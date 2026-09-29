@@ -4,10 +4,12 @@ import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingSicklePruning;
 import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents;
+import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomEvents;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import com.vincenthuto.hemomancy.common.rite.harbinger.SeveredQliphothState;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.QliphothBloomBlockEntity;
@@ -16,6 +18,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -107,7 +110,7 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 	@Override
 	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
 			BlockHitResult hit) {
-		return pickPendingPome(level, pos, player);
+		return pickPendingPome(level, pos, player, true);
 	}
 
 	@Override
@@ -116,7 +119,7 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 		if (LivingSicklePruning.interact(level, pos, player, hand)) {
 			return ItemInteractionResult.SUCCESS;
 		}
-		return pickPendingPome(level, pos, player) == InteractionResult.SUCCESS
+		return pickPendingPome(level, pos, player, stack.isEmpty()) == InteractionResult.SUCCESS
 				? ItemInteractionResult.SUCCESS
 				: ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 	}
@@ -145,7 +148,7 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 		return null;
 	}
 
-	private InteractionResult pickPendingPome(Level level, BlockPos pos, Player player) {
+	private InteractionResult pickPendingPome(Level level, BlockPos pos, Player player, boolean emptyHand) {
 		if (level.isClientSide) {
 			return InteractionResult.SUCCESS;
 		}
@@ -158,7 +161,7 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 		if (bloom == null || !bloom.center().equals(pos)) {
 			return InteractionResult.PASS;
 		}
-		SeveredQliphothState bloomState = data.getState(pos);
+		SeveredQliphothState bloomState = data.getState(bloom);
 		if (!bloom.ownerUUID().equals(player.getUUID())) {
 			player.displayClientMessage(Component.literal(bloomState == SeveredQliphothState.LIVING
 					? "The fruit tightens against another covenant."
@@ -184,13 +187,37 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 			VesperOrdealManager.enter(serverPlayer, bloom);
 			return InteractionResult.SUCCESS;
 		}
-		int huskIndex = data.getPendingPomeHuskIndex(pos);
-		boolean claimed = data.isPendingPomeClaimed(pos);
+		int huskIndex = data.getPendingPomeHuskIndex(bloom);
+		boolean claimed = data.isPendingPomeClaimed(bloom);
 		int consumedHere = HemoCapabilityAccess.getInitiatoryDegree(player)
-				.map(degree -> degree.getPomesConsumedFromBloom(pos.asLong())).orElse(0);
+				.map(degree -> degree.getPomesConsumedFromBloom(bloom.bloomId(), pos.asLong(),
+						bloom.migratesLegacyProgress())).orElse(0);
+		if (emptyHand && bloomState == SeveredQliphothState.LIVING && player.isShiftKeyDown()
+				&& data.getRemainingPomes(bloom) == 0 && consumedHere >= 9
+				&& player instanceof ServerPlayer serverPlayer
+				&& HemoCapabilityAccess.requireInitiatoryDegree(player).isQliphothCommunionDone()) {
+			if (player.getInventory().countItem(ItemInit.fungal_spine.get()) > 0) {
+				player.displayClientMessage(Component.literal("Your Fungal Spine is already with you.")
+						.withStyle(ChatFormatting.DARK_PURPLE), true);
+			} else {
+				var degree = HemoCapabilityAccess.requireInitiatoryDegree(player);
+				boolean delivered;
+				if (degree.hasFungalSpineGranted()) {
+					delivered = player.getInventory().add(new ItemStack(ItemInit.fungal_spine.get()));
+				} else {
+					QliphothBloomEvents.deliverPendingFungalSpine(serverPlayer);
+					delivered = player.getInventory().countItem(ItemInit.fungal_spine.get()) > 0;
+				}
+				player.displayClientMessage(Component.literal(delivered
+						? "The spent husks return your Fungal Spine."
+						: "Make room to reclaim your Fungal Spine.")
+						.withStyle(ChatFormatting.DARK_PURPLE), !delivered);
+			}
+			return InteractionResult.SUCCESS;
+		}
 		if (bloomState == SeveredQliphothState.LIVING && claimed && huskIndex >= 0
 				&& consumedHere == huskIndex + 1) {
-			data.clearPendingPome(pos.asLong());
+			data.clearPendingPome(bloom);
 			player.displayClientMessage(Component.literal(
 					"Your covenant remembers eating this husk. The tree releases its old wait and resumes its course.")
 					.withStyle(ChatFormatting.DARK_PURPLE), false);
@@ -200,12 +227,12 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 			Component message = claimed
 					? Component.literal("The tree has already given you its pome. Eat it before the next can grow.")
 					: Component.literal("The next pome is growing. Return when it ripens; this tree has "
-							+ data.getRemainingPomes(pos) + " pomes left to bear.");
-			if (!claimed && data.getRemainingPomes(pos) == 0) {
+							+ data.getRemainingPomes(bloom) + " pomes left to bear.");
+			if (!claimed && data.getRemainingPomes(bloom) == 0) {
 				EnumArchonPath path = HemoCapabilityAccess.getInitiatoryDegree(player)
 						.map(degree -> degree.getArchonPath()).orElse(EnumArchonPath.NONE);
 				message = Component.literal(switch (path) {
-					case NONE -> "The nine husks are spent. Use your Fungal Spine to witness the Gardens and answer the waiting choice.";
+					case NONE -> "Nine husks spent. Use the Spine for the Gardens. Lost it? Sneak here empty-handed.";
 					case SILENT_PENDING -> "Your refusal awaits its act. Sever this tree with your Living Arsenal to open the ordeal; ordinary pruning belongs to the Unstained path.";
 					case APOTHEOS_PENDING -> "The tree has fulfilled its nine husks. Your chosen Apotheosis now awaits its final rite.";
 					case SILENT_ARCHON, APOTHEOS -> "The nine-husk covenant is complete. This tree will not bear another pome.";
@@ -216,14 +243,14 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 			return InteractionResult.SUCCESS;
 		}
 
-		ItemStack pome = QliphothPomeItem.createPickedPomeStack(pos.asLong(), huskIndex, bloom.ownerUUID());
+		ItemStack pome = QliphothPomeItem.createPickedPomeStack(bloom, huskIndex);
 		if (!player.getInventory().add(pome)) {
 			player.displayClientMessage(Component.literal("The ripe pome waits. Make room before you claim it.")
 					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
 			return InteractionResult.SUCCESS;
 		}
 
-		data.markPendingPomeClaimed(pos);
+		data.markPendingPomeClaimed(bloom);
 		player.displayClientMessage(Component.literal("The Qliphoth pome comes away warm. Eat it before the next can grow.")
 				.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
 		return InteractionResult.SUCCESS;

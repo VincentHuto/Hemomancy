@@ -85,7 +85,9 @@ public class HarbingerVoyagerEntity extends PathfinderMob implements Progression
 	public DialogueTree progressionDialogue(ServerPlayer player) {
 		if (hasClarityUnlocked(player)) return HarbingerVoyagerDialogueTrees.clarity(this.getId());
 		if (isPurifying(player)) return HarbingerVoyagerDialogueTrees.purifying(this.getId());
-		return HarbingerVoyagerDialogueTrees.forDegree(HemoCapabilityAccess.getPlayerDegreeNumber(player), this.getId());
+		return com.vincenthuto.hemomancy.common.entity.npc.dialogue.VoyagerIntroductionDialogue.withFieldObservation(
+				HarbingerVoyagerDialogueTrees.forDegree(HemoCapabilityAccess.getPlayerDegreeNumber(player), this.getId()),
+				com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.canObserve(player, this));
 	}
 
 	@Override

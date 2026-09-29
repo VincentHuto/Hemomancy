@@ -15,6 +15,9 @@ public class AmbergrisCylinderItem extends Item implements HemoClientItemExtensi
         return program==null?super.getName(stack):Component.translatable("hemomancy.antecedent.cylinder."+program.id());
     }
     @Override public void appendHoverText(ItemStack stack,TooltipContext context,List<Component> lines,TooltipFlag flags){
+        appendCylinderHoverText(stack, context, lines, flags);
+    }
+    static void appendCylinderHoverText(ItemStack stack,TooltipContext context,List<Component> lines,TooltipFlag flags){
         var pattern=stack.get(DataComponentInit.RESONANT_PATTERN.get());
         if(pattern!=null){
             lines.add(Component.translatable(pattern.master()

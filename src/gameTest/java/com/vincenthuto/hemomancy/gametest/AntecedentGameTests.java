@@ -7,6 +7,9 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.*;
 import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
+import com.vincenthuto.hemomancy.common.mission.alchemist.DeepDarkCommission;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DeepDarkCommissionDialogue;
+import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.ClairaudiographBlockEntity;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.core.BlockPos;
@@ -293,6 +296,48 @@ public final class AntecedentGameTests {
         }
         h.assertTrue(HemoCapabilityAccess.antecedent(p).has(SAMPLE_ANALYZED),"Personal analysis evidence missing");
         h.assertTrue(HemoCapabilityAccess.clinicalBlood(p).sourceCount()==0,"Ahaematic sample credited as clinical blood");h.succeed();
+    }
+    @GameTest(template="empty") public static void deepDarkCommissionAcceptsPriorAnalysisWithoutTakingTheSample(GameTestHelper h) {
+        var p=player(h);
+        HemoCapabilityAccess.requireBloodVolume(p).setActive(true);
+        var alchemist=EntityInit.harbinger_alchemist.get().create(h.getLevel());
+        alchemist.setNoAi(true);alchemist.setPos(p.position());h.getLevel().addFreshEntity(alchemist);
+        var vicar=EntityInit.harbinger_vicar.get().create(h.getLevel());
+        vicar.setNoAi(true);vicar.setPos(p.position());h.getLevel().addFreshEntity(vicar);
+        var sample=sample("block","minecraft:sculk_catalyst");
+        BloodSampleData.identify(sample);
+        p.setItemInHand(InteractionHand.MAIN_HAND,sample);
+        var before=sample.copy();
+        h.assertTrue(!DeepDarkCommission.report(p,alchemist),"Unanalyzed sample completed the commission");
+        HemoCapabilityAccess.antecedent(p).record(VIGIL_RECORD_READ);
+        h.assertTrue(!DeepDarkCommission.report(p,alchemist),"Vigil record substituted for sample analysis");
+        HemoCapabilityAccess.antecedent(p).record(SAMPLE_ANALYZED);
+        h.assertTrue(!DeepDarkCommission.report(p,alchemist),"Degree 4 completed a Degree 5 commission");
+        h.assertTrue(alchemist.progressionDialogue(p).getNode("deep_dark_commission")==null,
+                "Degree 4 saw the formal commission");
+        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(5);
+        h.assertTrue(alchemist.progressionDialogue(p).getNode("deep_dark_commission")!=null,
+                "Degree 5 could not reach the commission dialogue");
+        h.assertTrue(!DeepDarkCommission.report(p,vicar),"The Vicar accepted the Alchemist's report");
+        h.assertTrue(DialogueOptionPacket.dispatch(p,DeepDarkCommissionDialogue.REPORT,vicar.getId())==null,
+                "The Vicar dispatched an Alchemist report");
+        var report=DialogueOptionPacket.dispatch(p,DeepDarkCommissionDialogue.REPORT,alchemist.getId());
+        h.assertTrue(report!=null && report.wasRewardDelivered(),
+                "Prior analysis was not reported through the Alchemist dialogue");
+        h.assertTrue(ItemStack.isSameItemSameComponents(before,p.getMainHandItem()),"Report changed the Ahaematic sample");
+        h.assertTrue(!DeepDarkCommission.report(p,alchemist),"The report was accepted twice");
+        var restored=player(h);
+        restored.getPersistentData().put(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG,
+                p.getPersistentData().getCompound(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG).copy());
+        h.assertTrue(DeepDarkCommission.progress(restored).reported()
+                && DeepDarkCommission.progress(restored).sampleProof(),
+                "Saved report did not retain completed ledger proof after restoration");
+
+        var earlierReplay=player(h);
+        HemoCapabilityAccess.antecedent(earlierReplay).record(CONTROLLED_REPLAY);
+        h.assertTrue(DeepDarkCommission.progress(earlierReplay).sampleProof(),
+                "Later sample-replay evidence did not satisfy the commission");
+        alchemist.discard();vicar.discard();h.succeed();
     }
     @GameTest(template="empty") public static void legacyAndUnknownProvenanceSurviveRoundTrip(GameTestHelper h) {
         var vial=new ItemStack(ItemInit.bloody_vial.get());var tag=new CompoundTag();tag.putString(BloodVialItem.TAG_ENTITY_TYPE,"minecraft:warden");tag.putString("owner_note","keep");

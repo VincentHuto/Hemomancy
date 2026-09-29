@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingIdentity;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
@@ -28,6 +29,132 @@ import java.util.UUID;
 @PrefixGameTestTemplate(false)
 public final class HarbingerRepairGameTests {
     @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void firstCultureCreditsLanternOutputWithoutPriorCatalogue(GameTestHelper helper) {
+        var actor = player(helper);
+        var pos = helper.absolutePos(new net.minecraft.core.BlockPos(1, 2, 1));
+        var level = helper.getLevel();
+        level.setBlock(pos, com.vincenthuto.hemomancy.common.init.BlockInit.mycelial_lantern.get().defaultBlockState(), 3);
+        try {
+            var lantern = (com.vincenthuto.hemomancy.common.tile.harbinger.crafting.MycelialLanternBlockEntity)
+                    level.getBlockEntity(pos);
+            var enzyme = new ItemStack(ItemInit.vivacious_enzyme.get());
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter
+                    .hasRecordedEnzyme(actor, enzyme), "Fixture must not already have an enzyme catalogue record");
+            lantern.setItem(lantern.SLOT_OUTPUT, enzyme);
+            var menu = new com.vincenthuto.hemomancy.common.menu.tile.crafting.MycelialLanternMenu(
+                    0, actor.getInventory(), lantern, lantern.dataAccess);
+            var taken = menu.getSlot(lantern.SLOT_OUTPUT).remove(1);
+            menu.getSlot(lantern.SLOT_OUTPUT).onTake(actor, taken);
+            helper.assertTrue(com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter
+                    .hasAdvancement(actor, com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter
+                            .ADV_FIRST_CULTURE_COMPLETE),
+                    "Taking a valid Lantern output must credit First Culture without a catalogue prerequisite");
+        } finally {
+            actor.discard();
+        }
+        helper.succeed();
+    }
+
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void firstCultureCreditsShiftClickedLanternOutput(GameTestHelper helper) {
+        var actor = player(helper);
+        var pos = helper.absolutePos(new net.minecraft.core.BlockPos(1, 2, 1));
+        var level = helper.getLevel();
+        level.setBlock(pos, com.vincenthuto.hemomancy.common.init.BlockInit.mycelial_lantern.get().defaultBlockState(), 3);
+        try {
+            var lantern = (com.vincenthuto.hemomancy.common.tile.harbinger.crafting.MycelialLanternBlockEntity)
+                    level.getBlockEntity(pos);
+            lantern.setItem(lantern.SLOT_OUTPUT, new ItemStack(ItemInit.vivacious_enzyme.get()));
+            var menu = new com.vincenthuto.hemomancy.common.menu.tile.crafting.MycelialLanternMenu(
+                    0, actor.getInventory(), lantern, lantern.dataAccess);
+            menu.quickMoveStack(actor, lantern.SLOT_OUTPUT);
+            helper.assertTrue(com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter
+                    .hasAdvancement(actor, com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter
+                            .ADV_FIRST_CULTURE_COMPLETE),
+                    "Shift-clicking a valid Lantern output must credit First Culture");
+        } finally {
+            actor.discard();
+        }
+        helper.succeed();
+    }
+
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void morphlingHandlingInspectsCapturedPolypWithoutIncubator(GameTestHelper helper) {
+        var learner = player(helper);
+        var priorResearcher = player(helper);
+        var level = helper.getLevel();
+        var alchemist = EntityInit.harbinger_alchemist.get().create(level);
+        var vicar = EntityInit.harbinger_vicar.get().create(level);
+        var polyp = EntityInit.morphling_polyp.get().create(level);
+        alchemist.setPos(learner.position());
+        vicar.setPos(learner.position());
+        polyp.setPos(learner.position());
+        polyp.setLayerMask(1);
+        level.addFreshEntity(alchemist);
+        level.addFreshEntity(vicar);
+        level.addFreshEntity(polyp);
+        HemoCapabilityAccess.requireInitiatoryDegree(learner).setDegreeNumber(4);
+        HemoCapabilityAccess.requireBloodVolume(learner).setActive(true);
+        HemoCapabilityAccess.requireInitiatoryDegree(priorResearcher).setDegreeNumber(4);
+        HemoCapabilityAccess.requireBloodVolume(priorResearcher).setActive(true);
+        try {
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingAssignment
+                    .inspect(learner, alchemist), "No specimen proof must not complete handling");
+            var otherJar = new ItemStack(com.vincenthuto.hemomancy.common.init.BlockInit.specimen_jar.get());
+            var otherSpecimen = new net.minecraft.nbt.CompoundTag();
+            otherSpecimen.putString("id", "hemomancy:chitinite");
+            com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.SpecimenJarData
+                    .setSpecimen(otherJar, otherSpecimen);
+            learner.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, otherJar);
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingAssignment
+                    .inspect(learner, alchemist), "An ordinary ecology specimen is not Morphling handling proof");
+            var emptyJar = new ItemStack(com.vincenthuto.hemomancy.common.init.BlockInit.specimen_jar.get());
+            learner.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, emptyJar);
+            emptyJar.getItem().interactLivingEntity(emptyJar, learner, polyp,
+                    net.minecraft.world.InteractionHand.MAIN_HAND);
+            var captured = learner.getMainHandItem();
+            helper.assertTrue(com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.SpecimenJarData
+                    .MORPHLING_POLYP_ID.equals(com.vincenthuto.hemomancy.common.item.harbinger.tile.functional
+                            .SpecimenJarData.getSpecimenEntityId(captured).orElseThrow().toString()),
+                    "The supported jar interaction must actually capture the Polyp");
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingAssignment
+                    .inspect(learner, vicar), "The Vicar cannot inspect Morphling handling");
+            HemoCapabilityAccess.requireInitiatoryDegree(learner).setDegreeNumber(3);
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingAssignment
+                    .inspect(learner, alchemist), "D3 capture must wait for the D4 Alchemist lesson");
+            HemoCapabilityAccess.requireInitiatoryDegree(learner).setDegreeNumber(4);
+            var before = captured.copy();
+            helper.assertTrue(com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingAssignment
+                    .inspect(learner, alchemist), "The Alchemist should recognize the captured Polyp");
+            helper.assertTrue(ItemStack.isSameItemSameComponents(before, learner.getMainHandItem()),
+                    "Inspection must retain the captured Polyp and its specimen components");
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingAssignment
+                    .inspect(learner, alchemist), "Handling inspection is one-time");
+            learner.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+            helper.assertTrue(com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingAssignment
+                    .progress(learner).inspected(), "Completed handling must survive jar removal");
+            HemoCapabilityAccess.requireSpecimenBestiary(priorResearcher)
+                    .recordSpecimen(Hemomancy.rloc("morphling_polyp"));
+            alchemist.setPos(priorResearcher.position());
+            helper.assertTrue(com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingAssignment
+                    .inspect(priorResearcher, alchemist), "Earlier Polyp Bestiary study should count without a second jar");
+            var restored = player(helper);
+            try {
+                restored.getPersistentData().put(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG,
+                        learner.getPersistentData().getCompound(
+                                net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG).copy());
+                helper.assertTrue(com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingAssignment
+                        .progress(restored).inspected(), "Handling completion must survive persisted restoration");
+            } finally {
+                restored.discard();
+            }
+        } finally {
+            learner.discard(); priorResearcher.discard(); alchemist.discard(); vicar.discard(); polyp.discard();
+        }
+        helper.succeed();
+    }
+
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
     public static void oldConsumedPomeReconcilesOnlyItsOwnersMatchingPendingHusk(GameTestHelper helper) {
         var actor = player(helper); var stranger = player(helper);
         var level = helper.getLevel();
@@ -35,18 +162,19 @@ public final class HarbingerRepairGameTests {
         var blooms = com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData.get(level.getServer().overworld());
         var dimension = level.dimension().location().toString();
         level.setBlock(origin, com.vincenthuto.hemomancy.common.init.BlockInit.qliphoth_bloom.get().defaultBlockState(), 3);
-        blooms.addBloom(new com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData.BloomEntry(actor.getUUID(), origin, dimension, 0, level.getGameTime()));
+        var bloom = new com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData.BloomEntry(actor.getUUID(), origin, dimension, 0, level.getGameTime());
+        blooms.addBloom(bloom);
         var hit = new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(origin), net.minecraft.core.Direction.UP, origin, false);
         try {
-            blooms.setPendingPome(origin, 0); blooms.markPendingPomeClaimed(origin);
-            HemoCapabilityAccess.requireInitiatoryDegree(actor).recordPomeConsumed(origin.asLong());
+            blooms.setPendingPome(bloom, 0); blooms.markPendingPomeClaimed(bloom);
+            HemoCapabilityAccess.requireInitiatoryDegree(actor).recordPomeConsumed(bloom.bloomId(), origin.asLong());
             level.getBlockState(origin).useWithoutItem(level, stranger, hit);
-            helper.assertTrue(blooms.getPendingPomeHuskIndex(origin) == 0, "A stranger must not reconcile another tree");
+            helper.assertTrue(blooms.getPendingPomeHuskIndex(bloom) == 0, "A stranger must not reconcile another tree");
             level.getBlockState(origin).useWithoutItem(level, actor, hit);
-            helper.assertTrue(blooms.getPendingPomeHuskIndex(origin) == -1, "Authoritative owner consumption must reconcile the old stuck pending husk");
-            blooms.setPendingPome(origin, 1); blooms.markPendingPomeClaimed(origin);
+            helper.assertTrue(blooms.getPendingPomeHuskIndex(bloom) == -1, "Authoritative owner consumption must reconcile the old stuck pending husk");
+            blooms.setPendingPome(bloom, 1); blooms.markPendingPomeClaimed(bloom);
             level.getBlockState(origin).useWithoutItem(level, actor, hit);
-            helper.assertTrue(blooms.getPendingPomeHuskIndex(origin) == 1, "The next uneaten husk must remain pending");
+            helper.assertTrue(blooms.getPendingPomeHuskIndex(bloom) == 1, "The next uneaten husk must remain pending");
         } finally { blooms.removeBloomInChunk(origin, dimension); actor.discard(); stranger.discard(); }
         helper.succeed();
     }
@@ -54,29 +182,34 @@ public final class HarbingerRepairGameTests {
     @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
     public static void duplicatePomeCannotAdvanceOrClearTheNextHusk(GameTestHelper helper) {
         var actor = player(helper);
+        HemoCapabilityAccess.requireInitiatoryDegree(actor).setDegreeNumber(7);
         var origin = helper.absolutePos(new net.minecraft.core.BlockPos(0, 45, 0));
         var blooms = com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData.get(helper.getLevel().getServer().overworld());
-        var fruit = com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeItem.createPickedPomeStack(origin.asLong(), 0, actor.getUUID());
+        var bloom = new com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData.BloomEntry(
+                actor.getUUID(), origin, helper.getLevel().dimension().location().toString(), 0,
+                helper.getLevel().getGameTime());
+        blooms.addBloom(bloom);
+        var fruit = com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeItem.createPickedPomeStack(bloom, 0);
         var duplicate = fruit.copy();
         try {
-            blooms.setPendingPome(origin, 0); blooms.markPendingPomeClaimed(origin);
+            blooms.setPendingPome(bloom, 0); blooms.markPendingPomeClaimed(bloom);
             fruit.getItem().finishUsingItem(fruit, helper.getLevel(), actor);
             helper.assertTrue(HemoCapabilityAccess.requireInitiatoryDegree(actor).getTotalPomesConsumed() == 1, "First husk must count");
-            blooms.setPendingPome(origin, 1); blooms.markPendingPomeClaimed(origin);
+            blooms.setPendingPome(bloom, 1); blooms.markPendingPomeClaimed(bloom);
             duplicate.getItem().finishUsingItem(duplicate, helper.getLevel(), actor);
             helper.assertTrue(HemoCapabilityAccess.requireInitiatoryDegree(actor).getTotalPomesConsumed() == 1,
                     "Duplicate husk must not advance communion");
-            helper.assertTrue(blooms.getPendingPomeHuskIndex(origin) == 1 && duplicate.getCount() == 1,
+            helper.assertTrue(blooms.getPendingPomeHuskIndex(bloom) == 1 && duplicate.getCount() == 1,
                     "Rejected duplicate must preserve itself and the next pending husk");
-            var next = com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeItem.createPickedPomeStack(origin.asLong(), 1, actor.getUUID());
+            var next = com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeItem.createPickedPomeStack(bloom, 1);
             next.getItem().finishUsingItem(next, helper.getLevel(), actor);
             helper.assertTrue(HemoCapabilityAccess.requireInitiatoryDegree(actor).getTotalPomesConsumed() == 2
-                    && blooms.getPendingPomeHuskIndex(origin) == -1, "The actual next husk must still advance and clear itself");
-            var later = com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeItem.createPickedPomeStack(origin.asLong(), 3, actor.getUUID());
+                    && blooms.getPendingPomeHuskIndex(bloom) == -1, "The actual next husk must still advance and clear itself");
+            var later = com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeItem.createPickedPomeStack(bloom, 3);
             later.getItem().finishUsingItem(later, helper.getLevel(), actor);
             helper.assertTrue(later.getCount() == 1 && HemoCapabilityAccess.requireInitiatoryDegree(actor).getTotalPomesConsumed() == 2,
                     "An out-of-order husk must wait for its preceding fruit");
-        } finally { blooms.clearPendingPome(origin.asLong()); actor.discard(); }
+        } finally { blooms.removeBloomInChunk(origin, bloom.dimension()); actor.discard(); }
         helper.succeed();
     }
 
@@ -622,17 +755,207 @@ public final class HarbingerRepairGameTests {
         String prefix = "hemomancy:chamber_visit_";
         original.getPersistentData().putBoolean(prefix + "attuned", true);
         original.getPersistentData().putBoolean(prefix + "chair_bound", true);
+        original.getPersistentData().putBoolean(prefix + "guided_complete", true);
         original.getPersistentData().putBoolean(prefix + "active", true);
         original.getPersistentData().putString(prefix + "mode", "DREAM");
         original.getPersistentData().putInt(prefix + "remaining", 1200);
         original.getPersistentData().put(prefix + "dream_inventory", new net.minecraft.nbt.ListTag());
         com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.copyEarnedProgress(original, replacement);
         helper.assertTrue(com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isAttuned(replacement)
-                && com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isChairBound(replacement), "Earned access survives");
+                && com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isChairBound(replacement)
+                && com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.hasCompletedGuidedVisit(replacement),
+                "Earned access and guided lesson survive");
         helper.assertTrue(!replacement.getPersistentData().contains(prefix + "active")
                 && !replacement.getPersistentData().contains(prefix + "remaining")
                 && !replacement.getPersistentData().contains(prefix + "dream_inventory"), "Session and inventory snapshots are not copied");
         original.discard(); replacement.discard(); helper.succeed();
+    }
+
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void guidedChamberStartAndReturnDoNotGrantAttunement(GameTestHelper helper) {
+        ServerPlayer learner = player(helper);
+        var chamber = com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager.CHAMBER_OF_WILL;
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireInitiatoryDegree(learner)
+                .setDegreeNumber(3);
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireBloodVolume(learner)
+                .setActive(true);
+        try {
+            if (helper.getLevel().getServer().getLevel(chamber) == null) {
+                helper.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.beginGuidedVisit(learner),
+                        "A missing destination must leave the lesson retryable");
+                helper.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isActive(learner)
+                        && !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.hasCompletedGuidedVisit(learner),
+                        "A failed start grants neither a visit nor the lesson");
+            } else {
+                helper.assertTrue(com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.beginGuidedVisit(learner),
+                        "Degree 3 should enter a guided Chamber visit");
+                helper.assertTrue(com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isActive(learner)
+                        && !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.hasCompletedGuidedVisit(learner),
+                        "Entry alone must not complete the lesson");
+                com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.returnFromVisit(learner);
+                helper.assertTrue(com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.hasCompletedGuidedVisit(learner)
+                        && !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isAttuned(learner),
+                        "Only a valid return completes the lesson; it does not grant rite attunement");
+            }
+        } finally {
+            if (com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isActive(learner))
+                com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.returnFromVisit(learner);
+            learner.discard();
+        }
+        helper.succeed();
+    }
+
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void interruptedGuidedVisitRestoresInventoryAndEquipment(GameTestHelper helper) {
+        ServerPlayer learner = player(helper);
+        var equipment = (com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentContainer)
+                HemoCapabilityAccess.requireEquipment(learner);
+        String prefix = "hemomancy:chamber_visit_";
+        learner.getInventory().setItem(0, new ItemStack(net.minecraft.world.item.Items.IRON_INGOT, 7));
+        equipment.setStackInSlot(6, new ItemStack(ItemInit.blood_gourd_white.get()));
+        var data = learner.getPersistentData();
+        data.put(prefix + "dream_inventory", learner.getInventory().save(new net.minecraft.nbt.ListTag()));
+        data.put(prefix + "guided_equipment", equipment.serializeNBT(learner.registryAccess()));
+        data.putBoolean(prefix + "active", true);
+        data.putString(prefix + "mode", "GUIDED");
+        try {
+            var interruptedAt = learner.position();
+            learner.getInventory().setItem(0, new ItemStack(net.minecraft.world.item.Items.DIRT));
+            equipment.setStackInSlot(6, ItemStack.EMPTY);
+            com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.returnFromVisit(learner);
+            helper.assertTrue(learner.getInventory().getItem(0).is(net.minecraft.world.item.Items.IRON_INGOT)
+                    && learner.getInventory().getItem(0).getCount() == 7,
+                    "A recovery outside the Chamber restores the exact inventory stack");
+            helper.assertTrue(equipment.getStackInSlot(6).is(ItemInit.blood_gourd_white.get()),
+                    "The equipped vessel must be restored as well");
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isActive(learner)
+                    && !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.hasCompletedGuidedVisit(learner),
+                    "Recovery clears the session but cannot award a completed lesson");
+            helper.assertTrue(learner.position().equals(interruptedAt),
+                    "Recovery outside the Chamber must not teleport the player a second time");
+        } finally {
+            learner.discard();
+        }
+        helper.succeed();
+    }
+
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void overworldFungalSurveyRequiresVisitAndKeepsBothSpecimens(GameTestHelper helper) {
+        ServerPlayer learner = player(helper);
+        var alchemist = com.vincenthuto.hemomancy.common.init.EntityInit.harbinger_alchemist.get()
+                .create(helper.getLevel());
+        alchemist.setPos(learner.position());
+        helper.getLevel().addFreshEntity(alchemist);
+        var first = new ItemStack(com.vincenthuto.hemomancy.common.init.BlockInit.infected_fungus.get());
+        var second = new ItemStack(com.vincenthuto.hemomancy.common.init.BlockInit.ghost_pipe.get());
+        learner.getInventory().setItem(0, first);
+        learner.getInventory().setItem(1, second);
+        HemoCapabilityAccess.requireInitiatoryDegree(learner).setDegreeNumber(2);
+        HemoCapabilityAccess.requireBloodVolume(learner).setActive(true);
+        try {
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey
+                    .progress(learner).ready(), "Holding specimens alone is not a visit");
+            com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.recordVisit(learner,
+                    net.minecraft.world.level.Level.NETHER,
+                    com.vincenthuto.hemomancy.common.init.BiomeInit.FUNGAL_GARDENS);
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.visited(learner),
+                    "The fungal projection must not count as an Overworld survey");
+            com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.recordVisit(learner,
+                    net.minecraft.world.level.Level.OVERWORLD,
+                    com.vincenthuto.hemomancy.common.init.BiomeInit.FUNGAL_GARDENS);
+            helper.assertTrue(com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey
+                    .progress(learner).ready(), "Prior Overworld discovery must count before a referral");
+            learner.getInventory().setItem(1, first.copy());
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey
+                    .report(learner, alchemist), "Two copies of one plant are not two specimens");
+            learner.getInventory().setItem(1, second);
+            helper.assertTrue(com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey
+                    .report(learner, alchemist), "The Alchemist should accept two distinct local plants");
+            helper.assertTrue(first.getCount() == 1 && second.getCount() == 1
+                    && learner.getInventory().getItem(0).is(first.getItem())
+                    && learner.getInventory().getItem(1).is(second.getItem()),
+                    "Inspection must preserve both carried specimens");
+            learner.getInventory().setItem(0, ItemStack.EMPTY);
+            learner.getInventory().setItem(1, ItemStack.EMPTY);
+            helper.assertTrue(com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey
+                    .progress(learner).specimens() == 2,
+                    "A completed report must not regress when the plants are stored elsewhere");
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey
+                    .report(learner, alchemist), "The report is one-time");
+            ServerPlayer restored = player(helper);
+            try {
+                restored.getPersistentData().put(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG,
+                        learner.getPersistentData().getCompound(
+                                net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG).copy());
+                var persisted = com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.progress(restored);
+                helper.assertTrue(persisted.visited() && persisted.reported() && persisted.specimens() == 2,
+                        "Visit and report evidence must survive persisted player restoration");
+            } finally {
+                restored.discard();
+            }
+        } finally {
+            alchemist.discard(); learner.discard();
+        }
+        helper.succeed();
+    }
+
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void voyagerIntroductionPreservesEarlyObservationAndRejectsWrongTeacher(GameTestHelper helper) {
+        ServerPlayer learner = player(helper);
+        var level = helper.getLevel();
+        var voyager = com.vincenthuto.hemomancy.common.init.EntityInit.harbinger_voyager.get().create(level);
+        var vicar = com.vincenthuto.hemomancy.common.init.EntityInit.harbinger_vicar.get().create(level);
+        voyager.setPos(learner.position());
+        vicar.setPos(learner.position());
+        level.addFreshEntity(voyager);
+        level.addFreshEntity(vicar);
+        HemoCapabilityAccess.requireInitiatoryDegree(learner).setDegreeNumber(2);
+        HemoCapabilityAccess.requireBloodVolume(learner).setActive(true);
+        try {
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.isFieldSite(
+                    net.minecraft.world.level.Level.NETHER,
+                    com.vincenthuto.hemomancy.common.init.BiomeInit.ERYTHROCORAL_REEF, true),
+                    "A reef-like site outside the Overworld is not the Voyager field assignment");
+            helper.assertTrue(com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.isFieldSite(
+                    net.minecraft.world.level.Level.OVERWORLD,
+                    com.vincenthuto.hemomancy.common.init.BiomeInit.ERYTHROCORAL_REEF, false),
+                    "An Overworld reef is valid without a vessel");
+            helper.assertTrue(com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.isFieldSite(
+                    net.minecraft.world.level.Level.OVERWORLD,
+                    net.minecraft.world.level.biome.Biomes.DEEP_OCEAN, true),
+                    "An active vessel is valid even at a reef edge");
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.observe(
+                    learner, voyager), "A spawned Voyager outside a reef or vessel cannot grant proof");
+            var persisted = learner.getPersistentData().getCompound(
+                    net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG);
+            var evidence = new net.minecraft.nbt.CompoundTag();
+            evidence.putBoolean("Observed", true);
+            persisted.put("hemomancy:voyager_introduction", evidence);
+            learner.getPersistentData().put(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG, persisted);
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.report(
+                    learner, vicar), "A prior observation is saved but the formal report begins at Degree 3");
+            HemoCapabilityAccess.requireInitiatoryDegree(learner).setDegreeNumber(3);
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.report(
+                    learner, voyager), "Only a Vicar can accept the report");
+            helper.assertTrue(com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.report(
+                    learner, vicar), "The Vicar must recognize the earlier observation");
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.report(
+                    learner, vicar), "The report cannot be claimed twice");
+            ServerPlayer restored = player(helper);
+            try {
+                restored.getPersistentData().put(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG,
+                        learner.getPersistentData().getCompound(
+                                net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG).copy());
+                var result = com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.progress(restored);
+                helper.assertTrue(result.observed() && result.reported(),
+                        "Voyager observation and report must survive persisted player restoration");
+            } finally {
+                restored.discard();
+            }
+        } finally {
+            voyager.discard(); vicar.discard(); learner.discard();
+        }
+        helper.succeed();
     }
 
     @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")

@@ -37,9 +37,6 @@ public class InitiatoryDegreeEvents {
 	}
 
 	private static void migrateLegacyState(ServerPlayer player, IInitiatoryDegree degree) {
-		if (degree.isQliphothCommunionDone() && !degree.hasFungalSpineGranted()) {
-			degree.setFungalSpineGranted(true);
-		}
 		String legacyChoice = player.getPersistentData().getString(FungalGardenTravelHelper.ARCHON_CHOICE_KEY);
 		if (degree.getArchonPath() == EnumArchonPath.NONE && !legacyChoice.isBlank()) {
 			degree.setFungalRevelationWitnessed(true);

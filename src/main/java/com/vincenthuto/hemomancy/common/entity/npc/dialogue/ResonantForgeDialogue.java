@@ -25,8 +25,7 @@ public final class ResonantForgeDialogue {
         options.add(0, option("hemomancy.artificer.resonant_forge.title", "resonant_forge",
                 progress.taught() ? null : TEACH, !progress.taught(),
                 "hemomancy.artificer.resonant_forge.prompt"));
-        nodes.put("resonant_forge", node("resonant_forge", progress.taught()
-                ? "hemomancy.artificer.resonant_forge.taught" : "hemomancy.artificer.resonant_forge.lesson"));
+		nodes.put("resonant_forge", forgeNode(degree));
         if (degree >= 5) {
             boolean ready = progress.canClaimPrecision(player);
             options.add(0, option("hemomancy.artificer.resonant_forge.precision.title",
@@ -60,6 +59,19 @@ public final class ResonantForgeDialogue {
 
     private static DialogueNode node(String id, String line) {
         return new DialogueNode(id, List.of(line),
+                List.of(new DialogueOption("hemomancy.dialogue.artificer.option.leave", null, null)));
+    }
+
+    private static DialogueNode forgeNode(int degree) {
+        List<String> lines = new ArrayList<>();
+        if (degree == 3) {
+            lines.add("hemomancy.artificer.resonant_forge.early");
+        } else {
+            lines.add("hemomancy.artificer.resonant_forge.lesson");
+            lines.add("hemomancy.artificer.resonant_forge.taught");
+            if (degree >= 6) lines.add("hemomancy.artificer.resonant_forge.practice");
+        }
+        return new DialogueNode("resonant_forge", lines,
                 List.of(new DialogueOption("hemomancy.dialogue.artificer.option.leave", null, null)));
     }
 }

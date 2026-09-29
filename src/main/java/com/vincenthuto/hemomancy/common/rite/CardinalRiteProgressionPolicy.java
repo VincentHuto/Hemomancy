@@ -21,10 +21,9 @@ public final class CardinalRiteProgressionPolicy {
 	public static List<String> violations(String ritePath, int degree,
 			CardinalRiteCeremonyDefinition ceremony, int offeringCount) {
 		if (ceremony == null) return List.of("ceremony is missing");
-		// Apotheos progression is intentionally a separate design pass.
-		if (ritePath != null && ritePath.endsWith("apotheos_rite")) return List.of();
-
-		Limits limits = limits(Math.max(0, degree));
+		Limits limits = degree == 7 && "cardinal_rite/apotheos_rite".equals(ritePath)
+				? new Limits(32, 4, 3, 6, 1, 0, "living_staff", 3, true, true, 3)
+				: limits(Math.max(0, degree));
 		List<String> problems = new ArrayList<>();
 		boolean authoredScriptoriumBoundary = ("cardinal_rite/eightfold_script".equals(ritePath)
 				&& degree == 5 && ceremony.anchors().size() == 20)

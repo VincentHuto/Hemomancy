@@ -237,7 +237,7 @@ public final class BloodInjectionGameTests {
 
     private static net.minecraft.world.entity.player.Player educatedPlayer(GameTestHelper h) {
         var player = h.makeMockPlayer(GameType.SURVIVAL);
-        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(1);
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(2);
         com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.clinicalBlood(player)
                 .learn(com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress.Lesson.INJECTION);
         return player;
@@ -309,7 +309,7 @@ public final class BloodInjectionGameTests {
                 new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "vial-animation"), false);
         var player = new net.minecraft.server.level.ServerPlayer(h.getLevel().getServer(), h.getLevel(),
                 cookie.gameProfile(), cookie.clientInformation());
-        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(1);
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(2);
         com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.clinicalBlood(player)
                 .learn(com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress.Lesson.INJECTION);
         var connection = new net.minecraft.network.Connection(net.minecraft.network.protocol.PacketFlow.SERVERBOUND);

@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.worldgen;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentContainer;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncChamberVisit;
@@ -20,6 +21,8 @@ public final class ChamberVisitService {
 	private static final String DREAM_ATTEMPTS = PREFIX + "dream_attempts";
 	private static final String DREAM_SEEN = PREFIX + "dream_seen";
 	private static final String DREAM_INVENTORY = PREFIX + "dream_inventory";
+	private static final String GUIDED_EQUIPMENT = PREFIX + "guided_equipment";
+	private static final String GUIDED_COMPLETE = PREFIX + "guided_complete";
 	private static final String CHAIR_BOUND = PREFIX + "chair_bound";
 	private static final String ATTUNED = PREFIX + "attuned";
 	private static final String PENDING_CHAIR_SLEEP = PREFIX + "pending_chair_sleep";
@@ -46,6 +49,18 @@ public final class ChamberVisitService {
 
 	public static boolean isDream(ServerPlayer player) {
 		return isActive(player) && mode(player) == ChamberVisitMode.DREAM;
+	}
+
+	public static boolean isObservational(ServerPlayer player) {
+		return isActive(player) && !ChamberVisitRules.canMoveItems(mode(player));
+	}
+
+	public static boolean hasCompletedGuidedVisit(ServerPlayer player) {
+		return player.getPersistentData().getBoolean(GUIDED_COMPLETE);
+	}
+
+	public static boolean hasSeenDream(ServerPlayer player) {
+		return player.getPersistentData().getBoolean(DREAM_SEEN);
 	}
 
 	public static boolean isProtected(ServerPlayer player) {
@@ -78,7 +93,7 @@ public final class ChamberVisitService {
 	public static void copyEarnedProgress(ServerPlayer original, ServerPlayer replacement) {
 		var oldData = original.getPersistentData();
 		var newData = replacement.getPersistentData();
-		for (String key : new String[] { CHAIR_BOUND, ATTUNED, DREAM_SEEN, DREAM_ATTEMPTS }) {
+		for (String key : new String[] { CHAIR_BOUND, ATTUNED, DREAM_SEEN, DREAM_ATTEMPTS, GUIDED_COMPLETE }) {
 			if (oldData.contains(key)) newData.put(key, oldData.get(key).copy());
 		}
 	}
@@ -100,6 +115,17 @@ public final class ChamberVisitService {
 		}
 		bindChair(player);
 		return startVisit(player, isAttuned(player) ? ChamberVisitMode.ATTUNED : ChamberVisitMode.TIMED_CHAIR);
+	}
+
+	public static boolean beginGuidedVisit(ServerPlayer player) {
+		if (hasCompletedGuidedVisit(player) || HemoCapabilityAccess.getPlayerDegreeNumber(player) < 3
+				|| !HemoCapabilityAccess.getBloodVolume(player).map(volume -> volume.isActive()).orElse(false)
+				|| HemoCapabilityAccess.getUnstainedProgress(player)
+						.map(progress -> progress.hasBegunPurification() || progress.hasClarityUnlocked()).orElse(false)
+				|| FungalGardenTravelHelper.isProjectionActive(player)
+				|| !player.containerMenu.getCarried().isEmpty()
+				|| !(HemoCapabilityAccess.requireEquipment(player) instanceof HarbingerEquipmentContainer)) return false;
+		return startVisit(player, ChamberVisitMode.GUIDED);
 	}
 
 	public static boolean beginRiteVisit(ServerPlayer player) {
@@ -149,6 +175,8 @@ public final class ChamberVisitService {
 	private static boolean startVisit(ServerPlayer player, ChamberVisitMode visitMode) {
 		if (isActive(player) || player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)
 				|| player.getServer().getLevel(ChamberOfWillManager.CHAMBER_OF_WILL) == null) return false;
+		if (visitMode == ChamberVisitMode.GUIDED && player.containerMenu != player.inventoryMenu)
+			player.closeContainer();
 		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 		int total = ChamberVisitRules.durationTicks(degree, visitMode, isAttuned(player));
 		var data = player.getPersistentData();
@@ -159,10 +187,17 @@ public final class ChamberVisitService {
 		data.putInt(FOOD, player.getFoodData().getFoodLevel());
 		data.putFloat(SATURATION, player.getFoodData().getSaturationLevel());
 		data.putFloat(EXHAUSTION, player.getFoodData().getExhaustionLevel());
-		if (visitMode == ChamberVisitMode.DREAM) {
+		if (!ChamberVisitRules.canMoveItems(visitMode)) {
 			data.put(DREAM_INVENTORY, player.getInventory().save(new ListTag()));
 		}
+		if (visitMode == ChamberVisitMode.GUIDED
+				&& HemoCapabilityAccess.requireEquipment(player) instanceof HarbingerEquipmentContainer equipment)
+			data.put(GUIDED_EQUIPMENT, equipment.serializeNBT(player.registryAccess()));
 		ChamberOfWillManager.get(player.getServer()).enterChamber(player);
+		if (!player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)) {
+			recoverOutsideChamber(player);
+			return false;
+		}
 		sync(player);
 		return true;
 	}
@@ -219,15 +254,21 @@ public final class ChamberVisitService {
 			}
 			return;
 		}
+		if (mode(player) == ChamberVisitMode.GUIDED
+				&& !player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)) {
+			recoverOutsideChamber(player);
+			return;
+		}
 		if (player.containerMenu != player.inventoryMenu) player.closeContainer();
 		var data = player.getPersistentData();
-		if (mode(player) == ChamberVisitMode.DREAM && data.contains(DREAM_INVENTORY)) {
-			player.getInventory().load(data.getList(DREAM_INVENTORY, net.minecraft.nbt.Tag.TAG_COMPOUND));
-			player.inventoryMenu.broadcastChanges();
-		}
+		boolean guidedReturn = mode(player) == ChamberVisitMode.GUIDED
+				&& player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL);
+		restoreObservationalInventory(player);
 		restoreFood(player);
 		clearSession(data);
 		ChamberOfWillManager.get(player.getServer()).exitChamber(player);
+		if (guidedReturn && !player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL))
+			data.putBoolean(GUIDED_COMPLETE, true);
 		PacketHandler.sendToPlayer(player, PacketSyncChamberVisit.inactive());
 	}
 
@@ -235,13 +276,28 @@ public final class ChamberVisitService {
 	public static void recoverOutsideChamber(ServerPlayer player) {
 		if (!isActive(player)) return;
 		var data = player.getPersistentData();
-		if (mode(player) == ChamberVisitMode.DREAM && data.contains(DREAM_INVENTORY)) {
-			player.getInventory().load(data.getList(DREAM_INVENTORY, net.minecraft.nbt.Tag.TAG_COMPOUND));
-			player.inventoryMenu.broadcastChanges();
-		}
+		restoreObservationalInventory(player);
 		restoreFood(player);
 		clearSession(data);
 		PacketHandler.sendToPlayer(player, PacketSyncChamberVisit.inactive());
+	}
+
+	private static void restoreObservationalInventory(ServerPlayer player) {
+		var data = player.getPersistentData();
+		if (isObservational(player) && data.contains(DREAM_INVENTORY)) {
+			player.getInventory().load(data.getList(DREAM_INVENTORY, net.minecraft.nbt.Tag.TAG_COMPOUND));
+			player.inventoryMenu.broadcastChanges();
+		}
+		if (mode(player) == ChamberVisitMode.GUIDED && data.contains(GUIDED_EQUIPMENT)
+				&& HemoCapabilityAccess.requireEquipment(player) instanceof HarbingerEquipmentContainer equipment) {
+			boolean blocked = equipment.isEventBlocked();
+			equipment.setEventBlock(true);
+			try {
+				equipment.deserializeNBT(player.registryAccess(), data.getCompound(GUIDED_EQUIPMENT));
+			} finally {
+				equipment.setEventBlock(blocked);
+			}
+		}
 	}
 
 	private static void restoreFood(ServerPlayer player) {
@@ -253,7 +309,7 @@ public final class ChamberVisitService {
 	}
 
 	private static void clearSession(net.minecraft.nbt.CompoundTag data) {
-		for (String key : new String[] { ACTIVE, MODE, REMAINING, TOTAL, DREAM_INVENTORY,
+		for (String key : new String[] { ACTIVE, MODE, REMAINING, TOTAL, DREAM_INVENTORY, GUIDED_EQUIPMENT,
 				EXIT_SLEEP_TICKS, FOOD, SATURATION, EXHAUSTION }) data.remove(key);
 	}
 

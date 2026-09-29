@@ -1,6 +1,6 @@
 # Phase 5: staged Chamber practice and the scar chapter
 
-[Index](../HARBINGER_PROGRESSION_REDESIGN.md) · Keep both promotion dependencies intact.
+[Index](HARBINGER_PROGRESSION_REDESIGN.md) · Keep both promotion dependencies intact.
 
 ## Outcome
 

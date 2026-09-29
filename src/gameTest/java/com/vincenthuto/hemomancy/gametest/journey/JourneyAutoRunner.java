@@ -26,10 +26,19 @@ public final class JourneyAutoRunner {
 		if (registered) return;
 		registered = true;
 		NeoForge.EVENT_BUS.addListener(JourneyAutoRunner::onServerTick);
+		NeoForge.EVENT_BUS.addListener(HemoJourneySnapshot::onPlayerClone);
 	}
 
 	public static boolean runHarbinger(ServerPlayer player) {
 		return start(player, List.of(Route.HARBINGER), true);
+	}
+
+	public static boolean runHarbingerToChoice(ServerPlayer player) {
+		return start(player, List.of(Route.HARBINGER), true, true);
+	}
+
+	public static boolean runHarbingerMainToChoice(ServerPlayer player) {
+		return start(player, List.of(Route.HARBINGER_MAIN), true, true);
 	}
 
 	public static boolean runUnstained(ServerPlayer player, String mode) {
@@ -65,9 +74,13 @@ public final class JourneyAutoRunner {
 	}
 
 	private static boolean start(ServerPlayer player, List<Route> routes, boolean allowResume) {
+		return start(player, routes, allowResume, false);
+	}
+
+	private static boolean start(ServerPlayer player, List<Route> routes, boolean allowResume, boolean stopAtChoice) {
 		RunState active = ACTIVE.get(player.getUUID());
 		if (active != null) {
-			if (!routes.equals(active.routes)) {
+			if (!routes.equals(active.routes) || stopAtChoice != active.stopAtChoice) {
 				player.sendSystemMessage(Component.literal("Different journey automation is already active: "
 						+ active.route().label + ". Stop or clear it before changing routes.").withStyle(ChatFormatting.RED));
 				return false;
@@ -82,7 +95,7 @@ public final class JourneyAutoRunner {
 					.withStyle(ChatFormatting.RED));
 			return false;
 		}
-		RunState state = new RunState(routes);
+		RunState state = new RunState(routes, stopAtChoice);
 		LAST_FAILURE.remove(player.getUUID());
 		ACTIVE.put(player.getUUID(), state);
 		if (!hasSnapshot && !startRoute(player, state.route())) {
@@ -116,12 +129,21 @@ public final class JourneyAutoRunner {
 				player.sendSystemMessage(Component.literal("AUTO " + state.route().label + ": " + stageId)
 						.withStyle(ChatFormatting.GRAY));
 			}
+			if (state.stopAtChoice && HemoJourneyStage.APOTHEOS_CHOICE.id().equals(stageId)) {
+				ACTIVE.remove(player.getUUID());
+				player.sendSystemMessage(Component.literal(
+						"Harbinger automation paused at the ending choice. The Bloom, Spine, and snapshot remain for manual play.")
+						.withStyle(ChatFormatting.YELLOW));
+				return;
+			}
 			state.stageTicks++;
 			if (state.stageTicks > STAGE_TIMEOUT_TICKS) {
 				fail(player, state, "Timed out at " + stageId + (state.lastFailure.isEmpty() ? "." : ": " + state.lastFailure));
 				return;
 			}
 			BlockPos origin = BlockPos.of(player.getPersistentData().getLong(HemoJourneyFixtures.ORIGIN_KEY));
+			if (!state.acted && state.route().harbinger()
+					&& HemoJourneyController.status(player).passed()) state.acted = true;
 			if ((!state.acted || state.route().runsContinuously(stageId)) && !"complete".equals(stageId)) {
 				state.route().perform(player, stageId, origin);
 				state.acted = true;
@@ -129,7 +151,7 @@ public final class JourneyAutoRunner {
 			if (state.stageTicks % 2 != 0) return;
 			boolean passed;
 			String message;
-			if (state.route() == Route.HARBINGER) {
+			if (state.route().harbinger()) {
 				HemoJourneyResult result = HemoJourneyController.next(player);
 				passed = result.passed();
 				message = result.message();
@@ -144,7 +166,11 @@ public final class JourneyAutoRunner {
 			}
 			if (!passed) {
 				state.lastFailure = message;
-				if (state.route() == Route.HARBINGER
+				if (message.startsWith("Next fixture failed:")) {
+					fail(player, state, message);
+					return;
+				}
+				if (state.route().harbinger()
 						&& HemoJourneyStage.FORMATION_PROJECTED.id().equals(stageId)) state.acted = false;
 			}
 		} catch (RuntimeException exception) {
@@ -172,8 +198,8 @@ public final class JourneyAutoRunner {
 	private static boolean startRoute(ServerPlayer player, Route route) {
 		boolean passed;
 		String message;
-		if (route == Route.HARBINGER) {
-			HemoJourneyResult result = HemoJourneyController.start(player);
+		if (route.harbinger()) {
+			HemoJourneyResult result = HemoJourneyController.start(player, route == Route.HARBINGER_MAIN);
 			passed = result.passed();
 			message = result.message();
 		} else if (!route.circus()) {
@@ -212,6 +238,7 @@ public final class JourneyAutoRunner {
 
 	private enum Route {
 		HARBINGER("Harbinger", "harbinger"),
+		HARBINGER_MAIN("Harbinger Main-only", "harbinger_main"),
 		UNSTAINED_CURE("Unstained cure", "cure"),
 		UNSTAINED_NOVITIATE("Unstained novitiate", "novitiate"),
 		CIRCUS_SUCCESSION("Circus succession", "succession"),
@@ -226,7 +253,9 @@ public final class JourneyAutoRunner {
 		}
 
 		private boolean owns(ServerPlayer player) {
-			if (this == HARBINGER) return JourneyRoute.is(player, JourneyRoute.HARBINGER);
+			if (harbinger()) return JourneyRoute.is(player, JourneyRoute.HARBINGER)
+					&& player.getPersistentData().getBoolean(HemoJourneyController.MAIN_ONLY_KEY)
+							== (this == HARBINGER_MAIN);
 			if (circus()) return JourneyRoute.is(player, JourneyRoute.CIRCUS)
 					&& mode.equals(CircusJourneyController.mode(player));
 			return JourneyRoute.is(player, JourneyRoute.UNSTAINED)
@@ -234,12 +263,13 @@ public final class JourneyAutoRunner {
 		}
 
 		private void perform(ServerPlayer player, String stageId, BlockPos origin) {
-			if (this == HARBINGER) HarbingerJourneyAutomation.perform(player, stageId, origin);
+			if (harbinger()) HarbingerJourneyAutomation.perform(player, stageId, origin);
 			else if (circus()) CircusJourneyAutomation.perform(player);
 			else UnstainedJourneyAutomation.perform(player, UnstainedJourneyStage.byId(stageId), origin);
 		}
 
 		private boolean circus() { return this == CIRCUS_SUCCESSION || this == CIRCUS_LIBERATION; }
+		private boolean harbinger() { return this == HARBINGER || this == HARBINGER_MAIN; }
 		private boolean runsContinuously(String stageId) {
 			return circus() && (CircusJourneyStage.ATTENTION.id().equals(stageId)
 					|| CircusJourneyStage.ACTS.id().equals(stageId)
@@ -249,14 +279,16 @@ public final class JourneyAutoRunner {
 
 	private static final class RunState {
 		private final List<Route> routes;
+		private final boolean stopAtChoice;
 		private int routeIndex;
 		private String stageId = "";
 		private int stageTicks;
 		private boolean acted;
 		private String lastFailure = "";
 
-		private RunState(List<Route> routes) {
+		private RunState(List<Route> routes, boolean stopAtChoice) {
 			this.routes = routes;
+			this.stopAtChoice = stopAtChoice;
 		}
 
 		private Route route() {

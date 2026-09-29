@@ -8,6 +8,8 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
 import com.vincenthuto.hemomancy.common.event.ArmorSetBonusHandler;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponForm;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponGraftRecipeUnlockEvents;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponMemoryUnlocks;
@@ -16,6 +18,7 @@ import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRu
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.ForkFamily;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.Step;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRules.ArmatureTier;
+import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -26,11 +29,15 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
@@ -86,7 +93,7 @@ public final class ArtificerProgressionGameTests {
 	public static void dialogueOnlyExposesReadyProgressionActions(GameTestHelper helper) {
 		ArtificerProgressSnapshot progress = new ArtificerProgressSnapshot(7, true, false, false, true,
 				ForkFamily.NONE, D7Lineage.NONE, Step.FULL_SET, Step.RECOVER_BRANCH, Step.LOCKED,
-				Step.LOCKED, Step.RECOVER_BRANCH, false, false, false, false, false);
+				Step.LOCKED, Step.RECOVER_BRANCH, false, false, false, false, false, false);
 		DialogueNode assignments = HarbingerArtificerDialogueTrees.forState(1, progress).getNode("assignments");
 		helper.assertTrue(!hasEvent(assignments, HarbingerArtificerDialogueTrees.EVENT_CLAIM_HEMATIC_IRON_FITTING),
 				"Worn Vow exposed its fitting before the full-set objective");
@@ -100,6 +107,117 @@ public final class ArtificerProgressionGameTests {
 		helper.assertTrue(assignments.options().stream().anyMatch(option -> option.eventId() != null
 				&& option.eventId().startsWith(HarbingerArtificerDialogueTrees.EVENT_RECOVER_D7_PREFIX)),
 				"D7 recovery choices were missing");
+		helper.succeed();
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void armatureKitBelongsToArtificerAndKeepsLegacyClaim(GameTestHelper helper) {
+		ServerPlayer player = player(helper, "armature-kit");
+		HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(5);
+		HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
+		var artificer = EntityInit.harbinger_artificer.get().create(helper.getLevel());
+		var vicar = EntityInit.harbinger_vicar.get().create(helper.getLevel());
+		var origin = helper.absolutePos(new net.minecraft.core.BlockPos(4, 2, 4)).getCenter();
+		artificer.setPos(origin);
+		vicar.setPos(origin.add(1, 0, 0));
+		helper.getLevel().addFreshEntity(artificer);
+		helper.getLevel().addFreshEntity(vicar);
+		player.setPos(origin);
+		String newEvent = "artificer_consecration_kit";
+		String oldEvent = HarbingerVicarDialogueTrees.EVENT_CONSECRATION_KIT;
+		helper.assertTrue(hasEvent(artificer.progressionDialogue(player).getNode("late_armature"), newEvent),
+				"D5 Artificer has no kit handoff");
+		helper.assertTrue(!hasEvent(vicar.progressionDialogue(player).getNode("armature_consecration"), oldEvent),
+				"Vicar still offers the kit grant");
+		helper.assertTrue(DialogueOptionPacket.dispatch(player, oldEvent, vicar.getId()) == null
+					&& DialogueOptionPacket.dispatch(player, newEvent, vicar.getId()) == null,
+				"A Vicar could grant either old or new kit event");
+		var forged = new DialogueEvent(player, newEvent, vicar.getId());
+		DialogueEventHandler.onDialogueOption(forged);
+		helper.assertTrue(!forged.wasRewardDelivered(), "A forged Artificer event accepted the Vicar");
+		player.setPos(origin.add(12, 0, 0));
+		helper.assertTrue(DialogueOptionPacket.dispatch(player, newEvent, artificer.getId()) == null,
+				"Distant Artificer granted the kit");
+		forged = new DialogueEvent(player, newEvent, artificer.getId());
+		DialogueEventHandler.onDialogueOption(forged);
+		helper.assertTrue(!forged.wasRewardDelivered(), "A direct distant event granted the kit");
+		player.setPos(origin);
+		ServerPlayer early = player(helper, "early-kit");
+		HemoCapabilityAccess.requireInitiatoryDegree(early).setDegreeNumber(4);
+		HemoCapabilityAccess.requireBloodVolume(early).setActive(true);
+		early.setPos(origin);
+		helper.assertTrue(!DialogueOptionPacket.dispatch(early, newEvent, artificer.getId()).wasRewardDelivered(),
+				"Degree 4 claimed the consecration kit");
+		var awarded = DialogueOptionPacket.dispatch(player, newEvent, artificer.getId());
+		helper.assertTrue(awarded != null && awarded.wasRewardDelivered()
+					&& DialogueEventHandler.hasClaimedConsecrationKit(player)
+					&& player.getRecipeBook().contains(Hemomancy.rloc("vicars_consecration_kit")),
+				"Valid Artificer did not grant the one-time kit");
+		helper.assertTrue(helper.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(artificer.blockPosition()).inflate(2))
+					.stream().anyMatch(item -> item.getItem().is(ItemInit.vicars_consecration_kit.get())),
+				"Artificer handoff did not retain the registered kit item");
+		helper.assertTrue(!DialogueOptionPacket.dispatch(player, newEvent, artificer.getId()).wasRewardDelivered(),
+				"Artificer issued the free kit twice");
+		helper.assertTrue(!hasEvent(artificer.progressionDialogue(player).getNode("late_armature"), newEvent),
+				"Claimed kit remained an active Artificer option");
+		ServerPlayer legacy = player(helper, "old-kit-claim");
+		HemoCapabilityAccess.requireInitiatoryDegree(legacy).setDegreeNumber(5);
+		HemoCapabilityAccess.requireBloodVolume(legacy).setActive(true);
+		legacy.getPersistentData().putBoolean("hemomancy.vicar_consecration_kit_claimed", true);
+		legacy.setPos(origin);
+		artificer.interact(legacy, net.minecraft.world.InteractionHand.MAIN_HAND);
+		helper.assertTrue(legacy.getRecipeBook().contains(Hemomancy.rloc("vicars_consecration_kit")),
+				"An old claimant did not learn the material-cost replacement on Artificer contact");
+		helper.assertTrue(!DialogueOptionPacket.dispatch(legacy, newEvent, artificer.getId()).wasRewardDelivered(),
+				"An old Vicar claimant received a second free kit");
+		helper.assertTrue(!hasEvent(artificer.progressionDialogue(legacy).getNode("late_armature"), newEvent),
+				"An old Vicar claimant was offered the new kit");
+		legacy.discard();
+		early.discard();
+		player.discard();
+		helper.succeed();
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void brokenUpgradedArmatureReturnsItsPaidUpgradeItems(GameTestHelper helper) {
+		var pos = helper.absolutePos(new net.minecraft.core.BlockPos(4, 2, 4));
+		helper.getLevel().setBlockAndUpdate(pos, BlockInit.hematic_armature.get().defaultBlockState());
+		var armature = (com.vincenthuto.hemomancy.common.tile.harbinger.crafting.HematicArmatureBlockEntity)
+				helper.getLevel().getBlockEntity(pos);
+		armature.setRiteLocked(true);
+		helper.assertTrue(armature.completeUpgrade(ArmatureTier.VICAR_CONSECRATED, UUID.randomUUID()),
+				"Could not prepare a consecrated Armature");
+		armature.setRiteLocked(true);
+		helper.assertTrue(armature.completeUpgrade(ArmatureTier.MONOLITHIC, UUID.randomUUID()),
+				"Could not prepare a Monolithic Armature");
+		var saved = armature.saveWithoutMetadata(helper.getLevel().registryAccess());
+		armature.loadWithComponents(saved, helper.getLevel().registryAccess());
+		helper.assertTrue(armature.getArmatureTier() == ArmatureTier.MONOLITHIC,
+				"The upgraded Armature lost its tier during save/load");
+		helper.getLevel().removeBlock(pos, false);
+		var drops = helper.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(pos).inflate(2));
+		helper.assertTrue(drops.stream().filter(item -> item.getItem().is(ItemInit.vicars_consecration_kit.get()))
+					.mapToInt(item -> item.getItem().getCount()).sum() == 1
+					&& drops.stream().filter(item -> item.getItem().is(ItemInit.monolithic_cornerstone.get()))
+					.mapToInt(item -> item.getItem().getCount()).sum() == 1,
+				"Breaking a Monolithic Armature did not return its two paid upgrade items exactly once");
+		helper.succeed();
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void consecrationKitHasMaterialCostReplacementRecipe(GameTestHelper helper) {
+		var holder = helper.getLevel().getRecipeManager().byKey(Hemomancy.rloc("vicars_consecration_kit"));
+		helper.assertTrue(holder.isPresent() && holder.get().value() instanceof CraftingRecipe,
+				"One-time Artificer kit has no material-cost replacement route");
+		var input = CraftingInput.of(3, 3, List.of(
+				ItemStack.EMPTY, new ItemStack(ItemInit.hematic_iron_scrap.get()), ItemStack.EMPTY,
+				new ItemStack(ItemInit.ferric_binder.get()), new ItemStack(ItemInit.blood_crystal_shard.get()),
+				new ItemStack(ItemInit.sanguine_formation.get()),
+				ItemStack.EMPTY, new ItemStack(ItemInit.hematic_iron_scrap.get()), ItemStack.EMPTY));
+		var recipe = (CraftingRecipe) holder.get().value();
+		helper.assertTrue(recipe.matches(input, helper.getLevel())
+					&& recipe.assemble(input, helper.getLevel().registryAccess()).is(ItemInit.vicars_consecration_kit.get()),
+				"Accessible iron, binder, shard, and formation did not craft the compatible kit item");
 		helper.succeed();
 	}
 
@@ -325,7 +443,7 @@ public final class ArtificerProgressionGameTests {
 	private static ArtificerProgressSnapshot completedForkProgress(ForkFamily family) {
 		return new ArtificerProgressSnapshot(3, true, false, false, false, family, D7Lineage.NONE,
 				Step.COMPLETE, Step.FULL_SET, Step.LOCKED, Step.LOCKED, Step.LOCKED,
-				false, false, false, false, false);
+				false, false, false, false, false, false);
 	}
 
 	private static boolean hasEvent(DialogueNode node, String event) {

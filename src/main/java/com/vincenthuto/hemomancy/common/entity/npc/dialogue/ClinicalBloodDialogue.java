@@ -74,7 +74,7 @@ public final class ClinicalBloodDialogue {
                 case "hemomancy:hematic_microscope" -> p.knows(Lesson.MICROSCOPE) ? "microscope.lesson" : "next.show_vial";
                 case "hemomancy:phlebotomists_cabinet", "minecraft:glass_pane" -> p.knows(Lesson.CABINET) ? "cabinet.lesson" : "next.three_sources";
                 case "hemomancy:phlebotomists_field_case" -> "inquiry.alchemist_field_case";
-                case "hemomancy:clairaudiograph", "hemomancy:ambergris_cylinder", "minecraft:echo_shard" -> degree >= 2 ? "inquiry.alchemist_echo" : "inquiry.later";
+                case "hemomancy:clairaudiograph", "hemomancy:wax_cylinder", "hemomancy:ambergris_cylinder", "minecraft:echo_shard" -> degree >= 2 ? "inquiry.alchemist_echo" : "inquiry.later";
                 case "hemomancy:living_syringe", "hemomancy:vial_rack" -> "inquiry.sampling";
                 case "hemomancy:vial_centrifuge" -> "inquiry.centrifuge";
                 case "hemomancy:ghastly_alembic" -> degree >= 2 ? "inquiry.alembic" : "inquiry.later";
@@ -93,12 +93,13 @@ public final class ClinicalBloodDialogue {
             };
         } else if (teacher.equals("mnemonist")) {
             key = switch (path) {
-                case "hemomancy:clairaudiograph", "hemomancy:ambergris_cylinder", "minecraft:echo_shard" ->
+                case "hemomancy:clairaudiograph", "hemomancy:wax_cylinder", "hemomancy:ambergris_cylinder", "minecraft:echo_shard" ->
                         p.knows(Lesson.CLAIRAUDIOGRAPH) ? "clairaudiograph.lesson" : "inquiry.echo_hint";
                 default -> null;
             };
         }
-        if (teacher.equals("mnemonist") && path.equals("hemomancy:ambergris_cylinder") && p.knows(Lesson.CLAIRAUDIOGRAPH)) {
+        if (teacher.equals("mnemonist") && (path.equals("hemomancy:wax_cylinder")
+                || path.equals("hemomancy:ambergris_cylinder")) && p.knows(Lesson.CLAIRAUDIOGRAPH)) {
             var recording = stack.get(com.vincenthuto.hemomancy.common.init.DataComponentInit.CLAIRAUDIOGRAPH_RECORDING.get());
             key = recording == null ? "inquiry.blank_cylinder" : recording.readable() ? "inquiry.carved_cylinder" : "inquiry.unreadable_cylinder";
         }

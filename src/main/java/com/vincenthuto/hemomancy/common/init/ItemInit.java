@@ -1,10 +1,15 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.antecedent.AhaematicColloidItem;
+import com.vincenthuto.hemomancy.common.antecedent.ListeningScarItem;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryPrimingRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.EnumOrgan;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoBookFilter;
+import com.vincenthuto.hemomancy.common.data.book.HemomancyBookPresentation;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.item.harbinger.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.*;
@@ -18,6 +23,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.scar.BloodHonedScar;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemMindSpike;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScar;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
+import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.*;
@@ -32,9 +38,11 @@ import com.vincenthuto.hemomancy.common.item.unstained.tool.AnnettasSanguisLance
 import com.vincenthuto.hemomancy.common.item.unstained.tool.SilthmereGlaiveItem;
 import com.vincenthuto.hemomancy.common.item.unstained.tool.UnstainedWarhammerItem;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.succession.BoundMnemonicRemnantItem;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import com.vincenthuto.hutoslib.common.item.ItemArmBanner;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
+import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -94,7 +102,7 @@ public class ItemInit {
                     Hemomancy.rloc("textures/entity/liber_sanguinum.png"))
                     .withBookId(Hemomancy.rloc("fanesanguinium"))
                     .withNotices(new com.vincenthuto.hutoslib.common.book.BookNoticeStyle("hemomancy.book.fane_discovery", "hutoslib.book.forgotten", "hutoslib.book.revealed", 0xFFB3121A))
-                    .withReaderConfiguration(com.vincenthuto.hemomancy.common.data.book.HemomancyBookPresentation::configure)
+                    .withReaderConfiguration(HemomancyBookPresentation::configure)
                     .withPageFilter(new MemoBookFilter())
                     .withKnowledgeProvider(player -> HemoCapabilityAccess.getLiberKnowledge(player)));
 
@@ -106,7 +114,7 @@ public class ItemInit {
                     Hemomancy.rloc("textures/entity/liber_immaculatus.png"))
                     .withBookId(Hemomancy.rloc("liberimmaculatus"))
                     .withNotices(new com.vincenthuto.hutoslib.common.book.BookNoticeStyle("hemomancy.book.liber_discovery", "hemomancy.book.forgotten", "hemomancy.book.remembers", 0xFF8EA6CF))
-                    .withReaderConfiguration(com.vincenthuto.hemomancy.common.data.book.HemomancyBookPresentation::configure)
+                    .withReaderConfiguration(HemomancyBookPresentation::configure)
                     .withPageFilter(new MemoBookFilter())
                     .withKnowledgeProvider(player -> HemoCapabilityAccess.getLiberKnowledge(player)));
 
@@ -138,41 +146,50 @@ public class ItemInit {
             () -> new Item(new Item.Properties().stacksTo(16)));
     public static final DeferredHolder<Item, Item> tincture_sanguine_fists = BASEITEMS.register("tincture_sanguine_fists",
             () -> new TinctureSanguineFistsItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
-    public static final DeferredHolder<Item, Item> tincture_laboring_arms = tincture("laboring_arms", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.LABORING_ARMS);
-    public static final DeferredHolder<Item, Item> tincture_coursing_legs = tincture("coursing_legs", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.COURSING_LEGS);
-    public static final DeferredHolder<Item, Item> tincture_hushed_gait = tincture("hushed_gait", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.HUSHED_GAIT);
-    public static final DeferredHolder<Item, Item> tincture_predatory_eyes = tincture("predatory_eyes", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.PREDATORY_EYES);
-    public static final DeferredHolder<Item, Item> tincture_second_pulse = tincture("second_pulse", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.SECOND_PULSE);
-    public static final DeferredHolder<Item, Item> tincture_enduring_viscera = tincture("enduring_viscera", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.ENDURING_VISCERA);
-    public static final DeferredHolder<Item, Item> tincture_carrion_metabolism = tincture("carrion_metabolism", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.CARRION_METABOLISM);
-    public static final DeferredHolder<Item, Item> tincture_sanguine_fists_jug = tinctureJug("sanguine_fists", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.SANGUINE_FISTS);
-    public static final DeferredHolder<Item, Item> tincture_laboring_arms_jug = tinctureJug("laboring_arms", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.LABORING_ARMS);
-    public static final DeferredHolder<Item, Item> tincture_coursing_legs_jug = tinctureJug("coursing_legs", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.COURSING_LEGS);
-    public static final DeferredHolder<Item, Item> tincture_hushed_gait_jug = tinctureJug("hushed_gait", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.HUSHED_GAIT);
-    public static final DeferredHolder<Item, Item> tincture_predatory_eyes_jug = tinctureJug("predatory_eyes", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.PREDATORY_EYES);
-    public static final DeferredHolder<Item, Item> tincture_second_pulse_jug = tinctureJug("second_pulse", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.SECOND_PULSE);
-    public static final DeferredHolder<Item, Item> tincture_enduring_viscera_jug = tinctureJug("enduring_viscera", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.ENDURING_VISCERA);
-    public static final DeferredHolder<Item, Item> tincture_carrion_metabolism_jug = tinctureJug("carrion_metabolism", com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.CARRION_METABOLISM);
+    public static final DeferredHolder<Item, Item> tincture_laboring_arms = tincture("laboring_arms", MuscleMemory.LABORING_ARMS);
+    public static final DeferredHolder<Item, Item> tincture_coursing_legs = tincture("coursing_legs", MuscleMemory.COURSING_LEGS);
+    public static final DeferredHolder<Item, Item> tincture_hushed_gait = tincture("hushed_gait", MuscleMemory.HUSHED_GAIT);
+    public static final DeferredHolder<Item, Item> tincture_predatory_eyes = tincture("predatory_eyes", MuscleMemory.PREDATORY_EYES);
+    public static final DeferredHolder<Item, Item> tincture_second_pulse = tincture("second_pulse", MuscleMemory.SECOND_PULSE);
+    public static final DeferredHolder<Item, Item> tincture_enduring_viscera = tincture("enduring_viscera", MuscleMemory.ENDURING_VISCERA);
+    public static final DeferredHolder<Item, Item> tincture_carrion_metabolism = tincture("carrion_metabolism", MuscleMemory.CARRION_METABOLISM);
+    public static final DeferredHolder<Item, Item> tincture_sanguine_fists_jug = tinctureJug("sanguine_fists", MuscleMemory.SANGUINE_FISTS);
+    public static final DeferredHolder<Item, Item> tincture_laboring_arms_jug = tinctureJug("laboring_arms", MuscleMemory.LABORING_ARMS);
+    public static final DeferredHolder<Item, Item> tincture_coursing_legs_jug = tinctureJug("coursing_legs", MuscleMemory.COURSING_LEGS);
+    public static final DeferredHolder<Item, Item> tincture_hushed_gait_jug = tinctureJug("hushed_gait", MuscleMemory.HUSHED_GAIT);
+    public static final DeferredHolder<Item, Item> tincture_predatory_eyes_jug = tinctureJug("predatory_eyes", MuscleMemory.PREDATORY_EYES);
+    public static final DeferredHolder<Item, Item> tincture_second_pulse_jug = tinctureJug("second_pulse", MuscleMemory.SECOND_PULSE);
+    public static final DeferredHolder<Item, Item> tincture_enduring_viscera_jug = tinctureJug("enduring_viscera", MuscleMemory.ENDURING_VISCERA);
+    public static final DeferredHolder<Item, Item> tincture_carrion_metabolism_jug = tinctureJug("carrion_metabolism", MuscleMemory.CARRION_METABOLISM);
     public static final DeferredHolder<Item, Item> sanguine_blob = BASEITEMS.register("sanguine_blob",
             () -> new SanguineBlobItem(new Item.Properties()));
 
-    private static DeferredHolder<Item, Item> tincture(String id, com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory memory) {
+    private static DeferredHolder<Item, Item> tincture(String id, MuscleMemory memory) {
         return BASEITEMS.register("tincture_" + id,
                 () -> new MuscleMemoryTinctureItem(new Item.Properties().rarity(Rarity.UNCOMMON), memory,
-                        com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryPrimingRules.FLASK_DOSES,
-                        () -> com.vincenthuto.hutoslib.common.registry.HLItemInit.cured_clay_flask.get()));
+                        MuscleMemoryPrimingRules.FLASK_DOSES,
+                        HLItemInit.cured_clay_flask::get));
     }
-	private static DeferredHolder<Item, Item> memory(String id,
-			DeferredHolder<BloodManipulation, BloodManipulation> manipulation) {
-		return BASEITEMS.register("memory_" + id,
-				() -> new BloodMemoryItem(new Item.Properties(), manipulation));
-	}
-    private static DeferredHolder<Item, Item> tinctureJug(String id, com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory memory) {
+
+    private static DeferredHolder<Item, Item> registerBloodMemoryItem(String id,
+            DeferredHolder<BloodManipulation, BloodManipulation> manipulation) {
+        return BASEITEMS.register(id,
+                () -> new BloodMemoryItem(new Item.Properties(), manipulation));
+    }
+
+    private static DeferredHolder<Item, Item> registerScarItem(String id,
+            DeferredHolder<ScarDefinition, ScarDefinition> scar) {
+        return BASEITEMS.register(id,
+                () -> new ItemScar(new Item.Properties().stacksTo(1), scar));
+    }
+
+    private static DeferredHolder<Item, Item> tinctureJug(String id, MuscleMemory memory) {
         return BASEITEMS.register("tincture_" + id + "_jug",
                 () -> new MuscleMemoryTinctureItem(new Item.Properties().rarity(Rarity.UNCOMMON), memory,
-                        com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryPrimingRules.JUG_DOSES,
+                        MuscleMemoryPrimingRules.JUG_DOSES,
                         () -> cured_clay_jug.get()));
     }
+
     public static final DeferredHolder<Item, Item> mnemonic_blueprint = BASEITEMS.register("mnemonic_blueprint",
             () -> new MnemonicBlueprintItem(new Item.Properties().fireResistant()));
     public static final DeferredHolder<Item, Item> mnemonic_folio = BASEITEMS.register("mnemonic_folio",
@@ -198,6 +215,8 @@ public class ItemInit {
             () -> new ItemNameBlockItem(BlockInit.active_smouldering_ash_trail.get(), (new Item.Properties())));
     public static final DeferredHolder<Item, Item> active_befouling_ash = SPECIALITEMS.register("active_befouling_ash",
             () -> new ItemNameBlockItem(BlockInit.active_befouling_ash_trail.get(), (new Item.Properties())));
+    public static final DeferredHolder<Item, Item> engram_stamp = SPECIALITEMS.register("engram_stamp",
+            () -> new EngramStampItem(new Item.Properties().stacksTo(1)));
     public static final DeferredHolder<Item, Item> hematic_iron_scrap = BASEITEMS.register("hematic_iron_scrap",
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> chalybeate_sclerite = BASEITEMS.register("chalybeate_sclerite",
@@ -224,10 +243,11 @@ public class ItemInit {
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> erythrocoral_fragment = BASEITEMS.register("erythrocoral_fragment",
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
-    public static final DeferredHolder<Item, Item> listening_scar = SPECIALITEMS.register("listening_scar", com.vincenthuto.hemomancy.common.antecedent.ListeningScarItem::new);
-    public static final DeferredHolder<Item, Item> ambergris_cylinder = SPECIALITEMS.register("ambergris_cylinder", com.vincenthuto.hemomancy.common.item.harbinger.AmbergrisCylinderItem::new);
+    public static final DeferredHolder<Item, Item> listening_scar = SPECIALITEMS.register("listening_scar", ListeningScarItem::new);
+    public static final DeferredHolder<Item, Item> wax_cylinder = SPECIALITEMS.register("wax_cylinder", WaxCylinderItem::new);
+    public static final DeferredHolder<Item, Item> ambergris_cylinder = SPECIALITEMS.register("ambergris_cylinder", AmbergrisCylinderItem::new);
     public static final DeferredHolder<Item, Item> bound_mnemonic_remnant = BASEITEMS.register("bound_mnemonic_remnant",
-            () -> new com.vincenthuto.hemomancy.common.succession.BoundMnemonicRemnantItem(new Item.Properties()));
+            () -> new BoundMnemonicRemnantItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> mnemonic_ambergris = BASEITEMS.register("mnemonic_ambergris",
             () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> salt_stained_voyager_log = BASEITEMS.register("salt_stained_voyager_log",
@@ -255,8 +275,7 @@ public class ItemInit {
 
     public static final DeferredHolder<Item, Item> scrying_dish = BASEITEMS.register("scrying_dish",
             () -> new Item(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> hematic_microscope = BASEITEMS.register("hematic_microscope",
-            () -> new com.vincenthuto.hemomancy.common.item.harbinger.HematicMicroscopeItem(new Item.Properties()));
+
     public static final DeferredHolder<Item, Item> vitality_chalice = BASEITEMS.register("vitality_chalice",
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> blood_stained_stone = BASEITEMS.register("blood_stained_stone",
@@ -281,8 +300,8 @@ public class ItemInit {
             () -> new Item(new Item.Properties().rarity(Rarity.RARE)));
     public static final DeferredHolder<Item, Item> scarlet_gorget = BASEITEMS.register("scarlet_gorget",
             () -> new Item(new Item.Properties().rarity(Rarity.RARE)));
-	public static final DeferredHolder<Item, Item> sanguine_hound_bridle = BASEITEMS.register("sanguine_hound_bridle",
-			() -> new Item(new Item.Properties().rarity(Rarity.RARE)));
+    public static final DeferredHolder<Item, Item> sanguine_hound_bridle = BASEITEMS.register("sanguine_hound_bridle",
+            () -> new Item(new Item.Properties().rarity(Rarity.RARE)));
     public static final DeferredHolder<Item, Item> tendon_line = BASEITEMS.register("tendon_line",
             () -> new TendonLineItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> hearty_compass = BASEITEMS.register("hearty_compass",
@@ -315,8 +334,7 @@ public class ItemInit {
             () -> new VivianiteScalpelItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> spore_sac = BASEITEMS.register("spore_sac",
             () -> new Item(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> fruiting_lure = BASEITEMS.register("fruiting_lure",
-            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+
     // Enzymes
     public static final DeferredHolder<Item, Item> vivacious_enzyme = BASEITEMS.register("vivacious_enzyme",
             () -> new EnzymeItem(EnumBloodTendency.ANIMUS, 10));
@@ -375,39 +393,22 @@ public class ItemInit {
             () -> new FerventHuskItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> hematic_memory = BASEITEMS.register("hematic_memory",
             () -> new HematicMemoryItem(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> memory_blood_absorption = BASEITEMS.register("memory_blood_absorption",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.blood_absorption));
-    public static final DeferredHolder<Item, Item> memory_blood_projection = BASEITEMS.register("memory_blood_projection",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.blood_projection));
-    public static final DeferredHolder<Item, Item> memory_venous_travel = BASEITEMS.register("memory_venous_travel",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.venous_travel));
-    public static final DeferredHolder<Item, Item> memory_blood_shot = BASEITEMS.register("memory_blood_shot",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.blood_shot));
-    public static final DeferredHolder<Item, Item> memory_blood_binding = BASEITEMS.register("memory_blood_binding",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.blood_binding));
-    public static final DeferredHolder<Item, Item> memory_blood_aneurysm = BASEITEMS.register("memory_blood_aneurysm",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.blood_aneurysm));
-    public static final DeferredHolder<Item, Item> memory_blood_rush = BASEITEMS.register("memory_blood_rush",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.blood_rush));
-    public static final DeferredHolder<Item, Item> memory_deadly_gaze = BASEITEMS.register("memory_deadly_gaze",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.deadly_gaze));
-    public static final DeferredHolder<Item, Item> memory_blood_needle = BASEITEMS.register("memory_blood_needle",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.blood_needle));
-    public static final DeferredHolder<Item, Item> memory_blood_cloud = BASEITEMS.register("memory_blood_cloud",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.blood_cloud));
-    public static final DeferredHolder<Item, Item> memory_activation_potential = BASEITEMS.register(
-            "memory_activation_potential",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.activation_potential));
-    public static final DeferredHolder<Item, Item> memory_sanguine_ward = BASEITEMS.register("memory_sanguine_ward",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.sanguine_ward));
-    public static final DeferredHolder<Item, Item> memory_hemolymphal_pulse = BASEITEMS.register("memory_hemolymphal_pulse",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hemolymphal_pulse));
-    public static final DeferredHolder<Item, Item> memory_synaptic_jolt = BASEITEMS.register("memory_synaptic_jolt",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.synaptic_jolt));
-    public static final DeferredHolder<Item, Item> memory_conductive_mark = BASEITEMS.register("memory_conductive_mark",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.conductive_mark));
-    public static final DeferredHolder<Item, Item> memory_vital_effusion = BASEITEMS.register("memory_vital_effusion",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.vital_effusion));
+    public static final DeferredHolder<Item, Item> memory_blood_absorption = registerBloodMemoryItem("memory_blood_absorption", ManipulationInit.blood_absorption);
+    public static final DeferredHolder<Item, Item> memory_blood_projection = registerBloodMemoryItem("memory_blood_projection", ManipulationInit.blood_projection);
+    public static final DeferredHolder<Item, Item> memory_venous_travel = registerBloodMemoryItem("memory_venous_travel", ManipulationInit.venous_travel);
+    public static final DeferredHolder<Item, Item> memory_blood_shot = registerBloodMemoryItem("memory_blood_shot", ManipulationInit.blood_shot);
+    public static final DeferredHolder<Item, Item> memory_blood_binding = registerBloodMemoryItem("memory_blood_binding", ManipulationInit.blood_binding);
+    public static final DeferredHolder<Item, Item> memory_blood_aneurysm = registerBloodMemoryItem("memory_blood_aneurysm", ManipulationInit.blood_aneurysm);
+    public static final DeferredHolder<Item, Item> memory_blood_rush = registerBloodMemoryItem("memory_blood_rush", ManipulationInit.blood_rush);
+    public static final DeferredHolder<Item, Item> memory_deadly_gaze = registerBloodMemoryItem("memory_deadly_gaze", ManipulationInit.deadly_gaze);
+    public static final DeferredHolder<Item, Item> memory_blood_needle = registerBloodMemoryItem("memory_blood_needle", ManipulationInit.blood_needle);
+    public static final DeferredHolder<Item, Item> memory_blood_cloud = registerBloodMemoryItem("memory_blood_cloud", ManipulationInit.blood_cloud);
+    public static final DeferredHolder<Item, Item> memory_activation_potential = registerBloodMemoryItem("memory_activation_potential", ManipulationInit.activation_potential);
+    public static final DeferredHolder<Item, Item> memory_sanguine_ward = registerBloodMemoryItem("memory_sanguine_ward", ManipulationInit.sanguine_ward);
+    public static final DeferredHolder<Item, Item> memory_hemolymphal_pulse = registerBloodMemoryItem("memory_hemolymphal_pulse", ManipulationInit.hemolymphal_pulse);
+    public static final DeferredHolder<Item, Item> memory_synaptic_jolt = registerBloodMemoryItem("memory_synaptic_jolt", ManipulationInit.synaptic_jolt);
+    public static final DeferredHolder<Item, Item> memory_conductive_mark = registerBloodMemoryItem("memory_conductive_mark", ManipulationInit.conductive_mark);
+    public static final DeferredHolder<Item, Item> memory_vital_effusion = registerBloodMemoryItem("memory_vital_effusion", ManipulationInit.vital_effusion);
     public static final DeferredHolder<Item, Item> living_weapon_graft = BASEITEMS.register("living_weapon_graft",
             () -> new LivingWeaponGraftItem(new Item.Properties().stacksTo(16)));
     public static final DeferredHolder<Item, Item> worn_vow_fitting = BASEITEMS.register("worn_vow_fitting",
@@ -426,33 +427,18 @@ public class ItemInit {
             () -> new LivingStaffFittingItem(new Item.Properties(), LivingStaffFittingHelper.MONOLITHIC_FRAME_VISUAL));
     public static final DeferredHolder<Item, Item> assumed_limb_fitting = BASEITEMS.register("assumed_limb_fitting",
             () -> new LivingStaffFittingItem(new Item.Properties(), LivingStaffFittingHelper.ASSUMED_LIMB_VISUAL));
-    public static final DeferredHolder<Item, Item> memory_living_blade = BASEITEMS.register("memory_living_blade",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.conjure_blade));
-    public static final DeferredHolder<Item, Item> memory_living_axe = BASEITEMS.register("memory_living_axe",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.conjure_axe));
-    public static final DeferredHolder<Item, Item> memory_living_spear = BASEITEMS.register("memory_living_spear",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.conjure_spear));
-    public static final DeferredHolder<Item, Item> memory_living_claws = BASEITEMS.register("memory_living_claws",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.conjure_claws));
-    public static final DeferredHolder<Item, Item> memory_living_crossbow = BASEITEMS.register("memory_living_crossbow",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.conjure_crossbow));
-    public static final DeferredHolder<Item, Item> memory_living_torch = BASEITEMS.register("memory_living_torch",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.conjure_torch));
-    public static final DeferredHolder<Item, Item> memory_living_flail = BASEITEMS.register("memory_living_flail",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.conjure_flail));
-    public static final DeferredHolder<Item, Item> memory_conjure_living_staff = BASEITEMS.register(
-            "memory_conjure_living_staff",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.conjure_staff));
-    public static final DeferredHolder<Item, Item> memory_summon_avatar = BASEITEMS.register("memory_summon_avatar",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.summon_avatar));
-    public static final DeferredHolder<Item, Item> memory_summon_thrall = BASEITEMS.register("memory_summon_thrall",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.summon_thrall));
-    public static final DeferredHolder<Item, Item> memory_ferric_transmutation = BASEITEMS.register(
-            "memory_ferric_transmutation",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.ferric_transmutation));
-    public static final DeferredHolder<Item, Item> memory_crimson_flame_conjuration = BASEITEMS.register(
-            "memory_crimson_flame_conjuration",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_flame_conjuration));
+    public static final DeferredHolder<Item, Item> memory_living_blade = registerBloodMemoryItem("memory_living_blade", ManipulationInit.conjure_blade);
+    public static final DeferredHolder<Item, Item> memory_living_axe = registerBloodMemoryItem("memory_living_axe", ManipulationInit.conjure_axe);
+    public static final DeferredHolder<Item, Item> memory_living_spear = registerBloodMemoryItem("memory_living_spear", ManipulationInit.conjure_spear);
+    public static final DeferredHolder<Item, Item> memory_living_claws = registerBloodMemoryItem("memory_living_claws", ManipulationInit.conjure_claws);
+    public static final DeferredHolder<Item, Item> memory_living_crossbow = registerBloodMemoryItem("memory_living_crossbow", ManipulationInit.conjure_crossbow);
+    public static final DeferredHolder<Item, Item> memory_living_torch = registerBloodMemoryItem("memory_living_torch", ManipulationInit.conjure_torch);
+    public static final DeferredHolder<Item, Item> memory_living_flail = registerBloodMemoryItem("memory_living_flail", ManipulationInit.conjure_flail);
+    public static final DeferredHolder<Item, Item> memory_conjure_living_staff = registerBloodMemoryItem("memory_conjure_living_staff", ManipulationInit.conjure_staff);
+    public static final DeferredHolder<Item, Item> memory_summon_avatar = registerBloodMemoryItem("memory_summon_avatar", ManipulationInit.summon_avatar);
+    public static final DeferredHolder<Item, Item> memory_summon_thrall = registerBloodMemoryItem("memory_summon_thrall", ManipulationInit.summon_thrall);
+    public static final DeferredHolder<Item, Item> memory_ferric_transmutation = registerBloodMemoryItem("memory_ferric_transmutation", ManipulationInit.ferric_transmutation);
+    public static final DeferredHolder<Item, Item> memory_crimson_flame_conjuration = registerBloodMemoryItem("memory_crimson_flame_conjuration", ManipulationInit.crimson_flame_conjuration);
     // Crude Memory Shards — pre-Somatic-Loom HUMILIS teaching items
     public static final DeferredHolder<Item, Item> crude_memory_blood_shot = BASEITEMS.register(
             "crude_memory_blood_shot",
@@ -495,159 +481,112 @@ public class ItemInit {
             () -> new OrganEchoItem(new Item.Properties(), EnumOrgan.KIDNEYS));
     public static final DeferredHolder<Item, Item> echo_of_heart = SPECIALITEMS.register("echo_of_heart",
             () -> new OrganEchoItem(new Item.Properties(), EnumOrgan.HEART));
-    public static final DeferredHolder<Item, Item> memory_sanguine_mending = BASEITEMS.register("memory_sanguine_mending",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.sanguine_mending));
-    public static final DeferredHolder<Item, Item> memory_hemosynthesis = BASEITEMS.register("memory_hemosynthesis",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hemosynthesis));
-    public static final DeferredHolder<Item, Item> memory_blood_lamp = BASEITEMS.register("memory_blood_lamp",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.blood_lamp));
-    public static final DeferredHolder<Item, Item> memory_hematic_flare = BASEITEMS.register("memory_hematic_flare",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hematic_flare));
-    public static final DeferredHolder<Item, Item> memory_crimson_harvest = BASEITEMS.register("memory_crimson_harvest",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_harvest));
-    public static final DeferredHolder<Item, Item> memory_glacial_grasp = BASEITEMS.register("memory_glacial_grasp",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.glacial_grasp));
-    public static final DeferredHolder<Item, Item> memory_sanguine_excavation = BASEITEMS.register(
-            "memory_sanguine_excavation",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.sanguine_excavation));
-    public static final DeferredHolder<Item, Item> memory_vascular_dowsing = BASEITEMS.register("memory_vascular_dowsing",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.vascular_dowsing));
-    public static final DeferredHolder<Item, Item> memory_ferric_resonance = BASEITEMS.register("memory_ferric_resonance",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.ferric_resonance));
-    public static final DeferredHolder<Item, Item> memory_iron_retort = BASEITEMS.register("memory_iron_retort",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.iron_retort));
-	public static final DeferredHolder<Item, Item> memory_ironhearted = BASEITEMS.register("memory_ironhearted",
-			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.ironhearted));
-    public static final DeferredHolder<Item, Item> memory_sanguine_magnetism = BASEITEMS.register("memory_sanguine_magnetism",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.sanguine_magnetism));
-    public static final DeferredHolder<Item, Item> memory_ferric_rampart = memory("ferric_rampart", ManipulationInit.ferric_rampart);
-    public static final DeferredHolder<Item, Item> memory_ferric_spikes = memory("ferric_spikes", ManipulationInit.ferric_spikes);
-    public static final DeferredHolder<Item, Item> memory_pyretic_forge = BASEITEMS.register("memory_pyretic_forge",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.pyretic_forge));
-    public static final DeferredHolder<Item, Item> memory_umbral_step = BASEITEMS.register("memory_umbral_step",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.umbral_step));
-    public static final DeferredHolder<Item, Item> memory_crimson_sight = BASEITEMS.register("memory_crimson_sight",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_sight));
-    public static final DeferredHolder<Item, Item> memory_vital_reservoir = BASEITEMS.register("memory_vital_reservoir",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.vital_reservoir));
-    public static final DeferredHolder<Item, Item> memory_hematic_rebuke = BASEITEMS.register("memory_hematic_rebuke",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hematic_rebuke));
-    public static final DeferredHolder<Item, Item> memory_hematic_impressment = BASEITEMS.register("memory_hematic_impressment",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hematic_impressment));
+    public static final DeferredHolder<Item, Item> memory_sanguine_mending = registerBloodMemoryItem("memory_sanguine_mending", ManipulationInit.sanguine_mending);
+    public static final DeferredHolder<Item, Item> memory_hemosynthesis = registerBloodMemoryItem("memory_hemosynthesis", ManipulationInit.hemosynthesis);
+    public static final DeferredHolder<Item, Item> memory_blood_lamp = registerBloodMemoryItem("memory_blood_lamp", ManipulationInit.blood_lamp);
+    public static final DeferredHolder<Item, Item> memory_hematic_flare = registerBloodMemoryItem("memory_hematic_flare", ManipulationInit.hematic_flare);
+    public static final DeferredHolder<Item, Item> memory_crimson_harvest = registerBloodMemoryItem("memory_crimson_harvest", ManipulationInit.crimson_harvest);
+    public static final DeferredHolder<Item, Item> memory_glacial_grasp = registerBloodMemoryItem("memory_glacial_grasp", ManipulationInit.glacial_grasp);
+    public static final DeferredHolder<Item, Item> memory_sanguine_excavation = registerBloodMemoryItem("memory_sanguine_excavation", ManipulationInit.sanguine_excavation);
+    public static final DeferredHolder<Item, Item> memory_vascular_dowsing = registerBloodMemoryItem("memory_vascular_dowsing", ManipulationInit.vascular_dowsing);
+    public static final DeferredHolder<Item, Item> memory_ferric_resonance = registerBloodMemoryItem("memory_ferric_resonance", ManipulationInit.ferric_resonance);
+    public static final DeferredHolder<Item, Item> memory_iron_retort = registerBloodMemoryItem("memory_iron_retort", ManipulationInit.iron_retort);
+    public static final DeferredHolder<Item, Item> memory_ironhearted = registerBloodMemoryItem("memory_ironhearted", ManipulationInit.ironhearted);
+    public static final DeferredHolder<Item, Item> memory_sanguine_magnetism = registerBloodMemoryItem("memory_sanguine_magnetism", ManipulationInit.sanguine_magnetism);
+    public static final DeferredHolder<Item, Item> memory_ferric_rampart = registerBloodMemoryItem("memory_ferric_rampart", ManipulationInit.ferric_rampart);
+    public static final DeferredHolder<Item, Item> memory_ferric_spikes = registerBloodMemoryItem("memory_ferric_spikes", ManipulationInit.ferric_spikes);
+    public static final DeferredHolder<Item, Item> memory_pyretic_forge = registerBloodMemoryItem("memory_pyretic_forge", ManipulationInit.pyretic_forge);
+    public static final DeferredHolder<Item, Item> memory_umbral_step = registerBloodMemoryItem("memory_umbral_step", ManipulationInit.umbral_step);
+    public static final DeferredHolder<Item, Item> memory_crimson_sight = registerBloodMemoryItem("memory_crimson_sight", ManipulationInit.crimson_sight);
+    public static final DeferredHolder<Item, Item> memory_vital_reservoir = registerBloodMemoryItem("memory_vital_reservoir", ManipulationInit.vital_reservoir);
+    public static final DeferredHolder<Item, Item> memory_hematic_rebuke = registerBloodMemoryItem("memory_hematic_rebuke", ManipulationInit.hematic_rebuke);
+    public static final DeferredHolder<Item, Item> memory_hematic_impressment = registerBloodMemoryItem("memory_hematic_impressment", ManipulationInit.hematic_impressment);
     //  Expanded tendency memories 
-    public static final DeferredHolder<Item, Item> memory_cryogenic_pulse = BASEITEMS.register("memory_cryogenic_pulse",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.cryogenic_pulse));
-    public static final DeferredHolder<Item, Item> memory_glacial_bastion = BASEITEMS.register("memory_glacial_bastion",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.glacial_bastion));
-    public static final DeferredHolder<Item, Item> memory_glacial_rampart = BASEITEMS.register("memory_glacial_rampart",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.glacial_rampart));
-    public static final DeferredHolder<Item, Item> memory_glacial_circulation = BASEITEMS.register("memory_glacial_circulation",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.glacial_circulation));
-    public static final DeferredHolder<Item, Item> memory_osseous_bloom = BASEITEMS.register("memory_osseous_bloom",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.osseous_bloom));
-    public static final DeferredHolder<Item, Item> memory_sanguine_ignition = BASEITEMS.register("memory_sanguine_ignition",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.sanguine_ignition));
-    public static final DeferredHolder<Item, Item> memory_vitric_combustion = BASEITEMS.register("memory_vitric_combustion",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.vitric_combustion));
-    public static final DeferredHolder<Item, Item> memory_cauterizing_rebuke = BASEITEMS.register("memory_cauterizing_rebuke",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.cauterizing_rebuke));
-    public static final DeferredHolder<Item, Item> memory_scalding_updraft = BASEITEMS.register("memory_scalding_updraft",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.scalding_updraft));
-    public static final DeferredHolder<Item, Item> memory_void_shroud = BASEITEMS.register("memory_void_shroud",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.void_shroud));
-    public static final DeferredHolder<Item, Item> memory_gloam_laceration = BASEITEMS.register("memory_gloam_laceration",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.gloam_laceration));
-    public static final DeferredHolder<Item, Item> memory_blood_eclipse = BASEITEMS.register("memory_blood_eclipse",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.blood_eclipse));
-    public static final DeferredHolder<Item, Item> memory_black_veil_covenant = BASEITEMS.register("memory_black_veil_covenant",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.black_veil_covenant));
-    public static final DeferredHolder<Item, Item> memory_umbral_reversal = BASEITEMS.register("memory_umbral_reversal",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.umbral_reversal));
-    public static final DeferredHolder<Item, Item> memory_blood_eclipse_mantle = BASEITEMS.register("memory_blood_eclipse_mantle",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.blood_eclipse_mantle));
-    public static final DeferredHolder<Item, Item> memory_prismatic_reproof = BASEITEMS.register("memory_prismatic_reproof",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.prismatic_reproof));
-    public static final DeferredHolder<Item, Item> memory_hematic_beacon = BASEITEMS.register("memory_hematic_beacon",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hematic_beacon));
-    public static final DeferredHolder<Item, Item> memory_lumen_suture = BASEITEMS.register("memory_lumen_suture",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.lumen_suture));
-    public static final DeferredHolder<Item, Item> memory_hemorrhage = BASEITEMS.register("memory_hemorrhage",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hemorrhage));
-    public static final DeferredHolder<Item, Item> memory_lignum_mortis = BASEITEMS.register("memory_lignum_mortis",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.lignum_mortis));
-    public static final DeferredHolder<Item, Item> memory_exsanguinate = BASEITEMS.register("memory_exsanguinate",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.exsanguinate));
-    public static final DeferredHolder<Item, Item> memory_insatiable_hunger = BASEITEMS.register("memory_insatiable_hunger",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.insatiable_hunger));
-    public static final DeferredHolder<Item, Item> memory_grave_debt = BASEITEMS.register("memory_grave_debt",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.grave_debt));
-	public static final DeferredHolder<Item, Item> memory_blackhearted = BASEITEMS.register("memory_blackhearted",
-			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.blackhearted));
+    public static final DeferredHolder<Item, Item> memory_cryogenic_pulse = registerBloodMemoryItem("memory_cryogenic_pulse", ManipulationInit.cryogenic_pulse);
+    public static final DeferredHolder<Item, Item> memory_glacial_bastion = registerBloodMemoryItem("memory_glacial_bastion", ManipulationInit.glacial_bastion);
+    public static final DeferredHolder<Item, Item> memory_glacial_rampart = registerBloodMemoryItem("memory_glacial_rampart", ManipulationInit.glacial_rampart);
+    public static final DeferredHolder<Item, Item> memory_glacial_circulation = registerBloodMemoryItem("memory_glacial_circulation", ManipulationInit.glacial_circulation);
+    public static final DeferredHolder<Item, Item> memory_osseous_bloom = registerBloodMemoryItem("memory_osseous_bloom", ManipulationInit.osseous_bloom);
+    public static final DeferredHolder<Item, Item> memory_sanguine_ignition = registerBloodMemoryItem("memory_sanguine_ignition", ManipulationInit.sanguine_ignition);
+    public static final DeferredHolder<Item, Item> memory_vitric_combustion = registerBloodMemoryItem("memory_vitric_combustion", ManipulationInit.vitric_combustion);
+    public static final DeferredHolder<Item, Item> memory_cauterizing_rebuke = registerBloodMemoryItem("memory_cauterizing_rebuke", ManipulationInit.cauterizing_rebuke);
+    public static final DeferredHolder<Item, Item> memory_scalding_updraft = registerBloodMemoryItem("memory_scalding_updraft", ManipulationInit.scalding_updraft);
+    public static final DeferredHolder<Item, Item> memory_void_shroud = registerBloodMemoryItem("memory_void_shroud", ManipulationInit.void_shroud);
+    public static final DeferredHolder<Item, Item> memory_gloam_laceration = registerBloodMemoryItem("memory_gloam_laceration", ManipulationInit.gloam_laceration);
+    public static final DeferredHolder<Item, Item> memory_blood_eclipse = registerBloodMemoryItem("memory_blood_eclipse", ManipulationInit.blood_eclipse);
+    public static final DeferredHolder<Item, Item> memory_black_veil_covenant = registerBloodMemoryItem("memory_black_veil_covenant", ManipulationInit.black_veil_covenant);
+    public static final DeferredHolder<Item, Item> memory_umbral_reversal = registerBloodMemoryItem("memory_umbral_reversal", ManipulationInit.umbral_reversal);
+    public static final DeferredHolder<Item, Item> memory_blood_eclipse_mantle = registerBloodMemoryItem("memory_blood_eclipse_mantle", ManipulationInit.blood_eclipse_mantle);
+    public static final DeferredHolder<Item, Item> memory_prismatic_reproof = registerBloodMemoryItem("memory_prismatic_reproof", ManipulationInit.prismatic_reproof);
+    public static final DeferredHolder<Item, Item> memory_hematic_beacon = registerBloodMemoryItem("memory_hematic_beacon", ManipulationInit.hematic_beacon);
+    public static final DeferredHolder<Item, Item> memory_lumen_suture = registerBloodMemoryItem("memory_lumen_suture", ManipulationInit.lumen_suture);
+    public static final DeferredHolder<Item, Item> memory_hemorrhage = registerBloodMemoryItem("memory_hemorrhage", ManipulationInit.hemorrhage);
+    public static final DeferredHolder<Item, Item> memory_lignum_mortis = registerBloodMemoryItem("memory_lignum_mortis", ManipulationInit.lignum_mortis);
+    public static final DeferredHolder<Item, Item> memory_exsanguinate = registerBloodMemoryItem("memory_exsanguinate", ManipulationInit.exsanguinate);
+    public static final DeferredHolder<Item, Item> memory_insatiable_hunger = registerBloodMemoryItem("memory_insatiable_hunger", ManipulationInit.insatiable_hunger);
+    public static final DeferredHolder<Item, Item> memory_grave_debt = registerBloodMemoryItem("memory_grave_debt", ManipulationInit.grave_debt);
+    public static final DeferredHolder<Item, Item> memory_blackhearted = registerBloodMemoryItem("memory_blackhearted", ManipulationInit.blackhearted);
     // Saint Canon Memories  imprinted from Sainted Mausoleums via Hallowed Residuum
-    public static final DeferredHolder<Item, Item> memory_crimson_tithe = BASEITEMS.register("memory_crimson_tithe",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_tithe));
-    public static final DeferredHolder<Item, Item> memory_unclosing_eye = BASEITEMS.register("memory_unclosing_eye",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.unclosing_eye));
-    public static final DeferredHolder<Item, Item> memory_bloom_of_rot = BASEITEMS.register("memory_bloom_of_rot",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.bloom_of_rot));
-    public static final DeferredHolder<Item, Item> memory_endless_hour = BASEITEMS.register("memory_endless_hour",
-            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.endless_hour));
+    public static final DeferredHolder<Item, Item> memory_crimson_tithe = registerBloodMemoryItem("memory_crimson_tithe", ManipulationInit.crimson_tithe);
+    public static final DeferredHolder<Item, Item> memory_unclosing_eye = registerBloodMemoryItem("memory_unclosing_eye", ManipulationInit.unclosing_eye);
+    public static final DeferredHolder<Item, Item> memory_bloom_of_rot = registerBloodMemoryItem("memory_bloom_of_rot", ManipulationInit.bloom_of_rot);
+    public static final DeferredHolder<Item, Item> memory_endless_hour = registerBloodMemoryItem("memory_endless_hour", ManipulationInit.endless_hour);
 
-	public static final DeferredHolder<Item, Item> memory_crimson_coronation = memory("crimson_coronation",
-			ManipulationInit.crimson_coronation);
-	public static final DeferredHolder<Item, Item> memory_sovereign_instinct = memory("sovereign_instinct",
-			ManipulationInit.sovereign_instinct);
-	public static final DeferredHolder<Item, Item> memory_synaptic_storm = memory("synaptic_storm",
-			ManipulationInit.synaptic_storm);
-	public static final DeferredHolder<Item, Item> memory_living_circuit = memory("living_circuit",
-			ManipulationInit.living_circuit);
-	public static final DeferredHolder<Item, Item> memory_white_verdict = memory("white_verdict",
-			ManipulationInit.white_verdict);
-	public static final DeferredHolder<Item, Item> memory_vigil_of_glass = memory("vigil_of_glass",
-			ManipulationInit.vigil_of_glass);
-	public static final DeferredHolder<Item, Item> memory_furnace_veins = memory("furnace_veins",
-			ManipulationInit.furnace_veins);
-	public static final DeferredHolder<Item, Item> memory_phoenix_debt = memory("phoenix_debt",
-			ManipulationInit.phoenix_debt);
-	public static final DeferredHolder<Item, Item> memory_absolute_stillness = memory("absolute_stillness",
-			ManipulationInit.absolute_stillness);
-	public static final DeferredHolder<Item, Item> memory_rimebound_sentence = memory("rimebound_sentence",
-			ManipulationInit.rimebound_sentence);
-	public static final DeferredHolder<Item, Item> memory_lingering_blood_binding = memory("lingering_blood_binding", ManipulationInit.lingering_blood_binding);
-	public static final DeferredHolder<Item, Item> memory_chain_blood_binding = memory("chain_blood_binding", ManipulationInit.chain_blood_binding);
-	public static final DeferredHolder<Item, Item> memory_blood_lattice = memory("blood_lattice", ManipulationInit.blood_lattice);
-    public static final DeferredHolder<Item, Item> memory_sanguine_marionette = memory("sanguine_marionette", ManipulationInit.sanguine_marionette);
-	public static final DeferredHolder<Item, Item> memory_blood_needle_fan = memory("blood_needle_fan", ManipulationInit.blood_needle_fan);
-	public static final DeferredHolder<Item, Item> memory_blood_needle_lance = memory("blood_needle_lance", ManipulationInit.blood_needle_lance);
-	public static final DeferredHolder<Item, Item> memory_guided_blood_shot = memory("guided_blood_shot", ManipulationInit.guided_blood_shot);
-	public static final DeferredHolder<Item, Item> memory_hematic_mortar = memory("hematic_mortar", ManipulationInit.hematic_mortar);
-	public static final DeferredHolder<Item, Item> memory_sanguine_halo = memory("sanguine_halo", ManipulationInit.sanguine_halo);
-	public static final DeferredHolder<Item, Item> memory_expansive_blood_cloud = memory("expansive_blood_cloud", ManipulationInit.expansive_blood_cloud);
-	public static final DeferredHolder<Item, Item> memory_pursuing_blood_cloud = memory("pursuing_blood_cloud", ManipulationInit.pursuing_blood_cloud);
-	public static final DeferredHolder<Item, Item> memory_sanguine_tempest = memory("sanguine_tempest", ManipulationInit.sanguine_tempest);
-	public static final DeferredHolder<Item, Item> memory_soaring_updraft = memory("soaring_updraft", ManipulationInit.soaring_updraft);
-	public static final DeferredHolder<Item, Item> memory_suspended_updraft = memory("suspended_updraft", ManipulationInit.suspended_updraft);
-	public static final DeferredHolder<Item, Item> memory_expulsive_updraft = memory("expulsive_updraft", ManipulationInit.expulsive_updraft);
-	public static final DeferredHolder<Item, Item> memory_canopy_mortis = memory("canopy_mortis", ManipulationInit.canopy_mortis);
-	public static final DeferredHolder<Item, Item> memory_worked_lignum = memory("worked_lignum", ManipulationInit.worked_lignum);
-	public static final DeferredHolder<Item, Item> memory_summon_avatar_arms = memory("summon_avatar_arms", ManipulationInit.summon_avatar_arms);
-	public static final DeferredHolder<Item, Item> memory_summon_avatar_armor = memory("summon_avatar_armor", ManipulationInit.summon_avatar_armor);
-	public static final DeferredHolder<Item, Item> memory_summon_avatar_legs = memory("summon_avatar_legs", ManipulationInit.summon_avatar_legs);
-	public static final DeferredHolder<Item, Item> memory_summon_avatar_complete = memory("summon_avatar_complete", ManipulationInit.summon_avatar_complete);
-	public static final DeferredHolder<Item, Item> memory_hematic_ballast = memory("hematic_ballast",
-			ManipulationInit.hematic_ballast);
-	public static final DeferredHolder<Item, Item> memory_iron_choir = memory("iron_choir",
-			ManipulationInit.iron_choir);
-	public static final DeferredHolder<Item, Item> memory_funeral_bell = memory("funeral_bell",
-			ManipulationInit.funeral_bell);
-	public static final DeferredHolder<Item, Item> memory_carrion_communion = memory("carrion_communion",
-			ManipulationInit.carrion_communion);
-	public static final DeferredHolder<Item, Item> memory_penumbral_drift = memory("penumbral_drift",
-			ManipulationInit.penumbral_drift);
-	public static final DeferredHolder<Item, Item> memory_eclipse_well = memory("eclipse_well",
-			ManipulationInit.eclipse_well);
-	public static final DeferredHolder<Item, Item> memory_thread_ripper = memory("thread_ripper",
-			ManipulationInit.thread_ripper);
+    public static final DeferredHolder<Item, Item> memory_crimson_coronation = registerBloodMemoryItem("memory_crimson_coronation",
+            ManipulationInit.crimson_coronation);
+    public static final DeferredHolder<Item, Item> memory_sovereign_instinct = registerBloodMemoryItem("memory_sovereign_instinct",
+            ManipulationInit.sovereign_instinct);
+    public static final DeferredHolder<Item, Item> memory_synaptic_storm = registerBloodMemoryItem("memory_synaptic_storm",
+            ManipulationInit.synaptic_storm);
+    public static final DeferredHolder<Item, Item> memory_living_circuit = registerBloodMemoryItem("memory_living_circuit",
+            ManipulationInit.living_circuit);
+    public static final DeferredHolder<Item, Item> memory_white_verdict = registerBloodMemoryItem("memory_white_verdict",
+            ManipulationInit.white_verdict);
+    public static final DeferredHolder<Item, Item> memory_vigil_of_glass = registerBloodMemoryItem("memory_vigil_of_glass",
+            ManipulationInit.vigil_of_glass);
+    public static final DeferredHolder<Item, Item> memory_furnace_veins = registerBloodMemoryItem("memory_furnace_veins",
+            ManipulationInit.furnace_veins);
+    public static final DeferredHolder<Item, Item> memory_phoenix_debt = registerBloodMemoryItem("memory_phoenix_debt",
+            ManipulationInit.phoenix_debt);
+    public static final DeferredHolder<Item, Item> memory_absolute_stillness = registerBloodMemoryItem("memory_absolute_stillness",
+            ManipulationInit.absolute_stillness);
+    public static final DeferredHolder<Item, Item> memory_rimebound_sentence = registerBloodMemoryItem("memory_rimebound_sentence",
+            ManipulationInit.rimebound_sentence);
+    public static final DeferredHolder<Item, Item> memory_lingering_blood_binding = registerBloodMemoryItem("memory_lingering_blood_binding", ManipulationInit.lingering_blood_binding);
+    public static final DeferredHolder<Item, Item> memory_chain_blood_binding = registerBloodMemoryItem("memory_chain_blood_binding", ManipulationInit.chain_blood_binding);
+    public static final DeferredHolder<Item, Item> memory_blood_lattice = registerBloodMemoryItem("memory_blood_lattice", ManipulationInit.blood_lattice);
+    public static final DeferredHolder<Item, Item> memory_sanguine_marionette = registerBloodMemoryItem("memory_sanguine_marionette", ManipulationInit.sanguine_marionette);
+    public static final DeferredHolder<Item, Item> memory_blood_needle_fan = registerBloodMemoryItem("memory_blood_needle_fan", ManipulationInit.blood_needle_fan);
+    public static final DeferredHolder<Item, Item> memory_blood_needle_lance = registerBloodMemoryItem("memory_blood_needle_lance", ManipulationInit.blood_needle_lance);
+    public static final DeferredHolder<Item, Item> memory_guided_blood_shot = registerBloodMemoryItem("memory_guided_blood_shot", ManipulationInit.guided_blood_shot);
+    public static final DeferredHolder<Item, Item> memory_hematic_mortar = registerBloodMemoryItem("memory_hematic_mortar", ManipulationInit.hematic_mortar);
+    public static final DeferredHolder<Item, Item> memory_sanguine_halo = registerBloodMemoryItem("memory_sanguine_halo", ManipulationInit.sanguine_halo);
+    public static final DeferredHolder<Item, Item> memory_expansive_blood_cloud = registerBloodMemoryItem("memory_expansive_blood_cloud", ManipulationInit.expansive_blood_cloud);
+    public static final DeferredHolder<Item, Item> memory_pursuing_blood_cloud = registerBloodMemoryItem("memory_pursuing_blood_cloud", ManipulationInit.pursuing_blood_cloud);
+    public static final DeferredHolder<Item, Item> memory_sanguine_tempest = registerBloodMemoryItem("memory_sanguine_tempest", ManipulationInit.sanguine_tempest);
+    public static final DeferredHolder<Item, Item> memory_soaring_updraft = registerBloodMemoryItem("memory_soaring_updraft", ManipulationInit.soaring_updraft);
+    public static final DeferredHolder<Item, Item> memory_suspended_updraft = registerBloodMemoryItem("memory_suspended_updraft", ManipulationInit.suspended_updraft);
+    public static final DeferredHolder<Item, Item> memory_expulsive_updraft = registerBloodMemoryItem("memory_expulsive_updraft", ManipulationInit.expulsive_updraft);
+    public static final DeferredHolder<Item, Item> memory_canopy_mortis = registerBloodMemoryItem("memory_canopy_mortis", ManipulationInit.canopy_mortis);
+    public static final DeferredHolder<Item, Item> memory_worked_lignum = registerBloodMemoryItem("memory_worked_lignum", ManipulationInit.worked_lignum);
+    public static final DeferredHolder<Item, Item> memory_summon_avatar_arms = registerBloodMemoryItem("memory_summon_avatar_arms", ManipulationInit.summon_avatar_arms);
+    public static final DeferredHolder<Item, Item> memory_summon_avatar_armor = registerBloodMemoryItem("memory_summon_avatar_armor", ManipulationInit.summon_avatar_armor);
+    public static final DeferredHolder<Item, Item> memory_summon_avatar_legs = registerBloodMemoryItem("memory_summon_avatar_legs", ManipulationInit.summon_avatar_legs);
+    public static final DeferredHolder<Item, Item> memory_summon_avatar_complete = registerBloodMemoryItem("memory_summon_avatar_complete", ManipulationInit.summon_avatar_complete);
+    public static final DeferredHolder<Item, Item> memory_hematic_ballast = registerBloodMemoryItem("memory_hematic_ballast",
+            ManipulationInit.hematic_ballast);
+    public static final DeferredHolder<Item, Item> memory_iron_choir = registerBloodMemoryItem("memory_iron_choir",
+            ManipulationInit.iron_choir);
+    public static final DeferredHolder<Item, Item> memory_funeral_bell = registerBloodMemoryItem("memory_funeral_bell",
+            ManipulationInit.funeral_bell);
+    public static final DeferredHolder<Item, Item> memory_carrion_communion = registerBloodMemoryItem("memory_carrion_communion",
+            ManipulationInit.carrion_communion);
+    public static final DeferredHolder<Item, Item> memory_penumbral_drift = registerBloodMemoryItem("memory_penumbral_drift",
+            ManipulationInit.penumbral_drift);
+    public static final DeferredHolder<Item, Item> memory_eclipse_well = registerBloodMemoryItem("memory_eclipse_well",
+            ManipulationInit.eclipse_well);
+    public static final DeferredHolder<Item, Item> memory_thread_ripper = registerBloodMemoryItem("memory_thread_ripper",
+            ManipulationInit.thread_ripper);
     // Living
     public static final DeferredHolder<Item, Item> blood_absorption = SPECIALITEMS.register("blood_absorption",
             () -> new BloodAbsorptionItem(new Item.Properties()));
@@ -688,6 +627,8 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> blood_thrall_effigy = BASEITEMS.register("blood_thrall_effigy",
             () -> new BloodThrallItem(new Item.Properties().stacksTo(16)));
     // Morphlings
+    public static final DeferredHolder<Item, Item> morphling_jar = SPECIALITEMS.register("morphling_jar",
+            () -> new ItemMorphlingJar("morphling_jar", 6, Rarity.UNCOMMON));
     public static final DeferredHolder<Item, Item> morphling_polyp = BASEITEMS.register("morphling_polyp",
             () -> new ItemMorphlingPolyp(new Item.Properties()));
     public static final DeferredHolder<Item, Item> morphling_deadmans_purse = BASEITEMS.register("morphling_deadmans_purse",
@@ -726,19 +667,15 @@ public class ItemInit {
             () -> new BloodyFlaskItem(new Item.Properties(), 2500));
     public static final DeferredHolder<Item, Item> bloody_jug = BASEITEMS.register("bloody_jug",
             () -> new BloodyFlaskItem(new Item.Properties(), 5000));
+    public static final DeferredHolder<Item, Item> hematic_microscope = BASEITEMS.register("hematic_microscope",
+            () -> new HematicMicroscopeItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> bloody_vial = SPECIALITEMS.register("bloody_vial",
             () -> new BloodVialItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> ahaematic_colloid = SPECIALITEMS.register("ahaematic_colloid",
-            com.vincenthuto.hemomancy.common.antecedent.AhaematicColloidItem::new);
+         AhaematicColloidItem::new);
     public static final DeferredHolder<Item, Item> vial_rack = SPECIALITEMS.register("vial_rack",
             () -> new VialRackItem(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> morphling_jar = SPECIALITEMS.register("morphling_jar",
-            () -> new ItemMorphlingJar("morphling_jar", 6, Rarity.UNCOMMON));
-    public static final DeferredHolder<Item, Item> engram_stamp = SPECIALITEMS.register("engram_stamp",
-            () -> new EngramStampItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> chitinite_arm_banner = SPECIALITEMS.register("chitinite_arm_banner",
-            () -> new ItemArmBanner(new Item.Properties(), EnumModArmorTiers.CHITINITE.holder(),
-                    Hemomancy.rloc("textures/entity/arm_banner/chitinite_arm_banner.png")));
+
     // Debug / Testing
     public static final DeferredHolder<Item, Item> structure_spawner = SPECIALITEMS.register("structure_spawner",
             () -> new StructureSpawnerItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
@@ -756,6 +693,9 @@ public class ItemInit {
 
     // Equipment
     // Artifacts
+    public static final DeferredHolder<Item, Item> chitinite_arm_banner = SPECIALITEMS.register("chitinite_arm_banner",
+            () -> new ItemArmBanner(new Item.Properties(), EnumModArmorTiers.CHITINITE.holder(),
+                    Hemomancy.rloc("textures/entity/arm_banner/chitinite_arm_banner.png")));
     public static final DeferredHolder<Item, Item> marrow_crown = BASEITEMS.register("marrow_crown",
             () -> new MarrowCrownArmorItem(EnumModArmorTiers.MARROW_CROWN.holder(), ArmorItem.Type.HELMET)
     );
@@ -889,37 +829,7 @@ public class ItemInit {
             () -> new CovenantMantleArmorItem(EnumModArmorTiers.COVENANT_MANTLE.holder(), ArmorItem.Type.CHESTPLATE));
     public static final DeferredHolder<Item, Item> ringmaster_topper = BASEITEMS.register("ringmaster_topper",
             () -> new RingmasterTopperItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
-    // Unstained
-    public static final DeferredHolder<Item, Item> unstained_helm = BASEITEMS.register("unstained_helm",
-            () -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED.holder(), ArmorItem.Type.HELMET));
-    public static final DeferredHolder<Item, Item> unstained_chestplate = BASEITEMS.register("unstained_chestplate",
-            () -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED.holder(), ArmorItem.Type.CHESTPLATE));
-    public static final DeferredHolder<Item, Item> unstained_leggings = BASEITEMS.register("unstained_leggings",
-            () -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED.holder(), ArmorItem.Type.LEGGINGS));
-    public static final DeferredHolder<Item, Item> unstained_boots = BASEITEMS.register("unstained_boots",
-            () -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED.holder(), ArmorItem.Type.BOOTS));
-    public static final DeferredHolder<Item, Item> vestment_of_the_final_molt = BASEITEMS.register(
-            "vestment_of_the_final_molt",
-            () -> new VestmentOfTheFinalMoltArmorItem(EnumModArmorTiers.UNSTAINED.holder(),
-                    ArmorItem.Type.CHESTPLATE));
-    public static final DeferredHolder<Item, Item> unstained_warhammer = HANDHELDITEMS.register("unstained_warhammer",
-            () -> new UnstainedWarhammerItem(8f, -3.4f, EnumModToolTiers.UNSTAINED,
-                    new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> unstained_shield = HANDHELDITEMS.register("unstained_shield",
-            () -> new UnstainedShieldItem(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> absolution_dagger = HANDHELDITEMS.register("absolution_dagger",
-            () -> new AbsolutionDaggerItem(EnumModToolTiers.UNSTAINED, -4, -1.8f,
-                    new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> annettas_absolution_dagger = HANDHELDITEMS.register("annettas_absolution_dagger",
-            () -> new AbsolutionDaggerItem(EnumModToolTiers.UNSTAINED, -4, -1.8f,
-                    new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
-    public static final DeferredHolder<Item, Item> silthmere_glaive = HANDHELDITEMS.register("silthmere_glaive",
-            () -> new SilthmereGlaiveItem(4, -2.8f, EnumModToolTiers.UNSTAINED,
-                    new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> pale_silver_bell = HANDHELDITEMS.register("pale_silver_bell",
-            () -> new PaleSilverBellItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
-    public static final DeferredHolder<Item, Item> lethean_chalice = SPECIALITEMS.register("lethean_chalice",
-            () -> new LetheanChaliceItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
+
 
     // Scars
     public static final DeferredHolder<Item, Item> self_reflection_mirror = BASEITEMS.register("self_reflection_mirror",
@@ -930,8 +840,8 @@ public class ItemInit {
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> runic_motif_paper = BASEITEMS.register("runic_motif_paper",
             () -> new Item(new Item.Properties()));
-	public static final DeferredHolder<Item, Item> scar_pattern = BASEITEMS.register("scar_pattern",
-			() -> new ItemScarPattern(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> scar_pattern = BASEITEMS.register("scar_pattern",
+            () -> new ItemScarPattern(new Item.Properties()));
     // Functional Spores
     public static final DeferredHolder<Item, Item> rhizovitta_communis = BASEITEMS.register("rhizovitta_communis",
             () -> new RhizovittaCommunisItem(new Item.Properties().stacksTo(1), ScarInit.rhizovitta_communis));
@@ -982,56 +892,32 @@ public class ItemInit {
     // Each scar has focused upsides and real downsides; magnitude escalates with tier.
 
     // ── ANIMUS — Vitality / Healing ──
-    public static final DeferredHolder<Item, Item> scar_heart = BASEITEMS.register("scar_heart",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_heart));
-    public static final DeferredHolder<Item, Item> scar_marrow = BASEITEMS.register("scar_marrow",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_marrow));
-    public static final DeferredHolder<Item, Item> scar_phoenix = BASEITEMS.register("scar_phoenix",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_phoenix));
-    public static final DeferredHolder<Item, Item> scar_pyre = BASEITEMS.register("scar_pyre",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_pyre));
-    public static final DeferredHolder<Item, Item> scar_sol = BASEITEMS.register("scar_sol",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_sol));
-    public static final DeferredHolder<Item, Item> scar_corona = BASEITEMS.register("scar_corona",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_corona));
-    public static final DeferredHolder<Item, Item> scar_feral = BASEITEMS.register("scar_feral",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_feral));
-    public static final DeferredHolder<Item, Item> scar_flux = BASEITEMS.register("scar_flux",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_flux));
-    public static final DeferredHolder<Item, Item> scar_chimera = BASEITEMS.register("scar_chimera",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_chimera));
-    public static final DeferredHolder<Item, Item> scar_halo = BASEITEMS.register("scar_halo",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_halo));
-    public static final DeferredHolder<Item, Item> scar_veil = BASEITEMS.register("scar_veil",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_veil));
-    public static final DeferredHolder<Item, Item> scar_transcendence = BASEITEMS.register("scar_transcendence",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_transcendence));
-    public static final DeferredHolder<Item, Item> scar_blight = BASEITEMS.register("scar_blight",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_blight));
-    public static final DeferredHolder<Item, Item> scar_wither = BASEITEMS.register("scar_wither",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_wither));
-    public static final DeferredHolder<Item, Item> scar_oblivion = BASEITEMS.register("scar_oblivion",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_oblivion));
-    public static final DeferredHolder<Item, Item> scar_rime = BASEITEMS.register("scar_rime",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_rime));
-    public static final DeferredHolder<Item, Item> scar_glacier = BASEITEMS.register("scar_glacier",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_glacier));
-    public static final DeferredHolder<Item, Item> scar_descendence = BASEITEMS.register("scar_descendence",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_descendence));
-    public static final DeferredHolder<Item, Item> scar_thorn = BASEITEMS.register("scar_thorn",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_thorn));
-    public static final DeferredHolder<Item, Item> scar_anvil = BASEITEMS.register("scar_anvil",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_anvil));
-    public static final DeferredHolder<Item, Item> scar_crucible = BASEITEMS.register("scar_crucible",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_crucible));
+    public static final DeferredHolder<Item, Item> scar_heart = registerScarItem("scar_heart", ScarInit.scar_heart);
+    public static final DeferredHolder<Item, Item> scar_marrow = registerScarItem("scar_marrow", ScarInit.scar_marrow);
+    public static final DeferredHolder<Item, Item> scar_phoenix = registerScarItem("scar_phoenix", ScarInit.scar_phoenix);
+    public static final DeferredHolder<Item, Item> scar_pyre = registerScarItem("scar_pyre", ScarInit.scar_pyre);
+    public static final DeferredHolder<Item, Item> scar_sol = registerScarItem("scar_sol", ScarInit.scar_sol);
+    public static final DeferredHolder<Item, Item> scar_corona = registerScarItem("scar_corona", ScarInit.scar_corona);
+    public static final DeferredHolder<Item, Item> scar_feral = registerScarItem("scar_feral", ScarInit.scar_feral);
+    public static final DeferredHolder<Item, Item> scar_flux = registerScarItem("scar_flux", ScarInit.scar_flux);
+    public static final DeferredHolder<Item, Item> scar_chimera = registerScarItem("scar_chimera", ScarInit.scar_chimera);
+    public static final DeferredHolder<Item, Item> scar_halo = registerScarItem("scar_halo", ScarInit.scar_halo);
+    public static final DeferredHolder<Item, Item> scar_veil = registerScarItem("scar_veil", ScarInit.scar_veil);
+    public static final DeferredHolder<Item, Item> scar_transcendence = registerScarItem("scar_transcendence", ScarInit.scar_transcendence);
+    public static final DeferredHolder<Item, Item> scar_blight = registerScarItem("scar_blight", ScarInit.scar_blight);
+    public static final DeferredHolder<Item, Item> scar_wither = registerScarItem("scar_wither", ScarInit.scar_wither);
+    public static final DeferredHolder<Item, Item> scar_oblivion = registerScarItem("scar_oblivion", ScarInit.scar_oblivion);
+    public static final DeferredHolder<Item, Item> scar_rime = registerScarItem("scar_rime", ScarInit.scar_rime);
+    public static final DeferredHolder<Item, Item> scar_glacier = registerScarItem("scar_glacier", ScarInit.scar_glacier);
+    public static final DeferredHolder<Item, Item> scar_descendence = registerScarItem("scar_descendence", ScarInit.scar_descendence);
+    public static final DeferredHolder<Item, Item> scar_thorn = registerScarItem("scar_thorn", ScarInit.scar_thorn);
+    public static final DeferredHolder<Item, Item> scar_anvil = registerScarItem("scar_anvil", ScarInit.scar_anvil);
+    public static final DeferredHolder<Item, Item> scar_crucible = registerScarItem("scar_crucible", ScarInit.scar_crucible);
     public static final DeferredHolder<Item, Item> scar_blood_honed = BASEITEMS.register("scar_blood_honed",
             () -> new BloodHonedScar(new Item.Properties().stacksTo(1)));
-    public static final DeferredHolder<Item, Item> scar_shade = BASEITEMS.register("scar_shade",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_shade));
-    public static final DeferredHolder<Item, Item> scar_moon = BASEITEMS.register("scar_moon",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_moon));
-    public static final DeferredHolder<Item, Item> scar_eye = BASEITEMS.register("scar_eye",
-            () -> new ItemScar(new Item.Properties().stacksTo(1), ScarInit.scar_eye));
+    public static final DeferredHolder<Item, Item> scar_shade = registerScarItem("scar_shade", ScarInit.scar_shade);
+    public static final DeferredHolder<Item, Item> scar_moon = registerScarItem("scar_moon", ScarInit.scar_moon);
+    public static final DeferredHolder<Item, Item> scar_eye = registerScarItem("scar_eye", ScarInit.scar_eye);
 
     // Charm / conduit-scale progression
     public static final DeferredHolder<Item, Item> sanguine_conduit = BASEITEMS.register("sanguine_conduit",
@@ -1050,24 +936,33 @@ public class ItemInit {
             () -> new MonolithFragmentItem(new Item.Properties().rarity(Rarity.RARE).fireResistant()));
     public static final DeferredHolder<Item, Item> monolith_imbued_cloth = BASEITEMS.register("monolith_imbued_cloth",
             () -> new MonolithImbuedClothItem(new Item.Properties().rarity(Rarity.RARE).fireResistant()));
-    public static final DeferredHolder<Item, Item> vicars_consecration_kit = BASEITEMS.register("vicars_consecration_kit",
-            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
-    public static final DeferredHolder<Item, Item> hematic_condenser_kit = BASEITEMS.register("hematic_condenser_kit",
-            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
-    public static final DeferredHolder<Item, Item> sanguine_athanor_kit = BASEITEMS.register("sanguine_athanor_kit",
-            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
-    public static final DeferredHolder<Item, Item> precision_governor_kit = BASEITEMS.register("precision_governor_kit",
-            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
-    public static final DeferredHolder<Item, Item> master_cam_kit = BASEITEMS.register("master_cam_kit",
-            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
-    public static final DeferredHolder<Item, Item> monolithic_cornerstone = BASEITEMS.register("monolithic_cornerstone",
-            () -> new MonolithicCornerstoneItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
     public static final DeferredHolder<Item, Item> memory_of_vesper = BASEITEMS.register("memory_of_vesper",
             () -> new MemoryOfVesperItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
     public static final DeferredHolder<Item, Item> orb_of_perspective = BASEITEMS.register("orb_of_perspective",
             () -> new OrbOfPerspectiveItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
     public static final DeferredHolder<Item, Item> fungal_spine = BASEITEMS.register("fungal_spine",
             () -> new FungalSpineItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> fruiting_lure = BASEITEMS.register("fruiting_lure",
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+
+    //Armature upgrades
+    public static final DeferredHolder<Item, Item> vicars_consecration_kit = BASEITEMS.register("vicars_consecration_kit",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> monolithic_cornerstone = BASEITEMS.register("monolithic_cornerstone",
+            () -> new MonolithicCornerstoneItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
+    //Alembic Upgrade kits
+    public static final DeferredHolder<Item, Item> hematic_condenser_kit = BASEITEMS.register("hematic_condenser_kit",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> sanguine_athanor_kit = BASEITEMS.register("sanguine_athanor_kit",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+    //Resonant Forge upgrade kit
+    public static final DeferredHolder<Item, Item> precision_governor_kit = BASEITEMS.register("precision_governor_kit",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> master_cam_kit = BASEITEMS.register("master_cam_kit",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+
+    //TODO: ENZYMATIC SCRIPTORIUM NEEDS 2 UNIQUE UPGRADE ITEMS TO GO HERE NOT REUSEING THE VICARS CONSESCRATION KIT('which needs to be renamed anywhoo to just the consecration kit)
+
 
     // Unstained Our Lady of Still Waters materials
     public static final DeferredHolder<Item, Item> hemolytic_solution = BASEITEMS.register("hemolytic_solution",
@@ -1098,7 +993,9 @@ public class ItemInit {
             () -> new BlockItem(BlockInit.lethean_poppy_wreath.get(), new Item.Properties().stacksTo(16)));
     public static final DeferredHolder<Item, Item> silver_chalice = BASEITEMS.register("silver_chalice",
             () -> new Item(new Item.Properties().stacksTo(1)));
-    /** Legacy registry alias retained so existing saves do not lose old stacks. Not exposed or issued. */
+    /**
+     * Legacy registry alias retained so existing saves do not lose old stacks. Not exposed or issued.
+     */
     @Deprecated(forRemoval = false)
     public static final DeferredHolder<Item, Item> tome_of_the_unstained = BASEITEMS.register("tome_of_the_unstained",
             () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
@@ -1108,6 +1005,38 @@ public class ItemInit {
             () -> new Item(new Item.Properties()));
     public static final DeferredHolder<Item, Item> pale_distillate = BASEITEMS.register("pale_distillate",
             () -> new Item(new Item.Properties().stacksTo(16)));
+
+    // Unstained
+    public static final DeferredHolder<Item, Item> unstained_helm = BASEITEMS.register("unstained_helm",
+            () -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED.holder(), ArmorItem.Type.HELMET));
+    public static final DeferredHolder<Item, Item> unstained_chestplate = BASEITEMS.register("unstained_chestplate",
+            () -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED.holder(), ArmorItem.Type.CHESTPLATE));
+    public static final DeferredHolder<Item, Item> unstained_leggings = BASEITEMS.register("unstained_leggings",
+            () -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED.holder(), ArmorItem.Type.LEGGINGS));
+    public static final DeferredHolder<Item, Item> unstained_boots = BASEITEMS.register("unstained_boots",
+            () -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED.holder(), ArmorItem.Type.BOOTS));
+    public static final DeferredHolder<Item, Item> vestment_of_the_final_molt = BASEITEMS.register(
+            "vestment_of_the_final_molt",
+            () -> new VestmentOfTheFinalMoltArmorItem(EnumModArmorTiers.UNSTAINED.holder(),
+                    ArmorItem.Type.CHESTPLATE));
+    public static final DeferredHolder<Item, Item> unstained_warhammer = HANDHELDITEMS.register("unstained_warhammer",
+            () -> new UnstainedWarhammerItem(8f, -3.4f, EnumModToolTiers.UNSTAINED,
+                    new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> unstained_shield = HANDHELDITEMS.register("unstained_shield",
+            () -> new UnstainedShieldItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> absolution_dagger = HANDHELDITEMS.register("absolution_dagger",
+            () -> new AbsolutionDaggerItem(EnumModToolTiers.UNSTAINED, -4, -1.8f,
+                    new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> annettas_absolution_dagger = HANDHELDITEMS.register("annettas_absolution_dagger",
+            () -> new AbsolutionDaggerItem(EnumModToolTiers.UNSTAINED, -4, -1.8f,
+                    new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
+    public static final DeferredHolder<Item, Item> silthmere_glaive = HANDHELDITEMS.register("silthmere_glaive",
+            () -> new SilthmereGlaiveItem(4, -2.8f, EnumModToolTiers.UNSTAINED,
+                    new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<Item, Item> pale_silver_bell = HANDHELDITEMS.register("pale_silver_bell",
+            () -> new PaleSilverBellItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> lethean_chalice = SPECIALITEMS.register("lethean_chalice",
+            () -> new LetheanChaliceItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
     // Spawn Eggs
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_myelin_borer = SPAWNEGGS.register("spawn_egg_myelin_borer",
             () -> new DeferredSpawnEggItem(EntityInit.myelin_borer, 0xD8D5C4, 0xC9A227, new Item.Properties()));
@@ -1178,14 +1107,14 @@ public class ItemInit {
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_scarlet_mummer = SPAWNEGGS.register(
             "spawn_egg_scarlet_mummer",
             () -> new DeferredSpawnEggItem(EntityInit.scarlet_mummer, 0x550916, 0xE9B51D, new Item.Properties()));
-	public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_excoriated = SPAWNEGGS.register(
-			"spawn_egg_excoriated",() -> new DeferredSpawnEggItem(EntityInit.excoriated,0x2D060A,0xC4A180,new Item.Properties()));
-	public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_phlegethontic_bombardier = SPAWNEGGS.register(
-			"spawn_egg_phlegethontic_bombardier",
-			() -> new DeferredSpawnEggItem(EntityInit.phlegethontic_bombardier, 0x20191A, 0x8D1824, new Item.Properties()));
-	public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_sanguine_hound = SPAWNEGGS.register(
-			"spawn_egg_sanguine_hound",
-			() -> new DeferredSpawnEggItem(EntityInit.sanguine_hound, 0x5A0712, 0xD74A50, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_excoriated = SPAWNEGGS.register(
+            "spawn_egg_excoriated", () -> new DeferredSpawnEggItem(EntityInit.excoriated, 0x2D060A, 0xC4A180, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_phlegethontic_bombardier = SPAWNEGGS.register(
+            "spawn_egg_phlegethontic_bombardier",
+            () -> new DeferredSpawnEggItem(EntityInit.phlegethontic_bombardier, 0x20191A, 0x8D1824, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_sanguine_hound = SPAWNEGGS.register(
+            "spawn_egg_sanguine_hound",
+            () -> new DeferredSpawnEggItem(EntityInit.sanguine_hound, 0x5A0712, 0xD74A50, new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_hemolymphopoda = SPAWNEGGS.register(
             "spawn_egg_hemolymphopoda",
             () -> new DeferredSpawnEggItem(EntityInit.hemolymphopoda, 6579558, 4875998, new Item.Properties()));
@@ -1207,12 +1136,12 @@ public class ItemInit {
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_choir_keeper = SPAWNEGGS.register(
             "spawn_egg_choir_keeper",
             () -> new DeferredSpawnEggItem(EntityInit.choir_keeper, 0x252333, 0x55C29A, new Item.Properties()));
-	public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_peacock_spider = SPAWNEGGS.register(
-			"spawn_egg_peacock_spider",
-			() -> new DeferredSpawnEggItem(EntityInit.peacock_spider, 0x17212B, 0x28B9C7, new Item.Properties()));
-	public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_vampire_bat = SPAWNEGGS.register(
-			"spawn_egg_vampire_bat",
-			() -> new DeferredSpawnEggItem(EntityInit.vampire_bat, 0x21151B, 0x8F182B, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_peacock_spider = SPAWNEGGS.register(
+            "spawn_egg_peacock_spider",
+            () -> new DeferredSpawnEggItem(EntityInit.peacock_spider, 0x17212B, 0x28B9C7, new Item.Properties()));
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_vampire_bat = SPAWNEGGS.register(
+            "spawn_egg_vampire_bat",
+            () -> new DeferredSpawnEggItem(EntityInit.vampire_bat, 0x21151B, 0x8F182B, new Item.Properties()));
     public static final DeferredHolder<Item, DeferredSpawnEggItem> spawn_egg_luminal_cicada = SPAWNEGGS.register(
             "spawn_egg_luminal_cicada",
             () -> new DeferredSpawnEggItem(EntityInit.luminal_cicada, 0x312B24, 0xFFF49A, new Item.Properties()));

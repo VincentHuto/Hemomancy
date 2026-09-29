@@ -20,7 +20,6 @@ public final class RecipeDegreeGates {
 	public static final int[] LEVELS = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
 
 	private static final Map<String, Integer> RANKUP_RITE_TARGET_DEGREES = Map.ofEntries(
-			Map.entry("cardinal_rite/initiate_rite", 3),
 			Map.entry("cardinal_rite/sanguine_brotherhood", 4),
 			Map.entry("cardinal_rite/illuminatus_rite", 5),
 			Map.entry("cardinal_rite/sanctified_rite", 6),

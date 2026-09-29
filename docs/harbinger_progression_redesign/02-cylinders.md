@@ -1,6 +1,6 @@
 # Phase 2: ordinary wax and specialty ambergris
 
-[Index](../HARBINGER_PROGRESSION_REDESIGN.md) · Implement before the final recording/Forge lesson pass.
+[Index](HARBINGER_PROGRESSION_REDESIGN.md) · Implement before the final recording/Forge lesson pass.
 
 ## Outcome and fixed behavior
 

@@ -18,6 +18,10 @@ public final class MnemonicRecipeKnowledge {
         return award(player, MnemonicRecipeKnowledgeRules.starterRecipePaths());
     }
 
+    public static int awardBlankMemory(ServerPlayer player) {
+        return award(player, List.of("hematic_memory"));
+    }
+
     public static int awardCatalogue(ServerPlayer player) {
         return award(player, MnemonicRecipeKnowledgeRules.catalogueRecipePaths());
     }

@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
+import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRules.ArmatureTier;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.HematicArmatureBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -276,6 +277,14 @@ public class HematicArmatureBlock extends BaseEntityBlock implements IMultiBlock
 			}
 			if (level.getBlockEntity(pos) instanceof HematicArmatureBlockEntity armature) {
 				Containers.dropContents(level, pos, armature);
+				if (!level.isClientSide && armature.getArmatureTier().id() >= ArmatureTier.VICAR_CONSECRATED.id()) {
+					Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(),
+							new ItemStack(ItemInit.vicars_consecration_kit.get()));
+				}
+				if (!level.isClientSide && armature.getArmatureTier() == ArmatureTier.MONOLITHIC) {
+					Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(),
+							new ItemStack(ItemInit.monolithic_cornerstone.get()));
+				}
 				level.updateNeighbourForOutputSignal(pos, this);
 			}
 		}

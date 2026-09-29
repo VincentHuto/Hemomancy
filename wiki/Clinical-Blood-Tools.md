@@ -31,7 +31,7 @@ The Field Case recipe consumes an empty Cabinet, six leather, and two Hematic Ir
 
 ## Mnemonic recording
 
-The Alchemist refers the unexplained echo to the Mnemonist. After formal D3 teaching, place a filled creature vial and a blank Ambergris Cylinder in the Clairaudiograph, choose a call, and Carve for four seconds. The blood is consumed and the empty vial remains. Recording itself still accepts unidentified creature blood. Carved cylinders play without further blood and cannot be used as blank stock.
+The Alchemist refers the unexplained echo to the Mnemonist. After formal D3 teaching, place a filled creature vial and a blank Wax Cylinder in the Clairaudiograph, choose a call, and Carve for four seconds. The blood is consumed and the empty vial remains. Recording itself still accepts unidentified creature blood. Carved cylinders play without further blood and cannot be used as blank stock. Existing Ambergris Cylinders also work; they are only required for Masterwork Forge patterns.
 
 ## Knowledge and existing saves
 

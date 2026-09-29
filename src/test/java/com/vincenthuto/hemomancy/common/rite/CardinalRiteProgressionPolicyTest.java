@@ -53,6 +53,21 @@ final class CardinalRiteProgressionPolicyTest {
 						1, "collapse"), 5).isEmpty());
 	}
 
+	@Test
+	void apotheosHasItsOwnFinalCeremonyLimits() {
+		var finalCeremony = ceremony(32, 4, 6, "living_staff", "storm", true, true,
+				0, "collapse");
+		assertTrue(CardinalRiteProgressionPolicy.violations(
+				"cardinal_rite/apotheos_rite", 7, finalCeremony, 1).isEmpty());
+		assertFalse(CardinalRiteProgressionPolicy.violations(
+				"cardinal_rite/apotheos_rite", 6, finalCeremony, 1).isEmpty());
+		assertFalse(CardinalRiteProgressionPolicy.violations(
+				"cardinal_rite/apotheos_rite", 7,
+				ceremony(36, 4, 6, "living_staff", "storm", true, true, 0, "collapse"), 1).isEmpty());
+		assertFalse(CardinalRiteProgressionPolicy.violations(
+				"cardinal_rite/apotheos_rite", 7, finalCeremony, 2).isEmpty());
+	}
+
 	private static CardinalRiteCeremonyDefinition ceremony(int anchors, int sockets, int waves,
 			String focus, String fog, boolean lightning, boolean dome,
 			int helpers, String failure) {

@@ -7,6 +7,7 @@ import net.neoforged.neoforge.common.util.INBTSerializable;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<CompoundTag> {
 
@@ -15,6 +16,7 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 
 	// Pome communion tracking
 	private final Map<Long, Integer> pomeCommunionProgress = new HashMap<>();
+	private final Map<UUID, Integer> pomeCommunionProgressByBloom = new HashMap<>();
 	private boolean qliphothCommunionDone = false;
 	private long pomeEmpowermentExpiry = 0L;
 	private int totalPomesConsumed = 0;
@@ -81,6 +83,35 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 	}
 
 	@Override
+	public int recordPomeConsumed(UUID bloomId, long legacyOrigin) {
+		return recordPomeConsumed(bloomId, legacyOrigin, false);
+	}
+
+	@Override
+	public int recordPomeConsumed(UUID bloomId, long legacyOrigin, boolean migrateLegacyProgress) {
+		int newCount = getPomesConsumedFromBloom(bloomId, legacyOrigin, migrateLegacyProgress) + 1;
+		pomeCommunionProgressByBloom.put(bloomId, newCount);
+		return newCount;
+	}
+
+	@Override
+	public int getPomesConsumedFromBloom(UUID bloomId, long legacyOrigin) {
+		return getPomesConsumedFromBloom(bloomId, legacyOrigin, false);
+	}
+
+	@Override
+	public int getPomesConsumedFromBloom(UUID bloomId, long legacyOrigin, boolean migrateLegacyProgress) {
+		Integer count = pomeCommunionProgressByBloom.get(bloomId);
+		if (count != null) return count;
+		if (migrateLegacyProgress && pomeCommunionProgress.containsKey(legacyOrigin)) {
+			int legacyCount = pomeCommunionProgress.remove(legacyOrigin);
+			pomeCommunionProgressByBloom.put(bloomId, legacyCount);
+			return legacyCount;
+		}
+		return 0;
+	}
+
+	@Override
 	public int getTotalPomesConsumed() { return totalPomesConsumed; }
 
 	@Override
@@ -92,6 +123,7 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 	@Override
 	public void resetPomeCommunion() {
 		pomeCommunionProgress.clear();
+		pomeCommunionProgressByBloom.clear();
 		qliphothCommunionDone = false;
 		pomeEmpowermentExpiry = 0L;
 		totalPomesConsumed = 0;
@@ -147,6 +179,10 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 		pomeCommunionProgress.forEach((origin, count) ->
 				progressTag.putInt(String.valueOf(origin), count));
 		tag.put("pome_communion_progress", progressTag);
+		CompoundTag bloomProgressTag = new CompoundTag();
+		pomeCommunionProgressByBloom.forEach((bloomId, count) ->
+				bloomProgressTag.putInt(bloomId.toString(), count));
+		tag.put("pome_communion_progress_by_bloom", bloomProgressTag);
 		return tag;
 	}
 
@@ -167,11 +203,18 @@ public class InitiatoryDegree implements IInitiatoryDegree, INBTSerializable<Com
 		mycophantRetryCooldownTicks = Math.max(0, nbt.getInt("mycophant_retry_cooldown_ticks"));
 		mycophantDefeated = nbt.getBoolean("mycophant_defeated");
 		pomeCommunionProgress.clear();
+		pomeCommunionProgressByBloom.clear();
 		CompoundTag progressTag = nbt.getCompound("pome_communion_progress");
 		for (String key : progressTag.getAllKeys()) {
 			try {
 				pomeCommunionProgress.put(Long.parseLong(key), progressTag.getInt(key));
 			} catch (NumberFormatException ignored) {}
+		}
+		CompoundTag bloomProgressTag = nbt.getCompound("pome_communion_progress_by_bloom");
+		for (String key : bloomProgressTag.getAllKeys()) {
+			try {
+				pomeCommunionProgressByBloom.put(UUID.fromString(key), bloomProgressTag.getInt(key));
+			} catch (IllegalArgumentException ignored) {}
 		}
 	}
 }

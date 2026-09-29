@@ -124,6 +124,52 @@ public class DialogueEventHandler {
 		if (event.getEventId().startsWith("artificer_") && !isValidArtificerDialogueSource(event)) return;
 		if (handleArtificerLegacyBranchChoice(player, event.getEventId())) return;
 			switch (event.getEventId()) {
+			case VagrantMindInquiryDialogue.MEMORY_REPORT -> event.setRewardDelivered(
+					com.vincenthuto.hemomancy.common.mission.shared.VagrantMindInquiry.reportMemory(
+							player, player.level().getEntity(event.getEntityId())));
+			case VagrantMindInquiryDialogue.BIOLOGY_REPORT -> event.setRewardDelivered(
+					com.vincenthuto.hemomancy.common.mission.shared.VagrantMindInquiry.reportBiology(
+							player, player.level().getEntity(event.getEntityId())));
+			case VagrantMindInquiryDialogue.BEARING -> event.setRewardDelivered(
+					com.vincenthuto.hemomancy.common.mission.shared.VagrantMindGuidance.tell(
+							player, player.level().getEntity(event.getEntityId())));
+			case DeepDarkCommissionDialogue.REPORT -> event.setRewardDelivered(
+					com.vincenthuto.hemomancy.common.mission.alchemist.DeepDarkCommission.report(
+							player, player.level().getEntity(event.getEntityId())));
+			case PhlegethonticCommissionDialogue.REPORT -> event.setRewardDelivered(
+					com.vincenthuto.hemomancy.common.mission.alchemist.PhlegethonticCommission.report(
+							player, player.level().getEntity(event.getEntityId())));
+			case PhlegethonticCommissionDialogue.BEARING -> event.setRewardDelivered(
+					com.vincenthuto.hemomancy.common.mission.alchemist.PhlegethonticBasinGuidance.tell(
+							player, player.level().getEntity(event.getEntityId())));
+			case MorphlingHandlingDialogue.INSPECT -> event.setRewardDelivered(
+					com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingAssignment.inspect(
+							player, player.level().getEntity(event.getEntityId())));
+			case VoyagerIntroductionDialogue.OBSERVE -> event.setRewardDelivered(
+					com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.observe(
+							player, player.level().getEntity(event.getEntityId())));
+			case VoyagerIntroductionDialogue.REPORT -> event.setRewardDelivered(
+					com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.report(
+							player, player.level().getEntity(event.getEntityId())));
+			case OverworldFungalSurveyDialogue.REPORT -> event.setRewardDelivered(
+					com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.report(
+							player, player.level().getEntity(event.getEntityId())));
+			case HarbingerMnemonistDialogueTrees.EVENT_GUIDED_CHAMBER -> {
+				Entity teacher = player.level().getEntity(event.getEntityId());
+				if (teacher instanceof HarbingerMnemonistEntity && player.distanceToSqr(teacher) <= 64) {
+					boolean started = com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.beginGuidedVisit(player);
+					event.setRewardDelivered(started);
+					player.displayClientMessage(Component.translatable(started
+							? "hemomancy.mnemonist.chamber.guided.started"
+							: "hemomancy.mnemonist.chamber.guided.unavailable"), true);
+				}
+			}
+            case FirstDrawsDialogue.ACCEPT -> event.setRewardDelivered(
+                    com.vincenthuto.hemomancy.common.mission.alchemist.FirstDrawsAssignment.brief(
+                            player, player.level().getEntity(event.getEntityId())));
+            case SpecimenJarLessonDialogue.TEACH -> event.setRewardDelivered(
+                    com.vincenthuto.hemomancy.common.mission.alchemist.SpecimenJarLesson.teach(
+                            player, player.level().getEntity(event.getEntityId())));
             case "vicar_begin_initiation" -> event.setRewardDelivered(com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.begin(player, player.level().getEntity(event.getEntityId())));
             case "vicar_release_charm" -> event.setRewardDelivered(com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.release(player, player.level().getEntity(event.getEntityId())));
             case "alchemist_replace_concentrated_blood" -> event.setRewardDelivered(com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.replace(player, player.level().getEntity(event.getEntityId())));
@@ -277,9 +323,8 @@ public class DialogueEventHandler {
 			case HarbingerVicarDialogueTrees.EVENT_MASONS_RESPITE_DIRECTIVE -> {
 				handleVicarMasonsRespiteDirective(player, event.getEntityId());
 			}
-			case HarbingerVicarDialogueTrees.EVENT_CONSECRATION_KIT -> {
-				event.setRewardDelivered(handleVicarConsecrationKit(player, event.getEntityId()));
-			}
+			case HarbingerArtificerDialogueTrees.EVENT_CONSECRATION_KIT ->
+					event.setRewardDelivered(handleArtificerConsecrationKit(player, event.getEntityId()));
 			case SanguineMonolithDialogueTrees.EVENT_SHATTER -> {
 				event.setRewardDelivered(com.vincenthuto.hemomancy.common.block.harbinger.functional.SanguineMonolithBlock.pressFurther(player));
 			}
@@ -439,6 +484,17 @@ public class DialogueEventHandler {
 			}
 			case HarbingerMnemonistDialogueTrees.EVENT_WOVEN_VESSEL_TURN_IN ->
 					event.setRewardDelivered(handleMnemonistWovenVessel(player, event.getEntityId()));
+			case HarbingerMnemonistDialogueTrees.EVENT_BLANK_MEMORY_RECIPE -> {
+				Entity teacher = player.level().getEntity(event.getEntityId());
+				if (teacher instanceof HarbingerMnemonistEntity
+						&& player.distanceToSqr(teacher) <= 64
+						&& HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 3
+						&& HemoCapabilityAccess.getUnstainedProgress(player)
+								.map(progress -> !progress.hasBegunPurification() && !progress.hasClarityUnlocked())
+								.orElse(true)) {
+					event.setRewardDelivered(MnemonicRecipeKnowledge.awardBlankMemory(player) > 0);
+				}
+			}
 			default -> {
 				// Unknown event — log for development
 			}
@@ -584,17 +640,22 @@ public class DialogueEventHandler {
 		return player.getPersistentData().getBoolean(VICAR_CONSECRATION_KIT_CLAIM_KEY);
 	}
 
-	private static boolean handleVicarConsecrationKit(ServerPlayer player, int entityId) {
-		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < 5) {
+	private static boolean handleArtificerConsecrationKit(ServerPlayer player, int entityId) {
+		Entity teacher = player.level().getEntity(entityId);
+		if (!(teacher instanceof HarbingerArtificerEntity) || player.distanceToSqr(teacher) > 64) return false;
+		ArtificerProgressSnapshot progress = ArtificerProgressSnapshot.from(player);
+		if (progress.degree() < 5 || !progress.activeBlood() || progress.purifying() || progress.clarity()) {
 			player.displayClientMessage(
-					Component.translatable("hemomancy.dialogue.event.vicar_consecration_kit_unready")
+					Component.translatable("hemomancy.dialogue.event.artificer_consecration_kit_unready")
 							.withStyle(ChatFormatting.GRAY),
 					false);
 			return false;
 		}
+		player.serverLevel().getRecipeManager().byKey(Hemomancy.rloc("vicars_consecration_kit"))
+				.ifPresent(recipe -> player.awardRecipes(java.util.List.of(recipe)));
 		if (hasClaimedConsecrationKit(player)) {
 			player.displayClientMessage(
-					Component.translatable("hemomancy.dialogue.event.vicar_consecration_kit_known")
+					Component.translatable("hemomancy.dialogue.event.artificer_consecration_kit_known")
 							.withStyle(ChatFormatting.GRAY),
 					false);
 			return false;
@@ -602,7 +663,7 @@ public class DialogueEventHandler {
 		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.vicars_consecration_kit.get()));
 		player.getPersistentData().putBoolean(VICAR_CONSECRATION_KIT_CLAIM_KEY, true);
 		player.displayClientMessage(
-				Component.translatable("hemomancy.dialogue.event.vicar_consecration_kit_granted")
+				Component.translatable("hemomancy.dialogue.event.artificer_consecration_kit_granted")
 						.withStyle(ChatFormatting.DARK_RED),
 				false);
 		return true;

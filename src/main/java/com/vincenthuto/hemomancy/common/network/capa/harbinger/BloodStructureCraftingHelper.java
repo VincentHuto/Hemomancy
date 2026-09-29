@@ -296,10 +296,7 @@ public final class BloodStructureCraftingHelper {
 	private static boolean isValidSpecialOffering(BloodStructureRecipe recipe, ItemStack stack) {
 		if (!recipe.getId().getNamespace().equals("hemomancy")
 				|| !recipe.getId().getPath().equals("blood_structure/resonant_forge")) return true;
-		return com.vincenthuto.hemomancy.common.enchanting.ResonantForgeRules.isBlankCylinder(
-				stack.has(com.vincenthuto.hemomancy.common.init.DataComponentInit.ANCIENT_RECORDING.get()),
-				stack.has(com.vincenthuto.hemomancy.common.init.DataComponentInit.CLAIRAUDIOGRAPH_RECORDING.get()),
-				stack.has(com.vincenthuto.hemomancy.common.init.DataComponentInit.RESONANT_PATTERN.get()));
+		return com.vincenthuto.hemomancy.common.item.harbinger.CylinderMedia.blank(stack);
 	}
 
 	private static void unlightOfferingBrazier(ServerLevel level, BlockPos pos) {

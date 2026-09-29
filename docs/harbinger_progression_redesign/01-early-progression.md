@@ -1,6 +1,6 @@
 # Phase 1: early progression and assignment ownership
 
-[Index](../HARBINGER_PROGRESSION_REDESIGN.md) · Depends on the player-journey contract.
+[Index](HARBINGER_PROGRESSION_REDESIGN.md) · Depends on the player-journey contract.
 
 ## Outcome
 

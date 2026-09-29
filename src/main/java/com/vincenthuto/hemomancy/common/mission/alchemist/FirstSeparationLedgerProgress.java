@@ -8,6 +8,7 @@ public record FirstSeparationLedgerProgress(
 		boolean separationStarted,
 		boolean enzymeRecovered,
 		boolean rewardClaimed,
+		boolean distillationRecovered,
 		boolean concentratedBloodPending,
 		boolean initiateReached) {
 
@@ -19,12 +20,13 @@ public record FirstSeparationLedgerProgress(
 		if (separationStarted) completed++;
 		if (enzymeRecovered) completed++;
 		if (rewardClaimed) completed++;
+		if (distillationRecovered) completed++;
 		if (initiateReached) completed++;
 		return completed;
 	}
 
 	public int totalSteps() {
-		return 7;
+		return 8;
 	}
 
 	public boolean complete() {

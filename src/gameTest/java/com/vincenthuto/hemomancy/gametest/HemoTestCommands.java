@@ -32,6 +32,8 @@ public final class HemoTestCommands {
 								.then(Commands.literal("harbinger")
 										.then(Commands.literal("start").executes(context -> journeyStart(context.getSource())))
 										.then(Commands.literal("run").executes(context -> journeyRun(context.getSource())))
+										.then(Commands.literal("run_to_choice").executes(context -> journeyRunToChoice(context.getSource())))
+										.then(Commands.literal("run_main_to_choice").executes(context -> journeyRunMainToChoice(context.getSource())))
 										.then(Commands.literal("next").executes(context -> journeyNext(context.getSource())))
 										.then(Commands.literal("status").executes(context -> journeyStatus(context.getSource())))
 										.then(Commands.literal("reset").executes(context -> journeyReset(context.getSource()))))
@@ -198,6 +200,17 @@ public final class HemoTestCommands {
 			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
 		ServerPlayer player = source.getPlayerOrException();
 		return JourneyAutoRunner.runHarbinger(player) ? 1 : 0;
+	}
+
+	private static int journeyRunToChoice(CommandSourceStack source)
+			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		ServerPlayer player = source.getPlayerOrException();
+		return JourneyAutoRunner.runHarbingerToChoice(player) ? 1 : 0;
+	}
+
+	private static int journeyRunMainToChoice(CommandSourceStack source)
+			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		return JourneyAutoRunner.runHarbingerMainToChoice(source.getPlayerOrException()) ? 1 : 0;
 	}
 
 	private static int journeyRunAll(CommandSourceStack source)

@@ -11,7 +11,7 @@ import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.common.manipulation.WillManipulationCaster;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
-import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
 import com.vincenthuto.hemomancy.config.HemoConfigValues;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -645,8 +645,10 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		WillBendRules.HeldItemKind held = stack.getItem() instanceof MarionetteCrossbarItem
 				? WillBendRules.HeldItemKind.MARIONETTE_CROSSBAR
 				: WillBendRules.HeldItemKind.EMPTY_OR_STAFF;
-		boolean silent = FungalGardenTravelHelper.ARCHON_CHOICE_SILENCE.equals(
-				player.getPersistentData().getString(FungalGardenTravelHelper.ARCHON_CHOICE_KEY));
+		boolean silent = HemoCapabilityAccess.getInitiatoryDegree(player)
+				.map(degree -> HarbingerPathPermissions.isProvenSilentArchon(
+						degree.getDegreeNumber(), degree.getArchonPath()))
+				.orElse(false);
 		int cap = BoundSummonBehavior.totalActiveCap(serverPlayer);
 		boolean capAvailable = MarionetteCrossbarItem.activeSummonsForOwner(player).size() < cap;
 		WillBendRules.BendOutcome outcome = WillBendRules.resolve(getOrigin(), getPhase(),

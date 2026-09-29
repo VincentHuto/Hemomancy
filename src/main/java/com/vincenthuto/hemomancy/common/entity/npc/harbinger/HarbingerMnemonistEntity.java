@@ -104,7 +104,7 @@ public class HarbingerMnemonistEntity extends com.vincenthuto.hemomancy.common.s
 		boolean claimed = serverPlayer.getPersistentData().getBoolean(MnemonistStarterMemoryChoice.CLAIM_KEY);
 		if (clarity) return HarbingerMnemonistDialogueTrees.clarity(this.getId());
 		if (purifying) return HarbingerMnemonistDialogueTrees.purifying(this.getId());
-		return ClinicalBloodDialogue.append(HarbingerMnemonistDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
+		DialogueTree tree = HarbingerMnemonistDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
 				isNpcInPlayerBloodline(player, this),
 				MnemonistStarterMemoryChoice.canClaim(degree, false, false, claimed),
 				HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(serverPlayer),
@@ -114,7 +114,15 @@ public class HarbingerMnemonistEntity extends com.vincenthuto.hemomancy.common.s
 				com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.has(serverPlayer,
 						com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.D6_COUNSEL),
 				CircusDiscoveryProgress.hasDiscovered(serverPlayer),
-				serverPlayer.getInventory().contains(new ItemStack(ItemInit.circus_waybill.get()))), serverPlayer, "mnemonist");
+				serverPlayer.getInventory().contains(new ItemStack(ItemInit.circus_waybill.get())));
+		tree = HarbingerMnemonistDialogueTrees.withGuidedChamber(tree, degree,
+				com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.hasCompletedGuidedVisit(serverPlayer),
+				com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.hasSeenDream(serverPlayer)
+						|| com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isChairBound(serverPlayer));
+		if (com.vincenthuto.hemomancy.common.mission.shared.VagrantMindInquiry.eligible(serverPlayer))
+			tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.VagrantMindInquiryDialogue.memory(
+					tree, com.vincenthuto.hemomancy.common.mission.shared.VagrantMindInquiry.progress(serverPlayer));
+		return ClinicalBloodDialogue.append(tree, serverPlayer, "mnemonist");
 	}
 
 	@Override

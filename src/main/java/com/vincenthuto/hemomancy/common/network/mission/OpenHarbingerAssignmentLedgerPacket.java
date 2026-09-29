@@ -3,7 +3,13 @@ package com.vincenthuto.hemomancy.common.network.mission;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.item.HarbingerAssignmentLedgerScreen;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationLedgerProgress;
+import com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingProgress;
+import com.vincenthuto.hemomancy.common.mission.alchemist.DeepDarkCommissionProgress;
+import com.vincenthuto.hemomancy.common.mission.alchemist.PhlegethonticCommissionProgress;
+import com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurveyProgress;
+import com.vincenthuto.hemomancy.common.mission.shared.VagrantMindInquiryProgress;
 import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftLedgerProgress;
+import com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroductionProgress;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -16,8 +22,13 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		FirstBloodcraftLedgerProgress firstBloodcraft,
 		boolean firstRemnant,
 		boolean ledgerGranted,
+		boolean firstDrawsBriefed,
+		int firstDrawsSamples,
+		int firstDrawsSpecies,
+		OverworldFungalSurveyProgress fungalSurvey,
+		VoyagerIntroductionProgress voyagerIntroduction,
+		boolean circusDiscovered,
 		FirstSeparationLedgerProgress firstSeparation,
-		boolean firstDistillationComplete,
 		boolean bodyAnswersBriefed,
 		boolean bodyAnswersComplete,
 		int muscleMemoryCount,
@@ -25,6 +36,11 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		boolean redTaxonomyComplete,
 		int enzymeMasteryCount,
 		boolean enzymeMasteryComplete,
+		boolean firstCultureComplete,
+		MorphlingHandlingProgress morphlingHandling,
+		DeepDarkCommissionProgress deepDarkCommission,
+		PhlegethonticCommissionProgress phlegethonticCommission,
+		VagrantMindInquiryProgress vagrantMindInquiry,
 		int livingBestiaryCount,
 		int livingBestiaryTotal,
 		int morphlingLayerCount,
@@ -77,8 +93,16 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		writeFirstBloodcraft(buf, msg.firstBloodcraft);
 		buf.writeBoolean(msg.firstRemnant);
 		buf.writeBoolean(msg.ledgerGranted);
+		buf.writeBoolean(msg.firstDrawsBriefed);
+		buf.writeVarInt(msg.firstDrawsSamples);
+		buf.writeVarInt(msg.firstDrawsSpecies);
+		buf.writeBoolean(msg.fungalSurvey.visited());
+		buf.writeVarInt(msg.fungalSurvey.specimens());
+		buf.writeBoolean(msg.fungalSurvey.reported());
+		buf.writeBoolean(msg.voyagerIntroduction.observed());
+		buf.writeBoolean(msg.voyagerIntroduction.reported());
+		buf.writeBoolean(msg.circusDiscovered);
 		writeFirstSeparation(buf, msg.firstSeparation);
-		buf.writeBoolean(msg.firstDistillationComplete);
 		buf.writeBoolean(msg.bodyAnswersBriefed);
 		buf.writeBoolean(msg.bodyAnswersComplete);
 		buf.writeVarInt(msg.muscleMemoryCount);
@@ -86,6 +110,18 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		buf.writeBoolean(msg.redTaxonomyComplete);
 		buf.writeVarInt(msg.enzymeMasteryCount);
 		buf.writeBoolean(msg.enzymeMasteryComplete);
+		buf.writeBoolean(msg.firstCultureComplete);
+		buf.writeBoolean(msg.morphlingHandling.proof());
+		buf.writeBoolean(msg.morphlingHandling.inspected());
+		buf.writeBoolean(msg.deepDarkCommission.sampleProof());
+		buf.writeBoolean(msg.deepDarkCommission.reported());
+		buf.writeBoolean(msg.phlegethonticCommission.sampleProof());
+		buf.writeVarInt(msg.phlegethonticCommission.scyphusCount());
+		buf.writeBoolean(msg.phlegethonticCommission.reported());
+		buf.writeBoolean(msg.vagrantMindInquiry.mindVisited());
+		buf.writeBoolean(msg.vagrantMindInquiry.biologyObserved());
+		buf.writeBoolean(msg.vagrantMindInquiry.memoryReported());
+		buf.writeBoolean(msg.vagrantMindInquiry.biologyReported());
 		buf.writeVarInt(msg.livingBestiaryCount);
 		buf.writeVarInt(msg.livingBestiaryTotal);
 		buf.writeVarInt(msg.morphlingLayerCount);
@@ -136,15 +172,26 @@ public record OpenHarbingerAssignmentLedgerPacket(
 				readFirstBloodcraft(buf),
 				buf.readBoolean(),
 				buf.readBoolean(),
+				buf.readBoolean(),
+				buf.readVarInt(),
+				buf.readVarInt(),
+				new OverworldFungalSurveyProgress(buf.readBoolean(), buf.readVarInt(), buf.readBoolean()),
+				new VoyagerIntroductionProgress(buf.readBoolean(), buf.readBoolean()),
+				buf.readBoolean(),
 				readFirstSeparation(buf),
 				buf.readBoolean(),
 				buf.readBoolean(),
-				buf.readBoolean(),
 				buf.readVarInt(),
 				buf.readVarInt(),
 				buf.readBoolean(),
 				buf.readVarInt(),
 				buf.readBoolean(),
+				buf.readBoolean(),
+				new MorphlingHandlingProgress(buf.readBoolean(), buf.readBoolean()),
+				new DeepDarkCommissionProgress(buf.readBoolean(), buf.readBoolean()),
+				new PhlegethonticCommissionProgress(buf.readBoolean(), buf.readVarInt(), buf.readBoolean()),
+				new VagrantMindInquiryProgress(buf.readBoolean(), buf.readBoolean(),
+						buf.readBoolean(), buf.readBoolean()),
 				buf.readVarInt(),
 				buf.readVarInt(),
 				buf.readVarInt(),
@@ -192,10 +239,19 @@ public record OpenHarbingerAssignmentLedgerPacket(
 				msg.degree, msg.firstAwakening, msg.degreeOne,
 				msg.firstBloodcraft,
 				msg.firstRemnant, msg.ledgerGranted,
-				msg.firstSeparation, msg.firstDistillationComplete,
+				msg.firstDrawsBriefed, msg.firstDrawsSamples, msg.firstDrawsSpecies,
+				msg.fungalSurvey,
+				msg.voyagerIntroduction,
+				msg.circusDiscovered,
+				msg.firstSeparation,
 				msg.bodyAnswersBriefed, msg.bodyAnswersComplete, msg.muscleMemoryCount,
 				msg.redTaxonomyCount, msg.redTaxonomyComplete,
 				msg.enzymeMasteryCount, msg.enzymeMasteryComplete,
+				msg.firstCultureComplete,
+				msg.morphlingHandling,
+				msg.deepDarkCommission,
+				msg.phlegethonticCommission,
+				msg.vagrantMindInquiry,
 				msg.livingBestiaryCount, msg.livingBestiaryTotal, msg.morphlingLayerCount,
 				msg.hasBlankHematicMemory,
 				msg.mnemonistWovenVesselComplete, msg.mnemonistFirstWeaveComplete, msg.vicarMasonsRespiteDirective,
@@ -223,6 +279,7 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		buf.writeBoolean(progress.separationStarted());
 		buf.writeBoolean(progress.enzymeRecovered());
 		buf.writeBoolean(progress.rewardClaimed());
+		buf.writeBoolean(progress.distillationRecovered());
 		buf.writeBoolean(progress.concentratedBloodPending());
 		buf.writeBoolean(progress.initiateReached());
 	}
@@ -243,7 +300,7 @@ public record OpenHarbingerAssignmentLedgerPacket(
 	private static FirstSeparationLedgerProgress readFirstSeparation(FriendlyByteBuf buf) {
 		return new FirstSeparationLedgerProgress(
 				buf.readBoolean(), buf.readBoolean(), buf.readBoolean(), buf.readBoolean(),
-				buf.readBoolean(), buf.readBoolean(), buf.readBoolean(), buf.readBoolean());
+				buf.readBoolean(), buf.readBoolean(), buf.readBoolean(), buf.readBoolean(), buf.readBoolean());
 	}
 
 	@Override

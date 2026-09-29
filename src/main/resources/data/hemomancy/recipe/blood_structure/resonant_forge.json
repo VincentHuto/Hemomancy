@@ -12,7 +12,7 @@
     "G": {"block": "minecraft:grindstone"}
   },
   "offerings": [
-    {"ingredient": {"item": "hemomancy:ambergris_cylinder"}, "count": 1}
+    {"ingredient": {"item": "hemomancy:wax_cylinder"}, "count": 1}
   ],
   "result": {"id": "hemomancy:resonant_forge"}
 }

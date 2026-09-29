@@ -32,6 +32,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -46,6 +47,105 @@ import java.util.UUID;
 @GameTestHolder("scriptorium_validation")
 @PrefixGameTestTemplate(false)
 public final class ResonantForgeGameTests {
+    @GameTest(template = "empty", timeoutTicks = 100, batch = "resonant_forge")
+    public static void shiftClickRoutesBlankWaxToGrinding(GameTestHelper helper) {
+        ResonantForgeBlockEntity forge = placeForge(helper, new BlockPos(5, 3, 5), Direction.NORTH);
+        var player = helper.makeMockPlayer(GameType.SURVIVAL);
+        player.setPos(forge.getBlockPos().getCenter());
+        var menu = new com.vincenthuto.hemomancy.common.menu.tile.crafting.ResonantForgeMenu(
+                1, player.getInventory(), forge, new SimpleContainerData(10));
+        player.getInventory().setItem(9, new ItemStack(ItemInit.wax_cylinder.get()));
+        helper.assertTrue(!menu.quickMoveStack(player, ResonantForgeBlockEntity.SLOT_COUNT).isEmpty()
+                && forge.getItem(ResonantForgeBlockEntity.GRINDING_CYLINDER).is(ItemInit.wax_cylinder.get())
+                && forge.getItem(ResonantForgeBlockEntity.APPLICATION_CYLINDER).isEmpty(),
+                "Shift-click put blank wax on the application side");
+        player.getInventory().setItem(10, new ItemStack(ItemInit.wax_cylinder.get()));
+        helper.assertTrue(menu.quickMoveStack(player, ResonantForgeBlockEntity.SLOT_COUNT + 1).isEmpty()
+                && forge.getItem(ResonantForgeBlockEntity.APPLICATION_CYLINDER).isEmpty(),
+                "Blank wax fell back to the application side when grinding was occupied");
+        helper.succeed();
+    }
+    @GameTest(template = "empty", timeoutTicks = 100, batch = "resonant_forge")
+    public static void waxHandlesOrdinaryPatternsButCannotBecomeMaster(GameTestHelper helper) {
+        ResonantForgeBlockEntity forge = placeForge(helper, new BlockPos(5, 3, 5), Direction.NORTH);
+        var unbreaking = helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT)
+                .getHolderOrThrow(Enchantments.UNBREAKING);
+        ItemStack source = new ItemStack(Items.DIAMOND_PICKAXE);
+        source.enchant(unbreaking, 3);
+        forge.receiveBlood(5000);
+        forge.setItem(ResonantForgeBlockEntity.GRINDING_ITEM, source);
+        forge.setItem(ResonantForgeBlockEntity.GRINDING_CYLINDER, new ItemStack(ItemInit.wax_cylinder.get()));
+        helper.assertTrue(forge.startGrinding(), "Base Forge rejected wax for ordinary grinding");
+        tick(forge, helper, ResonantForgeRules.OPERATION_TICKS);
+        ItemStack wax = forge.removeItemNoUpdate(ResonantForgeBlockEntity.GRINDING_CYLINDER_OUTPUT);
+        helper.assertTrue(wax.is(ItemInit.wax_cylinder.get()) && wax.has(DataComponentInit.RESONANT_PATTERN.get()),
+                "Ordinary pattern was not recorded on wax");
+        forge.setItem(ResonantForgeBlockEntity.APPLICATION_ITEM, new ItemStack(Items.DIAMOND_PICKAXE));
+        forge.setItem(ResonantForgeBlockEntity.APPLICATION_CYLINDER, wax);
+        helper.assertTrue(forge.startApply(), "Base Forge rejected wax pattern application");
+        tick(forge, helper, ResonantForgeRules.OPERATION_TICKS);
+        helper.assertTrue(forge.getItem(ResonantForgeBlockEntity.APPLICATION_CYLINDER).isEmpty(),
+                "Ordinary wax was not consumed on application");
+
+        forge.removeItemNoUpdate(ResonantForgeBlockEntity.APPLICATION_OUTPUT);
+        helper.assertTrue(forge.completeUpgrade(ResonantForgeTier.PRECISION, UUID.randomUUID())
+                && forge.completeUpgrade(ResonantForgeTier.MASTERWORK, UUID.randomUUID()), "Masterwork setup failed");
+        forge.setItem(ResonantForgeBlockEntity.GRINDING_CYLINDER, new ItemStack(ItemInit.wax_cylinder.get()));
+        forge.setItem(ResonantForgeBlockEntity.GRINDING_ITEM, source.copy());
+        helper.assertTrue(forge.toggleMasterMode(), "Master mode did not become available");
+        double bloodBefore = forge.getBloodVolume();
+        helper.assertTrue(!forge.startGrinding() && forge.getBloodVolume() == bloodBefore
+                && forge.getItem(ResonantForgeBlockEntity.GRINDING_ITEM).is(Items.DIAMOND_PICKAXE),
+                "Wax master capture changed inputs or blood");
+        forge.removeItemNoUpdate(ResonantForgeBlockEntity.GRINDING_ITEM);
+        ItemStack ordinaryWax = new ItemStack(ItemInit.wax_cylinder.get());
+        ordinaryWax.set(DataComponentInit.RESONANT_PATTERN.get(),
+                new ResonantPattern(List.of(new ResonantPattern.Entry("minecraft:unbreaking", 3)), "", 0, 0, false));
+        forge.setItem(ResonantForgeBlockEntity.GRINDING_CYLINDER, ordinaryWax);
+        helper.assertTrue(!forge.startStabilizing() && forge.getBloodVolume() == bloodBefore,
+                "Wax stabilization changed inputs or blood");
+        forge.removeItemNoUpdate(ResonantForgeBlockEntity.GRINDING_CYLINDER);
+        ItemStack forgedMasterWax = new ItemStack(ItemInit.wax_cylinder.get());
+        forgedMasterWax.set(DataComponentInit.RESONANT_PATTERN.get(),
+                new ResonantPattern(List.of(new ResonantPattern.Entry("minecraft:unbreaking", 3)), "", 0, 0, true));
+        forge.setItem(ResonantForgeBlockEntity.APPLICATION_ITEM, new ItemStack(Items.DIAMOND_PICKAXE));
+        forge.setItem(ResonantForgeBlockEntity.APPLICATION_CYLINDER, forgedMasterWax);
+        helper.assertTrue(!forge.startApply() && forge.getBloodVolume() == bloodBefore,
+                "Forged master pattern on wax was accepted or spent blood");
+        helper.succeed();
+    }
+    @GameTest(template = "empty", timeoutTicks = 100, batch = "resonant_forge")
+    public static void waxGrindingPreservesInputsAcrossBlockedOutputAndCancellation(GameTestHelper helper) {
+        ResonantForgeBlockEntity forge = placeForge(helper, new BlockPos(5, 3, 5), Direction.NORTH);
+        var unbreaking = helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT)
+                .getHolderOrThrow(Enchantments.UNBREAKING);
+        ItemStack source = new ItemStack(Items.DIAMOND_PICKAXE);
+        source.enchant(unbreaking, 3);
+        ItemStack wax = new ItemStack(ItemInit.wax_cylinder.get());
+        forge.receiveBlood(5000);
+        forge.setItem(ResonantForgeBlockEntity.GRINDING_ITEM, source);
+        forge.setItem(ResonantForgeBlockEntity.GRINDING_CYLINDER, wax);
+        forge.setItem(ResonantForgeBlockEntity.GRINDING_CYLINDER_OUTPUT, new ItemStack(Items.PAPER));
+        double bloodBefore = forge.getBloodVolume();
+        helper.assertTrue(!forge.startGrinding() && forge.getBloodVolume() == bloodBefore
+                && ItemStack.matches(wax, forge.getItem(ResonantForgeBlockEntity.GRINDING_CYLINDER)),
+                "Blocked wax output consumed blood or input");
+        forge.removeItemNoUpdate(ResonantForgeBlockEntity.GRINDING_CYLINDER_OUTPUT);
+        helper.assertTrue(forge.startGrinding(), "Wax grinding did not start after clearing output");
+        forge.setItem(ResonantForgeBlockEntity.GRINDING_CYLINDER, new ItemStack(ItemInit.ambergris_cylinder.get()));
+        helper.assertTrue(forge.removeItem(ResonantForgeBlockEntity.GRINDING_CYLINDER, 1).isEmpty()
+                && ItemStack.matches(wax, forge.getItem(ResonantForgeBlockEntity.GRINDING_CYLINDER)),
+                "Active wax input could be swapped or extracted");
+        helper.assertTrue(forge.getSlotsForFace(Direction.UP).length == 0
+                && !forge.canPlaceItemThroughFace(ResonantForgeBlockEntity.GRINDING_CYLINDER, wax, Direction.UP)
+                && !forge.canTakeItemThroughFace(ResonantForgeBlockEntity.GRINDING_CYLINDER, wax, Direction.DOWN),
+                "Forge automation exposed the cylinder slot");
+        helper.assertTrue(forge.cancelOperation() && forge.getBloodVolume() == bloodBefore
+                && ItemStack.matches(wax, forge.getItem(ResonantForgeBlockEntity.GRINDING_CYLINDER))
+                && ItemStack.matches(source, forge.getItem(ResonantForgeBlockEntity.GRINDING_ITEM)),
+                "Cancellation did not restore blood and wax inputs");
+        helper.succeed();
+    }
     @GameTest(template = "empty", timeoutTicks = 100, batch = "resonant_forge")
     public static void everyScriptoriumCurseAndOverlevelRoundTrips(GameTestHelper helper) {
         var registry = helper.getLevel().registryAccess();
@@ -307,6 +407,31 @@ public final class ResonantForgeGameTests {
         progress.deliver(player);
         helper.assertTrue(player.getInventory().contains(new ItemStack(ItemInit.master_cam_kit.get())),
                 "Pending D7 kit was not retried");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 100, batch = "resonant_forge")
+    public static void forgeFullCycleIsTaughtAtD4WhileD3AccessRemains(GameTestHelper helper) {
+        ServerPlayer player = player(helper);
+        var degree = HemoCapabilityAccess.requireInitiatoryDegree(player);
+        var artificer = com.vincenthuto.hemomancy.common.init.EntityInit.harbinger_artificer.get()
+                .create(helper.getLevel());
+        artificer.setPos(player.position());
+        degree.setDegreeNumber(3);
+        var d3 = artificer.progressionDialogue(player);
+        helper.assertTrue(d3.getNode("resonant_forge") != null
+                        && d3.getNode("resonant_forge").lines().contains("hemomancy.artificer.resonant_forge.early"),
+                "D3 Forge access was removed or the full cycle was taught early");
+        helper.assertTrue(HemoCapabilityAccess.resonantForge(player).teach(player),
+                "D3 exploratory Forge access could not be recorded");
+        degree.setDegreeNumber(4);
+        helper.assertTrue(artificer.progressionDialogue(player).getNode("resonant_forge").lines()
+                        .contains("hemomancy.artificer.resonant_forge.lesson"),
+                "The Artificer did not teach the full Forge cycle at D4");
+        degree.setDegreeNumber(6);
+        helper.assertTrue(artificer.progressionDialogue(player).getNode("resonant_forge").lines()
+                        .contains("hemomancy.artificer.resonant_forge.practice"),
+                "D6 practice did not build on the same Forge tier");
         helper.succeed();
     }
 

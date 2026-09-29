@@ -12,7 +12,7 @@ class VicarContinuingLessonsTest {
             assertTrue(continued.getStartNode().options().stream()
                     .anyMatch(option -> "armature_consecration".equals(option.nextNodeId())));
             assertTrue(continued.getNode("armature_consecration").options().stream()
-                    .anyMatch(option -> HarbingerVicarDialogueTrees.EVENT_CONSECRATION_KIT.equals(option.eventId())));
+                    .noneMatch(option -> HarbingerVicarDialogueTrees.EVENT_CONSECRATION_KIT.equals(option.eventId())));
             assertSame(base, HarbingerVicarDialogueTrees.withContinuingConsecration(base, degree, true));
         }
     }

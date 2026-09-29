@@ -14,6 +14,7 @@ public final class ChamberVisitRules {
 	}
 
 	public static int durationTicks(int degree, ChamberVisitMode mode, boolean attuned) {
+		if (mode == ChamberVisitMode.GUIDED) return 2_400;
 		if (attuned || mode == ChamberVisitMode.ATTUNED || mode == ChamberVisitMode.ADMIN) return 0;
 		if (mode == ChamberVisitMode.DREAM) return Math.max(1, Math.min(2, degree)) * 1_200;
 		return switch (Math.max(3, degree)) {
@@ -36,14 +37,15 @@ public final class ChamberVisitRules {
 	}
 
 	public static boolean canBuild(ChamberVisitMode mode) {
-		return mode != ChamberVisitMode.DREAM;
+		return mode != ChamberVisitMode.DREAM && mode != ChamberVisitMode.GUIDED;
 	}
 
 	public static boolean canMoveItems(ChamberVisitMode mode) {
-		return mode != ChamberVisitMode.DREAM;
+		return mode != ChamberVisitMode.DREAM && mode != ChamberVisitMode.GUIDED;
 	}
 
 	public static boolean isProtected(ChamberVisitMode mode) {
-		return mode == ChamberVisitMode.DREAM || mode == ChamberVisitMode.TIMED_CHAIR;
+		return mode == ChamberVisitMode.DREAM || mode == ChamberVisitMode.GUIDED
+				|| mode == ChamberVisitMode.TIMED_CHAIR;
 	}
 }

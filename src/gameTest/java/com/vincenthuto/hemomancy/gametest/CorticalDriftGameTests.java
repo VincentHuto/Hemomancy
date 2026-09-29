@@ -24,7 +24,6 @@ import java.util.Optional;
 @PrefixGameTestTemplate(false)
 public final class CorticalDriftGameTests {
 	private static final String EMPTY_TEMPLATE = "bastion/mobs/empty";
-	private static final java.util.Map<Integer, Integer> CLEAR_AT_RADIUS = new java.util.TreeMap<>();
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE)
 	public static void synapticNodeConductsDuctilis(GameTestHelper h) {
@@ -114,12 +113,9 @@ public final class CorticalDriftGameTests {
 		h.succeed();
 	}
 
-	/**
-	 * Runs the same search /locate uses against the live End, logging each link in the chain
-	 * (possible biomes, structure-set registration, candidate count) so a missing Vagrant Mind can be pinned down.
-	 */
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 2400)
-	public static void vagrantMindIsLocatableInTheEnd(GameTestHelper h) {
+	/** GameTest worlds disable structure generation, so validate the candidate and its start directly. */
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 80)
+	public static void vagrantMindCanBuildEndGenerationStart(GameTestHelper h) {
 		net.minecraft.server.level.ServerLevel end = h.getLevel().getServer().getLevel(net.minecraft.world.level.Level.END);
 		h.assertTrue(end != null, "The End is not loaded on the GameTest server");
 		var generator = end.getChunkSource().getGenerator();
@@ -130,77 +126,30 @@ public final class CorticalDriftGameTests {
 				.anyMatch(b -> b.is(com.vincenthuto.hemomancy.common.init.BiomeInit.CORTICAL_DRIFT));
 		boolean setPossible = end.getChunkSource().getGeneratorState().possibleStructureSets().stream()
 				.anyMatch(set -> set.is(ResourceKey.create(Registries.STRUCTURE_SET, Hemomancy.rloc("vagrant_mind"))));
-		var sampler = end.getChunkSource().randomState().sampler();
+		h.assertTrue(biomePossible && setPossible,
+				"The End must include Cortical Drift and the Vagrant Mind structure set");
 		var set = registries.registryOrThrow(Registries.STRUCTURE_SET)
 				.getOrThrow(ResourceKey.create(Registries.STRUCTURE_SET, Hemomancy.rloc("vagrant_mind")));
 		var placement = (net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement) set.placement();
-		int candidates = 0, inBiome = 0;
-		for (int cx = -500; cx <= 500; cx += placement.spacing()) {
-			for (int cz = -500; cz <= 500; cz += placement.spacing()) {
-				net.minecraft.world.level.ChunkPos c = placement.getPotentialStructureChunk(end.getSeed(), cx, cz);
-				candidates++;
-				if (generator.getBiomeSource().getNoiseBiome(net.minecraft.core.QuartPos.fromBlock(c.getMiddleBlockX()),
-						net.minecraft.core.QuartPos.fromBlock(118), net.minecraft.core.QuartPos.fromBlock(c.getMiddleBlockZ()),
-						sampler).is(com.vincenthuto.hemomancy.common.init.BiomeInit.CORTICAL_DRIFT)) {
-					inBiome++;
-					final int mx = c.getMiddleBlockX(), mz = c.getMiddleBlockZ();
-					for (int r : new int[] { 32, 64, 96, 128 }) {
-						final int rr = r;
-						boolean clear = true;
-						for (int dx = -rr; dx <= rr && clear; dx += 16) {
-							for (int dz = -rr; dz <= rr && clear; dz += 16) {
-								clear = generator.getBaseHeight(mx + dx, mz + dz,
-										net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE_WG, end,
-										end.getChunkSource().randomState()) <= end.getMinBuildHeight();
-							}
-						}
-						if (clear) CLEAR_AT_RADIUS.merge(rr, 1, Integer::sum);
-					}
-				}
-			}
-		}
 		net.minecraft.world.level.ChunkPos probe = null;
 		for (int cx = -500; cx <= 500 && probe == null; cx += placement.spacing()) {
 			for (int cz = -500; cz <= 500 && probe == null; cz += placement.spacing()) {
 				net.minecraft.world.level.ChunkPos c = placement.getPotentialStructureChunk(end.getSeed(), cx, cz);
-				if (generator.getBiomeSource().getNoiseBiome(net.minecraft.core.QuartPos.fromBlock(c.getMiddleBlockX()),
-						net.minecraft.core.QuartPos.fromBlock(118), net.minecraft.core.QuartPos.fromBlock(c.getMiddleBlockZ()),
-						sampler).is(com.vincenthuto.hemomancy.common.init.BiomeInit.CORTICAL_DRIFT)) {
+				var context = new Structure.GenerationContext(registries, generator, generator.getBiomeSource(),
+						end.getChunkSource().randomState(), end.getStructureManager(), end.getSeed(), c, end,
+						mind.value().biomes()::contains);
+				if (placement.isStructureChunk(end.getChunkSource().getGeneratorState(), c.x, c.z)
+						&& mind.value().findValidGenerationPoint(context).isPresent()) {
 					probe = c;
 				}
 			}
 		}
-		String probeResult = "no probe";
-		if (probe != null) {
-			var ctx = new Structure.GenerationContext(registries, generator, generator.getBiomeSource(),
-					end.getChunkSource().randomState(), end.getStructureManager(), end.getSeed(), probe, end,
-					mind.value().biomes()::contains);
-			var raw = mind.value().findValidGenerationPoint(new Structure.GenerationContext(registries, generator, generator.getBiomeSource(), end.getChunkSource().randomState(), end.getStructureManager(), end.getSeed(), probe, end, b -> true));
-			var valid = mind.value().findValidGenerationPoint(ctx);
-			boolean isStructureChunk = placement.isStructureChunk(end.getChunkSource().getGeneratorState(), probe.x, probe.z);
-			probeResult = "probe=" + probe + " isStructureChunk=" + isStructureChunk + " rawPoint="
-					+ raw.map(st -> st.position().toString()).orElse("empty") + " valid=" + valid.isPresent()
-					+ " tagSize=" + mind.value().biomes().size() + " tagHasDrift="
-					+ mind.value().biomes().stream().anyMatch(b -> b.is(com.vincenthuto.hemomancy.common.init.BiomeInit.CORTICAL_DRIFT));
-		}
-		if (probe != null) {
-			var presence = end.structureManager().checkStructurePresence(probe, mind.value(), placement, false);
-			var chunk = end.getChunk(probe.x, probe.z, net.minecraft.world.level.chunk.status.ChunkStatus.STRUCTURE_STARTS);
-			var start = end.structureManager().getStartForStructure(net.minecraft.core.SectionPos.bottomOf(chunk), mind.value(), chunk);
-			probeResult += " presence=" + presence + " chunkStatus=" + chunk.getPersistedStatus()
-					+ " start=" + (start == null ? "null" : ("valid=" + start.isValid() + " pieces=" + start.getPieces().size()))
-					+ " allStarts=" + chunk.getAllStarts().keySet().stream()
-							.map(st -> registries.registryOrThrow(Registries.STRUCTURE).getKey(st)).toList();
-		}
-		System.out.println("[VagrantMindProbe] " + probeResult);
-		var found = generator.findNearestMapStructure(end, net.minecraft.core.HolderSet.direct(mind),
-				new BlockPos(0, 100, 0), 64, false);
-		System.out.println("[VagrantMindClearance] in-biome candidates clear of vanilla terrain by radius=" + CLEAR_AT_RADIUS + " of " + inBiome);
-		System.out.println("[VagrantMindDiag] biomePossible=" + biomePossible + " setPossible=" + setPossible
-				+ " candidates=" + candidates + " candidatesInBiome=" + inBiome
-				+ " nearest=" + (found == null ? "none" : found.getFirst()));
-		h.assertTrue(found != null, "No Vagrant Mind locatable in the End: biomePossible=" + biomePossible
-				+ " setPossible=" + setPossible + " candidatesInBiome=" + inBiome + "/" + candidates);
+		h.assertTrue(probe != null, "No End placement candidate accepts the Vagrant Mind biome tag");
+		var generated = mind.value().generate(registries, generator, generator.getBiomeSource(),
+				end.getChunkSource().randomState(), end.getStructureManager(), end.getSeed(), probe, 0, end,
+				mind.value().biomes()::contains);
+		h.assertTrue(generated.isValid() && generated.getPieces().size() == 1,
+				"The Vagrant Mind must build one valid piece at an End placement candidate");
 		h.succeed();
 	}
 }

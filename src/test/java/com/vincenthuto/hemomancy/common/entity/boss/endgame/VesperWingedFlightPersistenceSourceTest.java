@@ -32,7 +32,7 @@ final class VesperWingedFlightPersistenceSourceTest {
 	void flightAuthorityComesFromTheActiveOwnerBoundOrdeal() throws Exception {
 		String source = Files.readString(ORDEAL);
 		assertTrue(source.contains("flightArena(VesperTheCrownedRefusalEntity"));
-		assertTrue(source.contains("owner.getPersistentData().getLong(ACTIVE_BLOOM_KEY) != vesper.getBloomOrigin()"));
+		assertTrue(source.contains("matchesActiveBloom(owner, vesper.getBloomOrigin(), vesper.getBloomId())"));
 		assertTrue(source.contains("owner.level() != vesper.level()"));
 	}
 

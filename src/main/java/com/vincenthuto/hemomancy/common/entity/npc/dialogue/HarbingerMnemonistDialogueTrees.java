@@ -7,20 +7,24 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Static factory for the Harbinger Mnemonist, the outpost guide for blood
  * manipulation memories, crude echoes, loadout slots, and memory weaving.
  */
 public final class HarbingerMnemonistDialogueTrees {
-	private static final ResourceLocation MNEMONIST_ICON = Hemomancy.rloc(
+	private static final ResourceLocation MNEMONIST_ICON = ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID,
 			"textures/entity/npc/harbinger/harbinger_mnemonist/harbinger_mnemonist.png");
 	private static final String SPEAKER = "entity.hemomancy.harbinger_mnemonist";
 	public static final String EVENT_WOVEN_VESSEL_TURN_IN = "mnemonist_woven_vessel_turn_in";
+	public static final String EVENT_BLANK_MEMORY_RECIPE = "mnemonist_blank_memory_recipe";
 	public static final String EVENT_RELIQUARY_TAUGHT = "mnemonist_reliquary_taught";
 	public static final String EVENT_ANCHORITE_COUNSEL = "mnemonist_anchorite_counsel";
 	public static final String EVENT_CIRCUS_WAYBILL = "mnemonist_circus_waybill";
+	public static final String EVENT_GUIDED_CHAMBER = "mnemonist_guided_chamber";
 
 	private HarbingerMnemonistDialogueTrees() {
 	}
@@ -59,6 +63,26 @@ public final class HarbingerMnemonistDialogueTrees {
 		return woven(entityId, degree, degree >= 5 && hasBloodline, isNpcRecruited, canClaimStarter,
 				!wovenVesselComplete, morphlingPuppetInterference, anchoriteReferral, anchoriteCounsel,
 				circusDiscovered, carryingCircusWaybill);
+	}
+
+	public static DialogueTree withGuidedChamber(DialogueTree tree, int degree, boolean completed,
+			boolean familiar) {
+		if (degree < 3 || completed) return tree;
+		DialogueNode start = tree.getStartNode();
+		List<DialogueOption> options = new ArrayList<>(start.options());
+		options.addFirst(new DialogueOption("hemomancy.dialogue.mnemonist.option.guided_chamber",
+				"guided_chamber", null));
+		Map<String, DialogueNode> nodes = new LinkedHashMap<>(tree.nodes());
+		nodes.put(start.id(), new DialogueNode(start.id(), start.lines(), List.copyOf(options)));
+		nodes.put("guided_chamber", new DialogueNode("guided_chamber", List.of(
+				familiar ? "hemomancy.mnemonist.chamber.guided.familiar"
+						: "hemomancy.mnemonist.chamber.guided.first",
+				"hemomancy.mnemonist.chamber.guided.rules"), List.of(
+				new DialogueOption("hemomancy.dialogue.mnemonist.option.begin_guided_chamber", null,
+						EVENT_GUIDED_CHAMBER),
+				new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null))));
+		return new DialogueTree(tree.speakerName(), tree.speakerIcon(), tree.startNodeId(), nodes,
+				tree.entityId(), tree.theme(), tree.presentation());
 	}
 
 	public static DialogueTree purifying(int entityId) {
@@ -114,7 +138,7 @@ public final class HarbingerMnemonistDialogueTrees {
 				), neophyteOptions(canClaimStarter)))
 				.addNode(crudeMemoriesNode())
 				.addNode(slotsNode())
-				.addNode(chamberNode())
+				.addNode(chamberNode(1))
 				.addNode(starterChoiceNode())
 				.addNode(itemHintNode())
 				.build();
@@ -127,7 +151,7 @@ public final class HarbingerMnemonistDialogueTrees {
 				), votaryOptions(canClaimStarter)))
 				.addNode(crudeMemoriesNode())
 				.addNode(slotsNode())
-				.addNode(chamberNode())
+				.addNode(chamberNode(2))
 				.addNode(starterChoiceNode())
 				.addNode(itemHintNode())
 				.build();
@@ -140,10 +164,21 @@ public final class HarbingerMnemonistDialogueTrees {
 		List<DialogueOption> options = new ArrayList<>();
 		if (canCompleteWovenVessel) {
 			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.woven_vessel",
-					"woven_vessel", null));
+					"woven_vessel", EVENT_BLANK_MEMORY_RECIPE));
 		}
-		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_loom", "loom", null));
+		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_loom", "loom",
+				EVENT_BLANK_MEMORY_RECIPE));
 		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_reliquary", "reliquary", null));
+		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_scriptorium",
+				"scriptorium", null));
+		if (degree >= 4) {
+			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_memory_practice",
+					"memory_practice", null));
+		}
+		if (degree >= 5) {
+			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_distributor",
+					"distributor", null));
+		}
 		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_chamber", "chamber", null));
 		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_crude_memories", "crude_memories", null));
 		if (morphlingPuppetInterference) {
@@ -171,7 +206,7 @@ public final class HarbingerMnemonistDialogueTrees {
 		addRecruitmentOption(options, hasBloodline, isNpcRecruited);
 		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null));
 
-		return DialogueTree.builder(SPEAKER, MNEMONIST_ICON, entityId)
+		var builder = DialogueTree.builder(SPEAKER, MNEMONIST_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.mnemonist.woven.line1",
 						"hemomancy.mnemonist.woven.line2"
@@ -180,6 +215,7 @@ public final class HarbingerMnemonistDialogueTrees {
 				.addNode(slotsNode())
 				.addNode(reliquaryNode())
 				.addNode(loomNode())
+				.addNode(scriptoriumNode(degree))
 				.addNode(mnemonicDoctrineNode())
 				.addNode(new DialogueNode("anchorite_counsel", List.of(
 						"hemomancy.mnemonist.anchorite_counsel.line1",
@@ -187,12 +223,14 @@ public final class HarbingerMnemonistDialogueTrees {
 						new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null))))
 				.addNode(morphlingPuppetInterferenceNode())
 				.addNode(circusNode(degree, circusDiscovered, carryingCircusWaybill))
-				.addNode(chamberNode())
+				.addNode(chamberNode(degree))
 				.addNode(wovenVesselNode())
 				.addNode(starterChoiceNode())
 				.addNode(recruitOfferNode())
-				.addNode(itemHintNode())
-				.build();
+				.addNode(itemHintNode());
+		if (degree >= 4) builder.addNode(memoryPracticeNode());
+		if (degree >= 5) builder.addNode(distributorNode());
+		return builder.build();
 	}
 
 	private static DialogueNode circusNode(int degree, boolean discovered, boolean carryingWaybill) {
@@ -284,12 +322,19 @@ public final class HarbingerMnemonistDialogueTrees {
 				EVENT_RELIQUARY_TAUGHT)));
 	}
 
-	private static DialogueNode chamberNode() {
-		return new DialogueNode("chamber", List.of(
+	private static DialogueNode chamberNode(int degree) {
+		List<String> lines = new ArrayList<>(List.of(
 				"hemomancy.mnemonist.chamber.line1",
 				"hemomancy.mnemonist.chamber.line2",
-				"hemomancy.mnemonist.chamber.line3"
-		), List.of(new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null)));
+				"hemomancy.mnemonist.chamber.line3"));
+		if (degree >= 4) {
+			lines.add("hemomancy.mnemonist.chamber.seat.controls");
+			lines.add("hemomancy.mnemonist.chamber.seat.duration");
+		}
+		if (degree >= 5) lines.add("hemomancy.mnemonist.chamber.support");
+		if (degree >= 6) lines.add("hemomancy.mnemonist.chamber.rite");
+		return new DialogueNode("chamber", List.copyOf(lines),
+				List.of(new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null)));
 	}
 
 	private static DialogueNode loomNode() {
@@ -297,6 +342,32 @@ public final class HarbingerMnemonistDialogueTrees {
 				"hemomancy.mnemonist.loom.line1",
 				"hemomancy.mnemonist.loom.line2"
 		), List.of(new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null)));
+	}
+
+	private static DialogueNode scriptoriumNode(int degree) {
+		List<String> lines = new ArrayList<>(List.of(
+				"hemomancy.mnemonist.scriptorium.role",
+				"hemomancy.mnemonist.scriptorium.materials"));
+		if (degree >= 5) lines.add("hemomancy.mnemonist.scriptorium.eightfold");
+		if (degree >= 7) lines.add("hemomancy.mnemonist.scriptorium.monolithic");
+		return new DialogueNode("scriptorium", lines,
+				List.of(new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null)));
+	}
+
+	private static DialogueNode memoryPracticeNode() {
+		return new DialogueNode("memory_practice", List.of(
+				"hemomancy.mnemonist.memory_practice.line1",
+				"hemomancy.mnemonist.memory_practice.line2"),
+				List.of(new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null)));
+	}
+
+	private static DialogueNode distributorNode() {
+		return new DialogueNode("distributor", List.of(
+				"hemomancy.mnemonist.distributor.line1",
+				"hemomancy.mnemonist.distributor.line2",
+				"hemomancy.mnemonist.distributor.line3",
+				"hemomancy.mnemonist.distributor.line4"),
+				List.of(new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null)));
 	}
 
 	private static DialogueNode wovenVesselNode() {

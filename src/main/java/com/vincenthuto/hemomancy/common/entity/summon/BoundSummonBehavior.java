@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.ToggleablePlayerPowerRules;
@@ -16,7 +17,6 @@ import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
 import com.vincenthuto.hemomancy.common.summon.RingmasterConductorRules;
-import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -373,8 +373,10 @@ public final class BoundSummonBehavior {
 	}
 
 	public static int claimedWillBonusCap(Player owner) {
-		boolean silentArchon = FungalGardenTravelHelper.ARCHON_CHOICE_SILENCE.equals(
-				owner.getPersistentData().getString(FungalGardenTravelHelper.ARCHON_CHOICE_KEY));
+		boolean silentArchon = HemoCapabilityAccess.getInitiatoryDegree(owner)
+				.map(degree -> HarbingerPathPermissions.isProvenSilentArchon(
+						degree.getDegreeNumber(), degree.getArchonPath()))
+				.orElse(false);
 		if (!silentArchon) {
 			return 0;
 		}

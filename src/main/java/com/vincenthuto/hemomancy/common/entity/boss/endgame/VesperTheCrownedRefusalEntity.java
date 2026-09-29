@@ -95,6 +95,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 	private String summonedFlightArenaDimension = "";
 	private UUID ordealOwner;
 	private long bloomOrigin;
+	private UUID bloomId;
 	public final AnimationState transformationAnimationState = new AnimationState();
 
     private final ServerBossEvent bossEvent = new ServerBossEvent(
@@ -256,19 +257,26 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 	}
 
 	public void setOrdeal(UUID owner, long bloomOrigin) {
+		setOrdeal(owner, bloomOrigin, null);
+	}
+
+	public void setOrdeal(UUID owner, long bloomOrigin, UUID bloomId) {
 		this.ordealOwner = owner;
 		this.bloomOrigin = bloomOrigin;
+		this.bloomId = bloomId;
 		this.summonedFlightArenaBound = false;
 	}
 
 	public UUID getOrdealOwner() { return ordealOwner; }
 	public long getBloomOrigin() { return bloomOrigin; }
+	public UUID getBloomId() { return bloomId; }
 
 	@Override
 	public void addAdditionalSaveData(CompoundTag tag) {
 		super.addAdditionalSaveData(tag);
 		if (ordealOwner != null) tag.putUUID("OrdealOwner", ordealOwner);
 		tag.putLong("BloomOrigin", bloomOrigin);
+		if (bloomId != null) tag.putUUID("BloomId", bloomId);
 		tag.putInt("VesperAttack", getAttack().ordinal());
 		tag.putInt("VesperAttackTick", getAttackTick());
 		tag.putInt("BrokenThroneAnchors", getBrokenAnchorMask());
@@ -306,6 +314,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 		super.readAdditionalSaveData(tag);
 		ordealOwner = tag.hasUUID("OrdealOwner") ? tag.getUUID("OrdealOwner") : null;
 		bloomOrigin = tag.getLong("BloomOrigin");
+		bloomId = tag.hasUUID("BloomId") ? tag.getUUID("BloomId") : null;
 		setAttack(VesperPhaseOneAttack.values()[Math.max(0, Math.min(VesperPhaseOneAttack.values().length - 1,
 				tag.getInt("VesperAttack")))]);
 		entityData.set(DATA_ATTACK_TICK, tag.getInt("VesperAttackTick"));

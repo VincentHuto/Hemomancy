@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.DialogueKnowledge;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import net.minecraft.resources.ResourceLocation;
@@ -17,13 +18,41 @@ public final class DialogueHubFactory {
 	private DialogueHubFactory() {}
 
 	public static DialogueTree decorate(DialogueTree tree, String npcId, ServerPlayer player) {
+		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 		if ("hermit".equals(npcId)) {
 			player.getPersistentData().putBoolean(MET_HERMIT, true);
-		} else if (HemoCapabilityAccess.getPlayerDegreeNumber(player) == 0
+		} else if (degree == 0
 				&& !player.getPersistentData().getBoolean(MET_HERMIT)) {
 			tree = addNewcomerGuidance(tree, npcId);
 		}
+		if (degree >= 7) {
+			EnumArchonPath path = HemoCapabilityAccess.getInitiatoryDegree(player)
+					.map(capability -> capability.getArchonPath()).orElse(EnumArchonPath.NONE);
+			tree = withArchonAcknowledgment(tree, npcId, degree, path);
+		}
 		return decorate(tree, npcId, player.getData(HemoAttachmentTypes.DIALOGUE_KNOWLEDGE));
+	}
+
+	static DialogueTree withArchonAcknowledgment(DialogueTree tree, String npcId, int degree,
+			EnumArchonPath path) {
+		if (degree < 7 || !Set.of("vicar", "alchemist", "artificer", "mnemonist").contains(npcId)) {
+			return tree;
+		}
+		DialogueNode root = tree.getStartNode();
+		if (root == null) return tree;
+		String state = switch (path) {
+			case NONE -> "undecided";
+			case SILENT_PENDING -> "silent_pending";
+			case SILENT_ARCHON -> "silent_archon";
+			case APOTHEOS_PENDING -> "apotheos_pending";
+			case APOTHEOS -> "apotheos";
+		};
+		Map<String, DialogueNode> nodes = new LinkedHashMap<>(tree.nodes());
+		List<String> lines = new ArrayList<>(root.lines());
+		lines.add("hemomancy.dialogue.ending." + npcId + "." + state);
+		nodes.put(root.id(), new DialogueNode(root.id(), lines, root.options()));
+		return new DialogueTree(tree.speakerName(), tree.speakerIcon(), tree.startNodeId(), nodes,
+				tree.entityId(), tree.theme(), tree.presentation());
 	}
 
 	private static DialogueTree addNewcomerGuidance(DialogueTree tree, String npcId) {
@@ -116,7 +145,9 @@ public final class DialogueHubFactory {
 		String value = (option.text() + " " + nullToEmpty(option.nextNodeId()) + " "
 				+ nullToEmpty(option.eventId())).toLowerCase(Locale.ROOT);
 		if (containsAny(value, "quest", "assignment", "reward", "claim", "brief", "task", "report",
-				"lesson", "directive", "diagnosis", "observance", "taxonomy", "bestiary")) {
+				"lesson", "directive", "diagnosis", "observance", "taxonomy", "bestiary",
+				"fungal_survey", "voyager_introduction", "morphling_handling", "circus_referral",
+				"deep_dark_commission", "phlegethontic_commission", "vagrant_inquiry")) {
 			return DialogueCategory.QUESTS;
 		}
 		if (containsAny(value, "about", "lore", "history", "order", "rite", "ritual", "machine",

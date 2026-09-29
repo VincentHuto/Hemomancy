@@ -5,7 +5,7 @@
   "required_degree": 5,
   "rankup": false,
   "riteName": "Rite of Armature Consecration",
-  "riteDescription": "Consecrate the Hematic Armature with the Vicar's kit and close its two blood circuits.",
+  "riteDescription": "Consecrate the Hematic Armature with the Armature Consecration Kit and close its two blood circuits.",
   "floor": "hemomancy:working_greater",
   "required_structure": {
     "pattern": [[" S "], ["   "], ["   "]],

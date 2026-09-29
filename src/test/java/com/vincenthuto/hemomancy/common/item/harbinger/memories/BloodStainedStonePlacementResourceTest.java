@@ -37,7 +37,7 @@ public final class BloodStainedStonePlacementResourceTest {
 		assertContains("marker block uses the expected registry id", blockInit,
 				"\"placed_blood_stained_stone\"");
 		assertContains("marker block has no auto block item", blockInit,
-				"block == BlockInit.placed_blood_stained_stone.get()");
+				"\"placed_blood_stained_stone\", \"blood_stained_stone\"");
 
 		assertContains("marker block is a thin flat sprite", placedBlock,
 				"Block.box(2.0D, 0.0D, 2.0D, 14.0D, 2.0D, 14.0D)");

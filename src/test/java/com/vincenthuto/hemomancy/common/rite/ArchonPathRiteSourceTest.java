@@ -15,7 +15,8 @@ public final class ArchonPathRiteSourceTest {
 		assertContains(dialogue, "EnumArchonPath.APOTHEOS_PENDING");
 		String pruning = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingSicklePruning.java");
 		assertContains(pruning, "EnumArchonPath.SILENT_PENDING");
-		assertContains(pruning, "data.severBloom(pos)");
+		assertContains(pruning, "data.severBloom(bloom)");
+		assertContains(pruning, "root.getUUID(BLOOM_ID_KEY).equals(bloom.bloomId())");
 		assertContains(ordeal, "EnumArchonPath.SILENT_ARCHON");
 		assertContains(ordeal, "ADV_VESPER_DEFEATED");
 		assertNotContains(rites, "completePruningOfQliphoth");

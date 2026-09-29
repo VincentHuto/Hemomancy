@@ -130,6 +130,36 @@ public class HarbingerAlchemistEntity extends com.vincenthuto.hemomancy.common.s
                     com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.hasAdvancement(
                             serverPlayer, BodyAnswersAssignment.ADV_COMPLETE));
         }
+        tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.FirstDrawsDialogue.append(tree, serverPlayer);
+        tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.SpecimenJarLessonDialogue.append(tree, serverPlayer);
+        if (com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.eligible(serverPlayer)) {
+            var survey = com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.progress(serverPlayer);
+            tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.OverworldFungalSurveyDialogue
+                    .withAlchemistReport(tree, degree, survey.visited(), survey.specimens(), survey.reported());
+        }
+        if (com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingAssignment.eligible(serverPlayer)) {
+            var handling = com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingAssignment
+                    .progress(serverPlayer);
+            tree = MorphlingHandlingDialogue.withAlchemistInspection(tree, degree, handling.proof(),
+                    handling.inspected());
+        }
+        if (com.vincenthuto.hemomancy.common.mission.alchemist.DeepDarkCommission.eligible(serverPlayer)) {
+            var commission = com.vincenthuto.hemomancy.common.mission.alchemist.DeepDarkCommission
+                    .progress(serverPlayer);
+            tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.DeepDarkCommissionDialogue
+                    .withAlchemistCommission(tree, degree, commission.sampleProof(), commission.reported());
+        }
+        if (com.vincenthuto.hemomancy.common.mission.alchemist.PhlegethonticCommission.eligible(serverPlayer)) {
+            var commission = com.vincenthuto.hemomancy.common.mission.alchemist.PhlegethonticCommission
+                    .progress(serverPlayer);
+            tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.PhlegethonticCommissionDialogue
+                    .withAlchemistCommission(tree, degree, commission.sampleProof(),
+                            commission.scyphusCount(), commission.reported());
+        }
+        if (com.vincenthuto.hemomancy.common.mission.shared.VagrantMindInquiry.eligible(serverPlayer)) {
+            tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.VagrantMindInquiryDialogue.biology(
+                    tree, com.vincenthuto.hemomancy.common.mission.shared.VagrantMindInquiry.progress(serverPlayer));
+        }
         tree = EarlyInitiationDialogue.alchemist(tree, serverPlayer);
 		return com.vincenthuto.hemomancy.common.entity.npc.dialogue.AdvancedBrewingDialogue.append(
 				ClinicalBloodDialogue.append(HarbingerAlchemistDialogueTrees.withArtificerCorrespondence(tree,

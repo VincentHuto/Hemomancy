@@ -76,11 +76,11 @@ The Conduit's Rites tab explains how later ceremonies add each mechanic.
 
 ### Learning before the Somatic Loom
 
-Early memories do not require a loom. Player-killed Thirsters can drop crude Blood Shot or Blood Rush memories; Hematic Constructs can drop Deadly Gaze. Harbinger Outposts can contain all eight crude memories, including Mending, Hemorrhage, Glacial Grasp, Sanguine Ignition and Void Shroud. Drops are random.
+Early memories do not require a loom. Player-killed Thirsters can drop crude Blood Shot or Blood Rush memories; Hematic Constructs can drop Deadly Gaze. Harbinger Outposts can contain all eight crude memories, including Mending, Hemorrhage, Glacial Grasp, Sanguine Ignition and Void Shroud. Drops are random. At Degree II, the Mnemonist also offers one deliberate choice of Blood Shot, Blood Rush, or Deadly Gaze. Earlier found memories still work, and a previously claimed choice is not granted twice.
 
 Right-click a crude memory with active blood and its required learning degree to learn it for **500 mL**. Casting alignment and casting blood cost are separate requirements, shown on the item. Duplicate learning keeps your blood and shard. Degree I grants Blood Absorption and Blood Projection automatically; the Living Staff comes through its Degree-I structure recipe.
 
-The self-built Somatic Loom remains **Degree III**. A blank memory needs four Sanguine Formations, four Blood-Stained Stone and one Neurotic Enzyme, in addition to each weaving recipe's catalyst, enzymes and blood. See the [acquisition route](../docs/manipulation_work_plan/03-acquisition-results.md#early-route--source-backed-checkpoints) and [complete recipe cost ledger](../docs/manipulation_work_plan/03-memory-recipe-ledger.md).
+The self-built Somatic Loom remains **Degree III**. Ask the Mnemonist about The Woven Vessel or the Loom to learn the blank Hematic Memory recipe. It needs four Sanguine Formations, four Blood-Stained Stone and one Neurotic Enzyme, in addition to each weaving recipe's catalyst, enzymes and blood. Project the formations, search Hermitage Remnants for the stones, and spin ordinary chicken Blood Vials for Neurotic Enzyme. Chicken blood can also yield Vivacious Enzyme, so collect more than one vial. See the [acquisition route](../docs/manipulation_work_plan/03-acquisition-results.md#early-route--source-backed-checkpoints) and [complete recipe cost ledger](../docs/manipulation_work_plan/03-memory-recipe-ledger.md).
 
 ### Blood Volume
 Blood is the resource used by Hemomancy. Most adult humans contain about **5000 mL** of blood, and activation starts you at 1000 mL.

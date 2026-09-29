@@ -25,7 +25,8 @@ public final class HarbingerAssignmentStructureSourceTest {
 		assertContains("ledger renders D1 main assignment", ledgerScreen, "renderFirstBloodcraft");
 		assertContains("ledger renders D1 Hermit Road side assignment", ledgerScreen, "renderHermitRoad");
 		assertContains("ledger renders the D2 separation assignment", ledgerScreen, "renderFirstSeparation");
-		assertContains("ledger renders the D2 rank assignment", ledgerScreen, "renderFirstDistillation");
+		assertContains("First Separation ledger includes personal distillation", ledgerScreen,
+				"progress.distillationRecovered()");
 		assertContains("ledger header compares completed and visible assignments", ledgerScreen,
 				"completedAssignmentCount(), visibleAssignmentCount()");
 		assertContains("ledger labels Taxonomy as side assignment", language,
@@ -56,7 +57,8 @@ public final class HarbingerAssignmentStructureSourceTest {
 		assertContains("centrifuge startup grants first separation when successful", startPacket,
 				"ADV_FIRST_SEPARATION_STARTED");
 		assertContains("ledger item detects vial centrifuge", ledgerItem, "hasVialCentrifuge");
-		assertContains("ledger item detects sampled vial", ledgerItem, "hasSampledBloodVial");
+		assertContains("ledger item recognizes a carried sample", ledgerItem,
+				"FirstSeparationAssignment.recognizeInventorySample(player)");
 		assertContains("ledger item builds durable first separation progress", ledgerItem,
 				"FirstSeparationLedgerProgress");
 		assertContains("ledger item uses durable sampling proof", ledgerItem,
@@ -64,7 +66,7 @@ public final class HarbingerAssignmentStructureSourceTest {
 		assertContains("ledger packet carries the assignment progress record", ledgerPacket,
 				"FirstSeparationLedgerProgress firstSeparation");
 		assertContains("ledger packet carries the Degree 3 proof", ledgerPacket,
-				"boolean firstDistillationComplete");
+				"buf.writeBoolean(progress.distillationRecovered())");
 		assertContains("ledger screen renders first separation", ledgerScreen, "renderFirstSeparation");
 		assertContains("first separation computes progress", ledgerScreen, "firstSeparationProgress()");
 		assertContains("first separation displays its whole route", ledgerScreen, "progress.totalSteps()");

@@ -22,7 +22,6 @@ final class CardinalRiteProgressionResourceTest {
 	@Test
 	void promotionRitesUseTheAgreedFormsAndOfferingsWithoutMaterialRewards() throws IOException {
 		assertFalse(Files.exists(ROOT.resolve("votary_rite.json")));
-		assertPromotion("initiate_rite", 2, "lesser", List.of("hemomancy:hematic_iron_powder"));
 		assertPromotion("sanguine_brotherhood", 3, "lesser", List.of("hemomancy:hematic_iron_powder"));
 		assertPromotion("illuminatus_rite", 4, "greater",
 				List.of("hemomancy:hematic_memory", "minecraft:glowstone_dust"));
@@ -32,6 +31,15 @@ final class CardinalRiteProgressionResourceTest {
 		assertPromotion("archon_rite", 6, "grand",
 				List.of("hemomancy:sanguine_quintessence", "hemomancy:hematic_memory",
 						"hemomancy:fervent_husk", "minecraft:echo_shard", "minecraft:ender_eye"));
+	}
+
+	@Test
+	void incarnadineFaneCeremonyHasItsOwnSelector() throws IOException {
+		JsonObject rite = rite("initiate_rite");
+		assertEquals(2, rite.get("required_degree").getAsInt());
+		assertFalse(rite.get("rankup").getAsBoolean());
+		assertEquals("minecraft:iron_nugget", rite.getAsJsonArray("brazier_signature").get(0)
+				.getAsJsonObject().getAsJsonObject("ingredient").get("item").getAsString());
 	}
 
 	@Test
@@ -85,7 +93,6 @@ final class CardinalRiteProgressionResourceTest {
 			for (Path path : paths.filter(p -> p.toString().endsWith(".json")).toList()) {
 				JsonObject json = read(path);
 				if (json.has("unstained") && json.get("unstained").getAsBoolean()) continue;
-				if ("apotheos_rite.json".equals(path.getFileName().toString())) continue;
 				if (json.has("puppeteer_trial")) continue;
 				assertEquals(0.0D, json.get("bloodCost").getAsDouble(), 0.0D, path.getFileName().toString());
 			}
@@ -93,15 +100,15 @@ final class CardinalRiteProgressionResourceTest {
 	}
 
 	@Test
-	void apotheosEconomyRemainsOutsideThisProgressionPass() throws IOException {
+	void apotheosUsesTheInteractiveCeremonyEconomy() throws IOException {
 		JsonObject json = rite("apotheos_rite");
-		assertEquals(7000.0D, json.get("bloodCost").getAsDouble(), 0.0D);
+		assertEquals(0.0D, json.get("bloodCost").getAsDouble(), 0.0D);
 		assertEquals("hemomancy:sanguine_quintessence",
 				json.getAsJsonObject("result").get("id").getAsString());
 	}
 
 	@Test
-	void apotheosDeclaresItsCodecIdSoItsProgressionExemptionSurvivesDecode() throws IOException {
+	void apotheosDeclaresItsCodecIdForCeremonyValidation() throws IOException {
 		JsonObject json = rite("apotheos_rite");
 		assertEquals("hemomancy:cardinal_rite/apotheos_rite", json.get("id").getAsString());
 	}

@@ -117,7 +117,7 @@ public final class CardinalRiteNpcTravel {
         var world = dimension(level.getServer(), trip.getString("RiteDimension"));
         var rite = world == null ? null : CardinalRiteSavedData.get(world).getRite(trip.getUUID("Caster"));
         if (rite == null || rite.getCenterPos().asLong() != trip.getLong("Center")
-                || !rite.getAllyRoles().containsKey(npc.getUUID()) || rite.isComplete()
+                || !rite.getAllyRoles().containsKey(npc.getUUID())
                 || rite.getPhase() == CardinalRitePhase.COLLAPSED || !SuccessionResidents.helper(npc)) {
             returnHome(level, npc);
         }

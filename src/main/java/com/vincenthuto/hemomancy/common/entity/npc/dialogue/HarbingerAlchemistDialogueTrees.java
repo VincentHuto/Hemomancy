@@ -27,7 +27,8 @@ import static com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgre
  */
 public final class HarbingerAlchemistDialogueTrees {
 
-	private static final ResourceLocation ALCHEMIST_ICON = Hemomancy.rloc("textures/entity/npc/harbinger/harbinger_alchemist/harbinger_alchemist.png");
+	private static final ResourceLocation ALCHEMIST_ICON = ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID,
+			"textures/entity/npc/harbinger/harbinger_alchemist/harbinger_alchemist.png");
 	private static final String SPEAKER = "entity.hemomancy.harbinger_alchemist";
 	public static final String EVENT_RED_TAXONOMY_PREFIX = "alchemist_red_taxonomy_";
 	public static final String EVENT_BESTIARY_RECORD = "alchemist_bestiary_record";
@@ -117,8 +118,9 @@ public final class HarbingerAlchemistDialogueTrees {
 			boolean canBriefFirstSeparation, boolean canClaimFirstSeparation, boolean canBriefBodyAnswers,
 			boolean canDiscussMuscleMemories) {
 		if (degree >= 2 && (heldRedTaxonomySample != null || heldSpecimenJar != null)) {
-			return votary(entityId, heldRedTaxonomySample, heldSpecimenJar, canBriefFirstSeparation,
-					canClaimFirstSeparation, canBriefBodyAnswers, canDiscussMuscleMemories);
+			return withCurrentVesselLesson(votary(entityId, heldRedTaxonomySample, heldSpecimenJar,
+					canBriefFirstSeparation, canClaimFirstSeparation, canBriefBodyAnswers,
+					canDiscussMuscleMemories), degree, entityId);
 		}
 		DialogueTree tree = switch (degree) {
 			case 0 -> uninitiated(entityId);
@@ -148,6 +150,33 @@ public final class HarbingerAlchemistDialogueTrees {
 		}
 		options.addAll(tree.getStartNode().options());
 		nodes.put(tree.startNodeId(), new DialogueNode(tree.startNodeId(), tree.getStartNode().lines(), options));
+		return new DialogueTree(tree.speakerName(), tree.speakerIcon(), tree.startNodeId(), nodes,
+				tree.entityId(), tree.theme(), tree.presentation());
+	}
+
+	static DialogueTree withCurrentVesselLesson(DialogueTree tree, int degree, int entityId) {
+		DialogueTree lesson = switch (degree) {
+			case 3 -> initiate(entityId);
+			case 4 -> adept(entityId);
+			case 5 -> illuminatus(entityId, false, false);
+			case 6 -> sanctified(entityId, false, false);
+			default -> null;
+		};
+		if (lesson == null) return tree;
+		String nodeId = switch (degree) {
+			case 3 -> "pallid_vessel";
+			case 4 -> "crimson_vessel";
+			case 5 -> "ashen_vessel";
+			default -> "curved_horn";
+		};
+		Map<String, DialogueNode> nodes = new LinkedHashMap<>(tree.nodes());
+		nodes.put(nodeId, lesson.getNode(nodeId));
+		DialogueNode start = tree.getStartNode();
+		List<DialogueOption> options = new ArrayList<>(start.options());
+		lesson.getStartNode().options().stream()
+				.filter(option -> nodeId.equals(option.nextNodeId()))
+				.findFirst().ifPresent(option -> options.add(Math.max(0, options.size() - 1), option));
+		nodes.put(start.id(), new DialogueNode(start.id(), start.lines(), List.copyOf(options)));
 		return new DialogueTree(tree.speakerName(), tree.speakerIcon(), tree.startNodeId(), nodes,
 				tree.entityId(), tree.theme(), tree.presentation());
 	}
@@ -442,13 +471,22 @@ public final class HarbingerAlchemistDialogueTrees {
 						"hemomancy.alchemist.red_taxonomy.intro.line3",
 						"hemomancy.alchemist.red_taxonomy.intro.line4"
 				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.bloodwood_lesson",
+								"bloodwood_lesson", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_centrifuge",
 								"centrifuge_lore", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
+				.addNode(new DialogueNode("bloodwood_lesson", List.of(
+					"hemomancy.alchemist.bloodwood_lesson.line1",
+					"hemomancy.alchemist.bloodwood_lesson.line2"
+				), List.of(
+					new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
 				.addNode(new DialogueNode("living_bestiary_intro", List.of(
 						"hemomancy.alchemist.living_bestiary.intro.line1",
-						"hemomancy.alchemist.living_bestiary.intro.line2"
+						"hemomancy.alchemist.living_bestiary.intro.line2",
+						"hemomancy.alchemist.living_bestiary.intro.line3"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_morphlings",
 								"living_bestiary_morphlings", null),
@@ -613,6 +651,7 @@ public final class HarbingerAlchemistDialogueTrees {
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_mnemonist_work",
 				"mnemonist_breadcrumb", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_loom", "loom_lore", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.pallid_vessel", "pallid_vessel", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.what_is_memory_weaving", "memory_weaving", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null));
@@ -637,6 +676,11 @@ public final class HarbingerAlchemistDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
+				.addNode(new DialogueNode("pallid_vessel", List.of(
+						"hemomancy.alchemist.initiate.pallid_vessel.rite",
+						"hemomancy.alchemist.initiate.pallid_vessel.fill",
+						"hemomancy.alchemist.initiate.pallid_vessel.withdraw"
+				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
 				.addNode(new DialogueNode("item_hint", List.of(
 						"hemomancy.alchemist.item_hint"
 				), List.of(
@@ -654,6 +698,9 @@ public final class HarbingerAlchemistDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_scar_station", "scar_station_lore", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_chisel_station", "chisel_lore", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.lantern_cultivation", "lantern_cultivation", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.wild_morphlings", "wild_morphlings", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.crimson_vessel", "crimson_vessel", null),
       new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
@@ -668,6 +715,17 @@ public final class HarbingerAlchemistDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
+				.addNode(new DialogueNode("lantern_cultivation", List.of(
+						"hemomancy.alchemist.adept.lantern.line1",
+						"hemomancy.alchemist.adept.lantern.line2"
+				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
+				.addNode(new DialogueNode("wild_morphlings", List.of(
+						"hemomancy.alchemist.adept.morphlings.line1",
+						"hemomancy.alchemist.adept.morphlings.line2"
+				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
+				.addNode(new DialogueNode("crimson_vessel", List.of(
+						"hemomancy.alchemist.adept.crimson_vessel"
+				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
 				.addNode(new DialogueNode("item_hint", List.of(
 						"hemomancy.alchemist.item_hint"
 				), List.of(
@@ -680,6 +738,7 @@ public final class HarbingerAlchemistDialogueTrees {
 	public static DialogueTree illuminatus(int entityId, boolean hasBloodline, boolean isNpcRecruited) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_morphling_incubator", "incubator_lore", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.ashen_vessel", "ashen_vessel", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null));
 		addRecruitmentOption(greetingOptions, hasBloodline, isNpcRecruited);
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null));
@@ -692,6 +751,9 @@ public final class HarbingerAlchemistDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
+				.addNode(new DialogueNode("ashen_vessel", List.of(
+						"hemomancy.alchemist.illuminatus.ashen_vessel"
+				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
 				.addNode(new DialogueNode("recruit_offer", List.of(
 						"hemomancy.dialogue.recruit.alchemist.consider",
 						"hemomancy.dialogue.recruit.alchemist.accept"
@@ -711,6 +773,7 @@ public final class HarbingerAlchemistDialogueTrees {
 	public static DialogueTree sanctified(int entityId, boolean hasBloodline, boolean isNpcRecruited) {
 		List<DialogueOption> greetingOptions = new ArrayList<>();
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.what_remains", "final_machines", null));
+		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.curved_horn", "curved_horn", null));
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null));
 		addRecruitmentOption(greetingOptions, hasBloodline, isNpcRecruited);
 		greetingOptions.add(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null));
@@ -724,6 +787,9 @@ public final class HarbingerAlchemistDialogueTrees {
       new DialogueOption("hemomancy.dialogue.alchemist.option.ask_about_item", "item_hint", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
+				.addNode(new DialogueNode("curved_horn", List.of(
+						"hemomancy.alchemist.sanctified.curved_horn"
+				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
 				.addNode(new DialogueNode("recruit_offer", List.of(
 						"hemomancy.dialogue.recruit.alchemist.consider",
 						"hemomancy.dialogue.recruit.alchemist.accept"

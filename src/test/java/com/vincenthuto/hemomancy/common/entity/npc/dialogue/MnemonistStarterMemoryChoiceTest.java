@@ -7,7 +7,7 @@ public final class MnemonistStarterMemoryChoiceTest {
 	public static void main(String[] args) {
 		eventIdsResolveToStarterChoices();
 		unknownEventDoesNotResolve();
-		claimRulesRequireDegreeOneHarbingerState();
+		claimRulesRequireDegreeTwoHarbingerState();
 	}
 
 	private static void eventIdsResolveToStarterChoices() {
@@ -30,17 +30,19 @@ public final class MnemonistStarterMemoryChoiceTest {
 				MnemonistStarterMemoryChoice.fromEventId("mnemonist_grant_crude_void_shroud").isPresent());
 	}
 
-	private static void claimRulesRequireDegreeOneHarbingerState() {
-		assertTrue("degree one can claim",
+	private static void claimRulesRequireDegreeTwoHarbingerState() {
+		assertTrue("degree two can claim",
+				MnemonistStarterMemoryChoice.canClaim(2, false, false, false));
+		assertFalse("degree one is learning from found memories",
 				MnemonistStarterMemoryChoice.canClaim(1, false, false, false));
 		assertFalse("degree zero cannot claim",
 				MnemonistStarterMemoryChoice.canClaim(0, false, false, false));
 		assertFalse("claimed cannot claim again",
-				MnemonistStarterMemoryChoice.canClaim(1, false, false, true));
+				MnemonistStarterMemoryChoice.canClaim(2, false, false, true));
 		assertFalse("purifying cannot claim",
-				MnemonistStarterMemoryChoice.canClaim(1, true, false, false));
+				MnemonistStarterMemoryChoice.canClaim(2, true, false, false));
 		assertFalse("clarity cannot claim",
-				MnemonistStarterMemoryChoice.canClaim(1, false, true, false));
+				MnemonistStarterMemoryChoice.canClaim(2, false, true, false));
 	}
 
 	private static void assertChoice(String label, String eventId, String manipName, String itemName) {

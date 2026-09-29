@@ -4,22 +4,38 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
-import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerRecruitmentRules;
+import com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.portal.DimensionTransition;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.server.ServerStoppedEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -32,7 +48,14 @@ import java.util.UUID;
 	 *   <li>2 = Set fane recall point to current position (leader only, must be inside the fane)</li>
  * </ul>
  */
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class PacketLedgerAction implements CustomPacketPayload {
+	private static final TicketType<UUID> RECRUIT_LOOKUP_TICKET =
+			TicketType.create("hemomancy_ledger_recruit", UUID::compareTo, 200);
+	private static final Map<UUID, PendingSummon> PENDING_SUMMONS = new HashMap<>();
+	private record PendingSummon(UUID bloodlineId, ResourceKey<Level> dimension,
+			long expiresAt, Set<UUID> recruits) {}
+	private enum SummonResult { MOVED, PENDING, UNAVAILABLE }
 
 	public static final Type<PacketLedgerAction> TYPE = new Type<>(Hemomancy.rloc("packet_ledger_action"));
 	public static final StreamCodec<FriendlyByteBuf, PacketLedgerAction> STREAM_CODEC = StreamCodec.of(PacketLedgerAction::encode, PacketLedgerAction::decode);
@@ -134,6 +157,8 @@ public class PacketLedgerAction implements CustomPacketPayload {
 
 		ServerLevel sLevel = (ServerLevel) player.level();
 		int summoned = 0;
+		int unavailable = 0;
+		Set<UUID> pending = new LinkedHashSet<>();
 
 		for (UUID npcUUID : bloodline.getNpcMemberUUIDs()) {
 			Entity existing = sLevel.getEntity(npcUUID);
@@ -141,10 +166,16 @@ public class PacketLedgerAction implements CustomPacketPayload {
 				continue;
 			}
 
-			if (teleportOrSpawnNpc(sLevel, player, npcUUID)) {
-				summoned++;
+			switch (teleportNpc(sLevel, player, bloodline, npcUUID)) {
+				case MOVED -> summoned++;
+				case PENDING -> pending.add(npcUUID);
+				case UNAVAILABLE -> unavailable++;
 			}
 		}
+		if (pending.isEmpty()) PENDING_SUMMONS.remove(player.getUUID());
+		else PENDING_SUMMONS.put(player.getUUID(), new PendingSummon(
+				bloodline.getBloodlineUUID(), sLevel.dimension(),
+				player.server.getTickCount() + 100L, pending));
 
 		if (summoned > 0) {
 			sLevel.playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT,
@@ -153,11 +184,21 @@ public class PacketLedgerAction implements CustomPacketPayload {
 					Component.translatable("hemomancy.ledger.summon.success", summoned)
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 					false);
-		} else {
+		} else if (unavailable == 0 && pending.isEmpty()) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.ledger.summon.already_near")
 							.withStyle(ChatFormatting.GRAY),
 					false);
+		}
+		if (unavailable > 0) {
+			player.displayClientMessage(Component.translatable(
+					"hemomancy.ledger.summon.unavailable")
+					.withStyle(ChatFormatting.DARK_RED), false);
+		}
+		if (!pending.isEmpty()) {
+			player.displayClientMessage(Component.translatable(
+					"hemomancy.ledger.summon.searching")
+					.withStyle(ChatFormatting.GRAY), false);
 		}
 	}
 
@@ -294,33 +335,111 @@ public class PacketLedgerAction implements CustomPacketPayload {
 				false);
 	}
 
-	private static boolean teleportOrSpawnNpc(ServerLevel level, ServerPlayer player, UUID npcUUID) {
+	private static SummonResult teleportNpc(ServerLevel level, ServerPlayer player, Bloodline bloodline, UUID npcUUID) {
+		if (findLoadedRecruit(level, npcUUID) != null) {
+			return moveLoadedRecruit(level, player, npcUUID) ? SummonResult.MOVED : SummonResult.UNAVAILABLE;
+		}
+		if (!loadRecordedOutpost(level, bloodline, npcUUID)) return SummonResult.UNAVAILABLE;
+		return moveLoadedRecruit(level, player, npcUUID) ? SummonResult.MOVED : SummonResult.PENDING;
+	}
+
+	private static boolean moveLoadedRecruit(ServerLevel level, ServerPlayer player, UUID npcUUID) {
 		double targetX = player.getX() + (player.getRandom().nextDouble() - 0.5) * 3.0;
 		double targetY = player.getY();
 		double targetZ = player.getZ() + (player.getRandom().nextDouble() - 0.5) * 3.0;
-
-		for (ServerLevel dim : level.getServer().getAllLevels()) {
-			Entity found = dim.getEntity(npcUUID);
-			if (found != null) {
-				found.teleportTo(targetX, targetY, targetZ);
-				return true;
-			}
-		}
-
-		EntityType<?>[] harbingerTypes = {
-			EntityInit.harbinger_vicar.get(),
-			EntityInit.harbinger_alchemist.get()
-		};
-		EntityType<?> type = harbingerTypes[(npcUUID.hashCode() & Integer.MAX_VALUE) % harbingerTypes.length];
-
-		Entity spawned = type.create(level);
-		if (spawned != null) {
-			spawned.setUUID(npcUUID);
-			spawned.setPos(targetX, targetY, targetZ);
-			level.addFreshEntity(spawned);
+		Entity found = findLoadedRecruit(level, npcUUID);
+		if (!(found instanceof ProfessionalHarbingerEntity npc) || !npc.isAlive()) return false;
+		if (npc.level() == level) {
+			npc.teleportTo(targetX, targetY, targetZ);
 			return true;
 		}
-		return false;
+		Entity moved = npc.changeDimension(new DimensionTransition(level,
+				new Vec3(targetX, targetY, targetZ), Vec3.ZERO,
+				npc.getYRot(), npc.getXRot(), DimensionTransition.DO_NOTHING));
+		return moved != null && moved.level() == level && moved.getUUID().equals(npcUUID);
+	}
+
+	private static Entity findLoadedRecruit(ServerLevel level, UUID npcUUID) {
+		for (ServerLevel dim : level.getServer().getAllLevels()) {
+			Entity found = dim.getEntity(npcUUID);
+			if (found != null) return found;
+		}
+		return null;
+	}
+
+	private static boolean loadRecordedOutpost(ServerLevel level, Bloodline bloodline, UUID npcUUID) {
+		int index = bloodline.getNpcMemberUUIDs().indexOf(npcUUID);
+		if (index < 0 || index >= bloodline.getNpcMemberOutposts().size()) return false;
+		var origin = HarbingerRecruitmentRules.outpostOrigin(
+				bloodline.getNpcMemberOutposts().get(index));
+		if (origin.isEmpty()) return false;
+		var site = origin.get();
+		ServerLevel source = level.getServer().getLevel(
+				ResourceKey.create(Registries.DIMENSION, site.dimension()));
+		if (source == null) return false;
+		source.resetEmptyTime();
+		// Chunk data can load before its entities enter the UUID lookup; the pending call retries on later ticks.
+		for (int x = site.minChunkX(); x <= site.maxChunkX(); x++) {
+			for (int z = site.minChunkZ(); z <= site.maxChunkZ(); z++) {
+				ChunkPos chunk = new ChunkPos(x, z);
+				source.getChunkSource().addRegionTicket(RECRUIT_LOOKUP_TICKET, chunk, 2, npcUUID, true);
+				source.getChunkAt(new BlockPos(x * 16, 0, z * 16));
+				if (source.getEntity(npcUUID) != null) return true;
+			}
+		}
+		return true;
+	}
+
+	@SubscribeEvent
+	public static void onServerTick(ServerTickEvent.Post event) {
+		var server = event.getServer();
+		Iterator<Map.Entry<UUID, PendingSummon>> requests = PENDING_SUMMONS.entrySet().iterator();
+		while (requests.hasNext()) {
+			var request = requests.next();
+			var pending = request.getValue();
+			ServerPlayer player = server.getPlayerList().getPlayer(request.getKey());
+			if (player == null || !player.level().dimension().equals(pending.dimension())) {
+				requests.remove();
+				continue;
+			}
+			Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(player)
+					.map(IBloodVolume::getBloodLine).orElse(Bloodline.NOBLOODLINE);
+			if (!bloodline.isValid() || !bloodline.getBloodlineUUID().equals(pending.bloodlineId())
+					|| !isInsideOwnedFane(player, getFaneOwner(bloodline, player))) {
+				requests.remove();
+				continue;
+			}
+			int summoned = 0;
+			Iterator<UUID> recruits = pending.recruits().iterator();
+			while (recruits.hasNext()) {
+				UUID npcId = recruits.next();
+				if (!bloodline.hasNpcMember(npcId)) {
+					recruits.remove();
+				} else if (findLoadedRecruit(player.serverLevel(), npcId) != null) {
+					if (moveLoadedRecruit(player.serverLevel(), player, npcId)) summoned++;
+					recruits.remove();
+				}
+			}
+			if (summoned > 0) {
+				player.serverLevel().playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT,
+						SoundSource.PLAYERS, 1.0f, 0.7f);
+				player.displayClientMessage(Component.translatable(
+						"hemomancy.ledger.summon.success", summoned)
+						.withStyle(ChatFormatting.DARK_RED), false);
+			}
+			if (pending.recruits().isEmpty()) requests.remove();
+			else if (server.getTickCount() >= pending.expiresAt()) {
+				player.displayClientMessage(Component.translatable(
+						"hemomancy.ledger.summon.unavailable")
+						.withStyle(ChatFormatting.DARK_RED), false);
+				requests.remove();
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void onServerStopped(ServerStoppedEvent event) {
+		PENDING_SUMMONS.clear();
 	}
 
 	@Override

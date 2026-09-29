@@ -6,6 +6,8 @@ import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
+import com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity;
+import com.vincenthuto.hemomancy.common.succession.SuccessionResidents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -41,11 +43,13 @@ public final class CardinalRiteAllyService {
 		if (role == null || !supportsRole(CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId()), role)) return false;
 		Bloodline line = bloodline(level, rite);
 		if (line == null || !line.hasMember(player.getUUID())) return false;
-        for (var entry : rite.getAllyRoles().entrySet()) {
+        for (var entry : java.util.List.copyOf(rite.getAllyRoles().entrySet())) {
             if (entry.getValue() != role || entry.getKey().equals(player.getUUID())) continue;
+            if (line.hasMember(entry.getKey())) return true;
             var resident = CardinalRiteNpcTravel.find(level, entry.getKey());
-            if (resident == null || !line.hasNpcMember(entry.getKey())
-                    || !CardinalRiteNpcTravel.returnHome(level, resident)) return true;
+            if (resident != null && line.hasNpcMember(entry.getKey())
+                    && resident instanceof ProfessionalHarbingerEntity professional && professional.isSuccessor()
+                    && !CardinalRiteNpcTravel.returnHome(level, resident)) return true;
             rite.removeAlly(entry.getKey());
         }
 		int quota = helperQuota(level, rite);
@@ -69,15 +73,18 @@ public final class CardinalRiteAllyService {
 
 	public static boolean tryAssignNpc(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite,
 			Entity npc) {
-        if (!com.vincenthuto.hemomancy.common.succession.SuccessionResidents.helper(npc)) return false;
 		if (rite.getPhase() != CardinalRitePhase.INSCRIPTION || rite.getDegree() < 5
 				|| !rite.getPlayerUUID().equals(caster.getUUID())) return false;
 		Bloodline line = bloodline(level, rite);
-		if (line == null || !line.hasNpcMember(npc.getUUID())) return false;
+		if (!eligibleNpcHelper(npc, line)) return false;
 		if (line.isNpcBloodspent(npc.getUUID(), level.getGameTime())) {
 			caster.displayClientMessage(Component.literal("That ally is Bloodspent and must rest for a full day.")
 					.withStyle(ChatFormatting.DARK_RED), true);
 			return true;
+		}
+		for (var assigned : rite.getAllyRoles().keySet()) {
+			if (!line.hasMember(assigned) && (!line.hasNpcMember(assigned)
+					|| CardinalRiteNpcTravel.find(level, assigned) == null)) rite.removeAlly(assigned);
 		}
 		int quota = helperQuota(level, rite);
 		if (!rite.getAllyRoles().containsKey(npc.getUUID()) && rite.getAllyRoles().size() >= quota) {
@@ -99,7 +106,7 @@ public final class CardinalRiteAllyService {
 					.withStyle(ChatFormatting.DARK_RED), true);
 			return true;
 		}
-		CardinalRiteNpcTravel.remember(level, rite, mob);
+		if (((ProfessionalHarbingerEntity) npc).isSuccessor()) CardinalRiteNpcTravel.remember(level, rite, mob);
 		rite.assignAlly(npc.getUUID(), next);
 		directToStation(level, rite, mob, next);
 		caster.displayClientMessage(Component.literal("Assigned " + npc.getName().getString() + " as "
@@ -145,8 +152,7 @@ public final class CardinalRiteAllyService {
 			if (line.isNpcBloodspent(ally, level.getGameTime())) return false;
 			Entity entity = level.getEntity(ally);
 			CardinalRiteAllyRole role = rite.getAllyRoles().get(ally);
-			if (!(entity instanceof Mob mob) || role == null
-                    || !com.vincenthuto.hemomancy.common.succession.SuccessionResidents.helper(entity)) return false;
+			if (!(entity instanceof Mob mob) || role == null || !eligibleNpcHelper(entity, line)) return false;
 			BlockPos station = station(level, rite, role);
 			boolean safe = safeStation(level, mob, station);
 			return CardinalRiteNpcStationRules.participates(mob.position(), station, safe);
@@ -170,26 +176,37 @@ public final class CardinalRiteAllyService {
 		for (var assignment : rite.getAllyRoles().entrySet()) {
 			if (!line.hasNpcMember(assignment.getKey())) continue;
 			Entity entity = level.getEntity(assignment.getKey());
-			if (entity instanceof Mob mob && com.vincenthuto.hemomancy.common.succession.SuccessionResidents.helper(entity)) {
+			if (entity instanceof Mob mob && eligibleNpcHelper(entity, line)) {
 				directToStation(level, rite, mob, assignment.getValue());
 			}
 		}
 	}
 
     public static void returnNpcAlliesToFane(ServerLevel level, ActiveCardinalRite rite) {
-        for (var id : rite.getAllyRoles().keySet()) {
-            if (!com.vincenthuto.hemomancy.common.succession.SuccessionSavedData.get(level).residents.containsKey(id)) continue;
+        Bloodline line = bloodline(level, rite);
+        for (var id : java.util.List.copyOf(rite.getAllyRoles().keySet())) {
+            boolean resident = com.vincenthuto.hemomancy.common.succession.SuccessionSavedData.get(level)
+                    .residents.containsKey(id);
+            if (!resident && (line == null || !line.hasNpcMember(id))) continue;
             var role = rite.getAllyRoles().get(id);
             var position = station(level, rite, role);
             if (position != null) level.getChunkAt(position);
             var npc = CardinalRiteNpcTravel.find(level, id);
-            if (npc != null) {
+            if (resident && npc != null) {
                 CardinalRiteNpcTravel.remember(level, rite, npc);
                 CardinalRiteNpcTravel.returnHome(level, npc);
+            } else if (npc != null) {
+                npc.getNavigation().stop();
             }
             rite.removeAlly(id);
         }
     }
+
+	private static boolean eligibleNpcHelper(Entity entity, Bloodline line) {
+		if (line == null || !(entity instanceof ProfessionalHarbingerEntity npc)
+				|| !npc.isAlive() || !line.hasNpcMember(npc.getUUID())) return false;
+		return !npc.isSuccessor() || SuccessionResidents.helper(npc);
+	}
 
 	public static boolean hasRequiredHelperCount(int available, int required) {
 		return Math.max(0, available) >= Math.max(0, required);

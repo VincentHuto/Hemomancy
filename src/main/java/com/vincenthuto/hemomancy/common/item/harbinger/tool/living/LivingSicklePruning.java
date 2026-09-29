@@ -30,6 +30,7 @@ public final class LivingSicklePruning {
 	public static final String BLOOM_DIMENSION_KEY = "HemomancySickleBloomDimension";
 	public static final String BLOOM_POS_KEY = "HemomancySickleBloomPos";
 	public static final String BLOOM_OWNER_KEY = "HemomancySickleBloomOwner";
+	public static final String BLOOM_ID_KEY = "HemomancySickleBloomId";
 
 	private LivingSicklePruning() {
 	}
@@ -51,7 +52,7 @@ public final class LivingSicklePruning {
 						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
 				return true;
 			}
-			if (!data.severBloom(pos)) return true;
+			if (!data.severBloom(bloom)) return true;
 			player.setItemInHand(hand, restoredWeaponStack(held, player.registryAccess()));
 			HarbingerCardinalRiteEvents.syncQliphothBlooms(serverLevel.getServer());
 			serverLevel.playSound(null, pos, SoundEvents.WITHER_BREAK_BLOCK, SoundSource.BLOCKS, 1.1F, 0.55F);
@@ -110,7 +111,7 @@ public final class LivingSicklePruning {
 	private static boolean eligible(ServerPlayer player, QliphothBloomSavedData.BloomEntry bloom,
 			QliphothBloomSavedData data) {
 		return bloom.ownerUUID().equals(player.getUUID())
-				&& data.getState(bloom.center()) == SeveredQliphothState.LIVING
+				&& data.getState(bloom) == SeveredQliphothState.LIVING
 				&& HemoCapabilityAccess.getInitiatoryDegree(player)
 						.map(degree -> degree.getDegreeNumber() == 7
 								&& degree.getArchonPath() == EnumArchonPath.SILENT_PENDING
@@ -128,6 +129,7 @@ public final class LivingSicklePruning {
 		root.putString(BLOOM_DIMENSION_KEY, dimension);
 		root.putLong(BLOOM_POS_KEY, bloom.center().asLong());
 		root.putUUID(BLOOM_OWNER_KEY, bloom.ownerUUID());
+		root.putUUID(BLOOM_ID_KEY, bloom.bloomId());
 		sickle.set(DataComponents.CUSTOM_DATA, CustomData.of(root));
 		return sickle;
 	}
@@ -139,6 +141,9 @@ public final class LivingSicklePruning {
 		return dimension.equals(root.getString(BLOOM_DIMENSION_KEY))
 				&& root.getLong(BLOOM_POS_KEY) == bloom.center().asLong()
 				&& root.hasUUID(BLOOM_OWNER_KEY)
-				&& root.getUUID(BLOOM_OWNER_KEY).equals(bloom.ownerUUID());
+				&& root.getUUID(BLOOM_OWNER_KEY).equals(bloom.ownerUUID())
+				&& (root.hasUUID(BLOOM_ID_KEY)
+						? root.getUUID(BLOOM_ID_KEY).equals(bloom.bloomId())
+						: bloom.migratesLegacyProgress());
 	}
 }

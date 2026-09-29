@@ -68,7 +68,7 @@ public class MycelialLanternMenu extends AbstractContainerMenu {
             public void onTake(Player player, ItemStack stack) {
                 super.onTake(player, stack);
                 if (player instanceof ServerPlayer serverPlayer
-                        && HarbingerAdvancementGranter.hasRecordedEnzyme(serverPlayer, stack)) {
+                        && HarbingerAdvancementGranter.isKnownEnzyme(stack)) {
                     HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
                             HarbingerAdvancementGranter.ADV_FIRST_CULTURE_COMPLETE);
                 }
@@ -171,7 +171,7 @@ public class MycelialLanternMenu extends AbstractContainerMenu {
         else slot.setChanged();
 
         if (slotStack.getCount() == result.getCount()) return ItemStack.EMPTY;
-        slot.onTake(player, slotStack);
+        slot.onTake(player, index == OUTPUT_SLOT ? result : slotStack);
         return result;
     }
 }

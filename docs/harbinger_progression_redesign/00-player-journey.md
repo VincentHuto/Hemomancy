@@ -1,6 +1,6 @@
 # Player journey and lore contract
 
-[Implementation index](../HARBINGER_PROGRESSION_REDESIGN.md)
+[Implementation index](HARBINGER_PROGRESSION_REDESIGN.md)
 
 ## Before Degree 1
 
@@ -85,6 +85,8 @@ Main completion: Chamber return, bound Throne, and successful Vigil certify The 
 The Vicar gives the final doctrinal disclosure. The Mnemonist interprets the Chamber and introduces Monolithic Script. The Artificer teaches Masterwork and the final equipment framework. The Alchemist describes observable changes without presenting speculation as complete knowledge.
 
 The player shatters the Monolith, receives its seed, grows the Bloom, consumes nine Pomes from one Bloom, receives the Spine, and experiences the first temporary projection. The projection returns the player before the final response becomes available.
+
+If the Spine is lost after Communion, the owner can sneak-right-click the same living, spent Bloom with an empty hand to reclaim it. A replacement Bloom at the same position does not inherit that claim.
 
 Silence requires the owned Bloom's severance and the two-phase Vesper ordeal. Only its verified completion produces Silent Archon, still D7. Apotheosis is the alternative route to D8. Preserve retryability, ownership, and branch-specific rewards.
 

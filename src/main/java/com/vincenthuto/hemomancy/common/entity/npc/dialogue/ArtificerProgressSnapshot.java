@@ -14,7 +14,7 @@ public record ArtificerProgressSnapshot(int degree, boolean activeBlood, boolean
 		boolean livingStaffBond, ForkFamily forkFamily, D7Lineage d7Lineage,
 		Step wornVow, Step threeAnswers, Step crimsonVestment, Step assumedLimb, Step weightOfFrame,
 		boolean missingWornVowFitting, boolean missingForkFitting, boolean missingCrimsonFitting,
-		boolean missingAssumedLimbFitting, boolean missingD7Fitting) {
+		boolean missingAssumedLimbFitting, boolean missingD7Fitting, boolean consecrationKitClaimed) {
 	public boolean needsForkRecovery() { return threeAnswers == Step.RECOVER_BRANCH; }
 	public boolean needsD7Recovery() { return weightOfFrame == Step.RECOVER_BRANCH; }
 
@@ -92,7 +92,8 @@ public record ArtificerProgressSnapshot(int degree, boolean activeBlood, boolean
 				forkFitting && !hasForkFitting(player, fork),
 				crimsonFitting && !ArtificerAssignments.hasFitting(player, ItemInit.crimson_vestment_fitting.get()),
 				assumedFitting && !ArtificerAssignments.hasFitting(player, ItemInit.assumed_limb_fitting.get()),
-				d7Fitting && !ArtificerAssignments.hasFitting(player, ItemInit.monolithic_frame_fitting.get()));
+				d7Fitting && !ArtificerAssignments.hasFitting(player, ItemInit.monolithic_frame_fitting.get()),
+				DialogueEventHandler.hasClaimedConsecrationKit(player));
 	}
 
 	private static boolean hasForkFitting(ServerPlayer player, ForkFamily family) {

@@ -1,6 +1,6 @@
 # Phase 6: field research, cultivation, and the Circus
 
-[Index](../HARBINGER_PROGRESSION_REDESIGN.md) · Build on Phases 1-5 without changing Main certification.
+[Index](HARBINGER_PROGRESSION_REDESIGN.md) · Build on Phases 1-5 without changing Main certification.
 
 ## Outcome
 
@@ -53,9 +53,11 @@ The two-specimen Overworld survey is an implementation default, not an existing 
 - [ ] Both fungal survey specimens have validated natural acquisition and valid loot.
 - [ ] Prior reef/Deep Dark/Circus discoveries are acknowledged rather than reset.
 - [ ] D4 cultivation/handling works without D5 incubation.
-- [ ] Either Nether sample satisfies the commission; other profiles and empty/unreadable samples do not.
+- [x] Either Nether sample satisfies the commission; other profiles and empty/unreadable samples do not. The focused mod-loaded test also checks five carried Scyphus items, non-consumption, and saved completion.
 - [ ] Vagrant discovery can advance both investigations without consuming the same unique proof twice.
 - [ ] All quests survive relog/restart and can be resumed with another valid teacher where appropriate.
 - [ ] A player who skips all these branches can still complete the Main chain and choose either ending.
 
 Natural generation, travel time, and supported capture presentation require fresh-world/live checks. Commands that place a structure prove only the placed encounter, not its natural discoverability.
+
+The D6 server path now records a Vagrant Mind interior visit and a separate End biology observation (Choir Keeper, Myelin Borer, or nearby chorus growth), then lets the Mnemonist and Alchemist file independent non-consuming reports. A focused mod-loaded test seeds a prior Mind visit and observes End chorus before dispatching both reports; it does not yet prove that a naturally generated Mind records its interior visit, that the bearing finds one in a fresh world, or that the new ledger is readable in a live client. Keep the acceptance item open until those checks run.

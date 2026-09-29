@@ -74,7 +74,7 @@ public final class ClinicalBloodKnowledge {
         return true;
     }
     public static List<String> recipes(Lesson lesson) {
-        return lesson == Lesson.CLAIRAUDIOGRAPH ? List.of("clairaudiograph", "ambergris_cylinder")
+        return lesson == Lesson.CLAIRAUDIOGRAPH ? List.of("clairaudiograph", "wax_cylinder")
                 : lesson.recipe == null ? List.of() : List.of(lesson.recipe);
     }
     public static boolean recipeVisible(Player player, ResourceLocation recipe) {

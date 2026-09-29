@@ -18,6 +18,7 @@ import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hemomancy.common.rite.*;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules;
+import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.rite.harbinger.PuppeteerTrialRiteController;
 import com.vincenthuto.hemomancy.common.rite.unstained.UnstainedCardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
@@ -53,6 +54,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 	public static final Type<BloodCraftingKeyPressPacket> TYPE = new Type<>(Hemomancy.rloc("blood_crafting_key_press_packet"));
 	public static final StreamCodec<FriendlyByteBuf, BloodCraftingKeyPressPacket> STREAM_CODEC = StreamCodec.of(BloodCraftingKeyPressPacket::encode, BloodCraftingKeyPressPacket::decode);
 	private static final ResourceLocation FOUNDING_FANE_RITE_ID = Hemomancy.rloc("cardinal_rite/founding_fane");
+	private static final ResourceLocation BLOOM_OF_QLIPHOTH_RITE_ID = Hemomancy.rloc("cardinal_rite/bloom_of_qliphoth");
 	private static final ResourceLocation APOTHEOS_RITE_ID = Hemomancy.rloc("cardinal_rite/apotheos_rite");
 	private static final Direction[] SEARCH_DIRECTIONS = Direction.values();
 	public static BloodCraftingKeyPressPacket decode(final FriendlyByteBuf buffer) {
@@ -502,6 +504,10 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 							false);
 						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 					}
+				}
+				if (BLOOM_OF_QLIPHOTH_RITE_ID.equals(recipe.getId())
+						&& !HarbingerCardinalRiteEvents.canPlaceQliphothBloom(sLevel, serverPlayer, centerPos)) {
+					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
 
 				// Start the rite

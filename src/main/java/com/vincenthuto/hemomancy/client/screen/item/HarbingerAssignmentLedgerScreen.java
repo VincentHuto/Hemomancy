@@ -3,7 +3,13 @@ package com.vincenthuto.hemomancy.client.screen.item;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationLedgerProgress;
+import com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingProgress;
+import com.vincenthuto.hemomancy.common.mission.alchemist.DeepDarkCommissionProgress;
+import com.vincenthuto.hemomancy.common.mission.alchemist.PhlegethonticCommissionProgress;
+import com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurveyProgress;
+import com.vincenthuto.hemomancy.common.mission.shared.VagrantMindInquiryProgress;
 import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftLedgerProgress;
+import com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroductionProgress;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.VeinBackgroundRenderer;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MilestoneDrawerState;
@@ -42,8 +48,16 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private static final int FIRST_PROJECTION_HEIGHT = 42 + 2 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP);
 	private static final int FIRST_FORMATION_CRAFT_HEIGHT = FIRST_PROJECTION_HEIGHT;
 	private static final int HERMIT_ROAD_HEIGHT = 110;
-	private static final int FIRST_SEPARATION_HEIGHT = 42 + 7 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP);
-	private static final int FIRST_DISTILLATION_HEIGHT = 68;
+	private static final int FIRST_DRAWS_HEIGHT = 42 + 3 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP);
+	private static final int FUNGAL_SURVEY_HEIGHT = 42 + 3 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP);
+	private static final int VOYAGER_INTRODUCTION_HEIGHT = 42 + 2 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP);
+	private static final int CIRCUS_REFERRAL_HEIGHT = 42 + ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
+	private static final int FIRST_CULTURE_HEIGHT = 42 + ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
+	private static final int MORPHLING_HANDLING_HEIGHT = 42 + 2 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP);
+	private static final int DEEP_DARK_COMMISSION_HEIGHT = 42 + 2 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP);
+	private static final int PHLEGETHONTIC_COMMISSION_HEIGHT = 42 + 3 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP);
+	private static final int VAGRANT_MIND_INQUIRY_HEIGHT = 42 + 4 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP);
+	private static final int FIRST_SEPARATION_HEIGHT = 42 + 8 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP);
 	private static final int BODY_ANSWERS_HEIGHT = 143;
 	private static final int RED_TAXONOMY_HEIGHT = 56;
 	private static final int ENZYME_MASTERY_HEIGHT = 56;
@@ -86,6 +100,8 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			Hemomancy.rloc("textures/entity/npc/harbinger/harbinger_mnemonist/harbinger_mnemonist_portrait.png");
 	private static final ResourceLocation VEIN_MASON_PORTRAIT =
 			Hemomancy.rloc("textures/entity/npc/harbinger/harbinger_cicatrix_anchorite/harbinger_cicatrix_anchorite_portrait.png");
+	private static final ResourceLocation VOYAGER_PORTRAIT =
+			Hemomancy.rloc("textures/entity/npc/harbinger/harbinger_voyager/harbinger_voyager_portrait.png");
 	private static final ResourceLocation ARTIFICER_PORTRAIT =
 			Hemomancy.rloc("textures/entity/npc/harbinger/harbinger_artificer/harbinger_artificer_portrait.png");
 
@@ -105,8 +121,9 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		FIRST_FORMATION_CRAFT(1, AssignmentCategory.MAIN, FIRST_FORMATION_CRAFT_HEIGHT),
 		FIRST_SEPARATION(2, AssignmentCategory.MAIN, FIRST_SEPARATION_HEIGHT),
 		HERMIT_ROAD(1, AssignmentCategory.SIDE, HERMIT_ROAD_HEIGHT),
+		FIRST_DRAWS(1, AssignmentCategory.SIDE, FIRST_DRAWS_HEIGHT),
+		FUNGAL_SURVEY(2, AssignmentCategory.SIDE, FUNGAL_SURVEY_HEIGHT),
         CLINICAL_OBSERVATION(2, AssignmentCategory.SIDE, 42 + 5 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP)),
-		FIRST_DISTILLATION(2, AssignmentCategory.MAIN, FIRST_DISTILLATION_HEIGHT),
         CLINICAL_FIELDWORK(2, AssignmentCategory.SIDE, 42 + 5 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP)),
 		BODY_ANSWERS(2, AssignmentCategory.SIDE, BODY_ANSWERS_HEIGHT),
 		RED_TAXONOMY(2, AssignmentCategory.CATALOGUE, RED_TAXONOMY_HEIGHT),
@@ -114,9 +131,16 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		ENZYME_MASTERY(2, AssignmentCategory.CATALOGUE, ENZYME_MASTERY_HEIGHT),
 		THE_WORN_VOW(2, AssignmentCategory.VOCATION, THE_WORN_VOW_HEIGHT),
 		WOVEN_VESSEL(3, AssignmentCategory.MAIN, WOVEN_VESSEL_HEIGHT),
+		VOYAGER_INTRODUCTION(3, AssignmentCategory.SIDE, VOYAGER_INTRODUCTION_HEIGHT),
+		CIRCUS_REFERRAL(4, AssignmentCategory.SIDE, CIRCUS_REFERRAL_HEIGHT),
 		CLINICAL_ECHOES(3, AssignmentCategory.SIDE, 42 + 3 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP)),
 		THE_THREE_ANSWERS(3, AssignmentCategory.VOCATION, THE_THREE_ANSWERS_HEIGHT),
 		VEIN_MASON(4, AssignmentCategory.MAIN, VEIN_MASON_HEIGHT),
+		FIRST_CULTURE(4, AssignmentCategory.VOCATION, FIRST_CULTURE_HEIGHT),
+		MORPHLING_HANDLING(4, AssignmentCategory.VOCATION, MORPHLING_HANDLING_HEIGHT),
+		DEEP_DARK_COMMISSION(5, AssignmentCategory.SIDE, DEEP_DARK_COMMISSION_HEIGHT),
+		PHLEGETHONTIC_COMMISSION(5, AssignmentCategory.SIDE, PHLEGETHONTIC_COMMISSION_HEIGHT),
+		VAGRANT_MIND_INQUIRY(6, AssignmentCategory.SIDE, VAGRANT_MIND_INQUIRY_HEIGHT),
 		ANCHORITE_D5(5, AssignmentCategory.SIDE, ANCHORITE_D5_HEIGHT),
 		COVENANT_WRITTEN(5, AssignmentCategory.MAIN, COVENANT_WRITTEN_HEIGHT),
 		CRIMSON_VESTMENT(5, AssignmentCategory.VOCATION, CRIMSON_VESTMENT_HEIGHT),
@@ -154,9 +178,14 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private final boolean degreeOne;
 	private final FirstBloodcraftLedgerProgress firstBloodcraft;
 	private final boolean firstRemnant;
+	private final boolean firstDrawsBriefed;
+	private final int firstDrawsSamples;
+	private final int firstDrawsSpecies;
+	private final OverworldFungalSurveyProgress fungalSurvey;
+	private final VoyagerIntroductionProgress voyagerIntroduction;
+	private final boolean circusDiscovered;
 	private final boolean ledgerGranted;
 	private final FirstSeparationLedgerProgress firstSeparation;
-	private final boolean firstDistillationComplete;
 	private final boolean bodyAnswersBriefed;
 	private final boolean bodyAnswersComplete;
 	private final int muscleMemoryCount;
@@ -164,6 +193,11 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private final boolean redTaxonomyComplete;
 	private final int enzymeMasteryCount;
 	private final boolean enzymeMasteryComplete;
+	private final boolean firstCultureComplete;
+	private final MorphlingHandlingProgress morphlingHandling;
+	private final DeepDarkCommissionProgress deepDarkCommission;
+	private final PhlegethonticCommissionProgress phlegethonticCommission;
+	private final VagrantMindInquiryProgress vagrantMindInquiry;
 	private final int livingBestiaryCount;
 	private final int livingBestiaryTotal;
 	private final int morphlingLayerCount;
@@ -219,10 +253,18 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private HarbingerAssignmentLedgerScreen(int degree, boolean firstAwakening, boolean degreeOne,
 			FirstBloodcraftLedgerProgress firstBloodcraft,
 			boolean firstRemnant, boolean ledgerGranted,
-			FirstSeparationLedgerProgress firstSeparation, boolean firstDistillationComplete,
+			boolean firstDrawsBriefed, int firstDrawsSamples, int firstDrawsSpecies,
+			OverworldFungalSurveyProgress fungalSurvey,
+			VoyagerIntroductionProgress voyagerIntroduction,
+			boolean circusDiscovered,
+			FirstSeparationLedgerProgress firstSeparation,
 			boolean bodyAnswersBriefed, boolean bodyAnswersComplete, int muscleMemoryCount,
 			int redTaxonomyCount, boolean redTaxonomyComplete,
-			int enzymeMasteryCount, boolean enzymeMasteryComplete,
+			int enzymeMasteryCount, boolean enzymeMasteryComplete, boolean firstCultureComplete,
+			MorphlingHandlingProgress morphlingHandling,
+			DeepDarkCommissionProgress deepDarkCommission,
+			PhlegethonticCommissionProgress phlegethonticCommission,
+			VagrantMindInquiryProgress vagrantMindInquiry,
 			int livingBestiaryCount, int livingBestiaryTotal, int morphlingLayerCount,
 			boolean hasBlankHematicMemory, boolean mnemonistWovenVesselComplete,
 			boolean mnemonistFirstWeaveComplete,
@@ -247,9 +289,14 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		this.degreeOne = degreeOne;
 		this.firstBloodcraft = firstBloodcraft;
 		this.firstRemnant = firstRemnant;
+		this.firstDrawsBriefed = firstDrawsBriefed;
+		this.firstDrawsSamples = firstDrawsSamples;
+		this.firstDrawsSpecies = firstDrawsSpecies;
+		this.fungalSurvey = fungalSurvey;
+		this.voyagerIntroduction = voyagerIntroduction;
+		this.circusDiscovered = circusDiscovered;
 		this.ledgerGranted = ledgerGranted;
 		this.firstSeparation = firstSeparation;
-		this.firstDistillationComplete = firstDistillationComplete;
 		this.bodyAnswersBriefed = bodyAnswersBriefed;
 		this.bodyAnswersComplete = bodyAnswersComplete;
 		this.muscleMemoryCount = muscleMemoryCount;
@@ -257,6 +304,11 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		this.redTaxonomyComplete = redTaxonomyComplete;
 		this.enzymeMasteryCount = enzymeMasteryCount;
 		this.enzymeMasteryComplete = enzymeMasteryComplete;
+		this.firstCultureComplete = firstCultureComplete;
+		this.morphlingHandling = morphlingHandling;
+		this.deepDarkCommission = deepDarkCommission;
+		this.phlegethonticCommission = phlegethonticCommission;
+		this.vagrantMindInquiry = vagrantMindInquiry;
 		this.livingBestiaryCount = livingBestiaryCount;
 		this.livingBestiaryTotal = livingBestiaryTotal;
 		this.morphlingLayerCount = morphlingLayerCount;
@@ -302,10 +354,18 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	public static void open(int degree, boolean firstAwakening, boolean degreeOne,
 			FirstBloodcraftLedgerProgress firstBloodcraft,
 			boolean firstRemnant, boolean ledgerGranted,
-			FirstSeparationLedgerProgress firstSeparation, boolean firstDistillationComplete,
+			boolean firstDrawsBriefed, int firstDrawsSamples, int firstDrawsSpecies,
+			OverworldFungalSurveyProgress fungalSurvey,
+			VoyagerIntroductionProgress voyagerIntroduction,
+			boolean circusDiscovered,
+			FirstSeparationLedgerProgress firstSeparation,
 			boolean bodyAnswersBriefed, boolean bodyAnswersComplete, int muscleMemoryCount,
 			int redTaxonomyCount, boolean redTaxonomyComplete,
-			int enzymeMasteryCount, boolean enzymeMasteryComplete,
+			int enzymeMasteryCount, boolean enzymeMasteryComplete, boolean firstCultureComplete,
+			MorphlingHandlingProgress morphlingHandling,
+			DeepDarkCommissionProgress deepDarkCommission,
+			PhlegethonticCommissionProgress phlegethonticCommission,
+			VagrantMindInquiryProgress vagrantMindInquiry,
 			int livingBestiaryCount, int livingBestiaryTotal, int morphlingLayerCount,
 			boolean hasBlankHematicMemory, boolean mnemonistWovenVesselComplete,
 			boolean mnemonistFirstWeaveComplete,
@@ -326,9 +386,18 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			boolean severedPortalOpen, boolean silentArchon) {
 		Minecraft.getInstance().setScreen(new HarbingerAssignmentLedgerScreen(
 				degree, firstAwakening, degreeOne, firstBloodcraft,
-				firstRemnant, ledgerGranted, firstSeparation, firstDistillationComplete,
+				firstRemnant, ledgerGranted, firstDrawsBriefed, firstDrawsSamples, firstDrawsSpecies,
+				fungalSurvey,
+				voyagerIntroduction,
+				circusDiscovered,
+				firstSeparation,
 				bodyAnswersBriefed, bodyAnswersComplete, muscleMemoryCount,
 				redTaxonomyCount, redTaxonomyComplete, enzymeMasteryCount, enzymeMasteryComplete,
+				firstCultureComplete,
+				morphlingHandling,
+				deepDarkCommission,
+				phlegethonticCommission,
+				vagrantMindInquiry,
 				livingBestiaryCount, livingBestiaryTotal, morphlingLayerCount, hasBlankHematicMemory,
 				mnemonistWovenVesselComplete, mnemonistFirstWeaveComplete, vicarMasonsRespiteDirective,
 				veinMasonFirstLesson, veinMasonFirstScarCarved, veinMasonFirstScarLearned,
@@ -594,11 +663,19 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			case FIRST_PROJECTION -> renderFirstProjection(gfx, x, y, w, mouseX, mouseY);
 			case FIRST_FORMATION_CRAFT -> renderFirstFormationCraft(gfx, x, y, w, mouseX, mouseY);
 			case HERMIT_ROAD -> renderHermitRoad(gfx, x, y, w, mouseX, mouseY);
+			case FIRST_DRAWS -> renderFirstDraws(gfx, x, y, w, mouseX, mouseY);
+			case FUNGAL_SURVEY -> renderFungalSurvey(gfx, x, y, w, mouseX, mouseY);
+			case VOYAGER_INTRODUCTION -> renderVoyagerIntroduction(gfx, x, y, w, mouseX, mouseY);
+			case CIRCUS_REFERRAL -> renderCircusReferral(gfx, x, y, w, mouseX, mouseY);
+			case FIRST_CULTURE -> renderFirstCulture(gfx, x, y, w, mouseX, mouseY);
+			case MORPHLING_HANDLING -> renderMorphlingHandling(gfx, x, y, w, mouseX, mouseY);
+			case DEEP_DARK_COMMISSION -> renderDeepDarkCommission(gfx, x, y, w, mouseX, mouseY);
+			case PHLEGETHONTIC_COMMISSION -> renderPhlegethonticCommission(gfx, x, y, w, mouseX, mouseY);
+			case VAGRANT_MIND_INQUIRY -> renderVagrantMindInquiry(gfx, x, y, w, mouseX, mouseY);
 			case FIRST_SEPARATION -> renderFirstSeparation(gfx, x, y, w, mouseX, mouseY);
             case CLINICAL_OBSERVATION, CLINICAL_FIELDWORK, CLINICAL_ECHOES ->
                     renderClinical(gfx, section, x, y, w, mouseX, mouseY);
 			case BODY_ANSWERS -> renderBodyAnswers(gfx, x, y, w, mouseX, mouseY);
-			case FIRST_DISTILLATION -> renderFirstDistillation(gfx, x, y, w, mouseX, mouseY);
 			case RED_TAXONOMY -> renderRedTaxonomy(gfx, x, y, w, mouseX, mouseY);
 			case LIVING_BESTIARY -> renderLivingBestiary(gfx, x, y, w, mouseX, mouseY);
 			case ENZYME_MASTERY -> renderEnzymeMastery(gfx, x, y, w, mouseX, mouseY);
@@ -754,6 +831,224 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
                 "hemomancy.clinical.ledger." + steps[i] + ".desc", mx, my);
     }
 
+	private void renderFirstDraws(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+		int done = (firstDrawsBriefed ? 1 : 0) + (firstDrawsSamples >= 5 ? 1 : 0)
+				+ (firstDrawsSpecies >= 3 ? 1 : 0);
+		String title = "screen.hemomancy.harbinger_assignment_ledger.first_draws.title";
+		String progress = "screen.hemomancy.harbinger_assignment_ledger.first_separation.progress";
+		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.FIRST_DRAWS, x, y, w,
+				ALCHEMIST_PORTRAIT, title, progress, done, 3, done == 3)) return;
+		gfx.fill(x, y, x + w, y + FIRST_DRAWS_HEIGHT, PANEL_DARK);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, FIRST_DRAWS_HEIGHT, BORDER, BORDER_MUTED);
+		renderGroupHeader(gfx, AssignmentSection.FIRST_DRAWS, x + 8, y + 6, w - 16,
+				title, progress, done, 3, done == 3);
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, done, 3);
+		renderAssignmentCard(gfx, x + 8, y + 42, w - 16, ASSIGNMENT_CARD_HEIGHT,
+				firstDrawsBriefed, ALCHEMIST_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.accept_first_draws",
+				"screen.hemomancy.harbinger_assignment_ledger.step.accept_first_draws.desc", mouseX, mouseY);
+		renderAssignmentCard(gfx, x + 8, y + 42 + ASSIGNMENT_CARD_HEIGHT + CARD_GAP,
+				w - 16, ASSIGNMENT_CARD_HEIGHT, firstDrawsSamples >= 5, ALCHEMIST_PORTRAIT,
+				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.step.first_draws_samples",
+						Math.min(firstDrawsSamples, 5), 5),
+				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.step.first_draws_samples.desc"),
+				mouseX, mouseY);
+		renderAssignmentCard(gfx, x + 8, y + 42 + 2 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP),
+				w - 16, ASSIGNMENT_CARD_HEIGHT, firstDrawsSpecies >= 3, ALCHEMIST_PORTRAIT,
+				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.step.first_draws_species",
+						Math.min(firstDrawsSpecies, 3), 3),
+				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.step.first_draws_species.desc"),
+				mouseX, mouseY);
+	}
+
+	private void renderFungalSurvey(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+		int done = (fungalSurvey.visited() ? 1 : 0) + (fungalSurvey.specimens() >= 2 ? 1 : 0)
+				+ (fungalSurvey.reported() ? 1 : 0);
+		String title = "screen.hemomancy.harbinger_assignment_ledger.fungal_survey.title";
+		String progress = "screen.hemomancy.harbinger_assignment_ledger.first_separation.progress";
+		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.FUNGAL_SURVEY, x, y, w,
+				ALCHEMIST_PORTRAIT, title, progress, done, 3, fungalSurvey.reported())) return;
+		gfx.fill(x, y, x + w, y + FUNGAL_SURVEY_HEIGHT, PANEL_DARK);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, FUNGAL_SURVEY_HEIGHT, BORDER, BORDER_MUTED);
+		renderGroupHeader(gfx, AssignmentSection.FUNGAL_SURVEY, x + 8, y + 6, w - 16,
+				title, progress, done, 3, fungalSurvey.reported());
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, done, 3);
+		renderAssignmentCard(gfx, x + 8, y + 42, w - 16, ASSIGNMENT_CARD_HEIGHT,
+				fungalSurvey.visited(), VICAR_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.fungal_survey_visit",
+				"screen.hemomancy.harbinger_assignment_ledger.step.fungal_survey_visit.desc", mouseX, mouseY);
+		renderAssignmentCard(gfx, x + 8, y + 42 + ASSIGNMENT_CARD_HEIGHT + CARD_GAP,
+				w - 16, ASSIGNMENT_CARD_HEIGHT, fungalSurvey.specimens() >= 2, ALCHEMIST_PORTRAIT,
+				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.step.fungal_survey_specimens",
+						Math.min(fungalSurvey.specimens(), 2), 2),
+				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.step.fungal_survey_specimens.desc"),
+				mouseX, mouseY);
+		renderAssignmentCard(gfx, x + 8, y + 42 + 2 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP),
+				w - 16, ASSIGNMENT_CARD_HEIGHT, fungalSurvey.reported(), ALCHEMIST_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.fungal_survey_report",
+				"screen.hemomancy.harbinger_assignment_ledger.step.fungal_survey_report.desc", mouseX, mouseY);
+	}
+
+	private void renderVoyagerIntroduction(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+		int done = (voyagerIntroduction.observed() ? 1 : 0) + (voyagerIntroduction.reported() ? 1 : 0);
+		String title = "screen.hemomancy.harbinger_assignment_ledger.voyager_introduction.title";
+		String progress = "screen.hemomancy.harbinger_assignment_ledger.first_separation.progress";
+		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.VOYAGER_INTRODUCTION, x, y, w,
+				VICAR_PORTRAIT, title, progress, done, 2, voyagerIntroduction.reported())) return;
+		gfx.fill(x, y, x + w, y + VOYAGER_INTRODUCTION_HEIGHT, PANEL_DARK);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, VOYAGER_INTRODUCTION_HEIGHT, BORDER, BORDER_MUTED);
+		renderGroupHeader(gfx, AssignmentSection.VOYAGER_INTRODUCTION, x + 8, y + 6, w - 16,
+				title, progress, done, 2, voyagerIntroduction.reported());
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, done, 2);
+		renderAssignmentCard(gfx, x + 8, y + 42, w - 16, ASSIGNMENT_CARD_HEIGHT,
+				voyagerIntroduction.observed(), VOYAGER_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.voyager_observation",
+				"screen.hemomancy.harbinger_assignment_ledger.step.voyager_observation.desc", mouseX, mouseY);
+		renderAssignmentCard(gfx, x + 8, y + 42 + ASSIGNMENT_CARD_HEIGHT + CARD_GAP,
+				w - 16, ASSIGNMENT_CARD_HEIGHT, voyagerIntroduction.reported(), VICAR_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.voyager_report",
+				"screen.hemomancy.harbinger_assignment_ledger.step.voyager_report.desc", mouseX, mouseY);
+	}
+
+	private void renderCircusReferral(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+		String title = "screen.hemomancy.harbinger_assignment_ledger.circus_referral.title";
+		String progress = "screen.hemomancy.harbinger_assignment_ledger.first_separation.progress";
+		int done = circusDiscovered ? 1 : 0;
+		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.CIRCUS_REFERRAL, x, y, w,
+				MNEMONIST_PORTRAIT, title, progress, done, 1, circusDiscovered)) return;
+		gfx.fill(x, y, x + w, y + CIRCUS_REFERRAL_HEIGHT, PANEL_DARK);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, CIRCUS_REFERRAL_HEIGHT, BORDER, BORDER_MUTED);
+		renderGroupHeader(gfx, AssignmentSection.CIRCUS_REFERRAL, x + 8, y + 6, w - 16,
+				title, progress, done, 1, circusDiscovered);
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, done, 1);
+		renderAssignmentCard(gfx, x + 8, y + 42, w - 16, ASSIGNMENT_CARD_HEIGHT,
+				circusDiscovered, MNEMONIST_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.circus_discovery",
+				"screen.hemomancy.harbinger_assignment_ledger.step.circus_discovery.desc", mouseX, mouseY);
+	}
+
+	private void renderFirstCulture(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+		String title = "screen.hemomancy.harbinger_assignment_ledger.first_culture.title";
+		String progress = "screen.hemomancy.harbinger_assignment_ledger.first_separation.progress";
+		int done = firstCultureComplete ? 1 : 0;
+		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.FIRST_CULTURE, x, y, w,
+				ALCHEMIST_PORTRAIT, title, progress, done, 1, firstCultureComplete)) return;
+		gfx.fill(x, y, x + w, y + FIRST_CULTURE_HEIGHT, PANEL_DARK);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, FIRST_CULTURE_HEIGHT, BORDER, BORDER_MUTED);
+		renderGroupHeader(gfx, AssignmentSection.FIRST_CULTURE, x + 8, y + 6, w - 16,
+				title, progress, done, 1, firstCultureComplete);
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, done, 1);
+		renderAssignmentCard(gfx, x + 8, y + 42, w - 16, ASSIGNMENT_CARD_HEIGHT,
+				firstCultureComplete, ALCHEMIST_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.first_culture",
+				"screen.hemomancy.harbinger_assignment_ledger.step.first_culture.desc", mouseX, mouseY);
+	}
+
+	private void renderMorphlingHandling(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+		String title = "screen.hemomancy.harbinger_assignment_ledger.morphling_handling.title";
+		String progress = "screen.hemomancy.harbinger_assignment_ledger.first_separation.progress";
+		int done = (morphlingHandling.proof() ? 1 : 0) + (morphlingHandling.inspected() ? 1 : 0);
+		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.MORPHLING_HANDLING, x, y, w,
+				ALCHEMIST_PORTRAIT, title, progress, done, 2, morphlingHandling.inspected())) return;
+		gfx.fill(x, y, x + w, y + MORPHLING_HANDLING_HEIGHT, PANEL_DARK);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, MORPHLING_HANDLING_HEIGHT, BORDER, BORDER_MUTED);
+		renderGroupHeader(gfx, AssignmentSection.MORPHLING_HANDLING, x + 8, y + 6, w - 16,
+				title, progress, done, 2, morphlingHandling.inspected());
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, done, 2);
+		renderAssignmentCard(gfx, x + 8, y + 42, w - 16, ASSIGNMENT_CARD_HEIGHT,
+				morphlingHandling.proof(), ALCHEMIST_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.morphling_proof",
+				"screen.hemomancy.harbinger_assignment_ledger.step.morphling_proof.desc", mouseX, mouseY);
+		renderAssignmentCard(gfx, x + 8, y + 42 + ASSIGNMENT_CARD_HEIGHT + CARD_GAP,
+				w - 16, ASSIGNMENT_CARD_HEIGHT, morphlingHandling.inspected(), ALCHEMIST_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.morphling_inspection",
+				"screen.hemomancy.harbinger_assignment_ledger.step.morphling_inspection.desc", mouseX, mouseY);
+	}
+
+	private void renderDeepDarkCommission(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+		String title = "screen.hemomancy.harbinger_assignment_ledger.deep_dark_commission.title";
+		String progress = "screen.hemomancy.harbinger_assignment_ledger.first_separation.progress";
+		int done = (deepDarkCommission.sampleProof() ? 1 : 0) + (deepDarkCommission.reported() ? 1 : 0);
+		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.DEEP_DARK_COMMISSION, x, y, w,
+				ALCHEMIST_PORTRAIT, title, progress, done, 2, deepDarkCommission.reported())) return;
+		gfx.fill(x, y, x + w, y + DEEP_DARK_COMMISSION_HEIGHT, PANEL_DARK);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, DEEP_DARK_COMMISSION_HEIGHT, BORDER, BORDER_MUTED);
+		renderGroupHeader(gfx, AssignmentSection.DEEP_DARK_COMMISSION, x + 8, y + 6, w - 16,
+				title, progress, done, 2, deepDarkCommission.reported());
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, done, 2);
+		renderAssignmentCard(gfx, x + 8, y + 42, w - 16, ASSIGNMENT_CARD_HEIGHT,
+				deepDarkCommission.sampleProof(), ALCHEMIST_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.deep_dark_analysis",
+				"screen.hemomancy.harbinger_assignment_ledger.step.deep_dark_analysis.desc", mouseX, mouseY);
+		renderAssignmentCard(gfx, x + 8, y + 42 + ASSIGNMENT_CARD_HEIGHT + CARD_GAP,
+				w - 16, ASSIGNMENT_CARD_HEIGHT, deepDarkCommission.reported(), ALCHEMIST_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.deep_dark_report",
+				"screen.hemomancy.harbinger_assignment_ledger.step.deep_dark_report.desc", mouseX, mouseY);
+	}
+
+	private void renderPhlegethonticCommission(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+		String title = "screen.hemomancy.harbinger_assignment_ledger.phlegethontic_commission.title";
+		String progress = "screen.hemomancy.harbinger_assignment_ledger.first_separation.progress";
+		int done = (phlegethonticCommission.sampleProof() ? 1 : 0)
+				+ (phlegethonticCommission.scyphusCount() >= 5 ? 1 : 0)
+				+ (phlegethonticCommission.reported() ? 1 : 0);
+		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.PHLEGETHONTIC_COMMISSION, x, y, w,
+				ALCHEMIST_PORTRAIT, title, progress, done, 3, phlegethonticCommission.reported())) return;
+		gfx.fill(x, y, x + w, y + PHLEGETHONTIC_COMMISSION_HEIGHT, PANEL_DARK);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, PHLEGETHONTIC_COMMISSION_HEIGHT, BORDER, BORDER_MUTED);
+		renderGroupHeader(gfx, AssignmentSection.PHLEGETHONTIC_COMMISSION, x + 8, y + 6, w - 16,
+				title, progress, done, 3, phlegethonticCommission.reported());
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, done, 3);
+		renderAssignmentCard(gfx, x + 8, y + 42, w - 16, ASSIGNMENT_CARD_HEIGHT,
+				phlegethonticCommission.sampleProof(), ALCHEMIST_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.phlegethontic_sample",
+				"screen.hemomancy.harbinger_assignment_ledger.step.phlegethontic_sample.desc", mouseX, mouseY);
+		renderAssignmentCard(gfx, x + 8, y + 42 + ASSIGNMENT_CARD_HEIGHT + CARD_GAP,
+				w - 16, ASSIGNMENT_CARD_HEIGHT, phlegethonticCommission.scyphusCount() >= 5,
+				ALCHEMIST_PORTRAIT,
+				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.step.phlegethontic_scyphus",
+						phlegethonticCommission.scyphusCount(), 5),
+				Component.translatable("screen.hemomancy.harbinger_assignment_ledger.step.phlegethontic_scyphus.desc"),
+				mouseX, mouseY);
+		renderAssignmentCard(gfx, x + 8, y + 42 + 2 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP),
+				w - 16, ASSIGNMENT_CARD_HEIGHT, phlegethonticCommission.reported(), ALCHEMIST_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.phlegethontic_report",
+				"screen.hemomancy.harbinger_assignment_ledger.step.phlegethontic_report.desc", mouseX, mouseY);
+	}
+
+	private void renderVagrantMindInquiry(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+		String title = "screen.hemomancy.harbinger_assignment_ledger.vagrant_mind_inquiry.title";
+		String progress = "screen.hemomancy.harbinger_assignment_ledger.first_separation.progress";
+		int done = (vagrantMindInquiry.mindVisited() ? 1 : 0)
+				+ (vagrantMindInquiry.biologyObserved() ? 1 : 0)
+				+ (vagrantMindInquiry.memoryReported() ? 1 : 0)
+				+ (vagrantMindInquiry.biologyReported() ? 1 : 0);
+		boolean complete = vagrantMindInquiry.memoryReported() && vagrantMindInquiry.biologyReported();
+		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.VAGRANT_MIND_INQUIRY, x, y, w,
+				MNEMONIST_PORTRAIT, title, progress, done, 4, complete)) return;
+		gfx.fill(x, y, x + w, y + VAGRANT_MIND_INQUIRY_HEIGHT, PANEL_DARK);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, VAGRANT_MIND_INQUIRY_HEIGHT, BORDER, BORDER_MUTED);
+		renderGroupHeader(gfx, AssignmentSection.VAGRANT_MIND_INQUIRY, x + 8, y + 6, w - 16,
+				title, progress, done, 4, complete);
+		drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, done, 4);
+		renderAssignmentCard(gfx, x + 8, y + 42, w - 16, ASSIGNMENT_CARD_HEIGHT,
+				vagrantMindInquiry.mindVisited(), MNEMONIST_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.vagrant_mind_visit",
+				"screen.hemomancy.harbinger_assignment_ledger.step.vagrant_mind_visit.desc", mouseX, mouseY);
+		renderAssignmentCard(gfx, x + 8, y + 42 + ASSIGNMENT_CARD_HEIGHT + CARD_GAP,
+				w - 16, ASSIGNMENT_CARD_HEIGHT, vagrantMindInquiry.biologyObserved(), ALCHEMIST_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.vagrant_biology",
+				"screen.hemomancy.harbinger_assignment_ledger.step.vagrant_biology.desc", mouseX, mouseY);
+		renderAssignmentCard(gfx, x + 8, y + 42 + 2 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP),
+				w - 16, ASSIGNMENT_CARD_HEIGHT, vagrantMindInquiry.memoryReported(), MNEMONIST_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.vagrant_memory_report",
+				"screen.hemomancy.harbinger_assignment_ledger.step.vagrant_memory_report.desc", mouseX, mouseY);
+		renderAssignmentCard(gfx, x + 8, y + 42 + 3 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP),
+				w - 16, ASSIGNMENT_CARD_HEIGHT, vagrantMindInquiry.biologyReported(), ALCHEMIST_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.vagrant_biology_report",
+				"screen.hemomancy.harbinger_assignment_ledger.step.vagrant_biology_report.desc", mouseX, mouseY);
+	}
+
 	private void renderFirstSeparation(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
 		FirstSeparationLedgerProgress progress = firstSeparationProgress();
 		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.FIRST_SEPARATION, x, y, w, ALCHEMIST_PORTRAIT,
@@ -794,30 +1089,16 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 				"screen.hemomancy.harbinger_assignment_ledger.step.report_separation",
 				"screen.hemomancy.harbinger_assignment_ledger.step.report_separation.desc", mouseX, mouseY);
 		rowY += ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
+		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, progress.distillationRecovered(), ALCHEMIST_PORTRAIT,
+				"screen.hemomancy.harbinger_assignment_ledger.step.first_distillation",
+				"screen.hemomancy.harbinger_assignment_ledger.step.first_distillation.desc", mouseX, mouseY);
+		rowY += ASSIGNMENT_CARD_HEIGHT + CARD_GAP;
 		String settleDescription = progress.concentratedBloodPending()
 				? "screen.hemomancy.harbinger_assignment_ledger.step.settle_concentrated_blood.desc.pending"
 				: "screen.hemomancy.harbinger_assignment_ledger.step.settle_concentrated_blood.desc";
 		renderAssignmentCard(gfx, x + 8, rowY, w - 16, ASSIGNMENT_CARD_HEIGHT, progress.initiateReached(), ALCHEMIST_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.step.settle_concentrated_blood",
 				settleDescription, mouseX, mouseY);
-	}
-
-	private void renderFirstDistillation(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
-		if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.FIRST_DISTILLATION, x, y, w,
-				ALCHEMIST_PORTRAIT,
-				"screen.hemomancy.harbinger_assignment_ledger.first_distillation.title",
-				"screen.hemomancy.harbinger_assignment_ledger.first_distillation.progress",
-				firstDistillationComplete ? 1 : 0, 1, firstDistillationComplete)) return;
-		gfx.fill(x, y, x + w, y + FIRST_DISTILLATION_HEIGHT, PANEL_DARK);
-		ScreenDrawUtils.drawBorder(gfx, x, y, w, FIRST_DISTILLATION_HEIGHT, BORDER, BORDER_MUTED);
-		renderGroupHeader(gfx, AssignmentSection.FIRST_DISTILLATION, x + 8, y + 6, w - 16,
-				"screen.hemomancy.harbinger_assignment_ledger.first_distillation.title",
-				"screen.hemomancy.harbinger_assignment_ledger.first_distillation.progress",
-				firstDistillationComplete ? 1 : 0, 1, firstDistillationComplete);
-		renderAssignmentCard(gfx, x + 8, y + 35, w - 16, ASSIGNMENT_CARD_HEIGHT,
-				firstDistillationComplete, ALCHEMIST_PORTRAIT,
-				"screen.hemomancy.harbinger_assignment_ledger.step.first_distillation",
-				"screen.hemomancy.harbinger_assignment_ledger.step.first_distillation.desc", mouseX, mouseY);
 	}
 
 	private void renderBodyAnswers(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
@@ -854,6 +1135,12 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 
 	private void renderAssignmentCard(GuiGraphics gfx, int x, int y, int w, int h, boolean done,
 			ResourceLocation assignerPortrait, String titleKey, String descriptionKey, int mouseX, int mouseY) {
+		renderAssignmentCard(gfx, x, y, w, h, done, assignerPortrait,
+				Component.translatable(titleKey), Component.translatable(descriptionKey), mouseX, mouseY);
+	}
+
+	private void renderAssignmentCard(GuiGraphics gfx, int x, int y, int w, int h, boolean done,
+			ResourceLocation assignerPortrait, Component title, Component description, int mouseX, int mouseY) {
 		int portraitSize = h;
 		renderAssignerPortrait(gfx, assignerPortrait, x, y, portraitSize);
 		int cardX = x + portraitSize + PORTRAIT_GAP;
@@ -861,8 +1148,8 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		gfx.fill(cardX, y, cardX + cardW, y + h, done ? PANEL_DONE : PANEL_ROW);
 		ScreenDrawUtils.drawBorder(gfx, cardX, y, cardW, h, done ? BORDER : BORDER_MUTED, 0xAA1E0D0B);
 		gfx.drawString(font, Component.literal(done ? "[x]" : "[ ]"), cardX + 8, y + 6, done ? DONE : CURRENT, false);
-		gfx.drawString(font, Component.translatable(titleKey), cardX + 31, y + 5, done ? DONE : TITLE, false);
-		renderTruncatedDescription(gfx, Component.translatable(descriptionKey), cardX + 31, y + 17,
+		gfx.drawString(font, title, cardX + 31, y + 5, done ? DONE : TITLE, false);
+		renderTruncatedDescription(gfx, description, cardX + 31, y + 17,
 				Math.max(20, cardW - 46), done ? TEXT : MUTED, mouseX, mouseY);
 	}
 
@@ -1434,9 +1721,17 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			case FIRST_FORMATION_CRAFT -> firstBloodcraft.votaryReached();
 			case FIRST_SEPARATION -> firstSeparation.complete();
 			case HERMIT_ROAD -> hermitRoadProgress() >= 2;
+			case FIRST_DRAWS -> firstDrawsBriefed && firstDrawsSamples >= 5 && firstDrawsSpecies >= 3;
+			case FUNGAL_SURVEY -> fungalSurvey.reported();
+			case VOYAGER_INTRODUCTION -> voyagerIntroduction.reported();
+			case CIRCUS_REFERRAL -> circusDiscovered;
+			case FIRST_CULTURE -> firstCultureComplete;
+			case MORPHLING_HANDLING -> morphlingHandling.inspected();
+			case DEEP_DARK_COMMISSION -> deepDarkCommission.reported();
+			case PHLEGETHONTIC_COMMISSION -> phlegethonticCommission.reported();
+			case VAGRANT_MIND_INQUIRY -> vagrantMindInquiry.memoryReported() && vagrantMindInquiry.biologyReported();
 			case CLINICAL_OBSERVATION, CLINICAL_FIELDWORK, CLINICAL_ECHOES ->
 					isClinicalAssignmentComplete(section);
-			case FIRST_DISTILLATION -> firstDistillationComplete;
 			case BODY_ANSWERS -> bodyAnswersProgress() >= 3;
 			case RED_TAXONOMY -> redTaxonomyComplete;
 			case LIVING_BESTIARY -> livingBestiaryCount >= Math.max(1, livingBestiaryTotal);

@@ -53,10 +53,13 @@ public final class MaterialsData {
                 "Artificer: place to open; close before pickup. Nine identities, sixteen vials per cell.",
                 "Clinical Tools", () -> new ItemStack(BlockInit.phlebotomists_field_case.get())));
         list.add(new MaterialEntry("clairaudiograph", "Clairaudiograph",
-                "Mnemonist: carve a creature call from a filled vial into a blank Ambergris Cylinder.",
+                "Mnemonist: carve a creature call from a filled vial into a blank Wax Cylinder.",
                 "Clinical Tools", () -> new ItemStack(BlockInit.clairaudiograph.get())));
+        list.add(new MaterialEntry("wax_cylinder", "Wax Cylinder",
+                "Ordinary medium for creature calls and single-use Resonant Forge patterns.",
+                "Clinical Tools", () -> new ItemStack(ItemInit.wax_cylinder.get())));
         list.add(new MaterialEntry("ambergris_cylinder", "Ambergris Cylinder",
-                "A blank recording medium; carved cylinders retain a creature's expression.",
+                "Whale-derived medium for ancient records and Masterwork Forge patterns; also accepts ordinary recordings.",
                 "Clinical Tools", () -> new ItemStack(ItemInit.ambergris_cylinder.get())));
 
 
@@ -1406,8 +1409,8 @@ public final class MaterialsData {
                 "Qliphoth Reagents", () -> new ItemStack(ItemInit.qliphoth_seed.get()),
                 true, UnlockPredicate.minDegree(5)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("vicars_consecration_kit", "Vicar's Consecration Kit",
-                "A late-stage qliphoth reagent used in monolith and consecration work.",
+                                                                                                                                                                                                                        list.add(new MaterialEntry("vicars_consecration_kit", "Armature Consecration Kit",
+                "The Artificer's D5 offering for the Rite of Armature Consecration.",
                 "Qliphoth Reagents", () -> new ItemStack(ItemInit.vicars_consecration_kit.get()),
                 true, UnlockPredicate.minDegree(5)));
 

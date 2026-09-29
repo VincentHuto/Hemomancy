@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.VialRackItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodSampleData;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -41,7 +42,19 @@ public final class FirstSeparationAssignment {
 
 	public static boolean markBriefed(ServerPlayer player) {
 		HarbingerAdvancementGranter.grantIfNotDone(player, ADV_BRIEFED);
+		if (isBriefed(player)) recognizeInventorySample(player);
 		return isBriefed(player);
+	}
+
+	public static void recognizeInventorySample(ServerPlayer player) {
+		if (!isBriefed(player) || hasSampleAcquired(player)) return;
+		for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+			ItemStack stack = player.getInventory().getItem(slot);
+			if (BloodSampleData.isStorableSample(stack) && BloodSampleData.entityType(stack) != null) {
+				markSampleAcquired(player);
+				return;
+			}
+		}
 	}
 
 	public static List<ItemStack> briefingStacks() {

@@ -317,9 +317,9 @@ public final class HarbingerHermitRoadMissionSourceTest {
 				"if (degree >= 3) completed++");
 		assertContains("woven vessel language title exists", language,
 				"screen.hemomancy.harbinger_assignment_ledger.woven_vessel.title");
-		assertContains("mnemonist recipe dialogue names self", language, "a piece of yourself");
-		assertContains("mnemonist recipe dialogue names history", language, "a piece of history");
-		assertContains("mnemonist recipe dialogue names nervous tissue", language, "a piece of living nervous tissue");
+		assertContains("mnemonist recipe dialogue names formations", language, "four Sanguine Formations");
+		assertContains("mnemonist recipe dialogue names remnant stone", language, "four Blood Stained Stones");
+		assertContains("mnemonist recipe dialogue names the enzyme source", language, "chicken Blood Vial");
 		assertContains("woven vessel completion advancement exists", read(RESOURCE_ROOT.resolve(
 				"data/hemomancy/advancement/hemomancy/mnemonist_woven_vessel_complete.json")),
 				"advancements.hemomancy.mnemonist_woven_vessel_complete.title");

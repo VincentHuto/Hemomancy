@@ -6,7 +6,7 @@ import java.util.Set;
 public enum HarbingerChapterMilestone {
 	FIRST_BLOODCRAFT(2, "First Bloodcraft"),
 	FIRST_SEPARATION(-1, "The First Separation"),
-	FIRST_DISTILLATION(3, "The First Distillation"),
+	FIRST_DISTILLATION(3, "The First Separation"),
 	WOVEN_VESSEL(4, "The Woven Vessel"),
 	VEIN_MASON(5, "The Vein-Mason"),
 	COVENANT_WRITTEN_IN_PLACE(6, "A Covenant Written in Place"),

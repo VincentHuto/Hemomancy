@@ -137,7 +137,8 @@ public final class MaterialAtlasSpec {
         entryAt("phlebotomists_cabinet", h, "alchemy_enzymes", d(2), 1190, 963, "hematic_microscope");
         entryAt("phlebotomists_field_case", h, "alchemy_enzymes", d(2), 1300, 963, "phlebotomists_cabinet");
         entryAt("clairaudiograph", h, "alchemy_enzymes", d(3), 1190, 1050, "hematic_microscope");
-        entryAt("ambergris_cylinder", h, "alchemy_enzymes", d(3), 1300, 1050, "clairaudiograph");
+        entryAt("wax_cylinder", h, "alchemy_enzymes", d(3), 1300, 1050, "clairaudiograph");
+        entryAt("ambergris_cylinder", h, "alchemy_enzymes", d(3), 1410, 1050, "wax_cylinder");
 		entryAt("vial_centrifuge", h, "alchemy_enzymes", d(2), 805, 963, "bloody_vial");
 		entryAt("ferric_enzyme", h, "alchemy_enzymes", d(2), 900, 961, "recycled_enzyme");
 		entryAt("fervent_enzyme", h, "alchemy_enzymes", d(2), 979, 922, "recycled_enzyme");

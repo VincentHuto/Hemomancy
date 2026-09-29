@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity;
 import com.vincenthuto.hemomancy.common.init.DataComponentInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.CylinderMedia;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.ResonantForgeMenu;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import net.minecraft.core.BlockPos;
@@ -125,8 +126,9 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
         ItemStack target = items.get(APPLICATION_ITEM);
         ItemStack cylinder = items.get(APPLICATION_CYLINDER);
         ResonantPattern pattern = cylinder.get(DataComponentInit.RESONANT_PATTERN.get());
-        if (target.isEmpty() || !cylinder.is(ItemInit.ambergris_cylinder.get()) || pattern == null)
+        if (target.isEmpty() || !CylinderMedia.supported(cylinder) || cylinder.getCount() != 1 || pattern == null)
             return fail(Status.MISSING_INPUT);
+        if (pattern.master() && !CylinderMedia.masterCapable(cylinder)) return fail(Status.MASTER_REQUIRES_AMBERGRIS);
         if (pattern.master() && !ResonantForgeRules.canUseMaster(tier)) return fail(Status.MASTER_REQUIRES_D7);
         var preview = ResonantForgeTransfer.apply(target, pattern, level.registryAccess());
         if (!preview.success()) return fail(map(preview.failure()));
@@ -141,12 +143,12 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
             return fail(Status.OUTPUT_BLOCKED);
         ItemStack source = items.get(GRINDING_ITEM);
         ItemStack cylinder = items.get(GRINDING_CYLINDER);
-        if (source.isEmpty() || !cylinder.is(ItemInit.ambergris_cylinder.get())) return fail(Status.MISSING_INPUT);
-        if (!ResonantForgeRules.isBlankCylinder(cylinder.has(DataComponentInit.ANCIENT_RECORDING.get()),
-                cylinder.has(DataComponentInit.CLAIRAUDIOGRAPH_RECORDING.get()),
-                cylinder.has(DataComponentInit.RESONANT_PATTERN.get()))) return fail(Status.CYLINDER_NOT_BLANK);
+        if (source.isEmpty() || !CylinderMedia.supported(cylinder) || cylinder.getCount() != 1)
+            return fail(Status.MISSING_INPUT);
+        if (!CylinderMedia.blank(cylinder)) return fail(Status.CYLINDER_NOT_BLANK);
         if (!selection.isBlank() && !ResonantForgeRules.canSelectIndividual(tier)) return fail(Status.SELECTION_REQUIRES_D5);
         if (masterMode && !ResonantForgeRules.canUseMaster(tier)) return fail(Status.MASTER_REQUIRES_D7);
+        if (masterMode && !CylinderMedia.masterCapable(cylinder)) return fail(Status.MASTER_REQUIRES_AMBERGRIS);
         var preview = ResonantForgeTransfer.capture(source, level.registryAccess(), selection, masterMode);
         if (!preview.success()) return fail(Status.NO_PATTERN);
         int cost = ResonantForgeRules.grindingCost(preview.pattern())
@@ -162,8 +164,10 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
         if (!items.get(GRINDING_CYLINDER_OUTPUT).isEmpty()) return fail(Status.OUTPUT_BLOCKED);
         ItemStack cylinder = items.get(GRINDING_CYLINDER);
         ResonantPattern pattern = cylinder.get(DataComponentInit.RESONANT_PATTERN.get());
-        if (!cylinder.is(ItemInit.ambergris_cylinder.get()) || pattern == null || pattern.isEmpty() || pattern.master())
+        if (!CylinderMedia.supported(cylinder) || cylinder.getCount() != 1
+                || pattern == null || pattern.isEmpty() || pattern.master())
             return fail(Status.MISSING_INPUT);
+        if (!CylinderMedia.masterCapable(cylinder)) return fail(Status.MASTER_REQUIRES_AMBERGRIS);
         return begin(Operation.STABILIZE, ResonantForgeRules.MASTER_OPERATION_TICKS,
                 ResonantForgeRules.MASTER_SURCHARGE);
     }
@@ -200,7 +204,9 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
         ItemStack target = items.get(APPLICATION_ITEM);
         ItemStack cylinder = items.get(APPLICATION_CYLINDER);
         ResonantPattern pattern = cylinder.get(DataComponentInit.RESONANT_PATTERN.get());
-        if (target.isEmpty() || pattern == null || !items.get(APPLICATION_OUTPUT).isEmpty()) return false;
+        if (target.isEmpty() || !CylinderMedia.supported(cylinder) || cylinder.getCount() != 1
+                || pattern == null || pattern.master() && !CylinderMedia.masterCapable(cylinder)
+                || !items.get(APPLICATION_OUTPUT).isEmpty()) return false;
         var result = ResonantForgeTransfer.apply(target, pattern, level.registryAccess());
         if (!result.success()) return false;
         items.set(APPLICATION_OUTPUT, result.equipment());
@@ -213,7 +219,9 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
     private boolean finishGrinding() {
         ItemStack source = items.get(GRINDING_ITEM);
         ItemStack cylinder = items.get(GRINDING_CYLINDER);
-        if (source.isEmpty() || cylinder.isEmpty() || !items.get(GRINDING_EQUIPMENT_OUTPUT).isEmpty()
+        if (source.isEmpty() || !CylinderMedia.blank(cylinder)
+                || masterMode && !CylinderMedia.masterCapable(cylinder)
+                || !items.get(GRINDING_EQUIPMENT_OUTPUT).isEmpty()
                 || !items.get(GRINDING_CYLINDER_OUTPUT).isEmpty()) return false;
         var result = ResonantForgeTransfer.capture(source, level.registryAccess(), selection, masterMode);
         if (!result.success()) return false;
@@ -231,7 +239,8 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
     private boolean finishStabilizing() {
         ItemStack cylinder = items.get(GRINDING_CYLINDER);
         ResonantPattern pattern = cylinder.get(DataComponentInit.RESONANT_PATTERN.get());
-        if (pattern == null || pattern.master() || !items.get(GRINDING_CYLINDER_OUTPUT).isEmpty()) return false;
+        if (!CylinderMedia.masterCapable(cylinder) || cylinder.getCount() != 1
+                || pattern == null || pattern.master() || !items.get(GRINDING_CYLINDER_OUTPUT).isEmpty()) return false;
         ItemStack result = cylinder.copy();
         result.set(DataComponentInit.RESONANT_PATTERN.get(), pattern.asMaster());
         items.set(GRINDING_CYLINDER_OUTPUT, result);
@@ -418,7 +427,7 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
     public enum Operation { NONE, APPLY, GRIND, STABILIZE }
     public enum Status {
         IDLE, WORKING, MISSING_INPUT, OUTPUT_BLOCKED, INSUFFICIENT_BLOOD, HAMMER_WORN, WHEEL_WORN,
-        CYLINDER_NOT_BLANK, SELECTION_REQUIRES_D5, MASTER_REQUIRES_D7, NO_PATTERN, UNSUPPORTED_ENCHANTMENT,
+        CYLINDER_NOT_BLANK, SELECTION_REQUIRES_D5, MASTER_REQUIRES_D7, MASTER_REQUIRES_AMBERGRIS, NO_PATTERN, UNSUPPORTED_ENCHANTMENT,
         INCOMPATIBLE_ENCHANTMENTS, DIFFERENT_CURSE, UNSUPPORTED_CURSE, NO_CHANGE, INPUT_CHANGED
     }
 }

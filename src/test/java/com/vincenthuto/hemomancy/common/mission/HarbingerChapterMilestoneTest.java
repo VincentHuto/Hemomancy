@@ -15,6 +15,8 @@ class HarbingerChapterMilestoneTest {
 				HarbingerChapterMilestone.requiredForTargetDegree(2));
 		assertEquals(HarbingerChapterMilestone.FIRST_DISTILLATION,
 				HarbingerChapterMilestone.requiredForTargetDegree(3));
+		assertEquals("The First Separation",
+				HarbingerChapterMilestone.requiredForTargetDegree(3).chapterName());
 		assertEquals(HarbingerChapterMilestone.WOVEN_VESSEL,
 				HarbingerChapterMilestone.requiredForTargetDegree(4));
 		assertEquals(HarbingerChapterMilestone.VEIN_MASON,

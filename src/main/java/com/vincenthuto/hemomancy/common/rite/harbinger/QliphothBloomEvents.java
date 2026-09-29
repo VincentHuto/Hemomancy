@@ -2,12 +2,14 @@ package com.vincenthuto.hemomancy.common.rite.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.CirculationIncomeHelper;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoDefinitions;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeRules;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
@@ -21,6 +23,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -28,6 +31,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.BlockEvent.BreakEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.List;
 
@@ -43,6 +47,24 @@ public class QliphothBloomEvents {
 	private static final int REGEN_DURATION = 50;
 	private static final double BLOOD_REGEN_PER_TICK = 5.0;
 	private static final int POME_RIPEN_CHANCE = 80;
+
+	public static void deliverPendingFungalSpine(ServerPlayer player) {
+		HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree -> {
+			if (!degree.isQliphothCommunionDone() || degree.hasFungalSpineGranted()) return;
+			if (player.getInventory().countItem(ItemInit.fungal_spine.get()) > 0
+					|| player.getInventory().add(new ItemStack(ItemInit.fungal_spine.get()))) {
+				degree.setFungalSpineGranted(true);
+				InitiatoryDegreeEvents.syncDegree(player, degree);
+			}
+		});
+	}
+
+	@SubscribeEvent
+	public static void onPlayerTick(PlayerTickEvent.Post event) {
+		if (event.getEntity() instanceof ServerPlayer player && player.tickCount % 20 == 0) {
+			deliverPendingFungalSpine(player);
+		}
+	}
 
 	@SubscribeEvent
 	public static void onQliphothBloomBreak(BreakEvent event) {
@@ -66,7 +88,7 @@ public class QliphothBloomEvents {
 
 		for (QliphothBloomSavedData.BloomEntry bloom : data.getBlooms()) {
 			if (!bloom.dimension().equals(dimension)) continue;
-			if (data.getState(bloom.center()) != SeveredQliphothState.LIVING) continue;
+			if (data.getState(bloom) != SeveredQliphothState.LIVING) continue;
 
 			int blockRadius = bloom.chunkRadius() * 16;
 			AABB bloomBounds = new AABB(bloom.center()).inflate(blockRadius, 64, blockRadius);
@@ -93,12 +115,12 @@ public class QliphothBloomEvents {
 
 		BlockPos center = bloom.center();
 		QliphothBloomSavedData data = QliphothBloomSavedData.get(level.getServer().overworld());
-		int alreadyRipened = data.getPomesDropped(center);
-		if (!QliphothPomeRules.canRipenPome(alreadyRipened, data.hasPendingPome(center))) return;
+		int alreadyRipened = data.getPomesDropped(bloom);
+		if (!QliphothPomeRules.canRipenPome(alreadyRipened, data.hasPendingPome(bloom))) return;
 
 		int huskIndex = QliphothPomeRules.nextRipeHuskIndex(alreadyRipened);
-		data.incrementPomesDropped(center);
-		data.setPendingPome(center, huskIndex);
+		data.incrementPomesDropped(bloom);
+		data.setPendingPome(bloom, huskIndex);
 		HarbingerCardinalRiteEvents.syncQliphothBlooms(level.getServer());
 
 		ServerPlayer owner = level.getServer().getPlayerList().getPlayer(bloom.ownerUUID());

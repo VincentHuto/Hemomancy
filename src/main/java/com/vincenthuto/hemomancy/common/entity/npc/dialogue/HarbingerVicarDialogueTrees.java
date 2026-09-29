@@ -80,14 +80,33 @@ public final class HarbingerVicarDialogueTrees {
 		if (degree < 6 || kitClaimed) return tree;
 		DialogueTree lesson = illuminatus(tree.entityId(), false, false, false);
 		var nodes = new java.util.LinkedHashMap<>(tree.nodes());
-		for (String id : List.of("armature_consecration", "armature_consecration_given")) {
-			nodes.put(id, lesson.getNode(id));
-		}
+		nodes.put("armature_consecration", lesson.getNode("armature_consecration"));
 		DialogueNode root = tree.getStartNode();
 		List<DialogueOption> options = new ArrayList<>(root.options());
 		options.addFirst(new DialogueOption("hemomancy.dialogue.vicar.option.consecrate_armature",
 				"armature_consecration", null));
 		nodes.put(root.id(), new DialogueNode(root.id(), root.lines(), options));
+		return new DialogueTree(tree.speakerName(), tree.speakerIcon(), tree.startNodeId(), nodes,
+				tree.entityId(), tree.theme(), tree.presentation());
+	}
+
+	public static DialogueTree withCovenantGuidance(DialogueTree tree, int degree, boolean foundedBloodline,
+			boolean faneComplete, boolean chamberReturned, boolean throneBound, boolean vigilComplete) {
+		if (degree != 5 && degree != 6) return tree;
+		List<String> lines = new ArrayList<>();
+		if (degree == 5) {
+			lines.add(!foundedBloodline ? "hemomancy.vicar.covenant.found_bloodline"
+					: !faneComplete ? "hemomancy.vicar.covenant.found_fane"
+					: "hemomancy.vicar.covenant.perform_bloodline_rite");
+		} else {
+			if (!chamberReturned) lines.add("hemomancy.vicar.covenant.chamber_return");
+			if (!throneBound) lines.add("hemomancy.vicar.covenant.bind_throne");
+			if (!vigilComplete) lines.add("hemomancy.vicar.covenant.complete_vigil");
+			if (lines.isEmpty()) lines.add("hemomancy.vicar.covenant.perform_hematic_order_rite");
+		}
+		var nodes = new java.util.LinkedHashMap<>(tree.nodes());
+		DialogueNode hint = nodes.get("degree_hint");
+		nodes.put(hint.id(), new DialogueNode(hint.id(), lines, hint.options()));
 		return new DialogueTree(tree.speakerName(), tree.speakerIcon(), tree.startNodeId(), nodes,
 				tree.entityId(), tree.theme(), tree.presentation());
 	}
@@ -324,6 +343,7 @@ public final class HarbingerVicarDialogueTrees {
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.vicar.votary.line1"
 				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.rooted_vein", "rooted_vein", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_tendencies", "tendency_lore", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
@@ -334,6 +354,11 @@ public final class HarbingerVicarDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
+				.addNode(new DialogueNode("rooted_vein", List.of(
+						"hemomancy.vicar.votary.rooted_vein.floor",
+						"hemomancy.vicar.votary.rooted_vein.offering",
+						"hemomancy.vicar.votary.rooted_vein.staff"
+				), List.of(new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null))))
 				.addNode(new DialogueNode("degree_hint", List.of(
 						"hemomancy.vicar.votary.degree_hint"
 				), List.of(
@@ -475,14 +500,7 @@ public final class HarbingerVicarDialogueTrees {
 						"hemomancy.vicar.illuminatus.armature_consecration.line1",
 						"hemomancy.vicar.illuminatus.armature_consecration.line2"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.vicar.option.take_consecration_kit",
-								"armature_consecration_given", EVENT_CONSECRATION_KIT),
 						new DialogueOption("hemomancy.dialogue.vicar.option.not_yet", null, null)
-				)))
-				.addNode(new DialogueNode("armature_consecration_given", List.of(
-						"hemomancy.vicar.illuminatus.armature_consecration.given"
-				), List.of(
-						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("monolith_rumor", List.of(
 						"hemomancy.vicar.illuminatus.monolith_rumor.line1",

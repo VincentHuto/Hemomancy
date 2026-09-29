@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.disco
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerAlchemistEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerArtificerEntity;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -63,6 +64,7 @@ public class DialogueOptionPacket implements CustomPacketPayload {
 
 	public static DialogueEvent dispatch(ServerPlayer sender, String eventId, int entityId) {
 		var entity = sender.level().getEntity(entityId);
+		if (HarbingerVicarDialogueTrees.EVENT_CONSECRATION_KIT.equals(eventId)) return null;
 		if (SanguineMonolithDialogueTrees.EVENT_CORNERSTONE.equals(eventId)
 				|| SanguineMonolithDialogueTrees.EVENT_SHATTER.equals(eventId)) {
 			if (entityId != SanguineMonolithDialogueTrees.BLOCK_ENTITY_ID
@@ -70,15 +72,28 @@ public class DialogueOptionPacket implements CustomPacketPayload {
 		} else {
 			if (entityId != 0 && (entity == null || sender.distanceTo(entity) > 8.0)) return null;
 			if ((HarbingerVicarDialogueTrees.EVENT_CLAIM_FIRST_BLOODCRAFT_REWARD.equals(eventId)
-					|| HarbingerVicarDialogueTrees.EVENT_CONSECRATION_KIT.equals(eventId))
+					|| VoyagerIntroductionDialogue.REPORT.equals(eventId))
 					&& !(entity instanceof HarbingerVicarEntity)) return null;
+			if (VoyagerIntroductionDialogue.OBSERVE.equals(eventId)
+					&& !(entity instanceof com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVoyagerEntity)) return null;
+			if (HarbingerArtificerDialogueTrees.EVENT_CONSECRATION_KIT.equals(eventId)
+					&& !(entity instanceof HarbingerArtificerEntity)) return null;
 			if ((MnemonistStarterMemoryChoice.fromEventId(eventId).isPresent()
-					|| HarbingerMnemonistDialogueTrees.EVENT_WOVEN_VESSEL_TURN_IN.equals(eventId))
+					|| com.vincenthuto.hemomancy.common.entity.npc.dialogue.VagrantMindInquiryDialogue.MEMORY_REPORT.equals(eventId)
+					|| com.vincenthuto.hemomancy.common.entity.npc.dialogue.VagrantMindInquiryDialogue.BEARING.equals(eventId)
+					|| HarbingerMnemonistDialogueTrees.EVENT_WOVEN_VESSEL_TURN_IN.equals(eventId)
+					|| HarbingerMnemonistDialogueTrees.EVENT_GUIDED_CHAMBER.equals(eventId))
 					&& !(entity instanceof com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerMnemonistEntity)) return null;
 			if ((HarbingerCicatrixAnchoriteDialogueTrees.EVENT_FIRST_LESSON.equals(eventId)
 					|| HarbingerCicatrixAnchoriteDialogueTrees.EVENT_CONTINUATION_REWARD.equals(eventId))
 					&& !(entity instanceof com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerCicatrixAnchoriteEntity)) return null;
 			if ((HarbingerAlchemistDialogueTrees.EVENT_FIRST_SEPARATION_CLAIM.equals(eventId)
+					|| com.vincenthuto.hemomancy.common.entity.npc.dialogue.VagrantMindInquiryDialogue.BIOLOGY_REPORT.equals(eventId)
+					|| MorphlingHandlingDialogue.INSPECT.equals(eventId)
+					|| DeepDarkCommissionDialogue.REPORT.equals(eventId)
+					|| PhlegethonticCommissionDialogue.REPORT.equals(eventId)
+					|| PhlegethonticCommissionDialogue.BEARING.equals(eventId)
+					|| OverworldFungalSurveyDialogue.REPORT.equals(eventId)
 					|| com.vincenthuto.hemomancy.common.entity.npc.dialogue.AdvancedBrewingDialogue.CONDENSER_CLAIM.equals(eventId)
 					|| com.vincenthuto.hemomancy.common.entity.npc.dialogue.AdvancedBrewingDialogue.ATHANOR_CLAIM.equals(eventId))
 					&& !(entity instanceof HarbingerAlchemistEntity)) return null;

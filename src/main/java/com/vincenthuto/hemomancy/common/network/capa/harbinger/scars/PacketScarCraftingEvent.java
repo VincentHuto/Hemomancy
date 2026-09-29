@@ -47,53 +47,52 @@ public class PacketScarCraftingEvent implements CustomPacketPayload {
 			ctx.enqueueWork(() -> {
 				Player packetPlayer = ctx.player();
 				if (!(packetPlayer instanceof ServerPlayer player)) return;
-
-				// ── Degree gate: Scar crafting requires Adept (degree 4) ──
-				int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-				if (playerDegree < REQUIRED_DEGREE) {
-					player.displayClientMessage(
-							Component.literal("The chisel resists your hand — ")
-									.withStyle(ChatFormatting.RED)
-									.append(Component.literal("Adept")
-											.withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD))
-									.append(Component.literal(" rank (Degree " + REQUIRED_DEGREE
-											+ ") is required to carve scars.")
-											.withStyle(ChatFormatting.RED)),
-							false);
-					return;
-				}
-
 				AbstractContainerMenu container = player.containerMenu;
 				if (container instanceof ScarStationMenu && container.stillValid(ctx.player())) {
-					ScarStationBlockEntity station = ((ScarStationMenu) container).getTe();
-					ScarRecipe recipe = station.getCurrentRecipe();
-					if (recipe != null && recipe.getTier() >= 3
-							&& !SkillPointHelper.isUnlocked(player, SkillPointInit.skill_deep_inscription)) {
-						player.displayClientMessage(
-								Component.literal("The third inscription tier refuses a shallow hand.")
-										.withStyle(ChatFormatting.DARK_RED),
-								false);
-						return;
-					}
-					if (!com.vincenthuto.hemomancy.common.event.MachineAccessEvents.hasPersonalAccess(player, station.getBlockState().getBlock())
-							&& recipe != null && !recipe.getResultItem().is(
-									com.vincenthuto.hemomancy.common.entity.npc.dialogue.VeinMasonScarLesson.forPlayer(player).scar().get())) {
-						player.displayClientMessage(Component.literal("Supervised access is for your first lesson scar. Craft your own station for other patterns."), false);
-						return;
-					}
-					Component failure = station.craftingFailure();
-					if (failure != null) {
-						player.displayClientMessage(failure.copy().withStyle(ChatFormatting.RED), false);
-						return;
-					}
-					boolean outputWasEmpty = station.getItem(2).isEmpty();
-					station.craftEvent();
-					if (outputWasEmpty && station.getItem(2).getItem() instanceof ItemScar) {
-						HarbingerAdvancementGranter.grantIfNotDone(player,
-								HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_SCAR_CARVED);
-					}
+					tryCraft(player, ((ScarStationMenu) container).getTe());
 				}
 			});
+		}
+	}
+
+	public static void tryCraft(ServerPlayer player, ScarStationBlockEntity station) {
+		int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
+		if (playerDegree < REQUIRED_DEGREE) {
+			player.displayClientMessage(
+					Component.literal("The chisel resists your hand — ")
+							.withStyle(ChatFormatting.RED)
+							.append(Component.literal("Adept")
+									.withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD))
+							.append(Component.literal(" rank (Degree " + REQUIRED_DEGREE
+									+ ") is required to carve scars.")
+									.withStyle(ChatFormatting.RED)),
+					false);
+			return;
+		}
+		ScarRecipe recipe = station.getCurrentRecipe();
+		if (recipe != null && recipe.getTier() >= 3
+				&& !SkillPointHelper.isUnlocked(player, SkillPointInit.skill_deep_inscription)) {
+			player.displayClientMessage(
+					Component.literal("The third inscription tier refuses a shallow hand.")
+							.withStyle(ChatFormatting.DARK_RED), false);
+			return;
+		}
+		if (!com.vincenthuto.hemomancy.common.event.MachineAccessEvents.hasPersonalAccess(player, station.getBlockState().getBlock())
+				&& recipe != null && !recipe.getResultItem().is(
+						com.vincenthuto.hemomancy.common.entity.npc.dialogue.VeinMasonScarLesson.forPlayer(player).scar().get())) {
+			player.displayClientMessage(Component.literal("Supervised access is for your first lesson scar. Craft your own station for other patterns."), false);
+			return;
+		}
+		Component failure = station.craftingFailure();
+		if (failure != null) {
+			player.displayClientMessage(failure.copy().withStyle(ChatFormatting.RED), false);
+			return;
+		}
+		boolean outputWasEmpty = station.getItem(2).isEmpty();
+		station.craftEvent();
+		if (outputWasEmpty && station.getItem(2).getItem() instanceof ItemScar) {
+			HarbingerAdvancementGranter.grantIfNotDone(player,
+					HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_SCAR_CARVED);
 		}
 	}
 

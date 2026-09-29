@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:venous_stone" },
+    { "item": "hemomancy:sanguine_formation" },
+    { "item": "minecraft:redstone" }
+  ],
+  "result": {
+    "id": "hemomancy:blood_stained_stone"
+  }
+}

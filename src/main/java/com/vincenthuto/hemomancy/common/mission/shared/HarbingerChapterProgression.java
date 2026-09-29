@@ -2,10 +2,13 @@ package com.vincenthuto.hemomancy.common.mission.shared;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
 import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -49,9 +52,13 @@ public final class HarbingerChapterProgression {
 		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(player)
 				.map(volume -> volume.getBloodLine()).orElse(Bloodline.NOBLOODLINE);
 		if (!bloodline.isValid() || !player.getUUID().equals(bloodline.getLeaderUUID())) return;
+		Bloodline registered = BloodlineSavedData.get(player.getServer().overworld())
+				.getBloodline(bloodline.getBloodlineUUID());
+		if (registered == null || !player.getUUID().equals(registered.getLeaderUUID())) return;
 
 		for (ServerLevel level : player.getServer().getAllLevels()) {
-			if (FoundingFaneSavedData.get(level).hasFane(player.getUUID())) {
+			BlockPos heart = FoundingFaneSavedData.get(level).getHeart(player.getUUID());
+			if (heart != null && level.getBlockState(heart).is(BlockInit.consecrated_bloodwell.get())) {
 				HarbingerAdvancementGranter.grantIfNotDone(player,
 						HarbingerAdvancementGranter.ADV_COVENANT_WRITTEN_IN_PLACE);
 				return;

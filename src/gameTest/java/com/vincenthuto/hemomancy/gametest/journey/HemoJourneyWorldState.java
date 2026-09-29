@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.event.worldevent.FaneFootprint;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
+import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAllyService;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService;
@@ -115,27 +116,39 @@ final class HemoJourneyWorldState {
 	}
 
 	static boolean accelerateCovenantVigil(ServerPlayer player, BlockPos focusPos) {
+		if (!assignSwornHelper(player, focusPos,
+				com.vincenthuto.hemomancy.Hemomancy.rloc("cardinal_rite/covenant_vigil"))) return false;
+		var rite = CardinalRiteSavedData.get(player.serverLevel()).getRite(player.getUUID());
+		rite.markComplete();
+		CardinalRiteSavedData.get(player.serverLevel()).setDirty();
+		return true;
+	}
+
+	static boolean assignSwornHelper(ServerPlayer player, BlockPos focusPos, ResourceLocation recipeId) {
 		var rite = CardinalRiteSavedData.get(player.serverLevel()).getRite(player.getUUID());
 		if (rite == null || !rite.getCenterPos().equals(focusPos)
-				|| !rite.getRecipeId().equals(com.vincenthuto.hemomancy.Hemomancy.rloc("cardinal_rite/covenant_vigil"))) {
+				|| !rite.getRecipeId().equals(recipeId)) {
 			return false;
 		}
-		int[] anchors = rite.getAnchorBloodMl();
-		for (int index = 0; index < anchors.length; index++) rite.fillAnchor(index, 50);
-		if (!rite.enterInscription()) return false;
+		if (rite.getPhase() == CardinalRitePhase.CONSECRATION) {
+			int[] anchors = rite.getAnchorBloodMl();
+			for (int index = 0; index < anchors.length; index++) rite.fillAnchor(index, 50);
+			if (!rite.enterInscription()) return false;
+		} else if (rite.getPhase() != CardinalRitePhase.INSCRIPTION) return false;
 		Mob helper = null;
+		BlockPos origin = focusPos.below();
 		for (Entity entity : player.serverLevel().getEntitiesOfClass(Entity.class,
-				HemoJourneyFixtures.bounds(BlockPos.of(player.getPersistentData().getLong(HemoJourneyFixtures.ORIGIN_KEY))),
-				entity -> entity.getTags().contains(HemoJourneyFixtures.entityMarker(
-						BlockPos.of(player.getPersistentData().getLong(HemoJourneyFixtures.ORIGIN_KEY)))))) {
+				HemoJourneyFixtures.bounds(origin),
+				entity -> entity.getTags().contains(HemoJourneyFixtures.entityMarker(origin)))) {
 			if (entity instanceof Mob mob) {
 				helper = mob;
 				break;
 			}
 		}
-		if (helper == null || !CardinalRiteAllyService.tryAssignNpc(player.serverLevel(), player, rite, helper)
-				|| !CardinalRiteAllyService.isAvailable(player.serverLevel(), rite, helper.getUUID())) return false;
-		rite.markComplete();
+		if (helper == null) return false;
+		if (!rite.getAllyRoles().containsKey(helper.getUUID())
+				&& !CardinalRiteAllyService.tryAssignNpc(player.serverLevel(), player, rite, helper)) return false;
+		if (!CardinalRiteAllyService.isAvailable(player.serverLevel(), rite, helper.getUUID())) return false;
 		CardinalRiteSavedData.get(player.serverLevel()).setDirty();
 		return true;
 	}

@@ -14,15 +14,18 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.SpecimenJarData;
 import com.vincenthuto.hemomancy.common.mission.alchemist.BodyAnswersAssignment;
+import com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.D7Lineage;
 import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
 import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
+import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ScarStationBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.VialCentrifugeBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.MortalDisplayBlockEntity;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
+import com.vincenthuto.hemomancy.common.worldgen.VesperOrdealManager;
 import com.vincenthuto.hutoslib.common.book.knowledge.CommonDiscoverySource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -62,17 +65,26 @@ public final class HemoJourneyChecks {
 				require(unmet, HarbingerAdvancementGranter.hasAdvancement(player,
 						HarbingerAdvancementGranter.ADV_HERMIT_ROAD_LEDGER_GRANTED),
 						"Speak to the Vicar once to receive the Assignment Ledger.");
+				require(unmet, hasItem(player, origin, ItemInit.harbinger_assignment_ledger.get()),
+						"The Assignment Ledger is missing; ask the Vicar for a replacement.");
 				require(unmet, HarbingerAdvancementGranter.hasAdvancement(player,
 						HarbingerAdvancementGranter.ADV_HERMIT_ROAD_REPORTED),
 						"Report the First Remnant to the Vicar.");
 				require(unmet, outputPresent(player, stage, origin, claimOutputs),
-						"The Vicar's Assignment Ledger and four Befouling Ash Trail were not received.");
+						"The Vicar's four Befouling Ash Trail were not received.");
 			}
 			case VESSEL_FILLED -> {
 				require(unmet, HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume() >= 5000.0D,
 						"Blood vessel has not reached 5,000 mL.");
 				require(unmet, HarbingerAdvancementGranter.isVesselFilled(player),
 						"Vessel Filled milestone is incomplete.");
+			}
+			case FIRST_BLOODCRAFT_PROOFS -> {
+				var progress = FirstBloodcraftAssignment.progress(player);
+				require(unmet, progress.absorbedMl() >= 500.0D, "Absorb 500 mL of blood for First Bloodcraft.");
+				require(unmet, progress.venousStoneProjected(), "Project Venous Stone for First Bloodcraft.");
+				require(unmet, outputPresent(player, stage, origin, claimOutputs),
+						"No attributable Venous Stone was produced after preparation.");
 			}
 			case FORMATION_PROJECTED -> verifyFormation(player, origin, unmet, claimOutputs);
 			case LIBER_CRAFTED -> verifyCraft(player, stage, origin, unmet, claimOutputs,
@@ -86,8 +98,6 @@ public final class HemoJourneyChecks {
 						"The Living Staff craft did not establish its staff bond.");
 			}
 			case VICAR_REWARD -> verifyVicarReward(player, origin, unmet, claimOutputs);
-			case VOTARY_RITE -> require(unmet, HemoCapabilityAccess.requireInitiatoryDegree(player).getDegreeNumber() == 2
-					&& HarbingerAdvancementGranter.hasAdvancement(player, HarbingerAdvancementGranter.ADV_DEGREE_2_VOTARY), "Rite of the Votary is incomplete.");
 			case DEGREE_2_REACHED -> require(unmet, HemoCapabilityAccess.requireInitiatoryDegree(player).getDegreeNumber() == 2, "Initiatory degree is not exactly 2.");
 			case ALCHEMIST_BRIEFING -> require(unmet, FirstSeparationAssignment.isBriefed(player), "The First Separation briefing was not accepted.");
 			case CENTRIFUGE_PREPARED -> require(unmet, player.getStats().getValue(Stats.ITEM_CRAFTED.get(BlockInit.vial_centrifuge.get().asItem())) > 0
@@ -96,6 +106,15 @@ public final class HemoJourneyChecks {
 					&& HarbingerAdvancementGranter.isFirstSeparationStarted(player), "Vial Centrifuge separation has not started.");
 			case ENZYME_RECOVERED -> require(unmet, HarbingerAdvancementGranter.isFirstSeparationComplete(player), "Recover the enzyme from the centrifuge output.");
 			case ALCHEMIST_REWARD -> require(unmet, FirstSeparationAssignment.isClaimed(player), "First Separation reward has not been claimed.");
+			case FIRST_DISTILLATION -> require(unmet,
+					HemoCapabilityAccess.advancedBrewing(player).distilled()
+							&& outputPresent(player, stage, origin, claimOutputs),
+					"Take the first ordinary Ghastly Alembic distillation output.");
+			case CONCENTRATED_BLOOD_REST -> require(unmet,
+					HemoCapabilityAccess.requireInitiatoryDegree(player).getDegreeNumber() == 3
+							&& HarbingerAdvancementGranter.hasAdvancement(player, HarbingerAdvancementGranter.ADV_DEGREE_3_INITIATE)
+							&& !ConcentratedBlood.pending(player),
+					"Inject Concentrated Blood and complete sleep to reach Degree 3.");
 			case BODY_ANSWERS_BRIEFING -> {
 				require(unmet, HarbingerAdvancementGranter.hasAdvancement(player, BodyAnswersAssignment.ADV_BRIEFED),
 						"The Body Answers briefing was not accepted.");
@@ -118,8 +137,8 @@ public final class HemoJourneyChecks {
 				require(unmet, HarbingerAdvancementGranter.getRedTaxonomySpecimenCount(player) == 4
 						&& HarbingerAdvancementGranter.isRedTaxonomyComplete(player),
 						"Submit four distinct Red Taxonomy specimens to the Alchemist.");
-				require(unmet, player.getInventory().countItem(BlockInit.specimen_jar.get().asItem()) == 4
-						&& player.getInventory().countItem(ItemInit.bloody_vial.get()) == 5,
+				require(unmet, HemoJourneyFixtures.inventoryGain(player, BlockInit.specimen_jar.get().asItem()) == 4
+						&& HemoJourneyFixtures.inventoryGain(player, ItemInit.bloody_vial.get()) == 5,
 						"The four specimen jars, first field vial, and four completion vials were not received.");
 			}
 			case LIVING_BESTIARY_RECORD -> {
@@ -136,7 +155,7 @@ public final class HemoJourneyChecks {
 				require(unmet, bestiary.hasSurrenderedSpecimen(Hemomancy.rloc("crimson_doe")),
 						"Surrender the recorded Crimson Doe to the Alchemist.");
 				require(unmet, !SpecimenJarData.hasSpecimen(player.getMainHandItem())
-						&& player.getInventory().countItem(ItemInit.enzyme_primer.get()) == 1,
+						&& outputPresent(player, stage, origin, claimOutputs),
 						"The surrendered jar was not emptied or its Enzyme Primer was not received.");
 			}
 			case HYPHAE_DISCOVERED -> {
@@ -174,8 +193,6 @@ public final class HemoJourneyChecks {
 					HarbingerAdvancementGranter.getEnzymeMasteryCount(player) == 8
 							&& HarbingerAdvancementGranter.isEnzymeMasteryComplete(player),
 					"The Eightfold Centrifuge has not recorded all eight carried enzymes.");
-			case INITIATE_RITE -> verifyRankup(player, 3, HarbingerAdvancementGranter.ADV_DEGREE_3_INITIATE,
-					"Rite of the Incarnadine Fane", unmet);
 			case FIRST_CULTURE -> require(unmet,
 					HarbingerAdvancementGranter.hasAdvancement(player,
 							HarbingerAdvancementGranter.ADV_FIRST_CULTURE_COMPLETE),
@@ -324,7 +341,7 @@ public final class HemoJourneyChecks {
 					"The Crimson Vestment briefing was not accepted.");
 			case VICAR_CONSECRATION_KIT -> require(unmet,
 					outputPresent(player, stage, origin, claimOutputs),
-					"The Vicar's Consecration Kit was not received.");
+					"The Armature Consecration Kit was not received from the Artificer.");
 			case ARTIFICER_FRAME_CONSECRATED -> require(unmet,
 					HarbingerAdvancementGranter.isArtificerFrameConsecrated(player),
 					"Complete the Rite of Armature Consecration.");
@@ -432,22 +449,48 @@ public final class HemoJourneyChecks {
 					"Claim the Monolithic Frame fitting from the Artificer.");
 			case QLIPHOTH_COMMUNION -> {
 				var degree = HemoCapabilityAccess.requireInitiatoryDegree(player);
-				require(unmet, degree.getTotalPomesConsumed() == 9 && degree.isQliphothCommunionDone(),
-						"Consume all nine supplied Qliphoth pomes from the same bloom.");
+				var bloom = QliphothBloomSavedData.get(player.getServer().overworld()).getBloomAt(
+						origin.above(), player.serverLevel().dimension().location().toString());
+				require(unmet, bloom != null && bloom.center().equals(origin.above())
+						&& bloom.ownerUUID().equals(player.getUUID())
+						&& degree.getPomesConsumedFromBloom(bloom.bloomId(), bloom.center().asLong(),
+								bloom.migratesLegacyProgress()) == 9
+						&& degree.getTotalPomesConsumed() == 9 && degree.isQliphothCommunionDone(),
+						"Pick and consume all nine Qliphoth pomes from this bloom.");
 			}
 			case APOTHEOS_CHOICE -> {
 				var degree = HemoCapabilityAccess.requireInitiatoryDegree(player);
-				require(unmet, degree.getArchonPath() == EnumArchonPath.APOTHEOS_PENDING
-						&& FungalGardenTravelHelper.ARCHON_CHOICE_APOTHEOS.equals(player.getPersistentData()
-								.getString(FungalGardenTravelHelper.ARCHON_CHOICE_KEY))
+				String choice = player.getPersistentData().getString(FungalGardenTravelHelper.ARCHON_CHOICE_KEY);
+				boolean chosen = (degree.getArchonPath() == EnumArchonPath.APOTHEOS_PENDING
+						&& FungalGardenTravelHelper.ARCHON_CHOICE_APOTHEOS.equals(choice)
+						|| degree.getArchonPath() == EnumArchonPath.SILENT_PENDING
+						&& (choice.isBlank() || FungalGardenTravelHelper.ARCHON_CHOICE_SILENCE.equals(choice)));
+				require(unmet, chosen && degree.hasWitnessedFungalRevelation()
+						&& !FungalGardenTravelHelper.isProjectionActive(player)
 						&& !player.getPersistentData().getBoolean(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING),
-						"Choose to pursue the Eighth Degree in the fungal revelation.");
+						"Answer the fungal revelation after returning from the Spine projection.");
 			}
 			case APOTHEOS_RITE -> {
 				verifyRankup(player, 8, HarbingerAdvancementGranter.ADV_DEGREE_8_APOTHEOS,
 						"Rite of Apotheos", unmet);
 				require(unmet, HemoCapabilityAccess.requireInitiatoryDegree(player).getArchonPath()
 						== EnumArchonPath.APOTHEOS, "The Apotheos path did not finalize.");
+			}
+			case SILENT_REFUSAL -> {
+				var blooms = QliphothBloomSavedData.get(player.getServer().overworld());
+				var saved = player.getPersistentData();
+				var bloom = saved.hasUUID(HemoJourneyFixtures.BLOOM_ID_KEY)
+						? blooms.getBloomById(saved.getUUID(HemoJourneyFixtures.BLOOM_ID_KEY)) : null;
+				require(unmet, bloom != null && bloom.center().equals(origin.above())
+						&& bloom.ownerUUID().equals(player.getUUID())
+						&& bloom.dimension().equals(HemoJourneyFixtures.fixtureLevel(player).dimension().location().toString())
+						&& blooms.getState(bloom).isSealedTrophy()
+						&& !VesperOrdealManager.isActive(player)
+						&& HemoCapabilityAccess.requireInitiatoryDegree(player).getDegreeNumber() == 7
+						&& HemoCapabilityAccess.requireInitiatoryDegree(player).getArchonPath() == EnumArchonPath.SILENT_ARCHON
+						&& HarbingerAdvancementGranter.hasAdvancement(player,
+								HarbingerAdvancementGranter.ADV_VESPER_DEFEATED),
+						"Defeat Vesper through this Bloom's refusal portal and return as Silent Archon.");
 			}
 			case COMPLETE -> { return new HemoJourneyResult(true, stage, "Journey checkpoints complete; ready to restore the snapshot."); }
 		}
@@ -501,13 +544,16 @@ public final class HemoJourneyChecks {
 
 	private static void verifyVicarReward(ServerPlayer player, BlockPos origin, List<String> unmet,
 			boolean claimOutputs) {
-		require(unmet, HarbingerAdvancementGranter.isVesselFilled(player), "Vessel Filled milestone no longer holds.");
-		require(unmet, HarbingerAdvancementGranter.isLiberSanguinumCrafted(player), "Fane Sanguinium milestone no longer holds.");
-		require(unmet, HarbingerAdvancementGranter.isHematicIronBlockCrafted(player), "Iron in the Blood milestone no longer holds.");
+		require(unmet, HarbingerAdvancementGranter.isLiberSanguinumCrafted(player)
+				|| HarbingerAdvancementGranter.isHematicIronBlockCrafted(player),
+				"Neither eligible blood-structure milestone holds.");
 		boolean outputs = outputPresent(player, HemoJourneyStage.VICAR_REWARD, origin, claimOutputs);
 		require(unmet, HemoJourneyCheckpointRules.rewardPassed(outputs,
 				HemoJourneyFixtures.baselineAdvancementIncomplete(player), FirstBloodcraftAssignment.isClaimed(player)),
 				"First Bloodcraft reward has not been newly claimed with its exact kit.");
+		require(unmet, HemoCapabilityAccess.requireInitiatoryDegree(player).getDegreeNumber() == 2
+				&& HarbingerAdvancementGranter.hasAdvancement(player, HarbingerAdvancementGranter.ADV_DEGREE_2_VOTARY),
+				"The Vicar's First Bloodcraft reward did not grant Degree 2.");
 	}
 
 	private static void verifyRankup(ServerPlayer player, int degree,

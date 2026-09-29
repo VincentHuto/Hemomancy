@@ -173,7 +173,7 @@ public final class HarbingerPilotGameTests {
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
-	public static void sanguineInitiationReplacesLinkedMortalDisplay(GameTestHelper helper) {
+	public static void templeHeartClaimPreservesLinkedMortalDisplay(GameTestHelper helper) {
 		BlockPos focusPos = helper.absolutePos(new BlockPos(1, 1, 1));
 		BlockPos displayPos = focusPos.offset(2, 0, 0);
 		helper.getLevel().setBlock(focusPos, BlockInit.cardinal_focus.get().defaultBlockState(), 3);
@@ -181,22 +181,31 @@ public final class HarbingerPilotGameTests {
 		var focus = (com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity)
 				helper.getLevel().getBlockEntity(focusPos);
 		focus.linkTempleDisplay(displayPos);
-
+		var display = (com.vincenthuto.hemomancy.common.tile.harbinger.functional.MortalDisplayBlockEntity)
+				helper.getLevel().getBlockEntity(displayPos);
+		var hermit = java.util.UUID.randomUUID();
+		display.linkHermit(hermit);
+		ServerPlayer player = connectedTestPlayer(helper);
 		try {
-			var replace = Class.forName(
-					"com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents")
-					.getDeclaredMethod("replaceLinkedTempleDisplay", net.minecraft.server.level.ServerLevel.class,
-							BlockPos.class);
-			replace.setAccessible(true);
-			replace.invoke(null, helper.getLevel(), focusPos);
+			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(0);
+			HemoCapabilityAccess.getBloodVolume(player).orElseThrow().setActive(false);
+			HemoCapabilityAccess.getEquipment(player).orElseThrow().setStackInSlot(5, ItemStack.EMPTY);
+			com.vincenthuto.hemomancy.common.rite.TempleOathRules.bless(player, hermit);
+			var hit = new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(displayPos),
+					net.minecraft.core.Direction.UP, displayPos, false);
+			helper.getLevel().getBlockState(displayPos).useWithoutItem(helper.getLevel(), player, hit);
 			helper.assertTrue(helper.getLevel().getBlockState(focusPos).is(BlockInit.cardinal_focus.get()),
-					"Sanguine Initiation must leave the Cardinal Focus in place");
-			helper.assertTrue(helper.getLevel().getBlockState(displayPos)
-					.is(BlockInit.placed_blood_stained_stone.get()),
-					"Sanguine Initiation must replace the linked Mortal Display");
+					"Claiming the temple heart must leave its Cardinal Focus in place");
+			helper.assertTrue(helper.getLevel().getBlockState(displayPos).is(BlockInit.mortal_display.get())
+					&& display.isClaimedBy(player.getUUID()) && displayPos.equals(focus.getTempleDisplay()),
+					"Claiming the heart must preserve its linked Mortal Display and record the claimant");
+			helper.assertTrue(HemoCapabilityAccess.getEquipment(player).orElseThrow().getStackInSlot(5)
+					.is(ItemInit.charm_of_vascularium.get())
+					&& player.getInventory().countItem(ItemInit.covenant_waybill.get()) == 1,
+					"The claimed heart must equip the Charm and give the Waybill");
 			helper.succeed();
-		} catch (ReflectiveOperationException exception) {
-			helper.fail("Sanguine Initiation temple-display replacement failed: " + exception);
+		} finally {
+			player.discard();
 		}
 	}
 
@@ -244,6 +253,26 @@ public final class HarbingerPilotGameTests {
 		} catch (ReflectiveOperationException exception) {
 			helper.fail("Cardinal Rite medium matching rules are missing: " + exception);
 		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void incarnadineFaneAndBrotherhoodHaveDistinctOfferings(GameTestHelper helper) {
+		CardinalRiteRecipe fane = CardinalRiteRecipe.getRiteByLocation(helper.getLevel(),
+				Hemomancy.rloc("cardinal_rite/initiate_rite"));
+		CardinalRiteRecipe brotherhood = CardinalRiteRecipe.getRiteByLocation(helper.getLevel(),
+				Hemomancy.rloc("cardinal_rite/sanguine_brotherhood"));
+		helper.assertTrue(fane != null && brotherhood != null, "Both authored rites must load");
+		helper.assertTrue(!fane.isRankup() && brotherhood.isRankup()
+				&& fane.getBrazierSignature().size() == 1 && brotherhood.getBrazierSignature().size() == 1,
+				"Only Sanguine Brotherhood may be the D4 rank rite");
+		Ingredient faneOffering = fane.getBrazierSignature().get(0).ingredient();
+		Ingredient brotherhoodOffering = brotherhood.getBrazierSignature().get(0).ingredient();
+		helper.assertTrue(faneOffering.test(new ItemStack(Items.IRON_NUGGET))
+				&& !brotherhoodOffering.test(new ItemStack(Items.IRON_NUGGET))
+				&& brotherhoodOffering.test(new ItemStack(ItemInit.hematic_iron_powder.get()))
+				&& !faneOffering.test(new ItemStack(ItemInit.hematic_iron_powder.get())),
+				"D2 ceremony and D3 rank rite must not answer the same brazier offering");
+		helper.succeed();
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)

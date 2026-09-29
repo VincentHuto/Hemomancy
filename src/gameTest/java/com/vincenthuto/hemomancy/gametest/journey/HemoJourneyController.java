@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.gametest.journey;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService;
@@ -14,10 +15,15 @@ import net.minecraft.world.phys.Vec3;
 
 public final class HemoJourneyController {
 	public static final String VERIFIED_STAGE_KEY = "hemomancy.dev_test.journey.verified_stage";
+	public static final String MAIN_ONLY_KEY = "hemomancy.dev_test.journey.main_only";
 	private HemoJourneyController() {
 	}
 
 	public static HemoJourneyResult start(ServerPlayer player) {
+		return start(player, false);
+	}
+
+	public static HemoJourneyResult start(ServerPlayer player, boolean mainOnly) {
 		if (ChamberVisitService.isActive(player)
 				|| player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)) {
 			return HemoJourneyResult.fail(HemoJourneyStage.MORTAL_DISPLAY,
@@ -28,6 +34,7 @@ public final class HemoJourneyController {
 		HemoJourneyResult reset = HemoJourneySnapshot.resetForJourney(player);
 		if (!reset.passed()) return reset;
 		player.getPersistentData().putString(JourneyRoute.KEY, JourneyRoute.HARBINGER);
+		player.getPersistentData().putBoolean(MAIN_ONLY_KEY, mainOnly);
 		player.getPersistentData().remove(VERIFIED_STAGE_KEY);
 		player.getPersistentData().remove(HemoJourneyFixtures.OWNED_OUTPUTS_KEY);
 		BlockPos origin;
@@ -113,8 +120,11 @@ public final class HemoJourneyController {
 			if (!verified.passed()) return verified;
 			player.getPersistentData().putString(VERIFIED_STAGE_KEY, current.id());
 		}
-		HemoJourneyStage next = HemoJourneyTransition.next(current, true, true);
+		HemoJourneyStage next = HemoJourneyTransition.next(current, true, true,
+				HemoCapabilityAccess.requireInitiatoryDegree(player).getArchonPath(),
+				player.getPersistentData().getBoolean(MAIN_ONLY_KEY));
 		CompoundTag priorBaseline = player.getPersistentData().getCompound(HemoJourneyFixtures.BASELINE_KEY).copy();
+		BlockPos preparedOrigin = origin;
 		try {
 			boolean retainCentrifuge = current == HemoJourneyStage.SEPARATION_STARTED
 					&& next == HemoJourneyStage.ENZYME_RECOVERED;
@@ -124,16 +134,24 @@ public final class HemoJourneyController {
 			} else if (next == HemoJourneyStage.COMPLETE) {
 				HemoJourneyFixtures.cleanup(player, origin);
 			} else {
-				HemoJourneyFixtures.prepare(player, next, origin);
+				if (current == HemoJourneyStage.FOUNDING_FANE) {
+					HemoJourneyFixtures.cleanup(player, origin);
+					preparedOrigin = HemoJourneyFixtures.findClearOriginBeyond(player, origin);
+				}
+				HemoJourneyFixtures.prepare(player, next, preparedOrigin);
 			}
-			moveAndExplain(player, next, origin);
+			player.getPersistentData().putLong(HemoJourneyFixtures.ORIGIN_KEY, preparedOrigin.asLong());
+			moveAndExplain(player, next, preparedOrigin);
 			player.getPersistentData().putString(HemoJourneySnapshot.STAGE_KEY, next.id());
 			player.getPersistentData().remove(VERIFIED_STAGE_KEY);
 			return new HemoJourneyResult(true, next, next == HemoJourneyStage.COMPLETE
 					? "All checkpoints passed. Run journey harbinger next once more to restore your snapshot."
 					: action(next));
 		} catch (RuntimeException exception) {
-			HemoJourneyFixtures.cleanup(player, origin);
+			if (next != HemoJourneyStage.APOTHEOS_CHOICE && next != HemoJourneyStage.SILENT_REFUSAL) {
+				HemoJourneyFixtures.cleanup(player, preparedOrigin);
+			}
+			player.getPersistentData().putLong(HemoJourneyFixtures.ORIGIN_KEY, origin.asLong());
 			player.getPersistentData().put(HemoJourneyFixtures.BASELINE_KEY, priorBaseline);
 			player.getPersistentData().putString(HemoJourneySnapshot.STAGE_KEY,
 					HemoJourneyTransition.next(current, true, false).id());
@@ -242,20 +260,22 @@ public final class HemoJourneyController {
 			case MORTAL_DISPLAY -> "Right-click the Mortal Display, then run journey harbinger next.";
 			case SANGUINE_INITIATION -> "Speak with the Vicar and choose formal initiation. Wait ten seconds for Degree 1 and the conduit.";
 			case FIRST_REMNANT_DISCOVERED -> "Right-click the prepared First Remnant blood echo and read it, then run journey harbinger next.";
-			case VICAR_HERMIT_ROAD_REPORT -> "Speak to the marked Vicar to receive the Assignment Ledger, then report the First Remnant and run journey harbinger next.";
+			case VICAR_HERMIT_ROAD_REPORT -> "Speak to the marked Vicar to recover the Assignment Ledger if needed, then report the First Remnant and run journey harbinger next.";
 			case VESSEL_FILLED -> "Use the supplied Bloody Jug to fill the vessel to 5,000 mL.";
+			case FIRST_BLOODCRAFT_PROOFS -> "Use Blood Projection on the prepared Stone until it yields Venous Stone, then absorb 500 mL from the practice cow. The fixture supplies starting blood and the targets.";
 			case FORMATION_PROJECTED -> "The fixture supplied the legitimate Blood Projection hand tool. Normally select the lower Blood Projection utility in the Charm radial and conjure it with the use-manipulation key. Hold it on the Venous Stone until one Sanguine Formation appears, then release. The checkpoint accepts the formation either in your inventory or on the fixture.";
 			case LIBER_CRAFTED -> "The fixture supplied Blood Projection and one Sanguine Formation in your offhand. Hold projection on the center Bookshelf, then pick up the crafted Liber Sanguinum before running journey harbinger next.";
 			case HEMATIC_IRON_CRAFTED -> "The fixture supplied Blood Projection and one Ink Sac in your offhand. Hold projection on the center Iron Block, then pick up the crafted Hematic Iron Block before running journey harbinger next.";
 			case LIVING_STAFF_CRAFTED -> "Hold the supplied Blood Projection on the center Iron Bars until the Living Staff structure completes, then pick up the Staff and run journey harbinger next.";
-			case VICAR_REWARD -> "Speak to the marked Vicar and claim the First Bloodcraft completion kit. Keep inventory rewards and leave any overflow drops beside the Vicar until journey harbinger next.";
-			case VOTARY_RITE -> "Inject the Concentrated Blood directly, then sleep in the prepared bed to reach Degree 2.";
+			case VICAR_REWARD -> "Speak to the marked Vicar, claim the First Bloodcraft kit, and pick up its Hematic Iron Scrap for the Alchemist's distillation. Leave other overflow drops beside the Vicar until journey harbinger next.";
 			case DEGREE_2_REACHED -> "You are now a Votary. Run journey harbinger next to meet the Alchemist.";
 			case ALCHEMIST_BRIEFING -> "Speak to the marked Alchemist and accept The First Separation.";
 			case CENTRIFUGE_PREPARED -> "Place the supplied Glass Bottle and Copper Ingot into the two Iron Braziers, light both with Blood Projection, then project the centrifuge structure with the Ferric Binder. Pick up and place the crafted Vial Centrifuge at the fixture center, then run journey harbinger next.";
 			case SEPARATION_STARTED -> "Use the two loose Blood Vials from the briefing on the two cows without damaging them. Put the sampled vials in opposite centrifuge slots, press Start, then wait for the spin to finish before running journey harbinger next.";
 			case ENZYME_RECOVERED -> "Open the centrifuge, take the Vivacious Enzyme from its output, then run journey harbinger next.";
 			case ALCHEMIST_REWARD -> "Speak to the marked Alchemist and claim the First Separation sampling kit.";
+			case FIRST_DISTILLATION -> "Take the first ordinary distillation output from the heated Ghastly Alembic.";
+			case CONCENTRATED_BLOOD_REST -> "Ask the marked Alchemist for Concentrated Blood, inject it directly, then complete a night's sleep to reach Degree 3.";
 			case BODY_ANSWERS_BRIEFING -> "Speak to the marked Alchemist and accept The Body Answers, then run journey harbinger next.";
 			case BODY_ANSWERS_TINCTURE -> "The supplied ingredients are already loaded into the heated Ghastly Alembic. Wait for the tincture, take it from the output slot, and drink it.";
 			case RED_TAXONOMY -> "Four distinct Red Taxonomy samples are in your hotbar. Hold each one in turn, speak to the marked Alchemist, and submit it.";
@@ -268,7 +288,6 @@ public final class HemoJourneyController {
 			case ARTIFICER_WORN_VOW_REWARD -> "Speak to the marked Artificer and claim the four Hematic Iron Scrap reward.";
 			case ARTIFICER_WORN_VOW_FITTING -> "The complete Hematic Iron set is equipped. Speak to the marked Artificer and claim The Worn Vow fitting.";
 			case ENZYME_MASTERY -> "All eight enzyme expressions are in your inventory. Wait for The Eightfold Centrifuge milestone, then run journey harbinger next.";
-			case INITIATE_RITE -> "Invoke the prepared Rite of the Incarnadine Fane and wait until Degree 3 is awarded.";
 			case FIRST_CULTURE -> "The Mycelial Lantern is loaded with a recorded culture and enough blood. Wait for it to fruit, then take the enzyme from its output.";
 			case WOVEN_VESSEL_TURN_IN -> "Speak to the marked Mnemonist and turn in the supplied Hematic Memory, Book, Ink Sac, and three Paper for The Woven Vessel.";
 			case FIRST_MEMORY_WOVEN -> "The Somatic Loom is loaded for Blood Shot. Hold Blood Projection on it until the strand appears, then use the Living Staff to draw the strand into the loom.";
@@ -301,8 +320,8 @@ public final class HemoJourneyController {
 			case ARTIFICER_FULL_LIVING_ARSENAL -> "Hold the Living Staff on each of the six lit graft braziers until every remaining Living Weapon form is learned.";
 			case ARTIFICER_LIVING_ARSENAL_FITTING -> "Speak to the marked Artificer and claim The Assumed Limb fitting.";
 			case ARTIFICER_CRIMSON_VESTMENT_BRIEFING -> "Speak to the marked Artificer and accept The Crimson Vestment.";
-			case VICAR_CONSECRATION_KIT -> "Speak to the marked Vicar, claim the Armature Consecration Kit, and pick it up before running journey harbinger next.";
-			case ARTIFICER_FRAME_CONSECRATED -> "Use the Vicar's Consecration Kit on the prepared Hematic Armature.";
+			case VICAR_CONSECRATION_KIT -> "Speak to the marked Artificer, claim the Armature Consecration Kit, and pick it up before running journey harbinger next.";
+			case ARTIFICER_FRAME_CONSECRATED -> "Use the Armature Consecration Kit in the prepared Armature rite.";
 			case ARTIFICER_CRIMSON_VESTMENT_INSPECTION -> "Speak to the marked Artificer and show the consecrated frame.";
 			case ARTIFICER_CRIMSON_VESTMENT_COUNSEL -> "Speak to the marked Alchemist, claim the Crimson Lacquer, and pick it up before running journey harbinger next.";
 			case ARTIFICER_BLOOD_LUST_UPGRADE -> "Step onto the prepared consecrated Armature and wait for the Barbed Boots to become Blood Lust Boots.";
@@ -328,23 +347,24 @@ public final class HemoJourneyController {
 			case ARTIFICER_WEIGHT_OF_FRAME_INSPECTION -> "Speak to the marked Artificer, show the first Edacious piece, and collect the lineage material.";
 			case ARTIFICER_D7_DEMONSTRATION -> "Wear the supplied Edacious set and press the armor-ability key once to activate Bloodburst.";
 			case ARTIFICER_D7_FITTING -> "Speak to the marked Artificer and claim the Monolithic Frame fitting.";
-			case QLIPHOTH_COMMUNION -> "Eat each of the nine supplied Qliphoth pomes, switching through hotbar slots 1-9 as each husk is consumed.";
-			case APOTHEOS_CHOICE -> "In the opened fungal revelation, choose to pursue the Eighth Degree.";
+			case QLIPHOTH_COMMUNION -> "Wait for each pome to ripen, pick it from your Qliphoth Bloom, and eat it before the next grows. Consume all nine from this tree.";
+			case APOTHEOS_CHOICE -> "Use the earned Fungal Spine. After the two-minute projection returns you, choose either silence or the Eighth Degree.";
 			case APOTHEOS_RITE -> "Invoke the prepared Rite of Apotheos. Once it starts, run journey harbinger next to fast-complete the owned ceremony, then run next once more.";
+			case SILENT_REFUSAL -> "Assume a Living Arsenal weapon form, shape its Sickle on your Qliphoth Bloom, and sever the tree. Enter the open wound, defeat both Vesper phases, and finish the downed body with Blood Absorption. Return after victory and run journey harbinger next.";
 			case COMPLETE -> "Run journey harbinger next to restore the pre-journey snapshot.";
 		};
 	}
 
 	private static BlockPos target(HemoJourneyStage stage, BlockPos origin) {
 		return switch (stage) {
-			case MORTAL_DISPLAY, FIRST_REMNANT_DISCOVERED, FORMATION_PROJECTED -> origin.above();
+			case MORTAL_DISPLAY, FIRST_REMNANT_DISCOVERED, FIRST_BLOODCRAFT_PROOFS, FORMATION_PROJECTED -> origin.above();
 			case SANGUINE_INITIATION -> origin.above();
 			case LIBER_CRAFTED, HEMATIC_IRON_CRAFTED -> origin.above();
 			case LIVING_STAFF_CRAFTED -> origin.above(2);
 			case VESSEL_FILLED -> origin.above();
 			case VICAR_HERMIT_ROAD_REPORT, VICAR_REWARD -> origin.above();
-			case VOTARY_RITE -> origin.above();
-			case DEGREE_2_REACHED, ALCHEMIST_BRIEFING, ALCHEMIST_REWARD, BODY_ANSWERS_BRIEFING,
+			case FIRST_DISTILLATION -> origin.above();
+			case DEGREE_2_REACHED, ALCHEMIST_BRIEFING, ALCHEMIST_REWARD, CONCENTRATED_BLOOD_REST, BODY_ANSWERS_BRIEFING,
 					WOVEN_VESSEL_TURN_IN, NOETIC_MARK_RECOGNIZED,
 					VEIN_MASON_LESSON, VEIN_MASON_REWARD -> origin.above();
 			case VEIN_MASON_D5_STRAIN, VEIN_MASON_D5_DIAGNOSIS, VEIN_MASON_D5_TREATMENT,
@@ -382,8 +402,8 @@ public final class HemoJourneyController {
 					VEIN_MASON_D6_SECOND_ROUTE, VEIN_MASON_D6_REWARD -> origin.above();
 			case CHAMBER_RETURNED -> origin;
 			case COVENANT_THRONE_BOUND, COVENANT_VIGIL -> origin.above();
-			case INITIATE_RITE, ADEPT_RITE, ILLUMINATUS_RITE, SANCTIFIED_RITE, ARCHON_RITE, APOTHEOS_RITE -> origin.above(3);
-			case QLIPHOTH_COMMUNION, APOTHEOS_CHOICE -> origin;
+			case ADEPT_RITE, ILLUMINATUS_RITE, SANCTIFIED_RITE, ARCHON_RITE, APOTHEOS_RITE -> origin.above(3);
+			case QLIPHOTH_COMMUNION, APOTHEOS_CHOICE, SILENT_REFUSAL -> origin;
 			case COMPLETE -> origin;
 		};
 	}
@@ -392,9 +412,11 @@ public final class HemoJourneyController {
 		player.getPersistentData().remove(HemoJourneyFixtures.ORIGIN_KEY);
 		player.getPersistentData().remove(HemoJourneyFixtures.DIMENSION_KEY);
 		player.getPersistentData().remove(HemoJourneyFixtures.OWNED_BLOCKS_KEY);
+		player.getPersistentData().remove(HemoJourneyFixtures.BLOOM_ID_KEY);
 		player.getPersistentData().remove(HemoJourneyFixtures.BASELINE_KEY);
 		player.getPersistentData().remove(HemoJourneyFixtures.OWNED_OUTPUTS_KEY);
 		player.getPersistentData().remove(VERIFIED_STAGE_KEY);
+		player.getPersistentData().remove(MAIN_ONLY_KEY);
 		player.getPersistentData().remove(JourneyRoute.KEY);
 	}
 

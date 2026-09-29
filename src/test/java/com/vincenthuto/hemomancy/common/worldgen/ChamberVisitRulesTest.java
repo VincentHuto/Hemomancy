@@ -25,6 +25,17 @@ final class ChamberVisitRulesTest {
 	}
 
 	@Test
+	void guidedGlimpseIsBoundedAndObservational() {
+		ChamberVisitMode guided = ChamberVisitMode.valueOf("GUIDED");
+		assertEquals(2_400, ChamberVisitRules.durationTicks(3, guided, false));
+		assertEquals(2_400, ChamberVisitRules.durationTicks(6, guided, true));
+		assertTrue(guided.timed());
+		assertFalse(ChamberVisitRules.canBuild(guided));
+		assertFalse(ChamberVisitRules.canMoveItems(guided));
+		assertTrue(ChamberVisitRules.isProtected(guided));
+	}
+
+	@Test
 	void permissionsDistinguishDreamTimedAndAttunedVisits() {
 		assertTrue(ChamberVisitRules.canUseArbor(ChamberVisitMode.DREAM));
 		assertFalse(ChamberVisitRules.canBuild(ChamberVisitMode.DREAM));

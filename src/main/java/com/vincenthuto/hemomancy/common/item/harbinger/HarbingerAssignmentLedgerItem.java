@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.mission.alchemist.BodyAnswersAssignment;
 import com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationLedgerProgress;
+import com.vincenthuto.hemomancy.common.mission.alchemist.FirstDrawsAssignment;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
 import com.vincenthuto.hemomancy.common.mission.shared.HarbingerChapterMilestone;
@@ -54,7 +55,7 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 			QliphothBloomSavedData blooms = QliphothBloomSavedData.get(serverPlayer.getServer().overworld());
 			boolean severedPortalOpen = blooms.getBlooms().stream()
 					.filter(bloom -> bloom.ownerUUID().equals(serverPlayer.getUUID()))
-					.anyMatch(bloom -> blooms.getState(bloom.center()).isPortalOpen());
+					.anyMatch(bloom -> blooms.getState(bloom).isPortalOpen());
 			Bloodline playerBloodline = HemoCapabilityAccess.getBloodVolume(serverPlayer)
 					.map(volume -> volume.getBloodLine()).orElse(Bloodline.NOBLOODLINE);
 			boolean foundedBloodline = playerBloodline.isValid()
@@ -88,6 +89,7 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 			int artificerProgressSteps = com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.packSteps(
 					artificerProgress.wornVow(), artificerProgress.threeAnswers(), artificerProgress.crimsonVestment(),
 					artificerProgress.assumedLimb(), artificerProgress.weightOfFrame());
+			var firstDraws = FirstDrawsAssignment.progress(serverPlayer);
 			PacketHandler.sendToPlayer(serverPlayer, new OpenHarbingerAssignmentLedgerPacket(
 					HemoCapabilityAccess.getPlayerDegreeNumber(serverPlayer),
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
@@ -99,9 +101,11 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 							HarbingerAdvancementGranter.ADV_HERMIT_ROAD_FIRST_REMNANT),
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
 							HarbingerAdvancementGranter.ADV_HERMIT_ROAD_REPORTED),
+					FirstDrawsAssignment.isBriefed(serverPlayer), firstDraws.samples(), firstDraws.species().size(),
+					com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.progress(serverPlayer),
+					com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.progress(serverPlayer),
+					com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.hasDiscovered(serverPlayer),
 					firstSeparationProgress(serverPlayer),
-					FirstSeparationAssignment.isClaimed(serverPlayer)
-							&& HemoCapabilityAccess.advancedBrewing(serverPlayer).distilled(),
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
 							BodyAnswersAssignment.ADV_BRIEFED),
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
@@ -111,6 +115,12 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 					HarbingerAdvancementGranter.isRedTaxonomyComplete(serverPlayer),
 					HarbingerAdvancementGranter.getEnzymeMasteryCount(serverPlayer),
 					HarbingerAdvancementGranter.isEnzymeMasteryComplete(serverPlayer),
+					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
+							HarbingerAdvancementGranter.ADV_FIRST_CULTURE_COMPLETE),
+					com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingAssignment.progress(serverPlayer),
+					com.vincenthuto.hemomancy.common.mission.alchemist.DeepDarkCommission.progress(serverPlayer),
+					com.vincenthuto.hemomancy.common.mission.alchemist.PhlegethonticCommission.progress(serverPlayer),
+					com.vincenthuto.hemomancy.common.mission.shared.VagrantMindInquiry.progress(serverPlayer),
 					HemoCapabilityAccess.getSpecimenBestiary(serverPlayer)
 							.map(progress -> progress.recordedSpecimenCount()).orElse(0),
 					SpecimenBestiaryDefinitions.totalResearchSpecimens(),
@@ -178,16 +188,8 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 		return acquired;
 	}
 
-	private static boolean hasSampledBloodVial(ServerPlayer player) {
-		return player.getInventory().items.stream()
-				.anyMatch(stack -> stack.getItem() instanceof BloodVialItem
-						&& BloodVialItem.getEntityType(stack) != null);
-	}
-
 	private static FirstSeparationLedgerProgress firstSeparationProgress(ServerPlayer player) {
-		if (!FirstSeparationAssignment.hasSampleAcquired(player) && hasSampledBloodVial(player)) {
-			FirstSeparationAssignment.markSampleAcquired(player);
-		}
+		FirstSeparationAssignment.recognizeInventorySample(player);
 		return new FirstSeparationLedgerProgress(
 				FirstSeparationAssignment.isBriefed(player),
 				hasVialCentrifuge(player),
@@ -195,6 +197,7 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 				HarbingerAdvancementGranter.isFirstSeparationStarted(player),
 				HarbingerAdvancementGranter.isFirstSeparationComplete(player),
 				FirstSeparationAssignment.isClaimed(player),
+				HemoCapabilityAccess.advancedBrewing(player).distilled(),
 				ConcentratedBlood.pending(player),
 				HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 3);
 	}

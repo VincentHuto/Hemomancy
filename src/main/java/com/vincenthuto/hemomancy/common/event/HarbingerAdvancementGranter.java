@@ -308,9 +308,18 @@ public final class HarbingerAdvancementGranter {
 	}
 
 	public static boolean hasRecordedEnzyme(ServerPlayer player, ItemStack enzyme) {
+		ResourceLocation record = enzymeRecord(enzyme);
+		return record != null && hasAdvancement(player, record);
+	}
+
+	public static boolean isKnownEnzyme(ItemStack enzyme) {
+		return enzymeRecord(enzyme) != null;
+	}
+
+	private static ResourceLocation enzymeRecord(ItemStack enzyme) {
 		ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(enzyme.getItem());
-		if (!itemId.getNamespace().equals(Hemomancy.MOD_ID)) return false;
-		ResourceLocation record = switch (itemId.getPath()) {
+		if (!itemId.getNamespace().equals(Hemomancy.MOD_ID)) return null;
+		return switch (itemId.getPath()) {
 			case "vivacious_enzyme" -> ADV_ENZYME_MASTERY_VIVACIOUS;
 			case "fervent_enzyme" -> ADV_ENZYME_MASTERY_FERVENT;
 			case "neurotic_enzyme" -> ADV_ENZYME_MASTERY_NEUROTIC;
@@ -321,7 +330,6 @@ public final class HarbingerAdvancementGranter {
 			case "umbral_enzyme" -> ADV_ENZYME_MASTERY_UMBRAL;
 			default -> null;
 		};
-		return record != null && hasAdvancement(player, record);
 	}
 
 	public static boolean isVesselFilled(ServerPlayer player) {

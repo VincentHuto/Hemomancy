@@ -522,10 +522,13 @@ public class ChamberOfWillManager extends SavedData {
         ChamberState state = getChamberState(player.getUUID());
         PacketHandler.sendToPlayer(player, new PacketSyncChamberOfWill(
                 state.skyTheme(), state.tier(), radiusFor(player.getUUID()), qliphothPomeCount(player)));
-        if (THEME_VESPER_FIGHT.equals(state.skyTheme())) {
+        if (VesperOrdealManager.isActive(player)) {
+            PacketHandler.sendToPlayer(player,
+                    PacketSyncVesperFightScene.activate(VesperOrdealManager.arenaCenter(player)));
+        } else if (THEME_VESPER_FIGHT.equals(state.skyTheme())) {
             PacketHandler.sendToPlayer(player,
                     PacketSyncVesperFightScene.activate(cellPos(idFor(player.getUUID()))));
-        } else if (!VesperOrdealManager.isActive(player)) {
+        } else {
             PacketHandler.sendToPlayer(player, PacketSyncVesperFightScene.clearScene());
         }
     }

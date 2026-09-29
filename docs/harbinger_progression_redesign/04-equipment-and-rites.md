@@ -1,6 +1,6 @@
 # Phase 4: equipment, Living Staff, gourds, and rites
 
-[Index](../HARBINGER_PROGRESSION_REDESIGN.md) · Depends on the early assignment structure; coordinate Forge text with Phase 3.
+[Index](HARBINGER_PROGRESSION_REDESIGN.md) · Depends on the early assignment structure; coordinate Forge text with Phase 3.
 
 ## Outcome
 

@@ -1,5 +1,8 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
+
 public final class SilentArchonArmorRules {
 	public static final String SILENT_CHOICE = "silent";
 	public static final int SILENT_ARCHON_DEGREE = 7;
@@ -12,13 +15,17 @@ public final class SilentArchonArmorRules {
 
 	public static boolean canRefuseDeath(boolean hasFullSet, int degree, String archonChoice,
 			double bloodVolume, double bloodCost, long now, long cooldownUntil) {
+		return canRefuseDeath(hasFullSet, degree,
+				SILENT_CHOICE.equals(archonChoice) ? EnumArchonPath.SILENT_ARCHON : EnumArchonPath.NONE,
+				bloodVolume, bloodCost, now, cooldownUntil);
+	}
+
+	public static boolean canRefuseDeath(boolean hasFullSet, int degree, EnumArchonPath path,
+			double bloodVolume, double bloodCost, long now, long cooldownUntil) {
 		if (!hasFullSet) {
 			return false;
 		}
-		if (degree < SILENT_ARCHON_DEGREE || degree >= APOTHEOS_DEGREE) {
-			return false;
-		}
-		if (!SILENT_CHOICE.equals(archonChoice)) {
+		if (!HarbingerPathPermissions.isProvenSilentArchon(degree, path)) {
 			return false;
 		}
 		if (bloodVolume < bloodCost) {

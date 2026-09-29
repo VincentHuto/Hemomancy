@@ -72,6 +72,7 @@ public class VesperTheEveningStarEntity extends Monster {
 	private int stanceIndex = -1;
 	private UUID ordealOwner;
 	private long bloomOrigin;
+	private UUID bloomId;
 	private boolean ordealResolved;
 	private VesperWeaponAction lastWeaponAction = VesperWeaponAction.NONE;
 	private Vec3 lockedActionAim = Vec3.ZERO;
@@ -200,18 +201,25 @@ public class VesperTheEveningStarEntity extends Monster {
     }
 
 	public void setOrdeal(UUID owner, long bloomOrigin) {
+		setOrdeal(owner, bloomOrigin, null);
+	}
+
+	public void setOrdeal(UUID owner, long bloomOrigin, UUID bloomId) {
 		this.ordealOwner = owner;
 		this.bloomOrigin = bloomOrigin;
+		this.bloomId = bloomId;
 	}
 
 	public UUID getOrdealOwner() { return ordealOwner; }
 	public long getBloomOrigin() { return bloomOrigin; }
+	public UUID getBloomId() { return bloomId; }
 
 	@Override
 	public void addAdditionalSaveData(CompoundTag tag) {
 		super.addAdditionalSaveData(tag);
 		if (ordealOwner != null) tag.putUUID("OrdealOwner", ordealOwner);
 		tag.putLong("BloomOrigin", bloomOrigin);
+		if (bloomId != null) tag.putUUID("BloomId", bloomId);
 		tag.putLong("TendencySeed", tendencySeed);
 		tag.putInt("StanceIndex", stanceIndex);
 		tag.putInt("StanceTick", getStanceTick());
@@ -243,6 +251,7 @@ public class VesperTheEveningStarEntity extends Monster {
 		super.readAdditionalSaveData(tag);
 		ordealOwner = tag.hasUUID("OrdealOwner") ? tag.getUUID("OrdealOwner") : null;
 		bloomOrigin = tag.getLong("BloomOrigin");
+		bloomId = tag.hasUUID("BloomId") ? tag.getUUID("BloomId") : null;
 		tendencySeed = tag.getLong("TendencySeed");
 		stanceIndex = tag.contains("StanceIndex") ? tag.getInt("StanceIndex") : -1;
 		entityData.set(DATA_STANCE_TICK, tag.getInt("StanceTick"));

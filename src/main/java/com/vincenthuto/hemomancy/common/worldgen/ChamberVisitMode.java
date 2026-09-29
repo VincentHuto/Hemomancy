@@ -4,9 +4,10 @@ public enum ChamberVisitMode {
 	DREAM,
 	TIMED_CHAIR,
 	ATTUNED,
-	ADMIN;
+	ADMIN,
+	GUIDED;
 
 	public boolean timed() {
-		return this == DREAM || this == TIMED_CHAIR;
+		return this == DREAM || this == TIMED_CHAIR || this == GUIDED;
 	}
 }

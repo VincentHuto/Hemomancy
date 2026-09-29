@@ -32,7 +32,8 @@ public final class LivingWorkshopResourceTest {
 		assertContains("Poultice no longer duplicates the Salve", poultice, "\"count\": 1");
 		assertContains("all brewing outcomes are taught", language, "Umbral turns Night Vision into Invisibility");
 		assertContains("First Culture guidance names cost", language, "600 blood over 2,400 ticks");
-		assertContains("First Culture requires a recorded tendency", lanternMenu, "hasRecordedEnzyme(serverPlayer, stack)");
+		assertContains("Lantern accepts an authored fruiting culture", lanternMenu,
+				"holder.value().matchesCulture(stack)");
 		assertContains("Tap harvest drops output when inventory is full", tapBlock,
 				"if (!player.addItem(extracted)) player.drop(extracted, false);");
 	}

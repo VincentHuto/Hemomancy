@@ -70,17 +70,19 @@ class GameTestHarnessSourceContractTest {
 				"first_remnant_discovered",
 				"vicar_hermit_road_report",
 				"vessel_filled",
+				"first_bloodcraft_proofs",
 				"formation_projected",
 				"liber_crafted",
 				"hematic_iron_crafted",
 				"living_staff_crafted",
-				"vicar_reward", "alchemist_briefing",
-				"centrifuge_prepared", "separation_started", "enzyme_recovered", "alchemist_reward", "votary_rite", "degree_2_reached",
+				"vicar_reward", "degree_2_reached", "alchemist_briefing",
+				"centrifuge_prepared", "separation_started", "enzyme_recovered", "alchemist_reward",
+				"first_distillation", "concentrated_blood_rest",
 				"body_answers_briefing", "body_answers_tincture", "red_taxonomy",
 				"living_bestiary_record", "living_bestiary_surrender", "hyphae_discovered",
 				"artificer_worn_vow_briefing", "artificer_armature_placed", "artificer_hematic_upgrade",
 				"artificer_worn_vow_reward", "artificer_worn_vow_fitting", "enzyme_mastery",
-				"initiate_rite", "first_culture", "woven_vessel_turn_in", "first_memory_woven",
+				"first_culture", "woven_vessel_turn_in", "first_memory_woven",
 				"noetic_mark_recognized",
 				"artificer_three_answers_briefing", "artificer_fork_upgrade",
 				"artificer_three_answers_inspection", "artificer_three_answers_counsel",
@@ -104,7 +106,7 @@ class GameTestHarnessSourceContractTest {
 				"artificer_weight_of_frame_briefing", "artificer_monolithic_frame",
 				"artificer_d7_upgrade", "artificer_weight_of_frame_inspection",
 				"artificer_d7_demonstration", "artificer_d7_fitting",
-				"qliphoth_communion", "apotheos_choice", "apotheos_rite",
+				"qliphoth_communion", "apotheos_choice", "apotheos_rite", "silent_refusal",
 				"complete"), stageIds);
 
 		var unstainedStageIds = Pattern.compile("[A-Z_]+\\(\"([^\"]+)\"\\)")
@@ -287,9 +289,12 @@ class GameTestHarnessSourceContractTest {
 				"Server-side automation must not open NPC dialogue screens");
 		assertTrue(!harbinger.contains("case FIRST_REMNANT_DISCOVERED -> useBlock"),
 				"Server-side automation must not open the First Remnant inscription screen");
-		assertTrue(read("src/gameTest/java/com/vincenthuto/hemomancy/gametest/journey/HemoJourneyFixtures.java")
-				.contains("if (!JourneyAutoRunner.activeForTest(player))"),
-				"Automatic Apotheos setup must suppress its optional client dialogue");
+		assertTrue(!read("src/gameTest/java/com/vincenthuto/hemomancy/gametest/journey/HemoJourneyFixtures.java")
+				.contains("putBoolean(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING"),
+				"Journey setup must not grant revelation before the Spine projection");
+		assertTrue(harbinger.contains("spine.use(player.serverLevel(), player, InteractionHand.MAIN_HAND)")
+				&& harbinger.contains("FungalGardenTravelHelper.performForcedProjectionReturn(player)"),
+				"Automation must use the earned Spine before accelerating projection return");
 
 		assertEveryStageCovered(harbingerStages, harbinger);
 		assertEveryStageCovered(unstainedStages, unstained);

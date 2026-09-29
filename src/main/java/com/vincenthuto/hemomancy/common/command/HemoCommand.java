@@ -1128,16 +1128,17 @@ public class HemoCommand {
 		}
 		multiBlock.placeFillers(level, center, bloomBlock.defaultBlockState());
 
-		data.addBloom(new QliphothBloomSavedData.BloomEntry(
-				player.getUUID(), center, dimension, 3, level.getGameTime()));
+		var debugBloom = new QliphothBloomSavedData.BloomEntry(
+				player.getUUID(), center, dimension, 3, level.getGameTime());
+		data.addBloom(debugBloom);
 		for (int i = 0; i < stage.pomesDropped(); i++) {
-			data.incrementPomesDropped(center);
+			data.incrementPomesDropped(debugBloom);
 		}
 		if (stage.severedState().isPortalOpen()) {
-			data.severBloom(center);
+			data.severBloom(debugBloom);
 		} else if (stage.severedState().isSealedTrophy()) {
-			data.severBloom(center);
-			data.sealBloom(center);
+			data.severBloom(debugBloom);
+			data.sealBloom(debugBloom);
 		}
 		HarbingerCardinalRiteEvents.syncQliphothBlooms(level.getServer());
 

@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.enchanting.ResonantForgeTransfer;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.DataComponentInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.CylinderMedia;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ResonantForgeBlockEntity;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
@@ -48,8 +49,8 @@ public class ResonantForgeMenu extends AbstractContainerMenu {
     private Slot input(Container container, int slot, int x, int y, boolean cylinder) {
         return new Slot(container, slot, x, y) {
             @Override public boolean mayPlace(ItemStack stack) {
-                return forge.idle() && (cylinder ? stack.is(ItemInit.ambergris_cylinder.get())
-                        : !stack.is(ItemInit.ambergris_cylinder.get()) && stack.getCount() == 1);
+                return forge.idle() && (cylinder ? CylinderMedia.supported(stack)
+                        : !CylinderMedia.supported(stack) && stack.getCount() == 1);
             }
             @Override public boolean mayPickup(Player player) { return forge.idle(); }
             @Override public int getMaxStackSize() { return 1; }
@@ -139,8 +140,13 @@ public class ResonantForgeMenu extends AbstractContainerMenu {
         ItemStack copy = original.copy();
         if (index < ResonantForgeBlockEntity.SLOT_COUNT) {
             if (!moveItemStackTo(original, ResonantForgeBlockEntity.SLOT_COUNT, slots.size(), true)) return ItemStack.EMPTY;
-        } else if (original.is(ItemInit.ambergris_cylinder.get())) {
-            if (!moveItemStackTo(original, ResonantForgeBlockEntity.APPLICATION_CYLINDER,
+        } else if (CylinderMedia.supported(original)) {
+            if (!CylinderMedia.blank(original) && !original.has(DataComponentInit.RESONANT_PATTERN.get()))
+                return ItemStack.EMPTY;
+            if (CylinderMedia.blank(original)) {
+                if (!moveItemStackTo(original, ResonantForgeBlockEntity.GRINDING_CYLINDER,
+                        ResonantForgeBlockEntity.GRINDING_CYLINDER + 1, false)) return ItemStack.EMPTY;
+            } else if (!moveItemStackTo(original, ResonantForgeBlockEntity.APPLICATION_CYLINDER,
                     ResonantForgeBlockEntity.APPLICATION_CYLINDER + 1, false)
                     && !moveItemStackTo(original, ResonantForgeBlockEntity.GRINDING_CYLINDER,
                     ResonantForgeBlockEntity.GRINDING_CYLINDER + 1, false)) return ItemStack.EMPTY;

@@ -73,8 +73,9 @@ public final class HarbingerArtificerNpcSourceTest {
 		assertContains("client model layer registered", layerEvents,
 				"HarbingerArtificerModel.LAYER_LOCATION");
 		assertContains("outpost spawns Artificer", outpost, "EntityInit.harbinger_artificer.get()");
-		assertContains("outpost places Artificer in unused eastern workshop quadrant", outpost, "centerX + halfWidth");
-		assertContains("outpost places Artificer in unused northern workshop quadrant", outpost, "centerZ - halfDepth");
+		assertContains("outpost maps the Artificer marker", outpost,
+				"case 12 -> EntityInit.harbinger_artificer.get()");
+		assertContains("outpost spawns marked residents", outpost, "spawnMob(level, resident, pos, outpostKey)");
 
 		assertContains("renderer uses dedicated Artificer texture path", renderer,
 				"textures/entity/npc/harbinger/harbinger_artificer/harbinger_artificer.png");

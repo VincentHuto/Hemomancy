@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.gametest;
 import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumSkillStates;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodShotEntity;
@@ -22,7 +23,6 @@ import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonFactory;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.PuppeteersSpindleBlockEntity;
-import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -250,8 +250,9 @@ public final class PuppeteeringGameTests {
 		Mob claimedWill = null;
 		try {
 			PuppeteerSummonDefinition definition = learnVulture(owner);
-			owner.getPersistentData().putString(FungalGardenTravelHelper.ARCHON_CHOICE_KEY,
-					FungalGardenTravelHelper.ARCHON_CHOICE_SILENCE);
+			var degree = HemoCapabilityAccess.requireInitiatoryDegree(owner);
+			degree.setDegreeNumber(7);
+			degree.setArchonPath(EnumArchonPath.SILENT_ARCHON);
 			ItemStack crossbar = attunedCrossbar(owner, 100);
 			owner.setItemInHand(InteractionHand.MAIN_HAND, crossbar);
 

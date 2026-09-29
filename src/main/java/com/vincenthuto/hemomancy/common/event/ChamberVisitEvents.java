@@ -89,37 +89,37 @@ public final class ChamberVisitEvents {
 
 	@SubscribeEvent
 	public static void onAttack(AttackEntityEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player && ChamberVisitService.isDream(player)
+		if (event.getEntity() instanceof ServerPlayer player && ChamberVisitService.isObservational(player)
 				&& !(event.getTarget() instanceof ArborOfWillEntity)) event.setCanceled(true);
 	}
 
 	@SubscribeEvent
 	public static void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
-		if (event.getEntity() instanceof ServerPlayer player && ChamberVisitService.isDream(player)) event.setCanceled(true);
+		if (event.getEntity() instanceof ServerPlayer player && ChamberVisitService.isObservational(player)) event.setCanceled(true);
 	}
 
 	@SubscribeEvent
 	public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-		if (event.getEntity() instanceof ServerPlayer player && ChamberVisitService.isDream(player)) event.setCanceled(true);
+		if (event.getEntity() instanceof ServerPlayer player && ChamberVisitService.isObservational(player)) event.setCanceled(true);
 	}
 
 	@SubscribeEvent
 	public static void onRightClickEntity(PlayerInteractEvent.EntityInteract event) {
-		if (event.getEntity() instanceof ServerPlayer player && ChamberVisitService.isDream(player)
+		if (event.getEntity() instanceof ServerPlayer player && ChamberVisitService.isObservational(player)
 				&& !(event.getTarget() instanceof ArborOfWillEntity)) event.setCanceled(true);
 	}
 
 	@SubscribeEvent
 	public static void onBreak(BlockEvent.BreakEvent event) {
 		if (event.getPlayer() instanceof ServerPlayer player
-				&& (ChamberVisitService.isDream(player) || WarpChairBlock.isPaired(event.getLevel(), event.getPos()))) {
+				&& (ChamberVisitService.isObservational(player) || WarpChairBlock.isPaired(event.getLevel(), event.getPos()))) {
 			event.setCanceled(true);
 		}
 	}
 
 	@SubscribeEvent
 	public static void onPlace(BlockEvent.EntityPlaceEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player && ChamberVisitService.isDream(player)) event.setCanceled(true);
+		if (event.getEntity() instanceof ServerPlayer player && ChamberVisitService.isObservational(player)) event.setCanceled(true);
 	}
 
 	@SubscribeEvent
@@ -129,12 +129,12 @@ public final class ChamberVisitEvents {
 
 	@SubscribeEvent
 	public static void onToss(ItemTossEvent event) {
-		if (event.getPlayer() instanceof ServerPlayer player && ChamberVisitService.isDream(player)) event.setCanceled(true);
+		if (event.getPlayer() instanceof ServerPlayer player && ChamberVisitService.isObservational(player)) event.setCanceled(true);
 	}
 
 	@SubscribeEvent
 	public static void onPickup(ItemEntityPickupEvent.Pre event) {
-		if (event.getPlayer() instanceof ServerPlayer player && ChamberVisitService.isDream(player)) {
+		if (event.getPlayer() instanceof ServerPlayer player && ChamberVisitService.isObservational(player)) {
 			event.setCanPickup(TriState.FALSE);
 		}
 	}

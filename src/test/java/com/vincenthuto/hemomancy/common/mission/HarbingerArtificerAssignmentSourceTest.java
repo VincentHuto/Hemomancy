@@ -78,6 +78,8 @@ public final class HarbingerArtificerAssignmentSourceTest {
 				"com/vincenthuto/hemomancy/common/block/harbinger/crafting/HematicArmatureBlock.java"));
 		String blockEntity = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/tile/harbinger/crafting/HematicArmatureBlockEntity.java"));
+		String tierRites = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/rite/harbinger/ArmatureUpgradeRites.java"));
 		String graftRite = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponGraftRite.java"));
 
@@ -85,7 +87,7 @@ public final class HarbingerArtificerAssignmentSourceTest {
 				"ArtificerAssignments.onArmaturePlaced");
 		assertContains("Armature upgrade success grants Artificer upgrade milestones", blockEntity,
 				"ArtificerAssignments.onArmatureUpgrade");
-		assertContains("Armature tier item success grants Artificer tier milestones", blockEntity,
+		assertContains("Armature tier rite success grants Artificer tier milestones", tierRites,
 				"ArtificerAssignments.onArmatureTierApplied");
 		assertContains("Graft rite success grants Artificer graft milestone", graftRite,
 				"ArtificerAssignments.onLivingWeaponGraftComplete");

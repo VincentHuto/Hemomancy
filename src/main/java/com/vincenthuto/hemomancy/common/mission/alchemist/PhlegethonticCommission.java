@@ -1,0 +1,67 @@
+package com.vincenthuto.hemomancy.common.mission.alchemist;
+
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryContext;
+import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerAlchemistEntity;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodSampleData;
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
+import com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+
+public final class PhlegethonticCommission {
+    private static final String DATA = "hemomancy:phlegethontic_commission";
+    private static final String REPORTED = "Reported";
+
+    private PhlegethonticCommission() {
+    }
+
+    public static boolean eligible(ServerPlayer player) {
+        ItemInquiryContext context = ItemInquiryContext.from(player);
+        return context.degree() >= 5 && context.activeBlood() && !context.purifying()
+                && !context.clarityUnlocked();
+    }
+
+    public static boolean validSample(ItemStack stack) {
+        if (!(stack.getItem() instanceof BloodVialItem) || !BloodSampleData.isStorableSample(stack)) return false;
+        EntityType<?> source = BloodSampleData.entityType(stack);
+        return source == EntityInit.excoriated.get() || source == EntityInit.phlegethontic_bombardier.get();
+    }
+
+    public static PhlegethonticCommissionProgress progress(ServerPlayer player) {
+        boolean reported = data(player).getBoolean(REPORTED);
+        return new PhlegethonticCommissionProgress(
+                reported || validSample(player.getMainHandItem()),
+                reported ? 5 : Math.min(5, player.getInventory().countItem(BlockInit.escharian_scyphus.get().asItem())),
+                reported);
+    }
+
+    public static boolean report(ServerPlayer player, Entity teacher) {
+        if (!(teacher instanceof HarbingerAlchemistEntity) || !EarlyInitiation.near(player, teacher)
+                || !eligible(player) || !progress(player).ready()) return false;
+        CompoundTag data = data(player);
+        data.putBoolean(REPORTED, true);
+        save(player, data);
+        player.displayClientMessage(Component.translatable("hemomancy.alchemist.phlegethontic_commission.recorded")
+                .withStyle(ChatFormatting.DARK_RED), false);
+        return true;
+    }
+
+    private static CompoundTag data(ServerPlayer player) {
+        return player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getCompound(DATA);
+    }
+
+    private static void save(ServerPlayer player, CompoundTag data) {
+        CompoundTag root = player.getPersistentData();
+        CompoundTag persisted = root.getCompound(Player.PERSISTED_NBT_TAG);
+        persisted.put(DATA, data);
+        root.put(Player.PERSISTED_NBT_TAG, persisted);
+    }
+}

@@ -10,7 +10,7 @@ import java.util.List;
 import static com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.Step;
 
 public final class HarbingerArtificerDialogueTrees {
-	private static final ResourceLocation ARTIFICER_ICON = Hemomancy.rloc(
+	private static final ResourceLocation ARTIFICER_ICON = ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID,
 			"textures/entity/npc/harbinger/harbinger_artificer/harbinger_artificer.png");
 	private static final String SPEAKER = "entity.hemomancy.harbinger_artificer";
 	public static final String EVENT_CLAIM_WORN_VOW_REWARD = "artificer_claim_worn_vow_reward";
@@ -31,6 +31,7 @@ public final class HarbingerArtificerDialogueTrees {
 	public static final String EVENT_INSPECT_CRIMSON_VESTMENT = "artificer_inspect_crimson_vestment";
 	public static final String EVENT_INSPECT_WEIGHT_OF_FRAME = "artificer_inspect_weight_of_frame";
 	public static final String EVENT_CLAIM_D7_REWARD = "artificer_claim_d7_reward";
+	public static final String EVENT_CONSECRATION_KIT = "artificer_consecration_kit";
 	public static final String EVENT_RECOVER_FORK_PREFIX = "artificer_recover_fork_";
 	public static final String EVENT_RECOVER_D7_PREFIX = "artificer_recover_d7_";
 
@@ -104,6 +105,7 @@ public final class HarbingerArtificerDialogueTrees {
 		options.add(new DialogueOption("hemomancy.dialogue.artificer.option.who_are_you", "identity", null));
 		if (degree >= 2) {
 			options.add(new DialogueOption("hemomancy.dialogue.artificer.option.teach_armature", "armature", null));
+			options.add(new DialogueOption("hemomancy.dialogue.artificer.option.living_staff", "living_staff", null));
 			options.add(new DialogueOption("hemomancy.dialogue.artificer.option.assignments", "assignments", null));
 		}
 		if (degree >= 3) {
@@ -131,6 +133,10 @@ public final class HarbingerArtificerDialogueTrees {
 				.addNode(identityNode());
 		if (degree >= 2) {
 			builder.addNode(armatureNode());
+			builder.addNode(new DialogueNode("living_staff", List.of(
+					"hemomancy.artificer.living_staff.construction",
+					"hemomancy.artificer.living_staff.use"
+			), List.of(new DialogueOption("hemomancy.dialogue.artificer.option.leave", null, null))));
 			builder.addNode(assignmentsNode(progress));
 			addAssignmentReminderNodes(builder, progress);
 		}
@@ -142,7 +148,10 @@ public final class HarbingerArtificerDialogueTrees {
 			builder.addNode(livingGraftsNode());
 		}
 		if (degree >= 5) {
-			builder.addNode(lateArmatureNode());
+			builder.addNode(lateArmatureNode(progress.consecrationKitClaimed()));
+			builder.addNode(new DialogueNode("late_armature_given", List.of(
+					"hemomancy.artificer.late_armature.given"),
+					List.of(new DialogueOption("hemomancy.dialogue.artificer.option.leave", null, null))));
 		}
 		if (degree >= 7) {
 			builder.addNode(monolithicArmatureNode());
@@ -189,11 +198,17 @@ public final class HarbingerArtificerDialogueTrees {
 		), List.of(new DialogueOption("hemomancy.dialogue.artificer.option.leave", null, null)));
 	}
 
-	private static DialogueNode lateArmatureNode() {
+	private static DialogueNode lateArmatureNode(boolean kitClaimed) {
+		List<DialogueOption> options = new ArrayList<>();
+		if (!kitClaimed) options.add(new DialogueOption(
+				"hemomancy.dialogue.artificer.option.claim_consecration_kit",
+				"late_armature_given", EVENT_CONSECRATION_KIT));
+		options.add(new DialogueOption("hemomancy.dialogue.artificer.option.leave", null, null));
 		return new DialogueNode("late_armature", List.of(
 				"hemomancy.artificer.late_armature.line1",
-				"hemomancy.artificer.late_armature.line2"
-		), List.of(new DialogueOption("hemomancy.dialogue.artificer.option.leave", null, null)));
+				"hemomancy.artificer.late_armature.line2",
+				"hemomancy.artificer.late_armature.line3"
+		), options);
 	}
 
 	private static DialogueNode monolithicArmatureNode() {

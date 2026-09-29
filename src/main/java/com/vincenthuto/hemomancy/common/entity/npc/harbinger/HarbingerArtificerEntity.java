@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc.harbinger;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
@@ -73,6 +74,10 @@ public class HarbingerArtificerEntity extends com.vincenthuto.hemomancy.common.s
         if (!successionInteraction(player, hand)) return InteractionResult.SUCCESS;
 		if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
 			ArtificerProgressSnapshot progress = ArtificerProgressSnapshot.from(serverPlayer);
+			if (progress.degree() >= 5 && progress.activeBlood() && !progress.purifying() && !progress.clarity()) {
+				serverPlayer.serverLevel().getRecipeManager().byKey(Hemomancy.rloc("vicars_consecration_kit"))
+						.ifPresent(recipe -> serverPlayer.awardRecipes(java.util.List.of(recipe)));
+			}
 			com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.met(serverPlayer, "artificer");
             DialogueTree tree = progressionDialogue(serverPlayer);
 			tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "artificer", progress.degree(), 0f);

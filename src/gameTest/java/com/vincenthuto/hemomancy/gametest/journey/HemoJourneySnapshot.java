@@ -21,6 +21,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Vas
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledgeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointGainEvents;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArtEvents;
@@ -49,7 +50,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.ServerRecipeBook;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -60,6 +63,21 @@ import java.util.Map;
 public final class HemoJourneySnapshot {
 	public static final String SNAPSHOT_KEY = "hemomancy.dev_test.journey.snapshot";
 	public static final String STAGE_KEY = "hemomancy.dev_test.journey.stage";
+	private static final String JOURNEY_KEY_PREFIX = "hemomancy.dev_test.journey.";
+
+	public static void onPlayerClone(PlayerEvent.Clone event) {
+		if (event.isWasDeath() && event.getOriginal() instanceof ServerPlayer original
+				&& event.getEntity() instanceof ServerPlayer replacement) {
+			copyJourneyData(original.getPersistentData(), replacement.getPersistentData());
+		}
+	}
+
+	static void copyJourneyData(CompoundTag original, CompoundTag replacement) {
+		if (!original.contains(SNAPSHOT_KEY, Tag.TAG_COMPOUND)) return;
+		for (String key : original.getAllKeys()) {
+			if (key.startsWith(JOURNEY_KEY_PREFIX)) replacement.put(key, original.get(key).copy());
+		}
+	}
 
 	private static final String BLOOD_ACTIVE = "blood_active";
 	private static final String BLOOD_CURRENT = "blood_current";
@@ -72,6 +90,7 @@ public final class HemoJourneySnapshot {
 	private static final String ORIGIN_DIMENSION = "origin_dimension";
 	private static final String ORIGIN_POSITION = "origin_position";
 	private static final String CURRENT_STAGE = "current_stage";
+	private static final String SCAR_STATION_CRAFTS = "scar_station_crafts";
 	private static final String SKILL_PROGRESS = "skill_progress";
 	private static final String LIBER_KNOWLEDGE = "liber_knowledge";
 	private static final String KNOWN_MANIPULATIONS = "known_manipulations";
@@ -84,10 +103,12 @@ public final class HemoJourneySnapshot {
 	private static final String VASCULAR_SYSTEM = "vascular_system";
 	private static final String RECIPE_BOOK = "recipe_book";
 	private static final String SPECIMEN_BESTIARY = "specimen_bestiary";
+	private static final String ADVANCED_BREWING = "advanced_brewing";
 	private static final String PERSISTENT_DATA = "persistent_data";
 	private static final String VASC_EQUIPMENT = "vasc_equipment";
 	private static final int VASC_SLOT = 5;
 	private static final List<String> JOURNEY_PERSISTENT_KEYS = List.of(
+			net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG,
 			ArtificerAssignments.WORN_VOW_REWARD_CLAIM_KEY,
 			ArtificerAssignments.THREE_ANSWERS_REWARD_CLAIM_KEY,
 			ArtificerAssignments.CRIMSON_VESTMENT_REWARD_CLAIM_KEY,
@@ -97,7 +118,16 @@ public final class HemoJourneySnapshot {
 			ArtificerAssignments.FIRST_FORK_FAMILY_KEY,
 			ArtificerAssignments.FIRST_D7_LINEAGE_KEY,
 			FungalGardenTravelHelper.ARCHON_CHOICE_KEY,
+			"hemomancy:vesper_memory_pending",
 			FungalGardenTravelHelper.REVELATION_CHOICE_PENDING,
+			FungalGardenTravelHelper.PROJECTION_ACTIVE,
+			FungalGardenTravelHelper.PROJECTION_REMAINING,
+			FungalGardenTravelHelper.RETURN_X,
+			FungalGardenTravelHelper.RETURN_Y,
+			FungalGardenTravelHelper.RETURN_Z,
+			FungalGardenTravelHelper.RETURN_XROT,
+			FungalGardenTravelHelper.RETURN_YROT,
+			FungalGardenTravelHelper.RETURN_DIMENSION,
 			"hemomancy.blessed_hermit",
 			"hemomancy.claimed_heart_hermit",
 			"hemomancy.vicar_consecration_kit_claimed");
@@ -213,6 +243,7 @@ public final class HemoJourneySnapshot {
 			HarbingerAdvancementGranter.ADV_LIVING_COVENANT_COMPLETE,
 			HarbingerAdvancementGranter.ADV_DEGREE_7_ARCHON,
 			HarbingerAdvancementGranter.ADV_DEGREE_8_APOTHEOS,
+			HarbingerAdvancementGranter.ADV_VESPER_DEFEATED,
 			ArtificerAssignments.WEIGHT_OF_FRAME_BRIEFED,
 			HarbingerAdvancementGranter.ADV_ARTIFICER_MONOLITHIC_FRAME,
 			HarbingerAdvancementGranter.ADV_ARTIFICER_FIRST_D7_UPGRADE,
@@ -284,7 +315,11 @@ public final class HemoJourneySnapshot {
 		snapshot.put(RECIPE_BOOK, player.getRecipeBook().toNbt());
 		snapshot.put(SPECIMEN_BESTIARY, HemoCapabilityAccess.requireSpecimenBestiary(player)
 				.serializeNBT(player.registryAccess()));
+		snapshot.put(ADVANCED_BREWING, HemoCapabilityAccess.advancedBrewing(player)
+				.serializeNBT(player.registryAccess()));
 		snapshot.put(PERSISTENT_DATA, capturePersistentData(player));
+		snapshot.putInt(SCAR_STATION_CRAFTS, player.getStats().getValue(
+				Stats.ITEM_CRAFTED.get(BlockInit.scar_station.get().asItem())));
 		HemoJourneyWorldState.capture(player, snapshot);
 		snapshot.put(VASC_EQUIPMENT, HemoCapabilityAccess.requireEquipment(player).getStackInSlot(VASC_SLOT)
 				.saveOptional(player.registryAccess()));
@@ -350,6 +385,7 @@ public final class HemoJourneySnapshot {
 		var emptyTendency = new BloodTendency();
 		var emptyRecipeBook = new ServerRecipeBook();
 		var emptyBestiary = new SpecimenBestiaryProgress();
+		var emptyBrewing = new com.vincenthuto.hemomancy.common.brewing.AdvancedBrewingProgress();
 		ParsedState reset = new ParsedState(false, 0.0D, 5000.0D, 0,
 				emptyDegree.serializeNBT(player.registryAccess()), emptyTendency.serializeNBT(player.registryAccess()), emptyInventory,
 				resetAdvancements, emptySkills.serializeNBT(player.registryAccess()),
@@ -361,13 +397,14 @@ public final class HemoJourneySnapshot {
 				emptyMuscleMemory.serializeNBT(player.registryAccess()),
 				emptyLivingStaffProgress.serializeNBT(player.registryAccess()),
 				emptyVascularSystem.serializeNBT(player.registryAccess()), emptyRecipeBook.toNbt(),
-				emptyBestiary.serializeNBT(player.registryAccess()), new CompoundTag(),
+				emptyBestiary.serializeNBT(player.registryAccess()), emptyBrewing.serializeNBT(player.registryAccess()), new CompoundTag(),
 				ItemStack.EMPTY, rollback.target(),
 				HemoJourneyStage.MORTAL_DISPLAY);
 		ApplyResult applied = applyStateSafely(player, reset);
 		if (!applied.success()) {
 			return rollbackFailure(player, rollback, currentStage(data), "Journey reset failed: " + applied.message());
 		}
+		player.getStats().setValue(player, Stats.ITEM_CRAFTED.get(BlockInit.scar_station.get().asItem()), 0);
 		player.removeAllEffects();
 		HemoJourneyWorldState.reset(player, data.getCompound(SNAPSHOT_KEY));
 		data.putString(STAGE_KEY, HemoJourneyStage.MORTAL_DISPLAY.id());
@@ -394,6 +431,10 @@ public final class HemoJourneySnapshot {
 			return rollbackFailure(player, rollback, currentStage(data), "Journey restore failed: " + applied.message());
 		}
 		HemoJourneyWorldState.restore(player, snapshot);
+		if (snapshot.contains(SCAR_STATION_CRAFTS, Tag.TAG_INT)) {
+			player.getStats().setValue(player, Stats.ITEM_CRAFTED.get(BlockInit.scar_station.get().asItem()),
+					snapshot.getInt(SCAR_STATION_CRAFTS));
+		}
 		HemoJourneyStage restoredStage = target.stage();
 		data.remove(SNAPSHOT_KEY);
 		data.remove(STAGE_KEY);
@@ -401,6 +442,11 @@ public final class HemoJourneySnapshot {
 	}
 
 	private static PreflightResult preflightSnapshot(ServerPlayer player, CompoundTag snapshot) {
+		if (snapshot.contains(SCAR_STATION_CRAFTS)
+				&& (!snapshot.contains(SCAR_STATION_CRAFTS, Tag.TAG_INT)
+						|| snapshot.getInt(SCAR_STATION_CRAFTS) < 0)) {
+			return PreflightResult.fail("Snapshot restore failed: invalid Scarring Station craft credit.");
+		}
 		if (!snapshot.contains(BLOOD_ACTIVE, Tag.TAG_BYTE) || !snapshot.contains(BLOOD_CURRENT, Tag.TAG_ANY_NUMERIC)
 				|| !snapshot.contains(BLOOD_MAX, Tag.TAG_ANY_NUMERIC) || !snapshot.contains(DEGREE, Tag.TAG_ANY_NUMERIC)
 				|| !snapshot.contains(DEGREE_STATE, Tag.TAG_COMPOUND)
@@ -417,6 +463,7 @@ public final class HemoJourneySnapshot {
 				|| !snapshot.contains(VASCULAR_SYSTEM, Tag.TAG_COMPOUND)
 				|| !snapshot.contains(RECIPE_BOOK, Tag.TAG_COMPOUND)
 				|| !snapshot.contains(SPECIMEN_BESTIARY, Tag.TAG_COMPOUND)
+				|| !snapshot.contains(ADVANCED_BREWING, Tag.TAG_COMPOUND)
 				|| !snapshot.contains(PERSISTENT_DATA, Tag.TAG_COMPOUND)
 				|| !HemoJourneyWorldState.validSnapshot(snapshot)) {
 			return PreflightResult.fail("Snapshot restore failed: missing or invalid blood state.");
@@ -450,6 +497,8 @@ public final class HemoJourneySnapshot {
 		if (!validateRecipeBookSchema(player, recipeBookTag)) return PreflightResult.fail("Recipe book restore failed: malformed schema.");
 		CompoundTag bestiaryTag = snapshot.getCompound(SPECIMEN_BESTIARY);
 		if (!validateSpecimenBestiarySchema(player, bestiaryTag)) return PreflightResult.fail("Specimen Bestiary restore failed: malformed schema.");
+		CompoundTag brewingTag = snapshot.getCompound(ADVANCED_BREWING);
+		if (!validateAdvancedBrewingSchema(player, brewingTag)) return PreflightResult.fail("Advanced Brewing restore failed: malformed schema.");
 		CompoundTag persistentDataTag = snapshot.getCompound(PERSISTENT_DATA);
 		if (!validatePersistentDataSchema(persistentDataTag)) return PreflightResult.fail("Persistent journey data restore failed: malformed schema.");
 		ListTag inventoryTag = snapshot.getList(INVENTORY, Tag.TAG_COMPOUND);
@@ -482,7 +531,7 @@ public final class HemoJourneySnapshot {
 				snapshot.getCompound(DEGREE_STATE).copy(), snapshot.getCompound(BLOOD_TENDENCY).copy(),
 				inventory, advancements, skillTag.copy(), knowledgeTag.copy(), manipulationTag.copy(), summonsTag.copy(), scarTag.copy(),
 				unstainedTag.copy(), stillArtsTag.copy(), muscleMemoryTag.copy(), livingStaffTag.copy(), vascularTag.copy(), recipeBookTag.copy(), bestiaryTag.copy(),
-				persistentDataTag.copy(), vasc, target,
+				brewingTag.copy(), persistentDataTag.copy(), vasc, target,
 				stageById(snapshot.getString(CURRENT_STAGE))));
 	}
 
@@ -517,6 +566,7 @@ public final class HemoJourneySnapshot {
 				player.getData(HemoAttachmentTypes.VASCULAR_SYSTEM).serializeNBT(player.registryAccess()),
 				player.getRecipeBook().toNbt(),
 				HemoCapabilityAccess.requireSpecimenBestiary(player).serializeNBT(player.registryAccess()),
+				HemoCapabilityAccess.advancedBrewing(player).serializeNBT(player.registryAccess()),
 				capturePersistentData(player),
 				HemoCapabilityAccess.requireEquipment(player).getStackInSlot(VASC_SLOT).copy(),
 				target, currentStage(player.getPersistentData()));
@@ -563,12 +613,9 @@ public final class HemoJourneySnapshot {
 				player.registryAccess(), target.livingStaffProgressTag().copy());
 		player.getData(HemoAttachmentTypes.VASCULAR_SYSTEM).deserializeNBT(
 				player.registryAccess(), target.vascularSystemTag().copy());
-		ServerRecipeBook recipeBook = new ServerRecipeBook();
-		recipeBook.fromNbt(target.recipeBookTag().copy(), player.server.getRecipeManager());
-		player.getRecipeBook().copyOverData(recipeBook);
-		player.getRecipeBook().sendInitialRecipeBook(player);
 		var bestiary = HemoCapabilityAccess.requireSpecimenBestiary(player);
 		bestiary.deserializeNBT(player.registryAccess(), target.bestiaryTag().copy());
+		HemoCapabilityAccess.advancedBrewing(player).deserializeNBT(player.registryAccess(), target.brewingTag().copy());
 		CompoundTag persistentData = player.getPersistentData();
 		for (String key : JOURNEY_PERSISTENT_KEYS) persistentData.remove(key);
 		for (String key : List.copyOf(persistentData.getAllKeys()))
@@ -592,6 +639,10 @@ public final class HemoJourneySnapshot {
 		InitiatoryDegreeEvents.syncDegree(player, HemoCapabilityAccess.requireInitiatoryDegree(player));
 		BloodTendencyEvents.syncTendency(player, HemoCapabilityAccess.requireBloodTendency(player));
 		SpecimenBestiaryEvents.sync(player, bestiary);
+		ServerRecipeBook recipeBook = new ServerRecipeBook();
+		recipeBook.fromNbt(target.recipeBookTag().copy(), player.server.getRecipeManager());
+		player.getRecipeBook().copyOverData(recipeBook);
+		player.getRecipeBook().sendInitialRecipeBook(player);
 		Target destination = target.target();
 		player.teleportTo(destination.level(), destination.x(), destination.y(), destination.z(), destination.yaw(), destination.pitch());
 		if (!teleportMatches(player, target)) return ApplyResult.fail("teleport postcondition did not match target");
@@ -641,6 +692,8 @@ public final class HemoJourneySnapshot {
 		if (!player.getRecipeBook().toNbt().equals(target.recipeBookTag())) return ApplyResult.fail("Recipe book postcondition mismatch");
 		if (!HemoCapabilityAccess.requireSpecimenBestiary(player).serializeNBT(player.registryAccess())
 				.equals(target.bestiaryTag())) return ApplyResult.fail("Specimen Bestiary postcondition mismatch");
+		if (!HemoCapabilityAccess.advancedBrewing(player).serializeNBT(player.registryAccess())
+				.equals(target.brewingTag())) return ApplyResult.fail("Advanced Brewing postcondition mismatch");
 		if (!capturePersistentData(player).equals(target.persistentDataTag())) return ApplyResult.fail("Persistent journey data postcondition mismatch");
 		return ApplyResult.ok();
 	}
@@ -821,6 +874,12 @@ public final class HemoJourneySnapshot {
 		}
 	}
 
+	private static boolean validateAdvancedBrewingSchema(ServerPlayer player, CompoundTag tag) {
+		var progress = new com.vincenthuto.hemomancy.common.brewing.AdvancedBrewingProgress();
+		progress.deserializeNBT(player.registryAccess(), tag.copy());
+		return progress.serializeNBT(player.registryAccess()).equals(tag);
+	}
+
 	private static CompoundTag capturePersistentData(ServerPlayer player) {
 		CompoundTag captured = new CompoundTag();
 		CompoundTag data = player.getPersistentData();
@@ -832,8 +891,21 @@ public final class HemoJourneySnapshot {
 	private static boolean validatePersistentDataSchema(CompoundTag tag) {
 		for (String key : tag.getAllKeys()) {
 			if (key.startsWith("hemomancy.circus_")) continue;
-			if (!JOURNEY_PERSISTENT_KEYS.contains(key)
-					|| !tag.contains(key, Tag.TAG_BYTE) && !tag.contains(key, Tag.TAG_STRING)) return false;
+			if (net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG.equals(key)) {
+				if (!tag.contains(key, Tag.TAG_COMPOUND)) return false;
+				continue;
+			}
+			if (!JOURNEY_PERSISTENT_KEYS.contains(key)) return false;
+			int numericType = switch (key) {
+				case FungalGardenTravelHelper.PROJECTION_REMAINING -> Tag.TAG_INT;
+				case FungalGardenTravelHelper.RETURN_X, FungalGardenTravelHelper.RETURN_Y,
+						FungalGardenTravelHelper.RETURN_Z -> Tag.TAG_DOUBLE;
+				case FungalGardenTravelHelper.RETURN_XROT,
+						FungalGardenTravelHelper.RETURN_YROT -> Tag.TAG_FLOAT;
+				default -> -1;
+			};
+			if (numericType >= 0 ? !tag.contains(key, numericType)
+					: !tag.contains(key, Tag.TAG_BYTE) && !tag.contains(key, Tag.TAG_STRING)) return false;
 		}
 		return true;
 	}
@@ -907,7 +979,7 @@ public final class HemoJourneySnapshot {
 			CompoundTag knowledgeTag, ListTag manipulationTag, CompoundTag summonsTag, CompoundTag scarTag, CompoundTag unstainedTag,
 			CompoundTag stillArtsTag,
 			CompoundTag muscleMemoryTag, CompoundTag livingStaffProgressTag, CompoundTag vascularSystemTag,
-			CompoundTag recipeBookTag, CompoundTag bestiaryTag,
+			CompoundTag recipeBookTag, CompoundTag bestiaryTag, CompoundTag brewingTag,
 			CompoundTag persistentDataTag, ItemStack vasc,
 			Target target, HemoJourneyStage stage) {
 	}

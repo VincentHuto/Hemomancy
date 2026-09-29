@@ -4,30 +4,33 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.HematicArmatureBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.CrimsonDoeEntity;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.VeinMasonScarLesson;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.*;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
+import com.vincenthuto.hemomancy.common.event.MachineAccessEvents;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponForm;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponGraftData;
-import com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeItem;
+import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
+import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents;
+import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.QliphothBloomBlockEntity;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponGraftRecipeUnlocks;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingSicklePruning;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureOfferingPlacement;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
@@ -43,13 +46,13 @@ import com.vincenthuto.hemomancy.common.tile.harbinger.functional.MasonsEffigyBl
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.MortalDisplayBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.inscription.DiscoveryInscriptionBlockEntity;
-import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.LongArrayTag;
 import net.minecraft.nbt.LongTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
@@ -60,6 +63,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -67,6 +72,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -80,6 +87,7 @@ public final class HemoJourneyFixtures {
 	public static final String OWNED_BLOCKS_KEY = "hemomancy.dev_test.journey.owned_blocks";
 	public static final String BASELINE_KEY = "hemomancy.dev_test.journey.stage_baseline";
 	public static final String OWNED_OUTPUTS_KEY = "hemomancy.dev_test.journey.owned_outputs";
+	public static final String BLOOM_ID_KEY = "hemomancy.dev_test.journey.bloom_id";
 	public static final String OUTPUT_MARKER = "hemomancy.dev_test.journey.output";
 	private static final String BASELINE_INVENTORY = "inventory";
 	private static final String BASELINE_ENTITIES = "entities";
@@ -105,6 +113,18 @@ public final class HemoJourneyFixtures {
 		throw new IllegalStateException("No clear journey fixture volume was found near the player");
 	}
 
+	public static BlockPos findClearOriginBeyond(ServerPlayer player, BlockPos oldOrigin) {
+		ServerLevel level = fixtureLevel(player);
+		for (int rise = 0; rise <= 12; rise++) {
+			for (BlockPos offset : List.of(new BlockPos(32, 0, 0), new BlockPos(-32, 0, 0),
+					new BlockPos(0, 0, 32), new BlockPos(0, 0, -32))) {
+				BlockPos candidate = oldOrigin.offset(offset).above(rise);
+				if (allPlacementPositions(candidate).stream().allMatch(pos -> canPlace(level, pos))) return candidate;
+			}
+		}
+		throw new IllegalStateException("No clear journey fixture volume was found beyond the founded Fane");
+	}
+
 	public static ServerLevel fixtureLevel(ServerPlayer player) {
 		String saved = player.getPersistentData().getString(DIMENSION_KEY);
 		ResourceLocation id = ResourceLocation.tryParse(saved);
@@ -117,6 +137,30 @@ public final class HemoJourneyFixtures {
 
 	public static void prepare(ServerPlayer player, HemoJourneyStage stage, BlockPos origin) {
 		ServerLevel level = fixtureLevel(player);
+		if (stage == HemoJourneyStage.APOTHEOS_CHOICE || stage == HemoJourneyStage.SILENT_REFUSAL) {
+			BlockPos root = origin.above();
+			var bloom = QliphothBloomSavedData.get(level.getServer().overworld()).getBloomAt(
+					root, level.dimension().location().toString());
+			if (bloom == null || !bloom.center().equals(root)
+					|| !bloom.ownerUUID().equals(player.getUUID())
+					|| !player.getPersistentData().hasUUID(BLOOM_ID_KEY)
+					|| !bloom.bloomId().equals(player.getPersistentData().getUUID(BLOOM_ID_KEY))
+					|| !level.getBlockState(root).is(BlockInit.qliphoth_bloom.get())
+					|| !ownsBlock(player, root)) {
+				throw new IllegalStateException("The Communion Bloom is missing from this journey");
+			}
+			if (stage == HemoJourneyStage.APOTHEOS_CHOICE) {
+				prepareApotheosChoice(player);
+			} else {
+				if (HemoCapabilityAccess.requireInitiatoryDegree(player).getArchonPath()
+						!= EnumArchonPath.SILENT_PENDING) {
+					throw new IllegalStateException("The Silent refusal was not chosen");
+				}
+				prepareSilentRefusal(player);
+			}
+			recordBaseline(player, stage, origin);
+			return;
+		}
 		cleanup(player, origin);
 		List<BlockPos> planned = plannedPositions(stage, origin);
 		for (BlockPos pos : planned) {
@@ -125,7 +169,7 @@ public final class HemoJourneyFixtures {
 						+ level.getBlockState(pos) + " at " + pos);
 			}
 		}
-		player.getPersistentData().put(OWNED_BLOCKS_KEY, new ListTag());
+		player.getPersistentData().put(OWNED_BLOCKS_KEY, new LongArrayTag(new long[0]));
 		try {
 			buildPlatform(player, origin);
 			player.setItemSlot(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
@@ -138,6 +182,7 @@ public final class HemoJourneyFixtures {
 				case VICAR_HERMIT_ROAD_REPORT -> spawnVicar(level, origin);
 				case VESSEL_FILLED -> player.setItemSlot(EquipmentSlot.OFFHAND,
 						new ItemStack(ItemInit.bloody_jug.get()));
+				case FIRST_BLOODCRAFT_PROOFS -> prepareFirstBloodcraftProofs(player, origin);
 				case FORMATION_PROJECTED -> {
 					set(player, origin.above(), BlockInit.venous_stone.get());
 					player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.blood_projection.get()));
@@ -154,21 +199,17 @@ public final class HemoJourneyFixtures {
 				}
 				case LIVING_STAFF_CRAFTED -> prepareLivingStaffCraft(player, origin);
 				case VICAR_REWARD -> spawnVicar(level, origin);
-				case VOTARY_RITE -> {
-                    HemoCapabilityAccess.getEquipment(player).orElseThrow().setStackInSlot(5, new ItemStack(ItemInit.charm_of_vascularium.get()));
-                    player.setItemSlot(EquipmentSlot.MAINHAND, com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.create());
-                    BlockPos foot = origin.east(2).above();
-                    set(player, foot, Blocks.RED_BED);
-                    set(player, foot.north(), Blocks.RED_BED);
-                    level.setBlockAndUpdate(foot.north(), Blocks.RED_BED.defaultBlockState().setValue(
-                            net.minecraft.world.level.block.BedBlock.PART, net.minecraft.world.level.block.state.properties.BedPart.HEAD));
-                }
 				case DEGREE_2_REACHED, ALCHEMIST_BRIEFING, ALCHEMIST_REWARD, BODY_ANSWERS_BRIEFING ->
 					spawnAlchemist(level, origin);
+				case FIRST_DISTILLATION -> prepareFirstDistillation(player, origin);
+				case CONCENTRATED_BLOOD_REST -> {
+					spawnAlchemist(level, origin);
+					prepareRestBed(player, origin);
+				}
 				case BODY_ANSWERS_TINCTURE -> prepareBodyAnswersAlembic(player, origin);
 				case RED_TAXONOMY -> prepareRedTaxonomy(player, level, origin);
 				case LIVING_BESTIARY_RECORD -> prepareLivingBestiaryRecord(player, level, origin);
-				case LIVING_BESTIARY_SURRENDER -> { }
+				case LIVING_BESTIARY_SURRENDER -> spawnAlchemist(level, origin);
 				case HYPHAE_DISCOVERED -> spawnDiscoveryItem(level, origin, ItemInit.fungal_spine.get());
 				case ARTIFICER_WORN_VOW_BRIEFING -> {
 					HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
@@ -227,7 +268,7 @@ public final class HemoJourneyFixtures {
 				case ARTIFICER_CRIMSON_VESTMENT_BRIEFING,
 						ARTIFICER_CRIMSON_VESTMENT_INSPECTION, ARTIFICER_BLOOD_LUST_FITTING ->
 						spawnArtificer(level, origin);
-				case VICAR_CONSECRATION_KIT -> spawnVicar(level, origin);
+				case VICAR_CONSECRATION_KIT -> spawnArtificer(level, origin);
 				case ARTIFICER_FRAME_CONSECRATED -> prepareFrameConsecration(player, origin);
 				case ARTIFICER_CRIMSON_VESTMENT_COUNSEL -> spawnAlchemist(level, origin);
 				case ARTIFICER_BLOOD_LUST_UPGRADE -> prepareBloodLustUpgrade(player, origin);
@@ -248,8 +289,13 @@ public final class HemoJourneyFixtures {
 				case CHAMBER_RETURNED -> HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(6);
 				case COVENANT_THRONE_BOUND -> set(player, origin.above(), BlockInit.covenant_throne.get());
 				case COVENANT_VIGIL -> prepareCovenantVigil(player, level, origin);
-				case INITIATE_RITE, ADEPT_RITE, ILLUMINATUS_RITE, SANCTIFIED_RITE, ARCHON_RITE ->
+				case ADEPT_RITE, ILLUMINATUS_RITE, SANCTIFIED_RITE ->
 					buildRankupRite(player, origin, rankupRecipe(stage));
+				case ARCHON_RITE -> {
+					buildRankupRite(player, origin, rankupRecipe(stage));
+					spawnSwornRiteHelper(player, level, origin, CardinalRiteRecipe.getRiteByLocation(
+							level, Hemomancy.rloc("cardinal_rite/archon_rite")));
+				}
 				case ARTIFICER_WEIGHT_OF_FRAME_BRIEFING -> {
 					HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
 					spawnArtificer(level, origin);
@@ -259,7 +305,7 @@ public final class HemoJourneyFixtures {
 				case ARTIFICER_D7_UPGRADE -> prepareD7Upgrade(player, origin);
 				case ARTIFICER_D7_DEMONSTRATION -> prepareD7Demonstration(player);
 				case QLIPHOTH_COMMUNION -> prepareQliphothCommunion(player, origin);
-				case APOTHEOS_CHOICE -> prepareApotheosChoice(player);
+				case APOTHEOS_CHOICE, SILENT_REFUSAL -> { }
 				case APOTHEOS_RITE -> buildRankupRite(player, origin, rankupRecipe(stage));
 				case COMPLETE -> { }
 			}
@@ -274,10 +320,12 @@ public final class HemoJourneyFixtures {
 		ServerLevel level = fixtureLevel(player);
 		for (Entity entity : level.getEntitiesOfClass(Entity.class, bounds(origin),
 				entity -> entity.getTags().contains(entityMarker(origin)))) entity.discard();
-		ListTag owned = player.getPersistentData().getList(OWNED_BLOCKS_KEY, Tag.TAG_LONG);
-		for (Tag value : owned) {
-			BlockPos pos = BlockPos.of(((LongTag) value).getAsLong());
+		long[] owned = ownedBlocks(player);
+		List<Long> remaining = new ArrayList<>();
+		for (long packed : owned) {
+			BlockPos pos = BlockPos.of(packed);
 			if (isInsideOwnedBounds(origin, pos)) {
+				level.getChunkAt(pos);
 				if (player.getVehicle() instanceof com.vincenthuto.hemomancy.common.entity.utility.ArmatureRestraintEntity restraint
 						&& restraint.isForArmature(pos)) player.stopRiding();
 				if (level.getBlockEntity(pos) instanceof SomaticLoomBlockEntity loom) loom.contents.clear();
@@ -289,7 +337,15 @@ public final class HemoJourneyFixtures {
 				level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
 			}
 		}
-		player.getPersistentData().remove(OWNED_BLOCKS_KEY);
+		for (long packed : owned) {
+			BlockPos pos = BlockPos.of(packed);
+			if (isInsideOwnedBounds(origin, pos) && !level.getBlockState(pos).isAir()) remaining.add(packed);
+		}
+		if (remaining.isEmpty()) player.getPersistentData().remove(OWNED_BLOCKS_KEY);
+		else player.getPersistentData().put(OWNED_BLOCKS_KEY,
+				new LongArrayTag(remaining.stream().mapToLong(Long::longValue).toArray()));
+		player.getPersistentData().remove(BLOOM_ID_KEY);
+		if (!remaining.isEmpty()) throw new IllegalStateException("Journey fixture blocks could not be removed; retry cleanup after their chunks load");
 	}
 
 	public static String entityMarker(BlockPos origin) {
@@ -323,7 +379,10 @@ public final class HemoJourneyFixtures {
 		candidates.sort(java.util.Comparator.comparing(entity -> entity.getUUID().toString()));
 		List<ItemEntity> selected = new ArrayList<>();
 		for (ItemStack expected : required) {
-			boolean inventoryMayContainOutput = stage == HemoJourneyStage.FORMATION_PROJECTED
+			boolean inventoryMayContainOutput = stage == HemoJourneyStage.FIRST_BLOODCRAFT_PROOFS
+					|| stage == HemoJourneyStage.FORMATION_PROJECTED
+					|| stage == HemoJourneyStage.LIVING_BESTIARY_SURRENDER
+					|| stage == HemoJourneyStage.FIRST_DISTILLATION
 					|| stage == HemoJourneyStage.LIBER_CRAFTED
 					|| stage == HemoJourneyStage.HEMATIC_IRON_CRAFTED
 					|| stage == HemoJourneyStage.LIVING_STAFF_CRAFTED
@@ -389,6 +448,10 @@ public final class HemoJourneyFixtures {
 	private static int baselineInventoryCount(ServerPlayer player, Item item) {
 		return player.getPersistentData().getCompound(BASELINE_KEY).getCompound(BASELINE_INVENTORY)
 				.getInt(itemId(item));
+	}
+
+	static int inventoryGain(ServerPlayer player, Item item) {
+		return inventoryCount(player, item) - baselineInventoryCount(player, item);
 	}
 
 	private static int inventoryCount(ServerPlayer player, Item item) {
@@ -478,14 +541,15 @@ public final class HemoJourneyFixtures {
 
 	private static List<ItemStack> expectedOutputStacks(ServerPlayer player, HemoJourneyStage stage) {
 		return switch (stage) {
+			case FIRST_BLOODCRAFT_PROOFS -> List.of(new ItemStack(BlockInit.venous_stone.get()));
 			case FORMATION_PROJECTED -> List.of(new ItemStack(ItemInit.sanguine_formation.get()));
 			case LIBER_CRAFTED -> List.of(new ItemStack(ItemInit.liber_sanguinum.get()));
 			case HEMATIC_IRON_CRAFTED -> List.of(new ItemStack(BlockInit.hematic_iron_block.get()));
 			case LIVING_STAFF_CRAFTED -> List.of(new ItemStack(ItemInit.living_staff.get()));
-			case VICAR_HERMIT_ROAD_REPORT -> List.of(
-					new ItemStack(ItemInit.harbinger_assignment_ledger.get()),
-					new ItemStack(BlockInit.befouling_ash_trail.get(), 4));
+			case VICAR_HERMIT_ROAD_REPORT -> List.of(new ItemStack(BlockInit.befouling_ash_trail.get(), 4));
 			case VICAR_REWARD -> FirstBloodcraftAssignment.rewardStacks();
+			case FIRST_DISTILLATION -> List.of(new ItemStack(ItemInit.hematic_iron_powder.get(), 3));
+			case LIVING_BESTIARY_SURRENDER -> List.of(new ItemStack(ItemInit.enzyme_primer.get()));
 			case VICAR_CONSECRATION_KIT -> List.of(new ItemStack(ItemInit.vicars_consecration_kit.get()));
 			case ARTIFICER_WORN_VOW_REWARD -> List.of(new ItemStack(ItemInit.hematic_iron_scrap.get(), 4));
 			case ARTIFICER_WORN_VOW_FITTING -> List.of(new ItemStack(ItemInit.worn_vow_fitting.get()));
@@ -499,7 +563,7 @@ public final class HemoJourneyFixtures {
 			case ARTIFICER_WEIGHT_OF_FRAME_INSPECTION -> List.of(new ItemStack(ItemInit.fargone_proboscis.get()));
 			case ARTIFICER_D7_FITTING -> List.of(new ItemStack(ItemInit.monolithic_frame_fitting.get()));
 			case WOVEN_VESSEL_TURN_IN -> List.of(new ItemStack(ItemInit.bleeding_bulb.get()),
-					new ItemStack(ItemInit.vivacious_enzyme.get()));
+					new ItemStack(ItemInit.vivacious_enzyme.get(), 3));
 			case FIRST_MEMORY_WOVEN -> List.of(new ItemStack(ItemInit.memory_blood_shot.get()));
 			case VEIN_MASON_LESSON -> List.of(new ItemStack(ItemInit.scar_pattern.get()),
 					new ItemStack(ItemInit.scar_blank.get()),
@@ -523,7 +587,8 @@ public final class HemoJourneyFixtures {
 	}
 
 	private static AABB expectedSpawnBounds(HemoJourneyStage stage, BlockPos origin) {
-		if (stage == HemoJourneyStage.FORMATION_PROJECTED || stage == HemoJourneyStage.LIBER_CRAFTED
+		if (stage == HemoJourneyStage.FIRST_BLOODCRAFT_PROOFS
+				|| stage == HemoJourneyStage.FORMATION_PROJECTED || stage == HemoJourneyStage.LIBER_CRAFTED
 				|| stage == HemoJourneyStage.HEMATIC_IRON_CRAFTED
 				|| stage == HemoJourneyStage.LIVING_STAFF_CRAFTED
 				|| stage == HemoJourneyStage.FIRST_MEMORY_WOVEN
@@ -534,6 +599,7 @@ public final class HemoJourneyFixtures {
 		Vec3 center = switch (stage) {
 			case FORMATION_PROJECTED -> Vec3.atCenterOf(origin.above());
 			case VICAR_HERMIT_ROAD_REPORT, VICAR_REWARD, VICAR_CONSECRATION_KIT,
+					LIVING_BESTIARY_SURRENDER,
 					ARTIFICER_WORN_VOW_REWARD, ARTIFICER_WORN_VOW_FITTING,
 					ARTIFICER_THREE_ANSWERS_COUNSEL, ARTIFICER_FORK_FITTING,
 					ARTIFICER_BARBED_RESEARCH_REWARD,
@@ -579,23 +645,29 @@ public final class HemoJourneyFixtures {
 	private static List<BlockPos> plannedPositions(HemoJourneyStage stage, BlockPos origin) {
 		List<BlockPos> positions = new ArrayList<>();
 		for (int x = -2; x <= 2; x++) for (int z = -2; z <= 2; z++) positions.add(origin.offset(x, 0, z));
+		if (stage == HemoJourneyStage.CONCENTRATED_BLOOD_REST) {
+			positions.add(origin.east().above());
+			positions.add(origin.east().south().above());
+		}
 		if (stage == HemoJourneyStage.MORTAL_DISPLAY || stage == HemoJourneyStage.FIRST_REMNANT_DISCOVERED
+				|| stage == HemoJourneyStage.FIRST_BLOODCRAFT_PROOFS
 				|| stage == HemoJourneyStage.FORMATION_PROJECTED
 				|| stage == HemoJourneyStage.FIRST_MEMORY_WOVEN || stage == HemoJourneyStage.FIRST_SCAR_CARVED
 				|| stage == HemoJourneyStage.FIRST_SCAR_LEARNED || stage == HemoJourneyStage.FIRST_EFFIGY_PATTERN
 				|| stage == HemoJourneyStage.FIRST_EFFIGY_LOADOUT
 				|| stage == HemoJourneyStage.BODY_ANSWERS_TINCTURE
+				|| stage == HemoJourneyStage.FIRST_DISTILLATION
 				|| stage == HemoJourneyStage.FIRST_CULTURE) {
 			positions.add(origin.above());
 		} else if (stage == HemoJourneyStage.LIVING_STAFF_CRAFTED) {
 			for (int y = 1; y <= 3; y++) positions.add(origin.above(y));
+		} else if (stage == HemoJourneyStage.QLIPHOTH_COMMUNION) {
+			for (int y = 1; y <= 8; y++) positions.add(origin.above(y));
 		} else if (stage == HemoJourneyStage.ARTIFICER_FIRST_LIVING_GRAFT
 				|| stage == HemoJourneyStage.ARTIFICER_FULL_LIVING_ARSENAL) {
 			for (int x = -1; x <= 1; x++) for (int z = 0; z <= 1; z++) positions.add(origin.offset(x, 1, z));
 		} else if (stage == HemoJourneyStage.SANGUINE_INITIATION || stage == HemoJourneyStage.LIBER_CRAFTED || stage == HemoJourneyStage.HEMATIC_IRON_CRAFTED) {
 			for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) positions.add(origin.offset(x, 1, z));
-		} else if (stage == HemoJourneyStage.VOTARY_RITE) {
-			for (int x = -2; x <= 2; x++) for (int z = -2; z <= 2; z++) positions.add(origin.offset(x, 1, z));
 		} else if (stage == HemoJourneyStage.ARTIFICER_ARMATURE_PLACED) {
 			for (int x = -3; x <= 3; x++) for (int y = 1; y <= 5; y++) {
 				for (int z = -1; z <= 1; z++) positions.add(origin.offset(x, y, z));
@@ -739,6 +811,9 @@ public final class HemoJourneyFixtures {
 		blood.setActive(true);
 		blood.setMaxBloodVolume(HematicArmatureBlockEntity.MAX_BLOOD);
 		blood.setBloodVolume(500.0D);
+		player.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
+		player.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY);
+		player.setItemSlot(EquipmentSlot.LEGS, ItemStack.EMPTY);
 		player.setItemSlot(EquipmentSlot.FEET, new ItemStack(ItemInit.hematic_iron_boots.get()));
 	}
 
@@ -779,7 +854,7 @@ public final class HemoJourneyFixtures {
 		fixtureLevel(player).setBlock(origin.above(), BlockInit.hematic_armature.get().defaultBlockState()
 				.setValue(HematicArmatureBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
 		player.setItemSlot(EquipmentSlot.MAINHAND,
-				takeOne(player, ItemInit.vicars_consecration_kit.get(), "Vicar's Consecration Kit"));
+				takeOne(player, ItemInit.vicars_consecration_kit.get(), "Armature Consecration Kit"));
 	}
 
 	public static void performArmatureUpgradeRite(ServerPlayer player, BlockPos origin) {
@@ -863,6 +938,9 @@ public final class HemoJourneyFixtures {
 		blood.setActive(true);
 		blood.setMaxBloodVolume(HematicArmatureBlockEntity.MAX_BLOOD);
 		blood.setBloodVolume(1200.0D);
+		player.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
+		player.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY);
+		player.setItemSlot(EquipmentSlot.LEGS, ItemStack.EMPTY);
 		player.setItemSlot(EquipmentSlot.FEET, new ItemStack(ItemInit.barbed_boots.get()));
 	}
 
@@ -906,6 +984,9 @@ public final class HemoJourneyFixtures {
 		blood.setActive(true);
 		blood.setMaxBloodVolume(HematicArmatureBlockEntity.MAX_BLOOD);
 		blood.setBloodVolume(2000.0D);
+		player.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
+		player.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY);
+		player.setItemSlot(EquipmentSlot.LEGS, ItemStack.EMPTY);
 		player.setItemSlot(EquipmentSlot.FEET, new ItemStack(ItemInit.blood_lust_boots.get()));
 	}
 
@@ -920,18 +1001,78 @@ public final class HemoJourneyFixtures {
 	}
 
 	private static void prepareQliphothCommunion(ServerPlayer player, BlockPos origin) {
-		player.getInventory().selected = 0;
-		for (int husk = 0; husk < 9; husk++) {
-			player.getInventory().setItem(husk,
-					QliphothPomeItem.createPickedPomeStack(origin.asLong(), husk, player.getUUID()));
+		ServerLevel level = fixtureLevel(player);
+		BlockPos root = origin.above();
+		String dimension = level.dimension().location().toString();
+		QliphothBloomSavedData blooms = QliphothBloomSavedData.get(level.getServer().overworld());
+		if (blooms.getOverlappingBloom(root, dimension, 3) != null) {
+			throw new IllegalStateException("Journey Bloom would overlap an existing Bloom");
 		}
+		set(player, root, BlockInit.qliphoth_bloom.get());
+		if (!(level.getBlockEntity(root) instanceof QliphothBloomBlockEntity bloomBE)) {
+			throw new IllegalStateException("Journey Bloom block entity was not created");
+		}
+		bloomBE.setOwnerUUID(player.getUUID());
+		bloomBE.setChunkRadius(3);
+		((IMultiBlock) BlockInit.qliphoth_bloom.get()).placeFillers(level, root,
+				BlockInit.qliphoth_bloom.get().defaultBlockState());
+		var bloom = new QliphothBloomSavedData.BloomEntry(
+				player.getUUID(), root, dimension, 3, level.getGameTime());
+		blooms.addBloom(bloom);
+		player.getPersistentData().putUUID(BLOOM_ID_KEY, bloom.bloomId());
+		HarbingerCardinalRiteEvents.syncQliphothBlooms(level.getServer());
+	}
+
+	private static void prepareSilentRefusal(ServerPlayer player) {
+		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		blood.setActive(true);
+		blood.setBloodVolume(Math.max(blood.getBloodVolume(), 500.0D));
+		boolean hasWeapon = false;
+		for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+			ItemStack stack = player.getInventory().getItem(slot);
+			if (stack.is(ItemInit.living_staff.get()) || LivingSicklePruning.isBaseLivingWeapon(stack)
+					|| LivingSicklePruning.isTemporarySickle(stack)) {
+				hasWeapon = true;
+				break;
+			}
+		}
+		if (!hasWeapon && !player.getInventory().add(new ItemStack(ItemInit.living_staff.get()))) {
+			throw new IllegalStateException("Make room for the Living Staff needed to sever the Bloom");
+		}
+		var known = HemoCapabilityAccess.requireKnownManipulations(player);
+		BloodManipulation blade = ManipulationInit.conjure_blade.get();
+		known.getKnownManips().putIfAbsent(blade, new ManipLevel(0, 0));
+		if (!known.getEquippedManipNames().contains(blade.getName())) {
+			List<String> equipped = new ArrayList<>(known.getEquippedManipNames());
+			equipped.add(blade.getName());
+			known.setEquippedManipNames(equipped);
+		}
+		KnownManipulationEvents.syncPlayerEvent(player);
 	}
 
 	private static void prepareApotheosChoice(ServerPlayer player) {
-		player.getPersistentData().putBoolean(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING, true);
-		HemoCapabilityAccess.requireInitiatoryDegree(player).setFungalRevelationWitnessed(true);
-		if (!JourneyAutoRunner.activeForTest(player)) {
-			PacketHandler.sendToPlayer(player, new OpenDialoguePacket(FungalWhisperDialogueTrees.coreWitnessDialogue()));
+		if (!HemoCapabilityAccess.requireInitiatoryDegree(player).hasFungalSpineGranted()) {
+			throw new IllegalStateException("Communion has not granted the Fungal Spine");
+		}
+		int spineSlot = -1;
+		for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+			if (player.getInventory().getItem(slot).is(ItemInit.fungal_spine.get())) {
+				spineSlot = slot;
+				break;
+			}
+		}
+		if (spineSlot < 0) throw new IllegalStateException("The Communion-earned Fungal Spine is missing");
+		if (spineSlot >= 9) {
+			ItemStack firstSlot = player.getInventory().getItem(0);
+			player.getInventory().setItem(0, player.getInventory().getItem(spineSlot));
+			player.getInventory().setItem(spineSlot, firstSlot);
+			spineSlot = 0;
+		}
+		player.getInventory().selected = spineSlot;
+		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		blood.setActive(true);
+		if (blood.getBloodVolume() < 500.0D) {
+			blood.setBloodVolume(500.0D);
 		}
 	}
 
@@ -948,6 +1089,30 @@ public final class HemoJourneyFixtures {
 				takeOne(player, ItemInit.fervent_enzyme.get(), "Fervent Enzyme"));
 		alembic.setItem(GhastlyAlembicBlockEntity.SLOT_TINCTURE_BLOOD,
 				takeOne(player, ItemInit.bloody_flask.get(), "Bloody Flask"));
+	}
+
+	private static void prepareFirstDistillation(ServerPlayer player, BlockPos origin) {
+		set(player, origin, Blocks.MAGMA_BLOCK);
+		BlockPos pos = origin.above();
+		set(player, pos, BlockInit.ghastly_alembic.get());
+		if (!(fixtureLevel(player).getBlockEntity(pos) instanceof GhastlyAlembicBlockEntity alembic))
+			throw new IllegalStateException("Ghastly Alembic block entity was not created");
+		alembic.setItem(GhastlyAlembicBlockEntity.SLOT_INPUT,
+				takeOne(player, ItemInit.hematic_iron_scrap.get(), "Hematic Iron Scrap"));
+	}
+
+	private static void prepareRestBed(ServerPlayer player, BlockPos origin) {
+		BlockPos foot = origin.east().above();
+		BlockPos head = foot.south();
+		int flags = Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE;
+		if (!fixtureLevel(player).setBlock(foot, Blocks.RED_BED.defaultBlockState()
+				.setValue(BedBlock.FACING, Direction.SOUTH).setValue(BedBlock.PART, BedPart.FOOT), flags)
+				|| !fixtureLevel(player).setBlock(head, Blocks.RED_BED.defaultBlockState()
+						.setValue(BedBlock.FACING, Direction.SOUTH).setValue(BedBlock.PART, BedPart.HEAD), flags)) {
+			throw new IllegalStateException("Could not prepare Concentrated Blood rest bed");
+		}
+		ownExistingBlock(player, foot);
+		ownExistingBlock(player, head);
 	}
 
 	private static void prepareRedTaxonomy(ServerPlayer player, ServerLevel level, BlockPos origin) {
@@ -1224,6 +1389,7 @@ public final class HemoJourneyFixtures {
 		if (station.getCurrentRecipe() == null || !station.tryLoadPatternFromSlot() || !station.areScarsMatching()) {
 			throw new IllegalStateException("Continuation scar recipe could not be prepared");
 		}
+		MachineAccessEvents.awardMachineCrafted(player, BlockInit.scar_station.get());
 	}
 
 	private static void prepareContinuationScarBrazier(ServerPlayer player, BlockPos origin, boolean loadout) {
@@ -1281,7 +1447,7 @@ public final class HemoJourneyFixtures {
 		blood.setBloodVolume(Math.max(blood.getBloodVolume(), recipe.getBloodCost()));
 	}
 
-	static void prepareCardinalRite(ServerPlayer player, BlockPos origin, String recipePath) {
+	public static void prepareCardinalRite(ServerPlayer player, BlockPos origin, String recipePath) {
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(
 				fixtureLevel(player), Hemomancy.rloc("cardinal_rite/" + recipePath));
 		if (recipe == null) throw new IllegalStateException("Cardinal rite recipe is unavailable: " + recipePath);
@@ -1398,12 +1564,19 @@ public final class HemoJourneyFixtures {
 				}
 			}
 		}
+		spawnSwornRiteHelper(player, level, origin, recipe);
+		HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(6);
+		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.living_staff.get()));
+	}
+
+	private static void spawnSwornRiteHelper(ServerPlayer player, ServerLevel level, BlockPos origin,
+			CardinalRiteRecipe recipe) {
 		var line = HemoCapabilityAccess.requireBloodVolume(player).getBloodLine();
-		if (!line.isValid()) throw new IllegalStateException("Covenant Vigil requires the journey bloodline");
+		if (!line.isValid()) throw new IllegalStateException("Rite helper requires the journey bloodline");
 		HarbingerVicarEntity helper = EntityInit.harbinger_vicar.get().create(level);
-		if (helper == null) throw new IllegalStateException("Covenant Vigil helper creation returned null");
+		if (helper == null) throw new IllegalStateException("Rite helper creation returned null");
 		// Fast-stage fixture: supply the helper at the actual role marker. This does not test navigation.
-		BlockPos station = focusPos.offset(
+		BlockPos station = origin.above().offset(
 				com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAllyService.markers(recipe)
 						.get(com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole.ANCHOR));
 		if (!level.getBlockState(station.below()).is(net.minecraft.world.level.block.Blocks.STONE))
@@ -1414,10 +1587,11 @@ public final class HemoJourneyFixtures {
 		helper.setNoAi(true);
 		helper.setInvulnerable(true);
 		helper.addTag(entityMarker(origin));
-		com.vincenthuto.hemomancy.gametest.SuccessionTestFixtures.resident(player, helper, focusPos);
-		if (!level.addFreshEntity(helper)) throw new IllegalStateException("Covenant Vigil helper could not be spawned");
-		HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(6);
-		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.living_staff.get()));
+		if (!line.addNpcMember(helper.getUUID())) {
+			throw new IllegalStateException("Rite helper could not join the journey bloodline");
+		}
+		BloodlineSavedData.get(player.server.overworld()).setDirty();
+		if (!level.addFreshEntity(helper)) throw new IllegalStateException("Rite helper could not be spawned");
 	}
 
 	private static void placePattern(ServerPlayer player, com.vincenthuto.hutoslib.math.MultiblockPattern pattern,
@@ -1445,14 +1619,13 @@ public final class HemoJourneyFixtures {
 	}
 
 	private static boolean isRankupStage(HemoJourneyStage stage) {
-		return stage == HemoJourneyStage.INITIATE_RITE || stage == HemoJourneyStage.ADEPT_RITE
+		return stage == HemoJourneyStage.ADEPT_RITE
 				|| stage == HemoJourneyStage.ILLUMINATUS_RITE || stage == HemoJourneyStage.SANCTIFIED_RITE
 				|| stage == HemoJourneyStage.ARCHON_RITE || stage == HemoJourneyStage.APOTHEOS_RITE;
 	}
 
 	private static String rankupRecipe(HemoJourneyStage stage) {
 		return switch (stage) {
-			case INITIATE_RITE -> "initiate_rite";
 			case ADEPT_RITE -> "sanguine_brotherhood";
 			case ILLUMINATUS_RITE -> "illuminatus_rite";
 			case SANCTIFIED_RITE -> "sanctified_rite";
@@ -1460,6 +1633,24 @@ public final class HemoJourneyFixtures {
 			case APOTHEOS_RITE -> "apotheos_rite";
 			default -> throw new IllegalArgumentException("Not a rank-up journey stage: " + stage);
 		};
+	}
+
+	private static void prepareFirstBloodcraftProofs(ServerPlayer player, BlockPos origin) {
+		set(player, origin.above(), Blocks.STONE);
+		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		blood.setActive(true);
+		blood.setBloodVolume(Math.min(blood.getMaxBloodVolume() - 500.0D,
+				Math.max(1000.0D, blood.getBloodVolume())));
+		Cow cow = EntityType.COW.create(fixtureLevel(player));
+		if (cow == null) throw new IllegalStateException("Journey practice cow could not be created");
+		cow.getAttribute(Attributes.MAX_HEALTH).setBaseValue(600.0D);
+		cow.setHealth(600.0F);
+		cow.setNoAi(true);
+		cow.setPos(origin.getX() + 2.5D, origin.getY() + 1.0D, origin.getZ() + 1.5D);
+		cow.addTag(entityMarker(origin));
+		if (!fixtureLevel(player).addFreshEntity(cow)) {
+			throw new IllegalStateException("Journey practice cow could not be spawned");
+		}
 	}
 
 	private static void prepareCentrifuge(ServerPlayer player, BlockPos origin) {
@@ -1543,12 +1734,13 @@ public final class HemoJourneyFixtures {
 	}
 
 	private static void prepareLivingArsenalDemonstration(ServerPlayer player, ServerLevel level, BlockPos origin) {
-		Entity target = EntityType.ZOMBIE.create(level);
+		Entity target = EntityType.HUSK.create(level);
 		if (!(target instanceof net.minecraft.world.entity.LivingEntity living)) {
 			throw new IllegalStateException("Living Arsenal target could not be created");
 		}
 		BlockPos spawn = origin.offset(0, 1, 1);
 		living.setPos(spawn.getX() + 0.5D, spawn.getY(), spawn.getZ() + 0.5D);
+		if (living instanceof Mob mob) mob.setNoAi(true);
 		living.setHealth(1.0F);
 		living.addTag(entityMarker(origin));
 		if (!level.addFreshEntity(living)) throw new IllegalStateException("Living Arsenal target could not be spawned");
@@ -1559,16 +1751,33 @@ public final class HemoJourneyFixtures {
 		if (!fixtureLevel(player).setBlock(pos, block.defaultBlockState(), Block.UPDATE_ALL)) {
 			throw new IllegalStateException("Could not place " + block + " at " + pos);
 		}
-		ListTag owned = player.getPersistentData().getList(OWNED_BLOCKS_KEY, Tag.TAG_LONG);
-		owned.add(LongTag.valueOf(pos.asLong()));
-		player.getPersistentData().put(OWNED_BLOCKS_KEY, owned);
+		long[] owned = ownedBlocks(player);
+		owned = Arrays.copyOf(owned, owned.length + 1);
+		owned[owned.length - 1] = pos.asLong();
+		player.getPersistentData().put(OWNED_BLOCKS_KEY, new LongArrayTag(owned));
 	}
 
 	private static void ownExistingBlock(ServerPlayer player, BlockPos pos) {
-		ListTag owned = player.getPersistentData().getList(OWNED_BLOCKS_KEY, Tag.TAG_LONG);
+		long[] owned = ownedBlocks(player);
 		long packed = pos.asLong();
-		for (Tag value : owned) if (((LongTag) value).getAsLong() == packed) return;
-		owned.add(LongTag.valueOf(packed));
-		player.getPersistentData().put(OWNED_BLOCKS_KEY, owned);
+		for (long value : owned) if (value == packed) return;
+		owned = Arrays.copyOf(owned, owned.length + 1);
+		owned[owned.length - 1] = packed;
+		player.getPersistentData().put(OWNED_BLOCKS_KEY, new LongArrayTag(owned));
+	}
+
+	private static boolean ownsBlock(ServerPlayer player, BlockPos pos) {
+		for (long value : ownedBlocks(player)) if (value == pos.asLong()) return true;
+		return false;
+	}
+
+	private static long[] ownedBlocks(ServerPlayer player) {
+		Tag tag = player.getPersistentData().get(OWNED_BLOCKS_KEY);
+		if (tag == null) return new long[0];
+		if (tag instanceof LongArrayTag array) return array.getAsLongArray();
+		if (tag instanceof ListTag list && (list.isEmpty() || list.getElementType() == Tag.TAG_LONG)) {
+			return list.stream().mapToLong(value -> ((LongTag) value).getAsLong()).toArray();
+		}
+		throw new IllegalStateException("Invalid journey fixture ownership tag: " + tag.getId());
 	}
 }

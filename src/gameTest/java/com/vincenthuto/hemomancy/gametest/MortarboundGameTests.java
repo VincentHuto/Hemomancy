@@ -22,12 +22,13 @@ public final class MortarboundGameTests {
             level.setBlockAndUpdate(helper.absolutePos(new BlockPos(x, y, 2)), Blocks.DEEPSLATE_BRICKS.defaultBlockState());
         var start = helper.absolutePos(new BlockPos(2, 1, 1));
         var mob = EntityInit.mortarbound.get().create(level);
-        if (mob == null) throw new AssertionError("Mortarbound entity could not be created");
+        helper.assertTrue(mob != null, "Mortarbound entity could not be created");
         mob.setPos(start.getX() + .5, start.getY() + .1, start.getZ() + .5);
         level.addFreshEntity(mob);
         helper.runAfterDelay(38, () -> {
-            if (mob.formState().form() != MortarboundFormRules.Form.EMBEDDED || mob.getX() <= start.getX() + 1)
-                throw new AssertionError("Mortarbound did not patrol while embedded: " + mob.position() + " " + mob.formState());
+            helper.assertTrue(mob.formState().form() == MortarboundFormRules.Form.EMBEDDED
+                            && mob.getX() > start.getX() + 1,
+                    "Mortarbound did not patrol while embedded: " + mob.position() + " " + mob.formState());
             helper.succeed();
         });
     }
@@ -41,25 +42,25 @@ public final class MortarboundGameTests {
             level.setBlockAndUpdate(helper.absolutePos(new BlockPos(2, y, 2)), Blocks.DEEPSLATE_BRICKS.defaultBlockState());
         var start = helper.absolutePos(new BlockPos(2, 1, 1));
         var mob = EntityInit.mortarbound.get().create(level);
-        if (mob == null) throw new AssertionError("Mortarbound entity could not be created");
+        helper.assertTrue(mob != null, "Mortarbound entity could not be created");
         mob.setPos(start.getX() + .5, start.getY() + .1, start.getZ() + .5);
         level.addFreshEntity(mob);
         helper.runAfterDelay(3, () -> {
-            if (mob.formState().form() != MortarboundFormRules.Form.EMBEDDED)
-                throw new AssertionError("Unalerted Mortarbound should be embedded");
+            helper.assertTrue(mob.formState().form() == MortarboundFormRules.Form.EMBEDDED,
+                    "Unalerted Mortarbound should be embedded");
             mob.hear(mob.position().add(0, 0, -1));
         });
         helper.runAfterDelay(12, () -> {
-            if (mob.formState().form() != MortarboundFormRules.Form.EMERGING || mob.emergence(0) <= 0)
-                throw new AssertionError("Vibration should grow the Mortarbound out of the wall");
+            helper.assertTrue(mob.formState().form() == MortarboundFormRules.Form.EMERGING && mob.emergence(0) > 0,
+                    "Vibration should grow the Mortarbound out of the wall");
         });
         helper.runAfterDelay(30, () -> {
-            if (mob.formState().form() != MortarboundFormRules.Form.ACTIVE)
-                throw new AssertionError("Mortarbound did not finish emerging");
+            helper.assertTrue(mob.formState().form() == MortarboundFormRules.Form.ACTIVE,
+                    "Mortarbound did not finish emerging");
         });
         helper.runAfterDelay(205, () -> {
-            if (mob.formState().form() != MortarboundFormRules.Form.EMBEDDED)
-                throw new AssertionError("Quiet Mortarbound did not melt back into its wall");
+            helper.assertTrue(mob.formState().form() == MortarboundFormRules.Form.EMBEDDED,
+                    "Quiet Mortarbound did not melt back into its wall");
             helper.succeed();
         });
     }
@@ -73,19 +74,20 @@ public final class MortarboundGameTests {
             level.setBlockAndUpdate(helper.absolutePos(new BlockPos(x, y, 2)), Blocks.DEEPSLATE_BRICKS.defaultBlockState());
         var start = helper.absolutePos(new BlockPos(2, 1, 1));
         var mob = EntityInit.mortarbound.get().create(level);
-        if (mob == null) throw new AssertionError("Mortarbound entity could not be created");
+        helper.assertTrue(mob != null, "Mortarbound entity could not be created");
         mob.setPos(start.getX() + .5, start.getY() + .1, start.getZ() + .5);
         level.addFreshEntity(mob);
         mob.hear(helper.absolutePos(new BlockPos(5, 1, 1)).getCenter());
         helper.runAfterDelay(12, () -> {
-            if (mob.formState().form() != MortarboundFormRules.Form.EMBEDDED || mob.getX() <= start.getX() + .5)
-                throw new AssertionError("Mortarbound should follow distant sound while hidden");
+            helper.assertTrue(mob.formState().form() == MortarboundFormRules.Form.EMBEDDED
+                            && mob.getX() > start.getX() + .5,
+                    "Mortarbound should follow distant sound while hidden");
         });
         helper.runAfterDelay(60, () -> {
-            if (mob.getX() <= start.getX() + 2)
-                throw new AssertionError("Mortarbound did not traverse the supported wall");
-            if (mob.formState().form() != MortarboundFormRules.Form.ACTIVE)
-                throw new AssertionError("Mortarbound did not emerge near the disturbance");
+            helper.assertTrue(mob.getX() > start.getX() + 2,
+                    "Mortarbound did not traverse the supported wall");
+            helper.assertTrue(mob.formState().form() == MortarboundFormRules.Form.ACTIVE,
+                    "Mortarbound did not emerge near the disturbance");
             helper.succeed();
         });
     }
@@ -100,13 +102,13 @@ public final class MortarboundGameTests {
         level.setBlockAndUpdate(helper.absolutePos(new BlockPos(4, 1, 1)), Blocks.WHITE_WOOL.defaultBlockState());
         var start = helper.absolutePos(new BlockPos(2, 1, 1));
         var mob = EntityInit.mortarbound.get().create(level);
-        if (mob == null) throw new AssertionError("Mortarbound entity could not be created");
+        helper.assertTrue(mob != null, "Mortarbound entity could not be created");
         mob.setPos(start.getX() + .5, start.getY() + .1, start.getZ() + .5);
         level.addFreshEntity(mob);
         mob.hear(helper.absolutePos(new BlockPos(5, 1, 1)).getCenter());
         helper.runAfterDelay(40, () -> {
-            if (mob.formState().form() != MortarboundFormRules.Form.EMBEDDED)
-                throw new AssertionError("Mortarbound emerged after a wool-blocked sound");
+            helper.assertTrue(mob.formState().form() == MortarboundFormRules.Form.EMBEDDED,
+                    "Mortarbound emerged after a wool-blocked sound");
             helper.succeed();
         });
     }

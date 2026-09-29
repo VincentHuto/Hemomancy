@@ -41,19 +41,19 @@ public class QliphothBloomSavedData extends SavedData {
 
 	/**
 	 * Tracks how many pomes have been dropped by each bloom, keyed by the
-	 * bloom center's {@link BlockPos#asLong()} value. Cleared when a bloom is
+	 * bloom lifecycle ID. Cleared when a bloom is
 	 * pruned or removed.
 	 */
-	private final Map<Long, Integer> pomesDroppedByBloom = new HashMap<>();
-	private final Map<Long, SeveredQliphothState> bloomStates = new HashMap<>();
+	private final Map<UUID, Integer> pomesDroppedByBloom = new HashMap<>();
+	private final Map<UUID, SeveredQliphothState> bloomStates = new HashMap<>();
 
 	/**
-	 * Tracks the currently ripe or claimed-but-unconsumed pome by bloom center.
+	 * Tracks the currently ripe or claimed-but-unconsumed pome by bloom lifecycle.
 	 * The value is the husk index (0-8). A bloom may not ripen another pome
 	 * while this entry exists.
 	 */
-	private final Map<Long, Integer> pendingPomeByBloom = new HashMap<>();
-	private final Set<Long> claimedPendingPomes = new HashSet<>();
+	private final Map<UUID, Integer> pendingPomeByBloom = new HashMap<>();
+	private final Set<UUID> claimedPendingPomes = new HashSet<>();
 	private final Map<UUID, List<ItemStack>> pendingBoundPomeReturns = new HashMap<>();
 
 	public QliphothBloomSavedData() {}
@@ -73,23 +73,27 @@ public class QliphothBloomSavedData extends SavedData {
 				String dimension = entry.getString("Dimension");
 				int chunkRadius = entry.getInt("ChunkRadius");
 				long createdTick = entry.getLong("CreatedTick");
-				data.blooms.add(new BloomEntry(ownerUUID, center, dimension, chunkRadius, createdTick));
+				UUID bloomId = entry.hasUUID("BloomId") ? entry.getUUID("BloomId") : UUID.randomUUID();
+				boolean migratesLegacyProgress = !entry.hasUUID("BloomId") || entry.getBoolean("MigratesLegacyProgress");
+				data.blooms.add(new BloomEntry(ownerUUID, center, dimension, chunkRadius, createdTick,
+						bloomId, migratesLegacyProgress));
+				if (!entry.hasUUID("BloomId")) data.setDirty();
 			}
 		}
 		if (tag.contains("pomesDropped", Tag.TAG_LIST)) {
 			ListTag pdList = tag.getList("pomesDropped", Tag.TAG_COMPOUND);
 			for (int i = 0; i < pdList.size(); i++) {
 				CompoundTag entry = pdList.getCompound(i);
-				long centerLong = entry.getLong("Center");
-				int count = entry.getInt("Count");
-				data.pomesDroppedByBloom.put(centerLong, count);
+				UUID bloomId = data.bloomIdFromTag(entry);
+				if (bloomId != null) data.pomesDroppedByBloom.put(bloomId, entry.getInt("Count"));
 			}
 		}
 		if (tag.contains("bloomStates", Tag.TAG_LIST)) {
 			ListTag states = tag.getList("bloomStates", Tag.TAG_COMPOUND);
 			for (int i = 0; i < states.size(); i++) {
 				CompoundTag entry = states.getCompound(i);
-				data.bloomStates.put(entry.getLong("Center"),
+				UUID bloomId = data.bloomIdFromTag(entry);
+				if (bloomId != null) data.bloomStates.put(bloomId,
 						SeveredQliphothState.byName(entry.getString("State")));
 			}
 		}
@@ -97,9 +101,10 @@ public class QliphothBloomSavedData extends SavedData {
 			ListTag pendingList = tag.getList("pendingPomes", Tag.TAG_COMPOUND);
 			for (int i = 0; i < pendingList.size(); i++) {
 				CompoundTag entry = pendingList.getCompound(i);
-				data.pendingPomeByBloom.put(entry.getLong("Center"), entry.getInt("HuskIndex"));
-				if (entry.getBoolean("Claimed")) {
-					data.claimedPendingPomes.add(entry.getLong("Center"));
+				UUID bloomId = data.bloomIdFromTag(entry);
+				if (bloomId != null) {
+					data.pendingPomeByBloom.put(bloomId, entry.getInt("HuskIndex"));
+					if (entry.getBoolean("Claimed")) data.claimedPendingPomes.add(bloomId);
 				}
 			}
 		}
@@ -124,6 +129,15 @@ public class QliphothBloomSavedData extends SavedData {
 		return data;
 	}
 
+	private UUID bloomIdFromTag(CompoundTag entry) {
+		if (entry.hasUUID("BloomId")) return entry.getUUID("BloomId");
+		long center = entry.getLong("Center");
+		setDirty();
+		return blooms.stream().filter(bloom -> bloom.migratesLegacyProgress()
+				&& bloom.center().asLong() == center)
+				.map(BloomEntry::bloomId).findFirst().orElse(null);
+	}
+
 	@Override
 	@Nonnull
 	public CompoundTag save(@Nonnull CompoundTag tag, HolderLookup.Provider provider) {
@@ -135,31 +149,33 @@ public class QliphothBloomSavedData extends SavedData {
 			bloomTag.putString("Dimension", entry.dimension());
 			bloomTag.putInt("ChunkRadius", entry.chunkRadius());
 			bloomTag.putLong("CreatedTick", entry.createdTick());
+			bloomTag.putUUID("BloomId", entry.bloomId());
+			if (entry.migratesLegacyProgress()) bloomTag.putBoolean("MigratesLegacyProgress", true);
 			list.add(bloomTag);
 		}
 		tag.put("blooms", list);
 
 		ListTag pdList = new ListTag();
-		for (Map.Entry<Long, Integer> pd : pomesDroppedByBloom.entrySet()) {
+		for (Map.Entry<UUID, Integer> pd : pomesDroppedByBloom.entrySet()) {
 			CompoundTag pdTag = new CompoundTag();
-			pdTag.putLong("Center", pd.getKey());
+			pdTag.putUUID("BloomId", pd.getKey());
 			pdTag.putInt("Count", pd.getValue());
 			pdList.add(pdTag);
 		}
 		tag.put("pomesDropped", pdList);
 		ListTag stateList = new ListTag();
-		for (Map.Entry<Long, SeveredQliphothState> state : bloomStates.entrySet()) {
+		for (Map.Entry<UUID, SeveredQliphothState> state : bloomStates.entrySet()) {
 			CompoundTag stateTag = new CompoundTag();
-			stateTag.putLong("Center", state.getKey());
+			stateTag.putUUID("BloomId", state.getKey());
 			stateTag.putString("State", state.getValue().name());
 			stateList.add(stateTag);
 		}
 		tag.put("bloomStates", stateList);
 
 		ListTag pendingList = new ListTag();
-		for (Map.Entry<Long, Integer> pending : pendingPomeByBloom.entrySet()) {
+		for (Map.Entry<UUID, Integer> pending : pendingPomeByBloom.entrySet()) {
 			CompoundTag pendingTag = new CompoundTag();
-			pendingTag.putLong("Center", pending.getKey());
+			pendingTag.putUUID("BloomId", pending.getKey());
 			pendingTag.putInt("HuskIndex", pending.getValue());
 			pendingTag.putBoolean("Claimed", claimedPendingPomes.contains(pending.getKey()));
 			pendingList.add(pendingTag);
@@ -189,7 +205,7 @@ public class QliphothBloomSavedData extends SavedData {
 
 	public void addBloom(BloomEntry entry) {
 		blooms.add(entry);
-		bloomStates.put(entry.center().asLong(), SeveredQliphothState.LIVING);
+		bloomStates.put(entry.bloomId(), SeveredQliphothState.LIVING);
 		setDirty();
 	}
 
@@ -201,30 +217,30 @@ public class QliphothBloomSavedData extends SavedData {
 	 * Returns the number of pomes already dropped from the bloom at the given
 	 * center position. Returns 0 if no pomes have been dropped yet.
 	 */
-	public int getPomesDropped(BlockPos center) {
-		return pomesDroppedByBloom.getOrDefault(center.asLong(), 0);
+	public int getPomesDropped(BloomEntry bloom) {
+		return pomesDroppedByBloom.getOrDefault(bloom.bloomId(), 0);
 	}
 
 	/**
 	 * Increments the pome-drop counter for the given bloom center and marks
 	 * the data as dirty. Returns the new count after incrementing.
 	 */
-	public int incrementPomesDropped(BlockPos center) {
-		long key = center.asLong();
+	public int incrementPomesDropped(BloomEntry bloom) {
+		UUID key = bloom.bloomId();
 		int next = pomesDroppedByBloom.getOrDefault(key, 0) + 1;
 		pomesDroppedByBloom.put(key, next);
 		setDirty();
 		return next;
 	}
 
-	public SeveredQliphothState getState(BlockPos center) {
-		return bloomStates.getOrDefault(center.asLong(), SeveredQliphothState.LIVING);
+	public SeveredQliphothState getState(BloomEntry bloom) {
+		return bloomStates.getOrDefault(bloom.bloomId(), SeveredQliphothState.LIVING);
 	}
 
-	public boolean severBloom(BlockPos center) {
-		long key = center.asLong();
-		if (blooms.stream().noneMatch(bloom -> bloom.center().equals(center))) return false;
-		SeveredQliphothState next = getState(center).sever();
+	public boolean severBloom(BloomEntry bloom) {
+		UUID key = bloom.bloomId();
+		if (!blooms.contains(bloom)) return false;
+		SeveredQliphothState next = getState(bloom).sever();
 		bloomStates.put(key, next);
 		pendingPomeByBloom.remove(key);
 		claimedPendingPomes.remove(key);
@@ -232,42 +248,43 @@ public class QliphothBloomSavedData extends SavedData {
 		return next.isPortalOpen();
 	}
 
-	public boolean sealBloom(BlockPos center) {
-		SeveredQliphothState next = getState(center).seal();
-		bloomStates.put(center.asLong(), next);
+	public boolean sealBloom(BloomEntry bloom) {
+		SeveredQliphothState next = getState(bloom).seal();
+		bloomStates.put(bloom.bloomId(), next);
 		setDirty();
 		return next.isSealedTrophy();
 	}
 
-	public boolean hasPendingPome(BlockPos center) {
-		return pendingPomeByBloom.containsKey(center.asLong());
+	public boolean hasPendingPome(BloomEntry bloom) {
+		return pendingPomeByBloom.containsKey(bloom.bloomId());
 	}
 
-	public int getPendingPomeHuskIndex(BlockPos center) {
-		return pendingPomeByBloom.getOrDefault(center.asLong(), -1);
+	public int getPendingPomeHuskIndex(BloomEntry bloom) {
+		return pendingPomeByBloom.getOrDefault(bloom.bloomId(), -1);
 	}
 
-	public void setPendingPome(BlockPos center, int huskIndex) {
-		long key = center.asLong();
+	public void setPendingPome(BloomEntry bloom, int huskIndex) {
+		UUID key = bloom.bloomId();
 		pendingPomeByBloom.put(key, huskIndex);
 		claimedPendingPomes.remove(key);
 		setDirty();
 	}
 
-	public void clearPendingPome(long bloomOrigin) {
-		if (pendingPomeByBloom.remove(bloomOrigin) != null) {
-			claimedPendingPomes.remove(bloomOrigin);
+	public void clearPendingPome(BloomEntry bloom) {
+		UUID key = bloom.bloomId();
+		if (pendingPomeByBloom.remove(key) != null) {
+			claimedPendingPomes.remove(key);
 			setDirty();
 		}
 	}
 
-	public boolean isPendingPomeClaimed(BlockPos center) {
-		return claimedPendingPomes.contains(center.asLong());
+	public boolean isPendingPomeClaimed(BloomEntry bloom) {
+		return claimedPendingPomes.contains(bloom.bloomId());
 	}
 
-	public void markPendingPomeClaimed(BlockPos center) {
-		if (pendingPomeByBloom.containsKey(center.asLong())) {
-			claimedPendingPomes.add(center.asLong());
+	public void markPendingPomeClaimed(BloomEntry bloom) {
+		if (pendingPomeByBloom.containsKey(bloom.bloomId())) {
+			claimedPendingPomes.add(bloom.bloomId());
 			setDirty();
 		}
 	}
@@ -294,8 +311,8 @@ public class QliphothBloomSavedData extends SavedData {
 	 * i.e. {@link #MAX_POMES_PER_BLOOM} minus the number already dropped.
 	 * Returns 0 once the lifecycle is exhausted.
 	 */
-	public int getRemainingPomes(BlockPos center) {
-		return Math.max(0, MAX_POMES_PER_BLOOM - getPomesDropped(center));
+	public int getRemainingPomes(BloomEntry bloom) {
+		return Math.max(0, MAX_POMES_PER_BLOOM - getPomesDropped(bloom));
 	}
 
 	/**
@@ -312,6 +329,11 @@ public class QliphothBloomSavedData extends SavedData {
 				return entry;
 			}
 		}
+		return null;
+	}
+
+	public BloomEntry getBloomById(UUID bloomId) {
+		for (BloomEntry entry : blooms) if (entry.bloomId().equals(bloomId)) return entry;
 		return null;
 	}
 
@@ -361,10 +383,10 @@ public class QliphothBloomSavedData extends SavedData {
 			int bloomChunkZ = entry.center().getZ() >> 4;
 			if (bloomChunkX == chunkX && bloomChunkZ == chunkZ) {
 				blooms.remove(i);
-				bloomStates.remove(entry.center().asLong());
-				pomesDroppedByBloom.remove(entry.center().asLong());
-				pendingPomeByBloom.remove(entry.center().asLong());
-				claimedPendingPomes.remove(entry.center().asLong());
+				bloomStates.remove(entry.bloomId());
+				pomesDroppedByBloom.remove(entry.bloomId());
+				pendingPomeByBloom.remove(entry.bloomId());
+				claimedPendingPomes.remove(entry.bloomId());
 				setDirty();
 				return entry;
 			}
@@ -376,5 +398,14 @@ public class QliphothBloomSavedData extends SavedData {
 	 * A persistent Qliphoth Bloom entry.
 	 */
 	public record BloomEntry(UUID ownerUUID, BlockPos center, String dimension,
-			int chunkRadius, long createdTick) {}
+			int chunkRadius, long createdTick, UUID bloomId, boolean migratesLegacyProgress) {
+		public BloomEntry(UUID ownerUUID, BlockPos center, String dimension, int chunkRadius, long createdTick) {
+			this(ownerUUID, center, dimension, chunkRadius, createdTick, UUID.randomUUID(), false);
+		}
+
+		public BloomEntry(UUID ownerUUID, BlockPos center, String dimension, int chunkRadius,
+				long createdTick, UUID bloomId) {
+			this(ownerUUID, center, dimension, chunkRadius, createdTick, bloomId, false);
+		}
+	}
 }

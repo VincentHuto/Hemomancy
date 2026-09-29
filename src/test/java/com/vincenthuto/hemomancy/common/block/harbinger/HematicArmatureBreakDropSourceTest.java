@@ -13,19 +13,14 @@ public final class HematicArmatureBreakDropSourceTest {
 	public static void main(String[] args) throws IOException {
 		String block = readSource(
 				"com/vincenthuto/hemomancy/common/block/harbinger/crafting/HematicArmatureBlock.java");
-		String blockEntity = readSource(
-				"com/vincenthuto/hemomancy/common/tile/harbinger/crafting/HematicArmatureBlockEntity.java");
-
 		assertContains("armature removal drops persistent upgrade items", block,
-				"armature.dropAppliedUpgradeItems(level, pos)");
-		assertContains("armature exposes upgrade item recovery", blockEntity,
-				"dropAppliedUpgradeItems(Level level, BlockPos pos)");
-		assertContains("vicar tier recovers the consecration kit", blockEntity,
+				"Containers.dropContents(level, pos, armature)");
+		assertContains("vicar tier recovers the consecration kit", block,
 				"ItemInit.vicars_consecration_kit");
-		assertContains("monolithic tier also recovers the cornerstone", blockEntity,
+		assertContains("monolithic tier also recovers the cornerstone", block,
 				"ItemInit.monolithic_cornerstone");
-		assertContains("tier recovery uses persisted armature tier", blockEntity,
-				"armatureTier.id()");
+		assertContains("tier recovery uses persisted armature tier", block,
+				"armature.getArmatureTier()");
 	}
 
 	private static String readSource(String relativePath) throws IOException {

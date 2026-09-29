@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.armor.BodyIdiomArmorRules;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -15,7 +16,6 @@ import com.vincenthuto.hemomancy.common.item.harbinger.armor.MarrowCrownArmorIte
 import com.vincenthuto.hemomancy.common.item.shared.armor.EnumModArmorTiers;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.ForkFamily;
-import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -320,11 +320,12 @@ public class ArmorSetBonusHandler {
 
 		long now = player.level().getGameTime();
 		long cooldownUntil = player.getPersistentData().getLong(SILENT_ARCHON_COOLDOWN_TAG);
-		String archonChoice = player.getPersistentData().getString(FungalGardenTravelHelper.ARCHON_CHOICE_KEY);
+		IInitiatoryDegree degree = HemoCapabilityAccess.getInitiatoryDegree(player).orElse(null);
+		if (degree == null) return false;
 		boolean canRefuse = SilentArchonArmorRules.canRefuseDeath(
 				hasFullSet(player, EnumModArmorTiers.SILENT_ARCHON),
-				HemoCapabilityAccess.getPlayerDegreeNumber(player),
-				archonChoice,
+				degree.getDegreeNumber(),
+				degree.getArchonPath(),
 				volume.getBloodVolume(),
 				SilentArchonArmorRules.DEATH_REFUSAL_BLOOD_COST,
 				now,

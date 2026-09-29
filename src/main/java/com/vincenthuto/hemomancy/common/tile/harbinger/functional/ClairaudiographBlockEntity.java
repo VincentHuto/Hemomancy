@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodSampleData;
+import com.vincenthuto.hemomancy.common.item.harbinger.CylinderMedia;
 import com.vincenthuto.hemomancy.common.item.component.ClairaudiographRecording;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.ClairaudiographBlock;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.ClairaudiographMenu;
@@ -46,7 +47,7 @@ public class ClairaudiographBlockEntity extends BlockEntity implements MenuProvi
     public final ItemStackHandler inventory = new ItemStackHandler(2) {
         @Override public int getSlotLimit(int slot) { return 1; }
         @Override public boolean isItemValid(int slot, ItemStack stack) {
-            return slot == 0 ? BloodSampleData.isStorableSample(stack) : stack.is(ItemInit.ambergris_cylinder.get());
+            return slot == 0 ? BloodSampleData.isStorableSample(stack) : CylinderMedia.supported(stack);
         }
         @Override public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
             return progress > 0 ? stack : super.insertItem(slot, stack, simulate);
@@ -63,7 +64,7 @@ public class ClairaudiographBlockEntity extends BlockEntity implements MenuProvi
     public String source() { return BloodSampleData.rawSource(inventory.getStackInSlot(0)); }
     public ClairaudiographRecording recording() {
         var cylinder = inventory.getStackInSlot(1);
-        return cylinder.is(ItemInit.ambergris_cylinder.get()) && cylinder.getCount() == 1
+        return CylinderMedia.supported(cylinder) && cylinder.getCount() == 1
             ? cylinder.get(DataComponentInit.CLAIRAUDIOGRAPH_RECORDING.get()) : null;
     }
     public boolean playing() { return playing; }
@@ -75,11 +76,7 @@ public class ClairaudiographBlockEntity extends BlockEntity implements MenuProvi
         var sample = inventory.getStackInSlot(0); var cylinder = inventory.getStackInSlot(1);
         return choice != null && sample.getCount() == 1 && BloodSampleData.isStorableSample(sample)
             && BloodSampleData.entityType(sample) != null && source().equals(choice.source())
-            && cylinder.is(ItemInit.ambergris_cylinder.get()) && cylinder.getCount() == 1
-            && com.vincenthuto.hemomancy.common.enchanting.ResonantForgeRules.isBlankCylinder(
-                    cylinder.has(DataComponentInit.ANCIENT_RECORDING.get()),
-                    cylinder.has(DataComponentInit.CLAIRAUDIOGRAPH_RECORDING.get()),
-                    cylinder.has(DataComponentInit.RESONANT_PATTERN.get()))
+            && CylinderMedia.blank(cylinder)
             && ClairaudiographCatalogue.allowed(choice) != null;
     }
     public void cancelCarve() { progress = 0; selected = null; originalSample = ItemStack.EMPTY; }

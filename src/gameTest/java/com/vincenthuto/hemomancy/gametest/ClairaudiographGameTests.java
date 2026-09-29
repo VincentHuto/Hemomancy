@@ -25,6 +25,38 @@ public class ClairaudiographGameTests {
     }
     private static ClairaudiographRecording choice(){return ClairaudiographCatalogue.choices("minecraft:pig").getFirst().recording();}
     private static void tick(ClairaudiographBlockEntity be,int n){for(int i=0;i<n;i++)ClairaudiographBlockEntity.tick(be.getLevel(),be.getBlockPos(),be.getBlockState(),be);}
+    @GameTest(template="empty") public static void waxCylinderRecordsAndRejectsOccupiedMedia(GameTestHelper h){
+        h.assertTrue(h.getLevel().getRecipeManager().byKey(net.minecraft.resources.ResourceLocation.parse("hemomancy:wax_cylinder")).isPresent(),
+                "Ordinary wax recipe failed to load");
+        var be=machine(h);
+        be.inventory.setStackInSlot(1,new ItemStack(ItemInit.wax_cylinder.get()));
+        h.assertTrue(be.startCarve(choice()),"Wax cylinder could not start ordinary recording");
+        tick(be,80);
+        h.assertTrue(choice().equals(be.recording()) && be.inventory.getStackInSlot(1).is(ItemInit.wax_cylinder.get()),
+                "Wax cylinder lost its recorded call");
+        var saved=be.saveWithFullMetadata(h.getLevel().registryAccess());
+        var restored=new ClairaudiographBlockEntity(be.getBlockPos(),be.getBlockState());
+        restored.loadWithComponents(saved,h.getLevel().registryAccess());
+        h.assertTrue(choice().equals(restored.recording())
+                && restored.inventory.getStackInSlot(1).is(ItemInit.wax_cylinder.get()),
+                "Saved wax recording lost its medium or sound");
+        be.startPlayback(false);
+        h.assertTrue(be.playing(),"Wax recording could not play");
+        be.stopPlayback();
+        var occupied=new ItemStack(ItemInit.wax_cylinder.get());
+        occupied.set(DataComponentInit.ANCIENT_RECORDING.get(),"old:record");
+        be.inventory.setStackInSlot(1,occupied);
+        be.inventory.setStackInSlot(0,sample());
+        h.assertTrue(!be.startCarve(choice()),"Ancient component was overwritten on wax");
+        var patterned=new ItemStack(ItemInit.wax_cylinder.get());
+        patterned.set(DataComponentInit.RESONANT_PATTERN.get(),
+                new com.vincenthuto.hemomancy.common.enchanting.ResonantPattern(
+                        java.util.List.of(new com.vincenthuto.hemomancy.common.enchanting.ResonantPattern.Entry(
+                                "minecraft:unbreaking", 1)), "", 0, 0, false));
+        be.inventory.setStackInSlot(1,patterned);
+        h.assertTrue(!be.startCarve(choice()),"Forge pattern was overwritten by audio");
+        h.succeed();
+    }
     @GameTest(template="empty") public static void recipesLoadAndCylinderSlotStaysSingle(GameTestHelper h){
         var recipes=h.getLevel().getRecipeManager();
         h.assertTrue(recipes.byKey(net.minecraft.resources.ResourceLocation.parse("hemomancy:clairaudiograph")).isPresent(),"Machine recipe failed to load");

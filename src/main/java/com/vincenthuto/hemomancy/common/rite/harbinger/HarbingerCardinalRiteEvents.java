@@ -372,8 +372,11 @@ public class HarbingerCardinalRiteEvents {
 				}
 				if (completeRite(sLevel, caster, rite)) {
 					spawnHumanityDispersal(sLevel, caster);
+				} else {
+					CardinalRiteOrdealEngine.clearThreats(sLevel, rite);
+					AlembicUpgradeRites.recover(sLevel, rite);
+					CardinalRiteStaffEscrow.restore(caster, rite);
 				}
-				else AlembicUpgradeRites.recover(sLevel, rite);
 				toRemove.add(playerUUID);
 			}
 		}
@@ -1277,6 +1280,12 @@ public class HarbingerCardinalRiteEvents {
 					false);
 			return false;
 		}
+		if (!CardinalRiteAllyService.hasRequiredHelpers(sLevel, rite)) {
+			caster.displayClientMessage(Component.literal(
+					"The rite falls silent. Required bloodline helpers must still hold their stations.")
+					.withStyle(ChatFormatting.DARK_RED), false);
+			return false;
+		}
 
 		UnstainedRitePreflight.Result unstainedPreflight = UnstainedCardinalRiteEvents.preflight(
 				caster, rite.getRecipeId().getPath());
@@ -1313,6 +1322,10 @@ public class HarbingerCardinalRiteEvents {
 					false);
 			return false;
 		}
+		if (FOUNDING_FANE_RITE.equals(rite.getRecipeId().getPath())
+				&& !canConsecrateFoundingFane(sLevel, caster, rite.getCenterPos().above(3))) return false;
+		if (BLOOM_OF_QLIPHOTH_RITE.equals(rite.getRecipeId().getPath())
+				&& !canPlaceQliphothBloom(sLevel, caster, rite.getCenterPos())) return false;
 
 		// Interactive Harbinger ceremonies already paid their base cost node by
 		// node. Only legacy/Unstained countdown rites retain the completion drain.
@@ -1466,7 +1479,7 @@ public class HarbingerCardinalRiteEvents {
 
 		// Rite of the Founding Fane: consecrate the surrounding area as a Harbinger Fane
 		if (FOUNDING_FANE_RITE.equals(ritePath)) {
-			completeFoundingFane(sLevel, caster, center);
+			if (!completeFoundingFane(sLevel, caster, center)) return false;
 		}
 
 		// Play completion sound
@@ -2088,18 +2101,8 @@ public class HarbingerCardinalRiteEvents {
 		sLevel.playSound(null, center, SoundEvents.WITHER_SPAWN, SoundSource.BLOCKS, 0.7f, 1.5f);
 	}
 
-	/**
-	 * Bloom of the Qliphoth (Degree 7, Grand Archon-tier summoning rite):
-	 * Summons a persistent Qliphoth Bloom at the rite center. Within a 3-chunk
-	 * radius, all blood manipulations cost 25% less blood and players receive
-	 * passive health regeneration and enhanced blood regeneration.
-	 * <p>
-	 * Places a 1Ã—1Ã—8 multi-block (QliphothBloomBlock + 7 fillers) at the
-	 * ritual center and registers the bloom in world SavedData.
-	 * The tree produces exactly nine pomes over its lifecycle one for each
-	 * husk of the Qliphoth then ceases dropping fruit until re-summoned.
-	 */
-	private static void completeBloomOfQliphoth(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+	/** Validates the Bloom's root, filler column, and exclusion radius before payment. */
+	public static boolean canPlaceQliphothBloom(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
 		ServerLevel overworld = sLevel.getServer().overworld();
 		QliphothBloomSavedData data = QliphothBloomSavedData.get(overworld);
 		String dimension = sLevel.dimension().location().toString();
@@ -2114,20 +2117,31 @@ public class HarbingerCardinalRiteEvents {
 							+ "-chunk radius.")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
-			return;
+			return false;
 		}
 
-		// Verify there is room for the 1Ã—1Ã—8 column
+		// The shared multiblock check covers fillers, not the root itself.
 		Block bloomBlock = BlockInit.qliphoth_bloom.get();
 		IMultiBlock multiBlock =
 				(IMultiBlock) bloomBlock;
-		if (!multiBlock.canPlaceMultiBlock(sLevel, center.above(2))) {
+		BlockPos bloomPos = center.above(2);
+		if (!sLevel.getBlockState(bloomPos).canBeReplaced()
+				|| !multiBlock.canPlaceMultiBlock(sLevel, bloomPos)) {
 			caster.displayClientMessage(
 					Component.literal("The Qliphoth needs more room to bloom here.")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
-			return;
+			return false;
 		}
+		return true;
+	}
+
+	/** Places the Bloom and registers its nine-pome lifecycle after preflight succeeds. */
+	private static void completeBloomOfQliphoth(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		QliphothBloomSavedData data = QliphothBloomSavedData.get(sLevel.getServer().overworld());
+		String dimension = sLevel.dimension().location().toString();
+		Block bloomBlock = BlockInit.qliphoth_bloom.get();
+		IMultiBlock multiBlock = (IMultiBlock) bloomBlock;
 
 		// Place the multi-block
 		sLevel.setBlockAndUpdate(center.above(2), bloomBlock.defaultBlockState());
@@ -2254,10 +2268,10 @@ public class HarbingerCardinalRiteEvents {
 			java.util.List<com.vincenthuto.hemomancy.client.data.QliphothBloomClientData.BloomEntry> clientEntries = new ArrayList<>();
 			for (QliphothBloomSavedData.BloomEntry bloom : data.getBlooms()) {
 				if (bloom.dimension().equals(dimension)) {
-					int pomesDropped = data.getPomesDropped(bloom.center());
+					int pomesDropped = data.getPomesDropped(bloom);
 					clientEntries.add(new com.vincenthuto.hemomancy.client.data.QliphothBloomClientData.BloomEntry(
 							bloom.center(), bloom.chunkRadius(), pomesDropped,
-							data.getState(bloom.center()).ordinal()));
+							data.getState(bloom).ordinal()));
 				}
 			}
 			PacketSyncQliphothBlooms packet =
@@ -2410,8 +2424,7 @@ public class HarbingerCardinalRiteEvents {
 	}
 
 
-	private static void completeFoundingFane(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
-		BlockPos heartPos = center.above(3);
+	private static boolean canConsecrateFoundingFane(ServerLevel sLevel, ServerPlayer caster, BlockPos heartPos) {
 		BlockState heartState = sLevel.getBlockState(heartPos);
 		if (!heartState.is(BlockInit.consecrated_bloodwell.get())
 				&& !heartState.isAir()
@@ -2420,7 +2433,7 @@ public class HarbingerCardinalRiteEvents {
 					Component.literal("The rite's heart was obstructed before the Consecrated Bloodwell could be manifested.")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
-			return;
+			return false;
 		}
 		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(caster)
 				.map(volume -> volume.getBloodLine())
@@ -2430,35 +2443,71 @@ public class HarbingerCardinalRiteEvents {
 					Component.literal("The Founding Fane requires an established bloodline.")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
-			return;
+			return false;
 		}
 		if (!bloodline.getLeaderUUID().equals(caster.getUUID())) {
 			caster.displayClientMessage(
 					Component.literal("Only the bloodline Progenitor may consecrate a Founding Fane.")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
-			return;
+			return false;
 		}
-		UUID faneOwner = bloodline.getLeaderUUID();
-		FoundingFaneSavedData faneData = FoundingFaneSavedData.get(sLevel);
-		boolean isReconsecrating = false;
-		for (ServerLevel oldLevel : sLevel.getServer().getAllLevels()) {
-			FoundingFaneSavedData oldData = FoundingFaneSavedData.get(oldLevel);
-			if (!oldData.hasFane(faneOwner)) continue;
-			isReconsecrating = true;
-			for (BlockPos stakePos : oldData.removeStakesAndGet(faneOwner)) {
-				if (oldLevel.getBlockState(stakePos).is(BlockInit.hematic_stake.get())) {
-					oldLevel.removeBlock(stakePos, false);
-				}
+		Bloodline registered = BloodlineSavedData.get(sLevel.getServer().overworld())
+				.getBloodline(bloodline.getBloodlineUUID());
+		if (registered == null || !registered.getLeaderUUID().equals(caster.getUUID())) {
+			caster.displayClientMessage(Component.literal("The Founding Fane requires a founded bloodline in this world.")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+			return false;
+		}
+		FoundingFaneSavedData data = FoundingFaneSavedData.get(sLevel);
+		UUID heartOwner = data.findOwnerForHeart(heartPos);
+		if (heartState.is(BlockInit.consecrated_bloodwell.get())
+				&& !caster.getUUID().equals(heartOwner)) {
+			caster.displayClientMessage(Component.literal("This Consecrated Bloodwell belongs to another Fane.")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+			return false;
+		}
+		for (var entry : data.getAllFootprints().entrySet()) {
+			if (!entry.getKey().equals(caster.getUUID()) && entry.getValue().contains(heartPos)) {
+				caster.displayClientMessage(Component.literal("Another Fane already claims this ground.")
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+				return false;
 			}
 		}
+		return true;
+	}
+
+	private static boolean completeFoundingFane(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		BlockPos heartPos = center.above(3);
+		if (!canConsecrateFoundingFane(sLevel, caster, heartPos)) return false;
+		Bloodline bloodline = HemoCapabilityAccess.requireBloodVolume(caster).getBloodLine();
+		UUID faneOwner = bloodline.getLeaderUUID();
+		FoundingFaneSavedData faneData = FoundingFaneSavedData.get(sLevel);
 		if (!sLevel.getBlockState(heartPos).is(BlockInit.consecrated_bloodwell.get())
 				&& !sLevel.setBlock(heartPos, BlockInit.consecrated_bloodwell.get().defaultBlockState(), 3)) {
 			caster.displayClientMessage(
 					Component.literal("The rite falters before the Consecrated Bloodwell can take form.")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
-			return;
+			return false;
+		}
+		boolean isReconsecrating = false;
+		for (ServerLevel oldLevel : sLevel.getServer().getAllLevels()) {
+			FoundingFaneSavedData oldData = FoundingFaneSavedData.get(oldLevel);
+			BlockPos oldHeart = oldData.getHeart(faneOwner);
+			if (oldHeart == null) continue;
+			isReconsecrating = true;
+			for (BlockPos stakePos : oldData.removeStakesAndGet(faneOwner)) {
+				if (oldLevel.getBlockState(stakePos).is(BlockInit.hematic_stake.get())) {
+					oldLevel.removeBlock(stakePos, false);
+				}
+			}
+			if (oldLevel != sLevel || !oldHeart.equals(heartPos)) {
+				if (oldLevel.getBlockState(oldHeart).is(BlockInit.consecrated_bloodwell.get())) {
+					oldLevel.removeBlock(oldHeart, false);
+				}
+				oldData.remove(faneOwner);
+			}
 		}
 		faneData.consecrateHeart(faneOwner, heartPos);
 		com.vincenthuto.hemomancy.common.event.MachineAccessEvents.awardMachineCrafted(
@@ -2485,6 +2534,7 @@ public class HarbingerCardinalRiteEvents {
 		sLevel.sendParticles(ParticleTypes.CRIMSON_SPORE,
 				heartPos.getX() + 0.5, heartPos.getY() + 1.0, heartPos.getZ() + 0.5,
 				300, FoundingFaneSavedData.FANE_RADIUS * 0.3, 3.0, FoundingFaneSavedData.FANE_RADIUS * 0.3, 0.01);
+		return true;
 	}
 
 }

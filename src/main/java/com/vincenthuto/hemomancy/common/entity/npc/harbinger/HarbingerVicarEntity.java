@@ -8,6 +8,8 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedPr
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.mission.shared.HarbingerChapterMilestone;
+import com.vincenthuto.hemomancy.common.mission.shared.HarbingerChapterProgression;
 import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
@@ -216,9 +218,10 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.succe
         int degree = HemoCapabilityAccess.getPlayerDegreeNumber(serverPlayer);
         if (isPurifying(serverPlayer)) return HarbingerVicarDialogueTrees.purifying(this.getId());
         if (degree >= 7 && hasPomeEmpowerment(serverPlayer)) {
-            return HarbingerVicarDialogueTrees.withContinuingConsecration(
+            DialogueTree empowered = HarbingerVicarDialogueTrees.withContinuingConsecration(
                     HarbingerVicarDialogueTrees.archonPomeEmpowered(this.getId()), degree,
                     com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEventHandler.hasClaimedConsecrationKit(serverPlayer));
+            return withFieldResearch(empowered, serverPlayer, degree);
         }
         DialogueTree tree = HarbingerVicarDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
                 isNpcInPlayerBloodline(player, this), hasAbocipherLiteracy(serverPlayer),
@@ -227,8 +230,41 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.succe
                 hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_VICAR_MASONS_RESPITE_DIRECTIVE),
                 FirstBloodcraftAssignment.canClaim(serverPlayer), FirstBloodcraftAssignment.isClaimed(serverPlayer));
         tree = EarlyInitiationDialogue.vicar(tree, serverPlayer);
-        return HarbingerVicarDialogueTrees.withContinuingConsecration(tree, degree,
+        tree = HarbingerVicarDialogueTrees.withContinuingConsecration(tree, degree,
                 com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEventHandler.hasClaimedConsecrationKit(serverPlayer));
+        if (degree == 5 || degree == 6) {
+            var bloodline = HemoCapabilityAccess.getBloodVolume(serverPlayer)
+                    .map(volume -> volume.getBloodLine()).orElse(
+                            com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline.NOBLOODLINE);
+            boolean foundedBloodline = bloodline.isValid()
+                    && serverPlayer.getUUID().equals(bloodline.getLeaderUUID());
+            boolean faneComplete = HarbingerChapterProgression.completedChapters(serverPlayer)
+                    .contains(HarbingerChapterMilestone.COVENANT_WRITTEN_IN_PLACE);
+            tree = HarbingerVicarDialogueTrees.withCovenantGuidance(tree, degree, foundedBloodline,
+                    faneComplete,
+                    hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_CHAMBER_RETURNED),
+                    hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_COVENANT_THRONE_BOUND),
+                    hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_COVENANT_VIGIL_COMPLETED));
+        }
+        return withFieldResearch(tree, serverPlayer, degree);
+    }
+
+    private static DialogueTree withFieldResearch(DialogueTree tree, ServerPlayer player, int degree) {
+        tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.CircusReferralDialogue
+                .withVicarReferral(tree, degree,
+                        com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.hasDiscovered(player));
+        if (com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.eligible(player)) {
+            tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.OverworldFungalSurveyDialogue
+                    .withVicarReferral(tree, degree,
+                        com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.visited(player),
+                        com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.reported(player));
+        }
+        if (com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.eligibleForReferral(player)) {
+            var voyager = com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.progress(player);
+            tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.VoyagerIntroductionDialogue
+                    .withVicarReport(tree, degree, voyager.observed(), voyager.reported());
+        }
+        return tree;
     }
 
     @Override

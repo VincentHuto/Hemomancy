@@ -4,6 +4,10 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.degree;
 public final class HarbingerPathPermissions {
 	private HarbingerPathPermissions() {}
 
+	public static boolean isProvenSilentArchon(int degree, EnumArchonPath path) {
+		return degree == 7 && path == EnumArchonPath.SILENT_ARCHON;
+	}
+
 	public static boolean isChoiceUnresolved(int pomes, EnumArchonPath path) {
 		return pomes >= 9 && path != EnumArchonPath.APOTHEOS && path != EnumArchonPath.SILENT_ARCHON;
 	}

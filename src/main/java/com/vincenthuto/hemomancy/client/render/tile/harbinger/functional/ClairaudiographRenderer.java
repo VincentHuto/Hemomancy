@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.ClairaudiographBlock;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.ClairaudiographBlockEntity;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.AmbergrisCylinderRenderer;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.blockentity.*;
@@ -19,7 +20,15 @@ public class ClairaudiographRenderer implements BlockEntityRenderer<Clairaudiogr
         if(!be.inventory.getStackInSlot(1).isEmpty()){
             pose.pushPose();pose.translate(.47,.39,.39);
             if(be.playing() || be.progress>0)pose.mulPose(Axis.XP.rotationDegrees(time*9));
-            pose.scale(.8F,.8F,.8F);AmbergrisCylinderRenderer.draw(be.inventory.getStackInSlot(1),pose,buffers,light,overlay);pose.popPose();
+            if(be.inventory.getStackInSlot(1).is(ItemInit.ambergris_cylinder.get())) {
+                pose.scale(.8F,.8F,.8F);
+                AmbergrisCylinderRenderer.draw(be.inventory.getStackInSlot(1),pose,buffers,light,overlay);
+            } else {
+                pose.scale(.55F,.55F,.55F);
+                mc.getItemRenderer().renderStatic(be.inventory.getStackInSlot(1),ItemDisplayContext.FIXED,
+                        light,overlay,pose,buffers,be.getLevel(),0);
+            }
+            pose.popPose();
         }
         pose.pushPose();pose.translate(be.progress>0?Math.min(80,be.progress+partial)/80F*.35:0,0,0);
         var stylus=mc.getModelManager().getModel(ModelResourceLocation.standalone(Hemomancy.rloc("block/clairaudiograph_stylus")));

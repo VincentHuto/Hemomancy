@@ -48,7 +48,8 @@ gameTestSuites.each { namespace, suite ->
 }
 def combined = neoForge.runs.maybeCreate('gameTestServer')
 combined.type = 'gameTestServer'
-combined.gameDirectory = file('build/phlegethontic-gametest')
+combined.gameDirectory = file(providers.gradleProperty('combinedGameTestDirectory')
+        .getOrElse('build/phlegethontic-gametest'))
 combined.systemProperty namespaceProperty, alphaNamespaces.join(',')
 
 def verifySuites = tasks.register('verifyGameTestSuites') {

@@ -1,7 +1,7 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
   "id": "hemomancy:cardinal_rite/apotheos_rite",
-  "bloodCost": 7000,
+  "bloodCost": 0,
   "riteType": "grand",
   "required_degree": 7,
   "riteName": "Rite of Apotheos",

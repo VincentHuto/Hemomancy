@@ -11,7 +11,7 @@ public final class DialogueRewardClaims {
                  HarbingerCicatrixAnchoriteDialogueTrees.EVENT_FIRST_LESSON,
                  HarbingerCicatrixAnchoriteDialogueTrees.EVENT_CONTINUATION_REWARD,
                  HarbingerVicarDialogueTrees.EVENT_CLAIM_FIRST_BLOODCRAFT_REWARD,
-                 HarbingerVicarDialogueTrees.EVENT_CONSECRATION_KIT,
+                 HarbingerArtificerDialogueTrees.EVENT_CONSECRATION_KIT,
                  HarbingerAlchemistDialogueTrees.EVENT_FIRST_SEPARATION_CLAIM,
                  AdvancedBrewingDialogue.CONDENSER_CLAIM,
                  AdvancedBrewingDialogue.ATHANOR_CLAIM,

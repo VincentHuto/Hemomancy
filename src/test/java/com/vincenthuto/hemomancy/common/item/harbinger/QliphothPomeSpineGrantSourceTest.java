@@ -10,9 +10,15 @@ public final class QliphothPomeSpineGrantSourceTest {
 	public static void main(String[] args) throws IOException {
 		String source = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/QliphothPomeItem.java"));
+		String delivery = Files.readString(Path.of(
+				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/QliphothBloomEvents.java"));
 		assertContains(source, "QliphothPomeRules.shouldGrantFungalSpine(count, degree.hasFungalSpineGranted())");
-		assertContains(source, "degree.setFungalSpineGranted(true)");
-		assertContains(source, "new ItemStack(ItemInit.fungal_spine.get())");
+		assertContains(source, "QliphothBloomEvents.deliverPendingFungalSpine(player)");
+		assertContains(delivery, "degree.isQliphothCommunionDone() || degree.hasFungalSpineGranted()");
+		assertContains(delivery, "player.getInventory().add(new ItemStack(ItemInit.fungal_spine.get()))");
+		assertContains(delivery, "degree.setFungalSpineGranted(true)");
+		assertContains(delivery, "deliverPendingFungalSpine(player);");
+		if (source.contains("player.drop(spine")) throw new AssertionError("unique Spine must not become a world drop");
 	}
 
 	private static void assertContains(String source, String expected) {

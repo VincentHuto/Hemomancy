@@ -41,6 +41,6 @@ public enum MnemonistStarterMemoryChoice {
 	}
 
 	public static boolean canClaim(int degree, boolean purifying, boolean clarity, boolean alreadyClaimed) {
-		return degree >= 1 && !purifying && !clarity && !alreadyClaimed;
+		return degree >= 2 && !purifying && !clarity && !alreadyClaimed;
 	}
 }

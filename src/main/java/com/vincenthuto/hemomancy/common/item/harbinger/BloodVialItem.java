@@ -256,6 +256,8 @@ public class BloodVialItem extends Item {
                 }
                 com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodKnowledge.collected(player, sample);
 				if (player instanceof ServerPlayer serverPlayer) {
+					com.vincenthuto.hemomancy.common.mission.alchemist.FirstDrawsAssignment
+							.recordCollection(serverPlayer, (LivingEntity) entity);
 					com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment
 							.markSampleAcquired(serverPlayer);
 				}

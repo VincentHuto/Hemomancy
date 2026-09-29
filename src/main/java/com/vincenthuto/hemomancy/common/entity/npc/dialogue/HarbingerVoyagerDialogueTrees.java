@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.List;
 
 public final class HarbingerVoyagerDialogueTrees {
-	private static final ResourceLocation VOYAGER_ICON = Hemomancy.rloc(
+	private static final ResourceLocation VOYAGER_ICON = ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID,
 			"textures/entity/npc/harbinger/harbinger_voyager/harbinger_voyager.png");
 	private static final String SPEAKER = "entity.hemomancy.harbinger_voyager";
 

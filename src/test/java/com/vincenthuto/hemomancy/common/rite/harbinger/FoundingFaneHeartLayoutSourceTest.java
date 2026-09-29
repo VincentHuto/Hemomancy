@@ -22,7 +22,7 @@ final class FoundingFaneHeartLayoutSourceTest {
 		String activationGate = section(activation,
 				"private static boolean canManifestFoundingFaneHeart", "private static BlockPattern.BlockPatternMatch");
 		String completionGate = section(completion,
-				"private static void completeFoundingFane", "\n}\n");
+				"private static boolean completeFoundingFane", "\n}\n");
 
 		assertTrue(activationGate.contains("BlockPos heartPos = centerPos.above(3)"),
 				"Founding Fane activation must check the future bloodwell position three blocks above the focus");

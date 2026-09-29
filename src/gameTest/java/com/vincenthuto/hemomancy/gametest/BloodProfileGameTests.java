@@ -157,7 +157,7 @@ public final class BloodProfileGameTests {
         var player = player(h);
         player.getInventory().add(new ItemStack(ItemInit.living_syringe.get()));
         for (var type : List.of(EntityType.IRON_GOLEM, EntityType.VILLAGER, EntityType.WARDEN,
-                EntityInit.harbinger_alchemist.get(), EntityInit.chitinite.get(), EntityInit.bog_revenant.get())) {
+                EntityInit.harbinger_alchemist.get(), EntityInit.fervent_chitinite.get(), EntityInit.bog_revenant.get())) {
             var target = type.create(h.getLevel());
             target.setInvulnerable(false);
             var vial = new ItemStack(ItemInit.bloody_vial.get());
@@ -178,6 +178,7 @@ public final class BloodProfileGameTests {
     @GameTest(template = "empty")
     public static void syringeCollectsRestrictedBloodAndStillRejectsInvalidCondition(GameTestHelper h) {
         var player = player(h);
+        HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(2);
         var syringe = syringe(h, player);
         var target = EntityType.IRON_GOLEM.create(h.getLevel());
         player.setItemInHand(InteractionHand.MAIN_HAND, syringe);

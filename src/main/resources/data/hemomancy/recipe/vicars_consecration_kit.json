@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " I ",
+    "FCS",
+    " I "
+  ],
+  "key": {
+    "I": { "item": "hemomancy:hematic_iron_scrap" },
+    "F": { "item": "hemomancy:ferric_binder" },
+    "C": { "item": "hemomancy:blood_crystal_shard" },
+    "S": { "item": "hemomancy:sanguine_formation" }
+  },
+  "result": {
+    "id": "hemomancy:vicars_consecration_kit"
+  }
+}

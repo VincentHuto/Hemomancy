@@ -1,6 +1,6 @@
 # Phase 3: memories, alchemy, and station lessons
 
-[Index](../HARBINGER_PROGRESSION_REDESIGN.md) · Depends on Phases 1 and 2 for coherent sample and cylinder lessons.
+[Index](HARBINGER_PROGRESSION_REDESIGN.md) · Depends on Phases 1 and 2 for coherent sample and cylinder lessons.
 
 ## Outcome
 
