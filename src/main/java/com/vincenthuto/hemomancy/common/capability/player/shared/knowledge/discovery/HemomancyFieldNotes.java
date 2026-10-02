@@ -15,7 +15,7 @@ import java.util.List;
 public final class HemomancyFieldNotes implements FieldNotes.Provider {
     @Override public boolean available(Player player) {
         var books = BookPlaceboReloadListener.INSTANCE;
-        return books.getBookByTitle(ResourceLocation.parse("hemomancy:fanesanguinium")) != null
+        return books.getBookByTitle(ResourceLocation.parse("hemomancy:libersanguinium")) != null
                 || books.getBookByTitle(ResourceLocation.parse("hemomancy:liberimmaculatus")) != null;
     }
     @Override public int pending(Player player) {

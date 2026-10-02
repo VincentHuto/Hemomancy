@@ -46,8 +46,6 @@ public class ActiveCardinalRite {
 	private int carriedIchorTicks;
 	private int reservoirBloodMl;
 	private int[] anchorBloodMl = new int[0];
-	private int[] scriptorialBloodMl = new int[16];
-	private int scriptorialStage;
 	private int[] instabilityRepairBloodMl = new int[0];
 	private int[] instabilityDamagePriority = new int[0];
 	private final LinkedHashSet<Integer> brokenInstabilityAnchors = new LinkedHashSet<>();
@@ -62,8 +60,9 @@ public class ActiveCardinalRite {
 	private CompoundTag escrowedStaff = new CompoundTag();
 	private boolean completionCommitted;
     private CompoundTag succession = new CompoundTag();
-    private CompoundTag alembic = new CompoundTag();
-    public CompoundTag alembic() { return alembic; }
+    private CompoundTag upgrade = new CompoundTag();
+    /** Escrow, circuit progress and subject snapshot of a station-upgrade rite. */
+    public CompoundTag upgrade() { return upgrade; }
     public CompoundTag succession() { return succession; }
     public void beginSuccession(CompoundTag context) {
         succession = context.copy();
@@ -281,12 +280,8 @@ public class ActiveCardinalRite {
 		altarSealed = true;
 		betweenWaveStillIntervals = hasStillInterval;
 		finalStillInterval = false;
-		if (com.vincenthuto.hemomancy.common.rite.harbinger.ScriptoriumRites.isRite(recipeId)) {
-			setPhase(CardinalRitePhase.SCRIPTORIAL_INSCRIPTION);
-			return true;
-		}
-		if (com.vincenthuto.hemomancy.common.rite.harbinger.AlembicUpgradeRites.isRite(recipeId)) {
-			setPhase(CardinalRitePhase.ALEMBIC_PROJECTION);
+		if (com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.isRite(recipeId)) {
+			setPhase(CardinalRitePhase.STATION_PROJECTION);
 			return true;
 		}
 		if (totalWaves > 0) setPhase(CardinalRitePhase.ORDEAL);
@@ -295,46 +290,23 @@ public class ActiveCardinalRite {
 		return true;
 	}
 
-	public int getScriptorialStage() { return scriptorialStage; }
-	public int alembicBloodNeeded() {
-		return phase == CardinalRitePhase.ALEMBIC_PROJECTION
-				? com.vincenthuto.hemomancy.common.rite.harbinger.AlembicUpgradeRites.bloodPerProjection(recipeId)
-						- alembic.getInt("BloodAtStage") : 0;
+	public int upgradeBloodNeeded() {
+		return phase == CardinalRitePhase.STATION_PROJECTION
+				? com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.bloodPerCircuit(recipeId)
+						- upgrade.getInt("BloodAtStage") : 0;
 	}
-	public boolean fillAlembicProjection(int stage, int paid) {
-		if (phase != CardinalRitePhase.ALEMBIC_PROJECTION || stage != alembic.getInt("Stage")
-				|| paid <= 0 || alembicBloodNeeded() <= 0) return false;
-		int stageCost = com.vincenthuto.hemomancy.common.rite.harbinger.AlembicUpgradeRites
-				.bloodPerProjection(recipeId);
-		int next = Math.min(stageCost, alembic.getInt("BloodAtStage") + paid);
-		committedBloodMl += next - alembic.getInt("BloodAtStage");
-		alembic.putInt("BloodAtStage", next);
-		if (next == stageCost) {
-			alembic.putInt("Stage", stage + 1);
-			alembic.putInt("BloodAtStage", 0);
-			if (stage + 1 == com.vincenthuto.hemomancy.common.rite.harbinger.AlembicUpgradeRites.projections(recipeId))
+	public boolean fillUpgradeCircuit(int circuit, int paid) {
+		if (phase != CardinalRitePhase.STATION_PROJECTION || circuit != upgrade.getInt("Stage")
+				|| paid <= 0 || upgradeBloodNeeded() <= 0) return false;
+		int circuitCost = com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.bloodPerCircuit(recipeId);
+		int next = Math.min(circuitCost, upgrade.getInt("BloodAtStage") + paid);
+		committedBloodMl += next - upgrade.getInt("BloodAtStage");
+		upgrade.putInt("BloodAtStage", next);
+		if (next == circuitCost) {
+			upgrade.putInt("Stage", circuit + 1);
+			upgrade.putInt("BloodAtStage", 0);
+			if (circuit + 1 == com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.circuits(recipeId))
 				setPhase(finalePhase());
-		}
-		return true;
-	}
-	public int getScriptorialBlood(int stage) { return scriptorialBloodMl[Math.clamp(stage, 0, 15)]; }
-	public int scriptorialBloodNeeded() {
-		int total = com.vincenthuto.hemomancy.common.rite.harbinger.ScriptoriumRites.isMonolithic(recipeId) ? 16 : 8;
-		return phase == CardinalRitePhase.SCRIPTORIAL_INSCRIPTION && scriptorialStage < total
-				? 50 - scriptorialBloodMl[scriptorialStage] : 0;
-	}
-	public boolean fillScriptorialOrb(int orb, int amount) {
-		if (scriptorialBloodNeeded() <= 0 || orb != scriptorialStage % 8 || amount <= 0) return false;
-		int added = Math.min(amount, scriptorialBloodNeeded());
-		scriptorialBloodMl[scriptorialStage] += added;
-		committedBloodMl += added;
-		if (scriptorialBloodMl[scriptorialStage] == 50) {
-			scriptorialStage++;
-			if (scriptorialBloodNeeded() == 0) {
-				if (totalWaves > 0) setPhase(CardinalRitePhase.ORDEAL);
-				else if (betweenWaveStillIntervals) setPhase(CardinalRitePhase.STILL_INTERVAL);
-				else setPhase(finalePhase());
-			}
 		}
 		return true;
 	}
@@ -845,10 +817,9 @@ public class ActiveCardinalRite {
 					: 0.25D * committedBloodMl
 							/ (anchorBloodMl.length * (double) CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML);
 			case INSCRIPTION -> 0.25D;
-			case SCRIPTORIAL_INSCRIPTION -> 0.25D + 0.05D * scriptorialStage / (com.vincenthuto.hemomancy.common.rite.harbinger.ScriptoriumRites.isMonolithic(recipeId) ? 16 : 8);
-			case ALEMBIC_PROJECTION -> 0.25D + 0.55D * (alembic.getInt("Stage")
-					+ alembic.getInt("BloodAtStage") / (double) com.vincenthuto.hemomancy.common.rite.harbinger.AlembicUpgradeRites.bloodPerProjection(recipeId))
-					/ com.vincenthuto.hemomancy.common.rite.harbinger.AlembicUpgradeRites.projections(recipeId);
+			case STATION_PROJECTION -> 0.25D + 0.55D * (upgrade.getInt("Stage")
+					+ upgrade.getInt("BloodAtStage") / (double) com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.bloodPerCircuit(recipeId))
+					/ com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.circuits(recipeId);
 			case ORDEAL -> 0.25D + (totalWaves == 0 ? 0.0D : 0.5D * currentWave / totalWaves);
 			case PUPPET_TRIAL -> puppeteerTrialProgress;
 			case STILL_INTERVAL -> 0.75D + 0.10D * boundedPhaseProgress(stillIntervalTicks);
@@ -893,8 +864,6 @@ public class ActiveCardinalRite {
 		tag.putInt("CarriedIchorTicks", carriedIchorTicks);
 		tag.putInt("ReservoirBloodMl", reservoirBloodMl);
 		tag.putIntArray("AnchorBloodMl", anchorBloodMl);
-		tag.putIntArray("ScriptorialBloodMl", scriptorialBloodMl);
-		tag.putInt("ScriptorialStage", scriptorialStage);
 		tag.putIntArray("InstabilityRepairBloodMl", instabilityRepairBloodMl);
 		tag.putIntArray("InstabilityDamagePriority", instabilityDamagePriority);
 		tag.putIntArray("BrokenInstabilityAnchors",
@@ -923,7 +892,7 @@ public class ActiveCardinalRite {
 		}
 		tag.put("WaveDeck", waves);
 		if (!escrowedStaff.isEmpty()) tag.put("EscrowedStaff", escrowedStaff.copy());
-		if (!alembic.isEmpty()) tag.put("AlembicUpgrade", alembic.copy());
+		if (!upgrade.isEmpty()) tag.put("StationUpgrade", upgrade.copy());
 		tag.putBoolean("CompletionCommitted", completionCommitted);
 		if (matchedFloorId != null) tag.putString("MatchedFloor", matchedFloorId.toString());
 		tag.putString("FloorForwards", floorForwards.getName());
@@ -1005,6 +974,9 @@ public class ActiveCardinalRite {
 		UUID playerUUID = tag.getUUID("PlayerUUID");
 		BlockPos centerPos = BlockPos.of(tag.getLong("CenterPos"));
 		ResourceLocation recipeId = ResourceLocation.parse(tag.getString("RecipeId"));
+		// The D7 Scriptorium rite was renamed from the Monolithic Script to the Rite of the Palimpsest.
+		if (recipeId.getNamespace().equals("hemomancy") && recipeId.getPath().equals("cardinal_rite/monolithic_script"))
+			recipeId = ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/palimpsest");
 		int totalTicks = tag.getInt("TotalTicks");
 		int riteSize = tag.getInt("RiteSize");
 		ActiveCardinalRite rite = new ActiveCardinalRite(playerUUID, centerPos, recipeId, totalTicks, riteSize);
@@ -1029,9 +1001,6 @@ public class ActiveCardinalRite {
 		rite.carriedIchorTicks = tag.getInt("CarriedIchorTicks");
 		rite.reservoirBloodMl = tag.getInt("ReservoirBloodMl");
 		rite.anchorBloodMl = tag.getIntArray("AnchorBloodMl");
-		int[] scriptorial = tag.getIntArray("ScriptorialBloodMl");
-		if (scriptorial.length == 16) rite.scriptorialBloodMl = scriptorial;
-		rite.scriptorialStage = Math.clamp(tag.getInt("ScriptorialStage"), 0, 16);
 		rite.instabilityRepairBloodMl = tag.getIntArray("InstabilityRepairBloodMl");
 		rite.instabilityDamagePriority = tag.getIntArray("InstabilityDamagePriority");
 		for (int anchor : tag.getIntArray("BrokenInstabilityAnchors")) {
@@ -1055,7 +1024,8 @@ public class ActiveCardinalRite {
 		for (int i = 0; i < waves.size(); i++) rite.waveDeck.add(waves.getCompound(i).getString("Id"));
 		rite.escrowedStaff = tag.contains("EscrowedStaff")
 				? tag.getCompound("EscrowedStaff").copy() : new CompoundTag();
-		rite.alembic = tag.getCompound("AlembicUpgrade").copy();
+		rite.upgrade = (tag.contains("StationUpgrade") ? tag.getCompound("StationUpgrade")
+				: tag.getCompound("AlembicUpgrade")).copy();
 		rite.completionCommitted = tag.getBoolean("CompletionCommitted");
         rite.succession = tag.getCompound("Succession").copy();
 		if (tag.contains("MatchedFloor")) rite.matchedFloorId =

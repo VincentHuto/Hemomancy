@@ -7,6 +7,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DeepDarkCommissionDialogueTest {
     @Test
+    void unfinishedCommissionOffersTravelGuidanceWithoutRequiringAnalysis() {
+        DialogueTree base = HarbingerAlchemistDialogueTrees.adept(42);
+        for (boolean proof : new boolean[] {false, true}) {
+            DialogueTree tree = DeepDarkCommissionDialogue.withAlchemistCommission(base, 5, proof, false);
+            assertTrue(tree.getNode("deep_dark_commission").options().stream()
+                    .anyMatch(option -> "alchemist_deep_dark_commission_bearing".equals(option.eventId())),
+                    "The commission needs a usable destination lead before analysis");
+            assertTrue(hasReport(tree) == proof, "Guidance must not make an unproved report available");
+        }
+    }
+
+    @Test
     void d5CommissionRecognizesPriorAnalysisWithoutClosingTheAntecedentInquiry() {
         DialogueTree base = HarbingerAlchemistDialogueTrees.adept(42);
         assertFalse(hasCommission(DeepDarkCommissionDialogue.withAlchemistCommission(base, 4, true, false)));

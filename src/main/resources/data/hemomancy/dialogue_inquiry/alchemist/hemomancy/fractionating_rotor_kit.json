@@ -1,0 +1,10 @@
+{
+  "conditions": [
+    {
+      "lines": [
+        "hemomancy.alchemist.centrifuge.fractionating.requirements",
+        "hemomancy.alchemist.centrifuge.fractionating.claimed"
+      ]
+    }
+  ]
+}

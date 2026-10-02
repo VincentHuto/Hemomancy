@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [" Q ", "HBH", " T "],
+  "key": {
+    "Q": { "item": "hemomancy:sanguine_quintessence" },
+    "H": { "item": "hemomancy:hemolytic_solution" },
+    "B": { "item": "minecraft:brewing_stand" },
+    "T": { "item": "minecraft:ghast_tear" }
+  },
+  "result": { "id": "hemomancy:sanguine_athanor_kit" }
+}

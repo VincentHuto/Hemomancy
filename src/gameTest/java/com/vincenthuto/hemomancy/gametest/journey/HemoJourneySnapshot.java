@@ -103,7 +103,7 @@ public final class HemoJourneySnapshot {
 	private static final String VASCULAR_SYSTEM = "vascular_system";
 	private static final String RECIPE_BOOK = "recipe_book";
 	private static final String SPECIMEN_BESTIARY = "specimen_bestiary";
-	private static final String ADVANCED_BREWING = "advanced_brewing";
+	private static final String ADVANCED_BREWING = "station_upgrades";
 	private static final String PERSISTENT_DATA = "persistent_data";
 	private static final String VASC_EQUIPMENT = "vasc_equipment";
 	private static final int VASC_SLOT = 5;
@@ -132,15 +132,18 @@ public final class HemoJourneySnapshot {
 			"hemomancy.claimed_heart_hermit",
 			"hemomancy.vicar_consecration_kit_claimed");
 
+	private static final ResourceLocation INITIATION_BLOOD_CLAIMED = Hemomancy.rloc("hemomancy/initiation_blood_claimed");
+
 	/** Exact advancement ownership for every checkpoint currently driven by the journey. */
 	private static final List<ResourceLocation> JOURNEY_ADVANCEMENTS = List.of(
 			Hemomancy.rloc("hemomancy/the_first_awakening"),
 			Hemomancy.rloc("hemomancy/degree_1_neophyte"),
+			INITIATION_BLOOD_CLAIMED,
 			HarbingerAdvancementGranter.ADV_HERMIT_ROAD_FIRST_REMNANT,
 			HarbingerAdvancementGranter.ADV_HERMIT_ROAD_LEDGER_GRANTED,
 			HarbingerAdvancementGranter.ADV_HERMIT_ROAD_REPORTED,
 			Hemomancy.rloc("hemomancy/vessel_filled"),
-			Hemomancy.rloc("hemomancy/fane_sanguinium"),
+			Hemomancy.rloc("hemomancy/liber_sanguinium"),
 			Hemomancy.rloc("hemomancy/iron_in_the_blood"),
 			FirstBloodcraftAssignment.ADV_REWARD_CLAIMED,
 			HarbingerAdvancementGranter.ADV_DEGREE_2_VOTARY,
@@ -315,7 +318,7 @@ public final class HemoJourneySnapshot {
 		snapshot.put(RECIPE_BOOK, player.getRecipeBook().toNbt());
 		snapshot.put(SPECIMEN_BESTIARY, HemoCapabilityAccess.requireSpecimenBestiary(player)
 				.serializeNBT(player.registryAccess()));
-		snapshot.put(ADVANCED_BREWING, HemoCapabilityAccess.advancedBrewing(player)
+		snapshot.put(ADVANCED_BREWING, HemoCapabilityAccess.stationUpgrades(player)
 				.serializeNBT(player.registryAccess()));
 		snapshot.put(PERSISTENT_DATA, capturePersistentData(player));
 		snapshot.putInt(SCAR_STATION_CRAFTS, player.getStats().getValue(
@@ -385,7 +388,7 @@ public final class HemoJourneySnapshot {
 		var emptyTendency = new BloodTendency();
 		var emptyRecipeBook = new ServerRecipeBook();
 		var emptyBestiary = new SpecimenBestiaryProgress();
-		var emptyBrewing = new com.vincenthuto.hemomancy.common.brewing.AdvancedBrewingProgress();
+		var emptyBrewing = new com.vincenthuto.hemomancy.common.station.StationUpgradeProgress();
 		ParsedState reset = new ParsedState(false, 0.0D, 5000.0D, 0,
 				emptyDegree.serializeNBT(player.registryAccess()), emptyTendency.serializeNBT(player.registryAccess()), emptyInventory,
 				resetAdvancements, emptySkills.serializeNBT(player.registryAccess()),
@@ -498,7 +501,7 @@ public final class HemoJourneySnapshot {
 		CompoundTag bestiaryTag = snapshot.getCompound(SPECIMEN_BESTIARY);
 		if (!validateSpecimenBestiarySchema(player, bestiaryTag)) return PreflightResult.fail("Specimen Bestiary restore failed: malformed schema.");
 		CompoundTag brewingTag = snapshot.getCompound(ADVANCED_BREWING);
-		if (!validateAdvancedBrewingSchema(player, brewingTag)) return PreflightResult.fail("Advanced Brewing restore failed: malformed schema.");
+		if (!validateAdvancedBrewingSchema(player, brewingTag)) return PreflightResult.fail("Station upgrade restore failed: malformed schema.");
 		CompoundTag persistentDataTag = snapshot.getCompound(PERSISTENT_DATA);
 		if (!validatePersistentDataSchema(persistentDataTag)) return PreflightResult.fail("Persistent journey data restore failed: malformed schema.");
 		ListTag inventoryTag = snapshot.getList(INVENTORY, Tag.TAG_COMPOUND);
@@ -519,6 +522,11 @@ public final class HemoJourneySnapshot {
 		CompoundTag advancementTag = snapshot.getCompound(ADVANCEMENTS);
 		Map<ResourceLocation, Boolean> advancements = new LinkedHashMap<>();
 		for (ResourceLocation id : JOURNEY_ADVANCEMENTS) {
+			if (id.equals(INITIATION_BLOOD_CLAIMED) && !advancementTag.contains(id.toString())) {
+				// Older snapshots did not own this claim; retain it rather than inventing a baseline.
+				advancements.put(id, HarbingerAdvancementGranter.hasAdvancement(player, id));
+				continue;
+			}
 			if (!advancementTag.contains(id.toString(), Tag.TAG_BYTE)) return PreflightResult.fail("Advancement restore failed: snapshot is missing " + id + ".");
 			advancements.put(id, advancementTag.getBoolean(id.toString()));
 		}
@@ -566,7 +574,7 @@ public final class HemoJourneySnapshot {
 				player.getData(HemoAttachmentTypes.VASCULAR_SYSTEM).serializeNBT(player.registryAccess()),
 				player.getRecipeBook().toNbt(),
 				HemoCapabilityAccess.requireSpecimenBestiary(player).serializeNBT(player.registryAccess()),
-				HemoCapabilityAccess.advancedBrewing(player).serializeNBT(player.registryAccess()),
+				HemoCapabilityAccess.stationUpgrades(player).serializeNBT(player.registryAccess()),
 				capturePersistentData(player),
 				HemoCapabilityAccess.requireEquipment(player).getStackInSlot(VASC_SLOT).copy(),
 				target, currentStage(player.getPersistentData()));
@@ -615,7 +623,7 @@ public final class HemoJourneySnapshot {
 				player.registryAccess(), target.vascularSystemTag().copy());
 		var bestiary = HemoCapabilityAccess.requireSpecimenBestiary(player);
 		bestiary.deserializeNBT(player.registryAccess(), target.bestiaryTag().copy());
-		HemoCapabilityAccess.advancedBrewing(player).deserializeNBT(player.registryAccess(), target.brewingTag().copy());
+		HemoCapabilityAccess.stationUpgrades(player).deserializeNBT(player.registryAccess(), target.brewingTag().copy());
 		CompoundTag persistentData = player.getPersistentData();
 		for (String key : JOURNEY_PERSISTENT_KEYS) persistentData.remove(key);
 		for (String key : List.copyOf(persistentData.getAllKeys()))
@@ -692,8 +700,8 @@ public final class HemoJourneySnapshot {
 		if (!player.getRecipeBook().toNbt().equals(target.recipeBookTag())) return ApplyResult.fail("Recipe book postcondition mismatch");
 		if (!HemoCapabilityAccess.requireSpecimenBestiary(player).serializeNBT(player.registryAccess())
 				.equals(target.bestiaryTag())) return ApplyResult.fail("Specimen Bestiary postcondition mismatch");
-		if (!HemoCapabilityAccess.advancedBrewing(player).serializeNBT(player.registryAccess())
-				.equals(target.brewingTag())) return ApplyResult.fail("Advanced Brewing postcondition mismatch");
+		if (!HemoCapabilityAccess.stationUpgrades(player).serializeNBT(player.registryAccess())
+				.equals(target.brewingTag())) return ApplyResult.fail("Station upgrade postcondition mismatch");
 		if (!capturePersistentData(player).equals(target.persistentDataTag())) return ApplyResult.fail("Persistent journey data postcondition mismatch");
 		return ApplyResult.ok();
 	}
@@ -875,7 +883,7 @@ public final class HemoJourneySnapshot {
 	}
 
 	private static boolean validateAdvancedBrewingSchema(ServerPlayer player, CompoundTag tag) {
-		var progress = new com.vincenthuto.hemomancy.common.brewing.AdvancedBrewingProgress();
+		var progress = new com.vincenthuto.hemomancy.common.station.StationUpgradeProgress();
 		progress.deserializeNBT(player.registryAccess(), tag.copy());
 		return progress.serializeNBT(player.registryAccess()).equals(tag);
 	}

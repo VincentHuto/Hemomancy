@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.*;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
@@ -23,16 +24,18 @@ public record ManipulationChargeVisualPacket(int heldTicks) implements CustomPac
             if (!(context.player() instanceof ServerPlayer player)) return;
             if (packet.heldTicks>0 && com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.isParalyzed(player)) return;
             var known=HemoCapabilityAccess.requireKnownManipulations(player);
+            if(packet.heldTicks>0 && known.getSelectedMemoryRef().kind()!=MemoryEntryKind.MANIPULATION) return;
             var saved=known.getSelectedManip();
             var selected=saved==null?null:ManipulationInit.getByName(saved.getName());
-            if(selected==null || selected.getType()!=EnumManipulationType.CHARGED || !known.isManipEquipped(selected)
-                    || !known.isManipulationAvailable(selected) || !HemoCapabilityAccess.requireBloodVolume(player).isActive()
-                    || selected.isOnCooldown(player) || !player.isAlive()) return;
-            if(HemoCapabilityAccess.getUnstainedProgress(player).map(
-                    com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false)
-                    || HemoCapabilityAccess.getBloodTendency(player).map(t -> t.getAlignmentByTendency(selected.getTend()) < selected.getAlignLevel()).orElse(true)) return;
+            if(selected==null || selected.getType()!=EnumManipulationType.CHARGED) return;
             var form=ManipulationVisuals.chargeForm(selected.getName());
             if(form==null || packet.heldTicks<0 || packet.heldTicks>selected.getRequiredChargeTicks())return;
+            if(packet.heldTicks>0 && (!known.isManipEquipped(selected)
+                    || !known.isManipulationAvailable(selected) || !HemoCapabilityAccess.requireBloodVolume(player).isActive()
+                    || selected.isOnCooldown(player) || !player.isAlive())) return;
+            if(packet.heldTicks>0 && (HemoCapabilityAccess.getUnstainedProgress(player).map(
+                    com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false)
+                    || HemoCapabilityAccess.getBloodTendency(player).map(t -> t.getAlignmentByTendency(selected.getTend()) < selected.getAlignLevel()).orElse(true))) return;
             long now=player.level().getGameTime();
             String key="hemomancy:charge_visual_tick";
             if(packet.heldTicks>0 && player.getPersistentData().contains(key)

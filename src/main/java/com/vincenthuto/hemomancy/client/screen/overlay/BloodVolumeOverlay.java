@@ -106,6 +106,7 @@ public class BloodVolumeOverlay {
     private int lastSpecialPomes = -1;
     private DynamicTexture bloodFillTexture;
     private ResourceLocation bloodFillTextureId;
+    private VesselFillMask vesselFillMask;
     private int lastFillFrame = Integer.MIN_VALUE;
     private int lastFillHeight = -1;
     private int lastFillDegree = -1;
@@ -115,6 +116,7 @@ public class BloodVolumeOverlay {
         refreshClock.reset();
         hornFillMask = null;
         ribFillMask = null;
+        vesselFillMask = null;
         lastSpecialMaskId = null;
         if (specialFillTextureId != null) {
             mc.getTextureManager().release(specialFillTextureId);
@@ -337,28 +339,31 @@ public class BloodVolumeOverlay {
         float corruption = degree >= 7 ? Mth.clamp(pomeProgress / 9.0f, 0.0f, 1.0f) : 0.0f;
 
         if (bloodFillTexture == null) {
-            bloodFillTexture = new DynamicTexture(new NativeImage(BloodFillPixels.WIDTH, BloodFillPixels.HEIGHT, false));
+            VesselFillMask mask = vesselFillMask();
+            bloodFillTexture = new DynamicTexture(new NativeImage(mask.width(), mask.height(), false));
             bloodFillTextureId = mc.getTextureManager().register("blood_vessel_fill", bloodFillTexture);
         }
         int frame = (int) (time * 60.0f);
         if (frame != lastFillFrame || fillHeight != lastFillHeight || degree != lastFillDegree
                 || pomeProgress != lastFillPomes) {
-            int[] pixels = BloodFillPixels.render(fillHeight, degree, pomeProgress, frame / 60.0f);
-            uploadPixels(bloodFillTexture, pixels, BloodFillPixels.WIDTH, BloodFillPixels.HEIGHT);
+            VesselFillMask mask = vesselFillMask();
+            int[] pixels = BloodFillPixels.render(mask.pixels(), mask.width(), mask.height(),
+                    fillHeight / (double) VESSEL_H, degree, pomeProgress, frame / 60.0f);
+            uploadPixels(bloodFillTexture, pixels, mask.width(), mask.height());
             lastFillFrame = frame;
             lastFillHeight = fillHeight;
             lastFillDegree = degree;
             lastFillPomes = pomeProgress;
         }
-        gfx.blit(bloodFillTextureId, centerX - 12, y + VESSEL_TOP, 0, 0,
-                BloodFillPixels.WIDTH, BloodFillPixels.HEIGHT, BloodFillPixels.WIDTH, BloodFillPixels.HEIGHT);
+        blitOverlay(gfx, bloodFillTextureId, x, y);
 
         for (int local = fillOffset; local < fillBottom; local++) {
             int vesselLocalY = Mth.clamp(local - VESSEL_TOP, 0, VESSEL_H - 1);
             int halfInner = Math.max(1, vesselHalfWidth(vesselLocalY, false));
             if (degree >= 6 && (vesselLocalY + (int) (time * 9.0f)) % 19 < 2) {
                 int veinX = centerX + Math.round(Mth.sin(time * 0.9f + vesselLocalY * 0.18f) * (halfInner - 3));
-                gfx.fill(veinX, y + local, veinX + 2, y + local + 1,
+                if (vesselFillMask().contains(veinX - x, local) && vesselFillMask().contains(veinX - x + 1, local))
+                    gfx.fill(veinX, y + local, veinX + 2, y + local + 1,
                         alphaBlend(0x6635080A, ((int) (90 * corruption) << 24) | 0x00010002));
             }
         }
@@ -387,8 +392,9 @@ public class BloodVolumeOverlay {
             int bubbleX = centerX - halfInner + bubbleRand.nextInt(Math.max(halfInner * 2, 1));
             int alpha = (int) (Mth.clamp((1.0f - Math.abs(progress - 0.5f) * 1.7f), 0.0f, 1.0f) * 72);
             int color = alphaBlend((alpha << 24) | 0x00FF4A40, ((int) (120 * corruption) << 24) | 0x00100616);
-            gfx.fill(bubbleX, y + localY, bubbleX + 1, y + localY + 1, color);
-            if (i % 3 == 0) {
+            if (vesselFillMask().contains(bubbleX - x, localY))
+                gfx.fill(bubbleX, y + localY, bubbleX + 1, y + localY + 1, color);
+            if (i % 3 == 0 && vesselFillMask().contains(bubbleX - x + 1, localY + 1)) {
                 gfx.fill(bubbleX + 1, y + localY + 1, bubbleX + 2, y + localY + 2, color & 0x88FFFFFF);
             }
         }
@@ -397,11 +403,39 @@ public class BloodVolumeOverlay {
     private void renderFillMeniscus(GuiGraphics gfx, int x, int y, int fillOffset, int degree, int pomeProgress, float time) {
         int localY = Mth.clamp(fillOffset - VESSEL_TOP, 0, VESSEL_H - 1);
         int halfInner = Math.max(1, vesselHalfWidth(localY, false));
-        int centerX = x + OVERLAY_W / 2;
         int rowY = y + fillOffset;
         int meniscus = BloodFillPixels.meniscusColor(degree, pomeProgress);
         int wave = Math.round(Mth.sin(time * 2.2f + localY * 0.3f) * 1.25f);
-        gfx.fill(centerX - halfInner, rowY + wave, centerX + halfInner + 1, rowY + wave + 1, meniscus);
+        for (int localX = OVERLAY_W / 2 - halfInner; localX <= OVERLAY_W / 2 + halfInner; localX++) {
+            if (vesselFillMask().contains(localX, fillOffset + wave))
+                gfx.fill(x + localX, rowY + wave, x + localX + 1, rowY + wave + 1, meniscus);
+        }
+    }
+
+    private VesselFillMask vesselFillMask() {
+        if (vesselFillMask != null) return vesselFillMask;
+        try (InputStream stream = mc.getResourceManager().open(VESSEL_BACK_TEXTURE);
+             NativeImage image = NativeImage.read(stream)) {
+            boolean[] pixels = new boolean[image.getWidth() * image.getHeight()];
+            for (int row = 0; row < image.getHeight(); row++) {
+                for (int col = 0; col < image.getWidth(); col++) {
+                    pixels[row * image.getWidth() + col] = (image.getPixelRGBA(col, row) >>> 24) != 0;
+                }
+            }
+            vesselFillMask = new VesselFillMask(image.getWidth(), image.getHeight(), pixels);
+            return vesselFillMask;
+        } catch (IOException error) {
+            throw new IllegalStateException("Unable to load blood vessel HUD mask", error);
+        }
+    }
+
+    private record VesselFillMask(int width, int height, boolean[] pixels) {
+        boolean contains(int x, int y) {
+            if (x < 0 || x >= OVERLAY_W || y < 0 || y >= OVERLAY_H) return false;
+            int col = (int) ((x + 0.5) * width / OVERLAY_W);
+            int row = (int) ((y + 0.5) * height / OVERLAY_H);
+            return pixels[row * width + col];
+        }
     }
 
     private void renderDegreeOrnament(GuiGraphics gfx, int centerX, int vesselY, int degree, float time) {

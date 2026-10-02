@@ -54,6 +54,10 @@ import java.util.UUID;
 @SuppressWarnings("removal")
 public final class PuppeteeringGameTests {
 	private static final String EMPTY_TEMPLATE = "bastion/mobs/empty";
+	private static final net.minecraft.server.level.TicketType<UUID> VOLLEY_FIXTURE_TICKET =
+			net.minecraft.server.level.TicketType.create("hemomancy_volley_fixture", UUID::compareTo);
+	private static final net.minecraft.server.level.TicketType<UUID> FEATHER_FIXTURE_TICKET =
+			net.minecraft.server.level.TicketType.create("hemomancy_feather_fixture", UUID::compareTo);
 
 	private PuppeteeringGameTests() {
 	}
@@ -335,7 +339,7 @@ public final class PuppeteeringGameTests {
 			helper.getLevel().addFreshEntity(summon);
 			target = EntityType.ZOMBIE.create(helper.getLevel());
 			target.setPos(owner.getX() + 3.0, owner.getY(), owner.getZ());
-			helper.getLevel().addFreshEntity(target);
+		helper.getLevel().addFreshEntity(target);
 			owner.setLastHurtByMob(target);
 
 			helper.assertTrue(BoundSummonBehavior.commonServerTick(summon,
@@ -357,91 +361,186 @@ public final class PuppeteeringGameTests {
 		helper.succeed();
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 80)
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 200)
 	public static void veinwingVultureFlightControllerPursuesAssignedTarget(GameTestHelper helper) {
 		ServerPlayer owner = testPlayer(helper);
 		PuppeteerSummonDefinition definition = learnVulture(owner);
 		Mob summon = PuppeteerSummonFactory.createTrial(definition, helper.getLevel(), owner,
 				helper.absolutePos(new BlockPos(1, 2, 5))).orElseThrow();
-		summon.setTarget(owner);
-		helper.getLevel().addFreshEntity(summon);
 		double startingDistance = summon.distanceTo(owner);
+		var chunk = new net.minecraft.world.level.ChunkPos(summon.blockPosition());
+		var targetChunk = new net.minecraft.world.level.ChunkPos(owner.blockPosition());
+		helper.getLevel().getChunkSource().addRegionTicket(VOLLEY_FIXTURE_TICKET, chunk, 2, owner.getUUID(), true);
+		Runnable cleanup = () -> {
+			summon.discard();
+			removePlayer(owner);
+			helper.getLevel().getChunkSource().removeRegionTicket(VOLLEY_FIXTURE_TICKET, chunk, 2, owner.getUUID(), true);
+		};
+		helper.testInfo.addListener(new net.minecraft.gametest.framework.GameTestListener() {
+			public void testStructureLoaded(net.minecraft.gametest.framework.GameTestInfo test) { }
+			public void testPassed(net.minecraft.gametest.framework.GameTestInfo test,
+					net.minecraft.gametest.framework.GameTestRunner runner) { }
+			public void testFailed(net.minecraft.gametest.framework.GameTestInfo test,
+					net.minecraft.gametest.framework.GameTestRunner runner) { cleanup.run(); }
+			public void testAddedForRerun(net.minecraft.gametest.framework.GameTestInfo oldTest,
+					net.minecraft.gametest.framework.GameTestInfo newTest,
+					net.minecraft.gametest.framework.GameTestRunner runner) { }
+		});
 
-		helper.runAfterDelay(50, () -> {
+		helper.startSequence().thenWaitUntil(() -> helper.assertTrue(
+				helper.getLevel().areEntitiesLoaded(chunk.toLong())
+						&& helper.getLevel().areEntitiesLoaded(targetChunk.toLong()),
+				"Pursuit fixture and target chunks must become entity-loaded"))
+				.thenExecute(() -> {
+					summon.setTarget(owner);
+					helper.assertTrue(helper.getLevel().addFreshEntity(summon), "Pursuit fixture could not spawn");
+				}).thenWaitUntil(() -> helper.assertTrue(summon.isAlive() && summon.tickCount >= 50,
+						"Pursuit fixture must receive fifty natural actor ticks; ticks=" + summon.tickCount
+								+ ", alive=" + summon.isAlive()))
+				.thenExecute(() -> {
 			try {
 				helper.assertTrue(summon.getTarget() == owner && summon.distanceTo(owner) < startingDistance - 2.0,
 						"Veinwing Vulture flight controller must pursue its assigned target; target="
 								+ (summon.getTarget() == owner) + ", startDistance=" + startingDistance
-								+ ", finalDistance=" + summon.distanceTo(owner) + ", pos=" + summon.position());
-				helper.succeed();
+								+ ", finalDistance=" + summon.distanceTo(owner) + ", pos=" + summon.position()
+								+ ", ticks=" + summon.tickCount + ", alive=" + summon.isAlive()
+								+ ", indexed=" + (helper.getLevel().getEntity(summon.getUUID()) == summon)
+								+ ", entitiesLoaded=" + helper.getLevel().areEntitiesLoaded(
+										net.minecraft.world.level.ChunkPos.asLong(summon.blockPosition()))
+								+ ", ownerAlive=" + owner.isAlive() + ", ownerPos=" + owner.position()
+								+ ", sight=" + summon.hasLineOfSight(owner) + ", canAttack=" + summon.canAttack(owner));
 			} finally {
-				summon.discard();
-				removePlayer(owner);
+				cleanup.run();
 			}
-		});
+		}).thenSucceed();
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 120)
 	public static void veinwingVultureFiresAFeatherVolleyBeforeClosingToMelee(GameTestHelper helper) {
 		ServerPlayer caster = testPlayer(helper);
 		caster.setPos(net.minecraft.world.phys.Vec3.atCenterOf(helper.absolutePos(new BlockPos(12, 2, 2))));
 		Mob vulture = PuppeteerSummonFactory.createTrial(learnVulture(caster), helper.getLevel(), caster,
 				helper.absolutePos(new BlockPos(1, 3, 2))).orElseThrow();
-		vulture.setTarget(caster);
-		helper.getLevel().addFreshEntity(vulture);
-
-		helper.runAfterDelay(5, () -> {
+		var chunk = new net.minecraft.world.level.ChunkPos(vulture.blockPosition());
+		var targetChunk = new net.minecraft.world.level.ChunkPos(caster.blockPosition());
+		helper.getLevel().getChunkSource().addRegionTicket(VOLLEY_FIXTURE_TICKET, chunk, 2, caster.getUUID(), true);
+		Runnable cleanup = () -> {
+			vulture.discard();
+			removePlayer(caster);
+			helper.getLevel().getChunkSource().removeRegionTicket(VOLLEY_FIXTURE_TICKET, chunk, 2, caster.getUUID(), true);
+		};
+		helper.testInfo.addListener(new net.minecraft.gametest.framework.GameTestListener() {
+			public void testStructureLoaded(net.minecraft.gametest.framework.GameTestInfo test) { }
+			public void testPassed(net.minecraft.gametest.framework.GameTestInfo test,
+					net.minecraft.gametest.framework.GameTestRunner runner) { }
+			public void testFailed(net.minecraft.gametest.framework.GameTestInfo test,
+					net.minecraft.gametest.framework.GameTestRunner runner) { cleanup.run(); }
+			public void testAddedForRerun(net.minecraft.gametest.framework.GameTestInfo oldTest,
+					net.minecraft.gametest.framework.GameTestInfo newTest,
+					net.minecraft.gametest.framework.GameTestRunner runner) { }
+		});
+		helper.startSequence().thenWaitUntil(() -> helper.assertTrue(
+				helper.getLevel().areEntitiesLoaded(chunk.toLong())
+						&& helper.getLevel().areEntitiesLoaded(targetChunk.toLong()),
+				"Volley fixture and target chunks must become entity-loaded"))
+				.thenExecute(() -> {
+					vulture.setTarget(caster);
+					helper.assertTrue(helper.getLevel().addFreshEntity(vulture), "Volley fixture could not spawn");
+				}).thenWaitUntil(() -> helper.assertTrue(vulture.isAlive() && vulture.tickCount >= 5,
+						"Volley fixture must receive five natural actor ticks; ticks=" + vulture.tickCount
+								+ ", alive=" + vulture.isAlive()))
+				.thenExecute(() -> {
 			try {
 				int volleySize = helper.getLevel().getEntitiesOfClass(VeinwingFeatherEntity.class,
 						vulture.getBoundingBox().inflate(24.0), projectile -> projectile.getOwner() == vulture).size();
 				helper.assertTrue(volleySize >= 4 && volleySize <= 6,
-						"Veinwing Vulture must fire one 4-6 feather volley at range; found " + volleySize);
-				helper.succeed();
+						"Veinwing Vulture must fire one 4-6 feather volley at range; found " + volleySize
+								+ " ticks=" + vulture.tickCount + " alive=" + vulture.isAlive()
+								+ " indexed=" + (helper.getLevel().getEntity(vulture.getUUID()) == vulture)
+								+ " target=" + (vulture.getTarget() == caster)
+								+ " canAttack=" + vulture.canAttack(caster)
+								+ " sight=" + vulture.hasLineOfSight(caster)
+								+ " distance=" + vulture.distanceTo(caster)
+								+ " position=" + vulture.position() + " caster=" + caster.position());
 			} finally {
-				vulture.discard();
-				removePlayer(caster);
+				cleanup.run();
 			}
-		});
+		}).thenSucceed();
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 140)
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 200)
 	public static void veinwingFeathersEmbedStackAndRestoreMaxHealthWhenTheyExpire(GameTestHelper helper) {
+		var feathers = new java.util.ArrayList<VeinwingFeatherEntity>();
 		Mob vulture = EntityInit.veinwing_vulture.get().create(helper.getLevel());
 		Zombie target = EntityType.ZOMBIE.create(helper.getLevel());
 		helper.assertTrue(vulture != null && target != null, "Veinwing embed fixtures must spawn");
 		vulture.setPos(net.minecraft.world.phys.Vec3.atCenterOf(helper.absolutePos(new BlockPos(1, 2, 2))));
 		target.setPos(net.minecraft.world.phys.Vec3.atCenterOf(helper.absolutePos(new BlockPos(4, 2, 2))));
 		target.setNoAi(true);
-		helper.getLevel().addFreshEntity(target);
-		for (int i = 0; i < 2; i++) {
-			VeinwingFeatherEntity feather = new VeinwingFeatherEntity(helper.getLevel(), vulture);
-			feather.setPos(target.getX() - 1.0D, target.getY(0.45D + i * 0.1D), target.getZ());
-			feather.shoot(1.0D, 0.0D, 0.0D, 1.0F, 0.0F);
-			helper.getLevel().addFreshEntity(feather);
-		}
+		target.setPersistenceRequired();
+		helper.assertTrue(helper.getLevel().addFreshEntity(target), "Feather target must enter the level");
+		var chunks = new java.util.HashSet<net.minecraft.world.level.ChunkPos>();
+		for (int offset : new int[] {-1, 0, 2})
+			chunks.add(new net.minecraft.world.level.ChunkPos(target.blockPosition().offset(offset, 0, 0)));
+		UUID ticketOwner = UUID.randomUUID();
+		var chunkSource = helper.getLevel().getChunkSource();
+		chunks.forEach(chunk -> chunkSource.addRegionTicket(FEATHER_FIXTURE_TICKET, chunk, 2, ticketOwner, true));
+		Runnable cleanup = () -> {
+			feathers.forEach(Entity::discard);
+			vulture.discard();
+			target.discard();
+			chunks.forEach(chunk -> chunkSource.removeRegionTicket(FEATHER_FIXTURE_TICKET, chunk, 2, ticketOwner, true));
+		};
+		helper.testInfo.addListener(new net.minecraft.gametest.framework.GameTestListener() {
+			public void testStructureLoaded(net.minecraft.gametest.framework.GameTestInfo test) { }
+			public void testPassed(net.minecraft.gametest.framework.GameTestInfo test,
+					net.minecraft.gametest.framework.GameTestRunner runner) { cleanup.run(); }
+			public void testFailed(net.minecraft.gametest.framework.GameTestInfo test,
+					net.minecraft.gametest.framework.GameTestRunner runner) { cleanup.run(); }
+			public void testAddedForRerun(net.minecraft.gametest.framework.GameTestInfo oldTest,
+					net.minecraft.gametest.framework.GameTestInfo newTest,
+					net.minecraft.gametest.framework.GameTestRunner runner) { }
+		});
+		helper.startSequence().thenWaitUntil(() -> helper.assertTrue(target.isAlive() && target.tickCount > 0,
+				"Feather fixture must receive its first natural target tick"))
+		.thenExecute(() -> {
+			for (int i = 0; i < 2; i++) {
+				VeinwingFeatherEntity feather = new VeinwingFeatherEntity(helper.getLevel(), vulture);
+				feather.setPos(target.getX() - 1.0D, target.getY(0.45D + i * 0.1D), target.getZ());
+				feather.shoot(1.0D, 0.0D, 0.0D, 1.0F, 0.0F);
+				feathers.add(feather);
+				helper.assertTrue(helper.getLevel().addFreshEntity(feather), "Shot feather must enter the level");
+			}
 
-		helper.runAfterDelay(4, () -> {
-			int embedded = helper.getLevel().getEntitiesOfClass(VeinwingFeatherEntity.class,
-					target.getBoundingBox().inflate(2.0D), Entity::isAlive).size();
-			helper.assertTrue(embedded == 2, "Both hit feathers must remain visibly embedded; found " + embedded);
-			helper.assertTrue(Math.abs(target.getMaxHealth() - 18.0F) < 0.001F,
-					"Two embedded feathers must remove two max health; found " + target.getMaxHealth());
-			target.setPos(target.getX() + 2.0D, target.getY(), target.getZ());
-		});
-		helper.runAfterDelay(6, () -> {
-			int attached = helper.getLevel().getEntitiesOfClass(VeinwingFeatherEntity.class,
-					target.getBoundingBox().inflate(2.0D), Entity::isAlive).size();
-			helper.assertTrue(attached == 2, "Embedded feathers must follow the struck mob");
-		});
-		helper.runAfterDelay(110, () -> {
-			try {
+			helper.runAfterDelay(4, () -> {
+				int embedded = helper.getLevel().getEntitiesOfClass(VeinwingFeatherEntity.class,
+						target.getBoundingBox().inflate(2.0D), Entity::isAlive).size();
+				helper.assertTrue(embedded == 2, "Both hit feathers must remain visibly embedded; found " + embedded);
+				helper.assertTrue(Math.abs(target.getMaxHealth() - 18.0F) < 0.001F,
+						"Two embedded feathers must remove two max health; found " + target.getMaxHealth()
+								+ ", targetTicks=" + target.tickCount + ", targetAlive=" + target.isAlive()
+								+ ", targetIndexed=" + (helper.getLevel().getEntity(target.getUUID()) == target)
+								+ ", feathers=" + feathers.stream().map(feather -> "ticks=" + feather.tickCount
+										+ ", embedded=" + feather.isEmbedded() + ", pos=" + feather.position()
+										+ ", indexed=" + (helper.getLevel().getEntity(feather.getUUID()) == feather)
+										+ ", entitiesLoaded=" + helper.getLevel().areEntitiesLoaded(
+												net.minecraft.world.level.ChunkPos.asLong(feather.blockPosition())))
+							.collect(java.util.stream.Collectors.joining("; ")));
+				helper.assertTrue(feathers.stream().allMatch(feather -> feather.tickCount > 0 && feather.isEmbedded()),
+						"Both shot feathers must embed through their natural projectile ticks");
+				target.setPos(target.getX() + 2.0D, target.getY(), target.getZ());
+			});
+			helper.runAfterDelay(6, () -> {
+				int attached = helper.getLevel().getEntitiesOfClass(VeinwingFeatherEntity.class,
+						target.getBoundingBox().inflate(2.0D), Entity::isAlive).size();
+				helper.assertTrue(attached == 2, "Embedded feathers must follow the struck mob");
+			});
+			helper.runAfterDelay(110, () -> {
+				helper.assertTrue(feathers.stream().noneMatch(Entity::isAlive), "Embedded feathers must naturally expire");
 				helper.assertTrue(Math.abs(target.getMaxHealth() - 20.0F) < 0.001F,
 						"Expired feathers must restore the mob's original max health");
 				helper.succeed();
-			} finally {
-				vulture.discard();
-				target.discard();
-			}
+			});
 		});
 	}
 
@@ -480,29 +579,31 @@ public final class PuppeteeringGameTests {
 		}
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 100)
+	@GameTest(templateNamespace = "hemomancy", template = "empty", timeoutTicks = 100)
 	public static void goreboundHulkSurvivesDaylightAndPursuesItsTarget(GameTestHelper helper) {
 		assertGroundPuppetPursuesTarget(helper, PuppeteerSummonDefinitions.GOREBOUND_HULK,
 				"Gorebound Hulk");
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 100)
+	@GameTest(templateNamespace = "hemomancy", template = "empty", timeoutTicks = 100)
 	public static void mnemonistSurvivesDaylightAndPursuesItsTarget(GameTestHelper helper) {
 		assertGroundPuppetPursuesTarget(helper, PuppeteerSummonDefinitions.MNEMONIST_PUPPET,
 				"Mnemonist Puppet");
 	}
 
 	private static void assertGroundPuppetPursuesTarget(GameTestHelper helper, String summonName, String displayName) {
-		for (int x = 0; x <= 2; x++) for (int z = 0; z <= 6; z++) {
-			helper.getLevel().setBlockAndUpdate(helper.absolutePos(new BlockPos(x, 0, z)), Blocks.STONE.defaultBlockState());
+		// Keep the complete walking lane inside the room, away from template walls and neighbouring tests.
+		for (int x = 8; x <= 10; x++) for (int z = 8; z <= 14; z++) {
+			helper.setBlock(new BlockPos(x, 4, z), Blocks.STONE);
+			for (int y = 5; y <= 8; y++) helper.setBlock(new BlockPos(x, y, z), Blocks.AIR);
 		}
 		ServerPlayer caster = testPlayer(helper);
 		Player target = helper.makeMockPlayer(GameType.SURVIVAL);
-		target.setPos(net.minecraft.world.phys.Vec3.atBottomCenterOf(helper.absolutePos(new BlockPos(1, 1, 1))));
+		target.setPos(net.minecraft.world.phys.Vec3.atBottomCenterOf(helper.absolutePos(new BlockPos(9, 5, 9))));
 		helper.assertTrue(helper.getLevel().addFreshEntity(target), displayName + " trial target must spawn");
 		PuppeteerSummonDefinition definition = PuppeteerSummonDefinitions.byName(summonName).orElseThrow();
 		Mob puppet = PuppeteerSummonFactory.createTrial(definition, helper.getLevel(), caster,
-				helper.absolutePos(new BlockPos(1, 1, 5))).orElseThrow();
+				helper.absolutePos(new BlockPos(9, 5, 13))).orElseThrow();
 		puppet.setTarget(target);
 		double startingDistance = puppet.distanceTo(target);
 		helper.assertTrue(helper.getLevel().addFreshEntity(puppet), displayName + " fixture entity must spawn");
@@ -510,6 +611,15 @@ public final class PuppeteeringGameTests {
 			for (int i = 0; i < 5; i++) helper.getLevel().tickNonPassenger(puppet);
 			helper.assertTrue(puppet.getNavigation().moveTo(target, 1.0),
 					displayName + " must have a walkable path to its trial target");
+			var initialPath = puppet.getNavigation().getPath();
+			helper.assertTrue(initialPath.canReach(), displayName + " path must reach the trial target; path="
+					+ initialPath + ", end=" + initialPath.getEndNode() + ", corridor="
+					+ java.util.stream.IntStream.rangeClosed(9, 13).mapToObj(z -> {
+						BlockPos feet = helper.absolutePos(new BlockPos(9, 5, z));
+						return feet + ":" + helper.getLevel().getBlockState(feet) + "/"
+								+ helper.getLevel().getBlockState(feet.above()) + "/"
+								+ helper.getLevel().getBlockState(feet.above(2));
+					}).toList());
 			for (int i = 5; i < 60; i++) helper.getLevel().tickNonPassenger(puppet);
 			helper.assertTrue(puppet.isAlive(), displayName + " must remain alive during combat");
 			helper.assertTrue(!puppet.isOnFire(), displayName + " must not ignite in sunlight");
@@ -517,14 +627,32 @@ public final class PuppeteeringGameTests {
 					displayName + " must retain its assigned hostile target");
 			helper.assertTrue(puppet.distanceTo(target) < startingDistance - 0.75,
 					displayName + " must navigate toward its target; startDistance=" + startingDistance
-							+ ", finalDistance=" + puppet.distanceTo(target) + ", pos=" + puppet.position());
+							+ ", finalDistance=" + puppet.distanceTo(target) + ", pos=" + puppet.position()
+							+ ", ticks=" + puppet.tickCount + ", noAi=" + puppet.isNoAi()
+							+ ", indexed=" + (helper.getLevel().getEntity(puppet.getUUID()) == puppet)
+							+ ", entitiesLoaded=" + helper.getLevel().areEntitiesLoaded(
+									net.minecraft.world.level.ChunkPos.asLong(puppet.blockPosition()))
+							+ ", targetAlive=" + target.isAlive() + ", targetPos=" + target.position()
+							+ ", targetIndexed=" + (helper.getLevel().getEntity(target.getUUID()) == target)
+							+ ", effectiveAi=" + puppet.isEffectiveAi() + ", speed=" + puppet.getSpeed()
+							+ ", movementAttribute=" + puppet.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED)
+							+ ", onGround=" + puppet.onGround() + ", delta=" + puppet.getDeltaMovement()
+							+ ", horizontalCollision=" + puppet.horizontalCollision
+							+ ", navigationDone=" + puppet.getNavigation().isDone()
+							+ ", path=" + puppet.getNavigation().getPath()
+							+ ", nextNode=" + (puppet.getNavigation().isDone() ? "none"
+									: puppet.getNavigation().getPath().getNextNodePos())
+							+ ", wanted=" + puppet.getMoveControl().hasWanted()
+							+ ", runningGoals=" + puppet.goalSelector.getAvailableGoals().stream()
+									.filter(net.minecraft.world.entity.ai.goal.WrappedGoal::isRunning)
+									.map(goal -> goal.getGoal().getClass().getSimpleName()).toList());
 			helper.succeed();
 		} finally {
 			puppet.discard();
 			target.discard();
 			removePlayer(caster);
-			for (int x = 0; x <= 2; x++) for (int z = 0; z <= 6; z++) {
-				helper.getLevel().setBlockAndUpdate(helper.absolutePos(new BlockPos(x, 0, z)), Blocks.AIR.defaultBlockState());
+			for (int x = 8; x <= 10; x++) for (int z = 8; z <= 14; z++) {
+				helper.setBlock(new BlockPos(x, 4, z), Blocks.AIR);
 			}
 		}
 	}

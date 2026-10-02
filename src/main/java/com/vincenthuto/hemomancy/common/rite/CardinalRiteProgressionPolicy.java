@@ -25,11 +25,7 @@ public final class CardinalRiteProgressionPolicy {
 				? new Limits(32, 4, 3, 6, 1, 0, "living_staff", 3, true, true, 3)
 				: limits(Math.max(0, degree));
 		List<String> problems = new ArrayList<>();
-		boolean authoredScriptoriumBoundary = ("cardinal_rite/eightfold_script".equals(ritePath)
-				&& degree == 5 && ceremony.anchors().size() == 20)
-				|| ("cardinal_rite/monolithic_script".equals(ritePath)
-				&& degree == 7 && ceremony.anchors().size() == 28);
-		if (ceremony.anchors().size() > limits.maxAnchors() && !authoredScriptoriumBoundary) {
+		if (ceremony.anchors().size() > limits.maxAnchors()) {
 			problems.add("anchors " + ceremony.anchors().size() + " exceed " + limits.maxAnchors());
 		}
 		if (ceremony.supportSockets().size() > limits.maxSupportSockets()) {
@@ -46,8 +42,12 @@ public final class CardinalRiteProgressionPolicy {
 		if (waveOptions > limits.maxWaveOptions()) {
 			problems.add("ordeal waves " + waveOptions + " exceed " + limits.maxWaveOptions());
 		}
-		if (offeringCount > limits.maxOfferings()) {
-			problems.add("offerings " + offeringCount + " exceed " + limits.maxOfferings());
+		// Station upgrade rites always take the upgrade item plus five offerings, whatever their degree.
+		int maxOfferings = com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.isUpgradeRitePath(ritePath)
+				? com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.OFFERINGS_PER_RITE
+				: limits.maxOfferings();
+		if (offeringCount > maxOfferings) {
+			problems.add("offerings " + offeringCount + " exceed " + maxOfferings);
 		}
 		if (ceremony.requiredHelpers() > limits.maxRequiredHelpers()) {
 			problems.add("required helpers " + ceremony.requiredHelpers()

@@ -68,7 +68,18 @@ public final class SchoolAwarenessCombatGameTests {
         h.runAfterDelay(65, () -> {
             try {
                 h.assertTrue(husk.position().distanceToSqr(start) > .25 && player.getHealth() < 1000,
-                        "Close melee: moved=" + husk.position().distanceToSqr(start) + ", health=" + player.getHealth() + ", target=" + husk.getTarget());
+                        "Close melee: moved=" + husk.position().distanceToSqr(start)
+                                + ", health=" + player.getHealth() + ", target=" + husk.getTarget()
+                                + ", huskPos=" + husk.position() + ", playerPos=" + player.position()
+                                + ", huskTicks=" + husk.tickCount + ", playerTicks=" + player.tickCount
+                                + ", alive=" + husk.isAlive() + "/" + player.isAlive()
+                                + ", distanceSquared=" + husk.distanceToSqr(player)
+                                + ", canAttack=" + husk.canAttack(player)
+                                + ", sight=" + husk.hasLineOfSight(player)
+                                + ", navigationDone=" + husk.getNavigation().isDone()
+                                + ", onGround=" + husk.onGround() + "/" + player.onGround()
+                                + ", huskChunkLoaded=" + h.getLevel().areEntitiesLoaded(husk.chunkPosition().toLong())
+                                + ", playerChunkLoaded=" + h.getLevel().areEntitiesLoaded(player.chunkPosition().toLong()));
                 h.succeed();
             } finally { husk.discard(); player.discard(); }
         });

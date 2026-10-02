@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 11,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Rite of the Palimpsest",
+  "subtitle": "Writing over what was written",
+  "text": "Practice ordinary inscription, then target an inscription at an Eightfold Scriptorium yourself. At the seventh Degree, with active blood, the Mnemonist offers a free Palimpsest Burin. Crafted or gifted tools also work; accepting his earlier quill is not required. Seat the Eightfold station two blocks behind a Focus on a Greater working floor. Light six braziers: the burin, an Echo Shard, a Glow Ink Sac, a Mnemonic Folio, an Axonal Slate, and a Myelin Sheath. Plant your Living Staff, fill eight anchors, seal the daemon, close three circuits with 50 mL each, then finish the procession. The chosen enchantment can be cut two levels deeper. The same station keeps its facing and contents; its tier survives moving. Cancellation returns offerings and Staff, not spent blood.",
+  "icon": "hemomancy:palimpsest_burin"
+}

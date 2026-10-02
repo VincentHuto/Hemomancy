@@ -23,6 +23,34 @@ public final class MaterialsAtlasMetadataSourceTest {
 		String view = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialsTabView.java");
 		String controller = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/MaterialsTabController.java");
 
+		assertContains("atlas teaches repeatable stained stone acquisition", data,
+				"Venous Stone, one Sanguine Formation, and redstone");
+		assertContains("atlas teaches accessible Neurotic collection", data,
+				"Chicken blood can yield this enzyme in a Vial Centrifuge");
+		assertContains("atlas warns that chicken spins may yield the other tendency", data,
+				"some spins yield Vivacious instead");
+		assertNotContains("Ductilis is impulse and motion, not generic mental manipulation", data,
+				"Ductilis-aligned enzyme. Sharpens mental manipulation.");
+		assertContains("atlas teaches the Communion Spine instead of creature loot", data,
+				"The ninth owner-bound Pome from one Bloom completes Communion and grants this Spine.");
+		assertNotContains("Spine is not an ordinary crafting drop", data,
+				"Hardened spine from a fungal blood creature. Used in crafting.");
+		for (String id : new String[] {"fungal_spine", "qliphoth_seed", "qliphoth_bloom", "qliphoth_pome", "memory_of_vesper"}) {
+			String entry = data.substring(data.indexOf("new MaterialEntry(\"" + id + "\""));
+			entry = entry.substring(0, entry.indexOf("list.add", 1));
+			assertContains("D7 entry predicate for " + id, entry, "UnlockPredicate.minDegree(7)");
+			Matcher gate = Pattern.compile("entryAt\\(\"" + id + "\"[^;]+;").matcher(spec);
+			if (!gate.find()) throw new AssertionError("missing atlas gate for " + id);
+			assertContains("D7 atlas gate for " + id, gate.group(), "d(7)");
+			assertNotContains("no deferred Saint dependency for " + id, gate.group(), "blood_trial_altar");
+		}
+		assertContains("Memory teaching waits for the returned revelation", data,
+				"degree.hasWitnessedFungalRevelation()");
+		assertContains("Seed traces from the Monolith", spec,
+				"entryAt(\"qliphoth_seed\", h, \"qliphoth_reagents\", d(7), 805, 65, \"sanguine_monolith\")");
+		assertContains("Bloom traces from its Seed", spec,
+				"entryAt(\"qliphoth_bloom\", h, \"qliphoth_reagents\", d(7), 760, 65, \"qliphoth_seed\")");
+
 		assertContains("atlas spec exposes Harbinger path", spec, "MaterialAtlasPath.HARBINGER");
 		assertContains("atlas spec exposes Unstained path", spec, "MaterialAtlasPath.UNSTAINED");
 		for (String bucket : new String[] {

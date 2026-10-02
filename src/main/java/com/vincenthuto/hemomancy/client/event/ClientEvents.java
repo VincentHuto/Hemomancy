@@ -76,6 +76,7 @@ import com.vincenthuto.hemomancy.client.screen.unstained.RadialChooseStillArtScr
 import com.vincenthuto.hemomancy.client.sound.EndgameBossMusicHandler;
 import com.vincenthuto.hemomancy.common.armor.ability.SilentArchonArmorAbilityHandler;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.RenderBloodLaserEvent;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.utility.ArmatureRestraintEntity;
@@ -366,9 +367,10 @@ public class ClientEvents {
             return;
         }
 		HemoCapabilityAccess.getKnownManipulations(mc.player).ifPresent(known -> {
-			var selected = known.getSelectedManip() == null ? null
-					: ManipulationInit.getByName(known.getSelectedManip().getName());
-			if (selected == null) {
+			var memory = known.getSelectedMemoryRef();
+			boolean thelemic = memory.kind() == MemoryEntryKind.MUSCLE_MEMORY;
+			var selected = thelemic ? null : ManipulationInit.getByName(memory.id());
+			if (selected == null && !thelemic) {
                 stopCastingChargePresentation();
 				if (lastManipulationType == EnumManipulationType.CONTINUOUS && manipulationChargeTicks > 0) {
 					PacketHandler.sendToServer(UseManipKeyPacket.stopContinuous());
@@ -380,37 +382,38 @@ public class ClientEvents {
 			}
 			boolean down = useManip.isDown();
 			boolean clicked = useManip.consumeClick();
-			if (!selected.getName().equals(lastManipulationName)) {
+			var type = thelemic ? EnumManipulationType.PASSIVE : selected.getType();
+			if (!memory.storageKey().equals(lastManipulationName)) {
                 stopCastingChargePresentation();
 				if (lastManipulationType == EnumManipulationType.CONTINUOUS && manipulationChargeTicks > 0) {
 					PacketHandler.sendToServer(UseManipKeyPacket.stopContinuous());
 				}
 				manipulationChargeTicks = 0;
-				lastManipulationName = selected.getName();
-				lastManipulationType = selected.getType();
+				lastManipulationName = memory.storageKey();
+				lastManipulationType = type;
 				suppressManipulationUntilRelease = down && !clicked;
 			}
 			if (suppressManipulationUntilRelease) {
 				if (down) return;
 				suppressManipulationUntilRelease = false;
 			}
-			if (selected.getType() == EnumManipulationType.CHARGED && down
+			if (type == EnumManipulationType.CHARGED && down
 					&& mc.player.hurtTime > 0 && mc.player.hurtTime == mc.player.hurtDuration
 					&& manipulationChargeTicks > 0) {
 				manipulationChargeTicks = com.vincenthuto.hemomancy.common.capability.player.shared.skill.BodyRefinementSkillRules
 						.retainedChargeTicks(manipulationChargeTicks,
 								SkillPointHelper.getNervesOfSteelLevel(mc.player));
 			}
-			var input = ManipulationInputRules.tick(selected.getType(), down, clicked,
-					manipulationChargeTicks, selected.getRequiredChargeTicks());
+			var input = ManipulationInputRules.tick(type, down, clicked,
+					manipulationChargeTicks, thelemic ? 0 : selected.getRequiredChargeTicks());
 			manipulationChargeTicks = input.nextHeldTicks();
-            if (selected.getType() == EnumManipulationType.CHARGED
+            if (type == EnumManipulationType.CHARGED
                     && down && input.action() != ManipulationInputRules.Action.CAST
                     && (manipulationChargeTicks == 1 || manipulationChargeTicks % 4 == 0)) {
                 PacketHandler.sendToServer(new com.vincenthuto.hemomancy.common.network.CastingChargePacket(
                         selected.getName(), manipulationChargeTicks));
             }
-            if (selected.getType() == EnumManipulationType.CHARGED
+            if (type == EnumManipulationType.CHARGED
                     && (down || input.action() == ManipulationInputRules.Action.CAST)
                     && com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.chargeForm(selected.getName()) != null
                     && (manipulationChargeTicks % 4 == 0 || input.action() == ManipulationInputRules.Action.CAST)) {
@@ -432,8 +435,6 @@ public class ClientEvents {
         if (manipulationChargeTicks > 0) {
             if (lastManipulationType == EnumManipulationType.CONTINUOUS) {
                 PacketHandler.sendToServer(UseManipKeyPacket.stopContinuous());
-            } else if (lastManipulationType == EnumManipulationType.CHARGED) {
-                PacketHandler.sendToServer(new com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.ManipulationChargeVisualPacket(0));
             }
         }
         manipulationChargeTicks = 0;
@@ -447,6 +448,7 @@ public class ClientEvents {
 
     private static void stopCastingChargePresentation() {
         if (lastManipulationType == EnumManipulationType.CHARGED && manipulationChargeTicks > 0) {
+            PacketHandler.sendToServer(new com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.ManipulationChargeVisualPacket(0));
             PacketHandler.sendToServer(new com.vincenthuto.hemomancy.common.network.CastingChargePacket(lastManipulationName, 0));
         }
     }
@@ -1272,8 +1274,8 @@ public class ClientEvents {
                 event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/phlebotomists_cabinet_" + part)));
             event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/clairaudiograph_stylus")));
             event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/clairaudiograph_feed")));
-            event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/ghastly_alembic_condenser_growth")));
-            event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/ghastly_alembic_athanor_growth")));
+            event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/ghastly_alembic_condenser")));
+            event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/ghastly_alembic_athanor")));
             for (String part : new String[]{"hammer", "wheel", "treadle", "cam", "stylus"})
                 event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/resonant_forge_" + part)));
             event.register(ModelResourceLocation.standalone(Hemomancy.rloc("item/blood_absorption_texture")));

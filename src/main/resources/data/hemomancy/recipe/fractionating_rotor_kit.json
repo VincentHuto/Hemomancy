@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " A ",
+    "HCH",
+    " P "
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "H": {
+      "item": "hemomancy:hematic_iron_scrap"
+    },
+    "C": {
+      "item": "hemomancy:chromatic_sublimate"
+    },
+    "P": {
+      "item": "hemomancy:enzyme_primer"
+    }
+  },
+  "result": {
+    "id": "hemomancy:fractionating_rotor_kit"
+  }
+}

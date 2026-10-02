@@ -239,18 +239,31 @@ public final class DuctilisGameTests {
     @GameTest(templateNamespace="hemomancy",template=EMPTY,batch="ductilis",timeoutTicks=50)
     public static void entityJoltEnergizesTerrainAndKeepsItsCasterSafe(GameTestHelper h) {
         var caster=mob(h,new Vec3(4.5,2,5.5));
+        caster.setPersistenceRequired(); // Distant players in other fixtures must not despawn this caster.
         var target=EntityType.PIG.create(h.getLevel()); target.setPos(h.absoluteVec(new Vec3(6.5,2,5.5)));
         target.setNoAi(true); target.setNoGravity(true); h.getLevel().addFreshEntity(target); caster.setTarget(target);
         var bystander=EntityType.PIG.create(h.getLevel()); bystander.setPos(h.absoluteVec(new Vec3(7.5,2,5.5)));
         bystander.setNoAi(true); bystander.setNoGravity(true); h.getLevel().addFreshEntity(bystander);
         for (int x=4;x<=7;x++) h.setBlock(new BlockPos(x,1,5),Blocks.IRON_BLOCK);
+        boolean casterIndexedAtCast=h.getLevel().getEntity(caster.getUUID())==caster;
+        boolean casterChunkLoadedAtCast=h.getLevel().areEntitiesLoaded(new net.minecraft.world.level.ChunkPos(caster.blockPosition()).toLong());
         var context=com.vincenthuto.hemomancy.common.manipulation.ManipulationCastContext.forWill(caster,target,ItemStack.EMPTY);
         h.assertTrue(com.vincenthuto.hemomancy.common.manipulation.EntityManipulationEffects.cast(ManipulationInit.synaptic_jolt.get(),context),"Entity Jolt failed");
         h.assertTrue(target.getHealth()<target.getMaxHealth(),"Entity Jolt lost direct damage");
         h.runAfterDelay(11,()-> {
-            h.assertTrue(bystander.getHealth()<bystander.getMaxHealth(),"Entity cast did not energize touching iron");
-            h.assertTrue(caster.getHealth()==caster.getMaxHealth(),"Conductor damaged its entity caster");
-            caster.discard();target.discard();bystander.discard();h.succeed();
+            try {
+                h.assertTrue(bystander.getHealth()<bystander.getMaxHealth(),"Entity cast did not energize touching iron; casterIndexed="
+                        + (h.getLevel().getEntity(caster.getUUID())==caster) + ", casterAlive=" + caster.isAlive()
+                        + ", bystanderIndexed=" + (h.getLevel().getEntity(bystander.getUUID())==bystander)
+                        + ", entitiesLoaded=" + h.getLevel().areEntitiesLoaded(new net.minecraft.world.level.ChunkPos(caster.blockPosition()).toLong())
+                        + ", caster=" + caster.position() + ", bystander=" + bystander.position()
+                        + ", conductive=" + ConductionManager.conductive(bystander)
+                        + ", casterHealth=" + caster.getHealth() + ", removal=" + caster.getRemovalReason()
+                        + ", lastDamage=" + caster.getLastDamageSource() + ", difficulty=" + h.getLevel().getDifficulty()
+                        + ", casterIndexedAtCast=" + casterIndexedAtCast + ", casterChunkLoadedAtCast=" + casterChunkLoadedAtCast);
+                h.assertTrue(caster.isAlive() && caster.getHealth()==caster.getMaxHealth(),"Conductor lost or damaged its entity caster");
+                h.succeed();
+            } finally { caster.discard();target.discard();bystander.discard(); }
         });
     }
 

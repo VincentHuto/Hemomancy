@@ -33,7 +33,7 @@ They should refer the player to one another when their work intersects. That con
 
 Your proposed three-NPC introduction fits here.
 
-- The **Vicar** teaches Absorption and Projection, then guides the Liber Sanguinum construction.
+- The **Vicar** teaches Absorption and Projection, then guides the Liber Sanguinium construction.
 - The **Artificer** teaches Hematic Iron through a small practical project.
 - The **Alchemist** supplies five empty vials and asks for five animal samples. I’d require **at least three different common species**, rather than five rare species or five samples from one cow.
 
@@ -235,7 +235,7 @@ Your draft lists lessons but never marks which one is the Main. I'd tag every le
 ## Filled-out ladder (my recommendation)
 
 **D1, Neophyte.** Main: First Bloodcraft.
-- **Vicar:** Liber Sanguinum, 500 ml absorbed, Sanguine Formation, Venous Stone, plus the crude rite floor.
+- **Vicar:** Liber Sanguinium, 500 ml absorbed, Sanguine Formation, Venous Stone, plus the crude rite floor.
 - **Artificer:** Hematic Iron. The current Liber *or* Hematic Iron choice becomes both, split between the two NPCs.
 - **Alchemist:** "First Draws," 5 animal samples in issued vials. **Open question:** how does a D1 player fill a vial before having a syringe? Nice continuity: D2's First Separation could spin *these* samples.
 - Bloodwood from a Dead Bush.

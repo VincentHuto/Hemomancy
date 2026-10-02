@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 2,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Degrees of Initiation",
+  "subtitle": "The path within the Order",
+  "text": "The Hermit's permission and the Mortal Display mark Degree 0. The Vicar's formal reception grants Degree 1. A founder of Degree 5 or higher with an established bloodline can receive a recruit instead, but the ceremony must finish. For Degree 2, show the Vicar your First Bloodcraft: absorb blood, project a Sanguine Formation and Venous Stone, then make either a Liber Sanguinium or Hematic Iron Block through blood formation crafting. At Degree 2, the Alchemist asks you to claim First Separation and take the result of an ordinary Ghastly Alembic distillation. Only then do they prepare Concentrated Blood. Inject it and complete a night's sleep to reach Degree 3. Later degrees ask for work of their own before a rite can raise you. Most Harbingers reach no higher than Illuminatus. The few paths beyond it are not common instruction. The Hematic Order itself, the Vicar says, is not a rank.",
+  "icon": "hemomancy:liber_sanguinum"
+}

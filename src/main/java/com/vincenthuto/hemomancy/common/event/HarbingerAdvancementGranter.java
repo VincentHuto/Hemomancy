@@ -68,8 +68,8 @@ public final class HarbingerAdvancementGranter {
 			Hemomancy.rloc("hemomancy/hermit_road_reported");
 	public static final ResourceLocation ADV_VESSEL_FILLED =
 			Hemomancy.rloc("hemomancy/vessel_filled");
-	public static final ResourceLocation ADV_FANE_SANGUINIUM =
-			Hemomancy.rloc("hemomancy/fane_sanguinium");
+	public static final ResourceLocation ADV_LIBER_SANGUINIUM =
+			Hemomancy.rloc("hemomancy/liber_sanguinium");
 	public static final ResourceLocation ADV_IRON_IN_THE_BLOOD =
 			Hemomancy.rloc("hemomancy/iron_in_the_blood");
 	public static final ResourceLocation ADV_FIRST_SEPARATION_STARTED =
@@ -337,7 +337,7 @@ public final class HarbingerAdvancementGranter {
 	}
 
 	public static boolean isLiberSanguinumCrafted(ServerPlayer player) {
-		return hasAdvancement(player, ADV_FANE_SANGUINIUM);
+		return hasAdvancement(player, ADV_LIBER_SANGUINIUM);
 	}
 
 	public static boolean isHematicIronBlockCrafted(ServerPlayer player) {

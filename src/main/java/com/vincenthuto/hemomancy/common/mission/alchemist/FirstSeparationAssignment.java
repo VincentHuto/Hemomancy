@@ -6,8 +6,10 @@ import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.VialRackItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodSampleData;
+import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -22,6 +24,9 @@ public final class FirstSeparationAssignment {
 	private static final String DATA_CENTRIFUGE_ACQUIRED = "hemomancy:first_separation_centrifuge_acquired";
 	private static final String DATA_SAMPLE_ACQUIRED = "hemomancy:first_separation_sample_acquired";
 	private static final String DATA_ASSIGNED_SPIN = "hemomancy:first_separation_spin";
+	private static final String DATA_PENDING_REWARDS = "hemomancy:first_separation_pending_rewards";
+	private static final String DATA_BRIEFING_SUPPLIES_ISSUED = "hemomancy:first_separation_supplies_issued";
+	private static final String DATA_PENDING_BRIEFING_VIALS = "hemomancy:first_separation_pending_vials";
 	private static final String TAG_SPIN = "first_separation_spin";
 	private static final String TAG_PLAYER = "first_separation_player";
 	public static final ResourceLocation ADV_BRIEFED =
@@ -33,7 +38,7 @@ public final class FirstSeparationAssignment {
 	}
 
 	public static boolean canBrief(ServerPlayer player) {
-		return HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 2 && !isBriefed(player);
+		return player.isAlive() && ClinicalBloodKnowledge.eligible(player) && !isBriefed(player);
 	}
 
 	public static boolean isBriefed(ServerPlayer player) {
@@ -62,9 +67,29 @@ public final class FirstSeparationAssignment {
 	}
 
 	public static void giveBriefingSupplies(ServerPlayer player) {
-		for (ItemStack stack : briefingStacks()) {
-			if (!player.getInventory().add(stack)) player.drop(stack, false);
-		}
+		if (!player.isAlive() || !ClinicalBloodKnowledge.eligible(player) || !isBriefed(player)) return;
+		CompoundTag root = player.getPersistentData();
+		CompoundTag durable = root.getCompound(Player.PERSISTED_NBT_TAG);
+		if (durable.getBoolean(DATA_BRIEFING_SUPPLIES_ISSUED)) return;
+		durable.putBoolean(DATA_BRIEFING_SUPPLIES_ISSUED, true);
+		durable.putInt(DATA_PENDING_BRIEFING_VIALS, briefingStacks().stream().mapToInt(ItemStack::getCount).sum());
+		root.put(Player.PERSISTED_NBT_TAG, durable);
+		deliverPendingBriefingVials(player);
+	}
+
+	static void deliverPendingBriefingVials(ServerPlayer player) {
+		if (!player.isAlive() || ChamberVisitService.isObservational(player)
+				|| !ClinicalBloodKnowledge.eligible(player) || !isBriefed(player)) return;
+		CompoundTag root = player.getPersistentData();
+		CompoundTag durable = root.getCompound(Player.PERSISTED_NBT_TAG);
+		int pending = durable.getInt(DATA_PENDING_BRIEFING_VIALS);
+		if (pending <= 0) return;
+		int before = player.getInventory().countItem(ItemInit.bloody_vial.get());
+		player.getInventory().add(new ItemStack(ItemInit.bloody_vial.get(), pending));
+		int inserted = player.getInventory().countItem(ItemInit.bloody_vial.get()) - before;
+		if (inserted <= 0) return;
+		durable.putInt(DATA_PENDING_BRIEFING_VIALS, Math.max(0, pending - inserted));
+		root.put(Player.PERSISTED_NBT_TAG, durable);
 	}
 
 	public static void markCentrifugeAcquired(ServerPlayer player) {
@@ -171,6 +196,48 @@ public final class FirstSeparationAssignment {
 	public static boolean markClaimed(ServerPlayer player) {
 		HarbingerAdvancementGranter.grantIfNotDone(player, ADV_REWARD_CLAIMED);
 		return isClaimed(player);
+	}
+
+	public static boolean claimRewards(ServerPlayer player) {
+		if (!player.isAlive() || !canClaim(player)) return false;
+		savePendingRewards(player, rewardStacks());
+		if (!markClaimed(player)) return false;
+		deliverPendingRewards(player);
+		return true;
+	}
+
+	static void deliverPendingRewards(ServerPlayer player) {
+		if (!player.isAlive() || ChamberVisitService.isObservational(player)
+				|| !ClinicalBloodKnowledge.eligible(player) || !isClaimed(player)) return;
+		CompoundTag root = player.getPersistentData();
+		CompoundTag durable = root.getCompound(Player.PERSISTED_NBT_TAG);
+		ListTag pending = durable.getList(DATA_PENDING_REWARDS, 10);
+		if (pending.isEmpty()) return;
+		ListTag remaining = new ListTag();
+		for (int i = 0; i < pending.size(); i++) {
+			CompoundTag encoded = pending.getCompound(i);
+			ItemStack stack = ItemStack.parseOptional(player.registryAccess(), encoded);
+			if (stack.isEmpty()) {
+				remaining.add(encoded.copy());
+				continue;
+			}
+			int before = player.getInventory().countItem(stack.getItem());
+			player.getInventory().add(stack.copy());
+			int inserted = player.getInventory().countItem(stack.getItem()) - before;
+			stack.shrink(Math.max(0, inserted));
+			if (!stack.isEmpty()) remaining.add(stack.saveOptional(player.registryAccess()));
+		}
+		durable.put(DATA_PENDING_REWARDS, remaining);
+		root.put(Player.PERSISTED_NBT_TAG, durable);
+	}
+
+	private static void savePendingRewards(ServerPlayer player, List<ItemStack> stacks) {
+		ListTag pending = new ListTag();
+		for (ItemStack stack : stacks) pending.add(stack.saveOptional(player.registryAccess()));
+		CompoundTag root = player.getPersistentData();
+		CompoundTag durable = root.getCompound(Player.PERSISTED_NBT_TAG);
+		durable.put(DATA_PENDING_REWARDS, pending);
+		root.put(Player.PERSISTED_NBT_TAG, durable);
 	}
 
 	public static List<ItemStack> rewardStacks() {

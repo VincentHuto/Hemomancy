@@ -356,8 +356,13 @@ public final class HarbingerVicarDialogueTrees {
 				)))
 				.addNode(new DialogueNode("rooted_vein", List.of(
 						"hemomancy.vicar.votary.rooted_vein.floor",
-						"hemomancy.vicar.votary.rooted_vein.offering",
-						"hemomancy.vicar.votary.rooted_vein.staff"
+						"hemomancy.vicar.votary.rooted_vein.offering"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.rooted_vein.channel", "rooted_vein_channel", null),
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null))))
+				.addNode(new DialogueNode("rooted_vein_channel", List.of(
+						"hemomancy.vicar.votary.rooted_vein.staff",
+						"hemomancy.vicar.votary.rooted_vein.recovery"
 				), List.of(new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null))))
 				.addNode(new DialogueNode("degree_hint", List.of(
 						"hemomancy.vicar.votary.degree_hint"
@@ -623,26 +628,14 @@ public final class HarbingerVicarDialogueTrees {
 				.build();
 	}
 
-	/**
-	 * Special Archon dialogue triggered when the player has an active Qliphoth
-	 * Pome empowerment. The Vicar is briefly, visibly unsettled — the only time
-	 * the player will ever see him like this.
-	 */
-	public static DialogueTree archonPomeEmpowered(int entityId) {
-		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
-				.addNode(new DialogueNode("greeting", List.of(
-						"hemomancy.vicar.archon.pome_empowered.line1",
-						"hemomancy.vicar.archon.pome_empowered.line2"
-				), List.of(
-						new DialogueOption("hemomancy.dialogue.vicar.option.ask_about_item", "item_hint", null),
-						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
-				)))
-				.addNode(new DialogueNode("item_hint", List.of(
-						"hemomancy.vicar.item_hint"
-				), List.of(
-						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
-				)))
-				.build();
+	public static DialogueTree withPomeEmpowerment(DialogueTree tree) {
+		var nodes = new java.util.LinkedHashMap<>(tree.nodes());
+		DialogueNode root = tree.getStartNode();
+		nodes.put(root.id(), new DialogueNode(root.id(), List.of(
+				"hemomancy.vicar.archon.pome_empowered.line1",
+				"hemomancy.vicar.archon.pome_empowered.line2"), root.options()));
+		return new DialogueTree(tree.speakerName(), tree.speakerIcon(), tree.startNodeId(), nodes,
+				tree.entityId(), tree.theme(), tree.presentation());
 	}
 
 	/**

@@ -115,6 +115,9 @@ public final class ArtificerProgressionGameTests {
 		ServerPlayer player = player(helper, "armature-kit");
 		HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(5);
 		HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
+		HemoCapabilityAccess.stationUpgrades(player).recordUse(
+				com.vincenthuto.hemomancy.common.station.UpgradeStation.ARMATURE,
+				com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.ARMOR_UPGRADE);
 		var artificer = EntityInit.harbinger_artificer.get().create(helper.getLevel());
 		var vicar = EntityInit.harbinger_vicar.get().create(helper.getLevel());
 		var origin = helper.absolutePos(new net.minecraft.core.BlockPos(4, 2, 4)).getCenter();
@@ -153,9 +156,8 @@ public final class ArtificerProgressionGameTests {
 					&& DialogueEventHandler.hasClaimedConsecrationKit(player)
 					&& player.getRecipeBook().contains(Hemomancy.rloc("vicars_consecration_kit")),
 				"Valid Artificer did not grant the one-time kit");
-		helper.assertTrue(helper.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(artificer.blockPosition()).inflate(2))
-					.stream().anyMatch(item -> item.getItem().is(ItemInit.vicars_consecration_kit.get())),
-				"Artificer handoff did not retain the registered kit item");
+		helper.assertTrue(player.getInventory().contains(new net.minecraft.world.item.ItemStack(ItemInit.vicars_consecration_kit.get())),
+				"Artificer handoff did not deliver the registered kit item");
 		helper.assertTrue(!DialogueOptionPacket.dispatch(player, newEvent, artificer.getId()).wasRewardDelivered(),
 				"Artificer issued the free kit twice");
 		helper.assertTrue(!hasEvent(artificer.progressionDialogue(player).getNode("late_armature"), newEvent),
@@ -165,9 +167,9 @@ public final class ArtificerProgressionGameTests {
 		HemoCapabilityAccess.requireBloodVolume(legacy).setActive(true);
 		legacy.getPersistentData().putBoolean("hemomancy.vicar_consecration_kit_claimed", true);
 		legacy.setPos(origin);
-		artificer.interact(legacy, net.minecraft.world.InteractionHand.MAIN_HAND);
+		com.vincenthuto.hemomancy.common.station.StationUpgradeMigration.migrate(legacy);
 		helper.assertTrue(legacy.getRecipeBook().contains(Hemomancy.rloc("vicars_consecration_kit")),
-				"An old claimant did not learn the material-cost replacement on Artificer contact");
+				"An old claimant did not learn the material-cost replacement when migrated");
 		helper.assertTrue(!DialogueOptionPacket.dispatch(legacy, newEvent, artificer.getId()).wasRewardDelivered(),
 				"An old Vicar claimant received a second free kit");
 		helper.assertTrue(!hasEvent(artificer.progressionDialogue(legacy).getNode("late_armature"), newEvent),
@@ -175,32 +177,6 @@ public final class ArtificerProgressionGameTests {
 		legacy.discard();
 		early.discard();
 		player.discard();
-		helper.succeed();
-	}
-
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
-	public static void brokenUpgradedArmatureReturnsItsPaidUpgradeItems(GameTestHelper helper) {
-		var pos = helper.absolutePos(new net.minecraft.core.BlockPos(4, 2, 4));
-		helper.getLevel().setBlockAndUpdate(pos, BlockInit.hematic_armature.get().defaultBlockState());
-		var armature = (com.vincenthuto.hemomancy.common.tile.harbinger.crafting.HematicArmatureBlockEntity)
-				helper.getLevel().getBlockEntity(pos);
-		armature.setRiteLocked(true);
-		helper.assertTrue(armature.completeUpgrade(ArmatureTier.VICAR_CONSECRATED, UUID.randomUUID()),
-				"Could not prepare a consecrated Armature");
-		armature.setRiteLocked(true);
-		helper.assertTrue(armature.completeUpgrade(ArmatureTier.MONOLITHIC, UUID.randomUUID()),
-				"Could not prepare a Monolithic Armature");
-		var saved = armature.saveWithoutMetadata(helper.getLevel().registryAccess());
-		armature.loadWithComponents(saved, helper.getLevel().registryAccess());
-		helper.assertTrue(armature.getArmatureTier() == ArmatureTier.MONOLITHIC,
-				"The upgraded Armature lost its tier during save/load");
-		helper.getLevel().removeBlock(pos, false);
-		var drops = helper.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(pos).inflate(2));
-		helper.assertTrue(drops.stream().filter(item -> item.getItem().is(ItemInit.vicars_consecration_kit.get()))
-					.mapToInt(item -> item.getItem().getCount()).sum() == 1
-					&& drops.stream().filter(item -> item.getItem().is(ItemInit.monolithic_cornerstone.get()))
-					.mapToInt(item -> item.getItem().getCount()).sum() == 1,
-				"Breaking a Monolithic Armature did not return its two paid upgrade items exactly once");
 		helper.succeed();
 	}
 

@@ -20,6 +20,89 @@ import net.neoforged.neoforge.gametest.*;
 @GameTestHolder("blood_injection_validation")
 @PrefixGameTestTemplate(false)
 public final class BloodInjectionGameTests {
+    @GameTest(template = "empty", timeoutTicks = 450)
+    public static void founderReceptionPreservesLateCanonicalConflictAndCanRetry(GameTestHelper h) {
+        lateReceptionConflict(h, true);
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 450)
+    public static void founderReceptionPreservesLatePersonalConflictAndCanRetry(GameTestHelper h) {
+        lateReceptionConflict(h, false);
+    }
+
+    private static void lateReceptionConflict(GameTestHelper h, boolean canonical) {
+        var recruit = animationPlayer(h).player();
+        var founder = animationPlayer(h).player();
+        founder.setPos(recruit.position().add(1, 0, 0));
+        HemoCapabilityAccess.requireInitiatoryDegree(recruit).setDegreeNumber(0);
+        HemoCapabilityAccess.getEquipment(recruit).orElseThrow().setStackInSlot(5,
+                new ItemStack(ItemInit.charm_of_vascularium.get()));
+        EarlyInitiation.activate(recruit);
+        var founderDegree = HemoCapabilityAccess.requireInitiatoryDegree(founder);
+        founderDegree.setDegreeNumber(5);
+        founderDegree.setHasFoundedBloodline(true);
+        var data = BloodlineSavedData.get(h.getLevel().getServer().overworld());
+        var line = new Bloodline("Reception retry", founder.getUUID(), java.util.UUID.randomUUID(), new java.util.ArrayList<>());
+        var foreign = new Bloodline("Late conflict", java.util.UUID.randomUUID(), java.util.UUID.randomUUID(), new java.util.ArrayList<>());
+        data.registerBloodline(line);
+        data.registerBloodline(foreign);
+        var founderVolume = HemoCapabilityAccess.getBloodVolume(founder).orElseThrow();
+        founderVolume.setBloodLine(line);
+        founderVolume.setActive(true);
+        var recruitVolume = HemoCapabilityAccess.getBloodVolume(recruit).orElseThrow();
+        Runnable cleanup = () -> {
+            EarlyInitiation.cancel(recruit);
+            EarlyInitiation.cancel(founder);
+            data.disbandBloodline(line.getBloodlineUUID());
+            data.disbandBloodline(foreign.getBloodlineUUID());
+            recruit.discard();
+            founder.discard();
+        };
+        h.testInfo.addListener(new GameTestListener() {
+            public void testStructureLoaded(GameTestInfo test) { }
+            public void testPassed(GameTestInfo test, GameTestRunner runner) { cleanup.run(); }
+            public void testFailed(GameTestInfo test, GameTestRunner runner) { cleanup.run(); }
+            public void testAddedForRerun(GameTestInfo oldTest, GameTestInfo newTest, GameTestRunner runner) { }
+        });
+        h.assertTrue(EarlyInitiation.begin(recruit, founder), "An unbound recruit must begin founder reception");
+        h.runAfterDelay(199, () -> {
+            h.assertTrue(HemoCapabilityAccess.getPlayerDegreeNumber(recruit) == 0 && !line.hasMember(recruit.getUUID()),
+                    "The first ceremony must not bind before its full duration");
+            if (canonical) data.addMember(foreign.getBloodlineUUID(), recruit.getUUID());
+            else recruitVolume.setBloodLine(foreign);
+        });
+        h.runAfterDelay(201, () -> {
+            EarlyInitiation.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(recruit));
+            h.assertTrue(HemoCapabilityAccess.getPlayerDegreeNumber(recruit) == 0 && !line.hasMember(recruit.getUUID())
+                            && recruit.getInventory().countItem(ItemInit.sanguine_conduit.get()) == 0
+                            && recruit.getInventory().countItem(ItemInit.bloody_flask.get()) == 0,
+                    "Late conflicting membership must cancel even at completion time without rank, binding or rewards");
+            h.assertTrue(canonical ? foreign.hasMember(recruit.getUUID())
+                            : recruitVolume.getBloodLine().getBloodlineUUID().equals(foreign.getBloodlineUUID()),
+                    "Reception must retain the conflicting canonical/personal bloodline");
+            h.assertTrue(!EarlyInitiation.begin(recruit, founder), "The conflict must still reject another reception");
+            if (canonical) data.removeMember(foreign.getBloodlineUUID(), recruit.getUUID());
+            else recruitVolume.setBloodLine(new Bloodline());
+            h.assertTrue(EarlyInitiation.begin(recruit, founder), "Removing the conflict must permit a fresh ceremony");
+        });
+        h.runAfterDelay(399, () -> {
+            EarlyInitiation.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(recruit));
+            h.assertTrue(HemoCapabilityAccess.getPlayerDegreeNumber(recruit) == 0 && !line.hasMember(recruit.getUUID()),
+                    "Retry must wait its own full ceremony duration");
+        });
+        h.runAfterDelay(405, () -> {
+            EarlyInitiation.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(recruit));
+            h.assertTrue(HemoCapabilityAccess.getPlayerDegreeNumber(recruit) == 1 && line.hasMember(recruit.getUUID())
+                            && !foreign.hasMember(recruit.getUUID())
+                            && recruitVolume.getBloodLine().getBloodlineUUID().equals(line.getBloodlineUUID())
+                            && recruit.getInventory().countItem(ItemInit.sanguine_conduit.get()) == 1
+                            && recruit.getInventory().countItem(ItemInit.bloody_flask.get()) == 4,
+                    "A completed retry must bind only the intended bloodline and award exactly one starter set");
+            h.assertTrue(!EarlyInitiation.begin(recruit, founder), "Completed retry must not repeat rewards");
+            h.succeed();
+        });
+    }
+
     @GameTest(template = "empty")
     public static void founderInitiationChecksRankOwnershipAndInterruption(GameTestHelper h) {
         var recruit = animationPlayer(h).player();
@@ -135,7 +218,7 @@ public final class BloodInjectionGameTests {
         player.setItemInHand(InteractionHand.MAIN_HAND, sample);
         h.assertTrue(!sample.use(h.getLevel(), player, InteractionHand.MAIN_HAND).getResult().consumesAction(), "Unclaimed mission permitted injection");
         com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment.markClaimed(player);
-        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.advancedBrewing(player).record("distill");
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.stationUpgrades(player).recordUse(com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC, "distill");
         sample.use(h.getLevel(), player, InteractionHand.MAIN_HAND);
         for (int i = 0; i < 7; i++) player.doTick();
         player.releaseUsingItem();
@@ -144,12 +227,44 @@ public final class BloodInjectionGameTests {
         for (int i = 0; i < 16; i++) player.doTick();
         h.assertTrue(com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.pending(player), "Injection did not persist pending rest");
         h.assertTrue(!BloodSampleData.isFilled(player.getMainHandItem()), "Special injection did not return empty vial");
-        h.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.completeSleep(player, false), "Interrupted sleep advanced degree");
-        h.assertTrue(com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getPlayerDegreeNumber(player) == 2, "Injection granted degree early");
-        h.assertTrue(com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.completeSleep(player, true), "Completed sleep did not advance");
-        h.assertTrue(com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getPlayerDegreeNumber(player) == 3, "Wrong wake degree");
-        h.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.completeSleep(player, true), "Sleep repeated reward");
-        player.discard(); h.succeed();
+        var respawned = animationPlayer(h, player.getGameProfile()).player();
+        try {
+            respawned.restoreFrom(player, false);
+            h.assertTrue(com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.pending(respawned),
+                    "Death cloning lost pending Concentrated Blood rest");
+            h.assertTrue(HemoCapabilityAccess.getPlayerDegreeNumber(respawned) == 2
+                            && EarlyInitiation.attached(respawned)
+                            && com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment.isClaimed(respawned)
+                            && HemoCapabilityAccess.stationUpgrades(respawned).hasUsed(
+                            com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC, "distill"),
+                    "Death clone proofs: degree=" + HemoCapabilityAccess.getPlayerDegreeNumber(respawned)
+                            + ", charm=" + EarlyInitiation.attached(respawned)
+                            + ", separation=" + com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment.isClaimed(respawned)
+                            + ", distillation=" + HemoCapabilityAccess.stationUpgrades(respawned).hasUsed(
+                            com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC, "distill")
+                            + ", originalUuid=" + player.getUUID() + ", replacementUuid=" + respawned.getUUID());
+            h.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.canInject(respawned),
+                    "Pending rest after death permitted another injection or replacement claim");
+            com.vincenthuto.hemomancy.common.event.ChamberVisitEvents.onWake(
+                    new net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent(respawned, false, true));
+            h.assertTrue(HemoCapabilityAccess.getPlayerDegreeNumber(respawned) == 2, "Injection granted degree early");
+            h.assertTrue(com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.pending(respawned), "Leaving bed consumed pending rest");
+            com.vincenthuto.hemomancy.common.event.ChamberVisitEvents.onWake(
+                    new net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent(respawned, true, true));
+            h.assertTrue(HemoCapabilityAccess.getPlayerDegreeNumber(respawned) == 2, "Immediate wake advanced degree");
+            com.vincenthuto.hemomancy.common.event.ChamberVisitEvents.onWake(
+                    new net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent(respawned, false, false));
+            h.assertTrue(HemoCapabilityAccess.getPlayerDegreeNumber(respawned) == 3, "Wrong wake degree");
+            h.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.pending(respawned),
+                    "Completed rest retained a consumable pending claim");
+            h.assertTrue(HemoCapabilityAccess.getPlayerDegreeNumber(player) == 2,
+                    "Death cloning shared the mutable degree attachment with the old player");
+            h.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.completeSleep(respawned, true), "Sleep repeated reward");
+        } finally {
+            respawned.discard();
+            player.discard();
+        }
+        h.succeed();
     }
 
     @GameTest(template = "empty")
@@ -305,8 +420,15 @@ public final class BloodInjectionGameTests {
     }
 
     private static AnimationCapture animationPlayer(GameTestHelper h) {
+        var capture = animationPlayer(h,
+                new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "vial-animation"));
+        h.getLevel().addNewPlayer(capture.player());
+        return capture;
+    }
+
+    private static AnimationCapture animationPlayer(GameTestHelper h, com.mojang.authlib.GameProfile profile) {
         var cookie = net.minecraft.server.network.CommonListenerCookie.createInitial(
-                new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "vial-animation"), false);
+                profile, false);
         var player = new net.minecraft.server.level.ServerPlayer(h.getLevel().getServer(), h.getLevel(),
                 cookie.gameProfile(), cookie.clientInformation());
         com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(2);
@@ -323,7 +445,6 @@ public final class BloodInjectionGameTests {
             }
         };
         player.setPos(net.minecraft.world.phys.Vec3.atCenterOf(h.absolutePos(new net.minecraft.core.BlockPos(1, 2, 1))));
-        h.getLevel().addNewPlayer(player);
         return new AnimationCapture(player, packets);
     }
 

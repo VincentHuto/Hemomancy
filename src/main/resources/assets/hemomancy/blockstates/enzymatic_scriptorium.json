@@ -31,18 +31,18 @@
       "y": 270
     },
     "facing=north,stage=2": {
-      "model": "hemomancy:block/monolithic_scriptorium"
+      "model": "hemomancy:block/palimpsest_scriptorium"
     },
     "facing=east,stage=2": {
-      "model": "hemomancy:block/monolithic_scriptorium",
+      "model": "hemomancy:block/palimpsest_scriptorium",
       "y": 90
     },
     "facing=south,stage=2": {
-      "model": "hemomancy:block/monolithic_scriptorium",
+      "model": "hemomancy:block/palimpsest_scriptorium",
       "y": 180
     },
     "facing=west,stage=2": {
-      "model": "hemomancy:block/monolithic_scriptorium",
+      "model": "hemomancy:block/palimpsest_scriptorium",
       "y": 270
     }
   }

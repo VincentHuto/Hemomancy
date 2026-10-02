@@ -109,19 +109,19 @@ public final class JourneyAutomationGameTests {
 	public static void journeySnapshotRestoresDistillationAndPendingRest(GameTestHelper helper) {
 		ServerPlayer player = connectedPlayer(helper);
 		try {
-			var brewing = HemoCapabilityAccess.advancedBrewing(player);
-			brewing.record("distill");
+			var brewing = HemoCapabilityAccess.stationUpgrades(player);
+			brewing.recordUse(com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC, "distill");
 			var persisted = new net.minecraft.nbt.CompoundTag();
 			persisted.putBoolean("hemomancy:concentrated_blood_pending", true);
 			player.getPersistentData().put(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG, persisted);
 			helper.assertTrue(HemoJourneySnapshot.capture(player).passed(), "Journey snapshot capture failed");
 			helper.assertTrue(HemoJourneySnapshot.resetForJourney(player).passed(), "Journey snapshot reset failed");
-			helper.assertTrue(!HemoCapabilityAccess.advancedBrewing(player).distilled()
+			helper.assertTrue(!HemoCapabilityAccess.stationUpgrades(player).hasUsed(com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC, "distill")
 					&& !player.getPersistentData().getCompound(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG)
 							.getBoolean("hemomancy:concentrated_blood_pending"),
 					"Journey reset retained preexisting D3 proof or pending-rest state");
 			helper.assertTrue(HemoJourneySnapshot.restore(player).passed(), "Journey snapshot restore failed");
-			helper.assertTrue(HemoCapabilityAccess.advancedBrewing(player).distilled()
+			helper.assertTrue(HemoCapabilityAccess.stationUpgrades(player).hasUsed(com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC, "distill")
 					&& player.getPersistentData().getCompound(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG)
 							.getBoolean("hemomancy:concentrated_blood_pending"),
 					"Journey restore lost preexisting D3 proof or pending-rest state");

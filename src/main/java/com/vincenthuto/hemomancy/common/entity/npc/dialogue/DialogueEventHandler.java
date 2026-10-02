@@ -49,6 +49,9 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnSanguineOmenEffectPacket;
 import com.vincenthuto.hemomancy.common.rite.TempleOathRules;
+import com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog;
+import com.vincenthuto.hemomancy.common.station.StationUpgradeRules;
+import com.vincenthuto.hemomancy.common.station.UpgradeStation;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
@@ -76,14 +79,14 @@ import net.neoforged.fml.common.EventBusSubscriber;
 public class DialogueEventHandler {
 	private static final int BLOOD_SHOTTING_OVERLAY_TICKS = 1200;
 	private static final float BLOOD_SHOTTING_OVERLAY_ALPHA = 0.30F;
-	private static final String VICAR_CONSECRATION_KIT_CLAIM_KEY =
-			"hemomancy.vicar_consecration_kit_claimed";
-	private static final String MONOLITH_CORNERSTONE_CLAIM_KEY =
-			"hemomancy.monolithic_cornerstone_claimed";
-
 	@SubscribeEvent
 	public static void onDialogueOption(DialogueEvent event) {
 		ServerPlayer player = event.getPlayer();
+		var stationClaim = StationUpgradeDialogue.parseClaim(event.getEventId());
+		if (stationClaim.isPresent()) {
+			event.setRewardDelivered(HemoCapabilityAccess.stationUpgrades(player).claim(player, stationClaim.get()));
+			return;
+		}
         if (event.getEventId().startsWith("antecedent_")) { event.setRewardDelivered(com.vincenthuto.hemomancy.common.antecedent.AntecedentDialogue.handle(event)); return; }
         if (event.getEventId().startsWith("clinical_lesson_")) {
             for (var lesson : com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress.Lesson.values()) {
@@ -136,6 +139,9 @@ public class DialogueEventHandler {
 			case DeepDarkCommissionDialogue.REPORT -> event.setRewardDelivered(
 					com.vincenthuto.hemomancy.common.mission.alchemist.DeepDarkCommission.report(
 							player, player.level().getEntity(event.getEntityId())));
+			case DeepDarkCommissionDialogue.BEARING -> event.setRewardDelivered(
+					com.vincenthuto.hemomancy.common.mission.alchemist.DeepDarkGuidance.tell(
+							player, player.level().getEntity(event.getEntityId())));
 			case PhlegethonticCommissionDialogue.REPORT -> event.setRewardDelivered(
 					com.vincenthuto.hemomancy.common.mission.alchemist.PhlegethonticCommission.report(
 							player, player.level().getEntity(event.getEntityId())));
@@ -150,6 +156,9 @@ public class DialogueEventHandler {
 							player, player.level().getEntity(event.getEntityId())));
 			case VoyagerIntroductionDialogue.REPORT -> event.setRewardDelivered(
 					com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.report(
+							player, player.level().getEntity(event.getEntityId())));
+			case VoyagerIntroductionDialogue.BEARING -> event.setRewardDelivered(
+					com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.tellBearing(
 							player, player.level().getEntity(event.getEntityId())));
 			case OverworldFungalSurveyDialogue.REPORT -> event.setRewardDelivered(
 					com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.report(
@@ -307,16 +316,6 @@ public class DialogueEventHandler {
 			case HarbingerAlchemistDialogueTrees.EVENT_FIRST_SEPARATION_CLAIM -> {
 				event.setRewardDelivered(handleAlchemistFirstSeparationReward(player, event.getEntityId()));
 			}
-			case AdvancedBrewingDialogue.CONDENSER_CLAIM ->
-					event.setRewardDelivered(HemoCapabilityAccess.advancedBrewing(player).claimCondenser(player));
-			case AdvancedBrewingDialogue.ATHANOR_CLAIM ->
-					event.setRewardDelivered(HemoCapabilityAccess.advancedBrewing(player).claimAthanor(player));
-			case ResonantForgeDialogue.TEACH ->
-					event.setRewardDelivered(HemoCapabilityAccess.resonantForge(player).teach(player));
-			case ResonantForgeDialogue.PRECISION_CLAIM ->
-					event.setRewardDelivered(HemoCapabilityAccess.resonantForge(player).claimPrecision(player));
-			case ResonantForgeDialogue.MASTER_CLAIM ->
-					event.setRewardDelivered(HemoCapabilityAccess.resonantForge(player).claimMaster(player));
 			case HarbingerAlchemistDialogueTrees.EVENT_BODY_ANSWERS_BRIEF -> {
 				handleAlchemistBodyAnswersBrief(player);
 			}
@@ -495,6 +494,18 @@ public class DialogueEventHandler {
 					event.setRewardDelivered(MnemonicRecipeKnowledge.awardBlankMemory(player) > 0);
 				}
 			}
+			case HarbingerMnemonistDialogueTrees.EVENT_SCRIPTORIUM_LESSON -> {
+				Entity teacher = player.level().getEntity(event.getEntityId());
+				if (teacher instanceof HarbingerMnemonistEntity && teacher.isAlive()
+						&& player.distanceToSqr(teacher) <= 64
+						&& HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 3
+						&& HemoCapabilityAccess.getUnstainedProgress(player)
+								.map(progress -> !progress.hasBegunPurification() && !progress.hasClarityUnlocked())
+								.orElse(true)) {
+					event.setRewardDelivered(LiberKnowledgeHelper.unlockEntry(player,
+							LiberEntryDefinitions.SCRIPTORIUM, HemomancyDiscoverySource.DIALOGUE));
+				}
+			}
 			default -> {
 				// Unknown event — log for development
 			}
@@ -603,11 +614,7 @@ public class DialogueEventHandler {
 	private static boolean handleAlchemistFirstSeparationReward(ServerPlayer player, int entityId) {
         if (!(player.level().getEntity(entityId) instanceof HarbingerAlchemistEntity alchemist)
                 || !com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.near(player, alchemist)) return false;
-		if (!FirstSeparationAssignment.canClaim(player)) return false;
-		if (!FirstSeparationAssignment.markClaimed(player)) return false;
-		for (ItemStack stack : FirstSeparationAssignment.rewardStacks()) {
-			giveOrDropAtEntity(player, entityId, stack);
-		}
+		if (!FirstSeparationAssignment.claimRewards(player)) return false;
 		player.displayClientMessage(Component.translatable("hemomancy.alchemist.first_separation.next_distillation"), false);
 		return true;
 	}
@@ -637,63 +644,36 @@ public class DialogueEventHandler {
 	}
 
 	public static boolean hasClaimedConsecrationKit(ServerPlayer player) {
-		return player.getPersistentData().getBoolean(VICAR_CONSECRATION_KIT_CLAIM_KEY);
+		return HemoCapabilityAccess.stationUpgrades(player).hasClaimed(UpgradeStation.ARMATURE, 1);
 	}
 
 	private static boolean handleArtificerConsecrationKit(ServerPlayer player, int entityId) {
 		Entity teacher = player.level().getEntity(entityId);
 		if (!(teacher instanceof HarbingerArtificerEntity) || player.distanceToSqr(teacher) > 64) return false;
-		ArtificerProgressSnapshot progress = ArtificerProgressSnapshot.from(player);
-		if (progress.degree() < 5 || !progress.activeBlood() || progress.purifying() || progress.clarity()) {
-			player.displayClientMessage(
-					Component.translatable("hemomancy.dialogue.event.artificer_consecration_kit_unready")
-							.withStyle(ChatFormatting.GRAY),
-					false);
-			return false;
-		}
-		player.serverLevel().getRecipeManager().byKey(Hemomancy.rloc("vicars_consecration_kit"))
-				.ifPresent(recipe -> player.awardRecipes(java.util.List.of(recipe)));
-		if (hasClaimedConsecrationKit(player)) {
-			player.displayClientMessage(
-					Component.translatable("hemomancy.dialogue.event.artificer_consecration_kit_known")
-							.withStyle(ChatFormatting.GRAY),
-					false);
-			return false;
-		}
-		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.vicars_consecration_kit.get()));
-		player.getPersistentData().putBoolean(VICAR_CONSECRATION_KIT_CLAIM_KEY, true);
-		player.displayClientMessage(
-				Component.translatable("hemomancy.dialogue.event.artificer_consecration_kit_granted")
-						.withStyle(ChatFormatting.DARK_RED),
-				false);
-		return true;
+		return claimArmatureTier(player, 1, "hemomancy.dialogue.event.artificer_consecration_kit");
 	}
 
 	public static boolean hasClaimedMonolithCornerstone(ServerPlayer player) {
-		return player.getPersistentData().getBoolean(MONOLITH_CORNERSTONE_CLAIM_KEY);
+		return HemoCapabilityAccess.stationUpgrades(player).hasClaimed(UpgradeStation.ARMATURE, 2);
 	}
 
 	private static boolean handleMonolithCornerstone(ServerPlayer player, int entityId) {
-		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < 7) {
-			player.displayClientMessage(
-					Component.translatable("hemomancy.dialogue.event.monolith_cornerstone_unready")
-							.withStyle(ChatFormatting.GRAY),
-					false);
+		return claimArmatureTier(player, 2, "hemomancy.dialogue.event.monolith_cornerstone");
+	}
+
+	/** The Armature keeps its own Artificer and Monolith scenes; both claim through the shared station progress. */
+	private static boolean claimArmatureTier(ServerPlayer player, int tierNumber, String messagePrefix) {
+		var tier = StationUpgradeCatalog.get(UpgradeStation.ARMATURE, tierNumber);
+		var progress = HemoCapabilityAccess.stationUpgrades(player);
+		var state = progress.claimState(player, tier);
+		if (state != StationUpgradeRules.ClaimState.READY) {
+			player.displayClientMessage(Component.translatable(state == StationUpgradeRules.ClaimState.CLAIMED
+					? messagePrefix + "_known" : messagePrefix + "_unready").withStyle(ChatFormatting.GRAY), false);
 			return false;
 		}
-		if (hasClaimedMonolithCornerstone(player)) {
-			player.displayClientMessage(
-					Component.translatable("hemomancy.dialogue.event.monolith_cornerstone_known")
-							.withStyle(ChatFormatting.GRAY),
-					false);
-			return false;
-		}
-		giveOrDropAtEntity(player, entityId, new ItemStack(ItemInit.monolithic_cornerstone.get()));
-		player.getPersistentData().putBoolean(MONOLITH_CORNERSTONE_CLAIM_KEY, true);
-		player.displayClientMessage(
-				Component.translatable("hemomancy.dialogue.event.monolith_cornerstone_granted")
-						.withStyle(ChatFormatting.DARK_RED),
-				false);
+		progress.claim(player, tier);
+		player.displayClientMessage(Component.translatable(messagePrefix + "_granted")
+				.withStyle(ChatFormatting.DARK_RED), false);
 		return true;
 	}
 

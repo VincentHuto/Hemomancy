@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [" A ", "WGW", " I "],
+  "key": {
+    "A": { "item": "minecraft:amethyst_shard" },
+    "W": { "item": "hemomancy:wax_cylinder" },
+    "G": { "item": "minecraft:grindstone" },
+    "I": { "item": "hemomancy:hematic_iron_block" }
+  },
+  "result": { "id": "hemomancy:precision_governor_kit" }
+}

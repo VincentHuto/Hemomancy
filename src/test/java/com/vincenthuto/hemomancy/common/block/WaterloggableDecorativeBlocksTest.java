@@ -103,18 +103,32 @@ public final class WaterloggableDecorativeBlocksTest {
 
 		for (TargetBlock target : TARGETS) {
 			String source = readSource(target.sourcePath());
-			assertContains(target.id() + " should declare WATERLOGGED", source, "WATERLOGGED");
-			assertContains(target.id() + " should be a SimpleWaterloggedBlock", source, "SimpleWaterloggedBlock");
-			assertContains(target.id() + " should register WATERLOGGED in its state definition", source,
-					".add(");
-			assertContains(target.id() + " should expose water as its fluid state", source, "getFluidState");
-			assertContains(target.id() + " should schedule water ticks", source, "scheduleWaterTick");
+			if (target.id().equals("dictation_table")) {
+				assertContains("Dictation Table should inherit shared waterlogging", source,
+						"extends com.vincenthuto.hutoslib.common.block.DictationTableBlock");
+				assertContains("Dictation Table should preserve its save-compatible block entity", source,
+						"return new DictationTableBlockEntity(pos, state)");
+			} else {
+				assertContains(target.id() + " should declare WATERLOGGED", source, "WATERLOGGED");
+				assertContains(target.id() + " should be a SimpleWaterloggedBlock", source, "SimpleWaterloggedBlock");
+				assertContains(target.id() + " should register WATERLOGGED in its state definition", source,
+						".add(");
+				assertContains(target.id() + " should expose water as its fluid state", source, "getFluidState");
+				assertContains(target.id() + " should schedule water ticks", source, "scheduleWaterTick");
+			}
 
 			String blockstate = readResource("assets/hemomancy/blockstates/" + target.id() + ".json");
-			assertContains(target.id() + " blockstate should ignore waterlogged variants", blockstate, "\"multipart\"");
-			assertDoesNotContain(target.id() + " blockstate should not enumerate waterlogged variants",
-					blockstate, "waterlogged=");
+			assertWaterIndependentModels(target.id(), blockstate);
 		}
+	}
+
+	static void assertWaterIndependentModels(String label, String source) {
+		var blockstate = com.google.gson.JsonParser.parseString(source).getAsJsonObject();
+		if (blockstate.has("multipart") == blockstate.has("variants")) {
+			throw new AssertionError(label + ": expected one multipart or variants model definition");
+		}
+		assertDoesNotContain(label + " should not enumerate waterlogged variants", source, "waterlogged=");
+		assertDoesNotContain(label + " should not select multipart models by waterlogging", source, "\"waterlogged\"");
 	}
 
 	private static String readSource(String path) throws IOException {

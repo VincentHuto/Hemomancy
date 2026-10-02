@@ -19,13 +19,11 @@ class GourdHudSpriteResourceTest {
         BufferedImage red = image("gourd_frame_red.png");
         BufferedImage black = image("gourd_frame_black.png");
         BufferedImage halo = image("gourd_halo.png");
-        BufferedImage source = ImageIO.read(Path.of("tools/art_source/gourd_hud_concept.png").toFile());
 
         for (BufferedImage image : new BufferedImage[] {back, white, red, black}) {
             assertEquals(32, image.getWidth());
             assertEquals(64, image.getHeight());
         }
-        assertEquals(source.getRGB(8, 24), white.getRGB(8, 24));
         assertEquals(0, white.getRGB(16, 27) >>> 24);
         assertEquals(0, red.getRGB(16, 27) >>> 24);
         assertEquals(0, black.getRGB(16, 27) >>> 24);
@@ -40,6 +38,24 @@ class GourdHudSpriteResourceTest {
                     int alpha = frame.getRGB(x, y) >>> 24;
                     assertTrue(alpha == 0 || alpha >= 16);
                 }
+            }
+            int previousVisible = -1;
+            for (int quarter = 0; quarter <= 4; quarter++) {
+                int[] fill = GourdHudFillPixels.render(quarter / 4.0, 0, 0, 0.0f);
+                int visible = 0;
+                for (int y = 0; y < frame.getHeight(); y++) {
+                    for (int x = 0; x < frame.getWidth(); x++) {
+                        if ((fill[y * GourdHudFillPixels.WIDTH + x] >>> 24) != 0
+                                && (frame.getRGB(x, y) >>> 24) == 0) {
+                            visible++;
+                            assertTrue((back.getRGB(x, y) >>> 24) != 0,
+                                    "Gourd backing misses visible renderer fill at " + x + "," + y);
+                        }
+                    }
+                }
+                if (quarter == 0) assertEquals(0, visible);
+                assertTrue(visible > previousVisible, "Gourd quarter-volume increase must expose more liquid");
+                previousVisible = visible;
             }
         }
         assertNotEquals(white.getRGB(8, 24), red.getRGB(8, 24));

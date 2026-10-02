@@ -1,0 +1,34 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "id": "hemomancy:cardinal_rite/palimpsest",
+  "bloodCost": 0,
+  "riteType": "greater",
+  "required_degree": 7,
+  "rankup": false,
+  "riteName": "Rite of the Palimpsest",
+  "riteDescription": "Scrape the Scriptorium's vellum back to memory and cut the chosen inscription deeper than ink can hold.",
+  "floor": "hemomancy:working_greater",
+  "required_structure": {
+    "pattern": [["  S  "], ["     "], ["     "], ["     "], ["     "]],
+    "key": {"S": {"block": "hemomancy:enzymatic_scriptorium"}}
+  },
+  "brazier_signature": [
+    {"ingredient": {"item": "hemomancy:palimpsest_burin"}, "count": 1},
+    {"ingredient": {"item": "minecraft:echo_shard"}, "count": 1},
+    {"ingredient": {"item": "minecraft:glow_ink_sac"}, "count": 1},
+    {"ingredient": {"item": "hemomancy:mnemonic_folio"}, "count": 1},
+    {"ingredient": {"item": "hemomancy:axonal_slate"}, "count": 1},
+    {"ingredient": {"item": "hemomancy:myelin_sheath"}, "count": 1}
+  ],
+  "ceremony": {
+    "profile": "ceremonial", "layout": "cardinal",
+    "anchors": [{"y": 1, "ring": 0, "order": 0}, {"y": 1, "ring": 0, "order": 1},
+      {"y": 1, "ring": 0, "order": 2}, {"y": 1, "ring": 0, "order": 3},
+      {"y": 1, "ring": 1, "order": 0}, {"y": 1, "ring": 1, "order": 1},
+      {"y": 1, "ring": 1, "order": 2}, {"y": 1, "ring": 1, "order": 3}],
+    "support_sockets": [], "waves": [], "guaranteed_waves": [], "fragile_offsets": [],
+    "target_duration_ticks": 3600, "focus": "living_staff", "required_helpers": 0,
+    "helper_roles": ["anchor", "attendant", "warden"], "still_interval_ticks": 0,
+    "atmosphere": {"fog": "faint", "lightning": false, "dome": false}, "failure": "safe_retry"
+  }
+}

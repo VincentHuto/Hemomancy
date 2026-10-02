@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.block.harbinger.functional.WarpChairBloc
 import com.vincenthuto.hemomancy.common.entity.utility.ArborOfWillEntity;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.util.TriState;
@@ -24,8 +25,10 @@ public final class ChamberVisitEvents {
 	@SubscribeEvent
 	public static void onWake(PlayerWakeUpEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
-			if (!com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.completeSleep(player, !event.wakeImmediately()))
-                ChamberVisitService.onCompletedSleep(player, !event.wakeImmediately());
+			// Leaving bed also uses the slow wake animation; only the server's night skip completes rest.
+			boolean completed = !event.wakeImmediately() && !event.updateLevel();
+			if (!com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.completeSleep(player, completed))
+				ChamberVisitService.onCompletedSleep(player, completed);
 		}
 	}
 
@@ -127,9 +130,14 @@ public final class ChamberVisitEvents {
 		event.getAffectedBlocks().removeIf(pos -> WarpChairBlock.isPaired(event.getLevel(), pos));
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public static void onToss(ItemTossEvent event) {
-		if (event.getPlayer() instanceof ServerPlayer player && ChamberVisitService.isObservational(player)) event.setCanceled(true);
+		if (event.getPlayer() instanceof ServerPlayer player && ChamberVisitService.isObservational(player)) {
+			event.setCanceled(true);
+			// NeoForge removes the tossed stack before posting this event.
+			player.getInventory().add(event.getEntity().getItem().copy());
+			player.containerMenu.broadcastChanges();
+		}
 	}
 
 	@SubscribeEvent

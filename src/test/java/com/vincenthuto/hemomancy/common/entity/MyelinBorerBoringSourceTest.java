@@ -34,7 +34,10 @@ class MyelinBorerBoringSourceTest {
 	@Test
 	void mendingOnlyFillsGenuineGaps() throws IOException {
 		String goal = read(ARTHROPOD + "MendFiberGoal.java");
-		assertTrue(goal.contains("FiberGapRules.isGap"),
+		assertTrue(goal.contains("FiberRepair.gapAxis") && goal.contains("FiberRepair.repair"),
+				"mending must use shared gap validation and repair");
+		String repair = read(ARTHROPOD + "FiberRepair.java");
+		assertTrue(repair.contains(".isAir()") && repair.contains("FiberGapRules.gapAxis"),
 				"mending must be gated on gap detection, or Borers would extrude fiber into open void");
 		assertTrue(goal.contains("!this.borer.isAgitated()"), "only calm Borers mend");
 	}

@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.manipulation.animation;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
@@ -68,7 +69,8 @@ public final class CastingAnimationManager {
         var known=HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
         return player.isAlive() && !ManipulationRetirementRules.isRetiredManipulation(manipulation)
                 && !com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(player)
-                && known!=null && known.getSelectedManip()!=null
+                && known!=null && known.getSelectedMemoryRef().kind()==MemoryEntryKind.MANIPULATION
+                && known.getSelectedManip()!=null
                 && known.getSelectedManip().getName().equals(manipulation.getName())
                 && known.isManipEquipped(manipulation) && known.isManipulationAvailable(manipulation)
                 && HemoCapabilityAccess.requireBloodVolume(player).isActive()

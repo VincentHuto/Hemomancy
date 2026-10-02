@@ -1,0 +1,11 @@
+{
+  "type": "hutoslib:chapter",
+  "ordinality": 10,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "color": "0.2,0,0",
+  "title": "Vial Separation",
+  "subtitle": "Recover what remains",
+  "icon": "hemomancy:vial_centrifuge",
+  "tabColor": "#330505",
+  "rowLimit": 7
+}

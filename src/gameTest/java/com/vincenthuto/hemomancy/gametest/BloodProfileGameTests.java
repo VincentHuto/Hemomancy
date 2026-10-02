@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.gametest;
 
 import com.mojang.authlib.GameProfile;
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.*;
@@ -28,12 +29,81 @@ import net.minecraft.world.entity.ai.attributes.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.neoforged.neoforge.gametest.*;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.filter.AbstractFilter;
+import org.apache.logging.log4j.core.impl.Log4jLogEvent;
+import org.apache.logging.log4j.message.SimpleMessage;
 import java.nio.file.*;
 import java.util.*;
 
 @GameTestHolder("blood_injection_validation")
 @PrefixGameTestTemplate(false)
 public final class BloodProfileGameTests {
+    private static final String MALFORMED_FIXTURE_ERROR =
+            "Invalid blood profile absent_mod:blood_profiles/malformed.json: requires_living_syringe must be a boolean";
+
+    @GameTest(template = "empty")
+    public static void expectedProfileRejectionCaptureDoesNotHideOtherErrors(GameTestHelper h) {
+        var filter = new MalformedFixtureFilter("fixture-thread");
+        var neutral = org.apache.logging.log4j.core.Filter.Result.NEUTRAL;
+        h.assertTrue(filter.filter(rejectionEvent("other.logger", "fixture-thread", Level.ERROR, MALFORMED_FIXTURE_ERROR)) == neutral,
+                "Expected rejection capture hid another logger");
+        h.assertTrue(filter.filter(rejectionEvent(Hemomancy.LOGGER.getName(), "other-thread", Level.ERROR, MALFORMED_FIXTURE_ERROR)) == neutral,
+                "Expected rejection capture hid another thread");
+        h.assertTrue(filter.filter(rejectionEvent(Hemomancy.LOGGER.getName(), "fixture-thread", Level.WARN, MALFORMED_FIXTURE_ERROR)) == neutral,
+                "Expected rejection capture consumed another severity");
+        h.assertTrue(filter.filter(rejectionEvent(Hemomancy.LOGGER.getName(), "fixture-thread", Level.ERROR,
+                MALFORMED_FIXTURE_ERROR.replace("absent_mod", "hemomancy"))) == neutral,
+                "Expected rejection capture hid a shipped-resource error");
+        h.assertTrue(filter.filter(rejectionEvent(Hemomancy.LOGGER.getName(), "fixture-thread", Level.ERROR,
+                MALFORMED_FIXTURE_ERROR + " unexpected detail")) == neutral,
+                "Expected rejection capture accepted an inexact message");
+        h.assertTrue(filter.filter(rejectionEvent(Hemomancy.LOGGER.getName(), "fixture-thread", Level.ERROR, MALFORMED_FIXTURE_ERROR))
+                        == org.apache.logging.log4j.core.Filter.Result.DENY && filter.count.get() == 1,
+                "Expected rejection capture must consume exactly its own known error");
+        h.succeed();
+    }
+
+    private static LogEvent rejectionEvent(String logger, String thread, Level level, String message) {
+        return Log4jLogEvent.newBuilder().setLoggerName(logger).setThreadName(thread).setLevel(level)
+                .setMessage(new SimpleMessage(message)).build();
+    }
+
+    private static final class MalformedFixtureFilter extends AbstractFilter {
+        private final String thread;
+        private final java.util.concurrent.atomic.AtomicInteger count = new java.util.concurrent.atomic.AtomicInteger();
+
+        private MalformedFixtureFilter(String thread) { this.thread = thread; }
+
+        @Override public Result filter(LogEvent event) {
+            if (event.getLevel() != Level.ERROR || !Hemomancy.LOGGER.getName().equals(event.getLoggerName())
+                    || !thread.equals(event.getThreadName())
+                    || !MALFORMED_FIXTURE_ERROR.equals(event.getMessage().getFormattedMessage())) return Result.NEUTRAL;
+            count.incrementAndGet();
+            return Result.DENY;
+        }
+    }
+
+    private static BloodProfileData.Snapshot prepareMalformedFixture(GameTestHelper h, BloodProfileData loader,
+            java.lang.reflect.Method prepare, ResourceManager manager) throws Exception {
+        var context = (LoggerContext) LogManager.getContext(false);
+        var logger = context.getConfiguration().getLoggerConfig(Hemomancy.LOGGER.getName());
+        var filter = new MalformedFixtureFilter(Thread.currentThread().getName());
+        logger.addFilter(filter);
+        BloodProfileData.Snapshot result;
+        try {
+            result = (BloodProfileData.Snapshot) prepare.invoke(loader, manager, InactiveProfiler.INSTANCE);
+        } finally {
+            logger.removeFilter(filter);
+        }
+        h.assertTrue(filter.count.get() == 1, "Malformed fixture must log exactly one captured rejection; found " + filter.count.get());
+        Hemomancy.LOGGER.info("Captured expected negative-fixture rejection: {}", MALFORMED_FIXTURE_ERROR);
+        return result;
+    }
+
     private static ServerPlayer player(GameTestHelper h) {
         return player(h, packet -> {});
     }
@@ -267,7 +337,7 @@ public final class BloodProfileGameTests {
         prepare.setAccessible(true);
         apply.setAccessible(true);
         try (var manager = new MultiPackResourceManager(PackType.SERVER_DATA, packs)) {
-            var replacement = (BloodProfileData.Snapshot) prepare.invoke(loader, manager, InactiveProfiler.INSTANCE);
+            var replacement = prepareMalformedFixture(h, loader, prepare, manager);
             var id = ResourceLocation.parse("minecraft:pig");
             h.assertTrue(replacement.json().size() == 2 && replacement.get(ResourceLocation.parse("absent_mod:dormant")).requiresLivingSyringe()
                     && replacement.get(ResourceLocation.parse("absent_mod:malformed")).equals(EntityBloodProfile.EMPTY), "Malformed/dormant definitions handled incorrectly");
@@ -293,7 +363,7 @@ public final class BloodProfileGameTests {
                     && BloodProfileData.profile(EntityType.PIG, false).requiresLivingSyringe(), "Disconnect cleared server snapshot");
             Files.delete(root.resolve("pack0/data/minecraft/blood_profiles/pig.json"));
             Files.delete(root.resolve("pack1/data/minecraft/blood_profiles/pig.json"));
-            var removed = (BloodProfileData.Snapshot) prepare.invoke(loader, manager, InactiveProfiler.INSTANCE);
+            var removed = prepareMalformedFixture(h, loader, prepare, manager);
             apply.invoke(loader, removed, manager, InactiveProfiler.INSTANCE);
             h.assertTrue(BloodSampleData.profile(vial, false).tendencies().isEmpty() && BloodSampleData.identified(vial), "Reload retained stale traits or erased identification");
         } finally {

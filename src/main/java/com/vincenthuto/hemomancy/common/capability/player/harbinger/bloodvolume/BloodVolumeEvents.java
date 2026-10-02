@@ -22,6 +22,7 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServer
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodFlowDiagnostics;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodlinePool;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncMaxBloodDiagnostics;
+import com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -33,6 +34,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
@@ -43,6 +45,28 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class BloodVolumeEvents {
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public static void ordinaryRecruitDied(LivingDeathEvent event) {
+		if (!(event.getEntity() instanceof ProfessionalHarbingerEntity npc)
+				|| npc.isSuccessor() || !(npc.level() instanceof ServerLevel level)) return;
+		ServerLevel overworld = level.getServer().overworld();
+		BloodlineSavedData data = BloodlineSavedData.get(overworld);
+		for (Bloodline line : data.getAllBloodlines().values()) {
+			if (!line.hasNpcMember(npc.getUUID())) continue;
+			data.removeNpcMember(line.getBloodlineUUID(), npc.getUUID());
+			line.clampPoolToCapacity();
+			for (var memberId : line.getPlayerUUIDS()) {
+				ServerPlayer member = level.getServer().getPlayerList().getPlayer(memberId);
+				if (member == null) continue;
+				HemoCapabilityAccess.getBloodVolume(member).ifPresent(volume -> {
+					volume.setBloodLine(line);
+					syncVolume(member, volume);
+				});
+			}
+			syncBloodlinePool(overworld, line);
+		}
+	}
+
 	@SubscribeEvent
 	public static void playerTick(PlayerTickEvent.Post event) {
 		Player player = event.getEntity();

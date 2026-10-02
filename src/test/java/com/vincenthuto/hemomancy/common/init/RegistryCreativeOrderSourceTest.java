@@ -29,19 +29,22 @@ public final class RegistryCreativeOrderSourceTest {
 				"fungal_spine = BASEITEMS.register",
 				"hemolytic_solution = BASEITEMS.register");
 
-		assertInOrder("special item registration should put player-facing tools before debug tools",
+		assertInOrder("special item registration should preserve player-facing tool order",
 				itemInit,
 				"liber_sanguinum = SPECIALITEMS.register",
 				"harbinger_assignment_ledger = SPECIALITEMS.register",
 				"blood_absorption = SPECIALITEMS.register",
 				"blood_projection = SPECIALITEMS.register",
 				"living_syringe = SPECIALITEMS.register",
-				"vial_rack = SPECIALITEMS.register",
 				"morphling_jar = SPECIALITEMS.register",
-				"chitinite_arm_banner = SPECIALITEMS.register",
-				"structure_spawner = SPECIALITEMS.register",
-				"debug_showcase = SPECIALITEMS.register",
-				"structure_scanner = SPECIALITEMS.register");
+				"vial_rack = SPECIALITEMS.register",
+				"chitinite_arm_banner = SPECIALITEMS.register");
+
+		String mod = read("src/main/java/com/vincenthuto/hemomancy/Hemomancy.java");
+		assertInOrder("debug tools should use the explicit WIP display order", mod,
+				"populator.accept(ItemInit.structure_spawner.get())",
+				"populator.accept(ItemInit.structure_scanner.get())",
+				"populator.accept(ItemInit.debug_showcase.get())");
 
 		assertInOrder("item stream should expose special utilities before handheld weapons",
 				itemInit,

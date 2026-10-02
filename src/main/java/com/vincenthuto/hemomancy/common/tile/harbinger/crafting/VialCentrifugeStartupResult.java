@@ -8,7 +8,10 @@ public enum VialCentrifugeStartupResult {
 	IMBALANCE("imbalance"),
 	INVALID_SAMPLE("invalid_sample"),
 	BLOCKED_ENZYME_OUTPUT("blocked_enzyme_output"),
-	BLOCKED_VIAL_RETURN("blocked_vial_return");
+	BLOCKED_VIAL_RETURN("blocked_vial_return"),
+	BLOCKED_SECONDARY_OUTPUT("blocked_secondary_output"),
+	BLOCKED_POWDER_OUTPUT("blocked_powder_output"),
+	RITE_LOCKED("rite_locked");
 
 	private final String translationKey;
 

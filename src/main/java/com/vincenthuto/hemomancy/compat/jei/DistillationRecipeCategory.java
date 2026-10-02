@@ -29,7 +29,7 @@ import java.util.Arrays;
 public class DistillationRecipeCategory implements IRecipeCategory<DistillationRecipe> {
 
 	private static final int BG_W = 150;
-	private static final int BG_H = 90;  // slightly taller to fit catalyst label
+	private static final int BG_H = 110;
 
 	private static final int BORDER_OUTER = 0xFF330808;
 	private static final int BORDER_INNER = 0xFF220606;
@@ -90,8 +90,8 @@ public class DistillationRecipeCategory implements IRecipeCategory<DistillationR
 			Font font = Minecraft.getInstance().font;
 			gfx.drawString(font, Component.literal("Catalyst"), 20, 3, pallid ? 0xFF7B8DAA : 0xFF886644, false);
 		}
-		if (recipe.requiresBloodInput()) {
-			drawSlot(gfx, 1, 25);
+		if (recipe.requiresVesselInput()) {
+			drawSlot(gfx, 110, 50);
 		}
 
 		// ── Fire indicator (campfire catalyst) ──
@@ -130,11 +130,14 @@ public class DistillationRecipeCategory implements IRecipeCategory<DistillationR
 		// ── Text ──
 		drawExperience(recipe, gfx, BG_H - 20);
 		drawCookTime(recipe, gfx, BG_H - 10);
+		if (recipe.getBloodCost() > 0) gfx.drawString(Minecraft.getInstance().font,
+				Component.translatable("container.hemomancy.alembic.advanced.cost", recipe.getBloodCost()),
+				2, BG_H - 10, 0xFFCC7777, false);
 
 		// "Requires fire below" hint
 		Font font = Minecraft.getInstance().font;
 		MutableComponent hint = Component.translatable("gui.hemomancy.ghastly_alembic.requires_fire");
-		gfx.drawString(font, hint, 42, 56, pallid ? 0xFF8AA4C4 : 0xFF884400, false);
+		gfx.drawString(font, hint, 42, 74, pallid ? 0xFF8AA4C4 : 0xFF884400, false);
 	}
 
 	private void drawSlot(GuiGraphics gfx, int sx, int sy) {
@@ -202,19 +205,20 @@ public class DistillationRecipeCategory implements IRecipeCategory<DistillationR
 
 		// Catalyst slot (top-left) — always present; populated only when recipe needs one
 		if (recipe.requiresCatalyst()) {
-			builder.addSlot(RecipeIngredientRole.CATALYST, 2, 2)
+			builder.addSlot(recipe.consumesCatalyst() ? RecipeIngredientRole.INPUT : RecipeIngredientRole.CATALYST, 2, 2)
 					.addIngredients(VanillaTypes.ITEM_STACK, Arrays.asList(recipe.getCatalyst().getItems()));
 		} else {
 			builder.addSlot(RecipeIngredientRole.CATALYST, 2, 2);
 		}
-		if (recipe.requiresBloodInput()) {
-			builder.addSlot(RecipeIngredientRole.INPUT, 2, 26)
-					.addIngredients(VanillaTypes.ITEM_STACK, Arrays.asList(recipe.getBloodInput().getItems()));
+		if (recipe.requiresVesselInput()) {
+			builder.addSlot(RecipeIngredientRole.INPUT, 111, 51)
+					.addIngredients(VanillaTypes.ITEM_STACK, Arrays.asList(recipe.getVesselInput().getItems()));
 		}
 
-		// Campfire as heat hint — shows that fire below is needed
-		builder.addSlot(RecipeIngredientRole.CATALYST, 21, 51)
+		var heatSlot = builder.addSlot(RecipeIngredientRole.CATALYST, 21, 51)
 				.addIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Items.CAMPFIRE));
+		if (!pallid) heatSlot.addTooltipCallback((slot, tooltip) ->
+				tooltip.add(Component.translatable("hemomancy.jei.alembic.athanor_hint")));
 
 		// Output slot
 		builder.addSlot(RecipeIngredientRole.OUTPUT, 111, 25)

@@ -7,13 +7,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class DistillationConsumptionRulesTest {
 
     @Test
-    void tinctureConsumesAllThreeRecipeInputs() {
+    void tinctureConsumesReagentsAndEmptyPackaging() {
         DistillationConsumptionRules.Consumption consumption =
                 DistillationConsumptionRules.forRecipe(true, true);
 
         assertEquals(1, consumption.mainInput());
         assertEquals(1, consumption.catalyst());
-        assertEquals(1, consumption.bloodInput());
+        assertEquals(1, consumption.vesselInput());
     }
 
     @Test
@@ -23,6 +23,6 @@ class DistillationConsumptionRulesTest {
 
         assertEquals(1, consumption.mainInput());
         assertEquals(0, consumption.catalyst());
-        assertEquals(0, consumption.bloodInput());
+        assertEquals(0, consumption.vesselInput());
     }
 }

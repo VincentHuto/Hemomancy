@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " C ",
+    "IFI",
+    " G "
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:chain"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "F": {
+      "item": "hemomancy:ferric_binder"
+    },
+    "G": {
+      "item": "hemomancy:sanguine_glass"
+    }
+  },
+  "result": {
+    "id": "hemomancy:centrifugal_governor_kit"
+  }
+}

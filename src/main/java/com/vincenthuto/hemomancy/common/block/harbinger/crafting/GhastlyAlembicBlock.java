@@ -1,12 +1,18 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.crafting;
 
+import com.vincenthuto.hemomancy.common.station.CreativeStationUpgrades;
+import com.vincenthuto.hemomancy.common.brewing.AlembicTier;
+
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity;
+import net.minecraft.core.component.DataComponents;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.GhastlyAlembicBlockEntity;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.station.StationTierProperty;
 import net.minecraft.world.item.ItemStack;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
@@ -54,21 +60,65 @@ public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock,
 	public static final BooleanProperty LIT = BlockStateProperties.LIT;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
-	/** Filler offset: 1×2×1 — one filler block directly above the base. */
-	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
-			//new BlockPos(0, 1, 0)
-	};
-	private static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 32.0D, 16.0D);
 
 	public GhastlyAlembicBlock(BlockBehaviour.Properties props) {
 		super(props);
 		this.registerDefaultState(
-				this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(LIT, false).setValue(WATERLOGGED, false));
+				this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(LIT, false).setValue(WATERLOGGED, false)
+						.setValue(StationTierProperty.STAGE, 0));
 	}
 
 	@Override
 	public BlockPos[] getFillerOffsets() {
-		return FILLER_OFFSETS;
+		return AlembicGeometry.cells(2, Direction.NORTH).keySet().stream()
+				.filter(offset -> !offset.equals(BlockPos.ZERO)).toArray(BlockPos[]::new);
+	}
+
+	public static boolean hasSpace(Level level, BlockPos pos, BlockState state) {
+		for (BlockPos offset : AlembicGeometry.cells(StationTierProperty.stage(state), state.getValue(FACING)).keySet()) {
+			BlockPos cell = pos.offset(offset);
+			if (level.isOutsideBuildHeight(cell) || !level.getWorldBorder().isWithinBounds(cell) || !level.hasChunkAt(cell)) return false;
+			if (offset.equals(BlockPos.ZERO)) continue;
+			if (!level.getBlockState(cell).canBeReplaced() && !ownsFiller(level, cell, pos)) return false;
+		}
+		return true;
+	}
+
+	private static boolean ownsFiller(BlockGetter level, BlockPos cell, BlockPos controller) {
+		return level.getBlockState(cell).is(BlockInit.filler_block.get())
+				&& level.getBlockEntity(cell) instanceof FillerBlockEntity filler
+				&& controller.equals(filler.getMainBlockPos());
+	}
+
+	@Override
+	public void placeFillers(Level level, BlockPos pos, BlockState state) {
+		if (level.isClientSide || !hasSpace(level, pos, state)) return;
+		for (BlockPos offset : AlembicGeometry.cells(StationTierProperty.stage(state), state.getValue(FACING)).keySet()) {
+			if (offset.equals(BlockPos.ZERO)) continue;
+			BlockPos cell = pos.offset(offset);
+			if (ownsFiller(level, cell, pos)) continue;
+			boolean waterlogged = level.getFluidState(cell).getType() == Fluids.WATER;
+			level.setBlock(cell, BlockInit.filler_block.get().defaultBlockState()
+					.setValue(WATERLOGGED, waterlogged), Block.UPDATE_CLIENTS);
+			if (level.getBlockEntity(cell) instanceof FillerBlockEntity filler) {
+				filler.setMainBlockPos(pos);
+				level.sendBlockUpdated(cell, level.getBlockState(cell), level.getBlockState(cell), Block.UPDATE_ALL);
+			}
+		}
+	}
+
+	@Override
+	public void removeFillers(Level level, BlockPos pos) {
+		for (BlockPos cell : BlockPos.betweenClosed(pos.offset(-1, 0, -1), pos.offset(1, 2, 1))) {
+			if (!ownsFiller(level, cell, pos)) continue;
+			boolean waterlogged = level.getBlockState(cell).getValue(WATERLOGGED);
+			((FillerBlockEntity) level.getBlockEntity(cell)).setMainBlockPos(null);
+			level.setBlockAndUpdate(cell, waterlogged ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState());
+		}
+	}
+
+	public static VoxelShape partShape(BlockState state, BlockPos offset) {
+		return AlembicGeometry.shape(StationTierProperty.stage(state), state.getValue(FACING), offset);
 	}
 
 	@Override
@@ -88,12 +138,12 @@ public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock,
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
-		return SHAPE;
+		return partShape(state, BlockPos.ZERO);
 	}
 
 	@Override
 	protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
-		return SHAPE;
+		return partShape(state, BlockPos.ZERO);
 	}
 
 	@Override
@@ -130,7 +180,7 @@ public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock,
 
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-		builder.add(FACING, LIT, WATERLOGGED);
+		builder.add(FACING, LIT, WATERLOGGED, StationTierProperty.STAGE);
 	}
 
 	@Override
@@ -150,11 +200,11 @@ public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock,
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
 		BlockPos pos = context.getClickedPos();
-		Level level = (Level) context.getLevel();
-		if (pos.getY() + 1 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos)) {
-			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
-		}
-		return null; // Prevents placement if there's not enough room
+		BlockState state = defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite())
+				.setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
+		var saved = context.getItemInHand().get(DataComponents.BLOCK_STATE);
+		if (saved != null) state = state.setValue(StationTierProperty.STAGE, StationTierProperty.stage(saved.apply(defaultBlockState())));
+		return hasSpace(context.getLevel(), pos, state) ? state : null;
 	}
 
 	@Override
@@ -185,7 +235,8 @@ public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock,
 		super.neighborChanged(state, level, pos, block, fromPos, isMoving);
 		// Re-check heat when a neighbor changes (e.g. fire placed/removed below)
 		if (!level.isClientSide) {
-			boolean heated = !state.getValue(WATERLOGGED) && GhastlyAlembicBlockEntity.isHeatSource(level, pos);
+			boolean heated = AlembicTier.fromSaved(StationTierProperty.stage(state)).hasInternalHeat()
+					|| !state.getValue(WATERLOGGED) && GhastlyAlembicBlockEntity.isHeatSource(level, pos);
 			if (state.getValue(LIT) != heated) {
 				level.setBlock(pos, state.setValue(LIT, heated), 3);
 			}
@@ -202,10 +253,6 @@ public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock,
 					for (ItemStack recovery = alembic.takeHiddenCatalystRecovery(); !recovery.isEmpty();
 							recovery = alembic.takeHiddenCatalystRecovery())
 						Block.popResource(level, pos, recovery);
-					if (alembic.tier().ordinal() >= 1)
-						Block.popResource(level, pos, new ItemStack(ItemInit.hematic_condenser_kit.get()));
-					if (alembic.tier().ordinal() >= 2)
-						Block.popResource(level, pos, new ItemStack(ItemInit.sanguine_athanor_kit.get()));
 					alembic.getRecipesToAwardAndPopExperience(serverLevel, Vec3.atCenterOf(pos));
 				}
 				level.updateNeighbourForOutputSignal(pos, this);
@@ -221,6 +268,10 @@ public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock,
 		BlockEntity be = level.getBlockEntity(pos);
 		if (be instanceof GhastlyAlembicBlockEntity te) {
 			if (!level.isClientSide) {
+				for (ItemStack recovered = te.takeHiddenCatalystRecovery(); !recovered.isEmpty();
+						recovered = te.takeHiddenCatalystRecovery()) {
+					if (!player.getInventory().add(recovered)) player.drop(recovered, false);
+				}
 				VanillaPacketDispatcher.dispatchTEToNearbyPlayers(level, pos);
 				((ServerPlayer) player).openMenu(te, pos);
 			}
@@ -255,6 +306,8 @@ public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock,
 	@Override
 	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
 			Player player, InteractionHand hand, BlockHitResult hit) {
+        if (CreativeStationUpgrades.tryApply(stack, level, pos, player))
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
 		this.openContainer(level, pos, player);
 		return ItemInteractionResult.SUCCESS;
 	}
@@ -266,7 +319,8 @@ public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock,
 	@Override
 	public boolean placeLiquid(LevelAccessor level, BlockPos pos, BlockState state, FluidState fluidState) {
 		if (!state.getValue(WATERLOGGED) && fluidState.getType() == Fluids.WATER) {
-			level.setBlock(pos, state.setValue(WATERLOGGED, true).setValue(LIT, false), Block.UPDATE_ALL);
+			boolean internalHeat = AlembicTier.fromSaved(StationTierProperty.stage(state)).hasInternalHeat();
+			level.setBlock(pos, state.setValue(WATERLOGGED, true).setValue(LIT, internalHeat), Block.UPDATE_ALL);
 			level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
 			return true;
 		}

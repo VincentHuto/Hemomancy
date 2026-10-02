@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:book",
+  "coverLoc": "hemomancy:textures/gui/guide/title.png",
+  "overlayLoc": "hemomancy:textures/gui/guide/hemo_overlay.png",
+  "title": "Hemomancy",
+  "subtitle": "Liber Sanguinium",
+  "text": "A guide to your blood and its power.",
+  "icon": "hemomancy:sanguine_formation",
+  "theme": "hemomancy:fane"
+}

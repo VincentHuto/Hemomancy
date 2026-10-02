@@ -19,11 +19,11 @@ public final class ConjureLivingStaffMemoryResourceTest {
 		Path recipe = ROOT.resolve("src/main/resources/data/hemomancy/recipe/memory_weaving/memory_conjure_living_staff.json");
 
 		assertContains("living staff memory holder is registered", itemInit,
-				"memory_conjure_living_staff = BASEITEMS.register");
+				"memory_conjure_living_staff = registerBloodMemoryItem(\"memory_conjure_living_staff\", ManipulationInit.conjure_staff)");
 		assertContains("living staff memory registry id is correct", itemInit,
 				"\"memory_conjure_living_staff\"");
 		assertContains("living staff memory teaches conjure staff", itemInit,
-				"new BloodMemoryItem(new Item.Properties(), ManipulationInit.conjure_staff)");
+				"new BloodMemoryItem(new Item.Properties(), manipulation)");
 		assertContains("living staff memory is hidden from creative tab", hemomancy,
 				"item != ItemInit.memory_conjure_living_staff.get()");
 		assertContains("living staff memory has lang entry", lang,

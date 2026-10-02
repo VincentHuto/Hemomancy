@@ -20,15 +20,18 @@ public final class BookKitGameTests {
     @GameTest(template="empty",batch="book_kit")
     public static void fullCorpusBindsOnDedicatedServer(GameTestHelper helper) {
         var loader=BookPlaceboReloadListener.INSTANCE;
-        var fane=loader.getBookByTitle(Hemomancy.rloc("fanesanguinium"));
+        var sanguinium=loader.getBookByTitle(Hemomancy.rloc("libersanguinium"));
         var liber=loader.getBookByTitle(Hemomancy.rloc("liberimmaculatus"));
-        helper.assertTrue(fane!=null&&liber!=null,"Both books must bind without client classes");
-        helper.assertTrue(fane.getSourceIndex().entries().size()==78,"Fane lost entries");
+        helper.assertTrue(sanguinium!=null&&liber!=null,"Both books must bind without client classes");
+        helper.assertTrue(sanguinium.getSourceIndex().entries().size()==81,
+                "Expected 81 Liber Sanguinium entries including the scar lesson, found " + sanguinium.getSourceIndex().entries().size());
+        var scar=loader.findTarget(Hemomancy.rloc("libersanguinium/the_hematic_order/pages/scar_practice")).orElseThrow();
+        helper.assertTrue(((PageTemplate)scar.template()).getText().contains("Blood Absorption"),"Scar control teaching did not bind");
         helper.assertTrue(liber.getSourceIndex().entries().size()==19,"Liber lost entries");
-        helper.assertTrue(fane.getTemplate().getThemeId().orElseThrow().equals(Hemomancy.rloc("fane")),"Theme ID missing");
-        var cut=loader.findTarget(Hemomancy.rloc("fanesanguinium/the_infection/pages/antecedent_vigil_record_read")).orElseThrow();
+        helper.assertTrue(sanguinium.getTemplate().getThemeId().orElseThrow().equals(Hemomancy.rloc("fane")),"Theme ID missing");
+        var cut=loader.findTarget(Hemomancy.rloc("libersanguinium/the_infection/pages/antecedent_vigil_record_read")).orElseThrow();
         helper.assertTrue(((PageTemplate)cut.template()).getPresentation().record().isPresent(),"Record metadata missing");
-        helper.assertTrue(!fane.getGlossary().isEmpty(),"Glossary did not bind");
+        helper.assertTrue(!sanguinium.getGlossary().isEmpty(),"Glossary did not bind");
         helper.succeed();
     }
 

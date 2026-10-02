@@ -82,7 +82,7 @@ Main completion: Chamber return, bound Throne, and successful Vigil certify The 
 
 ## Degree 7: Archon of the Hematic Order
 
-The Vicar gives the final doctrinal disclosure. The Mnemonist interprets the Chamber and introduces Monolithic Script. The Artificer teaches Masterwork and the final equipment framework. The Alchemist describes observable changes without presenting speculation as complete knowledge.
+The Vicar gives the final doctrinal disclosure. The Mnemonist interprets the Chamber and introduces the Rite of the Palimpsest. The Artificer teaches Masterwork and the final equipment framework. The Alchemist describes observable changes without presenting speculation as complete knowledge.
 
 The player shatters the Monolith, receives its seed, grows the Bloom, consumes nine Pomes from one Bloom, receives the Spine, and experiences the first temporary projection. The projection returns the player before the final response becomes available.
 

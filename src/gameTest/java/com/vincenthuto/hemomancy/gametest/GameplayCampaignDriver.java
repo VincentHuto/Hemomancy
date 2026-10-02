@@ -139,6 +139,22 @@ public final class GameplayCampaignDriver {
                 mc.screen.mouseClicked(x, y, button);
                 if (mc.screen != null) mc.screen.mouseReleased(x, y, button);
             }
+            case "drag" -> {
+                if (mc.screen == null) throw new IllegalStateException("No screen");
+                double x = c.get("x").getAsDouble(), y = c.get("y").getAsDouble();
+                double endX = c.get("endX").getAsDouble(), endY = c.get("endY").getAsDouble();
+                int button = c.has("button") ? c.get("button").getAsInt() : 0;
+                mc.screen.mouseClicked(x, y, button);
+                if (mc.screen != null) {
+                    mc.screen.mouseDragged(endX, endY, button, endX - x, endY - y);
+                    mc.screen.mouseReleased(endX, endY, button);
+                }
+            }
+            case "type" -> {
+                if (mc.screen == null) throw new IllegalStateException("No screen");
+                for (char character : c.get("text").getAsString().toCharArray())
+                    mc.screen.charTyped(character, 0);
+            }
             case "key" -> {
                 if (mc.screen == null) throw new IllegalStateException("No screen");
                 mc.screen.keyPressed(c.get("key").getAsInt(), 0, c.has("mods") ? c.get("mods").getAsInt() : 0);
@@ -158,6 +174,14 @@ public final class GameplayCampaignDriver {
                 log("assist", "Bypass broken topic navigation with original focused dialogue; choices still send normal packets");
                 DialogueScreen.open(new DialogueTree(tree.speakerName(), tree.speakerIcon(),
                         tree.startNodeId(), tree.nodes(), tree.entityId(), tree.theme(), DialoguePresentation.focused()));
+            }
+            case "binding" -> {
+                if (mc.screen != null) throw new IllegalStateException("Binding input requires the world screen");
+                KeyMapping key = Arrays.stream(mc.options.keyMappings)
+                        .filter(k -> k.getName().equals(c.get("binding").getAsString())).findFirst().orElseThrow();
+                release();
+                key.setDown(true); held.add(key); KeyMapping.click(key.getKey());
+                releaseAt = ticks + (c.has("ticks") ? c.get("ticks").getAsInt() : 1);
             }
             case "rebind" -> {
                 KeyMapping key = Arrays.stream(mc.options.keyMappings)
@@ -233,6 +257,7 @@ public final class GameplayCampaignDriver {
         state.addProperty("tick", ticks);
         state.addProperty("screen", mc.screen == null ? "world" : mc.screen.getClass().getSimpleName());
         state.addProperty("guiWidth", mc.getWindow().getGuiScaledWidth()); state.addProperty("guiHeight", mc.getWindow().getGuiScaledHeight());
+        state.addProperty("manipulationChargeTicks", com.vincenthuto.hemomancy.client.event.ClientEvents.getManipulationChargeTicks());
         JsonArray widgets = new JsonArray();
         if (mc.screen != null) for (var child : mc.screen.children()) if (child instanceof AbstractWidget widget) {
             JsonObject w = new JsonObject(); w.addProperty("label", widget.getMessage().getString());
@@ -280,8 +305,27 @@ public final class GameplayCampaignDriver {
                     server.addProperty("archonPath", degree.getArchonPath().name());
                     server.addProperty("pomes", degree.getTotalPomesConsumed());
                     server.addProperty("communion", degree.isQliphothCommunionDone());
-                    HemoCapabilityAccess.getBloodVolume(player).ifPresent(v -> {server.addProperty("blood",v.getBloodVolume());server.addProperty("capacity",v.getMaxBloodVolume());});
+                    HemoCapabilityAccess.getBloodVolume(player).ifPresent(v -> {server.addProperty("blood",v.getBloodVolume());server.addProperty("capacity",v.getMaxBloodVolume());server.addProperty("activeBlood",v.isActive());});
+                    HemoCapabilityAccess.getLivingStaffProgress(player).ifPresent(progress -> {
+                        server.addProperty("livingStaffBond", progress.hasLivingStaffBond());
+                        server.addProperty("staffBloodHandled", progress.getBloodHandled());
+                        server.addProperty("vesperMemoryAwakened", progress.isVesperMemoryAwakened());
+                    });
                     server.addProperty("persistent",player.getPersistentData().toString());
+                    server.addProperty("experienceLevel", player.experienceLevel);
+                    server.addProperty("experienceProgress", player.experienceProgress);
+                    server.addProperty("totalExperience", player.totalExperience);
+                    HemoCapabilityAccess.getKnownManipulations(player).ifPresent(known -> {
+                        server.add("equippedMemories", JSON.toJsonTree(known.getEquippedManipNames()));
+                        server.addProperty("selectedMemory", known.getSelectedMemoryRef().storageKey());
+                        server.addProperty("legacySelectedManipulation", known.getSelectedManip().getName());
+                        server.add("loadouts", JSON.toJsonTree(known.getLoadouts()));
+                    });
+                    server.addProperty("muscleMemory", player.getData(
+                            com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes.MUSCLE_MEMORY)
+                            .serializeNBT(player.registryAccess()).toString());
+                    server.addProperty("channeling", com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager
+                            .isChanneling(player.getUUID()));
                     var rite = com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData.get(player.serverLevel()).getRite(uuid);
                     if (rite != null) {
                         JsonObject r = new JsonObject();

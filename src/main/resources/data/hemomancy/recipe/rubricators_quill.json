@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [" I ", "CFC", " P "],
+  "key": {
+    "I": { "item": "minecraft:ink_sac" },
+    "C": { "item": "hemomancy:cuttlefish_chromatophores" },
+    "F": { "item": "minecraft:feather" },
+    "P": { "item": "hemomancy:runic_motif_paper" }
+  },
+  "result": { "id": "hemomancy:rubricators_quill" }
+}

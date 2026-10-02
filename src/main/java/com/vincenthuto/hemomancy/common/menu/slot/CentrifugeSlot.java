@@ -15,7 +15,9 @@ public class CentrifugeSlot extends Slot {
 
 	@Override
 	public boolean mayPlace(ItemStack pStack) {
-		return pStack.getItem() == ItemInit.bloody_vial.get();
+		return container instanceof VialCentrifugeBlockEntity te && !te.isRiteLocked() && !te.isProcessing()
+				&& (pStack.getItem() == ItemInit.bloody_vial.get()
+				|| pStack.getItem() instanceof com.vincenthuto.hemomancy.common.item.harbinger.ConsecratedSyringeItem);
 	}
 
 	@Override
@@ -26,7 +28,7 @@ public class CentrifugeSlot extends Slot {
 	@Override
 	public boolean mayPickup(net.minecraft.world.entity.player.Player pPlayer) {
 		if (container instanceof VialCentrifugeBlockEntity te) {
-			return !te.isSpinning();
+			return !te.isRiteLocked() && !te.isProcessing();
 		}
 		return super.mayPickup(pPlayer);
 	}

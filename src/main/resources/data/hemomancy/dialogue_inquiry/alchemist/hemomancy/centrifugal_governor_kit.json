@@ -1,0 +1,10 @@
+{
+  "conditions": [
+    {
+      "lines": [
+        "hemomancy.alchemist.centrifuge.governor.requirements",
+        "hemomancy.alchemist.centrifuge.governor.claimed"
+      ]
+    }
+  ]
+}

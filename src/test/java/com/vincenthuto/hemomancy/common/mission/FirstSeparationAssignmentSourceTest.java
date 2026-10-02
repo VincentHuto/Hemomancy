@@ -50,10 +50,9 @@ class FirstSeparationAssignmentSourceTest {
 		assertContains(alchemist, "EVENT_FIRST_SEPARATION_CLAIM");
 		assertContains(alchemist, "canBriefFirstSeparation");
 		assertContains(alchemist, "canClaimFirstSeparation");
-		assertContains(handler, "FirstSeparationAssignment.markClaimed(player)");
+		assertContains(handler, "FirstSeparationAssignment.claimRewards(player)");
 		assertContains(handler, "FirstSeparationAssignment.giveBriefingSupplies(player)");
-		assertOrdered(handler, "FirstSeparationAssignment.markClaimed(player)",
-				"FirstSeparationAssignment.rewardStacks()");
+		assertOrdered(helper, "savePendingRewards(player, rewardStacks())", "if (!markClaimed(player))");
 		assertNotContains(read(BLOOD_EVENTS), "ADV_FIRST_SEPARATION_COMPLETE");
 		assertContains(read(OUTPUT_SLOT), "FirstSeparationAssignment.tryRecoverAssignmentOutput");
 	}

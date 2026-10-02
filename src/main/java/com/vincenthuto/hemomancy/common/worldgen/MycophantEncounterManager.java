@@ -22,6 +22,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.portal.DimensionTransition;
@@ -41,6 +42,7 @@ public final class MycophantEncounterManager {
 	private static final String ACTIVE_KEY = Hemomancy.MOD_ID + ":mycophant_active";
 	private static final String REMATCH_KEY = Hemomancy.MOD_ID + ":mycophant_rematch";
 	private static final String CLAIM_KEY = Hemomancy.MOD_ID + ":mycophant_claim_ticks";
+	private static final String TENDRIL_PENDING_KEY = Hemomancy.MOD_ID + ":mycophant_tendril_pending";
 	private static final int ARENA_X = 8192;
 	private static final int ARENA_SPACING = 128;
 	private static final int HALF = 25;
@@ -50,6 +52,7 @@ public final class MycophantEncounterManager {
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent.Post event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
+		if (player.tickCount % 20 == 0) givePendingTendril(player);
 		if (player.getPersistentData().contains(CLAIM_KEY)) tickClaim(player);
 		else tickGardensPlayer(player);
 	}
@@ -171,7 +174,12 @@ public final class MycophantEncounterManager {
 		});
 		clear(owner);
 		ChamberOfWillManager.get(level.getServer()).exitChamber(owner);
-		if (first) give(owner, new ItemStack(ItemInit.mycophant_tendril.get()));
+		if (first) {
+			var persisted = owner.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
+			persisted.putBoolean(TENDRIL_PENDING_KEY, true);
+			owner.getPersistentData().put(Player.PERSISTED_NBT_TAG, persisted);
+			givePendingTendril(owner);
+		}
 		else {
 			give(owner, new ItemStack(ItemInit.sanguine_quintessence.get()));
 			give(owner, new ItemStack(ItemInit.spore_sac.get(), 2 + owner.getRandom().nextInt(3)));
@@ -266,6 +274,19 @@ public final class MycophantEncounterManager {
 		if (!player.addItem(stack)) player.drop(stack, false);
 	}
 
+	private static void givePendingTendril(ServerPlayer player) {
+		if (!player.isAlive() || ChamberVisitService.isObservational(player)) return;
+		var persisted = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
+		if (!persisted.getBoolean(TENDRIL_PENDING_KEY)) return;
+		var tendril = ItemInit.mycophant_tendril.get();
+		int before = player.getInventory().countItem(tendril);
+		player.getInventory().add(new ItemStack(tendril));
+		if (player.getInventory().countItem(tendril) > before) {
+			persisted.remove(TENDRIL_PENDING_KEY);
+			player.getPersistentData().put(Player.PERSISTED_NBT_TAG, persisted);
+		}
+	}
+
 	private static void clear(ServerPlayer player) {
 		PacketHandler.sendToPlayer(player, PacketSyncMycophantFightScene.clearScene());
 		player.getPersistentData().remove(ACTIVE_KEY);
@@ -285,7 +306,9 @@ public final class MycophantEncounterManager {
 
 	@SubscribeEvent
 	public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
-		if (!(event.getEntity() instanceof ServerPlayer player) || !isActive(player)) return;
+		if (!(event.getEntity() instanceof ServerPlayer player)) return;
+		givePendingTendril(player);
+		if (!isActive(player)) return;
 		if (!player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)) { clear(player); return; }
 		PacketHandler.sendToPlayer(player, PacketSyncMycophantFightScene.activate(arenaCenter(player)));
 	}

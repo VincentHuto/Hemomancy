@@ -179,7 +179,7 @@ public final class MaterialAtlasSpec {
 		entryAt("infected_cap", h, "fungal_ecology", d(4), 1010, 761, "infected_fungus");
 		entryAt("infected_stem", h, "fungal_ecology", d(4), 1027, 594, "erythrocytic_mycelium");
 		entryAt("infested_venous_stone", h, "fungal_ecology", d(4), 775, 670, "erythrocytic_dirt", "venous_stone");
-		entryAt("fungal_spine", h, "fungal_ecology", d(4), 1117, 77);
+		entryAt("fungal_spine", h, "fungal_ecology", d(7), 1117, 77, "qliphoth_pome");
 		entryAt("fungal_podium", h, "fungal_ecology", d(4), 1052, 824, "infected_fungus");
 		entryAt("mycelial_crucible", h, "fungal_ecology", d(4), 1052, 871, "fungal_podium", "morphling_incubator");
 		entryAt("fungal_implantation_pylon", h, "fungal_ecology", d(4), 1132, 883, "erythrocytic_mycelium", "hyphae_block");
@@ -225,7 +225,7 @@ public final class MaterialAtlasSpec {
 		entryAt("engram_block", h, "alchemy_enzymes", d(3), 349, 358, "ghastly_alembic");
 		entryAt("enzyme_primer", h, "alchemy_enzymes", d(3), 939, 938, "recycled_enzyme");
 		entryAt("ferric_binder", h, "alchemy_enzymes", d(3), 860, 922, "ferric_enzyme", "hematic_iron_powder");
-		entryAt("qliphoth_bloom", h, "qliphoth_reagents", d(3), 760, 65);
+		entryAt("qliphoth_bloom", h, "qliphoth_reagents", d(7), 760, 65, "qliphoth_seed");
 		entryAt("humoral_barometer", h, "idols_fixtures", d(3), 625, 838);
 		entryAt("ossuary_clock", h, "idols_fixtures", d(3), 591, 838);
 		entryAt("venous_stone_slab", h, "architecture", d(3), 630, 725, "venous_stone");
@@ -298,12 +298,12 @@ public final class MaterialAtlasSpec {
 		entryAt("hallowed_residuum_putriciel", h, "qliphoth_reagents", d(5), 900, 105, "blood_trial_altar");
 		entryAt("hallowed_residuum_seraphae", h, "qliphoth_reagents", d(5), 955, 105, "blood_trial_altar");
 		entryAt("hallowed_residuum_velorum", h, "qliphoth_reagents", d(5), 1010, 105, "blood_trial_altar");
-		entryAt("memory_of_vesper", h, "qliphoth_reagents", d(5), 1066, 77, "blood_trial_altar");
+		entryAt("memory_of_vesper", h, "qliphoth_reagents", d(7), 1066, 77, "qliphoth_bloom");
 		entryAt("monolith_fragment", h, "qliphoth_reagents", d(5), 900, 65, "blood_trial_altar");
 		entryAt("monolith_imbued_cloth", h, "qliphoth_reagents", d(5), 955, 65, "blood_trial_altar");
 		entryAt("monolithic_cornerstone", h, "qliphoth_reagents", d(5), 556, 1004, "vicars_consecration_kit");
-		entryAt("qliphoth_pome", h, "qliphoth_reagents", d(5), 860, 65, "blood_trial_altar");
-		entryAt("qliphoth_seed", h, "qliphoth_reagents", d(5), 805, 65, "blood_trial_altar");
+		entryAt("qliphoth_pome", h, "qliphoth_reagents", d(7), 860, 65, "qliphoth_bloom");
+		entryAt("qliphoth_seed", h, "qliphoth_reagents", d(7), 805, 65, "sanguine_monolith");
 		entryAt("vicars_consecration_kit", h, "masks_vestments", d(5), 420, 1004, "hematic_armature");
 		entryAt("rhizovitta_communis", h, "spores_cultures", d(4), 1220, 858, "fungal_implantation_pylon");
 		entryAt("antiphonomyces_resonans", h, "spores_cultures", d(4), 1220, 903, "fungal_implantation_pylon");

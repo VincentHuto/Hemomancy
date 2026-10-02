@@ -4,6 +4,12 @@ The Phlegethontic Basin is a Nether biome of dark arterial ichor, scorched scab 
 
 Buried ichor veins also occur outside the Basin. Their cores and scab shells remain between five and twenty blocks above the Nether floor. They can pass through compatible Nether biomes containing natural netherrack, basalt, or blackstone. Ores, structures, block entities, portals, and unsupported foreign blocks interrupt and seal their paths.
 
+## Alchemist's Basin commission
+
+At Degree 5, the Alchemist requests a blood sample from either an Excoriated or a Phlegethontic Bombardier and five carried Escharian Scyphus items. This optional Side assignment does not grant permission to enter the Nether or gate promotion. Ask the Alchemist for a Basin bearing from your current Nether position or its Overworld-aligned coordinates.
+
+Use the Living Syringe to collect the sample. Sneak-use it to eject the rack, use the rack on an idle Vial Centrifuge you have personally crafted, then open the machine and remove the vial without spinning. Hold that vial in your main hand when reporting. Microscope identification is optional. The Alchemist retains neither the sample nor the five plants; completed reports remain recorded without carrying the proof afterward.
+
 ## Escharian Overgrowth
 
 Escharian Scyphus is a gatherable, shallow cup plant. One block space holds one to five Scyphus: placing another Scyphus onto an existing group increases its count, and breaking the group returns that many items. Counts one through four use the four authored small-cup arrangements; count five uses the original large cup. It attaches to any sturdy block face except Escharian Overgrowth Rim, opens away from its support, and can be waterlogged. Removing the supporting block drops the full group and leaves its water behind.

@@ -226,10 +226,11 @@ class GameTestHarnessSourceContractTest {
 		var advancementIds = Pattern.compile("Hemomancy\\.rloc\\(\"([^\"]+)\"\\)")
 				.matcher(snapshot).results().map(match -> match.group(1)).toList();
 		assertEquals(java.util.List.of(
+				"hemomancy/initiation_blood_claimed",
 				"hemomancy/the_first_awakening",
 				"hemomancy/degree_1_neophyte",
 				"hemomancy/vessel_filled",
-				"hemomancy/fane_sanguinium",
+				"hemomancy/liber_sanguinium",
 				"hemomancy/iron_in_the_blood",
 				"recipe/hemomancy/living_weapon_graft/blade",
 				"recipe/hemomancy/living_weapon_graft/axe",
@@ -362,8 +363,8 @@ class GameTestHarnessSourceContractTest {
 		String checks = read(
 				"src/gameTest/java/com/vincenthuto/hemomancy/gametest/journey/HemoJourneyChecks.java");
 
-		assertTrue(language.contains("\"advancements.hemomancy.fane_sanguinium.title\": \"Liber Sanguinum\""));
-		assertTrue(checks.contains("\"Liber Sanguinum\", \"Liber Sanguinum\""));
+		assertTrue(language.contains("\"advancements.hemomancy.liber_sanguinium.title\": \"Liber Sanguinium\""));
+		assertTrue(checks.contains("\"Liber Sanguinium\", \"Liber Sanguinium\""));
 	}
 
 	@Test
@@ -429,6 +430,19 @@ class GameTestHarnessSourceContractTest {
 				"The spawner must resolve a representative item for the rite's focus medium");
 		assertTrue(placement.contains("focus.insertMedium(null, mediumStack)"),
 				"The spawner must seat the declared medium in the newly placed Cardinal Focus");
+	}
+
+	@Test
+	void gameplayDriverUsesScreenInputsForMemoryLoadoutReplay() throws IOException {
+		String driver = read("src/gameTest/java/com/vincenthuto/hemomancy/gametest/GameplayCampaignDriver.java");
+		assertTrue(driver.contains("case \"drag\" ->"), "Reliquary replay needs screen drag input");
+		assertTrue(driver.contains("mc.screen.mouseDragged("));
+		assertTrue(driver.contains("mc.screen.mouseReleased(endX, endY, button)"));
+		assertTrue(driver.contains("case \"type\" ->"), "Pattern names need screen text input");
+		assertTrue(driver.contains("mc.screen.charTyped("));
+		assertTrue(driver.contains("case \"binding\" ->"), "Thelemic replay needs the ordinary mapped use key");
+		assertTrue(driver.contains("KeyMapping.click(key.getKey())"));
+		assertTrue(driver.contains("server.add(\"loadouts\""), "Replay must observe saved patterns, not inject them");
 	}
 
 	private static String read(String relativePath) throws IOException {

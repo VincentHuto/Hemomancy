@@ -62,8 +62,9 @@ class IronheartedClientRegressionSourceTest {
 
 		assertEquals(1, occurrences(source, "handleCommonClientTickInput();"));
 		assertTrue(source.contains("mc.player.hurtTime > 0 && mc.player.hurtTime == mc.player.hurtDuration"));
-		assertTrue(source.contains("ManipulationInit.getByName(known.getSelectedManip().getName())"));
-		assertTrue(source.contains("ManipulationInputRules.tick(selected.getType(), down, clicked"));
+		assertTrue(source.contains("var memory = known.getSelectedMemoryRef();"));
+		assertTrue(source.contains("ManipulationInit.getByName(memory.id())"));
+		assertTrue(source.contains("ManipulationInputRules.tick(type, down, clicked"));
 		assertFalse(source.contains("manipulationChargeTicks >= BodyIdiomRules.IRON_HEART_CHARGE_TICKS"));
 		assertFalse(source.contains("manipulationChargeSent"));
 	}

@@ -10,7 +10,7 @@
       "type": "bitmap",
       "file": "hemomancy:font/fane_blackletter_24.png",
       "height": 24,
-      "ascent": 20,
+      "ascent": 21,
       "chars": [
         "!\"#$%&'()*+,-./0",
         "123456789:;<=>?@",

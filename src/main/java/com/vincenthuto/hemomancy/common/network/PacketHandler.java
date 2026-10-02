@@ -75,6 +75,8 @@ public class PacketHandler {
 
     private static void onRegisterPayloads(RegisterPayloadHandlersEvent event) {
         var net = event.registrar(Hemomancy.MOD_ID);
+        net.playToClient(PacketSyncStationUpgrades.TYPE, PacketSyncStationUpgrades.STREAM_CODEC,
+                PacketSyncStationUpgrades::handle);
         net.playToServer(com.vincenthuto.hemomancy.common.succession.ResidentsRequestPacket.TYPE,
                 com.vincenthuto.hemomancy.common.succession.ResidentsRequestPacket.STREAM_CODEC,
                 com.vincenthuto.hemomancy.common.succession.ResidentsRequestPacket::handle);

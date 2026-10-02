@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.item.harbinger.EntityBloodProfile;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
@@ -10,9 +10,14 @@ import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.ConsecratedSyringeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.VialRackItem;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.VialCentrifugeMenu;
+import com.vincenthuto.hemomancy.common.station.*;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
 import com.vincenthuto.hemomancy.common.tile.IBloodContainerSlotAccess;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
@@ -24,6 +29,7 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -41,11 +47,12 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
-		implements StackedContentsCompatible, IBloodReservoir, IBloodContainerSlotAccess {
+		implements StackedContentsCompatible, IBloodReservoir, IBloodContainerSlotAccess, UpgradeableStation {
 
 	public static final int SLOT_BLOOD = 1;
 	public static final int SLOT_FLASK_OUTPUT = 19;
-	public static final int INVENTORY_SIZE = 20;
+	public static final int SLOT_SECONDARY_START = 20;
+	public static final int INVENTORY_SIZE = 28;
 	private static final double BLOOD_GAIN_PER_SPIN = 250D;
 
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
@@ -55,15 +62,22 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	int startupResultId;
 	UUID assignmentSpinId;
 	UUID assignmentPlayerId;
-	Map<Integer, Integer> inOutMap = Map.of(
-			2, 10,
-			3, 11,
-			4, 12,
-			5, 13,
-			6, 14,
-			7, 15,
-			8, 16,
-			9, 17);
+	private boolean riteLocked;
+	private UUID machineIdentity = UUID.randomUUID();
+	private UUID lastUpgradeRite;
+	private NonNullList<ItemStack> batchInputs = emptyBatch();
+	private NonNullList<ItemStack> batchPrimary = emptyBatch();
+	private NonNullList<ItemStack> batchSecondary = emptyBatch();
+	private int batchPowder;
+	private int batchStage;
+	private boolean pendingBatch;
+	private NonNullList<ItemStack> completedOutputs = NonNullList.withSize(16, ItemStack.EMPTY);
+	private int[] completedQuantities = new int[48];
+
+	private static NonNullList<ItemStack> emptyBatch() {
+		return NonNullList.withSize(8, ItemStack.EMPTY);
+	}
+
 	public final ContainerData dataAccess = new ContainerData() {
 		@Override
 		public int get(int index) {
@@ -116,26 +130,13 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 			VialCentrifugeBlockEntity self) {
 	}
 
-	public static void serverTick(Level level, BlockPos pos, BlockState p_155016_, VialCentrifugeBlockEntity te) {
-		// Process blood flask in the blood slot
+	public static void serverTick(Level level, BlockPos pos, BlockState state, VialCentrifugeBlockEntity te) {
+		if (te.riteLocked) return;
 		te.processBloodSlot();
-
-		if (te.spinningProgress > 0) {
-			te.spinningProgress--;
-			te.sendUpdates();
-			setChanged(level, pos, p_155016_);
-			if (te.spinningProgress == 0) {
-				if (te.outputResults()) te.addOperationBlood();
-			}
-			if (!te.inventory.isEmpty()) {
-				if (!((te.checkBalancedSpots(2, 6) && te.checkBalancedSpots(3, 7) && te.checkBalancedSpots(4, 8)
-						&& te.checkBalancedSpots(9, 5)))) {
-					if (te.dataAccess.get(0) > 0) {
-						te.dataAccess.set(0, 0);
-					}
-				}
-			}
-		}
+		if (te.spinningProgress <= 0) return;
+		te.spinningProgress--;
+		if (te.spinningProgress == 0 && te.outputResults()) te.addOperationBlood();
+		te.sendUpdates();
 	}
 
 	private void addOperationBlood() {
@@ -148,57 +149,111 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		sendUpdates();
 	}
 
+	private VialCentrifugeStartupResult validateBatch() {
+		if (!balanced()) return VialCentrifugeStartupResult.IMBALANCE;
+		for (int i = 0; i < 8; i++) {
+			if (!ItemStack.matches(inventory.get(i + 2), batchInputs.get(i)))
+				return VialCentrifugeStartupResult.INVALID_SAMPLE;
+			if (!canFitOutput(i + 10, batchPrimary.get(i)))
+				return VialCentrifugeStartupResult.BLOCKED_ENZYME_OUTPUT;
+			if (!canFitOutput(SLOT_SECONDARY_START + i, batchSecondary.get(i)))
+				return VialCentrifugeStartupResult.BLOCKED_SECONDARY_OUTPUT;
+		}
+		if (batchPowder > 0 && !canFitOutput(18, new ItemStack(ItemInit.hematic_iron_powder.get(), batchPowder)))
+			return VialCentrifugeStartupResult.BLOCKED_POWDER_OUTPUT;
+		return VialCentrifugeStartupResult.SUCCESS;
+	}
+
 	private boolean outputResults() {
-		if (!(checkBalancedSpots(2, 6) && checkBalancedSpots(3, 7)
-				&& checkBalancedSpots(4, 8) && checkBalancedSpots(9, 5))) {
-			startupResultId = VialCentrifugeStartupResult.IMBALANCE.ordinal();
-			assignmentSpinId = null;
-			assignmentPlayerId = null;
-			return false;
-		}
-		NonNullList<ItemStack> results = NonNullList.withSize(8, ItemStack.EMPTY);
-		boolean hasSample = false;
-		for (int i = 0; i < results.size(); i++) {
-			ItemStack sample = inventory.get(i + 2);
-			if (sample.isEmpty()) continue;
-			ItemStack result = ItemStack.EMPTY;
-			if (sample.getItem() instanceof BloodVialItem) {
-				result = getResultFromVial(BloodVialItem.getEntityType(sample));
-				FirstSeparationAssignment.markAssignmentOutput(result, assignmentPlayerId, assignmentSpinId);
-			} else if (sample.getItem() instanceof ConsecratedSyringeItem) {
-				EnumSaintType saint = ConsecratedSyringeItem.getSaintType(sample);
-				if (saint != null) result = getResultFromSyringe(saint);
+		if (!pendingBatch) return false;
+		var result = validateBatch();
+		startupResultId = result.ordinal();
+		if (result != VialCentrifugeStartupResult.SUCCESS) return false;
+		for (int i = 0; i < 8; i++) {
+			if (batchInputs.get(i).isEmpty()) continue;
+			boolean vial = batchInputs.get(i).getItem() instanceof BloodVialItem;
+			if (vial) {
+				rememberOutput(i, i + 10, batchPrimary.get(i));
+				rememberOutput(i + 8, SLOT_SECONDARY_START + i, batchSecondary.get(i));
 			}
-			if (sample.getCount() != 1 || result.isEmpty() || !canFitOutput(i + 10, result)) {
-				startupResultId = (sample.getCount() != 1 ? VialCentrifugeStartupResult.BLOCKED_VIAL_RETURN
-						: result.isEmpty() ? VialCentrifugeStartupResult.INVALID_SAMPLE
-						: VialCentrifugeStartupResult.BLOCKED_ENZYME_OUTPUT).ordinal();
-				assignmentSpinId = null;
-				assignmentPlayerId = null;
-				return false;
-			}
-			results.set(i, result);
-			hasSample = true;
-		}
-		// Check the whole batch before consuming any sample or awarding its byproducts.
-		for (int i = 0; i < results.size(); i++) {
-			ItemStack result = results.get(i);
-			if (result.isEmpty()) continue;
-			boolean vial = inventory.get(i + 2).getItem() instanceof BloodVialItem;
-			ItemStack output = inventory.get(i + 10);
-			if (output.isEmpty()) inventory.set(i + 10, result);
-			else output.grow(result.getCount());
+			appendOutput(i + 10, batchPrimary.get(i));
+			appendOutput(SLOT_SECONDARY_START + i, batchSecondary.get(i));
 			inventory.set(i + 2, vial ? new ItemStack(ItemInit.bloody_vial.get()) : ItemStack.EMPTY);
-			if (vial && level.random.nextInt(1, 5) % 2 == 0) {
-				ItemStack powder = inventory.get(18);
-				if (powder.isEmpty()) inventory.set(18, new ItemStack(ItemInit.hematic_iron_powder.get()));
-				else if (powder.is(ItemInit.hematic_iron_powder.get()) && powder.getCount() < powder.getMaxStackSize()) powder.grow(1);
-			}
 		}
+		if (batchPowder > 0) appendOutput(18, new ItemStack(ItemInit.hematic_iron_powder.get(), batchPowder));
+		pendingBatch = false;
+		batchInputs = emptyBatch();
+		batchPrimary = emptyBatch();
+		batchSecondary = emptyBatch();
+		batchPowder = 0;
 		assignmentSpinId = null;
 		assignmentPlayerId = null;
-		return hasSample;
+		return true;
 	}
+
+	private void appendOutput(int slot, ItemStack result) {
+		if (result.isEmpty()) return;
+		if (inventory.get(slot).isEmpty()) inventory.set(slot, result.copy());
+		else inventory.get(slot).grow(result.getCount());
+	}
+
+	private int rememberedCount(int index) {
+		return completedQuantities[index * 3] + completedQuantities[index * 3 + 1] + completedQuantities[index * 3 + 2];
+	}
+
+	private void reconcileOutput(int index, int available) {
+		int excess = Math.max(0, rememberedCount(index) - available);
+		for (int stage = 0; stage < 3 && excess > 0; stage++) {
+			int removed = Math.min(excess, completedQuantities[index * 3 + stage]);
+			completedQuantities[index * 3 + stage] -= removed;
+			excess -= removed;
+		}
+	}
+
+	private void rememberOutput(int index, int slot, ItemStack result) {
+		if (result.isEmpty()) return;
+		if (!ItemStack.isSameItemSameComponents(completedOutputs.get(index), inventory.get(slot)))
+			reconcileOutput(index, 0);
+		else reconcileOutput(index, inventory.get(slot).getCount());
+		completedOutputs.set(index, result.copyWithCount(1));
+		completedQuantities[index * 3 + batchStage] += result.getCount();
+	}
+
+	public void onPlayerExtract(ServerPlayer player, int slot, ItemStack extracted) {
+		int index = slot >= 10 && slot < 18 ? slot - 10
+				: slot >= SLOT_SECONDARY_START && slot < INVENTORY_SIZE ? slot - SLOT_SECONDARY_START + 8 : -1;
+		if (riteLocked || index < 0 || extracted.isEmpty()
+				|| !ItemStack.isSameItemSameComponents(completedOutputs.get(index), extracted)) return;
+		int before = inventory.get(slot).getCount() + extracted.getCount();
+		// Unobserved hopper removals spend old results without granting personal practice.
+		reconcileOutput(index, before);
+		int unknown = Math.max(0, before - rememberedCount(index));
+		int remaining = Math.max(0, extracted.getCount() - unknown);
+		boolean recovered = false;
+		boolean calibrated = false;
+		for (int stage = 0; stage < 3 && remaining > 0; stage++) {
+			int taken = Math.min(remaining, completedQuantities[index * 3 + stage]);
+			completedQuantities[index * 3 + stage] -= taken;
+			remaining -= taken;
+			recovered |= taken > 0;
+			calibrated |= taken > 0 && stage >= 1;
+		}
+		if (rememberedCount(index) == 0) completedOutputs.set(index, ItemStack.EMPTY);
+		if (recovered) {
+			var progress = HemoCapabilityAccess.stationUpgrades(player);
+			progress.recordUse(UpgradeStation.CENTRIFUGE, StationUpgradeCatalog.SEPARATE);
+			if (calibrated) progress.recordUse(UpgradeStation.CENTRIFUGE, StationUpgradeCatalog.SEPARATE_CALIBRATED);
+			progress.sync(player, false);
+		}
+		setChanged();
+	}
+
+	private boolean balanced() {
+		return checkBalancedSpots(2, 6) && checkBalancedSpots(3, 7)
+				&& checkBalancedSpots(4, 8) && checkBalancedSpots(9, 5);
+	}
+
+	public boolean isProcessing() { return isSpinning() || pendingBatch; }
 
 	public List<ItemStack> getVialSlots() {
 		return inventory.subList(2, 10);
@@ -209,7 +264,7 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	}
 
 	public int insertVialsFromRack(ItemStack rackStack) {
-		if (!(rackStack.getItem() instanceof VialRackItem)) {
+		if (riteLocked || isProcessing() || !(rackStack.getItem() instanceof VialRackItem)) {
 			return 0;
 		}
 		NonNullList<ItemStack> rackVials = VialRackItem.getVials(rackStack);
@@ -267,63 +322,30 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		return 10;
 	}
 
-	public ItemStack getResultFromVial(EntityType<?> sampledMob) {
-		if (sampledMob == EntityType.WARDEN) return ItemStack.EMPTY;
-		if (sampledMob != null) {
-			if (sampledMob.create(level) instanceof LivingEntity living) {
-				float maxHealth = living.getMaxHealth();
-				ArrayList<ItemStack> outputList = new ArrayList<ItemStack>();
-                var profile = BloodProfileData.profile(sampledMob, level.isClientSide);
-				if (profile.properties().contains(EntityBloodProfile.FUNGAL)) {
-					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
-					outputList.add(new ItemStack(BlockInit.infected_fungus.get(), amountOfEnzyme));
-				}
-				if (profile.tendencies().contains(EnumBloodTendency.TENEBRIS)) {
-					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
-					outputList.add(new ItemStack(ItemInit.umbral_enzyme.get(), amountOfEnzyme));
-				}
-				if (profile.tendencies().contains(EnumBloodTendency.LUX)) {
-					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
-					outputList.add(new ItemStack(ItemInit.incandescent_enzyme.get(), amountOfEnzyme));
-				}
-				if (profile.tendencies().contains(EnumBloodTendency.FERRIC)) {
-					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
-					outputList.add(new ItemStack(ItemInit.ferric_enzyme.get(), amountOfEnzyme));
-				}
-				if (profile.tendencies().contains(EnumBloodTendency.ANIMUS)) {
-					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
-					outputList.add(new ItemStack(ItemInit.vivacious_enzyme.get(), amountOfEnzyme));
-				}
-				if (profile.tendencies().contains(EnumBloodTendency.MORTEM)) {
-					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
-					outputList.add(new ItemStack(ItemInit.ruinous_enzyme.get(), amountOfEnzyme));
-				}
-				if (profile.tendencies().contains(EnumBloodTendency.DUCTILIS)) {
-					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
-					outputList.add(new ItemStack(ItemInit.neurotic_enzyme.get(), amountOfEnzyme));
-				}
-				if (profile.tendencies().contains(EnumBloodTendency.FLAMMEUS)) {
-					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
-					outputList.add(new ItemStack(ItemInit.fervent_enzyme.get(), amountOfEnzyme));
-				}
-				if (profile.tendencies().contains(EnumBloodTendency.CONGEATIO)) {
-					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
-					outputList.add(new ItemStack(ItemInit.frigid_enzyme.get(), amountOfEnzyme));
-				}
-				if (!outputList.isEmpty()) {
-					if (!outputList.get(new Random().nextInt(outputList.size())).isEmpty()) {
-						return outputList.get(new Random().nextInt(outputList.size()));
-					} else {
-						return ItemStack.EMPTY;
-					}
-				} else {
-					return ItemStack.EMPTY;
-				}
-
-			}
+	private List<ItemStack> vialFractions(EntityType<?> sampledMob) {
+		if (sampledMob == null || sampledMob == EntityType.WARDEN
+				|| !(sampledMob.create(level) instanceof LivingEntity living)) return List.of();
+		var profile = BloodProfileData.profile(sampledMob, level.isClientSide);
+		List<ItemStack> outputs = new ArrayList<>();
+		if (profile.properties().contains(EntityBloodProfile.FUNGAL))
+			outputs.add(new ItemStack(BlockInit.infected_fungus.get()));
+		for (var tendency : profile.tendencies())
+			outputs.add(new ItemStack(EnumBloodTendency.getRepEnzyme(tendency)));
+		// Keep the existing health-based base yield, using the server's random source.
+		for (var output : outputs) {
+			int amount = (int) ((living.getMaxHealth() / 10) * level.random.nextInt(4) + 1);
+			output.setCount(Math.min(output.getMaxStackSize(), amount));
 		}
-		return ItemStack.EMPTY;
+		return outputs;
+	}
 
+	public ItemStack getResultFromVial(EntityType<?> sampledMob) {
+		var outputs = vialFractions(sampledMob);
+		if (outputs.isEmpty()) return ItemStack.EMPTY;
+		var result = outputs.get(level.random.nextInt(outputs.size())).copy();
+		result.setCount(Math.min(result.getMaxStackSize(),
+				VialCentrifugeYieldRules.quantity(result.getCount(), upgradeTier(), level.random.nextDouble())));
+		return result;
 	}
 
 	private ItemStack getResultFromSyringe(EnumSaintType saint) {
@@ -341,49 +363,74 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		}
 	}
 
-	public VialCentrifugeStartupResult attemptStartup(@Nullable net.minecraft.server.level.ServerPlayer player) {
-		boolean balanced = checkBalancedSpots(2, 6) && checkBalancedSpots(3, 7)
-				&& checkBalancedSpots(4, 8) && checkBalancedSpots(9, 5);
+	public VialCentrifugeStartupResult attemptStartup(@Nullable ServerPlayer player) {
+		if (riteLocked) return VialCentrifugeStartupResult.RITE_LOCKED;
+		if (isSpinning()) return startup(VialCentrifugeStartupResult.ALREADY_RUNNING);
+		if (pendingBatch) {
+			var result = validateBatch();
+			if (result == VialCentrifugeStartupResult.SUCCESS && outputResults()) addOperationBlood();
+			return startup(result);
+		}
+		if (!balanced()) return startup(VialCentrifugeStartupResult.IMBALANCE);
+		boolean hasSample = false;
+		batchStage = upgradeTier();
+		batchInputs = emptyBatch();
+		batchPrimary = emptyBatch();
+		batchSecondary = emptyBatch();
+		batchPowder = 0;
 		boolean assignmentSpin = player != null && FirstSeparationAssignment.canBeginAssignmentSpin(player);
-		List<VialCentrifugeStartupRules.SampleState> samples = new ArrayList<>();
-		for (int inputSlot = 2; inputSlot <= 9; inputSlot++) {
-			ItemStack vialStack = inventory.get(inputSlot);
-			if (vialStack.isEmpty()) {
-				samples.add(new VialCentrifugeStartupRules.SampleState(false, false, true, true));
-				continue;
+		for (int i = 0; i < 8; i++) {
+			var sample = inventory.get(i + 2);
+			if (sample.isEmpty()) continue;
+			if (sample.getCount() != 1) return startup(VialCentrifugeStartupResult.BLOCKED_VIAL_RETURN);
+			ItemStack primary = ItemStack.EMPTY;
+			if (sample.getItem() instanceof BloodVialItem) {
+				var fractions = vialFractions(BloodVialItem.getEntityType(sample));
+				if (fractions.isEmpty()) return startup(VialCentrifugeStartupResult.INVALID_SAMPLE);
+				int choice = level.random.nextInt(fractions.size());
+				primary = fractions.remove(choice);
+				primary.setCount(Math.min(primary.getMaxStackSize(),
+						VialCentrifugeYieldRules.quantity(primary.getCount(), batchStage, level.random.nextDouble())));
+				if (VialCentrifugeYieldRules.secondFraction(batchStage, fractions.size() + 1, level.random.nextDouble()))
+					batchSecondary.set(i, fractions.get(level.random.nextInt(fractions.size())).copyWithCount(1));
+				if (VialCentrifugeYieldRules.powder(batchStage, level.random.nextDouble())) batchPowder++;
+			} else if (sample.getItem() instanceof ConsecratedSyringeItem) {
+				var saint = ConsecratedSyringeItem.getSaintType(sample);
+				if (saint != null) primary = getResultFromSyringe(saint);
 			}
-			EntityType<?> sampledMob = vialStack.getItem() instanceof BloodVialItem
-					? BloodVialItem.getEntityType(vialStack) : null;
-			ItemStack resultStack = sampledMob == null ? ItemStack.EMPTY : getResultFromVial(sampledMob);
-			if (vialStack.getItem() instanceof ConsecratedSyringeItem) {
-				EnumSaintType saint = ConsecratedSyringeItem.getSaintType(vialStack);
-				if (saint != null) resultStack = getResultFromSyringe(saint);
-			}
-			boolean processable = !resultStack.isEmpty();
-			Integer outputSlot = inOutMap.get(inputSlot);
-			boolean outputFits = !processable || outputSlot != null
-					&& (assignmentSpin ? inventory.get(outputSlot).isEmpty() : canFitOutput(outputSlot, resultStack));
-			boolean vialReturnFits = vialStack.getCount() == 1;
-			samples.add(new VialCentrifugeStartupRules.SampleState(true, processable, outputFits, vialReturnFits));
+			if (primary.isEmpty()) return startup(VialCentrifugeStartupResult.INVALID_SAMPLE);
+			if (assignmentSpin && !inventory.get(i + 10).isEmpty())
+				return startup(VialCentrifugeStartupResult.BLOCKED_ENZYME_OUTPUT);
+			batchInputs.set(i, sample.copy());
+			batchPrimary.set(i, primary);
+			hasSample = true;
 		}
-		VialCentrifugeStartupResult result = VialCentrifugeStartupRules.evaluate(isSpinning(), balanced, samples);
-		dataAccess.set(2, result.ordinal());
-		if (result == VialCentrifugeStartupResult.SUCCESS) {
-			dataAccess.set(0, SPIN_TOTAL_TIME);
-			if (player != null) {
-				assignmentSpinId = FirstSeparationAssignment.beginAssignmentSpin(player);
-				assignmentPlayerId = assignmentSpinId == null ? null : player.getUUID();
-			}
+		if (!hasSample) return startup(VialCentrifugeStartupResult.NO_PROCESSABLE_SAMPLES);
+		var result = validateBatch();
+		if (result != VialCentrifugeStartupResult.SUCCESS) return startup(result);
+		if (player != null) {
+			assignmentSpinId = FirstSeparationAssignment.beginAssignmentSpin(player);
+			assignmentPlayerId = assignmentSpinId == null ? null : player.getUUID();
 		}
+		for (int i = 0; i < 8; i++)
+			if (batchInputs.get(i).getItem() instanceof BloodVialItem)
+				FirstSeparationAssignment.markAssignmentOutput(batchPrimary.get(i), assignmentPlayerId, assignmentSpinId);
+		pendingBatch = true;
+		spinningTotalTime = VialCentrifugeYieldRules.duration(batchStage);
+		spinningProgress = spinningTotalTime;
+		return startup(VialCentrifugeStartupResult.SUCCESS);
+	}
+
+	private VialCentrifugeStartupResult startup(VialCentrifugeStartupResult result) {
+		startupResultId = result.ordinal();
 		sendUpdates();
 		return result;
 	}
 
 	private boolean canFitOutput(int outputSlot, ItemStack resultStack) {
+		if (resultStack.isEmpty()) return true;
 		ItemStack outputStack = inventory.get(outputSlot);
-		if (outputStack.isEmpty()) {
-			return true;
-		}
+		if (outputStack.isEmpty()) return resultStack.getCount() <= resultStack.getMaxStackSize();
 		int maxAllowed = Math.min(outputStack.getMaxStackSize(), resultStack.getMaxStackSize());
 		return ItemStack.isSameItemSameComponents(outputStack, resultStack)
 				&& outputStack.getCount() + resultStack.getCount() <= maxAllowed;
@@ -400,7 +447,7 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 
 	@Override
 	public void clearContent() {
-		this.inventory.clear();
+		if (!riteLocked && !isProcessing()) this.inventory.clear();
 
 	}
 
@@ -464,29 +511,12 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 
 	@Override
 	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-		CompoundTag tag = new CompoundTag();
-		tag.putInt("SpinTime", this.spinningProgress);
-		tag.putInt("SpinTimeTotal", this.spinningTotalTime);
-		tag.putInt("StartupResult", this.startupResultId);
-		if (assignmentSpinId != null) tag.putUUID("AssignmentSpin", assignmentSpinId);
-		if (assignmentPlayerId != null) tag.putUUID("AssignmentPlayer", assignmentPlayerId);
-		ContainerHelper.saveAllItems(tag, this.inventory, registries);
-		IBloodVolume vol = resolveVolume();
-		if (vol != null) {
-			tag.putDouble(TAG_BLOOD_LEVEL, vol.getBloodVolume());
-		}
-		return tag;
+		return saveWithoutMetadata(registries);
 	}
 
 	@Override
 	public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
-		super.handleUpdateTag(tag, registries);
-		if (tag != null) {
-			IBloodVolume vol = resolveVolume();
-			if (vol != null) {
-				vol.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
-			}
-		}
+		loadAdditional(tag, registries);
 	}
 
 	@Override
@@ -507,29 +537,37 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		this.startupResultId = pTag.getInt("StartupResult");
 		this.assignmentSpinId = pTag.hasUUID("AssignmentSpin") ? pTag.getUUID("AssignmentSpin") : null;
 		this.assignmentPlayerId = pTag.hasUUID("AssignmentPlayer") ? pTag.getUUID("AssignmentPlayer") : null;
-		this.inventory = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+		this.inventory = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
 		ContainerHelper.loadAllItems(pTag, this.inventory, registries);
+		riteLocked = pTag.getBoolean("RiteLocked");
+		if (pTag.hasUUID("MachineIdentity")) machineIdentity = pTag.getUUID("MachineIdentity");
+		lastUpgradeRite = pTag.hasUUID("LastUpgradeRite") ? pTag.getUUID("LastUpgradeRite") : null;
+		pendingBatch = pTag.contains("PendingBatch");
+		var batch = pTag.getCompound("PendingBatch");
+		batchInputs = loadStacks(batch.getCompound("Inputs"), registries);
+		batchPrimary = loadStacks(batch.getCompound("Primary"), registries);
+		batchSecondary = loadStacks(batch.getCompound("Secondary"), registries);
+		batchStage = batch.getInt("Stage");
+		batchPowder = batch.getInt("Powder");
+		completedOutputs = NonNullList.withSize(16, ItemStack.EMPTY);
+		ContainerHelper.loadAllItems(pTag.getCompound("CompletedOutputs"), completedOutputs, registries);
+		completedQuantities = Arrays.copyOf(pTag.getIntArray("CompletedQuantities"), 48);
+		// Old saves lack rolled output; leave their samples intact and allow a fresh startup.
+		if (!pendingBatch) spinningProgress = 0;
 		IBloodVolume vol = resolveVolume();
-		if (vol != null && pTag != null) {
-			vol.setBloodVolume(pTag.getFloat(TAG_BLOOD_LEVEL));
+		if (vol != null) {
+			vol.setBloodVolume(pTag.getDouble(TAG_BLOOD_LEVEL));
 		}
 	}
 
 	@Override
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {
-		super.onDataPacket(net, pkt, registries);
-		if (pkt.getTag() != null) {
-			CompoundTag tag = pkt.getTag();
-			IBloodVolume vol = resolveVolume();
-			if (vol != null) {
-				vol.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
-			}
-		}
-
+		if (pkt.getTag() != null) loadAdditional(pkt.getTag(), registries);
 	}
 
 	@Override
 	public void onLoad() {
+		super.onLoad();
 		IBloodVolume vol = resolveVolume();
 		if (vol != null) {
 			vol.setActive(true);
@@ -539,12 +577,18 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 
 	@Override
 	public ItemStack removeItem(int pSlot, int pAmount) {
-		return ContainerHelper.removeItem(this.inventory, pSlot, pAmount);
+		if (riteLocked || isProcessing() && pSlot >= 2 && pSlot <= 9) return ItemStack.EMPTY;
+		var removed = ContainerHelper.removeItem(this.inventory, pSlot, pAmount);
+		setChanged();
+		return removed;
 	}
 
 	@Override
 	public ItemStack removeItemNoUpdate(int pSlot) {
-		return ContainerHelper.takeItem(this.inventory, pSlot);
+		if (riteLocked || isProcessing() && pSlot >= 2 && pSlot <= 9) return ItemStack.EMPTY;
+		var removed = ContainerHelper.takeItem(this.inventory, pSlot);
+		setChanged();
+		return removed;
 	}
 
 	// NBT and Data
@@ -557,6 +601,20 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		if (assignmentSpinId != null) pTag.putUUID("AssignmentSpin", assignmentSpinId);
 		if (assignmentPlayerId != null) pTag.putUUID("AssignmentPlayer", assignmentPlayerId);
 		ContainerHelper.saveAllItems(pTag, this.inventory, registries);
+		pTag.putBoolean("RiteLocked", riteLocked);
+		pTag.putUUID("MachineIdentity", machineIdentity);
+		if (lastUpgradeRite != null) pTag.putUUID("LastUpgradeRite", lastUpgradeRite);
+		pTag.put("CompletedOutputs", saveStacks(completedOutputs, registries));
+		pTag.putIntArray("CompletedQuantities", completedQuantities);
+		if (pendingBatch) {
+			var batch = new CompoundTag();
+			batch.put("Inputs", saveStacks(batchInputs, registries));
+			batch.put("Primary", saveStacks(batchPrimary, registries));
+			batch.put("Secondary", saveStacks(batchSecondary, registries));
+			batch.putInt("Stage", batchStage);
+			batch.putInt("Powder", batchPowder);
+			pTag.put("PendingBatch", batch);
+		}
 		IBloodVolume vol = resolveVolume();
 		if (vol != null) {
 			pTag.putDouble(TAG_BLOOD_LEVEL, vol.getBloodVolume());
@@ -564,6 +622,7 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	}
 
 	public void sendUpdates() {
+		if (level == null) { setChanged(); return; }
 		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
 		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
 		setChanged();
@@ -571,10 +630,25 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 
 	@Override
 	public void setItem(int pSlot, ItemStack pStack) {
+		if (riteLocked || isProcessing() && pSlot >= 2 && pSlot <= 9) return;
 		this.inventory.set(pSlot, pStack);
+		setChanged();
 		if (pStack.getCount() > this.getMaxStackSize()) {
 			pStack.setCount(this.getMaxStackSize());
 		}
+	}
+
+	@Override
+	public boolean canPlaceItem(int slot, ItemStack stack) {
+		if (riteLocked) return false;
+		if (slot == SLOT_BLOOD) return stack.getItem() instanceof BloodyFlaskItem;
+		return slot >= 2 && slot <= 9 && !isProcessing()
+				&& (stack.getItem() instanceof BloodVialItem || stack.getItem() instanceof ConsecratedSyringeItem);
+	}
+
+	@Override
+	public boolean canTakeItem(Container destination, int slot, ItemStack stack) {
+		return !riteLocked && !(isProcessing() && slot >= 2 && slot <= 9);
 	}
 
 	@Override
@@ -583,5 +657,37 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 				: pPlayer.distanceToSqr(this.worldPosition.getX() + 0.5D, this.worldPosition.getY() + 0.5D,
 						this.worldPosition.getZ() + 0.5D) <= 64.0D;
 	}
+
+	private static CompoundTag saveStacks(NonNullList<ItemStack> stacks, HolderLookup.Provider registries) {
+		var tag = new CompoundTag();
+		ContainerHelper.saveAllItems(tag, stacks, registries);
+		return tag;
+	}
+
+	private static NonNullList<ItemStack> loadStacks(CompoundTag tag, HolderLookup.Provider registries) {
+		var stacks = emptyBatch();
+		ContainerHelper.loadAllItems(tag, stacks, registries);
+		return stacks;
+	}
+
+	@Override public UpgradeStation upgradeStation() { return UpgradeStation.CENTRIFUGE; }
+	@Override public UUID machineIdentity() { return machineIdentity; }
+	@Override public boolean isRiteLocked() { return riteLocked; }
+	@Override public void setRiteLocked(boolean locked) { riteLocked = locked; sendUpdates(); }
+	@Override public boolean canReceiveBlood() { return !riteLocked; }
+	@Override public boolean canProvideBlood() { return !riteLocked; }
+	@Override public boolean readyForUpgradeRite(ServerLevel level, Direction forward) {
+		return !riteLocked && !isProcessing() && getBlockState().getValue(
+				com.vincenthuto.hemomancy.common.block.harbinger.crafting.VialCentrifugeBlock.FACING) == forward;
+	}
+	@Override public CompoundTag upgradeSnapshot(HolderLookup.Provider registries) {
+		var tag = saveWithoutMetadata(registries);
+		tag.remove("RiteLocked");
+		tag.remove("LastUpgradeRite");
+		tag.remove("neoforge:attachments");
+		return tag;
+	}
+	@Override public boolean wasUpgradedBy(UUID riteId) { return riteId != null && riteId.equals(lastUpgradeRite); }
+	@Override public void markUpgradedBy(UUID riteId) { lastUpgradeRite = riteId; sendUpdates(); }
 
 }

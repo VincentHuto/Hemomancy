@@ -6,11 +6,9 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -55,38 +53,18 @@ public class FillBloodGourdRecipe extends net.minecraft.world.item.crafting.Cust
 
 	@Override
 	public ItemStack assemble(CraftingInput inv, HolderLookup.Provider registryAccess) {
-		final ItemStack craftingResult = baseRecipe.assemble(inv, registryAccess);
-		ItemStack dataSource = ItemStack.EMPTY;
-
-		if (!craftingResult.isEmpty()) {
-			for (int i = 0; i < inv.size(); i++) {
-				final ItemStack item = inv.getItem(i);
-				if (!item.isEmpty() && item.getItem() instanceof BloodGourdItem) {
-
-					dataSource = item;
-					break;
-				}
-			}
-			if (dataSource.getItem() instanceof BloodGourdItem gourd1) {
-				if (!dataSource.isEmpty() && dataSource.has(DataComponents.CUSTOM_DATA)) {
-					craftingResult.set(DataComponents.CUSTOM_DATA,
-							CustomData.of(dataSource.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag()));
-					IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(dataSource)
-							.orElseThrow(NullPointerException::new);
-					if (craftingResult.getItem() instanceof BloodGourdItem gourd2) {
-						IBloodVolume resultVolume = HemoCapabilityAccess.getBloodVolume(craftingResult)
-								.orElseThrow(NullPointerException::new);
-
-						double maxBlood = gourd2.getMaxBlood();
-						double fillBlood = bloodVolume.getBloodVolume() + 200;
-						double fillAmount = fillBlood <= maxBlood ? fillBlood : maxBlood;
-
-						resultVolume.setBloodVolume(fillAmount);
-					}
-				}
-			}
+		ItemStack craftingResult = baseRecipe.assemble(inv, registryAccess);
+		if (!(craftingResult.getItem() instanceof BloodGourdItem gourd)) return craftingResult;
+		for (int slot = 0; slot < inv.size(); slot++) {
+			ItemStack source = inv.getItem(slot);
+			if (!(source.getItem() instanceof BloodGourdItem)) continue;
+			IBloodVolume sourceVolume = HemoCapabilityAccess.getBloodVolume(source.copy()).orElseThrow();
+			craftingResult.applyComponents(source.getComponentsPatch());
+			IBloodVolume resultVolume = HemoCapabilityAccess.getBloodVolume(craftingResult).orElseThrow();
+			resultVolume.setMaxBloodVolume(gourd.getMaxBlood());
+			resultVolume.setBloodVolume(Math.min(sourceVolume.getBloodVolume() + 200, gourd.getMaxBlood()));
+			break;
 		}
-
 		return craftingResult;
 	}
 

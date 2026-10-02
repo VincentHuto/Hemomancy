@@ -424,7 +424,9 @@ public final class DialogueScreen extends Screen {
 		if (button == 0) {
 			for (int i = 0; i < clickTargets.size(); i++) {
 				ClickTarget target = clickTargets.get(i);
-				if (target.contains(mouseX, mouseY)) {
+				if (target.contentTarget()
+						? DialogueHitRules.containsVisible(target.rect(), layout.content(), mouseX, mouseY)
+						: target.contains(mouseX, mouseY)) {
 					navigation.setFocusIndex(i);
 					activate(target);
 					return true;

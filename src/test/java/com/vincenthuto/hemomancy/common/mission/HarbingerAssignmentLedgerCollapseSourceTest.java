@@ -18,6 +18,7 @@ public final class HarbingerAssignmentLedgerCollapseSourceTest {
 		ledgerSeparatesAssignmentLabelsFromTitles();
 		ledgerTogglesAssignmentsFromClickHitboxes();
 		ledgerProvidesGlobalCollapseControls();
+		ledgerBoundsVerboseProgressInSharedHeaders();
 	}
 
 	private static void ledgerDefinesCollapsibleAssignmentSections() throws IOException {
@@ -145,6 +146,18 @@ public final class HarbingerAssignmentLedgerCollapseSourceTest {
 				"screen.hemomancy.harbinger_assignment_ledger.collapse_all");
 		assertContains("expand all language exists", language,
 				"screen.hemomancy.harbinger_assignment_ledger.expand_all");
+	}
+
+	private static void ledgerBoundsVerboseProgressInSharedHeaders() throws IOException {
+		String ledger = readLedger();
+		assertContains("wide progress labels use a measured numeric fallback", ledger,
+				"font.width(label) <= maxWidth ? label : Component.literal(progress + \"/\" + total)");
+		assertContains("collapsed progress reserves title space", ledger,
+				"ledgerProgressLabel(progressKey, progress, total, (cardW - 30) / 2)");
+		assertContains("expanded progress reserves title space", ledger,
+				"ledgerProgressLabel(progressKey, progress, total, w / 2)");
+		assertContains("collapsed title retains full hover text", ledger,
+				"renderTruncatedDescription(gfx, Component.translatable(titleKey), titleX, y + 14");
 	}
 
 	private static String readLedger() throws IOException {

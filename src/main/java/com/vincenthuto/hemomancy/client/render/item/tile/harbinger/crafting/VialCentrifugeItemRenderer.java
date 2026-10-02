@@ -6,6 +6,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.crafting.CentrifugeArmsModel;
 import com.vincenthuto.hemomancy.client.model.tile.crafting.CentrifugeStandModel;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.station.StationTierProperty;
 import com.vincenthuto.hutoslib.client.HlClientTickHandler;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
@@ -17,8 +19,12 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.BlockItemStateProperties;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 
 public class VialCentrifugeItemRenderer extends BlockEntityWithoutLevelRenderer {
 
@@ -50,6 +56,10 @@ public class VialCentrifugeItemRenderer extends BlockEntityWithoutLevelRenderer 
 		}
 
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		var state = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY)
+				.apply(BlockInit.vial_centrifuge.get().defaultBlockState())
+				.setValue(HorizontalDirectionalBlock.FACING, Direction.NORTH);
+		int stage = StationTierProperty.stage(state);
 
 		boolean isGui = displayContext == ItemDisplayContext.GUI;
 		if (isGui) {
@@ -61,7 +71,7 @@ public class VialCentrifugeItemRenderer extends BlockEntityWithoutLevelRenderer 
 		}
 
 		poseStack.pushPose();
-		poseStack.translate(0.5, 1.25, 0.5);
+		poseStack.translate(0.5, stage == 0 ? 1.25 : 1.3025, 0.5);
 		poseStack.scale(0.45f, 0.45f, 0.45f);
 		poseStack.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
 		poseStack.mulPose(new Quaternion(Vector3.YN, 45, true).toMoj());
@@ -92,14 +102,23 @@ public class VialCentrifugeItemRenderer extends BlockEntityWithoutLevelRenderer 
 				OverlayTexture.NO_OVERLAY, -1);
 		poseStack.popPose();
 
-		// Render the stand (static, no spin)
+		// Keep the same miniature origin for the baked body and moving rotor.
 		poseStack.pushPose();
-		poseStack.translate(0.5, 1.1, 0.5);
-		poseStack.scale(0.45f, 0.45f, 0.45f);
-		poseStack.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
-		poseStack.mulPose(new Quaternion(Vector3.YN, 45, true).toMoj());
-		standModel.renderToBuffer(poseStack, buffer.getBuffer(standModel.renderType(TEXTURE)), combinedLight,
-				OverlayTexture.NO_OVERLAY, -1);
+		if (stage == 0) {
+			poseStack.translate(0.5, 1.1, 0.5);
+			poseStack.scale(0.45f, 0.45f, 0.45f);
+			poseStack.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
+			poseStack.mulPose(new Quaternion(Vector3.YN, 45, true).toMoj());
+			standModel.renderToBuffer(poseStack, buffer.getBuffer(standModel.renderType(TEXTURE)), combinedLight,
+					OverlayTexture.NO_OVERLAY, -1);
+		} else {
+			poseStack.translate(0.5, .425, 0.5);
+			poseStack.scale(0.45f, 0.45f, 0.45f);
+			poseStack.mulPose(new Quaternion(Vector3.YN, 45, true).toMoj());
+			poseStack.translate(-0.5, 0, -0.5);
+			Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, poseStack, buffer,
+					combinedLight, OverlayTexture.NO_OVERLAY);
+		}
 		poseStack.popPose();
 
 		if (isGui) {

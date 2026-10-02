@@ -1,5 +1,9 @@
 # Autonomous execution policy
 
+## Station-upgrade reference
+
+Before changing any station upgrade, read [docs/STATION_UPGRADES.md](docs/STATION_UPGRADES.md). This shared contract applies to future stations too: reuse catalog/progress/rites, require personal eligibility rather than prior gift claims, allow crafted/gifted kits without bypassing server gates, preserve in-place state and exact escrow recovery, and update books/dialogue and activation tests together. Root `AGENTS.md` and `docs/agents/hemomancy-mod-agent.md` contain the broader project conventions.
+
 Treat my initial task request as authorization to complete the entire task
 from investigation through implementation, testing, and final reporting.
 

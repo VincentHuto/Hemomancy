@@ -79,7 +79,7 @@ public final class HarbingerRecipeMapDefinitions {
 		iconRites("cardinal_rite/pallid_shadow", () -> new ItemStack(ItemInit.pallid_icon.get()));
 
 		iconRites("cardinal_rite/ancestral_communion", () -> new ItemStack(ItemInit.memory_of_vesper.get()));
-		iconRites("cardinal_rite/bloom_of_qliphoth", () -> new ItemStack(BlockInit.qliphoth_bloom.get()));
+		iconRites("cardinal_rite/bloom_of_qliphoth", () -> new ItemStack(ItemInit.qliphoth_seed.get()));
 
 		iconRites("cardinal_rite/puppeteer_trial_gorebound_hulk", () -> new ItemStack(ItemInit.gorebound_yoke.get()));
 		iconRites("cardinal_rite/puppeteer_trial_marrow_spitter", () -> new ItemStack(ItemInit.marrow_spitter_carriage.get()));

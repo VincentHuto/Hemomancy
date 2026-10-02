@@ -100,7 +100,7 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> liber_sanguinum = SPECIALITEMS.register("liber_sanguinum",
             () -> new BloodyBookItem(new Item.Properties().stacksTo(1),
                     Hemomancy.rloc("textures/entity/liber_sanguinum.png"))
-                    .withBookId(Hemomancy.rloc("fanesanguinium"))
+                    .withBookId(Hemomancy.rloc("libersanguinium"))
                     .withNotices(new com.vincenthuto.hutoslib.common.book.BookNoticeStyle("hemomancy.book.fane_discovery", "hutoslib.book.forgotten", "hutoslib.book.revealed", 0xFFB3121A))
                     .withReaderConfiguration(HemomancyBookPresentation::configure)
                     .withPageFilter(new MemoBookFilter())
@@ -956,12 +956,20 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> sanguine_athanor_kit = BASEITEMS.register("sanguine_athanor_kit",
             () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
     //Resonant Forge upgrade kit
+    public static final DeferredHolder<Item, Item> centrifugal_governor_kit = BASEITEMS.register("centrifugal_governor_kit",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> fractionating_rotor_kit = BASEITEMS.register("fractionating_rotor_kit",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
     public static final DeferredHolder<Item, Item> precision_governor_kit = BASEITEMS.register("precision_governor_kit",
             () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> master_cam_kit = BASEITEMS.register("master_cam_kit",
             () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
 
-    //TODO: ENZYMATIC SCRIPTORIUM NEEDS 2 UNIQUE UPGRADE ITEMS TO GO HERE NOT REUSEING THE VICARS CONSESCRATION KIT('which needs to be renamed anywhoo to just the consecration kit)
+    //Enzymatic Scriptorium upgrade items
+    public static final DeferredHolder<Item, Item> rubricators_quill = BASEITEMS.register("rubricators_quill",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> palimpsest_burin = BASEITEMS.register("palimpsest_burin",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
 
 
     // Unstained Our Lady of Still Waters materials

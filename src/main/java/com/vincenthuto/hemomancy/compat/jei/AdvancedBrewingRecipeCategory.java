@@ -26,7 +26,7 @@ public final class AdvancedBrewingRecipeCategory implements IRecipeCategory<Adva
     @Override public RecipeType<AdvancedBrewingDisplay> getRecipeType() { return TYPE; }
     @Override public Component getTitle() { return Component.translatable("hemomancy.jei.advanced_brewing"); }
     @Override public int getWidth() { return 170; }
-    @Override public int getHeight() { return 86; }
+    @Override public int getHeight() { return 98; }
     @Override public IDrawable getIcon() { return icon; }
 
     @Override public void setRecipe(IRecipeLayoutBuilder builder, AdvancedBrewingDisplay recipe, IFocusGroup focuses) {
@@ -39,9 +39,9 @@ public final class AdvancedBrewingRecipeCategory implements IRecipeCategory<Adva
 
     @Override public void draw(AdvancedBrewingDisplay recipe, IRecipeSlotsView slots, GuiGraphics gfx,
                                double mouseX, double mouseY) {
-        gfx.fill(0, 0, 170, 86, 0xFF120609);
+        gfx.fill(0, 0, 170, 98, 0xFF120609);
         gfx.fill(0, 0, 170, 1, 0xFF7C2938);
-        gfx.fill(0, 85, 170, 86, 0xFF7C2938);
+        gfx.fill(0, 97, 170, 98, 0xFF7C2938);
         var font = Minecraft.getInstance().font;
         gfx.drawString(font, Component.translatable("hemomancy.jei.advanced_brewing." + recipe.note()),
                 10, 8, 0xFFE4B8B5, false);
@@ -50,5 +50,7 @@ public final class AdvancedBrewingRecipeCategory implements IRecipeCategory<Adva
                 10, 61, 0xFFD7948B, false);
         gfx.drawString(font, Component.translatable("hemomancy.jei.advanced_brewing." + recipe.note() + ".hint"),
                 10, 73, 0xFFB9A4A4, false);
+        gfx.drawString(font, Component.translatable("hemomancy.jei.alembic.athanor_hint"),
+                10, 85, 0xFFB9A4A4, false);
     }
 }

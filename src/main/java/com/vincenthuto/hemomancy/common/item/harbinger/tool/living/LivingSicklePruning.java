@@ -45,6 +45,7 @@ public final class LivingSicklePruning {
 		String dimension = level.dimension().location().toString();
 		QliphothBloomSavedData.BloomEntry bloom = data.getBloomAt(pos, dimension);
 		if (bloom == null || !bloom.center().equals(pos)) return false;
+		if (data.getState(bloom) != SeveredQliphothState.LIVING) return false;
 
 		if (isTemporarySickle(held)) {
 			if (!isBoundTo(held, bloom, dimension) || !eligible(serverPlayer, bloom, data)) {

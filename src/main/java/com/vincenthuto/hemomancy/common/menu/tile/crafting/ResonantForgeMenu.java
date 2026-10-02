@@ -118,10 +118,17 @@ public class ResonantForgeMenu extends AbstractContainerMenu {
 
     @Override public boolean clickMenuButton(Player player, int button) {
         if (!stillValid(player)) return false;
+        if (button >= 0 && button <= 2) {
+            boolean started = switch (button) {
+                case 0 -> forge.startApply();
+                case 1 -> forge.startGrinding();
+                default -> forge.startStabilizing();
+            };
+            // Only the player whose press actually started the operation is credited with its machine use.
+            if (started) forge.setOperator(player.getUUID());
+            return started;
+        }
         return switch (button) {
-            case 0 -> forge.startApply();
-            case 1 -> forge.startGrinding();
-            case 2 -> forge.startStabilizing();
             case 3 -> forge.cancelOperation();
             case 4 -> forge.toggleMasterMode();
             default -> {
@@ -141,9 +148,10 @@ public class ResonantForgeMenu extends AbstractContainerMenu {
         if (index < ResonantForgeBlockEntity.SLOT_COUNT) {
             if (!moveItemStackTo(original, ResonantForgeBlockEntity.SLOT_COUNT, slots.size(), true)) return ItemStack.EMPTY;
         } else if (CylinderMedia.supported(original)) {
-            if (!CylinderMedia.blank(original) && !original.has(DataComponentInit.RESONANT_PATTERN.get()))
+            boolean blank = CylinderMedia.blank(original.copyWithCount(1));
+            if (!blank && !original.has(DataComponentInit.RESONANT_PATTERN.get()))
                 return ItemStack.EMPTY;
-            if (CylinderMedia.blank(original)) {
+            if (blank) {
                 if (!moveItemStackTo(original, ResonantForgeBlockEntity.GRINDING_CYLINDER,
                         ResonantForgeBlockEntity.GRINDING_CYLINDER + 1, false)) return ItemStack.EMPTY;
             } else if (!moveItemStackTo(original, ResonantForgeBlockEntity.APPLICATION_CYLINDER,

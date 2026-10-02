@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.capability.player.shared.knowledge;
 import com.vincenthuto.hutoslib.common.book.knowledge.IDiscoverySource;
 
 /**
- * Hemomancy-specific discovery sources for the Liber Sanguinum / Liber
+ * Hemomancy-specific discovery sources for the Liber Sanguinium / Liber
  * Immaculatus book knowledge system.
  *
  * <p>Generic sources that are shared across all HutosLib consumer mods
@@ -24,4 +24,6 @@ public enum HemomancyDiscoverySource implements IDiscoverySource {
 	BLOOD_ECHO,
 	/** Entry was unlocked by reading a rite fragment inscription. */
 	RITE_FRAGMENT,
+	/** Entry was unlocked by meeting personal machine-practice eligibility. */
+	PRACTICE,
 }

@@ -147,7 +147,7 @@ public final class DialogueHubFactory {
 		if (containsAny(value, "quest", "assignment", "reward", "claim", "brief", "task", "report",
 				"lesson", "directive", "diagnosis", "observance", "taxonomy", "bestiary",
 				"fungal_survey", "voyager_introduction", "morphling_handling", "circus_referral",
-				"deep_dark_commission", "phlegethontic_commission", "vagrant_inquiry")) {
+				"deep_dark_commission", "phlegethontic_commission", "vagrant_inquiry", "woven_vessel")) {
 			return DialogueCategory.QUESTS;
 		}
 		if (containsAny(value, "about", "lore", "history", "order", "rite", "ritual", "machine",
@@ -177,7 +177,7 @@ public final class DialogueHubFactory {
 			return DialogueAttention.URGENT;
 		}
 		if (containsAny(event, "brief", "accept", "lesson", "referral", "task", "diagnosis", "directive",
-				"starter")) {
+				"starter", "mnemonist_blank_memory_recipe")) {
 			return DialogueAttention.NOTICE;
 		}
 		return DialogueAttention.NONE;

@@ -40,7 +40,7 @@ public final class LiberDiscoveryEvents {
 	}
 
 	/**
-	 * Registers all Hemomancy item and advancement → Liber Sanguinum entry
+	 * Registers all Hemomancy item and advancement → Liber Sanguinium entry
 	 * unlock mappings with HutosLib's {@link BookEntryRegistry}. This shared
 	 * registry is used by HutosLib's own discovery events and Hemomancy's bridge
 	 * handlers below.
@@ -120,6 +120,7 @@ public final class LiberDiscoveryEvents {
 		BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_DEGREE_6_SANCTIFIED, LiberEntryDefinitions.DEGREES);
 		BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_DEGREE_7_ARCHON,    LiberEntryDefinitions.ENTITY);
 		BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_DEGREE_8_APOTHEOS,  LiberEntryDefinitions.TRUTH);
+		BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_LESSON, LiberEntryDefinitions.SCAR_PRACTICE);
 		// Harbinger milestone advancements
 		BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_BLOOD_IS_BOUND,                LiberEntryDefinitions.BLOOD_MEMORIES);
 		BookEntryRegistry.registerAdvancementUnlock(HarbingerAdvancementGranter.ADV_CRIMSON_LODGE_CONSECRATED,     LiberEntryDefinitions.BLOOD_MEMORIES);

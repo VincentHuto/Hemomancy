@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.crafting;
 
+import com.vincenthuto.hemomancy.common.station.CreativeStationUpgrades;
+
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.shared.FillerBlock;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
@@ -61,11 +63,14 @@ public class ResonantForgeBlock extends BaseEntityBlock implements EntityBlock, 
 
     public ResonantForgeBlock(BlockBehaviour.Properties properties) {
         super(properties);
-        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
+        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH)
+                .setValue(com.vincenthuto.hemomancy.common.station.StationTierProperty.STAGE, 0));
     }
 
     @Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
-    @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) { builder.add(FACING); }
+    @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(FACING, com.vincenthuto.hemomancy.common.station.StationTierProperty.STAGE);
+    }
     @Override public BlockPos[] getFillerOffsets() { return NORTH_OFFSETS; }
     @Override public RenderShape getRenderShape(BlockState state) { return RenderShape.MODEL; }
     private static VoxelShape shape(BlockState state) {
@@ -148,6 +153,8 @@ public class ResonantForgeBlock extends BaseEntityBlock implements EntityBlock, 
 
     @Override protected ItemInteractionResult useItemOn(ItemStack held, BlockState state, Level level, BlockPos pos,
             Player player, InteractionHand hand, BlockHitResult hit) {
+        if (CreativeStationUpgrades.tryApply(held, level, pos, player))
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
         if (!(level.getBlockEntity(pos) instanceof ResonantForgeBlockEntity forge)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         Part part = part(state, pos, hit);
         if (!level.isClientSide && part == Part.HAMMER && forge.hammerWorn()
@@ -180,6 +187,9 @@ public class ResonantForgeBlock extends BaseEntityBlock implements EntityBlock, 
         ItemStack station = new ItemStack(this);
         CompoundTagWithoutItems saved = new CompoundTagWithoutItems(forge.saveWithoutMetadata(params.getLevel().registryAccess()));
         BlockItem.setBlockEntityData(station, BlockEntityInit.resonant_forge.get(), saved.tag());
+        station.set(net.minecraft.core.component.DataComponents.BLOCK_STATE,
+                net.minecraft.world.item.component.BlockItemStateProperties.EMPTY
+                        .with(com.vincenthuto.hemomancy.common.station.StationTierProperty.STAGE, state));
         return List.of(station);
     }
 

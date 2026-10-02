@@ -39,7 +39,7 @@
     "toast": "hemomancy:textures/gui/book/liber/toast.png"
   },
   "layout": {
-    "tabStyle": "head",
+    "tabStyle": "fore_edge",
     "spread": "auto",
     "pageSize": [
       174,

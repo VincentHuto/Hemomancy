@@ -1,6 +1,7 @@
 {
   "credit": "Mechanical conversion from GhastlyAlembicModel Java addBox definitions scaled to vanilla block-model element bounds",
   "parent": "minecraft:block/block",
+  "ambientocclusion": false,
   "render_type": "translucent",
   "textures": {
     "model": "hemomancy:block/model_ghastly_alembic",

@@ -41,6 +41,23 @@ class ChamberGuidanceDialogueTest {
                 .contains("hemomancy.mnemonist.chamber.rite"));
     }
 
+    @Test
+    void unavailableGuidanceExplainsItemTransferInsteadOfAnEmptyHandGate() throws Exception {
+        var language = com.google.gson.JsonParser.parseString(java.nio.file.Files.readString(java.nio.file.Path.of(
+                "src/main/resources/assets/hemomancy/lang/en_us.json"))).getAsJsonObject();
+        String explanation = language.get("hemomancy.mnemonist.chamber.guided.unavailable").getAsString();
+        assertTrue(explanation.contains("item transfer"), "The rejected visit must explain clearing a carried inventory item");
+        assertFalse(explanation.contains("empty hands"), "Holding a tool does not block the guided visit");
+    }
+
+    @Test
+    void arborHasAPlayerReadableEntityName() throws Exception {
+        var language = com.google.gson.JsonParser.parseString(java.nio.file.Files.readString(java.nio.file.Path.of(
+                "src/main/resources/assets/hemomancy/lang/en_us.json"))).getAsJsonObject();
+        assertTrue(language.has("entity.hemomancy.arbor_of_will"), "The Arbor inspection must not expose a translation key");
+        org.junit.jupiter.api.Assertions.assertEquals("Arbor of Will", language.get("entity.hemomancy.arbor_of_will").getAsString());
+    }
+
     private static DialogueTree baseTree() {
         return DialogueTree.builder("mnemonist", ResourceLocation.fromNamespaceAndPath("hemomancy", "test"), 42)
                 .addNode(new DialogueNode("greeting", List.of("greeting"), List.of(

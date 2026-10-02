@@ -217,18 +217,15 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.succe
         Player player = serverPlayer;
         int degree = HemoCapabilityAccess.getPlayerDegreeNumber(serverPlayer);
         if (isPurifying(serverPlayer)) return HarbingerVicarDialogueTrees.purifying(this.getId());
-        if (degree >= 7 && hasPomeEmpowerment(serverPlayer)) {
-            DialogueTree empowered = HarbingerVicarDialogueTrees.withContinuingConsecration(
-                    HarbingerVicarDialogueTrees.archonPomeEmpowered(this.getId()), degree,
-                    com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEventHandler.hasClaimedConsecrationKit(serverPlayer));
-            return withFieldResearch(empowered, serverPlayer, degree);
-        }
         DialogueTree tree = HarbingerVicarDialogueTrees.forDegree(degree, this.getId(), canShowRecruitment(player, this),
                 isNpcInPlayerBloodline(player, this), hasAbocipherLiteracy(serverPlayer),
                 hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_FIRST_REMNANT),
                 hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_HERMIT_ROAD_REPORTED),
                 hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_VICAR_MASONS_RESPITE_DIRECTIVE),
                 FirstBloodcraftAssignment.canClaim(serverPlayer), FirstBloodcraftAssignment.isClaimed(serverPlayer));
+        if (degree >= 7 && hasPomeEmpowerment(serverPlayer)) {
+            tree = HarbingerVicarDialogueTrees.withPomeEmpowerment(tree);
+        }
         tree = EarlyInitiationDialogue.vicar(tree, serverPlayer);
         tree = HarbingerVicarDialogueTrees.withContinuingConsecration(tree, degree,
                 com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEventHandler.hasClaimedConsecrationKit(serverPlayer));

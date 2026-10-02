@@ -10,63 +10,109 @@ import javax.imageio.ImageIO;
 import org.junit.jupiter.api.Test;
 
 class BloodFillPixelsTest {
-    @Test
-    void fillHeightControlsVisibleLiquidRows() {
-        int[] empty = BloodFillPixels.render(0, 0, 0, 0.0f);
-        int[] half = BloodFillPixels.render(46, 0, 0, 0.0f);
-        int[] full = BloodFillPixels.render(92, 0, 0, 0.0f);
+    private static final Path ROOT = Path.of("src/main/resources/assets/hemomancy/textures/gui/blood_overlay");
 
-        assertEquals(25 * 92, full.length);
-        assertEquals(0, empty[60 * 25 + 12]);
-        assertEquals(0, half[20 * 25 + 12]);
-        assertNotEquals(0, half[60 * 25 + 12]);
-        assertNotEquals(0, full[20 * 25 + 12]);
+    @Test
+    void fillHeightControlsVisibleLiquidRows() throws Exception {
+        BufferedImage back = texture("vessel_back.png");
+        int[] empty = render(back, 0, 0, 0, 0);
+        int[] half = render(back, 0.5, 0, 0, 0);
+        int[] full = render(back, 1, 0, 0, 0);
+        assertEquals(back.getWidth() * back.getHeight(), full.length);
+        assertEquals(0, empty[90 * back.getWidth() + 32]);
+        assertEquals(0, half[40 * back.getWidth() + 32]);
+        assertNotEquals(0, half[90 * back.getWidth() + 32]);
+        assertNotEquals(0, full[40 * back.getWidth() + 32]);
         assertEquals(0, full[0]);
     }
 
     @Test
-    void communionCorruptionChangesBloodColor() {
-        int[] clear = BloodFillPixels.render(46, 7, 0, 1.0f);
-        int[] corrupted = BloodFillPixels.render(46, 7, 9, 1.0f);
-        assertNotEquals(clear[60 * 25 + 12], corrupted[60 * 25 + 12]);
+    void communionCorruptionChangesBloodColor() throws Exception {
+        BufferedImage back = texture("vessel_back.png");
+        int[] clear = render(back, 0.5, 7, 0, 1);
+        int[] corrupted = render(back, 0.5, 7, 9, 1);
+        assertNotEquals(clear[90 * back.getWidth() + 32], corrupted[90 * back.getWidth() + 32]);
     }
 
     @Test
-    void fullFillTopMatchesStaticVesselTextures() throws Exception {
-        int[] procedural = BloodFillPixels.render(92, 7, 0, 0.0f);
-        assertNotEquals(0, procedural[3]);
-        assertNotEquals(0, procedural[21]);
-
-        Path root = Path.of("src/main/resources/assets/hemomancy/textures/gui/blood_overlay");
-        for (int frame = -1; frame < 16; frame++) {
-            String name = frame < 0 ? "vessel_back.png" : "fill_apotheos_" + frame + ".png";
-            BufferedImage texture = ImageIO.read(root.resolve(name).toFile());
-            assertEquals(76, texture.getWidth());
-            assertEquals(126, texture.getHeight());
-            for (int row = 0; row <= 10; row++) {
-                for (int col = 0; col < 25; col++) {
-                    boolean liquid = procedural[row * 25 + col] != 0;
-                    boolean sprite = (texture.getRGB(26 + col, 26 + row) >>> 24) != 0;
-                    assertEquals(liquid, sprite, name + " at " + col + "," + row);
+    void fullFillCoversTheAuthoredVisibleWindow() throws Exception {
+        BufferedImage back = texture("vessel_back.png");
+        for (int degree = 0; degree < 8; degree++) {
+            BufferedImage frame = texture("base_degree_" + degree + ".png");
+            int[] fill = render(back, 1, degree, degree == 7 ? 9 : 0, 0);
+            for (int y = 0; y < back.getHeight(); y++) {
+                for (int x = 0; x < back.getWidth(); x++) {
+                    if ((back.getRGB(x, y) >>> 24) == 0 || (frame.getRGB(x, y) >>> 24) != 0) continue;
+                    assertNotEquals(0, fill[y * back.getWidth() + x],
+                            "Unfilled visible window in degree " + degree + " at " + x + "," + y);
                 }
             }
         }
     }
 
     @Test
-    void upperFrameShoulderDoesNotCoverFillWithSilverPixels() throws Exception {
-        Path root = Path.of("src/main/resources/assets/hemomancy/textures/gui/blood_overlay");
-        int[][] shoulder = {{28, 28}, {27, 29}, {27, 30}};
-        for (int degree = 0; degree <= 8; degree++) {
-            BufferedImage frame = ImageIO.read(root.resolve("base_degree_" + degree + ".png").toFile());
-            for (int[] point : shoulder) {
-                int color = frame.getRGB(point[0], point[1]);
-                int red = (color >>> 16) & 0xFF;
-                int green = (color >>> 8) & 0xFF;
-                assertNotEquals(0, color >>> 24, "frame " + degree + " at " + point[0] + "," + point[1]);
-                assertTrue(red > green * 2,
-                        "silver gap in frame " + degree + " at " + point[0] + "," + point[1]);
+    void fillNeverEscapesTheBackingMaskAtAnyVolume() throws Exception {
+        BufferedImage back = texture("vessel_back.png");
+        for (double ratio : new double[]{0, 0.01, 0.25, 0.5, 0.99, 1}) {
+            int[] fill = render(back, ratio, 7, 9, 2);
+            for (int y = 0; y < back.getHeight(); y++) {
+                for (int x = 0; x < back.getWidth(); x++) {
+                    if ((back.getRGB(x, y) >>> 24) == 0)
+                        assertEquals(0, fill[y * back.getWidth() + x], "Escaped backing at " + x + "," + y);
+                }
             }
         }
+    }
+
+    @Test
+    void apotheosFramesCoverTheAuthoredVisibleWindow() throws Exception {
+        BufferedImage back = texture("vessel_back.png");
+        BufferedImage frame = texture("base_degree_8.png");
+        for (int index = 0; index < 16; index++) {
+            BufferedImage fill = texture("fill_apotheos_" + index + ".png");
+            assertEquals(back.getWidth(), fill.getWidth());
+            assertEquals(back.getHeight(), fill.getHeight());
+            for (int y = 0; y < back.getHeight(); y++) {
+                for (int x = 0; x < back.getWidth(); x++) {
+                    if ((back.getRGB(x, y) >>> 24) == 0 || (frame.getRGB(x, y) >>> 24) != 0) continue;
+                    assertNotEquals(0, fill.getRGB(x, y) >>> 24,
+                            "Unfilled Apotheos window in frame " + index + " at " + x + "," + y);
+                }
+            }
+        }
+    }
+
+    @Test
+    void degreeFramesRetainTheirOpenInteriorWithoutARequiredPalette() throws Exception {
+        BufferedImage back = texture("vessel_back.png");
+        assertEquals(64, back.getWidth());
+        assertEquals(128, back.getHeight());
+        for (int degree = 0; degree <= 8; degree++) {
+            BufferedImage frame = texture("base_degree_" + degree + ".png");
+            assertEquals(back.getWidth(), frame.getWidth());
+            assertEquals(back.getHeight(), frame.getHeight());
+            assertEquals(0, frame.getRGB(32, 65) >>> 24, "Degree frame obstructed the middle of the vessel");
+            assertNotEquals(0, frame.getRGB(21, 65) >>> 24, "Degree frame lost its interior border");
+        }
+    }
+
+    @Test
+    void emptyMaskRendersNoBlood() {
+        int[] pixels = BloodFillPixels.render(new boolean[9], 3, 3, 1, 0, 0, 0);
+        for (int pixel : pixels) assertEquals(0, pixel);
+    }
+
+    private static BufferedImage texture(String name) throws Exception {
+        BufferedImage image = ImageIO.read(ROOT.resolve(name).toFile());
+        assertTrue(image != null, "Unreadable blood HUD texture: " + name);
+        return image;
+    }
+
+    private static int[] render(BufferedImage back, double ratio, int degree, int pomes, float time) {
+        boolean[] mask = new boolean[back.getWidth() * back.getHeight()];
+        for (int y = 0; y < back.getHeight(); y++) {
+            for (int x = 0; x < back.getWidth(); x++) mask[y * back.getWidth() + x] = (back.getRGB(x, y) >>> 24) != 0;
+        }
+        return BloodFillPixels.render(mask, back.getWidth(), back.getHeight(), ratio, degree, pomes, time);
     }
 }

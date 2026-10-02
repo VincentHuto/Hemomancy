@@ -45,7 +45,6 @@ import java.util.function.IntUnaryOperator;
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class CardinalRiteInteractionHandler {
-	private static final double HANDLED_WITHOUT_BLOOD = Double.MIN_NORMAL;
 	private static final int FALSE_STROKE_OUTER_BLACK = 0xE806020A;
 	private static final int FALSE_STROKE_INNER_PURPLE = 0xFF5A167D;
 
@@ -63,18 +62,18 @@ public final class CardinalRiteInteractionHandler {
 		CardinalRiteSavedData data = CardinalRiteSavedData.get(serverLevel);
 		for (ActiveCardinalRite rite : data.getActiveRites().values()) {
 			if (!mayParticipate(player, rite)) continue;
-			if (rite.getPhase() == CardinalRitePhase.ALEMBIC_PROJECTION) {
-				int stage = rite.alembic().getInt("Stage");
+			if (rite.getPhase() == CardinalRitePhase.STATION_PROJECTION) {
+				int stage = rite.upgrade().getInt("Stage");
 				int aimed = CardinalRiteVirtualTargeting.closestTarget(player.getEyePosition(), player.getLookAngle(),
 						CardinalRiteVirtualTargeting.PROJECTION_RANGE, CardinalRiteVirtualTargeting.TARGET_RADIUS,
-						java.util.stream.IntStream.range(0, AlembicUpgradeRites.projections(rite.getRecipeId()))
-								.mapToObj(i -> AlembicUpgradeRites.targetSurface(serverLevel, rite, i)).toList());
+						java.util.stream.IntStream.range(0, StationUpgradeRites.circuits(rite.getRecipeId()))
+								.mapToObj(i -> StationUpgradeRites.targetSurface(serverLevel, rite, i)).toList());
 				if (aimed != stage) return CardinalRiteProjectionResult.handled(0.0D);
 				int paid = spendBlood(player, rite,
-						Math.min(rite.alembicBloodNeeded(), Math.max(1, (int) Math.floor(projectionRate))));
-				if (paid > 0 && rite.fillAlembicProjection(stage, paid)) {
+						Math.min(rite.upgradeBloodNeeded(), Math.max(1, (int) Math.floor(projectionRate))));
+				if (paid > 0 && rite.fillUpgradeCircuit(stage, paid)) {
 					data.setDirty();
-					serverLevel.playSound(null, AlembicUpgradeRites.target(rite, stage),
+					serverLevel.playSound(null, StationUpgradeRites.target(rite, stage),
 							SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.BLOCKS, 0.5F, 0.85F + stage * 0.1F);
 				}
 				return CardinalRiteProjectionResult.handled(paid);
@@ -82,22 +81,6 @@ public final class CardinalRiteInteractionHandler {
 			if (tryProjectSeal(serverLevel, player, rite)) {
 				data.setDirty();
 				return CardinalRiteProjectionResult.handled(0.0D);
-			}
-			if (rite.getPhase() == CardinalRitePhase.SCRIPTORIAL_INSCRIPTION) {
-				int orb = CardinalRiteVirtualTargeting.closestTarget(player.getEyePosition(), player.getLookAngle(),
-						CardinalRiteVirtualTargeting.PROJECTION_RANGE,
-						CardinalRiteVirtualTargeting.TARGET_RADIUS,
-						java.util.stream.IntStream.range(0, 8)
-								.mapToObj(i -> ScriptoriumRites.orbSurface(serverLevel, rite, i)).toList());
-				if (orb != rite.getScriptorialStage() % 8) return CardinalRiteProjectionResult.handled(0.0D);
-				int paid = spendBlood(player, rite,
-						Math.min(rite.scriptorialBloodNeeded(), Math.max(1, (int) Math.floor(projectionRate))));
-				if (paid > 0 && rite.fillScriptorialOrb(orb, paid)) {
-					data.setDirty();
-					serverLevel.playSound(null, ScriptoriumRites.orb(rite, orb), SoundEvents.RESPAWN_ANCHOR_CHARGE,
-							SoundSource.BLOCKS, 0.4F, 0.9F + orb * 0.04F);
-				}
-				return CardinalRiteProjectionResult.handled(paid);
 			}
 			BlockPos target = virtualProjectionTarget(serverLevel, player, rite);
 			if (target == null) target = physicalTarget;
@@ -107,10 +90,11 @@ public final class CardinalRiteInteractionHandler {
 				data.setDirty();
 				return CardinalRiteProjectionResult.handled(falseOmen);
 			}
-			double sigilHandled = tryProjectSigil(serverLevel, player, rite, target, projectionRate);
-			if (sigilHandled > 0.0D) {
+			SigilOffer sigilOffer = tryOfferSigilBlood(serverLevel, player, rite, target, projectionRate,
+					requested -> spendBlood(player, rite, requested));
+			if (sigilOffer.handled()) {
 				data.setDirty();
-				return CardinalRiteProjectionResult.handled(sigilHandled);
+				return CardinalRiteProjectionResult.handled(sigilOffer.spent());
 			}
 			int anchor = anchorAt(serverLevel, rite, target);
 			if (anchor < 0) continue;
@@ -167,7 +151,7 @@ public final class CardinalRiteInteractionHandler {
 					&& !rite.isSigilAwakened(Hemomancy.rloc(socket.suggestedSigil()).toString())) {
 				player.displayClientMessage(Component.literal(
 								"The required " + socket.suggestedSigil() + " support sigil has not awakened.")
-						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), true);
 				return true;
 			}
 		}
@@ -210,7 +194,7 @@ public final class CardinalRiteInteractionHandler {
 						CardinalRiteTargetGeometry.anchorAimPoint(rite.getCenterPos(), offset)));
 			}
 		}
-		for (SigilPlacement placement : activeSigils(level, rite)) {
+		for (SigilPlacement placement : projectionSigils(level, rite)) {
 			IchorianSigilDefinition sigil = IchorianSigilRegistry.get(placement.id());
 			if (sigil == null) continue;
 			BlockPos base = rite.getCenterPos().offset(0, placement.y(), 0);
@@ -243,17 +227,9 @@ public final class CardinalRiteInteractionHandler {
 		return targets;
 	}
 
-	private static double tryProjectSigil(ServerLevel level, ServerPlayer player, ActiveCardinalRite rite,
-			BlockPos target, double projectionRate) {
-		SigilOffer offer = tryOfferSigilBlood(level, player, rite, target, projectionRate,
-				requested -> spendBlood(player, rite, requested));
-		if (!offer.handled()) return 0.0D;
-		return offer.spent() > 0 ? offer.spent() : HANDLED_WITHOUT_BLOOD;
-	}
-
 	private static SigilOffer tryOfferSigilBlood(ServerLevel level, ServerPlayer player, ActiveCardinalRite rite,
 			BlockPos target, double projectionRate, IntUnaryOperator payment) {
-		List<SigilPlacement> placements = activeSigils(level, rite);
+		List<SigilPlacement> placements = projectionSigils(level, rite);
 		for (SigilPlacement placement : placements) {
 			IchorianSigilDefinition sigil = IchorianSigilRegistry.get(placement.id());
 			if (sigil == null || sigil.nodes().isEmpty()) continue;
@@ -472,6 +448,11 @@ public final class CardinalRiteInteractionHandler {
 	}
 
 	static List<SigilPlacement> activeSigils(ServerLevel level, ActiveCardinalRite rite) {
+		return projectionSigils(level, rite).stream()
+				.filter(placement -> !rite.isSigilAwakened(placement.progressKey())).toList();
+	}
+
+	private static List<SigilPlacement> projectionSigils(ServerLevel level, ActiveCardinalRite rite) {
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
 		if (recipe == null || recipe.getCeremony() == null) return List.of();
 		List<SigilPlacement> placements = new ArrayList<>();
@@ -492,7 +473,6 @@ public final class CardinalRiteInteractionHandler {
 				if (!placements.contains(wavePlacement)) placements.add(wavePlacement);
 			}
 		}
-		placements.removeIf(placement -> rite.isSigilAwakened(placement.progressKey()));
 		return placements;
 	}
 

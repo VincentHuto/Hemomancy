@@ -354,6 +354,14 @@ public final class EnzymaticScriptoriumMenu extends AbstractContainerMenu {
         for (int i = 0; i < 8; i++) enzymeCosts[i] = enzymeCost(tier, i);
         station.consumeEnzymes(enzymeCosts);
         actor.onEnchantmentPerformed(input, tier + 1);
+        if (actor instanceof net.minecraft.server.level.ServerPlayer serverActor) {
+            var stationProgress = HemoCapabilityAccess.stationUpgrades(serverActor);
+            stationProgress.recordUse(com.vincenthuto.hemomancy.common.station.UpgradeStation.SCRIPTORIUM,
+                    com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.ENCHANT);
+            // A package with a target raised one enchantment above its roll (mode 1 or 2).
+            if (targets[tier] >= 0) stationProgress.recordUse(com.vincenthuto.hemomancy.common.station.UpgradeStation.SCRIPTORIUM,
+                    com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.ENCHANT_TARGETED);
+        }
         station.sync();
         cachedKey = "";
         refresh();

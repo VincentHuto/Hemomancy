@@ -26,7 +26,7 @@ public class DistillationRecipe implements Recipe<RecipeInput> {
 	private final Ingredient ingredient;
 	/** Optional catalyst — {@link Ingredient#EMPTY} means the recipe works without one. */
 	private final Ingredient catalyst;
-	private final Ingredient bloodInput;
+	private final Ingredient vesselInput;
 	private final boolean consumeCatalyst;
 	private final boolean pallid;
 	private final ItemStack result;
@@ -37,34 +37,36 @@ public class DistillationRecipe implements Recipe<RecipeInput> {
 	 * 0 means the recipe generates white humor instead of consuming it.
 	 */
 	private final int whiteHumorCost;
+	private final int bloodCost;
 
 	public DistillationRecipe(ResourceLocation id, String group, Ingredient ingredient,
 			Ingredient catalyst, boolean pallid, ItemStack result, float experience, int cookingTime) {
 		this(id, group, ingredient, catalyst, Ingredient.EMPTY, false, pallid,
-				result, experience, cookingTime, 0);
+				result, experience, cookingTime, 0, 0);
 	}
 
 	public DistillationRecipe(ResourceLocation id, String group, Ingredient ingredient,
 			Ingredient catalyst, boolean pallid, ItemStack result, float experience, int cookingTime,
 			int whiteHumorCost) {
 		this(id, group, ingredient, catalyst, Ingredient.EMPTY, false, pallid,
-				result, experience, cookingTime, whiteHumorCost);
+				result, experience, cookingTime, whiteHumorCost, 0);
 	}
 
 	public DistillationRecipe(ResourceLocation id, String group, Ingredient ingredient,
-			Ingredient catalyst, Ingredient bloodInput, boolean consumeCatalyst, boolean pallid,
-			ItemStack result, float experience, int cookingTime, int whiteHumorCost) {
+			Ingredient catalyst, Ingredient vesselInput, boolean consumeCatalyst, boolean pallid,
+			ItemStack result, float experience, int cookingTime, int whiteHumorCost, int bloodCost) {
 		this.id = id;
 		this.group = group;
 		this.ingredient = ingredient;
 		this.catalyst = catalyst;
-		this.bloodInput = bloodInput;
+		this.vesselInput = vesselInput;
 		this.consumeCatalyst = consumeCatalyst;
 		this.pallid = pallid;
 		this.result = result;
 		this.experience = experience;
 		this.cookingTime = cookingTime;
 		this.whiteHumorCost = whiteHumorCost;
+		this.bloodCost = bloodCost;
 	}
 
 	// ---- Accessors ----
@@ -73,11 +75,11 @@ public class DistillationRecipe implements Recipe<RecipeInput> {
 
 	/** The catalyst ingredient. {@link Ingredient#EMPTY} means no catalyst is required. */
 	public Ingredient getCatalyst() { return catalyst; }
-	public Ingredient getBloodInput() { return bloodInput; }
+	public Ingredient getVesselInput() { return vesselInput; }
 
 	/** True when this recipe requires a specific catalyst item. */
 	public boolean requiresCatalyst() { return !catalyst.isEmpty(); }
-	public boolean requiresBloodInput() { return !bloodInput.isEmpty(); }
+	public boolean requiresVesselInput() { return !vesselInput.isEmpty(); }
 	public boolean consumesCatalyst() { return consumeCatalyst; }
 
 	/** True when this recipe is for the Pallid Retort; false means Ghastly Alembic. */
@@ -87,10 +89,11 @@ public class DistillationRecipe implements Recipe<RecipeInput> {
 	public int getCookingTime() { return cookingTime; }
 	/** White humor drained from the retort tank on completion; 0 = no cost (generates humor instead). */
 	public int getWhiteHumorCost() { return whiteHumorCost; }
+	public int getBloodCost() { return bloodCost; }
 
 	/** Slot index of the catalyst in the Ghastly Alembic container. Must match GhastlyAlembicBlockEntity.SLOT_CATALYST. */
 	public static final int SLOT_CATALYST_INDEX = 3;
-	public static final int SLOT_BLOOD_INPUT_INDEX = 5;
+	public static final int SLOT_VESSEL_INPUT_INDEX = 1;
 
 	// ---- Recipe<RecipeInput> ----
 
@@ -108,7 +111,7 @@ public class DistillationRecipe implements Recipe<RecipeInput> {
 			ItemStack catalystStack = container.getItem(SLOT_CATALYST_INDEX);
 			if (!catalyst.test(catalystStack)) return false;
 		}
-		return !requiresBloodInput() || bloodInput.test(container.getItem(SLOT_BLOOD_INPUT_INDEX));
+		return !requiresVesselInput() || vesselInput.test(container.getItem(SLOT_VESSEL_INPUT_INDEX));
 	}
 
 	/** Convenience match that works directly from ItemStacks without a RecipeInput wrapper. */
@@ -116,10 +119,10 @@ public class DistillationRecipe implements Recipe<RecipeInput> {
 		return matchesItems(input, catalystStack, ItemStack.EMPTY);
 	}
 
-	public boolean matchesItems(ItemStack input, ItemStack catalystStack, ItemStack bloodInputStack) {
+	public boolean matchesItems(ItemStack input, ItemStack catalystStack, ItemStack vesselInputStack) {
 		if (!ingredient.test(input)) return false;
 		if (requiresCatalyst() && !catalyst.test(catalystStack)) return false;
-		return !requiresBloodInput() || bloodInput.test(bloodInputStack);
+		return !requiresVesselInput() || vesselInput.test(vesselInputStack);
 	}
 
 	@Override
@@ -138,7 +141,7 @@ public class DistillationRecipe implements Recipe<RecipeInput> {
 		NonNullList<Ingredient> list = NonNullList.create();
 		list.add(ingredient);
 		if (requiresCatalyst()) list.add(catalyst);
-		if (requiresBloodInput()) list.add(bloodInput);
+		if (requiresVesselInput()) list.add(vesselInput);
 		return list;
 	}
 

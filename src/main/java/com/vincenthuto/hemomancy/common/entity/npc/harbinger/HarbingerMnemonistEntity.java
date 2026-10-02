@@ -122,6 +122,8 @@ public class HarbingerMnemonistEntity extends com.vincenthuto.hemomancy.common.s
 		if (com.vincenthuto.hemomancy.common.mission.shared.VagrantMindInquiry.eligible(serverPlayer))
 			tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.VagrantMindInquiryDialogue.memory(
 					tree, com.vincenthuto.hemomancy.common.mission.shared.VagrantMindInquiry.progress(serverPlayer));
+		tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.StationUpgradeDialogue.append(tree, serverPlayer,
+				com.vincenthuto.hemomancy.common.station.UpgradeStation.SCRIPTORIUM, "hemomancy.dialogue.mnemonist.option.leave");
 		return ClinicalBloodDialogue.append(tree, serverPlayer, "mnemonist");
 	}
 

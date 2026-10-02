@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerAlchemistE
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData;
 import com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation;
+import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -25,6 +26,7 @@ public final class FirstDrawsAssignment {
 	private static final String BRIEFED = "Briefed";
 	private static final String SAMPLES = "Samples";
 	private static final String SPECIES = "Species";
+	private static final String VIALS_PENDING = "VialsPending";
 
 	private FirstDrawsAssignment() {}
 
@@ -39,7 +41,7 @@ public final class FirstDrawsAssignment {
 	}
 
 	public static boolean canBrief(ServerPlayer player) {
-		return eligible(player) && !isBriefed(player);
+		return player.isAlive() && eligible(player) && !isBriefed(player);
 	}
 
 	public static boolean brief(ServerPlayer player, Entity npc) {
@@ -47,12 +49,25 @@ public final class FirstDrawsAssignment {
 				|| !canBrief(player)) return false;
 		CompoundTag data = data(player);
 		data.putBoolean(BRIEFED, true);
+		data.putInt(VIALS_PENDING, 5);
 		save(player, data);
-		ItemStack vials = new ItemStack(ItemInit.bloody_vial.get(), 5);
-		if (!player.getInventory().add(vials)) player.drop(vials, false);
+		deliverPendingVials(player);
 		player.server.getRecipeManager().byKey(Hemomancy.rloc("bloody_vial"))
 				.ifPresent(recipe -> player.awardRecipes(List.of(recipe)));
 		return true;
+	}
+
+	static void deliverPendingVials(ServerPlayer player) {
+		if (!player.isAlive() || ChamberVisitService.isObservational(player) || !eligible(player)) return;
+		CompoundTag data = data(player);
+		int pending = data.getInt(VIALS_PENDING);
+		if (pending <= 0) return;
+		int before = player.getInventory().countItem(ItemInit.bloody_vial.get());
+		player.getInventory().add(new ItemStack(ItemInit.bloody_vial.get(), pending));
+		int inserted = player.getInventory().countItem(ItemInit.bloody_vial.get()) - before;
+		if (inserted <= 0) return;
+		data.putInt(VIALS_PENDING, Math.max(0, pending - inserted));
+		save(player, data);
 	}
 
 	public static FirstDrawsProgress progress(ServerPlayer player) {

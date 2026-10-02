@@ -7,7 +7,8 @@
       },
       "when": {
         "facing": "east",
-        "lit": "false"
+        "lit": "false",
+        "stage": "0"
       }
     },
     {
@@ -17,7 +18,8 @@
       },
       "when": {
         "facing": "east",
-        "lit": "true"
+        "lit": "true",
+        "stage": "0"
       }
     },
     {
@@ -26,7 +28,8 @@
       },
       "when": {
         "facing": "north",
-        "lit": "false"
+        "lit": "false",
+        "stage": "0"
       }
     },
     {
@@ -35,7 +38,8 @@
       },
       "when": {
         "facing": "north",
-        "lit": "true"
+        "lit": "true",
+        "stage": "0"
       }
     },
     {
@@ -45,7 +49,8 @@
       },
       "when": {
         "facing": "south",
-        "lit": "false"
+        "lit": "false",
+        "stage": "0"
       }
     },
     {
@@ -55,7 +60,8 @@
       },
       "when": {
         "facing": "south",
-        "lit": "true"
+        "lit": "true",
+        "stage": "0"
       }
     },
     {
@@ -65,7 +71,8 @@
       },
       "when": {
         "facing": "west",
-        "lit": "false"
+        "lit": "false",
+        "stage": "0"
       }
     },
     {
@@ -75,7 +82,24 @@
       },
       "when": {
         "facing": "west",
-        "lit": "true"
+        "lit": "true",
+        "stage": "0"
+      }
+    },
+    {
+      "when": {
+        "stage": "1"
+      },
+      "apply": {
+        "model": "hemomancy:block/ghastly_alembic_upgraded"
+      }
+    },
+    {
+      "when": {
+        "stage": "2"
+      },
+      "apply": {
+        "model": "hemomancy:block/ghastly_alembic_upgraded"
       }
     }
   ]

@@ -11,8 +11,8 @@ public final class SettledLoreSynchronizationSourceTest {
 		String lore = read("docs/LORE_REFERENCE.md");
 		String mechanics = read("docs/HEMOMANCY_REFERENCE.md");
 		String lang = read("src/main/resources/assets/hemomancy/lang/en_us.json");
-		String annettaBook = read("src/main/resources/data/hemomancy/books/fanesanguinium/cosmic_forces/pages/annetta_knowles.json");
-		String bloodMoonBook = read("src/main/resources/data/hemomancy/books/fanesanguinium/cosmic_forces/pages/blood_moons.json");
+		String annettaBook = read("src/main/resources/data/hemomancy/books/libersanguinium/cosmic_forces/pages/annetta_knowles.json");
+		String bloodMoonBook = read("src/main/resources/data/hemomancy/books/libersanguinium/cosmic_forces/pages/blood_moons.json");
 		String remembrance = read("src/main/java/com/vincenthuto/hemomancy/common/rite/unstained/UnstainedCardinalRiteEvents.java");
 		String remembranceRecipe = read("src/main/resources/data/hemomancy/recipe/cardinal_rite/silthmeres_remembrance.json");
 		String armor = read("src/main/java/com/vincenthuto/hemomancy/common/item/shared/armor/EnumModArmorTiers.java");

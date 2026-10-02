@@ -3,21 +3,35 @@ package com.vincenthuto.hemomancy.client.screen.overlay;
 import net.minecraft.util.Mth;
 
 final class BloodFillPixels {
-    static final int WIDTH = 25;
     static final int HEIGHT = 92;
 
     private BloodFillPixels() {
     }
 
-    static int[] render(int fillHeight, int degree, int pomeProgress, float time) {
-        int[] pixels = new int[WIDTH * HEIGHT];
-        int height = Mth.clamp(fillHeight, 0, HEIGHT);
-        int top = HEIGHT - height;
-        for (int row = top; row < HEIGHT; row++) {
-            int halfInner = Math.max(1, BloodVesselShape.halfWidth(row, false));
-            int color = colorAt(row, top, height, degree, pomeProgress, time);
-            for (int x = 12 - halfInner; x <= 12 + halfInner; x++) {
-                pixels[row * WIDTH + x] = color;
+    static int[] render(boolean[] mask, int width, int height, double ratio,
+                        int degree, int pomeProgress, float time) {
+        if (mask.length != width * height) throw new IllegalArgumentException("Invalid blood vessel mask dimensions");
+        int[] pixels = new int[mask.length];
+        int top = height;
+        int bottom = -1;
+        for (int row = 0; row < height; row++) {
+            for (int x = 0; x < width; x++) {
+                if (mask[row * width + x]) {
+                    top = Math.min(top, row);
+                    bottom = row;
+                }
+            }
+        }
+        if (bottom < top) return pixels;
+        int span = bottom - top + 1;
+        int fillRows = Mth.clamp((int) Math.round(Mth.clamp(ratio, 0.0, 1.0) * span), 0, span);
+        int surface = bottom + 1 - fillRows;
+        int vesselTop = (surface - top) * (HEIGHT - 1) / Math.max(1, span - 1);
+        for (int row = surface; row <= bottom; row++) {
+            int vesselRow = (row - top) * (HEIGHT - 1) / Math.max(1, span - 1);
+            int color = colorAt(vesselRow, vesselTop, HEIGHT - vesselTop, degree, pomeProgress, time);
+            for (int x = 0; x < width; x++) {
+                if (mask[row * width + x]) pixels[row * width + x] = color;
             }
         }
         return pixels;

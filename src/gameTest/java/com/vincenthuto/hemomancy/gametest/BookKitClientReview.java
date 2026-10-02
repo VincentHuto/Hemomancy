@@ -75,7 +75,7 @@ public final class BookKitClientReview {
                         player.getInventory().add(new ItemStack(ItemInit.liber_sanguinum.get()));
                         player.getInventory().add(new ItemStack(ItemInit.liber_immaculatus.get()));
                         HemoCapabilityAccess.getLiberKnowledge(player).ifPresent(knowledge-> {
-                            for(String name:new String[]{"fanesanguinium","liberimmaculatus"}) {
+                            for(String name:new String[]{"libersanguinium","liberimmaculatus"}) {
                                 var book=BookPlaceboReloadListener.INSTANCE.getBookByTitle(Hemomancy.rloc(name));
                                 book.getChapters().forEach(chapter->chapter.getPages().forEach(page->knowledge.unlockEntry(page.getId(),CommonDiscoverySource.OTHER)));
                             }
@@ -90,7 +90,7 @@ public final class BookKitClientReview {
                 });
             } else if(op.equals("open")) {
                 String name=data.get("book").getAsString();
-                var item=(ItemGuideBook)(name.equals("fanesanguinium")?ItemInit.liber_sanguinum.get():ItemInit.liber_immaculatus.get());
+                var item=(ItemGuideBook)(name.equals("libersanguinium")?ItemInit.liber_sanguinum.get():ItemInit.liber_immaculatus.get());
                 // Exercise the production item opener.
                 item.use(mc.level,mc.player,InteractionHand.MAIN_HAND);
             } else if(op.equals("scale")) {mc.options.guiScale().set(data.get("value").getAsInt());mc.resizeDisplay();}
@@ -137,7 +137,7 @@ public final class BookKitClientReview {
                     BookReaderScreen.open(filtered,null,null,null);
                 }
                 if(op.equals("longRecord")) {
-                    var target=BookPlaceboReloadListener.INSTANCE.findTarget(Hemomancy.rloc("fanesanguinium/the_infection/pages/antecedent_vigil_record_read")).orElseThrow();
+                    var target=BookPlaceboReloadListener.INSTANCE.findTarget(Hemomancy.rloc("libersanguinium/the_infection/pages/antecedent_vigil_record_read")).orElseThrow();
                     ((com.vincenthuto.hutoslib.common.data.book.PageTemplate)target.template()).setText("Long record continuation review. ".repeat(60));
                     ItemInit.liber_sanguinum.get().use(mc.level,mc.player,InteractionHand.MAIN_HAND);
                 }

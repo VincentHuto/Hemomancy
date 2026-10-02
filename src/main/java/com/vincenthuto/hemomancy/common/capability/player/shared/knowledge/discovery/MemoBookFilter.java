@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Implements {@link IBookPageFilter} to hide Liber Sanguinum and Liber
+ * Implements {@link IBookPageFilter} to hide Liber Sanguinium and Liber
  * Immaculatus pages that the player has not yet unlocked. Pages without an ID
  * (title / decorative pages) are always visible.
  *
@@ -31,7 +31,7 @@ public final class MemoBookFilter implements IBookPageFilter {
 		}
 		String bookPath = source.getResourceLocation().getPath();
 		if (!source.getResourceLocation().getNamespace().equals("hemomancy")
-				|| (!"fanesanguinium".equals(bookPath) && !"liberimmaculatus".equals(bookPath))) {
+				|| (!"libersanguinium".equals(bookPath) && !"liberimmaculatus".equals(bookPath))) {
 			return source;
 		}
 		final String entryPrefix = bookPath + "/";

@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.Enu
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
-import com.vincenthuto.hemomancy.common.rite.harbinger.ScriptoriumRites;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.enchanting.ScriptoriumAffinities;
@@ -309,109 +308,17 @@ public final class EnzymaticScriptoriumGameTests {
         helper.succeed();
     }
 
-    private static ActiveCardinalRite rite(GameTestHelper helper, boolean monolithic, Direction forwards) {
-        BlockPos center = helper.absolutePos(new BlockPos(5, 3, 5));
-        int degree = monolithic ? 7 : 5;
-        ActiveCardinalRite rite = ActiveCardinalRite.interactive(UUID.randomUUID(), center,
-                Hemomancy.rloc(monolithic ? "cardinal_rite/monolithic_script" : "cardinal_rite/eightfold_script"),
-                3600, monolithic ? 9 : 7, degree, false, 1, degree * 4);
-        rite.setMatchedFloor(Hemomancy.rloc(monolithic ? "working_grand" : "working_greater"), forwards, Direction.UP);
-        return rite;
-    }
-
-    private static EnzymaticScriptoriumBlockEntity station(GameTestHelper helper, ActiveCardinalRite rite, boolean monolithic) {
-        var level = helper.getLevel();
-        BlockPos seat = ScriptoriumRites.seat(rite);
-        level.setBlockAndUpdate(seat, BlockInit.enzymatic_scriptorium.get().defaultBlockState().setValue(com.vincenthuto.hemomancy.common.block.harbinger.crafting.EnzymaticScriptoriumBlock.STAGE, monolithic ? 1 : 0));
-        var station = (EnzymaticScriptoriumBlockEntity) level.getBlockEntity(seat);
-        for (int i = 0; i < 8; i++)
-            station.setItem(i, new ItemStack(EnumBloodTendency.getRepEnzyme(EnumBloodTendency.values()[i]), monolithic ? 2 : 1));
-        return station;
-    }
-
-    private static void seal(ActiveCardinalRite rite) {
-        for (int i = 0; i < rite.getAnchorBloodMl().length; i++) rite.fillAnchor(i, 50);
-        if (!rite.enterInscription() || !rite.sealAltar(false)) throw new AssertionError("Could not seal rite");
-    }
-
     @GameTest(template = "empty", timeoutTicks = 100, batch = "scriptorium")
-    public static void rotatedEightfoldOrbsPersistAcrossReload(GameTestHelper helper) {
-        var eightfoldRecipe = CardinalRiteRecipe.getRiteByLocation(helper.getLevel(),
-                Hemomancy.rloc("cardinal_rite/eightfold_script"));
-        var monolithicRecipe = CardinalRiteRecipe.getRiteByLocation(helper.getLevel(),
-                Hemomancy.rloc("cardinal_rite/monolithic_script"));
-        helper.assertTrue(eightfoldRecipe != null && eightfoldRecipe.getCeremony().anchors().size() == 20,
-                "Eightfold recipe lost its twenty anchors");
-        helper.assertTrue(monolithicRecipe != null && monolithicRecipe.getCeremony().anchors().size() == 28,
-                "Monolithic recipe lost its twenty-eight anchors");
+    public static void scriptoriumRitesAndStructureLoad(GameTestHelper helper) {
+        helper.assertTrue(CardinalRiteRecipe.getRiteByLocation(helper.getLevel(),
+                Hemomancy.rloc("cardinal_rite/eightfold_script")) != null, "Eightfold rite failed to load");
+        helper.assertTrue(CardinalRiteRecipe.getRiteByLocation(helper.getLevel(),
+                Hemomancy.rloc("cardinal_rite/palimpsest")) != null, "Palimpsest rite failed to load");
         helper.assertTrue(BloodStructureRecipe.getAllRecipes(helper.getLevel()).stream()
                 .anyMatch(recipe -> recipe.getId().equals(Hemomancy.rloc("blood_structure/enzymatic_scriptorium"))),
                 "D3 Blood Structure recipe failed to load");
         helper.assertTrue(ScriptoriumAffinities.get(net.minecraft.resources.ResourceLocation.parse("minecraft:efficiency")) != null,
                 "Efficiency affinity failed to load");
-        ActiveCardinalRite east = rite(helper, false, Direction.EAST);
-        ActiveCardinalRite south = rite(helper, false, Direction.SOUTH);
-        helper.assertTrue(!ScriptoriumRites.orb(east, 0).equals(ScriptoriumRites.orb(south, 0)),
-                "Orb placement did not rotate with the floor");
-        station(helper, east, false);
-        helper.assertTrue(ScriptoriumRites.prepare(helper.getLevel(), east), "Valid station rejected");
-        seal(east);
-        helper.assertTrue(east.getPhase() == CardinalRitePhase.SCRIPTORIAL_INSCRIPTION, "Skipped writing phase");
-        helper.assertTrue(!east.fillScriptorialOrb(1, 50), "Wrong orb accepted blood");
-        helper.assertTrue(east.fillScriptorialOrb(0, 23), "First orb rejected blood");
-        var reloaded = ActiveCardinalRite.deserialize(east.serialize(helper.getLevel().registryAccess()),
-                helper.getLevel().registryAccess());
-        helper.assertTrue(reloaded.getScriptorialStage() == 0 && reloaded.getScriptorialBlood(0) == 23,
-                "Partial orb progress did not persist");
-        helper.assertTrue(reloaded.fillScriptorialOrb(0, 27) && reloaded.getScriptorialStage() == 1,
-                "Reloaded rite could not finish its first orb");
-        ScriptoriumRites.cleanup(helper.getLevel(), east);
-        helper.assertTrue(!ScriptoriumRites.station(helper.getLevel(), east).isRiteLocked(),
-                "Cancellation did not release station inventory");
-        helper.succeed();
-    }
-
-    @GameTest(template = "empty", timeoutTicks = 100, batch = "scriptorium")
-    public static void eightfoldUpgradeConsumesExactlyOneOfEach(GameTestHelper helper) {
-        ActiveCardinalRite rite = rite(helper, false, Direction.SOUTH);
-        EnzymaticScriptoriumBlockEntity station = station(helper, rite, false);
-        station.receiveBlood(725);
-        var originalState = station.getBlockState();
-        helper.assertTrue(ScriptoriumRites.prepare(helper.getLevel(), rite), "Valid station rejected");
-        seal(rite);
-        for (int i = 0; i < 8; i++) helper.assertTrue(rite.fillScriptorialOrb(i, 50), "Orb " + i + " rejected blood");
-        helper.assertTrue(rite.getPhase() == CardinalRitePhase.ORDEAL, "Writing did not lead to ordeal");
-        helper.assertTrue(ScriptoriumRites.complete(helper.getLevel(), rite), "Upgrade failed");
-        helper.assertTrue(helper.getLevel().getBlockState(ScriptoriumRites.seat(rite)).getValue(com.vincenthuto.hemomancy.common.block.harbinger.crafting.EnzymaticScriptoriumBlock.STAGE) == 1,
-                "Wrong upgraded block");
-        var upgraded = ScriptoriumRites.station(helper.getLevel(), rite);
-        helper.assertTrue(upgraded == station, "Upgrade replaced the block entity");
-        helper.assertTrue(upgraded.getBloodCapability().getBloodVolume() == 725, "Upgrade lost stored blood");
-        helper.assertTrue(upgraded.getBlockState().getBlock() == originalState.getBlock()
-                && upgraded.getBlockState().getValue(com.vincenthuto.hemomancy.common.block.harbinger.crafting.EnzymaticScriptoriumBlock.FACING)
-                == originalState.getValue(com.vincenthuto.hemomancy.common.block.harbinger.crafting.EnzymaticScriptoriumBlock.FACING),
-                "Upgrade replaced the block or changed its facing");
-        for (int i = 0; i < 8; i++) helper.assertTrue(upgraded.getItem(i).isEmpty(), "Enzyme was not consumed once");
-        helper.assertTrue(!upgraded.isRiteLocked(), "Upgraded station stayed locked");
-        helper.succeed();
-    }
-
-    @GameTest(template = "empty", timeoutTicks = 100, batch = "scriptorium")
-    public static void monolithicSubjectRejectsMissingEnzymeAndNeedsTwoCircuits(GameTestHelper helper) {
-        ActiveCardinalRite rite = rite(helper, true, Direction.WEST);
-        EnzymaticScriptoriumBlockEntity station = station(helper, rite, true);
-        station.removeItem(0, 1);
-        helper.assertTrue(!ScriptoriumRites.prepare(helper.getLevel(), rite), "Missing enzyme accepted");
-        station.setItem(0, new ItemStack(EnumBloodTendency.getRepEnzyme(EnumBloodTendency.values()[0]), 2));
-        helper.assertTrue(ScriptoriumRites.prepare(helper.getLevel(), rite), "Repaired subject rejected");
-        seal(rite);
-        for (int i = 0; i < 8; i++) rite.fillScriptorialOrb(i, 50);
-        helper.assertTrue(rite.getPhase() == CardinalRitePhase.SCRIPTORIAL_INSCRIPTION
-                && rite.getScriptorialStage() == 8, "Second circuit was skipped");
-        for (int i = 0; i < 8; i++) rite.fillScriptorialOrb(i, 50);
-        helper.assertTrue(ScriptoriumRites.complete(helper.getLevel(), rite), "Monolithic upgrade failed");
-        helper.assertTrue(helper.getLevel().getBlockState(ScriptoriumRites.seat(rite)).getValue(com.vincenthuto.hemomancy.common.block.harbinger.crafting.EnzymaticScriptoriumBlock.STAGE) == 2,
-                "Wrong Monolithic result");
         helper.succeed();
     }
 

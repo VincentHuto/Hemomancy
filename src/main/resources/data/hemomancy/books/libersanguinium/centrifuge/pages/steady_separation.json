@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 0,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Calibrated Rotor",
+  "subtitle": "An Alchemist project at D4",
+  "text": "At D4, with active blood and personal recovery from a balanced spin, the Alchemist offers one free Centrifugal Governor Kit. First Separation recovery counts. This Cardinal upgrade preserves your Vial Centrifuge and its contents. On a Greater working floor, seat the base machine two blocks behind the Focus, facing the rite. Light six braziers: the kit, an Iron Ingot, Chain, Sanguine Glass, Ferric Binder, and Neurotic Enzyme. Plant a Living Staff, fill four anchors, seal the daemon, close two circuits with 50 mL each, and finish the procession: 300 mL total. The Calibrated Rotor takes 7.5 seconds, gives 25% more primary material on average, and has a 75% iron-powder chance per ordinary vial. Small yields receive the bonus through fractional rounding. Opposing vials still need balance. Crafted and gifted kits require the same personal eligibility. The installed stage survives moving; cancellation returns exact offerings and Staff, but not spent blood. These projects do not promote your Degree.",
+  "icon": "hemomancy:centrifugal_governor_kit"
+}

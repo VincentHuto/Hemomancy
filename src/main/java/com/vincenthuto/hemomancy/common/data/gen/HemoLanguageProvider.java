@@ -148,8 +148,8 @@ public class HemoLanguageProvider extends LanguageProvider {
                     HLTextUtils.convertInitToLang(i.get().asItem().getDescriptionId().replace("item.hemomancy.", "")));
         }
         for (DeferredHolder<Item, ? extends Item> i : ItemInit.SPECIALITEMS.getEntries()) {
-            addItem(i,
-                    HLTextUtils.convertInitToLang(i.get().asItem().getDescriptionId().replace("item.hemomancy.", "")));
+            addItem(i, i == ItemInit.liber_sanguinum ? "Liber Sanguinium"
+                    : HLTextUtils.convertInitToLang(i.get().asItem().getDescriptionId().replace("item.hemomancy.", "")));
         }
         for (DeferredHolder<Item, ? extends Item> i : ItemInit.SPAWNEGGS.getEntries()) {
             addItem(i,

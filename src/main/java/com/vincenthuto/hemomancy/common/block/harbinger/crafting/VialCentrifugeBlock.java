@@ -1,6 +1,9 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.crafting;
 
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
+import com.vincenthuto.hemomancy.common.station.CreativeStationUpgrades;
+import com.vincenthuto.hemomancy.common.station.StationTierProperty;
+import net.minecraft.world.Containers;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.VialRackItem;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
@@ -54,13 +57,13 @@ public class VialCentrifugeBlock extends Block implements EntityBlock, SimpleWat
 
 	public VialCentrifugeBlock(Properties properties) {
 		super(properties);
-		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH).setValue(LIT, false).setValue(WATERLOGGED, false));
+		this.registerDefaultState(this.stateDefinition.any().setValue(StationTierProperty.STAGE, 0).setValue(FACING, Direction.SOUTH).setValue(LIT, false).setValue(WATERLOGGED, false));
 
 	}
 
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		builder.add(FACING, LIT, WATERLOGGED);
+		builder.add(FACING, LIT, WATERLOGGED, StationTierProperty.STAGE);
 	}
 
 	@Override
@@ -161,6 +164,8 @@ public class VialCentrifugeBlock extends Block implements EntityBlock, SimpleWat
 	@Override
 	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
 			Player player, InteractionHand handIn, BlockHitResult hit) {
+		if (CreativeStationUpgrades.tryApply(stack, level, pos, player))
+			return ItemInteractionResult.sidedSuccess(level.isClientSide);
 		handleInteraction(level, pos, player, stack);
 		return ItemInteractionResult.SUCCESS;
 	}
@@ -175,6 +180,13 @@ public class VialCentrifugeBlock extends Block implements EntityBlock, SimpleWat
 			BlockPos pos, BlockPos neighborPos) {
 		WaterloggedBlockSupport.scheduleWaterTick(state, level, pos);
 		return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+	}
+
+	@Override
+	protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState next, boolean moving) {
+		if (!state.is(next.getBlock()) && level.getBlockEntity(pos) instanceof VialCentrifugeBlockEntity machine)
+			Containers.dropContents(level, pos, machine);
+		super.onRemove(state, level, pos, next, moving);
 	}
 
 }

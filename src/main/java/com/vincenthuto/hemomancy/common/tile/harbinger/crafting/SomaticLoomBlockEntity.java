@@ -447,8 +447,11 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 
 	public boolean tryChargeRitualBlood(Player player, double maxAmount, boolean livingStaff) {
 		if (player == null || level == null) return false;
-		refreshRecipe();
-		if (curRecipe == null || recoveryRequired || craftingPhase != PHASE_AWAITING_BLOOD) {
+		refreshRecipe();
+
+		if (isWeavingOrbs() && curRecipe != null && !recoveryRequired) return false;
+
+		if (curRecipe == null || recoveryRequired || craftingPhase != PHASE_AWAITING_BLOOD) {
 			provideTendencyFeedback(player);
 			return false;
 		}

@@ -28,6 +28,8 @@ public final class LiberEntryDefinitions {
 	public static final ResourceLocation ORDER_BELIEFS = entry("the_hematic_order/pages/what_they_believe");
 	public static final ResourceLocation HISTORICAL_RECORD = entry("the_hematic_order/pages/historical_record");
 	public static final ResourceLocation ABOCIPHER_LITERACY = entry("the_hematic_order/pages/abocipher_literacy");
+	public static final ResourceLocation SCAR_PRACTICE = entry("the_hematic_order/pages/scar_practice");
+	public static final ResourceLocation SCRIPTORIUM = entry("tendency/pages/enzymatic_scriptorium");
 	public static final ResourceLocation BLOOD_MEMORIES = entry("the_infection/pages/blood_memories");
 	public static final ResourceLocation HYPHAE = entry("the_infection/pages/hyphae");
 	public static final ResourceLocation ENTITY = entry("the_infection/pages/the_entity");
@@ -73,6 +75,18 @@ public final class LiberEntryDefinitions {
 		register(ORDER_BELIEFS, HemomancyDiscoverySource.DEGREE, HemomancyDiscoverySource.RITE);
 		register(HISTORICAL_RECORD, HemomancyDiscoverySource.DEGREE, HemomancyDiscoverySource.RITE, HemomancyDiscoverySource.RITE_FRAGMENT);
 		register(ABOCIPHER_LITERACY, HemomancyDiscoverySource.DIALOGUE);
+		register(SCAR_PRACTICE, CommonDiscoverySource.ADVANCEMENT);
+		register(SCRIPTORIUM, HemomancyDiscoverySource.DIALOGUE);
+		registerUpgradeLesson("cardinal_rite/first_condensation", "alembic/pages/first_condensation");
+		registerUpgradeLesson("cardinal_rite/first_condensation", "alembic/pages/refined_and_compound");
+		registerUpgradeLesson("cardinal_rite/sanguine_athanor", "alembic/pages/sanguine_athanor");
+		registerUpgradeLesson("cardinal_rite/sanguine_athanor", "alembic/pages/bound_potion");
+		registerUpgradeLesson("cardinal_rite/steady_separation", "centrifuge/pages/steady_separation");
+		registerUpgradeLesson("cardinal_rite/second_fraction", "centrifuge/pages/second_fraction");
+		registerUpgradeLesson("cardinal_rite/true_groove", "resonant_forge/pages/upgrades");
+		registerRite("cardinal_rite/enduring_pattern", entry("resonant_forge/pages/upgrades"));
+		registerUpgradeLesson("cardinal_rite/eightfold_script", "tendency/pages/eightfold_script");
+		registerUpgradeLesson("cardinal_rite/palimpsest", "tendency/pages/palimpsest");
 		register(BLOOD_MEMORIES, CommonDiscoverySource.ITEM_PICKUP, HemomancyDiscoverySource.RITE,
 				HemomancyDiscoverySource.BLOOD_ECHO, HemomancyDiscoverySource.RITE_FRAGMENT);
 		register(HYPHAE, HemomancyDiscoverySource.MEMO, CommonDiscoverySource.ITEM_PICKUP, HemomancyDiscoverySource.DIALOGUE,
@@ -175,7 +189,7 @@ public final class LiberEntryDefinitions {
 	}
 
 	private static ResourceLocation entry(String path) {
-		return Hemomancy.rloc("fanesanguinium/" + path);
+		return Hemomancy.rloc("libersanguinium/" + path);
 	}
 
 	private static ResourceLocation immaculatusEntry(String path) {
@@ -188,6 +202,12 @@ public final class LiberEntryDefinitions {
 
 	private static void registerRite(String ritePath, ResourceLocation entryId) {
 		add(RITE_UNLOCKS, ritePath, entryId);
+	}
+
+	private static void registerUpgradeLesson(String ritePath, String pagePath) {
+		ResourceLocation entryId = entry(pagePath);
+		register(entryId, HemomancyDiscoverySource.PRACTICE, HemomancyDiscoverySource.RITE);
+		registerRite(ritePath, entryId);
 	}
 
 	private static void registerDialogue(String eventId, ResourceLocation entryId) {

@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
 import com.vincenthuto.hemomancy.client.screen.skilltree.unstained.UnstainedProgressScreen;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.UnlockPredicate;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.world.item.ItemStack;
@@ -427,14 +428,14 @@ public final class MaterialsData {
                 true, UnlockPredicate.minDegree(5)));
 
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("blood_stained_stone", "Blood-Stained Stone",
-                "Common stone saturated with sanguine residue.",
+                "Craft each from one Venous Stone, one Sanguine Formation, and redstone, or find it in a Hermitage Remnant. A blank Hematic Memory needs four.",
                 "Materials", () -> new ItemStack(ItemInit.blood_stained_stone.get()),
                 true, UnlockPredicate.always()));
 
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("fungal_spine", "Fungal Spine",
-                "Hardened spine from a fungal blood creature. Used in crafting.",
+                "The ninth owner-bound Pome from one Bloom completes Communion and grants this Spine. Its first use projects your consciousness for two minutes, then forces return.",
                 "Materials", () -> new ItemStack(ItemInit.fungal_spine.get()),
-                true, UnlockPredicate.minDegree(4)));
+                true, UnlockPredicate.minDegree(7)));
 
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("curved_horn", "Curved Horn",
                 "A curved horn from a blood-aligned creature. Sturdy and resonant.",
@@ -463,7 +464,7 @@ public final class MaterialsData {
                 true, UnlockPredicate.minDegree(2)));
 
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("neurotic_enzyme", "Neurotic Enzyme",
-                "Ductilis-aligned enzyme. Sharpens mental manipulation.",
+                "Ductilis enzyme for impulse and motion. Chicken blood can yield this enzyme in a Vial Centrifuge; some spins yield Vivacious instead. One is needed for a blank Hematic Memory.",
                 "Enzymes", () -> new ItemStack(ItemInit.neurotic_enzyme.get()),
                 true, UnlockPredicate.minDegree(2)));
 
@@ -880,9 +881,9 @@ public final class MaterialsData {
                 true, UnlockPredicate.minDegree(3)));
 
                                                                                                                                                                                                                         list.add(new MaterialEntry("qliphoth_bloom", "Qliphoth Bloom",
-                "A catalogued reagent used in blood alchemy and enzyme work.",
-                "Alchemy & Enzymes", () -> new ItemStack(BlockInit.qliphoth_bloom.get()),
-                true, UnlockPredicate.minDegree(3)));
+                "The Bloom of the Qliphoth rite plants your Seed. Pick and consume all nine sequential owner-bound Pomes from this one Bloom to complete Communion.",
+                "Qliphoth Reagents", () -> new ItemStack(ItemInit.qliphoth_pome.get()),
+                false, UnlockPredicate.minDegree(7)));
 
                                                                                                                                                                                                                         list.add(new MaterialEntry("humoral_barometer", "Humoral Barometer",
                 "A structural or decorative bloodcraft block.",
@@ -914,8 +915,8 @@ public final class MaterialsData {
                 "Architecture", () -> new ItemStack(BlockInit.vivianite_pane.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                        list.add(new MaterialEntry("liber_sanguinum", "Liber Sanguinum",
-                "A catalogued material entry for Liber Sanguinum.",
+                                                                                                                                                                                                                        list.add(new MaterialEntry("liber_sanguinum", "Liber Sanguinium",
+                "A catalogued material entry for Liber Sanguinium.",
                 "Materials", () -> new ItemStack(ItemInit.liber_sanguinum.get()),
                 true, UnlockPredicate.always()));
 
@@ -1380,9 +1381,10 @@ public final class MaterialsData {
                 true, UnlockPredicate.minDegree(5)));
 
                                                                                                                                                                                                                         list.add(new MaterialEntry("memory_of_vesper", "Memory of Vesper",
-                "A late-stage qliphoth reagent used in monolith and consecration work.",
+                "Earned once by defeating both faces of Vesper through your owned Qliphoth wound. Teach it to your Living Staff through an Iron Brazier and Blood Absorption.",
                 "Qliphoth Reagents", () -> new ItemStack(ItemInit.memory_of_vesper.get()),
-                true, UnlockPredicate.minDegree(5)));
+                true, UnlockPredicate.minDegree(7).and(player -> HemoCapabilityAccess.getInitiatoryDegree(player)
+                        .map(degree -> degree.hasWitnessedFungalRevelation()).orElse(false))));
 
                                                                                                                                                                                                                         list.add(new MaterialEntry("monolith_fragment", "Monolith Fragment",
                 "A late-stage qliphoth reagent used in monolith and consecration work.",
@@ -1400,14 +1402,14 @@ public final class MaterialsData {
                 true, UnlockPredicate.minDegree(5)));
 
                                                                                                                                                                                                                         list.add(new MaterialEntry("qliphoth_pome", "Qliphoth Pome",
-                "A late-stage qliphoth reagent used in monolith and consecration work.",
+                "Consume nine sequential owner-bound Pomes from one Bloom to complete Communion. Unbound fruit feeds you but cannot replace that proof.",
                 "Qliphoth Reagents", () -> new ItemStack(ItemInit.qliphoth_pome.get()),
-                true, UnlockPredicate.minDegree(5)));
+                true, UnlockPredicate.minDegree(7)));
 
                                                                                                                                                                                                                         list.add(new MaterialEntry("qliphoth_seed", "Qliphoth Seed",
-                "A late-stage qliphoth reagent used in monolith and consecration work.",
+                "At D7, press further in your Sanguine Monolith conversation to shatter it and recover this Seed. Seat it as the medium for the Bloom of the Qliphoth rite.",
                 "Qliphoth Reagents", () -> new ItemStack(ItemInit.qliphoth_seed.get()),
-                true, UnlockPredicate.minDegree(5)));
+                true, UnlockPredicate.minDegree(7)));
 
                                                                                                                                                                                                                         list.add(new MaterialEntry("vicars_consecration_kit", "Armature Consecration Kit",
                 "The Artificer's D5 offering for the Rite of Armature Consecration.",

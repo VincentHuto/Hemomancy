@@ -54,6 +54,7 @@ public final class HemoAttachmentTypes {
             ATTACHMENT_TYPES.register("clinical_blood", () -> AttachmentType.serializable(
                     com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress::new).copyOnDeath().build());
 
+    // Legacy: ADVANCED_BREWING and RESONANT_FORGE are read once by StationUpgradeMigration, then removed from the player.
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.brewing.AdvancedBrewingProgress>> ADVANCED_BREWING =
             ATTACHMENT_TYPES.register("advanced_brewing", () -> AttachmentType.serializable(
                     com.vincenthuto.hemomancy.common.brewing.AdvancedBrewingProgress::new).copyOnDeath().build());
@@ -61,6 +62,10 @@ public final class HemoAttachmentTypes {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.enchanting.ResonantForgeProgress>> RESONANT_FORGE =
             ATTACHMENT_TYPES.register("resonant_forge", () -> AttachmentType.serializable(
                     com.vincenthuto.hemomancy.common.enchanting.ResonantForgeProgress::new).copyOnDeath().build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.station.StationUpgradeProgress>> STATION_UPGRADES =
+            ATTACHMENT_TYPES.register("station_upgrades", () -> AttachmentType.serializable(
+                    com.vincenthuto.hemomancy.common.station.StationUpgradeProgress::new).copyOnDeath().build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<BloodVolume>> BLOOD_VOLUME =
             ATTACHMENT_TYPES.register("blood_volume",

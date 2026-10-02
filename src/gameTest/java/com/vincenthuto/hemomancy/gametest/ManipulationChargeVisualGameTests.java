@@ -95,6 +95,27 @@ public final class ManipulationChargeVisualGameTests {
                 tested++;
             }
             require(tested == 16, "Expected coverage of all 16 registered charged manipulations, got " + tested);
+
+            var mortar = ManipulationInit.hematic_mortar.get();
+            known.setSelectedManip(mortar);
+            known.setEquippedManipNames(List.of(mortar.getName()));
+            player.getPersistentData().remove("hemomancy:charge_visual_tick");
+            packets.clear();
+            ManipulationChargeVisualPacket.handle(new ManipulationChargeVisualPacket(4), context);
+            require(packets.size() == 1, "Shared-selection fixture did not open a valid preview");
+            known.setSelectedMemoryRef(com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemorySlotRef
+                    .muscleMemory(com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.LABORING_ARMS));
+            player.getPersistentData().remove("hemomancy:charge_visual_tick");
+            packets.clear();
+            ManipulationChargeVisualPacket.handle(new ManipulationChargeVisualPacket(4), context);
+            require(packets.isEmpty(), "Thelemic selection refreshed the prior equipped Noetic preview");
+            known.setEquippedManipNames(List.of("muscle_memory:laboring_arms"));
+            blood.setActive(false);
+            ManipulationChargeVisualPacket.handle(new ManipulationChargeVisualPacket(0), context);
+            require(packets.size() == 1 && packets.getFirst().ticks() == 0
+                    && packets.getFirst().entityId() == player.getId()
+                    && packets.getFirst().form() == ManipulationVisuals.Form.MORTAR_CHARGE,
+                    "Thelemic selection blocked cleanup of the prior Noetic preview");
 			require(blood.getBloodVolume() == 2000, "Preview spent blood");
             return tested;
         } finally {

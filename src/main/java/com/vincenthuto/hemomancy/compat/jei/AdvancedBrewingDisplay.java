@@ -22,25 +22,26 @@ public record AdvancedBrewingDisplay(ItemStack input, ItemStack catalyst, ItemSt
             displays.add(new AdvancedBrewingDisplay(
                     PotionContents.createItemStack(Items.POTION, recipe.inputPotion()),
                     recipe.catalyst().getItems()[0], ItemStack.EMPTY,
-                    recipe.getResultItem(level.registryAccess()), recipe.blood(), recipe.ticks(),
+                    recipe.getResultItem(level.registryAccess()), recipe.blood(),
+                    AlembicTier.fromSaved(recipe.tier()).processingTicks(recipe.ticks()),
                     recipe.tier() == 1 ? 3 : 5, "refine"));
         }
         ItemStack strength = PotionContents.createItemStack(Items.POTION, Potions.STRENGTH);
         ItemStack speed = PotionContents.createItemStack(Items.POTION, Potions.SWIFTNESS);
         ItemStack fire = PotionContents.createItemStack(Items.POTION, Potions.FIRE_RESISTANCE);
-        add(displays, BrewingResolver.resolve(level, AlembicTier.CONDENSER, strength, speed, ItemStack.EMPTY), 3,
+        add(displays, BrewingResolver.resolve(level, AlembicTier.CONDENSER, strength, speed, ItemStack.EMPTY), AlembicTier.CONDENSER,
                 "compound");
         BrewingMatch bound = BrewingResolver.resolve(level, AlembicTier.ATHANOR, strength, speed, fire);
-        add(displays, bound, 5, "bind");
+        add(displays, bound, AlembicTier.ATHANOR, "bind");
         if (bound != null)
             add(displays, BrewingResolver.resolve(level, AlembicTier.ATHANOR,
-                    bound.result(), fire, speed), 5, "refill");
+                    bound.result(), fire, speed), AlembicTier.ATHANOR, "refill");
         return displays;
     }
 
-    private static void add(List<AdvancedBrewingDisplay> displays, BrewingMatch match, int degree, String note) {
+    private static void add(List<AdvancedBrewingDisplay> displays, BrewingMatch match, AlembicTier tier, String note) {
         if (match == null) return;
         displays.add(new AdvancedBrewingDisplay(match.input(), match.catalyst(), match.catalyst2(),
-                match.result(), match.blood(), match.ticks(), degree, note));
+                match.result(), match.blood(), tier.processingTicks(match.ticks()), tier == AlembicTier.CONDENSER ? 3 : 5, note));
     }
 }

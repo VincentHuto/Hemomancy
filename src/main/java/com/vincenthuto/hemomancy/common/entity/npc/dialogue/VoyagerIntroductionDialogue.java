@@ -7,6 +7,7 @@ import java.util.List;
 public final class VoyagerIntroductionDialogue {
     public static final String OBSERVE = "voyager_introduction_observe";
     public static final String REPORT = "vicar_voyager_introduction_report";
+    public static final String BEARING = "vicar_voyager_introduction_bearing";
 
     private VoyagerIntroductionDialogue() {}
 
@@ -33,6 +34,8 @@ public final class VoyagerIntroductionDialogue {
         DialogueNode start = tree.getStartNode();
         nodes.put(start.id(), new DialogueNode(start.id(), start.lines(), options));
         var reportOptions = new ArrayList<DialogueOption>();
+        if (!observed) reportOptions.add(new DialogueOption(
+                "hemomancy.dialogue.vicar.option.voyager_bearing", null, BEARING));
         if (observed) reportOptions.add(new DialogueOption(
                 "hemomancy.dialogue.vicar.option.report_voyager_observation", null, REPORT,
                 DialogueOptionPresentation.prompt("hemomancy.vicar.voyager_introduction.report.prompt")));

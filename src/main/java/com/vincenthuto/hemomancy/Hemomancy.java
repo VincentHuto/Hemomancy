@@ -175,7 +175,6 @@ public class Hemomancy {
                     else populator.accept(item.get());
                     if (item.get() == ItemInit.bloody_vial.get()) {
                         populator.accept(ItemInit.cleansing_hemolymph.get());
-                        populator.accept(((ConsecratedSyringeItem) ItemInit.consecrated_syringe.get()).randomSaintStack());
                     }
                     if (item.get() == ItemInit.chitinous_husk.get()) {
                         populator.accept(ItemInit.fervent_husk.get());
@@ -215,6 +214,7 @@ public class Hemomancy {
         populator.accept(ItemInit.blood_thrall_effigy.get());
         populator.accept(ItemInit.blood_bolt.get());
         populator.accept(ItemInit.vascular_status_gauge.get());
+        populator.accept(((ConsecratedSyringeItem) ItemInit.consecrated_syringe.get()).randomSaintStack());
         populator.accept(ItemInit.hallowed_residuum_hemorath.get());
         populator.accept(ItemInit.hallowed_residuum_seraphae.get());
         populator.accept(ItemInit.hallowed_residuum_putriciel.get());
@@ -299,6 +299,7 @@ public class Hemomancy {
                 || item == ItemInit.blood_thrall_effigy.get()
                 || item == ItemInit.blood_bolt.get()
                 || item == ItemInit.vascular_status_gauge.get()
+                || item == ItemInit.consecrated_syringe.get()
                 || item == ItemInit.hallowed_residuum_hemorath.get()
                 || item == ItemInit.hallowed_residuum_seraphae.get()
                 || item == ItemInit.hallowed_residuum_putriciel.get()

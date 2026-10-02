@@ -78,8 +78,8 @@ public final class HarbingerArtificerAssignmentSourceTest {
 				"com/vincenthuto/hemomancy/common/block/harbinger/crafting/HematicArmatureBlock.java"));
 		String blockEntity = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/tile/harbinger/crafting/HematicArmatureBlockEntity.java"));
-		String tierRites = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/rite/harbinger/ArmatureUpgradeRites.java"));
+		// Station rites call UpgradeableStation.onUpgraded; the Armature's override awards the tier milestone.
+		String tierRites = blockEntity;
 		String graftRite = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponGraftRite.java"));
 

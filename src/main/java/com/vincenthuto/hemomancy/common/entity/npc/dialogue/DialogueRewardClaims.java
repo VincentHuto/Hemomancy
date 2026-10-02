@@ -6,6 +6,7 @@ public final class DialogueRewardClaims {
     public static boolean requiresAcknowledgement(String eventId) {
         if (eventId == null) return false;
         if (MnemonistStarterMemoryChoice.fromEventId(eventId).isPresent()) return true;
+        if (StationUpgradeDialogue.parseClaim(eventId).isPresent()) return true;
         return switch (eventId) {
             case HarbingerMnemonistDialogueTrees.EVENT_WOVEN_VESSEL_TURN_IN,
                  HarbingerCicatrixAnchoriteDialogueTrees.EVENT_FIRST_LESSON,
@@ -13,8 +14,6 @@ public final class DialogueRewardClaims {
                  HarbingerVicarDialogueTrees.EVENT_CLAIM_FIRST_BLOODCRAFT_REWARD,
                  HarbingerArtificerDialogueTrees.EVENT_CONSECRATION_KIT,
                  HarbingerAlchemistDialogueTrees.EVENT_FIRST_SEPARATION_CLAIM,
-                 AdvancedBrewingDialogue.CONDENSER_CLAIM,
-                 AdvancedBrewingDialogue.ATHANOR_CLAIM,
                  SanguineMonolithDialogueTrees.EVENT_CORNERSTONE,
                  SanguineMonolithDialogueTrees.EVENT_SHATTER -> true;
             default -> false;

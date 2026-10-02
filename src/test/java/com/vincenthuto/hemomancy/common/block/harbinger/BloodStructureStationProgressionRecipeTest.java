@@ -17,7 +17,7 @@ public final class BloodStructureStationProgressionRecipeTest {
 		assertStationRecipe("Somatic Loom", "somatic_loom", 3, "hemomancy:somatic_loom");
 		assertStationRecipe("Cerebral Scarring Station", "runic_chisel_station", 4, "hemomancy:scar_station");
 		assertStationRecipe("Mason's Effigy", "mason_effigy", 4, "hemomancy:mason_effigy");
-		assertStationRecipe("Liber Sanguinum", "liber_sanguinum", 1, "hemomancy:liber_sanguinum");
+		assertStationRecipe("Liber Sanguinium", "liber_sanguinum", 1, "hemomancy:liber_sanguinum");
 		assertStationRecipe("Hematic Iron Block", "hematic_iron_block", 1, "hemomancy:hematic_iron_block");
 	}
 

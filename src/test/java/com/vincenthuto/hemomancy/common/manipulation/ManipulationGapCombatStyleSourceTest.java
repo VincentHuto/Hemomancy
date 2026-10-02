@@ -94,7 +94,7 @@ public final class ManipulationGapCombatStyleSourceTest {
 		String lang = read("src/main/resources/assets/hemomancy/lang/en_us.json");
 		for (String id : NEW_MANIPULATIONS) {
 			assertContains(id + " memory item", itemInit,
-					"memory_" + id + " = BASEITEMS.register(\"memory_" + id + "\"");
+					"memory_" + id + " = registerBloodMemoryItem(\"memory_" + id + "\", ManipulationInit." + id + ")");
 			assertContains(id + " item lang", lang,
 					"\"item.hemomancy.memory_" + id + "\": \"Memory " + title(id) + "\"");
 			assertContains(id + " manipulation desc", lang,

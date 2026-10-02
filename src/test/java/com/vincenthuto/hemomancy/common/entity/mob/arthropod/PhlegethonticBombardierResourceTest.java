@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.mob.arthropod;
 
 import com.google.gson.JsonParser;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.item.harbinger.EntityBloodProfile;
 import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
@@ -28,7 +30,7 @@ class PhlegethonticBombardierResourceTest {
         assertEquals(0, loot.getAsJsonArray("pools").size());
     }
 
-    @Test void entityHasAuthoredClientResourcesAndFerventClassification() throws Exception {
+    @Test void entityHasAuthoredClientResourcesAndFlammeusBloodProfile() throws Exception {
         var image = ImageIO.read(ROOT.resolve(
                 "assets/hemomancy/textures/entity/phlegethontic_bombardier/phlegethontic_bombardier.png").toFile());
         assertEquals(128, image.getWidth());
@@ -45,11 +47,10 @@ class PhlegethonticBombardierResourceTest {
         assertArrayEquals(Files.readAllBytes(ROOT.resolve(
                         "assets/hemomancy/textures/entity/phlegethontic_bombardier/phlegethontic_bombardier.png")),
                 java.util.Base64.getDecoder().decode(texture.get("source").getAsString().split(",", 2)[1]));
-        var fervent = JsonParser.parseString(Files.readString(ROOT.resolve(
-                "data/hemomancy/tags/entity_type/fervent.json"))).getAsJsonObject().getAsJsonArray("values");
-        long matches = fervent.asList().stream().filter(value ->
-                value.getAsString().equals("hemomancy:phlegethontic_bombardier")).count();
-        assertEquals(1, matches);
+        var profile = EntityBloodProfile.parse(JsonParser.parseString(Files.readString(ROOT.resolve(
+                "data/hemomancy/blood_profiles/phlegethontic_bombardier.json"))).getAsJsonObject());
+        assertEquals(java.util.List.of(EnumBloodTendency.FLAMMEUS), profile.tendencies());
+        assertTrue(profile.requiresLivingSyringe());
         assertTrue(JsonParser.parseString(Files.readString(ROOT.resolve(
                 "assets/hemomancy/lang/en_us.json"))).getAsJsonObject()
                 .has("entity.hemomancy.phlegethontic_bombardier"));

@@ -25,19 +25,20 @@ ResourceLocation.CODEC.optionalFieldOf("id", Hemomancy.rloc("distillation/unknow
 Codec.STRING.optionalFieldOf("group", "").forGetter(DistillationRecipe::getGroup),
 Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(DistillationRecipe::getIngredient),
 Ingredient.CODEC.optionalFieldOf("catalyst", Ingredient.EMPTY).forGetter(DistillationRecipe::getCatalyst),
-Ingredient.CODEC.optionalFieldOf("blood_input", Ingredient.EMPTY).forGetter(DistillationRecipe::getBloodInput),
+Ingredient.CODEC.optionalFieldOf("vessel_input", Ingredient.EMPTY).forGetter(DistillationRecipe::getVesselInput),
 Codec.BOOL.optionalFieldOf("consume_catalyst", false).forGetter(DistillationRecipe::consumesCatalyst),
 RESULT_CODEC.fieldOf("result").forGetter(recipe -> Either.left(recipe.getResultItemRaw())),
 Codec.INT.optionalFieldOf("count", 1).forGetter(recipe -> recipe.getResultItemRaw().getCount()),
 Codec.FLOAT.optionalFieldOf("experience", 0.0F).forGetter(DistillationRecipe::getExperience),
 Codec.INT.optionalFieldOf("cookingtime", 100).forGetter(DistillationRecipe::getCookingTime),
 Codec.BOOL.optionalFieldOf("pallid", false).forGetter(DistillationRecipe::isPallid),
-Codec.INT.optionalFieldOf("white_humor_cost", 0).forGetter(DistillationRecipe::getWhiteHumorCost)).apply(instance,
-(id, group, ingredient, catalyst, bloodInput, consumeCatalyst, resultEither, count, experience, cookingTime, pallid, whiteHumorCost) -> {
+Codec.INT.optionalFieldOf("white_humor_cost", 0).forGetter(DistillationRecipe::getWhiteHumorCost),
+Codec.intRange(0, 5000).optionalFieldOf("blood_cost", 0).forGetter(DistillationRecipe::getBloodCost)).apply(instance,
+(id, group, ingredient, catalyst, vesselInput, consumeCatalyst, resultEither, count, experience, cookingTime, pallid, whiteHumorCost, bloodCost) -> {
 ItemStack result = resultEither.map(ItemStack::copy,
 resultId -> new ItemStack(BuiltInRegistries.ITEM.get(resultId), count));
-return new DistillationRecipe(id, group, ingredient, catalyst, bloodInput, consumeCatalyst,
-        pallid, result, experience, cookingTime, whiteHumorCost);
+return new DistillationRecipe(id, group, ingredient, catalyst, vesselInput, consumeCatalyst,
+        pallid, result, experience, cookingTime, whiteHumorCost, bloodCost);
 }));
 
 public static final StreamCodec<RegistryFriendlyByteBuf, DistillationRecipe> STREAM_CODEC = StreamCodec
@@ -49,8 +50,8 @@ String group = buffer.readUtf();
 Ingredient ingredient = Ingredient.CONTENTS_STREAM_CODEC.decode(buffer);
 boolean hasCatalyst = buffer.readBoolean();
 Ingredient catalyst = hasCatalyst ? Ingredient.CONTENTS_STREAM_CODEC.decode(buffer) : Ingredient.EMPTY;
-boolean hasBloodInput = buffer.readBoolean();
-Ingredient bloodInput = hasBloodInput ? Ingredient.CONTENTS_STREAM_CODEC.decode(buffer) : Ingredient.EMPTY;
+boolean hasVesselInput = buffer.readBoolean();
+Ingredient vesselInput = hasVesselInput ? Ingredient.CONTENTS_STREAM_CODEC.decode(buffer) : Ingredient.EMPTY;
 boolean consumeCatalyst = buffer.readBoolean();
 boolean pallid = buffer.readBoolean();
 boolean hasResult = buffer.readBoolean();
@@ -58,8 +59,9 @@ ItemStack result = hasResult ? ItemStack.STREAM_CODEC.decode(buffer) : ItemStack
 float xp = buffer.readFloat();
 int time = buffer.readInt();
 int whiteHumorCost = buffer.readInt();
-return new DistillationRecipe(recipeId, group, ingredient, catalyst, bloodInput, consumeCatalyst,
-        pallid, result, xp, time, whiteHumorCost);
+int bloodCost = buffer.readVarInt();
+return new DistillationRecipe(recipeId, group, ingredient, catalyst, vesselInput, consumeCatalyst,
+        pallid, result, xp, time, whiteHumorCost, bloodCost);
 }
 
 private static void toNetwork(RegistryFriendlyByteBuf buffer, DistillationRecipe recipe) {
@@ -69,9 +71,9 @@ Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.getIngredient());
 boolean hasCatalyst = recipe.requiresCatalyst();
 buffer.writeBoolean(hasCatalyst);
 if (hasCatalyst) Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.getCatalyst());
-boolean hasBloodInput = recipe.requiresBloodInput();
-buffer.writeBoolean(hasBloodInput);
-if (hasBloodInput) Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.getBloodInput());
+boolean hasVesselInput = recipe.requiresVesselInput();
+buffer.writeBoolean(hasVesselInput);
+if (hasVesselInput) Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.getVesselInput());
 buffer.writeBoolean(recipe.consumesCatalyst());
 buffer.writeBoolean(recipe.isPallid());
 ItemStack result = recipe.getResultItemRaw();
@@ -83,6 +85,7 @@ ItemStack.STREAM_CODEC.encode(buffer, result);
 buffer.writeFloat(recipe.getExperience());
 buffer.writeInt(recipe.getCookingTime());
 buffer.writeInt(recipe.getWhiteHumorCost());
+buffer.writeVarInt(recipe.getBloodCost());
 }
 
 @Override

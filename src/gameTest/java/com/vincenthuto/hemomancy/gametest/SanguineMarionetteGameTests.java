@@ -52,22 +52,63 @@ public final class SanguineMarionetteGameTests {
     public static void eightSecondChannelPaysEightPulsesAndReleasesAutomatically(GameTestHelper h) {
         ServerPlayer player = caster(h);
         Mob puppet = body(h, 2, 6);
+        // Idle wandering must not turn the duration check into a range-break check.
+        puppet.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED).setBaseValue(0);
         double cost = com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostLedger
                 .collect(player, ManipulationInit.sanguine_marionette.get()).effectiveCost();
         ManipulationChannelManager.start(player);
-        for (int tick = 1; tick <= 160; tick++) h.runAfterDelay(tick, () ->
-                ManipulationChannelManager.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(player)));
+        h.assertTrue(ManipulationChannelManager.isChanneling(player.getUUID())
+                && HematicCommandManager.marionette(player) == puppet, "Eight-second fixture failed to acquire its body");
+        long started = h.getLevel().getGameTime();
+        StringBuilder timeline = new StringBuilder();
+        for (int tick = 1; tick <= 160; tick++) {
+            int scheduled = tick;
+            h.runAfterDelay(tick, () -> {
+                boolean wasChanneling = ManipulationChannelManager.isChanneling(player.getUUID());
+                ManipulationChannelManager.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(player));
+                if (scheduled % 20 == 0 || wasChanneling && !ManipulationChannelManager.isChanneling(player.getUUID())) {
+                    timeline.append(" [scheduled=").append(scheduled)
+                            .append(", elapsed=").append(h.getLevel().getGameTime() - started)
+                            .append(", blood=").append(HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume())
+                            .append(", channel=").append(ManipulationChannelManager.isChanneling(player.getUUID()))
+                            .append(", body=").append(HematicCommandManager.marionette(player) == puppet)
+                            .append(", distance=").append(player.distanceTo(puppet))
+                            .append(", indexed=").append(h.getLevel().getEntity(puppet.getUUID()) == puppet).append(']');
+                }
+            });
+        }
         h.runAfterDelay(165, () -> {
             try {
                 h.assertTrue(!ManipulationChannelManager.isChanneling(player.getUUID()) && HematicCommandManager.marionette(player) == null,
                         "Marionette exceeded its eight-second maximum");
                 h.assertTrue(Math.abs(HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume() - (1000 - 8 * cost)) < .001,
-                        "Pulse ledger: actual=" + HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume() + ", expected=" + (1000 - 8 * cost) + ", cost=" + cost);
+                        "Pulse ledger: actual=" + HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume() + ", expected=" + (1000 - 8 * cost) + ", cost=" + cost + timeline);
                 h.assertTrue(!((com.vincenthuto.hemomancy.mixin.core.GoalSelectorAccessor)puppet.targetSelector)
                         .hemomancy$disabledFlags().contains(Goal.Flag.TARGET), "Timed expiry left AI disabled");
                 h.succeed();
             } finally { ManipulationChannelManager.stop(player, false); puppet.discard(); player.discard(); }
         });
+    }
+
+    @GameTest(templateNamespace="hemomancy", template="ductilis_arena", batch="marionette", timeoutTicks=40)
+    public static void leavingTetherRangeStopsUpkeepAndRestoresTargeting(GameTestHelper h) {
+        ServerPlayer player = caster(h);
+        Mob puppet = body(h, 2, 6);
+        try {
+            ManipulationChannelManager.start(player);
+            h.assertTrue(ManipulationChannelManager.isChanneling(player.getUUID())
+                    && HematicCommandManager.marionette(player) == puppet, "Range fixture failed to acquire its body");
+            double paidVolume = HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume();
+            puppet.setPos(player.position().add(17, 0, 0));
+            ManipulationChannelManager.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(player));
+            h.assertTrue(!ManipulationChannelManager.isChanneling(player.getUUID())
+                    && HematicCommandManager.marionette(player) == null, "Out-of-range tether retained control");
+            h.assertTrue(HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume() == paidVolume,
+                    "Range break charged an extra pulse");
+            h.assertTrue(!((com.vincenthuto.hemomancy.mixin.core.GoalSelectorAccessor)puppet.targetSelector)
+                    .hemomancy$disabledFlags().contains(Goal.Flag.TARGET), "Range break left targeting disabled");
+            h.succeed();
+        } finally { ManipulationChannelManager.stop(player, false); puppet.discard(); player.discard(); }
     }
 
     @GameTest(templateNamespace="hemomancy", template="ductilis_arena", batch="marionette", timeoutTicks=50)

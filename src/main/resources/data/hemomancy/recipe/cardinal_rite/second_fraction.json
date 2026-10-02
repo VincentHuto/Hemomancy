@@ -1,0 +1,141 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "id": "hemomancy:cardinal_rite/second_fraction",
+  "bloodCost": 0,
+  "riteType": "greater",
+  "required_degree": 6,
+  "rankup": false,
+  "riteName": "Rite of the Second Fraction",
+  "riteDescription": "Seat a calibrated Vial Centrifuge behind the Focus and close three circuits for a second fraction.",
+  "floor": "hemomancy:working_greater",
+  "required_structure": {
+    "pattern": [
+      [
+        "  S  "
+      ],
+      [
+        "     "
+      ],
+      [
+        "     "
+      ],
+      [
+        "     "
+      ],
+      [
+        "     "
+      ]
+    ],
+    "key": {
+      "S": {
+        "block": "hemomancy:vial_centrifuge",
+        "properties": {
+          "stage": "1"
+        }
+      }
+    }
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "hemomancy:fractionating_rotor_kit"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:amethyst_shard"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:ghast_tear"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:hematic_iron_block"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:chromatic_sublimate"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:enzyme_primer"
+      },
+      "count": 1
+    }
+  ],
+  "ceremony": {
+    "profile": "ceremonial",
+    "layout": "cardinal",
+    "anchors": [
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 3
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 4
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 5
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 6
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 7
+      }
+    ],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "fragile_offsets": [],
+    "target_duration_ticks": 2400,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry"
+  }
+}

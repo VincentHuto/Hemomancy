@@ -24,14 +24,14 @@ final class CardinalRiteChecklistTest {
 
 		assertEquals("Optional sigils: 1/2", lines.get(0));
 		assertTrue(lines.contains("Optional allies: 1 assigned"));
-		assertTrue(lines.contains("Medium seated"));
+		assertTrue(lines.contains("Focus ready"));
 		assertEquals("Project into the daemon to begin", lines.get(lines.size() - 1));
 	}
 
 	@Test
 	void missingCatalystIsReportedAsABlocker() {
 		assertTrue(CardinalRiteChecklist.inscription(0, 0, false)
-				.contains("Required medium missing"));
+				.contains("Focus medium mismatch"));
 	}
 
 	@Test

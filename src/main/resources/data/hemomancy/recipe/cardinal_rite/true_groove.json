@@ -1,5 +1,6 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
+  "id": "hemomancy:cardinal_rite/true_groove",
   "bloodCost": 0,
   "riteType": "greater",
   "required_degree": 5,
@@ -8,11 +9,16 @@
   "riteDescription": "Seat a Resonant Forge behind the Focus and align its wheel and carving stylus.",
   "floor": "hemomancy:working_greater",
   "required_structure": {
-    "pattern": [[" S "], ["   "], ["   "]],
+    "pattern": [["  S  "], ["     "], ["     "], ["     "], ["     "]],
     "key": {"S": {"block": "hemomancy:resonant_forge"}}
   },
   "brazier_signature": [
-    {"ingredient": {"item": "hemomancy:precision_governor_kit"}, "count": 1}
+    {"ingredient": {"item": "hemomancy:precision_governor_kit"}, "count": 1},
+    {"ingredient": {"item": "minecraft:grindstone"}, "count": 1},
+    {"ingredient": {"item": "minecraft:honeycomb"}, "count": 1},
+    {"ingredient": {"item": "minecraft:amethyst_shard"}, "count": 1},
+    {"ingredient": {"item": "hemomancy:wax_cylinder"}, "count": 1},
+    {"ingredient": {"item": "hemomancy:hematic_iron_block"}, "count": 1}
   ],
   "ceremony": {
     "profile": "ceremonial", "layout": "cardinal",

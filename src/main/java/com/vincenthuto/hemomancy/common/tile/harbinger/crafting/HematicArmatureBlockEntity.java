@@ -10,6 +10,10 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRecipe;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRules;
+import com.vincenthuto.hemomancy.common.station.StationTierProperty;
+import com.vincenthuto.hemomancy.common.station.UpgradeStation;
+import com.vincenthuto.hemomancy.common.station.UpgradeableStation;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.HematicArmatureBlock;
 import com.vincenthuto.hemomancy.common.tile.BloodContainerTransfer;
 import com.vincenthuto.hemomancy.common.tile.IBloodContainerSlotAccess;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
@@ -49,7 +53,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public class HematicArmatureBlockEntity extends BaseContainerBlockEntity implements IBloodReservoir, IBloodContainerSlotAccess {
+public class HematicArmatureBlockEntity extends BaseContainerBlockEntity implements IBloodReservoir, IBloodContainerSlotAccess,
+		UpgradeableStation {
 	public static final int SLOT_HEAD_REAGENT = 0;
 	public static final int SLOT_CHEST_REAGENT = 1;
 	public static final int SLOT_LEGS_REAGENT = 2;
@@ -83,7 +88,7 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 	private ArmatureUpgradeRules.ArmatureSlot pendingSlot;
 	private int pendingBowlSlot = -1;
 	private long craftStartTick = -1L;
-	private ArmatureUpgradeRules.ArmatureTier armatureTier = ArmatureUpgradeRules.ArmatureTier.BASE;
+	private int legacyStage;
 	private boolean riteLocked;
 	private UUID machineIdentity = UUID.randomUUID();
 	@Nullable
@@ -94,6 +99,7 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 	}
 
 	public static void serverTick(Level level, BlockPos pos, BlockState state, HematicArmatureBlockEntity armature) {
+		armature.applyLegacyStage();
 		if (armature.riteLocked) return;
 		boolean changed = armature.processBloodContainerInputSlot(armature, armature);
 		changed |= armature.tryProcessRestrainedPlayer(level);
@@ -164,6 +170,12 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 			copyDamage(worn, upgraded);
 			player.setItemSlot(equipmentSlot, upgraded);
 			ArtificerAssignments.onArmatureUpgrade(player, upgraded, recipe.getRequiredDegree());
+			var stationProgress = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.stationUpgrades(player);
+			stationProgress.recordUse(UpgradeStation.ARMATURE,
+					com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.ARMOR_UPGRADE);
+			if (getArmatureTier().id() >= ArmatureUpgradeRules.ArmatureTier.VICAR_CONSECRATED.id())
+				stationProgress.recordUse(UpgradeStation.ARMATURE,
+						com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.ARMOR_UPGRADE_CONSECRATED);
 			ItemStack reagent = match.reagent();
 			reagent.shrink(1);
 			if (reagent.isEmpty()) {
@@ -189,7 +201,7 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 			if (reagent.isEmpty()) {
 				continue;
 			}
-			ArmatureUpgradeRecipe recipe = findMatchingRecipe(recipes, slot, worn, reagent, player, armatureTier);
+			ArmatureUpgradeRecipe recipe = findMatchingRecipe(recipes, slot, worn, reagent, player, getArmatureTier());
 			if (recipe != null) {
 				return new MatchedUpgrade(recipe, bowlSlot, reagent);
 			}
@@ -415,7 +427,14 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 		return false;
 	}
 
-	public ArmatureUpgradeRules.ArmatureTier getArmatureTier() { return armatureTier; }
+	public ArmatureUpgradeRules.ArmatureTier getArmatureTier() {
+		return ArmatureUpgradeRules.ArmatureTier.byId(Math.max(StationTierProperty.stage(getBlockState()), legacyStage));
+	}
+
+	public void applyLegacyStage() {
+		StationTierProperty.applyLegacyStage(this, legacyStage);
+		legacyStage = 0;
+	}
 	public boolean isRiteLocked() { return riteLocked; }
 	public boolean idleForRite() { return !riteLocked && pendingSlot == null && restrainedPlayer == null; }
 	@Override public boolean canReceiveBlood() { return !riteLocked; }
@@ -436,14 +455,28 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 		sendUpdates();
 	}
 
+	@Override public UpgradeStation upgradeStation() { return UpgradeStation.ARMATURE; }
+
+	@Override public boolean readyForUpgradeRite(ServerLevel level, Direction riteForward) {
+		return idleForRite() && getBlockState().getValue(HematicArmatureBlock.FACING) == riteForward;
+	}
+
+	@Override public void markUpgradedBy(UUID riteId) { lastUpgradeRite = riteId; setChanged(); }
+
+	@Override public void onUpgraded(ServerPlayer owner) {
+		ArtificerAssignments.onArmatureTierApplied(owner, getArmatureTier());
+	}
+
+	/** The Armature only accepts a tier while a rite holds it and nobody is restrained in it. */
+	@Override public boolean completeUpgrade(int targetTier, UUID riteId) {
+		if (!riteLocked || pendingSlot != null || restrainedPlayer != null) return false;
+		boolean upgraded = UpgradeableStation.super.completeUpgrade(targetTier, riteId);
+		if (upgraded) sendUpdates();
+		return upgraded;
+	}
+
 	public boolean completeUpgrade(ArmatureUpgradeRules.ArmatureTier target, UUID riteId) {
-		if (target == null || riteId == null || target.id() != armatureTier.id() + 1
-				|| !riteLocked || pendingSlot != null || restrainedPlayer != null) return false;
-		armatureTier = target;
-		lastUpgradeRite = riteId;
-		riteLocked = false;
-		sendUpdates();
-		return true;
+		return target != null && completeUpgrade(target.id(), riteId);
 	}
 
 	private static void giveOrDrop(Player player, ItemStack stack) {
@@ -616,9 +649,9 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 		items = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
 		ContainerHelper.loadAllItems(tag, items, registries);
 		restrainedPlayer = tag.hasUUID(TAG_RESTRAINED_PLAYER) ? tag.getUUID(TAG_RESTRAINED_PLAYER) : null;
-		armatureTier = tag.contains(TAG_ARMATURE_TIER)
-				? ArmatureUpgradeRules.ArmatureTier.byName(tag.getString(TAG_ARMATURE_TIER))
-				: ArmatureUpgradeRules.ArmatureTier.BASE;
+		// Pre-consolidation saves kept the tier here; applyLegacyStage moves it into the blockstate.
+		legacyStage = tag.contains(TAG_ARMATURE_TIER)
+				? ArmatureUpgradeRules.ArmatureTier.byName(tag.getString(TAG_ARMATURE_TIER)).id() : 0;
 		riteLocked = tag.getBoolean(TAG_RITE_LOCKED);
 		if (tag.hasUUID(TAG_MACHINE_IDENTITY)) machineIdentity = tag.getUUID(TAG_MACHINE_IDENTITY);
 		lastUpgradeRite = tag.hasUUID(TAG_LAST_UPGRADE_RITE) ? tag.getUUID(TAG_LAST_UPGRADE_RITE) : null;
@@ -637,7 +670,7 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 		if (restrainedPlayer != null) {
 			tag.putUUID(TAG_RESTRAINED_PLAYER, restrainedPlayer);
 		}
-		tag.putString(TAG_ARMATURE_TIER, armatureTier.serializedName());
+		if (legacyStage > 0) tag.putString(TAG_ARMATURE_TIER, ArmatureUpgradeRules.ArmatureTier.byId(legacyStage).serializedName());
 		tag.putBoolean(TAG_RITE_LOCKED, riteLocked);
 		tag.putUUID(TAG_MACHINE_IDENTITY, machineIdentity);
 		if (lastUpgradeRite != null) tag.putUUID(TAG_LAST_UPGRADE_RITE, lastUpgradeRite);
@@ -654,7 +687,6 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 		if (restrainedPlayer != null) {
 			tag.putUUID(TAG_RESTRAINED_PLAYER, restrainedPlayer);
 		}
-		tag.putString(TAG_ARMATURE_TIER, armatureTier.serializedName());
 		tag.putBoolean(TAG_RITE_LOCKED, riteLocked);
 		tag.putUUID(TAG_MACHINE_IDENTITY, machineIdentity);
 		if (lastUpgradeRite != null) tag.putUUID(TAG_LAST_UPGRADE_RITE, lastUpgradeRite);
@@ -671,9 +703,6 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 		items = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
 		ContainerHelper.loadAllItems(tag, items, registries);
 		restrainedPlayer = tag.hasUUID(TAG_RESTRAINED_PLAYER) ? tag.getUUID(TAG_RESTRAINED_PLAYER) : null;
-		armatureTier = tag.contains(TAG_ARMATURE_TIER)
-				? ArmatureUpgradeRules.ArmatureTier.byName(tag.getString(TAG_ARMATURE_TIER))
-				: ArmatureUpgradeRules.ArmatureTier.BASE;
 		riteLocked = tag.getBoolean(TAG_RITE_LOCKED);
 		if (tag.hasUUID(TAG_MACHINE_IDENTITY)) machineIdentity = tag.getUUID(TAG_MACHINE_IDENTITY);
 		lastUpgradeRite = tag.hasUUID(TAG_LAST_UPGRADE_RITE) ? tag.getUUID(TAG_LAST_UPGRADE_RITE) : null;

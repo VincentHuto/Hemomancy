@@ -1,5 +1,7 @@
 # Developer Reference
 
+Alembic upgrades use complete editable Condenser/Athanor assemblies with proportional UV islands. `python tools/model_export/export_alembic_upgrades.py` exports runtime JSON, texture atlases, blockstates, and rotated collision cells. Athanor lifts the assembly 7/16 block onto its heating mantle; placement and upgrade clearance reserve the occupied portion of a 3×3 footprint across three vertical layers. Linked fillers handle collision, selection, interaction, and break cleanup. See [the station-upgrade contract](../docs/STATION_UPGRADES.md#alembic-model-and-clearance) and `AlembicFootprintGameTests`.
+
 Cardinal Rite floors and Ichorian Sigils share `JsonResourceReloadListener` for JSON scanning, per-file diagnostics, and immutable reload publication. Their schema parsers and registries remain separate; malformed files are skipped, and each applied reload replaces the previous snapshot.
 
 Recipe codec plumbing shares a registry-aware JSON bridge across Incubator, Memory Weaving, Scar, Armature Upgrade, Fungal Scar Cultivation, Blood Structure, and Cardinal Rite serializers. Nested codec errors propagate instead of silently omitting fields; legacy result forms remain supported. Run `./gradlew.bat runRecipeCodecGameTestServer` for the regression suite, also included in `alphaCheck`. See [recipe pipeline details](../docs/consolidation/recipe-pipelines.md).
@@ -268,6 +270,7 @@ Linux/Mac:
 ### Build Output
 - **Main JAR:** `build/libs/hemomancy-6.0.1-neoforge.1.21.1.0.jar`
 - **Generated Resources:** `src/generated/resources/`
+- **Resonant Forge stage models:** `tools/model_export/generate_resonant_forge_upgrades.py` builds the Precision and Masterwork static models, full editable Blockbench assemblies, and stage/facing multipart entries from the base Forge. Animated components keep their existing renderer models and pivots.
 
 ### Data Generation
 
@@ -518,3 +521,14 @@ Location: `tools/skill_tree_editor/`
 
 See [Ferric and Ductilis](Ferric-Ductilis.md) for construct geometry, conductor rules, paralysis, packet compatibility and the disposable two-client review.
 
+
+
+Distant Horizons is disabled in the local Gradle dependencies and therefore excluded from builds and run configurations. Its current local jar crashes NeoForge GameTest startup by casting `GameTestServer` to `DedicatedServer`; the jar remains in `libs/` for optional future testing.
+
+The Vial Centrifuge uses the shared station contract at D4/D6 with appended output indices 20–27, persisted atomic batches, stage-aware personal extraction credit, and server-validated Alchemist kit claims. Alembic upgrade degrees are also D4/D6. See `docs/STATION_UPGRADES.md` and `CentrifugeUpgradeGameTests` for the current mechanics and focused runtime validation.
+
+### Centrifuge model sources
+
+`vial_centrifuge_calibrated.bbmodel` and `vial_centrifuge_fractionating.bbmodel` contain the complete static bodies with embedded existing textures. The animated rotor remains in `CentrifugeArmsModel`. Run `python tools/model_export/export_centrifuge_upgrades.py` to regenerate bodies and all twelve stage/facing variants; run `check_centrifuge_upgrades.py` for export parity, quarter-unit geometry, native UV density, hierarchy, and rotor clearance. `preview_centrifuge_upgrades.py` composes the bodies with the actual rotor geometry for front/rear previews. The world renderer skips the legacy stand on upgraded stages, and item rendering reads the stage saved on the stack.
+
+The Centrifugal Governor Kit and Fractionating Rotor Kit have separate native 16x16 PNGs and item-model texture references. `tools/model_export/centrifuge_kit_sprites.json` owns the explicit pixel grids and shared palette. Run `python tools/model_export/export_centrifuge_kit_sprites.py` to regenerate and preview them, or add `--check` to validate exports without writing.

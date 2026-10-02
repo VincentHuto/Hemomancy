@@ -8,7 +8,8 @@
     },
     {
       "lines": [
-        "hemomancy.clinical.inquiry.centrifuge"
+        "hemomancy.clinical.inquiry.centrifuge",
+        "hemomancy.clinical.inquiry.centrifuge_upgrades"
       ]
     }
   ]

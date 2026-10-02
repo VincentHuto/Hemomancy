@@ -232,7 +232,7 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 				EnumArchonPath path = HemoCapabilityAccess.getInitiatoryDegree(player)
 						.map(degree -> degree.getArchonPath()).orElse(EnumArchonPath.NONE);
 				message = Component.literal(switch (path) {
-					case NONE -> "Nine husks spent. Use the Spine for the Gardens. Lost it? Sneak here empty-handed.";
+					case NONE -> "Spine: visit the Gardens. Lost it? Sneak-use empty-handed.";
 					case SILENT_PENDING -> "Your refusal awaits its act. Sever this tree with your Living Arsenal to open the ordeal; ordinary pruning belongs to the Unstained path.";
 					case APOTHEOS_PENDING -> "The tree has fulfilled its nine husks. Your chosen Apotheosis now awaits its final rite.";
 					case SILENT_ARCHON, APOTHEOS -> "The nine-husk covenant is complete. This tree will not bear another pome.";

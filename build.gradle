@@ -235,6 +235,7 @@ neoForge {
 
         // applies to all the run configs above
         configureEach {
+            systemProperty 'hemomancy.chamberLoadedValidation', providers.gradleProperty('chamberLoadedValidation').getOrElse('false')
             // Recommended logging data for a userdev environment
             // The markers can be added/remove as needed separated by commas.
             // "SCAN": For mods scan.
@@ -287,9 +288,8 @@ dependencies {
     implementation files ("libs/theoneprobe-1.21_neo-12.0.8.jar")
     implementation files ("libs/dummmmmmy-1.21-2.0.12-neoforge.jar")
     implementation files("libs/jei-1.21.1-neoforge-19.27.0.340.jar")
-    // Optional client-side LOD testing mod. Disabled for alpha smoke tests because
-    // 3.0.3-b crashes during its startup updater on NeoForge dev launch.
-    // implementation files("libs/DistantHorizons-3.0.3-b-1.21.1-fabric-neoforge.jar")
+    // Disabled: Distant Horizons crashes the GameTest server during startup.
+    // implementation files("libs/DistantHorizons-3.3.3-1.21.1-fabric-neoforge.jar")
 
     //libraries
     implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
@@ -297,11 +297,11 @@ dependencies {
     implementation "top.theillusivec4.curios:curios-neoforge:${curios_version}"
 
     //Astral
-    implementation files("libs/observerlib-1.10.3.jar")
-    implementation files ("libs/AstralSorcery-2.0.0.3.jar")
+    //implementation files("libs/observerlib-1.10.3.jar")
+    //implementation files ("libs/AstralSorcery-2.0.0.3.jar")
 
 //Thaum
-    implementation files ("libs/thaumaturge-1.21.1-NeoForge-BETA-0.4.5.jar")
+   // implementation files ("libs/thaumaturge-1.21.1-NeoForge-BETA-0.4.5.jar")
 
     //Mna
     implementation files ("libs/mna-3.1.11-neoforge.1.21.1.0.jar")

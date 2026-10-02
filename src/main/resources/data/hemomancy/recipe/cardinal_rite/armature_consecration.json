@@ -1,5 +1,6 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
+  "id": "hemomancy:cardinal_rite/armature_consecration",
   "bloodCost": 0,
   "riteType": "greater",
   "required_degree": 5,
@@ -8,31 +9,24 @@
   "riteDescription": "Consecrate the Hematic Armature with the Armature Consecration Kit and close its two blood circuits.",
   "floor": "hemomancy:working_greater",
   "required_structure": {
-    "pattern": [[" S "], ["   "], ["   "]],
+    "pattern": [["  S  "], ["     "], ["     "], ["     "], ["     "]],
     "key": {"S": {"block": "hemomancy:hematic_armature"}}
   },
   "brazier_signature": [
-    {"ingredient": {"item": "hemomancy:vicars_consecration_kit"}, "count": 1}
+    {"ingredient": {"item": "hemomancy:vicars_consecration_kit"}, "count": 1},
+    {"ingredient": {"item": "minecraft:armor_stand"}, "count": 1},
+    {"ingredient": {"item": "minecraft:chain"}, "count": 1},
+    {"ingredient": {"item": "hemomancy:tendon_line"}, "count": 1},
+    {"ingredient": {"item": "hemomancy:hemolytic_plating"}, "count": 1},
+    {"ingredient": {"item": "hemomancy:sanguine_formation"}, "count": 1}
   ],
   "ceremony": {
-    "profile": "ceremonial",
-    "layout": "cardinal",
-    "anchors": [
-      {"y": 1, "ring": 0, "order": 0},
-      {"y": 1, "ring": 0, "order": 1},
-      {"y": 1, "ring": 0, "order": 2},
-      {"y": 1, "ring": 0, "order": 3}
-    ],
-    "support_sockets": [],
-    "waves": [],
-    "guaranteed_waves": [],
-    "fragile_offsets": [],
-    "target_duration_ticks": 2400,
-    "focus": "living_staff",
-    "required_helpers": 0,
-    "helper_roles": ["anchor", "attendant", "warden"],
-    "still_interval_ticks": 0,
-    "atmosphere": {"fog": "faint", "lightning": false, "dome": false},
-    "failure": "safe_retry"
+    "profile": "ceremonial", "layout": "cardinal",
+    "anchors": [{"y": 1, "ring": 0, "order": 0}, {"y": 1, "ring": 0, "order": 1},
+      {"y": 1, "ring": 0, "order": 2}, {"y": 1, "ring": 0, "order": 3}],
+    "support_sockets": [], "waves": [], "guaranteed_waves": [], "fragile_offsets": [],
+    "target_duration_ticks": 2400, "focus": "living_staff", "required_helpers": 0,
+    "helper_roles": ["anchor", "attendant", "warden"], "still_interval_ticks": 0,
+    "atmosphere": {"fog": "faint", "lightning": false, "dome": false}, "failure": "safe_retry"
   }
 }

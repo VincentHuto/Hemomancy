@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [" G ", "BFB", " C "],
+  "key": {
+    "G": { "item": "hemomancy:sanguine_glass" },
+    "B": { "item": "minecraft:glass_bottle" },
+    "F": { "item": "hemomancy:ferric_binder" },
+    "C": { "item": "hemomancy:blood_crystal_shard" }
+  },
+  "result": { "id": "hemomancy:hematic_condenser_kit" }
+}

@@ -68,7 +68,7 @@ public final class ClinicalBloodKnowledge {
                 .ifPresent(recipe -> player.awardRecipes(List.of(recipe)));
         unlockEntry(player, lesson.key());
         if (lesson == Lesson.CLAIRAUDIOGRAPH) LiberKnowledgeHelper.unlockEntry(player,
-                Hemomancy.rloc("fanesanguinium/the_infection/pages/clairaudiograph"), HemomancyDiscoverySource.DIALOGUE);
+                Hemomancy.rloc("libersanguinium/the_infection/pages/clairaudiograph"), HemomancyDiscoverySource.DIALOGUE);
         HarbingerAdvancementGranter.grantIfNotDone(player, Hemomancy.rloc("hemomancy/clinical_" + lesson.key()));
         sync(player);
         return true;
@@ -121,7 +121,7 @@ public final class ClinicalBloodKnowledge {
         LiberKnowledgeHelper.unlockEntry(player, entry(lesson), HemomancyDiscoverySource.DIALOGUE);
     }
     public static ResourceLocation entry(String lesson) {
-        return Hemomancy.rloc("fanesanguinium/the_infection/pages/clinical_" + lesson);
+        return Hemomancy.rloc("libersanguinium/the_infection/pages/clinical_" + lesson);
     }
     public static void sync(ServerPlayer player) {
         PacketHandler.sendToPlayer(player, new PacketSyncClinicalBlood(
@@ -135,7 +135,11 @@ public final class ClinicalBloodKnowledge {
         }
     }
     @SubscribeEvent public static void tick(PlayerTickEvent.Post event) {
-        if (!(event.getEntity() instanceof ServerPlayer player) || player.tickCount % 20 != 0 || !eligible(player)) return;
+        if (!(event.getEntity() instanceof ServerPlayer player) || player.tickCount % 20 != 0) return;
+        FirstDrawsAssignment.deliverPendingVials(player);
+        FirstSeparationAssignment.deliverPendingRewards(player);
+        FirstSeparationAssignment.deliverPendingBriefingVials(player);
+        if (!eligible(player)) return;
         var progress = HemoCapabilityAccess.clinicalBlood(player);
         boolean changed = false;
         for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
@@ -150,6 +154,9 @@ public final class ClinicalBloodKnowledge {
     }
     @SubscribeEvent public static void login(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
+            FirstDrawsAssignment.deliverPendingVials(player);
+            FirstSeparationAssignment.deliverPendingRewards(player);
+            FirstSeparationAssignment.deliverPendingBriefingVials(player);
             for (Lesson lesson : Lesson.values()) for (String path : recipes(lesson))
                 player.server.getRecipeManager().byKey(Hemomancy.rloc(path)).ifPresent(recipe -> {
                     if (HemoCapabilityAccess.clinicalBlood(player).knows(lesson)) player.awardRecipes(List.of(recipe));

@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 2,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Sanguine Athanor",
+  "subtitle": "A second catalyst for the sixth Degree",
+  "text": "Take a distillation result yourself, then finish a refinement and a compound at a Condenser and take each result yourself. At the sixth Degree, with active blood, the Alchemist offers a free Athanor Kit. Accepting either gift is optional: crafted or gifted kits work once your practice is earned. On a Greater working floor, light six braziers: the kit, a Brewing Stand, a Ghast Tear, Sanguine Quintessence, Chromatic Sublimate, and Hemolytic Solution. Seat the Condenser one plinth behind the Focus and plant your Living Staff. Fill eight anchors, seal the daemon, close the flow, impulse, and containment circuits with 50 mL each, then finish the procession. The same machine gains its second catalyst slot, keeps the Condenser's 7,500 mL tank and stored blood, and retains its tier and capacity when moved. Floor damage pauses the rite; cancellation returns offerings and Staff, not spent blood. The Athanor adds a vented heating mantle beneath the Alembic and Condenser. Clear a 3-by-3 area through three vertical layers around the station before upgrading or replacing its saved-tier item. Its actual solid shape follows the mantle, pipes, and vessels. The mantle supplies permanent heat, so no block is needed underneath. All Alembic recipes process twice as fast, with unchanged costs and yields. A blocked expansion refuses the rite; cancellation returns offerings and Staff, not spent blood.",
+  "icon": "hemomancy:sanguine_athanor_kit"
+}

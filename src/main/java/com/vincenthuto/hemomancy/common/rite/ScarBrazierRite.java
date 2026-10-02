@@ -284,9 +284,15 @@ public final class ScarBrazierRite {
 			scars.activateCerebralScar(id);
 		}
 		if (player instanceof ServerPlayer serverPlayer) {
-			HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
-					HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_EFFIGY_LOADOUT);
-			if (!HarbingerAdvancementGranter.isVeinMasonRewardClaimed(serverPlayer)) {
+			if (HarbingerAdvancementGranter.isVeinMasonFirstEffigyPattern(serverPlayer)) {
+				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
+						HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_EFFIGY_LOADOUT);
+			} else if (!HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(serverPlayer)) {
+				message(player, "The loadout takes, but the Vein-Mason still requires your own Effigy preparation.",
+						ChatFormatting.GOLD);
+			}
+			if (HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(serverPlayer)
+					&& !HarbingerAdvancementGranter.isVeinMasonRewardClaimed(serverPlayer)) {
 				HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
 						HarbingerAdvancementGranter.ADV_VEIN_MASON_CONTINUATION_READY);
 			}

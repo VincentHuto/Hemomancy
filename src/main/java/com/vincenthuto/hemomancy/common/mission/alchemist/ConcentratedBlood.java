@@ -46,7 +46,9 @@ public final class ConcentratedBlood {
     public static boolean canInject(ServerPlayer player) {
         return HemoCapabilityAccess.getPlayerDegreeNumber(player) == 2 && EarlyInitiation.attached(player)
                 && FirstSeparationAssignment.isClaimed(player) && !pending(player)
-                && HemoCapabilityAccess.advancedBrewing(player).distilled()
+                && HemoCapabilityAccess.stationUpgrades(player).hasUsed(
+                com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC,
+                com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.DISTILL)
                 && ClinicalBloodKnowledge.eligible(player);
     }
     public static boolean inject(ServerPlayer player) {
@@ -59,7 +61,9 @@ public final class ConcentratedBlood {
         if (!completed || !pending(player) || !EarlyInitiation.attached(player)
                 || HemoCapabilityAccess.getPlayerDegreeNumber(player) != 2 || !ClinicalBloodKnowledge.eligible(player)
                 || !FirstSeparationAssignment.isClaimed(player)
-                || !HemoCapabilityAccess.advancedBrewing(player).distilled()) return false;
+                || !HemoCapabilityAccess.stationUpgrades(player).hasUsed(
+                com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC,
+                com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.DISTILL)) return false;
         if (!DegreeProgression.advance(player, 3)) return false;
         pending(player, false);
         player.displayClientMessage(Component.translatable("hemomancy.initiation.awakened"), false);

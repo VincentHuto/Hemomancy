@@ -4,7 +4,12 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.Enu
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.EnzymeItem;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.EnzymaticScriptoriumMenu;
+import com.vincenthuto.hemomancy.common.station.UpgradeStation;
+import com.vincenthuto.hemomancy.common.station.UpgradeableStation;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import java.util.UUID;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -19,7 +24,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class EnzymaticScriptoriumBlockEntity extends BaseContainerBlockEntity implements com.vincenthuto.hemomancy.common.tile.IBloodReservoir {
+public class EnzymaticScriptoriumBlockEntity extends BaseContainerBlockEntity
+        implements com.vincenthuto.hemomancy.common.tile.IBloodReservoir, UpgradeableStation {
     public static final double BLOOD_CAPACITY = 2000;
     public static final int ITEM = 8;
     public static final int LAPIS = 9;
@@ -27,6 +33,8 @@ public class EnzymaticScriptoriumBlockEntity extends BaseContainerBlockEntity im
     private NonNullList<ItemStack> items = NonNullList.withSize(11, ItemStack.EMPTY);
     private final int[] selected = new int[8];
     private boolean riteLocked;
+    private UUID machineIdentity = UUID.randomUUID();
+    private UUID lastUpgradeRite;
 
     public EnzymaticScriptoriumBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityInit.enzymatic_scriptorium.get(), pos, state);
@@ -75,20 +83,27 @@ public class EnzymaticScriptoriumBlockEntity extends BaseContainerBlockEntity im
         sync();
     }
 
-    public boolean isRiteLocked() { return riteLocked; }
-    public void setRiteLocked(boolean value) { riteLocked = value; sync(); }
+    @Override public boolean isRiteLocked() { return riteLocked; }
+    // A held Scriptorium's blood is part of its upgrade snapshot, so it must not move mid-rite.
+    @Override public boolean canReceiveBlood() { return !riteLocked; }
+    @Override public boolean canProvideBlood() { return !riteLocked; }
+    @Override public void setRiteLocked(boolean value) { riteLocked = value; sync(); }
 
-    public boolean hasRiteEnzymes(int each) {
-        if (!items.get(ITEM).isEmpty() || !items.get(LAPIS).isEmpty() || !items.get(SHARD).isEmpty()) return false;
-        for (int i = 0; i < 8; i++) if (items.get(i).getCount() != each) return false;
-        return true;
+    @Override public UpgradeStation upgradeStation() { return UpgradeStation.SCRIPTORIUM; }
+    @Override public UUID machineIdentity() { return machineIdentity; }
+    @Override public boolean readyForUpgradeRite(ServerLevel level, Direction riteForward) { return !riteLocked; }
+
+    @Override public CompoundTag upgradeSnapshot(HolderLookup.Provider registries) {
+        CompoundTag tag = saveWithoutMetadata(registries);
+        tag.remove("RiteLocked");
+        tag.remove("LastUpgradeRite");
+        tag.remove("Selected");
+        tag.remove("neoforge:attachments");
+        return tag;
     }
 
-    public void consumeRiteEnzymes(int each) {
-        for (int i = 0; i < 8; i++) items.get(i).shrink(each);
-        riteLocked = false;
-        sync();
-    }
+    @Override public boolean wasUpgradedBy(UUID riteId) { return riteId != null && riteId.equals(lastUpgradeRite); }
+    @Override public void markUpgradedBy(UUID riteId) { lastUpgradeRite = riteId; sync(); }
 
     public void sync() {
         setChanged();
@@ -142,6 +157,8 @@ public class EnzymaticScriptoriumBlockEntity extends BaseContainerBlockEntity im
         int[] saved = tag.getIntArray("Selected");
         for (int i = 0; i < 8; i++) selected[i] = i < saved.length ? Math.clamp(saved[i], 0, Math.min(3, items.get(i).getCount())) : 0;
         riteLocked = tag.getBoolean("RiteLocked");
+        if (tag.hasUUID("MachineIdentity")) machineIdentity = tag.getUUID("MachineIdentity");
+        lastUpgradeRite = tag.hasUUID("LastUpgradeRite") ? tag.getUUID("LastUpgradeRite") : null;
         getBloodCapability().setBloodVolume(Math.clamp(tag.getDouble("BloodVolume"), 0, BLOOD_CAPACITY));
     }
 
@@ -150,6 +167,8 @@ public class EnzymaticScriptoriumBlockEntity extends BaseContainerBlockEntity im
         ContainerHelper.saveAllItems(tag, items, registries);
         tag.putIntArray("Selected", selected);
         tag.putBoolean("RiteLocked", riteLocked);
+        tag.putUUID("MachineIdentity", machineIdentity);
+        if (lastUpgradeRite != null) tag.putUUID("LastUpgradeRite", lastUpgradeRite);
         tag.putDouble("BloodVolume", getBloodVolume());
     }
 

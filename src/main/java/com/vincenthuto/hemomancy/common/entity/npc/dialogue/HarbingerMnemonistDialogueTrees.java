@@ -25,6 +25,7 @@ public final class HarbingerMnemonistDialogueTrees {
 	public static final String EVENT_ANCHORITE_COUNSEL = "mnemonist_anchorite_counsel";
 	public static final String EVENT_CIRCUS_WAYBILL = "mnemonist_circus_waybill";
 	public static final String EVENT_GUIDED_CHAMBER = "mnemonist_guided_chamber";
+	public static final String EVENT_SCRIPTORIUM_LESSON = "mnemonist_scriptorium_taught";
 
 	private HarbingerMnemonistDialogueTrees() {
 	}
@@ -170,7 +171,7 @@ public final class HarbingerMnemonistDialogueTrees {
 				EVENT_BLANK_MEMORY_RECIPE));
 		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_reliquary", "reliquary", null));
 		options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_scriptorium",
-				"scriptorium", null));
+				"scriptorium", EVENT_SCRIPTORIUM_LESSON));
 		if (degree >= 4) {
 			options.add(new DialogueOption("hemomancy.dialogue.mnemonist.option.ask_about_memory_practice",
 					"memory_practice", null));
@@ -349,7 +350,7 @@ public final class HarbingerMnemonistDialogueTrees {
 				"hemomancy.mnemonist.scriptorium.role",
 				"hemomancy.mnemonist.scriptorium.materials"));
 		if (degree >= 5) lines.add("hemomancy.mnemonist.scriptorium.eightfold");
-		if (degree >= 7) lines.add("hemomancy.mnemonist.scriptorium.monolithic");
+		if (degree >= 7) lines.add("hemomancy.mnemonist.scriptorium.palimpsest_lesson");
 		return new DialogueNode("scriptorium", lines,
 				List.of(new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null)));
 	}

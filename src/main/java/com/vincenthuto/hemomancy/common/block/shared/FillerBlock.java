@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.block.shared;
 
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.GhastlyAlembicBlock;
 import com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity;
 
 import net.minecraft.core.BlockPos;
@@ -79,13 +80,27 @@ public class FillerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        VoxelShape alembic = alembicShape(level, pos);
+        if (alembic != null) return alembic;
         return Shapes.block();
     }
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos,
             CollisionContext context) {
+        VoxelShape alembic = alembicShape(level, pos);
+        if (alembic != null) return alembic;
         return isHematicArmatureCenterFiller(level, pos) ? Shapes.empty() : Shapes.block();
+    }
+
+    @Nullable
+    private static VoxelShape alembicShape(BlockGetter level, BlockPos pos) {
+        if (!(level.getBlockEntity(pos) instanceof FillerBlockEntity filler)) return null;
+        BlockPos main = filler.getMainBlockPos();
+        if (main == null) return null;
+        BlockState controller = level.getBlockState(main);
+        return controller.getBlock() instanceof GhastlyAlembicBlock
+                ? GhastlyAlembicBlock.partShape(controller, pos.subtract(main)) : null;
     }
 
     @Override

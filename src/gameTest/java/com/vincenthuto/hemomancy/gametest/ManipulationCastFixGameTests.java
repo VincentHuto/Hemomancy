@@ -293,17 +293,32 @@ public final class ManipulationCastFixGameTests {
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void hemorrhagePrimesMortemStatusConsumers(GameTestHelper helper) {
 		ServerPlayer player = player(helper, "hemorrhage-primer-test");
+		player.setPos(helper.absoluteVec(new Vec3(2.5D, 2.0D, 2.5D)));
 		Zombie target = zombie(helper, player.position().add(2, 0, 0));
+		Zombie farther = zombie(helper, player.position().add(0, 0, 3));
 		try {
 			ManipulationInit.hemorrhage.get().getAction(player, helper.getLevel(), ItemStack.EMPTY,
 					player.blockPosition());
 			helper.assertTrue(target.hasEffect(EffectInit.blood_loss),
-					"Hemorrhage did not apply the shared Blood Loss primer");
+					"Hemorrhage did not apply the shared Blood Loss primer; player=" + player.position()
+							+ ", target=" + target.position() + ", alive=" + target.isAlive()
+							+ ", indexed=" + (helper.getLevel().getEntity(target.getUUID()) == target)
+							+ ", visible=" + com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.visible(player, target)
+							+ ", nearby=" + helper.getLevel().getEntitiesOfClass(
+									net.minecraft.world.entity.LivingEntity.class,
+									new net.minecraft.world.phys.AABB(player.blockPosition()).inflate(8.0D),
+									e -> com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.canHarm(player, e))
+								.stream().map(e -> e.getType() + "@" + e.position() + "/distance=" + e.distanceTo(player)
+										+ "/visible=" + com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.visible(player, e)
+										+ "/primed=" + e.hasEffect(EffectInit.blood_loss)).toList());
 			helper.assertTrue(!target.hasEffect(MobEffects.WITHER),
 					"Hemorrhage still duplicates a generic Wither applicator");
+			helper.assertTrue(!farther.hasEffect(EffectInit.blood_loss),
+					"Hemorrhage must prime only the closest visible enemy, not the farther decoy");
 			helper.succeed();
 		} finally {
 			target.discard();
+			farther.discard();
 			player.discard();
 		}
 	}
@@ -706,9 +721,18 @@ public final class ManipulationCastFixGameTests {
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void vitricCombustionScalesDamageFromPartialToFull(GameTestHelper helper) {
 		ServerPlayer player = player(helper, "vitric-combustion-charge-test");
+		player.setPos(helper.absoluteVec(new Vec3(2.5D, 90.0D, 2.5D)));
+		player.setYRot(0);
+		player.setXRot(0);
 		Vec3 targetPosition = player.getEyePosition(1.0F).add(player.getViewVector(1.0F).scale(22.0D));
 		Zombie target = zombie(helper, targetPosition);
 		try {
+			var clearRay = helper.getLevel().clip(new net.minecraft.world.level.ClipContext(
+					player.getEyePosition(1.0F), targetPosition,
+					net.minecraft.world.level.ClipContext.Block.OUTLINE,
+					net.minecraft.world.level.ClipContext.Fluid.NONE, player));
+			helper.assertTrue(clearRay.getType() == net.minecraft.world.phys.HitResult.Type.MISS,
+					"Charge comparison requires an unobstructed blast endpoint: " + clearRay.getBlockPos());
 			var manipulation = ManipulationInit.vitric_combustion.get();
 			manipulation.getAction(player, helper.getLevel(), ItemStack.EMPTY, player.blockPosition(), 30.0F);
 			float partial = target.getMaxHealth() - target.getHealth();
@@ -718,10 +742,51 @@ public final class ManipulationCastFixGameTests {
 			target.setDeltaMovement(Vec3.ZERO);
 			manipulation.getAction(player, helper.getLevel(), ItemStack.EMPTY, player.blockPosition(), 60.0F);
 			float full = target.getMaxHealth() - target.getHealth();
+			var ray = helper.getLevel().clip(new net.minecraft.world.level.ClipContext(
+					player.getEyePosition(1.0F), targetPosition,
+					net.minecraft.world.level.ClipContext.Block.OUTLINE,
+					net.minecraft.world.level.ClipContext.Fluid.NONE, player));
 			helper.assertTrue(partial > 0.0F && full > partial,
-					"Vitric Combustion damage did not increase: partial=" + partial + ", full=" + full);
+					"Vitric Combustion damage did not increase: partial=" + partial + ", full=" + full
+							+ ", player=" + player.position() + ", target=" + target.position()
+							+ ", indexed=" + (helper.getLevel().getEntity(target.getUUID()) == target)
+							+ ", ray=" + ray.getType() + "@" + ray.getBlockPos());
 			helper.succeed();
 		} finally {
+			target.discard();
+			player.discard();
+		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void vitricCombustionInterceptedRayDoesNotDamageItsDistantEndpoint(GameTestHelper helper) {
+		ServerPlayer player = player(helper, "vitric-combustion-occlusion-test");
+		player.setPos(helper.absoluteVec(new Vec3(2.5D, 90.0D, 2.5D)));
+		player.setYRot(0);
+		player.setXRot(0);
+		Vec3 eye = player.getEyePosition(1.0F);
+		Vec3 look = player.getViewVector(1.0F);
+		Vec3 endpoint = eye.add(look.scale(22.0D));
+		BlockPos wall = BlockPos.containing(eye.add(look.scale(10.0D)));
+		var oldWall = helper.getLevel().getBlockState(wall);
+		Zombie target = zombie(helper, endpoint);
+		try {
+			helper.getLevel().setBlock(wall, net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), 3);
+			var ray = helper.getLevel().clip(new net.minecraft.world.level.ClipContext(
+					eye, endpoint, net.minecraft.world.level.ClipContext.Block.OUTLINE,
+					net.minecraft.world.level.ClipContext.Fluid.NONE, player));
+			helper.assertTrue(ray.getType() == net.minecraft.world.phys.HitResult.Type.BLOCK && ray.getBlockPos().equals(wall),
+					"The negative control must hit its supplied stone wall");
+			var manipulation = ManipulationInit.vitric_combustion.get();
+			manipulation.getAction(player, helper.getLevel(), ItemStack.EMPTY, player.blockPosition(), 30.0F);
+			helper.assertTrue(target.getHealth() == target.getMaxHealth(),
+					"An intercepted partial blast must not damage the distant unobstructed endpoint");
+			manipulation.getAction(player, helper.getLevel(), ItemStack.EMPTY, player.blockPosition(), 60.0F);
+			helper.assertTrue(target.getHealth() == target.getMaxHealth(),
+					"An intercepted full blast must not damage the distant unobstructed endpoint");
+			helper.succeed();
+		} finally {
+			helper.getLevel().setBlock(wall, oldWall, 3);
 			target.discard();
 			player.discard();
 		}

@@ -26,6 +26,7 @@ The evidence belongs to the player. The sample and archive interval needs contin
 - After hearing the Severed Record, the Alchemist requests a controlled replay. Keep the Alchemist, analyzed sample, and yourself near the machine through the decisive interval.
 - At Degree 4, bring the controlled result to the Vicar. His recognition gives the clue: **"Pass where the wool ends."**
 - At Degree 5, the Vicar compares the two incursions' strategies.
+- At Degree 5, the Alchemist offers a separate optional sample-analysis commission. Before reporting it, ask in the Overworld for a Deep Dark bearing. The search covers nearby terrain within 2,048 blocks; the coordinates identify an underground region, not a safe descent or guaranteed Vigil. A Sculk Catalyst supplies the sample without a Warden fight. Prior personal analysis counts and the report does not take the sample or finish the broader inquiry.
 - At Degree 7, the optional Fungal Entity epilogue waits for a player who completed the investigation.
 
 The evidence points to a repeated intelligence using a changed strategy. It does not make the Warden a primitive Apotheos or sculk into crimson mycelium.

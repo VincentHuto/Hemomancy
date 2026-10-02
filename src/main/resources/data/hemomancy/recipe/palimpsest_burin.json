@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [" E ", "MSM", " A "],
+  "key": {
+    "E": { "item": "minecraft:echo_shard" },
+    "M": { "item": "hemomancy:myelin_sheath" },
+    "S": { "item": "hemomancy:vivianite_scalpel" },
+    "A": { "item": "hemomancy:axonal_slate" }
+  },
+  "result": { "id": "hemomancy:palimpsest_burin" }
+}

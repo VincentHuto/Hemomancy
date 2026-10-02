@@ -31,6 +31,20 @@ class ManipulationInputRulesTest {
 	}
 
 	@Test
+	void thelemicToggleDoesNotRepeatWhileHeldOrFireOnRelease() {
+		var press = ManipulationInputRules.tick(EnumManipulationType.PASSIVE, true, true, 0, 0);
+		assertEquals(ManipulationInputRules.Action.CAST, press.action());
+		for (int tick = 0; tick < 40; tick++) {
+			var held = ManipulationInputRules.tick(EnumManipulationType.PASSIVE, true, false,
+					press.nextHeldTicks(), 0);
+			assertEquals(ManipulationInputRules.Action.NONE, held.action());
+			assertEquals(0, held.nextHeldTicks());
+		}
+		assertEquals(ManipulationInputRules.Action.NONE,
+				ManipulationInputRules.tick(EnumManipulationType.PASSIVE, false, false, 0, 0).action());
+	}
+
+	@Test
 	void chargedFiresPartialChargeOnRelease() {
 		var held = ManipulationInputRules.tick(EnumManipulationType.CHARGED, true, true, 0, 40);
 		for (int i = 1; i < 20; i++) {

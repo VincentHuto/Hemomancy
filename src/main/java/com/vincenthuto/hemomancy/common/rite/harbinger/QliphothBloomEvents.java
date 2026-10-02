@@ -49,10 +49,13 @@ public class QliphothBloomEvents {
 	private static final int POME_RIPEN_CHANCE = 80;
 
 	public static void deliverPendingFungalSpine(ServerPlayer player) {
+		if (!player.isAlive() || com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isObservational(player)) return;
 		HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree -> {
 			if (!degree.isQliphothCommunionDone() || degree.hasFungalSpineGranted()) return;
-			if (player.getInventory().countItem(ItemInit.fungal_spine.get()) > 0
-					|| player.getInventory().add(new ItemStack(ItemInit.fungal_spine.get()))) {
+			if (player.getInventory().countItem(ItemInit.fungal_spine.get()) == 0) {
+				player.getInventory().add(new ItemStack(ItemInit.fungal_spine.get()));
+			}
+			if (player.getInventory().countItem(ItemInit.fungal_spine.get()) > 0) {
 				degree.setFungalSpineGranted(true);
 				InitiatoryDegreeEvents.syncDegree(player, degree);
 			}

@@ -120,14 +120,15 @@ public final class MaterialAcceptanceGameTests {
         machine.setItem(GhastlyAlembicBlockEntity.SLOT_RESULT, ItemStack.EMPTY);
         machine.setItem(GhastlyAlembicBlockEntity.SLOT_INPUT, new ItemStack(ItemInit.sanguine_formation.get()));
         tickAlembic(helper, machine, 1);
-        helper.assertTrue(machine.getProcessingStatus() == GhastlyAlembicBlockEntity.Status.MISSING_INGREDIENTS, "Tincture without catalyst and blood input must explain missing ingredients");
+        helper.assertTrue(machine.getProcessingStatus() == GhastlyAlembicBlockEntity.Status.MISSING_INGREDIENTS, "Tincture without catalyst and packaging must explain missing ingredients");
         machine.setItem(GhastlyAlembicBlockEntity.SLOT_CATALYST, new ItemStack(ItemInit.fervent_enzyme.get()));
-        machine.setItem(GhastlyAlembicBlockEntity.SLOT_TINCTURE_BLOOD, new ItemStack(ItemInit.bloody_flask.get()));
+        machine.setItem(GhastlyAlembicBlockEntity.SLOT_FLASK, new ItemStack(HLItemInit.cured_clay_flask.get()));
+        HemoCapabilityAccess.getBloodVolume(machine).orElseThrow().setBloodVolume(2600);
         tickAlembic(helper, machine, 200);
         helper.assertTrue(machine.getItem(GhastlyAlembicBlockEntity.SLOT_RESULT).is(ItemInit.tincture_sanguine_fists.get())
                 && machine.getItem(GhastlyAlembicBlockEntity.SLOT_CATALYST).isEmpty()
-                && machine.getItem(GhastlyAlembicBlockEntity.SLOT_TINCTURE_BLOOD).isEmpty() && machine.getBloodVolume() == 100,
-                "Sanguine Fists must consume its authored reagents without adding free reservoir blood");
+                && machine.getItem(GhastlyAlembicBlockEntity.SLOT_FLASK).isEmpty() && machine.getBloodVolume() == 100,
+                "Sanguine Fists must consume packaging and reagents and exactly 2500 reservoir blood");
         helper.succeed();
     }
 

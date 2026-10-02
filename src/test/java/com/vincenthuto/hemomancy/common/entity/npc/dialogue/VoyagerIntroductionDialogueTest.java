@@ -7,6 +7,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class VoyagerIntroductionDialogueTest {
     @Test
+    void unobservedReferralOffersABearingWithoutGrantingObservation() {
+        DialogueTree base = HarbingerVicarDialogueTrees.votary(42);
+        DialogueTree referral = VoyagerIntroductionDialogue.withVicarReport(base, 3, false, false);
+        assertTrue(hasEvent(referral.getNode("voyager_introduction"), "vicar_voyager_introduction_bearing"));
+        assertFalse(hasEvent(referral.getNode("voyager_introduction"), VoyagerIntroductionDialogue.REPORT));
+        assertFalse(hasEvent(referral.getNode("voyager_introduction"), VoyagerIntroductionDialogue.OBSERVE));
+        assertFalse(hasOption(VoyagerIntroductionDialogue.withVicarReport(base, 2, false, false),
+                "voyager_introduction"));
+        assertFalse(hasEvent(VoyagerIntroductionDialogue.withVicarReport(base, 3, true, false)
+                .getNode("voyager_introduction"), "vicar_voyager_introduction_bearing"));
+    }
+
+    @Test
     void observationIsAnExplicitVoyagerChoice() {
         DialogueTree base = HarbingerVoyagerDialogueTrees.forDegree(2, 42);
         assertFalse(hasEvent(base.getNode("work"), VoyagerIntroductionDialogue.OBSERVE));

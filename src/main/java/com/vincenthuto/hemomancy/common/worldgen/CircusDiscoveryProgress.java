@@ -37,6 +37,10 @@ public final class CircusDiscoveryProgress {
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent.Post event) {
 		if (!(event.getEntity() instanceof ServerPlayer player) || player.tickCount % 20 != 0) return;
+		if (!player.isAlive() || player.isSpectator()) {
+			CircusPlayerProgress.sync(player, false);
+			return;
+		}
 		var start = player.serverLevel().structureManager().getStructureWithPieceAt(
 				player.blockPosition(), holder -> holder.is(CIRCUS_PAVILION));
 		boolean inside = start.isValid();

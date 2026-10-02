@@ -152,13 +152,7 @@ final class CardinalRiteProgressionResourceTest {
 		String completionSource = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java"));
 		completionSource += Files.readString(Path.of(
-				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/ScriptoriumRites.java"));
-		completionSource += Files.readString(Path.of(
-				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/AlembicUpgradeRites.java"));
-		completionSource += Files.readString(Path.of(
-				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/ResonantForgeUpgradeRites.java"));
-		completionSource += Files.readString(Path.of(
-				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/ArmatureUpgradeRites.java"));
+				"src/main/java/com/vincenthuto/hemomancy/common/station/StationUpgradeCatalog.java"));
 		try (var paths = Files.list(ROOT)) {
 			for (Path path : paths.filter(p -> p.toString().endsWith(".json")).toList()) {
 				JsonObject json = read(path);

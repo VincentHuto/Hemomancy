@@ -19,7 +19,7 @@ The Harbinger Path follows the **Hematic Order**, a secret society that treats b
 - Morphling incubation and puppeteering; Drudge creation is post-alpha WIP
 - Cardinal rites for advancement and utility
 - Founding Fanes with powerful buffs
-- The Chamber of Will, a Degree 6 inner refuge that grows with late Harbinger progression
+- The Chamber of Will, encountered in early dreams and guided practice before Degree 6 attunement
 - NPC interactions and lore discoveries
 
 ---
@@ -33,7 +33,7 @@ The Hematic Order publicly recognizes seven degrees. Apotheos is the hidden eigh
 - **Rite:** Formal Vicar initiation
 - **Theme:** Crimson Veil; blood becomes a deliberate living resource
 - **Core progression:** Blood Absorption, Blood Projection, first structures, early tendency awareness
-- The Vicar asks for four proofs in any order: absorb 500 ml with Blood Absorption, project a Sanguine Formation and Venous Stone, and craft either a Liber Sanguinum or Hematic Iron Block using a blood formation. Ask for hints and recipe blueprints while the work is active.
+- The Vicar asks for four proofs in any order: absorb 500 ml with Blood Absorption, project a Sanguine Formation and Venous Stone, and craft either a Liber Sanguinium or Hematic Iron Block using a blood formation. Ask for hints and recipe blueprints while the work is active.
 - The first Vicar contacted grants or replaces the Assignment Ledger. Return after the four First Bloodcraft proofs for Degree 2. **The Hermit Road** remains an optional Side assignment.
 
 ### Degree 2: Votary
@@ -47,8 +47,10 @@ The Hematic Order publicly recognizes seven degrees. Apotheos is the hidden eigh
 ### Degree 3: Initiate
 
 - **Promotion:** Inject Concentrated Blood and complete a night of sleep
+- Leaving the bed early keeps the injection pending without granting Degree 3. Save and reload do not require another vial; complete a later night's sleep.
 - **Theme:** Incarnadine Fane; blood becomes shaped memory and external craft
 - **Core progression:** deliberate puppeteering and advanced non-Canon Somatic Loom work; Drudges and every Saint trial, including Hemorath, are post-release expansion content
+- Ask the Mnemonist for a one-time, two-minute guided Chamber glimpse. It returns your original inventory and equipment without permanently attuning you. Dreams and guided visits block world interaction, pickup, and dropping; a rejected inventory-screen drop keeps its item on the cursor. Finish any item transfer before beginning the visit. Holding a tool does not prevent entry.
 
 ### Degree 4: Adept
 
@@ -73,6 +75,10 @@ The Hematic Order publicly recognizes seven degrees. Apotheos is the hidden eigh
 
 #### Chamber of Will progression
 
+Ordinary bed dreams begin at Degrees 1-2. The Degree 3 guided lesson and timed chair visits are practice, not the independent Degree 6 attunement rite. Chair visits last five minutes at Degree 3, ten at Degree 4, and twenty from Degree 5. The Degree 4 Mnemonist lesson explains completed chair sleep and empty-hand sneak-use for direct entry; leaving sleep early does not count as completed rest.
+
+Chair entry cannot overlap another visit or Fungal projection. An unavailable destination rejects entry before granting new chair binding; existing binding is retained. Use the owner-paired Seat beside the Arbor to return early.
+
 The Chamber remains one private per-player cell and grows through four existing tiers: 9x9 at tier 0, 13x13 after the Vein-Mason Degree-6 milestone or Degree 7, 17x17 once Qliphoth begins or Silence is chosen, and 21x21 at Apotheos. Newly earned edge bands appear immediately when progression changes inside the Chamber. Existing player construction is not overwritten, old floor is never removed if progression is reduced, and the corner lights move outward only when their old manager-placed crystals are still present.
 
 The **Orb of Perspective** is a reusable late-game focus crafted from four Monolith Fragments, four Echo Shards, and one Blood Crystal Shard (`MEM / EBE / MEM`). Throw it beyond the edge of your own Chamber floor. Once it falls three blocks below floor level it cycles to the next normal Chamber background you have legitimately unlocked, persists that choice, and returns to your inventory or beside you if the inventory is full. Vesper and Mycophant encounter environments are excluded and an active ordeal rejects the Orb without consuming it.
@@ -92,6 +98,7 @@ The **Orb of Perspective** is a reusable late-game focus crafted from four Monol
 - **Requirements:** Degree 7, Qliphoth Communion, the ninth-pome Spine, completed revelation, and the Apotheos response
 - **Theme:** transcendence and fungal fruiting
 - **Core progression:** Apotheos-scale Chamber state, Primal Morphlings, and the Mycophant consequence
+- **First Mycophant reward:** The unique Tendril waits for inventory space if your pack is full. Its pending claim survives death and retries on login or after you free a slot; later victories give repeat rewards instead.
 
 Silent Archon is never Degree 8. It is the flagged Degree-7 refusal state earned only after successful Pruning and the two-phase Vesper ordeal.
 
@@ -101,7 +108,13 @@ Silent Archon is never Degree 8. It is the flagged Degree-7 refusal state earned
 
 Besides degree advancement, the Cardinal Altar enables **utility rites** for practical benefits:
 
+The Artificer teaches Living Staff construction at D2, while its formation remains craftable at D1. Forming it earns the bond: select **Conjure Staff** with an empty hand to recall it. Select **Blood Absorption** or **Blood Projection**, then hold the Staff to channel that utility. Selecting a Thelemic memory does not leave the previous Staff utility running. Staff ownership does not raise your degree; positive-degree Harbinger rites require active blood before the server plants or escrows it.
+
+At D2, the Vicar teaches **Rooted Vein** as a first practical ceremony. Prepare its Lesser floor with an empty Focus and keep the block above it clear. Put one Blood Rock in an Iron Brazier on a floor socket and light it with Blood Projection. Use the Living Staff on the Focus, project 50 mL into each of the four anchors, then project into the daemon. Stay inside the boundary through its offering procession and return. No helper, support sigil, or ordeal is required. Completion returns the Staff and replaces the Focus with Venous Stone supporting a permanent Earthen Vein; it does not promote your degree.
+
 Cardinal Rites teach their ritual vocabulary progressively:
+
+Keep the sigil surface intact and aim at its visible nodes. Once a shape awakens, continuing to hold Blood Projection over its completed markers does not spend more blood or craft into the terrain behind them. This protection lasts while that support or current response belongs to the active rite phase; aiming elsewhere still uses ordinary Projection.
 
 - **Sanguine Initiation (D0):** performed on the prepared Blood Temple floor
   after the Hermit's temple-bound oath. It uses an iron-nugget medium, with no
@@ -132,9 +145,26 @@ while Founding Fane uses Sanguine Quintessence.
 
 ### Cancelling an Active Rite
 
-The caster can safely recall an active Harbinger Cardinal Rite by holding **Blood Absorption** on its center focus or planted Living Staff for four uninterrupted seconds. The central daemon contracts back into the staff first; the staff then dissolves into blood and flows back to the caster's hand.
+The caster can safely recall an active Harbinger Cardinal Rite by holding **Blood Absorption** on its center focus or planted Living Staff for about four seconds. The central daemon contracts back into the staff first; the staff then dissolves into blood and flows back to the caster's hand.
 
-Releasing Blood Absorption, looking away, moving out of range, or leaving the rite boundary resets the recall and lets the rite resume. A completed recall returns the exact planted Living Staff and dismisses rite-spawned threats, but it does not refund blood, offerings, or other committed rite costs and grants no rite result.
+Releasing Blood Absorption, looking away, moving out of range, or leaving the rite boundary interrupts the recall and lets the rite resume. Brief interruptions retain some recall progress, which fades while the channel is idle; reload does not preserve it. A completed recall returns the exact planted Living Staff and dismisses rite-spawned threats, but grants no rite result and refunds no spent blood or consumed offerings. An untouched offering stays in its brazier.
+
+### Blood Gourds
+
+The Alchemist teaches each vessel at its rite's existing degree. These are optional portable reserves, not degree proofs or increases to the blood your body holds.
+
+| Rite | Degree | Vessel | Capacity | Withdrawal |
+|---|---|---|---|---|
+| Pallid Vessel | 3 | White Blood Gourd | 1,000 mL | 1 mL/tick |
+| Crimson Vessel | 4 | Red Blood Gourd | 1,800 mL | 3 mL/tick |
+| Ashen Vessel | 5 | Black Blood Gourd | 3,500 mL | 0.75 mL/tick |
+| Horn of Culmination | 6 | Curved Horn | 1,500 mL | 5 mL/tick |
+
+Follow the Alchemist's floor and offering lesson, then its fill/use page. Pallid needs no helper, support sigil, or ordeal. The later vessel rites require a Bastion; the Horn also requires Hematic Iron Pillars. Empty your earlier vessel before offering it for an upgrade, since that offering is consumed.
+
+Fill a personally accessible Ghastly Alembic's reservoir first. Remove returned empty containers from its blood-output slot, then put a corked gourd there to fill it. Take the vessel back when ready. Alternatively, craft four Sanguine Formations in a cross around a vessel for a 200 mL refill, capped at its capacity; its name and cork state remain intact.
+
+Carry the gourd or equip it in the Scarlet Vanity's gourd slot. Use a carried gourd in your hand to open or cork it. **Toggle Gourd Open/Closed**, normally **H**, does the same for an equipped gourd. An open vessel transfers stored blood while your blood is active and your personal reserve is below capacity. Cork it to stop. The Curved Horn trades capacity for faster withdrawal.
 
 ### Vascular Mending
 - **Purpose:** Repair all seven vascular sections
@@ -170,9 +200,8 @@ At Degree 5 (Illuminatus) and higher, you can found and manage a **bloodline**, 
 
 ### Recruiting Members
 - **Other Players:** Invite them to join your bloodline
-- **NPCs:** Recruit from Harbinger Outposts
-  - Each bloodline can recruit **one Pledged Voice** (general follower) per outpost
-  - Each bloodline can recruit **one of each calling** (Warblood, Fleshwright, Cordwainer, Bloodletter) total across all outposts
+- **NPCs:** Current recruitable outpost teachers are the Vicar, Alchemist, and Mnemonist. A bloodline can recruit one of each entity type across all outposts, and only one NPC from each outpost.
+- An ordinary recruit's death frees its profession and outpost slots and removes its shared-pool capacity. Temporary absence does not. A replacement still needs normal recruitment; Succession residents follow their separate remnant recovery route.
 - Recruited NPCs can aid in defense, provide unique dialogue, participate in rituals, and offer services based on their calling.
 
 ### NPC Callings
@@ -201,14 +230,29 @@ The Somatic Loom is where you craft **Hematic Memories** to learn new manipulati
 1. Craft or obtain **Blank Hematic Memories**
 2. Gather required **Enzymes** (Vivacious, Fervent, Neurotic, etc.)
 3. Collect **Catalysts** (tendency-specific materials)
-4. Place items in the Loom following the pattern
-5. Project blood into the Loom
-6. Wrestle the unruly colored memory-orbs into shape
+4. Insert one blank and the recipe's catalysts, then empty-hand use the Loom to select an output and check its cost and learning requirements
+5. Project the displayed blood cost into the Loom; payment locks that recipe and its catalysts
+6. Hold a Living Staff on a colored strand, then turn and move to draw it into the Loom at the captured distance
 7. Receive completed Memory item
 
-**Result:** Use the Memory item to permanently learn that manipulation.
+**Result:** Place the full Memory item in an Iron Brazier, light it with Blood Projection, and hold Blood Absorption on it to learn the manipulation. In Survival, direct item use learns crude starter shards, not full woven memories.
 
-**Tip:** Memory weaving is closer to taming dormant biology than assembling a static recipe. Each tendency uses different patterns and behaviors.
+More enzyme stock does not change the selected output. Drifting strands can require extra enzymes, which are spent while drawing them home. Once payment finishes, continuing to hold Projection does not pay again or repeat the Staff instructions; empty-hand use still shows that help.
+
+An interrupted weave retains its paid blood, selected recipe, inputs, remaining enzymes, and unfinished strands across save/reload. A missing or changed recipe pauses it for recovery. Crouch-use with an empty hand cancels without refunding spent blood or enzymes; further crouch-use returns the remaining catalyst and blank. Unspent enzymes stay in the Loom.
+
+### Memory Selection and Saved Patterns
+The selected Thelemic memory toggles on or off with the normal manipulation-use key. Holding that key does not charge or channel the Noetic power you selected earlier. Changing selection interrupts that earlier Noetic channel or charge.
+
+The **Mnemonic Reliquary** becomes available at Degree 3. Known Noetic manipulations and prepared Thelemic tinctures share the same memory capacity. Drag a memory into the central brain to equip it; click an equipped Noetic icon to remove it. The inner vascular section slots cycle prepared Thelemic memories. A new tincture for an occupied section replaces that section's selection rather than taking another slot.
+
+At Degree 5, the **Dendritic Distributor** stores named patterns of your equipped memories. Save an empty pattern, rename an existing one, or apply it to restore its memories and preferred selection. Overwrite requires a second confirmation click. Save and confirmed overwrite each cost **100 mL blood and 25 raw XP**, not 25 levels; Apply and Rename are free. You start with three pattern slots, with Synaptic Memory increasing storage to seven.
+
+Fixed Blood Absorption, Blood Projection, and Conjure Staff utilities are not stored in patterns and remain available through equip normalization. Applying a pattern turns off running Thelemic memories omitted from it without consuming their remaining reserve. Saved patterns must still fit your current capacity and contain memories you know.
+
+Save and overwrite remember only learned Noetic and Thelemic memories. If none of the equipped custom memories are learned, neither operation changes the old pattern or spends blood or XP.
+
+Applying a pattern updates stopped Thelemic memories on the client immediately, including when it stops the last running memory. Their remaining reserve is kept.
 
 ### Drudges (Blood Servants)
 > **Post-alpha WIP:** This system is retained for development testing but is not part of the first-release progression promise. Its items and Semi-Sentient Construct are in the WIP creative tab.
@@ -289,23 +333,24 @@ Advanced Harbingers can call shaped bodies as temporary extensions of learned bl
 A faltering Broken Will may also be **Commandeered** with an owner-attuned Crossbar. It counts toward the same cap, costs Crossbar charge to claim, pays a base 16 charge per minute before Thread Economy, and follows the same tether, focus, persistence, and severance rules. Silent Archon's bonus cap slots are claimed-Will-only: claiming a Will first does not consume the ordinary shaped-body slot, and an artificial shape cannot occupy a Will bonus slot. It remains a claimed failed person, not a learned puppet shape.
 
 ### Scars and Spores
-As you progress, your body accumulates **Fungal Scars**: visible marks of corruption.
+Cerebral scars are learned routes with an active loadout. Cultivated fungal scars occupy a separate physical slot; neither is a Harbinger equipment slot.
 
-**Scar Types:**
-- **Minor Scars**: Small marks, slight tendency bonus
-- **Major Scars**: Large patterns, significant bonuses
-- **Qliphoth Scars**: From communion, powerful but disturbing
+At **Degree 4**, ask the Vicar who teaches the old scarring rites. Use his map to find **Masons Respite** and its remote **Vein-Mason**, rather than an outpost vendor. Accept the first lesson for a pattern matching your strongest tendency, a blank scar, its catalyst, and a Hematic Iron Knapper if needed.
 
-**Crafting Scars:**
-- Use **Sanguine Chisel** at a **Chisel Station**
-- Carve patterns into blank scar items
-- Apply to yourself (painful but worthwhile)
-- Scars grant passive bonuses to specific tendencies
+1. At the **Cerebral Scarring Station**, insert the kit and load the purple stencil. Trace its cells in red, then carve. The nearby teacher supervises first-scar access until you learn it; later work needs your own crafted station.
+2. Place the carved Scar in an empty **Iron Brazier** with ordinary use. **Blood Projection** lights it for 50 mL if needed. Hold **Blood Absorption** on the lit offering until it dissolves; learning costs 100 mL. Sneaking retrieves an offering instead.
+3. Craft **Runic Motif Paper** from Paper, Charcoal, and Sanguine Formation. Select the known scar at the **Mason's Effigy** and press Prepare. Place the paper, project 500 mL per selected scar, and collect the prepared Scar Pattern. The selection stays fixed while that motif charges. Stopping projection or reloading retains its partial charge; resume to pay only the remainder.
+4. Place that pattern in a lit Brazier and hold Blood Absorption to commit it for 50 mL. This completes the D4 Main assignment; merely owning a pattern, carving, or speaking to the teacher does not. Return to the Anchorite for the optional continuation kit.
 
-**Scar Skills:**
-- **Scar Affinity**: Reduces scar application pain
-- **Scar Resonance**: Scars boost related manipulations more
-- **Scar Mastery**: Wear more scars than normal
+Degree 4 permits one active cerebral scar, Degree 5 two, and Degree 6+ four. A prepared pattern replaces the active loadout but cannot teach unknown scars. Burning blank Runic Motif Paper through the same offering channel clears the cerebral loadout for 50 mL while retaining known scars and the fungal slot. The **Fungal Implantation Pylon** installs, replaces, or removes one cultivated fungal scar and is not part of this first cerebral cycle.
+
+Templates and gifted patterns can activate scars you already know, but the first Main proof also requires your own completed Effigy preparation. Someone else's pattern cannot replace that practice. Previously earned Main proofs remain valid.
+
+Breaking an Effigy during preparation returns its inserted motif paper, including its name and components. The partial blood charge is lost, and no prepared pattern or scar proof is awarded. Merely changing the Effigy's facing does not cancel preparation.
+
+The Effigy can be shared, but anyone projecting into its motif must know every selected scar and have enough scar capacity. Rejected projection spends no blood and leaves pending work intact. Another eligible practitioner may continue it; completion grants that practitioner's preparation proof, not the Main commit proof.
+
+Accepting the Anchorite's first lesson unlocks **The First Scar** in Liber Sanguinium. Existing learners receive the missing page when knowledge synchronizes; the page does not replace any crafting or commit proof.
 
 **Spores:**
 - Released during high-degree rituals
@@ -316,6 +361,8 @@ As you progress, your body accumulates **Fungal Scars**: visible marks of corrup
 ---
 
 ## Harbinger Equipment
+
+In Creative mode, right-click the Ghastly Alembic, Resonant Forge, Hematic Armature, or Enzymatic Scriptorium with its matching upgrade item to instantly install that tier. The item remains in your hand, and a second-tier item can upgrade a base station directly. This bypasses progression and ceremony requirements while preserving machine contents and orientation. Lower-tier items never downgrade a station. An obstructed Alembic still changes tier, but needs clear space for its expanded collision parts. Survival and Adventure upgrades still require their Cardinal Rites.
 
 ### Armor Sets
 
@@ -448,8 +495,8 @@ The **Qliphoth** is a massive fungal structure that grows after performing Qliph
 - Fungal Whispers intensify dramatically
 
 ### Refusing the Qliphoth
-- Choose Silence after the first Fungal Spine projection
-- Strike the owned Bloom with any base Living Weapon to shape the temporary Living Sickle
+- Choose Silence after the first Fungal Spine projection; this records pending refusal, not victory, and leaves you at Degree 7
+- Strike the base of the owned spent Bloom with a base Living Weapon form, not the untransformed Staff, to shape the temporary Living Sickle
 - Cut the Bloom again to open Vesper's retryable wound
 - Defeat Vesper, then absorb his Memory through the Iron Brazier to permanently unlock `conjure_sickle`
 
@@ -548,8 +595,39 @@ A: No. They're people who've embraced a taboo art. Some are kind, some are dange
 
 *"We are not monsters. We are the inheritors of a sacred art, keepers of a secret written in blood. That the world fears us does not make us wicked. That we embrace what others flee does not make us evil. We are Harbingers, and the blood remembers."*
 
-*From the Liber Sanguinum, opening passage*
+*From the Liber Sanguinium, opening passage*
 
 ### Hematic Succession at Degree 5
 
 [Hematic Succession](Hematic-Succession.md) creates mortal professional residents without moving original teachers. Consent is independent of old recruitment limits. Successors provide local services and physical rite assistance; originals keep their ordinary pool benefits.
+
+
+### Alembic tincture preparation
+
+The base Alembic holds 5,000 mL. Installing the Condenser increases maximum storage by 1.5× to 7,500 mL without adding blood or changing recipe costs. Athanor retains that capacity, supplies permanent heat without a block underneath, and processes every recipe twice as fast. Base and Condenser still need external heat and use ordinary recipe times. The installed tier determines these benefits after reloads and moving the station.
+
+Tinctures draw blood from the Ghastly Alembic's stored reservoir. Put Sanguine Formation in the main input and the matching enzyme in the catalyst slot. Put an empty Cured Clay Flask or Jug in the existing lower-right container input. At base or Condenser, a flask batch costs 2,500 mL and takes 200 ticks, yielding three doses; a jug costs 5,000 mL and takes 300 ticks, yielding six. Athanor halves those times to 100 and 150 ticks while keeping the costs and yields. Each batch consumes one formation, enzyme, and empty vessel. Fill the tank by projection or by placing a Bloody Flask/Jug in that same container input; move the returned empty vessel from the adjacent output back into the input to package a tincture. Valid tincture packaging is reserved while blood, heat, or output space is unavailable. Tinctures generate no blood byproduct, and rejected batches consume nothing. The separate tincture-blood slot has been removed; Catalyst 2 is now slot 5, available only at Athanor. Saved contents of the retired slot are preserved for recovery when opening/breaking the station.
+
+### Alchemist station projects at D4 and D6
+
+The Alembic Condenser now unlocks at D4 and Athanor at D6, keeping their distillation/refinement/compound practice requirements and existing machine benefits. Base distillation and early preparation teaching remain available.
+
+The Alchemist also offers one free Centrifugal Governor Kit at D4 after personal recovery from a balanced spin (First Separation counts), and one Fractionating Rotor Kit at D6 after personal recovery from a calibrated-or-better spin. These are optional projects, not promotion proofs. Crafted or gifted kits require the same personal eligibility; earlier gifts need not be claimed. Borrowed machines count when you personally extract a completed result.
+
+The Liber's Calibrated Rotor and Second Fraction lessons appear when you meet those personal requirements, without claiming either gift. The authored Alembic, Forge and Scriptorium upgrade lessons follow the same rule. Logging in restores earned teaching pages; reading them does not grant a kit or promote you.
+
+The Condenser lesson also opens refinement and compounding instructions; the Athanor lesson opens binding and refilling. At D3, ask the Mnemonist about the Scriptorium to add its construction and operation page to your Liber. This is optional teaching, not a Woven Vessel requirement. An earlier conversation can be repeated to learn the page.
+
+| Centrifuge stage | Spin time | Primary recovery | Powder per ordinary vial | Second fraction |
+|---|---|---|---|---|
+| Base | 10 seconds | Existing yield | 50% chance | None |
+| Calibrated | 7.5 seconds | +25% average | 75% chance | None |
+| Fractionating | 5 seconds | +50% average | One guaranteed | 50% chance of one different native item |
+
+Both rites use Greater working floors, with the machine facing the rite two blocks behind the Focus. Steady Separation uses the Governor Kit, Iron Ingot, Chain, Sanguine Glass, Ferric Binder, and Neurotic Enzyme; four anchors plus two 50 mL circuits cost 300 mL. Second Fraction uses the Rotor Kit, Amethyst Shard, Ghast Tear, Hematic Iron Block, Chromatic Sublimate, and Enzyme Primer; eight anchors plus three circuits cost 550 mL. Finish the procession after sealing and closing circuits. Cancellation returns exact offerings and Staff, not spent blood.
+
+Keep opposing vials balanced. The second fraction comes only from that specimen's existing profile; a single-fraction vial cannot invent another tendency. Sacred syringes still give one residuum. Clear space for primary output, second fractions, and powder. Blocked completion retains the samples and rolled batch for retry, including after reload. The installed stage survives breaking and replacing the station. Upgraded placed-model artwork remains a later asset task.
+
+The Calibrated centrifuge is recognizable by its broad front governor dial, four bearing braces, and low iron footing. The Fractionating tier keeps that equipment and adds two glass receivers beneath a raised split manifold. Both leave the spinning specimens visible, and the installed appearance stays with the machine when moved.
+
+The Centrifugal Governor Kit appears as a bone-rimmed red calibration dial on a short iron mount. The Fractionating Rotor Kit shows two glass fractions hanging from a forked iron crosshead; both have distinct native item sprites.

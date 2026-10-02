@@ -161,8 +161,7 @@ public class HarbingerCardinalRiteEvents {
 		if (sLevel.getGameTime() % 20 == 0) {
 			for (ServerPlayer player : sLevel.players()) {
 				CardinalRiteSavedData.get(sLevel.getServer().overworld()).deliverRecovery(player);
-				HemoCapabilityAccess.advancedBrewing(player).deliver(player);
-				HemoCapabilityAccess.resonantForge(player).deliver(player);
+				HemoCapabilityAccess.stationUpgrades(player).deliver(player);
 			}
 		}
 		Map<UUID, ActiveCardinalRite> activeRites = savedData.getActiveRites();
@@ -180,11 +179,11 @@ public class HarbingerCardinalRiteEvents {
                     && !com.vincenthuto.hemomancy.common.succession.SuccessionRites.chunksReady(sLevel, rite)) continue;
 
 			ServerPlayer caster = sLevel.getServer().getPlayerList().getPlayer(playerUUID);
-			if (AlembicUpgradeRites.isRite(rite.getRecipeId())) {
-				if (!sLevel.hasChunkAt(rite.getCenterPos()) || !sLevel.hasChunkAt(AlembicUpgradeRites.seat(rite))) continue;
-				if (!AlembicUpgradeRites.focusPresent(sLevel, rite)
-						|| !AlembicUpgradeRites.subjectPresent(sLevel, rite)) {
-					AlembicUpgradeRites.recover(sLevel, rite);
+			if (StationUpgradeRites.isRite(rite.getRecipeId())) {
+				if (!sLevel.hasChunkAt(rite.getCenterPos()) || !sLevel.hasChunkAt(StationUpgradeRites.seat(rite))) continue;
+				if (!StationUpgradeRites.focusPresent(sLevel, rite)
+						|| !StationUpgradeRites.subjectPresent(sLevel, rite)) {
+					StationUpgradeRites.recover(sLevel, rite);
 					toRemove.add(playerUUID);
 					continue;
 				}
@@ -218,7 +217,7 @@ public class HarbingerCardinalRiteEvents {
 			if ((recipe == null && rite.getPhase() != CardinalRitePhase.LEGACY)
                     || rite.getRecipeId().getPath().equals("cardinal_rite/sanguine_initiation")
                     || rite.getRecipeId().getPath().equals("cardinal_rite/votary_rite")) {
-				AlembicUpgradeRites.recover(sLevel, rite);
+				StationUpgradeRites.recover(sLevel, rite);
 				Hemomancy.LOGGER.warn("Retiring active cardinal rite {} at {} because its recipe no longer exists",
 						rite.getRecipeId(), center);
 				CardinalRiteOrdealEngine.clearThreats(sLevel, rite);
@@ -254,7 +253,7 @@ public class HarbingerCardinalRiteEvents {
 					Math.max(CardinalRiteBoundaryLeashRules.ritualRadius(riteSize), footprintRadius));
 			AABB casterBounds = new AABB(center).inflate(
 					Math.max(CardinalRiteBoundaryLeashRules.casterLeashRadius(riteSize), footprintRadius));
-			if (AlembicUpgradeRites.isRite(rite.getRecipeId())
+			if (StationUpgradeRites.isRite(rite.getRecipeId())
 					&& (!casterBounds.contains(caster.position()) || !verifyRiteStructure(sLevel, rite)))
 				continue;
 
@@ -279,7 +278,7 @@ public class HarbingerCardinalRiteEvents {
 			// === Caster boundary enforcement ===
 			// Only the caster takes damage and blood drain for leaving the rite bounds
 			if (!casterBounds.contains(caster.position())) {
-				if (AlembicUpgradeRites.isRite(rite.getRecipeId())) continue;
+				if (StationUpgradeRites.isRite(rite.getRecipeId())) continue;
 				rite.interruptCancellation();
 				caster.hurt(caster.damageSources().generic(), CASTER_BOUNDARY_DAMAGE_PER_TICK);
 				HemoCapabilityAccess.getBloodVolume(caster).ifPresent(volume -> {
@@ -336,7 +335,7 @@ public class HarbingerCardinalRiteEvents {
 				rite.tick();
 			} else {
 				if (sLevel.getGameTime() % 20 == 0 && !verifyRiteStructure(sLevel, rite)) {
-					if (AlembicUpgradeRites.isRite(rite.getRecipeId())) continue;
+					if (StationUpgradeRites.isRite(rite.getRecipeId())) continue;
 					failRite(sLevel, caster, rite);
 					toRemove.add(playerUUID);
 					continue;
@@ -352,8 +351,8 @@ public class HarbingerCardinalRiteEvents {
 			savedData.setDirty();
 
 			if (rite.getPhase() == CardinalRitePhase.COLLAPSED) {
-				if (AlembicUpgradeRites.isRite(rite.getRecipeId())) {
-					AlembicUpgradeRites.recover(sLevel, rite);
+				if (StationUpgradeRites.isRite(rite.getRecipeId())) {
+					StationUpgradeRites.recover(sLevel, rite);
 					toRemove.add(playerUUID);
 					continue;
 				}
@@ -365,7 +364,7 @@ public class HarbingerCardinalRiteEvents {
 			if (rite.isComplete()) {
 				// === Final structure integrity check ===
 				if (!verifyRiteStructure(sLevel, rite)) {
-					if (AlembicUpgradeRites.isRite(rite.getRecipeId())) continue;
+					if (StationUpgradeRites.isRite(rite.getRecipeId())) continue;
 					failRite(sLevel, caster, rite);
 					toRemove.add(playerUUID);
 					continue;
@@ -374,7 +373,7 @@ public class HarbingerCardinalRiteEvents {
 					spawnHumanityDispersal(sLevel, caster);
 				} else {
 					CardinalRiteOrdealEngine.clearThreats(sLevel, rite);
-					AlembicUpgradeRites.recover(sLevel, rite);
+					StationUpgradeRites.recover(sLevel, rite);
 					CardinalRiteStaffEscrow.restore(caster, rite);
 				}
 				toRemove.add(playerUUID);
@@ -384,8 +383,7 @@ public class HarbingerCardinalRiteEvents {
 		for (UUID uuid : toRemove) {
 			ActiveCardinalRite removedRite = activeRites.get(uuid);
 			if (removedRite != null) {
-				ScriptoriumRites.cleanup(sLevel, removedRite);
-				AlembicUpgradeRites.cleanup(sLevel, removedRite);
+				StationUpgradeRites.cleanup(sLevel, removedRite);
                 com.vincenthuto.hemomancy.common.succession.SuccessionRites.cleanup(sLevel, removedRite);
 				CardinalRiteAllyService.returnNpcAlliesToFane(sLevel, removedRite);
 				discardHumanitySprites(sLevel, uuid, removedRite.getCenterPos());
@@ -410,7 +408,7 @@ public class HarbingerCardinalRiteEvents {
 		if (savedData.hasActiveRite(player.getUUID())) {
 			ActiveCardinalRite broken = savedData.getRite(player.getUUID());
 			if (broken != null) {
-				AlembicUpgradeRites.recover(sLevel, broken);
+				StationUpgradeRites.recover(sLevel, broken);
 				CardinalRiteOrdealEngine.clearThreats(sLevel, broken);
 				CardinalRiteAllyService.returnNpcAlliesToFane(sLevel, broken);
 				discardHumanitySprites(sLevel, player.getUUID(), broken.getCenterPos());
@@ -625,7 +623,7 @@ public class HarbingerCardinalRiteEvents {
 	private static void completeRiteCancellation(ServerLevel level, ServerPlayer caster,
 			ActiveCardinalRite rite) {
 		CardinalRiteOrdealEngine.clearThreats(level, rite);
-		AlembicUpgradeRites.recover(level, rite);
+		StationUpgradeRites.recover(level, rite);
 		CardinalRiteStaffEscrow.restore(caster, rite);
 		level.playSound(null, rite.getCenterPos(), SoundEvents.BEACON_DEACTIVATE,
 				SoundSource.BLOCKS, 1.0F, 0.65F);
@@ -701,7 +699,7 @@ public class HarbingerCardinalRiteEvents {
 
 		BlockPos center = rite.getCenterPos();
 		if (recipe.hasLayeredStation()) {
-			boolean valid = (AlembicUpgradeRites.isRite(rite.getRecipeId())
+			boolean valid = (StationUpgradeRites.isRite(rite.getRecipeId())
 					|| rite.getOfferingVisitIndex() > 0 || rite.isPuppeteerTrialManifested()
 					? layeredStructureMatch(sLevel, rite, recipe)
 					: layeredStationMatch(sLevel, rite, recipe)) != null;
@@ -961,23 +959,12 @@ public class HarbingerCardinalRiteEvents {
             return CardinalRiteChecklist.inscription(optional, optionalComplete, required, requiredComplete,
                     availableAllies, requiredAllies, mediumReady);
 		}
-		if (rite.getPhase() == CardinalRitePhase.SCRIPTORIAL_INSCRIPTION) {
-			int total = ScriptoriumRites.isMonolithic(rite.getRecipeId()) ? 16 : 8;
-			int stage = rite.getScriptorialStage();
-			return java.util.List.of("Eightfold writing: " + stage + "/" + total,
-					"Current orb " + (stage % 8 + 1) + ": " + rite.getScriptorialBlood(stage) + "/50 mL",
-					"Project blood into the next floor orb");
-		}
-		if (rite.getPhase() == CardinalRitePhase.ALEMBIC_PROJECTION) {
-			int stage = rite.alembic().getInt("Stage");
-			boolean armature = ArmatureUpgradeRites.isRite(rite.getRecipeId());
-			return java.util.List.of((armature ? "Armature circuits: " : "Station circuits: ") + stage + "/"
-					+ AlembicUpgradeRites.projections(rite.getRecipeId()),
-				"Current circuit: " + (AlembicUpgradeRites.bloodPerProjection(rite.getRecipeId())
-							- rite.alembicBloodNeeded()) + "/"
-							+ AlembicUpgradeRites.bloodPerProjection(rite.getRecipeId()) + " mL",
-				armature ? "Project blood into the next armature circuit"
-						: "Project blood into the next receiving station circuit");
+		if (rite.getPhase() == CardinalRitePhase.STATION_PROJECTION) {
+			int stage = rite.upgrade().getInt("Stage");
+			int cost = StationUpgradeRites.bloodPerCircuit(rite.getRecipeId());
+			return java.util.List.of("Station circuits: " + stage + "/" + StationUpgradeRites.circuits(rite.getRecipeId()),
+					"Current circuit: " + (cost - rite.upgradeBloodNeeded()) + "/" + cost + " mL",
+					"Project blood into the next station circuit");
 		}
 		if (rite.getPhase() == CardinalRitePhase.ORDEAL) {
 			String wave = rite.getCurrentWave() < rite.getWaveDeck().size()
@@ -1109,20 +1096,6 @@ public class HarbingerCardinalRiteEvents {
 	private static java.util.List<ActiveRiteClientData.SigilSegment> visibleSigilSegments(
 			ServerLevel level, ActiveCardinalRite rite) {
 		java.util.List<ActiveRiteClientData.SigilSegment> result = new java.util.ArrayList<>();
-		if (ScriptoriumRites.isRite(rite.getRecipeId())) {
-			int total = ScriptoriumRites.isMonolithic(rite.getRecipeId()) ? 16 : 8;
-			int[] colors = {0xE62929, 0xE87A24, 0xD9BE25, 0xEDE9DA,
-					0x285D34, 0x287FD1, 0x999999, 0x8634AD};
-			for (int stage = 0; stage < total; stage++) {
-				int blood = rite.getScriptorialBlood(stage);
-				if (blood <= 0) continue;
-				int orb = stage % 8;
-				Vec3 start = ScriptoriumRites.orbSurface(level, rite, orb);
-				Vec3 end = start.lerp(ScriptoriumRites.tubePoint(level, rite, orb), blood / 50.0D);
-				result.add(new ActiveRiteClientData.SigilSegment(start.x, start.y, start.z,
-						end.x, end.y, end.z, colors[orb]));
-			}
-		}
 		for (CardinalRiteInteractionHandler.SigilPlacement placement
 				: CardinalRiteInteractionHandler.activeSigils(level, rite)) {
 			IchorianSigilDefinition sigil = IchorianSigilRegistry.get(placement.id());
@@ -1264,8 +1237,8 @@ public class HarbingerCardinalRiteEvents {
 	private static boolean completeRite(ServerLevel sLevel, ServerPlayer caster, ActiveCardinalRite rite) {
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(sLevel, rite.getRecipeId());
 		if (recipe == null) return false;
-		if (AlembicUpgradeRites.isRite(rite.getRecipeId())) {
-			boolean completed = AlembicUpgradeRites.complete(sLevel, rite);
+		if (StationUpgradeRites.isRite(rite.getRecipeId())) {
+			boolean completed = StationUpgradeRites.complete(sLevel, rite);
 			if (completed) CardinalRiteSavedData.get(sLevel.getServer().overworld()).deliverRecovery(caster);
 			return completed;
 		}
@@ -1326,6 +1299,8 @@ public class HarbingerCardinalRiteEvents {
 				&& !canConsecrateFoundingFane(sLevel, caster, rite.getCenterPos().above(3))) return false;
 		if (BLOOM_OF_QLIPHOTH_RITE.equals(rite.getRecipeId().getPath())
 				&& !canPlaceQliphothBloom(sLevel, caster, rite.getCenterPos())) return false;
+		if (ROOTED_VEIN_RITE.equals(rite.getRecipeId().getPath())
+				&& !canPlaceRootedVein(sLevel, caster, rite.getCenterPos())) return false;
 
 		// Interactive Harbinger ceremonies already paid their base cost node by
 		// node. Only legacy/Unstained countdown rites retain the completion drain.
@@ -1345,7 +1320,6 @@ public class HarbingerCardinalRiteEvents {
 			return false;
 		}
 		if (!consumeRiteMedium(sLevel, caster, rite, recipe)) return false;
-		if (!ScriptoriumRites.complete(sLevel, rite)) return false;
 		String ritePath = rite.getRecipeId().getPath();
 		if (recipe.isUnstained()
 				&& !UnstainedCardinalRiteEvents.completeRite(sLevel, caster, center, ritePath)) {
@@ -1619,6 +1593,15 @@ public class HarbingerCardinalRiteEvents {
 	//
 	// Utility Rite Completion Handlers
 	//
+
+	public static boolean canPlaceRootedVein(ServerLevel level, ServerPlayer caster, BlockPos center) {
+		if (!level.getBlockState(center.above()).canBeReplaced()) {
+			caster.displayClientMessage(Component.literal("Keep the block above the Cardinal Focus clear for the Earthen Vein.")
+					.withStyle(ChatFormatting.DARK_RED), false);
+			return false;
+		}
+		return true;
+	}
 
 	private static void completeRootedVein(ServerLevel level, BlockPos center) {
 		level.setBlockAndUpdate(center.above(), BlockInit.earthen_vein.get().defaultBlockState());

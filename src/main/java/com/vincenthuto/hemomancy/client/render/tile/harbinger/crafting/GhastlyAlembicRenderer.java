@@ -6,6 +6,7 @@ import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.common.brewing.AlembicTier;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.AlembicGeometry;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.GhastlyAlembicBlockEntity;
 
@@ -40,20 +41,20 @@ public class GhastlyAlembicRenderer implements BlockEntityRenderer<GhastlyAlembi
 		renderFluidLevel(poseStack, bufferIn, te, combinedLightIn);
 		poseStack.pushPose();
 		poseStack.translate(0.5, 0, 0.5);
-		poseStack.mulPose(Axis.YP.rotationDegrees(te.getBlockState().getValue(FACING).toYRot() + 180));
+		poseStack.mulPose(Axis.YP.rotationDegrees(-(te.getBlockState().getValue(FACING).toYRot() + 180)));
 		poseStack.translate(-0.5, 0, -0.5);
 		if (te.tier() != AlembicTier.BASE)
-			renderGrowth("condenser", false, poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
-		if (te.tier() == AlembicTier.ATHANOR)
-			renderGrowth("athanor", false, poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
-		if (ghostActive(te) && te.tier() != AlembicTier.ATHANOR)
-			renderGrowth(te.tier() == AlembicTier.BASE ? "condenser" : "athanor", true,
+			renderAssembly(te.tier() == AlembicTier.ATHANOR ? "athanor" : "condenser", false,
 					poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
-		if (te.tier() == AlembicTier.ATHANOR && te.getLevel() != null) {
+		if (ghostActive(te) && te.tier() != AlembicTier.ATHANOR)
+			renderAssembly(te.tier() == AlembicTier.BASE ? "condenser" : "athanor", true,
+					poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
+		if (te.tier() == AlembicTier.ATHANOR && te.getBlockState().getValue(com.vincenthuto.hemomancy.common.block.harbinger.crafting.GhastlyAlembicBlock.LIT)
+				&& te.getLevel() != null) {
 			float pulse = (float) (0.5 + 0.5 * Math.sin((te.getLevel().getGameTime() + partialTicks) * 0.15));
 			VertexConsumer channel = bufferIn.getBuffer(RenderTypeInit.FLASK_FLUID);
-			renderColorBox(channel, poseStack.last().pose(), 7f / 16, 22f / 16, 7f / 16,
-					9f / 16, (23f + pulse * 3) / 16, 9f / 16, 176, 18, 28, 125);
+			renderColorBox(channel, poseStack.last().pose(), 2f / 16, 4.5f / 16, -2.3f / 16,
+					14f / 16, 6.5f / 16, -2.25f / 16, 176, 18, 28, (int) (80 + pulse * 45));
 		}
 		poseStack.popPose();
 		if (bufferIn instanceof MultiBufferSource.BufferSource source) {
@@ -64,28 +65,31 @@ public class GhastlyAlembicRenderer implements BlockEntityRenderer<GhastlyAlembi
 	private static boolean ghostActive(GhastlyAlembicBlockEntity station) {
 		if (!station.isRiteLocked()) return false;
 		return ActiveRiteClientData.getActiveRites().stream().anyMatch(rite ->
-				rite.getRecipeId().getNamespace().equals(Hemomancy.MOD_ID)
-						&& (rite.getRecipeId().getPath().equals("cardinal_rite/first_condensation")
-						|| rite.getRecipeId().getPath().equals("cardinal_rite/sanguine_athanor"))
+				com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.forRite(rite.getRecipeId())
+						.filter(tier -> tier.station() == com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC)
+						.isPresent()
 						&& rite.getCenter().distManhattan(station.getBlockPos()) <= 2
-						&& (rite.getPhase().equals("ALEMBIC_PROJECTION")
+						&& (rite.getPhase().equals("STATION_PROJECTION")
 						|| rite.getPhase().equals("OFFERING_PROCESSION")
 						|| rite.getPhase().equals("CULMINATION")));
 	}
 
-	private static void renderGrowth(String tier, boolean ghost, PoseStack pose,
+	private static void renderAssembly(String tier, boolean ghost, PoseStack pose,
 			MultiBufferSource buffers, int light, int overlay) {
 		var minecraft = Minecraft.getInstance();
 		var model = minecraft.getModelManager().getModel(ModelResourceLocation.standalone(
-				Hemomancy.rloc("block/ghastly_alembic_" + tier + "_growth")));
+				Hemomancy.rloc("block/ghastly_alembic_" + tier)));
+		pose.pushPose();
+		if (tier.equals("athanor")) pose.translate(0, AlembicGeometry.ATHANOR_LIFT, 0);
 		var type = ghost ? RenderType.entityTranslucent(TextureAtlas.LOCATION_BLOCKS)
 				: RenderType.entityCutoutNoCull(TextureAtlas.LOCATION_BLOCKS);
 		minecraft.getBlockRenderer().getModelRenderer().renderModel(pose.last(), buffers.getBuffer(type), null,
 				model, ghost ? 0.8F : 1.0F, ghost ? 0.25F : 1.0F, ghost ? 0.3F : 1.0F, light, overlay);
+		pose.popPose();
 	}
 
 	@Override public AABB getRenderBoundingBox(GhastlyAlembicBlockEntity te) {
-		return new AABB(te.getBlockPos()).inflate(1.5D, 1.5D, 1.5D);
+		return new AABB(te.getBlockPos()).inflate(1.5D, 2.5D, 1.5D);
 	}
 
 	private void renderFluidLevel(PoseStack poseStack, MultiBufferSource bufferIn,
@@ -103,7 +107,7 @@ public class GhastlyAlembicRenderer implements BlockEntityRenderer<GhastlyAlembi
 		float fluidHeight = flaskHeight * fillPct;
 
 		poseStack.pushPose();
-		poseStack.translate(0.5f, flaskBottomY, 0.5f);
+		poseStack.translate(0.5f, flaskBottomY + (te.tier() == AlembicTier.ATHANOR ? AlembicGeometry.ATHANOR_LIFT : 0), 0.5f);
 
 		int r = 153, g = 13, b = 13, a = 191;
 

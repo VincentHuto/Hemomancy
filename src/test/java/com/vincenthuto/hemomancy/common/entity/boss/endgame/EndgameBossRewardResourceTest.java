@@ -74,7 +74,11 @@ public final class EndgameBossRewardResourceTest {
 		assertBefore("managed Mycophant rewards are delivered after leaving the disposable arena",
 				mycophantEncounter,
 				"ChamberOfWillManager.get(level.getServer()).exitChamber(owner);",
-				"if (first) give(owner, new ItemStack(ItemInit.mycophant_tendril.get()));");
+				"givePendingTendril(owner);");
+		assertContains("first Mycophant reward waits under death-persistent player data", mycophantEncounter,
+				"persisted.putBoolean(TENDRIL_PENDING_KEY, true);");
+		assertContains("Vesper Memory waits under death-persistent player data", vesperOrdeal,
+				"owner.getPersistentData().put(Player.PERSISTED_NBT_TAG, persisted);");
 		assertBefore("Mycophant victory clears the active encounter before dimension-change callbacks",
 				mycophantEncounter,
 				"clear(owner);",

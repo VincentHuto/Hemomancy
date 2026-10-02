@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [" N ", "MAM", " S "],
+  "key": {
+    "N": { "item": "minecraft:netherite_scrap" },
+    "M": { "item": "hemomancy:mnemonic_ambergris_block" },
+    "A": { "item": "minecraft:anvil" },
+    "S": { "item": "hemomancy:chalybeate_sclerite" }
+  },
+  "result": { "id": "hemomancy:master_cam_kit" }
+}

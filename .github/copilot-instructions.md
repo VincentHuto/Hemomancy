@@ -78,7 +78,7 @@ src/main/java/com/vincenthuto/hemomancy/
 - Registry IDs are `snake_case`. Java classes are `PascalCase`. Init classes are `XxxInit` (not `XxxRegistry`).
 - Manipulations live in `common/manipulation/<tendency>/` and extend `BloodManipulation`. Each defines cost, type (QUICK/CHARGED/PASSIVE/CONTINUOUS), rank (HUMILIS→PERFECTUS), tendency, vein section, cooldown, and an action lambda.
 - Tendencies are named in **Latin-flavored neutral terms** internally: `Animus, Flammeus, Ductilis, Lux, Mortem, Congeatio, Ferric, Tenebris`. The corresponding **enzyme** items use a different vocabulary (Vivacious, Fervent, Neurotic, Incandescent, Ruinous, Frigid, Ferric, Umbral). Don't conflate them — both vocabularies are intentional and need to stay consistent.
-- Lore prose leans **archaic, ecclesiastical, Latinate** for Harbinger material ("Liber Sanguinum", "Sanguine Initiation", "Crimson Lodge"); **clean, sacramental, Anglo-Saxon-flavored** for Unstained material ("Tears of Silthmere", "Pallid Icon", "Lethean Dew", "Our Lady of Still Waters").
+- Lore prose leans **archaic, ecclesiastical, Latinate** for Harbinger material ("Liber Sanguinium", "Sanguine Initiation", "Crimson Lodge"); **clean, sacramental, Anglo-Saxon-flavored** for Unstained material ("Tears of Silthmere", "Pallid Icon", "Lethean Dew", "Our Lady of Still Waters").
 - Resource locations: use `Hemomancy.rloc("path")` rather than constructing `new ResourceLocation(MOD_ID, ...)` directly.
 - Blood costs in the hundreds for Humilis-rank manipulations, low thousands for Mediocritas/Summa, 5000+ for Grand rites. Match the existing economy.
 - Cardinal Rite naming: degree-advancement rites are named after the rank they unlock ("Rite of the Crimson Lodge" → Illuminatus). Utility rites get descriptive names ("Vascular Mending", "Crimson Beacon").
@@ -114,7 +114,7 @@ Check `HEMOMANCY_REFERENCE.md` §38 for the full list, but the big ones:
 - **Blood Moons** — frequency and ritual trigger designed; full gameplay effects partially wired.
 - **Founding Fane** — Degree-5 area-consecration system; buffs work, boundary detection still being tuned.
 - **Visceral Organs** — extraction ritual and per-organ gameplay effects are implemented; check the reference before changing tuning.
-- **Liber Sanguinum guidebook** — opens but renders no content (`HemoProgressionScreen.setupEntries()` is commented out).
+- **Liber Sanguinium guidebook** — opens but renders no content (`HemoProgressionScreen.setupEntries()` is commented out).
 - **Blood as a placeable fluid** (`FluidInit`) — commented out.
 
 ## When working in this repo

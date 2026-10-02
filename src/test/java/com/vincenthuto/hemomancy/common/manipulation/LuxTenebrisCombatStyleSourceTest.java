@@ -38,9 +38,9 @@ public final class LuxTenebrisCombatStyleSourceTest {
 		String itemInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java");
 		String lang = read("src/main/resources/assets/hemomancy/lang/en_us.json");
 		assertContains("hematic flare memory registered", itemInit,
-				"memory_hematic_flare = BASEITEMS.register(\"memory_hematic_flare\"");
+				"memory_hematic_flare = registerBloodMemoryItem(\"memory_hematic_flare\", ManipulationInit.hematic_flare)");
 		assertContains("gloam laceration memory registered", itemInit,
-				"memory_gloam_laceration = BASEITEMS.register(\"memory_gloam_laceration\"");
+				"memory_gloam_laceration = registerBloodMemoryItem(\"memory_gloam_laceration\", ManipulationInit.gloam_laceration)");
 		assertContains("hematic flare lang", lang,
 				"\"item.hemomancy.memory_hematic_flare\": \"Memory Hematic Flare\"");
 		assertContains("gloam laceration lang", lang,

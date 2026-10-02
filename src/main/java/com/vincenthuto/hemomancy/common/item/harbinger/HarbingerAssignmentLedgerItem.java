@@ -197,7 +197,9 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 				HarbingerAdvancementGranter.isFirstSeparationStarted(player),
 				HarbingerAdvancementGranter.isFirstSeparationComplete(player),
 				FirstSeparationAssignment.isClaimed(player),
-				HemoCapabilityAccess.advancedBrewing(player).distilled(),
+				HemoCapabilityAccess.stationUpgrades(player).hasUsed(
+						com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC,
+						com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.DISTILL),
 				ConcentratedBlood.pending(player),
 				HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 3);
 	}

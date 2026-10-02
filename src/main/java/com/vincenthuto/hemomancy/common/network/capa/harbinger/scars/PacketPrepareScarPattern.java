@@ -78,6 +78,10 @@ public class PacketPrepareScarPattern implements CustomPacketPayload {
 				return;
 			}
 			List<ResourceLocation> selected = new ArrayList<>(new LinkedHashSet<>(msg.scarIds));
+			if (effigy.hasPendingMotif()) {
+				fail(player, "Finish charging the current motif before changing its scars.");
+				return;
+			}
 			int max = Math.min(MasonsEffigyMenu.MAX_SELECTED_SCARS, menu.getMaxSelectableScars());
 			if (selected.size() > max) {
 				fail(player, "That pattern exceeds your current scar capacity.");

@@ -249,6 +249,8 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private int assignmentScrollOffset;
 	private int assignmentMaxScroll;
 	private Component hoveredAssignmentDescription;
+	private int assignmentMouseX;
+	private int assignmentMouseY;
 
 	private HarbingerAssignmentLedgerScreen(int degree, boolean firstAwakening, boolean degreeOne,
 			FirstBloodcraftLedgerProgress firstBloodcraft,
@@ -444,6 +446,8 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		ScreenDrawUtils.drawBorder(gfx, left, top, panelWidth, panelHeight, 0xFF330808, 0xFF220606);
 		gfx.drawCenteredString(font, this.title, left + panelWidth / 2, top + 9, TITLE);
 		hoveredAssignmentDescription = null;
+		assignmentMouseX = mouseX;
+		assignmentMouseY = mouseY;
 
 		int contentLeft = contentLeft();
 		int contentRight = contentRight();
@@ -606,18 +610,22 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		gfx.fill(cardX, y, cardX + cardW, y + h, done ? PANEL_DONE : PANEL_ROW);
 		ScreenDrawUtils.drawBorder(gfx, cardX, y, cardW, h, done ? BORDER : BORDER_MUTED, 0xAA1E0D0B);
 
-		Component progressText = Component.translatable(progressKey, progress, total);
+		Component progressText = ledgerProgressLabel(progressKey, progress, total, (cardW - 30) / 2);
 		int progressW = font.width(progressText);
 		int titleX = cardX + 22;
 		int progressX = cardX + cardW - progressW - 8;
-		int titleMaxW = Math.max(20, progressX - titleX - 8);
-		String title = truncateWithEllipsis(Component.translatable(titleKey).getString(), titleMaxW);
+		int titleMaxW = Math.max(0, progressX - titleX - 8);
 
 		gfx.drawString(font, Component.literal("+"), cardX + 8, y + 10, done ? DONE : CURRENT, false);
 		renderAssignmentLabel(gfx, section, cardX + 22, y + 4, done ? DONE : MUTED);
-		gfx.drawString(font, title, titleX, y + 14, done ? DONE : TITLE, false);
+		renderTruncatedDescription(gfx, Component.translatable(titleKey), titleX, y + 14,
+				titleMaxW, done ? DONE : TITLE, assignmentMouseX, assignmentMouseY);
 		if (progressX > titleX) {
 			gfx.drawString(font, progressText, progressX, y + 14, done ? DONE : CURRENT, false);
+			if (!progressText.equals(Component.translatable(progressKey, progress, total))
+					&& isMouseOverLine(assignmentMouseX, assignmentMouseY, progressX, y + 14, progressW)) {
+				hoveredAssignmentDescription = Component.translatable(progressKey, progress, total);
+			}
 		}
 	}
 
@@ -1148,7 +1156,8 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		gfx.fill(cardX, y, cardX + cardW, y + h, done ? PANEL_DONE : PANEL_ROW);
 		ScreenDrawUtils.drawBorder(gfx, cardX, y, cardW, h, done ? BORDER : BORDER_MUTED, 0xAA1E0D0B);
 		gfx.drawString(font, Component.literal(done ? "[x]" : "[ ]"), cardX + 8, y + 6, done ? DONE : CURRENT, false);
-		gfx.drawString(font, title, cardX + 31, y + 5, done ? DONE : TITLE, false);
+		renderTruncatedDescription(gfx, title, cardX + 31, y + 5,
+				Math.max(20, cardW - 46), done ? DONE : TITLE, mouseX, mouseY);
 		renderTruncatedDescription(gfx, description, cardX + 31, y + 17,
 				Math.max(20, cardW - 46), done ? TEXT : MUTED, mouseX, mouseY);
 	}
@@ -1307,13 +1316,22 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 
 	private void renderGroupHeader(GuiGraphics gfx, AssignmentSection section, int x, int y, int w, String titleKey, String progressKey,
 			int progress, int total, boolean done) {
-		Component progressText = Component.translatable(progressKey, progress, total);
+		Component progressText = ledgerProgressLabel(progressKey, progress, total, w / 2);
 		int progressX = x + w - font.width(progressText);
-		int titleMaxW = Math.max(20, progressX - x - 8);
-		String title = truncateWithEllipsis(Component.translatable(titleKey).getString(), titleMaxW);
+		int titleMaxW = Math.max(0, progressX - x - 8);
 		renderAssignmentLabel(gfx, section, x, y, done ? DONE : MUTED);
-		gfx.drawString(font, title, x, y + 8, done ? DONE : HEADER, false);
+		renderTruncatedDescription(gfx, Component.translatable(titleKey), x, y + 8,
+				titleMaxW, done ? DONE : HEADER, assignmentMouseX, assignmentMouseY);
 		gfx.drawString(font, progressText, progressX, y + 8, done ? DONE : CURRENT, false);
+		if (!progressText.equals(Component.translatable(progressKey, progress, total))
+				&& isMouseOverLine(assignmentMouseX, assignmentMouseY, progressX, y + 8, font.width(progressText))) {
+			hoveredAssignmentDescription = Component.translatable(progressKey, progress, total);
+		}
+	}
+
+	private Component ledgerProgressLabel(String progressKey, int progress, int total, int maxWidth) {
+		Component label = Component.translatable(progressKey, progress, total);
+		return font.width(label) <= maxWidth ? label : Component.literal(progress + "/" + total);
 	}
 
 	private void renderAssignmentLabel(GuiGraphics gfx, AssignmentSection section, int x, int y, int color) {
@@ -1648,6 +1666,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			return text;
 		}
 		String ellipsis = "...";
+		if (maxW < font.width(ellipsis)) return font.plainSubstrByWidth(ellipsis, Math.max(0, maxW));
 		int textW = Math.max(0, maxW - font.width(ellipsis));
 		return font.plainSubstrByWidth(text, textW) + ellipsis;
 	}

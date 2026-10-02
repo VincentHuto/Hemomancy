@@ -117,11 +117,6 @@ public final class HarbingerAlchemistDialogueTrees {
 			RedTaxonomySample heldRedTaxonomySample, HeldSpecimenJar heldSpecimenJar,
 			boolean canBriefFirstSeparation, boolean canClaimFirstSeparation, boolean canBriefBodyAnswers,
 			boolean canDiscussMuscleMemories) {
-		if (degree >= 2 && (heldRedTaxonomySample != null || heldSpecimenJar != null)) {
-			return withCurrentVesselLesson(votary(entityId, heldRedTaxonomySample, heldSpecimenJar,
-					canBriefFirstSeparation, canClaimFirstSeparation, canBriefBodyAnswers,
-					canDiscussMuscleMemories), degree, entityId);
-		}
 		DialogueTree tree = switch (degree) {
 			case 0 -> uninitiated(entityId);
 			case 1 -> neophyte(entityId);
@@ -134,15 +129,23 @@ public final class HarbingerAlchemistDialogueTrees {
 			case 7 -> archon(entityId, hasBloodline, isNpcRecruited);
 			default -> apotheos(entityId, hasBloodline, isNpcRecruited); // degree 8+
 		};
-		if (degree < 1 || degree == 2 || !(canBriefFirstSeparation || canClaimFirstSeparation
+		boolean heldResearch = degree >= 2 && (heldRedTaxonomySample != null || heldSpecimenJar != null);
+		if (degree < 1 || degree == 2 || !(heldResearch || canBriefFirstSeparation || canClaimFirstSeparation
 				|| canBriefBodyAnswers || canDiscussMuscleMemories)) return tree;
-		DialogueTree lessons = votary(entityId, null, null, canBriefFirstSeparation,
+		DialogueTree lessons = votary(entityId, heldResearch ? heldRedTaxonomySample : null,
+				heldResearch ? heldSpecimenJar : null, canBriefFirstSeparation,
 				canClaimFirstSeparation, canBriefBodyAnswers, canDiscussMuscleMemories);
 		var nodes = new java.util.LinkedHashMap<>(tree.nodes());
 		lessons.nodes().forEach(nodes::putIfAbsent);
 		List<DialogueOption> options = new ArrayList<>();
 		for (DialogueOption option : lessons.getStartNode().options()) {
-			if ("first_separation_offer".equals(option.nextNodeId())
+			boolean researchOption = heldResearch && ("living_bestiary_intro".equals(option.nextNodeId())
+					|| "red_taxonomy_intro".equals(option.nextNodeId())
+					|| EVENT_BESTIARY_RECORD.equals(option.eventId())
+					|| EVENT_BESTIARY_SURRENDER.equals(option.eventId())
+					|| (option.eventId() != null && option.eventId().startsWith(EVENT_BESTIARY_SURRENDER_MORPHLING_PREFIX))
+					|| (heldRedTaxonomySample != null && heldRedTaxonomySample.eventId().equals(option.eventId())));
+			if (researchOption || "first_separation_offer".equals(option.nextNodeId())
 					|| EVENT_FIRST_SEPARATION_BRIEF.equals(option.eventId())
 					|| EVENT_FIRST_SEPARATION_CLAIM.equals(option.eventId())
 					|| EVENT_BODY_ANSWERS_BRIEF.equals(option.eventId())
@@ -152,6 +155,17 @@ public final class HarbingerAlchemistDialogueTrees {
 		nodes.put(tree.startNodeId(), new DialogueNode(tree.startNodeId(), tree.getStartNode().lines(), options));
 		return new DialogueTree(tree.speakerName(), tree.speakerIcon(), tree.startNodeId(), nodes,
 				tree.entityId(), tree.theme(), tree.presentation());
+	}
+
+	private static List<DialogueOption> vesselUseOptions() {
+		return List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.gourd_use", "gourd_use", null),
+				new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null));
+	}
+
+	private static DialogueNode gourdUseLesson() {
+		return new DialogueNode("gourd_use", List.of("hemomancy.alchemist.gourd_use.fill",
+				"hemomancy.alchemist.gourd_use.withdraw"),
+				List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)));
 	}
 
 	static DialogueTree withCurrentVesselLesson(DialogueTree tree, int degree, int entityId) {
@@ -171,6 +185,7 @@ public final class HarbingerAlchemistDialogueTrees {
 		};
 		Map<String, DialogueNode> nodes = new LinkedHashMap<>(tree.nodes());
 		nodes.put(nodeId, lesson.getNode(nodeId));
+		nodes.put("gourd_use", lesson.getNode("gourd_use"));
 		DialogueNode start = tree.getStartNode();
 		List<DialogueOption> options = new ArrayList<>(start.options());
 		lesson.getStartNode().options().stream()
@@ -677,10 +692,9 @@ public final class HarbingerAlchemistDialogueTrees {
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("pallid_vessel", List.of(
-						"hemomancy.alchemist.initiate.pallid_vessel.rite",
-						"hemomancy.alchemist.initiate.pallid_vessel.fill",
-						"hemomancy.alchemist.initiate.pallid_vessel.withdraw"
-				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
+						"hemomancy.alchemist.initiate.pallid_vessel.rite"
+				), vesselUseOptions()))
+				.addNode(gourdUseLesson())
 				.addNode(new DialogueNode("item_hint", List.of(
 						"hemomancy.alchemist.item_hint"
 				), List.of(
@@ -725,7 +739,8 @@ public final class HarbingerAlchemistDialogueTrees {
 				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
 				.addNode(new DialogueNode("crimson_vessel", List.of(
 						"hemomancy.alchemist.adept.crimson_vessel"
-				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
+				), vesselUseOptions()))
+				.addNode(gourdUseLesson())
 				.addNode(new DialogueNode("item_hint", List.of(
 						"hemomancy.alchemist.item_hint"
 				), List.of(
@@ -753,7 +768,8 @@ public final class HarbingerAlchemistDialogueTrees {
 				)))
 				.addNode(new DialogueNode("ashen_vessel", List.of(
 						"hemomancy.alchemist.illuminatus.ashen_vessel"
-				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
+				), vesselUseOptions()))
+				.addNode(gourdUseLesson())
 				.addNode(new DialogueNode("recruit_offer", List.of(
 						"hemomancy.dialogue.recruit.alchemist.consider",
 						"hemomancy.dialogue.recruit.alchemist.accept"
@@ -789,7 +805,8 @@ public final class HarbingerAlchemistDialogueTrees {
 				)))
 				.addNode(new DialogueNode("curved_horn", List.of(
 						"hemomancy.alchemist.sanctified.curved_horn"
-				), List.of(new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null))))
+				), vesselUseOptions()))
+				.addNode(gourdUseLesson())
 				.addNode(new DialogueNode("recruit_offer", List.of(
 						"hemomancy.dialogue.recruit.alchemist.consider",
 						"hemomancy.dialogue.recruit.alchemist.accept"

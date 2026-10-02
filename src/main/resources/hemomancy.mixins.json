@@ -20,6 +20,7 @@
     "MixinSchoolAwareness",
     "MixinSchoolConcealment",
     "MixinPlayer",
+    "MixinChamberInventoryDrops",
     "MixinParalysisLivingEntity",
     "MixinParalysisPlayer",
     "MixinParalysisMobAttack",

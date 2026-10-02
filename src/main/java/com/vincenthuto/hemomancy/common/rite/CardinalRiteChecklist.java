@@ -23,7 +23,7 @@ public final class CardinalRiteChecklist {
         if (optionalSigils > 0) lines.add("Optional sigils: " + completedOptional + "/" + optionalSigils);
         lines.add(requiredAllies > 0 ? "Required allies: " + availableAllies + "/" + requiredAllies
                 : "Optional allies: " + availableAllies + " assigned");
-        lines.add(mediumReady ? "Medium seated" : "Required medium missing");
+        lines.add(mediumReady ? "Focus ready" : "Focus medium mismatch");
         boolean ready = mediumReady && completedRequired >= requiredSigils && availableAllies >= requiredAllies;
         lines.add(ready ? "Project into the daemon to begin" : "Fulfil required preparations before sealing");
         return List.copyOf(lines);

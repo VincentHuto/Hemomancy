@@ -12,6 +12,8 @@ The Unstained Path treats blood magic as **infection**, not sacred inheritance. 
 
 **Goal:** Purge the hemomantic taint, reach biological immortality, and serve as a Guardian against blood magic's spread.
 
+The **Liber Immaculatus** uses a paginated book with chapter tabs along its right edge, contents, search, bookmarks, and a resume button, like the Liber Sanguinium. It keeps its pale paper and Clarity-gated passages. Short windows show a shorter two-page spread when space permits; narrow windows show one centered page. Longer entries continue onto additional pages.
+
 **Key Features:**
 - Progressive purification stages (Clarity system)
 - Hemolytic Solution-based rituals

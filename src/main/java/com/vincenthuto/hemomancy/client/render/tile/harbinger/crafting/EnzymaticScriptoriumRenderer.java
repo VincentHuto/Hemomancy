@@ -52,6 +52,14 @@ public final class EnzymaticScriptoriumRenderer implements BlockEntityRenderer<E
         book.renderToBuffer(pose, buffers.getBuffer(book.renderType(BOOK_TEXTURE)), light, overlay, -1);
         pose.popPose();
         Matrix4f matrix = pose.last().pose();
+        if (station.getBlockState().getValue(EnzymaticScriptoriumBlock.STAGE) >= 1) {
+            VertexConsumer script = buffers.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE);
+            int alpha = 200 + (int) (20 * Math.sin(time * .035F));
+            for (float[] q : ScriptoriumRuneMesh.QUADS) {
+                quad(script, matrix, q[0],q[1],q[2], q[3],q[4],q[5],
+                        q[6],q[7],q[8], q[9],q[10],q[11], 255,48,64,alpha);
+            }
+        }
         for (int i = 0; i < 8; i++) {
             int stored = station.getItem(i).getCount();
             if (stored == 0) continue;

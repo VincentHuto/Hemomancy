@@ -104,7 +104,7 @@ public final class MemoDefinitions {
     static {
         for (var fact : com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch.Evidence.values())
             register(new MemoDefinition(Hemomancy.rloc("antecedent_"+fact.key()),
-                Hemomancy.rloc("fanesanguinium/the_infection/pages/antecedent_"+fact.key()), MemoDefinition.MemoPath.HARBINGER));
+                Hemomancy.rloc("libersanguinium/the_infection/pages/antecedent_"+fact.key()), MemoDefinition.MemoPath.HARBINGER));
     }
 	private MemoDefinitions() {
 	}

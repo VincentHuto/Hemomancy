@@ -23,6 +23,8 @@ import java.util.*;
 @GameTestHolder(Hemomancy.MOD_ID)
 @PrefixGameTestTemplate(false)
 public class ManipulationBalanceGameTests {
+    private static final net.minecraft.server.level.TicketType<UUID> PROJECTILE_FIXTURE_TICKET =
+            net.minecraft.server.level.TicketType.create("hemomancy_projectile_fixture",UUID::compareTo);
     @GameTest(templateNamespace="minecraft", template="bastion/mobs/empty", batch="manipulation_balance")
     public static void ironheartedStoresFourHealthAndCapsAtTen(GameTestHelper h) {
         var p=player(h);
@@ -37,12 +39,19 @@ public class ManipulationBalanceGameTests {
         } finally {p.discard();}
     }
 
-    @GameTest(templateNamespace="minecraft", template="bastion/mobs/empty", batch="manipulation_balance")
+    @GameTest(templateNamespace="minecraft", template="bastion/mobs/empty", batch="manipulation_balance", timeoutTicks=120)
     public static void carrionCannotHealFromOverkill(GameTestHelper h) {
+        whenCombatAreaIsLoaded(h,()->checkCarrionOverkill(h));
+    }
+
+    private static void checkCarrionOverkill(GameTestHelper h) {
         var p=player(h); var target=EntityType.COW.create(h.getLevel());
         target.setPos(p.position().add(0,0,2)); target.setHealth(.25f);
         target.addEffect(new MobEffectInstance(MobEffects.POISON,200)); h.getLevel().addFreshEntity(target); p.setHealth(10);
         try {
+            h.assertTrue(h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class,
+                    p.getBoundingBox().inflate(8)).contains(target),
+                    "Carrion target must be queryable before casting; " + entityAvailability(h,target));
             ManipulationInit.carrion_communion.get().getAction(p,h.getLevel(),ItemStack.EMPTY,p.blockPosition(),0);
             h.assertTrue(p.getHealth()>10 && p.getHealth()<=10.126f,"Drain healing counted overkill: player=" + p.getHealth()
                     + ", target=" + target.getHealth() + ", visible targets="
@@ -51,8 +60,12 @@ public class ManipulationBalanceGameTests {
         } finally {target.discard();p.discard();}
     }
 
-    @GameTest(templateNamespace="minecraft", template="bastion/mobs/empty", batch="manipulation_balance")
+    @GameTest(templateNamespace="minecraft", template="bastion/mobs/empty", batch="manipulation_balance", timeoutTicks=120)
     public static void choirInterceptsThreeShotsPerPaidPulseAndProtectsFriendlyShots(GameTestHelper h) {
+        whenCombatAreaIsLoaded(h,()->checkChoirVolley(h));
+    }
+
+    private static void checkChoirVolley(GameTestHelper h) {
         var p=player(h); var enemy=EntityType.ZOMBIE.create(h.getLevel());
         enemy.setPos(p.position().add(0,0,4)); h.getLevel().addFreshEntity(enemy);
         var shots=new ArrayList<Arrow>();
@@ -63,19 +76,24 @@ public class ManipulationBalanceGameTests {
             m.tickContinuousAction(p,h.getLevel());
             h.assertTrue(shots.stream().filter(a->!a.isRemoved()).count()==1,"Choir volley budget was not three: remaining="
                     + shots.stream().filter(a->!a.isRemoved()).count() + ", visible projectiles="
-                    + h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.projectile.Projectile.class, p.getBoundingBox().inflate(5)).size());
+                    + h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.projectile.Projectile.class, p.getBoundingBox().inflate(5)).size()
+                    + ", first shot=" + entityAvailability(h,shots.getFirst()));
             h.assertTrue(!own.isRemoved(),"Choir consumed own projectile");h.succeed();
         } finally {ManipulationInit.iron_choir.get().finishContinuousAction(p,false);shots.forEach(Arrow::discard);own.discard();enemy.discard();p.discard();}
     }
 
-    @GameTest(templateNamespace="minecraft", template="bastion/mobs/empty", batch="manipulation_balance")
+    @GameTest(templateNamespace="minecraft", template="bastion/mobs/empty", batch="manipulation_balance", timeoutTicks=120)
     public static void stillnessRespondsBetweenUpkeepPulses(GameTestHelper h) {
+        whenCombatAreaIsLoaded(h,()->checkStillnessFriction(h));
+    }
+
+    private static void checkStillnessFriction(GameTestHelper h) {
         var p=player(h);var shot=new Arrow(h.getLevel(),p.getX(),p.getY()+1,p.getZ()+3,new ItemStack(Items.ARROW),null);
         shot.setDeltaMovement(0,0,-3);h.getLevel().addFreshEntity(shot);
         var own=new Arrow(h.getLevel(),p,new ItemStack(Items.ARROW),null);own.setPos(shot.position());own.setDeltaMovement(0,0,3);h.getLevel().addFreshEntity(own);
         try {
             ManipulationInit.absolute_stillness.get().tickContinuousAction(p,h.getLevel());
-            near(h,2.25,shot.getDeltaMovement().length(),"Between-pulse projectile friction");
+            near(h,2.25,shot.getDeltaMovement().length(),"Between-pulse projectile friction; " + entityAvailability(h,shot));
             near(h,3,own.getDeltaMovement().length(),"Own projectile was slowed");h.succeed();
         } finally {shot.discard();own.discard();p.discard();}
     }
@@ -192,6 +210,34 @@ public class ManipulationBalanceGameTests {
             h.assertTrue(needles.getFirst().getPierceLevel()==1,"Full crown lacks piercing");
             needles.forEach(net.minecraft.world.entity.Entity::discard);h.succeed();
         } finally {enemy.discard();pet.discard();p.discard();}
+    }
+
+    private static void whenCombatAreaIsLoaded(GameTestHelper h,Runnable action) {
+        var requiredChunks=new HashSet<net.minecraft.world.level.ChunkPos>();
+        for(var pos:List.of(new net.minecraft.core.BlockPos(2,8,2),new net.minecraft.core.BlockPos(3,9,6)))
+            requiredChunks.add(new net.minecraft.world.level.ChunkPos(h.absolutePos(pos)));
+        UUID owner=UUID.randomUUID();
+        var chunks=h.getLevel().getChunkSource();
+        requiredChunks.forEach(chunk->chunks.addRegionTicket(PROJECTILE_FIXTURE_TICKET,chunk,2,owner,true));
+        Runnable cleanup=()->requiredChunks.forEach(chunk->chunks.removeRegionTicket(PROJECTILE_FIXTURE_TICKET,chunk,2,owner,true));
+        h.testInfo.addListener(new GameTestListener() {
+            public void testStructureLoaded(GameTestInfo test) { }
+            public void testPassed(GameTestInfo test,GameTestRunner runner) { cleanup.run(); }
+            public void testFailed(GameTestInfo test,GameTestRunner runner) { cleanup.run(); }
+            public void testAddedForRerun(GameTestInfo oldTest,GameTestInfo newTest,GameTestRunner runner) { }
+        });
+        h.startSequence().thenWaitUntil(()->h.assertTrue(requiredChunks.stream().allMatch(
+                chunk->h.getLevel().areEntitiesLoaded(chunk.toLong())),"Combat fixture chunks must become entity-loaded"))
+                .thenExecute(()-> {
+                    try { action.run(); }
+                    catch(RuntimeException error) { h.fail("Combat fixture failed: "+error); }
+                });
+    }
+
+    private static String entityAvailability(GameTestHelper h,net.minecraft.world.entity.Entity entity) {
+        return "indexed=" + (h.getLevel().getEntity(entity.getUUID())==entity)
+                + ", entitiesLoaded=" + h.getLevel().areEntitiesLoaded(new net.minecraft.world.level.ChunkPos(entity.blockPosition()).toLong())
+                + ", alive=" + entity.isAlive() + ", pos=" + entity.position();
     }
 
     private static class ProbeNeedle extends com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity {

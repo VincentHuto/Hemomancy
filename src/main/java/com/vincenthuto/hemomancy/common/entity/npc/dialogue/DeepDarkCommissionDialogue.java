@@ -6,6 +6,7 @@ import java.util.List;
 
 public final class DeepDarkCommissionDialogue {
     public static final String REPORT = "alchemist_deep_dark_commission_report";
+    public static final String BEARING = "alchemist_deep_dark_commission_bearing";
 
     private DeepDarkCommissionDialogue() {
     }
@@ -20,6 +21,8 @@ public final class DeepDarkCommissionDialogue {
                 "hemomancy.dialogue.alchemist.option.deep_dark_commission", "deep_dark_commission", null));
         nodes.put(start.id(), new DialogueNode(start.id(), start.lines(), options));
         var reportOptions = new ArrayList<DialogueOption>();
+        reportOptions.add(new DialogueOption(
+                "hemomancy.dialogue.alchemist.option.deep_dark_bearing", null, BEARING));
         if (proof) reportOptions.add(new DialogueOption(
                 "hemomancy.dialogue.alchemist.option.report_deep_dark_commission", null, REPORT,
                 DialogueOptionPresentation.prompt("hemomancy.alchemist.deep_dark_commission.report.prompt")));

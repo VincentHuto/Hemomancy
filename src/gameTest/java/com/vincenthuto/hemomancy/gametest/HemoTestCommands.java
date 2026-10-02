@@ -34,6 +34,7 @@ public final class HemoTestCommands {
 										.then(Commands.literal("run").executes(context -> journeyRun(context.getSource())))
 										.then(Commands.literal("run_to_choice").executes(context -> journeyRunToChoice(context.getSource())))
 										.then(Commands.literal("run_main_to_choice").executes(context -> journeyRunMainToChoice(context.getSource())))
+										.then(Commands.literal("run_main_to_rest").executes(context -> journeyRunMainToRest(context.getSource())))
 										.then(Commands.literal("next").executes(context -> journeyNext(context.getSource())))
 										.then(Commands.literal("status").executes(context -> journeyStatus(context.getSource())))
 										.then(Commands.literal("reset").executes(context -> journeyReset(context.getSource()))))
@@ -211,6 +212,11 @@ public final class HemoTestCommands {
 	private static int journeyRunMainToChoice(CommandSourceStack source)
 			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
 		return JourneyAutoRunner.runHarbingerMainToChoice(source.getPlayerOrException()) ? 1 : 0;
+	}
+
+	private static int journeyRunMainToRest(CommandSourceStack source)
+			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		return JourneyAutoRunner.runHarbingerMainToRest(source.getPlayerOrException()) ? 1 : 0;
 	}
 
 	private static int journeyRunAll(CommandSourceStack source)

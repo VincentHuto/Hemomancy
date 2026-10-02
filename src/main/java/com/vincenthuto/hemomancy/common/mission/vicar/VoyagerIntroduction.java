@@ -61,6 +61,17 @@ public final class VoyagerIntroduction {
         return eligibleForReferral(player) && progress(player).ready();
     }
 
+    public static boolean canRequestBearing(ServerPlayer player, Entity teacher) {
+        return teacher instanceof HarbingerVicarEntity && EarlyInitiation.near(player, teacher)
+                && eligibleForReferral(player) && !observed(player) && !progress(player).reported()
+                && Level.OVERWORLD.equals(player.level().dimension());
+    }
+
+    public static boolean tellBearing(ServerPlayer player, Entity teacher) {
+        if (!canRequestBearing(player, teacher)) return false;
+        return VoyagerVesselGuidance.request(player);
+    }
+
     public static boolean report(ServerPlayer player, Entity teacher) {
         if (!(teacher instanceof HarbingerVicarEntity) || !EarlyInitiation.near(player, teacher)
                 || !canReport(player)) return false;

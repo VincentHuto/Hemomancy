@@ -12,6 +12,9 @@ public final class QliphothPomeSpineGrantSourceTest {
 				"src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/QliphothPomeItem.java"));
 		String delivery = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/QliphothBloomEvents.java"));
+		String bloom = Files.readString(Path.of(
+				"src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/QliphothBloomBlock.java"));
+		assertContains(bloom, "Spine: visit the Gardens. Lost it? Sneak-use empty-handed.");
 		assertContains(source, "QliphothPomeRules.shouldGrantFungalSpine(count, degree.hasFungalSpineGranted())");
 		assertContains(source, "QliphothBloomEvents.deliverPendingFungalSpine(player)");
 		assertContains(delivery, "degree.isQliphothCommunionDone() || degree.hasFungalSpineGranted()");

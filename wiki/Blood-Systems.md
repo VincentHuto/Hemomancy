@@ -28,6 +28,8 @@ Use this page as the mechanics reference: blood volume, manipulations, tendencie
 
 **Blood Volume** is the resource every blood-magic action spends.
 
+The HUD vessel shows current blood relative to maximum, inside the frame for your degree. Its liquid and effects follow the vessel artwork's interior; degree and Pome progress retain their existing colour changes, and Apotheos retains its animated helix. The equipped gourd has a separate indicator.
+
 ### Key Stats
 - **Starting Volume:** 1000 mL (after Mortal Display activation)
 - **Human Maximum:** ~5000 mL (natural)
@@ -718,7 +720,7 @@ Curios compatibility is dormant in the NeoForge 1.21.1 branch. The Charm of Vasc
 
 *"Blood is not merely a resource. It is memory, identity, power, and price. Master it, and you master yourself. Lose control, and it will consume you."*
 
-*From the Liber Sanguinum, Chapter on Fundamentals*
+*From the Liber Sanguinium, Chapter on Fundamentals*
 
 ## Manipulation balance pass — 7 September 2026
 

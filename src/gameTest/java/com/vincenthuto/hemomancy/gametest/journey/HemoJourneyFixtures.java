@@ -38,7 +38,7 @@ import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRules.ArmatureTier
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.ScarBrazierRite;
 import com.vincenthuto.hemomancy.common.rite.TempleOathRules;
-import com.vincenthuto.hemomancy.common.rite.harbinger.AlembicUpgradeRites;
+import com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.*;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
@@ -268,7 +268,13 @@ public final class HemoJourneyFixtures {
 				case ARTIFICER_CRIMSON_VESTMENT_BRIEFING,
 						ARTIFICER_CRIMSON_VESTMENT_INSPECTION, ARTIFICER_BLOOD_LUST_FITTING ->
 						spawnArtificer(level, origin);
-				case VICAR_CONSECRATION_KIT -> spawnArtificer(level, origin);
+				case VICAR_CONSECRATION_KIT -> {
+					// The kit claim now requires having worked the Armature once.
+					HemoCapabilityAccess.stationUpgrades(player).recordUse(
+							com.vincenthuto.hemomancy.common.station.UpgradeStation.ARMATURE,
+							com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.ARMOR_UPGRADE);
+					spawnArtificer(level, origin);
+				}
 				case ARTIFICER_FRAME_CONSECRATED -> prepareFrameConsecration(player, origin);
 				case ARTIFICER_CRIMSON_VESTMENT_COUNSEL -> spawnAlchemist(level, origin);
 				case ARTIFICER_BLOOD_LUST_UPGRADE -> prepareBloodLustUpgrade(player, origin);
@@ -888,9 +894,21 @@ public final class HemoJourneyFixtures {
 		if (!brazier.insertOffering(player, held)) {
 			throw new IllegalStateException("Armature rite offering could not be placed");
 		}
-		rite.captureOfferingItinerary(List.of(new ActiveCardinalRite.RiteOffering(brazierPos, offering, true)));
+		List<ActiveCardinalRite.RiteOffering> offerings = new java.util.ArrayList<>();
+		offerings.add(new ActiveCardinalRite.RiteOffering(brazierPos, offering, true));
+		// Station rites take the upgrade item plus five more offerings; the fixture fills those with sticks.
+		for (BlockPos extra : List.of(center.east(3), center.east(4), center.west(2), center.west(3), center.west(4))) {
+			set(player, extra, BlockInit.iron_brazier.get());
+			ItemStack stick = new ItemStack(net.minecraft.world.item.Items.STICK);
+			if (!(level.getBlockEntity(extra) instanceof IronBrazierBlockEntity extraBrazier)
+					|| !extraBrazier.insertOffering(null, stick.copy())) {
+				throw new IllegalStateException("Armature rite filler brazier was not created");
+			}
+			offerings.add(new ActiveCardinalRite.RiteOffering(extra, stick, true));
+		}
+		rite.captureOfferingItinerary(offerings);
 		UUID identity = armature.machineIdentity();
-		if (!AlembicUpgradeRites.prepare(level, rite) || !armature.isRiteLocked()) {
+		if (!StationUpgradeRites.prepare(level, rite) || !armature.isRiteLocked()) {
 			throw new IllegalStateException("Armature rite could not prepare its subject");
 		}
 		for (int index = 0; index < anchors; index++) {
@@ -900,12 +918,12 @@ public final class HemoJourneyFixtures {
 			throw new IllegalStateException("Armature rite did not enter projection");
 		}
 		for (int stage = 0; stage < stages; stage++) {
-			if (!rite.fillAlembicProjection(stage, 50)) {
+			if (!rite.fillUpgradeCircuit(stage, 50)) {
 				throw new IllegalStateException("Armature rite circuit " + stage + " did not fill");
 			}
 		}
 		rite.markComplete();
-		if (!AlembicUpgradeRites.complete(level, rite) || armature.getArmatureTier() != target
+		if (!StationUpgradeRites.complete(level, rite) || armature.getArmatureTier() != target
 				|| !armature.machineIdentity().equals(identity) || armature.isRiteLocked()) {
 			throw new IllegalStateException("Armature rite failed to upgrade its original subject");
 		}
@@ -1087,8 +1105,13 @@ public final class HemoJourneyFixtures {
 				takeOne(player, ItemInit.sanguine_formation.get(), "Sanguine Formation"));
 		alembic.setItem(GhastlyAlembicBlockEntity.SLOT_CATALYST,
 				takeOne(player, ItemInit.fervent_enzyme.get(), "Fervent Enzyme"));
-		alembic.setItem(GhastlyAlembicBlockEntity.SLOT_TINCTURE_BLOOD,
+		alembic.onLoad();
+		alembic.setItem(GhastlyAlembicBlockEntity.SLOT_FLASK,
 				takeOne(player, ItemInit.bloody_flask.get(), "Bloody Flask"));
+		GhastlyAlembicBlockEntity.serverTick(fixtureLevel(player), alembicPos,
+				alembic.getBlockState(), alembic);
+		alembic.setItem(GhastlyAlembicBlockEntity.SLOT_FLASK,
+				alembic.removeItemNoUpdate(GhastlyAlembicBlockEntity.SLOT_FLASK_OUTPUT));
 	}
 
 	private static void prepareFirstDistillation(ServerPlayer player, BlockPos origin) {
@@ -1535,6 +1558,7 @@ public final class HemoJourneyFixtures {
 		}
 		HemoJourneyWorldState.prepareFoundingFane(player);
 		HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(5);
+		HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
 		player.getInventory().add(new ItemStack(ItemInit.living_staff.get()));
 		player.getInventory().add(new ItemStack(ItemInit.blood_projection.get()));
 	}

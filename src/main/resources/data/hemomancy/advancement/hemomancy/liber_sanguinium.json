@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "hemomancy:liber_sanguinum"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.liber_sanguinium.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.liber_sanguinium.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/ashen_beginnings",
+  "criteria": {
+    "has_book": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "hemomancy:liber_sanguinum"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_book"
+    ]
+  ]
+}

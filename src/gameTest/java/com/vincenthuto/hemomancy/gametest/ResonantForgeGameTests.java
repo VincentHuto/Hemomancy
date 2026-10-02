@@ -14,8 +14,6 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
-import com.vincenthuto.hemomancy.common.rite.harbinger.AlembicUpgradeRites;
-import com.vincenthuto.hemomancy.common.rite.harbinger.ResonantForgeUpgradeRites;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ResonantForgeBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -47,6 +45,68 @@ import java.util.UUID;
 @GameTestHolder("scriptorium_validation")
 @PrefixGameTestTemplate(false)
 public final class ResonantForgeGameTests {
+    @GameTest(template = "empty", timeoutTicks = 100, batch = "resonant_forge")
+    public static void shiftClickSplitsBlankCylinderStacks(GameTestHelper helper) {
+        ResonantForgeBlockEntity forge = placeForge(helper, new BlockPos(5, 3, 5), Direction.NORTH);
+        var player = helper.makeMockPlayer(GameType.SURVIVAL);
+        player.setPos(forge.getBlockPos().getCenter());
+        var menu = new com.vincenthuto.hemomancy.common.menu.tile.crafting.ResonantForgeMenu(
+                1, player.getInventory(), forge, new SimpleContainerData(10));
+        for (var medium : List.of(ItemInit.wax_cylinder.get(), ItemInit.ambergris_cylinder.get())) {
+            player.getInventory().setItem(9, new ItemStack(medium, 2));
+            helper.assertTrue(!menu.quickMoveStack(player, ResonantForgeBlockEntity.SLOT_COUNT).isEmpty(),
+                    "Shift-click rejected a stack of two blank cylinders");
+            helper.assertTrue(forge.getItem(ResonantForgeBlockEntity.GRINDING_CYLINDER).is(medium)
+                            && forge.getItem(ResonantForgeBlockEntity.GRINDING_CYLINDER).getCount() == 1
+                            && player.getInventory().getItem(9).getCount() == 1
+                            && forge.getItem(ResonantForgeBlockEntity.APPLICATION_CYLINDER).isEmpty(),
+                    "Shift-click must insert one blank cylinder and retain the remainder");
+            helper.assertTrue(menu.quickMoveStack(player, ResonantForgeBlockEntity.SLOT_COUNT).isEmpty()
+                            && player.getInventory().getItem(9).getCount() == 1
+                            && forge.getItem(ResonantForgeBlockEntity.APPLICATION_CYLINDER).isEmpty(),
+                    "An occupied grinder must not route the remaining blank to application");
+            forge.removeItemNoUpdate(ResonantForgeBlockEntity.GRINDING_CYLINDER);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 100, batch = "resonant_forge")
+    public static void shiftClickPreservesOccupiedCylinderStacks(GameTestHelper helper) {
+        ResonantForgeBlockEntity forge = placeForge(helper, new BlockPos(5, 3, 5), Direction.NORTH);
+        var player = helper.makeMockPlayer(GameType.SURVIVAL);
+        player.setPos(forge.getBlockPos().getCenter());
+        var menu = new com.vincenthuto.hemomancy.common.menu.tile.crafting.ResonantForgeMenu(
+                1, player.getInventory(), forge, new SimpleContainerData(10));
+        for (var medium : List.of(ItemInit.wax_cylinder.get(), ItemInit.ambergris_cylinder.get())) {
+            ItemStack audio = new ItemStack(medium, 2);
+            audio.set(DataComponentInit.CLAIRAUDIOGRAPH_RECORDING.get(),
+                    new com.vincenthuto.hemomancy.common.item.component.ClairaudiographRecording(
+                            "minecraft:cow", "minecraft:entity.cow.ambient", "ambient", 1F));
+            ItemStack ancient = new ItemStack(medium, 2);
+            ancient.set(DataComponentInit.ANCIENT_RECORDING.get(), "test_recording");
+            for (ItemStack recorded : List.of(audio, ancient)) {
+                player.getInventory().setItem(9, recorded.copy());
+                helper.assertTrue(menu.quickMoveStack(player, ResonantForgeBlockEntity.SLOT_COUNT).isEmpty()
+                                && ItemStack.matches(player.getInventory().getItem(9), recorded)
+                                && forge.getItem(ResonantForgeBlockEntity.GRINDING_CYLINDER).isEmpty()
+                                && forge.getItem(ResonantForgeBlockEntity.APPLICATION_CYLINDER).isEmpty(),
+                        "Shift-click treated an occupied recording stack as blank");
+            }
+            ItemStack patterned = new ItemStack(medium, 2);
+            patterned.set(DataComponentInit.RESONANT_PATTERN.get(), new ResonantPattern(
+                    List.of(new ResonantPattern.Entry("minecraft:unbreaking", 3)), "", 0, 0, false));
+            player.getInventory().setItem(9, patterned.copy());
+            helper.assertTrue(!menu.quickMoveStack(player, ResonantForgeBlockEntity.SLOT_COUNT).isEmpty()
+                            && ItemStack.matches(forge.getItem(ResonantForgeBlockEntity.APPLICATION_CYLINDER),
+                                    patterned.copyWithCount(1))
+                            && ItemStack.matches(player.getInventory().getItem(9), patterned.copyWithCount(1))
+                            && forge.getItem(ResonantForgeBlockEntity.GRINDING_CYLINDER).isEmpty(),
+                    "Shift-click lost a pattern or routed it as a blank cylinder");
+            forge.removeItemNoUpdate(ResonantForgeBlockEntity.APPLICATION_CYLINDER);
+        }
+        helper.succeed();
+    }
+
     @GameTest(template = "empty", timeoutTicks = 100, batch = "resonant_forge")
     public static void shiftClickRoutesBlankWaxToGrinding(GameTestHelper helper) {
         ResonantForgeBlockEntity forge = placeForge(helper, new BlockPos(5, 3, 5), Direction.NORTH);
@@ -146,6 +206,88 @@ public final class ResonantForgeGameTests {
                 "Cancellation did not restore blood and wax inputs");
         helper.succeed();
     }
+    @GameTest(template = "empty", timeoutTicks = 100, batch = "resonant_forge")
+    public static void ordinaryCylinderOperationsResumeAfterSerialization(GameTestHelper helper) {
+        var registry = helper.getLevel().registryAccess();
+        var unbreaking = registry.registryOrThrow(Registries.ENCHANTMENT)
+                .getHolderOrThrow(Enchantments.UNBREAKING);
+        for (var medium : List.of(ItemInit.wax_cylinder.get(), ItemInit.ambergris_cylinder.get())) {
+            helper.setBlock(new BlockPos(5, 3, 5), net.minecraft.world.level.block.Blocks.AIR);
+            ResonantForgeBlockEntity forge = placeForge(helper, new BlockPos(5, 3, 5), Direction.NORTH);
+            ItemStack source = new ItemStack(Items.DIAMOND_PICKAXE);
+            source.enchant(unbreaking, 3);
+            source.setDamageValue(27);
+            source.set(DataComponents.CUSTOM_NAME, Component.literal("Remembered tool"));
+            ItemStack cylinder = new ItemStack(medium);
+            cylinder.set(DataComponents.CUSTOM_NAME, Component.literal("Remembered cylinder"));
+            var expectedCapture = ResonantForgeTransfer.capture(source, registry, "", false);
+            ItemStack expectedCylinder = cylinder.copy();
+            expectedCylinder.set(DataComponentInit.RESONANT_PATTERN.get(), expectedCapture.pattern());
+            forge.receiveBlood(5000);
+            forge.setItem(ResonantForgeBlockEntity.GRINDING_ITEM, source.copy());
+            forge.setItem(ResonantForgeBlockEntity.GRINDING_CYLINDER, cylinder.copy());
+            helper.assertTrue(forge.startGrinding(), "Ordinary capture did not start");
+            tick(forge, helper, 17);
+            double paidBlood = forge.getBloodVolume();
+            helper.assertTrue(paidBlood == 5000 - ResonantForgeRules.grindingCost(expectedCapture.pattern()),
+                    "Ordinary capture charged the wrong blood cost");
+            forge = reloadForge(helper, forge);
+            helper.assertTrue(forge.progress() == 17 && forge.getBloodVolume() == paidBlood
+                            && ItemStack.matches(source, forge.getItem(ResonantForgeBlockEntity.GRINDING_ITEM))
+                            && ItemStack.matches(cylinder, forge.getItem(ResonantForgeBlockEntity.GRINDING_CYLINDER)),
+                    "Reload changed paid capture progress, blood or input components");
+            tick(forge, helper, ResonantForgeRules.OPERATION_TICKS - 18);
+            helper.assertTrue(forge.getItem(ResonantForgeBlockEntity.GRINDING_CYLINDER_OUTPUT).isEmpty(),
+                    "Reload completed capture before its remaining time elapsed");
+            tick(forge, helper, 1);
+            helper.assertTrue(forge.idle() && forge.getBloodVolume() == paidBlood && forge.wheelUses() == 1
+                            && ItemStack.matches(expectedCapture.equipment(),
+                                    forge.getItem(ResonantForgeBlockEntity.GRINDING_EQUIPMENT_OUTPUT))
+                            && ItemStack.matches(expectedCylinder,
+                                    forge.getItem(ResonantForgeBlockEntity.GRINDING_CYLINDER_OUTPUT))
+                            && forge.getItem(ResonantForgeBlockEntity.GRINDING_ITEM).isEmpty()
+                            && forge.getItem(ResonantForgeBlockEntity.GRINDING_CYLINDER).isEmpty(),
+                    "Resumed capture changed components, charged twice or retained inputs");
+            forge.removeItemNoUpdate(ResonantForgeBlockEntity.GRINDING_EQUIPMENT_OUTPUT);
+            ItemStack recorded = forge.removeItemNoUpdate(ResonantForgeBlockEntity.GRINDING_CYLINDER_OUTPUT);
+            ItemStack target = new ItemStack(Items.DIAMOND_PICKAXE);
+            target.setDamageValue(41);
+            target.set(DataComponents.CUSTOM_NAME, Component.literal("Receiving tool"));
+            var expectedApply = ResonantForgeTransfer.apply(target, expectedCapture.pattern(), registry);
+            forge.setItem(ResonantForgeBlockEntity.APPLICATION_ITEM, target.copy());
+            forge.setItem(ResonantForgeBlockEntity.APPLICATION_CYLINDER, recorded.copy());
+            double beforeApply = forge.getBloodVolume();
+            helper.assertTrue(forge.startApply(), "Saved ordinary cylinder could not be applied");
+            tick(forge, helper, 23);
+            paidBlood = forge.getBloodVolume();
+            helper.assertTrue(paidBlood == beforeApply - ResonantForgeRules.hammeringCost(expectedCapture.pattern()),
+                    "Ordinary application charged the wrong blood cost");
+            forge = reloadForge(helper, forge);
+            helper.assertTrue(forge.progress() == 23 && forge.getBloodVolume() == paidBlood
+                            && ItemStack.matches(target, forge.getItem(ResonantForgeBlockEntity.APPLICATION_ITEM))
+                            && ItemStack.matches(recorded, forge.getItem(ResonantForgeBlockEntity.APPLICATION_CYLINDER)),
+                    "Reload changed paid application progress, blood or input components");
+            tick(forge, helper, ResonantForgeRules.OPERATION_TICKS - 24);
+            helper.assertTrue(forge.getItem(ResonantForgeBlockEntity.APPLICATION_OUTPUT).isEmpty(),
+                    "Reload completed application before its remaining time elapsed");
+            tick(forge, helper, 1);
+            helper.assertTrue(forge.idle() && forge.getBloodVolume() == paidBlood && forge.hammerUses() == 1
+                            && ItemStack.matches(expectedApply.equipment(),
+                                    forge.getItem(ResonantForgeBlockEntity.APPLICATION_OUTPUT))
+                            && forge.getItem(ResonantForgeBlockEntity.APPLICATION_ITEM).isEmpty()
+                            && forge.getItem(ResonantForgeBlockEntity.APPLICATION_CYLINDER).isEmpty(),
+                    "Resumed application changed components, charged twice or kept ordinary inputs");
+            forge.removeItemNoUpdate(ResonantForgeBlockEntity.APPLICATION_OUTPUT);
+            tick(forge, helper, ResonantForgeRules.OPERATION_TICKS);
+            forge = reloadForge(helper, forge);
+            tick(forge, helper, ResonantForgeRules.OPERATION_TICKS);
+            helper.assertTrue(forge.getItem(ResonantForgeBlockEntity.APPLICATION_OUTPUT).isEmpty()
+                            && forge.getBloodVolume() == paidBlood && forge.hammerUses() == 1,
+                    "Completed application replayed after output removal or reload");
+        }
+        helper.succeed();
+    }
+
     @GameTest(template = "empty", timeoutTicks = 100, batch = "resonant_forge")
     public static void everyScriptoriumCurseAndOverlevelRoundTrips(GameTestHelper helper) {
         var registry = helper.getLevel().registryAccess();
@@ -323,94 +465,6 @@ public final class ResonantForgeGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 100, batch = "resonant_forge")
-    public static void precisionRiteUsesTwoFullStagesAndPreservesMachineState(GameTestHelper helper) {
-        ActiveCardinalRite rite = upgradeRite(helper, false);
-        ResonantForgeBlockEntity forge = (ResonantForgeBlockEntity) helper.getLevel()
-                .getBlockEntity(ResonantForgeUpgradeRites.seat(rite));
-        forge.receiveBlood(1234);
-        forge.setItem(ResonantForgeBlockEntity.APPLICATION_ITEM, new ItemStack(Items.DIAMOND_PICKAXE));
-        UUID identity = forge.machineIdentity();
-        helper.assertTrue(AlembicUpgradeRites.prepare(helper.getLevel(), rite), "Precision rite preparation failed");
-        for (int i = 0; i < rite.getAnchorBloodMl().length; i++) rite.fillAnchor(i, 50);
-        helper.assertTrue(rite.enterInscription() && rite.sealAltar(false)
-                && rite.getPhase() == CardinalRitePhase.ALEMBIC_PROJECTION, "Rite did not enter projection");
-        helper.assertTrue(rite.alembicBloodNeeded() == 250 && !rite.fillAlembicProjection(1, 250),
-                "Rite accepted the wrong stage");
-        helper.assertTrue(rite.fillAlembicProjection(0, 250) && rite.fillAlembicProjection(1, 250),
-                "Rite rejected a 250 mL stage");
-        rite.markComplete();
-        helper.assertTrue(AlembicUpgradeRites.complete(helper.getLevel(), rite), "Precision upgrade failed");
-        helper.assertTrue(forge.tier() == ResonantForgeTier.PRECISION && forge.machineIdentity().equals(identity)
-                && forge.getBloodVolume() == 1234 && forge.getItem(ResonantForgeBlockEntity.APPLICATION_ITEM)
-                .is(Items.DIAMOND_PICKAXE), "Upgrade changed machine state");
-        helper.succeed();
-    }
-
-    @GameTest(template = "empty", timeoutTicks = 100, batch = "resonant_forge")
-    public static void interruptedRiteUnlocksForgeAndReturnsEscrowOnce(GameTestHelper helper) {
-        ActiveCardinalRite rite = upgradeRite(helper, false);
-        ResonantForgeBlockEntity forge = (ResonantForgeBlockEntity) helper.getLevel()
-                .getBlockEntity(ResonantForgeUpgradeRites.seat(rite));
-        helper.assertTrue(AlembicUpgradeRites.prepare(helper.getLevel(), rite) && forge.isRiteLocked(),
-                "Rite did not lock its subject");
-        AlembicUpgradeRites.recover(helper.getLevel(), rite);
-        helper.assertTrue(!forge.isRiteLocked() && forge.tier() == ResonantForgeTier.BASE
-                && rite.alembic().getString("EscrowState").equals("RETURNED"), "Recovery changed the forge");
-        AlembicUpgradeRites.recover(helper.getLevel(), rite);
-        helper.assertTrue(rite.alembic().getString("EscrowState").equals("RETURNED"),
-                "Recovery returned escrow twice");
-        helper.succeed();
-    }
-
-    @GameTest(template = "empty", timeoutTicks = 100, batch = "resonant_forge")
-    public static void masterRiteRequiresThreeOrderedStages(GameTestHelper helper) {
-        ActiveCardinalRite rite = upgradeRite(helper, true);
-        ResonantForgeBlockEntity forge = (ResonantForgeBlockEntity) helper.getLevel()
-                .getBlockEntity(ResonantForgeUpgradeRites.seat(rite));
-        helper.assertTrue(AlembicUpgradeRites.prepare(helper.getLevel(), rite), "Master rite preparation failed");
-        for (int i = 0; i < rite.getAnchorBloodMl().length; i++) rite.fillAnchor(i, 50);
-        helper.assertTrue(rite.enterInscription() && rite.sealAltar(false), "Master rite did not seal");
-        helper.assertTrue(rite.fillAlembicProjection(0, 250) && rite.fillAlembicProjection(1, 250)
-                && rite.fillAlembicProjection(2, 250), "Master rite rejected an ordered 250 mL stage");
-        var expectedSnapshot = rite.alembic().getCompound("SubjectSnapshot");
-        var actualSnapshot = forge.upgradeSnapshot(helper.getLevel().registryAccess());
-        helper.assertTrue(expectedSnapshot.equals(actualSnapshot), "Master snapshot changed: expected="
-                + expectedSnapshot + ", actual=" + actualSnapshot);
-        rite.markComplete();
-        boolean completed = AlembicUpgradeRites.complete(helper.getLevel(), rite);
-        helper.assertTrue(completed, "Master completion refused: phase=" + rite.getPhase()
-                + ", stage=" + rite.alembic().getInt("Stage") + ", escrow="
-                + rite.alembic().getString("EscrowState") + ", tier=" + forge.tier());
-        helper.assertTrue(forge.tier() == ResonantForgeTier.MASTERWORK,
-                "Master completion kept tier " + forge.tier());
-        helper.succeed();
-    }
-
-    @GameTest(template = "empty", timeoutTicks = 100, batch = "resonant_forge")
-    public static void artificerLessonsGateOneTimeKitsAndRetryFullInventory(GameTestHelper helper) {
-        ServerPlayer player = player(helper);
-        var degree = HemoCapabilityAccess.requireInitiatoryDegree(player);
-        var progress = HemoCapabilityAccess.resonantForge(player);
-        degree.setDegreeNumber(3);
-        helper.assertTrue(progress.teach(player) && !progress.teach(player), "D3 lesson was not one-time");
-        degree.setDegreeNumber(5);
-        helper.assertTrue(progress.claimPrecision(player) && !progress.claimPrecision(player)
-                && player.getInventory().contains(new ItemStack(ItemInit.precision_governor_kit.get())),
-                "D5 kit gate or claim failed");
-        for (int i = 0; i < player.getInventory().items.size(); i++)
-            player.getInventory().items.set(i, new ItemStack(Items.STONE, 64));
-        degree.setDegreeNumber(7);
-        helper.assertTrue(progress.claimMaster(player), "D7 kit claim was rejected");
-        helper.assertTrue(!player.getInventory().contains(new ItemStack(ItemInit.master_cam_kit.get())),
-                "Full inventory accepted the pending kit");
-        player.getInventory().items.set(0, ItemStack.EMPTY);
-        progress.deliver(player);
-        helper.assertTrue(player.getInventory().contains(new ItemStack(ItemInit.master_cam_kit.get())),
-                "Pending D7 kit was not retried");
-        helper.succeed();
-    }
-
-    @GameTest(template = "empty", timeoutTicks = 100, batch = "resonant_forge")
     public static void forgeFullCycleIsTaughtAtD4WhileD3AccessRemains(GameTestHelper helper) {
         ServerPlayer player = player(helper);
         var degree = HemoCapabilityAccess.requireInitiatoryDegree(player);
@@ -422,8 +476,6 @@ public final class ResonantForgeGameTests {
         helper.assertTrue(d3.getNode("resonant_forge") != null
                         && d3.getNode("resonant_forge").lines().contains("hemomancy.artificer.resonant_forge.early"),
                 "D3 Forge access was removed or the full cycle was taught early");
-        helper.assertTrue(HemoCapabilityAccess.resonantForge(player).teach(player),
-                "D3 exploratory Forge access could not be recorded");
         degree.setDegreeNumber(4);
         helper.assertTrue(artificer.progressionDialogue(player).getNode("resonant_forge").lines()
                         .contains("hemomancy.artificer.resonant_forge.lesson"),
@@ -475,24 +527,6 @@ public final class ResonantForgeGameTests {
         helper.succeed();
     }
 
-    private static ActiveCardinalRite upgradeRite(GameTestHelper helper, boolean master) {
-        BlockPos center = helper.absolutePos(new BlockPos(5, 3, 5));
-        ActiveCardinalRite rite = ActiveCardinalRite.interactive(UUID.randomUUID(), center,
-                Hemomancy.rloc(master ? "cardinal_rite/enduring_pattern" : "cardinal_rite/true_groove"),
-                2400, master ? 7 : 5, master ? 7 : 5, false, 0, master ? 8 : 4);
-        rite.setMatchedFloor(Hemomancy.rloc("working_greater"), Direction.NORTH, Direction.UP);
-        helper.getLevel().setBlockAndUpdate(center, BlockInit.cardinal_focus.get().defaultBlockState());
-        ResonantForgeBlockEntity forge = placeForgeAt(helper, ResonantForgeUpgradeRites.seat(rite), Direction.NORTH);
-        if (master) forge.completeUpgrade(ResonantForgeTier.PRECISION, UUID.randomUUID());
-        BlockPos brazierPos = center.offset(3, 0, 3);
-        helper.getLevel().setBlockAndUpdate(brazierPos, BlockInit.iron_brazier.get().defaultBlockState());
-        IronBrazierBlockEntity brazier = (IronBrazierBlockEntity) helper.getLevel().getBlockEntity(brazierPos);
-        ItemStack kit = new ItemStack(master ? ItemInit.master_cam_kit.get() : ItemInit.precision_governor_kit.get());
-        brazier.insertOffering(null, kit.copy());
-        rite.captureOfferingItinerary(List.of(new ActiveCardinalRite.RiteOffering(brazierPos, kit, true)));
-        return rite;
-    }
-
     private static ResonantForgeBlockEntity placeForge(GameTestHelper helper, BlockPos relative, Direction facing) {
         return placeForgeAt(helper, helper.absolutePos(relative), facing);
     }
@@ -505,8 +539,17 @@ public final class ResonantForgeGameTests {
         return (ResonantForgeBlockEntity) helper.getLevel().getBlockEntity(pos);
     }
 
+    private static ResonantForgeBlockEntity reloadForge(GameTestHelper helper, ResonantForgeBlockEntity forge) {
+        var saved = forge.saveWithoutMetadata(helper.getLevel().registryAccess());
+        var restored = new ResonantForgeBlockEntity(forge.getBlockPos(), forge.getBlockState());
+        restored.loadWithComponents(saved, helper.getLevel().registryAccess());
+        helper.getLevel().removeBlockEntity(forge.getBlockPos());
+        helper.getLevel().setBlockEntity(restored);
+        return restored;
+    }
+
     private static void tick(ResonantForgeBlockEntity forge, GameTestHelper helper, int ticks) {
-        for (int i = 0; i <= ticks; i++) ResonantForgeBlockEntity.serverTick(helper.getLevel(), forge.getBlockPos(),
+        for (int i = 0; i < ticks; i++) ResonantForgeBlockEntity.serverTick(helper.getLevel(), forge.getBlockPos(),
                 forge.getBlockState(), forge);
     }
 

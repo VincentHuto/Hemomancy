@@ -20,9 +20,9 @@ final class BodyIdiomWiringSourceTest {
 
 		assertTrue(manipulations.contains("MANIPS.register(\"ironhearted\""));
 		assertTrue(manipulations.contains("MANIPS.register(\"blackhearted\""));
-		assertTrue(items.contains("BASEITEMS.register(\"memory_ironhearted\""));
-		assertTrue(items.contains("BASEITEMS.register(\"memory_blackhearted\""));
-		assertTrue(client.contains("selected.getType() == EnumManipulationType.CHARGED"));
+		assertTrue(items.contains("registerBloodMemoryItem(\"memory_ironhearted\", ManipulationInit.ironhearted)"));
+		assertTrue(items.contains("registerBloodMemoryItem(\"memory_blackhearted\", ManipulationInit.blackhearted)"));
+		assertTrue(client.contains("type == EnumManipulationType.CHARGED"));
 		assertTrue(packet.contains("player.blockPosition(), pTic"));
 		assertTrue(java("common/manipulation/BodyIdiomEvents.java")
 				.contains("event.getSource().is(DamageTypes.WITHER)"));

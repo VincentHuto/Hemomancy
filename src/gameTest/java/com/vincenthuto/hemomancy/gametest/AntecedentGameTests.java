@@ -297,6 +297,41 @@ public final class AntecedentGameTests {
         h.assertTrue(HemoCapabilityAccess.antecedent(p).has(SAMPLE_ANALYZED),"Personal analysis evidence missing");
         h.assertTrue(HemoCapabilityAccess.clinicalBlood(p).sourceCount()==0,"Ahaematic sample credited as clinical blood");h.succeed();
     }
+    @GameTest(template="empty") public static void deepDarkBearingValidatesTeacherAndGrantsNoAnalysis(GameTestHelper h) {
+        var p = player(h);
+        p.setPos(h.absolutePos(new BlockPos(2, 2, 2)).getCenter());
+        var alchemist = EntityInit.harbinger_alchemist.get().create(h.getLevel());
+        alchemist.setNoAi(true); alchemist.setPos(p.position()); h.getLevel().addFreshEntity(alchemist);
+        var vicar = EntityInit.harbinger_vicar.get().create(h.getLevel());
+        vicar.setNoAi(true); vicar.setPos(p.position()); h.getLevel().addFreshEntity(vicar);
+        String bearing = DeepDarkCommissionDialogue.BEARING;
+        h.assertTrue(DialogueOptionPacket.dispatch(p, bearing, vicar.getId()) == null,
+                "The Vicar dispatched the Alchemist's Deep Dark bearing");
+        HemoCapabilityAccess.requireBloodVolume(p).setActive(true);
+        var lowRank = DialogueOptionPacket.dispatch(p, bearing, alchemist.getId());
+        h.assertTrue(lowRank != null && !lowRank.wasRewardDelivered(), "D4 obtained the formal D5 bearing");
+        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(5);
+        HemoCapabilityAccess.requireBloodVolume(p).setActive(false);
+        var inactive = DialogueOptionPacket.dispatch(p, bearing, alchemist.getId());
+        h.assertTrue(inactive != null && !inactive.wasRewardDelivered(), "Inactive blood obtained the bearing");
+        HemoCapabilityAccess.requireBloodVolume(p).setActive(true);
+        alchemist.setPos(p.position().add(10, 0, 0));
+        h.assertTrue(DialogueOptionPacket.dispatch(p, bearing, alchemist.getId()) == null,
+                "Remote teacher dispatched a bearing");
+        alchemist.setPos(p.position());
+        var before = p.getPersistentData().copy();
+        var guidance = DialogueOptionPacket.dispatch(p, bearing, alchemist.getId());
+        h.assertTrue(guidance != null && guidance.wasRewardDelivered(), "Eligible Alchemist refused guidance");
+        h.assertTrue(before.equals(p.getPersistentData()) && !HemoCapabilityAccess.antecedent(p).has(SAMPLE_ANALYZED)
+                        && !DeepDarkCommission.progress(p).ready(), "Bearing awarded inquiry/report proof");
+        HemoCapabilityAccess.antecedent(p).record(SAMPLE_ANALYZED);
+        h.assertTrue(DeepDarkCommission.report(p, alchemist), "Real prior analysis could not be reported");
+        var completed = DialogueOptionPacket.dispatch(p, bearing, alchemist.getId());
+        h.assertTrue(completed != null && !completed.wasRewardDelivered(),
+                "Retired commission still accepted its bearing event");
+        alchemist.discard(); vicar.discard(); h.succeed();
+    }
+
     @GameTest(template="empty") public static void deepDarkCommissionAcceptsPriorAnalysisWithoutTakingTheSample(GameTestHelper h) {
         var p=player(h);
         HemoCapabilityAccess.requireBloodVolume(p).setActive(true);

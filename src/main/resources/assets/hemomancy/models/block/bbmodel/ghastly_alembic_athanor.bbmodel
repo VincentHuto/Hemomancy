@@ -1,0 +1,7156 @@
+{
+  "meta": {
+    "format_version": "5.0",
+    "model_format": "java_block",
+    "box_uv": false
+  },
+  "name": "Ghastly Alembic \u2014 Athanor",
+  "parent": "minecraft:block/block",
+  "java_block_version": "1.21.11",
+  "credit": "Mechanical conversion from GhastlyAlembicModel Java addBox definitions scaled to vanilla block-model element bounds",
+  "ambientocclusion": true,
+  "front_gui_light": true,
+  "visible_box": [
+    3,
+    3,
+    1
+  ],
+  "variable_placeholders": "",
+  "multi_file_ruleset": "",
+  "variable_placeholder_buttons": [],
+  "unhandled_root_fields": {
+    "render_type": "translucent"
+  },
+  "resolution": {
+    "width": 16,
+    "height": 16
+  },
+  "elements": [
+    {
+      "name": "base_0",
+      "box_uv": false,
+      "render_order": "default",
+      "rescale": false,
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        2,
+        16
+      ],
+      "autouv": 0,
+      "color": 6,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0.0625,
+            0.0625,
+            1.0625,
+            0.1875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            1.1875,
+            0.0625,
+            2.1875,
+            0.1875
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            2.3125,
+            0.0625,
+            3.3125,
+            0.1875
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            3.4375,
+            0.0625,
+            4.4375,
+            0.1875
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            4.5625,
+            0.0625,
+            5.5625,
+            1.0625
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            5.6875,
+            0.0625,
+            6.6875,
+            1.0625
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "e9a670b3-9007-1f19-6b3a-c3630142fd5d"
+    },
+    {
+      "name": "base_1",
+      "box_uv": false,
+      "render_order": "default",
+      "rescale": false,
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        2,
+        2,
+        2
+      ],
+      "to": [
+        14,
+        4,
+        14
+      ],
+      "autouv": 0,
+      "color": 5,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            6.8125,
+            0.0625,
+            7.5625,
+            0.1875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            7.6875,
+            0.0625,
+            8.4375,
+            0.1875
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            8.5625,
+            0.0625,
+            9.3125,
+            0.1875
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            9.4375,
+            0.0625,
+            10.1875,
+            0.1875
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            10.3125,
+            0.0625,
+            11.0625,
+            0.8125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            11.1875,
+            0.0625,
+            11.9375,
+            0.8125
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "7fc02935-c13d-9c20-f7ed-06b0f8f921bf"
+    },
+    {
+      "name": "base_2",
+      "box_uv": false,
+      "render_order": "default",
+      "rescale": false,
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        7,
+        2,
+        14
+      ],
+      "to": [
+        9,
+        4,
+        16
+      ],
+      "autouv": 0,
+      "color": 9,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            12.0625,
+            0.0625,
+            12.1875,
+            0.1875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            12.3125,
+            0.0625,
+            12.4375,
+            0.1875
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12.5625,
+            0.0625,
+            12.6875,
+            0.1875
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12.8125,
+            0.0625,
+            12.9375,
+            0.1875
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            13.0625,
+            0.0625,
+            13.1875,
+            0.1875
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            13.3125,
+            0.0625,
+            13.4375,
+            0.1875
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "98eee1ab-6543-ab1d-cf89-08b466bab7a8"
+    },
+    {
+      "name": "base_3",
+      "box_uv": false,
+      "render_order": "default",
+      "rescale": false,
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        7,
+        2,
+        0
+      ],
+      "to": [
+        9,
+        4,
+        2
+      ],
+      "autouv": 0,
+      "color": 4,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            13.5625,
+            0.0625,
+            13.6875,
+            0.1875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            13.8125,
+            0.0625,
+            13.9375,
+            0.1875
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            14.0625,
+            0.0625,
+            14.1875,
+            0.1875
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            14.3125,
+            0.0625,
+            14.4375,
+            0.1875
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            14.5625,
+            0.0625,
+            14.6875,
+            0.1875
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            14.8125,
+            0.0625,
+            14.9375,
+            0.1875
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "98d7601a-c8bc-65e0-a386-e6c9772fdebd"
+    },
+    {
+      "name": "base_4",
+      "box_uv": false,
+      "render_order": "default",
+      "rescale": false,
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        14,
+        2,
+        7
+      ],
+      "to": [
+        16,
+        4,
+        9
+      ],
+      "autouv": 0,
+      "color": 2,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            15.0625,
+            0.0625,
+            15.1875,
+            0.1875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            15.3125,
+            0.0625,
+            15.4375,
+            0.1875
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            15.5625,
+            0.0625,
+            15.6875,
+            0.1875
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            15.8125,
+            0.0625,
+            15.9375,
+            0.1875
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            0.0625,
+            1.1875,
+            0.1875,
+            1.3125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            0.3125,
+            1.1875,
+            0.4375,
+            1.3125
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "c8eef0cf-fc0a-0620-e78c-795db14d3110"
+    },
+    {
+      "name": "base_5",
+      "box_uv": false,
+      "render_order": "default",
+      "rescale": false,
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        0,
+        2,
+        7
+      ],
+      "to": [
+        2,
+        4,
+        9
+      ],
+      "autouv": 0,
+      "color": 1,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0.5625,
+            1.1875,
+            0.6875,
+            1.3125
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0.8125,
+            1.1875,
+            0.9375,
+            1.3125
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            1.0625,
+            1.1875,
+            1.1875,
+            1.3125
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            1.3125,
+            1.1875,
+            1.4375,
+            1.3125
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            1.5625,
+            1.1875,
+            1.6875,
+            1.3125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            1.8125,
+            1.1875,
+            1.9375,
+            1.3125
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "b880b532-df6c-b2c3-5576-2c470ab1e275"
+    },
+    {
+      "name": "flask_0",
+      "box_uv": false,
+      "render_order": "default",
+      "rescale": false,
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        3,
+        4,
+        3
+      ],
+      "to": [
+        13,
+        20,
+        13
+      ],
+      "autouv": 0,
+      "color": 2,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            2.0625,
+            1.1875,
+            2.6875,
+            2.1875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            2.8125,
+            1.1875,
+            3.4375,
+            2.1875
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            3.5625,
+            1.1875,
+            4.1875,
+            2.1875
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            4.3125,
+            1.1875,
+            4.9375,
+            2.1875
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            5.0625,
+            1.1875,
+            5.6875,
+            1.8125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            5.8125,
+            1.1875,
+            6.4375,
+            1.8125
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "760776be-4f6d-4071-0cfa-95e7192e0ccf"
+    },
+    {
+      "name": "thorn_collar_0",
+      "box_uv": false,
+      "render_order": "default",
+      "rescale": false,
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        2,
+        8,
+        2
+      ],
+      "to": [
+        14,
+        11,
+        3
+      ],
+      "autouv": 0,
+      "color": 8,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            6.5625,
+            1.1875,
+            7.3125,
+            1.375
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            7.4375,
+            1.1875,
+            7.5,
+            1.375
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            7.625,
+            1.1875,
+            8.375,
+            1.375
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            8.5,
+            1.1875,
+            8.5625,
+            1.375
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            8.6875,
+            1.1875,
+            9.4375,
+            1.25
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            9.5625,
+            1.1875,
+            10.3125,
+            1.25
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "faa51750-1f1f-0493-7193-fc320cb0be22"
+    },
+    {
+      "name": "thorn_collar_1",
+      "box_uv": false,
+      "render_order": "default",
+      "rescale": false,
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        2,
+        8,
+        13
+      ],
+      "to": [
+        14,
+        11,
+        14
+      ],
+      "autouv": 0,
+      "color": 7,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            10.4375,
+            1.1875,
+            11.1875,
+            1.375
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            11.3125,
+            1.1875,
+            11.375,
+            1.375
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            11.5,
+            1.1875,
+            12.25,
+            1.375
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12.375,
+            1.1875,
+            12.4375,
+            1.375
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12.5625,
+            1.1875,
+            13.3125,
+            1.25
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            13.4375,
+            1.1875,
+            14.1875,
+            1.25
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "80cba25b-b3bb-5cce-cf42-b394158217cd"
+    },
+    {
+      "name": "thorn_collar_2",
+      "box_uv": false,
+      "render_order": "default",
+      "rescale": false,
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        2,
+        15,
+        2
+      ],
+      "to": [
+        14,
+        18,
+        3
+      ],
+      "autouv": 0,
+      "color": 5,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            14.3125,
+            1.1875,
+            15.0625,
+            1.375
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            15.1875,
+            1.1875,
+            15.25,
+            1.375
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            0.0625,
+            2.3125,
+            0.8125,
+            2.5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            0.9375,
+            2.3125,
+            1.0,
+            2.5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            1.125,
+            2.3125,
+            1.875,
+            2.375
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            2.0,
+            2.3125,
+            2.75,
+            2.375
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "2134e526-cda2-620f-c34f-8c7300cff27b"
+    },
+    {
+      "name": "thorn_collar_3",
+      "box_uv": false,
+      "render_order": "default",
+      "rescale": false,
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        2,
+        15,
+        3
+      ],
+      "to": [
+        3,
+        18,
+        13
+      ],
+      "autouv": 0,
+      "color": 0,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            2.875,
+            2.3125,
+            2.9375,
+            2.5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            3.0625,
+            2.3125,
+            3.6875,
+            2.5
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            3.8125,
+            2.3125,
+            3.875,
+            2.5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            4.0,
+            2.3125,
+            4.625,
+            2.5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            4.75,
+            2.3125,
+            4.8125,
+            2.9375
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            4.9375,
+            2.3125,
+            5.0,
+            2.9375
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "970aa681-fa27-c757-a83f-8f148fc9e30a"
+    },
+    {
+      "name": "thorn_collar_4",
+      "box_uv": false,
+      "render_order": "default",
+      "rescale": false,
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        13,
+        15,
+        3
+      ],
+      "to": [
+        14,
+        18,
+        13
+      ],
+      "autouv": 0,
+      "color": 3,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            5.125,
+            2.3125,
+            5.1875,
+            2.5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            5.3125,
+            2.3125,
+            5.9375,
+            2.5
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            6.0625,
+            2.3125,
+            6.125,
+            2.5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            6.25,
+            2.3125,
+            6.875,
+            2.5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            7.0,
+            2.3125,
+            7.0625,
+            2.9375
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            7.1875,
+            2.3125,
+            7.25,
+            2.9375
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "64b2a634-4b85-5458-e14b-4e6f31ca1475"
+    },
+    {
+      "name": "thorn_collar_5",
+      "box_uv": false,
+      "render_order": "default",
+      "rescale": false,
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        2,
+        15,
+        13
+      ],
+      "to": [
+        14,
+        18,
+        14
+      ],
+      "autouv": 0,
+      "color": 4,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7.375,
+            2.3125,
+            8.125,
+            2.5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            8.25,
+            2.3125,
+            8.3125,
+            2.5
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            8.4375,
+            2.3125,
+            9.1875,
+            2.5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            9.3125,
+            2.3125,
+            9.375,
+            2.5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            9.5,
+            2.3125,
+            10.25,
+            2.375
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            10.375,
+            2.3125,
+            11.125,
+            2.375
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "300a86eb-77f2-2e26-d968-f6cacd8e2c80"
+    },
+    {
+      "name": "thorn_collar_6",
+      "box_uv": false,
+      "render_order": "default",
+      "rescale": false,
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        12,
+        8,
+        3
+      ],
+      "to": [
+        14,
+        11,
+        13
+      ],
+      "autouv": 0,
+      "color": 1,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            11.25,
+            2.3125,
+            11.375,
+            2.5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            11.5,
+            2.3125,
+            12.125,
+            2.5
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12.25,
+            2.3125,
+            12.375,
+            2.5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12.5,
+            2.3125,
+            13.125,
+            2.5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            13.25,
+            2.3125,
+            13.375,
+            2.9375
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            13.5,
+            2.3125,
+            13.625,
+            2.9375
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "a7960510-d0af-0fa5-0dc8-f9aedf893d37"
+    },
+    {
+      "name": "thorn_collar_7",
+      "box_uv": false,
+      "render_order": "default",
+      "rescale": false,
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        2,
+        8,
+        3
+      ],
+      "to": [
+        4,
+        11,
+        13
+      ],
+      "autouv": 0,
+      "color": 1,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            13.75,
+            2.3125,
+            13.875,
+            2.5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            14.0,
+            2.3125,
+            14.625,
+            2.5
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            14.75,
+            2.3125,
+            14.875,
+            2.5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            15.0,
+            2.3125,
+            15.625,
+            2.5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            15.75,
+            2.3125,
+            15.875,
+            2.9375
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            0.0625,
+            3.0625,
+            0.1875,
+            3.6875
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "1d73a73c-57fc-f94f-be3d-b7f4e56725a6"
+    },
+    {
+      "name": "cap_0",
+      "box_uv": false,
+      "render_order": "default",
+      "rescale": false,
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        6,
+        20,
+        6
+      ],
+      "to": [
+        10,
+        23,
+        10
+      ],
+      "autouv": 0,
+      "color": 9,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0.3125,
+            3.0625,
+            0.5625,
+            3.25
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0.6875,
+            3.0625,
+            0.9375,
+            3.25
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            1.0625,
+            3.0625,
+            1.3125,
+            3.25
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            1.4375,
+            3.0625,
+            1.6875,
+            3.25
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            1.8125,
+            3.0625,
+            2.0625,
+            3.3125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            2.1875,
+            3.0625,
+            2.4375,
+            3.3125
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "7b017b3c-b9c6-3691-2c4e-1e47d674b53e"
+    },
+    {
+      "name": "cap_1",
+      "box_uv": false,
+      "render_order": "default",
+      "rescale": false,
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        5,
+        23,
+        5
+      ],
+      "to": [
+        11,
+        27,
+        11
+      ],
+      "autouv": 0,
+      "color": 1,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            2.5625,
+            3.0625,
+            2.9375,
+            3.3125
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            3.0625,
+            3.0625,
+            3.4375,
+            3.3125
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            3.5625,
+            3.0625,
+            3.9375,
+            3.3125
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            4.0625,
+            3.0625,
+            4.4375,
+            3.3125
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            4.5625,
+            3.0625,
+            4.9375,
+            3.4375
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            5.0625,
+            3.0625,
+            5.4375,
+            3.4375
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "11b0cd00-0434-0deb-4618-637e44c14bc2"
+    },
+    {
+      "name": "cap_2",
+      "box_uv": false,
+      "render_order": "default",
+      "rescale": false,
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        9,
+        27,
+        7
+      ],
+      "to": [
+        11,
+        30,
+        9
+      ],
+      "autouv": 0,
+      "color": 2,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            5.5625,
+            3.0625,
+            5.6875,
+            3.25
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            5.8125,
+            3.0625,
+            5.9375,
+            3.25
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            6.0625,
+            3.0625,
+            6.1875,
+            3.25
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            6.3125,
+            3.0625,
+            6.4375,
+            3.25
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            6.5625,
+            3.0625,
+            6.6875,
+            3.1875
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            6.8125,
+            3.0625,
+            6.9375,
+            3.1875
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "616fc729-5456-2f3c-b757-916d31261e7e"
+    },
+    {
+      "name": "cap_3",
+      "box_uv": false,
+      "render_order": "default",
+      "rescale": false,
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        5,
+        27,
+        7
+      ],
+      "to": [
+        7,
+        30,
+        9
+      ],
+      "autouv": 0,
+      "color": 7,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7.0625,
+            3.0625,
+            7.1875,
+            3.25
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            7.3125,
+            3.0625,
+            7.4375,
+            3.25
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            7.5625,
+            3.0625,
+            7.6875,
+            3.25
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            7.8125,
+            3.0625,
+            7.9375,
+            3.25
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            8.0625,
+            3.0625,
+            8.1875,
+            3.1875
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            8.3125,
+            3.0625,
+            8.4375,
+            3.1875
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "6ed57904-ed0f-1ed4-53fd-7c87bbb97d27"
+    },
+    {
+      "name": "cap_4",
+      "box_uv": false,
+      "render_order": "default",
+      "rescale": false,
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        7,
+        27,
+        7
+      ],
+      "to": [
+        9,
+        31,
+        9
+      ],
+      "autouv": 0,
+      "color": 8,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8.5625,
+            3.0625,
+            8.6875,
+            3.3125
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            8.8125,
+            3.0625,
+            8.9375,
+            3.3125
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            9.0625,
+            3.0625,
+            9.1875,
+            3.3125
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            9.3125,
+            3.0625,
+            9.4375,
+            3.3125
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            9.5625,
+            3.0625,
+            9.6875,
+            3.1875
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            9.8125,
+            3.0625,
+            9.9375,
+            3.1875
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "e701d03d-3e47-ce07-9647-ca3c5b5dba4a"
+    },
+    {
+      "name": "pipe_rod_0",
+      "box_uv": false,
+      "render_order": "default",
+      "rescale": false,
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        -2,
+        2,
+        7
+      ],
+      "to": [
+        0,
+        28,
+        9
+      ],
+      "autouv": 0,
+      "color": 1,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            10.0625,
+            3.0625,
+            10.1875,
+            4.6875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            10.3125,
+            3.0625,
+            10.4375,
+            4.6875
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            10.5625,
+            3.0625,
+            10.6875,
+            4.6875
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            10.8125,
+            3.0625,
+            10.9375,
+            4.6875
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            11.0625,
+            3.0625,
+            11.1875,
+            3.1875
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            11.3125,
+            3.0625,
+            11.4375,
+            3.1875
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "c848e4b0-6cec-ecc6-5cc3-ae8cccc73a82"
+    },
+    {
+      "name": "pipe_rod_1",
+      "box_uv": false,
+      "render_order": "default",
+      "rescale": false,
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        0,
+        16,
+        7
+      ],
+      "to": [
+        2,
+        18,
+        9
+      ],
+      "autouv": 0,
+      "color": 0,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            11.5625,
+            3.0625,
+            11.6875,
+            3.1875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            11.8125,
+            3.0625,
+            11.9375,
+            3.1875
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12.0625,
+            3.0625,
+            12.1875,
+            3.1875
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12.3125,
+            3.0625,
+            12.4375,
+            3.1875
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12.5625,
+            3.0625,
+            12.6875,
+            3.1875
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12.8125,
+            3.0625,
+            12.9375,
+            3.1875
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "a4e8ad9c-d241-b0f9-e6f7-89a23304910e"
+    },
+    {
+      "name": "pipe_rod_2",
+      "box_uv": false,
+      "render_order": "default",
+      "rescale": false,
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        0,
+        9,
+        7
+      ],
+      "to": [
+        2,
+        11,
+        9
+      ],
+      "autouv": 0,
+      "color": 8,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            13.0625,
+            3.0625,
+            13.1875,
+            3.1875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            13.3125,
+            3.0625,
+            13.4375,
+            3.1875
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            13.5625,
+            3.0625,
+            13.6875,
+            3.1875
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            13.8125,
+            3.0625,
+            13.9375,
+            3.1875
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            14.0625,
+            3.0625,
+            14.1875,
+            3.1875
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            14.3125,
+            3.0625,
+            14.4375,
+            3.1875
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "97f6e7df-a099-e0e5-360d-09753d0180a1"
+    },
+    {
+      "name": "pipe_rod_3",
+      "box_uv": false,
+      "render_order": "default",
+      "rescale": false,
+      "locked": false,
+      "shade": true,
+      "light_emission": 0,
+      "export": true,
+      "scope": 0,
+      "allow_mirror_modeling": true,
+      "from": [
+        0,
+        28,
+        7
+      ],
+      "to": [
+        5,
+        30,
+        9
+      ],
+      "autouv": 0,
+      "color": 7,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            14.5625,
+            3.0625,
+            14.875,
+            3.1875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            15.0,
+            3.0625,
+            15.125,
+            3.1875
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            15.25,
+            3.0625,
+            15.5625,
+            3.1875
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            15.6875,
+            3.0625,
+            15.8125,
+            3.1875
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            0.0625,
+            4.8125,
+            0.375,
+            4.9375
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            0.5,
+            4.8125,
+            0.8125,
+            4.9375
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "bb835f69-f8db-e6e5-f61c-e7745c0c22f9"
+    },
+    {
+      "name": "intake collar",
+      "type": "cube",
+      "uuid": "fe215f53-7737-56bf-b82e-a56df326df73",
+      "from": [
+        4,
+        18,
+        4
+      ],
+      "to": [
+        12,
+        19,
+        12
+      ],
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0.9375,
+            4.8125,
+            1.4375,
+            4.875
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            1.5625,
+            4.8125,
+            2.0625,
+            4.875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            2.1875,
+            4.8125,
+            2.6875,
+            4.875
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            2.8125,
+            4.8125,
+            3.3125,
+            4.875
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            3.4375,
+            4.8125,
+            3.9375,
+            5.3125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            4.0625,
+            4.8125,
+            4.5625,
+            5.3125
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "rising intake",
+      "type": "cube",
+      "uuid": "359ca476-537c-5d58-9ab7-91e33969ad64",
+      "from": [
+        7,
+        19,
+        7
+      ],
+      "to": [
+        9,
+        23,
+        9
+      ],
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4.6875,
+            4.8125,
+            4.8125,
+            5.0625
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            4.9375,
+            4.8125,
+            5.0625,
+            5.0625
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            5.1875,
+            4.8125,
+            5.3125,
+            5.0625
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            5.4375,
+            4.8125,
+            5.5625,
+            5.0625
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            5.6875,
+            4.8125,
+            5.8125,
+            4.9375
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            5.9375,
+            4.8125,
+            6.0625,
+            4.9375
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "return bridge",
+      "type": "cube",
+      "uuid": "f6532490-4e77-58df-9605-a6a5efd3e774",
+      "from": [
+        9,
+        21,
+        7
+      ],
+      "to": [
+        21,
+        22,
+        9
+      ],
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            6.1875,
+            4.8125,
+            6.9375,
+            4.875
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            7.0625,
+            4.8125,
+            7.8125,
+            4.875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            7.9375,
+            4.8125,
+            8.0625,
+            4.875
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            8.1875,
+            4.8125,
+            8.3125,
+            4.875
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            8.4375,
+            4.8125,
+            9.1875,
+            4.9375
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            9.3125,
+            4.8125,
+            10.0625,
+            4.9375
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "receiving bulb",
+      "type": "cube",
+      "uuid": "79ced648-edc1-5d21-b1a8-277cfe9c1022",
+      "from": [
+        17,
+        10,
+        4
+      ],
+      "to": [
+        23,
+        17,
+        12
+      ],
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            10.1875,
+            4.8125,
+            10.5625,
+            5.25
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            10.6875,
+            4.8125,
+            11.0625,
+            5.25
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            11.1875,
+            4.8125,
+            11.6875,
+            5.25
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            11.8125,
+            4.8125,
+            12.3125,
+            5.25
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12.4375,
+            4.8125,
+            12.8125,
+            5.3125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12.9375,
+            4.8125,
+            13.3125,
+            5.3125
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "receiving bulb neck",
+      "type": "cube",
+      "uuid": "d7fac719-4c07-5eac-88f2-15221a63a56e",
+      "from": [
+        19,
+        17,
+        7
+      ],
+      "to": [
+        21,
+        22,
+        9
+      ],
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            13.4375,
+            4.8125,
+            13.5625,
+            5.125
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            13.6875,
+            4.8125,
+            13.8125,
+            5.125
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            13.9375,
+            4.8125,
+            14.0625,
+            5.125
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            14.1875,
+            4.8125,
+            14.3125,
+            5.125
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            14.4375,
+            4.8125,
+            14.5625,
+            4.9375
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            14.6875,
+            4.8125,
+            14.8125,
+            4.9375
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "receiving foot",
+      "type": "cube",
+      "uuid": "27670c1e-d33f-50cf-9dae-6dc4c6543a2e",
+      "from": [
+        18,
+        8,
+        5
+      ],
+      "to": [
+        22,
+        10,
+        11
+      ],
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            14.9375,
+            4.8125,
+            15.1875,
+            4.9375
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            15.3125,
+            4.8125,
+            15.5625,
+            4.9375
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0.0625,
+            5.4375,
+            0.4375,
+            5.5625
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            0.5625,
+            5.4375,
+            0.9375,
+            5.5625
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            1.0625,
+            5.4375,
+            1.3125,
+            5.8125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            1.4375,
+            5.4375,
+            1.6875,
+            5.8125
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "coil 7 front",
+      "type": "cube",
+      "uuid": "a0c965af-4982-5f26-affa-444636889ab9",
+      "from": [
+        1,
+        7,
+        1
+      ],
+      "to": [
+        15,
+        8,
+        2
+      ],
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1.8125,
+            5.4375,
+            2.6875,
+            5.5
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            2.8125,
+            5.4375,
+            3.6875,
+            5.5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            3.8125,
+            5.4375,
+            3.875,
+            5.5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            4.0,
+            5.4375,
+            4.0625,
+            5.5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            4.1875,
+            5.4375,
+            5.0625,
+            5.5
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            5.1875,
+            5.4375,
+            6.0625,
+            5.5
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "coil 7 back",
+      "type": "cube",
+      "uuid": "198b9ce6-ffa5-5e60-9f31-5c4af6d2c97e",
+      "from": [
+        1,
+        7,
+        14
+      ],
+      "to": [
+        15,
+        8,
+        15
+      ],
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            6.1875,
+            5.4375,
+            7.0625,
+            5.5
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            7.1875,
+            5.4375,
+            8.0625,
+            5.5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            8.1875,
+            5.4375,
+            8.25,
+            5.5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            8.375,
+            5.4375,
+            8.4375,
+            5.5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            8.5625,
+            5.4375,
+            9.4375,
+            5.5
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            9.5625,
+            5.4375,
+            10.4375,
+            5.5
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "coil 7 left",
+      "type": "cube",
+      "uuid": "b427945e-67fb-5f7d-a9e2-228b99d672f5",
+      "from": [
+        1,
+        7,
+        2
+      ],
+      "to": [
+        2,
+        8,
+        14
+      ],
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            10.5625,
+            5.4375,
+            10.625,
+            5.5
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            10.75,
+            5.4375,
+            10.8125,
+            5.5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            10.9375,
+            5.4375,
+            11.6875,
+            5.5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            11.8125,
+            5.4375,
+            12.5625,
+            5.5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12.6875,
+            5.4375,
+            12.75,
+            6.1875
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12.875,
+            5.4375,
+            12.9375,
+            6.1875
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "coil 7 right",
+      "type": "cube",
+      "uuid": "db2c0b13-837b-55e3-b030-95760909ee0c",
+      "from": [
+        14,
+        7,
+        2
+      ],
+      "to": [
+        15,
+        8,
+        14
+      ],
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            13.0625,
+            5.4375,
+            13.125,
+            5.5
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            13.25,
+            5.4375,
+            13.3125,
+            5.5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            13.4375,
+            5.4375,
+            14.1875,
+            5.5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            14.3125,
+            5.4375,
+            15.0625,
+            5.5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            15.1875,
+            5.4375,
+            15.25,
+            6.1875
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            15.375,
+            5.4375,
+            15.4375,
+            6.1875
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "coil 10 front",
+      "type": "cube",
+      "uuid": "03ae3020-6eae-5c0a-b865-0a6977d9ead5",
+      "from": [
+        1,
+        10,
+        1
+      ],
+      "to": [
+        15,
+        11,
+        2
+      ],
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0.0625,
+            6.3125,
+            0.9375,
+            6.375
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            1.0625,
+            6.3125,
+            1.9375,
+            6.375
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            2.0625,
+            6.3125,
+            2.125,
+            6.375
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            2.25,
+            6.3125,
+            2.3125,
+            6.375
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            2.4375,
+            6.3125,
+            3.3125,
+            6.375
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            3.4375,
+            6.3125,
+            4.3125,
+            6.375
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "coil 10 back",
+      "type": "cube",
+      "uuid": "2fc62780-8920-5f4a-803f-52c83217f4dd",
+      "from": [
+        1,
+        10,
+        14
+      ],
+      "to": [
+        15,
+        11,
+        15
+      ],
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4.4375,
+            6.3125,
+            5.3125,
+            6.375
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            5.4375,
+            6.3125,
+            6.3125,
+            6.375
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            6.4375,
+            6.3125,
+            6.5,
+            6.375
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            6.625,
+            6.3125,
+            6.6875,
+            6.375
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            6.8125,
+            6.3125,
+            7.6875,
+            6.375
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            7.8125,
+            6.3125,
+            8.6875,
+            6.375
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "coil 10 left",
+      "type": "cube",
+      "uuid": "48132257-8e4f-58ff-90c0-e260cf50da2d",
+      "from": [
+        1,
+        10,
+        2
+      ],
+      "to": [
+        2,
+        11,
+        14
+      ],
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8.8125,
+            6.3125,
+            8.875,
+            6.375
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            9.0,
+            6.3125,
+            9.0625,
+            6.375
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            9.1875,
+            6.3125,
+            9.9375,
+            6.375
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            10.0625,
+            6.3125,
+            10.8125,
+            6.375
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            10.9375,
+            6.3125,
+            11.0,
+            7.0625
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            11.125,
+            6.3125,
+            11.1875,
+            7.0625
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "coil 10 right",
+      "type": "cube",
+      "uuid": "b091d30b-4b1e-5107-997b-283366a0bf25",
+      "from": [
+        14,
+        10,
+        2
+      ],
+      "to": [
+        15,
+        11,
+        14
+      ],
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            11.3125,
+            6.3125,
+            11.375,
+            6.375
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            11.5,
+            6.3125,
+            11.5625,
+            6.375
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            11.6875,
+            6.3125,
+            12.4375,
+            6.375
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12.5625,
+            6.3125,
+            13.3125,
+            6.375
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            13.4375,
+            6.3125,
+            13.5,
+            7.0625
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            13.625,
+            6.3125,
+            13.6875,
+            7.0625
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "coil 13 front",
+      "type": "cube",
+      "uuid": "a5acab35-4729-51b4-9a61-ae237c9fa12f",
+      "from": [
+        1,
+        13,
+        1
+      ],
+      "to": [
+        15,
+        14,
+        2
+      ],
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            13.8125,
+            6.3125,
+            14.6875,
+            6.375
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            14.8125,
+            6.3125,
+            15.6875,
+            6.375
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            15.8125,
+            6.3125,
+            15.875,
+            6.375
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            0.0625,
+            7.1875,
+            0.125,
+            7.25
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            0.25,
+            7.1875,
+            1.125,
+            7.25
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            1.25,
+            7.1875,
+            2.125,
+            7.25
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "coil 13 back",
+      "type": "cube",
+      "uuid": "16cfe769-9846-525a-839d-5549147a4c93",
+      "from": [
+        1,
+        13,
+        14
+      ],
+      "to": [
+        15,
+        14,
+        15
+      ],
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            2.25,
+            7.1875,
+            3.125,
+            7.25
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            3.25,
+            7.1875,
+            4.125,
+            7.25
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            4.25,
+            7.1875,
+            4.3125,
+            7.25
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            4.4375,
+            7.1875,
+            4.5,
+            7.25
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            4.625,
+            7.1875,
+            5.5,
+            7.25
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            5.625,
+            7.1875,
+            6.5,
+            7.25
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "coil 13 left",
+      "type": "cube",
+      "uuid": "9086faa8-b1c1-53c8-b038-de99aa227ff4",
+      "from": [
+        1,
+        13,
+        2
+      ],
+      "to": [
+        2,
+        14,
+        14
+      ],
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            6.625,
+            7.1875,
+            6.6875,
+            7.25
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            6.8125,
+            7.1875,
+            6.875,
+            7.25
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            7.0,
+            7.1875,
+            7.75,
+            7.25
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            7.875,
+            7.1875,
+            8.625,
+            7.25
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            8.75,
+            7.1875,
+            8.8125,
+            7.9375
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            8.9375,
+            7.1875,
+            9.0,
+            7.9375
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "coil 13 right",
+      "type": "cube",
+      "uuid": "92faab00-a1f3-5c07-9523-00e39bafdd57",
+      "from": [
+        14,
+        13,
+        2
+      ],
+      "to": [
+        15,
+        14,
+        14
+      ],
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            9.125,
+            7.1875,
+            9.1875,
+            7.25
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            9.3125,
+            7.1875,
+            9.375,
+            7.25
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            9.5,
+            7.1875,
+            10.25,
+            7.25
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            10.375,
+            7.1875,
+            11.125,
+            7.25
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            11.25,
+            7.1875,
+            11.3125,
+            7.9375
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            11.4375,
+            7.1875,
+            11.5,
+            7.9375
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "coil 16 front",
+      "type": "cube",
+      "uuid": "b48e4cff-51c8-55a7-a2a4-ef8594edd473",
+      "from": [
+        1,
+        16,
+        1
+      ],
+      "to": [
+        15,
+        17,
+        2
+      ],
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            11.625,
+            7.1875,
+            12.5,
+            7.25
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12.625,
+            7.1875,
+            13.5,
+            7.25
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            13.625,
+            7.1875,
+            13.6875,
+            7.25
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            13.8125,
+            7.1875,
+            13.875,
+            7.25
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            14.0,
+            7.1875,
+            14.875,
+            7.25
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            15.0,
+            7.1875,
+            15.875,
+            7.25
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "coil 16 back",
+      "type": "cube",
+      "uuid": "984096ae-eadc-5baf-98c6-1cb39d032c2c",
+      "from": [
+        1,
+        16,
+        14
+      ],
+      "to": [
+        15,
+        17,
+        15
+      ],
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0.0625,
+            8.0625,
+            0.9375,
+            8.125
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            1.0625,
+            8.0625,
+            1.9375,
+            8.125
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            2.0625,
+            8.0625,
+            2.125,
+            8.125
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            2.25,
+            8.0625,
+            2.3125,
+            8.125
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            2.4375,
+            8.0625,
+            3.3125,
+            8.125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            3.4375,
+            8.0625,
+            4.3125,
+            8.125
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "coil 16 left",
+      "type": "cube",
+      "uuid": "0c5a6863-195d-5742-a6d6-885f757f7065",
+      "from": [
+        1,
+        16,
+        2
+      ],
+      "to": [
+        2,
+        17,
+        14
+      ],
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4.4375,
+            8.0625,
+            4.5,
+            8.125
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            4.625,
+            8.0625,
+            4.6875,
+            8.125
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            4.8125,
+            8.0625,
+            5.5625,
+            8.125
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            5.6875,
+            8.0625,
+            6.4375,
+            8.125
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            6.5625,
+            8.0625,
+            6.625,
+            8.8125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            6.75,
+            8.0625,
+            6.8125,
+            8.8125
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "coil 16 right",
+      "type": "cube",
+      "uuid": "40711f75-21f9-521a-b59c-19b1066f0c8b",
+      "from": [
+        14,
+        16,
+        2
+      ],
+      "to": [
+        15,
+        17,
+        14
+      ],
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            6.9375,
+            8.0625,
+            7.0,
+            8.125
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            7.125,
+            8.0625,
+            7.1875,
+            8.125
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            7.3125,
+            8.0625,
+            8.0625,
+            8.125
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            8.1875,
+            8.0625,
+            8.9375,
+            8.125
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            9.0625,
+            8.0625,
+            9.125,
+            8.8125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            9.25,
+            8.0625,
+            9.3125,
+            8.8125
+          ],
+          "texture": 0
+        }
+      }
+    },
+    {
+      "name": "coil manifold",
+      "type": "cube",
+      "uuid": "07e96dbd-2645-53c4-a4c9-60324b3525fc",
+      "to": [
+        15,
+        19,
+        8
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            9.4375,
+            8.0625,
+            9.5,
+            8.8125
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            9.625,
+            8.0625,
+            9.75,
+            8.8125
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            9.875,
+            8.0625,
+            9.9375,
+            8.8125
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            10.0625,
+            8.0625,
+            10.1875,
+            8.8125
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            10.3125,
+            8.0625,
+            10.375,
+            8.1875
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            10.5,
+            8.0625,
+            10.5625,
+            8.1875
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        14,
+        7,
+        6
+      ]
+    },
+    {
+      "name": "manifold intake elbow",
+      "type": "cube",
+      "uuid": "c5b5aeab-cc87-58f9-aafa-1a5568e765ff",
+      "to": [
+        15,
+        19,
+        8
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            10.6875,
+            8.0625,
+            10.9375,
+            8.125
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            11.0625,
+            8.0625,
+            11.1875,
+            8.125
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            11.3125,
+            8.0625,
+            11.5625,
+            8.125
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            11.6875,
+            8.0625,
+            11.8125,
+            8.125
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            11.9375,
+            8.0625,
+            12.1875,
+            8.1875
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12.3125,
+            8.0625,
+            12.5625,
+            8.1875
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        11,
+        18,
+        6
+      ]
+    },
+    {
+      "name": "receiver pedestal",
+      "type": "cube",
+      "uuid": "06a183b7-00fa-5562-b3a0-c0318cf749db",
+      "to": [
+        23,
+        2,
+        12
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            12.6875,
+            8.0625,
+            13.0625,
+            8.1875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            13.1875,
+            8.0625,
+            13.6875,
+            8.1875
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            13.8125,
+            8.0625,
+            14.1875,
+            8.1875
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            14.3125,
+            8.0625,
+            14.8125,
+            8.1875
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            14.9375,
+            8.0625,
+            15.3125,
+            8.5625
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            15.4375,
+            8.0625,
+            15.8125,
+            8.5625
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        17,
+        0,
+        4
+      ]
+    },
+    {
+      "name": "receiver support",
+      "type": "cube",
+      "uuid": "b95a33e3-2bf7-58ce-a805-0864dfcfdc1f",
+      "to": [
+        21,
+        8,
+        9
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            0.0625,
+            8.9375,
+            0.1875,
+            9.3125
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0.3125,
+            8.9375,
+            0.4375,
+            9.3125
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            0.5625,
+            8.9375,
+            0.6875,
+            9.3125
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            0.8125,
+            8.9375,
+            0.9375,
+            9.3125
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            1.0625,
+            8.9375,
+            1.1875,
+            9.0625
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            1.3125,
+            8.9375,
+            1.4375,
+            9.0625
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        19,
+        2,
+        7
+      ]
+    },
+    {
+      "name": "receiver blood sight",
+      "type": "cube",
+      "uuid": "ac297c8b-b2a7-5f3d-8ab8-e56a7cc3afe3",
+      "to": [
+        21,
+        15,
+        4
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            1.5625,
+            8.9375,
+            1.6875,
+            9.1875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            1.8125,
+            8.9375,
+            1.84375,
+            9.1875
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            1.96875,
+            8.9375,
+            2.09375,
+            9.1875
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            2.21875,
+            8.9375,
+            2.25,
+            9.1875
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            2.375,
+            8.9375,
+            2.5,
+            8.96875
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            2.625,
+            8.9375,
+            2.75,
+            8.96875
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        19,
+        11,
+        3.5
+      ]
+    },
+    {
+      "name": "mantle lower foundation",
+      "type": "cube",
+      "uuid": "a0304b1b-625e-5356-87e1-addc4191689a",
+      "to": [
+        25,
+        -3,
+        19
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            2.875,
+            8.9375,
+            4.6875,
+            9.0625
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            4.8125,
+            8.9375,
+            6.1875,
+            9.0625
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            6.3125,
+            8.9375,
+            8.125,
+            9.0625
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            8.25,
+            8.9375,
+            9.625,
+            9.0625
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            9.75,
+            8.9375,
+            11.5625,
+            10.3125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            11.6875,
+            8.9375,
+            13.5,
+            10.3125
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        -4,
+        -5,
+        -3
+      ]
+    },
+    {
+      "name": "mantle heating plinth",
+      "type": "cube",
+      "uuid": "a29f5015-5b9d-5694-8e5c-77133c19240d",
+      "to": [
+        24,
+        0,
+        18
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            13.625,
+            8.9375,
+            15.3125,
+            9.125
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0.0625,
+            10.4375,
+            1.3125,
+            10.625
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            1.4375,
+            10.4375,
+            3.125,
+            10.625
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            3.25,
+            10.4375,
+            4.5,
+            10.625
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            4.625,
+            10.4375,
+            6.3125,
+            11.6875
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            6.4375,
+            10.4375,
+            8.125,
+            11.6875
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        -3,
+        -3,
+        -2
+      ]
+    },
+    {
+      "name": "mantle foot front left",
+      "type": "cube",
+      "uuid": "4bef91ef-59e0-5495-971f-51a50828e8a3",
+      "to": [
+        0,
+        -5,
+        1
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            8.25,
+            10.4375,
+            8.4375,
+            10.5625
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            8.5625,
+            10.4375,
+            8.75,
+            10.5625
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            8.875,
+            10.4375,
+            9.0625,
+            10.5625
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            9.1875,
+            10.4375,
+            9.375,
+            10.5625
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            9.5,
+            10.4375,
+            9.6875,
+            10.625
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            9.8125,
+            10.4375,
+            10.0,
+            10.625
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        -3,
+        -7,
+        -2
+      ]
+    },
+    {
+      "name": "mantle foot front right",
+      "type": "cube",
+      "uuid": "a7f721b2-becd-5a8f-bb01-ab799ee646d8",
+      "to": [
+        24,
+        -5,
+        1
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            10.125,
+            10.4375,
+            10.3125,
+            10.5625
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            10.4375,
+            10.4375,
+            10.625,
+            10.5625
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            10.75,
+            10.4375,
+            10.9375,
+            10.5625
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            11.0625,
+            10.4375,
+            11.25,
+            10.5625
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            11.375,
+            10.4375,
+            11.5625,
+            10.625
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            11.6875,
+            10.4375,
+            11.875,
+            10.625
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        21,
+        -7,
+        -2
+      ]
+    },
+    {
+      "name": "mantle foot rear left",
+      "type": "cube",
+      "uuid": "e1ede2ab-10b8-5ef8-9209-629909fbc71f",
+      "to": [
+        0,
+        -5,
+        18
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            12.0,
+            10.4375,
+            12.1875,
+            10.5625
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            12.3125,
+            10.4375,
+            12.5,
+            10.5625
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12.625,
+            10.4375,
+            12.8125,
+            10.5625
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12.9375,
+            10.4375,
+            13.125,
+            10.5625
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            13.25,
+            10.4375,
+            13.4375,
+            10.625
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            13.5625,
+            10.4375,
+            13.75,
+            10.625
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        -3,
+        -7,
+        15
+      ]
+    },
+    {
+      "name": "mantle foot rear right",
+      "type": "cube",
+      "uuid": "43514d92-cee7-5f07-ba35-26606ddac2ca",
+      "to": [
+        24,
+        -5,
+        18
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            13.875,
+            10.4375,
+            14.0625,
+            10.5625
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            14.1875,
+            10.4375,
+            14.375,
+            10.5625
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            14.5,
+            10.4375,
+            14.6875,
+            10.5625
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            14.8125,
+            10.4375,
+            15.0,
+            10.5625
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            15.125,
+            10.4375,
+            15.3125,
+            10.625
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            15.4375,
+            10.4375,
+            15.625,
+            10.625
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        21,
+        -7,
+        15
+      ]
+    },
+    {
+      "name": "mantle bowl casing front",
+      "type": "cube",
+      "uuid": "5025381c-dcc6-561f-b654-1a74d5316b49",
+      "to": [
+        16,
+        3,
+        1
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            0.0625,
+            11.8125,
+            1.0625,
+            12.0
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            1.1875,
+            11.8125,
+            1.3125,
+            12.0
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            1.4375,
+            11.8125,
+            2.4375,
+            12.0
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            2.5625,
+            11.8125,
+            2.6875,
+            12.0
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            2.8125,
+            11.8125,
+            3.8125,
+            11.9375
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            3.9375,
+            11.8125,
+            4.9375,
+            11.9375
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        0,
+        0,
+        -1
+      ]
+    },
+    {
+      "name": "mantle bowl casing rear",
+      "type": "cube",
+      "uuid": "9a638e9b-4f8e-53c9-b27b-5a36b884c5eb",
+      "to": [
+        16,
+        3,
+        17
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            5.0625,
+            11.8125,
+            6.0625,
+            12.0
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            6.1875,
+            11.8125,
+            6.3125,
+            12.0
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            6.4375,
+            11.8125,
+            7.4375,
+            12.0
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            7.5625,
+            11.8125,
+            7.6875,
+            12.0
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            7.8125,
+            11.8125,
+            8.8125,
+            11.9375
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            8.9375,
+            11.8125,
+            9.9375,
+            11.9375
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        0,
+        0,
+        15
+      ]
+    },
+    {
+      "name": "mantle bowl casing left",
+      "type": "cube",
+      "uuid": "5a2696e3-0d56-5379-bbd1-b2f85a44a7b7",
+      "to": [
+        1,
+        3,
+        15
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            10.0625,
+            11.8125,
+            10.1875,
+            12.0
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            10.3125,
+            11.8125,
+            11.1875,
+            12.0
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            11.3125,
+            11.8125,
+            11.4375,
+            12.0
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            11.5625,
+            11.8125,
+            12.4375,
+            12.0
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12.5625,
+            11.8125,
+            12.6875,
+            12.6875
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12.8125,
+            11.8125,
+            12.9375,
+            12.6875
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        -1,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "mantle bowl casing right",
+      "type": "cube",
+      "uuid": "5e8a2551-3259-5dbc-b62c-15b181bda148",
+      "to": [
+        17,
+        3,
+        15
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            13.0625,
+            11.8125,
+            13.1875,
+            12.0
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            13.3125,
+            11.8125,
+            14.1875,
+            12.0
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            14.3125,
+            11.8125,
+            14.4375,
+            12.0
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            14.5625,
+            11.8125,
+            15.4375,
+            12.0
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            15.5625,
+            11.8125,
+            15.6875,
+            12.6875
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            15.8125,
+            11.8125,
+            15.9375,
+            12.6875
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        15,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "mantle raised bowl lip front",
+      "type": "cube",
+      "uuid": "df7d3b8c-923b-5e59-8c1c-1f87bc7b680d",
+      "to": [
+        15,
+        6,
+        2
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            0.0625,
+            12.8125,
+            0.9375,
+            13.0
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            1.0625,
+            12.8125,
+            1.125,
+            13.0
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            1.25,
+            12.8125,
+            2.125,
+            13.0
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            2.25,
+            12.8125,
+            2.3125,
+            13.0
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            2.4375,
+            12.8125,
+            3.3125,
+            12.875
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            3.4375,
+            12.8125,
+            4.3125,
+            12.875
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        1,
+        3,
+        1
+      ]
+    },
+    {
+      "name": "mantle raised bowl lip rear",
+      "type": "cube",
+      "uuid": "f03c150e-3119-55fd-af62-673403044e35",
+      "to": [
+        15,
+        6,
+        15
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            4.4375,
+            12.8125,
+            5.3125,
+            13.0
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            5.4375,
+            12.8125,
+            5.5,
+            13.0
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            5.625,
+            12.8125,
+            6.5,
+            13.0
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            6.625,
+            12.8125,
+            6.6875,
+            13.0
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            6.8125,
+            12.8125,
+            7.6875,
+            12.875
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            7.8125,
+            12.8125,
+            8.6875,
+            12.875
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        1,
+        3,
+        14
+      ]
+    },
+    {
+      "name": "mantle raised bowl lip left",
+      "type": "cube",
+      "uuid": "6e6562e7-a4ee-5aed-9807-520923cbcadd",
+      "to": [
+        2,
+        6,
+        14
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            8.8125,
+            12.8125,
+            8.875,
+            13.0
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            9.0,
+            12.8125,
+            9.75,
+            13.0
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            9.875,
+            12.8125,
+            9.9375,
+            13.0
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            10.0625,
+            12.8125,
+            10.8125,
+            13.0
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            10.9375,
+            12.8125,
+            11.0,
+            13.5625
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            11.125,
+            12.8125,
+            11.1875,
+            13.5625
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        1,
+        3,
+        2
+      ]
+    },
+    {
+      "name": "mantle raised bowl lip right",
+      "type": "cube",
+      "uuid": "79e4d253-9dbf-5b97-9f7c-ee2ea3ecf1bb",
+      "to": [
+        15,
+        6,
+        14
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            11.3125,
+            12.8125,
+            11.375,
+            13.0
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            11.5,
+            12.8125,
+            12.25,
+            13.0
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12.375,
+            12.8125,
+            12.4375,
+            13.0
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12.5625,
+            12.8125,
+            13.3125,
+            13.0
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            13.4375,
+            12.8125,
+            13.5,
+            13.5625
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            13.625,
+            12.8125,
+            13.6875,
+            13.5625
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        14,
+        3,
+        2
+      ]
+    },
+    {
+      "name": "mantle front heat window",
+      "type": "cube",
+      "uuid": "60a20260-00a5-513f-bab0-e65f787725a5",
+      "to": [
+        14,
+        -0.5,
+        -2
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            13.8125,
+            12.8125,
+            14.5625,
+            12.9375
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            14.6875,
+            12.8125,
+            14.703125,
+            12.9375
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            14.828125,
+            12.8125,
+            15.578125,
+            12.9375
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            15.703125,
+            12.8125,
+            15.71875,
+            12.9375
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            0.0625,
+            13.6875,
+            0.8125,
+            13.703125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            0.9375,
+            13.6875,
+            1.6875,
+            13.703125
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        2,
+        -2.5,
+        -2.25
+      ]
+    },
+    {
+      "name": "mantle rear heat window",
+      "type": "cube",
+      "uuid": "1ad547e0-c327-5bdb-a828-8dd49dd3dcdb",
+      "to": [
+        14,
+        -0.5,
+        18.25
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            1.8125,
+            13.6875,
+            2.5625,
+            13.8125
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            2.6875,
+            13.6875,
+            2.703125,
+            13.8125
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            2.828125,
+            13.6875,
+            3.578125,
+            13.8125
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            3.703125,
+            13.6875,
+            3.71875,
+            13.8125
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            3.84375,
+            13.6875,
+            4.59375,
+            13.703125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            4.71875,
+            13.6875,
+            5.46875,
+            13.703125
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        2,
+        -2.5,
+        18
+      ]
+    },
+    {
+      "name": "mantle left heat window",
+      "type": "cube",
+      "uuid": "9a432dab-3dc0-5976-bc40-3fb239dee138",
+      "to": [
+        -3,
+        -0.5,
+        13
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            5.59375,
+            13.6875,
+            5.609375,
+            13.8125
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            5.734375,
+            13.6875,
+            6.359375,
+            13.8125
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            6.484375,
+            13.6875,
+            6.5,
+            13.8125
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            6.625,
+            13.6875,
+            7.25,
+            13.8125
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            7.375,
+            13.6875,
+            7.390625,
+            14.3125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            7.515625,
+            13.6875,
+            7.53125,
+            14.3125
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        -3.25,
+        -2.5,
+        3
+      ]
+    },
+    {
+      "name": "mantle front vent bar 2",
+      "type": "cube",
+      "uuid": "09e722e7-f4cb-5ac4-9bc3-20ffedc6262a",
+      "to": [
+        2.5,
+        0,
+        -2.25
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            7.65625,
+            13.6875,
+            7.6875,
+            13.875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            7.8125,
+            13.6875,
+            7.828125,
+            13.875
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            7.953125,
+            13.6875,
+            7.984375,
+            13.875
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            8.109375,
+            13.6875,
+            8.125,
+            13.875
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            8.25,
+            13.6875,
+            8.28125,
+            13.703125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            8.40625,
+            13.6875,
+            8.4375,
+            13.703125
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        2,
+        -3,
+        -2.5
+      ]
+    },
+    {
+      "name": "mantle rear vent bar 2",
+      "type": "cube",
+      "uuid": "2de16066-4173-5d14-9677-95ee5062675c",
+      "to": [
+        2.5,
+        0,
+        18.5
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            8.5625,
+            13.6875,
+            8.59375,
+            13.875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            8.71875,
+            13.6875,
+            8.734375,
+            13.875
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            8.859375,
+            13.6875,
+            8.890625,
+            13.875
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            9.015625,
+            13.6875,
+            9.03125,
+            13.875
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            9.15625,
+            13.6875,
+            9.1875,
+            13.703125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            9.3125,
+            13.6875,
+            9.34375,
+            13.703125
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        2,
+        -3,
+        18.25
+      ]
+    },
+    {
+      "name": "mantle front vent bar 5",
+      "type": "cube",
+      "uuid": "e07d5d6c-a934-5695-b412-7667bb1048a5",
+      "to": [
+        5.5,
+        0,
+        -2.25
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            9.46875,
+            13.6875,
+            9.5,
+            13.875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            9.625,
+            13.6875,
+            9.640625,
+            13.875
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            9.765625,
+            13.6875,
+            9.796875,
+            13.875
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            9.921875,
+            13.6875,
+            9.9375,
+            13.875
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            10.0625,
+            13.6875,
+            10.09375,
+            13.703125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            10.21875,
+            13.6875,
+            10.25,
+            13.703125
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        5,
+        -3,
+        -2.5
+      ]
+    },
+    {
+      "name": "mantle rear vent bar 5",
+      "type": "cube",
+      "uuid": "cf6e91aa-729f-53a1-bdc0-76883bc06313",
+      "to": [
+        5.5,
+        0,
+        18.5
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            10.375,
+            13.6875,
+            10.40625,
+            13.875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            10.53125,
+            13.6875,
+            10.546875,
+            13.875
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            10.671875,
+            13.6875,
+            10.703125,
+            13.875
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            10.828125,
+            13.6875,
+            10.84375,
+            13.875
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            10.96875,
+            13.6875,
+            11.0,
+            13.703125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            11.125,
+            13.6875,
+            11.15625,
+            13.703125
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        5,
+        -3,
+        18.25
+      ]
+    },
+    {
+      "name": "mantle front vent bar 8",
+      "type": "cube",
+      "uuid": "8298831c-4e30-51ea-ac63-8a2996d7cd8c",
+      "to": [
+        8.5,
+        0,
+        -2.25
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            11.28125,
+            13.6875,
+            11.3125,
+            13.875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            11.4375,
+            13.6875,
+            11.453125,
+            13.875
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            11.578125,
+            13.6875,
+            11.609375,
+            13.875
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            11.734375,
+            13.6875,
+            11.75,
+            13.875
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            11.875,
+            13.6875,
+            11.90625,
+            13.703125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12.03125,
+            13.6875,
+            12.0625,
+            13.703125
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        8,
+        -3,
+        -2.5
+      ]
+    },
+    {
+      "name": "mantle rear vent bar 8",
+      "type": "cube",
+      "uuid": "db92cebe-2778-575d-a8a5-881bd422486b",
+      "to": [
+        8.5,
+        0,
+        18.5
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            12.1875,
+            13.6875,
+            12.21875,
+            13.875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            12.34375,
+            13.6875,
+            12.359375,
+            13.875
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            12.484375,
+            13.6875,
+            12.515625,
+            13.875
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            12.640625,
+            13.6875,
+            12.65625,
+            13.875
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            12.78125,
+            13.6875,
+            12.8125,
+            13.703125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            12.9375,
+            13.6875,
+            12.96875,
+            13.703125
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        8,
+        -3,
+        18.25
+      ]
+    },
+    {
+      "name": "mantle front vent bar 11",
+      "type": "cube",
+      "uuid": "01d501d8-9bc9-5287-b541-a1196d89ad8a",
+      "to": [
+        11.5,
+        0,
+        -2.25
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            13.09375,
+            13.6875,
+            13.125,
+            13.875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            13.25,
+            13.6875,
+            13.265625,
+            13.875
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            13.390625,
+            13.6875,
+            13.421875,
+            13.875
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            13.546875,
+            13.6875,
+            13.5625,
+            13.875
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            13.6875,
+            13.6875,
+            13.71875,
+            13.703125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            13.84375,
+            13.6875,
+            13.875,
+            13.703125
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        11,
+        -3,
+        -2.5
+      ]
+    },
+    {
+      "name": "mantle rear vent bar 11",
+      "type": "cube",
+      "uuid": "34aaf454-530a-549b-baa8-cecea4bad5a0",
+      "to": [
+        11.5,
+        0,
+        18.5
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            14.0,
+            13.6875,
+            14.03125,
+            13.875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            14.15625,
+            13.6875,
+            14.171875,
+            13.875
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            14.296875,
+            13.6875,
+            14.328125,
+            13.875
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            14.453125,
+            13.6875,
+            14.46875,
+            13.875
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            14.59375,
+            13.6875,
+            14.625,
+            13.703125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            14.75,
+            13.6875,
+            14.78125,
+            13.703125
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        11,
+        -3,
+        18.25
+      ]
+    },
+    {
+      "name": "mantle front vent bar 13.5",
+      "type": "cube",
+      "uuid": "2fb16671-d34b-5d4f-88af-dfe106953a64",
+      "to": [
+        14.0,
+        0,
+        -2.25
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            14.90625,
+            13.6875,
+            14.9375,
+            13.875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            15.0625,
+            13.6875,
+            15.078125,
+            13.875
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            15.203125,
+            13.6875,
+            15.234375,
+            13.875
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            15.359375,
+            13.6875,
+            15.375,
+            13.875
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            15.5,
+            13.6875,
+            15.53125,
+            13.703125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            15.65625,
+            13.6875,
+            15.6875,
+            13.703125
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        13.5,
+        -3,
+        -2.5
+      ]
+    },
+    {
+      "name": "mantle rear vent bar 13.5",
+      "type": "cube",
+      "uuid": "d3e67b9f-52c9-5202-b395-9e894e2caf90",
+      "to": [
+        14.0,
+        0,
+        18.5
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            15.8125,
+            13.6875,
+            15.84375,
+            13.875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0.0625,
+            14.4375,
+            0.078125,
+            14.625
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            0.203125,
+            14.4375,
+            0.234375,
+            14.625
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            0.359375,
+            14.4375,
+            0.375,
+            14.625
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            0.5,
+            14.4375,
+            0.53125,
+            14.453125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            0.65625,
+            14.4375,
+            0.6875,
+            14.453125
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        13.5,
+        -3,
+        18.25
+      ]
+    },
+    {
+      "name": "mantle left vent bar 3",
+      "type": "cube",
+      "uuid": "7660275f-60e3-57b5-a106-cf1e8fe8153b",
+      "to": [
+        -3.25,
+        0,
+        3.5
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            0.8125,
+            14.4375,
+            0.828125,
+            14.625
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0.953125,
+            14.4375,
+            0.984375,
+            14.625
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            1.109375,
+            14.4375,
+            1.125,
+            14.625
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            1.25,
+            14.4375,
+            1.28125,
+            14.625
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            1.40625,
+            14.4375,
+            1.421875,
+            14.46875
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            1.546875,
+            14.4375,
+            1.5625,
+            14.46875
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        -3.5,
+        -3,
+        3
+      ]
+    },
+    {
+      "name": "mantle left vent bar 6",
+      "type": "cube",
+      "uuid": "3ebf8fa6-d0d3-575d-bb22-6b2dc805132c",
+      "to": [
+        -3.25,
+        0,
+        6.5
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            1.6875,
+            14.4375,
+            1.703125,
+            14.625
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            1.828125,
+            14.4375,
+            1.859375,
+            14.625
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            1.984375,
+            14.4375,
+            2.0,
+            14.625
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            2.125,
+            14.4375,
+            2.15625,
+            14.625
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            2.28125,
+            14.4375,
+            2.296875,
+            14.46875
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            2.421875,
+            14.4375,
+            2.4375,
+            14.46875
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        -3.5,
+        -3,
+        6
+      ]
+    },
+    {
+      "name": "mantle left vent bar 9",
+      "type": "cube",
+      "uuid": "ca8fcf84-065c-51b7-9603-44b672c37197",
+      "to": [
+        -3.25,
+        0,
+        9.5
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            2.5625,
+            14.4375,
+            2.578125,
+            14.625
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            2.703125,
+            14.4375,
+            2.734375,
+            14.625
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            2.859375,
+            14.4375,
+            2.875,
+            14.625
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            3.0,
+            14.4375,
+            3.03125,
+            14.625
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            3.15625,
+            14.4375,
+            3.171875,
+            14.46875
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            3.296875,
+            14.4375,
+            3.3125,
+            14.46875
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        -3.5,
+        -3,
+        9
+      ]
+    },
+    {
+      "name": "mantle left vent bar 12.5",
+      "type": "cube",
+      "uuid": "078590ab-57f0-5e20-ba3e-c6e34d8b163b",
+      "to": [
+        -3.25,
+        0,
+        13.0
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            3.4375,
+            14.4375,
+            3.453125,
+            14.625
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            3.578125,
+            14.4375,
+            3.609375,
+            14.625
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            3.734375,
+            14.4375,
+            3.75,
+            14.625
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            3.875,
+            14.4375,
+            3.90625,
+            14.625
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            4.03125,
+            14.4375,
+            4.046875,
+            14.46875
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            4.171875,
+            14.4375,
+            4.1875,
+            14.46875
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        -3.5,
+        -3,
+        12.5
+      ]
+    },
+    {
+      "name": "mantle control housing",
+      "type": "cube",
+      "uuid": "9e59cb54-4ad7-573d-ae04-39b559c932c2",
+      "to": [
+        23,
+        2,
+        4
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            4.3125,
+            14.4375,
+            4.6875,
+            14.5625
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            4.8125,
+            14.4375,
+            5.0,
+            14.5625
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            5.125,
+            14.4375,
+            5.5,
+            14.5625
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            5.625,
+            14.4375,
+            5.8125,
+            14.5625
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            5.9375,
+            14.4375,
+            6.3125,
+            14.625
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            6.4375,
+            14.4375,
+            6.8125,
+            14.625
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        17,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "mantle control dial",
+      "type": "cube",
+      "uuid": "992cc432-db36-5753-9dbd-6719ecf59032",
+      "to": [
+        21,
+        1.5,
+        1
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            6.9375,
+            14.4375,
+            7.0625,
+            14.5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            7.1875,
+            14.4375,
+            7.21875,
+            14.5
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            7.34375,
+            14.4375,
+            7.46875,
+            14.5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            7.59375,
+            14.4375,
+            7.625,
+            14.5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            7.75,
+            14.4375,
+            7.875,
+            14.46875
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            8.0,
+            14.4375,
+            8.125,
+            14.46875
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        19,
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "name": "mantle heat indicator",
+      "type": "cube",
+      "uuid": "a94a98b7-d3e3-55be-8a7c-6487618192df",
+      "to": [
+        22.5,
+        1,
+        1
+      ],
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "box_uv": false,
+      "autouv": 0,
+      "shade": true,
+      "export": true,
+      "faces": {
+        "north": {
+          "uv": [
+            8.25,
+            14.4375,
+            8.28125,
+            14.46875
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            8.40625,
+            14.4375,
+            8.421875,
+            14.46875
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            8.546875,
+            14.4375,
+            8.578125,
+            14.46875
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            8.703125,
+            14.4375,
+            8.71875,
+            14.46875
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            8.84375,
+            14.4375,
+            8.875,
+            14.453125
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            9.0,
+            14.4375,
+            9.03125,
+            14.453125
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        22,
+        0.5,
+        0.75
+      ]
+    }
+  ],
+  "groups": [],
+  "outliner": [
+    {
+      "name": "Original Alembic",
+      "uuid": "359ef800-f888-5ef2-bee5-138d1b4e110f",
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "export": true,
+      "isOpen": true,
+      "visibility": true,
+      "children": [
+        "e9a670b3-9007-1f19-6b3a-c3630142fd5d",
+        "7fc02935-c13d-9c20-f7ed-06b0f8f921bf",
+        "98eee1ab-6543-ab1d-cf89-08b466bab7a8",
+        "98d7601a-c8bc-65e0-a386-e6c9772fdebd",
+        "c8eef0cf-fc0a-0620-e78c-795db14d3110",
+        "b880b532-df6c-b2c3-5576-2c470ab1e275",
+        "760776be-4f6d-4071-0cfa-95e7192e0ccf",
+        "faa51750-1f1f-0493-7193-fc320cb0be22",
+        "80cba25b-b3bb-5cce-cf42-b394158217cd",
+        "2134e526-cda2-620f-c34f-8c7300cff27b",
+        "970aa681-fa27-c757-a83f-8f148fc9e30a",
+        "64b2a634-4b85-5458-e14b-4e6f31ca1475",
+        "300a86eb-77f2-2e26-d968-f6cacd8e2c80",
+        "a7960510-d0af-0fa5-0dc8-f9aedf893d37",
+        "1d73a73c-57fc-f94f-be3d-b7f4e56725a6",
+        "7b017b3c-b9c6-3691-2c4e-1e47d674b53e",
+        "11b0cd00-0434-0deb-4618-637e44c14bc2",
+        "616fc729-5456-2f3c-b757-916d31261e7e",
+        "6ed57904-ed0f-1ed4-53fd-7c87bbb97d27",
+        "e701d03d-3e47-ce07-9647-ca3c5b5dba4a",
+        "c848e4b0-6cec-ecc6-5cc3-ae8cccc73a82",
+        "a4e8ad9c-d241-b0f9-e6f7-89a23304910e",
+        "97f6e7df-a099-e0e5-360d-09753d0180a1",
+        "bb835f69-f8db-e6e5-f61c-e7745c0c22f9"
+      ]
+    },
+    {
+      "name": "Condenser assembly",
+      "uuid": "aa556c5c-bd79-52cb-bcb8-a6b3e1ed4623",
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "export": true,
+      "isOpen": true,
+      "visibility": true,
+      "children": [
+        "fe215f53-7737-56bf-b82e-a56df326df73",
+        "359ca476-537c-5d58-9ab7-91e33969ad64",
+        "f6532490-4e77-58df-9605-a6a5efd3e774",
+        "79ced648-edc1-5d21-b1a8-277cfe9c1022",
+        "d7fac719-4c07-5eac-88f2-15221a63a56e",
+        "27670c1e-d33f-50cf-9dae-6dc4c6543a2e",
+        "a0c965af-4982-5f26-affa-444636889ab9",
+        "198b9ce6-ffa5-5e60-9f31-5c4af6d2c97e",
+        "b427945e-67fb-5f7d-a9e2-228b99d672f5",
+        "db2c0b13-837b-55e3-b030-95760909ee0c",
+        "03ae3020-6eae-5c0a-b865-0a6977d9ead5",
+        "2fc62780-8920-5f4a-803f-52c83217f4dd",
+        "48132257-8e4f-58ff-90c0-e260cf50da2d",
+        "b091d30b-4b1e-5107-997b-283366a0bf25",
+        "a5acab35-4729-51b4-9a61-ae237c9fa12f",
+        "16cfe769-9846-525a-839d-5549147a4c93",
+        "9086faa8-b1c1-53c8-b038-de99aa227ff4",
+        "92faab00-a1f3-5c07-9523-00e39bafdd57",
+        "b48e4cff-51c8-55a7-a2a4-ef8594edd473",
+        "984096ae-eadc-5baf-98c6-1cb39d032c2c",
+        "0c5a6863-195d-5742-a6d6-885f757f7065",
+        "40711f75-21f9-521a-b59c-19b1066f0c8b",
+        "07e96dbd-2645-53c4-a4c9-60324b3525fc",
+        "c5b5aeab-cc87-58f9-aafa-1a5568e765ff",
+        "06a183b7-00fa-5562-b3a0-c0318cf749db",
+        "b95a33e3-2bf7-58ce-a805-0864dfcfdc1f",
+        "ac297c8b-b2a7-5f3d-8ab8-e56a7cc3afe3"
+      ]
+    },
+    {
+      "name": "Athanor heating mantle",
+      "uuid": "dfdf84dc-3530-533b-ab87-2c117878857c",
+      "origin": [
+        8,
+        0,
+        8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "export": true,
+      "isOpen": true,
+      "visibility": true,
+      "children": [
+        "a0304b1b-625e-5356-87e1-addc4191689a",
+        "a29f5015-5b9d-5694-8e5c-77133c19240d",
+        "4bef91ef-59e0-5495-971f-51a50828e8a3",
+        "a7f721b2-becd-5a8f-bb01-ab799ee646d8",
+        "e1ede2ab-10b8-5ef8-9209-629909fbc71f",
+        "43514d92-cee7-5f07-ba35-26606ddac2ca",
+        "5025381c-dcc6-561f-b654-1a74d5316b49",
+        "9a638e9b-4f8e-53c9-b27b-5a36b884c5eb",
+        "5a2696e3-0d56-5379-bbd1-b2f85a44a7b7",
+        "5e8a2551-3259-5dbc-b62c-15b181bda148",
+        "df7d3b8c-923b-5e59-8c1c-1f87bc7b680d",
+        "f03c150e-3119-55fd-af62-673403044e35",
+        "6e6562e7-a4ee-5aed-9807-520923cbcadd",
+        "79e4d253-9dbf-5b97-9f7c-ee2ea3ecf1bb",
+        "60a20260-00a5-513f-bab0-e65f787725a5",
+        "1ad547e0-c327-5bdb-a828-8dd49dd3dcdb",
+        "9a432dab-3dc0-5976-bc40-3fb239dee138",
+        "09e722e7-f4cb-5ac4-9bc3-20ffedc6262a",
+        "2de16066-4173-5d14-9677-95ee5062675c",
+        "e07d5d6c-a934-5695-b412-7667bb1048a5",
+        "cf6e91aa-729f-53a1-bdc0-76883bc06313",
+        "8298831c-4e30-51ea-ac63-8a2996d7cd8c",
+        "db92cebe-2778-575d-a8a5-881bd422486b",
+        "01d501d8-9bc9-5287-b541-a1196d89ad8a",
+        "34aaf454-530a-549b-baa8-cecea4bad5a0",
+        "2fb16671-d34b-5d4f-88af-dfe106953a64",
+        "d3e67b9f-52c9-5202-b395-9e894e2caf90",
+        "7660275f-60e3-57b5-a106-cf1e8fe8153b",
+        "3ebf8fa6-d0d3-575d-bb22-6b2dc805132c",
+        "ca8fcf84-065c-51b7-9603-44b672c37197",
+        "078590ab-57f0-5e20-ba3e-c6e34d8b163b",
+        "9e59cb54-4ad7-573d-ae04-39b559c932c2",
+        "992cc432-db36-5753-9dbd-6719ecf59032",
+        "a94a98b7-d3e3-55be-8a7c-6487618192df"
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "id": "0",
+      "uuid": "108b008b-0822-5394-bb3b-f957dc3623ee",
+      "name": "ghastly_alembic_athanor_atlas.png",
+      "width": 1024,
+      "height": 1024,
+      "uv_width": 16,
+      "uv_height": 16,
+      "source": "data:image/png;base64,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",
+      "mode": "bitmap",
+      "saved": false,
+      "internal": true,
+      "render_mode": "default",
+      "render_sides": "double",
+      "visible": true
+    }
+  ],
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        75,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.25,
+        0.25,
+        0.25
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        1,
+        0
+      ],
+      "scale": [
+        0.25,
+        0.25,
+        0.25
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.25,
+        0.25,
+        0.25
+      ]
+    },
+    "gui": {
+      "rotation": [
+        30,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        -1.75,
+        0
+      ],
+      "scale": [
+        0.37,
+        0.37,
+        0.37
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        -180,
+        0
+      ],
+      "translation": [
+        0,
+        -4,
+        0
+      ],
+      "scale": [
+        0.25,
+        0.25,
+        0.25
+      ]
+    }
+  },
+  "model_identifier": "ghastly_alembic_athanor"
+}

@@ -198,6 +198,15 @@ public class MasonsEffigyBlock extends Block implements EntityBlock, SimpleWater
 	}
 
 	@Override
+	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+		if (!state.is(newState.getBlock())
+				&& level.getBlockEntity(pos) instanceof MasonsEffigyBlockEntity effigy) {
+			effigy.dropPendingMotif();
+		}
+		super.onRemove(state, level, pos, newState, isMoving);
+	}
+
+	@Override
 	public FluidState getFluidState(BlockState state) {
 		return WaterloggedBlockSupport.fluidState(state);
 	}

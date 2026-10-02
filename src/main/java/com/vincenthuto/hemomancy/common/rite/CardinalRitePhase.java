@@ -8,8 +8,7 @@ public enum CardinalRitePhase {
 	LEGACY,
 	CONSECRATION,
 	INSCRIPTION,
-	SCRIPTORIAL_INSCRIPTION,
-	ALEMBIC_PROJECTION,
+	STATION_PROJECTION,
 	ORDEAL,
 	PUPPET_TRIAL,
 	STILL_INTERVAL,
@@ -22,6 +21,9 @@ public enum CardinalRitePhase {
 		if (name == null || name.isBlank()) {
 			return LEGACY;
 		}
+		if (name.equals("ALEMBIC_PROJECTION")) return STATION_PROJECTION;
+		// The Scriptorium's orb inscription was removed; its rites never escrowed offerings, so collapse safely.
+		if (name.equals("SCRIPTORIAL_INSCRIPTION")) return COLLAPSED;
 		try {
 			return valueOf(name);
 		} catch (IllegalArgumentException ignored) {

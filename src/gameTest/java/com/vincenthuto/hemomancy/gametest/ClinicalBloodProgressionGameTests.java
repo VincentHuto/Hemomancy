@@ -1,11 +1,23 @@
 package com.vincenthuto.hemomancy.gametest;
 
+import net.minecraft.network.chat.Component;
+import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitMode;
+
 import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemorySlotRef;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
+import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager;
+import com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.UseManipKeyPacket;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.block.harbinger.EscharianScyphusBlock;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerMnemonistDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ClinicalBloodDialogue;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueCategory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
@@ -30,6 +42,13 @@ import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncVesperFightScene;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomEvents;
+import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
+import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCancellationHandler;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteInteractionHandler;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteTargetGeometry;
+import com.vincenthuto.hemomancy.common.entity.utility.HumanitySpriteEntity;
 import com.vincenthuto.hemomancy.common.worldgen.VesperOrdealManager;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.gametest.journey.HemoJourneyFixtures;
@@ -80,6 +99,10 @@ import static com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodPr
 @GameTestHolder("clinical_validation")
 @PrefixGameTestTemplate(false)
 public final class ClinicalBloodProgressionGameTests {
+    private static final net.minecraft.server.level.TicketType<UUID> ROOTED_VEIN_TICKET =
+            net.minecraft.server.level.TicketType.create("hemomancy_rooted_vein_test", UUID::compareTo);
+    private static final net.minecraft.server.level.TicketType<UUID> CHAMBER_ITEM_FIXTURE_TICKET =
+            net.minecraft.server.level.TicketType.create("hemomancy_chamber_item_fixture", UUID::compareTo);
     private static ServerPlayer player(GameTestHelper h, int degree) {
         return player(h, degree, h.getLevel());
     }
@@ -88,12 +111,18 @@ public final class ClinicalBloodProgressionGameTests {
     }
     private static ServerPlayer player(GameTestHelper h, int degree, net.minecraft.server.level.ServerLevel level,
             java.util.function.Consumer<net.minecraft.network.protocol.Packet<?>> received) {
-        var cookie = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(), "clinical-test"), false);
+        return player(h, degree, level, received, new GameProfile(UUID.randomUUID(), "clinical-test"));
+    }
+    private static ServerPlayer player(GameTestHelper h, int degree, net.minecraft.server.level.ServerLevel level,
+            java.util.function.Consumer<net.minecraft.network.protocol.Packet<?>> received, GameProfile profile) {
+        var cookie = CommonListenerCookie.createInitial(profile, false);
         var p = new ServerPlayer(level.getServer(), level, cookie.gameProfile(), cookie.clientInformation());
         var connection = new Connection(PacketFlow.SERVERBOUND);
         new EmbeddedChannel(connection);
         new ServerGamePacketListenerImpl(p.server, connection, p, cookie) {
             @Override public void send(net.minecraft.network.protocol.Packet<?> packet) { received.accept(packet); }
+            @Override public void send(net.minecraft.network.protocol.Packet<?> packet,
+                    net.minecraft.network.PacketSendListener listener) { received.accept(packet); }
         };
         p.setGameMode(GameType.SURVIVAL);
         p.setPos(level == h.getLevel() ? h.absolutePos(new BlockPos(0, 3, 0)).getCenter()
@@ -109,6 +138,2023 @@ public final class ClinicalBloodProgressionGameTests {
                 && custom.payload() instanceof PacketSyncVesperFightScene scene) scenes.add(scene);
         if (packet instanceof net.minecraft.network.protocol.game.ClientboundBundlePacket bundle)
             bundle.subPackets().forEach(child -> captureVesperScene(child, scenes));
+    }
+
+    @GameTest(template = "empty") public static void distributorSaveRequiresLearnedThelemicMemory(GameTestHelper h) {
+        var p = player(h, 5);
+        var pos = h.absolutePos(new BlockPos(1, 2, 1));
+        h.getLevel().setBlockAndUpdate(pos, BlockInit.dendritic_distributor.get().defaultBlockState());
+        p.setPos(pos.getCenter());
+        var known = HemoCapabilityAccess.getKnownManipulations(p).orElseThrow();
+        var volume = HemoCapabilityAccess.requireBloodVolume(p);
+        volume.setActive(true);
+        volume.setBloodVolume(1000);
+        p.giveExperiencePoints(100);
+        var memory = MuscleMemory.SANGUINE_FISTS;
+        String key = MemorySlotRef.muscleMemory(memory).storageKey();
+        known.setEquippedManipNames(List.of(key));
+        known.setSelectedMemoryRef(MemorySlotRef.muscleMemory(memory));
+        try {
+            distributorAction(p, pos, 0,
+                    com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SynapticLoadoutActionPacket.Action.SAVE_OR_OVERWRITE);
+            h.assertTrue(known.getLoadout(0).isEmpty() && volume.getBloodVolume() == 1000
+                            && p.totalExperience == 100,
+                    "An unlearned equipped Thelemic key must not save or spend blood/XP");
+            p.getData(HemoAttachmentTypes.MUSCLE_MEMORY).learnAndAddReserve(memory, 200);
+            distributorAction(p, pos, 0,
+                    com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SynapticLoadoutActionPacket.Action.SAVE_OR_OVERWRITE);
+            h.assertTrue(known.getLoadout(0).manipNames().equals(List.of(key))
+                            && known.getLoadout(0).selectedManipName().equals(key)
+                            && volume.getBloodVolume() == 900 && p.totalExperience == 75,
+                    "Learning the same Thelemic memory must allow normal paid Save");
+            h.assertTrue(p.getData(HemoAttachmentTypes.MUSCLE_MEMORY).reserveTicks(memory) == 200,
+                    "Saving a pattern must not consume its Thelemic reserve");
+            h.succeed();
+        } finally { p.discard(); }
+    }
+
+    @GameTest(template = "empty") public static void distributorRejectsRemoteActionsWithoutMutation(GameTestHelper h) {
+        var p = player(h, 5);
+        var pos = h.absolutePos(new BlockPos(1, 2, 1));
+        h.getLevel().setBlockAndUpdate(pos, BlockInit.dendritic_distributor.get().defaultBlockState());
+        p.setPos(pos.getCenter().add(9, 0, 0));
+        var known = HemoCapabilityAccess.getKnownManipulations(p).orElseThrow();
+        var volume = HemoCapabilityAccess.requireBloodVolume(p);
+        volume.setActive(true);
+        volume.setBloodVolume(1000);
+        p.giveExperiencePoints(100);
+        var memory = MuscleMemory.SANGUINE_FISTS;
+        p.getData(HemoAttachmentTypes.MUSCLE_MEMORY).learnAndAddReserve(memory, 200);
+        String key = MemorySlotRef.muscleMemory(memory).storageKey();
+        var saved = com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout.of(
+                "Retained pattern", key, List.of(key), 0);
+        known.setLoadout(0, saved);
+        p.getData(HemoAttachmentTypes.MUSCLE_MEMORY).learnAndAddReserve(MuscleMemory.LABORING_ARMS, 200);
+        known.setEquippedMemoryRefs(List.of(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS)));
+        known.setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS));
+        var equipped = List.copyOf(known.getEquippedManipNames());
+        var selected = known.getSelectedMemoryRef();
+        try {
+            for (var action : com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SynapticLoadoutActionPacket.Action.values()) {
+                distributorAction(p, pos, 0, action);
+                h.assertTrue(known.getLoadout(0).equals(saved)
+                                && known.getEquippedManipNames().equals(equipped)
+                                && known.getSelectedMemoryRef().equals(selected)
+                                && volume.getBloodVolume() == 1000 && p.totalExperience == 100,
+                        "Remote " + action + " must retain pattern, equipment, selection and costs");
+            }
+            h.succeed();
+        } finally { p.discard(); }
+    }
+
+    @GameTest(template = "empty") public static void distributorApplyRejectsUnknownAndOverCapacityPatterns(GameTestHelper h) {
+        var p = player(h, 5);
+        var pos = h.absolutePos(new BlockPos(1, 2, 1));
+        h.getLevel().setBlockAndUpdate(pos, BlockInit.dendritic_distributor.get().defaultBlockState());
+        p.setPos(pos.getCenter());
+        var known = HemoCapabilityAccess.getKnownManipulations(p).orElseThrow();
+        var volume = HemoCapabilityAccess.requireBloodVolume(p);
+        volume.setActive(true);
+        volume.setBloodVolume(1000);
+        p.giveExperiencePoints(100);
+        var muscle = p.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+        muscle.learnAndAddReserve(MuscleMemory.LABORING_ARMS, 200);
+        muscle.activate(MuscleMemory.LABORING_ARMS);
+        known.setEquippedMemoryRefs(List.of(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS)));
+        known.setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS));
+        var equipped = List.copyOf(known.getEquippedManipNames());
+        var selected = known.getSelectedMemoryRef();
+        try {
+            var unknownThelemic = List.of(MemorySlotRef.muscleMemory(MuscleMemory.SANGUINE_FISTS).storageKey());
+            var unknownNoetic = List.of("missing_distributor_test_memory");
+            var allThelemic = java.util.Arrays.stream(MuscleMemory.values())
+                    .map(memory -> MemorySlotRef.muscleMemory(memory).storageKey()).toList();
+            for (var names : List.of(unknownThelemic, unknownNoetic, allThelemic)) {
+                if (names == allThelemic) {
+                    for (var memory : MuscleMemory.values()) muscle.learnAndAddReserve(memory, 200);
+                    h.assertTrue(names.size() > com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper.getMaxSlots(p),
+                            "The capacity fixture must exceed this player's actual shared limit");
+                }
+                var saved = com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout.of(
+                        "Rejected pattern", names.getFirst(), names, 0);
+                known.setLoadout(0, saved);
+                int reserve = muscle.reserveTicks(MuscleMemory.LABORING_ARMS);
+                distributorAction(p, pos, 0,
+                        com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SynapticLoadoutActionPacket.Action.APPLY);
+                h.assertTrue(known.getLoadout(0).equals(saved) && known.getEquippedManipNames().equals(equipped)
+                                && known.getSelectedMemoryRef().equals(selected) && muscle.isEnabled(MuscleMemory.LABORING_ARMS)
+                                && muscle.reserveTicks(MuscleMemory.LABORING_ARMS) == reserve
+                                && volume.getBloodVolume() == 1000 && p.totalExperience == 100,
+                        "Rejected Apply must retain saved pattern, current memories, activation, reserve and costs: " + names);
+            }
+            h.succeed();
+        } finally { p.discard(); }
+    }
+
+    private static void distributorAction(ServerPlayer player, BlockPos pos, int slot,
+            com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SynapticLoadoutActionPacket.Action action) {
+        var context = (net.neoforged.neoforge.network.handling.IPayloadContext) java.lang.reflect.Proxy.newProxyInstance(
+                ClinicalBloodProgressionGameTests.class.getClassLoader(),
+                new Class<?>[]{net.neoforged.neoforge.network.handling.IPayloadContext.class}, (proxy, method, args) -> {
+                    if (method.getName().equals("player")) return player;
+                    if (method.getName().equals("enqueueWork")) {
+                        ((Runnable) args[0]).run();
+                        return java.util.concurrent.CompletableFuture.completedFuture(null);
+                    }
+                    throw new UnsupportedOperationException(method.getName());
+                });
+        com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SynapticLoadoutActionPacket.handle(
+                new com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SynapticLoadoutActionPacket(
+                        action, pos, slot, "Changed pattern"), context);
+    }
+
+    @GameTest(template = "empty") public static void distributorApplySynchronizesOmittedThelemicMemory(GameTestHelper h) {
+        var states = new ArrayList<com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncMuscleMemory>();
+        var p = player(h, 5, h.getLevel(), packet -> captureDistributorMuscleState(packet, states));
+        h.getLevel().addNewPlayer(p);
+        var pos = h.absolutePos(new BlockPos(1, 2, 1));
+        h.getLevel().setBlockAndUpdate(pos, BlockInit.dendritic_distributor.get().defaultBlockState());
+        p.setPos(pos.getCenter());
+        var known = HemoCapabilityAccess.getKnownManipulations(p).orElseThrow();
+        var volume = HemoCapabilityAccess.requireBloodVolume(p);
+        volume.setActive(true);
+        volume.setBloodVolume(1000);
+        var muscle = p.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+        muscle.learnAndAddReserve(MuscleMemory.LABORING_ARMS, 200);
+        muscle.learnAndAddReserve(MuscleMemory.SANGUINE_FISTS, 300);
+        muscle.activate(MuscleMemory.LABORING_ARMS);
+        known.setEquippedMemoryRefs(List.of(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS)));
+        known.setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS));
+        String key = MemorySlotRef.muscleMemory(MuscleMemory.SANGUINE_FISTS).storageKey();
+        known.setLoadout(0, com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout.of(
+                "Fists", key, List.of(key), 0));
+        states.clear();
+        try {
+            distributorAction(p, pos, 0,
+                    com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SynapticLoadoutActionPacket.Action.APPLY);
+            h.assertTrue(!muscle.hasEnabledMemories() && muscle.reserveTicks(MuscleMemory.LABORING_ARMS) == 200
+                            && muscle.reserveTicks(MuscleMemory.SANGUINE_FISTS) == 300
+                            && known.getSelectedMemoryRef().storageKey().equals(key)
+                            && volume.getBloodVolume() == 1000 && p.totalExperience == 0,
+                    "Apply must stop the omitted memory, preserve reserves, select the saved memory and remain free");
+            h.assertTrue(states.size() == 1 && states.getFirst().playerId() == p.getId(),
+                    "Stopping the final active Thelemic memory must synchronize it immediately to its player; packets=" + states.size());
+            var clientState = new com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryState();
+            clientState.deserializeNBT(null, states.getFirst().state());
+            h.assertTrue(!clientState.hasEnabledMemories() && clientState.knows(MuscleMemory.LABORING_ARMS)
+                            && clientState.reserveTicks(MuscleMemory.LABORING_ARMS) == 200
+                            && clientState.reserveTicks(MuscleMemory.SANGUINE_FISTS) == 300,
+                    "The sent state must retain knowledge/reserves and clear the omitted activation");
+            distributorAction(p, pos, 0,
+                    com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SynapticLoadoutActionPacket.Action.APPLY);
+            h.assertTrue(states.size() == 1, "Repeating unchanged Apply must not emit another muscle-state update");
+            h.succeed();
+        } finally { p.discard(); }
+    }
+
+    private static void captureDistributorMuscleState(net.minecraft.network.protocol.Packet<?> packet,
+            List<com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncMuscleMemory> states) {
+        if (packet instanceof net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket custom
+                && custom.payload() instanceof com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncMuscleMemory state)
+            states.add(state);
+        if (packet instanceof net.minecraft.network.protocol.game.ClientboundBundlePacket bundle)
+            bundle.subPackets().forEach(child -> captureDistributorMuscleState(child, states));
+    }
+
+    @GameTest(template = "empty") public static void distributorPatternsRetainMixedAndLegacySelectionsAcrossNbt(GameTestHelper h) {
+        var p = player(h, 5);
+        var pos = h.absolutePos(new BlockPos(1, 2, 1));
+        h.getLevel().setBlockAndUpdate(pos, BlockInit.dendritic_distributor.get().defaultBlockState());
+        p.setPos(pos.getCenter());
+        var known = HemoCapabilityAccess.getKnownManipulations(p).orElseThrow();
+        var volume = HemoCapabilityAccess.requireBloodVolume(p);
+        volume.setActive(true);
+        volume.setBloodVolume(1000);
+        com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper.learnAndEquipIfPossible(
+                known, ManipulationInit.getByName("blood_shot"), 5);
+        var muscle = p.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+        muscle.learnAndAddReserve(MuscleMemory.SANGUINE_FISTS, 300);
+        String key = MemorySlotRef.muscleMemory(MuscleMemory.SANGUINE_FISTS).storageKey();
+        var legacy = com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout.of(
+                "Old shot", "blood_shot", List.of("blood_shot"), 0);
+        var mixed = com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout.of(
+                "Mixed field", key, List.of("blood_shot", key), 2);
+        known.setLoadout(0, legacy);
+        known.setLoadout(2, mixed);
+        known.setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.SANGUINE_FISTS));
+        try {
+            var source = p.getData(HemoAttachmentTypes.KNOWN_MANIPULATIONS);
+            var restored = new com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulations();
+            restored.deserializeNBT(h.getLevel().registryAccess(), source.serializeNBT(h.getLevel().registryAccess()).copy());
+            h.assertTrue(restored.getLoadouts().size() == 3 && restored.getLoadout(0).equals(legacy)
+                            && restored.getLoadout(1).isEmpty() && restored.getLoadout(2).equals(mixed)
+                            && restored.getSelectedMemoryRef().storageKey().equals(key),
+                    "NBT must retain legacy and mixed names/order/preferred selection and their empty intermediate slot");
+            known.setLoadouts(List.of());
+            known.setCapa(restored);
+            for (int slot : new int[]{0, 2}) {
+                var pattern = known.getLoadout(slot);
+                distributorAction(p, pos, slot,
+                        com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SynapticLoadoutActionPacket.Action.APPLY);
+                h.assertTrue(known.getEquippedManipNames().containsAll(pattern.manipNames())
+                                && com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper
+                                        .countNormalEquippedNames(known.getEquippedManipNames()) == pattern.manipNames().size()
+                                && known.getSelectedMemoryRef().storageKey().equals(pattern.selectedManipName())
+                                && known.getLoadout(0).equals(legacy) && known.getLoadout(2).equals(mixed)
+                                && volume.getBloodVolume() == 1000 && p.totalExperience == 0
+                                && muscle.reserveTicks(MuscleMemory.SANGUINE_FISTS) == 300,
+                        "Restored pattern must Apply without record mutation, costs or lost reserve: " + slot);
+            }
+            h.succeed();
+        } finally { p.discard(); }
+    }
+
+    @GameTest(template = "empty") public static void scarTemplateCommitCannotReplacePersonalEffigyPractice(GameTestHelper h) {
+        scarCommitWithoutPractice(h, true);
+    }
+
+    @GameTest(template = "empty") public static void giftedScarLoadoutCannotReplacePersonalEffigyPractice(GameTestHelper h) {
+        scarCommitWithoutPractice(h, false);
+    }
+
+    @GameTest(template = "empty") public static void existingScarMainProofSurvivesWithoutTheIntermediateEffigyMilestone(GameTestHelper h) {
+        var p = player(h, 4);
+        var id = Hemomancy.rloc("scar_heart");
+        var scars = HemoCapabilityAccess.requireScarState(p);
+        scars.addKnownCerebralScar(id);
+        var volume = HemoCapabilityAccess.requireBloodVolume(p);
+        volume.setActive(true);
+        volume.setBloodVolume(1000);
+        HarbingerAdvancementGranter.grantIfNotDone(p, HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_EFFIGY_LOADOUT);
+        var pattern = com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern.createTemplatePattern(id);
+        try {
+            com.vincenthuto.hemomancy.common.rite.ScarBrazierRite.burn(h.getLevel(), p.blockPosition(), p, pattern,
+                    com.vincenthuto.hemomancy.common.rite.ScarBrazierInteractionRules.Burn.COMMIT);
+            h.assertTrue(pattern.isEmpty() && scars.getActiveCerebralScars().contains(id)
+                    && volume.getBloodVolume() == 950, "Existing practitioners must retain normal loadout use");
+            h.assertTrue(HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(p)
+                    && !HarbingerAdvancementGranter.isVeinMasonFirstEffigyPattern(p),
+                    "Existing Main proof survives without fabricating intermediate practice");
+            h.assertTrue(HarbingerAdvancementGranter.isVeinMasonContinuationReady(p),
+                    "Existing earned Main proof must retain continuation eligibility");
+            h.succeed();
+        } finally { p.discard(); }
+    }
+
+    private static void scarCommitWithoutPractice(GameTestHelper h, boolean template) {
+        var p = player(h, 4);
+        var id = Hemomancy.rloc("scar_heart");
+        var scars = HemoCapabilityAccess.requireScarState(p);
+        scars.addKnownCerebralScar(id);
+        var volume = HemoCapabilityAccess.requireBloodVolume(p);
+        volume.setActive(true);
+        volume.setBloodVolume(1000);
+        var pattern = template
+                ? com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern.createTemplatePattern(id)
+                : com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern.createPreparedPattern(List.of(id));
+        try {
+            com.vincenthuto.hemomancy.common.rite.ScarBrazierRite.burn(h.getLevel(), p.blockPosition(), p, pattern,
+                    com.vincenthuto.hemomancy.common.rite.ScarBrazierInteractionRules.Burn.COMMIT);
+            h.assertTrue(pattern.isEmpty() && scars.getActiveCerebralScars().contains(id)
+                    && volume.getBloodVolume() == 950, "Known loadouts remain usable and pay the ordinary commit cost");
+            h.assertTrue(!HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(p),
+                    "Committing a template or gift without personal Effigy preparation must not grant the D4 Main proof");
+            h.assertTrue(!HarbingerAdvancementGranter.hasAdvancement(p,
+                    HarbingerAdvancementGranter.ADV_VEIN_MASON_CONTINUATION_READY),
+                    "Unearned Main proof must not unlock the continuation reward");
+            h.succeed();
+        } finally { p.discard(); }
+    }
+
+    @GameTest(template = "empty") public static void personalEffigyPreparationThenCommitEarnsOnlyTheActorsMainProof(GameTestHelper h) {
+        var actor = player(h, 4);
+        var guest = player(h, 4);
+        var id = Hemomancy.rloc("scar_heart");
+        var pos = h.absolutePos(new BlockPos(1, 2, 1));
+        h.getLevel().setBlockAndUpdate(pos, BlockInit.mason_effigy.get().defaultBlockState());
+        var effigy = (com.vincenthuto.hemomancy.common.tile.harbinger.functional.MasonsEffigyBlockEntity)
+                h.getLevel().getBlockEntity(pos);
+        try {
+            for (var p : List.of(actor, guest)) {
+                HemoCapabilityAccess.requireScarState(p).addKnownCerebralScar(id);
+                var volume = HemoCapabilityAccess.requireBloodVolume(p);
+                volume.setActive(true);
+                volume.setBloodVolume(1000);
+            }
+            effigy.setSelectedScarIds(List.of(id));
+            h.assertTrue(effigy.beginMotifRitual(actor, new ItemStack(ItemInit.runic_motif_paper.get())),
+                    "Selected known scar must accept motif paper");
+            effigy.receiveProjectedBlood(actor, 500, false);
+            h.assertTrue(HarbingerAdvancementGranter.isVeinMasonFirstEffigyPattern(actor)
+                    && !HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(actor),
+                    "Actual preparation records only the intermediate milestone");
+            var outputs = h.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(pos).inflate(2),
+                    item -> item.getItem().is(ItemInit.scar_pattern.get()));
+            h.assertTrue(outputs.size() == 1, "Actual preparation must eject one pattern");
+            var gifted = outputs.getFirst().getItem().copy();
+            com.vincenthuto.hemomancy.common.rite.ScarBrazierRite.burn(h.getLevel(), pos, guest, gifted,
+                    com.vincenthuto.hemomancy.common.rite.ScarBrazierInteractionRules.Burn.COMMIT);
+            h.assertTrue(!HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(guest),
+                    "Another practitioner's real Effigy output cannot supply personal practice");
+            var ownPattern = outputs.getFirst().getItem();
+            com.vincenthuto.hemomancy.common.rite.ScarBrazierRite.burn(h.getLevel(), pos, actor, ownPattern,
+                    com.vincenthuto.hemomancy.common.rite.ScarBrazierInteractionRules.Burn.COMMIT);
+            h.assertTrue(ownPattern.isEmpty() && HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(actor),
+                    "Actual preparation followed by commit must earn the actor's Main proof");
+            h.assertTrue(HarbingerAdvancementGranter.hasAdvancement(actor,
+                    HarbingerAdvancementGranter.ADV_VEIN_MASON_CONTINUATION_READY), "Completed cycle must unlock continuation");
+            h.succeed();
+        } finally { actor.discard(); guest.discard(); }
+    }
+
+    @GameTest(template = "empty") public static void scarLessonUnlocksRegisteredLiberPracticePage(GameTestHelper h) {
+        var actor = player(h, 4);
+        var entry = Hemomancy.rloc("libersanguinium/the_hematic_order/pages/scar_practice");
+        try {
+            h.assertTrue(!LiberKnowledgeHelper.hasEntry(actor, entry), "D4 alone must not supply the scar lesson page");
+            HarbingerAdvancementGranter.grantIfNotDone(actor, HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_LESSON);
+            h.assertTrue(LiberKnowledgeHelper.hasEntry(actor, entry)
+                    && com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions
+                            .get(entry).isPresent(),
+                    "Accepted first scar lesson must unlock a registered, visible Liber page");
+            h.assertTrue(!HarbingerAdvancementGranter.isVeinMasonFirstEffigyPattern(actor)
+                    && !HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(actor),
+                    "Reading access must not substitute for scar preparation or commit");
+            h.succeed();
+        } finally { actor.discard(); }
+    }
+
+    @GameTest(template = "empty") public static void earnedScarLessonBackfillsPracticePageWithoutNewRewards(GameTestHelper h) {
+        var actor = player(h, 4);
+        var newcomer = player(h, 4);
+        var entry = Hemomancy.rloc("libersanguinium/the_hematic_order/pages/scar_practice");
+        try {
+            HarbingerAdvancementGranter.grantIfNotDone(actor, HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_LESSON);
+            var knowledge = actor.getData(HemoAttachmentTypes.LIBER_KNOWLEDGE);
+            var legacy = new com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledge();
+            var other = Hemomancy.rloc("libersanguinium/intro/pages/hemomancy");
+            legacy.unlockEntry(other, com.vincenthuto.hutoslib.common.book.knowledge.CommonDiscoverySource.OTHER);
+            knowledge.setFrom(legacy);
+            h.assertTrue(!knowledge.hasEntry(entry), "Legacy fixture must begin with the missing page");
+            com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledgeEvents.playerLoggedIn(
+                    new PlayerEvent.PlayerLoggedInEvent(actor));
+            com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledgeEvents.playerLoggedIn(
+                    new PlayerEvent.PlayerLoggedInEvent(newcomer));
+            h.assertTrue(knowledge.hasEntry(entry) && knowledge.hasEntry(other)
+                    && !LiberKnowledgeHelper.hasEntry(newcomer, entry),
+                    "Login must restore only the earned scar lesson page, preserving existing knowledge");
+            int count = knowledge.getUnlockedEntries().size();
+            com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledgeEvents.playerLoggedIn(
+                    new PlayerEvent.PlayerLoggedInEvent(actor));
+            h.assertTrue(knowledge.getUnlockedEntries().size() == count && actor.getInventory().isEmpty()
+                    && HemoCapabilityAccess.getPlayerDegreeNumber(actor) == 4
+                    && !HarbingerAdvancementGranter.isVeinMasonFirstEffigyPattern(actor)
+                    && !HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(actor),
+                    "Repeat backfill must not supply items, preparation, Main proof or promotion");
+            h.succeed();
+        } finally { actor.discard(); newcomer.discard(); }
+    }
+
+    @GameTest(template = "empty") public static void effigyProjectionRejectsUnknownScarsWithoutLosingPaidWork(GameTestHelper h) {
+        effigyRejectsIneligibleContributor(h, false);
+    }
+
+    @GameTest(template = "empty") public static void effigyProjectionRejectsInsufficientCapacityWithoutLosingPaidWork(GameTestHelper h) {
+        effigyRejectsIneligibleContributor(h, true);
+    }
+
+    private static void effigyRejectsIneligibleContributor(GameTestHelper h, boolean insufficientCapacity) {
+        var actor = player(h, insufficientCapacity ? 5 : 4);
+        var guest = player(h, 4);
+        var heart = Hemomancy.rloc("scar_heart");
+        var selected = insufficientCapacity ? List.of(heart, Hemomancy.rloc("scar_marrow")) : List.of(heart);
+        var pos = h.absolutePos(new BlockPos(1, 2, 1));
+        var bounds = new AABB(pos).inflate(2);
+        h.getLevel().setBlockAndUpdate(pos, BlockInit.mason_effigy.get().defaultBlockState());
+        var effigy = (com.vincenthuto.hemomancy.common.tile.harbinger.functional.MasonsEffigyBlockEntity)
+                h.getLevel().getBlockEntity(pos);
+        try {
+            selected.forEach(HemoCapabilityAccess.requireScarState(actor)::addKnownCerebralScar);
+            if (insufficientCapacity) {
+                selected.forEach(HemoCapabilityAccess.requireScarState(guest)::addKnownCerebralScar);
+            }
+            for (var p : List.of(actor, guest)) {
+                var volume = HemoCapabilityAccess.requireBloodVolume(p);
+                volume.setActive(true);
+                volume.setBloodVolume(1000);
+            }
+            effigy.setSelectedScarIds(selected);
+            var paper = new ItemStack(ItemInit.runic_motif_paper.get());
+            h.assertTrue(effigy.beginMotifRitual(actor, paper) && paper.isEmpty(),
+                    "Eligible practitioner must insert a real motif");
+            h.assertTrue(effigy.receiveProjectedBlood(actor, 200, false) == 200,
+                    "Eligible practitioner must establish paid partial work");
+            h.assertTrue(effigy.receiveProjectedBlood(guest, 1000, false) == 0,
+                    insufficientCapacity ? "Charging must enforce the contributor's scar capacity"
+                            : "Charging must require the contributor to know each selected scar");
+            h.assertTrue(effigy.hasPendingMotif() && effigy.getPendingBlood() == 200
+                    && effigy.getSelectedScarIds().equals(selected)
+                    && HemoCapabilityAccess.requireBloodVolume(guest).getBloodVolume() == 1000
+                    && !HarbingerAdvancementGranter.isVeinMasonFirstEffigyPattern(guest)
+                    && h.getLevel().getEntitiesOfClass(ItemEntity.class, bounds,
+                            item -> item.getItem().is(ItemInit.scar_pattern.get())).isEmpty(),
+                    "Rejected projection must retain escrow, guest blood and unearned proof");
+            if (insufficientCapacity) {
+                HemoCapabilityAccess.requireInitiatoryDegree(guest).setDegreeNumber(5);
+            } else {
+                selected.forEach(HemoCapabilityAccess.requireScarState(guest)::addKnownCerebralScar);
+            }
+            double remaining = selected.size() * 500 - 200;
+            h.assertTrue(effigy.receiveProjectedBlood(guest, 1000, false) == remaining
+                    && HemoCapabilityAccess.requireBloodVolume(guest).getBloodVolume() == 1000 - remaining
+                    && HemoCapabilityAccess.requireBloodVolume(actor).getBloodVolume() == 800,
+                    "Eligible second practitioner may resume shared work without an ownership lock");
+            var outputs = h.getLevel().getEntitiesOfClass(ItemEntity.class, bounds,
+                    item -> item.getItem().is(ItemInit.scar_pattern.get()));
+            h.assertTrue(outputs.size() == 1
+                    && com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern
+                            .getScarIds(outputs.getFirst().getItem()).equals(selected)
+                    && HarbingerAdvancementGranter.isVeinMasonFirstEffigyPattern(guest)
+                    && !HarbingerAdvancementGranter.isVeinMasonFirstEffigyPattern(actor)
+                    && !HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(guest),
+                    "Eligible completion emits one original pattern and only its practitioner's preparation proof");
+            h.succeed();
+        } finally {
+            h.getLevel().removeBlock(pos, false);
+            h.getLevel().getEntitiesOfClass(ItemEntity.class, bounds,
+                    item -> item.getItem().is(ItemInit.scar_pattern.get())
+                            || item.getItem().is(ItemInit.runic_motif_paper.get())).forEach(ItemEntity::discard);
+            actor.discard();
+            guest.discard();
+        }
+    }
+
+    @GameTest(template = "empty") public static void breakingChargedEffigyReturnsItsExactMotifOnce(GameTestHelper h) {
+        var actor = player(h, 4);
+        var pos = h.absolutePos(new BlockPos(1, 2, 1));
+        var bounds = new AABB(pos).inflate(2);
+        h.getLevel().setBlockAndUpdate(pos, BlockInit.mason_effigy.get().defaultBlockState());
+        var effigy = (com.vincenthuto.hemomancy.common.tile.harbinger.functional.MasonsEffigyBlockEntity)
+                h.getLevel().getBlockEntity(pos);
+        try {
+            var heart = Hemomancy.rloc("scar_heart");
+            HemoCapabilityAccess.requireScarState(actor).addKnownCerebralScar(heart);
+            var volume = HemoCapabilityAccess.requireBloodVolume(actor);
+            volume.setActive(true);
+            volume.setBloodVolume(1000);
+            effigy.setSelectedScarIds(List.of(heart));
+            var paper = new ItemStack(ItemInit.runic_motif_paper.get(), 2);
+            paper.set(DataComponents.CUSTOM_NAME, Component.literal("Interrupted Heart Motif"));
+            var expected = paper.copyWithCount(1);
+            h.assertTrue(effigy.beginMotifRitual(actor, paper) && paper.getCount() == 1,
+                    "Preparation must consume only one motif from the supplied stack");
+            effigy.receiveProjectedBlood(actor, 200, false);
+            var state = h.getLevel().getBlockState(pos);
+            h.getLevel().setBlockAndUpdate(pos, state.setValue(
+                    com.vincenthuto.hemomancy.common.block.harbinger.functional.MasonsEffigyBlock.FACING,
+                    state.getValue(com.vincenthuto.hemomancy.common.block.harbinger.functional.MasonsEffigyBlock.FACING)
+                            .getOpposite()));
+            h.assertTrue(h.getLevel().getBlockEntity(pos) == effigy && effigy.hasPendingMotif()
+                    && effigy.getPendingBlood() == 200
+                    && h.getLevel().getEntitiesOfClass(ItemEntity.class, bounds,
+                            item -> item.getItem().is(ItemInit.runic_motif_paper.get())).isEmpty(),
+                    "Same-block state changes must retain pending work without dropping it");
+            h.assertTrue(h.getLevel().destroyBlock(pos, true), "The real block destruction path must run");
+            var drops = h.getLevel().getEntitiesOfClass(ItemEntity.class, bounds,
+                    item -> item.getItem().is(ItemInit.runic_motif_paper.get()));
+            h.assertTrue(drops.size() == 1 && drops.getFirst().getItem().getCount() == 1
+                    && ItemStack.isSameItemSameComponents(drops.getFirst().getItem(), expected),
+                    "Breaking interrupted work must return exactly its original motif and components");
+            h.assertTrue(!effigy.hasPendingMotif() && effigy.getPendingBlood() == 0
+                    && volume.getBloodVolume() == 800
+                    && !HarbingerAdvancementGranter.isVeinMasonFirstEffigyPattern(actor)
+                    && !HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(actor),
+                    "Removal must clear escrow without refunding blood or awarding scar proofs");
+            h.getLevel().destroyBlock(pos, true);
+            effigy.dropPendingMotif();
+            h.assertTrue(h.getLevel().getEntitiesOfClass(ItemEntity.class, bounds,
+                    item -> item.getItem().is(ItemInit.runic_motif_paper.get())).size() == 1,
+                    "Repeated removal must not duplicate the returned motif");
+            h.succeed();
+        } finally {
+            h.getLevel().removeBlock(pos, false);
+            h.getLevel().getEntitiesOfClass(ItemEntity.class, bounds,
+                    item -> item.getItem().is(ItemInit.runic_motif_paper.get())
+                            || item.getItem().is(BlockInit.mason_effigy.get().asItem())).forEach(ItemEntity::discard);
+            actor.discard();
+        }
+    }
+
+    @GameTest(template = "empty") public static void chargedEffigySelectionSurvivesInterruptionAndReload(GameTestHelper h) {
+        var actor = player(h, 4);
+        var heart = Hemomancy.rloc("scar_heart");
+        var marrow = Hemomancy.rloc("scar_marrow");
+        var pos = h.absolutePos(new BlockPos(1, 2, 1));
+        h.getLevel().setBlockAndUpdate(pos, BlockInit.mason_effigy.get().defaultBlockState());
+        var effigy = (com.vincenthuto.hemomancy.common.tile.harbinger.functional.MasonsEffigyBlockEntity)
+                h.getLevel().getBlockEntity(pos);
+        var bounds = new AABB(pos).inflate(2);
+        try {
+            var scars = HemoCapabilityAccess.requireScarState(actor);
+            scars.addKnownCerebralScar(heart);
+            scars.addKnownCerebralScar(marrow);
+            var volume = HemoCapabilityAccess.requireBloodVolume(actor);
+            volume.setActive(true);
+            volume.setBloodVolume(1000);
+            effigy.setSelectedScarIds(List.of(heart));
+            var paper = new ItemStack(ItemInit.runic_motif_paper.get(), 2);
+            h.assertTrue(effigy.beginMotifRitual(actor, paper) && paper.getCount() == 1,
+                    "Starting preparation must consume exactly one motif");
+            h.assertTrue(effigy.receiveProjectedBlood(actor, 200, false) == 200,
+                    "Partial projection must retain its paid charge");
+            effigy.setSelectedScarIds(List.of());
+            h.assertTrue(effigy.getSelectedScarIds().equals(List.of(heart)),
+                    "Clearing selection must not strand a paid motif");
+            effigy.setSelectedScarIds(List.of(marrow));
+            h.assertTrue(effigy.getSelectedScarIds().equals(List.of(heart)),
+                    "A pending motif must retain the scars it was started with");
+            var saved = effigy.saveWithFullMetadata(h.getLevel().registryAccess());
+            h.getLevel().removeBlockEntity(pos);
+            effigy = new com.vincenthuto.hemomancy.common.tile.harbinger.functional.MasonsEffigyBlockEntity(
+                    pos, h.getLevel().getBlockState(pos));
+            h.getLevel().setBlockEntity(effigy);
+            effigy.loadWithComponents(saved, h.getLevel().registryAccess());
+            h.assertTrue(effigy.hasPendingMotif() && effigy.getPendingBlood() == 200
+                    && effigy.getSelectedScarIds().equals(List.of(heart))
+                    && !HarbingerAdvancementGranter.isVeinMasonFirstEffigyPattern(actor),
+                    "Reload must preserve unfinished work without awarding preparation proof");
+            effigy.setSelectedScarIds(List.of(marrow));
+            h.assertTrue(effigy.getSelectedScarIds().equals(List.of(heart)),
+                    "Reload must not release the pending selection lock");
+            h.assertTrue(!effigy.beginMotifRitual(actor, paper) && paper.getCount() == 1,
+                    "Restarting pending work must retain the spare motif");
+            h.assertTrue(effigy.receiveProjectedBlood(actor, 500, false) == 300
+                    && volume.getBloodVolume() == 500,
+                    "Resuming must spend only the remaining charge, exactly 500 total");
+            var outputs = h.getLevel().getEntitiesOfClass(ItemEntity.class, bounds,
+                    item -> item.getItem().is(ItemInit.scar_pattern.get()));
+            h.assertTrue(outputs.size() == 1
+                    && com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern
+                            .getScarIds(outputs.getFirst().getItem()).equals(List.of(heart))
+                    && !effigy.hasPendingMotif() && effigy.getPendingBlood() == 0,
+                    "Resumption must eject exactly the original loadout and clear pending work");
+            h.assertTrue(HarbingerAdvancementGranter.isVeinMasonFirstEffigyPattern(actor)
+                    && !HarbingerAdvancementGranter.isVeinMasonFirstEffigyLoadout(actor),
+                    "Completion earns preparation only, not the Main commit proof");
+            h.assertTrue(effigy.receiveProjectedBlood(actor, 500, false) == 0
+                    && volume.getBloodVolume() == 500,
+                    "Completed preparation must not spend blood or eject a duplicate");
+            effigy.setSelectedScarIds(List.of(marrow));
+            h.assertTrue(effigy.getSelectedScarIds().equals(List.of(marrow)),
+                    "Selection becomes editable after completion");
+            h.succeed();
+        } finally {
+            h.getLevel().getEntitiesOfClass(ItemEntity.class, bounds,
+                    item -> item.getItem().is(ItemInit.scar_pattern.get())).forEach(ItemEntity::discard);
+            h.getLevel().removeBlock(pos, false);
+            actor.discard();
+        }
+    }
+
+    @GameTest(template = "empty") public static void personalScarCycleOpensIlluminatusWithoutPromotingEarly(GameTestHelper h) {
+        var actor = player(h, 4);
+        var origin = h.absolutePos(new BlockPos(14, 3, 14));
+        var effigyPos = h.absolutePos(new BlockPos(1, 2, 1));
+        var saved = CardinalRiteSavedData.get(h.getLevel());
+        actor.getPersistentData().putString(HemoJourneyFixtures.DIMENSION_KEY,
+                h.getLevel().dimension().location().toString());
+        try {
+            HemoJourneyFixtures.prepareCardinalRite(actor, origin, "illuminatus_rite");
+            var blood = HemoCapabilityAccess.requireBloodVolume(actor);
+            blood.setActive(true);
+            blood.setBloodVolume(2000);
+            var staff = actor.getMainHandItem();
+            var id = Hemomancy.rloc("scar_heart");
+            HemoCapabilityAccess.requireScarState(actor).addKnownCerebralScar(id);
+            var gift = com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern.createPreparedPattern(List.of(id));
+            com.vincenthuto.hemomancy.common.rite.ScarBrazierRite.burn(h.getLevel(), effigyPos, actor, gift,
+                    com.vincenthuto.hemomancy.common.rite.ScarBrazierInteractionRules.Burn.COMMIT);
+            var trigger = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE;
+            var rejected = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
+                    .tryStartCardinalRite(actor, origin.above(), trigger);
+            h.assertTrue(rejected != com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
+                    && saved.getRite(actor.getUUID()) == null && actor.getMainHandItem() == staff,
+                    "A gifted loadout must leave Illuminatus sealed and its Staff unescrowed");
+            h.getLevel().setBlockAndUpdate(effigyPos, BlockInit.mason_effigy.get().defaultBlockState());
+            var effigy = (com.vincenthuto.hemomancy.common.tile.harbinger.functional.MasonsEffigyBlockEntity)
+                    h.getLevel().getBlockEntity(effigyPos);
+            effigy.setSelectedScarIds(List.of(id));
+            h.assertTrue(effigy.beginMotifRitual(actor, new ItemStack(ItemInit.runic_motif_paper.get())),
+                    "Personal Effigy practice must accept the known Heart");
+            effigy.receiveProjectedBlood(actor, 500, false);
+            var outputs = h.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(effigyPos).inflate(2),
+                    item -> item.getItem().is(ItemInit.scar_pattern.get()));
+            h.assertTrue(outputs.size() == 1, "Personal practice must produce one actual pattern");
+            com.vincenthuto.hemomancy.common.rite.ScarBrazierRite.burn(h.getLevel(), effigyPos, actor,
+                    outputs.getFirst().getItem(), com.vincenthuto.hemomancy.common.rite.ScarBrazierInteractionRules.Burn.COMMIT);
+            var started = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
+                    .tryStartCardinalRite(actor, origin.above(), trigger);
+            var rite = saved.getRite(actor.getUUID());
+            h.assertTrue(started == com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
+                    && rite != null && rite.getRecipeId().equals(Hemomancy.rloc("cardinal_rite/illuminatus_rite")),
+                    "Personal preparation and commit must open the authored Illuminatus rite");
+            h.assertTrue(HemoCapabilityAccess.getPlayerDegreeNumber(actor) == 4,
+                    "Starting Illuminatus must not award Degree 5 before its ceremony finishes");
+            h.succeed();
+        } finally {
+            var rite = saved.getRite(actor.getUUID());
+            if (rite != null) com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow.restore(actor, rite);
+            saved.removeRite(actor.getUUID());
+            HemoJourneyFixtures.cleanup(actor, origin);
+            h.getLevel().removeBlock(effigyPos, false);
+            actor.discard();
+        }
+    }
+
+    @GameTest(template = "empty") public static void chamberRiteAttunesWithoutGuidedLessonChairOrRecruitedMnemonist(GameTestHelper h) {
+        var actor = player(h, 5);
+        var origin = h.absolutePos(new BlockPos(14, 3, 14));
+        var saved = CardinalRiteSavedData.get(h.getLevel());
+        actor.getPersistentData().putString(HemoJourneyFixtures.DIMENSION_KEY,
+                h.getLevel().dimension().location().toString());
+        try {
+            HemoJourneyFixtures.prepareCardinalRite(actor, origin, "chamber_of_will");
+            HemoCapabilityAccess.requireBloodVolume(actor).setActive(true);
+            var recipe = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getRiteByLocation(
+                    h.getLevel(), Hemomancy.rloc("cardinal_rite/chamber_of_will"));
+            h.assertTrue(recipe.getCeremony().requiredHelpers() == 0,
+                    "Independent Chamber attunement must not require recruited helpers");
+            h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isAttuned(actor)
+                    && !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isChairBound(actor)
+                    && !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.hasCompletedGuidedVisit(actor),
+                    "Independent fixture must begin without earlier Chamber access");
+            var staff = actor.getMainHandItem();
+            var tooEarly = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
+                    .tryStartCardinalRite(actor, origin.above(),
+                            com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
+            h.assertTrue(tooEarly != com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
+                    && saved.getRite(actor.getUUID()) == null && actor.getMainHandItem() == staff
+                    && !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isAttuned(actor),
+                    "D5 must not start the independent D6 rite, lose its Staff, or gain attunement");
+            HemoCapabilityAccess.requireInitiatoryDegree(actor).setDegreeNumber(6);
+            var started = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
+                    .tryStartCardinalRite(actor, origin.above(),
+                            com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
+            var rite = saved.getRite(actor.getUUID());
+            h.assertTrue(started == com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
+                    && rite != null && rite.getAllyRoles().isEmpty(), "Unrecruited D6 must start its own Chamber rite");
+            // Supply the completed ceremony boundary; this server has no Chamber destination.
+            var complete = com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents.class
+                    .getDeclaredMethod("completeRite", net.minecraft.server.level.ServerLevel.class,
+                            ServerPlayer.class, ActiveCardinalRite.class);
+            complete.setAccessible(true);
+            h.assertTrue((boolean) complete.invoke(null, h.getLevel(), actor, rite),
+                    "Independent Chamber rite completion must succeed without a recruited Mnemonist");
+            h.assertTrue(com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isAttuned(actor)
+                    && HarbingerAdvancementGranter.hasAdvancement(actor, HarbingerAdvancementGranter.ADV_CHAMBER_RITE_ATTUNED),
+                    "Earned rite completion must grant permanent attunement even when transport is unavailable");
+            h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.hasCompletedGuidedVisit(actor)
+                    && !HarbingerAdvancementGranter.hasAdvancement(actor, HarbingerAdvancementGranter.ADV_CHAMBER_RETURNED)
+                    && HemoCapabilityAccess.getPlayerDegreeNumber(actor) == 6,
+                    "Attunement must not fabricate a guided lesson, return, or higher degree");
+            h.succeed();
+        } catch (ReflectiveOperationException exception) {
+            h.fail("Independent Chamber completion could not run: " + exception);
+        } finally {
+            var rite = saved.getRite(actor.getUUID());
+            if (rite != null) com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow.restore(actor, rite);
+            saved.removeRite(actor.getUUID());
+            HemoJourneyFixtures.cleanup(actor, origin);
+            actor.discard();
+        }
+    }
+
+    private static void prepareSharedSelection(ServerPlayer player, BloodManipulation noetic) {
+        var known = HemoCapabilityAccess.requireKnownManipulations(player);
+        known.getKnownManips().put(ManipulationInit.blood_shot.get(), new ManipLevel(4, 185));
+        known.getKnownManips().put(noetic, new ManipLevel(4, 185));
+        known.setEquippedManipNames(List.of(noetic.getName(),
+                MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS).storageKey()));
+        known.setSelectedManip(noetic);
+        player.getData(HemoAttachmentTypes.MUSCLE_MEMORY).learnAndAddReserve(MuscleMemory.LABORING_ARMS, 6000);
+        var blood = HemoCapabilityAccess.requireBloodVolume(player);
+        blood.setActive(true);
+        blood.setBloodVolume(2000);
+        HemoCapabilityAccess.requireBloodTendency(player).setTendencyAlignment(noetic.getTend(), 100);
+    }
+
+    private static void cleanupSharedSelection(ServerPlayer player) {
+        ManipulationChannelManager.stop(player, false);
+        CastingAnimationManager.logout(new PlayerEvent.PlayerLoggedOutEvent(player));
+        player.discard();
+    }
+
+    @GameTest(template = "empty") public static void staffAbsorptionFollowsSharedMemorySelection(GameTestHelper h) {
+        verifyStaffUtilitySelection(h, ManipulationInit.blood_absorption.get());
+    }
+
+    @GameTest(template = "empty") public static void staffProjectionFollowsSharedMemorySelection(GameTestHelper h) {
+        verifyStaffUtilitySelection(h, ManipulationInit.blood_projection.get());
+    }
+
+    @GameTest(template = "empty") public static void inactiveStaffCannotStartRootedVeinOrLoseItsEscrow(GameTestHelper h) {
+        var actor = player(h, 2);
+        var origin = h.absolutePos(new BlockPos(14, 3, 14));
+        var focusPos = origin.above();
+        actor.getPersistentData().putString(HemoJourneyFixtures.DIMENSION_KEY,
+                h.getLevel().dimension().location().toString());
+        var saved = com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData.get(h.getLevel());
+        try {
+            HemoJourneyFixtures.prepareCardinalRite(actor, origin, "rooted_vein");
+            actor.setPos(focusPos.getCenter().add(0, 1, 2));
+            var staff = actor.getMainHandItem();
+            var blood = HemoCapabilityAccess.requireBloodVolume(actor);
+            blood.setBloodVolume(1000);
+            blood.setActive(false);
+            var result = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
+                    .tryStartCardinalRite(actor, focusPos,
+                            com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
+            h.assertTrue(result != com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
+                            && saved.getRite(actor.getUUID()) == null,
+                    "Inactive blood started Rooted Vein with an early Staff");
+            h.assertTrue(actor.getMainHandItem() == staff && blood.getBloodVolume() == 1000,
+                    "Rejected inactive start escrowed the Staff or spent blood");
+            blood.setActive(true);
+            HemoCapabilityAccess.requireInitiatoryDegree(actor).setDegreeNumber(1);
+            var tooEarly = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
+                    .tryStartCardinalRite(actor, focusPos,
+                            com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
+            h.assertTrue(tooEarly != com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
+                            && saved.getRite(actor.getUUID()) == null && actor.getMainHandItem() == staff,
+                    "D1 Staff ownership bypassed Rooted Vein's D2 gate");
+            HemoCapabilityAccess.requireInitiatoryDegree(actor).setDegreeNumber(2);
+            var retry = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
+                    .tryStartCardinalRite(actor, focusPos,
+                            com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
+            h.assertTrue(retry == com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
+                            && saved.getRite(actor.getUUID()) != null,
+                    "Active D2 retry did not start the same Rooted Vein fixture");
+            h.succeed();
+        } finally {
+            var rite = saved.getRite(actor.getUUID());
+            if (rite != null) com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow.restore(actor, rite);
+            saved.removeRite(actor.getUUID());
+            HemoJourneyFixtures.cleanup(actor, origin);
+            actor.discard();
+        }
+    }
+
+    @net.minecraft.gametest.framework.GameTestGenerator
+    public static java.util.Collection<net.minecraft.gametest.framework.TestFunction> loadedChamberEntryTests() {
+        if (!Boolean.getBoolean("hemomancy.chamberLoadedValidation")) return List.of();
+        return List.of(
+                new net.minecraft.gametest.framework.TestFunction("chamber_loaded_entry", "loaded_chamber_active_visit",
+                        "clinical_validation:empty", 40, 0, true, h -> {
+                    requireLoadedChamber(h);
+                    rejectedChairVisitPreservesAnActiveVisit(h);
+                }),
+                new net.minecraft.gametest.framework.TestFunction("chamber_loaded_entry", "loaded_chamber_fungal_projection",
+                        "clinical_validation:empty", 40, 0, true, h -> {
+                    requireLoadedChamber(h);
+                    rejectedChairVisitPreservesFungalProjection(h);
+                }),
+                new net.minecraft.gametest.framework.TestFunction("chamber_loaded_entry", "loaded_chamber_dream_snapshot_return",
+                        "clinical_validation:empty", 200, 0, true, h -> loadedObservationalSnapshotRecovery(h, ChamberVisitMode.DREAM, false)),
+                new net.minecraft.gametest.framework.TestFunction("chamber_loaded_entry", "loaded_chamber_dream_menu_recovery",
+                        "clinical_validation:empty", 200, 0, true, h -> loadedObservationalSnapshotRecovery(h, ChamberVisitMode.DREAM, true)),
+                new net.minecraft.gametest.framework.TestFunction("chamber_loaded_entry", "loaded_chamber_guided_snapshot_return",
+                        "clinical_validation:empty", 200, 0, true, h -> loadedObservationalSnapshotRecovery(h, ChamberVisitMode.GUIDED, false)),
+                new net.minecraft.gametest.framework.TestFunction("chamber_loaded_entry", "loaded_chamber_guided_menu_recovery",
+                        "clinical_validation:empty", 200, 0, true, h -> loadedObservationalSnapshotRecovery(h, ChamberVisitMode.GUIDED, true)),
+                new net.minecraft.gametest.framework.TestFunction("chamber_loaded_entry", "loaded_chamber_dream_pending_return",
+                        "clinical_validation:empty", 200, 0, true, h -> loadedObservationalSnapshotRecovery(h, ChamberVisitMode.DREAM, false, true)),
+                new net.minecraft.gametest.framework.TestFunction("chamber_loaded_entry", "loaded_chamber_dream_pending_recovery",
+                        "clinical_validation:empty", 200, 0, true, h -> loadedObservationalSnapshotRecovery(h, ChamberVisitMode.DREAM, true, true)),
+                new net.minecraft.gametest.framework.TestFunction("chamber_loaded_entry", "loaded_chamber_guided_pending_return",
+                        "clinical_validation:empty", 200, 0, true, h -> loadedObservationalSnapshotRecovery(h, ChamberVisitMode.GUIDED, false, true)),
+                new net.minecraft.gametest.framework.TestFunction("chamber_loaded_entry", "loaded_chamber_guided_pending_recovery",
+                        "clinical_validation:empty", 200, 0, true, h -> loadedObservationalSnapshotRecovery(h, ChamberVisitMode.GUIDED, true, true)),
+                new net.minecraft.gametest.framework.TestFunction("chamber_loaded_entry", "loaded_chamber_already_inside",
+                        "clinical_validation:empty", 40, 0, true, h -> {
+                    var chamber = requireLoadedChamber(h);
+                    var actor = player(h, 3, chamber);
+                    try {
+                        var before = actor.getPersistentData().copy();
+                        h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.beginChairVisit(actor),
+                                "Chair entry accepted a player already inside the Chamber");
+                        h.assertTrue(before.equals(actor.getPersistentData()),
+                                "Rejected in-Chamber entry changed binding or visit state");
+                        h.succeed();
+                    } finally { actor.discard(); }
+                }));
+    }
+
+    private static net.minecraft.server.level.ServerLevel requireLoadedChamber(GameTestHelper h) {
+        var chamber = h.getLevel().getServer().getLevel(ChamberOfWillManager.CHAMBER_OF_WILL);
+        h.assertTrue(chamber != null, "Loaded-entry acceptance requires the real Chamber destination");
+        return chamber;
+    }
+
+    private static void loadedObservationalSnapshotRecovery(GameTestHelper h, ChamberVisitMode mode, boolean outsideRecovery) {
+        loadedObservationalSnapshotRecovery(h, mode, outsideRecovery, false);
+    }
+
+    private static void loadedObservationalSnapshotRecovery(GameTestHelper h, ChamberVisitMode mode,
+            boolean outsideRecovery, boolean pendingGifts) {
+        var chamber = requireLoadedChamber(h);
+        int degree = mode == ChamberVisitMode.GUIDED ? (pendingGifts ? 7 : 3) : 1;
+        var actor = player(h, degree);
+        var originArea = actor.getBoundingBox().inflate(8);
+        var manager = ChamberOfWillManager.get(actor.server);
+        var cell = manager.cellPos(manager.idFor(actor.getUUID()));
+        var chamberArea = new AABB(cell).inflate(16);
+        var originChunks = itemQueryChunks(originArea);
+        var chamberChunks = itemQueryChunks(chamberArea);
+        var originTicket = new net.minecraft.world.level.ChunkPos(actor.blockPosition());
+        var chamberTicket = new net.minecraft.world.level.ChunkPos(cell);
+        boolean chamberWasForced = chamber.getForcedChunks().contains(chamberTicket.toLong());
+        var probes = new java.util.ArrayList<net.minecraft.world.entity.item.ItemEntity>();
+        var baselines = new java.util.ArrayList<java.util.Set<UUID>>();
+        Runnable cleanup = () -> {
+            probes.forEach(net.minecraft.world.entity.Entity::discard);
+            actor.containerMenu.setCarried(ItemStack.EMPTY);
+            actor.inventoryMenu.setCarried(ItemStack.EMPTY);
+            actor.inventoryMenu.clearCraftingContent();
+            actor.getInventory().clearContent();
+            if (actor.containerMenu != actor.inventoryMenu) actor.closeContainer();
+            actor.discard();
+            h.getLevel().getChunkSource().removeRegionTicket(CHAMBER_ITEM_FIXTURE_TICKET, originTicket, 2, actor.getUUID(), true);
+            chamber.getChunkSource().removeRegionTicket(CHAMBER_ITEM_FIXTURE_TICKET, chamberTicket, 2, actor.getUUID(), true);
+            if (!chamberWasForced) chamber.setChunkForced(chamberTicket.x, chamberTicket.z, false);
+        };
+        h.testInfo.addListener(new GameTestListener() {
+            public void testStructureLoaded(GameTestInfo test) { }
+            public void testPassed(GameTestInfo test, net.minecraft.gametest.framework.GameTestRunner runner) { cleanup.run(); }
+            public void testFailed(GameTestInfo test, net.minecraft.gametest.framework.GameTestRunner runner) { cleanup.run(); }
+            public void testAddedForRerun(GameTestInfo oldTest, GameTestInfo newTest, net.minecraft.gametest.framework.GameTestRunner runner) { }
+        });
+        h.getLevel().getChunkSource().addRegionTicket(CHAMBER_ITEM_FIXTURE_TICKET, originTicket, 2, actor.getUUID(), true);
+        chamber.getChunkSource().addRegionTicket(CHAMBER_ITEM_FIXTURE_TICKET, chamberTicket, 2, actor.getUUID(), true);
+        // Transient tickets load chunks but do not keep an empty dimension's entity loop running.
+        chamber.setChunkForced(chamberTicket.x, chamberTicket.z, true);
+        h.startSequence().thenWaitUntil(() -> h.assertTrue(
+                originChunks.stream().allMatch(chunk -> h.getLevel().areEntitiesLoaded(chunk.toLong()))
+                        && chamberChunks.stream().allMatch(chunk -> chamber.areEntitiesLoaded(chunk.toLong())),
+                "Every observational item-query chunk must become entity-loaded"))
+                .thenExecute(() -> {
+            probes.add(itemQueryProbe(h, h.getLevel(), actor.position().add(2, 1, 0)));
+            probes.add(itemQueryProbe(h, chamber, Vec3.atCenterOf(cell.offset(2, 1, 2))));
+            var originDrops = itemEntityIds(h.getLevel(), originArea);
+            var chamberDrops = itemEntityIds(chamber, chamberArea);
+            h.assertTrue(originDrops.contains(probes.get(0).getUUID()) && chamberDrops.contains(probes.get(1).getUUID()),
+                    "Item-query positive controls must be visible before recording baselines");
+            baselines.add(originDrops);
+            baselines.add(chamberDrops);
+            for (int slot = 0; slot < 36; slot++) actor.getInventory().setItem(slot, new ItemStack(Items.STONE, 64));
+            actor.getInventory().setItem(39, new ItemStack(Items.DIAMOND_HELMET));
+            actor.getInventory().setItem(40, new ItemStack(Items.SHIELD));
+            if (pendingGifts) prepareLoadedPendingGifts(h, actor, mode);
+            actor.inventoryMenu.getSlot(1).set(new ItemStack(Items.OAK_PLANKS, 17));
+            actor.inventoryMenu.getSlot(4).set(new ItemStack(Items.DIAMOND, 3));
+            var cursor = mode == ChamberVisitMode.GUIDED ? ItemStack.EMPTY : new ItemStack(Items.EMERALD, 2);
+            if (!cursor.isEmpty()) cursor.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, Component.literal("Dream entry cursor"));
+            actor.inventoryMenu.setCarried(cursor.copy());
+            var inventory = actor.getInventory().save(new net.minecraft.nbt.ListTag());
+            var crafting = new net.minecraft.nbt.ListTag();
+            for (int slot = 1; slot <= 4; slot++)
+                crafting.add(actor.inventoryMenu.getSlot(slot).getItem().saveOptional(actor.registryAccess()));
+            var origin = actor.position();
+            var equipment = (com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentContainer)
+                    HemoCapabilityAccess.requireEquipment(actor);
+            var gourd = mode == ChamberVisitMode.GUIDED ? new ItemStack(ItemInit.blood_gourd_red.get()) : ItemStack.EMPTY;
+            if (mode == ChamberVisitMode.GUIDED) {
+                gourd.set(DataComponents.CUSTOM_NAME, Component.literal("Guided entry reserve"));
+                HemoCapabilityAccess.getBloodVolume(gourd).orElseThrow().setBloodVolume(123);
+                equipment.setStackInSlot(6, gourd.copy());
+            }
+            var equipmentSnapshot = equipment.serializeNBT(actor.registryAccess());
+            boolean equipmentEventsBlocked = equipment.isEventBlocked();
+
+            if (mode == ChamberVisitMode.GUIDED) {
+                HemoCapabilityAccess.requireBloodVolume(actor).setActive(true);
+                h.assertTrue(com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.beginGuidedVisit(actor),
+                        "Eligible guided fixture did not begin its visit");
+            } else {
+                actor.getPersistentData().putInt("hemomancy:chamber_visit_dream_attempts", 2);
+                com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.onCompletedSleep(actor, true);
+            }
+            h.assertTrue(actor.serverLevel().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)
+                            && com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isActive(actor),
+                    "Observational fixture did not enter the actual Chamber for " + mode);
+            h.assertTrue(inventory.equals(actor.getPersistentData().getList("hemomancy:chamber_visit_dream_inventory", 10))
+                            && crafting.equals(actor.getPersistentData().getList("hemomancy:chamber_visit_dream_crafting", 10))
+                            && ItemStack.matches(cursor, ItemStack.parseOptional(actor.registryAccess(),
+                                    actor.getPersistentData().getCompound("hemomancy:chamber_visit_dream_carried"))),
+                    "Real observational entry did not capture inventory, crafting inputs, and cursor for " + mode);
+            h.assertTrue(originDrops.equals(itemEntityIds(h.getLevel(), originArea))
+                            && chamberDrops.equals(itemEntityIds(chamber, chamberArea)),
+                    "Observational entry leaked item entities for " + mode);
+            if (mode == ChamberVisitMode.GUIDED) {
+                h.assertTrue(equipmentSnapshot.equals(actor.getPersistentData().getCompound("hemomancy:chamber_visit_guided_equipment")),
+                        "Real guided entry did not capture its equipment");
+                equipment.setStackInSlot(6, ItemStack.EMPTY);
+            }
+
+            actor.inventoryMenu.getSlot(1).set(ItemStack.EMPTY);
+            actor.inventoryMenu.getSlot(2).set(new ItemStack(Items.STONE, 64));
+            actor.inventoryMenu.setCarried(ItemStack.EMPTY);
+            if (pendingGifts) {
+                actor.getInventory().setItem(0, ItemStack.EMPTY);
+                retryPendingChamberGifts(actor);
+                h.assertTrue(actor.getInventory().getItem(0).isEmpty()
+                                && actor.getInventory().countItem(ItemInit.bloody_vial.get()) == 0
+                                && actor.getInventory().countItem(ItemInit.living_syringe.get()) == 0
+                                && actor.getInventory().countItem(ItemInit.vial_rack.get()) == 0
+                                && actor.getInventory().countItem(ItemInit.fungal_spine.get()) == 0
+                                && actor.getInventory().countItem(ItemInit.memory_of_vesper.get()) == 0
+                                && actor.getInventory().countItem(ItemInit.mycophant_tendril.get()) == 0,
+                        "Actual observational entry must defer all pending gifts despite available space");
+                if (mode == ChamberVisitMode.GUIDED) {
+                    var persisted = actor.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
+                    h.assertTrue(!actor.getPersistentData().contains("hemomancy:vesper_memory_pending")
+                                    && persisted.getBoolean("hemomancy:vesper_memory_pending"),
+                            "Observational deferral must still migrate the explicit legacy Memory claim");
+                }
+            }
+            if (outsideRecovery) {
+                actor.changeDimension(new net.minecraft.world.level.portal.DimensionTransition(h.getLevel(), origin,
+                        Vec3.ZERO, 0, 0, net.minecraft.world.level.portal.DimensionTransition.DO_NOTHING));
+                actor.openMenu(new net.minecraft.world.SimpleMenuProvider(
+                        (id, inv, p) -> net.minecraft.world.inventory.ChestMenu.threeRows(id, inv),
+                        Component.literal("Recovery fixture chest")));
+                h.assertTrue(actor.containerMenu != actor.inventoryMenu, "Recovery fixture did not open another menu");
+                actor.containerMenu.setCarried(new ItemStack(Items.DIAMOND_HELMET));
+                com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.recoverOutsideChamber(actor);
+            } else {
+                actor.inventoryMenu.setCarried(new ItemStack(Items.DIAMOND_HELMET));
+                actor.getPersistentData().putInt("hemomancy:chamber_visit_remaining", 1);
+                com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.tick(actor);
+            }
+            h.assertTrue(actor.serverLevel() == h.getLevel(),
+                    "Observational recovery remained in " + actor.serverLevel().dimension());
+            h.assertTrue(actor.containerMenu == actor.inventoryMenu, "Observational recovery retained another menu");
+            h.assertTrue(inventory.equals(actor.getInventory().save(new net.minecraft.nbt.ListTag())),
+                    "Observational recovery changed inventory: " + actor.getInventory().save(new net.minecraft.nbt.ListTag()));
+            h.assertTrue(ItemStack.matches(cursor, actor.inventoryMenu.getCarried()),
+                    "Observational recovery changed its cursor: " + actor.inventoryMenu.getCarried().saveOptional(actor.registryAccess()));
+            for (int slot = 1; slot <= 4; slot++)
+                h.assertTrue(ItemStack.matches(actor.inventoryMenu.getSlot(slot).getItem(),
+                                ItemStack.parseOptional(actor.registryAccess(), crafting.getCompound(slot - 1))),
+                        "Observational recovery changed crafting slot " + slot);
+            if (mode == ChamberVisitMode.GUIDED)
+                h.assertTrue(ItemStack.matches(gourd, equipment.getStackInSlot(6))
+                                && equipment.isEventBlocked() == equipmentEventsBlocked,
+                        "Guided recovery changed its equipped reserve or event-block state");
+            h.assertTrue(originDrops.equals(itemEntityIds(h.getLevel(), originArea))
+                            && chamberDrops.equals(itemEntityIds(chamber, chamberArea)),
+                    "Observational recovery leaked item entities for " + mode);
+            h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isActive(actor)
+                            && !actor.getPersistentData().contains("hemomancy:chamber_visit_dream_crafting")
+                            && actor.getPersistentData().getBoolean("hemomancy:chamber_visit_guided_complete")
+                                    == (mode == ChamberVisitMode.GUIDED && !outsideRecovery)
+                            && !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isAttuned(actor),
+                    "Observational recovery retained visit state or miscredited guided completion/attunement");
+            if (pendingGifts) {
+                actor.getInventory().clearContent();
+                retryPendingChamberGifts(actor);
+                int vials = mode == ChamberVisitMode.GUIDED ? 7 : 5;
+                h.assertTrue(actor.getInventory().countItem(ItemInit.bloody_vial.get()) == vials,
+                        "Real Chamber return/recovery lost its pending vial claims");
+                if (mode == ChamberVisitMode.GUIDED) {
+                    for (var item : List.of(ItemInit.living_syringe.get(), ItemInit.vial_rack.get(),
+                            ItemInit.fungal_spine.get(), ItemInit.memory_of_vesper.get(), ItemInit.mycophant_tendril.get()))
+                        h.assertTrue(actor.getInventory().countItem(item) == 1,
+                                "Real guided return/recovery lost its pending " + item);
+                    var rack = actor.getInventory().items.stream().filter(s -> s.is(ItemInit.vial_rack.get())).findFirst().orElseThrow();
+                    h.assertTrue(rack.getComponents().equals(FirstSeparationAssignment.rewardStacks().get(1).getComponents()),
+                            "Actual return/recovery changed the initialized pending rack");
+                }
+                var delivered = actor.getInventory().save(new net.minecraft.nbt.ListTag());
+                retryPendingChamberGifts(actor);
+                h.assertTrue(delivered.equals(actor.getInventory().save(new net.minecraft.nbt.ListTag()))
+                                && HemoCapabilityAccess.getPlayerDegreeNumber(actor) == degree,
+                        "Actual return/recovery duplicated pending gifts or changed degree");
+            }
+        }).thenWaitUntil(() -> h.assertTrue(probes.stream().allMatch(probe -> probe.isAlive() && probe.tickCount >= 5),
+                "Both item-query probes must receive five natural ticks; " + probes.stream().map(probe ->
+                        probe.level().dimension() + ": ticks=" + probe.tickCount + ", alive=" + probe.isAlive()
+                                + ", indexed=" + (probe.level() instanceof net.minecraft.server.level.ServerLevel level
+                                        && level.getEntity(probe.getUUID()) == probe)
+                                + ", pos=" + probe.position()).toList()))
+                .thenExecute(() -> {
+            h.assertTrue(originChunks.stream().allMatch(chunk -> h.getLevel().areEntitiesLoaded(chunk.toLong()))
+                            && chamberChunks.stream().allMatch(chunk -> chamber.areEntitiesLoaded(chunk.toLong())),
+                    "Observational item-query chunks stopped being entity-loaded");
+            h.assertTrue(baselines.get(0).equals(itemEntityIds(h.getLevel(), originArea))
+                            && baselines.get(1).equals(itemEntityIds(chamber, chamberArea)),
+                    "Observational recovery leaked item entities after natural ticks for " + mode);
+        }).thenSucceed();
+    }
+
+    private static void prepareLoadedPendingGifts(GameTestHelper h, ServerPlayer actor, ChamberVisitMode mode) {
+        HemoCapabilityAccess.requireBloodVolume(actor).setActive(true);
+        var alchemist = EntityInit.harbinger_alchemist.get().create(h.getLevel());
+        alchemist.setPos(actor.position());
+        try {
+            h.assertTrue(FirstDrawsAssignment.brief(actor, alchemist), "Loaded fixture must record pending Draws supplies");
+            if (mode != ChamberVisitMode.GUIDED) return;
+            FirstSeparationAssignment.markBriefed(actor);
+            FirstSeparationAssignment.giveBriefingSupplies(actor);
+            HarbingerAdvancementGranter.grantIfNotDone(actor, HarbingerAdvancementGranter.ADV_FIRST_SEPARATION_STARTED);
+            HarbingerAdvancementGranter.grantIfNotDone(actor, HarbingerAdvancementGranter.ADV_FIRST_SEPARATION_COMPLETE);
+            h.assertTrue(FirstSeparationAssignment.claimRewards(actor), "Loaded fixture must record its supplied tool claim");
+            HemoCapabilityAccess.requireInitiatoryDegree(actor).setQliphothCommunionDone(true);
+            actor.getPersistentData().putBoolean("hemomancy:vesper_memory_pending", true);
+            var persisted = actor.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
+            persisted.putBoolean("hemomancy:mycophant_tendril_pending", true);
+            actor.getPersistentData().put(Player.PERSISTED_NBT_TAG, persisted);
+        } finally { alchemist.discard(); }
+    }
+
+    private static java.util.List<net.minecraft.world.level.ChunkPos> itemQueryChunks(AABB area) {
+        return net.minecraft.world.level.ChunkPos.rangeClosed(
+                new net.minecraft.world.level.ChunkPos(BlockPos.containing(area.minX, 0, area.minZ)),
+                new net.minecraft.world.level.ChunkPos(BlockPos.containing(area.maxX, 0, area.maxZ))).toList();
+    }
+
+    private static net.minecraft.world.entity.item.ItemEntity itemQueryProbe(GameTestHelper h,
+            net.minecraft.server.level.ServerLevel level, Vec3 position) {
+        var probe = new net.minecraft.world.entity.item.ItemEntity(level, position.x, position.y, position.z,
+                new ItemStack(Items.STONE));
+        probe.setNoGravity(true);
+        probe.setInvulnerable(true);
+        probe.setPickUpDelay(32767);
+        probe.setDeltaMovement(Vec3.ZERO);
+        h.assertTrue(level.addFreshEntity(probe), "Could not spawn item-query positive control");
+        return probe;
+    }
+
+    private static java.util.Set<UUID> itemEntityIds(net.minecraft.server.level.ServerLevel level, AABB area) {
+        return level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, area).stream()
+                .map(net.minecraft.world.entity.Entity::getUUID).collect(java.util.stream.Collectors.toSet());
+    }
+
+    @GameTest(template = "empty") public static void rejectedChairVisitPreservesAnActiveVisit(GameTestHelper h) {
+        var actor = player(h, 3);
+        try {
+            actor.getPersistentData().putBoolean("hemomancy:chamber_visit_active", true);
+            actor.getPersistentData().putString("hemomancy:chamber_visit_mode", "GUIDED");
+            actor.getPersistentData().putInt("hemomancy:chamber_visit_remaining", 1200);
+            var before = actor.getPersistentData().copy();
+            h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.beginChairVisit(actor),
+                    "Chair entry overlapped an active guided visit");
+            h.assertTrue(before.equals(actor.getPersistentData()),
+                    "Rejected overlapping chair entry granted binding or changed the original visit");
+            h.succeed();
+        } finally {
+            actor.discard();
+        }
+    }
+
+    @GameTest(template = "empty") public static void rejectedChairVisitPreservesFungalProjection(GameTestHelper h) {
+        var actor = player(h, 7);
+        try {
+            actor.getPersistentData().putBoolean("hemomancy:fungal_projection_active", true);
+            actor.getPersistentData().putInt("hemomancy:fungal_projection_remaining", 1200);
+            var before = actor.getPersistentData().copy();
+            h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.beginChairVisit(actor),
+                    "Chair entry overlapped a Fungal projection");
+            h.assertTrue(before.equals(actor.getPersistentData()),
+                    "Rejected projecting chair entry granted binding or changed the projection");
+            h.succeed();
+        } finally {
+            actor.discard();
+        }
+    }
+
+    @GameTest(template = "empty") public static void unavailableChairDestinationDoesNotGrantBinding(GameTestHelper h) {
+        var actor = player(h, 3);
+        try {
+            h.assertTrue(actor.server.getLevel(ChamberOfWillManager.CHAMBER_OF_WILL) == null,
+                    "This failed-start fixture requires an unloaded Chamber destination");
+            var before = actor.getPersistentData().copy();
+            h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.beginChairVisit(actor),
+                    "Chair entry succeeded without its destination");
+            h.assertTrue(before.equals(actor.getPersistentData()),
+                    "Missing Chamber destination still granted chair binding");
+            h.succeed();
+        } finally {
+            actor.discard();
+        }
+    }
+
+    @GameTest(template = "empty") public static void observationalSingleAndStackDropsPreserveFullInventoryImmediately(GameTestHelper h) {
+        for (String mode : List.of("DREAM", "GUIDED")) {
+            var actor = player(h, 3);
+            try {
+                fillObservationalDropInventory(actor, new ItemStack(Items.STONE, 64), mode);
+                var before = actor.getInventory().save(new net.minecraft.nbt.ListTag());
+                h.assertTrue(!actor.drop(false), "Observational single-item drop entered the world");
+                h.assertTrue(before.equals(actor.getInventory().save(new net.minecraft.nbt.ListTag())),
+                        "Cancelled " + mode + " drop removed an item until return");
+                h.assertTrue(!actor.drop(true), "Observational whole-stack drop entered the world");
+                h.assertTrue(before.equals(actor.getInventory().save(new net.minecraft.nbt.ListTag())),
+                        "Cancelled " + mode + " stack drop changed inventory or components");
+            } finally {
+                actor.getPersistentData().remove("hemomancy:chamber_visit_active");
+                actor.discard();
+            }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty") public static void observationalInventoryScreenDropPreservesVesselComponentsImmediately(GameTestHelper h) {
+        var actor = player(h, 3);
+        var vessel = new ItemStack(ItemInit.blood_gourd_white.get());
+        HemoCapabilityAccess.getBloodVolume(vessel).orElseThrow().setBloodVolume(212);
+        try {
+            fillObservationalDropInventory(actor, vessel, "GUIDED");
+            var before = actor.getInventory().save(new net.minecraft.nbt.ListTag());
+            var expected = vessel.copy();
+            actor.inventoryMenu.clicked(36, 0, ClickType.PICKUP, actor);
+            h.assertTrue(actor.inventoryMenu.getCarried().is(ItemInit.blood_gourd_white.get()), "Fixture did not pick up the vessel");
+            actor.inventoryMenu.clicked(-999, 0, ClickType.PICKUP, actor);
+            h.assertTrue(ItemStack.matches(actor.inventoryMenu.getCarried(), expected),
+                    "Rejected inventory-screen drop did not retain the vessel on the cursor");
+            actor.inventoryMenu.clicked(36, 0, ClickType.PICKUP, actor);
+            h.assertTrue(before.equals(actor.getInventory().save(new net.minecraft.nbt.ListTag())),
+                    "Returning the rejected cursor drop changed vessel components or blood");
+            h.assertTrue(h.getLevel().getEntitiesOfClass(ItemEntity.class, actor.getBoundingBox().inflate(4),
+                            item -> item.getItem().is(ItemInit.blood_gourd_white.get())).isEmpty(),
+                    "Observational inventory-screen drop spawned a vessel");
+        } finally {
+            actor.getPersistentData().remove("hemomancy:chamber_visit_active");
+            actor.discard();
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty") public static void observationalEquipmentDropsKeepFullInventoryAndCursor(GameTestHelper h) {
+        for (String mode : List.of("DREAM", "GUIDED")) {
+            var actor = player(h, 3);
+            try {
+                fillObservationalDropInventory(actor, new ItemStack(Items.STONE, 64), mode);
+                actor.getInventory().setItem(39, new ItemStack(Items.DIAMOND_HELMET));
+                actor.getInventory().setItem(40, new ItemStack(Items.SHIELD));
+                var before = actor.getInventory().save(new net.minecraft.nbt.ListTag());
+                for (int slot : List.of(5, 45)) {
+                    actor.inventoryMenu.clicked(slot, 1, ClickType.THROW, actor);
+                    h.assertTrue(before.equals(actor.getInventory().save(new net.minecraft.nbt.ListTag())),
+                            "Rejected " + mode + " equipment throw changed a full inventory");
+                    actor.inventoryMenu.clicked(slot, 0, ClickType.PICKUP, actor);
+                    var carried = actor.inventoryMenu.getCarried().copy();
+                    for (int button : List.of(0, 1)) {
+                        actor.inventoryMenu.clicked(-999, button, ClickType.PICKUP, actor);
+                        h.assertTrue(ItemStack.matches(carried, actor.inventoryMenu.getCarried()),
+                                "Rejected equipment cursor drop lost its item");
+                        actor.inventoryMenu.clicked(-999, button, ClickType.QUICK_MOVE, actor);
+                        h.assertTrue(ItemStack.matches(carried, actor.inventoryMenu.getCarried()),
+                                "Outside quick-move bypassed observational equipment protection");
+                    }
+                    actor.inventoryMenu.clicked(slot, 0, ClickType.PICKUP, actor);
+                    h.assertTrue(before.equals(actor.getInventory().save(new net.minecraft.nbt.ListTag())),
+                            "Returning equipment from the cursor changed its components");
+                }
+            } finally {
+                actor.inventoryMenu.setCarried(ItemStack.EMPTY);
+                actor.getPersistentData().remove("hemomancy:chamber_visit_active");
+                actor.discard();
+            }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty") public static void observationalFormationKeyDoesNotSpendBlood(GameTestHelper h) {
+        var actor = player(h, 3);
+        try {
+            fillObservationalDropInventory(actor, new ItemStack(Items.IRON_SWORD), "GUIDED");
+            var blood = HemoCapabilityAccess.requireBloodVolume(actor);
+            blood.setActive(true);
+            blood.setBloodVolume(1000);
+            var before = actor.getInventory().save(new net.minecraft.nbt.ListTag());
+            var context = new net.neoforged.neoforge.network.handling.ServerPayloadContext(actor.connection,
+                    com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodFormationKeyPressPacket.TYPE.id());
+            com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodFormationKeyPressPacket.handle(
+                    new com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodFormationKeyPressPacket(), context);
+            h.assertTrue(blood.getBloodVolume() == 1000
+                            && before.equals(actor.getInventory().save(new net.minecraft.nbt.ListTag())),
+                    "Observational formation key spent blood or changed inventory");
+        } finally {
+            actor.getPersistentData().remove("hemomancy:chamber_visit_active");
+            actor.discard();
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty") public static void observationalRecoveryClearsCursorBeforeRestoringInventory(GameTestHelper h) {
+        for (String mode : List.of("DREAM", "GUIDED")) {
+            var actor = player(h, 3);
+            try {
+                fillObservationalDropInventory(actor, new ItemStack(Items.STONE, 64), mode);
+                actor.getInventory().setItem(39, new ItemStack(Items.DIAMOND_HELMET));
+                var before = actor.getInventory().save(new net.minecraft.nbt.ListTag());
+                actor.getPersistentData().put("hemomancy:chamber_visit_dream_inventory", before.copy());
+                actor.inventoryMenu.clicked(5, 0, ClickType.PICKUP, actor);
+                h.assertTrue(actor.inventoryMenu.getCarried().is(Items.DIAMOND_HELMET), "Recovery fixture did not hold its helmet");
+                com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.recoverOutsideChamber(actor);
+                h.assertTrue(actor.inventoryMenu.getCarried().isEmpty()
+                                && before.equals(actor.getInventory().save(new net.minecraft.nbt.ListTag())),
+                        "Observational " + mode + " recovery duplicated its restored helmet on the cursor");
+                h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isActive(actor)
+                                && !actor.getPersistentData().getBoolean("hemomancy:chamber_visit_guided_complete"),
+                        "Outside recovery completed an invalid guided return");
+            } finally {
+                actor.inventoryMenu.setCarried(ItemStack.EMPTY);
+                actor.getPersistentData().remove("hemomancy:chamber_visit_active");
+                actor.discard();
+            }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty") public static void observationalRecoveryRestoresCraftingInputsWithoutDuplicates(GameTestHelper h) {
+        for (String mode : List.of("DREAM", "GUIDED")) {
+            var actor = player(h, 3);
+            try {
+                fillObservationalDropInventory(actor, new ItemStack(Items.STONE, 64), mode);
+                actor.inventoryMenu.getSlot(1).set(new ItemStack(Items.DIAMOND));
+                var before = actor.getInventory().save(new net.minecraft.nbt.ListTag());
+                var crafting = new net.minecraft.nbt.ListTag();
+                for (int slot = 1; slot <= 4; slot++)
+                    crafting.add(actor.inventoryMenu.getSlot(slot).getItem().saveOptional(actor.registryAccess()));
+                actor.getPersistentData().put("hemomancy:chamber_visit_dream_inventory", before.copy());
+                actor.getPersistentData().put("hemomancy:chamber_visit_dream_crafting", crafting);
+                var entryCursor = mode.equals("DREAM") ? new ItemStack(Items.EMERALD, 2) : ItemStack.EMPTY;
+                actor.getPersistentData().put("hemomancy:chamber_visit_dream_carried", entryCursor.saveOptional(actor.registryAccess()));
+                actor.inventoryMenu.clicked(36, 0, ClickType.PICKUP, actor);
+                actor.inventoryMenu.clicked(2, 0, ClickType.PICKUP, actor);
+                h.assertTrue(actor.inventoryMenu.getSlot(2).getItem().is(Items.STONE), "Crafting fixture did not move its stack");
+                com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.recoverOutsideChamber(actor);
+                h.assertTrue(before.equals(actor.getInventory().save(new net.minecraft.nbt.ListTag()))
+                                && actor.inventoryMenu.getSlot(1).getItem().is(Items.DIAMOND)
+                                && actor.inventoryMenu.getSlot(1).getItem().getCount() == 1
+                                && actor.inventoryMenu.getSlot(2).getItem().isEmpty(),
+                        "Observational recovery lost entry crafting inputs or duplicated its moved stack");
+                h.assertTrue(!actor.getPersistentData().contains("hemomancy:chamber_visit_dream_crafting"),
+                        "Completed recovery retained its transient crafting snapshot");
+                h.assertTrue(ItemStack.matches(entryCursor, actor.inventoryMenu.getCarried()),
+                        "Recovery lost or duplicated the original dream cursor state");
+            } finally {
+                actor.inventoryMenu.setCarried(ItemStack.EMPTY);
+                actor.inventoryMenu.clearCraftingContent();
+                actor.getPersistentData().remove("hemomancy:chamber_visit_active");
+                actor.discard();
+            }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty") public static void timedChairStillAllowsOrdinaryDrops(GameTestHelper h) {
+        var actor = player(h, 3);
+        var source = new ItemStack(Items.STONE, 64);
+        var helmet = new ItemStack(Items.DIAMOND_HELMET);
+        helmet.set(DataComponents.CUSTOM_NAME, net.minecraft.network.chat.Component.literal("Chair helmet " + actor.getUUID()));
+        var shield = new ItemStack(Items.SHIELD);
+        shield.set(DataComponents.CUSTOM_NAME, net.minecraft.network.chat.Component.literal("Chair shield " + actor.getUUID()));
+        try {
+            fillObservationalDropInventory(actor, source, "TIMED_CHAIR");
+            h.assertTrue(actor.drop(false) && actor.getInventory().getItem(0).getCount() == 63,
+                    "A non-observational chair visit stopped ordinary dropping");
+            var items = h.getLevel().getEntitiesOfClass(ItemEntity.class, actor.getBoundingBox().inflate(4),
+                    item -> ItemStack.isSameItemSameComponents(item.getItem(), source));
+            h.assertTrue(items.size() == 1 && items.getFirst().getItem().getCount() == 1,
+                    "Chair drop did not produce exactly the removed item");
+            actor.getInventory().setItem(39, helmet.copy());
+            actor.inventoryMenu.clicked(5, 1, ClickType.THROW, actor);
+            h.assertTrue(actor.getInventory().getItem(39).isEmpty()
+                            && !h.getLevel().getEntitiesOfClass(ItemEntity.class, actor.getBoundingBox().inflate(4),
+                                    item -> ItemStack.isSameItemSameComponents(item.getItem(), helmet)).isEmpty(),
+                    "Timed chair inventory throw was incorrectly protected");
+            actor.getInventory().setItem(40, shield.copy());
+            actor.inventoryMenu.clicked(45, 0, ClickType.PICKUP, actor);
+            actor.inventoryMenu.clicked(-999, 0, ClickType.QUICK_MOVE, actor);
+            h.assertTrue(actor.inventoryMenu.getCarried().isEmpty()
+                            && !h.getLevel().getEntitiesOfClass(ItemEntity.class, actor.getBoundingBox().inflate(4),
+                                    item -> ItemStack.isSameItemSameComponents(item.getItem(), shield)).isEmpty(),
+                    "Timed chair outside-cursor drop was incorrectly protected");
+        } finally {
+            h.getLevel().getEntitiesOfClass(ItemEntity.class, actor.getBoundingBox().inflate(4),
+                    item -> ItemStack.isSameItemSameComponents(item.getItem(), source)
+                            || ItemStack.isSameItemSameComponents(item.getItem(), helmet)
+                            || ItemStack.isSameItemSameComponents(item.getItem(), shield)).forEach(ItemEntity::discard);
+            actor.getPersistentData().remove("hemomancy:chamber_visit_active");
+            actor.discard();
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty") public static void observationalDropKeepsTransformedStaffAndPairedOffhand(GameTestHelper h) {
+        var actor = player(h, 3);
+        try {
+            fillObservationalDropInventory(actor, new ItemStack(ItemInit.living_staff.get()), "GUIDED");
+            HemoCapabilityAccess.requireBloodVolume(actor).setActive(true);
+            HemoCapabilityAccess.requireBloodVolume(actor).setBloodVolume(1000);
+            h.assertTrue(LivingStaffWeaponFormHelper.applySelection(actor, ManipulationInit.conjure_claws.get())
+                            && actor.getOffhandItem().is(ItemInit.living_baghnakh.get()),
+                    "Fixture did not form paired claws from its Staff");
+            var before = actor.getInventory().save(new net.minecraft.nbt.ListTag());
+            h.assertTrue(!actor.drop(false), "Observational weapon-form drop entered the world");
+            h.assertTrue(before.equals(actor.getInventory().save(new net.minecraft.nbt.ListTag())),
+                    "Cancelled drop restored the Staff form or removed its paired offhand");
+        } finally {
+            actor.getPersistentData().remove("hemomancy:chamber_visit_active");
+            actor.discard();
+        }
+        h.succeed();
+    }
+
+    private static void fillObservationalDropInventory(ServerPlayer actor, ItemStack selected, String mode) {
+        for (int slot = 0; slot < actor.getInventory().items.size(); slot++)
+            actor.getInventory().setItem(slot, new ItemStack(Items.COBBLESTONE, 64));
+        selected.set(DataComponents.CUSTOM_NAME, net.minecraft.network.chat.Component.literal("Guided visit reserve " + actor.getUUID()));
+        actor.getInventory().setItem(0, selected);
+        actor.getInventory().selected = 0;
+        actor.getPersistentData().putBoolean("hemomancy:chamber_visit_active", true);
+        actor.getPersistentData().putString("hemomancy:chamber_visit_mode", mode);
+    }
+
+    @GameTest(template = "empty") public static void pallidVesselRequiresThirdDegree(GameTestHelper h) {
+        verifyVesselDegreeGate(h, "pallid_vessel_rite", 3);
+    }
+
+    @GameTest(template = "empty") public static void crimsonVesselRequiresFourthDegree(GameTestHelper h) {
+        verifyVesselDegreeGate(h, "crimson_vessel_rite", 4);
+    }
+
+    @GameTest(template = "empty") public static void ashenVesselRequiresFifthDegree(GameTestHelper h) {
+        verifyVesselDegreeGate(h, "ashen_vessel_rite", 5);
+    }
+
+    @GameTest(template = "empty") public static void curvedHornRequiresSixthDegree(GameTestHelper h) {
+        verifyVesselDegreeGate(h, "horn_of_culmination_rite", 6);
+    }
+
+    private static void verifyVesselDegreeGate(GameTestHelper h, String recipePath, int requiredDegree) {
+        var actor = player(h, requiredDegree - 1);
+        var origin = h.absolutePos(new BlockPos(14, 3, 14));
+        var center = origin.above();
+        var saved = CardinalRiteSavedData.get(h.getLevel());
+        actor.getPersistentData().putString(HemoJourneyFixtures.DIMENSION_KEY, h.getLevel().dimension().location().toString());
+        try {
+            HemoJourneyFixtures.prepareCardinalRite(actor, origin, recipePath);
+            actor.setPos(center.getCenter().add(0, 0.5, 2));
+            var blood = HemoCapabilityAccess.requireBloodVolume(actor);
+            blood.setActive(true);
+            blood.setBloodVolume(1000);
+            var staff = actor.getMainHandItem();
+            var trigger = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE;
+            var attempt = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
+                    .tryStartCardinalRite(actor, center, trigger);
+            h.assertTrue(attempt != com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
+                            && saved.getRite(actor.getUUID()) == null && actor.getMainHandItem() == staff
+                            && blood.getBloodVolume() == 1000,
+                    "An earlier-degree Staff owner started " + recipePath + " or lost blood/escrow");
+            HemoCapabilityAccess.requireInitiatoryDegree(actor).setDegreeNumber(requiredDegree);
+            attempt = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
+                    .tryStartCardinalRite(actor, center, trigger);
+            h.assertTrue(attempt == com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
+                            && saved.getRite(actor.getUUID()) != null
+                            && saved.getRite(actor.getUUID()).getRecipeId().equals(Hemomancy.rloc("cardinal_rite/" + recipePath)),
+                    "The authored vessel gate rejected its eligible degree: " + recipePath);
+        } finally {
+            if (saved.getRite(actor.getUUID()) != null)
+                com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow.restore(actor, saved.getRite(actor.getUUID()));
+            saved.removeRite(actor.getUUID());
+            HemoJourneyFixtures.cleanup(actor, origin);
+            actor.discard();
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty") public static void allVesselsFillCorkTransferEquipAndSerialize(GameTestHelper h) {
+        var actor = player(h, 6);
+        var pos = h.absolutePos(new BlockPos(4, 3, 4));
+        h.getLevel().setBlockAndUpdate(pos, BlockInit.ghastly_alembic.get().defaultBlockState());
+        var alembic = (com.vincenthuto.hemomancy.common.tile.harbinger.crafting.GhastlyAlembicBlockEntity) h.getLevel().getBlockEntity(pos);
+        var playerBlood = HemoCapabilityAccess.requireBloodVolume(actor);
+        var equipment = HemoCapabilityAccess.requireEquipment(actor);
+        try {
+            for (Item item : List.of(ItemInit.blood_gourd_white.get(), ItemInit.blood_gourd_red.get(),
+                    ItemInit.blood_gourd_black.get(), ItemInit.curved_horn.get())) {
+                var gourd = new ItemStack(item);
+                gourd.set(DataComponents.CUSTOM_NAME, net.minecraft.network.chat.Component.literal("Saved reserve"));
+                var gourdItem = (com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem) item;
+                var stored = HemoCapabilityAccess.getBloodVolume(gourd).orElseThrow();
+                alembic.getBloodCapability().setBloodVolume(500);
+                alembic.setItem(4, gourd);
+                com.vincenthuto.hemomancy.common.tile.harbinger.crafting.GhastlyAlembicBlockEntity
+                        .serverTick(h.getLevel(), pos, alembic.getBlockState(), alembic);
+                h.assertTrue(stored.getBloodVolume() == 100 && alembic.getBloodCapability().getBloodVolume() == 400,
+                        "Alembic did not conserve its 100 mL gourd transfer");
+                alembic.setItem(4, ItemStack.EMPTY);
+                playerBlood.setActive(true);
+                playerBlood.setBloodVolume(1000);
+                actor.setItemInHand(InteractionHand.MAIN_HAND, gourd);
+                item.inventoryTick(gourd, h.getLevel(), actor, 0, true);
+                h.assertTrue(playerBlood.getBloodVolume() == 1000 && stored.getBloodVolume() == 100,
+                        "A corked gourd transferred blood");
+                item.use(h.getLevel(), actor, InteractionHand.MAIN_HAND);
+                item.inventoryTick(gourd, h.getLevel(), actor, 0, true);
+                double rate = gourdItem.getTransferRate();
+                h.assertTrue(playerBlood.getBloodVolume() == 1000 + rate && stored.getBloodVolume() == 100 - rate,
+                        "Open gourd ignored its authored withdrawal rate");
+                playerBlood.setActive(false);
+                item.inventoryTick(gourd, h.getLevel(), actor, 0, true);
+                h.assertTrue(stored.getBloodVolume() == 100 - rate, "Dormant blood drained its gourd");
+                playerBlood.setActive(true);
+                playerBlood.setBloodVolume(playerBlood.getMaxBloodVolume() - 0.25);
+                item.inventoryTick(gourd, h.getLevel(), actor, 0, true);
+                h.assertTrue(playerBlood.isFull() && stored.getBloodVolume() == 99.75 - rate,
+                        "Gourd overflow lost fractional blood");
+                item.use(h.getLevel(), actor, InteractionHand.MAIN_HAND);
+                var menu = new com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu(
+                        1, h.getLevel(), pos, actor.getInventory(), actor, true);
+                menu.quickMoveStack(actor, 35);
+                h.assertTrue(equipment.getStackInSlot(6).is(item) && actor.getMainHandItem().isEmpty(),
+                        "Scarlet Vanity shift-click lost or duplicated its gourd");
+                playerBlood.setBloodVolume(1000);
+                var context = new net.neoforged.neoforge.network.handling.ServerPayloadContext(actor.connection,
+                        com.vincenthuto.hemomancy.common.network.capa.harbinger.ToggleGourdKeyPacket.TYPE.id());
+                com.vincenthuto.hemomancy.common.network.capa.harbinger.ToggleGourdKeyPacket.handle(
+                        new com.vincenthuto.hemomancy.common.network.capa.harbinger.ToggleGourdKeyPacket(), context);
+                gourdItem.onWornTick(actor);
+                h.assertTrue(playerBlood.getBloodVolume() == 1000 + rate, "Equipped toggle did not open the gourd");
+                var restored = new com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentContainer();
+                restored.deserializeNBT(actor.registryAccess(), actor.getData(HemoAttachmentTypes.HARBINGER_EQUIPMENT)
+                        .serializeNBT(actor.registryAccess()));
+                h.assertTrue(ItemStack.isSameItemSameComponents(restored.getStackInSlot(6), equipment.getStackInSlot(6)),
+                        "Equipment serialization changed gourd reserve, cork state, or name");
+                equipment.setStackInSlot(6, ItemStack.EMPTY);
+            }
+        } finally {
+            equipment.setStackInSlot(6, ItemStack.EMPTY);
+            alembic.clearContent();
+            h.getLevel().removeBlock(pos.above(), false);
+            h.getLevel().removeBlock(pos, false);
+            actor.discard();
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty") public static void allVesselFormationRefillsUseTheFillSerializer(GameTestHelper h) {
+        for (String recipe : List.of("blood_gourd_white_fill", "blood_gourd_red_fill", "blood_gourd_black_fill", "curved_horn_fill")) {
+            h.assertTrue(h.getLevel().getRecipeManager().byKey(Hemomancy.rloc(recipe)).orElseThrow().value()
+                            instanceof com.vincenthuto.hemomancy.common.recipe.FillBloodGourdRecipe,
+                    "A gourd refill is wired to a non-filling serializer: " + recipe);
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty") public static void freshVesselFormationRefillActuallyAddsBlood(GameTestHelper h) {
+        List<Item> vessels = List.of(ItemInit.blood_gourd_white.get(), ItemInit.blood_gourd_red.get(),
+                ItemInit.blood_gourd_black.get(), ItemInit.curved_horn.get());
+        List<String> recipes = List.of("blood_gourd_white_fill", "blood_gourd_red_fill", "blood_gourd_black_fill", "curved_horn_fill");
+        for (int tier = 0; tier < vessels.size(); tier++) {
+            var source = new ItemStack(vessels.get(tier));
+            var original = source.copy();
+            var input = gourdRefillInput(source);
+            var recipe = (CraftingRecipe) h.getLevel().getRecipeManager().byKey(Hemomancy.rloc(recipes.get(tier))).orElseThrow().value();
+            h.assertTrue(recipe.matches(input, h.getLevel()), "Refill fixture does not match " + recipes.get(tier));
+            var output = recipe.assemble(input, h.getLevel().registryAccess());
+            h.assertTrue(HemoCapabilityAccess.getBloodVolume(output).orElseThrow().getBloodVolume() == 200,
+                    "A fresh vessel consumed its formations without gaining blood: " + recipes.get(tier));
+            h.assertTrue(ItemStack.isSameItemSameComponents(source, original), "Refill preview mutated its fresh input");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty") public static void vesselFormationRefillPreservesItsComponentsAndClampsCapacity(GameTestHelper h) {
+        var inputGourd = new ItemStack(ItemInit.blood_gourd_red.get());
+        inputGourd.set(DataComponents.CUSTOM_NAME, net.minecraft.network.chat.Component.literal("My reserve"));
+        HemoCapabilityAccess.getBloodVolume(inputGourd).orElseThrow().setBloodVolume(1750);
+        var data = inputGourd.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        data.putBoolean("state", true);
+        inputGourd.set(DataComponents.CUSTOM_DATA, CustomData.of(data));
+        var input = gourdRefillInput(inputGourd);
+        var recipe = (CraftingRecipe) h.getLevel().getRecipeManager().byKey(Hemomancy.rloc("blood_gourd_red_fill")).orElseThrow().value();
+        var output = recipe.assemble(input, h.getLevel().registryAccess());
+        h.assertTrue(java.util.Objects.equals(output.get(DataComponents.CUSTOM_NAME), inputGourd.get(DataComponents.CUSTOM_NAME))
+                        && output.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getBoolean("state"),
+                "Refilling erased the original vessel name or open state");
+        h.assertTrue(HemoCapabilityAccess.getBloodVolume(output).orElseThrow().getBloodVolume() == 1800
+                        && HemoCapabilityAccess.getBloodVolume(inputGourd).orElseThrow().getBloodVolume() == 1750,
+                "Refill overflowed capacity or changed its crafting input");
+        h.succeed();
+    }
+
+    private static CraftingInput gourdRefillInput(ItemStack gourd) {
+        var formation = new ItemStack(ItemInit.sanguine_formation.get());
+        return CraftingInput.of(3, 3, List.of(ItemStack.EMPTY, formation.copy(), ItemStack.EMPTY,
+                formation.copy(), gourd, formation.copy(), ItemStack.EMPTY, formation.copy(), ItemStack.EMPTY));
+    }
+
+    @GameTest(template = "empty") public static void occupiedRootedVeinSiteRejectsBeforeStaffEscrow(GameTestHelper h) {
+        var actor = player(h, 2);
+        var origin = h.absolutePos(new BlockPos(14, 3, 14));
+        var center = origin.above();
+        var saved = com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData.get(h.getLevel());
+        actor.getPersistentData().putString(HemoJourneyFixtures.DIMENSION_KEY,
+                h.getLevel().dimension().location().toString());
+        try {
+            HemoJourneyFixtures.prepareCardinalRite(actor, origin, "rooted_vein");
+            actor.setPos(center.getCenter().add(0, 1, 2));
+            HemoCapabilityAccess.requireBloodVolume(actor).setActive(true);
+            var staff = actor.getMainHandItem();
+            h.getLevel().setBlock(center.above(), Blocks.CHEST.defaultBlockState(), 3);
+            var chest = (net.minecraft.world.level.block.entity.ChestBlockEntity) h.getLevel().getBlockEntity(center.above());
+            chest.setItem(0, new ItemStack(Items.DIAMOND, 3));
+            var result = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
+                    .tryStartCardinalRite(actor, center,
+                            com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
+            h.assertTrue(result != com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
+                            && saved.getRite(actor.getUUID()) == null,
+                    "An occupied Rooted Vein site started its ceremony");
+            h.assertTrue(actor.getMainHandItem() == staff && chest.getItem(0).getCount() == 3,
+                    "A rejected Rooted Vein start changed the Staff or occupied inventory");
+            h.succeed();
+        } finally {
+            var rite = saved.getRite(actor.getUUID());
+            if (rite != null) com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow.restore(actor, rite);
+            saved.removeRite(actor.getUUID());
+            HemoJourneyFixtures.cleanup(actor, origin);
+            actor.discard();
+        }
+    }
+
+    @GameTest(template = "empty") public static void rootedVeinCompletionRechecksOccupiedSite(GameTestHelper h) {
+        var actor = player(h, 2);
+        var center = h.absolutePos(new BlockPos(6, 3, 6));
+        h.getLevel().setBlock(center, BlockInit.cardinal_focus.get().defaultBlockState(), 3);
+        h.getLevel().setBlock(center.above(), Blocks.CHEST.defaultBlockState(), 3);
+        var chest = (net.minecraft.world.level.block.entity.ChestBlockEntity) h.getLevel().getBlockEntity(center.above());
+        chest.setItem(0, new ItemStack(Items.DIAMOND, 3));
+        var rite = com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite.interactive(
+                actor.getUUID(), center, Hemomancy.rloc("cardinal_rite/rooted_vein"), 400, 2, 2, false, 0, 4);
+        try {
+            var complete = com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents.class
+                    .getDeclaredMethod("completeRite", net.minecraft.server.level.ServerLevel.class,
+                            ServerPlayer.class, com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite.class);
+            complete.setAccessible(true);
+            h.assertTrue(!(boolean) complete.invoke(null, h.getLevel(), actor, rite),
+                    "Rooted Vein overwrote a site occupied after activation");
+            h.assertTrue(h.getLevel().getBlockState(center).is(BlockInit.cardinal_focus.get())
+                            && h.getLevel().getBlockEntity(center.above()) == chest
+                            && chest.getItem(0).is(Items.DIAMOND) && chest.getItem(0).getCount() == 3,
+                    "Rejected Rooted Vein completion changed the Focus or occupied inventory");
+            h.getLevel().removeBlock(center.above(), false);
+            h.assertTrue((boolean) complete.invoke(null, h.getLevel(), actor, rite),
+                    "A clear-site Rooted Vein retry did not complete");
+            h.assertTrue(h.getLevel().getBlockState(center).is(BlockInit.venous_stone.get())
+                            && h.getLevel().getBlockState(center.above()).is(BlockInit.earthen_vein.get()),
+                    "Rooted Vein retry did not create its permanent result");
+            h.succeed();
+        } catch (ReflectiveOperationException exception) {
+            h.fail("Rooted Vein completion could not run: " + exception);
+        } finally {
+            h.getLevel().removeBlock(center.above(), false);
+            h.getLevel().removeBlock(center, false);
+            actor.discard();
+        }
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 800)
+    public static void illuminatusPaysRequiredBastionAndCompletesItsActualCeremony(GameTestHelper h) {
+        var supportWarnings = new ArrayList<net.minecraft.network.protocol.game.ClientboundSystemChatPacket>();
+        var actor = player(h, 4, h.getLevel(), packet -> {
+            if (packet instanceof net.minecraft.network.protocol.game.ClientboundSystemChatPacket message
+                    && message.content().getString().contains("support sigil has not awakened")) supportWarnings.add(message);
+        });
+        var origin = h.absolutePos(new BlockPos(14, 3, 14));
+        var center = origin.above();
+        actor.getPersistentData().putString(HemoJourneyFixtures.DIMENSION_KEY,
+                h.getLevel().dimension().location().toString());
+        HemoJourneyFixtures.prepareCardinalRite(actor, origin, "illuminatus_rite");
+        // Supplied chapter proof isolates the ceremony; the personal cycle/start is tested separately.
+        HarbingerAdvancementGranter.grantIfNotDone(actor, HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_EFFIGY_LOADOUT);
+        actor.setPos(center.getCenter().add(0, 0.5, 2));
+        actor.getMainHandItem().set(DataComponents.CUSTOM_NAME,
+                net.minecraft.network.chat.Component.literal("Illuminatus ceremony Staff"));
+        var staff = actor.getMainHandItem().copy();
+        var blood = HemoCapabilityAccess.requireBloodVolume(actor);
+        blood.setActive(true);
+        blood.setBloodVolume(2000);
+        var recipe = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getRiteByLocation(
+                h.getLevel(), Hemomancy.rloc("cardinal_rite/illuminatus_rite"));
+        var saved = CardinalRiteSavedData.get(h.getLevel());
+        var chunk = new net.minecraft.world.level.ChunkPos(center);
+        h.getLevel().getChunkSource().addRegionTicket(ROOTED_VEIN_TICKET, chunk, 2, actor.getUUID());
+        setServerPlayerLookup(actor, true);
+        Runnable cleanup = () -> {
+            if (actor.isRemoved()) return;
+            var rite = saved.getRite(actor.getUUID());
+            if (rite != null) {
+                com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteOrdealEngine.clearThreats(h.getLevel(), rite);
+                com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow.restore(actor, rite);
+            }
+            saved.removeRite(actor.getUUID());
+            for (var daemon : h.getLevel().getEntitiesOfClass(HumanitySpriteEntity.class,
+                    new AABB(center).inflate(128), entity -> entity.isBoundToRite(actor.getUUID()))) daemon.discard();
+            HemoJourneyFixtures.cleanup(actor, origin);
+            h.getLevel().getChunkSource().removeRegionTicket(ROOTED_VEIN_TICKET, chunk, 2, actor.getUUID());
+            setServerPlayerLookup(actor, false);
+            actor.discard();
+        };
+        h.testInfo.addListener(new GameTestListener() {
+            public void testStructureLoaded(GameTestInfo test) { }
+            public void testPassed(GameTestInfo test, GameTestRunner runner) { }
+            public void testFailed(GameTestInfo test, GameTestRunner runner) { cleanup.run(); }
+            public void testAddedForRerun(GameTestInfo oldTest, GameTestInfo newTest, GameTestRunner runner) { }
+        });
+        h.startSequence()
+                .thenWaitUntil(() -> h.assertTrue(h.getLevel().areEntitiesLoaded(chunk.toLong()),
+                        "Illuminatus ceremony chunk is not ready"))
+                .thenExecute(() -> {
+                    actor.getMainHandItem().useOn(new net.minecraft.world.item.context.UseOnContext(actor,
+                            InteractionHand.MAIN_HAND, new BlockHitResult(center.getCenter(), Direction.UP, center, false)));
+                    h.assertTrue(saved.getRite(actor.getUUID()) != null, "Staff use did not start Illuminatus");
+                })
+                .thenIdle(25)
+                .thenExecute(() -> {
+                    actor.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ItemInit.blood_projection.get()));
+                    for (var anchor : recipe.getCeremony().anchors()) {
+                        actor.lookAt(EntityAnchorArgument.Anchor.EYES,
+                                CardinalRiteTargetGeometry.anchorAimPoint(center, anchor.offset()));
+                        var payment = CardinalRiteInteractionHandler.tryProject(h.getLevel(), actor, 50);
+                        h.assertTrue(payment.handled() && payment.bloodSpent() == 50,
+                                "Illuminatus anchor must accept exactly 50 mL");
+                    }
+                    h.assertTrue(saved.getRite(actor.getUUID()).getPhase() == CardinalRitePhase.INSCRIPTION
+                            && blood.getBloodVolume() == 1800, "Four paid anchors must open inscription without promotion");
+                })
+                .thenWaitUntil(() -> h.assertTrue(HumanitySpriteEntity.findBoundToRite(h.getLevel(),
+                        actor.getUUID(), center) != null, "Illuminatus daemon has not emerged"))
+                .thenExecute(() -> {
+                    var rite = saved.getRite(actor.getUUID());
+                    actor.lookAt(EntityAnchorArgument.Anchor.EYES,
+                            HumanitySpriteEntity.findBoundToRite(h.getLevel(), actor.getUUID(), center).position());
+                    for (int pulse = 0; pulse < 10; pulse++) CardinalRiteInteractionHandler.tryProject(h.getLevel(), actor, 50);
+                    h.assertTrue(rite.getPhase() == CardinalRitePhase.INSCRIPTION && blood.getBloodVolume() == 1800,
+                            "Missing Bastion support must reject sealing without spending blood");
+                    h.assertTrue(!supportWarnings.isEmpty() && supportWarnings.stream().allMatch(message -> message.overlay()),
+                            "Held Projection must show missing support in the action bar without filling chat: warnings="
+                                    + supportWarnings.size());
+                    var socket = recipe.getCeremony().supportSockets().getFirst();
+                    var id = Hemomancy.rloc(socket.suggestedSigil());
+                    var sigil = com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry.get(id);
+                    var occupied = new java.util.HashSet<BlockPos>();
+                    for (var anchor : recipe.getCeremony().anchors()) occupied.add(new BlockPos(anchor.x(), 0, anchor.z()));
+                    var placement = com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilPlacementRules.resolveSupportPlacement(
+                            new BlockPos(socket.x(), 0, socket.z()), sigil.nodes(), occupied);
+                    actor.setPos(center.getCenter().add(2, 0.5, 2));
+                    for (var node : sigil.nodes()) {
+                        var surface = com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilRules.surfaceAirPosition(
+                                h.getLevel(), center.offset(0, socket.y(), 0),
+                                placement.getX() + (int) Math.round(node.x()), placement.getZ() + (int) Math.round(node.z()));
+                        actor.lookAt(EntityAnchorArgument.Anchor.EYES, CardinalRiteTargetGeometry.sigilAimPoint(center,
+                                surface, placement.getX(), placement.getZ(), node.x(), node.z()));
+                        var payment = CardinalRiteInteractionHandler.tryProject(h.getLevel(), actor, 50);
+                        h.assertTrue(payment.handled() && payment.bloodSpent() == 50,
+                                "Ordered Bastion node must accept exactly 50 mL: node=" + node
+                                        + ", placement=" + placement + ", surface=" + surface
+                                        + ", payment=" + payment + ", progress=" + rite.getSigilProgress()
+                                        + ", eye=" + actor.getEyePosition());
+                    }
+                    h.assertTrue(rite.isSigilAwakened(id.toString()) && blood.getBloodVolume() == 1800 - 50 * sigil.nodes().size(),
+                            "Fully paid Bastion must awaken without an extra blood debit");
+                    actor.lookAt(EntityAnchorArgument.Anchor.EYES,
+                            HumanitySpriteEntity.findBoundToRite(h.getLevel(), actor.getUUID(), center).position());
+                    var seal = CardinalRiteInteractionHandler.tryProject(h.getLevel(), actor, 50);
+                    h.assertTrue(seal.handled() && seal.bloodSpent() == 0 && rite.getPhase() == CardinalRitePhase.OFFERING_PROCESSION,
+                            "Paid Bastion must allow the real daemon seal and zero-wave procession");
+                    h.assertTrue(HemoCapabilityAccess.getPlayerDegreeNumber(actor) == 4,
+                            "Sealing the altar must not promote before culmination");
+                })
+                .thenWaitUntil(() -> h.assertTrue(saved.getRite(actor.getUUID()) == null, "Illuminatus ceremony has not finished"))
+                .thenExecute(() -> {
+                    try {
+                        h.assertTrue(HemoCapabilityAccess.getPlayerDegreeNumber(actor) == 5
+                                && HarbingerAdvancementGranter.hasAdvancement(actor, HarbingerAdvancementGranter.ADV_CRIMSON_LODGE_CONSECRATED),
+                                "Actual Illuminatus culmination must award D5 and its rite proof");
+                        h.assertTrue(actor.getInventory().countItem(ItemInit.living_staff.get()) == 1
+                                && actor.getInventory().items.stream().anyMatch(stack -> ItemStack.isSameItemSameComponents(stack, staff)),
+                                "Illuminatus must return exactly one original named Staff");
+                        h.assertTrue(blood.getBloodVolume() == 1500,
+                                "Illuminatus must spend only its four anchors and six Bastion nodes, with no completion debit or refund");
+                        var floor = com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry.get(recipe.getFloorId()).orElseThrow();
+                        for (var socket : floor.brazierSockets().subList(0, 2)) {
+                            var brazier = (com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity)
+                                    h.getLevel().getBlockEntity(center.offset(socket.getX(), socket.getY(), -socket.getZ()));
+                            h.assertTrue(brazier.getOfferingForMatching().isEmpty(), "Illuminatus must consume both authored offerings");
+                        }
+                    } finally { cleanup.run(); }
+                }).thenSucceed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 600)
+    public static void rootedVeinCompletesThroughPaidAnchorsAndDaemon(GameTestHelper h) {
+        var fixture = rootedVeinFixture(h);
+        rootedVeinSequence(h, fixture)
+                .thenExecute(() -> sealRootedVein(h, fixture))
+                .thenWaitUntil(() -> h.assertTrue(fixture.rite().getPhase() == CardinalRitePhase.CULMINATION,
+                        "Rooted Vein daemon has not returned from its offering"))
+                .thenExecute(() -> h.assertTrue(fixture.brazier().getOfferingForMatching().isEmpty(),
+                        "Rooted Vein did not consume its one Blood Rock"))
+                .thenWaitUntil(() -> h.assertTrue(fixture.rite() == null, "Rooted Vein did not finish"))
+                .thenExecute(() -> {
+                    try {
+                        assertRootedStaffReturned(h, fixture);
+                        h.assertTrue(h.getLevel().getBlockState(fixture.center()).is(BlockInit.venous_stone.get())
+                                        && h.getLevel().getBlockState(fixture.center().above()).is(BlockInit.earthen_vein.get()),
+                                "Full Rooted Vein ceremony did not create the authored result");
+                        var vein = (com.vincenthuto.hemomancy.common.tile.harbinger.functional.EarthenVeinBlockEntity)
+                                h.getLevel().getBlockEntity(fixture.center().above());
+                        h.assertTrue(!vein.isTemporary(), "Rooted Vein created a temporary result");
+                        var restored = new com.vincenthuto.hemomancy.common.tile.harbinger.functional.EarthenVeinBlockEntity(
+                                fixture.center().above(), vein.getBlockState());
+                        restored.loadWithComponents(vein.saveWithFullMetadata(h.getLevel().registryAccess()), h.getLevel().registryAccess());
+                        h.assertTrue(!restored.isTemporary(), "Rooted Vein lost its permanent state on serialization");
+                        h.assertTrue(HemoCapabilityAccess.getPlayerDegreeNumber(fixture.actor()) == 2,
+                                "Rooted Vein promoted its caster");
+                    } finally { fixture.close(); }
+                }).thenSucceed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 600)
+    public static void rootedVeinInterruptedAbsorptionReturnsExactStaffAndUntouchedOffering(GameTestHelper h) {
+        verifyRootedVeinCancellation(h, false);
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 600)
+    public static void rootedVeinCancellationDoesNotRefundConsumedOffering(GameTestHelper h) {
+        verifyRootedVeinCancellation(h, true);
+    }
+
+    private static void verifyRootedVeinCancellation(GameTestHelper h, boolean afterOffering) {
+        var fixture = rootedVeinFixture(h);
+        var sequence = rootedVeinSequence(h, fixture);
+        if (afterOffering) {
+            sequence.thenExecute(() -> sealRootedVein(h, fixture))
+                    .thenWaitUntil(() -> h.assertTrue(fixture.rite().getPhase() == CardinalRitePhase.CULMINATION,
+                            "Rooted Vein daemon has not consumed its offering"));
+        }
+        sequence.thenExecute(() -> fixture.actor().lookAt(EntityAnchorArgument.Anchor.EYES, fixture.center().getCenter()))
+                .thenExecuteFor(10, () -> h.assertTrue(CardinalRiteCancellationHandler.tryChannel(fixture.actor(), 8),
+                        "Absorption could not target the planted Staff"))
+                .thenIdle(5)
+                .thenExecute(() -> h.assertTrue(fixture.rite() != null && fixture.rite().hasEscrowedStaff()
+                                && fixture.actor().getInventory().countItem(ItemInit.living_staff.get()) == 0,
+                        "Interrupted absorption lost or duplicated the Staff"))
+                .thenExecuteFor(80, () -> {
+                    if (fixture.rite() != null) h.assertTrue(CardinalRiteCancellationHandler.tryChannel(fixture.actor(), 8),
+                            "Resumed absorption could not target the planted Staff");
+                })
+                .thenWaitUntil(() -> h.assertTrue(fixture.rite() == null, "Resumed absorption did not finish cancellation"))
+                .thenExecute(() -> {
+                    try {
+                        assertRootedStaffReturned(h, fixture);
+                        h.assertTrue(h.getLevel().getBlockState(fixture.center()).is(BlockInit.cardinal_focus.get())
+                                        && h.getLevel().getBlockState(fixture.center().above()).isAir(),
+                                "Cancelled Rooted Vein changed its Focus or created a result");
+                        var offering = fixture.brazier().getOfferingForMatching();
+                        h.assertTrue(afterOffering ? offering.isEmpty() : offering.is(ItemInit.blood_rock.get()) && offering.getCount() == 1,
+                                "Cancellation changed the consumed/untouched offering contract");
+                    } finally { fixture.close(); }
+                }).thenSucceed();
+    }
+
+    private static GameTestSequence rootedVeinSequence(GameTestHelper h, RootedVeinFixture fixture) {
+        return h.startSequence()
+                .thenWaitUntil(() -> h.assertTrue(h.getLevel().areEntitiesLoaded(
+                        net.minecraft.world.level.ChunkPos.asLong(fixture.center())), "Rooted Vein entity chunk is not ready"))
+                .thenExecute(() -> {
+                    var hit = new BlockHitResult(fixture.center().getCenter(), Direction.UP, fixture.center(), false);
+                    fixture.actor().getMainHandItem().useOn(new net.minecraft.world.item.context.UseOnContext(
+                            fixture.actor(), InteractionHand.MAIN_HAND, hit));
+                    h.assertTrue(fixture.rite() != null && fixture.rite().hasEscrowedStaff(),
+                            "D2 Staff use did not start the authored Rooted Vein ceremony");
+                })
+                .thenIdle(25)
+                .thenExecute(() -> {
+                    var recipe = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getRiteByLocation(
+                            h.getLevel(), Hemomancy.rloc("cardinal_rite/rooted_vein"));
+                    fixture.actor().setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ItemInit.blood_projection.get()));
+                    for (var anchor : recipe.getCeremony().anchors()) {
+                        fixture.actor().lookAt(EntityAnchorArgument.Anchor.EYES,
+                                CardinalRiteTargetGeometry.anchorAimPoint(fixture.center(), anchor.offset()));
+                        var projection = CardinalRiteInteractionHandler.tryProject(h.getLevel(), fixture.actor(), 50);
+                        h.assertTrue(projection.handled() && projection.bloodSpent() == 50,
+                                "Rooted Vein anchor did not receive exactly 50 mL");
+                    }
+                    h.assertTrue(fixture.rite().getPhase() == CardinalRitePhase.INSCRIPTION
+                                    && HemoCapabilityAccess.requireBloodVolume(fixture.actor()).getBloodVolume() == 800,
+                            "Four Rooted Vein anchors did not spend exactly 200 mL before inscription");
+                })
+                .thenWaitUntil(() -> h.assertTrue(HumanitySpriteEntity.findBoundToRite(h.getLevel(),
+                        fixture.actor().getUUID(), fixture.center()) != null, "Rooted Vein daemon has not emerged"));
+    }
+
+    private static void sealRootedVein(GameTestHelper h, RootedVeinFixture fixture) {
+        var daemon = HumanitySpriteEntity.findBoundToRite(h.getLevel(), fixture.actor().getUUID(), fixture.center());
+        fixture.actor().lookAt(EntityAnchorArgument.Anchor.EYES, daemon.position());
+        var projection = CardinalRiteInteractionHandler.tryProject(h.getLevel(), fixture.actor(), 50);
+        h.assertTrue(projection.handled() && projection.bloodSpent() == 0
+                        && fixture.rite().getPhase() == CardinalRitePhase.OFFERING_PROCESSION,
+                "Projection into the daemon did not seal Rooted Vein without extra blood");
+    }
+
+    private static void assertRootedStaffReturned(GameTestHelper h, RootedVeinFixture fixture) {
+        h.assertTrue(fixture.actor().getInventory().countItem(ItemInit.living_staff.get()) == 1
+                        && fixture.actor().getInventory().items.stream().anyMatch(stack ->
+                                ItemStack.isSameItemSameComponents(stack, fixture.staff())),
+                "Rooted Vein did not return exactly one original Staff with its components");
+        h.assertTrue(HemoCapabilityAccess.requireBloodVolume(fixture.actor()).getBloodVolume() == 800,
+                "Rooted Vein refunded anchor blood or charged an extra completion cost");
+    }
+
+    private static RootedVeinFixture rootedVeinFixture(GameTestHelper h) {
+        var actor = player(h, 2);
+        var origin = h.absolutePos(new BlockPos(14, 3, 14));
+        var center = origin.above();
+        actor.getPersistentData().putString(HemoJourneyFixtures.DIMENSION_KEY, h.getLevel().dimension().location().toString());
+        HemoJourneyFixtures.prepareCardinalRite(actor, origin, "rooted_vein");
+        actor.setPos(center.getCenter().add(0, 0.5, 2));
+        actor.getMainHandItem().set(DataComponents.CUSTOM_NAME, net.minecraft.network.chat.Component.literal("Rooted Vein test Staff"));
+        var staff = actor.getMainHandItem().copy();
+        var blood = HemoCapabilityAccess.requireBloodVolume(actor);
+        blood.setActive(true);
+        blood.setBloodVolume(1000);
+        setServerPlayerLookup(actor, true);
+        var chunk = new net.minecraft.world.level.ChunkPos(center);
+        h.getLevel().getChunkSource().addRegionTicket(ROOTED_VEIN_TICKET, chunk, 2, actor.getUUID());
+        var floor = com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry
+                .get(Hemomancy.rloc("working_lesser")).orElseThrow();
+        var socket = floor.brazierSockets().getFirst();
+        var brazierPos = center.offset(socket.getX(), socket.getY(), -socket.getZ());
+        var fixture = new RootedVeinFixture(actor, origin, center, staff, brazierPos, chunk);
+        h.testInfo.addListener(new GameTestListener() {
+            public void testStructureLoaded(GameTestInfo test) { }
+            public void testPassed(GameTestInfo test, GameTestRunner runner) { }
+            public void testFailed(GameTestInfo test, GameTestRunner runner) { fixture.close(); }
+            public void testAddedForRerun(GameTestInfo oldTest, GameTestInfo newTest, GameTestRunner runner) { }
+        });
+        return fixture;
+    }
+
+    private record RootedVeinFixture(ServerPlayer actor, BlockPos origin, BlockPos center, ItemStack staff,
+            BlockPos brazierPos, net.minecraft.world.level.ChunkPos chunk) {
+        ActiveCardinalRite rite() { return CardinalRiteSavedData.get(actor.serverLevel()).getRite(actor.getUUID()); }
+        com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity brazier() {
+            return (com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity)
+                    actor.serverLevel().getBlockEntity(brazierPos);
+        }
+        void close() {
+            if (actor.isRemoved()) return;
+            if (rite() != null) {
+                com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteOrdealEngine.clearThreats(actor.serverLevel(), rite());
+                com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow.restore(actor, rite());
+            }
+            CardinalRiteSavedData.get(actor.serverLevel()).removeRite(actor.getUUID());
+            for (var daemon : actor.serverLevel().getEntitiesOfClass(HumanitySpriteEntity.class,
+                    new AABB(center).inflate(128), entity -> entity.isBoundToRite(actor.getUUID()))) daemon.discard();
+            if (actor.serverLevel().getBlockState(center.above()).is(BlockInit.earthen_vein.get()))
+                actor.serverLevel().removeBlock(center.above(), false);
+            HemoJourneyFixtures.cleanup(actor, origin);
+            actor.serverLevel().getChunkSource().removeRegionTicket(ROOTED_VEIN_TICKET, chunk, 2, actor.getUUID());
+            setServerPlayerLookup(actor, false);
+            actor.discard();
+        }
+    }
+
+    private static void verifyStaffUtilitySelection(GameTestHelper h, BloodManipulation utility) {
+        var p = player(h, 2);
+        try {
+            var known = HemoCapabilityAccess.requireKnownManipulations(p);
+            known.getKnownManips().put(utility, new ManipLevel(0, 0));
+            known.setSelectedManip(utility);
+            var staff = new ItemStack(ItemInit.living_staff.get());
+            p.setItemInHand(InteractionHand.MAIN_HAND, staff);
+            staff.use(h.getLevel(), p, InteractionHand.MAIN_HAND);
+            h.assertTrue(p.isUsingItem(), "D2 Staff did not begin held use");
+            h.assertTrue(com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem
+                            .isLivingStaffUtilityUse(p, staff), "Selected Staff utility was unavailable at D2");
+
+            known.setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS));
+            h.assertTrue(known.getSelectedManip() == utility, "Fixture did not retain the legacy utility selection");
+            h.assertTrue(!com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem
+                            .isLivingStaffUtilityUse(p, staff), "Thelemic selection retained the hidden Staff utility");
+
+            known.setSelectedMemoryRef(MemorySlotRef.manipulation(utility.getName()));
+            h.assertTrue(com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem
+                            .isLivingStaffUtilityUse(p, staff), "Returning to the utility did not restore Staff use");
+            known.setSelectedMemoryRef(MemorySlotRef.manipulation(ManipulationInit.blood_shot.get().getName()));
+            h.assertTrue(!com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem
+                            .isLivingStaffUtilityUse(p, staff), "Another Noetic retained the hidden Staff utility");
+            h.succeed();
+        } finally { p.releaseUsingItem(); p.discard(); }
+    }
+
+    @GameTest(template = "empty") public static void thelemicSelectionRejectsStaleContinuousStart(GameTestHelper h) {
+        var p = player(h, 5);
+        try {
+            prepareSharedSelection(p, ManipulationInit.sanguine_ward.get());
+            var known = HemoCapabilityAccess.requireKnownManipulations(p);
+            known.setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS));
+            ManipulationChannelManager.start(p);
+            h.assertTrue(!ManipulationChannelManager.isChanneling(p.getUUID()),
+                    "Thelemic selection started the previously selected Noetic channel");
+            h.assertTrue(HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume() == 2000,
+                    "Rejected stale channel spent blood");
+            h.succeed();
+        } finally { cleanupSharedSelection(p); }
+    }
+
+    @GameTest(template = "empty") public static void thelemicSelectionStopsRunningNoeticChannel(GameTestHelper h) {
+        var p = player(h, 5);
+        try {
+            prepareSharedSelection(p, ManipulationInit.sanguine_ward.get());
+            ManipulationChannelManager.start(p);
+            h.assertTrue(ManipulationChannelManager.isChanneling(p.getUUID()), "Noetic channel fixture did not start");
+            double blood = HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume();
+            HemoCapabilityAccess.requireKnownManipulations(p)
+                    .setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS));
+            ManipulationChannelManager.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(p));
+            h.assertTrue(!ManipulationChannelManager.isChanneling(p.getUUID()),
+                    "Switching to a Thelemic memory retained the hidden Noetic channel");
+            h.assertTrue(HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume() == blood,
+                    "Selection interruption spent another channel pulse");
+            h.succeed();
+        } finally { cleanupSharedSelection(p); }
+    }
+
+    @GameTest(template = "empty") public static void thelemicSelectionRejectsStaleChargedPresentation(GameTestHelper h) {
+        var p = player(h, 5);
+        try {
+            var mortar = ManipulationInit.hematic_mortar.get();
+            prepareSharedSelection(p, mortar);
+            CastingAnimationManager.charge(p, mortar.getName(), 4);
+            h.assertTrue(CastingAnimationManager.current(p) != null, "Charged presentation fixture did not start");
+            CastingAnimationManager.charge(p, mortar.getName(), 0);
+            HemoCapabilityAccess.requireKnownManipulations(p)
+                    .setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS));
+            CastingAnimationManager.charge(p, mortar.getName(), 4);
+            h.assertTrue(!CastingAnimationManager.current(p).phase().sustained(),
+                    "Thelemic selection reopened the previous Noetic charge pose");
+            h.succeed();
+        } finally { cleanupSharedSelection(p); }
+    }
+
+    @GameTest(template = "empty") public static void thelemicSelectionCancelsAnActiveNoeticCharge(GameTestHelper h) {
+        var p = player(h, 5);
+        try {
+            var mortar = ManipulationInit.hematic_mortar.get();
+            prepareSharedSelection(p, mortar);
+            CastingAnimationManager.charge(p, mortar.getName(), 4);
+            h.assertTrue(CastingAnimationManager.current(p) != null, "Active charge fixture did not start");
+            HemoCapabilityAccess.requireKnownManipulations(p)
+                    .setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS));
+            CastingAnimationManager.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(p));
+            h.assertTrue(!CastingAnimationManager.current(p).phase().sustained(),
+                    "Switching to a Thelemic memory retained an active Noetic charge pose");
+            h.succeed();
+        } finally { cleanupSharedSelection(p); }
+    }
+
+    @GameTest(template = "empty") public static void sharedSelectionPreservesChargePreviewCleanup(GameTestHelper h) {
+        ManipulationChargeVisualGameTests.verify(h.getLevel(), h.absolutePos(new BlockPos(0, 3, 0)).getCenter());
+        h.succeed();
+    }
+
+    @GameTest(template = "empty") public static void thelemicUseTogglesWithoutCastingThePreviousNoetic(GameTestHelper h) {
+        for (var noetic : List.of(ManipulationInit.sanguine_ward.get(), ManipulationInit.hematic_mortar.get())) {
+            var p = player(h, 5);
+            try {
+                prepareSharedSelection(p, noetic);
+                HemoCapabilityAccess.requireKnownManipulations(p)
+                        .setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS));
+                var context = new net.neoforged.neoforge.network.handling.ServerPayloadContext(
+                        p.connection, UseManipKeyPacket.TYPE.id());
+                var state = p.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+                UseManipKeyPacket.handle(new UseManipKeyPacket(), context);
+                h.assertTrue(state.isEnabled(MuscleMemory.LABORING_ARMS), "Use did not activate the selected Thelemic memory");
+                UseManipKeyPacket.handle(new UseManipKeyPacket(), context);
+                h.assertTrue(!state.isEnabled(MuscleMemory.LABORING_ARMS), "Second use did not deactivate the memory");
+                h.assertTrue(state.reserveTicks(MuscleMemory.LABORING_ARMS) == 6000,
+                        "Selection toggle spent reserve without a running tick");
+                h.assertTrue(HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume() == 2000,
+                        "Thelemic use cast the previous Noetic");
+            } finally { cleanupSharedSelection(p); }
+        }
+        h.succeed();
     }
     private static ItemStack vial(String source) {
         var stack = new ItemStack(ItemInit.bloody_vial.get());
@@ -304,6 +2350,109 @@ public final class ClinicalBloodProgressionGameTests {
             blooms.removeBloomInChunk(bloom.center(), bloom.dimension());
             actor.discard();
         }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void qliphothAtlasTeachingFollowsArchonRevelation(GameTestHelper h) {
+        var actor = player(h, 5);
+        var degree = HemoCapabilityAccess.requireInitiatoryDegree(actor);
+        var entries = com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialsData.getBloodEntries();
+        try {
+            for (String id : new String[] {"qliphoth_seed", "qliphoth_bloom", "qliphoth_pome", "fungal_spine", "memory_of_vesper"}) {
+                var entry = entries.stream().filter(e -> e.name().equals(id)).findFirst().orElseThrow();
+                h.assertTrue(!entry.iconStack().get().isEmpty(),
+                        "Qliphoth teaching must have a nonempty process/material icon: " + id);
+                var gate = com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialAtlasSpec.entryFor(
+                        com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialAtlasPath.HARBINGER, entry).gate();
+                degree.setDegreeNumber(5);
+                h.assertTrue(!entry.unlockPredicate().isUnlocked(actor)
+                                && gate.visibilityFor(com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialAtlasPath.HARBINGER,
+                                        5, 0, 0) == com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialVisibility.HIDDEN,
+                        "Lower-degree teaching exposed the Archon material " + id);
+                h.assertTrue(gate.visibilityFor(com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialAtlasPath.HARBINGER,
+                                6, 0, 0) == com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialVisibility.NEXT_PREVIEW,
+                        "D6 should retain the atlas's veiled next-degree preview for " + id);
+                degree.setDegreeNumber(7);
+                h.assertTrue(entry.unlockPredicate().isUnlocked(actor) == !id.equals("memory_of_vesper"),
+                        "Undecided D7 teaching must expose Communion, not Vesper reward details: " + id);
+            }
+            var memory = entries.stream().filter(e -> e.name().equals("memory_of_vesper")).findFirst().orElseThrow();
+            var bloom = entries.stream().filter(e -> e.name().equals("qliphoth_bloom")).findFirst().orElseThrow();
+            h.assertTrue(bloom.iconStack().get().is(ItemInit.qliphoth_pome.get()) && !bloom.hasRecipe(),
+                    "Itemless Bloom process must use its Pome icon without advertising a crafting recipe");
+            degree.setFungalRevelationWitnessed(true);
+            h.assertTrue(memory.unlockPredicate().isUnlocked(actor),
+                    "Returned revelation must make Vesper Memory teaching available at D7");
+            degree.setDegreeNumber(8);
+            h.assertTrue(memory.unlockPredicate().isUnlocked(actor),
+                    "Apotheos must retain knowledge of the other branch without receiving its reward");
+        } finally { actor.discard(); }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void bloomRiteIconUsesItsSeedWithoutCreatingABlockItem(GameTestHelper h) {
+        h.assertTrue(BlockInit.qliphoth_bloom.get().asItem() == Items.AIR,
+                "Bloom must remain itemless; its rite is the acquisition route");
+        var icon = com.vincenthuto.hemomancy.client.screen.skilltree.shared.HarbingerRecipeMapDefinitions.riteIcon(
+                "cardinal_rite/bloom_of_qliphoth", ItemStack.EMPTY);
+        h.assertTrue(icon.is(ItemInit.qliphoth_seed.get()),
+                "Bloom rite must display its Seed medium, not an empty block item");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void creativeFullInventoryKeepsFungalSpineClaimPending(GameTestHelper h) {
+        var actor = player(h, 7);
+        var degree = HemoCapabilityAccess.requireInitiatoryDegree(actor);
+        try {
+            degree.setQliphothCommunionDone(true);
+            for (int slot = 0; slot < actor.getInventory().getContainerSize(); slot++)
+                actor.getInventory().setItem(slot, new ItemStack(Items.COBBLESTONE));
+            actor.setGameMode(GameType.CREATIVE);
+            InitiatoryDegreeEvents.playerLoggedIn(new PlayerEvent.PlayerLoggedInEvent(actor));
+            actor.tickCount = 20;
+            QliphothBloomEvents.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
+            h.assertTrue(!degree.hasFungalSpineGranted()
+                            && actor.getInventory().countItem(ItemInit.fungal_spine.get()) == 0,
+                    "Creative full-inventory discard must not mark the first Spine delivered");
+            actor.getInventory().setItem(0, ItemStack.EMPTY);
+            actor.tickCount = 20;
+            QliphothBloomEvents.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
+            QliphothBloomEvents.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
+            h.assertTrue(degree.hasFungalSpineGranted()
+                            && actor.getInventory().countItem(ItemInit.fungal_spine.get()) == 1,
+                    "Actual Creative inventory space must deliver the pending Spine exactly once");
+        } finally { actor.discard(); }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void deadPlayerKeepsFungalSpineClaimForRespawn(GameTestHelper h) {
+        var actor = player(h, 7);
+        var restored = player(h, 7, h.getLevel(), packet -> {}, actor.getGameProfile());
+        var respawned = player(h, 7, h.getLevel(), packet -> {}, actor.getGameProfile());
+        try {
+            HemoCapabilityAccess.requireInitiatoryDegree(actor).setQliphothCommunionDone(true);
+            restored.load(actor.saveWithoutId(new CompoundTag()));
+            restored.setHealth(0);
+            restored.tickCount = 20;
+            QliphothBloomEvents.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(restored));
+            h.assertTrue(!HemoCapabilityAccess.requireInitiatoryDegree(restored).hasFungalSpineGranted()
+                            && restored.getInventory().countItem(ItemInit.fungal_spine.get()) == 0,
+                    "Dead-player retries must not consume the pending first Spine before respawn");
+            respawned.restoreFrom(restored, false);
+            h.assertTrue(HemoCapabilityAccess.requireInitiatoryDegree(respawned).isQliphothCommunionDone()
+                            && !HemoCapabilityAccess.requireInitiatoryDegree(respawned).hasFungalSpineGranted(),
+                    "Serialization and death cloning must preserve the pending Communion Spine");
+            InitiatoryDegreeEvents.playerLoggedIn(new PlayerEvent.PlayerLoggedInEvent(respawned));
+            respawned.tickCount = 20;
+            QliphothBloomEvents.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(respawned));
+            h.assertTrue(HemoCapabilityAccess.requireInitiatoryDegree(respawned).hasFungalSpineGranted()
+                            && respawned.getInventory().countItem(ItemInit.fungal_spine.get()) == 1,
+                    "Respawn must receive the earned first Spine exactly once");
+        } finally { respawned.discard(); restored.discard(); actor.discard(); }
         h.succeed();
     }
 
@@ -705,6 +2854,13 @@ public final class ClinicalBloodProgressionGameTests {
             h.assertTrue(blooms.getState(bloom) == com.vincenthuto.hemomancy.common.rite.harbinger.SeveredQliphothState.OPEN
                             && degree.getArchonPath() == com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.SILENT_PENDING,
                     "Opening the refusal portal prematurely awarded Silent Archon");
+			ItemStack restoredWeapon = owner.getMainHandItem().copy();
+			h.assertTrue(!LivingSicklePruning.interact(h.getLevel(), root, owner, InteractionHand.MAIN_HAND),
+					"Pruning must yield an open wound to portal entry while the restored weapon is held");
+			h.assertTrue(ItemStack.matches(restoredWeapon, owner.getMainHandItem()),
+					"Using an open wound must not reshape or lose the restored weapon");
+            h.getLevel().getBlockState(root).useItemOn(owner.getMainHandItem(), h.getLevel(),
+                    owner, InteractionHand.MAIN_HAND, hit);
             h.assertTrue(h.getLevel().getServer().getLevel(
                             com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager.CHAMBER_OF_WILL) == null,
                     "This focused test expects the GameTest server's absent Chamber dimension");
@@ -835,27 +2991,253 @@ public final class ClinicalBloodProgressionGameTests {
     @GameTest(template = "empty")
     public static void vesperMemoryWaitsForInventorySpace(GameTestHelper h) {
         var owner = player(h, 7);
+        var restored = player(h, 7, h.getLevel(), packet -> {}, owner.getGameProfile());
+        var respawned = player(h, 7, h.getLevel(), packet -> {}, owner.getGameProfile());
+        String pending = "hemomancy:vesper_memory_pending";
         try {
             for (int slot = 0; slot < owner.getInventory().getContainerSize(); slot++) {
                 owner.getInventory().setItem(slot, new ItemStack(Items.COBBLESTONE));
             }
             owner.getPersistentData().putBoolean("hemomancy:vesper_memory_pending", true);
             VesperOrdealManager.onLogin(new PlayerEvent.PlayerLoggedInEvent(owner));
-            h.assertTrue(owner.getPersistentData().getBoolean("hemomancy:vesper_memory_pending")
+            h.assertTrue(owner.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(pending)
+                            && !owner.getPersistentData().contains(pending)
                             && h.getLevel().getEntitiesOfClass(ItemEntity.class,
                                     new AABB(owner.blockPosition()).inflate(4),
                                     item -> item.getItem().is(ItemInit.memory_of_vesper.get())).isEmpty(),
-                    "A full inventory must retain the memory claim instead of dropping its only copy");
+                    "A full inventory must migrate the earned Memory claim into death-persistent data");
 
+            restored.load(owner.saveWithoutId(new CompoundTag()));
             owner.getInventory().setItem(0, ItemStack.EMPTY);
+            owner.tickCount = 20;
             VesperOrdealManager.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(owner));
-            h.assertTrue(!owner.getPersistentData().contains("hemomancy:vesper_memory_pending")
+            h.assertTrue(!owner.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).contains(pending)
                             && owner.getInventory().countItem(ItemInit.memory_of_vesper.get()) == 1,
                     "The pending memory was not delivered after inventory space opened");
             VesperOrdealManager.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(owner));
             h.assertTrue(owner.getInventory().countItem(ItemInit.memory_of_vesper.get()) == 1,
                     "Retrying delivery duplicated the unique Vesper memory");
+            restored.getInventory().clearContent();
+            restored.setHealth(0);
+            restored.tickCount = 20;
+            VesperOrdealManager.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(restored));
+            respawned.restoreFrom(restored, false);
+            h.assertTrue(respawned.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(pending),
+                    "Save/load and death cloning lost the pending Vesper Memory");
+            VesperOrdealManager.onLogin(new PlayerEvent.PlayerLoggedInEvent(respawned));
+            VesperOrdealManager.onLogin(new PlayerEvent.PlayerLoggedInEvent(respawned));
+            h.assertTrue(!respawned.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).contains(pending)
+                            && respawned.getInventory().countItem(ItemInit.memory_of_vesper.get()) == 1,
+                    "Respawn login must deliver exactly one pending Memory");
         } finally {
+            respawned.discard();
+            restored.discard();
+            owner.discard();
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void vesperMemoryCreativeFullInventoryRetainsClaim(GameTestHelper h) {
+        var owner = player(h, 7);
+        String pending = "hemomancy:vesper_memory_pending";
+        try {
+            for (int slot = 0; slot < owner.getInventory().getContainerSize(); slot++)
+                owner.getInventory().setItem(slot, new ItemStack(Items.COBBLESTONE));
+            owner.getPersistentData().putBoolean(pending, true);
+            owner.setGameMode(GameType.CREATIVE);
+            VesperOrdealManager.onLogin(new PlayerEvent.PlayerLoggedInEvent(owner));
+            h.assertTrue((owner.getPersistentData().getBoolean(pending)
+                            || owner.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(pending))
+                            && owner.getInventory().countItem(ItemInit.memory_of_vesper.get()) == 0,
+                    "Creative full-inventory discard erased the earned Vesper Memory claim");
+            owner.getInventory().setItem(0, ItemStack.EMPTY);
+            owner.tickCount = 20;
+            VesperOrdealManager.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(owner));
+            h.assertTrue(owner.getInventory().countItem(ItemInit.memory_of_vesper.get()) == 1
+                            && !owner.getPersistentData().contains(pending)
+                            && !owner.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).contains(pending),
+                    "A Creative player with actual space must receive and clear the earned claim");
+        } finally { owner.discard(); }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void vesperMemoryLegacyClaimSurvivesDeathBeforeRetry(GameTestHelper h) {
+        var owner = player(h, 7);
+        var respawned = player(h, 7, h.getLevel(), packet -> {}, owner.getGameProfile());
+        String pending = "hemomancy:vesper_memory_pending";
+        try {
+            owner.getPersistentData().putBoolean(pending, true);
+            owner.setHealth(0);
+            VesperOrdealManager.onPlayerDeath(new net.neoforged.neoforge.event.entity.living.LivingDeathEvent(
+                    owner, owner.damageSources().generic()));
+            owner.tickCount = 20;
+            VesperOrdealManager.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(owner));
+            h.assertTrue(owner.getInventory().countItem(ItemInit.memory_of_vesper.get()) == 0
+                            && owner.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(pending),
+                    "Death before the first retry must preserve the legacy claim without dead-player delivery");
+            respawned.restoreFrom(owner, false);
+            VesperOrdealManager.onLogin(new PlayerEvent.PlayerLoggedInEvent(respawned));
+            h.assertTrue(respawned.getInventory().countItem(ItemInit.memory_of_vesper.get()) == 1
+                            && !respawned.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).contains(pending),
+                    "The migrated pre-retry death claim must deliver once after respawn");
+        } finally { respawned.discard(); owner.discard(); }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void circusObservationRequiresLivingNonSpectator(GameTestHelper h) {
+        var actor = player(h, 0);
+        var level = h.getLevel();
+        var circus = level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.STRUCTURE)
+                .get(com.vincenthuto.hemomancy.Hemomancy.rloc("circus_pavilion"));
+        var piece = new net.minecraft.world.level.levelgen.structure.structures.NetherFortressPieces.StartPiece(
+                net.minecraft.util.RandomSource.create(42), actor.blockPosition().getX(), actor.blockPosition().getZ());
+        var center = piece.getBoundingBox().getCenter();
+        actor.setPos(center.getX() + .5, center.getY(), center.getZ() + .5);
+        var chunk = level.getChunkAt(actor.blockPosition());
+        var oldStarts = new java.util.HashMap<>(chunk.getAllStarts());
+        var oldReferences = new java.util.HashMap<>(chunk.getAllReferences());
+        oldReferences.replaceAll((structure, references) -> new it.unimi.dsi.fastutil.longs.LongOpenHashSet(references));
+        try {
+            var start = new net.minecraft.world.level.levelgen.structure.StructureStart(circus, chunk.getPos(), 0,
+                    new net.minecraft.world.level.levelgen.structure.pieces.PiecesContainer(java.util.List.of(piece)));
+            chunk.setStartForStructure(circus, start);
+            chunk.addReferenceForStructure(circus, chunk.getPos().toLong());
+            h.assertTrue(level.structureManager().getStructureWithPieceAt(actor.blockPosition(),
+                    holder -> holder.is(com.vincenthuto.hemomancy.Hemomancy.rloc("circus_pavilion"))).isValid(),
+                    "Supplied Circus structure reference must be visible to real observation");
+            HemoCapabilityAccess.getBloodVolume(actor).orElseThrow().setActive(false);
+            actor.tickCount = com.vincenthuto.hemomancy.common.circus.CircusProgressRules.PASSIVE_POINT_TICKS;
+            actor.setGameMode(GameType.SPECTATOR);
+            com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.onPlayerTick(
+                    new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
+            h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.hasDiscovered(actor)
+                            && com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress.acclimation(actor) == 0,
+                    "Spectator inspection must not earn Circus discovery or passive acclimation");
+            actor.setGameMode(GameType.SURVIVAL);
+            actor.setHealth(0);
+            com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.onPlayerTick(
+                    new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
+            h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.hasDiscovered(actor)
+                            && com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress.acclimation(actor) == 0,
+                    "Dead-player ticks must not earn Circus discovery or passive acclimation");
+            actor.setHealth(20);
+            com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.onPlayerTick(
+                    new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
+            h.assertTrue(com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.hasDiscovered(actor)
+                            && com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress.acclimation(actor) == 1
+                            && HemoCapabilityAccess.requireInitiatoryDegree(actor).getDegreeNumber() == 0,
+                    "Living D0 inactive-blood discovery must remain valid without rank credit");
+            actor.setGameMode(GameType.SPECTATOR);
+            com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.onPlayerTick(
+                    new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
+            h.assertTrue(com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.hasDiscovered(actor)
+                            && com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress.acclimation(actor) == 1,
+                    "Spectator inspection must retain earned discovery without gaining acclimation");
+        } finally {
+            chunk.setAllStarts(oldStarts);
+            chunk.setAllReferences(oldReferences);
+            actor.discard();
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void mycophantTendrilWaitsForInventorySpaceAcrossDeath(GameTestHelper h) {
+        var owner = player(h, 8);
+        var restored = player(h, 8, h.getLevel(), packet -> {}, owner.getGameProfile());
+        var respawned = player(h, 8, h.getLevel(), packet -> {}, owner.getGameProfile());
+        var manager = ChamberOfWillManager.get(owner.server);
+        var boss = EntityInit.mycophant.get().create(h.getLevel());
+        var box = new AABB(owner.blockPosition()).inflate(4);
+        var oldDrops = h.getLevel().getEntitiesOfClass(ItemEntity.class, box,
+                item -> item.getItem().is(ItemInit.mycophant_tendril.get())).stream()
+                .map(ItemEntity::getUUID).collect(java.util.stream.Collectors.toSet());
+        String pending = "hemomancy:mycophant_tendril_pending";
+        setServerPlayerLookup(owner, true);
+        manager.rememberReturnPoint(owner);
+        try {
+            HemoCapabilityAccess.requireInitiatoryDegree(owner).setArchonPath(
+                    com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.APOTHEOS);
+            for (int slot = 0; slot < owner.getInventory().getContainerSize(); slot++)
+                owner.getInventory().setItem(slot, new ItemStack(Items.COBBLESTONE));
+            owner.getPersistentData().putBoolean("hemomancy:mycophant_active", true);
+            boss.setEncounterOwner(owner.getUUID());
+            com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.completeVictory(boss);
+            h.assertTrue(HemoCapabilityAccess.requireInitiatoryDegree(owner).isMycophantDefeated()
+                            && !com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.isActive(owner),
+                    "The first victory must finish even while its unique reward cannot fit");
+            h.assertTrue(owner.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(pending)
+                            && owner.getInventory().countItem(ItemInit.mycophant_tendril.get()) == 0
+                            && h.getLevel().getEntitiesOfClass(ItemEntity.class, box,
+                                    item -> item.getItem().is(ItemInit.mycophant_tendril.get())
+                                            && !oldDrops.contains(item.getUUID())).isEmpty(),
+                    "A full inventory must retain the Tendril claim, not drop its only copy");
+
+            com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onLogin(
+                    new PlayerEvent.PlayerLoggedInEvent(owner));
+            owner.tickCount = 20;
+            com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onPlayerTick(
+                    new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(owner));
+            h.assertTrue(owner.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(pending)
+                            && owner.getInventory().countItem(ItemInit.mycophant_tendril.get()) == 0,
+                    "Blocked login/tick retries must retain the claim without awarding a copy");
+            owner.setGameMode(GameType.CREATIVE);
+            com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onLogin(
+                    new PlayerEvent.PlayerLoggedInEvent(owner));
+            h.assertTrue(owner.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(pending)
+                            && owner.getInventory().countItem(ItemInit.mycophant_tendril.get()) == 0,
+                    "Creative full-inventory discard must not clear an undelivered Tendril claim");
+            owner.setGameMode(GameType.SURVIVAL);
+            restored.load(owner.saveWithoutId(new CompoundTag()));
+            owner.getInventory().setItem(0, ItemStack.EMPTY);
+            com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onPlayerTick(
+                    new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(owner));
+            h.assertTrue(!owner.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(pending)
+                            && owner.getInventory().countItem(ItemInit.mycophant_tendril.get()) == 1,
+                    "Opening a slot must deliver the earned Tendril on the next retry tick");
+            restored.getInventory().clearContent();
+            restored.setHealth(0);
+            restored.tickCount = 20;
+            com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onPlayerTick(
+                    new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(restored));
+            h.assertTrue(restored.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(pending)
+                            && restored.getInventory().countItem(ItemInit.mycophant_tendril.get()) == 0,
+                    "A dead player's empty inventory must not consume the pending Tendril before respawn");
+            respawned.restoreFrom(restored, false);
+            h.assertTrue(respawned.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(pending)
+                            && HemoCapabilityAccess.requireInitiatoryDegree(respawned).isMycophantDefeated(),
+                    "Saved-data reload and death cloning lost the earned Tendril claim");
+            com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onLogin(
+                    new PlayerEvent.PlayerLoggedInEvent(respawned));
+            h.assertTrue(!respawned.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(pending)
+                            && respawned.getInventory().countItem(ItemInit.mycophant_tendril.get()) == 1,
+                    "Respawn inventory space must deliver the earned Tendril on login");
+            respawned.tickCount = 20;
+            com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onPlayerTick(
+                    new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(respawned));
+            com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onLogin(
+                    new PlayerEvent.PlayerLoggedInEvent(respawned));
+            h.assertTrue(respawned.getInventory().countItem(ItemInit.mycophant_tendril.get()) == 1,
+                    "Repeated tick/login delivery duplicated the unique Tendril");
+        } finally {
+            setServerPlayerLookup(owner, false);
+            try {
+                var field = ChamberOfWillManager.class.getDeclaredField("returnPoints");
+                field.setAccessible(true);
+                ((java.util.Map<?, ?>) field.get(manager)).remove(owner.getUUID());
+                manager.setDirty();
+            } catch (ReflectiveOperationException e) {
+                throw new IllegalStateException("Could not clean the reward fixture's return point", e);
+            }
+            h.getLevel().getEntitiesOfClass(ItemEntity.class, box,
+                    item -> item.getItem().is(ItemInit.mycophant_tendril.get())
+                            && !oldDrops.contains(item.getUUID())).forEach(ItemEntity::discard);
+            boss.discard();
+            respawned.discard();
+            restored.discard();
             owner.discard();
         }
         h.succeed();
@@ -1023,6 +3405,7 @@ public final class ClinicalBloodProgressionGameTests {
     @GameTest(template = "empty")
     public static void blockedBloomSiteCannotStartItsCeremony(GameTestHelper h) {
         var actor = player(h, 7);
+        HemoCapabilityAccess.requireBloodVolume(actor).setActive(true);
         var level = h.getLevel();
         var origin = h.absolutePos(new BlockPos(14, 3, 14));
         var focusPos = origin.above();
@@ -1240,6 +3623,104 @@ public final class ClinicalBloodProgressionGameTests {
         h.succeed();
     }
 
+    @GameTest(template = "empty") public static void paidLoomProjectionDoesNotRepeatStaffInstructions(GameTestHelper h) {
+        var feedback = new ArrayList<net.minecraft.network.chat.Component>();
+        var cookie = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(), "loom-feedback-test"), false);
+        var p = new ServerPlayer(h.getLevel().getServer(), h.getLevel(), cookie.gameProfile(), cookie.clientInformation()) {
+            @Override public void displayClientMessage(net.minecraft.network.chat.Component message, boolean overlay) {
+                feedback.add(message);
+            }
+        };
+        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(3);
+        try {
+            var pos = h.absolutePos(new BlockPos(4, 2, 4));
+            h.getLevel().setBlockAndUpdate(pos, BlockInit.somatic_loom.get().defaultBlockState());
+            var loom = (SomaticLoomBlockEntity) h.getLevel().getBlockEntity(pos);
+            loom.addItem(p, new ItemStack(ItemInit.hematic_memory.get()), null);
+            loom.addItem(p, new ItemStack(ItemInit.bleeding_bulb.get()), null);
+            loom.addItem(p, new ItemStack(ItemInit.vivacious_enzyme.get()), null);
+            h.assertTrue(loom.selectRecipe(p, Hemomancy.rloc("memory_weaving/memory_blood_shot")),
+                    "Fixture must select Blood Shot before payment");
+            var blood = HemoCapabilityAccess.requireBloodVolume(p);
+            blood.setActive(true);
+            blood.setBloodVolume(100);
+            h.assertTrue(loom.tryChargeRitualBlood(p, 50, false) && loom.isWeavingOrbs(),
+                    "Projection must pay for the strand");
+            feedback.clear();
+            for (int tick = 0; tick < 20; tick++)
+                h.assertTrue(!loom.tryChargeRitualBlood(p, 50, false), "A paid weave cannot accept more blood");
+            h.assertTrue(feedback.isEmpty(), "Holding Projection after payment must not repeat Staff instructions every tick");
+            h.assertTrue(blood.getBloodVolume() == 50 && loom.getRitualBloodCharged() == 50,
+                    "Continued Projection must preserve the single payment");
+            loom.provideTendencyFeedback(p);
+            h.assertTrue(feedback.size() == 1 && feedback.getFirst().getString().contains("Hold a Living Staff"),
+                    "Explicit empty-hand feedback must still explain strand handling");
+
+            feedback.clear();
+            var saved = loom.saveWithoutMetadata(h.getLevel().registryAccess());
+            saved.putString("selectedRecipeId", "hemomancy:memory_weaving/removed_fixture");
+            loom.loadWithComponents(saved, h.getLevel().registryAccess());
+            h.assertTrue(!loom.tryChargeRitualBlood(p, 50, false)
+                            && feedback.stream().anyMatch(message -> message.getString().contains("weave is paused")),
+                    "Projection must still report a missing paid recipe instead of silently ignoring recovery");
+        } finally {
+            p.discard();
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty") public static void scriptoriumLessonUnlocksItsRegisteredPageWithoutPromotion(GameTestHelper h) {
+        var p = player(h, 3);
+        var mnemonist = EntityInit.harbinger_mnemonist.get().create(h.getLevel());
+        mnemonist.setPos(p.position());
+        h.getLevel().addFreshEntity(mnemonist);
+        var entry = Hemomancy.rloc("libersanguinium/tendency/pages/enzymatic_scriptorium");
+        var choice = mnemonist.progressionDialogue(p).nodes().values().stream()
+                .flatMap(node -> node.options().stream())
+                .filter(option -> "scriptorium".equals(option.nextNodeId())).findFirst().orElseThrow();
+        h.assertTrue(HarbingerMnemonistDialogueTrees.EVENT_SCRIPTORIUM_LESSON.equals(choice.eventId()),
+                "D3 Scriptorium teaching has no book discovery action");
+        var event = DialogueOptionPacket.dispatch(p, choice.eventId(), mnemonist.getId());
+        h.assertTrue(event != null && event.wasRewardDelivered() && LiberKnowledgeHelper.hasEntry(p, entry)
+                        && com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery
+                                .LiberEntryDefinitions.get(entry).isPresent(),
+                "The actual teacher choice did not unlock a registered operation page");
+        var repeat = DialogueOptionPacket.dispatch(p, choice.eventId(), mnemonist.getId());
+        h.assertTrue(repeat != null && !repeat.wasRewardDelivered() && p.getInventory().isEmpty()
+                        && HemoCapabilityAccess.getPlayerDegreeNumber(p) == 3
+                        && !HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(p),
+                "Repeated optional teaching granted items or Main promotion proof");
+        mnemonist.discard();
+        p.discard();
+        h.succeed();
+    }
+
+    @GameTest(template = "empty") public static void scriptoriumLessonRejectsEarlyRemoteAndWrongTeachers(GameTestHelper h) {
+        var p = player(h, 2);
+        var mnemonist = EntityInit.harbinger_mnemonist.get().create(h.getLevel());
+        mnemonist.setPos(p.position());
+        h.getLevel().addFreshEntity(mnemonist);
+        var alchemist = EntityInit.harbinger_alchemist.get().create(h.getLevel());
+        alchemist.setPos(p.position());
+        h.getLevel().addFreshEntity(alchemist);
+        var entry = Hemomancy.rloc("libersanguinium/tendency/pages/enzymatic_scriptorium");
+        String lesson = HarbingerMnemonistDialogueTrees.EVENT_SCRIPTORIUM_LESSON;
+        DialogueOptionPacket.dispatch(p, lesson, mnemonist.getId());
+        h.assertTrue(!LiberKnowledgeHelper.hasEntry(p, entry), "D2 forged a D3 operation lesson");
+        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(3);
+        h.assertTrue(DialogueOptionPacket.dispatch(p, lesson, alchemist.getId()) == null
+                        && DialogueOptionPacket.dispatch(p, lesson, 0) == null,
+                "Wrong or absent teacher accepted the Mnemonist lesson");
+        mnemonist.setPos(p.position().add(9, 0, 0));
+        h.assertTrue(DialogueOptionPacket.dispatch(p, lesson, mnemonist.getId()) == null
+                        && !LiberKnowledgeHelper.hasEntry(p, entry),
+                "Out-of-range teaching revealed the operation page");
+        mnemonist.discard();
+        alchemist.discard();
+        p.discard();
+        h.succeed();
+    }
+
     @GameTest(template = "empty") public static void mnemonistStationLessonsFollowDegreeWithoutNewPromotionGates(GameTestHelper h) {
         var p = player(h, 3);
         var mnemonist = EntityInit.harbinger_mnemonist.get().create(h.getLevel());
@@ -1259,8 +3740,8 @@ public final class ClinicalBloodProgressionGameTests {
                 "D5 did not teach named loadouts and the Eightfold Script");
         HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(7);
         h.assertTrue(mnemonist.progressionDialogue(p).getNode("scriptorium").lines()
-                        .contains("hemomancy.mnemonist.scriptorium.monolithic"),
-                "D7 did not name the Monolithic Script");
+                        .contains("hemomancy.mnemonist.scriptorium.palimpsest_lesson"),
+                "D7 did not name the Rite of the Palimpsest");
         h.succeed();
     }
 
@@ -1272,9 +3753,9 @@ public final class ClinicalBloodProgressionGameTests {
         h.assertTrue(unbriefed.getNode("thelemic_preparations") != null
                         && unbriefed.getNode("thelemic_preparations").lines()
                                 .contains("hemomancy.alchemist.preparations.unbriefed")
-                        && unbriefed.getNode("advanced_condenser") != null
-                        && unbriefed.getNode("advanced_athanor") == null,
-                "D3 preparations or existing Condenser access were not explained");
+                        && unbriefed.getNode("station_upgrade_alembic_1") == null
+                        && unbriefed.getNode("station_upgrade_alembic_2") == null,
+                "D3 preparation teaching changed or exposed a D4 upgrade early");
         HarbingerAdvancementGranter.grantIfNotDone(p, BodyAnswersAssignment.ADV_BRIEFED);
         h.assertTrue(alchemist.progressionDialogue(p).getNode("thelemic_preparations").lines()
                         .contains("hemomancy.alchemist.preparations.briefed"),
@@ -1283,9 +3764,16 @@ public final class ClinicalBloodProgressionGameTests {
         h.assertTrue(alchemist.progressionDialogue(p).getNode("thelemic_preparations").lines()
                         .contains("hemomancy.alchemist.preparations.complete"),
                 "An earlier tincture drink was not recognized at D3");
+        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(4);
+        h.assertTrue(alchemist.progressionDialogue(p).getNode("station_upgrade_alembic_1") != null
+                        && alchemist.progressionDialogue(p).getNode("station_upgrade_centrifuge_1") != null,
+                "D4 Alchemist station projects were not taught");
         HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(5);
-        h.assertTrue(alchemist.progressionDialogue(p).getNode("advanced_athanor") != null,
-                "D5 Athanor eligibility disappeared from the existing station progression");
+        h.assertTrue(alchemist.progressionDialogue(p).getNode("station_upgrade_alembic_2") == null,
+                "D5 exposed the D6 Athanor early");
+        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(6);
+        h.assertTrue(alchemist.progressionDialogue(p).getNode("station_upgrade_alembic_2") != null,
+                "D6 Athanor eligibility disappeared from the existing station progression");
         h.succeed();
     }
 
@@ -1372,6 +3860,366 @@ public final class ClinicalBloodProgressionGameTests {
 				"The D1 sample in inventory was not recognized at D2 briefing");
 		h.succeed();
 	}
+
+    private enum PendingChamberGift { DRAWS, BRIEFING, TOOLS, SPINE, MEMORY, TENDRIL }
+
+    @GameTest(template = "empty") public static void dreamRecoveryKeepsDraws(GameTestHelper h) { pendingChamberGift(h, ChamberVisitMode.DREAM, PendingChamberGift.DRAWS); h.succeed(); }
+    @GameTest(template = "empty") public static void dreamRecoveryKeepsBriefing(GameTestHelper h) { pendingChamberGift(h, ChamberVisitMode.DREAM, PendingChamberGift.BRIEFING); h.succeed(); }
+    @GameTest(template = "empty") public static void dreamRecoveryKeepsTools(GameTestHelper h) { pendingChamberGift(h, ChamberVisitMode.DREAM, PendingChamberGift.TOOLS); h.succeed(); }
+    @GameTest(template = "empty") public static void dreamRecoveryKeepsSpine(GameTestHelper h) { pendingChamberGift(h, ChamberVisitMode.DREAM, PendingChamberGift.SPINE); h.succeed(); }
+    @GameTest(template = "empty") public static void dreamRecoveryKeepsMemory(GameTestHelper h) { pendingChamberGift(h, ChamberVisitMode.DREAM, PendingChamberGift.MEMORY); h.succeed(); }
+    @GameTest(template = "empty") public static void dreamRecoveryKeepsTendril(GameTestHelper h) { pendingChamberGift(h, ChamberVisitMode.DREAM, PendingChamberGift.TENDRIL); h.succeed(); }
+    @GameTest(template = "empty") public static void guidedRecoveryKeepsDraws(GameTestHelper h) { pendingChamberGift(h, ChamberVisitMode.GUIDED, PendingChamberGift.DRAWS); h.succeed(); }
+    @GameTest(template = "empty") public static void guidedRecoveryKeepsBriefing(GameTestHelper h) { pendingChamberGift(h, ChamberVisitMode.GUIDED, PendingChamberGift.BRIEFING); h.succeed(); }
+    @GameTest(template = "empty") public static void guidedRecoveryKeepsTools(GameTestHelper h) { pendingChamberGift(h, ChamberVisitMode.GUIDED, PendingChamberGift.TOOLS); h.succeed(); }
+    @GameTest(template = "empty") public static void guidedRecoveryKeepsSpine(GameTestHelper h) { pendingChamberGift(h, ChamberVisitMode.GUIDED, PendingChamberGift.SPINE); h.succeed(); }
+    @GameTest(template = "empty") public static void guidedRecoveryKeepsMemory(GameTestHelper h) { pendingChamberGift(h, ChamberVisitMode.GUIDED, PendingChamberGift.MEMORY); h.succeed(); }
+    @GameTest(template = "empty") public static void guidedRecoveryKeepsTendril(GameTestHelper h) { pendingChamberGift(h, ChamberVisitMode.GUIDED, PendingChamberGift.TENDRIL); h.succeed(); }
+
+    @GameTest(template = "empty") public static void inventoryCarryingChamberVisitsAllowPendingGifts(GameTestHelper h) {
+        for (var mode : List.of(ChamberVisitMode.TIMED_CHAIR, ChamberVisitMode.ATTUNED, ChamberVisitMode.ADMIN))
+            for (var gift : PendingChamberGift.values()) pendingChamberGift(h, mode, gift);
+        h.succeed();
+    }
+
+    private static void pendingChamberGift(GameTestHelper h, ChamberVisitMode mode, PendingChamberGift gift) {
+        var actor = player(h, 7);
+        var alchemist = EntityInit.harbinger_alchemist.get().create(h.getLevel());
+        alchemist.setPos(actor.position());
+        try {
+            HemoCapabilityAccess.requireBloodVolume(actor).setActive(true);
+            for (int slot = 0; slot < actor.getInventory().getContainerSize(); slot++)
+                actor.getInventory().setItem(slot, new ItemStack(Items.COBBLESTONE, 64));
+            List<ItemStack> expected = switch (gift) {
+                case DRAWS -> {
+                    h.assertTrue(FirstDrawsAssignment.brief(actor, alchemist), "Fixture must earn the Draws supply claim");
+                    yield List.of(new ItemStack(ItemInit.bloody_vial.get(), 5));
+                }
+                case BRIEFING -> {
+                    FirstSeparationAssignment.markBriefed(actor);
+                    FirstSeparationAssignment.giveBriefingSupplies(actor);
+                    yield List.of(new ItemStack(ItemInit.bloody_vial.get(),
+                            FirstSeparationAssignment.briefingStacks().stream().mapToInt(ItemStack::getCount).sum()));
+                }
+                case TOOLS -> {
+                    FirstSeparationAssignment.markBriefed(actor);
+                    HarbingerAdvancementGranter.grantIfNotDone(actor, HarbingerAdvancementGranter.ADV_FIRST_SEPARATION_STARTED);
+                    HarbingerAdvancementGranter.grantIfNotDone(actor, HarbingerAdvancementGranter.ADV_FIRST_SEPARATION_COMPLETE);
+                    h.assertTrue(FirstSeparationAssignment.claimRewards(actor), "Fixture must record its supplied earned tool claim");
+                    yield FirstSeparationAssignment.rewardStacks();
+                }
+                case SPINE -> {
+                    HemoCapabilityAccess.requireInitiatoryDegree(actor).setQliphothCommunionDone(true);
+                    yield List.of(new ItemStack(ItemInit.fungal_spine.get()));
+                }
+                case MEMORY, TENDRIL -> {
+                    var persisted = actor.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
+                    persisted.putBoolean(gift == PendingChamberGift.MEMORY
+                            ? "hemomancy:vesper_memory_pending" : "hemomancy:mycophant_tendril_pending", true);
+                    actor.getPersistentData().put(Player.PERSISTED_NBT_TAG, persisted);
+                    yield List.of(new ItemStack(gift == PendingChamberGift.MEMORY
+                            ? ItemInit.memory_of_vesper.get() : ItemInit.mycophant_tendril.get()));
+                }
+            };
+            var snapshot = actor.getInventory().save(new net.minecraft.nbt.ListTag());
+            // Supplied interrupted visit state exercises recovery without requiring a loaded destination.
+            var data = actor.getPersistentData();
+            data.putBoolean("hemomancy:chamber_visit_active", true);
+            data.putString("hemomancy:chamber_visit_mode", mode.name());
+            boolean observational = com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isObservational(actor);
+            if (observational) data.put("hemomancy:chamber_visit_dream_inventory", snapshot.copy());
+            actor.getInventory().clearContent();
+            retryPendingChamberGifts(actor);
+            boolean temporaryInventoryEmpty = actor.getInventory().isEmpty();
+            if (observational) {
+                com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.recoverOutsideChamber(actor);
+                h.assertTrue(snapshot.equals(actor.getInventory().save(new net.minecraft.nbt.ListTag()))
+                                && !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isActive(actor),
+                        "Recovery must restore the exact entry inventory and close the supplied session");
+                actor.getInventory().clearContent();
+                retryPendingChamberGifts(actor);
+            }
+            for (var stack : expected) {
+                h.assertTrue(actor.getInventory().countItem(stack.getItem()) == stack.getCount(),
+                        mode + " recovery lost or duplicated pending " + gift);
+                var delivered = actor.getInventory().items.stream().filter(s -> s.is(stack.getItem())).findFirst().orElseThrow();
+                h.assertTrue(delivered.getComponents().equals(stack.getComponents()), "Recovery changed " + gift + " components");
+            }
+            h.assertTrue(!observational || temporaryInventoryEmpty,
+                    "Observational retries must leave the temporary inventory untouched");
+            var delivered = actor.getInventory().save(new net.minecraft.nbt.ListTag());
+            retryPendingChamberGifts(actor);
+            h.assertTrue(delivered.equals(actor.getInventory().save(new net.minecraft.nbt.ListTag()))
+                            && HemoCapabilityAccess.getPlayerDegreeNumber(actor) == 7,
+                    "Repeated delivery must not duplicate gifts or change degree");
+        } finally { actor.discard(); alchemist.discard(); }
+    }
+
+    private static void retryPendingChamberGifts(ServerPlayer actor) {
+        actor.tickCount = 20;
+        var tick = new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor);
+        ClinicalBloodKnowledge.tick(tick);
+        QliphothBloomEvents.onPlayerTick(tick);
+        VesperOrdealManager.onPlayerTick(tick);
+        com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onPlayerTick(tick);
+    }
+
+    @GameTest(template = "empty") public static void firstDrawsFullInventoryKeepsSuppliesAcrossDeath(GameTestHelper h) {
+        firstDrawsPendingSupplies(h, false);
+    }
+
+    @GameTest(template = "empty") public static void separationRewardWaitsForInventorySpace(GameTestHelper h) {
+        separationPendingReward(h, false, false);
+    }
+
+    @GameTest(template = "empty") public static void separationBriefingKeepsFullInventoryVialsAcrossDeath(GameTestHelper h) {
+        separationPendingBriefing(h, false, false);
+    }
+
+    @GameTest(template = "empty") public static void separationBriefingRejectsAStaleIneligibleCallback(GameTestHelper h) {
+        for (boolean clarity : new boolean[] {false, true}) {
+            var actor = player(h, 2);
+            var alchemist = EntityInit.harbinger_alchemist.get().create(h.getLevel());
+            alchemist.setPos(actor.position());
+            h.getLevel().addFreshEntity(alchemist);
+            var unstained = HemoCapabilityAccess.getUnstainedProgress(actor).orElseThrow();
+            try {
+                if (clarity) unstained.setClarityUnlocked(true);
+                else unstained.setBegunPurification(true);
+                DialogueEventHandler.onDialogueOption(new DialogueEvent(actor,
+                        "alchemist_first_separation_brief", alchemist.getId()));
+                h.assertTrue(!FirstSeparationAssignment.isBriefed(actor)
+                                && actor.getInventory().countItem(ItemInit.bloody_vial.get()) == 0,
+                        "Stale ineligible callback must not record a briefing without its supply claim");
+                unstained.setClarityUnlocked(false);
+                unstained.setBegunPurification(false);
+                DialogueEventHandler.onDialogueOption(new DialogueEvent(actor,
+                        "alchemist_first_separation_brief", alchemist.getId()));
+                h.assertTrue(FirstSeparationAssignment.isBriefed(actor)
+                                && actor.getInventory().countItem(ItemInit.bloody_vial.get()) == 2,
+                        "Eligible retry must still offer the complete one-time briefing");
+            } finally { actor.discard(); alchemist.discard(); }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty") public static void separationBriefingKeepsCreativeDiscardedVials(GameTestHelper h) {
+        separationPendingBriefing(h, true, false);
+    }
+
+    @GameTest(template = "empty") public static void separationBriefingRetriesOnlyItsRemainingVial(GameTestHelper h) {
+        separationPendingBriefing(h, false, true);
+    }
+
+    private static void separationPendingBriefing(GameTestHelper h, boolean creative, boolean partial) {
+        var actor = player(h, 2);
+        var restored = player(h, 2, h.getLevel(), packet -> {}, actor.getGameProfile());
+        var respawned = player(h, 2, h.getLevel(), packet -> {}, actor.getGameProfile());
+        var alchemist = EntityInit.harbinger_alchemist.get().create(h.getLevel());
+        alchemist.setPos(actor.position());
+        h.getLevel().addFreshEntity(alchemist);
+        var area = actor.getBoundingBox().inflate(4);
+        try {
+            for (int slot = 0; slot < actor.getInventory().getContainerSize(); slot++)
+                actor.getInventory().setItem(slot, new ItemStack(Items.COBBLESTONE, 64));
+            if (partial) actor.getInventory().setItem(0, new ItemStack(ItemInit.bloody_vial.get(), 63));
+            if (creative) actor.setGameMode(GameType.CREATIVE);
+            DialogueEventHandler.onDialogueOption(new DialogueEvent(actor,
+                    "alchemist_first_separation_brief", alchemist.getId()));
+            h.assertTrue(FirstSeparationAssignment.isBriefed(actor), "Full inventory must not block briefing");
+            FirstSeparationAssignment.giveBriefingSupplies(actor);
+            h.assertTrue(h.getLevel().getEntitiesOfClass(ItemEntity.class, area,
+                            item -> item.getItem().is(ItemInit.bloody_vial.get())).isEmpty(),
+                    "Separation briefing vials must remain pending, not become overflow drops");
+            restored.load(actor.saveWithoutId(new CompoundTag()));
+            restored.getInventory().clearContent();
+            restored.setHealth(0);
+            restored.tickCount = 20;
+            ClinicalBloodKnowledge.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(restored));
+            h.assertTrue(restored.getInventory().countItem(ItemInit.bloody_vial.get()) == 0,
+                    "Dead player must retain pending briefing supplies despite free inventory space");
+            if (partial) {
+                actor.getInventory().setItem(1, ItemStack.EMPTY);
+                ClinicalBloodKnowledge.login(new PlayerEvent.PlayerLoggedInEvent(actor));
+                actor.tickCount = 20;
+                ClinicalBloodKnowledge.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
+                h.assertTrue(actor.getInventory().countItem(ItemInit.bloody_vial.get()) == 65,
+                        "Partial retry must deliver only one remaining vial, not another two-vial gift");
+            } else {
+                respawned.restoreFrom(restored, false);
+                respawned.setHealth(20);
+                respawned.getInventory().clearContent();
+                ClinicalBloodKnowledge.login(new PlayerEvent.PlayerLoggedInEvent(respawned));
+                respawned.tickCount = 20;
+                ClinicalBloodKnowledge.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(respawned));
+                h.assertTrue(respawned.getInventory().countItem(ItemInit.bloody_vial.get()) == 2,
+                        "Saved/death-cloned briefing must deliver exactly two vials once");
+            }
+            var recipient = partial ? actor : respawned;
+            int before = recipient.getInventory().countItem(ItemInit.bloody_vial.get());
+            FirstSeparationAssignment.giveBriefingSupplies(recipient);
+            h.assertTrue(recipient.getInventory().countItem(ItemInit.bloody_vial.get()) == before
+                            && !FirstSeparationAssignment.hasSampleAcquired(recipient)
+                            && !FirstSeparationAssignment.isClaimed(recipient)
+                            && HemoCapabilityAccess.getPlayerDegreeNumber(recipient) == 2,
+                    "Briefing retry must refuse duplicate gifts without earning collection, reward or rank proof");
+        } finally {
+            h.getLevel().getEntitiesOfClass(ItemEntity.class, area,
+                    item -> item.getItem().is(ItemInit.bloody_vial.get())).forEach(ItemEntity::discard);
+            actor.discard(); restored.discard(); respawned.discard(); alchemist.discard();
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty") public static void separationRewardSurvivesCreativeDiscard(GameTestHelper h) {
+        separationPendingReward(h, true, false);
+    }
+
+    @GameTest(template = "empty") public static void separationRewardRetriesOnlyTheUndeliveredRack(GameTestHelper h) {
+        separationPendingReward(h, false, true);
+    }
+
+    private static void separationPendingReward(GameTestHelper h, boolean creative, boolean oneSlot) {
+        var actor = player(h, 2);
+        var restored = player(h, 2, h.getLevel(), packet -> {}, actor.getGameProfile());
+        var respawned = player(h, 2, h.getLevel(), packet -> {}, actor.getGameProfile());
+        var alchemist = EntityInit.harbinger_alchemist.get().create(h.getLevel());
+        alchemist.setPos(actor.position());
+        h.getLevel().addFreshEntity(alchemist);
+        var area = actor.getBoundingBox().inflate(4);
+        try {
+            FirstSeparationAssignment.markBriefed(actor);
+            com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.grantIfNotDone(actor,
+                    com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.ADV_FIRST_SEPARATION_STARTED);
+            com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.grantIfNotDone(actor,
+                    com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.ADV_FIRST_SEPARATION_COMPLETE);
+            for (int slot = 0; slot < actor.getInventory().getContainerSize(); slot++)
+                actor.getInventory().setItem(slot, new ItemStack(Items.COBBLESTONE, 64));
+            if (oneSlot) actor.getInventory().setItem(0, ItemStack.EMPTY);
+            if (creative) actor.setGameMode(GameType.CREATIVE);
+            var claim = new DialogueEvent(actor, "alchemist_first_separation_claim", alchemist.getId());
+            DialogueEventHandler.onDialogueOption(claim);
+            h.assertTrue(FirstSeparationAssignment.isClaimed(actor), "Valid Separation claim was not recorded");
+            h.assertTrue(h.getLevel().getEntitiesOfClass(ItemEntity.class, area,
+                            item -> item.getItem().is(ItemInit.living_syringe.get())
+                                    || item.getItem().is(ItemInit.vial_rack.get())).isEmpty(),
+                    "Earned Separation tools must wait for space rather than become overflow drops");
+            restored.load(actor.saveWithoutId(new CompoundTag()));
+            restored.getInventory().clearContent();
+            restored.setHealth(0);
+            restored.tickCount = 20;
+            ClinicalBloodKnowledge.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(restored));
+            h.assertTrue(restored.getInventory().countItem(ItemInit.vial_rack.get()) == 0,
+                    "Dead-player retries must not deliver the pending rack");
+            if (oneSlot) {
+                actor.getInventory().setItem(1, ItemStack.EMPTY);
+                ClinicalBloodKnowledge.login(new PlayerEvent.PlayerLoggedInEvent(actor));
+                actor.tickCount = 20;
+                ClinicalBloodKnowledge.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
+                h.assertTrue(actor.getInventory().countItem(ItemInit.living_syringe.get()) == 1,
+                        "Partial retry duplicated the already delivered syringe");
+            } else {
+                respawned.restoreFrom(restored, false);
+                respawned.setHealth(20);
+                respawned.getInventory().clearContent();
+                ClinicalBloodKnowledge.login(new PlayerEvent.PlayerLoggedInEvent(respawned));
+                respawned.tickCount = 20;
+                ClinicalBloodKnowledge.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(respawned));
+                h.assertTrue(respawned.getInventory().countItem(ItemInit.living_syringe.get()) == 1,
+                        "Death-cloned pending claim did not deliver exactly one syringe");
+            }
+            var recipient = oneSlot ? actor : respawned;
+            h.assertTrue(recipient.getInventory().countItem(ItemInit.vial_rack.get()) == 1,
+                    "Pending claim did not deliver exactly one initialized rack");
+            var rack = recipient.getInventory().items.stream().filter(s -> s.is(ItemInit.vial_rack.get()))
+                    .findFirst().orElseThrow();
+            h.assertTrue(rack.getComponents().equals(FirstSeparationAssignment.rewardStacks().get(1).getComponents()),
+                    "Pending recovery changed the initialized rack components");
+            h.assertTrue(!FirstSeparationAssignment.canClaim(actor)
+                            && HemoCapabilityAccess.getPlayerDegreeNumber(recipient) == 2,
+                    "Tool recovery must not reopen the claim or promote the player");
+        } finally {
+            h.getLevel().getEntitiesOfClass(ItemEntity.class, area,
+                    item -> item.getItem().is(ItemInit.living_syringe.get())
+                            || item.getItem().is(ItemInit.vial_rack.get())).forEach(ItemEntity::discard);
+            actor.discard(); restored.discard(); respawned.discard(); alchemist.discard();
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty") public static void firstDrawsCreativeDiscardKeepsSuppliesAcrossDeath(GameTestHelper h) {
+        firstDrawsPendingSupplies(h, true);
+    }
+
+    private static void firstDrawsPendingSupplies(GameTestHelper h, boolean creative) {
+        var actor = player(h, 1);
+        var restored = player(h, 1, h.getLevel(), packet -> {}, actor.getGameProfile());
+        var respawned = player(h, 1, h.getLevel(), packet -> {}, actor.getGameProfile());
+        var alchemist = EntityInit.harbinger_alchemist.get().create(h.getLevel());
+        alchemist.setPos(actor.position());
+        var area = actor.getBoundingBox().inflate(4);
+        try {
+            HemoCapabilityAccess.requireBloodVolume(actor).setActive(true);
+            for (int slot = 0; slot < actor.getInventory().getContainerSize(); slot++)
+                actor.getInventory().setItem(slot, new ItemStack(Items.COBBLESTONE, 64));
+            if (creative) actor.setGameMode(GameType.CREATIVE);
+            h.assertTrue(FirstDrawsAssignment.brief(actor, alchemist), "Full inventory must not block the lesson");
+            h.assertTrue(!FirstDrawsAssignment.brief(actor, alchemist), "Repeated lesson duplicated its supply claim");
+            h.assertTrue(h.getLevel().getEntitiesOfClass(ItemEntity.class, area,
+                            item -> item.getItem().is(ItemInit.bloody_vial.get())).isEmpty(),
+                    "First Draws overflow must remain pending, not become a lossy world drop");
+            restored.load(actor.saveWithoutId(new CompoundTag()));
+            restored.getInventory().clearContent();
+            restored.setHealth(0);
+            restored.tickCount = 20;
+            ClinicalBloodKnowledge.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(restored));
+            h.assertTrue(restored.getInventory().countItem(ItemInit.bloody_vial.get()) == 0,
+                    "Dead-player retries must not deliver supplies before death cloning");
+            respawned.restoreFrom(restored, false);
+            respawned.setHealth(20);
+            HemoCapabilityAccess.requireBloodVolume(respawned).setActive(true);
+            ClinicalBloodKnowledge.login(new PlayerEvent.PlayerLoggedInEvent(respawned));
+            respawned.tickCount = 20;
+            ClinicalBloodKnowledge.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(respawned));
+            h.assertTrue(FirstDrawsAssignment.isBriefed(respawned)
+                            && respawned.getInventory().countItem(ItemInit.bloody_vial.get()) == 5,
+                    "Saved pending supplies must survive death cloning and deliver exactly five vials at D1");
+        } finally {
+            h.getLevel().getEntitiesOfClass(ItemEntity.class, area,
+                    item -> item.getItem().is(ItemInit.bloody_vial.get())).forEach(ItemEntity::discard);
+            actor.discard(); restored.discard(); respawned.discard(); alchemist.discard();
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty") public static void firstDrawsPartialInsertionRetriesOnlyTheRemainingVials(GameTestHelper h) {
+        var actor = player(h, 1);
+        var alchemist = EntityInit.harbinger_alchemist.get().create(h.getLevel());
+        alchemist.setPos(actor.position());
+        var area = actor.getBoundingBox().inflate(4);
+        try {
+            HemoCapabilityAccess.requireBloodVolume(actor).setActive(true);
+            for (int slot = 0; slot < actor.getInventory().getContainerSize(); slot++)
+                actor.getInventory().setItem(slot, new ItemStack(Items.COBBLESTONE, 64));
+            actor.getInventory().setItem(0, new ItemStack(ItemInit.bloody_vial.get(), 63));
+            h.assertTrue(FirstDrawsAssignment.brief(actor, alchemist), "Partial room must allow briefing");
+            h.assertTrue(actor.getInventory().countItem(ItemInit.bloody_vial.get()) == 64,
+                    "Briefing must fill the one available vial position");
+            actor.getInventory().setItem(1, ItemStack.EMPTY);
+            ClinicalBloodKnowledge.login(new PlayerEvent.PlayerLoggedInEvent(actor));
+            actor.tickCount = 20;
+            ClinicalBloodKnowledge.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
+            h.assertTrue(actor.getInventory().countItem(ItemInit.bloody_vial.get()) == 68,
+                    "Retry must insert only four remaining vials and refuse duplicate delivery");
+            h.assertTrue(FirstDrawsAssignment.progress(actor).samples() == 0,
+                    "Supply delivery must not count as collecting samples");
+        } finally {
+            h.getLevel().getEntitiesOfClass(ItemEntity.class, area,
+                    item -> item.getItem().is(ItemInit.bloody_vial.get())).forEach(ItemEntity::discard);
+            actor.discard(); alchemist.discard();
+        }
+        h.succeed();
+    }
 
 	@GameTest(template = "empty") public static void firstBloodcraftProofsPromoteOnlyAfterVicarReturn(GameTestHelper h) {
 		var p = player(h, 1);
@@ -1624,6 +4472,63 @@ public final class ClinicalBloodProgressionGameTests {
         degree.setArchonPath(com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.APOTHEOS);
         h.assertTrue(com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior.claimedWillBonusCap(p) == 0,
                 "Apotheos retained the Silent Archon summon cap");
+        h.succeed();
+    }
+
+    @GameTest(template = "empty") public static void deadOrdinaryRecruitReleasesProfessionAndOutpost(GameTestHelper h) {
+        var p = player(h, 6);
+        var data = com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData
+                .get(h.getLevel().getServer().overworld());
+        var line = new com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline(
+                "Dead recruit", p.getUUID(), UUID.randomUUID(), new java.util.ArrayList<>());
+        data.registerBloodline(line);
+        var npc = EntityInit.harbinger_vicar.get().create(h.getLevel());
+        h.assertTrue(npc != null, "Vicar could not be created");
+        npc.setPos(h.absolutePos(new BlockPos(2, 2, 2)).getCenter());
+        npc.setNoAi(true);
+        h.assertTrue(h.getLevel().addFreshEntity(npc), "Vicar could not be spawned");
+        var type = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(npc.getType());
+        String outpost = "test:ordinary_recruit_outpost";
+        data.addNpcMember(line.getBloodlineUUID(), npc.getUUID(), type, outpost);
+        line.contributeBlood(line.getMaxBloodVolume());
+        npc.kill();
+        h.assertTrue(!line.hasNpcMember(npc.getUUID()), "Dead ordinary recruit retained its membership");
+        h.assertTrue(!line.hasNpcMemberType(type) && !line.hasNpcMemberOutpost(outpost),
+                "Dead ordinary recruit still reserved its profession or outpost");
+        h.assertTrue(line.getBloodVolume() <= line.getMaxBloodVolume(),
+                "Recruit death left the pool above its reduced capacity");
+        var restored = com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline
+                .deserialize(line.serialize());
+        h.assertTrue(!restored.hasNpcMember(npc.getUUID()) && !restored.hasNpcMemberType(type)
+                        && !restored.hasNpcMemberOutpost(outpost), "Dead recruit returned after saved-data restoration");
+        h.assertTrue(line.addNpcMember(UUID.randomUUID(), type, outpost),
+                "A replacement could not join the same profession and outpost");
+        data.disbandBloodline(line.getBloodlineUUID());
+        npc.discard();
+        p.discard();
+        h.succeed();
+    }
+
+    @GameTest(template = "empty") public static void absentOrCancelledDeathRecruitKeepsMembership(GameTestHelper h) {
+        var p = player(h, 6);
+        var data = com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData
+                .get(h.getLevel().getServer().overworld());
+        var line = new com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline(
+                "Absent recruit", p.getUUID(), UUID.randomUUID(), new java.util.ArrayList<>());
+        data.registerBloodline(line);
+        var npc = EntityInit.harbinger_vicar.get().create(h.getLevel());
+        h.assertTrue(npc != null, "Vicar could not be created");
+        data.addNpcMember(line.getBloodlineUUID(), npc.getUUID(),
+                net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(npc.getType()));
+        var death = new net.neoforged.neoforge.event.entity.living.LivingDeathEvent(
+                npc, h.getLevel().damageSources().genericKill());
+        death.setCanceled(true);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(death);
+        h.assertTrue(line.hasNpcMember(npc.getUUID()), "Cancelled death released a living recruit");
+        npc.discard();
+        h.assertTrue(line.hasNpcMember(npc.getUUID()), "Entity removal released an absent recruit");
+        data.disbandBloodline(line.getBloodlineUUID());
+        p.discard();
         h.succeed();
     }
 

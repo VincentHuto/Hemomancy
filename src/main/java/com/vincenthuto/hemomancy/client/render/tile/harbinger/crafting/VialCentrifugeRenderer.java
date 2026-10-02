@@ -41,7 +41,9 @@ public class VialCentrifugeRenderer implements BlockEntityRenderer<VialCentrifug
 		matrixStackIn.pushPose();
 		matrixStackIn.translate(0.5D, 1.95D, 0.5D);
 		matrixStackIn.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
-		float spinSpeed = (float) mapOneRangeToAnother(te.dataAccess.get(0), 0, 200, 0, 8, 10);
+		int total = Math.max(1, te.dataAccess.get(1));
+		float spinSpeed = (float) mapOneRangeToAnother(te.dataAccess.get(0), 0, total, 0,
+				8 * 200F / total, 10);
 		float spinMod = spinSpeed < 1 && spinSpeed > 0 ? 0 : spinSpeed;
 		matrixStackIn.mulPose(Vector3.YP.rotationDegrees((float) ticks * spinMod).toMoj());
 		// Displaying vials in slots
@@ -75,12 +77,14 @@ public class VialCentrifugeRenderer implements BlockEntityRenderer<VialCentrifug
 		matrixStackIn.popPose();
 
 
-		matrixStackIn.pushPose();
-		matrixStackIn.translate(0.5D, 1.5D, 0.5D);
-		matrixStackIn.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
-		VertexConsumer standivertexbuilder = bufferIn.getBuffer(arms.renderType(texture));
-		stand.renderToBuffer(matrixStackIn, standivertexbuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, -1);
-		matrixStackIn.popPose();
+		if (te.upgradeTier() == 0) {
+			matrixStackIn.pushPose();
+			matrixStackIn.translate(0.5D, 1.5D, 0.5D);
+			matrixStackIn.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
+			VertexConsumer standivertexbuilder = bufferIn.getBuffer(arms.renderType(texture));
+			stand.renderToBuffer(matrixStackIn, standivertexbuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, -1);
+			matrixStackIn.popPose();
+		}
 
 	}
 

@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class MnemonicTerminologySourceTest {
     private static final List<Path> PLAYER_FACING = List.of(
             Path.of("src/main/resources/assets/hemomancy/lang/en_us.json"),
-            Path.of("src/main/resources/data/hemomancy/books/fanesanguinium/manipulations/pages/muscle_memories.json"),
+            Path.of("src/main/resources/data/hemomancy/books/libersanguinium/manipulations/pages/muscle_memories.json"),
             Path.of("src/main/java/com/vincenthuto/hemomancy/client/screen/manips/RadialChooseManipScreen.java"),
             Path.of("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/MnemonicReliquaryScreen.java"),
             Path.of("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/EquipManipulationPacket.java"));

@@ -17,10 +17,12 @@ import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEven
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.portal.DimensionTransition;
@@ -163,7 +165,11 @@ public final class VesperOrdealManager {
 		});
 		blooms.sealBloom(bloom);
 		HarbingerAdvancementGranter.grantIfNotDone(owner, HarbingerAdvancementGranter.ADV_VESPER_DEFEATED);
-		if (firstVictory) owner.getPersistentData().putBoolean(PENDING_MEMORY_KEY, true);
+		if (firstVictory) {
+			var persisted = memoryClaims(owner);
+			persisted.putBoolean(PENDING_MEMORY_KEY, true);
+			owner.getPersistentData().put(Player.PERSISTED_NBT_TAG, persisted);
+		}
 		PacketHandler.sendToPlayer(owner, PacketSyncVesperFightScene.clearScene());
 		owner.getPersistentData().remove(ACTIVE_BLOOM_KEY);
 		owner.getPersistentData().remove(ACTIVE_BLOOM_ID_KEY);
@@ -173,7 +179,7 @@ public final class VesperOrdealManager {
 				.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD), false);
 		ChamberOfWillManager.get(level.getServer()).exitChamber(owner);
 		givePendingMemory(owner);
-		if (owner.getPersistentData().getBoolean(PENDING_MEMORY_KEY)) {
+		if (owner.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(PENDING_MEMORY_KEY)) {
 			owner.displayClientMessage(Component.literal("Make room in your inventory to receive the Memory of Vesper."), false);
 		}
 	}
@@ -221,11 +227,27 @@ public final class VesperOrdealManager {
 	}
 
 	private static void givePendingMemory(ServerPlayer owner) {
-		if (!owner.getPersistentData().getBoolean(PENDING_MEMORY_KEY)) return;
-		ItemStack memory = new ItemStack(ItemInit.memory_of_vesper.get());
-		if (owner.getInventory().add(memory)) {
-			owner.getPersistentData().remove(PENDING_MEMORY_KEY);
+		var persisted = memoryClaims(owner);
+		if (!owner.isAlive() || ChamberVisitService.isObservational(owner) || !persisted.getBoolean(PENDING_MEMORY_KEY)) return;
+		var memory = ItemInit.memory_of_vesper.get();
+		int before = owner.getInventory().countItem(memory);
+		owner.getInventory().add(new ItemStack(memory));
+		if (owner.getInventory().countItem(memory) > before) {
+			persisted.remove(PENDING_MEMORY_KEY);
+			owner.getPersistentData().put(Player.PERSISTED_NBT_TAG, persisted);
 		}
+	}
+
+	private static CompoundTag memoryClaims(ServerPlayer owner) {
+		var data = owner.getPersistentData();
+		var persisted = data.getCompound(Player.PERSISTED_NBT_TAG);
+		// Older earned claims lived outside the data vanilla copies on death.
+		if (data.getBoolean(PENDING_MEMORY_KEY)) {
+			persisted.putBoolean(PENDING_MEMORY_KEY, true);
+			data.put(Player.PERSISTED_NBT_TAG, persisted);
+		}
+		data.remove(PENDING_MEMORY_KEY);
+		return persisted;
 	}
 
 	@SubscribeEvent
@@ -375,8 +397,9 @@ public final class VesperOrdealManager {
 
 	@SubscribeEvent
 	public static void onPlayerDeath(LivingDeathEvent event) {
-		if (!(event.getEntity() instanceof ServerPlayer player)
-				|| !player.getPersistentData().contains(ACTIVE_BLOOM_KEY)) return;
+		if (!(event.getEntity() instanceof ServerPlayer player)) return;
+		memoryClaims(player);
+		if (!player.getPersistentData().contains(ACTIVE_BLOOM_KEY)) return;
 		abandonAttempt(player);
 	}
 

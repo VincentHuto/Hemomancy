@@ -2,19 +2,17 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "rolls": 1.0,
-      "bonus_rolls": 0.0,
+      "rolls": 1,
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "hemomancy:hematic_armature"
+          "name": "hemomancy:hematic_armature",
+          "functions": [
+            { "function": "minecraft:copy_state", "block": "hemomancy:hematic_armature", "properties": ["stage"] }
+          ]
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ]
+      "conditions": [{ "condition": "minecraft:survives_explosion" }]
     }
   ]
 }

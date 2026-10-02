@@ -1,1 +1,19 @@
-{"type":"hemomancy:distillation_recipe","ingredient":{"item":"hemomancy:sanguine_formation"},"catalyst":{"item":"hemomancy:frigid_enzyme"},"blood_input":{"item":"hemomancy:bloody_flask"},"consume_catalyst":true,"result":"hemomancy:tincture_enduring_viscera","count":1,"experience":0.5,"cookingtime":200,"id":"hemomancy:distillation/tincture_enduring_viscera"}
+{
+  "type": "hemomancy:distillation_recipe",
+  "ingredient": {
+    "item": "hemomancy:sanguine_formation"
+  },
+  "catalyst": {
+    "item": "hemomancy:frigid_enzyme"
+  },
+  "consume_catalyst": true,
+  "result": "hemomancy:tincture_enduring_viscera",
+  "count": 1,
+  "experience": 0.5,
+  "cookingtime": 200,
+  "id": "hemomancy:distillation/tincture_enduring_viscera",
+  "vessel_input": {
+    "item": "hutoslib:cured_clay_flask"
+  },
+  "blood_cost": 2500
+}

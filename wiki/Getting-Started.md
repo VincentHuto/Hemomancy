@@ -80,7 +80,9 @@ Early memories do not require a loom. Player-killed Thirsters can drop crude Blo
 
 Right-click a crude memory with active blood and its required learning degree to learn it for **500 mL**. Casting alignment and casting blood cost are separate requirements, shown on the item. Duplicate learning keeps your blood and shard. Degree I grants Blood Absorption and Blood Projection automatically; the Living Staff comes through its Degree-I structure recipe.
 
-The self-built Somatic Loom remains **Degree III**. Ask the Mnemonist about The Woven Vessel or the Loom to learn the blank Hematic Memory recipe. It needs four Sanguine Formations, four Blood-Stained Stone and one Neurotic Enzyme, in addition to each weaving recipe's catalyst, enzymes and blood. Project the formations, search Hermitage Remnants for the stones, and spin ordinary chicken Blood Vials for Neurotic Enzyme. Chicken blood can also yield Vivacious Enzyme, so collect more than one vial. See the [acquisition route](../docs/manipulation_work_plan/03-acquisition-results.md#early-route--source-backed-checkpoints) and [complete recipe cost ledger](../docs/manipulation_work_plan/03-memory-recipe-ledger.md).
+The self-built Somatic Loom remains **Degree III**. Ask the Mnemonist about The Woven Vessel or the Loom to learn the blank Hematic Memory recipe. It needs four Sanguine Formations, four Blood Stained Stones and one Neurotic Enzyme. Make each stained stone from Venous Stone, a Sanguine Formation and redstone dust; crafting all four brings the total to eight formations. Stones found in Hermitage Remnants also work. Spin ordinary chicken Blood Vials for Neurotic Enzyme. Chicken blood can also yield Vivacious Enzyme, so collect more than one vial. Bring the blank, a book, an ink sac and three paper to the Mnemonist for the Blood Shot starter materials. The actual weave then requires its listed catalyst, enzymes and blood.
+
+In the Mnemonist's **Quest Work**, choose **How do I prepare a blank memory?** for The Woven Vessel. General Loom teaching remains under Lore. Indexing supplies the starter materials; finishing the weave is still the Main proof.
 
 ### Blood Volume
 Blood is the resource used by Hemomancy. Most adult humans contain about **5000 mL** of blood, and activation starts you at 1000 mL.
@@ -307,7 +309,15 @@ Your in-game journal with tabs for:
 - **Discoveries**: Lore entries, item codex, creatures
 
 ### Alpha Guidebook Note
-The HutosLib JSON book data for the Liber Sanguinum and Liber Immaculatus is present, and Field Notes/Liber knowledge is wired into player state. The Harbinger-side Java progression renderer is still partially wired, so alpha testers should treat guidebook access as a smoke-test priority and report any missing pages, dead tabs, or unclear first steps.
+The HutosLib JSON book data for the Liber Sanguinium and Liber Immaculatus is present, and Field Notes/Liber knowledge is wired into player state. The Harbinger-side Java progression renderer is still partially wired, so alpha testers should treat guidebook access as a smoke-test priority and report any missing pages, dead tabs, or unclear first steps.
+
+While the Liber's search field is focused, **Ctrl+A** selects the query, **Ctrl+C** copies selected text, and **Ctrl+V** pastes text at the cursor or replaces the selection.
+
+The Liber Sanguinium's blackletter headings use larger, more detailed glyphs, with a larger cover title and enough spacing above the body text.
+
+Entry titles and subtitles scale down when needed to fit one complete line, preserving their font styles without wrapping or cutting off the text.
+
+An entry's icon, chapter, title, and subtitle appear on its opening page only. Continuation pages use that space for text; separate entries retain their own headings. Page numbers appear near the fold at the bottom of the book.
 
 ---
 

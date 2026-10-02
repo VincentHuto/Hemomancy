@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 1,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Fractionating Rotor",
+  "subtitle": "An Alchemist project at D6",
+  "text": "At D6, personally recover an ordinary specimen result from a spin completed at Calibrated stage or higher. With that and earlier practice proven, the Alchemist offers one free Fractionating Rotor Kit, even if his earlier gift was unclaimed. On a Greater working floor, seat the calibrated machine two blocks behind the Focus, facing the rite. Light six braziers: the kit, an Amethyst Shard, Ghast Tear, Hematic Iron Block, Chromatic Sublimate, and Enzyme Primer. Fill eight anchors, seal the daemon, close three 50 mL circuits and finish the procession: 550 mL total. Spins take 5 seconds, primary quantity rises by 50% on average, and each ordinary vial yields one iron powder. Mixed specimens have a 50% chance to yield one different native fraction in the second output bank. A single-fraction sample cannot create another. Consecrated Syringes still yield one residuum. Clear all output space; a blocked batch keeps its rolled results for retry. Crafted and gifted kits require the same personal eligibility. The installed stage survives moving; cancellation returns exact offerings and Staff, but not spent blood. These projects do not promote your Degree.",
+  "icon": "hemomancy:fractionating_rotor_kit"
+}

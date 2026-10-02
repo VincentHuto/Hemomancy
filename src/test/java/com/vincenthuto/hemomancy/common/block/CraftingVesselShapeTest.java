@@ -10,8 +10,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class CraftingVesselShapeTest {
 	@Test
-	void ghastlyAlembicHasTwoBlockTallShape() throws IOException {
-		assertTwoBlockTallShape("com/vincenthuto/hemomancy/common/block/harbinger/crafting/GhastlyAlembicBlock.java");
+	void ghastlyAlembicUsesModelClippedParts() throws IOException {
+		String source = Files.readString(Path.of("src/main/java",
+				"com/vincenthuto/hemomancy/common/block/harbinger/crafting/GhastlyAlembicBlock.java"));
+		assertTrue(source.contains("AlembicGeometry.shape(StationTierProperty.stage(state), state.getValue(FACING), offset)"));
+		assertTrue(source.contains("getShape") && source.contains("getCollisionShape"));
+		assertTrue(source.indexOf("return partShape(state, BlockPos.ZERO);")
+				!= source.lastIndexOf("return partShape(state, BlockPos.ZERO);"),
+				"Selection and collision must both use the controller's clipped model part");
 	}
 
 	@Test

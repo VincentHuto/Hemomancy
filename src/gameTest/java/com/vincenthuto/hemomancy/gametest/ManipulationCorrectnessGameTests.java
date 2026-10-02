@@ -186,7 +186,12 @@ public final class ManipulationCorrectnessGameTests {
                         bloom.getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
                         float raw = health * .25F * (float) com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper.getCrimsonMasteryMultiplier(p);
                         float adjusted = TendencyAffinityRules.adjustManipulationDamage(p, boss, bloom, raw);
-                        near(h, Math.min(12, adjusted), health - boss.getHealth(), "Final boss damage, health=" + health + ", trained=" + trained);
+                        near(h, Math.min(12, adjusted), health - boss.getHealth(), "Final boss damage, health=" + health
+                                + ", trained=" + trained + ", alive=" + boss.isAlive()
+                                + ", indexed=" + (h.getLevel().getEntity(boss.getUUID()) == boss)
+                                + ", entitiesLoaded=" + h.getLevel().areEntitiesLoaded(
+                                        net.minecraft.world.level.ChunkPos.asLong(boss.blockPosition()))
+                                + ", ticks=" + boss.tickCount + ", pos=" + boss.position());
                     } finally { boss.discard(); }
                 }
             }
@@ -266,7 +271,10 @@ public final class ManipulationCorrectnessGameTests {
                 near(h, 2000 - cost, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Full cast payment");
                 var projectiles = h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.projectile.Projectile.class,
                         p.getBoundingBox().inflate(5), projectile -> projectile.getOwner() == p);
-                near(h, m == ManipulationInit.hematic_mortar.get() ? 1 : 3, projectiles.size(), "Full projectile count");
+                near(h, m == ManipulationInit.hematic_mortar.get() ? 1 : 3, projectiles.size(),
+                        "Full projectile count, manipulation=" + m.getName() + ", entitiesLoaded="
+                                + h.getLevel().areEntitiesLoaded(net.minecraft.world.level.ChunkPos.asLong(p.blockPosition()))
+                                + ", playerPos=" + p.position());
                 projectiles.forEach(net.minecraft.world.entity.Entity::discard);
             } finally { p.discard(); }
         }

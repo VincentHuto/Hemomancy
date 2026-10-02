@@ -3,12 +3,14 @@ package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 import com.vincenthuto.hemomancy.client.particle.data.BloodCellData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarType;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.init.ScarInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.MasonsEffigyMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.rite.ScarBrazierRite;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
@@ -76,6 +78,9 @@ public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider
 	}
 
 	public void setSelectedScarIds(Collection<ResourceLocation> scarIds) {
+		if (hasPendingMotif()) {
+			return;
+		}
 		selectedScarIds.clear();
 		for (ResourceLocation id : scarIds) {
 			if (id != null && !selectedScarIds.contains(id)
@@ -98,6 +103,17 @@ public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider
 		return pendingBlood;
 	}
 
+	public void dropPendingMotif() {
+		if (level == null || level.isClientSide || !hasPendingMotif()) {
+			return;
+		}
+		ItemStack recovered = pendingMotif;
+		pendingMotif = ItemStack.EMPTY;
+		pendingBlood = 0.0D;
+		setChanged();
+		Block.popResource(level, worldPosition, recovered);
+	}
+
 	public double getRequiredBlood() {
 		return selectedScarIds.size() * BLOOD_PER_SCAR;
 	}
@@ -106,7 +122,7 @@ public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider
 		if (level == null || selectedScarIds.isEmpty() || hasPendingMotif()) {
 			return false;
 		}
-		pendingMotif = new ItemStack(ItemInit.runic_motif_paper.get());
+		pendingMotif = stack.copyWithCount(1);
 		pendingBlood = 0.0D;
 		if (!player.getAbilities().instabuild) {
 			stack.shrink(1);
@@ -127,6 +143,25 @@ public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider
 						: "Select scars on the Effigy before charging the motif.").withStyle(ChatFormatting.RED), true);
 			}
 			return 0.0D;
+		}
+		if (selectedScarIds.size() > ScarBrazierRite.getMaxActiveScars(player)) {
+			if (level.getGameTime() % 20L == 0L) {
+				player.displayClientMessage(Component.literal("That motif exceeds your current scar capacity.")
+						.withStyle(ChatFormatting.RED), true);
+			}
+			return 0.0D;
+		}
+		var scars = HemoCapabilityAccess.getScarState(player).orElse(null);
+		for (ResourceLocation id : selectedScarIds) {
+			var definition = ScarInit.getByName(id.toString());
+			if (definition == null || definition.getScarType() != ScarType.CEREBRAL
+					|| scars == null || !scars.knowsCerebralScar(id)) {
+				if (level.getGameTime() % 20L == 0L) {
+					player.displayClientMessage(Component.literal("Learn every selected scar before charging this motif.")
+							.withStyle(ChatFormatting.RED), true);
+				}
+				return 0.0D;
+			}
 		}
 		IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
 		if (playerVolume == null || !playerVolume.isActive() || playerVolume.getBloodVolume() <= 0) {

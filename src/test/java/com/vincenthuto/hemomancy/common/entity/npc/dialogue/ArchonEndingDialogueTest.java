@@ -18,6 +18,32 @@ class ArchonEndingDialogueTest {
     private static final DialogueOption SERVICE = new DialogueOption("service", null, "claim_reward");
 
     @Test
+    void returnedRevelationExplainsThatBothAnswersStillRequireCompletion() throws Exception {
+        JsonObject language = language();
+        String requirements = language.get("hemomancy.whisper.core_witness.line3").getAsString().toLowerCase();
+        for (String detail : List.of("your own bloom", "both", "vesper", "rite of apotheos")) {
+            assertTrue(requirements.contains(detail), "The decision omits " + detail);
+        }
+        assertTrue(!language.get("hemomancy.whisper.core_witness.option.silence")
+                .getAsString().toLowerCase().contains("go home"), "Refusal is not a completed ending");
+    }
+
+    @Test
+    void pendingRefusalConfirmationTeachesTheActualTwoCutEntry() throws Exception {
+        String confirmation = language().get("hemomancy.dialogue.event.archon_choice_silence")
+                .getAsString().toLowerCase();
+        for (String detail : List.of("not yet", "base living weapon", "bloom", "temporary living sickle",
+                "second", "wound", "both", "vesper", "seventh degree")) {
+            assertTrue(confirmation.contains(detail), "Pending-refusal guidance omits " + detail);
+        }
+    }
+
+    private static JsonObject language() throws Exception {
+        return JsonParser.parseString(Files.readString(
+                Path.of("src/main/resources/assets/hemomancy/lang/en_us.json"))).getAsJsonObject();
+    }
+
+    @Test
     void archonResponsesFollowTheCanonicalPath() {
         DialogueTree tree = tree();
         assertResponse(tree, "vicar", 7, EnumArchonPath.NONE, "undecided");

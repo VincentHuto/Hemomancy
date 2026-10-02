@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["FCF", "QSQ", "FCF"],
+  "key": {
+    "F": { "item": "hemomancy:monolith_fragment" },
+    "C": { "item": "hemomancy:monolith_imbued_cloth" },
+    "Q": { "item": "hemomancy:sanguine_quintessence" },
+    "S": { "item": "hemomancy:sclerite_block" }
+  },
+  "result": { "id": "hemomancy:monolithic_cornerstone" }
+}

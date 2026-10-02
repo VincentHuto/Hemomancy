@@ -607,7 +607,7 @@ public class BlockInit {
             () -> new com.vincenthuto.hemomancy.common.succession.VacantEffigyBlock(BlockBehaviour.Properties.of().strength(1.5f).noOcclusion()));
 	public static final DeferredHolder<Block, Block> vial_centrifuge = MODELEDBLOCKS.register("vial_centrifuge",
 			() -> new VialCentrifugeBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(1.5F, 6.0F).sound(SoundType.METAL)));
+					.strength(1.5F, 6.0F).sound(SoundType.METAL).noOcclusion()));
 	public static final DeferredHolder<Block, Block> enzymatic_scriptorium = MODELEDBLOCKS.register("enzymatic_scriptorium",
 			() -> new EnzymaticScriptoriumBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(3.0F, 8.0F).sound(SoundType.METAL).noOcclusion()));
@@ -618,7 +618,7 @@ public class BlockInit {
 
 	public static final DeferredHolder<Block, Block> ghastly_alembic = MODELEDBLOCKS.register("ghastly_alembic",
 			() -> new GhastlyAlembicBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
-					.sound(SoundType.METAL)));
+					.sound(SoundType.METAL).noOcclusion().isViewBlocking((state, level, pos) -> false)));
 
 	public static final DeferredHolder<Block, Block> somatic_loom = MODELEDBLOCKS
 			.register("somatic_loom", () -> new SomaticLoomBlock(BlockBehaviour.Properties.of()

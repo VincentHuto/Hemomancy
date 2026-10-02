@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 
 public final class ChamberVisitService {
 	private static final String PREFIX = Hemomancy.MOD_ID + ":chamber_visit_";
@@ -21,6 +22,8 @@ public final class ChamberVisitService {
 	private static final String DREAM_ATTEMPTS = PREFIX + "dream_attempts";
 	private static final String DREAM_SEEN = PREFIX + "dream_seen";
 	private static final String DREAM_INVENTORY = PREFIX + "dream_inventory";
+	private static final String DREAM_CRAFTING = PREFIX + "dream_crafting";
+	private static final String DREAM_CARRIED = PREFIX + "dream_carried";
 	private static final String GUIDED_EQUIPMENT = PREFIX + "guided_equipment";
 	private static final String GUIDED_COMPLETE = PREFIX + "guided_complete";
 	private static final String CHAIR_BOUND = PREFIX + "chair_bound";
@@ -113,6 +116,7 @@ public final class ChamberVisitService {
 			player.displayClientMessage(Component.translatable("message.hemomancy.warp_chair.degree"), true);
 			return false;
 		}
+		if (!canStartVisit(player)) return false;
 		bindChair(player);
 		return startVisit(player, isAttuned(player) ? ChamberVisitMode.ATTUNED : ChamberVisitMode.TIMED_CHAIR);
 	}
@@ -172,10 +176,15 @@ public final class ChamberVisitService {
 		}
 	}
 
+	private static boolean canStartVisit(ServerPlayer player) {
+		return !isActive(player) && !FungalGardenTravelHelper.isProjectionActive(player)
+				&& !player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)
+				&& player.getServer().getLevel(ChamberOfWillManager.CHAMBER_OF_WILL) != null;
+	}
+
 	private static boolean startVisit(ServerPlayer player, ChamberVisitMode visitMode) {
-		if (isActive(player) || player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)
-				|| player.getServer().getLevel(ChamberOfWillManager.CHAMBER_OF_WILL) == null) return false;
-		if (visitMode == ChamberVisitMode.GUIDED && player.containerMenu != player.inventoryMenu)
+		if (!canStartVisit(player)) return false;
+		if (!ChamberVisitRules.canMoveItems(visitMode) && player.containerMenu != player.inventoryMenu)
 			player.closeContainer();
 		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 		int total = ChamberVisitRules.durationTicks(degree, visitMode, isAttuned(player));
@@ -189,6 +198,11 @@ public final class ChamberVisitService {
 		data.putFloat(EXHAUSTION, player.getFoodData().getExhaustionLevel());
 		if (!ChamberVisitRules.canMoveItems(visitMode)) {
 			data.put(DREAM_INVENTORY, player.getInventory().save(new ListTag()));
+			var crafting = new ListTag();
+			for (int slot = 1; slot <= 4; slot++)
+				crafting.add(player.inventoryMenu.getSlot(slot).getItem().saveOptional(player.registryAccess()));
+			data.put(DREAM_CRAFTING, crafting);
+			data.put(DREAM_CARRIED, player.inventoryMenu.getCarried().saveOptional(player.registryAccess()));
 		}
 		if (visitMode == ChamberVisitMode.GUIDED
 				&& HemoCapabilityAccess.requireEquipment(player) instanceof HarbingerEquipmentContainer equipment)
@@ -259,14 +273,16 @@ public final class ChamberVisitService {
 			recoverOutsideChamber(player);
 			return;
 		}
-		if (player.containerMenu != player.inventoryMenu) player.closeContainer();
 		var data = player.getPersistentData();
 		boolean guidedReturn = mode(player) == ChamberVisitMode.GUIDED
 				&& player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL);
+		if (isObservational(player) && data.contains(DREAM_INVENTORY)) clearObservationalCopies(player);
+		else if (player.containerMenu != player.inventoryMenu) player.closeContainer();
+		// Dimension transfer removes the player's menu; restore originals only after that removal.
+		ChamberOfWillManager.get(player.getServer()).exitChamber(player);
 		restoreObservationalInventory(player);
 		restoreFood(player);
 		clearSession(data);
-		ChamberOfWillManager.get(player.getServer()).exitChamber(player);
 		if (guidedReturn && !player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL))
 			data.putBoolean(GUIDED_COMPLETE, true);
 		PacketHandler.sendToPlayer(player, PacketSyncChamberVisit.inactive());
@@ -285,8 +301,13 @@ public final class ChamberVisitService {
 	private static void restoreObservationalInventory(ServerPlayer player) {
 		var data = player.getPersistentData();
 		if (isObservational(player) && data.contains(DREAM_INVENTORY)) {
+			clearObservationalCopies(player);
 			player.getInventory().load(data.getList(DREAM_INVENTORY, net.minecraft.nbt.Tag.TAG_COMPOUND));
-			player.inventoryMenu.broadcastChanges();
+			var crafting = data.getList(DREAM_CRAFTING, net.minecraft.nbt.Tag.TAG_COMPOUND);
+			for (int slot = 1; slot <= Math.min(4, crafting.size()); slot++)
+				player.inventoryMenu.getSlot(slot).set(ItemStack.parseOptional(player.registryAccess(), crafting.getCompound(slot - 1)));
+			player.inventoryMenu.setCarried(ItemStack.parseOptional(player.registryAccess(), data.getCompound(DREAM_CARRIED)));
+			player.inventoryMenu.broadcastFullState();
 		}
 		if (mode(player) == ChamberVisitMode.GUIDED && data.contains(GUIDED_EQUIPMENT)
 				&& HemoCapabilityAccess.requireEquipment(player) instanceof HarbingerEquipmentContainer equipment) {
@@ -300,6 +321,13 @@ public final class ChamberVisitService {
 		}
 	}
 
+	private static void clearObservationalCopies(ServerPlayer player) {
+		player.containerMenu.setCarried(ItemStack.EMPTY);
+		if (player.containerMenu != player.inventoryMenu) player.closeContainer();
+		player.inventoryMenu.setCarried(ItemStack.EMPTY);
+		player.inventoryMenu.clearCraftingContent();
+	}
+
 	private static void restoreFood(ServerPlayer player) {
 		var data = player.getPersistentData();
 		if (!data.contains(FOOD)) return;
@@ -309,7 +337,7 @@ public final class ChamberVisitService {
 	}
 
 	private static void clearSession(net.minecraft.nbt.CompoundTag data) {
-		for (String key : new String[] { ACTIVE, MODE, REMAINING, TOTAL, DREAM_INVENTORY, GUIDED_EQUIPMENT,
+		for (String key : new String[] { ACTIVE, MODE, REMAINING, TOTAL, DREAM_INVENTORY, DREAM_CRAFTING, DREAM_CARRIED, GUIDED_EQUIPMENT,
 				EXIT_SLEEP_TICKS, FOOD, SATURATION, EXHAUSTION }) data.remove(key);
 	}
 

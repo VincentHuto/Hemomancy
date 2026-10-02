@@ -8,13 +8,13 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.ILivingStaffProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffBondHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationEquipHelper;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperBloodAbsorptionInteractions;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillAbsorptionRules;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBloodUtilityInteractions;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
-import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
@@ -393,9 +393,10 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 			if (known.getManipList().isEmpty()) {
 				return false;
 			}
-			BloodManipulation selected = known.getSelectedManip();
+			var selected = known.getSelectedMemoryRef();
 			return selected != null
-					&& LivingStaffUtilitySelectionRules.isSelectedUtility(selected.getName(), manipName);
+					&& selected.kind() == MemoryEntryKind.MANIPULATION
+					&& LivingStaffUtilitySelectionRules.isSelectedUtility(selected.id(), manipName);
 		}).orElse(false);
 	}
 

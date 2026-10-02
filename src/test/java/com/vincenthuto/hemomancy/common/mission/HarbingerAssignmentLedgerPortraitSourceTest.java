@@ -15,6 +15,19 @@ public final class HarbingerAssignmentLedgerPortraitSourceTest {
 		ledgerDefinesAssignerPortraitResources();
 		ledgerRendersPortraitsAtCardHeight();
 		ledgerWiresPortraitsToAssignmentCards();
+		ledgerFitsStepTitlesInsideThePortraitOffsetCard();
+	}
+
+	private static void ledgerFitsStepTitlesInsideThePortraitOffsetCard() throws IOException {
+		String ledger = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/client/screen/item/HarbingerAssignmentLedgerScreen.java"));
+		assertContains("step titles use the measured truncation and full-text hover path", ledger,
+				"renderTruncatedDescription(gfx, title, cardX + 31, y + 5,");
+		assertContains("step title width leaves the same right inset as descriptions", ledger,
+				"Math.max(20, cardW - 46), done ? DONE : TITLE, mouseX, mouseY)");
+		if (ledger.contains("gfx.drawString(font, title, cardX + 31")) {
+			throw new AssertionError("step titles must not bypass card width fitting");
+		}
 	}
 
 	private static void ledgerDefinesAssignerPortraitResources() throws IOException {

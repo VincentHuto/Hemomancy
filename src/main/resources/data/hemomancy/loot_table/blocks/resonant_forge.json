@@ -3,8 +3,16 @@
   "pools": [
     {
       "rolls": 1,
-      "entries": [{"type": "minecraft:item", "name": "hemomancy:resonant_forge"}],
-      "conditions": [{"condition": "minecraft:survives_explosion"}]
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "hemomancy:resonant_forge",
+          "functions": [
+            { "function": "minecraft:copy_state", "block": "hemomancy:resonant_forge", "properties": ["stage"] }
+          ]
+        }
+      ],
+      "conditions": [{ "condition": "minecraft:survives_explosion" }]
     }
   ]
 }

@@ -11,6 +11,53 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DialogueHubFactoryTest {
 	@Test
+	void optionalScriptoriumTeachingStaysInLoreWithItsServerAction() {
+		DialogueTree base = HarbingerMnemonistDialogueTrees.forDegree(3, 42, false, false, false, false);
+		DialogueTree decorated = DialogueHubFactory.decorate(base, "mnemonist", new DialogueKnowledge());
+		DialogueTopic topic = decorated.presentation().topics(DialogueCategory.LORE).stream()
+				.filter(candidate -> candidate.titleKey().equals(
+						"hemomancy.dialogue.mnemonist.option.ask_about_scriptorium"))
+				.findFirst().orElseThrow(() -> new AssertionError("Optional Scriptorium teaching leaked into Quest Work"));
+		DialogueOption teaching = decorated.getNode(topic.targetNodeId()).options().getFirst();
+		assertEquals(HarbingerMnemonistDialogueTrees.EVENT_SCRIPTORIUM_LESSON, teaching.eventId());
+		assertEquals("scriptorium", teaching.nextNodeId());
+		assertEquals(base.getNode("scriptorium"), decorated.getNode("scriptorium"));
+		assertEquals(DialogueTopicState.AVAILABLE, topic.state());
+		assertTrue(decorated.presentation().topics(DialogueCategory.QUESTS).stream()
+				.noneMatch(candidate -> candidate.titleKey().equals(topic.titleKey())));
+	}
+
+	@Test
+	void firstWeaveLessonAppearsInQuestWorkWithoutSkippingRecipeTeaching() {
+		DialogueTree base = HarbingerMnemonistDialogueTrees.forDegree(3, 42, false, false, false, false);
+		DialogueTree decorated = DialogueHubFactory.decorate(base, "mnemonist", new DialogueKnowledge());
+		DialogueTopic topic = decorated.presentation().topics(DialogueCategory.QUESTS).stream()
+				.filter(candidate -> candidate.id().equals("quests/woven_vessel"))
+				.findFirst().orElseThrow(() -> new AssertionError("The Woven Vessel is missing from Quest Work"));
+
+		DialogueOption teaching = base.getStartNode().options().stream()
+				.filter(option -> "woven_vessel".equals(option.nextNodeId())).findFirst().orElseThrow();
+		assertEquals(List.of(teaching), decorated.getNode(topic.targetNodeId()).options());
+		assertEquals(HarbingerMnemonistDialogueTrees.EVENT_BLANK_MEMORY_RECIPE, teaching.eventId());
+		assertEquals(base.getNode("woven_vessel"), decorated.getNode("woven_vessel"));
+		assertEquals(DialogueTopicState.ACTIVE, topic.state());
+		assertEquals(DialogueAttention.NOTICE, topic.attention());
+		assertTrue(decorated.presentation().topics(DialogueCategory.LORE).stream()
+				.anyMatch(candidate -> candidate.titleKey().equals("hemomancy.dialogue.mnemonist.option.ask_about_loom")));
+	}
+
+	@Test
+	void indexedVesselDoesNotReofferItsMaterialBridgeInQuestWork() {
+		DialogueTree base = HarbingerMnemonistDialogueTrees.forDegree(3, 42, false, false, false, true);
+		DialogueTree decorated = DialogueHubFactory.decorate(base, "mnemonist", new DialogueKnowledge());
+
+		assertTrue(decorated.presentation().topics().stream()
+				.noneMatch(topic -> topic.id().equals("quests/woven_vessel")));
+		assertTrue(decorated.presentation().topics(DialogueCategory.LORE).stream()
+				.anyMatch(topic -> topic.titleKey().equals("hemomancy.dialogue.mnemonist.option.ask_about_loom")));
+	}
+
+	@Test
 	void enteringARewardTopicDoesNotSkipItsEventBearingChoice() {
 		DialogueOption claim = new DialogueOption("claim_assignment_reward", "thanks", "claim_reward");
 		DialogueTree base = DialogueTree.builder("speaker", id("portrait"), 42)

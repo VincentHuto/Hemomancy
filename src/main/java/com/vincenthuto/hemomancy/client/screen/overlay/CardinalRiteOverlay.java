@@ -67,8 +67,7 @@ public final class CardinalRiteOverlay {
 				0xFF241A1C, instabilityColor);
 
 		String pips = "Rings " + pips(rite.getCompletedRings(), rite.getTotalRings())
-				+ "  Waves " + Math.min(rite.getCurrentWave() + 1, Math.max(1, rite.getTotalWaves()))
-				+ "/" + Math.max(1, rite.getTotalWaves());
+				+ "  " + waveSummary(rite.getCurrentWave(), rite.getTotalWaves());
 		graphics.drawString(minecraft.font, pips, x, y + 34, 0xFFFFC4CB, false);
 		String resources = "Anchors " + rite.getCommittedBloodMl() + "/" + rite.getUpfrontBloodMl() + "ml"
 				+ (rite.getCarriedIchorMl() > 0 ? "  Ichor " + rite.getCarriedIchorMl() + "ml" : "")
@@ -78,7 +77,7 @@ public final class CardinalRiteOverlay {
 		if (!rite.getChecklist().isEmpty()) {
 			int lineY = y + 57;
 			for (String line : rite.getChecklist()) {
-				int color = line.contains("missing") || line.startsWith("Dry") ? 0xFFFF6578
+				int color = line.contains("missing") || line.contains("mismatch") || line.startsWith("Dry") ? 0xFFFF6578
 						: line.startsWith("Optional") ? 0xFFD8B0B5 : 0xFFFFD36A;
 				drawCentered(graphics, line, screenWidth / 2, lineY, color);
 				lineY += 10;
@@ -106,6 +105,11 @@ public final class CardinalRiteOverlay {
 		StringBuilder result = new StringBuilder();
 		for (int i = 0; i < total; i++) result.append(i < complete ? "◆" : "◇");
 		return result.toString();
+	}
+
+	static String waveSummary(int currentWave, int totalWaves) {
+		return totalWaves <= 0 ? "No ordeal"
+				: "Waves " + Math.min(currentWave + 1, totalWaves) + "/" + totalWaves;
 	}
 
 	private static String readable(String value) {

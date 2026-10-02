@@ -16,6 +16,36 @@ import static org.junit.jupiter.api.Assertions.*;
 class FieldMycologyResourceTest {
 
 	@Test
+	void fungalSurveySpecimensComeFromTheGardensFungusSelectorAndDropThemselves() throws IOException {
+		JsonArray specimens = resourceJson("data/hemomancy/tags/item/overworld_fungal_survey_specimens.json")
+				.getAsJsonArray("values");
+		assertEquals(2, specimens.size(), "The survey must keep a narrow two-specimen set");
+		JsonArray variants = resourceJson("data/hemomancy/worldgen/configured_feature/small_infected_fungus.json")
+				.getAsJsonObject("config").getAsJsonArray("features");
+		var naturalPlants = new java.util.HashSet<String>();
+		for (var variant : variants) {
+			var state = variant.getAsJsonObject().getAsJsonObject("feature").getAsJsonObject("config")
+					.getAsJsonObject("feature").getAsJsonObject("feature").getAsJsonObject("config")
+					.getAsJsonObject("to_place").getAsJsonObject("state");
+			naturalPlants.add(state.get("Name").getAsString());
+		}
+		JsonArray stages = resourceJson("data/hemomancy/worldgen/biome/fungal_gardens.json")
+				.getAsJsonArray("features");
+		assertTrue(java.util.stream.StreamSupport.stream(stages.spliterator(), false)
+				.flatMap(stage -> java.util.stream.StreamSupport.stream(stage.getAsJsonArray().spliterator(), false))
+				.anyMatch(feature -> "hemomancy:small_infected_fungus".equals(feature.getAsString())));
+		for (var specimen : specimens) {
+			String id = specimen.getAsString();
+			assertTrue(naturalPlants.contains(id), id + " is not in the Gardens' fungus selector");
+			JsonObject loot = resourceJson("data/hemomancy/loot_table/blocks/" + id.substring(id.indexOf(':') + 1) + ".json");
+			var entry = loot.getAsJsonArray("pools").get(0).getAsJsonObject()
+					.getAsJsonArray("entries").get(0).getAsJsonObject();
+			assertEquals("minecraft:item", entry.get("type").getAsString());
+			assertEquals(id, entry.get("name").getAsString(), "Normal harvest must recover the specimen");
+		}
+	}
+
+	@Test
 	void normalFungiDropTheHarvestedPlant() throws IOException {
 		assertSinglePlantDrop("infected_fungus");
 		assertSinglePlantDrop("stinkhorn_fungus");

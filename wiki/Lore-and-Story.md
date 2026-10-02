@@ -537,7 +537,7 @@ When engaging with Hemomancy's story, remember:
 
 ### In-Game Sources
 - **Field Notes**: Your journal, updates with discoveries
-- **Liber Sanguinum**: Harbinger guidebook (WIP content)
+- **Liber Sanguinium**: Harbinger guidebook (WIP content)
 - **Item Descriptions**: Many items have lore text
 - **NPC Dialogues**: Use Item Inquiry system extensively
 - **Fungal Whispers**: Direct messages from Entity

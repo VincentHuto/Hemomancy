@@ -1,39 +1,49 @@
 {
-  "multipart": [
-    {
-      "apply": {
-        "model": "hemomancy:block/vial_centrifuge"
-      },
-      "when": {
-        "facing": "north"
-      }
+  "variants": {
+    "facing=north,stage=0": {
+      "model": "hemomancy:block/vial_centrifuge"
     },
-    {
-      "apply": {
-        "model": "hemomancy:block/vial_centrifuge",
-        "y": 180
-      },
-      "when": {
-        "facing": "south"
-      }
+    "facing=east,stage=0": {
+      "model": "hemomancy:block/vial_centrifuge",
+      "y": 90
     },
-    {
-      "apply": {
-        "model": "hemomancy:block/vial_centrifuge",
-        "y": 270
-      },
-      "when": {
-        "facing": "west"
-      }
+    "facing=south,stage=0": {
+      "model": "hemomancy:block/vial_centrifuge",
+      "y": 180
     },
-    {
-      "apply": {
-        "model": "hemomancy:block/vial_centrifuge",
-        "y": 90
-      },
-      "when": {
-        "facing": "east"
-      }
+    "facing=west,stage=0": {
+      "model": "hemomancy:block/vial_centrifuge",
+      "y": 270
+    },
+    "facing=north,stage=1": {
+      "model": "hemomancy:block/vial_centrifuge_calibrated"
+    },
+    "facing=east,stage=1": {
+      "model": "hemomancy:block/vial_centrifuge_calibrated",
+      "y": 90
+    },
+    "facing=south,stage=1": {
+      "model": "hemomancy:block/vial_centrifuge_calibrated",
+      "y": 180
+    },
+    "facing=west,stage=1": {
+      "model": "hemomancy:block/vial_centrifuge_calibrated",
+      "y": 270
+    },
+    "facing=north,stage=2": {
+      "model": "hemomancy:block/vial_centrifuge_fractionating"
+    },
+    "facing=east,stage=2": {
+      "model": "hemomancy:block/vial_centrifuge_fractionating",
+      "y": 90
+    },
+    "facing=south,stage=2": {
+      "model": "hemomancy:block/vial_centrifuge_fractionating",
+      "y": 180
+    },
+    "facing=west,stage=2": {
+      "model": "hemomancy:block/vial_centrifuge_fractionating",
+      "y": 270
     }
-  ]
+  }
 }

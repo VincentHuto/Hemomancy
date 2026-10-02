@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.crafting;
 
+import com.vincenthuto.hemomancy.common.station.CreativeStationUpgrades;
+
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.EnzymaticScriptoriumBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -29,7 +31,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class EnzymaticScriptoriumBlock extends Block implements EntityBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final net.minecraft.world.level.block.state.properties.IntegerProperty STAGE =
-            net.minecraft.world.level.block.state.properties.IntegerProperty.create("stage", 0, 2);
+            com.vincenthuto.hemomancy.common.station.StationTierProperty.STAGE;
 
     public EnzymaticScriptoriumBlock(Properties properties) {
         super(properties);
@@ -103,6 +105,8 @@ public class EnzymaticScriptoriumBlock extends Block implements EntityBlock {
 
     @Override protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
             Player player, InteractionHand hand, BlockHitResult hit) {
+        if (CreativeStationUpgrades.tryApply(stack, level, pos, player))
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
         open(level, pos, player);
         return ItemInteractionResult.SUCCESS;
     }

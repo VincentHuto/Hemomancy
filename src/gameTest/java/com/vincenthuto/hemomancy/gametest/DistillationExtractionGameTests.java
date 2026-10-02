@@ -101,6 +101,20 @@ public final class DistillationExtractionGameTests {
 
 	@GameTest(template = "empty")
 	public static void alembicPickupAndShiftClickPreserveOutput(GameTestHelper helper) {
+		alembicPickupAndShiftClick(helper, false);
+		helper.succeed();
+	}
+
+	@GameTest(template = "empty", timeoutTicks = 100)
+	public static void alembicMergedExperiencePreservesBothExtractionAwards(GameTestHelper helper) {
+		BlockPos pos = helper.absolutePos(new BlockPos(4, 3, 4));
+		helper.startSequence().thenWaitUntil(() -> helper.assertTrue(
+				helper.getLevel().areEntitiesLoaded(new net.minecraft.world.level.ChunkPos(pos).toLong()),
+				"Alembic XP fixture chunk is not entity-loaded"))
+				.thenExecute(() -> alembicPickupAndShiftClick(helper, true)).thenSucceed();
+	}
+
+	private static void alembicPickupAndShiftClick(GameTestHelper helper, boolean forceMergedExperience) {
 		var level = helper.getLevel();
 		var player = player(helper);
 		BlockPos pos = helper.absolutePos(new BlockPos(4, 3, 4));
@@ -119,15 +133,38 @@ public final class DistillationExtractionGameTests {
 				"Pickup changed output components or retained the ledger");
 		alembic.setItem(GhastlyAlembicBlockEntity.SLOT_RESULT, output.copy());
 		alembic.setRecipeUsed(recipe);
+		if (forceMergedExperience) {
+			var orbs = level.getEntitiesOfClass(ExperienceOrb.class, new AABB(pos).inflate(3));
+			helper.assertTrue(orbs.size() == 1 && orbs.getFirst().getValue() == 1,
+					"First extraction must release one ordinary XP orb before the merge check");
+			// Select vanilla's existing-orb merge bucket for the next real extraction.
+			long seed = 0;
+			while (true) {
+				level.getRandom().setSeed(seed);
+				if (level.getRandom().nextInt(40) == Math.floorMod(orbs.getFirst().getId(), 40)) break;
+				seed++;
+			}
+			level.getRandom().setSeed(seed);
+		}
 		ItemStack moved = menu.quickMoveStack(player, GhastlyAlembicMenu.RESULT_SLOT);
 		helper.assertTrue(ItemStack.isSameItemSameComponents(moved, output) && moved.getCount() == 1,
 				"Shift-click changed output components or count");
 		helper.assertTrue(alembic.saveWithoutMetadata(level.registryAccess()).getCompound("RecipesUsed").isEmpty(),
 				"Shift-click retained the recipe ledger");
-		int experience = level.getEntitiesOfClass(ExperienceOrb.class, new AABB(pos).inflate(3))
-				.stream().mapToInt(ExperienceOrb::getValue).sum();
-		helper.assertTrue(experience == 2, "Pickup and shift-click did not release one XP each");
-		helper.succeed();
+		var orbs = level.getEntitiesOfClass(ExperienceOrb.class, new AABB(pos).inflate(3));
+		if (forceMergedExperience) helper.assertTrue(orbs.size() == 1
+				&& orbs.getFirst().saveWithoutId(new net.minecraft.nbt.CompoundTag()).getInt("Count") == 2,
+				"The second real extraction did not merge into the first XP orb");
+		int experience = orbs.stream().mapToInt(orb -> orb.getValue()
+				* orb.saveWithoutId(new net.minecraft.nbt.CompoundTag()).getInt("Count")).sum();
+		try {
+			helper.assertTrue(experience == 2, "Pickup and shift-click did not release one XP each: total="
+					+ experience + ", orbs=" + orbs.stream()
+							.map(orb -> orb.saveWithoutId(new net.minecraft.nbt.CompoundTag()).toString()).toList());
+		} finally {
+			orbs.forEach(ExperienceOrb::discard);
+			player.discard();
+		}
 	}
 
 	@GameTest(template = "empty")
@@ -168,7 +205,7 @@ public final class DistillationExtractionGameTests {
 		alembic.loadWithComponents(saved, level.registryAccess());
 		ItemStack pickedUp = menu.getSlot(GhastlyAlembicMenu.RESULT_SLOT).remove(1);
 		menu.getSlot(GhastlyAlembicMenu.RESULT_SLOT).onTake(player, pickedUp);
-		helper.assertTrue(HemoCapabilityAccess.advancedBrewing(player).refined()
+		helper.assertTrue(HemoCapabilityAccess.stationUpgrades(player).hasUsed(com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC, "refine")
 				&& alembic.saveWithoutMetadata(level.registryAccess()).getString("CompletedOperation").isEmpty(),
 				"Advanced pickup did not record and consume the completion");
 		alembic.setItem(GhastlyAlembicBlockEntity.SLOT_RESULT, output.copy());
@@ -177,7 +214,7 @@ public final class DistillationExtractionGameTests {
 		saved.put("CompletedOutput", output.save(level.registryAccess()));
 		alembic.loadWithComponents(saved, level.registryAccess());
 		menu.quickMoveStack(player, GhastlyAlembicMenu.RESULT_SLOT);
-		helper.assertTrue(HemoCapabilityAccess.advancedBrewing(player).compounded()
+		helper.assertTrue(HemoCapabilityAccess.stationUpgrades(player).hasUsed(com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC, "compound")
 				&& alembic.saveWithoutMetadata(level.registryAccess()).getString("CompletedOperation").isEmpty(),
 				"Advanced shift-click did not record and consume the completion");
 		helper.succeed();
@@ -205,7 +242,7 @@ public final class DistillationExtractionGameTests {
 
 		ItemStack pickedUp = menu.getSlot(GhastlyAlembicMenu.RESULT_SLOT).remove(1);
 		menu.getSlot(GhastlyAlembicMenu.RESULT_SLOT).onTake(player, pickedUp);
-		helper.assertTrue(HemoCapabilityAccess.advancedBrewing(player).distilled(),
+		helper.assertTrue(HemoCapabilityAccess.stationUpgrades(player).hasUsed(com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC, "distill"),
 				"Taking the first ordinary distillation did not record its proof");
 		helper.assertTrue(HarbingerChapterProgression.unmetChapterForTargetDegree(player, 3)
 				== HarbingerChapterMilestone.FIRST_DISTILLATION,

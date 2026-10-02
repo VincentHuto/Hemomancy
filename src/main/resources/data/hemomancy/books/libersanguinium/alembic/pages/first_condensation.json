@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 0,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The First Condensation",
+  "subtitle": "A return path for the fourth Degree",
+  "text": "Complete a distillation in the Ghastly Alembic and take the result yourself. At the fourth Degree, with your blood awake, the Alchemist offers one free Hematic Condenser Kit. A crafted or gifted kit works too, but does not replace your practice; check with him before spending materials. On a Lesser working floor, seat the Alembic one plinth behind the Cardinal Focus. Light six braziers: the kit, a Glass Bottle, Blaze Powder, Sanguine Glass, a Ferric Binder, and a Vivacious Enzyme. Plant a Living Staff, fill four anchors, seal the daemon, then close the intake and return circuits with 50 mL each and finish the procession. The same Alembic becomes a Condenser, increasing maximum blood storage by 1.5x from 5,000 to 7,500 mL while keeping its contents. This adds room, not blood; its tier and capacity survive moving. Cancelling returns offerings and Staff, not spent blood. Keep the space beside the Alembic and above its receiver clear for the cooling coils and return pipe; the rite refuses a blocked expansion.",
+  "icon": "hemomancy:hematic_condenser_kit"
+}

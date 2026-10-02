@@ -11,7 +11,7 @@ public final class AnnettaCanonSourceTest {
 		String infection = read("src/main/java/com/vincenthuto/hemomancy/common/entity/boss/annetta/LatentAnnettaInfectionEntity.java");
 		String priestess = read("src/main/java/com/vincenthuto/hemomancy/common/entity/boss/annetta/StainedPriestessEntity.java");
 		String lang = read("src/main/resources/assets/hemomancy/lang/en_us.json");
-		String lore = read("src/main/resources/data/hemomancy/books/fanesanguinium/cosmic_forces/pages/annetta_knowles.json");
+		String lore = read("src/main/resources/data/hemomancy/books/libersanguinium/cosmic_forces/pages/annetta_knowles.json");
 		assertContains(annetta, "type == EntityInit.tooth_pecks.get()");
 		assertBefore(annetta, "SpecimenJarData.releaseSpecimen", "SpecimenJarData.clearSpecimen(jarStack)");
 		assertContains(annetta, "infection.setCuredAnnetta(this.getUUID())");

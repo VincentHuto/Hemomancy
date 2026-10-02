@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.manipulation;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
@@ -115,7 +116,8 @@ public final class ManipulationChannelManager {
 		if (HemoCapabilityAccess.getUnstainedProgress(player)
 				.map(UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false)) return null;
 		var known = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
-		if (known == null || known.getSelectedManip() == null) return null;
+		if (known == null || known.getSelectedMemoryRef().kind() != MemoryEntryKind.MANIPULATION
+				|| known.getSelectedManip() == null) return null;
 		BloodManipulation selected = ManipulationInit.getByName(known.getSelectedManip().getName());
 		if (selected == null || selected.getType() != EnumManipulationType.CONTINUOUS
 				|| ManipulationRetirementRules.isRetiredManipulation(selected)

@@ -1,0 +1,19 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 59,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Cut",
+  "subtitle": "The Antecedent Inquiry",
+  "text": "If a signal crossed the break, their work had failed.",
+  "icon": "hemomancy:hematic_microscope",
+  "layout": "record",
+  "record": {
+    "label": "VIGIL RECORD",
+    "text": "The watchers left the growth alive so they could test whether its parts would start answering each other again. They were told not to burn it or move it."
+  },
+  "seeAlso": [
+    "hemomancy:libersanguinium/the_infection/pages/antecedent_degraded_network",
+    "hemomancy:liberimmaculatus/our_lady/pages/she_who_listens"
+  ],
+  "pinned": false
+}

@@ -2,6 +2,11 @@ package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
 import com.google.common.collect.Lists;
 import com.vincenthuto.hemomancy.common.brewing.AlembicTier;
+import com.vincenthuto.hemomancy.common.station.StationTierProperty;
+import com.vincenthuto.hemomancy.common.station.UpgradeStation;
+import com.vincenthuto.hemomancy.common.station.UpgradeableStation;
+import com.vincenthuto.hemomancy.common.station.StationUpgradeRules;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.GhastlyAlembicBlock;
 import com.vincenthuto.hemomancy.common.brewing.AdvancedBrewingReload;
 import com.vincenthuto.hemomancy.common.brewing.BrewingMatch;
 import com.vincenthuto.hemomancy.common.brewing.BrewingResolver;
@@ -57,7 +62,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * Ghastly Alembic Block Entity — a blood distillery powered by fire below.
+ * Ghastly Alembic Block Entity — a blood distillery heated externally or by its Athanor mantle.
  * <p>
  * Slots:
  * <ul>
@@ -69,7 +74,8 @@ import java.util.List;
  * lit soul campfire, lava, magma, or crimson flames.
  */
 public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
-		implements WorldlyContainer, RecipeCraftingHolder, StackedContentsCompatible, IBloodReservoir, IBloodContainerSlotAccess {
+		implements WorldlyContainer, RecipeCraftingHolder, StackedContentsCompatible, IBloodReservoir, IBloodContainerSlotAccess,
+		UpgradeableStation {
 
 	static final String TAG_BLOOD_LEVEL = "bloodLevel";
 
@@ -79,9 +85,8 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	public static final int SLOT_RESULT   = 2;
 	public static final int SLOT_CATALYST = 3;
 	public static final int SLOT_FLASK_OUTPUT = 4;
-	public static final int SLOT_TINCTURE_BLOOD = 5;
-	public static final int SLOT_CATALYST_2 = 6;
-	public static final int NUM_SLOTS     = 7;
+	public static final int SLOT_CATALYST_2 = 5;
+	public static final int NUM_SLOTS     = 6;
 
 	// Container data indices
 	public static final int DATA_HEATED = 0;
@@ -100,15 +105,16 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	// Hopper / sided access
 	private static final int[] SLOTS_FOR_UP    = new int[]{SLOT_INPUT};
 	private static final int[] SLOTS_FOR_DOWN  = new int[]{SLOT_RESULT, SLOT_FLASK_OUTPUT};
-	private static final int[] SLOTS_FOR_SIDES = new int[]{SLOT_FLASK, SLOT_CATALYST, SLOT_TINCTURE_BLOOD};
-	private static final int[] SLOTS_FOR_SIDES_ATHANOR = new int[]{SLOT_FLASK, SLOT_CATALYST, SLOT_TINCTURE_BLOOD, SLOT_CATALYST_2};
+	private static final int[] SLOTS_FOR_SIDES = new int[]{SLOT_FLASK, SLOT_CATALYST};
+	private static final int[] SLOTS_FOR_SIDES_ATHANOR = new int[]{SLOT_FLASK, SLOT_CATALYST, SLOT_CATALYST_2};
 
 	// ---- Fields ----
 
 	public NonNullList<ItemStack> items = NonNullList.withSize(NUM_SLOTS, ItemStack.EMPTY);
-	private AlembicTier tier = AlembicTier.BASE;
+	private int legacyStage;
 	private final java.util.List<ItemStack> hiddenCatalystRecovery = new java.util.ArrayList<>();
 	private boolean riteLocked;
+	private boolean footprintChecked;
 	private java.util.UUID machineIdentity = java.util.UUID.randomUUID();
 	private java.util.UUID lastUpgradeRite;
 	private boolean heated;
@@ -134,7 +140,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 				case DATA_COOKING_PROGRESS -> cookingProgress;
 				case DATA_COOKING_TOTAL_TIME -> cookingTotalTime;
 				case DATA_STATUS -> getProcessingStatus().ordinal();
-				case DATA_TIER -> tier.ordinal();
+				case DATA_TIER -> tier().ordinal();
 				case DATA_ADVANCED_PROGRESS -> advancedProgress;
 				case DATA_ADVANCED_TOTAL_TIME -> advancedTotalTicks;
 				default -> 0;
@@ -164,7 +170,32 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		super(BlockEntityInit.ghastly_alembic.get(), pos, state);
 	}
 
-	public AlembicTier tier() { return tier; }
+	public AlembicTier tier() {
+		return AlembicTier.fromSaved(Math.max(StationTierProperty.stage(getBlockState()), legacyStage));
+	}
+
+	@Override
+	public void setBlockState(BlockState state) {
+		super.setBlockState(state);
+		IBloodVolume vol = resolveVolume();
+		if (vol != null) vol.setMaxBloodVolume(tier().bloodCapacity());
+	}
+
+	public void applyLegacyStage() {
+		StationTierProperty.applyLegacyStage(this, legacyStage);
+		legacyStage = 0;
+	}
+
+	/** Raises the tier directly (fixtures and admin tooling); rites use completeUpgrade. Never lowers it. */
+	public void setTier(AlembicTier tier) {
+		if (tier == null || getLevel() == null) return;
+		var state = getBlockState().setValue(StationTierProperty.STAGE, tier.ordinal());
+		if (!GhastlyAlembicBlock.hasSpace(getLevel(), getBlockPos(), state)) return;
+		StationTierProperty.applyLegacyStage(this, tier.ordinal());
+		((GhastlyAlembicBlock) getBlockState().getBlock())
+				.placeFillers(getLevel(), getBlockPos(), getBlockState());
+	}
+
 	public boolean isRiteLocked() { return riteLocked; }
 	public boolean isProcessing() { return cookingProgress > 0 || advancedProgress > 0; }
 	public java.util.UUID machineIdentity() { return machineIdentity; }
@@ -174,24 +205,41 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	public ItemStack advancedPreview() { return advancedPreview; }
 	public String advancedFeedback() { return advancedFeedback; }
 	public int advancedBloodCost() { return advancedBloodCost; }
-	public int advancedTotalTicks() { return advancedTotalTicks; }
+	public int advancedTotalTicks() { return tier().processingTicks(advancedTotalTicks); }
 
-	public void setTier(AlembicTier tier) {
-		if (tier == null || tier.ordinal() < this.tier.ordinal()) return;
-		this.tier = tier;
-		setChanged();
-		sendUpdates();
+	@Override public UpgradeStation upgradeStation() { return UpgradeStation.ALEMBIC; }
+
+	@Override public boolean readyForUpgradeRite(ServerLevel level, net.minecraft.core.Direction riteForward) {
+		return !isProcessing() && !isRiteLocked() && upgradeTier() < 2
+				&& GhastlyAlembicBlock.hasSpace(level, getBlockPos(),
+						getBlockState().setValue(StationTierProperty.STAGE, upgradeTier() + 1));
 	}
 
-	public boolean wasUpgradedBy(java.util.UUID riteId) {
+	@Override public boolean completeUpgrade(int targetTier, java.util.UUID riteId) {
+		if (getLevel() == null || !StationUpgradeRules.isNextTier(upgradeTier(), targetTier)
+				|| !GhastlyAlembicBlock.hasSpace(getLevel(), getBlockPos(),
+						getBlockState().setValue(StationTierProperty.STAGE, targetTier))) return false;
+		if (!UpgradeableStation.super.completeUpgrade(targetTier, riteId)) return false;
+		((GhastlyAlembicBlock) getBlockState().getBlock())
+				.placeFillers(getLevel(), getBlockPos(), getBlockState());
+		return true;
+	}
+
+	@Override public CompoundTag upgradeSnapshot(HolderLookup.Provider registries) {
+		CompoundTag tag = new CompoundTag();
+		ContainerHelper.saveAllItems(tag, items, registries);
+		tag.putDouble("BloodLevel", getBloodVolume());
+		return tag;
+	}
+
+	@Override public void markUpgradedBy(java.util.UUID riteId) { lastUpgradeRite = riteId; setChanged(); }
+
+	@Override public boolean wasUpgradedBy(java.util.UUID riteId) {
 		return riteId != null && riteId.equals(lastUpgradeRite);
 	}
 
 	public boolean completeUpgrade(AlembicTier target, java.util.UUID riteId) {
-		if (target == null || riteId == null || target.ordinal() != tier.ordinal() + 1) return false;
-		lastUpgradeRite = riteId;
-		setTier(target);
-		return true;
+		return target != null && completeUpgrade(target.ordinal(), riteId);
 	}
 
 	public ItemStack takeHiddenCatalystRecovery() {
@@ -204,9 +252,10 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	// ---- Heat source detection ----
 
 	/**
-	 * Returns true if the block directly below is a valid heat source.
+	 * Athanor supplies permanent heat; lower tiers check the block directly below.
 	 */
 	public static boolean isHeatSource(Level level, BlockPos alembicPos) {
+		if (AlembicTier.fromSaved(StationTierProperty.stage(level.getBlockState(alembicPos))).hasInternalHeat()) return true;
 		BlockPos below = alembicPos.below();
 		BlockState belowState = level.getBlockState(below);
 
@@ -240,7 +289,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 				.getAllRecipesFor(RecipeInit.distillation_recipe_type.get())
 				.stream()
 				.filter(h -> !h.value().isPallid() && h.value().matchesItems(te.items.get(SLOT_INPUT),
-						te.items.get(SLOT_CATALYST), te.items.get(SLOT_TINCTURE_BLOOD)))
+						te.items.get(SLOT_CATALYST), te.items.get(SLOT_FLASK)))
 				.mapToInt(h -> h.value().getCookingTime())
 				.findFirst()
 				.orElse(200);
@@ -252,7 +301,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 				.getAllRecipesFor(RecipeInit.distillation_recipe_type.get())
 				.stream()
 				.filter(h -> !h.value().isPallid() && h.value().matchesItems(te.items.get(SLOT_INPUT),
-						te.items.get(SLOT_CATALYST), te.items.get(SLOT_TINCTURE_BLOOD)))
+						te.items.get(SLOT_CATALYST), te.items.get(SLOT_FLASK)))
 				.findFirst()
 				.orElse(null);
 	}
@@ -267,6 +316,11 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	}
 
 	public static void serverTick(Level level, BlockPos pos, BlockState state, GhastlyAlembicBlockEntity te) {
+		te.applyLegacyStage();
+		if (!te.footprintChecked && GhastlyAlembicBlock.hasSpace(level, pos, te.getBlockState())) {
+			((GhastlyAlembicBlock) te.getBlockState().getBlock()).placeFillers(level, pos, te.getBlockState());
+			te.footprintChecked = true;
+		}
 		if (te.riteLocked) return;
 		if (te.observedRecipeGeneration != AdvancedBrewingReload.generation()) {
 			te.observedRecipeGeneration = AdvancedBrewingReload.generation();
@@ -281,26 +335,28 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		IBloodVolume vol = te.resolveVolume();
 		if (vol == null) return;
 		RecipeHolder<DistillationRecipe> ordinary = findMatchingRecipe(level, te);
-		BrewingMatch advanced = ordinary == null ? BrewingResolver.resolve(level, te.tier,
+		BrewingMatch advanced = ordinary == null ? BrewingResolver.resolve(level, te.tier(),
 				te.items.get(SLOT_INPUT), te.items.get(SLOT_CATALYST), te.items.get(SLOT_CATALYST_2)) : null;
-		te.updateAdvancedPreview(advanced, ordinary != null, vol);
+		te.updateAdvancedPreview(advanced, ordinary, vol);
 		te.tickAdvanced(advanced, vol);
 
 		if (advanced == null && te.heated && !te.items.get(SLOT_INPUT).isEmpty()) {
 			RecipeHolder<DistillationRecipe> recipe = findMatchingRecipe(level, te);
 			boolean canStoreByproduct = vol.getBloodVolume() < vol.getMaxBloodVolume() - 99;
-			if (recipe != null && (canStoreByproduct || recipe.value().requiresBloodInput())) {
+			if (recipe != null && (recipe.value().getBloodCost() > 0
+					? vol.getBloodVolume() >= recipe.value().getBloodCost() : canStoreByproduct)) {
 				int maxStack = te.getMaxStackSize();
 
 				if (te.canBurn(level.registryAccess(), recipe, te.items, maxStack)) {
-					++te.cookingProgress;
+					// Progress remains in recipe ticks so changing tier also speeds up an unfinished batch.
+					te.cookingProgress += te.tier().processingSpeed();
 					if (te.cookingProgress >= te.cookingTotalTime) {
 						te.cookingProgress = 0;
 						te.cookingTotalTime = getTotalCookTime(level, te);
 						if (te.burn(level.registryAccess(), recipe, te.items, maxStack)) {
 							te.recordCompleted("distill");
 							te.setRecipeUsed(recipe);
-							if (!recipe.value().requiresBloodInput()) {
+							if (recipe.value().getBloodCost() == 0) {
 								vol.fill(100);
 							}
 							te.sendUpdates();
@@ -323,7 +379,8 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		// Update LIT blockstate
 		if (wasHeated != te.heated) {
 			dirty = true;
-			state = state.setValue(AbstractFurnaceBlock.LIT, te.heated);
+			// Read the live state: applyLegacyStage may have raised the tier earlier this tick.
+			state = level.getBlockState(pos).setValue(AbstractFurnaceBlock.LIT, te.heated);
 			level.setBlock(pos, state, 3);
 		}
 
@@ -331,7 +388,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		tryDrainBloodIntoGourd(te);
 
 		// Drain stored blood into flasks (independent of cooking)
-		tryDrainBloodIntoFlask(te);
+		if (ordinary == null || !ordinary.value().requiresVesselInput()) tryDrainBloodIntoFlask(te);
 
 		// Fill blood from bloody flasks (independent of cooking)
 		tryFillBloodFromFlask(te);
@@ -344,10 +401,11 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		}
 	}
 
-	private void updateAdvancedPreview(@Nullable BrewingMatch match, boolean ordinary, IBloodVolume volume) {
+	private void updateAdvancedPreview(@Nullable BrewingMatch match,
+			@Nullable RecipeHolder<DistillationRecipe> ordinary, IBloodVolume volume) {
 		String feedback;
-		if (ordinary) feedback = "ordinary";
-		else if (tier == AlembicTier.BASE && items.get(SLOT_INPUT).is(net.minecraft.world.item.Items.POTION)) feedback = "upgrade_required";
+		if (ordinary != null) feedback = "ordinary";
+		else if (tier() == AlembicTier.BASE && items.get(SLOT_INPUT).is(net.minecraft.world.item.Items.POTION)) feedback = "upgrade_required";
 		else if (match == null && items.get(SLOT_INPUT).is(net.minecraft.world.item.Items.POTION))
 			feedback = items.get(SLOT_CATALYST).isEmpty() ? "missing_catalyst" : "invalid_formula";
 		else if (match == null) feedback = "";
@@ -355,14 +413,18 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		else if (volume.getBloodVolume() < match.blood()) feedback = "insufficient_blood";
 		else if (!canAcceptAdvanced(match.result())) feedback = "output_occupied";
 		else feedback = match.operation();
-		ItemStack preview = match == null ? ItemStack.EMPTY : match.result();
+		boolean tincture = ordinary != null && ordinary.value().getBloodCost() > 0;
+		ItemStack preview = tincture ? ordinary.value().getResultItemRaw()
+				: match == null ? ItemStack.EMPTY : match.result();
+		int bloodCost = tincture ? ordinary.value().getBloodCost() : match == null ? 0 : match.blood();
+		int ticks = tincture ? ordinary.value().getCookingTime() : match == null ? 0 : match.ticks();
 		if (advancedFeedback.equals(feedback)
 				&& ItemStack.isSameItemSameComponents(advancedPreview, preview)
-				&& advancedBloodCost == (match == null ? 0 : match.blood())) return;
+				&& advancedBloodCost == bloodCost && advancedTotalTicks == ticks) return;
 		advancedFeedback = feedback;
 		advancedPreview = preview.copy();
-		advancedBloodCost = match == null ? 0 : match.blood();
-		advancedTotalTicks = match == null ? 0 : match.ticks();
+		advancedBloodCost = bloodCost;
+		advancedTotalTicks = ticks;
 		sendUpdates();
 	}
 
@@ -377,8 +439,9 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 			advancedMatch = candidate;
 			advancedProgress = 0;
 		}
-		if (++advancedProgress < candidate.ticks()) return;
-		BrewingMatch refreshed = BrewingResolver.resolve(level, tier, items.get(SLOT_INPUT),
+		advancedProgress += tier().processingSpeed();
+		if (advancedProgress < candidate.ticks()) return;
+		BrewingMatch refreshed = BrewingResolver.resolve(level, tier(), items.get(SLOT_INPUT),
 				items.get(SLOT_CATALYST), items.get(SLOT_CATALYST_2));
 		if (refreshed != null && sameMatch(candidate, refreshed)
 				&& canAcceptAdvanced(refreshed.result()) && volume.getBloodVolume() >= refreshed.blood()
@@ -412,8 +475,8 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		if (level == null || level.isClientSide || completedOperation.isEmpty()
 				|| !ItemStack.isSameItemSameComponents(completedOutput, extracted)) return;
 		if (player instanceof ServerPlayer serverPlayer)
-			com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.advancedBrewing(serverPlayer)
-					.record(completedOperation);
+			com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.stationUpgrades(serverPlayer)
+					.recordUse(UpgradeStation.ALEMBIC, completedOperation);
 		completedOperation = "";
 		completedOutput = ItemStack.EMPTY;
 		setChanged();
@@ -431,7 +494,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	public Status getProcessingStatus() {
 		if (!heated) return Status.NO_HEAT;
 		if (items.get(SLOT_INPUT).isEmpty()) return Status.NO_INPUT;
-		if (!advancedPreview.isEmpty()) {
+		if (!advancedPreview.isEmpty() && !advancedFeedback.equals("ordinary")) {
 			if (advancedFeedback.equals("output_occupied")) return Status.OUTPUT_BLOCKED;
 			if (advancedFeedback.equals("insufficient_blood")) return Status.MISSING_INGREDIENTS;
 			return Status.DISTILLING;
@@ -439,8 +502,9 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		if (level == null) return Status.MISSING_INGREDIENTS;
 		RecipeHolder<DistillationRecipe> recipe = findMatchingRecipe(level, this);
 		if (recipe == null) return Status.MISSING_INGREDIENTS;
+		if (getBloodVolume() < recipe.value().getBloodCost()) return Status.MISSING_INGREDIENTS;
 		if (!canBurn(level.registryAccess(), recipe, items, getMaxStackSize())) return Status.OUTPUT_BLOCKED;
-		if (!recipe.value().requiresBloodInput() && getBloodVolume() >= getMaxBloodVolume() - 99) {
+		if (recipe.value().getBloodCost() == 0 && getBloodVolume() >= getMaxBloodVolume() - 99) {
 			return Status.TANK_FULL;
 		}
 		return Status.DISTILLING;
@@ -459,6 +523,8 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		if (recipeHolder == null || !canBurn(registryAccess, recipeHolder, inv, maxStack)) return false;
 
 		DistillationRecipe recipe = recipeHolder.value();
+		IBloodVolume volume = resolveVolume();
+		if (recipe.getBloodCost() > 0 && (volume == null || !volume.drain(recipe.getBloodCost()))) return false;
 		ItemStack input = inv.get(SLOT_INPUT);
 		ItemStack recipeResult = recipe.getResultItem(registryAccess).copy();
 		ItemStack resultStack = inv.get(SLOT_RESULT);
@@ -469,10 +535,10 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		}
 
 		DistillationConsumptionRules.Consumption consumption = DistillationConsumptionRules.forRecipe(
-				recipe.consumesCatalyst(), recipe.requiresBloodInput());
+				recipe.consumesCatalyst(), recipe.requiresVesselInput());
 		input.shrink(consumption.mainInput());
 		inv.get(SLOT_CATALYST).shrink(consumption.catalyst());
-		inv.get(SLOT_TINCTURE_BLOOD).shrink(consumption.bloodInput());
+		inv.get(SLOT_FLASK).shrink(consumption.vesselInput());
 		return true;
 	}
 
@@ -489,7 +555,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 			stack.setCount(this.getMaxStackSize());
 		}
 		// Reset cooking progress when input changes
-		if ((slot == SLOT_INPUT || slot == SLOT_CATALYST || slot == SLOT_CATALYST_2 || slot == SLOT_TINCTURE_BLOOD) && !sameItem) {
+		if ((slot == SLOT_INPUT || slot == SLOT_CATALYST || slot == SLOT_CATALYST_2 || slot == SLOT_FLASK) && !sameItem) {
 			advancedMatch = null;
 			advancedProgress = 0;
 			this.cookingTotalTime = (this.level != null) ? getTotalCookTime(this.level, this) : BURN_TIME_STANDARD;
@@ -697,7 +763,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		return switch (direction) {
 			case UP -> SLOTS_FOR_UP;
 			case DOWN -> SLOTS_FOR_DOWN;
-			default -> tier.hasSecondCatalyst() ? SLOTS_FOR_SIDES_ATHANOR : SLOTS_FOR_SIDES;
+			default -> tier().hasSecondCatalyst() ? SLOTS_FOR_SIDES_ATHANOR : SLOTS_FOR_SIDES;
 		};
 	}
 
@@ -712,9 +778,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 					|| BloodContainerTransfer.isFilledBloodContainer(stack);
 		}
 		if (slot == SLOT_CATALYST) return true; // any item allowed as catalyst
-		if (slot == SLOT_CATALYST_2) return tier.hasSecondCatalyst();
-		if (slot == SLOT_TINCTURE_BLOOD) return stack.getItem() == ItemInit.bloody_flask.get()
-				|| stack.getItem() == ItemInit.bloody_jug.get();
+		if (slot == SLOT_CATALYST_2) return tier().hasSecondCatalyst();
 		return true; // SLOT_INPUT
 	}
 
@@ -735,7 +799,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		IBloodVolume vol = resolveVolume();
 		if (vol != null) {
 			vol.setActive(true);
-			vol.setMaxBloodVolume(AlembicVesselRules.requiredBlood(AlembicVesselRules.Vessel.JUG));
+			vol.setMaxBloodVolume(tier().bloodCapacity());
 		}
 	}
 
@@ -743,12 +807,12 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 		super.loadAdditional(tag, registries);
 		this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-		ContainerHelper.loadAllItems(tag, this.items, registries);
-		if (tag.contains("AlembicTier") && (tag.getInt("AlembicTier") < 0
-				|| tag.getInt("AlembicTier") >= AlembicTier.values().length))
-			com.vincenthuto.hemomancy.Hemomancy.LOGGER.warn(
-					"Invalid Alembic tier {} at {}; loading as BASE", tag.getInt("AlembicTier"), worldPosition);
-		this.tier = AlembicTier.fromSaved(tag.getInt("AlembicTier"));
+		NonNullList<ItemStack> savedItems = NonNullList.withSize(tag.getBoolean("ReservoirTinctures") ? NUM_SLOTS : 7, ItemStack.EMPTY);
+		ContainerHelper.loadAllItems(tag, savedItems, registries);
+		for (int i = 0; i < SLOT_CATALYST_2; i++) items.set(i, savedItems.get(i));
+		items.set(SLOT_CATALYST_2, savedItems.get(tag.getBoolean("ReservoirTinctures") ? SLOT_CATALYST_2 : 6));
+		// Pre-consolidation saves kept the tier here; applyLegacyStage moves it into the blockstate.
+		this.legacyStage = tag.contains("AlembicTier") ? AlembicTier.fromSaved(tag.getInt("AlembicTier")).ordinal() : 0;
 		this.riteLocked = tag.getBoolean("RiteLocked");
 		this.machineIdentity = tag.hasUUID("MachineIdentity") ? tag.getUUID("MachineIdentity") : java.util.UUID.randomUUID();
 		this.lastUpgradeRite = tag.hasUUID("LastUpgradeRite") ? tag.getUUID("LastUpgradeRite") : null;
@@ -761,6 +825,8 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		this.completedOutput = tag.contains("CompletedOutput")
 				? ItemStack.parseOptional(registries, tag.getCompound("CompletedOutput")) : ItemStack.EMPTY;
 		hiddenCatalystRecovery.clear();
+		if (!tag.getBoolean("ReservoirTinctures") && !savedItems.get(5).isEmpty())
+			hiddenCatalystRecovery.add(savedItems.get(5));
 		if (tag.contains("HiddenCatalystRecovery")) {
 			ItemStack legacy = ItemStack.parseOptional(registries, tag.getCompound("HiddenCatalystRecovery"));
 			if (!legacy.isEmpty()) hiddenCatalystRecovery.add(legacy);
@@ -770,7 +836,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 			ItemStack stack = ItemStack.parseOptional(registries, recovered.getCompound(i));
 			if (!stack.isEmpty()) hiddenCatalystRecovery.add(stack);
 		}
-		if (!tier.hasSecondCatalyst() && !items.get(SLOT_CATALYST_2).isEmpty()) {
+		if (!tier().hasSecondCatalyst() && !items.get(SLOT_CATALYST_2).isEmpty()) {
 			ItemStack hidden = items.get(SLOT_CATALYST_2);
 			items.set(SLOT_CATALYST_2, ItemStack.EMPTY);
 			hiddenCatalystRecovery.add(hidden);
@@ -785,6 +851,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		IBloodVolume vol = resolveVolume();
 		if (vol != null) {
 			vol.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+			vol.setMaxBloodVolume(tier().bloodCapacity());
 		}
 	}
 
@@ -792,7 +859,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 		super.saveAdditional(tag, registries);
 		tag.putBoolean("Heated", this.heated);
-		tag.putInt("AlembicTier", tier.ordinal());
+		if (legacyStage > 0) tag.putInt("AlembicTier", legacyStage);
 		tag.putBoolean("RiteLocked", riteLocked);
 		tag.putUUID("MachineIdentity", machineIdentity);
 		if (lastUpgradeRite != null) tag.putUUID("LastUpgradeRite", lastUpgradeRite);
@@ -807,6 +874,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		if (!recovered.isEmpty()) tag.put("HiddenCatalystRecoveries", recovered);
 		tag.putInt("CookTime", this.cookingProgress);
 		tag.putInt("CookTimeTotal", this.cookingTotalTime);
+		tag.putBoolean("ReservoirTinctures", true);
 		ContainerHelper.saveAllItems(tag, this.items, registries);
 		CompoundTag recipesTag = new CompoundTag();
 		this.recipesUsed.forEach((key, val) -> recipesTag.putInt(key.toString(), val));
@@ -828,7 +896,6 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
 		CompoundTag tag = new CompoundTag();
 		tag.putBoolean("Heated", this.heated);
-		tag.putInt("AlembicTier", tier.ordinal());
 		tag.putBoolean("RiteLocked", riteLocked);
 		tag.putUUID("MachineIdentity", machineIdentity);
 		tag.putString("AdvancedFeedback", advancedFeedback);
@@ -837,6 +904,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		if (!advancedPreview.isEmpty()) tag.put("AdvancedPreview", advancedPreview.save(registries));
 		tag.putInt("CookTime", this.cookingProgress);
 		tag.putInt("CookTimeTotal", this.cookingTotalTime);
+		tag.putBoolean("ReservoirTinctures", true);
 		ContainerHelper.saveAllItems(tag, this.items, registries);
 		CompoundTag recipesTag = new CompoundTag();
 		this.recipesUsed.forEach((key, val) -> recipesTag.putInt(key.toString(), val));
@@ -851,7 +919,6 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	@Override
 	public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
 		super.handleUpdateTag(tag, registries);
-		this.tier = AlembicTier.fromSaved(tag.getInt("AlembicTier"));
 		this.riteLocked = tag.getBoolean("RiteLocked");
 		if (tag.hasUUID("MachineIdentity")) this.machineIdentity = tag.getUUID("MachineIdentity");
 		this.advancedFeedback = tag.getString("AdvancedFeedback");

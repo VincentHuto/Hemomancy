@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.mob.arthropod.MyelinBorerEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.arthropod.FiberRepair;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.core.BlockPos;
@@ -193,21 +194,66 @@ public final class MyelinBorerGameTests {
 		});
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 100)
+	@GameTest(templateNamespace = "hemomancy", template = "empty", timeoutTicks = 100)
 	public static void patrollingBorerBlinksToAnotherRun(GameTestHelper h) {
-		h.setBlock(new BlockPos(2, 2, 3), fiberX());
-		h.setBlock(new BlockPos(5, 2, 3), fiberX());
-		h.setBlock(new BlockPos(2, 3, 3), net.minecraft.world.level.block.Blocks.AIR);
-		h.setBlock(new BlockPos(5, 3, 3), net.minecraft.world.level.block.Blocks.AIR);
-		MyelinBorerEntity borer = spawnBorer(h, new BlockPos(2, 3, 3));
+		// Keep the full six-block patrol search away from neighbouring cable fixtures.
+		BlockPos firstCable = new BlockPos(12, 5, 12);
+		BlockPos farCable = firstCable.east(3);
+		h.setBlock(firstCable, fiberX());
+		h.setBlock(farCable, fiberX());
+		h.setBlock(firstCable.above(), net.minecraft.world.level.block.Blocks.AIR);
+		h.setBlock(farCable.above(), net.minecraft.world.level.block.Blocks.AIR);
+		MyelinBorerEntity borer = spawnBorer(h, firstCable.above());
 		java.util.concurrent.atomic.AtomicBoolean sawBlink = new java.util.concurrent.atomic.AtomicBoolean();
 		h.succeedWhen(() -> {
 			h.getLevel().tickNonPassenger(borer);
 			sawBlink.set(sawBlink.get() || borer.isBlinking());
-			if (!sawBlink.get() || borer.blockPosition().distSqr(h.absolutePos(new BlockPos(5, 3, 3))) > 2.0D) {
-				throw new net.minecraft.gametest.framework.GameTestAssertException("patrolling borer has not blinked to the next run");
+			if (!sawBlink.get() || borer.blockPosition().distSqr(h.absolutePos(farCable.above())) > 2.0D) {
+				throw new net.minecraft.gametest.framework.GameTestAssertException(
+						"patrolling borer has not blinked to the next run: pos=" + borer.position()
+								+ " ticks=" + borer.tickCount + " sawBlink=" + sawBlink.get()
+								+ " phase=" + borer.isBlinking() + " grip=" + borer.isGripping()
+								+ " alive=" + borer.isAlive() + " removed=" + borer.isRemoved()
+								+ " start=" + h.absolutePos(firstCable.above())
+								+ " destination=" + h.absolutePos(farCable.above())
+								+ " farCable=" + h.getBlockState(farCable)
+								+ " farLanding=" + h.getBlockState(farCable.above()));
 			}
 		});
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE)
+	public static void sharedFiberRepairRejectsNonGapsAndPreservesAxis(GameTestHelper h) {
+		BlockPos gap = h.absolutePos(new BlockPos(2, 2, 2));
+		var level = h.getLevel();
+		for (Direction direction : Direction.values()) level.setBlock(gap.relative(direction),
+				net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);
+		level.setBlock(gap, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);
+		h.assertTrue(!FiberRepair.repair(level, gap), "Open void must not become fiber");
+		level.setBlock(gap.west(), fiberX(), 3);
+		h.assertTrue(!FiberRepair.repair(level, gap), "A cable dead end is not a severed run");
+		level.setBlock(gap.north(), fiberX(), 3);
+		h.assertTrue(!FiberRepair.repair(level, gap), "A corner is not a severed run");
+		level.setBlock(gap.east(), fiberX(), 3);
+		level.setBlock(gap.south(), fiberX(), 3);
+		h.assertTrue(!FiberRepair.repair(level, gap), "Two opposing pairs are an ambiguous crossing");
+		for (Direction.Axis axis : Direction.Axis.values()) {
+			for (Direction direction : Direction.values()) level.setBlock(gap.relative(direction),
+					net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);
+			level.setBlock(gap, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);
+			Direction along = Direction.get(Direction.AxisDirection.POSITIVE, axis);
+			level.setBlock(gap.relative(along), fiberX(), 3);
+			level.setBlock(gap.relative(along.getOpposite()), fiberX(), 3);
+			h.assertTrue(FiberRepair.repair(level, gap), "A genuine " + axis + " gap must be repaired");
+			h.assertTrue(level.getBlockState(gap).is(BlockInit.nerve_fiber.get())
+					&& level.getBlockState(gap).getValue(RotatedPillarBlock.AXIS) == axis,
+					"Repaired fiber must follow its opposing neighbours on " + axis);
+			level.setBlock(gap, net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), 3);
+			h.assertTrue(!FiberRepair.repair(level, gap)
+					&& level.getBlockState(gap).is(net.minecraft.world.level.block.Blocks.STONE),
+					"Repair must not overwrite an occupied gap");
+		}
+		h.succeed();
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 180)

@@ -35,7 +35,7 @@ public class BloodyBookItem extends ItemGuideBook {
     @Override
     public InteractionResultHolder<ItemStack> use(Level lvl, Player player  , InteractionHand hand) {
         BookPlaceboReloadListener test = BookPlaceboReloadListener.INSTANCE;
-        BookCodeModel book = test.getBookByTitle(Hemomancy.rloc("fanesanguinium"));
+        BookCodeModel book = test.getBookByTitle(Hemomancy.rloc("libersanguinium"));
 
         if (!lvl.isClientSide && player instanceof ServerPlayer serverPlayer) {
             MemoHelper.migrateLegacyLiberStack(serverPlayer, player.getItemInHand(hand));

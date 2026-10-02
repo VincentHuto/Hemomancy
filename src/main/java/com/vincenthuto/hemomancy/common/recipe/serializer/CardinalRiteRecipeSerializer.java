@@ -261,16 +261,8 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			recipe.setCeremony(ceremonyFromJson(pJson, pRecipeId, riteType, requiredDegree));
 			int offeringCount = recipe.getBrazierSignature().stream()
 					.mapToInt(CardinalRiteRecipe.BrazierRequirement::count).sum();
+			// Station upgrade rites declare their "id" so the codec path is real here.
 			String policyPath = pRecipeId.getPath();
-			if (policyPath.endsWith("/unknown") && layered && pJson.has("floor")
-					&& pJson.has("riteName")) {
-				String floor = GsonHelper.getAsString(pJson, "floor");
-				String name = GsonHelper.getAsString(pJson, "riteName");
-				if (requiredDegree == 5 && "hemomancy:working_greater".equals(floor)
-						&& "Rite of the Eightfold Script".equals(name)) policyPath = "cardinal_rite/eightfold_script";
-				if (requiredDegree == 7 && "hemomancy:working_grand".equals(floor)
-						&& "Rite of the Monolithic Script".equals(name)) policyPath = "cardinal_rite/monolithic_script";
-			}
 			List<String> violations = CardinalRiteProgressionPolicy.violations(
 					policyPath, requiredDegree, recipe.getCeremony(), offeringCount);
 			if (!violations.isEmpty()) {

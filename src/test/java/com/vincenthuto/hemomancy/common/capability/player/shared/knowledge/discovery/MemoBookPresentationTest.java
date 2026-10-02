@@ -17,12 +17,12 @@ class MemoBookPresentationTest {
                  "icon":"minecraft:book","layout":"preview","text":"Introduction","margin":"Note","rowLimit":7,
                  "callout":{"icon":"minecraft:book","text":"A callout"}}
                 """)).getOrThrow();
-        chapter.setId(id("hemomancy:fanesanguinium/intro/chapter"));
+        chapter.setId(id("hemomancy:libersanguinium/intro/chapter"));
         var registered = page("registered");
         var unregistered = page("unregistered");
         var locked = page("locked");
         chapter.setPages(List.of(registered, unregistered, locked));
-        var book = new BookCodeModel(id("hemomancy:fanesanguinium"),
+        var book = new BookCodeModel(id("hemomancy:libersanguinium"),
                 new BookTemplate("test:cover", "test:overlay", "Book", "", "", "minecraft:book"));
         book.setChapters(List.of(chapter));
         book.setSourceIndex(BookSourceIndex.create(book.getChapters()));
@@ -39,7 +39,7 @@ class MemoBookPresentationTest {
 
     private static PageTemplate page(String name) {
         var page = new PageTemplate(0, "test:page", name, "", "Body", "minecraft:book");
-        page.setId(id("hemomancy:fanesanguinium/intro/pages/" + name));
+        page.setId(id("hemomancy:libersanguinium/intro/pages/" + name));
         return page;
     }
     private static ResourceLocation id(String id) { return ResourceLocation.parse(id); }

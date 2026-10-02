@@ -29,8 +29,8 @@ public enum HemoMilestone {
     /** Craft Befouling Ash. */
     ASHEN_BEGINNINGS("ashen_beginnings", 1, Category.DISCOVERY, 0, "Craft Befouling Ash"),
 
-    /** Obtain the Liber Sanguinum guide book. */
-    FANE_SANGUINIUM("fane_sanguinium", 1, Category.DISCOVERY, 0, "Obtain the Liber Sanguinum"),
+    /** Obtain the Liber Sanguinium guide book. */
+    LIBER_SANGUINIUM("liber_sanguinium", 1, Category.DISCOVERY, 0, "Obtain the Liber Sanguinium"),
 
     /** Activate a Blood Temple's Mortal Display. */
     THE_FIRST_AWAKENING("the_first_awakening", 2, Category.DISCOVERY, 0, "Activate a Blood Temple"),
@@ -236,6 +236,8 @@ public enum HemoMilestone {
 
     /** Look up a milestone by its string ID, or null if not found. */
     public static HemoMilestone byId(String id) {
+        // Preserve earned credit from saves using the old guide milestone ID.
+        if ("fane_sanguinium".equals(id)) return LIBER_SANGUINIUM;
         for (HemoMilestone m : values()) {
             if (m.id.equals(id)) return m;
         }

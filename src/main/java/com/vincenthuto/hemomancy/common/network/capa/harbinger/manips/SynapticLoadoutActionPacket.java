@@ -100,7 +100,7 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 
 	private static void saveOrOverwrite(ServerPlayer player, IKnownManipulations known, IBloodVolume volume,
 			int slotIndex, String requestedName) {
-		List<String> memorizedNames = memorizedEquippedNames(known);
+		List<String> memorizedNames = memorizedEquippedNames(player, known);
 		if (memorizedNames.isEmpty()) {
 			fail(player, "No memorized manipulations are equipped to remember.");
 			return;
@@ -158,11 +158,15 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 		}
 		known.setEquippedManipNames(loadout.manipNames());
 		var muscleState = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+		boolean muscleStateChanged = false;
 		for (var memory : com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.values()) {
 			if (muscleState.isEnabled(memory)
 					&& !loadout.manipNames().contains(MemorySlotRef.muscleMemory(memory).storageKey())) {
-				muscleState.deactivate(memory);
+				muscleStateChanged |= muscleState.deactivate(memory);
 			}
+		}
+		if (muscleStateChanged) {
+			com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryEvents.sync(player);
 		}
 		MemorySlotRef selected = MemorySlotRef.fromStorageKey(loadout.selectedManipName());
 		if (!isKnownMemory(player, known, selected.storageKey()) && !loadout.manipNames().isEmpty()) {
@@ -183,10 +187,10 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 		return be != null && be.getType() == BlockEntityInit.dendritic_distributor.get();
 	}
 
-	private static List<String> memorizedEquippedNames(IKnownManipulations known) {
+	private static List<String> memorizedEquippedNames(ServerPlayer player, IKnownManipulations known) {
 		List<String> names = new ArrayList<>();
 		for (String name : known.getEquippedManipNames()) {
-			if (isKnownMemory(null, known, name)) {
+			if (isKnownMemory(player, known, name)) {
 				names.add(name);
 			}
 		}
@@ -222,8 +226,7 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 		if (ref.kind() == MemoryEntryKind.MANIPULATION) {
 			return findKnownManipulation(known, ref.id()) != null;
 		}
-		return ref.muscleMemory().filter(memory -> player == null
-				|| player.getData(HemoAttachmentTypes.MUSCLE_MEMORY).knows(memory)).isPresent();
+		return ref.muscleMemory().filter(memory -> player.getData(HemoAttachmentTypes.MUSCLE_MEMORY).knows(memory)).isPresent();
 	}
 
 	private static int currentRawExperience(Player player) {

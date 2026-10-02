@@ -28,7 +28,8 @@
     "label": "minecraft:default",
     "badge": "hutoslib:book_badge",
     "title20": "hemomancy:fane_blackletter_20",
-    "title24": "hemomancy:fane_blackletter_24"
+    "title24": "hemomancy:fane_blackletter_24",
+    "title28": "hemomancy:fane_blackletter_28"
   },
   "textures": {
     "page": "hemomancy:textures/gui/book/fane/page.png",

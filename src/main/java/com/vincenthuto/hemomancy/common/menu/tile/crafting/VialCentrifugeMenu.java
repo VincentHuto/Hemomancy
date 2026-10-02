@@ -4,7 +4,6 @@ import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.menu.slot.CentrifugeOutputSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.CentrifugeSlot;
-import com.vincenthuto.hemomancy.common.menu.slot.OutputSlot;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.VialCentrifugeBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.VialCentrifugeStartupResult;
 import com.vincenthuto.hutoslib.common.container.SlotSelectiveType;
@@ -27,7 +26,9 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 	public static final int OUTPUT_END = 16;
 	public static final int AUX_OUTPUT_SLOT = 17;
 	public static final int FLASK_OUTPUT_SLOT = 18;
-	public static final int SLOT_COUNT = 19;
+	public static final int SECONDARY_START = 19;
+	public static final int SECONDARY_END = 26;
+	public static final int SLOT_COUNT = 27;
 	public static final int DATA_COUNT = 3;
 
 	private static final int INV_START = SLOT_COUNT;
@@ -65,7 +66,10 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 		// SLOTS — positioned for programmatic UI layout
 		// Blood flask slot (bottom-left, below blood bar)
 		addSlot(new SlotSelectiveType(te, BloodyFlaskItem.class,
-				VialCentrifugeBlockEntity.SLOT_BLOOD, 16, 8, 90));
+				VialCentrifugeBlockEntity.SLOT_BLOOD, 16, 8, 90) {
+			@Override public boolean mayPlace(ItemStack stack) { return !te.isRiteLocked() && super.mayPlace(stack); }
+			@Override public boolean mayPickup(Player player) { return !te.isRiteLocked(); }
+		});
 
 		// Vial slots — ring arrangement centered around (77, 50)
 		// Radius 28, 8 slots at 45° increments (clockwise from top)
@@ -90,20 +94,27 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 		addSlot(new CentrifugeOutputSlot(te, 17, 146, 68));
 
 		// Aux output (below output grid, within craft area)
-		addSlot(new OutputSlot(te, 18, 137, 88));
+		addSlot(new CentrifugeOutputSlot(te, 18, 137, 88));
 
 		// Flask output (next to blood input slot — empty flasks from consumed bloody flasks)
-		addSlot(new OutputSlot(te, VialCentrifugeBlockEntity.SLOT_FLASK_OUTPUT, 26, 90));
+		addSlot(new CentrifugeOutputSlot(te, VialCentrifugeBlockEntity.SLOT_FLASK_OUTPUT, 26, 90));
+
+		for (int i = 0; i < 8; i++) {
+			addSlot(new CentrifugeOutputSlot(te, VialCentrifugeBlockEntity.SLOT_SECONDARY_START + i,
+					172 + i % 2 * 18, 14 + i / 2 * 18) {
+				@Override public boolean isActive() { return te.upgradeTier() >= 2 || hasItem(); }
+			});
+		}
 
 		// INVENTORY
 		for (int y = 0; y < 3; y++) {
 			for (int x = 0; x < 9; x++) {
-				this.addSlot(new Slot(playerInv, x + y * 9 + 9, 8 + x * 18, 122 + y * 18));
+				this.addSlot(new Slot(playerInv, x + y * 9 + 9, 28 + x * 18, 122 + y * 18));
 			}
 		}
 		// HOTBAR
 		for (int x = 0; x < 9; x++) {
-			this.addSlot(new Slot(playerInv, x, 8 + x * 18, 180));
+			this.addSlot(new Slot(playerInv, x, 28 + x * 18, 180));
 		}
 
 		this.addDataSlots(containerData);
@@ -117,6 +128,7 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 
 	@Override
 	public void clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
+		if (te.isRiteLocked()) return;
 		super.clicked(slotId, dragType, clickTypeIn, player);
 		te.sendUpdates();
 	}
@@ -124,8 +136,8 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 	/** Progress scaled 0–24 for rendering (0 = idle, 24 = complete) */
 	public int getSpinProgress() {
 		int remaining = this.data.get(0);
-		int total = VialCentrifugeBlockEntity.SPIN_TOTAL_TIME;
-		if (remaining <= 0) return 0;
+		int total = this.data.get(1);
+		if (remaining <= 0 || total <= 0) return 0;
 		return (total - remaining) * 24 / total;
 	}
 
@@ -144,9 +156,10 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 
 	@Override
 	public ItemStack quickMoveStack(Player playerIn, int index) {
+		if (te.isRiteLocked() || index < 0 || index >= slots.size()) return ItemStack.EMPTY;
 		ItemStack stack = ItemStack.EMPTY;
 		te.sendUpdates();
-		if (te.isSpinning() && index >= VIAL_START && index <= VIAL_END) {
+		if (te.isProcessing() && index >= VIAL_START && index <= VIAL_END) {
 			return ItemStack.EMPTY;
 		}
 		Slot slot = this.slots.get(index);
@@ -173,7 +186,7 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 			} else {
 				slot.setChanged();
 			}
-			if (index < SLOT_COUNT) slot.onTake(playerIn, stack);
+			if (index < SLOT_COUNT) slot.onTake(playerIn, stack.copyWithCount(stack.getCount() - itemStack.getCount()));
 		}
 		return stack;
 	}

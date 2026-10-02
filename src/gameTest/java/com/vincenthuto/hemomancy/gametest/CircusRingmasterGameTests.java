@@ -18,17 +18,22 @@ import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.gametest.framework.GameTestInfo;
+import net.minecraft.gametest.framework.GameTestListener;
+import net.minecraft.gametest.framework.GameTestRunner;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.level.ChunkPos;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -39,31 +44,56 @@ import java.util.UUID;
 @PrefixGameTestTemplate(false)
 @SuppressWarnings("removal")
 public final class CircusRingmasterGameTests {
+	private static final TicketType<UUID> CAROUSEL_FIXTURE_TICKET =
+			TicketType.create("hemomancy_carousel_fixture", UUID::compareTo);
+
 	private CircusRingmasterGameTests() {
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", timeoutTicks = 40)
+	@GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", timeoutTicks = 120)
 	public static void carouselSpawnsThreeBoundPuppeteerCaptives(GameTestHelper helper) {
 		CircusCarouselEntity carousel = EntityInit.circus_carousel.get().create(helper.getLevel());
 		helper.assertTrue(carousel != null, "Carousel fixture must create");
 		carousel.setPos(helper.absolutePos(new BlockPos(4, 2, 4)).getCenter());
 		helper.getLevel().addFreshEntity(carousel);
-		carousel.tick();
-		int initialPassengers = carousel.getPassengers().size();
+		var chunks = new java.util.HashSet<ChunkPos>();
+		for (int x : new int[]{-4, 4}) for (int z : new int[]{-4, 4})
+			chunks.add(new ChunkPos(carousel.blockPosition().offset(x, 0, z)));
+		var source = helper.getLevel().getChunkSource();
+		UUID ticketOwner = carousel.getUUID();
+		chunks.forEach(chunk -> source.addRegionTicket(CAROUSEL_FIXTURE_TICKET, chunk, 2, ticketOwner, true));
+		Runnable cleanup = () -> {
+			java.util.List.copyOf(carousel.getPassengers()).forEach(net.minecraft.world.entity.Entity::discard);
+			carousel.discard();
+			chunks.forEach(chunk -> source.removeRegionTicket(CAROUSEL_FIXTURE_TICKET, chunk, 2, ticketOwner, true));
+		};
+		helper.testInfo.addListener(new GameTestListener() {
+			public void testStructureLoaded(GameTestInfo test) { }
+			public void testPassed(GameTestInfo test, GameTestRunner runner) { cleanup.run(); }
+			public void testFailed(GameTestInfo test, GameTestRunner runner) { cleanup.run(); }
+			public void testAddedForRerun(GameTestInfo oldTest, GameTestInfo newTest, GameTestRunner runner) { }
+		});
 
-		helper.runAfterDelay(3, () -> {
+		helper.startSequence().thenWaitUntil(() -> helper.assertTrue(!carousel.isRemoved() && carousel.tickCount > 0,
+				"Carousel fixture must receive its first natural entity tick"))
+				.thenIdle(3).thenExecute(() -> {
 			String passengers = carousel.getPassengers().stream()
 					.map(entity -> entity.getType().toString() + ":" + entity.isRemoved())
 					.collect(java.util.stream.Collectors.joining(", "));
 			helper.assertTrue(carousel.getPassengers().size() == 3
 					&& carousel.getPassengers().stream().allMatch(BloodDrunkPuppeteerEntity.class::isInstance),
 					"Carousel must carry three Blood Drunk Puppeteer captives; found "
-							+ carousel.getPassengers().size() + " [" + passengers + "] after initially spawning "
-							+ initialPassengers + " at "
+							+ carousel.getPassengers().size() + " [" + passengers + "] at "
 							+ helper.getLevel().getDifficulty());
 			helper.assertTrue(carousel.getPassengers().stream()
 					.allMatch(captive -> captive.getY() > carousel.getY() + 2.0D),
-					"Carousel captives must sit above the horse bodies instead of standing on the platform");
+					"Carousel captives must sit above the horse bodies instead of standing on the platform: ticks="
+							+ carousel.tickCount + ", indexed=" + (helper.getLevel().getEntity(carousel.getUUID()) == carousel)
+							+ ", entitiesLoaded=" + helper.getLevel().areEntitiesLoaded(net.minecraft.world.level.ChunkPos.asLong(carousel.blockPosition()))
+							+ ", pos=" + carousel.position() + ", riders=" + carousel.getPassengers().stream()
+							.map(captive -> "ticks=" + captive.tickCount + ", pos=" + captive.position()
+									+ ", indexed=" + (helper.getLevel().getEntity(captive.getUUID()) == captive))
+							.collect(java.util.stream.Collectors.joining("; ")));
 			helper.assertTrue(carousel.getPassengers().stream().allMatch(captive -> Math.abs(Math.hypot(
 					captive.getX() - carousel.getX(), captive.getZ() - carousel.getZ())
 					- CircusCarouselRules.HORSE_RADIUS - 0.55D) < 0.01D),
@@ -71,10 +101,7 @@ public final class CircusRingmasterGameTests {
 			helper.assertTrue(helper.getLevel().getEntitiesOfClass(EnthralledDollEntity.class,
 					new AABB(carousel.blockPosition()).inflate(8.0D)).isEmpty(),
 					"Carousel captives must not summon combat dolls");
-			carousel.getPassengers().forEach(net.minecraft.world.entity.Entity::discard);
-			carousel.discard();
-			helper.succeed();
-		});
+		}).thenSucceed();
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", timeoutTicks = 40)

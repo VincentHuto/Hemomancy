@@ -13,9 +13,17 @@ public class CentrifugeOutputSlot extends OutputSlot {
 	}
 
 	@Override
+	public boolean mayPickup(Player player) {
+		return !(container instanceof com.vincenthuto.hemomancy.common.tile.harbinger.crafting.VialCentrifugeBlockEntity te)
+				|| !te.isRiteLocked();
+	}
+
+	@Override
 	public void onTake(Player player, ItemStack stack) {
 		if (player instanceof ServerPlayer serverPlayer) {
 			FirstSeparationAssignment.tryRecoverAssignmentOutput(serverPlayer, stack);
+			if (container instanceof com.vincenthuto.hemomancy.common.tile.harbinger.crafting.VialCentrifugeBlockEntity te)
+				te.onPlayerExtract(serverPlayer, getContainerSlot(), stack);
 		}
 		super.onTake(player, stack);
 	}

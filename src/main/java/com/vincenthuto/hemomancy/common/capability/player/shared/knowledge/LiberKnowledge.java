@@ -121,9 +121,27 @@ public class LiberKnowledge extends BookKnowledge {
 	@Override
 	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
 		super.deserializeNBT(provider, tag);
+		// Keep discoveries from saves made before the guide's resource ID was corrected.
+		LiberKnowledge migrated = new LiberKnowledge();
+		for (ResourceLocation entry : getUnlockedEntries()) {
+			migrated.unlockEntry(migrateBookEntry(entry), null);
+		}
+		getEntrySources().forEach((entry, sources) -> sources.forEach(source ->
+				migrated.unlockEntry(migrateBookEntry(entry), source)));
+		getKnownMemos().forEach(migrated::recordMemo);
+		super.setFrom(migrated);
 		pendingMemos.clear();
 		readResourceLocationSet(tag.getList(TAG_PENDING_MEMOS, TAG_STRING), pendingMemos);
 		pendingMemos.removeIf(this::knowsMemo);
+	}
+
+	private static ResourceLocation migrateBookEntry(ResourceLocation entry) {
+		String legacyPrefix = "fanesanguinium/";
+		if ("hemomancy".equals(entry.getNamespace()) && entry.getPath().startsWith(legacyPrefix)) {
+			return ResourceLocation.fromNamespaceAndPath("hemomancy",
+					"libersanguinium/" + entry.getPath().substring(legacyPrefix.length()));
+		}
+		return entry;
 	}
 
 	private static MemoDefinition.MemoPath pathForMemo(ResourceLocation memoId) {

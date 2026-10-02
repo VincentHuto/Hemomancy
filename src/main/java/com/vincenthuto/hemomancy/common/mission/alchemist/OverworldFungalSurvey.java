@@ -37,7 +37,7 @@ public final class OverworldFungalSurvey {
 
     public static void recordVisit(ServerPlayer player, ResourceKey<Level> dimension,
             ResourceKey<Biome> biome) {
-        if (visited(player) || !Level.OVERWORLD.equals(dimension)
+        if (visited(player) || player.isSpectator() || !Level.OVERWORLD.equals(dimension)
                 || !BiomeInit.FUNGAL_GARDENS.equals(biome)) return;
         CompoundTag data = data(player);
         data.putBoolean(VISITED, true);

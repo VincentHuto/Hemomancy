@@ -28,6 +28,315 @@ import java.util.UUID;
 @GameTestHolder(Hemomancy.MOD_ID)
 @PrefixGameTestTemplate(false)
 public final class HarbingerRepairGameTests {
+    private static final net.minecraft.server.level.TicketType<UUID> HELPER_FIXTURE_TICKET =
+            net.minecraft.server.level.TicketType.create("hemomancy_test_helper", UUID::compareTo, 200);
+
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void awakenedSigilRetainsItsProjectionBlocker(GameTestHelper helper) {
+        var level = helper.getLevel();
+        var actor = player(helper);
+        var center = helper.absolutePos(new net.minecraft.core.BlockPos(12, 70, 12));
+        var recipe = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getRiteByLocation(
+                level, Hemomancy.rloc("cardinal_rite/apotheos_rite"));
+        var rite = com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite.interactive(
+                actor.getUUID(), center, recipe.getId(), 3600, 9, 7, false, 6, 32);
+        for (int i = 0; i < 32; i++) rite.fillAnchor(i, 50);
+        helper.assertTrue(rite.enterInscription(), "Paid fixture must enter inscription");
+        var id = Hemomancy.rloc("bastion");
+        var sigil = com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry.get(id);
+        var socket = recipe.getCeremony().supportSockets().getFirst();
+        helper.assertTrue(socket.suggestedSigil().equals("bastion"), "Fixture must target the first Bastion socket");
+        var occupied = new java.util.HashSet<net.minecraft.core.BlockPos>();
+        for (var anchor : recipe.getCeremony().anchors()) {
+            occupied.add(new net.minecraft.core.BlockPos(anchor.x(), 0, anchor.z()));
+        }
+        var placement = com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilPlacementRules.resolveSupportPlacement(
+                new net.minecraft.core.BlockPos(socket.x(), 0, socket.z()), sigil.nodes(), occupied);
+        var node = sigil.nodes().getFirst();
+        rite.setSigilProgress(id.toString(), sigil.nodes().size());
+        rite.awakenSigil(id.toString());
+        var saved = com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData.get(level);
+        saved.startRite(rite);
+        var blood = HemoCapabilityAccess.requireBloodVolume(actor);
+        blood.setActive(true);
+        blood.setBloodVolume(2000);
+        HemoCapabilityAccess.requireInitiatoryDegree(actor).setDegreeNumber(7);
+        actor.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(ItemInit.blood_projection.get()));
+        var floor = center.offset(placement.getX() + (int) Math.round(node.x()), socket.y(),
+                placement.getZ() + (int) Math.round(node.z()));
+        var backdrop = floor.offset(0, 1, 3);
+        var oldFloor = level.getBlockState(floor);
+        var oldBackdrop = level.getBlockState(backdrop);
+        var lowerFloor = floor.below(2);
+        var oldLowerFloor = level.getBlockState(lowerFloor);
+        level.setBlock(floor, net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), 3);
+        level.setBlock(backdrop, net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), 3);
+        var aim = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteTargetGeometry.sigilAimPoint(
+                center, floor.above(), placement.getX(), placement.getZ(), node.x(), node.z());
+        actor.setPos(aim.x, aim.y - actor.getEyeHeight(), aim.z - 2);
+        actor.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, aim);
+        try {
+            var physical = com.vincenthuto.hemomancy.common.event.SanguineProjectionTargeting.pick(
+                    level, actor, 5.5, true);
+            helper.assertTrue(physical instanceof net.minecraft.world.phys.BlockHitResult hit
+                            && hit.getBlockPos().equals(backdrop), "Ray must reach ordinary stone behind the completed marker");
+            var handled = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteInteractionHandler
+                    .tryProject(level, actor, 5);
+            helper.assertTrue(handled.handled() && handled.bloodSpent() == 0,
+                    "A fully awakened sigil must still absorb held Projection without ordinary fallback: " + handled);
+            for (int tick = 0; tick < 65; tick++) {
+                com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem
+                        .projectFromEntity(level, actor, 5, 100);
+            }
+            helper.assertTrue(blood.getBloodVolume() == 2000
+                            && level.getBlockState(floor).is(net.minecraft.world.level.block.Blocks.STONE)
+                            && level.getBlockState(backdrop).is(net.minecraft.world.level.block.Blocks.STONE)
+                            && rite.getSigilProgress().get(id.toString()) == sigil.nodes().size(),
+                    "Overholding the completed node must retain blood, terrain and completed progress");
+
+            var tracing = com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite.interactive(
+                    actor.getUUID(), center, recipe.getId(), 3600, 9, 7, false, 6, 32);
+            for (int i = 0; i < 32; i++) tracing.fillAnchor(i, 50);
+            helper.assertTrue(tracing.enterInscription(), "Broken-floor fixture must enter inscription");
+            saved.startRite(tracing);
+            level.setBlock(floor, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);
+            level.setBlock(lowerFloor, net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), 3);
+            var loweredSurface = com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilRules.surfaceAirPosition(
+                    level, center.offset(0, socket.y(), 0),
+                    placement.getX() + (int) Math.round(node.x()), placement.getZ() + (int) Math.round(node.z()));
+            helper.assertTrue(loweredSurface.equals(lowerFloor.above()),
+                    "A broken floor must place its visible marker above the lower stone");
+            var loweredAim = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteTargetGeometry.sigilAimPoint(
+                    center, loweredSurface, placement.getX(), placement.getZ(), node.x(), node.z());
+            actor.setPos(loweredAim.x, loweredAim.y - actor.getEyeHeight(), loweredAim.z - 2);
+            actor.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, loweredAim);
+            var partial = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteInteractionHandler
+                    .tryProject(level, actor, 5);
+            helper.assertTrue(partial.handled() && partial.bloodSpent() == 5
+                            && tracing.getSigilProgress().getOrDefault(id.toString(), 0) == 0
+                            && tracing.getSigilProgress().getOrDefault("blood:" + id, 0) == 5,
+                    "A lowered marker must accept partial payment without a false stroke: " + partial);
+            level.setBlock(floor, net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), 3);
+            actor.setPos(aim.x, aim.y - actor.getEyeHeight(), aim.z - 2);
+            actor.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, aim);
+            var resumed = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteInteractionHandler
+                    .tryProject(level, actor, 45);
+            helper.assertTrue(resumed.handled() && resumed.bloodSpent() == 45
+                            && blood.getBloodVolume() == 1950
+                            && tracing.getSigilProgress().getOrDefault(id.toString(), 0) == 1
+                            && tracing.getSigilProgress().getOrDefault("blood:" + id, 0) == 0,
+                    "Repairing the platform must retain partial payment and finish the same node: " + resumed);
+            var paid = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteInteractionHandler
+                    .tryProject(level, actor, 5);
+            helper.assertTrue(paid.handled() && paid.bloodSpent() == 0 && blood.getBloodVolume() == 1950
+                            && tracing.getSigilProgress().getOrDefault(id.toString(), 0) == 1
+                            && tracing.getInstability() == 0,
+                    "The repaired paid marker must block held input without cost or false-stroke instability");
+            saved.startRite(rite);
+            actor.setPos(aim.x, aim.y + 2 - actor.getEyeHeight(), aim.z);
+            actor.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, aim);
+            helper.assertTrue(rite.sealAltar(), "Support lifetime fixture must seal");
+            var ordealBlocker = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteInteractionHandler
+                    .tryProject(level, actor, 5);
+            helper.assertTrue(ordealBlocker.handled() && ordealBlocker.bloodSpent() == 0,
+                    "Awakened support must remain a zero-cost blocker during ordeal");
+            for (int wave = 0; wave < 6; wave++) rite.completeWave();
+            helper.assertTrue(rite.getPhase() == com.vincenthuto.hemomancy.common.rite.CardinalRitePhase.STILL_INTERVAL,
+                    "Support lifetime fixture must reach its final still interval");
+            var stillBlocker = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteInteractionHandler
+                    .tryProject(level, actor, 5);
+            helper.assertTrue(stillBlocker.handled() && stillBlocker.bloodSpent() == 0,
+                    "Awakened support must remain a zero-cost blocker during the still interval");
+            rite.finishStillInterval();
+            helper.assertTrue(rite.getPhase() == com.vincenthuto.hemomancy.common.rite.CardinalRitePhase.CULMINATION
+                            && com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteInteractionHandler
+                                    .tryProject(level, actor, 5).allowsOrdinaryProjection()
+                            && blood.getBloodVolume() == 1950,
+                    "Culmination must release the old support target without taking blood");
+            actor.setPos(center.getX() + 20.5, center.getY() + 1, center.getZ() + 20.5);
+            actor.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, actor.getEyePosition().add(0, 0, -3));
+            helper.assertTrue(com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteInteractionHandler
+                            .tryProject(level, actor, 5).allowsOrdinaryProjection(),
+                    "An unrelated miss must still permit ordinary Projection");
+        } finally {
+            saved.removeRite(actor.getUUID());
+            level.setBlock(floor, oldFloor, 3);
+            level.setBlock(backdrop, oldBackdrop, 3);
+            level.setBlock(lowerFloor, oldLowerFloor, 3);
+            actor.discard();
+        }
+        helper.succeed();
+    }
+
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void awakenedResponseBlocksOnlyItsCurrentWave(GameTestHelper helper) {
+        var level = helper.getLevel();
+        var actor = player(helper);
+        var center = helper.absolutePos(new net.minecraft.core.BlockPos(12, 70, 12));
+        var recipe = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getRiteByLocation(
+                level, Hemomancy.rloc("cardinal_rite/apotheos_rite"));
+        var rite = com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite.interactive(
+                actor.getUUID(), center, recipe.getId(), 3600, 9, 7, false, 2, 32);
+        for (int i = 0; i < 32; i++) rite.fillAnchor(i, 50);
+        helper.assertTrue(rite.enterInscription(), "Response fixture must enter inscription");
+        rite.getWaveDeck().addAll(java.util.List.of("response_sigil", "rogue_will"));
+        helper.assertTrue(rite.sealAltar(true), "Response fixture must seal with between-wave intervals");
+        var occupied = new java.util.HashSet<net.minecraft.core.BlockPos>();
+        for (var anchor : recipe.getCeremony().anchors()) {
+            occupied.add(new net.minecraft.core.BlockPos(anchor.x(), 0, anchor.z()));
+        }
+        for (var socket : recipe.getCeremony().supportSockets()) {
+            var support = com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry.get(
+                    Hemomancy.rloc(socket.suggestedSigil()));
+            var placement = com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilPlacementRules.resolveSupportPlacement(
+                    new net.minecraft.core.BlockPos(socket.x(), 0, socket.z()), support.nodes(), occupied);
+            occupied.addAll(com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilPlacementRules
+                    .footprint(placement, support.nodes()));
+        }
+        var id = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteInteractionHandler.sigilForWave(rite);
+        var sigil = com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry.get(id);
+        var placement = com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilPlacementRules.resolveNearestPlacement(
+                net.minecraft.core.BlockPos.ZERO, sigil.nodes(), occupied);
+        var node = sigil.nodes().getFirst();
+        var floor = center.offset(placement.getX() + (int) Math.round(node.x()), 0,
+                placement.getZ() + (int) Math.round(node.z()));
+        var oldFloor = level.getBlockState(floor);
+        var saved = com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData.get(level);
+        var key = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteInteractionHandler.responseProgressKey(0, id);
+        rite.setSigilProgress(key, sigil.nodes().size());
+        rite.awakenSigil(key);
+        saved.startRite(rite);
+        var blood = HemoCapabilityAccess.requireBloodVolume(actor);
+        blood.setActive(true);
+        blood.setBloodVolume(2000);
+        HemoCapabilityAccess.requireInitiatoryDegree(actor).setDegreeNumber(7);
+        actor.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(ItemInit.blood_projection.get()));
+        try {
+            level.setBlock(floor, net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), 3);
+            var aim = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteTargetGeometry.sigilAimPoint(
+                    center, floor.above(), placement.getX(), placement.getZ(), node.x(), node.z());
+            actor.setPos(aim.x, aim.y + 2 - actor.getEyeHeight(), aim.z);
+            actor.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, aim);
+            var blocked = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteInteractionHandler
+                    .tryProject(level, actor, 5);
+            helper.assertTrue(blocked.handled() && blocked.bloodSpent() == 0,
+                    "An awakened current response must block without payment: " + blocked);
+            for (int tick = 0; tick < 65; tick++) {
+                com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem
+                        .projectFromEntity(level, actor, 5, 100);
+            }
+            helper.assertTrue(blood.getBloodVolume() == 2000 && rite.getSigilProgress().get(key) == sigil.nodes().size()
+                            && level.getBlockState(floor).is(net.minecraft.world.level.block.Blocks.STONE),
+                    "Held Projection must preserve the awakened response, blood and underlying stone");
+            rite.completeWave();
+            helper.assertTrue(rite.getPhase() == com.vincenthuto.hemomancy.common.rite.CardinalRitePhase.STILL_INTERVAL
+                            && com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteInteractionHandler
+                                    .tryProject(level, actor, 5).allowsOrdinaryProjection(),
+                    "The ended response must release its old target during the interval");
+            rite.finishStillInterval();
+            helper.assertTrue(rite.getCurrentWave() == 1
+                            && com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteInteractionHandler
+                                    .tryProject(level, actor, 5).allowsOrdinaryProjection()
+                            && blood.getBloodVolume() == 2000 && rite.getSigilProgress().get(key) == sigil.nodes().size(),
+                    "A later non-response wave must not reclaim the old completed response or alter its record");
+        } finally {
+            saved.removeRite(actor.getUUID());
+            level.setBlock(floor, oldFloor, 3);
+            actor.discard();
+        }
+        helper.succeed();
+    }
+
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void pomeEmpoweredVicarRetainsOrdinaryEndingServices(GameTestHelper helper) {
+        var actor = player(helper);
+        var vicar = EntityInit.harbinger_vicar.get().create(helper.getLevel());
+        var degree = HemoCapabilityAccess.requireInitiatoryDegree(actor);
+        HemoCapabilityAccess.requireBloodVolume(actor).setActive(true);
+        try {
+            for (var path : com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.values()) {
+                degree.setDegreeNumber(path == com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.APOTHEOS ? 8 : 7);
+                degree.setArchonPath(path);
+                degree.setPomeEmpowermentExpiry(0);
+                var baseline = vicar.progressionDialogue(actor);
+                degree.setPomeEmpowermentExpiry(helper.getLevel().getGameTime() + 3600);
+                var empowered = vicar.progressionDialogue(actor);
+                helper.assertTrue(empowered.getStartNode().lines().contains("hemomancy.vicar.archon.pome_empowered.line2"),
+                        "Pome empowerment lost its authored Vicar reaction for " + path);
+                helper.assertTrue(empowered.getStartNode().options().containsAll(baseline.getStartNode().options()),
+                        "Pome empowerment hid an ordinary Vicar service for " + path);
+                for (var node : baseline.nodes().values()) {
+                    if (!node.id().equals(baseline.startNodeId())) helper.assertTrue(
+                            node.equals(empowered.getNode(node.id())),
+                            "Pome empowerment replaced service node " + node.id() + " for " + path);
+                }
+                assertDialogueTargetsExist(helper, empowered);
+                helper.assertTrue(degree.getArchonPath() == path
+                                && degree.getDegreeNumber() == (path == com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.APOTHEOS ? 8 : 7),
+                        "The Vicar reaction changed the player's ending or degree");
+            }
+        } finally {
+            vicar.discard();
+            actor.discard();
+        }
+        helper.succeed();
+    }
+
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void alchemistHeldJarKeepsCurrentDegreeLessons(GameTestHelper helper) {
+        var jar = new com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees.HeldSpecimenJar(
+                Hemomancy.rloc("morphling_polyp"), java.util.List.of(
+                        com.vincenthuto.hemomancy.common.entity.summon.MorphlingPolypLayer.BAT));
+        for (int degree = 2; degree <= 8; degree++) {
+            var baseline = com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees
+                    .forDegree(degree, 42, true, false);
+            var held = com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees
+                    .forDegree(degree, 42, true, false, null, jar);
+            helper.assertTrue(held.getStartNode().lines().equals(baseline.getStartNode().lines()),
+                    "A held jar must retain the current greeting at D" + degree);
+            helper.assertTrue(held.getStartNode().options().containsAll(baseline.getStartNode().options()),
+                    "A held jar must retain all current lessons at D" + degree);
+            helper.assertTrue(held.getStartNode().options().stream().anyMatch(option ->
+                            "alchemist_bestiary_record".equals(option.eventId()))
+                    && held.getStartNode().options().stream().anyMatch(option ->
+                            "alchemist_bestiary_surrender_morphling_bat".equals(option.eventId())),
+                    "Recording and layer-specific surrender must remain available at D" + degree);
+            assertDialogueTargetsExist(helper, held);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void alchemistHeldFloraKeepsCurrentAndUnfinishedLessons(GameTestHelper helper) {
+        var sample = com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees
+                .RedTaxonomySample.INFECTED_FUNGUS;
+        for (int degree = 2; degree <= 8; degree++) {
+            var baseline = com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees
+                    .forDegree(degree, 42, true, false, null, null, true, true, true, true);
+            var held = com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees
+                    .forDegree(degree, 42, true, false, sample, null, true, true, true, true);
+            helper.assertTrue(held.getStartNode().lines().equals(baseline.getStartNode().lines()),
+                    "Held flora must retain the current greeting at D" + degree);
+            helper.assertTrue(held.getStartNode().options().containsAll(baseline.getStartNode().options()),
+                    "Held flora must retain current and unfinished lessons at D" + degree);
+            helper.assertTrue(held.getStartNode().options().stream().anyMatch(option ->
+                            sample.eventId().equals(option.eventId())),
+                    "The actual sample submission must remain available at D" + degree);
+            assertDialogueTargetsExist(helper, held);
+        }
+        helper.succeed();
+    }
+
+    private static void assertDialogueTargetsExist(GameTestHelper helper,
+            com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree tree) {
+        for (var node : tree.nodes().values()) {
+            for (var option : node.options()) {
+                helper.assertTrue(option.nextNodeId() == null || tree.getNode(option.nextNodeId()) != null,
+                        "Merged dialogue must retain target " + option.nextNodeId());
+            }
+        }
+    }
+
     @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
     public static void firstCultureCreditsLanternOutputWithoutPriorCatalogue(GameTestHelper helper) {
         var actor = player(helper);
@@ -387,7 +696,8 @@ public final class HarbingerRepairGameTests {
 
     @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
     public static void attendantRejectsInsufficientPaymentWithoutSpending(GameTestHelper helper) {
-        try (var fixture = new AllyPaymentFixture(helper, com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole.ATTENDANT)) {
+        var fixture = new AllyPaymentFixture(helper, com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole.ATTENDANT);
+        fixture.verifyAfterChunkActivation(() -> {
             fixture.line.setBloodVolume(20);
             fixture.data.drawNpcRiteReserve(fixture.line.getBloodlineUUID(), fixture.ally.getUUID(), 975, helper.getLevel().getGameTime());
             helper.assertTrue(!com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAllyService.tryCorrectMiss(helper.getLevel(), fixture.rite),
@@ -401,13 +711,13 @@ public final class HarbingerRepairGameTests {
                     "Successful correction must debit exactly its 50 ml cost");
             helper.assertTrue(!com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAllyService.tryCorrectMiss(helper.getLevel(), fixture.rite),
                     "One Attendant cannot correct a second miss in the same rite");
-        }
-        helper.succeed();
+        });
     }
 
     @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
     public static void wardenPaysOnlyForALivingRiteThreat(GameTestHelper helper) {
-        try (var fixture = new AllyPaymentFixture(helper, com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole.WARDEN)) {
+        var fixture = new AllyPaymentFixture(helper, com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole.WARDEN);
+        fixture.verifyAfterChunkActivation(() -> {
             fixture.rite.addRiteThreat(UUID.randomUUID()); // Unloaded/expired threat reference.
             fixture.tickAt(100);
             helper.assertTrue(fixture.reserve() == 1000,
@@ -422,20 +732,19 @@ public final class HarbingerRepairGameTests {
                 helper.assertTrue(effect != null && effect.getAmplifier() == 3 && fixture.reserve() == 975,
                         "A living rite threat receives the authored slow for exactly 25 ml");
             } finally { threat.discard(); }
-        }
-        helper.succeed();
+        });
     }
 
     @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
     public static void helperPaymentDoesNotRoundFractionalPoolIntoFreeBlood(GameTestHelper helper) {
-        try (var fixture = new AllyPaymentFixture(helper, com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole.ANCHOR)) {
+        var fixture = new AllyPaymentFixture(helper, com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole.ANCHOR);
+        fixture.verifyAfterChunkActivation(() -> {
             fixture.line.setBloodVolume(0.5F);
             int drawn = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAllyService.spend(
                     helper.getLevel(), fixture.rite, fixture.ally.getUUID(), 1);
             helper.assertTrue(drawn == 1 && fixture.line.getBloodVolume() == 0.5F && fixture.reserve() == 999,
                     "A whole-ml transfer must retain a fractional shared remainder and debit the private ml");
-        }
-        helper.succeed();
+        });
     }
 
     private static final class AllyPaymentFixture implements AutoCloseable {
@@ -445,6 +754,7 @@ public final class HarbingerRepairGameTests {
         final com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline line;
         final com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData data;
         final com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe recipe;
+        final net.minecraft.world.level.ChunkPos stationChunk;
         com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite rite;
 
         AllyPaymentFixture(GameTestHelper helper, com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole role) {
@@ -458,6 +768,8 @@ public final class HarbingerRepairGameTests {
             data = com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData.get(level.getServer().overworld());
             data.registerBloodline(line);
             var station = center.offset(com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAllyService.markers(recipe).get(role));
+            stationChunk = new net.minecraft.world.level.ChunkPos(station);
+            level.getChunkSource().addRegionTicket(HELPER_FIXTURE_TICKET, stationChunk, 2, actor.getUUID(), true);
             level.setBlock(station.below(), net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), 3);
             ally = com.vincenthuto.hemomancy.common.init.EntityInit.harbinger_vicar.get().create(level);
             ally.setNoAi(true); // Effect/payment fixture only, not navigation acceptance.
@@ -465,7 +777,20 @@ public final class HarbingerRepairGameTests {
             level.addFreshEntity(ally);
             data.addNpcMember(line.getBloodlineUUID(), ally.getUUID());
             rite.assignAlly(ally.getUUID(), role);
-            helper.assertTrue(com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAllyService.isAvailable(level, rite, ally.getUUID()), "Supplied helper must be available");
+        }
+
+        void verifyAfterChunkActivation(Runnable checks) {
+            cleanupOnFailure(helper, this::close);
+            // The helper station can lie outside the vanilla template's ticking chunks.
+            helper.startSequence().thenWaitUntil(() -> helper.assertTrue(
+                    helper.getLevel().areEntitiesLoaded(stationChunk.toLong()),
+                    "The supplied helper station chunk must become entity-loaded"))
+                    .thenExecute(() -> {
+                        try (this) {
+                            assertAvailableHelper(helper, rite, ally);
+                            checks.run();
+                        }
+                    }).thenSucceed();
         }
 
         int reserve() { return line.getNpcRiteReserve(ally.getUUID(), helper.getLevel().getGameTime()); }
@@ -480,6 +805,7 @@ public final class HarbingerRepairGameTests {
 
         public void close() {
             ally.discard(); actor.discard(); data.disbandBloodline(line.getBloodlineUUID());
+            helper.getLevel().getChunkSource().removeRegionTicket(HELPER_FIXTURE_TICKET, stationChunk, 2, actor.getUUID(), true);
         }
     }
 
@@ -526,8 +852,17 @@ public final class HarbingerRepairGameTests {
         data.registerBloodline(line);
         var role = com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole.ANCHOR;
         var station = center.offset(com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAllyService.markers(recipe).get(role));
+        var stationChunk = new net.minecraft.world.level.ChunkPos(station);
+        level.getChunkSource().addRegionTicket(HELPER_FIXTURE_TICKET, stationChunk, 2, actor.getUUID(), true);
         level.setBlock(station.below(), net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), 3);
         var allies = new java.util.ArrayList<net.minecraft.world.entity.Mob>();
+        Runnable cleanup = () -> {
+            allies.forEach(net.minecraft.world.entity.Entity::discard);
+            data.disbandBloodline(line.getBloodlineUUID());
+            actor.discard();
+            level.getChunkSource().removeRegionTicket(HELPER_FIXTURE_TICKET, stationChunk, 2, actor.getUUID(), true);
+        };
+        cleanupOnFailure(helper, cleanup);
         for (int i = 0; i < 3; i++) {
             var ally = com.vincenthuto.hemomancy.common.init.EntityInit.harbinger_vicar.get().create(level);
             ally.setNoAi(true); // Supplied effect fixture; navigation is validated in the live campaign.
@@ -537,21 +872,61 @@ public final class HarbingerRepairGameTests {
             rite.assignAlly(ally.getUUID(), role);
             allies.add(ally);
         }
-        try {
-            for (var ally : allies) helper.assertTrue(
-                    com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAllyService.isAvailable(level, rite, ally.getUUID()),
-                    "Each supplied helper must be available before measuring its effect");
-            com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteOrdealEngine.tick(level, actor, rite, recipe);
-            helper.assertTrue(java.util.Arrays.stream(rite.getAnchorBloodMl()).sum() == 30,
-                    "Three available Anchor helpers must each supply 10 ml across the two real rings");
-            helper.assertTrue(allies.stream().mapToInt(a -> line.getNpcRiteReserve(a.getUUID(), level.getGameTime())).sum() == 2970,
-                    "Only the 30 ml actually delivered may leave private reserves");
-        } finally {
-            allies.forEach(net.minecraft.world.entity.Entity::discard);
-            data.disbandBloodline(line.getBloodlineUUID());
-            actor.discard();
-        }
-        helper.succeed();
+        var activeRite = rite;
+        helper.startSequence().thenWaitUntil(() -> helper.assertTrue(
+                level.areEntitiesLoaded(stationChunk.toLong()),
+                "The supplied Anchor station chunk must become entity-loaded"))
+                .thenExecute(() -> {
+                    try {
+                        for (var ally : allies) assertAvailableHelper(helper, activeRite, ally);
+                        com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteOrdealEngine.tick(level, actor, activeRite, recipe);
+                        helper.assertTrue(java.util.Arrays.stream(activeRite.getAnchorBloodMl()).sum() == 30,
+                                "Three available Anchor helpers must each supply 10 ml across the two real rings");
+                        helper.assertTrue(allies.stream().mapToInt(a -> line.getNpcRiteReserve(a.getUUID(), level.getGameTime())).sum() == 2970,
+                                "Only the 30 ml actually delivered may leave private reserves");
+                    } finally {
+                        cleanup.run();
+                    }
+                }).thenSucceed();
+    }
+
+    private static void cleanupOnFailure(GameTestHelper helper, Runnable cleanup) {
+        helper.testInfo.addListener(new net.minecraft.gametest.framework.GameTestListener() {
+            public void testStructureLoaded(net.minecraft.gametest.framework.GameTestInfo test) { }
+            public void testPassed(net.minecraft.gametest.framework.GameTestInfo test,
+                    net.minecraft.gametest.framework.GameTestRunner runner) { }
+            public void testFailed(net.minecraft.gametest.framework.GameTestInfo test,
+                    net.minecraft.gametest.framework.GameTestRunner runner) {
+                cleanup.run();
+            }
+            public void testAddedForRerun(net.minecraft.gametest.framework.GameTestInfo oldTest,
+                    net.minecraft.gametest.framework.GameTestInfo newTest,
+                    net.minecraft.gametest.framework.GameTestRunner runner) { }
+        });
+    }
+
+    private static void assertAvailableHelper(GameTestHelper helper,
+            com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite rite, net.minecraft.world.entity.Mob ally) {
+        var level = helper.getLevel();
+        if (com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAllyService
+                .isAvailable(level, rite, ally.getUUID())) return;
+        var recipe = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
+        var role = rite.getAllyRoles().get(ally.getUUID());
+        var station = rite.getCenterPos().offset(com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAllyService
+                .markers(recipe).get(role));
+        var bounds = ally.getBoundingBox().move(station.getX() + 0.5 - ally.getX(),
+                station.getY() - ally.getY(), station.getZ() + 0.5 - ally.getZ());
+        var line = com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData
+                .get(level.getServer().overworld()).getBloodlineForPlayer(rite.getPlayerUUID());
+        helper.fail("Supplied helper unavailable: role=" + role + ", station=" + station
+                + ", indexed=" + (level.getEntity(ally.getUUID()) == ally)
+                + ", entitiesLoaded=" + level.areEntitiesLoaded(net.minecraft.world.level.ChunkPos.asLong(station))
+                + ", npcMember=" + (line != null && line.hasNpcMember(ally.getUUID()))
+                + ", alive=" + ally.isAlive() + ", bloodspent=" + (line != null && line.isNpcBloodspent(ally.getUUID(), level.getGameTime()))
+                + ", floor=" + level.getBlockState(station.below())
+                + ", blockCollision=" + level.getBlockCollisions(ally, bounds).iterator().hasNext()
+                + ", entityCollisions=" + level.getEntityCollisions(ally, bounds).size()
+                + ", position=" + ally.position());
     }
 
     @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
@@ -847,7 +1222,7 @@ public final class HarbingerRepairGameTests {
         alchemist.setPos(learner.position());
         helper.getLevel().addFreshEntity(alchemist);
         var first = new ItemStack(com.vincenthuto.hemomancy.common.init.BlockInit.infected_fungus.get());
-        var second = new ItemStack(com.vincenthuto.hemomancy.common.init.BlockInit.ghost_pipe.get());
+        var second = new ItemStack(com.vincenthuto.hemomancy.common.init.BlockInit.puffball_fungus.get());
         learner.getInventory().setItem(0, first);
         learner.getInventory().setItem(1, second);
         HemoCapabilityAccess.requireInitiatoryDegree(learner).setDegreeNumber(2);
@@ -865,6 +1240,10 @@ public final class HarbingerRepairGameTests {
                     com.vincenthuto.hemomancy.common.init.BiomeInit.FUNGAL_GARDENS);
             helper.assertTrue(com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey
                     .progress(learner).ready(), "Prior Overworld discovery must count before a referral");
+            learner.getInventory().setItem(1, new ItemStack(
+                    com.vincenthuto.hemomancy.common.init.BlockInit.ghost_pipe.get()));
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey
+                    .report(learner, alchemist), "Forest Ghost Pipe is not a local Gardens specimen");
             learner.getInventory().setItem(1, first.copy());
             helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey
                     .report(learner, alchemist), "Two copies of one plant are not two specimens");
@@ -900,6 +1279,64 @@ public final class HarbingerRepairGameTests {
     }
 
     @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void fungalSurveyRejectsSpectatorVisitAndResumesWithAnotherAlchemist(GameTestHelper helper) {
+        var actor = player(helper);
+        var restored = player(helper);
+        actor.setPos(helper.absoluteVec(new net.minecraft.world.phys.Vec3(2.5, 2, 2.5)));
+        restored.setPos(actor.position());
+        HemoCapabilityAccess.requireInitiatoryDegree(actor).setDegreeNumber(0);
+        HemoCapabilityAccess.requireBloodVolume(actor).setActive(false);
+        var firstTeacher = EntityInit.harbinger_alchemist.get().create(helper.getLevel());
+        var secondTeacher = EntityInit.harbinger_alchemist.get().create(helper.getLevel());
+        try {
+            actor.setGameMode(net.minecraft.world.level.GameType.SPECTATOR);
+            com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.recordVisit(actor,
+                    net.minecraft.world.level.Level.OVERWORLD,
+                    com.vincenthuto.hemomancy.common.init.BiomeInit.FUNGAL_GARDENS);
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.visited(actor),
+                    "Spectator inspection must not earn the Overworld survey visit");
+            actor.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
+            com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.recordVisit(actor,
+                    net.minecraft.world.level.Level.OVERWORLD,
+                    com.vincenthuto.hemomancy.common.init.BiomeInit.FUNGAL_GARDENS);
+            helper.assertTrue(com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.visited(actor)
+                            && !com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.reported(actor),
+                    "Ordinary early discovery must remain useful before the report");
+            restored.getPersistentData().put(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG,
+                    actor.getPersistentData().getCompound(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG).copy());
+            HemoCapabilityAccess.requireInitiatoryDegree(restored).setDegreeNumber(2);
+            HemoCapabilityAccess.requireBloodVolume(restored).setActive(true);
+            var first = new ItemStack(com.vincenthuto.hemomancy.common.init.BlockInit.infected_fungus.get());
+            var second = new ItemStack(com.vincenthuto.hemomancy.common.init.BlockInit.puffball_fungus.get());
+            first.set(DataComponents.CUSTOM_NAME, net.minecraft.network.chat.Component.literal("Retained fungus"));
+            restored.getInventory().setItem(0, first);
+            restored.getInventory().setItem(1, second);
+            firstTeacher.setPos(restored.position());
+            secondTeacher.setPos(restored.position());
+            helper.assertTrue(helper.getLevel().addFreshEntity(firstTeacher)
+                            && helper.getLevel().addFreshEntity(secondTeacher), "Both survey teachers must spawn");
+            firstTeacher.discard();
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.report(restored, firstTeacher),
+                    "A removed teacher must not accept the restored report");
+            secondTeacher.setPos(restored.position().add(9, 0, 0));
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.report(restored, secondTeacher),
+                    "The replacement teacher must still be within interaction range");
+            secondTeacher.setPos(restored.position());
+            var firstSnapshot = first.copy();
+            var secondSnapshot = second.copy();
+            helper.assertTrue(com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.report(restored, secondTeacher),
+                    "A different living Alchemist must accept restored early discovery without a repeat visit");
+            helper.assertTrue(ItemStack.matches(firstSnapshot, restored.getInventory().getItem(0))
+                            && ItemStack.matches(secondSnapshot, restored.getInventory().getItem(1))
+                            && HemoCapabilityAccess.getPlayerDegreeNumber(restored) == 2,
+                    "Replacement-teacher inspection must retain exact specimen components/counts and degree");
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey.report(restored, secondTeacher),
+                    "Changing teacher must not allow repeat completion");
+            helper.succeed();
+        } finally { firstTeacher.discard(); secondTeacher.discard(); actor.discard(); restored.discard(); }
+    }
+
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
     public static void voyagerIntroductionPreservesEarlyObservationAndRejectsWrongTeacher(GameTestHelper helper) {
         ServerPlayer learner = player(helper);
         var level = helper.getLevel();
@@ -912,6 +1349,11 @@ public final class HarbingerRepairGameTests {
         HemoCapabilityAccess.requireInitiatoryDegree(learner).setDegreeNumber(2);
         HemoCapabilityAccess.requireBloodVolume(learner).setActive(true);
         try {
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.canRequestBearing(
+                    learner, vicar), "The vessel bearing begins at Degree 3, not Degree 2");
+            helper.assertTrue(com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket.dispatch(
+                    learner, com.vincenthuto.hemomancy.common.entity.npc.dialogue.VoyagerIntroductionDialogue.BEARING,
+                    voyager.getId()) == null, "A Voyager cannot impersonate the Vicar's bearing service");
             helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.isFieldSite(
                     net.minecraft.world.level.Level.NETHER,
                     com.vincenthuto.hemomancy.common.init.BiomeInit.ERYTHROCORAL_REEF, true),
@@ -926,6 +1368,18 @@ public final class HarbingerRepairGameTests {
                     "An active vessel is valid even at a reef edge");
             helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.observe(
                     learner, voyager), "A spawned Voyager outside a reef or vessel cannot grant proof");
+            HemoCapabilityAccess.requireInitiatoryDegree(learner).setDegreeNumber(3);
+            helper.assertTrue(com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.canRequestBearing(
+                    learner, vicar), "An eligible unobserved Overworld learner can request the lead");
+            vicar.setPos(learner.getX() + 20, learner.getY(), learner.getZ());
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.canRequestBearing(
+                    learner, vicar), "The bearing cannot be requested from a distant teacher");
+            vicar.setPos(learner.position());
+            HemoCapabilityAccess.requireBloodVolume(learner).setActive(false);
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.canRequestBearing(
+                    learner, vicar), "The bearing respects active-blood eligibility");
+            HemoCapabilityAccess.requireBloodVolume(learner).setActive(true);
+            HemoCapabilityAccess.requireInitiatoryDegree(learner).setDegreeNumber(2);
             var persisted = learner.getPersistentData().getCompound(
                     net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG);
             var evidence = new net.minecraft.nbt.CompoundTag();
@@ -935,6 +1389,8 @@ public final class HarbingerRepairGameTests {
             helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.report(
                     learner, vicar), "A prior observation is saved but the formal report begins at Degree 3");
             HemoCapabilityAccess.requireInitiatoryDegree(learner).setDegreeNumber(3);
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.canRequestBearing(
+                    learner, vicar), "An earlier observation needs a report, not another journey");
             helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.report(
                     learner, voyager), "Only a Vicar can accept the report");
             helper.assertTrue(com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.report(
@@ -1048,23 +1504,34 @@ public final class HarbingerRepairGameTests {
                 "A supplied lesson milestone alone must not unlock a station");
         var instructor = com.vincenthuto.hemomancy.common.init.EntityInit.harbinger_cicatrix_anchorite.get().create(level);
         instructor.setPos(pos.getX() + 2, pos.getY(), pos.getZ());
+        var instructorChunk = new net.minecraft.world.level.ChunkPos(instructor.blockPosition());
+        level.getChunkSource().addRegionTicket(HELPER_FIXTURE_TICKET, instructorChunk, 2, student.getUUID(), true);
         instructor.setNoAi(true); level.addFreshEntity(instructor);
-        helper.assertTrue(com.vincenthuto.hemomancy.common.event.MachineAccessEvents.canUseStation(student, level, pos),
-                "The unfinished lesson may use the nearby supervised station");
-        helper.assertTrue(!com.vincenthuto.hemomancy.common.event.MachineAccessEvents.hasPersonalAccess(student, block),
-                "Supervision must not grant personal craft credit");
-        instructor.setPos(pos.getX() + 20, pos.getY(), pos.getZ());
-        helper.assertTrue(!com.vincenthuto.hemomancy.common.event.MachineAccessEvents.canUseStation(student, level, pos),
-                "Moving the instructor away revokes access");
-        instructor.setPos(pos.getX() + 2, pos.getY(), pos.getZ());
-        com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.grantIfNotDone(student,
-                com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_SCAR_LEARNED);
-        helper.assertTrue(!com.vincenthuto.hemomancy.common.event.MachineAccessEvents.canUseStation(student, level, pos),
-                "Learning the first scar ends the exception");
-        com.vincenthuto.hemomancy.common.event.MachineAccessEvents.awardMachineCrafted(student, block);
-        helper.assertTrue(com.vincenthuto.hemomancy.common.event.MachineAccessEvents.canUseStation(student, level, pos),
-                "Canonical personal credit still permits access after the lesson");
-        instructor.discard(); student.discard(); helper.succeed();
+        Runnable cleanup = () -> {
+            instructor.discard(); student.discard();
+            level.getChunkSource().removeRegionTicket(HELPER_FIXTURE_TICKET, instructorChunk, 2, student.getUUID(), true);
+        };
+        cleanupOnFailure(helper, cleanup);
+        helper.startSequence().thenWaitUntil(() -> helper.assertTrue(level.areEntitiesLoaded(instructorChunk.toLong()),
+                "The supplied scar instructor chunk must become entity-loaded")).thenExecute(() -> {
+            try {
+                helper.assertTrue(com.vincenthuto.hemomancy.common.event.MachineAccessEvents.canUseStation(student, level, pos),
+                        "The unfinished lesson may use the nearby supervised station");
+                helper.assertTrue(!com.vincenthuto.hemomancy.common.event.MachineAccessEvents.hasPersonalAccess(student, block),
+                        "Supervision must not grant personal craft credit");
+                instructor.setPos(pos.getX() + 20, pos.getY(), pos.getZ());
+                helper.assertTrue(!com.vincenthuto.hemomancy.common.event.MachineAccessEvents.canUseStation(student, level, pos),
+                        "Moving the instructor away revokes access");
+                instructor.setPos(pos.getX() + 2, pos.getY(), pos.getZ());
+                com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.grantIfNotDone(student,
+                        com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_SCAR_LEARNED);
+                helper.assertTrue(!com.vincenthuto.hemomancy.common.event.MachineAccessEvents.canUseStation(student, level, pos),
+                        "Learning the first scar ends the exception");
+                com.vincenthuto.hemomancy.common.event.MachineAccessEvents.awardMachineCrafted(student, block);
+                helper.assertTrue(com.vincenthuto.hemomancy.common.event.MachineAccessEvents.canUseStation(student, level, pos),
+                        "Canonical personal credit still permits access after the lesson");
+            } finally { cleanup.run(); }
+        }).thenSucceed();
     }
 
     @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
@@ -1104,13 +1571,90 @@ public final class HarbingerRepairGameTests {
     }
 
     private static ServerPlayer player(GameTestHelper helper) {
+        return player(helper, message -> {});
+    }
+
+    private static ServerPlayer player(GameTestHelper helper,
+            java.util.function.Consumer<net.minecraft.network.chat.Component> messages) {
         var cookie = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(), "repair-fixture"), false);
-        var player = new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(), cookie.gameProfile(), cookie.clientInformation());
+        var player = new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(), cookie.gameProfile(), cookie.clientInformation()) {
+            @Override public void displayClientMessage(net.minecraft.network.chat.Component message, boolean overlay) {
+                messages.accept(message);
+            }
+        };
         var connection = new Connection(PacketFlow.SERVERBOUND);
         new EmbeddedChannel(connection);
         new ServerGamePacketListenerImpl(helper.getLevel().getServer(), connection, player, cookie) {
             @Override public void send(net.minecraft.network.protocol.Packet<?> packet) {}
         };
         return player;
+    }
+
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void voyagerBearingAcknowledgesQueuedSearchWithoutGrantingProof(GameTestHelper helper) {
+        var messages = new java.util.ArrayList<String>();
+        var learner = player(helper, message -> {
+            if (message.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents text)
+                messages.add(text.getKey());
+        });
+        var vicar = EntityInit.harbinger_vicar.get().create(helper.getLevel());
+        learner.setPos(helper.absoluteVec(new net.minecraft.world.phys.Vec3(2.5, 2, 2.5)));
+        vicar.setPos(learner.position());
+        helper.getLevel().addFreshEntity(vicar);
+        HemoCapabilityAccess.requireInitiatoryDegree(learner).setDegreeNumber(3);
+        HemoCapabilityAccess.requireBloodVolume(learner).setActive(true);
+        try {
+            helper.assertTrue(com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.tellBearing(
+                    learner, vicar), "An eligible player must be able to request chart work");
+            helper.assertTrue(messages.contains("hemomancy.vicar.voyager_introduction.bearing_searching"),
+                    "The request must acknowledge queued chart work instead of finishing a blocking lookup");
+            var progress = com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.progress(learner);
+            helper.assertTrue(!progress.observed() && !progress.reported(), "Chart work grants no quest proof");
+        } finally {
+            net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(
+                    new net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent(learner));
+            vicar.discard(); learner.discard();
+        }
+        helper.succeed();
+    }
+
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void voyagerBearingBoundsRequestsAndReleasesLoggedOutPlayer(GameTestHelper helper) {
+        var learners = new java.util.ArrayList<ServerPlayer>();
+        var messages = new java.util.ArrayList<String>();
+        var vicar = EntityInit.harbinger_vicar.get().create(helper.getLevel());
+        vicar.setPos(helper.absoluteVec(new net.minecraft.world.phys.Vec3(2.5, 2, 2.5)));
+        helper.getLevel().addFreshEntity(vicar);
+        try {
+            for (int index = 0; index < 9; index++) {
+                var learner = player(helper, message -> {
+                    if (message.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents text)
+                        messages.add(text.getKey());
+                });
+                learners.add(learner);
+                learner.setPos(vicar.position());
+                HemoCapabilityAccess.requireInitiatoryDegree(learner).setDegreeNumber(3);
+                HemoCapabilityAccess.requireBloodVolume(learner).setActive(true);
+                boolean accepted = com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.tellBearing(learner, vicar);
+                helper.assertTrue(accepted == (index < 8), "The chart queue admits eight distinct requests, not nine");
+                if (index == 0) helper.assertTrue(
+                        com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.tellBearing(learner, vicar),
+                        "A repeated request acknowledges the existing job without spending another queue slot");
+            }
+            helper.assertTrue(messages.contains("hemomancy.vicar.voyager_introduction.bearing_busy"),
+                    "A full queue must explain why the request was refused");
+            net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(
+                    new net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent(learners.getFirst()));
+            helper.assertTrue(com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.tellBearing(
+                    learners.getLast(), vicar), "Logout must release the request so another eligible learner can retry");
+        } finally {
+            for (var learner : learners) {
+                net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(
+                        new net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent(learner));
+                learner.discard();
+            }
+            vicar.discard();
+        }
+        helper.succeed();
     }
 }

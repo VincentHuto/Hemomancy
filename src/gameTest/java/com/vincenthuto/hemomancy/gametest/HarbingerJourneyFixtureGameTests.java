@@ -102,6 +102,8 @@ import java.util.UUID;
 public final class HarbingerJourneyFixtureGameTests {
 	private static final String EMPTY_TEMPLATE = "bastion/mobs/empty";
 	private static final String CLEAN_TEMPLATE = "empty";
+	private static final net.minecraft.server.level.TicketType<UUID> JOURNEY_FIXTURE_TICKET =
+			net.minecraft.server.level.TicketType.create("hemomancy_journey_fixture", UUID::compareTo);
 	private static final String FIXTURES_CLASS =
 			"com.vincenthuto.hemomancy.gametest.journey.HemoJourneyFixtures";
 
@@ -258,8 +260,12 @@ public final class HarbingerJourneyFixtureGameTests {
 					"Reading the real loaded blood echo must unlock its milestone and Liber entries");
 
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.VICAR_HERMIT_ROAD_REPORT, origin);
-			HarbingerVicarEntity vicar = helper.getLevel().getEntitiesOfClass(
-					HarbingerVicarEntity.class, HemoJourneyFixtures.bounds(origin)).getFirst();
+			var vicars = helper.getLevel().getEntitiesOfClass(
+					HarbingerVicarEntity.class, HemoJourneyFixtures.bounds(origin));
+			helper.assertTrue(!vicars.isEmpty(), "First Remnant report Vicar missing at " + origin
+					+ " in " + helper.getLevel().dimension().location()
+					+ "; fixture level=" + HemoJourneyFixtures.fixtureLevel(player).dimension().location());
+			HarbingerVicarEntity vicar = vicars.getFirst();
 			vicar.interact(player, InteractionHand.MAIN_HAND);
 			NeoForge.EVENT_BUS.post(new DialogueEvent(player,
 					HarbingerVicarDialogueTrees.EVENT_HERMIT_ROAD_REPORT, vicar.getId()));
@@ -279,17 +285,24 @@ public final class HarbingerJourneyFixtureGameTests {
 					&& HemoCapabilityAccess.requireLiberKnowledge(player).getUnlockedEntries().isEmpty(),
 					"Snapshot restore must remove journey-owned inscription knowledge and advancement");
 			helper.succeed();
+		} catch (RuntimeException exception) {
+			Hemomancy.LOGGER.error("First Remnant journey failed at {}", origin, exception);
+			throw exception;
 		} finally {
 			HemoJourneyFixtures.cleanup(player, origin);
 			player.discard();
 		}
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 60)
+	@GameTest(templateNamespace = "hemomancy", template = CLEAN_TEMPLATE, timeoutTicks = 120)
 	public static void livingStaffJourneyUsesRealStructureCraftAndRestoresBond(GameTestHelper helper) {
+		withEntityLoadedJourneyFixture(helper, new BlockPos(14, 5, 14), () -> craftLivingStaff(helper));
+	}
+
+	private static void craftLivingStaff(GameTestHelper helper) {
 		ServerPlayer player = connectedTestPlayer(helper);
 		setServerPlayerLookup(player, true);
-		BlockPos origin = helper.absolutePos(new BlockPos(14, 3, 14));
+		BlockPos origin = helper.absolutePos(new BlockPos(14, 5, 14));
 		try {
 			HemoJourneyResult captured = HemoJourneySnapshot.capture(player);
 			helper.assertTrue(captured.passed(), "Living Staff snapshot capture must succeed");
@@ -305,9 +318,35 @@ public final class HarbingerJourneyFixtureGameTests {
 			helper.assertTrue(BloodStructureFeedManager.feedStructure(player, helper.getLevel(), origin.above(2),
 					player.getOffhandItem(), 150.0D), "The real Living Staff structure must accept projection");
 			for (int tick = 0; tick < 30; tick++) PendingBloodCraftManager.tick();
-			helper.assertTrue(HemoJourneyChecks.verify(player,
-					HemoJourneyStage.LIVING_STAFF_CRAFTED, origin).passed(),
-					"The real structure craft must produce a Living Staff and unlock its bond");
+			HemoJourneyResult crafted = HemoJourneyChecks.verify(player,
+					HemoJourneyStage.LIVING_STAFF_CRAFTED, origin);
+			helper.assertTrue(crafted.passed(),
+					"The real structure craft must produce a Living Staff and unlock its bond: "
+							+ crafted.message() + "; entitiesLoaded="
+							+ helper.getLevel().areEntitiesLoaded(new net.minecraft.world.level.ChunkPos(origin).toLong())
+							+ "; bond=" + HemoCapabilityAccess.getLivingStaffProgress(player).orElseThrow().hasLivingStaffBond());
+
+			ServerPlayer respawned = connectedTestPlayer(helper);
+			try {
+				respawned.restoreFrom(player, false);
+				helper.assertTrue(HemoCapabilityAccess.getLivingStaffProgress(respawned).orElseThrow()
+						.hasLivingStaffBond(), "Death cloning lost the personally crafted Staff bond");
+				var recalled = HemoCapabilityAccess.requireKnownManipulations(respawned);
+				helper.assertTrue(recalled.doesListContainName(recalled.getKnownManips(),
+						ManipulationInit.conjure_staff.get()), "Death cloning lost the earned Staff recall lesson");
+				helper.assertTrue(respawned.getMainHandItem().isEmpty(),
+						"Death-clone fixture unexpectedly retained a held item");
+				ManipulationInit.conjure_staff.get().getAction(respawned, helper.getLevel(),
+						respawned.getMainHandItem(), respawned.blockPosition());
+				helper.assertTrue(respawned.getMainHandItem().is(ItemInit.living_staff.get())
+						&& respawned.getMainHandItem().getCount() == 1,
+						"The earned recall action did not restore one Staff after death cloning");
+				helper.assertTrue(HemoCapabilityAccess.getLivingStaffProgress(respawned).orElseThrow()
+						!= HemoCapabilityAccess.getLivingStaffProgress(player).orElseThrow(),
+						"Death cloning shared mutable Staff progress with the old player");
+			} finally {
+				respawned.discard();
+			}
 
 			HemoJourneyFixtures.cleanup(player, origin);
 			HemoJourneyResult restored = HemoJourneySnapshot.restore(player);
@@ -403,8 +442,9 @@ public final class HarbingerJourneyFixtureGameTests {
 			helper.assertTrue(alembic != null && alembic.getItem(GhastlyAlembicBlockEntity.SLOT_INPUT)
 					.is(ItemInit.sanguine_formation.get())
 					&& alembic.getItem(GhastlyAlembicBlockEntity.SLOT_CATALYST).is(ItemInit.fervent_enzyme.get())
-					&& alembic.getItem(GhastlyAlembicBlockEntity.SLOT_TINCTURE_BLOOD).is(ItemInit.bloody_flask.get()),
-					"Body Answers fixture must load the real Alembic recipe inputs");
+					&& alembic.getItem(GhastlyAlembicBlockEntity.SLOT_FLASK).is(com.vincenthuto.hutoslib.common.registry.HLItemInit.cured_clay_flask.get())
+					&& alembic.getBloodVolume() == 2500,
+					"Body Answers fixture must transfer its supplied blood into the tank and reuse the empty flask");
 			for (int tick = 0; tick < 200; tick++) {
 				GhastlyAlembicBlockEntity.serverTick(helper.getLevel(), alembicPos,
 						helper.getLevel().getBlockState(alembicPos), alembic);
@@ -1544,10 +1584,19 @@ public final class HarbingerJourneyFixtureGameTests {
 		}
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 80)
+	@GameTest(templateNamespace = "hemomancy", template = CLEAN_TEMPLATE, timeoutTicks = 120)
 	public static void archonJourneyRequiresAndUsesBloodlineHelper(GameTestHelper helper) {
+		BlockPos relativeOrigin = new BlockPos(14, 15, 14);
+		var recipe = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getRiteByLocation(
+				helper.getLevel(), Hemomancy.rloc("cardinal_rite/archon_rite"));
+		BlockPos station = relativeOrigin.above().offset(CardinalRiteAllyService.markers(recipe)
+				.get(com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole.ANCHOR));
+		withEntityLoadedJourneyFixture(helper, relativeOrigin, () -> performArchonJourney(helper), station);
+	}
+
+	private static void performArchonJourney(GameTestHelper helper) {
 		ServerPlayer player = connectedTestPlayer(helper);
-		BlockPos origin = helper.absolutePos(new BlockPos(14, 3, 14));
+		BlockPos origin = helper.absolutePos(new BlockPos(14, 15, 14));
 		UUID lineId = UUID.randomUUID();
 		try {
 			Bloodline line = new Bloodline("Archon Test", player.getUUID(), lineId, new java.util.ArrayList<>());
@@ -1561,7 +1610,10 @@ public final class HarbingerJourneyFixtureGameTests {
 			List<HarbingerVicarEntity> allies = helper.getLevel().getEntitiesOfClass(
 					HarbingerVicarEntity.class, HemoJourneyFixtures.bounds(origin),
 					entity -> entity.getTags().contains(HemoJourneyFixtures.entityMarker(origin)));
-			helper.assertTrue(allies.size() == 1, "Archon fixture must supply one sworn bloodline helper");
+			helper.assertTrue(allies.size() == 1, "Archon fixture must supply one sworn bloodline helper; found="
+					+ allies.size() + "; entitiesLoaded="
+					+ helper.getLevel().areEntitiesLoaded(new net.minecraft.world.level.ChunkPos(origin).toLong())
+					+ "; members=" + line.getNpcMemberUUIDs());
 			HarbingerJourneyAutomation.perform(player, HemoJourneyStage.ARCHON_RITE.id(), origin);
 			helper.assertTrue(HemoJourneyChecks.verify(player, HemoJourneyStage.ARCHON_RITE, origin).passed(),
 					"Archon rank-up must complete with a real assigned helper");
@@ -1574,14 +1626,19 @@ public final class HarbingerJourneyFixtureGameTests {
 		}
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 120)
+	@GameTest(templateNamespace = "hemomancy", template = CLEAN_TEMPLATE, timeoutTicks = 120)
 	public static void livingCovenantFixturesUseRealPathsAndRestoreState(GameTestHelper helper) {
 		ServerPlayer player = connectedTestPlayer(helper);
-		BlockPos origin = helper.absolutePos(new BlockPos(14, 3, 14));
+		BlockPos origin = helper.absolutePos(new BlockPos(14, 40, 14));
 		BlockPos originalSpawn = helper.absolutePos(new BlockPos(2, 2, 2));
 		UUID lineId = UUID.randomUUID();
 		String step = "capturing original state";
 		try {
+			for (int x = -2; x <= 2; x++) for (int z = -2; z <= 2; z++) {
+				BlockPos floor = origin.offset(x, 0, z);
+				helper.assertTrue(helper.getLevel().getBlockState(floor).isAir(),
+						"Covenant fixture requires empty supplied platform space: " + floor);
+			}
 			player.setRespawnPosition(helper.getLevel().dimension(), originalSpawn, 37.0F, false, false);
 			player.getPersistentData().putBoolean("hemomancy:chamber_visit_chair_bound", false);
 			HemoJourneyResult captured = HemoJourneySnapshot.capture(player);
@@ -1877,7 +1934,7 @@ public final class HarbingerJourneyFixtureGameTests {
 		});
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	@GameTest(templateNamespace = "hemomancy", template = CLEAN_TEMPLATE, timeoutTicks = 40)
 	public static void sanguineLandingIsSupportedAndReachable(GameTestHelper helper) {
 		withFixture(helper, HemoJourneyStage.SANGUINE_INITIATION, (origin, player) -> {
 			BlockPos landing = invokeJourneyLanding(origin);
@@ -2215,26 +2272,30 @@ public final class HarbingerJourneyFixtureGameTests {
 		helper.succeed();
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	@GameTest(templateNamespace = "hemomancy", template = CLEAN_TEMPLATE, timeoutTicks = 120)
 	public static void liberPositiveDelta(GameTestHelper helper) {
-		positiveCraftDelta(helper, HemoJourneyStage.LIBER_CRAFTED, ItemInit.liber_sanguinum.get());
+		withEntityLoadedJourneyFixture(helper, new BlockPos(14, 10, 14), () ->
+				positiveCraftDelta(helper, HemoJourneyStage.LIBER_CRAFTED, ItemInit.liber_sanguinum.get()));
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	@GameTest(templateNamespace = "hemomancy", template = CLEAN_TEMPLATE, timeoutTicks = 120)
 	public static void hematicIronPositiveDelta(GameTestHelper helper) {
-		positiveCraftDelta(helper, HemoJourneyStage.HEMATIC_IRON_CRAFTED,
-				BlockInit.hematic_iron_block.get().asItem());
+		withEntityLoadedJourneyFixture(helper, new BlockPos(14, 10, 14), () ->
+				positiveCraftDelta(helper, HemoJourneyStage.HEMATIC_IRON_CRAFTED,
+						BlockInit.hematic_iron_block.get().asItem()));
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	@GameTest(templateNamespace = "hemomancy", template = CLEAN_TEMPLATE, timeoutTicks = 120)
 	public static void fallenLiberOutputIsCapturedAndCleaned(GameTestHelper helper) {
-		settledCraftOutput(helper, HemoJourneyStage.LIBER_CRAFTED, ItemInit.liber_sanguinum.get());
+		withEntityLoadedJourneyFixture(helper, new BlockPos(14, 10, 14), () ->
+				settledCraftOutput(helper, HemoJourneyStage.LIBER_CRAFTED, ItemInit.liber_sanguinum.get()));
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	@GameTest(templateNamespace = "hemomancy", template = CLEAN_TEMPLATE, timeoutTicks = 120)
 	public static void fallenHematicIronOutputIsCapturedAndCleaned(GameTestHelper helper) {
-		settledCraftOutput(helper, HemoJourneyStage.HEMATIC_IRON_CRAFTED,
-				BlockInit.hematic_iron_block.get().asItem());
+		withEntityLoadedJourneyFixture(helper, new BlockPos(14, 10, 14), () ->
+				settledCraftOutput(helper, HemoJourneyStage.HEMATIC_IRON_CRAFTED,
+						BlockInit.hematic_iron_block.get().asItem()));
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
@@ -2325,6 +2386,53 @@ public final class HarbingerJourneyFixtureGameTests {
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void journeySnapshotRestoresInitiationBloodClaim(GameTestHelper helper) {
+		var starter = Hemomancy.rloc("hemomancy/initiation_blood_claimed");
+		for (boolean alreadyClaimed : new boolean[] { false, true }) {
+			ServerPlayer player = connectedTestPlayer(helper);
+			try {
+				if (alreadyClaimed) HarbingerAdvancementGranter.grantIfNotDone(player, starter);
+				var captured = HemoJourneySnapshot.capture(player);
+				helper.assertTrue(captured.passed(), captured.message());
+				var reset = HemoJourneySnapshot.resetForJourney(player);
+				helper.assertTrue(reset.passed(), reset.message());
+				helper.assertTrue(!HarbingerAdvancementGranter.hasAdvancement(player, starter),
+						"A fresh journey must be eligible for its own starter blood");
+				HarbingerAdvancementGranter.grantIfNotDone(player, starter);
+				var restored = HemoJourneySnapshot.restore(player);
+				helper.assertTrue(restored.passed(), restored.message());
+				helper.assertTrue(HarbingerAdvancementGranter.hasAdvancement(player, starter) == alreadyClaimed,
+						"Restoring must recover the original starter claim, not retain the journey's claim");
+			} finally {
+				player.discard();
+			}
+		}
+		helper.succeed();
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void oldJourneySnapshotPreservesUntrackedInitiationBloodClaim(GameTestHelper helper) {
+		var starter = Hemomancy.rloc("hemomancy/initiation_blood_claimed");
+		for (boolean claimed : new boolean[] { false, true }) {
+			ServerPlayer player = connectedTestPlayer(helper);
+			try {
+				if (claimed) HarbingerAdvancementGranter.grantIfNotDone(player, starter);
+				var captured = HemoJourneySnapshot.capture(player);
+				helper.assertTrue(captured.passed(), captured.message());
+				player.getPersistentData().getCompound(HemoJourneySnapshot.SNAPSHOT_KEY)
+						.getCompound("advancements").remove(starter.toString());
+				var restored = HemoJourneySnapshot.restore(player);
+				helper.assertTrue(restored.passed(), "Old snapshot must remain restorable: " + restored.message());
+				helper.assertTrue(HarbingerAdvancementGranter.hasAdvancement(player, starter) == claimed,
+						"Old snapshots cannot infer an unrecorded starter claim");
+			} finally {
+				player.discard();
+			}
+		}
+		helper.succeed();
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void journeySnapshotRestoresScarAndUnstainedState(GameTestHelper helper) {
 		ServerPlayer player = connectedTestPlayer(helper);
 		var scarId = Hemomancy.rloc("scar_heart");
@@ -2387,6 +2495,40 @@ public final class HarbingerJourneyFixtureGameTests {
 		helper.succeed();
 	}
 
+	private static void withEntityLoadedJourneyFixture(GameTestHelper helper, BlockPos relativeOrigin,
+			Runnable action, BlockPos... additionalPositions) {
+		var chunk = new net.minecraft.world.level.ChunkPos(helper.absolutePos(relativeOrigin));
+		var requiredChunks = new java.util.HashSet<net.minecraft.world.level.ChunkPos>();
+		requiredChunks.add(chunk);
+		for (BlockPos position : additionalPositions) {
+			requiredChunks.add(new net.minecraft.world.level.ChunkPos(helper.absolutePos(position)));
+		}
+		UUID owner = UUID.randomUUID();
+		var chunks = helper.getLevel().getChunkSource();
+		chunks.addRegionTicket(JOURNEY_FIXTURE_TICKET, chunk, 2, owner, true);
+		Runnable cleanup = () -> chunks.removeRegionTicket(JOURNEY_FIXTURE_TICKET, chunk, 2, owner, true);
+		helper.testInfo.addListener(new net.minecraft.gametest.framework.GameTestListener() {
+			public void testStructureLoaded(net.minecraft.gametest.framework.GameTestInfo test) { }
+			public void testPassed(net.minecraft.gametest.framework.GameTestInfo test,
+					net.minecraft.gametest.framework.GameTestRunner runner) { cleanup.run(); }
+			public void testFailed(net.minecraft.gametest.framework.GameTestInfo test,
+					net.minecraft.gametest.framework.GameTestRunner runner) { cleanup.run(); }
+			public void testAddedForRerun(net.minecraft.gametest.framework.GameTestInfo oldTest,
+					net.minecraft.gametest.framework.GameTestInfo newTest,
+					net.minecraft.gametest.framework.GameTestRunner runner) { }
+		});
+		helper.startSequence().thenWaitUntil(() -> helper.assertTrue(
+				requiredChunks.stream().allMatch(required -> helper.getLevel().areEntitiesLoaded(required.toLong())),
+				"Journey fixture chunks must become entity-loaded before preparation"))
+				.thenExecute(() -> {
+					try {
+						action.run();
+					} catch (RuntimeException exception) {
+						helper.fail("Journey fixture action failed: " + exception);
+					}
+				});
+	}
+
 	private static void settledCraftOutput(GameTestHelper helper, HemoJourneyStage stage,
 			net.minecraft.world.item.Item output) {
 		ServerPlayer player = detachedTestPlayer(helper);
@@ -2404,7 +2546,12 @@ public final class HarbingerJourneyFixtureGameTests {
 			ItemEntity settled = spawn(helper, origin.getX() + 0.5D, origin.getY() + 1.0D,
 					origin.getZ() + 0.5D, new ItemStack(output));
 			helper.assertTrue(invokeBooleanFixture("captureExpectedOutputs", player, stage, origin),
-					"Expected settled craft output to be captured at platform height");
+					"Expected settled craft output to be captured at platform height; alive=" + settled.isAlive()
+							+ "; indexed=" + (helper.getLevel().getEntity(settled.getUUID()) == settled)
+							+ "; entitiesLoaded=" + helper.getLevel().areEntitiesLoaded(
+									new net.minecraft.world.level.ChunkPos(settled.blockPosition()).toLong())
+							+ "; visibleItems=" + helper.getLevel().getEntitiesOfClass(ItemEntity.class,
+									HemoJourneyFixtures.bounds(origin)).size());
 			invokeFixture("cleanupForExit", player, stage, origin);
 			helper.assertTrue(settled.isRemoved(), "Captured settled craft output must be cleaned");
 			helper.assertTrue(!baseline.isRemoved(), "Baseline craft output must be preserved");
@@ -2664,8 +2811,11 @@ public final class HarbingerJourneyFixtureGameTests {
 	}
 
 	private static void pickUpFixtureItem(GameTestHelper helper, ServerPlayer player, BlockPos origin, Item item) {
-		ItemEntity drop = helper.getLevel().getEntitiesOfClass(ItemEntity.class,
-				HemoJourneyFixtures.bounds(origin), entity -> entity.getItem().is(item)).getFirst();
+		var drops = helper.getLevel().getEntitiesOfClass(ItemEntity.class,
+				HemoJourneyFixtures.bounds(origin), entity -> entity.getItem().is(item));
+		// Station upgrade claims deliver straight to the inventory instead of dropping at the teacher.
+		if (drops.isEmpty() && player.getInventory().contains(new net.minecraft.world.item.ItemStack(item))) return;
+		ItemEntity drop = drops.getFirst();
 		player.getInventory().add(drop.getItem().copy());
 		drop.discard();
 	}

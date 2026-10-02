@@ -71,7 +71,8 @@ public final class CardinalRiteSigilRules {
 	}
 
 	public static List<Integer> raycastNodeIndices(int completedNodes, int totalNodes) {
-		if (totalNodes <= 0 || completedNodes >= totalNodes) return List.of();
+		// Paid nodes still claim held Projection until the active sigil leaves the rite.
+		if (totalNodes <= 0) return List.of();
 		List<Integer> indices = new java.util.ArrayList<>(totalNodes);
 		for (int index = 0; index < totalNodes; index++) indices.add(index);
 		return List.copyOf(indices);

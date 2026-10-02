@@ -34,11 +34,15 @@ public final class JourneyAutoRunner {
 	}
 
 	public static boolean runHarbingerToChoice(ServerPlayer player) {
-		return start(player, List.of(Route.HARBINGER), true, true);
+		return start(player, List.of(Route.HARBINGER), true, HemoJourneyStage.APOTHEOS_CHOICE);
 	}
 
 	public static boolean runHarbingerMainToChoice(ServerPlayer player) {
-		return start(player, List.of(Route.HARBINGER_MAIN), true, true);
+		return start(player, List.of(Route.HARBINGER_MAIN), true, HemoJourneyStage.APOTHEOS_CHOICE);
+	}
+
+	public static boolean runHarbingerMainToRest(ServerPlayer player) {
+		return start(player, List.of(Route.HARBINGER_MAIN), true, HemoJourneyStage.CONCENTRATED_BLOOD_REST);
 	}
 
 	public static boolean runUnstained(ServerPlayer player, String mode) {
@@ -74,13 +78,14 @@ public final class JourneyAutoRunner {
 	}
 
 	private static boolean start(ServerPlayer player, List<Route> routes, boolean allowResume) {
-		return start(player, routes, allowResume, false);
+		return start(player, routes, allowResume, null);
 	}
 
-	private static boolean start(ServerPlayer player, List<Route> routes, boolean allowResume, boolean stopAtChoice) {
+	private static boolean start(ServerPlayer player, List<Route> routes, boolean allowResume,
+			HemoJourneyStage pauseAtStage) {
 		RunState active = ACTIVE.get(player.getUUID());
 		if (active != null) {
-			if (!routes.equals(active.routes) || stopAtChoice != active.stopAtChoice) {
+			if (!routes.equals(active.routes) || pauseAtStage != active.pauseAtStage) {
 				player.sendSystemMessage(Component.literal("Different journey automation is already active: "
 						+ active.route().label + ". Stop or clear it before changing routes.").withStyle(ChatFormatting.RED));
 				return false;
@@ -95,7 +100,7 @@ public final class JourneyAutoRunner {
 					.withStyle(ChatFormatting.RED));
 			return false;
 		}
-		RunState state = new RunState(routes, stopAtChoice);
+		RunState state = new RunState(routes, pauseAtStage);
 		LAST_FAILURE.remove(player.getUUID());
 		ACTIVE.put(player.getUUID(), state);
 		if (!hasSnapshot && !startRoute(player, state.route())) {
@@ -129,10 +134,14 @@ public final class JourneyAutoRunner {
 				player.sendSystemMessage(Component.literal("AUTO " + state.route().label + ": " + stageId)
 						.withStyle(ChatFormatting.GRAY));
 			}
-			if (state.stopAtChoice && HemoJourneyStage.APOTHEOS_CHOICE.id().equals(stageId)) {
+			if (state.pauseAtStage != null && state.pauseAtStage.id().equals(stageId)) {
 				ACTIVE.remove(player.getUUID());
-				player.sendSystemMessage(Component.literal(
-						"Harbinger automation paused at the ending choice. The Bloom, Spine, and snapshot remain for manual play.")
+				player.connection.send(new net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket(
+						player.getInventory().selected));
+				String message = state.pauseAtStage == HemoJourneyStage.APOTHEOS_CHOICE
+						? "Harbinger automation paused at the ending choice. The Bloom, Spine, and snapshot remain for manual play."
+						: "Harbinger automation paused before Concentrated Blood injection and sleep. The Alchemist, bed, and snapshot remain for manual play.";
+				player.sendSystemMessage(Component.literal(message)
 						.withStyle(ChatFormatting.YELLOW));
 				return;
 			}
@@ -279,16 +288,16 @@ public final class JourneyAutoRunner {
 
 	private static final class RunState {
 		private final List<Route> routes;
-		private final boolean stopAtChoice;
+		private final HemoJourneyStage pauseAtStage;
 		private int routeIndex;
 		private String stageId = "";
 		private int stageTicks;
 		private boolean acted;
 		private String lastFailure = "";
 
-		private RunState(List<Route> routes, boolean stopAtChoice) {
+		private RunState(List<Route> routes, HemoJourneyStage pauseAtStage) {
 			this.routes = routes;
-			this.stopAtChoice = stopAtChoice;
+			this.pauseAtStage = pauseAtStage;
 		}
 
 		private Route route() {

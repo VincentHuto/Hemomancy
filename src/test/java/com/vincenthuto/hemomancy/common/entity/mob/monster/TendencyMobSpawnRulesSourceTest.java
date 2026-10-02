@@ -10,8 +10,7 @@ public final class TendencyMobSpawnRulesSourceTest {
 			"void_drinker",
 			"frozen_clot",
 			"abyssal_siphon",
-			"synapse_hound",
-			"myelin_borer"
+			"synapse_hound"
 	};
 	private static final String[] ACTIVE_DESICCANT_SNIPPETS = {
 			" desiccant = ENTITY_TYPES.register(",
@@ -24,8 +23,7 @@ public final class TendencyMobSpawnRulesSourceTest {
 			"molten_scab",
 			"void_ichor",
 			"frozen_clot",
-			"abyssal_ichor",
-			"nerve_bundle"
+			"abyssal_ichor"
 	};
 
 	private TendencyMobSpawnRulesSourceTest() {
@@ -33,6 +31,7 @@ public final class TendencyMobSpawnRulesSourceTest {
 
 	public static void main(String[] args) throws IOException {
 		assertDesiccantActive();
+		assertMyelinBorerActive();
 		String entityInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/EntityInit.java");
 		String itemInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java");
 		for (String id : DORMANT_ENTITY_IDS) {
@@ -49,6 +48,32 @@ public final class TendencyMobSpawnRulesSourceTest {
 			assertDoesNotContain("recipes should not consume dormant drop: " + id,
 					readTree(Path.of("src/main/resources/data/hemomancy/recipe")), "hemomancy:" + id);
 		}
+	}
+
+	private static void assertMyelinBorerActive() throws IOException {
+		String entities = stripLineComments(read("src/main/java/com/vincenthuto/hemomancy/common/init/EntityInit.java"));
+		assertContains("active Borer registration", entities, "myelin_borer = ENTITY_TYPES.register(\"myelin_borer\"");
+		assertContains("active Borer spawn predicate", entities, "MyelinBorerEntity::canSpawnHere");
+		assertContains("active Borer attributes", entities,
+				"event.put(EntityInit.myelin_borer.get(), MyelinBorerEntity.setAttributes().build())");
+		assertContains("Borer spawn egg", read("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java"),
+				"spawn_egg_myelin_borer = SPAWNEGGS.register(\"spawn_egg_myelin_borer\"");
+		assertContains("Borer renderer", read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java"),
+				"EntityInit.myelin_borer.get(), MyelinBorerRenderer::new");
+		assertContains("active Nerve Bundle block", read("src/main/java/com/vincenthuto/hemomancy/common/init/BlockInit.java"),
+				"nerve_bundle = BASEBLOCKS.register(\"nerve_bundle\"");
+		var biome = com.google.gson.JsonParser.parseString(read(
+				"src/main/resources/data/hemomancy/worldgen/biome/cortical_drift.json")).getAsJsonObject();
+		var monsters = biome.getAsJsonObject("spawners").getAsJsonArray("monster");
+		if (monsters.size() != 1) throw new AssertionError("Authored Cortical Drift must have one monster spawn entry");
+		var borer = monsters.get(0).getAsJsonObject();
+		if (!borer.get("type").getAsString().equals("hemomancy:myelin_borer")
+				|| borer.get("weight").getAsInt() != 8 || borer.get("minCount").getAsInt() != 1
+				|| borer.get("maxCount").getAsInt() != 2) {
+			throw new AssertionError("Authored Cortical Drift Borer spawn parameters changed");
+		}
+		assertContains("Nerve Bundle crawlable tag", read("src/main/resources/data/hemomancy/tags/block/cortical_crawlable.json"),
+				"\"hemomancy:nerve_bundle\"");
 	}
 
 	private static void assertDesiccantActive() throws IOException {

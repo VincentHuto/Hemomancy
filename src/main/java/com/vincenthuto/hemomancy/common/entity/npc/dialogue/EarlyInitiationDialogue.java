@@ -15,7 +15,9 @@ public final class EarlyInitiationDialogue {
  public static DialogueTree alchemist(DialogueTree tree, ServerPlayer player) {
   if (!ClinicalBloodKnowledge.eligible(player) || com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getPlayerDegreeNumber(player) != 2
     || !FirstSeparationAssignment.isClaimed(player)
-    || !com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.advancedBrewing(player).distilled()) return tree;
+    || !com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.stationUpgrades(player).hasUsed(
+            com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC,
+            com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.DISTILL)) return tree;
   List<DialogueOption> options = new ArrayList<>();
   if (!ConcentratedBlood.pending(player)) options.add(new DialogueOption("hemomancy.initiation.replace", null, "alchemist_replace_concentrated_blood"));
   options.add(new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null));

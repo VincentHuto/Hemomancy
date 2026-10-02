@@ -88,7 +88,7 @@ public final class HemoJourneyChecks {
 			}
 			case FORMATION_PROJECTED -> verifyFormation(player, origin, unmet, claimOutputs);
 			case LIBER_CRAFTED -> verifyCraft(player, stage, origin, unmet, claimOutputs,
-					HarbingerAdvancementGranter.isLiberSanguinumCrafted(player), "Liber Sanguinum", "Liber Sanguinum");
+					HarbingerAdvancementGranter.isLiberSanguinumCrafted(player), "Liber Sanguinium", "Liber Sanguinium");
 			case HEMATIC_IRON_CRAFTED -> verifyCraft(player, stage, origin, unmet, claimOutputs,
 					HarbingerAdvancementGranter.isHematicIronBlockCrafted(player), "Hematic Iron Block", "Iron in the Blood");
 			case LIVING_STAFF_CRAFTED -> {
@@ -107,7 +107,7 @@ public final class HemoJourneyChecks {
 			case ENZYME_RECOVERED -> require(unmet, HarbingerAdvancementGranter.isFirstSeparationComplete(player), "Recover the enzyme from the centrifuge output.");
 			case ALCHEMIST_REWARD -> require(unmet, FirstSeparationAssignment.isClaimed(player), "First Separation reward has not been claimed.");
 			case FIRST_DISTILLATION -> require(unmet,
-					HemoCapabilityAccess.advancedBrewing(player).distilled()
+					HemoCapabilityAccess.stationUpgrades(player).hasUsed(com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC, "distill")
 							&& outputPresent(player, stage, origin, claimOutputs),
 					"Take the first ordinary Ghastly Alembic distillation output.");
 			case CONCENTRATED_BLOOD_REST -> require(unmet,

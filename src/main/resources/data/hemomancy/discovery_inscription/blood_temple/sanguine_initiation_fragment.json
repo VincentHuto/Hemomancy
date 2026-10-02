@@ -11,7 +11,7 @@
     "Receive the Hermit's permission before touching the Mortal Display. The Vicar at the outpost will hear your choice."
   ],
   "liber_entries": [
-    "hemomancy:fanesanguinium/intro/pages/hemomancy",
-    "hemomancy:fanesanguinium/intro/pages/the_harbingers"
+    "hemomancy:libersanguinium/intro/pages/hemomancy",
+    "hemomancy:libersanguinium/intro/pages/the_harbingers"
   ]
 }

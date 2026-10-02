@@ -55,6 +55,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 	public static final StreamCodec<FriendlyByteBuf, BloodCraftingKeyPressPacket> STREAM_CODEC = StreamCodec.of(BloodCraftingKeyPressPacket::encode, BloodCraftingKeyPressPacket::decode);
 	private static final ResourceLocation FOUNDING_FANE_RITE_ID = Hemomancy.rloc("cardinal_rite/founding_fane");
 	private static final ResourceLocation BLOOM_OF_QLIPHOTH_RITE_ID = Hemomancy.rloc("cardinal_rite/bloom_of_qliphoth");
+	private static final ResourceLocation ROOTED_VEIN_RITE_ID = Hemomancy.rloc("cardinal_rite/rooted_vein");
 	private static final ResourceLocation APOTHEOS_RITE_ID = Hemomancy.rloc("cardinal_rite/apotheos_rite");
 	private static final Direction[] SEARCH_DIRECTIONS = Direction.values();
 	public static BloodCraftingKeyPressPacket decode(final FriendlyByteBuf buffer) {
@@ -352,6 +353,11 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				}
 				// Explicit recipe degree / stage progression check.
 				if (!recipe.isUnstained()) {
+					if (RecipeDegreeGates.getRequiredDegree(recipe) > 0 && !bloodVolume.isActive()) {
+						player.displayClientMessage(Component.literal("Your blood must be active to begin this rite.")
+								.withStyle(ChatFormatting.DARK_RED), false);
+						return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
+					}
 					// Harbinger: check Hematic Order degree
 					int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 					int requiredDegree = RecipeDegreeGates.getRequiredDegree(recipe);
@@ -509,6 +515,10 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 						&& !HarbingerCardinalRiteEvents.canPlaceQliphothBloom(sLevel, serverPlayer, centerPos)) {
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
+				if (ROOTED_VEIN_RITE_ID.equals(recipe.getId())
+						&& !HarbingerCardinalRiteEvents.canPlaceRootedVein(sLevel, serverPlayer, centerPos)) {
+					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
+				}
 
 				// Start the rite
 				int castingDuration = recipe.hasInteractiveCeremony()
@@ -523,7 +533,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 								player.getUUID(), centerPos, recipe.getId(), castingDuration,
 								recipe.getRiteType().getSize(), ceremonyDegree,
 								recipe.getCeremony().abbreviated(),
-								com.vincenthuto.hemomancy.common.rite.harbinger.AlembicUpgradeRites.isRite(recipe.getId()) ? 0
+								com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.isRite(recipe.getId()) ? 0
 								: recipe.getCeremony().waves().isEmpty()
 										? recipe.getCeremony().guaranteedWaves().size()
 										: Math.max(recipe.getCeremony().guaranteedWaves().size(),
@@ -571,19 +581,17 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 					rite.beginStaffPlanting();
 					plantingStaff = staff;
 				}
-				if (!com.vincenthuto.hemomancy.common.rite.harbinger.ScriptoriumRites.prepare(sLevel, rite)) {
+				var upgradeTier = com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.forRite(rite.getRecipeId());
+				if (upgradeTier.isPresent() && !HemoCapabilityAccess.stationUpgrades(serverPlayer).eligible(serverPlayer, upgradeTier.get())) {
 					CardinalRiteStaffEscrow.restore(serverPlayer, rite);
-					player.displayClientMessage(Component.literal("The Scriptorium must sit two blocks north of the Focus with every tube filled and its item and lapis slots empty.")
-							.withStyle(ChatFormatting.DARK_RED), false);
+					player.displayClientMessage(Component.translatable("hemomancy.station_upgrade.requirements_unmet")
+							.withStyle(ChatFormatting.RED), false);
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
-				if (!com.vincenthuto.hemomancy.common.rite.harbinger.AlembicUpgradeRites.prepare(sLevel, rite)) {
+				if (!com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.prepare(sLevel, rite)) {
 					CardinalRiteStaffEscrow.restore(serverPlayer, rite);
-					String instruction = com.vincenthuto.hemomancy.common.rite.harbinger.ArmatureUpgradeRites
-							.isRite(rite.getRecipeId())
-							? "Seat an idle Armature of the required tier beside the Focus and place its kit at a lit brazier."
-							: "Seat the correct station beside the Focus, with all upgrade offerings ready at lit braziers.";
-					player.displayClientMessage(Component.literal(instruction)
+					player.displayClientMessage(Component.literal(
+							"Seat an idle station of the required tier behind the Focus, facing it, with its upgrade item and five offerings on lit braziers.")
 							.withStyle(ChatFormatting.DARK_RED), false);
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}

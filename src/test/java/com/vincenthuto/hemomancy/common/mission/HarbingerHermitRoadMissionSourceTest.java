@@ -319,7 +319,8 @@ public final class HarbingerHermitRoadMissionSourceTest {
 				"screen.hemomancy.harbinger_assignment_ledger.woven_vessel.title");
 		assertContains("mnemonist recipe dialogue names formations", language, "four Sanguine Formations");
 		assertContains("mnemonist recipe dialogue names remnant stone", language, "four Blood Stained Stones");
-		assertContains("mnemonist recipe dialogue names the enzyme source", language, "chicken Blood Vial");
+		assertContains("mnemonist recipe dialogue names the enzyme source", language, "Chicken blood can yield Neurotic Enzyme");
+		assertContains("mnemonist recipe dialogue explains the variable spin", language, "some spins yield Vivacious instead");
 		assertContains("woven vessel completion advancement exists", read(RESOURCE_ROOT.resolve(
 				"data/hemomancy/advancement/hemomancy/mnemonist_woven_vessel_complete.json")),
 				"advancements.hemomancy.mnemonist_woven_vessel_complete.title");

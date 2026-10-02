@@ -8,6 +8,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class CardinalRiteVirtualTargetingTest {
 	@Test
@@ -61,5 +62,13 @@ final class CardinalRiteVirtualTargetingTest {
 		assertEquals(0, selectedNode, "the completed front marker must remain the ray blocker");
 		assertFalse(CardinalRiteSigilRules.isActionableNode(selectedNode, 1, 3),
 				"the blocker must absorb projection without advancing or punishing the sigil");
+	}
+
+	@Test
+	void fullyPaidShapeKeepsItsGroundMarkersAsBlockers() {
+		List<Integer> indices = CardinalRiteSigilRules.raycastNodeIndices(3, 3);
+		assertEquals(List.of(0, 1, 2), indices);
+		assertTrue(indices.stream().noneMatch(index -> CardinalRiteSigilRules.isActionableNode(index, 3, 3)),
+				"finished markers must claim the cast without becoming payable again");
 	}
 }

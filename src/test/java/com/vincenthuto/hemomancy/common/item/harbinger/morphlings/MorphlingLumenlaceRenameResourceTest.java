@@ -95,7 +95,7 @@ public final class MorphlingLumenlaceRenameResourceTest {
 		for (Path root : List.of(SOURCE_ROOT, RESOURCE_ROOT, DOCS_ROOT)) {
 			try (Stream<Path> paths = Files.walk(root)) {
 				for (Path path : paths.filter(Files::isRegularFile).toList()) {
-					if (path.equals(LEGACY_MIGRATION) || !isText(path)) continue;
+					if (path.equals(LEGACY_MIGRATION) || !isActiveText(path)) continue;
 					String content = read(path);
 					assertNotContains("active Foxfire reference in " + path, content, "foxfire");
 					assertNotContains("active FoxFire reference in " + path, content, "Foxfire");
@@ -112,7 +112,9 @@ public final class MorphlingLumenlaceRenameResourceTest {
 				"entry(\"foxfire\", \"lumenlace\")");
 	}
 
-	private static boolean isText(Path path) {
+	static boolean isActiveText(Path path) {
+		// Archived asset bundles are not active rename documentation.
+		if (path.startsWith(DOCS_ROOT.resolve("done"))) return false;
 		String name = path.getFileName().toString().toLowerCase();
 		return name.endsWith(".java") || name.endsWith(".json") || name.endsWith(".md")
 				|| name.endsWith(".mcmeta") || name.endsWith(".properties") || name.endsWith(".toml")

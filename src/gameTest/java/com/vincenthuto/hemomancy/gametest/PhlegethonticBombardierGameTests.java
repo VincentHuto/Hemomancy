@@ -28,6 +28,17 @@ public final class PhlegethonticBombardierGameTests {
     private static final String ROOM = "phlegethontic_test_room";
 
     @GameTest(batch = "phlegethontic_bombardier", template = ROOM, timeoutTicks = 20)
+    public static void loadedBloodProfilePreservesFlammeusAndRestrictedSampling(GameTestHelper helper) {
+        var profile = com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData.profile(
+                EntityInit.phlegethontic_bombardier.get(), false);
+        helper.assertTrue(profile.tendencies().equals(java.util.List.of(
+                        com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.FLAMMEUS)),
+                "Loaded Bombardier blood must retain its Flammeus tendency");
+        helper.assertTrue(profile.requiresLivingSyringe(), "Loaded Bombardier blood must require a Living Syringe");
+        helper.succeed();
+    }
+
+    @GameTest(batch = "phlegethontic_bombardier", template = ROOM, timeoutTicks = 20)
     public static void naturalSpawnUsesNetherMobPool(GameTestHelper helper) {
         helper.assertTrue(EntityInit.phlegethontic_bombardier.get().getCategory() == MobCategory.MONSTER,
                 "Bombardier must use the Nether hostile cap instead of the Strider-filled creature cap");
@@ -53,10 +64,7 @@ public final class PhlegethonticBombardierGameTests {
     public static void naturalSpawnGatesAcceptBasinOvergrowth(GameTestHelper helper) {
         var level = helper.getLevel();
         BlockPos center = helper.absolutePos(new BlockPos(8, 4, 8));
-        var basin = level.registryAccess().registryOrThrow(Registries.BIOME)
-                .getHolderOrThrow(BiomeInit.PHLEGETHONTIC_BASIN);
-        level.getChunk(center).fillBiomesFromNoise((x, y, z, sampler) -> basin,
-                level.getChunkSource().randomState().sampler());
+        fillSpawnBiomeFixture(helper, center);
         level.setBlockAndUpdate(center.below(), BlockInit.escharian_overgrowth.get().defaultBlockState());
         level.setBlockAndUpdate(center, Blocks.AIR.defaultBlockState());
         level.setBlockAndUpdate(center.above(), Blocks.AIR.defaultBlockState());
@@ -68,7 +76,7 @@ public final class PhlegethonticBombardierGameTests {
         helper.assertTrue(SpawnPlacements.isSpawnPositionOk(type, level, center),
                 "Basin overgrowth must satisfy the Bombardier ground placement");
         helper.assertTrue(SpawnPlacements.checkSpawnRules(type, level, MobSpawnType.NATURAL, center, level.random),
-                "Basin overgrowth must satisfy the Bombardier NATURAL spawn predicate");
+                "Basin overgrowth must satisfy the Bombardier NATURAL spawn predicate: " + spawnEvidence(helper, center));
         helper.succeed();
     }
 
@@ -77,10 +85,7 @@ public final class PhlegethonticBombardierGameTests {
         var level = helper.getLevel();
         BlockPos spawn = helper.absolutePos(new BlockPos(8, 4, 8));
         BlockPos growth = helper.absolutePos(new BlockPos(13, 4, 8));
-        var basin = level.registryAccess().registryOrThrow(Registries.BIOME)
-                .getHolderOrThrow(BiomeInit.PHLEGETHONTIC_BASIN);
-        level.getChunk(spawn).fillBiomesFromNoise((x, y, z, sampler) -> basin,
-                level.getChunkSource().randomState().sampler());
+        fillSpawnBiomeFixture(helper, spawn);
         level.setBlockAndUpdate(spawn.below(), Blocks.NETHERRACK.defaultBlockState());
         level.setBlockAndUpdate(spawn, Blocks.AIR.defaultBlockState());
         level.setBlockAndUpdate(spawn.above(), Blocks.AIR.defaultBlockState());
@@ -90,7 +95,54 @@ public final class PhlegethonticBombardierGameTests {
         helper.assertTrue(SpawnPlacements.isSpawnPositionOk(type, level, spawn),
                 "ordinary solid ground near a colony must satisfy the ground placement");
         helper.assertTrue(SpawnPlacements.checkSpawnRules(type, level, MobSpawnType.NATURAL, spawn, level.random),
-                "Bombardiers must naturally spawn on safe ground near Escharian Overgrowth");
+                "Bombardiers must naturally spawn on safe ground near Escharian Overgrowth: " + spawnEvidence(helper, spawn));
+        helper.succeed();
+    }
+
+    private static String spawnEvidence(GameTestHelper helper, BlockPos pos) {
+        var level = helper.getLevel();
+        var type = EntityInit.phlegethontic_bombardier.get();
+        return "pos=" + pos + ", biome=" + level.getBiome(pos).unwrapKey()
+                + ", difficulty=" + level.getDifficulty()
+                + ", growth=" + com.vincenthuto.hemomancy.common.entity.mob.arthropod.BombardierHabitat.findNearestGrowth(
+                        level, pos, PhlegethonticBombardier.SPAWN_HABITAT_HORIZONTAL_RANGE,
+                        PhlegethonticBombardier.SPAWN_HABITAT_VERTICAL_RANGE)
+                + ", clear=" + level.noCollision(type.getSpawnAABB(pos.getX() + .5, pos.getY(), pos.getZ() + .5));
+    }
+
+    private static void fillSpawnBiomeFixture(GameTestHelper helper, BlockPos pos) {
+        var level = helper.getLevel();
+        var basin = level.registryAccess().registryOrThrow(Registries.BIOME)
+                .getHolderOrThrow(BiomeInit.PHLEGETHONTIC_BASIN);
+        // BiomeManager samples both adjacent quart coordinates after subtracting two blocks.
+        int quartX = (pos.getX() - 2) >> 2;
+        int quartZ = (pos.getZ() - 2) >> 2;
+        var chunks = new java.util.HashSet<net.minecraft.world.level.ChunkPos>();
+        for (int dx = 0; dx <= 1; dx++) for (int dz = 0; dz <= 1; dz++)
+            chunks.add(new net.minecraft.world.level.ChunkPos((quartX + dx) >> 2, (quartZ + dz) >> 2));
+        for (var chunk : chunks)
+            level.getChunk(chunk.x, chunk.z).fillBiomesFromNoise((x, y, z, sampler) -> basin,
+                    level.getChunkSource().randomState().sampler());
+        helper.assertTrue(level.getBiome(pos).is(BiomeInit.PHLEGETHONTIC_BASIN),
+                "Spawn fixture must resolve to Basin after filling all possible biome samples");
+    }
+
+    @GameTest(batch = "phlegethontic_bombardier", template = ROOM, timeoutTicks = 20)
+    public static void naturalSpawnAcceptsBasinAcrossFuzzyChunkBoundaries(GameTestHelper helper) {
+        var level = helper.getLevel();
+        var origin = helper.absolutePos(new BlockPos(0, 4, 0));
+        int boundaryX = Math.floorDiv(origin.getX() + 19, 16) * 16;
+        int boundaryZ = Math.floorDiv(origin.getZ() + 19, 16) * 16;
+        for (int dx : new int[]{-2, -1, 0, 1}) for (int dz : new int[]{-2, -1, 0, 1}) {
+            var spawn = new BlockPos(boundaryX + dx, origin.getY(), boundaryZ + dz);
+            fillSpawnBiomeFixture(helper, spawn);
+            level.setBlockAndUpdate(spawn.below(), BlockInit.escharian_overgrowth.get().defaultBlockState());
+            level.setBlockAndUpdate(spawn, Blocks.AIR.defaultBlockState());
+            level.setBlockAndUpdate(spawn.above(), Blocks.AIR.defaultBlockState());
+            helper.assertTrue(SpawnPlacements.checkSpawnRules(EntityInit.phlegethontic_bombardier.get(),
+                            level, MobSpawnType.NATURAL, spawn, level.random),
+                    "Basin boundary candidate must satisfy the actual spawn predicate: " + spawnEvidence(helper, spawn));
+        }
         helper.succeed();
     }
 

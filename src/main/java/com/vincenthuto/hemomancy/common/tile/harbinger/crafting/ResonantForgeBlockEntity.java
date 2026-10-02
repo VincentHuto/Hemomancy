@@ -2,6 +2,11 @@ package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
 import com.vincenthuto.hemomancy.common.enchanting.ResonantForgeRules;
 import com.vincenthuto.hemomancy.common.enchanting.ResonantForgeTier;
+import com.vincenthuto.hemomancy.common.station.StationTierProperty;
+import com.vincenthuto.hemomancy.common.station.UpgradeStation;
+import com.vincenthuto.hemomancy.common.station.UpgradeableStation;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.ResonantForgeBlock;
+import net.minecraft.server.level.ServerLevel;
 import com.vincenthuto.hemomancy.common.enchanting.ResonantForgeTransfer;
 import com.vincenthuto.hemomancy.common.enchanting.ResonantPattern;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
@@ -32,7 +37,8 @@ import net.minecraft.core.Direction;
 
 import java.util.UUID;
 
-public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implements IBloodReservoir, WorldlyContainer {
+public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implements IBloodReservoir, WorldlyContainer,
+        UpgradeableStation {
     private static final int[] NO_AUTOMATION_SLOTS = new int[0];
     public static final int APPLICATION_ITEM = 0;
     public static final int APPLICATION_CYLINDER = 1;
@@ -44,7 +50,7 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
     public static final int SLOT_COUNT = 7;
 
     private NonNullList<ItemStack> items = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
-    private ResonantForgeTier tier = ResonantForgeTier.BASE;
+    private int legacyStage;
     private Operation operation = Operation.NONE;
     private int progress;
     private int totalTicks;
@@ -61,6 +67,8 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
     private boolean needsFootprintCleanup = true;
     private UUID machineIdentity = UUID.randomUUID();
     private UUID lastUpgradeRite;
+    /** Player who started the running operation; credited with the machine use when it finishes. */
+    private UUID operator;
     private Status status = Status.IDLE;
 
     private final ContainerData data = new ContainerData() {
@@ -72,7 +80,7 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
                 case 3 -> (int) getMaxBloodVolume();
                 case 4 -> hammerUses;
                 case 5 -> wheelUses;
-                case 6 -> tier.ordinal();
+                case 6 -> tier().ordinal();
                 case 7 -> operation.ordinal();
                 case 8 -> status.ordinal();
                 case 9 -> masterMode ? 1 : 0;
@@ -102,6 +110,7 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
     @Override public boolean canProvideBlood() { return !riteLocked && operation == Operation.NONE; }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, ResonantForgeBlockEntity forge) {
+        forge.applyLegacyStage();
         if (forge.needsFootprintCleanup) {
             forge.needsFootprintCleanup = false;
             BlockPos above = pos.above();
@@ -129,7 +138,7 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
         if (target.isEmpty() || !CylinderMedia.supported(cylinder) || cylinder.getCount() != 1 || pattern == null)
             return fail(Status.MISSING_INPUT);
         if (pattern.master() && !CylinderMedia.masterCapable(cylinder)) return fail(Status.MASTER_REQUIRES_AMBERGRIS);
-        if (pattern.master() && !ResonantForgeRules.canUseMaster(tier)) return fail(Status.MASTER_REQUIRES_D7);
+        if (pattern.master() && !ResonantForgeRules.canUseMaster(tier())) return fail(Status.MASTER_REQUIRES_D7);
         var preview = ResonantForgeTransfer.apply(target, pattern, level.registryAccess());
         if (!preview.success()) return fail(map(preview.failure()));
         int cost = ResonantForgeRules.hammeringCost(pattern);
@@ -146,8 +155,8 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
         if (source.isEmpty() || !CylinderMedia.supported(cylinder) || cylinder.getCount() != 1)
             return fail(Status.MISSING_INPUT);
         if (!CylinderMedia.blank(cylinder)) return fail(Status.CYLINDER_NOT_BLANK);
-        if (!selection.isBlank() && !ResonantForgeRules.canSelectIndividual(tier)) return fail(Status.SELECTION_REQUIRES_D5);
-        if (masterMode && !ResonantForgeRules.canUseMaster(tier)) return fail(Status.MASTER_REQUIRES_D7);
+        if (!selection.isBlank() && !ResonantForgeRules.canSelectIndividual(tier())) return fail(Status.SELECTION_REQUIRES_D5);
+        if (masterMode && !ResonantForgeRules.canUseMaster(tier())) return fail(Status.MASTER_REQUIRES_D7);
         if (masterMode && !CylinderMedia.masterCapable(cylinder)) return fail(Status.MASTER_REQUIRES_AMBERGRIS);
         var preview = ResonantForgeTransfer.capture(source, level.registryAccess(), selection, masterMode);
         if (!preview.success()) return fail(Status.NO_PATTERN);
@@ -160,7 +169,7 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
     public boolean startStabilizing() {
         if (!idle()) return false;
         if (wheelWorn()) return fail(Status.WHEEL_WORN);
-        if (!ResonantForgeRules.canUseMaster(tier)) return fail(Status.MASTER_REQUIRES_D7);
+        if (!ResonantForgeRules.canUseMaster(tier())) return fail(Status.MASTER_REQUIRES_D7);
         if (!items.get(GRINDING_CYLINDER_OUTPUT).isEmpty()) return fail(Status.OUTPUT_BLOCKED);
         ItemStack cylinder = items.get(GRINDING_CYLINDER);
         ResonantPattern pattern = cylinder.get(DataComponentInit.RESONANT_PATTERN.get());
@@ -184,7 +193,11 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
         return true;
     }
 
+    public void setOperator(UUID operator) { this.operator = operator; }
+
     private void completeOperation() {
+        Operation finished = operation;
+        boolean selective = !selection.isBlank();
         boolean success = switch (operation) {
             case APPLY -> finishApply();
             case GRIND -> finishGrinding();
@@ -193,10 +206,25 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
         };
         if (!success) refundAndReset(Status.INPUT_CHANGED);
         else {
+            recordOperatorUse(finished, selective);
             operation = Operation.NONE;
             progress = totalTicks = reservedBlood = 0;
             status = Status.IDLE;
             sync();
+        }
+    }
+
+    private void recordOperatorUse(Operation finished, boolean selective) {
+        if (operator == null || !(level instanceof ServerLevel serverLevel)) return;
+        net.minecraft.server.level.ServerPlayer player = serverLevel.getServer().getPlayerList().getPlayer(operator);
+        if (player == null) return;
+        var progress = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.stationUpgrades(player);
+        if (finished == Operation.APPLY)
+            progress.recordUse(UpgradeStation.RESONANT_FORGE, com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.APPLY);
+        if (finished == Operation.GRIND) {
+            progress.recordUse(UpgradeStation.RESONANT_FORGE, com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.GRIND);
+            if (selective) progress.recordUse(UpgradeStation.RESONANT_FORGE,
+                    com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.GRIND_SELECTED);
         }
     }
 
@@ -264,14 +292,14 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
     }
 
     public boolean toggleMasterMode() {
-        if (!idle() || !ResonantForgeRules.canUseMaster(tier)) return false;
+        if (!idle() || !ResonantForgeRules.canUseMaster(tier())) return false;
         masterMode = !masterMode;
         sync();
         return true;
     }
 
     public boolean setSelection(String value) {
-        if (!idle() || (!value.isBlank() && !ResonantForgeRules.canSelectIndividual(tier))) return false;
+        if (!idle() || (!value.isBlank() && !ResonantForgeRules.canSelectIndividual(tier()))) return false;
         selection = value == null ? "" : value;
         sync();
         return true;
@@ -318,7 +346,10 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
     public boolean hammerWorn() { return ResonantForgeRules.hammerServiceRequired(hammerUses); }
     public boolean wheelWorn() { return ResonantForgeRules.wheelServiceRequired(wheelUses); }
     public boolean idle() { return operation == Operation.NONE && !riteLocked; }
-    public ResonantForgeTier tier() { return tier; }
+    public ResonantForgeTier tier() {
+        return ResonantForgeTier.values()[Math.max(StationTierProperty.stage(getBlockState()), legacyStage)];
+    }
+    public void applyLegacyStage() { StationTierProperty.applyLegacyStage(this, legacyStage); legacyStage = 0; }
     public Operation operation() { return operation; }
     public int progress() { return progress; }
     public int totalTicks() { return totalTicks; }
@@ -343,9 +374,18 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
     }
 
     public void setRiteLocked(boolean value) { riteLocked = value; sync(); }
+
+    @Override public UpgradeStation upgradeStation() { return UpgradeStation.RESONANT_FORGE; }
+    @Override public boolean readyForUpgradeRite(ServerLevel level, Direction riteForward) {
+        return idle() && getBlockState().getValue(ResonantForgeBlock.FACING) == riteForward
+                && ResonantForgeBlock.hasCompleteStructure(level, worldPosition, getBlockState());
+    }
+    @Override public void markUpgradedBy(UUID riteId) { lastUpgradeRite = riteId; sync(); }
+    @Override public boolean completeUpgrade(int targetTier, UUID riteId) {
+        return operation == Operation.NONE && UpgradeableStation.super.completeUpgrade(targetTier, riteId);
+    }
     public boolean completeUpgrade(ResonantForgeTier target, UUID riteId) {
-        if (target == null || riteId == null || target.ordinal() != tier.ordinal() + 1 || operation != Operation.NONE) return false;
-        tier = target; lastUpgradeRite = riteId; riteLocked = false; sync(); return true;
+        return target != null && completeUpgrade(target.ordinal(), riteId);
     }
 
     private boolean fail(Status failure) { status = failure; sync(); return false; }
@@ -396,7 +436,8 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
         super.loadAdditional(tag, registries);
         items = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
         ContainerHelper.loadAllItems(tag, items, registries);
-        tier = ResonantForgeTier.values()[Math.clamp(tag.getInt("Tier"), 0, ResonantForgeTier.values().length - 1)];
+        // Pre-consolidation saves kept the tier here; applyLegacyStage moves it into the blockstate.
+        legacyStage = tag.contains("Tier") ? Math.clamp(tag.getInt("Tier"), 0, 2) : 0;
         operation = Operation.values()[Math.clamp(tag.getInt("Operation"), 0, Operation.values().length - 1)];
         progress = tag.getInt("Progress"); totalTicks = tag.getInt("TotalTicks"); reservedBlood = tag.getInt("ReservedBlood");
         hammerUses = tag.getInt("HammerUses"); wheelUses = tag.getInt("WheelUses"); selection = tag.getString("Selection");
@@ -405,18 +446,21 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
         wheelAsh = tag.getBoolean("WheelAsh"); riteLocked = tag.getBoolean("RiteLocked");
         if (tag.hasUUID("MachineIdentity")) machineIdentity = tag.getUUID("MachineIdentity");
         if (tag.hasUUID("LastUpgradeRite")) lastUpgradeRite = tag.getUUID("LastUpgradeRite");
+        operator = tag.hasUUID("Operator") ? tag.getUUID("Operator") : null;
         getBloodCapability().setBloodVolume(Math.clamp(tag.getDouble("BloodVolume"), 0, ResonantForgeRules.BLOOD_CAPACITY));
     }
 
     @Override protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         ContainerHelper.saveAllItems(tag, items, registries);
-        tag.putInt("Tier", tier.ordinal()); tag.putInt("Operation", operation.ordinal()); tag.putInt("Progress", progress);
+        if (legacyStage > 0) tag.putInt("Tier", legacyStage);
+        tag.putInt("Operation", operation.ordinal()); tag.putInt("Progress", progress);
         tag.putInt("TotalTicks", totalTicks); tag.putInt("ReservedBlood", reservedBlood); tag.putInt("HammerUses", hammerUses);
         tag.putInt("WheelUses", wheelUses); tag.putString("Selection", selection); tag.putBoolean("MasterMode", masterMode);
         tag.putBoolean("HammerIron", hammerIron); tag.putBoolean("HammerAsh", hammerAsh); tag.putBoolean("WheelAsh", wheelAsh);
         tag.putDouble("HammerRepairBlood", hammerRepairBlood);
         tag.putBoolean("RiteLocked", riteLocked); tag.putUUID("MachineIdentity", machineIdentity);
+        if (operator != null) tag.putUUID("Operator", operator);
         if (lastUpgradeRite != null) tag.putUUID("LastUpgradeRite", lastUpgradeRite);
         tag.putDouble("BloodVolume", getBloodVolume());
     }

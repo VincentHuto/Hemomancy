@@ -38,6 +38,8 @@ Do not add longer recordings, voice recording, new audio storage formats, or new
 
 ## Acceptance
 
+2026-10-01 focused follow-up: Both wax and ambergris paid capture/application now have fresh-block-entity serialization/resume coverage. Exact custom names, damage, enchantments and patterns, initial costs, remaining tick boundaries, ordinary consumption, single maintenance increments and no post-completion replay passed in the 20-case Forge/Scriptorium suite. The test tick helper's extra tick and same-position fixture reuse were corrected after failed runs; no production mechanic changed. This is not chunk-unload, cold-server, native interruption or complete older-world compatibility acceptance. Phase 8 records the runs.
+
 - [ ] Fresh D3 records and replays a creature call using ordinary wax, without acquiring ambergris.
 - [ ] Forge construction and ordinary capture/application work with wax.
 - [ ] Audio/ancient/pattern-bearing cylinders are never accepted as blank.
@@ -47,3 +49,11 @@ Do not add longer recordings, voice recording, new audio storage formats, or new
 - [ ] Both item types render correctly in inventory, hand, world, and machine views.
 
 Use existing Clairaudiograph/Antecedent and ResonantForge runtime tests. Resource checks alone do not prove component preservation or machine transfer.
+
+## 2026-09-30 implementation and live follow-up
+
+The ordinary wax route works in disposable `HarbingerWaxRoute_20260930`: inventory crafting produced two cylinders; a fresh cow sample recorded and replayed; a wax offering supported Forge construction; ordinary grinding and application transferred Efficiency III and Unbreaking II. The recording, machine blood, and equipment components survived a full client restart. No ambergris was supplied or acquired. Degree, ingredients, projection item, equipment, platform, and formation placement were assisted, so natural acquisition and pacing remain unverified.
+
+The live run exposed a menu bug: shift-clicking the recipe's stack of two blank cylinders inserted nothing. Forge routing now checks a one-item copy for blankness and transfers from the original stack. One cylinder enters the grinder and the remainder stays in inventory; an occupied grinder does not send the remaining blank to application. Machine start checks still require one cylinder. New GameTests cover wax and ambergris stacks, occupied-grinder rejection, audio/ancient rejection, and pattern-preserving application routing. The final focused run passed 19 Forge/Scriptorium and 88 blood-injection tests. The fixed stack interaction and saved recording playback were also replayed in the client.
+
+These checks do not close every acceptance box above. Natural survival, older-world compatibility, multiplayer, all interruption/automation cases in a client, master rejection presentation, and both media's full visual review remain open. Exact assists, costs, logs, and screenshots are in [the Phase 8 handoff](08-validation-and-handoff.md).
