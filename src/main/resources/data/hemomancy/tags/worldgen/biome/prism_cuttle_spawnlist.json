@@ -3,6 +3,7 @@
   "values": [
     "minecraft:warm_ocean",
     "minecraft:lukewarm_ocean",
-    "minecraft:deep_lukewarm_ocean"
+    "minecraft:deep_lukewarm_ocean",
+    "hemomancy:erythrocoral_reef"
   ]
 }

@@ -8,7 +8,6 @@ import com.mojang.serialization.*;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
@@ -22,24 +21,6 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWeavingRecipe> {
-	public static final HashMap<ResourceLocation, MemoryWeavingRecipe> ALL_RECIPES = new HashMap<>();
-
-	public static MemoryWeavingRecipe getRecipe(String path) {
-		if (path == null || path.isBlank()) {
-			return null;
-		}
-		ResourceLocation direct = ResourceLocation.tryParse(path);
-		if (direct != null && ALL_RECIPES.containsKey(direct)) {
-			return ALL_RECIPES.get(direct);
-		}
-		String cleanPath = path;
-		int colon = cleanPath.indexOf(':');
-		if (colon >= 0) {
-			cleanPath = cleanPath.substring(colon + 1);
-		}
-		return ALL_RECIPES.get(ResourceLocation.parse("hemomancy:memory_weaving/" + cleanPath));
-	}
-
 	private static MemoryWeavingRecipe fromJsonObject(ResourceLocation recipeId, JsonObject json, DynamicOps<JsonElement> jsonOps) {
 		List<Ingredient> catalysts = parseCatalysts(json, jsonOps);
 		EnumMap<EnumBloodTendency, Integer> enzymes = parseEnzymes(json);
@@ -54,7 +35,6 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 		}
 
 		MemoryWeavingRecipe recipe = new MemoryWeavingRecipe(recipeId, catalysts, enzymes, blood, result);
-		cacheRecipe(recipe);
 		return recipe;
 	}
 
@@ -124,14 +104,6 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 		return requiredTendencies * 50.0D;
 	}
 
-	private static void cacheRecipe(MemoryWeavingRecipe recipe) {
-		ALL_RECIPES.put(recipe.getId(), recipe);
-		ResourceLocation resultId = BuiltInRegistries.ITEM.getKey(recipe.getResultItem(null).getItem());
-		if (resultId != null) {
-			ALL_RECIPES.put(Hemomancy.rloc("memory_weaving/" + resultId.getPath()), recipe);
-		}
-	}
-
 	private static final MapCodec<MemoryWeavingRecipe> CODEC = new MapCodec<>() {
 		@Override
 		public <T> Stream<T> keys(DynamicOps<T> ops) {
@@ -198,7 +170,6 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 		double blood = buffer.readDouble();
 		ItemStack output = ItemStack.STREAM_CODEC.decode(buffer);
 		MemoryWeavingRecipe recipe = new MemoryWeavingRecipe(id, catalysts, enzymes, blood, output);
-		cacheRecipe(recipe);
 		return recipe;
 	}
 

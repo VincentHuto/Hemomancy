@@ -106,7 +106,9 @@ public final class ScarBrazierRite {
 	}
 
 	public static int getMaxActiveScars(Player player) {
-		return ScarBrazierInteractionRules.maxActiveScars(HemoCapabilityAccess.getPlayerDegreeNumber(player));
+		int base = ScarBrazierInteractionRules.maxActiveScars(HemoCapabilityAccess.getPlayerDegreeNumber(player));
+		return base == 0 ? 0 : base + com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper
+				.getScarResonanceSlots(player);
 	}
 
 	private static Preflight preflight(Player player, ItemStack stack, ScarBrazierInteractionRules.Burn burn) {

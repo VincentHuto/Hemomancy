@@ -26,9 +26,7 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 	public static final int OUTPUT_END = 16;
 	public static final int AUX_OUTPUT_SLOT = 17;
 	public static final int FLASK_OUTPUT_SLOT = 18;
-	public static final int SECONDARY_START = 19;
-	public static final int SECONDARY_END = 26;
-	public static final int SLOT_COUNT = 27;
+	public static final int SLOT_COUNT = 19;
 	public static final int DATA_COUNT = 3;
 
 	private static final int INV_START = SLOT_COUNT;
@@ -99,22 +97,15 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 		// Flask output (next to blood input slot — empty flasks from consumed bloody flasks)
 		addSlot(new CentrifugeOutputSlot(te, VialCentrifugeBlockEntity.SLOT_FLASK_OUTPUT, 26, 90));
 
-		for (int i = 0; i < 8; i++) {
-			addSlot(new CentrifugeOutputSlot(te, VialCentrifugeBlockEntity.SLOT_SECONDARY_START + i,
-					172 + i % 2 * 18, 14 + i / 2 * 18) {
-				@Override public boolean isActive() { return te.upgradeTier() >= 2 || hasItem(); }
-			});
-		}
-
 		// INVENTORY
 		for (int y = 0; y < 3; y++) {
 			for (int x = 0; x < 9; x++) {
-				this.addSlot(new Slot(playerInv, x + y * 9 + 9, 28 + x * 18, 122 + y * 18));
+				this.addSlot(new Slot(playerInv, x + y * 9 + 9, 8 + x * 18, 122 + y * 18));
 			}
 		}
 		// HOTBAR
 		for (int x = 0; x < 9; x++) {
-			this.addSlot(new Slot(playerInv, x, 28 + x * 18, 180));
+			this.addSlot(new Slot(playerInv, x, 8 + x * 18, 180));
 		}
 
 		this.addDataSlots(containerData);

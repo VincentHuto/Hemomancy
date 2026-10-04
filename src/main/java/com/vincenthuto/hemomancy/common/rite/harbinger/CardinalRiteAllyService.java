@@ -37,7 +37,8 @@ public final class CardinalRiteAllyService {
 
 	public static boolean tryClaimPlayerRole(ServerLevel level, ServerPlayer player, ActiveCardinalRite rite,
 			BlockPos clicked) {
-		if (rite.getPhase() != CardinalRitePhase.INSCRIPTION || rite.getDegree() < 5
+		if (!player.isAlive() || player.isSpectator()
+				|| rite.getPhase() != CardinalRitePhase.INSCRIPTION || rite.getDegree() < 5
 				|| rite.getPlayerUUID().equals(player.getUUID())) return false;
 		CardinalRiteAllyRole role = roleAt(level, rite, clicked);
 		if (role == null || !supportsRole(CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId()), role)) return false;

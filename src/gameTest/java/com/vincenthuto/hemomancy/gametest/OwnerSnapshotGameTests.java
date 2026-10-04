@@ -3,6 +3,9 @@ package com.vincenthuto.hemomancy.gametest;
 import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityRegistrar;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegree;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPomeProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendencyEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
@@ -31,6 +34,54 @@ import java.util.UUID;
 @GameTestHolder("owner_snapshot_validation")
 @PrefixGameTestTemplate(false)
 public final class OwnerSnapshotGameTests {
+    @GameTest(template = "empty", batch = "owner_snapshots")
+    public static void degreeLifecycleSendsSavedPomeProgress(GameTestHelper helper) {
+        var cookie = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(), "pome_sync_test"), false);
+        var player = new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(), cookie.gameProfile(), cookie.clientInformation());
+        var connection = new Connection(PacketFlow.SERVERBOUND);
+        var channel = new EmbeddedChannel(connection);
+        List<CustomPacketPayload> packets = new ArrayList<>();
+        new ServerGamePacketListenerImpl(helper.getLevel().getServer(), connection, player, cookie) {
+            @Override public void send(net.minecraft.network.protocol.Packet<?> packet) {
+                if (packet instanceof ClientboundCustomPayloadPacket custom) packets.add(custom.payload());
+            }
+        };
+        try {
+            var degree = (InitiatoryDegree) HemoCapabilityAccess.requireInitiatoryDegree(player);
+            degree.recordPomeConsumed(UUID.randomUUID(), 0L);
+            degree.incrementTotalPomesConsumed();
+            var saved = degree.serializeNBT(player.registryAccess());
+            degree.resetPomeCommunion();
+            degree.deserializeNBT(player.registryAccess(), saved);
+            InitiatoryDegreeEvents.playerLoggedIn(new PlayerEvent.PlayerLoggedInEvent(player));
+            assertPomeProgress(helper, packets, 1, "login");
+            packets.clear();
+            InitiatoryDegreeEvents.onDimensionChange(new PlayerEvent.PlayerChangedDimensionEvent(player, Level.OVERWORLD, Level.NETHER));
+            assertPomeProgress(helper, packets, 1, "dimension change");
+            packets.clear();
+            degree.setQliphothCommunionDone(true);
+            InitiatoryDegreeEvents.playerRespawn(new PlayerEvent.PlayerRespawnEvent(player, false));
+            assertPomeProgress(helper, packets, 9, "completed Communion respawn");
+            helper.succeed();
+        } finally {
+            player.discard();
+            channel.finishAndReleaseAll();
+        }
+    }
+
+    private static void assertPomeProgress(GameTestHelper helper, List<CustomPacketPayload> packets, int expected, String phase) {
+        var progress = packets.stream().filter(PacketSyncPomeProgress.class::isInstance).toList();
+        helper.assertTrue(progress.size() == 1, phase + " must send one pome progress packet, got " + progress.size());
+        var buffer = new net.minecraft.network.FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
+        try {
+            PacketSyncPomeProgress.encode(buffer,
+                    (PacketSyncPomeProgress) progress.getFirst());
+            helper.assertTrue(buffer.readInt() == expected, phase + " sent incorrect saved pome progress");
+        } finally {
+            buffer.release();
+        }
+    }
+
     @GameTest(template = "empty", batch = "owner_snapshots")
     public static void lifecycleAndChangePathEachSendOneOwnerPacket(GameTestHelper helper) {
         var cookie = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(), "snapshot_test"), false);

@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 5,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Mnemonic Ambergris",
+  "subtitle": "Feed the living archive",
+  "text": "Mnemonic Whales hunt squid, glow squid, and Prism Cuttles in nearby water. Every prey the whale kills leaves one Mnemonic Ambergris immediately above its back. Bring squid on leads, or carry Prism Cuttles in specimen jars: place a filled jar near the whale and break it to release the cuttle. Keep supplying live prey for repeated meals; feeding has no ambergris cooldown. Bottles still collect a sample, and whales still shed ambergris naturally. Those methods share a waiting period, separate from feeding. The whale must make the kill. A dead specimen or a player-killed squid offers it no meal. Keep the whale unharmed; its memory belongs in the reef.",
+  "icon": "hemomancy:mnemonic_ambergris"
+}

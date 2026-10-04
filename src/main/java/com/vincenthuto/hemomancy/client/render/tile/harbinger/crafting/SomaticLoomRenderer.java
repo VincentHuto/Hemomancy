@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
-import com.vincenthuto.hemomancy.common.recipe.serializer.MemoryWeavingRecipeSerializer;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticLoomBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.Vector3;
@@ -184,8 +183,7 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		}
 
 		// Recipe result preview floating above both items
-		MemoryWeavingRecipe currRecipe = MemoryWeavingRecipeSerializer
-				.getRecipe(te.getRecipePath());
+		MemoryWeavingRecipe currRecipe = te.getPreviewRecipe();
 		if (currRecipe != null) {
 			matrixStackIn.pushPose();
 			float bob = Mth.sin(gameTime * 0.1f) * 0.05f;

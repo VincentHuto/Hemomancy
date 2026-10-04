@@ -4,9 +4,23 @@
 
 The Alchemist teaches blood as material and specimen: sampling, physiological classification, microscopy, injection, preservation, and laboratory storage. The Artificer converts established laboratory practice into durable field apparatus after an Alchemist referral. The Mnemonist receives the Alchemist's unexplained auditory observations and teaches retained expression through the Clairaudiograph at Degree 3. Construction alone does not determine knowledge ownership. See [Clinical Blood Tools](../wiki/Clinical-Blood-Tools.md).
 
+### Alchemist station teaching: separation at D4/D6
+
+The Alchemist recognizes practiced work rather than conferring knowledge through a gift. The D4 Calibrated Rotor teaches steady recovery: material previously lost during a rough spin can be retained. The D6 Fractionating Rotor teaches attention to the remainder: a mixed specimen can yield another fraction it already contains. This extends the same blood-as-specimen jurisdiction as the Alembic, whose Condenser and Athanor upgrades now sit at D4 and D6. All use the shared Cardinal ceremonial grammar and optional station-project progression; the Artificer's apparatus assignments and degree-promotion proofs remain separate.
+
+The other station disciplines retain their own voices within that shared ceremony: the Artificer teaches resonance and vestment apparatus, and the Mnemonist teaches recollection through the Scriptorium. Crafted or gifted equipment cannot supply personal learning. See [the shared station contract](STATION_UPGRADES.md).
+
+## Current narrative synchronization (2026-10-03)
+
+The [source/history audit](validation/REFERENCE_SYNC_2026-10-03.md) covers the latest substantial reference commit on October 1 and checks coverage back to the September 19 broad audit. Recent repairs clarify personal practice, shared belonging, scar preparation and the two ending states; they do not introduce another faction, tendency or degree ladder. The current assignment ledger recognizes either completed Archon path while retaining Apotheos's unresolved decision as pending. Interface completion is a record of the existing ending, not another ascension.
+
+Mnemonic Whales remain living archives that Voyagers collect from without killing. Their predation on squid and Prism Cuttles now supports repeated ambergris collection through live prey. Nonlethal refers to treatment of the whale; it does not imply prey survive. Sampling and shedding remain distinct collection methods. This ecology establishes no new doctrine for the Brined Votary or other reef inhabitants.
+
+Dynasty Castles and the Fargone's Scout, Attendant, Guard, Elder and Reclaimed variants are present world content. Their authored populations do not establish an additional Harbinger faction, player rank system or complete history of the castle builders. Appearance and population labels alone must not be expanded into settled political canon.
+
 > This document covers **lore only**: world history, cosmic origins, factions, characters, beliefs, mythology, and narrative themes. For mechanics, systems, and code details see [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md).
 >
-> **Last Updated:** 2026-09-01 lore/reference synchronization audit. LORE_REFERENCE.md is the authority for canon. `HEMOMANCY_REFERENCE.md` describes the mechanics that implement it. Game code, dialogue, inquiries, item text, advancements, and wiki pages are downstream and must be corrected when they disagree with these documents.
+> **Last Updated:** 2026-10-03 lore/reference synchronization audit. LORE_REFERENCE.md is the authority for canon. `HEMOMANCY_REFERENCE.md` describes the mechanics that implement it. Game code, dialogue, inquiries, item text, advancements, and wiki pages are downstream and must be corrected when they disagree with these documents.
 
 ## Canon Governance
 
@@ -24,7 +38,7 @@ The following settled facts are non-negotiable consistency anchors:
 - Hemorath expresses Ferric and Mortem. Seraphae expresses Animus and Lux.
 - Eight canonical Morphling strains are implemented. Older references to twelve describe superseded prototypes.
 
-> **Current Lore-State Snapshot (2026-09-01 audit):**
+> **Current Lore-State Snapshot (2026-10-03 audit):**
 > - Core narrative pillars remain directly represented in gameplay: Harbinger initiation/degrees (now including the explicit Apotheos gate), Unstained purification path, faction NPC dialogue trees, blood-memory framing, and fungal-whisper escalation.
 > - **Memory Weaving now reads as a physical Somatic Loom rite:** blank Hematic Memories, catalyst patterns, enzyme-dye reservoirs, projected blood, and unruly colored memory-orbs all make refined manipulation learning feel like wrestling dormant biology into a chosen shape rather than selecting a recipe from a menu.
 > - Qliphoth Communion now has a clearer in-game rhythm: the Sanguine Monolith breaks open with a black void-bloom, the Qliphoth Tree drops nine named husks with personal whispers, and a Silent Archon's Living Arsenal must become the sickle that wounds it.
@@ -373,6 +387,8 @@ The curse of silence should remain deliberately ambiguous. It may be self-impose
 One-off pieces should remain covenant-breaking tradeoffs in tone as well as mechanics. The Crown of Sacred Marrow, Hemolymphopoda Headpiece, Venous Strider Sabatons, and Covenant Mantle each express a narrow vow or ecology. Wearing one means choosing that vow over the comfort of a full-set identity.
 
 ### 6.5 The Founding Fane
+
+A shared Fane is sustained by individual covenant contributions. A member's personal blood deposited at its heart can write their own covenant proof; merely standing near another practitioner's rite does not. This preserves the distinction between belonging and practiced commitment. A shared heart does not require each member to found another bloodline.
 
 At Degree 5, a Harbinger becomes eligible to perform the **Founding Fane ritual** — a distinct ceremony separate from both the Illuminatus rank-up rite and the Bloodline Founding rite. The **Rite of the Crimson Lodge** makes the practitioner Illuminatus; **Bloodline Founding** creates the covenant; the **Founding Fane ritual** gives that existing bloodline territory. Its boundary is a **Flexible Envelope**, beginning at the Consecrated Bloodwell heart and expanding through connected Hematic Stakes rather than occupying a fixed chunk square. Harbingers inside receive strength scaled by the living footprint, while its visible boundary, recall ground, and ledger permissions follow the envelope. **Sanguine Quintessence** is the medium seated in the Cardinal Focus, but the Quintessence itself is not the consecration — the founding ritual is.
 
@@ -730,7 +746,7 @@ Plants in Hemomancy are designed around real-world plant biology and carry both 
 | **Rafflesia** | Real parasitic plant (world's largest flower) | Extremely rare. A parasitic plant with no leaves, no chlorophyll — lives entirely inside other plants. Deeply fitting for the infection theme. |
 | **Puffball Mushroom** | Real fungus | Common fungus, used for Harbinger recipes. |
 | **Erythrocoral** | Fictional fungal coral | A warm-ocean shelf ecology where hemomantic tissue behaves like reef life: living mass, pale calcified skeleton, soft fans, and tendrils. It is eerie and biologically wrong to ordinary eyes, but not evil corruption; it is a thriving habitat with its own grazers and drifters. |
-| **Mnemonic Whale** | Fictional reef megafauna | A slow deep-reef drifter treated by Voyagers as a "living archive" of currents, vents, and reef pulse. Harbinger crews are expected to witness and record, not hunt; field ethics emphasize distance, patience, and nonlethal sampling. |
+| **Mnemonic Whale** | Fictional reef megafauna | A slow deep-reef drifter treated by Voyagers as a "living archive" of currents, vents, and reef pulse. It hunts squid and Prism Cuttles, shedding one Mnemonic Ambergris after each kill. Crews may supply live prey for repeatable collection while keeping the whale unharmed; field ethics forbid hunting the archive itself. |
 | **Qliphoth Pome** | Fictional fruit | A void-dark fruit grown around a crystallized blood core — one of nine husks of the Qliphoth. Eating causes a brief expansion of awareness into the void-register (perceived as darkness), a surge of blood power, and reduced manipulation costs. Nine drop from a single tree's lifecycle; consuming all nine from one bloom is the unnamed act that precedes the Eighth Degree. |
 
 ### 15.2 Unstained/Pale Lady Plants
@@ -756,7 +772,7 @@ The mod's worldbuilding extends into the animal kingdom: **arthropods** are the 
 | **Chalybeate Snails** | Implemented deep-ocean iron snails inspired by the real-world iron-plated snail (Chrysomallon squamiferum). They cluster around hydrothermal vent fields and grow iron-sulfide sclerites that Harbingers prize as Ferric material. Their best harvest is careful knapping while retracted, reinforcing the Order's uneasy covenant with living sources rather than simple predation. |
 | **Scarlet Serpents** | Warm-biome blood-serpents with black, red, and yellow warning colors. Their hood flare is taboo folklore in desert and jungle communities, but they are natural territorial wildlife rather than cosmic omens or factional agents. |
 
-**Ocean ecology V1/V2:** Hydrothermal vent fields are the first deep-ocean slice. They are mineral heat-scars on the sea floor, not ore nodes: basalt, blackstone, deepslate, magma, and restrained blood-organic accents where Chalybeate Snails graze. Erythrocoral Reefs are the warm shelf counterpart: fungal-coral habitats with murky red-violet water, Blood Lantern Jellies drifting through the reef, rare Mnemonic Whales moving through deeper shelves, and light Vivacious harvesting. Harbinger Voyager Wrecks are failed reef/vent research craft: covenant field laboratories swallowed by the sea, guarded by Brined Votaries who are tragic remnants of duty rather than a new enemy faction. Active Harbinger voyager expeditions now appear as rare Survey Cog vessels: compact moving laboratories and chapels crewed by a captain-scholar Voyager, with an occasional Votary Wayfarer aboard to learn by witnessing rather than by conquest. Whale-associated Mnemonic Ambergris is framed as an offered or shed sample, never a hunting prize. Trade, rumors, and faction tension remain future maritime hooks without flattening Harbingers into villains.
+**Ocean ecology V1/V2:** Hydrothermal vent fields are the first deep-ocean slice. They are mineral heat-scars on the sea floor, not ore nodes: basalt, blackstone, deepslate, magma, and restrained blood-organic accents where Chalybeate Snails graze. Erythrocoral Reefs are the warm shelf counterpart: fungal-coral habitats with murky red-violet water, Blood Lantern Jellies drifting through the reef, Prism Cuttles, rare Mnemonic Whales moving through deeper shelves, and light Vivacious harvesting. Harbinger Voyager Wrecks are failed reef/vent research craft: covenant field laboratories swallowed by the sea, guarded by Brined Votaries who are tragic remnants of duty rather than a new enemy faction. Active Harbinger voyager expeditions now appear as rare Survey Cog vessels: compact moving laboratories and chapels crewed by a captain-scholar Voyager, with an occasional Votary Wayfarer aboard to learn by witnessing rather than by conquest. Whale-associated Mnemonic Ambergris is an offered or shed sample, including an immediate secretion after the whale consumes squid or cuttles. Crews can supply prey without harming the whale; ambergris remains no prize for killing a living archive. Trade, rumors, and faction tension remain future maritime hooks without flattening Harbingers into villains.
 
 The **Chthonian Queen** is the only creature in the mod associated with gold — a nod to her royal status and to gold's position as a material that sits between but belongs to neither faction.
 
@@ -900,7 +916,3 @@ Signals travel along the shorter arms, each ending in a small electrical dischar
 red axon trails behind, its lights steady. When the creature feeds, that axon swings forward to
 bind its prey and draw it toward the brightening core. No one agrees whether it is a parasite that
 found the Mind or an old reflex of the Mind itself. Its ganglion still conducts after death.
-
-### Alchemist station teaching: separation at D4/D6
-
-The Alchemist recognizes practiced work rather than conferring knowledge through a gift. The D4 Calibrated Rotor teaches steady recovery: material previously lost during a rough spin can be retained. The D6 Fractionating Rotor teaches attention to the remainder: a mixed specimen can yield another fraction it already contains. This extends the same blood-as-specimen jurisdiction as the Alembic, whose Condenser and Athanor upgrades now sit at D4 and D6. All use the shared Cardinal ceremonial grammar and optional station-project progression; the Artificer's apparatus assignments and degree-promotion proofs remain separate.

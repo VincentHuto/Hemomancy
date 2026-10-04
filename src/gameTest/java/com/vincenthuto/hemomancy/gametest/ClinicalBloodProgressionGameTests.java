@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.gametest;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
+
 import net.minecraft.network.chat.Component;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitMode;
 
@@ -4287,6 +4289,7 @@ public final class ClinicalBloodProgressionGameTests {
 	}
 
 	private static Object ledgerPacketValue(Class<?> type, int index) {
+		if (type == EnumArchonPath.class) return EnumArchonPath.APOTHEOS;
 		if (type == int.class) return index * 17 + 3;
 		if (type == boolean.class) return index % 3 == 0;
 		if (type == FirstSeparationLedgerProgress.class) {

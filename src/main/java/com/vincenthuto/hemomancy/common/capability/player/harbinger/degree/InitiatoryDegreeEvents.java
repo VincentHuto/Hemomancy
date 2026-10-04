@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncDegree;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPomeProgress;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonTrialEvents;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import net.minecraft.server.level.ServerPlayer;
@@ -22,6 +23,8 @@ public class InitiatoryDegreeEvents {
 
 	public static void syncDegree(ServerPlayer player, IInitiatoryDegree degree) {
 		PacketHandler.sendToPlayer(player, new PacketSyncDegree(degree));
+		PacketHandler.sendToPlayer(player, new PacketSyncPomeProgress(
+				degree.isQliphothCommunionDone() ? 9 : degree.getTotalPomesConsumed()));
 		PuppeteerSummonTrialEvents.awardOrdealRecipes(player, degree.getDegreeNumber());
 	}
 

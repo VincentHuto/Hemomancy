@@ -65,7 +65,7 @@ public final class BloodProjectionInteractionEvents {
 						&& volume.getBloodLine().hasNpcMember(target.getUUID())).orElse(false);
 	}
 
-	private static boolean isBloodToolUse(Player player, ItemStack stack) {
+	static boolean isBloodToolUse(Player player, ItemStack stack) {
 		if (stack.getItem() instanceof BloodAbsorptionItem || stack.getItem() instanceof BloodProjectionItem) {
 			return true;
 		}

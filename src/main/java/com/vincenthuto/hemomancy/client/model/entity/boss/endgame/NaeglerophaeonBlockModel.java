@@ -22,7 +22,7 @@ import org.joml.Vector4f;
 
 /** Renders the authored Blockbench cubes, UVs and bone hierarchy without generating a smooth mesh. */
 public final class NaeglerophaeonBlockModel {
-    private static final String MODEL="/assets/hemomancy/models/entity/naeglerophaeon_cube_geometry.json";
+    private static final String MODEL="/assets/hemomancy/entity_geometry/naeglerophaeon_cube_geometry.json";
     private static final float INV_ATLAS=1F/128F;
     private static final float PIXEL=1F/16F;
     private static final String[] FACE_NAMES={"north","south","west","east","up","down"};

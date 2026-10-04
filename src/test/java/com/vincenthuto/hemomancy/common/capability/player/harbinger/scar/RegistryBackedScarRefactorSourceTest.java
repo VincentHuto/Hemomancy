@@ -110,7 +110,7 @@ public final class RegistryBackedScarRefactorSourceTest {
 		assertContains("brazier unlocks known scars", brazier, "addKnownCerebralScar");
 		assertContains("brazier activates selected scars", brazier, "activateCerebralScar");
 		assertContains("brazier deactivates active scars", brazier, "deactivateCerebralScar");
-		assertContains("effigy limits prepared loadouts", menu, "MAX_SELECTED_SCARS = 4");
+		assertContains("effigy shares pattern storage limit", menu, "ItemScarPattern.MAX_SCAR_IDS");
 		assertContains("effigy screen renders known scars", screen, "renderScarList");
 	}
 

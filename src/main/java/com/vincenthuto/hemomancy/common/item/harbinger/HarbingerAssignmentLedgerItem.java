@@ -152,8 +152,7 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 							HarbingerAdvancementGranter.ADV_COVENANT_VIGIL_COMPLETED),
 					completedChapters.contains(HarbingerChapterMilestone.LIVING_COVENANT),
 					pomesConsumed, qliphothCommunionComplete,
-					archonPath == EnumArchonPath.SILENT_PENDING, severedPortalOpen,
-					archonPath == EnumArchonPath.SILENT_ARCHON));
+					archonPath, severedPortalOpen));
 		}
 		return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
 	}

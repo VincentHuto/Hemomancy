@@ -240,6 +240,14 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock implements BlockB
 		}
 
 		savedData.contributeBlood(bloodline.getBloodlineUUID(), (float) toDeposit);
+		if (player.isAlive() && !player.isSpectator()
+				&& HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 5
+				&& globalLine.hasMember(player.getUUID())
+				&& globalLine.getLeaderUUID().equals(bloodline.getLeaderUUID())
+				&& FoundingFaneSavedData.get(level).isWithinFane(globalLine.getLeaderUUID(), player.blockPosition())) {
+			com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.grantIfNotDone(player,
+					com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.ADV_COVENANT_WRITTEN_IN_PLACE);
+		}
 		BloodVolumeEvents.syncVolume(player, playerBlood);
 		syncBloodlinePool(player, globalLine);
 		syncWellFromPool(level, pos, globalLine);

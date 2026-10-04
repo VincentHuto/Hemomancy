@@ -82,6 +82,7 @@ public final class LiberDiscoveryEvents {
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("hematic_memory"),             LiberEntryDefinitions.BLOOD_MEMORIES);
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("engram_stamp"),               LiberEntryDefinitions.BLOOD_MEMORIES);
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("unsigned_ancestral_ledger"),  LiberEntryDefinitions.BLOOD_MEMORIES);
+		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("mnemonic_ambergris"), LiberEntryDefinitions.MNEMONIC_AMBERGRIS);
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("qliphoth_seed"),  LiberEntryDefinitions.QLIPHOTH);
 		BookEntryRegistry.registerItemUnlock(Hemomancy.rloc("qliphoth_pome"),  LiberEntryDefinitions.QLIPHOTH);
 

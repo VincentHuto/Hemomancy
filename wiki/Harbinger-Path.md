@@ -50,7 +50,7 @@ The Hematic Order publicly recognizes seven degrees. Apotheos is the hidden eigh
 - Leaving the bed early keeps the injection pending without granting Degree 3. Save and reload do not require another vial; complete a later night's sleep.
 - **Theme:** Incarnadine Fane; blood becomes shaped memory and external craft
 - **Core progression:** deliberate puppeteering and advanced non-Canon Somatic Loom work; Drudges and every Saint trial, including Hemorath, are post-release expansion content
-- Ask the Mnemonist for a one-time, two-minute guided Chamber glimpse. It returns your original inventory and equipment without permanently attuning you. Dreams and guided visits block world interaction, pickup, and dropping; a rejected inventory-screen drop keeps its item on the cursor. Finish any item transfer before beginning the visit. Holding a tool does not prevent entry.
+- Ask the Mnemonist for a one-time, two-minute guided Chamber glimpse. Items you rearrange or craft with during the glimpse are temporary copies. It returns your original inventory and equipment without permanently attuning you. Dreams and guided visits block world interaction, pickup, and dropping; a rejected inventory-screen drop keeps its item on the cursor. Finish any item transfer before beginning the visit. Holding a tool does not prevent entry.
 
 ### Degree 4: Adept
 
@@ -64,6 +64,8 @@ The Hematic Order publicly recognizes seven degrees. Apotheos is the hidden eigh
 - **Theme:** the Crimson Lodge and its concealed mycelial research
 - **Core progression:** Bloodline Founding, Morphling Incubator, Sanguine Monolith, and Founding Fane eligibility
 - Bloodline Founding creates the covenant. The later Founding Fane rite gives that covenant a Flexible Envelope shaped by a Consecrated Bloodwell and connected Hematic Stakes.
+- Members of an existing bloodline can earn their personal D6 chapter proof at D5 by standing inside its Fane and using Blood Projection to deposit their own blood into its Bloodwell. Membership, observation, withdrawal, and a zero deposit do not count.
+- Using a blood tool at the shared Bloodwell starts that tool's transfer. Opening the ordinary pool monitor still requires personal Bloodwell mastery.
 - Founding a valid bloodline and consecrating its first usable Fane completes **A Covenant Written in Place**, the chapter proof for the Sanctified rite.
 
 ### Degree 6: Sanctified

@@ -24,6 +24,11 @@
     {
       "type": "single",
       "resource": "hemomancy:entity/liber_sanguinum"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "hemomancy:entity/blood_gourd/hemorath_rib",
+      "sprite": "hemomancy:entity/blood_gourd/hemorath_rib"
     }
   ]
 }

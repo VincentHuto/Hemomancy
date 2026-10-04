@@ -24,22 +24,9 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      - name: Verify dependency bundle
+      - name: Verify pinned dependency inputs
         shell: pwsh
-        run: |
-          $required = @(
-            "libs/TerraBlender-neoforge-1.21.1-4.1.0.8.jar",
-            "libs/buildinggadgets2-1.3.9.jar",
-            "libs/worldedit-mod-7.3.8.jar",
-            "libs/moonlight-neoforge-1.21.1-3.0.20.jar",
-            "libs/dummmmmmy-1.21-2.0.12-neoforge.jar",
-            "libs/theoneprobe-1.21_neo-12.0.8.jar",
-            "libs/jei-1.21.1-neoforge-19.27.0.340.jar"
-          )
-          $missing = $required | Where-Object { -not (Test-Path -LiteralPath $_) }
-          if ($missing) {
-            throw "Runner is missing required local jars: $($missing -join ', ')"
-          }
+        run: pwsh -NoProfile -File gradle/verify-dependency-bundle.ps1
 
       - name: Run alpha release gate
         shell: pwsh
@@ -52,4 +39,6 @@ jobs:
           name: alpha-check-reports
           path: |
             build/reports/tests/
+            build/phlegethontic-gametest/logs/latest.log
+            gradle/dependency-bundle.json
             run/logs/latest.log

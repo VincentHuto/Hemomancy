@@ -384,6 +384,13 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		return curRecipe;
 	}
 
+	public MemoryWeavingRecipe getPreviewRecipe() {
+		if (level == null || contents.get(0).isEmpty() || recoveryRequired) return null;
+		ResourceLocation id = ResourceLocation.tryParse(selectedRecipeId);
+		var holder = id == null ? null : level.getRecipeManager().byKey(id).orElse(null);
+		if (holder == null || !(holder.value() instanceof MemoryWeavingRecipe recipe) || !catalystsMatch(recipe)) return null;
+		return committedRecipe.isEmpty() || committedRecipe.equals(recipeCommitment(recipe)) ? recipe : null;
+	}
 	public String getRecipePath() {
 		return recipePath;
 	}

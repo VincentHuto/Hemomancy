@@ -52,7 +52,6 @@ public class MasonsEffigyScreen extends AbstractContainerScreen<MasonsEffigyMenu
 	private static final int SOCKET_X = 101;
 	private static final int SOCKET_Y = 120;
 	private static final int SLOT_SIZE = 18;
-	private static final int SOCKET_GAP = 8;
 	private static final int VEIN_COUNT = 12;
 
 	private final List<ResourceLocation> selected = new ArrayList<>();
@@ -216,18 +215,24 @@ public class MasonsEffigyScreen extends AbstractContainerScreen<MasonsEffigyMenu
 	private void renderActiveScarSockets(GuiGraphics gfx) {
 		int x = leftPos + SOCKET_X;
 		int y = topPos + SOCKET_Y;
+		int socketSize = 14;
 		for (int i = 0; i < MasonsEffigyMenu.MAX_SELECTED_SCARS; i++) {
-			int sx = x + i * (SLOT_SIZE + SOCKET_GAP);
+			int sx = x + i * 14;
 			boolean unlocked = i < menu.getMaxSelectableScars();
 			boolean occupied = i < selected.size();
-			drawItemSlot(gfx, sx, y, occupied);
+			gfx.fill(sx, y, sx + socketSize, y + socketSize, occupied ? LINE_BRIGHT : LINE_DIM);
+			gfx.fill(sx + 1, y + 1, sx + socketSize - 1, y + socketSize - 1, PANEL_DARK);
 			if (unlocked && occupied) {
 				ItemStack scarStack = scarStackFor(selected.get(i));
 				if (!scarStack.isEmpty()) {
-					gfx.renderItem(scarStack, sx + 1, y + 1);
+					gfx.pose().pushPose();
+					gfx.pose().translate(sx + 1, y + 1, 0);
+					gfx.pose().scale(0.75F, 0.75F, 1);
+					gfx.renderItem(scarStack, 0, 0);
+					gfx.pose().popPose();
 				}
 			} else if (!unlocked) {
-				gfx.fill(sx + 2, y + 2, sx + SLOT_SIZE - 2, y + SLOT_SIZE - 2, 0xAA030101);
+				gfx.fill(sx + 2, y + 2, sx + socketSize - 2, y + socketSize - 2, 0xAA030101);
 			}
 		}
 	}

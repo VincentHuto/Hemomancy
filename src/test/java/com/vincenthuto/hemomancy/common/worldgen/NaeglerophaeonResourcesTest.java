@@ -34,8 +34,20 @@ class NaeglerophaeonResourcesTest {
 		assertFalse(Files.readString(ROOT.resolve(
 				"src/main/resources/data/hemomancy/worldgen/biome/cortical_drift.json"))
 				.contains("naeglerophaeon"));
-		assertTrue(json("src/main/resources/data/hemomancy/blood_profiles/naeglerophaeon.json")
+		assertFalse(json("src/main/resources/data/hemomancy/blood_profiles/naeglerophaeon.json")
 				.get("requires_living_syringe").getAsBoolean());
+	}
+
+	@Test
+	void authoredEntityGeometryIsNotScannedAsABlockModel() throws IOException {
+		Path geometry = ROOT.resolve("src/main/resources/assets/hemomancy/entity_geometry/naeglerophaeon_cube_geometry.json");
+		assertTrue(Files.exists(geometry), "Custom entity geometry must live outside the block-model scan");
+		assertFalse(Files.exists(ROOT.resolve("src/main/resources/assets/hemomancy/models/entity/naeglerophaeon_cube_geometry.json")));
+		JsonObject model = JsonParser.parseString(Files.readString(geometry)).getAsJsonObject();
+		assertFalse(model.getAsJsonArray("elements").isEmpty());
+		assertFalse(model.getAsJsonArray("outliner").isEmpty());
+		String renderer = Files.readString(ROOT.resolve("src/main/java/com/vincenthuto/hemomancy/client/model/entity/boss/endgame/NaeglerophaeonBlockModel.java"));
+		assertTrue(renderer.contains("/assets/hemomancy/entity_geometry/naeglerophaeon_cube_geometry.json"));
 	}
 
 	@Test

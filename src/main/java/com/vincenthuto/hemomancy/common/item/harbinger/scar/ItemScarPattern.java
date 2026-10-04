@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.client.render.item.ScarPatternItemRenderer;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
-import com.vincenthuto.hemomancy.common.recipe.serializer.ScarRecipeSerializer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.component.DataComponents;
@@ -39,7 +38,7 @@ import java.util.List;
 
 public class ItemScarPattern extends Item implements HemoClientItemExtensionsProvider {
 	public static final String TAG_SCAR_IDS = "ScarIds";
-	public static final int MAX_SCAR_IDS = 4;
+	public static final int MAX_SCAR_IDS = 7;
 
 	public ItemScarPattern(Properties prop) {
 		super(prop.stacksTo(1));
@@ -119,18 +118,10 @@ public class ItemScarPattern extends Item implements HemoClientItemExtensionsPro
 
 	public static ScarRecipe getRecipeForScarId(ResourceLocation scarId, Level level) {
 		String recipePath = recipePathForScarId(scarId);
-		ScarRecipe recipe = ScarRecipeSerializer.getRecipe(recipePath);
-		if (recipe != null) {
-			return recipe;
-		}
-
-		recipe = getRecipeFromLevel(level, recipePath);
-		if (recipe != null) {
-			return recipe;
-		}
+		if (level != null) return getRecipeFromLevel(level, recipePath);
 
 		Level serverLevel = getServerLevel();
-		recipe = getRecipeFromLevel(serverLevel, recipePath);
+		ScarRecipe recipe = getRecipeFromLevel(serverLevel, recipePath);
 		if (recipe != null) {
 			return recipe;
 		}
@@ -145,9 +136,6 @@ public class ItemScarPattern extends Item implements HemoClientItemExtensionsPro
 	private static String recipePathForScarId(ResourceLocation scarId) {
 		if (scarId == null) {
 			return "";
-		}
-		if (scarId.getNamespace().equals(Hemomancy.MOD_ID)) {
-			return scarId.getPath();
 		}
 		return scarId.toString();
 	}
@@ -164,11 +152,15 @@ public class ItemScarPattern extends Item implements HemoClientItemExtensionsPro
 			return null;
 		}
 
+		ResourceLocation requested = ResourceLocation.tryParse(recipePath);
+		if (requested == null) return null;
 		for (RecipeHolder<ScarRecipe> holder : level.getRecipeManager().getAllRecipesFor(RecipeInit.chisel_recipe.get())) {
 			ResourceLocation id = holder.id();
+			if (!id.getNamespace().equals(requested.getNamespace())) continue;
 			String idPath = id.getPath();
-			if (idPath.equals(recipePath) || idPath.equals("scar/" + recipePath) || idPath.equals("chisel/" + recipePath)
-					|| idPath.equals("rune/" + recipePath)) {
+			String requestedPath = requested.getPath();
+			if (idPath.equals(requestedPath) || idPath.equals("scar/" + requestedPath) || idPath.equals("chisel/" + requestedPath)
+					|| idPath.equals("rune/" + requestedPath)) {
 				return holder.value();
 			}
 		}

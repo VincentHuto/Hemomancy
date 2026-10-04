@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.block.harbinger.functional.ConsecratedBloodwellBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
@@ -21,6 +22,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent.BreakEvent;
 
@@ -42,6 +44,14 @@ public final class MachineAccessEvents {
 		}
 
 		Block block = resolveGatedBlock(level, event.getPos(), level.getBlockState(event.getPos()));
+		if (block == BlockInit.consecrated_bloodwell.get() && player instanceof ServerPlayer member
+				&& ConsecratedBloodwellBlock.canUseBloodwell(member, event.getPos())
+				&& BloodProjectionInteractionEvents.isBloodToolUse(player, event.getItemStack())) {
+			// Shared-Fane blood transfer is personal contribution, not pool-menu mastery.
+			event.setUseBlock(TriState.FALSE);
+			event.setUseItem(TriState.TRUE);
+			return;
+		}
 		if (block == BlockInit.mnemonic_reliquary.get() && player instanceof ServerPlayer serverPlayer
 				&& HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 3) {
 			MnemonicReliquaryProgression.teach(serverPlayer);

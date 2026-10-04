@@ -248,7 +248,7 @@ public final class PuppeteeringGameTests {
 		helper.succeed();
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	@GameTest(templateNamespace = "hemomancy", template = "ductilis_arena", timeoutTicks = 40)
 	public static void silentClaimedWillDoesNotConsumeTheShapedBodySlot(GameTestHelper helper) {
 		ServerPlayer owner = testPlayer(helper);
 		Mob claimedWill = null;
@@ -261,12 +261,17 @@ public final class PuppeteeringGameTests {
 			owner.setItemInHand(InteractionHand.MAIN_HAND, crossbar);
 
 			claimedWill = EntityInit.will.get().create(helper.getLevel());
+			claimedWill.setPos(owner.position().add(2, 0, 0));
+			helper.assertTrue(helper.getBounds().contains(owner.position()) && helper.getBounds().contains(claimedWill.position()),
+					"Claimed-Will fixture must own its player and bonus body; bounds=" + helper.getBounds());
 			BoundPuppeteerSummon claimed = (BoundPuppeteerSummon) claimedWill;
 			claimed.hemomancy$setOwnerUUID(owner.getUUID());
 			claimed.hemomancy$setCrossbarUUID(MarionetteCrossbarItem.ensureCrossbarId(crossbar));
 			claimed.hemomancy$setSummonName("claimed_will");
 			BoundSummonBehavior.bindOwnerSession(claimedWill, owner);
-			helper.getLevel().addFreshEntity(claimedWill);
+			helper.assertTrue(helper.getLevel().addFreshEntity(claimedWill), "Claimed-Will bonus body could not be spawned");
+			helper.assertTrue(MarionetteCrossbarItem.activeSummonsForOwner(owner).size() == 1,
+					"The bonus body must be indexed before requesting a shaped summon");
 
 			MarionetteCrossbarItem.callOrRecallSelectedSummon(crossbar, owner);
 			java.util.List<Mob> active = MarionetteCrossbarItem.activeSummonsForOwner(owner);
@@ -361,18 +366,23 @@ public final class PuppeteeringGameTests {
 		helper.succeed();
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 200)
+	@GameTest(templateNamespace = "hemomancy", template = "ductilis_arena", timeoutTicks = 200)
 	public static void veinwingVultureFlightControllerPursuesAssignedTarget(GameTestHelper helper) {
 		ServerPlayer owner = testPlayer(helper);
 		PuppeteerSummonDefinition definition = learnVulture(owner);
-		Mob summon = PuppeteerSummonFactory.createTrial(definition, helper.getLevel(), owner,
-				helper.absolutePos(new BlockPos(1, 2, 5))).orElseThrow();
+        Mob summon = PuppeteerSummonFactory.createTrial(definition, helper.getLevel(), owner,
+                helper.absolutePos(new BlockPos(1, 2, 5))).orElseThrow();
+        helper.assertTrue(helper.getBounds().contains(summon.position())
+                        && helper.getBounds().contains(owner.position()),
+                "Pursuit fixture must own its initial actor and target positions; bounds=" + helper.getBounds());
+        var removal = new FixtureEntityRemovalProbe(summon);
 		double startingDistance = summon.distanceTo(owner);
 		var chunk = new net.minecraft.world.level.ChunkPos(summon.blockPosition());
 		var targetChunk = new net.minecraft.world.level.ChunkPos(owner.blockPosition());
 		helper.getLevel().getChunkSource().addRegionTicket(VOLLEY_FIXTURE_TICKET, chunk, 2, owner.getUUID(), true);
-		Runnable cleanup = () -> {
-			summon.discard();
+        Runnable cleanup = () -> {
+            removal.close();
+            summon.discard();
 			removePlayer(owner);
 			helper.getLevel().getChunkSource().removeRegionTicket(VOLLEY_FIXTURE_TICKET, chunk, 2, owner.getUUID(), true);
 		};
@@ -396,7 +406,9 @@ public final class PuppeteeringGameTests {
 					helper.assertTrue(helper.getLevel().addFreshEntity(summon), "Pursuit fixture could not spawn");
 				}).thenWaitUntil(() -> helper.assertTrue(summon.isAlive() && summon.tickCount >= 50,
 						"Pursuit fixture must receive fifty natural actor ticks; ticks=" + summon.tickCount
-								+ ", alive=" + summon.isAlive()))
+                                + ", alive=" + summon.isAlive() + ", removal=" + summon.getRemovalReason()
+                                + ", indexed=" + (helper.getLevel().getEntity(summon.getUUID()) == summon)
+                                + ", removalTrace=" + removal.trace()))
 				.thenExecute(() -> {
 			try {
 				helper.assertTrue(summon.getTarget() == owner && summon.distanceTo(owner) < startingDistance - 2.0,
@@ -415,17 +427,22 @@ public final class PuppeteeringGameTests {
 		}).thenSucceed();
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 120)
+	@GameTest(templateNamespace = "hemomancy", template = "ductilis_arena", timeoutTicks = 120)
 	public static void veinwingVultureFiresAFeatherVolleyBeforeClosingToMelee(GameTestHelper helper) {
 		ServerPlayer caster = testPlayer(helper);
 		caster.setPos(net.minecraft.world.phys.Vec3.atCenterOf(helper.absolutePos(new BlockPos(12, 2, 2))));
-		Mob vulture = PuppeteerSummonFactory.createTrial(learnVulture(caster), helper.getLevel(), caster,
-				helper.absolutePos(new BlockPos(1, 3, 2))).orElseThrow();
+        Mob vulture = PuppeteerSummonFactory.createTrial(learnVulture(caster), helper.getLevel(), caster,
+                helper.absolutePos(new BlockPos(1, 3, 2))).orElseThrow();
+        helper.assertTrue(helper.getBounds().contains(vulture.position())
+                        && helper.getBounds().contains(caster.position()),
+                "Volley fixture must own its initial actor and target positions; bounds=" + helper.getBounds());
+        var removal = new FixtureEntityRemovalProbe(vulture);
 		var chunk = new net.minecraft.world.level.ChunkPos(vulture.blockPosition());
 		var targetChunk = new net.minecraft.world.level.ChunkPos(caster.blockPosition());
 		helper.getLevel().getChunkSource().addRegionTicket(VOLLEY_FIXTURE_TICKET, chunk, 2, caster.getUUID(), true);
-		Runnable cleanup = () -> {
-			vulture.discard();
+        Runnable cleanup = () -> {
+            removal.close();
+            vulture.discard();
 			removePlayer(caster);
 			helper.getLevel().getChunkSource().removeRegionTicket(VOLLEY_FIXTURE_TICKET, chunk, 2, caster.getUUID(), true);
 		};
@@ -448,7 +465,9 @@ public final class PuppeteeringGameTests {
 					helper.assertTrue(helper.getLevel().addFreshEntity(vulture), "Volley fixture could not spawn");
 				}).thenWaitUntil(() -> helper.assertTrue(vulture.isAlive() && vulture.tickCount >= 5,
 						"Volley fixture must receive five natural actor ticks; ticks=" + vulture.tickCount
-								+ ", alive=" + vulture.isAlive()))
+                                + ", alive=" + vulture.isAlive() + ", removal=" + vulture.getRemovalReason()
+                                + ", indexed=" + (helper.getLevel().getEntity(vulture.getUUID()) == vulture)
+                                + ", removalTrace=" + removal.trace()))
 				.thenExecute(() -> {
 			try {
 				int volleySize = helper.getLevel().getEntitiesOfClass(VeinwingFeatherEntity.class,

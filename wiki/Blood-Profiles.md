@@ -59,7 +59,8 @@ targets remain invalid during direct sampling even with the syringe.
 The initial data contains 131 profiles, of which 80 require the syringe: the
 selected large/armored vanilla animals and hostile mobs, villagers and wandering
 traders, all registered Hemomancy NPCs, registered Hemomancy mobs/summons with
-declared base health above 20 HP, and Chitinite, Fervent Chitinite, Chalybeate Snail,
+declared base health above 20 HP (except Hemomancy Armadillo, Desiccant,
+Mortarbound, and Naeglerophaeon), and Chitinite, Fervent Chitinite, Chalybeate Snail,
 and Hematic Construct. Flags are static data; damage and temporary health changes
 do not change eligibility. Unlisted creatures retain ordinary sampling.
 

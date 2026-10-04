@@ -122,6 +122,28 @@ public final class GameplayCampaignDriver {
             case "open" -> mc.createWorldOpenFlows().openWorld(c.get("name").getAsString(), () -> {});
             case "capture" -> Screenshot.grab(mc.gameDirectory, safe(c.get("name").getAsString()) + ".png",
                     mc.getMainRenderTarget(), message -> log("capture", message.getString()));
+            case "guiScale" -> {
+                int scale = c.get("value").getAsInt();
+                if (scale < 1 || scale > 4) throw new IllegalArgumentException("Review GUI scale must be 1 through 4");
+                mc.options.guiScale().set(scale);
+                mc.resizeDisplay();
+            }
+            case "ledgerReview" -> {
+                if (!(mc.screen instanceof com.vincenthuto.hemomancy.client.screen.item.HarbingerAssignmentLedgerScreen))
+                    throw new IllegalStateException("No assignment ledger open");
+                var screenType = mc.screen.getClass();
+                var path = screenType.getDeclaredField("archonPath");
+                path.setAccessible(true);
+                var sectionType = Class.forName(screenType.getName() + "$AssignmentSection");
+                Object ending = Arrays.stream(sectionType.getEnumConstants())
+                        .filter(value -> value.toString().equals("BLOOD_BENEATH_BLOOD")).findFirst().orElseThrow();
+                var complete = screenType.getDeclaredMethod("isAssignmentComplete", sectionType);
+                complete.setAccessible(true);
+                var result = new JsonObject();
+                result.addProperty("archonPath", path.get(mc.screen).toString());
+                result.addProperty("endingComplete", (boolean) complete.invoke(mc.screen, ending));
+                write("ledger-review.json", result);
+            }
             case "hover" -> {
                 if (mc.screen == null) throw new IllegalStateException("No screen");
                 double x = c.get("x").getAsDouble(), y = c.get("y").getAsDouble();
@@ -242,6 +264,15 @@ public final class GameplayCampaignDriver {
                 else if (mc.hitResult instanceof BlockHitResult hit) mc.gameMode.startDestroyBlock(hit.getBlockPos(), hit.getDirection());
                 mc.player.swing(InteractionHand.MAIN_HAND);
             }
+            case "attackEntity" -> {
+                if (mc.hitResult instanceof EntityHitResult hit
+                        && hit.getEntity().getId() == c.get("targetId").getAsInt()
+                        && hit.getEntity() instanceof net.minecraft.world.entity.LivingEntity target
+                        && target.isAlive()) {
+                    mc.gameMode.attack(mc.player, target);
+                    mc.player.swing(InteractionHand.MAIN_HAND);
+                } else log("input", "Entity attack skipped because the requested entity is no longer under the crosshair");
+            }
             case "slot" -> mc.gameMode.handleInventoryMouseClick(mc.player.containerMenu.containerId,
                     c.get("slot").getAsInt(), c.has("button") ? c.get("button").getAsInt() : 0,
                     c.has("type") ? ClickType.valueOf(c.get("type").getAsString()) : ClickType.PICKUP, mc.player);
@@ -277,6 +308,12 @@ public final class GameplayCampaignDriver {
             JsonArray inventory = new JsonArray();
             for (int i=0;i<mc.player.getInventory().getContainerSize();i++) if (!mc.player.getInventory().getItem(i).isEmpty()) inventory.add(i+": "+mc.player.getInventory().getItem(i));
             state.add("inventory",inventory);
+            JsonArray effects = new JsonArray();
+            for (var effect : mc.player.getActiveEffects()) effects.add(effect.toString());
+            state.add("effects", effects);
+            state.addProperty("pomes", HemoCapabilityAccess.requireInitiatoryDegree(mc.player).getTotalPomesConsumed());
+            state.addProperty("gameMode", mc.gameMode.getPlayerMode().getName());
+            state.addProperty("mainHand", mc.player.getMainHandItem().saveOptional(mc.level.registryAccess()).toString());
             JsonArray slots = new JsonArray();
             for (var slot : mc.player.containerMenu.slots) slots.add(slot.index+" @"+slot.x+","+slot.y+": "+slot.getItem());
             state.add("slots", slots);

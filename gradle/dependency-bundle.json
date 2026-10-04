@@ -1,0 +1,44 @@
+{
+  "hutosLib": {
+    "revision": "911f4b616385ba4199dba6719b5088b755f08f74",
+    "sourceSha256": "8AE4CDF30DBCE6D70A4E2C44E99911A1D957761BB36D67AE51215F6778EB8D5A"
+  },
+  "localJars": [
+    {
+      "path": "libs/create-1.21.1-6.0.10.jar",
+      "sha256": "EF87FE5709F1BA1F5B8BB20A2925B5AFB4669E178FD6D8BF10C167759EEFE37A"
+    },
+    {
+      "path": "libs/buildinggadgets2-1.3.9.jar",
+      "sha256": "ACAE3B628FA60AE8D34059B40C696EA282C01D20B14D32A506C4F85DD357B114"
+    },
+    {
+      "path": "libs/worldedit-mod-7.3.8.jar",
+      "sha256": "5E7752C97876D87411E3760BCC573CC431F43C453722E6959FA7FE54DB1B01CA"
+    },
+    {
+      "path": "libs/moonlight-neoforge-1.21.1-3.0.20.jar",
+      "sha256": "4F787E33CA53E44824987CDA208FD9C85DDB6B297A681222C66323EA6549B3EE"
+    },
+    {
+      "path": "libs/theoneprobe-1.21_neo-12.0.8.jar",
+      "sha256": "40D9CA8CF1A5B587297F56A9D6BCACF198B065FA2F29593A91215EA1567A8808"
+    },
+    {
+      "path": "libs/dummmmmmy-1.21-2.0.12-neoforge.jar",
+      "sha256": "4D35C6CDC7A17D6175F116EC8B31CE5EBC740E5D1412CE32CC721B042B2F5298"
+    },
+    {
+      "path": "libs/jei-1.21.1-neoforge-19.27.0.340.jar",
+      "sha256": "8AAF547432F1B4958239B036356B910692FE40F858C3073D996F56BBF7C99826"
+    },
+    {
+      "path": "libs/mna-3.1.11-neoforge.1.21.1.0.jar",
+      "sha256": "6CD035D531B89349A2D7652117A38CCBF236215DFFE7EAC7BB6436A25D738F12"
+    },
+    {
+      "path": "libs/TerraBlender-neoforge-1.21.1-4.1.0.8.jar",
+      "sha256": "EDB34C388FE17EA88D0A7FD11174BBF8AE8F28A4C8CE886F1BF9A5CF0EBC36B8"
+    }
+  ]
+}

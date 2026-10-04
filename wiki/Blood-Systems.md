@@ -735,3 +735,9 @@ See [area 4 comparisons and verification](../docs/manipulation_work_plan/04-bala
 ### Specimen storage
 
 The [Phlebotomist’s Cabinet](Phlebotomists-Cabinet.md) stores nine groups of up to 64 exactly matching full vials. Loose vials stay unstackable. Identified and unknown blood stay separate; ordinary extraction always produces individual vials.
+
+Scar Resonance adds one cerebral loadout slot per purchased level to the shared Effigy/Brazier capacity: base D4/D5/D6+ capacity is 1/2/4, with up to three bonus slots and seven stored scar IDs. Purchase does not bypass D4. Recipe decoding retains no static Scar or memory-weaving cache; templates and Loom previews resolve through the current level recipe manager. Removed recipes and missing catalysts cannot retain a preview.
+
+### Centrifuge fraction output
+
+The Fractionating Rotor recovers its secondary fraction into the same eight output slots as primary fractions. Matching items and components stack first; remaining fractions use empty slots. The whole batch must fit before samples are consumed. Blocked completion retains its rolled results for retry. Legacy extra-bank contents are saved and recovered through these slots as space opens, with their original processing-stage credit.

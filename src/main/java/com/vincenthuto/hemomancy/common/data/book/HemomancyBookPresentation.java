@@ -14,6 +14,7 @@ public final class HemomancyBookPresentation {
                 .map(progress -> canReveal(progress.hasClarityUnlocked(), progress.getClarity(), level)).orElse(false));
         book.setRevealRequirementLabel(level -> Component.translatable("hemomancy.book.clarity_requirement", roman(level)));
         boolean liber = book.getResourceLocation().getPath().equals("liberimmaculatus");
+        book.setShowWashedSearchCount(liber);
         book.setOwnerLine(player -> liber ? Component.translatable("hemomancy.book.owner", player.getName())
                 : Component.translatable("hemomancy.book.owner_degree", player.getName(), HemoCapabilityAccess.getPlayerDegreeNumber(player)));
         if (liber) {

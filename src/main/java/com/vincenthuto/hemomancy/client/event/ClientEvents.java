@@ -116,6 +116,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.RecipeBookCategories;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.*;
@@ -797,6 +798,14 @@ public class ClientEvents {
      public static class ClientModBusEvents {
 
         public static BakedModel bloodAbsorptionModel, bloodProjectionModel;
+
+        @SubscribeEvent
+        public static void registerMachineRecipeBookCategories(RegisterRecipeBookCategoriesEvent event) {
+            // Machines and rites use their own recipe interfaces, outside the vanilla book tabs.
+            for (var type : com.vincenthuto.hemomancy.common.init.RecipeInit.RECIPE_TYPES.getEntries()) {
+                event.registerRecipeCategoryFinder(type.get(), recipe -> RecipeBookCategories.UNKNOWN);
+            }
+        }
 
         @SubscribeEvent
         public static void registerScriptoriumGlintBuffers(net.neoforged.neoforge.client.event.RegisterRenderBuffersEvent event) {

@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.mission.shared.VagrantMindInquiryProgres
 import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftLedgerProgress;
 import com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroductionProgress;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.VeinBackgroundRenderer;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MilestoneDrawerState;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MilestoneDrawerView;
@@ -235,9 +236,9 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	private final boolean livingCovenantComplete;
 	private final int pomesConsumed;
 	private final boolean qliphothCommunionComplete;
-	private final boolean silentPending;
+	private final EnumArchonPath archonPath;
 	private final boolean severedPortalOpen;
-	private final boolean silentArchon;
+
 	private final EnumSet<AssignmentSection> collapsedAssignments = EnumSet.noneOf(AssignmentSection.class);
 	private final List<AssignmentHitbox> assignmentHitboxes = new ArrayList<>();
 	private final MilestoneDrawerState milestoneState = new MilestoneDrawerState();
@@ -283,8 +284,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			int artificerProgressSteps,
 			boolean foundedBloodline, boolean foundingFaneEstablished, boolean chamberReturned,
 			boolean covenantThroneBound, boolean covenantVigilCompleted, boolean livingCovenantComplete,
-			int pomesConsumed, boolean qliphothCommunionComplete, boolean silentPending,
-			boolean severedPortalOpen, boolean silentArchon) {
+			int pomesConsumed, boolean qliphothCommunionComplete, EnumArchonPath archonPath, boolean severedPortalOpen) {
 		super(Component.translatable("screen.hemomancy.harbinger_assignment_ledger.title"));
 		this.degree = degree;
 		this.firstAwakening = firstAwakening;
@@ -348,9 +348,9 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		this.livingCovenantComplete = livingCovenantComplete;
 		this.pomesConsumed = pomesConsumed;
 		this.qliphothCommunionComplete = qliphothCommunionComplete;
-		this.silentPending = silentPending;
+		this.archonPath = archonPath;
 		this.severedPortalOpen = severedPortalOpen;
-		this.silentArchon = silentArchon;
+
 	}
 
 	public static void open(int degree, boolean firstAwakening, boolean degreeOne,
@@ -384,8 +384,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			int artificerProgressSteps,
 			boolean foundedBloodline, boolean foundingFaneEstablished, boolean chamberReturned,
 			boolean covenantThroneBound, boolean covenantVigilCompleted, boolean livingCovenantComplete,
-			int pomesConsumed, boolean qliphothCommunionComplete, boolean silentPending,
-			boolean severedPortalOpen, boolean silentArchon) {
+			int pomesConsumed, boolean qliphothCommunionComplete, EnumArchonPath archonPath, boolean severedPortalOpen) {
 		Minecraft.getInstance().setScreen(new HarbingerAssignmentLedgerScreen(
 				degree, firstAwakening, degreeOne, firstBloodcraft,
 				firstRemnant, ledgerGranted, firstDrawsBriefed, firstDrawsSamples, firstDrawsSpecies,
@@ -413,7 +412,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 				artificerProgressSteps,
 				foundedBloodline, foundingFaneEstablished, chamberReturned,
 				covenantThroneBound, covenantVigilCompleted, livingCovenantComplete,
-				pomesConsumed, qliphothCommunionComplete, silentPending, severedPortalOpen, silentArchon));
+				pomesConsumed, qliphothCommunionComplete, archonPath, severedPortalOpen));
 	}
 
 	@Override
@@ -1409,7 +1408,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	}
 
 	private void renderCovenantWritten(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
-		int progress = (foundedBloodline ? 1 : 0) + (foundingFaneEstablished ? 1 : 0);
+		int progress = foundingFaneEstablished ? 2 : (foundedBloodline ? 1 : 0);
 		renderCompactChapter(gfx, AssignmentSection.COVENANT_WRITTEN, x, y, w, VICAR_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.covenant_written.title",
 				"screen.hemomancy.harbinger_assignment_ledger.covenant_written.progress",
@@ -1434,15 +1433,20 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 	}
 
 	private void renderBloodBeneathBlood(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
-		int progress = silentArchon ? 12 : Math.min(9, pomesConsumed)
-				+ (qliphothCommunionComplete ? 1 : 0) + (silentPending ? 1 : 0)
+		boolean completed = archonPath == EnumArchonPath.SILENT_ARCHON || archonPath == EnumArchonPath.APOTHEOS;
+		int progress = completed ? 12 : Math.min(9, pomesConsumed)
+				+ (qliphothCommunionComplete ? 1 : 0) + ((archonPath == EnumArchonPath.SILENT_PENDING || archonPath == EnumArchonPath.APOTHEOS_PENDING) ? 1 : 0)
 				+ (severedPortalOpen ? 1 : 0);
 		String descriptionKey;
-		if (silentArchon) {
+		if (archonPath == EnumArchonPath.APOTHEOS) {
+			descriptionKey = "screen.hemomancy.harbinger_assignment_ledger.blood_beneath.apotheos_complete";
+		} else if (archonPath == EnumArchonPath.APOTHEOS_PENDING) {
+			descriptionKey = "screen.hemomancy.harbinger_assignment_ledger.blood_beneath.apotheos_pending";
+		} else if (archonPath == EnumArchonPath.SILENT_ARCHON) {
 			descriptionKey = "screen.hemomancy.harbinger_assignment_ledger.blood_beneath.complete";
 		} else if (severedPortalOpen) {
 			descriptionKey = "screen.hemomancy.harbinger_assignment_ledger.blood_beneath.ordeal";
-		} else if (silentPending) {
+		} else if (archonPath == EnumArchonPath.SILENT_PENDING) {
 			descriptionKey = "screen.hemomancy.harbinger_assignment_ledger.blood_beneath.prune";
 		} else if (qliphothCommunionComplete) {
 			descriptionKey = "screen.hemomancy.harbinger_assignment_ledger.blood_beneath.revelation";
@@ -1452,7 +1456,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		renderCompactChapter(gfx, AssignmentSection.BLOOD_BENEATH_BLOOD, x, y, w, VICAR_PORTRAIT,
 				"screen.hemomancy.harbinger_assignment_ledger.blood_beneath.title",
 				"screen.hemomancy.harbinger_assignment_ledger.blood_beneath.progress",
-				progress, 12, silentArchon, descriptionKey, mouseX, mouseY);
+				progress, 12, completed, descriptionKey, mouseX, mouseY);
 	}
 
 	private void renderCompactChapter(GuiGraphics gfx, AssignmentSection section, int x, int y, int w,
@@ -1765,7 +1769,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			case THE_ASSUMED_LIMB -> artificerLivingArsenalFitting;
 			case LIVING_COVENANT -> livingCovenantComplete;
 			case ANCHORITE_D6 -> anchoriteD6Progress >= 4;
-			case BLOOD_BENEATH_BLOOD -> silentArchon;
+			case BLOOD_BENEATH_BLOOD -> archonPath == EnumArchonPath.SILENT_ARCHON || archonPath == EnumArchonPath.APOTHEOS;
 			case WEIGHT_OF_THE_FRAME -> artificerD7Fitting;
 		};
 	}

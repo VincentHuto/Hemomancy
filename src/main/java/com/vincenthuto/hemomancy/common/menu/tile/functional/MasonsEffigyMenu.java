@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class MasonsEffigyMenu extends AbstractContainerMenu {
-	public static final int MAX_SELECTED_SCARS = 4;
+	public static final int MAX_SELECTED_SCARS = com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern.MAX_SCAR_IDS;
 	public static final int PLAYER_INV_START = 0;
 	public static final int PLAYER_INV_SLOTS = 36;
 	public static final int PLAYER_INV_X = 32;

@@ -211,9 +211,11 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 
 	@Override
 	public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
-		if (!level.isClientSide && entity instanceof Player player && !canPlayerConsumeStack(stack, player)) {
-			player.displayClientMessage(Component.literal("The pome resists your mouth. It belongs to the one who grew it.")
-					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
+		if (entity instanceof Player player && !canPlayerConsumeStack(stack, player)) {
+			if (!level.isClientSide) {
+				player.displayClientMessage(Component.literal("The pome resists your mouth. It belongs to the one who grew it.")
+						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
+			}
 			return stack;
 		}
 

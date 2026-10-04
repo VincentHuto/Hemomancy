@@ -17,7 +17,8 @@
 
 ## Workflows that matter
 - Windows/PowerShell commands from project root: `./gradlew.bat build`, `./gradlew.bat test`, `./gradlew.bat runClient`, `./gradlew.bat runServer`, `./gradlew.bat runData`, `./gradlew.bat gameTestServer`.
-- Run `./gradlew.bat alphaCheck` for the combined JVM and dedicated GameTest alpha gate; see `docs/TESTING.md` for the in-game `/hemo test` fixture workflow.
+- Run `./gradlew.bat alphaCheck` for JVM contracts, dedicated GameTests, runtime resource errors and packaged asset-path/PNG-header/font-license checks; see `docs/TESTING.md` for the in-game `/hemo test` fixture workflow.
+- CI dependency preflight is `pwsh -NoProfile -File gradle/verify-dependency-bundle.ps1`. See `docs/DEPENDENCY_PROVISIONING.md` for the pinned JARs/HutosLib source snapshot and clean packaged acceptance.
 - `settings.gradle` pulls `../HutosLib` as a composite build when present; otherwise Hemomancy resolves `com.vincenthuto.hutoslib:hutoslib` normally.
 - `build.gradle` relies on local jars in `libs/` for TerraBlender, JEI, Create, Building Gadgets 2, WorldEdit, and other dev/runtime integrations; do not assume Maven coordinates exist for every dependency.
 - `src/generated/resources` is included as a resource source, but `processResources` excludes duplicates so `src/main/resources` stays authoritative.

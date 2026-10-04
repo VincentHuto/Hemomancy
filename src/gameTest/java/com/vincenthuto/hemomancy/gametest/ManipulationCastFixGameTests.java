@@ -324,12 +324,26 @@ public final class ManipulationCastFixGameTests {
 	}
 
 	// Other default-batch tests clear all reactive state while this test waits for upkeep.
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 60, batch = "hematic_beacon_refresh")
+	@GameTest(templateNamespace = "hemomancy", template = "combat_targeting_room", timeoutTicks = 60, batch = "hematic_beacon_refresh")
 	public static void hematicBeaconRefreshesItsRallyZone(GameTestHelper helper) {
 		ServerPlayer player = player(helper, "hematic-beacon-zone-test");
-		helper.getLevel().addNewPlayer(player);
+		player.setPos(helper.absoluteVec(new Vec3(2.5D, 2.0D, 2.5D)));
+		player.setYRot(0);
+		player.setXRot(0);
 		Vec3 center = player.getEyePosition().add(player.getLookAngle().scale(20.0D));
+		helper.assertTrue(helper.getBounds().contains(player.position()) && helper.getBounds().contains(center),
+				"Beacon fixture must own its actor and rally endpoint; bounds=" + helper.getBounds());
+		helper.getLevel().addNewPlayer(player);
 		Zombie target = zombie(helper, center);
+		target.setNoGravity(true);
+		var ray = helper.getLevel().clip(new net.minecraft.world.level.ClipContext(player.getEyePosition(), center,
+				net.minecraft.world.level.ClipContext.Block.OUTLINE,
+				net.minecraft.world.level.ClipContext.Fluid.NONE, player));
+		helper.assertTrue(ray.getType() == net.minecraft.world.phys.HitResult.Type.MISS,
+				"Beacon fixture must have a clear aimed path instead of using world-spawn terrain");
+		helper.assertTrue(helper.getLevel().getEntitiesOfClass(Zombie.class,
+				new net.minecraft.world.phys.AABB(center, center).inflate(8)).contains(target),
+				"Beacon target must be queryable in the aimed rally zone");
 		ManipulationReactiveEvents.clearSessionState();
 		ManipulationInit.hematic_beacon.get().getAction(player, helper.getLevel(), ItemStack.EMPTY,
 				player.blockPosition());
@@ -671,24 +685,56 @@ public final class ManipulationCastFixGameTests {
 		}
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	@GameTest(templateNamespace = "hemomancy", template = "combat_targeting_room", timeoutTicks = 40)
 	public static void activationPotentialScalesDamageFromPartialToFull(GameTestHelper helper) {
         ServerPlayer player = player(helper, "activation-potential-charge-test");
+        player.setPos(helper.absoluteVec(new Vec3(2.5D, 2.0D, 2.5D)));
         Zombie target = zombie(helper, player.position().add(2.0D, 0.0D, 0.0D));
-        var manipulation = ManipulationInit.activation_potential.get();
-        manipulation.getAction(player, helper.getLevel(), ItemStack.EMPTY, player.blockPosition(), 15.0F);
-        float partial = target.getMaxHealth() - target.getHealth();
-        // A second charged release happens on a later tick, outside the first discharge ledger.
-        helper.runAfterDelay(1, () -> {
-            try {
-                target.setHealth(target.getMaxHealth()); target.invulnerableTime = 0;
-                manipulation.getAction(player, helper.getLevel(), ItemStack.EMPTY, player.blockPosition(), 30.0F);
-                float full = target.getMaxHealth() - target.getHealth();
-                helper.assertTrue(partial > 0.0F && full > partial,
-                        "Activation Potential damage did not increase: partial=" + partial + ", full=" + full);
-                helper.succeed();
-            } finally { target.discard(); player.discard(); }
-        });
+        target.setNoGravity(true);
+        helper.assertTrue(helper.getBounds().contains(player.position()) && helper.getBounds().contains(target.position()),
+                "Discharge fixture must own its actor and target positions; bounds=" + helper.getBounds());
+        helper.assertTrue(helper.getLevel().getEntitiesOfClass(Zombie.class,
+                player.getBoundingBox().inflate(5)).contains(target), "Discharge target is outside the loaded fixture");
+        var removal = new FixtureEntityRemovalProbe(target);
+        try {
+            var manipulation = ManipulationInit.activation_potential.get();
+            manipulation.getAction(player, helper.getLevel(), ItemStack.EMPTY, player.blockPosition(), 15.0F);
+            float partial = target.getMaxHealth() - target.getHealth();
+            long firstReleaseTick = helper.getLevel().getGameTime();
+            // A second charged release happens on a later tick, outside the first discharge ledger.
+            helper.runAfterDelay(1, () -> {
+                try {
+                    target.setHealth(target.getMaxHealth()); target.invulnerableTime = 0;
+                    helper.assertTrue(helper.getLevel().getGameTime() > firstReleaseTick,
+                            "Second release must happen on a later world tick; first=" + firstReleaseTick
+                                    + ", now=" + helper.getLevel().getGameTime());
+                    helper.assertTrue(target.isAlive() && helper.getLevel().getEntitiesOfClass(Zombie.class,
+                                    player.getBoundingBox().inflate(5)).contains(target),
+                            "Second release lost its target; removalTrace=" + removal.trace());
+                    helper.assertTrue(com.vincenthuto.hemomancy.common.manipulation.ductilis.ConductionManager
+                                    .visible(helper.getLevel(), player.getEyePosition(), target.getEyePosition(), player),
+                            "Second release target became occluded");
+                    helper.assertTrue(com.vincenthuto.hemomancy.common.manipulation.ductilis.ConductionManager
+                                    .canClaimHit(player, target,
+                                            new com.vincenthuto.hemomancy.common.manipulation.ductilis.Discharge()),
+                            "Second release was still blocked by the first discharge ledger");
+                    manipulation.getAction(player, helper.getLevel(), ItemStack.EMPTY, player.blockPosition(), 30.0F);
+                    float full = target.getMaxHealth() - target.getHealth();
+                    helper.assertTrue(partial > 0.0F && full > partial,
+                            "Activation Potential damage did not increase: partial=" + partial + ", full=" + full
+                                    + ", alive=" + target.isAlive() + ", removal=" + target.getRemovalReason()
+                                    + ", indexed=" + (helper.getLevel().getEntity(target.getUUID()) == target)
+                                    + ", nearby=" + helper.getLevel().getEntitiesOfClass(Zombie.class,
+                                            player.getBoundingBox().inflate(5)).contains(target)
+                                    + ", removalTrace=" + removal.trace());
+                    helper.succeed();
+                } finally { removal.close(); target.discard(); player.discard(); }
+            });
+        } catch (RuntimeException | Error failure) {
+            removal.close();
+            target.discard(); player.discard();
+            throw failure;
+        }
     }
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
@@ -718,15 +764,17 @@ public final class ManipulationCastFixGameTests {
 		}
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	@GameTest(templateNamespace = "hemomancy", template = "combat_targeting_room", timeoutTicks = 40)
 	public static void vitricCombustionScalesDamageFromPartialToFull(GameTestHelper helper) {
 		ServerPlayer player = player(helper, "vitric-combustion-charge-test");
-		player.setPos(helper.absoluteVec(new Vec3(2.5D, 90.0D, 2.5D)));
+		player.setPos(helper.absoluteVec(new Vec3(2.5D, 2.0D, 2.5D)));
 		player.setYRot(0);
 		player.setXRot(0);
 		Vec3 targetPosition = player.getEyePosition(1.0F).add(player.getViewVector(1.0F).scale(22.0D));
 		Zombie target = zombie(helper, targetPosition);
 		try {
+			helper.assertTrue(helper.getBounds().contains(player.position()) && helper.getBounds().contains(target.position()),
+					"Vitric charge fixture must own its actor and blast endpoint; bounds=" + helper.getBounds());
 			var clearRay = helper.getLevel().clip(new net.minecraft.world.level.ClipContext(
 					player.getEyePosition(1.0F), targetPosition,
 					net.minecraft.world.level.ClipContext.Block.OUTLINE,
@@ -758,10 +806,10 @@ public final class ManipulationCastFixGameTests {
 		}
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	@GameTest(templateNamespace = "hemomancy", template = "combat_targeting_room", timeoutTicks = 40)
 	public static void vitricCombustionInterceptedRayDoesNotDamageItsDistantEndpoint(GameTestHelper helper) {
 		ServerPlayer player = player(helper, "vitric-combustion-occlusion-test");
-		player.setPos(helper.absoluteVec(new Vec3(2.5D, 90.0D, 2.5D)));
+		player.setPos(helper.absoluteVec(new Vec3(2.5D, 2.0D, 2.5D)));
 		player.setYRot(0);
 		player.setXRot(0);
 		Vec3 eye = player.getEyePosition(1.0F);
@@ -771,6 +819,9 @@ public final class ManipulationCastFixGameTests {
 		var oldWall = helper.getLevel().getBlockState(wall);
 		Zombie target = zombie(helper, endpoint);
 		try {
+			helper.assertTrue(helper.getBounds().contains(player.position()) && helper.getBounds().contains(target.position())
+						&& helper.getBounds().contains(Vec3.atCenterOf(wall)),
+					"Vitric interception fixture must own its actor, wall and endpoint; bounds=" + helper.getBounds());
 			helper.getLevel().setBlock(wall, net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), 3);
 			var ray = helper.getLevel().clip(new net.minecraft.world.level.ClipContext(
 					eye, endpoint, net.minecraft.world.level.ClipContext.Block.OUTLINE,

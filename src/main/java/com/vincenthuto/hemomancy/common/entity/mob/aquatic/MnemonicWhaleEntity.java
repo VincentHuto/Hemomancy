@@ -13,6 +13,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -25,15 +27,22 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
 import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.entity.animal.Squid;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.HashSet;
 
 public class MnemonicWhaleEntity extends WaterAnimal {
 	private static final int SAMPLE_COOLDOWN_TICKS = 6000;
@@ -53,17 +62,20 @@ public class MnemonicWhaleEntity extends WaterAnimal {
 	public static AttributeSupplier.Builder setAttributes() {
 		return Mob.createMobAttributes()
 				.add(Attributes.MAX_HEALTH, 38.0D)
+				.add(Attributes.ATTACK_DAMAGE, MnemonicWhaleTuning.BITE_DAMAGE)
+				.add(Attributes.FOLLOW_RANGE, MnemonicWhaleTuning.HUNT_RANGE)
 				.add(Attributes.MOVEMENT_SPEED, MnemonicWhaleTuning.MOVEMENT_SPEED)
 				.add(Attributes.KNOCKBACK_RESISTANCE, 0.8D);
 	}
 
 	@Override
 	protected PathNavigation createNavigation(Level level) {
-		return new WaterBoundPathNavigation(this, level);
+		return new MnemonicWhaleNavigation(this, level);
 	}
 
 	@Override
 	protected void registerGoals() {
+		this.goalSelector.addGoal(0, new MnemonicWhaleHuntGoal(this));
 		this.goalSelector.addGoal(1, new MnemonicWhaleCruiseGoal(this));
 		this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 8.0F));
 		this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
@@ -92,7 +104,7 @@ public class MnemonicWhaleEntity extends WaterAnimal {
 		if (this.isInWater()) {
 			BlockPos below = this.blockPosition().below();
 			Vec3 current = this.getDeltaMovement();
-			boolean tooCloseToSurface = this.getY() > this.level().getSeaLevel()
+			boolean tooCloseToSurface = this.getTarget() == null && this.getY() > this.level().getSeaLevel()
 					- ErythrocoralReefTuning.WHALE_SHALLOW_WATER_PUSH_DEPTH;
 			boolean hasWaterBelow = this.level().getFluidState(below).is(FluidTags.WATER);
 			double yMotion = MnemonicWhaleMovementRules.adjustVerticalMotion(current.y, tooCloseToSurface,
@@ -101,6 +113,29 @@ public class MnemonicWhaleEntity extends WaterAnimal {
 				this.setDeltaMovement(current.x, yMotion, current.z);
 			}
 		}
+	}
+
+	static boolean isFeedingPrey(LivingEntity prey) {
+		return (prey instanceof Squid || prey instanceof PrismCuttleEntity)
+				&& prey.isAlive() && !prey.isRemoved() && prey.isInWater();
+	}
+
+	boolean canBite(LivingEntity prey) {
+		return this.isAlive() && this.isInWater() && isFeedingPrey(prey)
+				&& this.getBoundingBox().inflate(MnemonicWhaleTuning.BITE_REACH).intersects(prey.getBoundingBox())
+				&& this.hasLineOfSight(prey);
+	}
+
+	@Override
+	public boolean doHurtTarget(Entity target) {
+		if (this.level().isClientSide() || !(target instanceof LivingEntity prey) || !this.canBite(prey)) {
+			return false;
+		}
+		boolean hurt = super.doHurtTarget(prey);
+		if (hurt && !prey.isAlive()) {
+			this.spawnAtLocation(new ItemStack(ItemInit.mnemonic_ambergris.get()), this.getBbHeight() + 0.1F);
+		}
+		return hurt;
 	}
 
 	@Override
@@ -161,6 +196,160 @@ public class MnemonicWhaleEntity extends WaterAnimal {
 	@Override
 	public float getVoicePitch() {
 		return 0.65F + this.random.nextFloat() * 0.1F;
+	}
+
+	private static final class MnemonicWhaleHuntGoal extends Goal {
+		private final MnemonicWhaleEntity whale;
+		private LivingEntity prey;
+		private Path path;
+		private int nextSearchTick;
+		private int repathTicks;
+		private int biteTicks;
+		private int stalledTicks;
+		private double closestDistance;
+		private boolean unreachable;
+
+		private MnemonicWhaleHuntGoal(MnemonicWhaleEntity whale) {
+			this.whale = whale;
+			this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+		}
+
+		@Override
+		public boolean canUse() {
+			if (!this.whale.isInWater() || this.whale.hasControllingPassenger()
+					|| this.whale.tickCount < this.nextSearchTick) {
+				return false;
+			}
+			this.nextSearchTick = this.whale.tickCount + MnemonicWhaleTuning.HUNT_SEARCH_INTERVAL_TICKS;
+			var candidates = this.whale.level().getEntitiesOfClass(LivingEntity.class,
+					this.whale.getBoundingBox().inflate(MnemonicWhaleTuning.HUNT_RANGE),
+					candidate -> isFeedingPrey(candidate) && this.inRange(candidate));
+			candidates.sort(Comparator.comparingDouble(this.whale::distanceToSqr));
+			for (LivingEntity candidate : candidates) {
+				Path candidatePath = this.pathTo(candidate);
+				if (this.whale.canBite(candidate) || candidatePath != null && candidatePath.canReach()) {
+					this.prey = candidate;
+					this.path = candidatePath;
+					return true;
+				}
+			}
+			return false;
+		}
+
+		@Override
+		public boolean canContinueToUse() {
+			return this.prey != null && isFeedingPrey(this.prey) && this.inRange(this.prey)
+					&& this.whale.isInWater() && !this.whale.hasControllingPassenger()
+					&& !this.unreachable;
+		}
+
+		@Override
+		public void start() {
+			this.whale.setTarget(this.prey);
+			this.repathTicks = 0;
+			this.biteTicks = 0;
+			this.stalledTicks = 0;
+			this.closestDistance = this.whale.distanceToSqr(this.prey);
+			this.unreachable = false;
+			if (this.path != null) {
+				this.whale.getNavigation().moveTo(this.path, MnemonicWhaleTuning.HUNT_SPEED_MODIFIER);
+			}
+		}
+
+		@Override
+		public boolean requiresUpdateEveryTick() {
+			return true;
+		}
+
+		@Override
+		public void tick() {
+			this.whale.getLookControl().setLookAt(this.prey, 12.0F, 12.0F);
+			if (this.biteTicks > 0) {
+				this.biteTicks--;
+			}
+			if (this.whale.canBite(this.prey)) {
+				this.whale.getNavigation().stop();
+				this.stalledTicks = 0;
+				if (this.biteTicks == 0) {
+					this.whale.doHurtTarget(this.prey);
+					this.biteTicks = MnemonicWhaleTuning.BITE_INTERVAL_TICKS;
+				}
+				return;
+			}
+			if (--this.repathTicks <= 0) {
+				this.repathTicks = MnemonicWhaleTuning.HUNT_REPATH_INTERVAL_TICKS;
+				this.path = this.pathTo(this.prey);
+				if (this.path == null || !this.path.canReach()) {
+					this.unreachable = true;
+					return;
+				}
+				this.whale.getNavigation().stop();
+				this.whale.getNavigation().moveTo(this.path, MnemonicWhaleTuning.HUNT_SPEED_MODIFIER);
+			}
+			double distance = this.whale.distanceToSqr(this.prey);
+			if (distance < this.closestDistance - 0.25D) {
+				this.closestDistance = distance;
+				this.stalledTicks = 0;
+			} else if (++this.stalledTicks >= MnemonicWhaleTuning.HUNT_STALL_TIMEOUT_TICKS) {
+				this.unreachable = true;
+			}
+		}
+
+		@Override
+		public void stop() {
+			this.whale.getNavigation().stop();
+			this.whale.setTarget(null);
+			if (this.unreachable) {
+				this.nextSearchTick = this.whale.tickCount + MnemonicWhaleTuning.HUNT_STALL_TIMEOUT_TICKS;
+			}
+			this.prey = null;
+			this.path = null;
+		}
+
+		private boolean inRange(LivingEntity candidate) {
+			return this.whale.distanceToSqr(candidate) <= MnemonicWhaleTuning.HUNT_RANGE * MnemonicWhaleTuning.HUNT_RANGE;
+		}
+
+		private Path pathTo(LivingEntity candidate) {
+			// Path nodes anchor the whale's wide footprint at its corner, not its centre.
+			double centreOffset = (int) (this.whale.getBbWidth() + 1.0F) * 0.5D;
+			BlockPos approach = BlockPos.containing(candidate.getX() - centreOffset + 0.5D,
+					candidate.getY(), candidate.getZ() - centreOffset + 0.5D);
+			var approaches = new HashSet<BlockPos>();
+			for (BlockPos node : BlockPos.betweenClosed(approach.offset(-2, -2, -2), approach.offset(2, 1, 2))) {
+				Vec3 centre = new Vec3(node.getX() + centreOffset, node.getY(), node.getZ() + centreOffset);
+				AABB biteBox = this.whale.getBoundingBox().move(centre.subtract(this.whale.position()))
+						.inflate(MnemonicWhaleTuning.BITE_REACH - 0.3D);
+				if (biteBox.intersects(candidate.getBoundingBox()) && this.whale.level().clip(new ClipContext(
+						centre.add(0, this.whale.getEyeHeight(), 0), candidate.getEyePosition(),
+						ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this.whale)).getType() == HitResult.Type.MISS) {
+					approaches.add(node.immutable());
+				}
+			}
+			return approaches.isEmpty() ? null : this.whale.getNavigation().createPath(approaches, 0);
+		}
+	}
+
+	private static final class MnemonicWhaleNavigation extends WaterBoundPathNavigation {
+		private MnemonicWhaleNavigation(MnemonicWhaleEntity whale, Level level) {
+			super(whale, level);
+		}
+
+		@Override
+		protected void followThePath() {
+			if (this.mob.getTarget() == null) {
+				super.followThePath();
+				return;
+			}
+			// The normal 2.1-block waypoint tolerance stops this wide mob outside biting range.
+			Vec3 position = this.getTempMobPos();
+			Vec3 next = this.path.getNextEntityPos(this.mob);
+			if (Math.abs(position.x - next.x) < 0.25D && Math.abs(position.z - next.z) < 0.25D
+					&& Math.abs(position.y - next.y) < 1.0D) {
+				this.path.advance();
+			}
+			this.doStuckDetection(position);
+		}
 	}
 
 	private static final class MnemonicWhaleCruiseGoal extends Goal {

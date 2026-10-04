@@ -24,6 +24,19 @@ sourceSets.main.resources {
     // Exclude common development only resources from finalized outputs
     exclude("**/*.bbmodel") // BlockBench project files
     exclude("src/generated/**/.cache") // datagen cache files
+    // Preserve authoring archives in source without exposing them to resource-pack scanners.
+    exclude('assets/hemomancy/**/* - Copy.*')
+    exclude('assets/hemomancy/models/entity/bbmodel/imports/**')
+    exclude('assets/hemomancy/textures/item/sanguine formation/**')
+    exclude('assets/hemomancy/sounds/**/*.mp3')
+    exclude('assets/hemomancy/sounds/entity/colin/OLD*.ogg')
+    exclude('assets/hemomancy/shaders/program/ShaderBasicMethods.txt')
+    exclude('assets/hemomancy/shaders/program/HowToShaderTileEntities')
+    exclude('assets/hemomancy/font/OFL-Jacquard24.txt')
+    exclude('assets/hemomancy/textures/block/old/infected_cap.png') // Unreferenced archive has a non-PNG header.
+    exclude('assets/hemomancy/textures/entity/drudge/model_drudge_grey_old (*).png')
+    exclude('assets/hemomancy/textures/gui/microscope/README.md')
+    exclude('assets/hemomancy/textures/gui/old/BORDER.png')
 }
 
 var replaceProperties = [
@@ -46,6 +59,9 @@ var replaceProperties = [
 tasks.named('processResources', ProcessResources).configure {
     // Keep src/main/resources as the authoritative copy when datagen outputs overlap.
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from('src/main/resources/assets/hemomancy/font/OFL-Jacquard24.txt') {
+        into 'META-INF/licenses/hemomancy'
+    }
     inputs.properties replaceProperties
     filesMatching(['META-INF/neoforge.mods.toml', 'pack.mcmeta']) {
         expand replaceProperties
@@ -394,10 +410,42 @@ tasks.register('verifyGameTestResourceLog') {
     }
 }
 
+tasks.register('verifyPackagedClientResources') {
+    group = 'verification'
+    description = 'Reject invalid runtime asset paths and PNG headers; preserve the bundled font license.'
+    dependsOn tasks.named('jar')
+    doLast {
+        def problems = []
+        def pngSignature = [137, 80, 78, 71, 13, 10, 26, 10].collect { (byte) it } as byte[]
+        def archive = tasks.named('jar').get().archiveFile.get().asFile
+        new java.util.zip.ZipFile(archive).withCloseable { zip ->
+            zip.entries().each { entry ->
+                if (!entry.directory && entry.name.startsWith('assets/')) {
+                    if (!(entry.name ==~ /[a-z0-9\/._-]+/)) problems.add("Invalid resource path: ${entry.name}")
+                    if (entry.name.endsWith('.png')) {
+                        zip.getInputStream(entry).withCloseable { stream ->
+                            if (!java.util.Arrays.equals(pngSignature, stream.readNBytes(8)))
+                                problems.add("Invalid PNG header: ${entry.name}")
+                        }
+                    }
+                }
+            }
+            def license = zip.getEntry('META-INF/licenses/hemomancy/OFL-Jacquard24.txt')
+            if (license == null) problems.add('Missing Jacquard font license')
+            else zip.getInputStream(license).withCloseable { stream ->
+                if (!java.util.Arrays.equals(stream.readAllBytes(), file('src/main/resources/assets/hemomancy/font/OFL-Jacquard24.txt').bytes))
+                    problems.add('Jacquard font license content changed')
+            }
+        }
+        if (!problems.isEmpty()) throw new GradleException(problems.join('\n'))
+        logger.lifecycle('Packaged client resource paths, PNG headers and font license verified.')
+    }
+}
+
 tasks.register('alphaCheck') {
     group = 'verification'
-    description = 'Runs JVM contracts, dedicated Hemomancy GameTests, and the runtime resource-error gate.'
-    dependsOn tasks.named('test'), tasks.named('verifyGameTestResourceLog')
+    description = 'Runs JVM contracts, dedicated GameTests, runtime resource errors and packaged client resource checks.'
+    dependsOn tasks.named('test'), tasks.named('verifyGameTestResourceLog'), tasks.named('verifyPackagedClientResources')
 }
 
 // IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.

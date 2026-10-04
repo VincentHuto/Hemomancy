@@ -31,6 +31,7 @@ public final class LiberEntryDefinitions {
 	public static final ResourceLocation SCAR_PRACTICE = entry("the_hematic_order/pages/scar_practice");
 	public static final ResourceLocation SCRIPTORIUM = entry("tendency/pages/enzymatic_scriptorium");
 	public static final ResourceLocation BLOOD_MEMORIES = entry("the_infection/pages/blood_memories");
+	public static final ResourceLocation MNEMONIC_AMBERGRIS = entry("the_infection/pages/mnemonic_ambergris");
 	public static final ResourceLocation HYPHAE = entry("the_infection/pages/hyphae");
 	public static final ResourceLocation ENTITY = entry("the_infection/pages/the_entity");
 	public static final ResourceLocation TRUTH = entry("the_infection/pages/the_truth");
@@ -89,6 +90,7 @@ public final class LiberEntryDefinitions {
 		registerUpgradeLesson("cardinal_rite/palimpsest", "tendency/pages/palimpsest");
 		register(BLOOD_MEMORIES, CommonDiscoverySource.ITEM_PICKUP, HemomancyDiscoverySource.RITE,
 				HemomancyDiscoverySource.BLOOD_ECHO, HemomancyDiscoverySource.RITE_FRAGMENT);
+		register(MNEMONIC_AMBERGRIS, CommonDiscoverySource.ITEM_PICKUP);
 		register(HYPHAE, HemomancyDiscoverySource.MEMO, CommonDiscoverySource.ITEM_PICKUP, HemomancyDiscoverySource.DIALOGUE,
 				HemomancyDiscoverySource.BLOOD_ECHO);
 		register(ENTITY, HemomancyDiscoverySource.MEMO, HemomancyDiscoverySource.DEGREE, HemomancyDiscoverySource.RITE, HemomancyDiscoverySource.DIALOGUE, CommonDiscoverySource.ITEM_PICKUP);
@@ -115,7 +117,7 @@ public final class LiberEntryDefinitions {
 		register(IMMACULATUS_ANNETTA_GEODE, HemomancyDiscoverySource.MEMO);
 
 		registerRite("cardinal_rite/initiate_rite", ORDER_BELIEFS);
-		registerRite("cardinal_rite/adept_rite", HISTORICAL_RECORD);
+		registerRite("cardinal_rite/sanctified_rite", HISTORICAL_RECORD);
 		registerRite("cardinal_rite/illuminatus_rite", HERMITS);
 		registerRite("cardinal_rite/archon_rite", ENTITY);
 		registerRite("cardinal_rite/apotheos_rite", TRUTH);

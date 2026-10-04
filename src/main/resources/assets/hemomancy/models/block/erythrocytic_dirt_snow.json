@@ -4,6 +4,6 @@
     "bottom": "hemomancy:block/erythrocytic_dirt",
     "particle": "hemomancy:block/erythrocytic_dirt",
     "side": "hemomancy:block/erythrocytic_dirt_block_snow",
-    "top": "hemomancy:block/erythrocytic_dirt_block_top"
+    "top": "minecraft:block/snow"
   }
 }

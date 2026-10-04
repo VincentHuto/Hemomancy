@@ -97,8 +97,15 @@ repo/
 /docs/superpowers/
 /output/
 /
-/docs/consolidation/
 /tools/worldgen/generate_harbinger_outpost.py
+!/docs/STATION_UPGRADES.md
+!/docs/DEPENDENCY_PROVISIONING.md
+!/docs/HARBINGER_PROGRESSION_AUDIT.md
+!/docs/HARBINGER_PROGRESSION_FINISH_OVERVIEW.md
+!/docs/validation/
+!/docs/validation/**
+*.java~
+__pycache__/
 !/docs/HARBINGER_PROGRESSION_REDESIGN.md
 !/docs/harbinger_progression_redesign/
 !/docs/harbinger_progression_redesign/**

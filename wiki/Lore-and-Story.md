@@ -1,5 +1,9 @@
 # Lore and Story
 
+The October 3 [lore synchronization](../docs/LORE_REFERENCE.md#current-narrative-synchronization-2026-10-03) clarifies practiced station knowledge and personal contributions to a shared Fane. An upgrade gift does not supply learning, and a member can demonstrate their own covenant at a shared heart without founding a second bloodline. Either completed Archon path concludes the existing ending assignment; a pending Apotheos decision remains unresolved.
+
+Mnemonic Whales remain living archives collected from without killing the whale. Their feeding on squid and Prism Cuttles supplies repeatable ambergris; the prey are consumed. Dynasty Castle populations and Fargone variant names describe present world content without establishing a new faction or player degree ladder. See [World Content](World-Content.md) for exploration and collection guidance.
+
 *"The blood remembers what the mind forgets. But what does it remember? And from whom?"*
 
 The premise is direct: blood magic is a fungal infection, ancient cosmic entities reproduce through human bodies, and salvation can look a lot like dissolution.

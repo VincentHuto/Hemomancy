@@ -17,26 +17,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
-import java.util.HashMap;
 import java.util.stream.Stream;
 
 public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
-	public static HashMap<ResourceLocation, ScarRecipe> ALL_RECIPES = new HashMap<ResourceLocation, ScarRecipe>();
-
-	public static ScarRecipe getRecipe(String path) {
-		// Current recipe IDs live under "hemomancy:scar/<path>".
-		ScarRecipe recipe = ALL_RECIPES.get(ResourceLocation.parse("hemomancy:scar/" + path));
-		if (recipe != null) {
-			return recipe;
-		}
-		// Legacy fallbacks kept for migrated worlds / old naming.
-		recipe = ALL_RECIPES.get(ResourceLocation.parse("hemomancy:chisel/" + path));
-		if (recipe != null) {
-			return recipe;
-		}
-		return ALL_RECIPES.get(ResourceLocation.parse("hemomancy:rune/" + path));
-	}
-
 	// ---- JSON helpers (reused by codec) ----
 
 	private static ScarRecipe fromJsonObject(ResourceLocation id, JsonObject pJson, DynamicOps<JsonElement> jsonOps) {
@@ -116,7 +99,6 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 						? ResourceLocation.parse(json.get("id").getAsString())
 						: Hemomancy.rloc("scar/unknown");
 				ScarRecipe recipe = fromJsonObject(id, json, RecipeCodecJson.jsonOps(ops));
-				ALL_RECIPES.put(id, recipe);
 				return DataResult.success(recipe);
 			} catch (Exception e) {
 				return DataResult.error(() -> "Failed to decode ScarRecipe: " + e.getMessage());
@@ -158,7 +140,6 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 			ItemStack result = hasResult ? ItemStack.STREAM_CODEC.decode(pBuffer) : new ItemStack(Items.BARRIER);
 			ScarRecipe recipe = new ScarRecipe(id, tier, scarType, input1, input2, pattern, result);
 			recipe.setPatternBytes(pattern);
-			ALL_RECIPES.put(id, recipe);
 			return recipe;
 		} catch (Exception e) {
 			Hemomancy.LOGGER.error("Error reading scar recipe from packet.", (Throwable) e);

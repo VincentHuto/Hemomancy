@@ -56,6 +56,7 @@ import com.vincenthuto.hemomancy.gametest.journey.*;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.ListTag;
@@ -1594,6 +1595,136 @@ public final class HarbingerJourneyFixtureGameTests {
 		withEntityLoadedJourneyFixture(helper, relativeOrigin, () -> performArchonJourney(helper), station);
 	}
 
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 80,
+			batch = "journeyFoundingFane")
+	public static void sharedFaneMemberEarnsChapterOnlyFromPersonalDeposit(GameTestHelper helper) {
+		ServerPlayer member = connectedTestPlayer(helper);
+		ServerPlayer observer = connectedTestPlayer(helper);
+		UUID owner = UUID.randomUUID();
+		UUID lineId = UUID.randomUUID();
+		BlockPos heart = helper.absolutePos(new BlockPos(4, 5, 4));
+		var previous = helper.getLevel().getBlockState(heart);
+		var data = BloodlineSavedData.get(helper.getLevel().getServer().overworld());
+		try {
+			Bloodline line = new Bloodline("Shared covenant", owner, lineId, new java.util.ArrayList<>());
+			line.addMember(member.getUUID());
+			line.addMember(observer.getUUID());
+			data.registerBloodline(line);
+			for (ServerPlayer player : java.util.List.of(member, observer)) {
+				HemoCapabilityAccess.requireBloodVolume(player).setBloodLine(line);
+				HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
+				HemoCapabilityAccess.requireBloodVolume(player).fill(1000);
+				HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(5);
+				player.teleportTo(heart.getX() + 1, heart.getY(), heart.getZ());
+			}
+			helper.getLevel().setBlock(heart, BlockInit.consecrated_bloodwell.get().defaultBlockState(), Block.UPDATE_ALL);
+			FoundingFaneSavedData.get(helper.getLevel()).consecrateHeart(owner, heart);
+			var well = (com.vincenthuto.hemomancy.common.block.harbinger.functional.ConsecratedBloodwellBlock)
+					BlockInit.consecrated_bloodwell.get();
+			var state = helper.getLevel().getBlockState(heart);
+			com.vincenthuto.hemomancy.common.mission.shared.HarbingerChapterProgression.migrateExistingProgress(member);
+			helper.assertTrue(!HarbingerAdvancementGranter.hasAdvancement(member,
+					HarbingerAdvancementGranter.ADV_COVENANT_WRITTEN_IN_PLACE), "Membership alone granted proof");
+			var hit = new BlockHitResult(Vec3.atCenterOf(heart), Direction.UP, heart, false);
+			var menuUse = new net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.RightClickBlock(
+					member, InteractionHand.MAIN_HAND, heart, hit);
+			com.vincenthuto.hemomancy.common.event.MachineAccessEvents.onRightClickBlock(menuUse);
+			helper.assertTrue(menuUse.isCanceled(), "Shared membership bypassed personal pool-menu mastery");
+			member.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ItemInit.blood_projection.get()));
+			var projectionUse = new net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.RightClickBlock(
+					member, InteractionHand.MAIN_HAND, heart, hit);
+			com.vincenthuto.hemomancy.common.event.MachineAccessEvents.onRightClickBlock(projectionUse);
+			helper.assertTrue(!projectionUse.isCanceled(), "Machine mastery rejected personal shared-Fane projection");
+			helper.assertTrue(projectionUse.getUseBlock() == net.neoforged.neoforge.common.util.TriState.FALSE
+					&& projectionUse.getUseItem() == net.neoforged.neoforge.common.util.TriState.TRUE,
+					"Projection must route to the item without opening the pool menu");
+			well.projectBloodIntoBlock(helper.getLevel(), heart, state, member, 0);
+			helper.assertTrue(!HarbingerAdvancementGranter.hasAdvancement(member,
+					HarbingerAdvancementGranter.ADV_COVENANT_WRITTEN_IN_PLACE), "Zero deposit granted proof");
+			helper.assertTrue(well.projectBloodIntoBlock(helper.getLevel(), heart, state, member, 100) > 0,
+					"Member failed to contribute blood");
+			helper.assertTrue(HarbingerAdvancementGranter.hasAdvancement(member,
+					HarbingerAdvancementGranter.ADV_COVENANT_WRITTEN_IN_PLACE), "Personal contribution did not earn chapter");
+			helper.assertTrue(!HarbingerAdvancementGranter.hasAdvancement(observer,
+					HarbingerAdvancementGranter.ADV_COVENANT_WRITTEN_IN_PLACE), "Nearby member received another player's proof");
+			helper.succeed();
+		} finally {
+			helper.getLevel().setBlock(heart, previous, Block.UPDATE_ALL);
+			FoundingFaneSavedData.get(helper.getLevel()).remove(owner);
+			data.disbandBloodline(lineId);
+			member.discard();
+			observer.discard();
+		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE)
+	public static void scarResonanceCapacityReachesEffigyAndPatternStorage(GameTestHelper helper) {
+		ServerPlayer player = connectedTestPlayer(helper);
+		try {
+			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(6);
+			helper.assertTrue(ScarBrazierRite.getMaxActiveScars(player) == 4, "Uninvested capacity changed");
+			var progress = HemoCapabilityAccess.requireSkillProgress(player);
+			for (int rank = 1; rank <= 3; rank++) {
+				progress.unlockOrLevel(SkillPointInit.skill_scar_resonance);
+				helper.assertTrue(ScarBrazierRite.getMaxActiveScars(player) == 4 + rank, "Purchased rank did not add a slot");
+			}
+			var menu = new com.vincenthuto.hemomancy.common.menu.tile.functional.MasonsEffigyMenu(
+					1, player.getInventory(), player.blockPosition());
+			helper.assertTrue(menu.getMaxSelectableScars() == 7, "Effigy truncated purchased capacity");
+			var ids = java.util.stream.IntStream.range(0, 7).mapToObj(i -> Hemomancy.rloc("capacity_test_" + i)).toList();
+			var pattern = ItemScarPattern.createPreparedPattern(ids);
+			helper.assertTrue(ItemScarPattern.getScarIds(pattern).equals(ids), "Pattern discarded bonus slots");
+			var known = HemoCapabilityAccess.getScarState(player).orElseThrow();
+			var realIds = ScarInit.SCARS_TYPE_REGISTRY.keySet().stream()
+					.filter(id -> ScarInit.getByName(id.toString()).getScarType()
+							== com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarType.CEREBRAL)
+					.sorted(java.util.Comparator.comparing(ResourceLocation::toString)).limit(7).toList();
+			helper.assertTrue(realIds.size() == 7, "Seven cerebral scar fixtures are required");
+			realIds.forEach(known::addKnownCerebralScar);
+			HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
+			HemoCapabilityAccess.requireBloodVolume(player).fill(1000);
+			var realPattern = ItemScarPattern.createPreparedPattern(realIds);
+			ScarBrazierRite.burn(helper.getLevel(), player.blockPosition(), player, realPattern,
+					com.vincenthuto.hemomancy.common.rite.ScarBrazierInteractionRules.Burn.COMMIT);
+			helper.assertTrue(known.getActiveCerebralScars().size() == 7 && realPattern.isEmpty(),
+					"Server activation refused purchased seven-scar capacity");
+			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(3);
+			helper.assertTrue(ScarBrazierRite.getMaxActiveScars(player) == 0, "Purchased slots bypassed D4 gate");
+			helper.succeed();
+		} finally {
+			player.discard();
+		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE)
+	public static void removedScarRecipeCannotSurviveInTemplateLookup(GameTestHelper helper) {
+		var manager = helper.getLevel().getRecipeManager();
+		var recipes = java.util.List.copyOf(manager.getRecipes());
+		var id = Hemomancy.rloc("scar_heart");
+		var recipe = ItemScarPattern.getRecipeForScarId(id, helper.getLevel());
+		helper.assertTrue(recipe != null, "Scar fixture was not loaded");
+		var originalId = recipe.getId();
+		var buffer = new net.minecraft.network.RegistryFriendlyByteBuf(io.netty.buffer.Unpooled.buffer(),
+				helper.getLevel().registryAccess());
+		try {
+			recipe.setId(Hemomancy.rloc("scar/scar_heart"));
+			var codec = new com.vincenthuto.hemomancy.common.recipe.serializer.ScarRecipeSerializer().streamCodec();
+			codec.encode(buffer, recipe);
+			codec.decode(buffer);
+		} finally {
+			recipe.setId(originalId);
+			buffer.release();
+		}
+		try {
+			manager.replaceRecipes(java.util.List.of());
+			helper.assertTrue(ItemScarPattern.getRecipeForScarId(id, helper.getLevel()) == null,
+					"Removed recipe survived in template cache");
+		} finally {
+			manager.replaceRecipes(recipes);
+		}
+		helper.succeed();
+	}
+
 	private static void performArchonJourney(GameTestHelper helper) {
 		ServerPlayer player = connectedTestPlayer(helper);
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 15, 14));
@@ -2168,10 +2299,16 @@ public final class HarbingerJourneyFixtureGameTests {
 		helper.succeed();
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	@GameTest(templateNamespace = "hemomancy", template = "combat_targeting_room", timeoutTicks = 40)
 	public static void formationAcceptsAutoPickedUpOutput(GameTestHelper helper) {
+		BlockPos origin = helper.absolutePos(new BlockPos(16, 2, 16));
+		var fixtureBounds = HemoJourneyFixtures.bounds(origin);
+		helper.assertTrue(helper.getBounds().contains(new net.minecraft.world.phys.Vec3(
+				fixtureBounds.minX, fixtureBounds.minY, fixtureBounds.minZ))
+				&& helper.getBounds().contains(new net.minecraft.world.phys.Vec3(
+						fixtureBounds.maxX - .001, fixtureBounds.maxY - .001, fixtureBounds.maxZ - .001)),
+				"Formation preparation and cleanup must stay inside the owned fixture");
 		ServerPlayer player = detachedTestPlayer(helper);
-		BlockPos origin = helper.absolutePos(new BlockPos(4, 12, 4));
 		try {
 			var blood = HemoCapabilityAccess.requireBloodVolume(player);
 			blood.setActive(true);

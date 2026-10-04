@@ -1,5 +1,11 @@
 # Developer Reference
 
+## Current checkout synchronization (2026-10-03)
+
+The [reference audit](../docs/validation/REFERENCE_SYNC_2026-10-03.md) compares current source with the October 1 reference commit and checks coverage back to September 19. The [mechanics reference](../docs/HEMOMANCY_REFERENCE.md) now records shared centrifuge outputs, seven-scar preparation/activation, canonical ending-ledger state, recipe-manager preview invalidation, updated sampling policy and packaged resource fixes. Older validation results retain their dates and do not establish a currently passing full suite.
+
+Use [dependency provisioning](../docs/DEPENDENCY_PROVISIONING.md) for the SHA-256-pinned local JAR bundle and sibling HutosLib source snapshot. The local composite builds HutosLib 7.4.0; the fallback Maven coordinate remains 7.3.5. MnA and Curios development dependencies are present, but their Hemomancy compat source is still excluded. `verifyPackagedClientResources` participates in `alphaCheck`, checking runtime asset paths, PNG headers and the packaged font license.
+
 Alembic upgrades use complete editable Condenser/Athanor assemblies with proportional UV islands. `python tools/model_export/export_alembic_upgrades.py` exports runtime JSON, texture atlases, blockstates, and rotated collision cells. Athanor lifts the assembly 7/16 block onto its heating mantle; placement and upgrade clearance reserve the occupied portion of a 3×3 footprint across three vertical layers. Linked fillers handle collision, selection, interaction, and break cleanup. See [the station-upgrade contract](../docs/STATION_UPGRADES.md#alembic-model-and-clearance) and `AlembicFootprintGameTests`.
 
 Cardinal Rite floors and Ichorian Sigils share `JsonResourceReloadListener` for JSON scanning, per-file diagnostics, and immutable reload publication. Their schema parsers and registries remain separate; malformed files are skipped, and each applied reload replaces the previous snapshot.

@@ -32,6 +32,69 @@ public final class HarbingerRepairGameTests {
             net.minecraft.server.level.TicketType.create("hemomancy_test_helper", UUID::compareTo, 200);
 
     @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
+    public static void vigilStationRejectsSpectatorAndDeadPlayerClaims(GameTestHelper helper) {
+        var level = helper.getLevel();
+        var caster = player(helper);
+        var guest = player(helper);
+        var lines = com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData
+                .get(level.getServer().overworld());
+        var line = new com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline(
+                "Vigil claim", caster.getUUID(), UUID.randomUUID(), new java.util.ArrayList<>());
+        lines.registerBloodline(line);
+        lines.addMember(line.getBloodlineUUID(), guest.getUUID());
+        var recipeId = Hemomancy.rloc("cardinal_rite/covenant_vigil");
+        var recipe = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getRiteByLocation(level, recipeId);
+        var center = helper.absolutePos(new net.minecraft.core.BlockPos(12, 70, 12));
+        var rite = com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite.interactive(
+                caster.getUUID(), center, recipeId, 1200, 5, 6, false, 0);
+        for (int i = 0; i < rite.getAnchorBloodMl().length; i++) rite.fillAnchor(i, 50);
+        helper.assertTrue(rite.enterInscription(), "Vigil must enter helper assignment");
+        var station = center.offset(com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAllyService
+                .markers(recipe).get(com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole.ANCHOR));
+        level.setBlock(station.below(), net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), 3);
+        guest.setPos(station.getCenter());
+        guest.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        var rites = com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData.get(level);
+        rites.startRite(rite);
+        var hit = new net.minecraft.world.phys.BlockHitResult(station.getCenter(),
+                net.minecraft.core.Direction.UP, station.below(), false);
+        try {
+            guest.setGameMode(net.minecraft.world.level.GameType.SPECTATOR);
+            guest.setShiftKeyDown(true);
+            guest.gameMode.useItemOn(guest, level, ItemStack.EMPTY, net.minecraft.world.InteractionHand.MAIN_HAND, hit);
+            helper.assertTrue(rite.getAllyRoles().isEmpty() && rite.getSharedPoolOptIns().isEmpty(),
+                    "Spectator block use reserved a Vigil helper role or shared blood consent");
+            guest.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
+            guest.setHealth(0);
+            guest.gameMode.useItemOn(guest, level, ItemStack.EMPTY, net.minecraft.world.InteractionHand.MAIN_HAND, hit);
+            helper.assertTrue(rite.getAllyRoles().isEmpty() && rite.getSharedPoolOptIns().isEmpty(),
+                    "Dead player block use reserved a Vigil helper role or shared blood consent");
+            guest.setHealth(guest.getMaxHealth());
+            guest.setShiftKeyDown(false);
+            guest.gameMode.useItemOn(guest, level, ItemStack.EMPTY, net.minecraft.world.InteractionHand.MAIN_HAND, hit);
+            helper.assertTrue(rite.getAllyRoles().containsKey(guest.getUUID()) && rite.getSharedPoolOptIns().isEmpty(),
+                    "Living Survival bloodline member must claim a station without granting shared blood access");
+            guest.setShiftKeyDown(true);
+            guest.gameMode.useItemOn(guest, level, ItemStack.EMPTY, net.minecraft.world.InteractionHand.MAIN_HAND, hit);
+            helper.assertTrue(rite.getSharedPoolOptIns().contains(guest.getUUID()),
+                    "Living participant must retain explicit shared blood opt-in");
+            guest.gameMode.useItemOn(guest, level, ItemStack.EMPTY, net.minecraft.world.InteractionHand.OFF_HAND, hit);
+            helper.assertTrue(rite.getSharedPoolOptIns().contains(guest.getUUID()),
+                    "The offhand fallback of one empty-hand click must not toggle Vigil consent twice");
+            guest.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,
+                    new ItemStack(ItemInit.living_staff.get()));
+            guest.gameMode.useItemOn(guest, level, ItemStack.EMPTY, net.minecraft.world.InteractionHand.OFF_HAND, hit);
+            helper.assertTrue(!rite.getSharedPoolOptIns().contains(guest.getUUID()),
+                    "An empty offhand must still toggle consent when the main hand is occupied");
+        } finally {
+            rites.removeRite(caster.getUUID());
+            lines.disbandBloodline(line.getBloodlineUUID());
+            caster.discard(); guest.discard();
+        }
+        helper.succeed();
+    }
+
+    @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
     public static void awakenedSigilRetainsItsProjectionBlocker(GameTestHelper helper) {
         var level = helper.getLevel();
         var actor = player(helper);
@@ -785,6 +848,7 @@ public final class HarbingerRepairGameTests {
             helper.startSequence().thenWaitUntil(() -> helper.assertTrue(
                     helper.getLevel().areEntitiesLoaded(stationChunk.toLong()),
                     "The supplied helper station chunk must become entity-loaded"))
+                    .thenWaitUntil(() -> assertIndexedHelper(helper, ally))
                     .thenExecute(() -> {
                         try (this) {
                             assertAvailableHelper(helper, rite, ally);
@@ -867,15 +931,16 @@ public final class HarbingerRepairGameTests {
             var ally = com.vincenthuto.hemomancy.common.init.EntityInit.harbinger_vicar.get().create(level);
             ally.setNoAi(true); // Supplied effect fixture; navigation is validated in the live campaign.
             ally.moveTo(station.getX() + 1.5, station.getY(), station.getZ() - 1.5 + i * 1.5);
-            level.addFreshEntity(ally);
+            allies.add(ally);
+            helper.assertTrue(level.addFreshEntity(ally), "The supplied Anchor helper must be accepted by the level");
             data.addNpcMember(line.getBloodlineUUID(), ally.getUUID());
             rite.assignAlly(ally.getUUID(), role);
-            allies.add(ally);
         }
         var activeRite = rite;
         helper.startSequence().thenWaitUntil(() -> helper.assertTrue(
                 level.areEntitiesLoaded(stationChunk.toLong()),
                 "The supplied Anchor station chunk must become entity-loaded"))
+                .thenWaitUntil(() -> allies.forEach(ally -> assertIndexedHelper(helper, ally)))
                 .thenExecute(() -> {
                     try {
                         for (var ally : allies) assertAvailableHelper(helper, activeRite, ally);
@@ -888,6 +953,14 @@ public final class HarbingerRepairGameTests {
                         cleanup.run();
                     }
                 }).thenSucceed();
+    }
+
+    private static void assertIndexedHelper(GameTestHelper helper, net.minecraft.world.entity.Mob ally) {
+        var level = helper.getLevel();
+        var chunk = new net.minecraft.world.level.ChunkPos(ally.blockPosition());
+        helper.assertTrue(level.areEntitiesLoaded(chunk.toLong()) && level.getEntity(ally.getUUID()) == ally,
+                "The supplied helper must become entity-loaded and UUID-indexed in its own chunk " + chunk
+                        + " at " + ally.position());
     }
 
     private static void cleanupOnFailure(GameTestHelper helper, Runnable cleanup) {

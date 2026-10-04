@@ -1,6 +1,7 @@
 // Every source namespace must choose alpha: true or alpha: false with a reason.
 // Existing focused suites stay opt-in; the consolidation suites join the combined gate.
 ext.gameTestSuites = [
+    'mnemonic_whale_validation': [alpha: true, run: 'mnemonicWhaleGameTestServer', directory: 'build/mnemonic-whale-gametest'],
     'station_upgrade_validation': [alpha: true, run: 'stationUpgradeGameTestServer', directory: 'build/station-upgrade-gametest'],
     'book_kit_validation': [alpha: true, run: 'bookKitGameTestServer', directory: 'build/book-kit-gametest'],
     'recipe_codec_validation': [alpha: true, run: 'recipeCodecGameTestServer', directory: 'build/recipe-codec-gametest'],

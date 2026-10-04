@@ -595,6 +595,9 @@ public final class CardinalRiteInteractionHandler {
 				|| !event.getItemStack().isEmpty()) {
 			return;
 		}
+		// Client prediction can send both hands for one click on an inert station block.
+		if (event.getHand() == net.minecraft.world.InteractionHand.OFF_HAND
+				&& player.getMainHandItem().isEmpty()) return;
 		CardinalRiteSavedData data = CardinalRiteSavedData.get(level);
 		for (ActiveCardinalRite candidate : data.getActiveRites().values()) {
 			if (CardinalRiteAllyService.tryClaimPlayerRole(level, player, candidate, event.getPos())) {

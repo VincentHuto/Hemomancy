@@ -298,10 +298,15 @@ public final class BloodProfileGameTests {
 
     @SuppressWarnings("unchecked")
     @GameTest(template = "empty")
-    public static void allRegisteredHighHealthMobsHaveAuthoredRestrictions(GameTestHelper h) {
+    public static void highHealthRestrictionsRespectApprovedSamplingExceptions(GameTestHelper h) {
+        var ordinarySources = java.util.Set.of("armadillo", "desiccant", "mortarbound", "naeglerophaeon");
         for (var type : BuiltInRegistries.ENTITY_TYPE) {
             var id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
             if (!id.getNamespace().equals("hemomancy") || !DefaultAttributes.hasSupplier(type)) continue;
+            if (ordinarySources.contains(id.getPath())) {
+                h.assertTrue(!BloodProfileData.profile(type, false).requiresLivingSyringe(), "Approved ordinary source restricted: " + id);
+                continue;
+            }
             if (DefaultAttributes.getSupplier((EntityType<? extends net.minecraft.world.entity.LivingEntity>) type).getValue(Attributes.MAX_HEALTH) > 20)
                 h.assertTrue(BloodProfileData.profile(type, false).requiresLivingSyringe(), "Missing high-health restriction: " + id);
         }

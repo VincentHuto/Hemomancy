@@ -1,12 +1,12 @@
 {
-  "parent": "forge:item/default",
-  "loader": "forge:composite",
+  "parent": "neoforge:item/default",
+  "loader": "neoforge:composite",
   "textures": {
   	"particle": "hemomancy:block/mna/broken_mana_trapazahedron"
   },
   "children": {
     "base": {
-      "loader": "forge:obj",
+      "loader": "neoforge:obj",
       "automatic_culling": false,
 	  "shade_quads": false,
 	  "flip_v": true,

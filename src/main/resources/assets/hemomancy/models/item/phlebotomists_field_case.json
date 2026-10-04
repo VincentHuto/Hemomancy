@@ -7,9 +7,9 @@
 		"2": "block/black_wool",
 		"3": "hemomancy:block/hematic_iron_block",
 		"4": "block/stripped_oak_log",
-		"5": "vial_glass",
-		"6": "vial_blood",
-		"7": "vial_cap"
+		"5": "hemomancy:block/vial_glass",
+		"6": "hemomancy:block/blood_fill_tiled",
+		"7": "hemomancy:block/vial_cap"
 	},
 	"elements": [
 		{

@@ -184,8 +184,10 @@ public class VialCentrifugeBlock extends Block implements EntityBlock, SimpleWat
 
 	@Override
 	protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState next, boolean moving) {
-		if (!state.is(next.getBlock()) && level.getBlockEntity(pos) instanceof VialCentrifugeBlockEntity machine)
+		if (!state.is(next.getBlock()) && level.getBlockEntity(pos) instanceof VialCentrifugeBlockEntity machine) {
 			Containers.dropContents(level, pos, machine);
+			machine.dropLegacyRecovery(level, pos);
+		}
 		super.onRemove(state, level, pos, next, moving);
 	}
 

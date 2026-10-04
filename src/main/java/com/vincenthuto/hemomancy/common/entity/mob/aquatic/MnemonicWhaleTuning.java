@@ -6,6 +6,14 @@ public final class MnemonicWhaleTuning {
 	public static final float RENDER_SHADOW_RADIUS = 1.7F;
 	public static final double MOVEMENT_SPEED = 0.48D;
 	public static final double CRUISE_SPEED_MODIFIER = 0.72D;
+	public static final double HUNT_RANGE = 16.0D;
+	public static final double HUNT_SPEED_MODIFIER = 1.0D;
+	public static final double BITE_REACH = 0.5D;
+	public static final double BITE_DAMAGE = 12.0D;
+	public static final int BITE_INTERVAL_TICKS = 20;
+	public static final int HUNT_SEARCH_INTERVAL_TICKS = 20;
+	public static final int HUNT_REPATH_INTERVAL_TICKS = 10;
+	public static final int HUNT_STALL_TIMEOUT_TICKS = 80;
 	public static final int CRUISE_INTERVAL_TICKS = 35;
 	public static final int CRUISE_MAX_TICKS = 180;
 	public static final int CRUISE_MIN_HORIZONTAL_DISTANCE = 10;

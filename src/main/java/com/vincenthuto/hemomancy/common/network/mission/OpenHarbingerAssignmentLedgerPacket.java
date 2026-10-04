@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.mission;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.client.screen.item.HarbingerAssignmentLedgerScreen;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationLedgerProgress;
 import com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingProgress;
@@ -78,9 +79,7 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		boolean livingCovenantComplete,
 		int pomesConsumed,
 		boolean qliphothCommunionComplete,
-		boolean silentPending,
-		boolean severedPortalOpen,
-		boolean silentArchon) implements CustomPacketPayload {
+		EnumArchonPath archonPath, boolean severedPortalOpen) implements CustomPacketPayload {
 	public static final Type<OpenHarbingerAssignmentLedgerPacket> TYPE =
 			new Type<>(Hemomancy.rloc("open_harbinger_assignment_ledger"));
 	public static final StreamCodec<FriendlyByteBuf, OpenHarbingerAssignmentLedgerPacket> STREAM_CODEC =
@@ -159,9 +158,8 @@ public record OpenHarbingerAssignmentLedgerPacket(
 		buf.writeBoolean(msg.livingCovenantComplete);
 		buf.writeVarInt(msg.pomesConsumed);
 		buf.writeBoolean(msg.qliphothCommunionComplete);
-		buf.writeBoolean(msg.silentPending);
+		buf.writeEnum(msg.archonPath);
 		buf.writeBoolean(msg.severedPortalOpen);
-		buf.writeBoolean(msg.silentArchon);
 	}
 
 	public static OpenHarbingerAssignmentLedgerPacket decode(FriendlyByteBuf buf) {
@@ -229,8 +227,7 @@ public record OpenHarbingerAssignmentLedgerPacket(
 				buf.readBoolean(),
 				buf.readVarInt(),
 				buf.readBoolean(),
-				buf.readBoolean(),
-				buf.readBoolean(),
+				buf.readEnum(EnumArchonPath.class),
 				buf.readBoolean());
 	}
 
@@ -268,8 +265,7 @@ public record OpenHarbingerAssignmentLedgerPacket(
 				msg.artificerProgressSteps,
 				msg.foundedBloodline, msg.foundingFaneEstablished, msg.chamberReturned,
 				msg.covenantThroneBound, msg.covenantVigilCompleted, msg.livingCovenantComplete,
-				msg.pomesConsumed, msg.qliphothCommunionComplete, msg.silentPending,
-				msg.severedPortalOpen, msg.silentArchon));
+				msg.pomesConsumed, msg.qliphothCommunionComplete, msg.archonPath, msg.severedPortalOpen));
 	}
 
 	private static void writeFirstSeparation(FriendlyByteBuf buf, FirstSeparationLedgerProgress progress) {

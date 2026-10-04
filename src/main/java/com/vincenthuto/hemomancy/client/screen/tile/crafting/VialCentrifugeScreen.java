@@ -51,7 +51,7 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 	public VialCentrifugeScreen(VialCentrifugeMenu menu, Inventory inv, Component title) {
 		super(menu, inv, title);
 		this.te = menu.getTe();
-		this.imageWidth = 216;
+		this.imageWidth = 176;
 		this.imageHeight = 204;
 		this.inventoryLabelY = CRAFT_AREA_HEIGHT + 7;
 	}
@@ -92,15 +92,6 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 
 		BloodVolumeBarWidget.renderTooltip(graphics, font, bloodBarBounds,
 				te.getBloodVolume(), te.getMaxBloodVolume(), mouseX, mouseY);
-
-		for (int i = VialCentrifugeMenu.SECONDARY_START; i <= VialCentrifugeMenu.SECONDARY_END; i++) {
-			Slot slot = menu.slots.get(i);
-			if (mouseX >= leftPos + slot.x && mouseX < leftPos + slot.x + 16
-					&& mouseY >= topPos + slot.y && mouseY < topPos + slot.y + 16 && !slot.hasItem())
-				graphics.renderTooltip(font, Component.translatable(te.upgradeTier() >= 2
-						? "message.hemomancy.vial_centrifuge.second_fraction"
-						: "message.hemomancy.vial_centrifuge.second_fraction_locked"), mouseX, mouseY);
-		}
 
 		// Start button hover tooltip
 		if (!this.menu.isSpinning() && mouseX >= btnX1 && mouseX < btnX2 && mouseY >= btnY1 && mouseY < btnY2) {
@@ -145,8 +136,6 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 			drawSlotBackground(gfx, sx, sy, i);
 		}
 
-		gfx.fill(gx + 167, gy + 14, gx + 168, gy + 85, BORDER_OUTER);
-		if (te.upgradeTier() < 2) gfx.drawString(font, "D6", gx + 183, gy + 90, 0xFF664444, false);
 
 		// ── Progress ring around the vial slots ──
 		renderProgressRing(gfx, gx, gy);
