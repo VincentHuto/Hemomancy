@@ -1,0 +1,30 @@
+{
+  "structures": [
+    {
+      "structure": "hemomancy:troupe_camp_air",
+      "weight": 1
+    },
+    {
+      "structure": "hemomancy:troupe_camp_blades",
+      "weight": 1
+    },
+    {
+      "structure": "hemomancy:troupe_camp_pageantry",
+      "weight": 1
+    },
+    {
+      "structure": "hemomancy:troupe_camp_embers",
+      "weight": 1
+    },
+    {
+      "structure": "hemomancy:troupe_camp_memory",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 24,
+    "separation": 8,
+    "salt": 2030148871
+  }
+}

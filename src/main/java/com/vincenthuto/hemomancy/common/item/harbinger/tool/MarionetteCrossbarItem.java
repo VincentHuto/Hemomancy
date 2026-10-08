@@ -427,6 +427,7 @@ public class MarionetteCrossbarItem extends Item {
 		UUID crossbarId = ensureCrossbarId(stack);
 		List<Mob> alreadyActive = activeSummonsForCrossbar(player, crossbarId, selected);
 		if (!alreadyActive.isEmpty()) {
+            com.vincenthuto.hemomancy.common.circus.CircusSchoolQuests.observeControl((ServerPlayer) player, crossbarId, "recall", selected);
 			for (Mob mob : alreadyActive) {
 				mob.discard();
 			}
@@ -479,6 +480,7 @@ public class MarionetteCrossbarItem extends Item {
 					.withStyle(ChatFormatting.GRAY), true);
 			return;
 		}
+		com.vincenthuto.hemomancy.common.circus.CircusSchoolQuests.observeControl((ServerPlayer) player, crossbarId, "call", selected);
 		player.getCooldowns().addCooldown(stack.getItem(), 20);
 		player.playSound(SoundEvents.EVOKER_PREPARE_SUMMON, 0.55F, 0.75F);
 		player.displayClientMessage(Component.translatable("hemomancy.summon.called",

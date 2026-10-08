@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 100,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Crimson Troupe Apprenticeship",
+  "subtitle": "Professors of the strings",
+  "text": "The first assignment is An Empty Ring. Hold an attuned, charged Crossbar for inspection, learn any shape, complete its ordeal, then call, command and recall with that same Crossbar. Report here. Every professor records their own practical; story investigations and paid guest performances appear in the Side ledger.",
+  "icon": "hemomancy:marionette_crossbar"
+}

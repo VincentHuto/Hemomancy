@@ -47,6 +47,11 @@ public final class PeacockSpiderEntity extends Spider {
 	}
 
 	@Override
+	protected boolean shouldDropLoot() {
+		return !getPersistentData().hasUUID("CircusTrialOwner") && super.shouldDropLoot();
+	}
+
+	@Override
 	public void tick() {
 		super.tick();
 		if (!(level() instanceof ServerLevel server) || tickCount % 40 != 0

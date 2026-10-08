@@ -31,15 +31,15 @@
     "water_ambient": [
       {
         "type": "hemomancy:blood_lantern_jelly",
-        "weight": 36,
-        "minCount": 3,
-        "maxCount": 6
+        "weight": 3,
+        "minCount": 1,
+        "maxCount": 2
       },
       {
         "type": "hemomancy:barbed_urchin",
-        "weight": 12,
-        "minCount": 1,
-        "maxCount": 3
+        "weight": 22,
+        "minCount": 2,
+        "maxCount": 4
       },
       {
         "type": "minecraft:tropical_fish",
@@ -69,9 +69,15 @@
       },
       {
         "type": "hemomancy:mnemonic_whale",
-        "weight": 4,
+        "weight": 1,
         "minCount": 1,
         "maxCount": 1
+      },
+      {
+        "type": "hemomancy:prism_cuttle",
+        "weight": 2,
+        "minCount": 1,
+        "maxCount": 2
       }
     ]
   },

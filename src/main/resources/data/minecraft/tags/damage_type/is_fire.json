@@ -1,4 +1,8 @@
 {
   "replace": false,
-  "values": ["hemomancy:living_torch_breath", "hemomancy:searing"]
+  "values": [
+    "hemomancy:living_torch_breath",
+    "hemomancy:searing",
+    "hemomancy:cinder_breath"
+  ]
 }

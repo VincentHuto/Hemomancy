@@ -98,10 +98,16 @@ Terrain that blocks the pull breaks the hold instead of dragging you through blo
 The Mind's resident does not respawn after defeat and does not appear in Peaceful mode.
 Minds generated before this encounter was added can still house one.
 
-Defeating it drops one **Naeglerophaeon Ganglion**. Craft it with two Ganglion Clusters and a Ferric
-Binder to make **Synaptic Step**. Stand within three blocks of any synaptic node, aim at a visible
-node no more than 32 blocks from the source, and use the tool to blink to the top of that node.
-Generated and player-built nodes both work, in any dimension. The destination must be loaded and
-have room for you; a successful jump has a ten-second cooldown. Neither the tool nor the nodes are
-consumed.
+Defeating it drops one **Naeglerophaeon Ganglion**. Place that ganglion beside a blank Hematic Memory in the **Somatic Loom**, prepare four **Neurotic enzymes**, and project **600 mL blood** to weave **Memory of Axonal Transduction**. Absorb it through the Iron Brazier. Learning requires Degree 6; using it requires 65 Ductilis alignment.
 
+Enable this passive through your manipulation controls and touch a **Synaptic Node**. For a base entry cost of **150 mL**, your body becomes a yellow-white electrical impulse inside the nerve network. Build continuous one-block-wide runs of **Nerve Fibers or Bundles**, with nodes at your entrances and exits. Natural and player-built routes work in every dimension.
+
+Finish using an open station and put away any item held on your inventory cursor before entering. While dissolved, you cannot move inventory stacks, drop items or collect items and experience from the world.
+
+Hold forward to travel toward where you look along the run at **32 blocks per second**; turn the camera around to reverse while still holding forward. Backward travels away from where you look. Simple bends follow the cable automatically. Release to stop; look into the desired branch at a fork. Sneaking bypasses entry while physical, or slows signal travel to **6 blocks per second**. There is **no upkeep or duration limit**. A severed run stops you rather than letting you jump its gap.
+
+Another node reforms you above or beside it. Leave clear space for your full body. If the exit is blocked, remain a signal and backtrack. You must leave contact with an arrival node before it can draw you in again, including after reconnecting. Disabling the passive or losing its eligibility returns you safely to your entry, as does interrupted-session recovery.
+
+During travel, nearby nodes glow **bright yellow**, fibers appear **dull white**, and the surrounding world becomes **deep red and black**. Nerve highlights fade within sixteen blocks, including buried routes. Your view provides enough orientation to follow the network, but ordinary terrain remains hard to read. Attacking, casting and working blocks are unavailable while dissolved.
+
+**Old Synaptic Step tools are dormant.** Dismantle one in a crafting grid to recover its ganglion for the Loom.

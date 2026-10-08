@@ -45,7 +45,7 @@ public class DeepOceanVentFeature extends Feature<NoneFeatureConfiguration> {
 		int radius = 4 + random.nextInt(3);
 		buildMineralApron(level, floor, radius, random, mutable);
 
-		int chimneyCount = 2 + random.nextInt(3);
+		int chimneyCount = 1 + random.nextInt(5);
 		for (int i = 0; i < chimneyCount; i++) {
 			float angle = random.nextFloat() * Mth.TWO_PI;
 			int distance = i == 0 ? 0 : 1 + random.nextInt(Math.max(2, radius - 1));
@@ -121,11 +121,10 @@ public class DeepOceanVentFeature extends Feature<NoneFeatureConfiguration> {
 				if (floor == null || Math.abs(floor.getY() - center.getY()) > 4) {
 					continue;
 				}
-				mutable.set(floor);
-				placeIfSubmerged(level, mutable, chooseApronBlock(random, dist, radius));
-				if (dist < radius * 0.55F && random.nextInt(7) == 0) {
-					mutable.move(Direction.UP);
-					placeIfSubmerged(level, mutable, chooseMineralBlock(random));
+				int thickness = 1 + (int)(2.5F * Math.max(0, 1 - dist / radius));
+				for (int y = 0; y < thickness; y++) {
+					mutable.set(floor).move(Direction.UP, y);
+					placeIfSubmerged(level, mutable, chooseApronBlock(random, dist, radius));
 				}
 			}
 		}

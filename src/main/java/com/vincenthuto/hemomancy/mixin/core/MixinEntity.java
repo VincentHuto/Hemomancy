@@ -21,10 +21,12 @@ import java.util.List;
 
 @Mixin(Entity.class)
 public class MixinEntity {
-	@Inject(method = "move", at = @At("HEAD"), remap = false)
+	@Inject(method = "move", at = @At("HEAD"), cancellable = true, remap = false)
 	private void hemomancy$applySilentSlippingNoClip(MoverType type, Vec3 movement, CallbackInfo ci) {
 		if ((Object) this instanceof Player player) {
 			SilentArchonArmorAbilityHandler.applySilentSlippingNoClip(player);
+			com.vincenthuto.hemomancy.common.manipulation.ductilis.AxonalTransductionManager.applyMovement(player);
+			if (com.vincenthuto.hemomancy.common.manipulation.ductilis.AxonalTransductionManager.isTraveling(player)) ci.cancel();
 		}
 	}
 

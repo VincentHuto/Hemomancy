@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
-import com.vincenthuto.hemomancy.common.entity.projectile.BloodShotEntity;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -40,7 +39,7 @@ public class MarrowSpitterEntity extends Skeleton implements BoundPuppeteerSummo
 			SynchedEntityData.defineId(MarrowSpitterEntity.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Optional<UUID>> DATA_TRIAL_CASTER_UUID =
 			SynchedEntityData.defineId(MarrowSpitterEntity.class, EntityDataSerializers.OPTIONAL_UUID);
-	private int shotCooldown = 10;
+	private int shotCooldown = 0;
 
 	public MarrowSpitterEntity(EntityType<? extends Skeleton> type, Level level) {
 		super(type, level);
@@ -127,29 +126,23 @@ public class MarrowSpitterEntity extends Skeleton implements BoundPuppeteerSummo
 		else super.travel(travelVector);
 	}
 
-	private void tickSentryFire() {
-		if (shotCooldown > 0) shotCooldown--;
-		LivingEntity target = getTarget();
-		if (target == null || !target.isAlive() || !canAttack(target)) return;
-		getLookControl().setLookAt(target, 30.0F, 30.0F);
-		if (shotCooldown <= 0 && distanceToSqr(target) <= 24.0 * 24.0) {
-			performRangedAttack(target, 1.0F);
-			shotCooldown = SHOT_INTERVAL_TICKS;
-		}
-	}
-
-	@Override
-	public void performRangedAttack(LivingEntity target, float distanceFactor) {
-		BloodShotEntity shot = new BloodShotEntity(level(), this);
-		double dx = target.getX() - getX();
-		double dz = target.getZ() - getZ();
-		double horizontal = Math.sqrt(dx * dx + dz * dz);
-		double dy = target.getY(0.55) - shot.getY() + horizontal * 0.06;
-		shot.setBaseDamage(Math.max(2.0, getAttributeValue(Attributes.ATTACK_DAMAGE)));
-		shot.shoot(dx, dy, dz, 1.7F, 2.5F);
-		level().addFreshEntity(shot);
-		level().playSound(null, blockPosition(), SoundEvents.LLAMA_SPIT, SoundSource.HOSTILE, 0.65F, 0.75F);
-	}
+    private void tickSentryFire() {
+        LivingEntity target = getTarget();
+        if (target == null || !target.isAlive() || !canAttack(target) || !hasLineOfSight(target)) { shotCooldown = 0; return; }
+        getLookControl().setLookAt(target, 30, 30);
+        if (distanceToSqr(target) > 24 * 24) { shotCooldown = 0; return; }
+        if (com.vincenthuto.hemomancy.common.circus.MarrowJugglerRules.throwTick(shotCooldown)) performRangedAttack(target, 1);
+        shotCooldown = (shotCooldown + 1) % SHOT_INTERVAL_TICKS;
+    }
+    @Override public void performRangedAttack(LivingEntity target, float distanceFactor) {
+        var shot = new com.vincenthuto.hemomancy.common.entity.projectile.CircusKnifeProjectileEntity(level(), this,
+                com.vincenthuto.hemomancy.common.circus.MarrowJugglerRules.daggerDamage(getAttributeValue(Attributes.ATTACK_DAMAGE)));
+        shot.setPuppetDagger();
+        double dx = target.getX() - getX(), dz = target.getZ() - getZ();
+        shot.shoot(dx, target.getY(.55) - shot.getY() + Math.sqrt(dx * dx + dz * dz) * .03, dz, 1.7F, 1);
+        level().addFreshEntity(shot);
+        level().playSound(null, blockPosition(), SoundEvents.TRIDENT_THROW.value(), SoundSource.HOSTILE, .5F, 1.4F);
+    }
 
 	@Override
 	protected boolean isSunBurnTick() {

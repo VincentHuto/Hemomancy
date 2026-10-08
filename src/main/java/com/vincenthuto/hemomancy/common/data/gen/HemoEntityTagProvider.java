@@ -27,6 +27,9 @@ public class HemoEntityTagProvider extends TagsProvider<EntityType<?>> {
 	@Override
 	protected void addTags(Provider p_256380_) {
 		tag(EntityInit.SPECIMEN_JAR_CAPTURABLE)
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.vampire_squid.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.osteophage.getId()))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.ice_fish.getId()))
 				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.chthonian.getId()))
 				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.chthonian_queen.getId()))
 				.add(ResourceKey.create(Registries.ENTITY_TYPE, EntityInit.chitinite.getId()))

@@ -133,6 +133,7 @@ public class LayerEvents {
 
 		event.registerLayerDefinition(BloodThrallModel.LAYER_LOCATION, BloodThrallModel::createBodyLayer);
 		event.registerLayerDefinition(VeinwingVultureModel.LAYER_LOCATION, VeinwingVultureModel::createBodyLayer);
+		event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.entity.summon.CinderBellowsModel.LAYER_LOCATION, com.vincenthuto.hemomancy.client.model.entity.summon.CinderBellowsModel::createBodyLayer);
 		event.registerLayerDefinition(MarrowSpitterModel.LAYER_LOCATION, MarrowSpitterModel::createBodyLayer);
 		event.registerLayerDefinition(GoreboundHulkModel.LAYER_LOCATION, GoreboundHulkModel::createBodyLayer);
 		event.registerLayerDefinition(MnemonistPuppetModel.LAYER_LOCATION, MnemonistPuppetModel::createBodyLayer);
@@ -176,6 +177,12 @@ public class LayerEvents {
 		event.registerLayerDefinition(BarbedUrchinMidModel.LAYER_LOCATION, BarbedUrchinMidModel::createBodyLayer);
 		event.registerLayerDefinition(ChalybeateSnailModel.LAYER_LOCATION, ChalybeateSnailModel::createBodyLayer);
 		event.registerLayerDefinition(BloodLanternJellyModel.LAYER_LOCATION, BloodLanternJellyModel::createBodyLayer);
+        for (var style : com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.PelagicCreatureModel.Style.values())
+            event.registerLayerDefinition(style.layer(), () -> com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.PelagicMeshes.create(style.id));
+        event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.VampireSquidModel.LAYER_LOCATION,
+                com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.VampireSquidMesh::create);
+        event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.IceFishModel.LAYER_LOCATION,
+                com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.IceFishMesh::create);
 		event.registerLayerDefinition(MnemonicWhaleModel.LAYER_LOCATION, MnemonicWhaleModel::createBodyLayer);
 		event.registerLayerDefinition(BrinedVotaryModel.LAYER_LOCATION, BrinedVotaryModel::createBodyLayer);
 		event.registerLayerDefinition(HemolymphopodaModel.LAYER_LOCATION, HemolymphopodaModel::createBodyLayer);
@@ -214,6 +221,8 @@ public class LayerEvents {
 		event.registerLayerDefinition(CrimsonDoeModel.LAYER_LOCATION, CrimsonDoeModel::createBodyLayer);
 		event.registerLayerDefinition(VerdigrisMothModel.LAYER_LOCATION, VerdigrisMothModel::createBodyLayer);
 		event.registerLayerDefinition(ChoirKeeperModel.LAYER_LOCATION, ChoirKeeperModel::createBodyLayer);
+        event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.entity.mob.animal.OsteophageModel.LAYER_LOCATION,
+                com.vincenthuto.hemomancy.client.model.entity.mob.animal.OsteophageMesh::create);
 		event.registerLayerDefinition(LuminalCicadaModel.LAYER_LOCATION, LuminalCicadaModel::createBodyLayer);
 		event.registerLayerDefinition(ScarletSerpentModel.LAYER_LOCATION, ScarletSerpentModel::createBodyLayer);
 		event.registerLayerDefinition(HemojellyModel.LAYER_LOCATION, HemojellyModel::createBodyLayer);

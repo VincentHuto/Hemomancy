@@ -20,7 +20,7 @@ public final class MnemonistPuppetRules {
             return;
         }
         float damage = Math.max(0.0F, Math.min(MAX_STORED_DAMAGE, memory.damage()));
-        memories.add(new AttackMemory(memory.targetId(), damage, memory.gameTime()));
+        memories.add(new AttackMemory(memory.targetId(), damage, memory.gameTime(), memory.attackerId()));
         while (memories.size() > MAX_MEMORIES) {
             memories.remove(0);
         }
@@ -64,6 +64,9 @@ public final class MnemonistPuppetRules {
         return memory == null || gameTime - memory.gameTime() > MEMORY_EXPIRY_TICKS;
     }
 
-    public record AttackMemory(UUID targetId, float damage, long gameTime) {
+    public record AttackMemory(UUID targetId, float damage, long gameTime, UUID attackerId) {
+        public AttackMemory(UUID targetId, float damage, long gameTime) {
+            this(targetId, damage, gameTime, null);
+        }
     }
 }

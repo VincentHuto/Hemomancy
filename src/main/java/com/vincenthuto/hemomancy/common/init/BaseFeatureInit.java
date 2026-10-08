@@ -63,6 +63,8 @@ public class BaseFeatureInit {
 
 	public static final Feature<NoneFeatureConfiguration> ERYTHROCORAL_REEF = register("erythrocoral_reef",
 			new ErythrocoralReefFeature(NoneFeatureConfiguration.CODEC));
+    public static final Feature<NoneFeatureConfiguration> PELAGIC_SEABED = register("pelagic_seabed", new PelagicSeabedFeature());
+    public static final Feature<NoneFeatureConfiguration> PELAGIC_HABITAT = register("pelagic_habitat", new PelagicHabitatFeature());
 
 	public static final Feature<NoneFeatureConfiguration> SPORE_NEXUS_TOWER = register("spore_nexus_tower",
 			new SporeNexusTowerFeature(NoneFeatureConfiguration.CODEC));

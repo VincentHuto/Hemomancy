@@ -64,6 +64,11 @@ public final class VampireBatEntity extends Bat {
 	}
 
 	@Override
+	protected boolean shouldDropLoot() {
+		return !isManifestedAggregate() && !getPersistentData().hasUUID("CircusSwarmOwner") && super.shouldDropLoot();
+	}
+
+	@Override
 	public void tick() {
 		super.tick();
 		if (level().isClientSide) {

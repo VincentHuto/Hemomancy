@@ -25,7 +25,7 @@ public final class PuppeteerSummonRulesTest {
 				PuppeteerCommandMode.GUARD.retainsAutomaticTarget());
 		assertTrue("hunt retains an automatic hostile target",
 				PuppeteerCommandMode.HUNT.retainsAutomaticTarget());
-		assertEquals("seven summon shapes", 7, PuppeteerSummonDefinitions.all().size());
+		assertEquals("eight summon shapes", 8, PuppeteerSummonDefinitions.all().size());
 
 		PuppeteerSummonDefinition vulture = PuppeteerSummonDefinitions.byName("veinwing_vulture")
 				.orElseThrow(() -> new AssertionError("missing veinwing vulture"));

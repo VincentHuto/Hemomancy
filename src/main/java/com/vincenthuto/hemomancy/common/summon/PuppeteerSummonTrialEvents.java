@@ -34,6 +34,8 @@ public final class PuppeteerSummonTrialEvents {
 			case PuppeteerSummonDefinitions.GOREBOUND_HULK -> "gorebound_yoke";
 			case PuppeteerSummonDefinitions.SCARLET_MUMMER -> "scarlet_gorget";
 			case PuppeteerSummonDefinitions.MNEMONIST_PUPPET -> "mnemonist_cradle";
+			case PuppeteerSummonDefinitions.CINDER_BELLOWS -> "cinder_bellows_frame";
+			case PuppeteerSummonDefinitions.SANGUINE_HOUND -> "sanguine_hound_bridle";
 			default -> definition.name();
 		});
 	}
@@ -44,7 +46,8 @@ public final class PuppeteerSummonTrialEvents {
 		}
 		List<RecipeHolder<?>> recipes = new ArrayList<>();
 		for (PuppeteerSummonDefinition definition : PuppeteerSummonDefinitions.all()) {
-			if (definition.requiredDegree() <= degree) {
+			if (definition.requiredDegree() <= degree
+					&& com.vincenthuto.hemomancy.common.circus.CircusApprenticeshipProgress.instructionSatisfied(player, definition.name())) {
 				player.server.getRecipeManager().byKey(recipeId(definition)).ifPresent(recipes::add);
 				player.server.getRecipeManager().byKey(componentRecipeId(definition)).ifPresent(recipes::add);
 			}

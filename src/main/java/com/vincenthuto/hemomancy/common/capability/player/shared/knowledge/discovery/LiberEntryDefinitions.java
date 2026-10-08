@@ -54,6 +54,10 @@ public final class LiberEntryDefinitions {
 	public static final ResourceLocation IMMACULATUS_ANNETTA_GEODE = immaculatusEntry("the_path/pages/annetta_geode_memo");
 
 	static {
+        register(entry("the_hematic_order/pages/troupe_school"), HemomancyDiscoverySource.DIALOGUE);
+        for (var lesson : com.vincenthuto.hemomancy.common.circus.CircusCurriculum.lessons())
+            register(entry("the_hematic_order/pages/troupe_" + lesson.summon()), HemomancyDiscoverySource.DIALOGUE);
+
         for (var fact : com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch.Evidence.values())
             register(entry("the_infection/pages/antecedent_" + fact.key()), HemomancyDiscoverySource.MEMO);
         register(entry("the_infection/pages/clairaudiograph"), HemomancyDiscoverySource.DIALOGUE);

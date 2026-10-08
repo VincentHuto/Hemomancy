@@ -152,7 +152,7 @@ public final class CircusRingmasterEntity extends PathfinderMob {
 	}
 
 	private List<CircusPerformerEntity> troupe() {
-		return level().getEntitiesOfClass(CircusPerformerEntity.class, new AABB(encounterOrigin).inflate(20.0D));
+		return level().getEntitiesOfClass(CircusPerformerEntity.class, new AABB(encounterOrigin).inflate(20.0D), CircusPerformerEntity::participatesInFinale);
 	}
 
 	private void throwKnife(ServerPlayer owner) {
@@ -333,11 +333,13 @@ public final class CircusRingmasterEntity extends PathfinderMob {
 			if (CircusPlayerProgress.canRepairRoute(player))
 				options.add(new DialogueOption("hemomancy.circus.option.repair", null, EVENT_REPAIR));
 		}
+		options.add(new DialogueOption("hemomancy.circus.school.conductor", "school", null));
 		options.add(new DialogueOption("hemomancy.dialogue.circus_performer.leave", null, null));
 		return DialogueTree.builder(getType().getDescriptionId(),
 				Hemomancy.rloc("textures/entity/circus/ringmaster.png"), getId())
 				.addNode(new DialogueNode("greeting", List.of("hemomancy.circus.ringmaster.line." + route.serializedName()),
 						options))
+				.addNode(new DialogueNode("school", List.of("hemomancy.circus.school.ringmaster.curriculum", "hemomancy.circus.school.ringmaster.faculty", "hemomancy.circus.school.aftermath." + route.serializedName()), List.of(new DialogueOption("hemomancy.circus.school.back", "greeting", null))))
 				.addNode(new DialogueNode("succession_warning",
 						List.of("hemomancy.circus.ringmaster.warning.succession"),
 						List.of(new DialogueOption("hemomancy.circus.option.confirm_succession", null, EVENT_ACCEPT),

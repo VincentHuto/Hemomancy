@@ -28,6 +28,7 @@ class PuppeteerSummonTextureUvTest {
 				{"MnemonistPuppetModel.bbmodel", "mnemonist_puppet.png"},
 				{"ScarletMummerModel.bbmodel", "scarlet_mummer.png"},
 				{"SanguineHoundModel.bbmodel", "sanguine_hound.png"},
+				{"CinderBellowsModel.bbmodel", "cinder_bellows.png"},
 				{"RingmasterPatternModel.bbmodel", "ringmaster_pattern.png"}
 		};
 		assertEquals(PuppeteerSummonDefinitions.all().size(), assets.length,
@@ -36,13 +37,14 @@ class PuppeteerSummonTextureUvTest {
 	}
 
 	@Test
-	void allSevenRuntimeModelsBakeWithTheirAnimationHierarchy() {
+	void allRuntimeModelsBakeWithTheirAnimationHierarchy() {
 		assertDoesNotThrow(() -> new VeinwingVultureModel(VeinwingVultureModel.createBodyLayer().bakeRoot()));
 		assertDoesNotThrow(() -> new MarrowSpitterModel(MarrowSpitterModel.createBodyLayer().bakeRoot()));
 		assertDoesNotThrow(() -> new GoreboundHulkModel(GoreboundHulkModel.createBodyLayer().bakeRoot()));
 		assertDoesNotThrow(() -> new MnemonistPuppetModel(MnemonistPuppetModel.createBodyLayer().bakeRoot()));
 		assertDoesNotThrow(() -> new ScarletMummerModel(ScarletMummerModel.createBodyLayer().bakeRoot()));
 		assertDoesNotThrow(() -> new SanguineHoundModel(SanguineHoundModel.createBodyLayer().bakeRoot()));
+		assertDoesNotThrow(() -> new CinderBellowsModel(CinderBellowsModel.createBodyLayer().bakeRoot()));
 		assertDoesNotThrow(() -> new RingmasterPatternModel(RingmasterPatternModel.createBodyLayer().bakeRoot()));
 	}
 

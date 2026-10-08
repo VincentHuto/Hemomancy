@@ -56,13 +56,21 @@ attack without filling the vial or awarding collection evidence. Carrying a
 syringe is insufficient: use it with its loaded vial rack. Dead and invulnerable
 targets remain invalid during direct sampling even with the syringe.
 
-The initial data contains 131 profiles, of which 80 require the syringe: the
+The current data contains 147 profiles, of which 81 require the syringe: the
 selected large/armored vanilla animals and hostile mobs, villagers and wandering
 traders, all registered Hemomancy NPCs, registered Hemomancy mobs/summons with
 declared base health above 20 HP (except Hemomancy Armadillo, Desiccant,
 Mortarbound, and Naeglerophaeon), and Chitinite, Fervent Chitinite, Chalybeate Snail,
-and Hematic Construct. Flags are static data; damage and temporary health changes
+Hematic Construct, and Chiton. Flags are static data; damage and temporary health changes
 do not change eligibility. Unlisted creatures retain ordinary sampling.
+
+The [Pelagic communities](../docs/PELAGIC_ECOLOGY.md) add ordinary biological
+profiles with no special processing chain: Chiton is Ferric, Pyrosome Animus,
+Pelagic Herring Ductilis, Siphonophore Congeatio, Bloody-Belly Comb Jelly Tenebris,
+Hagfish Mortem, and Vampire Squid Tenebris with the aquatic property. Only Chiton requires a Living Syringe. Existing ocean
+creatures retain their established profiles when their home habitats change. Osteophage Vultures add a Mortem profile and allow ordinary sampling; their skeletal appearance does not impose the Living Syringe gate.
+
+Ice Fish have no blood tendency, retain the aquatic property and permit ordinary sampling. Their haemoglobin-free circulation is regarded as naturally pure in Unstained lore; their death drop shares the existing Cleansing Hemolymph item with Hemolymphopoda.
 
 Piglin, Piglin Brute, and Zombified Piglin are included; the illager set includes
 Pillager, Vindicator, Evoker, and Illusioner. Camel Husk has no registered entity
@@ -71,7 +79,7 @@ in this 1.21.1 checkout and is not mapped to Husk. Add its real addon ID when av
 Consenting professional NPC donations also require a held syringe when their
 profile requires it. The donation fills a rack vial and retains authenticated
 donor provenance. Original professionals remain protected from direct sampling; their established consent-based donation bypasses that protection only within the authorized dialogue transaction. Consent, distance, and degree checks still apply. Personal
-self-sampling, Hemolymphopoda's cleansing hemolymph, and the Warden's special
+self-sampling, the cleansing hemolymph shared by Hemolymphopoda and Ice Fish, and the Warden's special
 syringe sample retain their existing behavior.
 
 ## Verification

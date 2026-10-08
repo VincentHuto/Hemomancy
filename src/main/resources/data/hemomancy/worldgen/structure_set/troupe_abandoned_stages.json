@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "hemomancy:troupe_abandoned_stage",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 32,
+    "separation": 10,
+    "salt": 2030148873
+  }
+}

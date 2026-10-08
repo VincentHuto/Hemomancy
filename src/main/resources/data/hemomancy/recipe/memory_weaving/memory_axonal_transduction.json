@@ -1,0 +1,8 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "catalysts": [{"item": "hemomancy:naeglerophaeon_ganglion"}],
+  "enzymes": {"animus": 0, "flammeus": 0, "ductilis": 4, "lux": 0, "mortem": 0, "congeatio": 0, "ferric": 0, "tenebris": 0},
+  "blood": 600,
+  "result": "hemomancy:memory_axonal_transduction",
+  "count": 1
+}

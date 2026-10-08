@@ -8,11 +8,11 @@ import java.util.regex.Pattern;
 final class ErythrocoralReefTuningTest {
 	public static void main(String[] args) throws IOException {
 		keepsTripledReefDensityInSync();
-		prioritizesCustomReefLifeOverVanillaFiller();
+		retainsReefGrazersAndSparseRelocatedVisitors();
 		keepsAquaticSpawnDepthsVisibleInDeepReefs();
 		keepsDataPackSpawnTablesInSync();
 		keepsWhalesTaggedForUnderwaterBreathing();
-		keepsHydrothermalVentsAvailableInReefs();
+		movesSnailBearingVentsToHydrothermalDepths();
 	}
 
 	private static void keepsTripledReefDensityInSync() throws IOException {
@@ -29,13 +29,15 @@ final class ErythrocoralReefTuningTest {
 				"placed feature JSON should use the shared reef attempt count");
 	}
 
-	private static void prioritizesCustomReefLifeOverVanillaFiller() {
-		assertTrue(ErythrocoralReefTuning.BLOOD_LANTERN_JELLY_WEIGHT > ErythrocoralReefTuning.TROPICAL_FISH_WEIGHT,
-				"blood lantern jellies should be the signature visible reef ambient spawn");
+	private static void retainsReefGrazersAndSparseRelocatedVisitors() {
+		assertTrue(ErythrocoralReefTuning.BLOOD_LANTERN_JELLY_WEIGHT > 0
+				&& ErythrocoralReefTuning.BLOOD_LANTERN_JELLY_WEIGHT < ErythrocoralReefTuning.TROPICAL_FISH_WEIGHT,
+				"Midnight lantern jellies should remain sparse reef visitors");
 		assertTrue(ErythrocoralReefTuning.BARBED_URCHIN_WEIGHT >= ErythrocoralReefTuning.PUFFERFISH_WEIGHT * 2,
 				"barbed urchins should not be drowned out by vanilla pufferfish");
-		assertTrue(ErythrocoralReefTuning.MNEMONIC_WHALE_WEIGHT > ErythrocoralReefTuning.SQUID_WEIGHT,
-				"mnemonic whales should win more water-creature rolls than squid inside their own biome");
+		assertTrue(ErythrocoralReefTuning.MNEMONIC_WHALE_WEIGHT > 0
+				&& ErythrocoralReefTuning.MNEMONIC_WHALE_WEIGHT < ErythrocoralReefTuning.SQUID_WEIGHT,
+				"Open-ocean whales should visit reefs without displacing their ordinary prey");
 	}
 
 	private static void keepsAquaticSpawnDepthsVisibleInDeepReefs() {
@@ -65,11 +67,12 @@ final class ErythrocoralReefTuningTest {
 				"mnemonic whales should be tagged as underwater breathers");
 	}
 
-	private static void keepsHydrothermalVentsAvailableInReefs() throws IOException {
+	private static void movesSnailBearingVentsToHydrothermalDepths() throws IOException {
 		String ventBiomeTag = Files.readString(Path.of(
 				"src/main/resources/data/hemomancy/tags/worldgen/biome/deep_ocean_vent_spawnlist.json"));
-		assertTrue(ventBiomeTag.contains("\"hemomancy:erythrocoral_reef\""),
-				"erythrocoral reefs should be in the hydrothermal vent spawnlist tag");
+		var values = com.google.gson.JsonParser.parseString(ventBiomeTag).getAsJsonObject().getAsJsonArray("values");
+		assertTrue(values.size() == 1 && values.get(0).getAsString().equals("hemomancy:hydrothermal_depths"),
+				"snail-bearing vents should generate in Hydrothermal Depths instead of reefs and the former deep-ocean biomes");
 	}
 
 	private static void assertSpawnerWeight(String biome, String entityId, int weight) {

@@ -99,11 +99,16 @@ public class BarbedUrchinEntity extends AbstractFish {
 
 	protected void registerGoals() {
 		this.goalSelector.addGoal(1, new BarbedUrchinEntity.BarbedUrchinEntityPuffGoal(this));
+		this.goalSelector.addGoal(3, new PelagicBottomForageGoal(this,
+				com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species.URCHIN, () -> getPuffState() == STATE_SMALL));
 	}
 
 	public static boolean canSpawnHere(EntityType<? extends AbstractFish> fish, LevelAccessor world,
 			MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
 		int seaLevel = world.getSeaLevel();
+		if (com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.layer(world, pos) != null)
+			return com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.suitable(world, pos,
+					com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species.URCHIN);
 		int minY = seaLevel - ErythrocoralReefTuning.URCHIN_MAX_DEPTH_BELOW_SEA_LEVEL;
 		int maxY = seaLevel - ErythrocoralReefTuning.URCHIN_MIN_DEPTH_BELOW_SEA_LEVEL;
 		boolean isAllNeighborsSource = isSourceBlock(world, pos.north()) && isSourceBlock(world, pos.south())

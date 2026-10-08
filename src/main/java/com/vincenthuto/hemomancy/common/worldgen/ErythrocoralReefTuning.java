@@ -11,12 +11,12 @@ public final class ErythrocoralReefTuning {
 	public static final int CLUSTER_RADIUS_VARIANCE = 2;
 	public static final int STABLE_SHELF_MIN_MATCHES = 16;
 
-	public static final int BLOOD_LANTERN_JELLY_WEIGHT = 36;
-	public static final int BLOOD_LANTERN_JELLY_MIN_COUNT = 3;
-	public static final int BLOOD_LANTERN_JELLY_MAX_COUNT = 6;
-	public static final int BARBED_URCHIN_WEIGHT = 12;
-	public static final int BARBED_URCHIN_MIN_COUNT = 1;
-	public static final int BARBED_URCHIN_MAX_COUNT = 3;
+	public static final int BLOOD_LANTERN_JELLY_WEIGHT = 3;
+	public static final int BLOOD_LANTERN_JELLY_MIN_COUNT = 1;
+	public static final int BLOOD_LANTERN_JELLY_MAX_COUNT = 2;
+	public static final int BARBED_URCHIN_WEIGHT = 22;
+	public static final int BARBED_URCHIN_MIN_COUNT = 2;
+	public static final int BARBED_URCHIN_MAX_COUNT = 4;
 	public static final int TROPICAL_FISH_WEIGHT = 16;
 	public static final int TROPICAL_FISH_MIN_COUNT = 4;
 	public static final int TROPICAL_FISH_MAX_COUNT = 8;
@@ -29,7 +29,7 @@ public final class ErythrocoralReefTuning {
 	public static final int DOLPHIN_WEIGHT = 1;
 	public static final int DOLPHIN_MIN_COUNT = 1;
 	public static final int DOLPHIN_MAX_COUNT = 2;
-	public static final int MNEMONIC_WHALE_WEIGHT = 4;
+	public static final int MNEMONIC_WHALE_WEIGHT = 1;
 	public static final int MNEMONIC_WHALE_MIN_COUNT = 1;
 	public static final int MNEMONIC_WHALE_MAX_COUNT = 1;
 

@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.common.entity.mob.aquatic;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.worldgen.ErythrocoralReefTuning;
+import com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat;
+import com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -83,6 +85,7 @@ public class MnemonicWhaleEntity extends WaterAnimal {
 
 	public static boolean canSpawnHere(EntityType<? extends MnemonicWhaleEntity> type, LevelAccessor level,
 			MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+		if (PelagicHabitat.layer(level, pos) != null) return PelagicHabitat.suitable(level, pos, Species.WHALE);
 		return level.getFluidState(pos).is(FluidTags.WATER)
 				&& level.getFluidState(pos.above()).is(FluidTags.WATER)
 				&& level.getFluidState(pos.below()).is(FluidTags.WATER)
@@ -419,9 +422,13 @@ public class MnemonicWhaleEntity extends WaterAnimal {
 						+ this.whale.getRandom().nextInt(MnemonicWhaleTuning.CRUISE_HORIZONTAL_VARIANCE);
 				int x = this.whale.blockPosition().getX() + (int) Math.round(Math.cos(angle) * distance);
 				int z = this.whale.blockPosition().getZ() + (int) Math.round(Math.sin(angle) * distance);
+				if (!PelagicHabitat.loaded(level, new BlockPos(x, seaLevel - 1, z))) continue;
 				int floorY = this.findOceanFloorY(level, x, z, seaLevel);
 				int y = MnemonicWhaleMovementRules.cruiseTargetY(seaLevel, floorY,
 						this.whale.getRandom().nextInt(MnemonicWhaleTuning.CRUISE_RANDOM_DIVE_DEPTH + 1));
+				var layer = PelagicHabitat.layer(level, this.whale.blockPosition());
+				if (layer != null && layer != com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicLayer.REEF)
+					y = Math.max(floorY + MnemonicWhaleTuning.CRUISE_MIN_FLOOR_CLEARANCE, 34 + this.whale.getRandom().nextInt(21));
 				BlockPos targetPos = new BlockPos(x, y, z);
 				if (this.isOpenWater(level, targetPos)) {
 					return Vec3.atCenterOf(targetPos);
@@ -444,9 +451,7 @@ public class MnemonicWhaleEntity extends WaterAnimal {
 		}
 
 		private boolean isOpenWater(Level level, BlockPos pos) {
-			return level.getFluidState(pos).is(FluidTags.WATER)
-					&& level.getFluidState(pos.above()).is(FluidTags.WATER)
-					&& level.getFluidState(pos.below()).is(FluidTags.WATER);
+			return PelagicHabitat.waterClearance(level, pos, 2, 2, 2);
 		}
 	}
 }

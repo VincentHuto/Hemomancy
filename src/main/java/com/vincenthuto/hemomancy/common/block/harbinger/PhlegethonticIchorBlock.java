@@ -6,6 +6,9 @@ import com.vincenthuto.hemomancy.common.worldgen.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import com.vincenthuto.hemomancy.common.network.PhlegethonticCurrentPacket;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -47,6 +50,12 @@ public class PhlegethonticIchorBlock extends LiquidBlock {
         double force=PhlegethonticRules.pulsing(now)?.014:.007;
         Vec3 velocity=entity.getDeltaMovement();
         Vec3 addition=new Vec3(data.getDouble("PhlegethonticFlowX"),0,data.getDouble("PhlegethonticFlowZ")).scale(force);
+        if(addition.lengthSqr()==0)return;
+        // Player physics run on the client; a full velocity update also overwrites jumping and flight.
+        if(entity instanceof ServerPlayer player) {
+            PacketDistributor.sendToPlayer(player,new PhlegethonticCurrentPacket(addition.x,addition.z));
+            return;
+        }
         if(velocity.horizontalDistanceSqr()<.09) {
             Vec3 pushed=velocity.add(addition);
             double speed=pushed.horizontalDistance();

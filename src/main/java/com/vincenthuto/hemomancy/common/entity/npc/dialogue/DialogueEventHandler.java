@@ -96,6 +96,10 @@ public class DialogueEventHandler {
             }
             return;
         }
+        if (event.getEventId().startsWith("circus_school_")) {
+            event.setRewardDelivered(com.vincenthuto.hemomancy.common.circus.CircusSchoolDialogue.handle(event));
+            return;
+        }
 		if (event.getEventId().startsWith("circus_")
 				&& player.level().getEntity(event.getEntityId()) instanceof CircusRingmasterEntity ringmaster) {
 			ringmaster.handleChoice(player, event.getEventId());

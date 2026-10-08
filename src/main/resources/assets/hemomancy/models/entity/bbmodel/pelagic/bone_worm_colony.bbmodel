@@ -1,0 +1,1548 @@
+{
+  "meta": {
+    "format_version": "4.10",
+    "model_format": "free",
+    "box_uv": true
+  },
+  "name": "bone_worm_colony",
+  "model_identifier": "bone_worm_colony",
+  "resolution": {
+    "width": 128,
+    "height": 256
+  },
+  "elements": [
+    {
+      "name": "tube0_0",
+      "uuid": "ef18b711-032f-5199-bb41-3a78d063db1d",
+      "type": "cube",
+      "to": [
+        -2,
+        3,
+        -1
+      ],
+      "origin": [
+        -3,
+        0,
+        -2
+      ],
+      "uv_offset": [
+        1,
+        1
+      ],
+      "autouv": 0,
+      "faces": {
+        "north": {
+          "uv": [
+            3,
+            3,
+            5,
+            6
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            1,
+            3,
+            3,
+            6
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            7,
+            3,
+            9,
+            6
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            5,
+            3,
+            7,
+            6
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            5,
+            3,
+            3,
+            1
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            7,
+            1,
+            5,
+            3
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        -4,
+        0,
+        -3
+      ]
+    },
+    {
+      "name": "plume0_0",
+      "uuid": "b6169577-6155-5576-85fa-407fdb091f86",
+      "type": "cube",
+      "to": [
+        -1.5,
+        6,
+        -1.5
+      ],
+      "origin": [
+        -3,
+        3,
+        -2
+      ],
+      "uv_offset": [
+        11,
+        1
+      ],
+      "autouv": 0,
+      "faces": {
+        "north": {
+          "uv": [
+            12,
+            2,
+            15,
+            5.5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            11,
+            2,
+            12,
+            5.5
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            16,
+            2,
+            19,
+            5.5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            15,
+            2,
+            16,
+            5.5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            15,
+            2,
+            12,
+            1
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            18,
+            1,
+            15,
+            2
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        -4.5,
+        2.5,
+        -2.5
+      ]
+    },
+    {
+      "name": "plume0_1",
+      "uuid": "a884527d-a5a4-536a-b651-27655196965c",
+      "type": "cube",
+      "to": [
+        -2.5,
+        6,
+        -0.5
+      ],
+      "origin": [
+        -3,
+        3,
+        -2
+      ],
+      "uv_offset": [
+        21,
+        1
+      ],
+      "autouv": 0,
+      "faces": {
+        "north": {
+          "uv": [
+            24,
+            4,
+            25,
+            7.5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            21,
+            4,
+            24,
+            7.5
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            28,
+            4,
+            29,
+            7.5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            25,
+            4,
+            28,
+            7.5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            25,
+            4,
+            24,
+            1
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            26,
+            1,
+            25,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        -3.5,
+        2.5,
+        -3.5
+      ]
+    },
+    {
+      "name": "tube1_0",
+      "uuid": "0acbd9e8-4513-5b45-b9a8-e1dfb08f2a2e",
+      "type": "cube",
+      "to": [
+        3,
+        4,
+        -2
+      ],
+      "origin": [
+        2,
+        0,
+        -3
+      ],
+      "uv_offset": [
+        31,
+        1
+      ],
+      "autouv": 0,
+      "faces": {
+        "north": {
+          "uv": [
+            33,
+            3,
+            35,
+            7
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            31,
+            3,
+            33,
+            7
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            37,
+            3,
+            39,
+            7
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            35,
+            3,
+            37,
+            7
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            35,
+            3,
+            33,
+            1
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            37,
+            1,
+            35,
+            3
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        1,
+        0,
+        -4
+      ]
+    },
+    {
+      "name": "plume1_0",
+      "uuid": "7a44a83d-d916-5433-b1e2-42b34c3a971b",
+      "type": "cube",
+      "to": [
+        3.5,
+        7,
+        -2.5
+      ],
+      "origin": [
+        2,
+        4,
+        -3
+      ],
+      "uv_offset": [
+        41,
+        1
+      ],
+      "autouv": 0,
+      "faces": {
+        "north": {
+          "uv": [
+            42,
+            2,
+            45,
+            5.5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            41,
+            2,
+            42,
+            5.5
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            46,
+            2,
+            49,
+            5.5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            45,
+            2,
+            46,
+            5.5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            45,
+            2,
+            42,
+            1
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            48,
+            1,
+            45,
+            2
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        0.5,
+        3.5,
+        -3.5
+      ]
+    },
+    {
+      "name": "plume1_1",
+      "uuid": "5ac1e034-7273-5b4f-a5fe-233451b08c7b",
+      "type": "cube",
+      "to": [
+        2.5,
+        7,
+        -1.5
+      ],
+      "origin": [
+        2,
+        4,
+        -3
+      ],
+      "uv_offset": [
+        51,
+        1
+      ],
+      "autouv": 0,
+      "faces": {
+        "north": {
+          "uv": [
+            54,
+            4,
+            55,
+            7.5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            51,
+            4,
+            54,
+            7.5
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            58,
+            4,
+            59,
+            7.5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            55,
+            4,
+            58,
+            7.5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            55,
+            4,
+            54,
+            1
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            56,
+            1,
+            55,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        1.5,
+        3.5,
+        -4.5
+      ]
+    },
+    {
+      "name": "tube2_0",
+      "uuid": "6418a3ea-914b-5167-bac1-3efae2fbbccb",
+      "type": "cube",
+      "to": [
+        1,
+        5,
+        3
+      ],
+      "origin": [
+        0,
+        0,
+        2
+      ],
+      "uv_offset": [
+        61,
+        1
+      ],
+      "autouv": 0,
+      "faces": {
+        "north": {
+          "uv": [
+            63,
+            3,
+            65,
+            8
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            61,
+            3,
+            63,
+            8
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            67,
+            3,
+            69,
+            8
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            65,
+            3,
+            67,
+            8
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            65,
+            3,
+            63,
+            1
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            67,
+            1,
+            65,
+            3
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        -1,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "plume2_0",
+      "uuid": "575113b1-5a0b-5aa5-b34b-e6408c833efc",
+      "type": "cube",
+      "to": [
+        1.5,
+        8,
+        2.5
+      ],
+      "origin": [
+        0,
+        5,
+        2
+      ],
+      "uv_offset": [
+        71,
+        1
+      ],
+      "autouv": 0,
+      "faces": {
+        "north": {
+          "uv": [
+            72,
+            2,
+            75,
+            5.5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            71,
+            2,
+            72,
+            5.5
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            76,
+            2,
+            79,
+            5.5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            75,
+            2,
+            76,
+            5.5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            75,
+            2,
+            72,
+            1
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            78,
+            1,
+            75,
+            2
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        -1.5,
+        4.5,
+        1.5
+      ]
+    },
+    {
+      "name": "plume2_1",
+      "uuid": "8cec5c55-99c5-59b7-be27-8844f5d13755",
+      "type": "cube",
+      "to": [
+        0.5,
+        8,
+        3.5
+      ],
+      "origin": [
+        0,
+        5,
+        2
+      ],
+      "uv_offset": [
+        81,
+        1
+      ],
+      "autouv": 0,
+      "faces": {
+        "north": {
+          "uv": [
+            84,
+            4,
+            85,
+            7.5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            81,
+            4,
+            84,
+            7.5
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            88,
+            4,
+            89,
+            7.5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            85,
+            4,
+            88,
+            7.5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            85,
+            4,
+            84,
+            1
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            86,
+            1,
+            85,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        -0.5,
+        4.5,
+        0.5
+      ]
+    },
+    {
+      "name": "tube3_0",
+      "uuid": "ea92287d-2b50-5070-81df-da74481e8717",
+      "type": "cube",
+      "to": [
+        5,
+        3,
+        4
+      ],
+      "origin": [
+        4,
+        0,
+        3
+      ],
+      "uv_offset": [
+        91,
+        1
+      ],
+      "autouv": 0,
+      "faces": {
+        "north": {
+          "uv": [
+            93,
+            3,
+            95,
+            6
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            91,
+            3,
+            93,
+            6
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            97,
+            3,
+            99,
+            6
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            95,
+            3,
+            97,
+            6
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            95,
+            3,
+            93,
+            1
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            97,
+            1,
+            95,
+            3
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        3,
+        0,
+        2
+      ]
+    },
+    {
+      "name": "plume3_0",
+      "uuid": "eb655fcf-6349-5f31-bd6a-cf5bbf64d998",
+      "type": "cube",
+      "to": [
+        5.5,
+        6,
+        3.5
+      ],
+      "origin": [
+        4,
+        3,
+        3
+      ],
+      "uv_offset": [
+        101,
+        1
+      ],
+      "autouv": 0,
+      "faces": {
+        "north": {
+          "uv": [
+            102,
+            2,
+            105,
+            5.5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            101,
+            2,
+            102,
+            5.5
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            106,
+            2,
+            109,
+            5.5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            105,
+            2,
+            106,
+            5.5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            105,
+            2,
+            102,
+            1
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            108,
+            1,
+            105,
+            2
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        2.5,
+        2.5,
+        2.5
+      ]
+    },
+    {
+      "name": "plume3_1",
+      "uuid": "5696bf49-8663-56bf-8037-002a05fce983",
+      "type": "cube",
+      "to": [
+        4.5,
+        6,
+        4.5
+      ],
+      "origin": [
+        4,
+        3,
+        3
+      ],
+      "uv_offset": [
+        111,
+        1
+      ],
+      "autouv": 0,
+      "faces": {
+        "north": {
+          "uv": [
+            114,
+            4,
+            115,
+            7.5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            111,
+            4,
+            114,
+            7.5
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            118,
+            4,
+            119,
+            7.5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            115,
+            4,
+            118,
+            7.5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            115,
+            4,
+            114,
+            1
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            116,
+            1,
+            115,
+            4
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        3.5,
+        2.5,
+        1.5
+      ]
+    },
+    {
+      "name": "tube4_0",
+      "uuid": "b350d51c-3d14-569b-9035-de1d004c02af",
+      "type": "cube",
+      "to": [
+        -3,
+        4,
+        4
+      ],
+      "origin": [
+        -4,
+        0,
+        3
+      ],
+      "uv_offset": [
+        1,
+        11
+      ],
+      "autouv": 0,
+      "faces": {
+        "north": {
+          "uv": [
+            3,
+            13,
+            5,
+            17
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            1,
+            13,
+            3,
+            17
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            7,
+            13,
+            9,
+            17
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            5,
+            13,
+            7,
+            17
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            5,
+            13,
+            3,
+            11
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            7,
+            11,
+            5,
+            13
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        -5,
+        0,
+        2
+      ]
+    },
+    {
+      "name": "plume4_0",
+      "uuid": "e8b2f0ef-d49a-5d84-bedd-f5a645ddd351",
+      "type": "cube",
+      "to": [
+        -2.5,
+        7,
+        3.5
+      ],
+      "origin": [
+        -4,
+        4,
+        3
+      ],
+      "uv_offset": [
+        11,
+        11
+      ],
+      "autouv": 0,
+      "faces": {
+        "north": {
+          "uv": [
+            12,
+            12,
+            15,
+            15.5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            11,
+            12,
+            12,
+            15.5
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            16,
+            12,
+            19,
+            15.5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            15,
+            12,
+            16,
+            15.5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            15,
+            12,
+            12,
+            11
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            18,
+            11,
+            15,
+            12
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        -5.5,
+        3.5,
+        2.5
+      ]
+    },
+    {
+      "name": "plume4_1",
+      "uuid": "1db7b331-0eeb-5462-a479-f80a444e840b",
+      "type": "cube",
+      "to": [
+        -3.5,
+        7,
+        4.5
+      ],
+      "origin": [
+        -4,
+        4,
+        3
+      ],
+      "uv_offset": [
+        21,
+        11
+      ],
+      "autouv": 0,
+      "faces": {
+        "north": {
+          "uv": [
+            24,
+            14,
+            25,
+            17.5
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            21,
+            14,
+            24,
+            17.5
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            28,
+            14,
+            29,
+            17.5
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            25,
+            14,
+            28,
+            17.5
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            25,
+            14,
+            24,
+            11
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            26,
+            11,
+            25,
+            14
+          ],
+          "texture": 0
+        }
+      },
+      "from": [
+        -4.5,
+        3.5,
+        1.5
+      ]
+    }
+  ],
+  "outliner": [
+    {
+      "name": "body",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "uuid": "793ace77-c828-5226-91d4-a6491602d4e1",
+      "children": [
+        {
+          "name": "tube0",
+          "origin": [
+            -3,
+            0,
+            -2
+          ],
+          "rotation": [
+            0,
+            0,
+            4
+          ],
+          "uuid": "644b2330-386a-5fbd-8b80-85c80448df58",
+          "children": [
+            "ef18b711-032f-5199-bb41-3a78d063db1d",
+            {
+              "name": "plume0",
+              "origin": [
+                -3,
+                3,
+                -2
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "uuid": "e424a089-e181-5cd7-be09-8ef45b8d827c",
+              "children": [
+                "b6169577-6155-5576-85fa-407fdb091f86",
+                "a884527d-a5a4-536a-b651-27655196965c"
+              ],
+              "export": true,
+              "isOpen": true,
+              "visibility": true
+            }
+          ],
+          "export": true,
+          "isOpen": true,
+          "visibility": true
+        },
+        {
+          "name": "tube1",
+          "origin": [
+            2,
+            0,
+            -3
+          ],
+          "rotation": [
+            0,
+            0,
+            2
+          ],
+          "uuid": "b0097917-8897-5938-ab09-9e171c28adf4",
+          "children": [
+            "0acbd9e8-4513-5b45-b9a8-e1dfb08f2a2e",
+            {
+              "name": "plume1",
+              "origin": [
+                2,
+                4,
+                -3
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "uuid": "a3ca5a45-d5e7-59b6-b6f6-9f51cf69b2b5",
+              "children": [
+                "7a44a83d-d916-5433-b1e2-42b34c3a971b",
+                "5ac1e034-7273-5b4f-a5fe-233451b08c7b"
+              ],
+              "export": true,
+              "isOpen": true,
+              "visibility": true
+            }
+          ],
+          "export": true,
+          "isOpen": true,
+          "visibility": true
+        },
+        {
+          "name": "tube2",
+          "origin": [
+            0,
+            0,
+            2
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "uuid": "b23723bd-c601-5fd2-a5aa-ca3a9ba58649",
+          "children": [
+            "6418a3ea-914b-5167-bac1-3efae2fbbccb",
+            {
+              "name": "plume2",
+              "origin": [
+                0,
+                5,
+                2
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "uuid": "28d6a9bc-0cef-5a6f-93a8-1c4dcd562dcf",
+              "children": [
+                "575113b1-5a0b-5aa5-b34b-e6408c833efc",
+                "8cec5c55-99c5-59b7-be27-8844f5d13755"
+              ],
+              "export": true,
+              "isOpen": true,
+              "visibility": true
+            }
+          ],
+          "export": true,
+          "isOpen": true,
+          "visibility": true
+        },
+        {
+          "name": "tube3",
+          "origin": [
+            4,
+            0,
+            3
+          ],
+          "rotation": [
+            0,
+            0,
+            -2
+          ],
+          "uuid": "5e968e1c-bb4f-5aae-b107-805448283331",
+          "children": [
+            "ea92287d-2b50-5070-81df-da74481e8717",
+            {
+              "name": "plume3",
+              "origin": [
+                4,
+                3,
+                3
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "uuid": "453b6818-327d-5713-915a-a1175c15417b",
+              "children": [
+                "eb655fcf-6349-5f31-bd6a-cf5bbf64d998",
+                "5696bf49-8663-56bf-8037-002a05fce983"
+              ],
+              "export": true,
+              "isOpen": true,
+              "visibility": true
+            }
+          ],
+          "export": true,
+          "isOpen": true,
+          "visibility": true
+        },
+        {
+          "name": "tube4",
+          "origin": [
+            -4,
+            0,
+            3
+          ],
+          "rotation": [
+            0,
+            0,
+            -4
+          ],
+          "uuid": "bdf1c72a-2122-58c5-8251-b34e404b04d1",
+          "children": [
+            "b350d51c-3d14-569b-9035-de1d004c02af",
+            {
+              "name": "plume4",
+              "origin": [
+                -4,
+                4,
+                3
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "uuid": "03bd0c44-4534-5600-89fc-326399f3b6df",
+              "children": [
+                "e8b2f0ef-d49a-5d84-bedd-f5a645ddd351",
+                "1db7b331-0eeb-5462-a479-f80a444e840b"
+              ],
+              "export": true,
+              "isOpen": true,
+              "visibility": true
+            }
+          ],
+          "export": true,
+          "isOpen": true,
+          "visibility": true
+        }
+      ],
+      "export": true,
+      "isOpen": true,
+      "visibility": true
+    }
+  ],
+  "textures": [
+    {
+      "name": "bone_worm_colony.png",
+      "uuid": "e8cb0be1-8221-5ee8-afde-95b0426e6c5d",
+      "id": "0",
+      "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAAEACAYAAAB7+X6nAAABzUlEQVR4nO3YvU7CUBQA4NtEYCPdfARfws1g3Bh0VBInVx/GJ9BRFwcXjE4OMhkXcSQOrg4MhIWa26TGv8EaoIjft9we2nDg9Nw2OSHwryXvg+v9w6zZbIZerxfiutc9/XA+etjYz+I6Go3CYDAIxfHuy/2Xa4vr+/1+2H6+/fa8vM251fk7K2Uu7q61suFw+PZj0jQNjUYjjy9XV7PWY7dUcnmrr3PeAMetnXznx6RJkuQJY3zW7uSfb54czeTGypvOpc5TewKU6eCie2NTxYa6SreyopvX785n9qSQd6tUnUs1QPzier3+IZ5MJr+7W/IuRJ3zBuhcnv1oR7afbqa6c+Mfq9Vq+WsnrkU8Ho/zddnydiqq89xfAbGg748/x4WDm4ukirzTNvpneQFYCgsxCaQ6f2ISyOxUOgmkeks1CaS8PzEJZMYNUNVkjAVpgGWZyAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAmKtXf+bPs90TE0kAAAAASUVORK5CYII=",
+      "mode": "bitmap",
+      "render_mode": "default",
+      "visible": true
+    }
+  ],
+  "animations": [
+    {
+      "uuid": "c10302c3-c288-558c-bee7-d402de46594a",
+      "name": "idle",
+      "loop": "loop",
+      "length": 2,
+      "animators": {
+        "644b2330-386a-5fbd-8b80-85c80448df58": {
+          "name": "tube0",
+          "type": "bone",
+          "keyframes": [
+            {
+              "channel": "rotation",
+              "time": 0,
+              "interpolation": "catmullrom",
+              "data_points": [
+                {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                }
+              ],
+              "uuid": "f60cf28f-7287-5966-8087-6f929c061d85"
+            },
+            {
+              "channel": "rotation",
+              "time": 0.5,
+              "interpolation": "catmullrom",
+              "data_points": [
+                {
+                  "x": 0,
+                  "y": 8,
+                  "z": 0
+                }
+              ],
+              "uuid": "7cc36fe4-779f-5ac7-b28d-587d8fd5f78b"
+            },
+            {
+              "channel": "rotation",
+              "time": 1,
+              "interpolation": "catmullrom",
+              "data_points": [
+                {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                }
+              ],
+              "uuid": "2693ba4e-77c1-52cd-80c0-0ad7bbc8ef4e"
+            },
+            {
+              "channel": "rotation",
+              "time": 1.5,
+              "interpolation": "catmullrom",
+              "data_points": [
+                {
+                  "x": 0,
+                  "y": -8,
+                  "z": 0
+                }
+              ],
+              "uuid": "f1b96655-cb4c-5bb1-a5c5-fef40f1da397"
+            },
+            {
+              "channel": "rotation",
+              "time": 2,
+              "interpolation": "catmullrom",
+              "data_points": [
+                {
+                  "x": 0,
+                  "y": 0,
+                  "z": 0
+                }
+              ],
+              "uuid": "6b7a7208-a38b-55b1-a0d4-73d1dd6b2867"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

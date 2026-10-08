@@ -337,8 +337,8 @@ public final class MaterialsData {
                 "Materials", () -> new ItemStack(ItemInit.sanguine_conduit.get()),
                 true, UnlockPredicate.minDegree(2)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("puppeteering_thread", "Puppeteering Thread",
-                "Fine threads used in manipulation memory weaving.",
+                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("puppeteering_thread", "Enthralling Filament",
+                "Restraint fibre from Peacock Spiders, surface Hemojellies and Blood Drunk Puppeteers; used in memory weaving and stored Crossbar tension.",
                 "Materials", () -> new ItemStack(ItemInit.puppeteering_thread.get()),
                 true, UnlockPredicate.minDegree(2)));
 
@@ -392,8 +392,8 @@ public final class MaterialsData {
                 "Materials", () -> new ItemStack(ItemInit.queens_physogastrism.get()),
                 true, UnlockPredicate.minDegree(3)));
 
-                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("cuttlefish_chromatophores", "Cuttlefish Chromatophores",
-                "Pigment organs from a Prism Cuttle, still flashing with false color.",
+                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("cuttlefish_chromatophores", "Chromatophores",
+                "Color and light cells shared by Prism Cuttles, Bloody-Belly Comb Jellies and Luminal Cicadas.",
                 "Materials", () -> new ItemStack(ItemInit.cuttlefish_chromatophores.get()),
                 true, UnlockPredicate.minDegree(3)));
 

@@ -19,6 +19,12 @@ public final class HighStrungMeleeAttackGoal extends MeleeAttackGoal {
 		super.tick();
 	}
 
+    @Override protected void checkAndPerformAttack(net.minecraft.world.entity.LivingEntity target) {
+        if (mob instanceof GoreboundHulkEntity hulk) {
+            if (canPerformAttack(target)) { resetAttackCooldown(); hulk.beginStrike(target); }
+        } else super.checkAndPerformAttack(target);
+    }
+
 	@Override
 	protected boolean isTimeToAttack() {
 		return attackCooldown <= 0;

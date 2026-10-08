@@ -222,7 +222,7 @@ public abstract class CircusPerformerEntity extends PathfinderMob {
 	private void alertTroupe(LivingEntity attacker) {
 		AABB area = getBoundingBox().inflate(32.0D);
 		for (CircusPerformerEntity performer : level().getEntitiesOfClass(CircusPerformerEntity.class, area)) {
-			if (!performer.isDowned()) performer.setThreat(attacker);
+			if (!performer.isDowned() && (finaleOwner == null || performer.participatesInFinale())) performer.setThreat(attacker);
 		}
 	}
 
@@ -271,10 +271,11 @@ public abstract class CircusPerformerEntity extends PathfinderMob {
 		if (hand != InteractionHand.MAIN_HAND || isDowned() || threatId != null)
 			return InteractionResult.PASS;
 		if (!level().isClientSide && player instanceof ServerPlayer serverPlayer) {
+			com.vincenthuto.hemomancy.common.circus.CircusSchoolKnowledge.discover(serverPlayer, "school");
 			boolean firstVisit = CircusPlayerProgress.awardMilestone(serverPlayer, "performer." + roleId(), 50);
 			CircusPlayerProgress.sync(serverPlayer, true);
 			changeState(ActState.RECOVER);
-			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(dialogueTree(firstVisit)));
+			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(com.vincenthuto.hemomancy.common.circus.CircusSchoolDialogue.tree(this, serverPlayer, firstVisit)));
 		}
 		return InteractionResult.sidedSuccess(level().isClientSide);
 	}
@@ -349,6 +350,10 @@ public abstract class CircusPerformerEntity extends PathfinderMob {
 		return entity instanceof CircusPerformerEntity
 				|| entity instanceof EnthralledDollEntity doll && doll.isOwnedByCircusPerformer();
 	}
+
+	public String facultyRoleId() { return roleId(); }
+	public boolean participatesInFinale() { return true; }
+	public boolean canTeachNow() { return isAlive() && !isDowned() && threatId == null && finaleOwner == null; }
 
 	protected abstract String roleId();
 	protected abstract String texturePath();

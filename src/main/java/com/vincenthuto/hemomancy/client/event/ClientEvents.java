@@ -687,6 +687,8 @@ public class ClientEvents {
     public static void renderSanguineOmenWorldGrade(RenderGuiEvent.Pre event) {
         Minecraft minecraft = Minecraft.getInstance();
         float partialTicks = minecraft.getTimer().getGameTimeDeltaPartialTick(true);
+        if(com.vincenthuto.hemomancy.client.screen.overlay.AxonalTravelView.renderGrade(event.getGuiGraphics(),
+                event.getGuiGraphics().guiWidth(),event.getGuiGraphics().guiHeight(),partialTicks)) return;
         if(NaeglerophaeonCaptureOverlay.renderWorldGrade(event.getGuiGraphics(),
                 event.getGuiGraphics().guiWidth(),event.getGuiGraphics().guiHeight(),partialTicks)) return;
         FaneBoundaryRenderer.renderPost(event.getGuiGraphics(),
@@ -891,6 +893,7 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.enthralled_doll.get(), EnthralledDollRenderer::new);
             event.registerEntityRenderer(EntityInit.blood_thrall.get(), BloodThrallRenderer::new);
             event.registerEntityRenderer(EntityInit.veinwing_vulture.get(), VeinwingVultureRenderer::new);
+            event.registerEntityRenderer(EntityInit.cinder_bellows.get(), com.vincenthuto.hemomancy.client.render.entity.summon.CinderBellowsRenderer::new);
             event.registerEntityRenderer(EntityInit.marrow_spitter.get(), MarrowSpitterRenderer::new);
             event.registerEntityRenderer(EntityInit.gorebound_hulk.get(), GoreboundHulkRenderer::new);
             event.registerEntityRenderer(EntityInit.mnemonist_puppet.get(), MnemonistPuppetRenderer::new);
@@ -905,6 +908,14 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.mnemonic_whale.get(), MnemonicWhaleRenderer::new);
             event.registerEntityRenderer(EntityInit.brined_votary.get(), BrinedVotaryRenderer::new);
             event.registerEntityRenderer(EntityInit.prism_cuttle.get(), PrismCuttleRenderer::new);
+            event.registerEntityRenderer(EntityInit.chiton.get(), context -> new com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.PelagicCreatureRenderer<>(context, com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.PelagicCreatureModel.Style.CHITON));
+            event.registerEntityRenderer(EntityInit.pyrosome.get(), context -> new com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.PelagicCreatureRenderer<>(context, com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.PelagicCreatureModel.Style.PYROSOME));
+            event.registerEntityRenderer(EntityInit.pelagic_herring.get(), context -> new com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.PelagicCreatureRenderer<>(context, com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.PelagicCreatureModel.Style.HERRING));
+            event.registerEntityRenderer(EntityInit.ice_fish.get(), com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.IceFishRenderer::new);
+            event.registerEntityRenderer(EntityInit.siphonophore.get(), context -> new com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.PelagicCreatureRenderer<>(context, com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.PelagicCreatureModel.Style.SIPHONOPHORE));
+            event.registerEntityRenderer(EntityInit.bloody_belly_comb_jelly.get(), context -> new com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.PelagicCreatureRenderer<>(context, com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.PelagicCreatureModel.Style.COMB_JELLY));
+            event.registerEntityRenderer(EntityInit.hagfish.get(), context -> new com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.PelagicCreatureRenderer<>(context, com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.PelagicCreatureModel.Style.HAGFISH));
+            event.registerEntityRenderer(EntityInit.vampire_squid.get(), com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.VampireSquidRenderer::new);
             event.registerEntityRenderer(EntityInit.hemolymphopoda.get(), HemolymphopodaRenderer::new);
             event.registerEntityRenderer(EntityInit.lantern_tick.get(), LanternTickRenderer::new);
             event.registerEntityRenderer(EntityInit.erythromycelium_eruptus.get(), ErythromyceliumEruptusRenderer::new);
@@ -926,7 +937,11 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.harbinger_vicar.get(), HarbingerVicarRenderer::new);
             event.registerEntityRenderer(EntityInit.harbinger_voyager.get(), HarbingerVoyagerRenderer::new);
             event.registerEntityRenderer(EntityInit.harbinger_votary_wayfarer.get(), HarbingerVotaryWayfarerRenderer::new);
-			event.registerEntityRenderer(EntityInit.circus_fire_eater.get(), context -> new CircusPerformerRenderer<>(
+			event.registerEntityRenderer(EntityInit.circus_strongman.get(), context -> new CircusPerformerRenderer<>(context, new net.minecraft.client.model.HumanoidModel<>(context.bakeLayer(net.minecraft.client.model.geom.ModelLayers.ZOMBIE)), "circus_strongman", 0.45F));
+            event.registerEntityRenderer(EntityInit.circus_beast_tamer.get(), context -> new CircusPerformerRenderer<>(context, new net.minecraft.client.model.HumanoidModel<>(context.bakeLayer(net.minecraft.client.model.geom.ModelLayers.ZOMBIE)), "circus_beast_tamer", 0.45F));
+            event.registerEntityRenderer(EntityInit.circus_threadkeeper.get(), context -> new CircusPerformerRenderer<>(context, new net.minecraft.client.model.HumanoidModel<>(context.bakeLayer(net.minecraft.client.model.geom.ModelLayers.ZOMBIE)), "circus_threadkeeper", 0.45F));
+            event.registerEntityRenderer(EntityInit.circus_understudy.get(), context -> new CircusPerformerRenderer<>(context, new net.minecraft.client.model.HumanoidModel<>(context.bakeLayer(net.minecraft.client.model.geom.ModelLayers.ZOMBIE)), "circus_understudy", 0.45F));
+            event.registerEntityRenderer(EntityInit.circus_fire_eater.get(), context -> new CircusPerformerRenderer<>(
 					context, new CircusFireEaterModel(context.bakeLayer(CircusFireEaterModel.LAYER_LOCATION)),
 					"fire_eater", 0.45F));
 			event.registerEntityRenderer(EntityInit.circus_stilt_walker.get(), context -> new CircusPerformerRenderer<>(
@@ -959,6 +974,7 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.crimson_doe.get(), CrimsonDoeRenderer::new);
             event.registerEntityRenderer(EntityInit.verdigris_moth.get(), VerdigrisMothRenderer::new);
             event.registerEntityRenderer(EntityInit.choir_keeper.get(), ChoirKeeperRenderer::new);
+            event.registerEntityRenderer(EntityInit.osteophage.get(), com.vincenthuto.hemomancy.client.render.entity.mob.animal.OsteophageRenderer::new);
             event.registerEntityRenderer(EntityInit.luminal_cicada.get(), LuminalCicadaRenderer::new);
             event.registerEntityRenderer(EntityInit.hematic_burrower.get(), HematicBurrowerRenderer::new);
             event.registerEntityRenderer(EntityInit.scarlet_serpent.get(), ScarletSerpentRenderer::new);
@@ -999,6 +1015,7 @@ public class ClientEvents {
             BlockEntityRenderers.register(BlockEntityInit.mycelial_lantern.get(), MycelialLanternRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.morphling_cradle.get(), MorphlingCradleRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.gourdvine_tap.get(), GourdvineTapRenderer::new);
+            BlockEntityRenderers.register(BlockEntityInit.pelagic_colony.get(), com.vincenthuto.hemomancy.client.render.tile.harbinger.plant.PelagicColonyRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.specimen_jar.get(), SpecimenJarRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.unstained_podium.get(), UnstainedPodiumRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.scrying_podium.get(), ScryingPodiumRenderer::new);

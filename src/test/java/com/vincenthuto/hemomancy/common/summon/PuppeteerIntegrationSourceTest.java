@@ -175,7 +175,9 @@ public final class PuppeteerIntegrationSourceTest {
 		assertNotContains(craftingKey, "if (tryActivatePuppeteerTrial(player, sLevel, hitPos))");
 		assertContains(spitter, "shouldDespawnInPeaceful");
 		assertContains(spitter, "protected boolean isSunBurnTick()");
-		assertContains(spitter, "new BloodShotEntity(level(), this)");
+		assertContains(spitter, "new com.vincenthuto.hemomancy.common.entity.projectile.CircusKnifeProjectileEntity(level(), this,");
+        assertContains(spitter, "shot.setPuppetDagger()");
+        assertContains(spitter, "MarrowJugglerRules.daggerDamage");
 		assertContains(spitter, "performRangedAttack");
 		assertContains(spitter, "tickBoundOrbit");
 		assertContains(spitter, "setNoGravity(true)");

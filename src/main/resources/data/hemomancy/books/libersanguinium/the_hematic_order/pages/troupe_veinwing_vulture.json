@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 101,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Veinwing Vulture",
+  "subtitle": "Acrobat",
+  "text": "Watch the wing spars and the scarlet tendons. The Veinwing Vulture is a constructed aerial striker, not a natural bird. At Degree 3, prepare its existing frame and Cardinal Ordeal. In the practical it must pursue a rehearsal threat from the air, hit it, and return when recalled.",
+  "icon": "hemomancy:marionette_crossbar"
+}

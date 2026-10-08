@@ -155,6 +155,22 @@ final class StructurePlacementChecks {
 				CircusPavilionPlacementRules.surfaceVariation(heights));
 	}
 
+    // Validate the selected rotation and template, rather than a guessed radius around the chunk.
+    static boolean isSuitableTroupeFootprint(Structure.GenerationContext context,
+            net.minecraft.world.level.levelgen.structure.BoundingBox box) {
+        int low = Integer.MAX_VALUE, high = Integer.MIN_VALUE;
+        for (int x = box.minX(); x <= box.maxX(); x++) for (int z = box.minZ(); z <= box.maxZ(); z++) {
+            if (!isSuitableLandColumn(context, x, z, 0)) return false;
+            int ground = getOceanFloorHeight(context, x, z);
+            low = Math.min(low, ground); high = Math.max(high, ground);
+            if (high - low > 3 || Math.abs(ground - box.minY()) > 3) return false;
+            var column = context.chunkGenerator().getBaseColumn(x, z, context.heightAccessor(), context.randomState());
+            for (int y = Math.max(ground, box.minY()) + 1; y <= box.maxY(); y++)
+                if (!column.getBlock(y).isAir()) return false;
+        }
+        return true;
+    }
+
 	static boolean isSuitableOceanWreckChunk(Structure.GenerationContext context) {
 		if (!canPlaceOverworldHemomancyStructure(context)) {
 			return false;

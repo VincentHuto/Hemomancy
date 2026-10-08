@@ -1,0 +1,15 @@
+{
+  "name": "hemomancy:troupe_camp_blades/start_pool",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "location": "hemomancy:troupe_camp_blades",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

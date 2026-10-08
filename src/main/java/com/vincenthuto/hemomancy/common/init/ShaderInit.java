@@ -89,6 +89,8 @@ public class ShaderInit {
 	public static ShaderHolder MANIPULATION_UMBRA = new ShaderHolder(Hemomancy.rloc("world/manipulation_umbra"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "ColorModulator");
 
+    public static ShaderHolder AXONAL_TRAVEL_VIEW = new ShaderHolder(Hemomancy.rloc("screen/axonal_travel_view"),
+            DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "ColorModulator");
     public static ShaderHolder MANIPULATION_ANIMUS = thermal("animus");
     public static ShaderHolder MANIPULATION_ANIMUS_MODEL = new ShaderHolder(Hemomancy.rloc("world/manipulation_animus_model"),
             DefaultVertexFormat.NEW_ENTITY, "HemoTime", "ColorModulator");
@@ -165,6 +167,7 @@ public class ShaderInit {
 				});
         registerShader(event, DISTORTED_TEXTURE.createInstance(provider));
         registerShader(event, SANGUINE_OMEN_WORLD.createInstance(provider));
+        registerShader(event, AXONAL_TRAVEL_VIEW.createInstance(provider));
         registerShader(event, SANGUINE_OMEN_SCREEN_OVERLAY.createInstance(provider));
         registerShader(event, SCAR_GLOW.createInstance(provider));
         registerShader(event, MONOLITH_FRAGMENT.createInstance(provider));

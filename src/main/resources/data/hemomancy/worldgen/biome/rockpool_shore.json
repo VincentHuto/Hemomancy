@@ -1,0 +1,49 @@
+{
+  "temperature": 0.65,
+  "downfall": 0.7,
+  "has_precipitation": true,
+  "effects": {
+    "sky_color": 8626628,
+    "fog_color": 12638463,
+    "water_color": 3698038,
+    "water_fog_color": 1391168,
+    "ambient_sound": "minecraft:ambient.underwater.loop"
+  },
+  "spawners": {
+    "ambient": [
+      {
+        "type": "hemomancy:hemolymphopoda",
+        "weight": 30,
+        "minCount": 2,
+        "maxCount": 5
+      }
+    ],
+    "hemomancy:pelagic_benthos": [
+      {
+        "type": "hemomancy:chiton",
+        "weight": 26,
+        "minCount": 2,
+        "maxCount": 4
+      }
+    ]
+  },
+  "spawn_costs": {},
+  "carvers": {},
+  "features": [
+    [],
+    [],
+    [
+      "hemomancy:pelagic_seabed"
+    ],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "hemomancy:pelagic_habitat"
+    ],
+    []
+  ]
+}

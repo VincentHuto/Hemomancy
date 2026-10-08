@@ -35,7 +35,7 @@ public final class NaeglerophaeonGameTests {
 	}
 
 	@GameTest(template = "empty")
-	public static void synapticStepTravelsBetweenBuiltNodes(GameTestHelper h) {
+	public static void dormantSynapticStepCannotTravelBetweenBuiltNodes(GameTestHelper h) {
 		BlockPos source = new BlockPos(2, 4, 2);
 		BlockPos destination = new BlockPos(7, 4, 2);
 		h.setBlock(source, BlockInit.synaptic_node.get());
@@ -52,26 +52,16 @@ public final class NaeglerophaeonGameTests {
 		BlockPos obstruction = new BlockPos(5, 5, 2);
 		h.setBlock(obstruction, net.minecraft.world.level.block.Blocks.BARRIER);
 		var blocked = ItemInit.synaptic_step.get().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
-		h.assertTrue(blocked.getResult() == net.minecraft.world.InteractionResult.FAIL
+		h.assertTrue(blocked.getResult() == net.minecraft.world.InteractionResult.PASS
 				&& player.blockPosition().equals(start)
 				&& !player.getCooldowns().isOnCooldown(ItemInit.synaptic_step.get()),
-				"a blocked sightline must not move the player or spend the jump cooldown");
+				"a dormant tool must remain inert with an obstructed route");
 		h.setBlock(obstruction, net.minecraft.world.level.block.Blocks.AIR);
-		var eye = player.getEyePosition();
-		var hit = h.getLevel().clip(new net.minecraft.world.level.ClipContext(eye,
-				eye.add(player.getLookAngle().scale(35)), net.minecraft.world.level.ClipContext.Block.COLLIDER,
-				net.minecraft.world.level.ClipContext.Fluid.NONE, player));
 		var result = ItemInit.synaptic_step.get().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
-		h.assertTrue(player.blockPosition().closerThan(h.absolutePos(destination.above()), 1.5),
-				"the player must arrive on the targeted node: result=" + result.getResult()
-						+ " source=" + start + " destination=" + h.absolutePos(destination)
-						+ " actual=" + player.position() + " eye=" + eye
-						+ " hit=" + hit.getType() + ":" + hit.getBlockPos()
-						+ " hitState=" + h.getLevel().getBlockState(hit.getBlockPos())
-						+ " landing=" + h.getBlockState(destination.above())
-						+ " headroom=" + h.getBlockState(destination.above(2)));
-		h.assertTrue(player.getCooldowns().isOnCooldown(ItemInit.synaptic_step.get()),
-				"a successful jump must apply cooldown");
+		h.assertTrue(result.getResult() == net.minecraft.world.InteractionResult.PASS && player.blockPosition().equals(start),
+				"removing the obstruction must not restore the retired teleport");
+		h.assertTrue(!player.getCooldowns().isOnCooldown(ItemInit.synaptic_step.get()),
+				"a dormant tool must not spend a cooldown");
 		h.succeed();
 	}
 }

@@ -6,6 +6,7 @@ loaderVersion="${loader_version_range}" #mandatory
 license="${mod_license}"
 
 [[mods]] #mandatory
+enumExtensions="META-INF/enumextensions.json"
 
 modId="${mod_id}" #mandatory
 

@@ -33,6 +33,8 @@ public class HemolymphopodaEntity extends PathfinderMob {
 	@Override
 	protected void registerGoals() {
 		this.goalSelector.addGoal(0, new PanicGoal(this, 1.4D));
+		this.goalSelector.addGoal(1, new com.vincenthuto.hemomancy.common.entity.mob.aquatic.PelagicBottomForageGoal(this,
+				com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species.HEMOLYMPHOPODA, () -> isInWater()));
 		this.goalSelector.addGoal(1, new RandomStrollGoal(this, 0.5D));
 		this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 6.0F));
 		this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
@@ -41,6 +43,9 @@ public class HemolymphopodaEntity extends PathfinderMob {
 	public static boolean canSpawnHere(EntityType<? extends HemolymphopodaEntity> type, LevelAccessor world,
 			MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
 		BlockPos below = pos.below();
+		if (com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.layer(world, pos) == com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicLayer.SHORE)
+			return com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.suitable(world, pos,
+					com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species.HEMOLYMPHOPODA);
 		return world.getBlockState(below).isSolidRender(world, below)
 				&& pos.getY() <= world.getSeaLevel() + 16;
 	}
@@ -78,6 +83,11 @@ public class HemolymphopodaEntity extends PathfinderMob {
 	public int getMaxAirSupply() {
 		return 4800;
 	}
+
+	@Override protected net.minecraft.world.entity.ai.navigation.PathNavigation createNavigation(Level level) {
+		return new net.minecraft.world.entity.ai.navigation.AmphibiousPathNavigation(this, level);
+	}
+	@Override public boolean checkSpawnObstruction(net.minecraft.world.level.LevelReader level) { return level.isUnobstructed(this); }
 
 	@Override
 	public boolean isPushedByFluid() {

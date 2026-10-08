@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smoking",
+  "category": "food",
+  "ingredient": {
+    "item": "hemomancy:raw_pelagic_herring"
+  },
+  "result": {
+    "id": "hemomancy:cooked_pelagic_herring"
+  },
+  "experience": 0.35,
+  "cookingtime": 100
+}

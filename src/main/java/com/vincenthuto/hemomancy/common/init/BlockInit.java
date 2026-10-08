@@ -376,6 +376,15 @@ public class BlockInit {
 	public static final DeferredHolder<Block, Block> calcified_hyphae = BASEBLOCKS.register("calcified_hyphae",
 			() -> new Block(BlockBehaviour.Properties.of().strength(2.0F, 6.0F).sound(SoundType.BONE_BLOCK)));
 
+	public static final DeferredHolder<Block, Block> hematic_algal_crust = SPECIALBLOCKS.register("hematic_algal_crust",
+			() -> new HematicAlgalCrustBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).strength(.2F).noCollission().randomTicks().sound(SoundType.WET_GRASS)));
+	public static final DeferredHolder<Block, Block> tidepool_anemone = SPECIALBLOCKS.register("tidepool_anemone",
+			() -> new PelagicColonyBlock(PelagicColonyBlock.Kind.ANEMONE, BlockBehaviour.Properties.of().strength(.25F).noCollission().noOcclusion().sound(SoundType.WET_GRASS)));
+	public static final DeferredHolder<Block, Block> bone_worm_colony = SPECIALBLOCKS.register("bone_worm_colony",
+			() -> new BoneWormColonyBlock(BlockBehaviour.Properties.of().strength(.2F).noCollission().noOcclusion().sound(SoundType.WET_GRASS)));
+	public static final DeferredHolder<Block, Block> giant_tube_worm_colony = SPECIALBLOCKS.register("giant_tube_worm_colony",
+			() -> new GiantTubeWormColonyBlock(BlockBehaviour.Properties.of().strength(.4F).noCollission().noOcclusion().sound(SoundType.BONE_BLOCK)));
+
 	public static final DeferredHolder<Block, Block> erythrocoral_block = BASEBLOCKS.register("erythrocoral_block",
 			() -> new Block(BlockBehaviour.Properties.of()
 					.mapColor(MapColor.COLOR_RED)
@@ -883,6 +892,14 @@ public class BlockInit {
 					.strength(2.0F, 6.0F).sound(SoundType.STONE)
 					.mapColor(MapColor.COLOR_PURPLE)));
 
+    public static final DeferredHolder<Block, Block> circus_stage_record = MODELEDBLOCKS.register("circus_stage_record", () -> new com.vincenthuto.hemomancy.common.circus.CircusEvidenceBlock(BlockBehaviour.Properties.of().strength(2).sound(SoundType.WOOD), "stage"));
+    public static final DeferredHolder<Block, Block> circus_loft_record = MODELEDBLOCKS.register("circus_loft_record", () -> new com.vincenthuto.hemomancy.common.circus.CircusEvidenceBlock(BlockBehaviour.Properties.of().strength(2).sound(SoundType.WOOD), "loft"));
+    public static final DeferredHolder<Block, Block> circus_quarters_record = MODELEDBLOCKS.register("circus_quarters_record", () -> new com.vincenthuto.hemomancy.common.circus.CircusEvidenceBlock(BlockBehaviour.Properties.of().strength(2).sound(SoundType.WOOD), "quarters"));
+    public static final DeferredHolder<Block, Block> circus_carousel_record = MODELEDBLOCKS.register("circus_carousel_record", () -> new com.vincenthuto.hemomancy.common.circus.CircusEvidenceBlock(BlockBehaviour.Properties.of().strength(2).sound(SoundType.WOOD), "carousel"));
+    public static final DeferredHolder<Block, Block> laughing_mask = MODELEDBLOCKS.register("laughing_mask", () -> new com.vincenthuto.hemomancy.common.circus.TroupePropBlock(BlockBehaviour.Properties.of().strength(1).sound(SoundType.WOOD).noOcclusion(), false));
+    public static final DeferredHolder<Block, Block> mourning_mask = MODELEDBLOCKS.register("mourning_mask", () -> new com.vincenthuto.hemomancy.common.circus.TroupePropBlock(BlockBehaviour.Properties.of().strength(1).sound(SoundType.WOOD).noOcclusion(), false));
+    public static final DeferredHolder<Block, Block> blank_mask = MODELEDBLOCKS.register("blank_mask", () -> new com.vincenthuto.hemomancy.common.circus.TroupePropBlock(BlockBehaviour.Properties.of().strength(1).sound(SoundType.WOOD).noOcclusion(), false));
+    public static final DeferredHolder<Block, Block> troupe_rigging = MODELEDBLOCKS.register("troupe_rigging", () -> new com.vincenthuto.hemomancy.common.circus.TroupePropBlock(BlockBehaviour.Properties.of().strength(1).sound(SoundType.WOOD).noOcclusion(), true));
 	public static List<Block> getAllBlockEntries() {
 		List<Block> blocks = new ArrayList<>();
 		BASEBLOCKS.getEntries().stream().map(e -> e.get()).forEach(b -> blocks.add(b));

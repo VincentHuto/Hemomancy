@@ -262,6 +262,7 @@ public class Hemomancy {
                 && item != ItemInit.active_smouldering_ash.get()
                 && item != ItemInit.living_weapon_graft.get()
                 && item != ItemInit.living_sickle.get()
+                && item != ItemInit.synaptic_step.get()
                 && item != ItemInit.memory_conjure_living_staff.get()
                 && !isLegacyLivingWeaponMemory(item)
                 && !ManipulationRetirementRules.isRetiredMemoryItem(item)

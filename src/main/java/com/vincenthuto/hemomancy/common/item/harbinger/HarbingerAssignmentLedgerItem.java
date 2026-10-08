@@ -90,6 +90,7 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 					artificerProgress.wornVow(), artificerProgress.threeAnswers(), artificerProgress.crimsonVestment(),
 					artificerProgress.assumedLimb(), artificerProgress.weightOfFrame());
 			var firstDraws = FirstDrawsAssignment.progress(serverPlayer);
+			PacketHandler.sendToPlayer(serverPlayer, com.vincenthuto.hemomancy.common.network.circus.PacketSyncCircusSchool.from(serverPlayer));
 			PacketHandler.sendToPlayer(serverPlayer, new OpenHarbingerAssignmentLedgerPacket(
 					HemoCapabilityAccess.getPlayerDegreeNumber(serverPlayer),
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,

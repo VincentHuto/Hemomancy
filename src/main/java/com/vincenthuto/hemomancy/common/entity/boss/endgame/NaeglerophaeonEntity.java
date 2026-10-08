@@ -116,7 +116,8 @@ public final class NaeglerophaeonEntity extends Monster {
         entityData.set(PHASE,phase); entityData.set(PHASE_START,level().getGameTime());
     }
     private boolean valid(Player p) {
-        return p.isAlive() && !p.isCreative() && !p.isSpectator() && p.level()==level();
+        return p.isAlive() && !p.isCreative() && !p.isSpectator() && p.level()==level()
+                && !com.vincenthuto.hemomancy.common.manipulation.ductilis.AxonalTransductionManager.isTraveling(p);
     }
     private Player victim(ServerLevel level) {
         Entity e=attackTarget==null ? null : level.getEntity(attackTarget);

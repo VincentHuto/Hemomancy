@@ -1,0 +1,16 @@
+{
+  "entries": [
+    {
+      "enum": "net/minecraft/world/entity/MobCategory",
+      "name": "HEMOMANCY_PELAGIC_BENTHOS",
+      "constructor": "(Ljava/lang/String;IZZI)V",
+      "parameters": ["hemomancy:pelagic_benthos", 12, true, false, 128]
+    },
+    {
+      "enum": "net/minecraft/world/entity/MobCategory",
+      "name": "HEMOMANCY_PYROSOMES",
+      "constructor": "(Ljava/lang/String;IZZI)V",
+      "parameters": ["hemomancy:pyrosomes", 8, true, false, 128]
+    }
+  ]
+}

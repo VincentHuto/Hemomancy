@@ -91,6 +91,8 @@ repo/
 /tmp
 /docs/Hemo Concept/
 /docs/*
+!/docs/PELAGIC_WORLDGEN.md
+!/docs/PELAGIC_ECOLOGY.md
 !/docs/consolidation/
 !/docs/consolidation/**
 /docs/agents/

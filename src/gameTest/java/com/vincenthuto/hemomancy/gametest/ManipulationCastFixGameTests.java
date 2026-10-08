@@ -109,7 +109,7 @@ public final class ManipulationCastFixGameTests {
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void registryTypesMatchUnifiedInputSemantics(GameTestHelper helper) {
 		var manipulations = ManipulationInit.MANIPS.getEntries().stream().map(holder -> holder.get()).toList();
-		helper.assertTrue(manipulations.size() == 115, "Expected 115 registered manipulations, got " + manipulations.size());
+		helper.assertTrue(manipulations.size() == 116, "Expected 116 registered manipulations, got " + manipulations.size());
 		helper.assertTrue(manipulations.stream().filter(m -> m.getType() == EnumManipulationType.QUICK).count() == 76,
 				"Quick manipulation count changed");
 		helper.assertTrue(names(manipulations, EnumManipulationType.CHARGED).equals(Set.of(
@@ -126,7 +126,7 @@ public final class ManipulationCastFixGameTests {
 		helper.assertTrue(names(manipulations, EnumManipulationType.PASSIVE).equals(Set.of(
 				"blackhearted", "sovereign_instinct", "vigil_of_glass", "phoenix_debt", "hematic_ballast",
 				"summon_avatar", "summon_avatar_arms", "summon_avatar_armor", "summon_avatar_legs",
-				"summon_avatar_complete")),
+				"summon_avatar_complete", "axonal_transduction")),
 				"Passive manipulation set is incorrect");
 		helper.succeed();
 	}
@@ -161,7 +161,7 @@ public final class ManipulationCastFixGameTests {
 		}
 		long active = ManipulationInit.MANIPS.getEntries().stream().map(holder -> holder.get())
 				.filter(manipulation -> !ManipulationRetirementRules.isRetiredManipulation(manipulation)).count();
-		helper.assertTrue(active == 100, "Expected 100 active manipulations after pruning, got " + active);
+		helper.assertTrue(active == 101, "Expected 101 active manipulations after pruning, got " + active);
 		helper.assertTrue(!ManipulationRetirementRules.isRetiredManipulation("summon_avatar"),
 				"Summon Avatar was retired");
 		helper.assertTrue(ManipulationInit.deadly_gaze.get().getType() == EnumManipulationType.CHARGED

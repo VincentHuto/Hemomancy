@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "hemomancy:erythrocoral_reef",
+    "hemomancy:pelagic_ocean",
+    "hemomancy:twilight_ocean",
+    "hemomancy:midnight_ocean",
+    "hemomancy:carrion_depths",
+    "hemomancy:hydrothermal_depths"
+  ]
+}

@@ -305,17 +305,17 @@ Starting at Degree 3, you can create **Drudges**, mindless blood constructs that
 ### Puppeteering
 Advanced Harbingers can call shaped bodies as temporary extensions of learned blood-memory. These are tethered summons, not possessed creatures or first-person avatars.
 
-**Learning shapes:**
+**Learning shapes:** Speak to the matching [Crimson Troupe professor](Crimson-Troupe.md) before starting a new ordinary shape's ordeal. Previously learned shapes remain usable; school mastery still requires a practical.
 
-- Degree 3: the **Veinwing Vulture Ordeal** takes a Veinwing Harness; the **Marrow Spitter Ordeal** takes a Marrow Spitter Carriage.
-- Degree 4: the **Gorebound Hulk Ordeal** takes a Gorebound Yoke and Sanguine Quintessence.
+- Degree 3: the **Veinwing Vulture Ordeal** takes a Veinwing Harness; the **Marrow Juggler Ordeal** takes a Marrow Spitter Carriage.
+- Degree 4: the **Gorebound Hulk Ordeal** takes a Gorebound Yoke and Sanguine Quintessence; Scarlet Mummer, Sanguine Hound and the coiled **Cinder Bellows** each have their own professor and frame ordeal. Bellows requires 900 mL and its Cinder Bellows Frame.
 - Degree 5: the **Mnemonist Puppet Ordeal** takes a Mnemonist Cradle, Mnemonic Ambergris, and Memory Thread.
 - Build the reusable **Dominion Lesser** Cardinal Rite floor, light the listed offerings in its braziers, seat your owner-attuned Marionette Crossbar in the Cardinal Focus, and plant a Living Staff. The Crossbar must control no active bodies.
 - Blood and offerings are committed only when the hostile puppet manifests. Failure after manifestation does not refund them, but the complete Crossbar stack remains untouched. Defeating the one tracked puppet culminates the rite and permanently teaches its shape to the recorded caster.
 
 **Preparing a Crossbar:**
 
-- Feed Puppeteering Thread to a **Puppeteer's Spindle**. Each item becomes 8 charge; the Spindle stores 512.
+- Feed Enthralling Filament to a **Puppeteer's Spindle**. Each item becomes 8 charge; the Spindle stores 512.
 - A fresh **Marionette Crossbar** permanently attunes to the first player who right-clicks with it. Insert it into the Spindle to fill it to its skill-scaled capacity; clicking a learned puppet row immediately prepares that shape, with no separate Attune or Prepare button.
 - The Crossbar holds 256 base charge, plus 32 per Bound Command level. A foreign owner cannot use or retune it.
 - The Spindle prepares only; it never calls or recalls a body.
@@ -324,7 +324,7 @@ Advanced Harbingers can call shaped bodies as temporary extensions of learned bl
 
 - Tap air-use with the equipped Crossbar to call or recall the prepared shape. Hold for 10 ticks to open its command radial.
 - The inner ring applies **Follow**, **Guard**, **Hunt**, or **Passive** to every shaped body and Commandeered Will attached to that exact Crossbar. Follow stays near the puppeteer and attacks hostiles within 12 blocks; Hunt searches the full tether range.
-- Shape changes remain at the Spindle until the one-rank Degree 5 skill **Skein Transposition**. It adds an outer ring with all four artificial shapes; choosing another valid shape recalls only the formerly prepared cohort and calls one replacement at the normal adjusted charge cost. Other shapes and claimed Wills remain.
+- Shape changes remain at the Spindle until the one-rank Degree 5 skill **Skein Transposition**. It adds an outer ring with all seven ordinary artificial shapes; choosing another valid shape recalls only the formerly prepared cohort and calls one replacement at the normal adjusted charge cost. Other shapes and claimed Wills remain.
 - Attack a hostile while holding the Crossbar in the main hand to focus only summons attached to that exact Crossbar. Players and friendly bound bodies cannot be marked, and focus drops outside tether range.
 - Each body draws its own periodic upkeep from the matching equipped Crossbar. A starved body alone unravels. Bound bodies persist through ordinary hostile despawn and Peaceful difficulty so upkeep, recall, and severance remain in control of the tether system.
 - Unequipping the matching Crossbar begins a short fade; Bound Command extends that grace and tether range.

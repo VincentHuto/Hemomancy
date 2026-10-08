@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "hemomancy:block/troupe_rigging",
+      "y": 0
+    },
+    "facing=east": {
+      "model": "hemomancy:block/troupe_rigging",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "hemomancy:block/troupe_rigging",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "hemomancy:block/troupe_rigging",
+      "y": 270
+    }
+  }
+}

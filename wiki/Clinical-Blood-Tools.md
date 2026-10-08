@@ -1,6 +1,6 @@
 # Clinical Blood Tools
 
-The Living Syringe is required for thick-skinned creatures, selected powerful mobs, villagers, and all Hemomancy NPCs. A loose vial displays a requirement message and collects nothing from these sources. Hold and use the syringe with an empty vial in its rack; simply carrying it does not count. Ordinary unrestricted creatures still support loose-vial collection. See [entity blood profiles](Blood-Profiles.md) for the datapack settings.
+The Living Syringe is required for thick-skinned creatures, including coastal Chitons, selected powerful mobs, villagers, and all Hemomancy NPCs. A loose vial displays a requirement message and collects nothing from these sources. Hold and use the syringe with an empty vial in its rack; simply carrying it does not count. Ordinary unrestricted creatures still support loose-vial collection. See [entity blood profiles](Blood-Profiles.md) for the datapack settings and the six new Pelagic sources.
 
 The Alchemist teaches blood as specimen: collection, observation, injection, and stationary storage. The Artificer teaches field construction. The Mnemonist teaches retained expression beyond physiology.
 

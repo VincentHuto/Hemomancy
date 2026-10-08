@@ -95,12 +95,16 @@ public class MnemonistPuppetEntity extends GroundPuppetEntity implements BoundPu
 	}
 
 	public void rememberDamage(LivingEntity damaged, float damage) {
+		rememberDamage(damaged, damage, null);
+	}
+
+	public void rememberDamage(LivingEntity damaged, float damage, net.minecraft.world.entity.Entity attacker) {
 		if (damaged == null || !MnemonistPuppetRules.canRecord(targetId(), damaged.getUUID(), damage,
 				MnemonistPuppetEvents.isReplayingDamage())) {
 			return;
 		}
 		MnemonistPuppetRules.record(memories, new MnemonistPuppetRules.AttackMemory(damaged.getUUID(), damage,
-				level().getGameTime()));
+				level().getGameTime(), attacker == null ? null : attacker.getUUID()));
 		if (level() instanceof ServerLevel serverLevel) {
 			serverLevel.sendParticles(MEMORY_DUST, damaged.getX(), damaged.getY() + damaged.getBbHeight() * 0.65D,
 					damaged.getZ(), 5, 0.22D, 0.24D, 0.22D, 0.0D);
@@ -125,7 +129,10 @@ public class MnemonistPuppetEntity extends GroundPuppetEntity implements BoundPu
 		if (damage <= 0.0F) {
 			return;
 		}
-		MnemonistPuppetEvents.withReplayDamage(() -> target.hurt(level().damageSources().magic(), damage));
+		MnemonistPuppetEvents.withReplayDamage(() -> {
+            if (target.hurt(level().damageSources().magic(), damage))
+                com.vincenthuto.hemomancy.common.circus.CircusPracticalController.replay(this, target, memory.attackerId());
+        });
 		playReplayEffects(serverLevel, target);
 	}
 

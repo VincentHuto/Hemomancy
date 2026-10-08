@@ -24,6 +24,14 @@ public class HemoLanguageProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
+        for (var layer : com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicLayer.values())
+            add("biome.hemomancy." + layer.id, layer.title);
+
+        add("bestiary.hemomancy.specimen.hemojelly.description", "A surface-floating blood jelly in temperate and warm seas. Its long submerged tendrils gather small fish beneath the bell.");
+        add("bestiary.hemomancy.specimen.hemojelly.source", "Temperate and warm ocean surfaces, including upper Pelagic waters. Player kills yield Enthralling Filament; its existing enzyme remains useful.");
+        add("bestiary.hemomancy.specimen.siphonophore.description", "A Ductilis colonial swimmer whose hanging tentacles zap small fish in the deeper Pelagic water column.");
+        add("bestiary.hemomancy.specimen.siphonophore.source", "Twilight waters and adjacent Pelagic layers. Player kills yield ordinary Ganglion Clusters, not the unique Naeglerophaeon organ.");
+        add("hemomancy.mnemonist.item_inquiry.puppeteering_thread.line1", "Enthralling Filament. Peacock Spiders, surface Hemojellies and Blood Drunk Puppeteers supply this restraint fibre. The Somatic Loom weaves it into memory; the Spindle stores its tension for a Crossbar.");
 
         // Jei
         add("hemomancy.jei.memory_weaving", "Memory Weaving");
@@ -96,6 +104,7 @@ public class HemoLanguageProvider extends LanguageProvider {
 
         for (DeferredHolder<EntityType<?>, ? extends EntityType<?>> e : EntityInit.ENTITY_TYPES.getEntries()) {
             addEntityType(e, e == EntityInit.circus_ringmaster ? "Ringmaster"
+                    : e == EntityInit.osteophage ? "Osteophage Vulture"
                     : HLTextUtils.convertInitToLang(e.get().getDescriptionId().replace("entity.hemomancy.", "")));
         }
         for (DeferredHolder<Block, ? extends Block> b : BlockInit.CROSSBLOCKS.getEntries()) {
@@ -140,7 +149,10 @@ public class HemoLanguageProvider extends LanguageProvider {
         for (DeferredHolder<Item, ? extends Item> i : ItemInit.BASEITEMS.getEntries()) {
             String descriptionId = i.get().asItem().getDescriptionId();
             if (!descriptionId.startsWith("block.hemomancy.")) {
-                addItem(i, HLTextUtils.convertInitToLang(descriptionId.replace("item.hemomancy.", "")));
+                addItem(i, i == ItemInit.calcified_blood_spine ? "Barbed Splinter"
+                        : i == ItemInit.cuttlefish_chromatophores ? "Chromatophores"
+                        : i == ItemInit.puppeteering_thread ? "Enthralling Filament"
+                        : HLTextUtils.convertInitToLang(descriptionId.replace("item.hemomancy.", "")));
             }
         }
         for (DeferredHolder<Item, ? extends Item> i : ItemInit.HANDHELDITEMS.getEntries()) {
@@ -153,8 +165,22 @@ public class HemoLanguageProvider extends LanguageProvider {
         }
         for (DeferredHolder<Item, ? extends Item> i : ItemInit.SPAWNEGGS.getEntries()) {
             addItem(i,
-                    HLTextUtils.convertInitToLang(i.get().asItem().getDescriptionId().replace("item.hemomancy.", "")));
+                    i == ItemInit.spawn_egg_vampire_squid ? "Vampire Squid Spawn Egg"
+                            : i == ItemInit.spawn_egg_ice_fish ? "Ice Fish Spawn Egg"
+                            : i == ItemInit.spawn_egg_osteophage ? "Osteophage Vulture Spawn Egg"
+                            : HLTextUtils.convertInitToLang(i.get().asItem().getDescriptionId().replace("item.hemomancy.", "")));
         }
+        add("bestiary.hemomancy.specimen.osteophage.title", "Osteophage Vulture");
+        add("bestiary.hemomancy.specimen.osteophage.description", "A skeletal bearded vulture roosting on valley fossils. It climbs above skeleton prey before striking, then grinds loose bones in its hooked beak.");
+        add("bestiary.hemomancy.specimen.osteophage.source", "Soul Sand Valley bone formations. Offer dropped bones; player kills yield Venous Pinions. Capture in a Specimen Jar for the Living Bestiary.");
+        add("bestiary.hemomancy.specimen.ice_fish.title", "Ice Fish");
+        add("item.hemomancy.cleansing_hemolymph.tooltip", "A blue vial of cleansing fluid from Hemolymphopoda or Ice Fish");
+        add("hemomancy.alchemist.item_inquiry.cleansing_hemolymph.line1", "Cleansing hemolymph. Hemolymphopoda and Ice Fish supply this blue-tinted lytic fluid, whose circulatory chemistry opposes standard blood-matrix compounds.");
+        add("bestiary.hemomancy.specimen.ice_fish.description", "A pale, broad-headed fish swimming in cold-water schools. Its haemoglobin-free circulation is regarded by the Unstained as naturally pure.");
+        add("bestiary.hemomancy.specimen.ice_fish.source", "Cold and frozen oceans, Frozen Rivers and submerged Ice Spikes pools. Drops Cleansing Hemolymph; capture in a Specimen Jar for the Living Bestiary.");
+        add("bestiary.hemomancy.specimen.vampire_squid.title", "Vampire Squid");
+        add("bestiary.hemomancy.specimen.vampire_squid.description", "Eight curling arms bear a crimson web lined with pale barbs. When threatened, the web folds around the mantle as the squid retreats.");
+        add("bestiary.hemomancy.specimen.vampire_squid.source", "Open water in Carrion and Hydrothermal Depths. Drops Barbed Splinters; capture in a Specimen Jar for the Living Bestiary.");
 
         add("entity.minecraft.villager.hemomancy.hemopothecary", "Hemopothecary");
 

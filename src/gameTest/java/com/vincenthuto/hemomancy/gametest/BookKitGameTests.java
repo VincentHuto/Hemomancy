@@ -23,8 +23,10 @@ public final class BookKitGameTests {
         var sanguinium=loader.getBookByTitle(Hemomancy.rloc("libersanguinium"));
         var liber=loader.getBookByTitle(Hemomancy.rloc("liberimmaculatus"));
         helper.assertTrue(sanguinium!=null&&liber!=null,"Both books must bind without client classes");
-        helper.assertTrue(sanguinium.getSourceIndex().entries().size()==81,
-                "Expected 81 Liber Sanguinium entries including the scar lesson, found " + sanguinium.getSourceIndex().entries().size());
+        helper.assertTrue(sanguinium.getSourceIndex().entries().size()>=89,
+                "Expected the existing corpus and eight Troupe lessons, found " + sanguinium.getSourceIndex().entries().size());
+        for (var page : new String[]{"school", "veinwing_vulture", "marrow_spitter", "scarlet_mummer", "gorebound_hulk", "sanguine_hound", "cinder_bellows", "mnemonist_puppet"})
+            helper.assertTrue(loader.findTarget(Hemomancy.rloc("libersanguinium/the_hematic_order/pages/troupe_" + page)).isPresent(), "Missing Troupe book lesson: " + page);
         var scar=loader.findTarget(Hemomancy.rloc("libersanguinium/the_hematic_order/pages/scar_practice")).orElseThrow();
         helper.assertTrue(((PageTemplate)scar.template()).getText().contains("Blood Absorption"),"Scar control teaching did not bind");
         helper.assertTrue(liber.getSourceIndex().entries().size()==19,"Liber lost entries");

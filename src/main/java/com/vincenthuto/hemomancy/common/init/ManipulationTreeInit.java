@@ -141,6 +141,7 @@ public class ManipulationTreeInit {
 		register("crimson_coronation",480,134, "sovereign_instinct", "summon_avatar");
 		register("iron_choir",850,70, "iron_retort", "ironhearted");
 		register("living_circuit",1110,95, "conductive_mark");
+		register("axonal_transduction",1110,210);
 		register("white_verdict",1351,280, "unclosing_eye", "prismatic_reproof", "hematic_beacon");
 		register("absolute_stillness",1470,220, "glacial_grasp", "endless_hour");
 		register("furnace_veins",1830,50, "vitric_combustion");

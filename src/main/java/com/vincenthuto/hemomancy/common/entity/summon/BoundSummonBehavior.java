@@ -572,9 +572,15 @@ public final class BoundSummonBehavior {
 	}
 
 	public static boolean canAttack(Mob mob, BoundPuppeteerSummon summon, LivingEntity target) {
+		if (com.vincenthuto.hemomancy.common.circus.CircusDemonstrations.isStage(mob)) return false;
+        if (target != null && target.getPersistentData().hasUUID(com.vincenthuto.hemomancy.common.circus.CircusPracticalController.EXAM)
+                && !target.getPersistentData().getUUID(com.vincenthuto.hemomancy.common.circus.CircusPracticalController.EXAM).equals(summon.hemomancy$getOwnerUUID())) return false;
 		if (target == null || !target.isAlive() || target == mob) {
 			return false;
 		}
+		if (target instanceof Mob targetMob
+				&& com.vincenthuto.hemomancy.common.circus.CircusDemonstrations.isStage(targetMob)) return false;
+		if (target instanceof SanguineHoundEntity hound && hound.isBloodCur() && hound.curOwner() != null) return false;
 		if (summon.hemomancy$isTrialSummon()) {
 			return target instanceof Player player && !player.isSpectator() && !player.isCreative();
 		}

@@ -43,8 +43,10 @@ public final class MnemonicWhaleGameTests {
         helper.assertTrue(spawns.stream().anyMatch(spawn -> spawn.type == EntityType.SQUID),
                 "Reef lost its natural squid prey");
         helper.assertTrue(spawns.stream().anyMatch(spawn -> spawn.type == EntityInit.prism_cuttle.get()
-                        && spawn.getWeight().asInt() == 14 && spawn.minCount == 1 && spawn.maxCount == 3),
-                "Reef did not receive the existing cuttle spawn modifier");
+                        && spawn.getWeight().asInt() == 2 && spawn.minCount == 1 && spawn.maxCount == 2),
+                "Reef did not retain the sparse cuttle visitor population");
+        helper.assertTrue(spawns.stream().filter(spawn -> spawn.type == EntityInit.prism_cuttle.get()).count() == 1,
+                "Reef cuttles were duplicated by the old biome modifier");
         helper.succeed();
     }
 
@@ -177,6 +179,36 @@ public final class MnemonicWhaleGameTests {
     }
 
     @GameTest(template = "pool", timeoutTicks = 40)
+    public static void capturedAndLegacyJarSpecimensSurviveNormalDistanceDespawning(GameTestHelper helper) {
+        var level = helper.getLevel();
+        var origin = helper.absolutePos(new BlockPos(8192, 0, 8192));
+        var pos = new BlockPos(origin.getX(), 50, origin.getZ());
+        level.setBlock(pos, Blocks.WATER.defaultBlockState(), 2);
+        var observer = new net.neoforged.neoforge.common.util.FakePlayer(level,
+                new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "JarObserver"));
+        observer.moveTo(pos.getX() + 192, 50, pos.getZ());
+        level.addNewPlayer(observer);
+        Mob natural = EntityInit.prism_cuttle.get().create(level);
+        natural.moveTo(pos.getCenter()); level.addFreshEntity(natural);
+        Mob released = null;
+        try {
+            natural.checkDespawn();
+            helper.assertTrue(natural.isRemoved(), "Control animal must be subject to ordinary distance despawning");
+            var captured = SpecimenJarData.captureEntity(EntityInit.prism_cuttle.get().create(level));
+            helper.assertTrue(captured.getBoolean("PersistenceRequired"), "Capturing a cuttle must preserve it beyond natural despawn distance");
+            // Older filled jars predate the capture flag; releasing one should protect it too.
+            captured.putBoolean("PersistenceRequired", false);
+            released = (Mob)SpecimenJarData.releaseSpecimen(level, pos, captured).orElseThrow();
+            released.checkDespawn();
+            helper.assertTrue(released.isAlive() && released.isPersistenceRequired(), "Legacy jar release lost its captured animal to despawning");
+            helper.succeed();
+        } finally {
+            observer.discard(); natural.discard();
+            if (released != null) released.discard();
+        }
+    }
+
+    @GameTest(template = "pool", timeoutTicks = 40)
     public static void rejectedBitesAndOtherKillersGiveNoAmbergris(GameTestHelper helper) {
         pool(helper);
         MnemonicWhaleEntity whale = whale(helper);
@@ -288,10 +320,12 @@ public final class MnemonicWhaleGameTests {
     private static void assertMeal(GameTestHelper helper, MnemonicWhaleEntity whale, LivingEntity prey) {
         bottleCooldown(helper, whale);
         helper.succeedWhen(() -> {
-            helper.assertTrue(!prey.isAlive(), "Whale did not pursue and consume supplied prey: whale="
+            helper.assertTrue(!prey.isAlive() && prey.getHealth() <= 0 && prey.getKillCredit() == whale,
+                    "Whale did not pursue and consume supplied prey: whale="
                     + whale.position() + ", prey=" + prey.position() + ", target=" + whale.getTarget()
-                    + ", navigation=" + whale.getNavigation().isDone());
-            helper.assertTrue(ambergris(helper) == 1, "Meal did not produce exactly one ambergris");
+                    + ", navigation=" + whale.getNavigation().isDone() + ", removed=" + prey.getRemovalReason());
+            int drops = ambergris(helper);
+            helper.assertTrue(drops == 1, "Meal did not produce exactly one ambergris: drops=" + drops);
             helper.assertTrue(whale.getX() > helper.absolutePos(new BlockPos(7, 0, 0)).getX(),
                     "Whale killed distant prey without pursuing it");
         });

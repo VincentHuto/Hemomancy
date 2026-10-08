@@ -29,7 +29,8 @@ public final class Paralysis {
     }
 
     public static boolean blocksActions(LivingEntity entity) {
-        return isParalyzed(entity) || entity.isAlive() && entity.hasEffect(EffectInit.disrupted);
+        return isParalyzed(entity) || entity.isAlive() && entity.hasEffect(EffectInit.disrupted)
+                || entity instanceof Player player && AxonalTransductionManager.isTraveling(player);
     }
 
     public static boolean apply(LivingEntity target, int ticks) {

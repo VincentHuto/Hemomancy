@@ -34,6 +34,32 @@ public final class PhlegethonticGameTests {
     }
 
     @GameTest(batch="phlegethontic",template=ROOM,timeoutTicks=40)
+    public static void currentDoesNotResendStalePlayerFallVelocity(GameTestHelper h) {
+        if(h.getLevel().getGameTime()%20==0) {
+            h.runAfterDelay(1,() -> currentDoesNotResendStalePlayerFallVelocity(h));
+            return;
+        }
+        var packets=new ArrayList<net.minecraft.network.protocol.Packet<?>>();
+        var player=player(h,"barb_current",new BlockPos(8,3,8),packets::add);
+        long now=h.getLevel().getGameTime();
+        var data=player.getPersistentData();
+        data.putLong("PhlegethonticScald",now);
+        data.putDouble("PhlegethonticFlowX",1);
+        data.putDouble("PhlegethonticFlowZ",0);
+        player.setDeltaMovement(0,-2,0);
+        player.hurtMarked=false;
+        BlockInit.PHLEGETHONTIC_ICHOR_BLOCK.get().defaultBlockState()
+                .entityInside(h.getLevel(),player.blockPosition(),player);
+        h.assertTrue(!player.hurtMarked,"Horizontal current must not resend a server player's stale downward velocity");
+        h.assertTrue(player.getDeltaMovement().equals(new Vec3(0,-2,0)),
+                "Player current must apply on the client without accumulating server velocity");
+        h.assertTrue(packets.stream().anyMatch(packet -> packet instanceof net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket payload
+                && payload.payload() instanceof com.vincenthuto.hemomancy.common.network.PhlegethonticCurrentPacket current
+                && current.x()>0 && current.z()==0),"Current must still deliver a horizontal impulse to the player");
+        h.succeed();
+    }
+
+    @GameTest(batch="phlegethontic",template=ROOM,timeoutTicks=40)
     public static void authoritativeWorldgenResourcesDecode(GameTestHelper h) throws Exception {
         var ops=RegistryOps.create(JsonOps.INSTANCE,h.getLevel().registryAccess());
         for(String id:List.of("phlegethontic_basin_terrain","phlegethontic_vein","escharian_overgrowth")) {
@@ -265,12 +291,17 @@ public final class PhlegethonticGameTests {
     }
 
     private static net.minecraft.server.level.ServerPlayer player(GameTestHelper h,String name,BlockPos relative) {
+        return player(h,name,relative,packet -> {});
+    }
+
+    private static net.minecraft.server.level.ServerPlayer player(GameTestHelper h,String name,BlockPos relative,
+            java.util.function.Consumer<net.minecraft.network.protocol.Packet<?>> packets) {
         var cookie=net.minecraft.server.network.CommonListenerCookie.createInitial(new com.mojang.authlib.GameProfile(UUID.randomUUID(),name),false);
         var player=new net.minecraft.server.level.ServerPlayer(h.getLevel().getServer(),h.getLevel(),cookie.gameProfile(),cookie.clientInformation());
         var connection=new net.minecraft.network.Connection(net.minecraft.network.protocol.PacketFlow.SERVERBOUND);
         new io.netty.channel.embedded.EmbeddedChannel(connection);
         new net.minecraft.server.network.ServerGamePacketListenerImpl(h.getLevel().getServer(),connection,player,cookie) {
-            @Override public void send(net.minecraft.network.protocol.Packet<?> packet) {}
+            @Override public void send(net.minecraft.network.protocol.Packet<?> packet) {packets.accept(packet);}
         };
         player.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);player.setNoGravity(true);
         player.setPos(Vec3.atBottomCenterOf(h.absolutePos(relative)));

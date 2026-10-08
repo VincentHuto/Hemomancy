@@ -46,26 +46,15 @@ public class HemojellyModel extends EntityModel<HemojellyEntity> {
 				.texOffs(24, 14).addBox(-2.0F, -4.0F, -2.0F, 4.0F, 4.0F, 4.0F, new CubeDeformation(0.0F)),
 				PartPose.offset(0.0F, 14.0F, 0.0F));
 
-		// Trailing tentacles — 5 delicate filaments
-		partdefinition.addOrReplaceChild("tentacle1", CubeListBuilder.create()
-				.texOffs(32, 0).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 8.0F, 1.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 14.0F, 0.0F));
-
-		partdefinition.addOrReplaceChild("tentacle2", CubeListBuilder.create()
-				.texOffs(36, 0).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(-2.5F, 14.0F, -2.5F));
-
-		partdefinition.addOrReplaceChild("tentacle3", CubeListBuilder.create()
-				.texOffs(40, 0).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(2.5F, 14.0F, -2.5F));
-
-		partdefinition.addOrReplaceChild("tentacle4", CubeListBuilder.create()
-				.texOffs(44, 0).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(-2.5F, 14.0F, 2.5F));
-
-		partdefinition.addOrReplaceChild("tentacle5", CubeListBuilder.create()
-				.texOffs(48, 0).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(2.5F, 14.0F, 2.5F));
+        // Four short joints preserve the existing UV strips while reaching two blocks below the bell.
+        float[][] offsets = {{0,0}, {-2.5F,-2.5F}, {2.5F,-2.5F}, {-2.5F,2.5F}, {2.5F,2.5F}};
+        for (int i = 0; i < offsets.length; i++) {
+            var parent = partdefinition.addOrReplaceChild("tentacle" + (i+1), CubeListBuilder.create()
+                    .texOffs(32,0).addBox(-.5F,0,-.5F,1,8,1), PartPose.offset(offsets[i][0],14,offsets[i][1]));
+            for (String joint : new String[]{"middle", "lower", "tip"})
+                parent = parent.addOrReplaceChild(joint, CubeListBuilder.create()
+                        .texOffs(32,0).addBox(-.5F,0,-.5F,1,8,1), PartPose.offset(0,8,0));
+        }
 
 		return LayerDefinition.create(meshdefinition, 64, 32);
 	}
@@ -77,15 +66,19 @@ public class HemojellyModel extends EntityModel<HemojellyEntity> {
 		this.bell.y = 14.0F + pulse * 8.0F;
 		this.innerBell.y = 14.0F + pulse * 8.0F;
 
-		// Tentacles sway gracefully
-		float sway = (float) Math.sin(ageInTicks * 0.08F) * 0.2F;
-		this.tentacle1.xRot = sway;
-		this.tentacle2.xRot = -sway * 0.7F;
-		this.tentacle2.zRot = sway * 0.5F;
-		this.tentacle3.xRot = sway * 0.8F;
-		this.tentacle3.zRot = -sway * 0.5F;
-		this.tentacle4.zRot = sway * 0.6F;
-		this.tentacle5.zRot = -sway * 0.6F;
+        float gather = entity.captureTicks() > 0 ? (float)Math.sin((30-entity.captureTicks()) * Math.PI / 60) : 0;
+        ModelPart[] tentacles = {tentacle1, tentacle2, tentacle3, tentacle4, tentacle5};
+        for (int i = 0; i < tentacles.length; i++) {
+            var tentacle = tentacles[i];
+            tentacle.xRot = (float)Math.sin(ageInTicks*.08F+i) * .06F - Math.signum(tentacle.z)*gather*.08F;
+            tentacle.zRot = (float)Math.cos(ageInTicks*.07F+i) * .06F + Math.signum(tentacle.x)*gather*.08F;
+            var joint = tentacle;
+            for (String name : new String[]{"middle", "lower", "tip"}) {
+                joint = joint.getChild(name);
+                joint.xRot = (float)Math.sin(ageInTicks*.09F+i) * .035F + gather*.05F;
+                joint.zRot = (float)Math.cos(ageInTicks*.08F+i) * .035F;
+            }
+        }
 	}
 
 	@Override

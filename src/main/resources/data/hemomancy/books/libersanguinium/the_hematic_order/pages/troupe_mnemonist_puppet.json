@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 107,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Mnemonist Puppet",
+  "subtitle": "Retired Understudy",
+  "text": "At Degree 5, complete the Mnemonist Puppet's existing ordeal. During the practical, strike a rehearsal threat yourself while your known puppet observes, then keep that threat in its range until it actually replays the recorded attack. Ordinary puppet melee is not an echo.",
+  "icon": "hemomancy:marionette_crossbar"
+}

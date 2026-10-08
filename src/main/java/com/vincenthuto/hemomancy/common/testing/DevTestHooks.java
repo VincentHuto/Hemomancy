@@ -30,6 +30,12 @@ public final class DevTestHooks {
             event.register(Class.forName("com.vincenthuto.hemomancy.gametest.ExcoriatedSpawnGameTests"));
             event.register(Class.forName("com.vincenthuto.hemomancy.gametest.UnstainedZoneLifecycleGameTests"));
 			event.register(Class.forName("com.vincenthuto.hemomancy.gametest.PhlegethonticWorldValidation"));
+            event.register(Class.forName("com.vincenthuto.hemomancy.gametest.PelagicWorldValidation"));
+            event.register(Class.forName("com.vincenthuto.hemomancy.gametest.PelagicGameTests"));
+            event.register(Class.forName("com.vincenthuto.hemomancy.gametest.PelagicEcologyGameTests"));
+            event.register(Class.forName("com.vincenthuto.hemomancy.gametest.VampireSquidGameTests"));
+            event.register(Class.forName("com.vincenthuto.hemomancy.gametest.OsteophageGameTests"));
+            event.register(Class.forName("com.vincenthuto.hemomancy.gametest.IceFishGameTests"));
 		} catch (ClassNotFoundException ignored) {
 			// Expected in packaged release jars where the gameTest source set is absent.
 		}

@@ -117,6 +117,7 @@ public class SanguineHoundEntity extends Wolf implements BoundPuppeteerSummon {
 			SanguineHoundEntity cur = EntityInit.sanguine_hound.get().create(serverLevel);
 			if (cur == null) continue;
 			cur.configureCur(hemomancy$getOwnerUUID(), hemomancy$isTrialSummon(), hemomancy$getTrialCasterUUID());
+            cur.hemomancy$setCrossbarUUID(hemomancy$getCrossbarUUID());
 			cur.setPos(getX() + (random.nextDouble() - 0.5D) * 1.4D, getY(),
 					getZ() + (random.nextDouble() - 0.5D) * 1.4D);
 			if (inheritedTarget != null && cur.canAttack(inheritedTarget)) cur.setTarget(inheritedTarget);
@@ -127,6 +128,8 @@ public class SanguineHoundEntity extends Wolf implements BoundPuppeteerSummon {
 		playSound(SoundEvents.SLIME_SQUISH_SMALL, 0.9F, 0.55F);
 		discard();
 	}
+
+	public UUID curOwner() { return entityData.get(DATA_CUR_OWNER_UUID).orElse(null); }
 
 	public boolean isBloodCur() {
 		return entityData.get(DATA_CUR);
@@ -180,6 +183,10 @@ public class SanguineHoundEntity extends Wolf implements BoundPuppeteerSummon {
 	public boolean canAttack(LivingEntity target) {
 		if (!isBloodCur()) return BoundSummonBehavior.canAttack(this, this, target) && super.canAttack(target);
 		if (target == null || !target.isAlive() || target == this) return false;
+		if (target instanceof net.minecraft.world.entity.Mob mob && com.vincenthuto.hemomancy.common.circus.CircusDemonstrations.isStage(mob)) return false;
+		if (target instanceof SanguineHoundEntity cur && cur.isBloodCur() && cur.curOwner() != null) return false;
+		if (target.getPersistentData().hasUUID(com.vincenthuto.hemomancy.common.circus.CircusPracticalController.EXAM)
+				&& !target.getPersistentData().getUUID(com.vincenthuto.hemomancy.common.circus.CircusPracticalController.EXAM).equals(curOwner())) return false;
 		if (hemomancy$isTrialSummon()) return target instanceof Player player
 				&& !player.isCreative() && !player.isSpectator();
 		UUID ownerId = entityData.get(DATA_CUR_OWNER_UUID).orElse(null);

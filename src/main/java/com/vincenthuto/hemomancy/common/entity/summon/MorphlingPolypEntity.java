@@ -20,7 +20,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
@@ -49,6 +48,7 @@ public class MorphlingPolypEntity extends Monster {
 			MorphlingPolypEntity.class, EntityDataSerializers.INT);
 	private static final String TAG_MORPHLING_LAYERS = "MorphlingLayers";
 	private static final double WATER_DRIFT_SPEED = 0.025D;
+	private static final double WATER_SINK_ACCELERATION = 0.02D;
 
 	public static AttributeSupplier.Builder setAttributes() {
 		return Mob.createMobAttributes()
@@ -87,7 +87,6 @@ public class MorphlingPolypEntity extends Monster {
 
 	@Override
 	protected void registerGoals() {
-		this.goalSelector.addGoal(0, new FloatGoal(this));
 		this.goalSelector.addGoal(2, new MorphlingPolypHopGoal(this));
 		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
 		this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
@@ -213,7 +212,8 @@ public class MorphlingPolypEntity extends Monster {
 	public void travel(Vec3 travelVector) {
 		if (this.isAlive() && this.isInWater()) {
 			Vec3 drift = this.waterDriftVector();
-			this.setDeltaMovement(this.getDeltaMovement().scale(0.82D).add(drift));
+			this.setDeltaMovement(this.getDeltaMovement().scale(0.82D)
+					.add(drift.x, -WATER_SINK_ACCELERATION, drift.z));
 			this.move(MoverType.SELF, this.getDeltaMovement());
 			return;
 		}
@@ -223,14 +223,13 @@ public class MorphlingPolypEntity extends Monster {
 	private Vec3 waterDriftVector() {
 		LivingEntity target = this.getTarget();
 		if (target != null) {
-			Vec3 toTarget = target.position().subtract(this.position());
+			Vec3 toTarget = new Vec3(target.getX() - this.getX(), 0.0D, target.getZ() - this.getZ());
 			if (toTarget.lengthSqr() > 0.01D) {
 				return toTarget.normalize().scale(WATER_DRIFT_SPEED);
 			}
 		}
 		double turn = (this.tickCount + this.getId()) * 0.071D;
-		double y = this.level().getFluidState(this.blockPosition().above()).is(FluidTags.WATER) ? 0.006D : -0.004D;
-		return new Vec3(Math.cos(turn) * WATER_DRIFT_SPEED, y, Math.sin(turn) * WATER_DRIFT_SPEED);
+		return new Vec3(Math.cos(turn) * WATER_DRIFT_SPEED, 0.0D, Math.sin(turn) * WATER_DRIFT_SPEED);
 	}
 
 	@Override

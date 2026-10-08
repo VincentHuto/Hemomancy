@@ -32,6 +32,9 @@ public class BlockEntityInit {
 			.register("scar_station", () -> BlockEntityType.Builder
 					.of(ScarStationBlockEntity::new, BlockInit.scar_station.get()).build(null));
 
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.vincenthuto.hemomancy.common.tile.harbinger.plant.PelagicColonyBlockEntity>> pelagic_colony = TILES
+			.register("pelagic_colony", () -> BlockEntityType.Builder.of(com.vincenthuto.hemomancy.common.tile.harbinger.plant.PelagicColonyBlockEntity::new,
+					BlockInit.tidepool_anemone.get(), BlockInit.bone_worm_colony.get(), BlockInit.giant_tube_worm_colony.get()).build(null));
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SemiSentientConstructBlockEntity>> semi_sentient_construct = TILES
 			.register("semi_sentient_construct", () -> BlockEntityType.Builder
 					.of(SemiSentientConstructBlockEntity::new, BlockInit.semi_sentient_construct.get()).build(null));

@@ -185,6 +185,19 @@ neoForge {
             programArguments.addAll '--username', 'IchorReview', '--quickPlaySingleplayer', 'Phlegethontic Final Review'
         }
 
+        pelagicReviewClient {
+            client()
+            gameDirectory = project.file('build/pelagic-client')
+            additionalRuntimeClasspathConfiguration.extendsFrom(clientLocalRuntime)
+            jvmArguments.addAll '-Xms2G', '-Xmx6G'
+            systemProperty 'hemomancy.pelagic.clientReview', providers.gradleProperty('pelagicEcologyReview').isPresent() ? 'false' : 'true'
+            systemProperty 'hemomancy.pelagic.ecologyClientReview', providers.gradleProperty('pelagicEcologyReview').getOrElse('false')
+            systemProperty 'hemomancy.osteophage.clientReview', providers.gradleProperty('osteophageReview').getOrElse('false')
+            systemProperty 'hemomancy.pelagic.reviewStartScene', providers.gradleProperty('pelagicReviewStartScene').getOrElse('0')
+            systemProperty 'hemomancy.gameplayDriver', 'true'
+            programArguments.addAll '--username', 'PelagicReview', '--quickPlaySingleplayer', providers.gradleProperty('pelagicReviewWorld').getOrElse('Pelagic Review'), '--width', '1280', '--height', '800'
+        }
+
         phlegethonticObserverClient {
             client()
             gameDirectory = project.file('build/phlegethontic-observer')
@@ -208,6 +221,16 @@ neoForge {
             systemProperty 'hemomancy.gameplayDriver', 'true'
             systemProperty 'hemomancy.antecedentReview', 'true'
             programArguments.addAll '--username', 'AntecedentReview'
+        }
+
+        axonalReviewClient {
+            client()
+            gameDirectory = project.file('build/axonal-client')
+            additionalRuntimeClasspathConfiguration.extendsFrom(clientLocalRuntime)
+            jvmArguments.addAll('-Xms2G', '-Xmx5G')
+            systemProperty 'hemomancy.gameplayDriver', 'true'
+            systemProperty 'hemomancy.axonalReview', 'true'
+            programArguments.addAll '--username', 'AxonalReview'
         }
 
         naeglerophaeonReviewClient {
@@ -437,8 +460,18 @@ tasks.register('verifyPackagedClientResources') {
                     problems.add('Jacquard font license content changed')
             }
         }
+
         if (!problems.isEmpty()) throw new GradleException(problems.join('\n'))
         logger.lifecycle('Packaged client resource paths, PNG headers and font license verified.')
+    }
+}
+
+tasks.named('runPelagicValidationServer').configure {
+    doFirst {
+        File regions = neoForge.runs.pelagicValidationServer.gameDirectory.get().dir('world/region').asFile
+        if (regions.isDirectory() && regions.listFiles().any { it.name.endsWith('.mca') }) {
+            throw new GradleException('Fresh ocean validation requires a new -PpelagicRun name.')
+        }
     }
 }
 

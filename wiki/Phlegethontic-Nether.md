@@ -34,6 +34,8 @@ Ichor deals three points of heat damage at ten-tick intervals and briefly ignite
 
 Every eight seconds, a thirty-tick heartbeat strengthens gentle currents and the guardians' attacks. Fluid levels stay stable. You can swim against the capped current. Ordinary buckets cannot collect ichor. Extraction, fever, draughts, and Course of Phlegethon remain future content.
 
+The heartbeat current is horizontal and preserves jumping, swimming upward, and Creative flight. It does not apply a lingering downward pull after leaving ichor.
+
 ## Excoriated
 
 The Excoriated has an exposed equine body, a lowered horse head, a long human torso, shared ribs and lungs, and a bow grown into its left arm. It has 52 health and remains near its home shore. It can spawn on illuminated, fully supported shores in the Basin; it never naturally spawns in Peaceful. Persistent sentinels are selected during terrain generation and do not return after being killed.

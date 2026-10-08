@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.mob.aquatic;
 
 import net.minecraft.core.BlockPos;
+import com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat;
+import com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -66,6 +68,7 @@ public class PrismCuttleEntity extends WaterAnimal {
 	public static boolean canSpawnHere(EntityType<? extends PrismCuttleEntity> type, LevelAccessor level,
 			MobSpawnType spawnType, BlockPos pos, RandomSource random) {
 		boolean waterHere = level.getFluidState(pos).is(FluidTags.WATER);
+		if (PelagicHabitat.layer(level, pos) != null) return PelagicHabitat.suitable(level, pos, Species.CUTTLE);
 		boolean openWater = level.getFluidState(pos.above()).is(FluidTags.WATER)
 				&& level.getFluidState(pos.below()).is(FluidTags.WATER);
 		return PrismCuttleRules.canNaturalSpawn(waterHere, openWater, level.getSeaLevel(), pos.getY());
@@ -119,9 +122,9 @@ public class PrismCuttleEntity extends WaterAnimal {
 
 	@Override
 	public void travel(Vec3 travelVector) {
-		if (this.isAlive() && this.isInWater()) {
+		if (this.isEffectiveAi() && this.isAlive() && this.isInWater()) {
 			double driftTime = (this.tickCount + this.getId()) * 0.055D;
-			double depthCorrection = PrismCuttleRules.verticalDepthCorrection(this.level().getSeaLevel(), this.getY());
+			double depthCorrection = habitatDepthCorrection();
 			Vec3 drift = new Vec3(Math.cos(driftTime) * 0.006D, depthCorrection,
 					Math.sin(driftTime) * 0.006D);
 			this.setDeltaMovement(this.getDeltaMovement().scale(0.88D).add(drift).add(this.fleeImpulse));
@@ -171,7 +174,7 @@ public class PrismCuttleEntity extends WaterAnimal {
 		player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, PrismCuttleRules.BLINDNESS_DURATION_TICKS, 0));
 		player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, PrismCuttleRules.NAUSEA_DURATION_TICKS, 0));
 		Vec3 away = this.position().subtract(player.position()).normalize().scale(0.18D);
-		double depthCorrection = PrismCuttleRules.verticalDepthCorrection(this.level().getSeaLevel(), this.getY());
+		double depthCorrection = habitatDepthCorrection();
 		this.fleeImpulse = new Vec3(away.x, Math.min(0.0D, depthCorrection), away.z);
 		this.level().playSound(null, this.blockPosition(), SoundEvents.GLOW_SQUID_SQUIRT, SoundSource.NEUTRAL,
 				0.6F, 1.35F);
@@ -190,6 +193,7 @@ public class PrismCuttleEntity extends WaterAnimal {
 		int samples = 0;
 		BlockPos base = this.blockPosition();
 		for (BlockPos pos : BlockPos.betweenClosed(base.offset(-2, -2, -2), base.offset(2, 1, 2))) {
+			if (!PelagicHabitat.loaded(level(), pos)) continue;
 			BlockState state = this.level().getBlockState(pos);
 			if (!state.isAir() && !state.getFluidState().is(FluidTags.WATER)) {
 				int color = state.getMapColor(this.level(), pos).col;
@@ -217,6 +221,13 @@ public class PrismCuttleEntity extends WaterAnimal {
 		return 0.25F;
 	}
 
+	private double habitatDepthCorrection() {
+		var layer = PelagicHabitat.layer(level(), blockPosition());
+		return layer == null || layer == com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicLayer.REEF
+				? PrismCuttleRules.verticalDepthCorrection(level().getSeaLevel(), getY())
+				: PelagicHabitat.depthCorrection(level(), blockPosition(), Species.CUTTLE);
+	}
+
 	private static final class DriftGoal extends Goal {
 		private final PrismCuttleEntity cuttle;
 
@@ -228,6 +239,12 @@ public class PrismCuttleEntity extends WaterAnimal {
 		@Override
 		public boolean canUse() {
 			return true;
+		}
+		@Override public void tick() {
+			if (cuttle.tickCount % 40 == 0 && PelagicHabitat.layer(cuttle.level(), cuttle.blockPosition()) != null) {
+				Vec3 target = PelagicHabitat.target(cuttle, Species.CUTTLE, false);
+				if (target != null) cuttle.fleeImpulse = cuttle.fleeImpulse.add(target.subtract(cuttle.position()).normalize().scale(.014));
+			}
 		}
 	}
 }

@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 6,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Shared Living Materials",
+  "subtitle": "Different bodies, common functions",
+  "text": "Chitons and Bombardiers grow Chitinous Husks. Peacock Spiders spin Enthralling Filament and rarely yield a husk; surface Hemojellies share that restraint fibre. The Loom and Spindle use the same filament once called Puppeteering Thread. Prism Cuttles, comb jellies and Luminal Cicadas share Chromatophores. Urchins, Vampire Squids, Vampire Bats, Excoriated and Venous Striders supply Barbed Splinters. Striders, Choir Keepers and Osteophages share Venous Pinions. Deeper Siphonophores yield ordinary Ganglion Clusters. New material sources require player kills. Seek rare organs separately, and knap living withdrawn snails for Sclerites. Herring and Crimson Does also provide fish and venison for your furnace or smoker.",
+  "icon": "hemomancy:puppeteering_thread"
+}

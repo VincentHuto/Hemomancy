@@ -35,14 +35,7 @@
       }
     ],
     "axolotls": [],
-    "creature": [
-      {
-        "type": "hemomancy:hemojelly",
-        "weight": 6,
-        "minCount": 1,
-        "maxCount": 3
-      }
-    ],
+    "creature": [],
     "misc": [],
     "monster": [
       {

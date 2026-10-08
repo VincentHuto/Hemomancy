@@ -20,6 +20,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LocalPlayer.class)
 public class MixinLocalPlayer {
+      @Inject(method = "drop", at = @At("HEAD"), cancellable = true, remap = false)
+      private void hemomancy$signalDrop(boolean fullStack,
+              org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable<Boolean> cir) {
+          if (com.vincenthuto.hemomancy.common.manipulation.ductilis.AxonalTransductionManager.isTraveling((LocalPlayer)(Object)this))
+              cir.setReturnValue(false);
+      }
 	  @Unique
 	  private boolean hemomancy$flag = false;
 
@@ -39,6 +45,7 @@ public class MixinLocalPlayer {
 	  @Inject(method = "aiStep", at = @At("HEAD"), remap = false)
 	  private void hemomancy$applySilentSlippingNoClipBeforePushOut(CallbackInfo cb) {
 		SilentArchonArmorAbilityHandler.applySilentSlippingNoClip((LocalPlayer) (Object) this);
+		com.vincenthuto.hemomancy.common.manipulation.ductilis.AxonalTransductionManager.applyMovement((LocalPlayer) (Object) this);
 	  }
 
 	  @Inject(at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/client/player/LocalPlayer;getItemBySlot(Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/world/item/ItemStack;"), method = "aiStep", remap = false)

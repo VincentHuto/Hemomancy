@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 102,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Marrow Juggler",
+  "subtitle": "Dagger Thrower",
+  "text": "The Marrow Juggler is the shape older records call a Marrow Spitter. Its ordeal and Crossbar identity remain the same. At Degree 3, prepare the existing offering, unlock it, then command a full three-dagger volley into one rehearsal threat. The three throws share one attack's strength.",
+  "icon": "hemomancy:marionette_crossbar"
+}

@@ -1,0 +1,69 @@
+{
+  "temperature": 0.65,
+  "downfall": 0.7,
+  "has_precipitation": true,
+  "effects": {
+    "sky_color": 8626628,
+    "fog_color": 12638463,
+    "water_color": 2643322,
+    "water_fog_color": 1059654,
+    "ambient_sound": "minecraft:ambient.underwater.loop"
+  },
+  "spawners": {
+    "water_ambient": [
+      {
+        "type": "hemomancy:pelagic_herring",
+        "weight": 45,
+        "minCount": 6,
+        "maxCount": 10
+      }
+    ],
+    "water_creature": [
+      {
+        "type": "hemomancy:mnemonic_whale",
+        "weight": 12,
+        "minCount": 1,
+        "maxCount": 1
+      },
+      {
+        "type": "hemomancy:prism_cuttle",
+        "weight": 2,
+        "minCount": 1,
+        "maxCount": 1
+      },
+      {
+        "type": "minecraft:squid",
+        "weight": 6,
+        "minCount": 1,
+        "maxCount": 3
+      }
+    ],
+    "hemomancy:pyrosomes": [
+      {
+        "type": "hemomancy:pyrosome",
+        "weight": 18,
+        "minCount": 1,
+        "maxCount": 2
+      }
+    ]
+  },
+  "spawn_costs": {},
+  "carvers": {},
+  "features": [
+    [],
+    [],
+    [
+      "hemomancy:pelagic_seabed"
+    ],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "hemomancy:pelagic_habitat"
+    ],
+    []
+  ]
+}

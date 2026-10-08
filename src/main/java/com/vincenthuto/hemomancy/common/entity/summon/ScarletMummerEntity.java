@@ -217,6 +217,9 @@ public class ScarletMummerEntity extends GroundPuppetEntity implements BoundPupp
 	public boolean isPerforming() {
 		return entityData.get(DATA_PERFORMANCE_TICKS) > 0;
 	}
+	public void setDemonstrationPerformance(boolean performing) {
+		entityData.set(DATA_PERFORMANCE_TICKS, performing ? 1 : 0);
+	}
 
 	@Override
 	public boolean canAttack(net.minecraft.world.entity.LivingEntity target) {

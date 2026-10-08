@@ -1,6 +1,12 @@
 // Every source namespace must choose alpha: true or alpha: false with a reason.
 // Existing focused suites stay opt-in; the consolidation suites join the combined gate.
 ext.gameTestSuites = [
+    'crimson_troupe_validation': [alpha: true, run: 'crimsonTroupeGameTestServer', directory: 'build/crimson-troupe-gametest'],
+    'mob_drop_validation': [alpha: true, run: 'mobDropGameTestServer', directory: 'build/mob-drop-gametest'],
+    'ice_fish_validation': [alpha: true, run: 'iceFishGameTestServer', directory: 'build/ice-fish-gametest'],
+    'osteophage_validation': [alpha: true, run: 'osteophageGameTestServer', directory: 'build/osteophage-gametest'],
+    'pelagic_ecology_validation': [alpha: true, run: 'pelagicEcologyGameTestServer', directory: 'build/pelagic-ecology/gametest'],
+    'pelagic_worldgen_validation': [alpha: false, run: 'pelagicValidationServer', directory: null, reason: 'Requires a fresh seeded noise Overworld.', generator: 'com.vincenthuto.hemomancy.gametest.PelagicWorldValidation'],
     'mnemonic_whale_validation': [alpha: true, run: 'mnemonicWhaleGameTestServer', directory: 'build/mnemonic-whale-gametest'],
     'station_upgrade_validation': [alpha: true, run: 'stationUpgradeGameTestServer', directory: 'build/station-upgrade-gametest'],
     'book_kit_validation': [alpha: true, run: 'bookKitGameTestServer', directory: 'build/book-kit-gametest'],
@@ -37,7 +43,18 @@ gameTestSuites.each { namespace, suite ->
     def run = neoForge.runs.maybeCreate(suite.run)
     run.type = 'gameTestServer'
     run.systemProperty namespaceProperty, namespace
-    if (suite.generator != null) {
+    if (namespace == 'pelagic_worldgen_validation') {
+        def seed = providers.gradleProperty('pelagicSeed').getOrElse('42')
+        def pass = providers.gradleProperty('pelagicRun').getOrElse('fresh')
+        run.gameDirectory = file("build/pelagic-worlds/${seed}-${pass}")
+        run.systemProperty 'hemomancy.pelagic.validationSeed', seed
+        run.systemProperty 'hemomancy.pelagic.validationOrder', providers.gradleProperty('pelagicOrder').getOrElse('forward')
+        run.systemProperty 'hemomancy.pelagic.validationPreset', providers.gradleProperty('pelagicPreset').getOrElse('normal')
+        run.systemProperty 'hemomancy.pelagic.expectDisabled', providers.gradleProperty('pelagicExpectDisabled').getOrElse('false')
+        run.systemProperty 'hemomancy.pelagic.ecologyProbe', providers.gradleProperty('pelagicEcology').getOrElse('false')
+        run.programArguments.addAll '--mixin', 'pelagic-validation.mixins.json'
+        run.jvmArguments.addAll '-Xms1G', '-Xmx5G'
+    } else if (suite.generator != null) {
         def seed = providers.gradleProperty('phlegethonticSeed').getOrElse('42')
         def pass = providers.gradleProperty('phlegethonticRun').getOrElse('fresh')
         run.gameDirectory = file("build/phlegethontic-worlds/${seed}-${pass}")

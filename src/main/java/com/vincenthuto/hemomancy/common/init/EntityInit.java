@@ -204,6 +204,10 @@ public class EntityInit {
             "circus_knife_thrower", () -> EntityType.Builder.of(CircusKnifeThrowerEntity::new, MobCategory.CREATURE)
                     .sized(0.65F, 1.95F).clientTrackingRange(10)
                     .build(Hemomancy.rloc("circus_knife_thrower").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<CircusFacultyEntity>> circus_strongman = ENTITY_TYPES.register("circus_strongman", () -> EntityType.Builder.of(CircusFacultyEntity::new, MobCategory.CREATURE).sized(0.6F, 1.95F).clientTrackingRange(10).build(Hemomancy.rloc("circus_strongman").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<CircusFacultyEntity>> circus_beast_tamer = ENTITY_TYPES.register("circus_beast_tamer", () -> EntityType.Builder.of(CircusFacultyEntity::new, MobCategory.CREATURE).sized(0.6F, 1.95F).clientTrackingRange(10).build(Hemomancy.rloc("circus_beast_tamer").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<CircusFacultyEntity>> circus_threadkeeper = ENTITY_TYPES.register("circus_threadkeeper", () -> EntityType.Builder.of(CircusFacultyEntity::new, MobCategory.CREATURE).sized(0.6F, 1.95F).clientTrackingRange(10).build(Hemomancy.rloc("circus_threadkeeper").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<CircusFacultyEntity>> circus_understudy = ENTITY_TYPES.register("circus_understudy", () -> EntityType.Builder.of(CircusFacultyEntity::new, MobCategory.CREATURE).sized(0.6F, 1.95F).clientTrackingRange(10).build(Hemomancy.rloc("circus_understudy").toString()));
     public static final DeferredHolder<EntityType<?>, EntityType<CircusCarouselEntity>> circus_carousel = ENTITY_TYPES.register(
             "circus_carousel", () -> EntityType.Builder.<CircusCarouselEntity>of(CircusCarouselEntity::new, MobCategory.MISC)
                     .sized(1.0F, 7.0F).clientTrackingRange(12).updateInterval(2)
@@ -422,6 +426,10 @@ public class EntityInit {
                             .clientTrackingRange(8)
                             .build(Hemomancy.rloc("veinwing_vulture").toString()));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<com.vincenthuto.hemomancy.common.entity.summon.CinderBellowsEntity>> cinder_bellows = ENTITY_TYPES.register("cinder_bellows",
+            () -> EntityType.Builder.<com.vincenthuto.hemomancy.common.entity.summon.CinderBellowsEntity>of(com.vincenthuto.hemomancy.common.entity.summon.CinderBellowsEntity::new, MobCategory.CREATURE)
+                    .sized(.9F, 2.2F).fireImmune().clientTrackingRange(8).build(Hemomancy.rloc("cinder_bellows").toString()));
+
     public static final DeferredHolder<EntityType<?>, EntityType<MarrowSpitterEntity>> marrow_spitter = ENTITY_TYPES
             .register("marrow_spitter",
                     () -> EntityType.Builder.<MarrowSpitterEntity>of(MarrowSpitterEntity::new, MobCategory.CREATURE)
@@ -470,6 +478,46 @@ public class EntityInit {
                             .build(Hemomancy.rloc("enthralled_doll").toString()));
 
 
+    public static final DeferredHolder<EntityType<?>, EntityType<ChitonEntity>> chiton = ENTITY_TYPES.register(
+            "chiton", () -> EntityType.Builder.of(ChitonEntity::new, MobCategory.valueOf("HEMOMANCY_PELAGIC_BENTHOS"))
+                    .sized(0.65F, 0.22F).clientTrackingRange(8).updateInterval(3)
+                    .build(Hemomancy.rloc("chiton").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<PyrosomeEntity>> pyrosome = ENTITY_TYPES.register(
+            "pyrosome", () -> EntityType.Builder.of(PyrosomeEntity::new, MobCategory.valueOf("HEMOMANCY_PYROSOMES"))
+                    .sized(0.8F, 1.5F).clientTrackingRange(8).updateInterval(3)
+                    .build(Hemomancy.rloc("pyrosome").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<PelagicHerringEntity>> pelagic_herring = ENTITY_TYPES.register(
+            "pelagic_herring", () -> EntityType.Builder.of(PelagicHerringEntity::new, MobCategory.WATER_AMBIENT)
+                    .sized(0.45F, 0.32F).clientTrackingRange(8).updateInterval(3)
+                    .build(Hemomancy.rloc("pelagic_herring").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<IceFishEntity>> ice_fish = ENTITY_TYPES.register(
+            "ice_fish", () -> EntityType.Builder.of(IceFishEntity::new, MobCategory.WATER_AMBIENT)
+                    .sized(0.5F, 0.35F).clientTrackingRange(8).updateInterval(3)
+                    .build(Hemomancy.rloc("ice_fish").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<SiphonophoreEntity>> siphonophore = ENTITY_TYPES.register(
+            "siphonophore", () -> EntityType.Builder.of(SiphonophoreEntity::new, MobCategory.WATER_CREATURE)
+                    .sized(0.65F, 1.25F).clientTrackingRange(8).updateInterval(3)
+                    .build(Hemomancy.rloc("siphonophore").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<BloodyBellyCombJellyEntity>> bloody_belly_comb_jelly = ENTITY_TYPES.register(
+            "bloody_belly_comb_jelly", () -> EntityType.Builder.of(BloodyBellyCombJellyEntity::new, MobCategory.WATER_AMBIENT)
+                    .sized(0.7F, 0.8F).clientTrackingRange(8).updateInterval(3)
+                    .build(Hemomancy.rloc("bloody_belly_comb_jelly").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<HagfishEntity>> hagfish = ENTITY_TYPES.register(
+            "hagfish", () -> EntityType.Builder.of(HagfishEntity::new, MobCategory.valueOf("HEMOMANCY_PELAGIC_BENTHOS"))
+                    .sized(0.6F, 0.3F).clientTrackingRange(8).updateInterval(3)
+                    .build(Hemomancy.rloc("hagfish").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<VampireSquidEntity>> vampire_squid = ENTITY_TYPES.register(
+            "vampire_squid", () -> EntityType.Builder.of(VampireSquidEntity::new, MobCategory.WATER_AMBIENT)
+                    .sized(0.9F, 1.2F).clientTrackingRange(8).updateInterval(3)
+                    .build(Hemomancy.rloc("vampire_squid").toString()));
+
     public static final DeferredHolder<EntityType<?>, EntityType<BarbedUrchinEntity>> barbed_urchin = ENTITY_TYPES.register(
             "barbed_urchin",
             () -> EntityType.Builder.of(BarbedUrchinEntity::new, MobCategory.WATER_AMBIENT)
@@ -477,7 +525,7 @@ public class EntityInit {
 
     public static final DeferredHolder<EntityType<?>, EntityType<ChalybeateSnailEntity>> chalybeate_snail = ENTITY_TYPES.register(
             "chalybeate_snail",
-            () -> EntityType.Builder.of(ChalybeateSnailEntity::new, MobCategory.WATER_AMBIENT)
+            () -> EntityType.Builder.of(ChalybeateSnailEntity::new, MobCategory.valueOf("HEMOMANCY_PELAGIC_BENTHOS"))
                     .sized(0.9F, 0.45F)
                     .clientTrackingRange(8)
                     .build(Hemomancy.rloc("chalybeate_snail").toString()));
@@ -596,6 +644,11 @@ public class EntityInit {
                     .updateInterval(2)
                     .build(Hemomancy.rloc("choir_keeper").toString()));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<OsteophageEntity>> osteophage = ENTITY_TYPES.register(
+            "osteophage", () -> EntityType.Builder.of(OsteophageEntity::new, MobCategory.AMBIENT)
+                    .sized(0.8F, 1.2F).clientTrackingRange(10).updateInterval(2)
+                    .build(Hemomancy.rloc("osteophage").toString()));
+
     public static final DeferredHolder<EntityType<?>, EntityType<LuminalCicadaEntity>> luminal_cicada = ENTITY_TYPES.register(
             "luminal_cicada",
             () -> EntityType.Builder.of(LuminalCicadaEntity::new, MobCategory.AMBIENT)
@@ -621,7 +674,7 @@ public class EntityInit {
 
     public static final DeferredHolder<EntityType<?>, EntityType<HemojellyEntity>> hemojelly = ENTITY_TYPES.register(
             "hemojelly",
-            () -> EntityType.Builder.of(HemojellyEntity::new, MobCategory.CREATURE)
+            () -> EntityType.Builder.of(HemojellyEntity::new, MobCategory.WATER_CREATURE)
                     .sized(0.7F, 0.9F).build(Hemomancy.rloc("hemojelly").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<VenousStriderEntity>> venous_strider = ENTITY_TYPES.register(
@@ -786,6 +839,32 @@ public class EntityInit {
                 ExcoriatedSpawnRules::canSpawn,RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(phlegethontic_bombardier.get(),SpawnPlacementTypes.ON_GROUND,Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 PhlegethonticBombardier::canSpawn,RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(chiton.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                (type, level, reason, pos, random) -> com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.suitable(level, pos,
+                        com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species.CHITON), RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(pyrosome.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                (type, level, reason, pos, random) -> com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.suitable(level, pos,
+                        com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species.PYROSOME), RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(ice_fish.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                IceFishEntity::canSpawnHere, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(pelagic_herring.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                (type, level, reason, pos, random) -> com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.suitable(level, pos,
+                        com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species.HERRING), RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(siphonophore.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                (type, level, reason, pos, random) -> com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.suitable(level, pos,
+                        com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species.SIPHONOPHORE), RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(bloody_belly_comb_jelly.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                (type, level, reason, pos, random) -> com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.suitable(level, pos,
+                        com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species.COMB_JELLY), RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(hagfish.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                (type, level, reason, pos, random) -> com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.suitable(level, pos,
+                        com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species.HAGFISH), RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(vampire_squid.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                (type, level, reason, pos, random) -> com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.suitable(level, pos,
+                        com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species.VAMPIRE_SQUID), RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(chalybeate_snail.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                (type, level, reason, pos, random) -> com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat.suitable(level, pos,
+                        com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species.SNAIL), RegisterSpawnPlacementsEvent.Operation.REPLACE);
         Hemomancy.LOGGER.info("[Hemomancy] Registering spawn placements...");
         event.register(EntityInit.chitinite.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ChitiniteEntity::canSpawnInCave,
@@ -805,7 +884,7 @@ public class EntityInit {
         event.register(EntityInit.mnemonic_whale.get(), SpawnPlacementTypes.IN_WATER,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MnemonicWhaleEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
-        event.register(EntityInit.hemolymphopoda.get(), SpawnPlacementTypes.ON_GROUND,
+        event.register(EntityInit.hemolymphopoda.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HemolymphopodaEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(EntityInit.bog_revenant.get(), SpawnPlacementTypes.ON_GROUND,
@@ -829,6 +908,9 @@ public class EntityInit {
         event.register(EntityInit.choir_keeper.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ChoirKeeperEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(osteophage.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, OsteophageEntity::canSpawnHere,
+                RegisterSpawnPlacementsEvent.Operation.OR);
 		event.register(EntityInit.peacock_spider.get(), SpawnPlacementTypes.ON_GROUND,
 				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, PeacockSpiderEntity::canSpawnHere,
 				RegisterSpawnPlacementsEvent.Operation.OR);
@@ -847,7 +929,7 @@ public class EntityInit {
         event.register(EntityInit.scarlet_serpent.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ScarletSerpentEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
-        event.register(EntityInit.hemojelly.get(), SpawnPlacementTypes.ON_GROUND,
+        event.register(EntityInit.hemojelly.get(), SpawnPlacementTypes.IN_WATER,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HemojellyEntity::canSpawnHere,
                 RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(EntityInit.venous_strider.get(), SpawnPlacementTypes.ON_GROUND,
@@ -920,6 +1002,14 @@ public class EntityInit {
         event.put(EntityInit.mnemonic_whale.get(), MnemonicWhaleEntity.setAttributes().build());
         event.put(EntityInit.brined_votary.get(), BrinedVotaryEntity.setAttributes().build());
         event.put(EntityInit.prism_cuttle.get(), PrismCuttleEntity.setAttributes().build());
+        event.put(chiton.get(), PelagicAnimal.attributes(8, 0.1).build());
+        event.put(pyrosome.get(), PelagicAnimal.attributes(8, 0.13).build());
+        event.put(pelagic_herring.get(), PelagicHerringEntity.setAttributes().build());
+        event.put(ice_fish.get(), IceFishEntity.setAttributes().build());
+        event.put(siphonophore.get(), PelagicAnimal.attributes(6, 0.09).build());
+        event.put(bloody_belly_comb_jelly.get(), PelagicAnimal.attributes(5, 0.11).build());
+        event.put(hagfish.get(), PelagicAnimal.attributes(10, 0.16).build());
+        event.put(vampire_squid.get(), PelagicAnimal.attributes(8, 0.16).build());
         event.put(EntityInit.hemolymphopoda.get(), HemolymphopodaEntity.setAttributes().build());
         event.put(EntityInit.lantern_tick.get(), LanternTickEntity.setAttributes().build());
         event.put(EntityInit.abhorent_thought.get(), AbhorentThoughtEntity.setAttributes().build());
@@ -930,6 +1020,7 @@ public class EntityInit {
         event.put(EntityInit.enthralled_doll.get(), EnthralledDollEntity.setAttributes().build());
         event.put(EntityInit.blood_thrall.get(), BloodThrallEntity.setAttributes().build());
         event.put(EntityInit.veinwing_vulture.get(), VeinwingVultureEntity.setAttributes().build());
+        event.put(EntityInit.cinder_bellows.get(), com.vincenthuto.hemomancy.common.entity.summon.CinderBellowsEntity.setAttributes().build());
         event.put(EntityInit.marrow_spitter.get(), MarrowSpitterEntity.setAttributes().build());
         event.put(EntityInit.gorebound_hulk.get(), GoreboundHulkEntity.setAttributes().build());
         event.put(EntityInit.mnemonist_puppet.get(), MnemonistPuppetEntity.setAttributes().build());
@@ -953,6 +1044,10 @@ public class EntityInit {
 		event.put(EntityInit.circus_fire_eater.get(), CircusFireEaterEntity.setAttributes().build());
 		event.put(EntityInit.circus_ringmaster.get(), CircusRingmasterEntity.setAttributes().build());
 		event.put(EntityInit.circus_stilt_walker.get(), CircusStiltWalkerEntity.setAttributes().build());
+		event.put(EntityInit.circus_strongman.get(), CircusFacultyEntity.setAttributes().build());
+		event.put(EntityInit.circus_beast_tamer.get(), CircusFacultyEntity.setAttributes().build());
+		event.put(EntityInit.circus_threadkeeper.get(), CircusFacultyEntity.setAttributes().build());
+		event.put(EntityInit.circus_understudy.get(), CircusFacultyEntity.setAttributes().build());
 		event.put(EntityInit.circus_acrobat.get(), CircusAcrobatEntity.setAttributes().build());
 		event.put(EntityInit.circus_knife_thrower.get(), CircusKnifeThrowerEntity.setAttributes().build());
         event.put(EntityInit.hemorath.get(), HemorathEntity.setAttributes().build());
@@ -970,6 +1065,7 @@ public class EntityInit {
         event.put(EntityInit.crimson_doe.get(), CrimsonDoeEntity.setAttributes().build());
         event.put(EntityInit.verdigris_moth.get(), VerdigrisMothEntity.setAttributes().build());
         event.put(EntityInit.choir_keeper.get(), ChoirKeeperEntity.setAttributes().build());
+        event.put(osteophage.get(), OsteophageEntity.setAttributes().build());
 		event.put(EntityInit.peacock_spider.get(), Spider.createAttributes().build());
 		event.put(EntityInit.vampire_bat.get(), VampireBatEntity.setAttributes().build());
         event.put(EntityInit.luminal_cicada.get(), LuminalCicadaEntity.setAttributes().build());

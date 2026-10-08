@@ -63,17 +63,19 @@ public final class CircusPavilionStructure extends Structure {
 
 	@Override
 	public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
-		if (!StructurePlacementChecks.isSuitableCircusPavilionSite(context)) {
-			return Optional.empty();
-		}
+        if (!StructurePlacementChecks.canPlaceOverworldHemomancyStructure(context)) return Optional.empty();
 
 		int startY = startHeight.sample(context.random(),
 				new WorldGenerationContext(context.chunkGenerator(), context.heightAccessor()));
 		ChunkPos chunk = context.chunkPos();
 		BlockPos start = new BlockPos(chunk.getMinBlockX(), startY, chunk.getMinBlockZ());
-		return JigsawPlacement.addPieces(context, startPool, startJigsawName, size, start, false,
+		var generated = JigsawPlacement.addPieces(context, startPool, startJigsawName, size, start, false,
 				projectStartToHeightmap, maxDistanceFromCenter, PoolAliasLookup.EMPTY,
 				JigsawStructure.DEFAULT_DIMENSION_PADDING, LiquidSettings.APPLY_WATERLOGGING);
+        if (generated.isEmpty()) return Optional.empty();
+        var pieces = generated.get().getPiecesBuilder();
+        if (!StructurePlacementChecks.isSuitableTroupeFootprint(context, pieces.getBoundingBox())) return Optional.empty();
+        return Optional.of(new GenerationStub(generated.get().position(), com.mojang.datafixers.util.Either.right(pieces)));
 	}
 
 	@Override
@@ -86,6 +88,7 @@ public final class CircusPavilionStructure extends Structure {
 			ChunkGenerator chunkGenerator, RandomSource random, BoundingBox chunkBox,
 			ChunkPos chunkPos, PiecesContainer pieces) {
 		BoundingBox fullBox = pieces.calculateBoundingBox();
+		if (fullBox.getXSpan() < 65) return;
 		int centerX = (fullBox.minX() + fullBox.maxX()) / 2;
 		int centerZ = (fullBox.minZ() + fullBox.maxZ()) / 2;
 		if (chunkBox.isInside(centerX, fullBox.minY(), centerZ)) {

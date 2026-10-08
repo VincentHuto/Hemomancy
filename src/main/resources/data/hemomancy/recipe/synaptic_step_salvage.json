@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [{"item": "hemomancy:synaptic_step"}],
+  "result": {"id": "hemomancy:naeglerophaeon_ganglion", "count": 1}
+}

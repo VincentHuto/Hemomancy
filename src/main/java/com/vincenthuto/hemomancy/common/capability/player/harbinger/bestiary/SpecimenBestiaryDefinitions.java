@@ -17,6 +17,14 @@ import java.util.stream.Collectors;
 public final class SpecimenBestiaryDefinitions {
 	private static final List<ResearchEntry> RESEARCH_ENTRIES = List.of(
 			specimen("barbed_urchin"),
+			specimen("chiton"),
+			specimen("pyrosome"),
+			specimen("pelagic_herring"),
+			specimen("ice_fish"),
+			specimen("siphonophore"),
+			specimen("bloody_belly_comb_jelly"),
+			specimen("hagfish"),
+			specimen("vampire_squid"),
 			specimen("blood_lantern_jelly"),
 			specimen("chalybeate_snail"),
 			specimen("chitinite"),
@@ -34,6 +42,7 @@ public final class SpecimenBestiaryDefinitions {
 			specimen("tooth_pecks"),
 			specimen("venom_rib_centipede"),
 			specimen("venous_strider"),
+			specimen("osteophage"),
 			specimen("verdigris_moth")
 	);
 

@@ -69,6 +69,12 @@ public final class PuppeteerTrialRiteController {
 			if (notify) caster.displayClientMessage(Component.translatable("hemomancy.summon.trial.already_known"), true);
 			return false;
 		}
+		if (!com.vincenthuto.hemomancy.common.circus.CircusCurriculum.mayBeginOrdeal(summonName,
+				HemoCapabilityAccess.getPlayerDegreeNumber(caster),
+				com.vincenthuto.hemomancy.common.circus.CircusApprenticeshipProgress.instructionSatisfied(caster, summonName), known)) {
+			if (notify) caster.displayClientMessage(Component.translatable("hemomancy.circus.school.instruction_required"), true);
+			return false;
+		}
 		boolean enoughBlood = HemoCapabilityAccess.getBloodVolume(caster)
 				.map(value -> value.getBloodVolume() >= bloodCost).orElse(false);
 		if (!enoughBlood && notify) {

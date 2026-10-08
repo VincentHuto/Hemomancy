@@ -35,6 +35,14 @@ public final class CircusPavilionSavedData extends SavedData {
 		if (sites.remove(key(level, origin)) != null) setDirty();
 	}
 
+    public boolean isCompletedNear(ServerLevel level, BlockPos position) {
+        String prefix = level.dimension().location() + "|";
+        return sites.entrySet().stream().anyMatch(entry -> entry.getKey().startsWith(prefix)
+                && entry.getValue().outcome != CircusPavilionStateRules.Outcome.NEUTRAL
+                && Math.abs(entry.getValue().origin.getX() - position.getX()) < 80
+                && Math.abs(entry.getValue().origin.getZ() - position.getZ()) < 80);
+    }
+
 	public boolean begin(ServerLevel level, BlockPos origin, UUID owner, CircusRouteRules.Route route) {
 		return begin(level, origin, owner, route, CircusPavilionStateRules.Phase.RAFTERS);
 	}

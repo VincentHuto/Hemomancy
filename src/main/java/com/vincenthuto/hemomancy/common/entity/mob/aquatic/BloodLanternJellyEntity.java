@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.entity.mob.aquatic;
 
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.core.BlockPos;
+import com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitat;
+import com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
@@ -39,6 +41,7 @@ public class BloodLanternJellyEntity extends PathfinderMob {
 
 	public static boolean canSpawnHere(EntityType<? extends BloodLanternJellyEntity> type, LevelAccessor level,
 			MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+		if (PelagicHabitat.layer(level, pos) != null) return PelagicHabitat.suitable(level, pos, Species.LANTERN);
 		return level.getFluidState(pos).is(FluidTags.WATER)
 				&& level.getFluidState(pos.above()).is(FluidTags.WATER)
 				&& pos.getY() <= level.getSeaLevel();
@@ -51,14 +54,15 @@ public class BloodLanternJellyEntity extends PathfinderMob {
 
 	@Override
 	public void travel(Vec3 travelVector) {
-		if (BloodLanternJellyMovementRules.canDrift(this.isInWater(), this.isAlive())) {
+        if (isEffectiveAi() && BloodLanternJellyMovementRules.canDrift(this.isInWater(), this.isAlive())) {
 			double pulse = Math.sin((this.tickCount + this.getId()) * 0.12D);
 			double turn = (this.tickCount + this.getId()) * 0.037D;
 			boolean waterAbove = this.level().getFluidState(this.blockPosition().above()).is(FluidTags.WATER);
 			boolean waterBelow = this.level().getFluidState(this.blockPosition().below()).is(FluidTags.WATER);
 			Vec3 drift = new Vec3(
 					BloodLanternJellyMovementRules.horizontalDrift(Math.cos(turn)),
-					BloodLanternJellyMovementRules.verticalImpulse(waterAbove, waterBelow, pulse),
+					BloodLanternJellyMovementRules.verticalImpulse(waterAbove, waterBelow, pulse)
+							+ PelagicHabitat.depthCorrection(level(), blockPosition(), Species.LANTERN),
 					BloodLanternJellyMovementRules.horizontalDrift(Math.sin(turn)));
 			this.setDeltaMovement(this.getDeltaMovement().scale(BloodLanternJellyMovementRules.DAMPING).add(drift));
 			this.move(MoverType.SELF, this.getDeltaMovement());

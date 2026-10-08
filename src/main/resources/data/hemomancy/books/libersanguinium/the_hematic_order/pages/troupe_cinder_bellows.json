@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 106,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Cinder Bellows",
+  "subtitle": "Fire Breather",
+  "text": "At Degree 4, build a Cinder Bellows Frame from hematic iron scraps, leather, Filaments and blaze powder. Its Dominion Lesser ordeal requires 900 mL and consumes the frame only after manifestation, preserving your Crossbar. Your Bellows inhales for one second, breathes a five-block, sixty-degree cone for two seconds, then recovers for two. The practical requires both rehearsal threats to be hit during one breath. Walls and allies must be respected; the act never ignites terrain.",
+  "icon": "hemomancy:marionette_crossbar"
+}

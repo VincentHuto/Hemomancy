@@ -30,6 +30,7 @@ public final class PuppeteerCrossbarCommands {
 			MarionetteCrossbarItem.clearGuardAnchor(crossbar);
 		}
 		relayMode(player, mode);
+        com.vincenthuto.hemomancy.common.circus.CircusSchoolQuests.observeControl(player, MarionetteCrossbarItem.ensureCrossbarId(crossbar), "command", MarionetteCrossbarItem.getSelectedSummonName(crossbar));
 		player.playSound(SoundEvents.WOODEN_BUTTON_CLICK_ON, 0.35F, 0.75F);
 		player.displayClientMessage(Component.translatable("hemomancy.summon.command." + mode.serializedName())
 				.withStyle(ChatFormatting.RED), true);

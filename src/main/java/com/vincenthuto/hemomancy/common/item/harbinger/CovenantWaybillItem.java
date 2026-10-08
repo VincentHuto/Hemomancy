@@ -67,8 +67,7 @@ public class CovenantWaybillItem extends Item {
 	}
 
 	private void attune(ItemStack stack, ServerLevel level, Player player, boolean showFeedback) {
-		BlockPos target = level.findNearestMapStructure(
-				targets, player.blockPosition(), searchRadiusChunks, false);
+		BlockPos target = findTarget(level, player);
 		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		tag.putString(CHECKED_DIMENSION, level.dimension().location().toString());
 		if (target == null) {
@@ -92,6 +91,10 @@ public class CovenantWaybillItem extends Item {
 					.withStyle(ChatFormatting.DARK_RED), false);
 		}
 	}
+
+    protected BlockPos findTarget(ServerLevel level, Player player) {
+        return level.findNearestMapStructure(targets, player.blockPosition(), searchRadiusChunks, false);
+    }
 
 	public static BlockPos target(ItemStack stack, Level level) {
 		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();

@@ -22,6 +22,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -67,7 +68,9 @@ public class ChalybeateSnailEntity extends WaterAnimal {
 	@Override
 	protected void registerGoals() {
 		this.goalSelector.addGoal(0, new RetractWhenThreatenedGoal(this));
-		this.goalSelector.addGoal(1, new SlowFloorCrawlGoal(this));
+		this.goalSelector.addGoal(1, new PelagicBottomForageGoal(this,
+				com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicHabitatRules.Species.SNAIL, () -> !isRetracted()));
+		this.goalSelector.addGoal(2, new SlowFloorCrawlGoal(this));
 		this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 5.0F));
 		this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
 	}
@@ -173,6 +176,10 @@ public class ChalybeateSnailEntity extends WaterAnimal {
 
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
+		if (source.is(DamageTypes.HOT_FLOOR)) {
+			return false;
+		}
+
 		if (!this.level().isClientSide()) {
 			this.retractFor(ChalybeateSnailRetractionRules.HURT_TUCK_TICKS);
 		}

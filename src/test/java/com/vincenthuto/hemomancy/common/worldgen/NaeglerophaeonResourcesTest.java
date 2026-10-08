@@ -28,9 +28,20 @@ class NaeglerophaeonResourcesTest {
 		assertEquals("hemomancy:naeglerophaeon_ganglion", loot.getAsJsonArray("pools")
 				.get(0).getAsJsonObject().getAsJsonArray("entries").get(0).getAsJsonObject()
 				.get("name").getAsString());
-		JsonObject recipe = json("src/main/resources/data/hemomancy/recipe/synaptic_step.json");
-		assertEquals(4, recipe.getAsJsonArray("ingredients").size());
-		assertEquals("hemomancy:synaptic_step", recipe.getAsJsonObject("result").get("id").getAsString());
+		Path weaving = ROOT.resolve("src/main/resources/data/hemomancy/recipe/memory_weaving/memory_axonal_transduction.json");
+		assertTrue(Files.exists(weaving), "The ganglion must weave Axonal Transduction in the Somatic Loom");
+		JsonObject recipe = json(ROOT.relativize(weaving).toString());
+		assertEquals("hemomancy:memory_weaving", recipe.get("type").getAsString());
+		assertEquals("hemomancy:naeglerophaeon_ganglion", recipe.getAsJsonArray("catalysts")
+				.get(0).getAsJsonObject().get("item").getAsString());
+		assertEquals(4, recipe.getAsJsonObject("enzymes").get("ductilis").getAsInt());
+		assertEquals(600, recipe.get("blood").getAsInt());
+		assertEquals("hemomancy:memory_axonal_transduction", recipe.get("result").getAsString());
+		assertFalse(Files.exists(ROOT.resolve("src/main/resources/data/hemomancy/recipe/synaptic_step.json")));
+		JsonObject salvage = json("src/main/resources/data/hemomancy/recipe/synaptic_step_salvage.json");
+		assertEquals("hemomancy:synaptic_step", salvage.getAsJsonArray("ingredients")
+				.get(0).getAsJsonObject().get("item").getAsString());
+		assertEquals("hemomancy:naeglerophaeon_ganglion", salvage.getAsJsonObject("result").get("id").getAsString());
 		assertFalse(Files.readString(ROOT.resolve(
 				"src/main/resources/data/hemomancy/worldgen/biome/cortical_drift.json"))
 				.contains("naeglerophaeon"));

@@ -21,7 +21,7 @@ public final class MnemonistPuppetEvents {
 		LivingEntity damaged = event.getEntity();
 		damaged.level().getEntitiesOfClass(MnemonistPuppetEntity.class, damaged.getBoundingBox().inflate(24.0D),
 						puppet -> puppet.isAlive() && puppet.getTarget() == damaged)
-				.forEach(puppet -> puppet.rememberDamage(damaged, event.getNewDamage()));
+				.forEach(puppet -> puppet.rememberDamage(damaged, event.getNewDamage(), event.getSource().getEntity()));
 	}
 
 	public static boolean isReplayingDamage() {

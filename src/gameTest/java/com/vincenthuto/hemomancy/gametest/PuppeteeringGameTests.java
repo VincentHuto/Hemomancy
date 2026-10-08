@@ -314,6 +314,8 @@ public final class PuppeteeringGameTests {
 		try {
 			ItemStack crossbar = attunedCrossbar(caster, 0);
 			var degree = HemoCapabilityAccess.requireInitiatoryDegree(caster);
+			degree.setDegreeNumber(4);
+            com.vincenthuto.hemomancy.common.circus.CircusApprenticeshipProgress.state(caster).putBoolean("taught.scarlet_mummer", true);
 			degree.syncTotalPomesConsumed(8);
 			helper.assertTrue(PuppeteerTrialRiteController.canBegin(caster, crossbar,
 					PuppeteerSummonDefinitions.SCARLET_MUMMER, 0.0D, false),
@@ -564,7 +566,7 @@ public final class PuppeteeringGameTests {
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 80)
-	public static void marrowSpitterFiresBloodShotsInsteadOfArrows(GameTestHelper helper) {
+	public static void marrowJugglerThrowsDaggersAndKeepsItsHover(GameTestHelper helper) {
 		ServerPlayer owner = testPlayer(helper);
 		PuppeteerSummonDefinition definition = PuppeteerSummonDefinitions
 				.byName(PuppeteerSummonDefinitions.MARROW_SPITTER).orElseThrow();
@@ -580,13 +582,13 @@ public final class PuppeteeringGameTests {
 		helper.assertTrue(helper.getLevel().addFreshEntity(spitter),
 				"Marrow Spitter fixture entity must spawn");
 		((net.minecraft.world.entity.monster.RangedAttackMob) spitter).performRangedAttack(target, 1.0F);
-		boolean firedBloodShot = !helper.getLevel().getEntitiesOfClass(BloodShotEntity.class,
+		boolean firedDagger = !helper.getLevel().getEntitiesOfClass(com.vincenthuto.hemomancy.common.entity.projectile.CircusKnifeProjectileEntity.class,
 				spitter.getBoundingBox().inflate(32.0),
 				shot -> shot.getOwner() == spitter).isEmpty();
 
 		try {
 			for (int i = 0; i < 50; i++) helper.getLevel().tickNonPassenger(spitter);
-			helper.assertTrue(firedBloodShot, "Marrow Spitter must fire BloodShot projectiles");
+			helper.assertTrue(firedDagger, "Marrow Juggler must throw dagger projectiles");
 			helper.assertTrue(spitter.position().distanceTo(startingPosition) > 0.5,
 					"Marrow Spitter must hover around its player anchor instead of remaining ground-locked");
 			helper.assertTrue(!spitter.isOnFire(), "Marrow Spitter must not ignite in sunlight");

@@ -1,0 +1,12 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#hemomancy:ice_fish_spawnlist",
+  "spawners": [
+    {
+      "type": "hemomancy:ice_fish",
+      "weight": 12,
+      "minCount": 3,
+      "maxCount": 5
+    }
+  ]
+}

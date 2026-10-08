@@ -30,6 +30,25 @@ public class GoreboundHulkEntity extends GroundPuppetEntity implements BoundPupp
 	private static final EntityDataAccessor<Optional<UUID>> DATA_TRIAL_CASTER_UUID =
 			SynchedEntityData.defineId(GoreboundHulkEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 
+    private static final EntityDataAccessor<Integer> STRIKE_WINDUP = SynchedEntityData.defineId(GoreboundHulkEntity.class, EntityDataSerializers.INT);
+    private UUID strikeTarget;
+    public int getStrikeWindup() { return entityData.get(STRIKE_WINDUP); }
+    public void setDemonstrationWindup(int tick) { entityData.set(STRIKE_WINDUP, tick); }
+    public void beginStrike(net.minecraft.world.entity.LivingEntity target) {
+        if (getStrikeWindup() == 0) { strikeTarget = target.getUUID(); entityData.set(STRIKE_WINDUP, 1); }
+    }
+    private void tickStrike() {
+        int windup = getStrikeWindup();
+        if (windup == 0) return;
+        if (windup >= 10) {
+            if (strikeTarget != null && level() instanceof net.minecraft.server.level.ServerLevel server && server.getEntity(strikeTarget) instanceof net.minecraft.world.entity.LivingEntity target
+                    && target.isAlive() && canAttack(target) && isWithinMeleeAttackRange(target) && hasLineOfSight(target)) {
+                swing(net.minecraft.world.InteractionHand.MAIN_HAND); doHurtTarget(target);
+            }
+            entityData.set(STRIKE_WINDUP, 0); strikeTarget = null;
+        } else entityData.set(STRIKE_WINDUP, windup + 1);
+    }
+
 	public GoreboundHulkEntity(EntityType<? extends Zombie> type, Level level) {
 		super(type, level);
 	}
@@ -51,6 +70,7 @@ public class GoreboundHulkEntity extends GroundPuppetEntity implements BoundPupp
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		super.defineSynchedData(builder);
+        builder.define(STRIKE_WINDUP, 0);
 		builder.define(DATA_OWNER_UUID, Optional.empty());
 		builder.define(DATA_CROSSBAR_UUID, Optional.empty());
 		builder.define(DATA_SUMMON_NAME, "gorebound_hulk");
@@ -65,6 +85,7 @@ public class GoreboundHulkEntity extends GroundPuppetEntity implements BoundPupp
 		if (level().isClientSide) {
 			return;
 		}
+		tickStrike();
 		if (hemomancy$isTrialSummon()) {
 			BoundSummonBehavior.trialServerTick(this, this);
 			return;

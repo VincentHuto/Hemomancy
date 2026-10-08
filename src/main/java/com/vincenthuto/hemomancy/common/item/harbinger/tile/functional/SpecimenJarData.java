@@ -14,6 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 
@@ -72,6 +73,8 @@ public final class SpecimenJarData {
 	public static CompoundTag captureEntity(LivingEntity entity) {
 		CompoundTag specimen = new CompoundTag();
 		if (entity.save(specimen)) {
+			if (entity instanceof Mob)
+				specimen.putBoolean("PersistenceRequired", true);
 			sanitizeStoredEntity(specimen);
 			return specimen;
 		}
@@ -87,6 +90,8 @@ public final class SpecimenJarData {
 		prepareReleaseTag(releaseTag, pos);
 		Entity released = EntityType.create(releaseTag, level).orElse(null);
 		if (released == null) return Optional.empty();
+		// Older filled jars can contain a wild mob's false persistence flag.
+		if (released instanceof Mob mob) mob.setPersistenceRequired();
 		released.moveTo(pos.getX() + 0.5D, pos.getY() + 0.05D, pos.getZ() + 0.5D,
 				released.getYRot(), released.getXRot());
 		if (!level.addFreshEntity(released)) return Optional.empty();

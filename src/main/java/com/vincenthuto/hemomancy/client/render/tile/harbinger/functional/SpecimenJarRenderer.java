@@ -23,6 +23,7 @@ import net.minecraft.world.phys.AABB;
 import java.util.Optional;
 
 public class SpecimenJarRenderer implements BlockEntityRenderer<SpecimenJarBlockEntity> {
+	private static final String DISPLAY_ENTITY_TAG = "hemomancy:specimen_display";
 	private static final float INNER_JAR_FIT = 0.52F;
 	private static final float MAX_SPECIMEN_SCALE = 0.75F;
 	private static final float DEFAULT_SPECIMEN_SCALE = 0.45F;
@@ -32,6 +33,10 @@ public class SpecimenJarRenderer implements BlockEntityRenderer<SpecimenJarBlock
 	private String cachedKey = "";
 
 	public SpecimenJarRenderer(BlockEntityRendererProvider.Context context) {
+	}
+
+	public static boolean isDisplayEntity(Entity entity) {
+		return entity.getPersistentData().getBoolean(DISPLAY_ENTITY_TAG);
 	}
 
 	@Override
@@ -90,6 +95,13 @@ public class SpecimenJarRenderer implements BlockEntityRenderer<SpecimenJarBlock
 	}
 
 	static float longBodiedVisualLength(String path, float width, float height) {
+        if (path.equals("osteophage")) return 2.4F;
+		if (path.equals("siphonophore")) return 3.5F;
+		if (path.equals("hagfish")) return 1.8F;
+		if (path.equals("vampire_squid")) return 1.6F;
+		if (path.equals("chiton")) return 1.05F;
+		if (path.equals("pelagic_herring")) return .85F;
+        if (path.equals("ice_fish")) return 1.3F;
 		if (path.contains("centipede")) {
 			return Math.max(width * 2.65F, height * 6.0F);
 		}
@@ -112,10 +124,12 @@ public class SpecimenJarRenderer implements BlockEntityRenderer<SpecimenJarBlock
 
 	private static void applySpecimenVisualOffset(Entity entity, PoseStack poseStack) {
 		String path = entityPath(entity);
+		if (path.equals("siphonophore")) poseStack.translate(0, 2.3, 0);
 		poseStack.translate(0.0D, 0.0D, specimenVisualDepthOffset(path, entity.getBbWidth()));
 	}
 
 	static double specimenVisualDepthOffset(String path, float width) {
+		if (path.equals("hagfish")) return -.2;
 		if (path.contains("prism_cuttle")) {
 			return width * 0.18D;
 		}
@@ -154,6 +168,8 @@ public class SpecimenJarRenderer implements BlockEntityRenderer<SpecimenJarBlock
 		cachedEntity = entity.orElse(null);
 		cachedKey = key;
 		if (cachedEntity != null) {
+			// This disposable client copy never updates physical water state or writes back to the jar.
+			cachedEntity.getPersistentData().putBoolean(DISPLAY_ENTITY_TAG, true);
 			cachedEntity.setPos(0.0D, 0.0D, 0.0D);
 			cachedEntity.setYRot(0.0F);
 			cachedEntity.setXRot(0.0F);

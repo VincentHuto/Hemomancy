@@ -1119,6 +1119,8 @@ public class ManipulationInit {
 			() -> new SovereignInstinctManip("sovereign_instinct", 450, 60, 0, EnumManipulationType.PASSIVE,
 					EnumManipulationRank.MAGISTER, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> axonal_transduction = MANIPS.register("axonal_transduction",
+			AxonalTransductionManip::new);
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> synaptic_storm = MANIPS.register("synaptic_storm",
 			() -> new SynapticStormManip("synaptic_storm", 900, 65, 0, EnumManipulationType.CHARGED,
 					EnumManipulationRank.PERFECTUS, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD)

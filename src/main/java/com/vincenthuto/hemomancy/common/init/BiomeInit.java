@@ -64,6 +64,7 @@ public class BiomeInit {
 		register(context, HEMORRHAGIC_PLATEAU, hemorrhagicPlateau(placedFeatureGetter, carverGetter));
 		register(context, ERYTHROCORAL_REEF, erythrocoralReef(placedFeatureGetter, carverGetter));
 		register(context, CORTICAL_DRIFT, corticalDrift(placedFeatureGetter, carverGetter));
+        com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicBiomes.bootstrap(context, placedFeatureGetter, carverGetter);
 	}
 
 	private static Biome phlegethonticBasin(HolderGetter<PlacedFeature> placed,HolderGetter<ConfiguredWorldCarver<?>> carvers) {
@@ -289,6 +290,7 @@ public class BiomeInit {
 						ErythrocoralReefTuning.MNEMONIC_WHALE_WEIGHT,
 						ErythrocoralReefTuning.MNEMONIC_WHALE_MIN_COUNT,
 						ErythrocoralReefTuning.MNEMONIC_WHALE_MAX_COUNT));
+		spawnBuilder.addSpawn(MobCategory.WATER_CREATURE, new MobSpawnSettings.SpawnerData(EntityInit.prism_cuttle.get(), 2, 1, 2));
 
 		BiomeGenerationSettings.Builder biomeBuilder = new BiomeGenerationSettings.Builder(placedFeatureGetter,
 				carverGetter);
@@ -318,8 +320,6 @@ public class BiomeInit {
 				new MobSpawnSettings.SpawnerData(EntityInit.erythromycelium_eruptus.get(), 8, 1, 2));
 		spawnBuilder.addSpawn(MobCategory.AMBIENT,
 				new MobSpawnSettings.SpawnerData(EntityInit.hemolymphopoda.get(), 20, 3, 8));
-		spawnBuilder.addSpawn(MobCategory.CREATURE,
-				new MobSpawnSettings.SpawnerData(EntityInit.hemojelly.get(), 6, 1, 3));
 
 		BiomeGenerationSettings.Builder biomeBuilder = new BiomeGenerationSettings.Builder(placedFeatureGetter,
 				carverGetter);
@@ -433,7 +433,12 @@ public class BiomeInit {
 
 		event.enqueueWork(() -> {
 
-			Regions.register(new ErythrocoralReefRegion(Hemomancy.rloc("erythrocoral_reef_overworld"), 1));
+            if (HemoCommonConfig.enablePelagicWorldgen()) {
+                Regions.register(new com.vincenthuto.hemomancy.common.worldgen.terrablender.PelagicOverworldRegion(
+                        Hemomancy.rloc("pelagic_overworld"), HemoCommonConfig.PELAGIC_REGION_WEIGHT.get()));
+            } else {
+                Regions.register(new ErythrocoralReefRegion(Hemomancy.rloc("erythrocoral_reef_overworld"), 1));
+            }
 			if(HemoCommonConfig.ENABLE_PHLEGETHONTIC_NETHER_REGION.get()) {
 				Regions.register(new com.vincenthuto.hemomancy.common.worldgen.terrablender.PhlegethonticNetherRegion(
 						Hemomancy.rloc("phlegethontic_nether"),HemoCommonConfig.PHLEGETHONTIC_NETHER_REGION_WEIGHT.get()));
@@ -447,7 +452,9 @@ public class BiomeInit {
 
 			// Register our surface rules
 			SurfaceRuleManager.addSurfaceRules(SurfaceRuleManager.RuleCategory.OVERWORLD, Hemomancy.MOD_ID,
-					TestSurfaceRuleData.makeRules());
+                    net.minecraft.world.level.levelgen.SurfaceRules.sequence(
+                            com.vincenthuto.hemomancy.common.worldgen.terrablender.PelagicSurfaceRules.makeRules(),
+                            TestSurfaceRuleData.makeRules()));
 
 			if (HemoCommonConfig.ENABLE_CORTICAL_DRIFT_END_REGION.get()) {
 				int endWeight = HemoCommonConfig.CORTICAL_DRIFT_END_REGION_WEIGHT.get();

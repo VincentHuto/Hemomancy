@@ -75,6 +75,8 @@ public class PacketHandler {
 
     private static void onRegisterPayloads(RegisterPayloadHandlersEvent event) {
         var net = event.registrar(Hemomancy.MOD_ID);
+        net.playToClient(PhlegethonticCurrentPacket.TYPE, PhlegethonticCurrentPacket.STREAM_CODEC,
+                PhlegethonticCurrentPacket::handle);
         net.playToClient(PacketSyncStationUpgrades.TYPE, PacketSyncStationUpgrades.STREAM_CODEC,
                 PacketSyncStationUpgrades::handle);
         net.playToServer(com.vincenthuto.hemomancy.common.succession.ResidentsRequestPacket.TYPE,
@@ -124,6 +126,7 @@ public class PacketHandler {
                 PacketSyncFungalProjection.STREAM_CODEC, PacketSyncFungalProjection::handle);
 		net.playToClient(PacketSyncChamberVisit.TYPE,
 				PacketSyncChamberVisit.STREAM_CODEC, PacketSyncChamberVisit::handle);
+		net.playToClient(com.vincenthuto.hemomancy.common.network.circus.PacketSyncCircusSchool.TYPE, com.vincenthuto.hemomancy.common.network.circus.PacketSyncCircusSchool.STREAM_CODEC, com.vincenthuto.hemomancy.common.network.circus.PacketSyncCircusSchool::handle);
 		net.playToClient(PacketSyncCircusPerception.TYPE,
 				PacketSyncCircusPerception.STREAM_CODEC, PacketSyncCircusPerception::handle);
         net.playToClient(PacketSyncChamberOfWill.TYPE,
@@ -227,6 +230,12 @@ public class PacketHandler {
         net.playToClient(SyncArmorSetAbilityCooldownS2CPacket.TYPE,
                 SyncArmorSetAbilityCooldownS2CPacket.STREAM_CODEC,
                 SyncArmorSetAbilityCooldownS2CPacket::handle);
+        net.playToServer(com.vincenthuto.hemomancy.common.network.axonal.AxonalInputPacket.TYPE,
+                com.vincenthuto.hemomancy.common.network.axonal.AxonalInputPacket.STREAM_CODEC,
+                com.vincenthuto.hemomancy.common.network.axonal.AxonalInputPacket::handle);
+        net.playToClient(com.vincenthuto.hemomancy.common.network.axonal.AxonalStatePacket.TYPE,
+                com.vincenthuto.hemomancy.common.network.axonal.AxonalStatePacket.STREAM_CODEC,
+                com.vincenthuto.hemomancy.common.network.axonal.AxonalStatePacket::handle);
         net.playToServer(ToggleSilentSlippingC2SPacket.TYPE, ToggleSilentSlippingC2SPacket.STREAM_CODEC,
                 ToggleSilentSlippingC2SPacket::handle);
         net.playToClient(SyncSilentSlippingStateS2CPacket.TYPE, SyncSilentSlippingStateS2CPacket.STREAM_CODEC,

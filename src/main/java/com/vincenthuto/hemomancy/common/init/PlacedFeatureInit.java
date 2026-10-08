@@ -62,6 +62,8 @@ public class PlacedFeatureInit {
 	public static final ResourceKey<PlacedFeature> DEEP_OCEAN_VENT = createKey("deep_ocean_vent");
 
 	public static final ResourceKey<PlacedFeature> ERYTHROCORAL_REEF = createKey("erythrocoral_reef");
+    public static final ResourceKey<PlacedFeature> PELAGIC_SEABED = createKey("pelagic_seabed");
+    public static final ResourceKey<PlacedFeature> PELAGIC_HABITAT = createKey("pelagic_habitat");
 
 	public static final ResourceKey<PlacedFeature> TOOTH_GEODE = createKey("tooth_geode");
 
@@ -189,6 +191,8 @@ public class PlacedFeatureInit {
 
 		register(context, PlacedFeatureInit.ERYTHROCORAL_REEF, ERYTHROCORAL_REEF, CountPlacement.of(18),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome());
+        register(context, PELAGIC_SEABED, configuredFeatureGetter.getOrThrow(ConfiguredFeatureInit.PELAGIC_SEABED));
+        register(context, PELAGIC_HABITAT, configuredFeatureGetter.getOrThrow(ConfiguredFeatureInit.PELAGIC_HABITAT));
 
 		// Tooth Geode - underground, rare, roughly once per 48 chunks
 		final Holder<ConfiguredFeature<?, ?>> TOOTH_GEODE = configuredFeatureGetter

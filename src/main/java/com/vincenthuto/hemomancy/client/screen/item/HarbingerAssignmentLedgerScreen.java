@@ -134,6 +134,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 		WOVEN_VESSEL(3, AssignmentCategory.MAIN, WOVEN_VESSEL_HEIGHT),
 		VOYAGER_INTRODUCTION(3, AssignmentCategory.SIDE, VOYAGER_INTRODUCTION_HEIGHT),
 		CIRCUS_REFERRAL(4, AssignmentCategory.SIDE, CIRCUS_REFERRAL_HEIGHT),
+        CIRCUS_SCHOOL(3, AssignmentCategory.SIDE, 42 + 11 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP)),
 		CLINICAL_ECHOES(3, AssignmentCategory.SIDE, 42 + 3 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP)),
 		THE_THREE_ANSWERS(3, AssignmentCategory.VOCATION, THE_THREE_ANSWERS_HEIGHT),
 		VEIN_MASON(4, AssignmentCategory.MAIN, VEIN_MASON_HEIGHT),
@@ -674,6 +675,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			case FUNGAL_SURVEY -> renderFungalSurvey(gfx, x, y, w, mouseX, mouseY);
 			case VOYAGER_INTRODUCTION -> renderVoyagerIntroduction(gfx, x, y, w, mouseX, mouseY);
 			case CIRCUS_REFERRAL -> renderCircusReferral(gfx, x, y, w, mouseX, mouseY);
+            case CIRCUS_SCHOOL -> renderCircusSchool(gfx, x, y, w, mouseX, mouseY);
 			case FIRST_CULTURE -> renderFirstCulture(gfx, x, y, w, mouseX, mouseY);
 			case MORPHLING_HANDLING -> renderMorphlingHandling(gfx, x, y, w, mouseX, mouseY);
 			case DEEP_DARK_COMMISSION -> renderDeepDarkCommission(gfx, x, y, w, mouseX, mouseY);
@@ -933,6 +935,36 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 				"screen.hemomancy.harbinger_assignment_ledger.step.circus_discovery",
 				"screen.hemomancy.harbinger_assignment_ledger.step.circus_discovery.desc", mouseX, mouseY);
 	}
+
+    private void renderCircusSchool(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
+        int done = CircusSchoolLedgerState.completedCount();
+        String title = "hemomancy.circus.school.ledger.title";
+        String progress = "screen.hemomancy.harbinger_assignment_ledger.first_separation.progress";
+        if (renderCollapsedAssignmentIfNeeded(gfx, AssignmentSection.CIRCUS_SCHOOL, x, y, w,
+                MNEMONIST_PORTRAIT, title, progress, done, 10, done == 10)) return;
+        int height = 42 + 11 * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP);
+        gfx.fill(x, y, x + w, y + height, PANEL_DARK);
+        ScreenDrawUtils.drawBorder(gfx, x, y, w, height, BORDER, BORDER_MUTED);
+        renderGroupHeader(gfx, AssignmentSection.CIRCUS_SCHOOL, x + 8, y + 6, w - 16, title, progress, done, 10, done == 10);
+        drawProgressBar(gfx, x + 8, y + 31, w - 16, 7, done, 10);
+        int row = 0;
+        for (String quest : new String[]{"empty_ring", "wrong_audience", "missing_understudy"}) {
+            renderAssignmentCard(gfx, x + 8, y + 42 + row++ * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP), w - 16, ASSIGNMENT_CARD_HEIGHT,
+                    CircusSchoolLedgerState.complete("quest." + quest), MNEMONIST_PORTRAIT,
+                    "hemomancy.circus.school.ledger." + quest,
+                    "hemomancy.circus.school.ledger." + quest + "." + CircusSchoolLedgerState.storyNext(quest), mouseX, mouseY);
+        }
+        for (var lesson : com.vincenthuto.hemomancy.common.circus.CircusCurriculum.lessons()) {
+            String summon = lesson.summon();
+            renderAssignmentCard(gfx, x + 8, y + 42 + row++ * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP), w - 16, ASSIGNMENT_CARD_HEIGHT,
+                    CircusSchoolLedgerState.complete("practical." + summon), MNEMONIST_PORTRAIT,
+                    "hemomancy.circus.school.ledger." + summon,
+                    "hemomancy.circus.school.ledger." + summon + "." + CircusSchoolLedgerState.next(summon), mouseX, mouseY);
+        }
+        renderAssignmentCard(gfx, x + 8, y + 42 + row * (ASSIGNMENT_CARD_HEIGHT + CARD_GAP), w - 16, ASSIGNMENT_CARD_HEIGHT,
+                false, MNEMONIST_PORTRAIT, "hemomancy.circus.school.ledger.guest",
+                "hemomancy.circus.school.ledger.guest." + (CircusSchoolLedgerState.rewardPending() ? "pending" : "available"), mouseX, mouseY);
+    }
 
 	private void renderFirstCulture(GuiGraphics gfx, int x, int y, int w, int mouseX, int mouseY) {
 		String title = "screen.hemomancy.harbinger_assignment_ledger.first_culture.title";
@@ -1748,6 +1780,7 @@ public class HarbingerAssignmentLedgerScreen extends Screen {
 			case FUNGAL_SURVEY -> fungalSurvey.reported();
 			case VOYAGER_INTRODUCTION -> voyagerIntroduction.reported();
 			case CIRCUS_REFERRAL -> circusDiscovered;
+            case CIRCUS_SCHOOL -> CircusSchoolLedgerState.completedCount() == 10;
 			case FIRST_CULTURE -> firstCultureComplete;
 			case MORPHLING_HANDLING -> morphlingHandling.inspected();
 			case DEEP_DARK_COMMISSION -> deepDarkCommission.reported();

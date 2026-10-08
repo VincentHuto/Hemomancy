@@ -4,6 +4,6 @@
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "Neurotic Manipulations",
   "subtitle": "Ductilis — the nerve of blood",
-  "text": "The Neurotic tendency is the strangest — blood that has learned from precision, from the fine movements of craft and the slow patience of cultivation. Activation Potential (QUICK, 200): send a neural pulse that disrupts a target's coordination. Sanguine Ward (CONTINUOUS, 10/tick): shape your blood into a passive shield that absorbs incoming harm. Crimson Harvest (QUICK, 200): extend your reach into the blood of nearby organisms and draw resources — crops, materials, energies — toward you. The Ductilis practitioner does not attack. They redirect.",
+  "text": "Ductilis carries coordination through blood. Activation Potential disrupts a target; Sanguine Ward shields its caster. At Degree Six, Axonal Transduction (PASSIVE, 150 mL per entry) turns the practitioner into a living impulse. Weave a Naeglerophaeon Ganglion beside a blank Hematic Memory with four Neurotic enzymes and 600 mL blood. Absorb the memory in an Iron Brazier. Enable the passive, then touch a Synaptic Node to enter connected Nerve Fibers or Bundles. Hold forward to travel toward where you look, press backward to travel away, release to stop, and look into a branch to choose it. Sneak bypasses entry or slows travel. Another node releases you into clear space. Travel has no upkeep or time limit, but broken fibers stop the run. You cannot attack, cast, or work blocks while dissolved.",
   "icon": "hemomancy:neurotic_enzyme"
 }
