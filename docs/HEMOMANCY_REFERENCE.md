@@ -1312,7 +1312,7 @@ Manipulation types are input contracts: **Quick** fires once on key press; **Cha
 
 ### 8.2 Registered Manipulations
 
-`ManipulationInit` currently registers 114 blood manipulations: 99 active entries and 15 retired compatibility IDs. The catalog below tracks every active entry and its developer-facing gameplay role. The Tendency column lists the primary tendency; secondary tendencies are assigned in code and surfaced in the Manipulations tab detail panel.
+`ManipulationInit` currently registers 117 blood manipulations: 102 active entries and 15 retired compatibility IDs. The catalog below tracks every active entry and its developer-facing gameplay role. The Tendency column lists the primary tendency; secondary tendencies are assigned in code and surfaced in the Manipulations tab detail panel.
 
 Twelve active families containing 28 deeper forms share one `ManipLevel`: learning a form preserves the family's highest level and XP, while a deeper form requires the stated family-mastery stage. Forms are distinct registered manipulations and Blood Memory items, not replacements for the baseline form.
 
@@ -1328,6 +1328,7 @@ Twelve active families containing 28 deeper forms share one `ManipLevel`: learni
 | `blood_lattice` | 275 | Quick | Humilis | Animus / Ductilis | Legs | 140t | Blood Binding form (mastery 4); spreads a binding lattice through a packed group |
 | `deadly_gaze` | 100 | Charged (40t) | Humilis | Ductilis / Tenebris | Head | 20t | Charge extends its aimed reach and lift; a full charge interrupts the target before a delayed bloodborne slam |
 | `hematic_rebuke` | 225 | Quick | Mediocritas | Animus / Ductilis | Head | 100t | Commands a blood-bearing mob to drop its target and flee for 8 seconds; players, bosses, bloodless constructs, and mobs above 80 max health are immune |
+| `hematic_riposte` | 60 | Quick | Mediocritas | Animus / Ductilis | Arms | 40t (10t after a parry) | Tap to grow a clawed blood-arm from the back that sweeps over a shoulder and slaps across the front. For 9 ticks after the cast, frontal (±100° of body facing) direct melee hits are cancelled, the attacker is knocked back and paralysed (30t mobs, 12t players; bosses are only knocked back), and hostile projectiles are swatted sideways with their owner unchanged. Hits from behind, explosions, thorns, magic and invulnerability-bypassing damage are not parried. Any parry in a cast caps the remaining cooldown at 10t once; a whiff keeps the full 40t. Cancels at NORMAL priority, so Sanguine Ward and Iron Hearts are not spent |
 | `hematic_impressment` | 500 | Quick | Summa | Animus / Ductilis | Head | 200t | Impresses one eligible mob into defending the caster and allies for 15–30 seconds; stronger bodies shed the command sooner and replacing it releases the prior mob |
 | `blood_needle` | 100 | Charged (20t) | Humilis | Animus | Head | 10t | Charge scales the volley from 1 needle to the existing randomized 10–20 projectile spread |
 | `blood_needle_fan` | 140 | Charged | Humilis | Animus / Ferric | Head | 20t | Blood Needle form (mastery 1); scatters a broad needle fan across a wider area |
@@ -2375,6 +2376,7 @@ The Drudge is a persistent, player-owned semi-organic construct that holds a sin
 | `blood_needle` | Fires a five-hit needle volley at the nearest hostile |
 | `blood_cloud` | Applies Wither to nearby hostiles |
 | `blood_rush` | Grants Speed II to the Drudge and nearby player allies for 10 seconds |
+| `hematic_riposte` | Unsupported; the parry needs a player's timing |
 | `blood_aneurysm` | Damages nearby hostiles and applies Nausea |
 | `vital_effusion` | Bonemeal-accelerates nearby growable blocks around the Drudge |
 | `activation_potential` | Grants Regeneration II to nearby player allies for 5 seconds |
@@ -2659,6 +2661,7 @@ Focused combat memory weaving additions for Lux and Tenebris:
 | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_umbral_step_overlay.png) Umbral Step | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_summon_thrall_overlay.png) Summon Thrall | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_cryogenic_pulse_overlay.png) Cryogenic Pulse | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_glacial_bastion_overlay.png) Glacial Bastion |
 | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_sanguine_ignition_overlay.png) Sanguine Ignition | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_vitric_combustion_overlay.png) Vitric Combustion | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_void_shroud_overlay.png) Void Shroud | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_blood_eclipse_overlay.png) Blood Eclipse |
 | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_hemorrhage_overlay.png) Hemorrhage | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_exsanguinate_overlay.png) Exsanguinate | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_glacial_circulation_overlay.png) Glacial Circulation | ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_osseous_bloom_overlay.png) Osseous Bloom |
+| ![](../src/main/resources/assets/hemomancy/textures/item/memories/memory_hematic_riposte_overlay.png) Hematic Riposte | | | |
 
 **Saint Canon Memory Overlays (placeholder art — unique textures pending):**
 
@@ -3547,6 +3550,7 @@ Client rendering notes: `SomaticLoomRenderer` renders expanded/offscreen bounds 
 | `memory_ferric_resonance` | `minecraft:amethyst_shard` | `ferric: 2` | 250 | Ferric Resonance |
 | `memory_ironhearted` | `minecraft:iron_block` | `ferric: 2`, `animus: 1` | 300 | Ironhearted |
 | `memory_blackhearted` | `minecraft:wither_rose` | `mortem: 2`, `animus: 1` | 300 | Blackhearted |
+| `memory_hematic_riposte` | `minecraft:armadillo_scute` | `animus: 1`, `ductilis: 1` | 100 | Hematic Riposte |
 
 #### 25.7.2 Saint Canon Memory Recipes (Somatic Loom)
 

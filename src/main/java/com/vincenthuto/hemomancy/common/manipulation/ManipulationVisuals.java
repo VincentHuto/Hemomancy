@@ -24,12 +24,17 @@ public final class ManipulationVisuals {
         FERRIC_IMPACT, FERRIC_CONJURE, NERVE_PULSE, NERVE_HIT, PARALYSIS,
         ANIMUS_IMPACT, ANIMUS_CONJURE, MORTEM_CONJURE, MORTEM_BURST, GRAVE_REFUND, HUNGER_COLLAPSE,
         BLACKHEART_RUPTURE, TITHE_RETURN, TITHE_COLLECT, ROT_INFECTION, COMMUNION, MARIONETTE_TETHER, MARIONETTE_ORDER,
-        BOMBARDIER_SWEEP
+        BOMBARDIER_SWEEP, RIPOSTE, RIPOSTE_STRIKE
     }
 
     public static void burst(ServerLevel level, Form form, Vec3 from, Vec3 to, double radius, int ticks) {
         // For UMBRA_SLASH, the form-specific count field carries the shared roll in degrees.
         int count = form == Form.UMBRA_SLASH ? level.random.nextInt(360) : 1;
+        send(level, new ManipulationVisualPacket(form, -1, from, to, (float) radius, ticks, count));
+    }
+
+    /** A burst whose form-specific {@code count} carries extra detail, such as RIPOSTE_STRIKE's melee/projectile variant. */
+    public static void burst(ServerLevel level, Form form, Vec3 from, Vec3 to, double radius, int ticks, int count) {
         send(level, new ManipulationVisualPacket(form, -1, from, to, (float) radius, ticks, count));
     }
 

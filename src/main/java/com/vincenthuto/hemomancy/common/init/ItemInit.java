@@ -510,6 +510,7 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> memory_crimson_sight = registerBloodMemoryItem("memory_crimson_sight", ManipulationInit.crimson_sight);
     public static final DeferredHolder<Item, Item> memory_vital_reservoir = registerBloodMemoryItem("memory_vital_reservoir", ManipulationInit.vital_reservoir);
     public static final DeferredHolder<Item, Item> memory_hematic_rebuke = registerBloodMemoryItem("memory_hematic_rebuke", ManipulationInit.hematic_rebuke);
+    public static final DeferredHolder<Item, Item> memory_hematic_riposte = registerBloodMemoryItem("memory_hematic_riposte", ManipulationInit.hematic_riposte);
     public static final DeferredHolder<Item, Item> memory_hematic_impressment = registerBloodMemoryItem("memory_hematic_impressment", ManipulationInit.hematic_impressment);
     //  Expanded tendency memories 
     public static final DeferredHolder<Item, Item> memory_cryogenic_pulse = registerBloodMemoryItem("memory_cryogenic_pulse", ManipulationInit.cryogenic_pulse);

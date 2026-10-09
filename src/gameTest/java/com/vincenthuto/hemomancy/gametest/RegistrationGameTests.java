@@ -190,6 +190,7 @@ public final class RegistrationGameTests {
                 java.util.Map.entry(ItemInit.memory_ironhearted, ManipulationInit.ironhearted),
                 java.util.Map.entry(ItemInit.memory_blackhearted, ManipulationInit.blackhearted),
                 java.util.Map.entry(ItemInit.memory_hematic_rebuke, ManipulationInit.hematic_rebuke),
+                java.util.Map.entry(ItemInit.memory_hematic_riposte, ManipulationInit.hematic_riposte),
                 java.util.Map.entry(ItemInit.memory_hematic_impressment, ManipulationInit.hematic_impressment),
                 java.util.Map.entry(ItemInit.memory_hematic_flare, ManipulationInit.hematic_flare),
                 java.util.Map.entry(ItemInit.memory_gloam_laceration, ManipulationInit.gloam_laceration),

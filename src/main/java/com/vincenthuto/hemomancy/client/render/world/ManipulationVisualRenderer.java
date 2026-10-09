@@ -178,9 +178,11 @@ public final class ManipulationVisualRenderer {
                 from = entity.getPosition(partial);
                 if (packet.form().name().endsWith("_CHARGE")) from = from.add(0,entity.getEyeHeight(),0);
                 cue.lastFrom=from;
-                if ((packet.form()==ManipulationVisuals.Form.IRON_HEART || packet.form()==ManipulationVisuals.Form.BLACK_HEART)
+                if ((packet.form()==ManipulationVisuals.Form.IRON_HEART || packet.form()==ManipulationVisuals.Form.BLACK_HEART
+                        || packet.form()==ManipulationVisuals.Form.RIPOSTE)
                         && entity instanceof net.minecraft.world.entity.LivingEntity living) {
                     cue.bodyYaw=Mth.rotLerp(partial,living.yBodyRotO,living.yBodyRot);
+                    cue.headYaw=Mth.rotLerp(partial,living.yHeadRotO,living.yHeadRot);
                     cue.bodyScale=living.getScale();
                     cue.crouching=living.isCrouching();
                 }
@@ -219,6 +221,16 @@ public final class ManipulationVisualRenderer {
                 FerricDuctilisGeometry.draw(packet,poses,solids?buffers.getBuffer(FerricDuctilisRenderTypes.IRON):FerricDuctilisGeometry.DISCARD,
                         solids?FerricDuctilisGeometry.DISCARD:FLOWS.vertices(LuxUmbraBatch.Material.DUCTILIS),camera.subtract(from),right,up,time,age,formation,opacity,
                         source instanceof net.minecraft.world.entity.LivingEntity living?living:null);
+                poses.popPose();continue;
+            }
+            if(HematicRiposteGeometry.handles(packet.form())) {
+                // The swing authors its own eruption and fray; the shared entrance fade would swallow the first ticks.
+                float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):1;
+                var source=packet.entityId()>=0?world.getEntity(packet.entityId()):null;
+                if(source!=null && source.isInvisible()) {poses.popPose();continue;}
+                boolean firstPerson=source==mc.player && mc.options.getCameraType().isFirstPerson();
+                HematicRiposteGeometry.draw(packet,poses,FLOWS.vertices(LuxUmbraBatch.Material.ANIMUS),camera.subtract(from),right,up,
+                        time,age,opacity,new HematicRiposteGeometry.Frame(cue.bodyYaw,cue.headYaw,cue.bodyScale,cue.crouching,firstPerson));
                 poses.popPose();continue;
             }
             if(AnimusMortemGeometry.handles(packet.form())) {
@@ -707,6 +719,7 @@ public final class ManipulationVisualRenderer {
         final ThermalFragments fragments=new ThermalFragments();
         Vec3 lastFrom;
         float bodyYaw;
+        float headYaw;
         float bodyScale=1;
         boolean crouching;
         int exposedFaces=63;

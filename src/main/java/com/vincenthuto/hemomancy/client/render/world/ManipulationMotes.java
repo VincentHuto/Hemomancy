@@ -51,7 +51,7 @@ final class ManipulationMotes {
             };
         } else {
             switch(form) {
-                case SWORD_IMPACT, RUPTURE, DRAIN -> {kind=Kind.DROP;color=0xA91C35;}
+                case SWORD_IMPACT, RUPTURE, DRAIN, RIPOSTE_STRIKE -> {kind=Kind.DROP;color=0xA91C35;}
                 case GLASS -> {kind=Kind.FRAGMENT;color=0xF7B599;}
                 case FURNACE, CAUTERIZE, PHOENIX -> {kind=Kind.VAPOR;color=0xB76D6A;}
                 case BELL, BLOOM -> {kind=Kind.RESIDUE;color=0x84724F;}

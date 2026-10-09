@@ -1269,5 +1269,26 @@
   "entity.mortarbound.crawl": {"sounds": ["hemomancy:entity/mortarbound/crawl"], "subtitle": "subtitle.hemomancy.entity.mortarbound.crawl"},
   "entity.mortarbound.attack": {"sounds": ["hemomancy:entity/mortarbound/attack"], "subtitle": "subtitle.hemomancy.entity.mortarbound.attack"},
   "entity.mortarbound.hurt": {"sounds": ["hemomancy:entity/mortarbound/hurt"], "subtitle": "subtitle.hemomancy.entity.mortarbound.hurt"},
-  "entity.mortarbound.death": {"sounds": ["hemomancy:entity/mortarbound/death"], "subtitle": "subtitle.hemomancy.entity.mortarbound.death"}
+  "entity.mortarbound.death": {"sounds": ["hemomancy:entity/mortarbound/death"], "subtitle": "subtitle.hemomancy.entity.mortarbound.death"},
+  "manipulation.hematic_riposte.emerge": {
+    "subtitle": "subtitle.hemomancy.manipulation.hematic_riposte.emerge",
+    "sounds": [
+      {"name": "minecraft:entity.player.attack.sweep", "type": "event", "pitch": 1.3},
+      {"name": "minecraft:entity.player.attack.sweep", "type": "event", "pitch": 1.45}
+    ]
+  },
+  "manipulation.hematic_riposte.parry": {
+    "subtitle": "subtitle.hemomancy.manipulation.hematic_riposte.parry",
+    "sounds": [
+      {"name": "hemomancy:item/bow_blade/clang", "pitch": 1.25, "volume": 0.8},
+      {"name": "minecraft:item.shield.block", "type": "event", "pitch": 1.45}
+    ]
+  },
+  "manipulation.hematic_riposte.swat": {
+    "subtitle": "subtitle.hemomancy.manipulation.hematic_riposte.swat",
+    "sounds": [
+      {"name": "minecraft:entity.player.attack.sweep", "type": "event", "pitch": 1.7},
+      {"name": "minecraft:item.trident.hit", "type": "event", "pitch": 1.4}
+    ]
+  }
 }

@@ -36,6 +36,8 @@ The resolver evaluates the pre-hit state, applies ordinary affinity once, and co
 
 Visible status effects identify the state; the entity attachment owns level, meter, owner, expiry and cooldown data. Refresh does not erase stored wounds or reset a burn/build clock. Save/reload resumes with the native effect's remaining duration. Tracking snapshots and subsequent changes synchronize these values, including to a late observer. Expiry, cleansing and death remove matching data.
 
+Hematic Riposte cancels a parried hit at NORMAL priority, after school preparation only records pending state and before Sanguine Ward or Iron Hearts can absorb it. The cancelled hit therefore builds, spends and absorbs nothing; the parry itself deals no damage, so it never starts a reaction chain.
+
 Blood-volume drain/transfer, vascular damage, Blood Loss, Grave Debt, Insatiable Hunger, and Hemolysis purification remain separate. Healing suppression uses the strongest applicable reduction instead of multiplying penalties. Cauterizing Rebuke, Lumen Suture, and Winter Shroud cures remove their relevant replacement states; Night Vision, mining Haste, and authored defensive trade-offs remain.
 
 ## Sanguine Marionette
@@ -120,6 +122,7 @@ Every listed manipulation has its player path. Entity indicates the currently su
 | `hematic_impressment` | ANIMUS | DUCTILIS | Apply | — | — |
 | `hematic_mortar` | ANIMUS | — | Apply | — | — |
 | `hematic_rebuke` | ANIMUS | DUCTILIS | Apply | — | — |
+| `hematic_riposte` | ANIMUS | DUCTILIS | Apply | — | — |
 | `hemolymphal_pulse` | DUCTILIS | ANIMUS | Apply | Yes | Yes |
 | `hemorrhage` | MORTEM | ANIMUS | Apply | Yes | Yes |
 | `hemosynthesis` | LUX | ANIMUS | Apply | — | Yes |

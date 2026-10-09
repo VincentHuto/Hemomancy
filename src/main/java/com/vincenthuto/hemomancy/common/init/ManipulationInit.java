@@ -157,6 +157,13 @@ public class ManipulationInit {
 					.setCooldownTicks(100)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> hematic_riposte = MANIPS.register("hematic_riposte",
+			() -> new HematicRiposteManip("hematic_riposte", 60, 10, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.ANIMUS, EnumVeinSections.ARMS)
+					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
+					.setCooldownTicks(40)
+					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
+
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> hematic_impressment = MANIPS.register("hematic_impressment",
 			() -> new HematicCommandManip("hematic_impressment", 500, 25, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.SUMMA, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD, true)

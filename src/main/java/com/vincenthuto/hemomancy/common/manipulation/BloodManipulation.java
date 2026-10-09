@@ -94,6 +94,7 @@ public class BloodManipulation implements EntityCastableManipulation {
 		COOLDOWNS.clear();
 		ManipulationChannelManager.clearSessionState();
 		ManipulationReactiveEvents.clearSessionState();
+		com.vincenthuto.hemomancy.common.manipulation.animus.HematicRiposteEvents.clearSessionState();
 	}
 
 	int cooldownTicks;
@@ -256,6 +257,12 @@ public class BloodManipulation implements EntityCastableManipulation {
 			return false;
 		}
 		return COOLDOWNS.isOnCooldown(player.getUUID(), name, player.level().getGameTime());
+	}
+
+	/** Caps an already-running cooldown (for example after a successful parry) and resyncs the client. */
+	public final void capCooldown(ServerPlayer player, long maxRemainingTicks) {
+		long left = COOLDOWNS.capRemaining(player.getUUID(), name, player.level().getGameTime(), maxRemainingTicks);
+		PacketHandler.sendToPlayer(player, new ManipCooldownPacket(name, (int) left));
 	}
 
 	public boolean ignoresCooldown(Player player) {

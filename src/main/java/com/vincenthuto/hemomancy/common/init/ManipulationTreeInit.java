@@ -45,6 +45,7 @@ public class ManipulationTreeInit {
 		register("deadly_gaze",1080,160, "synaptic_jolt");
 		register("blood_cloud",510,193, "blood_needle", "blood_shot");
 		register("hematic_rebuke",650,243, "blood_rush");
+		register("hematic_riposte",710,243, "hematic_rebuke");
 
 		// Row 2 (bottom) — HUMILIS
 		register("blood_shot",510,293, "blood_binding");

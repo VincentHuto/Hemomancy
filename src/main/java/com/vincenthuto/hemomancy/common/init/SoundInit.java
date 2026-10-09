@@ -360,4 +360,11 @@ public class SoundInit {
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MYCOPHANT_MUSIC = registerSoundEvent(
 			"entity.mycophant.music");
 
+	public static final DeferredHolder<SoundEvent, SoundEvent> MANIPULATION_HEMATIC_RIPOSTE_EMERGE = registerSoundEvent(
+			"manipulation.hematic_riposte.emerge");
+	public static final DeferredHolder<SoundEvent, SoundEvent> MANIPULATION_HEMATIC_RIPOSTE_PARRY = registerSoundEvent(
+			"manipulation.hematic_riposte.parry");
+	public static final DeferredHolder<SoundEvent, SoundEvent> MANIPULATION_HEMATIC_RIPOSTE_SWAT = registerSoundEvent(
+			"manipulation.hematic_riposte.swat");
+
 }

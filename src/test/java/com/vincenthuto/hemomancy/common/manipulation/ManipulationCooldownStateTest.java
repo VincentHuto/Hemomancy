@@ -47,4 +47,31 @@ class ManipulationCooldownStateTest {
         assertFalse(cooldowns.isOnCooldown(first, "blood_binding", 10L));
         assertFalse(cooldowns.isOnCooldown(second, "ironhearted", 10L));
     }
+
+    @Test
+    void cappingShortensButNeverStartsOrLengthensACooldown() {
+        ManipulationCooldownState cooldowns = new ManipulationCooldownState();
+        UUID player = UUID.randomUUID();
+
+        assertEquals(0L, cooldowns.capRemaining(player, "hematic_riposte", 100L, 10L));
+        assertFalse(cooldowns.isOnCooldown(player, "hematic_riposte", 100L));
+
+        cooldowns.start(player, "hematic_riposte", 100L, 40L);
+        assertEquals(10L, cooldowns.capRemaining(player, "hematic_riposte", 105L, 10L));
+        assertEquals(10L, cooldowns.remainingTicks(player, "hematic_riposte", 105L));
+
+        cooldowns.start(player, "blood_rush", 100L, 6L);
+        assertEquals(6L, cooldowns.capRemaining(player, "blood_rush", 100L, 10L));
+        assertEquals(6L, cooldowns.remainingTicks(player, "blood_rush", 100L));
+    }
+
+    @Test
+    void cappingToZeroClearsTheCooldown() {
+        ManipulationCooldownState cooldowns = new ManipulationCooldownState();
+        UUID player = UUID.randomUUID();
+        cooldowns.start(player, "hematic_riposte", 100L, 40L);
+
+        assertEquals(0L, cooldowns.capRemaining(player, "hematic_riposte", 101L, 0L));
+        assertFalse(cooldowns.isOnCooldown(player, "hematic_riposte", 101L));
+    }
 }

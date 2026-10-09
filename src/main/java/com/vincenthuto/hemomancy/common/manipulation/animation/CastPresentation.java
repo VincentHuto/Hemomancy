@@ -30,7 +30,7 @@ public record CastPresentation(CastPurpose purpose, CastStyle style) {
             case "blood_rush", "summon_avatar", "summon_avatar_arms", "summon_avatar_armor", "summon_avatar_legs",
                     "summon_avatar_complete", "iron_retort", "ironhearted", "void_shroud", "black_veil_covenant",
                     "insatiable_hunger", "grave_debt", "blackhearted", "sovereign_instinct", "phoenix_debt",
-                    "living_circuit", "furnace_veins", "crimson_tithe", "endless_hour" -> SELF;
+                    "living_circuit", "furnace_veins", "crimson_tithe", "endless_hour", "hematic_riposte" -> SELF;
             case "sanguine_halo", "blood_cloud", "expansive_blood_cloud", "pursuing_blood_cloud", "sanguine_tempest",
                     "blood_aneurysm", "vital_effusion", "activation_potential", "sanguine_ward", "hemolymphal_pulse",
                     "hematic_flare", "hematic_beacon", "cryogenic_pulse", "osseous_bloom", "vitric_combustion",
