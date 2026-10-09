@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.client.render.entity.summon;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.summon.CinderBellowsModel;
+import com.vincenthuto.hemomancy.client.render.layer.mob.CinderBellowsGlowLayer;
+import com.vincenthuto.hemomancy.client.render.world.CinderBreathFlames;
 import com.vincenthuto.hemomancy.common.entity.summon.CinderBellowsEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -15,6 +17,7 @@ public class CinderBellowsRenderer extends MobRenderer<CinderBellowsEntity, Cind
 
 	public CinderBellowsRenderer(EntityRendererProvider.Context context) {
 		super(context, new CinderBellowsModel(context.bakeLayer(CinderBellowsModel.LAYER_LOCATION)), 0.35F);
+		addLayer(new CinderBellowsGlowLayer(this));
 	}
 
 	@Override
@@ -28,6 +31,7 @@ public class CinderBellowsRenderer extends MobRenderer<CinderBellowsEntity, Cind
 		if (PuppeteerSummonRenderHelper.shouldSkipRender(entity)) {
 			return;
 		}
+		CinderBreathFlames.emit(entity, partialTicks);
 		poseStack.pushPose();
 		PuppeteerSummonRenderHelper.applyDismissalScale(entity, partialTicks, poseStack);
 		super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);

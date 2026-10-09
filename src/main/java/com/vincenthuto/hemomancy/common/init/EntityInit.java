@@ -451,6 +451,13 @@ public class EntityInit {
                             .clientTrackingRange(8)
                             .build(Hemomancy.rloc("mnemonist_puppet").toString()));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<RingmasterPatternEntity>> ringmaster_pattern = ENTITY_TYPES
+            .register("ringmaster_pattern",
+                    () -> EntityType.Builder.<RingmasterPatternEntity>of(RingmasterPatternEntity::new, MobCategory.CREATURE)
+                            .sized(0.6F, 1.8F)
+                            .clientTrackingRange(8)
+                            .build(Hemomancy.rloc("ringmaster_pattern").toString()));
+
     public static final DeferredHolder<EntityType<?>, EntityType<ScarletMummerEntity>> scarlet_mummer = ENTITY_TYPES
             .register("scarlet_mummer",
                     () -> EntityType.Builder.<ScarletMummerEntity>of(ScarletMummerEntity::new, MobCategory.CREATURE)
@@ -1024,6 +1031,7 @@ public class EntityInit {
         event.put(EntityInit.marrow_spitter.get(), MarrowSpitterEntity.setAttributes().build());
         event.put(EntityInit.gorebound_hulk.get(), GoreboundHulkEntity.setAttributes().build());
         event.put(EntityInit.mnemonist_puppet.get(), MnemonistPuppetEntity.setAttributes().build());
+        event.put(EntityInit.ringmaster_pattern.get(), RingmasterPatternEntity.setAttributes().build());
         event.put(EntityInit.scarlet_mummer.get(), ScarletMummerEntity.setAttributes().build());
 		event.put(EntityInit.sanguine_hound.get(), SanguineHoundEntity.setAttributes().build());
         event.put(EntityInit.drudge.get(), DrudgeEntity.setAttributes().build());

@@ -6,6 +6,20 @@ import static org.junit.jupiter.api.Assertions.*;
 import static com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicTerrainSampler.Surface.*;
 
 class PelagicTerrainSamplerTest {
+    @Test void inactiveClimatesSkipSamplingButTheEntireShoreTransitionRemainsEligible() {
+        var sampler = new PelagicTerrainSampler(42);
+        for (double c : new double[]{-1.2, -1.05, -.11, 0, .3, 1}) {
+            assertFalse(PelagicTerrainSampler.mayShape(c), "Inactive continentalness: " + c);
+            for (var surface : PelagicTerrainSampler.Surface.values()) {
+                var column = sampler.sample(81, -225, c, .2, -.1, surface);
+                assertEquals(0, column.influence(), 0);
+                assertEquals(58, column.floor(), 0);
+            }
+        }
+        for (double c : new double[]{-1.049, -.5, -.24, -.20, -.19, -.18, -.13, -.111})
+            assertTrue(PelagicTerrainSampler.mayShape(c), "Ocean or blended shore can still shape: " + c);
+    }
+
     @Test void shoreProfileDoesNotSwitchDensityAtItsOceanClimateLimit() {
         var sampler = new PelagicTerrainSampler(42);
         for (int x = -32; x <= 32; x++) {

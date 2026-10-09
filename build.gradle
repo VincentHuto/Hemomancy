@@ -336,11 +336,15 @@ dependencies {
     implementation "top.theillusivec4.curios:curios-neoforge:${curios_version}"
 
     //Astral
-    //implementation files("libs/observerlib-1.10.3.jar")
-    //implementation files ("libs/AstralSorcery-2.0.0.3.jar")
+    implementation files("libs/observerlib-1.10.3.jar")
+    implementation files ("libs/AstralSorcery-2.0.0.3.jar")
 
-//Thaum
-   // implementation files ("libs/thaumaturge-1.21.1-NeoForge-BETA-0.4.5.jar")
+
+    //Demonology
+   // implementation files("libs/Demonology-1.0.1+NeoForge-1.21.1.jar")
+
+    //Thaum
+   //implementation files ("libs/thaumaturge-1.21.1-NeoForge-1.0.2.jar")
 
     //Mna
     implementation files ("libs/mna-3.1.11-neoforge.1.21.1.0.jar")
@@ -366,7 +370,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation files(layout.buildDirectory.file("moddev/artifacts/neoforge-${neo_version}-merged.jar"))
     testImplementation "net.neoforged:minecraft-dependencies:${minecraft_version}"
-    testRuntimeOnly 'net.neoforged.fancymodloader:loader:4.0.42'
+    testRuntimeOnly 'net.neoforged.fancymodloader:loader:4.0.44'
 }
 // Template expansion is handled directly in processResources.
 

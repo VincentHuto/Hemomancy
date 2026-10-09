@@ -80,23 +80,62 @@ side to side. When it turns, the outer tendril joints and long crimson tail foll
 the core instead of rotating as a rigid cluster.
 
 It also tends the web. When a Myelin Borer chews a repairable one-block gap, Naeglerophaeon
-may leave its patrol to close it with yellow-white Ductilis lightning. Breaking a fiber or bundle
-yourself gets its attention even during a fight: it abandons its current attack, swims to the cut,
-and spends a short time repairing it. It will still investigate a larger cut, but only gaps held
-between opposing nerve blocks can regrow; tearing away an entire span does not create a new bridge
-through empty space.
+may leave its patrol to close it with yellow-white Ductilis lightning. Cutting a fiber or bundle
+yourself is a mistake: it does not stop fighting. It turns on whoever made the cut, flashes, and
+strikes them with lightning that leaves Neural Overload behind. Then it seals the gap from range,
+or comes back to mend it once the fight is over.
 
-The core brightens for one second before firing red-purple lightning. Solid terrain blocks the shot.
-When you come within twelve blocks, its long tendril can swing forward, wrap your torso, and reel
-you toward the core over five seconds. Your view grows darker and redder as you approach, while
-the core's eyes shine yellow through it. The color cuts off when the hold ends, as Ductilis lightning
-bursts outward from your body. Strike the gripping section or the core: eight damage breaks the
-hold, and allies can help. You can still look around and attack while held. Reaching the core
-causes a four-heart discharge before armor, then throws you away; this attack can kill you.
-Terrain that blocks the pull breaks the hold instead of dragging you through blocks.
+### Phase one
+
+It circles you, reversing direction now and then, and keeps swimming instead of freezing between
+attacks. Hit it hard enough in a short burst and it darts sideways out of your swing.
+
+- **Lightning.** The core brightens for one second before firing red-purple lightning. Solid
+  terrain blocks the shot.
+- **Capture.** Within twelve blocks, its long tendril can swing forward, wrap your torso, and reel
+  you toward the core over five seconds. Your view grows darker and redder as you approach, while
+  the core's eyes shine yellow through it. The hold also siphons your blood to heal the boss.
+  Strike the gripping section or the core: eight damage breaks the hold, and allies can help. You
+  can still look around and attack while held. Reaching the core causes a four-heart discharge
+  before armor, then throws you away; this attack can kill you. Terrain that blocks the pull breaks
+  the hold instead of dragging you through blocks.
+- **Lunge.** The tendrils flare wide and a glowing line marks its path. Then it snaps them shut and
+  shoots along that line. Step off the line. If it slams into terrain instead, it is stunned for a
+  moment.
+- **Lash.** Staying pressed against the core is not safe. When it coils its tendrils tight, back off
+  more than five blocks: they burst outward in a spinning starburst that knocks you away and
+  overloads your nerves.
+- **Tip sparks.** From range it flicks a string of sparks off its tendril tips. Each one strikes
+  where you were standing when it fired, so keep moving.
+- **Conduction.** It charges a synaptic node near you, then lightning runs outward along the
+  connected fibers and bundles. Get off the bridge or move well away from the cable.
+
+### Phase two
+
+At half health it shudders, blazes violet, and sends a pulse through every nearby node; it cannot
+be hurt during that moment. From then on it attacks more often, circles closer, and lunges twice.
+It also gains two more moves:
+
+- **Nerve dive.** It shrinks into a synaptic node, travels through the web as a signal it cannot be
+  hit in, and bursts out of another node to attack. The destination node flickers just before it
+  emerges.
+- **Core nova.** It curls its tendrils into a trembling cocoon while the core turns white-hot, then
+  releases a ring of lightning out to ten blocks. Get terrain between you and the core.
+
+### Overload
+
+At one tenth of its health, no single blow can finish it. It abandons you and rises to the centre
+of the Mind's nerve web. There it points straight up and throws its tendrils open like a
+wind-turned umbrella, its long tail hanging and writhing with light. Every pulse that climbs the
+tail ends in a blast that burns out one of the Mind's synaptic nodes. Each burned node spits two
+to six homing sparks that chase you. They are slower than a sprint, so keep running and use
+terrain to break them. You can still wound it here, but it will not die until the web is gone.
+
+When the last node burns out, it goes **Drained**. Grey, dark and harmless, it drifts from one
+burned node to the next, twitching. This is your chance to finish it.
 
 The Mind's resident does not respawn after defeat and does not appear in Peaceful mode.
-Minds generated before this encounter was added can still house one.
+Minds generated before this encounter was added can still house one. A Mind whose resident has been defeated keeps its fibers and bundles but loses its original synaptic nodes, so place crafted nodes there before using it for Axonal Transduction.
 
 Defeating it drops one **Naeglerophaeon Ganglion**. Place that ganglion beside a blank Hematic Memory in the **Somatic Loom**, prepare four **Neurotic enzymes**, and project **600 mL blood** to weave **Memory of Axonal Transduction**. Absorb it through the Iron Brazier. Learning requires Degree 6; using it requires 65 Ductilis alignment.
 

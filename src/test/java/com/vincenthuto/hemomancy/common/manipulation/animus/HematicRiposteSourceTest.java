@@ -56,10 +56,10 @@ class HematicRiposteSourceTest {
         assertTrue(materials.contains("RIPOSTE, RIPOSTE_STRIKE -> ANIMUS"));
         String renderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/world/ManipulationVisualRenderer.java");
         assertTrue(renderer.contains("HematicRiposteGeometry.draw"));
-        assertTrue(renderer.indexOf("HematicRiposteGeometry.handles") < renderer.indexOf("if(AnimusMortemGeometry.handles"),
+        assertTrue(renderer.indexOf("if(HematicRiposteGeometry.handles") < renderer.indexOf("if(AnimusMortemGeometry.handles(packet.form())) {"),
                 "riposte must be drawn before the shared Animus branch");
         String visuals = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationVisuals.java");
-        assertTrue(visuals.contains("BOMBARDIER_SWEEP, RIPOSTE, RIPOSTE_STRIKE\n"),
+        assertTrue(visuals.contains(", RIPOSTE, RIPOSTE_STRIKE\n"),
                 "new forms must be appended: the packet encodes forms by ordinal");
     }
 

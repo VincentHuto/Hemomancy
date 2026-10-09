@@ -8,10 +8,10 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.EyesLayer;
 
 
-public class PuppteerGlowLayer<T extends BloodDrunkPuppeteerEntity> extends EyesLayer<T, BloodDrunkPuppeteerModel<T>> {
+public class PuppeteerGlowLayer<T extends BloodDrunkPuppeteerEntity> extends EyesLayer<T, BloodDrunkPuppeteerModel<T>> {
 	private static final RenderType GLOW = RenderType.eyes(Hemomancy.rloc("textures/entity/blood_drunk_puppeteer/model_blood_drunk_puppeteer_glow.png"));
 
-	public PuppteerGlowLayer(RenderLayerParent<T, BloodDrunkPuppeteerModel<T>> p_116981_) {
+	public PuppeteerGlowLayer(RenderLayerParent<T, BloodDrunkPuppeteerModel<T>> p_116981_) {
 		super(p_116981_);
 	}
 

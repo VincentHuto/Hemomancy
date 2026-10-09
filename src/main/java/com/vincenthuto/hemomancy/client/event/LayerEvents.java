@@ -73,6 +73,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(LivingSpearModel.living_spear, LivingSpearModel::createLayers);
 		event.registerLayerDefinition(LivingTorchModel.LAYER_LOCATION, LivingTorchModel::createBodyLayer);
 		event.registerLayerDefinition(LivingFlailModel.LAYER_LOCATION, LivingFlailModel::createBodyLayer);
+		event.registerLayerDefinition(MarionetteCrossbarModel.LAYER_LOCATION, MarionetteCrossbarModel::createBodyLayer);
 		event.registerLayerDefinition(LivingSickleModel.LAYER_LOCATION, LivingSickleModel::createBodyLayer);
 		event.registerLayerDefinition(FloatingHeartModel.mortal_display, FloatingHeartModel::createBodyLayer);
 		event.registerLayerDefinition(CentrifugeArmsModel.LAYER_LOCATION, CentrifugeArmsModel::createBodyLayer);
@@ -146,14 +147,14 @@ public class LayerEvents {
 		event.registerLayerDefinition(CircusKnifeThrowerModel.LAYER_LOCATION, CircusKnifeThrowerModel::createBodyLayer);
 		event.registerLayerDefinition(CircusCarouselModel.LAYER_LOCATION, CircusCarouselModel::createBodyLayer);
 		event.registerLayerDefinition(CircusRingmasterModel.LAYER_LOCATION, CircusRingmasterModel::createBodyLayer);
+		event.registerLayerDefinition(CircusStrongmanModel.LAYER_LOCATION, CircusStrongmanModel::createBodyLayer);
+		event.registerLayerDefinition(CircusBeastTamerModel.LAYER_LOCATION, CircusBeastTamerModel::createBodyLayer);
+		event.registerLayerDefinition(CircusThreadkeeperModel.LAYER_LOCATION, CircusThreadkeeperModel::createBodyLayer);
+		event.registerLayerDefinition(CircusUnderstudyModel.LAYER_LOCATION, CircusUnderstudyModel::createBodyLayer);
 		event.registerLayerDefinition(PeacockSpiderModel.LAYER_LOCATION, PeacockSpiderModel::createBodyLayer);
 		event.registerLayerDefinition(VampireBatModel.LAYER_LOCATION, VampireBatModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingPolypModel.LAYER_LOCATION, MorphlingPolypModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingPolypLayerModel.LAYER_LOCATION, MorphlingPolypLayerModel::createBodyLayer);
-		event.registerLayerDefinition(MorphlingAttachmentExampleModel.HEAD_LAYER, MorphlingAttachmentExampleModel::createBodyLayer);
-		event.registerLayerDefinition(MorphlingAttachmentExampleModel.BODY_LAYER, MorphlingAttachmentExampleModel::createBodyLayer);
-		event.registerLayerDefinition(MorphlingAttachmentExampleModel.ARMS_LAYER, MorphlingAttachmentExampleModel::createBodyLayer);
-		event.registerLayerDefinition(MorphlingAttachmentExampleModel.LEGS_LAYER, MorphlingAttachmentExampleModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingBatHeadAttachmentModel.LAYER_LOCATION, MorphlingBatHeadAttachmentModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingSpiderBodyAttachmentModel.LAYER_LOCATION, MorphlingSpiderBodyAttachmentModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingFungalHeadModel.LAYER_LOCATION, MorphlingFungalHeadModel::createBodyLayer);

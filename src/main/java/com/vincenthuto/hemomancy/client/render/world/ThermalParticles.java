@@ -27,7 +27,23 @@ final class ThermalParticles {
             double a=i*2.39996;
             Vec3 velocity=new Vec3(Math.cos(a)*.035,cold?.015:.045,Math.sin(a)*.035)
                     .add(direction.normalize().scale(soft?.005:.025));
-            PARTICLES.add(new Particle(at,velocity,cold,seed+i,world.getGameTime(),soft?24:32,soft?.16:.25));
+            PARTICLES.add(new Particle(at,velocity,cold,seed+i,world.getGameTime(),soft?24:32,soft?.16:.25,.45));
+        }
+    }
+    /** A directed hot jet (breath weapons): fast licks inside a cone that burn most of the way out before smoking. */
+    static void jet(Vec3 at,Vec3 aim,int count,double speed,double spread) {
+        if(!ready())return;
+        Vec3 forward=aim.normalize();
+        long now=world.getGameTime();
+        int seed=at.hashCode()+(int)now;
+        for(int i=0;i<count;i++) {
+            if(PARTICLES.size()>=192)PARTICLES.removeFirst();
+            Vec3 scatter=new Vec3(ThermalMotion.random(seed,i*3)-.5,ThermalMotion.random(seed,i*3+1)-.5,
+                    ThermalMotion.random(seed,i*3+2)-.5).scale(spread*2);
+            double pace=speed*(.8+ThermalMotion.random(seed,i+31)*.4);
+            Vec3 start=at.add(forward.scale(ThermalMotion.random(seed,i+57)*.3));
+            PARTICLES.add(new Particle(start,forward.add(scatter).normalize().scale(pace),false,seed+i,now,18,
+                    .2+ThermalMotion.random(seed,i+83)*.14,.75));
         }
     }
     static void tick() {
@@ -54,7 +70,7 @@ final class ThermalParticles {
             poses.pushPose();poses.translate(at.x-camera.x,at.y-camera.y,at.z-camera.z);
             if(particle.cold)ThermalGeometry.powder(poses,batch.vertices(LuxUmbraBatch.Material.CRUOR),Vec3.ZERO,
                     right,up,particle.size*(1+progress),particle.seed,alpha);
-            else if(progress<.45)ThermalGeometry.fire(poses,batch.vertices(LuxUmbraBatch.Material.FLAME),Vec3.ZERO,
+            else if(progress<particle.fireFraction)ThermalGeometry.fire(poses,batch.vertices(LuxUmbraBatch.Material.FLAME),Vec3.ZERO,
                     right,up,particle.size*.45,particle.size*.9,particle.seed,alpha);
             else ThermalGeometry.smoke(poses,batch.vertices(LuxUmbraBatch.Material.FLAME),Vec3.ZERO,
                     right,up,particle.size*(.5+progress),particle.size*1.6,particle.seed,alpha*.55f);
@@ -66,10 +82,11 @@ final class ThermalParticles {
         final boolean cold;
         final int seed,life;
         final long born;
-        final double size;
+        final double size,fireFraction;
         Vec3 previous,position;
-        Particle(Vec3 origin,Vec3 velocity,boolean cold,int seed,long born,int life,double size) {
+        Particle(Vec3 origin,Vec3 velocity,boolean cold,int seed,long born,int life,double size,double fireFraction) {
             this.origin=origin;this.velocity=velocity;this.cold=cold;this.seed=seed;this.born=born;this.life=life;this.size=size;
+            this.fireFraction=fireFraction;
             previous=position=origin;
         }
     }

@@ -158,17 +158,45 @@ final class StructurePlacementChecks {
     // Validate the selected rotation and template, rather than a guessed radius around the chunk.
     static boolean isSuitableTroupeFootprint(Structure.GenerationContext context,
             net.minecraft.world.level.levelgen.structure.BoundingBox box) {
-        int low = Integer.MAX_VALUE, high = Integer.MIN_VALUE;
-        for (int x = box.minX(); x <= box.maxX(); x++) for (int z = box.minZ(); z <= box.maxZ(); z++) {
-            if (!isSuitableLandColumn(context, x, z, 0)) return false;
-            int ground = getOceanFloorHeight(context, x, z);
-            low = Math.min(low, ground); high = Math.max(high, ground);
-            if (high - low > 3 || Math.abs(ground - box.minY()) > 3) return false;
-            var column = context.chunkGenerator().getBaseColumn(x, z, context.heightAccessor(), context.randomState());
+        int[] range = {Integer.MAX_VALUE, Integer.MIN_VALUE};
+        var shared = new TroupeTerrainColumns(context);
+        return TroupeFootprintScan.matches(box.minX(), box.maxX(), box.minZ(), box.maxZ(),
+                (x, z) -> suitableTroupeColumn(context, box, range,
+                        context.chunkGenerator().getBaseColumn(x, z, context.heightAccessor(), context.randomState())),
+                (x, z) -> suitableTroupeColumn(context, box, range, shared.get(x, z)));
+    }
+
+    private static boolean suitableTroupeColumn(Structure.GenerationContext context,
+            net.minecraft.world.level.levelgen.structure.BoundingBox box, int[] range,
+            net.minecraft.world.level.NoiseColumn column) {
+            var dryGround = troupeGround(column, context.heightAccessor().getMinBuildHeight(),
+                    context.heightAccessor().getMaxBuildHeight());
+            if (dryGround.isEmpty()) return false;
+            int ground = dryGround.getAsInt();
+            range[0] = Math.min(range[0], ground);
+            range[1] = Math.max(range[1], ground);
+            if (range[1] - range[0] > 3 || Math.abs(ground - box.minY()) > 3) return false;
             for (int y = Math.max(ground, box.minY()) + 1; y <= box.maxY(); y++)
                 if (!column.getBlock(y).isAir()) return false;
+            return true;
+    }
+
+    static OptionalInt troupeGround(net.minecraft.world.level.NoiseColumn column, int minY, int maxY) {
+        int surface = minY - 1, floor = minY - 1;
+        boolean foundSurface = false;
+        for (int y = maxY - 1; y >= minY; y--) {
+            var state = column.getBlock(y);
+            if (!foundSurface && Heightmap.Types.WORLD_SURFACE_WG.isOpaque().test(state)) {
+                surface = y;
+                foundSurface = true;
+                if (surface >= MAX_LAND_STRUCTURE_HEIGHT) return OptionalInt.empty();
+            }
+            if (Heightmap.Types.OCEAN_FLOOR_WG.isOpaque().test(state)) {
+                floor = y;
+                break;
+            }
         }
-        return true;
+        return surface == floor ? OptionalInt.of(floor) : OptionalInt.empty();
     }
 
 	static boolean isSuitableOceanWreckChunk(Structure.GenerationContext context) {

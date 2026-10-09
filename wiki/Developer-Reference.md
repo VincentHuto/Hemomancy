@@ -24,6 +24,10 @@ Item inventory persistence for Syringe, Morphling Jar, and legacy Scar Binder is
 
 The [Phlegethontic Nether](Phlegethontic-Nether.md) has a [current implementation plan](../docs/phlegethontic-nether-worldgen/2026-09-12-phlegethontic-nether-worldgen.md) and [validation evidence](../docs/phlegethontic-nether-worldgen/VALIDATION.md). Geometry and containment are pure Java; runtime cases are explicitly registered through `DevTestHooks`. Model/material preparation tools live in `tools/model_export`.
 
+The [Pelagic worldgen reference](../docs/PELAGIC_WORLDGEN.md) records ocean terrain and performance checks. `PelagicContext.column` serves density, aquifer and carver queries from bounded per-worker tile caches; it skips biome lookup outside the ocean/shore climate bands. Reef and shore blends retain shared grid nodes across neighboring chunk revisits, including landmark footprints. Run `./gradlew.bat test --tests '*worldgen.pelagic.*'` for cache, climate-boundary and terrain regressions, then use the documented fresh-world launcher and report comparison to check actual generated terrain.
+
+Ocean travel also exposed expensive Circus Pavilion footprint checks on the generation scheduler. Placement now applies the selected stub's exact biome predicate before scanning and reuses each generated noise column for both heightmaps and clearance. Vanilla locate additionally benefits from widely separated early screening and footprint-local shared noise cells. `TroupeFootprintGameTests` covers dry/wet ground and the height limit; the seeded locate probe compares shared columns against vanilla and reproduces the player's distant pavilion. The loaded Circus suite and fresh ocean validation cover the combined change. Footprint coverage and placement gates remain unchanged.
+
 ### Primary References
 
 **[HEMOMANCY_REFERENCE.md](https://github.com/VincentHuto/Hemomancy/blob/main/docs/HEMOMANCY_REFERENCE.md)**
@@ -76,7 +80,7 @@ The [Phlegethontic Nether](Phlegethontic-Nether.md) has a [current implementatio
 - **Package:** `com.vincenthuto.hemomancy`
 - **Version:** `6.0.1-neoforge.1.21.1.0`
 - **Minecraft:** `1.21.1`
-- **NeoForge:** `21.1.219` (21.1.x range)
+- **NeoForge:** `21.1.251` (21.1.x range)
 - **Java:** `21`
 
 ### Architecture

@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
+import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
-import net.minecraft.core.particles.DustParticleOptions;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -12,35 +15,27 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import org.joml.Vector3f;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.WeakHashMap;
 
-public class MnemonistPuppetEntity extends GroundPuppetEntity implements BoundPuppeteerSummon {
-	private static final EntityDataAccessor<Optional<UUID>> DATA_OWNER_UUID =
-			SynchedEntityData.defineId(MnemonistPuppetEntity.class, EntityDataSerializers.OPTIONAL_UUID);
-	private static final EntityDataAccessor<Optional<UUID>> DATA_CROSSBAR_UUID =
-			SynchedEntityData.defineId(MnemonistPuppetEntity.class, EntityDataSerializers.OPTIONAL_UUID);
-	private static final EntityDataAccessor<String> DATA_SUMMON_NAME =
-			SynchedEntityData.defineId(MnemonistPuppetEntity.class, EntityDataSerializers.STRING);
-	private static final EntityDataAccessor<Integer> DATA_DISMISSAL_TICKS =
-			SynchedEntityData.defineId(MnemonistPuppetEntity.class, EntityDataSerializers.INT);
-	private static final EntityDataAccessor<Boolean> DATA_TRIAL_SUMMON =
-			SynchedEntityData.defineId(MnemonistPuppetEntity.class, EntityDataSerializers.BOOLEAN);
-	private static final EntityDataAccessor<Optional<UUID>> DATA_TRIAL_CASTER_UUID =
-			SynchedEntityData.defineId(MnemonistPuppetEntity.class, EntityDataSerializers.OPTIONAL_UUID);
-	private static final DustParticleOptions MEMORY_DUST =
-			new DustParticleOptions(new Vector3f(0.62F, 0.04F, 0.07F), 0.9F);
-	private static final DustParticleOptions PALE_DUST =
-			new DustParticleOptions(new Vector3f(0.72F, 0.68F, 0.70F), 0.65F);
+public class MnemonistPuppetEntity extends GroundPuppetEntity implements SyncedBoundSummon {
+	private static final BoundSummonSync SYNC = BoundSummonSync.define(MnemonistPuppetEntity.class);
+	private static final ParticleOptions MEMORY_GLOW = HemoParticleData.glow(new ParticleColor(158, 10, 18));
+	private static final ParticleOptions PALE_GLOW = HemoParticleData.glow(new ParticleColor(184, 173, 178));
+	private static final int REPLAY_VISUAL_TICKS = 20;
+	// Server-side puppets in loaded levels, so the damage listener never has to search the world for them.
+	private static final Set<MnemonistPuppetEntity> LOADED = Collections.newSetFromMap(new WeakHashMap<>());
 
 	private final List<MnemonistPuppetRules.AttackMemory> memories = new ArrayList<>();
 
@@ -49,10 +44,8 @@ public class MnemonistPuppetEntity extends GroundPuppetEntity implements BoundPu
 	}
 
 	public static AttributeSupplier.Builder setAttributes() {
-		return Zombie.createAttributes()
-				.add(Attributes.MAX_HEALTH, 26.0)
-				.add(Attributes.ATTACK_DAMAGE, 3.0)
-				.add(Attributes.MOVEMENT_SPEED, 0.26);
+		return BoundSummonBehavior.definitionAttributes(Zombie.createAttributes(),
+				PuppeteerSummonDefinitions.MNEMONIST_PUPPET);
 	}
 
 	@Override
@@ -64,18 +57,38 @@ public class MnemonistPuppetEntity extends GroundPuppetEntity implements BoundPu
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		super.defineSynchedData(builder);
-		builder.define(DATA_OWNER_UUID, Optional.empty());
-		builder.define(DATA_CROSSBAR_UUID, Optional.empty());
-		builder.define(DATA_SUMMON_NAME, "mnemonist_puppet");
-		builder.define(DATA_DISMISSAL_TICKS, 0);
-		builder.define(DATA_TRIAL_SUMMON, false);
-		builder.define(DATA_TRIAL_CASTER_UUID, Optional.empty());
+		SYNC.defineDefaults(builder, PuppeteerSummonDefinitions.MNEMONIST_PUPPET);
+	}
+
+	static List<MnemonistPuppetEntity> loaded() {
+		return List.copyOf(LOADED);
+	}
+
+	@Override
+	public void onAddedToLevel() {
+		super.onAddedToLevel();
+		if (!level().isClientSide) LOADED.add(this);
+	}
+
+	@Override
+	public void onRemovedFromLevel() {
+		super.onRemovedFromLevel();
+		LOADED.remove(this);
+	}
+
+	/** Only the Mnemonist shape replays; older saves stored the Ringmaster Pattern on this entity type. */
+	public boolean replaysMemories() {
+		return !PuppeteerSummonDefinitions.RINGMASTER_PATTERN.equals(hemomancy$getSummonName());
 	}
 
 	@Override
 	public void tick() {
 		super.tick();
 		if (level().isClientSide) {
+			return;
+		}
+		if (!replaysMemories()) {
+			convertLegacyRingmaster((ServerLevel) level());
 			return;
 		}
 		if (hemomancy$isTrialSummon()) {
@@ -94,20 +107,36 @@ public class MnemonistPuppetEntity extends GroundPuppetEntity implements BoundPu
 		}
 	}
 
+	/** Moves a Ringmaster Pattern saved before it had its own entity type onto that type, keeping its binding. */
+	private void convertLegacyRingmaster(ServerLevel level) {
+		if (!isAlive()) {
+			return;
+		}
+		RingmasterPatternEntity pattern = EntityInit.ringmaster_pattern.get().create(level);
+		if (pattern == null) {
+			return;
+		}
+		CompoundTag tag = saveWithoutId(new CompoundTag());
+		tag.remove("UUID");
+		pattern.load(tag);
+		discard();
+		level.addFreshEntity(pattern);
+	}
+
 	public void rememberDamage(LivingEntity damaged, float damage) {
 		rememberDamage(damaged, damage, null);
 	}
 
 	public void rememberDamage(LivingEntity damaged, float damage, net.minecraft.world.entity.Entity attacker) {
-		if (damaged == null || !MnemonistPuppetRules.canRecord(targetId(), damaged.getUUID(), damage,
+		if (damaged == null || !replaysMemories() || !MnemonistPuppetRules.canRecord(targetId(), damaged.getUUID(), damage,
 				MnemonistPuppetEvents.isReplayingDamage())) {
 			return;
 		}
 		MnemonistPuppetRules.record(memories, new MnemonistPuppetRules.AttackMemory(damaged.getUUID(), damage,
 				level().getGameTime(), attacker == null ? null : attacker.getUUID()));
 		if (level() instanceof ServerLevel serverLevel) {
-			serverLevel.sendParticles(MEMORY_DUST, damaged.getX(), damaged.getY() + damaged.getBbHeight() * 0.65D,
-					damaged.getZ(), 5, 0.22D, 0.24D, 0.22D, 0.0D);
+			serverLevel.sendParticles(MEMORY_GLOW, damaged.getX(), damaged.getY() + damaged.getBbHeight() * 0.65D,
+					damaged.getZ(), 4, 0.22D, 0.24D, 0.22D, 0.0D);
 		}
 	}
 
@@ -138,8 +167,12 @@ public class MnemonistPuppetEntity extends GroundPuppetEntity implements BoundPu
 
 	private void playReplayEffects(ServerLevel serverLevel, LivingEntity target) {
 		double y = target.getY() + target.getBbHeight() * 0.55D;
-		serverLevel.sendParticles(MEMORY_DUST, target.getX(), y, target.getZ(), 10, 0.35D, 0.32D, 0.35D, 0.0D);
-		serverLevel.sendParticles(PALE_DUST, target.getX(), y + 0.15D, target.getZ(), 8, 0.28D, 0.26D, 0.28D, 0.0D);
+		// The threads reach from the spool on its back to the remembered wound.
+		Vec3 spool = position().add(0.0D, getBbHeight() * 0.62D, 0.0D);
+		ManipulationVisuals.burst(serverLevel, ManipulationVisuals.Form.MNEMONIC_REPLAY, spool,
+				new Vec3(target.getX(), y, target.getZ()), 1.0D, REPLAY_VISUAL_TICKS);
+		serverLevel.sendParticles(MEMORY_GLOW, target.getX(), y, target.getZ(), 6, 0.3D, 0.28D, 0.3D, 0.0D);
+		serverLevel.sendParticles(PALE_GLOW, target.getX(), y + 0.15D, target.getZ(), 4, 0.24D, 0.22D, 0.24D, 0.0D);
 		serverLevel.playSound(null, target.blockPosition(), SoundEvents.SCULK_SHRIEKER_SHRIEK, SoundSource.HOSTILE,
 				0.35F, 1.65F);
 	}
@@ -171,16 +204,5 @@ public class MnemonistPuppetEntity extends GroundPuppetEntity implements BoundPu
 		BoundSummonBehavior.load(this, tag);
 	}
 
-	@Override public UUID hemomancy$getOwnerUUID() { return entityData.get(DATA_OWNER_UUID).orElse(null); }
-	@Override public void hemomancy$setOwnerUUID(UUID ownerUuid) { entityData.set(DATA_OWNER_UUID, Optional.ofNullable(ownerUuid)); }
-	@Override public UUID hemomancy$getCrossbarUUID() { return entityData.get(DATA_CROSSBAR_UUID).orElse(null); }
-	@Override public void hemomancy$setCrossbarUUID(UUID crossbarUuid) { entityData.set(DATA_CROSSBAR_UUID, Optional.ofNullable(crossbarUuid)); }
-	@Override public String hemomancy$getSummonName() { return entityData.get(DATA_SUMMON_NAME); }
-	@Override public void hemomancy$setSummonName(String summonName) { entityData.set(DATA_SUMMON_NAME, summonName == null ? "" : summonName); }
-	@Override public int hemomancy$getDismissalTicks() { return entityData.get(DATA_DISMISSAL_TICKS); }
-	@Override public void hemomancy$setDismissalTicks(int ticks) { entityData.set(DATA_DISMISSAL_TICKS, Math.max(0, ticks)); }
-	@Override public boolean hemomancy$isTrialSummon() { return entityData.get(DATA_TRIAL_SUMMON); }
-	@Override public void hemomancy$setTrialSummon(boolean trialSummon) { entityData.set(DATA_TRIAL_SUMMON, trialSummon); }
-	@Override public UUID hemomancy$getTrialCasterUUID() { return entityData.get(DATA_TRIAL_CASTER_UUID).orElse(null); }
-	@Override public void hemomancy$setTrialCasterUUID(UUID casterUuid) { entityData.set(DATA_TRIAL_CASTER_UUID, Optional.ofNullable(casterUuid)); }
+	@Override public BoundSummonSync hemomancy$sync() { return SYNC; }
 }

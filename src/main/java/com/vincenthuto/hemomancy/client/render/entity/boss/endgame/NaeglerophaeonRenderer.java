@@ -19,6 +19,7 @@ import net.minecraft.world.phys.Vec3;
 
 public final class NaeglerophaeonRenderer extends EntityRenderer<NaeglerophaeonEntity> {
     private static final ResourceLocation TEXTURE=Hemomancy.rloc("textures/entity/naeglerophaeon_cube_palette.png");
+    private static final ResourceLocation DRAINED_TEXTURE=Hemomancy.rloc("textures/entity/naeglerophaeon_cube_palette_drained.png");
     private static final ResourceLocation EYE_MARKER=Hemomancy.rloc("textures/entity/naeglerophaeon_eye_marker.png");
     private static final LightningTestConfig ARC=new LightningTestConfig(LightningTestConfig.Backend.BOLT,
             0xDDFF424D,0xDDFF424D,0xFFFFFFAB,32,0,0,0,18,3,4,3,.025F,.009F,true,0,false,2);
@@ -32,7 +33,7 @@ public final class NaeglerophaeonRenderer extends EntityRenderer<NaeglerophaeonE
         double lastLookTime=Double.NaN;
         double huntBlend, lastHuntTime=Double.NaN;
         int lastPhase;
-        long releaseTick=Long.MIN_VALUE, lastRenderTick=Long.MIN_VALUE;
+        long releaseTick=Long.MIN_VALUE, lastRenderTick=Long.MIN_VALUE, lastOverloadPulse=Long.MIN_VALUE;
     }
     public NaeglerophaeonRenderer(EntityRendererProvider.Context context) { super(context); shadowRadius=.9F; }
     @Override public boolean shouldRender(NaeglerophaeonEntity entity,Frustum frustum,
@@ -90,7 +91,7 @@ public final class NaeglerophaeonRenderer extends EntityRenderer<NaeglerophaeonE
                 victim==null?1.8:victim.getBbHeight(),state.pose.offsets(origin),
                 state.lastTail==null?null:Arrays.stream(state.lastTail).map(p->p.subtract(origin)).toArray(Vec3[]::new),
                 capturing || state.releaseTick==Long.MIN_VALUE?0:Math.max(0,1-(tick+partial-state.releaseTick)/40.0),
-                state.huntBlend,state.pose.turnLag(partial));
+                state.huntBlend,state.pose.turnLag(partial),entity.isEnraged());
         float lookWeight=switch(entity.animationPhase()) {
             case NaeglerophaeonEntity.CAPTURE -> (float)NaeglerophaeonModel.smooth(input.phaseTicks()/20);
             case NaeglerophaeonEntity.GRAB -> 1;
@@ -118,18 +119,22 @@ public final class NaeglerophaeonRenderer extends EntityRenderer<NaeglerophaeonE
         }
         if(capturing && tail!=null) state.lastTail=Arrays.stream(tail).map(p->p.add(origin)).toArray(Vec3[]::new);
         int overlay=LivingEntityRenderer.getOverlayCoords(entity,0);
-        boolean markEyes=!entity.isInvisible() && NaeglerophaeonCaptureOverlay.markEyes(entity);
+        boolean drained=input.drained();
+        ResourceLocation texture=drained?DRAINED_TEXTURE:TEXTURE;
+        boolean markEyes=!drained && !entity.isInvisible() && NaeglerophaeonCaptureOverlay.markEyes(entity);
         for(int pass=0;pass<(markEyes?4:3);pass++) {
-            RenderType material=entity.isInvisible()?RenderType.outline(TEXTURE):pass==0?RenderType.entityCutoutNoCull(TEXTURE)
-                    :pass==1?RenderType.eyes(TEXTURE):pass==2?RenderType.entityTranslucent(TEXTURE)
+            if(drained && pass==1) continue;
+            RenderType material=entity.isInvisible()?RenderType.outline(texture):pass==0?RenderType.entityCutoutNoCull(texture)
+                    :pass==1?RenderType.eyes(texture):pass==2?RenderType.entityTranslucent(texture)
                     :RenderType.eyes(EYE_MARKER);
             VertexConsumer consumer=buffers.getBuffer(material);
             NaeglerophaeonBlockModel.render(stack,consumer,pass,input,light,overlay,dynamicTail,
                     state.lookDirection,lookWeight,markEyes);
             if(dynamicTail) NaeglerophaeonBlockModel.renderCaptureTail(stack,consumer,pass,tail,light,overlay);
         }
-        if(!entity.isInvisible() && entity.isAlive() && entityRenderDispatcher.distanceToSqr(entity)<64*64 && state.lastTick!=tick) {
+        if(!drained && !entity.isInvisible() && entity.isAlive() && entityRenderDispatcher.distanceToSqr(entity)<64*64 && state.lastTick!=tick) {
             state.lastTick=tick;
+            if(entity.animationPhase()==NaeglerophaeonEntity.OVERLOAD) overloadTailBolts(entity,state,input,origin,partial);
             Vec3[] tips=null;
             for(var pulse:NaeglerophaeonModel.pulses(tick,entity.getId())) if(pulse.spark()) {
                 int slot=pulse.limb()/4;
@@ -149,5 +154,30 @@ public final class NaeglerophaeonRenderer extends EntityRenderer<NaeglerophaeonE
         }
         super.render(entity,yaw,partial,stack,buffers,light);
     }
-    @Override public ResourceLocation getTextureLocation(NaeglerophaeonEntity e) { return TEXTURE; }
+    /** Lightning crawls the hanging tail as each pulse climbs toward the crown. */
+    private static void overloadTailBolts(NaeglerophaeonEntity entity,State state,NaeglerophaeonModel.Input input,Vec3 origin,float partial) {
+        long ticks=(long)input.phaseTicks();
+        long pulse=ticks/30;
+        int moment=(int)Math.floorMod(ticks,30);
+        if(moment%3!=0 && !(moment==22 && state.lastOverloadPulse!=pulse)) return;
+        Vec3[] tail=NaeglerophaeonBlockModel.tailPoints(input);
+        long seed=entity.getId()*31L+ticks;
+        int climb=Math.max(1,47-moment*2);
+        for(int i=0;i<2;i++) {
+            int from=Math.clamp(climb+(i==0?-3:3),1,47);
+            Vec3 a=tail[from].add(origin), b=tail[Math.max(0,from-5)].add(origin)
+                    .add(Math.sin(seed+i)*.45,Math.cos(seed*.7+i)*.3,Math.cos(seed+i)*.45);
+            BoltRenderer.INSTANCE.add(LightningTestBoltFactory.create(a,b,seed+i,ARC.outerColor(),.03F,ARC),partial);
+            BoltRenderer.INSTANCE.add(LightningTestBoltFactory.create(a,b,seed+i,ARC.innerColor(),.01F,ARC),partial);
+        }
+        if(moment==22) {
+            state.lastOverloadPulse=pulse;
+            Vec3 crown=origin.add(0,.8,0);
+            for(int i=0;i<4;i++) {
+                Vec3 tip=crown.add(Math.cos(seed+i*1.6)*1.6,2.2+i*.3,Math.sin(seed+i*1.6)*1.6);
+                BoltRenderer.INSTANCE.add(LightningTestBoltFactory.create(crown,tip,seed+10+i,ARC.outerColor(),.035F,ARC),partial);
+            }
+        }
+    }
+    @Override public ResourceLocation getTextureLocation(NaeglerophaeonEntity e) { return e.isDrained()?DRAINED_TEXTURE:TEXTURE; }
 }

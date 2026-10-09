@@ -4,6 +4,43 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PelagicReefBlendTest {
+    @Test void neighboringChunkRevisitsReuseBlendNodes() {
+        int[] probes = {0};
+        var blend = new PelagicReefBlend();
+        PelagicReefBlend.ReefMask mask = (x, z) -> { probes[0]++; return x >= 0; };
+        blend.cachedWeight(-1, 0, mask);
+        blend.cachedWeight(0, 0, mask);
+        int warmed = probes[0];
+        for (int i = 0; i < 256; i++) {
+            assertEquals(.25 + .5 * PelagicTerrainSampler.smooth(0, 16, 15), blend.cachedWeight(-1, 0, mask), 0);
+            assertEquals(.75, blend.cachedWeight(0, 0, mask), 0);
+        }
+        assertEquals(warmed, probes[0], "Landmark scans revisit neighboring chunks without resampling climate");
+    }
+
+    @Test void samplingAChunkReusesItsBiomeNeighborhood() {
+        int[] probes = {0};
+        var blend = new PelagicReefBlend();
+        PelagicReefBlend.ReefMask mask = (x, z) -> {
+            probes[0]++;
+            return x >= 0;
+        };
+        for (int x = -16; x < 0; x++) for (int z = 16; z < 32; z++) {
+            double u = PelagicTerrainSampler.smooth(0, 16, x + 16);
+            assertEquals(.25 + .5 * u, blend.cachedWeight(x, z, mask), 1e-12);
+        }
+        assertTrue(probes[0] <= 36, "A chunk shares four blend nodes; biome probes: " + probes[0]);
+    }
+
+    @Test void reusedBlendKeepsExactWeightsAcrossChunkBoundariesAndRevisits() {
+        PelagicReefBlend.ReefMask mask = (x, z) -> x >= 0 && z >= -16;
+        var blend = new PelagicReefBlend();
+        for (int[] origin : new int[][]{{-32, -32}, {-16, -16}, {0, 0}, {16, 16}, {-32, -32}})
+            for (int x = origin[0]; x < origin[0] + 16; x++)
+                for (int z = origin[1]; z < origin[1] + 16; z++)
+                    assertEquals(PelagicReefBlend.weight(x, z, mask), blend.cachedWeight(x, z, mask), 0);
+    }
+
     @Test void coastCoverageFadesShapingStrengthAsWellAsFloorHeight() {
         var inactive = new PelagicTerrainSampler.Column(58, 0, PelagicTerrainSampler.Form.PLAIN, 0, false);
         var coast = new PelagicTerrainSampler.Column(65, 1, PelagicTerrainSampler.Form.SHORE, 0, false);

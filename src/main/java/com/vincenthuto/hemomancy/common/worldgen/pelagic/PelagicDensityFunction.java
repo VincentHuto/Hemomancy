@@ -6,7 +6,7 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 /** Runtime wrapper, installed after seed wiring; never part of saved generator settings. */
 public record PelagicDensityFunction(DensityFunction original, PelagicContext context, boolean preliminary) implements DensityFunction {
     @Override public double compute(FunctionContext point) {
-        var column = context.sample(point.blockX(), point.blockZ()).column();
+        var column = context.column(point.blockX(), point.blockZ());
         boolean fullyShaped = column.influence() == 1 && (preliminary || column.floor() < -45
                 || column.floor() - point.blockY() <= 8);
         double vanilla = fullyShaped ? 0 : original.compute(point);

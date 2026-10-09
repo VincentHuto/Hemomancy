@@ -897,6 +897,7 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.marrow_spitter.get(), MarrowSpitterRenderer::new);
             event.registerEntityRenderer(EntityInit.gorebound_hulk.get(), GoreboundHulkRenderer::new);
             event.registerEntityRenderer(EntityInit.mnemonist_puppet.get(), MnemonistPuppetRenderer::new);
+            event.registerEntityRenderer(EntityInit.ringmaster_pattern.get(), com.vincenthuto.hemomancy.client.render.entity.summon.RingmasterPatternRenderer::new);
             event.registerEntityRenderer(EntityInit.scarlet_mummer.get(), ScarletMummerRenderer::new);
 			event.registerEntityRenderer(EntityInit.sanguine_hound.get(), SanguineHoundRenderer::new);
             event.registerEntityRenderer(EntityInit.lump_of_thought.get(), LumpOfThoughtRenderer::new);
@@ -937,10 +938,18 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.harbinger_vicar.get(), HarbingerVicarRenderer::new);
             event.registerEntityRenderer(EntityInit.harbinger_voyager.get(), HarbingerVoyagerRenderer::new);
             event.registerEntityRenderer(EntityInit.harbinger_votary_wayfarer.get(), HarbingerVotaryWayfarerRenderer::new);
-			event.registerEntityRenderer(EntityInit.circus_strongman.get(), context -> new CircusPerformerRenderer<>(context, new net.minecraft.client.model.HumanoidModel<>(context.bakeLayer(net.minecraft.client.model.geom.ModelLayers.ZOMBIE)), "circus_strongman", 0.45F));
-            event.registerEntityRenderer(EntityInit.circus_beast_tamer.get(), context -> new CircusPerformerRenderer<>(context, new net.minecraft.client.model.HumanoidModel<>(context.bakeLayer(net.minecraft.client.model.geom.ModelLayers.ZOMBIE)), "circus_beast_tamer", 0.45F));
-            event.registerEntityRenderer(EntityInit.circus_threadkeeper.get(), context -> new CircusPerformerRenderer<>(context, new net.minecraft.client.model.HumanoidModel<>(context.bakeLayer(net.minecraft.client.model.geom.ModelLayers.ZOMBIE)), "circus_threadkeeper", 0.45F));
-            event.registerEntityRenderer(EntityInit.circus_understudy.get(), context -> new CircusPerformerRenderer<>(context, new net.minecraft.client.model.HumanoidModel<>(context.bakeLayer(net.minecraft.client.model.geom.ModelLayers.ZOMBIE)), "circus_understudy", 0.45F));
+			event.registerEntityRenderer(EntityInit.circus_strongman.get(), context -> new CircusPerformerRenderer<>(
+					context, new CircusStrongmanModel(context.bakeLayer(CircusStrongmanModel.LAYER_LOCATION)),
+					"circus_strongman", 0.55F));
+			event.registerEntityRenderer(EntityInit.circus_beast_tamer.get(), context -> new CircusPerformerRenderer<>(
+					context, new CircusBeastTamerModel(context.bakeLayer(CircusBeastTamerModel.LAYER_LOCATION)),
+					"circus_beast_tamer", 0.45F));
+			event.registerEntityRenderer(EntityInit.circus_threadkeeper.get(), context -> new CircusPerformerRenderer<>(
+					context, new CircusThreadkeeperModel(context.bakeLayer(CircusThreadkeeperModel.LAYER_LOCATION)),
+					"circus_threadkeeper", 0.4F));
+			event.registerEntityRenderer(EntityInit.circus_understudy.get(), context -> new CircusPerformerRenderer<>(
+					context, new CircusUnderstudyModel(context.bakeLayer(CircusUnderstudyModel.LAYER_LOCATION)),
+					"circus_understudy", 0.4F));
             event.registerEntityRenderer(EntityInit.circus_fire_eater.get(), context -> new CircusPerformerRenderer<>(
 					context, new CircusFireEaterModel(context.bakeLayer(CircusFireEaterModel.LAYER_LOCATION)),
 					"fire_eater", 0.45F));

@@ -52,6 +52,9 @@ gameTestSuites.each { namespace, suite ->
         run.systemProperty 'hemomancy.pelagic.validationPreset', providers.gradleProperty('pelagicPreset').getOrElse('normal')
         run.systemProperty 'hemomancy.pelagic.expectDisabled', providers.gradleProperty('pelagicExpectDisabled').getOrElse('false')
         run.systemProperty 'hemomancy.pelagic.ecologyProbe', providers.gradleProperty('pelagicEcology').getOrElse('false')
+        run.systemProperty 'hemomancy.pelagic.pavilionLocateProbe', providers.gradleProperty('pelagicPavilionLocate').getOrElse('false')
+        run.systemProperty 'hemomancy.pelagic.locateX', providers.gradleProperty('pelagicLocateX').getOrElse('0')
+        run.systemProperty 'hemomancy.pelagic.locateZ', providers.gradleProperty('pelagicLocateZ').getOrElse('0')
         run.programArguments.addAll '--mixin', 'pelagic-validation.mixins.json'
         run.jvmArguments.addAll '-Xms1G', '-Xmx5G'
     } else if (suite.generator != null) {

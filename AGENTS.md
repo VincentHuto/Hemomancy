@@ -1,7 +1,7 @@
 # AGENTS.md — Hemomancy
 
 ## Snapshot
-- Hemomancy is a Minecraft **NeoForge** mod for `1.21.1` / `21.1.219`, Java `21`, mod id `hemomancy`, package `com.vincenthuto.hemomancy`.
+- Hemomancy is a Minecraft **NeoForge** mod for `1.21.1` / `21.1.251`, Java `21`, mod id `hemomancy`, package `com.vincenthuto.hemomancy`.
 - Start with `src/main/java/com/vincenthuto/hemomancy/Hemomancy.java`, then verify versions and dependency gates in `gradle.properties`, `build.gradle`, and `settings.gradle`.
 - Treat current code/resources as authoritative when docs drift; use `docs/HEMOMANCY_REFERENCE.md` for mechanics/status and `docs/LORE_REFERENCE.md` for tone.
 - For the longer contributor checklist, see `docs/agents/hemomancy-mod-agent.md`.
@@ -28,7 +28,7 @@
 - Use NeoForge imports (`net.neoforged.*`), `DeferredHolder`, and `Hemomancy.rloc("snake_case_id")`; do not introduce `net.minecraftforge.*` or Forge-era provider/registration patterns.
 - Registries live in `common/init/*Init.java`. Example: `ManipulationInit` holds the blood-manipulation registry and registers entries like `blood_shot` and `vital_effusion` with cost/rank/tendency metadata.
 - Manipulation implementations live under `common/manipulation/<tendency>/`; many also define Drudge AI helpers with `setDrudgeAction(...)`. New manipulations usually need the class, a `ManipulationInit` entry, lang/model assets, and related docs.
-- For Hemomancy special effects, inspect and prefer the authored Hemomancy/HutosLib visual toolkit before using vanilla particles. Reuse the dynamic glow, cell, tendril, lightning, claw, slash, and related custom effects whenever they can express the intended action; match their color, motion, layering, and intensity to the surrounding blocks, mobs, and items. Vanilla particles are a deliberate fallback for effects the custom suite cannot reasonably express, not the convenience default. This applies especially to bosses, rites, manipulations, impacts, transitions, and other focal moments; do not let otherwise custom visuals become dominated by generic vanilla particle clouds.
+- For Hemomancy special effects, inspect and prefer the authored Hemomancy/HutosLib visual toolkit before using vanilla particles. Reuse the dynamic glow, cell, tendril, lightning, claw, slash, and related custom effects whenever they can express the intended action; match their color, motion, layering, and intensity to the surrounding blocks, mobs, and items. Vanilla particles are a deliberate fallback for effects the custom suite cannot reasonably express, not the convenience default. This applies especially to bosses, rites, manipulations, impacts, transitions, and other focal moments; do not let otherwise custom visuals become dominated by generic vanilla particle clouds. Before building or upgrading a focal visual, read [the manipulation visual standard](docs/MANIPULATION_VISUALS.md); Hematic Riposte's layered geometry is the reference bar.
 - Current resource paths are singular 1.21-style paths already used by this repo: `data/hemomancy/recipe/`, `data/hemomancy/loot_table/`, and `data/hemomancy/dialogue_inquiry/<npc>/<namespace>/<item>.json`. Do not “fix” them to older plural conventions.
 - HutosLib owns part of the dialogue/book pipeline, so check library-backed serializers and reload listeners before inventing local replacements.
 

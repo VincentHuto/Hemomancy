@@ -29,7 +29,8 @@ public final class NaeglerophaeonGameTests {
 		boss.bindMind(origin, 37L, List.of(h.absolutePos(node)));
 		VagrantMindEncounterData data = VagrantMindEncounterData.get(h.getLevel());
 		data.active(origin, boss.getUUID(), boss.blockPosition());
-		boss.hurt(h.getLevel().damageSources().generic(), 1000.0F);
+		// Ordinary damage cannot skip the Overload finale; kill damage stands in for a finished fight.
+		boss.kill();
 		h.assertTrue(data.encounter(origin).defeated(), "a killed resident must never respawn");
 		h.succeed();
 	}

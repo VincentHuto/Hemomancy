@@ -10,6 +10,8 @@ import com.vincenthuto.hemomancy.common.entity.projectile.BloodShotEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.VeinwingFeatherEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
+import com.vincenthuto.hemomancy.common.entity.summon.MnemonistPuppetEntity;
+import com.vincenthuto.hemomancy.common.entity.summon.RingmasterPatternEntity;
 import com.vincenthuto.hemomancy.common.event.ToggleableSkillEvents;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
@@ -610,6 +612,58 @@ public final class PuppeteeringGameTests {
 	public static void mnemonistSurvivesDaylightAndPursuesItsTarget(GameTestHelper helper) {
 		assertGroundPuppetPursuesTarget(helper, PuppeteerSummonDefinitions.MNEMONIST_PUPPET,
 				"Mnemonist Puppet");
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void ringmasterPatternUsesItsOwnBodyRatherThanTheMnemonist(GameTestHelper helper) {
+		ServerPlayer caster = testPlayer(helper);
+		Mob pattern = null;
+		Mob mnemonist = null;
+		try {
+			BlockPos pos = helper.absolutePos(new BlockPos(2, 2, 2));
+			pattern = PuppeteerSummonFactory.createTrial(PuppeteerSummonDefinitions.byName(
+					PuppeteerSummonDefinitions.RINGMASTER_PATTERN).orElseThrow(), helper.getLevel(), caster, pos).orElseThrow();
+			mnemonist = PuppeteerSummonFactory.createTrial(PuppeteerSummonDefinitions.byName(
+					PuppeteerSummonDefinitions.MNEMONIST_PUPPET).orElseThrow(), helper.getLevel(), caster, pos).orElseThrow();
+			helper.assertTrue(pattern instanceof RingmasterPatternEntity && !(pattern instanceof MnemonistPuppetEntity),
+					"The Conductor must not inherit the Mnemonist's memory replay body");
+			helper.assertTrue(mnemonist instanceof MnemonistPuppetEntity puppet && puppet.replaysMemories(),
+					"The Mnemonist must keep its memory replay");
+			helper.succeed();
+		} finally {
+			if (pattern != null) pattern.discard();
+			if (mnemonist != null) mnemonist.discard();
+			removePlayer(caster);
+		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void legacyRingmasterSaveConvertsToItsOwnEntityKeepingItsBinding(GameTestHelper helper) {
+		ServerLevel level = helper.getLevel();
+		MnemonistPuppetEntity legacy = EntityInit.mnemonist_puppet.get().create(level);
+		UUID owner = UUID.randomUUID();
+		UUID crossbar = UUID.randomUUID();
+		legacy.hemomancy$setSummonName(PuppeteerSummonDefinitions.RINGMASTER_PATTERN);
+		legacy.hemomancy$setOwnerUUID(owner);
+		legacy.hemomancy$setCrossbarUUID(crossbar);
+		legacy.setPos(net.minecraft.world.phys.Vec3.atBottomCenterOf(helper.absolutePos(new BlockPos(3, 2, 3))));
+		helper.assertTrue(level.addFreshEntity(legacy), "Legacy Ringmaster fixture must spawn");
+		RingmasterPatternEntity converted = null;
+		try {
+			level.tickNonPassenger(legacy);
+			helper.assertTrue(legacy.isRemoved(), "A Ringmaster saved as a Mnemonist must leave the Mnemonist type");
+			converted = level.getEntitiesOfClass(RingmasterPatternEntity.class, legacy.getBoundingBox().inflate(1.0D))
+					.stream().findFirst().orElse(null);
+			helper.assertTrue(converted != null, "The legacy save must reappear as a Ringmaster Pattern");
+			helper.assertTrue(owner.equals(converted.hemomancy$getOwnerUUID())
+							&& crossbar.equals(converted.hemomancy$getCrossbarUUID())
+							&& PuppeteerSummonDefinitions.RINGMASTER_PATTERN.equals(converted.hemomancy$getSummonName()),
+					"Conversion must keep the owner, crossbar and summon identity");
+			helper.succeed();
+		} finally {
+			legacy.discard();
+			if (converted != null) converted.discard();
+		}
 	}
 
 	private static void assertGroundPuppetPursuesTarget(GameTestHelper helper, String summonName, String displayName) {

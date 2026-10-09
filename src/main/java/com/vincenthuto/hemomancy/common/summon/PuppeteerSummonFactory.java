@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.summon;
 
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
-import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -23,17 +22,7 @@ public final class PuppeteerSummonFactory {
 		if (definition == null || level == null || owner == null || crossbarId == null) {
 			return Optional.empty();
 		}
-		Mob mob = switch (definition.name()) {
-			case PuppeteerSummonDefinitions.VEINWING_VULTURE -> EntityInit.veinwing_vulture.get().create(level);
-			case PuppeteerSummonDefinitions.MARROW_SPITTER -> EntityInit.marrow_spitter.get().create(level);
-			case PuppeteerSummonDefinitions.GOREBOUND_HULK -> EntityInit.gorebound_hulk.get().create(level);
-			case PuppeteerSummonDefinitions.MNEMONIST_PUPPET -> EntityInit.mnemonist_puppet.get().create(level);
-			case PuppeteerSummonDefinitions.RINGMASTER_PATTERN -> EntityInit.mnemonist_puppet.get().create(level);
-			case PuppeteerSummonDefinitions.SCARLET_MUMMER -> EntityInit.scarlet_mummer.get().create(level);
-			case PuppeteerSummonDefinitions.CINDER_BELLOWS -> EntityInit.cinder_bellows.get().create(level);
-			case PuppeteerSummonDefinitions.SANGUINE_HOUND -> EntityInit.sanguine_hound.get().create(level);
-			default -> null;
-		};
+		Mob mob = PuppeteerSummonBodies.create(definition.name(), level).orElse(null);
 		if (mob instanceof BoundPuppeteerSummon bound) {
 			bound.hemomancy$setOwnerUUID(owner.getUUID());
 			mob.setPersistenceRequired();
@@ -54,17 +43,7 @@ public final class PuppeteerSummonFactory {
 		if (definition == null || level == null || caster == null || pos == null) {
 			return Optional.empty();
 		}
-		Mob mob = switch (definition.name()) {
-			case PuppeteerSummonDefinitions.VEINWING_VULTURE -> EntityInit.veinwing_vulture.get().create(level);
-			case PuppeteerSummonDefinitions.MARROW_SPITTER -> EntityInit.marrow_spitter.get().create(level);
-			case PuppeteerSummonDefinitions.GOREBOUND_HULK -> EntityInit.gorebound_hulk.get().create(level);
-			case PuppeteerSummonDefinitions.MNEMONIST_PUPPET -> EntityInit.mnemonist_puppet.get().create(level);
-			case PuppeteerSummonDefinitions.RINGMASTER_PATTERN -> EntityInit.mnemonist_puppet.get().create(level);
-			case PuppeteerSummonDefinitions.SCARLET_MUMMER -> EntityInit.scarlet_mummer.get().create(level);
-			case PuppeteerSummonDefinitions.CINDER_BELLOWS -> EntityInit.cinder_bellows.get().create(level);
-			case PuppeteerSummonDefinitions.SANGUINE_HOUND -> EntityInit.sanguine_hound.get().create(level);
-			default -> null;
-		};
+		Mob mob = PuppeteerSummonBodies.create(definition.name(), level).orElse(null);
 		if (mob instanceof BoundPuppeteerSummon bound) {
 			bound.hemomancy$setTrialSummon(true);
 			bound.hemomancy$setTrialCasterUUID(caster.getUUID());

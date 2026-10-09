@@ -11,7 +11,7 @@ public final class PelagicSeabedFeature extends Feature<NoneFeatureConfiguration
         if (geology == null) return false;
         var chunk = new net.minecraft.world.level.ChunkPos(context.origin());
         var plan = com.vincenthuto.hemomancy.common.worldgen.pelagic.PelagicLandmarks.plan(geology.terrain(), chunk.x, chunk.z,
-                (x, z) -> geology.sample(x, z).column());
+                geology::column);
         boolean changed = false;
         for (var voxel : plan) {
             var pos = new net.minecraft.core.BlockPos(voxel.x(), voxel.y(), voxel.z());

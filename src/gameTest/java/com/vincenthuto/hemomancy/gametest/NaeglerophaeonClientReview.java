@@ -133,6 +133,9 @@ public final class NaeglerophaeonClientReview {
                             set(resident, "zapCooldown", 0);
                             set(resident, "grabCooldown", 0);
                         }
+                        // Stage shortcuts: the boss reacts on its next tick (transition / ascent to the web's centre).
+                        if (op.equals("phase2")) resident.setHealth(resident.getMaxHealth() * .5F);
+                        if (op.equals("overload")) resident.setHealth(resident.getMaxHealth() * .1F);
                         if (op.equals("release")) {
                             resident.hurt(player.serverLevel().damageSources().playerAttack(player), 12);
                             player.setGameMode(GameType.CREATIVE);

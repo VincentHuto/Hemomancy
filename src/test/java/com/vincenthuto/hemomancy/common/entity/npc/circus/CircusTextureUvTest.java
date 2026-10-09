@@ -12,7 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class CircusTextureUvTest {
 	@Test
 	void facesUseOneHeadCubeWithPaintedEyes() throws Exception {
-		for (String actor : new String[] { "Ringmaster", "KnifeThrower", "FireEater", "Acrobat", "StiltWalker" }) {
+		for (String actor : new String[] { "Ringmaster", "KnifeThrower", "FireEater", "Acrobat", "StiltWalker",
+				"Threadkeeper", "Understudy", "Strongman", "BeastTamer" }) {
 			var path = Path.of("src/main/resources/assets/hemomancy/models/entity/bbmodel/npc/harbinger/circus/Circus" + actor + "Model.bbmodel");
 			var model = JsonParser.parseString(Files.readString(path)).getAsJsonObject();
 			int heads = 0;
@@ -46,7 +47,10 @@ class CircusTextureUvTest {
 		String[] names = {
 				"fire_eater_0.png", "fire_eater_1.png", "stilt_walker_0.png", "stilt_walker_1.png",
 				"acrobat_0.png", "acrobat_1.png", "knife_thrower_0.png", "knife_thrower_1.png",
-				"ringmaster.png", "carousel.png"
+				"ringmaster.png", "carousel.png",
+				"circus_threadkeeper_0.png", "circus_threadkeeper_1.png", "circus_understudy_0.png",
+				"circus_understudy_1.png", "circus_strongman_0.png", "circus_strongman_1.png",
+				"circus_beast_tamer_0.png", "circus_beast_tamer_1.png"
 		};
 		for (String name : names) {
 			var image = ImageIO.read(TEXTURES.resolve(name).toFile());

@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.render.entity.mob.monster;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.mob.monster.BloodDrunkPuppeteerModel;
-import com.vincenthuto.hemomancy.client.render.layer.mob.PuppteerGlowLayer;
+import com.vincenthuto.hemomancy.client.render.layer.mob.PuppeteerGlowLayer;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.BloodDrunkPuppeteerEntity;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.MobRenderer;
@@ -16,7 +16,7 @@ public class BloodDrunkPuppeteerRenderer
 	public BloodDrunkPuppeteerRenderer(Context renderManagerIn) {
 		super(renderManagerIn,
 				new BloodDrunkPuppeteerModel(renderManagerIn.bakeLayer(BloodDrunkPuppeteerModel.LAYER_LOCATION)), 0.5F);
-		this.addLayer(new PuppteerGlowLayer<>(this));
+		this.addLayer(new PuppeteerGlowLayer<>(this));
 
 	}
 

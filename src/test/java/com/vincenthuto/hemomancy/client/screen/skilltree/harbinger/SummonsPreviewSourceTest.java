@@ -12,6 +12,7 @@ public final class SummonsPreviewSourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String view = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/SummonsTabView.java");
+		String bodies = read("src/main/java/com/vincenthuto/hemomancy/common/summon/PuppeteerSummonBodies.java");
 		String controller = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/SummonsTabController.java");
 
 		assertNotContains("summons preview should not use limited follow-mouse entity renderer",
@@ -34,10 +35,14 @@ public final class SummonsPreviewSourceTest {
 				view, "int centerY = top + Math.round((bottom - top) * 0.56F)");
 		assertContains("summons preview should leave bottom room for tall mobs",
 				view, "private static int previewEntityScale(LivingEntity entity, int availableH)");
+		assertContains("preview bodies should come from the shared summon body table",
+				view, "PuppeteerSummonBodies.create(definition.name(), mc.level)");
 		assertContains("scarlet mummer should have a preview entity",
-				view, "case PuppeteerSummonDefinitions.SCARLET_MUMMER -> EntityInit.scarlet_mummer.get().create(mc.level)");
+				bodies, "PuppeteerSummonDefinitions.SCARLET_MUMMER, EntityInit.scarlet_mummer");
 		assertContains("sanguine hound should have a preview entity",
-				view, "case PuppeteerSummonDefinitions.SANGUINE_HOUND -> EntityInit.sanguine_hound.get().create(mc.level)");
+				bodies, "PuppeteerSummonDefinitions.SANGUINE_HOUND, EntityInit.sanguine_hound");
+		assertContains("ringmaster pattern should preview its own entity type",
+				bodies, "PuppeteerSummonDefinitions.RINGMASTER_PATTERN, EntityInit.ringmaster_pattern");
 		assertContains("preview must retain the summon identity for shared entity types",
 				view, "bound.hemomancy$setSummonName(definition.name())");
 		assertContains("summons auto spin should be half the prior speed",

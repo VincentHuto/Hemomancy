@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.model.entity.summon;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.entity.summon.MnemonistPuppetEntity;
+import com.vincenthuto.hemomancy.common.entity.summon.RingmasterPatternEntity;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -10,7 +10,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import net.minecraft.resources.ResourceLocation;
 
-public class RingmasterPatternModel extends HumanoidModel<MnemonistPuppetEntity> {
+// Authored by tools/circus/build_ringmaster_pattern.py; regenerate the model, atlas and BBModel together.
+public class RingmasterPatternModel extends HumanoidModel<RingmasterPatternEntity> {
 	public static final ModelLayerLocation LAYER_LOCATION =
 			new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID, "ringmaster_pattern"), "main");
 	private final ModelPart leftCoattail;
@@ -24,103 +25,30 @@ public class RingmasterPatternModel extends HumanoidModel<MnemonistPuppetEntity>
 
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition mesh = new MeshDefinition();
-		PartDefinition part = mesh.getRoot();
-
-		PartDefinition head = part.addOrReplaceChild("head", CubeListBuilder.create()
-				.texOffs(22, 0).addBox(-2.5F, -7F, -2F, 5F, 7F, 4F)
-				.texOffs(48, 8).addBox(-2F, -6.5F, -2.5F, 4F, 6F, 1F),
-				PartPose.offsetAndRotation(0F, 0F, 0F, 0F, 0F, 0F));
-
-		PartDefinition hat = part.addOrReplaceChild("hat", CubeListBuilder.create(),
-				PartPose.offsetAndRotation(0F, 0F, 0F, 0F, 0F, 0F));
-
-		PartDefinition topHat = head.addOrReplaceChild("top_hat", CubeListBuilder.create()
-				.texOffs(40, 0).addBox(-4F, -1F, -3.5F, 8F, 1F, 7F)
-				.texOffs(70, 0).addBox(-2.5F, -5F, -2F, 5F, 4F, 4F)
-				.texOffs(66, 8).addBox(-3F, -2F, -2.5F, 6F, 1F, 5F),
-				PartPose.offsetAndRotation(0F, -7F, 0F, 0F, 0F, -0.07F));
-
-		PartDefinition body = part.addOrReplaceChild("body", CubeListBuilder.create()
-				.texOffs(0, 0).addBox(-3F, 0F, -1.5F, 6F, 10F, 3F)
-				.texOffs(88, 0).addBox(-2F, 1F, -2F, 4F, 7F, 1F)
-				.texOffs(88, 8).addBox(-3F, 9F, -2F, 6F, 2F, 4F),
-				PartPose.offsetAndRotation(0F, 0F, 0F, 0F, 0F, 0F));
-
-		PartDefinition rightLapel = body.addOrReplaceChild("right_lapel", CubeListBuilder.create()
-				.texOffs(98, 0).addBox(-2F, 0F, 0F, 2F, 7F, 1F),
-				PartPose.offsetAndRotation(-0.5F, 0F, -2F, 0F, 0F, 0.2F));
-
-		PartDefinition rightCoattail = body.addOrReplaceChild("right_coattail", CubeListBuilder.create()
-				.texOffs(104, 0).addBox(-3F, 0F, 0F, 3F, 7F, 1F)
-				.texOffs(112, 0).addBox(-3F, 0F, -0.1F, 1F, 7F, 1F),
-				PartPose.offsetAndRotation(-0.3F, 10F, 1F, 0.15F, 0F, 0.1F));
-
-		PartDefinition rightArm = part.addOrReplaceChild("right_arm", CubeListBuilder.create()
-				.texOffs(116, 0).addBox(-1F, -2F, -1F, 2F, 6F, 2F)
-				.texOffs(108, 8).addBox(-1.5F, -2F, -1.5F, 3F, 1F, 3F)
-				.texOffs(22, 11).addBox(-1.5F, 3F, -1.5F, 3F, 1F, 3F),
-				PartPose.offsetAndRotation(-4F, 2F, 0F, 0F, 0F, 0F));
-
-		PartDefinition rightForearm = rightArm.addOrReplaceChild("right_forearm", CubeListBuilder.create()
-				.texOffs(58, 8).addBox(-1F, 0F, -1F, 2F, 5F, 2F)
-				.texOffs(108, 8).addBox(-1.5F, 3.5F, -1.5F, 3F, 1F, 3F)
-				.texOffs(120, 8).addBox(-1F, 5F, -1F, 2F, 2F, 2F),
-				PartPose.offsetAndRotation(0F, 4F, 0F, 0F, 0F, 0F));
-
-		PartDefinition rightLeg = part.addOrReplaceChild("right_leg", CubeListBuilder.create()
-				.texOffs(40, 8).addBox(-1F, 0F, -1F, 2F, 6F, 2F)
-				.texOffs(22, 11).addBox(-1.5F, 5F, -1.5F, 3F, 1F, 3F),
-				PartPose.offsetAndRotation(-1.5F, 12F, 0F, 0F, 0F, 0F));
-
-		PartDefinition rightShin = rightLeg.addOrReplaceChild("right_shin", CubeListBuilder.create()
-				.texOffs(58, 8).addBox(-1F, 0F, -1F, 2F, 5F, 2F)
-				.texOffs(22, 11).addBox(-1.5F, 5F, -2F, 3F, 1F, 3F),
-				PartPose.offsetAndRotation(0F, 6F, 0F, 0F, 0F, 0F));
-
-		PartDefinition rightCommandThread = body.addOrReplaceChild("right_command_thread", CubeListBuilder.create()
-				.texOffs(18, 0).addBox(-0.5F, 0F, 0F, 1F, 12F, 1F),
-				PartPose.offsetAndRotation(-3F, -1F, 2F, 0F, 0F, 0F));
-
-		PartDefinition leftLapel = body.addOrReplaceChild("left_lapel", CubeListBuilder.create()
-				.texOffs(98, 0).addBox(0F, 0F, 0F, 2F, 7F, 1F),
-				PartPose.offsetAndRotation(0.5F, 0F, -2F, 0F, 0F, -0.2F));
-
-		PartDefinition leftCoattail = body.addOrReplaceChild("left_coattail", CubeListBuilder.create()
-				.texOffs(104, 0).addBox(0F, 0F, 0F, 3F, 7F, 1F)
-				.texOffs(112, 0).addBox(2F, 0F, -0.1F, 1F, 7F, 1F),
-				PartPose.offsetAndRotation(0.3F, 10F, 1F, 0.15F, 0F, -0.1F));
-
-		PartDefinition leftArm = part.addOrReplaceChild("left_arm", CubeListBuilder.create()
-				.texOffs(116, 0).addBox(-1F, -2F, -1F, 2F, 6F, 2F)
-				.texOffs(108, 8).addBox(-1.5F, -2F, -1.5F, 3F, 1F, 3F)
-				.texOffs(22, 11).addBox(-1.5F, 3F, -1.5F, 3F, 1F, 3F),
-				PartPose.offsetAndRotation(4F, 2F, 0F, 0F, 0F, 0F));
-
-		PartDefinition leftForearm = leftArm.addOrReplaceChild("left_forearm", CubeListBuilder.create()
-				.texOffs(58, 8).addBox(-1F, 0F, -1F, 2F, 5F, 2F)
-				.texOffs(108, 8).addBox(-1.5F, 3.5F, -1.5F, 3F, 1F, 3F)
-				.texOffs(120, 8).addBox(-1F, 5F, -1F, 2F, 2F, 2F),
-				PartPose.offsetAndRotation(0F, 4F, 0F, 0F, 0F, 0F));
-
-		PartDefinition leftLeg = part.addOrReplaceChild("left_leg", CubeListBuilder.create()
-				.texOffs(40, 8).addBox(-1F, 0F, -1F, 2F, 6F, 2F)
-				.texOffs(22, 11).addBox(-1.5F, 5F, -1.5F, 3F, 1F, 3F),
-				PartPose.offsetAndRotation(1.5F, 12F, 0F, 0F, 0F, 0F));
-
-		PartDefinition leftShin = leftLeg.addOrReplaceChild("left_shin", CubeListBuilder.create()
-				.texOffs(58, 8).addBox(-1F, 0F, -1F, 2F, 5F, 2F)
-				.texOffs(22, 11).addBox(-1.5F, 5F, -2F, 3F, 1F, 3F),
-				PartPose.offsetAndRotation(0F, 6F, 0F, 0F, 0F, 0F));
-
-		PartDefinition leftCommandThread = body.addOrReplaceChild("left_command_thread", CubeListBuilder.create()
-				.texOffs(18, 0).addBox(-0.5F, 0F, 0F, 1F, 12F, 1F),
-				PartPose.offsetAndRotation(3F, -1F, 2F, 0F, 0F, 0F));
-
-		return LayerDefinition.create(mesh, 128, 128);
+        PartDefinition head = mesh.getRoot().addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-2.5F, -5.0F, -2.0F, 5.0F, 5.0F, 4.0F), PartPose.offset(0.0F, 0.0F, 0.0F));
+        PartDefinition top_hat = head.addOrReplaceChild("top_hat", CubeListBuilder.create().texOffs(19, 0).addBox(-4.0F, -1.0F, -4.0F, 8.0F, 1.0F, 8.0F).texOffs(52, 0).addBox(-3.0F, -9.0F, -3.0F, 6.0F, 8.0F, 6.0F).texOffs(77, 0).addBox(-3.5F, -3.0F, -3.5F, 7.0F, 2.0F, 7.0F).texOffs(106, 0).addBox(-1.0F, -3.0F, -4.5F, 2.0F, 2.0F, 1.0F), PartPose.offsetAndRotation(0.0F, -5.0F, 0.0F, 0.0F, 0.0F, -0.06981317007977318F));
+        PartDefinition hat = mesh.getRoot().addOrReplaceChild("hat", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
+        PartDefinition body = mesh.getRoot().addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 15).addBox(-3.0F, 0.0F, -2.0F, 6.0F, 9.0F, 4.0F).texOffs(21, 15).addBox(-2.0F, 1.0F, -2.5F, 4.0F, 7.0F, 1.0F).texOffs(32, 15).addBox(-3.5F, 9.0F, -2.0F, 7.0F, 3.0F, 4.0F).texOffs(55, 15).addBox(-3.0F, -2.0F, -2.5F, 6.0F, 2.0F, 5.0F), PartPose.offset(0.0F, 0.0F, 0.0F));
+        PartDefinition left_lapel = body.addOrReplaceChild("left_lapel", CubeListBuilder.create().texOffs(78, 15).addBox(0.0F, 0.0F, -0.5F, 2.0F, 7.0F, 1.0F), PartPose.offsetAndRotation(1.0F, 0.0F, -2.5F, 0.0F, 0.0F, -0.19198621771937624F));
+        PartDefinition left_coattail = body.addOrReplaceChild("left_coattail", CubeListBuilder.create().texOffs(85, 15).addBox(0.0F, 0.0F, 0.0F, 3.0F, 10.0F, 1.0F), PartPose.offsetAndRotation(0.5F, 10.0F, 1.0F, 0.15707963267948966F, 0.0F, -0.10471975511965978F));
+        PartDefinition left_command_thread = body.addOrReplaceChild("left_command_thread", CubeListBuilder.create().texOffs(94, 15).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 12.0F, 1.0F), PartPose.offset(3.5F, -1.0F, 2.5F));
+        PartDefinition left_arm = mesh.getRoot().addOrReplaceChild("left_arm", CubeListBuilder.create().texOffs(99, 15).addBox(-1.0F, -2.0F, -1.0F, 2.0F, 6.0F, 2.0F).texOffs(108, 15).addBox(-2.0F, -3.0F, -1.5F, 4.0F, 1.0F, 3.0F).texOffs(0, 29).addBox(-2.0F, -2.0F, -1.5F, 4.0F, 1.0F, 3.0F).texOffs(15, 29).addBox(-1.5F, 3.0F, -1.5F, 3.0F, 1.0F, 3.0F), PartPose.offset(4.0F, 2.0F, 0.0F));
+        PartDefinition left_forearm = left_arm.addOrReplaceChild("left_forearm", CubeListBuilder.create().texOffs(28, 29).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 4.0F, 2.0F).texOffs(37, 29).addBox(-1.5F, 3.0F, -1.5F, 3.0F, 1.0F, 3.0F).texOffs(50, 29).addBox(-1.0F, 4.0F, -1.0F, 2.0F, 3.0F, 2.0F), PartPose.offsetAndRotation(0.0F, 4.0F, 0.0F, -0.4537856055185257F, 0.0F, 0.0F));
+        PartDefinition left_leg = mesh.getRoot().addOrReplaceChild("left_leg", CubeListBuilder.create().texOffs(59, 29).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 6.0F, 2.0F), PartPose.offset(1.5F, 12.0F, 0.0F));
+        PartDefinition left_shin = left_leg.addOrReplaceChild("left_shin", CubeListBuilder.create().texOffs(68, 29).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 5.0F, 2.0F).texOffs(77, 29).addBox(-1.0F, 5.0F, -2.0F, 2.0F, 1.0F, 3.0F), PartPose.offset(0.0F, 6.0F, 0.0F));
+        PartDefinition right_lapel = body.addOrReplaceChild("right_lapel", CubeListBuilder.create().texOffs(88, 29).addBox(-2.0F, 0.0F, -0.5F, 2.0F, 7.0F, 1.0F), PartPose.offsetAndRotation(-1.0F, 0.0F, -2.5F, 0.0F, 0.0F, 0.19198621771937624F));
+        PartDefinition right_coattail = body.addOrReplaceChild("right_coattail", CubeListBuilder.create().texOffs(95, 29).addBox(-3.0F, 0.0F, 0.0F, 3.0F, 10.0F, 1.0F), PartPose.offsetAndRotation(-0.5F, 10.0F, 1.0F, 0.15707963267948966F, 0.0F, 0.10471975511965978F));
+        PartDefinition right_command_thread = body.addOrReplaceChild("right_command_thread", CubeListBuilder.create().texOffs(104, 29).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 12.0F, 1.0F), PartPose.offset(-3.5F, -1.0F, 2.5F));
+        PartDefinition right_arm = mesh.getRoot().addOrReplaceChild("right_arm", CubeListBuilder.create().texOffs(109, 29).addBox(-1.0F, -2.0F, -1.0F, 2.0F, 6.0F, 2.0F).texOffs(0, 43).addBox(-2.0F, -3.0F, -1.5F, 4.0F, 1.0F, 3.0F).texOffs(15, 43).addBox(-2.0F, -2.0F, -1.5F, 4.0F, 1.0F, 3.0F).texOffs(30, 43).addBox(-1.5F, 3.0F, -1.5F, 3.0F, 1.0F, 3.0F), PartPose.offset(-4.0F, 2.0F, 0.0F));
+        PartDefinition right_forearm = right_arm.addOrReplaceChild("right_forearm", CubeListBuilder.create().texOffs(43, 43).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 4.0F, 2.0F).texOffs(52, 43).addBox(-1.5F, 3.0F, -1.5F, 3.0F, 1.0F, 3.0F).texOffs(65, 43).addBox(-1.0F, 4.0F, -1.0F, 2.0F, 3.0F, 2.0F), PartPose.offsetAndRotation(0.0F, 4.0F, 0.0F, -0.4537856055185257F, 0.0F, 0.0F));
+        PartDefinition right_leg = mesh.getRoot().addOrReplaceChild("right_leg", CubeListBuilder.create().texOffs(74, 43).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 6.0F, 2.0F), PartPose.offset(-1.5F, 12.0F, 0.0F));
+        PartDefinition right_shin = right_leg.addOrReplaceChild("right_shin", CubeListBuilder.create().texOffs(83, 43).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 5.0F, 2.0F).texOffs(92, 43).addBox(-1.0F, 5.0F, -2.0F, 2.0F, 1.0F, 3.0F), PartPose.offset(0.0F, 6.0F, 0.0F));
+        PartDefinition baton = right_forearm.addOrReplaceChild("baton", CubeListBuilder.create().texOffs(103, 43).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 6.0F, 1.0F).texOffs(108, 43).addBox(-0.5F, 6.0F, -0.5F, 1.0F, 1.0F, 1.0F), PartPose.offsetAndRotation(0.0F, 6.0F, -0.5F, -2.0943951023931953F, 0.0F, 0.0F));
+        return LayerDefinition.create(mesh, 128, 128);
 	}
 
 	@Override
-	public void setupAnim(MnemonistPuppetEntity entity, float limbSwing, float limbSwingAmount,
+	public void setupAnim(RingmasterPatternEntity entity, float limbSwing, float limbSwingAmount,
 			float ageInTicks, float netHeadYaw, float headPitch) {
 		super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
 		// Humanoid attacks assume five-pixel shoulders; keep the authored puppet joints attached.

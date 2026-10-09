@@ -3126,8 +3126,11 @@ public final class ClinicalBloodProgressionGameTests {
                             && com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress.acclimation(actor) == 0,
                     "Dead-player ticks must not earn Circus discovery or passive acclimation");
             actor.setHealth(20);
-            com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.onPlayerTick(
-                    new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
+            for (int interval = 0; interval < 4; interval++) {
+                actor.tickCount += 20;
+                com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.onPlayerTick(
+                        new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
+            }
             h.assertTrue(com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.hasDiscovered(actor)
                             && com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress.acclimation(actor) == 1
                             && HemoCapabilityAccess.requireInitiatoryDegree(actor).getDegreeNumber() == 0,

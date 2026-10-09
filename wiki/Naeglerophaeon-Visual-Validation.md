@@ -6,6 +6,22 @@ Three disjoint pulse slots limit axonal activity to three short tendrils; tail n
 Geometry is sampled by arc length, with transported frames and 32/64-block detail reductions.
 The core retains its 1.8 by 1.6 collision box; culling includes the full tail.
 
+## Combat phases (2026-10-09 overhaul)
+
+The fight is now two phases plus an Overload finale; see `docs/HEMOMANCY_REFERENCE.md`.
+Each move has its own Blockbench pose in `NaeglerophaeonBlockModel`:
+- lunge flare/tuck;
+- lash coil and rolling starburst;
+- nova cocoon and radial release;
+- conduction reach;
+- transition shake;
+- dive/emerge body scaling (the boss is invisible in transit);
+- the Overload inverted umbrella, with a writhing tail and a steady-node strobe that climbs on each 30-tick pulse, plus client tail bolts.
+
+Phase-two core light is tinted violet. Drained bodies swap to
+`textures/entity/naeglerophaeon_cube_palette_drained.png` (a desaturated copy of the cube palette). They skip the emissive
+pass, draw former light organs in the opaque pass, and have no tip sparks.
+
 ## Automated checks
 
 Commands:
@@ -22,6 +38,26 @@ shared grip coordinates, history resets, release interpolation and resource/comb
 The dedicated server suite covers gradual capture and terminal damage, actual multipart damage,
 core interruption, victim removal, capture misses, obstruction during lightning windup and pulling,
 isolated-platform flight, observer snapshots, and save/reload ownership without restoring a hold.
+The overhaul adds 18 dedicated tests:
+- lunge hit and wall stun;
+- lash hit and back-off miss;
+- volley dodge-then-hit;
+- grab drain healing;
+- single transition that persists through reload;
+- node-to-node blink with transit invulnerability, and no blink without nodes;
+- conduction along a fiber, sparing a player four blocks off it;
+- nova in the open and behind cover;
+- fiber-cut retaliation during a hold;
+- the Overload line and floor, with kill-damage bypass;
+- node burn-out with 2-6 sparks and no drops, then Drained death;
+- immediate Drained with no nodes;
+- the no-audience pause (its own batch);
+- Overload/Drained reload.
+
+`NaeglerophaeonCombatRulesTest` covers stage thresholds, health clamping, move priority, phase-two cooldowns, spark counts and the
+sprint-dodge invariant. Damage numbers come from the server suite, not from the assisted client.
+The `empty` template's stone floor tops out at helper y=5, and the GameTest framework encases the 32x12x24 volume in
+barriers. Node fixtures must stay inside it.
 Late tracking is verified by applying the real entity-data snapshot; it is not a two-client session.
 
 ## Live client review
@@ -38,6 +74,12 @@ No quantitative frame-time benchmark is claimed.
 
 The editable 64x64 tissue atlas is `textures/entity/naeglerophaeon.png`. The built-in imagegen
 source and export details are recorded in `tools/model_export/naeglerophaeon-tissue-prompt.txt`.
+
+## Overhaul review status: 2026-10-09
+
+- 26 focused JVM tests and all 47 `naeglerophaeon_validation` GameTests passed (17 Axonal, 12 original, 18 new).
+- The review fixture accepts `phase2` and `overload` ops in `membrane-review.json` to force each stage.
+- A live client review of the new poses, Overload and Drained has **not** been performed yet.
 
 ## Completed review: 2026-09-23
 

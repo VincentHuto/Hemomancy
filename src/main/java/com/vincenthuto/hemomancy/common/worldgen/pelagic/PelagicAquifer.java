@@ -12,7 +12,7 @@ public final class PelagicAquifer implements Aquifer {
     public PelagicAquifer(Aquifer original, PelagicContext context) { this.original = original; this.context = context; }
 
     @Override @Nullable public BlockState computeSubstance(DensityFunction.FunctionContext point, double density) {
-        var column = context.sample(point.blockX(), point.blockZ()).column();
+        var column = context.column(point.blockX(), point.blockZ());
         if (column.influence() > 0 && point.blockY() >= column.floor() - 6) {
             delegated = false;
             return density > 0 ? null : point.blockY() < 63 ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState();
@@ -22,7 +22,7 @@ public final class PelagicAquifer implements Aquifer {
     }
     @Override public boolean shouldScheduleFluidUpdate() { return delegated && original.shouldScheduleFluidUpdate(); }
     public boolean protectsSeabed(int x, int y, int z) {
-        var column = context.sample(x, z).column();
+        var column = context.column(x, z);
         return column.influence() >= .99 && y <= column.floor() && y >= column.floor() - 8;
     }
 }

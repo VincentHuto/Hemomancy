@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
@@ -18,7 +20,6 @@ import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
 import com.vincenthuto.hemomancy.common.summon.RingmasterConductorRules;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -28,6 +29,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
@@ -110,6 +112,14 @@ public final class BoundSummonBehavior {
 			return Optional.empty();
 		}
 		return Optional.ofNullable(serverLevel.getPlayerByUUID(ownerId));
+	}
+
+	/** Registered defaults read the summon definition, so unbound and preview bodies match a fresh summon. */
+	public static AttributeSupplier.Builder definitionAttributes(AttributeSupplier.Builder base, String summonName) {
+		PuppeteerSummonDefinition definition = PuppeteerSummonDefinitions.byName(summonName).orElseThrow();
+		return base.add(Attributes.MAX_HEALTH, definition.baseHealth())
+				.add(Attributes.ATTACK_DAMAGE, definition.baseDamage())
+				.add(Attributes.MOVEMENT_SPEED, definition.movementSpeed());
 	}
 
 	public static void applyStats(Mob mob, PuppeteerSummonDefinition definition, int livingSinewLevel) {
@@ -545,9 +555,12 @@ public final class BoundSummonBehavior {
 
 	private static void unravel(Mob mob, ServerPlayer owner, String messageKey) {
 		if (mob.level() instanceof ServerLevel serverLevel) {
-			serverLevel.sendParticles(ParticleTypes.CRIMSON_SPORE,
-					mob.getX(), mob.getY() + mob.getBbHeight() * 0.5, mob.getZ(),
-					18, 0.25, 0.35, 0.25, 0.02);
+			// The binding comes apart into the blood that held it.
+			double y = mob.getY() + mob.getBbHeight() * 0.5;
+			serverLevel.sendParticles(HemoParticleData.glow(ParticleColor.BLOOD),
+					mob.getX(), y, mob.getZ(), 10, 0.25, 0.35, 0.25, 0.02);
+			serverLevel.sendParticles(HemoParticleData.bloodCell(ParticleColor.BLOOD),
+					mob.getX(), y, mob.getZ(), 8, 0.25, 0.35, 0.25, 0.02);
 		}
 		mob.playSound(SoundEvents.CHAIN_BREAK, 0.5F, 0.8F);
 		owner.displayClientMessage(net.minecraft.network.chat.Component.translatable(messageKey,

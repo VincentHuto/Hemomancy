@@ -6,6 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.vincenthuto.hemomancy.common.init.StructureInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.QuartPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
@@ -73,6 +74,11 @@ public final class CircusPavilionStructure extends Structure {
 				projectStartToHeightmap, maxDistanceFromCenter, PoolAliasLookup.EMPTY,
 				JigsawStructure.DEFAULT_DIMENSION_PADDING, LiquidSettings.APPLY_WATERLOGGING);
         if (generated.isEmpty()) return Optional.empty();
+        // Vanilla rejects this same stub after findGenerationPoint returns. Check before expensive terrain scans.
+        var position = generated.get().position();
+        if (!context.validBiome().test(context.chunkGenerator().getBiomeSource().getNoiseBiome(
+                QuartPos.fromBlock(position.getX()), QuartPos.fromBlock(position.getY()),
+                QuartPos.fromBlock(position.getZ()), context.randomState().sampler()))) return Optional.empty();
         var pieces = generated.get().getPiecesBuilder();
         if (!StructurePlacementChecks.isSuitableTroupeFootprint(context, pieces.getBoundingBox())) return Optional.empty();
         return Optional.of(new GenerationStub(generated.get().position(), com.mojang.datafixers.util.Either.right(pieces)));

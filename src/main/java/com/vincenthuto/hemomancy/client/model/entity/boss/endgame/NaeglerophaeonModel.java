@@ -10,7 +10,14 @@ import com.vincenthuto.hemomancy.common.entity.boss.endgame.NaeglerophaeonEntity
 public final class NaeglerophaeonModel {
     public record Input(double time, int seed, double yaw, double pitch, int phase, double phaseTicks,
             Vec3 victim, double victimYaw, double victimHeight, Vec3[] history, Vec3[] releasedTail,
-            double releaseBlend, double hunting, NaeglerophaeonPose.TurnLag turns) {
+            double releaseBlend, double hunting, NaeglerophaeonPose.TurnLag turns, boolean enraged) {
+        public Input(double time, int seed, double yaw, double pitch, int phase, double phaseTicks,
+                Vec3 victim, double victimYaw, double victimHeight, Vec3[] history, Vec3[] releasedTail,
+                double releaseBlend, double hunting, NaeglerophaeonPose.TurnLag turns) {
+            this(time,seed,yaw,pitch,phase,phaseTicks,victim,victimYaw,victimHeight,history,releasedTail,
+                    releaseBlend,hunting,turns,false);
+        }
+        public boolean drained() { return phase==NaeglerophaeonEntity.DRAINED; }
         public Input(double time, int seed, double yaw, double pitch, int phase, double phaseTicks,
                 Vec3 victim, double victimYaw, double victimHeight, Vec3[] history, Vec3[] releasedTail,
                 double releaseBlend, double hunting) {

@@ -1,6 +1,7 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "builtin/entity",
   "textures": {
-    "layer0": "hemomancy:item/marionette_crossbar"
-  }
+    "particle": "hemomancy:item/marionette_crossbar"
+  },
+  "gui_light": "front"
 }

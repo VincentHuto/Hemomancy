@@ -28,7 +28,7 @@ public final class BloodDrunkPuppeteerBehaviorSourceTest {
 		assertContains("world thread renderer should recognize puppeteer-summoned dolls",
 				threadRenderer, "entity instanceof EnthralledDollEntity doll");
 		assertContains("world thread renderer should anchor wild doll threads to the puppeteer",
-				threadRenderer, "findPuppeteerOwner");
+				threadRenderer, "controller instanceof BloodDrunkPuppeteerEntity");
 
 		String dollRenderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/entity/mob/monster/EnthralledDollRenderer.java");
 		assertDoesNotContain("doll renderer should not keep a second fishing-line style tether renderer",

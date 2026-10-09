@@ -1,8 +1,10 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -26,19 +28,8 @@ import java.util.Comparator;
 import java.util.Optional;
 import java.util.UUID;
 
-public class SanguineHoundEntity extends Wolf implements BoundPuppeteerSummon {
-	private static final EntityDataAccessor<Optional<UUID>> DATA_OWNER_UUID =
-			SynchedEntityData.defineId(SanguineHoundEntity.class, EntityDataSerializers.OPTIONAL_UUID);
-	private static final EntityDataAccessor<Optional<UUID>> DATA_CROSSBAR_UUID =
-			SynchedEntityData.defineId(SanguineHoundEntity.class, EntityDataSerializers.OPTIONAL_UUID);
-	private static final EntityDataAccessor<String> DATA_SUMMON_NAME =
-			SynchedEntityData.defineId(SanguineHoundEntity.class, EntityDataSerializers.STRING);
-	private static final EntityDataAccessor<Integer> DATA_DISMISSAL_TICKS =
-			SynchedEntityData.defineId(SanguineHoundEntity.class, EntityDataSerializers.INT);
-	private static final EntityDataAccessor<Boolean> DATA_TRIAL_SUMMON =
-			SynchedEntityData.defineId(SanguineHoundEntity.class, EntityDataSerializers.BOOLEAN);
-	private static final EntityDataAccessor<Optional<UUID>> DATA_TRIAL_CASTER_UUID =
-			SynchedEntityData.defineId(SanguineHoundEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+public class SanguineHoundEntity extends Wolf implements SyncedBoundSummon {
+	private static final BoundSummonSync SYNC = BoundSummonSync.define(SanguineHoundEntity.class);
 	private static final EntityDataAccessor<Boolean> DATA_CUR =
 			SynchedEntityData.defineId(SanguineHoundEntity.class, EntityDataSerializers.BOOLEAN);
 	private static final EntityDataAccessor<Optional<UUID>> DATA_CUR_OWNER_UUID =
@@ -52,10 +43,8 @@ public class SanguineHoundEntity extends Wolf implements BoundPuppeteerSummon {
 	}
 
 	public static AttributeSupplier.Builder setAttributes() {
-		return Wolf.createAttributes()
-				.add(Attributes.MAX_HEALTH, 30.0D)
-				.add(Attributes.ATTACK_DAMAGE, 6.0D)
-				.add(Attributes.MOVEMENT_SPEED, 0.36D);
+		return BoundSummonBehavior.definitionAttributes(Wolf.createAttributes(),
+				PuppeteerSummonDefinitions.SANGUINE_HOUND);
 	}
 
 	@Override
@@ -67,12 +56,7 @@ public class SanguineHoundEntity extends Wolf implements BoundPuppeteerSummon {
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		super.defineSynchedData(builder);
-		builder.define(DATA_OWNER_UUID, Optional.empty());
-		builder.define(DATA_CROSSBAR_UUID, Optional.empty());
-		builder.define(DATA_SUMMON_NAME, "sanguine_hound");
-		builder.define(DATA_DISMISSAL_TICKS, 0);
-		builder.define(DATA_TRIAL_SUMMON, false);
-		builder.define(DATA_TRIAL_CASTER_UUID, Optional.empty());
+		SYNC.defineDefaults(builder, "sanguine_hound");
 		builder.define(DATA_CUR, false);
 		builder.define(DATA_CUR_OWNER_UUID, Optional.empty());
 		builder.define(DATA_CUR_AGE, 0);
@@ -123,8 +107,10 @@ public class SanguineHoundEntity extends Wolf implements BoundPuppeteerSummon {
 			if (inheritedTarget != null && cur.canAttack(inheritedTarget)) cur.setTarget(inheritedTarget);
 			serverLevel.addFreshEntity(cur);
 		}
-		serverLevel.sendParticles(ParticleTypes.CRIMSON_SPORE, getX(), getY() + 0.45D, getZ(),
-				36, 0.55D, 0.35D, 0.55D, 0.045D);
+		serverLevel.sendParticles(HemoParticleData.bloodCell(ParticleColor.BLOOD), getX(), getY() + 0.45D, getZ(),
+				24, 0.55D, 0.35D, 0.55D, 0.045D);
+		serverLevel.sendParticles(HemoParticleData.glow(ParticleColor.BLOOD), getX(), getY() + 0.45D, getZ(),
+				12, 0.45D, 0.3D, 0.45D, 0.02D);
 		playSound(SoundEvents.SLIME_SQUISH_SMALL, 0.9F, 0.55F);
 		discard();
 	}
@@ -173,8 +159,8 @@ public class SanguineHoundEntity extends Wolf implements BoundPuppeteerSummon {
 
 	private void dissolveCur() {
 		if (level() instanceof ServerLevel serverLevel) {
-			serverLevel.sendParticles(ParticleTypes.FALLING_LAVA, getX(), getY() + 0.25D, getZ(),
-					12, 0.22D, 0.15D, 0.22D, 0.01D);
+			serverLevel.sendParticles(HemoParticleData.bloodCell(ParticleColor.BLOOD), getX(), getY() + 0.25D, getZ(),
+					10, 0.22D, 0.15D, 0.22D, 0.01D);
 		}
 		discard();
 	}
@@ -228,16 +214,5 @@ public class SanguineHoundEntity extends Wolf implements BoundPuppeteerSummon {
 		ruptured = tag.getBoolean("Ruptured");
 	}
 
-	@Override public UUID hemomancy$getOwnerUUID() { return entityData.get(DATA_OWNER_UUID).orElse(null); }
-	@Override public void hemomancy$setOwnerUUID(UUID ownerUuid) { entityData.set(DATA_OWNER_UUID, Optional.ofNullable(ownerUuid)); }
-	@Override public UUID hemomancy$getCrossbarUUID() { return entityData.get(DATA_CROSSBAR_UUID).orElse(null); }
-	@Override public void hemomancy$setCrossbarUUID(UUID crossbarUuid) { entityData.set(DATA_CROSSBAR_UUID, Optional.ofNullable(crossbarUuid)); }
-	@Override public String hemomancy$getSummonName() { return entityData.get(DATA_SUMMON_NAME); }
-	@Override public void hemomancy$setSummonName(String summonName) { entityData.set(DATA_SUMMON_NAME, summonName == null ? "" : summonName); }
-	@Override public int hemomancy$getDismissalTicks() { return entityData.get(DATA_DISMISSAL_TICKS); }
-	@Override public void hemomancy$setDismissalTicks(int ticks) { entityData.set(DATA_DISMISSAL_TICKS, Math.max(0, ticks)); }
-	@Override public boolean hemomancy$isTrialSummon() { return entityData.get(DATA_TRIAL_SUMMON); }
-	@Override public void hemomancy$setTrialSummon(boolean trialSummon) { entityData.set(DATA_TRIAL_SUMMON, trialSummon); }
-	@Override public UUID hemomancy$getTrialCasterUUID() { return entityData.get(DATA_TRIAL_CASTER_UUID).orElse(null); }
-	@Override public void hemomancy$setTrialCasterUUID(UUID casterUuid) { entityData.set(DATA_TRIAL_CASTER_UUID, Optional.ofNullable(casterUuid)); }
+	@Override public BoundSummonSync hemomancy$sync() { return SYNC; }
 }

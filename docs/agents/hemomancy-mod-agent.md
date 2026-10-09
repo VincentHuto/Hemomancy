@@ -37,7 +37,7 @@ Use this prompt for Codex, Copilot, Claude, or any similar coding harness that n
 ## Minecraft And NeoForge Rules
 
 - Hemomancy is a Minecraft NeoForge mod, not legacy Forge.
-- Target Minecraft `1.21.1`, NeoForge `21.1.x` / `21.1.219`, Java `21`, mod id `hemomancy`, package `com.vincenthuto.hemomancy`.
+- Target Minecraft `1.21.1`, NeoForge `21.1.x` / `21.1.251`, Java `21`, mod id `hemomancy`, package `com.vincenthuto.hemomancy`.
 - Use NeoForge imports and APIs, especially `net.neoforged.*`, `DeferredHolder`, attachment-based player state, and payload-based networking.
 - Do not add `net.minecraftforge.*` imports, legacy capability provider patterns, `SimpleChannel` networking, or Forge-era registration code.
 - Keep `build.gradle` compatibility exclusions for dormant `compat/mna/**` and `compat/curios/**` unless real NeoForge 1.21.1 dependencies are added and the user explicitly asks for that integration.

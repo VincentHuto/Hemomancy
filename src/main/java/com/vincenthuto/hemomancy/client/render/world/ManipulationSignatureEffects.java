@@ -116,6 +116,14 @@ final class ManipulationSignatureEffects {
                     drop(p,v,at,.035,.065,0xBC2940,fade,0);
                 }
             }
+            case MNEMONIC_REPLAY -> {
+                // A Mnemonist's threads lash out to its target, then reel the remembered wound back in.
+                double reach=Mth.clamp(age/5,0,1)*(1-Mth.clamp((age-12)/8,0,1));
+                Vec3 tip=end.scale(reach);
+                for(int i=0;i<3;i++)
+                    strand(p,v,Vec3.ZERO,tip,.022,.22,i*2.1+time*.02,i==1?0x8E1A2A:0xC3324D,fade);
+                if(age>4) drop(p,v,end,.06*(1-Mth.clamp((age-4)/14,0,1)),.1,0xE4DCD8,fade,time*.05);
+            }
             default -> { return false; }
         }
         return true;

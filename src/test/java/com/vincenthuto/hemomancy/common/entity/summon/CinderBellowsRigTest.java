@@ -47,6 +47,22 @@ class CinderBellowsRigTest {
     }
 
     @Test
+    void inhaleRearsBackThenTheBreathLungesTheNeckAndStokesTheEmbers() {
+        var baked = CinderBellowsModel.createBodyLayer().bakeRoot();
+        var model = new CinderBellowsModel(baked);
+        var neck = baked.getChild("root").getChild("pelvis").getChild("abdomen").getChild("chest").getChild("neck");
+        model.setupPose(0, 0, 10, 0, 0, 0);
+        float rest = neck.xRot;
+        model.setupPose(0, 0, 10, 0, 0, 18);
+        assertTrue(neck.xRot < rest - .1F, "The draw must rear the neck back");
+        model.setupPose(0, 0, 10, 0, 0, 40);
+        assertTrue(neck.xRot > rest + .2F, "The breath must lunge the neck forward");
+        assertEquals(0, CinderBellowsModel.emberHeat(0), .00001);
+        assertEquals(1, CinderBellowsModel.emberHeat(40), .00001);
+        assertTrue(CinderBellowsModel.emberHeat(18) < CinderBellowsModel.emberHeat(40));
+    }
+
+    @Test
     void everyFrameResetsJointRotationsTranslationsAndLungScale() {
         var baked = CinderBellowsModel.createBodyLayer().bakeRoot();
         var model = new CinderBellowsModel(baked);

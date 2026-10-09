@@ -10,9 +10,22 @@ public final class PelagicTerrainSampler {
 
     private static final double[] CONTINENTALNESS = {-.74, -.64, -.54, -.46, -.36, -.28, -.20};
     private static final double[] DEPTH = {-53.5, -31, -8, 13, 33, 46, 58};
+    static final Column INACTIVE = new Column(58, 0, Form.PLAIN, 0, false);
     private final long seed;
 
     public PelagicTerrainSampler(long seed) { this.seed = seed; }
+
+    public static boolean mayShape(double continentalness) {
+        return oceanInfluence(continentalness) > 0 || shoreInfluence(continentalness) > 0;
+    }
+
+    private static double oceanInfluence(double c) {
+        return smooth(-1.05, -1.0, c) * (1 - smooth(-.24, -.19, c));
+    }
+
+    private static double shoreInfluence(double c) {
+        return smooth(-.22, -.197, c) * (1 - smooth(-.13, -.11, c));
+    }
 
     public Column sample(int x, int z, double continentalness, double erosion, double ridges, Surface surface) {
         if (surface == Surface.ROCKPOOL) {
@@ -20,8 +33,8 @@ public final class PelagicTerrainSampler {
             var coast = shore(x, z, continentalness);
             return blend(ocean, new Column(coast.floor(), 1, coast.form(), 0, coast.pool()), coast.influence());
         }
-        double influence = smooth(-1.05, -1.0, continentalness) * (1 - smooth(-.24, -.19, continentalness));
-        if (influence == 0) return new Column(58, 0, Form.PLAIN, 0, false);
+        double influence = oceanInfluence(continentalness);
+        if (influence == 0) return INACTIVE;
 
         double base = bathymetry(continentalness + erosion * .004);
         double wx = x + noise(x / 170.0, z / 170.0, 11) * 24;
@@ -81,7 +94,7 @@ public final class PelagicTerrainSampler {
     }
 
     private Column shore(int x, int z, double c) {
-        double influence = smooth(-.22, -.197, c) * (1 - smooth(-.13, -.11, c));
+        double influence = shoreInfluence(c);
         double bank = 60 + (c + .19) * 115;
         double joints = noise(x / 36.0, z / 58.0, 81);
         double platform = Math.floor((bank + joints * 1.3) / 2) * 2 + .3;

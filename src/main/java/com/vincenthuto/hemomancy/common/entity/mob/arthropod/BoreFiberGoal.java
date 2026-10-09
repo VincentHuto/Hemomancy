@@ -80,7 +80,7 @@ public class BoreFiberGoal extends MoveToBlockGoal {
 		}
 		if (this.boreTimer >= BORE_DURATION) {
 			if(level.destroyBlock(target,false) && level instanceof ServerLevel serverLevel)
-				NaeglerophaeonNerveEvents.announceGap(serverLevel,target,false);
+				NaeglerophaeonNerveEvents.announceGap(serverLevel,target,null);
 			this.boreTimer = 0;
 		}
 	}

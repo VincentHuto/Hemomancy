@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "hemomancy.refmap.json",
   "mixins": [
+    "TroupeNoiseGeneratorAccessor",
     "MixinPelagicAquaticVegetation",
     "MixinPelagicMonument",
     "PelagicMonumentChildrenAccessor",

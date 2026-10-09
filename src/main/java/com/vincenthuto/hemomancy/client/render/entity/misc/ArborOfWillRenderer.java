@@ -614,18 +614,11 @@ public final class ArborOfWillRenderer extends EntityRenderer<ArborOfWillEntity>
 
     private static void colorEllipsoid(VertexConsumer out,Matrix4f matrix,float cx,float cy,float cz,float rx,float ry,float rz,
             float red,float green,float blue,float alpha) {
-        for(int lat=0;lat<6;lat++){double t0=Math.PI*lat/6,t1=Math.PI*(lat+1)/6;
-            for(int lon=0;lon<10;lon++){double p0=Math.PI*2*lon/10,p1=Math.PI*2*(lon+1)/10;
-                colorVertex(out,matrix,cx,cy,cz,rx,ry,rz,t0,p0,red,green,blue,alpha);
-                colorVertex(out,matrix,cx,cy,cz,rx,ry,rz,t1,p0,red,green,blue,alpha);
-                colorVertex(out,matrix,cx,cy,cz,rx,ry,rz,t1,p1,red,green,blue,alpha);
-                colorVertex(out,matrix,cx,cy,cz,rx,ry,rz,t0,p1,red,green,blue,alpha);}}
-    }
-
-    private static void colorVertex(VertexConsumer out,Matrix4f matrix,float cx,float cy,float cz,float rx,float ry,float rz,
-            double theta,double phi,float red,float green,float blue,float alpha) {
-        out.addVertex(matrix,cx+(float)(Math.sin(theta)*Math.cos(phi))*rx,cy+(float)Math.cos(theta)*ry,
-                cz+(float)(Math.sin(theta)*Math.sin(phi))*rz).setColor(red,green,blue,alpha);
+        for (int vertex = 0; vertex < ArborGlowGeometry.vertexCount(); vertex++) {
+            out.addVertex(matrix, cx + ArborGlowGeometry.x(vertex) * rx,
+                    cy + ArborGlowGeometry.y(vertex) * ry, cz + ArborGlowGeometry.z(vertex) * rz)
+                    .setColor(red, green, blue, alpha);
+        }
     }
 
     private static int mix(int a,int b,float amount) {

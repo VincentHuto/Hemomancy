@@ -10,6 +10,11 @@ public final class PuppeteerThreadEndpointRules {
 	private static final double HAND_FORWARD_OFFSET = 0.42D;
 	private static final double HAND_DOWN_OFFSET = 1.05D;
 	private static final double THIRD_PERSON_HAND_EXTRA_DROP = 0.70D;
+	private static final double ROOT_RADIUS = 0.016D;
+	private static final double TIP_RADIUS = 0.009D;
+	/** Share of the thread over which each end rounds shut: about three segments at the hand, two at the body. */
+	private static final double ROOT_CLOSE = 3.0D / 28.0D;
+	private static final double TIP_CLOSE = 2.0D / 28.0D;
 
 	private PuppeteerThreadEndpointRules() {
 	}
@@ -36,5 +41,21 @@ public final class PuppeteerThreadEndpointRules {
 		return eyePosition.add(right.scale(HAND_SIDE_OFFSET * side))
 				.add(viewVector.normalize().scale(HAND_FORWARD_OFFSET))
 				.add(0.0D, WORLD_Y_OFFSET - drop, 0.0D);
+	}
+
+	/**
+	 * Tube radius at {@code t} along the thread (0 at the controller, 1 at the body). The thread is built from
+	 * open hexagonal segments, so both ends round to a point rather than showing the hollow tube.
+	 */
+	static double threadRadius(double t) {
+		double close = Math.sin(Math.min(1.0D, t / ROOT_CLOSE) * Math.PI * 0.5D)
+				* Math.sin(Math.min(1.0D, (1.0D - t) / TIP_CLOSE) * Math.PI * 0.5D);
+		return Mth.lerp(t, ROOT_RADIUS, TIP_RADIUS) * Math.max(0.0D, close);
+	}
+
+	/** Circus performers hold their strings where a third-person player holds a Crossbar: the right hand. */
+	static Vec3 performerHandEndpoint(Vec3 eyePosition, float bodyYawRadians) {
+		Vec3 forward = new Vec3(-Mth.sin(bodyYawRadians), 0.0D, Mth.cos(bodyYawRadians));
+		return playerHandEndpoint(eyePosition, forward, bodyYawRadians, -1.0D, false);
 	}
 }

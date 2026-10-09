@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.world.PerformerHandAnchors;
 import com.vincenthuto.hemomancy.client.screen.overlay.CircusPerceptionOverlay;
 import com.vincenthuto.hemomancy.common.circus.CircusProgressRules;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusAcrobatEntity;
@@ -19,20 +20,46 @@ import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 public final class CircusPerformerRenderer<T extends CircusPerformerEntity, M extends HumanoidModel<T>>
 		extends MobRenderer<T, M> {
 	private final ResourceLocation[] textures;
+	/** The right arm's grip in model pixels, and the frame the dispatcher placed this entity in. */
+	private final Vector3f grip;
+	private final Matrix4f entityRoot = new Matrix4f();
 
 	public CircusPerformerRenderer(EntityRendererProvider.Context context, M model, String textureName,
 			float shadowRadius) {
 		super(context, model, shadowRadius);
 		addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
 		addLayer(new PerceptionEchoLayer());
+		addLayer(new StringHandLayer());
+		grip = PerformerHandAnchors.gripOf(model.rightArm);
 		textures = new ResourceLocation[] {
 				Hemomancy.rloc("textures/entity/npc/harbinger/circus/" + textureName + "_0.png"),
 				Hemomancy.rloc("textures/entity/npc/harbinger/circus/" + textureName + "_1.png")
 		};
+	}
+
+	/** Records where the posed right hand was drawn, after every flip, spin, act pose and swing. */
+	private final class StringHandLayer extends RenderLayer<T, M> {
+		private StringHandLayer() {
+			super(CircusPerformerRenderer.this);
+		}
+
+		@Override
+		public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight, T entity,
+				float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks,
+				float netHeadYaw, float headPitch) {
+			poseStack.pushPose();
+			getParentModel().rightArm.translateAndRotate(poseStack);
+			Vector3f hand = poseStack.last().pose().transformPosition(
+					grip.x / 16.0F, grip.y / 16.0F, grip.z / 16.0F, new Vector3f());
+			poseStack.popPose();
+			PerformerHandAnchors.record(entity, PerformerHandAnchors.worldOffset(entityRoot, hand));
+		}
 	}
 
 	private final class PerceptionEchoLayer extends RenderLayer<T, M> {
@@ -66,6 +93,7 @@ public final class CircusPerformerRenderer<T extends CircusPerformerEntity, M ex
 	@Override
 	public void render(T entity, float entityYaw, float partialTick, PoseStack poseStack,
 			MultiBufferSource buffer, int packedLight) {
+		entityRoot.set(poseStack.last().pose());
 		float jitter = CircusPerceptionOverlay.isActive() ? CircusPerceptionOverlay.stage().motionJitter() : 0.0F;
 		poseStack.pushPose();
 		if (jitter > 0.0F) {

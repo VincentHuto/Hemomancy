@@ -4,6 +4,8 @@ import com.vincenthuto.hemomancy.client.particle.factory.WillAbsorptionGlowParti
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
+import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonSync;
+import com.vincenthuto.hemomancy.common.entity.summon.SyncedBoundSummon;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -52,7 +54,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class WillEntity extends Monster implements BoundPuppeteerSummon {
+public class WillEntity extends Monster implements SyncedBoundSummon {
 	private static final int NORMAL_DISSOLVE_TICKS = 40;
 	private static final EntityDataAccessor<Byte> DATA_ORIGIN =
 			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.BYTE);
@@ -64,18 +66,7 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.BYTE);
 	private static final EntityDataAccessor<Optional<UUID>> DATA_TARGET_UUID =
 			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.OPTIONAL_UUID);
-	private static final EntityDataAccessor<Optional<UUID>> DATA_OWNER_UUID =
-			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.OPTIONAL_UUID);
-	private static final EntityDataAccessor<Optional<UUID>> DATA_CROSSBAR_UUID =
-			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.OPTIONAL_UUID);
-	private static final EntityDataAccessor<String> DATA_SUMMON_NAME =
-			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.STRING);
-	private static final EntityDataAccessor<Integer> DATA_DISMISSAL_TICKS =
-			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.INT);
-	private static final EntityDataAccessor<Boolean> DATA_TRIAL_SUMMON =
-			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.BOOLEAN);
-	private static final EntityDataAccessor<Optional<UUID>> DATA_TRIAL_CASTER_UUID =
-			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+	private static final BoundSummonSync SYNC = BoundSummonSync.define(WillEntity.class);
 	private static final EntityDataAccessor<Optional<UUID>> DATA_ABSORPTION_OWNER_UUID =
 			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 	private static final EntityDataAccessor<Float> DATA_ABSORPTION_PROGRESS =
@@ -134,12 +125,7 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		builder.define(DATA_TIER, (byte) 1);
 		builder.define(DATA_PHASE, (byte) WillPhase.MATERIALIZED.ordinal());
 		builder.define(DATA_TARGET_UUID, Optional.empty());
-		builder.define(DATA_OWNER_UUID, Optional.empty());
-		builder.define(DATA_CROSSBAR_UUID, Optional.empty());
-		builder.define(DATA_SUMMON_NAME, "claimed_will");
-		builder.define(DATA_DISMISSAL_TICKS, 0);
-		builder.define(DATA_TRIAL_SUMMON, false);
-		builder.define(DATA_TRIAL_CASTER_UUID, Optional.empty());
+		SYNC.defineDefaults(builder, "claimed_will");
 		builder.define(DATA_ABSORPTION_OWNER_UUID, Optional.empty());
 		builder.define(DATA_ABSORPTION_PROGRESS, 0.0F);
 		builder.define(DATA_ABSORPTION_STAGE, 0);
@@ -794,16 +780,5 @@ public class WillEntity extends Monster implements BoundPuppeteerSummon {
 		BoundSummonBehavior.load(this, tag);
 	}
 
-	@Override public UUID hemomancy$getOwnerUUID() { return entityData.get(DATA_OWNER_UUID).orElse(null); }
-	@Override public void hemomancy$setOwnerUUID(UUID ownerUuid) { entityData.set(DATA_OWNER_UUID, Optional.ofNullable(ownerUuid)); }
-	@Override public UUID hemomancy$getCrossbarUUID() { return entityData.get(DATA_CROSSBAR_UUID).orElse(null); }
-	@Override public void hemomancy$setCrossbarUUID(UUID crossbarUuid) { entityData.set(DATA_CROSSBAR_UUID, Optional.ofNullable(crossbarUuid)); }
-	@Override public String hemomancy$getSummonName() { return entityData.get(DATA_SUMMON_NAME); }
-	@Override public void hemomancy$setSummonName(String summonName) { entityData.set(DATA_SUMMON_NAME, summonName == null ? "" : summonName); }
-	@Override public int hemomancy$getDismissalTicks() { return entityData.get(DATA_DISMISSAL_TICKS); }
-	@Override public void hemomancy$setDismissalTicks(int ticks) { entityData.set(DATA_DISMISSAL_TICKS, Math.max(0, ticks)); }
-	@Override public boolean hemomancy$isTrialSummon() { return entityData.get(DATA_TRIAL_SUMMON); }
-	@Override public void hemomancy$setTrialSummon(boolean trialSummon) { entityData.set(DATA_TRIAL_SUMMON, trialSummon); }
-	@Override public UUID hemomancy$getTrialCasterUUID() { return entityData.get(DATA_TRIAL_CASTER_UUID).orElse(null); }
-	@Override public void hemomancy$setTrialCasterUUID(UUID casterUuid) { entityData.set(DATA_TRIAL_CASTER_UUID, Optional.ofNullable(casterUuid)); }
+	@Override public BoundSummonSync hemomancy$sync() { return SYNC; }
 }

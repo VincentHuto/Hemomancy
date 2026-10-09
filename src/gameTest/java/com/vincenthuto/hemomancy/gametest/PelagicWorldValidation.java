@@ -23,6 +23,9 @@ public final class PelagicWorldValidation {
     @GameTestGenerator
     public static Collection<TestFunction> tests() {
         if (System.getProperty("hemomancy.pelagic.validationSeed") == null) return List.of();
+        if (Boolean.getBoolean("hemomancy.pelagic.pavilionLocateProbe"))
+            return List.of(new TestFunction("pelagic_worldgen", "pavilion_locate", "pelagic_worldgen_validation:room",
+                    12000, 0, true, PelagicWorldValidation::inspectPavilionLocate));
         if (Boolean.getBoolean("hemomancy.pelagic.expectDisabled"))
             return List.of(new TestFunction("pelagic_worldgen", "disabled_ocean", "pelagic_worldgen_validation:room", 100,
                     0, true, h -> {
@@ -35,6 +38,37 @@ public final class PelagicWorldValidation {
             }));
         return List.of(new TestFunction("pelagic_worldgen", "fresh_ocean_seed", "pelagic_worldgen_validation:room",
                 Boolean.getBoolean("hemomancy.pelagic.ecologyProbe") ? 100000 : 12000, 0, true, PelagicWorldValidation::inspect));
+    }
+
+    private static void inspectPavilionLocate(GameTestHelper h) {
+        try {
+            var level = h.getLevel();
+            h.assertTrue(PelagicWorldgen.context(level.getChunkSource().randomState()) != null,
+                    "Locate probe needs the real seeded noise Overworld");
+            com.vincenthuto.hemomancy.common.worldgen.structure.TroupeFootprintGameTests.verifyNoiseColumns(h);
+            var origin = new BlockPos(Integer.getInteger("hemomancy.pelagic.locateX", 0), 70,
+                    Integer.getInteger("hemomancy.pelagic.locateZ", 0));
+            var structures = level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.STRUCTURE);
+            var pavilion = structures.getHolderOrThrow(net.minecraft.resources.ResourceKey.create(
+                    net.minecraft.core.registries.Registries.STRUCTURE,
+                    net.minecraft.resources.ResourceLocation.parse("hemomancy:circus_pavilion")));
+            var targets = net.minecraft.core.HolderSet.direct(pavilion);
+            long start = System.nanoTime();
+            // Same search radius and reference policy as vanilla /locate structure.
+            var found = level.getChunkSource().getGenerator().findNearestMapStructure(level, targets, origin, 100, false);
+            double seconds = (System.nanoTime() - start) / 1e9;
+            h.assertTrue(found != null, "Cold pavilion locate must find an actual eligible structure");
+            var report = new JsonObject();
+            report.addProperty("seed", level.getSeed());
+            report.addProperty("originX", origin.getX()); report.addProperty("originZ", origin.getZ());
+            report.addProperty("foundX", found.getFirst().getX()); report.addProperty("foundZ", found.getFirst().getZ());
+            report.addProperty("locateSeconds", seconds);
+            Files.writeString(Path.of("pavilion-locate-report.json"), new GsonBuilder().setPrettyPrinting().create().toJson(report));
+            LogUtils.getLogger().info("PAVILION cold locate from {} found {} in {} seconds", origin, found.getFirst(), seconds);
+            h.succeed();
+        } catch (Exception e) {
+            throw new RuntimeException("Pavilion locate validation failed", e);
+        }
     }
 
     private static void inspect(GameTestHelper h) {
@@ -160,8 +194,9 @@ public final class PelagicWorldValidation {
         var router = h.getLevel().getChunkSource().randomState().router();
         for (var site : sites) {
             if (site.layer != PelagicLayer.REEF) continue;
-            for (int x = site.x - 128; x < site.x + 128; x += 4)
-                for (int z = site.z - 128; z < site.z + 128; z += 4)
+            // Use the coastal check's area so reef interiors can still reach their natural boundary.
+            for (int x = site.x - 256; x < site.x + 256; x += 4)
+                for (int z = site.z - 256; z < site.z + 256; z += 4)
                     for (int axis = 0; axis < 2; axis++) {
                         int px = x + (axis == 0 ? 3 : 0), pz = z + (axis == 1 ? 3 : 0);
                         var a = context.sample(px, pz);
@@ -193,7 +228,7 @@ public final class PelagicWorldValidation {
                         h.assertTrue(step < 4, "Reef edge jumps " + step + " blocks at " + px + ", " + pz);
                     }
         }
-        h.assertTrue(crossings > 10, "Natural reef boundaries must be exercised");
+        h.assertTrue(crossings > 10, "Natural reef boundaries must be exercised; found " + crossings);
         var result = new JsonObject();
         result.addProperty("crossings", crossings);
         result.addProperty("maximumAdjacentFloorStep", steepest);
@@ -335,7 +370,8 @@ public final class PelagicWorldValidation {
 
     private static List<Site> findLandmarks(PelagicContext context) {
         var sites = new ArrayList<Site>();
-        int maximum = System.getProperty("hemomancy.pelagic.validationPreset", "normal").equals("large_biomes") ? 1024 : 256;
+        // Match the habitat search area; additional TerraBlender regions can move rare shore stacks farther out.
+        int maximum = System.getProperty("hemomancy.pelagic.validationPreset", "normal").equals("large_biomes") ? 2048 : 512;
         for (int radius = 16; radius <= maximum && sites.size() < 3; radius += 16) {
             for (int cx = -radius; cx <= radius; cx++) for (int cz = -radius; cz <= radius; cz++) {
                 if (Math.max(Math.abs(cx), Math.abs(cz)) <= radius - 16) continue;

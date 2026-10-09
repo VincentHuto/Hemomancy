@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.common.entity.boss.endgame.NaeglerophaeonCombatRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.NaeglerophaeonEntity;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -126,9 +127,44 @@ public final class NaeglerophaeonBlockModel {
         stack.mulPose(new Quaternionf().rotationY((float)-input.yaw()));
         stack.mulPose(new Quaternionf().rotationX((float)input.pitch()));
         stack.mulPose(new Quaternionf().rotationY((float)Math.PI));
-        double swim=input.phase()==NaeglerophaeonEntity.IDLE?input.hunting():0;
+        int phase=input.phase();
+        double swim=phase==NaeglerophaeonEntity.IDLE || phase==NaeglerophaeonEntity.VOLLEY?input.hunting():0;
         stack.translate(Math.sin(input.time()*.26)*.12*swim,Math.sin(input.time()*.52)*.035*swim,0);
         stack.mulPose(new Quaternionf().rotationY((float)(Math.sin(input.time()*.26+.6)*.10*swim)));
+        double shake=switch(phase) {
+            case NaeglerophaeonEntity.TRANSITION -> .09;
+            case NaeglerophaeonEntity.OVERLOAD -> .05;
+            case NaeglerophaeonEntity.NOVA -> input.phaseTicks()<NOVA_WINDUP?.05*input.phaseTicks()/NOVA_WINDUP:0;
+            default -> 0;
+        };
+        if(shake>0) stack.translate(Math.sin(input.time()*2.9)*shake,Math.sin(input.time()*3.7+1)*shake,Math.sin(input.time()*3.1+2)*shake);
+        if(phase==NaeglerophaeonEntity.LASH && input.phaseTicks()>=LASH_STRIKE)
+            stack.mulPose(new Quaternionf().rotationZ((float)(smooth((float)((input.phaseTicks()-LASH_STRIKE)/6))*Math.PI*2)));
+        float size=bodyScale(input);
+        if(size!=1) stack.scale(size,size,size);
+    }
+
+    /** Collapses into a synaptic node on a dive and unfolds again on emergence. */
+    public static float bodyScale(NaeglerophaeonModel.Input input) {
+        if(input.phase()==NaeglerophaeonEntity.NERVE_DIVE) return 1-.85F*smooth((float)(input.phaseTicks()/12));
+        if(input.phase()==NaeglerophaeonEntity.NERVE_EMERGE) return .15F+.85F*smooth((float)(input.phaseTicks()/6));
+        return 1;
+    }
+
+    /** Core orb swell; drained orbs sit slightly shrunken. */
+    static float coreCharge(NaeglerophaeonModel.Input input) {
+        double t=input.phaseTicks();
+        return switch(input.phase()) {
+            case NaeglerophaeonEntity.GRAB -> (float)Math.min(1,t/100);
+            case NaeglerophaeonEntity.CHARGE, NaeglerophaeonEntity.CAPTURE -> (float)Math.min(1,t/20);
+            case NaeglerophaeonEntity.LUNGE_WINDUP -> (float)Math.min(1,t/LUNGE_WINDUP)*.6F;
+            case NaeglerophaeonEntity.CONDUCT -> (float)Math.min(1,t/15);
+            case NaeglerophaeonEntity.NOVA -> (float)Math.min(1,t/NOVA_WINDUP);
+            case NaeglerophaeonEntity.TRANSITION -> .7F+.3F*(float)Math.abs(Math.sin(t*.9));
+            case NaeglerophaeonEntity.OVERLOAD -> .6F+.4F*(float)Math.max(0,1-Math.floorMod((long)t,30)/8.0);
+            case NaeglerophaeonEntity.DRAINED -> -.15F;
+            default -> 0;
+        };
     }
 
     private static float smooth(float t) {
@@ -143,14 +179,41 @@ public final class NaeglerophaeonBlockModel {
         return 0;
     }
 
-    private static float ringAngle(NaeglerophaeonModel.Input input,int segment) {
+    private static final float LUNGE_WINDUP=NaeglerophaeonCombatRules.LUNGE_WINDUP,
+            LASH_STRIKE=NaeglerophaeonCombatRules.LASH_WINDUP, NOVA_WINDUP=NaeglerophaeonCombatRules.NOVA_WINDUP;
+    private static final float[] FLARE={40,26,16,8}, TUCK={-14,-9,-6,-3}, RADIAL={70,30,10,0},
+            UMBRELLA={58,42,28,14}, REACH={25,18,10,5}, LIMP={-3,-2,-1,0}, EASED={20,12,6,2};
+
+    private static float ringAngle(NaeglerophaeonModel.Input input,int segment,int limb) {
         float[] closed={-5,-3,-2,-1};
         float[] spread={13,8,5,2};
         float[] hunting={-9,-5,-3,-1};
         float stroke=propulsionStroke(input.time()-segment*3);
         float idle=closed[segment]+spread[segment]*stroke;
         float swim=hunting[segment]+(float)Math.sin(input.time()*.26-segment*.35)*(2.4F-segment*.5F);
-        return Mth.lerp((float)input.hunting(),idle,swim);
+        float base=Mth.lerp((float)input.hunting(),idle,swim);
+        double t=input.phaseTicks();
+        float in=smooth((float)(t/4));
+        return switch(input.phase()) {
+            case NaeglerophaeonEntity.LUNGE_WINDUP -> Mth.lerp(smooth((float)(t/LUNGE_WINDUP)),base,FLARE[segment]);
+            case NaeglerophaeonEntity.LUNGE -> Mth.lerp(smooth((float)(t/2)),FLARE[segment],TUCK[segment]);
+            case NaeglerophaeonEntity.LASH -> t<LASH_STRIKE
+                    ?Mth.lerp(in,base,TUCK[segment])+(float)Math.sin(t*1.7+limb)*1.5F
+                    :Mth.lerp(smooth((float)((t-LASH_STRIKE)/2)),TUCK[segment],RADIAL[segment]);
+            case NaeglerophaeonEntity.NOVA -> t<NOVA_WINDUP
+                    ?Mth.lerp(in,base,TUCK[segment]-2)+(float)(Math.sin(t*2.3+limb*1.3)*t/NOVA_WINDUP*2)
+                    :Mth.lerp(smooth((float)((t-NOVA_WINDUP)/2)),TUCK[segment],RADIAL[segment]);
+            case NaeglerophaeonEntity.CONDUCT, NaeglerophaeonEntity.CHARGE -> Mth.lerp(in*.6F,base,REACH[segment]);
+            case NaeglerophaeonEntity.TRANSITION -> Mth.lerp(in,base,FLARE[segment])+(float)Math.sin(input.time()*1.9+limb*2.1+segment)*6;
+            case NaeglerophaeonEntity.NERVE_DIVE -> Mth.lerp(in,base,TUCK[segment]);
+            case NaeglerophaeonEntity.NERVE_EMERGE -> Mth.lerp(smooth((float)(t/6)),FLARE[segment],base);
+            case NaeglerophaeonEntity.OVERLOAD -> Mth.lerp(smooth((float)(t/20)),base,UMBRELLA[segment])
+                    +(float)(Math.sin(input.time()*.9+limb*1.7+segment*.8)*(3+segment*1.5));
+            case NaeglerophaeonEntity.DRAINED -> LIMP[segment]+(float)Math.sin(input.time()*.05+limb)*1.2F
+                    +(Math.floorMod((long)input.time()+limb*7,53)<2?(float)Math.sin(input.time()*4)*4:0);
+            case NaeglerophaeonEntity.RECOVERY -> Mth.lerp(smooth((float)(t/10)),EASED[segment],base);
+            default -> base;
+        };
     }
 
     private static void bendRing(PoseStack stack,float angle,float degrees) {
@@ -184,8 +247,14 @@ public final class NaeglerophaeonBlockModel {
         }
         float[] rot=group.rotation();
         float rx=rot[0],ry=rot[1],rz=rot[2];
-        if(tailBend>=0) {
-            float wave=(float)(Math.sin(input.time()*.075-tailBend*.5)-Math.sin(-tailBend*.5));
+        if(tailBend>=0 && input.phase()==NaeglerophaeonEntity.OVERLOAD) {
+            float writhe=(float)Math.sin(input.time()*.55-tailBend*.9);
+            float cross=(float)Math.cos(input.time()*.71-tailBend*1.3);
+            rx+=(5+tailBend*1.2F)*writhe;
+            ry+=(6+tailBend*1.5F)*cross;
+        } else if(tailBend>=0) {
+            double rate=input.drained()?.02:.075;
+            float wave=(float)(Math.sin(input.time()*rate-tailBend*.5)-Math.sin(-tailBend*.5));
             rx+=1.5F*wave;
             ry+=(2+tailBend*.7F)*wave;
         } else if(name.equals("Deep maroon core and seven embedded orbs")) {
@@ -195,13 +264,13 @@ public final class NaeglerophaeonBlockModel {
         if(ry!=0) stack.mulPose(new Quaternionf().rotationY(ry*Mth.DEG_TO_RAD));
         if(rz!=0) stack.mulPose(new Quaternionf().rotationZ(rz*Mth.DEG_TO_RAD));
         if(limb>=0 && bend>=0 && name.endsWith(" bone")) {
-            bendRing(stack,(float)Math.atan2(pivot[1],pivot[0]),ringAngle(input,bend));
+            bendRing(stack,(float)Math.atan2(pivot[1],pivot[0]),ringAngle(input,bend,limb));
             stack.mulPose(new Quaternionf().rotationY(input.turns().ringYaw()[bend])
                     .rotateX(input.turns().ringPitch()[bend]));
         } else if(name.startsWith("web ") && name.length()>4 && Character.isDigit(name.charAt(4))) {
             int web=Integer.parseInt(name.substring(4))-1;
             float angle=(float)((web+.5)*Math.PI/6+.1);
-            bendRing(stack,angle,ringAngle(input,0)*.72F);
+            bendRing(stack,angle,ringAngle(input,0,web)*.72F);
             stack.mulPose(new Quaternionf().rotationY(input.turns().ringYaw()[0])
                     .rotateX(input.turns().ringPitch()[0]));
         } else if(tailBend>=0) {
@@ -220,17 +289,21 @@ public final class NaeglerophaeonBlockModel {
             float size=.82F+activation*.58F;
             stack.scale(size,size,size);
         } else if(name.startsWith("embedded orb ")) {
-            float charge=input.phase()==NaeglerophaeonEntity.GRAB
-                    ?(float)Math.min(1,input.phaseTicks()/100)
-                    :input.phase()==NaeglerophaeonEntity.CHARGE || input.phase()==NaeglerophaeonEntity.CAPTURE
-                    ?(float)Math.min(1,input.phaseTicks()/20):0;
-            float size=1+charge*.35F;
+            float size=1+coreCharge(input)*.35F;
+            stack.scale(size,size,size);
+        } else if(name.startsWith("steady node ") && input.phase()==NaeglerophaeonEntity.OVERLOAD) {
+            // A pulse climbs the hanging tail toward the crown before every blast.
+            int node=Integer.parseInt(name.substring(12));
+            double climb=1-Math.min(1,Math.floorMod((long)input.phaseTicks(),30)/22.0);
+            float activation=(float)Math.max(0,1-Math.abs(climb-node/8.0)*5);
+            float size=1+activation*.9F;
             stack.scale(size,size,size);
         }
         stack.translate(-pivot[0]*PIXEL,-pivot[1]*PIXEL,-pivot[2]*PIXEL);
         for(Object child:group.children()) {
             if(child instanceof Group next) renderGroup(next,stack,consumer,pass,input,light,overlay,limb,bend,dynamicTail,tips,tailPoints,headAim,coreEye,markEyes);
-            else if(pass>=0) renderCube((Cube)child,stack,consumer,pass,light,overlay,coreEye,markEyes);
+            else if(pass>=0) renderCube((Cube)child,stack,consumer,pass,light,overlay,coreEye,markEyes,
+                    coreEye && input.enraged() && !input.drained()?ENRAGED_TINT:-1,input.drained());
             else if(tips!=null && limb>=0 && limb<12 && ((Cube)child).name().equals("tip discharge")) {
                 Cube cube=(Cube)child;
                 float[] from=cube.from(),to=cube.to();
@@ -243,10 +316,14 @@ public final class NaeglerophaeonBlockModel {
         stack.popPose();
     }
 
+    private static final int ENRAGED_TINT=0xFFE6A8FF;
+
+    /** Drained bodies draw their former light organs in the opaque pass instead of the emissive one. */
     private static void renderCube(Cube cube,PoseStack stack,VertexConsumer consumer,int pass,int light,int overlay,
-            boolean coreEye,boolean markEyes) {
+            boolean coreEye,boolean markEyes,int tint,boolean dim) {
         int material=cube.material();
         int materialPass=material==6?2:(material==8 || material==9 || material==10)?1:0;
+        if(dim && materialPass==1) materialPass=0;
         if(markEyes && coreEye && materialPass==1) materialPass=3;
         if(pass!=materialPass) return;
         float[] a=cube.from(),b=cube.to();
@@ -261,7 +338,7 @@ public final class NaeglerophaeonBlockModel {
             for(int j=0;j<4;j++) {
                 float[] point=points[corners[j]];
                 consumer.addVertex(stack.last().pose(),point[0]*PIXEL,point[1]*PIXEL,point[2]*PIXEL)
-                        .setColor(-1).setUv(tex[j][0]*INV_ATLAS,tex[j][1]*INV_ATLAS)
+                        .setColor(tint).setUv(tex[j][0]*INV_ATLAS,tex[j][1]*INV_ATLAS)
                         .setOverlay(overlay).setLight(pass==1 || pass==3?LightTexture.FULL_BRIGHT:light)
                         .setNormal(stack.last(),normal[0],normal[1],normal[2]);
             }
@@ -303,6 +380,6 @@ public final class NaeglerophaeonBlockModel {
         for(int i=0;i<6;i++) uv[i]=new float[]{u+1,v+1,u+31,v+31};
         Cube cube=new Cube("dynamic tail",new float[]{x0/PIXEL,y0/PIXEL,z0/PIXEL},
                 new float[]{x1/PIXEL,y1/PIXEL,z1/PIXEL},uv,material);
-        renderCube(cube,stack,consumer,pass,light,overlay,false,false);
+        renderCube(cube,stack,consumer,pass,light,overlay,false,false,-1,false);
     }
 }

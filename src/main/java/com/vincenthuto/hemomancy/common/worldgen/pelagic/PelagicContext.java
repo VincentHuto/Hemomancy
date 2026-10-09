@@ -15,12 +15,17 @@ public final class PelagicContext {
     private final Climate.Sampler climate;
     private final EnumMap<PelagicLayer, Holder<Biome>> biomes = new EnumMap<>(PelagicLayer.class);
     private final ThreadLocal<Climate.ParameterList<Holder<Biome>>> parameters;
-    private final ThreadLocal<Map<Long, Holder<Biome>>> surfaces = ThreadLocal.withInitial(() -> new LinkedHashMap<>(1024, .75f, true) {
-        @Override protected boolean removeEldestEntry(Map.Entry<Long, Holder<Biome>> entry) { return size() > 4096; }
-    });
-    private final ThreadLocal<Map<Long, Sample>> samples = ThreadLocal.withInitial(() -> new LinkedHashMap<>(1024, .75f, true) {
-        @Override protected boolean removeEldestEntry(Map.Entry<Long, Sample> entry) { return size() > 4096; }
-    });
+    private final ThreadLocal<PelagicColumnCache<Holder<Biome>>> surfaces =
+            ThreadLocal.withInitial(PelagicColumnCache::new);
+    private final ThreadLocal<PelagicColumnCache<PelagicTerrainSampler.Column>> columns =
+            ThreadLocal.withInitial(PelagicColumnCache::new);
+    private final ThreadLocal<PelagicReefBlend> reefBlend = ThreadLocal.withInitial(PelagicReefBlend::new);
+    private final ThreadLocal<PelagicReefBlend> shoreBlend = ThreadLocal.withInitial(PelagicReefBlend::new);
+    // Keep callbacks on the world context, not in worker ThreadLocal values that would retain it after unload.
+    private final PelagicColumnCache.Sampler<Holder<Biome>> surfaceSampler = this::sampleSurface;
+    private final PelagicColumnCache.Sampler<PelagicTerrainSampler.Column> columnSampler = this::sampleColumn;
+    private final PelagicReefBlend.ReefMask reefMask = (x, z) -> surface(x, z).is(PelagicBiomes.key(PelagicLayer.REEF));
+    private final PelagicReefBlend.ReefMask shoreMask = (x, z) -> surface(x, z).is(PelagicBiomes.key(PelagicLayer.SHORE));
     public record Sample(PelagicTerrainSampler.Column column, Holder<Biome> surface) {}
 
     public PelagicContext(long seed, RandomState state, MultiNoiseBiomeSource source, Registry<Biome> registry) {
@@ -41,24 +46,29 @@ public final class PelagicContext {
     }
 
     public Sample sample(int x, int z) {
-        long key = ((long)x << 32) ^ (z & 0xffffffffL);
-        var cache = samples.get();
-        var found = cache.get(key);
-        if (found != null) return found;
+        return new Sample(column(x, z), surface(x, z));
+    }
+
+    public PelagicTerrainSampler.Column column(int x, int z) {
+        return columns.get().get(x, z, columnSampler);
+    }
+
+    private PelagicTerrainSampler.Column sampleColumn(int x, int z) {
         var point = new DensityFunction.SinglePointContext(x, 63, z);
+        double continentalness = continents.compute(point);
+        // Outside both influence bands every profile is inactive, regardless of neighboring biomes.
+        if (!PelagicTerrainSampler.mayShape(continentalness)) return PelagicTerrainSampler.INACTIVE;
         var surface = surface(x, z);
         var type = surface.is(PelagicBiomes.key(PelagicLayer.SHORE)) ? PelagicTerrainSampler.Surface.ROCKPOOL
                 : surface.is(PelagicBiomes.key(PelagicLayer.REEF)) ? PelagicTerrainSampler.Surface.REEF
                 : surface.is(PelagicBiomes.key(PelagicLayer.OPEN)) ? PelagicTerrainSampler.Surface.OPEN
                 : PelagicTerrainSampler.Surface.VANILLA;
-        double continentalness = continents.compute(point), eroded = erosion.compute(point), ridge = ridges.compute(point);
+        double eroded = erosion.compute(point), ridge = ridges.compute(point);
         var column = terrain.sample(x, z, continentalness, eroded, ridge, type);
         if (type != PelagicTerrainSampler.Surface.VANILLA
                 || surface.unwrapKey().orElseThrow().location().getNamespace().equals("minecraft")) {
-            double reefWeight = PelagicReefBlend.weight(x, z,
-                    (px, pz) -> surface(px, pz).is(PelagicBiomes.key(PelagicLayer.REEF)));
-            double shoreWeight = PelagicReefBlend.weight(x, z,
-                    (px, pz) -> surface(px, pz).is(PelagicBiomes.key(PelagicLayer.SHORE)));
+            double reefWeight = reefBlend.get().cachedWeight(x, z, reefMask);
+            double shoreWeight = shoreBlend.get().cachedWeight(x, z, shoreMask);
             // Narrow beaches need a fully shaped core for enclosed pools and grounded rock stacks.
             shoreWeight = PelagicTerrainSampler.smooth(0, .75, shoreWeight);
             var open = terrain.sample(x, z, continentalness, eroded, ridge, PelagicTerrainSampler.Surface.OPEN);
@@ -76,27 +86,26 @@ public final class PelagicContext {
         if (type == PelagicTerrainSampler.Surface.VANILLA
                 && !surface.unwrapKey().orElseThrow().location().getNamespace().equals("minecraft"))
             column = new PelagicTerrainSampler.Column(column.floor(), 0, column.form(), column.incision(), false);
-        found = new Sample(column, surface);
-        cache.put(key, found);
-        return found;
+        return column;
     }
 
     private Holder<Biome> surface(int x, int z) {
-        int qx = QuartPos.fromBlock(x), qz = QuartPos.fromBlock(z);
-        long key = ((long)qx << 32) ^ (qz & 0xffffffffL);
-        return surfaces.get().computeIfAbsent(key, ignored ->
-                ((IExtendedParameterList<Holder<Biome>>)(Object)parameters.get())
-                        .findValuePositional(climate.sample(qx, 15, qz), qx, 15, qz));
+        return surfaces.get().get(QuartPos.fromBlock(x), QuartPos.fromBlock(z), surfaceSampler);
+    }
+
+    private Holder<Biome> sampleSurface(int qx, int qz) {
+        return ((IExtendedParameterList<Holder<Biome>>)(Object)parameters.get())
+                .findValuePositional(climate.sample(qx, 15, qz), qx, 15, qz);
     }
 
     public Holder<Biome> biome(int x, int y, int z, Holder<Biome> original) {
-        var sample = sample(x, z);
-        var column = sample.column();
+        var column = column(x, z);
         if (column.influence() == 0 || y < column.floor() - 5) return original;
-        if (sample.surface().is(PelagicBiomes.key(PelagicLayer.SHORE)))
-            return y < 90 ? sample.surface() : original;
-        if (!sample.surface().is(BiomeTags.IS_OCEAN) || y > 63) return original;
-        return y >= 34 ? sample.surface() : biomes.get(PelagicLayer.atWaterY(y));
+        var surface = surface(x, z);
+        if (surface.is(PelagicBiomes.key(PelagicLayer.SHORE)))
+            return y < 90 ? surface : original;
+        if (!surface.is(BiomeTags.IS_OCEAN) || y > 63) return original;
+        return y >= 34 ? surface : biomes.get(PelagicLayer.atWaterY(y));
     }
 
     public Collection<Holder<Biome>> biomes() { return Collections.unmodifiableCollection(biomes.values()); }

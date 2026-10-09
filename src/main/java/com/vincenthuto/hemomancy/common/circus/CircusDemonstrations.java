@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.circus;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPerformerEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.*;
-import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonBodies;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -27,16 +27,7 @@ public final class CircusDemonstrations {
             var stages = level.getEntitiesOfClass(Mob.class, teacher.getBoundingBox().inflate(16),
                     mob -> isStage(mob) && teacher.getUUID().equals(mob.getPersistentData().getUUID(TEACHER)));
             if (!stages.isEmpty()) { stages.stream().skip(1).forEach(Mob::discard); return; }
-            Mob body = switch (lesson.summon()) {
-                case "veinwing_vulture" -> EntityInit.veinwing_vulture.get().create(level);
-                case "marrow_spitter" -> EntityInit.marrow_spitter.get().create(level);
-                case "scarlet_mummer" -> EntityInit.scarlet_mummer.get().create(level);
-                case "gorebound_hulk" -> EntityInit.gorebound_hulk.get().create(level);
-                case "sanguine_hound" -> EntityInit.sanguine_hound.get().create(level);
-                case "cinder_bellows" -> EntityInit.cinder_bellows.get().create(level);
-                case "mnemonist_puppet" -> EntityInit.mnemonist_puppet.get().create(level);
-                default -> null;
-            };
+            Mob body = PuppeteerSummonBodies.create(lesson.summon(), level).orElse(null);
             if (body == null) return;
             body.getPersistentData().putUUID(TEACHER, teacher.getUUID());
             body.setNoAi(true); body.setNoGravity(true); body.setInvulnerable(true); body.setPersistenceRequired();
@@ -48,6 +39,10 @@ public final class CircusDemonstrations {
         event.setCanceled(true); // Bypasses combat, upkeep, owner reconciliation, and summon trials together.
         if (!(level.getEntity(body.getPersistentData().getUUID(TEACHER)) instanceof CircusPerformerEntity teacher)
                 || !teacher.canTeachNow() || teacher.distanceToSqr(body) > 256) { body.discard(); return; }
+        // The synced owner lets clients draw the teacher's control thread (older saved bodies are backfilled);
+        // cancelling the tick above still keeps the body out of every ownership, upkeep and combat rule.
+        if (body instanceof BoundPuppeteerSummon bound && !teacher.getUUID().equals(bound.hemomancy$getOwnerUUID()))
+            bound.hemomancy$setOwnerUUID(teacher.getUUID());
         int cycle = (int) (level.getGameTime() % 100);
         double angle = level.getGameTime() * .035;
         boolean flying = body instanceof VeinwingVultureEntity || body instanceof MarrowSpitterEntity;

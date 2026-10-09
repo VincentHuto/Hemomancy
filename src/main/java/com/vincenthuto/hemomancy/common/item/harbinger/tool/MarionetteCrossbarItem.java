@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
+import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+import com.vincenthuto.hemomancy.client.render.item.harbinger.crossbar.MarionetteCrossbarItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummonEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
@@ -30,13 +32,14 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class MarionetteCrossbarItem extends Item {
+public class MarionetteCrossbarItem extends Item implements HemoClientItemExtensionsProvider {
 	public static final int RADIAL_HOLD_TICKS = 10;
 	private static final int USE_DURATION = 72000;
 	public static final String TAG_CROSSBAR_ID = "crossbar_id";
@@ -621,5 +624,11 @@ public class MarionetteCrossbarItem extends Item {
 			stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 		}
 		return isBoundTo(stack, player);
+	}
+
+	/** Held as an animated marionette control; see MarionetteCrossbarItemRenderer. */
+	@Override
+	public IClientItemExtensions hemomancy$getClientItemExtensions() {
+		return MarionetteCrossbarItemRenderer.EXTENSIONS;
 	}
 }

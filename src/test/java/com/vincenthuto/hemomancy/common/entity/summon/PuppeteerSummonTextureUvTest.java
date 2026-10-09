@@ -81,6 +81,22 @@ class PuppeteerSummonTextureUvTest {
 	}
 
 	@Test
+	void cinderBellowsGlowOnlyCopiesSparseEmberPixels() throws Exception {
+		var base = ImageIO.read(TEXTURES.resolve("cinder_bellows.png").toFile());
+		var glow = ImageIO.read(TEXTURES.resolve("cinder_bellows_glow.png").toFile());
+		assertEquals(base.getWidth(), glow.getWidth());
+		assertEquals(base.getHeight(), glow.getHeight());
+		int lit = 0;
+		for (int y = 0; y < glow.getHeight(); y++) for (int x = 0; x < glow.getWidth(); x++) {
+			if ((glow.getRGB(x, y) >>> 24) != 0) {
+				assertEquals(base.getRGB(x, y), glow.getRGB(x, y));
+				lit++;
+			}
+		}
+		assertTrue(lit > 0 && lit < 128 * 128 / 8, "Bellows glow must remain sparse embers");
+	}
+
+	@Test
 	void sanguineHoundUsesItsOwnPuppetTexture() throws Exception {
 		assertTrue(Files.exists(TEXTURES.resolve("sanguine_hound.png")));
 		String renderer = Files.readString(Path.of(

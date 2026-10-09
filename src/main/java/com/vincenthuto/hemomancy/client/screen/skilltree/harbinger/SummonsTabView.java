@@ -6,9 +6,9 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
-import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
+import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonBodies;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
@@ -16,6 +16,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -276,16 +277,7 @@ public final class SummonsTabView {
 				&& state.previewEntity.level() == mc.level) {
 			return state.previewEntity;
 		}
-		LivingEntity entity = switch (definition.name()) {
-			case PuppeteerSummonDefinitions.VEINWING_VULTURE -> EntityInit.veinwing_vulture.get().create(mc.level);
-			case PuppeteerSummonDefinitions.MARROW_SPITTER -> EntityInit.marrow_spitter.get().create(mc.level);
-			case PuppeteerSummonDefinitions.GOREBOUND_HULK -> EntityInit.gorebound_hulk.get().create(mc.level);
-			case PuppeteerSummonDefinitions.SCARLET_MUMMER -> EntityInit.scarlet_mummer.get().create(mc.level);
-			case PuppeteerSummonDefinitions.SANGUINE_HOUND -> EntityInit.sanguine_hound.get().create(mc.level);
-			case PuppeteerSummonDefinitions.MNEMONIST_PUPPET, PuppeteerSummonDefinitions.RINGMASTER_PATTERN ->
-					EntityInit.mnemonist_puppet.get().create(mc.level);
-			default -> null;
-		};
+		LivingEntity entity = PuppeteerSummonBodies.create(definition.name(), mc.level).orElse(null);
 		if (entity != null) {
 			if (entity instanceof BoundPuppeteerSummon bound) {
 				bound.hemomancy$setSummonName(definition.name());
@@ -334,7 +326,7 @@ public final class SummonsTabView {
 		boolean known = state.isKnown(definition);
 		boolean recipeUnlocked = hasTrialRecipe(definition);
 		drawY = drawStackedDetailLine(gfx, ctx, "Status", statusComponent(degreeOk, recipeUnlocked, known, definition.requiredDegree()).getString(), textX, drawY, textW, lineH);
-		drawY = drawStackedDetailLine(gfx, ctx, "Role", definition.role(), textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, "Role", I18n.get(definition.roleTranslationKey()), textX, drawY, textW, lineH);
 		drawY = drawStackedDetailLine(gfx, ctx, "Required", "Degree " + definition.requiredDegree(), textX, drawY, textW, lineH);
 		drawY += 4;
 

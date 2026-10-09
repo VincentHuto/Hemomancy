@@ -8,6 +8,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class MnemonistPuppetEvents {
+	private static final double MEMORY_RANGE = 24.0D;
 	private static final ThreadLocal<Boolean> REPLAYING_DAMAGE = ThreadLocal.withInitial(() -> false);
 
 	private MnemonistPuppetEvents() {
@@ -19,9 +20,16 @@ public final class MnemonistPuppetEvents {
 			return;
 		}
 		LivingEntity damaged = event.getEntity();
-		damaged.level().getEntitiesOfClass(MnemonistPuppetEntity.class, damaged.getBoundingBox().inflate(24.0D),
-						puppet -> puppet.isAlive() && puppet.getTarget() == damaged)
-				.forEach(puppet -> puppet.rememberDamage(damaged, event.getNewDamage(), event.getSource().getEntity()));
+		if (damaged.level().isClientSide) {
+			return;
+		}
+		// Usually zero or a few puppets; scanning them beats a world search on every damage event.
+		for (MnemonistPuppetEntity puppet : MnemonistPuppetEntity.loaded()) {
+			if (puppet.level() == damaged.level() && puppet.isAlive() && puppet.getTarget() == damaged
+					&& puppet.distanceToSqr(damaged) <= MEMORY_RANGE * MEMORY_RANGE) {
+				puppet.rememberDamage(damaged, event.getNewDamage(), event.getSource().getEntity());
+			}
+		}
 	}
 
 	public static boolean isReplayingDamage() {

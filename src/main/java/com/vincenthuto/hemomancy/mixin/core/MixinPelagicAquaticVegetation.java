@@ -16,7 +16,7 @@ public abstract class MixinPelagicAquaticVegetation {
     private int hemomancy$photicShelf(WorldGenLevel level, Heightmap.Types type, int x, int z, Operation<Integer> original) {
         int floor = original.call(level, type, x, z);
         var pelagic = PelagicWorldgen.context(level.getLevel().getChunkSource().randomState());
-        if (pelagic != null && floor < 13 && pelagic.sample(x, z).column().influence() > .99)
+        if (pelagic != null && floor < 13 && pelagic.column(x, z).influence() > .99)
             return level.getMaxBuildHeight(); // No water/support there: vanilla safely declines this individual plant.
         return floor;
     }
