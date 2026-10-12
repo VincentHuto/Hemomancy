@@ -142,12 +142,6 @@ public final class HemoRenderTypes {
 						.createCompositeState(false));
 	}
 
-	public static RenderType loomOrbShell(float gameTime, float orbSeed, float centerX, float centerY, float centerZ,
-			float orbRadius, float writheStrength, float threadScale, boolean glowLayer) {
-		return loomOrbShell(gameTime, orbSeed, centerX, centerY, centerZ,
-				orbRadius, writheStrength, threadScale, glowLayer, true);
-	}
-
 	public static RenderType faneBoundaryShell(float gameTime, float orbSeed,
 			float centerX, float centerY, float centerZ, float orbRadius,
 			float writheStrength, float threadScale, boolean glowLayer) {

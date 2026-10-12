@@ -1,84 +1,48 @@
 package com.vincenthuto.hemomancy.client.render.item.tile.harbinger.crafting;
 
-import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
-import com.vincenthuto.hemomancy.client.model.tile.crafting.HematicArmatureModel;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.HematicArmatureRenderer;
-import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRules;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.station.StationTierProperty;
+import com.vincenthuto.hutoslib.client.HlClientTickHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.BlockItemStateProperties;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 
+/** Draws the saved stage's whole frame shrunk into one block, so a moved Armature keeps its look. */
 public class HematicArmatureItemRenderer extends BlockEntityWithoutLevelRenderer {
-	public static final ResourceLocation TEXTURE = HematicArmatureRenderer.TEXTURE;
-	private static final float GUI_MODEL_SCALE = 0.13F;
-	private static final float GUI_MODEL_PITCH_DEGREES = 198.0F;
-	private static final float GUI_MODEL_YAW_DEGREES = -42.0F;
-	private static final float GUI_MODEL_ROLL_DEGREES = -8.0F;
-	private static final float WORLD_MODEL_SCALE = 0.105F;
-
-	private HematicArmatureModel model;
+	/** The frame is five blocks wide and tall; this fits it to the item's unit cube. */
+	private static final float FIT = .2F;
 
 	public HematicArmatureItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet) {
 		super(dispatcher, modelSet);
-		if (modelSet != null) {
-			this.model = new HematicArmatureModel(
-					modelSet.bakeLayer(HematicArmatureModel.LAYER_LOCATION));
-		}
 	}
 
 	@Override
 	public void renderByItem(ItemStack stack, ItemDisplayContext displayContext, PoseStack poseStack,
 			MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
-		if (this.model == null) {
-			EntityModelSet modelSet = Minecraft.getInstance().getEntityModels();
-			this.model = new HematicArmatureModel(
-					modelSet.bakeLayer(HematicArmatureModel.LAYER_LOCATION));
-		}
-
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		boolean isGui = displayContext == ItemDisplayContext.GUI;
-		if (isGui) {
-			Lighting.setupForEntityInInventory();
-		}
-
+		var state = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY)
+				.apply(BlockInit.hematic_armature.get().defaultBlockState())
+				.setValue(HorizontalDirectionalBlock.FACING, Direction.NORTH);
+		var mc = Minecraft.getInstance();
+		float time = HlClientTickHandler.ticksInGame + HlClientTickHandler.partialTicks;
 		poseStack.pushPose();
-		if (isGui) {
-			poseStack.translate(0.5D, 0.48D, 0.5D);
-			poseStack.scale(GUI_MODEL_SCALE, GUI_MODEL_SCALE, GUI_MODEL_SCALE);
-			poseStack.mulPose(Axis.XP.rotationDegrees(GUI_MODEL_PITCH_DEGREES));
-			poseStack.mulPose(Axis.YP.rotationDegrees(GUI_MODEL_YAW_DEGREES));
-			poseStack.mulPose(Axis.ZP.rotationDegrees(GUI_MODEL_ROLL_DEGREES));
-		} else if (displayContext == ItemDisplayContext.FIXED) {
-			poseStack.translate(0.5D, 0.62D, 0.5D);
-			poseStack.scale(WORLD_MODEL_SCALE, WORLD_MODEL_SCALE, WORLD_MODEL_SCALE);
-			poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
-			poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
-		} else {
-			poseStack.translate(0.5D, 0.68D, 0.5D);
-			poseStack.scale(WORLD_MODEL_SCALE, WORLD_MODEL_SCALE, WORLD_MODEL_SCALE);
-			poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
-			poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
-		}
-
-		VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityTranslucent(TEXTURE));
-		model.setupUpgradeVisibility(ArmatureUpgradeRules.ArmatureTier.BASE);
-		model.renderToBuffer(poseStack, vertexConsumer, combinedLight, OverlayTexture.NO_OVERLAY, -1);
+		poseStack.translate(.5, .5, .5);
+		poseStack.scale(FIT, FIT, FIT);
+		// Centre the frame: x spans -2..3 blocks, y 0..5 and z -1..1 around the controller.
+		poseStack.translate(-.5, -2.45, -.0625);
+		mc.getBlockRenderer().renderSingleBlock(state, poseStack, buffer, combinedLight, combinedOverlay);
+		HematicArmatureRenderer.renderFrame(mc, StationTierProperty.stage(state), time, poseStack, buffer,
+				combinedLight, combinedOverlay);
 		poseStack.popPose();
-
-		if (isGui) {
-			Lighting.setupFor3DItems();
-		}
 	}
 }

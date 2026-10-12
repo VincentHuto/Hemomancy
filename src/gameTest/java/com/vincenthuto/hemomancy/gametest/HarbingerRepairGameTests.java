@@ -1106,21 +1106,23 @@ public final class HarbingerRepairGameTests {
         var saved = loom.saveWithoutMetadata(helper.getLevel().registryAccess());
         loom.loadWithComponents(saved, helper.getLevel().registryAccess());
         loom.refreshRecipe();
-        helper.assertTrue(loom.isWeavingOrbs() && loom.getCurRecipe() != null && loom.getRitualBloodCharged() == 50,
+        helper.assertTrue(loom.isWeaving() && loom.getCurRecipe() != null && loom.getRitualBloodCharged() == 50,
                 "Charged reload must restore the recipe without resetting or charging again");
-        helper.assertTrue(loom.getStoredEnzyme(com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.ANIMUS) == 20,
-                "Reload must preserve unspent enzymes");
+        // Payment spins exactly the recipe's one Animus enzyme onto its pirn; the other nineteen stay stocked.
+        helper.assertTrue(loom.getStoredEnzyme(com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.ANIMUS) == 19
+                        && loom.getSpun(com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.ANIMUS) == 1,
+                "Reload must preserve the stocked and the spun enzymes");
         var missing = saved.copy();
         missing.putString("selectedRecipeId", "hemomancy:memory_weaving/removed_fixture");
         loom.loadWithComponents(missing, helper.getLevel().registryAccess());
         loom.refreshRecipe();
-        helper.assertTrue(loom.getCurRecipe() == null && loom.isWeavingOrbs() && loom.getRitualBloodCharged() == 50,
+        helper.assertTrue(loom.getCurRecipe() == null && loom.isWeaving() && loom.getRitualBloodCharged() == 50,
                 "Missing recipe must pause paid state, without a guessed output or refund");
         var changed = saved.copy();
         changed.getCompound("committedRecipe").putDouble("blood", 51);
         loom.loadWithComponents(changed, helper.getLevel().registryAccess());
         loom.refreshRecipe();
-        helper.assertTrue(loom.getCurRecipe() == null && loom.isWeavingOrbs(), "Changed paid commitment must pause");
+        helper.assertTrue(loom.getCurRecipe() == null && loom.isWeaving(), "Changed paid commitment must pause");
         loom.loadWithComponents(saved, helper.getLevel().registryAccess());
         loom.refreshRecipe();
         helper.assertTrue(loom.getCurRecipe() != null && blood.getBloodVolume() == 950, "Restoring the recipe must not charge a second time");

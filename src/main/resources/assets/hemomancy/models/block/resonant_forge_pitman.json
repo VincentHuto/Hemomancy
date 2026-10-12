@@ -1,0 +1,149 @@
+{
+ "parent": "minecraft:block/block",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "hemomancy:block/hematic_iron_block",
+  "oak": "minecraft:block/stripped_dark_oak_log",
+  "iron": "hemomancy:block/hematic_iron_block"
+ },
+ "elements": [
+  {
+   "name": "pitman_rod",
+   "from": [
+    -15.94,
+    8.0,
+    5.0
+   ],
+   "to": [
+    -15,
+    15.47,
+    6.0
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      0.5,
+      1,
+      8.0
+     ],
+     "texture": "#oak"
+    },
+    "south": {
+     "uv": [
+      0,
+      0.5,
+      1,
+      8.0
+     ],
+     "texture": "#oak"
+    },
+    "east": {
+     "uv": [
+      5.0,
+      0.5,
+      6.0,
+      8.0
+     ],
+     "texture": "#oak"
+    },
+    "west": {
+     "uv": [
+      5.0,
+      0.5,
+      6.0,
+      8.0
+     ],
+     "texture": "#oak"
+    },
+    "up": {
+     "uv": [
+      0,
+      5.0,
+      1,
+      6.0
+     ],
+     "texture": "#oak"
+    },
+    "down": {
+     "uv": [
+      0,
+      5.0,
+      1,
+      6.0
+     ],
+     "texture": "#oak"
+    }
+   }
+  },
+  {
+   "name": "pitman_eye",
+   "from": [
+    -15.97,
+    14.5,
+    4.5
+   ],
+   "to": [
+    -14.75,
+    16.0,
+    6.5
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      0.0,
+      1.25,
+      1.5
+     ],
+     "texture": "#iron"
+    },
+    "south": {
+     "uv": [
+      0,
+      0.0,
+      1.25,
+      1.5
+     ],
+     "texture": "#iron"
+    },
+    "east": {
+     "uv": [
+      4.5,
+      0.0,
+      6.5,
+      1.5
+     ],
+     "texture": "#iron"
+    },
+    "west": {
+     "uv": [
+      4.5,
+      0.0,
+      6.5,
+      1.5
+     ],
+     "texture": "#iron"
+    },
+    "up": {
+     "uv": [
+      0,
+      4.5,
+      1.25,
+      6.5
+     ],
+     "texture": "#iron"
+    },
+    "down": {
+     "uv": [
+      0,
+      4.5,
+      1.25,
+      6.5
+     ],
+     "texture": "#iron"
+    }
+   }
+  }
+ ]
+}

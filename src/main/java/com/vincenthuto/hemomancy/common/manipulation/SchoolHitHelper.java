@@ -139,13 +139,15 @@ public final class SchoolHitHelper {
 
 		Player owner = graveDebtOwner(target);
 		Vec3 center = target.position().add(0.0D, target.getBbHeight() * 0.45D, 0.0D);
+		float burst = ManipulationStatusRules.GRAVE_DEBT_BURST_DAMAGE * (owner == null ? 1.0F
+				: (float) com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper.getCrimsonMasteryMultiplier(owner));
 		target.level().getEntitiesOfClass(LivingEntity.class,
 						new AABB(target.blockPosition()).inflate(ManipulationStatusRules.GRAVE_DEBT_RADIUS),
 						victim -> victim != target && victim.isAlive()
 								&& (owner == null ? !data.hasUUID(GRAVE_DEBT_OWNER_KEY) : ManipulationCombatHelper.canHarm(owner, victim))
 								&& victim.position().distanceTo(center) <= ManipulationStatusRules.GRAVE_DEBT_RADIUS)
 				.forEach(victim -> victim.hurt(com.vincenthuto.hemomancy.common.damage.SchoolDamage.reaction(owner == null ? target : owner, "grave_debt", EnumBloodTendency.MORTEM),
-						ManipulationStatusRules.GRAVE_DEBT_BURST_DAMAGE));
+						burst));
 		sendGraveBurst(target, center);
 		return true;
 	}

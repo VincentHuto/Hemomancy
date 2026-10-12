@@ -384,7 +384,7 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
                                         .findFirst().ifPresent(manip -> {
                                             int tier = ScarNoeticRoutingRules.bestMatchingTier(manip.getTend(), active);
                                             String reduction = tier > 0 ? " (Scar T" + tier + ": -" + tier * 5 + "% strain)" : "";
-                                            hoveredTooltip.add(Component.literal("Noetic: " + manip.getProperName() + reduction));
+                                            hoveredTooltip.add(Component.literal("Noetic: ").append(manip.getDisplayName()).append(reduction));
                                         });
                             }
                         });

@@ -43,6 +43,11 @@ public final class LivingSickleItemRenderer extends BlockEntityWithoutLevelRende
 		poseStack.scale(scale, scale, scale);
 		poseStack.translate(context == ItemDisplayContext.GUI ? 0.8D : -0.45D,
 				thirdPersonHand ? THIRD_PERSON_MODEL_LIFT : -0.1D, 0.0D);
+		if (thirdPersonHand || context == ItemDisplayContext.FIRST_PERSON_LEFT_HAND
+				|| context == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND) {
+			// Turn about the handle's own axis so the honed inner curve faces the target, not the wielder.
+			poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
+		}
 		VertexConsumer base = buffers.getBuffer(model.renderType(TEXTURE));
 		model.renderToBuffer(poseStack, base, light, OverlayTexture.NO_OVERLAY, -1);
 		if (!LivingStaffMorphRenderer.isMorphBuffer(buffers)) {

@@ -29,8 +29,8 @@ public class OssuaryClockBlock extends Block {
 	public static final net.minecraft.world.level.block.state.properties.EnumProperty<DoubleBlockHalf> HALF =
 			BlockStateProperties.DOUBLE_BLOCK_HALF;
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	private static final VoxelShape LOWER_SHAPE = Block.box(1.0D, 0.0D, 2.0D, 15.0D, 16.0D, 14.0D);
-	private static final VoxelShape UPPER_SHAPE = Block.box(2.0D, 0.0D, 3.0D, 14.0D, 16.0D, 13.0D);
+	private static final VoxelShape LOWER_SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0D);
+	private static final VoxelShape UPPER_SHAPE = Block.box(1.25D, 0.0D, 1.25D, 14.75D, 16.0D, 14.75D);
 
 	public OssuaryClockBlock(Properties properties) {
 		super(properties);

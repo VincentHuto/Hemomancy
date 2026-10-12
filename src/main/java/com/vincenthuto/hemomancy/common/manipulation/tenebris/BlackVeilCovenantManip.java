@@ -32,6 +32,15 @@ public class BlackVeilCovenantManip extends BloodManipulation {
 	}
 
 	@Override
+	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
+		if (BlackVeilCovenantManager.hasActiveVeil(player)) {
+			player.displayClientMessage(net.minecraft.network.chat.Component.literal("Your black veil still stands."), true);
+			return false;
+		}
+		return super.canPerformAction(player, heldItem, ticks);
+	}
+
+	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
         try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
 

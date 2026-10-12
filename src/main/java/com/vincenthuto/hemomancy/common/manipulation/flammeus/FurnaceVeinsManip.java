@@ -28,6 +28,7 @@ public class FurnaceVeinsManip extends BloodManipulation {
         try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, getRequiredChargeTicks() <= 0 ? 1 : heldTicks / getRequiredChargeTicks())) {
 
 		if (!(world instanceof ServerLevel level)) return;
+		float tick = 2.0F * (float) com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper.getCrimsonMasteryMultiplier(player);
 		for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(5), LivingEntity::isAlive)) {
 			if (ManipulationCombatHelper.allied(player, target)) {
 				target.clearFire();
@@ -36,12 +37,13 @@ public class FurnaceVeinsManip extends BloodManipulation {
 				target.removeEffect(com.vincenthuto.hemomancy.common.init.EffectInit.searing);
 				target.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE, 25, 0, false, true));
 			} else if (ManipulationCombatHelper.canHarm(player, target)) {
-				ManipulationCombatHelper.hurt(this, player, target, level, 2.0F, 60, 1);
+				ManipulationCombatHelper.hurt(this, player, target, level, tick, 60, 1);
 			}
 		}
 		for (BlockPos pos : BlockPos.betweenClosed(player.blockPosition().offset(-5, -5, -5),
 				player.blockPosition().offset(5, 5, 5))) {
-			if (level.getBlockState(pos).is(Blocks.FROSTED_ICE) || level.getBlockState(pos).is(BlockInit.frozen_cruor.get())) {
+			if ((level.getBlockState(pos).is(Blocks.FROSTED_ICE) || level.getBlockState(pos).is(BlockInit.frozen_cruor.get()))
+					&& ManipulationCombatHelper.mayAlter(player, pos)) {
 				level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
 			}
 		}

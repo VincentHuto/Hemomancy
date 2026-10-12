@@ -8,7 +8,10 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-/** Presentation only; the existing cast packet remains the sole gameplay request. */
+/**
+ * Charge presentation. The existing cast packet remains the sole gameplay request; this packet only lets the
+ * server observe the key-down so it can clamp the charge the cast packet later reports.
+ */
 public record CastingChargePacket(String manipulation,int held) implements CustomPacketPayload {
     public static final Type<CastingChargePacket> TYPE = new Type<>(Hemomancy.rloc("casting_charge"));
     public static final StreamCodec<FriendlyByteBuf,CastingChargePacket> STREAM_CODEC = StreamCodec.of(
@@ -16,7 +19,10 @@ public record CastingChargePacket(String manipulation,int held) implements Custo
             b -> new CastingChargePacket(b.readUtf(128),b.readVarInt()));
     public static void handle(CastingChargePacket packet,IPayloadContext context) {
         context.enqueueWork(() -> {
-            if(context.player() instanceof ServerPlayer player) CastingAnimationManager.charge(player,packet.manipulation,packet.held);
+            if(context.player() instanceof ServerPlayer player) {
+                com.vincenthuto.hemomancy.common.manipulation.ManipulationChargeClock.observe(player,packet.manipulation,packet.held);
+                CastingAnimationManager.charge(player,packet.manipulation,packet.held);
+            }
         });
     }
     @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }

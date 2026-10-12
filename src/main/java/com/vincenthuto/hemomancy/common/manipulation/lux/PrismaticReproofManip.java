@@ -25,6 +25,8 @@ import net.minecraft.world.phys.Vec3;
 public class PrismaticReproofManip extends BloodManipulation {
 	private static final double RANGE = 14.0;
 	private static final double HALF_CONE_DOT = 0.72;
+	// Doubled against Illuminated targets by the shared school payoff.
+	private static final float BASE_DAMAGE = 4.0F;
 
 	public PrismaticReproofManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
@@ -49,7 +51,7 @@ public class PrismaticReproofManip extends BloodManipulation {
 			double distance = toTarget.length();
 			if (distance <= 0.001 || distance > RANGE) continue;
 			if (look.dot(toTarget.normalize()) < HALF_CONE_DOT) continue;
-			float damage = (float) (2.0F * SkillPointHelper.getCrimsonMasteryMultiplier(player));
+			float damage = (float) (BASE_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier(player));
             ManipulationCombatHelper.hurt(this, player, target, sLevel, damage);
 			ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.VERDICT, eye, target.getEyePosition(), .25, 12);
             struck++;

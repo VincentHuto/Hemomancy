@@ -7,8 +7,12 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.*;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.animus.SummonAvatarManip;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.DendriticDistributorBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -39,6 +43,10 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 	public static final int SAVE_RAW_XP_COST = 25;
 	private static final int REQUIRED_DEGREE = 5;
 	private static final double MAX_DISTRIBUTOR_DISTANCE_SQR = 64.0D;
+	/** After a pattern applies, further applies are refused for this long. */
+	public static final int APPLY_LOCKOUT_TICKS = SynapticLoadoutLockout.APPLY_LOCKOUT_TICKS;
+	/** Every manipulation a pattern newly equips starts on at least this cooldown. */
+	public static final int NEWLY_EQUIPPED_COOLDOWN_TICKS = 40;
 
 	private final Action action;
 	private final BlockPos pos;
@@ -90,28 +98,39 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 				return;
 			}
 
+			// The selector axon marks the pattern now running, so a rename leaves it where it is.
 			switch (msg.action) {
-				case SAVE_OR_OVERWRITE -> saveOrOverwrite(player, known, volume, msg.slotIndex, msg.name);
+				case SAVE_OR_OVERWRITE -> {
+					if (saveOrOverwrite(player, known, volume, msg.slotIndex, msg.name)) markSelected(player, msg);
+				}
 				case RENAME -> rename(player, known, msg.slotIndex, msg.name);
-				case APPLY -> apply(player, known, msg.slotIndex);
+				case APPLY -> {
+					if (apply(player, known, msg.slotIndex)) markSelected(player, msg);
+				}
 			}
 		});
 	}
 
-	private static void saveOrOverwrite(ServerPlayer player, IKnownManipulations known, IBloodVolume volume,
+	private static void markSelected(ServerPlayer player, SynapticLoadoutActionPacket msg) {
+		if (player.level().getBlockEntity(msg.pos) instanceof DendriticDistributorBlockEntity distributor) {
+			distributor.setSelectedSlot(msg.slotIndex);
+		}
+	}
+
+	private static boolean saveOrOverwrite(ServerPlayer player, IKnownManipulations known, IBloodVolume volume,
 			int slotIndex, String requestedName) {
 		List<String> memorizedNames = memorizedEquippedNames(player, known);
 		if (memorizedNames.isEmpty()) {
 			fail(player, "No memorized manipulations are equipped to remember.");
-			return;
+			return false;
 		}
 		if (volume.getBloodVolume() < SAVE_BLOOD_COST) {
 			fail(player, "Not enough blood. Need 100 mL.");
-			return;
+			return false;
 		}
 		if (currentRawExperience(player) < SAVE_RAW_XP_COST) {
 			fail(player, "Not enough experience. Need 25 XP.");
-			return;
+			return false;
 		}
 
 		String selected = selectedNameForLoadout(known, memorizedNames);
@@ -124,6 +143,7 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 		syncKnown(player, known);
 		player.displayClientMessage(Component.literal("Synaptic pattern saved: " + loadout.name())
 				.withStyle(ChatFormatting.DARK_RED), true);
+		return true;
 	}
 
 	private static void rename(ServerPlayer player, IKnownManipulations known, int slotIndex, String requestedName) {
@@ -139,24 +159,54 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 				.withStyle(ChatFormatting.GRAY), true);
 	}
 
-	private static void apply(ServerPlayer player, IKnownManipulations known, int slotIndex) {
+	/**
+	 * Applies a saved pattern, skipping the distributor/degree/slot gates that {@link #handle} checks first.
+	 * Returns whether it applied.
+	 */
+	public static boolean applyLoadout(ServerPlayer player, int slotIndex) {
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+		return known != null && apply(player, known, slotIndex);
+	}
+
+	public static long applyLockoutRemaining(ServerPlayer player) {
+		return SynapticLoadoutLockout.remaining(player.getUUID(), player.level().getGameTime());
+	}
+
+	private static boolean apply(ServerPlayer player, IKnownManipulations known, int slotIndex) {
+		long lockout = applyLockoutRemaining(player);
+		if (lockout > 0L) {
+			fail(player, String.format(java.util.Locale.ROOT, "Synaptic patterns are still settling (%.1fs).",
+					lockout / 20.0D));
+			return false;
+		}
 		ManipulationLoadout loadout = known.getLoadout(slotIndex);
 		if (loadout.isEmpty()) {
 			fail(player, "No synaptic pattern is saved in that slot.");
-			return;
+			return false;
 		}
 		int maxSlots = ManipSlotHelper.getMaxSlots(player);
 		if (ManipulationEquipHelper.countNormalEquippedNames(loadout.manipNames()) > maxSlots) {
 			fail(player, "That pattern exceeds your current manipulation capacity.");
-			return;
+			return false;
 		}
 		for (String memoryName : loadout.manipNames()) {
 			if (!isKnownMemory(player, known, memoryName)) {
 				fail(player, "A saved memory has atrophied: " + memoryName);
-				return;
+				return false;
 			}
 		}
+		List<String> previouslyEquipped = new ArrayList<>(known.getEquippedManipNames());
 		known.setEquippedManipNames(loadout.manipNames());
+		SynapticLoadoutLockout.start(player.getUUID(), player.level().getGameTime());
+		for (String storageKey : loadout.manipNames()) {
+			if (previouslyEquipped.contains(storageKey)) continue;
+			MemorySlotRef ref = MemorySlotRef.fromStorageKey(storageKey);
+			if (ref.kind() != MemoryEntryKind.MANIPULATION) continue;
+			BloodManipulation equipped = findKnownManipulation(known, ref.id());
+			if (equipped != null && honoursSwapCooldown(equipped)) {
+				equipped.imposeCooldown(player, NEWLY_EQUIPPED_COOLDOWN_TICKS);
+			}
+		}
 		var muscleState = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
 		boolean muscleStateChanged = false;
 		for (var memory : com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.values()) {
@@ -176,6 +226,14 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 		syncKnown(player, known);
 		player.displayClientMessage(Component.literal("Synaptic pattern applied: " + loadout.name())
 				.withStyle(ChatFormatting.DARK_RED), true);
+		return true;
+	}
+
+	/** Passives, avatars and staff weapon forms are toggles that never check a cooldown; don't show one. */
+	private static boolean honoursSwapCooldown(BloodManipulation manipulation) {
+		return manipulation.getType() != EnumManipulationType.PASSIVE
+				&& !(manipulation instanceof SummonAvatarManip)
+				&& !LivingStaffWeaponFormRules.isStaffWeaponFormManip(manipulation.getName());
 	}
 
 	private static boolean isValidDistributor(ServerPlayer player, BlockPos pos) {

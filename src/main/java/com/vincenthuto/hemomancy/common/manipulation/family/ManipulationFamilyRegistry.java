@@ -11,7 +11,7 @@ import java.util.Optional;
 public final class ManipulationFamilyRegistry {
 	private static final List<ManipulationFamilyDefinition> FAMILIES = List.of(
 			family("blood_binding", form("lingering_blood_binding", 1), form("chain_blood_binding", 2),
-					form("sanguine_marionette", 3), form("blood_lattice", 4)),
+					form("blood_lattice", 4)),
 			family("blood_needle", form("blood_needle_fan", 1), form("blood_needle_lance", 2)),
 			family("blood_shot", form("guided_blood_shot", 1), form("hematic_mortar", 3),
 					form("sanguine_halo", 4)),
@@ -22,7 +22,7 @@ public final class ManipulationFamilyRegistry {
 			family("lignum_mortis", form("canopy_mortis", 1), form("worked_lignum", 3)),
 			family("summon_avatar", form("summon_avatar_arms", 1), form("summon_avatar_armor", 2),
 					form("summon_avatar_legs", 3), form("summon_avatar_complete", 4)),
-			family("hematic_rebuke", form("hematic_impressment", 3)),
+			family("hematic_rebuke", form("sanguine_marionette", 2), form("hematic_impressment", 3)),
 			family("umbral_step", form("umbral_reversal", 2)),
 			family("synaptic_jolt", form("activation_potential", 2), form("synaptic_storm", 4)),
 			family("sanguine_magnetism", form("ferric_rampart", 1), form("ferric_spikes", 2)),

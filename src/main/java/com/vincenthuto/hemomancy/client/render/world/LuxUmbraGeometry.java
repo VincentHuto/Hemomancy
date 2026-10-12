@@ -14,6 +14,8 @@ import java.util.List;
 final class LuxUmbraGeometry {
     static final int RIBBON = 0, WISP = 1, POOL = 2, EYE = 3, FOCUS = 4, BEAM = 5, RIPPLE = 6, SLASH = 7, WHITE_BEAM = 8, LUX_SHELL = 9;
     static final int WHITE = 0xFFFAEF;
+    /** Hematic light: Lux is still blood, so a crimson undertone and a warm gold core run through the white. */
+    static final int CRIMSON = 0xF0566A, GOLD = 0xFFE3A8;
 
     private LuxUmbraGeometry() {}
 
@@ -24,14 +26,14 @@ final class LuxUmbraGeometry {
     static boolean handles(Form form) {
         return switch (form) {
             case VERDICT, WHITE_VERDICT, VERDICT_CHARGE, BEACON, SUTURE, FLARE, EYE, WELL, WELL_CHARGE,
-                    VEIL, TELEPORT, UMBRA_ARRIVAL, LUX_MENDING, UMBRA_SLASH, LUX_MIST, UMBRA_MIST -> true;
+                    VEIL, LUX_MENDING, UMBRA_SLASH, LUX_MIST, UMBRA_MIST -> true;
             default -> false;
         };
     }
 
     static boolean umbra(Form form) {
         return switch (form) {
-            case WELL, WELL_CHARGE, VEIL, TELEPORT, UMBRA_ARRIVAL, UMBRA_SLASH, UMBRA_MIST -> true;
+            case WELL, WELL_CHARGE, VEIL, UMBRA_SLASH, UMBRA_MIST -> true;
             default -> false;
         };
     }
@@ -66,20 +68,20 @@ final class LuxUmbraGeometry {
                         for (int i = -1; i <= 1; i += 2) {
                             Vec3 offset = side.scale(r * .97 * i);
                             ribbon(p, v, offset, end.add(offset), camera, r * .02,
-                                    RIBBON, seed + i + 2, WHITE, edgeOpacity, 0, 1);
+                                    RIBBON, seed + i + 2, CRIMSON, edgeOpacity, 0, 1);
                         }
                     }
                 }
             }
             case BEACON -> {
                 Vec3 focus = new Vec3(0, 1.35 + Math.sin(time * .045) * .065, 0);
-                card(p, v, focus, right, up, .38, .57, FOCUS, seed, WHITE, opacity);
+                card(p, v, focus, right, up, .38, .57, FOCUS, seed, GOLD, opacity);
                 card(p, v, new Vec3(0, 1.3, 0), right, up, .65, 1.45, WISP, seed + 3, WHITE, opacity * .7f);
                 for (int i = 0; i < 2; i++) {
                     double a = i * Math.PI + time * .012;
                     Vec3 bottom = new Vec3(Math.cos(a) * .13, .12, Math.sin(a) * .13);
                     stream(p, v, bottom, focus.add(Math.sin(a) * .28, .85 + i * .22, Math.cos(a) * .23), camera,
-                            .18, .19, time * .035 + i * 2.1, RIBBON, seed + i, WHITE, opacity * .42f);
+                            .18, .19, time * .035 + i * 2.1, RIBBON, seed + i, i == 0 ? GOLD : CRIMSON, opacity * .42f);
                 }
                 float pulse = (float) ((age % 20) / 20.0);
                 ground(p, v, Vec3.ZERO.add(0, .08, 0), r * (.25 + pulse * .7), RIPPLE, seed,
@@ -112,15 +114,17 @@ final class LuxUmbraGeometry {
                             RIBBON, seed + i, 0xFFFFFF, opacity * .65f, 0, 1);
                 }
             }
-            case SUTURE -> stream(p, v, Vec3.ZERO, end, camera, .15, .12, time * .035,
-                    RIBBON, seed, WHITE, opacity);
+            case SUTURE -> {
+                stream(p, v, Vec3.ZERO, end, camera, .15, .12, time * .035, RIBBON, seed, WHITE, opacity);
+                stream(p, v, Vec3.ZERO, end, camera, .04, .12, time * .035, RIBBON, seed + 1, CRIMSON, opacity * .7f);
+            }
             case LUX_MENDING -> {
                 for (int i = 0; i < 5; i++) {
                     double a = i * Math.PI * 2 / 5 + time * .017;
                     Vec3 start = new Vec3(Math.cos(a) * .33, .3, Math.sin(a) * .33);
                     Vec3 tip = new Vec3(Math.cos(a + .8) * .36, 1.45, Math.sin(a + .8) * .36);
                     stream(p, v, start, tip, camera, .11, .07, time * .03 + i,
-                            RIBBON, seed + i, WHITE, opacity * .65f);
+                            RIBBON, seed + i, i % 2 == 0 ? WHITE : CRIMSON, opacity * .65f);
                 }
             }
             case WELL -> {
@@ -134,6 +138,25 @@ final class LuxUmbraGeometry {
                     card(p, v, at, right, up, Math.min(.7, r * .27), .32, WISP, seed + i,
                             0xFFFFFF, opacity * .62f);
                 }
+                // A violet-cored rim in broken arcs, and ink drawn in across the ground toward the centre.
+                for (int arc = 0; arc < 4; arc++) {
+                    List<Vec3> rim = new ArrayList<>(9);
+                    double start = arc * Math.PI / 2 + time * .006;
+                    for (int i = 0; i <= 8; i++) {
+                        double a = start + i * Math.PI / 2 * .78 / 8;
+                        rim.add(new Vec3(Math.cos(a) * spread, .08, Math.sin(a) * spread));
+                    }
+                    ribbonPath(p, v, rim, camera, .06, SLASH, seed + 20 + arc, 0xFFFFFF, opacity * .85f);
+                }
+                for (int i = 0; i < 6; i++) {
+                    double a = i * Math.PI / 3 + time * .01;
+                    double inward = (time * .015 + i * .17) % 1;
+                    Vec3 outer = new Vec3(Math.cos(a) * spread, .09, Math.sin(a) * spread);
+                    Vec3 inner = new Vec3(Math.cos(a + .6) * spread * .2, .09, Math.sin(a + .6) * spread * .2);
+                    Vec3 tip = outer.lerp(inner, inward);
+                    ribbonPath(p, v, List.of(outer, outer.lerp(tip, .5).add(0, .02, 0), tip), camera, .05, .01,
+                            RIBBON, seed + 30 + i, 0xFFFFFF, opacity * .7f * (float) Math.sin(inward * Math.PI));
+                }
             }
             case WELL_CHARGE -> {
                 Vec3 focus = end.lengthSqr() > 1e-8 ? end.normalize().scale(1.15) : new Vec3(0, 0, 1.15);
@@ -145,19 +168,26 @@ final class LuxUmbraGeometry {
                             RIBBON, seed + i, 0xFFFFFF, opacity * .8f);
                 }
             }
-            case VEIL, TELEPORT, UMBRA_ARRIVAL -> {
-                double collapse = switch (form) {
-                    case TELEPORT -> Math.max(.05, 1 - age / 20.0);
-                    case UMBRA_ARRIVAL -> Math.min(1, .05 + age / 12.0);
-                    default -> 1;
-                };
+            case VEIL -> {
                 for (int i = 0; i < 6; i++) {
                     double a = i * 2.39996 + time * .012;
-                    Vec3 at = new Vec3(Math.cos(a) * .42 * collapse,
-                            .3 + (i % 3) * .48, Math.sin(a) * .42 * collapse);
-                    card(p, v, at, right, up, .40 * collapse, .63, WISP, seed + i,
-                            0xFFFFFF, opacity * .65f);
+                    Vec3 at = new Vec3(Math.cos(a) * .42, .3 + (i % 3) * .48, Math.sin(a) * .42);
+                    card(p, v, at, right, up, .40, .63, WISP, seed + i, 0xFFFFFF, opacity * .5f);
                 }
+                // Ink winds round the body like a shroud, a violet glint catching along one fold at a time.
+                for (int band = 0; band < 2; band++) {
+                    List<Vec3> wrap = new ArrayList<>(13);
+                    for (int i = 0; i <= 12; i++) {
+                        double t = i / 12.0, a = t * Math.PI * 3 + band * Math.PI + time * .02;
+                        wrap.add(new Vec3(Math.cos(a) * .46, .15 + t * 1.6, Math.sin(a) * .46));
+                    }
+                    ribbonPath(p, v, wrap, camera, .07, .04, RIBBON, seed + 10 + band, 0xFFFFFF, opacity * .7f);
+                }
+                double glint = (time * .02) % 1;
+                double ga = glint * Math.PI * 3 + time * .02;
+                Vec3 at = new Vec3(Math.cos(ga) * .47, .15 + glint * 1.6, Math.sin(ga) * .47);
+                ribbon(p, v, at.add(0, -.12, 0), at.add(0, .12, 0), camera, .03, SLASH, seed + 20, 0xFFFFFF,
+                        opacity * (float) Math.sin(glint * Math.PI), 0, 1);
             }
             case UMBRA_SLASH -> {
                 Vec3 across = end.lengthSqr() > 1e-8 ? facingSide(end.normalize(), new Vec3(0, 1, 0)) : right;
@@ -176,6 +206,17 @@ final class LuxUmbraGeometry {
                     Vec3 tip = start.lerp(finish, cut);
                     stream(p, v, start, tip, camera, .16, .11, age * .02 + strand * .13,
                             SLASH, seed + strand * 17, 0xFFFFFF, opacity * (strand == 1 ? 1.0f : .82f));
+                    // Where each cut lands it flashes: a short violet cross-cut and a puff of shadow.
+                    double landed = age - strand * .65 - 3;
+                    if (landed > 0 && landed < 4) {
+                        float flash = opacity * (float) (1 - landed / 4);
+                        Vec3 cross = cutUp.scale(r * .18);
+                        // Ink, not a fourth slash: the three cuts stay the only violet-cored strokes.
+                        ribbon(p, v, finish.subtract(cross), finish.add(cross), camera, .07, RIBBON, seed + 50 + strand,
+                                0xFFFFFF, flash, 0, 1);
+                        card(p, v, finish, right, up, .18 + landed * .06, .18 + landed * .06, WISP, seed + 60 + strand,
+                                0xFFFFFF, flash * .6f);
+                    }
                 }
             }
             case LUX_MIST, UMBRA_MIST -> {
@@ -273,7 +314,13 @@ final class LuxUmbraGeometry {
 
     static void ribbonPath(PoseStack p, VertexConsumer v, List<Vec3> points, Vec3 camera, double width,
             int shape, int seed, int color, float alpha) {
-        if (points.size() < 2 || width <= 0 || alpha <= 0) return;
+        ribbonPath(p, v, points, camera, width, width, shape, seed, color, alpha);
+    }
+
+    /** A path whose half-width runs linearly from {@code startWidth} at the first point to {@code endWidth} at the last. */
+    static void ribbonPath(PoseStack p, VertexConsumer v, List<Vec3> points, Vec3 camera, double startWidth,
+            double endWidth, int shape, int seed, int color, float alpha) {
+        if (points.size() < 2 || Math.max(startWidth, endWidth) <= 0 || alpha <= 0) return;
         Vec3 previousLeft = null, previousRight = null, previousSide = null;
         for (int i = 0; i < points.size(); i++) {
             Vec3 at = points.get(i);
@@ -284,7 +331,7 @@ final class LuxUmbraGeometry {
                     : facingSide(tangent, camera.subtract(at));
             if (previousSide != null && side.dot(previousSide) < 0) side = side.scale(-1);
             // Keep inner edges from folding past neighboring stations on short, tightly curved flows.
-            double localWidth = width;
+            double localWidth = Mth.lerp(i / (points.size() - 1.0), startWidth, endWidth);
             if (i > 0) localWidth = Math.min(localWidth, joinWidth(at.subtract(points.get(i - 1)), side));
             if (i + 1 < points.size()) localWidth = Math.min(localWidth, joinWidth(points.get(i + 1).subtract(at), side));
             Vec3 left = at.subtract(side.scale(localWidth)), right = at.add(side.scale(localWidth));

@@ -78,10 +78,26 @@ public final class ManipulationRetirementRules {
 			return false;
 		}
 		boolean changed = removeRetiredKnownManipulations(known.getKnownManips());
+		changed |= adoptRegisteredMetadata(known);
 		changed |= sanitizeEquippedManipulations(known);
 		changed |= sanitizeLoadouts(known);
 		changed |= sanitizeSelectedManipulation(known);
 		return changed;
+	}
+
+	private static boolean adoptRegisteredMetadata(IKnownManipulations known) {
+		boolean changed = false;
+		if (known.getKnownManips() != null) {
+			for (BloodManipulation manipulation : known.getKnownManips().keySet()) changed |= adoptRegistered(manipulation);
+		}
+		return changed | adoptRegistered(known.getSelectedManip());
+	}
+
+	private static boolean adoptRegistered(BloodManipulation manipulation) {
+		if (manipulation == null || manipulation.getName() == null) return false;
+		var id = net.minecraft.resources.ResourceLocation.tryBuild(com.vincenthuto.hemomancy.Hemomancy.MOD_ID, manipulation.getName());
+		return id != null && manipulation.adoptRegisteredMetadata(
+				com.vincenthuto.hemomancy.common.init.ManipulationInit.MANIPS_TYPE_REGISTRY.get(id));
 	}
 
 	private static boolean removeRetiredKnownManipulations(LinkedHashMap<BloodManipulation, ManipLevel> knownManips) {

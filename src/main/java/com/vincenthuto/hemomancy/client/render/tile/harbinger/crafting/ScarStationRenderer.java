@@ -1,25 +1,48 @@
 package com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ScarStationBlockEntity;
-import com.vincenthuto.hutoslib.math.Quaternion;
-import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.FaceInfo;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
+/**
+ * Lays the station's slots out on the baked model from tools/model_export/scar_station.py: the blank
+ * on the scar grid, the catalyst in its cup and the knapper across its rest (all pitched with the
+ * carving bed), and the pattern and finished scar pinned to the backboard.
+ */
 public class ScarStationRenderer implements BlockEntityRenderer<ScarStationBlockEntity> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	private static final int DISPLAY_ITEM_MAX_LIGHT = 11;
+	private static final float PX = 1.0F / 16.0F;
+
+	// Anchors shared with tools/model_export/scar_station.py (model pixels, north-facing).
+	private static final float BED_ORIGIN_Y = 11.0F;
+	private static final float BED_ORIGIN_Z = 2.5F;
+	private static final float BED_PITCH = -22.5F;
+	private static final float BED_TOP = 12.0F;
+	private static final float GRID_X = 9.5F;
+	private static final float GRID_Z = 7.8F;
+	private static final float CUP_X = 3.7F;
+	private static final float CUP_Z = 9.0F;
+	private static final float REST_X = 3.7F;
+	private static final float REST_Z = 5.0F;
+	private static final float BOARD_FRONT = 13.4F;
+	private static final float PATTERN_X = 5.3F;
+	private static final float OUTPUT_X = 10.7F;
+	private static final float PIN_Y = 20.0F;
+
+	/** Generated items' ground display lifts them 2px along their own up axis; undone so anchors are centres. */
+	private static final float GROUND_LIFT = 2.0F * PX;
 
 	public ScarStationRenderer(BlockEntityRendererProvider.Context context) {
 	}
@@ -30,182 +53,77 @@ public class ScarStationRenderer implements BlockEntityRenderer<ScarStationBlock
 	}
 
 	@Override
-	public void render(ScarStationBlockEntity te, float partialTicks, PoseStack matrixStackIn,
-			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+	public void render(ScarStationBlockEntity te, float partialTicks, PoseStack poseStack,
+			MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
+		int itemLight = displayItemLight(te, combinedLight);
 
-		// ── Render the chisel station entity model ──
-		// ── Render items on the station ──
-		Minecraft mc = Minecraft.getInstance();
+		poseStack.pushPose();
+		poseStack.translate(0.5F, 0.0F, 0.5F);
+		poseStack.mulPose(Axis.YP.rotationDegrees(rotationForFacing(te.getBlockState().getValue(FACING))));
+		poseStack.translate(-0.5F, 0.0F, -0.5F);
 
-		Minecraft.getInstance().getTextureManager().bindForSetup(TextureAtlas.LOCATION_BLOCKS);
-		int itemLight = displayItemLight(te, combinedLightIn);
-		matrixStackIn.translate(0, 0.5, 0);
+		poseStack.pushPose();
+		poseStack.translate(0.0F, BED_ORIGIN_Y * PX, BED_ORIGIN_Z * PX);
+		poseStack.mulPose(Axis.XP.rotationDegrees(BED_PITCH));
+		poseStack.translate(0.0F, -BED_ORIGIN_Y * PX, -BED_ORIGIN_Z * PX);
+		renderLying(te, te.contents.get(0), GRID_X, BED_TOP + 0.6F, GRID_Z, 0.0F, 0.78F, poseStack, buffer, itemLight,
+				combinedOverlay);
+		renderLying(te, te.contents.get(3), REST_X, BED_TOP + 1.15F, REST_Z, 45.0F, 0.7F, poseStack, buffer, itemLight,
+				combinedOverlay);
+		renderUpright(te, te.contents.get(1), CUP_X, BED_TOP + 2.4F, CUP_Z, 0.5F, poseStack, buffer, itemLight,
+				combinedOverlay);
+		poseStack.popPose();
 
-		// Chisel
-		matrixStackIn.pushPose();
-		if (te.contents.get(3) != null) {
-			ItemStack stack = te.contents.get(3);
-			if (te.getBlockState().getValues().get(FACING).toString().toUpperCase().equals(FaceInfo.WEST.toString())) {
-				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-				matrixStackIn.mulPose(new Quaternion(Vector3.ZP,90, true).toMoj());
-				matrixStackIn.translate(1.3, -1.0, 1.85f);
-			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
-					.equals(FaceInfo.EAST.toString())) {
-				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-				matrixStackIn.mulPose(new Quaternion(Vector3.YP,-360,true).toMoj());
-				matrixStackIn.mulPose(new Quaternion(Vector3.XP,180,true).toMoj());
-				matrixStackIn.mulPose(new Quaternion(Vector3.ZP,-90, true).toMoj());
-				matrixStackIn.translate(1.3, 1.0, -0.5f + 0.35f);
-			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
-					.equals(FaceInfo.NORTH.toString())) {
-				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-				matrixStackIn.mulPose(new Quaternion(Vector3.YP,-90, true).toMoj());
-				matrixStackIn.mulPose(new Quaternion(Vector3.ZP,90, true).toMoj());
-				matrixStackIn.translate(1.3, -1.0, -0.5f + 0.35f);
-			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
-					.equals(FaceInfo.SOUTH.toString())) {
-				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-				matrixStackIn.mulPose(new Quaternion(Vector3.YP,90, true).toMoj());
-				matrixStackIn.mulPose(new Quaternion(Vector3.ZP,90, true).toMoj());
-				matrixStackIn.translate(1.3, 1f, 1.5f + 0.35f);
-			}
-			mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.GROUND, itemLight, combinedOverlayIn,
-					matrixStackIn, bufferIn,te.getLevel(),0);
+		renderUpright(te, te.contents.get(4), PATTERN_X, PIN_Y, BOARD_FRONT - 0.5F, 0.6F, poseStack, buffer, itemLight,
+				combinedOverlay);
+		renderUpright(te, te.contents.get(2), OUTPUT_X, PIN_Y, BOARD_FRONT - 0.5F, 0.6F, poseStack, buffer, itemLight,
+				combinedOverlay);
+		poseStack.popPose();
+	}
 
+	/** Flat on its back, front up, its top edge pointing away from the mason; {@code yaw} turns it on the surface. */
+	private static void renderLying(ScarStationBlockEntity te, ItemStack stack, float x, float y, float z, float yaw,
+			float scale, PoseStack poseStack, MultiBufferSource buffer, int itemLight, int overlay) {
+		if (stack.isEmpty()) {
+			return;
 		}
+		poseStack.pushPose();
+		poseStack.translate(x * PX, y * PX, z * PX);
+		poseStack.mulPose(Axis.YP.rotationDegrees(180.0F + yaw));
+		poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
+		renderItem(te, stack, scale, poseStack, buffer, itemLight, overlay);
+		poseStack.popPose();
+	}
 
-		matrixStackIn.popPose();
-
-		// Output
-		matrixStackIn.pushPose();
-		if (te.contents.get(2) != ItemStack.EMPTY) {
-			ItemStack stack = te.contents.get(2);
-			if (te.getBlockState().getValues().get(FACING).toString().toUpperCase().equals(FaceInfo.WEST.toString())) {
-				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-				matrixStackIn.mulPose(new Quaternion(Vector3.YP,90, true).toMoj());
-				matrixStackIn.mulPose(new Quaternion(Vector3.XP,75, true).toMoj());
-				matrixStackIn.translate(-1f, 0.25, -1f);
-			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
-					.equals(FaceInfo.EAST.toString())) {
-				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-				matrixStackIn.mulPose(new Quaternion(Vector3.YP,-90, true).toMoj());
-				matrixStackIn.mulPose(new Quaternion(Vector3.XP,75, true).toMoj());
-				matrixStackIn.translate(1f, -1.65, -1.5);
-			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
-					.equals(FaceInfo.NORTH.toString())) {
-				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-				matrixStackIn.mulPose(new Quaternion(Vector3.YP,0, true).toMoj());
-				matrixStackIn.mulPose(new Quaternion(Vector3.XP,75, true).toMoj());
-				matrixStackIn.translate(1f, 0.25, -1f);
-			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
-					.equals(FaceInfo.SOUTH.toString())) {
-				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-				matrixStackIn.mulPose(new Quaternion(Vector3.YP,0, true).toMoj());
-				matrixStackIn.mulPose(new Quaternion(Vector3.XP,-75, true).toMoj());
-				matrixStackIn.translate(1f, -1.65, 1.5f);
-			}
-			mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.GROUND, itemLight, combinedOverlayIn,
-					matrixStackIn, bufferIn, te.getLevel(),0);
+	/** Standing, facing the mason. */
+	private static void renderUpright(ScarStationBlockEntity te, ItemStack stack, float x, float y, float z, float scale,
+			PoseStack poseStack, MultiBufferSource buffer, int itemLight, int overlay) {
+		if (stack.isEmpty()) {
+			return;
 		}
-		matrixStackIn.popPose();
+		poseStack.pushPose();
+		poseStack.translate(x * PX, y * PX, z * PX);
+		poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
+		renderItem(te, stack, scale, poseStack, buffer, itemLight, overlay);
+		poseStack.popPose();
+	}
 
-		// Blank Scar
-		matrixStackIn.pushPose();
-		if (te.contents.get(0) != ItemStack.EMPTY) {
-			ItemStack stack = te.contents.get(0);
-			if (te.getBlockState().getValues().get(FACING).toString().toUpperCase().equals(FaceInfo.WEST.toString())) {
-				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-				matrixStackIn.mulPose(new Quaternion(Vector3.YP,90, true).toMoj());
-				matrixStackIn.mulPose(new Quaternion(Vector3.XP,45, true).toMoj());
-				matrixStackIn.translate(-1f, 1.75, -0.35f);
-			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
-					.equals(FaceInfo.EAST.toString())) {
-				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-				matrixStackIn.mulPose(new Quaternion(Vector3.YP,-90, true).toMoj());
-				matrixStackIn.mulPose(new Quaternion(Vector3.XP,45, true).toMoj());
-				matrixStackIn.translate(1f, 0.35, -1.75);
-			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
-					.equals(FaceInfo.NORTH.toString())) {
-				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-				matrixStackIn.mulPose(new Quaternion(Vector3.YP,0, true).toMoj());
-				matrixStackIn.mulPose(new Quaternion(Vector3.XP,45, true).toMoj());
-				matrixStackIn.translate(1f, 1.75f, -0.35f);
-			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
-					.equals(FaceInfo.SOUTH.toString())) {
-				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-				matrixStackIn.mulPose(new Quaternion(Vector3.YP,0, true).toMoj());
-				matrixStackIn.mulPose(new Quaternion(Vector3.XP,-45, true).toMoj());
-				matrixStackIn.translate(1f, 0.35f, 1.75f);
-			}
-			mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.GROUND, itemLight, combinedOverlayIn,
-					matrixStackIn, bufferIn,te.getLevel(), 0);
-		}
-		matrixStackIn.popPose();
+	private static void renderItem(ScarStationBlockEntity te, ItemStack stack, float scale, PoseStack poseStack,
+			MultiBufferSource buffer, int itemLight, int overlay) {
+		poseStack.scale(scale, scale, scale);
+		poseStack.translate(0.0F, -GROUND_LIFT, 0.0F);
+		Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.GROUND, itemLight, overlay,
+				poseStack, buffer, te.getLevel(), 0);
+	}
 
-		// Aux Slot
-		matrixStackIn.pushPose();
-		if (te.contents.get(1) != ItemStack.EMPTY) {
-			ItemStack stack = te.contents.get(1);
-			if (te.getBlockState().getValues().get(FACING).toString().toUpperCase().equals(FaceInfo.WEST.toString())) {
-				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-				matrixStackIn.mulPose(new Quaternion(Vector3.YP,90, true).toMoj());
-				matrixStackIn.mulPose(new Quaternion(Vector3.XP,45, true).toMoj());
-				matrixStackIn.translate(-1f, 1.75, -0.40f);
-			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
-					.equals(FaceInfo.EAST.toString())) {
-				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-				matrixStackIn.mulPose(new Quaternion(Vector3.YP,-90, true).toMoj());
-				matrixStackIn.mulPose(new Quaternion(Vector3.XP,45, true).toMoj());
-				matrixStackIn.translate(1f, 0.35, -1.80);
-			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
-					.equals(FaceInfo.NORTH.toString())) {
-				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-				matrixStackIn.mulPose(new Quaternion(Vector3.YP,0, true).toMoj());
-				matrixStackIn.mulPose(new Quaternion(Vector3.XP,45, true).toMoj());
-				matrixStackIn.translate(1f, 1.75f, -0.40f);
-			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
-					.equals(FaceInfo.SOUTH.toString())) {
-				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-				matrixStackIn.mulPose(new Quaternion(Vector3.YP,0, true).toMoj());
-				matrixStackIn.mulPose(new Quaternion(Vector3.XP,-45, true).toMoj());
-				matrixStackIn.translate(1f, 0.35f, 1.80f);
-			}
-			mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.GROUND, itemLight, combinedOverlayIn,
-					matrixStackIn, bufferIn, te.getLevel(), 0);
-		}
-		matrixStackIn.popPose();
-
-		// Binder / Pattern - flat on top surface facing the player
-		matrixStackIn.pushPose();
-		if (te.contents.get(4) != ItemStack.EMPTY) {
-			ItemStack stack = te.contents.get(4);
-			if (te.getBlockState().getValues().get(FACING).toString().toUpperCase().equals(FaceInfo.WEST.toString())) {
-				matrixStackIn.translate(0.1, 0.51, 0.5);
-				matrixStackIn.mulPose(new Quaternion(Vector3.XP, -90, true).toMoj());
-				matrixStackIn.mulPose(new Quaternion(Vector3.ZP, -90, true).toMoj());
-				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
-					.equals(FaceInfo.EAST.toString())) {
-				matrixStackIn.translate(0.9, 0.51, 0.5);
-				matrixStackIn.mulPose(new Quaternion(Vector3.XP, -90, true).toMoj());
-				matrixStackIn.mulPose(new Quaternion(Vector3.ZP, 90, true).toMoj());
-				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
-					.equals(FaceInfo.NORTH.toString())) {
-				matrixStackIn.translate(0.5, 0.51, 0.1);
-				matrixStackIn.mulPose(new Quaternion(Vector3.XP, -90, true).toMoj());
-				matrixStackIn.mulPose(new Quaternion(Vector3.ZP, 180, true).toMoj());
-				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
-					.equals(FaceInfo.SOUTH.toString())) {
-				matrixStackIn.translate(0.5, 0.51, .9);
-				matrixStackIn.mulPose(new Quaternion(Vector3.XP, -90, true).toMoj());
-				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-			}
-			mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.GROUND, itemLight, combinedOverlayIn,
-					matrixStackIn, bufferIn, te.getLevel(), 0);
-		}
-		matrixStackIn.popPose();
+	/** The model's turn for each facing, matching the blockstate (north y0, east y90, south y180, west y270). */
+	private static float rotationForFacing(Direction facing) {
+		return switch (facing) {
+			case SOUTH -> 180.0F;
+			case WEST -> 90.0F;
+			case EAST -> -90.0F;
+			default -> 0.0F;
+		};
 	}
 
 	private static int displayItemLight(ScarStationBlockEntity te, int fallbackLight) {
@@ -223,4 +141,3 @@ public class ScarStationRenderer implements BlockEntityRenderer<ScarStationBlock
 	}
 
 }
-

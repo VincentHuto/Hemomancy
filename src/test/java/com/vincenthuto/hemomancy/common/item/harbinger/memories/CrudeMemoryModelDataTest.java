@@ -12,6 +12,7 @@ public final class CrudeMemoryModelDataTest {
 			"blood_shot",
 			"deadly_gaze",
 			"glacial_grasp",
+			"hematic_flare",
 			"hemorrhage",
 			"sanguine_ignition",
 			"sanguine_mending",

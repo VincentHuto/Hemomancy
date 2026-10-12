@@ -25,6 +25,11 @@ import net.minecraft.world.phys.Vec3;
 
 public class ScaldingUpdraftManip extends BloodManipulation {
 	private static final double RADIUS = 4.0;
+	private static final float BURST_DAMAGE = 1.5F;
+	/** Expulsive trades height for a heavier blast that throws everything nearby outward. */
+	public static final float EXPULSIVE_BURST_DAMAGE = 3.0F;
+	public static final double EXPULSIVE_LAUNCH = 0.6D;
+	private static final int SEARING_TICKS = 60;
 	private final Mode mode;
 
 	public ScaldingUpdraftManip(String name, double cost, double alignLevel, double xpCost,
@@ -40,6 +45,16 @@ public class ScaldingUpdraftManip extends BloodManipulation {
 		this.mode = mode;
 	}
 
+	/** The updraft kicks off something: ground, water or a ladder. It cannot be chained in mid-air. */
+	@Override
+	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
+		if (!player.onGround() && !player.isInWater() && !player.onClimbable()) {
+			player.displayClientMessage(net.minecraft.network.chat.Component.literal("The updraft needs footing."), true);
+			return false;
+		}
+		return super.canPerformAction(player, heldItem, ticks);
+	}
+
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
         try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
@@ -51,6 +66,7 @@ public class ScaldingUpdraftManip extends BloodManipulation {
 		double vertical = switch (mode) {
 			case SOARING -> 1.6D;
 			case SUSPENDED -> 1.2D;
+			case EXPULSIVE -> EXPULSIVE_LAUNCH;
 			default -> 1.1D;
 		};
 		if (look.lengthSqr() > 0.01) look = look.normalize().scale(horizontal);
@@ -69,17 +85,21 @@ public class ScaldingUpdraftManip extends BloodManipulation {
 		}
 		player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, slowFalling, 0, false, true));
 
+		float burst = (mode == Mode.EXPULSIVE ? EXPULSIVE_BURST_DAMAGE : BURST_DAMAGE)
+				* (float) com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper.getCrimsonMasteryMultiplier(player);
 		for (LivingEntity target : world.getEntitiesOfClass(LivingEntity.class, new AABB(player.blockPosition()).inflate(RADIUS),
 				e -> ManipulationCombatHelper.canHarm(player, e))) {
 			ManipulationParticles.hurt(this, target, world.damageSources().onFire(),
-					1.5F, 60, 1);
-			if (mode == Mode.EXPULSIVE && !player.isAlliedTo(target)) {
+					burst, SEARING_TICKS, 1);
+			if (mode == Mode.EXPULSIVE) {
 				Vec3 outward = new Vec3(target.getX() - player.getX(), 0, target.getZ() - player.getZ());
 				if (outward.lengthSqr() > 0.001D) outward = outward.normalize().scale(0.8D);
 				target.push(outward.x, 1.0D, outward.z);
 				target.hurtMarked = true;
 			}
 		}
+		if (mode == Mode.EXPULSIVE)
+			ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.IGNITION, player.position(), player.position(), RADIUS, 18);
 		world.playSound(null, player.blockPosition(), SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 0.9F, 0.6F);
 
 	        }

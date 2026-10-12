@@ -59,7 +59,7 @@ class HematicRiposteSourceTest {
         assertTrue(renderer.indexOf("if(HematicRiposteGeometry.handles") < renderer.indexOf("if(AnimusMortemGeometry.handles(packet.form())) {"),
                 "riposte must be drawn before the shared Animus branch");
         String visuals = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationVisuals.java");
-        assertTrue(visuals.contains(", RIPOSTE, RIPOSTE_STRIKE\n"),
+        assertTrue(visuals.contains(", RIPOSTE, RIPOSTE_STRIKE,") || visuals.contains(", RIPOSTE, RIPOSTE_STRIKE\n"),
                 "new forms must be appended: the packet encodes forms by ordinal");
     }
 

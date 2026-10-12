@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["SAS", "BCB", "SVS"],
+  "key": {
+    "S": { "item": "hemomancy:nerve_bundle" },
+    "A": { "item": "hemomancy:mnemonic_ambergris" },
+    "B": { "item": "hemomancy:hematic_iron_block" },
+    "C": { "item": "hemomancy:hematic_memory" },
+    "V": { "item": "hemomancy:blood_stained_stone" }
+  },
+  "result": { "id": "hemomancy:cortical_crown" }
+}

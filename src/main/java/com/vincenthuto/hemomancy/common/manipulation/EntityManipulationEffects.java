@@ -109,7 +109,7 @@ public final class EntityManipulationEffects {
 	}
 
 	private static boolean bloodShot(ManipulationCastContext context) {
-		BloodShotEntity shot = new BloodShotEntity(context.level(), context.caster(), context.heldItem());
+		BloodShotEntity shot = BloodShotEntity.fromManipulation(context.level(), context.caster(), context.heldItem());
 		shootArrow(context, shot, 4.5F, 1.0F, 3.0D);
 		return true;
 	}
@@ -117,7 +117,8 @@ public final class EntityManipulationEffects {
 	private static boolean bloodNeedle(ManipulationCastContext context) {
 		int count = 8 + context.level().random.nextInt(6);
 		for (int i = 0; i < count; i++) {
-			BloodNeedleEntity needle = new BloodNeedleEntity(context.level(), context.caster(), context.heldItem());
+			BloodNeedleEntity needle = BloodNeedleEntity.fromManipulation(context.level(), context.caster(), context.heldItem());
+			needle.setForged(true);
 			shootArrow(context, needle, 3.8F + context.level().random.nextFloat() * 1.2F, 8.0F, 1.25D);
 		}
 		return true;

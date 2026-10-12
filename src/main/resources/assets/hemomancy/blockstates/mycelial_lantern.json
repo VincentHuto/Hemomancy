@@ -1,20 +1,74 @@
 {
   "multipart": [
     {
-      "when": { "facing": "north" },
-      "apply": { "model": "hemomancy:block/mycelial_lantern" }
+      "apply": {
+        "model": "hemomancy:block/mycelial_lantern"
+      },
+      "when": {
+        "facing": "north"
+      }
     },
     {
-      "when": { "facing": "south" },
-      "apply": { "model": "hemomancy:block/mycelial_lantern", "y": 180 }
+      "apply": {
+        "model": "hemomancy:block/mycelial_lantern_glass"
+      },
+      "when": {
+        "facing": "north"
+      }
     },
     {
-      "when": { "facing": "west" },
-      "apply": { "model": "hemomancy:block/mycelial_lantern", "y": 270 }
+      "apply": {
+        "model": "hemomancy:block/mycelial_lantern",
+        "y": 90
+      },
+      "when": {
+        "facing": "east"
+      }
     },
     {
-      "when": { "facing": "east" },
-      "apply": { "model": "hemomancy:block/mycelial_lantern", "y": 90 }
+      "apply": {
+        "model": "hemomancy:block/mycelial_lantern_glass",
+        "y": 90
+      },
+      "when": {
+        "facing": "east"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/mycelial_lantern",
+        "y": 180
+      },
+      "when": {
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/mycelial_lantern_glass",
+        "y": 180
+      },
+      "when": {
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/mycelial_lantern",
+        "y": 270
+      },
+      "when": {
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/mycelial_lantern_glass",
+        "y": 270
+      },
+      "when": {
+        "facing": "west"
+      }
     }
   ]
 }

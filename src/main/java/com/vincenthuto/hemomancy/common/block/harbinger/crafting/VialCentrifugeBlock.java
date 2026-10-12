@@ -36,6 +36,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
@@ -45,7 +46,9 @@ public class VialCentrifugeBlock extends Block implements EntityBlock, SimpleWat
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	public static final BooleanProperty LIT = BooleanProperty.create("lit");
 
-	private static final VoxelShape SHAPE_N = Block.box(2, 0, 2, 14, 14, 14);
+	// Plinth, splash bowl and the rotor's sweep; tools/model_export/vial_centrifuge.py authors the body.
+	private static final VoxelShape SHAPE_N = Shapes.or(Block.box(.5, 0, .5, 15.5, 2.25, 15.5),
+			Block.box(1, 2.25, 1, 15, 11, 15), Block.box(2.5, 11, 2.5, 13.5, 16, 13.5));
 
 
 	@Nullable

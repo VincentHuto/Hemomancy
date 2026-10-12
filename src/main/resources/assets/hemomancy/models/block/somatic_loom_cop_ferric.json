@@ -1,0 +1,269 @@
+{
+ "parent": "minecraft:block/block",
+ "render_type": "minecraft:cutout",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "minecraft:block/gray_wool",
+  "ferric": "minecraft:block/gray_wool"
+ },
+ "elements": [
+  {
+   "name": "cop_ferric",
+   "from": [
+    21.45,
+    8.1,
+    6.2479
+   ],
+   "to": [
+    23.15,
+    9.1,
+    6.9521
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      5.45,
+      6.9,
+      7.15,
+      7.9
+     ],
+     "texture": "#ferric"
+    },
+    "south": {
+     "uv": [
+      5.45,
+      6.9,
+      7.15,
+      7.9
+     ],
+     "texture": "#ferric"
+    },
+    "east": {
+     "uv": [
+      6.248,
+      6.9,
+      6.952,
+      7.9
+     ],
+     "texture": "#ferric"
+    },
+    "west": {
+     "uv": [
+      6.248,
+      6.9,
+      6.952,
+      7.9
+     ],
+     "texture": "#ferric"
+    },
+    "up": {
+     "uv": [
+      5.45,
+      6.248,
+      7.15,
+      6.952
+     ],
+     "texture": "#ferric"
+    }
+   }
+  },
+  {
+   "name": "cop_ferric",
+   "from": [
+    21.9479,
+    8.14,
+    5.75
+   ],
+   "to": [
+    22.6521,
+    9.06,
+    7.45
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      5.948,
+      6.94,
+      6.652,
+      7.86
+     ],
+     "texture": "#ferric"
+    },
+    "south": {
+     "uv": [
+      5.948,
+      6.94,
+      6.652,
+      7.86
+     ],
+     "texture": "#ferric"
+    },
+    "east": {
+     "uv": [
+      5.75,
+      6.94,
+      7.45,
+      7.86
+     ],
+     "texture": "#ferric"
+    },
+    "west": {
+     "uv": [
+      5.75,
+      6.94,
+      7.45,
+      7.86
+     ],
+     "texture": "#ferric"
+    },
+    "up": {
+     "uv": [
+      5.948,
+      5.75,
+      6.652,
+      7.45
+     ],
+     "texture": "#ferric"
+    }
+   }
+  },
+  {
+   "name": "cop_ferric",
+   "from": [
+    21.45,
+    8.18,
+    6.2479
+   ],
+   "to": [
+    23.15,
+    9.02,
+    6.9521
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     22.3,
+     0,
+     6.6
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      5.45,
+      6.98,
+      7.15,
+      7.82
+     ],
+     "texture": "#ferric"
+    },
+    "south": {
+     "uv": [
+      5.45,
+      6.98,
+      7.15,
+      7.82
+     ],
+     "texture": "#ferric"
+    },
+    "east": {
+     "uv": [
+      6.248,
+      6.98,
+      6.952,
+      7.82
+     ],
+     "texture": "#ferric"
+    },
+    "west": {
+     "uv": [
+      6.248,
+      6.98,
+      6.952,
+      7.82
+     ],
+     "texture": "#ferric"
+    },
+    "up": {
+     "uv": [
+      5.45,
+      6.248,
+      7.15,
+      6.952
+     ],
+     "texture": "#ferric"
+    }
+   }
+  },
+  {
+   "name": "cop_ferric",
+   "from": [
+    21.45,
+    8.22,
+    6.2479
+   ],
+   "to": [
+    23.15,
+    8.98,
+    6.9521
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     22.3,
+     0,
+     6.6
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      5.45,
+      7.02,
+      7.15,
+      7.78
+     ],
+     "texture": "#ferric"
+    },
+    "south": {
+     "uv": [
+      5.45,
+      7.02,
+      7.15,
+      7.78
+     ],
+     "texture": "#ferric"
+    },
+    "east": {
+     "uv": [
+      6.248,
+      7.02,
+      6.952,
+      7.78
+     ],
+     "texture": "#ferric"
+    },
+    "west": {
+     "uv": [
+      6.248,
+      7.02,
+      6.952,
+      7.78
+     ],
+     "texture": "#ferric"
+    },
+    "up": {
+     "uv": [
+      5.45,
+      6.248,
+      7.15,
+      6.952
+     ],
+     "texture": "#ferric"
+    }
+   }
+  }
+ ]
+}

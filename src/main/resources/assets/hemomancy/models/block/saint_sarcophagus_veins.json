@@ -1,0 +1,450 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    256
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/saint_sarcophagus",
+    "particle": "hemomancy:block/polished_venous_stone"
+  },
+  "elements": [
+    {
+      "name": "neck_vein",
+      "from": [
+        7.175,
+        6.925,
+        21.175
+      ],
+      "to": [
+        8.825,
+        8.575,
+        22.075
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            2.5,
+            10.6875,
+            2.75,
+            10.8125
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            2.75,
+            10.6875,
+            3.0,
+            10.8125
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            12.75,
+            10.6875,
+            12.875,
+            10.8125
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            12.875,
+            10.6875,
+            13.0,
+            10.8125
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            10.0,
+            11.25,
+            10.25,
+            11.3125
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "shade": false,
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "head_vein",
+      "from": [
+        6.175,
+        6.925,
+        21.925
+      ],
+      "to": [
+        9.825,
+        10.325,
+        25.825
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8.25,
+            5.9375,
+            10.125,
+            6.8125
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            10.125,
+            5.9375,
+            12.0,
+            6.8125
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            4.25,
+            5.9375,
+            6.25,
+            6.8125
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            6.25,
+            5.9375,
+            8.25,
+            6.8125
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            0.0,
+            4.9375,
+            1.875,
+            5.9375
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            1.875,
+            4.9375,
+            3.75,
+            5.9375
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "shade": false,
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "hand_left_vein",
+      "from": [
+        6.675,
+        9.675,
+        12.675
+      ],
+      "to": [
+        8.075,
+        10.825,
+        15.075
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            5.25,
+            9.5,
+            5.625,
+            9.6875
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            5.625,
+            9.5,
+            6.0,
+            9.6875
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            3.125,
+            9.3125,
+            3.75,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            3.75,
+            9.3125,
+            4.375,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            7.25,
+            8.4375,
+            7.625,
+            8.75
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            7.625,
+            8.4375,
+            8.0,
+            8.75
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "shade": false,
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "hand_right_vein",
+      "from": [
+        7.925,
+        9.675,
+        12.925
+      ],
+      "to": [
+        9.325,
+        10.825,
+        15.325
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            6.0,
+            9.5,
+            6.375,
+            9.6875
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            6.375,
+            9.5,
+            6.75,
+            9.6875
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            4.375,
+            9.3125,
+            5.0,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            5.0,
+            9.3125,
+            5.625,
+            9.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            8.0,
+            8.4375,
+            8.375,
+            8.75
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            8.375,
+            8.4375,
+            8.75,
+            8.75
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "shade": false,
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "vial_vein",
+      "from": [
+        7.425,
+        9.675,
+        10.675
+      ],
+      "to": [
+        8.575,
+        11.325,
+        12.825
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            11.75,
+            8.8125,
+            12.125,
+            9.0625
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            12.125,
+            8.8125,
+            12.5,
+            9.0625
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            14.5,
+            8.4375,
+            15.125,
+            8.6875
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            15.125,
+            8.4375,
+            15.75,
+            8.6875
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            8.75,
+            8.4375,
+            9.125,
+            8.75
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            9.125,
+            8.4375,
+            9.5,
+            8.75
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "shade": false,
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "vial_stopper_vein",
+      "from": [
+        7.55,
+        9.925,
+        10.175
+      ],
+      "to": [
+        8.45,
+        11.075,
+        10.825
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            13.0,
+            10.6875,
+            13.125,
+            10.8125
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            13.125,
+            10.6875,
+            13.25,
+            10.8125
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            13.25,
+            10.6875,
+            13.375,
+            10.8125
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            13.375,
+            10.6875,
+            13.5,
+            10.8125
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            2.25,
+            11.3125,
+            2.375,
+            11.375
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            2.375,
+            11.3125,
+            2.5,
+            11.375
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "shade": false,
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    }
+  ]
+}

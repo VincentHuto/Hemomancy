@@ -709,6 +709,11 @@ public class ClientEvents {
 			VesperFightFloorRenderer.renderOpaque(event);
         }
 
+		if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS) {
+			// Before entities and translucent blocks, so the echo, threads and water inside draw over the Chamber sky.
+			com.vincenthuto.hemomancy.client.render.world.chamberofwill.SomaticLoomDomeRenderer.render(event);
+		}
+
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
             MnemonicBlueprintRenderer.render(event);
             float partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(true);
@@ -974,6 +979,9 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.mycophant.get(), MycophantRenderer::new);
             event.registerEntityRenderer(EntityInit.seraphae.get(), SeraphaeRenderer::new);
             event.registerEntityRenderer(EntityInit.seraphae_fragment.get(), SeraphaeFragmentRenderer::new);
+            event.registerEntityRenderer(EntityInit.frayed_thread.get(), com.vincenthuto.hemomancy.client.render.entity.weave.FrayedThreadRenderer::new);
+            event.registerEntityRenderer(EntityInit.thread_bolt.get(), com.vincenthuto.hemomancy.client.render.entity.weave.ThreadBoltRenderer::new);
+            event.registerEntityRenderer(EntityInit.thread_hazard.get(), com.vincenthuto.hemomancy.client.render.entity.weave.ThreadHazardRenderer::new);
             event.registerEntityRenderer(EntityInit.containment_anchor.get(), ContainmentAnchorRenderer::new);
             event.registerEntityRenderer(EntityInit.hematic_construct.get(), HematicConstructRenderer::new);
             event.registerEntityRenderer(EntityInit.spectral_companion.get(), PaleIntercessionRenderer::new);
@@ -1311,8 +1319,22 @@ public class ClientEvents {
             event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/clairaudiograph_feed")));
             event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/ghastly_alembic_condenser")));
             event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/ghastly_alembic_athanor")));
-            for (String part : new String[]{"hammer", "wheel", "treadle", "cam", "stylus"})
+            for (String part : ResonantForgeRenderer.PART_MODELS)
                 event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/resonant_forge_" + part)));
+            for (String part : VialCentrifugeRenderer.PART_MODELS)
+                event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/vial_centrifuge_" + part)));
+            for (String part : HematicArmatureRenderer.PART_MODELS)
+                event.register(ModelResourceLocation.standalone(Hemomancy.rloc("block/hematic_armature_" + part)));
+            for (String part : MnemonicReliquaryRenderer.PART_MODELS)
+                event.register(MnemonicReliquaryRenderer.part(part));
+            for (String part : SaintSarcophagusRenderer.PART_MODELS)
+                event.register(SaintSarcophagusRenderer.part(part));
+            for (String part : DendriticDistributorRenderer.PART_MODELS)
+                event.register(DendriticDistributorRenderer.part(part));
+            event.register(MycelialCrucibleRenderer.CISTERN_BLOOD);
+            event.register(MycelialLanternRenderer.GAUGE_BLOOD);
+            for (String part : com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.SomaticLoomRenderer.PART_MODELS)
+                event.register(com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.SomaticLoomRenderer.part(part));
             event.register(ModelResourceLocation.standalone(Hemomancy.rloc("item/blood_absorption_texture")));
             event.register(ModelResourceLocation.standalone(Hemomancy.rloc("item/blood_projection_texture")));
             CardinalRitePlantedStaffModels.uniqueModelNames().forEach(model ->

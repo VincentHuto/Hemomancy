@@ -27,7 +27,7 @@ public final class SanguineMarionetteGameTests {
     private static ServerPlayer caster(GameTestHelper h) {
         ServerPlayer player = DuctilisGameTests.player(h);
         var known = HemoCapabilityAccess.requireKnownManipulations(player);
-        known.getKnownManips().put(ManipulationInit.blood_binding.get(), new ManipLevel(3, 0));
+        known.getKnownManips().put(ManipulationInit.hematic_rebuke.get(), new ManipLevel(3, 0));
         known.getKnownManips().put(ManipulationInit.sanguine_marionette.get(), new ManipLevel(3, 0));
         known.setEquippedManipNames(java.util.List.of("sanguine_marionette"));
         known.setSelectedManip(ManipulationInit.sanguine_marionette.get());
@@ -324,7 +324,9 @@ public final class SanguineMarionetteGameTests {
         h.assertTrue(!HematicCommandManager.isImpressed(first, player), "Two bodies remained controlled");
         h.assertTrue(!HematicCommandManager.acquireMarionette(rival, second), "Another caster stole the puppet");
         first.addEffect(new net.minecraft.world.effect.MobEffectInstance(EffectInit.blood_binding, 100));
-        h.assertTrue(!HematicCommandManager.acquireMarionette(player, first), "Stationary captive became a mobile puppet");
+        h.assertTrue(HematicCommandManager.acquireMarionette(player, first), "Marionette refused a Blood-Bound body");
+        h.assertTrue(!first.hasEffect(EffectInit.blood_binding), "Marionette kept the binding on its puppet");
+        h.assertTrue(HematicCommandManager.marionette(player) == first, "The released captive is not the puppet");
         HematicCommandManager.releaseMarionette(player.getUUID());
         first.discard(); second.discard(); skeleton.discard(); player.discard(); rival.discard(); h.succeed();
     }

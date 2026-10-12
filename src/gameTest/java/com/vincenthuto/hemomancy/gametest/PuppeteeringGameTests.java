@@ -20,6 +20,7 @@ import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.common.menu.PuppeteersSpindleMenu;
 import com.vincenthuto.hemomancy.common.rite.harbinger.PuppeteerTrialRiteController;
+import com.vincenthuto.hemomancy.common.summon.PuppetStrings;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerCrossbarCommands;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
@@ -437,6 +438,8 @@ public final class PuppeteeringGameTests {
 		caster.setPos(net.minecraft.world.phys.Vec3.atCenterOf(helper.absolutePos(new BlockPos(12, 2, 2))));
         Mob vulture = PuppeteerSummonFactory.createTrial(learnVulture(caster), helper.getLevel(), caster,
                 helper.absolutePos(new BlockPos(1, 3, 2))).orElseThrow();
+        // Grid placement can leave the fixture far from any real player; natural despawn must not end it.
+        vulture.setPersistenceRequired();
         helper.assertTrue(helper.getBounds().contains(vulture.position())
                         && helper.getBounds().contains(caster.position()),
                 "Volley fixture must own its initial actor and target positions; bounds=" + helper.getBounds());
@@ -800,8 +803,11 @@ public final class PuppeteeringGameTests {
 
 			helper.assertTrue(!BoundSummonBehavior.commonServerTick(summon,
 					(BoundPuppeteerSummon) summon, owner), "Cross-dimension summon must stop ticking");
-			helper.assertTrue(summon.isRemoved(), "Cross-dimension summon must deliberately unravel");
-			helper.succeed();
+			assertUnspooling(helper, summon, "Cross-dimension summon must deliberately unravel");
+			Mob departing = summon;
+			summon = null; // The haul removes it; leave it in the world until then.
+			helper.succeedWhen(() -> helper.assertTrue(departing.isRemoved(),
+					"An unspooled body must leave once its strings finish the haul"));
 		} finally {
 			if (summon != null) summon.discard();
 			removePlayer(owner);
@@ -824,7 +830,7 @@ public final class PuppeteeringGameTests {
 
 			helper.assertTrue(!BoundSummonBehavior.commonServerTick(summon,
 					(BoundPuppeteerSummon) summon, owner), "A body from an earlier owner session must stop ticking");
-			helper.assertTrue(summon.isRemoved(), "Logout, respawn, or dimension session rotation must unravel it");
+			assertUnspooling(helper, summon, "Logout, respawn, or dimension session rotation must unravel it");
 			helper.succeed();
 		} finally {
 			if (summon != null) summon.discard();
@@ -854,7 +860,7 @@ public final class PuppeteeringGameTests {
 
 			helper.assertTrue(BoundSummonBehavior.commonServerTick(oldest,
 					(BoundPuppeteerSummon) oldest, owner), "The returning older tether must retain its cap slot");
-			helper.assertTrue(overflow.isRemoved(),
+			assertUnspooling(helper, overflow,
 					"Reload reconciliation must actively unravel a newer incumbent that is already ticking");
 			helper.assertTrue(oldest.isAlive(), "The oldest loaded tether must remain alive");
 			helper.succeed();
@@ -891,7 +897,7 @@ public final class PuppeteeringGameTests {
 
 			helper.assertTrue(PuppeteerCrossbarCommands.hotSwap(owner, crossbar, spitter.name()),
 					"Skein Transposition must permit a learned affordable replacement");
-			helper.assertTrue(oldPrepared.isRemoved(), "The former prepared cohort must be recalled");
+			assertUnspooling(helper, oldPrepared, "The former prepared cohort must be recalled");
 			helper.assertTrue(otherShape.isAlive(), "Another shape on the same Crossbar must remain active");
 			helper.assertTrue(MarionetteCrossbarItem.getThread(crossbar) == before - cost,
 					"A successful swap must spend the normal adjusted call charge exactly once");
@@ -982,5 +988,10 @@ public final class PuppeteeringGameTests {
 		if (player != null) {
 			player.discard();
 		}
+	}
+
+	/** Unravelling hands the body to its strings: it turns inert at once and is removed after the haul. */
+	private static void assertUnspooling(GameTestHelper helper, Mob body, String message) {
+		helper.assertTrue(PuppetStrings.isUnspooling(body) && body.isNoAi() && body.isInvulnerable(), message);
 	}
 }

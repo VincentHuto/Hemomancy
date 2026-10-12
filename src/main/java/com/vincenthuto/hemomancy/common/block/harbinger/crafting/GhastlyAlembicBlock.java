@@ -110,11 +110,22 @@ public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock,
 	@Override
 	public void removeFillers(Level level, BlockPos pos) {
 		for (BlockPos cell : BlockPos.betweenClosed(pos.offset(-1, 0, -1), pos.offset(1, 2, 1))) {
-			if (!ownsFiller(level, cell, pos)) continue;
-			boolean waterlogged = level.getBlockState(cell).getValue(WATERLOGGED);
-			((FillerBlockEntity) level.getBlockEntity(cell)).setMainBlockPos(null);
-			level.setBlockAndUpdate(cell, waterlogged ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState());
+			if (ownsFiller(level, cell, pos)) unlinkFiller(level, cell);
 		}
+	}
+
+	/** Drops this machine's fillers outside its current footprint, e.g. cells an older model reserved. */
+	public static void pruneFillers(Level level, BlockPos pos, BlockState state) {
+		var cells = AlembicGeometry.cells(StationTierProperty.stage(state), state.getValue(FACING));
+		for (BlockPos cell : BlockPos.betweenClosed(pos.offset(-1, 0, -1), pos.offset(1, 2, 1))) {
+			if (!cells.containsKey(cell.subtract(pos)) && ownsFiller(level, cell, pos)) unlinkFiller(level, cell);
+		}
+	}
+
+	private static void unlinkFiller(Level level, BlockPos cell) {
+		boolean waterlogged = level.getBlockState(cell).getValue(WATERLOGGED);
+		((FillerBlockEntity) level.getBlockEntity(cell)).setMainBlockPos(null);
+		level.setBlockAndUpdate(cell, waterlogged ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState());
 	}
 
 	public static VoxelShape partShape(BlockState state, BlockPos offset) {

@@ -1,0 +1,304 @@
+{
+ "parent": "minecraft:block/block",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "hemomancy:block/hematic_iron_block",
+  "blood": "hemomancy:block/blood_still"
+ },
+ "elements": [
+  {
+   "name": "vial_blood",
+   "from": [
+    -9.45,
+    14.2,
+    3.1494
+   ],
+   "to": [
+    -6.55,
+    15.2,
+    4.3506
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.55,
+      0.8,
+      9.45,
+      1.8
+     ],
+     "texture": "#blood"
+    },
+    "south": {
+     "uv": [
+      6.55,
+      0.8,
+      9.45,
+      1.8
+     ],
+     "texture": "#blood"
+    },
+    "east": {
+     "uv": [
+      3.149,
+      0.8,
+      4.351,
+      1.8
+     ],
+     "texture": "#blood"
+    },
+    "west": {
+     "uv": [
+      3.149,
+      0.8,
+      4.351,
+      1.8
+     ],
+     "texture": "#blood"
+    },
+    "up": {
+     "uv": [
+      6.55,
+      3.149,
+      9.45,
+      4.351
+     ],
+     "texture": "#blood"
+    },
+    "down": {
+     "uv": [
+      6.55,
+      3.149,
+      9.45,
+      4.351
+     ],
+     "texture": "#blood"
+    }
+   }
+  },
+  {
+   "name": "vial_blood",
+   "from": [
+    -8.6006,
+    14.24,
+    2.3
+   ],
+   "to": [
+    -7.3994,
+    15.16,
+    5.2
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.399,
+      0.84,
+      8.601,
+      1.76
+     ],
+     "texture": "#blood"
+    },
+    "south": {
+     "uv": [
+      7.399,
+      0.84,
+      8.601,
+      1.76
+     ],
+     "texture": "#blood"
+    },
+    "east": {
+     "uv": [
+      2.3,
+      0.84,
+      5.2,
+      1.76
+     ],
+     "texture": "#blood"
+    },
+    "west": {
+     "uv": [
+      2.3,
+      0.84,
+      5.2,
+      1.76
+     ],
+     "texture": "#blood"
+    },
+    "up": {
+     "uv": [
+      7.399,
+      2.3,
+      8.601,
+      5.2
+     ],
+     "texture": "#blood"
+    },
+    "down": {
+     "uv": [
+      7.399,
+      2.3,
+      8.601,
+      5.2
+     ],
+     "texture": "#blood"
+    }
+   }
+  },
+  {
+   "name": "vial_blood",
+   "from": [
+    -9.45,
+    14.28,
+    3.1494
+   ],
+   "to": [
+    -6.55,
+    15.12,
+    4.3506
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     -8.0,
+     0,
+     3.75
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6.55,
+      0.88,
+      9.45,
+      1.72
+     ],
+     "texture": "#blood"
+    },
+    "south": {
+     "uv": [
+      6.55,
+      0.88,
+      9.45,
+      1.72
+     ],
+     "texture": "#blood"
+    },
+    "east": {
+     "uv": [
+      3.149,
+      0.88,
+      4.351,
+      1.72
+     ],
+     "texture": "#blood"
+    },
+    "west": {
+     "uv": [
+      3.149,
+      0.88,
+      4.351,
+      1.72
+     ],
+     "texture": "#blood"
+    },
+    "up": {
+     "uv": [
+      6.55,
+      3.149,
+      9.45,
+      4.351
+     ],
+     "texture": "#blood"
+    },
+    "down": {
+     "uv": [
+      6.55,
+      3.149,
+      9.45,
+      4.351
+     ],
+     "texture": "#blood"
+    }
+   }
+  },
+  {
+   "name": "vial_blood",
+   "from": [
+    -9.45,
+    14.32,
+    3.1494
+   ],
+   "to": [
+    -6.55,
+    15.08,
+    4.3506
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     -8.0,
+     0,
+     3.75
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6.55,
+      0.92,
+      9.45,
+      1.68
+     ],
+     "texture": "#blood"
+    },
+    "south": {
+     "uv": [
+      6.55,
+      0.92,
+      9.45,
+      1.68
+     ],
+     "texture": "#blood"
+    },
+    "east": {
+     "uv": [
+      3.149,
+      0.92,
+      4.351,
+      1.68
+     ],
+     "texture": "#blood"
+    },
+    "west": {
+     "uv": [
+      3.149,
+      0.92,
+      4.351,
+      1.68
+     ],
+     "texture": "#blood"
+    },
+    "up": {
+     "uv": [
+      6.55,
+      3.149,
+      9.45,
+      4.351
+     ],
+     "texture": "#blood"
+    },
+    "down": {
+     "uv": [
+      6.55,
+      3.149,
+      9.45,
+      4.351
+     ],
+     "texture": "#blood"
+    }
+   }
+  }
+ ]
+}

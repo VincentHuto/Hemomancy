@@ -1,0 +1,5015 @@
+{
+ "parent": "minecraft:block/block",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "hemomancy:block/hematic_iron_block",
+  "pillar": "hemomancy:block/hematic_iron_pillar",
+  "netherite": "minecraft:block/netherite_block",
+  "chisel": "hemomancy:block/chiseled_hematic_iron_block",
+  "iron": "hemomancy:block/hematic_iron_block",
+  "chain": "hemomancy:block/hematic_iron_chain",
+  "mono": "minecraft:block/polished_blackstone",
+  "monobrick": "minecraft:block/polished_blackstone_bricks",
+  "venous": "hemomancy:block/chiseled_polished_venous_stone",
+  "bone": "minecraft:block/bone_block_side",
+  "bonecap": "minecraft:block/bone_block_top",
+  "vein": "hemomancy:block/hemorrhagic_crust"
+ },
+ "elements": [
+  {
+   "name": "post",
+   "from": [
+    -10.0,
+    -16,
+    6.0
+   ],
+   "to": [
+    -6.0,
+    7.0,
+    10.0
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.0,
+      0,
+      10.0,
+      16
+     ],
+     "texture": "#pillar"
+    },
+    "south": {
+     "uv": [
+      6.0,
+      0,
+      10.0,
+      16
+     ],
+     "texture": "#pillar"
+    },
+    "east": {
+     "uv": [
+      6.0,
+      0,
+      10.0,
+      16
+     ],
+     "texture": "#pillar"
+    },
+    "west": {
+     "uv": [
+      6.0,
+      0,
+      10.0,
+      16
+     ],
+     "texture": "#pillar"
+    },
+    "up": {
+     "uv": [
+      6.0,
+      6.0,
+      10.0,
+      10.0
+     ],
+     "texture": "#pillar"
+    }
+   }
+  },
+  {
+   "name": "post_band",
+   "from": [
+    -10.4,
+    -8,
+    5.6
+   ],
+   "to": [
+    -10.0,
+    -6.5,
+    10.4
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      5.6,
+      6.5,
+      6.0,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      5.6,
+      6.5,
+      6.0,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      5.6,
+      6.5,
+      10.4,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      5.6,
+      6.5,
+      10.4,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      5.6,
+      5.6,
+      6.0,
+      10.4
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      5.6,
+      5.6,
+      6.0,
+      10.4
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "post_band",
+   "from": [
+    -10.0,
+    -8,
+    5.6
+   ],
+   "to": [
+    -6.0,
+    -6.5,
+    6.0
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.0,
+      6.5,
+      10.0,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      6.0,
+      6.5,
+      10.0,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      5.6,
+      6.5,
+      6.0,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      5.6,
+      6.5,
+      6.0,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      6.0,
+      5.6,
+      10.0,
+      6.0
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      6.0,
+      5.6,
+      10.0,
+      6.0
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "post_band",
+   "from": [
+    -6.0,
+    -8,
+    5.6
+   ],
+   "to": [
+    -5.6,
+    -6.5,
+    10.4
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      10.0,
+      6.5,
+      10.4,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      10.0,
+      6.5,
+      10.4,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      5.6,
+      6.5,
+      10.4,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      5.6,
+      6.5,
+      10.4,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      10.0,
+      5.6,
+      10.4,
+      10.4
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      10.0,
+      5.6,
+      10.4,
+      10.4
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "post_band",
+   "from": [
+    -10.0,
+    -8,
+    10.0
+   ],
+   "to": [
+    -6.0,
+    -6.5,
+    10.4
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.0,
+      6.5,
+      10.0,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      6.0,
+      6.5,
+      10.0,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      10.0,
+      6.5,
+      10.4,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      10.0,
+      6.5,
+      10.4,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      6.0,
+      10.0,
+      10.0,
+      10.4
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      6.0,
+      10.0,
+      10.0,
+      10.4
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "post_capital",
+   "from": [
+    -11.0,
+    6.5,
+    5.0
+   ],
+   "to": [
+    -5.0,
+    13.0,
+    11.0
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      5.0,
+      3.0,
+      11.0,
+      9.5
+     ],
+     "texture": "#chisel"
+    },
+    "south": {
+     "uv": [
+      5.0,
+      3.0,
+      11.0,
+      9.5
+     ],
+     "texture": "#chisel"
+    },
+    "east": {
+     "uv": [
+      5.0,
+      3.0,
+      11.0,
+      9.5
+     ],
+     "texture": "#chisel"
+    },
+    "west": {
+     "uv": [
+      5.0,
+      3.0,
+      11.0,
+      9.5
+     ],
+     "texture": "#chisel"
+    },
+    "up": {
+     "uv": [
+      5.0,
+      5.0,
+      11.0,
+      11.0
+     ],
+     "texture": "#chisel"
+    },
+    "down": {
+     "uv": [
+      5.0,
+      5.0,
+      11.0,
+      11.0
+     ],
+     "texture": "#chisel"
+    }
+   }
+  },
+  {
+   "name": "post_finial",
+   "from": [
+    -9.25,
+    13.0,
+    7.4822
+   ],
+   "to": [
+    -6.75,
+    15.5,
+    8.5178
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.75,
+      0.5,
+      9.25,
+      3.0
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      6.75,
+      0.5,
+      9.25,
+      3.0
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      7.482,
+      0.5,
+      8.518,
+      3.0
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      7.482,
+      0.5,
+      8.518,
+      3.0
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      6.75,
+      7.482,
+      9.25,
+      8.518
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      6.75,
+      7.482,
+      9.25,
+      8.518
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "post_finial",
+   "from": [
+    -8.5178,
+    13.04,
+    6.75
+   ],
+   "to": [
+    -7.4822,
+    15.46,
+    9.25
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.482,
+      0.54,
+      8.518,
+      2.96
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      7.482,
+      0.54,
+      8.518,
+      2.96
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      6.75,
+      0.54,
+      9.25,
+      2.96
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      6.75,
+      0.54,
+      9.25,
+      2.96
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      7.482,
+      6.75,
+      8.518,
+      9.25
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      7.482,
+      6.75,
+      8.518,
+      9.25
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "post_finial",
+   "from": [
+    -9.25,
+    13.08,
+    7.4822
+   ],
+   "to": [
+    -6.75,
+    15.42,
+    8.5178
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     -8.0,
+     -48,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6.75,
+      0.58,
+      9.25,
+      2.92
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      6.75,
+      0.58,
+      9.25,
+      2.92
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      7.482,
+      0.58,
+      8.518,
+      2.92
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      7.482,
+      0.58,
+      8.518,
+      2.92
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      6.75,
+      7.482,
+      9.25,
+      8.518
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      6.75,
+      7.482,
+      9.25,
+      8.518
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "post_finial",
+   "from": [
+    -9.25,
+    13.12,
+    7.4822
+   ],
+   "to": [
+    -6.75,
+    15.38,
+    8.5178
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     -8.0,
+     -48,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6.75,
+      0.62,
+      9.25,
+      2.88
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      6.75,
+      0.62,
+      9.25,
+      2.88
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      7.482,
+      0.62,
+      8.518,
+      2.88
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      7.482,
+      0.62,
+      8.518,
+      2.88
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      6.75,
+      7.482,
+      9.25,
+      8.518
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      6.75,
+      7.482,
+      9.25,
+      8.518
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "post_plate",
+   "from": [
+    -9.6,
+    -16,
+    5.6
+   ],
+   "to": [
+    -6.4,
+    -8.5,
+    6.0
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.4,
+      8.5,
+      9.6,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "east": {
+     "uv": [
+      5.6,
+      8.5,
+      6.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "west": {
+     "uv": [
+      5.6,
+      8.5,
+      6.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "up": {
+     "uv": [
+      6.4,
+      5.6,
+      9.6,
+      6.0
+     ],
+     "texture": "#iron"
+    }
+   }
+  },
+  {
+   "name": "post_plate",
+   "from": [
+    -9.6,
+    -6.5,
+    5.6
+   ],
+   "to": [
+    -6.4,
+    5.5,
+    6.0
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.4,
+      4.0,
+      9.6,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "east": {
+     "uv": [
+      5.6,
+      4.0,
+      6.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "west": {
+     "uv": [
+      5.6,
+      4.0,
+      6.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "up": {
+     "uv": [
+      6.4,
+      5.6,
+      9.6,
+      6.0
+     ],
+     "texture": "#iron"
+    },
+    "down": {
+     "uv": [
+      6.4,
+      5.6,
+      9.6,
+      6.0
+     ],
+     "texture": "#iron"
+    }
+   }
+  },
+  {
+   "name": "post",
+   "from": [
+    22.0,
+    -16,
+    6.0
+   ],
+   "to": [
+    26.0,
+    7.0,
+    10.0
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.0,
+      0,
+      10.0,
+      16
+     ],
+     "texture": "#pillar"
+    },
+    "south": {
+     "uv": [
+      6.0,
+      0,
+      10.0,
+      16
+     ],
+     "texture": "#pillar"
+    },
+    "east": {
+     "uv": [
+      6.0,
+      0,
+      10.0,
+      16
+     ],
+     "texture": "#pillar"
+    },
+    "west": {
+     "uv": [
+      6.0,
+      0,
+      10.0,
+      16
+     ],
+     "texture": "#pillar"
+    },
+    "up": {
+     "uv": [
+      6.0,
+      6.0,
+      10.0,
+      10.0
+     ],
+     "texture": "#pillar"
+    }
+   }
+  },
+  {
+   "name": "post_band",
+   "from": [
+    21.6,
+    -8,
+    5.6
+   ],
+   "to": [
+    22.0,
+    -6.5,
+    10.4
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      5.6,
+      6.5,
+      6.0,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      5.6,
+      6.5,
+      6.0,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      5.6,
+      6.5,
+      10.4,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      5.6,
+      6.5,
+      10.4,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      5.6,
+      5.6,
+      6.0,
+      10.4
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      5.6,
+      5.6,
+      6.0,
+      10.4
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "post_band",
+   "from": [
+    22.0,
+    -8,
+    5.6
+   ],
+   "to": [
+    26.0,
+    -6.5,
+    6.0
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.0,
+      6.5,
+      10.0,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      6.0,
+      6.5,
+      10.0,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      5.6,
+      6.5,
+      6.0,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      5.6,
+      6.5,
+      6.0,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      6.0,
+      5.6,
+      10.0,
+      6.0
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      6.0,
+      5.6,
+      10.0,
+      6.0
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "post_band",
+   "from": [
+    26.0,
+    -8,
+    5.6
+   ],
+   "to": [
+    26.4,
+    -6.5,
+    10.4
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      10.0,
+      6.5,
+      10.4,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      10.0,
+      6.5,
+      10.4,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      5.6,
+      6.5,
+      10.4,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      5.6,
+      6.5,
+      10.4,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      10.0,
+      5.6,
+      10.4,
+      10.4
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      10.0,
+      5.6,
+      10.4,
+      10.4
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "post_band",
+   "from": [
+    22.0,
+    -8,
+    10.0
+   ],
+   "to": [
+    26.0,
+    -6.5,
+    10.4
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.0,
+      6.5,
+      10.0,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      6.0,
+      6.5,
+      10.0,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      10.0,
+      6.5,
+      10.4,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      10.0,
+      6.5,
+      10.4,
+      8.0
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      6.0,
+      10.0,
+      10.0,
+      10.4
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      6.0,
+      10.0,
+      10.0,
+      10.4
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "post_capital",
+   "from": [
+    21.0,
+    6.5,
+    5.0
+   ],
+   "to": [
+    27.0,
+    13.0,
+    11.0
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      5.0,
+      3.0,
+      11.0,
+      9.5
+     ],
+     "texture": "#chisel"
+    },
+    "south": {
+     "uv": [
+      5.0,
+      3.0,
+      11.0,
+      9.5
+     ],
+     "texture": "#chisel"
+    },
+    "east": {
+     "uv": [
+      5.0,
+      3.0,
+      11.0,
+      9.5
+     ],
+     "texture": "#chisel"
+    },
+    "west": {
+     "uv": [
+      5.0,
+      3.0,
+      11.0,
+      9.5
+     ],
+     "texture": "#chisel"
+    },
+    "up": {
+     "uv": [
+      5.0,
+      5.0,
+      11.0,
+      11.0
+     ],
+     "texture": "#chisel"
+    },
+    "down": {
+     "uv": [
+      5.0,
+      5.0,
+      11.0,
+      11.0
+     ],
+     "texture": "#chisel"
+    }
+   }
+  },
+  {
+   "name": "post_finial",
+   "from": [
+    22.75,
+    13.0,
+    7.4822
+   ],
+   "to": [
+    25.25,
+    15.5,
+    8.5178
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.75,
+      0.5,
+      9.25,
+      3.0
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      6.75,
+      0.5,
+      9.25,
+      3.0
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      7.482,
+      0.5,
+      8.518,
+      3.0
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      7.482,
+      0.5,
+      8.518,
+      3.0
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      6.75,
+      7.482,
+      9.25,
+      8.518
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      6.75,
+      7.482,
+      9.25,
+      8.518
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "post_finial",
+   "from": [
+    23.4822,
+    13.04,
+    6.75
+   ],
+   "to": [
+    24.5178,
+    15.46,
+    9.25
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.482,
+      0.54,
+      8.518,
+      2.96
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      7.482,
+      0.54,
+      8.518,
+      2.96
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      6.75,
+      0.54,
+      9.25,
+      2.96
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      6.75,
+      0.54,
+      9.25,
+      2.96
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      7.482,
+      6.75,
+      8.518,
+      9.25
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      7.482,
+      6.75,
+      8.518,
+      9.25
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "post_finial",
+   "from": [
+    22.75,
+    13.08,
+    7.4822
+   ],
+   "to": [
+    25.25,
+    15.42,
+    8.5178
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     24.0,
+     -48,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6.75,
+      0.58,
+      9.25,
+      2.92
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      6.75,
+      0.58,
+      9.25,
+      2.92
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      7.482,
+      0.58,
+      8.518,
+      2.92
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      7.482,
+      0.58,
+      8.518,
+      2.92
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      6.75,
+      7.482,
+      9.25,
+      8.518
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      6.75,
+      7.482,
+      9.25,
+      8.518
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "post_finial",
+   "from": [
+    22.75,
+    13.12,
+    7.4822
+   ],
+   "to": [
+    25.25,
+    15.38,
+    8.5178
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     24.0,
+     -48,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6.75,
+      0.62,
+      9.25,
+      2.88
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      6.75,
+      0.62,
+      9.25,
+      2.88
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      7.482,
+      0.62,
+      8.518,
+      2.88
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      7.482,
+      0.62,
+      8.518,
+      2.88
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      6.75,
+      7.482,
+      9.25,
+      8.518
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      6.75,
+      7.482,
+      9.25,
+      8.518
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "post_plate",
+   "from": [
+    22.4,
+    -16,
+    5.6
+   ],
+   "to": [
+    25.6,
+    -8.5,
+    6.0
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.4,
+      8.5,
+      9.6,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "east": {
+     "uv": [
+      5.6,
+      8.5,
+      6.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "west": {
+     "uv": [
+      5.6,
+      8.5,
+      6.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "up": {
+     "uv": [
+      6.4,
+      5.6,
+      9.6,
+      6.0
+     ],
+     "texture": "#iron"
+    }
+   }
+  },
+  {
+   "name": "post_plate",
+   "from": [
+    22.4,
+    -6.5,
+    5.6
+   ],
+   "to": [
+    25.6,
+    5.5,
+    6.0
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.4,
+      4.0,
+      9.6,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "east": {
+     "uv": [
+      5.6,
+      4.0,
+      6.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "west": {
+     "uv": [
+      5.6,
+      4.0,
+      6.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "up": {
+     "uv": [
+      6.4,
+      5.6,
+      9.6,
+      6.0
+     ],
+     "texture": "#iron"
+    },
+    "down": {
+     "uv": [
+      6.4,
+      5.6,
+      9.6,
+      6.0
+     ],
+     "texture": "#iron"
+    }
+   }
+  },
+  {
+   "name": "crossbeam",
+   "from": [
+    -10.5,
+    7.5,
+    6.5
+   ],
+   "to": [
+    26.5,
+    11.5,
+    9.5
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      4.5,
+      16,
+      8.5
+     ],
+     "texture": "#iron"
+    },
+    "south": {
+     "uv": [
+      0,
+      4.5,
+      16,
+      8.5
+     ],
+     "texture": "#iron"
+    },
+    "east": {
+     "uv": [
+      6.5,
+      4.5,
+      9.5,
+      8.5
+     ],
+     "texture": "#iron"
+    },
+    "west": {
+     "uv": [
+      6.5,
+      4.5,
+      9.5,
+      8.5
+     ],
+     "texture": "#iron"
+    },
+    "up": {
+     "uv": [
+      0,
+      6.5,
+      16,
+      9.5
+     ],
+     "texture": "#iron"
+    },
+    "down": {
+     "uv": [
+      0,
+      6.5,
+      16,
+      9.5
+     ],
+     "texture": "#iron"
+    }
+   }
+  },
+  {
+   "name": "beam_eye",
+   "from": [
+    1.25,
+    6.25,
+    7.28
+   ],
+   "to": [
+    2.75,
+    7.5,
+    8.72
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      1.25,
+      8.5,
+      2.75,
+      9.75
+     ],
+     "texture": "#chisel"
+    },
+    "south": {
+     "uv": [
+      1.25,
+      8.5,
+      2.75,
+      9.75
+     ],
+     "texture": "#chisel"
+    },
+    "east": {
+     "uv": [
+      7.25,
+      8.5,
+      8.75,
+      9.75
+     ],
+     "texture": "#chisel"
+    },
+    "west": {
+     "uv": [
+      7.25,
+      8.5,
+      8.75,
+      9.75
+     ],
+     "texture": "#chisel"
+    },
+    "up": {
+     "uv": [
+      1.25,
+      7.25,
+      2.75,
+      8.75
+     ],
+     "texture": "#chisel"
+    },
+    "down": {
+     "uv": [
+      1.25,
+      7.25,
+      2.75,
+      8.75
+     ],
+     "texture": "#chisel"
+    }
+   }
+  },
+  {
+   "name": "beam_eye",
+   "from": [
+    13.25,
+    6.25,
+    7.28
+   ],
+   "to": [
+    14.75,
+    7.5,
+    8.72
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      13.25,
+      8.5,
+      14.75,
+      9.75
+     ],
+     "texture": "#chisel"
+    },
+    "south": {
+     "uv": [
+      13.25,
+      8.5,
+      14.75,
+      9.75
+     ],
+     "texture": "#chisel"
+    },
+    "east": {
+     "uv": [
+      7.25,
+      8.5,
+      8.75,
+      9.75
+     ],
+     "texture": "#chisel"
+    },
+    "west": {
+     "uv": [
+      7.25,
+      8.5,
+      8.75,
+      9.75
+     ],
+     "texture": "#chisel"
+    },
+    "up": {
+     "uv": [
+      13.25,
+      7.25,
+      14.75,
+      8.75
+     ],
+     "texture": "#chisel"
+    },
+    "down": {
+     "uv": [
+      13.25,
+      7.25,
+      14.75,
+      8.75
+     ],
+     "texture": "#chisel"
+    }
+   }
+  },
+  {
+   "name": "knee_brace",
+   "from": [
+    -7.5,
+    3.25,
+    7.25
+   ],
+   "to": [
+    2.5,
+    4.75,
+    8.75
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "z",
+    "origin": [
+     -2.5,
+     4.0,
+     8
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6.0,
+      11.25,
+      16.0,
+      12.75
+     ],
+     "texture": "#iron"
+    },
+    "south": {
+     "uv": [
+      6.0,
+      11.25,
+      16.0,
+      12.75
+     ],
+     "texture": "#iron"
+    },
+    "east": {
+     "uv": [
+      7.25,
+      11.25,
+      8.75,
+      12.75
+     ],
+     "texture": "#iron"
+    },
+    "west": {
+     "uv": [
+      7.25,
+      11.25,
+      8.75,
+      12.75
+     ],
+     "texture": "#iron"
+    },
+    "up": {
+     "uv": [
+      6.0,
+      7.25,
+      16.0,
+      8.75
+     ],
+     "texture": "#iron"
+    },
+    "down": {
+     "uv": [
+      6.0,
+      7.25,
+      16.0,
+      8.75
+     ],
+     "texture": "#iron"
+    }
+   }
+  },
+  {
+   "name": "knee_brace",
+   "from": [
+    13.5,
+    3.25,
+    7.25
+   ],
+   "to": [
+    23.5,
+    4.75,
+    8.75
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "z",
+    "origin": [
+     18.5,
+     4.0,
+     8
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6.0,
+      11.25,
+      16.0,
+      12.75
+     ],
+     "texture": "#iron"
+    },
+    "south": {
+     "uv": [
+      6.0,
+      11.25,
+      16.0,
+      12.75
+     ],
+     "texture": "#iron"
+    },
+    "east": {
+     "uv": [
+      7.25,
+      11.25,
+      8.75,
+      12.75
+     ],
+     "texture": "#iron"
+    },
+    "west": {
+     "uv": [
+      7.25,
+      11.25,
+      8.75,
+      12.75
+     ],
+     "texture": "#iron"
+    },
+    "up": {
+     "uv": [
+      6.0,
+      7.25,
+      16.0,
+      8.75
+     ],
+     "texture": "#iron"
+    },
+    "down": {
+     "uv": [
+      6.0,
+      7.25,
+      16.0,
+      8.75
+     ],
+     "texture": "#iron"
+    }
+   }
+  },
+  {
+   "name": "restraint_chain",
+   "from": [
+    0.5,
+    -16.0,
+    7.995
+   ],
+   "to": [
+    3.5,
+    0.0,
+    8.005
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     2.0,
+     -16.0,
+     8
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      0.0,
+      3,
+      16
+     ],
+     "texture": "#chain"
+    },
+    "south": {
+     "uv": [
+      0,
+      0.0,
+      3,
+      16
+     ],
+     "texture": "#chain"
+    }
+   }
+  },
+  {
+   "name": "restraint_chain",
+   "from": [
+    0.5,
+    -16.0,
+    7.995
+   ],
+   "to": [
+    3.5,
+    0.0,
+    8.005
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     2.0,
+     -16.0,
+     8
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      3,
+      0.0,
+      6,
+      16
+     ],
+     "texture": "#chain"
+    },
+    "south": {
+     "uv": [
+      3,
+      0.0,
+      6,
+      16
+     ],
+     "texture": "#chain"
+    }
+   }
+  },
+  {
+   "name": "restraint_chain",
+   "from": [
+    0.5,
+    0.0,
+    7.995
+   ],
+   "to": [
+    3.5,
+    6.25,
+    8.005
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     2.0,
+     0.0,
+     8
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      9.75,
+      3,
+      16
+     ],
+     "texture": "#chain"
+    },
+    "south": {
+     "uv": [
+      0,
+      9.75,
+      3,
+      16
+     ],
+     "texture": "#chain"
+    }
+   }
+  },
+  {
+   "name": "restraint_chain",
+   "from": [
+    0.5,
+    0.0,
+    7.995
+   ],
+   "to": [
+    3.5,
+    6.25,
+    8.005
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     2.0,
+     0.0,
+     8
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      3,
+      9.75,
+      6,
+      16
+     ],
+     "texture": "#chain"
+    },
+    "south": {
+     "uv": [
+      3,
+      9.75,
+      6,
+      16
+     ],
+     "texture": "#chain"
+    }
+   }
+  },
+  {
+   "name": "restraint_chain",
+   "from": [
+    12.5,
+    -16.0,
+    7.995
+   ],
+   "to": [
+    15.5,
+    0.0,
+    8.005
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     14.0,
+     -16.0,
+     8
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      0.0,
+      3,
+      16
+     ],
+     "texture": "#chain"
+    },
+    "south": {
+     "uv": [
+      0,
+      0.0,
+      3,
+      16
+     ],
+     "texture": "#chain"
+    }
+   }
+  },
+  {
+   "name": "restraint_chain",
+   "from": [
+    12.5,
+    -16.0,
+    7.995
+   ],
+   "to": [
+    15.5,
+    0.0,
+    8.005
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     14.0,
+     -16.0,
+     8
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      3,
+      0.0,
+      6,
+      16
+     ],
+     "texture": "#chain"
+    },
+    "south": {
+     "uv": [
+      3,
+      0.0,
+      6,
+      16
+     ],
+     "texture": "#chain"
+    }
+   }
+  },
+  {
+   "name": "restraint_chain",
+   "from": [
+    12.5,
+    0.0,
+    7.995
+   ],
+   "to": [
+    15.5,
+    6.25,
+    8.005
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     14.0,
+     0.0,
+     8
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      9.75,
+      3,
+      16
+     ],
+     "texture": "#chain"
+    },
+    "south": {
+     "uv": [
+      0,
+      9.75,
+      3,
+      16
+     ],
+     "texture": "#chain"
+    }
+   }
+  },
+  {
+   "name": "restraint_chain",
+   "from": [
+    12.5,
+    0.0,
+    7.995
+   ],
+   "to": [
+    15.5,
+    6.25,
+    8.005
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     14.0,
+     0.0,
+     8
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      3,
+      9.75,
+      6,
+      16
+     ],
+     "texture": "#chain"
+    },
+    "south": {
+     "uv": [
+      3,
+      9.75,
+      6,
+      16
+     ],
+     "texture": "#chain"
+    }
+   }
+  },
+  {
+   "name": "cornerstone",
+   "from": [
+    1,
+    11.5,
+    4
+   ],
+   "to": [
+    15,
+    19,
+    12
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      1,
+      8.5,
+      15,
+      16.0
+     ],
+     "texture": "#mono"
+    },
+    "south": {
+     "uv": [
+      1,
+      8.5,
+      15,
+      16.0
+     ],
+     "texture": "#mono"
+    },
+    "east": {
+     "uv": [
+      4,
+      8.5,
+      12,
+      16.0
+     ],
+     "texture": "#mono"
+    },
+    "west": {
+     "uv": [
+      4,
+      8.5,
+      12,
+      16.0
+     ],
+     "texture": "#mono"
+    },
+    "up": {
+     "uv": [
+      1,
+      4,
+      15,
+      12
+     ],
+     "texture": "#mono"
+    },
+    "down": {
+     "uv": [
+      1,
+      4,
+      15,
+      12
+     ],
+     "texture": "#mono"
+    }
+   }
+  },
+  {
+   "name": "cornerstone_lintel",
+   "from": [
+    0.25,
+    18,
+    3.25
+   ],
+   "to": [
+    15.75,
+    19.75,
+    12.75
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0.25,
+      12.25,
+      15.75,
+      14.0
+     ],
+     "texture": "#monobrick"
+    },
+    "south": {
+     "uv": [
+      0.25,
+      12.25,
+      15.75,
+      14.0
+     ],
+     "texture": "#monobrick"
+    },
+    "east": {
+     "uv": [
+      3.25,
+      12.25,
+      12.75,
+      14.0
+     ],
+     "texture": "#monobrick"
+    },
+    "west": {
+     "uv": [
+      3.25,
+      12.25,
+      12.75,
+      14.0
+     ],
+     "texture": "#monobrick"
+    },
+    "up": {
+     "uv": [
+      0.25,
+      3.25,
+      15.75,
+      12.75
+     ],
+     "texture": "#monobrick"
+    },
+    "down": {
+     "uv": [
+      0.25,
+      3.25,
+      15.75,
+      12.75
+     ],
+     "texture": "#monobrick"
+    }
+   }
+  },
+  {
+   "name": "cornerstone_rune",
+   "from": [
+    4.5,
+    13,
+    3.7
+   ],
+   "to": [
+    11.5,
+    17.5,
+    4
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      4.5,
+      11.5,
+      11.5,
+      16.0
+     ],
+     "texture": "#venous"
+    },
+    "east": {
+     "uv": [
+      3.7,
+      11.5,
+      4.0,
+      16.0
+     ],
+     "texture": "#venous"
+    },
+    "west": {
+     "uv": [
+      3.7,
+      11.5,
+      4.0,
+      16.0
+     ],
+     "texture": "#venous"
+    },
+    "up": {
+     "uv": [
+      4.5,
+      3.7,
+      11.5,
+      4.0
+     ],
+     "texture": "#venous"
+    },
+    "down": {
+     "uv": [
+      4.5,
+      3.7,
+      11.5,
+      4.0
+     ],
+     "texture": "#venous"
+    }
+   }
+  },
+  {
+   "name": "heart_seat",
+   "from": [
+    4.5,
+    19.75,
+    6.5503
+   ],
+   "to": [
+    11.5,
+    20.5,
+    9.4497
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      4.5,
+      11.5,
+      11.5,
+      12.25
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      4.5,
+      11.5,
+      11.5,
+      12.25
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      6.55,
+      11.5,
+      9.45,
+      12.25
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      6.55,
+      11.5,
+      9.45,
+      12.25
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      4.5,
+      6.55,
+      11.5,
+      9.45
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      4.5,
+      6.55,
+      11.5,
+      9.45
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "heart_seat",
+   "from": [
+    6.5503,
+    19.79,
+    4.5
+   ],
+   "to": [
+    9.4497,
+    20.46,
+    11.5
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.55,
+      11.54,
+      9.45,
+      12.21
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      6.55,
+      11.54,
+      9.45,
+      12.21
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      4.5,
+      11.54,
+      11.5,
+      12.21
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      4.5,
+      11.54,
+      11.5,
+      12.21
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      6.55,
+      4.5,
+      9.45,
+      11.5
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      6.55,
+      4.5,
+      9.45,
+      11.5
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "heart_seat",
+   "from": [
+    4.5,
+    19.83,
+    6.5503
+   ],
+   "to": [
+    11.5,
+    20.42,
+    9.4497
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     -48,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      4.5,
+      11.58,
+      11.5,
+      12.17
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      4.5,
+      11.58,
+      11.5,
+      12.17
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      6.55,
+      11.58,
+      9.45,
+      12.17
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      6.55,
+      11.58,
+      9.45,
+      12.17
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      4.5,
+      6.55,
+      11.5,
+      9.45
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      4.5,
+      6.55,
+      11.5,
+      9.45
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "heart_seat",
+   "from": [
+    4.5,
+    19.87,
+    6.5503
+   ],
+   "to": [
+    11.5,
+    20.38,
+    9.4497
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     -48,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      4.5,
+      11.62,
+      11.5,
+      12.13
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      4.5,
+      11.62,
+      11.5,
+      12.13
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      6.55,
+      11.62,
+      9.45,
+      12.13
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      6.55,
+      11.62,
+      9.45,
+      12.13
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      4.5,
+      6.55,
+      11.5,
+      9.45
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      4.5,
+      6.55,
+      11.5,
+      9.45
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "heart_shoulder",
+   "from": [
+    4.6,
+    27.0,
+    6.5917
+   ],
+   "to": [
+    11.4,
+    27.75,
+    9.4083
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      4.6,
+      4.25,
+      11.4,
+      5.0
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      4.6,
+      4.25,
+      11.4,
+      5.0
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      6.592,
+      4.25,
+      9.408,
+      5.0
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      6.592,
+      4.25,
+      9.408,
+      5.0
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      4.6,
+      6.592,
+      11.4,
+      9.408
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      4.6,
+      6.592,
+      11.4,
+      9.408
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "heart_shoulder",
+   "from": [
+    6.5917,
+    27.04,
+    4.6
+   ],
+   "to": [
+    9.4083,
+    27.71,
+    11.4
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.592,
+      4.29,
+      9.408,
+      4.96
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      6.592,
+      4.29,
+      9.408,
+      4.96
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      4.6,
+      4.29,
+      11.4,
+      4.96
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      4.6,
+      4.29,
+      11.4,
+      4.96
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      6.592,
+      4.6,
+      9.408,
+      11.4
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      6.592,
+      4.6,
+      9.408,
+      11.4
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "heart_shoulder",
+   "from": [
+    4.6,
+    27.08,
+    6.5917
+   ],
+   "to": [
+    11.4,
+    27.67,
+    9.4083
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     -48,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      4.6,
+      4.33,
+      11.4,
+      4.92
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      4.6,
+      4.33,
+      11.4,
+      4.92
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      6.592,
+      4.33,
+      9.408,
+      4.92
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      6.592,
+      4.33,
+      9.408,
+      4.92
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      4.6,
+      6.592,
+      11.4,
+      9.408
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      4.6,
+      6.592,
+      11.4,
+      9.408
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "heart_shoulder",
+   "from": [
+    4.6,
+    27.12,
+    6.5917
+   ],
+   "to": [
+    11.4,
+    27.63,
+    9.4083
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     -48,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      4.6,
+      4.37,
+      11.4,
+      4.88
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      4.6,
+      4.37,
+      11.4,
+      4.88
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      6.592,
+      4.37,
+      9.408,
+      4.88
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      6.592,
+      4.37,
+      9.408,
+      4.88
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      4.6,
+      6.592,
+      11.4,
+      9.408
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      4.6,
+      6.592,
+      11.4,
+      9.408
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "heart_neck",
+   "from": [
+    6.25,
+    27.75,
+    7.2751
+   ],
+   "to": [
+    9.75,
+    29.0,
+    8.7249
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.25,
+      3.0,
+      9.75,
+      4.25
+     ],
+     "texture": "#chisel"
+    },
+    "south": {
+     "uv": [
+      6.25,
+      3.0,
+      9.75,
+      4.25
+     ],
+     "texture": "#chisel"
+    },
+    "east": {
+     "uv": [
+      7.275,
+      3.0,
+      8.725,
+      4.25
+     ],
+     "texture": "#chisel"
+    },
+    "west": {
+     "uv": [
+      7.275,
+      3.0,
+      8.725,
+      4.25
+     ],
+     "texture": "#chisel"
+    },
+    "up": {
+     "uv": [
+      6.25,
+      7.275,
+      9.75,
+      8.725
+     ],
+     "texture": "#chisel"
+    },
+    "down": {
+     "uv": [
+      6.25,
+      7.275,
+      9.75,
+      8.725
+     ],
+     "texture": "#chisel"
+    }
+   }
+  },
+  {
+   "name": "heart_neck",
+   "from": [
+    7.2751,
+    27.79,
+    6.25
+   ],
+   "to": [
+    8.7249,
+    28.96,
+    9.75
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.275,
+      3.04,
+      8.725,
+      4.21
+     ],
+     "texture": "#chisel"
+    },
+    "south": {
+     "uv": [
+      7.275,
+      3.04,
+      8.725,
+      4.21
+     ],
+     "texture": "#chisel"
+    },
+    "east": {
+     "uv": [
+      6.25,
+      3.04,
+      9.75,
+      4.21
+     ],
+     "texture": "#chisel"
+    },
+    "west": {
+     "uv": [
+      6.25,
+      3.04,
+      9.75,
+      4.21
+     ],
+     "texture": "#chisel"
+    },
+    "up": {
+     "uv": [
+      7.275,
+      6.25,
+      8.725,
+      9.75
+     ],
+     "texture": "#chisel"
+    },
+    "down": {
+     "uv": [
+      7.275,
+      6.25,
+      8.725,
+      9.75
+     ],
+     "texture": "#chisel"
+    }
+   }
+  },
+  {
+   "name": "heart_neck",
+   "from": [
+    6.25,
+    27.83,
+    7.2751
+   ],
+   "to": [
+    9.75,
+    28.92,
+    8.7249
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     -48,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6.25,
+      3.08,
+      9.75,
+      4.17
+     ],
+     "texture": "#chisel"
+    },
+    "south": {
+     "uv": [
+      6.25,
+      3.08,
+      9.75,
+      4.17
+     ],
+     "texture": "#chisel"
+    },
+    "east": {
+     "uv": [
+      7.275,
+      3.08,
+      8.725,
+      4.17
+     ],
+     "texture": "#chisel"
+    },
+    "west": {
+     "uv": [
+      7.275,
+      3.08,
+      8.725,
+      4.17
+     ],
+     "texture": "#chisel"
+    },
+    "up": {
+     "uv": [
+      6.25,
+      7.275,
+      9.75,
+      8.725
+     ],
+     "texture": "#chisel"
+    },
+    "down": {
+     "uv": [
+      6.25,
+      7.275,
+      9.75,
+      8.725
+     ],
+     "texture": "#chisel"
+    }
+   }
+  },
+  {
+   "name": "heart_neck",
+   "from": [
+    6.25,
+    27.87,
+    7.2751
+   ],
+   "to": [
+    9.75,
+    28.88,
+    8.7249
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     -48,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6.25,
+      3.12,
+      9.75,
+      4.13
+     ],
+     "texture": "#chisel"
+    },
+    "south": {
+     "uv": [
+      6.25,
+      3.12,
+      9.75,
+      4.13
+     ],
+     "texture": "#chisel"
+    },
+    "east": {
+     "uv": [
+      7.275,
+      3.12,
+      8.725,
+      4.13
+     ],
+     "texture": "#chisel"
+    },
+    "west": {
+     "uv": [
+      7.275,
+      3.12,
+      8.725,
+      4.13
+     ],
+     "texture": "#chisel"
+    },
+    "up": {
+     "uv": [
+      6.25,
+      7.275,
+      9.75,
+      8.725
+     ],
+     "texture": "#chisel"
+    },
+    "down": {
+     "uv": [
+      6.25,
+      7.275,
+      9.75,
+      8.725
+     ],
+     "texture": "#chisel"
+    }
+   }
+  },
+  {
+   "name": "heart_knob",
+   "from": [
+    7.0,
+    29.0,
+    7.5858
+   ],
+   "to": [
+    9.0,
+    30.5,
+    8.4142
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.0,
+      1.5,
+      9.0,
+      3.0
+     ],
+     "texture": "#bone"
+    },
+    "south": {
+     "uv": [
+      7.0,
+      1.5,
+      9.0,
+      3.0
+     ],
+     "texture": "#bone"
+    },
+    "east": {
+     "uv": [
+      7.586,
+      1.5,
+      8.414,
+      3.0
+     ],
+     "texture": "#bone"
+    },
+    "west": {
+     "uv": [
+      7.586,
+      1.5,
+      8.414,
+      3.0
+     ],
+     "texture": "#bone"
+    },
+    "up": {
+     "uv": [
+      7.0,
+      7.586,
+      9.0,
+      8.414
+     ],
+     "texture": "#bonecap"
+    },
+    "down": {
+     "uv": [
+      7.0,
+      7.586,
+      9.0,
+      8.414
+     ],
+     "texture": "#bonecap"
+    }
+   }
+  },
+  {
+   "name": "heart_knob",
+   "from": [
+    7.5858,
+    29.04,
+    7.0
+   ],
+   "to": [
+    8.4142,
+    30.46,
+    9.0
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.586,
+      1.54,
+      8.414,
+      2.96
+     ],
+     "texture": "#bone"
+    },
+    "south": {
+     "uv": [
+      7.586,
+      1.54,
+      8.414,
+      2.96
+     ],
+     "texture": "#bone"
+    },
+    "east": {
+     "uv": [
+      7.0,
+      1.54,
+      9.0,
+      2.96
+     ],
+     "texture": "#bone"
+    },
+    "west": {
+     "uv": [
+      7.0,
+      1.54,
+      9.0,
+      2.96
+     ],
+     "texture": "#bone"
+    },
+    "up": {
+     "uv": [
+      7.586,
+      7.0,
+      8.414,
+      9.0
+     ],
+     "texture": "#bonecap"
+    },
+    "down": {
+     "uv": [
+      7.586,
+      7.0,
+      8.414,
+      9.0
+     ],
+     "texture": "#bonecap"
+    }
+   }
+  },
+  {
+   "name": "heart_knob",
+   "from": [
+    7.0,
+    29.08,
+    7.5858
+   ],
+   "to": [
+    9.0,
+    30.42,
+    8.4142
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     -48,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      7.0,
+      1.58,
+      9.0,
+      2.92
+     ],
+     "texture": "#bone"
+    },
+    "south": {
+     "uv": [
+      7.0,
+      1.58,
+      9.0,
+      2.92
+     ],
+     "texture": "#bone"
+    },
+    "east": {
+     "uv": [
+      7.586,
+      1.58,
+      8.414,
+      2.92
+     ],
+     "texture": "#bone"
+    },
+    "west": {
+     "uv": [
+      7.586,
+      1.58,
+      8.414,
+      2.92
+     ],
+     "texture": "#bone"
+    },
+    "up": {
+     "uv": [
+      7.0,
+      7.586,
+      9.0,
+      8.414
+     ],
+     "texture": "#bonecap"
+    },
+    "down": {
+     "uv": [
+      7.0,
+      7.586,
+      9.0,
+      8.414
+     ],
+     "texture": "#bonecap"
+    }
+   }
+  },
+  {
+   "name": "heart_knob",
+   "from": [
+    7.0,
+    29.12,
+    7.5858
+   ],
+   "to": [
+    9.0,
+    30.38,
+    8.4142
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     -48,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      7.0,
+      1.62,
+      9.0,
+      2.88
+     ],
+     "texture": "#bone"
+    },
+    "south": {
+     "uv": [
+      7.0,
+      1.62,
+      9.0,
+      2.88
+     ],
+     "texture": "#bone"
+    },
+    "east": {
+     "uv": [
+      7.586,
+      1.62,
+      8.414,
+      2.88
+     ],
+     "texture": "#bone"
+    },
+    "west": {
+     "uv": [
+      7.586,
+      1.62,
+      8.414,
+      2.88
+     ],
+     "texture": "#bone"
+    },
+    "up": {
+     "uv": [
+      7.0,
+      7.586,
+      9.0,
+      8.414
+     ],
+     "texture": "#bonecap"
+    },
+    "down": {
+     "uv": [
+      7.0,
+      7.586,
+      9.0,
+      8.414
+     ],
+     "texture": "#bonecap"
+    }
+   }
+  },
+  {
+   "name": "heart_rib",
+   "from": [
+    11.05,
+    20.5,
+    7.6
+   ],
+   "to": [
+    11.85,
+    27,
+    8.4
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      11.05,
+      5,
+      11.85,
+      11.5
+     ],
+     "texture": "#bone"
+    },
+    "south": {
+     "uv": [
+      11.05,
+      5,
+      11.85,
+      11.5
+     ],
+     "texture": "#bone"
+    },
+    "east": {
+     "uv": [
+      7.6,
+      5,
+      8.4,
+      11.5
+     ],
+     "texture": "#bone"
+    },
+    "west": {
+     "uv": [
+      7.6,
+      5,
+      8.4,
+      11.5
+     ],
+     "texture": "#bone"
+    },
+    "up": {
+     "uv": [
+      11.05,
+      7.6,
+      11.85,
+      8.4
+     ],
+     "texture": "#bone"
+    },
+    "down": {
+     "uv": [
+      11.05,
+      7.6,
+      11.85,
+      8.4
+     ],
+     "texture": "#bone"
+    }
+   }
+  },
+  {
+   "name": "heart_rib",
+   "from": [
+    7.6,
+    20.5,
+    11.05
+   ],
+   "to": [
+    8.4,
+    27,
+    11.85
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.6,
+      5,
+      8.4,
+      11.5
+     ],
+     "texture": "#bone"
+    },
+    "south": {
+     "uv": [
+      7.6,
+      5,
+      8.4,
+      11.5
+     ],
+     "texture": "#bone"
+    },
+    "east": {
+     "uv": [
+      11.05,
+      5,
+      11.85,
+      11.5
+     ],
+     "texture": "#bone"
+    },
+    "west": {
+     "uv": [
+      11.05,
+      5,
+      11.85,
+      11.5
+     ],
+     "texture": "#bone"
+    },
+    "up": {
+     "uv": [
+      7.6,
+      11.05,
+      8.4,
+      11.85
+     ],
+     "texture": "#bone"
+    },
+    "down": {
+     "uv": [
+      7.6,
+      11.05,
+      8.4,
+      11.85
+     ],
+     "texture": "#bone"
+    }
+   }
+  },
+  {
+   "name": "heart_rib",
+   "from": [
+    4.15,
+    20.5,
+    7.6
+   ],
+   "to": [
+    4.95,
+    27,
+    8.4
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      4.15,
+      5,
+      4.95,
+      11.5
+     ],
+     "texture": "#bone"
+    },
+    "south": {
+     "uv": [
+      4.15,
+      5,
+      4.95,
+      11.5
+     ],
+     "texture": "#bone"
+    },
+    "east": {
+     "uv": [
+      7.6,
+      5,
+      8.4,
+      11.5
+     ],
+     "texture": "#bone"
+    },
+    "west": {
+     "uv": [
+      7.6,
+      5,
+      8.4,
+      11.5
+     ],
+     "texture": "#bone"
+    },
+    "up": {
+     "uv": [
+      4.15,
+      7.6,
+      4.95,
+      8.4
+     ],
+     "texture": "#bone"
+    },
+    "down": {
+     "uv": [
+      4.15,
+      7.6,
+      4.95,
+      8.4
+     ],
+     "texture": "#bone"
+    }
+   }
+  },
+  {
+   "name": "heart_rib",
+   "from": [
+    7.6,
+    20.5,
+    4.15
+   ],
+   "to": [
+    8.4,
+    27,
+    4.95
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.6,
+      5,
+      8.4,
+      11.5
+     ],
+     "texture": "#bone"
+    },
+    "south": {
+     "uv": [
+      7.6,
+      5,
+      8.4,
+      11.5
+     ],
+     "texture": "#bone"
+    },
+    "east": {
+     "uv": [
+      4.15,
+      5,
+      4.95,
+      11.5
+     ],
+     "texture": "#bone"
+    },
+    "west": {
+     "uv": [
+      4.15,
+      5,
+      4.95,
+      11.5
+     ],
+     "texture": "#bone"
+    },
+    "up": {
+     "uv": [
+      7.6,
+      4.15,
+      8.4,
+      4.95
+     ],
+     "texture": "#bone"
+    },
+    "down": {
+     "uv": [
+      7.6,
+      4.15,
+      8.4,
+      4.95
+     ],
+     "texture": "#bone"
+    }
+   }
+  },
+  {
+   "name": "vertebra",
+   "from": [
+    6.5,
+    -15,
+    12
+   ],
+   "to": [
+    9.5,
+    -12.5,
+    15
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.5,
+      12.5,
+      9.5,
+      15.0
+     ],
+     "texture": "#bone"
+    },
+    "south": {
+     "uv": [
+      6.5,
+      12.5,
+      9.5,
+      15.0
+     ],
+     "texture": "#bone"
+    },
+    "east": {
+     "uv": [
+      12,
+      12.5,
+      15,
+      15.0
+     ],
+     "texture": "#bone"
+    },
+    "west": {
+     "uv": [
+      12,
+      12.5,
+      15,
+      15.0
+     ],
+     "texture": "#bone"
+    },
+    "up": {
+     "uv": [
+      6.5,
+      12,
+      9.5,
+      15
+     ],
+     "texture": "#bone"
+    },
+    "down": {
+     "uv": [
+      6.5,
+      12,
+      9.5,
+      15
+     ],
+     "texture": "#bone"
+    }
+   }
+  },
+  {
+   "name": "spinous_process",
+   "from": [
+    7.5,
+    -14.5,
+    15
+   ],
+   "to": [
+    8.5,
+    -13,
+    16
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.5,
+      13,
+      8.5,
+      14.5
+     ],
+     "texture": "#bone"
+    },
+    "south": {
+     "uv": [
+      7.5,
+      13,
+      8.5,
+      14.5
+     ],
+     "texture": "#bone"
+    },
+    "east": {
+     "uv": [
+      15,
+      13,
+      16,
+      14.5
+     ],
+     "texture": "#bone"
+    },
+    "west": {
+     "uv": [
+      15,
+      13,
+      16,
+      14.5
+     ],
+     "texture": "#bone"
+    },
+    "up": {
+     "uv": [
+      7.5,
+      15,
+      8.5,
+      16
+     ],
+     "texture": "#bone"
+    },
+    "down": {
+     "uv": [
+      7.5,
+      15,
+      8.5,
+      16
+     ],
+     "texture": "#bone"
+    }
+   }
+  },
+  {
+   "name": "transverse_process",
+   "from": [
+    5.0,
+    -14.25,
+    13
+   ],
+   "to": [
+    11.0,
+    -13.25,
+    14
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      5.0,
+      13.25,
+      11.0,
+      14.25
+     ],
+     "texture": "#bone"
+    },
+    "south": {
+     "uv": [
+      5.0,
+      13.25,
+      11.0,
+      14.25
+     ],
+     "texture": "#bone"
+    },
+    "east": {
+     "uv": [
+      13,
+      13.25,
+      14,
+      14.25
+     ],
+     "texture": "#bone"
+    },
+    "west": {
+     "uv": [
+      13,
+      13.25,
+      14,
+      14.25
+     ],
+     "texture": "#bone"
+    },
+    "up": {
+     "uv": [
+      5.0,
+      13,
+      11.0,
+      14
+     ],
+     "texture": "#bone"
+    },
+    "down": {
+     "uv": [
+      5.0,
+      13,
+      11.0,
+      14
+     ],
+     "texture": "#bone"
+    }
+   }
+  },
+  {
+   "name": "vertebra",
+   "from": [
+    6.5,
+    -11,
+    12
+   ],
+   "to": [
+    9.5,
+    -8.5,
+    15
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.5,
+      8.5,
+      9.5,
+      11.0
+     ],
+     "texture": "#bone"
+    },
+    "south": {
+     "uv": [
+      6.5,
+      8.5,
+      9.5,
+      11.0
+     ],
+     "texture": "#bone"
+    },
+    "east": {
+     "uv": [
+      12,
+      8.5,
+      15,
+      11.0
+     ],
+     "texture": "#bone"
+    },
+    "west": {
+     "uv": [
+      12,
+      8.5,
+      15,
+      11.0
+     ],
+     "texture": "#bone"
+    },
+    "up": {
+     "uv": [
+      6.5,
+      12,
+      9.5,
+      15
+     ],
+     "texture": "#bone"
+    },
+    "down": {
+     "uv": [
+      6.5,
+      12,
+      9.5,
+      15
+     ],
+     "texture": "#bone"
+    }
+   }
+  },
+  {
+   "name": "spinous_process",
+   "from": [
+    7.5,
+    -10.5,
+    15
+   ],
+   "to": [
+    8.5,
+    -9,
+    16
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.5,
+      9,
+      8.5,
+      10.5
+     ],
+     "texture": "#bone"
+    },
+    "south": {
+     "uv": [
+      7.5,
+      9,
+      8.5,
+      10.5
+     ],
+     "texture": "#bone"
+    },
+    "east": {
+     "uv": [
+      15,
+      9,
+      16,
+      10.5
+     ],
+     "texture": "#bone"
+    },
+    "west": {
+     "uv": [
+      15,
+      9,
+      16,
+      10.5
+     ],
+     "texture": "#bone"
+    },
+    "up": {
+     "uv": [
+      7.5,
+      15,
+      8.5,
+      16
+     ],
+     "texture": "#bone"
+    },
+    "down": {
+     "uv": [
+      7.5,
+      15,
+      8.5,
+      16
+     ],
+     "texture": "#bone"
+    }
+   }
+  },
+  {
+   "name": "vertebra",
+   "from": [
+    6.5,
+    -7,
+    12
+   ],
+   "to": [
+    9.5,
+    -4.5,
+    15
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.5,
+      4.5,
+      9.5,
+      7.0
+     ],
+     "texture": "#bone"
+    },
+    "south": {
+     "uv": [
+      6.5,
+      4.5,
+      9.5,
+      7.0
+     ],
+     "texture": "#bone"
+    },
+    "east": {
+     "uv": [
+      12,
+      4.5,
+      15,
+      7.0
+     ],
+     "texture": "#bone"
+    },
+    "west": {
+     "uv": [
+      12,
+      4.5,
+      15,
+      7.0
+     ],
+     "texture": "#bone"
+    },
+    "up": {
+     "uv": [
+      6.5,
+      12,
+      9.5,
+      15
+     ],
+     "texture": "#bone"
+    },
+    "down": {
+     "uv": [
+      6.5,
+      12,
+      9.5,
+      15
+     ],
+     "texture": "#bone"
+    }
+   }
+  },
+  {
+   "name": "spinous_process",
+   "from": [
+    7.5,
+    -6.5,
+    15
+   ],
+   "to": [
+    8.5,
+    -5,
+    16
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.5,
+      5,
+      8.5,
+      6.5
+     ],
+     "texture": "#bone"
+    },
+    "south": {
+     "uv": [
+      7.5,
+      5,
+      8.5,
+      6.5
+     ],
+     "texture": "#bone"
+    },
+    "east": {
+     "uv": [
+      15,
+      5,
+      16,
+      6.5
+     ],
+     "texture": "#bone"
+    },
+    "west": {
+     "uv": [
+      15,
+      5,
+      16,
+      6.5
+     ],
+     "texture": "#bone"
+    },
+    "up": {
+     "uv": [
+      7.5,
+      15,
+      8.5,
+      16
+     ],
+     "texture": "#bone"
+    },
+    "down": {
+     "uv": [
+      7.5,
+      15,
+      8.5,
+      16
+     ],
+     "texture": "#bone"
+    }
+   }
+  },
+  {
+   "name": "vertebra",
+   "from": [
+    6.5,
+    -3,
+    12
+   ],
+   "to": [
+    9.5,
+    -0.5,
+    15
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.5,
+      0.5,
+      9.5,
+      3.0
+     ],
+     "texture": "#bone"
+    },
+    "south": {
+     "uv": [
+      6.5,
+      0.5,
+      9.5,
+      3.0
+     ],
+     "texture": "#bone"
+    },
+    "east": {
+     "uv": [
+      12,
+      0.5,
+      15,
+      3.0
+     ],
+     "texture": "#bone"
+    },
+    "west": {
+     "uv": [
+      12,
+      0.5,
+      15,
+      3.0
+     ],
+     "texture": "#bone"
+    },
+    "up": {
+     "uv": [
+      6.5,
+      12,
+      9.5,
+      15
+     ],
+     "texture": "#bone"
+    },
+    "down": {
+     "uv": [
+      6.5,
+      12,
+      9.5,
+      15
+     ],
+     "texture": "#bone"
+    }
+   }
+  },
+  {
+   "name": "spinous_process",
+   "from": [
+    7.5,
+    -2.5,
+    15
+   ],
+   "to": [
+    8.5,
+    -1,
+    16
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.5,
+      1,
+      8.5,
+      2.5
+     ],
+     "texture": "#bone"
+    },
+    "south": {
+     "uv": [
+      7.5,
+      1,
+      8.5,
+      2.5
+     ],
+     "texture": "#bone"
+    },
+    "east": {
+     "uv": [
+      15,
+      1,
+      16,
+      2.5
+     ],
+     "texture": "#bone"
+    },
+    "west": {
+     "uv": [
+      15,
+      1,
+      16,
+      2.5
+     ],
+     "texture": "#bone"
+    },
+    "up": {
+     "uv": [
+      7.5,
+      15,
+      8.5,
+      16
+     ],
+     "texture": "#bone"
+    },
+    "down": {
+     "uv": [
+      7.5,
+      15,
+      8.5,
+      16
+     ],
+     "texture": "#bone"
+    }
+   }
+  },
+  {
+   "name": "transverse_process",
+   "from": [
+    5.0,
+    -2.25,
+    13
+   ],
+   "to": [
+    11.0,
+    -1.25,
+    14
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      5.0,
+      1.25,
+      11.0,
+      2.25
+     ],
+     "texture": "#bone"
+    },
+    "south": {
+     "uv": [
+      5.0,
+      1.25,
+      11.0,
+      2.25
+     ],
+     "texture": "#bone"
+    },
+    "east": {
+     "uv": [
+      13,
+      1.25,
+      14,
+      2.25
+     ],
+     "texture": "#bone"
+    },
+    "west": {
+     "uv": [
+      13,
+      1.25,
+      14,
+      2.25
+     ],
+     "texture": "#bone"
+    },
+    "up": {
+     "uv": [
+      5.0,
+      13,
+      11.0,
+      14
+     ],
+     "texture": "#bone"
+    },
+    "down": {
+     "uv": [
+      5.0,
+      13,
+      11.0,
+      14
+     ],
+     "texture": "#bone"
+    }
+   }
+  },
+  {
+   "name": "vertebra",
+   "from": [
+    6.5,
+    1,
+    12
+   ],
+   "to": [
+    9.5,
+    3.5,
+    15
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.5,
+      12.5,
+      9.5,
+      15.0
+     ],
+     "texture": "#bone"
+    },
+    "south": {
+     "uv": [
+      6.5,
+      12.5,
+      9.5,
+      15.0
+     ],
+     "texture": "#bone"
+    },
+    "east": {
+     "uv": [
+      12,
+      12.5,
+      15,
+      15.0
+     ],
+     "texture": "#bone"
+    },
+    "west": {
+     "uv": [
+      12,
+      12.5,
+      15,
+      15.0
+     ],
+     "texture": "#bone"
+    },
+    "up": {
+     "uv": [
+      6.5,
+      12,
+      9.5,
+      15
+     ],
+     "texture": "#bone"
+    },
+    "down": {
+     "uv": [
+      6.5,
+      12,
+      9.5,
+      15
+     ],
+     "texture": "#bone"
+    }
+   }
+  },
+  {
+   "name": "spinous_process",
+   "from": [
+    7.5,
+    1.5,
+    15
+   ],
+   "to": [
+    8.5,
+    3,
+    16
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.5,
+      13,
+      8.5,
+      14.5
+     ],
+     "texture": "#bone"
+    },
+    "south": {
+     "uv": [
+      7.5,
+      13,
+      8.5,
+      14.5
+     ],
+     "texture": "#bone"
+    },
+    "east": {
+     "uv": [
+      15,
+      13,
+      16,
+      14.5
+     ],
+     "texture": "#bone"
+    },
+    "west": {
+     "uv": [
+      15,
+      13,
+      16,
+      14.5
+     ],
+     "texture": "#bone"
+    },
+    "up": {
+     "uv": [
+      7.5,
+      15,
+      8.5,
+      16
+     ],
+     "texture": "#bone"
+    },
+    "down": {
+     "uv": [
+      7.5,
+      15,
+      8.5,
+      16
+     ],
+     "texture": "#bone"
+    }
+   }
+  },
+  {
+   "name": "vertebra",
+   "from": [
+    6.5,
+    5,
+    12
+   ],
+   "to": [
+    9.5,
+    7.5,
+    15
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.5,
+      8.5,
+      9.5,
+      11.0
+     ],
+     "texture": "#bone"
+    },
+    "south": {
+     "uv": [
+      6.5,
+      8.5,
+      9.5,
+      11.0
+     ],
+     "texture": "#bone"
+    },
+    "east": {
+     "uv": [
+      12,
+      8.5,
+      15,
+      11.0
+     ],
+     "texture": "#bone"
+    },
+    "west": {
+     "uv": [
+      12,
+      8.5,
+      15,
+      11.0
+     ],
+     "texture": "#bone"
+    },
+    "up": {
+     "uv": [
+      6.5,
+      12,
+      9.5,
+      15
+     ],
+     "texture": "#bone"
+    },
+    "down": {
+     "uv": [
+      6.5,
+      12,
+      9.5,
+      15
+     ],
+     "texture": "#bone"
+    }
+   }
+  },
+  {
+   "name": "spinous_process",
+   "from": [
+    7.5,
+    5.5,
+    15
+   ],
+   "to": [
+    8.5,
+    7,
+    16
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.5,
+      9,
+      8.5,
+      10.5
+     ],
+     "texture": "#bone"
+    },
+    "south": {
+     "uv": [
+      7.5,
+      9,
+      8.5,
+      10.5
+     ],
+     "texture": "#bone"
+    },
+    "east": {
+     "uv": [
+      15,
+      9,
+      16,
+      10.5
+     ],
+     "texture": "#bone"
+    },
+    "west": {
+     "uv": [
+      15,
+      9,
+      16,
+      10.5
+     ],
+     "texture": "#bone"
+    },
+    "up": {
+     "uv": [
+      7.5,
+      15,
+      8.5,
+      16
+     ],
+     "texture": "#bone"
+    },
+    "down": {
+     "uv": [
+      7.5,
+      15,
+      8.5,
+      16
+     ],
+     "texture": "#bone"
+    }
+   }
+  },
+  {
+   "name": "spinal_cord",
+   "from": [
+    7.4,
+    -16,
+    12.9
+   ],
+   "to": [
+    8.6,
+    6,
+    14.1
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.4,
+      0,
+      8.6,
+      16
+     ],
+     "texture": "#vein"
+    },
+    "south": {
+     "uv": [
+      7.4,
+      0,
+      8.6,
+      16
+     ],
+     "texture": "#vein"
+    },
+    "east": {
+     "uv": [
+      12.9,
+      0,
+      14.1,
+      16
+     ],
+     "texture": "#vein"
+    },
+    "west": {
+     "uv": [
+      12.9,
+      0,
+      14.1,
+      16
+     ],
+     "texture": "#vein"
+    },
+    "up": {
+     "uv": [
+      7.4,
+      12.9,
+      8.6,
+      14.1
+     ],
+     "texture": "#vein"
+    }
+   }
+  }
+ ]
+}

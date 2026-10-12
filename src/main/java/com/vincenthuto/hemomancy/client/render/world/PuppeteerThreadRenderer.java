@@ -134,7 +134,9 @@ public final class PuppeteerThreadRenderer {
 		if (!PuppeteerSummonRules.shouldRenderDismissingSummon(summon.tickCount, dismissalTicks)) {
 			return;
 		}
-		float fade = (float) PuppeteerSummonRules.dismissalAlpha(dismissalTicks, partialTick);
+		// The control thread lets go while the strings above haul a recalled body away.
+		float fade = (float) (PuppeteerSummonRules.dismissalAlpha(dismissalTicks, partialTick)
+				* PuppetStringStates.controlThreadFade(summon.getId(), level.getGameTime() + partialTick));
 		if (fade <= 0.01F) {
 			return;
 		}

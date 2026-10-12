@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["NBN", "FGF", "NTN"],
+  "key": {
+    "N": { "item": "hemomancy:nerve_fiber" },
+    "B": { "item": "minecraft:bone_block" },
+    "F": { "item": "hemomancy:sanguine_formation" },
+    "G": { "item": "hemomancy:blood_crystal_shard" },
+    "T": { "item": "hemomancy:puppeteering_thread" }
+  },
+  "result": { "id": "hemomancy:ganglionic_harness" }
+}

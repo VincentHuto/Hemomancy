@@ -27,6 +27,11 @@ final class ManipulationMotes {
         if(AnimusMortemGeometry.handles(form))return;
         if(FerricDuctilisGeometry.handles(form))return;
         if(ThermalGeometry.handles(form))return;
+        if(PhoenixDebtGeometry.handles(form))return;
+        if(UmbralTearGeometry.handles(form))return;
+        if(CrimsonCoronationGeometry.handles(form))return;
+        if(FuneralBellGeometry.handles(form))return;
+        if(PuppetStringsGeometry.handles(form))return;
         if (LuxUmbraGeometry.handles(form)) {
             if (expiry) LuxUmbraEffects.mist(packet.from(), new Vec3(0, .012, 0),
                     LuxUmbraGeometry.umbra(form), Math.min(.45f, packet.radius() * .18f), 18);

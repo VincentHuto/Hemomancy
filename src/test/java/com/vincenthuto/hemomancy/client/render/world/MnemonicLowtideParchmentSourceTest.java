@@ -29,7 +29,7 @@ public final class MnemonicLowtideParchmentSourceTest {
 		String shaderInit = read(SHADER_INIT);
 		String reference = read(REFERENCE);
 		String parchmentRenderType = slice(renderTypes, "public static RenderType mnemonicLowtideParchment",
-				"public static RenderType loomOrbShell");
+				"public static RenderType faneBoundaryShell");
 
 		assertContains("parchment render type exists", renderTypes,
 				"MNEMONIC_LOWTIDE_PARCHMENT");

@@ -1,0 +1,21 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "catalysts": [
+    {
+      "item": "minecraft:packed_ice"
+    }
+  ],
+  "enzymes": {
+    "animus": 0,
+    "flammeus": 0,
+    "ductilis": 0,
+    "lux": 0,
+    "mortem": 0,
+    "congeatio": 2,
+    "ferric": 1,
+    "tenebris": 0
+  },
+  "blood": 150,
+  "result": "hemomancy:memory_cruor_javelin",
+  "count": 1
+}

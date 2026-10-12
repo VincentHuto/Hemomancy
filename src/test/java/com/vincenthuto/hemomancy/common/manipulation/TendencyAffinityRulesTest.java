@@ -6,7 +6,8 @@ public final class TendencyAffinityRulesTest {
 
 	public static void main(String[] args) {
 		pureManipulationUsesFullPrimaryAffinity();
-		mixedManipulationSplitsPrimaryAndSecondaryAffinity();
+		weakerSecondaryNeverDilutesThePrimary();
+		strongerSecondaryAddsOnlyItsQuarterWeight();
 		secondaryTendencyGainIsHalfPrimaryGain();
 	}
 
@@ -15,9 +16,14 @@ public final class TendencyAffinityRulesTest {
 				TendencyAffinityRules.composeDamageMultiplier(1.75f, null));
 	}
 
-	private static void mixedManipulationSplitsPrimaryAndSecondaryAffinity() {
-		assertEquals("mixed affinity is 75 percent primary and 25 percent secondary", 1.375f,
+	private static void weakerSecondaryNeverDilutesThePrimary() {
+		assertEquals("a neutral secondary must not dilute a strong primary", 2.0f,
+				TendencyAffinityRules.composeDamageMultiplier(2.0f, 1.0f));
+		assertEquals("a neutral secondary must not dilute a 1.5 primary", 1.5f,
 				TendencyAffinityRules.composeDamageMultiplier(1.5f, 1.0f));
+	}
+
+	private static void strongerSecondaryAddsOnlyItsQuarterWeight() {
 		assertEquals("secondary-only matchup gets only the quarter-weighted benefit", 1.25f,
 				TendencyAffinityRules.composeDamageMultiplier(1.0f, 2.0f));
 	}

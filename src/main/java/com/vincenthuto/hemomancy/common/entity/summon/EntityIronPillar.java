@@ -1,14 +1,28 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
+import com.vincenthuto.hemomancy.common.damage.SchoolHitContext;
+import com.vincenthuto.hemomancy.common.damage.SchoolState;
+import com.vincenthuto.hemomancy.common.damage.SchoolStates;
+import com.vincenthuto.hemomancy.common.init.ManipulationInit;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationStatusRules;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
+import com.vincenthuto.hemomancy.common.manipulation.ferric.LodestoneCollapseRules;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -16,9 +30,14 @@ import net.minecraft.world.phys.Vec3;
 public class EntityIronPillar extends FerricConstructEntity {
 	private static final double MAGNETIC_RADIUS = 8.0D;
 	private static final double MAGNETIC_PIN_RADIUS = 1.3D;
+	/** When the pillar expires, everything it pulled within this radius is crushed against it. */
+	public static final double CRUSH_RADIUS = 3.0D;
+	public static final float CRUSH_DAMAGE = 4.0F;
+	public static final float CRUSH_LODESTONE_BONUS = 2.0F;
 	public float deathTicks = 1;
 	private boolean magnetic;
 	private int lifeTicks = 120;
+	private final java.util.Set<java.util.UUID> pulled = new java.util.HashSet<>();
 
 	public EntityIronPillar(EntityType<? extends EntityIronPillar> type, Level worldIn) {
 		super(type, worldIn);
@@ -128,12 +147,41 @@ public class EntityIronPillar extends FerricConstructEntity {
 		if (distance <= 0.001D) {
 			return;
 		}
+		if (!level().isClientSide) pulled.add(target.getUUID());
 		double strength = (distance <= MAGNETIC_PIN_RADIUS ? 0.08D : 0.22D);
         if (target.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.lodestone)) strength *= 1.5;
         strength *= 1 - target.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE);
         Vec3 pull = toAnchor.normalize().scale(strength);
 		target.setDeltaMovement(target.getDeltaMovement().add(pull).multiply(0.72D, 0.92D, 0.72D));
 		target.hurtMarked = true;
+	}
+
+	/** Player-cast magnetism ends by slamming everything it drew in against the iron: a direct Ferric hit. */
+	@Override
+	protected void onExpire(ServerLevel level, LivingEntity owner) {
+		if (!(owner instanceof Player player) || pulled.isEmpty()) return;
+		var magnetism = ManipulationInit.sanguine_magnetism.get();
+		SchoolHitContext cast = SchoolDamage.projectileContext(this);
+		if (cast == null) cast = SchoolDamage.context(magnetism, player);
+		float mastery = (float) SkillPointHelper.getCrimsonMasteryMultiplier(player);
+		Vec3 anchor = this.position().add(0.0D, this.getBbHeight() * 0.45D, 0.0D);
+		boolean crushed = false;
+		for (java.util.UUID id : pulled) {
+			if (!(level.getEntity(id) instanceof LivingEntity target) || !target.isAlive()
+					|| target.distanceToSqr(this) > CRUSH_RADIUS * CRUSH_RADIUS
+					|| !ManipulationCombatHelper.canHarm(player, target)) continue;
+			float damage = (CRUSH_DAMAGE + (SchoolStates.has(target, SchoolState.LODESTONE) ? CRUSH_LODESTONE_BONUS : 0))
+					* mastery;
+			ManipulationParticles.hurt(magnetism, target,
+					SchoolDamage.attributed(damageSources().indirectMagic(this, player), cast.newAttack(), player), damage);
+			crushed = true;
+		}
+		pulled.clear();
+		if (crushed) {
+			ManipulationVisuals.burst(level, ManipulationVisuals.Form.LODESTONE_COLLAPSE, anchor, anchor, CRUSH_RADIUS,
+					LodestoneCollapseRules.VISUAL_TICKS, 1 + level.random.nextInt(97));
+			level.playSound(null, blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 0.8F, 0.55F);
+		}
 	}
 
 	@Override

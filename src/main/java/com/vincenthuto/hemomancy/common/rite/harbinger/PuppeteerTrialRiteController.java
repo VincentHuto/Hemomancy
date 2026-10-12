@@ -130,6 +130,7 @@ public final class PuppeteerTrialRiteController {
 			rite.markCollapsed();
 			return;
 		}
+		com.vincenthuto.hemomancy.common.summon.PuppetStrings.descend(created.get());
 		List<PacketBloodStructureOfferingBurst.OfferingBurst> offeringBursts = new ArrayList<>();
 		for (CardinalRiteStationMatcher.BrazierMatch offering : station.braziers()) {
 			if (offering.consumeOnSuccess()

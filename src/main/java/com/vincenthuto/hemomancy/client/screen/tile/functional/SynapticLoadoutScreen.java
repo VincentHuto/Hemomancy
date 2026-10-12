@@ -62,6 +62,12 @@ public class SynapticLoadoutScreen extends Screen {
 	public SynapticLoadoutScreen(BlockPos distributorPos) {
 		super(Component.translatable("screen.hemomancy.synaptic_loadouts"));
 		this.distributorPos = distributorPos;
+		// Open on the pattern the distributor's selector axon is resting on.
+		var level = Minecraft.getInstance().level;
+		if (level != null && level.getBlockEntity(distributorPos)
+				instanceof com.vincenthuto.hemomancy.common.tile.harbinger.functional.DendriticDistributorBlockEntity distributor) {
+			this.selectedIndex = distributor.getSelectedSlot();
+		}
 	}
 
 	public static void openScreen(BlockPos pos) {

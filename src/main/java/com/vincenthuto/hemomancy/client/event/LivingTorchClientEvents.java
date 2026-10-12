@@ -55,13 +55,6 @@ public final class LivingTorchClientEvents {
 					&& minecraft.level instanceof ClientLevel clientLevel) {
 				emitFirstPersonTip(clientLevel, player, event, right, (int) elapsed);
 			}
-			return;
-		}
-		if (event.getSwingProgress() > 0.0F) {
-			LivingTorchPlayerPose.ArmPose pose = LivingTorchPlayerPose.jabArm(event.getSwingProgress(), right);
-			event.getPoseStack().translate(pose.xOffset(), pose.yOffset(), pose.zOffset());
-			event.getPoseStack().mulPose(Axis.XP.rotation(pose.xRot() * 0.45F));
-			event.getPoseStack().mulPose(Axis.YP.rotation(pose.yRot()));
 		}
 	}
 

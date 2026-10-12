@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.decoration;
 
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
+import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.decoration.SerpentineIdolBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -29,12 +30,16 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
+import java.util.Map;
 
 public class BlockSerpentineIdol extends Block implements EntityBlock, SimpleWaterloggedBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-	private static final VoxelShape SHAPE_N = Block.box(3.5, 0, 3.5, 12.5, 9, 12.5);
+	/** Tail along the base, the rising coil and the hooded head. */
+	private static final Map<Direction, VoxelShape> SHAPES = ModelShapes.horizontal(ModelShapes.of(
+			new double[] {7, 0, 5, 9, 3, 16}, new double[] {7, 3, 4, 9, 14, 10.75},
+			new double[] {4, 14, 7, 12, 20, 13.25}));
 
 	public BlockSerpentineIdol(Properties properties) {
 		super(properties);
@@ -49,7 +54,7 @@ public class BlockSerpentineIdol extends Block implements EntityBlock, SimpleWat
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return SHAPE_N;
+		return SHAPES.get(state.getValue(FACING));
 	}
 
 	@Override

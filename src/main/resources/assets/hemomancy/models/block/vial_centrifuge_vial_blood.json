@@ -1,0 +1,79 @@
+{
+ "parent": "minecraft:block/block",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "hemomancy:block/hematic_iron_block",
+  "blood": "hemomancy:block/blood_still"
+ },
+ "elements": [
+  {
+   "name": "vial_blood",
+   "from": [
+    11.6,
+    10.8,
+    7.6
+   ],
+   "to": [
+    12.4,
+    13.25,
+    8.4
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      11.6,
+      2.75,
+      12.4,
+      5.2
+     ],
+     "texture": "#blood"
+    },
+    "south": {
+     "uv": [
+      11.6,
+      2.75,
+      12.4,
+      5.2
+     ],
+     "texture": "#blood"
+    },
+    "east": {
+     "uv": [
+      7.6,
+      2.75,
+      8.4,
+      5.2
+     ],
+     "texture": "#blood"
+    },
+    "west": {
+     "uv": [
+      7.6,
+      2.75,
+      8.4,
+      5.2
+     ],
+     "texture": "#blood"
+    },
+    "up": {
+     "uv": [
+      11.6,
+      7.6,
+      12.4,
+      8.4
+     ],
+     "texture": "#blood"
+    },
+    "down": {
+     "uv": [
+      11.6,
+      7.6,
+      12.4,
+      8.4
+     ],
+     "texture": "#blood"
+    }
+   }
+  }
+ ]
+}

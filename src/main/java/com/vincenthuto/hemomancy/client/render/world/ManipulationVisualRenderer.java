@@ -27,17 +27,18 @@ public final class ManipulationVisualRenderer {
     private static final List<Cue> CUES = new ArrayList<>();
     private static ClientLevel world;
     private static final LuxUmbraBatch FLOWS = new LuxUmbraBatch();
-    private static final int BLOOD = 0xB40C38, EDGE = 0xFF6470, WHITE = 0xFFF3CF, ICE = 0x9BE9F4;
+    private static final int EDGE = 0xFF6470;
 
     private ManipulationVisualRenderer() {}
 
     public static void accept(ManipulationVisualPacket packet) {
         ClientLevel current = Minecraft.getInstance().level;
-        if (world != current) { CUES.clear(); ManipulationMotes.clear(); ManipulationAmbientParticles.clear(); world = current; }
+        if (world != current) { CUES.clear(); ManipulationMotes.clear(); ManipulationAmbientParticles.clear(); PuppetStringStates.clear(); world = current; }
         if (current == null || !Float.isFinite(packet.radius()) || packet.radius() < 0 || packet.radius() > 100000
                 || (packet.radius()>128 && packet.form()!=ManipulationVisuals.Form.DEBT && packet.form()!=ManipulationVisuals.Form.HOUR && packet.form()!=ManipulationVisuals.Form.HOUR_BREAK)
                 || !finite(packet.from()) || !finite(packet.to())) return;
         long now = current.getGameTime();
+        PuppetStringStates.accept(packet,now);
         com.vincenthuto.hemomancy.client.render.layer.MortemSkinLayer.accept(packet,current);
         com.vincenthuto.hemomancy.client.render.layer.ThermalSkinLayer.accept(packet,current);
         boolean keyed = packet.entityId() >= 0 || packet.form() == ManipulationVisuals.Form.WELL
@@ -93,6 +94,8 @@ public final class ManipulationVisualRenderer {
         }
         if(packet.entityId()<0)return true;
         var entity=level.getEntity(packet.entityId());
+        // An arrival cue can beat the body's spawn packet; wait briefly for it rather than retiring.
+        if(entity==null && packet.form()==ManipulationVisuals.Form.PUPPET_DESCEND && level.getGameTime()-cue.life.born<6)return true;
         if(entity==null || !entity.isAlive())return false;
         cue.lastFrom=entity.position();
         if(packet.form().name().endsWith("_CHARGE"))cue.lastFrom=cue.lastFrom.add(0,entity.getEyeHeight(),0);
@@ -123,7 +126,7 @@ public final class ManipulationVisualRenderer {
     @SubscribeEvent
     public static void tick(ClientTickEvent.Post event) {
         ClientLevel current = Minecraft.getInstance().level;
-        if (world != current) { CUES.clear(); ManipulationMotes.clear(); ManipulationAmbientParticles.clear(); world = current; }
+        if (world != current) { CUES.clear(); ManipulationMotes.clear(); ManipulationAmbientParticles.clear(); PuppetStringStates.clear(); world = current; }
         LuxUmbraEffects.tick();
         BloodFlowEffects.tick();
         BloodProjectileEffects.tick();
@@ -169,17 +172,21 @@ public final class ManipulationVisualRenderer {
                 camera, time, partial, solids);
         for (Cue cue : CUES) {
             var packet = cue.packet;
-            if(solids && !FerricDuctilisGeometry.handles(packet.form()))continue;
+            if(solids && !FerricDuctilisGeometry.handles(packet.form()) && !LodestoneCollapseGeometry.handles(packet.form())
+                    && !LodestoneFieldGeometry.handles(packet.form())
+                    && !ForgedNeedleGeometry.handlesCharge(packet.form()))continue;
             Vec3 from = cue.lastFrom;
             if (!cue.life.retiring() && packet.entityId() >= 0) {
                 var entity = world.getEntity(packet.entityId());
                 if (!sourceActive(cue,world)) {retire(cue,world);continue;}
+                if (entity==null) continue;
                 if(AnimusMortemGeometry.handles(packet.form()) && entity.isInvisible())continue;
                 from = entity.getPosition(partial);
                 if (packet.form().name().endsWith("_CHARGE")) from = from.add(0,entity.getEyeHeight(),0);
                 cue.lastFrom=from;
                 if ((packet.form()==ManipulationVisuals.Form.IRON_HEART || packet.form()==ManipulationVisuals.Form.BLACK_HEART
-                        || packet.form()==ManipulationVisuals.Form.RIPOSTE)
+                        || RadiantWakeGeometry.handles(packet.form())
+                        || packet.form()==ManipulationVisuals.Form.RIPOSTE || PhoenixDebtGeometry.handles(packet.form()))
                         && entity instanceof net.minecraft.world.entity.LivingEntity living) {
                     cue.bodyYaw=Mth.rotLerp(partial,living.yBodyRotO,living.yBodyRot);
                     cue.headYaw=Mth.rotLerp(partial,living.yHeadRotO,living.yHeadRot);
@@ -223,6 +230,56 @@ public final class ManipulationVisualRenderer {
                         source instanceof net.minecraft.world.entity.LivingEntity living?living:null);
                 poses.popPose();continue;
             }
+            if(LodestoneCollapseGeometry.handles(packet.form())) {
+                // The collapse authors its own pull, crush and sink; iron goes to the solid pass, field and blood to the flow pass.
+                float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):1;
+                LodestoneCollapseGeometry.draw(packet,poses,solids?buffers.getBuffer(FerricDuctilisRenderTypes.IRON):FerricDuctilisGeometry.DISCARD,
+                        solids?FerricDuctilisGeometry.DISCARD:FLOWS.vertices(LuxUmbraBatch.Material.DUCTILIS),camera.subtract(from),right,up,time,age,opacity);
+                poses.popPose();continue;
+            }
+            if(LodestoneFieldGeometry.handles(packet.form())) {
+                // The axe's field authors its own bite, held pulses and sink; iron in the solid pass, field and blood in the flow pass.
+                float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):1;
+                LodestoneFieldGeometry.draw(packet,poses,solids?buffers.getBuffer(FerricDuctilisRenderTypes.IRON):FerricDuctilisGeometry.DISCARD,
+                        solids?FerricDuctilisGeometry.DISCARD:FLOWS.vertices(LuxUmbraBatch.Material.DUCTILIS),camera.subtract(from),right,up,time,age,opacity);
+                poses.popPose();continue;
+            }
+            if(SearingLashGeometry.handles(packet.form())) {
+                // The whip authors its own uncoil, crack and burn-away.
+                float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):1;
+                SearingLashGeometry.draw(packet,poses,FLOWS.vertices(LuxUmbraBatch.Material.FLAME),FLOWS.vertices(LuxUmbraBatch.Material.MOLTEN),
+                        camera.subtract(from),right,up,time,age,opacity);
+                poses.popPose();continue;
+            }
+            if(CruorJavelinGeometry.handles(packet.form())) {
+                // The javelin authors its own forming, flight, impact and shatter; clots use the solid cruor core.
+                float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):1;
+                CruorJavelinGeometry.draw(packet,poses,buffers.getBuffer(ThermalRenderTypes.CORE),FLOWS.vertices(LuxUmbraBatch.Material.CRUOR),
+                        camera.subtract(from),right,up,time,age,opacity);
+                poses.popPose();continue;
+            }
+            if(RadiantWakeGeometry.handles(packet.form())) {
+                // Wings unfurl on their own clock and stay while the channel refreshes the cue.
+                float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):1;
+                var source=packet.entityId()>=0?world.getEntity(packet.entityId()):null;
+                if(source!=null && source.isInvisible()) {poses.popPose();continue;}
+                boolean firstPerson=source==mc.player && mc.options.getCameraType().isFirstPerson();
+                RadiantWakeGeometry.draw(packet,poses,FLOWS.vertices(LuxUmbraBatch.Material.LUX),camera.subtract(from),right,up,
+                        time,age,opacity,new RadiantWakeGeometry.Frame(cue.bodyYaw,cue.bodyScale,cue.crouching,firstPerson));
+                poses.popPose();continue;
+            }
+            if(FruitingContagionGeometry.handles(packet.form())) {
+                // Fruiting and spreading author their own growth, burst and wither.
+                float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):1;
+                FruitingContagionGeometry.draw(packet,poses,FLOWS.vertices(LuxUmbraBatch.Material.MORTEM),camera.subtract(from),right,up,time,age,opacity);
+                poses.popPose();continue;
+            }
+            if(UmbralRendGeometry.handles(packet.form())) {
+                // The rend authors its own gather, tear and fray, like the riposte swing.
+                float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):1;
+                UmbralRendGeometry.draw(packet,poses,FLOWS.vertices(LuxUmbraBatch.Material.UMBRA),camera.subtract(from),right,up,time,age,opacity);
+                poses.popPose();continue;
+            }
             if(HematicRiposteGeometry.handles(packet.form())) {
                 // The swing authors its own eruption and fray; the shared entrance fade would swallow the first ticks.
                 float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):1;
@@ -231,6 +288,85 @@ public final class ManipulationVisualRenderer {
                 boolean firstPerson=source==mc.player && mc.options.getCameraType().isFirstPerson();
                 HematicRiposteGeometry.draw(packet,poses,FLOWS.vertices(LuxUmbraBatch.Material.ANIMUS),camera.subtract(from),right,up,
                         time,age,opacity,new HematicRiposteGeometry.Frame(cue.bodyYaw,cue.headYaw,cue.bodyScale,cue.crouching,firstPerson));
+                poses.popPose();continue;
+            }
+            if(PuppetStringsGeometry.handles(packet.form())) {
+                // Arrival and departure author their own timelines, like the riposte swing.
+                float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):1;
+                var source=packet.entityId()>=0?world.getEntity(packet.entityId()):null;
+                if(source!=null && source.isInvisible()) {poses.popPose();continue;}
+                PuppetStringsGeometry.draw(packet,poses,FLOWS.vertices(LuxUmbraBatch.Material.ANIMUS),camera.subtract(from),right,up,time,age,opacity);
+                poses.popPose();continue;
+            }
+            if(BloodShotGeometry.handles(packet.form())) {
+                // The splash authors its own flash and settle, like the riposte swing.
+                float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):1;
+                BloodShotGeometry.splash(packet,poses,FLOWS.vertices(LuxUmbraBatch.Material.ANIMUS),camera.subtract(from),right,up,time,age,opacity);
+                poses.popPose();continue;
+            }
+            if(ForgedNeedleGeometry.handlesCharge(packet.form())) {
+                // Ferric needles forge in iron (solid pass) out of gathered blood (Ductilis flow pass).
+                float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):cue.life.presence(time);
+                ForgedNeedleGeometry.charge(packet,poses,solids?buffers.getBuffer(FerricDuctilisRenderTypes.IRON):FerricDuctilisGeometry.DISCARD,
+                        solids?FerricDuctilisGeometry.DISCARD:FLOWS.vertices(LuxUmbraBatch.Material.DUCTILIS),camera.subtract(from),right,up,time,opacity);
+                poses.popPose();continue;
+            }
+            if(FuneralBellGeometry.handles(packet.form())) {
+                float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time)
+                        :packet.form()==ManipulationVisuals.Form.BELL_CHARGE?cue.life.presence(time):1;
+                FuneralBellGeometry.draw(packet,poses,FLOWS.vertices(LuxUmbraBatch.Material.MORTEM),camera.subtract(from),right,up,time,age,opacity);
+                poses.popPose();continue;
+            }
+            if(CrimsonCoronationGeometry.handles(packet.form())) {
+                var source=packet.entityId()>=0?world.getEntity(packet.entityId()):null;
+                if(source!=null && source.isInvisible() && !cue.life.retiring()) {poses.popPose();continue;}
+                float formation=cue.life.retiring()?cue.life.retiredFormation():cue.life.formation(time);
+                float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):cue.life.presence(time);
+                CrimsonCoronationGeometry.draw(packet,poses,FLOWS.vertices(LuxUmbraBatch.Material.ANIMUS),camera.subtract(from),right,up,time,formation,opacity);
+                poses.popPose();continue;
+            }
+            if(UmbralTearGeometry.handles(packet.form())) {
+                float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):1;
+                UmbralTearGeometry.draw(packet,poses,FLOWS.vertices(LuxUmbraBatch.Material.UMBRA),camera.subtract(from),right,up,time,age,opacity);
+                poses.popPose();continue;
+            }
+            if(BloodAneurysmGeometry.handles(packet.form())) {
+                float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time)
+                        :packet.form()==ManipulationVisuals.Form.ANEURYSM_CHARGE?cue.life.presence(time):1;
+                BloodAneurysmGeometry.draw(packet,poses,FLOWS.vertices(LuxUmbraBatch.Material.ANIMUS),FLOWS.vertices(LuxUmbraBatch.Material.MORTEM),
+                        camera.subtract(from),right,up,time,age,opacity);
+                poses.popPose();continue;
+            }
+            if(PhoenixDebtGeometry.handles(packet.form())) {
+                // The eruption authors its own unfurl and burn; the armed heart follows the shared presence fade.
+                float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time)
+                        :packet.form()==ManipulationVisuals.Form.PHOENIX_READY?cue.life.presence(time):1;
+                var source=packet.entityId()>=0?world.getEntity(packet.entityId()):null;
+                if(source!=null && source.isInvisible()) {poses.popPose();continue;}
+                boolean firstPerson=source==mc.player && mc.options.getCameraType().isFirstPerson();
+                PhoenixDebtGeometry.draw(packet,poses,FLOWS.vertices(LuxUmbraBatch.Material.FLAME),FLOWS.vertices(LuxUmbraBatch.Material.MOLTEN),
+                        camera.subtract(from),right,up,time,age,opacity,
+                        new PhoenixDebtGeometry.Frame(cue.bodyYaw,cue.bodyScale,cue.crouching,firstPerson));
+                poses.popPose();continue;
+            }
+            if(NerveCommandGeometry.handles(packet.form())) {
+                // The command authors its own impulse, recoil and leash; the cue refreshes while it holds.
+                float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):1;
+                var source=packet.entityId()>=0?world.getEntity(packet.entityId()):null;
+                if(source!=null && source.isInvisible()) {poses.popPose();continue;}
+                NerveCommandGeometry.draw(packet,poses,FLOWS.vertices(LuxUmbraBatch.Material.DUCTILIS),camera.subtract(from),right,up,
+                        time,age,opacity,source instanceof net.minecraft.world.entity.LivingEntity living?living:null);
+                poses.popPose();continue;
+            }
+            if(DeadlyGazeGeometry.handles(packet.form())) {
+                // The charge follows the shared presence fade; the grip and slam author their own seize and release.
+                float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time)
+                        :packet.form()==ManipulationVisuals.Form.GAZE_CHARGE?cue.life.presence(time):1;
+                var source=packet.entityId()>=0?world.getEntity(packet.entityId()):null;
+                boolean firstPerson=source==mc.player && mc.options.getCameraType().isFirstPerson();
+                DeadlyGazeGeometry.draw(packet,poses,FLOWS.vertices(LuxUmbraBatch.Material.DUCTILIS),FLOWS.vertices(LuxUmbraBatch.Material.UMBRA),
+                        camera.subtract(from),from,right,up,time,age,opacity,
+                        source instanceof net.minecraft.world.entity.LivingEntity living?living:null,firstPerson);
                 poses.popPose();continue;
             }
             if(AnimusMortemGeometry.handles(packet.form())) {
@@ -294,6 +430,7 @@ public final class ManipulationVisualRenderer {
         }
         if(solids) {
             FerricDuctilisEffects.render(poses,FLOWS,buffers.getBuffer(FerricDuctilisRenderTypes.IRON),camera,right,up,time,partial,true);
+            BloodProjectileEffects.renderIron(poses,buffers.getBuffer(FerricDuctilisRenderTypes.IRON),camera,time,partial);
             buffers.endBatch(FerricDuctilisRenderTypes.IRON);return;
         }
         BloodProjectileEffects.render(poses,FLOWS,camera,right,up,time,partial);
@@ -348,19 +485,8 @@ public final class ManipulationVisualRenderer {
         if (ManipulationSignatureEffects.draw(packet.form(), packet.radius(), packet.count(),
                 packet.to().subtract(packet.from()), p, v, time, age, fade)) return;
         double r = packet.radius();
-        Vec3 end = packet.to().subtract(packet.from());
-        float grow = Mth.clamp(age / 6, .05F, 1);
         switch (packet.form()) {
-
-            case IRON_HEART, BLACK_HEART -> {
-                if(packet.form()!=ManipulationVisuals.Form.IRON_HEART)p.translate(0,1.25,.35);
-                double beat=1+Math.sin(time*.22)*.06;
-                p.scale((float)beat,(float)beat,(float)beat);
-                int color=packet.form()==ManipulationVisuals.Form.IRON_HEART?0xD2C0B8:0x68364F;
-                diamond(p,v,.22,.28,.08,color,fade*.65F);
-                crystal(p,v,new Vec3(-.12,.12,0),.13,color,fade*.7F);
-                crystal(p,v,new Vec3(.12,.12,0),.13,color,fade*.7F);
-            }
+            // Only forms no school tier claims reach this legacy path.
             case MARIONETTE_TETHER -> {
                 float partial = (float)(time - Math.floor(time));
                 var body = world.getEntity(packet.entityId());
@@ -402,178 +528,8 @@ public final class ManipulationVisualRenderer {
                     diamond(p, v, .16, .25, .04, EDGE, fade);
                 }
             }
-            case COMMAND -> {
-                p.translate(0,r+.35,0);
-                int color=packet.count()==1?0xFF6273:packet.count()==2?0xF1C487:0xBA91EC;
-                ring(p,v,.35,0,color,fade,.04);
-                for(int i=0;i<3;i++) {double a=i*Math.PI*2/3;
-                    tube(p,v,new Vec3(Math.cos(a)*.35,0,Math.sin(a)*.35),new Vec3(Math.cos(a)*.3,.3,Math.sin(a)*.3),.045,color,fade);}
-                // The endpoint is refreshed from the controller, not a guessed target.
-                VisceralMesh.strand(p,v,Vec3.ZERO,end.add(0,-r-.35,0),.014,.18,time*.015,color,fade*.5F);
-            }
-            case CIRCUIT -> {
-                for(int i=0;i<5;i++) {
-                    double a=i*2.39996;
-                    Vec3 root=new Vec3(Math.cos(a)*.4,.65,Math.sin(a)*.4);
-                    Vec3 tip=root.add(Math.sin(a)*.12,.65,Math.cos(a)*.12);
-                    VisceralMesh.strand(p,v,root,tip,.014,.12,i,0xD4B35E,fade*.8F);
-                    double pulse=(time*.055+i*.21)%1;
-                    VisceralMesh.drop(p,v,root.lerp(tip,pulse),.024,.04,0xFFF0BE,fade,0);
-                }
-            }
-            case RUSH -> {
-                boolean seal=packet.form()==ManipulationVisuals.Form.CAUTERIZE;
-                for(int i=0;i<5;i++) {
-                    double y=.4+i*.23, gap=seal?Math.max(0,.35-age*.025):.3;
-                    tube(p,v,new Vec3(-gap,y,.34),new Vec3(gap,y+.1,.34),.03,seal?0xFFAD6B:EDGE,fade);
-                    if(!seal)tube(p,v,new Vec3(-.3,y,0),new Vec3(-.3,y-.15,0),.035,BLOOD,fade);
-                }
-            }
-            case NEEDLE_CHARGE, FAN_CHARGE, LANCE_CHARGE -> {
-                Vec3 direction=end.normalize(),side=VisceralGeometry.side(direction);
-                int count=packet.form()==ManipulationVisuals.Form.FAN_CHARGE?7:packet.form()==ManipulationVisuals.Form.LANCE_CHARGE?3:4;
-                for(int i=0;i<count;i++) {
-                    double offset=(i-(count-1)*.5)*.12;
-                    Vec3 tip=direction.scale(1.3).add(side.scale(offset));
-                    Vec3 axis=packet.form()==ManipulationVisuals.Form.FAN_CHARGE?direction.add(side.scale(offset*2)):direction;
-                    tube(p,v,tip.subtract(axis.scale((packet.form()==ManipulationVisuals.Form.LANCE_CHARGE?.85:.4)*r)),tip,.018,EDGE,fade);
-                }
-            }
-            case MORTAR_CHARGE, ANEURYSM_CHARGE, ICE_CHARGE, LIGHTNING_CHARGE, IRON_CHARGE, GAZE_CHARGE -> {
-                Vec3 focus=packet.form()==ManipulationVisuals.Form.GAZE_CHARGE
-                        ?ChargeVisualGeometry.focus(packet.form(),end):ChargeVisualGeometry.alongAim(end,1.25);
-                p.translate(focus.x,focus.y,focus.z);
-                int color=switch(packet.form()) {case ICE_CHARGE -> ICE;
-                    case LIGHTNING_CHARGE -> 0xFFE9AB;case IRON_CHARGE -> 0xD6C0B9;default -> EDGE;};
-                if(packet.form()==ManipulationVisuals.Form.MORTAR_CHARGE || packet.form()==ManipulationVisuals.Form.ANEURYSM_CHARGE)
-                    crystal(p,v,Vec3.ZERO,(.08+.26*r)*(1+Math.sin(time*.3)*.08),BLOOD,fade);
-                for(int i=0;i<6;i++) {double a=i*Math.PI/3+time*.05;
-                    Vec3 at=new Vec3(Math.cos(a)*(.15+r*.25),Math.sin(a)*(.15+r*.25),0);
-                    if(packet.form()==ManipulationVisuals.Form.ICE_CHARGE)crystal(p,v,at,.06+r*.07,color,fade);
-                    else tube(p,v,at,at.add(Math.sin(a)*.12,Math.cos(a)*.12,0),.02,color,fade);
-                }
-            }
-            case CLOUD -> {
-                for(int i=0;i<18;i++) {
-                    double x=Math.sin(i*13.7)*r,z=Math.cos(i*7.3)*r;
-                    double fall=(time*.14+i*.57)%10;
-                    tube(p,v,new Vec3(x,-fall,z),new Vec3(x,-Math.min(10,fall+.7),z),.018,BLOOD,fade*.7F);
-                }
-            }
-            case MAGNET -> {
-                for(int i=0;i<8;i++) {
-                    double a=i*Math.PI/4, drift=1-(time*.035+i*.13)%1;
-                    Vec3 at=new Vec3(Math.cos(a)*r*drift,.2,Math.sin(a)*r*drift);
-                    tube(p,v,at,at.scale(.85),.04,0xB0A4A0,fade);
-                }
-            }
-            case BLOOM -> {
-                for(int i=0;i<8;i++) {
-                    double a=i*Math.PI/4;
-                    Vec3 root=new Vec3(0,.15,0), left=new Vec3(Math.cos(a-.25)*r*.65,.5*grow,Math.sin(a-.25)*r*.65);
-                    Vec3 tip=new Vec3(Math.cos(a)*r*grow,.15,Math.sin(a)*r*grow),right=new Vec3(Math.cos(a+.25)*r*.65,.5*grow,Math.sin(a+.25)*r*.65);
-                    quad(p,v,root,left,tip,right,i%2==0?0x6D243A:0x8B5447,fade*.7F);
-                    tube(p,v,root,tip,.025,0xB6B17C,fade);
-                }
-                crystal(p,v,new Vec3(0,.4,0),.4,0x94AA67,fade);
-            }
-            case RETORT -> {
-                p.translate(0,1.1,0);
-                for(int i=0;i<3;i++) {
-                    p.pushPose();p.translate(0,(i-1)*.27,i*.016);
-                    VisceralMesh.plate(p,v,.42,.23,.045,0xB2A5A0,fade*.8F,i*.2);
-                    VisceralMesh.strand(p,v,new Vec3(-.3,-.12,.09),new Vec3(.3,.12,.09),.012,.04,i,0xA84848,fade);
-                    p.popPose();
-                }
-            }
-            case HUNGER -> {
-                p.translate(0,1.3,0);
-                for(int i=0;i<8;i++){double a=i*Math.PI/4;
-                    Vec3 root=new Vec3(Math.cos(a)*.5,Math.sin(a)*.35,0);
-                    tube(p,v,root,root.scale(.65),.055,0xC2C09B,fade);}
-            }
-            case GRAVE -> {
-                p.translate(0,2.2,0);diamond(p,v,.25,.45,.08,0x738954,fade*.8F);
-                tube(p,v,new Vec3(-.35,0,0),new Vec3(.35,0,0),.025,0xD0B599,fade);
-            }
             case ORE -> {
                 VisceralMesh.locatorBox(p,v,.48,0xF0C985,fade*.6F);
-            }
-            case RUPTURE -> {
-                double expansion=r*Math.min(1,age/8);
-                for(int i=0;i<12;i++) {
-                    double a=i*Math.PI/6;
-                    Vec3 tip=new Vec3(Math.cos(a)*expansion,Math.sin(i*2)*expansion*.25,Math.sin(a)*expansion);
-                    Vec3 branch=tip.scale(.6).add(0,.25,0);
-                    VisceralMesh.strand(p,v,Vec3.ZERO,branch,.07,.13,i,BLOOD,fade);
-                    VisceralMesh.strand(p,v,branch,tip,.035,.1,i,EDGE,fade);
-                    crystal(p,v,tip,.14,BLOOD,fade);
-                }
-            }
-            case DRAIN -> {
-                boolean drain=packet.form()==ManipulationVisuals.Form.DRAIN;
-                for(int i=0;i<3;i++) {
-                    double phase=i*2.1+time*(drain?.015:.008);
-                    VisceralMesh.strand(p,v,Vec3.ZERO,end,.025,drain?.22:.12,phase,drain?0xA52239:0xFFF2DB,fade);
-                    double along=(time*(drain?.04:.06)+i/3.0)%1;
-                    if(drain)along=1-along;
-                    Vec3 at=VisceralGeometry.strandPoint(Vec3.ZERO,end,along,drain?.22:.12,phase);
-                    VisceralMesh.drop(p,v,at,drain?.06:.035,drain?.08:.04,drain?0xC02C42:WHITE,fade,0);
-                }
-            }
-
-            case MARK -> {
-                for(int i=0;i<5;i++) {
-                    double a=i*Math.PI*2/5;
-                    Vec3 root=new Vec3(Math.cos(a)*.31,.55,Math.sin(a)*.31);
-                    Vec3 tip=new Vec3(Math.cos(a+.4)*.39,1.55,Math.sin(a+.4)*.39);
-                    VisceralMesh.strand(p,v,root,tip,.018,.13,i,0xE9C569,fade);
-                    Vec3 split=root.lerp(tip,.6);
-                    VisceralMesh.strand(p,v,split,split.add(Math.cos(a)*.16,.24,Math.sin(a)*.16),.012,.04,i,0xB5914D,fade);
-                    double pulse=(time*.045+i*.2)%1;
-                    VisceralMesh.drop(p,v,VisceralGeometry.strandPoint(root,tip,pulse,.13,i),.025,.04,WHITE,fade,0);
-                }
-            }
-            case WOUND -> {
-                for(int i=0;i<3;i++) tube(p,v,new Vec3(-.3+i*.2,1.5,.35),new Vec3(-.1+i*.2,.65,.35),.045,BLOOD,fade);
-            }
-
-            case MENDING -> {
-                for(int i=0;i<5;i++) {
-                    double y=.5+i*.12, gap=.28*(1-Math.min(1,age/12.0));
-                    Vec3 start=new Vec3(-gap,y,.03),endStitch=new Vec3(gap,y+.08,.03);
-                    VisceralMesh.strand(p,v,start,endStitch,.019,.08,i,0xC6B4AE,fade);
-                    VisceralMesh.strand(p,v,new Vec3(0,y,0),new Vec3(0,y+.15,0),.014,.02,i,0x9E4850,fade);
-                }
-            }
-            case GROWTH -> {
-                boolean bone=packet.form()==ManipulationVisuals.Form.BONE;
-                boolean growth=packet.form()==ManipulationVisuals.Form.GROWTH;
-                int color=growth?0x94B77F:bone?0xDED0AD:0xC9E6F3;
-                for(int i=0;i<8;i++) {
-                    double a=i*2.39996;
-                    Vec3 base=new Vec3(Math.cos(a)*r,.05,Math.sin(a)*r);
-                    Vec3 tip=base.add(-base.x*.25,grow*(.55+i%3*.25),-base.z*.25);
-                    VisceralMesh.strand(p,v,base,tip,bone?.105:.06,growth?.17:.07,i,color,fade);
-                    Vec3 branch=base.lerp(tip,.55);
-                    VisceralMesh.strand(p,v,branch,tip.add(Math.sin(a)*.2,-.05,Math.cos(a)*.2),.035,.04,i,color,fade);
-                    VisceralMesh.strand(p,v,base,tip,.015,.03,i,growth?0xBC5260:0x994856,fade*.65F);
-                }
-            }
-
-            case DEBT -> {
-                boolean tithe=packet.form()==ManipulationVisuals.Form.DEBT;
-                int body=tithe?0x92674F:0xC8E3EF;
-                for(int i=0;i<12;i++) {
-                    double a=i*Math.PI/6;
-                    Vec3 outer=new Vec3(Math.cos(a)*.7,2.4+Math.sin(a)*.7,0);
-                    Vec3 inner=new Vec3(Math.cos(a+.12)*.56,2.4+Math.sin(a+.12)*.56,0);
-                    VisceralMesh.strand(p,v,outer,inner,.026,.04,i,body,fade);
-                }
-                Vec3 center=new Vec3(0,2.4,0);
-                Vec3 hand=center.add(Math.sin(time*.08)*.5,Math.cos(time*.08)*.5,0);
-                VisceralMesh.strand(p,v,center,hand,.025,.02,0,WHITE,fade);
-                VisceralMesh.drop(p,v,center,.065,.10,tithe?0xB82D42:WHITE,fade,0);
             }
         }
     }
@@ -619,29 +575,6 @@ public final class ManipulationVisualRenderer {
         p.popPose();
     }
 
-    public static void bloodShot(PoseStack p,MultiBufferSource buffers,Vec3 velocity,int form,float age) {
-        bloodShot(p,buffers,velocity,form,age,31);
-    }
-
-    public static void bloodShot(PoseStack p,MultiBufferSource buffers,Vec3 velocity,int form,float age,int seed) {
-        VertexConsumer v=buffers.getBuffer(ManipulationMaterials.ANIMUS.renderType());
-        v=formingProjectile(v,age);
-        v=new UndulatingVertexConsumer(v,new ManipulationUndulation(ManipulationVisuals.Form.RUPTURE,age,age,seed,1,Vec3.ZERO));
-        double size=form==2?.35:.14;
-        p.pushPose();
-        Vec3 direction=velocity.lengthSqr()<.0001?new Vec3(0,1,0):velocity.normalize();
-        p.mulPose(new org.joml.Quaternionf().rotationTo(0,1,0,(float)direction.x,(float)direction.y,(float)direction.z));
-        VisceralMesh.drop(p,v,Vec3.ZERO,size,size*1.6,0xCF2540,1,age*.018);
-        for(int i=0;i<(form==1?3:1);i++) {
-            double a=age*.4+i*Math.PI*2/3;
-            VisceralMesh.strand(p,v,new Vec3(Math.cos(a)*size,0,Math.sin(a)*size),
-                    new Vec3(Math.cos(a+.8)*size*.3,-(form==1?1.1:.6),Math.sin(a+.8)*size*.3),.035,.10,age*.025+i,EDGE,.8F);
-        }
-        if(form==2) {ring(p,v,.37,0,0x6F1330,.8F,.035);ring(p,v,.25,-.2,EDGE,.8F,.025);}
-        if(form==3) ring(p,v,.23,0,EDGE,.6F,.018);
-        p.popPose();
-    }
-
     public static VertexConsumer formingProjectile(VertexConsumer vertices,float age) {
         return new CoalescingVertexConsumer(vertices,.6F+.4F*ManipulationLifecycle.smooth(age/3),0);
     }
@@ -655,6 +588,14 @@ public final class ManipulationVisualRenderer {
         var reason=entity.getRemovalReason();
         if(reason!=net.minecraft.world.entity.Entity.RemovalReason.DISCARDED
                 && reason!=net.minecraft.world.entity.Entity.RemovalReason.KILLED)return;
+        if(entity instanceof com.vincenthuto.hemomancy.common.entity.projectile.BloodShotEntity shot) {
+            BloodProjectileEffects.shotRemoved(shot);
+            return;
+        }
+        if(entity instanceof com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity needle && !needle.isCoronationSword()) {
+            BloodProjectileEffects.needleRemoved(needle);
+            return;
+        }
         // Only residue survives removal; never retain a flying projectile or damage cue.
         var packet=new ManipulationVisualPacket(ManipulationVisuals.Form.RUPTURE,-1,entity.position(),
                 entity.position(),.3F,8,1);
@@ -668,20 +609,6 @@ public final class ManipulationVisualRenderer {
     }
 
 
-
-
-    private static void star(PoseStack p,VertexConsumer v,Vec3 center,double radius,int color,float alpha) {
-        for(int i=0;i<8;i++) {double a=i*Math.PI/4;
-            tube(p,v,center,center.add(Math.cos(a)*radius,Math.sin(a)*radius,0),i%2==0?.045:.02,color,alpha);}
-        tube(p,v,center.add(0,0,-radius),center.add(0,0,radius),.04,color,alpha);
-    }
-
-    private static void orientedRing(PoseStack p, VertexConsumer v, Vec3 at, Vec3 axis, double radius,int color,float alpha) {
-        Vec3 d=axis.normalize();p.pushPose();p.translate(at.x,at.y,at.z);
-        p.mulPose(new org.joml.Quaternionf().rotationTo(0,1,0,(float)d.x,(float)d.y,(float)d.z));
-        ring(p,v,radius,0,color,alpha,.025);p.popPose();
-    }
-
     private static void ring(PoseStack p,VertexConsumer v,double radius,double y,int color,float alpha,double width) {
         for(int i=0;i<48;i++) {double a=i*Math.PI/24,b=(i+1)*Math.PI/24;
             double wobbleA=1+.012*Math.sin(a*5),wobbleB=1+.012*Math.sin(b*5);
@@ -689,10 +616,6 @@ public final class ManipulationVisualRenderer {
                     new Vec3(Math.cos(b)*radius*wobbleB,y,Math.sin(b)*radius*wobbleB),
                     width*(.7+.3*Math.sin(a*3)*Math.sin(a*3)),width*(.7+.3*Math.sin(b*3)*Math.sin(b*3)),
                     color,alpha,i/48.0,(i+1)/48.0);}
-    }
-
-    private static void crystal(PoseStack p, VertexConsumer v, Vec3 center, double size, int color,float alpha) {
-        p.pushPose();p.translate(center.x,center.y,center.z);diamond(p,v,size*.55,size,size*.55,color,alpha);p.popPose();
     }
 
     private static void diamond(PoseStack p,VertexConsumer v,double x,double y,double z,int color,float alpha) {
@@ -704,10 +627,6 @@ public final class ManipulationVisualRenderer {
 
     private static void tube(PoseStack p,VertexConsumer v,Vec3 a,Vec3 b,double width,int color,float alpha) {
         VisceralMesh.tube(p,v,a,b,width,color,alpha);
-    }
-
-    private static void quad(PoseStack p,VertexConsumer v,Vec3 a,Vec3 b,Vec3 c,Vec3 d,int color,float alpha) {
-        VisceralMesh.quad(p,v,a,b,c,d,color,alpha,0,0,1,1);
     }
 
     private static final class Cue {

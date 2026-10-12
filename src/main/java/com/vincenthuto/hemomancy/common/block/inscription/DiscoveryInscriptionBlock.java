@@ -42,7 +42,7 @@ import java.util.List;
 public class DiscoveryInscriptionBlock extends Block implements EntityBlock, SimpleWaterloggedBlock {
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	private static final VoxelShape FLOOR_SHAPE = Block.box(2.0, 0.0, 2.0, 14.0, 4.0, 14.0);
+	private static final VoxelShape FLOOR_SHAPE = Block.box(2.0, 0.0, 2.0, 14.0, 2.0, 14.0);
 	private static final VoxelShape WALL_NORTH_SHAPE = Block.box(1.0, 1.0, 14.0, 15.0, 15.0, 16.0);
 	private static final VoxelShape WALL_SOUTH_SHAPE = Block.box(1.0, 1.0, 0.0, 15.0, 15.0, 2.0);
 	private static final VoxelShape WALL_EAST_SHAPE = Block.box(0.0, 1.0, 1.0, 2.0, 15.0, 15.0);

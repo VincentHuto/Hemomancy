@@ -15,8 +15,7 @@ public final class ArborOfWillVisualRules {
 	public static double treeHeight(int degree) {
 		int clamped = Math.max(0, Math.min(8, degree));
 		if (clamped == 0) return 1.0;
-		if (clamped == 8) return 9.0;
-		return 2.6 + (clamped - 1) * 0.8;
+		return 3.6 + (Math.min(7, clamped) - 1) * 1.15;
 	}
 
 	public static double rootRadius(int degree, double chamberRadius) {
@@ -39,6 +38,13 @@ public final class ArborOfWillVisualRules {
 				(double) unlockedSkills / totalSkills));
 		double pomeHealth = 1.0 - woundCount(pomesConsumed) / 9.0 * 0.92;
 		return Math.max(0.0, Math.min(1.0, skillHealth * pomeHealth));
+	}
+
+	/** Foliage the Arbor carries from Degree growth alone; Pome wounds still strip it toward bare wood. */
+	public static double minimumFoliage(int visibleWhorls, int pomesConsumed) {
+		double growth = Math.max(0, Math.min(7, visibleWhorls)) / 7.0;
+		double pomeHealth = 1.0 - woundCount(pomesConsumed) / 9.0 * 0.92;
+		return (0.40 + 0.40 * growth) * pomeHealth;
 	}
 
 	public static GrowthState growthState(boolean unlocked, boolean enabled,

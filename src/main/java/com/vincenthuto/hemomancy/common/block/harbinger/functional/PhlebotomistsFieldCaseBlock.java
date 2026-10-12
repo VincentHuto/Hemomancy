@@ -22,7 +22,7 @@ import java.util.function.BiConsumer;
 public class PhlebotomistsFieldCaseBlock extends Block implements EntityBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
-    private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 8, 16);
+    private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 6, 16);
     public PhlebotomistsFieldCaseBlock() {
         super(Properties.of().strength(1.5F, 6).sound(SoundType.WOOL).noOcclusion().pushReaction(PushReaction.BLOCK));
         registerDefaultState(SpecimenDisplayState.empty(stateDefinition.any()).setValue(FACING, Direction.NORTH).setValue(OPEN, false));

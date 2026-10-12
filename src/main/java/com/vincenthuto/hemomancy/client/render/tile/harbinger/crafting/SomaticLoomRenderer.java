@@ -2,7 +2,11 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
+import com.mojang.math.Axis;
+import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.world.ThreadKnotGeometry;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomBlock;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticWeaveRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
@@ -11,8 +15,12 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -21,67 +29,50 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import java.util.Map;
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import static com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomGeometry.*;
 
 /**
- * Renders the Somatic Loom's visual effects: fractal tendency star, enzyme
- * indicator rings, blood volume ring, and crafting progress ring.
- * <p>
- * Uses flat POSITION_COLOR quads with proper depth testing (matching
- * {@link com.vincenthuto.hemomancy.client.render.world.CardinalRiteBoundaryRenderer}
- * and {@link com.vincenthuto.hemomancy.client.render.world.BloodCraftRingRenderer}),
- * fixing the z-sorting issues of the old textured billboard approach.
+ * Draws the Somatic Loom's state onto the loom itself (tools/model_export/somatic_loom.py, anchors in
+ * {@link com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomGeometry}). Stored enzymes wind dyed thread onto the pirns and the reservoir fills the
+ * upright veins. A selected weave colours its share of the warp; projected blood pulses up the veins into a
+ * beating ganglion; each strand drawn home lights its threads and lays a band at the fell. The memory floats
+ * over the fell, catalysts lie on the fresh cloth and the pattern hangs above the ganglion. Loose threads are
+ * entities (FrayedThreadRenderer); this draws only what stays on the loom.
  */
 public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlockEntity> {
+	public static final List<String> PART_MODELS = parts();
 
-	/** Fractal random reseeded each tick for stable-per-tick crackle. */
-	private static final Random FRAC_RAND = new Random();
+	/** Threads range across the ritual area, and the loom keeps drawing them while its block is off screen. */
+	private static final double RENDER_BOUNDS = SomaticWeaveRules.RITUAL_RADIUS;
 
-	//  Star geometry (block-local coordinates) 
-	private static final float CX = 0.5f;
-	private static final float CZ = 0.5f;
-	private static final float STAR_Y = 2.3f;
-	private static final float BASE_RADIUS = 0.5f;
-	private static final float SPIKE_BASE_HALF_ANGLE = 22.75f;
-	/** How far each unit of affinity extends a spoke beyond BASE_RADIUS. */
-	private static final float AFFINITY_RADIUS_SCALE = 0.5f;
+	/** Clotted blood in the veins, plus the visual standard's hot core and clot accents. */
+	private static final float[] BLOOD = {0.55f, 0.03f, 0.06f};
+	private static final float[] HOT = ThreadKnotGeometry.HOT;
+	private static final float[] CLOT = {0.48f, 0.06f, 0.13f};
+	/** Ticks for one pulse to climb from sill to ganglion, with no blood projected and once fully paid. */
+	private static final float PULSE_SLOW = 44f, PULSE_FAST = 18f;
 
-	//  Fractal spoke widths & alphas 
-	private static final float SPOKE_CORE_WIDTH = 0.004f;
-	private static final float SPOKE_GLOW_WIDTH = 0.012f;
-	private static final float SPOKE_CORE_ALPHA = 0.85f;
-	private static final float SPOKE_GLOW_ALPHA = 0.25f;
-	/** Fractal recursion terminates when displacement drops below this. */
-	private static final double FRACTAL_DETAIL = 0.02;
-
-	//  Ring segment count 
-	private static final int RING_SEGMENTS = 64;
-	/** Segment count for the thinner enzyme indicator rings. */
-	private static final int ENZYME_RING_SEGMENTS = 48;
-	private static final int ORB_LAT_SEGMENTS = 8;
-	private static final int ORB_LON_SEGMENTS = 16;
-	private static final double ORB_RENDER_BOUNDS = 10.0D;
-	private static final float ORB_THREAD_CENTER_Y = 0.58f;
-	private static final int ORB_UNRAVEL_STRANDS = 9;
-	private static final float ORB_CENTER_STRAND_WIDTH = 0.012f;
-	private static final float ORB_UNRAVEL_STRAND_WIDTH = 0.01f;
-	private static final float ORB_UNRAVEL_MIN_LENGTH = 0.32f;
-	private static final float ORB_UNRAVEL_MAX_LENGTH = 0.78f;
-
-	//  Ring widths (used by enzyme, blood, crafting rings) 
-	private static final float RING_CORE_WIDTH = 0.06f;
-	private static final float RING_GLOW_WIDTH = 0.15f;
-
-	//  Undulation for rings 
-	private static final double UNDULATE_FREQ = 5.0;
-	private static final float UNDULATE_AMP = 0.04f;
-	private static final double UNDULATE_SPEED = 0.06;
-	private static final double UNDULATE_FREQ2 = 11.0;
-	private static final float UNDULATE_AMP2 = 0.015f;
-	private static final double UNDULATE_SPEED2 = 0.1;
+	private final SomaticLoomEcho echo;
 
 	public SomaticLoomRenderer(BlockEntityRendererProvider.Context ctx) {
+		this.echo = new SomaticLoomEcho(ctx);
+	}
+
+	/** Spun-thread cops then enzyme-vial liquids, each in EnumBloodTendency order. */
+	private static List<String> parts() {
+		List<String> parts = new ArrayList<>();
+		for (String kind : new String[]{"cop_", "vial_"})
+			for (EnumBloodTendency tendency : EnumBloodTendency.values())
+				parts.add(kind + tendency.name().toLowerCase(Locale.ROOT));
+		return List.copyOf(parts);
+	}
+
+	public static ModelResourceLocation part(String name) {
+		return ModelResourceLocation.standalone(Hemomancy.rloc("block/somatic_loom_" + name));
 	}
 
 	@Override
@@ -91,641 +82,312 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 
 	@Override
 	public AABB getRenderBoundingBox(SomaticLoomBlockEntity te) {
-		return new AABB(te.getBlockPos()).inflate(ORB_RENDER_BOUNDS);
+		return new AABB(te.getBlockPos()).inflate(RENDER_BOUNDS);
 	}
-
 
 	@Override
 	public void render(SomaticLoomBlockEntity te, float partialTicks, PoseStack stack,
 			MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
+		if (te.getLevel() == null) return;
+		float time = te.getLevel().getGameTime() + partialTicks;
+		Direction facing = te.getBlockState().getValue(SomaticLoomBlock.FACING);
 
-		float currentTime = te.getLevel().getGameTime() + partialTicks;
-		boolean showEffects = !te.contents.get(0).isEmpty() || te.isCrafting();
-
-		// === Items (always rendered, depth writes first) ===
+		// Textured parts first: fetching their buffers would end a flat-colour batch already in progress.
 		stack.pushPose();
+		toLoomFrame(stack, facing);
+		renderCops(te, stack, buffer, combinedLight, combinedOverlay);
+		renderVials(te, stack, buffer, combinedLight, combinedOverlay);
 		renderItems(te, partialTicks, stack, buffer, combinedLight, combinedOverlay);
+		echo.render(te, partialTicks, stack, buffer);
+		com.vincenthuto.hemomancy.client.render.world.chamberofwill.SomaticLoomDomeRenderer.track(te);
+
+		stack.pushPose();
+		stack.scale(1 / 16f, 1 / 16f, 1 / 16f);
+		Matrix4f px = stack.last().pose();
+		VertexConsumer vc = buffer.getBuffer(RenderTypeInit.LOOM_EFFECT);
+		float charge = ritualCharge(te);
+		drawVeins(vc, px, te, charge, time);
+		drawGanglion(vc, px, te, charge, time);
+		drawFeelers(vc, px, te, time);
+		drawWarp(vc, px, te, time);
+		drawWovenBands(vc, px, te, time);
+		stack.popPose();
 		stack.popPose();
 
-		// === Flat-color effects ===
-		if (showEffects) {
-			FRAC_RAND.setSeed(te.getLevel().getGameTime() * 31L + te.getBlockPos().hashCode());
+	}
 
+	/** Turns the pose into the north-facing model's frame, matching the blockstate's y rotation. */
+	private static void toLoomFrame(PoseStack stack, Direction facing) {
+		stack.translate(0.5D, 0.0D, 0.5D);
+		stack.mulPose(Axis.YP.rotationDegrees(facingDegrees(facing)));
+		stack.translate(-0.5D, 0.0D, -0.5D);
+	}
+
+	private static float facingDegrees(Direction facing) {
+		return switch (facing) {
+			case EAST -> -90; case SOUTH -> 180; case WEST -> 90; default -> 0;
+		};
+	}
+
+	/** 0 before any blood is projected, rising to 1 once the weave is paid; full while the orbs are woven. */
+	private static float ritualCharge(SomaticLoomBlockEntity te) {
+		if (te.isWeaving()) return 1f;
+		if (!te.isAwaitingBlood()) return 0f;
+		return SomaticLoomEffectRules.fill(te.getRitualBloodCharged(), te.getRitualBloodRequired());
+	}
+
+	//  Pirns and vials: stored enzyme stands as liquid; a paid weave spins it up onto the pirns as thread
+
+	private static void renderCops(SomaticLoomBlockEntity te, PoseStack stack, MultiBufferSource buffer,
+			int light, int overlay) {
+		Minecraft mc = Minecraft.getInstance();
+		EnumBloodTendency[] tendencies = EnumBloodTendency.values();
+		for (int t = 0; t < tendencies.length; t++) {
+			float fill = SomaticLoomEffectRules.spunFill(te.displayedSpun(tendencies[t]));
+			if (fill <= 0.01f) continue;
 			stack.pushPose();
-			Matrix4f mat = stack.last().pose();
-			VertexConsumer vc = buffer.getBuffer(RenderTypeInit.LOOM_EFFECT);
-
-			stack.translate(0F, -0.5F, 0F);
-
-			drawFractalStar(vc, mat, te, currentTime);
-
-			drawEnzymeRings(vc, mat, te, currentTime);
-
-			if (te.isAwaitingBlood()) {
-				drawAwaitingBloodGlow(vc, mat, te, currentTime);
-			}
-
-			double bloodVol = te.getBloodVolume();
-			double maxBloodVol = te.getMaxBloodVolume();
-			if (maxBloodVol > 0) {
-				drawBloodVolumeRing(vc, mat,
-						Mth.clamp(bloodVol / maxBloodVol, 0, 1), currentTime);
-			}
-
-			if (te.isCrafting() && te.getCraftingTotalTime() > 0) {
-				double progress = 1.0 - ((double) te.getCraftingProgress() / te.getCraftingTotalTime());
-				drawCraftingProgressRing(vc, mat, progress,
-						te.getCraftingPhase() == 2, currentTime);
-			}
-
-			if (te.isWeavingOrbs()) {
-				stack.pushPose();
-				stack.translate(0F, 0.5F, 0F);
-				drawRitualOrbs(buffer, stack.last().pose(), te, currentTime, partialTicks);
-				stack.popPose();
-			}
-
+			// The part is one pixel tall on the pirn floor; stretch it to the wound height.
+			stack.translate(0, PIRN_FLOOR / 16f, 0);
+			stack.scale(1, PIRN_HEIGHT * fill, 1);
+			stack.translate(0, -PIRN_FLOOR / 16f, 0);
+			mc.getBlockRenderer().getModelRenderer().renderModel(stack.last(),
+					buffer.getBuffer(RenderType.entityCutoutNoCull(TextureAtlas.LOCATION_BLOCKS)), null,
+					mc.getModelManager().getModel(part(PART_MODELS.get(t))), 1, 1, 1, light, overlay);
 			stack.popPose();
 		}
 	}
 
+	private static void renderVials(SomaticLoomBlockEntity te, PoseStack stack, MultiBufferSource buffer,
+			int light, int overlay) {
+		Minecraft mc = Minecraft.getInstance();
+		EnumBloodTendency[] tendencies = EnumBloodTendency.values();
+		for (int t = 0; t < tendencies.length; t++) {
+			float fill = SomaticLoomEffectRules.vialFill(te.displayedStock(tendencies[t]), SomaticLoomBlockEntity.ENZYME_CAPACITY);
+			if (fill <= 0.01f) continue;
+			stack.pushPose();
+			// One pixel of liquid on the vial floor, stretched to the stock it holds.
+			stack.translate(0, VIAL_FLOOR / 16f, 0);
+			stack.scale(1, VIAL_DEPTH * fill, 1);
+			stack.translate(0, -VIAL_FLOOR / 16f, 0);
+			mc.getBlockRenderer().getModelRenderer().renderModel(stack.last(),
+					buffer.getBuffer(RenderType.entityTranslucentCull(TextureAtlas.LOCATION_BLOCKS)), null,
+					mc.getModelManager().getModel(part(PART_MODELS.get(tendencies.length + t))), 1, 1, 1, light, overlay);
+			stack.popPose();
+		}
+	}
 
-	public void renderItems(SomaticLoomBlockEntity te, float partialTicks, PoseStack matrixStackIn,
-			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
-		float gameTime = te.getLevel().getGameTime() + partialTicks;
+	//  Items: the memory over the fell, catalysts on the fresh cloth, the pattern above the ganglion
+
+	public void renderItems(SomaticLoomBlockEntity te, float partialTicks, PoseStack stack,
+			MultiBufferSource buffer, int light, int overlay) {
+		float time = te.getLevel().getGameTime() + partialTicks;
 		Minecraft mc = Minecraft.getInstance();
 
-		// Slot 0 first item, floating above the center of the block
-		ItemStack stack0 = te.contents.get(0);
-		if (!stack0.isEmpty()) {
-			matrixStackIn.pushPose();
-			matrixStackIn.translate(0.5F, 1.25F, 0.5F);
-			matrixStackIn.mulPose(Vector3.YP.rotationDegrees(gameTime).toMoj());
-			matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-			mc.getItemRenderer().renderStatic(null, stack0, ItemDisplayContext.FIXED, true, matrixStackIn, bufferIn,
-					null, combinedLightIn, combinedOverlayIn, 0);
-			matrixStackIn.popPose();
+		ItemStack memory = te.contents.get(0);
+		if (!memory.isEmpty()) {
+			stack.pushPose();
+			// Low over the fell and a little forward, so it never hides the echo standing behind it.
+			float y = MEMORY_Y - 1.5f + Mth.sin(time * 0.06f) * 0.3f, z = FELL_Z - 1.0f, spin = time;
+			if (te.isInClimax()) {
+				// The echo, grown whole, takes the vessel into its hands, then carries it down into the fell.
+				float c = Mth.clamp((te.getClimaxTicks() + partialTicks) / SomaticWeaveRules.CLIMAX_TICKS, 0, 1);
+				float rise = Mth.clamp(c / 0.4f, 0, 1), fall = Mth.clamp((c - 0.7f) / 0.3f, 0, 1);
+				y = Mth.lerp(fall, Mth.lerp(rise, y, ECHO_Y + 17f), FELL_Y + 1f);
+				z = Mth.lerp(fall, Mth.lerp(rise, z, ECHO_Z - 3f), FELL_Z);
+				spin = time * (1 + 3 * rise);
+			}
+			stack.translate(0.5F, y / 16f, z / 16f);
+			stack.mulPose(Vector3.YP.rotationDegrees(spin).toMoj());
+			stack.scale(0.38f, 0.38f, 0.38f);
+			mc.getItemRenderer().renderStatic(null, memory, ItemDisplayContext.FIXED, true, stack, buffer,
+					null, light, overlay, 0);
+			stack.popPose();
 		}
 
-		// Slot 1 second item, floating above the first
-		for (int i = 1; i < te.contents.size(); i++) {
-			ItemStack stack1 = te.contents.get(i);
-			if (stack1.isEmpty()) continue;
-			matrixStackIn.pushPose();
-			double angle = gameTime * 0.04D + (i - 1) * Math.PI * 2.0D / Math.max(1, te.contents.size() - 1);
-			double radius = 0.32D + Math.min(0.18D, (te.contents.size() - 2) * 0.025D);
-			matrixStackIn.translate(0.5F + Math.cos(angle) * radius, 1.72F, 0.5F + Math.sin(angle) * radius);
-			matrixStackIn.mulPose(Vector3.YP.rotationDegrees(-gameTime * 0.75f + i * 25f).toMoj());
-			matrixStackIn.scale(0.42f, 0.42f, 0.42f);
-			mc.getItemRenderer().renderStatic(null, stack1, ItemDisplayContext.FIXED, true, matrixStackIn, bufferIn,
-					null, combinedLightIn, combinedOverlayIn, 0);
-			matrixStackIn.popPose();
+		List<ItemStack> catalysts = new ArrayList<>();
+		for (int i = 1; i < te.contents.size(); i++)
+			if (!te.contents.get(i).isEmpty()) catalysts.add(te.contents.get(i));
+		for (int i = 0; i < catalysts.size(); i++) {
+			float x = SomaticLoomEffectRules.catalystX(i, catalysts.size(), CATALYST_X0, CATALYST_X1);
+			stack.pushPose();
+			stack.translate(x / 16f, CATALYST_Y / 16f + Mth.sin(time * 0.05f + i * 1.7f) * 0.012f, CATALYST_Z / 16f);
+			stack.mulPose(Vector3.YP.rotationDegrees(time * 0.6f + i * 47f).toMoj());
+			stack.scale(0.3f, 0.3f, 0.3f);
+			mc.getItemRenderer().renderStatic(null, catalysts.get(i), ItemDisplayContext.FIXED, true, stack, buffer,
+					null, light, overlay, 0);
+			stack.popPose();
 		}
 
-		// Recipe result preview floating above both items
-		MemoryWeavingRecipe currRecipe = te.getPreviewRecipe();
-		if (currRecipe != null) {
-			matrixStackIn.pushPose();
-			float bob = Mth.sin(gameTime * 0.1f) * 0.05f;
-			matrixStackIn.translate(0.5F, 2.25F + bob, 0.5F);
-			matrixStackIn.mulPose(Vector3.YP.rotationDegrees(gameTime * 0.5f).toMoj());
-			matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-			mc.getItemRenderer().renderStatic(null, currRecipe.getResultItem(te.getLevel().registryAccess()),
-					ItemDisplayContext.FIXED, true, matrixStackIn, bufferIn, null, combinedLightIn, combinedOverlayIn,
-					0);
-			matrixStackIn.popPose();
-		}
-	}
-
-
-	private void drawFractalStar(VertexConsumer vc, Matrix4f mat,
-			SomaticLoomBlockEntity te, float currentTime) {
-		Map<EnumBloodTendency, Float> affs = te.getTendency();
-		float angle = -90f;
-
-		double pulse = (Math.sin(currentTime * 0.08) + 1.0) * 0.5;
-
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			float affinity = Math.min(3.0f, affs.getOrDefault(tend, 0f) / 16.0f);
-			ParticleColor color = tend.getColor();
-			float r = color.getRed() / 255f;
-			float g = color.getGreen() / 255f;
-			float b = color.getBlue() / 255f;
-
-			float cAlpha = (float) (SPOKE_CORE_ALPHA * (0.7 + 0.3 * pulse));
-			float gAlpha = (float) (SPOKE_GLOW_ALPHA * (0.5 + 0.5 * pulse));
-
-			double a1Rad = Math.toRadians(angle + SPIKE_BASE_HALF_ANGLE);
-			double a2Rad = Math.toRadians(angle - SPIKE_BASE_HALF_ANGLE);
-			float bx1 = CX + (float) (Math.cos(a1Rad) * BASE_RADIUS);
-			float bz1 = CZ + (float) (Math.sin(a1Rad) * BASE_RADIUS);
-			float bx2 = CX + (float) (Math.cos(a2Rad) * BASE_RADIUS);
-			float bz2 = CZ + (float) (Math.sin(a2Rad) * BASE_RADIUS);
-
-			double tipRad = Math.toRadians(angle);
-			float tipDist = BASE_RADIUS + affinity * AFFINITY_RADIUS_SCALE;
-			float tx = CX + (float) (Math.cos(tipRad) * tipDist);
-			float tz = CZ + (float) (Math.sin(tipRad) * tipDist);
-
-			float yBase1 = STAR_Y + yUndulation(a1Rad, currentTime, 1f);
-			float yBase2 = STAR_Y + yUndulation(a2Rad, currentTime, 1f);
-			float yTip   = STAR_Y + yUndulation(tipRad, currentTime, 1f);
-
-			float displace = (float) Math.sqrt(
-					(bx1 - bx2) * (bx1 - bx2) + (bz1 - bz2) * (bz1 - bz2)) * 0.5f;
-
-			// Primary fractal spokes (tip  base corners)
-			fracLine(vc, mat, tx, yTip, tz, bx1, yBase1, bz1,
-					r, g, b, cAlpha, gAlpha, SPOKE_CORE_WIDTH, SPOKE_GLOW_WIDTH,
-					displace, FRACTAL_DETAIL);
-			fracLine(vc, mat, tx, yTip, tz, bx2, yBase2, bz2,
-					r, g, b, cAlpha, gAlpha, SPOKE_CORE_WIDTH, SPOKE_GLOW_WIDTH,
-					displace, FRACTAL_DETAIL);
-
-			fracLine(vc, mat, bx1, yBase1, bz1, tx, yTip, tz,
-					r, g, b, cAlpha * 0.6f, gAlpha * 0.5f,
-					SPOKE_CORE_WIDTH * 0.7f, SPOKE_GLOW_WIDTH * 0.6f,
-					displace * 0.8, FRACTAL_DETAIL);
-			fracLine(vc, mat, bx2, yBase2, bz2, tx, yTip, tz,
-					r, g, b, cAlpha * 0.6f, gAlpha * 0.5f,
-					SPOKE_CORE_WIDTH * 0.7f, SPOKE_GLOW_WIDTH * 0.6f,
-					displace * 0.8, FRACTAL_DETAIL);
-
-			angle += 45f;
+		// While weaving, the echo itself shows what the loom is making.
+		MemoryWeavingRecipe recipe = te.isWeaving() ? null : te.getPreviewRecipe();
+		if (recipe != null) {
+			stack.pushPose();
+			stack.translate(GANGLION_X / 16f, PREVIEW_Y / 16f + Mth.sin(time * 0.1f) * 0.03f, GANGLION_Z / 16f);
+			stack.mulPose(Vector3.YP.rotationDegrees(time * 0.5f).toMoj());
+			stack.scale(0.35f, 0.35f, 0.35f);
+			mc.getItemRenderer().renderStatic(null, recipe.getResultItem(te.getLevel().registryAccess()),
+					ItemDisplayContext.FIXED, true, stack, buffer, null, light, overlay, 0);
+			stack.popPose();
 		}
 	}
 
-	/**
-	 * Draws concentric dark rings at the fractal star's Y-level. One ring per
-	 * 0.2f enzyme dose reached by any tendency. Radii match spike tip positions.
-	 */
-	private void drawEnzymeRings(VertexConsumer vc, Matrix4f mat,
-			SomaticLoomBlockEntity te, float currentTime) {
-		Map<EnumBloodTendency, Float> affs = te.getTendency();
+	//  Veins and ganglion: the reservoir, projected blood and the loom's heartbeat
 
-		float maxAff = 0f;
-		for (Float v : affs.values()) {
-			if (v != null && v > maxAff) maxAff = v;
+	private static void drawVeins(VertexConsumer vc, Matrix4f px, SomaticLoomBlockEntity te, float charge, float time) {
+		float reservoir = SomaticLoomEffectRules.fill(te.getBloodVolume(), te.getMaxBloodVolume());
+		boolean ritual = te.isAwaitingBlood() || te.isWeaving();
+		float beat = SomaticLoomEffectRules.heartbeat(time, charge);
+		for (float[] v : UPRIGHT_VEINS) {
+			float top = v[1] + (v[4] - v[1]) * (ritual ? Math.max(reservoir, charge) : reservoir);
+			if (top > v[1])
+				shell(vc, px, v[0], v[1], v[2], v[3], top, v[5], 0.03f, BLOOD, ritual ? 0.7f + 0.3f * beat : 0.85f);
 		}
-		int steps = Math.min((int) Math.ceil(maxAff / 8.0f), 8);
-		if (steps <= 0) return;
-
-		for (int s = 1; s <= steps; s++) {
-			float stepAff = s * 0.2f;
-			float radius = BASE_RADIUS + stepAff * AFFINITY_RADIUS_SCALE * 0.85f;
-			// Offset the direction per step so concentric rings undulate out of phase
-			float dir = (s % 2 == 0) ? 1.0f : -1.0f;
-			drawUndulatingRing(vc, mat, CX, STAR_Y, CZ, radius,
-					0f, 0f, 0f, 0.2f, 0.06f,
-					0.025f, 0.06f,
-					currentTime, dir, ENZYME_RING_SEGMENTS);
-		}
-	}
-
-
-	private void drawBloodVolumeRing(VertexConsumer vc, Matrix4f mat,
-			double fillRatio, float currentTime) {
-		float radius = 0.7f;
-		float ringY = STAR_Y + 0.3f;
-		float rotOff = currentTime * 0.5f;
-		int filled = (int) (RING_SEGMENTS * fillRatio);
-
-		// Breathing pulse
-		double pulse = (Math.sin(currentTime * 0.12) + 1.0) * 0.5;
-
-		for (int i = 0; i < RING_SEGMENTS; i++) {
-			float a1 = rotOff + (360f / RING_SEGMENTS) * i;
-			float a2 = rotOff + (360f / RING_SEGMENTS) * (i + 1);
-
-			float wave1 = yUndulation(Math.toRadians(a1), currentTime, 1f);
-			float wave2 = yUndulation(Math.toRadians(a2), currentTime, 1f);
-
-			float r1 = radius + undulation(Math.toRadians(a1), currentTime, 1f) * 0.5f;
-			float r2 = radius + undulation(Math.toRadians(a2), currentTime, 1f) * 0.5f;
-
-			if (i < filled) {
-				float coreA = (float) (0.70 + 0.30 * pulse);
-				float glowA = (float) (0.20 + 0.15 * pulse);
-				emitRingArc(vc, mat, CX, ringY, CZ,
-						a1, a2, r1, r2, wave1, wave2,
-						0.8f, 0.08f, 0.08f, coreA, glowA,
-						0.04f, 0.10f);
+		if (!ritual) return;
+		float[] bar = CROSSBAR_VEIN;
+		if (charge > 0)
+			shell(vc, px, bar[0], bar[1], bar[2], bar[3], bar[4], bar[5], 0.03f, BLOOD, 0.4f + 0.5f * charge);
+		// A hot pulse climbs both uprights, then runs along the crossbar into the ganglion.
+		float rise = UPRIGHT_VEINS[0][4] - UPRIGHT_VEINS[0][1];
+		float run = GANGLION_X - bar[0];
+		float front = SomaticLoomEffectRules.pulseFront(time, Mth.lerp(charge, PULSE_SLOW, PULSE_FAST)) * (rise + run);
+		float alpha = 0.3f + 0.65f * charge;
+		for (int side = 0; side < 2; side++) {
+			float[] v = UPRIGHT_VEINS[side];
+			if (front < rise) {
+				float y = v[1] + front;
+				shell(vc, px, v[0], y, v[2], v[3], Math.min(v[4], y + 1.6f), v[5], 0.06f, HOT, alpha);
 			} else {
-				emitRingArc(vc, mat, CX, ringY, CZ,
-						a1, a2, r1, r2, wave1, wave2,
-						0.12f, 0.02f, 0.02f, 0.5f, 0.12f,
-						0.025f, 0.05f);
+				float along = front - rise;
+				float x0 = side == 0 ? bar[0] + along : bar[3] - along - 1.6f;
+				shell(vc, px, x0, bar[1], bar[2], x0 + 1.6f, bar[4], bar[5], 0.06f, HOT, alpha);
 			}
 		}
 	}
 
-
-	private void drawCraftingProgressRing(VertexConsumer vc, Matrix4f mat,
-			double progressRatio, boolean pulsing, float currentTime) {
-		float radius = 0.55f;
-		float ringY = STAR_Y + 0.5f;
-		float rotOff = -currentTime * 0.8f;
-
-		int filled = (int) (RING_SEGMENTS * progressRatio);
-		float pulseAlpha = pulsing
-				? 0.5f + 0.5f * Mth.sin(currentTime * 0.3f)
-				: 1.0f;
-
-		for (int i = 0; i < RING_SEGMENTS; i++) {
-			float a1 = rotOff + (360f / RING_SEGMENTS) * i;
-			float a2 = rotOff + (360f / RING_SEGMENTS) * (i + 1);
-
-			float wave1 = yUndulation(Math.toRadians(a1), currentTime, -1f);
-			float wave2 = yUndulation(Math.toRadians(a2), currentTime, -1f);
-
-			float r1 = radius + undulation(Math.toRadians(a1), currentTime, -1f) * 0.4f;
-			float r2 = radius + undulation(Math.toRadians(a2), currentTime, -1f) * 0.4f;
-
-			if (i < filled) {
-				emitRingArc(vc, mat, CX, ringY, CZ,
-						a1, a2, r1, r2, wave1, wave2,
-						0.55f, 0.1f, 0.7f, pulseAlpha * 0.85f, pulseAlpha * 0.25f,
-						0.04f, 0.09f);
-			} else {
-				emitRingArc(vc, mat, CX, ringY, CZ,
-						a1, a2, r1, r2, wave1, wave2,
-						0.15f, 0.03f, 0.18f, 0.35f, 0.08f,
-						0.025f, 0.05f);
-			}
-		}
-	}
-
-	//  Fractal Line (recursive midpoint displacement)
-
-	/**
-	 * Recursively subdivides a line with random midpoint displacement to
-	 * produce a jagged fractal lightning effect, then draws each leaf segment
-	 * as a flat quad strip (core + glow) in the XZ plane.
-	 */
-	private void drawAwaitingBloodGlow(VertexConsumer vc, Matrix4f mat,
-			SomaticLoomBlockEntity te, float currentTime) {
-		double required = te.getRitualBloodRequired();
-		double charged = required <= 0.0D ? 0.0D : Mth.clamp(te.getRitualBloodCharged() / required, 0.0D, 1.0D);
-		float pulse = 0.55f + 0.35f * Mth.sin(currentTime * 0.18f);
-		float radius = 0.9f + (float) charged * 0.22f;
-		drawUndulatingRing(vc, mat, CX, STAR_Y + 0.65f, CZ, radius,
-				0.36f, 0.0f, 0.0f, 0.42f * pulse, 0.18f * pulse,
-				0.05f, 0.16f, currentTime, -1f, RING_SEGMENTS);
-	}
-
-	private void drawRitualOrbs(MultiBufferSource buffer, Matrix4f mat,
-			SomaticLoomBlockEntity te, float currentTime, float partialTicks) {
-		drawRitualOrbEffects(buffer, mat, te, currentTime, partialTicks);
-		drawRitualOrbShells(buffer, mat, te, currentTime, partialTicks);
-	}
-
-	private void drawRitualOrbEffects(MultiBufferSource buffer, Matrix4f mat,
-			SomaticLoomBlockEntity te, float currentTime, float partialTicks) {
-		VertexConsumer effectVc = buffer.getBuffer(RenderTypeInit.LOOM_EFFECT);
-		for (SomaticLoomBlockEntity.RitualOrb orb : te.getRitualOrbs()) {
-			if (orb.completed()) continue;
-			ParticleColor color = orb.tendency().getColor();
-			float r = color.getRed() / 255f;
-			float g = color.getGreen() / 255f;
-			float b = color.getBlue() / 255f;
-			Vec3 offset = orb.renderOffset(partialTicks);
-			float x = 0.5f + (float) offset.x;
-			float y = 0.5f + (float) offset.y;
-			float z = 0.5f + (float) offset.z;
-			drawOrbCenterStrand(effectVc, mat, x, y, z, currentTime, r, g, b);
-			drawOrbTrail(effectVc, mat, orb, offset, partialTicks, r, g, b);
-			drawOrbUnraveledStrands(effectVc, mat, orb, x, y, z, currentTime, r, g, b);
-		}
-	}
-
-	private void drawRitualOrbShells(MultiBufferSource buffer, Matrix4f mat,
-			SomaticLoomBlockEntity te, float currentTime, float partialTicks) {
-		for (SomaticLoomBlockEntity.RitualOrb orb : te.getRitualOrbs()) {
-			if (orb.completed()) continue;
-			ParticleColor color = orb.tendency().getColor();
-			float r = color.getRed() / 255f;
-			float g = color.getGreen() / 255f;
-			float b = color.getBlue() / 255f;
-			Vec3 offset = orb.renderOffset(partialTicks);
-			float x = 0.5f + (float) offset.x;
-			float y = 0.5f + (float) offset.y;
-			float z = 0.5f + (float) offset.z;
-			float pulse = 0.75f + 0.25f * Mth.sin(currentTime * 0.22f + orb.enzymeCost());
-			float size = (0.18f + orb.enzymeCost() * 0.025f) * pulse;
-			drawShaderWrithedOrbShell(buffer, mat, orb, x, y, z, size, currentTime, r, g, b, false);
-			drawShaderWrithedOrbShell(buffer, mat, orb, x, y, z, size, currentTime, r, g, b, true);
-		}
-	}
-
-	private void drawShaderWrithedOrbShell(MultiBufferSource buffer, Matrix4f mat,
-			SomaticLoomBlockEntity.RitualOrb orb, float x, float y, float z, float size,
-			float currentTime, float r, float g, float b, boolean glow) {
-		float layerRadius = glow ? size * 1.45f : size;
-		Vector3f center = mat.transformPosition(x, y, z, new Vector3f());
-		VertexConsumer vc = buffer.getBuffer(HemoRenderTypes.loomOrbShell(currentTime, orbShaderSeed(orb),
-				center.x(), center.y(), center.z(), layerRadius,
-				glow ? 0.08f : 0.18f, glow ? 7.0f : 11.0f, glow));
-		drawOrbSphere(vc, mat, x, y, z, size, r, g, b, 0.82f, glow);
-	}
-
-	private static float orbShaderSeed(SomaticLoomBlockEntity.RitualOrb orb) {
-		Vec3 start = orb.startOffset();
-		return (float) (orb.tendency().ordinal() * 31.0D
-				+ orb.enzymeCost() * 7.0D
-				+ start.x * 3.17D
-				+ start.y * 5.13D
-				+ start.z * 11.71D);
-	}
-
-	private void drawOrbCenterStrand(VertexConsumer vc, Matrix4f mat,
-			float x, float y, float z, float currentTime, float r, float g, float b) {
-		float pulse = 0.65f + 0.25f * Mth.sin(currentTime * 0.17f + x * 2.0f + z * 2.0f);
-		fracLine(vc, mat, CX, ORB_THREAD_CENTER_Y, CZ, x, y, z,
-				r, g, b, 0.16f * pulse, 0.08f * pulse,
-				ORB_CENTER_STRAND_WIDTH, 0.045f, 0.12D, FRACTAL_DETAIL);
-	}
-
-	private void drawOrbTrail(VertexConsumer vc, Matrix4f mat, SomaticLoomBlockEntity.RitualOrb orb,
-			Vec3 renderOffset, float partialTicks, float r, float g, float b) {
-		Vec3 previous = orb.previousOffset();
-		if (previous.distanceToSqr(renderOffset) < 0.001D) {
+	private static void drawGanglion(VertexConsumer vc, Matrix4f px, SomaticLoomBlockEntity te, float charge, float time) {
+		float alpha, swell;
+		if (te.isAwaitingBlood() || te.isWeaving()) {
+			float beat = SomaticLoomEffectRules.heartbeat(time, charge);
+			// Paid weaves keep a steady low glow so the ganglion reads as alive, not as a lit lantern.
+			alpha = (te.isWeaving() ? 0.12f + 0.12f * charge : 0.18f + 0.4f * charge) * (0.45f + 0.55f * beat);
+			swell = 0.2f + 0.45f * beat;
+		} else if (te.getPreviewRecipe() != null) {
+			// A weave is chosen: the ganglion breathes slowly while it holds the pattern.
+			alpha = 0.08f + 0.06f * (Mth.sin(time * 0.05f) + 1f);
+			swell = 0.2f;
+		} else {
 			return;
 		}
-		float fade = Mth.clamp(1.0f - partialTicks * 0.35f, 0.35f, 1.0f);
-		drawFlatLine(vc, mat,
-				0.5f + (float) previous.x, 0.5f + (float) previous.y, 0.5f + (float) previous.z,
-				0.5f + (float) renderOffset.x, 0.5f + (float) renderOffset.y, 0.5f + (float) renderOffset.z,
-				r, g, b, 0.12f * fade, 0.06f * fade, 0.035f, 0.18f);
+		// Upgraded looms grow a larger ganglion; the glow follows the stage's knot.
+		int stage = Mth.clamp(te.upgradeTier(), 0, GANGLION_RADII.length - 1);
+		float radius = GANGLION_RADII[stage], foot = GANGLION_FEET[stage], top = GANGLION_TOPS[stage];
+		octagon(vc, px, GANGLION_X, GANGLION_Z, radius + swell, foot - swell * 0.5f, top + swell * 0.5f, BLOOD, alpha);
+		octagon(vc, px, GANGLION_X, GANGLION_Z, radius + swell + 0.35f, foot - swell, top + swell,
+				te.isWeaving() ? HOT : BLOOD, alpha * 0.35f);
 	}
 
-	private void drawOrbUnraveledStrands(VertexConsumer vc, Matrix4f mat,
-			SomaticLoomBlockEntity.RitualOrb orb, float x, float y, float z,
-			float currentTime, float r, float g, float b) {
-		long seed = 97L * orb.tendency().ordinal()
-				+ 131L * orb.enzymeCost()
-				+ Double.doubleToLongBits(orb.startOffset().x * 3.17D)
-				+ Double.doubleToLongBits(orb.startOffset().y * 5.13D)
-				+ Double.doubleToLongBits(orb.startOffset().z * 11.71D);
-		FRAC_RAND.setSeed(seed);
-		for (int i = 0; i < ORB_UNRAVEL_STRANDS; i++) {
-			double yaw = FRAC_RAND.nextDouble() * Math.PI * 2.0D;
-			float phase = FRAC_RAND.nextFloat() * Mth.TWO_PI;
-			float strandWave = Mth.sin(currentTime * 0.055f + phase);
-			float strandCurl = Mth.cos(currentTime * 0.041f + phase * 1.31f);
-			double vertical = (FRAC_RAND.nextDouble() - 0.42D) * 0.8D + strandCurl * 0.16D;
-			double animatedYaw = yaw + strandWave * 0.22D;
-			float length = ORB_UNRAVEL_MIN_LENGTH
-					+ FRAC_RAND.nextFloat() * (ORB_UNRAVEL_MAX_LENGTH - ORB_UNRAVEL_MIN_LENGTH);
-			float rootRadius = 0.12f + FRAC_RAND.nextFloat() * 0.12f + strandWave * 0.018f;
-			float sx = x + (float) Math.cos(animatedYaw) * rootRadius;
-			float sy = y + (FRAC_RAND.nextFloat() - 0.5f) * 0.22f + strandCurl * 0.018f;
-			float sz = z + (float) Math.sin(animatedYaw) * rootRadius;
-			float ex = sx + (float) Math.cos(animatedYaw) * length;
-			float ey = sy + (float) vertical * length;
-			float ez = sz + (float) Math.sin(animatedYaw) * length;
-			float alpha = 0.09f + FRAC_RAND.nextFloat() * 0.07f;
-			fracLine(vc, mat, sx, sy, sz, ex, ey, ez,
-					r, g, b, alpha, alpha * 0.45f,
-					ORB_UNRAVEL_STRAND_WIDTH, 0.055f, 0.08D, FRACTAL_DETAIL);
+	/**
+	 * Ganglionic feelers: their tips glow faintly while a weave runs, and flare when a slack thread drifts into
+	 * their reach, a moment before the loom takes it home.
+	 */
+	private static void drawFeelers(VertexConsumer vc, Matrix4f px, SomaticLoomBlockEntity te, float time) {
+		double reach = com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticWeaveRules.autoCatchRadius(te.upgradeTier());
+		if (reach <= 0 || !te.isWeaving() || te.getLevel() == null) return;
+		Vec3 anchor = te.echoAnchor();
+		boolean slackNear = !te.getLevel().getEntitiesOfClass(com.vincenthuto.hemomancy.common.entity.weave.FrayedThreadEntity.class,
+				new net.minecraft.world.phys.AABB(anchor, anchor).inflate(reach + 1.0D),
+				thread -> thread.isSlack() && thread.distanceToSqr(anchor) <= (reach + 1.0D) * (reach + 1.0D)).isEmpty();
+		for (int k = 0; k < FEELER_TIPS.length; k++) {
+			float[] tip = FEELER_TIPS[k];
+			float beat = 0.5f + 0.5f * Mth.sin(time * (slackNear ? 0.6f : 0.08f) + k * 1.9f);
+			float alpha = slackNear ? 0.35f + 0.45f * beat : 0.06f + 0.08f * beat;
+			float r = slackNear ? 0.42f + 0.18f * beat : 0.3f;
+			octagon(vc, px, tip[0], tip[2], r, tip[1] - r, tip[1] + r, slackNear ? HOT : BLOOD, alpha);
 		}
 	}
 
-	private static void drawOrbSphere(VertexConsumer vc, Matrix4f mat,
-			float x, float y, float z, float radius, float r, float g, float b, float alpha, boolean glow) {
-		float layerRadius = glow ? radius * 1.45f : radius;
-		float layerAlpha = glow ? alpha * 0.18f : alpha;
-		drawSphere(vc, mat, x, y, z, layerRadius, r, g, b, layerAlpha);
-	}
+	//  Warp and cloth: the selected weave's tendencies, and the strands already woven home
 
-	private static void drawSphere(VertexConsumer vc, Matrix4f mat,
-			float cx, float cy, float cz, float radius, float r, float g, float b, float alpha) {
-		for (int lat = 0; lat < ORB_LAT_SEGMENTS; lat++) {
-			double theta1 = Math.PI * lat / ORB_LAT_SEGMENTS;
-			double theta2 = Math.PI * (lat + 1) / ORB_LAT_SEGMENTS;
-			for (int lon = 0; lon < ORB_LON_SEGMENTS; lon++) {
-				double phi1 = Math.PI * 2.0D * lon / ORB_LON_SEGMENTS;
-				double phi2 = Math.PI * 2.0D * (lon + 1) / ORB_LON_SEGMENTS;
-				emitSphereQuad(vc, mat, cx, cy, cz, radius, theta1, phi1, theta2, phi2, r, g, b, alpha);
+	private static void drawWarp(VertexConsumer vc, Matrix4f px, SomaticLoomBlockEntity te, float time) {
+		boolean weaving = te.isWeaving();
+		MemoryWeavingRecipe recipe = weaving ? te.getWeaveRecipe() : te.getPreviewRecipe();
+		if (recipe == null) return;
+		EnumBloodTendency[] tendencies = EnumBloodTendency.values();
+		int[] required = new int[tendencies.length];
+		int[] orbs = new int[tendencies.length], done = new int[tendencies.length];
+		for (int t = 0; t < tendencies.length; t++) required[t] = recipe.getEnzymeRequirement(tendencies[t]);
+		if (weaving) {
+			for (SomaticLoomBlockEntity.WeaveThread thread : te.getWeaveThreads()) {
+				int t = thread.tendency().ordinal();
+				orbs[t]++;
+				if (thread.state() == SomaticLoomBlockEntity.WeaveThread.State.WOVEN) done[t]++;
 			}
 		}
-	}
-
-	private static void emitSphereQuad(VertexConsumer vc, Matrix4f mat,
-			float cx, float cy, float cz, float radius,
-			double theta1, double phi1, double theta2, double phi2,
-			float r, float g, float b, float alpha) {
-		float x1 = sphereX(cx, radius, theta1, phi1);
-		float y1 = sphereY(cy, radius, theta1);
-		float z1 = sphereZ(cz, radius, theta1, phi1);
-		float x2 = sphereX(cx, radius, theta2, phi1);
-		float y2 = sphereY(cy, radius, theta2);
-		float z2 = sphereZ(cz, radius, theta2, phi1);
-		float x3 = sphereX(cx, radius, theta2, phi2);
-		float y3 = sphereY(cy, radius, theta2);
-		float z3 = sphereZ(cz, radius, theta2, phi2);
-		float x4 = sphereX(cx, radius, theta1, phi2);
-		float y4 = sphereY(cy, radius, theta1);
-		float z4 = sphereZ(cz, radius, theta1, phi2);
-		emitQuad(vc, mat,
-				x1, y1, z1, r, g, b, alpha,
-				x2, y2, z2, r, g, b, alpha,
-				x3, y3, z3, r, g, b, alpha,
-				x4, y4, z4, r, g, b, alpha);
-	}
-
-	private static float sphereX(float cx, float radius, double theta, double phi) {
-		return cx + radius * (float) (Math.sin(theta) * Math.cos(phi));
-	}
-
-	private static float sphereY(float cy, float radius, double theta) {
-		return cy + radius * (float) Math.cos(theta);
-	}
-
-	private static float sphereZ(float cz, float radius, double theta, double phi) {
-		return cz + radius * (float) (Math.sin(theta) * Math.sin(phi));
-	}
-
-	private void fracLine(VertexConsumer vc, Matrix4f mat,
-			float x1, float y1, float z1, float x2, float y2, float z2,
-			float r, float g, float b, float coreAlpha, float glowAlpha,
-			float coreWidth, float glowWidth, double displace, double detail) {
-		if (displace < detail) {
-			drawFlatLine(vc, mat, x1, y1, z1, x2, y2, z2,
-					r, g, b, coreAlpha, glowAlpha, coreWidth, glowWidth);
-		} else {
-			// Center bias for random displacement (shifts distribution away from midpoint)
-			float centerBias = 0.25f;
-			// Displace midpoint in XZ only (keep Y stable to stay flat)
-			float mx = (x1 + x2) * 0.5f + (FRAC_RAND.nextFloat() - centerBias) * (float) displace * centerBias;
-			float my = (y1 + y2) * 0.5f;
-			float mz = (z1 + z2) * 0.5f + (FRAC_RAND.nextFloat() - centerBias) * (float) displace * centerBias;
-			fracLine(vc, mat, x1, y1, z1, mx, my, mz,
-					r, g, b, coreAlpha, glowAlpha, coreWidth, glowWidth, displace / 2, detail);
-			fracLine(vc, mat, mx, my, mz, x2, y2, z2,
-					r, g, b, coreAlpha, glowAlpha, coreWidth, glowWidth, displace / 2, detail);
+		int[] threads = SomaticLoomEffectRules.threadTendencies(required, WARP_X.length);
+		for (int k = 0; k < threads.length; k++) {
+			int t = threads[k];
+			if (t < 0) continue;
+			int stored = te.getStoredEnzyme(tendencies[t]);
+			// Once paid, the enzyme is already spun onto the pirns, so a weave in progress can never run short.
+			boolean shortStock = !weaving && stored < required[t];
+			float completed = weaving && orbs[t] > 0 ? done[t] / (float) orbs[t] : 0f;
+			float alpha = SomaticLoomEffectRules.threadGlow(completed, shortStock, time, k);
+			float[] colour = ThreadKnotGeometry.vivid(tendencies[t].getColor());
+			if (shortStock) colour = ThreadKnotGeometry.mix(colour, CLOT, 0.7f);
+			float x = WARP_X[k], top = k % 2 == 0 ? UPPER_TOP : LOWER_TOP;
+			// A core over the thread's top and sides, then a faint halo either side of it.
+			shell(vc, px, x - THREAD_HALF, top - 0.25f, FELL_Z, x + THREAD_HALF, top, WARP_END_Z, 0.02f, colour, alpha);
+			flat(vc, px, x - 0.45f, x + 0.45f, top + 0.04f, FELL_Z, WARP_END_Z, colour, alpha * 0.3f);
 		}
 	}
 
-	//
-	//  Low-level drawing helpers
-	//
-
-	/**
-	 * Draws a single flat line segment as three quads (inner glow + core + outer glow)
-	 * perpendicular to the line direction in the XZ plane.
-	 * Matches the CardinalRite ring segment approach but for straight lines.
-	 */
-	private static void drawFlatLine(VertexConsumer vc, Matrix4f mat,
-			float x1, float y1, float z1, float x2, float y2, float z2,
-			float r, float g, float b, float coreAlpha, float glowAlpha,
-			float coreWidth, float glowWidth) {
-		float dx = x2 - x1;
-		float dz = z2 - z1;
-		float len = (float) Math.sqrt(dx * dx + dz * dz);
-		if (len < 1e-6f) return;
-
-		// Perpendicular direction in XZ plane
-		float px = -dz / len;
-		float pz = dx / len;
-
-		float cHalf = coreWidth * 0.5f;
-		float gOuter = cHalf + glowWidth;
-
-		// Inner glow (transparent edge  opaque at core boundary)
-		emitQuad(vc, mat,
-				x1 - px * gOuter, y1, z1 - pz * gOuter, r, g, b, 0f,
-				x1 - px * cHalf, y1, z1 - pz * cHalf, r, g, b, glowAlpha,
-				x2 - px * cHalf, y2, z2 - pz * cHalf, r, g, b, glowAlpha,
-				x2 - px * gOuter, y2, z2 - pz * gOuter, r, g, b, 0f);
-
-		// Core (solid)
-		emitQuad(vc, mat,
-				x1 - px * cHalf, y1, z1 - pz * cHalf, r, g, b, coreAlpha,
-				x1 + px * cHalf, y1, z1 + pz * cHalf, r, g, b, coreAlpha,
-				x2 + px * cHalf, y2, z2 + pz * cHalf, r, g, b, coreAlpha,
-				x2 - px * cHalf, y2, z2 - pz * cHalf, r, g, b, coreAlpha);
-
-		// Outer glow (opaque at core boundary  transparent edge)
-		emitQuad(vc, mat,
-				x1 + px * cHalf, y1, z1 + pz * cHalf, r, g, b, glowAlpha,
-				x1 + px * gOuter, y1, z1 + pz * gOuter, r, g, b, 0f,
-				x2 + px * gOuter, y2, z2 + pz * gOuter, r, g, b, 0f,
-				x2 + px * cHalf, y2, z2 + pz * cHalf, r, g, b, glowAlpha);
-	}
-
-	/**
-	 * Draws a full undulating ring (all segments) with uniform color.
-	 * Used for enzyme indicator rings.
-	 */
-	private void drawUndulatingRing(VertexConsumer vc, Matrix4f mat,
-			float cx, float y, float cz, float baseRadius,
-			float r, float g, float b, float coreAlpha, float glowAlpha,
-			float coreW, float glowW,
-			float currentTime, float dir, int segments) {
-		for (int i = 0; i < segments; i++) {
-			float a1 = (360f / segments) * i;
-			float a2 = (360f / segments) * (i + 1);
-
-			float rUnd1 = undulation(Math.toRadians(a1), currentTime, dir);
-			float rUnd2 = undulation(Math.toRadians(a2), currentTime, dir);
-
-			float yW1 = yUndulation(Math.toRadians(a1), currentTime, dir);
-			float yW2 = yUndulation(Math.toRadians(a2), currentTime, dir);
-
-			emitRingArc(vc, mat, cx, y, cz,
-					a1, a2, baseRadius + rUnd1, baseRadius + rUnd2, yW1, yW2,
-					r, g, b, coreAlpha, glowAlpha, coreW, glowW);
+	private static void drawWovenBands(VertexConsumer vc, Matrix4f px, SomaticLoomBlockEntity te, float time) {
+		if (!te.isWeaving()) return;
+		List<EnumBloodTendency> woven = new ArrayList<>();
+		for (SomaticLoomBlockEntity.WeaveThread thread : te.getWeaveThreads())
+			if (thread.state() == SomaticLoomBlockEntity.WeaveThread.State.WOVEN) woven.add(thread.tendency());
+		float step = SomaticLoomEffectRules.bandStep(te.getWeaveThreads().size(), FELL_Z - CLOTH_FRONT_Z - 1f);
+		// The newest pick lies at the fell; earlier ones have been beaten toward the breast beam.
+		for (int b = 0; b < woven.size(); b++) {
+			float z1 = FELL_Z - 0.55f - (woven.size() - 1 - b) * step;
+			float shimmer = 0.8f + 0.2f * Mth.sin(time * 0.15f + b * 1.3f);
+			flat(vc, px, CLOTH_X0, CLOTH_X1, CLOTH_TOP + 0.1f, z1 - step * 0.75f, z1,
+					ThreadKnotGeometry.vivid(woven.get(b).getColor()), 0.85f * shimmer);
 		}
 	}
 
-	/**
-	 * Emits one arc segment of a ring: inner glow + core + outer glow.
-	 * Radial widths expand outward from center, matching the CardinalRite approach.
-	 *
-	 * @param r1, r2 undulated radius at each end of the arc
-	 * @param yOff1, yOff2 subtle Y wave offsets
-	 */
-	private static void emitRingArc(VertexConsumer vc, Matrix4f mat,
-			float cx, float y, float cz,
-			float aDeg1, float aDeg2, float r1, float r2, float yOff1, float yOff2,
-			float r, float g, float b, float coreAlpha, float glowAlpha,
-			float coreW, float glowW) {
+	//  Flat-colour primitives in model pixels
 
-		float cos1 = (float) Math.cos(Math.toRadians(aDeg1));
-		float sin1 = (float) Math.sin(Math.toRadians(aDeg1));
-		float cos2 = (float) Math.cos(Math.toRadians(aDeg2));
-		float sin2 = (float) Math.sin(Math.toRadians(aDeg2));
-
-		// Radial width bands for vertex 1
-		float iGlow1 = r1 - glowW - coreW * 0.5f;
-		float iCore1 = r1 - coreW * 0.5f;
-		float oCore1 = r1 + coreW * 0.5f;
-		float oGlow1 = r1 + glowW + coreW * 0.5f;
-
-		// Radial width bands for vertex 2
-		float iGlow2 = r2 - glowW - coreW * 0.5f;
-		float iCore2 = r2 - coreW * 0.5f;
-		float oCore2 = r2 + coreW * 0.5f;
-		float oGlow2 = r2 + glowW + coreW * 0.5f;
-
-		float y1 = y + yOff1;
-		float y2 = y + yOff2;
-
-		// Inner glow
-		emitQuad(vc, mat,
-				cx + cos1 * iGlow1, y1, cz + sin1 * iGlow1, r, g, b, 0f,
-				cx + cos1 * iCore1, y1, cz + sin1 * iCore1, r, g, b, glowAlpha,
-				cx + cos2 * iCore2, y2, cz + sin2 * iCore2, r, g, b, glowAlpha,
-				cx + cos2 * iGlow2, y2, cz + sin2 * iGlow2, r, g, b, 0f);
-
-		// Core
-		emitQuad(vc, mat,
-				cx + cos1 * iCore1, y1, cz + sin1 * iCore1, r, g, b, coreAlpha,
-				cx + cos1 * oCore1, y1, cz + sin1 * oCore1, r, g, b, coreAlpha,
-				cx + cos2 * oCore2, y2, cz + sin2 * oCore2, r, g, b, coreAlpha,
-				cx + cos2 * iCore2, y2, cz + sin2 * iCore2, r, g, b, coreAlpha);
-
-		// Outer glow
-		emitQuad(vc, mat,
-				cx + cos1 * oCore1, y1, cz + sin1 * oCore1, r, g, b, glowAlpha,
-				cx + cos1 * oGlow1, y1, cz + sin1 * oGlow1, r, g, b, 0f,
-				cx + cos2 * oGlow2, y2, cz + sin2 * oGlow2, r, g, b, 0f,
-				cx + cos2 * oCore2, y2, cz + sin2 * oCore2, r, g, b, glowAlpha);
+	/** Horizontal quad over x0..x1, z0..z1 at height y. */
+	private static void flat(VertexConsumer vc, Matrix4f px, float x0, float x1, float y, float z0, float z1,
+			float[] c, float a) {
+		ThreadKnotGeometry.emitQuad(vc, px, x0, y, z0, c[0], c[1], c[2], a, x1, y, z0, c[0], c[1], c[2], a,
+				x1, y, z1, c[0], c[1], c[2], a, x0, y, z1, c[0], c[1], c[2], a);
 	}
 
-	//
-	//  Undulation
-	//
-
-	/** Layered sine-wave radial offset for ring segments. */
-	private static float undulation(double angleRad, float time, float dir) {
-		double w1 = Math.sin(angleRad * UNDULATE_FREQ + time * UNDULATE_SPEED * dir) * UNDULATE_AMP;
-		double w2 = Math.sin(angleRad * UNDULATE_FREQ2 - time * UNDULATE_SPEED2 * dir) * UNDULATE_AMP2;
-		double throb = Math.sin(time * 0.04) * 0.02;
-		return (float) (w1 + w2 + throb);
+	/** Top and side faces of a box grown `proud` pixels past a model element, so the colour sits over its texture. */
+	private static void shell(VertexConsumer vc, Matrix4f px, float x0, float y0, float z0, float x1, float y1,
+			float z1, float proud, float[] c, float a) {
+		x0 -= proud; y0 -= proud; z0 -= proud; x1 += proud; y1 += proud; z1 += proud;
+		float r = c[0], g = c[1], b = c[2];
+		ThreadKnotGeometry.emitQuad(vc, px, x0, y1, z0, r, g, b, a, x1, y1, z0, r, g, b, a, x1, y1, z1, r, g, b, a, x0, y1, z1, r, g, b, a);
+		ThreadKnotGeometry.emitQuad(vc, px, x0, y0, z0, r, g, b, a, x0, y1, z0, r, g, b, a, x1, y1, z0, r, g, b, a, x1, y0, z0, r, g, b, a);
+		ThreadKnotGeometry.emitQuad(vc, px, x0, y0, z1, r, g, b, a, x1, y0, z1, r, g, b, a, x1, y1, z1, r, g, b, a, x0, y1, z1, r, g, b, a);
+		ThreadKnotGeometry.emitQuad(vc, px, x0, y0, z0, r, g, b, a, x0, y0, z1, r, g, b, a, x0, y1, z1, r, g, b, a, x0, y1, z0, r, g, b, a);
+		ThreadKnotGeometry.emitQuad(vc, px, x1, y0, z0, r, g, b, a, x1, y1, z0, r, g, b, a, x1, y1, z1, r, g, b, a, x1, y0, z1, r, g, b, a);
 	}
 
-	/** Layered sine-wave vertical (Y) offset for ring segments and star spokes. */
-	private static float yUndulation(double angleRad, float time, float dir) {
-		double w1 = Math.sin(angleRad * 3.0 + time * 0.07 * dir) * 0.035;
-		double w2 = Math.sin(angleRad * 7.0 - time * 0.05 * dir) * 0.015;
-		double throb = Math.sin(time * 0.035) * 0.012;
-		return (float) (w1 + w2 + throb);
+	/** Upright octagonal glow with a lid, its flats `radius` from (cx, cz). */
+	private static void octagon(VertexConsumer vc, Matrix4f px, float cx, float cz, float radius, float y0, float y1,
+			float[] c, float a) {
+		float r = c[0], g = c[1], b = c[2];
+		float corner = radius / Mth.cos(Mth.PI / 8);
+		for (int i = 0; i < 8; i++) {
+			float a0 = Mth.PI / 8 + i * Mth.PI / 4, a1 = a0 + Mth.PI / 4;
+			float xa = cx + Mth.cos(a0) * corner, za = cz + Mth.sin(a0) * corner;
+			float xb = cx + Mth.cos(a1) * corner, zb = cz + Mth.sin(a1) * corner;
+			ThreadKnotGeometry.emitQuad(vc, px, xa, y0, za, r, g, b, a, xb, y0, zb, r, g, b, a, xb, y1, zb, r, g, b, a, xa, y1, za, r, g, b, a);
+			ThreadKnotGeometry.emitQuad(vc, px, cx, y1, cz, r, g, b, a, xa, y1, za, r, g, b, a, xb, y1, zb, r, g, b, a, cx, y1, cz, r, g, b, a);
+		}
 	}
-
-	//
-	//  Quad helper (POSITION_COLOR format)
-	//
-
-	private static void emitQuad(VertexConsumer vc, Matrix4f mat,
-			float x1, float y1, float z1, float r1, float g1, float b1, float a1,
-			float x2, float y2, float z2, float r2, float g2, float b2, float a2,
-			float x3, float y3, float z3, float r3, float g3, float b3, float a3,
-			float x4, float y4, float z4, float r4, float g4, float b4, float a4) {
-		vc.addVertex(mat, x1, y1, z1).setColor(r1, g1, b1, a1);
-		vc.addVertex(mat, x2, y2, z2).setColor(r2, g2, b2, a2);
-		vc.addVertex(mat, x3, y3, z3).setColor(r3, g3, b3, a3);
-		vc.addVertex(mat, x4, y4, z4).setColor(r4, g4, b4, a4);
-	}
-
 }

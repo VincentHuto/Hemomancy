@@ -1,8 +1,121 @@
 {
   "multipart": [
-    { "when": { "facing": "north" }, "apply": { "model": "hemomancy:block/hematic_armature", "y": 180 } },
-    { "when": { "facing": "south" }, "apply": { "model": "hemomancy:block/hematic_armature" } },
-    { "when": { "facing": "west" },  "apply": { "model": "hemomancy:block/hematic_armature", "y": 90 } },
-    { "when": { "facing": "east" },  "apply": { "model": "hemomancy:block/hematic_armature", "y": 270 } }
+    {
+      "when": {
+        "facing": "north",
+        "stage": "0"
+      },
+      "apply": {
+        "model": "hemomancy:block/hematic_armature"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "stage": "0"
+      },
+      "apply": {
+        "model": "hemomancy:block/hematic_armature",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "stage": "0"
+      },
+      "apply": {
+        "model": "hemomancy:block/hematic_armature",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "stage": "0"
+      },
+      "apply": {
+        "model": "hemomancy:block/hematic_armature",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "stage": "1"
+      },
+      "apply": {
+        "model": "hemomancy:block/hematic_armature_consecrated"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "stage": "1"
+      },
+      "apply": {
+        "model": "hemomancy:block/hematic_armature_consecrated",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "stage": "1"
+      },
+      "apply": {
+        "model": "hemomancy:block/hematic_armature_consecrated",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "stage": "1"
+      },
+      "apply": {
+        "model": "hemomancy:block/hematic_armature_consecrated",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "stage": "2"
+      },
+      "apply": {
+        "model": "hemomancy:block/hematic_armature_monolithic"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "stage": "2"
+      },
+      "apply": {
+        "model": "hemomancy:block/hematic_armature_monolithic",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "stage": "2"
+      },
+      "apply": {
+        "model": "hemomancy:block/hematic_armature_monolithic",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "stage": "2"
+      },
+      "apply": {
+        "model": "hemomancy:block/hematic_armature_monolithic",
+        "y": 270
+      }
+    }
   ]
 }

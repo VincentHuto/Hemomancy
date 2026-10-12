@@ -31,7 +31,7 @@ import java.util.Optional;
  *
  * <p>Targets the nearest enemy within 10 blocks that is below 30% of their
  * maximum health. On a valid target, deals lethal damage equal to 150% of the
- * target's remaining health and restores 600 blood to the caster as the life
+ * target's remaining health and restores 250 blood to the caster as the life
  * force is converted. If no qualifying target exists, the cast fails.
  *
  * <p>This is a finisher — it rewards patient, calculated combat over
@@ -45,7 +45,9 @@ public class ExsanguinateManip extends BloodManipulation {
 	/** Damage multiplier applied to the target's current health. */
 	private static final float DRAIN_DAMAGE_MULTIPLIER = 1.5f;
 	/** Blood restored to the caster per execution. */
-	private static final double BLOOD_RESTORE = 600.0;
+	private static final double BLOOD_RESTORE = 250.0;
+	/** Bosses cannot be executed outright: the drain is capped at this much (before Crimson Mastery). */
+	public static final float BOSS_DAMAGE_CAP = 12.0F;
 
 	public ExsanguinateManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
@@ -91,7 +93,10 @@ public class ExsanguinateManip extends BloodManipulation {
 		}
 
 		LivingEntity target = targetOpt.get();
-		float drainDamage = target.getHealth() * DRAIN_DAMAGE_MULTIPLIER * (float) SkillPointHelper.getCrimsonMasteryMultiplier(player);
+		float mastery = (float) SkillPointHelper.getCrimsonMasteryMultiplier(player);
+		float drainDamage = target.getHealth() * DRAIN_DAMAGE_MULTIPLIER * mastery;
+		// SchoolCombatEvents applies the same cap again after tendency affinity.
+		if (ManipulationReactiveEvents.isBoss(target)) drainDamage = Math.min(BOSS_DAMAGE_CAP * mastery, drainDamage);
 		if (!ManipulationParticles.hurt(this, target, world.damageSources().magic(),
 				(drainDamage)) || target.isAlive()) return;
 		HemomancyTendrilEffects.exsanguinate(player, target);

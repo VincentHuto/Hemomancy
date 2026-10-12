@@ -6,22 +6,18 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.manipulation.*;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
 
 import java.util.Comparator;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -41,8 +37,6 @@ public class BloodAneurysmManip extends BloodManipulation {
 	private static final double BURST_RADIUS = 4.0;
 	private static final float BURST_DAMAGE = 3.0f;
 	private static final float LAUNCH_FORCE = 1.2f;
-	private static final DustParticleOptions BLOOD_DUST =
-			new DustParticleOptions(new Vector3f(0.9F, 0.0F, 0.0F), 1.0F);
 
 	public BloodAneurysmManip(String name, double cost, double alignLevel, double xpCost, EnumManipulationType type,
 			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
@@ -62,6 +56,24 @@ public class BloodAneurysmManip extends BloodManipulation {
 		return CHARGE_TICKS;
 	}
 
+	/** The rupture only seeks a fight: monsters, mobs hunting the caster, or players the caster may harm. */
+	private static Optional<LivingEntity> target(Player player) {
+		return player.level().getEntitiesOfClass(LivingEntity.class, new AABB(player.blockPosition()).inflate(TARGET_RADIUS),
+						e -> ManipulationCombatHelper.isHostileTarget(player, e)).stream()
+				.filter(e -> ManipulationCombatHelper.visible(player, e))
+				.filter(e -> e.distanceTo(player) <= TARGET_RADIUS)
+				.min(Comparator.comparingDouble(e -> e.distanceTo(player)));
+	}
+
+	@Override
+	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
+		if (target(player).isEmpty()) {
+			player.displayClientMessage(Component.literal("No hostile vessel within reach."), true);
+			return false;
+		}
+		return super.canPerformAction(player, heldItem, ticks);
+	}
+
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position,
 			float chargeTicks) {
@@ -70,19 +82,8 @@ public class BloodAneurysmManip extends BloodManipulation {
 		if (!(world instanceof ServerLevel sLevel)) return;
 		float strength = ManipulationCastingRules.chargeFraction(chargeTicks, CHARGE_TICKS);
 
-		AABB searchBox = new AABB(player.blockPosition()).inflate(TARGET_RADIUS);
-		List<LivingEntity> nearby = world.getEntitiesOfClass(LivingEntity.class, searchBox,
-				e -> ManipulationCombatHelper.canHarm(player, e));
-
-		Optional<LivingEntity> targetOpt = nearby.stream()
-				.filter(e -> ManipulationCombatHelper.visible(player, e))
-				.filter(e -> e.distanceTo(player) <= TARGET_RADIUS)
-				.min(Comparator.comparingDouble(e -> e.distanceTo(player)));
-
-		if (targetOpt.isEmpty()) {
-			player.displayClientMessage(Component.literal("§8No vessel within reach."), true);
-			return;
-		}
+		Optional<LivingEntity> targetOpt = target(player);
+		if (targetOpt.isEmpty()) return;
 
 		LivingEntity target = targetOpt.get();
 		float masteryMult = (float) SkillPointHelper.getCrimsonMasteryMultiplier(player);
@@ -94,24 +95,15 @@ public class BloodAneurysmManip extends BloodManipulation {
 		target.hurtMarked = true;
 
 		Vec3 tPos = target.position().add(0, target.getBbHeight() * 0.5, 0);
-        ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.RUPTURE, tPos, tPos, BURST_RADIUS, 24);
+        // The rupture's far point is the caster, so the swelling vessel can reach from them to the victim.
+        ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.ANEURYSM_RUPTURE, tPos,
+                player.position().add(0, player.getBbHeight() * 0.6, 0), BURST_RADIUS, 28, 1);
 		AABB burstBox = new AABB(target.blockPosition()).inflate(BURST_RADIUS);
 		world.getEntitiesOfClass(LivingEntity.class, burstBox,
 				e -> e != target && ManipulationCombatHelper.canHarm(player, e)
 						&& e.position().distanceTo(tPos) <= BURST_RADIUS)
 				.forEach(e -> ManipulationParticles.hurt(this, e, world.damageSources().magic(),
 						(BURST_DAMAGE * masteryMult * strength)));
-
-		RandomSource random = world.random;
-		for (int i = 0; i < 50; i++) {
-			sLevel.sendParticles(
-					BLOOD_DUST,
-					tPos.x + (random.nextDouble() - 0.5) * BURST_RADIUS,
-					tPos.y + random.nextDouble() * 1.5,
-					tPos.z + (random.nextDouble() - 0.5) * BURST_RADIUS,
-					1, (random.nextDouble() - 0.5) * 0.3, random.nextDouble() * 0.25,
-					(random.nextDouble() - 0.5) * 0.3, 0.04f);
-		}
 
 		world.playSound(null, target.blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, 0.5f, 1.8f);
 		world.playSound(null, target.blockPosition(), SoundEvents.WITHER_HURT, SoundSource.PLAYERS, 0.6f, 0.7f);

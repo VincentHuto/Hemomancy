@@ -1,0 +1,269 @@
+{
+ "parent": "minecraft:block/block",
+ "render_type": "minecraft:cutout",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "minecraft:block/red_wool",
+  "animus": "minecraft:block/red_wool"
+ },
+ "elements": [
+  {
+   "name": "cop_animus",
+   "from": [
+    -7.15,
+    8.1,
+    -0.3521
+   ],
+   "to": [
+    -5.45,
+    9.1,
+    0.3521
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      8.85,
+      6.9,
+      10.55,
+      7.9
+     ],
+     "texture": "#animus"
+    },
+    "south": {
+     "uv": [
+      8.85,
+      6.9,
+      10.55,
+      7.9
+     ],
+     "texture": "#animus"
+    },
+    "east": {
+     "uv": [
+      15.296,
+      6.9,
+      16.0,
+      7.9
+     ],
+     "texture": "#animus"
+    },
+    "west": {
+     "uv": [
+      15.296,
+      6.9,
+      16.0,
+      7.9
+     ],
+     "texture": "#animus"
+    },
+    "up": {
+     "uv": [
+      8.85,
+      15.296,
+      10.55,
+      16.0
+     ],
+     "texture": "#animus"
+    }
+   }
+  },
+  {
+   "name": "cop_animus",
+   "from": [
+    -6.6521,
+    8.14,
+    -0.85
+   ],
+   "to": [
+    -5.9479,
+    9.06,
+    0.85
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      9.348,
+      6.94,
+      10.052,
+      7.86
+     ],
+     "texture": "#animus"
+    },
+    "south": {
+     "uv": [
+      9.348,
+      6.94,
+      10.052,
+      7.86
+     ],
+     "texture": "#animus"
+    },
+    "east": {
+     "uv": [
+      14.3,
+      6.94,
+      16.0,
+      7.86
+     ],
+     "texture": "#animus"
+    },
+    "west": {
+     "uv": [
+      14.3,
+      6.94,
+      16.0,
+      7.86
+     ],
+     "texture": "#animus"
+    },
+    "up": {
+     "uv": [
+      9.348,
+      14.3,
+      10.052,
+      16.0
+     ],
+     "texture": "#animus"
+    }
+   }
+  },
+  {
+   "name": "cop_animus",
+   "from": [
+    -7.15,
+    8.18,
+    -0.3521
+   ],
+   "to": [
+    -5.45,
+    9.02,
+    0.3521
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     -6.3,
+     0,
+     0.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      8.85,
+      6.98,
+      10.55,
+      7.82
+     ],
+     "texture": "#animus"
+    },
+    "south": {
+     "uv": [
+      8.85,
+      6.98,
+      10.55,
+      7.82
+     ],
+     "texture": "#animus"
+    },
+    "east": {
+     "uv": [
+      15.296,
+      6.98,
+      16.0,
+      7.82
+     ],
+     "texture": "#animus"
+    },
+    "west": {
+     "uv": [
+      15.296,
+      6.98,
+      16.0,
+      7.82
+     ],
+     "texture": "#animus"
+    },
+    "up": {
+     "uv": [
+      8.85,
+      15.296,
+      10.55,
+      16.0
+     ],
+     "texture": "#animus"
+    }
+   }
+  },
+  {
+   "name": "cop_animus",
+   "from": [
+    -7.15,
+    8.22,
+    -0.3521
+   ],
+   "to": [
+    -5.45,
+    8.98,
+    0.3521
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     -6.3,
+     0,
+     0.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      8.85,
+      7.02,
+      10.55,
+      7.78
+     ],
+     "texture": "#animus"
+    },
+    "south": {
+     "uv": [
+      8.85,
+      7.02,
+      10.55,
+      7.78
+     ],
+     "texture": "#animus"
+    },
+    "east": {
+     "uv": [
+      15.296,
+      7.02,
+      16.0,
+      7.78
+     ],
+     "texture": "#animus"
+    },
+    "west": {
+     "uv": [
+      15.296,
+      7.02,
+      16.0,
+      7.78
+     ],
+     "texture": "#animus"
+    },
+    "up": {
+     "uv": [
+      8.85,
+      15.296,
+      10.55,
+      16.0
+     ],
+     "texture": "#animus"
+    }
+   }
+  }
+ ]
+}

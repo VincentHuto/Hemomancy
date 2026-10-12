@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
+import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.*;
 import com.vincenthuto.hemomancy.common.event.MachineAccessEvents;
@@ -40,7 +41,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class UnstainedPodiumBlock extends Block implements EntityBlock, SimpleWaterloggedBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-	private static final VoxelShape SHAPE_N = Block.box(2, 0, 2, 14, 14, 14);
+	/** Foot, stem, collar and top slab. */
+	private static final VoxelShape SHAPE_N = ModelShapes.of(new double[] {3, 0, 3, 13, 2, 13}, new double[] {5, 2, 5, 11, 9, 11},
+			new double[] {3, 9, 3, 13, 11, 13}, new double[] {2, 11, 2, 14, 14, 14});
 
 
 	public UnstainedPodiumBlock(Properties properties) {

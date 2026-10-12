@@ -31,14 +31,14 @@ public class DisplayKnownManipsPacket implements CustomPacketPayload {
 				return;
 			IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 					.orElseThrow(NullPointerException::new);
-			player.displayClientMessage(Component.literal("Selected: " + known.getSelectedManip().getProperName()),
+			player.displayClientMessage(Component.literal("Selected: ").append(known.getSelectedManip().getDisplayName()),
 					false);
 			java.util.List<String> equipped = known.getEquippedManipNames();
 			for (int i = 0; i < known.getKnownManips().size(); i++) {
 				String name = known.getManipList().get(i).getName();
 				String tag = equipped.contains(name) ? " [EQUIPPED]" : "";
 				player.displayClientMessage(
-						Component.literal("Manipulation " + i + ": " + known.getManipList().get(i).getProperName() + tag),
+						Component.literal("Manipulation " + i + ": ").append(known.getManipList().get(i).getDisplayName()).append(tag),
 						false);
 			}
 		});

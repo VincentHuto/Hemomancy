@@ -103,8 +103,9 @@ public final class PuppeteerCrossbarCommands {
 			return false;
 		}
 		for (Mob oldBody : oldCohort) {
-			oldBody.discard();
+			PuppetStrings.unspool(oldBody);
 		}
+		PuppetStrings.descend(candidate);
 		MarionetteCrossbarItem.setSelectedSummonName(crossbar, selectedName);
 		player.getCooldowns().addCooldown(crossbar.getItem(), 20);
 		player.playSound(SoundEvents.EVOKER_PREPARE_SUMMON, 0.55F, 0.9F);

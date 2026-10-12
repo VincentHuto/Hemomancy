@@ -189,6 +189,7 @@ public class LignumMortisManip extends BloodManipulation {
 	private static void dismantle(ServerLevel level, ServerPlayer player, Session session) {
 		for (BlockPos pos : session.selected) {
 			if (!isSelectable(level, pos, session.mode) || pos.distSqr(session.origin) > session.radius * session.radius
+					|| !com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.mayAlter(player, pos)
 					|| !VeinMinerHelper.hasBreakPermission(player, pos)) continue;
 			BlockState state = level.getBlockState(pos);
 			Block.dropResources(state, level, pos, null, player, ItemStack.EMPTY);

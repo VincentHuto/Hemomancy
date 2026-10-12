@@ -10,7 +10,7 @@ import com.vincenthuto.hemomancy.common.damage.SchoolState;
 import com.vincenthuto.hemomancy.common.damage.SchoolStates;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodBoltEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingAxeRotPools;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingAxeLodestoneFields;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingSpearItem;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.gametest.framework.GameTest;
@@ -38,7 +38,7 @@ import java.util.UUID;
 @PrefixGameTestTemplate(false)
 public final class LivingWeaponCombatGameTests {
     @GameTest(templateNamespace = "living_weapon_validation", template = "empty", batch = "living_weapons", timeoutTicks = 180)
-    public static void axePoolsRequireCriticalsReachTheGroundAndPreservePulseTimingWhenMerged(GameTestHelper h) {
+    public static void axeLodestoneFieldsRequireCriticalsReachTheGroundAndPreservePulseTimingWhenMerged(GameTestHelper h) {
         ServerPlayer p = player(h);
         h.getLevel().addNewPlayer(p);
         Cow first = target(h, 2, 2), second = target(h, 6, 2), inside = target(h, 4, 2), outside = target(h, 9, 2);
@@ -46,27 +46,28 @@ public final class LivingWeaponCombatGameTests {
         second.setPos(second.position().add(0, 3, 0));
         p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ItemInit.living_axe.get()));
         float pulse = com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules
-                .damageMultiplier(p, inside, EnumBloodTendency.MORTEM, null);
+                .damageMultiplier(p, inside, EnumBloodTendency.FERRIC, null);
         var tick = new net.neoforged.neoforge.event.tick.ServerTickEvent.Post(() -> true, h.getLevel().getServer());
         try {
             axeHit(p, first, false);
-            LivingAxeRotPools.tick(tick);
-            h.assertTrue(inside.getHealth() == 100, "An ordinary axe strike created a pool");
+            LivingAxeLodestoneFields.tick(tick);
+            h.assertTrue(inside.getHealth() == 100, "An ordinary axe strike created a Lodestone field");
             axeHit(p, first, true);
-            LivingAxeRotPools.tick(tick);
+            LivingAxeLodestoneFields.tick(tick);
             h.assertTrue(inside.getHealth() == 100 - pulse,
-                    "The critical pool did not reach the ground below its airborne victim: " + inside.getHealth());
-            h.assertTrue(SchoolStates.has(inside, SchoolState.NECROSIS), "Pool did not apply Necrosis");
+                    "The critical field did not reach the ground below its airborne victim: " + inside.getHealth());
+            h.assertTrue(SchoolStates.has(inside, SchoolState.LODESTONE), "Field did not apply Lodestone");
+            h.assertTrue(!SchoolStates.has(inside, SchoolState.NECROSIS), "The Ferric axe must no longer apply Mortem Necrosis");
             inside.invulnerableTime = 0;
             axeHit(p, second, true);
-            LivingAxeRotPools.tick(tick);
-            h.assertTrue(inside.getHealth() == 100 - pulse, "Refreshing an overlapping pool caused an extra immediate pulse");
-            h.assertTrue(outside.getHealth() == 100, "Pool exceeded its radius");
+            LivingAxeLodestoneFields.tick(tick);
+            h.assertTrue(inside.getHealth() == 100 - pulse, "Refreshing an overlapping field caused an extra immediate pulse");
+            h.assertTrue(outside.getHealth() == 100, "Field exceeded its radius");
             h.runAfterDelay(22, () -> h.assertTrue(inside.getHealth() == 100 - 2 * pulse,
-                    "Merged pool lost its twenty-tick pulse cadence: " + inside.getHealth()));
+                    "Merged field lost its twenty-tick pulse cadence: " + inside.getHealth()));
             h.runAfterDelay(125, () -> {
                 try {
-                    h.assertTrue(inside.getHealth() == 100 - 6 * pulse, "Pool did not expire after six pulses: " + inside.getHealth());
+                    h.assertTrue(inside.getHealth() == 100 - 6 * pulse, "Field did not expire after six pulses: " + inside.getHealth());
                     h.succeed();
                 } finally { p.discard(); first.discard(); second.discard(); inside.discard(); outside.discard(); }
             });
@@ -80,7 +81,27 @@ public final class LivingWeaponCombatGameTests {
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(
                 new net.neoforged.neoforge.event.entity.player.CriticalHitEvent(p, target, critical ? 1.5F : 1, critical));
         target.invulnerableTime = 0;
-        hit(p, target, "living_axe", EnumBloodTendency.MORTEM, 4, 1);
+        hit(p, target, "living_axe", EnumBloodTendency.FERRIC, 4, 1);
+    }
+
+    @GameTest(templateNamespace = "living_weapon_validation", template = "empty", batch = "living_weapons")
+    public static void axeLodestoneFieldDragsUnanchoredTargetsInward(GameTestHelper h) {
+        ServerPlayer p = player(h);
+        h.getLevel().addNewPlayer(p);
+        Cow struck = target(h, 2, 2), loose = target(h, 2, 4);
+        loose.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(0);
+        p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ItemInit.living_axe.get()));
+        var tick = new net.neoforged.neoforge.event.tick.ServerTickEvent.Post(() -> true, h.getLevel().getServer());
+        try {
+            loose.setDeltaMovement(Vec3.ZERO);
+            axeHit(p, struck, true);
+            LivingAxeLodestoneFields.tick(tick);
+            Vec3 toward = struck.position().subtract(loose.position());
+            h.assertTrue(loose.getDeltaMovement().dot(new Vec3(toward.x, 0, toward.z)) > 0,
+                    "The Lodestone field did not drag an unanchored target toward its centre: " + loose.getDeltaMovement());
+            h.assertTrue(SchoolStates.has(loose, SchoolState.LODESTONE), "The dragged target was not marked with Lodestone");
+            h.succeed();
+        } finally { p.discard(); struck.discard(); loose.discard(); }
     }
 
     @GameTest(templateNamespace = "living_weapon_validation", template = "empty", batch = "living_weapons")
@@ -135,9 +156,32 @@ public final class LivingWeaponCombatGameTests {
             h.assertTrue((int)duration.invoke(p) == 20, "Axe is still using the six-tick vanilla swing");
             p.setItemInHand(InteractionHand.OFF_HAND, p.getMainHandItem());
             p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ItemInit.living_blade.get()));
-            h.assertTrue((int)duration.invoke(p) == 6, "An idle offhand axe changed the main-hand swing");
+            h.assertTrue((int)duration.invoke(p) == 10, "An idle offhand axe changed the main-hand blade swing");
             p.swingingArm = InteractionHand.OFF_HAND;
             h.assertTrue((int)duration.invoke(p) == 20, "Offhand axe did not use its overhead timing");
+            h.succeed();
+        } finally { p.discard(); }
+    }
+
+    @GameTest(templateNamespace = "living_weapon_validation", template = "empty", batch = "living_weapons")
+    public static void livingArsenalStrokesUseTheirOwnTimingInEitherHand(GameTestHelper h) throws Exception {
+        ServerPlayer p = player(h);
+        try {
+            var duration = LivingEntity.class.getDeclaredMethod("getCurrentSwingDuration");
+            duration.setAccessible(true);
+            var weapons = new net.minecraft.world.item.Item[]{ItemInit.living_blade.get(), ItemInit.living_spear.get(),
+                    ItemInit.living_torch.get(), ItemInit.sanguis_lancea.get(), ItemInit.living_baghnakh.get(),
+                    ItemInit.living_flail.get(), ItemInit.living_sickle.get()};
+            int[] ticks = {10, 10, 10, 12, 7, 18, 9};
+            for (int i = 0; i < weapons.length; i++) {
+                for (InteractionHand hand : InteractionHand.values()) {
+                    p.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+                    p.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
+                    p.setItemInHand(hand, new ItemStack(weapons[i]));
+                    p.swingingArm = hand;
+                    h.assertTrue((int) duration.invoke(p) == ticks[i], "Wrong Living swing duration for " + weapons[i] + " in " + hand);
+                }
+            }
             h.succeed();
         } finally { p.discard(); }
     }
@@ -151,7 +195,7 @@ public final class LivingWeaponCombatGameTests {
             var weapons = new net.minecraft.world.item.Item[]{ItemInit.absolution_dagger.get(),
                     ItemInit.annettas_absolution_dagger.get(), ItemInit.silthmere_glaive.get(),
                     ItemInit.unstained_warhammer.get()};
-            int[] ticks = {8, 8, 16, 20};
+            int[] ticks = {9, 9, 16, 22};
             for (int i = 0; i < weapons.length; i++) {
                 for (InteractionHand hand : InteractionHand.values()) {
                     p.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
@@ -162,7 +206,7 @@ public final class LivingWeaponCombatGameTests {
                 }
             }
             p.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.DIG_SPEED, 100, 1));
-            h.assertTrue((int) duration.invoke(p) == 13, "Hammer must retain vanilla haste scaling like the axe");
+            h.assertTrue((int) duration.invoke(p) == 15, "Hammer must retain vanilla haste scaling like the axe");
             h.succeed();
         } finally { p.discard(); }
     }

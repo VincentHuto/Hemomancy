@@ -1,0 +1,21 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "catalysts": [
+    {
+      "item": "minecraft:blaze_rod"
+    }
+  ],
+  "enzymes": {
+    "animus": 1,
+    "flammeus": 2,
+    "ductilis": 0,
+    "lux": 0,
+    "mortem": 0,
+    "congeatio": 0,
+    "ferric": 0,
+    "tenebris": 0
+  },
+  "blood": 150,
+  "result": "hemomancy:memory_searing_lash",
+  "count": 1
+}

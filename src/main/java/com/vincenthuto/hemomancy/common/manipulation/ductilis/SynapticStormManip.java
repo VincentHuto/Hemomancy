@@ -28,6 +28,7 @@ public class SynapticStormManip extends BloodManipulation {
 
 		if (!(world instanceof ServerLevel level)) return;
         float charge = ManipulationCastingRules.chargeFraction(heldTicks, CHARGE_TICKS);
+        float mastery = (float) com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper.getCrimsonMasteryMultiplier(player);
         int limit=ManipulationScalingRules.scaledCount(1,8,heldTicks,CHARGE_TICKS);
         int paralysis=ManipulationScalingRules.scaledInt(10,60,heldTicks,CHARGE_TICKS);
         var candidates=level.getEntitiesOfClass(LivingEntity.class,player.getBoundingBox().inflate(18),
@@ -67,7 +68,7 @@ public class SynapticStormManip extends BloodManipulation {
             // Failed damage still consumes one victim slot, so invulnerable entities cannot expand the chain.
             struck.add(target);
             if (ConductionManager.claimHit(player,target,discharge)
-                    && ManipulationCombatHelper.hurt(this,player,target,level,2.0F+6.0F*charge)) {
+                    && ManipulationCombatHelper.hurt(this,player,target,level,(2.0F+6.0F*charge)*mastery)) {
                 successful.add(target);
                 Paralysis.apply(target,paralysis);
                 ConductionManager.energizeTouching(player,target,discharge);

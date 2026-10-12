@@ -1,0 +1,275 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    256
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/saint_sarcophagus",
+    "particle": "hemomancy:block/polished_venous_stone"
+  },
+  "elements": [
+    {
+      "name": "cresset_coals",
+      "from": [
+        0.75,
+        20.25,
+        -10.875
+      ],
+      "to": [
+        2.75,
+        20.75,
+        -9.125
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            15.0,
+            11.0625,
+            15.5,
+            11.125
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            15.5,
+            11.0625,
+            16.0,
+            11.125
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            0.0,
+            11.125,
+            0.5,
+            11.1875
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            0.5,
+            11.125,
+            1.0,
+            11.1875
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            9.0,
+            8.8125,
+            9.5,
+            9.0625
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "shade": false,
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "cresset_coals",
+      "from": [
+        0.75,
+        20.25,
+        29.375
+      ],
+      "to": [
+        2.75,
+        20.75,
+        31.125
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1.0,
+            11.125,
+            1.5,
+            11.1875
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            1.5,
+            11.125,
+            2.0,
+            11.1875
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            2.0,
+            11.125,
+            2.5,
+            11.1875
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            2.5,
+            11.125,
+            3.0,
+            11.1875
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            9.5,
+            8.8125,
+            10.0,
+            9.0625
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "shade": false,
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "cresset_coals",
+      "from": [
+        13.25,
+        20.25,
+        -10.875
+      ],
+      "to": [
+        15.25,
+        20.75,
+        -9.125
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3.0,
+            11.125,
+            3.5,
+            11.1875
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            3.5,
+            11.125,
+            4.0,
+            11.1875
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            4.0,
+            11.125,
+            4.5,
+            11.1875
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            4.5,
+            11.125,
+            5.0,
+            11.1875
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            10.0,
+            8.8125,
+            10.5,
+            9.0625
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "shade": false,
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "cresset_coals",
+      "from": [
+        13.25,
+        20.25,
+        29.375
+      ],
+      "to": [
+        15.25,
+        20.75,
+        31.125
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            5.0,
+            11.125,
+            5.5,
+            11.1875
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            5.5,
+            11.125,
+            6.0,
+            11.1875
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            6.0,
+            11.125,
+            6.5,
+            11.1875
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            6.5,
+            11.125,
+            7.0,
+            11.1875
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            10.5,
+            8.8125,
+            11.0,
+            9.0625
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "shade": false,
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    }
+  ]
+}

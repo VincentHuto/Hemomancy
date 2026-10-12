@@ -253,6 +253,50 @@ public final class ClinicalBloodProgressionGameTests {
         } finally { p.discard(); }
     }
 
+    @GameTest(template = "empty") public static void distributorSelectorFollowsAppliedAndSavedPatterns(GameTestHelper h) {
+        var p = player(h, 5);
+        var pos = h.absolutePos(new BlockPos(1, 2, 1));
+        h.getLevel().setBlockAndUpdate(pos, BlockInit.dendritic_distributor.get().defaultBlockState());
+        p.setPos(pos.getCenter());
+        var known = HemoCapabilityAccess.getKnownManipulations(p).orElseThrow();
+        var volume = HemoCapabilityAccess.requireBloodVolume(p);
+        volume.setActive(true);
+        volume.setBloodVolume(1000);
+        p.giveExperiencePoints(100);
+        p.getData(HemoAttachmentTypes.MUSCLE_MEMORY).learnAndAddReserve(MuscleMemory.SANGUINE_FISTS, 200);
+        String key = MemorySlotRef.muscleMemory(MuscleMemory.SANGUINE_FISTS).storageKey();
+        known.setLoadout(1, com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout.of(
+                "Fists", key, List.of(key), 1));
+        var distributor = (com.vincenthuto.hemomancy.common.tile.harbinger.functional.DendriticDistributorBlockEntity)
+                h.getLevel().getBlockEntity(pos);
+        var apply = com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SynapticLoadoutActionPacket.Action.APPLY;
+        try {
+            h.assertTrue(distributor.getSelectedSlot() == 0, "A fresh distributor rests on the first pattern");
+            distributorAction(p, pos, 1, apply);
+            h.assertTrue(distributor.getSelectedSlot() == 1, "Apply must move the selector to the applied pattern");
+            distributorAction(p, pos, 2,
+                    com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SynapticLoadoutActionPacket.Action.SAVE_OR_OVERWRITE);
+            h.assertTrue(!known.getLoadout(2).isEmpty() && distributor.getSelectedSlot() == 2,
+                    "A paid Save must move the selector to the pattern it just wrote");
+            distributorAction(p, pos, 1,
+                    com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SynapticLoadoutActionPacket.Action.RENAME);
+            h.assertTrue(known.getLoadout(1).name().equals("Changed pattern") && distributor.getSelectedSlot() == 2,
+                    "Rename changes no equipment, so the selector must stay put");
+            distributorAction(p, pos, 0, apply);
+            h.assertTrue(distributor.getSelectedSlot() == 2, "A refused Apply must not move the selector");
+
+            var copy = new com.vincenthuto.hemomancy.common.tile.harbinger.functional.DendriticDistributorBlockEntity(
+                    pos, distributor.getBlockState());
+            copy.loadWithComponents(distributor.saveWithoutMetadata(h.getLevel().registryAccess()), h.getLevel().registryAccess());
+            h.assertTrue(copy.getSelectedSlot() == 2, "The selected slot must survive save/load");
+            distributor.setSelectedSlot(99);
+            h.assertTrue(distributor.getSelectedSlot()
+                            == com.vincenthuto.hemomancy.common.tile.harbinger.functional.DendriticSelectorRules.SLOT_COUNT - 1,
+                    "Out-of-range slots clamp to the last bouton");
+            h.succeed();
+        } finally { p.discard(); }
+    }
+
     private static void distributorAction(ServerPlayer player, BlockPos pos, int slot,
             com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SynapticLoadoutActionPacket.Action action) {
         var context = (net.neoforged.neoforge.network.handling.IPayloadContext) java.lang.reflect.Proxy.newProxyInstance(
@@ -323,7 +367,7 @@ public final class ClinicalBloodProgressionGameTests {
             bundle.subPackets().forEach(child -> captureDistributorMuscleState(child, states));
     }
 
-    @GameTest(template = "empty") public static void distributorPatternsRetainMixedAndLegacySelectionsAcrossNbt(GameTestHelper h) {
+    @GameTest(template = "empty", timeoutTicks = 260) public static void distributorPatternsRetainMixedAndLegacySelectionsAcrossNbt(GameTestHelper h) {
         var p = player(h, 5);
         var pos = h.absolutePos(new BlockPos(1, 2, 1));
         h.getLevel().setBlockAndUpdate(pos, BlockInit.dendritic_distributor.get().defaultBlockState());
@@ -354,7 +398,7 @@ public final class ClinicalBloodProgressionGameTests {
                     "NBT must retain legacy and mixed names/order/preferred selection and their empty intermediate slot");
             known.setLoadouts(List.of());
             known.setCapa(restored);
-            for (int slot : new int[]{0, 2}) {
+            java.util.function.IntConsumer applyAndCheck = slot -> {
                 var pattern = known.getLoadout(slot);
                 distributorAction(p, pos, slot,
                         com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SynapticLoadoutActionPacket.Action.APPLY);
@@ -366,9 +410,20 @@ public final class ClinicalBloodProgressionGameTests {
                                 && volume.getBloodVolume() == 1000 && p.totalExperience == 0
                                 && muscle.reserveTicks(MuscleMemory.SANGUINE_FISTS) == 300,
                         "Restored pattern must Apply without record mutation, costs or lost reserve: " + slot);
-            }
-            h.succeed();
-        } finally { p.discard(); }
+            };
+            applyAndCheck.accept(0);
+            // Applying a pattern locks out further applies for a while; wait it out before the second pattern.
+            h.runAfterDelay(com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SynapticLoadoutActionPacket
+                    .APPLY_LOCKOUT_TICKS + 1, () -> {
+                try {
+                    applyAndCheck.accept(2);
+                    h.succeed();
+                } finally { p.discard(); }
+            });
+        } catch (RuntimeException | AssertionError failure) {
+            p.discard();
+            throw failure;
+        }
     }
 
     @GameTest(template = "empty") public static void scarTemplateCommitCannotReplacePersonalEffigyPractice(GameTestHelper h) {
@@ -3603,21 +3658,11 @@ public final class ClinicalBloodProgressionGameTests {
         blood.setActive(true);
         blood.setBloodVolume(100);
         h.assertTrue(loom.startRitual(p) && loom.tryChargeRitualBlood(p, 50, true)
-                        && loom.isWeavingOrbs() && blood.getBloodVolume() == 50,
+                        && loom.isWeaving() && blood.getBloodVolume() == 50,
                 "The first weave did not accept its 50 blood charge");
-        for (var orb : loom.getRitualOrbs()) {
-            var orbPos = Vec3.atCenterOf(pos).add(orb.offset());
-            p.setPos(orbPos.x + 2, orbPos.y - p.getEyeHeight(), orbPos.z);
-            p.lookAt(EntityAnchorArgument.Anchor.EYES, orbPos);
-            h.assertTrue(loom.dragSelectedOrb(p, 1), "The player could not catch the first strand");
-            var target = Vec3.atCenterOf(pos).add(0, 0.4, 0);
-            double eyeY = pos.getY() + 0.2 + p.getEyeHeight();
-            double horizontal = Math.sqrt(4 - Math.pow(eyeY - target.y, 2));
-            p.setPos(target.x + horizontal, pos.getY() + 0.2, target.z);
-            p.lookAt(EntityAnchorArgument.Anchor.EYES, target);
-            for (int pull = 0; pull < 200 && !orb.completed(); pull++) loom.dragSelectedOrb(p, 1);
-            h.assertTrue(orb.completed(), "The first strand could not be drawn into the Loom");
-        }
+        p.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() - 2.5);
+        h.assertTrue(LoomWeaveTestSupport.weaveAll(h.getLevel(), pos, loom, p),
+                "The first weave's threads could not be woven home");
         h.assertTrue(HarbingerAdvancementGranter.isMnemonistFirstWeaveComplete(p)
                         && HarbingerAdvancementGranter.isMnemonistWovenVesselFinished(p),
                 "Completing Blood Shot did not finish the Woven Vessel chapter proof");
@@ -3649,7 +3694,7 @@ public final class ClinicalBloodProgressionGameTests {
             var blood = HemoCapabilityAccess.requireBloodVolume(p);
             blood.setActive(true);
             blood.setBloodVolume(100);
-            h.assertTrue(loom.tryChargeRitualBlood(p, 50, false) && loom.isWeavingOrbs(),
+            h.assertTrue(loom.tryChargeRitualBlood(p, 50, false) && loom.isWeaving(),
                     "Projection must pay for the strand");
             feedback.clear();
             for (int tick = 0; tick < 20; tick++)
@@ -3658,7 +3703,7 @@ public final class ClinicalBloodProgressionGameTests {
             h.assertTrue(blood.getBloodVolume() == 50 && loom.getRitualBloodCharged() == 50,
                     "Continued Projection must preserve the single payment");
             loom.provideTendencyFeedback(p);
-            h.assertTrue(feedback.size() == 1 && feedback.getFirst().getString().contains("Hold a Living Staff"),
+            h.assertTrue(feedback.size() == 1 && feedback.getFirst().getString().contains("Survive the frayed threads or strike them with a Living Staff"),
                     "Explicit empty-hand feedback must still explain strand handling");
 
             feedback.clear();

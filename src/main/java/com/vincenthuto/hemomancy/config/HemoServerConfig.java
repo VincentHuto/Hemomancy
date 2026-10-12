@@ -25,6 +25,7 @@ public class HemoServerConfig {
 
 	// ===== Blood Tendency =====
 	public static ModConfigSpec.BooleanValue TENDENCY_SHIFT_ON_KILL_ENABLED;
+	public static ModConfigSpec.BooleanValue TENDENCY_SHIFT_ON_CAST_ENABLED;
 	public static ModConfigSpec.DoubleValue TENDENCY_SHIFT_AMOUNT;
 	public static ModConfigSpec.DoubleValue TENDENCY_SHIFT_ON_MANIP_USE;
 	public static ModConfigSpec.DoubleValue TENDENCY_BOSS_MULTIPLIER;
@@ -175,6 +176,10 @@ public class HemoServerConfig {
 				.comment("Whether killing entities shifts the player's blood tendency.")
 				.define("tendencyShiftOnKillEnabled", true);
 
+		TENDENCY_SHIFT_ON_CAST_ENABLED = builder
+				.comment("Whether casting a manipulation shifts the player's blood tendency toward its schools.")
+				.define("tendencyShiftOnCastEnabled", true);
+
 		TENDENCY_SHIFT_AMOUNT = builder
 				.comment("How much tendency alignment is gained per relevant kill.")
 				.defineInRange("tendencyShiftAmount", 1.0, 0.1, 100.0);
@@ -238,7 +243,7 @@ public class HemoServerConfig {
 				.define("vascularDegradationOnManipEnabled", true);
 
 		VASCULAR_MANIP_STRAIN = builder
-				.comment("Vascular health lost per manipulation use on its associated section.")
+				.comment("Vascular health lost per manipulation use on its associated section, multiplied by the manipulation's rank strain (Humilis/Mediocritas 1, Summa/Magister 2, Perfectus 3).")
 				.defineInRange("vascularManipStrain", 1.0, 0.01, 50.0);
 
 		VASCULAR_PASSIVE_HEAL_ENABLED = builder

@@ -60,7 +60,9 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-	private static final VoxelShape SHAPE = Block.box(0, 0, 4, 16, 16, 12);
+	/** The 16x32x8 slab, broadside to its facing; the filler above carries its upper half. */
+	private static final VoxelShape SHAPE_NS = Block.box(0, 0, 4, 16, 16, 12);
+	private static final VoxelShape SHAPE_EW = Block.box(4, 0, 0, 12, 16, 16);
 	private static final double SHATTER_PACKET_RADIUS = 64.0;
 
 	/** Filler offsets: 1×2×1 — one filler block above the base. */
@@ -94,7 +96,16 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return SHAPE;
+		return slab(state);
+	}
+
+	@Override
+	public VoxelShape fillerShape(BlockState controller, BlockPos offset) {
+		return slab(controller);
+	}
+
+	private static VoxelShape slab(BlockState state) {
+		return state.getValue(FACING).getAxis() == Direction.Axis.X ? SHAPE_EW : SHAPE_NS;
 	}
 
 	@Override

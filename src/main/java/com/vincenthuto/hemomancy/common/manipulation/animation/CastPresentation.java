@@ -26,7 +26,7 @@ public record CastPresentation(CastPurpose purpose, CastStyle style) {
         return switch(id) {
             case "blood_shot", "guided_blood_shot", "hematic_mortar", "blood_needle", "blood_needle_fan",
                     "blood_needle_lance", "blood_projection", "synaptic_jolt", "gloam_laceration",
-                    "white_verdict", "thread_ripper" -> PROJECTILE;
+                    "white_verdict", "thread_ripper", "searing_lash", "cruor_javelin" -> PROJECTILE;
             case "blood_rush", "summon_avatar", "summon_avatar_arms", "summon_avatar_armor", "summon_avatar_legs",
                     "summon_avatar_complete", "iron_retort", "ironhearted", "void_shroud", "black_veil_covenant",
                     "insatiable_hunger", "grave_debt", "blackhearted", "sovereign_instinct", "phoenix_debt",
@@ -36,7 +36,7 @@ public record CastPresentation(CastPurpose purpose, CastStyle style) {
                     "hematic_flare", "hematic_beacon", "cryogenic_pulse", "osseous_bloom", "vitric_combustion",
                     "cauterizing_rebuke", "blood_eclipse", "crimson_coronation", "synaptic_storm",
                     "absolute_stillness", "iron_choir", "funeral_bell", "carrion_communion", "eclipse_well",
-                    "unclosing_eye", "bloom_of_rot" -> AREA;
+                    "unclosing_eye", "bloom_of_rot", "umbral_rend", "lodestone_collapse", "fruiting_contagion" -> AREA;
             case "blood_binding", "lingering_blood_binding", "chain_blood_binding", "sanguine_marionette",
                     "blood_lattice", "deadly_gaze", "hematic_rebuke", "hematic_impressment", "conductive_mark",
                     "blood_absorption", "sanguine_mending", "glacial_grasp", "vascular_dowsing", "pyretic_forge",
@@ -46,7 +46,7 @@ public record CastPresentation(CastPurpose purpose, CastStyle style) {
             case "conjure_blade", "conjure_axe", "conjure_spear", "conjure_claws", "conjure_crossbow",
                     "conjure_torch", "conjure_flail", "conjure_sickle", "conjure_staff", "crimson_flame_conjuration" -> CONJURATION;
             case "umbral_step", "umbral_reversal", "penumbral_drift", "scalding_updraft", "soaring_updraft",
-                    "suspended_updraft", "expulsive_updraft" -> TRAVEL;
+                    "suspended_updraft", "expulsive_updraft", "radiant_wake" -> TRAVEL;
             default -> null;
         };
     }

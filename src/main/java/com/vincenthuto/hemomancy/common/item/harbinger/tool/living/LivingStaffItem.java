@@ -20,7 +20,6 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyP
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCancellationHandler;
-import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticLoomBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -163,9 +162,6 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 					return;
 				}
 			}
-			if (dragNearestLoomOrb(pLevel, player)) {
-				return;
-			}
 			if (isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_ABSORPTION)) {
 				ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
 				LivingStaffFocusProfile focus = LivingStaffFocusProfile.fromPlayer(player, progress);
@@ -260,9 +256,19 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
 		if (playerIn.isShiftKeyDown()) return InteractionResultHolder.pass(stack);
+		if (hookLookedAtThread(worldIn, playerIn, handIn)) return InteractionResultHolder.sidedSuccess(stack, worldIn.isClientSide);
 		playerIn.startUsingItem(handIn);
 		if (!worldIn.isClientSide) clearUtilityBloodHandled(playerIn);
 		return InteractionResultHolder.consume(stack);
+	}
+
+	/** A slack frayed thread in reach is hooked home instead of opening a blood channel; the server weaves it. */
+	private static boolean hookLookedAtThread(Level level, Player player, InteractionHand hand) {
+		var thread = com.vincenthuto.hemomancy.common.entity.weave.FrayedThreadEntity.lookedAtSlackThread(player);
+		if (thread == null) return false;
+		if (level instanceof net.minecraft.server.level.ServerLevel) thread.tryHook(player);
+		player.swing(hand);
+		return true;
 	}
 
 	private static boolean tryAbsorbFromLookedAtBlockWithStaff(Level level, Player player,
@@ -319,23 +325,6 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 				LivingStaffFocusRules.structureProjectionRate(true, focus),
 				LivingStaffFocusRules.bloodTileProjectionRate(true, focus), true);
 		recordUtilityBloodHandled(player, handled);
-	}
-
-	private static boolean dragNearestLoomOrb(Level level, Player player) {
-		BlockPos origin = player.blockPosition();
-		int radius = 10;
-		boolean handled = false;
-		for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-radius, -radius / 2, -radius),
-				origin.offset(radius, radius / 2, radius))) {
-			if (level.getBlockEntity(pos) instanceof SomaticLoomBlockEntity loom
-					&& loom.isWeavingOrbs()
-					&& player.distanceToSqr(Vec3.atCenterOf(pos)) <= 144.0D
-					&& loom.dragSelectedOrb(player, 1.0D)) {
-				handled = true;
-				break;
-			}
-		}
-		return handled;
 	}
 
 	private static void recordUtilityBloodHandled(Player player, double handled) {

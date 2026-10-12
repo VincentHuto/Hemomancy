@@ -6,10 +6,13 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.unstained.AbsolutionDaggerModel;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
@@ -18,7 +21,14 @@ import net.minecraft.world.item.ItemStack;
 
 public class AbsolutionDaggerItemRenderer extends BlockEntityWithoutLevelRenderer {
 	private static final ResourceLocation DAGGER_TEXTURE =
-			Hemomancy.rloc("textures/block/pale_silver_block.png");
+			Hemomancy.rloc("textures/entity/unstained_weapons/absolution_dagger.png");
+	/** Still-water inlays: the Tear gems and hemolytic channels glow faintly. */
+	private static final ResourceLocation DAGGER_GLOW =
+			Hemomancy.rloc("textures/entity/unstained_weapons/absolution_dagger_glow.png");
+	private static final ResourceLocation ANNETTA_TEXTURE =
+			Hemomancy.rloc("textures/entity/unstained_weapons/annettas_absolution_dagger.png");
+	private static final ResourceLocation ANNETTA_GLOW =
+			Hemomancy.rloc("textures/entity/unstained_weapons/annettas_absolution_dagger_glow.png");
 	private static final float GUI_MODEL_SCALE = 0.62F;
 	private static final double GUI_MODEL_TRANSLATE_X = 0.2D;
 	private static final double GUI_MODEL_TRANSLATE_Y = -0.2D;
@@ -42,8 +52,13 @@ public class AbsolutionDaggerItemRenderer extends BlockEntityWithoutLevelRendere
 
 		poseStack.pushPose();
 		applyDisplayTransform(displayContext, poseStack);
-		VertexConsumer vertexConsumer = bufferSource.getBuffer(model().renderType(DAGGER_TEXTURE));
+		boolean annetta = stack.is(ItemInit.annettas_absolution_dagger.get());
+		model().setAnnettaVariant(annetta);
+		VertexConsumer vertexConsumer = bufferSource.getBuffer(
+				model().renderType(annetta ? ANNETTA_TEXTURE : DAGGER_TEXTURE));
 		model().renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, -1);
+		model().renderToBuffer(poseStack, bufferSource.getBuffer(RenderType.eyes(annetta ? ANNETTA_GLOW : DAGGER_GLOW)),
+				LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, -1);
 		poseStack.popPose();
 
 		if (gui) {

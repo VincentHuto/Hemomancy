@@ -7,7 +7,16 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "hemomancy:somatic_loom"
+          "name": "hemomancy:somatic_loom",
+          "functions": [
+            {
+              "function": "minecraft:copy_state",
+              "block": "hemomancy:somatic_loom",
+              "properties": [
+                "stage"
+              ]
+            }
+          ]
         }
       ],
       "conditions": [

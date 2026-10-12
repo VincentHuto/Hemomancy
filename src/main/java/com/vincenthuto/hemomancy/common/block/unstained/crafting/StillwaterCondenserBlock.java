@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.block.unstained.crafting;
 
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import com.vincenthuto.hemomancy.common.tile.unstained.crafting.StillwaterCondenserBlockEntity;
@@ -18,6 +19,7 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -26,12 +28,20 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.CollisionContext;
 
 public class StillwaterCondenserBlock extends BaseEntityBlock {
 	public static final MapCodec<StillwaterCondenserBlock> CODEC = simpleCodec(StillwaterCondenserBlock::new);
+	/** Basin, the condensing chamber, its narrowing coil housing and the stopper. */
+	private static final VoxelShape SHAPE = ModelShapes.of(new double[] {1, 0, 1, 15, 5, 15},
+			new double[] {3, 5, 1, 13, 8, 15}, new double[] {3, 8, 5, 13, 13, 11}, new double[] {6, 13, 6, 10, 14, 10});
 	public StillwaterCondenserBlock(BlockBehaviour.Properties properties) { super(properties); }
 	@Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
 	@Override public RenderShape getRenderShape(BlockState state) { return RenderShape.MODEL; }
+	@Override protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+		return SHAPE;
+	}
 	@Override public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
 		return new StillwaterCondenserBlockEntity(pos, state);
 	}

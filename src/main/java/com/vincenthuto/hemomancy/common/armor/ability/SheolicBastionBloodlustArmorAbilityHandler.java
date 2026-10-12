@@ -91,7 +91,8 @@ public final class SheolicBastionBloodlustArmorAbilityHandler {
 		if (!(event.getEntity() instanceof ServerPlayer player)) {
 			return;
 		}
-		if (isBastionActive(player)) {
+		// The stance cannot refuse Endless Hour's debt: it was already mitigated when it was deferred.
+		if (isBastionActive(player) && !com.vincenthuto.hemomancy.common.manipulation.saint.EndlessHourManip.isSettlement(event.getSource())) {
 			event.setNewDamage(0.0F);
 			player.setDeltaMovement(Vec3.ZERO);
 			player.fallDistance = 0.0F;

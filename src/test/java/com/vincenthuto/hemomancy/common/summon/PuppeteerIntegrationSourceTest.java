@@ -107,7 +107,7 @@ public final class PuppeteerIntegrationSourceTest {
 		assertContains(crossbarCommands, "setMode(ServerPlayer player");
 		assertContains(crossbarCommands, "hotSwap(ServerPlayer player");
 		assertOrdered(crossbarCommands, "addFreshEntity(candidate)", "consumeThread(crossbar, summonCost)",
-				"oldBody.discard()", "setSelectedSummonName(crossbar, selectedName)");
+				"PuppetStrings.unspool(oldBody)", "setSelectedSummonName(crossbar, selectedName)");
 		assertContains(crossbarCommands, "getSkeinTranspositionLevel(player) <= 0");
 		assertContains(crossbarCommands, "projectedShapedCount");
 		assertContains(crossbarCommands, "!BoundSummonBehavior.isClaimedWill(body)");

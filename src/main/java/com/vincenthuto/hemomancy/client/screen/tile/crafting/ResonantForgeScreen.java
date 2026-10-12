@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.tile.crafting;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.VeinBackgroundRenderer;
 import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
 import com.vincenthuto.hemomancy.client.screen.widget.BloodVolumeBarWidget;
@@ -9,6 +11,7 @@ import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ResonantForgeBlo
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
 import java.util.List;
@@ -18,6 +21,19 @@ public class ResonantForgeScreen extends AbstractContainerScreen<ResonantForgeMe
     private static final int INNER = 0xFF220606;
     private static final int PALE = 0xFFE7B8B8;
     private static final int MUTED = 0xFF9B6969;
+    private static final ResourceLocation EQUIPMENT_ICON = iconTexture("equipment");
+    private static final ResourceLocation ENCHANTED_ICON = iconTexture("enchanted_equipment");
+    private static final ResourceLocation BLANK_CYLINDER_ICON = iconTexture("blank_cylinder");
+    private static final ResourceLocation RECORDED_CYLINDER_ICON = iconTexture("recorded_cylinder");
+    /** Indexed by forge slot: application item, cylinder, output, then grinding item, cylinder, outputs. */
+    private static final ResourceLocation[] SLOT_ICONS = {
+            EQUIPMENT_ICON, RECORDED_CYLINDER_ICON, ENCHANTED_ICON,
+            ENCHANTED_ICON, BLANK_CYLINDER_ICON, EQUIPMENT_ICON, RECORDED_CYLINDER_ICON
+    };
+    private static final String[] SLOT_HINTS = {
+            "application_item", "application_cylinder", "application_output",
+            "grinding_item", "grinding_cylinder", "grinding_equipment_output", "grinding_cylinder_output"
+    };
     private final VeinBackgroundRenderer veins = new VeinBackgroundRenderer();
     private BloodVolumeBarWidget.Bounds bloodBounds = BloodVolumeBarWidget.Bounds.EMPTY;
 
@@ -40,26 +56,29 @@ public class ResonantForgeScreen extends AbstractContainerScreen<ResonantForgeMe
         g.fillGradient(x + 120, y + 24, x + 212, y + 108, 0x60100406, 0x10100406);
         g.fillGradient(x + 102, y + 24, x + 118, y + 122, 0x80240708, 0x30100406);
 
+        var applicationPreview = menu.forge().getItem(ResonantForgeBlockEntity.APPLICATION_OUTPUT).isEmpty()
+                ? menu.applicationPreview() : net.minecraft.world.item.ItemStack.EMPTY;
+        var grindingPreview = menu.forge().getItem(ResonantForgeBlockEntity.GRINDING_EQUIPMENT_OUTPUT).isEmpty()
+                ? menu.grindingPreview() : null;
+        boolean grindingPreviewed = grindingPreview != null && grindingPreview.success();
         for (int i = 0; i < ResonantForgeBlockEntity.SLOT_COUNT; i++) {
             var slot = menu.slots.get(i);
             slot(g, x + slot.x, y + slot.y, i == ResonantForgeBlockEntity.APPLICATION_OUTPUT
                     || i >= ResonantForgeBlockEntity.GRINDING_EQUIPMENT_OUTPUT ? 0xFFB64A4A : 0xFF704040);
+            boolean previewed = i == ResonantForgeBlockEntity.APPLICATION_OUTPUT ? !applicationPreview.isEmpty()
+                    : i >= ResonantForgeBlockEntity.GRINDING_EQUIPMENT_OUTPUT && grindingPreviewed;
+            if (slot.getItem().isEmpty() && !previewed) icon(g, SLOT_ICONS[i], x + slot.x, y + slot.y);
         }
-        if (menu.forge().getItem(ResonantForgeBlockEntity.APPLICATION_OUTPUT).isEmpty()) {
-            var slot = menu.slots.get(ResonantForgeBlockEntity.APPLICATION_OUTPUT);
-            ItemStackPreview.render(g, menu.applicationPreview(), x + slot.x, y + slot.y);
-        }
-        if (menu.forge().getItem(ResonantForgeBlockEntity.GRINDING_EQUIPMENT_OUTPUT).isEmpty()) {
-            var preview = menu.grindingPreview();
-            if (preview.success()) {
-                var equipmentSlot = menu.slots.get(ResonantForgeBlockEntity.GRINDING_EQUIPMENT_OUTPUT);
-                var cylinderSlot = menu.slots.get(ResonantForgeBlockEntity.GRINDING_CYLINDER_OUTPUT);
-                ItemStackPreview.render(g, preview.equipment(), x + equipmentSlot.x, y + equipmentSlot.y);
-                var cylinderPreview = menu.forge().getItem(ResonantForgeBlockEntity.GRINDING_CYLINDER).copy();
-                cylinderPreview.set(com.vincenthuto.hemomancy.common.init.DataComponentInit.RESONANT_PATTERN.get(),
-                        preview.pattern());
-                ItemStackPreview.render(g, cylinderPreview, x + cylinderSlot.x, y + cylinderSlot.y);
-            }
+        var applicationSlot = menu.slots.get(ResonantForgeBlockEntity.APPLICATION_OUTPUT);
+        ItemStackPreview.render(g, applicationPreview, x + applicationSlot.x, y + applicationSlot.y);
+        if (grindingPreviewed) {
+            var equipmentSlot = menu.slots.get(ResonantForgeBlockEntity.GRINDING_EQUIPMENT_OUTPUT);
+            var cylinderSlot = menu.slots.get(ResonantForgeBlockEntity.GRINDING_CYLINDER_OUTPUT);
+            ItemStackPreview.render(g, grindingPreview.equipment(), x + equipmentSlot.x, y + equipmentSlot.y);
+            var cylinderPreview = menu.forge().getItem(ResonantForgeBlockEntity.GRINDING_CYLINDER).copy();
+            cylinderPreview.set(com.vincenthuto.hemomancy.common.init.DataComponentInit.RESONANT_PATTERN.get(),
+                    grindingPreview.pattern());
+            ItemStackPreview.render(g, cylinderPreview, x + cylinderSlot.x, y + cylinderSlot.y);
         }
 
         control(g, x + 14, y + 96, 82, 12, menu.operation() == 1, true,
@@ -163,6 +182,21 @@ public class ResonantForgeScreen extends AbstractContainerScreen<ResonantForgeMe
         BloodVolumeBarWidget.renderTooltip(g, font, bloodBounds, menu.blood(), menu.capacity(), mouseX, mouseY);
         if (inside(mouseX, mouseY, leftPos + 124, topPos + 84, 82, 10))
             g.renderTooltip(font, Component.translatable("screen.hemomancy.resonant_forge.selection.tooltip"), mouseX, mouseY);
+        if (menu.getCarried().isEmpty() && hoveredSlot != null && hoveredSlot.index < ResonantForgeBlockEntity.SLOT_COUNT
+                && !hoveredSlot.hasItem())
+            g.renderTooltip(font, Component.translatable("screen.hemomancy.resonant_forge.slot."
+                    + SLOT_HINTS[hoveredSlot.index]), mouseX, mouseY);
+    }
+
+    private static ResourceLocation iconTexture(String name) {
+        return Hemomancy.rloc("textures/gui/resonant_forge/" + name + ".png");
+    }
+
+    private static void icon(GuiGraphics g, ResourceLocation texture, int x, int y) {
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        g.blit(texture, x, y, 0, 0, 16, 16, 16, 16);
+        RenderSystem.disableBlend();
     }
 
     private static void slot(GuiGraphics g, int x, int y, int accent) {

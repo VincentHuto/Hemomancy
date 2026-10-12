@@ -1,0 +1,269 @@
+{
+ "parent": "minecraft:block/block",
+ "render_type": "minecraft:cutout",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "minecraft:block/orange_wool",
+  "flammeus": "minecraft:block/orange_wool"
+ },
+ "elements": [
+  {
+   "name": "cop_flammeus",
+   "from": [
+    -7.15,
+    8.1,
+    2.9479
+   ],
+   "to": [
+    -5.45,
+    9.1,
+    3.6521
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      8.85,
+      6.9,
+      10.55,
+      7.9
+     ],
+     "texture": "#flammeus"
+    },
+    "south": {
+     "uv": [
+      8.85,
+      6.9,
+      10.55,
+      7.9
+     ],
+     "texture": "#flammeus"
+    },
+    "east": {
+     "uv": [
+      2.948,
+      6.9,
+      3.652,
+      7.9
+     ],
+     "texture": "#flammeus"
+    },
+    "west": {
+     "uv": [
+      2.948,
+      6.9,
+      3.652,
+      7.9
+     ],
+     "texture": "#flammeus"
+    },
+    "up": {
+     "uv": [
+      8.85,
+      2.948,
+      10.55,
+      3.652
+     ],
+     "texture": "#flammeus"
+    }
+   }
+  },
+  {
+   "name": "cop_flammeus",
+   "from": [
+    -6.6521,
+    8.14,
+    2.45
+   ],
+   "to": [
+    -5.9479,
+    9.06,
+    4.15
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      9.348,
+      6.94,
+      10.052,
+      7.86
+     ],
+     "texture": "#flammeus"
+    },
+    "south": {
+     "uv": [
+      9.348,
+      6.94,
+      10.052,
+      7.86
+     ],
+     "texture": "#flammeus"
+    },
+    "east": {
+     "uv": [
+      2.45,
+      6.94,
+      4.15,
+      7.86
+     ],
+     "texture": "#flammeus"
+    },
+    "west": {
+     "uv": [
+      2.45,
+      6.94,
+      4.15,
+      7.86
+     ],
+     "texture": "#flammeus"
+    },
+    "up": {
+     "uv": [
+      9.348,
+      2.45,
+      10.052,
+      4.15
+     ],
+     "texture": "#flammeus"
+    }
+   }
+  },
+  {
+   "name": "cop_flammeus",
+   "from": [
+    -7.15,
+    8.18,
+    2.9479
+   ],
+   "to": [
+    -5.45,
+    9.02,
+    3.6521
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     -6.3,
+     0,
+     3.3
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      8.85,
+      6.98,
+      10.55,
+      7.82
+     ],
+     "texture": "#flammeus"
+    },
+    "south": {
+     "uv": [
+      8.85,
+      6.98,
+      10.55,
+      7.82
+     ],
+     "texture": "#flammeus"
+    },
+    "east": {
+     "uv": [
+      2.948,
+      6.98,
+      3.652,
+      7.82
+     ],
+     "texture": "#flammeus"
+    },
+    "west": {
+     "uv": [
+      2.948,
+      6.98,
+      3.652,
+      7.82
+     ],
+     "texture": "#flammeus"
+    },
+    "up": {
+     "uv": [
+      8.85,
+      2.948,
+      10.55,
+      3.652
+     ],
+     "texture": "#flammeus"
+    }
+   }
+  },
+  {
+   "name": "cop_flammeus",
+   "from": [
+    -7.15,
+    8.22,
+    2.9479
+   ],
+   "to": [
+    -5.45,
+    8.98,
+    3.6521
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     -6.3,
+     0,
+     3.3
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      8.85,
+      7.02,
+      10.55,
+      7.78
+     ],
+     "texture": "#flammeus"
+    },
+    "south": {
+     "uv": [
+      8.85,
+      7.02,
+      10.55,
+      7.78
+     ],
+     "texture": "#flammeus"
+    },
+    "east": {
+     "uv": [
+      2.948,
+      7.02,
+      3.652,
+      7.78
+     ],
+     "texture": "#flammeus"
+    },
+    "west": {
+     "uv": [
+      2.948,
+      7.02,
+      3.652,
+      7.78
+     ],
+     "texture": "#flammeus"
+    },
+    "up": {
+     "uv": [
+      8.85,
+      2.948,
+      10.55,
+      3.652
+     ],
+     "texture": "#flammeus"
+    }
+   }
+  }
+ ]
+}

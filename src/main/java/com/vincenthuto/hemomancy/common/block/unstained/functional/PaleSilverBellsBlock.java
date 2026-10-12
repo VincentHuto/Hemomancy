@@ -40,8 +40,8 @@ public class PaleSilverBellsBlock extends Block implements SimpleWaterloggedBloc
 	public static final EnumProperty<BellAttachType> ATTACHMENT = BlockStateProperties.BELL_ATTACHMENT;
 	private static final VoxelShape NORTH_SOUTH_FLOOR_SHAPE = Block.box(0.0, 0.0, 4.0, 16.0, 16.0, 12.0);
 	private static final VoxelShape EAST_WEST_FLOOR_SHAPE = Block.box(4.0, 0.0, 0.0, 12.0, 16.0, 16.0);
-	private static final VoxelShape BELL_TOP_SHAPE = Block.box(5.0, 6.0, 5.0, 11.0, 13.0, 11.0);
-	private static final VoxelShape BELL_BOTTOM_SHAPE = Block.box(4.0, 4.0, 4.0, 12.0, 6.0, 12.0);
+	private static final VoxelShape BELL_TOP_SHAPE = Block.box(4.0, 5.0, 4.0, 12.0, 13.0, 12.0);
+	private static final VoxelShape BELL_BOTTOM_SHAPE = Block.box(3.0, 2.0, 3.0, 13.0, 5.0, 13.0);
 	private static final VoxelShape BELL_SHAPE = Shapes.or(BELL_BOTTOM_SHAPE, BELL_TOP_SHAPE);
 	private static final VoxelShape NORTH_SOUTH_BETWEEN_SHAPE = Shapes.or(BELL_SHAPE,
 			Block.box(7.0, 13.0, 0.0, 9.0, 15.0, 16.0));

@@ -1,80 +1,81 @@
 {
   "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    32
+  ],
   "textures": {
-    "iron": "hemomancy:block/hematic_iron_block",
-    "wood": "hemomancy:block/blood_wood_planks",
-    "red": "minecraft:block/redstone_block",
-    "horn": "minecraft:block/copper_block",
-    "dark": "minecraft:block/black_terracotta",
-    "particle": "hemomancy:block/hematic_iron_block"
+    "atlas": "hemomancy:block/model_clairaudiograph"
   },
   "elements": [
     {
-      "name": "blood feed",
+      "name": "blood_bolus",
       "from": [
-        -0.5,
-        -0.5,
-        -0.5
+        -0.375,
+        -0.375,
+        -0.375
       ],
       "to": [
-        0.5,
-        0.5,
-        0.5
+        0.375,
+        0.375,
+        0.375
       ],
       "faces": {
         "north": {
           "uv": [
-            0,
-            0,
-            1.0,
-            1.0
+            9.0,
+            15.0,
+            9.09375,
+            15.375
           ],
-          "texture": "#red"
+          "texture": "#atlas"
         },
         "south": {
           "uv": [
-            0,
-            0,
-            1.0,
-            1.0
+            9.125,
+            15.0,
+            9.21875,
+            15.375
           ],
-          "texture": "#red"
+          "texture": "#atlas"
         },
         "east": {
           "uv": [
-            0,
-            0,
-            1.0,
-            1.0
+            9.25,
+            15.0,
+            9.34375,
+            15.375
           ],
-          "texture": "#red"
+          "texture": "#atlas"
         },
         "west": {
           "uv": [
-            0,
-            0,
-            1.0,
-            1.0
+            9.375,
+            15.0,
+            9.46875,
+            15.375
           ],
-          "texture": "#red"
+          "texture": "#atlas"
         },
         "up": {
           "uv": [
-            0,
-            0,
-            1.0,
-            1.0
+            9.5,
+            15.0,
+            9.59375,
+            15.375
           ],
-          "texture": "#red"
+          "texture": "#atlas"
         },
         "down": {
           "uv": [
-            0,
-            0,
-            1.0,
-            1.0
+            9.625,
+            15.0,
+            9.71875,
+            15.375
           ],
-          "texture": "#red"
+          "texture": "#atlas"
         }
       }
     }

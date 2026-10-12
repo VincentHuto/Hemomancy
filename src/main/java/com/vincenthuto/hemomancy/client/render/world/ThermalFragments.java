@@ -11,7 +11,7 @@ final class ThermalFragments {
     ThermalFragments(){Arrays.fill(previous,Vec3.ZERO);Arrays.fill(current,Vec3.ZERO);}
     void update(ManipulationVisualPacket packet,double age) {
         Form form=packet.form();
-        int count=form==Form.GLASS?30:form==Form.CRUOR_BREAK?7:form==Form.HOUR_BREAK?9:
+        int count=form==Form.GLASS?30:form==Form.CRUOR_BREAK?7:form==Form.HOUR_BREAK?12:
                 form==Form.UPDRAFT && packet.count()==4?14:0;
         for(int i=0;i<count;i++) {
             double angle=i*2.39996;

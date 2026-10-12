@@ -1,52 +1,117 @@
 {
   "multipart": [
     {
-      "when": { "facing": "north", "ritual_phase": "0" },
-      "apply": { "model": "hemomancy:block/iron_brazier" }
+      "apply": {
+        "model": "hemomancy:block/iron_brazier"
+      },
+      "when": {
+        "facing": "north"
+      }
     },
     {
-      "when": { "facing": "south", "ritual_phase": "0" },
-      "apply": { "model": "hemomancy:block/iron_brazier", "y": 180 }
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_lit"
+      },
+      "when": {
+        "facing": "north",
+        "ritual_phase": "1|2"
+      }
     },
     {
-      "when": { "facing": "west", "ritual_phase": "0" },
-      "apply": { "model": "hemomancy:block/iron_brazier", "y": 270 }
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_sanguine"
+      },
+      "when": {
+        "facing": "north",
+        "ritual_phase": "2"
+      }
     },
     {
-      "when": { "facing": "east", "ritual_phase": "0" },
-      "apply": { "model": "hemomancy:block/iron_brazier", "y": 90 }
+      "apply": {
+        "model": "hemomancy:block/iron_brazier",
+        "y": 90
+      },
+      "when": {
+        "facing": "east"
+      }
     },
     {
-      "when": { "facing": "north", "ritual_phase": "1" },
-      "apply": { "model": "hemomancy:block/iron_brazier_lit" }
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_lit",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "ritual_phase": "1|2"
+      }
     },
     {
-      "when": { "facing": "south", "ritual_phase": "1" },
-      "apply": { "model": "hemomancy:block/iron_brazier_lit", "y": 180 }
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_sanguine",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "ritual_phase": "2"
+      }
     },
     {
-      "when": { "facing": "west", "ritual_phase": "1" },
-      "apply": { "model": "hemomancy:block/iron_brazier_lit", "y": 270 }
+      "apply": {
+        "model": "hemomancy:block/iron_brazier",
+        "y": 180
+      },
+      "when": {
+        "facing": "south"
+      }
     },
     {
-      "when": { "facing": "east", "ritual_phase": "1" },
-      "apply": { "model": "hemomancy:block/iron_brazier_lit", "y": 90 }
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_lit",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "ritual_phase": "1|2"
+      }
     },
     {
-      "when": { "facing": "north", "ritual_phase": "2" },
-      "apply": { "model": "hemomancy:block/iron_brazier_lit" }
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_sanguine",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "ritual_phase": "2"
+      }
     },
     {
-      "when": { "facing": "south", "ritual_phase": "2" },
-      "apply": { "model": "hemomancy:block/iron_brazier_lit", "y": 180 }
+      "apply": {
+        "model": "hemomancy:block/iron_brazier",
+        "y": 270
+      },
+      "when": {
+        "facing": "west"
+      }
     },
     {
-      "when": { "facing": "west", "ritual_phase": "2" },
-      "apply": { "model": "hemomancy:block/iron_brazier_lit", "y": 270 }
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_lit",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "ritual_phase": "1|2"
+      }
     },
     {
-      "when": { "facing": "east", "ritual_phase": "2" },
-      "apply": { "model": "hemomancy:block/iron_brazier_lit", "y": 90 }
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_sanguine",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "ritual_phase": "2"
+      }
     }
   ]
 }

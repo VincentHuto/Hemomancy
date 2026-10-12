@@ -22,7 +22,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
 import java.util.Comparator;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -41,6 +40,23 @@ public class HemorrhageManip extends BloodManipulation {
 		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
 	}
 
+	private static Optional<LivingEntity> target(Player player) {
+		return player.level().getEntitiesOfClass(LivingEntity.class, new AABB(player.blockPosition()).inflate(RADIUS),
+						e -> ManipulationCombatHelper.canHarm(player, e)).stream()
+				.filter(e -> ManipulationCombatHelper.visible(player, e))
+				.filter(e -> e.distanceTo(player) <= RADIUS)
+				.min(Comparator.comparingDouble(e -> e.distanceTo(player)));
+	}
+
+	@Override
+	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
+		if (target(player).isEmpty()) {
+			player.displayClientMessage(Component.literal("No living vessel within reach."), true);
+			return false;
+		}
+		return super.canPerformAction(player, heldItem, ticks);
+	}
+
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
         try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
@@ -48,24 +64,15 @@ public class HemorrhageManip extends BloodManipulation {
 		if (!(world instanceof ServerLevel sLevel)) return;
 
 		BlockPos center = player.blockPosition();
-		AABB searchBox = new AABB(center).inflate(RADIUS);
-		List<LivingEntity> nearby = world.getEntitiesOfClass(LivingEntity.class, searchBox,
-				e -> ManipulationCombatHelper.canHarm(player, e));
-
-		Optional<LivingEntity> closest = nearby.stream()
-				.filter(e -> ManipulationCombatHelper.visible(player, e))
-				.filter(e -> e.distanceTo(player) <= RADIUS)
-				.min(Comparator.comparingDouble(e -> e.distanceTo(player)));
-
-		if (closest.isEmpty()) {
-			player.displayClientMessage(
-					Component.literal("§8No living vessel within reach."), true);
-			return;
-		}
+		Optional<LivingEntity> closest = target(player);
+		if (closest.isEmpty()) return;
 
 		LivingEntity target = closest.get();
 		target.addEffect(new MobEffectInstance(EffectInit.blood_loss,
 				BLOOD_LOSS_TICKS, 1, false, true));
+		// The open wound begins to rot, seeding Necrosis debt for Funeral Bell and Carrion Communion.
+		com.vincenthuto.hemomancy.common.damage.SchoolStates.apply(player, target,
+				com.vincenthuto.hemomancy.common.damage.SchoolState.NECROSIS, BLOOD_LOSS_TICKS);
 		HemomancyTendrilEffects.hemorrhage(player, target);
         ManipulationVisuals.attached(target, ManipulationVisuals.Form.WOUND, 1, BLOOD_LOSS_TICKS, 1);
 

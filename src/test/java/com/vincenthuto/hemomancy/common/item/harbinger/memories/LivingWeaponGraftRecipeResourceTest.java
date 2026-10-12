@@ -22,7 +22,7 @@ public final class LivingWeaponGraftRecipeResourceTest {
 
 	private static final Map<String, String> ENZYMES = Map.of(
 			"blade", "vivacious_enzyme",
-			"axe", "ruinous_enzyme",
+			"axe", "ferric_enzyme",
 			"spear", "incandescent_enzyme",
 			"claws", "umbral_enzyme",
 			"crossbow", "neurotic_enzyme",

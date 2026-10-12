@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.client.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoint;
-import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgressClientCache;
 import com.vincenthuto.hemomancy.common.entity.utility.ArborOfWillEntity;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -22,7 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/** Gives hanging fruit normal-reach right-click targets without making each fruit an entity. */
+/**
+ * Gives hanging fruit right-click targets without making each fruit an entity. The name label and the click
+ * share {@link #findTarget}, so any fruit whose name is showing opens the skill tree when right-clicked.
+ */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class ArborOfWillClientInteraction {
     private ArborOfWillClientInteraction() { }
@@ -33,15 +35,15 @@ public final class ArborOfWillClientInteraction {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
         if (player == null) return;
-        double reach = player.isCreative() ? 5.0D : 4.5D;
-        Target target = findTarget(minecraft, reach, true).orElse(null);
+        Target target = findTarget(minecraft).orElse(null);
         if (target == null) return;
         PacketHandler.sendToServer(new ArborFruitInteractPacket(target.arbor().getId(), target.fruit().skillId()));
         event.setCanceled(true);
         event.setSwingHand(true);
     }
 
-    public static Optional<Target> findTarget(Minecraft minecraft, double reach, boolean unlockedOnly) {
+    public static Optional<Target> findTarget(Minecraft minecraft) {
+        double reach = ArborOfWillInteractionRules.FRUIT_TARGET_REACH;
         LocalPlayer player = minecraft.player;
         if (player == null || minecraft.level == null
                 || !minecraft.level.dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)) return Optional.empty();
@@ -49,10 +51,9 @@ public final class ArborOfWillClientInteraction {
         List<ArborOfWillEntity> arbors = minecraft.level.getEntitiesOfClass(ArborOfWillEntity.class,
                 new AABB(player.blockPosition()).inflate(reach + 8.0D), arbor -> arbor.isOwnedBy(player));
         for (ArborOfWillEntity arbor : arbors) {
-            for (ArborOfWillLayout.FruitPlacement fruit : ArborSkillPresentation.placements(arbor.chamberRadius())) {
+            for (ArborOfWillLayout.FruitPlacement fruit : ArborSkillPresentation.placements(arbor.chamberRadius(), arbor.degree())) {
                 SkillPoint skill = SkillPointInit.getById(fruit.skillId());
                 if (skill == null || fruit.whorl() > Math.max(1, ArborOfWillVisualRules.visibleWhorls(arbor.degree()))) continue;
-                if (unlockedOnly && !SkillProgressClientCache.current().isUnlocked(skill)) continue;
                 Vec3 position = arbor.position().add(fruit.x(), fruit.y(), fruit.z());
                 candidates.add(new ArborFruitTargeting.Candidate(arbor.getId(), fruit.skillId(),
                         new ArborCanopyGeometry.Point(position.x, position.y, position.z), .38D));
@@ -68,7 +69,7 @@ public final class ArborOfWillClientInteraction {
                 .findFirst().orElse(null);
         SkillPoint skill = SkillPointInit.getById(selected.skillId());
         if (arbor == null || skill == null) return Optional.empty();
-        ArborOfWillLayout.FruitPlacement fruit = ArborSkillPresentation.placements(arbor.chamberRadius()).stream()
+        ArborOfWillLayout.FruitPlacement fruit = ArborSkillPresentation.placements(arbor.chamberRadius(), arbor.degree()).stream()
                 .filter(candidate -> candidate.skillId() == selected.skillId()).findFirst().orElse(null);
         return fruit == null ? Optional.empty() : Optional.of(new Target(arbor, fruit, skill));
     }

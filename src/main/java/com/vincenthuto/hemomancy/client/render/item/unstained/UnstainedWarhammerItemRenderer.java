@@ -9,7 +9,9 @@ import com.vincenthuto.hemomancy.client.model.item.unstained.UnstainedWarhammerM
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
@@ -18,7 +20,10 @@ import net.minecraft.world.item.ItemStack;
 
 public class UnstainedWarhammerItemRenderer extends BlockEntityWithoutLevelRenderer {
 	private static final ResourceLocation WARHAMMER_TEXTURE =
-			Hemomancy.rloc("textures/block/pale_silver_bell_body.png");
+			Hemomancy.rloc("textures/entity/unstained_weapons/unstained_warhammer.png");
+	/** Still-water inlays: the Tear gems and hemolytic channels glow faintly. */
+	private static final ResourceLocation WARHAMMER_GLOW =
+			Hemomancy.rloc("textures/entity/unstained_weapons/unstained_warhammer_glow.png");
 	private static final float GUI_MODEL_SCALE = 0.46F;
 	private static final double GUI_MODEL_TRANSLATE_X = 0.42D;
 	private static final double GUI_MODEL_TRANSLATE_Y = -0.44D;
@@ -44,6 +49,8 @@ public class UnstainedWarhammerItemRenderer extends BlockEntityWithoutLevelRende
 		applyDisplayTransform(displayContext, poseStack);
 		VertexConsumer vertexConsumer = bufferSource.getBuffer(model().renderType(WARHAMMER_TEXTURE));
 		model().renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, -1);
+		model().renderToBuffer(poseStack, bufferSource.getBuffer(RenderType.eyes(WARHAMMER_GLOW)),
+				LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, -1);
 		poseStack.popPose();
 
 		if (gui) {

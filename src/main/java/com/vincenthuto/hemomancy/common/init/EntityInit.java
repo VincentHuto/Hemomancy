@@ -13,6 +13,9 @@ import com.vincenthuto.hemomancy.common.entity.boss.saint.putriciel.PutricielEnt
 import com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae.ContainmentAnchorEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae.SeraphaeEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae.SeraphaeFragmentEntity;
+import com.vincenthuto.hemomancy.common.entity.weave.FrayedThreadEntity;
+import com.vincenthuto.hemomancy.common.entity.weave.ThreadBoltEntity;
+import com.vincenthuto.hemomancy.common.entity.weave.ThreadHazardEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.velorum.VelorumEntity;
 import com.vincenthuto.hemomancy.common.entity.item.EntityFlyingCharm;
 import com.vincenthuto.hemomancy.common.entity.item.EntityMorphlingPolypItem;
@@ -251,6 +254,21 @@ public class EntityInit {
                     .build(Hemomancy.rloc("seraphae").toString()));
 
     // Seraphae fragment (spawned during fracturing)
+    public static final DeferredHolder<EntityType<?>, EntityType<FrayedThreadEntity>> frayed_thread = ENTITY_TYPES.register(
+            "frayed_thread",
+            () -> EntityType.Builder.of(FrayedThreadEntity::new, MobCategory.MISC)
+                    .sized(0.4F, 0.4F).clientTrackingRange(10).updateInterval(1)
+                    .build(Hemomancy.rloc("frayed_thread").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<ThreadBoltEntity>> thread_bolt = ENTITY_TYPES.register(
+            "thread_bolt",
+            () -> EntityType.Builder.<ThreadBoltEntity>of(ThreadBoltEntity::new, MobCategory.MISC)
+                    .sized(0.25F, 0.25F).clientTrackingRange(8).updateInterval(1)
+                    .build(Hemomancy.rloc("thread_bolt").toString()));
+    public static final DeferredHolder<EntityType<?>, EntityType<ThreadHazardEntity>> thread_hazard = ENTITY_TYPES.register(
+            "thread_hazard",
+            () -> EntityType.Builder.<ThreadHazardEntity>of(ThreadHazardEntity::new, MobCategory.MISC)
+                    .sized(1.0F, 0.25F).clientTrackingRange(8)
+                    .build(Hemomancy.rloc("thread_hazard").toString()));
     public static final DeferredHolder<EntityType<?>, EntityType<SeraphaeFragmentEntity>> seraphae_fragment = ENTITY_TYPES.register(
             "seraphae_fragment",
             () -> EntityType.Builder.of(SeraphaeFragmentEntity::new, MobCategory.MONSTER)
@@ -1061,6 +1079,7 @@ public class EntityInit {
         event.put(EntityInit.hemorath.get(), HemorathEntity.setAttributes().build());
         event.put(EntityInit.seraphae.get(), SeraphaeEntity.setAttributes().build());
         event.put(EntityInit.seraphae_fragment.get(), SeraphaeFragmentEntity.setAttributes().build());
+        event.put(EntityInit.frayed_thread.get(), FrayedThreadEntity.setAttributes().build());
         event.put(EntityInit.annetta_knowles.get(), AnnettaKnowlesEntity.setAttributes().build());
         event.put(EntityInit.stained_priestess.get(), StainedPriestessEntity.setAttributes().build());
         event.put(EntityInit.latent_annetta_infection.get(), LatentAnnettaInfectionEntity.setAttributes().build());

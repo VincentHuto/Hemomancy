@@ -1,0 +1,44 @@
+{
+ "parent": "minecraft:block/block",
+ "render_type": "minecraft:cutout",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "hemomancy:block/blood_still",
+  "blood": "hemomancy:block/blood_still"
+ },
+ "elements": [
+  {
+   "name": "gauge_blood",
+   "from": [
+    7.3,
+    1.95,
+    1.75
+   ],
+   "to": [
+    8.7,
+    2.95,
+    1.95
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.3,
+      13.05,
+      8.7,
+      14.05
+     ],
+     "texture": "#blood"
+    },
+    "up": {
+     "uv": [
+      7.3,
+      1.75,
+      8.7,
+      1.95
+     ],
+     "texture": "#blood"
+    }
+   }
+  }
+ ]
+}

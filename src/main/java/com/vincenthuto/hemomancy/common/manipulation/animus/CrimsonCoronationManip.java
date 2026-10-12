@@ -22,6 +22,15 @@ public class CrimsonCoronationManip extends BloodManipulation {
 	}
 
 	@Override
+	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
+		if (ManipulationReactiveEvents.coronationActive(player)) {
+			player.displayClientMessage(net.minecraft.network.chat.Component.literal("Your crown still holds its swords."), true);
+			return false;
+		}
+		return super.canPerformAction(player, heldItem, ticks);
+	}
+
+	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position, float heldTicks) {
         try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, getRequiredChargeTicks() <= 0 ? 1 : heldTicks / getRequiredChargeTicks())) {
 

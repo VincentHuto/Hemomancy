@@ -1,5 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
+import com.vincenthuto.hemomancy.client.player.LivingWeaponPlayerPose;
+import net.minecraft.client.player.LocalPlayer;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingFlailItemRenderer;
@@ -123,6 +126,12 @@ public class LivingFlailItem extends LivingToolItem implements HemoClientItemExt
 }
 
 class RenderPropLivingFlail implements IClientItemExtensions {
+	@Override
+	public boolean applyForgeHandTransform(PoseStack poses, LocalPlayer player, HumanoidArm arm,
+			ItemStack stack, float partialTick, float equipProgress, float swingProgress) {
+		return LivingWeaponPlayerPose.applyFirstPerson(poses, player, arm, stack, equipProgress, swingProgress);
+	}
+
 	public static final RenderPropLivingFlail INSTANCE = new RenderPropLivingFlail();
 
 	@Override

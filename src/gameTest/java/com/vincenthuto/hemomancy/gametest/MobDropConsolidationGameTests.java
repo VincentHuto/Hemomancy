@@ -89,17 +89,20 @@ public final class MobDropConsolidationGameTests {
         h.startSequence().thenWaitUntil(() -> h.assertTrue(h.getLevel().areEntitiesLoaded(
                 net.minecraft.world.level.ChunkPos.asLong(pos)), "Pool must be entity loaded"))
                 .thenExecute(() -> {
-        var jelly = EntityInit.hemojelly.get().create(h.getLevel());
+        // The pool is far from the grid: a player in a concurrent test would otherwise far-despawn these on their first tick.
+        var jelly = EntityInit.hemojelly.get().create(h.getLevel()); jelly.setPersistenceRequired();
         jelly.moveTo(pos.getX()+.5, pos.getY()-.625, pos.getZ()+.5); h.getLevel().addFreshEntity(jelly);
-        var fish = EntityType.COD.create(h.getLevel()); fish.setNoAi(true); fish.setNoGravity(true);
+        var fish = EntityType.COD.create(h.getLevel()); fish.setNoAi(true); fish.setNoGravity(true); fish.setPersistenceRequired();
         fish.moveTo(pos.getX()+.5, pos.getY()-1.5, pos.getZ()+.5); h.getLevel().addFreshEntity(fish);
         h.runAfterDelay(20, () -> {
             fish.discard();
             h.getLevel().setBlockAndUpdate(pos.below(), Blocks.STONE.defaultBlockState());
-            var second = EntityType.COD.create(h.getLevel()); second.setNoAi(true); second.setNoGravity(true);
+            var second = EntityType.COD.create(h.getLevel()); second.setNoAi(true); second.setNoGravity(true); second.setPersistenceRequired();
             second.moveTo(pos.getX()+.5, pos.getY()-2.5, pos.getZ()+.5); h.getLevel().addFreshEntity(second);
             h.runAfterDelay(55, () -> {
-                h.assertTrue(second.tickCount >= 40 && jelly.tickCount >= 60, "Release control must receive entity ticks");
+                h.assertTrue(second.tickCount >= 40 && jelly.tickCount >= 60, "Release control must receive entity ticks: second="
+                        + second.tickCount + "/" + second.getRemovalReason() + " jelly=" + jelly.tickCount + "/" + jelly.getRemovalReason()
+                        + " players=" + h.getLevel().players().stream().map(p -> p.getGameProfile().getName() + "@" + p.blockPosition().toShortString()).toList());
                 h.assertTrue(second.getHealth() == second.getMaxHealth(), "Capture crossed an obstruction");
                 second.discard(); jelly.discard(); h.succeed();
             });

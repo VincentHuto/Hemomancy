@@ -219,6 +219,31 @@
           "name": "hemomancy:crude_memory_void_shroud"
         },
         {
+          "type": "minecraft:item",
+          "weight": 3,
+          "name": "hemomancy:crude_memory_hematic_flare"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 2,
+          "name": "hemomancy:memory_prismatic_reproof"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 2,
+          "name": "hemomancy:memory_lumen_suture"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 2,
+          "name": "hemomancy:memory_searing_lash"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 2,
+          "name": "hemomancy:memory_cruor_javelin"
+        },
+        {
           "type": "minecraft:empty",
           "weight": 36
         }

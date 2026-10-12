@@ -2,8 +2,7 @@
   "multipart": [
     {
       "apply": {
-        "model": "hemomancy:block/scar_station",
-        "y": 180
+        "model": "hemomancy:block/scar_station"
       },
       "when": {
         "facing": "north"
@@ -11,10 +10,10 @@
     },
     {
       "apply": {
-        "model": "hemomancy:block/scar_station"
+        "model": "hemomancy:block/scar_station_glass"
       },
       "when": {
-        "facing": "south"
+        "facing": "north"
       }
     },
     {
@@ -23,7 +22,34 @@
         "y": 90
       },
       "when": {
-        "facing": "west"
+        "facing": "east"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/scar_station_glass",
+        "y": 90
+      },
+      "when": {
+        "facing": "east"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/scar_station",
+        "y": 180
+      },
+      "when": {
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/scar_station_glass",
+        "y": 180
+      },
+      "when": {
+        "facing": "south"
       }
     },
     {
@@ -32,7 +58,16 @@
         "y": 270
       },
       "when": {
-        "facing": "east"
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/scar_station_glass",
+        "y": 270
+      },
+      "when": {
+        "facing": "west"
       }
     }
   ]

@@ -63,6 +63,8 @@ final class LivingSickleFeatureSourceTest {
 
 		assertTrue(javaModel.contains("blade_root"));
 		assertTrue(javaModel.contains("blade_tip"));
+		assertTrue(javaModel.contains("\"blade_15\"") && javaModel.contains("\"pommel\""),
+				"a fist-length handle under a segmented crescent blade, not a long-hafted scythe");
 		String blockbenchModel = Files.readString(bbmodel);
 		assertTrue(blockbenchModel.contains("model_living_sickle.png"));
 		assertTrue(blockbenchModel.contains("data:image/png;base64,"), "the Blockbench project must carry its texture");

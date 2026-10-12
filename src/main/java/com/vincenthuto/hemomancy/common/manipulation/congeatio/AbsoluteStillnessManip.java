@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -21,6 +22,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class AbsoluteStillnessManip extends BloodManipulation {
+	/** Each pulse freezes the blood of anything already held at full Rime. */
+	public static final float FREEZE_DAMAGE = 1.5F;
 	public AbsoluteStillnessManip(String name, double cost, double alignment, double xpCost, EnumManipulationType type,
 			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
 		super(name, cost, alignment, xpCost, type, rank, tendency, section);
@@ -31,8 +34,15 @@ public class AbsoluteStillnessManip extends BloodManipulation {
         try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, getRequiredChargeTicks() <= 0 ? 1 : heldTicks / getRequiredChargeTicks())) {
 
 		if (!(world instanceof ServerLevel level)) return;
+		float freeze = FREEZE_DAMAGE * (float) com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper
+				.getCrimsonMasteryMultiplier(player);
+		// The freeze rides the pulse's root but only deals damage; the pulse itself keeps Rime topped up.
+		SchoolHitContext freezeHit = SchoolDamage.context(this, player).withRole(SchoolHitContext.Role.DAMAGE_ONLY);
 		for (LivingEntity target : ManipulationCombatHelper.hostileTargets(player, level, 6)) {
 			target.clearFire();
+			if (SchoolStates.levels(target, SchoolState.RIME) >= 3)
+				ManipulationParticles.hurt(this, target,
+						SchoolDamage.attributed(level.damageSources().freeze(), freezeHit, player), freeze);
             ManipulationVisuals.attached(target,ManipulationVisuals.Form.FROZEN_VEINS,target.getBbWidth(),25,1);
 			SchoolStates.apply(player, target, SchoolState.RIME, 25);
 		}

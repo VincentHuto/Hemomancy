@@ -688,7 +688,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 
 	private void drawManipTooltip(GuiGraphics graphics, int mouseX, int mouseY, BloodManipulation hovered) {
 		List<Component> tooltip = new ArrayList<>();
-		tooltip.add(Component.literal(hovered.getProperName()).withStyle(s -> s.withBold(true)));
+		tooltip.add(hovered.getDisplayName().withStyle(s -> s.withBold(true)));
 		tooltip.add(Component.literal("Noetic Memory"));
 		tooltip.add(Component.literal("Tendency: " + HLTextUtils.convertInitToLang(hovered.getTend().name())));
 		tooltip.add(Component.literal("Rank: " + HLTextUtils.convertInitToLang(hovered.getRank().name())));

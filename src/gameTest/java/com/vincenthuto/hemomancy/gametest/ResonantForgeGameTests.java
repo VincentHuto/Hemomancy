@@ -488,13 +488,14 @@ public final class ResonantForgeGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 100, batch = "resonant_forge")
-    public static void everyOrientationBuildsFourBloodLinkedFillers(GameTestHelper helper) {
+    public static void everyOrientationBuildsNineBloodLinkedFillers(GameTestHelper helper) {
         Direction[] facings = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
         BlockPos[] positions = {new BlockPos(3, 3, 3), new BlockPos(7, 3, 3),
                 new BlockPos(3, 3, 8), new BlockPos(7, 3, 8)};
         for (int i = 0; i < facings.length; i++) {
-            helper.getLevel().setBlockAndUpdate(helper.absolutePos(positions[i]).above(),
-                    net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
+            for (BlockPos basinCell : new BlockPos[] {positions[i], positions[i].relative(facings[i].getOpposite())})
+                helper.getLevel().setBlockAndUpdate(helper.absolutePos(basinCell).above(),
+                        net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
             ResonantForgeBlockEntity forge = placeForge(helper, positions[i], facings[i]);
             helper.assertTrue(ResonantForgeBlock.hasCompleteStructure(helper.getLevel(), forge.getBlockPos(),
                     forge.getBlockState()), "Incomplete structure facing " + facings[i]);
@@ -507,9 +508,22 @@ public final class ResonantForgeGameTests {
                     helper.assertTrue(filler.getBloodVolume() == 321, "Filler did not resolve controller blood");
                 }
             }
-            helper.assertTrue(fillers == 4, "Wrong filler count facing " + facings[i]);
-            helper.assertTrue(helper.getLevel().getBlockState(forge.getBlockPos().above()).isAir(),
-                    "Basin headroom is occupied");
+            helper.assertTrue(fillers == 9, "Wrong filler count facing " + facings[i]);
+            for (BlockPos offset : ResonantForgeBlock.offsets(facings[i])) {
+                BlockPos fillerPos = forge.getBlockPos().offset(offset);
+                var traced = helper.getLevel().getBlockState(fillerPos).getShape(helper.getLevel(), fillerPos);
+                helper.assertTrue(!traced.isEmpty() && traced.bounds().equals(((ResonantForgeBlock) forge.getBlockState()
+                        .getBlock()).fillerShape(forge.getBlockState(), offset).bounds()),
+                        "Filler outline does not follow the traced model facing " + facings[i] + " at " + offset);
+            }
+            BlockPos frontBasin = forge.getBlockPos().relative(facings[i].getOpposite());
+            helper.assertTrue(helper.getLevel().getBlockEntity(frontBasin)
+                    instanceof com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity,
+                    "Front basin cell is not a filler facing " + facings[i]);
+            for (BlockPos headroomPos : new BlockPos[] {forge.getBlockPos().above(), frontBasin.above()})
+                helper.assertTrue(helper.getLevel().getBlockState(headroomPos).isAir(), "Basin headroom is occupied facing "
+                        + facings[i] + " at " + headroomPos.subtract(forge.getBlockPos()) + ": "
+                        + helper.getLevel().getBlockState(headroomPos));
             var headroom = net.minecraft.world.level.block.Block.box(0, 16, 0, 16, 32, 16);
             helper.assertTrue(!net.minecraft.world.phys.shapes.Shapes.joinIsNotEmpty(
                     forge.getBlockState().getCollisionShape(helper.getLevel(), forge.getBlockPos()),
@@ -524,6 +538,45 @@ public final class ResonantForgeGameTests {
             helper.assertTrue(helper.getLevel().getBlockEntity(forge.getBlockPos()) == forge
                     && forge.getBloodVolume() == 321, "Legacy cleanup damaged the forge");
         }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 100, batch = "resonant_forge")
+    public static void legacyFootprintRegainsFrontRowOnLoad(GameTestHelper helper) {
+        ResonantForgeBlockEntity forge = placeForge(helper, new BlockPos(5, 3, 4), Direction.NORTH);
+        forge.receiveBlood(250);
+        // Strip the front row back to the pre-redesign 3x1 footprint, unlinking first so the controller survives.
+        for (BlockPos offset : ResonantForgeBlock.offsets(Direction.NORTH)) {
+            if (offset.getZ() == 0) continue;
+            BlockPos fillerPos = forge.getBlockPos().offset(offset);
+            if (helper.getLevel().getBlockEntity(fillerPos) instanceof com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity filler)
+                filler.setMainBlockPos(null);
+            helper.getLevel().setBlockAndUpdate(fillerPos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
+        }
+        helper.assertFalse(ResonantForgeBlock.hasCompleteStructure(helper.getLevel(), forge.getBlockPos(),
+                forge.getBlockState()), "Stripped forge still reported a complete footprint");
+        forge = reloadForge(helper, forge);
+        tick(forge, helper, 1);
+        helper.assertTrue(ResonantForgeBlock.hasCompleteStructure(helper.getLevel(), forge.getBlockPos(),
+                forge.getBlockState()), "Legacy forge did not regain its front row");
+        helper.assertTrue(helper.getLevel().getBlockEntity(forge.getBlockPos()) == forge && forge.getBloodVolume() == 250,
+                "Front-row restoration damaged the forge");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 100, batch = "resonant_forge")
+    public static void blockedLegacyFrontRowIsLeftAlone(GameTestHelper helper) {
+        ResonantForgeBlockEntity forge = placeForge(helper, new BlockPos(5, 3, 4), Direction.NORTH);
+        BlockPos front = forge.getBlockPos().relative(Direction.SOUTH);
+        if (helper.getLevel().getBlockEntity(front) instanceof com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity filler)
+            filler.setMainBlockPos(null);
+        helper.getLevel().setBlockAndUpdate(front, net.minecraft.world.level.block.Blocks.STONE.defaultBlockState());
+        forge = reloadForge(helper, forge);
+        tick(forge, helper, 1);
+        helper.assertTrue(helper.getLevel().getBlockState(front).is(net.minecraft.world.level.block.Blocks.STONE),
+                "Restoration replaced a solid block");
+        helper.assertFalse(ResonantForgeBlock.hasCompleteStructure(helper.getLevel(), forge.getBlockPos(),
+                forge.getBlockState()), "Obstructed footprint reported complete");
         helper.succeed();
     }
 

@@ -6,21 +6,29 @@ import java.nio.file.Path;
 
 public class UnstainedWeaponRendererResourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
+	private static final String WEAPON_TEXTURES = "textures/entity/unstained_weapons/";
 
 	public static void main(String[] args) throws IOException {
 		assertCustomRenderedItemModel("unstained_warhammer");
 		assertCustomRenderedItemModel("silthmere_glaive");
 		assertCustomRenderedItemModel("absolution_dagger");
 		assertCustomRenderedItemModel("annettas_absolution_dagger");
-		assertBbModelExport("UnstainedWarhammerModel", "textures/block/pale_silver_bell_body.png", true);
-		assertBbModelExport("SilthmereGlaiveModel", "textures/block/pale_silver_block.png", true);
-		assertBbModelExport("AbsolutionDaggerModel", "textures/block/pale_silver_block.png", false);
+		assertBbModelExport("UnstainedWarhammerModel", WEAPON_TEXTURES + "unstained_warhammer.png", true);
+		assertBbModelExport("SilthmereGlaiveModel", WEAPON_TEXTURES + "silthmere_glaive.png", true);
+		assertBbModelExport("AbsolutionDaggerModel", WEAPON_TEXTURES + "absolution_dagger.png", true);
 		assertContains("src/main/resources/assets/hemomancy/models/item/bbmodel/SilthmereGlaiveModel.bbmodel",
-				"-10.31324",
-				"Glaive main blade must invert Java Z rotation for Blockbench's flipped Y axis");
-		assertContains("src/main/resources/assets/hemomancy/models/item/bbmodel/SilthmereGlaiveModel.bbmodel",
-				"31.512679",
-				"Glaive back hook must invert Java Z rotation for Blockbench's flipped Y axis");
+				"-11.997736",
+				"Glaive collar ribbon must invert Java Z rotation for Blockbench's flipped Y axis");
+		for (String texture : new String[] { "unstained_warhammer", "silthmere_glaive", "absolution_dagger",
+				"annettas_absolution_dagger" }) {
+			assertPng("src/main/resources/assets/hemomancy/" + WEAPON_TEXTURES + texture + ".png");
+			assertPng("src/main/resources/assets/hemomancy/" + WEAPON_TEXTURES + texture + "_glow.png");
+		}
+		assertPng("src/main/resources/assets/hemomancy/textures/item/unstained_shield.png");
+		assertContains("src/main/resources/assets/hemomancy/models/item/unstained_shield.json", "lunar boss",
+				"Unstained shield should keep its raised still-water moon boss");
+		assertContains("src/main/resources/assets/hemomancy/models/item/unstained_shield.json", "verdigris boss ring",
+				"Unstained shield should carry its patinated copper boss ring");
 
 		assertContains("src/main/java/com/vincenthuto/hemomancy/common/item/unstained/tool/UnstainedWarhammerItem.java",
 				"implements HemoClientItemExtensionsProvider",
@@ -99,6 +107,25 @@ public class UnstainedWeaponRendererResourceTest {
 		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/UnstainedWarhammerItemRenderer.java",
 				"WARHAMMER_TEXTURE",
 				"Warhammer renderer should own its texture");
+		for (String renderer : new String[] { "UnstainedWarhammerItemRenderer", "SilthmereGlaiveItemRenderer",
+				"AbsolutionDaggerItemRenderer" }) {
+			String path = "src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/" + renderer + ".java";
+			assertContains(path, WEAPON_TEXTURES, renderer + " should use its authored weapon atlas");
+			assertNotContains(path, "textures/block/", renderer + " must not borrow a 16x16 block texture");
+			assertContains(path, "RenderType.eyes(", renderer + " should render its still-water glow layer");
+		}
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/AbsolutionDaggerItemRenderer.java",
+				"ANNETTA_TEXTURE",
+				"Annetta's dagger should render with its own hair, tooth and nail atlas");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/AbsolutionDaggerItemRenderer.java",
+				"setAnnettaVariant(annetta)",
+				"Only Annetta's dagger should show her braid");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/model/item/unstained/AbsolutionDaggerModel.java",
+				"\"annetta_braid\"",
+				"Dagger model should define Annetta's braid part");
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/model/item/unstained/UnstainedWarhammerModel.java",
+				"\"crescent_finial\"",
+				"Warhammer should crown its bell with a crescent finial");
 		assertContains("src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained/SilthmereGlaiveItemRenderer.java",
 				"GLAIVE_TEXTURE",
 				"Glaive renderer should own its texture");
@@ -148,6 +175,12 @@ public class UnstainedWeaponRendererResourceTest {
 				modelName + " must point at its renderer texture");
 		assertTrue(!expectsRotation || json.contains("\"rotation\": ["),
 				modelName + " must preserve rotated Java PartPose groups");
+	}
+
+	private static void assertPng(String path) throws IOException {
+		byte[] bytes = Files.readAllBytes(ROOT.resolve(path));
+		assertTrue(bytes.length > 8 && (bytes[0] & 0xFF) == 0x89 && bytes[1] == 'P' && bytes[2] == 'N' && bytes[3] == 'G',
+				path + " must be a PNG");
 	}
 
 	private static void assertContains(String path, String expected, String message) throws IOException {

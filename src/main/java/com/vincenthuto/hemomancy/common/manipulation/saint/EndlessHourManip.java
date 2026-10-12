@@ -13,8 +13,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.damagesource.DamageSource;
+import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -23,10 +23,10 @@ import net.minecraft.world.level.Level;
  * Endless Hour — Canon Memory of Saint Velorum.
  * Doctrine: Martyrdom / Silence
  *
- * HP cannot drop below 1 temporarily. However, all delayed damage
- * returns at once when the effect expires. The player is granted
- * Absorption hearts that represent the "borrowed time", and when
- * the effect ends, they receive the accumulated damage as a burst.
+ * HP cannot drop below 1 temporarily. Damage that would have been lethal
+ * is held as debt and returns at once when the hour expires. The hour grants
+ * no extra mitigation: ordinary damage still lands, so the debt is the price
+ * of every blow survived beyond the last health point.
  *
  * Imprinted, not learned. The player uses it uncomfortably.
  */
@@ -35,6 +35,8 @@ public class EndlessHourManip extends BloodManipulation {
 	private static final String DEFERRED_DAMAGE_KEY = "hemomancy:endless_hour_deferred";
 	private static final String EXPIRY_KEY = "hemomancy:endless_hour_expiry";
 	private static final int DURATION_TICKS = 200; // 10 seconds
+	/** The source of the repayment in flight; identity marks it so mitigation is not applied twice. */
+	private static DamageSource settling;
 
 	public EndlessHourManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
@@ -92,9 +94,6 @@ public class EndlessHourManip extends BloodManipulation {
 			return;
 		}
 
-		player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, DURATION_TICKS, 4, false, true));
-		player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, DURATION_TICKS, 3, false, true));
-
 		player.getPersistentData().putLong(EXPIRY_KEY, currentTime + DURATION_TICKS);
 		player.getPersistentData().putFloat(DEFERRED_DAMAGE_KEY, 0.0f);
 
@@ -138,8 +137,23 @@ public class EndlessHourManip extends BloodManipulation {
                     player.position(),player.position(),deferred,24);
         }
 		if (deferred <= 0 || !player.isAlive()) return;
-		player.setHealth(Math.max(0, player.getHealth() - deferred));
-		if (!player.isAlive()) player.die(player.damageSources().magic());
+		// Repaid as one real hit so totems and Phoenix Debt can answer it. The debt was mitigated when it was
+		// deferred, so its damage type bypasses armor, effects and enchantments, and absorption and hit or
+		// spawn grace are waived here; defensive handlers exempt it through isSettlement.
+		DamageSource source = com.vincenthuto.hemomancy.common.damage.HemoDamageTypes.endlessHourDebt(player.level());
+		var grace = player instanceof com.vincenthuto.hemomancy.mixin.core.ServerPlayerSpawnGraceAccessor accessor ? accessor : null;
+		int spawnGrace = grace == null ? 0 : grace.hemomancy$getSpawnInvulnerableTime();
+		boolean collected;
+		settling = source;
+		try {
+			if (grace != null) grace.hemomancy$setSpawnInvulnerableTime(0);
+			player.invulnerableTime = 0;
+			collected = player.hurt(source, deferred);
+		} finally {
+			settling = null;
+			if (grace != null) grace.hemomancy$setSpawnInvulnerableTime(spawnGrace);
+		}
+		if (!collected) return;
 		player.displayClientMessage(net.minecraft.network.chat.Component.literal(
 				"The hour ends. Velorum collects: " + String.format("%.1f", deferred) + " damage returns.")
 				.withStyle(net.minecraft.ChatFormatting.RED, net.minecraft.ChatFormatting.BOLD), false);
@@ -147,6 +161,16 @@ public class EndlessHourManip extends BloodManipulation {
 			level.playSound(null, player.blockPosition(), SoundEvents.LIGHTNING_BOLT_THUNDER,
 					SoundSource.PLAYERS, .6F, .5F);
 		}
+	}
+
+	public static boolean isSettlement(DamageSource source) {
+		return source != null && source == settling;
+	}
+
+	public static void waiveMitigation(net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent event) {
+		for (var reduction : java.util.List.of(DamageContainer.Reduction.ARMOR, DamageContainer.Reduction.ENCHANTMENTS,
+				DamageContainer.Reduction.MOB_EFFECTS, DamageContainer.Reduction.ABSORPTION))
+			event.addReductionModifier(reduction, (container, amount) -> 0);
 	}
 
 	/**

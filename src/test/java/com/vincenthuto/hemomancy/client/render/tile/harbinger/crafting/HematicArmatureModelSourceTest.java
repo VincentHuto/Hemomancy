@@ -1,0 +1,103 @@
+package com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting;
+
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class HematicArmatureModelSourceTest {
+    private static final Path MODELS = Path.of("src/main/resources/assets/hemomancy/models/block");
+    private static final Path RENDERER = Path.of(
+            "src/main/java/com/vincenthuto/hemomancy/client/render/tile/harbinger/crafting/HematicArmatureRenderer.java");
+    private static final Path GEOMETRY = Path.of(
+            "src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/crafting/ArmatureGeometry.java");
+    private static final Path GENERATOR = Path.of("tools/model_export/hematic_armature.py");
+    private static final List<String> STAGES = List.of(
+            "hematic_armature", "hematic_armature_consecrated", "hematic_armature_monolithic");
+
+    private static String read(Path path) throws IOException {
+        return Files.readString(path).replace("\r\n", "\n");
+    }
+
+    private static List<String> partModels() throws IOException {
+        var matcher = Pattern.compile("PART_MODELS = \\{(.*?)};", Pattern.DOTALL).matcher(read(RENDERER));
+        assertTrue(matcher.find(), "renderer should list its part models");
+        List<String> parts = new ArrayList<>();
+        var names = Pattern.compile("\"([a-z_]+)\"").matcher(matcher.group(1));
+        while (names.find()) parts.add(names.group(1));
+        return parts;
+    }
+
+    @Test void everyRenderedSectionAndPartIsGeneratedAndRegistered() throws IOException {
+        var parts = partModels();
+        assertEquals(14, parts.size());
+        for (String part : parts) {
+            Path model = MODELS.resolve("hematic_armature_" + part + ".json");
+            assertTrue(Files.isRegularFile(model), model + " should be exported");
+            assertTrue(read(model).contains("tools/model_export/hematic_armature.py"), model + " should come from its generator");
+        }
+        assertTrue(read(Path.of("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java"))
+                .contains("for (String part : HematicArmatureRenderer.PART_MODELS)"));
+    }
+
+    @Test void stageBodiesAndBlockstateComeFromTheGenerator() throws IOException {
+        for (String body : STAGES) {
+            String json = read(MODELS.resolve(body + ".json"));
+            assertTrue(json.contains("tools/model_export/hematic_armature.py"), body);
+            assertTrue(json.contains("\"name\": \"dais\""), body + " should keep the subject's dais");
+            assertTrue(json.contains("\"name\": \"vial_glass\""), body + " should keep the side vials");
+        }
+        assertTrue(read(MODELS.resolve("hematic_armature_consecrated_upper.json")).contains("\"name\": \"restraint_chain\""));
+        assertTrue(read(MODELS.resolve("hematic_armature_monolithic_upper.json")).contains("\"name\": \"cornerstone\""));
+        String states = read(Path.of("src/main/resources/assets/hemomancy/blockstates/hematic_armature.json"));
+        for (String facing : List.of("north", "east", "south", "west"))
+            for (int stage = 0; stage < 3; stage++)
+                assertTrue(Pattern.compile("\"facing\": \"" + facing + "\",\\s*\"stage\": \"" + stage + "\"")
+                        .matcher(states).find(), facing + stage);
+    }
+
+    @Test void everyExportStaysInsideVanillaElementBounds() throws IOException {
+        var number = Pattern.compile("\"(?:from|to)\": \\[([^\\]]*)]");
+        try (var files = Files.list(MODELS)) {
+            for (Path model : files.filter(p -> p.getFileName().toString().startsWith("hematic_armature")).toList()) {
+                var matcher = number.matcher(read(model));
+                while (matcher.find()) {
+                    for (String v : matcher.group(1).split(",")) {
+                        double d = Double.parseDouble(v.trim());
+                        assertTrue(d >= -16 && d <= 32, model + " leaves vanilla bounds at " + d);
+                    }
+                }
+            }
+        }
+    }
+
+    @Test void rendererOffsetsMatchTheGeneratorSections() throws IOException {
+        String renderer = read(RENDERER), generator = read(GENERATOR);
+        assertTrue(generator.contains("SECTIONS = {'body': (0, 0), 'west': (-16, 0), 'east': (16, 0), 'upper': (0, 48)}"));
+        assertTrue(renderer.contains("WING_SHIFT = 16F, UPPER_LIFT = 48F"));
+        assertTrue(generator.contains("PART_LIFT = {'banner': 48, 'banner_monolithic': 48, 'vial_blood': 0, "
+                + "'heart_glass': 48, 'heart_blood': 48}"), "parts drawn with UPPER_LIFT must be exported lowered by it");
+    }
+
+    @Test void footprintIsFiveCellsWide() throws IOException {
+        String geometry = read(GEOMETRY);
+        assertTrue(geometry.contains("Generated by tools/model_export/hematic_armature.py"));
+        assertTrue(geometry.contains("{-2, 0, 0}") && geometry.contains("{2, 0, 0}"));
+        assertFalse(geometry.contains("{-3,") || geometry.contains("{3,"), "the frame is one cell slimmer on each side");
+    }
+
+    @Test void legacyEntityModelIsGone() {
+        for (String stale : List.of(
+                "src/main/java/com/vincenthuto/hemomancy/client/model/tile/crafting/HematicArmatureModel.java",
+                "src/main/resources/assets/hemomancy/textures/entity/model_hematic_armature.png",
+                "src/main/resources/assets/hemomancy/models/block/bbmodel/HematicArmatureModel.bbmodel")) {
+            assertFalse(Files.exists(Path.of(stale)), stale + " should be removed");
+        }
+    }
+}

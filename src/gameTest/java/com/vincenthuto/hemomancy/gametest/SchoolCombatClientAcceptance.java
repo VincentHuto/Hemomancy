@@ -123,7 +123,7 @@ public final class SchoolCombatClientAcceptance {
             } else {
                 target.setNoAi(false);
                 var known = HemoCapabilityAccess.requireKnownManipulations(caster);
-                known.getKnownManips().put(ManipulationInit.blood_binding.get(), new ManipLevel(3, 0));
+                known.getKnownManips().put(ManipulationInit.hematic_rebuke.get(), new ManipLevel(3, 0));
                 known.getKnownManips().put(ManipulationInit.sanguine_marionette.get(), new ManipLevel(3, 0));
                 known.setEquippedManipNames(java.util.List.of("sanguine_marionette"));
                 known.setSelectedManip(ManipulationInit.sanguine_marionette.get());

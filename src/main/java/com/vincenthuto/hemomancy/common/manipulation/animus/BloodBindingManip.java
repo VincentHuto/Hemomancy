@@ -22,6 +22,7 @@ public class BloodBindingManip extends BloodManipulation {
 	public static final double RANGE = 8.0D;
 	public static final int DURATION_TICKS = 120;
 	public static final int BOSS_DURATION_TICKS = DURATION_TICKS / 2;
+	public static final int CHAIN_DURATION_TICKS = 80;
 	private static final double AIM_DOT = 0.975D;
 	private final Mode mode;
 
@@ -86,12 +87,17 @@ public class BloodBindingManip extends BloodManipulation {
 				&& CommonHooks.canMobEffectBeApplied(target, binding);
 	}
 
-	private MobEffectInstance bindingFor(LivingEntity target) {
-		int normal = switch (mode) {
+	public static int durationTicks(Mode mode) {
+		return switch (mode) {
 			case LINGERING -> 240;
+			case CHAIN -> CHAIN_DURATION_TICKS;
 			case LATTICE -> 160;
 			default -> DURATION_TICKS;
 		};
+	}
+
+	private MobEffectInstance bindingFor(LivingEntity target) {
+		int normal = durationTicks(mode);
 		int duration = ManipulationReactiveEvents.isBoss(target) ? normal / 2 : normal;
 		return new MobEffectInstance(EffectInit.blood_binding, duration, 0, false, false, true);
 	}

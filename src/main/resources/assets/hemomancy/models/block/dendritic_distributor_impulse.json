@@ -1,0 +1,89 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    128
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/dendritic_distributor",
+    "particle": "hemomancy:block/dendritic_distributor"
+  },
+  "elements": [
+    {
+      "name": "impulse",
+      "from": [
+        7.625,
+        8.5,
+        7.125
+      ],
+      "to": [
+        8.375,
+        9.25,
+        7.875
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1.75,
+            9.375,
+            2.0,
+            9.625
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            2.0,
+            9.375,
+            2.25,
+            9.625
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            2.25,
+            9.375,
+            2.5,
+            9.625
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            2.5,
+            9.375,
+            2.75,
+            9.625
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            2.75,
+            9.375,
+            3.0,
+            9.625
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            3.0,
+            9.375,
+            3.25,
+            9.625
+          ],
+          "texture": "#atlas"
+        }
+      },
+      "shade": false,
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    }
+  ]
+}

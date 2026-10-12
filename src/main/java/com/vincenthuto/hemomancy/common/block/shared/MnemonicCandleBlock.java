@@ -29,7 +29,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class MnemonicCandleBlock extends Block implements SimpleWaterloggedBlock {
 	public static final BooleanProperty LIT = BlockStateProperties.LIT;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-	private static final VoxelShape SHAPE = Block.box(2.5D, 0.0D, 2.5D, 13.5D, 13.0D, 13.5D);
+	private static final VoxelShape SHAPE = Block.box(3.0D, 0.0D, 3.0D, 13.0D, 12.0D, 13.0D);
 
 	public MnemonicCandleBlock(Properties properties) {
 		super(properties);
@@ -89,15 +89,13 @@ public class MnemonicCandleBlock extends Block implements SimpleWaterloggedBlock
 		if (!state.getValue(LIT) || state.getValue(WATERLOGGED)) {
 			return;
 		}
+		// The lit model carries the flame; smoke rises from its tip (mnemonic_candle.py FLAME_TIP).
 		double x = pos.getX() + 0.5D;
-		double y = pos.getY() + 0.84D;
+		double y = pos.getY() + 0.9375D;
 		double z = pos.getZ() + 0.5D;
 		if (random.nextFloat() < 0.85F) {
-			level.addParticle(ParticleTypes.SMOKE, x, y + 0.05D, z,
+			level.addParticle(ParticleTypes.SMOKE, x, y, z,
 					(random.nextDouble() - 0.5D) * 0.01D, 0.018D, (random.nextDouble() - 0.5D) * 0.01D);
-		}
-		if (random.nextFloat() < 0.45F) {
-			level.addParticle(ParticleTypes.SMALL_FLAME, x, y, z, 0.0D, 0.004D, 0.0D);
 		}
 	}
 

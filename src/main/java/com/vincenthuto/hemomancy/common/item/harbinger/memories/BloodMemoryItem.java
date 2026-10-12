@@ -35,7 +35,7 @@ public class BloodMemoryItem extends Item {
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
 		if (getManip() != null) {
-			tooltip.add(Component.literal(getManip().getProperName()));
+			tooltip.add(getManip().getDisplayName());
 			if (isRetiredMemoryItem()) {
 				tooltip.add(Component.literal("This memory has gone dormant.")
 						.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));

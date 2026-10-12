@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
+import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import com.vincenthuto.hemomancy.common.event.MachineAccessEvents;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -40,7 +41,10 @@ public class ScryingPodiumBlock extends BaseEntityBlock implements SimpleWaterlo
 	public static final MapCodec<ScryingPodiumBlock> CODEC = simpleCodec(ScryingPodiumBlock::new);
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-	private static final VoxelShape SHAPE_N = Block.box(2, 0, 2, 14, 14, 14);
+	/** Foot, stem, collar, top slab and the scrying knob. */
+	private static final VoxelShape SHAPE_N = ModelShapes.of(new double[] {3, 0, 3, 13, 2, 13}, new double[] {5, 2, 5, 11, 9, 11},
+			new double[] {3, 9, 3, 13, 11, 13}, new double[] {2, 11, 2, 14, 14, 14},
+			new double[] {5, 14, 5, 11, 16, 11});
 
 
 	public ScryingPodiumBlock(Properties properties) {

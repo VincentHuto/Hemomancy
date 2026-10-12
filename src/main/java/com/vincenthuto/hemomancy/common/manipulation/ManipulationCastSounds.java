@@ -61,6 +61,12 @@ public final class ManipulationCastSounds {
 			case "carrion_communion" -> new Profile(Cue.SCULK_BLOCK_SPREAD, 0.55F, 0.65F);
 			case "penumbral_drift" -> new Profile(Cue.ENDERMAN_TELEPORT, 0.40F, 1.55F);
 			case "eclipse_well" -> new Profile(Cue.WARDEN_SONIC_BOOM, 0.40F, 0.65F);
+			case "searing_lash" -> new Profile(Cue.FIRECHARGE_USE, 0.55F, 1.35F);
+			case "umbral_rend" -> new Profile(Cue.PLAYER_ATTACK_SWEEP, 0.70F, 0.55F);
+			case "radiant_wake" -> new Profile(Cue.BEACON_ACTIVATE, 0.45F, 1.85F);
+			case "lodestone_collapse" -> new Profile(Cue.ANVIL_USE, 0.60F, 0.55F);
+			case "cruor_javelin" -> new Profile(Cue.GLASS_PLACE, 0.65F, 1.25F);
+			case "fruiting_contagion" -> new Profile(Cue.SCULK_BLOCK_SPREAD, 0.60F, 0.85F);
 			default -> null;
 		};
 	}

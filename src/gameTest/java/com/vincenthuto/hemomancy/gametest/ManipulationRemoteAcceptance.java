@@ -50,7 +50,7 @@ public final class ManipulationRemoteAcceptance {
             Hemomancy.LOGGER.info("AREA6 COMPLETE failures={}",failures);
             for(var player:List.of(caster,observer))player.sendSystemMessage(net.minecraft.network.chat.Component.literal("AREA6_SCENE "+POWERS.length));
         }
-        if(scene==6 && phase==85 && enemy!=null) {
+        if(scene==6 && phase==castTick(scene)+45 && enemy!=null) {
             caster.hurt(caster.damageSources().mobAttack(enemy),2);
         }
         if(phase==150) {
@@ -71,6 +71,15 @@ public final class ManipulationRemoteAcceptance {
             Hemomancy.LOGGER.info("AREA6 scene={} power={} bloodBefore={} bloodAfter={} enemyHP={} observerHP={}",
                     scene,POWERS[scene],beforeBlood,blood,enemy==null?-1:enemy.getHealth(),observer.getHealth());
         }
+    }
+    /**
+     * Client tick (from the scene message) on which the caster releases. Charged powers announce their key-down on
+     * tick 1 and release once the server has watched a full hold; everything else keeps the original tick 40.
+     */
+    private static int castTick(int scene) {
+        if(scene<=0)return 40;
+        var power=ManipulationInit.getByName(POWERS[scene]);
+        return power.getType()==EnumManipulationType.CHARGED?1+Math.max(40,power.getRequiredChargeTicks()+2):40;
     }
     private static void check(boolean result,String label) {
         if(!result)failures++;
@@ -146,12 +155,16 @@ public final class ManipulationRemoteAcceptance {
             if(scene>=POWERS.length){mc.stop();return;}
             ticks++;
             boolean caster=mc.getUser().getName().equals("Area6Caster");
-            if(caster && scene>0 && ticks>=20 && ticks<=32 && ticks%4==0) {
+            // The server clamps released charge to the hold it observed, so announce the key-down up front.
+            if(caster && scene>0 && ticks==1 && ManipulationInit.getByName(POWERS[scene]).getType()==EnumManipulationType.CHARGED)
+                PacketHandler.sendToServer(new com.vincenthuto.hemomancy.common.network.CastingChargePacket(POWERS[scene],1));
+            int cast=castTick(scene), shift=cast-40, local=ticks-shift;
+            if(caster && scene>0 && local>=20 && local<=32 && local%4==0) {
                 var power=ManipulationInit.getByName(POWERS[scene]);
                 if(power.getType()==EnumManipulationType.CHARGED)
-                    PacketHandler.sendToServer(new ManipulationChargeVisualPacket((ticks-16)*power.getRequiredChargeTicks()/16));
+                    PacketHandler.sendToServer(new ManipulationChargeVisualPacket((local-16)*power.getRequiredChargeTicks()/16));
             }
-            if(caster && ticks==40) {
+            if(caster && ticks==cast) {
                 if(scene==0)mc.gameMode.useItem(mc.player,InteractionHand.MAIN_HAND);
                 else {
                     var power=ManipulationInit.getByName(POWERS[scene]);
@@ -160,7 +173,8 @@ public final class ManipulationRemoteAcceptance {
                 }
             }
             if(caster && ticks==100)PacketHandler.sendToServer(UseManipKeyPacket.stopContinuous());
-            if(ticks==30 || ticks==44 || ticks==48 || ticks==55 || ticks==87 || ticks==92 || ticks==160)
+            // Screenshots keep their timing relative to the release; the late shot stays inside the 200-tick scene.
+            if(local==30 || local==44 || local==48 || local==55 || local==87 || local==92 || ticks==Math.min(190,160+shift))
                 net.minecraft.client.Screenshot.grab(mc.gameDirectory,"remote-"+scene+"-"+ticks+".png",mc.getMainRenderTarget(),message->{});
         }
     }

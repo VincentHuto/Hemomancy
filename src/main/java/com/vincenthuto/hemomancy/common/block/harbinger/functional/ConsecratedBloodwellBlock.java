@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.harbinger.BlockBloodEndpoint;
+import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
@@ -30,6 +31,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
@@ -40,6 +42,8 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.CollisionContext;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -54,6 +58,10 @@ import java.util.UUID;
 public class ConsecratedBloodwellBlock extends BaseEntityBlock implements BlockBloodEndpoint {
 
 	public static final MapCodec<ConsecratedBloodwellBlock> CODEC = simpleCodec(ConsecratedBloodwellBlock::new);
+	/** Heart font: plinth, stepped dais, ribbed heart column and the wide rimmed basin. */
+	private static final VoxelShape SHAPE = ModelShapes.of(new double[] {1.4, 0, 1.4, 14.6, 1.4, 14.6},
+			new double[] {2.8, 1.4, 2.8, 13.2, 2.9, 13.2}, new double[] {3.5, 2.9, 3.5, 12.5, 10.2, 12.5},
+			new double[] {1.2, 10.2, 1.2, 14.8, 14.4, 14.8});
 
 	public ConsecratedBloodwellBlock(Properties properties) {
 		super(properties);
@@ -71,6 +79,11 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock implements BlockB
 	@Override
 	protected MapCodec<? extends BaseEntityBlock> codec() {
 		return CODEC;
+	}
+
+	@Override
+	protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+		return SHAPE;
 	}
 
 	@Nullable

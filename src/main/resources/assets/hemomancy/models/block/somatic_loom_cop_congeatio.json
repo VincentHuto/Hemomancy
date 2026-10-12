@@ -1,0 +1,269 @@
+{
+ "parent": "minecraft:block/block",
+ "render_type": "minecraft:cutout",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "minecraft:block/blue_wool",
+  "congeatio": "minecraft:block/blue_wool"
+ },
+ "elements": [
+  {
+   "name": "cop_congeatio",
+   "from": [
+    21.45,
+    8.1,
+    2.9479
+   ],
+   "to": [
+    23.15,
+    9.1,
+    3.6521
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      5.45,
+      6.9,
+      7.15,
+      7.9
+     ],
+     "texture": "#congeatio"
+    },
+    "south": {
+     "uv": [
+      5.45,
+      6.9,
+      7.15,
+      7.9
+     ],
+     "texture": "#congeatio"
+    },
+    "east": {
+     "uv": [
+      2.948,
+      6.9,
+      3.652,
+      7.9
+     ],
+     "texture": "#congeatio"
+    },
+    "west": {
+     "uv": [
+      2.948,
+      6.9,
+      3.652,
+      7.9
+     ],
+     "texture": "#congeatio"
+    },
+    "up": {
+     "uv": [
+      5.45,
+      2.948,
+      7.15,
+      3.652
+     ],
+     "texture": "#congeatio"
+    }
+   }
+  },
+  {
+   "name": "cop_congeatio",
+   "from": [
+    21.9479,
+    8.14,
+    2.45
+   ],
+   "to": [
+    22.6521,
+    9.06,
+    4.15
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      5.948,
+      6.94,
+      6.652,
+      7.86
+     ],
+     "texture": "#congeatio"
+    },
+    "south": {
+     "uv": [
+      5.948,
+      6.94,
+      6.652,
+      7.86
+     ],
+     "texture": "#congeatio"
+    },
+    "east": {
+     "uv": [
+      2.45,
+      6.94,
+      4.15,
+      7.86
+     ],
+     "texture": "#congeatio"
+    },
+    "west": {
+     "uv": [
+      2.45,
+      6.94,
+      4.15,
+      7.86
+     ],
+     "texture": "#congeatio"
+    },
+    "up": {
+     "uv": [
+      5.948,
+      2.45,
+      6.652,
+      4.15
+     ],
+     "texture": "#congeatio"
+    }
+   }
+  },
+  {
+   "name": "cop_congeatio",
+   "from": [
+    21.45,
+    8.18,
+    2.9479
+   ],
+   "to": [
+    23.15,
+    9.02,
+    3.6521
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     22.3,
+     0,
+     3.3
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      5.45,
+      6.98,
+      7.15,
+      7.82
+     ],
+     "texture": "#congeatio"
+    },
+    "south": {
+     "uv": [
+      5.45,
+      6.98,
+      7.15,
+      7.82
+     ],
+     "texture": "#congeatio"
+    },
+    "east": {
+     "uv": [
+      2.948,
+      6.98,
+      3.652,
+      7.82
+     ],
+     "texture": "#congeatio"
+    },
+    "west": {
+     "uv": [
+      2.948,
+      6.98,
+      3.652,
+      7.82
+     ],
+     "texture": "#congeatio"
+    },
+    "up": {
+     "uv": [
+      5.45,
+      2.948,
+      7.15,
+      3.652
+     ],
+     "texture": "#congeatio"
+    }
+   }
+  },
+  {
+   "name": "cop_congeatio",
+   "from": [
+    21.45,
+    8.22,
+    2.9479
+   ],
+   "to": [
+    23.15,
+    8.98,
+    3.6521
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     22.3,
+     0,
+     3.3
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      5.45,
+      7.02,
+      7.15,
+      7.78
+     ],
+     "texture": "#congeatio"
+    },
+    "south": {
+     "uv": [
+      5.45,
+      7.02,
+      7.15,
+      7.78
+     ],
+     "texture": "#congeatio"
+    },
+    "east": {
+     "uv": [
+      2.948,
+      7.02,
+      3.652,
+      7.78
+     ],
+     "texture": "#congeatio"
+    },
+    "west": {
+     "uv": [
+      2.948,
+      7.02,
+      3.652,
+      7.78
+     ],
+     "texture": "#congeatio"
+    },
+    "up": {
+     "uv": [
+      5.45,
+      2.948,
+      7.15,
+      3.652
+     ],
+     "texture": "#congeatio"
+    }
+   }
+  }
+ ]
+}

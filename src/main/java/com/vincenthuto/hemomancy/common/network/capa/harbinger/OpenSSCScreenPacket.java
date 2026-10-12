@@ -41,7 +41,7 @@ public class OpenSSCScreenPacket implements CustomPacketPayload {
     /**
      * Immutable snapshot of a single Drudge's display state.
      *
-     * @param memoryName  The result of {@code BloodManipulation.getProperName()},
+     * @param memoryName  The result of {@code BloodManipulation.getDisplayName().getString()},
      *                    or empty string if no memory is equipped.
      * @param customName  The entity's custom name set via a name tag, or empty string if none.
      * @param passive     {@code true} if the drudge is in passive mode.

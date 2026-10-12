@@ -657,7 +657,7 @@ public class ManipulationsTabController implements IProgressTab {
 					.withStyle(s -> s.withColor(0xFFAA44)));
 		} else {
 			String name = manipulation != null ? manipulation.getName() : satellite.form().id();
-			tip.add(Component.literal(HLTextUtils.toProperCase(name.replace('_', ' ')))
+			tip.add(BloodManipulation.displayName(name)
 					.withStyle(s -> s.withColor(0xFFAA44).withBold(true)));
 			if (manipulation != null) {
 				tip.add(Component.literal(HLTextUtils.toProperCase(manipulation.getType().name())
@@ -706,8 +706,8 @@ public class ManipulationsTabController implements IProgressTab {
                 }
             } else {
                 String pretty = manip != null
-                        ? HLTextUtils.toProperCase(manip.getName().replace("_", " "))
-                        : HLTextUtils.toProperCase(entry.getManipName().replace("_", " "));
+                        ? manip.getDisplayName().getString()
+                        : BloodManipulation.displayName(entry.getManipName()).getString();
                 int nameCol = known ? 0xFFAA44 : 0x888888;
                 Component nameText = Component.literal(pretty).withStyle(s -> s.withColor(nameCol).withBold(true));
                 tip.add(veilUnknown ? AbocipherText.veil(nameText) : nameText);
@@ -746,7 +746,7 @@ public class ManipulationsTabController implements IProgressTab {
                     StringBuilder sb = new StringBuilder("Relates to: ");
                     for (int i = 0; i < entry.getParentNames().size(); i++) {
                         if (i > 0) sb.append(", ");
-                        sb.append(HLTextUtils.toProperCase(entry.getParentNames().get(i).replace("_", " ")));
+                        sb.append(BloodManipulation.displayName(entry.getParentNames().get(i)).getString());
                     }
                     Component relationText = Component.literal(sb.toString())
                             .withStyle(s -> s.withColor(0x666666).withItalic(true));
@@ -791,7 +791,7 @@ public class ManipulationsTabController implements IProgressTab {
         int maxW = panelW - 16;
         int lineH = 11;
 
-        String name = rankLocked ? "???" : HLTextUtils.toProperCase(manip.getName().replace("_", " "));
+        String name = rankLocked ? "???" : manip.getDisplayName().getString();
         List<String> nameLines = ScreenDrawUtils.wrapText(ctx.font(), name, maxW - 20);
         int nameRowH = Math.max(22, nameLines.size() * 10 + 4);
         List<String> descriptionLines = rankLocked ? List.of()

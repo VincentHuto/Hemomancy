@@ -10,6 +10,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /** Iron has physical faces; blood and nerve connections are joined ribbons with shader density. */
 final class FerricDuctilisGeometry {
     static final VertexConsumer DISCARD=new VertexConsumer() {
@@ -91,6 +94,23 @@ final class FerricDuctilisGeometry {
                     ribbon(p,flow,root,at.add(0,.28,0),.038,.08,time,seed+i,camera,BLOOD,opacity);
                 }
                 card(p,flow,at,right,up,.21,.32,3,seed,NERVE,opacity*.6f);
+                if(packet.form()==Form.FERRIC_CONJURE) {
+                    // Plates of blood-iron condense at the hand, one after another.
+                    for(int i=0;i<3;i++) {
+                        float own=Mth.clamp(formation*3-i,0,1);
+                        if(own<=0)continue;
+                        double a=i*Math.PI*2/3+time*.02;
+                        plate(p,iron,at.add(Math.cos(a)*.16,.12+i*.05,Math.sin(a)*.16),.12*own,.18*own,.03,seed+40+i,opacity*own);
+                    }
+                } else {
+                    // Mending: blood stitches draw a wound across the chest closed.
+                    double gap=.24*(1-Math.min(1,age/12.0));
+                    Vec3 chest=new Vec3(0,height*.62,0);
+                    for(int i=0;i<4;i++) {
+                        Vec3 row=chest.add(0,(i-1.5)*.1,0);
+                        ribbon(p,flow,row.add(-gap-.06,0,0),row.add(gap+.06,.03,0),.022,.01,time,seed+50+i,camera,BLOOD,opacity);
+                    }
+                }
             }
             case MAGNET -> field(p,flow,Vec3.ZERO,Math.min(8,packet.radius()),time,seed,camera,opacity);
             case MARK,PARALYSIS,CIRCUIT -> {
@@ -115,6 +135,13 @@ final class FerricDuctilisGeometry {
                     Vec3 tip=new Vec3(Math.cos(a+.2)*.8,1.65,Math.sin(a+.2)*.8);
                     ribbon(p,flow,root,tip,.045,.1,time,seed+i,camera,NERVE,opacity);
                     if(i<count-1)ribbon(p,flow,tip,new Vec3(Math.cos(a+Math.PI/4)*.8,1.5,Math.sin(a+Math.PI/4)*.8),.028,.04,time,seed+i+8,camera,NERVE,opacity*.7f);
+                    // A soft glow under each live strand so the sheath reads as current, not wire.
+                    card(p,flow,root.lerp(tip,.5),right,up,.16,.5,1,seed+i+16,NERVE,opacity*.45f);
+                }
+                if(count>=8) {
+                    List<Vec3> crown=new ArrayList<>(17);
+                    for(int i=0;i<=16;i++) {double a=i*Math.PI/8+time*.009;crown.add(new Vec3(Math.cos(a)*.8,1.62,Math.sin(a)*.8));}
+                    LuxUmbraGeometry.ribbonPath(p,flow,crown,camera,.06,0,seed+30,NERVE,opacity*.6f);
                 }
             }
             case LIGHTNING_CHARGE -> {
@@ -127,6 +154,13 @@ final class FerricDuctilisGeometry {
                 }
                 card(p,flow,focus,right,up,radius*.8,radius*.8,3,seed,NERVE,opacity);
                 card(p,flow,focus,right,up,radius*1.8,radius*1.5,1,seed,NERVE,opacity*.55f);
+                // Current crackles across the gathering charge, a nerve ring turning about it, flaring when full.
+                boolean full=packet.radius()>=.999;
+                float flicker=(float)(.35+.65*Math.pow(Math.max(0,Math.sin(time*1.6+seed)),2));
+                card(p,flow,focus,right,up,radius*2.2,radius*2.2,2,seed+1,NERVE,opacity*flicker*(full?1:.6f));
+                List<Vec3> ring=new ArrayList<>(17);
+                for(int i=0;i<=16;i++) {double a=i*Math.PI/8+time*.08;ring.add(focus.add(right.scale(Math.cos(a)*radius*1.6)).add(up.scale(Math.sin(a)*radius*1.6)));}
+                LuxUmbraGeometry.ribbonPath(p,flow,ring,camera,.05,0,seed+2,NERVE,opacity*(full?.9f:.5f));
             }
             case THREAD,THREAD_CHARGE -> {
                 boolean charge=packet.form()==Form.THREAD_CHARGE;
@@ -140,13 +174,17 @@ final class FerricDuctilisGeometry {
                     ribbon(p,flow,mid.lerp(to,gap).add(offset),to.add(offset),.026,.04,time,seed+i+3,camera,NERVE,opacity);
                 }
                 if(!charge && age<7)card(p,flow,mid,right,up,.25,.25,3,seed,NERVE,opacity);
+                // The severed ends fray and glow as they part.
+                if(!charge && gap>0)for(Vec3 frayed:new Vec3[]{mid.lerp(from,gap),mid.lerp(to,gap)})
+                    card(p,flow,frayed,right,up,.12,.12,1,seed+9,NERVE,opacity*(float)(1-gap/.4)*.8f);
             }
             case NERVE_PULSE -> {
                 double radius=Math.min(packet.radius(),age*.85);
-                for(int i=0;i<24;i++) {
-                    double a=i*Math.PI/12,b=(i+1)*Math.PI/12;
-                    ribbon(p,flow,new Vec3(Math.cos(a)*radius,.08,Math.sin(a)*radius),new Vec3(Math.cos(b)*radius,.08,Math.sin(b)*radius),.035,.01,time,seed+i,camera,NERVE,opacity*.65f);
-                }
+                // One continuous nerve loop, current running round it, over a soft glow left in its wake.
+                List<Vec3> loop=new ArrayList<>(33);
+                for(int i=0;i<=32;i++) {double a=i*Math.PI/16;loop.add(new Vec3(Math.cos(a)*radius,.08,Math.sin(a)*radius));}
+                LuxUmbraGeometry.ribbonPath(p,flow,loop,camera,.1,0,seed,NERVE,opacity*.65f);
+                LuxUmbraGeometry.ground(p,flow,new Vec3(0,.06,0),radius,1,seed+1,NERVE,opacity*.3f);
             }
             case NERVE_HIT -> {
                 Vec3 center=body==null?Vec3.ZERO:new Vec3(0,height*.6,0);
@@ -154,9 +192,13 @@ final class FerricDuctilisGeometry {
                     double a=i*2.399;
                     Vec3 tip=new Vec3(Math.cos(a)*.4,Math.sin(a*.8)*.45,Math.sin(a)*.4);
                     ribbon(p,flow,center,center.add(tip),.035,.06,time,seed+i,camera,NERVE,opacity);
+                    // Each branch forks where the current splits.
+                    Vec3 split=center.add(tip.scale(.6));
+                    ribbon(p,flow,split,split.add(Math.cos(a+.7)*.18,.1,Math.sin(a+.7)*.18),.02,.03,time,seed+i+10,camera,NERVE,opacity*.8f);
                 }
                 card(p,flow,center,right,up,.28,.32,3,seed,NERVE,opacity);
                 card(p,flow,center,right,up,.48,.4,1,seed,NERVE,opacity*.7f);
+                card(p,flow,center,right,up,.6,.6,2,seed+20,NERVE,opacity*(float)Math.max(0,1-age/8));
             }
             default -> { }
         }
@@ -177,14 +219,15 @@ final class FerricDuctilisGeometry {
         float formation=Mth.clamp((float)(age/8),0,1),opacity=Mth.clamp((float)((entity.expiresAt()-time)/9),0,1);
         int seed=entity.getId();
         p.pushPose();p.mulPose(Axis.YP.rotationDegrees(-entity.constructFacing().toYRot()));
+        double apart=shatter(opacity);
         switch(entity.constructKind()) {
             case WALL -> {
                 for(int x=0;x<5;x++)for(int row=0;row<3;row++)
-                    plate(p,iron,new Vec3(x-2,.5+row,((x+row)%2==0?.045:-.045)),1,1,.285,seed+x*3+row,formation*opacity);
+                    shard(p,iron,new Vec3(x-2,.5+row,((x+row)%2==0?.045:-.045)),new Vec3(0,1.5,0),1,1,.285,seed+x*3+row,formation*Math.min(1f,opacity*2.5f),apart);
             }
             case SPIKE -> spike(p,iron,1.5,.36,seed,formation*opacity);
             case PILLAR -> {
-                for(int row=0;row<4;row++)plate(p,iron,new Vec3(0,.35+row*.7,0),.75,.7,.75,seed+row,formation*opacity);
+                for(int row=0;row<4;row++)shard(p,iron,new Vec3(0,.35+row*.7,0),new Vec3(0,1.4,0),.75,.7,.75,seed+row,formation*Math.min(1f,opacity*2.5f),apart);
                 for(int i=0;i<3;i++){p.pushPose();p.translate((i-1)*.24,2.35,0);spike(p,iron,.45,.12,seed+i,formation*opacity);p.popPose();}
             }
             default -> { }
@@ -198,6 +241,21 @@ final class FerricDuctilisGeometry {
             for(int i=0;i<4;i++){double a=i*Math.PI/2;Vec3 at=new Vec3(Math.cos(a)*.39,.08,Math.sin(a)*.39);
                 ribbon(p,flow,at,at.add(0,h-.12,0),.048,.055,time,seed+i,camera,NERVE,opacity);}
         }
+    }
+
+    /** A plate of a failing construct, carried {@code apart} of the way off its {@code core}: outward, tumbling and falling. */
+    private static void shard(PoseStack p,VertexConsumer iron,Vec3 center,Vec3 core,double width,double height,double depth,
+            int seed,float alpha,double apart) {
+        if(apart<=0){plate(p,iron,center,width,height,depth,seed,alpha);return;}
+        Vec3 out=center.subtract(core);
+        out=out.lengthSqr()<1e-6?new Vec3(0,0,1):out.normalize();
+        double spin=(Math.floorMod(seed,7)-3)*.25;
+        p.pushPose();
+        p.translate(center.x+out.x*apart*.7,center.y+out.y*apart*.4-apart*apart*1.2,center.z+out.z*apart*.7+(seed%2==0?.3:-.3)*apart);
+        p.mulPose(Axis.ZP.rotation((float)(spin*apart*2)));
+        p.mulPose(Axis.XP.rotation((float)(spin*apart*1.4)));
+        plate(p,iron,Vec3.ZERO,width,height,depth,seed,alpha);
+        p.popPose();
     }
 
     static void field(PoseStack p,VertexConsumer flow,Vec3 anchor,double radius,double time,int seed,Vec3 camera,float alpha) {
@@ -217,14 +275,49 @@ final class FerricDuctilisGeometry {
         }
     }
 
+    /** Forged blood-iron: a slab with chamfered faces so the rim catches light, and rivets on plates big enough to hold them. */
     static void plate(PoseStack p,VertexConsumer v,Vec3 center,double width,double height,double depth,int seed,float alpha) {
         if(v==DISCARD)return;
         double x=width*.5,y=height*.5,z=depth*.5;
-        Vec3 a=center.add(-x,-y,-z),b=center.add(x,-y,-z),c=center.add(x,y,-z),d=center.add(-x,y,-z);
-        Vec3 e=center.add(-x,-y,z),f=center.add(x,-y,z),g=center.add(x,y,z),h=center.add(-x,y,z);
-        quad(p,v,a,b,c,d,0,seed,0xFFFFFF,alpha);quad(p,v,f,e,h,g,0,seed+1,0xFFFFFF,alpha);
-        quad(p,v,e,a,d,h,0,seed+2,0xFFFFFF,alpha);quad(p,v,b,f,g,c,0,seed+3,0xFFFFFF,alpha);
-        quad(p,v,d,c,g,h,0,seed+4,0xFFFFFF,alpha);quad(p,v,e,f,b,a,0,seed+5,0xFFFFFF,alpha);
+        double b=Math.min(Math.min(x,y)*.18,z*.9);
+        double fx=x-b,fy=y-b,sz=z-b;
+        for(int face=-1;face<=1;face+=2) {
+            double fz=z*face,ez=sz*face;
+            Vec3 f0=center.add(-fx,-fy,fz),f1=center.add(fx,-fy,fz),f2=center.add(fx,fy,fz),f3=center.add(-fx,fy,fz);
+            Vec3 e0=center.add(-x,-y,ez),e1=center.add(x,-y,ez),e2=center.add(x,y,ez),e3=center.add(-x,y,ez);
+            int s=seed+(face+1)*4;
+            if(face>0) {
+                quad(p,v,f0,f1,f2,f3,0,s,0xFFFFFF,alpha);
+                quad(p,v,f3,f2,e2,e3,0,s+1,0xFFFFFF,alpha);quad(p,v,f1,f0,e0,e1,0,s+2,0xFFFFFF,alpha);
+                quad(p,v,f0,f3,e3,e0,0,s+3,0xFFFFFF,alpha);quad(p,v,f2,f1,e1,e2,0,s+4,0xFFFFFF,alpha);
+            } else {
+                quad(p,v,f1,f0,f3,f2,0,s,0xFFFFFF,alpha);
+                quad(p,v,f2,f3,e3,e2,0,s+1,0xFFFFFF,alpha);quad(p,v,f0,f1,e1,e0,0,s+2,0xFFFFFF,alpha);
+                quad(p,v,f3,f0,e0,e3,0,s+3,0xFFFFFF,alpha);quad(p,v,f1,f2,e2,e1,0,s+4,0xFFFFFF,alpha);
+            }
+        }
+        Vec3 a=center.add(-x,-y,-sz),c=center.add(x,y,-sz),e=center.add(-x,-y,sz),g=center.add(x,y,sz);
+        quad(p,v,center.add(-x,y,-sz),c,g,center.add(-x,y,sz),0,seed+12,0xFFFFFF,alpha);
+        quad(p,v,e,center.add(x,-y,sz),center.add(x,-y,-sz),a,0,seed+13,0xFFFFFF,alpha);
+        quad(p,v,e,a,center.add(-x,y,-sz),center.add(-x,y,sz),0,seed+14,0xFFFFFF,alpha);
+        quad(p,v,center.add(x,-y,-sz),center.add(x,-y,sz),g,c,0,seed+15,0xFFFFFF,alpha);
+        if(Math.min(x,y)<.1)return;
+        double r=Math.min(x,y)*.09;
+        for(int i=0;i<4;i++) {
+            Vec3 at=center.add((i%2==0?-1:1)*(fx-r*2),(i<2?-1:1)*(fy-r*2),z);
+            Vec3 apex=at.add(0,0,r*.9);
+            Vec3 k0=at.add(-r,-r,0),k1=at.add(r,-r,0),k2=at.add(r,r,0),k3=at.add(-r,r,0);
+            quad(p,v,k0,k1,apex,apex,0,seed+20+i,0xFFFFFF,alpha);quad(p,v,k1,k2,apex,apex,0,seed+20+i,0xFFFFFF,alpha);
+            quad(p,v,k2,k3,apex,apex,0,seed+20+i,0xFFFFFF,alpha);quad(p,v,k3,k0,apex,apex,0,seed+20+i,0xFFFFFF,alpha);
+        }
+    }
+
+    /**
+     * How far a failing construct has come apart: plates drift outward from its middle, tumble and drop as it expires.
+     * Zero while the construct holds.
+     */
+    static double shatter(float opacity) {
+        return opacity>=1?0:Math.pow(1-opacity,1.5);
     }
 
     static void spike(PoseStack p,VertexConsumer v,double height,double radius,int seed,float alpha) {

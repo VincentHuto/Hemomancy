@@ -1,149 +1,435 @@
 {
   "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    32
+  ],
   "textures": {
-    "iron": "hemomancy:block/hematic_iron_block",
-    "wood": "hemomancy:block/blood_wood_planks",
-    "red": "minecraft:block/redstone_block",
-    "horn": "minecraft:block/copper_block",
-    "dark": "minecraft:block/black_terracotta",
-    "particle": "hemomancy:block/hematic_iron_block"
+    "atlas": "hemomancy:block/model_clairaudiograph"
   },
   "elements": [
     {
-      "name": "stylus rail",
+      "name": "carriage",
       "from": [
-        3.4,
-        7.8,
-        6
+        3,
+        10.75,
+        4.75
       ],
       "to": [
-        3.8,
-        8.2,
-        10
+        5,
+        12.25,
+        8.25
       ],
       "faces": {
         "north": {
           "uv": [
-            0,
-            0,
-            0.3999999999999999,
-            0.39999999999999947
+            8.25,
+            10.5,
+            8.5,
+            11.25
           ],
-          "texture": "#iron"
+          "texture": "#atlas"
         },
         "south": {
           "uv": [
-            0,
-            0,
-            0.3999999999999999,
-            0.39999999999999947
+            8.5,
+            10.5,
+            8.75,
+            11.25
           ],
-          "texture": "#iron"
+          "texture": "#atlas"
         },
         "east": {
           "uv": [
-            0,
-            0,
-            4,
-            0.39999999999999947
+            0.0,
+            10.5,
+            0.4375,
+            11.25
           ],
-          "texture": "#iron"
+          "texture": "#atlas"
         },
         "west": {
           "uv": [
-            0,
-            0,
-            4,
-            0.39999999999999947
+            0.5,
+            10.5,
+            0.9375,
+            11.25
           ],
-          "texture": "#iron"
+          "texture": "#atlas"
         },
         "up": {
           "uv": [
-            0,
-            0,
-            0.3999999999999999,
-            4
+            8.25,
+            6.5,
+            8.5,
+            8.25
           ],
-          "texture": "#iron"
+          "texture": "#atlas"
         },
         "down": {
           "uv": [
-            0,
-            0,
-            0.3999999999999999,
-            4
+            8.5,
+            6.5,
+            8.75,
+            8.25
           ],
-          "texture": "#iron"
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "carriage_knob",
+      "from": [
+        3.625,
+        12.25,
+        6.125
+      ],
+      "to": [
+        4.375,
+        12.75,
+        6.875
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7.5,
+            15.0,
+            7.59375,
+            15.25
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            7.625,
+            15.0,
+            7.71875,
+            15.25
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            7.75,
+            15.0,
+            7.84375,
+            15.25
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            7.875,
+            15.0,
+            7.96875,
+            15.25
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            8.0,
+            15.0,
+            8.09375,
+            15.375
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            8.125,
+            15.0,
+            8.21875,
+            15.375
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "carriage_band",
+      "from": [
+        2.875,
+        11.25,
+        4.625
+      ],
+      "to": [
+        5.125,
+        11.75,
+        8.375
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7.25,
+            14.0,
+            7.53125,
+            14.25
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            7.625,
+            14.0,
+            7.90625,
+            14.25
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            1.0,
+            14.0,
+            1.46875,
+            14.25
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            1.5,
+            14.0,
+            1.96875,
+            14.25
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            5.5,
+            6.5,
+            5.78125,
+            8.375
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            5.875,
+            6.5,
+            6.15625,
+            8.375
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "reproducer_0",
+      "from": [
+        2.75,
+        10,
+        4.25
+      ],
+      "to": [
+        5.25,
+        10.75,
+        6.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8.0,
+            14.0,
+            8.3125,
+            14.375
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            8.375,
+            14.0,
+            8.6875,
+            14.375
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            8.75,
+            14.0,
+            9.0625,
+            14.375
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            9.125,
+            14.0,
+            9.4375,
+            14.375
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            6.375,
+            9.0,
+            6.6875,
+            10.25
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            6.75,
+            9.0,
+            7.0625,
+            10.25
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "reproducer_45",
+      "from": [
+        2.75,
+        10,
+        4.25
+      ],
+      "to": [
+        5.25,
+        10.75,
+        6.75
+      ],
+      "rotation": {
+        "angle": 45,
+        "axis": "y",
+        "origin": [
+          4,
+          10.375,
+          5.5
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            9.5,
+            14.0,
+            9.8125,
+            14.375
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            9.875,
+            14.0,
+            10.1875,
+            14.375
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            10.25,
+            14.0,
+            10.5625,
+            14.375
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            10.625,
+            14.0,
+            10.9375,
+            14.375
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            7.125,
+            9.0,
+            7.4375,
+            10.25
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            7.5,
+            9.0,
+            7.8125,
+            10.25
+          ],
+          "texture": "#atlas"
         }
       }
     },
     {
       "name": "needle",
       "from": [
-        3.45,
-        6.7,
-        6
+        3.875,
+        9.75,
+        5.375
       ],
       "to": [
-        3.65,
-        8,
-        6.3
+        4.125,
+        10,
+        5.625
       ],
       "faces": {
         "north": {
           "uv": [
-            0,
-            0,
-            0.19999999999999973,
-            1.2999999999999998
+            8.25,
+            15.0,
+            8.28125,
+            15.125
           ],
-          "texture": "#horn"
+          "texture": "#atlas"
         },
         "south": {
           "uv": [
-            0,
-            0,
-            0.19999999999999973,
-            1.2999999999999998
+            8.375,
+            15.0,
+            8.40625,
+            15.125
           ],
-          "texture": "#horn"
+          "texture": "#atlas"
         },
         "east": {
           "uv": [
-            0,
-            0,
-            0.2999999999999998,
-            1.2999999999999998
+            8.5,
+            15.0,
+            8.53125,
+            15.125
           ],
-          "texture": "#horn"
+          "texture": "#atlas"
         },
         "west": {
           "uv": [
-            0,
-            0,
-            0.2999999999999998,
-            1.2999999999999998
+            8.625,
+            15.0,
+            8.65625,
+            15.125
           ],
-          "texture": "#horn"
+          "texture": "#atlas"
         },
         "up": {
           "uv": [
-            0,
-            0,
-            0.19999999999999973,
-            0.2999999999999998
+            8.75,
+            15.0,
+            8.78125,
+            15.125
           ],
-          "texture": "#horn"
+          "texture": "#atlas"
         },
         "down": {
           "uv": [
-            0,
-            0,
-            0.19999999999999973,
-            0.2999999999999998
+            8.875,
+            15.0,
+            8.90625,
+            15.125
           ],
-          "texture": "#horn"
+          "texture": "#atlas"
         }
       }
     }

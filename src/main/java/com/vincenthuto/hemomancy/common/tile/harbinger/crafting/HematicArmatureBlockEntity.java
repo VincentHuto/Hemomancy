@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
-import com.vincenthuto.hemomancy.common.block.harbinger.crafting.HematicArmatureBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.ArmatureGeometry;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.utility.ArmatureRestraintEntity;
@@ -67,12 +67,7 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 	private static final double HAND_GOURD_TRANSFER_TICKS = 20.0D;
 	private static final DustParticleOptions CRIMSON_FLASH =
 			new DustParticleOptions(new Vector3f(0.85F, 0.02F, 0.02F), 2.4F);
-	private static final double[][] BOWL_PARTICLE_OFFSETS = new double[][] {
-			{ -2.625D, 1.56D, 0.25D },
-			{ 2.625D, 1.56D, 0.25D },
-			{ -1.8125D, 1.38D, 1.0625D },
-			{ 1.8125D, 1.38D, 1.0625D }
-	};
+	private static final double[][] BOWL_PARTICLE_OFFSETS = ArmatureGeometry.BOWLS;
 
 	private static final String TAG_RESTRAINED_PLAYER = "RestrainedPlayer";
 	private static final String TAG_BLOOD_LEVEL = "BloodLevel";

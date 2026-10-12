@@ -193,6 +193,12 @@ public class ChamberOfWillManager extends SavedData {
                 ignored -> new ChamberState(0, THEME_WILL_DEFAULT));
     }
 
+    /** The owner's current Chamber sky theme, read without creating a Chamber record; the default when they have none. */
+    public ResourceLocation skyThemeOf(UUID owner) {
+        ChamberState state = chamberStates.get(owner);
+        return state == null ? THEME_WILL_DEFAULT : state.skyTheme();
+    }
+
     public int radiusFor(UUID owner) {
         return chamberRadiusOverrides.getOrDefault(owner, radiusForTier(getChamberState(owner).tier()));
     }

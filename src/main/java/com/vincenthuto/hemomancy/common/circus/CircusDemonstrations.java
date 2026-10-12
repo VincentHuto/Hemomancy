@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.circus;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusPerformerEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.*;
+import com.vincenthuto.hemomancy.common.summon.PuppetStrings;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonBodies;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -26,19 +27,19 @@ public final class CircusDemonstrations {
             if (lesson == null || !teacher.canTeachNow() || level.getNearestPlayer(teacher, 24) == null) return;
             var stages = level.getEntitiesOfClass(Mob.class, teacher.getBoundingBox().inflate(16),
                     mob -> isStage(mob) && teacher.getUUID().equals(mob.getPersistentData().getUUID(TEACHER)));
-            if (!stages.isEmpty()) { stages.stream().skip(1).forEach(Mob::discard); return; }
+            if (!stages.isEmpty()) { stages.stream().skip(1).forEach(PuppetStrings::unspool); return; }
             Mob body = PuppeteerSummonBodies.create(lesson.summon(), level).orElse(null);
             if (body == null) return;
             body.getPersistentData().putUUID(TEACHER, teacher.getUUID());
             body.setNoAi(true); body.setNoGravity(true); body.setInvulnerable(true); body.setPersistenceRequired();
             body.setPos(teacher.getX() + 2.5, teacher.getY(), teacher.getZ());
             PuppeteerSummonDefinitions.byName(lesson.summon()).ifPresent(def -> BoundSummonBehavior.applyTrialStats(body, def));
-            level.addFreshEntity(body);
+            if (level.addFreshEntity(body)) PuppetStrings.descend(body);
         }
         if (!(event.getEntity() instanceof Mob body) || !isStage(body)) return;
         event.setCanceled(true); // Bypasses combat, upkeep, owner reconciliation, and summon trials together.
         if (!(level.getEntity(body.getPersistentData().getUUID(TEACHER)) instanceof CircusPerformerEntity teacher)
-                || !teacher.canTeachNow() || teacher.distanceToSqr(body) > 256) { body.discard(); return; }
+                || !teacher.canTeachNow() || teacher.distanceToSqr(body) > 256) { PuppetStrings.unspool(body); return; }
         // The synced owner lets clients draw the teacher's control thread (older saved bodies are backfilled);
         // cancelling the tick above still keeps the body out of every ownership, upkeep and combat rule.
         if (body instanceof BoundPuppeteerSummon bound && !teacher.getUUID().equals(bound.hemomancy$getOwnerUUID()))

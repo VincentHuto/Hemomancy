@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.crafting;
 
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
+import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.MorphlingIncubatorBlockEntity;
@@ -35,17 +36,21 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
+import java.util.Map;
 
 @SuppressWarnings("deprecation")
 public class MorphlingIncubatorBlock extends Block implements EntityBlock, IMultiBlock, SimpleWaterloggedBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-	private static final VoxelShape SHAPE_N = Block.box(2, 0, 2, 14, 14, 14);
-
 	/** Filler offset: 1×2×1 — one filler block directly above the base. */
 	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
 			new BlockPos(0, 1, 0)
 	};
+	/** Plinth, strapped tank and lid of tools/model_export/morphling_incubator.py, with the feed tube on its side. */
+	private static final Map<Direction, Map<BlockPos, VoxelShape>> CELLS = ModelShapes.cells(
+			ModelShapes.footprint(FILLER_OFFSETS),
+			new double[] {0.75, 0, 0.5, 15.25, 4, 15.25}, new double[] {2.5, 4, 2.5, 13.5, 24, 13.5},
+			new double[] {13.5, 6, 7, 15.65, 19, 9}, new double[] {3.5, 24, 3.5, 12.5, 25, 12.5});
 
 	public MorphlingIncubatorBlock(Properties properties) {
 		super(properties);
@@ -84,7 +89,12 @@ public class MorphlingIncubatorBlock extends Block implements EntityBlock, IMult
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return SHAPE_N;
+		return CELLS.get(state.getValue(FACING)).getOrDefault(BlockPos.ZERO, Shapes.block());
+	}
+
+	@Override
+	public VoxelShape fillerShape(BlockState controller, BlockPos offset) {
+		return CELLS.get(controller.getValue(FACING)).get(offset);
 	}
 
 	@Override

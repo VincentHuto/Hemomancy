@@ -6,6 +6,9 @@ import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.damage.SchoolState;
+import com.vincenthuto.hemomancy.common.damage.SchoolStateRules;
+import com.vincenthuto.hemomancy.common.damage.SchoolStates;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
@@ -15,7 +18,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -29,7 +32,7 @@ import java.util.List;
  * all living entities within a 5-block radius using superheated blood expelled
  * from the caster's pores.
  *
- * <p>Enemies catch fire for 4 seconds and receive 1 heart of direct heat damage.
+ * <p>Enemies catch fire for 2 seconds and receive 1 heart of direct heat damage.
  * The caster is unaffected. A reliable, low-cost area denial ability that pairs
  * well with the field-smelting utility of Pyretic Forge.
  */
@@ -37,7 +40,7 @@ public class SanguineIgnitionManip extends BloodManipulation {
 
 	private static final double RADIUS = 5.0;
 	/** Seconds of fire applied to each target. */
-	private static final int FIRE_SECONDS = 4;
+	private static final int FIRE_SECONDS = 2;
 	/** Direct damage dealt on ignition (in half-hearts). */
 	private static final float IGNITION_DAMAGE = 2.0f; // 1 heart
 
@@ -64,6 +67,10 @@ public class SanguineIgnitionManip extends BloodManipulation {
 				float damage = (float) (IGNITION_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier(player));
 				ManipulationParticles.hurt(this, target, world.damageSources().onFire(),
 						(damage));
+				// Same ignition rule as Searing: Rime, water and fire immunity all refuse the flame.
+				if (target.isAlive() && SchoolStateRules.mayIgnite(SchoolStates.levels(target, SchoolState.RIME),
+						target.isInWaterOrRain(), target.fireImmune() || target.hasEffect(MobEffects.FIRE_RESISTANCE)))
+					target.igniteForSeconds(FIRE_SECONDS);
 				hit++;
 			}
 		}
@@ -74,7 +81,6 @@ public class SanguineIgnitionManip extends BloodManipulation {
 		}
 
 		ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.IGNITION, player.position(), player.position(), RADIUS, 18);
-        RandomSource random = world.random;
 
 	        }
     }

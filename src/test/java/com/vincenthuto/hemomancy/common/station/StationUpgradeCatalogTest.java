@@ -17,7 +17,7 @@ class StationUpgradeCatalogTest {
             assertTrue(StationUpgradeCatalog.get(station, 2).requiredDegree()
                     > StationUpgradeCatalog.get(station, 1).requiredDegree(), station.name());
         }
-        assertEquals(10, StationUpgradeCatalog.all().size());
+        assertEquals(12, StationUpgradeCatalog.all().size());
     }
 
     @Test
@@ -32,6 +32,24 @@ class StationUpgradeCatalogTest {
             assertEquals(5, StationUpgradeCatalog.get(station, 1).requiredDegree(), station.name());
             assertEquals(7, StationUpgradeCatalog.get(station, 2).requiredDegree(), station.name());
         }
+    }
+
+    @Test
+    void theLoomGrowsAtTheDegreesThatTeachItsRanks() {
+        UpgradeStation loom = UpgradeStation.byName("loom");
+        assertNotNull(loom);
+        assertEquals(ResourceLocation.parse("hemomancy:somatic_loom"), loom.blockId());
+        StationUpgradeTier ganglionic = StationUpgradeCatalog.get(loom, 1);
+        StationUpgradeTier cortical = StationUpgradeCatalog.get(loom, 2);
+        assertEquals(5, ganglionic.requiredDegree());
+        assertEquals(6, cortical.requiredDegree());
+        assertEquals("cardinal_rite/ganglionic_weave", ganglionic.ritePath());
+        assertEquals("cardinal_rite/cortical_weave", cortical.ritePath());
+        assertEquals(ResourceLocation.parse("hemomancy:ganglionic_harness"), ganglionic.upgradeItem());
+        assertEquals(ResourceLocation.parse("hemomancy:cortical_crown"), cortical.upgradeItem());
+        assertEquals(java.util.List.of(StationUpgradeCatalog.LOOM_WEAVE), ganglionic.requiredUsage());
+        assertEquals(java.util.List.of(StationUpgradeCatalog.LOOM_WEAVE_GANGLIONIC), cortical.requiredUsage());
+        assertTrue(ganglionic.dialogueKey().startsWith("hemomancy.mnemonist.loom."));
     }
 
     @Test

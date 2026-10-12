@@ -1,6 +1,12 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomFrame;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomGeometry;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.entity.weave.FrayedThreadEntity;
+import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
@@ -11,17 +17,21 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.EnzymeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.RecycledEnzymeItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import com.vincenthuto.hemomancy.common.tile.shared.IMultiBlockEntity;
+import com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog;
+import com.vincenthuto.hemomancy.common.station.UpgradeStation;
+import com.vincenthuto.hemomancy.common.station.UpgradeableStation;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -50,45 +60,40 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
-public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservoir, IMultiBlockEntity {
+public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservoir, IMultiBlockEntity, UpgradeableStation {
 
 	private static final String TAG_CONTENT_SIZE = "contentSize";
 	private static final String TAG_BLOOD_LEVEL = "bloodLevel";
 	private static final String TAG_RECIPE = "recipe";
 	private static final String TAG_CRAFT_PHASE = "craftPhase";
 	private static final String TAG_RITUAL_BLOOD_CHARGED = "ritualBloodCharged";
-	private static final String TAG_ACTIVE_ORB = "activeOrb";
-	private static final String TAG_LAST_ORB_DRAG_GAME_TIME = "lastOrbDragGameTime";
 	private static final String TAG_STORED_ENZYMES = "storedEnzymes";
-	private static final String TAG_RITUAL_ORBS = "ritualOrbs";
+	private static final String TAG_WEAVE_THREADS = "weaveThreads";
+	private static final String TAG_WEAVER = "weaver";
+	private static final String TAG_WEAVE_TICKS = "weaveTicks";
+	private static final String TAG_CLIMAX_TICKS = "climaxTicks";
+	private static final String TAG_PAUSED_TICKS = "pausedTicks";
+	private static final String TAG_SPUN = "spun";
+	private static final String TAG_LEGACY_RITUAL_ORBS = "ritualOrbs";
 
 	public static final int PHASE_IDLE = 0;
 	public static final int PHASE_AWAITING_BLOOD = 1;
-	public static final int PHASE_WEAVING_ORBS = 2;
+	public static final int PHASE_WEAVING = 2;
+	/** Every thread is woven: the echo grows whole and the memory crystallizes. */
+	public static final int PHASE_CLIMAX = 3;
 
-	private static final int ENZYME_CAPACITY = 64;
-	private static final int ORB_DRIFT_GRACE_TICKS = 100;
-	private static final double ORB_ABSORPTION_MARGIN = 0.18D;
-	private static final double ORB_DRAG_MAX_STEP = 0.055D;
-	private static final double ORB_DRAG_EASE = 0.24D;
-	private static final double ORB_WANDER_STEP = 0.03D;
-	private static final double ORB_WANDER_XZ_RANGE = 10.0D;
-	private static final double ORB_WANDER_Y_MIN = 0.35D;
-	private static final double ORB_WANDER_Y_MAX = 3.0D;
-	private static final int ORB_WANDER_MIN_TARGET_TICKS = 45;
-	private static final int ORB_WANDER_RANDOM_TARGET_TICKS = 75;
-	private static final double ORB_TARGETING_RANGE = 12.0D;
-	private static final double ORB_TARGETING_RADIUS = 1.35D;
+	public static final int ENZYME_CAPACITY = 64;
+	/** Soot shed by a strand as it is drawn home into the warp. */
+	private static final ParticleColor STRAND_SOOT = new ParticleColor(22, 2, 6);
 
-	/** Slot 0 = hematic memory; slots 1..n = catalyst items. */
 	public NonNullList<ItemStack> contents = createMutableContents(1);
 
 	IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(this).orElseThrow(IllegalStateException::new);
@@ -96,43 +101,83 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 
 	private final EnumMap<EnumBloodTendency, Integer> storedEnzymes =
 			MemoryWeavingRecipe.blankEnzymeRequirements();
-	private final List<RitualOrb> ritualOrbs = new ArrayList<>();
+	private final List<WeaveThread> weaveThreads = new ArrayList<>();
+	private final EnumMap<EnumBloodTendency, Integer> spun = MemoryWeavingRecipe.blankEnzymeRequirements();
+	@Nullable private UUID weaver;
+	/** The weaver as last seen; players not on the server list (fakes, test fixtures) resolve through it. */
+	@Nullable private Player weaverRef;
+	/** The weaver's Chamber of Will sky, which a Cortical loom raises as a dome around the weave. */
+	@Nullable private ResourceLocation weaverTheme;
+	/** Counted only while the weave runs, so pausing freezes the echo's loop in place. */
+	private long weaveTicks;
+	private int climaxTicks;
+	private int pausedTicks;
+	private boolean paused;
+	/** Client-only bookkeeping so the echo fires its cast once per loop and once at the climax. */
+	private long echoLastLoop = -1;
+	/** Client-smoothed spun thread and vial stock, so payment visibly draws liquid up into thread. */
+	private final float[] shownSpun = new float[EnumBloodTendency.values().length];
+	private final float[] shownStock = new float[EnumBloodTendency.values().length];
+	private boolean echoClimaxFired;
 
 	private MemoryWeavingRecipe curRecipe = null;
 	private String recipePath = "";
 	private String selectedRecipeId = "";
 	private CompoundTag committedRecipe = new CompoundTag();
 	private boolean recoveryRequired;
+	/** Shared station-upgrade bookkeeping: a rite holds the loom still, and remembers which rite raised it. */
+	private boolean riteLocked;
+	private UUID machineIdentity = UUID.randomUUID();
+	@Nullable private UUID lastUpgradeRite;
 	private int craftingPhase = PHASE_IDLE;
 	private double ritualBloodCharged = 0.0D;
-	private int activeOrb = -1;
-	private long lastOrbDragGameTime = -1L;
 
 	public SomaticLoomBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.somatic_loom.get(), pos, state);
 	}
 
-	public static void clientTick(Level level, BlockPos worldPosition, BlockState state,
-			SomaticLoomBlockEntity self) {
-		if (self.craftingPhase == PHASE_WEAVING_ORBS) {
-			self.tickClientOrbMotion();
+	public static void clientTick(Level level, BlockPos worldPosition, BlockState state, SomaticLoomBlockEntity self) {
+		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+			int i = tend.ordinal();
+			self.shownSpun[i] += (self.getSpun(tend) - self.shownSpun[i]) * 0.08F;
+			self.shownStock[i] += (self.getStoredEnzyme(tend) - self.shownStock[i]) * 0.08F;
 		}
+		if (self.craftingPhase == PHASE_WEAVING && !self.paused) {
+			self.weaveTicks++;
+			// Motes of the memory drift up off the echo while it is woven.
+			BloodManipulation manip = self.getWeaveManipulation();
+			if (manip != null && self.weaveTicks % 5 == 0) {
+				Vec3 at = self.echoAnchor();
+				double dx = (level.random.nextDouble() - 0.5D) * 0.4D, dz = (level.random.nextDouble() - 0.5D) * 0.4D;
+				level.addParticle(HemoParticleData.glow(manip.getTend().getColor()), at.x + dx, at.y + 0.1D + level.random.nextDouble() * 0.6D,
+						at.z + dz, 0.0D, 0.015D, 0.0D);
+			}
+		}
+		else if (self.craftingPhase == PHASE_CLIMAX) self.climaxTicks++;
 	}
 
-	public static void serverTick(Level level, BlockPos worldPosition, BlockState state,
-			SomaticLoomBlockEntity self) {
+	public static void serverTick(Level level, BlockPos worldPosition, BlockState state, SomaticLoomBlockEntity self) {
 		if (self.curRecipe == null || level.getGameTime() % 20L == 0L) self.refreshRecipe();
-		if (self.craftingPhase == PHASE_WEAVING_ORBS && !self.recoveryRequired) self.tickOrbDrift();
+		if (level instanceof ServerLevel server && self.isWeaving() && !self.recoveryRequired) self.tickWeave(server);
 	}
 
 	public boolean addItem(@Nullable Player player, ItemStack stack, @Nullable InteractionHand hand) {
-		if (stack.isEmpty()) {
+		if (stack.isEmpty() || refuseWhileRiteHeld(player)) {
 			return false;
 		}
 
 		if (stack.getItem() instanceof EnzymeItem enzyme) {
 			depositEnzyme(player, stack, enzyme, player != null && player.isShiftKeyDown());
 			return true;
+		}
+
+		var upgrade = StationUpgradeCatalog.all().stream().filter(tier -> tier.station() == UpgradeStation.LOOM
+				&& tier.upgradeItem().equals(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()))).findFirst();
+		if (upgrade.isPresent()) {
+			// Kits are installed by their rite, never woven: keep them out of the catalyst row.
+			msg(player, "Install this at the " + (upgrade.get().tier() == 1 ? "Rite of the Ganglionic Weave" : "Rite of the Cortical Weave")
+					+ ", with the Loom seated behind a Cardinal Focus.", ChatFormatting.YELLOW, true);
+			return false;
 		}
 
 		if (stack.getItem() instanceof RecycledEnzymeItem) {
@@ -150,7 +195,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 			return false;
 		}
 
-		if (ritualBloodCharged > 0 || isWeavingOrbs()) {
+		if (ritualBloodCharged > 0 || isWeaving()) {
 			msg(player, "Cancel the paid weave before changing its catalysts.", ChatFormatting.YELLOW, true);
 			return false;
 		}
@@ -159,7 +204,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 	}
 
 	public boolean removeItem(@Nullable Player player, boolean removeMemory) {
-		if (player == null) return false;
+		if (player == null || refuseWhileRiteHeld(player)) return false;
 		if (removeMemory) {
 			if (contents.get(0).isEmpty()) return false;
 			player.getInventory().placeItemBackInInventory(contents.get(0).copy());
@@ -258,7 +303,8 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		ResourceLocation id = ResourceLocation.tryParse(selectedRecipeId);
 		var holder = id == null ? null : level.getRecipeManager().byKey(id).orElse(null);
 		if (holder != null && holder.value() instanceof MemoryWeavingRecipe recipe
-				&& !contents.get(0).isEmpty() && catalystsMatch(recipe)) {
+				&& !contents.get(0).isEmpty() && catalystsMatch(recipe)
+				&& (ritualBloodCharged > 0 || isWeaving() || stageAllows(recipe))) {
 			if (!committedRecipe.isEmpty() && !committedRecipe.equals(recipeCommitment(recipe))) {
 				recoveryRequired = true;
 				return;
@@ -268,7 +314,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 			if (craftingPhase == PHASE_IDLE) craftingPhase = PHASE_AWAITING_BLOOD;
 			if (ritualBloodCharged > 0 && committedRecipe.isEmpty()) committedRecipe = recipeCommitment(recipe);
 			recoveryRequired = false;
-		} else if (ritualBloodCharged > 0 || craftingPhase == PHASE_WEAVING_ORBS) {
+		} else if (ritualBloodCharged > 0 || isWeaving()) {
 			recoveryRequired = true;
 		} else {
 			craftingPhase = PHASE_IDLE;
@@ -285,7 +331,8 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 
 	/** An empty-hand click deliberately cycles matching outputs; stocking enzymes never selects one. */
 	public void chooseNextRecipe(Player player) {
-		if (ritualBloodCharged > 0 || isWeavingOrbs()) {
+		if (refuseWhileRiteHeld(player)) return;
+		if (ritualBloodCharged > 0 || isWeaving()) {
 			provideTendencyFeedback(player);
 			return;
 		}
@@ -295,12 +342,28 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		for (int i = 0; i < choices.size(); i++) {
 			if (choices.get(i).id().toString().equals(selectedRecipeId)) current = i;
 		}
-		selectRecipe(player, choices.get((current + 1) % choices.size()).id());
+		var next = choices.get((current + 1) % choices.size());
+		if (!stageAllows(next.value())) {
+			// Cycling still lands on a memory this stage cannot weave, so the next click moves past it; refreshRecipe
+			// holds it back and payment refuses it.
+			selectedRecipeId = next.id().toString();
+			committedRecipe = new CompoundTag();
+			refreshRecipe();
+			msg(player, tierRequired(next.value()), ChatFormatting.YELLOW, true);
+			markDirtyAndSync();
+			return;
+		}
+		selectRecipe(player, next.id());
 	}
 
 	public boolean selectRecipe(@Nullable Player player, ResourceLocation id) {
-		if (level == null || level.isClientSide || ritualBloodCharged > 0 || isWeavingOrbs()) return false;
-		if (recipeChoices().stream().noneMatch(holder -> holder.id().equals(id))) return false;
+		if (level == null || level.isClientSide || riteLocked || ritualBloodCharged > 0 || isWeaving()) return false;
+		var choice = recipeChoices().stream().filter(holder -> holder.id().equals(id)).findFirst();
+		if (choice.isEmpty()) return false;
+		if (!stageAllows(choice.get().value())) {
+			msg(player, tierRequired(choice.get().value()), ChatFormatting.YELLOW, false);
+			return false;
+		}
 		selectedRecipeId = id.toString();
 		committedRecipe = new CompoundTag();
 		refreshRecipe();
@@ -357,10 +420,6 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		return craftingPhase == PHASE_AWAITING_BLOOD && curRecipe != null;
 	}
 
-	public boolean isWeavingOrbs() {
-		return craftingPhase == PHASE_WEAVING_ORBS;
-	}
-
 	public boolean hasValidRecipe() {
 		return curRecipe != null;
 	}
@@ -384,13 +443,13 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		return curRecipe;
 	}
 
-	public MemoryWeavingRecipe getPreviewRecipe() {
-		if (level == null || contents.get(0).isEmpty() || recoveryRequired) return null;
-		ResourceLocation id = ResourceLocation.tryParse(selectedRecipeId);
-		var holder = id == null ? null : level.getRecipeManager().byKey(id).orElse(null);
-		if (holder == null || !(holder.value() instanceof MemoryWeavingRecipe recipe) || !catalystsMatch(recipe)) return null;
-		return committedRecipe.isEmpty() || committedRecipe.equals(recipeCommitment(recipe)) ? recipe : null;
-	}
+	public MemoryWeavingRecipe getPreviewRecipe() {
+		if (level == null || contents.get(0).isEmpty() || recoveryRequired) return null;
+		ResourceLocation id = ResourceLocation.tryParse(selectedRecipeId);
+		var holder = id == null ? null : level.getRecipeManager().byKey(id).orElse(null);
+		if (holder == null || !(holder.value() instanceof MemoryWeavingRecipe recipe) || !catalystsMatch(recipe)) return null;
+		return committedRecipe.isEmpty() || committedRecipe.equals(recipeCommitment(recipe)) ? recipe : null;
+	}
 	public String getRecipePath() {
 		return recipePath;
 	}
@@ -431,17 +490,13 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		return storedEnzymes.getOrDefault(tendency, 0);
 	}
 
-	public List<RitualOrb> getRitualOrbs() {
-		return List.copyOf(ritualOrbs);
-	}
-
 	public ItemStack getResultItem() {
 		return curRecipe != null && level != null
 				? curRecipe.getResultItem(level.registryAccess()) : ItemStack.EMPTY;
 	}
 
 	public boolean startRitual(Player player) {
-		if (isWeavingOrbs() || ritualBloodCharged > 0) return false;
+		if (isWeaving() || ritualBloodCharged > 0) return false;
 		refreshRecipe();
 		if (curRecipe == null) {
 			return false;
@@ -453,12 +508,12 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 	}
 
 	public boolean tryChargeRitualBlood(Player player, double maxAmount, boolean livingStaff) {
-		if (player == null || level == null) return false;
-		refreshRecipe();
-
-		if (isWeavingOrbs() && curRecipe != null && !recoveryRequired) return false;
-
-		if (curRecipe == null || recoveryRequired || craftingPhase != PHASE_AWAITING_BLOOD) {
+		if (player == null || level == null || refuseWhileRiteHeld(player)) return false;
+		refreshRecipe();
+
+		if (isWeaving() && curRecipe != null && !recoveryRequired) return false;
+
+		if (curRecipe == null || recoveryRequired || craftingPhase != PHASE_AWAITING_BLOOD) {
 			provideTendencyFeedback(player);
 			return false;
 		}
@@ -475,7 +530,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 
 		double needed = Math.max(0.0D, curRecipe.getBloodCost() - ritualBloodCharged);
 		if (needed <= 0.0D) {
-			beginOrbWeaving(player);
+			beginWeave(player);
 			return true;
 		}
 
@@ -491,7 +546,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 			playSound(SoundEvents.BEACON_POWER_SELECT, 0.35f, 0.8f);
 		}
 		if (ritualBloodCharged >= curRecipe.getBloodCost() - 0.001D) {
-			beginOrbWeaving(player);
+			beginWeave(player);
 		} else if (level.getGameTime() % 10L == 0L) {
 			msg(player, "Blood charge: " + (int) ritualBloodCharged + "/" + (int) curRecipe.getBloodCost(),
 					ChatFormatting.DARK_RED, true);
@@ -501,7 +556,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 	}
 
 	public void cancelRitual(@Nullable Player player) {
-		if (!isCrafting()) return;
+		if (!isCrafting() || refuseWhileRiteHeld(player)) return;
 		if (player != null) {
 			msg(player, "The weave collapses. Spent blood and enzymes are lost.", ChatFormatting.RED, true);
 		}
@@ -510,258 +565,269 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		markDirtyAndSync();
 	}
 
-	private void beginOrbWeaving(Player player) {
+	private void beginWeave(Player player) {
 		if (curRecipe == null || level == null) return;
-		craftingPhase = PHASE_WEAVING_ORBS;
-		activeOrb = -1;
-		lastOrbDragGameTime = -1L;
-		ritualOrbs.clear();
-		spawnRitualOrbs(curRecipe);
-		msg(player, "The memory strands scatter. Draw them home.", ChatFormatting.DARK_PURPLE, true);
-		playSound(SoundEvents.END_PORTAL_FRAME_FILL, 0.8f, 0.55f);
-		if (level instanceof ServerLevel serverLevel) {
-			PacketHandler.sendMonolithShatterBurst(Vec3.atCenterOf(worldPosition), 48.0D, serverLevel);
-		}
-	}
-
-	private void spawnRitualOrbs(MemoryWeavingRecipe recipe) {
-		if (level == null) return;
+		craftingPhase = PHASE_WEAVING;
+		weaver = player.getUUID();
+		weaverRef = player;
+		weaverTheme = chamberThemeOf(player.getUUID());
+		weaveTicks = 0;
+		climaxTicks = 0;
+		pausedTicks = 0;
+		paused = false;
+		weaveThreads.clear();
+		// Payment draws each required enzyme out of its vial and spins it onto the pirn as thread.
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			int requirement = recipe.getEnzymeRequirement(tend);
-			if (requirement <= 0) continue;
-			for (int cost : splitOrbCosts(requirement)) {
-				double angle = level.random.nextDouble() * Math.PI * 2.0D;
-				double radius = 2.0D + (requirement / (double) MemoryWeavingRecipe.MAX_ENZYMES_PER_TENDENCY) * 5.75D;
-				radius += (level.random.nextDouble() - 0.5D) * 0.6D;
-				radius = Mth.clamp(radius, 2.0D, 8.0D);
-				double y = 1.2D + level.random.nextDouble() * 1.6D;
-				Vec3 start = new Vec3(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
-				ritualOrbs.add(new RitualOrb(tend, cost, start));
-			}
+			int required = curRecipe.getEnzymeRequirement(tend);
+			if (required <= 0) continue;
+			consumeStoredEnzyme(tend, required);
+			spun.put(tend, required);
+			for (int i = 0; i < SomaticWeaveRules.threadsFor(required); i++) weaveThreads.add(new WeaveThread(tend));
 		}
+		msg(player, "The echo of the memory takes shape over the warp. Its threads will fight being bound.",
+				ChatFormatting.DARK_PURPLE, true);
+		playSound(SoundEvents.END_PORTAL_FRAME_FILL, 0.8f, 0.55f);
+		if (level instanceof ServerLevel serverLevel)
+			PacketHandler.sendMonolithShatterBurst(Vec3.atCenterOf(worldPosition), 48.0D, serverLevel);
+		markDirtyAndSync();
 	}
 
-	private static List<Integer> splitOrbCosts(int requirement) {
-		int orbCount = MemoryWeavingRecipe.getOrbCountForRequirement(requirement);
-		List<Integer> costs = new ArrayList<>(orbCount);
-		for (int i = 0; i < orbCount; i++) {
-			costs.add(1);
+	private void tickWeave(ServerLevel server) {
+		if (craftingPhase == PHASE_CLIMAX) {
+			if (++climaxTicks >= SomaticWeaveRules.CLIMAX_TICKS) tickCompletion(weaverPlayer(server));
+			return;
 		}
-		return costs;
-	}
-
-	private void tickOrbDrift() {
-		long gameTime = level == null ? -1L : level.getGameTime();
-		if (activeOrb >= 0 && gameTime - lastOrbDragGameTime > 1L) {
-			if (activeOrb < ritualOrbs.size()) {
-				ritualOrbs.get(activeOrb).clearDragDepth();
-			}
-			activeOrb = -1;
+		if (weaver == null) adoptNearestWeaver(server);
+		reconcileLooseThreads(server);
+		Player player = weaverPlayer(server);
+		boolean present = player != null && SomaticWeaveRules.weaverPresent(player.isAlive(),
+				player.level() == server, player.distanceToSqr(Vec3.atCenterOf(worldPosition)));
+		if (pausedTicks > 0) pausedTicks--;
+		boolean shouldPause = !present || pausedTicks > 0;
+		if (shouldPause != paused) {
+			paused = shouldPause;
+			if (paused) recallLooseThreads(server);
+			markDirtyAndSync();
 		}
-		for (int i = 0; i < ritualOrbs.size(); i++) {
-			RitualOrb orb = ritualOrbs.get(i);
-			if (orb.completed) continue;
-			if (i == activeOrb) {
-				orb.idleTicks = 0;
-				continue;
-			}
-			orb.idleTicks++;
-			boolean needsWanderSync = tickWanderingOrb(orb);
-			if (needsWanderSync) {
+		if (paused) return;
+		catchWithFeelers(server, player);
+		weaveTicks++;
+		if (SomaticWeaveRules.frayDue(weaveTicks) && looseCount() < SomaticWeaveRules.maxLoose(getWeaveRank())) {
+			weaveThreads.stream().filter(t -> t.state == WeaveThread.State.HELD).findFirst().ifPresent(thread -> {
+				thread.state = WeaveThread.State.LOOSE;
+				thread.entity = FrayedThreadEntity.spawn(server, this, thread.tendency, getWeaveRank()).getUUID();
 				markDirtyAndSync();
+			});
+		}
+	}
+
+	private long looseCount() {
+		return weaveThreads.stream().filter(t -> t.state == WeaveThread.State.LOOSE).count();
+	}
+
+	/** Loose threads whose entity has gone (unloaded, killed by commands) return to the echo. */
+	private void reconcileLooseThreads(ServerLevel server) {
+		boolean changed = false;
+		for (WeaveThread thread : weaveThreads) {
+			if (thread.state == WeaveThread.State.LOOSE
+					&& (thread.entity == null || !(server.getEntity(thread.entity) instanceof FrayedThreadEntity))) {
+				thread.state = WeaveThread.State.HELD;
+				thread.entity = null;
+				changed = true;
 			}
 		}
+		if (changed) markDirtyAndSync();
 	}
 
-	private boolean tickWanderingOrb(RitualOrb orb) {
-		boolean needsWanderSync = level instanceof ServerLevel serverLevel
-				&& orb.updateWanderTargetWithinRitualBounds(serverLevel);
-		orb.wanderTowardTarget();
-		return needsWanderSync;
+	private void recallLooseThreads(ServerLevel server) {
+		for (WeaveThread thread : weaveThreads) {
+			if (thread.state != WeaveThread.State.LOOSE) continue;
+			if (thread.entity != null && server.getEntity(thread.entity) instanceof FrayedThreadEntity entity)
+				entity.discard();
+			thread.state = WeaveThread.State.HELD;
+			thread.entity = null;
+		}
 	}
 
-	private void tickClientOrbMotion() {
-		tickOrbDrift();
+	/** A weave carried over from an older save, or whose weaver is unknown, is taken up by the nearest player. */
+	private void adoptNearestWeaver(ServerLevel server) {
+		Vec3 centre = Vec3.atCenterOf(worldPosition);
+		Player nearest = server.getNearestPlayer(centre.x, centre.y, centre.z, SomaticWeaveRules.RITUAL_RADIUS,
+				p -> p.isAlive() && !p.isSpectator());
+		if (nearest != null) {
+			weaver = nearest.getUUID();
+			weaverRef = nearest;
+			weaverTheme = chamberThemeOf(weaver);
+			markDirtyAndSync();
+		}
 	}
 
-	public boolean dragSelectedOrb(Player player, double pullStrength) {
-		if (player == null || level == null || craftingPhase != PHASE_WEAVING_ORBS) return false;
-		refreshRecipe();
-		if (recoveryRequired || curRecipe == null) {
-			provideTendencyFeedback(player);
-			return false;
-		}
-		int selected = getActiveOrTargetedOrb(player);
-		if (selected < 0) {
-			clearActiveOrbDrag();
-			activeOrb = -1;
-			lastOrbDragGameTime = -1L;
-			return false;
-		}
-		int previousActive = activeOrb;
-		activeOrb = selected;
-		lastOrbDragGameTime = level.getGameTime();
-		RitualOrb orb = ritualOrbs.get(selected);
-		if (previousActive != selected || orb.dragDepth <= 0.0D) {
-			orb.captureDragDepth(player, worldPosition);
-		}
-		Vec3 dragTarget = findOrbDragTarget(player, orb, selected);
-		if (dragTarget == null) {
-			orb.clearDragDepth();
-			activeOrb = -1;
-			lastOrbDragGameTime = -1L;
-			return false;
-		}
-		int neededSpend = orb.requiredCost();
-		if (orb.enzymeSpent < neededSpend && !consumeStoredEnzyme(orb.tendency, 1)) {
-			msg(player, "The loom lacks " + orb.tendency.name() + " enzymes.", ChatFormatting.DARK_RED, true);
-			return false;
-		}
-		if (orb.enzymeSpent < neededSpend) {
-			orb.enzymeSpent++;
-		}
-
-		Vec3 offset = orb.offset();
-		if (isOrbWithinLoomAbsorptionBounds(offset)) {
-			completeOrb(player, selected);
+	public boolean weaveHome(FrayedThreadEntity entity, Player by) {
+		for (WeaveThread thread : weaveThreads) {
+			if (thread.state != WeaveThread.State.LOOSE || !entity.getUUID().equals(thread.entity)) continue;
+			thread.state = WeaveThread.State.WOVEN;
+			thread.entity = null;
+			spun.merge(thread.tendency, -1, (a, b) -> Math.max(0, a + b));
+			entity.discard();
+			playWeaveFeedback(thread.tendency);
+			if (weaveThreads.stream().allMatch(t -> t.state == WeaveThread.State.WOVEN)) {
+				craftingPhase = PHASE_CLIMAX;
+				climaxTicks = 0;
+			}
+			markDirtyAndSync();
 			return true;
 		}
-		Vec3 desired = dragTarget.subtract(offset).scale(ORB_DRAG_EASE);
-		double step = Math.min(desired.length(), ORB_DRAG_MAX_STEP * Math.max(0.5D, pullStrength));
-		Vec3 next = desired.lengthSqr() < 0.0001D ? offset : offset.add(desired.normalize().scale(step));
-		next = clampOrbOffsetToRitualBounds(next);
-		orb.setOffset(next);
-		orb.idleTicks = 0;
-		spawnOrbDragTrail(orb);
-		if (isOrbWithinLoomAbsorptionBounds(next)) {
-			completeOrb(player, selected);
+		return false;
+	}
+
+	/** Ganglionic feelers take slack threads that drift near the echo; taut threads still fight. */
+	private void catchWithFeelers(ServerLevel server, Player weaver) {
+		double radius = SomaticWeaveRules.autoCatchRadius(upgradeTier());
+		if (radius <= 0) return;
+		Vec3 anchor = echoAnchor();
+		for (FrayedThreadEntity thread : looseThreadEntities(server)) {
+			if (!thread.isSlack() || thread.distanceToSqr(anchor) > radius * radius) continue;
+			Vec3 from = nearestFeelerTip(thread.position());
+			Vec3 to = thread.position();
+			var colour = thread.tendency().getColor();
+			for (int i = 0; i <= 8; i++) {
+				Vec3 at = from.lerp(to, i / 8.0D);
+				server.sendParticles(HemoParticleData.glow(colour), at.x, at.y, at.z, 1, 0.02D, 0.02D, 0.02D, 0.0D);
+			}
+			weaveHome(thread, weaver);
 		}
-		markDirtyAndSync();
-		return true;
 	}
 
-	private boolean isOrbWithinLoomAbsorptionBounds(Vec3 offset) {
-		Vec3 worldOrbCenter = Vec3.atCenterOf(worldPosition).add(offset);
-		return new AABB(worldPosition).inflate(ORB_ABSORPTION_MARGIN).contains(worldOrbCenter);
-	}
-
-	private int getActiveOrTargetedOrb(Player player) {
-		if (activeOrb >= 0 && activeOrb < ritualOrbs.size() && !ritualOrbs.get(activeOrb).completed) {
-			return activeOrb;
-		}
-		return findTargetedOrb(player);
-	}
-
-	@Nullable
-	private Vec3 findOrbDragTarget(Player player, RitualOrb orb, int selected) {
-		if (selected < 0 || selected >= ritualOrbs.size()) {
-			return null;
-		}
-		Vec3 eye = player.getEyePosition();
-		Vec3 look = player.getLookAngle().normalize();
-		Vec3 center = Vec3.atCenterOf(worldPosition);
-		double along = orb.dragDepth > 0.0D ? orb.dragDepth
-				: center.add(orb.offset()).subtract(eye).dot(look);
-		along = Mth.clamp(along, 1.5D, ORB_TARGETING_RANGE);
-		Vec3 targetOffset = eye.add(look.scale(along)).subtract(center);
-		return clampOrbOffsetToRitualBounds(targetOffset);
-	}
-
-	private static Vec3 clampOrbOffsetToRitualBounds(Vec3 offset) {
-		return new Vec3(
-				Mth.clamp(offset.x, -ORB_WANDER_XZ_RANGE, ORB_WANDER_XZ_RANGE),
-				Mth.clamp(offset.y, ORB_WANDER_Y_MIN, ORB_WANDER_Y_MAX),
-				Mth.clamp(offset.z, -ORB_WANDER_XZ_RANGE, ORB_WANDER_XZ_RANGE));
-	}
-
-	private int findTargetedOrb(Player player) {
-		Vec3 eye = player.getEyePosition();
-		Vec3 look = player.getLookAngle().normalize();
-		Vec3 center = Vec3.atCenterOf(worldPosition);
-		int best = -1;
+	private Vec3 nearestFeelerTip(Vec3 to) {
+		Direction facing = getBlockState().hasProperty(SomaticLoomBlock.FACING)
+				? getBlockState().getValue(SomaticLoomBlock.FACING) : Direction.NORTH;
+		Vec3 best = echoAnchor();
 		double bestDistance = Double.MAX_VALUE;
-		for (int i = 0; i < ritualOrbs.size(); i++) {
-			RitualOrb orb = ritualOrbs.get(i);
-			if (orb.completed) continue;
-			Vec3 orbPos = center.add(orb.offset());
-			double along = orbPos.subtract(eye).dot(look);
-			if (along < 0 || along > ORB_TARGETING_RANGE) continue;
-			Vec3 closestPoint = eye.add(look.scale(along));
-			double rayDistance = closestPoint.distanceTo(orbPos);
-			if (rayDistance <= ORB_TARGETING_RADIUS && rayDistance < bestDistance) {
-				bestDistance = rayDistance;
-				best = i;
+		for (float[] tip : SomaticLoomGeometry.FEELER_TIPS) {
+			Vec3 at = SomaticLoomFrame.toWorld(worldPosition, facing, tip[0], tip[1], tip[2]);
+			double distance = at.distanceToSqr(to);
+			if (distance < bestDistance) {
+				bestDistance = distance;
+				best = at;
 			}
 		}
 		return best;
 	}
 
-	private void completeOrb(Player player, int index) {
-		RitualOrb orb = ritualOrbs.get(index);
-		while (orb.enzymeSpent < orb.requiredCost()) {
-			if (!consumeStoredEnzyme(orb.tendency, 1)) {
-				msg(player, "The final strand frays without enough enzyme.", ChatFormatting.DARK_RED, true);
-				return;
-			}
-			orb.enzymeSpent++;
-		}
-		orb.completed = true;
-		playOrbAbsorptionFeedback(orb);
-		orb.setOffset(Vec3.ZERO);
-		orb.clearDragDepth();
-		activeOrb = -1;
-		lastOrbDragGameTime = -1L;
-		if (allOrbsCompleted()) {
-			tickCompletion(player);
-		}
+	public void blackout() {
+		pausedTicks = SomaticWeaveRules.BLACKOUT_TICKS;
 	}
 
-	private void spawnOrbDragTrail(RitualOrb orb) {
-		if (!(level instanceof ServerLevel serverLevel)) {
-			return;
-		}
-		Vec3 center = Vec3.atCenterOf(worldPosition);
-		Vec3 previous = center.add(orb.previousOffset());
-		Vec3 current = center.add(orb.offset());
-		if (previous.distanceToSqr(current) < 0.0004D) {
-			return;
-		}
-		for (int i = 1; i <= 3; i++) {
-			Vec3 point = previous.lerp(current, i / 4.0D);
-			serverLevel.sendParticles(createOrbDust(orb), point.x, point.y, point.z,
-					1, 0.025D, 0.025D, 0.025D, 0.005D);
-		}
-		if (level.getGameTime() % 3L == 0L) {
-			serverLevel.sendParticles(ParticleTypes.REVERSE_PORTAL, current.x, current.y, current.z,
-					1, 0.02D, 0.02D, 0.02D, 0.02D);
-		}
+	public boolean ownsLooseThread(UUID entity) {
+		return isWeaving() && weaveThreads.stream()
+				.anyMatch(t -> t.state == WeaveThread.State.LOOSE && entity.equals(t.entity));
 	}
 
-	private void playOrbAbsorptionFeedback(RitualOrb orb) {
+	@Nullable
+	public Player weaverPlayer(ServerLevel server) {
+		if (weaver == null) return null;
+		ServerPlayer online = server.getServer().getPlayerList().getPlayer(weaver);
+		if (online != null) return online;
+		return weaverRef != null && !weaverRef.isRemoved() && weaver.equals(weaverRef.getUUID()) ? weaverRef : null;
+	}
+
+	public List<FrayedThreadEntity> looseThreadEntities(ServerLevel server) {
+		List<FrayedThreadEntity> out = new ArrayList<>();
+		for (WeaveThread thread : weaveThreads)
+			if (thread.state == WeaveThread.State.LOOSE && thread.entity != null
+					&& server.getEntity(thread.entity) instanceof FrayedThreadEntity entity)
+				out.add(entity);
+		return out;
+	}
+
+	public Vec3 echoAnchor() {
+		Direction facing = getBlockState().hasProperty(SomaticLoomBlock.FACING)
+				? getBlockState().getValue(SomaticLoomBlock.FACING) : Direction.NORTH;
+		return SomaticLoomFrame.toWorld(worldPosition, facing, SomaticLoomGeometry.ECHO_X, SomaticLoomGeometry.ECHO_Y,
+				SomaticLoomGeometry.ECHO_Z);
+	}
+
+	@Nullable
+	public BloodManipulation getWeaveManipulation() {
+		MemoryWeavingRecipe recipe = getWeaveRecipe();
+		if (recipe == null || level == null) return null;
+		return recipe.getResultItem(level.registryAccess()).getItem() instanceof BloodMemoryItem memory
+				? memory.getManip() : null;
+	}
+
+	/**
+	 * The weave in hand on either side. The server resolves curRecipe; the client never does, so while weaving it
+	 * reads the synced selection, which payment has already committed.
+	 */
+	@Nullable
+	public MemoryWeavingRecipe getWeaveRecipe() {
+		if (curRecipe != null) return curRecipe;
+		if (level == null || !level.isClientSide || !isWeaving()) return null;
+		ResourceLocation id = ResourceLocation.tryParse(selectedRecipeId);
+		var holder = id == null ? null : level.getRecipeManager().byKey(id).orElse(null);
+		return holder != null && holder.value() instanceof MemoryWeavingRecipe recipe ? recipe : null;
+	}
+
+	/** The rank a recipe's memory carries; non-memory results (effigies, formations) weave as Humilis. */
+	private EnumManipulationRank rankOf(MemoryWeavingRecipe recipe) {
+		return level != null && recipe.getResultItem(level.registryAccess()).getItem() instanceof BloodMemoryItem memory
+				&& memory.getManip() != null ? memory.getManip().getRank() : EnumManipulationRank.HUMILIS;
+	}
+
+	/** Base looms weave to Summa, Ganglionic to Magister, Cortical to Perfectus: the ranks each Degree teaches. */
+	public boolean stageAllows(MemoryWeavingRecipe recipe) {
+		return SomaticWeaveRules.rankAllowed(rankOf(recipe), upgradeTier());
+	}
+
+	private Component tierRequired(MemoryWeavingRecipe recipe) {
+		return Component.translatable("hemomancy.loom.tier_required." + SomaticWeaveRules.stageFor(rankOf(recipe)));
+	}
+
+	public EnumManipulationRank getWeaveRank() {
+		BloodManipulation manip = getWeaveManipulation();
+		return manip == null ? EnumManipulationRank.HUMILIS : manip.getRank();
+	}
+
+	public boolean isWeaving() { return craftingPhase == PHASE_WEAVING || craftingPhase == PHASE_CLIMAX; }
+	public boolean isInClimax() { return craftingPhase == PHASE_CLIMAX; }
+	public boolean isPaused() { return paused; }
+	public List<WeaveThread> getWeaveThreads() { return List.copyOf(weaveThreads); }
+	@Nullable public UUID getWeaver() { return weaver; }
+	@Nullable public ResourceLocation getWeaverTheme() { return weaverTheme; }
+
+	private ResourceLocation chamberThemeOf(UUID player) {
+		return level instanceof ServerLevel server
+				? com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager.get(server.getServer()).skyThemeOf(player)
+				: com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager.THEME_WILL_DEFAULT;
+	}
+	public long getWeaveTicks() { return weaveTicks; }
+	public int getClimaxTicks() { return climaxTicks; }
+	public int getSpun(EnumBloodTendency tendency) { return spun.getOrDefault(tendency, 0); }
+	public float displayedSpun(EnumBloodTendency tendency) { return shownSpun[tendency.ordinal()]; }
+	public float displayedStock(EnumBloodTendency tendency) { return shownStock[tendency.ordinal()]; }
+
+	public long echoLastLoopFired() { return echoLastLoop; }
+	public void markEchoLoopFired(long loop) { echoLastLoop = loop; }
+	public boolean echoClimaxFired() { return echoClimaxFired; }
+	public void markEchoClimaxFired() { echoClimaxFired = true; }
+
+	private void playWeaveFeedback(EnumBloodTendency tendency) {
 		if (level == null) {
 			return;
 		}
-		Vec3 pos = Vec3.atCenterOf(worldPosition).add(orb.offset());
+		Vec3 pos = echoAnchor();
 		level.playSound(null, pos.x, pos.y, pos.z, SoundEvents.AMETHYST_BLOCK_CHIME,
 				SoundSource.BLOCKS, 0.85F, 1.25F);
-		level.playSound(null, pos.x, pos.y, pos.z, SoundEvents.BEACON_POWER_SELECT,
-				SoundSource.BLOCKS, 0.45F, 1.65F);
+		level.playSound(null, pos.x, pos.y, pos.z, SoundEvents.WOOL_PLACE,
+				SoundSource.BLOCKS, 1.0F, 0.6F);
 		if (level instanceof ServerLevel serverLevel) {
-			serverLevel.sendParticles(ParticleTypes.POOF, pos.x, pos.y, pos.z,
+			serverLevel.sendParticles(HemoParticleData.darkGlow(STRAND_SOOT), pos.x, pos.y, pos.z,
 					12, 0.18D, 0.18D, 0.18D, 0.045D);
-			serverLevel.sendParticles(ParticleTypes.REVERSE_PORTAL, pos.x, pos.y, pos.z,
-					18, 0.28D, 0.28D, 0.28D, 0.06D);
-			serverLevel.sendParticles(createOrbDust(orb), pos.x, pos.y, pos.z,
+			serverLevel.sendParticles(HemoParticleData.ember(tendency.getColor(), 0.1F, 0.8F, 24),
+					pos.x, pos.y, pos.z, 18, 0.28D, 0.28D, 0.28D, 0.06D);
+			serverLevel.sendParticles(HemoParticleData.glow(tendency.getColor()), pos.x, pos.y, pos.z,
 					28, 0.24D, 0.24D, 0.24D, 0.035D);
 		}
-	}
-
-	private static DustParticleOptions createOrbDust(RitualOrb orb) {
-		var color = orb.tendency.getColor();
-		return new DustParticleOptions(new Vector3f(
-				color.getRed() / 255.0F,
-				color.getGreen() / 255.0F,
-				color.getBlue() / 255.0F), 1.2F);
 	}
 
 	private boolean consumeStoredEnzyme(EnumBloodTendency tendency, int amount) {
@@ -773,12 +839,9 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		return true;
 	}
 
-	private boolean allOrbsCompleted() {
-		return !ritualOrbs.isEmpty() && ritualOrbs.stream().allMatch(orb -> orb.completed);
-	}
-
-	private void tickCompletion(Player player) {
+	private void tickCompletion(@Nullable Player player) {
 		MemoryWeavingRecipe completedRecipe = curRecipe;
+		EnumManipulationRank completedRank = getWeaveRank();
 		if (completedRecipe == null || !catalystsMatch(completedRecipe)) {
 			msg(player, "The ritual unravels. Configuration changed.", ChatFormatting.RED, true);
 			clearActiveRitual(true);
@@ -795,6 +858,10 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		msg(player, "The memory crystallizes.", ChatFormatting.DARK_PURPLE, false);
 		playSound(SoundEvents.END_PORTAL_SPAWN, 0.5f, 1.5f);
 		if (player instanceof ServerPlayer serverPlayer) {
+			var stationProgress = HemoCapabilityAccess.stationUpgrades(serverPlayer);
+			stationProgress.recordUse(UpgradeStation.LOOM, StationUpgradeCatalog.LOOM_WEAVE);
+			if (upgradeTier() >= 1 && SomaticWeaveRules.stageFor(completedRank) >= 1)
+				stationProgress.recordUse(UpgradeStation.LOOM, StationUpgradeCatalog.LOOM_WEAVE_GANGLIONIC);
 			SkillPointGainEvents.onMemoryWeavingCompleted(serverPlayer);
 			if (result.is(ItemInit.memory_blood_shot.get()) && result.getItem() instanceof BloodMemoryItem memory) {
 				var learning = KnownManipulationGrantHelper.checkMemoryGrant(serverPlayer, memory.getManip(), memory);
@@ -835,17 +902,19 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		selectedRecipeId = "";
 		committedRecipe = new CompoundTag();
 		recoveryRequired = false;
-		activeOrb = -1;
-		lastOrbDragGameTime = -1L;
-		ritualOrbs.clear();
 		curRecipe = null;
 		recipePath = "";
-	}
-
-	private void clearActiveOrbDrag() {
-		if (activeOrb >= 0 && activeOrb < ritualOrbs.size()) {
-			ritualOrbs.get(activeOrb).clearDragDepth();
-		}
+		if (level instanceof ServerLevel server) recallLooseThreads(server);
+		weaveThreads.clear();
+		for (EnumBloodTendency tend : EnumBloodTendency.values()) spun.put(tend, 0);
+		weaver = null;
+		weaverRef = null;
+		weaverTheme = null;
+		weaveTicks = 0;
+		climaxTicks = 0;
+		pausedTicks = 0;
+		paused = false;
+		echoClimaxFired = false;
 	}
 
 	public void provideTendencyFeedback(@Nullable Player player) {
@@ -854,12 +923,17 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 			return;
 		}
 		if (contents.get(0).isEmpty()) { msg(player, "Insert a Hematic Memory.", ChatFormatting.GRAY, true); return; }
+		MemoryWeavingRecipe held = curRecipe == null ? getPreviewRecipe() : null;
+		if (held != null && !stageAllows(held)) {
+			msg(player, tierRequired(held), ChatFormatting.YELLOW, true);
+			return;
+		}
 		if (curRecipe == null) {
 			msg(player, recipeChoices().isEmpty() ? "Add catalysts for a known recipe." : "Use the loom with an empty hand to choose an output before paying blood.", ChatFormatting.YELLOW, false);
 			return;
 		}
-		if (isWeavingOrbs()) {
-			msg(player, "Hold a Living Staff on a strand, then turn and move to bring it home. Dragging holds a fixed distance. Crouch-use cancels and loses spent blood and enzymes.", ChatFormatting.DARK_PURPLE, false);
+		if (isWeaving()) {
+			msg(player, "Survive the frayed threads or strike them with a Living Staff until they go slack, then use the staff on a slack thread to weave it home. Crouch-use cancels and loses spent blood and enzymes.", ChatFormatting.DARK_PURPLE, false);
 			return;
 		}
 		msg(player, Component.literal("Selected: ").append(curRecipe.getResultItem(level.registryAccess()).getHoverName())
@@ -867,9 +941,9 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
 			int needed = curRecipe.getEnzymeRequirement(tend);
 			if (needed > 0) msg(player, Component.literal(needed + " × ").append(EnumBloodTendency.getRepEnzyme(tend).getDescription())
-					.append(" minimum (" + storedEnzymes.getOrDefault(tend, 0) + " stored)."), ChatFormatting.GRAY, false);
+					.append(" (" + storedEnzymes.getOrDefault(tend, 0) + " stored)."), ChatFormatting.GRAY, false);
 		}
-		msg(player, "Have a Living Staff ready. Each drifting strand can cost up to 8 additional enzymes. Hold the strand, turn, and move it home at the captured distance.", ChatFormatting.GRAY, false);
+		msg(player, "Have a Living Staff ready: its threads will tear loose and fight you, and the staff strikes them slack and weaves them home.", ChatFormatting.GRAY, false);
 		if (player instanceof ServerPlayer serverPlayer && curRecipe.getResultItem(level.registryAccess()).getItem() instanceof BloodMemoryItem memory) {
 			var check = KnownManipulationGrantHelper.checkMemoryGrant(serverPlayer, memory.getManip(), memory);
 			String requirement = switch (check.status()) {
@@ -923,10 +997,6 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		return -1;
 	}
 
-	private static double horizontalDistance(Vec3 offset) {
-		return Math.sqrt(offset.x * offset.x + offset.z * offset.z);
-	}
-
 	private void msg(@Nullable Player player, String text, ChatFormatting color, boolean actionBar) {
 		msg(player, Component.literal(text), color, actionBar);
 	}
@@ -950,12 +1020,55 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 	}
 
 	public AABB getRenderBoundingBox() {
-		return IMultiBlockEntity.computeMultiBlockAABB(this).inflate(ORB_WANDER_XZ_RANGE);
+		return IMultiBlockEntity.computeMultiBlockAABB(this).inflate(SomaticWeaveRules.RITUAL_RADIUS);
 	}
 
 	@Override
 	public void onLoad() {
 		volume.setActive(true);
+	}
+
+	//  Station upgrades: the shared catalog, progress and rites raise the loom in place.
+
+	@Override public UpgradeStation upgradeStation() { return UpgradeStation.LOOM; }
+	@Override public UUID machineIdentity() { return machineIdentity; }
+	@Override public boolean isRiteLocked() { return riteLocked; }
+	@Override public void setRiteLocked(boolean locked) { riteLocked = locked; markDirtyAndSync(); }
+	@Override public boolean canReceiveBlood() { return !riteLocked; }
+	@Override public boolean canProvideBlood() { return !riteLocked; }
+
+	/** A chosen but unpaid weave may wait through a rite; paid blood or a live weave must finish or be cancelled first. */
+	@Override
+	public boolean readyForUpgradeRite(ServerLevel level, Direction riteForward) {
+		return !riteLocked && !isWeaving() && ritualBloodCharged <= 0.0D;
+	}
+
+	@Override
+	public CompoundTag upgradeSnapshot(HolderLookup.Provider registries) {
+		CompoundTag tag = saveWithoutMetadata(registries);
+		tag.remove("RiteLocked");
+		tag.remove("LastUpgradeRite");
+		tag.remove("neoforge:attachments");
+		// Derived from the selection each refresh, not owned state.
+		tag.remove(TAG_RECIPE);
+		tag.remove(TAG_CRAFT_PHASE);
+		return tag;
+	}
+
+	@Override public boolean wasUpgradedBy(UUID riteId) { return riteId != null && riteId.equals(lastUpgradeRite); }
+	@Override public void markUpgradedBy(UUID riteId) { lastUpgradeRite = riteId; setChanged(); }
+
+	@Override
+	public boolean completeUpgrade(int targetTier, UUID riteId) {
+		boolean upgraded = !isWeaving() && UpgradeableStation.super.completeUpgrade(targetTier, riteId);
+		if (upgraded) markDirtyAndSync();
+		return upgraded;
+	}
+
+	private boolean refuseWhileRiteHeld(@Nullable Player player) {
+		if (!riteLocked) return false;
+		msg(player, "A rite holds the loom still until it ends.", ChatFormatting.GRAY, true);
+		return true;
 	}
 
 	@Override
@@ -1012,12 +1125,13 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
 		tag.putString(TAG_RECIPE, recipePath);
 		tag.putInt("weaveSaveVersion", 1);
+		tag.putBoolean("RiteLocked", riteLocked);
+		tag.putUUID("MachineIdentity", machineIdentity);
+		if (lastUpgradeRite != null) tag.putUUID("LastUpgradeRite", lastUpgradeRite);
 		tag.putString("selectedRecipeId", selectedRecipeId);
 		tag.put("committedRecipe", committedRecipe.copy());
 		tag.putInt(TAG_CRAFT_PHASE, craftingPhase);
 		tag.putDouble(TAG_RITUAL_BLOOD_CHARGED, ritualBloodCharged);
-		tag.putInt(TAG_ACTIVE_ORB, activeOrb);
-		tag.putLong(TAG_LAST_ORB_DRAG_GAME_TIME, lastOrbDragGameTime);
 
 		CompoundTag enzymeTag = new CompoundTag();
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
@@ -1025,11 +1139,18 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		}
 		tag.put(TAG_STORED_ENZYMES, enzymeTag);
 
-		ListTag orbs = new ListTag();
-		for (RitualOrb orb : ritualOrbs) {
-			orbs.add(orb.save());
-		}
-		tag.put(TAG_RITUAL_ORBS, orbs);
+		ListTag threads = new ListTag();
+		for (WeaveThread thread : weaveThreads) threads.add(thread.save());
+		tag.put(TAG_WEAVE_THREADS, threads);
+		if (weaver != null) tag.putUUID(TAG_WEAVER, weaver);
+		if (weaverTheme != null) tag.putString("weaverTheme", weaverTheme.toString());
+		tag.putLong(TAG_WEAVE_TICKS, weaveTicks);
+		tag.putInt(TAG_CLIMAX_TICKS, climaxTicks);
+		tag.putInt(TAG_PAUSED_TICKS, pausedTicks);
+		tag.putBoolean("paused", paused);
+		CompoundTag spunTag = new CompoundTag();
+		for (EnumBloodTendency tend : EnumBloodTendency.values()) spunTag.putInt(tend.name(), spun.getOrDefault(tend, 0));
+		tag.put(TAG_SPUN, spunTag);
 	}
 
 	private void loadShared(CompoundTag tag, HolderLookup.Provider registries) {
@@ -1044,38 +1165,43 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		recoveryRequired = false;
 		craftingPhase = tag.getInt(TAG_CRAFT_PHASE);
 		ritualBloodCharged = tag.getDouble(TAG_RITUAL_BLOOD_CHARGED);
-		activeOrb = tag.contains(TAG_ACTIVE_ORB) ? tag.getInt(TAG_ACTIVE_ORB) : -1;
-		lastOrbDragGameTime = tag.contains(TAG_LAST_ORB_DRAG_GAME_TIME)
-				? tag.getLong(TAG_LAST_ORB_DRAG_GAME_TIME)
-				: -1L;
+		riteLocked = tag.getBoolean("RiteLocked");
+		if (tag.hasUUID("MachineIdentity")) machineIdentity = tag.getUUID("MachineIdentity");
+		lastUpgradeRite = tag.hasUUID("LastUpgradeRite") ? tag.getUUID("LastUpgradeRite") : null;
 
 		CompoundTag enzymeTag = tag.getCompound(TAG_STORED_ENZYMES);
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
 			storedEnzymes.put(tend, Mth.clamp(enzymeTag.getInt(tend.name()), 0, ENZYME_CAPACITY));
 		}
 
-		ListTag orbs = tag.getList(TAG_RITUAL_ORBS, Tag.TAG_COMPOUND);
-		if (level != null && level.isClientSide && !ritualOrbs.isEmpty()) {
-			mergeSyncedRitualOrbs(orbs);
-		} else {
-			ritualOrbs.clear();
+		weaveThreads.clear();
+		if (tag.contains(TAG_WEAVE_THREADS)) {
+			ListTag threads = tag.getList(TAG_WEAVE_THREADS, Tag.TAG_COMPOUND);
+			for (int i = 0; i < threads.size(); i++) weaveThreads.add(WeaveThread.load(threads.getCompound(i)));
+			CompoundTag spunTag = tag.getCompound(TAG_SPUN);
+			for (EnumBloodTendency tend : EnumBloodTendency.values()) spun.put(tend, spunTag.getInt(tend.name()));
+		} else if (tag.contains(TAG_LEGACY_RITUAL_ORBS)) {
+			// Pre-witnessed saves: completed orbs are woven, the rest are held with their enzyme still on the pirn.
+			for (EnumBloodTendency tend : EnumBloodTendency.values()) spun.put(tend, 0);
+			ListTag orbs = tag.getList(TAG_LEGACY_RITUAL_ORBS, Tag.TAG_COMPOUND);
 			for (int i = 0; i < orbs.size(); i++) {
-				ritualOrbs.add(RitualOrb.load(orbs.getCompound(i)));
+				CompoundTag orb = orbs.getCompound(i);
+				WeaveThread thread = new WeaveThread(EnumBloodTendency.valueOf(orb.getString("tendency")));
+				if (orb.getBoolean("completed")) thread.state = WeaveThread.State.WOVEN;
+				else spun.merge(thread.tendency, 1, Integer::sum);
+				weaveThreads.add(thread);
 			}
 		}
-	}
-
-	private void mergeSyncedRitualOrbs(ListTag orbs) {
-		List<RitualOrb> localOrbs = new ArrayList<>(ritualOrbs);
-		ritualOrbs.clear();
-		for (int i = 0; i < orbs.size(); i++) {
-			RitualOrb synced = RitualOrb.load(orbs.getCompound(i));
-			if (i < localOrbs.size()) {
-				RitualOrb local = localOrbs.get(i);
-				synced.adoptServerOffsetSmoothly(local);
-			}
-			ritualOrbs.add(synced);
-		}
+		weaver = tag.hasUUID(TAG_WEAVER) ? tag.getUUID(TAG_WEAVER) : null;
+		weaverTheme = tag.contains("weaverTheme") ? ResourceLocation.tryParse(tag.getString("weaverTheme")) : null;
+		weaveTicks = tag.getLong(TAG_WEAVE_TICKS);
+		// The client never runs clearActiveRitual: a new or restarted weave must replay its loop and climax casts.
+		// A client running ahead of a lagging server is pulled back within the same beat; that beat stays fired.
+		if (craftingPhase != PHASE_CLIMAX) echoClimaxFired = false;
+		if (craftingPhase < PHASE_WEAVING || weaveTicks / SomaticWeaveRules.LOOP_TICKS < echoLastLoop) echoLastLoop = -1;
+		climaxTicks = tag.getInt(TAG_CLIMAX_TICKS);
+		pausedTicks = tag.getInt(TAG_PAUSED_TICKS);
+		paused = tag.getBoolean("paused");
 	}
 
 	private static NonNullList<ItemStack> createMutableContents(int size) {
@@ -1086,195 +1212,35 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		return items;
 	}
 
-	public static class RitualOrb {
+	/** One enzyme's thread: still held in the echo, loose as a hostile entity, or woven into the cloth. */
+	public static final class WeaveThread {
+		public enum State { HELD, LOOSE, WOVEN }
+
 		private final EnumBloodTendency tendency;
-		private final int enzymeCost;
-		private final Vec3 startOffset;
-		private double x;
-		private double y;
-		private double z;
-		private double previousX;
-		private double previousY;
-		private double previousZ;
-		private double dragDepth = -1.0D;
-		private double wanderTargetX;
-		private double wanderTargetY;
-		private double wanderTargetZ;
-		private int wanderTargetTicks;
-		private int idleTicks;
-		private int enzymeSpent;
-		private boolean completed;
+		private State state = State.HELD;
+		@Nullable private UUID entity;
 
-		private RitualOrb(EnumBloodTendency tendency, int enzymeCost, Vec3 startOffset) {
+		private WeaveThread(EnumBloodTendency tendency) {
 			this.tendency = tendency;
-			this.enzymeCost = enzymeCost;
-			this.startOffset = startOffset;
-			primeOffset(startOffset);
 		}
 
-		public EnumBloodTendency tendency() {
-			return tendency;
-		}
-
-		public int enzymeCost() {
-			return enzymeCost;
-		}
-
-		public boolean completed() {
-			return completed;
-		}
-
-		public Vec3 offset() {
-			return new Vec3(x, y, z);
-		}
-
-		public Vec3 previousOffset() {
-			return new Vec3(previousX, previousY, previousZ);
-		}
-
-		public Vec3 renderOffset(float partialTicks) {
-			double t = Mth.clamp(partialTicks, 0.0F, 1.0F);
-			return new Vec3(
-					Mth.lerp(t, previousX, x),
-					Mth.lerp(t, previousY, y),
-					Mth.lerp(t, previousZ, z));
-		}
-
-		public Vec3 startOffset() {
-			return startOffset;
-		}
-
-		private void setOffset(Vec3 offset) {
-			previousX = x;
-			previousY = y;
-			previousZ = z;
-			x = offset.x;
-			y = offset.y;
-			z = offset.z;
-		}
-
-		private void primeOffset(Vec3 offset) {
-			x = offset.x;
-			y = offset.y;
-			z = offset.z;
-			previousX = x;
-			previousY = y;
-			previousZ = z;
-			setWanderTarget(offset, 0);
-		}
-
-		private void captureDragDepth(Player player, BlockPos loomPos) {
-			Vec3 eye = player.getEyePosition();
-			Vec3 look = player.getLookAngle().normalize();
-			Vec3 center = Vec3.atCenterOf(loomPos);
-			dragDepth = Mth.clamp(center.add(offset()).subtract(eye).dot(look), 1.5D, ORB_TARGETING_RANGE);
-		}
-
-		private void clearDragDepth() {
-			dragDepth = -1.0D;
-		}
-
-		private void adoptServerOffsetSmoothly(RitualOrb localOrb) {
-			previousX = localOrb.x;
-			previousY = localOrb.y;
-			previousZ = localOrb.z;
-			if (dragDepth <= 0.0D) {
-				dragDepth = localOrb.dragDepth;
-			}
-		}
-
-		private boolean updateWanderTargetWithinRitualBounds(ServerLevel level) {
-			boolean needsWanderSync = false;
-			Vec3 target = wanderTarget();
-			if (wanderTargetTicks-- <= 0 || target.distanceToSqr(offset()) < 0.12D) {
-				chooseNewWanderTarget(level);
-				needsWanderSync = true;
-			}
-			return needsWanderSync;
-		}
-
-		private void chooseNewWanderTarget(ServerLevel level) {
-			double x = level.random.nextDouble() * ORB_WANDER_XZ_RANGE * 2.0D - ORB_WANDER_XZ_RANGE;
-			double y = ORB_WANDER_Y_MIN
-					+ level.random.nextDouble() * (ORB_WANDER_Y_MAX - ORB_WANDER_Y_MIN);
-			double z = level.random.nextDouble() * ORB_WANDER_XZ_RANGE * 2.0D - ORB_WANDER_XZ_RANGE;
-			int ticks = ORB_WANDER_MIN_TARGET_TICKS + level.random.nextInt(ORB_WANDER_RANDOM_TARGET_TICKS + 1);
-			setWanderTarget(clampOrbOffsetToRitualBounds(new Vec3(x, y, z)), ticks);
-		}
-
-		private Vec3 wanderTarget() {
-			return new Vec3(wanderTargetX, wanderTargetY, wanderTargetZ);
-		}
-
-		private void setWanderTarget(Vec3 target, int ticks) {
-			Vec3 clamped = clampOrbOffsetToRitualBounds(target);
-			wanderTargetX = clamped.x;
-			wanderTargetY = clamped.y;
-			wanderTargetZ = clamped.z;
-			wanderTargetTicks = Math.max(0, ticks);
-		}
-
-		private void wanderTowardTarget() {
-			Vec3 offset = offset();
-			Vec3 desired = wanderTarget().subtract(offset);
-			if (desired.lengthSqr() < 0.0004D) {
-				setOffset(clampOrbOffsetToRitualBounds(wanderTarget()));
-				return;
-			}
-			double step = Math.min(desired.length(), ORB_WANDER_STEP);
-			setOffset(clampOrbOffsetToRitualBounds(offset.add(desired.normalize().scale(step))));
-		}
-
-		private int requiredCost() {
-			double startDistance = horizontalDistance(startOffset);
-			double currentDistance = horizontalDistance(offset());
-			int driftPenalty = Math.max(0, (int) Math.floor((currentDistance - startDistance) * 0.75D));
-			return enzymeCost + Math.min(8, driftPenalty);
-		}
+		public EnumBloodTendency tendency() { return tendency; }
+		public State state() { return state; }
+		@Nullable public UUID entity() { return entity; }
 
 		private CompoundTag save() {
 			CompoundTag tag = new CompoundTag();
 			tag.putString("tendency", tendency.name());
-			tag.putInt("enzymeCost", enzymeCost);
-			tag.putDouble("startX", startOffset.x);
-			tag.putDouble("startY", startOffset.y);
-			tag.putDouble("startZ", startOffset.z);
-			tag.putDouble("x", x);
-			tag.putDouble("y", y);
-			tag.putDouble("z", z);
-			tag.putDouble("previousX", previousX);
-			tag.putDouble("previousY", previousY);
-			tag.putDouble("previousZ", previousZ);
-			tag.putDouble("dragDepth", dragDepth);
-			tag.putDouble("wanderTargetX", wanderTargetX);
-			tag.putDouble("wanderTargetY", wanderTargetY);
-			tag.putDouble("wanderTargetZ", wanderTargetZ);
-			tag.putInt("wanderTargetTicks", wanderTargetTicks);
-			tag.putInt("idleTicks", idleTicks);
-			tag.putInt("enzymeSpent", enzymeSpent);
-			tag.putBoolean("completed", completed);
+			tag.putString("state", state.name());
+			if (entity != null) tag.putUUID("entity", entity);
 			return tag;
 		}
 
-		private static RitualOrb load(CompoundTag tag) {
-			EnumBloodTendency tendency = EnumBloodTendency.valueOf(tag.getString("tendency"));
-			Vec3 start = new Vec3(tag.getDouble("startX"), tag.getDouble("startY"), tag.getDouble("startZ"));
-			RitualOrb orb = new RitualOrb(tendency, tag.getInt("enzymeCost"), start);
-			orb.x = tag.getDouble("x");
-			orb.y = tag.getDouble("y");
-			orb.z = tag.getDouble("z");
-			orb.previousX = tag.contains("previousX") ? tag.getDouble("previousX") : orb.x;
-			orb.previousY = tag.contains("previousY") ? tag.getDouble("previousY") : orb.y;
-			orb.previousZ = tag.contains("previousZ") ? tag.getDouble("previousZ") : orb.z;
-			orb.dragDepth = tag.contains("dragDepth") ? tag.getDouble("dragDepth") : -1.0D;
-			orb.wanderTargetX = tag.contains("wanderTargetX") ? tag.getDouble("wanderTargetX") : orb.startOffset.x;
-			orb.wanderTargetY = tag.contains("wanderTargetY") ? tag.getDouble("wanderTargetY") : orb.startOffset.y;
-			orb.wanderTargetZ = tag.contains("wanderTargetZ") ? tag.getDouble("wanderTargetZ") : orb.startOffset.z;
-			orb.wanderTargetTicks = tag.getInt("wanderTargetTicks");
-			orb.idleTicks = tag.getInt("idleTicks");
-			orb.enzymeSpent = tag.getInt("enzymeSpent");
-			orb.completed = tag.getBoolean("completed");
-			return orb;
+		private static WeaveThread load(CompoundTag tag) {
+			WeaveThread thread = new WeaveThread(EnumBloodTendency.valueOf(tag.getString("tendency")));
+			thread.state = State.valueOf(tag.getString("state"));
+			if (tag.hasUUID("entity")) thread.entity = tag.getUUID("entity");
+			return thread;
 		}
 	}
 }

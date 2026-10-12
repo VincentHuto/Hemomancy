@@ -155,11 +155,8 @@ public class HarbingerOutpostStructure extends Structure {
 							bindFiller(level, above, pos);
 						}
 					} else if (state.is(BlockInit.resonant_forge.get())) {
-						Direction right = state.getValue(ResonantForgeBlock.FACING).getClockWise();
-						for (Direction side : new Direction[] {right, right.getOpposite()}) {
-							placeFiller(level, chunkBox, pos.relative(side), pos);
-							placeFiller(level, chunkBox, pos.relative(side).above(), pos);
-						}
+						for (BlockPos offset : ResonantForgeBlock.offsets(state.getValue(ResonantForgeBlock.FACING)))
+							placeFiller(level, chunkBox, pos.offset(offset), pos);
 					} else if (state.is(BlockInit.somatic_loom.get())) {
 						Direction facing = state.getValue(SomaticLoomBlock.FACING);
 						placeFiller(level, chunkBox, pos.above(), pos);

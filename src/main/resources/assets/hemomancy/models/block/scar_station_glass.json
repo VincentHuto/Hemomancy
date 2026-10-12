@@ -1,0 +1,1043 @@
+{
+ "parent": "minecraft:block/block",
+ "render_type": "translucent",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "hemomancy:block/bold_chiseled_hematic_iron_block",
+  "glass": "hemomancy:block/ghastly_alembic_glass"
+ },
+ "elements": [
+  {
+   "name": "bell",
+   "from": [
+    5.25,
+    26.5,
+    9.4609
+   ],
+   "to": [
+    5.55,
+    30.7,
+    11.7391
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    },
+    "south": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    },
+    "east": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    },
+    "west": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    }
+   }
+  },
+  {
+   "name": "bell",
+   "from": [
+    6.8609,
+    26.5,
+    7.85
+   ],
+   "to": [
+    9.1391,
+    30.7,
+    8.15
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    },
+    "south": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    },
+    "east": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    },
+    "west": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    }
+   }
+  },
+  {
+   "name": "bell",
+   "from": [
+    10.45,
+    26.5,
+    9.4609
+   ],
+   "to": [
+    10.75,
+    30.7,
+    11.7391
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    },
+    "south": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    },
+    "east": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    },
+    "west": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    }
+   }
+  },
+  {
+   "name": "bell",
+   "from": [
+    6.8609,
+    26.5,
+    13.05
+   ],
+   "to": [
+    9.1391,
+    30.7,
+    13.35
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    },
+    "south": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    },
+    "east": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    },
+    "west": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    }
+   }
+  },
+  {
+   "name": "bell",
+   "from": [
+    5.25,
+    26.5,
+    9.4609
+   ],
+   "to": [
+    5.55,
+    30.7,
+    11.7391
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     26.5,
+     10.6
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    },
+    "south": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    },
+    "east": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    },
+    "west": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    }
+   }
+  },
+  {
+   "name": "bell",
+   "from": [
+    6.8609,
+    26.5,
+    7.85
+   ],
+   "to": [
+    9.1391,
+    30.7,
+    8.15
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     26.5,
+     10.6
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    },
+    "south": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    },
+    "east": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    },
+    "west": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    }
+   }
+  },
+  {
+   "name": "bell",
+   "from": [
+    10.45,
+    26.5,
+    9.4609
+   ],
+   "to": [
+    10.75,
+    30.7,
+    11.7391
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     26.5,
+     10.6
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    },
+    "south": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    },
+    "east": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    },
+    "west": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    }
+   }
+  },
+  {
+   "name": "bell",
+   "from": [
+    6.8609,
+    26.5,
+    13.05
+   ],
+   "to": [
+    9.1391,
+    30.7,
+    13.35
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     26.5,
+     10.6
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    },
+    "south": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    },
+    "east": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    },
+    "west": {
+     "uv": [
+      0,
+      1.3,
+      16,
+      5.5
+     ],
+     "texture": "#glass"
+    }
+   }
+  },
+  {
+   "name": "bell_crown",
+   "from": [
+    5.25,
+    30.7,
+    9.4609
+   ],
+   "to": [
+    10.75,
+    31.05,
+    11.7391
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      0.95,
+      16,
+      1.3
+     ],
+     "texture": "#glass"
+    },
+    "south": {
+     "uv": [
+      0,
+      0.95,
+      16,
+      1.3
+     ],
+     "texture": "#glass"
+    },
+    "east": {
+     "uv": [
+      0,
+      0.95,
+      16,
+      1.3
+     ],
+     "texture": "#glass"
+    },
+    "west": {
+     "uv": [
+      0,
+      0.95,
+      16,
+      1.3
+     ],
+     "texture": "#glass"
+    },
+    "up": {
+     "uv": [
+      5.25,
+      9.461,
+      10.75,
+      11.739
+     ],
+     "texture": "#glass"
+    },
+    "down": {
+     "uv": [
+      5.25,
+      9.461,
+      10.75,
+      11.739
+     ],
+     "texture": "#glass"
+    }
+   }
+  },
+  {
+   "name": "bell_crown",
+   "from": [
+    6.8609,
+    30.74,
+    7.85
+   ],
+   "to": [
+    9.1391,
+    31.01,
+    13.35
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      0.99,
+      16,
+      1.26
+     ],
+     "texture": "#glass"
+    },
+    "south": {
+     "uv": [
+      0,
+      0.99,
+      16,
+      1.26
+     ],
+     "texture": "#glass"
+    },
+    "east": {
+     "uv": [
+      0,
+      0.99,
+      16,
+      1.26
+     ],
+     "texture": "#glass"
+    },
+    "west": {
+     "uv": [
+      0,
+      0.99,
+      16,
+      1.26
+     ],
+     "texture": "#glass"
+    },
+    "up": {
+     "uv": [
+      6.861,
+      7.85,
+      9.139,
+      13.35
+     ],
+     "texture": "#glass"
+    },
+    "down": {
+     "uv": [
+      6.861,
+      7.85,
+      9.139,
+      13.35
+     ],
+     "texture": "#glass"
+    }
+   }
+  },
+  {
+   "name": "bell_crown",
+   "from": [
+    5.25,
+    30.78,
+    9.4609
+   ],
+   "to": [
+    10.75,
+    30.97,
+    11.7391
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     0,
+     10.6
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      1.03,
+      16,
+      1.22
+     ],
+     "texture": "#glass"
+    },
+    "south": {
+     "uv": [
+      0,
+      1.03,
+      16,
+      1.22
+     ],
+     "texture": "#glass"
+    },
+    "east": {
+     "uv": [
+      0,
+      1.03,
+      16,
+      1.22
+     ],
+     "texture": "#glass"
+    },
+    "west": {
+     "uv": [
+      0,
+      1.03,
+      16,
+      1.22
+     ],
+     "texture": "#glass"
+    },
+    "up": {
+     "uv": [
+      5.25,
+      9.461,
+      10.75,
+      11.739
+     ],
+     "texture": "#glass"
+    },
+    "down": {
+     "uv": [
+      5.25,
+      9.461,
+      10.75,
+      11.739
+     ],
+     "texture": "#glass"
+    }
+   }
+  },
+  {
+   "name": "bell_crown",
+   "from": [
+    5.25,
+    30.82,
+    9.4609
+   ],
+   "to": [
+    10.75,
+    30.93,
+    11.7391
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     0,
+     10.6
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      1.07,
+      16,
+      1.18
+     ],
+     "texture": "#glass"
+    },
+    "south": {
+     "uv": [
+      0,
+      1.07,
+      16,
+      1.18
+     ],
+     "texture": "#glass"
+    },
+    "east": {
+     "uv": [
+      0,
+      1.07,
+      16,
+      1.18
+     ],
+     "texture": "#glass"
+    },
+    "west": {
+     "uv": [
+      0,
+      1.07,
+      16,
+      1.18
+     ],
+     "texture": "#glass"
+    },
+    "up": {
+     "uv": [
+      5.25,
+      9.461,
+      10.75,
+      11.739
+     ],
+     "texture": "#glass"
+    },
+    "down": {
+     "uv": [
+      5.25,
+      9.461,
+      10.75,
+      11.739
+     ],
+     "texture": "#glass"
+    }
+   }
+  },
+  {
+   "name": "loupe_lens",
+   "from": [
+    8.2,
+    16.9,
+    6.1615
+   ],
+   "to": [
+    10.8,
+    17.1,
+    7.2385
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      14.9,
+      16,
+      15.1
+     ],
+     "texture": "#glass"
+    },
+    "south": {
+     "uv": [
+      0,
+      14.9,
+      16,
+      15.1
+     ],
+     "texture": "#glass"
+    },
+    "east": {
+     "uv": [
+      0,
+      14.9,
+      16,
+      15.1
+     ],
+     "texture": "#glass"
+    },
+    "west": {
+     "uv": [
+      0,
+      14.9,
+      16,
+      15.1
+     ],
+     "texture": "#glass"
+    },
+    "up": {
+     "uv": [
+      8.2,
+      6.162,
+      10.8,
+      7.239
+     ],
+     "texture": "#glass"
+    },
+    "down": {
+     "uv": [
+      8.2,
+      6.162,
+      10.8,
+      7.239
+     ],
+     "texture": "#glass"
+    }
+   }
+  },
+  {
+   "name": "loupe_lens",
+   "from": [
+    8.9615,
+    16.94,
+    5.4
+   ],
+   "to": [
+    10.0385,
+    17.06,
+    8.0
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      14.94,
+      16,
+      15.06
+     ],
+     "texture": "#glass"
+    },
+    "south": {
+     "uv": [
+      0,
+      14.94,
+      16,
+      15.06
+     ],
+     "texture": "#glass"
+    },
+    "east": {
+     "uv": [
+      0,
+      14.94,
+      16,
+      15.06
+     ],
+     "texture": "#glass"
+    },
+    "west": {
+     "uv": [
+      0,
+      14.94,
+      16,
+      15.06
+     ],
+     "texture": "#glass"
+    },
+    "up": {
+     "uv": [
+      8.961,
+      5.4,
+      10.039,
+      8.0
+     ],
+     "texture": "#glass"
+    },
+    "down": {
+     "uv": [
+      8.961,
+      5.4,
+      10.039,
+      8.0
+     ],
+     "texture": "#glass"
+    }
+   }
+  },
+  {
+   "name": "loupe_lens",
+   "from": [
+    8.2,
+    17.01,
+    6.1615
+   ],
+   "to": [
+    10.8,
+    17.14,
+    7.2385
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     9.5,
+     0,
+     6.7
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      14.98,
+      16,
+      15.02
+     ],
+     "texture": "#glass"
+    },
+    "south": {
+     "uv": [
+      0,
+      14.98,
+      16,
+      15.02
+     ],
+     "texture": "#glass"
+    },
+    "east": {
+     "uv": [
+      0,
+      14.98,
+      16,
+      15.02
+     ],
+     "texture": "#glass"
+    },
+    "west": {
+     "uv": [
+      0,
+      14.98,
+      16,
+      15.02
+     ],
+     "texture": "#glass"
+    },
+    "up": {
+     "uv": [
+      8.2,
+      6.162,
+      10.8,
+      7.239
+     ],
+     "texture": "#glass"
+    },
+    "down": {
+     "uv": [
+      8.2,
+      6.162,
+      10.8,
+      7.239
+     ],
+     "texture": "#glass"
+    }
+   }
+  },
+  {
+   "name": "loupe_lens",
+   "from": [
+    8.2,
+    16.98,
+    6.1615
+   ],
+   "to": [
+    10.8,
+    17.02,
+    7.2385
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     9.5,
+     0,
+     6.7
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      14.98,
+      16,
+      15.02
+     ],
+     "texture": "#glass"
+    },
+    "south": {
+     "uv": [
+      0,
+      14.98,
+      16,
+      15.02
+     ],
+     "texture": "#glass"
+    },
+    "east": {
+     "uv": [
+      0,
+      14.98,
+      16,
+      15.02
+     ],
+     "texture": "#glass"
+    },
+    "west": {
+     "uv": [
+      0,
+      14.98,
+      16,
+      15.02
+     ],
+     "texture": "#glass"
+    },
+    "up": {
+     "uv": [
+      8.2,
+      6.162,
+      10.8,
+      7.239
+     ],
+     "texture": "#glass"
+    },
+    "down": {
+     "uv": [
+      8.2,
+      6.162,
+      10.8,
+      7.239
+     ],
+     "texture": "#glass"
+    }
+   }
+  }
+ ]
+}

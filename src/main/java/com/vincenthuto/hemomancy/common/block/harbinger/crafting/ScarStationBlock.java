@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.crafting;
 
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
+import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ScarStationBlockEntity;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
@@ -30,18 +31,22 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
+import java.util.Map;
 
 public class ScarStationBlock extends Block implements EntityBlock, IMultiBlock, SimpleWaterloggedBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
-	/** Filler offsets: 1×2×1 — two filler blocks directly above the base. */
+	/** Filler offset: 1×2×1 — one filler block directly above the base. */
 	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
 			new BlockPos(0, 1, 0)
 	};
-
-	/** Full-block collision shape for the base block. */
-	private static final VoxelShape SHAPE = Shapes.block();
+	/** Plinth, cabinet, pitched bed, backboard pillars and the belled cortex of tools/model_export/scar_station.py. */
+	private static final Map<Direction, Map<BlockPos, VoxelShape>> CELLS = ModelShapes.cells(
+			ModelShapes.footprint(FILLER_OFFSETS),
+			new double[] {0.6, 0, 0.8, 15.4, 1.9, 15.6}, new double[] {1.5, 1.9, 2.5, 14.5, 11, 14.8},
+			new double[] {1.5, 11, 2.5, 14.5, 13, 8}, new double[] {1.5, 11, 8, 14.5, 15.5, 13},
+			new double[] {0.6, 11, 12.4, 15.4, 30.4, 14.8}, new double[] {4.2, 25, 7.8, 11.8, 31.8, 14.4});
 
 	public ScarStationBlock(Properties properties) {
 		super(properties);
@@ -94,7 +99,12 @@ public class ScarStationBlock extends Block implements EntityBlock, IMultiBlock,
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return SHAPE;
+		return CELLS.get(state.getValue(FACING)).getOrDefault(BlockPos.ZERO, Shapes.block());
+	}
+
+	@Override
+	public VoxelShape fillerShape(BlockState controller, BlockPos offset) {
+		return CELLS.get(controller.getValue(FACING)).get(offset);
 	}
 
 	@Override

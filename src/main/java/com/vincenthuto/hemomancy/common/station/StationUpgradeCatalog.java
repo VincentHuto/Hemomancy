@@ -20,6 +20,9 @@ public final class StationUpgradeCatalog {
     public static final String ARMOR_UPGRADE_CONSECRATED = "armor_upgrade_consecrated";
     public static final String ENCHANT = "enchant";
     public static final String ENCHANT_TARGETED = "enchant_targeted";
+    public static final String LOOM_WEAVE = "loom_weave";
+    /** A Magister-or-higher memory woven on a Ganglionic Loom. */
+    public static final String LOOM_WEAVE_GANGLIONIC = "loom_weave_ganglionic";
 
     private static final List<StationUpgradeTier> TIERS = List.of(
             new StationUpgradeTier(UpgradeStation.ALEMBIC, 1, 4, "hematic_condenser_kit",
@@ -51,7 +54,13 @@ public final class StationUpgradeCatalog {
                     "hemomancy.mnemonist.scriptorium.rubricator"),
             new StationUpgradeTier(UpgradeStation.SCRIPTORIUM, 2, 7, "palimpsest_burin",
                     "cardinal_rite/palimpsest", List.of(ENCHANT_TARGETED), 3, 50,
-                    "hemomancy.mnemonist.scriptorium.palimpsest"));
+                    "hemomancy.mnemonist.scriptorium.palimpsest"),
+            new StationUpgradeTier(UpgradeStation.LOOM, 1, 5, "ganglionic_harness",
+                    "cardinal_rite/ganglionic_weave", List.of(LOOM_WEAVE), 2, 50,
+                    "hemomancy.mnemonist.loom.ganglionic"),
+            new StationUpgradeTier(UpgradeStation.LOOM, 2, 6, "cortical_crown",
+                    "cardinal_rite/cortical_weave", List.of(LOOM_WEAVE_GANGLIONIC), 3, 50,
+                    "hemomancy.mnemonist.loom.cortical"));
 
     private StationUpgradeCatalog() {}
 

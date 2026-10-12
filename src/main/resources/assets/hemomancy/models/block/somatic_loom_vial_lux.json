@@ -1,0 +1,305 @@
+{
+ "parent": "minecraft:block/block",
+ "render_type": "translucent",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "minecraft:block/white_stained_glass",
+  "liq_lux": "minecraft:block/white_stained_glass"
+ },
+ "elements": [
+  {
+   "name": "vial_lux",
+   "from": [
+    -7.05,
+    4.4,
+    9.5893
+   ],
+   "to": [
+    -5.55,
+    5.4,
+    10.2107
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      10.6,
+      16,
+      11.6
+     ],
+     "texture": "#liq_lux"
+    },
+    "south": {
+     "uv": [
+      0,
+      10.6,
+      16,
+      11.6
+     ],
+     "texture": "#liq_lux"
+    },
+    "east": {
+     "uv": [
+      0,
+      10.6,
+      16,
+      11.6
+     ],
+     "texture": "#liq_lux"
+    },
+    "west": {
+     "uv": [
+      0,
+      10.6,
+      16,
+      11.6
+     ],
+     "texture": "#liq_lux"
+    },
+    "up": {
+     "uv": [
+      8.95,
+      9.589,
+      10.45,
+      10.211
+     ],
+     "texture": "#liq_lux"
+    },
+    "down": {
+     "uv": [
+      8.95,
+      9.589,
+      10.45,
+      10.211
+     ],
+     "texture": "#liq_lux"
+    }
+   }
+  },
+  {
+   "name": "vial_lux",
+   "from": [
+    -6.6107,
+    4.44,
+    9.15
+   ],
+   "to": [
+    -5.9893,
+    5.36,
+    10.65
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      10.64,
+      16,
+      11.56
+     ],
+     "texture": "#liq_lux"
+    },
+    "south": {
+     "uv": [
+      0,
+      10.64,
+      16,
+      11.56
+     ],
+     "texture": "#liq_lux"
+    },
+    "east": {
+     "uv": [
+      0,
+      10.64,
+      16,
+      11.56
+     ],
+     "texture": "#liq_lux"
+    },
+    "west": {
+     "uv": [
+      0,
+      10.64,
+      16,
+      11.56
+     ],
+     "texture": "#liq_lux"
+    },
+    "up": {
+     "uv": [
+      9.389,
+      9.15,
+      10.011,
+      10.65
+     ],
+     "texture": "#liq_lux"
+    },
+    "down": {
+     "uv": [
+      9.389,
+      9.15,
+      10.011,
+      10.65
+     ],
+     "texture": "#liq_lux"
+    }
+   }
+  },
+  {
+   "name": "vial_lux",
+   "from": [
+    -7.05,
+    4.48,
+    9.5893
+   ],
+   "to": [
+    -5.55,
+    5.32,
+    10.2107
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     -6.3,
+     0,
+     9.9
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      10.68,
+      16,
+      11.52
+     ],
+     "texture": "#liq_lux"
+    },
+    "south": {
+     "uv": [
+      0,
+      10.68,
+      16,
+      11.52
+     ],
+     "texture": "#liq_lux"
+    },
+    "east": {
+     "uv": [
+      0,
+      10.68,
+      16,
+      11.52
+     ],
+     "texture": "#liq_lux"
+    },
+    "west": {
+     "uv": [
+      0,
+      10.68,
+      16,
+      11.52
+     ],
+     "texture": "#liq_lux"
+    },
+    "up": {
+     "uv": [
+      8.95,
+      9.589,
+      10.45,
+      10.211
+     ],
+     "texture": "#liq_lux"
+    },
+    "down": {
+     "uv": [
+      8.95,
+      9.589,
+      10.45,
+      10.211
+     ],
+     "texture": "#liq_lux"
+    }
+   }
+  },
+  {
+   "name": "vial_lux",
+   "from": [
+    -7.05,
+    4.52,
+    9.5893
+   ],
+   "to": [
+    -5.55,
+    5.28,
+    10.2107
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     -6.3,
+     0,
+     9.9
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      10.72,
+      16,
+      11.48
+     ],
+     "texture": "#liq_lux"
+    },
+    "south": {
+     "uv": [
+      0,
+      10.72,
+      16,
+      11.48
+     ],
+     "texture": "#liq_lux"
+    },
+    "east": {
+     "uv": [
+      0,
+      10.72,
+      16,
+      11.48
+     ],
+     "texture": "#liq_lux"
+    },
+    "west": {
+     "uv": [
+      0,
+      10.72,
+      16,
+      11.48
+     ],
+     "texture": "#liq_lux"
+    },
+    "up": {
+     "uv": [
+      8.95,
+      9.589,
+      10.45,
+      10.211
+     ],
+     "texture": "#liq_lux"
+    },
+    "down": {
+     "uv": [
+      8.95,
+      9.589,
+      10.45,
+      10.211
+     ],
+     "texture": "#liq_lux"
+    }
+   }
+  }
+ ]
+}

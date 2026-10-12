@@ -1,0 +1,455 @@
+{
+ "parent": "minecraft:block/block",
+ "render_type": "translucent",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "hemomancy:block/hematic_iron_block",
+  "sanguine": "hemomancy:block/sanguine_glass"
+ },
+ "elements": [
+  {
+   "name": "heart_glass",
+   "from": [
+    5.0,
+    20.5,
+    6.7574
+   ],
+   "to": [
+    5.2,
+    27,
+    9.2426
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    },
+    "south": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    },
+    "east": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    },
+    "west": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    }
+   }
+  },
+  {
+   "name": "heart_glass",
+   "from": [
+    6.7574,
+    20.5,
+    5.0
+   ],
+   "to": [
+    9.2426,
+    27,
+    5.2
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    },
+    "south": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    },
+    "east": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    },
+    "west": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    }
+   }
+  },
+  {
+   "name": "heart_glass",
+   "from": [
+    10.8,
+    20.5,
+    6.7574
+   ],
+   "to": [
+    11.0,
+    27,
+    9.2426
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    },
+    "south": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    },
+    "east": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    },
+    "west": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    }
+   }
+  },
+  {
+   "name": "heart_glass",
+   "from": [
+    6.7574,
+    20.5,
+    10.8
+   ],
+   "to": [
+    9.2426,
+    27,
+    11.0
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    },
+    "south": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    },
+    "east": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    },
+    "west": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    }
+   }
+  },
+  {
+   "name": "heart_glass",
+   "from": [
+    5.0,
+    20.5,
+    6.7574
+   ],
+   "to": [
+    5.2,
+    27,
+    9.2426
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     20.5,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    },
+    "south": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    },
+    "east": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    },
+    "west": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    }
+   }
+  },
+  {
+   "name": "heart_glass",
+   "from": [
+    6.7574,
+    20.5,
+    5.0
+   ],
+   "to": [
+    9.2426,
+    27,
+    5.2
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     20.5,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    },
+    "south": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    },
+    "east": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    },
+    "west": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    }
+   }
+  },
+  {
+   "name": "heart_glass",
+   "from": [
+    10.8,
+    20.5,
+    6.7574
+   ],
+   "to": [
+    11.0,
+    27,
+    9.2426
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     20.5,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    },
+    "south": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    },
+    "east": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    },
+    "west": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    }
+   }
+  },
+  {
+   "name": "heart_glass",
+   "from": [
+    6.7574,
+    20.5,
+    10.8
+   ],
+   "to": [
+    9.2426,
+    27,
+    11.0
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     20.5,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    },
+    "south": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    },
+    "east": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    },
+    "west": {
+     "uv": [
+      0,
+      5,
+      16,
+      11.5
+     ],
+     "texture": "#sanguine"
+    }
+   }
+  }
+ ]
+}

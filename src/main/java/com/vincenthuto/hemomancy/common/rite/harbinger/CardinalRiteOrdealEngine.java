@@ -505,7 +505,11 @@ public final class CardinalRiteOrdealEngine {
 	public static void clearThreats(ServerLevel level, ActiveCardinalRite rite) {
 		for (UUID id : rite.getRiteThreats()) {
 			Entity entity = level.getEntity(id);
-			if (entity != null) entity.discard();
+			// A trial puppet leaves on its strings like any other; other threats vanish as before.
+			if (entity instanceof net.minecraft.world.entity.Mob mob
+					&& mob instanceof com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon)
+				com.vincenthuto.hemomancy.common.summon.PuppetStrings.unspool(mob);
+			else if (entity != null) entity.discard();
 		}
 		rite.clearRiteThreats();
 	}

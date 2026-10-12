@@ -93,12 +93,6 @@ class LuxUmbraGeometryTest {
         assertTrue(empty.points.isEmpty());
     }
 
-    @Test void teleportArrivalReformsWhileDepartureCollapses() {
-        Form arrival = Form.valueOf("UMBRA_ARRIVAL");
-        assertTrue(width(draw(arrival, Vec3.ZERO, 10)) > width(draw(arrival, Vec3.ZERO, 1)));
-        assertTrue(width(draw(Form.TELEPORT, Vec3.ZERO, 10)) < width(draw(Form.TELEPORT, Vec3.ZERO, 1)));
-    }
-
     @Test void curvedStreamsShareBothEdgesAndUvsAtEveryJoin() {
         for (Vec3 camera : List.of(new Vec3(.2, 1, .4), new Vec3(4, 3, -6), new Vec3(-2, 1, 3))) {
             Capture mesh = new Capture();

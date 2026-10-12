@@ -76,7 +76,7 @@ The Conduit's Rites tab explains how later ceremonies add each mechanic.
 
 ### Learning before the Somatic Loom
 
-Early memories do not require a loom. Player-killed Thirsters can drop crude Blood Shot or Blood Rush memories; Hematic Constructs can drop Deadly Gaze. Harbinger Outposts can contain all eight crude memories, including Mending, Hemorrhage, Glacial Grasp, Sanguine Ignition and Void Shroud. Drops are random. At Degree II, the Mnemonist also offers one deliberate choice of Blood Shot, Blood Rush, or Deadly Gaze. Earlier found memories still work, and a previously claimed choice is not granted twice.
+Early memories do not require a loom. Player-killed Thirsters can drop crude Blood Shot or Blood Rush memories; Hematic Constructs can drop Deadly Gaze. Harbinger Outposts can contain all nine crude memories, including Mending, Hemorrhage, Glacial Grasp, Sanguine Ignition, Void Shroud and Hematic Flare, and occasionally a full Prismatic Reproof, Lumen Suture, Searing Lash or Cruor Javelin memory. Drops are random. At Degree II, the Mnemonist also offers one deliberate choice of Blood Shot, Blood Rush, or Deadly Gaze. Earlier found memories still work, and a previously claimed choice is not granted twice.
 
 Right-click a crude memory with active blood and its required learning degree to learn it for **500 mL**. Casting alignment and casting blood cost are separate requirements, shown on the item. Duplicate learning keeps your blood and shard. Degree I grants Blood Absorption and Blood Projection automatically; the Living Staff comes through its Degree-I structure recipe.
 

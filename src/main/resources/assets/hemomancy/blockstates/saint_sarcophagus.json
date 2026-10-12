@@ -1,9 +1,19 @@
 {
-  "multipart": [
-    {
-      "apply": {
-        "model": "hemomancy:block/saint_sarcophagus"
-      }
+  "variants": {
+    "facing=north": {
+      "model": "hemomancy:block/saint_sarcophagus"
+    },
+    "facing=east": {
+      "model": "hemomancy:block/saint_sarcophagus",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "hemomancy:block/saint_sarcophagus",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "hemomancy:block/saint_sarcophagus",
+      "y": 270
     }
-  ]
+  }
 }

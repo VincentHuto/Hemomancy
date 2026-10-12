@@ -20,7 +20,9 @@ import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class CloudEntityBlood extends BloodConstructEntity {
@@ -35,6 +37,11 @@ public class CloudEntityBlood extends BloodConstructEntity {
 	private EnumBloodTendency secondaryDamageTendency;
 	private int durationTicks = 100;
 	private Mode mode = Mode.STATIC;
+	static final String DAMAGE_MULTIPLIER_TAG = "DamageMultiplier";
+	/** Caster's Crimson Mastery captured at cast time; scales the tick and bolt damage. */
+	private float damageMultiplier = 1.0F;
+	/** Targets this cloud has already struck: the first strike is the cast's direct hit, the rest are its periodic tail. */
+	private final Set<UUID> struck = new HashSet<>();
 
 	public CloudEntityBlood(EntityType<? extends CloudEntityBlood> type, Level worldIn) {
 		super(type, worldIn);
@@ -51,6 +58,19 @@ public class CloudEntityBlood extends BloodConstructEntity {
 			@Nullable EnumBloodTendency secondaryDamageTendency) {
 		this.damageTendency = damageTendency;
 		this.secondaryDamageTendency = secondaryDamageTendency;
+	}
+
+	public void setDamageMultiplier(float multiplier) {
+		this.damageMultiplier = Float.isFinite(multiplier) && multiplier > 0 ? multiplier : 1.0F;
+	}
+
+	public float getDamageMultiplier() {
+		return damageMultiplier;
+	}
+
+	static float readDamageMultiplier(CompoundTag tag) {
+		float stored = tag.contains(DAMAGE_MULTIPLIER_TAG) ? tag.getFloat(DAMAGE_MULTIPLIER_TAG) : 1.0F;
+		return Float.isFinite(stored) && stored > 0 ? stored : 1.0F;
 	}
 
 	public void configure(double radius, int durationTicks, Mode mode) {
@@ -76,6 +96,7 @@ public class CloudEntityBlood extends BloodConstructEntity {
 		tag.putDouble("EffectRadius", effectRadius());
 		tag.putInt("DurationTicks", durationTicks);
 		tag.putString("CloudMode", mode.name());
+		tag.putFloat(DAMAGE_MULTIPLIER_TAG, damageMultiplier);
 	}
 
 	@Override
@@ -87,6 +108,7 @@ public class CloudEntityBlood extends BloodConstructEntity {
 		if (tag.contains("EffectRadius")) entityData.set(EFFECT_RADIUS,
 				(float) Math.max(0.5D, tag.getDouble("EffectRadius")));
 		if (tag.contains("DurationTicks")) durationTicks = tag.getInt("DurationTicks");
+		damageMultiplier = readDamageMultiplier(tag);
 		if (tag.contains("CloudMode")) {
 			try {
 				mode = Mode.valueOf(tag.getString("CloudMode"));
@@ -96,16 +118,24 @@ public class CloudEntityBlood extends BloodConstructEntity {
 		}
 	}
 
-    private net.minecraft.world.damagesource.DamageSource cloudDamage(net.minecraft.world.damagesource.DamageSource nativeSource) {
+    private net.minecraft.world.damagesource.DamageSource cloudDamage(net.minecraft.world.damagesource.DamageSource nativeSource,
+            boolean firstContact) {
         SchoolHitContext hit = SchoolDamage.projectileContext(this);
         if (hit == null && damageTendency != null) {
             hit = SchoolHitContext.direct(com.vincenthuto.hemomancy.Hemomancy.rloc("blood_cloud"),
                     damageTendency, secondaryDamageTendency, creator);
             SchoolDamage.capture(this, hit);
         }
-        return hit == null ? nativeSource : SchoolDamage.attributed(
-                SchoolDamage.projectileSource(nativeSource, this, creator),
-                hit.child(SchoolHitContext.Kind.PERIODIC), creator);
+        if (hit == null) return nativeSource;
+        // The cast's own context applies the school state; one root attack means it lands once per target.
+        SchoolHitContext kind = firstContact && hit.kind() == SchoolHitContext.Kind.DIRECT ? hit
+                : hit.child(SchoolHitContext.Kind.PERIODIC);
+        return SchoolDamage.attributed(SchoolDamage.projectileSource(nativeSource, this, creator), kind, creator);
+    }
+
+    private void strike(LivingEntity target, net.minecraft.world.damagesource.DamageSource nativeSource, float amount) {
+        boolean first = !struck.contains(target.getUUID());
+        if (target.hurt(cloudDamage(nativeSource, first), amount) && first) struck.add(target.getUUID());
     }
 
     @Override protected boolean usesLegacyConstructParticles() { return false; }
@@ -131,7 +161,7 @@ public class CloudEntityBlood extends BloodConstructEntity {
 				if (ent != creator && ent != this && (creator == null || !creator.isAlliedTo(ent))) {
 					if (!(ent instanceof BloodConstructEntity)) {
                         if (!level().isClientSide && (creator == null || ConductionManager.canHarm(creator, ent)))
-                            ent.hurt(cloudDamage(ent.damageSources().generic()), 2);
+                            strike(ent, ent.damageSources().generic(), 2 * damageMultiplier);
 					}
 				}
 			}
@@ -196,7 +226,7 @@ public class CloudEntityBlood extends BloodConstructEntity {
                 net.minecraft.sounds.SoundSource.WEATHER,10000F,.8F+random.nextFloat()*.2F);
         server.playSound(null,target.blockPosition(),net.minecraft.sounds.SoundEvents.LIGHTNING_BOLT_IMPACT,
                 net.minecraft.sounds.SoundSource.WEATHER,2F,.5F+random.nextFloat()*.2F);
-        target.hurt(cloudDamage(server.damageSources().magic()), 4);
+        strike(target, server.damageSources().magic(), 4 * damageMultiplier);
 	}
 
 	private double effectRadius() {

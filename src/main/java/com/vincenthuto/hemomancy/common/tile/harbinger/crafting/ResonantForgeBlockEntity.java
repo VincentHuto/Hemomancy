@@ -121,6 +121,7 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
                 filler.setMainBlockPos(null);
                 level.setBlockAndUpdate(above, level.getFluidState(above).createLegacyBlock());
             }
+            ResonantForgeBlock.restoreFillers(level, pos, state);
         }
         if (forge.operation == Operation.NONE || forge.riteLocked) return;
         forge.progress++;

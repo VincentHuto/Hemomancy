@@ -5,12 +5,108 @@
         "model": "hemomancy:block/somatic_loom"
       },
       "when": {
+        "facing": "north",
+        "stage": "0"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/somatic_loom_ganglionic"
+      },
+      "when": {
+        "facing": "north",
+        "stage": "1"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/somatic_loom_cortical"
+      },
+      "when": {
+        "facing": "north",
+        "stage": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/somatic_loom_glass"
+      },
+      "when": {
         "facing": "north"
       }
     },
     {
       "apply": {
         "model": "hemomancy:block/somatic_loom",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "stage": "0"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/somatic_loom_ganglionic",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "stage": "1"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/somatic_loom_cortical",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "stage": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/somatic_loom_glass",
+        "y": 90
+      },
+      "when": {
+        "facing": "east"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/somatic_loom",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "stage": "0"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/somatic_loom_ganglionic",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "stage": "1"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/somatic_loom_cortical",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "stage": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/somatic_loom_glass",
         "y": 180
       },
       "when": {
@@ -23,16 +119,37 @@
         "y": 270
       },
       "when": {
-        "facing": "west"
+        "facing": "west",
+        "stage": "0"
       }
     },
     {
       "apply": {
-        "model": "hemomancy:block/somatic_loom",
-        "y": 90
+        "model": "hemomancy:block/somatic_loom_ganglionic",
+        "y": 270
       },
       "when": {
-        "facing": "east"
+        "facing": "west",
+        "stage": "1"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/somatic_loom_cortical",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "stage": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/somatic_loom_glass",
+        "y": 270
+      },
+      "when": {
+        "facing": "west"
       }
     }
   ]

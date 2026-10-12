@@ -28,16 +28,17 @@ public final class ManipulationTreeCoverageSourceTest {
 	private static final Pattern QUOTED_TEXT = Pattern.compile("\"([^\"]+)\"");
 	private static final Map<String, String> LIVING_WEAPON_TENDENCIES = Map.of(
 			"conjure_blade", "ANIMUS",
-			"conjure_axe", "MORTEM",
+			"conjure_axe", "FERRIC",
 			"conjure_spear", "LUX",
 			"conjure_claws", "TENEBRIS",
 			"conjure_crossbow", "DUCTILIS",
 			"conjure_torch", "FLAMMEUS",
-			"conjure_flail", "CONGEATIO"
+			"conjure_flail", "CONGEATIO",
+			"conjure_sickle", "MORTEM"
 	);
 	private static final Map<String, List<String>> LIVING_WEAPON_TREE_PARENTS = Map.of(
 			"conjure_blade", List.of("vital_effusion", "blood_binding"),
-			"conjure_axe", List.of("exsanguinate"),
+			"conjure_axe", List.of("iron_retort"),
 			"conjure_spear", List.of("hematic_flare"),
 			"conjure_claws", List.of("void_shroud"),
 			"conjure_crossbow", List.of("hemolymphal_pulse"),

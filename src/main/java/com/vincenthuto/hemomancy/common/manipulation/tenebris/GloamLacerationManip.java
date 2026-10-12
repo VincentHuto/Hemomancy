@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
@@ -46,15 +47,16 @@ public class GloamLacerationManip extends BloodManipulation {
 
 		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player);
 		LivingEntity target = findTarget(player, world, range);
+		// A Veil counts through isInvisible() (MixinSchoolConcealment), and Illumination strips it.
 		boolean ambush = player.isInvisible()
 				|| BlackVeilCovenantManager.isDarkEnough(world, player.blockPosition(), MAX_LIGHT_LEVEL);
 
 		if (target != null) {
-			target.addEffect(new MobEffectInstance(EffectInit.blood_loss, 140, 0, false, true));
 			float damage = (float) ((BASE_DAMAGE + (ambush ? AMBUSH_BONUS : 0.0F))
 					* SkillPointHelper.getCrimsonMasteryMultiplier(player));
-			ManipulationParticles.hurt(this, target, world.damageSources().magic(),
-					(damage));
+			if (ManipulationParticles.hurt(this, target, world.damageSources().magic(), damage)
+					&& ManipulationCombatHelper.canHarm(player, target))
+				target.addEffect(new MobEffectInstance(EffectInit.blood_loss, 140, 0, false, true));
 			world.playSound(null, target.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.PLAYERS,
 					0.75F, ambush ? 0.65F : 0.85F);
 		} else {

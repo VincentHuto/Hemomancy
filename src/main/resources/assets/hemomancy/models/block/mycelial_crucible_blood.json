@@ -1,0 +1,305 @@
+{
+ "parent": "minecraft:block/block",
+ "render_type": "minecraft:cutout",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "hemomancy:block/blood_still",
+  "blood": "hemomancy:block/blood_still"
+ },
+ "elements": [
+  {
+   "name": "cistern_blood",
+   "from": [
+    19.8,
+    3.55,
+    6.2603
+   ],
+   "to": [
+    28.2,
+    4.55,
+    9.7397
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      3.8,
+      11.45,
+      12.2,
+      12.45
+     ],
+     "texture": "#blood"
+    },
+    "south": {
+     "uv": [
+      3.8,
+      11.45,
+      12.2,
+      12.45
+     ],
+     "texture": "#blood"
+    },
+    "east": {
+     "uv": [
+      6.26,
+      11.45,
+      9.74,
+      12.45
+     ],
+     "texture": "#blood"
+    },
+    "west": {
+     "uv": [
+      6.26,
+      11.45,
+      9.74,
+      12.45
+     ],
+     "texture": "#blood"
+    },
+    "up": {
+     "uv": [
+      3.8,
+      6.26,
+      12.2,
+      9.74
+     ],
+     "texture": "#blood"
+    },
+    "down": {
+     "uv": [
+      3.8,
+      6.26,
+      12.2,
+      9.74
+     ],
+     "texture": "#blood"
+    }
+   }
+  },
+  {
+   "name": "cistern_blood",
+   "from": [
+    22.2603,
+    3.59,
+    3.8
+   ],
+   "to": [
+    25.7397,
+    4.51,
+    12.2
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.26,
+      11.49,
+      9.74,
+      12.41
+     ],
+     "texture": "#blood"
+    },
+    "south": {
+     "uv": [
+      6.26,
+      11.49,
+      9.74,
+      12.41
+     ],
+     "texture": "#blood"
+    },
+    "east": {
+     "uv": [
+      3.8,
+      11.49,
+      12.2,
+      12.41
+     ],
+     "texture": "#blood"
+    },
+    "west": {
+     "uv": [
+      3.8,
+      11.49,
+      12.2,
+      12.41
+     ],
+     "texture": "#blood"
+    },
+    "up": {
+     "uv": [
+      6.26,
+      3.8,
+      9.74,
+      12.2
+     ],
+     "texture": "#blood"
+    },
+    "down": {
+     "uv": [
+      6.26,
+      3.8,
+      9.74,
+      12.2
+     ],
+     "texture": "#blood"
+    }
+   }
+  },
+  {
+   "name": "cistern_blood",
+   "from": [
+    19.8,
+    3.63,
+    6.2603
+   ],
+   "to": [
+    28.2,
+    4.47,
+    9.7397
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     24.0,
+     0,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      3.8,
+      11.53,
+      12.2,
+      12.37
+     ],
+     "texture": "#blood"
+    },
+    "south": {
+     "uv": [
+      3.8,
+      11.53,
+      12.2,
+      12.37
+     ],
+     "texture": "#blood"
+    },
+    "east": {
+     "uv": [
+      6.26,
+      11.53,
+      9.74,
+      12.37
+     ],
+     "texture": "#blood"
+    },
+    "west": {
+     "uv": [
+      6.26,
+      11.53,
+      9.74,
+      12.37
+     ],
+     "texture": "#blood"
+    },
+    "up": {
+     "uv": [
+      3.8,
+      6.26,
+      12.2,
+      9.74
+     ],
+     "texture": "#blood"
+    },
+    "down": {
+     "uv": [
+      3.8,
+      6.26,
+      12.2,
+      9.74
+     ],
+     "texture": "#blood"
+    }
+   }
+  },
+  {
+   "name": "cistern_blood",
+   "from": [
+    19.8,
+    3.67,
+    6.2603
+   ],
+   "to": [
+    28.2,
+    4.43,
+    9.7397
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     24.0,
+     0,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      3.8,
+      11.57,
+      12.2,
+      12.33
+     ],
+     "texture": "#blood"
+    },
+    "south": {
+     "uv": [
+      3.8,
+      11.57,
+      12.2,
+      12.33
+     ],
+     "texture": "#blood"
+    },
+    "east": {
+     "uv": [
+      6.26,
+      11.57,
+      9.74,
+      12.33
+     ],
+     "texture": "#blood"
+    },
+    "west": {
+     "uv": [
+      6.26,
+      11.57,
+      9.74,
+      12.33
+     ],
+     "texture": "#blood"
+    },
+    "up": {
+     "uv": [
+      3.8,
+      6.26,
+      12.2,
+      9.74
+     ],
+     "texture": "#blood"
+    },
+    "down": {
+     "uv": [
+      3.8,
+      6.26,
+      12.2,
+      9.74
+     ],
+     "texture": "#blood"
+    }
+   }
+  }
+ ]
+}

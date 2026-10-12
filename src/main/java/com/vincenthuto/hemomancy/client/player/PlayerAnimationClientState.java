@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.client.player;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteStaffPlantingClientState;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingTorchBreathRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingTorchItem;
-import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingAxeItem;
 import com.vincenthuto.hemomancy.common.item.unstained.tool.AbsolutionDaggerItem;
 import com.vincenthuto.hemomancy.common.item.unstained.tool.SilthmereGlaiveItem;
 import com.vincenthuto.hemomancy.common.item.unstained.tool.UnstainedWarhammerItem;
@@ -104,52 +103,38 @@ public final class PlayerAnimationClientState {
 			copySleeves(model);
 			return;
 		}
-		ItemStack main = player.getMainHandItem();
-		ItemStack off = player.getOffhandItem();
 		InteractionHand swingingHand = player.swingingArm == null ? InteractionHand.MAIN_HAND : player.swingingArm;
 		var swingingItem = player.getItemInHand(swingingHand).getItem();
-		if ((swingingItem instanceof AbsolutionDaggerItem || swingingItem instanceof SilthmereGlaiveItem)
+		if ((swingingItem instanceof AbsolutionDaggerItem || swingingItem instanceof SilthmereGlaiveItem
+				|| swingingItem instanceof UnstainedWarhammerItem)
 				&& !CardinalRiteStaffPlantingClientState.isAnimating(player)) {
 			float swing = player.getAttackAnim(partialTick);
 			if (swing <= 0.0F) return;
 			boolean right = armFor(player, swingingHand) == HumanoidArm.RIGHT;
 			var pose = swingingItem instanceof AbsolutionDaggerItem
 					? UnstainedWeaponPlayerPose.dagger(swing, right)
-					: UnstainedWeaponPlayerPose.glaive(swing, right);
-			UnstainedWeaponPlayerPose.applyThirdPerson(model, pose, right);
+					: swingingItem instanceof SilthmereGlaiveItem
+							? UnstainedWeaponPlayerPose.glaive(swing, right)
+							: UnstainedWeaponPlayerPose.hammer(swing, right);
+			InteractionHand otherHand = swingingHand == InteractionHand.MAIN_HAND
+					? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+			UnstainedWeaponPlayerPose.applyThirdPerson(model, pose, right, player.getItemInHand(otherHand).isEmpty());
 			copySleeves(model);
 			return;
 		}
-		if ((swingingItem instanceof LivingAxeItem || swingingItem instanceof UnstainedWarhammerItem)
-				&& !CardinalRiteStaffPlantingClientState.isAnimating(player)) {
+		if (!CardinalRiteStaffPlantingClientState.isAnimating(player)) {
 			float swing = player.getAttackAnim(partialTick);
-			if (swing <= 0.0F) return;
-			boolean right = armFor(player, swingingHand) == HumanoidArm.RIGHT;
-			LivingAxePlayerPose.AxePose pose = LivingAxePlayerPose.swing(swing, right);
-			var arm = right ? model.rightArm : model.leftArm;
-			arm.xRot = Mth.lerp(pose.weight(), arm.xRot, pose.armXRot());
-			arm.yRot = Mth.lerp(pose.weight(), arm.yRot, pose.armYRot());
-			arm.zRot = Mth.lerp(pose.weight(), arm.zRot, pose.armZRot());
-			model.body.yRot = Mth.lerp(pose.weight(), model.body.yRot, pose.bodyYRot());
-			model.rightArm.x = -Mth.cos(model.body.yRot) * 5.0F;
-			model.rightArm.z = Mth.sin(model.body.yRot) * 5.0F;
-			model.leftArm.x = Mth.cos(model.body.yRot) * 5.0F;
-			model.leftArm.z = -Mth.sin(model.body.yRot) * 5.0F;
+			HumanoidArm swingingArm = armFor(player, swingingHand);
+			var stroke = LivingWeaponPlayerPose.stroke(swingingItem,
+					SwingComboTracker.strike(player, swingingArm, swing));
+			if (stroke == null || swing <= 0.0F) return;
+			boolean right = swingingArm == HumanoidArm.RIGHT;
+			InteractionHand otherHand = swingingHand == InteractionHand.MAIN_HAND
+					? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+			UnstainedWeaponPlayerPose.applyThirdPerson(model, LivingWeaponPlayerPose.thirdPerson(stroke, swing, right),
+					right, player.getItemInHand(otherHand).isEmpty());
 			copySleeves(model);
-			return;
 		}
-		if (!(main.getItem() instanceof LivingTorchItem) && !(off.getItem() instanceof LivingTorchItem)) return;
-		float swing = player.getAttackAnim(partialTick);
-		if (swing <= 0.0F) return;
-		boolean right = armFor(player, main.getItem() instanceof LivingTorchItem
-				? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND) == HumanoidArm.RIGHT;
-		LivingTorchPlayerPose.ArmPose pose = LivingTorchPlayerPose.jabArm(swing, right);
-		var arm = right ? model.rightArm : model.leftArm;
-		arm.xRot = pose.xRot();
-		arm.yRot = pose.yRot();
-		arm.zRot = pose.zRot();
-		model.body.yRot += (right ? -1.0F : 1.0F) * 0.08F * pose.weight();
-		copySleeves(model);
 	}
 
 	public static boolean isBreathing(LivingEntity entity) {

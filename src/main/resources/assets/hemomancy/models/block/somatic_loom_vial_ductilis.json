@@ -1,0 +1,305 @@
+{
+ "parent": "minecraft:block/block",
+ "render_type": "translucent",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "minecraft:block/yellow_stained_glass",
+  "liq_ductilis": "minecraft:block/yellow_stained_glass"
+ },
+ "elements": [
+  {
+   "name": "vial_ductilis",
+   "from": [
+    -7.05,
+    4.4,
+    6.2893
+   ],
+   "to": [
+    -5.55,
+    5.4,
+    6.9107
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      10.6,
+      16,
+      11.6
+     ],
+     "texture": "#liq_ductilis"
+    },
+    "south": {
+     "uv": [
+      0,
+      10.6,
+      16,
+      11.6
+     ],
+     "texture": "#liq_ductilis"
+    },
+    "east": {
+     "uv": [
+      0,
+      10.6,
+      16,
+      11.6
+     ],
+     "texture": "#liq_ductilis"
+    },
+    "west": {
+     "uv": [
+      0,
+      10.6,
+      16,
+      11.6
+     ],
+     "texture": "#liq_ductilis"
+    },
+    "up": {
+     "uv": [
+      8.95,
+      6.289,
+      10.45,
+      6.911
+     ],
+     "texture": "#liq_ductilis"
+    },
+    "down": {
+     "uv": [
+      8.95,
+      6.289,
+      10.45,
+      6.911
+     ],
+     "texture": "#liq_ductilis"
+    }
+   }
+  },
+  {
+   "name": "vial_ductilis",
+   "from": [
+    -6.6107,
+    4.44,
+    5.85
+   ],
+   "to": [
+    -5.9893,
+    5.36,
+    7.35
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      10.64,
+      16,
+      11.56
+     ],
+     "texture": "#liq_ductilis"
+    },
+    "south": {
+     "uv": [
+      0,
+      10.64,
+      16,
+      11.56
+     ],
+     "texture": "#liq_ductilis"
+    },
+    "east": {
+     "uv": [
+      0,
+      10.64,
+      16,
+      11.56
+     ],
+     "texture": "#liq_ductilis"
+    },
+    "west": {
+     "uv": [
+      0,
+      10.64,
+      16,
+      11.56
+     ],
+     "texture": "#liq_ductilis"
+    },
+    "up": {
+     "uv": [
+      9.389,
+      5.85,
+      10.011,
+      7.35
+     ],
+     "texture": "#liq_ductilis"
+    },
+    "down": {
+     "uv": [
+      9.389,
+      5.85,
+      10.011,
+      7.35
+     ],
+     "texture": "#liq_ductilis"
+    }
+   }
+  },
+  {
+   "name": "vial_ductilis",
+   "from": [
+    -7.05,
+    4.48,
+    6.2893
+   ],
+   "to": [
+    -5.55,
+    5.32,
+    6.9107
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     -6.3,
+     0,
+     6.6
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      10.68,
+      16,
+      11.52
+     ],
+     "texture": "#liq_ductilis"
+    },
+    "south": {
+     "uv": [
+      0,
+      10.68,
+      16,
+      11.52
+     ],
+     "texture": "#liq_ductilis"
+    },
+    "east": {
+     "uv": [
+      0,
+      10.68,
+      16,
+      11.52
+     ],
+     "texture": "#liq_ductilis"
+    },
+    "west": {
+     "uv": [
+      0,
+      10.68,
+      16,
+      11.52
+     ],
+     "texture": "#liq_ductilis"
+    },
+    "up": {
+     "uv": [
+      8.95,
+      6.289,
+      10.45,
+      6.911
+     ],
+     "texture": "#liq_ductilis"
+    },
+    "down": {
+     "uv": [
+      8.95,
+      6.289,
+      10.45,
+      6.911
+     ],
+     "texture": "#liq_ductilis"
+    }
+   }
+  },
+  {
+   "name": "vial_ductilis",
+   "from": [
+    -7.05,
+    4.52,
+    6.2893
+   ],
+   "to": [
+    -5.55,
+    5.28,
+    6.9107
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     -6.3,
+     0,
+     6.6
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      10.72,
+      16,
+      11.48
+     ],
+     "texture": "#liq_ductilis"
+    },
+    "south": {
+     "uv": [
+      0,
+      10.72,
+      16,
+      11.48
+     ],
+     "texture": "#liq_ductilis"
+    },
+    "east": {
+     "uv": [
+      0,
+      10.72,
+      16,
+      11.48
+     ],
+     "texture": "#liq_ductilis"
+    },
+    "west": {
+     "uv": [
+      0,
+      10.72,
+      16,
+      11.48
+     ],
+     "texture": "#liq_ductilis"
+    },
+    "up": {
+     "uv": [
+      8.95,
+      6.289,
+      10.45,
+      6.911
+     ],
+     "texture": "#liq_ductilis"
+    },
+    "down": {
+     "uv": [
+      8.95,
+      6.289,
+      10.45,
+      6.911
+     ],
+     "texture": "#liq_ductilis"
+    }
+   }
+  }
+ ]
+}

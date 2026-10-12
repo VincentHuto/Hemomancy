@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.client.screen.tile.functional.SynapticLoadoutScreen;
+import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.DendriticDistributorBlockEntity;
@@ -31,12 +32,17 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
+import java.util.Map;
 
 public class DendriticDistributorBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
 	public static final MapCodec<DendriticDistributorBlock> CODEC = simpleCodec(DendriticDistributorBlock::new);
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-	private static final VoxelShape SHAPE_N = Block.box(2, 0, 2, 14, 14, 14);
+	/** Stepped plinth, stem, the bouton tray and the selector knob rising behind it. */
+	private static final Map<Direction, VoxelShape> SHAPES = ModelShapes.horizontal(ModelShapes.of(
+			new double[] {2.5, 0, 2.5, 13.5, 2, 13.5}, new double[] {4, 2, 5, 12, 4, 13},
+			new double[] {6.5, 4, 7.5, 9.5, 7, 10.5}, new double[] {2, 7, 3, 14, 10, 11.25},
+			new double[] {6, 10, 7, 10.25, 12, 11.25}, new double[] {6.5, 12, 10.5, 9.5, 16.25, 12.5}));
 
 	public DendriticDistributorBlock(Properties properties) {
 		super(properties);
@@ -63,7 +69,7 @@ public class DendriticDistributorBlock extends BaseEntityBlock implements Simple
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return SHAPE_N;
+		return SHAPES.get(state.getValue(FACING));
 	}
 
 	@Override

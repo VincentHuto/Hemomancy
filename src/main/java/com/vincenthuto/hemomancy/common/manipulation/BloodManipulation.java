@@ -165,8 +165,31 @@ public class BloodManipulation implements EntityCastableManipulation {
 		return name;
 	}
 
+	/** The ID-derived name; the fallback for {@link #getDisplayName()} and for logs/save data. */
 	public String getProperName() {
 		return HLTextUtils.convertInitToLang(name);
+	}
+
+	/** Lang key for this manipulation's display name, e.g. {@code hemomancy.manipulation.osseous_bloom}. */
+	public String getDisplayNameKey() {
+		return displayNameKey(name);
+	}
+
+	public static String displayNameKey(String manipulationName) {
+		return "hemomancy.manipulation." + manipulationName;
+	}
+
+	/**
+	 * Player-facing name: the lang entry when the reader's language has one, otherwise {@link #getProperName()}.
+	 * Safe on both sides; a server-built message resolves on the receiving client.
+	 */
+	public net.minecraft.network.chat.MutableComponent getDisplayName() {
+		return displayName(name);
+	}
+
+	public static net.minecraft.network.chat.MutableComponent displayName(String manipulationName) {
+		return Component.translatableWithFallback(displayNameKey(manipulationName),
+				HLTextUtils.convertInitToLang(manipulationName));
 	}
 
 	public EnumManipulationRank getRank() {
@@ -250,9 +273,7 @@ public class BloodManipulation implements EntityCastableManipulation {
 	}
 
 	public boolean isOnCooldown(Player player) {
-		if (cooldownTicks <= 0) {
-			return false;
-		}
+		// No cooldownTicks short-circuit: imposed cooldowns (e.g. a Synaptic pattern swap) bind zero-cooldown powers too.
 		if (ignoresCooldown(player)) {
 			return false;
 		}
@@ -262,6 +283,13 @@ public class BloodManipulation implements EntityCastableManipulation {
 	/** Caps an already-running cooldown (for example after a successful parry) and resyncs the client. */
 	public final void capCooldown(ServerPlayer player, long maxRemainingTicks) {
 		long left = COOLDOWNS.capRemaining(player.getUUID(), name, player.level().getGameTime(), maxRemainingTicks);
+		PacketHandler.sendToPlayer(player, new ManipCooldownPacket(name, (int) left));
+	}
+
+	/** Holds this manipulation on cooldown for at least {@code minTicks} (never shortening one) and resyncs the client. */
+	public final void imposeCooldown(ServerPlayer player, long minTicks) {
+		if (ignoresCooldown(player)) return;
+		long left = COOLDOWNS.extendTo(player.getUUID(), name, player.level().getGameTime(), minTicks);
 		PacketHandler.sendToPlayer(player, new ManipCooldownPacket(name, (int) left));
 	}
 
@@ -446,6 +474,12 @@ public class BloodManipulation implements EntityCastableManipulation {
 						true);
 				return false;
 			}
+			if (com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents
+					.isSectionDead(player, section)) {
+				player.displayClientMessage(Component.literal("Your " + section.name().toLowerCase(java.util.Locale.ROOT)
+						+ " veins are dead; nothing flows to shape.").withStyle(ChatFormatting.RED), true);
+				return false;
+			}
 
 			// Check Unstained purity penalty — must happen before isActive check
 			// so that purified players are fully blocked even if volume is still active
@@ -476,8 +510,14 @@ public class BloodManipulation implements EntityCastableManipulation {
 				ManipulationCostSnapshot costSnapshot = ManipulationCostLedger.collect(player, this, costMultiplier);
 				double effectiveCost = costSnapshot.effectiveCost();
 				if (type == EnumManipulationType.CHARGED) {
-					effectiveCost = ManipulationCastingRules.chargedCost(effectiveCost, chargeTicks,
+					var charged = ManipulationCastingRules.chargedCost(effectiveCost, chargeTicks,
 							getRequiredChargeTicks());
+					if (charged.isEmpty()) {
+						player.displayClientMessage(Component.literal("Not enough charge")
+								.withStyle(ChatFormatting.RED), true);
+						return false;
+					}
+					effectiveCost = charged.getAsDouble();
 				}
 
 				boolean hasRequiredAlignment = tendency.getAlignmentByTendency(tend) >= alignLevel;
@@ -519,7 +559,9 @@ public class BloodManipulation implements EntityCastableManipulation {
 					CrawlingChoirHandler.tryEchoCast(player, world, heldItemMainhand, position, this, chargeTicks);
 
 					// Apply cross-system consequences: vascular strain, tendency shift, XP
-					if (creditUse) recordSuccessfulUse((ServerPlayer) player);
+					if (creditUse) recordSuccessfulUse((ServerPlayer) player,
+							ManipulationCastingRules.rewardScale(type, chargeTicks, getRequiredChargeTicks()));
+					if (type == EnumManipulationType.CHARGED) ManipulationChargeClock.release(player);
 
 					// MnA Combo System: Grant Sanguine Clarity (reduces next spell mana cost)
 					// and consume Arcane Resonance if present (it already reduced this manipulation's cost)
@@ -539,7 +581,12 @@ public class BloodManipulation implements EntityCastableManipulation {
 	}
 
 	public void recordSuccessfulUse(ServerPlayer player) {
-		KnownManipulationEvents.onManipulationUsed(player, this);
+		recordSuccessfulUse(player, 1.0F);
+	}
+
+	/** {@code rewardScale} is the charge fraction for CHARGED casts and 1 otherwise. */
+	public void recordSuccessfulUse(ServerPlayer player, float rewardScale) {
+		KnownManipulationEvents.onManipulationUsed(player, this, rewardScale);
 		PurityGainEvents.onBloodManipulationUsed(player);
 		if (ModList.get().isLoaded("mna")) invokeMnAComboHelper(player);
 	}
@@ -597,6 +644,30 @@ public class BloodManipulation implements EntityCastableManipulation {
 		if (secondaryTend == tend) {
 			secondaryTend = null;
 		}
+	}
+
+	/**
+	 * Saved copies keep the metadata they were learned with. Adopts the live registry entry's school, rank, prices
+	 * and section so rebalanced or re-homed manipulations display and save their current values.
+	 *
+	 * @return whether anything changed
+	 */
+	public boolean adoptRegisteredMetadata(BloodManipulation registered) {
+		if (registered == null || registered == this || !name.equals(registered.name)) return false;
+		boolean changed = tend != registered.tend || secondaryTend != registered.secondaryTend
+				|| rank != registered.rank || type != registered.type || section != registered.section
+				|| cost != registered.cost || alignLevel != registered.alignLevel || xpCost != registered.xpCost
+				|| cooldownTicks != registered.cooldownTicks;
+		tend = registered.tend;
+		secondaryTend = registered.secondaryTend;
+		rank = registered.rank;
+		type = registered.type;
+		section = registered.section;
+		cost = registered.cost;
+		alignLevel = registered.alignLevel;
+		xpCost = registered.xpCost;
+		cooldownTicks = registered.cooldownTicks;
+		return changed;
 	}
 
 	public void setType(EnumManipulationType type) {

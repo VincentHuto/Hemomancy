@@ -84,6 +84,25 @@ public final class AlembicFootprintGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 60, batch = "station_upgrade")
+    public static void fillerOutsideCurrentFootprintIsPrunedOnFirstTick(GameTestHelper h) {
+        var level = h.getLevel();
+        BlockPos pos = h.absolutePos(new BlockPos(4, 3, 4));
+        clearSpace(h, pos);
+        level.setBlockAndUpdate(pos, BlockInit.ghastly_alembic.get().defaultBlockState());
+        // A cell the redesigned base no longer reserves, still linked from an older save.
+        BlockPos stale = pos.east();
+        level.setBlockAndUpdate(stale, BlockInit.filler_block.get().defaultBlockState());
+        ((com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity) level.getBlockEntity(stale)).setMainBlockPos(pos);
+        h.runAfterDelay(3, () -> {
+            h.assertTrue(level.getBlockState(stale).isAir(), "Stale Alembic filler survived the footprint check");
+            h.assertTrue(level.getBlockState(pos).is(BlockInit.ghastly_alembic.get()), "Pruning broke the controller");
+            h.assertTrue(level.getBlockState(pos.west()).is(BlockInit.filler_block.get())
+                    && level.getBlockState(pos.above()).is(BlockInit.filler_block.get()), "Current footprint was not reserved");
+            h.succeed();
+        });
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 60, batch = "station_upgrade")
     public static void blockedMantleAtRiteCompletionRecoversEscrow(GameTestHelper h) {
         var tier = com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.get(
                 com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC, 2);

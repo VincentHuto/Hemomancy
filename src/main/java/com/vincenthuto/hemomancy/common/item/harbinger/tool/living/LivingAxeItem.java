@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.player.LivingAxePlayerPose;
+import com.vincenthuto.hemomancy.client.player.LivingWeaponPlayerPose;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingAxeItemRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -45,7 +45,7 @@ public class LivingAxeItem extends LivingToolItem implements HemoClientItemExten
 	public static String TAG_STATE = "state";
 
 	public LivingAxeItem(float speedIn, float attackDamageIn, Tier tier, Properties builderIn) {
-		super(speedIn, attackDamageIn, -3.0f, EnumBloodTendency.MORTEM, tier, builderIn);
+		super(speedIn, attackDamageIn, -3.0f, EnumBloodTendency.FERRIC, tier, builderIn);
 	}
 
 	@Override
@@ -168,8 +168,7 @@ class RenderPropLivingAxe implements IClientItemExtensions {
 	@Override
 	public boolean applyForgeHandTransform(PoseStack poses, LocalPlayer player, HumanoidArm arm,
 			ItemStack stack, float partialTick, float equipProgress, float swingProgress) {
-		LivingAxePlayerPose.firstPerson(poses, swingProgress, equipProgress, arm == HumanoidArm.RIGHT);
-		return true;
+		return LivingWeaponPlayerPose.applyFirstPerson(poses, player, arm, stack, equipProgress, swingProgress);
 	}
 
 

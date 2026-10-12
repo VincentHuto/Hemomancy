@@ -179,9 +179,9 @@ Conjuring Blood Absorption, Blood Projection, or Living Staff does not produce t
 
 Aimed rays stop at walls and glass; openings and partial cover follow collision shapes. Nearest-victim powers such as Hemorrhage and Exsanguinate require a visible enemy and can select behind you. Area pulses retain their area behavior. The audited hostile area powers protect teammates and owned/allied creatures, and respect disabled PvP.
 
-Living Circuit requires a nearby teammate and stops when none remain. Lumen Suture prioritizes the nearest injured teammate and falls back to yourself. Predictably invalid Forge, command, execution or shadow-teleport casts spend no blood, cooldown or mastery credit. A valid cast can spend exactly the blood you have; no additional 1 mL reserve is required.
+Living Circuit links up to three nearby teammates and runs through the caster when none are in reach. Lumen Suture prioritizes the nearest injured teammate and falls back to yourself. Predictably invalid Forge, command, execution or shadow-teleport casts spend no blood, cooldown or mastery credit. A valid cast can spend exactly the blood you have; no additional 1 mL reserve is required.
 
-Sovereign Instinct redirects ordinary attackers for five seconds when at least four blood-bearing enemies are targeting you. Blackhearted's rupture clears its saturation and starts its existing refractory period. Phoenix Debt uses the shared Last Rite gate and cannot fire repeatedly. These passives must be equipped, enabled, and meet their active-blood and alignment requirements.
+Sovereign Instinct (now a Ductilis passive) turns commandable attackers, those of 80 maximum health or less, on one another for five seconds when at least four blood-bearing enemies are targeting you; bosses only gain Sanguine Pressure. Blackhearted's rupture clears its saturation and starts its existing refractory period. Phoenix Debt uses the shared Last Rite gate and cannot fire repeatedly. These passives must be equipped, enabled, and meet their active-blood and alignment requirements.
 
 See the [casting implementation report](../docs/manipulation_work_plan/02-targeting-and-casting-results.md) for exact scope and remaining live acceptance.
 
@@ -202,6 +202,8 @@ At Degree 5, the **Dendritic Distributor** becomes a Synaptic Loadout station. I
 - Fixed mechanical utilities such as Blood Absorption, Blood Projection, and Conjure Staff stay automatic and are not saved inside patterns. Once learned, Conjure Staff cannot be dememorized at the Reliquary, costs no memorized slot, and remains available in the radial's utility section.
 
 Use these patterns for combat, travel, rituals, and fane work. You do not need to relearn the manipulations.
+
+The station has seven dendrites, one per pattern slot, each ending in an ambergris bouton. Its selector axon sweeps to the pattern last applied or saved there and lights that bouton yellow-white. Renaming leaves the selector where it is.
 
 ---
 
@@ -309,7 +311,7 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 - Vision control
 - Countered by Tenebris tendency
 
-**Current implemented combat notes:** Lux now has `hematic_flare` as a Humilis true-offense ray: it deals magic damage, applies Glowing, strips Invisibility, and hits concealed enemies harder. `prismatic_reproof` remains the larger cone follow-up, but now always deals base magic damage and doubles its bite against Glowing targets. Lux attacks dynamically oppose Tenebris-school Rogue Wills by their synced Will school.
+**Current implemented combat notes:** Lux now has `hematic_flare` as a Humilis true-offense ray: it deals magic damage and applies Illuminated, which exposes concealed enemies. `prismatic_reproof` remains the larger cone follow-up: 4 magic damage, doubled against Illuminated targets. `radiant_wake` is the Lux Magister: a channelled glide that mends nearby allies and Illuminates enemies. Lux attacks dynamically oppose Tenebris-school Rogue Wills by their synced Will school.
 
 ---
 
@@ -411,7 +413,7 @@ The **Scrying Podium** **Tendency** tab shows your dominant and latent tendencie
 - Escape and infiltration
 - Countered by Lux tendency
 
-**Current implemented combat notes:** Tenebris now has `gloam_laceration` as a Humilis ambush slash: it applies Blood Loss and Weakness, deals magic damage, hits harder while the caster is invisible or standing in natural/synthetic darkness, and uses a thin liquid-dark slash with dissolving smoky edges. `void_shroud`, `black_veil_covenant`, `umbral_step`, and `blood_eclipse` remain the core stealth/darkness chain. Tenebris attacks dynamically oppose Lux-school Rogue Wills by their synced Will school.
+**Current implemented combat notes:** Tenebris now has `gloam_laceration` as a Humilis ambush slash: it deals magic damage, applies Blood Loss to harmable targets it actually hits, hits harder while the caster is invisible (an un-Illuminated Veil counts) or standing in natural/synthetic darkness, and uses a thin liquid-dark slash with dissolving smoky edges. `void_shroud`, `black_veil_covenant`, `umbral_step`, and `blood_eclipse` remain the core stealth/darkness chain. Tenebris attacks dynamically oppose Lux-school Rogue Wills by their synced Will school.
 
 ---
 
@@ -731,6 +733,14 @@ Base costs are now Hemorrhage 75 mL, Coronation 600 mL, Conductive Mark 150 mL a
 Dowsing reports nearest ore coordinates, Forge preserves multi-output recipe counts and stack limits, and Lignum-family channels automatically harvest permitted blocks when selection completes. Earlier release and forced cancellation retain their separate behaviors. Memory recipes and progression gates are unchanged. Live balance acceptance and authored effects remain open.
 
 See [area 4 comparisons and verification](../docs/manipulation_work_plan/04-balance-results.md).
+
+## Manipulation balance pass 2 — 10 October 2026
+
+Charged manipulations now fizzle before payment below a quarter charge ("Not enough charge"); a release still pays only its charged share, and alignment and skill points follow the released charge. Spells with nothing to act on, such as Hemorrhage, Blood Aneurysm or Rimebound Sentence with no target, refuse without spending blood or cooldown. Every boss cap uses one shared boss list, which now includes the Warden and Elder Guardian.
+
+Sanguine Surge regenerates 5 mL/s per level and Last Wind 10 mL/s per level below 10% blood. A secondary tendency can lift a manipulation's affinity but never weakens it. Applying a Synaptic pattern locks further applies for ten seconds. Vein sections now matter: higher-rank casts strain harder, a clotted section makes its manipulations 25% dearer, and a dead section refuses them. Kills of mobs with no blood profile no longer feed Animus.
+
+Several Animus forms were re-ranked (Mortar, Halo, Lattice, Summon Avatar and Avatar Arms are learnable from Degree I; Tempest and Avatar Complete need Degree V), and Sanguine Marionette and Sovereign Instinct moved to Ductilis. Every school received tuning; the [developer reference](../docs/HEMOMANCY_REFERENCE.md) §8.2 lists current values, and the [balance plan](../docs/MANIPULATION_BALANCE_PLAN.md#11-pass-2) records what changed and why. Osseous Bloom is now called **Crystalline Bloom**.
 
 ### Specimen storage
 

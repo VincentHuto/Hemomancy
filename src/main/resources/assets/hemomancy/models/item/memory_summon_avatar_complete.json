@@ -3,6 +3,6 @@
   "textures": {
     "layer0": "hemomancy:item/memories/memory_blank",
     "layer1": "hemomancy:item/memories/memory_summon_avatar_complete_overlay",
-    "layer2": "hemomancy:item/memories/memory_rank_summa_overlay"
+    "layer2": "hemomancy:item/memories/memory_rank_magister_overlay"
   }
 }

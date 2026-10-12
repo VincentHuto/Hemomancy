@@ -88,8 +88,9 @@ public final class CrimsonTroupeGameTests {
             stage.getPersistentData().putUUID(CircusDemonstrations.TEACHER, fire.getUUID()); helper.getLevel().addFreshEntity(stage);
             var before = new EntityTickEvent.Pre(stage); CircusDemonstrations.beforeTick(before);
             helper.assertTrue(before.isCanceled() && stage.isAlive(), "stage body entered ownership reconciliation");
-            helper.assertTrue(stage.hemomancy$getOwnerUUID() == null && !stage.hemomancy$isTrialSummon()
-                    && !stage.canAttack(player), "stage body acquired an owner, trial, or visitor target");
+            // The teacher is synced as owner only so clients can draw its control thread.
+            helper.assertTrue(fire.getUUID().equals(stage.hemomancy$getOwnerUUID()) && !stage.hemomancy$isTrialSummon()
+                    && !stage.canAttack(player), "stage body acquired a foreign owner, trial, or visitor target");
             var pupilBody = PuppeteerSummonFactory.create(PuppeteerSummonDefinitions.byName("gorebound_hulk").orElseThrow(),
                     helper.getLevel(), player, UUID.randomUUID(), 0).orElseThrow();
             helper.assertTrue(!pupilBody.canAttack(stage), "owned puppet targets an invulnerable demonstration");
@@ -97,7 +98,7 @@ public final class CrimsonTroupeGameTests {
             var faculty = teacher(helper, player, EntityInit.circus_strongman.get());
             helper.assertTrue(!faculty.participatesInFinale() && fire.participatesInFinale(), "faculty expanded the original finale cast");
             faculty.discard(); fire.discard(); CircusDemonstrations.beforeTick(new EntityTickEvent.Pre(stage));
-            helper.assertTrue(stage.isRemoved(), "orphan demonstration survived"); helper.succeed();
+            helper.assertTrue(PuppetStrings.isUnspooling(stage), "orphan demonstration was not hauled away"); helper.succeed();
         } finally { stage.discard(); fire.discard(); player.discard(); }
     }
     @GameTest(template = "empty", timeoutTicks = 40)

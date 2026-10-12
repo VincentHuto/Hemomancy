@@ -22,16 +22,15 @@ import java.util.List;
 
 /**
  * Blood Eclipse — a T2 (MEDIOCRITAS) TENEBRIS quick manipulation that erupts
- * a cone of void-drenched blood ahead of the caster, afflicting all enemies
- * caught in a 60-degree arc with Blindness and Weakness.
+ * a cone of void-drenched blood ahead of the caster, striking every visible
+ * enemy in an 18-block, 60-degree arc.
  *
  * <p>Cone range scales with Sanguine Reach. Each affected entity receives:
  * <ul>
- *   <li>Blindness II for 5 seconds</li>
- *   <li>Weakness I for 6 seconds</li>
- *   <li>1.5 hearts of shadow damage</li>
+ *   <li>3 shadow (magic) damage, scaled by Crimson Mastery</li>
+ *   <li>Obscured for 5 seconds, the Tenebris school state applied by the direct hit</li>
  * </ul>
- * Best used to reduce pressure from ranged enemies or to open a gap in melee.
+ * Obscured limits the victim's perception and sets up Umbral Rend, which consumes it.
  */
 public class BloodEclipseManip extends BloodManipulation {
 

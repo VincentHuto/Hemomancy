@@ -1,0 +1,15 @@
+blood_eclipse_mantle
+blood_lamp
+crimson_harvest
+crimson_sight
+ferric_resonance
+ferric_transmutation
+glacial_bastion
+glacial_circulation
+hematic_ballast
+hemosynthesis
+sanguine_excavation
+summon_thrall
+venous_travel
+vigil_of_glass
+vital_reservoir

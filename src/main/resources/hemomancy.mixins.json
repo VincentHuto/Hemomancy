@@ -45,6 +45,7 @@
     "MixinPhlegethonticOreCandidates",
     "MixinRegenerationMobEffect",
     "MobEffectInstanceAccessor",
+    "ServerPlayerSpawnGraceAccessor",
     "GoalSelectorAccessor",
     "SinglePoolElementAccessor",
     "VigilTemplateAccessor",

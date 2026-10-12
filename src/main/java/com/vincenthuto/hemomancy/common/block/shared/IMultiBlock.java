@@ -3,6 +3,9 @@ package com.vincenthuto.hemomancy.common.block.shared;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+import javax.annotation.Nullable;
 
 /**
  * Interface for blocks that are part of a multi-block structure.
@@ -17,6 +20,15 @@ public interface IMultiBlock {
      * For example, a 1x3x1 block would return {(0,1,0), (0,2,0)}.
      */
     BlockPos[] getFillerOffsets();
+
+    /**
+     * Outline and collision of the filler standing at {@code offset} (world space) from the
+     * controller, or null to keep a full cube.
+     */
+    @Nullable
+    default VoxelShape fillerShape(BlockState controller, BlockPos offset) {
+        return null;
+    }
 
     /**
      * Called to place filler blocks when the main block is placed.

@@ -4,7 +4,6 @@ import com.vincenthuto.hemomancy.common.station.CreativeStationUpgrades;
 
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.shared.FillerBlock;
-import com.vincenthuto.hemomancy.common.block.shared.HorizontalFacingRotationHelper;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.entity.utility.ArmatureRestraintEntity;
@@ -57,31 +56,8 @@ public class HematicArmatureBlock extends BaseEntityBlock implements IMultiBlock
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
-	private static final VoxelShape SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0D);
-	private static final VoxelShape COLLISION_SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 2.0D, 16.0D);
 	private static final int MAX_FILLER_Y_OFFSET = 5;
-	private static final BlockPos[] CENTER_FILLER_OFFSETS = new BlockPos[] {
-			new BlockPos(0, 1, 0), new BlockPos(0, 2, 0)
-	};
-	private static final BlockPos[] BOWL_STAND_FILLER_OFFSETS = new BlockPos[] {
-			new BlockPos(-3, 0, 0), new BlockPos(-3, 1, 0),
-			new BlockPos(-2, 0, 0), new BlockPos(-2, 1, 0),
-			new BlockPos(-2, 0, 1),
-			new BlockPos(3, 0, 0), new BlockPos(3, 1, 0),
-			new BlockPos(2, 0, 0), new BlockPos(2, 1, 0),
-			new BlockPos(2, 0, 1)
-	};
-	private static final BlockPos[] TOP_ARCH_FILLER_OFFSETS = new BlockPos[] {
-			new BlockPos(-2, 2, 0), new BlockPos(2, 2, 0),
-			new BlockPos(-2, 3, 0), new BlockPos(-1, 3, 0),
-			new BlockPos(0, 3, 0), new BlockPos(1, 3, 0),
-			new BlockPos(2, 3, 0)
-	};
-	private static final BlockPos[] RESERVOIR_HEART_FILLER_OFFSETS = new BlockPos[] {
-			new BlockPos(0, 4, 0)
-	};
-	private static final BlockPos[] FILLER_OFFSETS = combineFillerOffsets();
-	private static final double RESTRAINT_Y_OFFSET = 0.05D;
+	private static final double RESTRAINT_Y_OFFSET = ArmatureGeometry.DAIS_TOP / 16.0D;
 
 	public HematicArmatureBlock(Properties properties) {
 		super(properties);
@@ -98,7 +74,7 @@ public class HematicArmatureBlock extends BaseEntityBlock implements IMultiBlock
 
 	@Override
 	public BlockPos[] getFillerOffsets() {
-		return FILLER_OFFSETS;
+		return ArmatureGeometry.fillers(Direction.SOUTH);
 	}
 
 	@Override
@@ -222,18 +198,23 @@ public class HematicArmatureBlock extends BaseEntityBlock implements IMultiBlock
 
 	@Override
 	public RenderShape getRenderShape(BlockState state) {
-		return RenderShape.ENTITYBLOCK_ANIMATED;
+		return RenderShape.MODEL;
+	}
+
+	/** Outline and collision of one Armature cell, following the installed stage's frame. */
+	public static VoxelShape partShape(BlockState state, BlockPos offset) {
+		return ArmatureGeometry.shape(StationTierProperty.stage(state), state.getValue(FACING), offset);
 	}
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-		return SHAPE;
+		return partShape(state, BlockPos.ZERO);
 	}
 
 	@Override
 	public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos,
 			CollisionContext context) {
-		return COLLISION_SHAPE;
+		return partShape(state, BlockPos.ZERO);
 	}
 
 	@Override
@@ -408,22 +389,8 @@ public class HematicArmatureBlock extends BaseEntityBlock implements IMultiBlock
 		}
 	}
 
-	private static BlockPos[] combineFillerOffsets() {
-		BlockPos[] offsets = new BlockPos[CENTER_FILLER_OFFSETS.length + BOWL_STAND_FILLER_OFFSETS.length
-				+ TOP_ARCH_FILLER_OFFSETS.length + RESERVOIR_HEART_FILLER_OFFSETS.length];
-		System.arraycopy(CENTER_FILLER_OFFSETS, 0, offsets, 0, CENTER_FILLER_OFFSETS.length);
-		System.arraycopy(BOWL_STAND_FILLER_OFFSETS, 0, offsets, CENTER_FILLER_OFFSETS.length,
-				BOWL_STAND_FILLER_OFFSETS.length);
-		int archStart = CENTER_FILLER_OFFSETS.length + BOWL_STAND_FILLER_OFFSETS.length;
-		System.arraycopy(TOP_ARCH_FILLER_OFFSETS, 0, offsets, archStart, TOP_ARCH_FILLER_OFFSETS.length);
-		int reservoirStart = archStart + TOP_ARCH_FILLER_OFFSETS.length;
-		System.arraycopy(RESERVOIR_HEART_FILLER_OFFSETS, 0, offsets, reservoirStart,
-				RESERVOIR_HEART_FILLER_OFFSETS.length);
-		return offsets;
-	}
-
 	private static BlockPos[] rotatedFillerOffsets(Direction facing) {
-		return HorizontalFacingRotationHelper.rotateSouthOffsets(FILLER_OFFSETS, facing);
+		return ArmatureGeometry.fillers(facing);
 	}
 
 	@Override

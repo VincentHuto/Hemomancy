@@ -1,0 +1,305 @@
+{
+ "parent": "minecraft:block/block",
+ "render_type": "translucent",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "minecraft:block/gray_stained_glass",
+  "liq_ferric": "minecraft:block/gray_stained_glass"
+ },
+ "elements": [
+  {
+   "name": "vial_ferric",
+   "from": [
+    21.55,
+    4.4,
+    6.2893
+   ],
+   "to": [
+    23.05,
+    5.4,
+    6.9107
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      10.6,
+      16,
+      11.6
+     ],
+     "texture": "#liq_ferric"
+    },
+    "south": {
+     "uv": [
+      0,
+      10.6,
+      16,
+      11.6
+     ],
+     "texture": "#liq_ferric"
+    },
+    "east": {
+     "uv": [
+      0,
+      10.6,
+      16,
+      11.6
+     ],
+     "texture": "#liq_ferric"
+    },
+    "west": {
+     "uv": [
+      0,
+      10.6,
+      16,
+      11.6
+     ],
+     "texture": "#liq_ferric"
+    },
+    "up": {
+     "uv": [
+      5.55,
+      6.289,
+      7.05,
+      6.911
+     ],
+     "texture": "#liq_ferric"
+    },
+    "down": {
+     "uv": [
+      5.55,
+      6.289,
+      7.05,
+      6.911
+     ],
+     "texture": "#liq_ferric"
+    }
+   }
+  },
+  {
+   "name": "vial_ferric",
+   "from": [
+    21.9893,
+    4.44,
+    5.85
+   ],
+   "to": [
+    22.6107,
+    5.36,
+    7.35
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      10.64,
+      16,
+      11.56
+     ],
+     "texture": "#liq_ferric"
+    },
+    "south": {
+     "uv": [
+      0,
+      10.64,
+      16,
+      11.56
+     ],
+     "texture": "#liq_ferric"
+    },
+    "east": {
+     "uv": [
+      0,
+      10.64,
+      16,
+      11.56
+     ],
+     "texture": "#liq_ferric"
+    },
+    "west": {
+     "uv": [
+      0,
+      10.64,
+      16,
+      11.56
+     ],
+     "texture": "#liq_ferric"
+    },
+    "up": {
+     "uv": [
+      5.989,
+      5.85,
+      6.611,
+      7.35
+     ],
+     "texture": "#liq_ferric"
+    },
+    "down": {
+     "uv": [
+      5.989,
+      5.85,
+      6.611,
+      7.35
+     ],
+     "texture": "#liq_ferric"
+    }
+   }
+  },
+  {
+   "name": "vial_ferric",
+   "from": [
+    21.55,
+    4.48,
+    6.2893
+   ],
+   "to": [
+    23.05,
+    5.32,
+    6.9107
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     22.3,
+     0,
+     6.6
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      10.68,
+      16,
+      11.52
+     ],
+     "texture": "#liq_ferric"
+    },
+    "south": {
+     "uv": [
+      0,
+      10.68,
+      16,
+      11.52
+     ],
+     "texture": "#liq_ferric"
+    },
+    "east": {
+     "uv": [
+      0,
+      10.68,
+      16,
+      11.52
+     ],
+     "texture": "#liq_ferric"
+    },
+    "west": {
+     "uv": [
+      0,
+      10.68,
+      16,
+      11.52
+     ],
+     "texture": "#liq_ferric"
+    },
+    "up": {
+     "uv": [
+      5.55,
+      6.289,
+      7.05,
+      6.911
+     ],
+     "texture": "#liq_ferric"
+    },
+    "down": {
+     "uv": [
+      5.55,
+      6.289,
+      7.05,
+      6.911
+     ],
+     "texture": "#liq_ferric"
+    }
+   }
+  },
+  {
+   "name": "vial_ferric",
+   "from": [
+    21.55,
+    4.52,
+    6.2893
+   ],
+   "to": [
+    23.05,
+    5.28,
+    6.9107
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     22.3,
+     0,
+     6.6
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      10.72,
+      16,
+      11.48
+     ],
+     "texture": "#liq_ferric"
+    },
+    "south": {
+     "uv": [
+      0,
+      10.72,
+      16,
+      11.48
+     ],
+     "texture": "#liq_ferric"
+    },
+    "east": {
+     "uv": [
+      0,
+      10.72,
+      16,
+      11.48
+     ],
+     "texture": "#liq_ferric"
+    },
+    "west": {
+     "uv": [
+      0,
+      10.72,
+      16,
+      11.48
+     ],
+     "texture": "#liq_ferric"
+    },
+    "up": {
+     "uv": [
+      5.55,
+      6.289,
+      7.05,
+      6.911
+     ],
+     "texture": "#liq_ferric"
+    },
+    "down": {
+     "uv": [
+      5.55,
+      6.289,
+      7.05,
+      6.911
+     ],
+     "texture": "#liq_ferric"
+    }
+   }
+  }
+ ]
+}

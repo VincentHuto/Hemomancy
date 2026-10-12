@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.gametest.journey;
 
+import com.vincenthuto.hemomancy.gametest.LoomWeaveTestSupport;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.armor.ability.ArmorSetAbilityRegistry;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.HematicArmatureBlock;
@@ -505,29 +506,18 @@ public final class HarbingerJourneyAutomation {
 	}
 
 	private static void weaveMemory(ServerPlayer player, BlockPos origin) {
-		SomaticLoomBlockEntity loom = (SomaticLoomBlockEntity) player.serverLevel().getBlockEntity(origin.above());
-		if (!loom.isWeavingOrbs()
+		BlockPos loomPos = origin.above();
+		SomaticLoomBlockEntity loom = (SomaticLoomBlockEntity) player.serverLevel().getBlockEntity(loomPos);
+		// Stand where a weaver would, inside the ritual area, so the weave does not pause.
+		BlockPos approach = origin.offset(0, 1, -2);
+		player.teleportTo(player.serverLevel(), approach.getX() + 0.5D, approach.getY(), approach.getZ() + 0.5D,
+				player.getYRot(), player.getXRot());
+		if (!loom.isWeaving()
 				&& (!loom.startRitual(player) || !loom.tryChargeRitualBlood(player, 10_000.0D, true))) {
 			throw new IllegalStateException("Somatic Loom did not start");
 		}
-		while (loom.getRitualOrbs().stream().anyMatch(orb -> !orb.completed())) {
-			SomaticLoomBlockEntity.RitualOrb orb = loom.getRitualOrbs().stream().filter(value -> !value.completed()).findFirst().orElseThrow();
-			Vec3 center = Vec3.atCenterOf(origin.above());
-			BlockPos approach = origin.offset(0, 1, -2);
-			player.teleportTo(player.serverLevel(), approach.getX() + 0.5D, approach.getY(),
-					approach.getZ() + 0.5D, player.getYRot(), player.getXRot());
-			player.lookAt(EntityAnchorArgument.Anchor.EYES, center.add(orb.offset()));
-			Vec3 look = player.getLookAngle().normalize();
-			Vec3 eyeOffset = player.getEyePosition().subtract(player.position());
-			double depth = Math.clamp(center.add(orb.offset()).subtract(player.getEyePosition()).dot(look), 1.5D, 12.0D);
-			if (!loom.dragSelectedOrb(player, 1.0D)) {
-				throw new IllegalStateException("Somatic Loom strand could not be selected");
-			}
-			Vec3 drawingPosition = center.subtract(look.scale(depth)).subtract(eyeOffset);
-			player.teleportTo(player.serverLevel(), drawingPosition.x, drawingPosition.y, drawingPosition.z,
-					player.getYRot(), player.getXRot());
-			for (int pull = 0; pull < 200 && !orb.completed(); pull++) loom.dragSelectedOrb(player, 1.0D);
-			if (!orb.completed()) throw new IllegalStateException("Somatic Loom strand could not be drawn home");
+		if (!LoomWeaveTestSupport.weaveAll(player.serverLevel(), loomPos, loom, player)) {
+			throw new IllegalStateException("Somatic Loom weave could not be completed");
 		}
 	}
 

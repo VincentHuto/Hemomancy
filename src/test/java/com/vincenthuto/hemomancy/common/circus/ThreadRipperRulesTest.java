@@ -26,4 +26,15 @@ class ThreadRipperRulesTest {
 		assertEquals(ThreadRipperRules.Outcome.NONE,
 				ThreadRipperRules.outcome(false, false, false, 0.1F));
 	}
+
+	@Test
+	void foreignSummonsUnravelAtAnyHealthUnlessProtected() {
+		assertEquals(ThreadRipperRules.Outcome.UNRAVEL,
+				ThreadRipperRules.outcome(false, false, true, false, 1.0F));
+		assertEquals(ThreadRipperRules.Outcome.NONE,
+				ThreadRipperRules.outcome(false, false, true, true, 1.0F));
+		// A puppet keeps its own health-gated disruption.
+		assertEquals(ThreadRipperRules.Outcome.DISRUPT,
+				ThreadRipperRules.outcome(false, true, true, false, 1.0F));
+	}
 }

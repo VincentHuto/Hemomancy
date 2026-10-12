@@ -7,7 +7,12 @@ import com.vincenthuto.hutoslib.client.particle.data.BoltParticleData.FadeFuncti
 import com.vincenthuto.hutoslib.client.particle.data.BoltParticleData.SpawnFunction;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -22,12 +27,81 @@ public class DendriticDistributorBlockEntity extends BlockEntity {
 	private static final double GOLDEN_ANGLE = Math.PI * (3.0D - Math.sqrt(5.0D));
 	private static final int OUTER_YELLOW = 0xE8FFE84A;
 	private static final int INNER_WHITE = 0xFFFFFFFF;
+	private static final String SELECTED_SLOT_TAG = "SelectedSlot";
+
+	/** The pattern last applied or saved here; the selector axon rests on its bouton for every viewer. */
+	private int selectedSlot;
+	private float selectorDegrees = Float.NaN;
+	private float lastSelectorDegrees;
 
 	public DendriticDistributorBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.dendritic_distributor.get(), pos, state);
 	}
 
+	public int getSelectedSlot() {
+		return selectedSlot;
+	}
+
+	public void setSelectedSlot(int slot) {
+		int clamped = DendriticSelectorRules.clampSlot(slot);
+		if (clamped == selectedSlot) {
+			return;
+		}
+		selectedSlot = clamped;
+		setChanged();
+		if (level != null && !level.isClientSide) {
+			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+		}
+	}
+
+	public float targetSelectorDegrees() {
+		return DendriticSelectorRules.slotDegrees(selectedSlot);
+	}
+
+	public float selectorDegrees(float partialTick) {
+		if (Float.isNaN(selectorDegrees)) {
+			return targetSelectorDegrees();
+		}
+		return Mth.lerp(partialTick, lastSelectorDegrees, selectorDegrees);
+	}
+
+	public boolean selectorSettled() {
+		return Float.isNaN(selectorDegrees) || DendriticSelectorRules.settled(selectorDegrees, targetSelectorDegrees());
+	}
+
+	private void tickSelector() {
+		float target = targetSelectorDegrees();
+		if (Float.isNaN(selectorDegrees)) {
+			selectorDegrees = target;
+		}
+		lastSelectorDegrees = selectorDegrees;
+		selectorDegrees = DendriticSelectorRules.approach(selectorDegrees, target);
+	}
+
+	@Override
+	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.saveAdditional(tag, registries);
+		tag.putInt(SELECTED_SLOT_TAG, selectedSlot);
+	}
+
+	@Override
+	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.loadAdditional(tag, registries);
+		selectedSlot = DendriticSelectorRules.clampSlot(tag.getInt(SELECTED_SLOT_TAG));
+	}
+
+	@Override
+	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+		return saveWithoutMetadata(registries);
+	}
+
+	@Override
+	public ClientboundBlockEntityDataPacket getUpdatePacket() {
+		return ClientboundBlockEntityDataPacket.create(this);
+	}
+
 	public static void clientTick(Level level, BlockPos pos, BlockState state, DendriticDistributorBlockEntity te) {
+		te.tickSelector();
 		if (level.getGameTime() % BOLT_CADENCE_TICKS != 0) {
 			return;
 		}

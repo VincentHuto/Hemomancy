@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
@@ -109,19 +110,19 @@ public final class ManipulationCastFixGameTests {
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void registryTypesMatchUnifiedInputSemantics(GameTestHelper helper) {
 		var manipulations = ManipulationInit.MANIPS.getEntries().stream().map(holder -> holder.get()).toList();
-		helper.assertTrue(manipulations.size() == 117, "Expected 117 registered manipulations, got " + manipulations.size());
-		helper.assertTrue(manipulations.stream().filter(m -> m.getType() == EnumManipulationType.QUICK).count() == 77,
+		helper.assertTrue(manipulations.size() == 123, "Expected 123 registered manipulations, got " + manipulations.size());
+		helper.assertTrue(manipulations.stream().filter(m -> m.getType() == EnumManipulationType.QUICK).count() == 81,
 				"Quick manipulation count changed");
 		helper.assertTrue(names(manipulations, EnumManipulationType.CHARGED).equals(Set.of(
 				"blood_needle", "activation_potential", "blood_aneurysm", "ironhearted", "vitric_combustion",
 				"deadly_gaze", "crimson_coronation", "synaptic_storm", "white_verdict", "rimebound_sentence",
 				"funeral_bell", "eclipse_well", "blood_needle_fan", "blood_needle_lance", "hematic_mortar",
-				"thread_ripper")),
+				"thread_ripper", "lodestone_collapse")),
 				"Charged manipulation set is incorrect");
 		helper.assertTrue(names(manipulations, EnumManipulationType.CONTINUOUS).equals(Set.of(
 				"sanguine_ward", "sanguine_mending", "vascular_dowsing", "living_circuit",
 				"furnace_veins", "absolute_stillness", "iron_choir", "carrion_communion",
-				"penumbral_drift", "lignum_mortis", "canopy_mortis", "worked_lignum", "sanguine_marionette")),
+				"penumbral_drift", "lignum_mortis", "canopy_mortis", "worked_lignum", "sanguine_marionette", "radiant_wake")),
 				"Continuous manipulation set is incorrect");
 		helper.assertTrue(names(manipulations, EnumManipulationType.PASSIVE).equals(Set.of(
 				"blackhearted", "sovereign_instinct", "vigil_of_glass", "phoenix_debt", "hematic_ballast",
@@ -161,7 +162,7 @@ public final class ManipulationCastFixGameTests {
 		}
 		long active = ManipulationInit.MANIPS.getEntries().stream().map(holder -> holder.get())
 				.filter(manipulation -> !ManipulationRetirementRules.isRetiredManipulation(manipulation)).count();
-		helper.assertTrue(active == 102, "Expected 102 active manipulations after pruning, got " + active);
+		helper.assertTrue(active == 108, "Expected 108 active manipulations after pruning, got " + active);
 		helper.assertTrue(!ManipulationRetirementRules.isRetiredManipulation("summon_avatar"),
 				"Summon Avatar was retired");
 		helper.assertTrue(ManipulationInit.deadly_gaze.get().getType() == EnumManipulationType.CHARGED
@@ -183,6 +184,8 @@ public final class ManipulationCastFixGameTests {
 			blood.setActive(true);
 			blood.setBloodVolume(500.0D);
 			select(player, ManipulationInit.blood_binding.get());
+			// The live price (125 nominal) so a world modifier such as a Blood Moon cannot break the assertion.
+			double cost = ManipulationCostLedger.collect(player, ManipulationInit.blood_binding.get()).effectiveCost();
 
 			boolean cast = ManipulationInit.blood_binding.get().tryPerformAction(player, helper.getLevel(),
 					ItemStack.EMPTY, player.blockPosition(), 0.0F);
@@ -192,8 +195,8 @@ public final class ManipulationCastFixGameTests {
 					"Blood Binding did not apply its shared immobilizing effect");
 			helper.assertTrue(target.getEffect(EffectInit.blood_binding).getDuration() == 120,
 					"Blood Binding did not use its 120-tick normal duration");
-			helper.assertTrue(Math.abs(blood.getBloodVolume() - 375.0D) < 0.001D,
-					"Blood Binding did not spend exactly 125 blood");
+			helper.assertTrue(Math.abs(blood.getBloodVolume() - (500.0D - cost)) < 0.001D,
+					"Blood Binding did not spend exactly its " + cost + " blood price; left " + blood.getBloodVolume());
 			helper.assertTrue(ManipulationInit.blood_binding.get().getRemainingCooldownTicks(player) == 60L,
 					"Blood Binding did not start its 60-tick cooldown");
 			target.setDeltaMovement(0.8D, 0.2D, -0.4D);
@@ -478,8 +481,9 @@ public final class ManipulationCastFixGameTests {
 			helper.assertTrue(!player.hasEffect(MobEffects.POISON) && !player.hasEffect(EffectInit.blood_loss),
 					"Cauterizing Rebuke did not purge blood ailments");
 			helper.assertTrue(player.getHealth() < before, "Cauterizing Rebuke did not impose its self-damage tradeoff");
-			helper.assertTrue(!nearby.isOnFire() && nearby.getHealth() == nearby.getMaxHealth(),
-					"Cauterizing Rebuke still duplicated Sanguine Ignition");
+			// Balance pass 2: the purge flares at nearby enemies (and sears them) but never sets them alight like Ignition.
+			helper.assertTrue(!nearby.isOnFire() && nearby.getHealth() < nearby.getMaxHealth(),
+					"Cauterizing Rebuke did not flare at a nearby enemy, or set it alight like Sanguine Ignition");
 			helper.succeed();
 		} finally {
 			nearby.discard();
@@ -589,10 +593,10 @@ public final class ManipulationCastFixGameTests {
 		assertMeta(helper, "crimson_coronation", 600, 70, EnumManipulationType.CHARGED,
 				EnumManipulationRank.PERFECTUS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD, 80, 120);
 		assertMeta(helper, "sovereign_instinct", 450, 60, EnumManipulationType.PASSIVE,
-				EnumManipulationRank.MAGISTER, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD, 0, 0);
+				EnumManipulationRank.MAGISTER, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD, 0, 0);
 		assertMeta(helper, "synaptic_storm", 900, 65, EnumManipulationType.CHARGED,
 				EnumManipulationRank.PERFECTUS, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD, 60, 100);
-		assertMeta(helper, "living_circuit", 180, 55, EnumManipulationType.CONTINUOUS,
+		assertMeta(helper, "living_circuit", 100, 55, EnumManipulationType.CONTINUOUS,
 				EnumManipulationRank.MAGISTER, EnumBloodTendency.DUCTILIS, EnumVeinSections.BODY, 0, 80);
 		assertMeta(helper, "white_verdict", 800, 65, EnumManipulationType.CHARGED,
 				EnumManipulationRank.PERFECTUS, EnumBloodTendency.LUX, EnumVeinSections.HEAD, 60, 100);
@@ -600,7 +604,7 @@ public final class ManipulationCastFixGameTests {
 				EnumManipulationRank.MAGISTER, EnumBloodTendency.LUX, EnumVeinSections.HEAD, 0, 0);
 		assertMeta(helper, "furnace_veins", 150, 55, EnumManipulationType.CONTINUOUS,
 				EnumManipulationRank.MAGISTER, EnumBloodTendency.FLAMMEUS, EnumVeinSections.BODY, 0, 100);
-		assertMeta(helper, "phoenix_debt", 2000, 75, EnumManipulationType.PASSIVE,
+		assertMeta(helper, "phoenix_debt", 1200, 75, EnumManipulationType.PASSIVE,
 				EnumManipulationRank.PERFECTUS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.HEART, 0, 0);
 		assertMeta(helper, "absolute_stillness", 300, 65, EnumManipulationType.CONTINUOUS,
 				EnumManipulationRank.PERFECTUS, EnumBloodTendency.CONGEATIO, EnumVeinSections.BODY, 0, 160);
@@ -850,7 +854,7 @@ public final class ManipulationCastFixGameTests {
 		BloodManipulation.clearSessionState();
 		var blood = HemoCapabilityAccess.requireBloodVolume(player);
 		blood.setActive(true);
-		blood.setBloodVolume(100.0D);
+		blood.setBloodVolume(300.0D);
 		HemoCapabilityAccess.requireBloodTendency(player)
 				.setTendencyAlignment(ManipulationInit.sanguine_ward.get().getTend(), 10.0F);
 		var known = HemoCapabilityAccess.requireKnownManipulations(player);
@@ -862,8 +866,8 @@ public final class ManipulationCastFixGameTests {
 		ManipulationChannelManager.start(player);
 		helper.assertTrue(ManipulationChannelManager.isChanneling(player.getUUID()),
 				"Continuous ward did not start");
-		helper.assertTrue(Math.abs(blood.getBloodVolume() - 90.0D) < 0.001D,
-				"Continuous ward did not pay its immediate pulse");
+		helper.assertTrue(Math.abs(blood.getBloodVolume() - 260.0D) < 0.001D,
+				"Continuous ward did not pay its immediate pulse: blood " + blood.getBloodVolume());
 		helper.assertTrue(mastery.getXp() == 0.0D,
 				"Continuous ward awarded mastery when the channel began");
 
@@ -978,11 +982,13 @@ public final class ManipulationCastFixGameTests {
 		pickaxe.setDamageValue(200);
 		player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, pickaxe);
 		select(player, ManipulationInit.sanguine_mending.get());
+		// The live price (150 nominal) so a world modifier such as a Blood Moon cannot break the assertion.
+		double upkeep = ManipulationCostLedger.collect(player, ManipulationInit.sanguine_mending.get()).effectiveCost();
 
 		ManipulationChannelManager.start(player);
 		helper.assertTrue(pickaxe.getDamageValue() == 150, "Mending did not repair 50 durability immediately");
-		helper.assertTrue(Math.abs(blood.getBloodVolume() - 350.0D) < 0.001D,
-				"Mending did not pay its immediate upkeep");
+		helper.assertTrue(Math.abs(blood.getBloodVolume() - (500.0D - upkeep)) < 0.001D,
+				"Mending did not pay its immediate " + upkeep + " upkeep; left " + blood.getBloodVolume());
 		helper.runAtTickTime(21, () -> {
 			try {
 				ManipulationChannelManager.onPlayerTick(new PlayerTickEvent.Post(player));

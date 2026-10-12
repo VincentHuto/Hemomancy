@@ -21,55 +21,55 @@
       "faces": {
         "north": {
           "uv": [
-            6,
-            14,
-            10,
-            15
-          ],
-          "texture": "#shield"
-        },
-        "south": {
-          "uv": [
-            12,
-            5,
-            13,
-            6
+            3.0,
+            7.0,
+            5.0,
+            7.5
           ],
           "texture": "#shield"
         },
         "east": {
           "uv": [
             12,
-            5,
+            8,
             13,
-            6
+            10
           ],
           "texture": "#shield"
         },
         "west": {
           "uv": [
             12,
-            5,
+            8,
             13,
-            6
+            10
           ],
           "texture": "#shield"
         },
         "up": {
           "uv": [
             12,
-            5,
-            13,
-            6
+            8,
+            16,
+            9
           ],
           "texture": "#shield"
         },
         "down": {
           "uv": [
             12,
-            5,
-            13,
-            6
+            8,
+            16,
+            9
+          ],
+          "texture": "#shield"
+        },
+        "south": {
+          "uv": [
+            11.0,
+            7.0,
+            13.0,
+            7.5
           ],
           "texture": "#shield"
         }
@@ -90,55 +90,55 @@
       "faces": {
         "north": {
           "uv": [
-            4,
-            13,
-            12,
-            14
-          ],
-          "texture": "#shield"
-        },
-        "south": {
-          "uv": [
-            12,
-            5,
-            13,
-            6
+            2.0,
+            6.5,
+            6.0,
+            7.0
           ],
           "texture": "#shield"
         },
         "east": {
           "uv": [
             12,
-            5,
+            8,
             13,
-            6
+            10
           ],
           "texture": "#shield"
         },
         "west": {
           "uv": [
             12,
-            5,
+            8,
             13,
-            6
+            10
           ],
           "texture": "#shield"
         },
         "up": {
           "uv": [
             12,
-            5,
-            13,
-            6
+            8,
+            16,
+            9
           ],
           "texture": "#shield"
         },
         "down": {
           "uv": [
             12,
-            5,
-            13,
-            6
+            8,
+            16,
+            9
+          ],
+          "texture": "#shield"
+        },
+        "south": {
+          "uv": [
+            10.0,
+            6.5,
+            14.0,
+            7.0
           ],
           "texture": "#shield"
         }
@@ -159,55 +159,55 @@
       "faces": {
         "north": {
           "uv": [
-            3,
-            12,
-            13,
-            13
-          ],
-          "texture": "#shield"
-        },
-        "south": {
-          "uv": [
-            12,
-            5,
-            13,
-            6
+            1.5,
+            6.0,
+            6.5,
+            6.5
           ],
           "texture": "#shield"
         },
         "east": {
           "uv": [
             12,
-            5,
+            8,
             13,
-            6
+            10
           ],
           "texture": "#shield"
         },
         "west": {
           "uv": [
             12,
-            5,
+            8,
             13,
-            6
+            10
           ],
           "texture": "#shield"
         },
         "up": {
           "uv": [
             12,
-            5,
-            13,
-            6
+            8,
+            16,
+            9
           ],
           "texture": "#shield"
         },
         "down": {
           "uv": [
             12,
-            5,
-            13,
-            6
+            8,
+            16,
+            9
+          ],
+          "texture": "#shield"
+        },
+        "south": {
+          "uv": [
+            9.5,
+            6.0,
+            14.5,
+            6.5
           ],
           "texture": "#shield"
         }
@@ -228,55 +228,55 @@
       "faces": {
         "north": {
           "uv": [
-            2,
-            10,
-            14,
-            12
-          ],
-          "texture": "#shield"
-        },
-        "south": {
-          "uv": [
-            12,
-            5,
-            13,
-            6
+            1.0,
+            5.0,
+            7.0,
+            6.0
           ],
           "texture": "#shield"
         },
         "east": {
           "uv": [
             12,
-            5,
+            8,
             13,
-            6
+            10
           ],
           "texture": "#shield"
         },
         "west": {
           "uv": [
             12,
-            5,
+            8,
             13,
-            6
+            10
           ],
           "texture": "#shield"
         },
         "up": {
           "uv": [
             12,
-            5,
-            13,
-            6
+            8,
+            16,
+            9
           ],
           "texture": "#shield"
         },
         "down": {
           "uv": [
             12,
-            5,
-            13,
-            6
+            8,
+            16,
+            9
+          ],
+          "texture": "#shield"
+        },
+        "south": {
+          "uv": [
+            9.0,
+            5.0,
+            15.0,
+            6.0
           ],
           "texture": "#shield"
         }
@@ -297,55 +297,55 @@
       "faces": {
         "north": {
           "uv": [
-            1,
-            6,
-            15,
-            10
-          ],
-          "texture": "#shield"
-        },
-        "south": {
-          "uv": [
-            12,
-            5,
-            13,
-            6
+            0.5,
+            3.0,
+            7.5,
+            5.0
           ],
           "texture": "#shield"
         },
         "east": {
           "uv": [
             12,
-            5,
+            8,
             13,
-            6
+            10
           ],
           "texture": "#shield"
         },
         "west": {
           "uv": [
             12,
-            5,
+            8,
             13,
-            6
+            10
           ],
           "texture": "#shield"
         },
         "up": {
           "uv": [
             12,
-            5,
-            13,
-            6
+            8,
+            16,
+            9
           ],
           "texture": "#shield"
         },
         "down": {
           "uv": [
             12,
-            5,
-            13,
-            6
+            8,
+            16,
+            9
+          ],
+          "texture": "#shield"
+        },
+        "south": {
+          "uv": [
+            8.5,
+            3.0,
+            15.5,
+            5.0
           ],
           "texture": "#shield"
         }
@@ -366,55 +366,55 @@
       "faces": {
         "north": {
           "uv": [
-            2,
-            4,
-            14,
-            6
-          ],
-          "texture": "#shield"
-        },
-        "south": {
-          "uv": [
-            12,
-            5,
-            13,
-            6
+            1.0,
+            2.0,
+            7.0,
+            3.0
           ],
           "texture": "#shield"
         },
         "east": {
           "uv": [
             12,
-            5,
+            8,
             13,
-            6
+            10
           ],
           "texture": "#shield"
         },
         "west": {
           "uv": [
             12,
-            5,
+            8,
             13,
-            6
+            10
           ],
           "texture": "#shield"
         },
         "up": {
           "uv": [
             12,
-            5,
-            13,
-            6
+            8,
+            16,
+            9
           ],
           "texture": "#shield"
         },
         "down": {
           "uv": [
             12,
-            5,
-            13,
-            6
+            8,
+            16,
+            9
+          ],
+          "texture": "#shield"
+        },
+        "south": {
+          "uv": [
+            9.0,
+            2.0,
+            15.0,
+            3.0
           ],
           "texture": "#shield"
         }
@@ -435,55 +435,55 @@
       "faces": {
         "north": {
           "uv": [
-            3,
-            3,
-            13,
-            4
-          ],
-          "texture": "#shield"
-        },
-        "south": {
-          "uv": [
-            12,
-            5,
-            13,
-            6
+            1.5,
+            1.5,
+            6.5,
+            2.0
           ],
           "texture": "#shield"
         },
         "east": {
           "uv": [
             12,
-            5,
+            8,
             13,
-            6
+            10
           ],
           "texture": "#shield"
         },
         "west": {
           "uv": [
             12,
-            5,
+            8,
             13,
-            6
+            10
           ],
           "texture": "#shield"
         },
         "up": {
           "uv": [
             12,
-            5,
-            13,
-            6
+            8,
+            16,
+            9
           ],
           "texture": "#shield"
         },
         "down": {
           "uv": [
             12,
-            5,
-            13,
-            6
+            8,
+            16,
+            9
+          ],
+          "texture": "#shield"
+        },
+        "south": {
+          "uv": [
+            9.5,
+            1.5,
+            14.5,
+            2.0
           ],
           "texture": "#shield"
         }
@@ -504,55 +504,55 @@
       "faces": {
         "north": {
           "uv": [
-            4,
-            2,
-            12,
-            3
-          ],
-          "texture": "#shield"
-        },
-        "south": {
-          "uv": [
-            12,
-            5,
-            13,
-            6
+            2.0,
+            1.0,
+            6.0,
+            1.5
           ],
           "texture": "#shield"
         },
         "east": {
           "uv": [
             12,
-            5,
+            8,
             13,
-            6
+            10
           ],
           "texture": "#shield"
         },
         "west": {
           "uv": [
             12,
-            5,
+            8,
             13,
-            6
+            10
           ],
           "texture": "#shield"
         },
         "up": {
           "uv": [
             12,
-            5,
-            13,
-            6
+            8,
+            16,
+            9
           ],
           "texture": "#shield"
         },
         "down": {
           "uv": [
             12,
-            5,
-            13,
-            6
+            8,
+            16,
+            9
+          ],
+          "texture": "#shield"
+        },
+        "south": {
+          "uv": [
+            10.0,
+            1.0,
+            14.0,
+            1.5
           ],
           "texture": "#shield"
         }
@@ -573,607 +573,952 @@
       "faces": {
         "north": {
           "uv": [
-            6,
-            1,
-            10,
-            2
-          ],
-          "texture": "#shield"
-        },
-        "south": {
-          "uv": [
-            12,
-            5,
-            13,
-            6
+            3.0,
+            0.5,
+            5.0,
+            1.0
           ],
           "texture": "#shield"
         },
         "east": {
           "uv": [
             12,
-            5,
+            8,
             13,
-            6
-          ],
-          "texture": "#shield"
-        },
-        "west": {
-          "uv": [
-            12,
-            5,
-            13,
-            6
-          ],
-          "texture": "#shield"
-        },
-        "up": {
-          "uv": [
-            12,
-            5,
-            13,
-            6
-          ],
-          "texture": "#shield"
-        },
-        "down": {
-          "uv": [
-            12,
-            5,
-            13,
-            6
-          ],
-          "texture": "#shield"
-        }
-      }
-    },
-    {
-      "name": "recessed lunar face",
-      "from": [
-        6,
-        3,
-        7.25
-      ],
-      "to": [
-        10,
-        4,
-        7.5
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            6,
-            12,
-            10,
-            13
-          ],
-          "texture": "#shield"
-        },
-        "south": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "east": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "west": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "up": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "down": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        }
-      }
-    },
-    {
-      "name": "recessed lunar face",
-      "from": [
-        4,
-        4,
-        7.25
-      ],
-      "to": [
-        12,
-        5,
-        7.5
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            4,
-            11,
-            12,
-            12
-          ],
-          "texture": "#shield"
-        },
-        "south": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "east": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "west": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "up": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "down": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        }
-      }
-    },
-    {
-      "name": "recessed lunar face",
-      "from": [
-        3,
-        5,
-        7.25
-      ],
-      "to": [
-        13,
-        6,
-        7.5
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            3,
-            10,
-            13,
-            11
-          ],
-          "texture": "#shield"
-        },
-        "south": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "east": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "west": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "up": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "down": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        }
-      }
-    },
-    {
-      "name": "recessed lunar face",
-      "from": [
-        2,
-        6,
-        7.25
-      ],
-      "to": [
-        14,
-        10,
-        7.5
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            2,
-            6,
-            14,
             10
           ],
           "texture": "#shield"
         },
-        "south": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "east": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
         "west": {
           "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "up": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "down": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        }
-      }
-    },
-    {
-      "name": "recessed lunar face",
-      "from": [
-        3,
-        10,
-        7.25
-      ],
-      "to": [
-        13,
-        11,
-        7.5
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            3,
-            5,
-            13,
-            6
-          ],
-          "texture": "#shield"
-        },
-        "south": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "east": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "west": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "up": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "down": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        }
-      }
-    },
-    {
-      "name": "recessed lunar face",
-      "from": [
-        4,
-        11,
-        7.25
-      ],
-      "to": [
-        12,
-        12,
-        7.5
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            4,
-            4,
             12,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "south": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "east": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "west": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
+            8,
+            13,
+            10
           ],
           "texture": "#shield"
         },
         "up": {
           "uv": [
-            9,
-            4,
-            10,
-            5
+            12,
+            8,
+            16,
+            9
           ],
           "texture": "#shield"
         },
         "down": {
           "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        }
-      }
-    },
-    {
-      "name": "recessed lunar face",
-      "from": [
-        6,
-        12,
-        7.25
-      ],
-      "to": [
-        10,
-        13,
-        7.5
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            6,
-            3,
-            10,
-            4
-          ],
-          "texture": "#shield"
-        },
-        "south": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "east": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "west": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "up": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        },
-        "down": {
-          "uv": [
-            9,
-            4,
-            10,
-            5
-          ],
-          "texture": "#shield"
-        }
-      }
-    },
-    {
-      "name": "moon boss",
-      "from": [
-        7,
-        7,
-        6.75
-      ],
-      "to": [
-        9,
-        9,
-        7.25
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            7,
-            7,
-            9,
+            12,
+            8,
+            16,
             9
           ],
           "texture": "#shield"
         },
         "south": {
           "uv": [
-            6,
-            4,
-            7,
-            5
+            11.0,
+            0.5,
+            13.0,
+            1.0
+          ],
+          "texture": "#shield"
+        }
+      }
+    },
+    {
+      "name": "still-water field",
+      "from": [
+        6,
+        2.5,
+        7.25
+      ],
+      "to": [
+        10,
+        3.5,
+        7.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3.0,
+            6.25,
+            5.0,
+            6.75
           ],
           "texture": "#shield"
         },
         "east": {
           "uv": [
-            6,
-            4,
-            7,
-            5
+            8,
+            8,
+            9,
+            10
           ],
           "texture": "#shield"
         },
         "west": {
           "uv": [
-            6,
-            4,
-            7,
-            5
+            8,
+            8,
+            9,
+            10
           ],
           "texture": "#shield"
         },
         "up": {
           "uv": [
-            6,
-            4,
-            7,
-            5
+            8,
+            8,
+            12,
+            9
           ],
           "texture": "#shield"
         },
         "down": {
           "uv": [
-            6,
-            4,
-            7,
-            5
+            8,
+            8,
+            12,
+            9
+          ],
+          "texture": "#shield"
+        },
+        "south": {
+          "uv": [
+            8,
+            8,
+            12,
+            9
+          ],
+          "texture": "#shield"
+        }
+      }
+    },
+    {
+      "name": "still-water field",
+      "from": [
+        4,
+        3.5,
+        7.25
+      ],
+      "to": [
+        12,
+        4.5,
+        7.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            2.0,
+            5.75,
+            6.0,
+            6.25
+          ],
+          "texture": "#shield"
+        },
+        "east": {
+          "uv": [
+            8,
+            8,
+            9,
+            10
+          ],
+          "texture": "#shield"
+        },
+        "west": {
+          "uv": [
+            8,
+            8,
+            9,
+            10
+          ],
+          "texture": "#shield"
+        },
+        "up": {
+          "uv": [
+            8,
+            8,
+            12,
+            9
+          ],
+          "texture": "#shield"
+        },
+        "down": {
+          "uv": [
+            8,
+            8,
+            12,
+            9
+          ],
+          "texture": "#shield"
+        },
+        "south": {
+          "uv": [
+            8,
+            8,
+            12,
+            9
+          ],
+          "texture": "#shield"
+        }
+      }
+    },
+    {
+      "name": "still-water field",
+      "from": [
+        3,
+        4.5,
+        7.25
+      ],
+      "to": [
+        13,
+        6,
+        7.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1.5,
+            5.0,
+            6.5,
+            5.75
+          ],
+          "texture": "#shield"
+        },
+        "east": {
+          "uv": [
+            8,
+            8,
+            9,
+            10
+          ],
+          "texture": "#shield"
+        },
+        "west": {
+          "uv": [
+            8,
+            8,
+            9,
+            10
+          ],
+          "texture": "#shield"
+        },
+        "up": {
+          "uv": [
+            8,
+            8,
+            12,
+            9
+          ],
+          "texture": "#shield"
+        },
+        "down": {
+          "uv": [
+            8,
+            8,
+            12,
+            9
+          ],
+          "texture": "#shield"
+        },
+        "south": {
+          "uv": [
+            8,
+            8,
+            12,
+            9
+          ],
+          "texture": "#shield"
+        }
+      }
+    },
+    {
+      "name": "still-water field",
+      "from": [
+        2.5,
+        6,
+        7.25
+      ],
+      "to": [
+        13.5,
+        10,
+        7.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1.25,
+            3.0,
+            6.75,
+            5.0
+          ],
+          "texture": "#shield"
+        },
+        "east": {
+          "uv": [
+            8,
+            8,
+            9,
+            10
+          ],
+          "texture": "#shield"
+        },
+        "west": {
+          "uv": [
+            8,
+            8,
+            9,
+            10
+          ],
+          "texture": "#shield"
+        },
+        "up": {
+          "uv": [
+            8,
+            8,
+            12,
+            9
+          ],
+          "texture": "#shield"
+        },
+        "down": {
+          "uv": [
+            8,
+            8,
+            12,
+            9
+          ],
+          "texture": "#shield"
+        },
+        "south": {
+          "uv": [
+            8,
+            8,
+            12,
+            9
+          ],
+          "texture": "#shield"
+        }
+      }
+    },
+    {
+      "name": "still-water field",
+      "from": [
+        3,
+        10,
+        7.25
+      ],
+      "to": [
+        13,
+        11.5,
+        7.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1.5,
+            2.25,
+            6.5,
+            3.0
+          ],
+          "texture": "#shield"
+        },
+        "east": {
+          "uv": [
+            8,
+            8,
+            9,
+            10
+          ],
+          "texture": "#shield"
+        },
+        "west": {
+          "uv": [
+            8,
+            8,
+            9,
+            10
+          ],
+          "texture": "#shield"
+        },
+        "up": {
+          "uv": [
+            8,
+            8,
+            12,
+            9
+          ],
+          "texture": "#shield"
+        },
+        "down": {
+          "uv": [
+            8,
+            8,
+            12,
+            9
+          ],
+          "texture": "#shield"
+        },
+        "south": {
+          "uv": [
+            8,
+            8,
+            12,
+            9
+          ],
+          "texture": "#shield"
+        }
+      }
+    },
+    {
+      "name": "still-water field",
+      "from": [
+        4,
+        11.5,
+        7.25
+      ],
+      "to": [
+        12,
+        12.5,
+        7.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            2.0,
+            1.75,
+            6.0,
+            2.25
+          ],
+          "texture": "#shield"
+        },
+        "east": {
+          "uv": [
+            8,
+            8,
+            9,
+            10
+          ],
+          "texture": "#shield"
+        },
+        "west": {
+          "uv": [
+            8,
+            8,
+            9,
+            10
+          ],
+          "texture": "#shield"
+        },
+        "up": {
+          "uv": [
+            8,
+            8,
+            12,
+            9
+          ],
+          "texture": "#shield"
+        },
+        "down": {
+          "uv": [
+            8,
+            8,
+            12,
+            9
+          ],
+          "texture": "#shield"
+        },
+        "south": {
+          "uv": [
+            8,
+            8,
+            12,
+            9
+          ],
+          "texture": "#shield"
+        }
+      }
+    },
+    {
+      "name": "still-water field",
+      "from": [
+        6,
+        12.5,
+        7.25
+      ],
+      "to": [
+        10,
+        13.5,
+        7.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3.0,
+            1.25,
+            5.0,
+            1.75
+          ],
+          "texture": "#shield"
+        },
+        "east": {
+          "uv": [
+            8,
+            8,
+            9,
+            10
+          ],
+          "texture": "#shield"
+        },
+        "west": {
+          "uv": [
+            8,
+            8,
+            9,
+            10
+          ],
+          "texture": "#shield"
+        },
+        "up": {
+          "uv": [
+            8,
+            8,
+            12,
+            9
+          ],
+          "texture": "#shield"
+        },
+        "down": {
+          "uv": [
+            8,
+            8,
+            12,
+            9
+          ],
+          "texture": "#shield"
+        },
+        "south": {
+          "uv": [
+            8,
+            8,
+            12,
+            9
+          ],
+          "texture": "#shield"
+        }
+      }
+    },
+    {
+      "name": "verdigris boss ring",
+      "from": [
+        6.5,
+        5.5,
+        7.0
+      ],
+      "to": [
+        9.5,
+        6.5,
+        7.25
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3.25,
+            4.75,
+            4.75,
+            5.25
+          ],
+          "texture": "#shield"
+        },
+        "east": {
+          "uv": [
+            8,
+            10,
+            9,
+            12
+          ],
+          "texture": "#shield"
+        },
+        "west": {
+          "uv": [
+            8,
+            10,
+            9,
+            12
+          ],
+          "texture": "#shield"
+        },
+        "up": {
+          "uv": [
+            8,
+            10,
+            12,
+            11
+          ],
+          "texture": "#shield"
+        },
+        "down": {
+          "uv": [
+            8,
+            10,
+            12,
+            11
+          ],
+          "texture": "#shield"
+        },
+        "south": {
+          "uv": [
+            8,
+            10,
+            12,
+            11
+          ],
+          "texture": "#shield"
+        }
+      }
+    },
+    {
+      "name": "verdigris boss ring",
+      "from": [
+        5.5,
+        6.5,
+        7.0
+      ],
+      "to": [
+        10.5,
+        9.5,
+        7.25
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            2.75,
+            3.25,
+            5.25,
+            4.75
+          ],
+          "texture": "#shield"
+        },
+        "east": {
+          "uv": [
+            8,
+            10,
+            9,
+            12
+          ],
+          "texture": "#shield"
+        },
+        "west": {
+          "uv": [
+            8,
+            10,
+            9,
+            12
+          ],
+          "texture": "#shield"
+        },
+        "up": {
+          "uv": [
+            8,
+            10,
+            12,
+            11
+          ],
+          "texture": "#shield"
+        },
+        "down": {
+          "uv": [
+            8,
+            10,
+            12,
+            11
+          ],
+          "texture": "#shield"
+        },
+        "south": {
+          "uv": [
+            8,
+            10,
+            12,
+            11
+          ],
+          "texture": "#shield"
+        }
+      }
+    },
+    {
+      "name": "verdigris boss ring",
+      "from": [
+        6.5,
+        9.5,
+        7.0
+      ],
+      "to": [
+        9.5,
+        10.5,
+        7.25
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3.25,
+            2.75,
+            4.75,
+            3.25
+          ],
+          "texture": "#shield"
+        },
+        "east": {
+          "uv": [
+            8,
+            10,
+            9,
+            12
+          ],
+          "texture": "#shield"
+        },
+        "west": {
+          "uv": [
+            8,
+            10,
+            9,
+            12
+          ],
+          "texture": "#shield"
+        },
+        "up": {
+          "uv": [
+            8,
+            10,
+            12,
+            11
+          ],
+          "texture": "#shield"
+        },
+        "down": {
+          "uv": [
+            8,
+            10,
+            12,
+            11
+          ],
+          "texture": "#shield"
+        },
+        "south": {
+          "uv": [
+            8,
+            10,
+            12,
+            11
+          ],
+          "texture": "#shield"
+        }
+      }
+    },
+    {
+      "name": "lunar boss",
+      "from": [
+        7.5,
+        6.5,
+        6.5
+      ],
+      "to": [
+        8.5,
+        7,
+        7.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3.75,
+            4.5,
+            4.25,
+            4.75
+          ],
+          "texture": "#shield"
+        },
+        "east": {
+          "uv": [
+            12,
+            10,
+            13,
+            12
+          ],
+          "texture": "#shield"
+        },
+        "west": {
+          "uv": [
+            12,
+            10,
+            13,
+            12
+          ],
+          "texture": "#shield"
+        },
+        "up": {
+          "uv": [
+            12,
+            10,
+            16,
+            11
+          ],
+          "texture": "#shield"
+        },
+        "down": {
+          "uv": [
+            12,
+            10,
+            16,
+            11
+          ],
+          "texture": "#shield"
+        },
+        "south": {
+          "uv": [
+            12,
+            10,
+            16,
+            11
+          ],
+          "texture": "#shield"
+        }
+      }
+    },
+    {
+      "name": "lunar boss",
+      "from": [
+        6.5,
+        7,
+        6.5
+      ],
+      "to": [
+        9.5,
+        9,
+        7.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3.25,
+            3.5,
+            4.75,
+            4.5
+          ],
+          "texture": "#shield"
+        },
+        "east": {
+          "uv": [
+            12,
+            10,
+            13,
+            12
+          ],
+          "texture": "#shield"
+        },
+        "west": {
+          "uv": [
+            12,
+            10,
+            13,
+            12
+          ],
+          "texture": "#shield"
+        },
+        "up": {
+          "uv": [
+            12,
+            10,
+            16,
+            11
+          ],
+          "texture": "#shield"
+        },
+        "down": {
+          "uv": [
+            12,
+            10,
+            16,
+            11
+          ],
+          "texture": "#shield"
+        },
+        "south": {
+          "uv": [
+            12,
+            10,
+            16,
+            11
+          ],
+          "texture": "#shield"
+        }
+      }
+    },
+    {
+      "name": "lunar boss",
+      "from": [
+        7.5,
+        9,
+        6.5
+      ],
+      "to": [
+        8.5,
+        9.5,
+        7.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3.75,
+            3.25,
+            4.25,
+            3.5
+          ],
+          "texture": "#shield"
+        },
+        "east": {
+          "uv": [
+            12,
+            10,
+            13,
+            12
+          ],
+          "texture": "#shield"
+        },
+        "west": {
+          "uv": [
+            12,
+            10,
+            13,
+            12
+          ],
+          "texture": "#shield"
+        },
+        "up": {
+          "uv": [
+            12,
+            10,
+            16,
+            11
+          ],
+          "texture": "#shield"
+        },
+        "down": {
+          "uv": [
+            12,
+            10,
+            16,
+            11
+          ],
+          "texture": "#shield"
+        },
+        "south": {
+          "uv": [
+            12,
+            10,
+            16,
+            11
           ],
           "texture": "#shield"
         }
@@ -1194,55 +1539,55 @@
       "faces": {
         "north": {
           "uv": [
+            8,
             12,
-            3,
-            13,
-            4
+            12,
+            13
           ],
           "texture": "#shield"
         },
         "south": {
           "uv": [
+            8,
             12,
-            3,
-            13,
-            4
+            12,
+            13
           ],
           "texture": "#shield"
         },
         "east": {
           "uv": [
+            8,
             12,
-            3,
-            13,
-            4
+            12,
+            13
           ],
           "texture": "#shield"
         },
         "west": {
           "uv": [
+            8,
             12,
-            3,
-            13,
-            4
+            12,
+            13
           ],
           "texture": "#shield"
         },
         "up": {
           "uv": [
+            8,
             12,
-            3,
-            13,
-            4
+            12,
+            13
           ],
           "texture": "#shield"
         },
         "down": {
           "uv": [
+            8,
             12,
-            3,
-            13,
-            4
+            12,
+            13
           ],
           "texture": "#shield"
         }
@@ -1263,55 +1608,55 @@
       "faces": {
         "north": {
           "uv": [
+            8,
             12,
-            3,
-            13,
-            4
+            12,
+            13
           ],
           "texture": "#shield"
         },
         "south": {
           "uv": [
+            8,
             12,
-            3,
-            13,
-            4
+            12,
+            13
           ],
           "texture": "#shield"
         },
         "east": {
           "uv": [
+            8,
             12,
-            3,
-            13,
-            4
+            12,
+            13
           ],
           "texture": "#shield"
         },
         "west": {
           "uv": [
+            8,
             12,
-            3,
-            13,
-            4
+            12,
+            13
           ],
           "texture": "#shield"
         },
         "up": {
           "uv": [
+            8,
             12,
-            3,
-            13,
-            4
+            12,
+            13
           ],
           "texture": "#shield"
         },
         "down": {
           "uv": [
+            8,
             12,
-            3,
-            13,
-            4
+            12,
+            13
           ],
           "texture": "#shield"
         }
@@ -1332,55 +1677,55 @@
       "faces": {
         "north": {
           "uv": [
+            8,
             12,
-            5,
-            13,
-            6
+            12,
+            13
           ],
           "texture": "#shield"
         },
         "south": {
           "uv": [
+            8,
             12,
-            5,
-            13,
-            6
+            12,
+            13
           ],
           "texture": "#shield"
         },
         "east": {
           "uv": [
+            8,
             12,
-            5,
-            13,
-            6
+            12,
+            13
           ],
           "texture": "#shield"
         },
         "west": {
           "uv": [
+            8,
             12,
-            5,
-            13,
-            6
+            12,
+            13
           ],
           "texture": "#shield"
         },
         "up": {
           "uv": [
+            8,
             12,
-            5,
-            13,
-            6
+            12,
+            13
           ],
           "texture": "#shield"
         },
         "down": {
           "uv": [
+            8,
             12,
-            5,
-            13,
-            6
+            12,
+            13
           ],
           "texture": "#shield"
         }

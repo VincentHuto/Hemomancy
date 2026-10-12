@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.MorphlingCradleBlockEntity;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -27,6 +28,7 @@ import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,6 +37,12 @@ public class MorphlingCradleBlock extends BaseEntityBlock implements SimpleWater
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final EnumProperty<AttachFace> FACE = BlockStateProperties.ATTACH_FACE;
+	/** The basket, standing on the floor, hung from the ceiling, or backed against the wall it faces away from. */
+	private static final VoxelShape FLOOR_SHAPE = Block.box(2, 1, 2, 14, 9, 14);
+	private static final VoxelShape CEILING_SHAPE = Block.box(2, 7, 2, 14, 15, 14);
+	private static final Map<Direction, VoxelShape> WALL_SHAPES = Map.of(
+			Direction.NORTH, Block.box(2, 2, 7, 14, 14, 15), Direction.SOUTH, Block.box(2, 2, 1, 14, 14, 9),
+			Direction.EAST, Block.box(1, 2, 2, 9, 14, 14), Direction.WEST, Block.box(7, 2, 2, 15, 14, 14));
 
 	public MorphlingCradleBlock(Properties props) {
 		super(props);
@@ -52,6 +60,15 @@ public class MorphlingCradleBlock extends BaseEntityBlock implements SimpleWater
 	@Override
 	public RenderShape getRenderShape(BlockState state) {
 		return RenderShape.MODEL;
+	}
+
+	@Override
+	protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+		return switch (state.getValue(FACE)) {
+			case FLOOR -> FLOOR_SHAPE;
+			case CEILING -> CEILING_SHAPE;
+			case WALL -> WALL_SHAPES.get(state.getValue(FACING));
+		};
 	}
 
 	@Override

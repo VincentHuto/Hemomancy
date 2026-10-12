@@ -59,7 +59,7 @@ public class CrudeMemoryShardItem extends Item {
 				"An echo scraped from the wall of a Harbinger chamber. The pattern is rough but legible\u2014someone has done this before.")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 		if (getManip() != null) {
-			tooltip.add(Component.literal(getManip().getProperName())
+			tooltip.add(getManip().getDisplayName()
 					.withStyle(ChatFormatting.DARK_RED));
 			if (ManipulationRetirementRules.isRetiredMemoryItem(this, getManip())) {
 				tooltip.add(Component.literal("This echo has gone dormant.")

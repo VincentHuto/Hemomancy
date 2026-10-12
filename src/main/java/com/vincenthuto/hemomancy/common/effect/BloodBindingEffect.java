@@ -25,6 +25,8 @@ public class BloodBindingEffect extends MobEffect {
 		var binding = entity.getEffect(EffectInit.blood_binding);
 		if (binding != null) {
 			entity.setDeltaMovement(0, 0, 0);
+			// A player's own client drives their motion: without a velocity packet a bound player walks free.
+			if (entity instanceof net.minecraft.server.level.ServerPlayer) entity.hurtMarked = true;
 			Level level = entity.level();
 			Vector3 centerVec = Vector3.fromEntityCenter(entity);
 			if (binding.isVisible() && !level.isClientSide && level instanceof ServerLevel sr) {

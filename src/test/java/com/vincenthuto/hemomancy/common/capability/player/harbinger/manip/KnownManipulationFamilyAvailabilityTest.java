@@ -12,7 +12,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.LinkedHashMap;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class KnownManipulationFamilyAvailabilityTest {
@@ -51,6 +53,55 @@ class KnownManipulationFamilyAvailabilityTest {
 		BloodManipulation restoredForm = restored.getManipList().stream()
 				.filter(manipulation -> "guided_blood_shot".equals(manipulation.getName())).findFirst().orElseThrow();
 		assertTrue(restored.isManipulationAvailable(restoredForm));
+	}
+
+	@Test
+	void versionOneMarionetteLeavesItsBindingMasteryBehindAndStaysUsable() {
+		ListTag save = marionetteSave(1);
+
+		KnownManipulations restored = new KnownManipulations();
+		restored.deserializeNBT(null, save);
+
+		assertEquals(3, restored.getManipLevel(named(restored, "blood_binding")).getCurrentLevel(),
+				"Blood Binding mastery survived");
+		assertEquals(0, restored.getManipLevel(named(restored, "hematic_rebuke")).getCurrentLevel(),
+				"Old Binding mastery leaked into the Rebuke family");
+		assertSame(restored.getManipLevel(named(restored, "hematic_rebuke")),
+				restored.getManipLevel(named(restored, "sanguine_marionette")));
+		assertTrue(restored.getGrandfatheredFamilyForms().contains("sanguine_marionette"));
+		assertTrue(restored.isManipulationAvailable(named(restored, "sanguine_marionette")));
+		assertTrue(restored.getEquippedManipNames().contains("sanguine_marionette"));
+	}
+
+	@Test
+	void currentSaveKeepsMarionetteOnItsRebukeMastery() {
+		KnownManipulations restored = new KnownManipulations();
+		restored.deserializeNBT(null, marionetteSave(2));
+
+		assertEquals(3, restored.getManipLevel(named(restored, "sanguine_marionette")).getCurrentLevel());
+		assertFalse(restored.getGrandfatheredFamilyForms().contains("sanguine_marionette"));
+	}
+
+	/** Blood Binding and Marionette at L3, Hematic Rebuke at L0, Marionette equipped. */
+	private static ListTag marionetteSave(int familyMemoryVersion) {
+		KnownManipulations original = new KnownManipulations();
+		LinkedHashMap<BloodManipulation, ManipLevel> map = new LinkedHashMap<>();
+		map.put(manipulation("blood_binding"), new ManipLevel(3, 60));
+		map.put(manipulation("hematic_rebuke"), new ManipLevel(0, 2));
+		map.put(manipulation("sanguine_marionette"), new ManipLevel(3, 60));
+		original.knownManips = map;
+		original.setEquippedManipNames(java.util.List.of("sanguine_marionette"));
+		ListTag save = original.serializeNBT(null);
+		for (int i = 0; i < save.size(); i++) {
+			CompoundTag tag = save.getCompound(i);
+			if (tag.contains("familyMemoryVersion")) tag.putInt("familyMemoryVersion", familyMemoryVersion);
+		}
+		return save;
+	}
+
+	private static BloodManipulation named(KnownManipulations known, String name) {
+		return known.getManipList().stream().filter(manipulation -> name.equals(manipulation.getName()))
+				.findFirst().orElseThrow();
 	}
 
 	private static BloodManipulation manipulation(String name) {

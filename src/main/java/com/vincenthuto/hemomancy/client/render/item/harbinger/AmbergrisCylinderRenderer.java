@@ -24,8 +24,10 @@ public class AmbergrisCylinderRenderer extends BlockEntityWithoutLevelRenderer {
     public static void draw(ItemStack stack,PoseStack pose,MultiBufferSource buffers,int light,int overlay){
         var pattern=stack.get(DataComponentInit.RESONANT_PATTERN.get());
         boolean audio=stack.has(DataComponentInit.CLAIRAUDIOGRAPH_RECORDING.get()) || stack.has(DataComponentInit.ANCIENT_RECORDING.get());
+        // Wax cylinders only take this mesh when mounted in the Clairaudiograph.
+        String body=stack.is(ItemInit.wax_cylinder.get())?"wax_cylinder_mounted":"ambergris_cylinder";
         CYLINDER.render(pose,buffers.getBuffer(RenderType.entityCutoutNoCull(Hemomancy.rloc(
-                "textures/item/ambergris_cylinder"+(audio?"_recorded":"")+".png"))),light,overlay);
+                "textures/item/"+body+(audio?"_recorded":"")+".png"))),light,overlay);
         if(pattern!=null){
             CYLINDER.render(pose,buffers.getBuffer(RenderTypeInit.getCrimsonGlint()),light,overlay);
             if(pattern.master())CYLINDER.render(pose,buffers.getBuffer(RenderType.entityGlint()),light,overlay);

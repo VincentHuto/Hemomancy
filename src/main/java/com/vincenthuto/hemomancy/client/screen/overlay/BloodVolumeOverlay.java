@@ -289,6 +289,10 @@ public class BloodVolumeOverlay {
     }
 
     private void blitOverlay(GuiGraphics gfx, ResourceLocation texture, int x, int y) {
+        // gfx.fill/renderItem flush batched render types whose clear state disables blending,
+        // which would render soft-alpha layers (the D8 frame glow) as opaque.
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
         gfx.blit(texture, x, y, 0, 0, OVERLAY_W, OVERLAY_H, OVERLAY_W, OVERLAY_H);
     }
 

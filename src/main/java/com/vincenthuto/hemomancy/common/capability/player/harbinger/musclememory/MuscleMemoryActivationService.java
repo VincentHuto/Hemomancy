@@ -41,9 +41,7 @@ public final class MuscleMemoryActivationService {
             int normalActiveTicks, int overexertedActiveTicks, boolean allowBorrowed) {
         long now = player.level().getGameTime();
         MuscleMemoryState state = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
-        boolean deadSection = HemoCapabilityAccess.getVascularSystem(player)
-                .map(vascular -> vascular.getBloodFlowBySection(memory.section()) == EnumBloodFlow.DEAD)
-                .orElse(false);
+        boolean deadSection = VascularSystemEvents.isSectionDead(player, memory.section());
         if (!state.isEnabled(memory) || deadSection) return TriggerResult.REJECTED;
         MuscleMemoryResonanceRules.Resonance resonance = resonance(player, memory);
         double cost = memory.bloodCost() * resonance.costMultiplier();

@@ -49,4 +49,17 @@ class ArborOfWillVisualRulesTest {
 		assertEquals(1.0, ArborOfWillVisualRules.fruitScale(5, 5), 0.0001);
 		assertEquals(3, ArborOfWillVisualRules.seedChambers(3, 5));
 	}
+
+	@Test
+	void foliageFloorKeepsAGrownTreeFullUntilPomesWoundIt() {
+		double previous = 0.0;
+		for (int whorls = 1; whorls <= 7; whorls++) {
+			double floor = ArborOfWillVisualRules.minimumFoliage(whorls, 0);
+			assertTrue(floor > previous);
+			previous = floor;
+		}
+		assertTrue(ArborOfWillVisualRules.minimumFoliage(1, 0) >= 0.4, "even a young Arbor carries real leaves");
+		assertTrue(ArborOfWillVisualRules.minimumFoliage(7, 0) >= 0.75, "a grown Arbor reads full before skills fill it");
+		assertTrue(ArborOfWillVisualRules.minimumFoliage(7, 9) <= 0.1, "nine Pomes still leave it nearly skeletal");
+	}
 }

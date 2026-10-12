@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.SchoolHitHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -22,7 +23,8 @@ import java.util.List;
 
 /**
  * Hemolymphal Pulse — a DUCTILIS HUMILIS quick manipulation that sends a blood-sense
- * pulse revealing all nearby living entities through walls for 15 seconds.
+ * pulse revealing nearby living entities the caster could harm through walls for 15 seconds.
+ * The caster, allies and their pets are left unmarked.
  *
  * Ductilis-tended blood moves like nerve signal. Everything alive has a pulse. Find it.
  */
@@ -46,7 +48,7 @@ public class HemolymphalPulseManip extends BloodManipulation {
 
 		int tagged = 0;
 		for (LivingEntity entity : nearby) {
-			if (entity == player || HemoEntityPredicates.NOBLOOD.test(entity)) continue;
+			if (!ManipulationCombatHelper.canHarm(player, entity) || HemoEntityPredicates.NOBLOOD.test(entity)) continue;
 			entity.addEffect(new MobEffectInstance(MobEffects.GLOWING, GLOW_DURATION, 0, false, false));
 			if (entity.getHealth() <= entity.getMaxHealth() * .5F) {
 				entity.addEffect(new MobEffectInstance(EffectInit.conductive_mark, 200, 0, false, true));

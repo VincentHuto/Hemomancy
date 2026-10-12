@@ -1,0 +1,218 @@
+{
+ "parent": "minecraft:block/block",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "hemomancy:block/hematic_iron_block",
+  "iron": "hemomancy:block/hematic_iron_block",
+  "anvil": "minecraft:block/anvil"
+ },
+ "elements": [
+  {
+   "name": "head_eye",
+   "from": [
+    -9.0,
+    16.0,
+    20
+   ],
+   "to": [
+    -4.0,
+    20.0,
+    25
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.0,
+      12.0,
+      12.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "south": {
+     "uv": [
+      7.0,
+      12.0,
+      12.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "east": {
+     "uv": [
+      4,
+      12.0,
+      9,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "west": {
+     "uv": [
+      4,
+      12.0,
+      9,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "up": {
+     "uv": [
+      7.0,
+      4,
+      12.0,
+      9
+     ],
+     "texture": "#iron"
+    },
+    "down": {
+     "uv": [
+      7.0,
+      4,
+      12.0,
+      9
+     ],
+     "texture": "#iron"
+    }
+   }
+  },
+  {
+   "name": "head",
+   "from": [
+    -8.5,
+    14,
+    20.5
+   ],
+   "to": [
+    -4.5,
+    16.0,
+    24.5
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.5,
+      0.0,
+      11.5,
+      2.0
+     ],
+     "texture": "#iron"
+    },
+    "south": {
+     "uv": [
+      7.5,
+      0.0,
+      11.5,
+      2.0
+     ],
+     "texture": "#iron"
+    },
+    "east": {
+     "uv": [
+      4.5,
+      0.0,
+      8.5,
+      2.0
+     ],
+     "texture": "#iron"
+    },
+    "west": {
+     "uv": [
+      4.5,
+      0.0,
+      8.5,
+      2.0
+     ],
+     "texture": "#iron"
+    },
+    "up": {
+     "uv": [
+      7.5,
+      4.5,
+      11.5,
+      8.5
+     ],
+     "texture": "#iron"
+    },
+    "down": {
+     "uv": [
+      7.5,
+      4.5,
+      11.5,
+      8.5
+     ],
+     "texture": "#iron"
+    }
+   }
+  },
+  {
+   "name": "head_face",
+   "from": [
+    -9.0,
+    12.75,
+    20
+   ],
+   "to": [
+    -4.0,
+    14,
+    25
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.0,
+      2,
+      12.0,
+      3.25
+     ],
+     "texture": "#anvil"
+    },
+    "south": {
+     "uv": [
+      7.0,
+      2,
+      12.0,
+      3.25
+     ],
+     "texture": "#anvil"
+    },
+    "east": {
+     "uv": [
+      4,
+      2,
+      9,
+      3.25
+     ],
+     "texture": "#anvil"
+    },
+    "west": {
+     "uv": [
+      4,
+      2,
+      9,
+      3.25
+     ],
+     "texture": "#anvil"
+    },
+    "up": {
+     "uv": [
+      7.0,
+      4,
+      12.0,
+      9
+     ],
+     "texture": "#anvil"
+    },
+    "down": {
+     "uv": [
+      7.0,
+      4,
+      12.0,
+      9
+     ],
+     "texture": "#anvil"
+    }
+   }
+  }
+ ]
+}

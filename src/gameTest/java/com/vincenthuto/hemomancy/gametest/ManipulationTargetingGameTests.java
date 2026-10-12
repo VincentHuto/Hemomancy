@@ -47,18 +47,18 @@ public final class ManipulationTargetingGameTests {
         try {
             for (var block : List.of(net.minecraft.world.level.block.Blocks.STONE, net.minecraft.world.level.block.Blocks.GLASS)) {
                 h.setBlock(2, 3, 4, block);
-                h.assertTrue(com.vincenthuto.hemomancy.common.manipulation.animus.DeadlyGazeManip.rayTraceEntities(p, 12, e -> e == target) == null, "Ray crossed " + block);
+                h.assertTrue(com.vincenthuto.hemomancy.common.manipulation.ductilis.DeadlyGazeManip.rayTraceEntities(p, 12, e -> e == target) == null, "Ray crossed " + block);
             }
             for (var block : List.of(net.minecraft.world.level.block.Blocks.AIR, net.minecraft.world.level.block.Blocks.STONE_SLAB)) {
                 h.setBlock(2, 3, 4, block);
-                h.assertTrue(com.vincenthuto.hemomancy.common.manipulation.animus.DeadlyGazeManip.rayTraceEntities(p, 12, e -> e == target) != null, "Ray failed through opening/above slab");
+                h.assertTrue(com.vincenthuto.hemomancy.common.manipulation.ductilis.DeadlyGazeManip.rayTraceEntities(p, 12, e -> e == target) != null, "Ray failed through opening/above slab");
             }
             h.setBlock(2, 3, 4, net.minecraft.world.level.block.Blocks.GLASS_PANE);
             target.setPos(p.position().add(0, 0, 2.4));
-            h.assertTrue(com.vincenthuto.hemomancy.common.manipulation.animus.DeadlyGazeManip.rayTraceEntities(p, 12, e -> e == target) == null, "Hitbox padding reached through thin cover");
+            h.assertTrue(com.vincenthuto.hemomancy.common.manipulation.ductilis.DeadlyGazeManip.rayTraceEntities(p, 12, e -> e == target) == null, "Hitbox padding reached through thin cover");
             h.setBlock(2, 3, 4, net.minecraft.world.level.block.Blocks.AIR);
             target.setPos(p.position().add(0, 0, -3));
-            h.assertTrue(com.vincenthuto.hemomancy.common.manipulation.animus.DeadlyGazeManip.rayTraceEntities(p, 12, e -> e == target) == null, "Ray selected behind caster");
+            h.assertTrue(com.vincenthuto.hemomancy.common.manipulation.ductilis.DeadlyGazeManip.rayTraceEntities(p, 12, e -> e == target) == null, "Ray selected behind caster");
             h.succeed();
         } finally { h.setBlock(2, 3, 4, net.minecraft.world.level.block.Blocks.AIR); target.discard(); p.discard(); }
     }
@@ -243,7 +243,8 @@ public final class ManipulationTargetingGameTests {
                 "cryogenic_pulse", "osseous_bloom", "blood_eclipse", "bloom_of_rot", "hemorrhage")) {
             ServerPlayer p = player(h);
             var ally = EntityType.COW.create(h.getLevel());
-            var enemy = EntityType.COW.create(h.getLevel());
+            // The aneurysm only seeks hostiles, so its opponent is a husk rather than a cow.
+            LivingEntity enemy = name.equals("blood_aneurysm") ? EntityType.HUSK.create(h.getLevel()) : EntityType.COW.create(h.getLevel());
             var board = h.getLevel().getScoreboard(); var team = board.addPlayerTeam("area_" + p.getId());
             board.addPlayerToTeam(p.getScoreboardName(), team); board.addPlayerToTeam(ally.getScoreboardName(), team);
             ally.setPos(p.position().add(1, 0, 2)); enemy.setPos(p.position().add(0, 0, 3));
@@ -357,10 +358,8 @@ public final class ManipulationTargetingGameTests {
     public static void soloSupportAndValidForgeHaveExplicitOutcomes(GameTestHelper h) {
         ServerPlayer p = player(h);
         try {
-            select(p, ManipulationInit.living_circuit.get());
-            ManipulationChannelManager.start(p);
-            h.assertTrue(!ManipulationChannelManager.isChanneling(p.getUUID()), "Solo Circuit started an empty channel");
-            near(h, 2000, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Solo Circuit spent blood");
+            ManipulationInit.living_circuit.get().getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), 0);
+            h.assertTrue(p.hasEffect(MobEffects.DIG_SPEED), "Solo Circuit did not close through the caster");
             p.setHealth(10);
             ManipulationInit.lumen_suture.get().getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
             near(h, 12, p.getHealth(), "Suture self fallback failed");

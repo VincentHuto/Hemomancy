@@ -37,7 +37,7 @@ public final class AnimusMortemVisualReview {
             "crimson_coronation","sovereign_instinct","summon_avatar","summon_avatar_arms","summon_avatar_armor",
             "summon_avatar_legs","summon_avatar_complete","conjure_blade","hemorrhage","lignum_mortis",
             "canopy_mortis","worked_lignum","insatiable_hunger","grave_debt","exsanguinate","carrion_communion",
-            "blackhearted","funeral_bell","crimson_tithe","bloom_of_rot","conjure_axe","conjure_sickle"};
+            "blackhearted","funeral_bell","crimson_tithe","bloom_of_rot","conjure_sickle"};
     private static final String[] NPC_SPELLS={"blood_shot","blood_needle","blood_aneurysm","blood_cloud","hemorrhage",
             "exsanguinate","insatiable_hunger","grave_debt","bloom_of_rot"};
     private static int ticks,frame,warmup;

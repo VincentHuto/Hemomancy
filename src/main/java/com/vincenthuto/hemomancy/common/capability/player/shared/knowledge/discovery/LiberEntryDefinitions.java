@@ -92,6 +92,8 @@ public final class LiberEntryDefinitions {
 		registerRite("cardinal_rite/enduring_pattern", entry("resonant_forge/pages/upgrades"));
 		registerUpgradeLesson("cardinal_rite/eightfold_script", "tendency/pages/eightfold_script");
 		registerUpgradeLesson("cardinal_rite/palimpsest", "tendency/pages/palimpsest");
+		registerUpgradeLesson("cardinal_rite/ganglionic_weave", "manipulations/pages/ganglionic_weave");
+		registerUpgradeLesson("cardinal_rite/cortical_weave", "manipulations/pages/cortical_weave");
 		register(BLOOD_MEMORIES, CommonDiscoverySource.ITEM_PICKUP, HemomancyDiscoverySource.RITE,
 				HemomancyDiscoverySource.BLOOD_ECHO, HemomancyDiscoverySource.RITE_FRAGMENT);
 		register(MNEMONIC_AMBERGRIS, CommonDiscoverySource.ITEM_PICKUP);

@@ -96,6 +96,13 @@ public final class PelagicEcologyGameTests {
             chunk.fillBiomesFromNoise((a,b,c,s) -> biome, level.getChunkSource().randomState().sampler());
             chunks.add(chunk);
         }
+        // Hold the 3x3 fixture loaded (not ticking); without a ticket a busy server unloads the control squid
+        // to disk before the count. They cannot be made persistent: the spawner skips persistent mobs.
+        var ticketChunk = new net.minecraft.world.level.ChunkPos(pos);
+        var ticketOwner = java.util.UUID.randomUUID();
+        var ticket = net.minecraft.server.level.TicketType.create("pyrosome_spawn_fixture",
+                java.util.Comparator.comparing(java.util.UUID::toString));
+        level.getChunkSource().addRegionTicket(ticket, ticketChunk, 2, ticketOwner);
         fillWater(h, pos, 23, 15);
         var observer = new net.neoforged.neoforge.common.util.FakePlayer(level,
                 new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "PyrosomeSpawn"));
@@ -119,7 +126,11 @@ public final class PelagicEcologyGameTests {
                             if (chunk != null) consumer.accept(chunk);
                         }, new net.minecraft.world.level.LocalMobCapCalculator(level.getChunkSource().chunkMap));
                 h.assertTrue(state.getMobCategoryCounts().getInt(net.minecraft.world.entity.MobCategory.WATER_CREATURE) == 5,
-                        "Control must fill the ordinary water-creature cap");
+                        "Control must fill the ordinary water-creature cap: counted="
+                                + state.getMobCategoryCounts().getInt(net.minecraft.world.entity.MobCategory.WATER_CREATURE)
+                                + " squid=" + competitors.stream().map(m -> String.valueOf(m.getRemovalReason())).toList()
+                                + " chunkNow=" + (level.getChunkSource().getChunkNow(pos.getX() >> 4, pos.getZ() >> 4) != null)
+                                + " players=" + level.players().stream().map(p -> p.getGameProfile().getName() + "@" + p.blockPosition().toShortString()).toList());
                 level.random.setSeed(1337);
                 for (int pass = 0; pass < 200; pass++) for (var chunk : chunks)
                     net.minecraft.world.level.NaturalSpawner.spawnForChunk(level, chunk, state, true, false, false);
@@ -133,6 +144,7 @@ public final class PelagicEcologyGameTests {
             } finally {
                 level.getEntitiesOfClass(Mob.class, bounds).forEach(Mob::discard);
                 competitors.forEach(Mob::discard); observer.discard();
+                level.getChunkSource().removeRegionTicket(ticket, ticketChunk, 2, ticketOwner);
             }
         });
     }

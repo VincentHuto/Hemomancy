@@ -33,14 +33,36 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
+import java.util.Map;
+import java.util.function.UnaryOperator;
 
 public class HematicStakeBlock extends Block implements EntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final EnumProperty<AttachFace> FACE = BlockStateProperties.ATTACH_FACE;
+	/** Spurred body then tapering point of the shard HematicStakeRenderer draws, in pixels while standing on a floor. */
+	private static final double[][] FLOOR_BOXES = { { 3.5, 0.3, 3.5, 12.5, 11, 12.5 }, { 5, 11, 5, 11, 19.5, 11 } };
+	private static final VoxelShape FLOOR_SHAPE = turned(b -> b);
+	private static final VoxelShape CEILING_SHAPE = turned(b -> new double[] { b[0], 16 - b[4], b[2], b[3], 16 - b[1], b[5] });
+	private static final Map<Direction, VoxelShape> WALL_SHAPES = Map.of(
+			Direction.NORTH, turned(b -> new double[] { b[0], b[2], 16 - b[4], b[3], b[5], 16 - b[1] }),
+			Direction.SOUTH, turned(b -> new double[] { b[0], 16 - b[5], b[1], b[3], 16 - b[2], b[4] }),
+			Direction.EAST, turned(b -> new double[] { b[1], 16 - b[3], b[2], b[4], 16 - b[0], b[5] }),
+			Direction.WEST, turned(b -> new double[] { 16 - b[4], b[0], b[2], 16 - b[1], b[3], b[5] }));
+
+	/** The floor boxes pointed away from the face the stake is driven into, matching the renderer's turn. */
+	private static VoxelShape turned(UnaryOperator<double[]> turn) {
+		VoxelShape shape = Shapes.empty();
+		for (double[] box : FLOOR_BOXES) {
+			double[] b = turn.apply(box);
+			shape = Shapes.or(shape, Block.box(b[0], b[1], b[2], b[3], b[4], b[5]));
+		}
+		return shape.optimize();
+	}
 
 	public HematicStakeBlock(Properties properties) {
 		super(properties);
@@ -52,6 +74,15 @@ public class HematicStakeBlock extends Block implements EntityBlock {
 	@Override
 	public RenderShape getRenderShape(BlockState state) {
 		return RenderShape.ENTITYBLOCK_ANIMATED;
+	}
+
+	@Override
+	protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+		return switch (state.getValue(FACE)) {
+			case FLOOR -> FLOOR_SHAPE;
+			case CEILING -> CEILING_SHAPE;
+			case WALL -> WALL_SHAPES.get(state.getValue(FACING));
+		};
 	}
 
 	@Override

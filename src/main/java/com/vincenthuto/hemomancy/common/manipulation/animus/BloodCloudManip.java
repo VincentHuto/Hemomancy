@@ -40,8 +40,10 @@ public class BloodCloudManip extends BloodManipulation {
 
 			BloodCloudCarrierEntity fireballentity = new BloodCloudCarrierEntity(world, player, 0, 1, 0);
 			fireballentity.setDamageTendencies(getTend(), getSecondaryTend());
+			fireballentity.setDamageMultiplier((float) com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper
+					.getCrimsonMasteryMultiplier(player));
 			switch (mode) {
-				case EXPANSIVE -> fireballentity.configureCloud(3.0D, 120, CloudEntityBlood.Mode.STATIC);
+				case EXPANSIVE -> fireballentity.configureCloud(4.0D, 120, CloudEntityBlood.Mode.STATIC);
 				case PURSUING -> fireballentity.configureCloud(2.0D, 160, CloudEntityBlood.Mode.PURSUING);
 				case TEMPEST -> fireballentity.configureCloud(3.0D, 160, CloudEntityBlood.Mode.TEMPEST);
 				default -> fireballentity.configureCloud(1.25D, 100, CloudEntityBlood.Mode.STATIC);

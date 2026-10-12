@@ -1,7 +1,5 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
@@ -14,6 +12,7 @@ import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBendRules;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
+import com.vincenthuto.hemomancy.common.summon.PuppetStrings;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerCommandMode;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
@@ -170,7 +169,7 @@ public final class BoundSummonBehavior {
 	public static boolean commonServerTick(Mob mob, BoundPuppeteerSummon summon) {
 		Optional<ServerPlayer> ownerOpt = ownerOnServer(mob, summon);
 		if (ownerOpt.isEmpty()) {
-			mob.discard();
+			PuppetStrings.unspool(mob);
 			return false;
 		}
 		return commonServerTick(mob, summon, ownerOpt.get());
@@ -180,7 +179,7 @@ public final class BoundSummonBehavior {
 		if (mob == null || summon == null || owner == null
 				|| !owner.getUUID().equals(summon.hemomancy$getOwnerUUID())) {
 			if (mob != null) {
-				mob.discard();
+				PuppetStrings.unspool(mob);
 			}
 			return false;
 		}
@@ -197,7 +196,7 @@ public final class BoundSummonBehavior {
 		}
 		UUID crossbarId = summon.hemomancy$getCrossbarUUID();
 		if (crossbarId == null) {
-			mob.discard();
+			PuppetStrings.unspool(mob);
 			return false;
 		}
 		Optional<net.minecraft.world.item.ItemStack> crossbar =
@@ -554,18 +553,11 @@ public final class BoundSummonBehavior {
 	}
 
 	private static void unravel(Mob mob, ServerPlayer owner, String messageKey) {
-		if (mob.level() instanceof ServerLevel serverLevel) {
-			// The binding comes apart into the blood that held it.
-			double y = mob.getY() + mob.getBbHeight() * 0.5;
-			serverLevel.sendParticles(HemoParticleData.glow(ParticleColor.BLOOD),
-					mob.getX(), y, mob.getZ(), 10, 0.25, 0.35, 0.25, 0.02);
-			serverLevel.sendParticles(HemoParticleData.bloodCell(ParticleColor.BLOOD),
-					mob.getX(), y, mob.getZ(), 8, 0.25, 0.35, 0.25, 0.02);
-		}
 		mob.playSound(SoundEvents.CHAIN_BREAK, 0.5F, 0.8F);
 		owner.displayClientMessage(net.minecraft.network.chat.Component.translatable(messageKey,
 				mob.getDisplayName()).withStyle(net.minecraft.ChatFormatting.GRAY), true);
-		mob.discard();
+		// The binding comes apart: its strings haul the body away.
+		PuppetStrings.unspool(mob);
 	}
 
 	private static boolean tickMissingEquippedCrossbar(Mob mob, BoundPuppeteerSummon summon, Player owner) {
@@ -574,7 +566,7 @@ public final class BoundSummonBehavior {
 			remaining = PuppeteerSummonRules.dismissalGraceTicks(SkillPointHelper.getBoundCommandLevel(owner));
 		}
 		if (remaining <= 1) {
-			mob.discard();
+			PuppetStrings.unspool(mob);
 			return false;
 		}
 		summon.hemomancy$setDismissalTicks(remaining - 1);

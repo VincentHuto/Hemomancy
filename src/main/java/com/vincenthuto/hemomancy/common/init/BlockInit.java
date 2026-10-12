@@ -33,7 +33,6 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tile.crafting.MycelialCru
 import com.vincenthuto.hemomancy.common.item.harbinger.tile.crafting.PuppeteersSpindleBlockItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tile.crafting.VialCentrifugeBlockItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.*;
-import com.vincenthuto.hemomancy.common.item.harbinger.tile.puzzle.SaintSarcophagusBlockItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tile.rite.SuspendedBloodCrystalBlockItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tile.rite.SuspendedVivianiteBlockItem;
 import com.vincenthuto.hemomancy.common.item.unstained.tile.SuspendedCleansedBloodCrystalBlockItem;
@@ -940,13 +939,11 @@ public class BlockInit {
 			Map.entry("visceral_mirror", b -> new VisceralMirrorBlockItem(b, new Item.Properties())),
 			Map.entry("fungal_implantation_pylon", b -> new FungalImplantationPylonBlockItem(b, new Item.Properties())),
 			Map.entry("phlebotomists_field_case", b -> new PhlebotomistsFieldCaseBlockItem(b, new Item.Properties())),
-			Map.entry("mnemonic_reliquary", b -> new MnemonicReliquaryBlockItem(b, new Item.Properties())),
 			Map.entry("earthen_vein", b -> new EarthenVeinBlockItem(b, new Item.Properties())),
 			Map.entry("vial_centrifuge", b -> new VialCentrifugeBlockItem(b, new Item.Properties())),
 			Map.entry("hematic_armature", b -> new HematicArmatureBlockItem(b, new Item.Properties())),
 			Map.entry("mycelial_crucible", b -> new MycelialCrucibleBlockItem(b, new Item.Properties())),
 			Map.entry("specimen_jar", b -> new SpecimenJarBlockItem(b, new Item.Properties())),
-			Map.entry("saint_sarcophagus", b -> new SaintSarcophagusBlockItem(b, new Item.Properties())),
 			Map.entry("sanguine_monolith", b -> new SanguineMonolithBlockItem(b, new Item.Properties())),
 			Map.entry("hematic_stake", b -> new HematicStakeBlockItem(b, new Item.Properties())),
 			Map.entry("puppeteers_spindle", b -> new PuppeteersSpindleBlockItem(b, new Item.Properties())),

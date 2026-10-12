@@ -30,41 +30,42 @@ public class BloodCrystalBlock extends Block implements SimpleWaterloggedBlock {
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	public static final int MAX_AGE = 3;
 
+	/** Cluster outlines per age, traced from the blood_crystal_stage models and turned to the face they grow from. */
 	private static final VoxelShape[] SHAPES_UP = {
-			Block.box(5, 0, 5, 11, 3, 11),
-			Block.box(4, 0, 4, 12, 5, 12),
-			Block.box(3, 0, 3, 13, 8, 13),
-			Block.box(3, 0, 3, 13, 12, 13)
+			Block.box(6, 0, 6, 10, 5, 10),
+			Block.box(5, 0, 5, 11, 7, 11),
+			Block.box(4.5, 0, 4.5, 11.5, 9, 11.5),
+			Block.box(4, 0, 4, 12, 11, 12)
 	};
 	private static final VoxelShape[] SHAPES_NORTH = {
-			Block.box(5, 5, 13, 11, 11, 16),
-			Block.box(4, 4, 11, 12, 12, 16),
-			Block.box(3, 3, 8, 13, 13, 16),
-			Block.box(3, 3, 4, 13, 13, 16)
+			Block.box(6, 6, 11, 10, 10, 16),
+			Block.box(5, 5, 9, 11, 11, 16),
+			Block.box(4.5, 4.5, 7, 11.5, 11.5, 16),
+			Block.box(4, 4, 5, 12, 12, 16)
 	};
 	private static final VoxelShape[] SHAPES_SOUTH = {
-			Block.box(5, 5, 0, 11, 11, 3),
-			Block.box(4, 4, 0, 12, 12, 5),
-			Block.box(3, 3, 0, 13, 13, 8),
-			Block.box(3, 3, 0, 13, 13, 12)
+			Block.box(6, 6, 0, 10, 10, 5),
+			Block.box(5, 5, 0, 11, 11, 7),
+			Block.box(4.5, 4.5, 0, 11.5, 11.5, 9),
+			Block.box(4, 4, 0, 12, 12, 11)
 	};
 	private static final VoxelShape[] SHAPES_EAST = {
-			Block.box(0, 5, 5, 3, 11, 11),
-			Block.box(0, 4, 4, 5, 12, 12),
-			Block.box(0, 3, 3, 8, 13, 13),
-			Block.box(0, 3, 3, 12, 13, 13)
+			Block.box(0, 6, 6, 5, 10, 10),
+			Block.box(0, 5, 5, 7, 11, 11),
+			Block.box(0, 4.5, 4.5, 9, 11.5, 11.5),
+			Block.box(0, 4, 4, 11, 12, 12)
 	};
 	private static final VoxelShape[] SHAPES_WEST = {
-			Block.box(13, 5, 5, 16, 11, 11),
-			Block.box(11, 4, 4, 16, 12, 12),
-			Block.box(8, 3, 3, 16, 13, 13),
-			Block.box(4, 3, 3, 16, 13, 13)
+			Block.box(11, 6, 6, 16, 10, 10),
+			Block.box(9, 5, 5, 16, 11, 11),
+			Block.box(7, 4.5, 4.5, 16, 11.5, 11.5),
+			Block.box(5, 4, 4, 16, 12, 12)
 	};
 	private static final VoxelShape[] SHAPES_DOWN = {
-			Block.box(5, 13, 5, 11, 16, 11),
-			Block.box(4, 11, 4, 12, 16, 12),
-			Block.box(3, 8, 3, 13, 16, 13),
-			Block.box(3, 4, 3, 13, 16, 13)
+			Block.box(6, 11, 6, 10, 16, 10),
+			Block.box(5, 9, 5, 11, 16, 11),
+			Block.box(4.5, 7, 4.5, 11.5, 16, 11.5),
+			Block.box(4, 5, 4, 12, 16, 12)
 	};
 
 	public BloodCrystalBlock(Properties p_49795_) {

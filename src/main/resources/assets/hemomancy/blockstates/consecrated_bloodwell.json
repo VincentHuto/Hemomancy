@@ -1,5 +1,7 @@
 {
   "variants": {
-    "": { "model": "hemomancy:block/consecrated_bloodwell" }
+    "": {
+      "model": "hemomancy:block/consecrated_bloodwell"
+    }
   }
 }

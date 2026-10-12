@@ -317,9 +317,12 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 
 	public static void serverTick(Level level, BlockPos pos, BlockState state, GhastlyAlembicBlockEntity te) {
 		te.applyLegacyStage();
-		if (!te.footprintChecked && GhastlyAlembicBlock.hasSpace(level, pos, te.getBlockState())) {
-			((GhastlyAlembicBlock) te.getBlockState().getBlock()).placeFillers(level, pos, te.getBlockState());
-			te.footprintChecked = true;
+		if (!te.footprintChecked) {
+			GhastlyAlembicBlock.pruneFillers(level, pos, te.getBlockState());
+			if (GhastlyAlembicBlock.hasSpace(level, pos, te.getBlockState())) {
+				((GhastlyAlembicBlock) te.getBlockState().getBlock()).placeFillers(level, pos, te.getBlockState());
+				te.footprintChecked = true;
+			}
 		}
 		if (te.riteLocked) return;
 		if (te.observedRecipeGeneration != AdvancedBrewingReload.generation()) {

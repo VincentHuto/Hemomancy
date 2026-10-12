@@ -1,0 +1,531 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "texture_size": [
+    128,
+    256
+  ],
+  "textures": {
+    "atlas": "hemomancy:block/mnemonic_reliquary",
+    "particle": "hemomancy:block/blood_wood_planks"
+  },
+  "elements": [
+    {
+      "name": "brain_left",
+      "from": [
+        5.75,
+        4,
+        6
+      ],
+      "to": [
+        7.9,
+        7,
+        10.25
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            6.0,
+            4.125,
+            7.125,
+            4.875
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            7.125,
+            4.125,
+            8.25,
+            4.875
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            7.5,
+            3.3125,
+            9.625,
+            4.0625
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            9.625,
+            3.3125,
+            11.75,
+            4.0625
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            5.0,
+            1.375,
+            6.125,
+            2.4375
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            6.125,
+            1.375,
+            7.25,
+            2.4375
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "brain_crown_left",
+      "from": [
+        6.25,
+        7,
+        6.5
+      ],
+      "to": [
+        7.75,
+        7.5,
+        9.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3.75,
+            8.0,
+            4.5,
+            8.125
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            4.5,
+            8.0,
+            5.25,
+            8.125
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            7.0,
+            7.75,
+            8.625,
+            7.875
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            8.625,
+            7.75,
+            10.25,
+            7.875
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            11.75,
+            2.5,
+            12.5,
+            3.3125
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            12.5,
+            2.5,
+            13.25,
+            3.3125
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "brain_frontal_left",
+      "from": [
+        6,
+        4.5,
+        5.5
+      ],
+      "to": [
+        7.75,
+        6.5,
+        6
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            10.625,
+            5.5625,
+            11.5,
+            6.0625
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            12.375,
+            5.5625,
+            12.625,
+            6.0625
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            12.625,
+            5.5625,
+            12.875,
+            6.0625
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            11.5,
+            7.875,
+            12.375,
+            8.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            12.375,
+            7.875,
+            13.25,
+            8.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "brain_right",
+      "from": [
+        8.1,
+        4,
+        6
+      ],
+      "to": [
+        10.25,
+        7,
+        10.25
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8.25,
+            4.125,
+            9.375,
+            4.875
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            9.375,
+            4.125,
+            10.5,
+            4.875
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            11.75,
+            3.3125,
+            13.875,
+            4.0625
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            13.875,
+            3.3125,
+            16.0,
+            4.0625
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            7.25,
+            1.375,
+            8.375,
+            2.4375
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            8.375,
+            1.375,
+            9.5,
+            2.4375
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "brain_crown_right",
+      "from": [
+        8.25,
+        7,
+        6.5
+      ],
+      "to": [
+        9.75,
+        7.5,
+        9.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            5.25,
+            8.0,
+            6.0,
+            8.125
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            6.0,
+            8.0,
+            6.75,
+            8.125
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            10.25,
+            7.75,
+            11.875,
+            7.875
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            11.875,
+            7.75,
+            13.5,
+            7.875
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            13.25,
+            2.5,
+            14.0,
+            3.3125
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            14.0,
+            2.5,
+            14.75,
+            3.3125
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "brain_frontal_right",
+      "from": [
+        8.25,
+        4.5,
+        5.5
+      ],
+      "to": [
+        10,
+        6.5,
+        6
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            11.5,
+            5.5625,
+            12.375,
+            6.0625
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            12.875,
+            5.5625,
+            13.125,
+            6.0625
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            13.125,
+            5.5625,
+            13.375,
+            6.0625
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            13.25,
+            7.875,
+            14.125,
+            8.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            14.125,
+            7.875,
+            15.0,
+            8.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "cerebellum",
+      "from": [
+        6.5,
+        4,
+        10.25
+      ],
+      "to": [
+        9.5,
+        5.25,
+        11
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            7.375,
+            6.1875,
+            8.875,
+            6.5
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            8.875,
+            6.1875,
+            9.25,
+            6.5
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            9.25,
+            6.1875,
+            9.625,
+            6.5
+          ],
+          "texture": "#atlas"
+        },
+        "up": {
+          "uv": [
+            9.0,
+            6.8125,
+            10.5,
+            7.0
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            10.5,
+            6.8125,
+            12.0,
+            7.0
+          ],
+          "texture": "#atlas"
+        }
+      }
+    },
+    {
+      "name": "brain_stem",
+      "from": [
+        7.5,
+        3.25,
+        9.5
+      ],
+      "to": [
+        8.5,
+        4,
+        10.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            11.5,
+            7.0,
+            12.0,
+            7.1875
+          ],
+          "texture": "#atlas"
+        },
+        "south": {
+          "uv": [
+            12.0,
+            7.0,
+            12.5,
+            7.1875
+          ],
+          "texture": "#atlas"
+        },
+        "east": {
+          "uv": [
+            12.5,
+            7.0,
+            13.0,
+            7.1875
+          ],
+          "texture": "#atlas"
+        },
+        "west": {
+          "uv": [
+            13.0,
+            7.0,
+            13.5,
+            7.1875
+          ],
+          "texture": "#atlas"
+        },
+        "down": {
+          "uv": [
+            1.5,
+            6.5625,
+            2.0,
+            6.8125
+          ],
+          "texture": "#atlas"
+        }
+      }
+    }
+  ]
+}

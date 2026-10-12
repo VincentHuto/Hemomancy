@@ -88,14 +88,14 @@ public class ManipulationInit {
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> hematic_mortar = MANIPS.register("hematic_mortar",
 			() -> new BloodShotManip("hematic_mortar", 200, 0, 0, EnumManipulationType.CHARGED,
-					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD,
 					BloodShotManip.Mode.MORTAR)
 					.setCooldownTicks(60)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> sanguine_halo = MANIPS.register("sanguine_halo",
 			() -> new BloodShotManip("sanguine_halo", 220, 0, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD,
 					BloodShotManip.Mode.HALO)
 					.setCooldownTicks(120)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
@@ -124,11 +124,11 @@ public class ManipulationInit {
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> sanguine_marionette = MANIPS.register("sanguine_marionette",
-            com.vincenthuto.hemomancy.common.manipulation.animus.SanguineMarionetteManip::new);
+            com.vincenthuto.hemomancy.common.manipulation.ductilis.SanguineMarionetteManip::new);
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> blood_lattice = MANIPS.register("blood_lattice",
 			() -> new BloodBindingManip("blood_lattice", 275, 0, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.LEGS,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.ANIMUS, EnumVeinSections.LEGS,
 					BloodBindingManip.Mode.LATTICE)
 					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
 					.setCooldownTicks(140)
@@ -145,6 +145,7 @@ public class ManipulationInit {
 								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
 						if (target == null) return false;
 						target.push(0, 0.8, 0);
+						com.vincenthuto.hemomancy.common.manipulation.ductilis.DeadlyGazeManip.grip(target, drudge.getEyePosition(), 1, false);
 						target.hurt(world.damageSources().mobAttack(drudge),
 								(float) drudge.getAttributeValue(Attributes.ATTACK_DAMAGE) * 2.0f);
 						return true;
@@ -152,8 +153,8 @@ public class ManipulationInit {
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> hematic_rebuke = MANIPS.register("hematic_rebuke",
 			() -> new HematicCommandManip("hematic_rebuke", 225, 10, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD, false)
-					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD, false)
+					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(100)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 
@@ -166,20 +167,20 @@ public class ManipulationInit {
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> hematic_impressment = MANIPS.register("hematic_impressment",
 			() -> new HematicCommandManip("hematic_impressment", 500, 25, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.SUMMA, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD, true)
-					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
+					EnumManipulationRank.SUMMA, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD, true)
+					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(200)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> summon_avatar = MANIPS.register("summon_avatar",
 			() -> new SummonAvatarManip("summon_avatar", 75, 50, 0, EnumManipulationType.PASSIVE,
-					EnumManipulationRank.SUMMA, EnumBloodTendency.ANIMUS, EnumVeinSections.BODY)
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.ANIMUS, EnumVeinSections.BODY)
 					.setCooldownTicks(0)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> summon_avatar_arms = MANIPS.register("summon_avatar_arms",
 			() -> new SummonAvatarManip("summon_avatar_arms", 125, 50, 0, EnumManipulationType.PASSIVE,
-					EnumManipulationRank.SUMMA, EnumBloodTendency.ANIMUS, EnumVeinSections.BODY)
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.ANIMUS, EnumVeinSections.BODY)
 					.setCooldownTicks(0)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 
@@ -197,14 +198,14 @@ public class ManipulationInit {
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> summon_avatar_complete = MANIPS.register("summon_avatar_complete",
 			() -> new SummonAvatarManip("summon_avatar_complete", 400, 50, 0, EnumManipulationType.PASSIVE,
-					EnumManipulationRank.SUMMA, EnumBloodTendency.ANIMUS, EnumVeinSections.BODY)
+					EnumManipulationRank.MAGISTER, EnumBloodTendency.ANIMUS, EnumVeinSections.BODY)
 					.setCooldownTicks(0)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> blood_needle = MANIPS.register("blood_needle",
 			() -> new BloodNeedleManip("blood_needle", 100, 0, 0, EnumManipulationType.CHARGED,
-					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD)
-					.setSecondaryTend(EnumBloodTendency.FERRIC)
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.FERRIC, EnumVeinSections.HEAD)
+					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(10)
 					.setDrudgeAction((drudge, world, centre, radius) -> {
 						AABB area = new AABB(centre).inflate(radius);
@@ -220,17 +221,17 @@ public class ManipulationInit {
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> blood_needle_fan = MANIPS.register("blood_needle_fan",
 			() -> new BloodNeedleManip("blood_needle_fan", 140, 0, 0, EnumManipulationType.CHARGED,
-					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.FERRIC, EnumVeinSections.HEAD,
 					BloodNeedleManip.Mode.FAN)
-					.setSecondaryTend(EnumBloodTendency.FERRIC)
+					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(20)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> blood_needle_lance = MANIPS.register("blood_needle_lance",
 			() -> new BloodNeedleManip("blood_needle_lance", 150, 0, 0, EnumManipulationType.CHARGED,
-					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.FERRIC, EnumVeinSections.HEAD,
 					BloodNeedleManip.Mode.LANCE)
-					.setSecondaryTend(EnumBloodTendency.FERRIC)
+					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(25)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 
@@ -265,9 +266,9 @@ public class ManipulationInit {
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> sanguine_tempest = MANIPS.register("sanguine_tempest",
 			() -> new BloodCloudManip("sanguine_tempest", 600, 25, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.SUMMA, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD,
+					EnumManipulationRank.MAGISTER, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD,
 					BloodCloudManip.Mode.TEMPEST)
-					.setSecondaryTend(EnumBloodTendency.MORTEM)
+					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
 					.setCooldownTicks(120)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 
@@ -275,7 +276,7 @@ public class ManipulationInit {
 			() -> new BloodRushManip("blood_rush", 100, 0, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.FLAMMEUS)
-					.setCooldownTicks(60)
+					.setCooldownTicks(160)
 					.setDrudgeAction((drudge, world, centre, radius) -> {
 						drudge.addEffect(
 								new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 200, 1, false, false));
@@ -339,13 +340,15 @@ public class ManipulationInit {
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.DUCTILIS, EnumVeinSections.BODY)
 					.setCooldownTicks(30)
 					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						List<Player> players = world.getEntitiesOfClass(Player.class, area);
-						if (players.isEmpty()) return false;
-						players.forEach(p -> p.addEffect(
-								new MobEffectInstance(MobEffects.REGENERATION, 100, 1, false, true)));
+						List<Monster> mobs = world.getEntitiesOfClass(Monster.class, drudge.getBoundingBox().inflate(5.0D),
+								m -> m.isAlive() && m.distanceTo(drudge) <= 5.0D);
+						if (mobs.isEmpty()) return false;
+						mobs.forEach(m -> {
+							SchoolStates.apply(drudge, m, SchoolState.DISRUPTED, 10);
+							m.hurt(world.damageSources().indirectMagic(drudge, drudge), 3.0F);
+						});
 						return true;
-					}, "Grants Regeneration to nearby allies"));
+					}, "Shocks hostiles near the Drudge"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> synaptic_jolt = MANIPS.register("synaptic_jolt",
 			() -> new SynapticJoltManip("synaptic_jolt", 150, 0, 0, EnumManipulationType.QUICK,
@@ -377,7 +380,7 @@ public class ManipulationInit {
 					}, "Marks nearest hostile for conductive arcs"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> sanguine_ward = MANIPS.register("sanguine_ward",
-			() -> new SanguineWardManip("sanguine_ward", 10, 10, 0, EnumManipulationType.CONTINUOUS,
+			() -> new SanguineWardManip("sanguine_ward", 40, 10, 0, EnumManipulationType.CONTINUOUS,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.DUCTILIS, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.FERRIC)
 					.setCooldownTicks(20)
@@ -391,19 +394,18 @@ public class ManipulationInit {
 					}, "Grants Resistance to nearby allies"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> hemolymphal_pulse = MANIPS.register("hemolymphal_pulse",
-			() -> new HemolymphalPulseManip("hemolymphal_pulse", 400, 0, 0, EnumManipulationType.QUICK,
+			() -> new HemolymphalPulseManip("hemolymphal_pulse", 175, 0, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
-					.setCooldownTicks(300)
+					.setCooldownTicks(200)
 					.setDrudgeAction((drudge, world, centre, radius) -> {
 						AABB area = new AABB(centre).inflate(radius);
-						List<net.minecraft.world.entity.LivingEntity> nearby =
-								world.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class, area);
+						List<Monster> nearby = world.getEntitiesOfClass(Monster.class, area);
 						if (nearby.isEmpty()) return false;
 						nearby.forEach(e -> e.addEffect(
 								new MobEffectInstance(MobEffects.GLOWING, 300, 0, false, false)));
 						return true;
-					}, "Illuminates nearby entities"));
+					}, "Illuminates nearby hostiles"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> conjure_blade = MANIPS.register("conjure_blade",
 			() -> new StaffWeaponFormManip("conjure_blade", ItemInit.living_blade, 0, 0,
@@ -413,8 +415,8 @@ public class ManipulationInit {
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> conjure_axe = MANIPS.register("conjure_axe",
 			() -> new StaffWeaponFormManip("conjure_axe", ItemInit.living_axe, 0, 0,
-					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.MORTEM, EnumVeinSections.ARMS)
-					.setSecondaryTend(EnumBloodTendency.FERRIC)
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.ARMS)
+					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> conjure_spear = MANIPS.register("conjure_spear",
@@ -686,8 +688,8 @@ public class ManipulationInit {
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Player-shaped iron barrier"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> pyretic_forge = MANIPS.register("pyretic_forge",
-			() -> new PyreticForgeManip("pyretic_forge", 350, 10, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.BODY)
+			() -> new PyreticForgeManip("pyretic_forge", 150, 10, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.FERRIC)
 					.setCooldownTicks(30)
 					.setDrudgeAction((drudge, world, centre, radius) -> {
@@ -738,7 +740,7 @@ public class ManipulationInit {
 			() -> new PrismaticReproofManip("prismatic_reproof", 325, 10, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.LUX, EnumVeinSections.HEAD)
 					.setSecondaryTend(EnumBloodTendency.FERRIC)
-					.setCooldownTicks(80)
+					.setCooldownTicks(50)
 					.setDrudgeAction((drudge, world, centre, radius) -> {
 						AABB area = new AABB(centre).inflate(radius);
 						List<Monster> mobs = world.getEntitiesOfClass(Monster.class, area);
@@ -905,7 +907,7 @@ public class ManipulationInit {
 					}, "Heavy fire damage to all hostiles in area"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> cauterizing_rebuke = MANIPS.register("cauterizing_rebuke",
-			() -> new CauterizingRebukeManip("cauterizing_rebuke", 275, 10, 0, EnumManipulationType.QUICK,
+			() -> new CauterizingRebukeManip("cauterizing_rebuke", 150, 10, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(90)
@@ -942,7 +944,7 @@ public class ManipulationInit {
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> suspended_updraft = MANIPS.register("suspended_updraft",
 			() -> new ScaldingUpdraftManip("suspended_updraft", 350, 5, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.HUMILIS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.LEGS,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.LEGS,
 					ScaldingUpdraftManip.Mode.SUSPENDED)
 					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
 					.setCooldownTicks(120)
@@ -950,7 +952,7 @@ public class ManipulationInit {
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> expulsive_updraft = MANIPS.register("expulsive_updraft",
 			() -> new ScaldingUpdraftManip("expulsive_updraft", 450, 5, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.HUMILIS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.LEGS,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.LEGS,
 					ScaldingUpdraftManip.Mode.EXPULSIVE)
 					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
 					.setCooldownTicks(140)
@@ -1005,7 +1007,7 @@ public class ManipulationInit {
 			() -> new BlackVeilCovenantManip("black_veil_covenant", 425, 15, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.TENEBRIS, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.MORTEM)
-					.setCooldownTicks(220)
+					.setCooldownTicks(900)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> umbral_reversal = MANIPS.register("umbral_reversal",
@@ -1060,7 +1062,7 @@ public class ManipulationInit {
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> worked_lignum = MANIPS.register("worked_lignum",
 			() -> new LignumMortisManip("worked_lignum", 175, 0, 0, EnumManipulationType.CONTINUOUS,
-					EnumManipulationRank.HUMILIS, EnumBloodTendency.MORTEM, EnumVeinSections.ARMS,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.MORTEM, EnumVeinSections.ARMS,
 					LignumMortisManip.Mode.WORKED)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(40)
@@ -1084,7 +1086,7 @@ public class ManipulationInit {
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> insatiable_hunger = MANIPS.register("insatiable_hunger",
 			() -> new InsatiableHungerManip("insatiable_hunger", 225, 10, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.MORTEM, EnumVeinSections.BODY)
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.MORTEM, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(70)
 					.setDrudgeAction((drudge, world, centre, radius) -> {
@@ -1124,7 +1126,8 @@ public class ManipulationInit {
 					.setCooldownTicks(120).setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> sovereign_instinct = MANIPS.register("sovereign_instinct",
 			() -> new SovereignInstinctManip("sovereign_instinct", 450, 60, 0, EnumManipulationType.PASSIVE,
-					EnumManipulationRank.MAGISTER, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD)
+					EnumManipulationRank.MAGISTER, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD)
+					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> axonal_transduction = MANIPS.register("axonal_transduction",
 			AxonalTransductionManip::new);
@@ -1133,7 +1136,7 @@ public class ManipulationInit {
 					EnumManipulationRank.PERFECTUS, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD)
 					.setCooldownTicks(100).setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> living_circuit = MANIPS.register("living_circuit",
-			() -> new LivingCircuitManip("living_circuit", 180, 55, 0, EnumManipulationType.CONTINUOUS,
+			() -> new LivingCircuitManip("living_circuit", 100, 55, 0, EnumManipulationType.CONTINUOUS,
 					EnumManipulationRank.MAGISTER, EnumBloodTendency.DUCTILIS, EnumVeinSections.BODY)
 					.setCooldownTicks(80).setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> white_verdict = MANIPS.register("white_verdict",
@@ -1149,7 +1152,7 @@ public class ManipulationInit {
 					EnumManipulationRank.MAGISTER, EnumBloodTendency.FLAMMEUS, EnumVeinSections.BODY)
 					.setCooldownTicks(100).setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> phoenix_debt = MANIPS.register("phoenix_debt",
-			() -> new PhoenixDebtManip("phoenix_debt", 2000, 75, 0, EnumManipulationType.PASSIVE,
+			() -> new PhoenixDebtManip("phoenix_debt", 1200, 75, 0, EnumManipulationType.PASSIVE,
 					EnumManipulationRank.PERFECTUS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.HEART)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> absolute_stillness = MANIPS.register("absolute_stillness",
@@ -1185,6 +1188,41 @@ public class ManipulationInit {
 					EnumManipulationRank.PERFECTUS, EnumBloodTendency.TENEBRIS, EnumVeinSections.HEAD)
 					.setCooldownTicks(140).setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 
+	// ── Tier-gap fills (see docs/MANIPULATION_BALANCE_PLAN.md §6) ──
+
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> searing_lash = MANIPS.register("searing_lash",
+			() -> new SearingLashManip("searing_lash", 225, 10, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.ARMS)
+					.setSecondaryTend(EnumBloodTendency.ANIMUS)
+					.setCooldownTicks(30)
+					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> cruor_javelin = MANIPS.register("cruor_javelin",
+			() -> new CruorJavelinManip("cruor_javelin", 200, 10, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.CONGEATIO, EnumVeinSections.ARMS)
+					.setSecondaryTend(EnumBloodTendency.FERRIC)
+					.setCooldownTicks(25)
+					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> fruiting_contagion = MANIPS.register("fruiting_contagion",
+			() -> new FruitingContagionManip("fruiting_contagion", 400, 20, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.SUMMA, EnumBloodTendency.MORTEM, EnumVeinSections.BODY)
+					.setSecondaryTend(EnumBloodTendency.ANIMUS)
+					.setCooldownTicks(80)
+					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> umbral_rend = MANIPS.register("umbral_rend",
+			() -> new UmbralRendManip("umbral_rend", 450, 20, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.SUMMA, EnumBloodTendency.TENEBRIS, EnumVeinSections.ARMS)
+					.setSecondaryTend(EnumBloodTendency.MORTEM)
+					.setCooldownTicks(80)
+					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> radiant_wake = MANIPS.register("radiant_wake",
+			() -> new RadiantWakeManip("radiant_wake", 120, 55, 0, EnumManipulationType.CONTINUOUS,
+					EnumManipulationRank.MAGISTER, EnumBloodTendency.LUX, EnumVeinSections.LEGS)
+					.setCooldownTicks(80).setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
+	public static final DeferredHolder<BloodManipulation, BloodManipulation> lodestone_collapse = MANIPS.register("lodestone_collapse",
+			() -> new LodestoneCollapseManip("lodestone_collapse", 900, 65, 0, EnumManipulationType.CHARGED,
+					EnumManipulationRank.PERFECTUS, EnumBloodTendency.FERRIC, EnumVeinSections.BODY)
+					.setCooldownTicks(140).setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
+
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> thread_ripper = MANIPS.register("thread_ripper",
 			() -> new ThreadRipperManip("thread_ripper", 35, 0, 0, EnumManipulationType.CHARGED,
 					EnumManipulationRank.SUMMA, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD)
@@ -1197,7 +1235,7 @@ public class ManipulationInit {
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> crimson_tithe = MANIPS.register("crimson_tithe",
 			() -> new CrimsonTitheManip("crimson_tithe", 100, 25, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.SUMMA, EnumBloodTendency.MORTEM, EnumVeinSections.HEART)
-					.setSecondaryTend(EnumBloodTendency.LUX)
+					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(100)
 					.setDrudgeAction(DrudgeAction.DRUDGE_UNSUPPORTED, "Not usable by Drudges"));
 
@@ -1234,10 +1272,9 @@ public class ManipulationInit {
 					.setSecondaryTend(EnumBloodTendency.LUX)
 					.setCooldownTicks(200)
 					.setDrudgeAction((drudge, world, centre, radius) -> {
-						drudge.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 400, 2, false, false));
-						drudge.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 400, 2, false, false));
+						drudge.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 200, 0, false, false));
 						return true;
-					}, "Grants Drudge protective absorption and resistance"));
+					}, "Grants the Drudge a brief absorption ward"));
 
 	public static List<BloodManipulation> getAllEntries() {
 		List<BloodManipulation> entries = new ArrayList<>();

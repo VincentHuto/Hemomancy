@@ -1,0 +1,21 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "catalysts": [
+    {
+      "item": "minecraft:feather"
+    }
+  ],
+  "enzymes": {
+    "animus": 0,
+    "flammeus": 0,
+    "ductilis": 0,
+    "lux": 4,
+    "mortem": 0,
+    "congeatio": 0,
+    "ferric": 0,
+    "tenebris": 0
+  },
+  "blood": 450,
+  "result": "hemomancy:memory_radiant_wake",
+  "count": 1
+}

@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.manipulation.animus;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodShotEntity;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
@@ -18,6 +19,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 public class BloodShotManip extends BloodManipulation {
+	// Arrow damage is ceil(speed * base); at the 4.5 launch speed this lands a 5-damage starter shot.
+	private static final double SHOT_BASE_DAMAGE = 1.0D;
 	private final Mode mode;
 
 	public BloodShotManip(String name, double cost, double alignLevel,double xpCost, EnumManipulationType type,
@@ -91,7 +94,8 @@ public class BloodShotManip extends BloodManipulation {
 	}
 
 	private BloodShotEntity shot(Level world, Player player, ItemStack heldItemMainhand) {
-		BloodShotEntity shot = new BloodShotEntity(world, player, heldItemMainhand);
+		BloodShotEntity shot = BloodShotEntity.fromManipulation(world, player, heldItemMainhand);
+		shot.setBaseDamage(SHOT_BASE_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier(player));
 		shot.setDamageTendency(getTend());
 		shot.setSecondaryDamageTendency(getSecondaryTend());
 		return shot;

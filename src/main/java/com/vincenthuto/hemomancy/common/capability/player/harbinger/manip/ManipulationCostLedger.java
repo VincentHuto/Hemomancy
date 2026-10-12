@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.manip;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumBloodFlow;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
@@ -24,6 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class ManipulationCostLedger {
+	/** Casting through a CLOTTED vein section costs 25% more blood. */
+	public static final double CLOTTED_VEIN_COST_MULTIPLIER = 1.25D;
+
 	private ManipulationCostLedger() {
 	}
 
@@ -105,6 +109,14 @@ public final class ManipulationCostLedger {
 				SporiticThuribleResonanceState.getCostMultiplier(player, manipulation.getTend()));
 		addIfNotNeutral(contributions, "mnemonic_screams", "Mnemonic Screams", Category.EFFECT,
 				MnemonicPotionRules.manipulationCostMultiplier(player.hasEffect(EffectInit.mnemonic_screams)));
+
+		boolean clotted = HemoCapabilityAccess.getVascularSystem(player)
+				.map(vascular -> vascular.getBloodFlowBySection(manipulation.getSection()) == EnumBloodFlow.ClOTTED)
+				.orElse(false);
+		if (clotted) {
+			addIfNotNeutral(contributions, "clotted_vein", "Clotted vein", Category.OTHER,
+					CLOTTED_VEIN_COST_MULTIPLIER);
+		}
 
 		return ManipulationCostRules.snapshot(manipulation.getCost(), contributions);
 	}

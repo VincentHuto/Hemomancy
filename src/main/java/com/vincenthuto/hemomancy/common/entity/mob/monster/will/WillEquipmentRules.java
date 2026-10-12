@@ -18,9 +18,9 @@ public final class WillEquipmentRules {
 		case FLAMMEUS -> "living_torch";
 		case DUCTILIS -> "living_crossbow";
 		case LUX -> "living_spear";
-		case MORTEM -> "living_axe";
+		case MORTEM -> "living_sickle";
 		case CONGEATIO -> "living_flail";
-		case FERRIC -> "living_staff";
+		case FERRIC -> "living_axe";
 		case TENEBRIS -> "living_baghnakh";
 		};
 	}
@@ -38,6 +38,7 @@ public final class WillEquipmentRules {
 		case "living_axe" -> ItemInit.living_axe.get();
 		case "living_flail" -> ItemInit.living_flail.get();
 		case "living_baghnakh" -> ItemInit.living_baghnakh.get();
+		case "living_sickle" -> ItemInit.living_sickle.get();
 		default -> ItemInit.living_staff.get();
 		};
 	}

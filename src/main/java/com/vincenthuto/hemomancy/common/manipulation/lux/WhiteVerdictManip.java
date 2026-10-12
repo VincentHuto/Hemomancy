@@ -15,6 +15,9 @@ import net.minecraft.world.phys.Vec3;
 
 public class WhiteVerdictManip extends BloodManipulation {
 	private static final int CHARGE_TICKS = 60;
+	/** Damage is {@code BASE_DAMAGE + CHARGE_DAMAGE x charge}, scaled by Crimson Mastery. */
+	public static final float BASE_DAMAGE = 3.0F;
+	public static final float CHARGE_DAMAGE = 9.0F;
 
 	public WhiteVerdictManip(String name, double cost, double alignment, double xpCost, EnumManipulationType type,
 			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
@@ -29,6 +32,7 @@ public class WhiteVerdictManip extends BloodManipulation {
 
 		if (!(world instanceof ServerLevel level)) return;
 		float charge = ManipulationCastingRules.chargeFraction(heldTicks, CHARGE_TICKS);
+		float mastery = (float) com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper.getCrimsonMasteryMultiplier(player);
 		double range = 8.0D + 16.0D * charge;
 		double width = 0.25D + 1.25D * charge;
 		Vec3 eye = player.getEyePosition();
@@ -37,7 +41,7 @@ public class WhiteVerdictManip extends BloodManipulation {
 			if (!ManipulationCombatHelper.visible(player, target) || target.getEyePosition().subtract(eye).dot(player.getLookAngle()) <= 0) continue;
 			if (ManipulationCombatHelper.distanceToSegment(target.getEyePosition(), eye, end) > width) continue;
 			ManipulationCombatHelper.hurt(this, player, target, level,
-					(2.0F + 8.0F * charge));
+					(BASE_DAMAGE + CHARGE_DAMAGE * charge) * mastery);
 		}
         ManipulationVisuals.burst(level, ManipulationVisuals.Form.WHITE_VERDICT, eye, end, width, 40);
 	        }

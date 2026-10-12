@@ -1,0 +1,305 @@
+{
+ "parent": "minecraft:block/block",
+ "render_type": "translucent",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "minecraft:block/red_stained_glass",
+  "liq_animus": "minecraft:block/red_stained_glass"
+ },
+ "elements": [
+  {
+   "name": "vial_animus",
+   "from": [
+    -7.05,
+    4.4,
+    -0.3107
+   ],
+   "to": [
+    -5.55,
+    5.4,
+    0.3107
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      10.6,
+      16,
+      11.6
+     ],
+     "texture": "#liq_animus"
+    },
+    "south": {
+     "uv": [
+      0,
+      10.6,
+      16,
+      11.6
+     ],
+     "texture": "#liq_animus"
+    },
+    "east": {
+     "uv": [
+      0,
+      10.6,
+      16,
+      11.6
+     ],
+     "texture": "#liq_animus"
+    },
+    "west": {
+     "uv": [
+      0,
+      10.6,
+      16,
+      11.6
+     ],
+     "texture": "#liq_animus"
+    },
+    "up": {
+     "uv": [
+      8.95,
+      15.379,
+      10.45,
+      16.0
+     ],
+     "texture": "#liq_animus"
+    },
+    "down": {
+     "uv": [
+      8.95,
+      15.379,
+      10.45,
+      16.0
+     ],
+     "texture": "#liq_animus"
+    }
+   }
+  },
+  {
+   "name": "vial_animus",
+   "from": [
+    -6.6107,
+    4.44,
+    -0.75
+   ],
+   "to": [
+    -5.9893,
+    5.36,
+    0.75
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      10.64,
+      16,
+      11.56
+     ],
+     "texture": "#liq_animus"
+    },
+    "south": {
+     "uv": [
+      0,
+      10.64,
+      16,
+      11.56
+     ],
+     "texture": "#liq_animus"
+    },
+    "east": {
+     "uv": [
+      0,
+      10.64,
+      16,
+      11.56
+     ],
+     "texture": "#liq_animus"
+    },
+    "west": {
+     "uv": [
+      0,
+      10.64,
+      16,
+      11.56
+     ],
+     "texture": "#liq_animus"
+    },
+    "up": {
+     "uv": [
+      9.389,
+      14.5,
+      10.011,
+      16.0
+     ],
+     "texture": "#liq_animus"
+    },
+    "down": {
+     "uv": [
+      9.389,
+      14.5,
+      10.011,
+      16.0
+     ],
+     "texture": "#liq_animus"
+    }
+   }
+  },
+  {
+   "name": "vial_animus",
+   "from": [
+    -7.05,
+    4.48,
+    -0.3107
+   ],
+   "to": [
+    -5.55,
+    5.32,
+    0.3107
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     -6.3,
+     0,
+     0.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      10.68,
+      16,
+      11.52
+     ],
+     "texture": "#liq_animus"
+    },
+    "south": {
+     "uv": [
+      0,
+      10.68,
+      16,
+      11.52
+     ],
+     "texture": "#liq_animus"
+    },
+    "east": {
+     "uv": [
+      0,
+      10.68,
+      16,
+      11.52
+     ],
+     "texture": "#liq_animus"
+    },
+    "west": {
+     "uv": [
+      0,
+      10.68,
+      16,
+      11.52
+     ],
+     "texture": "#liq_animus"
+    },
+    "up": {
+     "uv": [
+      8.95,
+      15.379,
+      10.45,
+      16.0
+     ],
+     "texture": "#liq_animus"
+    },
+    "down": {
+     "uv": [
+      8.95,
+      15.379,
+      10.45,
+      16.0
+     ],
+     "texture": "#liq_animus"
+    }
+   }
+  },
+  {
+   "name": "vial_animus",
+   "from": [
+    -7.05,
+    4.52,
+    -0.3107
+   ],
+   "to": [
+    -5.55,
+    5.28,
+    0.3107
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     -6.3,
+     0,
+     0.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      10.72,
+      16,
+      11.48
+     ],
+     "texture": "#liq_animus"
+    },
+    "south": {
+     "uv": [
+      0,
+      10.72,
+      16,
+      11.48
+     ],
+     "texture": "#liq_animus"
+    },
+    "east": {
+     "uv": [
+      0,
+      10.72,
+      16,
+      11.48
+     ],
+     "texture": "#liq_animus"
+    },
+    "west": {
+     "uv": [
+      0,
+      10.72,
+      16,
+      11.48
+     ],
+     "texture": "#liq_animus"
+    },
+    "up": {
+     "uv": [
+      8.95,
+      15.379,
+      10.45,
+      16.0
+     ],
+     "texture": "#liq_animus"
+    },
+    "down": {
+     "uv": [
+      8.95,
+      15.379,
+      10.45,
+      16.0
+     ],
+     "texture": "#liq_animus"
+    }
+   }
+  }
+ ]
+}

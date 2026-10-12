@@ -26,9 +26,9 @@ import net.minecraft.world.level.Level;
  * Bloom of Rot — Canon Memory of Saint Putriciel.
  * Doctrine: Absolution / Witness
  *
- * Spreads hematic fungus in a radius — enemies decay (wither + poison),
- * and flora blooms. However, the terrain becomes semi-hostile and
- * the player also takes minor poison.
+ * Spreads hematic fungus in a radius: every body the caster may harm takes
+ * a direct hit and Necrosis (10 s). The rot spares no one, so the caster
+ * also takes minor poison.
  *
  * Imprinted, not learned. The player uses it uncomfortably.
  */
@@ -37,6 +37,8 @@ public class BloomOfRotManip extends BloodManipulation {
 	private static final double RADIUS = 8.0;
 	private static final int ENEMY_EFFECT_DURATION = 200; // 10 seconds
 	private static final int SELF_POISON_DURATION = 100; // 5 seconds
+	/** Damage dealt to each body the bloom reaches, before Crimson Mastery. */
+	public static final float BLOOM_DAMAGE = 3.0F;
 
 	public BloomOfRotManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
@@ -48,9 +50,14 @@ public class BloomOfRotManip extends BloodManipulation {
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
         try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
 
+		float damage = BLOOM_DAMAGE * (float) com.vincenthuto.hemomancy.common.capability.player.shared.skill
+				.SkillPointHelper.getCrimsonMasteryMultiplier(player);
 		world.getEntitiesOfClass(LivingEntity.class,
 				player.getBoundingBox().inflate(RADIUS), e -> ManipulationCombatHelper.canHarm(player, e))
 				.forEach(entity -> {
+					if (world instanceof ServerLevel level)
+						ManipulationCombatHelper.hurt(this, player, entity, level, damage);
+					if (!entity.isAlive()) return;
 					com.vincenthuto.hemomancy.common.damage.SchoolStates.apply(player, entity,
                             com.vincenthuto.hemomancy.common.damage.SchoolState.NECROSIS, ENEMY_EFFECT_DURATION);
                     com.vincenthuto.hemomancy.common.manipulation.MortemStatusVisuals.infect(entity,ENEMY_EFFECT_DURATION);

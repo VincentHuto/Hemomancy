@@ -28,7 +28,9 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 	List<ManipulationLoadout> loadouts = new ArrayList<>();
 	String selectedMemoryKey = "";
 	Set<String> grandfatheredFamilyForms = new LinkedHashSet<>();
-	private static final int FAMILY_MEMORY_VERSION = 1;
+	private static final int FAMILY_MEMORY_VERSION = 2;
+	/** Forms moved to another family in family-memory version 2 (Sanguine Marionette: Blood Binding to Hematic Rebuke). */
+	private static final Set<String> FORMS_REHOMED_IN_V2 = Set.of("sanguine_marionette");
 
 	@Override
 	public BlockPos getLastVeinMineStart() {
@@ -496,8 +498,9 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 				}
 			}
 		}
+		if (familyMemoryVersion < 2) detachRehomedForms(map, savedGrandfatheredForms);
 		setKnownManips(map);
-		if (familyMemoryVersion < FAMILY_MEMORY_VERSION) {
+		if (familyMemoryVersion < 1) {
 			for (BloodManipulation manipulation : map.keySet()) {
 				if (manipulation != null && ManipulationFamilyRegistry.form(manipulation.getName()).isPresent()) {
 					savedGrandfatheredForms.add(manipulation.getName());
@@ -509,6 +512,19 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 		String restoredAvatar = !savedAvatarForm.isBlank() ? savedAvatarForm
 				: legacyAvatarActive ? "summon_avatar" : "";
 		setActiveAvatarForm(canRestoreAvatarForm(restoredAvatar) ? restoredAvatar : "");
+	}
+
+	/**
+	 * A re-homed form was saved with its old family's mastery. Left alone, normalization would lend that mastery to
+	 * the new family. It starts at the new family's level instead, and stays usable for whoever already learned it.
+	 */
+	private static void detachRehomedForms(LinkedHashMap<BloodManipulation, ManipLevel> map, Set<String> grandfathered) {
+		for (var entry : map.entrySet()) {
+			BloodManipulation manipulation = entry.getKey();
+			if (manipulation == null || !FORMS_REHOMED_IN_V2.contains(manipulation.getName())) continue;
+			entry.setValue(new ManipLevel(0, 0));
+			grandfathered.add(manipulation.getName());
+		}
 	}
 
 	private boolean canRestoreAvatarForm(String manipulationId) {

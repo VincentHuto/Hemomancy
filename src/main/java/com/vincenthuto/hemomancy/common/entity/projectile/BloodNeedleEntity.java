@@ -13,6 +13,7 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -24,18 +25,51 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
     private static final net.minecraft.network.syncher.EntityDataAccessor<Byte> PIERCE_STYLE =
             net.minecraft.network.syncher.SynchedEntityData.defineId(BloodNeedleEntity.class,
                     net.minecraft.network.syncher.EntityDataSerializers.BYTE);
+    /** Ferric needles cast by the Blood Needle family render as forged iron rather than glossy blood. */
+    private static final net.minecraft.network.syncher.EntityDataAccessor<Boolean> FORGED =
+            net.minecraft.network.syncher.SynchedEntityData.defineId(BloodNeedleEntity.class,
+                    net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
+    private static final net.minecraft.network.syncher.EntityDataAccessor<org.joml.Vector3f> LAUNCH_VELOCITY =
+            net.minecraft.network.syncher.SynchedEntityData.defineId(BloodNeedleEntity.class,
+                    net.minecraft.network.syncher.EntityDataSerializers.VECTOR3);
 
     @Override
     protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(CORONATION_SWORD, false);
         builder.define(PIERCE_STYLE, (byte)0);
+        builder.define(FORGED, false);
+        builder.define(LAUNCH_VELOCITY, new org.joml.Vector3f());
+    }
+
+    // Spawn and motion packets clamp each axis to 3.9 blocks/tick. These projectiles fly faster, so the client would
+    // simulate a slower, skewed flight and later jump to the server's; the true velocity rides in entity data instead.
+    @Override
+    public void shoot(double x, double y, double z, float velocity, float inaccuracy) {
+        super.shoot(x, y, z, velocity, inaccuracy);
+        syncLaunchVelocity();
+    }
+
+    protected void syncLaunchVelocity() {
+        if (level().isClientSide) return;
+        Vec3 motion = getDeltaMovement();
+        entityData.set(LAUNCH_VELOCITY, new org.joml.Vector3f((float) motion.x, (float) motion.y, (float) motion.z));
+    }
+
+    @Override
+    public void onSyncedDataUpdated(net.minecraft.network.syncher.EntityDataAccessor<?> key) {
+        super.onSyncedDataUpdated(key);
+        if (!LAUNCH_VELOCITY.equals(key) || level() == null || !level().isClientSide) return;
+        org.joml.Vector3f velocity = entityData.get(LAUNCH_VELOCITY);
+        if (velocity.lengthSquared() > 0) setDeltaMovement(velocity.x, velocity.y, velocity.z);
     }
 
     public boolean isCoronationSword() { return entityData.get(CORONATION_SWORD); }
     public boolean isLanceNeedle() { return entityData.get(PIERCE_STYLE) >= 3; }
     public float swordOpacity() { return Math.max(0, 1 - inGroundTime / 25F); }
     public void setCoronationSword(boolean sword) { entityData.set(CORONATION_SWORD, sword); }
+    public boolean isForged() { return entityData.get(FORGED); }
+    public void setForged(boolean forged) { entityData.set(FORGED, forged); }
 
     @Override
     protected void onHit(net.minecraft.world.phys.HitResult hit) {
@@ -71,6 +105,16 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 		this(EntityInit.blood_needle.get(), worldIn, shooter, firedFromWeapon);
 	}
 
+	/**
+	 * A needle shed by a manipulation. The held item still lends its tendency through {@link #getCombatWeaponItem()},
+	 * but vanilla arrow hooks never see it: no Sharpness, Piercing or post-attack enchantments ride the blood.
+	 */
+	public static BloodNeedleEntity fromManipulation(Level worldIn, LivingEntity shooter, @Nullable ItemStack heldItem) {
+		BloodNeedleEntity needle = new BloodNeedleEntity(worldIn, shooter, null);
+		needle.combatWeaponItem = copyCombatWeapon(heldItem);
+		return needle;
+	}
+
 	protected BloodNeedleEntity(EntityType<? extends BloodNeedleEntity> type, Level worldIn, LivingEntity shooter,
 			@Nullable ItemStack firedFromWeapon) {
 		super(type, shooter, worldIn, new ItemStack(Items.ARROW),
@@ -83,6 +127,7 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 	public void addAdditionalSaveData(CompoundTag compound) {
 		super.addAdditionalSaveData(compound);
         compound.putBoolean("CoronationSword", isCoronationSword());
+        compound.putBoolean("Forged", isForged());
 		if (!this.combatWeaponItem.isEmpty()) {
 			compound.put("CombatWeapon", this.combatWeaponItem.save(this.registryAccess()));
 		}
@@ -133,6 +178,12 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 			applyBloodburstEffects((LivingEntity) entity);
 
 		}
+		// A barbed iron lance pins what it strikes; bosses shrug it off.
+		if (isForged() && isLanceNeedle()
+				&& !com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents.isBoss(living))
+			living.addEffect(new MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN,
+					com.vincenthuto.hemomancy.common.manipulation.ferric.ForgedNeedleRules.LANCE_PIN_TICKS,
+					com.vincenthuto.hemomancy.common.manipulation.ferric.ForgedNeedleRules.LANCE_PIN_AMPLIFIER, false, true));
 
 	}
 
@@ -147,6 +198,7 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 	public void readAdditionalSaveData(CompoundTag compound) {
 		super.readAdditionalSaveData(compound);
         setCoronationSword(compound.getBoolean("CoronationSword"));
+        setForged(compound.getBoolean("Forged"));
 		this.combatWeaponItem = compound.contains("CombatWeapon", 10)
 				? ItemStack.parseOptional(this.registryAccess(), compound.getCompound("CombatWeapon"))
 				: ItemStack.EMPTY;

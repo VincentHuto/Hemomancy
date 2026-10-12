@@ -1,0 +1,633 @@
+{
+ "parent": "minecraft:block/block",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "hemomancy:block/hematic_iron_block",
+  "iron": "hemomancy:block/hematic_iron_block",
+  "chisel": "hemomancy:block/bold_chiseled_hematic_iron_block",
+  "vein": "hemomancy:block/hemorrhagic_crust"
+ },
+ "elements": [
+  {
+   "name": "helve",
+   "from": [
+    -8.0,
+    16.5,
+    2.53
+   ],
+   "to": [
+    -5.0,
+    19.5,
+    21
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      8.0,
+      12.5,
+      11.0,
+      15.5
+     ],
+     "texture": "#iron"
+    },
+    "south": {
+     "uv": [
+      8.0,
+      12.5,
+      11.0,
+      15.5
+     ],
+     "texture": "#iron"
+    },
+    "east": {
+     "uv": [
+      0,
+      12.5,
+      16,
+      15.5
+     ],
+     "texture": "#iron"
+    },
+    "west": {
+     "uv": [
+      0,
+      12.5,
+      16,
+      15.5
+     ],
+     "texture": "#iron"
+    },
+    "up": {
+     "uv": [
+      8.0,
+      0,
+      11.0,
+      16
+     ],
+     "texture": "#iron"
+    },
+    "down": {
+     "uv": [
+      8.0,
+      0,
+      11.0,
+      16
+     ],
+     "texture": "#iron"
+    }
+   }
+  },
+  {
+   "name": "helve_strap",
+   "from": [
+    -8.4,
+    16.1,
+    10.5
+   ],
+   "to": [
+    -8.0,
+    19.9,
+    13.5
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.6,
+      12.1,
+      8.0,
+      15.9
+     ],
+     "texture": "#chisel"
+    },
+    "south": {
+     "uv": [
+      7.6,
+      12.1,
+      8.0,
+      15.9
+     ],
+     "texture": "#chisel"
+    },
+    "east": {
+     "uv": [
+      10.5,
+      12.1,
+      13.5,
+      15.9
+     ],
+     "texture": "#chisel"
+    },
+    "west": {
+     "uv": [
+      10.5,
+      12.1,
+      13.5,
+      15.9
+     ],
+     "texture": "#chisel"
+    },
+    "up": {
+     "uv": [
+      7.6,
+      10.5,
+      8.0,
+      13.5
+     ],
+     "texture": "#chisel"
+    },
+    "down": {
+     "uv": [
+      7.6,
+      10.5,
+      8.0,
+      13.5
+     ],
+     "texture": "#chisel"
+    }
+   }
+  },
+  {
+   "name": "helve_strap",
+   "from": [
+    -8.0,
+    16.1,
+    10.5
+   ],
+   "to": [
+    -5.0,
+    16.5,
+    13.5
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      8.0,
+      15.5,
+      11.0,
+      15.9
+     ],
+     "texture": "#chisel"
+    },
+    "south": {
+     "uv": [
+      8.0,
+      15.5,
+      11.0,
+      15.9
+     ],
+     "texture": "#chisel"
+    },
+    "east": {
+     "uv": [
+      10.5,
+      15.5,
+      13.5,
+      15.9
+     ],
+     "texture": "#chisel"
+    },
+    "west": {
+     "uv": [
+      10.5,
+      15.5,
+      13.5,
+      15.9
+     ],
+     "texture": "#chisel"
+    },
+    "up": {
+     "uv": [
+      8.0,
+      10.5,
+      11.0,
+      13.5
+     ],
+     "texture": "#chisel"
+    },
+    "down": {
+     "uv": [
+      8.0,
+      10.5,
+      11.0,
+      13.5
+     ],
+     "texture": "#chisel"
+    }
+   }
+  },
+  {
+   "name": "helve_strap",
+   "from": [
+    -5.0,
+    16.1,
+    10.5
+   ],
+   "to": [
+    -4.6,
+    19.9,
+    13.5
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      11.0,
+      12.1,
+      11.4,
+      15.9
+     ],
+     "texture": "#chisel"
+    },
+    "south": {
+     "uv": [
+      11.0,
+      12.1,
+      11.4,
+      15.9
+     ],
+     "texture": "#chisel"
+    },
+    "east": {
+     "uv": [
+      10.5,
+      12.1,
+      13.5,
+      15.9
+     ],
+     "texture": "#chisel"
+    },
+    "west": {
+     "uv": [
+      10.5,
+      12.1,
+      13.5,
+      15.9
+     ],
+     "texture": "#chisel"
+    },
+    "up": {
+     "uv": [
+      11.0,
+      10.5,
+      11.4,
+      13.5
+     ],
+     "texture": "#chisel"
+    },
+    "down": {
+     "uv": [
+      11.0,
+      10.5,
+      11.4,
+      13.5
+     ],
+     "texture": "#chisel"
+    }
+   }
+  },
+  {
+   "name": "helve_strap",
+   "from": [
+    -8.0,
+    19.5,
+    10.5
+   ],
+   "to": [
+    -5.0,
+    19.9,
+    13.5
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      8.0,
+      12.1,
+      11.0,
+      12.5
+     ],
+     "texture": "#chisel"
+    },
+    "south": {
+     "uv": [
+      8.0,
+      12.1,
+      11.0,
+      12.5
+     ],
+     "texture": "#chisel"
+    },
+    "east": {
+     "uv": [
+      10.5,
+      12.1,
+      13.5,
+      12.5
+     ],
+     "texture": "#chisel"
+    },
+    "west": {
+     "uv": [
+      10.5,
+      12.1,
+      13.5,
+      12.5
+     ],
+     "texture": "#chisel"
+    },
+    "up": {
+     "uv": [
+      8.0,
+      10.5,
+      11.0,
+      13.5
+     ],
+     "texture": "#chisel"
+    },
+    "down": {
+     "uv": [
+      8.0,
+      10.5,
+      11.0,
+      13.5
+     ],
+     "texture": "#chisel"
+    }
+   }
+  },
+  {
+   "name": "follower",
+   "from": [
+    -7.0,
+    15,
+    5
+   ],
+   "to": [
+    -6.0,
+    16.5,
+    6
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      9.0,
+      14.5,
+      10.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "south": {
+     "uv": [
+      9.0,
+      14.5,
+      10.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "east": {
+     "uv": [
+      5,
+      14.5,
+      6,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "west": {
+     "uv": [
+      5,
+      14.5,
+      6,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "up": {
+     "uv": [
+      9.0,
+      5,
+      10.0,
+      6
+     ],
+     "texture": "#iron"
+    },
+    "down": {
+     "uv": [
+      9.0,
+      5,
+      10.0,
+      6
+     ],
+     "texture": "#iron"
+    }
+   }
+  },
+  {
+   "name": "follower_tip",
+   "from": [
+    -7.5,
+    14.75,
+    4.75
+   ],
+   "to": [
+    -5.5,
+    15.75,
+    6.25
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      8.5,
+      0.25,
+      10.5,
+      1.25
+     ],
+     "texture": "#vein"
+    },
+    "south": {
+     "uv": [
+      8.5,
+      0.25,
+      10.5,
+      1.25
+     ],
+     "texture": "#vein"
+    },
+    "east": {
+     "uv": [
+      4.75,
+      0.25,
+      6.25,
+      1.25
+     ],
+     "texture": "#vein"
+    },
+    "west": {
+     "uv": [
+      4.75,
+      0.25,
+      6.25,
+      1.25
+     ],
+     "texture": "#vein"
+    },
+    "up": {
+     "uv": [
+      8.5,
+      4.75,
+      10.5,
+      6.25
+     ],
+     "texture": "#vein"
+    },
+    "down": {
+     "uv": [
+      8.5,
+      4.75,
+      10.5,
+      6.25
+     ],
+     "texture": "#vein"
+    }
+   }
+  },
+  {
+   "name": "spring_link",
+   "from": [
+    -7.0,
+    19.5,
+    4
+   ],
+   "to": [
+    -6.0,
+    24.5,
+    5
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      9.0,
+      7.5,
+      10.0,
+      12.5
+     ],
+     "texture": "#iron"
+    },
+    "south": {
+     "uv": [
+      9.0,
+      7.5,
+      10.0,
+      12.5
+     ],
+     "texture": "#iron"
+    },
+    "east": {
+     "uv": [
+      4,
+      7.5,
+      5,
+      12.5
+     ],
+     "texture": "#iron"
+    },
+    "west": {
+     "uv": [
+      4,
+      7.5,
+      5,
+      12.5
+     ],
+     "texture": "#iron"
+    },
+    "up": {
+     "uv": [
+      9.0,
+      4,
+      10.0,
+      5
+     ],
+     "texture": "#iron"
+    },
+    "down": {
+     "uv": [
+      9.0,
+      4,
+      10.0,
+      5
+     ],
+     "texture": "#iron"
+    }
+   }
+  },
+  {
+   "name": "tail_weight",
+   "from": [
+    -8.5,
+    16.25,
+    2.5
+   ],
+   "to": [
+    -4.5,
+    20.0,
+    4.75
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.5,
+      12.0,
+      11.5,
+      15.75
+     ],
+     "texture": "#chisel"
+    },
+    "south": {
+     "uv": [
+      7.5,
+      12.0,
+      11.5,
+      15.75
+     ],
+     "texture": "#chisel"
+    },
+    "east": {
+     "uv": [
+      2.5,
+      12.0,
+      4.75,
+      15.75
+     ],
+     "texture": "#chisel"
+    },
+    "west": {
+     "uv": [
+      2.5,
+      12.0,
+      4.75,
+      15.75
+     ],
+     "texture": "#chisel"
+    },
+    "up": {
+     "uv": [
+      7.5,
+      2.5,
+      11.5,
+      4.75
+     ],
+     "texture": "#chisel"
+    },
+    "down": {
+     "uv": [
+      7.5,
+      2.5,
+      11.5,
+      4.75
+     ],
+     "texture": "#chisel"
+    }
+   }
+  }
+ ]
+}

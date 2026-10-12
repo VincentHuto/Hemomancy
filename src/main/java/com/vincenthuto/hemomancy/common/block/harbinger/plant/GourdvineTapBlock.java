@@ -36,7 +36,10 @@ public class GourdvineTapBlock extends BaseEntityBlock {
     public static final IntegerProperty STAGE = IntegerProperty.create("stage", 0, 3);
     public static final int MAX_STAGE = 3;
 
-    private static final VoxelShape SHAPE = box(2.0D, 0.0D, 2.0D, 14.0D, 14.0D, 14.0D);
+    /** The tap's outline as it grows from a bare spigot to the full vine crown. */
+    private static final VoxelShape[] SHAPES = {
+            box(4, 0, 6.5, 12, 9, 9.5), box(3, 0, 3, 13, 12, 10),
+            box(3.25, 0, 4.75, 12.75, 16, 11.25), box(2.5, 0, 3.75, 13.5, 17, 12.25)};
 
     public GourdvineTapBlock(Properties properties) {
         super(properties);
@@ -55,7 +58,7 @@ public class GourdvineTapBlock extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+        return SHAPES[state.getValue(STAGE)];
     }
 
     @Override

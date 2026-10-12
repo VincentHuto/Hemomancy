@@ -24,7 +24,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -74,7 +73,6 @@ public class SaintSarcophagusBlock extends Block implements EntityBlock, IMultiB
 
 public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 14, 16);
 /** Blood cost per offering (drained from player's blood volume). */
 private static final double BLOOD_COST_PER_OFFERING = 100.0;
 private static final String TAG_SAINT_TYPE = "SaintType";
@@ -174,7 +172,12 @@ private boolean canPlaceMultiBlock(Level level, BlockPos mainPos, Direction faci
 
 @Override
 public RenderShape getRenderShape(BlockState state) {
-	return RenderShape.ENTITYBLOCK_ANIMATED;
+	return RenderShape.MODEL;
+}
+
+/** The tomb's outline within one of its cells; fillers ask for theirs by offset from this block. */
+public static VoxelShape partShape(BlockState state, BlockPos offset) {
+	return SarcophagusGeometry.shape(state.getValue(FACING), offset);
 }
 
 @Override
@@ -199,7 +202,12 @@ builder.add(FACING, WATERLOGGED);
 
 @Override
 public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-return SHAPE;
+return partShape(state, BlockPos.ZERO);
+}
+
+@Override
+protected VoxelShape getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+return partShape(state, BlockPos.ZERO);
 }
 
 @Override
@@ -301,75 +309,60 @@ if (sarcophagus.isConsecrated() && lvl instanceof ServerLevel serverLevel) {
 }
 }
 
-/**
- * Brazier positions in facing-relative terms.
- * fwdDist:  distance along the FACING direction (positive = toward bowl).
- * sideDist: distance along facing.getClockWise() (positive = right when looking from the bowl).
- * y:        height offset from block origin.
- *
- * World position = blockPos + 0.5 + fwd * fwdDist + right * sideDist
- */
-private static final double[] BRAZIER_FWD  = { -1.28,  0.91, -1.28,  0.91 };
-private static final double[] BRAZIER_SIDE = {  0.69,  0.69, -0.71, -0.71 };
-private static final double[] BRAZIER_Y    = {  1.45,  1.17,  1.45,  1.17 };
-
-/** Resolves a brazier world-position array (4 × [x,y,z]) for the given facing direction. */
+/** World offsets from the main block of the four cresset coal beds, turned to the tomb's facing. */
 private static double[][] getBrazierPositions(Direction facing) {
-	Direction right = facing.getClockWise();
-	double[][] out = new double[4][3];
-	for (int i = 0; i < 4; i++) {
-		out[i][0] = 0.5 + facing.getStepX() * BRAZIER_FWD[i] + right.getStepX() * BRAZIER_SIDE[i];
-		out[i][1] = BRAZIER_Y[i];
-		out[i][2] = 0.5 + facing.getStepZ() * BRAZIER_FWD[i] + right.getStepZ() * BRAZIER_SIDE[i];
+	double[][] out = new double[SarcophagusGeometry.CRESSETS.length][];
+	for (int i = 0; i < out.length; i++) {
+		float[] c = SarcophagusGeometry.CRESSETS[i];
+		out[i] = SarcophagusGeometry.point(facing, c[0], c[1], c[2]);
 	}
 	return out;
 }
 
-/**
- * Returns the bowl world-relative offset for any facing direction.
- * The bowl is always on the FACING side (the front face) of the sarcophagus.
- */
+/** World offset from the main block of the offering bowl's surface, on the tomb's foot end. */
 private static double[] getBowlOffset(Direction facing) {
-	return new double[]{
-		0.5 + facing.getStepX() * 1.04,
-		0.6,
-		0.5 + facing.getStepZ() * 1.04
-	};
+	return SarcophagusGeometry.point(facing, SarcophagusGeometry.BOWL_X, SarcophagusGeometry.POOL_TOP,
+			SarcophagusGeometry.BOWL_Z);
 }
 
-/** Spawns flame and blood glow particles on each brazier and the offering bowl. */
+/** Crimson cresset fire, the glow it throws, and the Saint's own blood. */
+private static final ParticleColor FIRE = new ParticleColor(226, 52, 36);
+private static final ParticleColor GLOW = new ParticleColor(200, 0, 0);
+private static final ParticleColor CORPUS = new ParticleColor(150, 16, 28);
+
+/** Kindles every cresset at once and flares the bowl as the tomb accepts its offering. */
 private static void spawnConsecrationParticles(Level level, BlockPos pos, Direction facing) {
 	if (!(level instanceof ServerLevel serverLevel)) return;
 	double bx = pos.getX(), by = pos.getY(), bz = pos.getZ();
 	for (double[] r : getBrazierPositions(facing)) {
-		serverLevel.sendParticles(ParticleTypes.FLAME,
-			bx + r[0], by + r[1], bz + r[2], 5, 0.10, 0.10, 0.10, 0.02);
-		serverLevel.sendParticles(HemoParticleData.glow(new ParticleColor(200, 0, 0)),
+		serverLevel.sendParticles(HemoParticleData.ember(FIRE, 0.5F, 0.35F, 26),
+			bx + r[0], by + r[1], bz + r[2], 6, 0.10, 0.10, 0.10, 0.02);
+		serverLevel.sendParticles(HemoParticleData.glow(GLOW),
 			bx + r[0], by + r[1] + 0.1, bz + r[2], 4, 0.08, 0.08, 0.08, 0.0);
 	}
 	double[] bowl = getBowlOffset(facing);
-	serverLevel.sendParticles(ParticleTypes.FLAME,
-		bx + bowl[0], by + bowl[1], bz + bowl[2], 5, 0.05, 0.05, 0.05, 0.02);
-	serverLevel.sendParticles(HemoParticleData.glow(new ParticleColor(200, 0, 0)),
+	serverLevel.sendParticles(HemoParticleData.bloodCell(CORPUS),
+		bx + bowl[0], by + bowl[1], bz + bowl[2], 8, 0.12, 0.05, 0.12, 0.03);
+	serverLevel.sendParticles(HemoParticleData.glow(GLOW),
 		bx + bowl[0], by + bowl[1] + 0.1, bz + bowl[2], 4, 0.05, 0.05, 0.05, 0.0);
 }
 
-/** Spawns ambient flame & blood glow on each brazier and the bowl (called every tick when consecrated). */
+/** Keeps the consecrated cressets and bowl smouldering (called every tick while consecrated). */
 private static void spawnBrazierFlames(ServerLevel level, BlockPos pos, Direction facing) {
 	double bx = pos.getX(), by = pos.getY(), bz = pos.getZ();
 	for (double[] r : getBrazierPositions(facing)) {
-		level.sendParticles(ParticleTypes.FLAME,
-			bx + r[0], by + r[1], bz + r[2], 1, 0.02, 0.04, 0.02, 0.0);
+		level.sendParticles(HemoParticleData.ember(FIRE, 0.35F, 0.3F, 22),
+			bx + r[0], by + r[1], bz + r[2], 1, 0.04, 0.04, 0.04, 0.01);
 		if (level.random.nextInt(4) == 0) {
-			level.sendParticles(HemoParticleData.glow(new ParticleColor(200, 0, 0)),
+			level.sendParticles(HemoParticleData.glow(GLOW),
 				bx + r[0], by + r[1] + 0.15, bz + r[2], 1, 0.05, 0.05, 0.05, 0.0);
 		}
 	}
-	double[] bowl = getBowlOffset(facing);
-	level.sendParticles(ParticleTypes.FLAME,
-		bx + bowl[0], by + bowl[1], bz + bowl[2], 1, 0.02, 0.04, 0.02, 0.0);
-	if (level.random.nextInt(4) == 0) {
-		level.sendParticles(HemoParticleData.glow(new ParticleColor(200, 0, 0)),
+	if (level.random.nextInt(3) == 0) {
+		double[] bowl = getBowlOffset(facing);
+		level.sendParticles(HemoParticleData.ember(FIRE, 0.25F, 0.25F, 16),
+			bx + bowl[0], by + bowl[1], bz + bowl[2], 1, 0.06, 0.02, 0.06, 0.005);
+		level.sendParticles(HemoParticleData.glow(GLOW),
 			bx + bowl[0], by + bowl[1] + 0.1, bz + bowl[2], 1, 0.03, 0.03, 0.03, 0.0);
 	}
 }
@@ -519,7 +512,7 @@ showSarcophagusInfo(player, sarcophagus);
 if (sarcophagus.getCorpusState() == EnumCorpusState.DORMANT) {
 worldIn.playSound(null, pos, SoundEvents.SCULK_SENSOR_PLACE, SoundSource.BLOCKS, 0.4f, 0.6f);
 if (worldIn instanceof ServerLevel serverLevel) {
-serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME,
+serverLevel.sendParticles(HemoParticleData.darkGlow(CORPUS),
 pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5,
 6, 0.3, 0.3, 0.3, 0.01);
 }
@@ -649,9 +642,13 @@ sarcophagus.setSampleYielded(true);
 
 private void spawnAmbienceParticles(Level worldIn, BlockPos pos) {
 if (worldIn instanceof ServerLevel serverLevel) {
-serverLevel.sendParticles(ParticleTypes.SOUL,
+// The corpus's blood lifts out of the tomb after it yields.
+serverLevel.sendParticles(HemoParticleData.bloodCell(CORPUS),
 pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
-15, 0.5, 0.5, 0.5, 0.02);
+15, 0.4, 0.3, 0.4, 0.02);
+serverLevel.sendParticles(HemoParticleData.glow(GLOW),
+pos.getX() + 0.5, pos.getY() + 1.1, pos.getZ() + 0.5,
+6, 0.4, 0.2, 0.4, 0.0);
 }
 }
 

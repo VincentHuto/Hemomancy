@@ -9,15 +9,19 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.Manipu
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumBloodFlow;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
+import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.IDispellable;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationChargeClock;
+import com.vincenthuto.hemomancy.common.manipulation.QuickCasterRules;
 import com.vincenthuto.hemomancy.common.manipulation.animus.AvatarManifestationManager;
 import com.vincenthuto.hemomancy.common.manipulation.animus.SummonAvatarManip;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.ConjurationManip;
@@ -26,6 +30,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -132,6 +137,14 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 								return;
 							}
 							if (selectedManip.getType() == EnumManipulationType.CONTINUOUS) return;
+							// The client's charge is only a claim; credit no more than the hold the server watched.
+							if (selectedManip.getType() == EnumManipulationType.CHARGED) {
+								// No observed key-down: typically a repeat CAST sent after a full-charge release but
+								// before the cooldown packet resets the client. Refuse quietly rather than flash a
+								// "requires a full charge" message.
+								if (!ManipulationChargeClock.hasStart(player, selectedManip)) return;
+								pTic = ManipulationChargeClock.clamp(player, selectedManip, pTic);
+							}
 							if (LivingStaffWeaponFormRules.isStaffWeaponFormManip(selectedManip.getName())) {
                                 if (LivingStaffWeaponFormHelper.toggleSelectedForm(player, selectedManip)) {
                                     com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager.release(
@@ -188,6 +201,29 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 		});
 	}
 
+	/**
+	 * Quick Caster: casts a just-selected QUICK manipulation through the same server path as the R key. Anything the
+	 * rules exclude, or a paralysed, Unstained-blocked or inactive caster, is left selected without feedback.
+	 */
+	public static void castOnSelect(ServerPlayer player, BloodManipulation selected) {
+		BloodManipulation manip = selected == null ? null : ManipulationInit.getByName(selected.getName());
+		if (manip == null) return;
+		boolean enabled = SkillPointHelper.isTechniqueEnabled(player, SkillPointInit.skill_quick_caster);
+		if (!QuickCasterRules.shouldCastOnSelect(enabled, manip.getType(),
+				LivingStaffWeaponFormRules.isStaffWeaponFormManip(manip.getName()), manip instanceof ConjurationManip,
+				manip.isOnCooldown(player))) return;
+		if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.isParalyzed(player)) return;
+		boolean bloodPowersBlocked = HemoCapabilityAccess.getUnstainedProgress(player)
+				.map(UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false);
+		if (bloodPowersBlocked || !HemoCapabilityAccess.getBloodVolume(player).map(IBloodVolume::isActive).orElse(false))
+			return;
+		try {
+			manip.performAction(player, player.level(), player.getMainHandItem(), player.blockPosition(), 0);
+		} finally {
+			com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager.finishChargeAttempt(player);
+		}
+	}
+
 	private static void handleMuscleMemoryUse(Player player, IKnownManipulations known) {
 		if (!(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)) return;
 		var selected = known.getSelectedMemoryRef();
@@ -209,9 +245,7 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 			return;
 		}
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
-		boolean dead = HemoCapabilityAccess.getVascularSystem(player)
-				.map(vascular -> vascular.getBloodFlowBySection(memory.section()) == EnumBloodFlow.DEAD)
-				.orElse(false);
+		boolean dead = VascularSystemEvents.isSectionDead(player, memory.section());
 		if (volume == null || !volume.isActive() || dead || !state.activate(memory)) {
 			player.displayClientMessage(Component.translatable(
 					"message.hemomancy.muscle_memory.activation_failed").withStyle(ChatFormatting.RED), true);

@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.block.shared.FillerBlock;
 import com.vincenthuto.hemomancy.common.block.shared.HorizontalFacingRotationHelper;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
+import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -44,23 +45,31 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
+import java.util.Map;
 
 @SuppressWarnings("deprecation")
 public class MycelialCrucibleBlock extends Block implements EntityBlock, IMultiBlock, SimpleWaterloggedBlock {
 
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-    private static final VoxelShape SHAPE = Block.box(1, 0, 1, 15, 16, 15);
+    /** Crucible column, the culture vat and cistern on their plinths and the pipes feeding the crown. */
+    private static final Map<Direction, Map<BlockPos, VoxelShape>> CELLS = ModelShapes.cells(
+            new double[] {0, 0, 0, 16, 27, 16}, new double[] {1, 27, 1, 15, 29, 15}, new double[] {4, 29, 4, 12, 31, 12},
+            new double[] {-15.25, 0, 0.5, 0, 3, 15.5}, new double[] {-14, 3, 2, -2.75, 22, 14},
+            new double[] {-11, 22, 5.5, -5.25, 24, 10.5}, new double[] {-8.75, 24, 7.25, 0, 26, 10.5},
+            new double[] {16, 0, 0.5, 31.25, 3, 15.5}, new double[] {18.75, 3, 2.75, 29.25, 22, 13.25},
+            new double[] {21.5, 22, 5.5, 26.5, 24, 10.5}, new double[] {16, 24, 7.25, 24.75, 26, 8.75});
 
     /** 3x2x1 footprint in south-facing local space; the main block is the lower center. */
     private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
             new BlockPos(-1, 0, 0), new BlockPos(1, 0, 0),
             new BlockPos(-1, 1, 0), new BlockPos(0, 1, 0), new BlockPos(1, 1, 0)
     };
-    // Particle anchors for model elements "chain_l" and "chain_r", expressed in block-model pixels.
-    private static final ModelPoint CHAIN_L_SPOUT = new ModelPoint(-1.0D, 20.0D, 8.0D);
+    // Particle anchors at the culture vat's and cistern's nozzle tips (SPOUTS/TARGETS in
+    // tools/model_export/mycelial_crucible.py), expressed in block-model pixels.
+    private static final ModelPoint CHAIN_L_SPOUT = new ModelPoint(2.6D, 20.0D, 8.0D);
     private static final ModelPoint CHAIN_L_BASIN = new ModelPoint(6.5D, 9.75D, 8.0D);
-    private static final ModelPoint CHAIN_R_SPOUT = new ModelPoint(17.0D, 20.0D, 8.0D);
+    private static final ModelPoint CHAIN_R_SPOUT = new ModelPoint(13.4D, 20.0D, 8.0D);
     private static final ModelPoint CHAIN_R_BASIN = new ModelPoint(9.5D, 9.75D, 8.0D);
 
     public MycelialCrucibleBlock(Properties properties) {
@@ -100,7 +109,12 @@ public class MycelialCrucibleBlock extends Block implements EntityBlock, IMultiB
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx) {
-        return SHAPE;
+        return CELLS.get(state.getValue(FACING)).getOrDefault(BlockPos.ZERO, Shapes.block());
+    }
+
+    @Override
+    public VoxelShape fillerShape(BlockState controller, BlockPos offset) {
+        return CELLS.get(controller.getValue(FACING)).get(offset);
     }
 
     @Override

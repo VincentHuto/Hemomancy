@@ -8,16 +8,21 @@ import com.vincenthuto.hemomancy.common.entity.mob.arthropod.BombardierFlameGeom
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.ArrayList;
+import java.util.List;
 import static com.vincenthuto.hemomancy.client.render.world.LuxUmbraBatch.Material.*;
 
 /** Material-specific silhouettes: gas sheets, shallow pools, thin glass plates and heavy cruor. */
 final class ThermalGeometry {
     private static final int WHITE=0xFFFFFF;
+    /** Cruor shell shape: translucent frost, used for strands, rings and clock hands. */
+    static final int FROST_STRAND=4;
     private ThermalGeometry() {}
 
     static boolean handles(Form form) {
         return switch(form) {
-            case FURNACE,IGNITION,BOMBARDIER_SWEEP,GLASS,GLASS_CHARGE,UPDRAFT,FORGE,CAUTERIZE,PHOENIX,PHOENIX_READY,
+            case FURNACE,IGNITION,BOMBARDIER_SWEEP,GLASS,GLASS_CHARGE,UPDRAFT,FORGE,CAUTERIZE,
                     FLAME_CONJURE,FROST_CONJURE,ICE,ICE_CHARGE,BONE,STILLNESS,HOUR,HOUR_BREAK,
                     CRYOGENIC_PULSE,CRUOR_FORM,CRUOR_BREAK,FROZEN_VEINS,RIMEBOUND,CRUOR_SURFACE,FROST_ADVANCE -> true;
             default -> false;
@@ -69,9 +74,10 @@ final class ThermalGeometry {
                     double distance=r*(.22+.7*random(seed,i))*spread;
                     Vec3 root=surface.onSurface(from,new Vec3(Math.cos(a)*distance,.06,Math.sin(a)*distance));
                     double cycle=burst?age*.07:(time*.075+i*.29)%1;
-                    double lift=burst?Math.min(1.2,age*.08):cycle*.7;
-                    fire(p,flame,root.add(0,lift,0),right,up,.25+random(seed,i+41)*.22,
-                            (.55+random(seed,i+12)*.75)*(burst?1.25:1),seed+i,opacity);
+                    // Tongues rise from the ground and lean away from the source, a burst throwing them high and wide.
+                    double height=(.55+random(seed,i+12)*.75)*(burst?1.25*Math.min(1,age/5.0):.85+.25*Math.sin(time*.3+i));
+                    Vec3 lean=new Vec3(Math.cos(a),0,Math.sin(a)).scale(burst?.35:.12);
+                    flameRibbon(p,flame,tongue(root,lean,height,time,seed+i),camera,.25+random(seed,i+41)*.22,seed+i,opacity);
                     if(particles && i%3==0)smoke(p,flame,root.add(.15,1.0+cycle*.6,0),right,up,.42,.72,seed+i,opacity*.45f);
                 }
             }
@@ -103,7 +109,14 @@ final class ThermalGeometry {
                 for(int i=0;i<(blast?14:8);i++) {
                     double a=i*2.39996,spread=blast?Math.min(3.8,age*.18):narrow?.18:.4;
                     Vec3 at=new Vec3(Math.cos(a)*spread,-.25+((time*.1+i*.19)%1)*.55,Math.sin(a)*spread);
-                    fire(p,flame,at,right,up,narrow?.24:blast?.45:.36,narrow?1.7:hover?1.25:1.0,seed+i,opacity);
+                    // Tongues spiral up the column, twisting as they climb and drawing in toward the axis.
+                    double height=(narrow?1.7:hover?1.25:1.0)*1.2,twist=blast?.6:1.6;
+                    List<Vec3> spine=new ArrayList<>(7);
+                    for(int k=0;k<=6;k++) {
+                        double t=k/6.0,turn=a+t*twist+time*.05,radius=spread*(1-.35*t);
+                        spine.add(new Vec3(Math.cos(turn)*radius,-.25+t*height,Math.sin(turn)*radius));
+                    }
+                    flameRibbon(p,flame,spine,camera,narrow?.24:blast?.45:.36,seed+i,opacity);
                     if(particles && i%2==0)smoke(p,flame,at.add(0,.8,0),right,up,.4,.8,seed+i,opacity*.36f);
                     if(blast && age<34) {
                         Vec3 drop=fragments.offset(i,partial).add(0,.35,0);
@@ -127,33 +140,26 @@ final class ThermalGeometry {
                 p.popPose();
             }
             case CAUTERIZE -> {
+                // A molten seam closes up the body while short tongues lick off it and gutter out.
+                float seal=1-Mth.clamp(age/24,0,1);
+                List<Vec3> seam=new ArrayList<>(6);
                 for(int i=0;i<5;i++) {
                     double a=i*2.39996;
                     Vec3 at=new Vec3(Math.cos(a)*.3,.4+i*.23,Math.sin(a)*.3);
-                    fire(p,flame,at,right,up,.09,.22,seed+i,opacity*(1-Mth.clamp(age/24,0,1)));
+                    seam.add(at);
+                    Vec3 lean=new Vec3(Math.cos(a),0,Math.sin(a)).scale(.25);
+                    flameRibbon(p,flame,tongue(at,lean,.32*seal,time,seed+i),camera,.1,seed+i,opacity*seal);
                     if(particles)smoke(p,flame,at.add(0,age*.017,0),right,up,.14,.34,seed+i,opacity*.45f);
                 }
+                LuxUmbraGeometry.ribbonPath(p,batch.vertices(MOLTEN),seam,camera,.05*seal,.02*seal,0,seed+9,WHITE,opacity*seal);
             }
-            case PHOENIX -> {
-                double opening=Math.min(1,age/9.0);
-                for(int side:new int[]{-1,1})for(int i=0;i<9;i++) {
-                    double t=i/8.0;
-                    Vec3 at=new Vec3(side*(.3+t*3.1)*opening,1.0+Math.sin(t*2.3)*1.3,Math.sin(t*3.0)*.4);
-                    fire(p,flame,at,right,up,.3+(1-t)*.3,.5+(1-t)*1.05,seed+i,opacity);
-                    if(particles && i%2==0)smoke(p,flame,at.add(0,.6+age*.016,0),right,up,.5,.85,seed+i,opacity*.4f);
-                    if(particles && age>10) {
-                        Vec3 cinder=at.add(side*age*.012,-Math.pow(Math.max(0,age-14)*.03,2),0);
-                        LuxUmbraGeometry.card(p,flame,cinder,right,up,.035,.065,2,seed+i,WHITE,opacity);
-                    }
-                }
-                fire(p,flame,new Vec3(0,.2,0),right,up,.8,1.3,seed+34,opacity);
-            }
-            case PHOENIX_READY,FLAME_CONJURE -> {
-                int count=form==Form.PHOENIX_READY?3:7;
+            case FLAME_CONJURE -> {
+                int count=7;
                 for(int i=0;i<count;i++) {
                     double a=i*2.39996+time*.016;
                     Vec3 at=new Vec3(Math.cos(a)*.34,.35+(i%3)*.32,Math.sin(a)*.34);
-                    fire(p,flame,at,right,up,.1,.3,seed+i,opacity*.8f);
+                    // Small tongues lick up round the body, leaning out from it.
+                    flameRibbon(p,flame,tongue(at,new Vec3(Math.cos(a),0,Math.sin(a)).scale(.2),.32,time,seed+i),camera,.1,seed+i,opacity*.8f);
                     if(particles)smoke(p,flame,at.add(0,.4,0),right,up,.16,.36,seed+i,opacity*.25f);
                 }
             }
@@ -162,15 +168,19 @@ final class ThermalGeometry {
                 double spread=still?formation:Math.min(1,age/12.0);
                 cracks(p,frost,from,surface,(float)spread,opacity,seed);
                 int count=still?11:16;
+                Vec3[] held=new Vec3[count];
                 for(int i=0;i<count;i++) {
                     double a=i*2.39996,d=r*(.22+.68*random(seed,i));
                     double expansion=still?spread:1-Math.exp(-age*.1);
-                    Vec3 at=new Vec3(Math.cos(a)*d*expansion,.22+(i%4)*.12,Math.sin(a)*d*expansion);
+                    Vec3 at=new Vec3(Math.cos(a)*d*expansion,.22+(i%4)*.12+(still?(i%3)*.35:0),Math.sin(a)*d*expansion);
                     if(still)at=at.add(0,Math.sin(time*.013+i)*.025,0);
+                    held[i]=at;
                     double size=(.18+random(seed,i+9)*.25)*formation;
                     clot(p,core,frost,at,size,seed+i,still?i*.7:age*.013+i,opacity);
                     if(particles)powder(p,frost,at.add(0,.02,0),right,up,.63+(still?.1:age*.009),seed+i,opacity*.9f);
                 }
+                if(still)lattice(p,frost,held,camera,seed,opacity*formation);
+                else frostFingers(p,frost,camera,r*(1-Math.exp(-age*.1)),seed,opacity);
             }
             case ICE_CHARGE -> {
                 Vec3 focus=packet.to().subtract(packet.from()).normalize().scale(1.25);
@@ -181,14 +191,15 @@ final class ThermalGeometry {
                     if(particles)powder(p,frost,at,right,up,.2,seed+i,opacity*.5f);
                 }
             }
-            case BONE,RIMEBOUND,FROZEN_VEINS,FROST_CONJURE -> {
-                boolean bound=form==Form.RIMEBOUND,bloom=form==Form.BONE;
-                int count=bound?9:bloom?8:4;
-                double size=bound?.23:bloom?.19:.085;
+            case RIMEBOUND -> shackles(p,core,frost,camera,right,up,formation,opacity,seed,particles);
+            case BONE,FROZEN_VEINS,FROST_CONJURE -> {
+                boolean bloom=form==Form.BONE;
+                int count=bloom?8:4;
+                double size=bloom?.19:.085;
                 for(int i=0;i<count;i++) {
                     double a=i*2.39996;
                     double growth=bloom?Math.min(1,age/10.0):formation;
-                    double distance=(bound?.42:.3)+(bloom?Math.max(0,age-12)*.016:0);
+                    double distance=.3+(bloom?Math.max(0,age-12)*.016:0);
                     Vec3 at=new Vec3(Math.cos(a)*distance,.25+(i%5)*.29,Math.sin(a)*distance);
                     if(form!=Form.FROZEN_VEINS)clot(p,core,frost,at,size*growth,seed+i,a+age*.009,opacity);
                     if(particles)powder(p,frost,at.add(0,-age*.001,0),right,up,.23,seed+i,opacity*.6f);
@@ -213,15 +224,94 @@ final class ThermalGeometry {
                 boolean broken=form==Form.HOUR_BREAK;
                 // HOUR.radius is debt, never a physical radius.
                 double burden=Math.min(1,packet.radius()/30.0);
-                for(int i=0;i<9;i++) {
-                    double a=i*2.39996+time*.004;
-                    Vec3 at=new Vec3(Math.cos(a)*.62,.25+(i%4)*.42,Math.sin(a)*.62);
+                // A clock of frozen blood stands around the body, facing whoever watches it.
+                Vec3 face=new Vec3(0,1.15,0);
+                for(int i=0;i<12;i++) {
+                    double a=i*Math.PI/6;
+                    Vec3 at=face.add(right.scale(Math.cos(a)*.72)).add(up.scale(Math.sin(a)*.72));
                     if(broken)at=at.add(fragments.offset(i,partial));
-                    clot(p,core,frost,at,.09+burden*.12,seed+i,a+(broken?age*.045:0),opacity);
-                    if(particles)powder(p,frost,at,right,up,.18+burden*.12,seed+i,opacity*.35f);
+                    clot(p,core,frost,at,(i%3==0?.08:.05)+burden*.05,seed+i,a+(broken?age*.045:0),opacity);
+                    if(particles && i%3==0)powder(p,frost,at,right,up,.14+burden*.1,seed+i,opacity*.35f);
+                }
+                if(!broken) {
+                    List<Vec3> rim=new ArrayList<>(25);
+                    for(int i=0;i<=24;i++) {
+                        double a=i*Math.PI/12;
+                        rim.add(face.add(right.scale(Math.cos(a)*.72)).add(up.scale(Math.sin(a)*.72)));
+                    }
+                    LuxUmbraGeometry.ribbonPath(p,frost,rim,camera,.025,FROST_STRAND,seed+20,WHITE,opacity*.6f);
+                    // The hour hand points at the debt held; the minute hand keeps turning.
+                    double hour=Math.PI/2-burden*Math.PI*2,minute=Math.PI/2-time*.02;
+                    Vec3 hourTip=face.add(right.scale(Math.cos(hour)*.4)).add(up.scale(Math.sin(hour)*.4));
+                    Vec3 minuteTip=face.add(right.scale(Math.cos(minute)*.6)).add(up.scale(Math.sin(minute)*.6));
+                    LuxUmbraGeometry.ribbonPath(p,frost,List.of(face,hourTip),camera,.05,.012,FROST_STRAND,seed+21,WHITE,opacity);
+                    LuxUmbraGeometry.ribbonPath(p,frost,List.of(face,minuteTip),camera,.035,.008,FROST_STRAND,seed+22,WHITE,opacity);
+                    clot(p,core,frost,face,.07,seed+23,time*.01,opacity);
                 }
             }
             default -> {}
+        }
+    }
+
+    /** Frost creeping out across the ground as branching fingers, the freeze front of a grasp or pulse. */
+    private static void frostFingers(PoseStack p,VertexConsumer frost,Vec3 camera,double reach,int seed,float alpha) {
+        if(reach<.05)return;
+        for(int finger=0;finger<7;finger++) {
+            double a=finger*Math.PI*2/7+random(seed,finger+60)*.5;
+            double length=reach*(.6+.4*random(seed,finger+70));
+            List<Vec3> path=new ArrayList<>(7);
+            for(int i=0;i<=6;i++) {
+                double t=i/6.0,wander=Math.sin(t*5+finger)*.12*t;
+                path.add(new Vec3(Math.cos(a+wander)*length*t,.03,Math.sin(a+wander)*length*t));
+            }
+            LuxUmbraGeometry.ribbonPath(p,frost,path,camera,.1,.012,FROST_STRAND,seed+80+finger,WHITE,alpha*.8f);
+            Vec3 fork=path.get(3);
+            double b=a+(finger%2==0?.6:-.6);
+            LuxUmbraGeometry.ribbonPath(p,frost,List.of(fork,fork.add(Math.cos(b)*length*.3,0,Math.sin(b)*length*.3)),camera,
+                    .05,.008,FROST_STRAND,seed+90+finger,WHITE,alpha*.7f);
+        }
+    }
+
+    /** Frozen strands joining each suspended clot to its two nearest neighbours, so the stillness reads as a held lattice. */
+    private static void lattice(PoseStack p,VertexConsumer frost,Vec3[] held,Vec3 camera,int seed,float alpha) {
+        for(int i=0;i<held.length;i++) {
+            int first=-1,second=-1;
+            for(int j=0;j<held.length;j++) {
+                if(j==i)continue;
+                double d=held[i].distanceToSqr(held[j]);
+                if(first<0 || d<held[i].distanceToSqr(held[first])){second=first;first=j;}
+                else if(second<0 || d<held[i].distanceToSqr(held[second]))second=j;
+            }
+            for(int j:new int[]{first,second})if(j>i)
+                LuxUmbraGeometry.ribbonPath(p,frost,List.of(held[i],held[j]),camera,.03,.03,FROST_STRAND,seed+100+i*3+j,WHITE,alpha*.7f);
+        }
+    }
+
+    /** Rimebound shackles: rings of ice at the ankles and the hands, chained down to frozen anchors in the ground. */
+    private static void shackles(PoseStack p,VertexConsumer core,VertexConsumer frost,Vec3 camera,Vec3 right,Vec3 up,
+            float formation,float alpha,int seed,boolean particles) {
+        double[] heights={.18,1.0},radii={.36,.44};
+        for(int ring=0;ring<2;ring++) {
+            List<Vec3> loop=new ArrayList<>(13);
+            for(int i=0;i<=12;i++) {
+                double a=i*Math.PI/6+ring*.3;
+                Vec3 at=new Vec3(Math.cos(a)*radii[ring],heights[ring]+Math.sin(a*2)*.02,Math.sin(a)*radii[ring]);
+                loop.add(at);
+                if(i<12 && i%2==0)clot(p,core,frost,at,.06*formation,seed+ring*20+i,a,alpha);
+            }
+            LuxUmbraGeometry.ribbonPath(p,frost,loop,camera,.05*formation,FROST_STRAND,seed+40+ring,WHITE,alpha);
+        }
+        for(int chain=0;chain<3;chain++) {
+            double a=chain*Math.PI*2/3+seed;
+            Vec3 cuff=new Vec3(Math.cos(a)*radii[0],heights[0],Math.sin(a)*radii[0]);
+            Vec3 anchor=new Vec3(Math.cos(a)*.95,.05,Math.sin(a)*.95);
+            clot(p,core,frost,anchor,.12*formation,seed+60+chain,a,alpha);
+            for(int link=1;link<5;link++) {
+                double t=link/5.0;
+                Vec3 at=cuff.lerp(anchor,t).add(0,-Math.sin(t*Math.PI)*.08,0);
+                clot(p,core,frost,at,.035*formation,seed+70+chain*5+link,a+link,alpha);
+            }
+            if(particles)powder(p,frost,anchor.add(0,.05,0),right,up,.2,seed+80+chain,alpha*.5f);
         }
     }
 
@@ -237,6 +327,47 @@ final class ThermalGeometry {
         int i=0;
         for(var patch:surface.patches())LuxUmbraGeometry.ground(p,v,patch.center().subtract(origin),patch.halfWidth(),2,seed+i++,WHITE,alpha*growth);
     }
+    /**
+     * The spine of a flame tongue rising from {@code root}: it leans by {@code lean} as it climbs and its upper half
+     * sways, so successive tongues lick rather than stand.
+     */
+    static List<Vec3> tongue(Vec3 root,Vec3 lean,double height,double time,int seed) {
+        List<Vec3> spine=new ArrayList<>(7);
+        Vec3 across=lean.lengthSqr()<1e-6?new Vec3(1,0,0):new Vec3(-lean.z,0,lean.x).normalize();
+        for(int i=0;i<=6;i++) {
+            double t=i/6.0,sway=Math.sin(time*.3+seed*1.7+t*3)*.18*t*t*height;
+            spine.add(root.add(0,t*height,0).add(lean.scale(t*t*height)).add(across.scale(sway)));
+        }
+        return spine;
+    }
+
+    /**
+     * One continuous flame along a bent spine. The flame shader draws root to sooty tip along a card's height, so the
+     * height coordinate runs down the spine instead of across it and the whole tongue bends as one flame.
+     */
+    static void flameRibbon(PoseStack p,VertexConsumer v,List<Vec3> spine,Vec3 camera,double width,int seed,float alpha) {
+        if(spine.size()<2 || alpha<=.002 || spine.getFirst().distanceToSqr(spine.getLast())<1e-6)return;
+        Vec3 previousLeft=null,previousRight=null,previousSide=null;
+        double previousV=0;
+        int phase=Math.floorMod(seed,127)*2;
+        for(int i=0;i<spine.size();i++) {
+            Vec3 at=spine.get(i);
+            Vec3 tangent=spine.get(Math.min(i+1,spine.size()-1)).subtract(spine.get(Math.max(0,i-1)));
+            Vec3 side=tangent.lengthSqr()<1e-8?(previousSide==null?new Vec3(1,0,0):previousSide)
+                    :LuxUmbraGeometry.facingSide(tangent.normalize(),camera.subtract(at));
+            if(previousSide!=null && side.dot(previousSide)<0)side=side.scale(-1);
+            Vec3 left=at.subtract(side.scale(width)),right=at.add(side.scale(width));
+            double rise=i/(spine.size()-1.0);
+            if(i>0) {
+                vertex(p,v,previousLeft,0,(float)(phase+previousV),alpha);
+                vertex(p,v,previousRight,1,(float)(phase+previousV),alpha);
+                vertex(p,v,right,1,(float)(phase+rise),alpha);
+                vertex(p,v,left,0,(float)(phase+rise),alpha);
+            }
+            previousLeft=left;previousRight=right;previousSide=side;previousV=rise;
+        }
+    }
+
     static void fire(PoseStack p,VertexConsumer v,Vec3 bottom,Vec3 right,Vec3 up,double width,double height,int seed,float alpha) {
         LuxUmbraGeometry.card(p,v,bottom.add(0,height*.75,0),right,up,width,height,0,seed,WHITE,alpha);
     }
@@ -262,7 +393,7 @@ final class ThermalGeometry {
         for(Vec3 at:new Vec3[]{a,b,c,c})vertex(p,v,at,(float)(.5+at.x/(size*2.1)),
                 (float)(Math.floorMod(seed,127)*2+.45+at.y/(size*2.3)),alpha);
     }
-    private static void clot(PoseStack p,VertexConsumer core,VertexConsumer shell,Vec3 at,double size,int seed,double rotation,float alpha) {
+    static void clot(PoseStack p,VertexConsumer core,VertexConsumer shell,Vec3 at,double size,int seed,double rotation,float alpha) {
         if(size<=.005)return;
         p.pushPose();p.translate(at.x,at.y,at.z);p.mulPose(Axis.YP.rotation((float)rotation));
         p.mulPose(Axis.ZP.rotation((float)(random(seed,4)*.8-.4)));

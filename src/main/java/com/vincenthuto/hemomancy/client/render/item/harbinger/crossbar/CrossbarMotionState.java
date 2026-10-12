@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.item.harbinger.crossbar;
 
+import com.vincenthuto.hemomancy.client.render.world.PuppetStringStates;
 import com.vincenthuto.hemomancy.common.entity.projectile.CircusKnifeProjectileEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.entity.summon.CinderBellowsEntity;
@@ -52,10 +53,13 @@ final class CrossbarMotionState {
 				CrossbarMotionRules.lift(state.liftAge + partialTick));
 	}
 
-	/** Puppets driven by this Crossbar; Vesper's carry no Crossbar id, so a null id matches on owner alone. */
+	/**
+	 * Puppets driven by this Crossbar; Vesper's carry no Crossbar id, so a null id matches on owner alone. A body
+	 * being hauled away no longer counts, so the recall lift plays as it leaves.
+	 */
 	static List<Mob> puppets(LivingEntity holder, UUID crossbar) {
 		return holder.level().getEntitiesOfClass(Mob.class, holder.getBoundingBox().inflate(PUPPET_RANGE),
-				mob -> mob.isAlive() && mob instanceof BoundPuppeteerSummon bound
+				mob -> mob.isAlive() && !PuppetStringStates.unspooling(mob.getId()) && mob instanceof BoundPuppeteerSummon bound
 						&& holder.getUUID().equals(bound.hemomancy$getOwnerUUID())
 						&& (crossbar == null || crossbar.equals(bound.hemomancy$getCrossbarUUID())));
 	}

@@ -60,9 +60,9 @@ public final class ManipulationCorrectnessGameTests {
             try {
                 ManipulationInit.exsanguinate.get().getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
                 h.assertTrue(!victim.isAlive(), "Valid execution failed");
-                near(h, 2625, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Execution refund plus the separately attributed 25 mL kill reward");
+                near(h, 2275, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Execution refund (250) plus the separately attributed 25 mL kill reward");
                 ManipulationInit.exsanguinate.get().getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
-                near(h, 2625, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Dead victim refunded twice");
+                near(h, 2275, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Dead victim refunded twice");
             } finally { victim.discard(); }
             h.succeed();
         } finally { p.discard(); }
@@ -129,7 +129,7 @@ public final class ManipulationCorrectnessGameTests {
             ManipulationReactiveEvents.refreshSanguineWard(p);
             damage = new LivingIncomingDamageEvent(p, new DamageContainer(p.damageSources().generic(), 10));
             ManipulationReactiveEvents.onIncomingDamage(damage);
-            near(h, 8, damage.getAmount(), "Depleted Ward incorrectly re-granted initial six points");
+            near(h, 9, damage.getAmount(), "Depleted Ward incorrectly re-granted initial six points");
             h.succeed();
         } finally { ManipulationChannelManager.stop(p, false); p.discard(); }
     }
@@ -162,8 +162,19 @@ public final class ManipulationCorrectnessGameTests {
         } finally { p.discard(); }
     }
 
-    @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = "manipulation_correctness")
+    @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = "manipulation_correctness", timeoutTicks = 200)
     public static void osseousBloomCapsFinalBossDamage(GameTestHelper h) {
+        // Bloom finds its target by area query; entities added before their chunk section loads are invisible to it.
+        afterEntitiesLoad(h, new Vec3(2.5, 2, 4.5), 0, () -> checkOsseousBloomBossCap(h));
+    }
+
+    private static void afterEntitiesLoad(GameTestHelper h, Vec3 relative, int attempt, Runnable body) {
+        if (attempt >= 100 || h.getLevel().areEntitiesLoaded(net.minecraft.world.level.ChunkPos.asLong(
+                net.minecraft.core.BlockPos.containing(h.absoluteVec(relative))))) body.run();
+        else h.runAfterDelay(1, () -> afterEntitiesLoad(h, relative, attempt + 1, body));
+    }
+
+    private static void checkOsseousBloomBossCap(GameTestHelper h) {
         ServerPlayer p = player(h);
         try {
             for (boolean trained : List.of(false, true)) {
@@ -233,7 +244,7 @@ public final class ManipulationCorrectnessGameTests {
     @GameTest(templateNamespace = "minecraft", template = EMPTY, batch = "manipulation_correctness")
     public static void funeralBellScalesBankedNecrosisAndPayment(GameTestHelper h) {
         for (int count = 0; count <= 4; count++) {
-            for (int ticks : new int[]{1, 40, 80}) {
+            for (int ticks : new int[]{20, 40, 80}) {
                 ServerPlayer p = player(h);
                 var target = EntityType.COW.create(h.getLevel());
                 target.getAttribute(Attributes.MAX_HEALTH).setBaseValue(100);
@@ -250,10 +261,17 @@ public final class ManipulationCorrectnessGameTests {
                     double cost = ManipulationCostLedger.collect(p, bell, 1).effectiveCost();
                     h.assertTrue(bell.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), ticks), "Bell release rejected");
                     near(h, 2000 - cost * ticks / 80, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Bell charge payment");
-                    float raw = 4F * ticks / 80;
+                    float raw = 7F * ticks / 80;
                     near(h, TendencyAffinityRules.adjustManipulationDamage(p, target, bell, raw) + count * ticks / 80F, 100 - target.getHealth(), "Bell damage at " + ticks + " ticks, statuses=" + count);
-                    h.assertTrue(!target.hasEffect(EffectInit.necrosis) && !target.hasEffect(MobEffects.WITHER),
-                            "Bell did not consume the bank cleanly");
+                    // A partial toll cashes in only its share; the rest of the bank stays owed until expiry.
+                    float owed = count * (1 - ticks / 80F);
+                    var bank = com.vincenthuto.hemomancy.common.damage.SchoolStates.data(target).get(
+                            com.vincenthuto.hemomancy.common.damage.SchoolState.NECROSIS);
+                    h.assertTrue(!target.hasEffect(MobEffects.WITHER), "Bell left Wither behind");
+                    if (owed > 1.0E-4F) {
+                        h.assertTrue(target.hasEffect(EffectInit.necrosis) && bank != null, "Partial Bell erased the unpaid bank");
+                        near(h, owed, bank.stored, "Bank left after " + ticks + " ticks, statuses=" + count);
+                    } else h.assertTrue(!target.hasEffect(EffectInit.necrosis), "Bell did not consume the bank cleanly");
                 } finally { target.discard(); p.discard(); }
             }
         }
@@ -305,6 +323,8 @@ public final class ManipulationCorrectnessGameTests {
         try {
             var hour = ManipulationInit.endless_hour.get();
             hour.getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
+            // The hour grants no absorption of its own; supply a real source so the amount is not clamped away.
+            p.addEffect(new net.minecraft.world.effect.MobEffectInstance(MobEffects.ABSORPTION, 200, 0));
             p.setHealth(5);
             p.setAbsorptionAmount(2);
             var damage = new LivingDamageEvent.Pre(p, new DamageContainer(p.damageSources().generic(), 10));

@@ -44,6 +44,14 @@ public final class ManipulationCooldownState {
         return maxRemaining;
     }
 
+    /** Lengthens a cooldown to at least {@code minRemaining}; never shortens one. Returns the remaining ticks. */
+    public long extendTo(UUID playerId, String manipulationId, long now, long minRemaining) {
+        long remaining = remainingTicks(playerId, manipulationId, now);
+        if (minRemaining <= remaining) return remaining;
+        start(playerId, manipulationId, now, minRemaining);
+        return minRemaining;
+    }
+
     public void clear() {
         cooldowns.clear();
     }

@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.station.CreativeStationUpgrades;
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.shared.FillerBlock;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
+import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ResonantForgeBlockEntity;
@@ -48,18 +49,36 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ResonantForgeBlock extends BaseEntityBlock implements EntityBlock, IMultiBlock {
     public static final MapCodec<ResonantForgeBlock> CODEC = simpleCodec(ResonantForgeBlock::new);
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-    private static final BlockPos[] NORTH_OFFSETS = {
-            new BlockPos(-1, 0, 0), new BlockPos(1, 0, 0),
-            new BlockPos(-1, 1, 0), new BlockPos(1, 1, 0)
-    };
-    private static final VoxelShape SHAPE_X = Shapes.or(Block.box(-16, 0, 0, 32, 16, 16),
-            Block.box(-16, 16, 0, 0, 32, 16), Block.box(16, 16, 0, 32, 32, 16));
-    private static final VoxelShape SHAPE_Z = Shapes.or(Block.box(0, 0, -16, 16, 16, 32),
-            Block.box(0, 16, -16, 16, 32, 0), Block.box(0, 16, 16, 16, 32, 32));
+    /** Hammer and grinder bays below the upper row, shared by every stage (north-facing model pixels). */
+    private static final double[][] LOWER = {
+            {-16, 0, 0, 0, 16, 16}, {-16, 0, 16, 0, 9, 32}, {-11, 9, 19.5, 0, 16, 29.5},
+            {16, 0, 0, 32, 16, 16}, {16, 0, 16, 32, 5, 32}, {16, 5, 16, 30.25, 15, 32}};
+    private static final double[] GRINDER_FEED = {17, 16, 17.5, 25.5, 17, 25};
+    private static final double[] GRINDER_ARM = {16.75, 17, 16, 18.75, 28.5, 22.5};
+    /** Per-stage cells traced from each stage body plus its animated parts at rest; the basin's headroom stays open. */
+    private static final List<Map<Direction, Map<BlockPos, VoxelShape>>> CELLS = List.of(
+            ModelShapes.cells(concat(LOWER, new double[][] {
+                    {0, 0, 1, 16, 12, 16}, {0, 12, 2.25, 16, 14, 12.75}, {0, 0, 16, 16, 10, 31},
+                    {-12, 16, 0, -1, 20, 16}, {-8.25, 20, 0, -4.75, 31, 2.25}, {-8.25, 23, 2.25, -4.75, 30, 16},
+                    {-9, 16, 16, -0.5, 20, 29.5}, {-7, 20, 16, 0, 25, 30},
+                    {16, 16, 0, 32, 21, 14}, {20.25, 21, 0, 32, 29, 11.75}, GRINDER_FEED, GRINDER_ARM})),
+            ModelShapes.cells(concat(LOWER, new double[][] {
+                    {0, 0, 1, 16, 12, 16}, {0, 12, 2.25, 16, 14, 12.75}, {0, 0, 16, 16, 11, 31},
+                    {2.5, 11, 20, 16, 14, 30.5},
+                    {-13.5, 16, 0, -1, 20, 16}, {-8.5, 20, 0, -1, 28, 9}, {-16, 28, 0, -0.5, 31, 4},
+                    {-9, 16, 16, -0.5, 21, 29.5}, {-3, 21, 27, 0, 25.5, 30},
+                    {16, 16, 0, 32, 30, 16}, {16, 30, 6, 31, 31.75, 13.5}, GRINDER_FEED, GRINDER_ARM})),
+            ModelShapes.cells(concat(LOWER, new double[][] {
+                    {0, 0, 1, 16, 16, 16}, {0, 0, 16, 16, 11, 31},
+                    {-13.75, 16, 0, -1, 20, 16}, {-13.75, 20, 0, -1, 26, 9.5}, {-16, 26, 0, -0.5, 32, 16},
+                    {-9, 16, 16, -0.5, 21, 29.5}, {-3, 21, 27, 0, 26, 30}, {-14, 26, 16, 0, 31.25, 30},
+                    {16, 16, 0, 32, 31, 16}, {17.25, 31, 0, 32, 32, 8},
+                    {22.5, 16, 16.25, 25.5, 19, 25}, {16, 19, 16, 29, 32, 29.5}})));
 
     public ResonantForgeBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -71,11 +90,18 @@ public class ResonantForgeBlock extends BaseEntityBlock implements EntityBlock, 
     @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, com.vincenthuto.hemomancy.common.station.StationTierProperty.STAGE);
     }
-    @Override public BlockPos[] getFillerOffsets() { return NORTH_OFFSETS; }
-    @Override public RenderShape getRenderShape(BlockState state) { return RenderShape.MODEL; }
-    private static VoxelShape shape(BlockState state) {
-        return state.getValue(FACING).getAxis() == Direction.Axis.Z ? SHAPE_X : SHAPE_Z;
+    private static double[][] concat(double[][] a, double[][] b) {
+        double[][] all = java.util.Arrays.copyOf(a, a.length + b.length);
+        System.arraycopy(b, 0, all, a.length, b.length);
+        return all;
     }
+    @Override public BlockPos[] getFillerOffsets() { return offsets(Direction.NORTH); }
+    @Override public RenderShape getRenderShape(BlockState state) { return RenderShape.MODEL; }
+    private static Map<BlockPos, VoxelShape> cells(BlockState state) {
+        return CELLS.get(com.vincenthuto.hemomancy.common.station.StationTierProperty.stage(state)).get(state.getValue(FACING));
+    }
+    private static VoxelShape shape(BlockState state) { return cells(state).getOrDefault(BlockPos.ZERO, Shapes.block()); }
+    @Override public VoxelShape fillerShape(BlockState controller, BlockPos offset) { return cells(controller).get(offset); }
     @Override public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, net.minecraft.world.phys.shapes.CollisionContext context) { return shape(state); }
     @Override public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, net.minecraft.world.phys.shapes.CollisionContext context) { return shape(state); }
     @Override public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) { return Shapes.empty(); }
@@ -92,14 +118,42 @@ public class ResonantForgeBlock extends BaseEntityBlock implements EntityBlock, 
         return true;
     }
 
-    private static BlockPos[] offsets(Direction facing) {
+    /**
+     * Filler cells around the controller: the hammer and grinder bays are two blocks tall in both
+     * rows, while the basin column stays one block tall so its headroom is open. The controller is
+     * the back row; the front row extends toward the worker, away from an upgrade rite's Focus.
+     */
+    public static BlockPos[] offsets(Direction facing) {
         Direction right = facing.getClockWise();
-        return new BlockPos[] {
-                new BlockPos(-right.getStepX(), 0, -right.getStepZ()),
-                new BlockPos(right.getStepX(), 0, right.getStepZ()),
-                new BlockPos(-right.getStepX(), 1, -right.getStepZ()),
-                new BlockPos(right.getStepX(), 1, right.getStepZ())
-        };
+        Direction front = facing.getOpposite();
+        List<BlockPos> cells = new ArrayList<>();
+        for (int row = 0; row < 2; row++) {
+            BlockPos base = BlockPos.ZERO.relative(front, row);
+            if (row > 0) cells.add(base);
+            for (int side = -1; side <= 1; side += 2)
+                for (int y = 0; y < 2; y++) cells.add(base.relative(right, side).above(y));
+        }
+        return cells.toArray(BlockPos[]::new);
+    }
+
+    /** Fills any free footprint cell missing a linked filler, e.g. on forges placed before the front row existed. */
+    public static void restoreFillers(Level level, BlockPos controller, BlockState state) {
+        for (BlockPos offset : offsets(state.getValue(FACING))) {
+            BlockPos fillerPos = controller.offset(offset);
+            BlockState existing = level.getBlockState(fillerPos);
+            if (existing.is(BlockInit.filler_block.get())
+                    && level.getBlockEntity(fillerPos) instanceof FillerBlockEntity filler
+                    && controller.equals(filler.getMainBlockPos())) continue;
+            if (!existing.canBeReplaced()) continue;
+            placeFiller(level, controller, fillerPos);
+        }
+    }
+
+    private static void placeFiller(Level level, BlockPos controller, BlockPos fillerPos) {
+        boolean waterlogged = level.getFluidState(fillerPos).getType() == Fluids.WATER;
+        level.setBlockAndUpdate(fillerPos, BlockInit.filler_block.get().defaultBlockState()
+                .setValue(BlockStateProperties.WATERLOGGED, waterlogged));
+        if (level.getBlockEntity(fillerPos) instanceof FillerBlockEntity filler) filler.setMainBlockPos(controller);
     }
 
     public static boolean hasCompleteStructure(Level level, BlockPos controller, BlockState state) {
@@ -116,13 +170,7 @@ public class ResonantForgeBlock extends BaseEntityBlock implements EntityBlock, 
     @Override public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
         if (level.isClientSide) return;
-        for (BlockPos offset : offsets(state.getValue(FACING))) {
-            BlockPos fillerPos = pos.offset(offset);
-            boolean waterlogged = level.getFluidState(fillerPos).getType() == Fluids.WATER;
-            level.setBlockAndUpdate(fillerPos, BlockInit.filler_block.get().defaultBlockState()
-                    .setValue(BlockStateProperties.WATERLOGGED, waterlogged));
-            if (level.getBlockEntity(fillerPos) instanceof FillerBlockEntity filler) filler.setMainBlockPos(pos);
-        }
+        for (BlockPos offset : offsets(state.getValue(FACING))) placeFiller(level, pos, pos.offset(offset));
     }
 
     private void removeFillers(Level level, BlockPos pos, Direction facing) {

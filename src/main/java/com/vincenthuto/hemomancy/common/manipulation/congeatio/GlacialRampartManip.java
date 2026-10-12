@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -31,13 +32,30 @@ public class GlacialRampartManip extends BloodManipulation {
 	private static final double BASE_RANGE = 20.0;
 	private static final int HALF_WIDTH = 1;
 	private static final int HEIGHT = 3;
-	private static final int BASE_LIFETIME_TICKS = 500;
-	private static final int LIFETIME_VARIANCE = 100;
+	/** Twelve seconds of cover, for both the aimed wall and the crouched bastion. */
+	public static final int LIFETIME_TICKS = 240;
 
 	public GlacialRampartManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
 			EnumVeinSections section) {
 		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+	}
+
+	private static BlockHitResult anchor(Player player) {
+		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player);
+		Vec3 eyePos = player.getEyePosition(1.0F);
+		Vec3 endPos = eyePos.add(player.getViewVector(1.0F).scale(range));
+		return player.level().clip(new ClipContext(eyePos, endPos,
+				ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
+	}
+
+	@Override
+	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
+		if (!player.isShiftKeyDown() && anchor(player).getType() == HitResult.Type.MISS) {
+			player.displayClientMessage(Component.literal("No surface to anchor the rampart."), true);
+			return false;
+		}
+		return super.canPerformAction(player, heldItem, ticks);
 	}
 
 	@Override
@@ -50,16 +68,8 @@ public class GlacialRampartManip extends BloodManipulation {
 			return;
 		}
 
-		double range = BASE_RANGE * SkillPointHelper.getSanguineReachMultiplier(player);
-		Vec3 eyePos = player.getEyePosition(1.0F);
-		Vec3 endPos = eyePos.add(player.getViewVector(1.0F).scale(range));
-		BlockHitResult hitResult = world.clip(new ClipContext(eyePos, endPos,
-				ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
-
-		if (hitResult.getType() == HitResult.Type.MISS) {
-			player.displayClientMessage(Component.literal("No surface to anchor the rampart."), true);
-			return;
-		}
+		BlockHitResult hitResult = anchor(player);
+		if (hitResult.getType() == HitResult.Type.MISS) return;
 
 		Direction hitFace = hitResult.getDirection();
 		BlockPos base = hitResult.getBlockPos().relative(hitFace);
@@ -67,13 +77,12 @@ public class GlacialRampartManip extends BloodManipulation {
 				? player.getDirection().getClockWise()
 				: hitFace.getClockWise();
 
-		RandomSource random = world.random;
 		int placed = 0;
 		for (int dLat = -HALF_WIDTH; dLat <= HALF_WIDTH; dLat++) {
 			for (int dUp = 0; dUp < HEIGHT; dUp++) {
 				BlockPos target = base.relative(lateral, dLat).above(dUp);
-				if (TemporaryIceManager.place(sLevel, target, BlockInit.frozen_cruor.get().defaultBlockState(),
-						BASE_LIFETIME_TICKS + random.nextInt(LIFETIME_VARIANCE))) {
+				if (ManipulationCombatHelper.mayAlter(player, target) && TemporaryIceManager.place(sLevel, target, BlockInit.frozen_cruor.get().defaultBlockState(),
+						LIFETIME_TICKS)) {
 					placed++;
 				}
 			}
@@ -97,8 +106,9 @@ public class GlacialRampartManip extends BloodManipulation {
 			for (int dy = 0; dy < HEIGHT; dy++) {
 				if (dy == HEIGHT - 1 && distance == 3 && random.nextBoolean()) continue;
 				BlockPos target = base.offset(dx, dy, dz);
-				if (!target.equals(base) && !target.equals(base.above()) && TemporaryIceManager.place(level, target,
-						BlockInit.frozen_cruor.get().defaultBlockState(), BASE_LIFETIME_TICKS + random.nextInt(LIFETIME_VARIANCE))) placed++;
+				if (!target.equals(base) && !target.equals(base.above()) && ManipulationCombatHelper.mayAlter(player, target)
+						&& TemporaryIceManager.place(level, target,
+						BlockInit.frozen_cruor.get().defaultBlockState(), LIFETIME_TICKS)) placed++;
 			}
 		}
 		if (placed > 0) {

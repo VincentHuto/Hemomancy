@@ -42,7 +42,8 @@ public class MycelialLanternBlock extends Block implements EntityBlock, IMultiBl
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     private static final BlockPos[] FILLER_OFFSETS = { new BlockPos(0, 1, 0) };
-    private static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 16, 14);
+    /** Crock and caged bell of tools/model_export/mycelial_lantern.py; the bell rises into the filler. */
+    private static final VoxelShape SHAPE = Shapes.or(Block.box(1.5, 0, 1.5, 14.5, 7.25, 14.5), Block.box(2.5, 7.25, 2.5, 13.5, 16, 13.5));
 
     public MycelialLanternBlock(Properties properties) {
         super(properties);

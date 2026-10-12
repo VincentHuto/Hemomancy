@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -39,21 +40,45 @@ public class VitalEffusionManip extends BloodManipulation {
 		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
 	}
 
+	/** The aimed block the effusion soaks into, or null when the caster looks at nothing. */
+	private static BlockPos center(Player player, Level world) {
+		Vec3 eyePos = player.getEyePosition(1.0f);
+		Vec3 endPos = eyePos.add(player.getViewVector(1.0f).scale(RANGE));
+		BlockHitResult hit = world.clip(new ClipContext(
+				eyePos, endPos, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
+		return hit.getType() == HitResult.Type.MISS ? null : hit.getBlockPos();
+	}
+
+	private static boolean hasGrowth(ServerLevel level, BlockPos center) {
+		for (BlockPos p : BlockPos.betweenClosed(
+				center.offset(-HALF_WIDTH, -HALF_HEIGHT, -HALF_WIDTH),
+				center.offset(HALF_WIDTH, HALF_HEIGHT, HALF_WIDTH))) {
+			BlockState state = level.getBlockState(p);
+			if (state.getBlock() instanceof BonemealableBlock bb && bb.isValidBonemealTarget(level, p, state)) return true;
+		}
+		return false;
+	}
+
+	@Override
+	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
+		if (player.level() instanceof ServerLevel level) {
+			BlockPos center = center(player, level);
+			if (center == null || !hasGrowth(level, center)) {
+				player.displayClientMessage(Component.literal("Nothing here can be made to grow."), true);
+				return false;
+			}
+		}
+		return super.canPerformAction(player, heldItem, ticks);
+	}
+
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
         try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, 1)) {
 
 		if (!(world instanceof ServerLevel sLevel)) return;
 
-		Vec3 eyePos = player.getEyePosition(1.0f);
-		Vec3 lookVec = player.getViewVector(1.0f);
-		Vec3 endPos = eyePos.add(lookVec.scale(RANGE));
-
-		BlockHitResult hit = world.clip(new ClipContext(
-				eyePos, endPos, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
-		if (hit.getType() == HitResult.Type.MISS) return;
-
-		BlockPos center = hit.getBlockPos();
+		BlockPos center = center(player, world);
+		if (center == null) return;
 		int grew = 0;
 
 		for (BlockPos p : BlockPos.betweenClosed(

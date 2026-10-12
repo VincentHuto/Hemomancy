@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponGraf
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.rite.MemoryBrazierRite;
 import com.vincenthuto.hemomancy.common.rite.ScarBrazierRite;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
@@ -18,7 +19,6 @@ import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -49,6 +49,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
@@ -71,7 +72,16 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 	 */
 	public static final IntegerProperty RITUAL_PHASE = IntegerProperty.create("ritual_phase", 0, 2);
 
-	private static final VoxelShape SHAPE_N =Block.box(4, 0, 4, 12, 17, 12);
+	// Dais, vertebral stem, and the bowl up to its talon tips (tools/model_export/iron_brazier.py).
+	private static final VoxelShape SHAPE = Shapes.or(Block.box(3, 0, 3, 13, 2.2, 13),
+			Block.box(6, 2.2, 6, 10, 8.4, 10), Block.box(1.5, 8.4, 1.5, 14.5, 18.5, 14.5));
+	// Coal bed and flame tips in blocks above the brazier's base, from the same model.
+	private static final double COAL_TOP = 11.3D / 16.0D;
+	private static final double FLAME_TOP = 18.3D / 16.0D;
+	private static final ParticleColor EMBER = new ParticleColor(232, 42, 36);
+	private static final ParticleColor SANGUINE_EMBER = new ParticleColor(170, 0, 22);
+	private static final ParticleColor HOT_CORE = new ParticleColor(255, 176, 150);
+	private static final ParticleColor SOOT = new ParticleColor(22, 2, 6);
 
 	public BrazierBlock(Properties properties) {
 		super(properties);
@@ -84,25 +94,37 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 	@Override
 	public void animateTick(BlockState pState, Level pLevel, BlockPos pPos, RandomSource pRandom) {
 		super.animateTick(pState, pLevel, pPos, pRandom);
-		double d0 = (double) pPos.getX() + 0.5D;
-		double d1 = (double) pPos.getY() + 1.2D;
-		double d2 = (double) pPos.getZ() + 0.5D;
 		int phase = pState.getValue(RITUAL_PHASE);
-
-		if (phase == 1) {
-			// Normal fire — standard smoke
-			pLevel.addParticle(ParticleTypes.SMOKE, d0, d1, d2, 0.0D, 0.0D, 0.0D);
-		} else if (phase == 2) {
-			// Sanguine flames — dark red blood particles swirling upward
+		if (phase == 0) {
+			return;
+		}
+		double x = pPos.getX() + 0.5D;
+		double z = pPos.getZ() + 0.5D;
+		// Crimson embers lift off the coal bed and burn out around the offering.
+		for (int i = 0; i < 3; i++) {
+			double ox = (pRandom.nextDouble() - 0.5D) * 0.36D;
+			double oz = (pRandom.nextDouble() - 0.5D) * 0.36D;
+			pLevel.addParticle(HemoParticleData.ember(phase == 2 ? SANGUINE_EMBER : EMBER,
+					0.05F + pRandom.nextFloat() * 0.035F, 0.85F, 26 + pRandom.nextInt(14)),
+					x + ox, pPos.getY() + COAL_TOP, z + oz, -ox * 0.03D, 0.022D + pRandom.nextDouble() * 0.018D,
+					-oz * 0.03D);
+		}
+		if (pRandom.nextInt(3) == 0) {
+			pLevel.addParticle(HemoParticleData.ember(HOT_CORE, 0.035F, 0.95F, 16), x, pPos.getY() + COAL_TOP + 0.08D,
+					z, 0.0D, 0.045D, 0.0D);
+		}
+		pLevel.addParticle(HemoParticleData.darkGlow(SOOT), x + (pRandom.nextDouble() - 0.5D) * 0.2D,
+				pPos.getY() + FLAME_TOP, z + (pRandom.nextDouble() - 0.5D) * 0.2D, 0.0D, 0.012D, 0.0D);
+		if (phase == 2) {
+			// Sanguine flames: blood cells wheel up round the offering while the rite awaits its echo.
 			for (int i = 0; i < 3; i++) {
-				double ox = (pRandom.nextDouble() - 0.5) * 0.4;
-				double oz = (pRandom.nextDouble() - 0.5) * 0.4;
-				pLevel.addParticle(
-						new BloodCellData(ParticleInit.blood_cell.get(), new ParticleColor(180, 0, 20)),
-						d0 + ox, d1 + pRandom.nextDouble() * 0.3, d2 + oz,
-						0.0D, 0.04D, 0.0D);
+				double angle = pRandom.nextDouble() * Math.PI * 2.0D;
+				double cos = Math.cos(angle) * 0.2D;
+				double sin = Math.sin(angle) * 0.2D;
+				pLevel.addParticle(HemoParticleData.bloodCell(SANGUINE_EMBER), x + cos,
+						pPos.getY() + FLAME_TOP - 0.25D + pRandom.nextDouble() * 0.3D, z + sin,
+						-sin * 0.12D, 0.035D, cos * 0.12D);
 			}
-			pLevel.addParticle(ParticleTypes.SOUL_FIRE_FLAME, d0, d1, d2, 0.0D, 0.02D, 0.0D);
 		}
 	}
 
@@ -118,7 +140,7 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return SHAPE_N;
+		return SHAPE;
 	}
 
 	@Override
@@ -273,7 +295,10 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 						state.getValue(RITUAL_PHASE) > 0, !brazier.hasOffering(), maxAmount)) {
 			brazier.resetItemAbsorptionProgress();
 			level.setBlock(pos, state.setValue(RITUAL_PHASE, 0), Block.UPDATE_ALL);
-			HLParticleUtils.spawnPoof(level, pos, ParticleTypes.SMOKE);
+			level.sendParticles(HemoParticleData.darkGlow(SOOT), pos.getX() + 0.5D, pos.getY() + COAL_TOP + 0.15D,
+					pos.getZ() + 0.5D, 18, 0.18D, 0.12D, 0.18D, 0.025D);
+			level.sendParticles(HemoParticleData.ember(SANGUINE_EMBER, 0.06F, 0.8F, 18), pos.getX() + 0.5D,
+					pos.getY() + COAL_TOP, pos.getZ() + 0.5D, 10, 0.2D, 0.04D, 0.2D, 0.02D);
 			level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.55F, 1.0F);
 			return maxAmount;
 		}

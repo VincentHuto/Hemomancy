@@ -1,7 +1,9 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.decoration;
 
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
+import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import com.vincenthuto.hemomancy.common.tile.harbinger.decoration.HumaneIdolBlockEntity;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -28,7 +30,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class BlockHumaneIdol extends Block implements EntityBlock, SimpleWaterloggedBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-	private static final VoxelShape SHAPE_N = Block.box(3.5, 0, 3.5, 12.5, 15, 12.5);
+	/** Plinth, legs, outstretched arms and head of the thin figure. */
+	private static final Map<Direction, VoxelShape> SHAPES = ModelShapes.horizontal(ModelShapes.of(
+			new double[] {5, 0, 5, 11, 1, 11}, new double[] {6, 1, 7, 10, 6, 9},
+			new double[] {4, 6, 7, 12, 11, 9}, new double[] {6, 11, 6.5, 10, 15, 9.5}));
 
 	public BlockHumaneIdol(Properties properties) {
 		super(properties);
@@ -44,7 +49,7 @@ public class BlockHumaneIdol extends Block implements EntityBlock, SimpleWaterlo
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return SHAPE_N;
+		return SHAPES.get(state.getValue(FACING));
 	}
 
 	@Override

@@ -1,13 +1,14 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoint;
 import com.vincenthuto.hemomancy.common.entity.utility.ArborOfWillEntity;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
+import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborOfWillInteractionRules;
 import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborOfWillLayout;
+import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborOfWillVisualRules;
 import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborSkillPresentation;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -28,14 +29,15 @@ public record ArborFruitInteractPacket(int arborEntityId, int skillId) implement
                     || !player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)) return;
             Entity entity = player.level().getEntity(msg.arborEntityId);
             SkillPoint skill = SkillPointInit.getById(msg.skillId);
-            if (!(entity instanceof ArborOfWillEntity arbor) || skill == null || !arbor.isOwnedBy(player)) return;
-            if (!HemoCapabilityAccess.requireSkillProgress(player).isUnlocked(skill)) return;
-            ArborOfWillLayout.FruitPlacement fruit = ArborSkillPresentation.placements(arbor.chamberRadius()).stream()
+            if (!(entity instanceof ArborOfWillEntity arbor) || skill == null) return;
+            ArborOfWillLayout.FruitPlacement fruit = ArborSkillPresentation.placements(arbor.chamberRadius(), arbor.degree()).stream()
                     .filter(candidate -> candidate.skillId() == skill.getId()).findFirst().orElse(null);
             if (fruit == null) return;
-            double reach = player.isCreative() ? 5.0D : 4.5D;
-            if (player.getEyePosition().distanceToSqr(arbor.position().add(fruit.x(), fruit.y(), fruit.z()))
-                    > reach * reach) return;
+            // Mirrors the client label: any visible fruit, locked or not, within the shared fruit reach.
+            boolean visible = fruit.whorl() <= Math.max(1, ArborOfWillVisualRules.visibleWhorls(arbor.degree()));
+            double distance = player.getEyePosition().distanceTo(arbor.position().add(fruit.x(), fruit.y(), fruit.z()));
+            if (!ArborOfWillInteractionRules.mayFocusFruit(arbor.ownerId().orElse(null), player.getUUID(), true,
+                    visible, distance)) return;
             PacketHandler.sendToPlayer(player, new OpenArborSkillsPacket(skill.getId()));
         });
     }

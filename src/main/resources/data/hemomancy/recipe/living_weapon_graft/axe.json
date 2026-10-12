@@ -4,7 +4,7 @@
     { "item": "hemomancy:hematic_memory" },
     { "item": "hemomancy:sanguine_formation" },
     { "item": "hemomancy:chalybeate_sclerite" },
-    { "item": "hemomancy:ruinous_enzyme" }
+    { "item": "hemomancy:ferric_enzyme" }
   ],
   "result": {
     "id": "hemomancy:living_weapon_graft",

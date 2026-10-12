@@ -24,7 +24,11 @@ public final class ManipulationVisuals {
         FERRIC_IMPACT, FERRIC_CONJURE, NERVE_PULSE, NERVE_HIT, PARALYSIS,
         ANIMUS_IMPACT, ANIMUS_CONJURE, MORTEM_CONJURE, MORTEM_BURST, GRAVE_REFUND, HUNGER_COLLAPSE,
         BLACKHEART_RUPTURE, TITHE_RETURN, TITHE_COLLECT, ROT_INFECTION, COMMUNION, MARIONETTE_TETHER, MARIONETTE_ORDER,
-        BOMBARDIER_SWEEP, MNEMONIC_REPLAY, RIPOSTE, RIPOSTE_STRIKE
+        BOMBARDIER_SWEEP, MNEMONIC_REPLAY, RIPOSTE, RIPOSTE_STRIKE, BLOOD_SPLASH, GAZE_GRIP, GAZE_SLAM,
+        ANEURYSM_RUPTURE, SOVEREIGN_LASH,
+        // Encoded by ordinal: append new forms here.
+        PUPPET_DESCEND, PUPPET_UNSPOOL, UMBRAL_REND, LODESTONE_COLLAPSE,
+        SEARING_LASH, CRUOR_JAVELIN, RADIANT_WAKE, CONTAGION, NERVE_COMMAND, LODESTONE_FIELD
     }
 
     public static void burst(ServerLevel level, Form form, Vec3 from, Vec3 to, double radius, int ticks) {
@@ -36,6 +40,12 @@ public final class ManipulationVisuals {
     /** A burst whose form-specific {@code count} carries extra detail, such as RIPOSTE_STRIKE's melee/projectile variant. */
     public static void burst(ServerLevel level, Form form, Vec3 from, Vec3 to, double radius, int ticks, int count) {
         send(level, new ManipulationVisualPacket(form, -1, from, to, (float) radius, ticks, count));
+    }
+
+    /** An attached cue that also carries a world point, such as the eyes a gaze tether runs back to. */
+    public static void attached(Entity entity, Form form, Vec3 to, double radius, int ticks, int count) {
+        if (entity.level() instanceof ServerLevel level)
+            send(level, new ManipulationVisualPacket(form, entity.getId(), entity.position(), to, (float) radius, ticks, count));
     }
 
     public static void attached(Entity entity, Form form, double radius, int ticks, int count) {
@@ -76,7 +86,7 @@ public final class ManipulationVisuals {
             case "rimebound_sentence" -> Form.ICE_CHARGE;
             case "eclipse_well" -> Form.WELL_CHARGE;
             case "activation_potential", "synaptic_storm" -> Form.LIGHTNING_CHARGE;
-            case "ironhearted" -> Form.IRON_CHARGE;
+            case "ironhearted", "lodestone_collapse" -> Form.IRON_CHARGE;
             default -> null;
         };
     }
@@ -90,6 +100,7 @@ public final class ManipulationVisuals {
             case "iron_choir" -> Form.CHOIR;
             case "sanguine_ward" -> Form.WARD;
             case "penumbral_drift" -> Form.VEIL;
+            case "radiant_wake" -> Form.RADIANT_WAKE;
             default -> null;
         };
         if (form != null) attached(player, form, 0, 0, 0);

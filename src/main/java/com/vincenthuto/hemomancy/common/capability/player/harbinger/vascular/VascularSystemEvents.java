@@ -134,6 +134,13 @@ public class VascularSystemEvents {	/**
 		});
 	}
 
+	/** A DEAD section carries no blood: muscle memories and manipulations routed through it refuse to fire. */
+	public static boolean isSectionDead(Player player, EnumVeinSections section) {
+		return section != null && HemoCapabilityAccess.getVascularSystem(player)
+				.map(vascular -> vascular.getBloodFlowBySection(section) == EnumBloodFlow.DEAD)
+				.orElse(false);
+	}
+
 	public static void applyManipStrain(ServerPlayer player, BloodManipulation manipulation) {
 		ArrayList<ScarDefinition> active = new ArrayList<>();
 		HemoCapabilityAccess.getScarState(player).ifPresent(scars -> scars.forEachActiveCerebralScar(active::add));
@@ -142,8 +149,10 @@ public class VascularSystemEvents {	/**
 		if (HemoServerConfig.VASCULAR_DEGRADATION_ON_MANIP_ENABLED.get()) HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
 			boolean fortified = HemoCapabilityAccess.getInitiatoryDegree(player)
 					.map(degree -> degree.hasHematicFortification()).orElse(false);
+			// Higher-rank manipulations tax their vein harder; the config value scales every rank.
 			float strain = HematicFortificationRules.adjustedStrain(
-					HemoServerConfig.VASCULAR_MANIP_STRAIN.get().floatValue(), fortified);
+					HemoServerConfig.VASCULAR_MANIP_STRAIN.get().floatValue() * manipulation.getRank().veinStrain(),
+					fortified);
 			vascular.setVascularSectionHealth(manipulation.getSection(),
 					-ScarNoeticRoutingRules.adjustedStrain(strain, tier));
 			if (vascular.getHealthBySection(manipulation.getSection()) < 0) {

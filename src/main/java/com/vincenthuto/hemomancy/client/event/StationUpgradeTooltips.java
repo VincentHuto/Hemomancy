@@ -26,7 +26,7 @@ public final class StationUpgradeTooltips {
             String teacher = switch (tier.station()) {
                 case ALEMBIC, CENTRIFUGE -> "entity.hemomancy.harbinger_alchemist";
                 case RESONANT_FORGE -> "entity.hemomancy.harbinger_artificer";
-                case SCRIPTORIUM -> "entity.hemomancy.harbinger_mnemonist";
+                case SCRIPTORIUM, LOOM -> "entity.hemomancy.harbinger_mnemonist";
                 case ARMATURE -> tier.tier() == 1 ? "entity.hemomancy.harbinger_artificer" : "block.hemomancy.sanguine_monolith";
             };
             event.getToolTip().add(Component.translatable("item.hemomancy.station_upgrade.free_kit",

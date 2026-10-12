@@ -138,6 +138,28 @@ public final class StationUpgradeActivationGameTests {
         helper.succeed();
     }
 
+    @GameTest(templateNamespace = "station_upgrade_validation", template = "empty", timeoutTicks = 100, batch = "creative_station_footprint")
+    public static void creativeKitOnALoomFillerRaisesTheMainLoom(GameTestHelper helper) {
+        var level = helper.getLevel();
+        var player = StationUpgradeGameTests.player(helper);
+        player.setGameMode(net.minecraft.world.level.GameType.CREATIVE);
+        BlockPos pos = helper.absolutePos(new BlockPos(5, 3, 5));
+        var loom = (com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomBlock) BlockInit.somatic_loom.get();
+        var state = loom.defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, Direction.NORTH);
+        level.setBlockAndUpdate(pos, state);
+        loom.placeFillers(level, pos, state);
+        BlockPos filler = pos.above();
+        helper.assertTrue(!level.getBlockState(filler).is(BlockInit.somatic_loom.get()), "the castle cell is a filler");
+        clickKit(level, filler, player, new ItemStack(ItemInit.ganglionic_harness.get()));
+        helper.assertTrue(StationTierProperty.stage(level.getBlockState(pos)) == 1, "a Creative harness on a filler raised the main Loom");
+        clickKit(level, pos.north(), player, new ItemStack(ItemInit.cortical_crown.get()));
+        helper.assertTrue(StationTierProperty.stage(level.getBlockState(pos)) == 2
+                && level.getBlockState(filler).getBlock() == level.getBlockState(pos.north()).getBlock(),
+                "a Creative crown raised the Loom without disturbing its frame");
+        player.discard();
+        helper.succeed();
+    }
+
     private static void clickKit(net.minecraft.server.level.ServerLevel level, BlockPos pos, ServerPlayer player, ItemStack kit) {
         player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, kit);
         level.getBlockState(pos).useItemOn(kit, level, player, net.minecraft.world.InteractionHand.MAIN_HAND,
@@ -193,6 +215,8 @@ public final class StationUpgradeActivationGameTests {
 
     @GameTest(templateNamespace = "station_upgrade_validation", template = "empty", timeoutTicks = 100, batch = "station_centrifuge_activation")
     public static void centrifugeActivationAndFinale(GameTestHelper helper) { upgradeBoth(helper, UpgradeStation.CENTRIFUGE); }
+    @GameTest(templateNamespace = "station_upgrade_validation", template = "empty", timeoutTicks = 100, batch = "station_loom_activation")
+    public static void loomActivationAndFinale(GameTestHelper helper) { upgradeBoth(helper, UpgradeStation.LOOM); }
 
     private static BlockPos prepare(GameTestHelper helper, StationUpgradeTier tier) {
         var level = helper.getLevel();

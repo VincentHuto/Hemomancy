@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 12,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Ganglionic Weave",
+  "subtitle": "The Greater rite of the Somatic Loom",
+  "text": "Weave one memory home at a Somatic Loom yourself. At the fifth Degree, with your blood awake, the Mnemonist offers a free Ganglionic Harness. A crafted or gifted harness works too, but never replaces your practice. Finish or cancel any paid weave, then seat the Loom two blocks behind a Cardinal Focus on a Greater working floor, with room for its frame. Light six braziers: the harness, a Neurotic Enzyme, a Nerve Fiber, Puppeteering Thread, a Sanguine Formation and a Blood Crystal Shard. Plant your Living Staff, fill four anchors, seal the daemon, close two circuits with 50 mL each, then finish the procession. The Loom can then weave Magister memories; its feelers take slack threads that drift near the echo, your staff hooks them from twice as far, and the echo stands steadier and in its school's colour. It keeps its tier when moved; inserted items drop and stored enzymes are lost. Cancellation returns offerings and Staff, not spent blood.",
+  "icon": "hemomancy:ganglionic_harness"
+}

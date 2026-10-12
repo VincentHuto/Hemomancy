@@ -24,7 +24,7 @@ final class HematicCommandWiringSourceTest {
 		assertTrue(items.contains("registerBloodMemoryItem(\"memory_hematic_rebuke\", ManipulationInit.hematic_rebuke)"));
 		assertTrue(items.contains("registerBloodMemoryItem(\"memory_hematic_impressment\", ManipulationInit.hematic_impressment)"));
 		assertFalse(tree.contains("register(\"hematic_impressment\""));
-		assertTrue(tree.contains("register(\"sovereign_instinct\",640,132, \"hematic_rebuke\")"));
+		assertTrue(tree.contains("register(\"sovereign_instinct\",1120,290, \"hematic_rebuke\")"));
 		assertTrue(manager.contains("IMPRESSED_BY_CASTER"));
 		assertTrue(manager.contains("HemoEntityPredicates.NOBLOOD.test(target)"));
 		for (String id : new String[] {"hematic_rebuke", "hematic_impressment"}) {

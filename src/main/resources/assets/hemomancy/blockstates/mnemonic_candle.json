@@ -1,16 +1,72 @@
 {
   "variants": {
-    "lit=false,waterlogged=false": {
-      "model": "hemomancy:block/mnemonic_candle"
-    },
-    "lit=false,waterlogged=true": {
-      "model": "hemomancy:block/mnemonic_candle"
-    },
-    "lit=true,waterlogged=false": {
-      "model": "hemomancy:block/mnemonic_candle"
-    },
-    "lit=true,waterlogged=true": {
-      "model": "hemomancy:block/mnemonic_candle"
-    }
+    "lit=false,waterlogged=false": [
+      {
+        "model": "hemomancy:block/mnemonic_candle"
+      },
+      {
+        "model": "hemomancy:block/mnemonic_candle",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/mnemonic_candle",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/mnemonic_candle",
+        "y": 270
+      }
+    ],
+    "lit=false,waterlogged=true": [
+      {
+        "model": "hemomancy:block/mnemonic_candle"
+      },
+      {
+        "model": "hemomancy:block/mnemonic_candle",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/mnemonic_candle",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/mnemonic_candle",
+        "y": 270
+      }
+    ],
+    "lit=true,waterlogged=false": [
+      {
+        "model": "hemomancy:block/mnemonic_candle_lit"
+      },
+      {
+        "model": "hemomancy:block/mnemonic_candle_lit",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/mnemonic_candle_lit",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/mnemonic_candle_lit",
+        "y": 270
+      }
+    ],
+    "lit=true,waterlogged=true": [
+      {
+        "model": "hemomancy:block/mnemonic_candle"
+      },
+      {
+        "model": "hemomancy:block/mnemonic_candle",
+        "y": 90
+      },
+      {
+        "model": "hemomancy:block/mnemonic_candle",
+        "y": 180
+      },
+      {
+        "model": "hemomancy:block/mnemonic_candle",
+        "y": 270
+      }
+    ]
   }
 }

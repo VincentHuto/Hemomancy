@@ -37,6 +37,8 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 	private double cloudRadius = 1.25D;
 	private int cloudDuration = 100;
 	private CloudEntityBlood.Mode cloudMode = CloudEntityBlood.Mode.STATIC;
+	/** The caster's Crimson Mastery when the cloud was cast, handed to the cloud it becomes. */
+	private float damageMultiplier = 1.0F;
 
 
 	public BloodCloudCarrierEntity(EntityType<? extends BloodCloudCarrierEntity> ent, Level world) {
@@ -63,6 +65,7 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 		compound.putDouble("CloudRadius", cloudRadius);
 		compound.putInt("CloudDuration", cloudDuration);
 		compound.putString("CloudMode", cloudMode.name());
+		compound.putFloat(CloudEntityBlood.DAMAGE_MULTIPLIER_TAG, damageMultiplier);
 	}
 
 	@Override
@@ -170,6 +173,7 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 		secondaryDamageTendency = readTendency(compound, "SecondaryDamageTendency");
 		if (compound.contains("CloudRadius")) cloudRadius = compound.getDouble("CloudRadius");
 		if (compound.contains("CloudDuration")) cloudDuration = compound.getInt("CloudDuration");
+		damageMultiplier = CloudEntityBlood.readDamageMultiplier(compound);
 		if (compound.contains("CloudMode")) {
 			try {
 				cloudMode = CloudEntityBlood.Mode.valueOf(compound.getString("CloudMode"));
@@ -186,6 +190,10 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 		this.secondaryDamageTendency = secondaryDamageTendency;
 	}
 
+	public void setDamageMultiplier(float multiplier) {
+		this.damageMultiplier = multiplier;
+	}
+
 	public void configureCloud(double radius, int duration, CloudEntityBlood.Mode mode) {
 		this.cloudRadius = radius;
 		this.cloudDuration = duration;
@@ -198,6 +206,7 @@ public class BloodCloudCarrierEntity extends AbstractHurtingProjectile {
 		CloudEntityBlood cloud = new CloudEntityBlood(EntityInit.blood_cloud.get(), level(), source);
 		cloud.setDamageTendencies(damageTendency, secondaryDamageTendency);
 		cloud.configure(cloudRadius, cloudDuration, cloudMode);
+		cloud.setDamageMultiplier(damageMultiplier);
         com.vincenthuto.hemomancy.common.damage.SchoolDamage.capture(cloud,
                 com.vincenthuto.hemomancy.common.damage.SchoolDamage.projectileContext(this));
 		return cloud;

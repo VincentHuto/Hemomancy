@@ -104,7 +104,7 @@ class ManipulationFamilyRegistryTest {
 	@Test
 	void generatedFamilyMemoriesKeepBaselineIngredientsAndScaleByStage() throws IOException {
 		Map<String, String> primary = Map.of(
-				"blood_binding", "animus", "blood_needle", "animus", "blood_shot", "animus",
+				"blood_binding", "animus", "blood_needle", "ferric", "blood_shot", "animus",
 				"blood_cloud", "animus", "scalding_updraft", "flammeus",
 				"lignum_mortis", "mortem", "summon_avatar", "animus");
 		Map<Integer, Integer> bloodIncrease = Map.of(1, 50, 2, 100, 3, 200, 4, 350);
@@ -116,26 +116,30 @@ class ManipulationFamilyRegistryTest {
 			for (ManipulationFormDefinition form : family.forms()) {
 				JsonObject recipe = JsonParser.parseString(Files.readString(
 						root.resolve("memory_" + form.id() + ".json"))).getAsJsonObject();
-                if (form.id().equals("sanguine_marionette")) {
-                    assertEquals(325, recipe.get("blood").getAsInt());
-                    assertEquals(4, recipe.getAsJsonObject("enzymes").get("animus").getAsInt());
-                    assertEquals(2, recipe.getAsJsonObject("enzymes").get("ductilis").getAsInt());
-                    assertEquals(baseline.get("catalysts"), recipe.get("catalysts"));
-                    assertEquals(3, form.requiredLevel());
-                    continue;
-                }
 				assertEquals(baseline.get("catalysts"), recipe.get("catalysts"), form.id());
 				assertEquals(baseline.get("blood").getAsInt() + bloodIncrease.get(form.requiredLevel()),
 						recipe.get("blood").getAsInt(), form.id());
 				JsonObject baseEnzymes = baseline.getAsJsonObject("enzymes");
 				JsonObject formEnzymes = recipe.getAsJsonObject("enzymes");
 				for (String enzyme : baseEnzymes.keySet()) {
-					int expected = baseEnzymes.get(enzyme).getAsInt()
+					// Sanguine Tempest's Ductilis secondary adds one Neurotic enzyme to the cloud recipe.
+					int secondary = form.id().equals("sanguine_tempest") && enzyme.equals("ductilis") ? 1 : 0;
+					int expected = baseEnzymes.get(enzyme).getAsInt() + secondary
 							+ (enzyme.equals(primary.get(family.baselineId())) ? form.requiredLevel() : 0);
 					assertEquals(expected, formEnzymes.get(enzyme).getAsInt(), form.id() + " " + enzyme);
 				}
 			}
 		}
+	}
+
+	@Test
+	void sanguineMarionetteIsARebukeFormBelowImpressment() {
+		ManipulationFamilyDefinition rebuke = ManipulationFamilyRegistry.family("sanguine_marionette").orElseThrow();
+		assertEquals("hematic_rebuke", rebuke.baselineId());
+		assertEquals(2, ManipulationFamilyRegistry.form("sanguine_marionette").orElseThrow().requiredLevel());
+		assertEquals(3, ManipulationFamilyRegistry.form("hematic_impressment").orElseThrow().requiredLevel());
+		assertTrue(ManipulationFamilyRegistry.family("blood_binding").orElseThrow().forms().stream()
+				.noneMatch(form -> form.id().equals("sanguine_marionette")));
 	}
 
 	@Test

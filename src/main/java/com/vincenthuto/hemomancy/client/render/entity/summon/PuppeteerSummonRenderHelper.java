@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.entity.summon;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.vincenthuto.hemomancy.client.render.world.PuppetStringStates;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,6 +22,7 @@ final class PuppeteerSummonRenderHelper {
 		if (!(entity instanceof BoundPuppeteerSummon summon)) {
 			return;
 		}
+		PuppetStringStates.applyBodyPose(entity, partialTicks, poseStack);
 		int dismissalTicks = summon.hemomancy$getDismissalTicks();
 		if (dismissalTicks <= 0) {
 			return;

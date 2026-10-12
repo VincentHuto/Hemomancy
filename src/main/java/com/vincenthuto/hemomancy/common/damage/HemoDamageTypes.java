@@ -35,6 +35,9 @@ public final class HemoDamageTypes {
 			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("living_flail_freeze"));
 	public static final ResourceKey<DamageType> PALE_INTERCESSION =
 			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("pale_intercession"));
+	/** Endless Hour repayment: already-mitigated debt, so it bypasses armor, effects and enchantments but not totems. */
+	public static final ResourceKey<DamageType> ENDLESS_HOUR_DEBT =
+			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("endless_hour_debt"));
 
 	private HemoDamageTypes() {
 	}
@@ -71,6 +74,11 @@ public final class HemoDamageTypes {
         return attributed(new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
                 .getHolderOrThrow(LIVING_FLAIL_FREEZE), projectile, owner), hit, owner);
     }
+
+	public static DamageSource endlessHourDebt(Level level) {
+		return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
+				.getHolderOrThrow(ENDLESS_HOUR_DEBT));
+	}
 
 	public static DamageSource paleIntercession(Level level, Entity manifestation, Entity owner) {
 		return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)

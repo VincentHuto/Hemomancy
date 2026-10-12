@@ -12,7 +12,8 @@ record ManipulationBoundaryStyle(float radius,double height,int color) {
             case FURNACE -> new ManipulationBoundaryStyle(r,.055,0xD3754D);
             case CLOUD -> new ManipulationBoundaryStyle(r,-9.945,0xD73750);
             case MAGNET -> new ManipulationBoundaryStyle(r,.055,0xCE9D9D);
-            case RUPTURE -> new ManipulationBoundaryStyle(r*Math.min(1,age/8),.055,0xB40C38);
+            case RUPTURE, ANEURYSM_RUPTURE -> new ManipulationBoundaryStyle(r*Math.min(1,age/8),.055,0xB40C38);
+            case BLOOD_SPLASH -> count==BloodShotGeometry.MORTAR?new ManipulationBoundaryStyle(r*Math.min(1,age/8),.055,0xB40C38):null;
             case UPDRAFT -> count==4?new ManipulationBoundaryStyle(4*Math.min(1,age/12),.055,0xFFAF8A):
                     count==3?new ManipulationBoundaryStyle(.7F,.055,0xFFD6A0):null;
             default -> null;

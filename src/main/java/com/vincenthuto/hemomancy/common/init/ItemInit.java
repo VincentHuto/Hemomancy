@@ -480,6 +480,9 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> crude_memory_void_shroud = BASEITEMS.register(
             "crude_memory_void_shroud",
             () -> new CrudeMemoryShardItem(new Item.Properties(), ManipulationInit.void_shroud));
+    public static final DeferredHolder<Item, Item> crude_memory_hematic_flare = BASEITEMS.register(
+            "crude_memory_hematic_flare",
+            () -> new CrudeMemoryShardItem(new Item.Properties(), ManipulationInit.hematic_flare));
     // Organ Echoes (Visceral Mirror system)
     public static final DeferredHolder<Item, Item> echo_of_spleen = SPECIALITEMS.register("echo_of_spleen",
             () -> new OrganEchoItem(new Item.Properties(), EnumOrgan.SPLEEN));
@@ -511,6 +514,12 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> memory_vital_reservoir = registerBloodMemoryItem("memory_vital_reservoir", ManipulationInit.vital_reservoir);
     public static final DeferredHolder<Item, Item> memory_hematic_rebuke = registerBloodMemoryItem("memory_hematic_rebuke", ManipulationInit.hematic_rebuke);
     public static final DeferredHolder<Item, Item> memory_hematic_riposte = registerBloodMemoryItem("memory_hematic_riposte", ManipulationInit.hematic_riposte);
+    public static final DeferredHolder<Item, Item> memory_searing_lash = registerBloodMemoryItem("memory_searing_lash", ManipulationInit.searing_lash);
+    public static final DeferredHolder<Item, Item> memory_umbral_rend = registerBloodMemoryItem("memory_umbral_rend", ManipulationInit.umbral_rend);
+    public static final DeferredHolder<Item, Item> memory_radiant_wake = registerBloodMemoryItem("memory_radiant_wake", ManipulationInit.radiant_wake);
+    public static final DeferredHolder<Item, Item> memory_lodestone_collapse = registerBloodMemoryItem("memory_lodestone_collapse", ManipulationInit.lodestone_collapse);
+    public static final DeferredHolder<Item, Item> memory_cruor_javelin = registerBloodMemoryItem("memory_cruor_javelin", ManipulationInit.cruor_javelin);
+    public static final DeferredHolder<Item, Item> memory_fruiting_contagion = registerBloodMemoryItem("memory_fruiting_contagion", ManipulationInit.fruiting_contagion);
     public static final DeferredHolder<Item, Item> memory_hematic_impressment = registerBloodMemoryItem("memory_hematic_impressment", ManipulationInit.hematic_impressment);
     //  Expanded tendency memories 
     public static final DeferredHolder<Item, Item> memory_cryogenic_pulse = registerBloodMemoryItem("memory_cryogenic_pulse", ManipulationInit.cryogenic_pulse);
@@ -982,6 +991,12 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> rubricators_quill = BASEITEMS.register("rubricators_quill",
             () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
     public static final DeferredHolder<Item, Item> palimpsest_burin = BASEITEMS.register("palimpsest_burin",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+
+    //Somatic Loom upgrade items
+    public static final DeferredHolder<Item, Item> ganglionic_harness = BASEITEMS.register("ganglionic_harness",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> cortical_crown = BASEITEMS.register("cortical_crown",
             () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
 
 

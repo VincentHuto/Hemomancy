@@ -1,0 +1,269 @@
+{
+ "parent": "minecraft:block/block",
+ "render_type": "minecraft:cutout",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "minecraft:block/green_wool",
+  "mortem": "minecraft:block/green_wool"
+ },
+ "elements": [
+  {
+   "name": "cop_mortem",
+   "from": [
+    21.45,
+    8.1,
+    -0.3521
+   ],
+   "to": [
+    23.15,
+    9.1,
+    0.3521
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      5.45,
+      6.9,
+      7.15,
+      7.9
+     ],
+     "texture": "#mortem"
+    },
+    "south": {
+     "uv": [
+      5.45,
+      6.9,
+      7.15,
+      7.9
+     ],
+     "texture": "#mortem"
+    },
+    "east": {
+     "uv": [
+      15.296,
+      6.9,
+      16.0,
+      7.9
+     ],
+     "texture": "#mortem"
+    },
+    "west": {
+     "uv": [
+      15.296,
+      6.9,
+      16.0,
+      7.9
+     ],
+     "texture": "#mortem"
+    },
+    "up": {
+     "uv": [
+      5.45,
+      15.296,
+      7.15,
+      16.0
+     ],
+     "texture": "#mortem"
+    }
+   }
+  },
+  {
+   "name": "cop_mortem",
+   "from": [
+    21.9479,
+    8.14,
+    -0.85
+   ],
+   "to": [
+    22.6521,
+    9.06,
+    0.85
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      5.948,
+      6.94,
+      6.652,
+      7.86
+     ],
+     "texture": "#mortem"
+    },
+    "south": {
+     "uv": [
+      5.948,
+      6.94,
+      6.652,
+      7.86
+     ],
+     "texture": "#mortem"
+    },
+    "east": {
+     "uv": [
+      14.3,
+      6.94,
+      16.0,
+      7.86
+     ],
+     "texture": "#mortem"
+    },
+    "west": {
+     "uv": [
+      14.3,
+      6.94,
+      16.0,
+      7.86
+     ],
+     "texture": "#mortem"
+    },
+    "up": {
+     "uv": [
+      5.948,
+      14.3,
+      6.652,
+      16.0
+     ],
+     "texture": "#mortem"
+    }
+   }
+  },
+  {
+   "name": "cop_mortem",
+   "from": [
+    21.45,
+    8.18,
+    -0.3521
+   ],
+   "to": [
+    23.15,
+    9.02,
+    0.3521
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     22.3,
+     0,
+     0.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      5.45,
+      6.98,
+      7.15,
+      7.82
+     ],
+     "texture": "#mortem"
+    },
+    "south": {
+     "uv": [
+      5.45,
+      6.98,
+      7.15,
+      7.82
+     ],
+     "texture": "#mortem"
+    },
+    "east": {
+     "uv": [
+      15.296,
+      6.98,
+      16.0,
+      7.82
+     ],
+     "texture": "#mortem"
+    },
+    "west": {
+     "uv": [
+      15.296,
+      6.98,
+      16.0,
+      7.82
+     ],
+     "texture": "#mortem"
+    },
+    "up": {
+     "uv": [
+      5.45,
+      15.296,
+      7.15,
+      16.0
+     ],
+     "texture": "#mortem"
+    }
+   }
+  },
+  {
+   "name": "cop_mortem",
+   "from": [
+    21.45,
+    8.22,
+    -0.3521
+   ],
+   "to": [
+    23.15,
+    8.98,
+    0.3521
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     22.3,
+     0,
+     0.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      5.45,
+      7.02,
+      7.15,
+      7.78
+     ],
+     "texture": "#mortem"
+    },
+    "south": {
+     "uv": [
+      5.45,
+      7.02,
+      7.15,
+      7.78
+     ],
+     "texture": "#mortem"
+    },
+    "east": {
+     "uv": [
+      15.296,
+      7.02,
+      16.0,
+      7.78
+     ],
+     "texture": "#mortem"
+    },
+    "west": {
+     "uv": [
+      15.296,
+      7.02,
+      16.0,
+      7.78
+     ],
+     "texture": "#mortem"
+    },
+    "up": {
+     "uv": [
+      5.45,
+      15.296,
+      7.15,
+      16.0
+     ],
+     "texture": "#mortem"
+    }
+   }
+  }
+ ]
+}

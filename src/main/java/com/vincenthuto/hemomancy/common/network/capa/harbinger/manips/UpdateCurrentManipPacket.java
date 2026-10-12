@@ -57,9 +57,10 @@ public class UpdateCurrentManipPacket implements CustomPacketPayload {
 						known.setSelectedManip(target);
 						boolean applied = LivingStaffWeaponFormHelper.applySelection(player, target)
 								&& CellHandFormHelper.applySelection(player, target);
-						if (applied) player.displayClientMessage(Component.literal("Selected: " + target.getProperName()), true);
+						if (applied) player.displayClientMessage(Component.literal("Selected: ").append(target.getDisplayName()), true);
 						PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
 						ManipulationDiagnosticsSync.sync((ServerPlayer) player);
+						if (applied) UseManipKeyPacket.castOnSelect((ServerPlayer) player, target);
 					}
 				}
 			});

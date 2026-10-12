@@ -87,7 +87,8 @@ public final class ManipulationStatusEvents {
             var reaction = com.vincenthuto.hemomancy.common.damage.SchoolDamage.reaction(defender, origin);
             var hit = ((com.vincenthuto.hemomancy.common.damage.SchoolDamageSource)reaction).context();
             attacker.hurt(com.vincenthuto.hemomancy.common.damage.SchoolDamage.attributed(defender.damageSources().thorns(defender),
-                    hit, defender), ManipulationStatusRules.IRON_RETORT_DAMAGE);
+                    hit, defender), ManipulationStatusRules.IRON_RETORT_DAMAGE * (defender instanceof net.minecraft.world.entity.player.Player retorter
+                    ? (float) com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper.getCrimsonMasteryMultiplier(retorter) : 1.0F));
         }
         if (defender.level() instanceof ServerLevel level)
             ManipulationVisuals.burst(level, ManipulationVisuals.Form.FERRIC_IMPACT,

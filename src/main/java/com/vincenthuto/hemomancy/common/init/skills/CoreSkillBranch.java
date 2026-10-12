@@ -132,6 +132,10 @@ public final class CoreSkillBranch {
 					new SkillPoint(70, "skill_light_footed", 550, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_bright_eyed)
 							.setSkillPointCost(3).setRequiredDegree(6).setTreePosition(572, 214).setBranch("core").setBranchColor(0xFFFFD66B)
 							.setIconItem(() -> new ItemStack(ItemInit.memory_hematic_flare.get())));
+			SkillPointInit.skill_quick_caster = SkillPointInit.registerSkill(branch,
+					new SkillPoint(73, "skill_quick_caster", 300, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_dynamic_use)
+							.setSkillPointCost(2).setRequiredDegree(2).setTreePosition(488, 664).setBranch("core").setBranchColor(0xFFD00000).setToggleable(true)
+							.setIconItem(() -> new ItemStack(ItemInit.recycled_enzyme.get())));
 		// </skill-editor>
 	}
 }

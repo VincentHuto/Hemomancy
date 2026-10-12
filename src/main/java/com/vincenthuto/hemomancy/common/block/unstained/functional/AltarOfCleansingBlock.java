@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.unstained.functional;
 
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
+import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
@@ -40,6 +41,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
+import java.util.Map;
 
 /**
  * Altar of Cleansing — a sacred altar found in Unstained temples, blessed by
@@ -51,12 +53,22 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock, IMultiB
 
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-	private static final VoxelShape SHAPE = Shapes.block();
 
 	/** Filler offset: 1×2×1 — one filler block directly above the base. */
 	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
 			new BlockPos(0, 1, 0)
 	};
+	/**
+	 * Broad dais and front step, the altar stepping up toward its back, and the reredos crowning it. The model
+	 * is authored south-facing; these boxes are turned to north so they follow the blockstate rotations.
+	 */
+	private static final Map<Direction, Map<BlockPos, VoxelShape>> CELLS = ModelShapes.cells(
+			ModelShapes.footprint(FILLER_OFFSETS),
+			new double[] {-4.9, 0, 0, 20.9, 5, 17}, new double[] {0, 0, -2.75, 16, 4.75, 0},
+			new double[] {-1.65, 5, 3.7, 17.65, 6, 17}, new double[] {-1.65, 6, 7.5, 17.65, 14, 17},
+			new double[] {0, 14, 10.7, 16, 16, 17}, new double[] {-1.65, 14, 14.4, 17.65, 23.6, 17},
+			new double[] {0, 16, 10.7, 16, 23, 17.5}, new double[] {0, 23, 14.4, 16, 27, 17.5},
+			new double[] {3.7, 27, 14.4, 12.3, 32, 17.5});
 
 	/** One-time purity boost granted by the altar. */
 	private static final float ALTAR_PURITY_BOOST = 25.0f;
@@ -83,7 +95,12 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock, IMultiB
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return SHAPE;
+		return CELLS.get(state.getValue(FACING)).getOrDefault(BlockPos.ZERO, Shapes.block());
+	}
+
+	@Override
+	public VoxelShape fillerShape(BlockState controller, BlockPos offset) {
+		return CELLS.get(controller.getValue(FACING)).get(offset);
 	}
 
 	@Override

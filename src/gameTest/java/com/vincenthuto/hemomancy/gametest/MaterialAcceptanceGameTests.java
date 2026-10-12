@@ -32,17 +32,15 @@ public final class MaterialAcceptanceGameTests {
         machine.setItem(6, machine.getItem(3));
         machine.setItem(3, ItemStack.EMPTY);
         helper.assertTrue(machine.attemptStartup(null) == VialCentrifugeStartupResult.SUCCESS, "Balanced samples must start");
-        // A player can fill the outputs while the rotor is running.
-        machine.setItem(10, new ItemStack(ItemInit.vivacious_enzyme.get(), 64));
-        machine.setItem(14, new ItemStack(ItemInit.vivacious_enzyme.get(), 64));
+        // A player can fill the shared outputs while the rotor is running.
+        for (int slot = 10; slot < 18; slot++) machine.setItem(slot, new ItemStack(ItemInit.vivacious_enzyme.get(), 64));
         tick(helper, machine, 200);
         helper.assertTrue(machine.getBloodVolume() == 0 && machine.getItem(18).isEmpty(),
                 "A blocked batch cannot produce blood or powder without consuming samples");
         helper.assertTrue(BloodVialItem.getEntityType(machine.getItem(2)) == net.minecraft.world.entity.EntityType.COW
                 && BloodVialItem.getEntityType(machine.getItem(6)) == net.minecraft.world.entity.EntityType.COW,
                 "Blocked completion must retain both paid samples");
-        machine.setItem(10, ItemStack.EMPTY);
-        machine.setItem(14, ItemStack.EMPTY);
+        for (int slot = 10; slot < 18; slot++) machine.setItem(slot, ItemStack.EMPTY);
         helper.assertTrue(machine.attemptStartup(null) == VialCentrifugeStartupResult.SUCCESS, "Clearing outputs must allow a normal retry");
         tick(helper, machine, 200);
         helper.assertTrue(machine.getBloodVolume() == 250
@@ -173,15 +171,17 @@ public final class MaterialAcceptanceGameTests {
                 helper.assertTrue(!machine.isSpinning() && machine.getBloodVolume() == 250,
                         "A completed batch contributes exactly the authored 250 ml in 200 processing ticks");
                 var enzyme = species.equals("minecraft:cow") ? ItemInit.vivacious_enzyme.get() : ItemInit.neurotic_enzyme.get();
+                // Fractions share outputs 10-17 and merge matching stacks, so check the batch total.
                 int produced = 0;
                 for (var output : machine.getOutputSlots()) {
                     if (output.isEmpty()) continue;
-                    helper.assertTrue(output.is(enzyme) && output.getCount() >= 1 && output.getCount() <= 4,
-                            "Each ten-health sample must yield one to four of its species enzyme");
-                    produced++;
+                    helper.assertTrue(output.is(enzyme), "Outputs must contain only the species enzyme");
+                    produced += output.getCount();
                 }
-                helper.assertTrue(produced == samples && countContainers(machine, rack) == 8,
-                        "Every processed sample returns its single empty vial and one enzyme output");
+                helper.assertTrue(produced >= samples && produced <= samples * 4,
+                        "Each ten-health sample must yield one to four of its species enzyme");
+                helper.assertTrue(countContainers(machine, rack) == 8,
+                        "Every processed sample returns its single empty vial");
                 helper.assertTrue(machine.getVialSlots().stream().allMatch(v -> v.isEmpty() || VialRackItem.isEmptyVial(v)),
                         "Processed vials must no longer contain a sample");
                 helper.assertTrue(machine.getItem(18).isEmpty() || machine.getItem(18).getCount() <= samples,

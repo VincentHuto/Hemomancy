@@ -132,7 +132,7 @@ public class SemiSentientConstructBlock extends Block implements EntityBlock, Si
 			List<DrudgeEntry> entries = new ArrayList<>(drudges.size());
 			for (DrudgeEntity drudge : drudges) {
 				String memName = drudge.getEquippedMemory() != null
-						? drudge.getEquippedMemory().getProperName()
+						? drudge.getEquippedMemory().getDisplayName().getString()
 						: "";
 				String customName = drudge.hasCustomName()
 						? drudge.getCustomName().getString()

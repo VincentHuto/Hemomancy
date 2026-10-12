@@ -23,8 +23,9 @@ public final class TendencyAffinityRules {
 		if (secondaryAffinityMultiplier == null) {
 			return primaryAffinityMultiplier;
 		}
-		return primaryAffinityMultiplier * PRIMARY_DAMAGE_WEIGHT
-				+ secondaryAffinityMultiplier * SECONDARY_DAMAGE_WEIGHT;
+		// A secondary school can only add to the primary matchup, never dilute it.
+		return Math.max(primaryAffinityMultiplier, primaryAffinityMultiplier * PRIMARY_DAMAGE_WEIGHT
+				+ secondaryAffinityMultiplier * SECONDARY_DAMAGE_WEIGHT);
 	}
 
 	public static float secondaryTendencyGain(float primaryGain) {

@@ -4,6 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodCloudCarrierEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodShotEntity;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
+import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.Entity;
@@ -28,11 +30,95 @@ final class BloodProjectileEffects {
             if(trail==null){if(TRAILS.size()>=192)TRAILS.pollFirstEntry();trail=new Trail(entity);TRAILS.put(entity.getId(),trail);}
             trail.lastSeen=now;
             Vec3 at=entity instanceof BloodShotEntity shot?shot.visualPosition(1):entity.position();
-            if(trail.points.isEmpty()||trail.points.getLast().distanceToSqr(at)>.0001) {
+            // Once lodged, server position corrections must not grow the path or turn the needle.
+            if(!trail.splashed && (trail.points.isEmpty()||trail.points.getLast().distanceToSqr(at)>.0001)) {
                 if(trail.points.size()>=10)trail.points.removeFirst();trail.points.add(at);trail.lastMoved=now;
+                if(entity.getDeltaMovement().lengthSqr()>1e-4)trail.heading=entity.getDeltaMovement();
             }
+            if(entity instanceof BloodShotEntity shot && shot.visualForm()!=3)
+                lodge(trail,now,BloodShotGeometry.splashRadius(BloodShotGeometry.size(shot.visualForm())));
+            else if(entity instanceof BloodNeedleEntity needle && !needle.isCoronationSword())
+                lodge(trail,now,BloodNeedleGeometry.PUNCTURE);
         }
     }
+
+    /** A projectile that lodges in a block stops here long before the server removes it, so it splashes on contact. */
+    private static void lodge(Trail trail,long now,float radius) {
+        if(trail.splashed || trail.points.size()<2 || now-trail.lastMoved<1)return;
+        trail.splashed=true;
+        Vec3 at=trail.points.getLast();
+        Vec3 d=trail.heading.lengthSqr()>1e-6?trail.heading.normalize():travel(trail,new Vec3(0,-1,0)).normalize();
+        // Find the face it struck so the stain lies on it and the spray leaves it; the splash direction points into the face.
+        var hit=world.clip(new net.minecraft.world.level.ClipContext(at.subtract(d),at.add(d.scale(1.5)),
+                net.minecraft.world.level.ClipContext.Block.COLLIDER,net.minecraft.world.level.ClipContext.Fluid.NONE,trail.entity));
+        if(hit.getType()==net.minecraft.world.phys.HitResult.Type.BLOCK)
+            splash(hit.getLocation(),Vec3.atLowerCornerOf(hit.getDirection().getNormal()).scale(-1),radius,BloodShotGeometry.BLOCK);
+        else splash(at,d,radius,BloodShotGeometry.BLOCK);
+    }
+
+    /** Server removal after an entity hit, expiry or a lost owner. Mortars splash from the server's own blast. */
+    static void shotRemoved(BloodShotEntity shot) {
+        Trail trail=TRAILS.get(shot.getId());
+        if(shot.visualForm()==2 || trail!=null && trail.splashed)return;
+        if(trail!=null)trail.splashed=true;
+        if(!struckBody(shot,trail))return;
+        splash(shot.position(),trail==null?shot.getDeltaMovement():travel(trail,shot.getDeltaMovement()),
+                BloodShotGeometry.splashRadius(BloodShotGeometry.size(shot.visualForm())),BloodShotGeometry.ENTITY);
+    }
+
+    /** A needle removed in flight punctured something; one that lodged already splashed against the block. */
+    static void needleRemoved(BloodNeedleEntity needle) {
+        Trail trail=TRAILS.get(needle.getId());
+        if(trail!=null && trail.splashed)return;
+        if(trail!=null)trail.splashed=true;
+        if(!struckBody(needle,trail))return;
+        splash(needle.position(),trail==null?needle.getDeltaMovement():travel(trail,needle.getDeltaMovement()),
+                BloodNeedleGeometry.PUNCTURE,BloodShotGeometry.NEEDLE);
+    }
+
+    /**
+     * The client sees every server removal as a discard, including projectiles that simply left tracking range or an
+     * orbit that expired; only splash when a body other than the shooter is actually where the projectile ended.
+     */
+    private static boolean struckBody(Entity projectile,Trail trail) {
+        Vec3 reach=trail==null || trail.heading.lengthSqr()<1e-6?Vec3.ZERO:trail.heading.normalize().scale(1.5);
+        Entity owner=projectile instanceof net.minecraft.world.entity.projectile.Projectile shot?shot.getOwner():null;
+        return !world.getEntities(projectile,projectile.getBoundingBox().expandTowards(reach).expandTowards(reach.scale(-1)).inflate(.6),
+                e->e instanceof net.minecraft.world.entity.LivingEntity && e!=owner).isEmpty();
+    }
+
+    /** The drawn wake stops a few blocks behind the head; fast projectiles would otherwise drag lines across the sky. */
+    static List<Vec3> trim(List<Vec3> path,double length) {
+        if(path.size()<2)return path;
+        List<Vec3> kept=new ArrayList<>();
+        Vec3 previous=path.getLast();kept.add(previous);
+        double left=length;
+        for(int i=path.size()-2;i>=0 && left>0;i--) {
+            Vec3 point=path.get(i);
+            double step=point.distanceTo(previous);
+            if(step>left){kept.add(previous.lerp(point,left/step));break;}
+            kept.add(point);left-=step;previous=point;
+        }
+        java.util.Collections.reverse(kept);
+        return kept;
+    }
+
+    // The client may already have bounced the arrow off a body it cannot hurt; the whole path keeps the true heading.
+    private static Vec3 travel(Trail trail,Vec3 fallback) {
+        return trail.points.size()>=2?trail.points.getLast().subtract(trail.points.getFirst()):fallback;
+    }
+
+    // Needles arc under gravity: fly along the live velocity, lodge along the last velocity seen in flight.
+    private static Vec3 heading(Trail trail,Vec3 velocity) {
+        return velocity.lengthSqr()>1e-6?velocity:trail.heading;
+    }
+
+    private static void splash(Vec3 at,Vec3 direction,float radius,int variant) {
+        Vec3 d=direction.lengthSqr()<1e-6?new Vec3(0,1,0):direction.normalize();
+        ManipulationVisualRenderer.accept(new ManipulationVisualPacket(ManipulationVisuals.Form.BLOOD_SPLASH,-1,at,at.add(d),
+                radius,BloodShotGeometry.SPLASH_TICKS,variant));
+    }
+
     static void render(PoseStack p,LuxUmbraBatch batch,Vec3 camera,Vec3 right,Vec3 up,double time,float partial) {
         if(world==null)return;
         var v=batch.vertices(LuxUmbraBatch.Material.ANIMUS);
@@ -45,20 +131,57 @@ final class BloodProjectileEffects {
             float alpha=alive?1:Math.max(0,1-(float)(time-trail.lastSeen)/8);
             var path=new ArrayList<>(trail.points);
             if(!path.isEmpty())path.set(path.size()-1,at);
-            float trailAlpha=alpha*Math.max(0,1-(float)(time-trail.lastMoved)/8);
-            double width=entity instanceof BloodShotEntity shot&&shot.visualForm()==2?.17:.07;
-            LuxUmbraGeometry.ribbonPath(p,v,path,camera,width,0,seed,0xFFFFFF,trailAlpha*.8f);
+            // A wake left behind by a lodged or spent projectile drains quickly instead of hanging in the air.
+            float trailAlpha=alpha*Math.max(0,1-(float)(time-trail.lastMoved)/(trail.splashed?4:8));
+            if(entity instanceof BloodShotEntity shot) {
+                Entity owner=shot.visualForm()==3?shot.getOwner():null;
+                Vec3 tether=owner==null?null:owner.getPosition(partial).add(0,owner.getBbHeight()*.62,0);
+                BloodShotGeometry.shot(p,v,trim(path,shot.visualForm()==2?4:3),alive?shot.getDeltaMovement():Vec3.ZERO,camera,right,up,time,
+                        shot.tickCount+partial,shot.visualForm(),seed,alpha,trailAlpha,alive && !trail.splashed,tether);
+                continue;
+            }
+            if(entity instanceof BloodNeedleEntity needle && needle.isForged()) {
+                // Forged iron is drawn in the solid pass; here only its blood wake, glint and wound.
+                ForgedNeedleGeometry.flightFlow(p,batch.vertices(LuxUmbraBatch.Material.DUCTILIS),trim(path,needle.isLanceNeedle()?3:2),
+                        heading(trail,alive && !trail.splashed?needle.getDeltaMovement():Vec3.ZERO),camera,right,up,time,
+                        needle.tickCount+partial,seed,alive?alpha*needle.swordOpacity():0,trailAlpha,needle.isLanceNeedle(),trail.splashed);
+                continue;
+            }
+            if(entity instanceof BloodNeedleEntity needle && !needle.isCoronationSword()) {
+                BloodNeedleGeometry.flight(p,v,trim(path,needle.isLanceNeedle()?3:2),heading(trail,alive && !trail.splashed?needle.getDeltaMovement():Vec3.ZERO),camera,right,up,time,
+                        needle.tickCount+partial,seed,alive?alpha*needle.swordOpacity():0,trailAlpha,needle.isLanceNeedle(),
+                        trail.splashed,needle.shakeTime-partial);
+                continue;
+            }
+            LuxUmbraGeometry.ribbonPath(p,v,path,camera,.07,0,seed,0xFFFFFF,trailAlpha*.8f);
             if(alive&&!(entity instanceof BloodNeedleEntity)) {
-                boolean mortar=entity instanceof BloodShotEntity shot&&shot.visualForm()==2;
-                double size=mortar?.32:entity instanceof BloodCloudCarrierEntity?.22:.13;
+                double size=.22;
                 Vec3 axis=entity.getDeltaMovement().normalize();
                 if(axis.lengthSqr()<.001)axis=up;
                 Vec3 across=LuxUmbraGeometry.facingSide(axis,camera.subtract(at));
-                LuxUmbraGeometry.card(p,v,at,across,axis,size,size*(mortar?1.15:1.7),4,seed,0xFFFFFF,alpha);
+                LuxUmbraGeometry.card(p,v,at,across,axis,size,size*1.7,4,seed,0xFFFFFF,alpha);
                 LuxUmbraGeometry.card(p,v,at,right,up,size*.7,size*.7,4,seed,0xFFFFFF,alpha*.8f);
             }
         }
         p.popPose();
     }
-    private static final class Trail {final Entity entity;final List<Vec3> points=new ArrayList<>();long lastSeen,lastMoved;Trail(Entity entity){this.entity=entity;}}
+    /** Solid pass: the iron bodies of forged needles. */
+    static void renderIron(PoseStack p,com.mojang.blaze3d.vertex.VertexConsumer iron,Vec3 camera,double time,float partial) {
+        if(world==null)return;
+        p.pushPose();p.translate(-camera.x,-camera.y,-camera.z);
+        for(Trail trail:TRAILS.values()) {
+            if(!(trail.entity instanceof BloodNeedleEntity needle) || !needle.isForged())continue;
+            boolean alive=!needle.isRemoved();
+            if(!alive)continue;
+            Vec3 at=needle.getPosition(partial);
+            if(at.distanceToSqr(camera)>128*128)continue;
+            var path=new ArrayList<>(trail.points);
+            if(!path.isEmpty())path.set(path.size()-1,at);else path.add(at);
+            ForgedNeedleGeometry.flightIron(p,iron,trim(path,needle.isLanceNeedle()?3:2),
+                    heading(trail,!trail.splashed?needle.getDeltaMovement():Vec3.ZERO),camera,needle.tickCount+partial,
+                    Math.floorMod(needle.getId(),113),needle.swordOpacity(),needle.isLanceNeedle(),trail.splashed,needle.shakeTime-partial);
+        }
+        p.popPose();
+    }
+    private static final class Trail {final Entity entity;final List<Vec3> points=new ArrayList<>();long lastSeen,lastMoved;boolean splashed;Vec3 heading=Vec3.ZERO;Trail(Entity entity){this.entity=entity;}}
 }

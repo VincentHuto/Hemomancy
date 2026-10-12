@@ -2168,8 +2168,13 @@ public final class HarbingerJourneyFixtureGameTests {
 		helper.succeed();
 	}
 
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 80)
 	public static void markedVicarSpawn(GameTestHelper helper) {
+		// The Vicar lands outside the template; its chunk must accept entities before the marked spawn is counted.
+		withEntityLoadedJourneyFixture(helper, new BlockPos(14, 10, 14), () -> markedVicarSpawnLoaded(helper));
+	}
+
+	private static void markedVicarSpawnLoaded(GameTestHelper helper) {
 		withFixture(helper, HemoJourneyStage.VICAR_REWARD, (origin, player) -> {
 			List<HarbingerVicarEntity> vicars = helper.getLevel().getEntitiesOfClass(HarbingerVicarEntity.class,
 					new AABB(origin.getX() - 3, origin.getY(), origin.getZ() - 3,

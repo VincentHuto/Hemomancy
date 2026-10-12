@@ -2,10 +2,12 @@ package com.vincenthuto.hemomancy.common.block.unstained.crafting;
 
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
+import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.unstained.crafting.PallidRetortBlockEntity;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -54,7 +56,12 @@ public class PallidRetortBlock extends BaseEntityBlock implements EntityBlock, I
 	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
 			new BlockPos(0, 1, 0)
 	};
-	private static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 32.0D, 16.0D);
+	/** Furnace base, the retort's belly and neck, and the side spout bending over into the condenser. */
+	private static final Map<Direction, Map<BlockPos, VoxelShape>> CELLS = ModelShapes.cells(
+			ModelShapes.footprint(FILLER_OFFSETS),
+			new double[] {0, 0, 0, 16, 4, 16}, new double[] {0, 4, 2, 14, 11, 14}, new double[] {2, 11, 2, 14, 18, 14},
+			new double[] {3, 18, 3, 13, 20, 13}, new double[] {5, 20, 5, 11, 28, 11}, new double[] {-2, 2, 7, 0, 28, 9},
+			new double[] {0, 28, 7, 11, 30, 9}, new double[] {7, 30, 7, 9, 31, 9});
 
 	public PallidRetortBlock(BlockBehaviour.Properties props) {
 		super(props);
@@ -84,12 +91,12 @@ public class PallidRetortBlock extends BaseEntityBlock implements EntityBlock, I
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
-		return SHAPE;
+		return CELLS.get(state.getValue(FACING)).getOrDefault(BlockPos.ZERO, Shapes.block());
 	}
 
 	@Override
-	protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
-		return SHAPE;
+	public VoxelShape fillerShape(BlockState controller, BlockPos offset) {
+		return CELLS.get(controller.getValue(FACING)).get(offset);
 	}
 
 	@Override

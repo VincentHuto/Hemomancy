@@ -34,7 +34,7 @@ final class VesperTendencyDefenseIntegrationSourceTest {
 		String shotSource = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/manipulation/animus/BloodShotManip.java"));
 		String needleSource = Files.readString(Path.of(
-				"src/main/java/com/vincenthuto/hemomancy/common/manipulation/animus/BloodNeedleManip.java"));
+				"src/main/java/com/vincenthuto/hemomancy/common/manipulation/ferric/BloodNeedleManip.java"));
 		String cloudSource = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/entity/projectile/CloudEntityBlood.java"));
 
@@ -51,7 +51,7 @@ final class VesperTendencyDefenseIntegrationSourceTest {
 		String eventSource = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/damage/SchoolDamage.java"));
 		String needleSource = Files.readString(Path.of(
-				"src/main/java/com/vincenthuto/hemomancy/common/manipulation/animus/BloodNeedleManip.java"));
+				"src/main/java/com/vincenthuto/hemomancy/common/manipulation/ferric/BloodNeedleManip.java"));
 
 		assertTrue(carrierSource.contains("getSecondaryDamageTendency()"));
 		assertTrue(eventSource.contains("carrier.getSecondaryDamageTendency()"));

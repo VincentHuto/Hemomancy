@@ -2,7 +2,10 @@ package com.vincenthuto.hemomancy.common.block.shared;
 
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.ArmatureGeometry;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.GhastlyAlembicBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.HematicArmatureBlock;
+import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.SaintSarcophagusBlock;
 import com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity;
 
 import net.minecraft.core.BlockPos;
@@ -82,7 +85,12 @@ public class FillerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         VoxelShape alembic = alembicShape(level, pos);
         if (alembic != null) return alembic;
-        return Shapes.block();
+        VoxelShape armature = armatureShape(level, pos, false);
+        if (armature != null) return armature;
+        VoxelShape sarcophagus = sarcophagusShape(level, pos);
+        if (sarcophagus != null) return sarcophagus;
+        VoxelShape traced = tracedShape(level, pos);
+        return traced != null ? traced : Shapes.block();
     }
 
     @Override
@@ -90,7 +98,12 @@ public class FillerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
             CollisionContext context) {
         VoxelShape alembic = alembicShape(level, pos);
         if (alembic != null) return alembic;
-        return isHematicArmatureCenterFiller(level, pos) ? Shapes.empty() : Shapes.block();
+        VoxelShape armature = armatureShape(level, pos, true);
+        if (armature != null) return armature;
+        VoxelShape sarcophagus = sarcophagusShape(level, pos);
+        if (sarcophagus != null) return sarcophagus;
+        VoxelShape traced = tracedShape(level, pos);
+        return traced != null ? traced : Shapes.block();
     }
 
     @Nullable
@@ -101,6 +114,47 @@ public class FillerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
         BlockState controller = level.getBlockState(main);
         return controller.getBlock() instanceof GhastlyAlembicBlock
                 ? GhastlyAlembicBlock.partShape(controller, pos.subtract(main)) : null;
+    }
+
+    /**
+     * The Armature cell this filler stands in. The subject's column keeps a full outline so the
+     * frame can be used from inside it, but no collision so the restrained player is never buried.
+     */
+    @Nullable
+    private static VoxelShape armatureShape(BlockGetter level, BlockPos pos, boolean collision) {
+        if (!(level.getBlockEntity(pos) instanceof FillerBlockEntity filler)) return null;
+        BlockPos main = filler.getMainBlockPos();
+        if (main == null) return null;
+        BlockState controller = level.getBlockState(main);
+        if (!controller.is(BlockInit.hematic_armature.get())) return null;
+        BlockPos offset = pos.subtract(main);
+        if (ArmatureGeometry.holdsSubject(offset)) return collision ? Shapes.empty() : Shapes.block();
+        VoxelShape shape = HematicArmatureBlock.partShape(controller, offset);
+        return shape.isEmpty() ? Shapes.block() : shape;
+    }
+
+    /** The part of the Saint Sarcophagus's dais, tomb, bowl or cressets standing in this filler's cell. */
+    @Nullable
+    private static VoxelShape sarcophagusShape(BlockGetter level, BlockPos pos) {
+        if (!(level.getBlockEntity(pos) instanceof FillerBlockEntity filler)) return null;
+        BlockPos main = filler.getMainBlockPos();
+        if (main == null) return null;
+        BlockState controller = level.getBlockState(main);
+        if (!controller.is(BlockInit.saint_sarcophagus.get())) return null;
+        VoxelShape shape = SaintSarcophagusBlock.partShape(controller, pos.subtract(main));
+        return shape.isEmpty() ? Shapes.block() : shape;
+    }
+
+    /** The controller's traced part for this cell, when it supplies one through {@link IMultiBlock#fillerShape}. */
+    @Nullable
+    private static VoxelShape tracedShape(BlockGetter level, BlockPos pos) {
+        if (!(level.getBlockEntity(pos) instanceof FillerBlockEntity filler)) return null;
+        BlockPos main = filler.getMainBlockPos();
+        if (main == null) return null;
+        BlockState controller = level.getBlockState(main);
+        if (!(controller.getBlock() instanceof IMultiBlock multiBlock)) return null;
+        VoxelShape shape = multiBlock.fillerShape(controller, pos.subtract(main));
+        return shape == null || shape.isEmpty() ? null : shape;
     }
 
     @Override
@@ -205,18 +259,5 @@ public class FillerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
             return filler.getMainBlockPos();
         }
         return null;
-    }
-
-    private static boolean isHematicArmatureCenterFiller(BlockGetter level, BlockPos pos) {
-        BlockEntity be = level.getBlockEntity(pos);
-        if (!(be instanceof FillerBlockEntity filler)) {
-            return false;
-        }
-        BlockPos mainPos = filler.getMainBlockPos();
-        if (mainPos == null || !level.getBlockState(mainPos).is(BlockInit.hematic_armature.get())) {
-            return false;
-        }
-        BlockPos relative = pos.subtract(mainPos);
-        return relative.equals(new BlockPos(0, 1, 0)) || relative.equals(new BlockPos(0, 2, 0));
     }
 }

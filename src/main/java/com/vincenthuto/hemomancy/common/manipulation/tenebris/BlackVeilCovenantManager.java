@@ -36,6 +36,12 @@ public final class BlackVeilCovenantManager {
                 SchoolDamage.context(ManipulationInit.black_veil_covenant.get(), level.getPlayerByUUID(owner))));
 	}
 
+	/** Whether the caster's own covenant still stands anywhere; a recast would only stack a second veil. */
+	public static boolean hasActiveVeil(net.minecraft.world.entity.player.Player player) {
+		long now = player.level().getGameTime();
+		return VEILS.stream().anyMatch(entry -> entry.owner.equals(player.getUUID()) && now <= entry.expiryTick);
+	}
+
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent.Post event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;

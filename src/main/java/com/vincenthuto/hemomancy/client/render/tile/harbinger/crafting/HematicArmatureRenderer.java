@@ -1,13 +1,11 @@
 package com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.tile.crafting.HematicArmatureModel;
+import com.vincenthuto.hemomancy.common.block.harbinger.crafting.ArmatureGeometry;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.HematicArmatureBlock;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
-import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRules;
+import com.vincenthuto.hemomancy.common.station.StationTierProperty;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.HematicArmatureBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -15,108 +13,145 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
-import org.joml.Matrix4f;
 
+/**
+ * Draws what of the Hematic Armature lies outside the controller's own block model: the bowl
+ * wings and upper frame sections, the Consecrated banners swaying under the beam, the Monolithic
+ * heart, the stored blood in the side vials and heart, and the reagents floating over their bowls.
+ * Sections and parts come from tools/model_export/hematic_armature.py, which shifts each into
+ * vanilla's element bounds; the offsets below put them back. Anchors live in ArmatureGeometry.
+ */
 public class HematicArmatureRenderer implements BlockEntityRenderer<HematicArmatureBlockEntity> {
-	public static final ResourceLocation TEXTURE =
-			Hemomancy.rloc("textures/entity/model_hematic_armature.png");
-	private static final double BOWL_RENDER_BOUNDS = 3.5D;
-	private static final double FRAME_RENDER_HEIGHT = 5.5D;
-	private static final float RESERVOIR_RADIUS = 3.0F / 16.0F;
-	private static final float RESERVOIR_BOTTOM_Y = 4.05F;
-	private static final float RESERVOIR_MAX_HEIGHT = 7.0F / 16.0F;
-	private static final float SIDE_VIAL_Z_RADIUS = 1.85F / 16.0F;
-	private static final float SIDE_VIAL_MODEL_BOTTOM_Y = 5.0F / 16.0F;
-	private static final float SIDE_VIAL_MAX_HEIGHT = 11.0F / 16.0F;
-	private static final float LEFT_VIAL_X0 = 14.15F / 16.0F;
-	private static final float LEFT_VIAL_X1 = 17.85F / 16.0F;
-	private static final float RIGHT_VIAL_X0 = -17.85F / 16.0F;
-	private static final float RIGHT_VIAL_X1 = -14.15F / 16.0F;
+	public static final String[] PART_MODELS = {"west", "east", "upper", "consecrated_west", "consecrated_east",
+			"consecrated_upper", "monolithic_west", "monolithic_east", "monolithic_upper", "banner",
+			"banner_monolithic", "vial_blood", "heart_glass", "heart_blood"};
 
-	private static final float[][] BOWL_POSITIONS = new float[][] {
-			{ -2.625F, 1.44F, 0.25F },
-			{ 2.625F, 1.44F, 0.25F },
-			{ -1.8125F, 1.26F, 1.0625F },
-			{ 1.8125F, 1.26F, 1.0625F }
-	};
+	private static final String[] STAGE_PREFIX = {"", "consecrated_", "monolithic_"};
+	/** Wings were exported 16 px toward the controller, the upper frame and its parts 48 px down. */
+	private static final float WING_SHIFT = 16F, UPPER_LIFT = 48F;
 
-	private final HematicArmatureModel model;
-
-	public HematicArmatureRenderer(BlockEntityRendererProvider.Context context) {
-		this.model = new HematicArmatureModel(context.bakeLayer(HematicArmatureModel.LAYER_LOCATION));
-	}
+	public HematicArmatureRenderer(BlockEntityRendererProvider.Context context) {}
 
 	@Override
-	public void render(HematicArmatureBlockEntity armature, float partialTicks, PoseStack poseStack,
-			MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
-		Direction facing = armature.getBlockState().hasProperty(HematicArmatureBlock.FACING)
-				? armature.getBlockState().getValue(HematicArmatureBlock.FACING)
-				: Direction.SOUTH;
-		float yRot = rotationFor(facing);
-		float itemYRot = itemRotationFor(facing);
+	public void render(HematicArmatureBlockEntity armature, float partialTicks, PoseStack pose,
+			MultiBufferSource buffers, int light, int overlay) {
+		if (armature.getLevel() == null) return;
+		Direction facing = armature.getBlockState().getValue(HematicArmatureBlock.FACING);
+		int stage = StationTierProperty.stage(armature.getBlockState());
+		Minecraft mc = Minecraft.getInstance();
+		float time = armature.getLevel().getGameTime() + partialTicks;
 
-		renderReservoir(armature, poseStack, buffer, yRot);
-		if (buffer instanceof MultiBufferSource.BufferSource source) {
-			source.endBatch(RenderTypeInit.FLASK_FLUID);
+		pose.pushPose();
+		pose.translate(.5, 0, .5);
+		pose.mulPose(Axis.YP.rotationDegrees(switch (facing) {
+			case EAST -> -90; case SOUTH -> 180; case WEST -> 90; default -> 0;
+		}));
+		pose.translate(-.5, 0, -.5);
+		renderFrame(mc, stage, time, pose, buffers, light, overlay);
+		double max = armature.getMaxBloodVolume();
+		float fill = max <= 0 ? 0 : (float) Math.min(1, armature.getBloodVolume() / max);
+		if (fill > 0) renderBlood(mc, stage, fill, pose, buffers, light, overlay);
+		pose.popPose();
+
+		renderBowlItems(armature, mc, time, pose, buffers, light, overlay, itemRotationFor(facing));
+	}
+
+	/**
+	 * Draws the sections and parts around the controller's block model in the north-facing frame:
+	 * both wings, the upper frame and, once consecrated, the banners and Monolithic heart glass.
+	 * Shared with the item renderer.
+	 */
+	public static void renderFrame(Minecraft mc, int stage, float time, PoseStack pose, MultiBufferSource buffers,
+			int light, int overlay) {
+		String prefix = STAGE_PREFIX[Mth.clamp(stage, 0, 2)];
+		pose.pushPose();
+		pose.translate(-WING_SHIFT / 16F, 0, 0);
+		renderModel(mc, prefix + "west", pose, buffers, light, overlay, false);
+		pose.translate(2 * WING_SHIFT / 16F, 0, 0);
+		renderModel(mc, prefix + "east", pose, buffers, light, overlay, false);
+		pose.popPose();
+
+		pose.pushPose();
+		pose.translate(0, UPPER_LIFT / 16F, 0);
+		renderModel(mc, prefix + "upper", pose, buffers, light, overlay, false);
+		if (stage == 2) renderModel(mc, "heart_glass", pose, buffers, light, overlay, true);
+		pose.popPose();
+
+		if (stage > 0) {
+			// The banners hang still in a draught: a slow opposed sway and a slight flutter.
+			float sway = Mth.sin(time * .08F) * 2.6F;
+			float flutter = Mth.sin(time * .11F + .8F) * 1F;
+			float[] hinge = {ArmatureGeometry.BANNER_X[0], ArmatureGeometry.BANNER_PIVOT[0], ArmatureGeometry.BANNER_PIVOT[1]};
+			for (int k = 0; k < 2; k++) {
+				pose.pushPose();
+				pose.translate((ArmatureGeometry.BANNER_X[k] - ArmatureGeometry.BANNER_X[0]) / 16F, 0, 0);
+				px(pose, hinge);
+				pose.mulPose(Axis.ZP.rotationDegrees(k == 0 ? sway : -sway));
+				pose.mulPose(Axis.XP.rotationDegrees(flutter));
+				pxBack(pose, hinge);
+				pose.translate(0, UPPER_LIFT / 16F, 0);
+				renderModel(mc, stage == 1 ? "banner" : "banner_monolithic", pose, buffers, light, overlay, false);
+				pose.popPose();
+			}
 		}
-		renderModel(armature, partialTicks, poseStack, buffer, combinedLight, yRot);
-		renderBowlItems(armature, poseStack, buffer, combinedLight, combinedOverlay, itemYRot);
 	}
 
-	private void renderModel(HematicArmatureBlockEntity armature, float partialTicks, PoseStack poseStack,
-			MultiBufferSource buffer, int combinedLight, float yRot) {
-		poseStack.pushPose();
-		applyModelTransform(poseStack, yRot);
-		VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityTranslucent(TEXTURE));
-		float ageInTicks = armature.getLevel() != null
-				? armature.getLevel().getGameTime() + partialTicks
-				: partialTicks;
-		model.setupBannerAnimation(ageInTicks);
-		model.setupUpgradeVisibility(armature.getArmatureTier());
-		model.renderToBuffer(poseStack, vertexConsumer, combinedLight, OverlayTexture.NO_OVERLAY, -1);
-		poseStack.popPose();
+	/** Stretches the unit-high fluid models from each vessel's floor to the stored level. */
+	private static void renderBlood(Minecraft mc, int stage, float fill, PoseStack pose, MultiBufferSource buffers,
+			int light, int overlay) {
+		float[] vial = ArmatureGeometry.VIAL_FLUID;
+		float[] floor = {ArmatureGeometry.VIAL_X[0], vial[1], ArmatureGeometry.VIAL_Z};
+		for (float x : ArmatureGeometry.VIAL_X) {
+			pose.pushPose();
+			pose.translate((x - floor[0]) / 16F, 0, 0);
+			px(pose, floor);
+			pose.scale(1, (vial[2] - vial[1]) * fill, 1);
+			pxBack(pose, floor);
+			renderModel(mc, "vial_blood", pose, buffers, light, overlay, false);
+			pose.popPose();
+		}
+		if (stage == 2) {
+			float[] heart = ArmatureGeometry.HEART;
+			float[] heartFloor = {heart[0], heart[3], heart[1]};
+			pose.pushPose();
+			px(pose, heartFloor);
+			pose.scale(1, (heart[4] - heart[3]) * fill, 1);
+			pxBack(pose, heartFloor);
+			pose.translate(0, UPPER_LIFT / 16F, 0);
+			renderModel(mc, "heart_blood", pose, buffers, light, overlay, false);
+			pose.popPose();
+		}
 	}
 
-	private static void renderBowlItems(HematicArmatureBlockEntity armature, PoseStack poseStack,
-			MultiBufferSource buffer, int combinedLight, int combinedOverlay, float yRot) {
-		ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
-		long gameTime = armature.getLevel() != null ? armature.getLevel().getGameTime() : 0L;
+	private static void renderBowlItems(HematicArmatureBlockEntity armature, Minecraft mc, float time, PoseStack pose,
+			MultiBufferSource buffers, int light, int overlay, float yRot) {
+		ItemRenderer itemRenderer = mc.getItemRenderer();
 		for (int slot = HematicArmatureBlockEntity.SLOT_HEAD_REAGENT;
 			 slot <= HematicArmatureBlockEntity.SLOT_FEET_REAGENT; slot++) {
 			ItemStack stack = armature.getItem(slot);
-			if (stack.isEmpty()) {
-				continue;
-			}
-			float[] pos = BOWL_POSITIONS[slot];
-			float age = gameTime + Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
-			float bob = (float) Math.sin((age + slot * 11.0F) * 0.12F) * 0.025F;
-			poseStack.pushPose();
-			poseStack.translate(0.5D, 0.0D, 0.5D);
-			poseStack.mulPose(Axis.YP.rotationDegrees(yRot));
-			poseStack.translate(pos[0], pos[1] + bob, pos[2]);
-			poseStack.mulPose(Axis.YP.rotationDegrees((age * 2.5F + slot * 47.0F) % 360.0F));
-			poseStack.scale(0.38F, 0.38F, 0.38F);
-			itemRenderer.renderStatic(stack, ItemDisplayContext.FIXED, combinedLight, combinedOverlay,
-					poseStack, buffer, armature.getLevel(), slot);
-			poseStack.popPose();
+			if (stack.isEmpty()) continue;
+			double[] bowl = ArmatureGeometry.BOWLS[slot];
+			float bob = Mth.sin((time + slot * 11.0F) * 0.12F) * 0.025F;
+			pose.pushPose();
+			pose.translate(0.5D, 0.0D, 0.5D);
+			pose.mulPose(Axis.YP.rotationDegrees(yRot));
+			pose.translate(bowl[0], bowl[1] + bob, bowl[2]);
+			pose.mulPose(Axis.YP.rotationDegrees((time * 2.5F + slot * 47.0F) % 360.0F));
+			pose.scale(0.38F, 0.38F, 0.38F);
+			itemRenderer.renderStatic(stack, ItemDisplayContext.FIXED, light, overlay, pose, buffers,
+					armature.getLevel(), slot);
+			pose.popPose();
 		}
 	}
 
-	private static float rotationFor(Direction facing) {
-		return switch (facing) {
-			case NORTH -> 180.0F;
-			case EAST -> 270.0F;
-			case WEST -> 90.0F;
-			default -> 0.0F;
-		};
-	}
-
+	/** Bowl anchors are south-facing offsets, turned the same way the block entity aims its particles. */
 	private static float itemRotationFor(Direction facing) {
 		return switch (facing) {
 			case NORTH -> 180.0F;
@@ -126,96 +161,25 @@ public class HematicArmatureRenderer implements BlockEntityRenderer<HematicArmat
 		};
 	}
 
-	private static void renderReservoir(HematicArmatureBlockEntity armature, PoseStack poseStack,
-			MultiBufferSource buffer, float yRot) {
-		double max = armature.getMaxBloodVolume();
-		double current = armature.getBloodVolume();
-		if (max <= 0.0D || current <= 0.0D) {
-			return;
-		}
-
-		float fillPct = (float) Math.min(current / max, 1.0D);
-		renderSideVialReservoirs(poseStack, buffer, yRot, fillPct);
-		if (armature.getArmatureTier().id() >= ArmatureUpgradeRules.ArmatureTier.MONOLITHIC.id()) {
-			renderHeartReservoir(poseStack, buffer, fillPct);
-		}
+	private static void renderModel(Minecraft mc, String name, PoseStack pose, MultiBufferSource buffers, int light,
+			int overlay, boolean translucent) {
+		var model = mc.getModelManager().getModel(ModelResourceLocation.standalone(Hemomancy.rloc("block/hematic_armature_" + name)));
+		var buffer = buffers.getBuffer(translucent ? RenderType.entityTranslucentCull(TextureAtlas.LOCATION_BLOCKS)
+				: RenderType.entityCutoutNoCull(TextureAtlas.LOCATION_BLOCKS));
+		mc.getBlockRenderer().getModelRenderer().renderModel(pose.last(), buffer, null, model, 1, 1, 1, light, overlay);
 	}
 
-	private static void renderSideVialReservoirs(PoseStack poseStack, MultiBufferSource buffer, float yRot,
-			float fillPct) {
-		float height = SIDE_VIAL_MAX_HEIGHT * fillPct;
-		float topY = SIDE_VIAL_MODEL_BOTTOM_Y - height;
-
-		poseStack.pushPose();
-		applyModelTransform(poseStack, yRot);
-		VertexConsumer vc = buffer.getBuffer(RenderTypeInit.FLASK_FLUID);
-		Matrix4f mat = poseStack.last().pose();
-		renderColorBox(vc, mat, LEFT_VIAL_X0, topY, -SIDE_VIAL_Z_RADIUS,
-				LEFT_VIAL_X1, SIDE_VIAL_MODEL_BOTTOM_Y, SIDE_VIAL_Z_RADIUS,
-				154, 9, 9, 192);
-		renderColorBox(vc, mat, RIGHT_VIAL_X0, topY, -SIDE_VIAL_Z_RADIUS,
-				RIGHT_VIAL_X1, SIDE_VIAL_MODEL_BOTTOM_Y, SIDE_VIAL_Z_RADIUS,
-				154, 9, 9, 192);
-		poseStack.popPose();
-	}
-
-	private static void applyModelTransform(PoseStack poseStack, float yRot) {
-		poseStack.translate(0.5D, 1.5D, 0.5D);
-		poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
-		poseStack.mulPose(Axis.YP.rotationDegrees(yRot));
-	}
-
-	private static void renderHeartReservoir(PoseStack poseStack, MultiBufferSource buffer, float fillPct) {
-		float height = RESERVOIR_MAX_HEIGHT * fillPct;
-
-		poseStack.pushPose();
-		poseStack.translate(0.5F, RESERVOIR_BOTTOM_Y, 0.5F);
-		VertexConsumer vc = buffer.getBuffer(RenderTypeInit.FLASK_FLUID);
-		Matrix4f mat = poseStack.last().pose();
-		renderColorBox(vc, mat, -RESERVOIR_RADIUS, 0.0F, -RESERVOIR_RADIUS,
-				RESERVOIR_RADIUS, height, RESERVOIR_RADIUS,
-				154, 9, 9, 192);
-		poseStack.popPose();
-	}
-
-	private static void renderColorBox(VertexConsumer vc, Matrix4f mat,
-			float x0, float y0, float z0, float x1, float y1, float z1,
-			int r, int g, int b, int a) {
-		vc.addVertex(mat, x0, y1, z0).setColor(r, g, b, a);
-		vc.addVertex(mat, x0, y1, z1).setColor(r, g, b, a);
-		vc.addVertex(mat, x1, y1, z1).setColor(r, g, b, a);
-		vc.addVertex(mat, x1, y1, z0).setColor(r, g, b, a);
-		vc.addVertex(mat, x0, y0, z1).setColor(r, g, b, a);
-		vc.addVertex(mat, x0, y0, z0).setColor(r, g, b, a);
-		vc.addVertex(mat, x1, y0, z0).setColor(r, g, b, a);
-		vc.addVertex(mat, x1, y0, z1).setColor(r, g, b, a);
-		vc.addVertex(mat, x1, y1, z0).setColor(r, g, b, a);
-		vc.addVertex(mat, x1, y0, z0).setColor(r, g, b, a);
-		vc.addVertex(mat, x0, y0, z0).setColor(r, g, b, a);
-		vc.addVertex(mat, x0, y1, z0).setColor(r, g, b, a);
-		vc.addVertex(mat, x0, y1, z1).setColor(r, g, b, a);
-		vc.addVertex(mat, x0, y0, z1).setColor(r, g, b, a);
-		vc.addVertex(mat, x1, y0, z1).setColor(r, g, b, a);
-		vc.addVertex(mat, x1, y1, z1).setColor(r, g, b, a);
-		vc.addVertex(mat, x0, y1, z0).setColor(r, g, b, a);
-		vc.addVertex(mat, x0, y0, z0).setColor(r, g, b, a);
-		vc.addVertex(mat, x0, y0, z1).setColor(r, g, b, a);
-		vc.addVertex(mat, x0, y1, z1).setColor(r, g, b, a);
-		vc.addVertex(mat, x1, y1, z1).setColor(r, g, b, a);
-		vc.addVertex(mat, x1, y0, z1).setColor(r, g, b, a);
-		vc.addVertex(mat, x1, y0, z0).setColor(r, g, b, a);
-		vc.addVertex(mat, x1, y1, z0).setColor(r, g, b, a);
-	}
+	private static void px(PoseStack pose, float[] at) { pose.translate(at[0] / 16F, at[1] / 16F, at[2] / 16F); }
+	private static void pxBack(PoseStack pose, float[] at) { pose.translate(-at[0] / 16F, -at[1] / 16F, -at[2] / 16F); }
 
 	@Override
 	public boolean shouldRenderOffScreen(HematicArmatureBlockEntity armature) {
+		// The frame rises into the chunk section above the controller; keep drawing it from there.
 		return true;
 	}
 
 	@Override
 	public AABB getRenderBoundingBox(HematicArmatureBlockEntity armature) {
-		return new AABB(armature.getBlockPos())
-				.inflate(BOWL_RENDER_BOUNDS, 0.0D, BOWL_RENDER_BOUNDS)
-				.expandTowards(0.0D, FRAME_RENDER_HEIGHT, 0.0D);
+		return new AABB(armature.getBlockPos()).inflate(2, 0, 2).expandTowards(0, 4, 0);
 	}
 }

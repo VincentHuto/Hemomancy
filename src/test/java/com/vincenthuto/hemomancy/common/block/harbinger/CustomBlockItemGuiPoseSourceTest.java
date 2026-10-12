@@ -27,10 +27,12 @@ public final class CustomBlockItemGuiPoseSourceTest {
 		assertContains("visceral mirror item renderer should flip local X so the authored front face is visible",
 				mirror, "poseStack.scale(-GUI_MODEL_SCALE, GUI_MODEL_SCALE, GUI_MODEL_SCALE)");
 		String spindle = read(SOURCE_ROOT.resolve(CRAFTING_ITEM_RENDERER_PACKAGE + "PuppeteersSpindleItemRenderer.java"));
-		assertContains("puppeteers spindle item renderer should lower its GUI model",
-				spindle, "GUI_MODEL_TRANSLATE_Y = 0.26D");
-		assertContains("puppeteers spindle item renderer should use the lowered GUI model translation",
-				spindle, "poseStack.translate(0.5D, GUI_MODEL_TRANSLATE_Y, 0.5D)");
+		assertContains("puppeteers spindle item renderer should name the mesh's visual centre",
+				spindle, "MODEL_CENTRE_Y = 16.25F / 16.0F");
+		assertContains("puppeteers spindle item renderer should place its GUI model at the slot centre",
+				spindle, "poseStack.translate(0.5D, 0.5D, 0.5D)");
+		assertContains("puppeteers spindle item renderer should rotate about the mesh's centre, not its feet",
+				spindle, "poseStack.translate(0.0F, -MODEL_CENTRE_Y, -MODEL_CENTRE_Z)");
 	}
 
 	private static void assertDownRightGuiPose(String label, String packagePath, String fileName) throws IOException {

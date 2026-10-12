@@ -583,7 +583,7 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 		if (selected == null || selected == BloodManipulation.BLANK) {
 			return "None selected";
 		}
-		return selected.getProperName();
+		return selected.getDisplayName().getString();
 	}
 
 	private static String format(double value) {

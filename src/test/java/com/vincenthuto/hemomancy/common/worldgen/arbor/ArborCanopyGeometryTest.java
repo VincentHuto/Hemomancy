@@ -8,28 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ArborCanopyGeometryTest {
     @Test
-    void familyLimbBraidsAroundTrunkBeforeOpeningIntoCanopy() {
-        List<ArborCanopyGeometry.Point> limb = ArborCanopyGeometry.familyLimb(2, 7.4, 4.8);
-        assertTrue(limb.size() >= 13);
-        assertTrue(limb.get(0).radialDistance() < 0.75);
-        assertTrue(limb.get(5).angle() - limb.get(0).angle() > 1.25,
-                "the lower limb must visibly coil around the trunk");
-        assertTrue(limb.get(limb.size() - 1).radialDistance() > 3.5);
-        assertTrue(limb.get(limb.size() - 1).y() > 4.5);
-    }
-
-    @Test
-    void fruitStemIsShortCurvedAndHanging() {
-        ArborCanopyGeometry.Point fruit = new ArborCanopyGeometry.Point(3.2, 4.8, -1.4);
-        List<ArborCanopyGeometry.Point> stem = ArborCanopyGeometry.hangingStem(fruit, 1.1, .37);
-        assertEquals(6, stem.size());
-        assertTrue(stem.get(0).y() > fruit.y());
-        assertTrue(stem.get(0).distanceTo(fruit) < 1.6);
-        assertEquals(fruit.x(), stem.get(5).x(), 1.0e-6);
-        assertEquals(fruit.y(), stem.get(5).y(), 1.0e-6);
-    }
-
-    @Test
     void smoothingPreservesEndpointsAndAddsAContinuousCurve() {
         List<ArborCanopyGeometry.Point> path = List.of(
                 new ArborCanopyGeometry.Point(0, 0, 0),
@@ -64,21 +42,6 @@ class ArborCanopyGeometryTest {
     }
 
     @Test
-    void coloredVeinFollowsTheOutsideSurfaceInsteadOfClippingInsideBark() {
-        List<ArborCanopyGeometry.Point> branch = List.of(
-                new ArborCanopyGeometry.Point(1, 0, 0),
-                new ArborCanopyGeometry.Point(2, 1, 0),
-                new ArborCanopyGeometry.Point(3, 2, 0));
-
-        List<ArborCanopyGeometry.Point> vein = ArborCanopyGeometry.surfaceVein(
-                branch, .19, .045, .027, .010, .004);
-
-        assertEquals(.213, vein.get(0).distanceTo(branch.get(0)), 1.0e-6);
-        assertEquals(.051, vein.get(2).distanceTo(branch.get(2)), 1.0e-6);
-        assertTrue(vein.get(1).radialDistance() > branch.get(1).radialDistance());
-    }
-
-    @Test
     void terminalFoliageSitsBeyondTheCappedBranchEnd() {
         List<ArborCanopyGeometry.Point> branch = List.of(
                 new ArborCanopyGeometry.Point(0, 0, 0),
@@ -92,26 +55,6 @@ class ArborCanopyGeometryTest {
         assertEquals(.24, foliage.distanceTo(last), 1.0e-6);
         assertTrue(foliage.subtract(last).dot(outward) > 0,
                 "terminal leaves must cover the outside face rather than sink into the tube");
-    }
-
-    @Test
-    void terminalWoodContinuesIntoTheFoliageAttachment() {
-        List<ArborCanopyGeometry.Point> branch = List.of(
-                new ArborCanopyGeometry.Point(0, 0, 0),
-                new ArborCanopyGeometry.Point(.2, 1, 0),
-                new ArborCanopyGeometry.Point(.6, 2, .1));
-
-        List<ArborCanopyGeometry.Point> tapered = ArborCanopyGeometry.terminalTaper(branch, .36);
-        ArborCanopyGeometry.Point oldEnd = branch.get(branch.size() - 1);
-        ArborCanopyGeometry.Point outward = oldEnd.subtract(branch.get(branch.size() - 2)).normalized();
-
-        assertEquals(branch, tapered.subList(0, branch.size()));
-        assertEquals(branch.size() + 3, tapered.size());
-        assertEquals(.36, tapered.get(tapered.size() - 1).distanceTo(oldEnd), 1.0e-6);
-        assertTrue(tapered.get(tapered.size() - 1).subtract(oldEnd).dot(outward) > .35,
-                "the wooden tip must reach the foliage bud instead of ending at a flat disk");
-        assertTrue(tapered.get(branch.size()).distanceTo(oldEnd)
-                        < tapered.get(branch.size() + 1).distanceTo(oldEnd));
     }
 
     @Test

@@ -10,7 +10,42 @@
     },
     {
       "apply": {
+        "model": "hemomancy:block/mycelial_crucible_glass"
+      },
+      "when": {
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
         "model": "hemomancy:block/mycelial_crucible",
+        "y": 90
+      },
+      "when": {
+        "facing": "east"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/mycelial_crucible_glass",
+        "y": 90
+      },
+      "when": {
+        "facing": "east"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/mycelial_crucible",
+        "y": 180
+      },
+      "when": {
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/mycelial_crucible_glass",
         "y": 180
       },
       "when": {
@@ -28,11 +63,11 @@
     },
     {
       "apply": {
-        "model": "hemomancy:block/mycelial_crucible",
-        "y": 90
+        "model": "hemomancy:block/mycelial_crucible_glass",
+        "y": 270
       },
       "when": {
-        "facing": "east"
+        "facing": "west"
       }
     }
   ]

@@ -266,8 +266,8 @@ public class RadialChooseManipScreen extends Screen {
 				ManipulationIconResolver.overlay(manipulation.getName()),
 				ManipulationIconResolver.base(manipulation.getName()),
 				0, 0, 16, 16, 16, 16,
-				Component.literal(manipulation.getProperName()
-						+ (staffUnavailable ? " (staff planted in active rite)" : ""))) {
+				manipulation.getDisplayName()
+						.append(staffUnavailable ? " (staff planted in active rite)" : "")) {
 			@Override
 			public boolean onClick() {
 				if (staffUnavailable) return false;
@@ -288,7 +288,7 @@ public class RadialChooseManipScreen extends Screen {
 			public MutableComponent getCentralText() {
 				long now = mc.level != null ? mc.level.getGameTime() : 0L;
 				long remaining = ClientManipulationCooldowns.remainingTicks(manipulation.getName(), now);
-				MutableComponent label = Component.literal(manipulation.getProperName());
+				MutableComponent label = manipulation.getDisplayName();
 				if (remaining <= 0) return label;
 				long seconds = Math.max(1L, (remaining + 19L) / 20L);
 				return label.append(Component.literal("\n" + seconds + "s cooldown").withStyle(ChatFormatting.RED));

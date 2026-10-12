@@ -83,6 +83,10 @@ public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBl
 	public void setCorpusState(EnumCorpusState state) {
 		this.corpusState = state;
 		setChanged();
+		// The renderer kindles the corpus's veins by state.
+		if (level != null && !level.isClientSide) {
+			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+		}
 	}
 
 	public int getExtractionAttempts() {
@@ -130,6 +134,10 @@ public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBl
 	public void addOffering() {
 		this.offeringBloodVolume++;
 		setChanged();
+		// The offering bowl's blood level is drawn from this count.
+		if (level != null && !level.isClientSide) {
+			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+		}
 	}
 
 	public float getLidAngle(float partialTick) {
@@ -165,6 +173,7 @@ public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBl
 		CompoundTag tag = super.getUpdateTag(provider);
 		tag.putBoolean("IsOpen", isOpen);
 		tag.putBoolean("IsConsecrated", isConsecrated);
+		tag.putInt("OfferingBloodVolume", offeringBloodVolume);
 		tag.putString("SaintType", saintType.name());
 		tag.putString("CorpusState", corpusState.name());
 		tag.putBoolean("SampleYielded", sampleYielded);

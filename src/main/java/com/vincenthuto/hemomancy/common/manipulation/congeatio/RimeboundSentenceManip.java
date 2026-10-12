@@ -21,6 +21,9 @@ import java.util.List;
 
 public class RimeboundSentenceManip extends BloodManipulation {
 	private static final int CHARGE_TICKS = 70;
+	/** Damage is BASE + CHARGE x charge fraction, before Crimson Mastery. */
+	public static final float BASE_DAMAGE = 4.0F;
+	public static final float CHARGE_DAMAGE = 8.0F;
 
 	public RimeboundSentenceManip(String name, double cost, double alignment, double xpCost, EnumManipulationType type,
 			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
@@ -29,16 +32,30 @@ public class RimeboundSentenceManip extends BloodManipulation {
 
 	@Override public int getRequiredChargeTicks() { return CHARGE_TICKS; }
 
+	private static LivingEntity target(Player player) {
+		return ManipulationCombatHelper.aimedTarget(player, player.level(), 20, 0.75D);
+	}
+
+	@Override
+	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
+		if (target(player) == null) {
+			player.displayClientMessage(net.minecraft.network.chat.Component.literal("No vessel in your sights to sentence."), true);
+			return false;
+		}
+		return super.canPerformAction(player, heldItem, ticks);
+	}
+
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position, float heldTicks) {
         try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player, getRequiredChargeTicks() <= 0 ? 1 : heldTicks / getRequiredChargeTicks())) {
 
 		if (!(world instanceof ServerLevel level)) return;
-		LivingEntity target = ManipulationCombatHelper.aimedTarget(player, level, 20, 0.75D);
+		LivingEntity target = target(player);
 		if (target == null) return;
 		float charge = ManipulationCastingRules.chargeFraction(heldTicks, CHARGE_TICKS);
 		int duration = ManipulationScalingRules.scaledInt(20, 120, heldTicks, CHARGE_TICKS);
-		if (!ManipulationCombatHelper.hurt(this, player, target, level, 2.0F + 6.0F * charge, duration, charge >= 1 ? 3 : 1)) return;
+		if (!ManipulationCombatHelper.hurt(this, player, target, level,
+				(BASE_DAMAGE + CHARGE_DAMAGE * charge) * (float) com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper.getCrimsonMasteryMultiplier(player), duration, charge >= 1 ? 3 : 1)) return;
         ManipulationVisuals.attached(target, ManipulationVisuals.Form.RIMEBOUND, .7, duration, 1);
 		if (!ManipulationReactiveEvents.isBoss(target)) {
 			BlockPos base = target.blockPosition();

@@ -39,6 +39,7 @@ public class GlacialGraspManip extends BloodManipulation {
 	private static final double BASE_RANGE = 10.0D;
 	private static final double PATH_WIDTH = 2.0D;
 	private static final int RADIUS = 2;
+	private static final float DRY_DAMAGE = 2.0F;
 
 	public GlacialGraspManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
@@ -67,9 +68,15 @@ public class GlacialGraspManip extends BloodManipulation {
 		int frozenEntities = 0;
 
 		for (LivingEntity target : ManipulationCombatHelper.hostileTargets(player, world, range + PATH_WIDTH)) {
-			boolean wet = target.isInWaterOrBubble()
-					|| world.getFluidState(target.blockPosition()).is(Fluids.WATER);
-			if (!wet || ManipulationCombatHelper.distanceToSegment(target.getEyePosition(), eye, end) > PATH_WIDTH) {
+			boolean wet = isWet(target);
+			if (ManipulationCombatHelper.distanceToSegment(target.getEyePosition(), eye, end) > PATH_WIDTH) {
+				continue;
+			}
+			if (!wet) {
+				// Dry bodies only take a skin of frost: light freeze damage and a single Rime level.
+				ManipulationCombatHelper.hurt(this, player, target, sLevel,
+						(float) (DRY_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier(player)), 100, 1);
+				frozenEntities++;
 				continue;
 			}
 			SchoolStates.apply(player, target, SchoolState.RIME, 100, target.isInWaterOrRain() ? 2 : 1);
@@ -104,11 +111,21 @@ public class GlacialGraspManip extends BloodManipulation {
 	        }
     }
 
+	/** Soaked bodies freeze solid: submerged, in a bubble column, standing in water, or caught in the rain. */
+	public static boolean isWet(LivingEntity target) {
+		return wetRule(target.isInWaterOrBubble(), target.isInWaterOrRain(),
+				target.level().getFluidState(target.blockPosition()).is(Fluids.WATER));
+	}
+
+	static boolean wetRule(boolean inWaterOrBubble, boolean inWaterOrRain, boolean standingInWater) {
+		return inWaterOrBubble || inWaterOrRain || standingInWater;
+	}
+
 	private static void freezeWater(ServerLevel world, BlockPos target, RandomSource random, Set<BlockPos> frozenTargets,
 			Player owner) {
 		BlockState state = world.getBlockState(target);
 		if (!state.getFluidState().is(Fluids.WATER) || !state.getFluidState().isSource()
-				|| !world.getBlockState(target.above()).isAir()) return;
+				|| !world.getBlockState(target.above()).isAir() || !ManipulationCombatHelper.mayAlter(owner, target)) return;
 		TemporaryIceManager.placeOwned(world, target, BlockInit.frozen_cruor.get().defaultBlockState(),
 				60 + random.nextInt(40), owner.getUUID());
 		frozenTargets.add(target.immutable());

@@ -22,17 +22,16 @@ import net.minecraft.world.phys.AABB;
 import java.util.List;
 
 /**
- * Osseous Bloom — a T3 (SUMMA) CONGEATIO quick manipulation that forces a
- * crystallisation cascade through the blood of all nearby enemies.
+ * Osseous Bloom (displayed as "Crystalline Bloom"; the registry ID stays {@code osseous_bloom}) — a T3 (SUMMA)
+ * CONGEATIO quick manipulation that forces a crystallisation cascade through the blood of all nearby enemies.
  *
- * <p>Damage scales inversely with target wounds: healthy targets suffer more
- * as their full blood volume crystallises under the pressure, while
- * near-dead targets are largely spared (their blood is already depleted).
- * Confirmed hits build Rime for 4 seconds.
+ * <p>Each enemy within six blocks takes a quarter of its <em>current</em> health as freeze damage, scaled by
+ * Crimson Mastery, so healthy targets suffer more and near-dead targets are largely spared. Bosses (the shared
+ * {@link ManipulationReactiveEvents#isBoss} predicate) are capped at twelve. Confirmed hits build Rime for
+ * 4 seconds. With no enemy in reach the cast is refused before payment.
  *
  * <p>This rewards opening engagements — use it at the start of a fight when
- * enemies are at full health, not as a finisher. Pair with Exsanguinate or
- * Glacial Bastion for a full Congeatio crowd-control combo.
+ * enemies are at full health, not as a finisher.
  */
 public class OsseousBloomManip extends BloodManipulation {
 
@@ -40,11 +39,27 @@ public class OsseousBloomManip extends BloodManipulation {
 	/** Fraction of current HP dealt as magic damage. */
 	private static final float HP_FRACTION = 0.25f;
 	private static final int RIME_DURATION = 80;  // 4 seconds
+	/** Shared boss cap: a full-health boss would otherwise lose a quarter of its life per bloom. */
+	private static final float BOSS_DAMAGE_CAP = 12.0F;
 
 	public OsseousBloomManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
 			EnumVeinSections section) {
 		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
+	}
+
+	private static List<LivingEntity> targets(Player player, Level world) {
+		return world.getEntitiesOfClass(LivingEntity.class, new AABB(player.blockPosition()).inflate(RADIUS),
+				e -> ManipulationCombatHelper.canHarm(player, e) && e.distanceTo(player) <= RADIUS);
+	}
+
+	@Override
+	protected boolean canPerformAction(Player player, ItemStack heldItem, float ticks) {
+		if (targets(player, player.level()).isEmpty()) {
+			player.displayClientMessage(Component.literal("No vessels within the bloom's reach."), true);
+			return false;
+		}
+		return super.canPerformAction(player, heldItem, ticks);
 	}
 
 	@Override
@@ -54,20 +69,14 @@ public class OsseousBloomManip extends BloodManipulation {
 		if (!(world instanceof ServerLevel sLevel)) return;
 
 		BlockPos center = player.blockPosition();
-		AABB searchBox = new AABB(center).inflate(RADIUS);
-		List<LivingEntity> targets = world.getEntitiesOfClass(LivingEntity.class, searchBox,
-				e -> ManipulationCombatHelper.canHarm(player, e) && e.distanceTo(player) <= RADIUS);
-
-		if (targets.isEmpty()) {
-			player.displayClientMessage(Component.literal("§8No vessels within the bloom's reach."), true);
-			return;
-		}
+		List<LivingEntity> targets = targets(player, world);
+		if (targets.isEmpty()) return;
 
 		float masteryMult = (float) SkillPointHelper.getCrimsonMasteryMultiplier(player);
 
 		for (LivingEntity target : targets) {
 			float damage = target.getHealth() * HP_FRACTION * masteryMult;
-			if (ManipulationReactiveEvents.isBoss(target)) damage = Math.min(12.0F, damage);
+			if (ManipulationReactiveEvents.isBoss(target)) damage = Math.min(BOSS_DAMAGE_CAP, damage);
 			com.vincenthuto.hemomancy.common.damage.SchoolDamage.hurt(target, world.damageSources().freeze(), damage, RIME_DURATION, 1);
 		}
         for (LivingEntity target : targets) ManipulationVisuals.attached(target, ManipulationVisuals.Form.BONE, target.getBbWidth()*.7, 32, 1);

@@ -30,9 +30,6 @@ import com.vincenthuto.hemomancy.client.model.item.unstained.UnstainedWarhammerM
 import com.vincenthuto.hemomancy.client.model.tile.SuspendedBloodCrystalModel;
 import com.vincenthuto.hemomancy.client.model.tile.SuspendedCleansedBloodCrystalModel;
 import com.vincenthuto.hemomancy.client.model.tile.SuspendedVivianiteModel;
-import com.vincenthuto.hemomancy.client.model.tile.crafting.CentrifugeArmsModel;
-import com.vincenthuto.hemomancy.client.model.tile.crafting.CentrifugeStandModel;
-import com.vincenthuto.hemomancy.client.model.tile.crafting.HematicArmatureModel;
 import com.vincenthuto.hemomancy.client.model.tile.crafting.PuppeteersSpindleModel;
 import com.vincenthuto.hemomancy.client.model.tile.functional.*;
 import com.vincenthuto.hemomancy.client.render.layer.MonolithicDislocationShellLayer;
@@ -76,8 +73,6 @@ public class LayerEvents {
 		event.registerLayerDefinition(MarionetteCrossbarModel.LAYER_LOCATION, MarionetteCrossbarModel::createBodyLayer);
 		event.registerLayerDefinition(LivingSickleModel.LAYER_LOCATION, LivingSickleModel::createBodyLayer);
 		event.registerLayerDefinition(FloatingHeartModel.mortal_display, FloatingHeartModel::createBodyLayer);
-		event.registerLayerDefinition(CentrifugeArmsModel.LAYER_LOCATION, CentrifugeArmsModel::createBodyLayer);
-		event.registerLayerDefinition(CentrifugeStandModel.LAYER_LOCATION, CentrifugeStandModel::createBodyLayer);
 		event.registerLayerDefinition(VisceralMirrorModel.LAYER_LOCATION, VisceralMirrorModel::createBodyLayer);
 		event.registerLayerDefinition(SanguisLanceaModel.LAYER_LOCATION, SanguisLanceaModel::createBodyLayer);
 		event.registerLayerDefinition(AnnettasSanguisLanceaModel.LAYER_LOCATION, AnnettasSanguisLanceaModel::createBodyLayer);
@@ -88,12 +83,8 @@ public class LayerEvents {
 		event.registerLayerDefinition(SuspendedVivianiteModel.LAYER_LOCATION, SuspendedVivianiteModel::createBodyLayer);
 		event.registerLayerDefinition(SuspendedBloodCrystalModel.LAYER_LOCATION, SuspendedBloodCrystalModel::createBodyLayer);
 		event.registerLayerDefinition(SuspendedCleansedBloodCrystalModel.LAYER_LOCATION, SuspendedCleansedBloodCrystalModel::createBodyLayer);
-		event.registerLayerDefinition(MnemonicReliquaryModel.LAYER_LOCATION, MnemonicReliquaryModel::createBodyLayer);
-		event.registerLayerDefinition(HematicArmatureModel.LAYER_LOCATION, HematicArmatureModel::createBodyLayer);
-		event.registerLayerDefinition(MorphlingIncubatorModel.LAYER_LOCATION, MorphlingIncubatorModel::createBodyLayer);
 		event.registerLayerDefinition(PuppeteersSpindleModel.LAYER_LOCATION, PuppeteersSpindleModel::createBodyLayer);
 		event.registerLayerDefinition(MasonsEffigyModel.LAYER_LOCATION, MasonsEffigyModel::createBodyLayer);
-		event.registerLayerDefinition(HarbingerSaintSarcophagusModel.LAYER_LOCATION, HarbingerSaintSarcophagusModel::createBodyLayer);
 		event.registerLayerDefinition(SanguineMonolithModel.LAYER_LOCATION, SanguineMonolithModel::createBodyLayer);
 		event.registerLayerDefinition(CovenantThroneModel.LAYER_LOCATION, CovenantThroneModel::createBodyLayer);
 		event.registerLayerDefinition(BarbedShieldModel.barbed_shield, BarbedShieldModel::createLayers);

@@ -1,0 +1,10 @@
+{
+  "type": "hutoslib:page",
+  "decal": false,
+  "ordinality": 13,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Cortical Weave",
+  "subtitle": "Seeing the whole memory",
+  "text": "Weave a Magister memory on a Ganglionic Loom yourself. At the sixth Degree, with active blood, the Mnemonist offers a free Cortical Crown; accepting his harness first is not required. Finish or cancel any paid weave, then seat the Ganglionic Loom two blocks behind a Focus on a Greater working floor. Light six braziers: the crown, a Nerve Bundle, a Synaptic Node, Mnemonic Ambergris, a Blood Stained Stone and Sanguine Glass. Plant your Living Staff, fill eight anchors, seal the daemon, close three circuits with 50 mL each, then finish the procession. The Loom can then weave Perfectus memories, and the echo of the past Harbinger stands on the warp at full stature. Its feelers and long staff reach remain. It keeps its tier when moved; inserted items drop and stored enzymes are lost. Cancellation returns offerings and Staff, not spent blood.",
+  "icon": "hemomancy:cortical_crown"
+}

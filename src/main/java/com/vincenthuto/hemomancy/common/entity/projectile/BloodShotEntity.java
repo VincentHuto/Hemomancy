@@ -40,10 +40,36 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
     private static final net.minecraft.network.syncher.EntityDataAccessor<Long> ORBIT_STARTED_AT =
             net.minecraft.network.syncher.SynchedEntityData.defineId(BloodShotEntity.class,
                     net.minecraft.network.syncher.EntityDataSerializers.LONG);
+    private static final net.minecraft.network.syncher.EntityDataAccessor<org.joml.Vector3f> LAUNCH_VELOCITY =
+            net.minecraft.network.syncher.SynchedEntityData.defineId(BloodShotEntity.class,
+                    net.minecraft.network.syncher.EntityDataSerializers.VECTOR3);
     @Override protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);builder.define(VISUAL_FORM,0);
         builder.define(ORBIT_SLOT,-1);
         builder.define(ORBIT_STARTED_AT,0L);
+        builder.define(LAUNCH_VELOCITY,new org.joml.Vector3f());
+    }
+
+    // Spawn and motion packets clamp each axis to 3.9 blocks/tick. These projectiles fly faster, so the client would
+    // simulate a slower, skewed flight and later jump to the server's; the true velocity rides in entity data instead.
+    @Override
+    public void shoot(double x, double y, double z, float velocity, float inaccuracy) {
+        super.shoot(x, y, z, velocity, inaccuracy);
+        syncLaunchVelocity();
+    }
+
+    protected void syncLaunchVelocity() {
+        if (level().isClientSide) return;
+        Vec3 motion = getDeltaMovement();
+        entityData.set(LAUNCH_VELOCITY, new org.joml.Vector3f((float) motion.x, (float) motion.y, (float) motion.z));
+    }
+
+    @Override
+    public void onSyncedDataUpdated(net.minecraft.network.syncher.EntityDataAccessor<?> key) {
+        super.onSyncedDataUpdated(key);
+        if (!LAUNCH_VELOCITY.equals(key) || level() == null || !level().isClientSide) return;
+        org.joml.Vector3f velocity = entityData.get(LAUNCH_VELOCITY);
+        if (velocity.lengthSquared() > 0) setDeltaMovement(velocity.x, velocity.y, velocity.z);
     }
     public int visualForm(){return entityData.get(VISUAL_FORM);}
 	private ItemStack combatWeaponItem = ItemStack.EMPTY;
@@ -77,6 +103,16 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 				firedFromWeapon != null && !firedFromWeapon.isEmpty() ? firedFromWeapon : null);
 		this.pickup = Pickup.DISALLOWED;
 		this.combatWeaponItem = copyCombatWeapon(firedFromWeapon);
+	}
+
+	/**
+	 * A shot shed by a manipulation. The held item still lends its tendency through {@link #getCombatWeaponItem()},
+	 * but vanilla arrow hooks never see it: no Sharpness, Piercing or post-attack enchantments ride the blood.
+	 */
+	public static BloodShotEntity fromManipulation(Level worldIn, LivingEntity shooter, @Nullable ItemStack heldItem) {
+		BloodShotEntity shot = new BloodShotEntity(worldIn, shooter, null);
+		shot.combatWeaponItem = copyCombatWeapon(heldItem);
+		return shot;
 	}
 
 	@Override
@@ -255,7 +291,7 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 		setDeltaMovement(Vec3.ZERO);
 		if (tickCount < orbitIndex * 10 + 1 || (tickCount - orbitIndex * 10 - 1) % 50 != 0) return;
 		LivingEntity target = level().getEntitiesOfClass(LivingEntity.class, owner.getBoundingBox().inflate(16),
-				candidate -> candidate != owner && candidate.isAlive() && !owner.isAlliedTo(candidate)
+				candidate -> candidate != owner && candidate.isAlive() && haloMayFireAt(owner, candidate)
 						&& owner.hasLineOfSight(candidate)).stream()
 				.min(Comparator.comparingDouble(owner::distanceToSqr)).orElse(null);
 		if (target == null) return;
@@ -266,6 +302,13 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 		noPhysics = false;
 		setNoGravity(false);
 		shoot(direction.x, direction.y, direction.z, 4.5F, 0.5F);
+	}
+
+	/** A player's halo only looses at hostiles; cows, pets and villagers are never in its sights. */
+	private static boolean haloMayFireAt(LivingEntity owner, LivingEntity candidate) {
+		return owner instanceof net.minecraft.world.entity.player.Player player
+				? com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.isHostileTarget(player, candidate)
+				: !owner.isAlliedTo(candidate);
 	}
 
 	private void steerTowardTarget() {
@@ -279,27 +322,35 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 		if (speed < 0.01D) return;
 		Vec3 desired = target.getEyePosition().subtract(position()).normalize().scale(speed);
 		setDeltaMovement(motion.scale(0.85D).add(desired.scale(0.15D)).normalize().scale(speed));
+		// Arrows only resync every 20 ticks; without this the client flies straight and snaps to each correction.
+		syncLaunchVelocity();
 	}
 
 	private void explodeMortar() {
 		if (!(level() instanceof ServerLevel server)) return;
 		LivingEntity owner = getOwner() instanceof LivingEntity living ? living : null;
+		double mastery = owner instanceof net.minecraft.world.entity.player.Player player
+				? com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper.getCrimsonMasteryMultiplier(player)
+				: 1.0D;
 		for (LivingEntity target : server.getEntitiesOfClass(LivingEntity.class, new AABB(position(), position()).inflate(4),
 				candidate -> candidate.isAlive() && candidate != owner
 						&& (owner == null || com.vincenthuto.hemomancy.common.manipulation.ductilis.ConductionManager.canHarm(owner, candidate)))) {
+			// 6 at the centre falling to 3 at the 4-block edge, kept below Vitric Combustion's Summa burst.
 			double distance = Math.min(4.0D, target.position().distanceTo(position()));
-			float damage = (float) (8.0D - distance);
+			float damage = (float) ((6.0D - distance * 0.75D) * mastery);
 			var context = com.vincenthuto.hemomancy.common.damage.SchoolDamage.projectileContext(this);
             if (context == null) context = com.vincenthuto.hemomancy.common.damage.SchoolHitContext.direct(
                     com.vincenthuto.hemomancy.Hemomancy.rloc("hematic_mortar"),
                     damageTendency == null ? EnumBloodTendency.ANIMUS : damageTendency, secondaryDamageTendency, owner);
             if (target.hurt(com.vincenthuto.hemomancy.common.damage.SchoolDamage.attributed(
-                    server.damageSources().indirectMagic(this, owner), context, owner), Math.max(4.0F, damage)))
+                    server.damageSources().indirectMagic(this, owner), context, owner), Math.max(3.0F, damage)))
 				com.vincenthuto.hemomancy.common.manipulation.ManipulationParticles.impact(
 						target, damageTendency, secondaryDamageTendency, target.position().subtract(position()));
 		}
+		// Count 3 is the splash's mortar variant: an upward burst with a shock ring.
+		Vec3 heading = getDeltaMovement().lengthSqr() > 1.0E-6D ? getDeltaMovement().normalize() : new Vec3(0, -1, 0);
 		com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.burst(server,
-                com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.RUPTURE,position(),position(),2,24);
+                com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.BLOOD_SPLASH,position(),position().add(heading),2,16,3);
 		server.playSound(null, blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, 1.0F, 0.8F);
 		discard();
 	}

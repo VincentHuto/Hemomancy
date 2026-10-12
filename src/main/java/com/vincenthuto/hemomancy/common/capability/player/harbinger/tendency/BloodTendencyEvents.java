@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodTendencyServerPacket;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
@@ -21,15 +22,28 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 
 import javax.annotation.Nullable;
+import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class BloodTendencyEvents {
 
-	private record TendencyShift(EnumBloodTendency primary, float amount,
-			EnumBloodTendency secondary, float secondaryAmount) {
+	private record TendencyShift(Map<EnumBloodTendency, Float> amounts) {
 		TendencyShift(EnumBloodTendency tendency, float amount) {
-			this(tendency, amount, null, 0f);
+			this(Map.of(tendency, amount));
+		}
+
+		TendencyShift(EnumBloodTendency primary, float amount, EnumBloodTendency secondary, float secondaryAmount) {
+			this(Map.of(primary, amount, secondary, secondaryAmount));
+		}
+
+		/** A profiled mob's blood teaches each of its tendencies an even share of the base shift. */
+		static @Nullable TendencyShift fromProfile(List<EnumBloodTendency> tendencies, float base) {
+			if (tendencies.isEmpty()) return null;
+			Map<EnumBloodTendency, Float> amounts = new EnumMap<>(EnumBloodTendency.class);
+			for (EnumBloodTendency tendency : tendencies) amounts.put(tendency, base / tendencies.size());
+			return new TendencyShift(amounts);
 		}
 	}
 
@@ -52,21 +66,17 @@ public class BloodTendencyEvents {
 		if (shift == null) return;
 
 		HemoCapabilityAccess.getBloodTendency(player).ifPresent(cap -> {
-			cap.addTendencyAlignment(shift.primary(), shift.amount());
-			if (shift.secondary() != null) {
-				cap.addTendencyAlignment(shift.secondary(), shift.secondaryAmount());
-			}
+			shift.amounts().forEach(cap::addTendencyAlignment);
 			syncTendency((ServerPlayer) player, cap);
 		});
 	}
 
 	/**
 	 * Maps a killed entity to a TendencyShift (tendency + amount). Returns null for
-	 * entities that yield no tendency shift (e.g. Snow Golems).
+	 * entities that yield no tendency shift: the bloodless (e.g. Snow Golems) and
+	 * any mob with no blood profile, which no longer defaults to Animus.
 	 *
-	 * Check order: specific bosses → general predicates. This ensures INFERNALBLOOD
-	 * and ENDERBLOOD are tested before NOBLOOD, so Blazes and Endermen correctly
-	 * give FLAMMEUS/TENEBRIS rather than returning null.
+	 * Check order: specific bosses → general predicates → the entity's blood profile.
 	 */
 	private static TendencyShift determineTendencyFromKill(LivingEntity entity, float base, float bossMult) {
 		// ── Specific bosses (surge amounts, most specific first) ──────────────────
@@ -81,10 +91,10 @@ public class BloodTendencyEvents {
 		if (entity instanceof Allay)         return new TendencyShift(EnumBloodTendency.ANIMUS, base * 3f);
 		if (entity instanceof Bee)           return new TendencyShift(EnumBloodTendency.DUCTILIS, base);
 
-		// ── General predicates (specific before NOBLOOD to fix predicate conflict) ─
-		// Fire-aligned (Blaze, Ghast, Hoglin, etc.) — checked before NOBLOOD which also listed Blaze
+		// ── General predicates ───────────────────────────────────────────────────
+		// Fire-aligned (Blaze, Ghast, Hoglin, etc.)
 		if (HemoEntityPredicates.INFERNALBLOOD.test(entity)) return new TendencyShift(EnumBloodTendency.FLAMMEUS, base * 2f);
-		// Ender-aligned (EnderMan, Shulker, Phantom, etc.) — checked before NOBLOOD which also listed EnderMan/Shulker
+		// Ender-aligned (EnderMan, Shulker, Phantom, etc.)
 		if (HemoEntityPredicates.ENDERBLOOD.test(entity))    return new TendencyShift(EnumBloodTendency.TENEBRIS, base * 3f);
 		// Cold / aquatic (Drowned, Stray, WaterAnimal)
 		if (HemoEntityPredicates.COLDBLOODED.test(entity))   return new TendencyShift(EnumBloodTendency.CONGEATIO, base * 2f);
@@ -99,11 +109,9 @@ public class BloodTendencyEvents {
 		if (HemoEntityPredicates.WARMBLOODED.test(entity))   return new TendencyShift(EnumBloodTendency.ANIMUS, base);
 		// Slimes/plant-like mobs
 		if (HemoEntityPredicates.PLANTBLOOD.test(entity))    return new TendencyShift(EnumBloodTendency.DUCTILIS, base);
-		// Explicitly bloodless (SnowGolem, etc.) — after all specific checks
-		if (HemoEntityPredicates.NOBLOOD.test(entity))       return null;
-
-		// Fallback for anything else with blood
-		return new TendencyShift(EnumBloodTendency.ANIMUS, base);
+		// Anything else shifts only by its data-driven blood profile; bloodless and unprofiled kills
+		// teach the blood nothing (there is no Animus default).
+		return TendencyShift.fromProfile(BloodProfileData.profile(entity.getType(), false).tendencies(), base);
 	}
 
 	/**
@@ -116,8 +124,15 @@ public class BloodTendencyEvents {
 
 	public static void shiftTendencyFromManipUse(ServerPlayer player, EnumBloodTendency tendency,
 			@Nullable EnumBloodTendency secondaryTendency) {
-		if (!HemoServerConfig.TENDENCY_SHIFT_ON_KILL_ENABLED.get()) return;
-		float amount = HemoServerConfig.TENDENCY_SHIFT_ON_MANIP_USE.get().floatValue();
+		shiftTendencyFromManipUse(player, tendency, secondaryTendency, 1.0F);
+	}
+
+	/** {@code scale} is the cast's charge fraction for CHARGED manipulations, 1 otherwise. */
+	public static void shiftTendencyFromManipUse(ServerPlayer player, EnumBloodTendency tendency,
+			@Nullable EnumBloodTendency secondaryTendency, float scale) {
+		if (!HemoServerConfig.TENDENCY_SHIFT_ON_CAST_ENABLED.get()) return;
+		float amount = HemoServerConfig.TENDENCY_SHIFT_ON_MANIP_USE.get().floatValue()
+				* net.minecraft.util.Mth.clamp(scale, 0.0F, 1.0F);
 		if (amount <= 0) return;
 
 		HemoCapabilityAccess.getBloodTendency(player).ifPresent(cap -> {

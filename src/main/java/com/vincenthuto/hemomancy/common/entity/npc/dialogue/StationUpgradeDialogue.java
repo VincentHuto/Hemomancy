@@ -40,7 +40,7 @@ public final class StationUpgradeDialogue {
         return switch (station) {
             case ALEMBIC, CENTRIFUGE -> entity instanceof HarbingerAlchemistEntity;
             case RESONANT_FORGE -> entity instanceof HarbingerArtificerEntity;
-            case SCRIPTORIUM -> entity instanceof HarbingerMnemonistEntity;
+            case SCRIPTORIUM, LOOM -> entity instanceof HarbingerMnemonistEntity;
             case ARMATURE -> false;
         };
     }

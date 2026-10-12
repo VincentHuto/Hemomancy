@@ -38,11 +38,11 @@ public final class WillEquipmentRulesTest {
 				origin + " ductilis");
 		assertEquals("living_spear", WillEquipmentRules.weaponId(origin, EnumBloodTendency.LUX, tier),
 				origin + " lux");
-		assertEquals("living_axe", WillEquipmentRules.weaponId(origin, EnumBloodTendency.MORTEM, tier),
+		assertEquals("living_sickle", WillEquipmentRules.weaponId(origin, EnumBloodTendency.MORTEM, tier),
 				origin + " mortem");
 		assertEquals("living_flail", WillEquipmentRules.weaponId(origin, EnumBloodTendency.CONGEATIO, tier),
 				origin + " congeatio");
-		assertEquals("living_staff", WillEquipmentRules.weaponId(origin, EnumBloodTendency.FERRIC, tier),
+		assertEquals("living_axe", WillEquipmentRules.weaponId(origin, EnumBloodTendency.FERRIC, tier),
 				origin + " ferric");
 		assertEquals("living_baghnakh", WillEquipmentRules.weaponId(origin, EnumBloodTendency.TENEBRIS, tier),
 				origin + " tenebris");

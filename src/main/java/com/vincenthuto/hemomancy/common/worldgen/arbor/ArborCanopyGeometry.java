@@ -3,34 +3,9 @@ package com.vincenthuto.hemomancy.common.worldgen.arbor;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Pure curved skeleton shared by rendering and interaction geometry. */
+/** Pure curve, profile and foliage helpers for the Arbor mesh; branch layout lives in {@link ArborSkeleton}. */
 public final class ArborCanopyGeometry {
     private ArborCanopyGeometry() { }
-
-    public static List<Point> familyLimb(int familyIndex, double height, double extent) {
-        List<Point> result = new ArrayList<>();
-        double baseAngle = familyIndex * Math.PI * 2.0 / 6.0 - Math.PI;
-        for (int i = 0; i < 15; i++) {
-            double t = i / 14.0;
-            double opening = smoothstep(Math.max(0.0, (t - .34) / .66));
-            double radius = lerp(.42 + .42 * t, extent, opening);
-            double angle = baseAngle + t * 4.05 + Math.sin(t * Math.PI) * .20;
-            double y = .24 + height * (.06 + .76 * t) + Math.sin(t * Math.PI) * height * .12;
-            result.add(new Point(Math.cos(angle) * radius, y, Math.sin(angle) * radius));
-        }
-        return List.copyOf(result);
-    }
-
-    public static List<Point> hangingStem(Point fruit, double lift, double inward) {
-        double radial = Math.max(.001, fruit.radialDistance());
-        Point start = new Point(fruit.x - fruit.x / radial * inward, fruit.y + lift,
-                fruit.z - fruit.z / radial * inward);
-        Point c1 = new Point(start.x * 1.03, start.y + .14, start.z * 1.03);
-        Point c2 = new Point(fruit.x * .98, fruit.y + lift * .46, fruit.z * .98);
-        List<Point> result = new ArrayList<>();
-        for (int i = 0; i < 6; i++) result.add(cubic(start, c1, c2, fruit, i / 5.0));
-        return List.copyOf(result);
-    }
 
     public static List<Point> root(int index, double radius) {
         double angle = index * Math.PI * 2.0 / 7.0 + .18 * Math.sin(index * 2.1);
@@ -82,27 +57,6 @@ public final class ArborCanopyGeometry {
         return List.copyOf(result);
     }
 
-    /**
-     * Places a colored cambium cord against the changing outside radius of a
-     * branch. A small embed keeps it visually grafted without burying it.
-     */
-    public static List<Point> surfaceVein(List<Point> path, double branchStartRadius, double branchEndRadius,
-            double veinStartRadius, double veinEndRadius, double embed) {
-        if (path.isEmpty()) return List.of();
-        List<Point> result = new ArrayList<>(path.size());
-        for (int i = 0; i < path.size(); i++) {
-            double t = path.size() == 1 ? 0 : i / (double)(path.size() - 1);
-            double offset = lerp(branchStartRadius, branchEndRadius, t)
-                    + lerp(veinStartRadius, veinEndRadius, t) - embed;
-            Point point = path.get(i);
-            double radial = point.radialDistance();
-            double outwardX = radial < 1.0e-6 ? 1 : point.x / radial;
-            double outwardZ = radial < 1.0e-6 ? 0 : point.z / radial;
-            result.add(new Point(point.x + outwardX * offset, point.y, point.z + outwardZ * offset));
-        }
-        return List.copyOf(result);
-    }
-
     /** Places a terminal crown just beyond the tube cap along its final tangent. */
     public static Point terminalFoliageCenter(List<Point> path, double forward) {
         if (path.isEmpty()) return new Point(0, 0, 0);
@@ -110,19 +64,6 @@ public final class ArborCanopyGeometry {
         if (path.size() == 1 || forward <= 0) return end;
         Point tangent = end.subtract(path.get(path.size() - 2)).normalized();
         return end.add(tangent.scale(forward));
-    }
-
-    /** Continues a branch into its foliage bud so its wooden end narrows instead of being cut flat. */
-    public static List<Point> terminalTaper(List<Point> path, double forward) {
-        if (path.size() < 2 || forward <= 0) return List.copyOf(path);
-        Point end = path.get(path.size() - 1);
-        Point tangent = end.subtract(path.get(path.size() - 2)).normalized();
-        List<Point> result = new ArrayList<>(path.size() + 3);
-        result.addAll(path);
-        result.add(end.add(tangent.scale(forward / 3.0)));
-        result.add(end.add(tangent.scale(forward * 2.0 / 3.0)));
-        result.add(end.add(tangent.scale(forward)));
-        return List.copyOf(result);
     }
 
     public static float pointedRadius(float progress, float taperStart,
@@ -188,20 +129,6 @@ public final class ArborCanopyGeometry {
                         + (2*p0.z - 5*p1.z + 4*p2.z - p3.z) * t2
                         + (-p0.z + 3*p1.z - 3*p2.z + p3.z) * t3));
     }
-
-    private static Point cubic(Point a, Point b, Point c, Point d, double t) {
-        double u = 1.0 - t;
-        return new Point(u*u*u*a.x + 3*u*u*t*b.x + 3*u*t*t*c.x + t*t*t*d.x,
-                u*u*u*a.y + 3*u*u*t*b.y + 3*u*t*t*c.y + t*t*t*d.y,
-                u*u*u*a.z + 3*u*u*t*b.z + 3*u*t*t*c.z + t*t*t*d.z);
-    }
-
-    private static double smoothstep(double t) {
-        t = Math.max(0.0, Math.min(1.0, t));
-        return t * t * (3.0 - 2.0 * t);
-    }
-
-    private static double lerp(double a, double b, double t) { return a + (b - a) * t; }
 
     public record Leaflet(Point center, Point direction, double length, double width,
                           double thickness, double yaw, double curl) { }

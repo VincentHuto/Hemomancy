@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.mob.will.WillModel;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
+import com.vincenthuto.hemomancy.client.render.world.PuppetStringStates;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillPhase;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -43,10 +44,14 @@ public class WillRenderer extends MobRenderer<WillEntity, WillModel> {
 	public void render(WillEntity entity, float entityYaw, float partialTicks, PoseStack poseStack,
 			MultiBufferSource buffer, int packedLight) {
 		int hurtTime = entity.hurtTime;
+		poseStack.pushPose();
 		try {
 			entity.hurtTime = 0;
+			// A commandeered Will leaves on its puppet strings like any shaped body.
+			PuppetStringStates.applyBodyPose(entity, partialTicks, poseStack);
 			super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
 		} finally {
+			poseStack.popPose();
 			entity.hurtTime = hurtTime;
 		}
 	}

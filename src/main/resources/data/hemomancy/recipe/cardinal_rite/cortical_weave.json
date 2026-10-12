@@ -1,0 +1,138 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "id": "hemomancy:cardinal_rite/cortical_weave",
+  "bloodCost": 0,
+  "riteType": "greater",
+  "required_degree": 6,
+  "rankup": false,
+  "riteName": "Rite of the Cortical Weave",
+  "riteDescription": "Crown the Somatic Loom with a fold of cortex so it can see a Perfectus memory whole.",
+  "floor": "hemomancy:working_greater",
+  "required_structure": {
+    "pattern": [
+      [
+        "  S  "
+      ],
+      [
+        "     "
+      ],
+      [
+        "     "
+      ],
+      [
+        "     "
+      ],
+      [
+        "     "
+      ]
+    ],
+    "key": {
+      "S": {
+        "block": "hemomancy:somatic_loom"
+      }
+    }
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "hemomancy:cortical_crown"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:nerve_bundle"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:synaptic_node"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:mnemonic_ambergris"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:blood_stained_stone"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:sanguine_glass"
+      },
+      "count": 1
+    }
+  ],
+  "ceremony": {
+    "profile": "ceremonial",
+    "layout": "cardinal",
+    "anchors": [
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 0,
+        "order": 3
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 0
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 1
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 2
+      },
+      {
+        "y": 1,
+        "ring": 1,
+        "order": 3
+      }
+    ],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "fragile_offsets": [],
+    "target_duration_ticks": 3600,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [
+      "anchor",
+      "attendant",
+      "warden"
+    ],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry"
+  }
+}

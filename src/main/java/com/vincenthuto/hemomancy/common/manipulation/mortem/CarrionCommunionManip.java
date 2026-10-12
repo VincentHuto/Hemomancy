@@ -37,11 +37,12 @@ public class CarrionCommunionManip extends BloodManipulation {
 
 		if (!(world instanceof ServerLevel level)) return;
 		float drained = 0;
+		float pulse = 2.0F * (float) com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper.getCrimsonMasteryMultiplier(player);
 		for (LivingEntity target : eligibleTargets(player, level).stream()
 				.sorted(Comparator.comparingDouble(player::distanceToSqr)).limit(4).toList()) {
 			float before = target.getHealth();
-			if (ManipulationCombatHelper.hurt(this, player, target, level, 2.0F))
-				drained += Math.min(2.0F, Math.max(0.0F, before - target.getHealth()));
+			if (ManipulationCombatHelper.hurt(this, player, target, level, pulse))
+				drained += Math.min(pulse, Math.max(0.0F, before - target.getHealth()));
 			if (target.getHealth() < before) {
                 com.vincenthuto.hemomancy.common.manipulation.BloodFlowVisuals.connect(player,target,
                         com.vincenthuto.hemomancy.common.network.particle.BloodFlowPacket.Style.COMMUNION);
@@ -56,6 +57,7 @@ public class CarrionCommunionManip extends BloodManipulation {
 		return ManipulationCombatHelper.hostileTargets(player, world, 8).stream()
 				.filter(target -> !com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates.NOBLOOD.test(target)).filter(target ->
 				target.hasEffect(EffectInit.necrosis) || target.hasEffect(MobEffects.WITHER) || target.hasEffect(MobEffects.POISON)
-						|| target.hasEffect(EffectInit.blood_loss) || target.hasEffect(EffectInit.grave_debt)).toList();
+						|| target.hasEffect(EffectInit.blood_loss) || target.hasEffect(EffectInit.insatiable_hunger)
+						|| target.hasEffect(EffectInit.grave_debt)).toList();
 	}
 }

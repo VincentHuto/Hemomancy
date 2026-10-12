@@ -8,16 +8,14 @@ import net.minecraft.network.chat.Component;
 
 /** Names the skill represented by the Arbor fruit under the crosshair. */
 public final class ArborFruitHudOverlay {
-    private static final double LABEL_REACH = 8.0D;
-
     private ArborFruitHudOverlay() { }
 
     public static void renderHUD(GuiGraphics graphics, int screenWidth, int screenHeight) {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.player == null || minecraft.level == null || minecraft.options.hideGui
                 || minecraft.screen != null) return;
-        ArborOfWillClientInteraction.Target target = ArborOfWillClientInteraction
-                .findTarget(minecraft, LABEL_REACH, false).orElse(null);
+        // Same target as the right-click, so a showing name always means the fruit can be clicked.
+        ArborOfWillClientInteraction.Target target = ArborOfWillClientInteraction.findTarget(minecraft).orElse(null);
         if (target == null) return;
 
         String rawName = target.skill().getName().replace("skill_", "").replace('_', ' ');

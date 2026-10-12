@@ -52,9 +52,10 @@ public class GhastlyAlembicRenderer implements BlockEntityRenderer<GhastlyAlembi
 		if (te.tier() == AlembicTier.ATHANOR && te.getBlockState().getValue(com.vincenthuto.hemomancy.common.block.harbinger.crafting.GhastlyAlembicBlock.LIT)
 				&& te.getLevel() != null) {
 			float pulse = (float) (0.5 + 0.5 * Math.sin((te.getLevel().getGameTime() + partialTicks) * 0.15));
+			float[] mouth = AlembicGeometry.FIREBOX;
 			VertexConsumer channel = bufferIn.getBuffer(RenderTypeInit.FLASK_FLUID);
-			renderColorBox(channel, poseStack.last().pose(), 2f / 16, 4.5f / 16, -2.3f / 16,
-					14f / 16, 6.5f / 16, -2.25f / 16, 176, 18, 28, (int) (80 + pulse * 45));
+			renderColorBox(channel, poseStack.last().pose(), mouth[0] / 16, mouth[1] / 16, mouth[4] / 16,
+					mouth[2] / 16, mouth[3] / 16, (mouth[4] + 0.05f) / 16, 176, 18, 28, (int) (80 + pulse * 45));
 		}
 		poseStack.popPose();
 		if (bufferIn instanceof MultiBufferSource.BufferSource source) {
@@ -81,8 +82,8 @@ public class GhastlyAlembicRenderer implements BlockEntityRenderer<GhastlyAlembi
 				Hemomancy.rloc("block/ghastly_alembic_" + tier)));
 		pose.pushPose();
 		if (tier.equals("athanor")) pose.translate(0, AlembicGeometry.ATHANOR_LIFT, 0);
-		var type = ghost ? RenderType.entityTranslucent(TextureAtlas.LOCATION_BLOCKS)
-				: RenderType.entityCutoutNoCull(TextureAtlas.LOCATION_BLOCKS);
+		// Translucent either way: the cucurbit and receivers are glass the fluid shows through.
+		var type = RenderType.entityTranslucent(TextureAtlas.LOCATION_BLOCKS);
 		minecraft.getBlockRenderer().getModelRenderer().renderModel(pose.last(), buffers.getBuffer(type), null,
 				model, ghost ? 0.8F : 1.0F, ghost ? 0.25F : 1.0F, ghost ? 0.3F : 1.0F, light, overlay);
 		pose.popPose();
@@ -99,24 +100,39 @@ public class GhastlyAlembicRenderer implements BlockEntityRenderer<GhastlyAlembi
 		if (max <= 0 || current <= 0) return;
 
 		float fillPct = (float) Math.min(current / max, 1.0);
-
-		float halfW = 4.5f / 16f;
-		float halfD = 4.5f / 16f;
-		float flaskBottomY = 4f / 16f;
-		float flaskHeight = 15f / 16f;
-		float fluidHeight = flaskHeight * fillPct;
+		float bottom = AlembicGeometry.FLUID_BOTTOM / 16f;
+		float height = (AlembicGeometry.FLUID_TOP - AlembicGeometry.FLUID_BOTTOM) / 16f * fillPct;
 
 		poseStack.pushPose();
-		poseStack.translate(0.5f, flaskBottomY + (te.tier() == AlembicTier.ATHANOR ? AlembicGeometry.ATHANOR_LIFT : 0), 0.5f);
-
-		int r = 153, g = 13, b = 13, a = 191;
-
-		VertexConsumer vc = bufferIn.getBuffer(RenderTypeInit.FLASK_FLUID);
-		Matrix4f mat = poseStack.last().pose();
-
-		renderColorBox(vc, mat, -halfW, 0, -halfD, halfW, fluidHeight, halfD, r, g, b, a);
-
+		poseStack.translate(0.5f, bottom + (te.tier() == AlembicTier.ATHANOR ? AlembicGeometry.ATHANOR_LIFT : 0), 0.5f);
+		renderOctagon(bufferIn.getBuffer(RenderTypeInit.FLASK_FLUID), poseStack.last().pose(),
+				AlembicGeometry.FLUID_RADIUS / 16f, height, 153, 13, 13, 191);
 		poseStack.popPose();
+	}
+
+	/** Octagonal column matching the cucurbit's glass, flats facing the four sides. */
+	private static void renderOctagon(VertexConsumer vc, Matrix4f mat, float radius, float height,
+			int r, int g, int b, int a) {
+		float[] x = new float[8], z = new float[8];
+		float corner = radius / (float) Math.cos(Math.PI / 8);
+		for (int i = 0; i < 8; i++) {
+			double angle = Math.PI / 8 + i * Math.PI / 4;
+			x[i] = (float) Math.cos(angle) * corner;
+			z[i] = (float) Math.sin(angle) * corner;
+		}
+		for (int i = 0; i < 8; i++) {
+			int j = (i + 1) % 8;
+			vc.addVertex(mat, x[i], height, z[i]).setColor(r, g, b, a);
+			vc.addVertex(mat, x[j], height, z[j]).setColor(r, g, b, a);
+			vc.addVertex(mat, x[j], 0, z[j]).setColor(r, g, b, a);
+			vc.addVertex(mat, x[i], 0, z[i]).setColor(r, g, b, a);
+		}
+		// Each cap is three quads: two trapezoids either side of a central rectangle.
+		int[][] cap = {{0, 1, 2, 3}, {0, 3, 4, 7}, {4, 5, 6, 7}};
+		for (int[] quad : cap) {
+			for (int k : quad) vc.addVertex(mat, x[k], height, z[k]).setColor(r, g, b, a);
+			for (int k = 3; k >= 0; k--) vc.addVertex(mat, x[quad[k]], 0, z[quad[k]]).setColor(r, g, b, a);
+		}
 	}
 
 	private static void renderColorBox(VertexConsumer vc, Matrix4f mat,

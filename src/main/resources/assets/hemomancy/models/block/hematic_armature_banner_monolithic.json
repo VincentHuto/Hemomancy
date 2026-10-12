@@ -1,0 +1,400 @@
+{
+ "parent": "minecraft:block/block",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "hemomancy:block/hematic_iron_block",
+  "netherite": "minecraft:block/netherite_block",
+  "shroud": "minecraft:block/black_wool",
+  "venous": "hemomancy:block/chiseled_polished_venous_stone",
+  "vein": "hemomancy:block/hemorrhagic_crust"
+ },
+ "elements": [
+  {
+   "name": "banner_rod",
+   "from": [
+    -5.1,
+    6.7,
+    5.9
+   ],
+   "to": [
+    2.1,
+    7.5,
+    6.7
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      8.8,
+      8.5,
+      16.0,
+      9.3
+     ],
+     "texture": "#netherite"
+    },
+    "south": {
+     "uv": [
+      8.8,
+      8.5,
+      16.0,
+      9.3
+     ],
+     "texture": "#netherite"
+    },
+    "east": {
+     "uv": [
+      5.9,
+      8.5,
+      6.7,
+      9.3
+     ],
+     "texture": "#netherite"
+    },
+    "west": {
+     "uv": [
+      5.9,
+      8.5,
+      6.7,
+      9.3
+     ],
+     "texture": "#netherite"
+    },
+    "up": {
+     "uv": [
+      8.8,
+      5.9,
+      16.0,
+      6.7
+     ],
+     "texture": "#netherite"
+    },
+    "down": {
+     "uv": [
+      8.8,
+      5.9,
+      16.0,
+      6.7
+     ],
+     "texture": "#netherite"
+    }
+   }
+  },
+  {
+   "name": "banner_cloth",
+   "from": [
+    -4.5,
+    -9.5,
+    6.05
+   ],
+   "to": [
+    1.5,
+    6.7,
+    6.55
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      10.0,
+      0,
+      16.0,
+      16
+     ],
+     "texture": "#shroud"
+    },
+    "south": {
+     "uv": [
+      10.0,
+      0,
+      16.0,
+      16
+     ],
+     "texture": "#shroud"
+    },
+    "east": {
+     "uv": [
+      6.05,
+      0,
+      6.55,
+      16
+     ],
+     "texture": "#shroud"
+    },
+    "west": {
+     "uv": [
+      6.05,
+      0,
+      6.55,
+      16
+     ],
+     "texture": "#shroud"
+    },
+    "up": {
+     "uv": [
+      10.0,
+      6.05,
+      16.0,
+      6.55
+     ],
+     "texture": "#shroud"
+    },
+    "down": {
+     "uv": [
+      10.0,
+      6.05,
+      16.0,
+      6.55
+     ],
+     "texture": "#shroud"
+    }
+   }
+  },
+  {
+   "name": "banner_tail",
+   "from": [
+    -4.5,
+    -12,
+    6.05
+   ],
+   "to": [
+    -2.1,
+    -9.5,
+    6.55
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      11.5,
+      9.5,
+      13.9,
+      12.0
+     ],
+     "texture": "#shroud"
+    },
+    "south": {
+     "uv": [
+      11.5,
+      9.5,
+      13.9,
+      12.0
+     ],
+     "texture": "#shroud"
+    },
+    "east": {
+     "uv": [
+      6.05,
+      9.5,
+      6.55,
+      12.0
+     ],
+     "texture": "#shroud"
+    },
+    "west": {
+     "uv": [
+      6.05,
+      9.5,
+      6.55,
+      12.0
+     ],
+     "texture": "#shroud"
+    },
+    "up": {
+     "uv": [
+      11.5,
+      6.05,
+      13.9,
+      6.55
+     ],
+     "texture": "#shroud"
+    },
+    "down": {
+     "uv": [
+      11.5,
+      6.05,
+      13.9,
+      6.55
+     ],
+     "texture": "#shroud"
+    }
+   }
+  },
+  {
+   "name": "banner_tail",
+   "from": [
+    -0.9,
+    -12,
+    6.05
+   ],
+   "to": [
+    1.5,
+    -9.5,
+    6.55
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      13.6,
+      9.5,
+      16.0,
+      12.0
+     ],
+     "texture": "#shroud"
+    },
+    "south": {
+     "uv": [
+      13.6,
+      9.5,
+      16.0,
+      12.0
+     ],
+     "texture": "#shroud"
+    },
+    "east": {
+     "uv": [
+      6.05,
+      9.5,
+      6.55,
+      12.0
+     ],
+     "texture": "#shroud"
+    },
+    "west": {
+     "uv": [
+      6.05,
+      9.5,
+      6.55,
+      12.0
+     ],
+     "texture": "#shroud"
+    },
+    "up": {
+     "uv": [
+      13.6,
+      6.05,
+      16.0,
+      6.55
+     ],
+     "texture": "#shroud"
+    },
+    "down": {
+     "uv": [
+      13.6,
+      6.05,
+      16.0,
+      6.55
+     ],
+     "texture": "#shroud"
+    }
+   }
+  },
+  {
+   "name": "banner_emblem",
+   "from": [
+    -3.0,
+    -3,
+    5.75
+   ],
+   "to": [
+    0.0,
+    2,
+    6.05
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      13.0,
+      11,
+      16.0,
+      16
+     ],
+     "texture": "#venous"
+    },
+    "east": {
+     "uv": [
+      5.75,
+      11,
+      6.05,
+      16
+     ],
+     "texture": "#venous"
+    },
+    "west": {
+     "uv": [
+      5.75,
+      11,
+      6.05,
+      16
+     ],
+     "texture": "#venous"
+    },
+    "up": {
+     "uv": [
+      13.0,
+      5.75,
+      16.0,
+      6.05
+     ],
+     "texture": "#venous"
+    },
+    "down": {
+     "uv": [
+      13.0,
+      5.75,
+      16.0,
+      6.05
+     ],
+     "texture": "#venous"
+    }
+   }
+  },
+  {
+   "name": "banner_emblem_drop",
+   "from": [
+    -2.0,
+    -6,
+    5.8
+   ],
+   "to": [
+    -1.0,
+    -3,
+    6.05
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      14.0,
+      3,
+      15.0,
+      6
+     ],
+     "texture": "#vein"
+    },
+    "east": {
+     "uv": [
+      5.8,
+      3,
+      6.05,
+      6
+     ],
+     "texture": "#vein"
+    },
+    "west": {
+     "uv": [
+      5.8,
+      3,
+      6.05,
+      6
+     ],
+     "texture": "#vein"
+    },
+    "down": {
+     "uv": [
+      14.0,
+      5.8,
+      15.0,
+      6.05
+     ],
+     "texture": "#vein"
+    }
+   }
+  }
+ ]
+}

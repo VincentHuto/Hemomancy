@@ -11,9 +11,11 @@ import com.vincenthuto.hemomancy.common.effect.ChummedWatersAreaManager;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.SporiticThuribleResonanceState;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.HematicCommandManager;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationChargeClock;
 import com.vincenthuto.hemomancy.common.manipulation.congeatio.TemporaryIceManager;
 import com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArt;
 import com.vincenthuto.hemomancy.common.manipulation.tenebris.BlackVeilCovenantManager;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.SynapticLoadoutLockout;
 
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -53,5 +55,7 @@ public final class TransientServerStateEvents {
 		ConserveStateHelper.clearSessionState();
 		MuscleMemoryEvents.clearSessionState();
 		MuscleMemoryWorldEvents.clearSessionState();
+		SynapticLoadoutLockout.clearSessionState();
+		ManipulationChargeClock.clearSessionState();
 	}
 }

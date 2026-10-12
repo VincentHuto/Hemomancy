@@ -28,6 +28,10 @@ public abstract class FerricConstructEntity extends BloodConstructEntity {
     private static final EntityDataAccessor<Long> ENERGIZED = SynchedEntityData.defineId(FerricConstructEntity.class, EntityDataSerializers.LONG);
     private static final EntityDataAccessor<Optional<UUID>> OWNER = SynchedEntityData.defineId(FerricConstructEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 
+    /** Contact damage before affinity, fixed at the cast so later mastery changes cannot re-price old blades. */
+    public static final float SPIKE_BASE_DAMAGE = 3.5F;
+    private float spikeDamage = SPIKE_BASE_DAMAGE;
+
     protected FerricConstructEntity(EntityType<? extends PathfinderMob> type, net.minecraft.world.level.Level level) {
         super(type, level);
     }
@@ -44,6 +48,10 @@ public abstract class FerricConstructEntity extends BloodConstructEntity {
         entityData.set(KIND, kind.ordinal()); entityData.set(FACING, facing.get3DDataValue());
         entityData.set(BORN, level().getGameTime()); entityData.set(EXPIRES, level().getGameTime() + duration);
         setNoGravity(true); refreshDimensions(); updateBounds();
+        if (owner instanceof Player player) spikeDamage = (float) (SPIKE_BASE_DAMAGE
+                * com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper.getCrimsonMasteryMultiplier(player));
+        // The paid cast's school identity rides the iron, so each blade hit lands as a Ferric hit.
+        com.vincenthuto.hemomancy.common.damage.SchoolDamage.captureSpawn(this);
     }
 
     public boolean isPlayerConstruct() { return entityData.get(KIND) != 0; }
@@ -98,12 +106,18 @@ public abstract class FerricConstructEntity extends BloodConstructEntity {
         if (!(level() instanceof ServerLevel server)) return;
         long now = level().getGameTime();
         LivingEntity owner = getCreator();
-        if (now >= expiresAt() || owner == null || !owner.isAlive() || owner.level() != level()) {
+        if (owner == null || !owner.isAlive() || owner.level() != level()) {
+            discard(); return;
+        }
+        if (now >= expiresAt()) {
+            onExpire(server, owner);
             discard(); return;
         }
         if (constructKind() == Kind.WALL) {
             // A projectile may traverse the thin plate between ticks: test its next segment too.
-            for (Projectile shot : server.getEntitiesOfClass(Projectile.class, getBoundingBox().inflate(4), Entity::isAlive)) {
+            // The caster's and allies' shots pass through their own cover.
+            for (Projectile shot : server.getEntitiesOfClass(Projectile.class, getBoundingBox().inflate(4),
+                    shot -> shot.isAlive() && !friendlyShot(owner, shot))) {
                 var box = getBoundingBox().inflate(shot.getBbWidth() * .5);
                 if (box.contains(shot.position()) || box.clip(shot.position(), shot.position().add(shot.getDeltaMovement())).isPresent()) shot.discard();
             }
@@ -111,17 +125,40 @@ public abstract class FerricConstructEntity extends BloodConstructEntity {
             for (LivingEntity target : server.getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(.12),
                     target -> !(target instanceof IBloodConstruct) && ManipulationCombatHelper.canHarm(player, target))) {
                 if (com.vincenthuto.hemomancy.common.manipulation.ferric.FerricContacts.claim(server,player,target)) {
-                    target.hurt(damageSources().indirectMagic(this, player), 3.5F);
+                    target.hurt(com.vincenthuto.hemomancy.common.damage.SchoolDamage.attributed(
+                            damageSources().indirectMagic(this, player), spikeHit(player).newAttack(), player), spikeDamage);
                 }
             }
         }
+    }
+
+    /** Runs once when a player construct reaches its natural expiry, before it is discarded. */
+    protected void onExpire(ServerLevel level, LivingEntity owner) { }
+
+    /** A rampart is cover for its side: the caster's and allies' shots fly through the plate untouched. */
+    public boolean letsThrough(Projectile shot) {
+        if (!isPlayerConstruct() || constructKind() != Kind.WALL) return false;
+        LivingEntity owner = getCreator();
+        return owner != null && friendlyShot(owner, shot);
+    }
+
+    private static boolean friendlyShot(LivingEntity owner, Projectile shot) {
+        if (!(shot.getOwner() instanceof LivingEntity shooter)) return false;
+        if (owner instanceof Player player) return ManipulationCombatHelper.allied(player, shooter);
+        return shooter == owner || shooter.isAlliedTo(owner) || owner.isAlliedTo(shooter);
+    }
+
+    private com.vincenthuto.hemomancy.common.damage.SchoolHitContext spikeHit(Player owner) {
+        var hit = com.vincenthuto.hemomancy.common.damage.SchoolDamage.projectileContext(this);
+        return hit != null ? hit : com.vincenthuto.hemomancy.common.damage.SchoolDamage.context(
+                com.vincenthuto.hemomancy.common.init.ManipulationInit.ferric_spikes.get(), owner);
     }
 
     @Override public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt("FerricShape", entityData.get(KIND)); tag.putInt("FerricFacing", entityData.get(FACING));
         tag.putLong("FerricBorn", bornAt()); tag.putLong("FerricExpiry", entityData.get(EXPIRES));
-        tag.putLong("FerricEnergized", energizedUntil()); entityData.get(OWNER).ifPresent(id -> tag.putUUID("FerricOwner", id));
+        tag.putLong("FerricEnergized", energizedUntil()); tag.putFloat("FerricSpikeDamage", spikeDamage); entityData.get(OWNER).ifPresent(id -> tag.putUUID("FerricOwner", id));
     }
 
     @Override public void readAdditionalSaveData(CompoundTag tag) {
@@ -129,6 +166,7 @@ public abstract class FerricConstructEntity extends BloodConstructEntity {
         entityData.set(KIND, Math.clamp(tag.getInt("FerricShape"), 0, Kind.values().length - 1));
         entityData.set(FACING, tag.getInt("FerricFacing")); entityData.set(BORN, tag.getLong("FerricBorn"));
         entityData.set(EXPIRES, tag.getLong("FerricExpiry")); entityData.set(ENERGIZED, tag.getLong("FerricEnergized"));
+        if (tag.contains("FerricSpikeDamage")) spikeDamage = tag.getFloat("FerricSpikeDamage");
         entityData.set(OWNER, tag.hasUUID("FerricOwner") ? Optional.of(tag.getUUID("FerricOwner")) : Optional.empty());
         if (isPlayerConstruct()) { setNoGravity(true); updateBounds(); }
     }

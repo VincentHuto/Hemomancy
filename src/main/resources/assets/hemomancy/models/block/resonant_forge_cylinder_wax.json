@@ -1,0 +1,600 @@
+{
+ "parent": "minecraft:block/block",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "hemomancy:block/hematic_iron_block",
+  "wax": "hemomancy:item/ambergris_cylinder_recorded",
+  "waxcap": "hemomancy:item/ambergris_cylinder",
+  "iron": "hemomancy:block/hematic_iron_block"
+ },
+ "elements": [
+  {
+   "name": "cylinder",
+   "from": [
+    -4.88,
+    -2.5,
+    -1.0355
+   ],
+   "to": [
+    4.88,
+    2.5,
+    1.0355
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.0,
+      5.5,
+      16.0,
+      8.0
+     ],
+     "texture": "#wax"
+    },
+    "south": {
+     "uv": [
+      6.0,
+      5.5,
+      16.0,
+      8.0
+     ],
+     "texture": "#wax"
+    },
+    "east": {
+     "uv": [
+      13.929,
+      13.5,
+      16.0,
+      16.0
+     ],
+     "texture": "#waxcap"
+    },
+    "west": {
+     "uv": [
+      13.929,
+      13.5,
+      16.0,
+      16.0
+     ],
+     "texture": "#waxcap"
+    },
+    "up": {
+     "uv": [
+      6.0,
+      6.965,
+      16.0,
+      8.0
+     ],
+     "texture": "#wax"
+    },
+    "down": {
+     "uv": [
+      6.0,
+      6.965,
+      16.0,
+      8.0
+     ],
+     "texture": "#wax"
+    }
+   }
+  },
+  {
+   "name": "cylinder",
+   "from": [
+    -4.91,
+    -1.0355,
+    -2.5
+   ],
+   "to": [
+    4.91,
+    1.0355,
+    2.5
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6.02,
+      6.965,
+      16.0,
+      8.0
+     ],
+     "texture": "#wax"
+    },
+    "south": {
+     "uv": [
+      6.02,
+      6.965,
+      16.0,
+      8.0
+     ],
+     "texture": "#wax"
+    },
+    "east": {
+     "uv": [
+      11.0,
+      14.965,
+      16.0,
+      16.0
+     ],
+     "texture": "#waxcap"
+    },
+    "west": {
+     "uv": [
+      11.0,
+      14.965,
+      16.0,
+      16.0
+     ],
+     "texture": "#waxcap"
+    },
+    "up": {
+     "uv": [
+      6.02,
+      5.5,
+      16.0,
+      8.0
+     ],
+     "texture": "#wax"
+    },
+    "down": {
+     "uv": [
+      6.02,
+      5.5,
+      16.0,
+      8.0
+     ],
+     "texture": "#wax"
+    }
+   }
+  },
+  {
+   "name": "cylinder",
+   "from": [
+    -4.94,
+    -2.5,
+    -1.0355
+   ],
+   "to": [
+    4.94,
+    2.5,
+    1.0355
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "x",
+    "origin": [
+     0,
+     0,
+     0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6.04,
+      5.5,
+      16.0,
+      8.0
+     ],
+     "texture": "#wax"
+    },
+    "south": {
+     "uv": [
+      6.04,
+      5.5,
+      16.0,
+      8.0
+     ],
+     "texture": "#wax"
+    },
+    "east": {
+     "uv": [
+      13.929,
+      13.5,
+      16.0,
+      16.0
+     ],
+     "texture": "#waxcap"
+    },
+    "west": {
+     "uv": [
+      13.929,
+      13.5,
+      16.0,
+      16.0
+     ],
+     "texture": "#waxcap"
+    },
+    "up": {
+     "uv": [
+      6.04,
+      6.965,
+      16.0,
+      8.0
+     ],
+     "texture": "#wax"
+    },
+    "down": {
+     "uv": [
+      6.04,
+      6.965,
+      16.0,
+      8.0
+     ],
+     "texture": "#wax"
+    }
+   }
+  },
+  {
+   "name": "cylinder",
+   "from": [
+    -4.97,
+    -2.5,
+    -1.0355
+   ],
+   "to": [
+    4.97,
+    2.5,
+    1.0355
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "x",
+    "origin": [
+     0,
+     0,
+     0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6.06,
+      5.5,
+      16.0,
+      8.0
+     ],
+     "texture": "#wax"
+    },
+    "south": {
+     "uv": [
+      6.06,
+      5.5,
+      16.0,
+      8.0
+     ],
+     "texture": "#wax"
+    },
+    "east": {
+     "uv": [
+      13.929,
+      13.5,
+      16.0,
+      16.0
+     ],
+     "texture": "#waxcap"
+    },
+    "west": {
+     "uv": [
+      13.929,
+      13.5,
+      16.0,
+      16.0
+     ],
+     "texture": "#waxcap"
+    },
+    "up": {
+     "uv": [
+      6.06,
+      6.965,
+      16.0,
+      8.0
+     ],
+     "texture": "#wax"
+    },
+    "down": {
+     "uv": [
+      6.06,
+      6.965,
+      16.0,
+      8.0
+     ],
+     "texture": "#wax"
+    }
+   }
+  },
+  {
+   "name": "cylinder_core",
+   "from": [
+    -5.38,
+    -0.9,
+    -0.3728
+   ],
+   "to": [
+    5.38,
+    0.9,
+    0.3728
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      5.0,
+      14.2,
+      16.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "south": {
+     "uv": [
+      5.0,
+      14.2,
+      16.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "east": {
+     "uv": [
+      15.254,
+      14.2,
+      16.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "west": {
+     "uv": [
+      15.254,
+      14.2,
+      16.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "up": {
+     "uv": [
+      5.0,
+      15.254,
+      16.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "down": {
+     "uv": [
+      5.0,
+      15.254,
+      16.0,
+      16.0
+     ],
+     "texture": "#iron"
+    }
+   }
+  },
+  {
+   "name": "cylinder_core",
+   "from": [
+    -5.41,
+    -0.3728,
+    -0.9
+   ],
+   "to": [
+    5.41,
+    0.3728,
+    0.9
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      5.02,
+      15.254,
+      16.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "south": {
+     "uv": [
+      5.02,
+      15.254,
+      16.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "east": {
+     "uv": [
+      14.2,
+      15.254,
+      16.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "west": {
+     "uv": [
+      14.2,
+      15.254,
+      16.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "up": {
+     "uv": [
+      5.02,
+      14.2,
+      16.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "down": {
+     "uv": [
+      5.02,
+      14.2,
+      16.0,
+      16.0
+     ],
+     "texture": "#iron"
+    }
+   }
+  },
+  {
+   "name": "cylinder_core",
+   "from": [
+    -5.44,
+    -0.9,
+    -0.3728
+   ],
+   "to": [
+    5.44,
+    0.9,
+    0.3728
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "x",
+    "origin": [
+     0,
+     0,
+     0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      5.04,
+      14.2,
+      16.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "south": {
+     "uv": [
+      5.04,
+      14.2,
+      16.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "east": {
+     "uv": [
+      15.254,
+      14.2,
+      16.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "west": {
+     "uv": [
+      15.254,
+      14.2,
+      16.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "up": {
+     "uv": [
+      5.04,
+      15.254,
+      16.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "down": {
+     "uv": [
+      5.04,
+      15.254,
+      16.0,
+      16.0
+     ],
+     "texture": "#iron"
+    }
+   }
+  },
+  {
+   "name": "cylinder_core",
+   "from": [
+    -5.47,
+    -0.9,
+    -0.3728
+   ],
+   "to": [
+    5.47,
+    0.9,
+    0.3728
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "x",
+    "origin": [
+     0,
+     0,
+     0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      5.06,
+      14.2,
+      16.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "south": {
+     "uv": [
+      5.06,
+      14.2,
+      16.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "east": {
+     "uv": [
+      15.254,
+      14.2,
+      16.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "west": {
+     "uv": [
+      15.254,
+      14.2,
+      16.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "up": {
+     "uv": [
+      5.06,
+      15.254,
+      16.0,
+      16.0
+     ],
+     "texture": "#iron"
+    },
+    "down": {
+     "uv": [
+      5.06,
+      15.254,
+      16.0,
+      16.0
+     ],
+     "texture": "#iron"
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,304 @@
+{
+ "parent": "minecraft:block/block",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "hemomancy:block/hematic_iron_block",
+  "blood": "hemomancy:block/blood_still"
+ },
+ "elements": [
+  {
+   "name": "reservoir_blood",
+   "from": [
+    1.7,
+    2.4,
+    2.4615
+   ],
+   "to": [
+    4.3,
+    3.4,
+    3.5385
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      1.7,
+      12.6,
+      4.3,
+      13.6
+     ],
+     "texture": "#blood"
+    },
+    "south": {
+     "uv": [
+      1.7,
+      12.6,
+      4.3,
+      13.6
+     ],
+     "texture": "#blood"
+    },
+    "east": {
+     "uv": [
+      2.462,
+      12.6,
+      3.538,
+      13.6
+     ],
+     "texture": "#blood"
+    },
+    "west": {
+     "uv": [
+      2.462,
+      12.6,
+      3.538,
+      13.6
+     ],
+     "texture": "#blood"
+    },
+    "up": {
+     "uv": [
+      1.7,
+      2.462,
+      4.3,
+      3.538
+     ],
+     "texture": "#blood"
+    },
+    "down": {
+     "uv": [
+      1.7,
+      2.462,
+      4.3,
+      3.538
+     ],
+     "texture": "#blood"
+    }
+   }
+  },
+  {
+   "name": "reservoir_blood",
+   "from": [
+    2.4615,
+    2.44,
+    1.7
+   ],
+   "to": [
+    3.5385,
+    3.36,
+    4.3
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      2.462,
+      12.64,
+      3.538,
+      13.56
+     ],
+     "texture": "#blood"
+    },
+    "south": {
+     "uv": [
+      2.462,
+      12.64,
+      3.538,
+      13.56
+     ],
+     "texture": "#blood"
+    },
+    "east": {
+     "uv": [
+      1.7,
+      12.64,
+      4.3,
+      13.56
+     ],
+     "texture": "#blood"
+    },
+    "west": {
+     "uv": [
+      1.7,
+      12.64,
+      4.3,
+      13.56
+     ],
+     "texture": "#blood"
+    },
+    "up": {
+     "uv": [
+      2.462,
+      1.7,
+      3.538,
+      4.3
+     ],
+     "texture": "#blood"
+    },
+    "down": {
+     "uv": [
+      2.462,
+      1.7,
+      3.538,
+      4.3
+     ],
+     "texture": "#blood"
+    }
+   }
+  },
+  {
+   "name": "reservoir_blood",
+   "from": [
+    1.7,
+    2.48,
+    2.4615
+   ],
+   "to": [
+    4.3,
+    3.32,
+    3.5385
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     3.0,
+     0,
+     3.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      1.7,
+      12.68,
+      4.3,
+      13.52
+     ],
+     "texture": "#blood"
+    },
+    "south": {
+     "uv": [
+      1.7,
+      12.68,
+      4.3,
+      13.52
+     ],
+     "texture": "#blood"
+    },
+    "east": {
+     "uv": [
+      2.462,
+      12.68,
+      3.538,
+      13.52
+     ],
+     "texture": "#blood"
+    },
+    "west": {
+     "uv": [
+      2.462,
+      12.68,
+      3.538,
+      13.52
+     ],
+     "texture": "#blood"
+    },
+    "up": {
+     "uv": [
+      1.7,
+      2.462,
+      4.3,
+      3.538
+     ],
+     "texture": "#blood"
+    },
+    "down": {
+     "uv": [
+      1.7,
+      2.462,
+      4.3,
+      3.538
+     ],
+     "texture": "#blood"
+    }
+   }
+  },
+  {
+   "name": "reservoir_blood",
+   "from": [
+    1.7,
+    2.52,
+    2.4615
+   ],
+   "to": [
+    4.3,
+    3.28,
+    3.5385
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     3.0,
+     0,
+     3.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      1.7,
+      12.72,
+      4.3,
+      13.48
+     ],
+     "texture": "#blood"
+    },
+    "south": {
+     "uv": [
+      1.7,
+      12.72,
+      4.3,
+      13.48
+     ],
+     "texture": "#blood"
+    },
+    "east": {
+     "uv": [
+      2.462,
+      12.72,
+      3.538,
+      13.48
+     ],
+     "texture": "#blood"
+    },
+    "west": {
+     "uv": [
+      2.462,
+      12.72,
+      3.538,
+      13.48
+     ],
+     "texture": "#blood"
+    },
+    "up": {
+     "uv": [
+      1.7,
+      2.462,
+      4.3,
+      3.538
+     ],
+     "texture": "#blood"
+    },
+    "down": {
+     "uv": [
+      1.7,
+      2.462,
+      4.3,
+      3.538
+     ],
+     "texture": "#blood"
+    }
+   }
+  }
+ ]
+}

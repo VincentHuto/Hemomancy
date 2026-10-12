@@ -38,7 +38,7 @@ public class BogBodyBlock extends Block implements SimpleWaterloggedBlock {
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final BooleanProperty HARVESTED = BooleanProperty.create("harvested");
     private static final VoxelShape SHAPE_S = Block.box(3.75, -2, 0.75, 12, 4, 12.75);
-    private static final VoxelShape SHAPE_N = Block.box(3.75, -2, 2.75, 12.75, 2, 15.75);
+    private static final VoxelShape SHAPE_N = Block.box(3.75, -2, 2.75, 12.75, 4, 15.75);
     private static final VoxelShape SHAPE_E = Block.box(0.75, -2, 3.75, 12.75, 4, 11.75);
     private static final VoxelShape SHAPE_W = Block.box(2.75, -2, 3.75, 14.75, 4, 11.75);
 

@@ -28,7 +28,9 @@ class TransientServerStateLifecycleTest {
 			"RootedStateHelper.clearSessionState()",
 			"ConserveStateHelper.clearSessionState()",
 			"MuscleMemoryEvents.clearSessionState()",
-			"MuscleMemoryWorldEvents.clearSessionState()");
+			"MuscleMemoryWorldEvents.clearSessionState()",
+			"SynapticLoadoutLockout.clearSessionState()",
+			"ManipulationChargeClock.clearSessionState()");
 
 	@Test
 	void reportedCooldownMapsDiscardPriorWorldState() throws Exception {
@@ -49,6 +51,33 @@ class TransientServerStateLifecycleTest {
 		owner.getMethod("clearSessionState").invoke(null);
 		assertTrue((long) remaining.invoke(cooldowns, player, "prior_world", 0L) == 0L,
 				owner.getName() + " retained the prior world's timestamp");
+	}
+
+	@Test
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	void synapticApplyLockoutsDiscardPriorWorldState() throws Exception {
+		Class<?> owner = Class.forName(
+				"com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.SynapticLoadoutLockout");
+		Field field = owner.getDeclaredField("APPLY_LOCKOUT_UNTIL");
+		field.setAccessible(true);
+		Map map = (Map) field.get(null);
+		map.put(java.util.UUID.randomUUID(), 1_000_000L);
+
+		owner.getMethod("clearSessionState").invoke(null);
+		assertTrue(map.isEmpty(), owner.getName() + " retained the prior world's lockout");
+	}
+
+	@Test
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	void chargeClockDiscardsPriorWorldKeyDowns() throws Exception {
+		Class<?> owner = Class.forName("com.vincenthuto.hemomancy.common.manipulation.ManipulationChargeClock");
+		Field field = owner.getDeclaredField("STARTS");
+		field.setAccessible(true);
+		Map map = (Map) field.get(null);
+		map.put(java.util.UUID.randomUUID(), null);
+
+		owner.getMethod("clearSessionState").invoke(null);
+		assertTrue(map.isEmpty(), owner.getName() + " retained the prior world's key-down");
 	}
 
 	@Test

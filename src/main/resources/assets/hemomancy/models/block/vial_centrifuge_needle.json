@@ -1,0 +1,374 @@
+{
+ "parent": "minecraft:block/block",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "hemomancy:block/hematic_iron_block",
+  "hyphae": "hemomancy:block/calcified_hyphae",
+  "chisel": "hemomancy:block/chiseled_hematic_iron_block"
+ },
+ "elements": [
+  {
+   "name": "needle",
+   "from": [
+    7.885,
+    4.75,
+    1.3
+   ],
+   "to": [
+    8.115,
+    6.1,
+    1.45
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.85,
+      9.9,
+      8.15,
+      11.25
+     ],
+     "texture": "#hyphae"
+    },
+    "south": {
+     "uv": [
+      7.85,
+      9.9,
+      8.15,
+      11.25
+     ],
+     "texture": "#hyphae"
+    },
+    "east": {
+     "uv": [
+      1.3,
+      9.9,
+      1.45,
+      11.25
+     ],
+     "texture": "#hyphae"
+    },
+    "west": {
+     "uv": [
+      1.3,
+      9.9,
+      1.45,
+      11.25
+     ],
+     "texture": "#hyphae"
+    },
+    "up": {
+     "uv": [
+      7.85,
+      1.3,
+      8.15,
+      1.45
+     ],
+     "texture": "#hyphae"
+    },
+    "down": {
+     "uv": [
+      7.85,
+      1.3,
+      8.15,
+      1.45
+     ],
+     "texture": "#hyphae"
+    }
+   }
+  },
+  {
+   "name": "needle_hub",
+   "from": [
+    7.65,
+    4.605,
+    1.175
+   ],
+   "to": [
+    8.35,
+    4.895,
+    1.6
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.65,
+      11.105,
+      8.35,
+      11.395
+     ],
+     "texture": "#chisel"
+    },
+    "south": {
+     "uv": [
+      7.65,
+      11.105,
+      8.35,
+      11.395
+     ],
+     "texture": "#chisel"
+    },
+    "east": {
+     "uv": [
+      1.175,
+      11.105,
+      1.6,
+      11.395
+     ],
+     "texture": "#chisel"
+    },
+    "west": {
+     "uv": [
+      1.175,
+      11.105,
+      1.6,
+      11.395
+     ],
+     "texture": "#chisel"
+    },
+    "up": {
+     "uv": [
+      7.65,
+      1.175,
+      8.35,
+      1.6
+     ],
+     "texture": "#chisel"
+    },
+    "down": {
+     "uv": [
+      7.65,
+      1.175,
+      8.35,
+      1.6
+     ],
+     "texture": "#chisel"
+    }
+   }
+  },
+  {
+   "name": "needle_hub",
+   "from": [
+    7.855,
+    4.4,
+    1.215
+   ],
+   "to": [
+    8.145,
+    5.1,
+    1.56
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.855,
+      10.9,
+      8.145,
+      11.6
+     ],
+     "texture": "#chisel"
+    },
+    "south": {
+     "uv": [
+      7.855,
+      10.9,
+      8.145,
+      11.6
+     ],
+     "texture": "#chisel"
+    },
+    "east": {
+     "uv": [
+      1.215,
+      10.9,
+      1.56,
+      11.6
+     ],
+     "texture": "#chisel"
+    },
+    "west": {
+     "uv": [
+      1.215,
+      10.9,
+      1.56,
+      11.6
+     ],
+     "texture": "#chisel"
+    },
+    "up": {
+     "uv": [
+      7.855,
+      1.215,
+      8.145,
+      1.56
+     ],
+     "texture": "#chisel"
+    },
+    "down": {
+     "uv": [
+      7.855,
+      1.215,
+      8.145,
+      1.56
+     ],
+     "texture": "#chisel"
+    }
+   }
+  },
+  {
+   "name": "needle_hub",
+   "from": [
+    7.65,
+    4.605,
+    1.255
+   ],
+   "to": [
+    8.35,
+    4.895,
+    1.52
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "z",
+    "origin": [
+     8.0,
+     4.75,
+     0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      7.65,
+      11.105,
+      8.35,
+      11.395
+     ],
+     "texture": "#chisel"
+    },
+    "south": {
+     "uv": [
+      7.65,
+      11.105,
+      8.35,
+      11.395
+     ],
+     "texture": "#chisel"
+    },
+    "east": {
+     "uv": [
+      1.255,
+      11.105,
+      1.52,
+      11.395
+     ],
+     "texture": "#chisel"
+    },
+    "west": {
+     "uv": [
+      1.255,
+      11.105,
+      1.52,
+      11.395
+     ],
+     "texture": "#chisel"
+    },
+    "up": {
+     "uv": [
+      7.65,
+      1.255,
+      8.35,
+      1.52
+     ],
+     "texture": "#chisel"
+    },
+    "down": {
+     "uv": [
+      7.65,
+      1.255,
+      8.35,
+      1.52
+     ],
+     "texture": "#chisel"
+    }
+   }
+  },
+  {
+   "name": "needle_hub",
+   "from": [
+    7.65,
+    4.605,
+    1.33
+   ],
+   "to": [
+    8.35,
+    4.895,
+    1.48
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "z",
+    "origin": [
+     8.0,
+     4.75,
+     0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      7.65,
+      11.105,
+      8.35,
+      11.395
+     ],
+     "texture": "#chisel"
+    },
+    "south": {
+     "uv": [
+      7.65,
+      11.105,
+      8.35,
+      11.395
+     ],
+     "texture": "#chisel"
+    },
+    "east": {
+     "uv": [
+      1.295,
+      11.105,
+      1.48,
+      11.395
+     ],
+     "texture": "#chisel"
+    },
+    "west": {
+     "uv": [
+      1.295,
+      11.105,
+      1.48,
+      11.395
+     ],
+     "texture": "#chisel"
+    },
+    "up": {
+     "uv": [
+      7.65,
+      1.295,
+      8.35,
+      1.48
+     ],
+     "texture": "#chisel"
+    },
+    "down": {
+     "uv": [
+      7.65,
+      1.295,
+      8.35,
+      1.48
+     ],
+     "texture": "#chisel"
+    }
+   }
+  }
+ ]
+}

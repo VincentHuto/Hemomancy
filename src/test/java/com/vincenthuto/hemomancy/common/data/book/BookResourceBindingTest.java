@@ -25,6 +25,7 @@ class BookResourceBindingTest {
                 "centrifuge/pages/steady_separation", "centrifuge/pages/second_fraction",
                 "resonant_forge/pages/upgrades", "tendency/pages/enzymatic_scriptorium",
                 "tendency/pages/eightfold_script", "tendency/pages/palimpsest",
+                "manipulations/pages/ganglionic_weave", "manipulations/pages/cortical_weave",
                 "the_hematic_order/pages/scar_practice"}) {
             JsonObject source = JsonParser.parseString(Files.readString(Path.of(
                     "src/main/resources/data/hemomancy/books/libersanguinium/" + path + ".json"))).getAsJsonObject();

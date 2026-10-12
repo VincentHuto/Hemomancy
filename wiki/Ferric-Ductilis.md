@@ -4,18 +4,22 @@ Ferric forms blood into rigid iron. Ductilis carries electrical impulses between
 
 ## Iron defenses
 
-Sanguine Magnetism summons a pillar for six seconds. Its field pulls eligible enemies inward and pins bodies close to the column. Offensive Ductilis casts can energize summoned iron; an energized pillar also discharges into nearby enemies within five blocks.
+Sanguine Magnetism summons a pillar for six seconds. Its field pulls eligible enemies inward and pins bodies close to the column. When a player's pillar falls, it slams every enemy it pulled that is still within three blocks for 4 damage, or 6 if Lodestoned, scaled by Crimson Mastery. The slam is a Ferric hit, so it applies Lodestone and can shatter three-level Rime. Offensive Ductilis casts can energize summoned iron; an energized pillar also discharges into nearby enemies within five blocks.
 
 Two remembered forms share Magnetism's mastery and selector. Absorb each form's memory and reach the required family level:
 
 | Form | Family level | Behavior |
 | --- | --- | --- |
-| Ferric Rampart | 1 | Five blocks wide, three high, and three eighths of a block thick. Cardinally oriented plates block bodies and projectiles. |
-| Ferric Spikes | 2 | Five blades across a five-block line. After a brief blood tell, contact deals 3.5 damage at most once every ten ticks per target. |
+| Ferric Rampart | 1 | Five blocks wide, three high, and three eighths of a block thick. Cardinally oriented plates block bodies. Your own and your allies' projectiles pass through; all other projectiles are destroyed. |
+| Ferric Spikes | 2 | Five blades across a five-block line. After a brief blood tell, contact deals 3.5 Ferric damage (scaled by the caster's Crimson Mastery) and applies Lodestone, at most once every ten ticks per target. |
 
-Both forms last six seconds and use Magnetism's rank, cost, range and cooldown. Placement needs firm support and clear space. Rejected placement costs no blood and starts no cooldown. Constructs do not replace blocks or drop items. Their saved expiry is absolute, so unloading does not extend their life. Encounter spikes keep their existing behavior.
+Ferric Rampart lasts ten seconds and costs 350 mL; Ferric Spikes lasts six seconds and costs 450 mL. Both use Magnetism's rank, range and cooldown. Placement needs firm support and clear space. Rejected placement costs no blood and starts no cooldown. Constructs do not replace blocks or drop items. Their saved expiry is absolute, so unloading does not extend their life. Encounter spikes keep their existing behavior.
 
-Iron Choir keeps three interceptions per paid pulse; plates snap toward actual intercepted shots. Iron Retort braces against melee and fractures when consumed. Ironhearted keeps its full-charge requirement, capacity, damage reserve, knockback protection and chest/HUD placement. Mending and conjuration gather blood at the held tool. Vascular Dowsing retains its ore-specific locator. Retired Ferric utilities remain retired.
+Iron Choir keeps three interceptions per paid pulse; plates snap toward actual intercepted shots. Each pulse also looses one blood needle (about 3 damage, scaled by Crimson Mastery) at the nearest visible hostile within ten blocks. Iron Retort braces against melee and fractures when consumed. Ironhearted keeps its full-charge requirement, capacity, damage reserve, knockback protection and chest/HUD placement. Mending and conjuration gather blood at the held tool. Vascular Dowsing retains its ore-specific locator. Retired Ferric utilities remain retired.
+
+## Forged needles
+
+The Blood Needle family is Ferric. While charging, blood is drawn from the wrist and forged one needle at a time into square-section iron flechettes with tail fins; lances grow backward barbs and a full charge draws magnetic field lines into the bundle. The iron is solid and lit in flight, trailing a thin blood wake. Hits apply Lodestone like any Ferric strike, and a fully charged Lance pins non-boss targets for a second.
 
 ## Nerves and paralysis
 
@@ -25,7 +29,11 @@ Storm's dedicated paralysis stops voluntary movement, jumps, attacks, item use a
 
 Interruption cancels an already held blood-manipulation charge and requires a fresh key press. Paralysis also blocks Still Arts, alternate casting controls, slime contact attacks and mounted jump releases. It cancels a creeper's natural attack windup; an intentionally lit fuse continues. Automatic defensive passives remain active. Death, logout, login, respawn and dimension changes clear the transient lock.
 
-Conductive Mark identifies a preferred discharge target and retains its Lux interaction. Sanguine Ward shows its remaining protection pool as an electrical sheath. Living Circuit links the actual allied recipients and flashes when a recipient spends the conductive strike. Hemolymphal Pulse reveals blood-bearing bodies and marks wounded targets. Thread Ripper severs narrow nerve filaments while retaining puppet and encounter restrictions.
+Hematic Rebuke and Impressment are Ductilis commands: each briefly Disrupts its target and fires a nerve bolt from the caster. Rebuke clamps a crackling, recoiling net over the skull and sends fearful pulses down the spine; Impressment holds a steady nerve leash to a blood-lit sigil at the nape. Conductive Mark identifies a preferred discharge target and retains its Lux interaction. Sanguine Ward shows its remaining protection pool as an electrical sheath. Living Circuit links the actual allied recipients and flashes when a recipient spends the conductive strike. Hemolymphal Pulse reveals blood-bearing bodies and marks wounded targets. Thread Ripper severs narrow nerve filaments while retaining puppet and encounter restrictions.
+
+Deadly Gaze carries intent through the eyes. While it charges, an eye of nerve opens along the aim, fed by optic nerves sheathed in ink; its slit pupil narrows and a faint sightline reaches out as the charge grows. A hit seizes the target in nerve tendrils that wind up its body to a knot above the head, tethered back to the caster's eyes while ink drips from the lifted body. A full charge crackles around the seized body and then slams it into a bursting pool of ink split by violet cracks.
+
+Blood-iron is forged rather than boxed: every plate has chamfered faces that catch the light, and larger plates carry rivets. When a rampart, spike line or pillar expires it shatters, its plates drifting outward, tumbling and falling instead of fading in place.
 
 ## Environmental conduction
 

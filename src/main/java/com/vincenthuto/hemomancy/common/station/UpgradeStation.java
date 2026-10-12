@@ -7,7 +7,8 @@ public enum UpgradeStation {
     CENTRIFUGE("centrifuge", "vial_centrifuge", 2),
     RESONANT_FORGE("resonant_forge", "resonant_forge", 2),
     ARMATURE("armature", "hematic_armature", 2),
-    SCRIPTORIUM("scriptorium", "enzymatic_scriptorium", 2);
+    SCRIPTORIUM("scriptorium", "enzymatic_scriptorium", 2),
+    LOOM("loom", "somatic_loom", 2);
 
     private final String serializedName;
     private final String blockPath;

@@ -38,6 +38,21 @@ public final class ManipulationCombatHelper {
 		return true;
 	}
 
+	/**
+	 * Auto-targeting only picks fights: monsters, mobs already hunting the caster, and players the caster may harm.
+	 * Passive animals, pets and villagers stay out of a halo's or aneurysm's sights.
+	 */
+	public static boolean isHostileTarget(Player caster, LivingEntity e) {
+		return canHarm(caster, e) && (e instanceof net.minecraft.world.entity.monster.Enemy
+				|| e instanceof net.minecraft.world.entity.Mob mob && mob.getTarget() == caster
+				|| e instanceof Player);
+	}
+
+	/** Whether a manipulation's caster may place or remove a block here, as with their own hands. */
+	public static boolean mayAlter(Player p, net.minecraft.core.BlockPos pos) {
+		return p.mayBuild() && p.level().mayInteract(p, pos);
+	}
+
 	public static Vec3 clipToGeometry(Entity caster, Vec3 end) {
 		return caster.level().clip(new ClipContext(caster.getEyePosition(), end,
 				ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, caster)).getLocation();

@@ -2,10 +2,13 @@ package com.vincenthuto.hemomancy.common.block.harbinger.crafting;
 
 import com.vincenthuto.hemomancy.common.block.shared.HorizontalFacingRotationHelper;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
+import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
+import com.vincenthuto.hemomancy.common.station.CreativeStationUpgrades;
+import com.vincenthuto.hemomancy.common.station.StationTierProperty;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticLoomBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,22 +30,39 @@ import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
+import java.util.Map;
 import javax.annotation.Nullable;
 
 public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock, SimpleWaterloggedBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+	/** Upgrade stage: base, Ganglionic, Cortical. */
+	public static final IntegerProperty STAGE = StationTierProperty.STAGE;
 
 	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
 			new BlockPos(0, 1, 0),	new BlockPos(0, 0, -1),	new BlockPos(0, 0, 1)
 	};
-	private static final VoxelShape SHAPE_N = Shapes.block();
+	/**
+	 * Traced from tools/model_export/somatic_loom.py: side frames and castle, the tapestry and cloth beam,
+	 * reed, heddles and ganglion, the warp roll, treadles and pirn shelves, which overhang the fillers.
+	 */
+	private static final Map<Direction, Map<BlockPos, VoxelShape>> CELLS = ModelShapes.cells(
+			ModelShapes.footprint(FILLER_OFFSETS),
+			new double[] {-4.8, 0, -10.3, -1.2, 4, 26.3}, new double[] {17.2, 0, -10.3, 20.8, 4, 26.3},
+			new double[] {-4.6, 4, -10.2, -1.4, 15.9, -6.8}, new double[] {17.4, 4, -10.2, 20.6, 15.9, -6.8},
+			new double[] {-4.6, 4, 22.8, -1.4, 15.9, 26.2}, new double[] {17.4, 4, 22.8, 20.6, 15.9, 26.2},
+			new double[] {-4.7, 4, 14.4, -1.3, 26.6, 17.8}, new double[] {17.3, 4, 14.4, 20.7, 26.6, 17.8},
+			new double[] {-1.5, 21, 15.1, 17.5, 24.9, 17.1},
+			new double[] {-1.5, 4.6, -10.4, 17.5, 14.4, -4.6}, new double[] {0.5, 13.2, -4.6, 15.5, 14.6, 7.5},
+			new double[] {-1.4, 9.4, 7.5, 17.4, 19.4, 20.8}, new double[] {-1.5, 7.6, 20.8, 17.5, 14.4, 27.7},
+			new double[] {-1.5, 1.2, -6.4, 17.5, 2.8, 20.5},
+			new double[] {-8.1, 4.2, -2.2, -4.5, 12.4, 12.2}, new double[] {20.5, 4.2, -2.2, 24.1, 12.4, 12.2});
 
 	@Nullable
 	@SuppressWarnings("unchecked")
@@ -54,7 +74,7 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 	public SomaticLoomBlock(Properties properties) {
 		super(properties);
 		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH)
-				.setValue(WATERLOGGED, false));
+				.setValue(WATERLOGGED, false).setValue(STAGE, 0));
 	}
 
 	private static BlockPos[] rotatedFillerOffsets(Direction facing) {
@@ -142,12 +162,17 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		builder.add(FACING, WATERLOGGED);
+		builder.add(FACING, WATERLOGGED, STAGE);
 	}
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-		return SHAPE_N;
+		return CELLS.get(state.getValue(FACING)).getOrDefault(BlockPos.ZERO, Shapes.block());
+	}
+
+	@Override
+	public VoxelShape fillerShape(BlockState controller, BlockPos offset) {
+		return CELLS.get(controller.getValue(FACING)).get(offset);
 	}
 
 	@Override
@@ -242,7 +267,7 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 		if (!(tile instanceof SomaticLoomBlockEntity te)) return InteractionResult.PASS;
 
 		if (player.isShiftKeyDown()) {
-			if (te.isWeavingOrbs() || te.getRitualBloodCharged() > 0) {
+			if (te.isWeaving() || te.getRitualBloodCharged() > 0) {
 				te.cancelRitual(player);
 				return InteractionResult.SUCCESS;
 			}
@@ -252,7 +277,7 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 			return InteractionResult.PASS;
 		}
 
-		if (te.isWeavingOrbs()) {
+		if (te.isWeaving()) {
 			te.provideTendencyFeedback(player);
 			return InteractionResult.SUCCESS;
 		}
@@ -267,7 +292,7 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 		BlockEntity tile = worldIn.getBlockEntity(pos);
 		if (!(tile instanceof SomaticLoomBlockEntity te)) return InteractionResult.PASS;
 		if (isProjectionTool(stack)) return InteractionResult.PASS;
-		if (te.isWeavingOrbs()) return InteractionResult.PASS;
+		if (te.isWeaving()) return InteractionResult.PASS;
 		return te.addItem(player, stack, handIn) ? InteractionResult.SUCCESS : InteractionResult.PASS;
 	}
 
@@ -284,6 +309,8 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 	@Override
 	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos,
 			Player player, InteractionHand handIn, BlockHitResult result) {
+		if (CreativeStationUpgrades.tryApply(stack, worldIn, pos, player))
+			return ItemInteractionResult.sidedSuccess(worldIn.isClientSide);
 		if (isProjectionTool(stack)) {
 			return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 		}

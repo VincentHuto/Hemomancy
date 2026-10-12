@@ -11,6 +11,7 @@ ext.gameTestSuites = [
     'station_upgrade_validation': [alpha: true, run: 'stationUpgradeGameTestServer', directory: 'build/station-upgrade-gametest'],
     'book_kit_validation': [alpha: true, run: 'bookKitGameTestServer', directory: 'build/book-kit-gametest'],
     'recipe_codec_validation': [alpha: true, run: 'recipeCodecGameTestServer', directory: 'build/recipe-codec-gametest'],
+    'somatic_loom_validation': [alpha: true, run: 'somaticLoomGameTestServer', directory: 'build/somatic-loom-gametest'],
     'hemomancy': [alpha: true, run: null, directory: null],
     'blood_injection_validation': [alpha: true, run: 'bloodInjectionGameTestServer', directory: 'build/blood-injection-gametest'],
     'gore_wound_harpoon_validation': [alpha: true, run: 'goreWoundHarpoonGameTestServer', directory: 'build/gore-wound-harpoon-gametest'],

@@ -1,0 +1,113 @@
+{
+ "parent": "minecraft:block/block",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "hemomancy:block/hematic_iron_block",
+  "scab": "hemomancy:block/blood_scorched_scab",
+  "vein": "hemomancy:block/hemorrhagic_crust"
+ },
+ "elements": [
+  {
+   "name": "vial_spent",
+   "from": [
+    11.6,
+    10.8,
+    7.6
+   ],
+   "to": [
+    12.4,
+    11.25,
+    8.4
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      11.6,
+      4.75,
+      12.4,
+      5.2
+     ],
+     "texture": "#scab"
+    },
+    "south": {
+     "uv": [
+      11.6,
+      4.75,
+      12.4,
+      5.2
+     ],
+     "texture": "#scab"
+    },
+    "east": {
+     "uv": [
+      7.6,
+      4.75,
+      8.4,
+      5.2
+     ],
+     "texture": "#scab"
+    },
+    "west": {
+     "uv": [
+      7.6,
+      4.75,
+      8.4,
+      5.2
+     ],
+     "texture": "#scab"
+    },
+    "up": {
+     "uv": [
+      11.6,
+      7.6,
+      12.4,
+      8.4
+     ],
+     "texture": "#scab"
+    },
+    "down": {
+     "uv": [
+      11.6,
+      7.6,
+      12.4,
+      8.4
+     ],
+     "texture": "#scab"
+    }
+   }
+  },
+  {
+   "name": "vial_smear",
+   "from": [
+    11.57,
+    11.25,
+    7.8
+   ],
+   "to": [
+    11.59,
+    13.55,
+    8.2
+   ],
+   "faces": {
+    "east": {
+     "uv": [
+      7.8,
+      2.45,
+      8.2,
+      4.75
+     ],
+     "texture": "#vein"
+    },
+    "west": {
+     "uv": [
+      7.8,
+      2.45,
+      8.2,
+      4.75
+     ],
+     "texture": "#vein"
+    }
+   }
+  }
+ ]
+}

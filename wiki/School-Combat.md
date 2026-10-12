@@ -8,14 +8,14 @@ Damage numbers are health points (two points equal one heart). These are default
 
 | School | State | Behavior | Counters and follow-ups |
 | --- | --- | --- | --- |
-| Animus | Sanguine Pressure, 6 s | Direct hits add one level, up to three. No passive damage. | Bloodless targets cannot build pressure. Blood Aneurysm consumes it for 2 extra damage per level. A fully cooled Living Blade hit ruptures three levels instead of adding another. |
-| Mortem | Necrosis, 8 s | Healing received is reduced by 25%. Stores 25% of subsequent direct health damage, up to 6; absorption is not stored. | Natural expiry releases the bank once. Cleansing discards it safely. Funeral Bell releases it early, scaled by charge. Carrion Communion recognizes it. |
-| Ferric | Lodestone, 8 s | Subsequent Ferric hits gain 25% knockback. An owned magnetic pillar redirects that displacement toward itself and pulls marked bodies 1.5 times harder. | Knockback resistance still applies. A mark supplies an iron signature without requiring iron equipment. |
-| Flammeus | Searing, 4 s | One attributed crimson burn, 1 damage each second. Refresh extends its duration without restarting its tick clock or adding another stream. | Water, Fire Resistance, and fire immunity counter it. Vitric Combustion consumes remaining scheduled damage, capped at 4, without reigniting. |
-| Congeatio | Rime, 6 s | Three levels reduce movement by 15/30/45%. At most one build per victim per ten ticks. | It does not interrupt attacks or use. Wet Glacial Grasp adds two; full Rimebound Sentence establishes three and keeps its enclosure. Maximum Rime can shatter. |
+| Animus | Sanguine Pressure, 6 s | Direct hits add one level, up to three. No passive damage. | Bloodless targets cannot build pressure. Blood Aneurysm consumes it for 2 extra damage per level, scaled by charge. A Blood Cloud builds it once per creature, on first contact. A fully cooled Living Blade hit ruptures three levels instead of adding another. |
+| Mortem | Necrosis, 8 s | Healing received is reduced by 25%. Stores 25% of subsequent direct health damage, up to 6; absorption is not stored. | Natural expiry releases the bank once. Cleansing discards it safely. Funeral Bell releases it early, scaled by charge. Carrion Communion recognizes it. Hemorrhage seeds it alongside Blood Loss, and Fruiting Contagion spreads it from existing carriers to nearby enemies. |
+| Ferric | Lodestone, 8 s | Subsequent Ferric hits gain 25% knockback. An owned magnetic pillar redirects that displacement toward itself and pulls marked bodies 1.5 times harder. | Knockback resistance still applies. A mark supplies an iron signature without requiring iron equipment. Lodestone Collapse consumes it for up to 4 extra damage, scaled by charge. |
+| Flammeus | Searing, 4 s | One attributed crimson burn, 1 damage each second. Refresh extends its duration without restarting its tick clock or adding another stream. | Water, Fire Resistance, and fire immunity counter it. Vitric Combustion consumes remaining scheduled damage, capped at 4, without reigniting. Searing Lash lays a six-second Searing that primes the full bonus. |
+| Congeatio | Rime, 6 s | Three levels reduce movement by 15/30/45%. At most one build per victim per ten ticks. | It does not interrupt attacks or use. Glacial Grasp adds two to targets wet from water or rain and one to dry targets; Cruor Javelin adds two, or three to wet targets; full Rimebound Sentence establishes three and keeps its enclosure. Maximum Rime can shatter. |
 | Ductilis | Disrupted, 10 ticks | Interrupts action/use/channel and prevents restarting briefly. Movement remains available. | Strong authored Paralysis remains separate, capped at 20 ticks for players and 60 for ordinary mobs, followed by recovery. Ordinary Ductilis living-weapon hits establish Conductive Mark instead. |
-| Lux | Illuminated, 6 s | Exposes a target through school concealment. Its outline does not consume or replace vanilla Glowing. | Reproof consumes prior Illumination for its 4-versus-2 distinction. White Verdict gains its 1.5 multiplier once against prior Illumination or concealment; consuming hits do not reapply exposure. |
-| Tenebris | Obscured / Veiled | Obscured limits reliable perception beyond four blocks. Veiled is the caster's separate concealment. | Mobs retain close defense; Illumination suppresses concealment. Attacking breaks Veiled. Player darkness respects the accessibility intensity setting and imposes no movement/attack penalty. |
+| Lux | Illuminated, 6 s | Exposes a target through school concealment. Its outline does not consume or replace vanilla Glowing. | Reproof consumes prior Illumination for its 8-versus-4 distinction. White Verdict gains its 1.5 multiplier once against prior Illumination or concealment; consuming hits do not reapply exposure. |
+| Tenebris | Obscured / Veiled | Obscured limits reliable perception beyond four blocks. Veiled is the caster's separate concealment. | Mobs retain close defense; Illumination suppresses concealment. Attacking breaks Veiled. Umbral Rend consumes Obscured for 4 extra damage, and breaking Penumbral Drift with an attack lands a 1.5× ambush that applies Obscured. Player darkness respects the accessibility intensity setting and imposes no movement/attack penalty. |
 
 Only four new cross-school interactions exist:
 
@@ -42,13 +42,13 @@ Blood-volume drain/transfer, vascular damage, Blood Loss, Grave Debt, Insatiable
 
 ## Sanguine Marionette
 
-The Blood Binding family now includes Marionette at mastery three, between Chain and Lattice. It acquires one eligible blood-bearing mob within eight blocks and maintains a mobile tendon for at most eight seconds. It never applies stationary Blood Binding to the moving body.
+Marionette is a Ductilis / Animus command: a Hematic Rebuke family form at mastery two, before Impressment at mastery three. It is no longer a Blood Binding form; players who already knew it keep it, and their saved entry adopts the new school. It acquires one eligible blood-bearing mob within eight blocks and maintains a mobile tendon for at most eight seconds. It never applies stationary Blood Binding to the moving body; casting it on a creature already held by Blood Binding releases that binding and takes the body as the puppet.
 
 Every five server ticks, aim resolves out to sixteen blocks. A permitted enemy becomes an attack order; reachable ground becomes a movement order. Invalid aim leaves the previous order intact. Both ordinary goals and Brain-based bodies use their existing navigation, attack behavior and cooldowns.
 
-The caster can control one body across Impressment and Marionette. Players, bosses, bloodless bodies, mobs above 80 maximum health, owned allies/pets, stationary captives, and another caster's controlled body are excluded. Release, interruption, another cast or attack, unpaid blood, excessive separation, death, logout, dimension change, or unload releases the order and restores AI control flags. Natural projectiles and delayed area attacks retain protection for the caster and allies after release.
+The caster can control one body across Impressment and Marionette. Players, bosses, bloodless bodies, mobs above 80 maximum health, owned allies/pets, captives riding a Circus carousel, and another caster's controlled body are excluded. Impressment also refuses a Blood-Bound captive; Marionette releases the binding and takes the body instead. Release, interruption, another cast or attack, unpaid blood, excessive separation, death, logout, dimension change, or unload releases the order and restores AI control flags. Natural projectiles and delayed area attacks retain protection for the caster and allies after release.
 
-Base cost is 50 mL per existing one-second channel pulse, including the first, with a six-second base cooldown on ending. Existing mastery/cost modifiers still apply. The weaving recipe consumes a blank memory, Foul Paste, four Animus enzymes, two Ductilis enzymes, and 325 mL. Memory item/model/glyph, localization, Reliquary availability and radial family selection are wired through the existing family registry.
+Base cost is 50 mL per existing one-second channel pulse, including the first, with a six-second base cooldown on ending. Existing mastery/cost modifiers still apply. The weaving recipe consumes a blank memory, Foul Paste, two Animus enzymes, four Ductilis enzymes, and 325 mL. Memory item/model/glyph, localization, Reliquary availability and radial family selection are wired through the existing family registry.
 
 ## Registered manipulation source inventory
 
@@ -70,9 +70,9 @@ Every listed manipulation has its player path. Entity indicates the currently su
 | `blood_eclipse_mantle` | TENEBRIS | FLAMMEUS | Apply | — | Yes |
 | `blood_lamp` | LUX | — | Apply | — | Yes |
 | `blood_lattice` | ANIMUS | DUCTILIS | Apply | — | — |
-| `blood_needle` | ANIMUS | FERRIC | Apply | Yes | Yes |
-| `blood_needle_fan` | ANIMUS | FERRIC | Apply | — | — |
-| `blood_needle_lance` | ANIMUS | FERRIC | Apply | — | — |
+| `blood_needle` | FERRIC | ANIMUS | Apply | Yes | Yes |
+| `blood_needle_fan` | FERRIC | ANIMUS | Apply | — | — |
+| `blood_needle_lance` | FERRIC | ANIMUS | Apply | — | — |
 | `blood_projection` | FERRIC | ANIMUS | Apply | — | — |
 | `blood_rush` | ANIMUS | FLAMMEUS | Apply | — | Yes |
 | `blood_shot` | ANIMUS | — | Apply | Yes | Yes |
@@ -82,7 +82,7 @@ Every listed manipulation has its player path. Entity indicates the currently su
 | `cauterizing_rebuke` | FLAMMEUS | ANIMUS | Apply | — | Yes |
 | `chain_blood_binding` | ANIMUS | DUCTILIS | Apply | — | — |
 | `conductive_mark` | DUCTILIS | FERRIC | Apply | Yes | Yes |
-| `conjure_axe` | MORTEM | FERRIC | Apply | — | — |
+| `conjure_axe` | FERRIC | ANIMUS | Apply | — | — |
 | `conjure_blade` | ANIMUS | FERRIC | Apply | — | — |
 | `conjure_claws` | TENEBRIS | MORTEM | Apply | — | — |
 | `conjure_crossbow` | DUCTILIS | FERRIC | Apply | — | — |
@@ -95,7 +95,8 @@ Every listed manipulation has its player path. Entity indicates the currently su
 | `crimson_flame_conjuration` | FLAMMEUS | ANIMUS | Apply | Yes | Yes |
 | `crimson_harvest` | DUCTILIS | ANIMUS | Apply | — | Yes |
 | `crimson_sight` | LUX | TENEBRIS | Apply | — | Yes |
-| `crimson_tithe` | MORTEM | LUX | Apply | — | — |
+| `crimson_tithe` | MORTEM | ANIMUS | Apply | — | — |
+| `cruor_javelin` | CONGEATIO | FERRIC | Apply | — | — |
 | `cryogenic_pulse` | CONGEATIO | FLAMMEUS | Apply | Yes | Yes |
 | `deadly_gaze` | DUCTILIS | TENEBRIS | Apply | Yes | Yes |
 | `eclipse_well` | TENEBRIS | — | Apply | — | — |
@@ -107,6 +108,7 @@ Every listed manipulation has its player path. Entity indicates the currently su
 | `ferric_resonance` | FERRIC | FLAMMEUS | Apply | — | — |
 | `ferric_spikes` | FERRIC | DUCTILIS | Apply | — | — |
 | `ferric_transmutation` | FERRIC | DUCTILIS | Apply | — | Yes |
+| `fruiting_contagion` | MORTEM | ANIMUS | Apply | — | — |
 | `funeral_bell` | MORTEM | — | Exploit | — | — |
 | `furnace_veins` | FLAMMEUS | — | Apply | — | — |
 | `glacial_bastion` | CONGEATIO | FERRIC | Apply | — | Yes |
@@ -119,9 +121,9 @@ Every listed manipulation has its player path. Entity indicates the currently su
 | `hematic_ballast` | FERRIC | — | Apply | — | — |
 | `hematic_beacon` | LUX | ANIMUS | Apply | Yes | Yes |
 | `hematic_flare` | LUX | FLAMMEUS | Apply | Yes | Yes |
-| `hematic_impressment` | ANIMUS | DUCTILIS | Apply | — | — |
+| `hematic_impressment` | DUCTILIS | ANIMUS | Apply | — | — |
 | `hematic_mortar` | ANIMUS | — | Apply | — | — |
-| `hematic_rebuke` | ANIMUS | DUCTILIS | Apply | — | — |
+| `hematic_rebuke` | DUCTILIS | ANIMUS | Apply | — | — |
 | `hematic_riposte` | ANIMUS | DUCTILIS | Apply | — | — |
 | `hemolymphal_pulse` | DUCTILIS | ANIMUS | Apply | Yes | Yes |
 | `hemorrhage` | MORTEM | ANIMUS | Apply | Yes | Yes |
@@ -133,6 +135,7 @@ Every listed manipulation has its player path. Entity indicates the currently su
 | `lignum_mortis` | MORTEM | ANIMUS | Apply | — | — |
 | `lingering_blood_binding` | ANIMUS | DUCTILIS | Apply | — | — |
 | `living_circuit` | DUCTILIS | — | Apply | — | — |
+| `lodestone_collapse` | FERRIC | — | Exploit | — | — |
 | `lumen_suture` | LUX | DUCTILIS | Apply | — | Yes |
 | `osseous_bloom` | CONGEATIO | MORTEM | Apply | — | — |
 | `penumbral_drift` | TENEBRIS | — | Apply | — | — |
@@ -140,18 +143,20 @@ Every listed manipulation has its player path. Entity indicates the currently su
 | `prismatic_reproof` | LUX | FERRIC | Exploit | Yes | Yes |
 | `pursuing_blood_cloud` | ANIMUS | MORTEM | Apply | — | — |
 | `pyretic_forge` | FLAMMEUS | FERRIC | Apply | Yes | Yes |
+| `radiant_wake` | LUX | — | Apply | — | — |
 | `rimebound_sentence` | CONGEATIO | — | Apply | — | — |
 | `sanguine_excavation` | FERRIC | MORTEM | Apply | — | Yes |
 | `sanguine_halo` | ANIMUS | — | Apply | — | — |
 | `sanguine_ignition` | FLAMMEUS | ANIMUS | Apply | Yes | Yes |
 | `sanguine_magnetism` | FERRIC | DUCTILIS | Apply | Yes | Yes |
-| `sanguine_marionette` | ANIMUS | DUCTILIS | Apply | — | — |
+| `sanguine_marionette` | DUCTILIS | ANIMUS | Apply | — | — |
 | `sanguine_mending` | FERRIC | ANIMUS | Apply | — | Yes |
-| `sanguine_tempest` | ANIMUS | MORTEM | Apply | — | — |
+| `sanguine_tempest` | ANIMUS | DUCTILIS | Apply | — | — |
 | `sanguine_ward` | DUCTILIS | FERRIC | Apply | — | Yes |
 | `scalding_updraft` | FLAMMEUS | DUCTILIS | Apply | Yes | Yes |
+| `searing_lash` | FLAMMEUS | ANIMUS | Apply | — | — |
 | `soaring_updraft` | FLAMMEUS | DUCTILIS | Apply | — | — |
-| `sovereign_instinct` | ANIMUS | — | Apply | — | — |
+| `sovereign_instinct` | DUCTILIS | ANIMUS | Apply | — | — |
 | `summon_avatar` | ANIMUS | — | Apply | — | — |
 | `summon_avatar_armor` | ANIMUS | — | Apply | — | — |
 | `summon_avatar_arms` | ANIMUS | — | Apply | — | — |
@@ -162,6 +167,7 @@ Every listed manipulation has its player path. Entity indicates the currently su
 | `synaptic_jolt` | DUCTILIS | — | Apply | Yes | Yes |
 | `synaptic_storm` | DUCTILIS | — | Apply | — | — |
 | `thread_ripper` | DUCTILIS | TENEBRIS | Apply | — | — |
+| `umbral_rend` | TENEBRIS | MORTEM | Exploit | — | — |
 | `umbral_reversal` | TENEBRIS | ANIMUS | Apply | — | — |
 | `umbral_step` | TENEBRIS | DUCTILIS | Apply | Yes | Yes |
 | `unclosing_eye` | LUX | MORTEM | Apply | Yes | Yes |
@@ -182,7 +188,8 @@ Non-damaging exceptions retain their specific jobs: Binding forms bind; Marionet
 | Source | Captured school / role |
 | --- | --- |
 | Living Blade | Animus; apply Pressure, or exploit three levels with a fully cooled hit. |
-| Living Axe / Living Sickle | Mortem; apply Necrosis. Hook/projectile attribution retains the real direct entity. |
+| Living Axe | Ferric; apply Lodestone. Critical Lodestone fields pulse Ferric damage and pull toward their centre. |
+| Living Sickle | Mortem; apply Necrosis. Hook/projectile attribution retains the real direct entity. |
 | Living Spear | Lux; apply Illumination. |
 | Living Claws | Tenebris; apply Obscured. |
 | Living Crossbow / bolts | Ductilis; establish Conductive Mark on ordinary weapon contact. |
@@ -190,7 +197,7 @@ Non-damaging exceptions retain their specific jobs: Binding forms bind; Marionet
 | Living Torch / breath | Flammeus; apply Searing. No duplicate school-applied vanilla burn stream. |
 | Living Staff | Uses its weapon assignment, with captured secondary metadata where present. Holding it does not reschool another spell. |
 | Blood Needle, Shot, Bolt, Bullet | Use captured manipulation/weapon metadata, including family form identity. Legacy untyped launches remain untyped rather than taking the current held weapon's school. |
-| Blood cloud carrier / blood cloud | Carrier passes the launch identity to its persisted cloud; cloud ticks are periodic damage only. |
+| Blood cloud carrier / blood cloud | Carrier passes the launch identity and the caster's Crimson Mastery to its persisted cloud. A cloud's first contact with each creature is a direct hit (Pressure once); later ticks are periodic damage only. |
 | Tracking blood orb, pests, serpent; sickle hook; iron spike | Captured source/owner and actual projectile retained through custom collision damage. |
 | Ferric constructs / magnetic pillar | Ferric origins apply Lodestone on damaging strikes; magnetism exploits the mark and preserves construct ownership and terrain collision. |
 | Summoned attackers | Retain cast origin/owner; later natural melee attacks receive fresh root identities. |

@@ -1,0 +1,269 @@
+{
+ "parent": "minecraft:block/block",
+ "render_type": "minecraft:cutout",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "minecraft:block/purple_wool",
+  "tenebris": "minecraft:block/purple_wool"
+ },
+ "elements": [
+  {
+   "name": "cop_tenebris",
+   "from": [
+    21.45,
+    8.1,
+    9.5479
+   ],
+   "to": [
+    23.15,
+    9.1,
+    10.2521
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      5.45,
+      6.9,
+      7.15,
+      7.9
+     ],
+     "texture": "#tenebris"
+    },
+    "south": {
+     "uv": [
+      5.45,
+      6.9,
+      7.15,
+      7.9
+     ],
+     "texture": "#tenebris"
+    },
+    "east": {
+     "uv": [
+      9.548,
+      6.9,
+      10.252,
+      7.9
+     ],
+     "texture": "#tenebris"
+    },
+    "west": {
+     "uv": [
+      9.548,
+      6.9,
+      10.252,
+      7.9
+     ],
+     "texture": "#tenebris"
+    },
+    "up": {
+     "uv": [
+      5.45,
+      9.548,
+      7.15,
+      10.252
+     ],
+     "texture": "#tenebris"
+    }
+   }
+  },
+  {
+   "name": "cop_tenebris",
+   "from": [
+    21.9479,
+    8.14,
+    9.05
+   ],
+   "to": [
+    22.6521,
+    9.06,
+    10.75
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      5.948,
+      6.94,
+      6.652,
+      7.86
+     ],
+     "texture": "#tenebris"
+    },
+    "south": {
+     "uv": [
+      5.948,
+      6.94,
+      6.652,
+      7.86
+     ],
+     "texture": "#tenebris"
+    },
+    "east": {
+     "uv": [
+      9.05,
+      6.94,
+      10.75,
+      7.86
+     ],
+     "texture": "#tenebris"
+    },
+    "west": {
+     "uv": [
+      9.05,
+      6.94,
+      10.75,
+      7.86
+     ],
+     "texture": "#tenebris"
+    },
+    "up": {
+     "uv": [
+      5.948,
+      9.05,
+      6.652,
+      10.75
+     ],
+     "texture": "#tenebris"
+    }
+   }
+  },
+  {
+   "name": "cop_tenebris",
+   "from": [
+    21.45,
+    8.18,
+    9.5479
+   ],
+   "to": [
+    23.15,
+    9.02,
+    10.2521
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     22.3,
+     0,
+     9.9
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      5.45,
+      6.98,
+      7.15,
+      7.82
+     ],
+     "texture": "#tenebris"
+    },
+    "south": {
+     "uv": [
+      5.45,
+      6.98,
+      7.15,
+      7.82
+     ],
+     "texture": "#tenebris"
+    },
+    "east": {
+     "uv": [
+      9.548,
+      6.98,
+      10.252,
+      7.82
+     ],
+     "texture": "#tenebris"
+    },
+    "west": {
+     "uv": [
+      9.548,
+      6.98,
+      10.252,
+      7.82
+     ],
+     "texture": "#tenebris"
+    },
+    "up": {
+     "uv": [
+      5.45,
+      9.548,
+      7.15,
+      10.252
+     ],
+     "texture": "#tenebris"
+    }
+   }
+  },
+  {
+   "name": "cop_tenebris",
+   "from": [
+    21.45,
+    8.22,
+    9.5479
+   ],
+   "to": [
+    23.15,
+    8.98,
+    10.2521
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     22.3,
+     0,
+     9.9
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      5.45,
+      7.02,
+      7.15,
+      7.78
+     ],
+     "texture": "#tenebris"
+    },
+    "south": {
+     "uv": [
+      5.45,
+      7.02,
+      7.15,
+      7.78
+     ],
+     "texture": "#tenebris"
+    },
+    "east": {
+     "uv": [
+      9.548,
+      7.02,
+      10.252,
+      7.78
+     ],
+     "texture": "#tenebris"
+    },
+    "west": {
+     "uv": [
+      9.548,
+      7.02,
+      10.252,
+      7.78
+     ],
+     "texture": "#tenebris"
+    },
+    "up": {
+     "uv": [
+      5.45,
+      9.548,
+      7.15,
+      10.252
+     ],
+     "texture": "#tenebris"
+    }
+   }
+  }
+ ]
+}

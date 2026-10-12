@@ -26,8 +26,8 @@ public final class ArborSkillPresentation {
         return List.copyOf(result);
     }
 
-    public static List<ArborOfWillLayout.FruitPlacement> placements(double chamberRadius) {
-        return ArborOfWillLayout.place(specs(), chamberRadius);
+    public static List<ArborOfWillLayout.FruitPlacement> placements(double chamberRadius, int degree) {
+        return ArborOfWillLayout.place(specs(), chamberRadius, degree);
     }
 
     private static int depth(SkillPoint skill) {

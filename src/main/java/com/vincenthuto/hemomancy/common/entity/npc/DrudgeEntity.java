@@ -249,7 +249,7 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
         this.entityData.set(DATA_MEMORY_NAME, manip != null ? manip.getName() : "");
         if (!level().isClientSide) {
             if (manip != null) {
-                setCustomName(Component.literal("[" + manip.getProperName() + "]").withStyle(ChatFormatting.DARK_RED));
+                setCustomName(Component.literal("[").append(manip.getDisplayName()).append("]").withStyle(ChatFormatting.DARK_RED));
                 setCustomNameVisible(true);
             } else {
                 setCustomName(null);
@@ -376,7 +376,8 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
             if (!player.getAbilities().instabuild) {
                 held.shrink(1);
             }
-            player.displayClientMessage(Component.literal("§7Memory installed: §c" + memItem.getManip().getProperName()), true);
+            player.displayClientMessage(Component.literal("§7Memory installed: ")
+                    .append(memItem.getManip().getDisplayName().withStyle(ChatFormatting.RED)), true);
             return InteractionResult.SUCCESS;
         }
 
@@ -384,14 +385,22 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
         if (held.isEmpty()) {
             setPassiveMode(!isPassiveMode());
             String modeStr = isPassiveMode() ? "§aPassive" : "§eCommanded";
-            String memStr = equippedMemory != null ? "§c" + equippedMemory.getProperName() : "§8none";
-            player.displayClientMessage(Component.literal(
-                    "§7Mode: " + modeStr + " §7| Memory: " + memStr
-                    + " §7| Charge: §c" + (int) getBloodCharge() + "/" + (int) MAX_BLOOD_CHARGE + " mL"), true);
+            Component memName = equippedMemory != null ? equippedMemory.getDisplayName().withStyle(ChatFormatting.RED)
+                    : Component.literal("§8none");
+            player.displayClientMessage(Component.literal("§7Mode: " + modeStr + " §7| Memory: ").append(memName)
+                    .append(" §7| Charge: §c" + (int) getBloodCharge() + "/" + (int) MAX_BLOOD_CHARGE + " mL"), true);
             return InteractionResult.SUCCESS;
         }
 
         return super.mobInteract(player, hand);
+    }
+
+    /**
+     * Drops the equipped memory as an item, for removal paths that bypass {@link #die(DamageSource)}
+     * (for example Thread Ripper unravelling the construct).
+     */
+    public void dropEquippedMemory() {
+        if (!level().isClientSide) dropMemoryItem(null);
     }
 
     /** Drops the currently equipped memory as an item near the drudge. */

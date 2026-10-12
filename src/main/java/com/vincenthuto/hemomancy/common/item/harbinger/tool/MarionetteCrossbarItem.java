@@ -432,7 +432,7 @@ public class MarionetteCrossbarItem extends Item implements HemoClientItemExtens
 		if (!alreadyActive.isEmpty()) {
             com.vincenthuto.hemomancy.common.circus.CircusSchoolQuests.observeControl((ServerPlayer) player, crossbarId, "recall", selected);
 			for (Mob mob : alreadyActive) {
-				mob.discard();
+				PuppetStrings.unspool(mob);
 			}
 			player.playSound(SoundEvents.CHAIN_BREAK, 0.45F, 0.9F);
 			player.displayClientMessage(Component.translatable("hemomancy.summon.recalled",
@@ -483,6 +483,7 @@ public class MarionetteCrossbarItem extends Item implements HemoClientItemExtens
 					.withStyle(ChatFormatting.GRAY), true);
 			return;
 		}
+		PuppetStrings.descend(mob);
 		com.vincenthuto.hemomancy.common.circus.CircusSchoolQuests.observeControl((ServerPlayer) player, crossbarId, "call", selected);
 		player.getCooldowns().addCooldown(stack.getItem(), 20);
 		player.playSound(SoundEvents.EVOKER_PREPARE_SUMMON, 0.55F, 0.75F);
@@ -498,8 +499,10 @@ public class MarionetteCrossbarItem extends Item implements HemoClientItemExtens
 			List<Mob> active = new ArrayList<>();
 			for (ServerLevel level : serverPlayer.server.getAllLevels()) {
 				for (Entity entity : level.getAllEntities()) {
+					// A body being hauled away on its strings no longer counts as active.
 					if (entity instanceof Mob mob
 							&& mob.isAlive()
+							&& !PuppetStrings.isUnspooling(mob)
 							&& mob instanceof BoundPuppeteerSummon bound
 							&& player.getUUID().equals(bound.hemomancy$getOwnerUUID())) {
 						active.add(mob);

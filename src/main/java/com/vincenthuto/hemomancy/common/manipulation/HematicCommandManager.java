@@ -1,7 +1,11 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.damage.SchoolState;
+import com.vincenthuto.hemomancy.common.damage.SchoolStates;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
+import com.vincenthuto.hemomancy.common.manipulation.ductilis.DuctilisLightningEffects;
+import com.vincenthuto.hemomancy.common.manipulation.ductilis.NerveCommandRules;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -13,8 +17,6 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.WalkTarget;
-import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -59,10 +61,8 @@ public final class HematicCommandManager {
 	}
 
 	public static boolean canCommand(LivingEntity target) {
-		boolean boss = target instanceof EnderDragon || target instanceof WitherBoss
-				|| target.getClass().getName().startsWith("com.vincenthuto.hemomancy.common.entity.boss.");
 		return HematicCommandRules.canCommand(target instanceof Mob, target instanceof ServerPlayer,
-				boss, HemoEntityPredicates.NOBLOOD.test(target), target.getMaxHealth());
+				ManipulationReactiveEvents.isBoss(target), HemoEntityPredicates.NOBLOOD.test(target), target.getMaxHealth());
 	}
 
 	public static boolean isRebuked(LivingEntity target) {
@@ -84,14 +84,19 @@ public final class HematicCommandManager {
     }
 
     public static boolean available(ServerPlayer caster, LivingEntity target) {
+        return availableForMarionette(caster, target)
+                && !target.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.blood_binding);
+    }
+
+    /** Marionette takes a Blood-Bound body by releasing the binding; the other commands refuse a captive. */
+    public static boolean availableForMarionette(ServerPlayer caster, LivingEntity target) {
         CommandState existing = COMMANDS.get(target.getUUID());
         return canCommand(target) && ManipulationCombatHelper.canHarm(caster, target)
                 && (existing == null || existing.caster.equals(caster.getUUID()))
                 && !(target instanceof net.minecraft.world.entity.OwnableEntity ownable && ownable.getOwnerUUID() != null)
                 && !(target instanceof com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon bound
                     && bound.hemomancy$getOwnerUUID() != null)
-                && !(target.getVehicle() instanceof com.vincenthuto.hemomancy.common.entity.npc.circus.CircusCarouselEntity)
-                && !target.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.blood_binding);
+                && !(target.getVehicle() instanceof com.vincenthuto.hemomancy.common.entity.npc.circus.CircusCarouselEntity);
     }
 
     public static Mob marionette(ServerPlayer caster) {
@@ -105,10 +110,12 @@ public final class HematicCommandManager {
     }
 
     public static boolean acquireMarionette(ServerPlayer caster, LivingEntity target) {
-        if (!available(caster, target) || caster.distanceToSqr(target) > 64) return false;
+        if (!(target instanceof Mob) || !availableForMarionette(caster, target) || caster.distanceToSqr(target) > 64)
+            return false;
         UUID previous = IMPRESSED_BY_CASTER.get(caster.getUUID());
         Mob previousBody = previous == null ? null : BODIES.get(previous);
         if (previousBody != null) release(previousBody);
+        target.removeEffect(com.vincenthuto.hemomancy.common.init.EffectInit.blood_binding);
         return apply(caster, target, Mode.MARIONETTE, SanguineMarionetteRules.MAX_TICKS, null);
     }
 
@@ -213,7 +220,7 @@ public final class HematicCommandManager {
 
     private static boolean apply(ServerPlayer caster, LivingEntity target, Mode mode, int duration, UUID redirectedTarget) {
 		if (!(target instanceof Mob mob) || !ManipulationCombatHelper.canHarm(caster, target)
-				|| (mode == Mode.REDIRECTED ? ManipulationReactiveEvents.isBoss(target) : !canCommand(target))) return false;
+				|| !canCommand(target)) return false;
 		CommandState existing = COMMANDS.get(target.getUUID());
         if (existing != null && !existing.caster.equals(caster.getUUID())) return false;
         boolean targetDisabled = existing != null ? existing.targetDisabled
@@ -234,7 +241,15 @@ public final class HematicCommandManager {
 		if (mode == Mode.REDIRECTED) {
 			Entity redirected = caster.serverLevel().getEntity(redirectedTarget);
 			mob.setTarget(redirected instanceof LivingEntity living ? living : null);
-		} else feedback(caster.serverLevel(), mob, mode);
+		} else {
+			feedback(caster.serverLevel(), mob, mode);
+			// The command overrides what the body was doing: a nerve interruption, with a bolt from the caster's eyes.
+			if (mode == Mode.REBUKED || mode == Mode.IMPRESSED) {
+				SchoolStates.apply(caster, mob, SchoolState.DISRUPTED, 10);
+				if (mode == Mode.REBUKED) DuctilisLightningEffects.synapticJolt(caster, mob);
+				else DuctilisLightningEffects.conductiveMark(caster, mob);
+			}
+		}
         visual(caster,mob,COMMANDS.get(mob.getUUID()));
 		return true;
 	}
@@ -416,11 +431,15 @@ public final class HematicCommandManager {
             }
             return;
         }
+        // Rebuke and Impressment are Ductilis nerve commands; Sovereign Instinct's redirection keeps the Animus crown.
+        boolean nerve = state.mode == Mode.REBUKED || state.mode == Mode.IMPRESSED;
         net.neoforged.neoforge.network.PacketDistributor.sendToPlayersNear(caster.serverLevel(),null,
                 mob.getX(),mob.getY(),mob.getZ(),64,
                 new com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket(
-                        ManipulationVisuals.Form.COMMAND,mob.getId(),mob.position(),caster.getEyePosition(),
-                        mob.getBbHeight(),(int)Math.min(10,state.until-caster.level().getGameTime()),state.mode.ordinal()+1));
+                        nerve ? ManipulationVisuals.Form.NERVE_COMMAND : ManipulationVisuals.Form.COMMAND,mob.getId(),mob.position(),
+                        caster.getEyePosition(),mob.getBbHeight(),(int)Math.min(10,state.until-caster.level().getGameTime()),
+                        nerve ? (state.mode == Mode.REBUKED ? NerveCommandRules.REBUKE : NerveCommandRules.IMPRESS)
+                                : state.mode.ordinal()+1));
     }
 
 	private static void release(Mob mob) {
@@ -441,6 +460,7 @@ public final class HematicCommandManager {
         mob.getBrain().eraseMemory(net.minecraft.world.entity.ai.memory.MemoryModuleType.WALK_TARGET);
         mob.getBrain().eraseMemory(net.minecraft.world.entity.ai.memory.MemoryModuleType.LOOK_TARGET);
         ManipulationVisuals.attached(mob,ManipulationVisuals.Form.COMMAND,0,0,0);
+        ManipulationVisuals.attached(mob,ManipulationVisuals.Form.NERVE_COMMAND,0,0,0);
         ManipulationVisuals.attached(mob,ManipulationVisuals.Form.MARIONETTE_TETHER,0,0,0);
         ManipulationVisuals.attached(mob,ManipulationVisuals.Form.MARIONETTE_ORDER,0,0,0);
 		mob.setTarget(null);

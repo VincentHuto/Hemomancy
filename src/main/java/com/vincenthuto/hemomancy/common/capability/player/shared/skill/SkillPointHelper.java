@@ -95,7 +95,12 @@ public final class SkillPointHelper {
 	private static double getLastWindRegenPerTick(SkillProgress progress) {
 		SkillPoint sp = SkillPointInit.skill_last_wind;
 		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp) * 2.0;
+		return lastWindRegenPerTick(progress.getLevel(sp));
+	}
+
+	/** Last Wind: 0.5 mL/tick per level while below {@link #getLastWindThreshold()} (10 / 20 / 30 mL/s). */
+	public static double lastWindRegenPerTick(int level) {
+		return Math.max(0, level) * 0.5;
 	}
 
 	public static double getLastWindThreshold() {
@@ -155,7 +160,12 @@ public final class SkillPointHelper {
 	private static double getSanguineSurgeRegen(SkillProgress progress) {
 		SkillPoint sp = SkillPointInit.skill_sanguine_surge;
 		if (sp == null || !progress.isUnlocked(sp)) return 0;
-		return progress.getLevel(sp) * 1.0;
+		return sanguineSurgeRegenPerTick(progress.getLevel(sp));
+	}
+
+	/** Sanguine Surge: 0.25 mL/tick per level (5 / 10 / 15 mL/s). */
+	public static double sanguineSurgeRegenPerTick(int level) {
+		return Math.max(0, level) * 0.25;
 	}
 
 	public static double getCrimsonMasteryMultiplier(Player player) {

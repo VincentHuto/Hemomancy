@@ -31,7 +31,8 @@ import java.util.WeakHashMap;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class SchoolCombatEvents {
-    private record Prepared(SchoolHitContext hit, SchoolState consumed, boolean hadNecrosis,
+    /** {@code spent} is the Necrosis debt a partial Funeral Bell cashes in; the rest stays owed. */
+    private record Prepared(SchoolHitContext hit, SchoolState consumed, float spent, boolean hadNecrosis,
                             boolean hadLodestone, boolean hadConductor, boolean payoff) {}
     private record Impact(long tick, SchoolHitContext hit) {}
     private static final Map<DamageSource, Map<UUID, Prepared>> PENDING = new WeakHashMap<>();
@@ -65,6 +66,7 @@ public final class SchoolCombatEvents {
         MAGNETIC_IMPACTS.remove(target);
         SchoolHitContext hit = event.getSource() instanceof SchoolDamageSource source ? source.context() : null;
         SchoolState consumed = null;
+        float spent = 0;
         boolean payoff = false;
         float damage = event.getAmount();
         float stateBonus = 0;
@@ -88,16 +90,25 @@ public final class SchoolCombatEvents {
                 int pressure = SchoolStates.levels(target, SchoolState.PRESSURE);
                 if ((ability.equals("blood_aneurysm")
                         || ability.equals("living_blade") && hit.charge() >= 0.99f && pressure == 3) && pressure > 0) {
-                    bonus = SchoolStateRules.ruptureDamage(pressure);
+                    // Aneurysm's rupture scales with its charge, like Bell and Lodestone; Living Blade already needs full charge.
+                    bonus = SchoolStateRules.ruptureDamage(pressure)
+                            * (ability.equals("blood_aneurysm") ? hit.charge() : 1);
                     consumed = SchoolState.PRESSURE;
                 } else if (ability.equals("funeral_bell") && SchoolStates.has(target, SchoolState.NECROSIS)) {
                     var debt = data.get(SchoolState.NECROSIS);
                     bonus = debt == null ? 0 : debt.stored * hit.charge();
+                    spent = bonus;
                     consumed = SchoolState.NECROSIS;
                 } else if (ability.equals("vitric_combustion") && SchoolStates.has(target, SchoolState.SEARING)) {
                     var heat = data.get(SchoolState.SEARING);
                     bonus = heat == null ? 0 : SchoolStateRules.combustionDamage(heat.expires, heat.nextTick, target.level().getGameTime());
                     consumed = SchoolState.SEARING;
+                } else if (ability.equals("umbral_rend") && SchoolStates.has(target, SchoolState.OBSCURED)) {
+                    bonus = com.vincenthuto.hemomancy.common.manipulation.tenebris.UmbralRendManip.OBSCURED_BONUS;
+                    consumed = SchoolState.OBSCURED;
+                } else if (ability.equals("lodestone_collapse") && SchoolStates.has(target, SchoolState.LODESTONE)) {
+                    bonus = 4 * hit.charge();
+                    consumed = SchoolState.LODESTONE;
                 } else if (ability.equals("prismatic_reproof") && SchoolStates.has(target, SchoolState.ILLUMINATED)) {
                     damage *= 2;
                     consumed = SchoolState.ILLUMINATED;
@@ -126,10 +137,16 @@ public final class SchoolCombatEvents {
             damage += stateBonus;
             if (hit.ability().getPath().equals("osseous_bloom")
                     && com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents.isBoss(target)) damage = Math.min(12, damage);
+            if (hit.ability().getPath().equals("exsanguinate")
+                    && com.vincenthuto.hemomancy.common.manipulation.ManipulationReactiveEvents.isBoss(target)) {
+                float mastery = owner instanceof Player caster
+                        ? (float) com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper.getCrimsonMasteryMultiplier(caster) : 1.0F;
+                damage = Math.min(com.vincenthuto.hemomancy.common.manipulation.mortem.ExsanguinateManip.BOSS_DAMAGE_CAP * mastery, damage);
+            }
             event.setAmount(damage);
         }
         PENDING.computeIfAbsent(event.getSource(), ignored -> new HashMap<>()).put(target.getUUID(),
-                new Prepared(hit, consumed, SchoolStates.has(target, SchoolState.NECROSIS),
+                new Prepared(hit, consumed, spent, SchoolStates.has(target, SchoolState.NECROSIS),
                         SchoolStates.has(target, SchoolState.LODESTONE),
                         target.hasEffect(EffectInit.conductive_mark) || target.hasEffect(EffectInit.lodestone), payoff));
     }
@@ -169,12 +186,15 @@ public final class SchoolCombatEvents {
         LivingEntity caster = event.getSource().getEntity() instanceof LivingEntity living ? living : null;
         if (prepared.payoff && !data.hasPaid(hit.rootAttack())) {
             data.recordPayoff(hit.rootAttack(), now);
-            if (prepared.consumed != null) SchoolStates.clear(target, prepared.consumed);
+            if (prepared.consumed == SchoolState.NECROSIS) spendNecrosis(target, data, prepared.spent);
+            else if (prepared.consumed != null) SchoolStates.clear(target, prepared.consumed);
             if (target.level() instanceof ServerLevel level) {
                 var form = prepared.consumed == SchoolState.RIME ? ManipulationVisuals.Form.CRUOR_BREAK
                         : prepared.consumed == SchoolState.NECROSIS ? ManipulationVisuals.Form.MORTEM_BURST
                         : prepared.consumed == SchoolState.SEARING ? ManipulationVisuals.Form.IGNITION
                         : prepared.consumed == SchoolState.ILLUMINATED ? ManipulationVisuals.Form.FLARE
+                        : prepared.consumed == SchoolState.OBSCURED ? ManipulationVisuals.Form.UMBRA_SLASH
+                        : prepared.consumed == SchoolState.LODESTONE ? ManipulationVisuals.Form.FERRIC_IMPACT
                         : ManipulationVisuals.Form.ANIMUS_IMPACT;
                 ManipulationVisuals.burst(level, form, target.position(), target.position(), 1, 16);
             }
@@ -203,6 +223,17 @@ public final class SchoolCombatEvents {
                 if (discharge == null || !discharge.enqueueReaction(arc)) arc.run();
             }
         }
+    }
+
+    /** Spend part of the Necrosis debt; whatever a partial toll leaves unpaid still releases at expiry. */
+    private static void spendNecrosis(LivingEntity target, SchoolCombatState data, float spent) {
+        var debt = data.get(SchoolState.NECROSIS);
+        if (debt == null || debt.stored - spent <= 1.0E-4F) {
+            SchoolStates.clear(target, SchoolState.NECROSIS);
+            return;
+        }
+        debt.stored -= spent;
+        data.changed();
     }
 
     @SubscribeEvent public static void knockback(LivingKnockBackEvent event) {
@@ -236,7 +267,10 @@ public final class SchoolCombatEvents {
         data.observe(target.level().getGameTime());
         var heat = data.get(SchoolState.SEARING);
         if (heat != null) {
-            if (!target.isAlive() || target.isInWaterOrRain() || target.fireImmune() || target.hasEffect(MobEffects.FIRE_RESISTANCE)) {
+            // Never burn past the meter's deadline or without the effect, even if a removal hook was missed.
+            // The tick landing exactly on the deadline still burns, as Vitric Combustion's payout assumes.
+            if (!target.isAlive() || target.isInWaterOrRain() || target.fireImmune() || target.hasEffect(MobEffects.FIRE_RESISTANCE)
+                    || target.level().getGameTime() > heat.expires || !target.hasEffect(SchoolState.SEARING.effect())) {
                 SchoolStates.clear(target, SchoolState.SEARING);
             } else if (target.level().getGameTime() >= heat.nextTick) {
                 heat.nextTick += 20;

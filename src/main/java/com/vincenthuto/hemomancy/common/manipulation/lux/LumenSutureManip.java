@@ -24,6 +24,8 @@ import java.util.Comparator;
 
 public class LumenSutureManip extends BloodManipulation {
 	private static final double RADIUS = 12.0;
+	/** Absorption I for ten seconds on top of the small heal and cleanse. */
+	public static final int ABSORPTION_TICKS = 200;
 
 	public LumenSutureManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
@@ -41,7 +43,7 @@ public class LumenSutureManip extends BloodManipulation {
 				.min(Comparator.comparingDouble((Player p) -> p.distanceToSqr(player)).thenComparing(Player::getUUID))
 				.orElse(player);
 
-		target.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 400, 1, false, true));
+		target.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, ABSORPTION_TICKS, 0, false, true));
 		target.removeEffect(MobEffects.BLINDNESS);
 		target.removeEffect(MobEffects.WITHER);
 		target.removeEffect(com.vincenthuto.hemomancy.common.init.EffectInit.necrosis);

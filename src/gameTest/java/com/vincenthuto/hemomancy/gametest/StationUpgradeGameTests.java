@@ -61,7 +61,8 @@ public final class StationUpgradeGameTests {
     @GameTest(template = "empty", timeoutTicks = 60, batch = "station_upgrade")
     public static void upgradedStationsDropTheirStage(GameTestHelper helper) {
         for (Block block : List.of(BlockInit.ghastly_alembic.get(), BlockInit.resonant_forge.get(),
-                BlockInit.hematic_armature.get(), BlockInit.enzymatic_scriptorium.get(), BlockInit.vial_centrifuge.get())) {
+                BlockInit.hematic_armature.get(), BlockInit.enzymatic_scriptorium.get(), BlockInit.vial_centrifuge.get(),
+                BlockInit.somatic_loom.get())) {
             BlockPos pos = helper.absolutePos(new BlockPos(3, 2, 3));
             BlockState state = withFacing(block.defaultBlockState()).setValue(StationTierProperty.STAGE, 2);
             helper.getLevel().setBlockAndUpdate(pos, state);
@@ -195,6 +196,10 @@ public final class StationUpgradeGameTests {
     public static void armatureConsecrationUpgrade(GameTestHelper h) { assertUpgradeCompletes(h, UpgradeStation.ARMATURE, 1); }
     @GameTest(template = "empty", timeoutTicks = 100, batch = "station_upgrade_armature_2")
     public static void armatureMonolithicUpgrade(GameTestHelper h) { assertUpgradeCompletes(h, UpgradeStation.ARMATURE, 2); }
+    @GameTest(template = "empty", timeoutTicks = 100, batch = "station_upgrade_loom_1")
+    public static void loomGanglionicUpgrade(GameTestHelper h) { assertUpgradeCompletes(h, UpgradeStation.LOOM, 1); }
+    @GameTest(template = "empty", timeoutTicks = 100, batch = "station_upgrade_loom_2")
+    public static void loomCorticalUpgrade(GameTestHelper h) { assertUpgradeCompletes(h, UpgradeStation.LOOM, 2); }
     @GameTest(template = "empty", timeoutTicks = 100, batch = "station_upgrade_scriptorium_1")
     public static void scriptoriumEightfoldUpgrade(GameTestHelper h) { assertUpgradeCompletes(h, UpgradeStation.SCRIPTORIUM, 1); }
     @GameTest(template = "empty", timeoutTicks = 100, batch = "station_upgrade_scriptorium_2")
@@ -343,7 +348,9 @@ public final class StationUpgradeGameTests {
                 new Lesson(UpgradeStation.CENTRIFUGE, 2, "centrifuge/pages/second_fraction"),
                 new Lesson(UpgradeStation.RESONANT_FORGE, 1, "resonant_forge/pages/upgrades"),
                 new Lesson(UpgradeStation.SCRIPTORIUM, 1, "tendency/pages/eightfold_script"),
-                new Lesson(UpgradeStation.SCRIPTORIUM, 2, "tendency/pages/palimpsest"))) {
+                new Lesson(UpgradeStation.SCRIPTORIUM, 2, "tendency/pages/palimpsest"),
+                new Lesson(UpgradeStation.LOOM, 1, "manipulations/pages/ganglionic_weave"),
+                new Lesson(UpgradeStation.LOOM, 2, "manipulations/pages/cortical_weave"))) {
             UpgradeStation station = lesson.station();
             int number = lesson.tier();
             var tier = StationUpgradeCatalog.get(station, number);

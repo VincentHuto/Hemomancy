@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgress;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCastingRules;
 import com.vincenthuto.hemomancy.common.manipulation.animus.AvatarManifestationRules;
 import com.vincenthuto.hemomancy.common.manipulation.animus.SummonThrallManip;
 import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry;
@@ -20,6 +21,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.HitResult;
@@ -67,9 +71,8 @@ public class KnownManipulationEvents {
 	@SubscribeEvent
 	public static void onPlayerDamage(LivingDamageEvent.Pre e) {
 
-		// Radiant Protection
-		if (e.getEntity() instanceof Player) {
-			Player player = (Player) e.getEntity();
+		// Radiant Protection. The void, /kill and hunger are not blows the avatar can turn.
+		if (e.getEntity() instanceof Player player && !bypassesAvatar(e.getSource())) {
 			IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 					.orElseThrow(NullPointerException::new);
 			AvatarManifestationRules.stats(known.getActiveAvatarForm()).ifPresent(stats -> {
@@ -82,6 +85,10 @@ public class KnownManipulationEvents {
 			});
 		}
 
+	}
+
+	static boolean bypassesAvatar(DamageSource source) {
+		return source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) || source.is(DamageTypes.STARVE);
 	}
 
 	@SubscribeEvent
@@ -135,6 +142,7 @@ public class KnownManipulationEvents {
 		LAST_OWNER_SNAPSHOT.remove(event.getEntity().getUUID());
 		// Clean up any pending thrall awaiting target selection
 		SummonThrallManip.clearPendingThrall(event.getEntity().getUUID());
+		SynapticLoadoutLockout.clear(event.getEntity().getUUID());
 	}
 
 	public static void syncAvatar(Player player, Collection<? extends Player> receivers, String avatarForm) {
@@ -166,12 +174,21 @@ public class KnownManipulationEvents {
 	 * </ul>
 	 */
 	public static void onManipulationUsed(ServerPlayer player, BloodManipulation manip) {
+		onManipulationUsed(player, manip, 1.0F);
+	}
+
+	/**
+	 * {@code rewardScale} is the cast's charge fraction for CHARGED manipulations (1 otherwise): alignment and
+	 * skill points scale with it, and a cast below half charge earns no mastery use and does not count toward
+	 * the manipulation-use milestones.
+	 */
+	public static void onManipulationUsed(ServerPlayer player, BloodManipulation manip, float rewardScale) {
 		com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.ruptureCocoon(player, true);
 		// 1. Vascular strain on the manip's associated vein section
 		VascularSystemEvents.applyManipStrain(player, manip);
 
 		// 2. Tendency shift toward the manip's tendency
-		BloodTendencyEvents.shiftTendencyFromManipUse(player, manip.getTend(), manip.getSecondaryTend());
+		BloodTendencyEvents.shiftTendencyFromManipUse(player, manip.getTend(), manip.getSecondaryTend(), rewardScale);
 
 		// 3. Skill: Vital Link chance to heal when using a manipulation
 		double vitalLinkChance = SkillPointHelper.getVitalLinkChance(player);
@@ -182,13 +199,13 @@ public class KnownManipulationEvents {
 		// 4. Grant XP to the manipulation's level and check for rank-up
 		HemoCapabilityAccess.getKnownManipulations(player).ifPresent(known -> {
 			ManipLevel level = known.getManipLevel(manip);
-			if (level != null) {
+			if (level != null && ManipulationCastingRules.earnsMasteryUse(rewardScale)) {
 				level.setXp(level.getXp() + 1.0);
 				if (level.tryLevelUp()) {
 					player.displayClientMessage(
 							net.minecraft.network.chat.Component.translatable(
 									"hemomancy.manipulation.levelup",
-									manip.getProperName(),
+									manip.getDisplayName(),
 									level.getCurrentLevel()),
 							false);
 				}
@@ -206,10 +223,11 @@ public class KnownManipulationEvents {
 			case PERFECTUS     -> 5;
 		};
 		SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(player);
-		progress.addSkillPoints(spGain);
+		progress.addSkillPoints(ManipulationCastingRules.scaledSkillPoints(spGain, rewardScale));
 
-		// 6. Check manipulation-use milestones (first use, tiered totals)
-		SkillPointGainEvents.onManipulationUsed(player);
+		// 6. Check manipulation-use milestones (first use, tiered totals); like mastery, a cast below half
+		// charge does not count as a use.
+		if (ManipulationCastingRules.earnsMasteryUse(rewardScale)) SkillPointGainEvents.onManipulationUsed(player);
 
 		// Sync skill tree (which includes skill-point balance) back to client
 		SkillPointGainEvents.syncSkills(player);

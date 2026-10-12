@@ -29,14 +29,13 @@ import java.util.List;
  * Cryogenic Pulse — a T1 (HUMILIS) CONGEATIO quick manipulation that detonates
  * a burst of crystallised blood-ice in a 5-block radius around the caster.
  *
- * <p>All living entities caught in the pulse receive:
+ * <p>Every harmable entity caught in the pulse receives:
  * <ul>
- *   <li>Slowness III for 3 seconds (soft freeze)</li>
- *   <li>Mining Fatigue I for 4 seconds (frozen limbs)</li>
- *   <li>1.5 hearts of cold damage</li>
+ *   <li>3 freeze damage, scaled by Crimson Mastery</li>
+ *   <li>One Rime level for 3 seconds, the Congeatio school state applied by the direct hit</li>
  * </ul>
- * The caster is immune. Useful for crowd control in tight situations when
- * Glacial Grasp (the traversal tool) is not appropriate.
+ * The caster and allies are spared. Useful for crowd control in tight situations when
+ * Glacial Grasp (the aimed starter) is not appropriate.
  */
 public class CryogenicPulseManip extends BloodManipulation {
 

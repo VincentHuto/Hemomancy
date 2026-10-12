@@ -23,11 +23,6 @@ class AnimusMortemGeometryTest {
                 assertEquals(0,mesh.points.size()%4);
             }
     }
-    @Test void spectralBellIsHollowAndVisibleFromTheSide() {
-        Capture mesh=draw(Form.BELL,12);
-        assertTrue(mesh.points.size()<220,"Bell should use thin sheets rather than inner and outer lathed walls");
-        assertTrue(mesh.points.stream().anyMatch(p->Math.abs(p.z)>.2));
-    }
     @Test void distinctSchoolsDoNotCaptureUnrelatedSharedForms() {
         assertFalse(AnimusMortemGeometry.handles(Form.GAZE_CHARGE));
         assertFalse(AnimusMortemGeometry.handles(Form.SWORD_IMPACT));

@@ -234,14 +234,17 @@ The Somatic Loom is where you craft **Hematic Memories** to learn new manipulati
 3. Collect **Catalysts** (tendency-specific materials)
 4. Insert one blank and the recipe's catalysts, then empty-hand use the Loom to select an output and check its cost and learning requirements
 5. Project the displayed blood cost into the Loom; payment locks that recipe and its catalysts
-6. Hold a Living Staff on a colored strand, then turn and move to draw it into the Loom at the captured distance
-7. Receive completed Memory item
+6. Witness the echo: a past Harbinger appears on the warp and casts the memory on loop, and its threads tear loose and attack you by tendency
+7. Survive a thread's attacks or strike it with a Living Staff until it goes slack, then use the staff on it to weave it home
+8. When every thread is woven, the echo grows whole, casts once more and sinks into the fell: receive the completed Memory item
 
 **Result:** Place the full Memory item in an Iron Brazier, light it with Blood Projection, and hold Blood Absorption on it to learn the manipulation. In Survival, direct item use learns crude starter shards, not full woven memories.
 
-More enzyme stock does not change the selected output. Drifting strands can require extra enzymes, which are spent while drawing them home. Once payment finishes, continuing to hold Projection does not pay again or repeat the Staff instructions; empty-hand use still shows that help.
+More enzyme stock does not change the selected output. Paying the blood spins exactly the recipe's enzymes from the vials onto the pirns, so a paid weave never runs short. Low-rank weaves (Humilis, Mediocritas) cannot kill you: their threads black you out instead, pausing the weave. Summa and above can. Dying, leaving the area or logging out only pauses the weave; your woven threads and blood are kept. Once payment finishes, continuing to hold Projection does not pay again or repeat the Staff instructions; empty-hand use still shows that help.
 
-An interrupted weave retains its paid blood, selected recipe, inputs, remaining enzymes, and unfinished strands across save/reload. A missing or changed recipe pauses it for recovery. Crouch-use with an empty hand cancels without refunding spent blood or enzymes; further crouch-use returns the remaining catalyst and blank. Unspent enzymes stay in the Loom.
+**Loom tiers.** A base Loom weaves memories up to Summa. At Degree 5, after you have woven a memory yourself, the Mnemonist offers a Ganglionic Harness; install it at the Rite of the Ganglionic Weave to weave Magister memories. The grown ganglion's feelers take slack threads that drift near the echo, and your staff hooks slack threads from twice as far. At Degree 6, after weaving a Magister memory on a Ganglionic Loom, the Cortical Crown (Rite of the Cortical Weave) opens Perfectus memories and lets the echo stand at full stature; while it weaves, the world around the loom gives way to your own Chamber of Will sky. Crafted harnesses and crowns work too, but never replace your own practice.
+
+An interrupted weave retains its paid blood, selected recipe, inputs, spun enzymes, and woven threads across save/reload. A missing or changed recipe pauses it for recovery. Crouch-use with an empty hand cancels without refunding spent blood or enzymes; further crouch-use returns the remaining catalyst and blank. Unspent enzymes stay in the Loom.
 
 ### Memory Selection and Saved Patterns
 The selected Thelemic memory toggles on or off with the normal manipulation-use key. Holding that key does not charge or channel the Noetic power you selected earlier. Changing selection interrupts that earlier Noetic channel or charge.
@@ -320,6 +323,7 @@ Advanced Harbingers can call shaped bodies as temporary extensions of learned bl
 - The Crossbar holds 256 base charge, plus 32 per Bound Command level. A foreign owner cannot use or retune it.
 - In hand, the Crossbar is a bone-and-brass marionette control trailing living-vein strings. It hangs still until one of its puppets is out. Then it works the strings, jerks when a puppet attacks, and lifts and snaps when you call or recall. In third person each puppet's thread hangs from its own string on the bar.
 - The Spindle prepares only; it never calls or recalls a body.
+- Called puppets are lowered in on vein strings that drop from above. Recalled, swapped or unravelled ones are hauled back up as they fray apart. Your control thread lets go of a departing body, and it stops counting against your cap the moment it starts to rise.
 
 **Field control:**
 
@@ -394,7 +398,7 @@ In Creative mode, right-click the Ghastly Alembic, Resonant Forge, Hematic Armat
 **Living Staff weapon forms**
 
 - **Spear:** stores up to 30 damage dealt in bright light or against Illuminated targets. Its white glow strengthens with charge; the next fully cooled hit releases an eight-damage sphere of Lux light across five blocks and Illuminates enemies for ten seconds.
-- **Axe:** uses a slower overhead swing. A jumping critical leaves a six-second Mortem pool beneath its victim, dealing one damage each second and refreshing Necrosis. Your overlapping pools merge.
+- **Axe:** a Ferric weapon with a slower overhead swing; its hits apply Lodestone. A jumping critical magnetises the ground beneath its victim into a six-second Lodestone field. Each second, the field deals one damage, applies Lodestone and drags nearby enemies toward its centre. Your overlapping fields merge.
 - **Crossbow:** Blood Bolts chain to three new visible enemies, reaching up to five blocks per hop for 75%, 50%, and 25% of the initial impact damage.
 - **Torch:** channels a seven-block fan of pink and crimson fire with black smoky tips and outward-moving blood cells.
 - **Claws:** with a claw in each hand, clicking or holding attack alternates left and right arm strikes. Each hit draws three separated black Umbral cuts with violet cores, rotated to a fresh random angle.

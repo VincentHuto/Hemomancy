@@ -1,4 +1,5 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.functional;
+import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.ClairaudiographBlockEntity;
 import net.minecraft.core.*;
@@ -14,9 +15,16 @@ import net.minecraft.world.level.block.state.*;
 import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import java.util.Map;
 public class ClairaudiographBlock extends Block implements EntityBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED, ACTIVE = BooleanProperty.create("active");
+    /** Footed base, cylinder carriage and crank, then the horn and feed housing at the back. */
+    private static final Map<Direction, VoxelShape> SHAPES = ModelShapes.horizontal(ModelShapes.of(
+            new double[] {1, 0, 1.5, 15, 3, 14.5}, new double[] {0.75, 3, 1.5, 16, 9, 15},
+            new double[] {1.25, 9, 4.5, 15, 14, 15}, new double[] {1.75, 14, 8.75, 14, 16, 13}));
     public ClairaudiographBlock() {
         super(Properties.of().strength(3).sound(SoundType.METAL).noOcclusion().pushReaction(PushReaction.BLOCK));
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(POWERED,false).setValue(ACTIVE,false));
@@ -25,6 +33,7 @@ public class ClairaudiographBlock extends Block implements EntityBlock {
     @Override public BlockState getStateForPlacement(BlockPlaceContext c) { return defaultBlockState().setValue(FACING,c.getHorizontalDirection().getOpposite()); }
     @Override protected BlockState rotate(BlockState s, Rotation r) { return s.setValue(FACING,r.rotate(s.getValue(FACING))); }
     @Override protected BlockState mirror(BlockState s, Mirror m) { return s.rotate(m.getRotation(s.getValue(FACING))); }
+    @Override protected VoxelShape getShape(BlockState s, BlockGetter l, BlockPos p, CollisionContext c) { return SHAPES.get(s.getValue(FACING)); }
     @Override public BlockEntity newBlockEntity(BlockPos p, BlockState s) { return new ClairaudiographBlockEntity(p,s); }
     @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level l, BlockState s, BlockEntityType<T> t) {
         return t == BlockEntityInit.clairaudiograph.get() ? (world,pos,state,be) -> ClairaudiographBlockEntity.tick(world,pos,state,(ClairaudiographBlockEntity)be) : null;

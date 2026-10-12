@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.plant;
 
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -15,22 +16,18 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.util.TriState;
 
-import java.util.stream.Stream;
 
 public class PuffballFungusBlock extends FlowerBlock {
 
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
-	private static final VoxelShape SHAPE_N = Stream.of(Block.box(0.3125, 0, 0.3125, 0.6875, 0.125, 0.6875),
-			Block.box(0.125, 0.0625, 0.125, 0.875, 0.625, 0.875)).reduce((v1, v2) -> {
-				return Shapes.join(v1, v2, BooleanOp.OR);
-			}).get();
+	/** Stub of stem under the broad cap. */
+	private static final VoxelShape CAP_SHAPE = ModelShapes.of(new double[] {5, 0, 5, 11, 1, 11},
+			new double[] {2, 1, 2, 14, 10, 14});
 
 	public PuffballFungusBlock(Holder<MobEffect> effect, int effectDuration, Properties properties) {
 		super(effect, effectDuration, properties);
@@ -48,8 +45,9 @@ public class PuffballFungusBlock extends FlowerBlock {
 		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
 	}
 
+	@Override
 	public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-		return SHAPE;
+		return CAP_SHAPE;
 	}
 
 	@Override

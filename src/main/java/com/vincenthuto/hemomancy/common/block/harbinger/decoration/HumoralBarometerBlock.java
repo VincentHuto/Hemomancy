@@ -25,10 +25,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class HumoralBarometerBlock extends Block {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	private static final VoxelShape NORTH_SHAPE = Block.box(2.0D, 1.0D, 0.0D, 14.0D, 15.0D, 3.0D);
-	private static final VoxelShape SOUTH_SHAPE = Block.box(2.0D, 1.0D, 13.0D, 14.0D, 15.0D, 16.0D);
-	private static final VoxelShape WEST_SHAPE = Block.box(0.0D, 1.0D, 2.0D, 3.0D, 15.0D, 14.0D);
-	private static final VoxelShape EAST_SHAPE = Block.box(13.0D, 1.0D, 2.0D, 16.0D, 15.0D, 14.0D);
+	private static final VoxelShape NORTH_SHAPE = Block.box(3.0D, 0.0D, 0.0D, 13.0D, 16.0D, 2.5D);
+	private static final VoxelShape SOUTH_SHAPE = Block.box(3.0D, 0.0D, 13.5D, 13.0D, 16.0D, 16.0D);
+	private static final VoxelShape WEST_SHAPE = Block.box(0.0D, 0.0D, 3.0D, 2.5D, 16.0D, 13.0D);
+	private static final VoxelShape EAST_SHAPE = Block.box(13.5D, 0.0D, 3.0D, 16.0D, 16.0D, 13.0D);
 
 	public HumoralBarometerBlock(Properties properties) {
 		super(properties);

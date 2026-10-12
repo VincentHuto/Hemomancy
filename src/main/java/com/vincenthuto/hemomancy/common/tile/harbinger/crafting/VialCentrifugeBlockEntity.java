@@ -131,8 +131,26 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 
 	static final String TAG_BLOOD_LEVEL = "bloodLevel";
 
+	// Client-only rotor state, integrated per tick so a spin keeps its inertia between syncs.
+	public float rotorAngle, prevRotorAngle, rotorSpeed, prevRotorSpeed, driveAngle, prevDriveAngle;
+
 	public static void clientTick(Level level, BlockPos worldPosition, BlockState state,
 			VialCentrifugeBlockEntity self) {
+		self.prevRotorAngle = self.rotorAngle;
+		self.prevRotorSpeed = self.rotorSpeed;
+		self.prevDriveAngle = self.driveAngle;
+		self.rotorSpeed = VialCentrifugeRotorRules.approach(self.rotorSpeed,
+				VialCentrifugeRotorRules.targetSpeed(self.upgradeTier(), self.spinningProgress, self.spinningTotalTime));
+		self.rotorAngle += self.rotorSpeed;
+		self.driveAngle += self.rotorSpeed * VialCentrifugeRotorRules.DRIVE_RATIO;
+		if (self.driveAngle >= 360F) {
+			self.driveAngle -= 360F;
+			self.prevDriveAngle -= 360F;
+		}
+		if (self.rotorAngle >= 360F) {
+			self.rotorAngle -= 360F;
+			self.prevRotorAngle -= 360F;
+		}
 	}
 
 	public static void serverTick(Level level, BlockPos pos, BlockState state, VialCentrifugeBlockEntity te) {

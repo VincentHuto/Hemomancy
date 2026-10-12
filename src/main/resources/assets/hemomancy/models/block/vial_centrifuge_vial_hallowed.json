@@ -1,0 +1,79 @@
+{
+ "parent": "minecraft:block/block",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "hemomancy:block/hematic_iron_block",
+  "amber": "hemomancy:block/mnemonic_ambergris_block"
+ },
+ "elements": [
+  {
+   "name": "vial_hallowed",
+   "from": [
+    11.6,
+    10.8,
+    7.6
+   ],
+   "to": [
+    12.4,
+    13.0,
+    8.4
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      11.6,
+      3.0,
+      12.4,
+      5.2
+     ],
+     "texture": "#amber"
+    },
+    "south": {
+     "uv": [
+      11.6,
+      3.0,
+      12.4,
+      5.2
+     ],
+     "texture": "#amber"
+    },
+    "east": {
+     "uv": [
+      7.6,
+      3.0,
+      8.4,
+      5.2
+     ],
+     "texture": "#amber"
+    },
+    "west": {
+     "uv": [
+      7.6,
+      3.0,
+      8.4,
+      5.2
+     ],
+     "texture": "#amber"
+    },
+    "up": {
+     "uv": [
+      11.6,
+      7.6,
+      12.4,
+      8.4
+     ],
+     "texture": "#amber"
+    },
+    "down": {
+     "uv": [
+      11.6,
+      7.6,
+      12.4,
+      8.4
+     ],
+     "texture": "#amber"
+    }
+   }
+  }
+ ]
+}
