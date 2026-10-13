@@ -28,6 +28,10 @@ public final class PanZoomState {
 
 	public static final float ZOOM_MIN = 0.35f;
 	public static final float ZOOM_MAX = 3.0f;
+	/** Lowest zoom {@link #focusOn} picks; below this node icons stop drawing. */
+	public static final float FOCUS_ZOOM_MIN = 0.5f;
+	/** Content-space margin kept around the focused radius. */
+	private static final int FOCUS_PADDING = 24;
 	/** How far (screen pixels) a content edge may be dragged past the viewport edge. */
 	private static final int PAN_MARGIN = 200;
 
@@ -71,6 +75,27 @@ public final class PanZoomState {
 		zoom = 1.0f;
 		panX = (guiWidth  - contentW * zoom) / 2.0;
 		panY = (guiHeight - contentH * zoom) / 2.0;
+	}
+
+	/**
+	 * Centres a radial tree's hub in the viewport, zoomed so the given radius
+	 * fits without shrinking icons out of view.
+	 */
+	public void focusOn(int hubX, int hubY, int radius, int viewportW, int viewportH) {
+		centreHub(hubX, hubY, fitZoom(radius, viewportW, viewportH), viewportW, viewportH);
+	}
+
+	/** Centres a hub in the viewport at a fixed zoom (used when switching layers mid-dive). */
+	public void centreHub(int hubX, int hubY, float zoom, int viewportW, int viewportH) {
+		this.zoom = zoom;
+		panX = viewportW / 2.0 - hubX * zoom;
+		panY = viewportH / 2.0 - hubY * zoom;
+	}
+
+	/** Zoom that fits {@code radius} around the viewport centre, clamped to [0.5, 1.0]. */
+	public static float fitZoom(int radius, int viewportW, int viewportH) {
+		float fit = Math.min(viewportW, viewportH) / (2.0f * (radius + FOCUS_PADDING));
+		return Mth.clamp(fit, FOCUS_ZOOM_MIN, 1.0f);
 	}
 
 	/**

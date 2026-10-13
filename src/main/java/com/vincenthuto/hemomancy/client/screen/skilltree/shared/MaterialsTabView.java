@@ -30,14 +30,18 @@ public final class MaterialsTabView {
 	private MaterialsTabView() {
 	}
 
+	/**
+	 * Lays out the visible atlas nodes from the full spec so hidden entries never shift visible ones.
+	 * {@code boundsOut} receives the content width and height and, when it has room for them, the
+	 * offset applied to every atlas coordinate (nodes, hub and plaques alike) at indices 2 and 3.
+	 */
 	public static void buildLayout(List<MaterialAtlasNode> nodes,
 			Map<MaterialAtlasNode, int[]> positionsOut,
 			int[] boundsOut,
 			int nodeSize,
 			MaterialAtlasPath path) {
 		positionsOut.clear();
-		boundsOut[0] = 0;
-		boundsOut[1] = 0;
+		Arrays.fill(boundsOut, 0);
 		Map<String, int[]> allPositions = atlasEntryPositions(path);
 		if (allPositions.isEmpty()) {
 			return;
@@ -86,6 +90,10 @@ public final class MaterialsTabView {
 		}
 		boundsOut[0] = Math.max(1, maxX + CONTENT_PAD);
 		boundsOut[1] = Math.max(1, maxY + CONTENT_PAD);
+		if (boundsOut.length >= 4) {
+			boundsOut[2] = offX;
+			boundsOut[3] = offY;
+		}
 	}
 
 	private static Map<String, int[]> atlasEntryPositions(MaterialAtlasPath path) {
@@ -159,6 +167,8 @@ public final class MaterialsTabView {
 			PanZoomState state,
 			int guiLeft,
 			int guiTop,
+			int offsetX,
+			int offsetY,
 			int nodeSize,
 			EnumNodeShape nodeShape,
 			int accentColor,
@@ -167,8 +177,8 @@ public final class MaterialsTabView {
 			int defaultBorder) {
 		float time = (System.currentTimeMillis() % 100000L) / 1000.0F;
 		int hn = state.halfNode(nodeSize);
-		drawAtlasHub(gfx, font, path, state, guiLeft, guiTop);
-		drawBucketPlaques(gfx, font, path, nodes, state, guiLeft, guiTop);
+		drawAtlasHub(gfx, font, path, state, guiLeft, guiTop, offsetX, offsetY);
+		drawBucketPlaques(gfx, font, path, nodes, state, guiLeft, guiTop, offsetX, offsetY);
 		ColoredRectBatch chromeBatch = new ColoredRectBatch(gfx);
 
 		for (var e : positions.entrySet()) {
@@ -231,9 +241,9 @@ public final class MaterialsTabView {
 	}
 
 	private static void drawAtlasHub(GuiGraphics gfx, Font font, MaterialAtlasPath path,
-			PanZoomState state, int guiLeft, int guiTop) {
-		int cx = state.sx(guiLeft, MaterialAtlasSpec.hubLabelX(path));
-		int cy = state.sy(guiTop, MaterialAtlasSpec.hubLabelY(path));
+			PanZoomState state, int guiLeft, int guiTop, int offsetX, int offsetY) {
+		int cx = state.sx(guiLeft, MaterialAtlasSpec.hubLabelX(path) + offsetX);
+		int cy = state.sy(guiTop, MaterialAtlasSpec.hubLabelY(path) + offsetY);
 		int half = Math.max(8, Math.round(HUB_HALF * state.zoom));
 		int bg = (0xCC << 24) | (path.accentColor() & 0x001A1A1A);
 		gfx.fill(cx - half, cy - half, cx + half, cy + half, bg);
@@ -250,7 +260,7 @@ public final class MaterialsTabView {
 	}
 
 	private static void drawBucketPlaques(GuiGraphics gfx, Font font, MaterialAtlasPath path,
-			List<MaterialAtlasNode> nodes, PanZoomState state, int guiLeft, int guiTop) {
+			List<MaterialAtlasNode> nodes, PanZoomState state, int guiLeft, int guiTop, int offsetX, int offsetY) {
 		if (state.zoom < BUCKET_PLAQUE_MIN_ZOOM) {
 			return;
 		}
@@ -262,8 +272,8 @@ public final class MaterialsTabView {
 			if (!visibleBuckets.contains(bucket.id())) {
 				continue;
 			}
-			int x = state.sx(guiLeft, bucket.plaqueX());
-			int y = state.sy(guiTop, bucket.plaqueY());
+			int x = state.sx(guiLeft, bucket.plaqueX() + offsetX);
+			int y = state.sy(guiTop, bucket.plaqueY() + offsetY);
 			int color = bucket.color();
 			int textW = font.width(bucket.label());
 			int textX = x - textW / 2;

@@ -110,6 +110,14 @@ Silent Archon is never Degree 8. It is the flagged Degree-7 refusal state earned
 
 Besides degree advancement, the Cardinal Altar enables **utility rites** for practical benefits:
 
+**Rite floors.** Every rite names a floor style and a minimum size: minor 3×3, lesser 5×5, greater 7×7 or grand 9×9. A larger floor of the same style also works, and each size's centre is the size below, so you can extend a floor outward.
+- **Threshold:** stone bricks (mossy or cracked are fine) with a Hematic Iron cross.
+- **Dominion:** deepslate tiles, bricks or polished deepslate (old blackstone bricks still count) studded with Chiseled Hematic Iron.
+- **Communion:** a Polished Venous Stone and Blood Wood checker.
+- **Working:** Polished Venous Stone Bricks with a Bone Block cross and diagonal. Harbinger floors never use copper.
+
+Once the floor is complete, a living membrane spreads from the Focus across it and tears a gash in the ground around it, through every brazier socket, which swells into a clot pool where each brazier stands. A broken floor withers. Sockets sit just outside the floor edge; when you enlarge a floor, slide each brazier one block outward.
+
 The Artificer teaches Living Staff construction at D2, while its formation remains craftable at D1. Forming it earns the bond: select **Conjure Staff** with an empty hand to recall it. Select **Blood Absorption** or **Blood Projection**, then hold the Staff to channel that utility. Selecting a Thelemic memory does not leave the previous Staff utility running. Staff ownership does not raise your degree; positive-degree Harbinger rites require active blood before the server plants or escrows it.
 
 At D2, the Vicar teaches **Rooted Vein** as a first practical ceremony. Prepare its Lesser floor with an empty Focus and keep the block above it clear. Put one Blood Rock in an Iron Brazier on a floor socket and light it with Blood Projection. Use the Living Staff on the Focus, project 50 mL into each of the four anchors, then project into the daemon. Stay inside the boundary through its offering procession and return. No helper, support sigil, or ordeal is required. Completion returns the Staff and replaces the Focus with Venous Stone supporting a permanent Earthen Vein; it does not promote your degree.
@@ -345,7 +353,7 @@ Cerebral scars are learned routes with an active loadout. Cultivated fungal scar
 At **Degree 4**, ask the Vicar who teaches the old scarring rites. Use his map to find **Masons Respite** and its remote **Vein-Mason**, rather than an outpost vendor. Accept the first lesson for a pattern matching your strongest tendency, a blank scar, its catalyst, and a Hematic Iron Knapper if needed.
 
 1. At the **Cerebral Scarring Station**, insert the kit and load the purple stencil. Trace its cells in red, then carve. The nearby teacher supervises first-scar access until you learn it; later work needs your own crafted station.
-2. Place the carved Scar in an empty **Iron Brazier** with ordinary use. **Blood Projection** lights it for 50 mL if needed. Hold **Blood Absorption** on the lit offering until it dissolves; learning costs 100 mL. Sneaking retrieves an offering instead.
+2. Place the carved Scar in an empty **Iron Brazier** with ordinary use. **Blood Projection** lights it for 50 mL if needed: hold it until the bowl fills with blood and the fire takes. Hold **Blood Absorption** on the lit offering until it dissolves; learning costs 100 mL. Sneaking retrieves an offering instead.
 3. Craft **Runic Motif Paper** from Paper, Charcoal, and Sanguine Formation. Select the known scar at the **Mason's Effigy** and press Prepare. Place the paper, project 500 mL per selected scar, and collect the prepared Scar Pattern. The selection stays fixed while that motif charges. Stopping projection or reloading retains its partial charge; resume to pay only the remainder.
 4. Place that pattern in a lit Brazier and hold Blood Absorption to commit it for 50 mL. This completes the D4 Main assignment; merely owning a pattern, carving, or speaking to the teacher does not. Return to the Anchorite for the optional continuation kit.
 

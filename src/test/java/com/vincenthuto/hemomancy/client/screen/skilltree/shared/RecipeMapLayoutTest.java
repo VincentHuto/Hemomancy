@@ -29,11 +29,12 @@ final class RecipeMapLayoutTest {
 						ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/bounded")),
 				"Bounded", "", 2, "Order", 0, true, true);
 
-		RecipeMapLayout.NodeBounds node = RecipeMapLayout.build(List.of(entry), List.of("Order"),
-				java.util.Map.of(entry.key(), new RecipeMapLayout.AuthoredPosition(-50, 5000))).node(entry.key());
+		RecipeMapLayout.Result layout = RecipeMapLayout.build(List.of(entry), List.of("Order"),
+				java.util.Map.of(entry.key(), new RecipeMapLayout.AuthoredPosition(-50, 5000)));
+		RecipeMapLayout.NodeBounds node = layout.node(entry.key());
 
 		assertEquals(RecipeMapLayout.NODE_SIZE / 2, node.centerX());
-		assertEquals(1016, node.centerY());
+		assertEquals(layout.contentHeight() - RecipeMapLayout.NODE_SIZE / 2, node.centerY());
 	}
 	private static final ResourceLocation FIRST = ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/first");
 	private static final ResourceLocation HIDDEN = ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/hidden");
@@ -74,15 +75,15 @@ final class RecipeMapLayoutTest {
 	}
 
 	@Test
-	void deepDegreesReuseTheCompactRingFootprint() {
+	void deepDegreesStartOneRingOutSoTheirCrowdedFirstRingFits() {
 		ResourceLocation degreeFive = ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/degree_five");
 		ResourceLocation degreeEight = ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/degree_eight");
 		RecipeMapLayout.Result layout = RecipeMapLayout.build(List.of(
 				entry(degreeFive, "Degree Five", 5, "Order", 0, true),
 				entry(degreeEight, "Degree Eight", 8, "Order", 0, true)), List.of("Order"));
 
-		assertEquals(120.0, distanceFromCenter(layout, layout.node(degreeFive)), 1.0);
-		assertEquals(270.0, distanceFromCenter(layout, layout.node(degreeEight)), 1.0);
+		assertEquals(170.0, distanceFromCenter(layout, layout.node(degreeFive)), 1.0);
+		assertEquals(320.0, distanceFromCenter(layout, layout.node(degreeEight)), 1.0);
 	}
 
 	@Test

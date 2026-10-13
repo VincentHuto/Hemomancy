@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenCont
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumSkillStates;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoint;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgressClientCache;
+import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -35,7 +36,6 @@ final class SkillTraceLayerCache {
 
     private static final int TRACE_DEGREE_RING = ConcentricRingStyle.withBaseAlpha(0xFF58231F);
     private static final int TRACE_NODE_TRIM_RADIUS = 11;
-    private static final double TRACE_ORGANIC_SWAY_MIN = 8.0;
     private static final double TRACE_ORGANIC_SWAY_MAX = 18.0;
     private static final double TRACE_ORGANIC_SWAY_FACTOR = 0.08;
     private static final float HEARTBEAT_PERIOD_SECONDS = 1.35f;
@@ -88,14 +88,19 @@ final class SkillTraceLayerCache {
         }
 
         List<FlowTrace> traces = new ArrayList<>();
+        SkillPoint deepBase = SkillPointInit.deep_base_skill;
+        boolean deepLayer = layer == SkillTreeLayer.DEEP;
         for (SkillPoint sp : sortedSkills(nodePositions)) {
-            for (SkillPoint parent : sp.getParents()) {
+            List<SkillPoint> traceParents = deepLayer ? deepTraceParents(sp, deepBase) : sp.getParents();
+            for (SkillPoint parent : traceParents) {
                 int[] childPos = nodePositions.get(sp);
-                int[] parentPos = nodePositions.get(parent);
+                int[] parentPos = deepLayer && !isDeepParent(parent, deepBase) ? null : nodePositions.get(parent);
                 if (childPos == null) continue;
                 if (parentPos == null) {
                     if (!anchorMissingParents) continue;
-					if (layer != null && SkillTreeLayerRules.layerForDegree(parent.getRequiredDegree()) == layer) continue;
+					// A filtered-out parent on this layer draws nothing; anything else is anchored at the hub.
+					if (layer != null && (deepLayer ? isDeepParent(parent, deepBase)
+							: SkillTreeLayerRules.layerForDegree(parent.getRequiredDegree()) == layer)) continue;
                     parentPos = new int[] {COMPASS_CENTER_X, COMPASS_CENTER_Y};
                 }
 
@@ -312,6 +317,30 @@ final class SkillTraceLayerCache {
         return out.toString();
     }
 
+    /**
+     * Parents a deep-layer node traces to. A node linked to other deep skills draws only those
+     * links; a deep root (surface prerequisites and/or the deep base) gets exactly one trace from
+     * the hub, coloured by its first surface prerequisite.
+     */
+    static List<SkillPoint> deepTraceParents(SkillPoint sp, SkillPoint deepBase) {
+        List<SkillPoint> deepParents = new ArrayList<>();
+        SkillPoint hubParent = null;
+        for (SkillPoint parent : sp.getParents()) {
+            if (isDeepParent(parent, deepBase)) {
+                deepParents.add(parent);
+            } else if (hubParent == null || hubParent == deepBase) {
+                hubParent = parent;
+            }
+        }
+        if (!deepParents.isEmpty()) return deepParents;
+        return hubParent == null ? List.of() : List.of(hubParent);
+    }
+
+    /** True for a parent drawn at its own deep-layer position; the deep base and surface skills trace from the hub. */
+    static boolean isDeepParent(SkillPoint parent, SkillPoint deepBase) {
+        return parent != deepBase && SkillTreeLayerRules.layerForDegree(parent.getRequiredDegree()) == SkillTreeLayer.DEEP;
+    }
+
     private static List<SkillPoint> sortedSkills(Map<SkillPoint, int[]> nodePositions) {
         List<SkillPoint> skills = new ArrayList<>(nodePositions.keySet());
         skills.sort(Comparator.comparingInt(SkillPoint::getId));
@@ -361,7 +390,7 @@ final class SkillTraceLayerCache {
 
     private static double[] cubicControls(int x1, int y1, int x2, int y2) {
         double distance = Math.hypot(x2 - x1, y2 - y1);
-        double handle = Math.max(36.0, Math.min(120.0, distance * 0.34));
+        double handle = Math.min(120.0, distance * 0.34);
         double[] fromRadial = radialFromCenter(x1, y1, x2 - x1, y2 - y1);
         double[] toRadial = radialFromCenter(x2, y2, x2 - x1, y2 - y1);
         double[] sway = organicSway(x1, y1, x2, y2);
@@ -378,7 +407,7 @@ final class SkillTraceLayerCache {
         double dy = y2 - y1;
         double distance = Math.hypot(dx, dy);
         if (distance < 0.001) return new double[] {0.0, 0.0};
-        double amount = Math.min(TRACE_ORGANIC_SWAY_MAX, Math.max(TRACE_ORGANIC_SWAY_MIN, distance * TRACE_ORGANIC_SWAY_FACTOR));
+        double amount = Math.min(TRACE_ORGANIC_SWAY_MAX, distance * TRACE_ORGANIC_SWAY_FACTOR);
         double sign = organicSwaySign(x1, y1, x2, y2);
         return new double[] {
                 -dy / distance * amount * sign,

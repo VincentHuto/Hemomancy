@@ -15,6 +15,9 @@ public final class BestiaryTabView {
 	private static final int GROUP_H = 14;
 	private static final int TOP_H = 42;
 	private static final int PAD = 10;
+	private static final int PANEL_TOP = 24;
+	/** Panels stop above the bottom-right Summons/Bestiary tabs: 16 px tall with 4 px padding above and below. */
+	private static final int PANEL_BOTTOM_INSET = 16 + 2 * 4;
 	private static final int LIST_INSET = 5;
 	private static final int LIST_SCROLLBAR_W = 6;
 	private static final int DETAIL_PAD = 10;
@@ -27,9 +30,9 @@ public final class BestiaryTabView {
 
 	public static void draw(GuiGraphics gfx, ProgressScreenContext ctx, BestiaryTabState state, int mouseX, int mouseY) {
 		int x = ctx.guiLeft() + PAD;
-		int y = ctx.guiTop() + 24;
+		int y = ctx.guiTop() + PANEL_TOP;
 		int w = ctx.guiWidth() - PAD * 2;
-		int h = ctx.guiHeight() - 34;
+		int h = bodyHeight(ctx);
 		int listW = Math.min(220, Math.max(160, w / 3));
 		int detailX = x + listW + PAD;
 		int detailW = w - listW - PAD;
@@ -39,8 +42,13 @@ public final class BestiaryTabView {
 		drawDetail(gfx, ctx, state, detailX, y + TOP_H, detailW, h - TOP_H, mouseX, mouseY);
 	}
 
+	/** Height from the header down to just above the bottom-right tabs. */
+	static int bodyHeight(ProgressScreenContext ctx) {
+		return ctx.guiHeight() - PANEL_TOP - PANEL_BOTTOM_INSET;
+	}
+
 	static int listHeight(ProgressScreenContext ctx) {
-		return ctx.guiHeight() - 34 - TOP_H;
+		return bodyHeight(ctx) - TOP_H;
 	}
 
 	static int contentHeight(BestiaryTabState state) {
@@ -58,7 +66,7 @@ public final class BestiaryTabView {
 
 	static boolean isOverList(ProgressScreenContext ctx, double mx, double my) {
 		int x = ctx.guiLeft() + PAD;
-		int y = ctx.guiTop() + 24 + TOP_H;
+		int y = ctx.guiTop() + PANEL_TOP + TOP_H;
 		int listW = Math.min(220, Math.max(160, (ctx.guiWidth() - PAD * 2) / 3));
 		int listH = listHeight(ctx);
 		return mx >= x && mx <= x + listW && my >= y && my <= y + listH;
@@ -66,7 +74,7 @@ public final class BestiaryTabView {
 
 	static BestiaryTabState.Entry entryUnder(ProgressScreenContext ctx, BestiaryTabState state, double mx, double my) {
 		int x = ctx.guiLeft() + PAD;
-		int y = ctx.guiTop() + 24 + TOP_H;
+		int y = ctx.guiTop() + PANEL_TOP + TOP_H;
 		int listW = Math.min(220, Math.max(160, (ctx.guiWidth() - PAD * 2) / 3));
 		int listH = listHeight(ctx);
 		if (mx < x || mx > x + listW || my < y || my > y + listH) {
@@ -233,7 +241,28 @@ public final class BestiaryTabView {
 
 	private static void drawTextDossier(GuiGraphics gfx, ProgressScreenContext ctx, BestiaryTabState state,
 			BestiaryTabState.Entry entry, int x, int y, int w, int h) {
-		int cy = y - state.infoScroll;
+		state.infoVisibleH = h;
+		state.clampInfoScroll();
+		int top = y - state.infoScroll;
+		gfx.enableScissor(x, y, x + w, y + h);
+		try {
+			int end = drawDossierText(gfx, ctx, entry, x, top, w);
+			state.infoContentH = end - top;
+		} finally {
+			gfx.disableScissor();
+		}
+		state.clampInfoScroll();
+		if (state.infoScroll > 0) {
+			gfx.drawCenteredString(ctx.font(), "\u25B2", x + w - 4, y - 9, 0xAAFFFFFF);
+		}
+		if (state.infoScroll < state.maxInfoScroll()) {
+			gfx.drawCenteredString(ctx.font(), "\u25BC", x + w - 4, y + h + 1, 0xAAFFFFFF);
+		}
+	}
+
+	/** Draws the dossier text from {@code cy}; returns the Y below the last line. */
+	private static int drawDossierText(GuiGraphics gfx, ProgressScreenContext ctx, BestiaryTabState.Entry entry,
+			int x, int cy, int w) {
 		Component title = entry.discovered()
 				? Component.translatable(entry.titleKey())
 				: Component.translatable("bestiary.hemomancy.locked.title");
@@ -263,7 +292,7 @@ public final class BestiaryTabView {
 		String source = entry.discovered()
 				? Component.translatable(entry.sourceKey()).getString()
 				: Component.translatable("bestiary.hemomancy.locked.source").getString();
-		drawWrapped(gfx, ctx, source, x, cy, w, 0xFF91A091);
+		return drawWrapped(gfx, ctx, source, x, cy, w, 0xFF91A091);
 	}
 
 	private static PreviewBounds previewBounds(ProgressScreenContext ctx, BestiaryTabState state) {
@@ -271,9 +300,9 @@ public final class BestiaryTabView {
 			return null;
 		}
 		int x = ctx.guiLeft() + PAD;
-		int y = ctx.guiTop() + 24;
+		int y = ctx.guiTop() + PANEL_TOP;
 		int w = ctx.guiWidth() - PAD * 2;
-		int h = ctx.guiHeight() - 34;
+		int h = bodyHeight(ctx);
 		int listW = Math.min(220, Math.max(160, w / 3));
 		int detailX = x + listW + PAD;
 		int detailW = w - listW - PAD;

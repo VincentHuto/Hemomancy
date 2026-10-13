@@ -30,6 +30,10 @@ public class ManipulationsTabController implements IProgressTab {
     private static final int NODE_SIZE = 26;
     private static final int NODE_GAP_X = 80;
     private static final int INNER_MANIPULATION_RADIUS = 175;
+    /** Distance between the rank rings authored in ManipulationTreeInit (Humilis innermost). */
+    private static final int RANK_RING_STEP = 55;
+    /** Opening-view margin beyond the outermost rank ring the player can reach. */
+    private static final int FOCUS_RING_MARGIN = 30;
     private static final int COL_NODE_BG     = 0xCC1A0505;
     private static final float INFO_PANEL_Z = 400.0F;
     private static final float FAMILY_MENU_Z = INFO_PANEL_Z - 100.0F;
@@ -80,7 +84,26 @@ public class ManipulationsTabController implements IProgressTab {
         buildManipLayout();
         cacheKnownManipulations();
         refreshScarKnowledge();
-        panZoom.centreOn(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
+        focusRingCentre(ctx);
+    }
+
+    @Override
+    public void resetView(ProgressScreenContext ctx) {
+        focusRingCentre(ctx);
+    }
+
+    /** Opening view: ring centre in the middle, zoomed to the rank rings the player's degree reaches. */
+    private void focusRingCentre(ProgressScreenContext ctx) {
+        panZoom.focusOn(manipRingCenterX, manipRingCenterY, focusRadius(),
+                getNavigationViewportWidth(ctx), ctx.guiHeight());
+    }
+
+    private int focusRadius() {
+        int reachableRings = 0;
+        for (EnumManipulationRank rank : EnumManipulationRank.values()) {
+            if (ManipulationRankGates.playerMeetsRank(playerDegree, rank)) reachableRings = rank.ordinal();
+        }
+        return INNER_MANIPULATION_RADIUS + RANK_RING_STEP * reachableRings + FOCUS_RING_MARGIN;
     }
 
     private void loadScarEntries() {

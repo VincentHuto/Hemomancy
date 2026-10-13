@@ -20,7 +20,8 @@
   ],
   "key": {
     "B": {
-      "block": "minecraft:stone_bricks"
+      "tag": "hemomancy:cardinal_floor_threshold_stone",
+      "fallback": "minecraft:stone_bricks"
     },
     "A": {
       "block": "hemomancy:hematic_iron_block"
@@ -38,42 +39,42 @@
     [
       4,
       1,
-      0
+      2
     ],
     [
-      3,
-      1,
-      3
-    ],
-    [
-      0,
+      2,
       1,
       4
     ],
     [
-      -3,
+      -2,
       1,
-      3
+      4
     ],
     [
       -4,
       1,
-      0
+      2
     ],
     [
-      -3,
+      -4,
       1,
-      -3
+      -2
     ],
     [
-      0,
+      -2,
       1,
       -4
     ],
     [
-      3,
+      2,
       1,
-      -3
+      -4
+    ],
+    [
+      4,
+      1,
+      -2
     ]
   ],
   "footprint_radius": 5.5

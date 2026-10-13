@@ -156,7 +156,7 @@ public final class SkillPointBranchSourceTest {
 		assertContains("scar branch adds deep inscription", scars, "SkillPointInit.skill_deep_inscription");
 		assertContains("scar branch adds fungal symbiosis", scars, "SkillPointInit.skill_fungal_symbiosis");
 		assertContains("fungal symbiosis keeps hyphal cultivation as a live parent", scars,
-				"addParents(SkillPointInit.skill_hyphal_cultivation)");
+				"addParents(SkillPointInit.skill_hyphal_cultivation, SkillPointInit.deep_base_skill)");
 		assertContains("covenant branch adds fane suture", covenant, "SkillPointInit.skill_fane_suture");
 		assertContains("covenant deep skills depend on deep base", covenant, "addParents(SkillPointInit.deep_base_skill)");
 		assertContains("mycelial branch adds sporitic attunement", mycelial, "SkillPointInit.skill_sporitic_attunement");

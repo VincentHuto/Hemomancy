@@ -2,8 +2,12 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
+import com.vincenthuto.hutoslib.client.HLTextUtils;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +30,8 @@ public class CraftingTabState {
 	// ── Loaded recipe data ───────────────────────────────────────
 	public final List<BloodStructureRecipe> craftingRecipes = new ArrayList<>();
 	public final Map<String, List<BloodStructureRecipe>> craftingByTier = new LinkedHashMap<>();
+	/** Sidebar name lines per recipe (one or two), wrapped by the view against the live font. */
+	public final Map<ResourceLocation, List<String>> sidebarLabels = new HashMap<>();
 
 	// ── Selection / navigation ───────────────────────────────────
 	public String selectedCraftingTier = null;
@@ -60,6 +66,10 @@ public class CraftingTabState {
 	public int  rowBgNormal       = 0x99120303;
 	/** When {@code false}, all tiers are accessible regardless of player degree. */
 	public boolean enableDegreeLock = true;
+	/** When {@code true}, tiers with zero recipes are hidden from the sidebar. */
+	public boolean hideEmptyTiers   = false;
+	/** When {@code true}, tiers are headed by Unstained stage names instead of Harbinger degrees. */
+	public boolean unstainedStages  = false;
 
 	// ── Data helpers ─────────────────────────────────────────────
 
@@ -71,6 +81,42 @@ public class CraftingTabState {
 			int degree = RecipeDegreeGates.getRequiredDegree(r);
 			craftingByTier.get(TIER_NAMES[degree]).add(r);
 		}
+		for (List<BloodStructureRecipe> list : craftingByTier.values()) {
+			list.sort(RitesTabState.sidebarOrder(recipe -> recipe.getId().getPath(), CraftingTabState::displayName));
+		}
+	}
+
+	/** The crafted item's name, falling back to the recipe path when the result is empty. */
+	public static String displayName(BloodStructureRecipe recipe) {
+		ItemStack result = recipe.getResult();
+		if (result != null && !result.isEmpty()) return result.getHoverName().getString();
+		String path = recipe.getId().getPath();
+		if (path.contains("/")) path = path.substring(path.lastIndexOf('/') + 1);
+		return HLTextUtils.toProperCase(path.replace("_", " "));
+	}
+
+	public String sidebarTitle() {
+		return unstainedStages ? "Crafting by Stage" : "Tiers";
+	}
+
+	public String tierLabel(int tierIndex) {
+		return unstainedStages ? RecipeDegreeGates.unstainedStageLabel(TIER_DEGREE_REQ[tierIndex]) : TIER_NAMES[tierIndex];
+	}
+
+	public boolean isTierHidden(String tierName) {
+		return hideEmptyTiers && craftingByTier.getOrDefault(tierName, List.of()).isEmpty();
+	}
+
+	public int recipeRowHeight(BloodStructureRecipe recipe) {
+		return sidebarLabels.getOrDefault(recipe.getId(), List.of()).size() > 1
+				? RitesTabState.RECIPE_ROW_H_WRAPPED : RitesTabState.RECIPE_ROW_H;
+	}
+
+	/** Height of an expanded tier's recipe rows, including the gap after each. */
+	public int expandedRowsHeight(List<BloodStructureRecipe> recipes) {
+		int total = 0;
+		for (BloodStructureRecipe recipe : recipes) total += recipeRowHeight(recipe) + RitesTabState.RECIPE_ROW_GAP;
+		return total;
 	}
 
 	/** Selects the first accessible tier that contains at least one recipe. */
@@ -93,9 +139,10 @@ public class CraftingTabState {
 		int rowH = 22;
 		int total = 0;
 		for (String name : TIER_NAMES) {
+			if (isTierHidden(name)) continue;
 			total += rowH + 2;
 			if (name.equals(selectedCraftingTier)) {
-				total += rowH + 2 + craftingByTier.getOrDefault(name, List.of()).size() * 18;
+				total += rowH + 2 + expandedRowsHeight(craftingByTier.getOrDefault(name, List.of()));
 			}
 		}
 		return total;

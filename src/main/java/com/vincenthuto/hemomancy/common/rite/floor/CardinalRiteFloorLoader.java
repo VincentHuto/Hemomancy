@@ -14,12 +14,18 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 
-public final class CardinalRiteFloorLoader extends JsonResourceReloadListener<CardinalRiteFloorDefinition> {
+public final class CardinalRiteFloorLoader
+		extends JsonResourceReloadListener<CardinalRiteFloorLoader.Sourced> {
 	private static final Logger LOGGER = LogManager.getLogger();
+
+	/** A parsed floor with the JSON it came from, kept so clients can be sent the same definition. */
+	record Sourced(CardinalRiteFloorDefinition definition, String json) {
+	}
 
 	public CardinalRiteFloorLoader() {
 		super("cardinal_rite_floor", "Cardinal Rite floor", LOGGER,
-				CardinalRiteFloorLoader::parse, CardinalRiteFloorRegistry::reload);
+				(id, root) -> new Sourced(parse(id, root), root.toString()),
+				CardinalRiteFloorRegistry::reloadSourced);
 	}
 
 	public static CardinalRiteFloorDefinition parse(ResourceLocation id, JsonObject root) {

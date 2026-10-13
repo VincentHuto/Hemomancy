@@ -92,6 +92,7 @@ public class PacketHandler {
         net.playToClient(ClairaudiographSoundPacket.TYPE, ClairaudiographSoundPacket.STREAM_CODEC, ClairaudiographSoundPacket::handle);
         net.playToClient(BloodInjectionSyncPacket.TYPE, BloodInjectionSyncPacket.STREAM_CODEC, BloodInjectionSyncPacket::handle);
         net.playToClient(BloodProfileSyncPacket.TYPE, BloodProfileSyncPacket.STREAM_CODEC, BloodProfileSyncPacket::handle);
+        net.playToClient(CardinalRiteFloorSyncPacket.TYPE, CardinalRiteFloorSyncPacket.STREAM_CODEC, CardinalRiteFloorSyncPacket::handle);
         net.playToClient(PacketHematicMicroscopeViewing.TYPE, PacketHematicMicroscopeViewing.STREAM_CODEC, PacketHematicMicroscopeViewing::handle);
         net.playToClient(PacketBloodVialInjection.TYPE, PacketBloodVialInjection.STREAM_CODEC, PacketBloodVialInjection::handle);
         net.playToServer(ManipulationChargeVisualPacket.TYPE, ManipulationChargeVisualPacket.STREAM_CODEC,

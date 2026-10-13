@@ -15,6 +15,9 @@ public class SummonsTabState {
 
 	public int sidebarScroll = 0;
 	public int infoScroll = 0;
+	/** Detail text height and visible panel height, measured by the last draw. */
+	public int infoContentH = 0;
+	public int infoVisibleH = 0;
 
 	public float previewRotationAngle = 0f;
 	public boolean previewDragging = false;
@@ -70,5 +73,13 @@ public class SummonsTabState {
 
 	public void clampSidebarScroll(int visibleH) {
 		sidebarScroll = Math.min(sidebarScroll, Math.max(0, sidebarContentH() - visibleH));
+	}
+
+	public int maxInfoScroll() {
+		return Math.max(0, infoContentH - infoVisibleH);
+	}
+
+	public void clampInfoScroll() {
+		infoScroll = Math.max(0, Math.min(infoScroll, maxInfoScroll()));
 	}
 }

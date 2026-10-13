@@ -2,12 +2,15 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryDefinitions;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 public class BestiaryTabState {
 	enum Kind {
@@ -25,6 +28,9 @@ public class BestiaryTabState {
 	boolean detailsDismissed;
 	int listScroll;
 	int infoScroll;
+	/** Dossier text height and visible height, measured by the last draw. */
+	int infoContentH;
+	int infoVisibleH;
 	int recordedSpecimenCount;
 	int surrenderedSpecimenCount;
 	int recordedMorphlingLayerCount;
@@ -42,6 +48,11 @@ public class BestiaryTabState {
 	LivingEntity previewEntity;
 
 	void rebuild(Set<String> recordedSpecimens, Set<String> surrenderedSpecimens, Set<String> recordedMorphlingLayers) {
+		rebuild(recordedSpecimens, surrenderedSpecimens, recordedMorphlingLayers, key -> I18n.get(key));
+	}
+
+	void rebuild(Set<String> recordedSpecimens, Set<String> surrenderedSpecimens, Set<String> recordedMorphlingLayers,
+			Function<String, String> titleOf) {
 		String selectedKey = selectedEntry() == null ? "" : selectedEntry().key();
 		entries.clear();
 		for (SpecimenBestiaryDefinitions.ResearchEntry entry : SpecimenBestiaryDefinitions.orderedResearchEntries()) {
@@ -54,6 +65,7 @@ public class BestiaryTabState {
 			entries.add(new Entry(Kind.MORPHLING, id, entry.titleKey(), entry.descriptionKey(), entry.sourceKey(),
 					entry.binomialKey(), recordedMorphlingLayers.contains(id), false));
 		}
+		entries.sort(displayOrder(titleOf));
 		recordedSpecimenCount = recordedSpecimens.size();
 		surrenderedSpecimenCount = surrenderedSpecimens.size();
 		recordedMorphlingLayerCount = recordedMorphlingLayers.size();
@@ -61,6 +73,24 @@ public class BestiaryTabState {
 		if (selectedIndex < 0 && !detailsDismissed && !entries.isEmpty()) {
 			selectedIndex = 0;
 		}
+	}
+
+	/**
+	 * Specimens, then morphling strains; each group alphabetical by its entry title. Undiscovered
+	 * entries keep their alphabetical slot so the list does not reshuffle as records arrive.
+	 */
+	static Comparator<Entry> displayOrder(Function<String, String> titleOf) {
+		return Comparator.comparing(Entry::kind)
+				.thenComparing((Entry entry) -> titleOf.apply(entry.titleKey()), String.CASE_INSENSITIVE_ORDER)
+				.thenComparing(Entry::key);
+	}
+
+	int maxInfoScroll() {
+		return Math.max(0, infoContentH - infoVisibleH);
+	}
+
+	void clampInfoScroll() {
+		infoScroll = Math.max(0, Math.min(infoScroll, maxInfoScroll()));
 	}
 
 	Entry selectedEntry() {

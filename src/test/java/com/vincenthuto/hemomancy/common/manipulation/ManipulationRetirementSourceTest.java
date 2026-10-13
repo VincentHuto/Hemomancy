@@ -103,7 +103,7 @@ public final class ManipulationRetirementSourceTest {
 		assertContains("ferric capstone bypasses hematic ballast", tree,
 				"register(\"iron_choir\",850,70, \"iron_retort\", \"ironhearted\")");
 		assertContains("mortem reroutes grave debt away from vital reservoir", tree,
-				"register(\"grave_debt\",2210,83, \"hemorrhage\", \"exsanguinate\")");
+				"register(\"grave_debt\",2210,-53, \"hemorrhage\", \"exsanguinate\")");
 		assertContains("ferric magnetism no longer depends on excavation", tree,
 				"register(\"sanguine_magnetism\",850,180, \"iron_retort\")");
 	}

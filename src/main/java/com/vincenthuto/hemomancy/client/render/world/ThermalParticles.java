@@ -46,6 +46,12 @@ final class ThermalParticles {
                     .2+ThermalMotion.random(seed,i+83)*.14,.75));
         }
     }
+    /** One lick off a standing fire (braziers): it rises and burns most of its life before thinning to soot. */
+    static void lick(Vec3 at,Vec3 velocity,int seed,int life,double size) {
+        if(!ready())return;
+        if(PARTICLES.size()>=192)PARTICLES.removeFirst();
+        PARTICLES.add(new Particle(at,velocity,false,seed,world.getGameTime(),life,size,.65));
+    }
     static void tick() {
         if(!ready())return;
         long now=world.getGameTime();

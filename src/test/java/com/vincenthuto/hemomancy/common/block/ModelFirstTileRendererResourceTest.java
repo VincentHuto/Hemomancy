@@ -230,16 +230,31 @@ public final class ModelFirstTileRendererResourceTest {
 		assertContains("iron brazier flames should show in both lit phases", brazierState, "\"ritual_phase\": \"1|2\"");
 		assertContains("iron brazier sanguine veins should show only while awaiting the echo", brazierState,
 				"\"hemomancy:block/iron_brazier_sanguine\"");
-		assertContains("iron brazier lit part should draw crimson flame sheets",
-				read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/iron_brazier_lit.json")),
-				"\"texture\": \"#flame\"");
-		assertContains("iron brazier should burn its own authored flame rather than the muted crimson fire",
-				read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/iron_brazier_lit.json")),
-				"\"hemomancy:block/iron_brazier_flame\"");
-		assertDoesExist("iron brazier flame should animate",
-				RESOURCE_ROOT.resolve("assets/hemomancy/textures/block/iron_brazier_flame.png.mcmeta"));
+		assertDoesNotContain("iron brazier lit part should bake only its embers, not flame sheets",
+				read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/iron_brazier_lit.json")), "#flame");
+		assertContains("iron brazier renderer should draw the shader flames once lit",
+				read(SOURCE_ROOT.resolve(
+						"com/vincenthuto/hemomancy/client/render/tile/harbinger/rite/IronBrazierRenderer.java")),
+				"BrazierFlames.render(");
+		String brazierFlames = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/client/render/world/BrazierFlames.java"));
+		assertContains("brazier flames should burn in the steady-paced thermal flame shader", brazierFlames,
+				"ThermalRenderTypes.STEADY_FLAME");
+		assertContains("a lit brazier should hold a pool of blood", brazierFlames,
+				"HemoRenderTypes.bloodPool(");
+		assertDoesExist("the blood pool shader should exist",
+				RESOURCE_ROOT.resolve("assets/hemomancy/shaders/core/world/blood_pool.fsh"));
+		assertContains("brazier flames should be fed Flammeus licks", brazierFlames, "ThermalParticles.lick(");
+		assertDoesNotExist("the old baked brazier flame texture should be gone",
+				RESOURCE_ROOT.resolve("assets/hemomancy/textures/block/iron_brazier_flame.png"));
+		assertDoesExist("the crimson fire strip should animate",
+				RESOURCE_ROOT.resolve("assets/hemomancy/textures/block/crimson_fire.png.mcmeta"));
+		assertContains("the crimson flames fire block should burn the authored crimson fire strip",
+				read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/crimson_flames_floor0.json")),
+				"\"hemomancy:block/crimson_fire\"");
 		for (String source : new String[]{"com/vincenthuto/hemomancy/common/block/harbinger/rite/BrazierBlock.java",
-				"com/vincenthuto/hemomancy/common/rite/BrazierItemAbsorptionRite.java"})
+				"com/vincenthuto/hemomancy/common/rite/BrazierItemAbsorptionRite.java",
+				"com/vincenthuto/hemomancy/client/render/world/BrazierFlames.java"})
 			assertDoesNotContain(source + " should use Hemomancy/HutosLib particles, not vanilla ones",
 					read(SOURCE_ROOT.resolve(source)), "ParticleTypes.");
 		assertDoesNotContain("iron brazier item should carry the baked body, not a parent reference",
@@ -258,6 +273,10 @@ public final class ModelFirstTileRendererResourceTest {
 				"\"name\": \"spout_channel\"");
 		assertContains("consecrated bloodwell should catch the overflow in cups", bloodwellModel,
 				"\"name\": \"cup_blood\"");
+		assertContains("consecrated bloodwell basin should hold the shared blood pool surface",
+				read(SOURCE_ROOT.resolve(
+						"com/vincenthuto/hemomancy/client/render/tile/harbinger/functional/ConsecratedBloodwellRenderer.java")),
+				"HemoRenderTypes.bloodPool(");
 		assertDoesNotContain("consecrated bloodwell item should carry the baked body, not a parent reference",
 				read(RESOURCE_ROOT.resolve("assets/hemomancy/models/item/consecrated_bloodwell.json")),
 				"\"parent\": \"hemomancy:");

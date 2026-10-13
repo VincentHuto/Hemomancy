@@ -45,6 +45,14 @@ public final class HemoParticleData {
         return new EmberParticleData(HLParticleInit.ember.get(), color, a, s, l);
     }
 
+    /**
+     * An ember with its scale and alpha where its parameters say. {@link #ember} hands them to HutosLib swapped, and
+     * its callers are tuned around that; a large scale also flashes at full alpha for the glow's first frame.
+     */
+    public static ParticleOptions emberSpark(ParticleColor color, float scale, float alpha, int life) {
+        return new EmberParticleData(HLParticleInit.ember.get(), color, scale, alpha, life);
+    }
+
     public static ParticleOptions hitGlow(ParticleColor color) {
         return new HitColorParticleData(color.getRed(), color.getGreen(), color.getBlue());
     }

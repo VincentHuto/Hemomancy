@@ -175,9 +175,9 @@ public final class FaneHeartAndStakeSourceTest {
 		assertNotContains("bloodwell renderer removes crossed quad motes", bloodwellRenderer, "drawMote");
 		assertNotContains("bloodwell renderer removes renderer mote budget", bloodwellRenderer, "MOTE_COUNT");
 		assertNotContains("bloodwell renderer removes flat crown quad", bloodwellRenderer, "topY + crown");
-		assertContains("bloodwell renderer smooths stream arcs", bloodwellRenderer, "renderSmoothFountainArc");
-		assertContains("bloodwell stream arcs use tapered ribbons", bloodwellRenderer, "taperedRibbon");
-		assertContains("bloodwell stream arcs use continuous alpha", bloodwellRenderer, "arcAlphaAt");
+		assertContains("bloodwell streams run as living blood ribbons", bloodwellRenderer, "BloodStreams.stream(");
+		assertContains("bloodwell jet breaks into droplets at its crown", bloodwellRenderer, "BloodStreams.droplet(");
+		assertContains("bloodwell level eases between pool syncs", bloodwellRenderer, "be.shownFullness(");
 		assertNotContains("bloodwell stream arcs avoid segment overlap padding", bloodwellRenderer, "ARC_STRIP_OVERLAP");
 		assertNotContains("bloodwell stream arcs do not backtrack segment starts", bloodwellRenderer,
 				"- ARC_STRIP_OVERLAP");
@@ -186,9 +186,13 @@ public final class FaneHeartAndStakeSourceTest {
 		assertNotContains("bloodwell stream arcs remove phased texture chunks", bloodwellRenderer, "phase * 0.6f");
 		assertNotContains("bloodwell stream arcs avoid end gaps", bloodwellRenderer, "if (t1 > 1.0f)");
 		assertContains("bloodwell renderer is animated", bloodwellRenderer, "Mth.sin");
-		assertContains("bloodwell renderer uses blood fountain render type", hemoRenderTypes, "BLOODWELL_FOUNTAIN");
-		assertContains("bloodwell fountain render type writes depth for water sorting",
-				renderTypeBlock(hemoRenderTypes, "BLOODWELL_FOUNTAIN"), "setWriteMaskState(RenderType.COLOR_DEPTH_WRITE)");
+		String bloodStreams = Files.readString(Path.of(
+				"src/main/java/com/vincenthuto/hemomancy/client/render/world/BloodStreams.java"));
+		assertContains("bloodwell streams use the depth-writing living blood type", bloodStreams,
+				"AnimusMortemRenderTypes.ANIMUS_DEPTH");
+		assertContains("living blood streams write depth for water sorting",
+				Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/client/render/world/AnimusMortemRenderTypes.java")),
+				"depth?RenderType.COLOR_DEPTH_WRITE:RenderType.COLOR_WRITE");
 		assertContains("stake renderer registered", clientEvents,
 				"BlockEntityRenderers.register(BlockEntityInit.hematic_stake.get(), HematicStakeRenderer::new)");
 		assertContains("bloodwell renderer registered", clientEvents,
@@ -222,14 +226,5 @@ public final class FaneHeartAndStakeSourceTest {
 		if (firstIndex < 0 || secondIndex < 0 || firstIndex > secondIndex) {
 			throw new AssertionError(label + ": expected " + first + " before " + second);
 		}
-	}
-
-	private static String renderTypeBlock(String text, String constantName) {
-		int start = text.indexOf("public static final RenderType " + constantName);
-		if (start < 0) {
-			throw new AssertionError("missing render type constant " + constantName);
-		}
-		int end = text.indexOf("public static", start + 1);
-		return end >= 0 ? text.substring(start, end) : text.substring(start);
 	}
 }

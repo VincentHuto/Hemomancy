@@ -102,7 +102,8 @@ public class BestiaryTabController implements IProgressTab {
 			state.previewZoom = BestiaryEntityPreview.clampZoom(
 					state.previewZoom + (float) delta * PREVIEW_SCROLL_ZOOM_SPEED);
 		} else {
-			state.infoScroll = Math.max(0, state.infoScroll + scrollAmount);
+			state.infoScroll += scrollAmount;
+			state.clampInfoScroll();
 		}
 		return true;
 	}

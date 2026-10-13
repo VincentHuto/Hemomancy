@@ -26,7 +26,10 @@ public class SkillsTabController implements IProgressTab {
     private static final int COMPASS_CENTER_X = ConcentricTreeGeometry.CENTER_X;
     private static final int COMPASS_CENTER_Y = ConcentricTreeGeometry.CENTER_Y;
     private static final int[] DEGREE_RING_RADII = ConcentricTreeGeometry.degreeRingRadii();
-    private static final int COMPASS_CONTENT_PADDING = ConcentricTreeGeometry.CONTENT_PADDING;
+    /** Margin kept past the outermost ring, node or degree label when sizing the canvas. */
+    private static final int CONTENT_EDGE_PADDING = 60;
+    private static final int DEGREE_LABEL_WIDTH = 46;
+    private static final int DEGREE_LABEL_HEIGHT = 9;
     private static final int DEGREE_LABEL_X = COMPASS_CENTER_X - DEGREE_RING_RADII[DEGREE_RING_RADII.length - 1] + 10;
     private static final int DEGREE_LABEL_TOP_Y = COMPASS_CENTER_Y - DEGREE_RING_RADII[DEGREE_RING_RADII.length - 1] + 28;
     private static final int DEGREE_LABEL_GAP_Y = 34;
@@ -81,8 +84,33 @@ public class SkillsTabController implements IProgressTab {
 		familyFilter = null;
 		filterLayer = SkillTreeLayer.SURFACE;
         buildLayout();
-        surfacePanZoom.centreOn(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
-        deepPanZoom.centreOn(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
+        focusLayer(surfacePanZoom, SkillTreeLayer.SURFACE, ctx);
+        focusLayer(deepPanZoom, SkillTreeLayer.DEEP, ctx);
+    }
+
+    /** Opening view: compass hub centred, zoomed to fit the ring of the player's next degree on that layer. */
+    private void focusLayer(PanZoomState view, SkillTreeLayer layer, ProgressScreenContext ctx) {
+        view.focusOn(COMPASS_CENTER_X, COMPASS_CENTER_Y, focusRadius(layer), ctx.guiWidth(), ctx.guiHeight());
+    }
+
+    /**
+     * Layer switches centre the hub at natural size: a fitted zoom can sit one scroll step above
+     * {@link SkillTreeDiveState#DEEP_EXIT_ZOOM} and would throw the player straight back out.
+     */
+    private void diveLayer(PanZoomState view, ProgressScreenContext ctx) {
+        view.centreHub(COMPASS_CENTER_X, COMPASS_CENTER_Y, 1.0F, ctx.guiWidth(), ctx.guiHeight());
+    }
+
+    @Override
+    public void resetView(ProgressScreenContext ctx) {
+        focusLayer(activePanZoom(), diveState.activeLayer(), ctx);
+    }
+
+    private int focusRadius(SkillTreeLayer layer) {
+        boolean deep = layer == SkillTreeLayer.DEEP;
+        int nextDegree = Mth.clamp(playerDegree + 1, deep ? SkillTreeLayerRules.DEEP_MIN_DEGREE : 0,
+                deep ? 8 : SkillTreeLayerRules.SURFACE_MAX_DEGREE);
+        return SkillTreeLayerRules.ringRadiusForDegree(nextDegree, layer);
     }
 
     private void buildLayout() {
@@ -151,26 +179,23 @@ public class SkillsTabController implements IProgressTab {
         }
     }
 
+    /** Sizes the canvas from what is actually drawn: the outer skill ring, every node and every degree label. */
     private void recalculateContentBounds() {
-        contentW = 0;
-        contentH = 0;
+        int outerRing = Math.max(SkillTreeLayerRules.outerRingRadius(SkillTreeLayer.SURFACE),
+                SkillTreeLayerRules.outerRingRadius(SkillTreeLayer.DEEP));
+        contentW = COMPASS_CENTER_X + outerRing + CONTENT_EDGE_PADDING;
+        contentH = COMPASS_CENTER_Y + outerRing + CONTENT_EDGE_PADDING;
         for (Map<SkillPoint, int[]> layerPositions : List.of(surfaceNodePositions, deepNodePositions)) {
             for (int[] pos : layerPositions.values()) {
-                contentW = Math.max(contentW, pos[0] + NODE_SIZE + 48);
-                contentH = Math.max(contentH, pos[1] + NODE_SIZE + 48);
+                contentW = Math.max(contentW, pos[0] + NODE_SIZE / 2 + CONTENT_EDGE_PADDING);
+                contentH = Math.max(contentH, pos[1] + NODE_SIZE / 2 + CONTENT_EDGE_PADDING);
             }
-        }
-        for (int[] pos : List.of(new int[] {COMPASS_CENTER_X, COMPASS_CENTER_Y})) {
-            contentW = Math.max(contentW, pos[0] + NODE_SIZE + 48);
-            contentH = Math.max(contentH, pos[1] + NODE_SIZE + 48);
         }
         for (int degree = 0; degree < DEGREE_RING_RADII.length; degree++) {
             int[] labelPosition = SkillPointInit.getDegreeLabelPosition(degree);
-            contentW = Math.max(contentW, labelPosition[0] + 128);
-            contentH = Math.max(contentH, labelPosition[1] + 48);
+            contentW = Math.max(contentW, labelPosition[0] + DEGREE_LABEL_WIDTH + CONTENT_EDGE_PADDING);
+            contentH = Math.max(contentH, labelPosition[1] + DEGREE_LABEL_HEIGHT + CONTENT_EDGE_PADDING);
         }
-        contentW = Math.max(contentW, COMPASS_CENTER_X + DEGREE_RING_RADII[DEGREE_RING_RADII.length - 1] + COMPASS_CONTENT_PADDING);
-        contentH = Math.max(contentH, COMPASS_CENTER_Y + DEGREE_RING_RADII[DEGREE_RING_RADII.length - 1] + COMPASS_CONTENT_PADDING);
     }
 
     private Map<SkillPoint, int[]> positionsForLayer(SkillPoint sp) {
@@ -271,7 +296,7 @@ public class SkillsTabController implements IProgressTab {
         float centerFocus = SkillTreeLayerRules.centerFocus(centerX, centerY, ctx.guiWidth(), ctx.guiHeight());
         float surfaceDive = SkillTreeLayerRules.diveProgress(playerDegree, surfacePanZoom.zoom, centerFocus);
         if (diveState.updateSurfaceDive(playerDegree, surfaceDive)) {
-            deepPanZoom.centreOn(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
+            diveLayer(deepPanZoom, ctx);
             deepFade = 1.0f;
             lockedPortalFade = 0.0f;
 			syncFilterLayer();
@@ -619,11 +644,11 @@ public class SkillsTabController implements IProgressTab {
 	private void toggleLayer(ProgressScreenContext ctx) {
 		if (!diveState.toggleLayer(playerDegree)) return;
 		if (diveState.isDeepActive()) {
-			deepPanZoom.centreOn(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
+			diveLayer(deepPanZoom, ctx);
 			deepFade = 1.0F;
 			lockedPortalFade = 0.0F;
 		} else {
-			surfacePanZoom.centreOn(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
+			diveLayer(surfacePanZoom, ctx);
 			deepFade = 0.0F;
 			lockedPortalFade = 0.0F;
 		}
@@ -661,7 +686,7 @@ public class SkillsTabController implements IProgressTab {
         view.clamp(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
         if (diveState.isDeepActive()) {
             if (delta < 0 && diveState.updateDeepZoom(deepPanZoom.zoom)) {
-                surfacePanZoom.centreOn(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
+                diveLayer(surfacePanZoom, ctx);
                 deepFade = 0.0f;
 				syncFilterLayer();
             }

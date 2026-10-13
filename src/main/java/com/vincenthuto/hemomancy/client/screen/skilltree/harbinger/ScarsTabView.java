@@ -19,6 +19,7 @@ final class ScarsTabView {
 	private static final EnumNodeShape NODE_SHAPE = EnumNodeShape.SQUARE;
 	private static final int NODE_BG = 0xCC1A0505;
 	private static final int LOCKED_BORDER = 0xFF333333;
+	private static final float LABEL_ZOOM = 0.95F;
 	private static final float DETAILS_Z = 400.0F;
 	private static final float TOOLTIP_Z = 900.0F;
 	private static float animationTime;
@@ -70,11 +71,13 @@ final class ScarsTabView {
 			}
 
 			if (panZoom.zoom >= 0.5f) ScreenDrawUtils.renderScaledItem(gfx, entry.result(), x, y, halfNode);
-			if (panZoom.zoom >= 0.7f) {
+			// Labels keep a fixed screen size while the 65 px tier step shrinks, so below
+			// this zoom the "+N" line and names of neighbouring tiers start to collide.
+			if (panZoom.zoom >= LABEL_ZOOM) {
 				String deepen = deepenAmountLabel(entry.definition().getDeepenAmount());
 				gfx.drawCenteredString(ctx.font(), deepen, x, y - halfNode - 8, dim(tendencyColor, 0.85f));
 			}
-			if (panZoom.zoom >= 0.7f) {
+			if (panZoom.zoom >= LABEL_ZOOM) {
 				int labelColor = visual == ScarNodeVisualState.UNLEARNED ? dim(tendencyColor, 0.42f) : tendencyColor;
 				int labelY = y + halfNode + 3;
 				for (String line : ScreenDrawUtils.wrapText(ctx.font(), entry.result().getHoverName().getString(),

@@ -2,6 +2,6 @@
   "parent": "minecraft:block/template_fire_up_alt",
   "render_type" : "cutout",
   "textures": {
-    "fire": "hemomancy:block/crimson_flames"
+    "fire": "hemomancy:block/crimson_fire"
   }
 }

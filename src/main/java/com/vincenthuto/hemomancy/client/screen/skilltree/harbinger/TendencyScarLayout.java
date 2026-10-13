@@ -8,9 +8,10 @@ import java.util.Map;
 
 /** Places the short cerebral-scar chains just beyond their manipulation families. */
 final class TendencyScarLayout {
+	/** Gap from a family's outer manipulation edge to its tier-1 scar (authored tier 1 sits at 200). */
 	private static final int FAMILY_CLEARANCE = 70;
-	private static final int TIER_SPACING = 50;
-	private static final int SIDE_BRANCH_OFFSET = 40;
+	private static final int TIER_SPACING = 65;
+	private static final int SIDE_BRANCH_OFFSET = 68;
 	private static final int AUTHORED_CENTER_X = 480;
 	private static final int AUTHORED_CENTER_Y = 480;
 	private static final int AUTHORED_FIRST_RADIUS = 200;

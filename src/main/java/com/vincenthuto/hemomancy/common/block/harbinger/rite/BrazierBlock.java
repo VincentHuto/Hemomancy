@@ -75,12 +75,13 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 	// Dais, vertebral stem, and the bowl up to its talon tips (tools/model_export/iron_brazier.py).
 	private static final VoxelShape SHAPE = Shapes.or(Block.box(3, 0, 3, 13, 2.2, 13),
 			Block.box(6, 2.2, 6, 10, 8.4, 10), Block.box(1.5, 8.4, 1.5, 14.5, 18.5, 14.5));
-	// Coal bed and flame tips in blocks above the brazier's base, from the same model.
+	// Coal bed from the same model, and the blood pool and flame tips BrazierFlames draws when lit, in blocks above
+	// the brazier's base.
 	private static final double COAL_TOP = 11.3D / 16.0D;
-	private static final double FLAME_TOP = 18.3D / 16.0D;
+	private static final double POOL_TOP = 12.3D / 16.0D;
+	private static final double FLAME_TOP = 23.0D / 16.0D;
 	private static final ParticleColor EMBER = new ParticleColor(232, 42, 36);
 	private static final ParticleColor SANGUINE_EMBER = new ParticleColor(170, 0, 22);
-	private static final ParticleColor HOT_CORE = new ParticleColor(255, 176, 150);
 	private static final ParticleColor SOOT = new ParticleColor(22, 2, 6);
 
 	public BrazierBlock(Properties properties) {
@@ -100,18 +101,15 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 		}
 		double x = pPos.getX() + 0.5D;
 		double z = pPos.getZ() + 0.5D;
-		// Crimson embers lift off the coal bed and burn out around the offering.
+		// Crimson embers lift off the burning blood and burn out around the offering. The flame's hot core is
+		// BrazierFlames' shader, so no white spark is thrown here.
 		for (int i = 0; i < 3; i++) {
 			double ox = (pRandom.nextDouble() - 0.5D) * 0.36D;
 			double oz = (pRandom.nextDouble() - 0.5D) * 0.36D;
-			pLevel.addParticle(HemoParticleData.ember(phase == 2 ? SANGUINE_EMBER : EMBER,
+			pLevel.addParticle(HemoParticleData.emberSpark(phase == 2 ? SANGUINE_EMBER : EMBER,
 					0.05F + pRandom.nextFloat() * 0.035F, 0.85F, 26 + pRandom.nextInt(14)),
-					x + ox, pPos.getY() + COAL_TOP, z + oz, -ox * 0.03D, 0.022D + pRandom.nextDouble() * 0.018D,
+					x + ox, pPos.getY() + POOL_TOP, z + oz, -ox * 0.03D, 0.022D + pRandom.nextDouble() * 0.018D,
 					-oz * 0.03D);
-		}
-		if (pRandom.nextInt(3) == 0) {
-			pLevel.addParticle(HemoParticleData.ember(HOT_CORE, 0.035F, 0.95F, 16), x, pPos.getY() + COAL_TOP + 0.08D,
-					z, 0.0D, 0.045D, 0.0D);
 		}
 		pLevel.addParticle(HemoParticleData.darkGlow(SOOT), x + (pRandom.nextDouble() - 0.5D) * 0.2D,
 				pPos.getY() + FLAME_TOP, z + (pRandom.nextDouble() - 0.5D) * 0.2D, 0.0D, 0.012D, 0.0D);
@@ -294,13 +292,23 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 				&& BrazierBloodInteractionRules.shouldExtinguishOnAbsorption(
 						state.getValue(RITUAL_PHASE) > 0, !brazier.hasOffering(), maxAmount)) {
 			brazier.resetItemAbsorptionProgress();
+			// The fire is drawn out with its blood: the bowl drains over about a second and goes out once it is dry.
+			double pooled = brazier.getPooledBlood() > 0.0D ? brazier.getPooledBlood() : BLOOD_TO_LIGHT;
+			double drawn = BrazierBloodInteractionRules.drainStep(pooled, maxAmount);
+			brazier.setPooledBlood(pooled - drawn);
+			if (!BrazierBloodInteractionRules.isDry(pooled - drawn)) {
+				if (level.getGameTime() % 8L == 0L) {
+					level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 0.3F, 1.35F);
+				}
+				return drawn;
+			}
 			level.setBlock(pos, state.setValue(RITUAL_PHASE, 0), Block.UPDATE_ALL);
 			level.sendParticles(HemoParticleData.darkGlow(SOOT), pos.getX() + 0.5D, pos.getY() + COAL_TOP + 0.15D,
 					pos.getZ() + 0.5D, 18, 0.18D, 0.12D, 0.18D, 0.025D);
-			level.sendParticles(HemoParticleData.ember(SANGUINE_EMBER, 0.06F, 0.8F, 18), pos.getX() + 0.5D,
+			level.sendParticles(HemoParticleData.emberSpark(SANGUINE_EMBER, 0.06F, 0.8F, 18), pos.getX() + 0.5D,
 					pos.getY() + COAL_TOP, pos.getZ() + 0.5D, 10, 0.2D, 0.04D, 0.2D, 0.02D);
 			level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.55F, 1.0F);
-			return maxAmount;
+			return drawn;
 		}
 		double memoryHandled = MemoryBrazierRite.tryAbsorb(level, pos, state, player, maxAmount);
 		if (memoryHandled > 0.0D) {
@@ -315,28 +323,38 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 	@Override
 	public double projectBloodIntoBlock(ServerLevel level, BlockPos pos, BlockState state, ServerPlayer player,
 			double maxAmount) {
-		if (state.getValue(WATERLOGGED) || state.getValue(RITUAL_PHASE) > 0 || maxAmount < BLOOD_TO_LIGHT) {
+		if (state.getValue(WATERLOGGED) || state.getValue(RITUAL_PHASE) > 0 || maxAmount <= 0.0D
+				|| !(level.getBlockEntity(pos) instanceof IronBrazierBlockEntity brazier)) {
 			return 0.0D;
 		}
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
-		if (volume == null || !volume.isActive() || volume.getBloodVolume() < BLOOD_TO_LIGHT) {
+		double poured = volume == null || !volume.isActive() ? 0.0D
+				: BrazierBloodInteractionRules.fillStep(brazier.getPooledBlood(), BLOOD_TO_LIGHT, maxAmount,
+						volume.getBloodVolume());
+		if (poured <= 0.0D) {
 			if (level.getGameTime() % 20L == 0L) {
 				player.displayClientMessage(Component.literal("No blood answers the brazier."), true);
 			}
 			return 0.0D;
 		}
-		volume.subtractBloodVolume(BLOOD_TO_LIGHT);
-		volume.addBloodSpend(BLOOD_TO_LIGHT);
+		// The lighting cost pours into the bowl over about a second; the fire takes once the bowl is full.
+		volume.subtractBloodVolume(poured);
+		volume.addBloodSpend(poured);
 		BloodVolumeEvents.syncVolume(player, volume);
-		ItemStack offering = level.getBlockEntity(pos) instanceof IronBrazierBlockEntity brazier
-				? brazier.getOfferingDisplayStack()
-				: ItemStack.EMPTY;
+		brazier.setPooledBlood(brazier.getPooledBlood() + poured);
+		if (!BrazierBloodInteractionRules.isFull(brazier.getPooledBlood(), BLOOD_TO_LIGHT)) {
+			if (level.getGameTime() % 8L == 0L) {
+				level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 0.3F, 1.35F);
+			}
+			return poured;
+		}
+		ItemStack offering = brazier.getOfferingDisplayStack();
 		level.setBlock(pos, state.setValue(RITUAL_PHASE, 1), Block.UPDATE_ALL);
 		HLParticleUtils.spawnPoof(level, pos, new BloodCellData(ParticleInit.blood_cell.get(), ParticleColor.BLOOD));
 		BrazierSpecialOfferingEffects.spawn(level, pos, offering, true,
 				BrazierSpecialOfferingRules.shouldEmitOnIgnition(false, true, !offering.isEmpty()));
 		level.playSound(null, pos, SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS, 0.55F, 0.75F);
-		return BLOOD_TO_LIGHT;
+		return poured;
 	}
 
 	@Override

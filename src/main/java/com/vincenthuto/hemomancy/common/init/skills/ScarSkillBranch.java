@@ -32,7 +32,7 @@ public final class ScarSkillBranch {
 							.setIconItem(() -> new ItemStack(ItemInit.scar_blank.get())));
 			SkillPointInit.skill_fungal_symbiosis = SkillPointInit.registerSkill(branch,
 					new SkillPoint(29, "skill_fungal_symbiosis", 750, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_deep_inscription)
-							.setSkillPointCost(4).setRequiredDegree(7).setTreePosition(448, 700).setBranch("scars").setBranchColor(0xFF9A9A9F).addParents(SkillPointInit.skill_hyphal_cultivation)
+							.setSkillPointCost(4).setRequiredDegree(7).setTreePosition(448, 700).setBranch("scars").setBranchColor(0xFF9A9A9F).addParents(SkillPointInit.skill_hyphal_cultivation, SkillPointInit.deep_base_skill)
 							.setIconItem(() -> new ItemStack(ItemInit.fungal_spine.get())));
 			SkillPointInit.skill_deep_scar_resonance = SkillPointInit.registerSkill(branch,
 					new SkillPoint(63, "skill_deep_scar_resonance", 650, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_deep_inscription)

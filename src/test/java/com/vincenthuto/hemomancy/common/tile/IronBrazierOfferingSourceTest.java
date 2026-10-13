@@ -41,8 +41,12 @@ public final class IronBrazierOfferingSourceTest {
 				"BrazierBloodInteractionRules.shouldDrawAbsorptionParticles(state.getValue(RITUAL_PHASE) > 0)");
 		assertContains("brazier lights from projected blood", block, "projectBloodIntoBlock");
 		assertContains("brazier lighting costs 50 blood", block, "BLOOD_TO_LIGHT = 50.0D");
-		assertContains("brazier projection spends player blood", block, "volume.subtractBloodVolume(BLOOD_TO_LIGHT)");
-		assertContains("brazier projection records blood spend", block, "volume.addBloodSpend(BLOOD_TO_LIGHT)");
+		assertContains("brazier projection spends player blood as it pours", block, "volume.subtractBloodVolume(poured)");
+		assertContains("brazier projection records blood spend", block, "volume.addBloodSpend(poured)");
+		assertContains("brazier lights only once its bowl is full", block,
+				"BrazierBloodInteractionRules.isFull(brazier.getPooledBlood(), BLOOD_TO_LIGHT)");
+		assertContains("absorption drains the bowl before the fire goes out", block,
+				"BrazierBloodInteractionRules.drainStep(pooled, maxAmount)");
 		assertNotContains("empty hand no longer lights brazier", block, "player.hurt(player.damageSources().generic(), 1.5f)");
 		assertNotContains("flint and steel no longer lights brazier", block, "Items.FLINT_AND_STEEL");
 		assertContains("breaking drops offering", block, "dropOffering");

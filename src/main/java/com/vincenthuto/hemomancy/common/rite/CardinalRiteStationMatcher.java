@@ -84,6 +84,20 @@ public final class CardinalRiteStationMatcher {
 				: resolved.isEmpty() ? Status.NO_RITE : Status.MATCHED, resolved);
 	}
 
+	/** The highest-tier floor built around the focus, or empty when none or two styles tie, as {@link #resolve} treats them. */
+	public static Optional<FormedFloor> formedFloor(ServerLevel level, BlockPos focusPos) {
+		if (!level.getBlockState(focusPos).is(BlockInit.cardinal_focus.get())) return Optional.empty();
+		FormedFloor formed = null;
+		for (CardinalRiteFloorDefinition floor : CardinalRiteFloorRegistry.highestTierFirst()) {
+			if (formed != null && floor.tier() != formed.floor().tier()) break;
+			List<BlockPattern.BlockPatternMatch> matches = matchFloorsAtFocus(level, focusPos, floor);
+			if (matches.isEmpty()) continue;
+			if (formed != null) return Optional.empty();
+			formed = new FormedFloor(floor, matches.getFirst().getForwards());
+		}
+		return Optional.ofNullable(formed);
+	}
+
 	public static Optional<StationMatch> findCaptured(ServerLevel level, BlockPos focusPos,
 			CardinalRiteRecipe recipe, net.minecraft.resources.ResourceLocation floorId,
 			Direction forwards, Direction up) {
@@ -220,6 +234,9 @@ public final class CardinalRiteStationMatcher {
 	}
 
 	public record BrazierMatch(BlockPos pos, ItemStack stack, boolean consumeOnSuccess) {
+	}
+
+	public record FormedFloor(CardinalRiteFloorDefinition floor, Direction forwards) {
 	}
 
 	private record FloorMatch(CardinalRiteFloorDefinition floor, BlockPattern.BlockPatternMatch match) {

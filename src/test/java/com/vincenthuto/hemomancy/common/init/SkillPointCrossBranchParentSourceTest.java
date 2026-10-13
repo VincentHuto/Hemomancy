@@ -20,7 +20,7 @@ public final class SkillPointCrossBranchParentSourceTest {
 		assertContains("mycelial branch registers hyphal cultivation", mycelial,
 				"SkillPointInit.skill_hyphal_cultivation = SkillPointInit.registerSkill");
 		assertContains("fungal symbiosis includes hyphal cultivation as an additional parent", scars,
-				"addParents(SkillPointInit.skill_hyphal_cultivation)");
+				"addParents(SkillPointInit.skill_hyphal_cultivation, SkillPointInit.deep_base_skill)");
 	}
 
 	private static String read(String path) throws IOException {

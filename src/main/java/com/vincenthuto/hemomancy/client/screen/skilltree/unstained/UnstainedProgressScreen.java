@@ -2,9 +2,17 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.unstained;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.*;
+import com.vincenthuto.hemomancy.client.screen.skilltree.unstained.UnstainedProgressLayout.Kind;
+import com.vincenthuto.hemomancy.client.screen.skilltree.unstained.UnstainedProgressLayout.Link;
+import com.vincenthuto.hemomancy.client.screen.skilltree.unstained.UnstainedProgressLayout.Node;
+import com.vincenthuto.hemomancy.client.screen.skilltree.unstained.UnstainedProgressLayout.Pip;
+import com.vincenthuto.hemomancy.client.screen.skilltree.unstained.UnstainedProgressLayout.Rect;
+import com.vincenthuto.hemomancy.client.screen.skilltree.unstained.UnstainedProgressLayout.Rite;
+import com.vincenthuto.hemomancy.client.screen.skilltree.unstained.UnstainedProgressLayout.Status;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.*;
+import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances.Observance;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.unstained.PacketToggleUnstainedBonus;
@@ -13,6 +21,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
@@ -30,12 +39,12 @@ import java.util.Optional;
  *   <li>Dark blue background with floating hollow rhombus particles</li>
  *   <li>Click-and-drag panning</li>
  *   <li>Scroll-wheel zoom (anchored to cursor)</li>
- *   <li>Home button to reset view</li>
- *   <li>Diamond-shaped stage nodes</li>
- *   <li>Purity stage progression (left column)</li>
- *   <li>Clarity stage progression (right column, if unlocked)</li>
- *   <li>Progress bars and derived stat readouts</li>
- *   <li>Tooltips for each stage node</li>
+ *   <li>Home button to refit the path</li>
+ *   <li>One left-to-right path: Lethean Baptism, the purity stages, the three bridge rites,
+ *       then the clarity stages (once unlocked); positions come from {@link UnstainedProgressLayout}</li>
+ *   <li>Observance pips under the stage that opens each observance</li>
+ *   <li>Progress bars above the purity and clarity segments</li>
+ *   <li>Tooltips for stages, rites and observances</li>
  * </ul>
  */
 public class UnstainedProgressScreen extends Screen {
@@ -74,18 +83,26 @@ public class UnstainedProgressScreen extends Screen {
 
 	private static final int COL_NODE_BG        = 0xCC0C1020;
 	private static final int COL_NODE_LOCKED    = 0xFF303848;
+	private static final int COL_NODE_VEILED    = 0xFF242C3A;
+	private static final int COL_NODE_NEXT      = 0xFF8098C0;
 	private static final int COL_NODE_REACHED   = 0xFF6088B0;
 	private static final int COL_NODE_CURRENT   = 0xFFB0C0E0;
 
 	private static final int COL_LINE_LOCKED    = 0x66283848;
+	private static final int COL_LINE_VEILED    = 0x40283848;
 	private static final int COL_LINE_REACHED   = 0xFF5080B0;
+	private static final int COL_LINE_CLARITY   = 0xFF50A898;
+
+	private static final int COL_OBS_CLAIMED    = 0xFF70C090;
+	private static final int COL_OBS_ACCEPTED   = 0xFFB0C0E0;
+	private static final int COL_OBS_AVAILABLE  = 0xFF80D0C0;
+	private static final int COL_OBS_LOCKED     = 0xFF687080;
 
 	private final UnstainedBackgroundRenderer backgroundRenderer = new UnstainedBackgroundRenderer();
 
-	// ── Node layout (content-space pixels) ──
-	private static final int NODE_SIZE    = 30;
-	private static final int NODE_GAP_Y   = 72;
-	private static final int COLUMN_SPACING = 260;
+	/** Below this zoom the path drops its text (labels, headers, penalty line). */
+	private static final float LABEL_MIN_ZOOM = 0.4f;
+	private static final int TOOLTIP_WRAP_W = 220;
 
 	// ── Pan / zoom (encapsulated in PanZoomState) ──
 	private final PanZoomState progressView = new PanZoomState();
@@ -96,14 +113,19 @@ public class UnstainedProgressScreen extends Screen {
 	// ── Home button ──
 	private static final int HOME_BTN_SIZE = 16;
 	private static final int HOME_BTN_PAD  = 4;
+	private static final int ZOOM_LABEL_H  = 14;
 
 	// ── Milestones sidebar ──
+	private static final int SIDEBAR_INSET = 4;
+	private static final int SIDEBAR_TOP = 22;
 	private static final int SIDEBAR_WIDTH = 170;
 	private static final int SIDEBAR_TAB_W = 14;  // collapsed tab width
 	private static final int SIDEBAR_TAB_H = 50;  // collapsed tab height
 	private static final int SIDEBAR_SHADOW = 0xAA000000;
 	private static final float SIDEBAR_Z = 700.0F;
 	private boolean sidebarVisible = false;
+	private int sidebarScroll;
+	private int sidebarContentH;
 
 	// ── Bonus toggle panel (right side) ──
 	private static final int BONUS_BTN_SIZE = 24;
@@ -113,18 +135,21 @@ public class UnstainedProgressScreen extends Screen {
 	// ── GUI viewport (screen-space pixels, set in init()) ──
 	private int guiLeft, guiTop, guiWidth, guiHeight;
 
-	// ── Content bounds (content-space) ──
-	private int contentW, contentH;
+	// ── Path layout (content-space, rebuilt from the cached progress) ──
+	private UnstainedProgressLayout layout;
+	/** Progress the current layout was built from; render rebuilds only when it changes. */
+	private UnstainedProgressLayout.Progress layoutProgress;
 
 	// ── Cached capability data ──
 	private boolean begunPurification;
 	private float purity;
+	private boolean clarityPrepared;
 	private boolean clarityUnlocked;
 	private float clarity;
 	private float silverWardStrength;
 	private float verdigrisAura;
-	private EnumPurityStage currentPurityStage;
-	private EnumClarityStage currentClarityStage;
+	private EnumPurityStage currentPurityStage = EnumPurityStage.CORRUPTED;
+	private EnumClarityStage currentClarityStage = EnumClarityStage.AWAKENED;
 	private UnstainedPhase phase = UnstainedPhase.OUTSIDER;
 
 	// ── Cached bonus toggle state ──
@@ -132,10 +157,8 @@ public class UnstainedProgressScreen extends Screen {
 	private boolean verdigrisAuraEnabled;
 
 	// ── Cached milestone data ──
-	private int mHemoKills, mUndeadKills, mHostileKills, mFlawlessKills;
-	private int mAnimalsBreed, mCropsPlanted, mAdvancementsEarned, mNightsSlept, mPetsHealed;
 	private boolean mSleptHemolysis, mFirstHemoKill, mReachedAbstinence, mEmptiedBlood, mEarnedAdvancement;
-	private int acceptedObservances, claimedObservances;
+	private int acceptedObservances, claimedObservances, availableObservances;
 
 	// ────────────────────────────────────────────────────────────
 	//  Construction / opening
@@ -167,14 +190,12 @@ public class UnstainedProgressScreen extends Screen {
 
 		clearWidgets();
 		cachePlayerData();
-		buildContentBounds();
 		ProgressScreenContext ctx = makeContext();
 		ritesTab.onInit(ctx);
 		craftingTab.onInit(ctx);
 		materialsTab.onInit(ctx);
 
-		// Centre the progress view
-		progressView.centreOn(contentW, contentH, guiWidth, guiHeight);
+		fitProgressView();
 
 		view = viewForTab(activeTab);
 	}
@@ -185,6 +206,7 @@ public class UnstainedProgressScreen extends Screen {
 				phase                = UnstainedAccessRules.phase(cap);
 				begunPurification    = cap.hasBegunPurification();
 				purity               = cap.getPurity();
+				clarityPrepared      = cap.isClarityPrepared();
 				clarityUnlocked      = cap.hasClarityUnlocked();
 				clarity              = cap.getClarity();
 				silverWardStrength   = cap.getSilverWardStrength();
@@ -194,15 +216,6 @@ public class UnstainedProgressScreen extends Screen {
 				currentPurityStage   = EnumPurityStage.byPurity(purity);
 				currentClarityStage  = EnumClarityStage.byClarity(clarity);
 				// Milestones
-				mHemoKills          = cap.getHemoMobKills();
-				mUndeadKills        = cap.getUndeadKills();
-				mHostileKills       = cap.getHostileKills();
-				mFlawlessKills      = cap.getFlawlessKills();
-				mAnimalsBreed       = cap.getAnimalsBreed();
-				mCropsPlanted       = cap.getCropsPlanted();
-				mAdvancementsEarned = cap.getAdvancementsEarned();
-				mNightsSlept        = cap.getNightsSlept();
-				mPetsHealed         = cap.getPetsHealed();
 				mSleptHemolysis     = cap.hasSleptWithHemolysis();
 				mFirstHemoKill      = cap.hasKilledFirstHemoMob();
 				mReachedAbstinence  = cap.hasReachedAbstinence();
@@ -210,33 +223,31 @@ public class UnstainedProgressScreen extends Screen {
 				mEarnedAdvancement  = cap.hasEarnedAdvancement();
 				acceptedObservances = cap.getAcceptedObservances();
 				claimedObservances  = cap.getClaimedObservances();
+				int available = 0;
+				for (Observance observance : Observance.values()) {
+					if (UnstainedObservances.isAvailable(cap, observance)) available |= observance.mask();
+				}
+				availableObservances = available;
 			});
 		}
-	}
-
-	private void buildContentBounds() {
-		int stages = EnumPurityStage.values().length;
-		int columnHeight = 50 + stages * NODE_GAP_Y + 30;
-		int statAreaHeight = 80;
-
-		if (clarityUnlocked) {
-			contentW = COLUMN_SPACING + 160;
-		} else {
-			contentW = 200;
+		UnstainedProgressLayout.Progress progress = new UnstainedProgressLayout.Progress(
+				phase, currentPurityStage, clarityPrepared, clarityUnlocked, currentClarityStage, begunPurification);
+		if (layout == null || !progress.equals(layoutProgress)) {
+			layout = UnstainedProgressLayout.build(progress);
+			layoutProgress = progress;
 		}
-		contentH = columnHeight + statAreaHeight;
 	}
 
 	// ────────────────────────────────────────────────────────────
 	//  Coordinate helpers — delegate to active PanZoomState
 	// ────────────────────────────────────────────────────────────
 
-	/** Content-space → screen-space X */
+	/** Content-space X → screen-space X */
 	private int sx(int contentX) { return view.sx(guiLeft, contentX); }
-	/** Content-space → screen-space Y */
+	/** Content-space Y → screen-space Y */
 	private int sy(int contentY) { return view.sy(guiTop,  contentY); }
-	/** Half-node size on screen, accounting for zoom */
-	private int halfNode() { return view.halfNode(NODE_SIZE); }
+	/** Half of a node's on-screen size, accounting for zoom. */
+	private int screenHalf(Node node) { return view.halfNode(node.halfSize() * 2); }
 
 	private boolean insideGui(double mx, double my) {
 		return mx >= guiLeft && mx < guiLeft + guiWidth
@@ -251,19 +262,54 @@ public class UnstainedProgressScreen extends Screen {
 	}
 
 	// ────────────────────────────────────────────────────────────
+	//  What the Progress tab shows for the current phase
+	// ────────────────────────────────────────────────────────────
+
+	/** The path (and its tooltips) is drawn for these phases; the others show a route message. */
+	private boolean pathVisible() {
+		return phase == UnstainedPhase.PURIFYING || phase == UnstainedPhase.CURE_READY
+				|| phase == UnstainedPhase.PLEDGED;
+	}
+
+	/** The Book of Observances sidebar is offered on every route once one has begun. */
+	private boolean sidebarAvailable() {
+		return phase != UnstainedPhase.OUTSIDER;
+	}
+
+	private boolean sidebarOpen() {
+		return sidebarAvailable() && sidebarVisible;
+	}
+
+	private boolean bonusAvailable() {
+		return begunPurification || clarityUnlocked;
+	}
+
+	private static boolean isVow(Observance observance) {
+		return (observance.mask() & UnstainedAccessRules.NOVITIATE_MASK) != 0;
+	}
+
+	/** Vows show for players on the vow route; purification observances for everyone else. */
+	private boolean observanceShown(Observance observance) {
+		boolean vowRoute = phase == UnstainedPhase.NOVITIATE
+				|| ((acceptedObservances | claimedObservances) & UnstainedAccessRules.NOVITIATE_MASK) != 0;
+		if (isVow(observance)) return vowRoute;
+		return begunPurification || clarityUnlocked || !vowRoute;
+	}
+
+	// ────────────────────────────────────────────────────────────
 	//  Pan / zoom helpers
 	// ────────────────────────────────────────────────────────────
 
 	private int contentW() {
 		return switch (activeTab) {
-			case PROGRESS  -> contentW;
+			case PROGRESS  -> layout.contentBounds().w();
 			case MATERIALS -> materialsTab.getContentW();
 			default        -> 0; // RITES / CRAFTING don't pan
 		};
 	}
 	private int contentH() {
 		return switch (activeTab) {
-			case PROGRESS  -> contentH;
+			case PROGRESS  -> layout.contentBounds().h();
 			case MATERIALS -> materialsTab.getContentH();
 			default        -> 0;
 		};
@@ -294,11 +340,36 @@ public class UnstainedProgressScreen extends Screen {
 		restoreTabPan();
 	}
 
-	private void clampPan() {
-		view.clamp(contentW(), contentH(), guiWidth, guiHeight);
+	/** GUI-relative left edge of the area the path is fitted into (right of an open sidebar). */
+	private int progressAreaLeft() {
+		return sidebarOpen() ? SIDEBAR_INSET + SIDEBAR_WIDTH + SIDEBAR_TAB_W + 4 : 0;
+	}
+
+	private int progressAreaTop() {
+		return TAB_PAD + TAB_HEIGHT + 2;
+	}
+
+	/** Fits the whole path between the tabs and the zoom readout, clear of an open sidebar. */
+	private void fitProgressView() {
+		int areaX = progressAreaLeft();
+		int areaY = progressAreaTop();
+		int areaW = Math.max(1, guiWidth - areaX);
+		int areaH = Math.max(1, guiHeight - areaY - ZOOM_LABEL_H);
+		UnstainedProgressLayout.View fit = layout.fit(areaX, areaY, areaW, areaH);
+		progressView.zoom = fit.zoom();
+		progressView.panX = fit.panX();
+		progressView.panY = fit.panY();
 	}
 
 	private void resetToHome() {
+		if (activeTab == UTab.PROGRESS) {
+			fitProgressView();
+			return;
+		}
+		if (activeTab == UTab.MATERIALS) {
+			materialsTab.resetView(makeContext());
+			return;
+		}
 		view.centreOn(contentW(), contentH(), guiWidth, guiHeight);
 	}
 
@@ -321,12 +392,16 @@ public class UnstainedProgressScreen extends Screen {
 				return true;
 			}
 			if (activeTab == UTab.PROGRESS) {
-				if (begunPurification && isOverSidebarToggle(mx, my)) {
+				if (sidebarAvailable() && isOverSidebarToggle(mx, my)) {
 					sidebarVisible = !sidebarVisible;
+					fitProgressView();
+					return true;
+				}
+				if (sidebarOpen() && isOverSidebarPanel(mx, my)) {
 					return true;
 				}
 				// Bonus toggle buttons
-				if (begunPurification) {
+				if (bonusAvailable()) {
 					int clickedBonus = getBonusButtonAt(mx, my);
 					if (clickedBonus >= 0) {
 						PacketHandler.sendToServer(new PacketToggleUnstainedBonus(clickedBonus));
@@ -377,6 +452,11 @@ public class UnstainedProgressScreen extends Screen {
 
 		if (activeTab == UTab.RITES) return ritesTab.mouseScrolled(makeContext(), mx, my, scrollY);
 		if (activeTab == UTab.CRAFTING) return craftingTab.mouseScrolled(makeContext(), mx, my, scrollY);
+		if (activeTab == UTab.PROGRESS && sidebarOpen() && isOverSidebarPanel(mx, my)) {
+			sidebarScroll -= (int) (scrollY * 12);
+			clampSidebarScroll();
+			return true;
+		}
 
 		view.applyScroll(guiLeft, guiTop, mx, my, scrollY);
 		saveTabPan();
@@ -414,7 +494,6 @@ public class UnstainedProgressScreen extends Screen {
 		RenderSystem.disableBlend();
 
 		cachePlayerData();
-		buildContentBounds();
 
 		// 1. Dark blue background with floating hollow rhombuses
 		backgroundRenderer.render(gfx, guiLeft, guiTop, guiWidth, guiHeight);
@@ -429,14 +508,10 @@ public class UnstainedProgressScreen extends Screen {
 		if (activeTab == UTab.PROGRESS) {
 			if (phase == UnstainedPhase.OUTSIDER) {
 				drawNotBegunMessage(gfx);
-			} else if (phase == UnstainedPhase.NOVITIATE || phase == UnstainedPhase.CLEANSED_UNPLEDGED) {
+			} else if (!pathVisible()) {
 				drawRouteMessage(gfx);
 			} else {
-				drawPurityColumn(gfx);
-				if (clarityUnlocked) {
-					drawClarityColumn(gfx);
-				}
-				drawStatReadouts(gfx);
+				drawPath(gfx, mouseX, mouseY);
 			}
 		} else if (activeTab == UTab.RITES) {
 			ritesTab.render(gfx, makeContext(), mouseX, mouseY, partial);
@@ -454,12 +529,12 @@ public class UnstainedProgressScreen extends Screen {
 		}
 
 		// 4. Milestones sidebar (fixed on far left, outside content scissor; Progress tab only)
-		if (activeTab == UTab.PROGRESS && begunPurification) {
+		if (activeTab == UTab.PROGRESS && sidebarAvailable()) {
 			drawMilestones(gfx, mouseX, mouseY);
 		}
 
 		// 4b. Bonus toggle buttons (fixed on far right, outside content scissor; Progress tab only)
-		if (activeTab == UTab.PROGRESS && begunPurification) {
+		if (activeTab == UTab.PROGRESS && bonusAvailable()) {
 			drawBonusToggleButtons(gfx, mouseX, mouseY);
 		}
 
@@ -471,24 +546,24 @@ public class UnstainedProgressScreen extends Screen {
 		// 5b. Tabs
 		drawTabs(gfx, mouseX, mouseY);
 
-		// 6. Zoom indicator (hidden when milestones sidebar is open; not shown for browse tabs)
-		if (activeTab != UTab.RITES && activeTab != UTab.CRAFTING
-				&& (!sidebarVisible || !begunPurification || activeTab == UTab.MATERIALS)) {
+		// 6. Zoom indicator (hidden under an open milestones sidebar; not shown for browse tabs)
+		boolean progressZoomShown = activeTab == UTab.PROGRESS && pathVisible() && !sidebarOpen();
+		if (activeTab == UTab.MATERIALS || progressZoomShown) {
 			gfx.drawString(font,
 					String.format("%.0f%%", view.zoom * 100),
 					guiLeft + 5, guiTop + guiHeight - 12, 0x55888888, false);
 		}
 
 		// 7. Tooltips (outside scissor)
-		if (activeTab == UTab.PROGRESS && begunPurification) {
-			drawPurityTooltip(gfx, mouseX, mouseY);
-			if (clarityUnlocked) {
-				drawClarityTooltip(gfx, mouseX, mouseY);
+		if (activeTab == UTab.PROGRESS) {
+			if (pathVisible() && !isOverChrome(mouseX, mouseY)) {
+				drawPathTooltips(gfx, mouseX, mouseY);
+				drawStatTooltips(gfx, mouseX, mouseY);
 			}
-			drawStatTooltips(gfx, mouseX, mouseY);
-			drawBonusToggleTooltips(gfx, mouseX, mouseY);
-			// Sidebar toggle tooltip
-			if (isOverSidebarToggle(mouseX, mouseY)) {
+			if (bonusAvailable()) {
+				drawBonusToggleTooltips(gfx, mouseX, mouseY);
+			}
+			if (sidebarAvailable() && isOverSidebarToggle(mouseX, mouseY)) {
 				String tipText = sidebarVisible ? "Hide Milestones" : "Show Milestones";
 				gfx.renderTooltip(font, Component.literal(tipText), mouseX, mouseY);
 			}
@@ -508,9 +583,28 @@ public class UnstainedProgressScreen extends Screen {
 		// intentionally empty
 	}
 
+	/** Fixed chrome drawn over the path; path tooltips stay quiet underneath it. */
+	private boolean isOverChrome(double mx, double my) {
+		return isOverHomeButton(mx, my)
+				|| tabUnder(mx, my) != null
+				|| (sidebarAvailable() && isOverSidebarToggle(mx, my))
+				|| (sidebarOpen() && isOverSidebarPanel(mx, my))
+				|| (bonusAvailable() && getBonusButtonAt(mx, my) >= 0);
+	}
+
 	// ────────────────────────────────────────────────────────────
-	//  "Not begun" message
+	//  Route messages (phases without a drawn path)
 	// ────────────────────────────────────────────────────────────
+
+	/** Screen-space centre X of the free area (right of an open sidebar). */
+	private int messageCentreX() {
+		int areaX = progressAreaLeft();
+		return guiLeft + areaX + (guiWidth - areaX) / 2;
+	}
+
+	private int messageWidth() {
+		return Math.max(80, guiWidth - progressAreaLeft() - 24);
+	}
 
 	private void drawNotBegunMessage(GuiGraphics gfx) {
 		int centerX = guiLeft + guiWidth / 2;
@@ -528,137 +622,149 @@ public class UnstainedProgressScreen extends Screen {
 	}
 
 	private void drawRouteMessage(GuiGraphics gfx) {
-		int centerX = guiLeft + guiWidth / 2;
-		int centerY = guiTop + guiHeight / 2;
+		int centerX = messageCentreX();
+		int y = guiTop + guiHeight / 2 - 12;
 		if (phase == UnstainedPhase.NOVITIATE) {
 			int vows = UnstainedAccessRules.completedNovitiateVows(claimedObservances);
-			gfx.drawCenteredString(font, Component.literal("Novitiate Service"), centerX, centerY - 12, 0xFF80D0C0);
-			gfx.drawCenteredString(font, Component.literal("Vows fulfilled: " + vows + "/5"), centerX, centerY + 4, 0xFFB0C8E8);
+			gfx.drawCenteredString(font, Component.literal("Novitiate Service"), centerX, y, 0xFF80D0C0);
+			gfx.drawCenteredString(font, Component.literal("Vows fulfilled: " + vows + "/5"), centerX, y + 16, 0xFFB0C8E8);
+			if (UnstainedAccessRules.hasCompletedNovitiateVows(claimedObservances)) {
+				String next = clarityPrepared
+						? "Consecrated Copper has steadied the crossing. Perform Clarity Ascension with your blood wholly relinquished."
+						: "Your service is kept. Offer Consecrated Copper at an Unstained Podium, then perform Clarity Ascension. Both ask for blood wholly relinquished.";
+				drawCentredWrapped(gfx, Component.literal(next), centerX, y + 32, 0xFF8098C0);
+			}
 		} else {
-			gfx.drawCenteredString(font, Component.literal("Baseline Restored"), centerX, centerY - 12, 0xFF80D0C0);
-			gfx.drawCenteredString(font, Component.literal("Offer Consecrated Copper, then complete Clarity Ascension."), centerX, centerY + 4, 0xFFB0C8E8);
+			gfx.drawCenteredString(font, Component.literal("Baseline Restored"), centerX, y, 0xFF80D0C0);
+			String next = clarityPrepared
+					? "Consecrated Copper has steadied the crossing. Perform Clarity Ascension."
+					: "Offer Consecrated Copper, then complete Clarity Ascension.";
+			drawCentredWrapped(gfx, Component.literal(next), centerX, y + 16, 0xFFB0C8E8);
+		}
+	}
+
+	private void drawCentredWrapped(GuiGraphics gfx, Component text, int centerX, int y, int color) {
+		for (FormattedCharSequence line : font.split(text, messageWidth())) {
+			gfx.drawCenteredString(font, line, centerX, y, color);
+			y += 11;
 		}
 	}
 
 	// ────────────────────────────────────────────────────────────
-	//  Content-space layout helpers
+	//  Path
 	// ────────────────────────────────────────────────────────────
 
-	/** Content-space X centre for the purity column */
-	private int purityCenterCX() {
-		if (clarityUnlocked) {
-			return contentW / 2 - COLUMN_SPACING / 2;
-		}
-		return contentW / 2;
-	}
-
-	/** Content-space X centre for the clarity column */
-	private int clarityCenterCX() {
-		return contentW / 2 + COLUMN_SPACING / 2;
-	}
-
-	/** Content-space Y for the top of the node area */
-	private int nodeStartCY() {
-		return 50;
-	}
-
-	// ────────────────────────────────────────────────────────────
-	//  Purity column
-	// ────────────────────────────────────────────────────────────
-
-	private void drawPurityColumn(GuiGraphics gfx) {
-		int ccx = purityCenterCX();
-		int scrCenterX = sx(ccx);
-		int startCY = nodeStartCY();
-
-		// Column header
-		if (view.zoom >= 0.4f) {
-			gfx.drawCenteredString(font, Component.literal("— Purity —"),
-					scrCenterX, sy(10), PURITY_COLOR);
-
-			// Progress bar
-			int barW = Math.max(20, (int)(100 * view.zoom));
-			drawProgressBar(gfx, scrCenterX - barW / 2, sy(22), barW, Math.max(4, (int)(8 * view.zoom)),
-					purity, 100f, 0x7088C0);
-
-			gfx.drawCenteredString(font, String.format("%.1f%%", purity),
-					scrCenterX, sy(34), 0xFF8098B0);
+	private void drawPath(GuiGraphics gfx, int mouseX, int mouseY) {
+		// Links first — they stop at the diamond tips so they never cut through a node
+		int lw = Math.max(1, (int)(view.zoom * 1.5f));
+		for (Link link : layout.links()) {
+			int y = sy(link.from().y());
+			int x1 = sx(link.from().x()) + screenHalf(link.from());
+			int x2 = sx(link.to().x()) - screenHalf(link.to());
+			if (x2 > x1) gfx.fill(x1, y - lw, x2, y + lw, linkColor(link));
 		}
 
-		EnumPurityStage[] stages = EnumPurityStage.values();
-
-		// Connections first — lines stop at diamond edges to avoid cutting through nodes
-		int hn = halfNode();
-		for (int i = 1; i < stages.length; i++) {
-			int cy1 = startCY + (stages.length - 1 - (i - 1)) * NODE_GAP_Y;
-			int cy2 = startCY + (stages.length - 1 - i) * NODE_GAP_Y;
-			boolean reached = currentPurityStage.getLevel() >= stages[i].getLevel();
-			int lineCol = reached ? COL_LINE_REACHED : COL_LINE_LOCKED;
-			int lw = Math.max(1, (int)(view.zoom * 1.5f));
-			// Diamond centers are at sy(cy)+hn, tips are at sy(cy) and sy(cy)+2*hn
-			int upperBottom = sy(cy2) + 2 * hn; // bottom tip of upper diamond
-			int lowerTop    = sy(cy1);           // top tip of lower diamond
-			gfx.fill(sx(ccx) - lw, upperBottom, sx(ccx) + lw, lowerTop, lineCol);
+		for (Node node : layout.nodes()) {
+			if (node.kind() == Kind.RITE) {
+				drawRiteNode(gfx, node);
+			} else {
+				drawStageNode(gfx, node);
+			}
 		}
 
-		// Nodes
-		for (int i = 0; i < stages.length; i++) {
-			EnumPurityStage stage = stages[i];
-			int nodeCY = startCY + (stages.length - 1 - i) * NODE_GAP_Y;
-			drawShapedNode(gfx, sx(ccx), sy(nodeCY) + halfNode(), stage.getTitle(),
-					currentPurityStage.getLevel() >= stage.getLevel(),
-					currentPurityStage == stage,
-					PURITY_COLOR, PURITY_GLOW, stage.getNodeShape(),
-					stage.getIconTexture(), stage.getIconItem());
+		if (view.zoom >= LABEL_MIN_ZOOM) {
+			// Text lives in content space so labels shrink with the path and keep their spacing
+			var pose = gfx.pose();
+			pose.pushPose();
+			pose.translate(guiLeft + (float) view.panX, guiTop + (float) view.panY, 0.0F);
+			pose.scale(view.zoom, view.zoom, 1.0F);
+			drawSegmentHeader(gfx, layout.purityHeader(), "— Purity —", purity, PURITY_COLOR, 0x7088C0, 0xFF8098B0);
+			layout.clarityHeader().ifPresent(header ->
+					drawSegmentHeader(gfx, header, "— Clarity —", clarity, CLARITY_COLOR, 0x50B0A0, 0xFF70B0A0));
+			for (Node node : layout.nodes()) {
+				int color = labelColor(node);
+				int lineY = node.y() + UnstainedProgressLayout.LABEL_DY;
+				for (String line : node.labelLines()) {
+					gfx.drawCenteredString(font, line, node.x(), lineY, color);
+					lineY += UnstainedProgressLayout.LABEL_LINE_H;
+				}
+			}
+			Rect penalty = layout.penaltyRect();
+			float penaltyValue = currentPurityStage.getBloodMagicPenalty();
+			gfx.drawCenteredString(font, Component.literal(String.format("Blood Magic Penalty: -%.0f%%", penaltyValue * 100)),
+					penalty.x() + penalty.w() / 2, penalty.y(), penaltyValue > 0 ? 0xFFCC8060 : 0xFF405060);
+			pose.popPose();
+		}
+
+		Pip hoveredPip = pipUnder(mouseX, mouseY);
+		for (Pip pip : layout.pips()) {
+			if (observanceShown(pip.observance())) drawPip(gfx, pip, pip == hoveredPip);
 		}
 	}
 
-	// ────────────────────────────────────────────────────────────
-	//  Clarity column
-	// ────────────────────────────────────────────────────────────
-
-	private void drawClarityColumn(GuiGraphics gfx) {
-		int ccx = clarityCenterCX();
-		int scrCenterX = sx(ccx);
-		int startCY = nodeStartCY();
-
-		if (view.zoom >= 0.4f) {
-			gfx.drawCenteredString(font, Component.literal("— Clarity —"),
-					scrCenterX, sy(10), CLARITY_COLOR);
-
-			int barW = Math.max(20, (int)(100 * view.zoom));
-			drawProgressBar(gfx, scrCenterX - barW / 2, sy(22), barW, Math.max(4, (int)(8 * view.zoom)),
-					clarity, 100f, 0x50B0A0);
-
-			gfx.drawCenteredString(font, String.format("%.1f%%", clarity),
-					scrCenterX, sy(34), 0xFF70B0A0);
+	private int linkColor(Link link) {
+		if (link.lit()) {
+			return isClaritySide(link.to()) ? COL_LINE_CLARITY : COL_LINE_REACHED;
 		}
+		return link.to().veiled() ? COL_LINE_VEILED : COL_LINE_LOCKED;
+	}
 
-		EnumClarityStage[] stages = EnumClarityStage.values();
+	private static boolean isClaritySide(Node node) {
+		return node.kind() == Kind.CLARITY_STAGE || node.rite() == Rite.CLARITY_ASCENSION;
+	}
 
-		// Connections — lines stop at diamond edges to avoid cutting through nodes
-		int hn = halfNode();
-		for (int i = 1; i < stages.length; i++) {
-			int cy1 = startCY + (stages.length - 1 - (i - 1)) * NODE_GAP_Y;
-			int cy2 = startCY + (stages.length - 1 - i) * NODE_GAP_Y;
-			boolean reached = currentClarityStage.getLevel() >= stages[i].getLevel();
-			int lineCol = reached ? 0xFF50A898 : COL_LINE_LOCKED;
-			int lw = Math.max(1, (int)(view.zoom * 1.5f));
-			// Diamond centers are at sy(cy)+hn, tips are at sy(cy) and sy(cy)+2*hn
-			int upperBottom = sy(cy2) + 2 * hn; // bottom tip of upper diamond
-			int lowerTop    = sy(cy1);           // top tip of lower diamond
-			gfx.fill(sx(ccx) - lw, upperBottom, sx(ccx) + lw, lowerTop, lineCol);
+	private int labelColor(Node node) {
+		return switch (node.status()) {
+			case CURRENT -> isClaritySide(node) ? CLARITY_COLOR : PURITY_COLOR;
+			case REACHED -> 0xFF7090B0;
+			case NEXT -> 0xFF8098C0;
+			case LOCKED -> 0xFF384050;
+			case VEILED -> 0xFF2C3444;
+			case BYPASSED -> 0xFF4A5468;
+		};
+	}
+
+	private void drawSegmentHeader(GuiGraphics gfx, Rect header, String title, float value,
+								   int titleColor, int barRGB, int percentColor) {
+		int centreX = header.x() + header.w() / 2;
+		gfx.drawCenteredString(font, Component.literal(title), centreX, header.y(), titleColor);
+		ScreenDrawUtils.drawProgressBar(gfx, header.x(), header.y() + UnstainedProgressLayout.HEADER_BAR_DY,
+				header.w(), UnstainedProgressLayout.HEADER_BAR_H, value, 100f, barRGB);
+		gfx.drawCenteredString(font, String.format("%.1f%%", value),
+				centreX, header.y() + UnstainedProgressLayout.HEADER_PERCENT_DY, percentColor);
+	}
+
+	private void drawStageNode(GuiGraphics gfx, Node node) {
+		boolean claritySide = node.kind() == Kind.CLARITY_STAGE;
+		EnumNodeShape shape = claritySide ? node.clarityStage().getNodeShape() : node.purityStage().getNodeShape();
+		ResourceLocation texture = claritySide ? node.clarityStage().getIconTexture() : node.purityStage().getIconTexture();
+		ItemStack icon = claritySide ? node.clarityStage().getIconItem() : node.purityStage().getIconItem();
+		drawShapedNode(gfx, sx(node.x()), sy(node.y()), screenHalf(node), node.title(), node.status(),
+				claritySide ? CLARITY_GLOW : PURITY_GLOW, shape, texture, icon);
+	}
+
+	private void drawRiteNode(GuiGraphics gfx, Node node) {
+		int cx = sx(node.x());
+		int cy = sy(node.y());
+		int hs = screenHalf(node);
+		int accent = isClaritySide(node) ? CLARITY_COLOR : PURITY_COLOR;
+		if (node.status() == Status.NEXT) {
+			float p = 0.5f + 0.5f * Mth.sin(animTime * 2.5f);
+			NodeShapeRenderer.drawFill(gfx, EnumNodeShape.DIAMOND, cx, cy, hs + 3,
+					((int)(36 * p) << 24) | (accent & 0x00FFFFFF));
 		}
-
-		// Nodes
-		for (int i = 0; i < stages.length; i++) {
-			EnumClarityStage stage = stages[i];
-			int nodeCY = startCY + (stages.length - 1 - i) * NODE_GAP_Y;
-			drawShapedNode(gfx, sx(ccx), sy(nodeCY) + halfNode(), stage.getTitle(),
-					currentClarityStage.getLevel() >= stage.getLevel(),
-					currentClarityStage == stage,
-					CLARITY_COLOR, CLARITY_GLOW, stage.getNodeShape(),
-					stage.getIconTexture(), stage.getIconItem());
+		int border = switch (node.status()) {
+			case REACHED, CURRENT -> COL_NODE_REACHED;
+			case NEXT -> accent;
+			case LOCKED, BYPASSED -> COL_NODE_LOCKED;
+			case VEILED -> COL_NODE_VEILED;
+		};
+		NodeShapeRenderer.drawFill(gfx, EnumNodeShape.DIAMOND, cx, cy, hs, COL_NODE_BG);
+		NodeShapeRenderer.drawOutline(gfx, EnumNodeShape.DIAMOND, cx, cy, hs, border);
+		if (node.done() && node.status() != Status.BYPASSED) {
+			NodeShapeRenderer.drawFill(gfx, EnumNodeShape.DIAMOND, cx, cy, Math.max(1, hs / 3), accent);
+		} else if (node.veiled() && view.zoom >= 0.75f) {
+			gfx.drawCenteredString(font, "?", cx, cy - 4, 0xFF404858);
 		}
 	}
 
@@ -666,15 +772,15 @@ public class UnstainedProgressScreen extends Screen {
 	//  Shape-aware stage node
 	// ────────────────────────────────────────────────────────────
 	private float animTime = 0f;
-	private void drawShapedNode(GuiGraphics gfx, int scrX, int scrY, String title,
-								 boolean reached, boolean isCurrent, int accentColor, int glowColor,
-								 EnumNodeShape shape,
+	private void drawShapedNode(GuiGraphics gfx, int scrX, int scrY, int hn, String title,
+								 Status status, int glowColor, EnumNodeShape shape,
 								 @javax.annotation.Nullable ResourceLocation iconTexture,
 								 @javax.annotation.Nullable ItemStack iconStack) {
 		animTime += 0.016f; // ~60 FPS approximation
 
 		float time = animTime;
-		int hn = halfNode();
+		boolean isCurrent = status == Status.CURRENT;
+		boolean reached = status.done();
 
 		// Determine border colour
 		int border;
@@ -688,8 +794,12 @@ public class UnstainedProgressScreen extends Screen {
 			int gb = glowColor & 0xFF;
 			NodeShapeRenderer.drawFill(gfx, shape, scrX, scrY, hn + 4,
 					(ga << 24) | (gr << 16) | (gg << 8) | gb);
+		} else if (status == Status.BYPASSED) {
+			border = COL_NODE_LOCKED;
 		} else if (reached) {
 			border = COL_NODE_REACHED;
+		} else if (status == Status.NEXT) {
+			border = COL_NODE_NEXT;
 		} else {
 			border = COL_NODE_LOCKED;
 		}
@@ -712,61 +822,71 @@ public class UnstainedProgressScreen extends Screen {
 				gfx.drawCenteredString(font, initial, scrX, scrY - 4, textCol);
 			}
 		}
+	}
 
-		// Stage name below node
-		if (view.zoom >= 0.4f) {
-			int labelCol = isCurrent ? accentColor : (reached ? 0xFF7090B0 : 0xFF384050);
-			gfx.drawCenteredString(font, title, scrX, scrY + hn + 4, labelCol);
+	// ────────────────────────────────────────────────────────────
+	//  Observance pips
+	// ────────────────────────────────────────────────────────────
+
+	private int pipHalf() {
+		return Math.max(2, Math.round(UnstainedProgressLayout.PIP_SIZE / 2.0f * view.zoom));
+	}
+
+	private Pip pipUnder(double mx, double my) {
+		int hs = pipHalf() + 1;
+		for (Pip pip : layout.pips()) {
+			if (!observanceShown(pip.observance())) continue;
+			int cx = sx(pip.x());
+			int cy = sy(pip.y());
+			if (mx >= cx - hs && mx <= cx + hs && my >= cy - hs && my <= cy + hs) return pip;
+		}
+		return null;
+	}
+
+	private void drawPip(GuiGraphics gfx, Pip pip, boolean hovered) {
+		int cx = sx(pip.x());
+		int cy = sy(pip.y());
+		int hs = pipHalf();
+		Observance observance = pip.observance();
+		int color = observanceColor(observance);
+		if (isClaimed(observance) || isAccepted(observance) || isAvailable(observance)) {
+			NodeShapeRenderer.drawFill(gfx, EnumNodeShape.DIAMOND, cx, cy, hs, color);
+		} else {
+			NodeShapeRenderer.drawFill(gfx, EnumNodeShape.DIAMOND, cx, cy, hs, COL_NODE_BG);
+			NodeShapeRenderer.drawOutline(gfx, EnumNodeShape.DIAMOND, cx, cy, hs, color);
+		}
+		if (hovered) {
+			NodeShapeRenderer.drawOutline(gfx, EnumNodeShape.DIAMOND, cx, cy, hs + 1, 0xFFE0E8F8);
 		}
 	}
 
-	// ────────────────────────────────────────────────────────────
-	//  Progress bar — delegate to shared utility — delegate to shared utility
-	// ────────────────────────────────────────────────────────────
+	private boolean isClaimed(Observance observance) { return (claimedObservances & observance.mask()) != 0; }
+	private boolean isAccepted(Observance observance) { return (acceptedObservances & observance.mask()) != 0; }
+	private boolean isAvailable(Observance observance) { return (availableObservances & observance.mask()) != 0; }
 
-	private void drawProgressBar(GuiGraphics gfx, int x, int y, int w, int h,
-								 float value, float max, int fillColorRGB) {
-		ScreenDrawUtils.drawProgressBar(gfx, x, y, w, h, value, max, fillColorRGB);
+	private int observanceColor(Observance observance) {
+		if (isClaimed(observance)) return COL_OBS_CLAIMED;
+		if (isAccepted(observance)) return COL_OBS_ACCEPTED;
+		return isAvailable(observance) ? COL_OBS_AVAILABLE : COL_OBS_LOCKED;
+	}
+
+	private String observancePrefix(Observance observance) {
+		if (isClaimed(observance)) return "✓";
+		if (isAccepted(observance)) return "•";
+		return isAvailable(observance) ? "+" : "×";
 	}
 
 	// ────────────────────────────────────────────────────────────
-	//  Stat readouts (below the nodes, in content space)
+	//  Stat readouts — Blood Magic Penalty tooltip
 	// ────────────────────────────────────────────────────────────
 
-	private void drawStatReadouts(GuiGraphics gfx) {
-		EnumPurityStage[] stages = EnumPurityStage.values();
-		int statCY = nodeStartCY() + stages.length * NODE_GAP_Y + 20;
-		int centerScrX = sx(contentW / 2);
-		int scrY = sy(statCY);
-
-		// Divider line
-		int divW = Math.max(30, (int)(200 * view.zoom));
-		gfx.fill(centerScrX - divW / 2, scrY - 4, centerScrX + divW / 2, scrY - 3, 0x33405878);
-
-		if (view.zoom >= 0.4f) {
-			String penaltyStr = String.format("Blood Magic Penalty: -%.0f%%",
-					currentPurityStage.getBloodMagicPenalty() * 100);
-			int penaltyCol = currentPurityStage.getBloodMagicPenalty() > 0 ? 0xFFCC8060 : 0xFF405060;
-			gfx.drawCenteredString(font, Component.literal(penaltyStr), centerScrX, scrY, penaltyCol);
-		}
-	}
-
-	/**
-	 * Draws hover tooltips for the stat readout lines (Blood Magic Penalty).
-	 * Recomputes the same screen positions used by drawStatReadouts.
-	 */
+	/** Hover tooltip for the Blood Magic Penalty line under the purity stages. */
 	private void drawStatTooltips(GuiGraphics gfx, int mouseX, int mouseY) {
-		if (!insideGui(mouseX, mouseY) || view.zoom < 0.4f) return;
+		if (!insideGui(mouseX, mouseY) || view.zoom < LABEL_MIN_ZOOM) return;
 
-		EnumPurityStage[] stages = EnumPurityStage.values();
-		int statCY = nodeStartCY() + stages.length * NODE_GAP_Y + 20;
-		int centerScrX = sx(contentW / 2);
-		int scrY = sy(statCY);
-		int halfTextW = (int)(100 * view.zoom);  // approximate half-width of text hit area
-
-		// Blood Magic Penalty
-		if (mouseX >= centerScrX - halfTextW && mouseX <= centerScrX + halfTextW
-				&& mouseY >= scrY - 1 && mouseY <= scrY + 9) {
+		Rect penalty = layout.penaltyRect();
+		if (mouseX >= sx(penalty.x()) && mouseX <= sx(penalty.right())
+				&& mouseY >= sy(penalty.y()) - 1 && mouseY <= sy(penalty.bottom()) + 1) {
 			List<Component> tip = new ArrayList<>();
 			tip.add(Component.literal("Blood Magic Penalty")
 					.withStyle(s -> s.withColor(0xCC8060).withBold(true)));
@@ -779,13 +899,13 @@ public class UnstainedProgressScreen extends Screen {
 			tip.add(Component.literal("to all hemomancy abilities.")
 					.withStyle(s -> s.withColor(0xA08070)));
 			tip.add(Component.literal("")); // spacer
-		tip.add(Component.literal("Tainted: -10%  •  Cleansing: -25%")
-				.withStyle(s -> s.withColor(0x807060).withItalic(true)));
-		tip.add(Component.literal("Absolved: -50%  •  Purified: -100%")
+			tip.add(Component.literal("Tainted: -10%  •  Cleansing: -25%")
 					.withStyle(s -> s.withColor(0x807060).withItalic(true)));
-			float penalty = currentPurityStage.getBloodMagicPenalty() * 100;
-			tip.add(Component.literal(String.format("Current: -%.0f%%", penalty))
-					.withStyle(s -> s.withColor(penalty > 0 ? 0xCC6644 : 0x607060).withItalic(true)));
+			tip.add(Component.literal("Absolved: -50%  •  Purified: -100%")
+					.withStyle(s -> s.withColor(0x807060).withItalic(true)));
+			float penaltyValue = currentPurityStage.getBloodMagicPenalty() * 100;
+			tip.add(Component.literal(String.format("Current: -%.0f%%", penaltyValue))
+					.withStyle(s -> s.withColor(penaltyValue > 0 ? 0xCC6644 : 0x607060).withItalic(true)));
 			gfx.renderTooltip(font, tip, Optional.empty(), mouseX, mouseY);
 		}
 	}
@@ -799,7 +919,7 @@ public class UnstainedProgressScreen extends Screen {
 		return guiLeft + guiWidth - BONUS_PANEL_PAD - BONUS_BTN_SIZE;
 	}
 
-	/** Returns the screen-space Y for the top-left of the first bonus button. */
+	/** Returns the screen-space Y for the top-left of the first bonus button (below the tabs). */
 	private int bonusPanelStartY() {
 		return guiTop + 24;
 	}
@@ -858,7 +978,6 @@ public class UnstainedProgressScreen extends Screen {
 	 * @param glow      glow colour for pulse when active
 	 * @param hovered   whether the mouse is over this button
 	 */
-
 	private void drawBonusButton(GuiGraphics gfx, int bx, int by, String icon,
 								  boolean enabled, boolean unlocked, int accent, int glow, boolean hovered) {
 		int bs = BONUS_BTN_SIZE;
@@ -890,9 +1009,8 @@ public class UnstainedProgressScreen extends Screen {
 
 		// Pulsing glow when enabled and unlocked
 		if (enabled && unlocked) {
-animTime += 0.016f; // ~60 FPS approximation
-
-		float time = animTime;			float p = 0.3f + 0.3f * Mth.sin(time * 2.0f);
+			animTime += 0.016f; // ~60 FPS approximation
+			float p = 0.3f + 0.3f * Mth.sin(animTime * 2.0f);
 			int ga = (int)(30 * p);
 			int gr = (glow >> 16) & 0xFF;
 			int gg = (glow >> 8) & 0xFF;
@@ -978,12 +1096,20 @@ animTime += 0.016f; // ~60 FPS approximation
 	}
 
 	// ────────────────────────────────────────────────────────────
-	//  Milestones — checklist (one-time) + progress bars (repeatable)
+	//  Milestones sidebar — Book of Observances + one-time checklist
 	// ────────────────────────────────────────────────────────────
 
+	private int sidebarHeight() {
+		return guiHeight - 28;
+	}
+
+	private void clampSidebarScroll() {
+		sidebarScroll = Mth.clamp(sidebarScroll, 0, Math.max(0, sidebarContentH - (sidebarHeight() - 2)));
+	}
+
 	private void drawMilestones(GuiGraphics gfx, int mouseX, int mouseY) {
-		int sideX = guiLeft + 4;
-		int sideY = guiTop + 22;
+		int sideX = guiLeft + SIDEBAR_INSET;
+		int sideY = guiTop + SIDEBAR_TOP;
 		boolean tabHovered = isOverSidebarToggle(mouseX, mouseY);
 
 		var pose = gfx.pose();
@@ -998,7 +1124,7 @@ animTime += 0.016f; // ~60 FPS approximation
 
 		// ── Expanded sidebar ──
 		int sideW = SIDEBAR_WIDTH;
-		int sideH = guiHeight - 28;
+		int sideH = sidebarHeight();
 
 		// Solid overlay backing; stage nodes and item icons use their own GUI depth.
 		gfx.fill(sideX - 2, sideY - 2, sideX + sideW + 2, sideY + sideH + 2, SIDEBAR_SHADOW);
@@ -1018,7 +1144,9 @@ animTime += 0.016f; // ~60 FPS approximation
 		gfx.enableScissor(sideX + 1, sideY + 1, sideX + sideW - 1, sideY + sideH - 1);
 
 		int x = sideX + 6;
-		int y = sideY + 6;
+		int textW = sideW - 12;
+		int top = sideY + 6;
+		int y = top - sidebarScroll;
 		int centerX = sideX + sideW / 2;
 
 		// Section title
@@ -1029,70 +1157,71 @@ animTime += 0.016f; // ~60 FPS approximation
 		gfx.fill(sideX + 8, y, sideX + sideW - 8, y + 1, 0x33607890);
 		y += 5;
 
-		gfx.drawString(font, Component.literal("Next rite: " + nextRiteLabel()), x, y, 0xFF80D0C0, false);
-		y += 12;
-		for (Observance observance : Observance.values()) {
-			int mask = observance.mask();
-			boolean claimed = (claimedObservances & mask) != 0;
-			boolean accepted = (acceptedObservances & mask) != 0;
-			String prefix = claimed ? "✓ " : accepted ? "• " : observanceAvailable(observance) ? "+ " : "× ";
-			int color = claimed ? 0xFF70C090 : accepted ? 0xFFB0C0E0 : observanceAvailable(observance) ? 0xFF80D0C0 : 0xFF687080;
-			gfx.drawString(font, Component.literal(prefix).append(Component.translatable(observance.translation("title"))), x, y, color, false);
-			y += 10;
+		y = drawWrapped(gfx, Component.literal("Next rite: " + nextRiteLabel()), x, y, textW, 0xFF80D0C0);
+		y += 2;
+		for (Observance observance : UnstainedProgressLayout.earnOrder()) {
+			if (!observanceShown(observance)) continue;
+			int color = observanceColor(observance);
+			gfx.drawString(font, observancePrefix(observance), x, y, color, false);
+			y = drawWrapped(gfx, Component.translatable(observance.translation("title")), x + 10, y, textW - 10, color);
 		}
 		y += 3;
 		gfx.fill(sideX + 8, y, sideX + sideW - 8, y + 1, 0x33607890);
 		y += 5;
 
 		// ── One-time checklist ──
-		y = drawCheckItem(gfx, x, y, "First Hemo Kill", mFirstHemoKill);
-		y = drawCheckItem(gfx, x, y, "Slept w/ Hemolysis", mSleptHemolysis);
-		y = drawCheckItem(gfx, x, y, "5-min Abstinence", mReachedAbstinence);
-		y = drawCheckItem(gfx, x, y, "Emptied Blood", mEmptiedBlood);
-		y = drawCheckItem(gfx, x, y, "Earned Advancement", mEarnedAdvancement);
+		y = drawCheckItem(gfx, x, y, textW, "First Hemo Kill", mFirstHemoKill);
+		y = drawCheckItem(gfx, x, y, textW, "Slept w/ Hemolysis", mSleptHemolysis);
+		y = drawCheckItem(gfx, x, y, textW, "5-min Abstinence", mReachedAbstinence);
+		y = drawCheckItem(gfx, x, y, textW, "Emptied Blood", mEmptiedBlood);
+		y = drawCheckItem(gfx, x, y, textW, "Earned Advancement", mEarnedAdvancement);
 
 		y += 4;
 		gfx.fill(sideX + 8, y, sideX + sideW - 8, y + 1, 0x33607890);
 		y += 6;
 
-		// ── Progress bars ──
-		gfx.drawCenteredString(font, Component.literal("Progress"), centerX, y, 0xFF8898B0);
-		y += 12;
+		y = drawWrapped(gfx, Component.literal("Counters are records only; observances award progression."),
+				x, y, textW, 0xFF687890);
 
-		int barW = sideW - 16;
-		int barH = 6;
-		int barX = sideX + 8;
-
-		gfx.drawString(font, Component.literal("Counters are records only; observances award progression."),
-				x, y, 0xFF687890, false);
-
+		sidebarContentH = y + sidebarScroll - top + 6;
+		clampSidebarScroll();
 		gfx.disableScissor();
+
+		int visibleH = sideH - 2;
+		if (sidebarContentH > visibleH) {
+			if (sidebarScroll > 0) {
+				gfx.drawCenteredString(font, "▲", sideX + sideW - 10, sideY + 3, 0xAAFFFFFF);
+			}
+			if (sidebarScroll < sidebarContentH - visibleH) {
+				gfx.drawCenteredString(font, "▼", sideX + sideW - 10, sideY + sideH - 11, 0xAAFFFFFF);
+			}
+		}
 		pose.popPose();
 	}
 
+	/** Draws {@code text} wrapped to {@code width}; returns the Y below the last line. */
+	private int drawWrapped(GuiGraphics gfx, Component text, int x, int y, int width, int color) {
+		for (FormattedCharSequence line : font.split(text, Math.max(10, width))) {
+			gfx.drawString(font, line, x, y, color, false);
+			y += 10;
+		}
+		return y;
+	}
+
 	private String nextRiteLabel() {
-		if (phase == UnstainedPhase.NOVITIATE) return "Complete the five service vows";
+		if (phase == UnstainedPhase.NOVITIATE) {
+			if (!UnstainedAccessRules.hasCompletedNovitiateVows(claimedObservances)) return "Complete the five service vows";
+			return clarityPrepared ? "Clarity Ascension" : "Consecrated Copper offering, then Clarity Ascension";
+		}
 		if (phase == UnstainedPhase.CURE_READY) return "Closed Vein";
-		if (phase == UnstainedPhase.CLEANSED_UNPLEDGED) return "Clarity Ascension pledge";
+		if (phase == UnstainedPhase.CLEANSED_UNPLEDGED) {
+			return clarityPrepared ? "Clarity Ascension pledge" : "Consecrated Copper offering, then the Clarity Ascension pledge";
+		}
 		return switch (UnstainedPathGuidance.nextRequiredRite(begunPurification, purity >= 100f, clarityUnlocked)) {
 			case "lethean_baptism" -> "Lethean Baptism";
 			case "patient_purification" -> "No rite: complete observances";
 			case "clarity_ascension" -> "Clarity Ascension";
 			default -> "No rite: Still Arts follow Clarity";
-		};
-	}
-
-	private boolean observanceAvailable(Observance observance) {
-		if (!begunPurification) return false;
-		return switch (observance) {
-			case GATHER_GHOST_PIPE -> true;
-			case WEAVE_WREATH, PREPARE_HEMOLYTIC -> purity >= 25f;
-			case CONDENSE_STILL_WATERS, PLATE_THE_WARD -> purity >= 50f;
-			case BEAR_PALLID_ICON -> purity >= 75f;
-			case CONSECRATE_COPPER -> purity >= 100f;
-			case OFFER_CHALICE -> clarityUnlocked;
-			case RING_THE_PALE_WATCH -> clarityUnlocked && clarity >= 50f;
-			default -> false;
 		};
 	}
 
@@ -1112,169 +1241,211 @@ animTime += 0.016f; // ~60 FPS approximation
 
 	/** Hit test for the sidebar toggle tab. */
 	private boolean isOverSidebarToggle(double mx, double my) {
-		int tabY = guiTop + 22;
+		int tabY = guiTop + SIDEBAR_TOP;
 		int tabX;
 		if (sidebarVisible) {
 			// Tab is on the right edge of the expanded sidebar
-			tabX = guiLeft + 4 + SIDEBAR_WIDTH;
+			tabX = guiLeft + SIDEBAR_INSET + SIDEBAR_WIDTH;
 		} else {
 			// Tab is on the left edge when collapsed
-			tabX = guiLeft + 4;
+			tabX = guiLeft + SIDEBAR_INSET;
 		}
 		return mx >= tabX && mx <= tabX + SIDEBAR_TAB_W
 			&& my >= tabY && my <= tabY + SIDEBAR_TAB_H;
 	}
 
+	/** Hit test for the expanded sidebar panel itself. */
+	private boolean isOverSidebarPanel(double mx, double my) {
+		int sideX = guiLeft + SIDEBAR_INSET;
+		int sideY = guiTop + SIDEBAR_TOP;
+		return mx >= sideX && mx <= sideX + SIDEBAR_WIDTH
+			&& my >= sideY && my <= sideY + sidebarHeight();
+	}
+
 	/** Draws a single checklist item with a check/cross icon. Returns the next Y. */
-	private int drawCheckItem(GuiGraphics gfx, int x, int y, String label, boolean complete) {
+	private int drawCheckItem(GuiGraphics gfx, int x, int y, int width, String label, boolean complete) {
 		String icon = complete ? "✓" : "✗";
 		int iconCol = complete ? 0xFF60CC60 : 0xFF605060;
 		int labelCol = complete ? 0xFFA0C0D0 : 0xFF506070;
 
 		gfx.drawString(font, icon, x, y, iconCol, false);
-		gfx.drawString(font, " " + label, x + 10, y, labelCol, false);
-		return y + 12;
-	}
-
-	/** Draws a labeled milestone progress bar. Returns the next Y. */
-	private int drawMilestoneBar(GuiGraphics gfx, int labelX, int barX, int y,
-								 int barW, int barH, String label, int current, int goal, int fillColor) {
-		// Label + count on the same line
-		gfx.drawString(font, label, labelX, y, 0xFF8898B0, false);
-		String countStr = current >= goal ? (current + "/" + goal + " ✓") : (current + "/" + goal);
-		int countCol = current >= goal ? 0xFF60CC60 : 0xFF6080A0;
-		int countW = font.width(countStr);
-		gfx.drawString(font, countStr, barX + barW - countW, y, countCol, false);
-		y += 10;
-
-		// Bar background
-		gfx.fill(barX, y, barX + barW, y + barH, 0xFF0C1020);
-
-		// Bar frame
-		int frameCol = 0xFF203040;
-		gfx.fill(barX, y, barX + barW, y + 1, frameCol);
-		gfx.fill(barX, y + barH - 1, barX + barW, y + barH, frameCol);
-		gfx.fill(barX, y, barX + 1, y + barH, frameCol);
-		gfx.fill(barX + barW - 1, y, barX + barW, y + barH, frameCol);
-
-		// Bar fill
-		float ratio = Math.min(1.0f, (float) current / goal);
-		int fillW = (int) (barW * ratio);
-		if (fillW > 0) {
-			gfx.fill(barX + 1, y + 1, barX + 1 + fillW, y + barH - 1, fillColor);
-		}
-
-		// Completion glow
-		if (current >= goal) {
-			animTime += 0.016f; // ~60 FPS approximation
-
-			float time = animTime;
-
-			float pulse = 0.3f + 0.2f * Mth.sin(time * 2.0f);
-			int ga = (int) (pulse * 255);
-			gfx.fill(barX, y, barX + barW, y + barH, (ga << 24) | 0x60CC60);
-		}
-
-		return y + barH + 6;
+		int end = drawWrapped(gfx, Component.literal(label), x + 14, y, width - 14, labelCol);
+		return Math.max(y + 12, end + 2);
 	}
 
 	// ────────────────────────────────────────────────────────────
-	//  Tooltips
+	//  Tooltips — stages, rites and observance pips
 	// ────────────────────────────────────────────────────────────
 
-	private void drawPurityTooltip(GuiGraphics gfx, int mouseX, int mouseY) {
+	private void drawPathTooltips(GuiGraphics gfx, int mouseX, int mouseY) {
 		if (!insideGui(mouseX, mouseY)) return;
-		EnumPurityStage[] stages = EnumPurityStage.values();
-		int ccx = purityCenterCX();
-		int startCY = nodeStartCY();
-		int hn = halfNode();
-
-		for (int i = 0; i < stages.length; i++) {
-			EnumPurityStage stage = stages[i];
-			int nodeCY = startCY + (stages.length - 1 - i) * NODE_GAP_Y;
-			int nodeScrX = sx(ccx);
-			int nodeScrY = sy(nodeCY) + hn;
-
-			if (NodeShapeRenderer.isInside(stage.getNodeShape(), mouseX, mouseY, nodeScrX, nodeScrY, hn)) {
-				List<Component> tip = new ArrayList<>();
-				boolean reached = currentPurityStage.getLevel() >= stage.getLevel();
-				boolean isCurrent = currentPurityStage == stage;
-
-				tip.add(Component.literal(stage.getTitle())
-						.withStyle(s -> s.withColor(isCurrent ? 0xB0C0E0 : (reached ? 0x7090B0 : 0x404858)).withBold(true)));
-
-				tip.add(Component.literal(String.format("Requires: %.0f%% Purity", stage.getMinPurity()))
-						.withStyle(s -> s.withColor(0x888888)));
-
-				if (stage.getBloodMagicPenalty() > 0) {
-					tip.add(Component.literal(String.format("Blood Magic Penalty: -%.0f%%", stage.getBloodMagicPenalty() * 100))
-							.withStyle(s -> s.withColor(0xAA6644)));
-				}
-
-			if (isCurrent) {
-				tip.add(Component.literal("▸ Current Stage")
-						.withStyle(s -> s.withColor(0x60A0CC).withItalic(true)));
-			} else if (reached) {
-				tip.add(Component.literal("✓ Achieved")
-						.withStyle(s -> s.withColor(0x44AA44).withItalic(true)));
-			} else {
-				float needed = stage.getMinPurity() - purity;
-					tip.add(Component.literal(String.format("%.1f%% more purity needed", needed))
-							.withStyle(s -> s.withColor(0xAA4444).withItalic(true)));
-				}
-
-				tip.add(Component.translatable("unstained.hemomancy.purity." + stage.name().toLowerCase() + ".desc")
-						.withStyle(s -> s.withColor(0x6878A0).withItalic(true)));
-
-				gfx.renderTooltip(font, tip, Optional.empty(), mouseX, mouseY);
+		for (Node node : layout.nodes()) {
+			EnumNodeShape shape = node.purityStage() != null ? node.purityStage().getNodeShape()
+					: node.clarityStage() != null ? node.clarityStage().getNodeShape() : EnumNodeShape.DIAMOND;
+			if (NodeShapeRenderer.isInside(shape, mouseX, mouseY, sx(node.x()), sy(node.y()), screenHalf(node))) {
+				List<Component> tip = switch (node.kind()) {
+					case PURITY_STAGE -> purityTooltip(node.purityStage(), node.status() == Status.BYPASSED);
+					case CLARITY_STAGE -> clarityTooltip(node.clarityStage());
+					case RITE -> riteTooltip(node);
+				};
+				renderWrappedTooltip(gfx, tip, mouseX, mouseY);
 				return;
 			}
+		}
+		Pip pip = pipUnder(mouseX, mouseY);
+		if (pip != null) {
+			renderWrappedTooltip(gfx, observanceTooltip(pip.observance()), mouseX, mouseY);
 		}
 	}
 
-	private void drawClarityTooltip(GuiGraphics gfx, int mouseX, int mouseY) {
-		if (!insideGui(mouseX, mouseY)) return;
-		EnumClarityStage[] stages = EnumClarityStage.values();
-		int ccx = clarityCenterCX();
-		int startCY = nodeStartCY();
-		int hn = halfNode();
-
-		for (int i = 0; i < stages.length; i++) {
-			EnumClarityStage stage = stages[i];
-			int nodeCY = startCY + (stages.length - 1 - i) * NODE_GAP_Y;
-			int nodeScrX = sx(ccx);
-			int nodeScrY = sy(nodeCY) + hn;
-
-			if (NodeShapeRenderer.isInside(stage.getNodeShape(), mouseX, mouseY, nodeScrX, nodeScrY, hn)) {
-				List<Component> tip = new ArrayList<>();
-				boolean reached = currentClarityStage.getLevel() >= stage.getLevel();
-				boolean isCurrent = currentClarityStage == stage;
-
-				tip.add(Component.literal(stage.getTitle())
-						.withStyle(s -> s.withColor(isCurrent ? 0x80D0C0 : (reached ? 0x508878 : 0x384848)).withBold(true)));
-
-				tip.add(Component.literal(String.format("Requires: %.0f%% Clarity", stage.getMinClarity()))
-						.withStyle(s -> s.withColor(0x888888)));
-
-			if (isCurrent) {
-				tip.add(Component.literal("▸ Current Stage")
-						.withStyle(s -> s.withColor(0x50B0A0).withItalic(true)));
-			} else if (reached) {
-				tip.add(Component.literal("✓ Achieved")
-						.withStyle(s -> s.withColor(0x44AA44).withItalic(true)));
+	private void renderWrappedTooltip(GuiGraphics gfx, List<Component> lines, int mouseX, int mouseY) {
+		List<FormattedCharSequence> wrapped = new ArrayList<>();
+		for (Component line : lines) {
+			if (line.getString().isEmpty()) {
+				wrapped.add(FormattedCharSequence.EMPTY);
 			} else {
-				float needed = stage.getMinClarity() - clarity;
-					tip.add(Component.literal(String.format("%.1f%% more clarity needed", needed))
-							.withStyle(s -> s.withColor(0xAA4444).withItalic(true)));
-				}
-
-				tip.add(Component.translatable("unstained.hemomancy.clarity." + stage.name().toLowerCase() + ".desc")
-						.withStyle(s -> s.withColor(0x508878).withItalic(true)));
-
-				gfx.renderTooltip(font, tip, Optional.empty(), mouseX, mouseY);
-				return;
+				wrapped.addAll(font.split(line, TOOLTIP_WRAP_W));
 			}
 		}
+		gfx.renderTooltip(font, wrapped, mouseX, mouseY);
+	}
+
+	private List<Component> purityTooltip(EnumPurityStage stage, boolean bypassed) {
+		List<Component> tip = new ArrayList<>();
+		boolean reached = !bypassed && currentPurityStage.getLevel() >= stage.getLevel();
+		boolean isCurrent = !bypassed && currentPurityStage == stage;
+
+		tip.add(Component.literal(stage.getTitle())
+				.withStyle(s -> s.withColor(isCurrent ? 0xB0C0E0 : (reached ? 0x7090B0 : 0x404858)).withBold(true)));
+		tip.add(Component.literal(String.format("Requires: %.0f%% Purity", stage.getMinPurity()))
+				.withStyle(s -> s.withColor(0x888888)));
+		if (stage.getBloodMagicPenalty() > 0) {
+			tip.add(Component.literal(String.format("Blood Magic Penalty: -%.0f%%", stage.getBloodMagicPenalty() * 100))
+					.withStyle(s -> s.withColor(0xAA6644)));
+		}
+		if (bypassed) {
+			tip.add(Component.literal("✓ Passed over: the five service vows answered for it")
+					.withStyle(s -> s.withColor(0x7088A0).withItalic(true)));
+		} else if (isCurrent) {
+			tip.add(Component.literal("▸ Current Stage")
+					.withStyle(s -> s.withColor(0x60A0CC).withItalic(true)));
+		} else if (reached) {
+			tip.add(Component.literal("✓ Achieved")
+					.withStyle(s -> s.withColor(0x44AA44).withItalic(true)));
+		} else {
+			float needed = stage.getMinPurity() - purity;
+			tip.add(Component.literal(String.format("%.1f%% more purity needed", needed))
+					.withStyle(s -> s.withColor(0xAA4444).withItalic(true)));
+		}
+		tip.add(Component.translatable("unstained.hemomancy.purity." + stage.name().toLowerCase() + ".desc")
+				.withStyle(s -> s.withColor(0x6878A0).withItalic(true)));
+		return tip;
+	}
+
+	private List<Component> clarityTooltip(EnumClarityStage stage) {
+		List<Component> tip = new ArrayList<>();
+		boolean reached = currentClarityStage.getLevel() >= stage.getLevel();
+		boolean isCurrent = currentClarityStage == stage;
+
+		tip.add(Component.literal(stage.getTitle())
+				.withStyle(s -> s.withColor(isCurrent ? 0x80D0C0 : (reached ? 0x508878 : 0x384848)).withBold(true)));
+		tip.add(Component.literal(String.format("Requires: %.0f%% Clarity", stage.getMinClarity()))
+				.withStyle(s -> s.withColor(0x888888)));
+		if (isCurrent) {
+			tip.add(Component.literal("▸ Current Stage")
+					.withStyle(s -> s.withColor(0x50B0A0).withItalic(true)));
+		} else if (reached) {
+			tip.add(Component.literal("✓ Achieved")
+					.withStyle(s -> s.withColor(0x44AA44).withItalic(true)));
+		} else {
+			float needed = stage.getMinClarity() - clarity;
+			tip.add(Component.literal(String.format("%.1f%% more clarity needed", needed))
+					.withStyle(s -> s.withColor(0xAA4444).withItalic(true)));
+		}
+		tip.add(Component.translatable("unstained.hemomancy.clarity." + stage.name().toLowerCase() + ".desc")
+				.withStyle(s -> s.withColor(0x508878).withItalic(true)));
+		return tip;
+	}
+
+	private List<Component> riteTooltip(Node node) {
+		List<Component> tip = new ArrayList<>();
+		if (node.veiled()) {
+			tip.add(Component.literal("Veiled Rite").withStyle(s -> s.withColor(0x606C80).withBold(true)));
+			tip.add(Component.literal("A later rite rests beneath still water. It surfaces when you reach Purified.")
+					.withStyle(s -> s.withColor(0x6878A0).withItalic(true)));
+			return tip;
+		}
+		Rite rite = node.rite();
+		int titleColor = node.done() ? 0x7090B0 : (node.status() == Status.NEXT ? 0xB0C0E0 : 0x505868);
+		tip.add(Component.literal(rite.title()).withStyle(s -> s.withColor(titleColor).withBold(true)));
+		String description = switch (rite) {
+			case LETHEAN_BAPTISM -> "Still water takes the blood's first claim, and purification begins.";
+			case CLOSED_VEIN -> "At full Purity the last current stills, and the blood returns to a mortal baseline.";
+			case CONSECRATED_COPPER -> "Consecrated Copper offered at an Unstained Podium steadies the crossing into Clarity.";
+			case CLARITY_ASCENSION -> "The pledge. Clarity opens, and blood magic is set down for good.";
+		};
+		tip.add(Component.literal(description).withStyle(s -> s.withColor(0x8898B0)));
+		String state;
+		int stateColor;
+		if (node.done()) {
+			state = switch (rite) {
+				case LETHEAN_BAPTISM -> begunPurification ? "✓ Performed" : "✓ Answered by the five service vows";
+				case CLOSED_VEIN -> node.status() == Status.BYPASSED
+						? "✓ Passed over: the five service vows answered for it" : "✓ Baseline restored";
+				case CONSECRATED_COPPER -> "✓ Offered";
+				case CLARITY_ASCENSION -> "✓ Pledged";
+			};
+			stateColor = 0x44AA44;
+		} else if (node.status() == Status.NEXT) {
+			state = switch (rite) {
+				case LETHEAN_BAPTISM -> "▸ Next: quiet the infection at an Unstained Podium, then enter the rite";
+				case CLOSED_VEIN -> "▸ Next: perform the rite at full Purity";
+				case CONSECRATED_COPPER -> "▸ Next: offer it at a Podium with your blood wholly relinquished";
+				case CLARITY_ASCENSION -> "▸ Next: perform the rite with your blood wholly relinquished";
+			};
+			stateColor = 0x60A0CC;
+		} else {
+			state = switch (rite) {
+				case LETHEAN_BAPTISM -> "Not yet begun";
+				case CLOSED_VEIN -> "Requires Purified";
+				case CONSECRATED_COPPER -> "Follows the Closed Vein";
+				case CLARITY_ASCENSION -> "Follows the Consecrated Copper offering";
+			};
+			stateColor = 0xAA4444;
+		}
+		tip.add(Component.literal(state).withStyle(s -> s.withColor(stateColor).withItalic(true)));
+		return tip;
+	}
+
+	private List<Component> observanceTooltip(Observance observance) {
+		List<Component> tip = new ArrayList<>();
+		int color = observanceColor(observance);
+		tip.add(Component.translatable(observance.translation("title"))
+				.withStyle(s -> s.withColor(color & 0x00FFFFFF).withBold(true)));
+		if (isClaimed(observance)) {
+			tip.add(Component.literal("✓ Fulfilled").withStyle(s -> s.withColor(0x44AA44).withItalic(true)));
+		} else if (isAccepted(observance)) {
+			tip.add(Component.literal("• Accepted: bring the offering to its guide")
+					.withStyle(s -> s.withColor(0xB0C0E0).withItalic(true)));
+		} else if (isAvailable(observance)) {
+			tip.add(Component.literal("+ Available from " + issuerName(observance))
+					.withStyle(s -> s.withColor(0x80D0C0).withItalic(true)));
+		} else {
+			tip.add(Component.translatable(observance.translation("unlock"))
+					.withStyle(s -> s.withColor(0x687080).withItalic(true)));
+		}
+		tip.add(Component.translatable(observance.translation("requirement")).withStyle(s -> s.withColor(0x8898B0)));
+		tip.add(Component.translatable(observance.translation("reward"))
+				.withStyle(s -> s.withColor(0x6878A0).withItalic(true)));
+		return tip;
+	}
+
+	private static String issuerName(Observance observance) {
+		return switch (observance.issuer()) {
+			case ACOLYTE -> "an Acolyte";
+			case ZEALOT -> "a Zealot";
+			case GUARDIAN -> "a Guardian";
+		};
 	}
 
 	// ────────────────────────────────────────────────────────────
@@ -1310,10 +1481,6 @@ animTime += 0.016f; // ~60 FPS approximation
 	private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
 		ScreenDrawUtils.drawBorder(gfx, x, y, w, h, COL_BORDER_OUTER, COL_BORDER_INNER);
 	}
-
-	// ────────────────────────────────────────────────────────────
-	//  Tab buttons (top-right)
-	// ────────────────────────────────────────────────────────────
 
 	// ────────────────────────────────────────────────────────────
 	//  Tab buttons (top-right) — delegate to ScreenDrawUtils

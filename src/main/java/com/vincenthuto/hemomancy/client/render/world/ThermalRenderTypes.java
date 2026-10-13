@@ -11,6 +11,8 @@ import net.minecraft.client.renderer.RenderType;
 public final class ThermalRenderTypes {
     private static float time;
     static final RenderType FLAME=create("thermal_flame",ShaderInit.MANIPULATION_FLAME,false,false);
+    /** The same fire burning at a steadier pace, for standing flames such as the Iron Brazier's. */
+    static final RenderType STEADY_FLAME=create("thermal_flame_steady",ShaderInit.MANIPULATION_FLAME,false,false,.45f);
     static final RenderType MOLTEN=create("thermal_molten",ShaderInit.MANIPULATION_MOLTEN,false,false);
     static final RenderType GLASS=create("thermal_glass",ShaderInit.MANIPULATION_GLASS,false,false);
     static final RenderType CRUOR=create("thermal_cruor",ShaderInit.MANIPULATION_CRUOR,false,false);
@@ -33,10 +35,13 @@ public final class ThermalRenderTypes {
         };
     }
     private static RenderType create(String name,ShaderHolder holder,boolean solid,boolean entity) {
+        return create(name,holder,solid,entity,1f);
+    }
+    private static RenderType create(String name,ShaderHolder holder,boolean solid,boolean entity,float pace) {
         var uniforms=new RenderStateShard.TexturingStateShard(name+"_uniforms",()->{
             var shader=holder.getInstance().get();
             if(shader!=null) {
-                shader.safeGetUniform("HemoTime").set(time);
+                shader.safeGetUniform("HemoTime").set(time*pace);
                 shader.safeGetUniform("ColorModulator").set(1f,1f,1f,1f);
             }
         },()->{

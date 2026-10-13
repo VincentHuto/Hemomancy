@@ -56,7 +56,7 @@ final class RecipeMapTraceLayerCache {
 	private static void bakeConnection(NativeImage image, RecipeMapTracePlan.Connection connection) {
 		int[] start = trimEndpoint(connection.x0(), connection.y0(), connection.x1(), connection.y1());
 		int[] end = trimEndpoint(connection.x1(), connection.y1(), connection.x0(), connection.y0());
-		if (connection.kind() == RecipeMapLink.Kind.CONCEPTUAL) {
+		if (connection.kind() == RecipeMapLink.Kind.CONCEPTUAL || connection.hubStub()) {
 			bakeDashedLine(image, start[0], start[1], end[0], end[1], connection.color());
 			return;
 		}

@@ -3,24 +3,33 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.functional;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.particle.factory.AbsorbedBloodCellParticleFactory;
+import com.vincenthuto.hemomancy.client.render.BloodPoolSurface;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
+import com.vincenthuto.hemomancy.client.render.world.BloodStreams;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.ConsecratedBloodwellBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ConsecratedBloodwellRenderer implements BlockEntityRenderer<ConsecratedBloodwellBlockEntity> {
 	private static final float TAU = (float) (Math.PI * 2.0);
 	private static final int ARC_COUNT = 6;
 	private static final int ARC_SEGMENTS = 16;
+	private static final int JET_SEGMENTS = 10;
+	private static final int FALL_SEGMENTS = 8;
 	private static final int PARTICLE_INTERVAL_TICKS = 4;
 	private static final int PARTICLE_CACHE_LIMIT = 64;
 	private static final float LOW_JET_HEIGHT = 0.42f;
@@ -32,6 +41,8 @@ public class ConsecratedBloodwellRenderer implements BlockEntityRenderer<Consecr
 	private static final float POOL_BRIM_Y = 0.846f;
 	/** Inside the basin wall's 5.4 px flats. */
 	private static final float POOL_RADIUS = 0.325f;
+	/** The pool surface's disc: out to the basin wall's corners, so it meets the wall all round; the wall hides the rest. */
+	private static final float POOL_SURFACE_RADIUS = 5.8f / 16.0f;
 	private static final float RIM_TOP_Y = 0.90f;
 	/** Past the rim's outer corners: arcs reaching this far fall outside the font. */
 	private static final float BASIN_OUTER_RADIUS = 0.46f;
@@ -41,6 +52,8 @@ public class ConsecratedBloodwellRenderer implements BlockEntityRenderer<Consecr
 	private static final float CATCH_CUP_Y = 0.088f;
 	/** Pressure above which the pool brims into the four cardinal spouts. */
 	private static final float SPILL_PRESSURE = 0.6f;
+	/** Below this drawn fullness the well is dry and nothing is drawn. */
+	private static final float DRY = 0.002f;
 	private final Map<Long, Long> lastParticleTickByPos = new HashMap<>();
 
 	public ConsecratedBloodwellRenderer(BlockEntityRendererProvider.Context context) {
@@ -53,26 +66,32 @@ public class ConsecratedBloodwellRenderer implements BlockEntityRenderer<Consecr
 			return;
 		}
 
-		double stored = be.getStoredBlood();
-		if (stored <= 0.0) {
+		double ticks = be.getLevel().getGameTime() + partialTick;
+		float target = Mth.clamp((float) (be.getStoredBlood() / be.getMaxBlood()), 0.0f, 1.0f);
+		// The level rises and drains smoothly between the once-a-second pool syncs, down to dry.
+		float fullness = be.shownFullness(target, ticks);
+		if (fullness <= DRY) {
 			return;
 		}
-
-		float fullness = Mth.clamp((float) (stored / be.getMaxBlood()), 0.0f, 1.0f);
 		float pressure = bloodPressure(fullness);
-		float time = (be.getLevel().getGameTime() + partialTick) * 0.08f;
-		VertexConsumer vc = buffer.getBuffer(HemoRenderTypes.BLOODWELL_FOUNTAIN);
+		float time = (float) ticks * 0.08f;
+		int seed = (int) Math.floorMod(be.getBlockPos().asLong(), 1000L);
 
 		poseStack.pushPose();
 		Matrix4f mat = poseStack.last().pose();
 		float poolY = poolSurface(pressure);
-		renderSurfacePool(vc, mat, pressure, time, poolY);
-		renderCentralBloodJet(vc, mat, pressure, time, poolY);
+		// The pool goes first: it writes depth, so the jet and arcs plunge into its surface rather than through it.
+		renderSurfacePool(buffer, mat, seed, pressure, poolY, (float) (ticks % 24000.0));
+		var camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+		Vec3 eye = camera.getPosition().subtract(Vec3.atLowerCornerOf(be.getBlockPos()));
+		Vec3 right = new Vec3(new Vector3f(1, 0, 0).rotate(camera.rotation()));
+		Vec3 up = new Vec3(new Vector3f(0, 1, 0).rotate(camera.rotation()));
+		renderCentralBloodJet(poseStack, buffer, eye, right, up, seed, pressure, time, poolY);
 		int activeArcCount = Mth.clamp(4 + Math.round(pressure * (ARC_COUNT - 4)), 4, ARC_COUNT);
 		for (int i = 0; i < activeArcCount; i++) {
-			renderFountainArc(vc, mat, i, activeArcCount, pressure, time, poolY);
+			renderFountainArc(poseStack, buffer, eye, seed, i, activeArcCount, pressure, time, poolY);
 		}
-		renderSpoutSpill(vc, mat, pressure, time);
+		renderSpoutSpill(poseStack, buffer, eye, seed, pressure, time);
 		poseStack.popPose();
 		spawnBloodwellParticles(be, pressure, time, poolY);
 	}
@@ -89,36 +108,46 @@ public class ConsecratedBloodwellRenderer implements BlockEntityRenderer<Consecr
 		return Mth.clamp((pressure - SPILL_PRESSURE) / (1.0f - SPILL_PRESSURE), 0.0f, 1.0f);
 	}
 
-	private static void renderSurfacePool(VertexConsumer vc, Matrix4f mat, float pressure, float time, float y) {
-		float pulse = 0.5f + 0.5f * Mth.sin(time * 1.8f);
-		float radius = POOL_RADIUS - 0.006f + pulse * 0.006f;
-		int alphaInner = (int) (150 + pressure * 70.0f);
-		int alphaOuter = (int) (110 + pressure * 80.0f);
-		for (int i = 0; i < 16; i++) {
-			float a0 = i * TAU / 16.0f;
-			float a1 = (i + 1) * TAU / 16.0f;
-			quad(vc, mat,
-					0.5f, y + 0.003f, 0.5f,
-					0.5f + Mth.cos(a0) * radius, y, 0.5f + Mth.sin(a0) * radius,
-					0.5f + Mth.cos(a1) * radius, y, 0.5f + Mth.sin(a1) * radius,
-					0.5f, y + 0.003f, 0.5f,
-					190, 6, 5, alphaInner,
-					85, 1, 1, alphaOuter);
-		}
+	/**
+	 * The blood standing in the basin, in the shared blood pool shader: the jet rings ripples out from the centre,
+	 * harder as the well fills. A shallow pool stays translucent so the ostium shows through it.
+	 */
+	private static void renderSurfacePool(MultiBufferSource buffer, Matrix4f mat, int seed, float pressure, float y,
+			float shaderTime) {
+		VertexConsumer pool = buffer.getBuffer(HemoRenderTypes.bloodPool(shaderTime, seed));
+		BloodPoolSurface.draw(mat, pool, 0.5f, y, 0.5f, POOL_SURFACE_RADIUS,
+				(int) (90 + pressure * 165.0f), 0, 0, (int) (170 + pressure * 85.0f));
 	}
 
-	private static void renderCentralBloodJet(VertexConsumer vc, Matrix4f mat, float pressure, float time,
-			float baseY) {
+	/** A column of blood running up out of the heart, narrowing as it climbs and breaking into drops at its crown. */
+	private static void renderCentralBloodJet(PoseStack poses, MultiBufferSource buffer, Vec3 eye, Vec3 right, Vec3 up,
+			int seed, float pressure, float time, float baseY) {
 		float width = jetWidth(pressure, time);
-		float height = jetHeight(pressure, time);
-		float topY = baseY + height;
-		int baseAlpha = (int) (145 + pressure * 82.0f);
-		int topAlpha = (int) (26 + pressure * 54.0f);
-
-		verticalSheet(vc, mat, 0.5f, baseY, 0.5f, 1.0f, 0.0f, width, topY,
-				225, 14, 10, baseAlpha, 120, 2, 2, topAlpha);
-		verticalSheet(vc, mat, 0.5f, baseY, 0.5f, 0.0f, 1.0f, width * 0.82f, topY,
-				205, 8, 7, Math.max(96, baseAlpha - 28), 100, 2, 2, Math.max(16, topAlpha - 12));
+		float topY = baseY + jetHeight(pressure, time);
+		List<Vec3> column = new ArrayList<>(JET_SEGMENTS + 1);
+		for (int i = 0; i <= JET_SEGMENTS; i++) {
+			float t = i / (float) JET_SEGMENTS;
+			// The column sways a little more the higher it climbs, as a real jet does.
+			float sway = t * t * (0.008f + pressure * 0.014f);
+			column.add(new Vec3(0.5f + Mth.sin(time * 1.3f + t * 3.0f) * sway, Mth.lerp(t, baseY, topY),
+					0.5f + Mth.cos(time * 1.1f + t * 2.6f) * sway));
+		}
+		float alpha = 0.7f + pressure * 0.25f;
+		BloodStreams.stream(poses, buffer, column, eye, width, width * 0.45f, seed, alpha);
+		// A thinner core on its own seed keeps the column reading as moving liquid rather than a painted strip.
+		BloodStreams.stream(poses, buffer, column, eye, width * 0.55f, width * 0.25f, seed + 31, alpha * 0.8f);
+		int drops = 2 + Math.round(pressure * 2.0f);
+		for (int i = 0; i < drops; i++) {
+			// Each drop is thrown off the crown and falls back on its own cycle.
+			float cycle = (time * 0.9f + i / (float) drops) % 1.0f;
+			float angle = i * TAU / drops + seed;
+			float spread = cycle * (0.03f + pressure * 0.05f);
+			Vec3 at = new Vec3(0.5f + Mth.cos(angle) * spread,
+					topY - 0.02f + Mth.sin(cycle * (float) Math.PI) * 0.05f - cycle * cycle * 0.12f,
+					0.5f + Mth.sin(angle) * spread);
+			BloodStreams.droplet(poses, buffer, at, right, up, 0.012f + pressure * 0.012f, seed + 7 * i,
+					alpha * (1.0f - cycle * 0.6f));
+		}
 	}
 
 	private static float jetWidth(float pressure, float time) {
@@ -132,34 +161,18 @@ public class ConsecratedBloodwellRenderer implements BlockEntityRenderer<Consecr
 				+ pulse * (0.030f + pressure * 0.075f);
 	}
 
-	private static void renderFountainArc(VertexConsumer vc, Matrix4f mat, int index, int activeArcCount,
-			float pressure, float time, float poolY) {
+	/** One of the streams thrown out of the heart, fullest at launch and thinning as it falls. */
+	private static void renderFountainArc(PoseStack poses, MultiBufferSource buffer, Vec3 eye, int seed, int index,
+			int activeArcCount, float pressure, float time, float poolY) {
 		float angle = index * TAU / activeArcCount + time * (0.09f + pressure * 0.16f);
 		float width = 0.007f + pressure * 0.024f;
-		renderSmoothFountainArc(vc, mat, index, pressure, time, angle, width, poolY);
-	}
-
-	private static void renderSmoothFountainArc(VertexConsumer vc, Matrix4f mat, int index, float pressure,
-			float time, float angle, float width, float poolY) {
-		for (int segment = 0; segment < ARC_SEGMENTS; segment++) {
-			float t0 = segment / (float) ARC_SEGMENTS;
-			float t1 = (segment + 1.0f) / ARC_SEGMENTS;
-			float[] p0 = arcPoint(angle, t0, pressure, time, index, poolY);
-			float[] p1 = arcPoint(angle, t1, pressure, time, index, poolY);
-			taperedRibbon(vc, mat, p0[0], p0[1], p0[2], p1[0], p1[1], p1[2],
-					arcWidthAt(t0, width), arcWidthAt(t1, width),
-					214, 9, 7, arcAlphaAt(t0, pressure), arcAlphaAt(t1, pressure));
+		List<Vec3> path = new ArrayList<>(ARC_SEGMENTS + 1);
+		for (int segment = 0; segment <= ARC_SEGMENTS; segment++) {
+			float[] point = arcPoint(angle, segment / (float) ARC_SEGMENTS, pressure, time, index, poolY);
+			path.add(new Vec3(point[0], point[1], point[2]));
 		}
-	}
-
-	private static float arcWidthAt(float t, float width) {
-		float taper = Mth.sin(t * (float) Math.PI);
-		return width * (0.28f + taper * 0.72f);
-	}
-
-	private static int arcAlphaAt(float t, float pressure) {
-		float taper = Mth.sin(t * (float) Math.PI);
-		return Mth.clamp((int) (26 + pressure * 54.0f + taper * (62.0f + pressure * 84.0f)), 20, 210);
+		BloodStreams.stream(poses, buffer, path, eye, width * 0.8f, width * 0.45f, seed + 13 * index,
+				0.55f + pressure * 0.4f);
 	}
 
 	private void spawnBloodwellParticles(ConsecratedBloodwellBlockEntity be, float pressure, float time,
@@ -231,8 +244,12 @@ public class ConsecratedBloodwellRenderer implements BlockEntityRenderer<Consecr
 		}
 	}
 
-	/** A brimming pool runs out along the four cardinal spout channels and pours into the catch cups. */
-	private static void renderSpoutSpill(VertexConsumer vc, Matrix4f mat, float pressure, float time) {
+	/**
+	 * A brimming pool runs out along the four cardinal spout channels and pours off each lip into its catch cup: one
+	 * continuous stream from the pool's edge, curling out over the lip as it starts to fall.
+	 */
+	private static void renderSpoutSpill(PoseStack poses, MultiBufferSource buffer, Vec3 eye, int seed, float pressure,
+			float time) {
 		float spill = spillStrength(pressure);
 		if (spill <= 0.0f) {
 			return;
@@ -243,22 +260,17 @@ public class ConsecratedBloodwellRenderer implements BlockEntityRenderer<Consecr
 			float sin = Mth.sin(angle);
 			float pulse = 0.5f + 0.5f * Mth.sin(time * 1.7f + i * 1.3f);
 			float width = 0.010f + spill * 0.014f + pulse * 0.004f;
-			int alpha = (int) (70 + spill * 130.0f);
-			float tx = -sin * width;
-			float tz = cos * width;
-			float x0 = 0.5f + cos * (POOL_RADIUS - 0.01f);
-			float z0 = 0.5f + sin * (POOL_RADIUS - 0.01f);
-			float x1 = 0.5f + cos * SPOUT_LIP_RADIUS;
-			float z1 = 0.5f + sin * SPOUT_LIP_RADIUS;
-			quad(vc, mat,
-					x0 - tx, SPOUT_CHANNEL_Y, z0 - tz,
-					x1 - tx, SPOUT_CHANNEL_Y, z1 - tz,
-					x1 + tx, SPOUT_CHANNEL_Y, z1 + tz,
-					x0 + tx, SPOUT_CHANNEL_Y, z0 + tz,
-					200, 8, 6, alpha,
-					170, 5, 4, alpha);
-			ribbon(vc, mat, x1, SPOUT_CHANNEL_Y, z1, x1, CATCH_CUP_Y, z1, angle, width * 0.8f,
-					170, 5, 4, alpha);
+			List<Vec3> path = new ArrayList<>(FALL_SEGMENTS + 2);
+			path.add(new Vec3(0.5f + cos * (POOL_RADIUS - 0.01f), SPOUT_CHANNEL_Y, 0.5f + sin * (POOL_RADIUS - 0.01f)));
+			for (int k = 0; k <= FALL_SEGMENTS; k++) {
+				float t = k / (float) FALL_SEGMENTS;
+				// Off the lip the stream carries a little way out before it drops straight into the cup.
+				float reach = SPOUT_LIP_RADIUS
+						+ (0.02f + spill * 0.02f) * Mth.sin(Math.min(1.0f, t * 2.0f) * (float) Math.PI * 0.5f);
+				float y = SPOUT_CHANNEL_Y - (SPOUT_CHANNEL_Y - CATCH_CUP_Y) * t * t;
+				path.add(new Vec3(0.5f + cos * reach, y, 0.5f + sin * reach));
+			}
+			BloodStreams.stream(poses, buffer, path, eye, width, width * 0.7f, seed + 101 + i, 0.4f + spill * 0.55f);
 		}
 	}
 
@@ -286,61 +298,6 @@ public class ConsecratedBloodwellRenderer implements BlockEntityRenderer<Consecr
 			return RIM_TOP_Y;
 		}
 		return RIM_TOP_Y - (endRadius - BASIN_OUTER_RADIUS) * 1.2f;
-	}
-
-	private static void verticalSheet(VertexConsumer vc, Matrix4f mat, float centerX, float baseY, float centerZ,
-			float axisX, float axisZ, float halfWidth, float topY, int r0, int g0, int b0, int a0,
-			int r1, int g1, int b1, int a1) {
-		float dx = axisX * halfWidth;
-		float dz = axisZ * halfWidth;
-		quad(vc, mat,
-				centerX - dx, baseY, centerZ - dz,
-				centerX - dx * 0.42f, topY, centerZ - dz * 0.42f,
-				centerX + dx * 0.42f, topY, centerZ + dz * 0.42f,
-				centerX + dx, baseY, centerZ + dz,
-				r0, g0, b0, a0,
-				r1, g1, b1, a1);
-	}
-
-	private static void ribbon(VertexConsumer vc, Matrix4f mat, float x0, float y0, float z0, float x1, float y1,
-			float z1, float angle, float halfWidth, int r, int g, int b, int alpha) {
-		float nx = -Mth.sin(angle) * halfWidth;
-		float nz = Mth.cos(angle) * halfWidth;
-		quad(vc, mat,
-				x0 - nx, y0, z0 - nz,
-				x1 - nx, y1, z1 - nz,
-				x1 + nx, y1, z1 + nz,
-				x0 + nx, y0, z0 + nz,
-				r, g, b, alpha,
-				80, 1, 1, Math.max(0, alpha / 3));
-	}
-
-	private static void taperedRibbon(VertexConsumer vc, Matrix4f mat, float x0, float y0, float z0, float x1,
-			float y1, float z1, float width0, float width1, int r, int g, int b, int alpha0, int alpha1) {
-		float dx = x1 - x0;
-		float dz = z1 - z0;
-		float len = Mth.sqrt(dx * dx + dz * dz);
-		if (len < 0.0001f) {
-			return;
-		}
-		float nx = -dz / len;
-		float nz = dx / len;
-		quad(vc, mat,
-				x0 - nx * width0, y0, z0 - nz * width0,
-				x1 - nx * width1, y1, z1 - nz * width1,
-				x1 + nx * width1, y1, z1 + nz * width1,
-				x0 + nx * width0, y0, z0 + nz * width0,
-				r, g, b, alpha0,
-				r, g, b, alpha1);
-	}
-
-	private static void quad(VertexConsumer vc, Matrix4f mat, float x0, float y0, float z0, float x1, float y1,
-			float z1, float x2, float y2, float z2, float x3, float y3, float z3,
-			int r0, int g0, int b0, int a0, int r1, int g1, int b1, int a1) {
-		vc.addVertex(mat, x0, y0, z0).setColor(r0, g0, b0, a0);
-		vc.addVertex(mat, x1, y1, z1).setColor(r1, g1, b1, a1);
-		vc.addVertex(mat, x2, y2, z2).setColor(r1, g1, b1, a1);
-		vc.addVertex(mat, x3, y3, z3).setColor(r0, g0, b0, a0);
 	}
 
 	@Override

@@ -44,7 +44,7 @@ public class ManipulationTreeInit {
 		// Row 1 (middle) — MEDIOCRITAS
 		register("deadly_gaze",1080,160, "synaptic_jolt");
 		register("summon_avatar",650,243, "blood_rush");
-		register("hematic_riposte",710,243, "blood_rush");
+		register("hematic_riposte",690,283, "blood_rush");
 
 		// Row 2 (bottom) — HUMILIS
 		register("blood_shot",510,293, "blood_binding");
@@ -59,7 +59,7 @@ public class ManipulationTreeInit {
 		register("blood_projection",980,90);
 		register("iron_retort",920,50, "sanguine_mending");
 		register("sanguine_magnetism",850,180, "iron_retort");
-		register("ironhearted",820,130, "iron_retort");
+		register("ironhearted",806,130, "iron_retort");
 		register("conjure_axe",985,30, "iron_retort")
 				.setSoftParents("conjure_staff");
 
@@ -70,7 +70,7 @@ public class ManipulationTreeInit {
 		register("blood_needle",850,250);
 
 		// Row 0 (top) — MEDIOCRITAS
-		register("sanguine_ward",970,160, "synaptic_jolt");
+		register("sanguine_ward",952,184, "synaptic_jolt");
 
 		// Row 1 (middle) — MEDIOCRITAS root
 
@@ -107,10 +107,10 @@ public class ManipulationTreeInit {
 
 		// Row 2 (bottom) — HUMILIS
 		register("glacial_grasp",1620,90);
-		register("cruor_javelin",1580,150, "glacial_grasp");
+		register("cruor_javelin",1574,154, "glacial_grasp");
 
 		register("vitric_combustion",1760,50, "pyretic_forge");
-		register("searing_lash",1730,50, "sanguine_ignition");
+		register("searing_lash",1724,50, "sanguine_ignition");
 
 		// Row 1 (middle) — MEDIOCRITAS
 		register("cauterizing_rebuke",1730,110, "sanguine_ignition");
@@ -135,18 +135,18 @@ public class ManipulationTreeInit {
 				.setSoftParents("conjure_staff");
 
 		// Row 0 (top) — SUMMA
-		register("crimson_tithe",2330,143, "exsanguinate");
-		register("bloom_of_rot",2330,13, "hemorrhage", "exsanguinate");
+		register("crimson_tithe",2330,-113, "exsanguinate");
+		register("bloom_of_rot",2330,17, "hemorrhage", "exsanguinate");
 
 		// Row 1 (middle) — MEDIOCRITAS
-		register("grave_debt",2210,83, "hemorrhage", "exsanguinate");
-		register("blackhearted",2210,13, "grave_debt");
+		register("grave_debt",2210,-53, "hemorrhage", "exsanguinate");
+		register("blackhearted",2210,17, "grave_debt");
 
 		// Degree 4–5 tendency capstones
 		register("crimson_coronation",480,134, "blood_cloud", "summon_avatar");
 		register("iron_choir",850,70, "iron_retort", "ironhearted");
 		register("living_circuit",1110,95, "conductive_mark");
-		register("axonal_transduction",1110,210);
+		register("axonal_transduction",1170,95, "living_circuit");
 		register("white_verdict",1351,280, "unclosing_eye", "prismatic_reproof", "hematic_beacon");
 		register("absolute_stillness",1470,220, "glacial_grasp", "endless_hour");
 		register("furnace_veins",1830,50, "vitric_combustion");
@@ -154,17 +154,17 @@ public class ManipulationTreeInit {
 		register("penumbral_drift",1900,10, "black_veil_covenant");
 		register("eclipse_well",1960,-30, "penumbral_drift", "blood_eclipse");
 		register("umbral_rend",2070,60, "blood_eclipse", "gloam_laceration");
-		register("radiant_wake",1231,280, "hematic_beacon");
+		register("radiant_wake",1225,280, "hematic_beacon");
 		register("lodestone_collapse",790,60, "iron_choir", "sanguine_magnetism");
-		register("carrion_communion",2270,-58, "blackhearted", "bloom_of_rot");
-		register("funeral_bell",2270,-113, "carrion_communion");
-		register("insatiable_hunger",2330,83, "hemorrhage");
-		register("fruiting_contagion",2390,13, "insatiable_hunger", "bloom_of_rot");
+		register("carrion_communion",2270,88, "blackhearted", "bloom_of_rot");
+		register("funeral_bell",2270,143, "carrion_communion");
+		register("insatiable_hunger",2330,-53, "hemorrhage");
+		register("fruiting_contagion",2390,17, "insatiable_hunger", "bloom_of_rot");
 
 		// Row 2 (bottom) — HUMILIS / MEDIOCRITAS
-		register("hemorrhage",2270,52, "lignum_mortis");
-		register("lignum_mortis",2270,-8);
-		register("exsanguinate",2270,134, "hemorrhage");
+		register("hemorrhage",2270,-22, "lignum_mortis");
+		register("lignum_mortis",2270,38);
+		register("exsanguinate",2270,-104, "hemorrhage");
 	}
 
 

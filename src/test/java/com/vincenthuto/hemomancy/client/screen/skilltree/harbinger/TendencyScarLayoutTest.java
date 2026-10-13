@@ -21,8 +21,21 @@ final class TendencyScarLayoutTest {
 						new TendencyScarLayout.Node("phoenix", EnumBloodTendency.ANIMUS, 3, false)));
 
 		assertTrue(points.get("heart").y() < 240, "first scar sits beyond the outermost manipulation");
-		assertEquals(50, points.get("heart").y() - points.get("marrow").y());
-		assertEquals(50, points.get("marrow").y() - points.get("phoenix").y());
+		assertEquals(65, points.get("heart").y() - points.get("marrow").y());
+		assertEquals(65, points.get("marrow").y() - points.get("phoenix").y());
+	}
+
+	@Test
+	void tierOneScarsClearEveryFamilyByTheSameMargin() {
+		Map<String, TendencyScarLayout.Point> points = TendencyScarLayout.arrange(
+				500, 500,
+				Map.of(EnumBloodTendency.ANIMUS, 410, EnumBloodTendency.DUCTILIS, 380),
+				List.of(
+						new TendencyScarLayout.Node("heart", EnumBloodTendency.ANIMUS, 1, false, 480, 280),
+						new TendencyScarLayout.Node("feral", EnumBloodTendency.DUCTILIS, 1, false, 680, 480)));
+
+		assertEquals(new TendencyScarLayout.Point(500, 20), points.get("heart"));
+		assertEquals(new TendencyScarLayout.Point(950, 500), points.get("feral"));
 	}
 
 	@Test
@@ -35,7 +48,7 @@ final class TendencyScarLayoutTest {
 						new TendencyScarLayout.Node("blood_honed", EnumBloodTendency.FERRIC, 2, true)));
 
 		assertEquals(points.get("anvil").x(), points.get("blood_honed").x());
-		assertEquals(40, Math.abs(points.get("anvil").y() - points.get("blood_honed").y()));
+		assertEquals(68, Math.abs(points.get("anvil").y() - points.get("blood_honed").y()));
 	}
 
 	@Test

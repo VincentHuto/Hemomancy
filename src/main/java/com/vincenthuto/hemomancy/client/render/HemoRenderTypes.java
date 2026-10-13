@@ -50,17 +50,6 @@ public final class HemoRenderTypes {
 					.setLightmapState(RenderType.NO_LIGHTMAP)
 					.createCompositeState(false));
 
-	public static final RenderType BLOODWELL_FOUNTAIN = RenderType.create("bloodwell_fountain",
-			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 1024, false, true,
-			RenderType.CompositeState.builder()
-					.setShaderState(RenderType.RENDERTYPE_LIGHTNING_SHADER)
-					.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
-					.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
-					.setWriteMaskState(RenderType.COLOR_DEPTH_WRITE)
-					.setCullState(RenderType.NO_CULL)
-					.setLightmapState(RenderType.NO_LIGHTMAP)
-					.createCompositeState(false));
-
 	public static final RenderType MNEMONIC_LOWTIDE_WATERY_FOG = RenderType.create("mnemonic_lowtide_watery_fog",
 			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 4096, false, true,
 			RenderType.CompositeState.builder()
@@ -450,6 +439,100 @@ public final class HemoRenderTypes {
 						.setCullState(RenderType.NO_CULL)
 						.setLightmapState(RenderType.NO_LIGHTMAP)
 						.createCompositeState(false));
+	}
+
+	/**
+	 * A pool of blood standing in a vessel (the Iron Brazier's bowl, the Consecrated Bloodwell's basin). Vertex red is a
+	 * jet falling into it, green the heat simmering it, blue a fire over it, and alpha its opacity.
+	 */
+	public static RenderType bloodPool(float gameTime, float poolSeed) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"blood_pool_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.BLOOD_POOL.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "PoolSeed", poolSeed);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.BLOOD_POOL.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("blood_pool",
+				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 256, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.BLOOD_POOL.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_DEPTH_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
+	/**
+	 * @param focusX the Focus centre's x relative to the camera; with {@code focusZ}, it lets the shader rebuild
+	 *               ground positions from camera-relative ones for the brazier trench
+	 */
+	public static RenderType cardinalFloorMembrane(float gameTime, float seed, int style, int floorHalf,
+			float spread, float front, float beat, float floorLight, int baseColor, int veinColor, int glowColor,
+			float focusX, float focusZ) {
+		return cardinalFloor("cardinal_floor_membrane", RenderType.COLOR_WRITE, gameTime, seed, style, floorHalf,
+				spread, front, beat, floorLight, baseColor, veinColor, glowColor, focusX, focusZ);
+	}
+
+	/** The raised mound around the Focus: the same membrane, but writing depth so what sinks into it is hidden. */
+	public static RenderType cardinalFloorMound(float gameTime, float seed, int style, int floorHalf,
+			float spread, float front, float beat, float floorLight, int baseColor, int veinColor, int glowColor,
+			float focusX, float focusZ) {
+		return cardinalFloor("cardinal_floor_mound", RenderType.COLOR_DEPTH_WRITE, gameTime, seed, style, floorHalf,
+				spread, front, beat, floorLight, baseColor, veinColor, glowColor, focusX, focusZ);
+	}
+
+	private static RenderType cardinalFloor(String name, RenderStateShard.WriteMaskStateShard writeMask,
+			float gameTime, float seed, int style, int floorHalf, float spread, float front, float beat,
+			float floorLight, int baseColor, int veinColor, int glowColor, float focusX, float focusZ) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"cardinal_floor_membrane_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.CARDINAL_FLOOR_MEMBRANE.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "FloorSeed", seed);
+					setUniform(shader, "FloorStyle", style);
+					setUniform(shader, "FloorHalf", floorHalf);
+					setUniform(shader, "Spread", spread);
+					setUniform(shader, "Front", front);
+					setUniform(shader, "Beat", beat);
+					setUniform(shader, "FloorLight", floorLight);
+					setUniform(shader, "FocusOffset", focusX, focusZ);
+					setRgbUniform(shader, "BaseColor", baseColor);
+					setRgbUniform(shader, "VeinColor", veinColor);
+					setRgbUniform(shader, "GlowColor", glowColor);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.CARDINAL_FLOOR_MEMBRANE.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		// Unsorted: the floor quads never overlap, so submission order keeps the Focus collar on top.
+		return RenderType.create(name,
+				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 8192, false, false,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.CARDINAL_FLOOR_MEMBRANE.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(writeMask)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
+	private static void setRgbUniform(ShaderInstance shader, String name, int rgb) {
+		setUniform(shader, name, ((rgb >> 16) & 0xFF) / 255.0F, ((rgb >> 8) & 0xFF) / 255.0F, (rgb & 0xFF) / 255.0F);
 	}
 
 	public static RenderType mnemonicLowtideLake(float gameTime, float lakeSeed, float waveStrength,

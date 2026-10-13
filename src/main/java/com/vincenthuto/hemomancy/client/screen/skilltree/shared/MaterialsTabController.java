@@ -38,6 +38,11 @@ public class MaterialsTabController implements IProgressTab {
 
 	private int contentW;
 	private int contentH;
+	/** Offset buildLayout applied to every atlas coordinate; the hub, plaques and traces share it. */
+	private int layoutOffsetX;
+	private int layoutOffsetY;
+	/** Distance from the hub to the farthest visible node: the player's current tier plus the veiled next one. */
+	private int focusRadius;
 	private MaterialAtlasNode selectedEntry;
 
 	/** Harbinger-flavoured controller using the orange-copper blood-magic palette. */
@@ -106,23 +111,34 @@ public class MaterialsTabController implements IProgressTab {
 			selectedEntry = null;
 		}
 
-		int[] bounds = new int[2];
+		int[] bounds = new int[4];
 		MaterialsTabView.buildLayout(entries, positions, bounds, NODE_SIZE, path);
 		contentW = bounds[0];
 		contentH = bounds[1];
+		layoutOffsetX = bounds[2];
+		layoutOffsetY = bounds[3];
+		focusRadius = 0;
+		for (int[] pos : positions.values()) {
+			focusRadius = Math.max(focusRadius, (int) Math.ceil(Math.hypot(pos[0] - hubX(), pos[1] - hubY())));
+		}
 		rebuildRenderSnapshot();
-		panZoom.centreOn(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
+		resetView(ctx);
+	}
+
+	@Override
+	public void resetView(ProgressScreenContext ctx) {
+		panZoom.focusOn(hubX(), hubY(), focusRadius, getNavigationViewportWidth(ctx), ctx.guiHeight());
 	}
 
 	@Override
 	public void render(GuiGraphics gfx, ProgressScreenContext ctx, int mx, int my, float partial) {
 		if (traceInvalidation.consume(0L)) traceCache.rebuild(renderSnapshot.nodes(), renderSnapshot.positions(),
-				contentW, contentH, MaterialAtlasSpec.hubX(path), MaterialAtlasSpec.hubY(path));
+				contentW, contentH, hubX(), hubY());
 		rebuildViewportSnapshot(ctx);
 		MaterialsTabView.drawAtlasTrace(traceCache, gfx, ctx, panZoom);
 		MaterialsTabView.drawNodes(gfx, ctx.font(), path,
 				renderSnapshot.nodes(), viewportPositions, iconCache,
-				panZoom, ctx.guiLeft(), ctx.guiTop(), NODE_SIZE, nodeShape,
+				panZoom, ctx.guiLeft(), ctx.guiTop(), layoutOffsetX, layoutOffsetY, NODE_SIZE, nodeShape,
 				tabColor, selectedEntry, nodeTransparentColor, nodeAccentColor);
 		FamilyFilterControlView.draw(gfx, ctx, familyLabel(), tabColor, mx, my);
 	}
@@ -202,6 +218,15 @@ public class MaterialsTabController implements IProgressTab {
 
 	public int getContentH() {
 		return contentH;
+	}
+
+	/** Hub position in laid-out content space (spec hub plus the layout offset). */
+	private int hubX() {
+		return MaterialAtlasSpec.hubX(path) + layoutOffsetX;
+	}
+
+	private int hubY() {
+		return MaterialAtlasSpec.hubY(path) + layoutOffsetY;
 	}
 
 	private void rebuildRenderSnapshot() {

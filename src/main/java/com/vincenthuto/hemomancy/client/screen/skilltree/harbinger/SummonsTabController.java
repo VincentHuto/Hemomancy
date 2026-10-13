@@ -102,7 +102,8 @@ public class SummonsTabController implements IProgressTab {
 			state.sidebarScroll = Math.max(0, state.sidebarScroll + scrollAmt);
 			state.clampSidebarScroll(ctx.tierSidebarVisibleH());
 		} else {
-			state.infoScroll = Math.max(0, state.infoScroll + scrollAmt);
+			state.infoScroll += scrollAmt;
+			state.clampInfoScroll();
 		}
 		return true;
 	}

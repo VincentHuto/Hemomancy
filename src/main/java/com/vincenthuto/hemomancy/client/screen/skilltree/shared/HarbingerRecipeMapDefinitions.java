@@ -10,9 +10,10 @@ import java.util.function.Supplier;
 
 public final class HarbingerRecipeMapDefinitions {
 	public static final List<String> RITE_FAMILIES = List.of("Order", "Vessel", "Bloodline/Fane",
-			"Body/Will", "Domain/World", "Qliphoth/Forbidden", "Puppetry", RecipeMapLayout.MISC_FAMILY);
+			"Body/Will", "Domain/World", "Qliphoth/Forbidden", "Puppetry", "Trials", "Station Upgrades",
+			RecipeMapLayout.MISC_FAMILY);
 	public static final List<String> CRAFTING_FAMILIES = List.of("Foundations", "Apparatus",
-			"Ritual Infrastructure", "Constructs/Effigies", RecipeMapLayout.MISC_FAMILY);
+			"Ritual Infrastructure", "Constructs/Effigies", "Stations", RecipeMapLayout.MISC_FAMILY);
 
 	private static final Map<String, String> RITES = new LinkedHashMap<>();
 	private static final Map<String, String> CRAFTING = new LinkedHashMap<>();
@@ -28,21 +29,28 @@ public final class HarbingerRecipeMapDefinitions {
 		registerRites("Order", "initiate_rite", "sanguine_brotherhood",
 				"illuminatus_rite", "sanctified_rite", "archon_rite", "apotheos_rite");
 		registerRites("Vessel", "pallid_vessel_rite", "crimson_vessel_rite", "ashen_vessel_rite", "horn_of_culmination_rite");
-		registerRites("Bloodline/Fane", "bloodline_founding", "bloodline_recall", "founding_fane", "hematic_unbinding",
-				"scarlet_summons", "covenant_vigil", "sanguine_dominion");
-		registerRites("Body/Will", "sanguine_attunement", "vascular_mending", "hematic_fortification", "eternal_covenant",
-				"chamber_of_will", "crimson_beacon");
-		registerRites("Domain/World", "exsanguination", "rooted_vein", "hungering_earth", "sanguine_fervor", "sanguine_eclipse", "pallid_shadow");
+		registerRites("Bloodline/Fane", "bloodline_recall", "hematic_unbinding", "bloodline_founding", "scarlet_summons",
+				"founding_fane", "sanguine_dominion", "hematic_succession", "mnemonic_restoration", "covenant_vigil");
+		registerRites("Body/Will", "vascular_mending", "sanguine_attunement", "crimson_beacon", "hematic_fortification",
+				"eternal_covenant", "chamber_of_will");
+		registerRites("Domain/World", "rooted_vein", "hungering_earth", "exsanguination", "sanguine_fervor", "sanguine_eclipse", "pallid_shadow");
 		registerRites("Qliphoth/Forbidden", "ancestral_communion", "bloom_of_qliphoth");
+		registerRites("Puppetry", "puppeteer_trial_marrow_spitter", "puppeteer_trial_veinwing_vulture",
+				"puppeteer_trial_gorebound_hulk", "puppeteer_trial_mnemonist_puppet");
+		registerRites("Trials", "puppeteer_trial_cinder_bellows", "puppeteer_trial_sanguine_hound", "puppeteer_trial_scarlet_mummer");
+		registerRites("Station Upgrades", "first_condensation", "sanguine_athanor", "steady_separation", "second_fraction",
+				"true_groove", "enduring_pattern", "armature_consecration", "monolithic_armature",
+				"eightfold_script", "palimpsest", "ganglionic_weave", "cortical_weave");
 
 		registerCrafting("Foundations", "dried_gourd", "hematic_iron_block", "iron_brazier", "liber_sanguinum", "living_staff");
 		registerCrafting("Apparatus", "vial_centrifuge", "ghastly_alembic", "mnemonic_reliquary", "somatic_loom",
 				"sporitic_thurible", "morphling_incubator", "mycelial_lantern");
-		registerCrafting("Ritual Infrastructure", "runic_chisel_station", "visceral_mirror", "consecrated_bloodwell",
-				"dendritic_distributor", "covenant_throne", "sanguine_monolith");
-		registerCrafting("Constructs/Effigies", "semi_sentient_construct", "mason_effigy", "mind_spike", "vascular_effigy");
-		registerRites("Puppetry", "puppeteer_trial_gorebound_hulk", "puppeteer_trial_marrow_spitter",
-				"puppeteer_trial_mnemonist_puppet", "puppeteer_trial_veinwing_vulture");
+		registerCrafting("Ritual Infrastructure", "runic_chisel_station", "visceral_mirror", "dendritic_distributor",
+				"consecrated_bloodwell", "hematic_stake", "sanguine_monolith", "covenant_throne");
+		registerCrafting("Constructs/Effigies", "semi_sentient_construct", "mason_effigy", "mind_spike", "vacant_effigy",
+				"vascular_effigy");
+		registerCrafting("Stations", "enzymatic_scriptorium", "resonant_forge", "scarlet_vanity", "warp_chair",
+				"fungal_implantation_pylon");
 
 		iconRites("cardinal_rite/initiate_rite", () -> new ItemStack(ItemInit.liber_sanguinum.get()));
 		iconRites("cardinal_rite/sanguine_brotherhood", () -> new ItemStack(ItemInit.sanguine_conduit.get()));
@@ -86,8 +94,25 @@ public final class HarbingerRecipeMapDefinitions {
 		iconRites("cardinal_rite/puppeteer_trial_mnemonist_puppet", () -> new ItemStack(ItemInit.mnemonist_cradle.get()));
 		iconRites("cardinal_rite/puppeteer_trial_scarlet_mummer", () -> new ItemStack(ItemInit.scarlet_gorget.get()));
 		iconRites("cardinal_rite/puppeteer_trial_veinwing_vulture", () -> new ItemStack(ItemInit.veinwing_harness.get()));
+		iconRites("cardinal_rite/puppeteer_trial_cinder_bellows", () -> new ItemStack(ItemInit.cinder_bellows_frame.get()));
+		iconRites("cardinal_rite/puppeteer_trial_sanguine_hound", () -> new ItemStack(ItemInit.sanguine_hound_bridle.get()));
+		iconRites("cardinal_rite/hematic_succession", () -> new ItemStack(BlockInit.vacant_effigy.get()));
+		iconRites("cardinal_rite/mnemonic_restoration", () -> new ItemStack(ItemInit.bound_mnemonic_remnant.get()));
 
-		linkRites("cardinal_rite/initiate_rite", "cardinal_rite/sanguine_brotherhood", RecipeMapLink.Kind.PROGRESSION);
+		iconRites("cardinal_rite/first_condensation", () -> new ItemStack(ItemInit.hematic_condenser_kit.get()));
+		iconRites("cardinal_rite/sanguine_athanor", () -> new ItemStack(ItemInit.sanguine_athanor_kit.get()));
+		iconRites("cardinal_rite/steady_separation", () -> new ItemStack(ItemInit.centrifugal_governor_kit.get()));
+		iconRites("cardinal_rite/second_fraction", () -> new ItemStack(ItemInit.fractionating_rotor_kit.get()));
+		iconRites("cardinal_rite/true_groove", () -> new ItemStack(ItemInit.precision_governor_kit.get()));
+		iconRites("cardinal_rite/enduring_pattern", () -> new ItemStack(ItemInit.master_cam_kit.get()));
+		iconRites("cardinal_rite/armature_consecration", () -> new ItemStack(ItemInit.vicars_consecration_kit.get()));
+		iconRites("cardinal_rite/monolithic_armature", () -> new ItemStack(ItemInit.monolithic_cornerstone.get()));
+		iconRites("cardinal_rite/eightfold_script", () -> new ItemStack(ItemInit.rubricators_quill.get()));
+		iconRites("cardinal_rite/palimpsest", () -> new ItemStack(ItemInit.palimpsest_burin.get()));
+		iconRites("cardinal_rite/ganglionic_weave", () -> new ItemStack(ItemInit.ganglionic_harness.get()));
+		iconRites("cardinal_rite/cortical_weave", () -> new ItemStack(ItemInit.cortical_crown.get()));
+
+		linkRites("cardinal_rite/initiate_rite", "cardinal_rite/sanguine_brotherhood", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/sanguine_brotherhood", "cardinal_rite/illuminatus_rite", RecipeMapLink.Kind.PROGRESSION);
 		linkRites("cardinal_rite/illuminatus_rite", "cardinal_rite/sanctified_rite", RecipeMapLink.Kind.PROGRESSION);
 		linkRites("cardinal_rite/sanctified_rite", "cardinal_rite/archon_rite", RecipeMapLink.Kind.PROGRESSION);
@@ -96,26 +121,30 @@ public final class HarbingerRecipeMapDefinitions {
 		linkRites("cardinal_rite/crimson_vessel_rite", "cardinal_rite/ashen_vessel_rite", RecipeMapLink.Kind.PROGRESSION);
 		linkRites("cardinal_rite/ashen_vessel_rite", "cardinal_rite/horn_of_culmination_rite", RecipeMapLink.Kind.PROGRESSION);
 
-		linkRites("cardinal_rite/pallid_vessel_rite", "cardinal_rite/crimson_vessel_rite", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/pallid_vessel_rite", "cardinal_rite/ashen_vessel_rite", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/pallid_vessel_rite", "cardinal_rite/horn_of_culmination_rite", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/bloodline_founding", "cardinal_rite/bloodline_recall", RecipeMapLink.Kind.CONCEPTUAL);
-		linkRites("cardinal_rite/bloodline_founding", "cardinal_rite/founding_fane", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/bloodline_founding", "cardinal_rite/hematic_unbinding", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/bloodline_founding", "cardinal_rite/scarlet_summons", RecipeMapLink.Kind.CONCEPTUAL);
-		linkRites("cardinal_rite/bloodline_founding", "cardinal_rite/covenant_vigil", RecipeMapLink.Kind.CONCEPTUAL);
-		linkRites("cardinal_rite/bloodline_founding", "cardinal_rite/sanguine_dominion", RecipeMapLink.Kind.CONCEPTUAL);
+		linkRites("cardinal_rite/bloodline_founding", "cardinal_rite/founding_fane", RecipeMapLink.Kind.CONCEPTUAL);
+		linkRites("cardinal_rite/founding_fane", "cardinal_rite/sanguine_dominion", RecipeMapLink.Kind.CONCEPTUAL);
+		linkRites("cardinal_rite/founding_fane", "cardinal_rite/hematic_succession", RecipeMapLink.Kind.CONCEPTUAL);
+		linkRites("cardinal_rite/founding_fane", "cardinal_rite/covenant_vigil", RecipeMapLink.Kind.CONCEPTUAL);
+		linkRites("cardinal_rite/hematic_succession", "cardinal_rite/mnemonic_restoration", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/sanguine_attunement", "cardinal_rite/vascular_mending", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/sanguine_attunement", "cardinal_rite/hematic_fortification", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/sanguine_attunement", "cardinal_rite/eternal_covenant", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/sanguine_attunement", "cardinal_rite/chamber_of_will", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/sanguine_attunement", "cardinal_rite/crimson_beacon", RecipeMapLink.Kind.CONCEPTUAL);
+		linkRites("cardinal_rite/rooted_vein", "cardinal_rite/exsanguination", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/exsanguination", "cardinal_rite/hungering_earth", RecipeMapLink.Kind.CONCEPTUAL);
-		linkRites("cardinal_rite/exsanguination", "cardinal_rite/rooted_vein", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/exsanguination", "cardinal_rite/sanguine_fervor", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/exsanguination", "cardinal_rite/sanguine_eclipse", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/exsanguination", "cardinal_rite/pallid_shadow", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/ancestral_communion", "cardinal_rite/bloom_of_qliphoth", RecipeMapLink.Kind.CONCEPTUAL);
+		linkRites("cardinal_rite/puppeteer_trial_marrow_spitter", "cardinal_rite/puppeteer_trial_gorebound_hulk", RecipeMapLink.Kind.CONCEPTUAL);
+		linkRites("cardinal_rite/puppeteer_trial_veinwing_vulture", "cardinal_rite/puppeteer_trial_gorebound_hulk", RecipeMapLink.Kind.CONCEPTUAL);
+		linkRites("cardinal_rite/puppeteer_trial_gorebound_hulk", "cardinal_rite/puppeteer_trial_mnemonist_puppet", RecipeMapLink.Kind.CONCEPTUAL);
 
 		linkCrafting("blood_structure/dried_gourd", "blood_structure/hematic_iron_block", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/dried_gourd", "blood_structure/iron_brazier", RecipeMapLink.Kind.CONCEPTUAL);
@@ -123,8 +152,8 @@ public final class HarbingerRecipeMapDefinitions {
 		linkCrafting("blood_structure/dried_gourd", "blood_structure/living_staff", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/vial_centrifuge", "blood_structure/ghastly_alembic", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/vial_centrifuge", "blood_structure/mnemonic_reliquary", RecipeMapLink.Kind.CONCEPTUAL);
-		linkCrafting("blood_structure/vial_centrifuge", "blood_structure/somatic_loom", RecipeMapLink.Kind.CONCEPTUAL);
-		linkCrafting("blood_structure/vial_centrifuge", "blood_structure/sporitic_thurible", RecipeMapLink.Kind.CONCEPTUAL);
+		linkCrafting("blood_structure/ghastly_alembic", "blood_structure/somatic_loom", RecipeMapLink.Kind.CONCEPTUAL);
+		linkCrafting("blood_structure/mycelial_lantern", "blood_structure/sporitic_thurible", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/vial_centrifuge", "blood_structure/morphling_incubator", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/vial_centrifuge", "blood_structure/mycelial_lantern", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/runic_chisel_station", "blood_structure/visceral_mirror", RecipeMapLink.Kind.CONCEPTUAL);
@@ -132,12 +161,12 @@ public final class HarbingerRecipeMapDefinitions {
 		linkCrafting("blood_structure/runic_chisel_station", "blood_structure/dendritic_distributor", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/runic_chisel_station", "blood_structure/covenant_throne", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/runic_chisel_station", "blood_structure/sanguine_monolith", RecipeMapLink.Kind.CONCEPTUAL);
+		linkCrafting("blood_structure/sanguine_monolith", "blood_structure/covenant_throne", RecipeMapLink.Kind.PROGRESSION);
+		linkCrafting("blood_structure/consecrated_bloodwell", "blood_structure/hematic_stake", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/semi_sentient_construct", "blood_structure/mason_effigy", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/semi_sentient_construct", "blood_structure/mind_spike", RecipeMapLink.Kind.CONCEPTUAL);
-		linkCrafting("blood_structure/semi_sentient_construct", "blood_structure/vascular_effigy", RecipeMapLink.Kind.CONCEPTUAL);
-		linkRites("cardinal_rite/puppeteer_trial_gorebound_hulk", "cardinal_rite/puppeteer_trial_marrow_spitter", RecipeMapLink.Kind.CONCEPTUAL);
-		linkRites("cardinal_rite/puppeteer_trial_gorebound_hulk", "cardinal_rite/puppeteer_trial_mnemonist_puppet", RecipeMapLink.Kind.CONCEPTUAL);
-		linkRites("cardinal_rite/puppeteer_trial_gorebound_hulk", "cardinal_rite/puppeteer_trial_veinwing_vulture", RecipeMapLink.Kind.CONCEPTUAL);
+		linkCrafting("blood_structure/semi_sentient_construct", "blood_structure/vacant_effigy", RecipeMapLink.Kind.CONCEPTUAL);
+		linkCrafting("blood_structure/vacant_effigy", "blood_structure/vascular_effigy", RecipeMapLink.Kind.CONCEPTUAL);
 		// </recipe-map-editor>
 	}
 

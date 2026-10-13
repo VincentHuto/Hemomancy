@@ -20,15 +20,15 @@ public final class CovenantSkillBranch {
 							.setIconItem(() -> new ItemStack(ItemInit.hematic_suture_needle.get())));
 			SkillPointInit.skill_bloodline_concord = SkillPointInit.registerSkill(branch,
 					new SkillPoint(31, "skill_bloodline_concord", 650, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_fane_suture)
-							.setSkillPointCost(4).setRequiredDegree(6).setTreePosition(568, 328).setBranch("covenant").setBranchColor(0xFFA54569)
+							.setSkillPointCost(4).setRequiredDegree(6).setTreePosition(568, 328).setBranch("covenant").setBranchColor(0xFFA54569).addParents(SkillPointInit.deep_base_skill)
 							.setIconItem(() -> new ItemStack(ItemInit.sanguine_quintessence.get())));
 			SkillPointInit.skill_servitor_tender = SkillPointInit.registerSkill(branch,
 					new SkillPoint(32, "skill_servitor_tender", 650, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_fane_suture)
-							.setSkillPointCost(4).setRequiredDegree(6).setTreePosition(642, 434).setBranch("covenant").setBranchColor(0xFFA54569)
+							.setSkillPointCost(4).setRequiredDegree(6).setTreePosition(642, 434).setBranch("covenant").setBranchColor(0xFFA54569).addParents(SkillPointInit.deep_base_skill)
 							.setIconItem(() -> new ItemStack(ItemInit.hematic_suture_needle.get())));
 			SkillPointInit.skill_ancestral_sovereignty = SkillPointInit.registerSkill(branch,
 					new SkillPoint(33, "skill_ancestral_sovereignty", 850, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_bloodline_concord)
-							.setSkillPointCost(5).setRequiredDegree(7).setTreePosition(652, 340).setBranch("covenant").setBranchColor(0xFFA54569).addParents(SkillPointInit.skill_servitor_tender)
+							.setSkillPointCost(5).setRequiredDegree(7).setTreePosition(652, 340).setBranch("covenant").setBranchColor(0xFFA54569).addParents(SkillPointInit.skill_servitor_tender, SkillPointInit.deep_base_skill)
 							.setIconItem(() -> new ItemStack(ItemInit.covenant_mantle.get())));
 			SkillPointInit.skill_shared_siphon = SkillPointInit.registerSkill(branch,
 					new SkillPoint(55, "skill_shared_siphon", 650, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_fane_suture)

@@ -9,7 +9,9 @@ import com.vincenthuto.hemomancy.common.item.shared.MnemonicBlueprintTarget;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.ImprintMnemonicBlueprintPacket;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
+import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
@@ -21,6 +23,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +63,7 @@ public class RitesTabController implements IProgressTab {
             state.rowBgNormal      = 0x990A0E18;
             state.enableDegreeLock = true;
             state.hideEmptyTiers   = true;
+            state.unstainedStages  = true;
         }
     }
 
@@ -87,10 +91,11 @@ public class RitesTabController implements IProgressTab {
         }
         state.rebuildTierMap();
         if (unstained) {
+            RitesTabView.cacheSidebarLabels(ctx.font(), state);
             state.autoSelectFirstTier(ctx.playerDegree());
         } else {
-            appendFloorEntries(mapEntries);
-            appendSigilEntries(mc, mapEntries);
+            appendFloorEntries(mapEntries, mapRites.values());
+            appendSigilEntries(mc, mapEntries, mapRites.values());
             List<String> families = new ArrayList<>(HarbingerRecipeMapDefinitions.RITE_FAMILIES);
             families.add(families.size() - 1, FLOOR_FAMILY);
             families.add(families.size() - 1, "Ichorian Sigils");
@@ -109,33 +114,81 @@ public class RitesTabController implements IProgressTab {
         }
     }
 
-    private void appendFloorEntries(List<RecipeMapEntry> entries) {
-        int order = 0;
-        for (CardinalRiteFloorDefinition floor : CardinalRiteFloorRegistry.all().values().stream()
+    private void appendFloorEntries(List<RecipeMapEntry> entries, Collection<CardinalRiteRecipe> rites) {
+        List<CardinalRiteFloorDefinition> floors = CardinalRiteFloorRegistry.all().values().stream()
                 .sorted(java.util.Comparator.comparing(CardinalRiteFloorDefinition::style)
-                        .thenComparingInt(definition -> definition.tier().ordinal())).toList()) {
+                        .thenComparingInt(definition -> definition.tier().ordinal())).toList();
+        Map<ResourceLocation, Integer> used = new HashMap<>();
+        for (CardinalRiteRecipe rite : rites) {
+            if (rite.getFloorId() != null) used.merge(rite.getFloorId(), RecipeDegreeGates.getRequiredDegree(rite), Math::min);
+        }
+        Map<ResourceLocation, CardinalRiteType> tiers = new HashMap<>();
+        Map<ResourceLocation, Integer> fallback = new HashMap<>();
+        for (CardinalRiteFloorDefinition floor : floors) {
+            tiers.put(floor.id(), floor.tier());
+            fallback.put(floor.id(), floor.tier().ordinal());
+        }
+        Map<ResourceLocation, Integer> firstUse = firstUseDegrees(tiers, used, fallback);
+        int order = 0;
+        for (CardinalRiteFloorDefinition floor : floors) {
             String tier = HLTextUtils.toProperCase(floor.tier().getSerializedName());
             String style = HLTextUtils.toProperCase(floor.style().replace('_', ' '));
             entries.add(new RecipeMapEntry(new RecipeMapKey(RecipeMapEntry.Kind.FLOOR, floor.id()),
                     tier + " " + style + " Floor",
                     "Focused floor-only construction view for the " + style + " ritual style.",
-                    floor.tier().ordinal(), FLOOR_FAMILY, order++, true, true));
+                    firstUse.get(floor.id()), FLOOR_FAMILY, order++, true, true));
         }
     }
 
-    private void appendSigilEntries(Minecraft mc, List<RecipeMapEntry> entries) {
+    private void appendSigilEntries(Minecraft mc, List<RecipeMapEntry> entries, Collection<CardinalRiteRecipe> rites) {
         var knowledge = mc.player == null ? null : HemoCapabilityAccess.getIchorianKnowledge(mc.player).orElse(null);
-        int order = 0;
-        for (IchorianSigilDefinition sigil : IchorianSigilRegistry.all().stream()
+        List<IchorianSigilDefinition> sigils = IchorianSigilRegistry.all().stream()
                 .sorted(java.util.Comparator.comparingInt(IchorianSigilDefinition::tier)
-                        .thenComparing(definition -> definition.id().toString())).toList()) {
+                        .thenComparing(definition -> definition.id().toString())).toList();
+        Map<ResourceLocation, Integer> used = new HashMap<>();
+        for (CardinalRiteRecipe rite : rites) {
+            CardinalRiteCeremonyDefinition ceremony = rite.getCeremony();
+            if (ceremony == null) continue;
+            for (CardinalRiteCeremonyDefinition.SupportSocket socket : ceremony.supportSockets()) {
+                ResourceLocation sigil = sigilId(socket.suggestedSigil());
+                if (sigil != null) used.merge(sigil, RecipeDegreeGates.getRequiredDegree(rite), Math::min);
+            }
+        }
+        Map<ResourceLocation, Integer> tiers = new HashMap<>();
+        for (IchorianSigilDefinition sigil : sigils) tiers.put(sigil.id(), sigil.tier());
+        Map<ResourceLocation, Integer> firstUse = firstUseDegrees(tiers, used, tiers);
+        int order = 0;
+        for (IchorianSigilDefinition sigil : sigils) {
             boolean known = knowledge != null && knowledge.isKnown(sigil.id());
             boolean partial = knowledge != null && knowledge.discoveredNodeCount(sigil.id()) > 0;
             entries.add(new RecipeMapEntry(new RecipeMapKey(RecipeMapEntry.Kind.SIGIL, sigil.id()),
                     known ? sigil.name() : "Unknown Sigil", known ? sigil.purpose() : "",
-                    sigil.tier(), "Ichorian Sigils", order++,
+                    firstUse.get(sigil.id()), "Ichorian Sigils", order++,
                     known || partial, known));
         }
+    }
+
+    private static ResourceLocation sigilId(String suggested) {
+        if (suggested == null || suggested.isBlank()) return null;
+        return ResourceLocation.tryParse(suggested.contains(":") ? suggested : "hemomancy:" + suggested);
+    }
+
+    /**
+     * The degree at which each floor or sigil first matters: the earliest required degree of any
+     * Harbinger rite that uses it. Unused ones borrow the earliest use among same-tier siblings, so a
+     * whole tier rings together, and fall back to their own tier number when no sibling is used either.
+     */
+    static <T> Map<ResourceLocation, Integer> firstUseDegrees(Map<ResourceLocation, T> tiers,
+            Map<ResourceLocation, Integer> earliestUse, Map<ResourceLocation, Integer> fallback) {
+        Map<T, Integer> tierUse = new HashMap<>();
+        tiers.forEach((id, tier) -> {
+            Integer degree = earliestUse.get(id);
+            if (degree != null) tierUse.merge(tier, degree, Math::min);
+        });
+        Map<ResourceLocation, Integer> degrees = new HashMap<>();
+        tiers.forEach((id, tier) -> degrees.put(id, earliestUse.containsKey(id) ? earliestUse.get(id)
+                : tierUse.getOrDefault(tier, fallback.getOrDefault(id, 0))));
+        return degrees;
     }
 
     @Override

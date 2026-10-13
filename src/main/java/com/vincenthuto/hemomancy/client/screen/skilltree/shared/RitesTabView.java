@@ -131,7 +131,7 @@ public final class RitesTabView {
 			gfx.pose().pushPose();
 			gfx.pose().translate(0, 0, 400);
 			drawTierSidebar(gfx, ctx, state, mouseX, mouseY);
-			gfx.drawCenteredString(ctx.font(), "Select a degree",
+			gfx.drawCenteredString(ctx.font(), state.unstainedStages ? "Select a stage" : "Select a degree",
 					contentX + contentW / 2, ctx.guiTop() + ctx.guiHeight() / 2, 0xFF555555);
 			gfx.pose().popPose();
 			return;
@@ -143,7 +143,7 @@ public final class RitesTabView {
 			gfx.pose().pushPose();
 			gfx.pose().translate(0, 0, 400);
 			drawTierSidebar(gfx, ctx, state, mouseX, mouseY);
-			gfx.drawCenteredString(ctx.font(), "No rites at this degree",
+			gfx.drawCenteredString(ctx.font(), state.unstainedStages ? "No rites at this stage" : "No rites at this degree",
 					contentX + contentW / 2, ctx.guiTop() + ctx.guiHeight() / 2, 0xFF555555);
 			gfx.pose().popPose();
 			return;
@@ -222,7 +222,7 @@ public final class RitesTabView {
 		if (state.showIchorianSigils) {
 			sy = drawIchorianDropdown(gfx, ctx, state, sx, sy, sw, mouseX, mouseY);
 		}
-		gfx.drawString(ctx.font(), Component.literal("Rite Degrees")
+		gfx.drawString(ctx.font(), Component.literal(state.sidebarTitle())
 				.withStyle(s -> s.withColor(state.tabColor).withBold(true)), sx + 2, sy, 0);
 		sy += 14;
 
@@ -258,12 +258,14 @@ public final class RitesTabView {
 			gfx.fill(sx, sy,           sx + 1,  sy + rowH,  bc);
 			gfx.fill(sx + sw - 1, sy, sx + sw,  sy + rowH,  bc);
 
-			String tierLabel = type == 0 ? "No Degree" : "Degree " + type;
+			String tierLabel = state.tierLabel(type);
 
 			if (locked) {
 				gfx.fill(sx + 1, sy + 1, sx + sw - 1, sy + rowH - 1, 0xBB000000);
-				gfx.drawString(ctx.font(), "[X] " + tierLabel + " (Locked)",
-						sx + 4, sy + (rowH - 8) / 2, 0xFF444444, false);
+				// Long stage names ("Enlightened") leave no room for the suffix; [X] already says locked.
+				String lockedLabel = "[X] " + tierLabel + " (Locked)";
+				if (ctx.font().width(lockedLabel) > sw - 8) lockedLabel = "[X] " + tierLabel;
+				gfx.drawString(ctx.font(), lockedLabel, sx + 4, sy + (rowH - 8) / 2, 0xFF444444, false);
 			} else {
 				int textCol = selected ? state.nameColor : 0xFF999999;
 				gfx.drawString(ctx.font(),
@@ -275,34 +277,36 @@ public final class RitesTabView {
 				sy += rowH + 2;
 				for (int j = 0; j < recipes.size(); j++) {
 					CardinalRiteRecipe r = recipes.get(j);
+					int recH = state.recipeRowHeight(r);
 					boolean recSel = (j == state.selectedRiteIndexInTier);
 					boolean recHov = mouseX >= sx + 4 && mouseX <= sx + sw - 4
-							&& mouseY >= sy && mouseY <= sy + 16
+							&& mouseY >= sy && mouseY <= sy + recH
 							&& mouseY >= clipTop && mouseY <= clipBottom;
+					boolean recLocked = isRiteLocked(state, r);
 
 					int recBg = recSel ? state.rowBgSelected
 							: (recHov ? state.rowBgHovered : 0x00000000);
-					gfx.fill(sx + 2, sy, sx + sw - 2, sy + 16, recBg);
-					if (recSel) gfx.fill(sx + 2, sy, sx + 3, sy + 16, state.tabColor);
+					gfx.fill(sx + 2, sy, sx + sw - 2, sy + recH, recBg);
+					if (recSel) gfx.fill(sx + 2, sy, sx + 3, sy + recH, state.tabColor);
 
-					String recName = r.getRiteName();
-					if (recName == null || recName.isEmpty()) {
-						String ritePath = r.getId().getPath();
-						if (ritePath.contains("/")) ritePath = ritePath.substring(ritePath.lastIndexOf('/') + 1);
-						recName = HLTextUtils.toProperCase(ritePath.replace("_", " "));
+					int recCol = recLocked ? 0xFF555555 : recSel ? state.nameColor : 0xFF888888;
+					List<String> recLines = sidebarLines(ctx.font(), state, r);
+					for (int line = 0; line < recLines.size(); line++) {
+						String recName = recLines.get(line);
+						int textY = sy + 4 + line * 10;
+						if (r.isRankup() && !recLocked) {
+							int pulse = rankupTextColor();
+							int glowCol = withAlpha(pulse, 0x70);
+							gfx.drawString(ctx.font(), recName, sx + 7, textY, glowCol, false);
+							gfx.drawString(ctx.font(), recName, sx + 9, textY, glowCol, false);
+							gfx.drawString(ctx.font(), recName, sx + 8, textY - 1, glowCol, false);
+							gfx.drawString(ctx.font(), recName, sx + 8, textY + 1, glowCol, false);
+							gfx.drawString(ctx.font(), recName, sx + 8, textY, pulse, false);
+						} else {
+							gfx.drawString(ctx.font(), recName, sx + 8, textY, recCol, false);
+						}
 					}
-					recName = ScreenDrawUtils.truncateText(ctx.font(), recName, sw - 16);
-					int recCol = recSel ? state.nameColor : 0xFF888888;
-					if (r.isRankup()) {
-						recCol = rankupTextColor();
-						int glowCol = withAlpha(recCol, 0x70);
-						gfx.drawString(ctx.font(), recName, sx + 7, sy + 4, glowCol, false);
-						gfx.drawString(ctx.font(), recName, sx + 9, sy + 4, glowCol, false);
-						gfx.drawString(ctx.font(), recName, sx + 8, sy + 3, glowCol, false);
-						gfx.drawString(ctx.font(), recName, sx + 8, sy + 5, glowCol, false);
-					}
-					gfx.drawString(ctx.font(), recName, sx + 8, sy + 4, recCol, false);
-					sy += 18;
+					sy += recH + RitesTabState.RECIPE_ROW_GAP;
 				}
 			}
 			sy += rowH + 2;
@@ -318,6 +322,44 @@ public final class RitesTabView {
 			if (state.riteSidebarScroll < contentH - visibleH)
 				gfx.drawCenteredString(ctx.font(), "\u25BC", sx + sw / 2, clipBottom - 10, 0xAAFFFFFF);
 		}
+	}
+
+	/** Width available to a rite name inside an expanded sidebar row. */
+	private static int sidebarNameWidth() {
+		return ProgressScreenContext.TIER_SIDEBAR_W - 8 - 16;
+	}
+
+	/**
+	 * Wraps every rite name once against the live font so drawing, hit-testing and scroll
+	 * height agree on which rows take two lines.
+	 */
+	public static void cacheSidebarLabels(net.minecraft.client.gui.Font font, RitesTabState state) {
+		state.sidebarLabels.clear();
+		for (CardinalRiteRecipe recipe : state.riteRecipes) {
+			state.sidebarLabels.put(recipe.getId(), twoLines(font, RitesTabState.displayName(recipe), sidebarNameWidth()));
+		}
+	}
+
+	private static List<String> sidebarLines(net.minecraft.client.gui.Font font, RitesTabState state,
+			CardinalRiteRecipe recipe) {
+		List<String> cached = state.sidebarLabels.get(recipe.getId());
+		return cached != null ? cached
+				: List.of(ScreenDrawUtils.truncateText(font, RitesTabState.displayName(recipe), sidebarNameWidth()));
+	}
+
+	static List<String> twoLines(net.minecraft.client.gui.Font font, String text, int width) {
+		List<String> lines = ScreenDrawUtils.wrapText(font, text, width);
+		if (lines.isEmpty()) return List.of(text);
+		if (lines.size() <= 2) return List.copyOf(lines);
+		String rest = String.join(" ", lines.subList(1, lines.size()));
+		return List.of(lines.get(0), ScreenDrawUtils.truncateText(font, rest, width));
+	}
+
+	/** A rite inside an open stage can still wait on its own purity or clarity threshold. */
+	private static boolean isRiteLocked(RitesTabState state, CardinalRiteRecipe recipe) {
+		Minecraft minecraft = Minecraft.getInstance();
+		return state.enableDegreeLock && minecraft.player != null
+				&& !RecipeDegreeGates.playerMeets(minecraft.player, recipe);
 	}
 
 	public static void drawMapInspector(GuiGraphics gfx, ProgressScreenContext ctx, RitesTabState state,
@@ -994,7 +1036,7 @@ public final class RitesTabView {
 			if (state.hideEmptyTiers && recipes.isEmpty()) continue;
 			if (mx >= sx && mx <= sx + sw && my >= sy && my <= sy + rowH
 					&& my >= clipTop && my <= clipBottom) return type;
-			if (selected) sy += rowH + 2 + recipes.size() * 18;
+			if (selected) sy += rowH + 2 + state.expandedRowsHeight(recipes);
 			sy += rowH + 2;
 		}
 		return null;
@@ -1025,10 +1067,11 @@ public final class RitesTabView {
 			sy += rowH + 2;
 			if (selected) {
 				for (int j = 0; j < tierRecipes.size(); j++) {
+					int recH = state.recipeRowHeight(tierRecipes.get(j));
 					if (mx >= sx + 4 && mx <= sx + sw - 4
-							&& my >= sy && my <= sy + 16
+							&& my >= sy && my <= sy + recH
 							&& my >= clipTop && my <= clipBottom) return j;
-					sy += 18;
+					sy += recH + RitesTabState.RECIPE_ROW_GAP;
 				}
 				return -1;
 			}

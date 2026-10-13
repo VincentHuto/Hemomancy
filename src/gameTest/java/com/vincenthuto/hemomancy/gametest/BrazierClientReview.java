@@ -25,6 +25,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class BrazierClientReview {
+    private static final int POURED_SHOT = 9, DRAINED_SHOT = 10;
     private static int ticks;
     private static int shot;
     private static BlockPos row;
@@ -33,6 +34,10 @@ public final class BrazierClientReview {
             {0, 2.4, -5.5, .5, .9, .5, 0}, {-3, 1.6, -2.1, -2.5, .75, .5, 0}, {-1, 1.6, -2.1, -.5, .75, .5, 0},
             {1, 1.6, -2.1, 1.5, .75, .5, 0}, {2.4, 2.3, -1.2, 1.5, .8, .5, 0}, {4.6, 1.8, -1.6, 3.5, .8, .5, 0},
             {1, 2.6, -.8, 1.5, .7, .5, 0},
+            // Close over the lit and the sanguine bowl, for the blood pool under the flames.
+            {-1, 1.75, -.6, -.5, .74, .5, 0}, {1, 1.75, -.6, 1.5, .74, .5, 0},
+            // The unlit bowl half poured, then the lit bowl drawn down to a third (POURED_SHOT, DRAINED_SHOT).
+            {-3, 1.75, -.6, -2.5, .74, .5, 0}, {-1, 1.75, -.6, -.5, .74, .5, 0},
             {0, 2.4, -5.5, .5, .9, .5, 1}, {-1, 1.6, -2.1, -.5, .75, .5, 1}, {1, 1.6, -2.1, 1.5, .75, .5, 1},
             {0, 2.0, -4.0, .5, .9, .5, 0}};
 
@@ -94,11 +99,21 @@ public final class BrazierClientReview {
                 }
             });
         }
-        if (local == 5 && shot == SHOTS.length - 1) mc.player.getInventory().selected = 0;
+        if (local == 5 && shot == SHOTS.length - 1) mc.player.getInventory().selected = 0;        if (local == 20 && (shot == POURED_SHOT || shot == DRAINED_SHOT)) setBowl(server, shot == POURED_SHOT ? -3 : -1,
+                shot == POURED_SHOT ? 25.0D : 17.0D);
         if (local == 40) {
             Screenshot.grab(mc.gameDirectory, "brazier-" + shot + ".png", mc.getMainRenderTarget(), message -> {});
             Hemomancy.LOGGER.info("BRAZIER_REVIEW captured {}", shot);
             shot++;
         }
+    }
+
+    /** Sets a brazier's bowl as a part-finished pour or drain would leave it, for the shot that follows. */
+    private static void setBowl(net.minecraft.server.MinecraftServer server, int offset, double pooled) {
+        server.execute(() -> {
+            var level = server.overworld();
+            if (level.getBlockEntity(row.offset(offset, 0, 0)) instanceof IronBrazierBlockEntity brazier)
+                brazier.setPooledBlood(pooled);
+        });
     }
 }

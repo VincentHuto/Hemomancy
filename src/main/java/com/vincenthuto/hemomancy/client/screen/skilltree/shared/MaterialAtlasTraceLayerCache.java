@@ -12,7 +12,6 @@ import java.util.Map;
 
 final class MaterialAtlasTraceLayerCache {
 	private static final int TRACE_NODE_TRIM_RADIUS = 12;
-	private static final double TRACE_ORGANIC_SWAY_MIN = 10.0;
 	private static final double TRACE_ORGANIC_SWAY_MAX = 22.0;
 	private static final double TRACE_ORGANIC_SWAY_FACTOR = 0.09;
 
@@ -122,7 +121,7 @@ final class MaterialAtlasTraceLayerCache {
 
 	private static double[] cubicControls(int x1, int y1, int x2, int y2, int centerX, int centerY) {
 		double distance = Math.hypot(x2 - x1, y2 - y1);
-		double handle = Math.max(34.0, Math.min(126.0, distance * 0.33));
+		double handle = Math.min(126.0, distance * 0.33);
 		double[] fromRadial = radialFromCenter(x1, y1, x2 - x1, y2 - y1, centerX, centerY);
 		double[] toRadial = radialFromCenter(x2, y2, x2 - x1, y2 - y1, centerX, centerY);
 		double[] sway = organicSway(x1, y1, x2, y2);
@@ -142,7 +141,7 @@ final class MaterialAtlasTraceLayerCache {
 			return new double[] {0.0, 0.0};
 		}
 		double amount = Math.min(TRACE_ORGANIC_SWAY_MAX,
-				Math.max(TRACE_ORGANIC_SWAY_MIN, distance * TRACE_ORGANIC_SWAY_FACTOR));
+				distance * TRACE_ORGANIC_SWAY_FACTOR);
 		double sign = organicSwaySign(x1, y1, x2, y2);
 		return new double[] {
 				-dy / distance * amount * sign,

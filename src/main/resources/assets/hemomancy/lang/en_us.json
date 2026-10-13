@@ -5285,7 +5285,7 @@
   "hemomancy.dialogue.vicar.option.absorption_hint": "How do I absorb enough blood?",
   "hemomancy.dialogue.vicar.option.projection_hint": "How do I make the two projections?",
   "hemomancy.dialogue.vicar.option.rooted_vein": "How do I begin a Cardinal rite?",
-  "hemomancy.vicar.votary.rooted_vein.floor": "Start with the Rite of the Rooted Vein. Its working Lesser floor is cut copper and polished Venous Stone Bricks around a Cardinal Focus. This is a working floor, not the threshold used for your initiation.",
+  "hemomancy.vicar.votary.rooted_vein.floor": "Start with the Rite of the Rooted Vein. Its working Lesser floor is bone blocks and polished Venous Stone Bricks around a Cardinal Focus. No copper: that is the Unstained metal, and it will not hold our pattern. This is a working floor, not the threshold used for your initiation.",
   "hemomancy.vicar.votary.rooted_vein.offering": "Keep the block above the Focus clear. Set one Blood Rock in an Iron Brazier on a floor socket, then light it with Blood Projection. Leave the Focus's medium slot empty. No helper, support sigil, or second offering is required.",
   "hemomancy.dialogue.vicar.option.rooted_vein.channel": "How do I conduct it?",
   "hemomancy.vicar.votary.rooted_vein.staff": "Use your Living Staff on the Focus. With Blood Projection, feed the four anchors, then project into the daemon to seal the rite. Stay inside the boundary while it consumes the offering and returns. Your degree and active blood still decide which rites answer.",

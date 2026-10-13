@@ -29,6 +29,9 @@ public class ConsecratedBloodwellBlockEntity extends BlockEntity {
 
 	private double syncedPoolBlood = 0.0D;
 	private double syncedPoolMax = 0.0D;
+	// Client only: the fullness as drawn, easing toward the synced pool, and when it was last drawn.
+	private float shownFullness = -1.0F;
+	private double shownFullnessTime;
 
 	public ConsecratedBloodwellBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.consecrated_bloodwell.get(), pos, state);
@@ -136,5 +139,19 @@ public class ConsecratedBloodwellBlockEntity extends BlockEntity {
 
 	public double getMaxBlood() {
 		return Math.max(1.0D, syncedPoolMax);
+	}
+
+	/**
+	 * Client: how full the well looks, 0 to 1. The pool syncs only once a second, so the drawn level eases toward it
+	 * slowly enough to glide between updates; it starts at the synced level when the well first comes into view.
+	 */
+	public float shownFullness(float target, double time) {
+		if (shownFullness < 0.0F || time < shownFullnessTime || time - shownFullnessTime > 60.0D) {
+			shownFullness = target;
+		} else {
+			shownFullness += (target - shownFullness) * (float) (1.0D - Math.exp(-(time - shownFullnessTime) * 0.1D));
+		}
+		shownFullnessTime = time;
+		return shownFullness;
 	}
 }

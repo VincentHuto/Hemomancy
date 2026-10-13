@@ -11,8 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.ToIntFunction;
 
 public final class RecipeMapCanvas {
+	static final int FAMILY_LABEL_OFFSET = 22;
+	static final int FAMILY_LABEL_WRAP_WIDTH = 90;
+	private static final double LABEL_SIDE_COSINE = 0.3;
 	private static final RecipeMapRecentHistory RITE_RECENTS = new RecipeMapRecentHistory(5);
 	private static final RecipeMapRecentHistory CRAFTING_RECENTS = new RecipeMapRecentHistory(5);
 
@@ -111,11 +115,16 @@ public final class RecipeMapCanvas {
 			lines.add(Component.literal("Hold Shift to read explanation")
 					.withStyle(style -> style.withColor(0xFF777777).withItalic(true)));
 		}
+		boolean firstUse = RecipeMapTooltip.showsFirstUse(entry);
+		if (firstUse) {
+			lines.add(Component.literal(RecipeMapTooltip.gateLine(entry))
+					.withStyle(style -> style.withColor(entry.unlocked() ? 0xFF999999 : 0xFFAA5555)));
+		}
 		if (entry.unlocked()) {
 			lines.add(Component.literal("Click to view details")
 					.withStyle(style -> style.withColor(0xFFAA7777)));
-		} else {
-			lines.add(Component.literal("Requires Degree " + entry.column())
+		} else if (!firstUse) {
+			lines.add(Component.literal(RecipeMapTooltip.gateLine(entry))
 					.withStyle(style -> style.withColor(0xFFAA5555)));
 		}
 		boolean blueprintCue = canImprint(entry);
@@ -173,11 +182,9 @@ public final class RecipeMapCanvas {
 		int centerY = layout.centerY();
 		for (int degree = 0; degree <= 8; degree++) {
 			if (SkillTreeLayerRules.layerForDegree(degree) != layer) continue;
-			int radius = SkillTreeLayerRules.ringRadiusForDegree(degree, layer);
-			double labelAngle = Math.toRadians(220.0);
-			int labelX = centerX + (int) Math.round(Math.cos(labelAngle) * radius) + 5;
-			int labelY = centerY + (int) Math.round(Math.sin(labelAngle) * radius) - 4;
-			gfx.drawString(ctx.font(), "Degree " + degree, labelX, labelY,
+			String label = "Degree " + degree;
+			int radius = RecipeMapLayout.ringRadius(degree);
+			gfx.drawString(ctx.font(), label, centerX - ctx.font().width(label) / 2, centerY - radius - 4,
 					fadeColor(withAlpha(accent, degreeFilter == null || degreeFilter == degree ? 0xA8 : 0x45), alpha), false);
 		}
 		int hubSize = 42;
@@ -195,19 +202,55 @@ public final class RecipeMapCanvas {
 
 	private void drawFamilyLabels(GuiGraphics gfx, ProgressScreenContext ctx, int accent,
 			SkillTreeLayer layer, float alpha) {
-		int outerRadius = SkillTreeLayerRules.outerRingRadius(layer);
-		for (Map.Entry<String, Double> family : layout.familyAngles().entrySet()) {
-			double angle = family.getValue();
-			int endX = layout.centerX() + (int) Math.round(Math.cos(angle) * outerRadius);
-			int endY = layout.centerY() + (int) Math.round(Math.sin(angle) * outerRadius);
-
-			String label = ctx.font().plainSubstrByWidth(family.getKey(), 112);
-			int labelWidth = ctx.font().width(label);
-			int labelX = Mth.clamp(endX - labelWidth / 2, 8, layout.contentWidth() - labelWidth - 8);
-			int labelY = Mth.clamp(endY - 4, 6, layout.contentHeight() - 16);
-			gfx.drawString(ctx.font(), Component.literal(label).withStyle(style -> style.withBold(true)),
-					labelX, labelY, fadeColor(withAlpha(accent, 0xD8), alpha), false);
+		int anchorRadius = layout.rimRadius(layer) + FAMILY_LABEL_OFFSET;
+		int lineHeight = ctx.font().lineHeight;
+		int color = fadeColor(withAlpha(accent, 0xD8), alpha);
+		for (RecipeMapLayout.Sector sector : layout.sectors(layer)) {
+			List<Component> lines = familyLabelLines(sector.family(),
+					text -> ctx.font().width(boldLabel(text))).stream().map(RecipeMapCanvas::boldLabel).toList();
+			int width = lines.stream().mapToInt(line -> ctx.font().width(line)).max().orElse(0);
+			double angle = sector.midAngle();
+			int anchorX = layout.centerX() + (int) Math.round(Math.cos(angle) * anchorRadius);
+			int anchorY = layout.centerY() + (int) Math.round(Math.sin(angle) * anchorRadius);
+			int[] origin = familyLabelOrigin(angle, anchorX, anchorY, width, lines.size() * lineHeight);
+			for (int line = 0; line < lines.size(); line++) {
+				int lineWidth = ctx.font().width(lines.get(line));
+				int lineX = Math.cos(angle) > LABEL_SIDE_COSINE ? origin[0]
+						: Math.cos(angle) < -LABEL_SIDE_COSINE ? origin[0] + width - lineWidth
+						: origin[0] + (width - lineWidth) / 2;
+				gfx.drawString(ctx.font(), lines.get(line), lineX, origin[1] + line * lineHeight, color, false);
+			}
 		}
+	}
+
+	private static Component boldLabel(String text) {
+		return Component.literal(text).withStyle(style -> style.withBold(true));
+	}
+
+	/** Splits a long family name after its slash, or at the space nearest its middle. */
+	static List<String> familyLabelLines(String family, ToIntFunction<String> width) {
+		if (width.applyAsInt(family) <= FAMILY_LABEL_WRAP_WIDTH) return List.of(family);
+		int slash = family.indexOf('/');
+		if (slash > 0 && slash < family.length() - 1) {
+			return List.of(family.substring(0, slash + 1), family.substring(slash + 1));
+		}
+		int split = -1;
+		for (int index = 0; index < family.length(); index++) {
+			if (family.charAt(index) == ' '
+					&& (split < 0 || Math.abs(index - family.length() / 2.0) < Math.abs(split - family.length() / 2.0))) {
+				split = index;
+			}
+		}
+		return split < 0 ? List.of(family) : List.of(family.substring(0, split), family.substring(split + 1));
+	}
+
+	/** Top-left corner for a label that grows away from the hub from its anchor on the sector's mid-angle. */
+	static int[] familyLabelOrigin(double angle, int anchorX, int anchorY, int width, int height) {
+		double cos = Math.cos(angle);
+		double sin = Math.sin(angle);
+		int x = cos > LABEL_SIDE_COSINE ? anchorX : cos < -LABEL_SIDE_COSINE ? anchorX - width : anchorX - width / 2;
+		int y = sin > LABEL_SIDE_COSINE ? anchorY : sin < -LABEL_SIDE_COSINE ? anchorY - height : anchorY - height / 2;
+		return new int[] {x, y};
 	}
 
 	private void drawNodes(GuiGraphics gfx, ProgressScreenContext ctx, int mouseX, int mouseY, int accent,
@@ -426,7 +469,7 @@ public final class RecipeMapCanvas {
 		view.clamp(layout.contentWidth(), layout.contentHeight(), viewport.width(), viewport.height());
 		if (diveState.isDeepActive()) {
 			if (delta < 0 && diveState.updateDeepZoom(deepPanZoom.zoom)) {
-				centreView(surfacePanZoom, ctx);
+				diveView(surfacePanZoom, ctx);
 				deepFade = 0.0F;
 				resetLayerFilter();
 				closeDetails();
@@ -502,10 +545,10 @@ public final class RecipeMapCanvas {
 		if (!diveState.toggleLayer(ctx.playerDegree())) return;
 		closeDetails();
 		if (diveState.isDeepActive()) {
-			centreView(deepPanZoom, ctx);
+			diveView(deepPanZoom, ctx);
 			deepFade = 1.0F;
 		} else {
-			centreView(surfacePanZoom, ctx);
+			diveView(surfacePanZoom, ctx);
 			deepFade = 0.0F;
 		}
 		resetLayerFilter();
@@ -570,7 +613,7 @@ public final class RecipeMapCanvas {
 				viewport.width(), viewport.height());
 		float surfaceDive = SkillTreeLayerRules.diveProgress(ctx.playerDegree(), surfacePanZoom.zoom, focus);
 		if (diveState.updateSurfaceDive(ctx.playerDegree(), surfaceDive)) {
-			centreView(deepPanZoom, ctx);
+			diveView(deepPanZoom, ctx);
 			deepFade = 1.0F;
 			resetLayerFilter();
 			closeDetails();
@@ -581,7 +624,26 @@ public final class RecipeMapCanvas {
 
 	private void centreView(PanZoomState view, ProgressScreenContext ctx) {
 		RecipeMapInspectorLayout.IntRect viewport = inspectorLayout(ctx).mapViewport();
-		view.centreOn(layout.contentWidth(), layout.contentHeight(), viewport.width(), viewport.height());
+		SkillTreeLayer layer = view == deepPanZoom ? SkillTreeLayer.DEEP : SkillTreeLayer.SURFACE;
+		view.focusOn(layout.centerX(), layout.centerY(), focusRadius(ctx.playerDegree(), layer),
+				viewport.width(), viewport.height());
+	}
+
+	/**
+	 * Layer switches centre the hub at natural size rather than the fitted zoom: a fitted 0.5
+	 * sits one scroll step above {@link SkillTreeDiveState#DEEP_EXIT_ZOOM} and would bounce
+	 * the player straight back out of the deep layer.
+	 */
+	private void diveView(PanZoomState view, ProgressScreenContext ctx) {
+		RecipeMapInspectorLayout.IntRect viewport = inspectorLayout(ctx).mapViewport();
+		view.centreHub(layout.centerX(), layout.centerY(), 1.0F, viewport.width(), viewport.height());
+	}
+
+	/** Ring of the player's next degree on the layer, so Open and Home frame everything up to it. */
+	static int focusRadius(int playerDegree, SkillTreeLayer layer) {
+		int first = layer == SkillTreeLayer.DEEP ? SkillTreeLayerRules.DEEP_MIN_DEGREE : 0;
+		int last = layer == SkillTreeLayer.DEEP ? 8 : SkillTreeLayerRules.SURFACE_MAX_DEGREE;
+		return RecipeMapLayout.ringRadius(Mth.clamp(playerDegree + 1, first, last));
 	}
 
 	private void resetLayerFilter() {

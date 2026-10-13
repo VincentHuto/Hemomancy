@@ -7,7 +7,6 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureOffering;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
-import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import com.vincenthuto.hutoslib.math.MultiblockPatternKey;
@@ -82,7 +81,7 @@ public final class CraftingTabView {
 			gfx.pose().pushPose();
 			gfx.pose().translate(0, 0, 400);
 			drawTierSidebar(gfx, ctx, state, mouseX, mouseY);
-			gfx.drawCenteredString(ctx.font(), "Select a tier",
+			gfx.drawCenteredString(ctx.font(), state.unstainedStages ? "Select a stage" : "Select a tier",
 					contentX + contentW / 2, ctx.guiTop() + ctx.guiHeight() / 2, 0xFF555555);
 			gfx.pose().popPose();
 			return;
@@ -94,7 +93,7 @@ public final class CraftingTabView {
 			gfx.pose().pushPose();
 			gfx.pose().translate(0, 0, 400);
 			drawTierSidebar(gfx, ctx, state, mouseX, mouseY);
-			gfx.drawCenteredString(ctx.font(), "No recipes in this tier",
+			gfx.drawCenteredString(ctx.font(), state.unstainedStages ? "No recipes at this stage" : "No recipes in this tier",
 					contentX + contentW / 2, ctx.guiTop() + ctx.guiHeight() / 2, 0xFF555555);
 			gfx.pose().popPose();
 			return;
@@ -138,7 +137,7 @@ public final class CraftingTabView {
 		int sw  = ProgressScreenContext.TIER_SIDEBAR_W - 8;
 		int rowH = 22;
 
-		gfx.drawString(ctx.font(), Component.literal("Tiers")
+		gfx.drawString(ctx.font(), Component.literal(state.sidebarTitle())
 				.withStyle(s -> s.withColor(state.tabColor).withBold(true)), sx + 2, sy, 0);
 		sy += 14;
 
@@ -153,6 +152,8 @@ public final class CraftingTabView {
 
 		for (int i = 0; i < CraftingTabState.TIER_NAMES.length; i++) {
 			String tierName = CraftingTabState.TIER_NAMES[i];
+			if (state.isTierHidden(tierName)) continue;
+			String tierLabel = state.tierLabel(i);
 			boolean locked   = state.enableDegreeLock && ctx.playerDegree() < CraftingTabState.TIER_DEGREE_REQ[i];
 			boolean selected = tierName.equals(state.selectedCraftingTier);
 			List<BloodStructureRecipe> recipes =
@@ -173,10 +174,12 @@ public final class CraftingTabView {
 
 			if (locked) {
 				gfx.fill(sx + 1, sy + 1, sx + sw - 1, sy + rowH - 1, 0xBB000000);
-				gfx.drawString(ctx.font(), "[X] " + tierName + " (Locked)",
-						sx + 4, sy + (rowH - 8) / 2, 0xFF444444, false);
+				// Long stage names ("Enlightened") leave no room for the suffix; [X] already says locked.
+				String lockedLabel = "[X] " + tierLabel + " (Locked)";
+				if (ctx.font().width(lockedLabel) > sw - 8) lockedLabel = "[X] " + tierLabel;
+				gfx.drawString(ctx.font(), lockedLabel, sx + 4, sy + (rowH - 8) / 2, 0xFF444444, false);
 			} else {
-				String label = tierName + " (" + recipes.size() + ")";
+				String label = tierLabel + " (" + recipes.size() + ")";
 				int textCol = selected ? state.nameColor : 0xFF999999;
 				gfx.drawString(ctx.font(), label, sx + 4, sy + (rowH - 8) / 2, textCol, false);
 			}
@@ -185,21 +188,22 @@ public final class CraftingTabView {
 				sy += rowH + 2;
 				for (int j = 0; j < recipes.size(); j++) {
 					BloodStructureRecipe r = recipes.get(j);
+					int recH = state.recipeRowHeight(r);
 					boolean recSel = (j == state.selectedCraftingIndexInTier);
 					boolean recHov = mouseX >= sx + 4 && mouseX <= sx + sw - 4
-							&& mouseY >= sy && mouseY <= sy + 16
+							&& mouseY >= sy && mouseY <= sy + recH
 							&& mouseY >= clipTop && mouseY <= clipBottom;
 
 					int recBg = recSel ? state.rowBgSelected : (recHov ? state.rowBgHovered : 0x00000000);
-					gfx.fill(sx + 2, sy, sx + sw - 2, sy + 16, recBg);
-					if (recSel) gfx.fill(sx + 2, sy, sx + 3, sy + 16, state.tabColor);
+					gfx.fill(sx + 2, sy, sx + sw - 2, sy + recH, recBg);
+					if (recSel) gfx.fill(sx + 2, sy, sx + 3, sy + recH, state.tabColor);
 
-					String recPath = r.getId().getPath();
-					if (recPath.contains("/")) recPath = recPath.substring(recPath.lastIndexOf('/') + 1);
-					String recName = HLTextUtils.toProperCase(recPath.replace("_", " "));
 					int recCol = recSel ? state.nameColor : 0xFF888888;
-					gfx.drawString(ctx.font(), recName, sx + 8, sy + 4, recCol, false);
-					sy += 18;
+					List<String> recLines = sidebarLines(ctx.font(), state, r);
+					for (int line = 0; line < recLines.size(); line++) {
+						gfx.drawString(ctx.font(), recLines.get(line), sx + 8, sy + 4 + line * 10, recCol, false);
+					}
+					sy += recH + RitesTabState.RECIPE_ROW_GAP;
 				}
 			}
 			sy += rowH + 2;
@@ -215,6 +219,25 @@ public final class CraftingTabView {
 			if (state.craftingSidebarScroll < contentH - visibleH)
 				gfx.drawCenteredString(ctx.font(), "\u25BC", sx + sw / 2, clipBottom - 10, 0xAAFFFFFF);
 		}
+	}
+
+	/**
+	 * Wraps every recipe's result name once against the live font so drawing, hit-testing and
+	 * scroll height agree on which rows take two lines.
+	 */
+	public static void cacheSidebarLabels(net.minecraft.client.gui.Font font, CraftingTabState state) {
+		state.sidebarLabels.clear();
+		int width = ProgressScreenContext.TIER_SIDEBAR_W - 8 - 16;
+		for (BloodStructureRecipe recipe : state.craftingRecipes) {
+			state.sidebarLabels.put(recipe.getId(), RitesTabView.twoLines(font, CraftingTabState.displayName(recipe), width));
+		}
+	}
+
+	private static List<String> sidebarLines(net.minecraft.client.gui.Font font, CraftingTabState state,
+			BloodStructureRecipe recipe) {
+		List<String> cached = state.sidebarLabels.get(recipe.getId());
+		return cached != null ? cached : List.of(ScreenDrawUtils.truncateText(font, CraftingTabState.displayName(recipe),
+				ProgressScreenContext.TIER_SIDEBAR_W - 8 - 16));
 	}
 
 	// ────────────────────────────────────────────────────────────
@@ -360,9 +383,7 @@ public final class CraftingTabView {
 		int lineH = 12;
 
 		// Name
-		String namePath = recipe.getId().getPath();
-		if (namePath.contains("/")) namePath = namePath.substring(namePath.lastIndexOf('/') + 1);
-		String name = HLTextUtils.toProperCase(namePath.replace("_", " "));
+		String name = CraftingTabState.displayName(recipe);
 		for (String line : ScreenDrawUtils.wrapText(ctx.font(), name, panelW)) {
 			gfx.drawString(ctx.font(), Component.literal(line)
 					.withStyle(s -> s.withColor(state.tabColor & 0xFFFFFF).withBold(true)), panelX, y, 0);
@@ -511,9 +532,7 @@ public final class CraftingTabView {
 		int y     = 0;
 		int lineH = 12;
 
-		String namePath = recipe.getId().getPath();
-		if (namePath.contains("/")) namePath = namePath.substring(namePath.lastIndexOf('/') + 1);
-		String name = HLTextUtils.toProperCase(namePath.replace("_", " "));
+		String name = CraftingTabState.displayName(recipe);
 		y += ScreenDrawUtils.wrapText(font, name, panelW).size() * lineH + 4 + 1 + 6;
 		y += lineH + 4; // blood cost
 
@@ -600,9 +619,10 @@ public final class CraftingTabView {
 			boolean selected = tierName.equals(state.selectedCraftingTier);
 			List<BloodStructureRecipe> recipes =
 					state.craftingByTier.getOrDefault(tierName, List.of());
+			if (state.isTierHidden(tierName)) continue;
 			if (mx >= sx && mx <= sx + sw && my >= sy && my <= sy + rowH
 					&& my >= clipTop && my <= clipBottom) return tierName;
-			if (selected) sy += rowH + 2 + recipes.size() * 18;
+			if (selected) sy += rowH + 2 + state.expandedRowsHeight(recipes);
 			sy += rowH + 2;
 		}
 		return null;
@@ -630,13 +650,15 @@ public final class CraftingTabView {
 			boolean selected = tierName.equals(state.selectedCraftingTier);
 			List<BloodStructureRecipe> tierRecipes =
 					state.craftingByTier.getOrDefault(tierName, List.of());
+			if (state.isTierHidden(tierName)) continue;
 			sy += rowH + 2;
 			if (selected) {
 				for (int j = 0; j < tierRecipes.size(); j++) {
+					int recH = state.recipeRowHeight(tierRecipes.get(j));
 					if (mx >= sx + 4 && mx <= sx + sw - 4
-							&& my >= sy && my <= sy + 16
+							&& my >= sy && my <= sy + recH
 							&& my >= clipTop && my <= clipBottom) return j;
-					sy += 18;
+					sy += recH + RitesTabState.RECIPE_ROW_GAP;
 				}
 				return -1;
 			}

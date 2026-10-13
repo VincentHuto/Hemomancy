@@ -40,12 +40,12 @@ final class ScarTreeLayoutTest {
 				node("phoenix", EnumBloodTendency.ANIMUS, 3)));
 
 		assertEquals(new ScarTreeLayout.Point(480, 280), result.pointFor("heart"));
-		assertEquals(new ScarTreeLayout.Point(480, 230), result.pointFor("marrow"));
-		assertEquals(new ScarTreeLayout.Point(480, 180), result.pointFor("phoenix"));
+		assertEquals(new ScarTreeLayout.Point(480, 215), result.pointFor("marrow"));
+		assertEquals(new ScarTreeLayout.Point(480, 150), result.pointFor("phoenix"));
 	}
 
 	@Test
-	void builtInAuthoredBranchesUseTheCompactedTierRings() {
+	void builtInAuthoredBranchesUseTheTierRings() {
 		ScarTreeLayout.Result result = ScarTreeLayout.arrange(List.of(
 				node("hemomancy:scar_pyre", EnumBloodTendency.FLAMMEUS, 1),
 				node("hemomancy:scar_sol", EnumBloodTendency.FLAMMEUS, 2),
@@ -55,13 +55,41 @@ final class ScarTreeLayoutTest {
 				new ScarTreeLayout.Node("hemomancy:scar_blood_honed", EnumBloodTendency.FERRIC, 2, true),
 				node("hemomancy:scar_crucible", EnumBloodTendency.FERRIC, 3)));
 
-		assertEquals(new ScarTreeLayout.Point(601, 359), result.pointFor("hemomancy:scar_pyre"));
-		assertEquals(new ScarTreeLayout.Point(647, 313), result.pointFor("hemomancy:scar_sol"));
-		assertEquals(new ScarTreeLayout.Point(692, 268), result.pointFor("hemomancy:scar_corona"));
-		assertEquals(new ScarTreeLayout.Point(280, 490), result.pointFor("hemomancy:scar_thorn"));
-		assertEquals(new ScarTreeLayout.Point(230, 490), result.pointFor("hemomancy:scar_anvil"));
-		assertEquals(new ScarTreeLayout.Point(230, 450), result.pointFor("hemomancy:scar_blood_honed"));
-		assertEquals(new ScarTreeLayout.Point(180, 490), result.pointFor("hemomancy:scar_crucible"));
+		assertEquals(new ScarTreeLayout.Point(621, 339), result.pointFor("hemomancy:scar_pyre"));
+		assertEquals(new ScarTreeLayout.Point(667, 293), result.pointFor("hemomancy:scar_sol"));
+		assertEquals(new ScarTreeLayout.Point(713, 247), result.pointFor("hemomancy:scar_corona"));
+		assertEquals(new ScarTreeLayout.Point(280, 480), result.pointFor("hemomancy:scar_thorn"));
+		assertEquals(new ScarTreeLayout.Point(215, 480), result.pointFor("hemomancy:scar_anvil"));
+		assertEquals(new ScarTreeLayout.Point(215, 412), result.pointFor("hemomancy:scar_blood_honed"));
+		assertEquals(new ScarTreeLayout.Point(150, 480), result.pointFor("hemomancy:scar_crucible"));
+	}
+
+	@Test
+	void builtInMainChainsSitOnSharedTierRingsSoEveryFamilyGetsTheSameClearance() {
+		String[][] chains = {
+				{"heart", "marrow", "phoenix"}, {"pyre", "sol", "corona"}, {"feral", "flux", "chimera"},
+				{"halo", "veil", "transcendence"}, {"blight", "wither", "oblivion"},
+				{"rime", "glacier", "descendence"}, {"thorn", "anvil", "crucible"}, {"shade", "moon", "eye"}};
+		EnumBloodTendency[] tendencies = EnumBloodTendency.values();
+		List<ScarTreeLayout.Node> nodes = new java.util.ArrayList<>();
+		for (int family = 0; family < chains.length; family++) {
+			for (int tier = 1; tier <= 3; tier++) {
+				nodes.add(node("hemomancy:scar_" + chains[family][tier - 1], tendencies[family], tier));
+			}
+		}
+
+		ScarTreeLayout.Result result = ScarTreeLayout.arrange(nodes);
+
+		int[] tierRadii = {200, 265, 330};
+		for (ScarTreeLayout.Node node : nodes) {
+			ScarTreeLayout.Point point = result.pointFor(node.id());
+			double radius = Math.hypot(point.x() - ScarTreeLayout.CENTER_X, point.y() - ScarTreeLayout.CENTER_Y);
+			assertEquals(tierRadii[node.tier() - 1], radius, 1.0, node.id());
+			double axis = Math.toRadians(-90.0 + node.tendency().ordinal() * 45.0);
+			double offAxis = Math.abs(-(point.x() - ScarTreeLayout.CENTER_X) * Math.sin(axis)
+					+ (point.y() - ScarTreeLayout.CENTER_Y) * Math.cos(axis));
+			assertTrue(offAxis <= 1.0, node.id() + " sits on its tendency axis");
+		}
 	}
 
 	@Test

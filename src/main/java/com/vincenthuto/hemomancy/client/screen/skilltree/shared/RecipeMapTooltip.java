@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
+import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
 import net.minecraft.util.Mth;
 
 public final class RecipeMapTooltip {
@@ -13,17 +14,33 @@ public final class RecipeMapTooltip {
 			case FLOOR -> "Ritual Floor";
 		};
 		if (entry.key().kind() == RecipeMapEntry.Kind.FLOOR) {
-			String tier = switch (entry.column()) {
-				case 0 -> "Minor";
-				case 1 -> "Lesser";
-				case 2 -> "Greater";
-				default -> "Grand";
-			};
+			String tier = floorTier(entry);
 			return new Content(entry.displayName(), entry.description(),
-					kind + "  |  " + tier + "  |  " + entry.family());
+					kind + (tier == null ? "" : "  |  " + tier) + "  |  " + entry.family());
+		}
+		if (entry.key().kind() == RecipeMapEntry.Kind.SIGIL) {
+			return new Content(entry.displayName(), entry.description(), kind + "  |  " + entry.family());
 		}
 		return new Content(entry.displayName(), entry.description(),
 				kind + "  |  Degree " + entry.column() + "  |  " + entry.family());
+	}
+
+	/** Floors and sigils are ringed by the first rite that uses them, not by a gate of their own. */
+	public static boolean showsFirstUse(RecipeMapEntry entry) {
+		return entry.key().kind() == RecipeMapEntry.Kind.FLOOR || entry.key().kind() == RecipeMapEntry.Kind.SIGIL;
+	}
+
+	public static String gateLine(RecipeMapEntry entry) {
+		return (showsFirstUse(entry) ? "First used at Degree " : "Requires Degree ") + entry.column();
+	}
+
+	private static String floorTier(RecipeMapEntry entry) {
+		String path = entry.id().getPath();
+		for (CardinalRiteType tier : CardinalRiteType.values()) {
+			String name = tier.getSerializedName();
+			if (path.endsWith("_" + name)) return Character.toUpperCase(name.charAt(0)) + name.substring(1);
+		}
+		return null;
 	}
 
 	public static int maxWidth(int guiWidth) {

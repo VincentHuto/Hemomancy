@@ -9,7 +9,6 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.ImprintMnemonicBlueprintPacket;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
-import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
@@ -52,6 +51,8 @@ public class CraftingTabController implements IProgressTab {
             state.rowBgHovered     = 0xBB0C1420;
             state.rowBgNormal      = 0x990A0E18;
             state.enableDegreeLock = true;
+            state.hideEmptyTiers   = true;
+            state.unstainedStages  = true;
         }
     }
 
@@ -65,13 +66,14 @@ public class CraftingTabController implements IProgressTab {
                 if (r.isUnstained() == unstained) state.craftingRecipes.add(r);
         state.rebuildTierMap();
         if (unstained) {
+            CraftingTabView.cacheSidebarLabels(ctx.font(), state);
             state.autoSelectFirstTier(ctx.playerDegree());
         } else {
             List<RecipeMapEntry> entries = new ArrayList<>();
             for (BloodStructureRecipe recipe : state.craftingRecipes) {
                 mapRecipes.put(recipe.getId(), recipe);
                 String path = recipe.getId().getPath();
-				String name = displayName(recipe);
+				String name = CraftingTabState.displayName(recipe);
                 int degree = RecipeDegreeGates.getRequiredDegree(recipe);
                 entries.add(new RecipeMapEntry(new RecipeMapKey(RecipeMapEntry.Kind.CRAFTING, recipe.getId()),
                         name, tooltipDescription(recipe), degree, HarbingerRecipeMapDefinitions.craftingFamily(path),
@@ -85,14 +87,6 @@ public class CraftingTabController implements IProgressTab {
             });
             state.selectedCraftingTier = null;
         }
-    }
-
-    private static String displayName(BloodStructureRecipe recipe) {
-        ItemStack result = recipe.getResult();
-        if (result != null && !result.isEmpty()) return result.getHoverName().getString();
-        String path = recipe.getId().getPath();
-        if (path.contains("/")) path = path.substring(path.lastIndexOf('/') + 1);
-        return HLTextUtils.toProperCase(path.replace("_", " "));
     }
 
 	private static String tooltipDescription(BloodStructureRecipe recipe) {

@@ -35,13 +35,21 @@ public final class SummonsTabView {
 	static final int TAB_COLOR = 0xFFBB3355;
 	private static final int DETAIL_VALUE_INDENT = 10;
 	private static final int DETAIL_ROW_GAP = 2;
+	private static final int DETAIL_PAD = 8;
+	private static final int PANEL_TOP = 28;
+	/** Panels stop above the bottom-right Summons/Bestiary tabs: 16 px tall with 4 px padding above and below. */
+	static final int PANEL_BOTTOM_INSET = 16 + 2 * 4;
+
+	static int panelHeight(ProgressScreenContext ctx) {
+		return ctx.guiHeight() - PANEL_TOP - PANEL_BOTTOM_INSET;
+	}
 
 	public static void draw(GuiGraphics gfx, ProgressScreenContext ctx,
 							SummonsTabState state, int mouseX, int mouseY, float partial) {
 		int contentX = ctx.guiLeft() + ProgressScreenContext.TIER_SIDEBAR_W + 6;
 		int contentW = ctx.guiWidth() - ProgressScreenContext.TIER_SIDEBAR_W - 10;
-		int contentTop = ctx.guiTop() + 28;
-		int contentH = ctx.guiHeight() - 38;
+		int contentTop = ctx.guiTop() + PANEL_TOP;
+		int contentH = panelHeight(ctx);
 
 		gfx.pose().pushPose();
 		gfx.pose().translate(0, 0, 400);
@@ -164,7 +172,7 @@ public final class SummonsTabView {
 		boolean degreeOk = ctx.playerDegree() >= definition.requiredDegree();
 		boolean known = state.isKnown(definition);
 		boolean recipeUnlocked = hasTrialRecipe(definition);
-		Component status = statusComponent(degreeOk, recipeUnlocked, known, definition.requiredDegree());
+		Component status = statusComponent(definition, degreeOk, recipeUnlocked, known);
 		gfx.drawCenteredString(ctx.font(), status, x + w / 2, statusY, 0);
 
 		int entityTop = y + 34;
@@ -184,17 +192,30 @@ public final class SummonsTabView {
 		}
 	}
 
-	private static Component statusComponent(boolean degreeOk, boolean recipeUnlocked, boolean known, int requiredDegree) {
+	private static Component statusComponent(PuppeteerSummonDefinition definition, boolean degreeOk,
+											 boolean recipeUnlocked, boolean known) {
 		if (!degreeOk) {
-			return Component.literal("Locked: Degree " + requiredDegree).withStyle(ChatFormatting.DARK_GRAY);
+			return Component.literal("Locked: Degree " + definition.requiredDegree()).withStyle(ChatFormatting.DARK_GRAY);
 		}
 		if (known) {
 			return Component.literal("Unlocked").withStyle(ChatFormatting.DARK_RED);
+		}
+		if (grantedBySuccession(definition)) {
+			return Component.literal("Succession required").withStyle(ChatFormatting.GRAY);
 		}
 		if (!recipeUnlocked) {
 			return Component.literal("Recipe locked").withStyle(ChatFormatting.GRAY);
 		}
 		return Component.literal("Trial required").withStyle(ChatFormatting.GRAY);
+	}
+
+	/** The Ringmaster Pattern has no trial rite: the Circus Succession finale binds it. */
+	private static boolean grantedBySuccession(PuppeteerSummonDefinition definition) {
+		return PuppeteerSummonDefinitions.RINGMASTER_PATTERN.equals(definition.name());
+	}
+
+	static String unlockHint(PuppeteerSummonDefinition definition) {
+		return grantedBySuccession(definition) ? "Circus Succession finale" : "Puppetry Cardinal Ordeal";
 	}
 
 	private static boolean hasTrialRecipe(PuppeteerSummonDefinition definition) {
@@ -309,9 +330,12 @@ public final class SummonsTabView {
 				HarbingerChromeRenderer.State.ACTIVE);
 
 		int lineH = 12;
-		int textX = x + 8;
-		int textW = w - 16;
-		int drawY = y + 8 - state.infoScroll;
+		int textX = x + DETAIL_PAD;
+		int textW = w - DETAIL_PAD * 2;
+		state.infoVisibleH = h;
+		state.clampInfoScroll();
+		int textTop = y + DETAIL_PAD - state.infoScroll;
+		int drawY = textTop;
 		int clipTop = y + 2;
 		int clipBottom = y + h - 2;
 		gfx.enableScissor(x + 2, clipTop, x + w - 2, clipBottom);
@@ -325,7 +349,7 @@ public final class SummonsTabView {
 		boolean degreeOk = ctx.playerDegree() >= definition.requiredDegree();
 		boolean known = state.isKnown(definition);
 		boolean recipeUnlocked = hasTrialRecipe(definition);
-		drawY = drawStackedDetailLine(gfx, ctx, "Status", statusComponent(degreeOk, recipeUnlocked, known, definition.requiredDegree()).getString(), textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, "Status", statusComponent(definition, degreeOk, recipeUnlocked, known).getString(), textX, drawY, textW, lineH);
 		drawY = drawStackedDetailLine(gfx, ctx, "Role", I18n.get(definition.roleTranslationKey()), textX, drawY, textW, lineH);
 		drawY = drawStackedDetailLine(gfx, ctx, "Required", "Degree " + definition.requiredDegree(), textX, drawY, textW, lineH);
 		drawY += 4;
@@ -351,7 +375,7 @@ public final class SummonsTabView {
 		drawY = drawStackedDetailLine(gfx, ctx, "Upkeep", upkeep + " charge/min", textX, drawY, textW, lineH);
 		drawY = drawStackedDetailLine(gfx, ctx, "Primary Offering", primaryOffering(definition).getHoverName().getString(),
 				textX, drawY, textW, lineH);
-		drawY = drawStackedDetailLine(gfx, ctx, "Unlock", "Puppetry Cardinal Ordeal", textX, drawY, textW, lineH);
+		drawY = drawStackedDetailLine(gfx, ctx, "Unlock", unlockHint(definition), textX, drawY, textW, lineH);
 		drawY += 4;
 
 		int skein = SkillPointHelper.getPuppetSkeinLevel();
@@ -372,8 +396,14 @@ public final class SummonsTabView {
 
 		gfx.disableScissor();
 
-		if (drawY - y > h && state.infoScroll > 0) {
-			gfx.drawCenteredString(ctx.font(), "\u25B2", x + w / 2, y + 2, 0xAAFFFFFF);
+		// Text height including both paddings; scrolling stops once the last line is in view
+		state.infoContentH = drawY - textTop + DETAIL_PAD * 2;
+		state.clampInfoScroll();
+		if (state.infoScroll > 0) {
+			gfx.drawCenteredString(ctx.font(), "\u25B2", x + w - 10, y + 3, 0xAAFFFFFF);
+		}
+		if (state.infoScroll < state.maxInfoScroll()) {
+			gfx.drawCenteredString(ctx.font(), "\u25BC", x + w - 10, y + h - 11, 0xAAFFFFFF);
 		}
 	}
 
@@ -426,8 +456,8 @@ public final class SummonsTabView {
 		int contentX = ctx.guiLeft() + ProgressScreenContext.TIER_SIDEBAR_W + 6;
 		int contentW = ctx.guiWidth() - ProgressScreenContext.TIER_SIDEBAR_W - 10;
 		int previewW = Math.max(150, contentW / 2);
-		int y = ctx.guiTop() + 28;
-		int h = ctx.guiHeight() - 38;
+		int y = ctx.guiTop() + PANEL_TOP;
+		int h = panelHeight(ctx);
 		return mx >= contentX && mx <= contentX + previewW && my >= y && my <= y + h;
 	}
 

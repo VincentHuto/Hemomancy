@@ -64,10 +64,10 @@ public final class LivingStaffSkillBranch {
 							.setIconItem(() -> new ItemStack(ItemInit.living_staff.get())));
 			SkillPointInit.skill_vespers_refusal = SkillPointInit.registerSkill(branch,
 					new SkillPoint(25, "skill_vespers_refusal", 700, 3, EnumSkillStates.LOCKED, SkillPointInit.skill_hematic_focus)
-							.setSkillPointCost(4).setRequiredDegree(7).setTreePosition(276, 384).setBranch("living_staff").setBranchColor(0xFFD9AD28)
+							.setSkillPointCost(4).setRequiredDegree(7).setTreePosition(276, 384).setBranch("living_staff").setBranchColor(0xFFD9AD28).addParents(SkillPointInit.deep_base_skill)
 							.setIconItem(() -> new ItemStack(ItemInit.memory_of_vesper.get())));
 			SkillPointInit.skill_persistent_arsenal = SkillPointInit.registerSkill(branch,
-					new SkillPoint(50, "skill_persistent_arsenal", 350, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_weapons_master)
+					new SkillPoint(50, "skill_persistent_arsenal", 350, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_crimson_projection)
 							.setSkillPointCost(3).setRequiredDegree(3).setTreePosition(286, 382).setBranch("living_staff").setBranchColor(0xFFD9AD28).setToggleable(true)
 							.setIconItem(() -> new ItemStack(ItemInit.living_staff.get())));
 			SkillPointInit.skill_distributed_siphon = SkillPointInit.registerSkill(branch,
@@ -88,7 +88,7 @@ public final class LivingStaffSkillBranch {
 							.setIconItem(() -> new ItemStack(ItemInit.blood_absorption.get())));
 			SkillPointInit.skill_guarded_feeding = SkillPointInit.registerSkill(branch,
 					new SkillPoint(54, "skill_guarded_feeding", 525, 1, EnumSkillStates.LOCKED, SkillPointInit.skill_vascular_mercy)
-							.setSkillPointCost(3).setRequiredDegree(4).setTreePosition(232, 602).setBranch("living_staff").setBranchColor(0xFFD9AD28).setToggleable(true)
+							.setSkillPointCost(3).setRequiredDegree(4).setTreePosition(196, 604).setBranch("living_staff").setBranchColor(0xFFD9AD28).setToggleable(true)
 							.setIconItem(() -> new ItemStack(ItemInit.blood_absorption.get())));
 		// </skill-editor>
 	}

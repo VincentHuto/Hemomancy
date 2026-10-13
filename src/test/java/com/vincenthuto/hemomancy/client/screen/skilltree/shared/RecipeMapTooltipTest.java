@@ -53,6 +53,28 @@ final class RecipeMapTooltipTest {
 	}
 
 	@Test
+	void floorsAndSigilsNameTheirFirstUseInsteadOfAGate() {
+		RecipeMapEntry floor = new RecipeMapEntry(
+				new RecipeMapKey(RecipeMapEntry.Kind.FLOOR,
+						ResourceLocation.fromNamespaceAndPath("hemomancy", "communion_grand")),
+				"Grand Communion Floor", "", 6, "Ritual Floors", 0, true, true);
+		RecipeMapEntry sigil = new RecipeMapEntry(
+				new RecipeMapKey(RecipeMapEntry.Kind.SIGIL,
+						ResourceLocation.fromNamespaceAndPath("hemomancy", "reservoir")),
+				"Reservoir", "", 5, "Ichorian Sigils", 0, true, false);
+		RecipeMapEntry rite = new RecipeMapEntry(
+				new RecipeMapKey(RecipeMapEntry.Kind.RITE,
+						ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/test")),
+				"Test Rite", "", 3, "Order", 0, true, false);
+
+		assertEquals("Ritual Floor  |  Grand  |  Ritual Floors", RecipeMapTooltip.content(floor).context());
+		assertEquals("First used at Degree 6", RecipeMapTooltip.gateLine(floor));
+		assertEquals("Sigil  |  Ichorian Sigils", RecipeMapTooltip.content(sigil).context());
+		assertEquals("First used at Degree 5", RecipeMapTooltip.gateLine(sigil));
+		assertEquals("Requires Degree 3", RecipeMapTooltip.gateLine(rite));
+	}
+
+	@Test
 	void riteExplanationIsHiddenUntilShiftIsHeld() {
 		RecipeMapEntry rite = new RecipeMapEntry(
 				new RecipeMapKey(RecipeMapEntry.Kind.RITE,

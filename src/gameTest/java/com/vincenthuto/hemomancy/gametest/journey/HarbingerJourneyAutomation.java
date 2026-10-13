@@ -407,10 +407,12 @@ public final class HarbingerJourneyAutomation {
 			if (!brazier.hasOffering() && !brazier.insertOffering(player, slot.representativeStack().copy())) {
 				throw new IllegalStateException("Offering was rejected");
 			}
-			if (player.serverLevel().getBlockState(slot.pos()).getValue(BrazierBlock.RITUAL_PHASE) == 0) {
-				((BrazierBlock) player.serverLevel().getBlockState(slot.pos()).getBlock()).projectBloodIntoBlock(
+			// Projection pours the lighting cost in over several ticks; keep pouring until the brazier takes.
+			for (int pour = 0; pour < 64
+					&& player.serverLevel().getBlockState(slot.pos()).getValue(BrazierBlock.RITUAL_PHASE) == 0; pour++) {
+				if (((BrazierBlock) player.serverLevel().getBlockState(slot.pos()).getBlock()).projectBloodIntoBlock(
 						player.serverLevel(), slot.pos(), player.serverLevel().getBlockState(slot.pos()), player,
-						BrazierBlock.BLOOD_TO_LIGHT);
+						BrazierBlock.BLOOD_TO_LIGHT) <= 0.0D) break;
 			}
 		}
 	}

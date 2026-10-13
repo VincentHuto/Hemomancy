@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.model.tile.functional.FloatingHeartModel;
 import com.vincenthuto.hemomancy.client.render.item.QliphothSeedTendrilEffects;
+import com.vincenthuto.hemomancy.client.render.world.CardinalFloorConsecrationRenderer;
 import com.vincenthuto.hemomancy.common.rite.CardinalFocusMediumVisualRules;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
 import com.vincenthuto.hutoslib.math.Quaternion;
@@ -15,11 +16,13 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 /**
  * Reuses the Mortal Display heart model to show the temple heart's bond inside
- * its linked focus. An inserted medium makes the heart contract visibly.
+ * its linked focus. An inserted medium makes the heart contract visibly. A formed
+ * rite floor around the focus is drawn as one consecrated membrane.
  */
 public class CardinalFocusRenderer implements BlockEntityRenderer<CardinalFocusBlockEntity> {
 	private final FloatingHeartModel heart;
@@ -31,8 +34,27 @@ public class CardinalFocusRenderer implements BlockEntityRenderer<CardinalFocusB
 	}
 
 	@Override
+	public boolean shouldRenderOffScreen(CardinalFocusBlockEntity focus) {
+		return CardinalFloorConsecrationRenderer.hasFloor(focus);
+	}
+
+	@Override
+	public int getViewDistance() {
+		return 96;
+	}
+
+	@Override
+	public AABB getRenderBoundingBox(CardinalFocusBlockEntity focus) {
+		int radius = CardinalFloorConsecrationRenderer.renderRadius(focus);
+		return new AABB(focus.getBlockPos()).inflate(radius, 1.0D, radius);
+	}
+
+	@Override
 	public void render(CardinalFocusBlockEntity focus, float partialTick, PoseStack pose,
 			MultiBufferSource buffers, int light, int overlay) {
+		if (CardinalFloorConsecrationRenderer.hasFloor(focus)) {
+			CardinalFloorConsecrationRenderer.render(focus, partialTick, pose, buffers);
+		}
 		if (focus.getTempleDisplay() == null && !focus.hasMedium()) return;
 		float time = focus.getLevel() == null ? 0.0F
 				: focus.getLevel().getGameTime() + partialTick;

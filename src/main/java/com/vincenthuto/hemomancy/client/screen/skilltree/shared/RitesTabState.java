@@ -2,12 +2,16 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
+import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Holds all mutable state for the Cardinal Rites browser tab.
@@ -17,10 +21,18 @@ import java.util.Map;
  * rendering logic reduces the size of the main screen class.
  */
 public class RitesTabState {
+	/** Rites that open the next stretch of the Unstained path, in path order; they lead their stage's list. */
+	static final List<String> GATEWAY_RITES = List.of("cardinal_rite/lethean_baptism",
+			"cardinal_rite/closed_vein", "cardinal_rite/clarity_ascension");
+	public static final int RECIPE_ROW_H = 16;
+	public static final int RECIPE_ROW_H_WRAPPED = 26;
+	public static final int RECIPE_ROW_GAP = 2;
 
 	// ── Loaded recipe data ───────────────────────────────────────
 	public final List<CardinalRiteRecipe> riteRecipes = new ArrayList<>();
 	public final Map<Integer, List<CardinalRiteRecipe>> ritesByTier = new LinkedHashMap<>();
+	/** Sidebar name lines per rite (one or two), wrapped by the view against the live font. */
+	public final Map<ResourceLocation, List<String>> sidebarLabels = new HashMap<>();
 
 	// ── Selection / navigation ───────────────────────────────────
 	public Integer selectedRiteTier = null;
@@ -61,6 +73,8 @@ public class RitesTabState {
 	public boolean enableDegreeLock = true;
 	/** When {@code true}, tiers with zero recipes are hidden from the sidebar. */
 	public boolean hideEmptyTiers   = false;
+	/** When {@code true}, tiers are headed by Unstained stage names instead of Harbinger degrees. */
+	public boolean unstainedStages  = false;
 
 	// ── Data helpers ─────────────────────────────────────────────
 
@@ -74,8 +88,48 @@ public class RitesTabState {
 			ritesByTier.get(RecipeDegreeGates.getRequiredDegree(r)).add(r);
 		}
 		for (List<CardinalRiteRecipe> list : ritesByTier.values()) {
-			list.sort(java.util.Comparator.comparingDouble(CardinalRiteRecipe::getBloodCost));
+			list.sort(sidebarOrder(recipe -> recipe.getId().getPath(), RitesTabState::displayName));
 		}
+	}
+
+	/** Gateway rites first in path order, then alphabetical by the name the player reads. */
+	static <T> Comparator<T> sidebarOrder(Function<T, String> path, Function<T, String> name) {
+		return Comparator.comparingInt((T item) -> gatewayRank(path.apply(item)))
+				.thenComparing(name, String.CASE_INSENSITIVE_ORDER)
+				.thenComparing(path);
+	}
+
+	private static int gatewayRank(String path) {
+		int rank = GATEWAY_RITES.indexOf(path);
+		return rank < 0 ? GATEWAY_RITES.size() : rank;
+	}
+
+	public static String displayName(CardinalRiteRecipe recipe) {
+		String name = recipe.getRiteName();
+		if (name != null && !name.isEmpty()) return name;
+		String path = recipe.getId().getPath();
+		if (path.contains("/")) path = path.substring(path.lastIndexOf('/') + 1);
+		return HLTextUtils.toProperCase(path.replace("_", " "));
+	}
+
+	public String sidebarTitle() {
+		return unstainedStages ? "Rites by Stage" : "Rite Degrees";
+	}
+
+	public String tierLabel(int level) {
+		if (unstainedStages) return RecipeDegreeGates.unstainedStageLabel(level);
+		return level == 0 ? "No Degree" : "Degree " + level;
+	}
+
+	public int recipeRowHeight(CardinalRiteRecipe recipe) {
+		return sidebarLabels.getOrDefault(recipe.getId(), List.of()).size() > 1 ? RECIPE_ROW_H_WRAPPED : RECIPE_ROW_H;
+	}
+
+	/** Height of an expanded tier's rite rows, including the gap after each. */
+	public int expandedRowsHeight(List<CardinalRiteRecipe> recipes) {
+		int total = 0;
+		for (CardinalRiteRecipe recipe : recipes) total += recipeRowHeight(recipe) + RECIPE_ROW_GAP;
+		return total;
 	}
 
 	/** Selects the first accessible tier that contains at least one recipe. */
@@ -103,7 +157,7 @@ public class RitesTabState {
 			total += rowH + 2;
 			if (this.selectedRiteTier != null) {
 				if (type == selectedRiteTier) {
-					total += rowH + 2 + recipes.size() * 18;
+					total += rowH + 2 + expandedRowsHeight(recipes);
 				}
 			}
 

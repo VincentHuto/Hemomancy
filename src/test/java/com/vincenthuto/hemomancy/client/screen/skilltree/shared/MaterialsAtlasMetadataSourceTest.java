@@ -110,6 +110,16 @@ public final class MaterialsAtlasMetadataSourceTest {
 				view, "int textX = x - textW / 2;");
 		assertContains("materials view renders veiled preview nodes",
 				view, "drawVeiledNode");
+		assertContains("materials view offsets the drawn hub with its nodes",
+				view, "MaterialAtlasSpec.hubLabelX(path) + offsetX");
+		assertContains("materials view offsets category plaques with their nodes",
+				view, "bucket.plaqueX() + offsetX");
+		assertContains("materials controller bends traces around the drawn hub",
+				controller, "contentW, contentH, hubX(), hubY());");
+		assertContains("materials controller opens on the hub fitted to the player's next tier",
+				controller, "panZoom.focusOn(hubX(), hubY(), focusRadius");
+		assertNotContains("materials controller no longer centres the whole atlas content",
+				controller, "panZoom.centreOn(");
 		assertContains("materials view uses cached atlas traces",
 				view, "MaterialAtlasTraceLayerCache");
 		assertNotContains("materials view no longer owns rectangular cluster columns",
