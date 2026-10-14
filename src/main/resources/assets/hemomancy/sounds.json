@@ -1290,5 +1290,28 @@
       {"name": "minecraft:entity.player.attack.sweep", "type": "event", "pitch": 1.7},
       {"name": "minecraft:item.trident.hit", "type": "event", "pitch": 1.4}
     ]
-  }
+  },
+  "rite.staff_impact": {"subtitle": "subtitle.hemomancy.rite.staff_impact", "sounds": [{"name": "minecraft:entity.ravager.step", "type": "event", "pitch": 0.62}]},
+  "rite.consecrate": {"subtitle": "subtitle.hemomancy.rite.consecrate", "sounds": [{"name": "minecraft:block.beacon.activate", "type": "event", "pitch": 1.2, "volume": 0.8}]},
+  "rite.anchor_fill": {"subtitle": "subtitle.hemomancy.rite.anchor_fill", "sounds": [{"name": "minecraft:item.bucket.fill", "type": "event", "pitch": 0.7, "volume": 0.7}]},
+  "rite.anchor_repair": {"subtitle": "subtitle.hemomancy.rite.anchor_repair", "sounds": [{"name": "minecraft:block.respawn_anchor.charge", "type": "event", "pitch": 0.6, "volume": 0.5}]},
+  "rite.segment_seal": {"subtitle": "subtitle.hemomancy.rite.segment_seal", "sounds": [{"name": "minecraft:entity.warden.heartbeat", "type": "event", "pitch": 0.9, "volume": 0.8}]},
+  "rite.anchor_break": {"subtitle": "subtitle.hemomancy.rite.anchor_break", "sounds": [{"name": "minecraft:block.sculk_shrieker.break", "type": "event", "pitch": 0.6}]},
+  "rite.seal": {"subtitle": "subtitle.hemomancy.rite.seal", "sounds": [{"name": "minecraft:block.beacon.power_select", "type": "event", "pitch": 0.75}]},
+  "rite.sigil_awaken": {"subtitle": "subtitle.hemomancy.rite.sigil_awaken", "sounds": [{"name": "minecraft:block.sculk_catalyst.bloom", "type": "event", "pitch": 0.8}]},
+  "rite.wave_start": {"subtitle": "subtitle.hemomancy.rite.wave_start", "sounds": [{"name": "minecraft:block.sculk_shrieker.shriek", "type": "event", "pitch": 0.7, "volume": 0.8}]},
+  "rite.wave_clear": {"subtitle": "subtitle.hemomancy.rite.wave_clear", "sounds": [{"name": "minecraft:entity.warden.heartbeat", "type": "event", "pitch": 1.1, "volume": 0.6}]},
+  "rite.offering_drawn": {"subtitle": "subtitle.hemomancy.rite.offering_drawn", "sounds": [{"name": "minecraft:item.firecharge.use", "type": "event", "pitch": 0.7, "volume": 0.8}]},
+  "rite.culmination": {"subtitle": "subtitle.hemomancy.rite.culmination", "sounds": [{"name": "hemomancy:entity/samples/cinimatic_boom", "pitch": 0.8, "volume": 0.7}]},
+  "rite.complete": {"subtitle": "subtitle.hemomancy.rite.complete", "sounds": [{"name": "minecraft:entity.enderman.scream", "type": "event", "pitch": 0.5, "volume": 0.9}]},
+  "rite.collapse": {"subtitle": "subtitle.hemomancy.rite.collapse", "sounds": [{"name": "minecraft:entity.generic.explode", "type": "event", "pitch": 0.55}]},
+  "rite.cancel_draw": {"subtitle": "subtitle.hemomancy.rite.cancel_draw", "sounds": [{"name": "minecraft:block.sculk_shrieker.shriek", "type": "event", "pitch": 1.5, "volume": 0.25}]},
+  "rite.cancel": {"subtitle": "subtitle.hemomancy.rite.cancel", "sounds": [{"name": "minecraft:block.beacon.deactivate", "type": "event", "pitch": 0.65}]},
+  "rite.floor_form": {"subtitle": "subtitle.hemomancy.rite.floor_form", "sounds": [{"name": "minecraft:block.sculk_catalyst.bloom", "type": "event", "pitch": 0.7}]},
+  "rite.backlash": {"subtitle": "subtitle.hemomancy.rite.backlash", "sounds": [{"name": "minecraft:entity.ender_dragon.growl", "type": "event", "pitch": 0.7, "volume": 0.8}]},
+  "rite.escalate": {"subtitle": "subtitle.hemomancy.rite.escalate", "sounds": [{"name": "minecraft:entity.warden.sonic_charge", "type": "event", "pitch": 0.6, "volume": 0.9}]},
+  "rite.ambient.drone": {"subtitle": "subtitle.hemomancy.rite.ambient.drone", "sounds": [{"name": "minecraft:ambient.crimson_forest.loop", "type": "event", "pitch": 0.7}]},
+  "rite.ambient.heartbeat": {"subtitle": "subtitle.hemomancy.rite.ambient.heartbeat", "sounds": [{"name": "minecraft:entity.warden.heartbeat", "type": "event", "pitch": 0.8}]},
+  "rite.ambient.storm": {"subtitle": "subtitle.hemomancy.rite.ambient.storm", "sounds": [{"name": "minecraft:ambient.basalt_deltas.loop", "type": "event", "pitch": 0.8}]},
+  "rite.ring_open": {"subtitle": "subtitle.hemomancy.rite.ring_open", "sounds": [{"name": "minecraft:entity.warden.roar", "type": "event", "pitch": 0.7, "volume": 0.9}]}
 }

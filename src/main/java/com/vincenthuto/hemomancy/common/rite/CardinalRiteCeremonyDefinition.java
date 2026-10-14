@@ -23,7 +23,18 @@ public record CardinalRiteCeremonyDefinition(
 		List<String> helperRoles,
 		int stillIntervalTicks,
 		Atmosphere atmosphere,
-		String failureProfile) {
+		String failureProfile,
+		int waveCount,
+		String culmination) {
+
+	/** Authored data without an explicit wave count or culmination. */
+	public CardinalRiteCeremonyDefinition(CardinalRiteCeremonyProfile profile, List<Anchor> anchors,
+			List<SupportSocket> supportSockets, List<String> waves, List<String> guaranteedWaves,
+			List<BlockPos> fragileOffsets, int targetDurationTicks, String focusMode, int requiredHelpers,
+			List<String> helperRoles, int stillIntervalTicks, Atmosphere atmosphere, String failureProfile) {
+		this(profile, anchors, supportSockets, waves, guaranteedWaves, fragileOffsets, targetDurationTicks,
+				focusMode, requiredHelpers, helperRoles, stillIntervalTicks, atmosphere, failureProfile, -1, "");
+	}
 
 	public CardinalRiteCeremonyDefinition {
 		profile = profile == null ? CardinalRiteCeremonyProfile.STANDARD : profile;
@@ -39,10 +50,19 @@ public record CardinalRiteCeremonyDefinition(
 		stillIntervalTicks = Math.max(0, stillIntervalTicks);
 		atmosphere = atmosphere == null ? new Atmosphere("none", false, false) : atmosphere;
 		failureProfile = failureProfile == null ? "" : failureProfile;
+		waveCount = Math.max(-1, waveCount);
+		culmination = culmination == null ? "" : culmination;
+	}
+
+	/** Whether the recipe states its own wave count rather than inheriting the degree default. */
+	public boolean hasAuthoredWaveCount() {
+		return waveCount >= 0;
 	}
 
 	public int anchorBloodCostMl() {
-		return anchors.size() * CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML;
+		int total = 0;
+		for (int rank : CardinalRiteRingRules.ranksOf(anchors)) total += CardinalRiteRingRules.bloodForRank(rank);
+		return total;
 	}
 
 	public boolean abbreviated() {

@@ -71,7 +71,7 @@ public final class RecipeDegreeGates {
 	 */
 	public static boolean playerMayAttempt(Player player, CardinalRiteRecipe recipe) {
 		if (!playerMeets(player, recipe)) return false;
-		Integer target = recipe.isRankup() ? getRankupTargetDegree(recipe.getId()) : null;
+		Integer target = getRankupTargetDegree(recipe);
 		return target == null || rankupWindowOpen(getPlayerLevel(player, recipe.isUnstained()), target);
 	}
 
@@ -119,6 +119,16 @@ public final class RecipeDegreeGates {
 		return value == Math.rint(value) ? Integer.toString((int) value) : Float.toString(value);
 	}
 
+	/**
+	 * The degree a rank rite grants: one above the degree it requires. Every
+	 * Harbinger rank rite follows this, so the recipe itself is the authority.
+	 */
+	public static Integer getRankupTargetDegree(CardinalRiteRecipe recipe) {
+		if (recipe == null || !recipe.isRankup() || recipe.isUnstained()) return null;
+		return clampLevel(getRequiredDegree(recipe) + 1);
+	}
+
+	/** Legacy lookup by id, kept for rites that predate recipe-carried targets. */
 	public static Integer getRankupTargetDegree(ResourceLocation riteId) {
 		return riteId == null ? null : RANKUP_RITE_TARGET_DEGREES.get(riteId.getPath());
 	}

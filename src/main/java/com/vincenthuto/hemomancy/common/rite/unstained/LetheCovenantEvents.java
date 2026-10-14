@@ -4,31 +4,27 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
-import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 /**
- * Server-side event handler for Lethe Covenant domains established by the
- * Rite of the Lethe Covenant.
- * <p>
- * Three concurrent effects while a domain is active:
+ * Lethe Covenant domains from the Rites of the Lethe Covenant and the Lethean Font.
  * <ol>
- *   <li><b>Spawn suppression</b>: natural mob spawns inside the domain are denied
- *       at a 50% rate, countering Sanguine Fervor.</li>
- *   <li><b>Bleed immunity</b>: players inside the domain who have Silver Ward
- *       active take zero magic damage.</li>
- *   <li><b>Purity growth</b>: every minute, Unstained players inside the domain
+ *   <li><b>Purity growth</b>: every minute, Unstained players inside a domain
  *       gain +0.2 purity.</li>
+ *   <li><b>Bleed immunity</b>: players inside a domain who have Silver Ward
+ *       active take zero magic damage.</li>
+ *   <li><b>Spawn suppression</b>: half of natural spawns are denied, and
+ *       Sanguine Fervor never forces spawns inside a domain. The rule lives in
+ *       {@link com.vincenthuto.hemomancy.common.rite.zone.RiteZoneSpawnRules}.</li>
  * </ol>
+ * Each level processes the domains cast in its own dimension.
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class LetheCovenantEvents {
@@ -39,27 +35,17 @@ public class LetheCovenantEvents {
 	/** Purity awarded per minute to Unstained players in the domain. */
 	private static final float PURITY_PER_MINUTE = 0.2f;
 
-	//  Level tick: purity growth 
-
 	@SubscribeEvent
 	public static void onLevelTick(LevelTickEvent.Post event) {
 		if (!(event.getLevel() instanceof ServerLevel sLevel)) return;
-		if (sLevel != sLevel.getServer().overworld()) return;
-
 		long tick = sLevel.getGameTime();
-
 		if (tick % PURITY_TICK_INTERVAL != 0) return;
 
-		LetheCovenantSavedData data = LetheCovenantSavedData.get(sLevel);
-		if (data.getEntries().isEmpty()) return;
+		LetheCovenantSavedData data = LetheCovenantSavedData.get(sLevel.getServer().overworld());
+		if (data.zones().isEmpty()) return;
 
-		String dimension = sLevel.dimension().location().toString();
-
-		for (ServerPlayer player : sLevel.getServer().getPlayerList().getPlayers()) {
-			if (!player.level().equals(sLevel)) continue;
-			BlockPos pos = player.blockPosition();
-
-			if (!data.isInDomain(pos, dimension, tick)) continue;
+		for (ServerPlayer player : sLevel.players()) {
+			if (!data.contains(player.blockPosition(), sLevel.dimension(), tick)) continue;
 
 			HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
 				if (!progress.hasBegunPurification() || progress.isPurified()) return;
@@ -69,54 +55,16 @@ public class LetheCovenantEvents {
 		}
 	}
 
-	//  Spawn check: 50% suppression inside covenant domains 
-
-	@SubscribeEvent
-	public static void onPositionCheck(MobSpawnEvent.PositionCheck event) {
-		// Only suppress natural spawns
-		if (event.getSpawnType() == MobSpawnType.SPAWNER) return;
-
-		net.minecraft.world.level.ServerLevelAccessor levelAccessor = event.getLevel();
-		ServerLevel sLevel = levelAccessor.getLevel();
-		ServerLevel overworld = sLevel.getServer().overworld();
-
-		LetheCovenantSavedData data = LetheCovenantSavedData.get(overworld);
-		if (data.getEntries().isEmpty()) return;
-
-		BlockPos spawnPos = BlockPos.containing(event.getX(), event.getY(), event.getZ());
-		String dimension = sLevel.dimension().location().toString();
-		long tick = sLevel.getGameTime();
-
-		if (data.isInDomain(spawnPos, dimension, tick)) {
-			// 50% chance to block the spawn
-			if (sLevel.getRandom().nextBoolean()) {
-				event.setResult(MobSpawnEvent.PositionCheck.Result.FAIL);
-			}
-		}
-	}
-
-	//  Hurt event: bleed immunity for Silver Ward players in the domain 
-
 	@SubscribeEvent
 	public static void onLivingHurt(LivingIncomingDamageEvent event) {
 		if (!(event.getEntity() instanceof Player player)) return;
-		if (player.level().isClientSide) return;
+		if (!(player.level() instanceof ServerLevel sLevel)) return;
 		if (!event.getSource().is(DamageTypes.MAGIC)) return;
-
-		// Only protect players who have Silver Ward active
 		if (!player.hasEffect(EffectInit.silver_ward)) return;
 
-		ServerLevel sLevel = (ServerLevel) player.level();
-		ServerLevel overworld = sLevel.getServer().overworld();
-		LetheCovenantSavedData data = LetheCovenantSavedData.get(overworld);
-		if (data.getEntries().isEmpty()) return;
-
-		BlockPos pos = player.blockPosition();
-		String dimension = sLevel.dimension().location().toString();
-		long tick = sLevel.getGameTime();
-
-		if (data.isInDomain(pos, dimension, tick)) {
-			// Cancel all magic (bleed) damage Silver Ward is absolute inside the Covenant
+		LetheCovenantSavedData data = LetheCovenantSavedData.get(sLevel.getServer().overworld());
+		if (data.contains(player.blockPosition(), sLevel.dimension(), sLevel.getGameTime())) {
+			// Silver Ward is absolute inside the Covenant: all magic (bleed) damage is cancelled.
 			event.setCanceled(true);
 		}
 	}

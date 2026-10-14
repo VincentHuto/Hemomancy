@@ -1,102 +1,54 @@
 package com.vincenthuto.hemomancy.common.rite.unstained;
 
+import com.vincenthuto.hemomancy.common.rite.zone.RiteZone;
+import com.vincenthuto.hemomancy.common.rite.zone.RiteZoneKind;
+import com.vincenthuto.hemomancy.common.rite.zone.RiteZoneSavedData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 /**
- * World-level persistence for active Pale Consecration zones established by
- * the Rite of Pale Consecration. Each entry tracks the caster, zone center,
- * dimension, radius, and expiry tick.
- * <p>
- * While active, hostile mobs inside the zone periodically take 1 damage and
- * receive Slowness I, simulating the consecrated ground's rejection of
- * blood-touched creatures.
+ * Active Pale Consecration zones from the Rites of Pale Consecration and
+ * Antiseptic Ground. Hostile mobs inside one periodically take 1 damage and
+ * Slowness I, the consecrated ground rejecting blood-touched creatures.
  */
-public class PaleConsecrationSavedData extends SavedData {
+public class PaleConsecrationSavedData extends RiteZoneSavedData {
 
 	private static final String DATA_NAME = "hemomancy_pale_consecration";
 	private static final SavedData.Factory<PaleConsecrationSavedData> FACTORY =
 			new SavedData.Factory<>(PaleConsecrationSavedData::new, PaleConsecrationSavedData::load, null);
 
-	private final List<ConsecrationEntry> entries = new ArrayList<>();
-
-	public PaleConsecrationSavedData() {}
+	public PaleConsecrationSavedData() {
+		super(RiteZoneKind.PALE_CONSECRATION);
+	}
 
 	public static PaleConsecrationSavedData get(ServerLevel overworld) {
 		return overworld.getDataStorage().computeIfAbsent(FACTORY, DATA_NAME);
 	}
 
 	public static PaleConsecrationSavedData load(CompoundTag tag, HolderLookup.Provider provider) {
-		PaleConsecrationSavedData data = new PaleConsecrationSavedData();
-		if (tag.contains("entries", Tag.TAG_LIST)) {
-			ListTag list = tag.getList("entries", Tag.TAG_COMPOUND);
-			for (int i = 0; i < list.size(); i++) {
-				CompoundTag entry = list.getCompound(i);
-				UUID ownerUUID = entry.getUUID("Owner");
-				BlockPos center = BlockPos.of(entry.getLong("Center"));
-				String dimension = entry.getString("Dimension");
-				int blockRadius = entry.getInt("BlockRadius");
-				long expiryTick = entry.getLong("ExpiryTick");
-				data.entries.add(new ConsecrationEntry(ownerUUID, center, dimension, blockRadius, expiryTick));
-			}
-		}
-		return data;
-	}
-
-	@Override
-	@Nonnull
-	public CompoundTag save(@Nonnull CompoundTag tag, HolderLookup.Provider provider) {
-		ListTag list = new ListTag();
-		for (ConsecrationEntry entry : entries) {
-			CompoundTag entryTag = new CompoundTag();
-			entryTag.putUUID("Owner", entry.ownerUUID());
-			entryTag.putLong("Center", entry.center().asLong());
-			entryTag.putString("Dimension", entry.dimension());
-			entryTag.putInt("BlockRadius", entry.blockRadius());
-			entryTag.putLong("ExpiryTick", entry.expiryTick());
-			list.add(entryTag);
-		}
-		tag.put("entries", list);
-		return tag;
+		return loadInto(new PaleConsecrationSavedData(), tag);
 	}
 
 	public void addEntry(ConsecrationEntry entry) {
-		entries.add(entry);
-		setDirty();
+		addZone(entry.toZone());
 	}
 
 	public List<ConsecrationEntry> getEntries() {
-		return entries;
+		return zones().stream().map(ConsecrationEntry::of).toList();
 	}
 
-	/** Removes all expired entries. Returns true if anything was removed. */
-	public boolean removeExpired(long currentTick) {
-		boolean changed = entries.removeIf(e -> currentTick >= e.expiryTick());
-		if (changed) setDirty();
-		return changed;
-	}
-
-	/** Returns true if the given position is inside at least one active zone. */
+	/** Returns true if the position is inside at least one active zone in that dimension. */
 	public boolean isInZone(BlockPos pos, String dimension, long currentTick) {
-		for (ConsecrationEntry entry : entries) {
-			if (currentTick >= entry.expiryTick()) continue;
-			if (!entry.dimension().equals(dimension)) continue;
-			BlockPos center = entry.center();
-			double dx = Math.abs(pos.getX() - center.getX());
-			double dz = Math.abs(pos.getZ() - center.getZ());
-			if (dx <= entry.blockRadius() && dz <= entry.blockRadius()) return true;
-		}
-		return false;
+		ResourceKey<Level> key = RiteZone.dimensionKey(dimension);
+		return key != null && contains(pos, key, currentTick);
 	}
 
 	/**
@@ -109,5 +61,15 @@ public class PaleConsecrationSavedData extends SavedData {
 	 * @param expiryTick  world game-tick at which this entry expires
 	 */
 	public record ConsecrationEntry(UUID ownerUUID, BlockPos center, String dimension,
-			int blockRadius, long expiryTick) {}
+			int blockRadius, long expiryTick) {
+		RiteZone toZone() {
+			return RiteZone.timed(RiteZoneKind.PALE_CONSECRATION, ownerUUID, center,
+					RiteZone.requireDimensionKey(dimension), blockRadius, expiryTick);
+		}
+
+		static ConsecrationEntry of(RiteZone zone) {
+			return new ConsecrationEntry(zone.owner(), zone.center(), zone.dimensionId(),
+					zone.blockRadius(), zone.expiryTick());
+		}
+	}
 }

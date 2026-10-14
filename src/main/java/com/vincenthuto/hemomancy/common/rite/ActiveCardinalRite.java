@@ -93,6 +93,23 @@ public class ActiveCardinalRite {
 	private boolean puppeteerTrialDefeated;
 	private float puppeteerTrialProgress;
 	private int puppeteerTrialMissingTicks;
+	private int sacrificeMl;
+	private int finaleHoldTicks;
+	/** Milestones already counted toward the rite's world stage; see {@link CardinalRiteEscalation}. */
+	private CardinalRiteEscalation.Marks escalationMarks = CardinalRiteEscalation.Marks.NONE;
+	private int escalationStage;
+	/** Each anchor's ring rank, or null for a rite started before ring gating: every ring open at the flat cost. */
+	private int[] anchorRanks;
+	/** Rings woken so far; only rises. */
+	private int openRings;
+	/** Opener phases the sealed rite has entered while rings still slept. */
+	private int ringOpenersEntered;
+	/** Woken rings already announced to the world; ring 0 never is. */
+	private int announcedRings;
+	/** Whether the recipe holds still intervals, known before the seal records it. */
+	private boolean stillIntervalsPlanned;
+	/** Transient: set once the rite has been ended through CardinalRiteTermination. */
+	private boolean ended;
 
 	public record RiteOffering(BlockPos pos, ItemStack stack, boolean consume) {
 		public RiteOffering {
@@ -213,10 +230,11 @@ public class ActiveCardinalRite {
 	}
 
 	public boolean fillAnchor(int anchorIndex, int availableBloodMl) {
-		if (phase != CardinalRitePhase.CONSECRATION && phase != CardinalRitePhase.ORDEAL
-				&& phase != CardinalRitePhase.STILL_INTERVAL) return false;
-		if (anchorIndex < 0 || anchorIndex >= anchorBloodMl.length || availableBloodMl <= 0) return false;
-		int missing = CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML - anchorBloodMl[anchorIndex];
+		if (phase != CardinalRitePhase.CONSECRATION && phase != CardinalRitePhase.INSCRIPTION
+				&& phase != CardinalRitePhase.STATION_PROJECTION && phase != CardinalRitePhase.ORDEAL
+				&& phase != CardinalRitePhase.STILL_INTERVAL && phase != CardinalRitePhase.OFFERING_PROCESSION) return false;
+		if (!isAnchorOpen(anchorIndex) || availableBloodMl <= 0) return false;
+		int missing = anchorRequirementMl(anchorIndex) - anchorBloodMl[anchorIndex];
 		if (missing <= 0) return false;
 		int accepted = Math.min(missing, availableBloodMl);
 		anchorBloodMl[anchorIndex] += accepted;
@@ -226,34 +244,29 @@ public class ActiveCardinalRite {
 	}
 
 	public int bloodNeededForAnchor(int anchorIndex) {
-		if (anchorIndex < 0 || anchorIndex >= anchorBloodMl.length) return 0;
-		return Math.max(0, CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML - anchorBloodMl[anchorIndex]);
+		if (!isAnchorOpen(anchorIndex)) return 0;
+		return Math.max(0, anchorRequirementMl(anchorIndex) - anchorBloodMl[anchorIndex]);
 	}
 
 	public boolean areAnchorsConsecrated() {
 		if (anchorBloodMl.length == 0) return false;
-		for (int blood : anchorBloodMl) {
-			if (blood < CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML) return false;
+		for (int i = 0; i < anchorBloodMl.length; i++) {
+			if (isAnchorOpen(i) && anchorBloodMl[i] < anchorRequirementMl(i)) return false;
 		}
 		return true;
 	}
 
 	public int totalAnchorRings() {
-		return Math.ceilDiv(anchorBloodMl.length, CardinalRiteCeremonyRules.ANCHORS_PER_DEGREE);
+		return anchorRanks != null ? CardinalRiteRingRules.ringCount(anchorRanks)
+				: Math.ceilDiv(anchorBloodMl.length, CardinalRiteCeremonyRules.ANCHORS_PER_DEGREE);
 	}
 
 	public int completedRings() {
 		int completed = 0;
-		int authoredRings = totalAnchorRings();
-		for (int ring = 0; ring < authoredRings; ring++) {
-			boolean full = true;
-			int start = ring * CardinalRiteCeremonyRules.ANCHORS_PER_DEGREE;
-			for (int i = start; i < Math.min(start + CardinalRiteCeremonyRules.ANCHORS_PER_DEGREE,
-					anchorBloodMl.length); i++) {
-				if (anchorBloodMl[i] < CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML) {
-					full = false;
-					break;
-				}
+		for (int ring = 0; ring < totalAnchorRings(); ring++) {
+			boolean full = ring < getOpenRings();
+			for (int i = 0; full && i < anchorBloodMl.length; i++) {
+				if (anchorRank(i) == ring && anchorBloodMl[i] < anchorRequirementMl(i)) full = false;
 			}
 			if (!full) break;
 			completed++;
@@ -291,9 +304,10 @@ public class ActiveCardinalRite {
 	}
 
 	public int upgradeBloodNeeded() {
-		return phase == CardinalRitePhase.STATION_PROJECTION
-				? com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.bloodPerCircuit(recipeId)
-						- upgrade.getInt("BloodAtStage") : 0;
+		if (phase != CardinalRitePhase.STATION_PROJECTION || upgrade.getInt("Stage")
+				>= com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.circuits(recipeId)) return 0;
+		return com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.bloodPerCircuit(recipeId)
+				- upgrade.getInt("BloodAtStage");
 	}
 	public boolean fillUpgradeCircuit(int circuit, int paid) {
 		if (phase != CardinalRitePhase.STATION_PROJECTION || circuit != upgrade.getInt("Stage")
@@ -306,7 +320,7 @@ public class ActiveCardinalRite {
 			upgrade.putInt("Stage", circuit + 1);
 			upgrade.putInt("BloodAtStage", 0);
 			if (circuit + 1 == com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.circuits(recipeId))
-				setPhase(finalePhase());
+				tryFinishStationProjection();
 		}
 		return true;
 	}
@@ -394,15 +408,188 @@ public class ActiveCardinalRite {
 		return returningFromOfferings;
 	}
 
+	/**
+	 * Records that the next offering has been drawn out of its brazier. Unlike the
+	 * legacy visit, the procession clock keeps running: draws are staggered by
+	 * phase time rather than by the daemon reaching each brazier.
+	 */
+	public boolean markOfferingDrawn() {
+		if (offeringVisitIndex >= offeringItinerary.size()) return false;
+		offeringVisitIndex++;
+		returningFromOfferings = offeringVisitIndex >= offeringItinerary.size();
+		return true;
+	}
+
+	/**
+	 * Holds a rite that reached its finale while something it needs is missing.
+	 * The rite waits in a still interval instead of consuming its offerings for
+	 * nothing, and retries after {@code holdTicks}.
+	 */
+	public boolean holdBeforeFinale(int holdTicks) {
+		if (phase != CardinalRitePhase.OFFERING_PROCESSION && phase != CardinalRitePhase.CULMINATION) return false;
+		if (offeringVisitIndex > 0) return false;
+		enterPhase(CardinalRitePhase.STILL_INTERVAL, false);
+		finaleHoldTicks = Math.max(1, holdTicks);
+		return true;
+	}
+
+	/** Counts down a finale hold; true while the rite must keep waiting. */
+	public boolean tickFinaleHold() {
+		if (finaleHoldTicks <= 0) return false;
+		finaleHoldTicks--;
+		return true;
+	}
+
+	public boolean isHeldBeforeFinale() {
+		return finaleHoldTicks > 0;
+	}
+
+	/** Marks the rite ended; false if it already was. */
+	public boolean markEnded() {
+		if (ended) return false;
+		ended = true;
+		return true;
+	}
+
+	public boolean isEnded() {
+		return ended;
+	}
+
+	public void addSacrificeMl(int bloodMl) {
+		if (bloodMl > 0) sacrificeMl += bloodMl;
+	}
+
+	public int getSacrificeMl() {
+		return sacrificeMl;
+	}
+
+	public CardinalRiteEscalation.Marks getEscalationMarks() {
+		return escalationMarks;
+	}
+
+	public void setEscalationMarks(CardinalRiteEscalation.Marks marks) {
+		escalationMarks = marks == null ? CardinalRiteEscalation.Marks.NONE : marks;
+	}
+
+	public int getEscalationStage() {
+		return escalationStage;
+	}
+
+	public void setEscalationStage(int stage) {
+		escalationStage = Math.max(0, stage);
+	}
+
+	public int getEscalationTotal() {
+		return CardinalRiteEscalation.plan(this).total();
+	}
+
+	/** Wakes ring 0 only; later rings wake as the sealed rite enters its openers. Ignored unless one rank per anchor. */
+	public void configureRings(int[] ranks, boolean stillIntervals) {
+		if (ranks == null || ranks.length == 0 || ranks.length != anchorBloodMl.length) return;
+		anchorRanks = ranks.clone();
+		openRings = 1;
+		announcedRings = 1;
+		ringOpenersEntered = 0;
+		stillIntervalsPlanned = stillIntervals;
+		reconcileInstabilityDamage();
+	}
+
+	public boolean ringsGated() {
+		return anchorRanks != null;
+	}
+
+	public int anchorRank(int anchorIndex) {
+		return anchorRanks != null && anchorIndex >= 0 && anchorIndex < anchorRanks.length
+				? anchorRanks[anchorIndex] : anchorIndex / CardinalRiteCeremonyRules.ANCHORS_PER_DEGREE;
+	}
+
+	public int getOpenRings() {
+		return ringsGated() ? openRings : totalAnchorRings();
+	}
+
+	public boolean isAnchorOpen(int anchorIndex) {
+		return anchorIndex >= 0 && anchorIndex < anchorBloodMl.length && anchorRank(anchorIndex) < getOpenRings();
+	}
+
+	/** The blood this anchor asks for, by its rank; the flat cost for a rite started before ring gating. */
+	public int anchorRequirementMl(int anchorIndex) {
+		return ringsGated() ? CardinalRiteRingRules.bloodForRank(anchorRank(anchorIndex))
+				: CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML;
+	}
+
+	/** Each anchor's requirement, or 0 while its ring sleeps. */
+	public int[] anchorRequirements() {
+		int[] required = new int[anchorBloodMl.length];
+		for (int i = 0; i < required.length; i++) required[i] = isAnchorOpen(i) ? anchorRequirementMl(i) : 0;
+		return required;
+	}
+
+	public int openAnchorCount() {
+		int open = 0;
+		for (int i = 0; i < anchorBloodMl.length; i++) if (isAnchorOpen(i)) open++;
+		return open;
+	}
+
+	public int openRequirementMl() {
+		int total = 0;
+		for (int i = 0; i < anchorBloodMl.length; i++) if (isAnchorOpen(i)) total += anchorRequirementMl(i);
+		return total;
+	}
+
+	public int fullRequirementMl() {
+		int total = 0;
+		for (int i = 0; i < anchorBloodMl.length; i++) total += anchorRequirementMl(i);
+		return total;
+	}
+
+	/** Blood standing in the open anchors, each counted up to its requirement. */
+	public int committedAnchorBloodMl() {
+		int total = 0;
+		for (int i = 0; i < anchorBloodMl.length; i++) {
+			if (isAnchorOpen(i)) total += Math.clamp(anchorBloodMl[i], 0, anchorRequirementMl(i));
+		}
+		return total;
+	}
+
+	public int anchorDeficitInstability() {
+		return CardinalRiteCeremonyRules.anchorDeficitInstability(anchorBloodMl, anchorRequirements());
+	}
+
+	/** Open anchors beyond ring 0 still below their requirement. */
+	public int hungryLaterRingAnchors() {
+		if (!ringsGated()) return 0;
+		int hungry = 0;
+		for (int i = 0; i < anchorBloodMl.length; i++) {
+			if (anchorRank(i) > 0 && bloodNeededForAnchor(i) > 0) hungry++;
+		}
+		return hungry;
+	}
+
+	/** The next woken ring to announce, marking it announced, or -1 when every woken ring has been. */
+	public int nextRingToAnnounce() {
+		if (!ringsGated() || announcedRings >= openRings) return -1;
+		return announcedRings++;
+	}
+
+	/** Hands a station rite whose circuits are all fed to its finale, once every woken ring is fed too. */
+	public boolean tryFinishStationProjection() {
+		if (phase != CardinalRitePhase.STATION_PROJECTION || upgrade.getInt("Stage")
+				< com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.circuits(recipeId)) return false;
+		if (ringsGated() && !areAnchorsConsecrated()) return false;
+		setPhase(finalePhase());
+		return true;
+	}
+
 	public boolean finishOfferingProcession() {
 		if (phase != CardinalRitePhase.OFFERING_PROCESSION || !returningFromOfferings) return false;
+		if (ringsGated() && !areAnchorsConsecrated()) return false;
 		setPhase(CardinalRitePhase.CULMINATION);
 		return true;
 	}
 
 
 	public int drainAnchor(int anchorIndex, int requestedMl) {
-		if (anchorIndex < 0 || anchorIndex >= anchorBloodMl.length || requestedMl <= 0) return 0;
+		if (!isAnchorOpen(anchorIndex) || requestedMl <= 0) return 0;
 		int drained = Math.min(requestedMl, anchorBloodMl[anchorIndex]);
 		anchorBloodMl[anchorIndex] -= drained;
 		return drained;
@@ -428,8 +615,18 @@ public class ActiveCardinalRite {
 		addInstability(-Math.max(0, amount));
 	}
 
+	/**
+	 * A still interval past its duration presses dry stations each second without limit. A rite held before its
+	 * finale with no still interval of its own (duration 0) only feels the capped deficit pressure, so a ring that
+	 * woke with the procession cannot collapse it before it can be fed.
+	 */
+	public void applyStillIntervalPressure(int durationTicks) {
+		if (durationTicks <= 0) applyAnchorDeficitPressure();
+		else addInstability(anchorDeficitInstability());
+	}
+
 	public void applyAnchorDeficitPressure() {
-		int pressure = CardinalRiteCeremonyRules.anchorDeficitInstability(anchorBloodMl);
+		int pressure = anchorDeficitInstability();
 		if (pressure > instability) addInstability(pressure - instability);
 	}
 
@@ -446,7 +643,7 @@ public class ActiveCardinalRite {
 			instabilityRepairBloodMl[anchorIndex] = 0;
 			brokenInstabilityAnchors.remove(anchorIndex);
 			instability = Math.max(0, instability
-					- CardinalRiteInstabilityBoundaryRules.repairInstabilityAmount(anchorBloodMl.length));
+					- CardinalRiteInstabilityBoundaryRules.repairInstabilityAmount(openAnchorCount()));
 			reconcileInstabilityDamage();
 		}
 		return true;
@@ -469,11 +666,11 @@ public class ActiveCardinalRite {
 		if (brokenInstabilityAnchors.contains(anchorIndex)) return 0.0F;
 		if (threatenedInstabilityAnchor() != anchorIndex) return 1.0F;
 		return (float) (1.0D - CardinalRiteInstabilityBoundaryRules.flickerProgress(
-				instability, anchorBloodMl.length));
+				instability, openAnchorCount()));
 	}
 
 	private int threatenedInstabilityAnchor() {
-		if (CardinalRiteInstabilityBoundaryRules.flickerProgress(instability, anchorBloodMl.length) <= 0.0D) {
+		if (CardinalRiteInstabilityBoundaryRules.flickerProgress(instability, openAnchorCount()) <= 0.0D) {
 			return -1;
 		}
 		for (int index : effectiveInstabilityDamagePriority()) {
@@ -484,8 +681,8 @@ public class ActiveCardinalRite {
 
 	private void reconcileInstabilityDamage() {
 		int desired = CardinalRiteInstabilityBoundaryRules.brokenAnchorCount(
-				instability, anchorBloodMl.length);
-		brokenInstabilityAnchors.removeIf(index -> index < 0 || index >= anchorBloodMl.length);
+				instability, openAnchorCount());
+		brokenInstabilityAnchors.removeIf(index -> index < 0 || index >= anchorBloodMl.length || !isAnchorOpen(index));
 		while (brokenInstabilityAnchors.size() > desired) {
 			int last = -1;
 			for (int index : brokenInstabilityAnchors) last = index;
@@ -523,10 +720,14 @@ public class ActiveCardinalRite {
 	}
 
 	private int[] effectiveInstabilityDamagePriority() {
-		if (instabilityDamagePriority.length == anchorBloodMl.length) return instabilityDamagePriority;
-		int[] natural = new int[anchorBloodMl.length];
-		for (int index = 0; index < natural.length; index++) natural[index] = index;
-		return natural;
+		int[] base;
+		if (instabilityDamagePriority.length == anchorBloodMl.length) {
+			base = instabilityDamagePriority;
+		} else {
+			base = new int[anchorBloodMl.length];
+			for (int index = 0; index < base.length; index++) base[index] = index;
+		}
+		return ringsGated() ? java.util.Arrays.stream(base).filter(this::isAnchorOpen).toArray() : base;
 	}
 
 	public void setSigilProgress(String sigilId, int nodes) {
@@ -558,13 +759,21 @@ public class ActiveCardinalRite {
 	}
 
 	public void balanceAnchors() {
-		for (int start = 0; start < anchorBloodMl.length; start += CardinalRiteCeremonyRules.ANCHORS_PER_DEGREE) {
-			int end = Math.min(anchorBloodMl.length, start + CardinalRiteCeremonyRules.ANCHORS_PER_DEGREE);
+		for (int ring = 0; ring < getOpenRings(); ring++) {
 			int total = 0;
-			for (int i = start; i < end; i++) total += anchorBloodMl[i];
-			int average = total / (end - start);
-			int remainder = total % (end - start);
-			for (int i = start; i < end; i++) anchorBloodMl[i] = average + (i - start < remainder ? 1 : 0);
+			int count = 0;
+			for (int i = 0; i < anchorBloodMl.length; i++) {
+				if (anchorRank(i) != ring) continue;
+				total += anchorBloodMl[i];
+				count++;
+			}
+			if (count == 0) continue;
+			int average = total / count;
+			int remainder = total % count;
+			int seen = 0;
+			for (int i = 0; i < anchorBloodMl.length; i++) {
+				if (anchorRank(i) == ring) anchorBloodMl[i] = average + (seen++ < remainder ? 1 : 0);
+			}
 		}
 	}
 
@@ -724,9 +933,38 @@ public class ActiveCardinalRite {
 	}
 
 	private void setPhase(CardinalRitePhase phase) {
+		enterPhase(phase, true);
+	}
+
+	private void enterPhase(CardinalRitePhase phase, boolean wakesRings) {
 		this.phase = phase;
 		this.phaseTicks = 0;
 		this.idleTicks = 0;
+		if (wakesRings) wakeRings(phase);
+	}
+
+	/** Wakes the rings this phase entry owes: one per opener, every ring left at the last, or all at Inscription. */
+	private void wakeRings(CardinalRitePhase entered) {
+		if (!ringsGated() || openRings >= totalAnchorRings()) return;
+		int sleeping = totalAnchorRings() - openRings;
+		int opening;
+		if (entered == CardinalRitePhase.INSCRIPTION) {
+			opening = ringOpenerCount() == 0 ? sleeping : 0;
+		} else if (altarSealed && CardinalRiteRingRules.isOpener(entered)) {
+			opening = CardinalRiteRingRules.ringsToOpen(ringOpenersEntered++, ringOpenerCount(), sleeping);
+		} else {
+			return;
+		}
+		if (opening <= 0) return;
+		openRings += opening;
+		reconcileInstabilityDamage();
+	}
+
+	/** Openers the sealed rite enters before Culmination, from its shape. */
+	public int ringOpenerCount() {
+		return CardinalRiteRingRules.openerCount(
+				com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.isRite(recipeId), totalWaves,
+				altarSealed ? betweenWaveStillIntervals : stillIntervalsPlanned, !offeringItinerary.isEmpty());
 	}
 
 	public UUID getPlayerUUID() { return playerUUID; }
@@ -814,8 +1052,7 @@ public class ActiveCardinalRite {
 		}
 		return switch (phase) {
 			case CONSECRATION -> anchorBloodMl.length == 0 ? 0.0D
-					: 0.25D * committedBloodMl
-							/ (anchorBloodMl.length * (double) CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML);
+					: 0.25D * committedBloodMl / (double) Math.max(1, openRequirementMl());
 			case INSCRIPTION -> 0.25D;
 			case STATION_PROJECTION -> 0.25D + 0.55D * (upgrade.getInt("Stage")
 					+ upgrade.getInt("BloodAtStage") / (double) com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.bloodPerCircuit(recipeId))
@@ -823,7 +1060,8 @@ public class ActiveCardinalRite {
 			case ORDEAL -> 0.25D + (totalWaves == 0 ? 0.0D : 0.5D * currentWave / totalWaves);
 			case PUPPET_TRIAL -> puppeteerTrialProgress;
 			case STILL_INTERVAL -> 0.75D + 0.10D * boundedPhaseProgress(stillIntervalTicks);
-			case OFFERING_PROCESSION -> 0.90D;
+			case OFFERING_PROCESSION -> 0.85D + (offeringItinerary.isEmpty() ? 0.05D
+					: 0.10D * offeringVisitIndex / offeringItinerary.size());
 			case CULMINATION -> 0.95D + 0.05D * boundedPhaseProgress(
 					com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteFinaleTiming.TOTAL_TICKS);
 			case COMPLETE -> 1.0D;
@@ -909,6 +1147,19 @@ public class ActiveCardinalRite {
 		tag.putBoolean("PuppeteerTrialDefeated", puppeteerTrialDefeated);
 		tag.putFloat("PuppeteerTrialProgress", puppeteerTrialProgress);
 		tag.putInt("PuppeteerTrialMissingTicks", puppeteerTrialMissingTicks);
+		tag.putInt("SacrificeMl", sacrificeMl);
+		tag.putInt("FinaleHoldTicks", finaleHoldTicks);
+		tag.putInt("EscalationRings", escalationMarks.rings());
+		tag.putInt("EscalationCircuits", escalationMarks.circuits());
+		tag.putInt("EscalationFlags", escalationMarks.flags());
+		tag.putInt("EscalationStage", escalationStage);
+		if (anchorRanks != null) {
+			tag.putIntArray("AnchorRanks", anchorRanks);
+			tag.putInt("OpenRings", openRings);
+			tag.putInt("RingOpenersEntered", ringOpenersEntered);
+			tag.putInt("AnnouncedRings", announcedRings);
+			tag.putBoolean("StillIntervalsPlanned", stillIntervalsPlanned);
+		}
 		if (provider != null && !offeringItinerary.isEmpty()) {
 			ListTag offerings = new ListTag();
 			for (RiteOffering offering : offeringItinerary) {
@@ -1006,6 +1257,15 @@ public class ActiveCardinalRite {
 		for (int anchor : tag.getIntArray("BrokenInstabilityAnchors")) {
 			rite.brokenInstabilityAnchors.add(anchor);
 		}
+		int[] ranks = tag.getIntArray("AnchorRanks");
+		if (tag.contains("AnchorRanks") && ranks.length == rite.anchorBloodMl.length && ranks.length > 0) {
+			rite.anchorRanks = ranks;
+			int rings = CardinalRiteRingRules.ringCount(ranks);
+			rite.openRings = Math.clamp(tag.getInt("OpenRings"), 1, rings);
+			rite.ringOpenersEntered = Math.max(0, tag.getInt("RingOpenersEntered"));
+			rite.announcedRings = Math.clamp(tag.getInt("AnnouncedRings"), 1, rite.openRings);
+			rite.stillIntervalsPlanned = tag.getBoolean("StillIntervalsPlanned");
+		}
 		rite.reconcileInstabilityDamage();
 
 		CompoundTag sigils = tag.getCompound("SigilProgress");
@@ -1045,6 +1305,8 @@ public class ActiveCardinalRite {
 		rite.puppeteerTrialDefeated = tag.getBoolean("PuppeteerTrialDefeated");
 		rite.puppeteerTrialProgress = tag.getFloat("PuppeteerTrialProgress");
 		rite.puppeteerTrialMissingTicks = tag.getInt("PuppeteerTrialMissingTicks");
+		rite.sacrificeMl = tag.getInt("SacrificeMl");
+		rite.finaleHoldTicks = tag.getInt("FinaleHoldTicks");
 		ListTag offerings = tag.getList("OfferingItinerary", Tag.TAG_COMPOUND);
 		for (int i = 0; i < offerings.size(); i++) {
 			CompoundTag entry = offerings.getCompound(i);
@@ -1062,6 +1324,13 @@ public class ActiveCardinalRite {
 		rite.returningFromOfferings = tag.getBoolean("ReturningFromOfferings");
 		rite.offeringDwellTicks = tag.getInt("OfferingDwellTicks");
 		if (removedProfessionPhase) rite.phase = rite.finalePhase();
+		if (tag.contains("EscalationFlags")) {
+			rite.escalationMarks = new CardinalRiteEscalation.Marks(tag.getInt("EscalationRings"),
+					tag.getInt("EscalationCircuits"), tag.getInt("EscalationFlags"));
+			rite.escalationStage = tag.getInt("EscalationStage");
+		} else {
+			CardinalRiteEscalation.rebuild(rite);
+		}
 		return rite;
 	}
 

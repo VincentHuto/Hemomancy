@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCancellationRules;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteMath;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRitePlantingSequence;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -17,7 +18,8 @@ import java.util.List;
 public final class CardinalRiteStaffTendrilGeometry {
 	private static final int STRAND_COUNT = 6;
 	private static final int SEGMENTS_PER_STRAND = 16;
-	private static final double ROOT_Y_OFFSET = 0.86D;
+	/** Roots sit just under the Focus throat's slope (FloorMesh.emitThroat), so the strands rise out of the flesh. */
+	private static final double ROOT_Y_OFFSET = 0.8D;
 	private static final double GOLDEN_ANGLE = Math.PI * (3.0D - Math.sqrt(5.0D));
 
 	private CardinalRiteStaffTendrilGeometry() {
@@ -101,7 +103,7 @@ public final class CardinalRiteStaffTendrilGeometry {
 	}
 
 	private static float clamp(float value) {
-		return Math.max(0.0F, Math.min(1.0F, value));
+		return CardinalRiteMath.clamp01(value);
 	}
 
 	public record Strand(int index, List<Joint> joints) implements SanguineTendrilRibbonRenderer.Strand {

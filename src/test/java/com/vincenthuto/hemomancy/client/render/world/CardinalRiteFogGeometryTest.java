@@ -223,4 +223,35 @@ final class CardinalRiteFogGeometryTest {
 		assertTrue(minimum < 0.35F, "clouds can fade nearly away before reforming");
 		assertTrue(maximum > 0.90F, "clouds return to full density during their cycle");
 	}
+
+	@Test
+	void puffLayoutsAreBuiltOncePerSeedAndRadius() {
+		var first = CardinalRiteFogGeometry.puffs(4.1F, 9.75F);
+		assertSame(first, CardinalRiteFogGeometry.puffs(4.1F, 9.75F),
+				"the deterministic layout is reused instead of rebuilt every frame");
+		assertNotSame(first, CardinalRiteFogGeometry.puffs(4.1F, 11.75F));
+	}
+
+	@Test
+	void allocationFreePositionMatchesTheRecordForm() {
+		var puff = CardinalRiteFogGeometry.puffs(2.7F, 11.75F).get(31);
+		var expected = CardinalRiteFogGeometry.position(puff, 11.75F, 37.5F);
+		float[] out = new float[3];
+		CardinalRiteFogGeometry.positionInto(puff, 11.75F, 37.5F, out);
+
+		assertEquals(expected.x(), out[0], 0.0F);
+		assertEquals(expected.y(), out[1], 0.0F);
+		assertEquals(expected.z(), out[2], 0.0F);
+	}
+
+	@Test
+	void waveFogPartsBeforeTheThreatsArriveAndClosesAfter() {
+		assertEquals(0.0F, CardinalRiteFogGeometry.partingStrength(-1.0F), 0.0001F);
+		assertEquals(1.0F, CardinalRiteFogGeometry.partingStrength(20.0F), 0.0001F,
+				"the clearing is fully open when the server spawns the wave");
+		float closing = CardinalRiteFogGeometry.partingStrength(38.0F);
+		assertTrue(closing > 0.0F && closing < 1.0F);
+		assertEquals(0.0F, CardinalRiteFogGeometry.partingStrength(
+				CardinalRiteFogGeometry.PARTING_CLOSE_END), 0.0001F);
+	}
 }

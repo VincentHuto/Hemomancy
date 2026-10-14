@@ -216,6 +216,18 @@ public class ClientEvents {
         ActiveBloodStructureOfferingBurstClientData.tick();
         ActiveSanguineFormationProjectionClientData.tick();
         ActiveRiteClientData.tick();
+        com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState.tick();
+        com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteGuidance.tick(Minecraft.getInstance());
+        if (Minecraft.getInstance().level != null && !Minecraft.getInstance().isPaused()) {
+            com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteWorldState.tick(
+                    ActiveRiteClientData.getActiveRites(),
+                    com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState.ghosts(),
+                    center -> com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteFloor.at(
+                            Minecraft.getInstance().level, center));
+            com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteSkyWound.tick(Minecraft.getInstance());
+            com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteBloodRain.tick(Minecraft.getInstance());
+        }
+        com.vincenthuto.hemomancy.client.sound.RiteSoundBed.tick(Minecraft.getInstance());
         BloodStructureFeedSpiralParticles.tick();
         BloodBallClientData.tick();
         VeinSpiderCourierClientData.tick();
@@ -623,6 +635,15 @@ public class ClientEvents {
         // HutosLib now retains read tracker state across disconnect/reload.
         FaneBoundaryClientData.clear();
         ActiveRiteClientData.clear();
+        com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState.clear();
+        com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteGuidance.clear();
+        com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteWorldState.clear();
+        com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteSkyWound.clear();
+        com.vincenthuto.hemomancy.client.render.world.rite.DaemonHazeQueue.clear();
+        com.vincenthuto.hemomancy.client.sound.RiteSoundBed.stopAll();
+		com.vincenthuto.hemomancy.client.render.world.CardinalRiteBoundaryRenderer.clearCaches();
+		com.vincenthuto.hemomancy.client.render.world.floor.FloorRiteResponse.clear();
+		com.vincenthuto.hemomancy.client.render.world.rite.CardinalRiteOfferingMemory.clear();
 		ChamberOfWillClientData.clear();
 		FungalWhisperVignetteOverlay.clear();
         CardinalRiteFogRenderer.clear();
@@ -645,6 +666,15 @@ public class ClientEvents {
 	public static void onClientLevelUnload(net.neoforged.neoforge.event.level.LevelEvent.Unload event) {
 		if (!(event.getLevel() instanceof net.minecraft.client.multiplayer.ClientLevel)) return;
 		ActiveRiteClientData.clear();
+		com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState.clear();
+		com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteGuidance.clear();
+		com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteWorldState.clear();
+		com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteSkyWound.clear();
+		com.vincenthuto.hemomancy.client.render.world.rite.DaemonHazeQueue.clear();
+		com.vincenthuto.hemomancy.client.sound.RiteSoundBed.stopAll();
+		com.vincenthuto.hemomancy.client.render.world.CardinalRiteBoundaryRenderer.clearCaches();
+		com.vincenthuto.hemomancy.client.render.world.floor.FloorRiteResponse.clear();
+		com.vincenthuto.hemomancy.client.render.world.rite.CardinalRiteOfferingMemory.clear();
 		CardinalRiteFogRenderer.clear();
 		ChamberOfWillClientData.clear();
 		FungalWhisperVignetteOverlay.clear();
@@ -721,7 +751,12 @@ public class ClientEvents {
 			VesperFightFloorRenderer.renderFadingPerimeter(event);
 			VesperFightFloorRenderer.renderFissures(event.getPoseStack(), partialTick);
             CardinalRiteBoundaryRenderer.render(event.getPoseStack(), partialTick);
+            com.vincenthuto.hemomancy.client.render.world.rite.CardinalRiteOfferingRenderer.render(event.getPoseStack(), partialTick);
+            com.vincenthuto.hemomancy.client.render.world.rite.CardinalRiteAnchorJetRenderer.render(event.getPoseStack(), partialTick);
+            com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteSocketMarkerRenderer.render(event.getPoseStack(), partialTick);
+            com.vincenthuto.hemomancy.client.render.world.rite.CardinalRiteCulminationRenderer.render(event.getPoseStack(), partialTick);
             UnstainedRiteBoundaryRenderer.render(event.getPoseStack(), partialTick);
+            com.vincenthuto.hemomancy.client.render.world.zone.RiteZoneBoundaryRenderer.render(event.getPoseStack(), partialTick);
             GourdVineRenderer.render(event.getPoseStack(), partialTick);
             BloodStructureFeedWarpRenderer.render(event.getPoseStack(), partialTick);
             SanguineFormationProjectionRenderer.render(event.getPoseStack(), partialTick);
@@ -739,6 +774,14 @@ public class ClientEvents {
             HeartyCompassTendrilRenderer.render(event.getPoseStack(), partialTick);
             VeinSpiderCourierRenderer.render(event.getPoseStack(), partialTick);
             com.vincenthuto.hemomancy.client.render.entity.npc.SuccessionBrazierLabels.renderWorld(event.getPoseStack());
+        }
+
+        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_WEATHER) {
+            // After the clouds, so a cloud bank above never paints over the wound hanging below it.
+            com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteSkyWound.render(event.getPoseStack(),
+                    event.getPartialTick().getGameTimeDeltaPartialTick(true));
+            // The daemon's haze writes no depth, so it comes after every other rite visual and the clouds.
+            com.vincenthuto.hemomancy.client.render.world.rite.DaemonHazeQueue.render(event.getPoseStack());
         }
     }
 

@@ -197,7 +197,7 @@ public final class SuccessionRites {
     private static boolean consumeOffering(ServerLevel level, CompoundTag c, int index) {
         if (!matchesOffering(level, c, index)) return false;
         var e = c.getList("Offerings", Tag.TAG_COMPOUND).getCompound(index);
-        return !((IronBrazierBlockEntity) level.getBlockEntity(BlockPos.of(e.getLong("Position")))).consumeOffering().isEmpty();
+        return !((IronBrazierBlockEntity) level.getBlockEntity(BlockPos.of(e.getLong("Position")))).consumeForRite(false).isEmpty();
     }
     private static boolean resolve(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite) {
         var c = rite.succession(); var data = SuccessionSavedData.get(level); var body = BlockPos.of(c.getLong("Body"));

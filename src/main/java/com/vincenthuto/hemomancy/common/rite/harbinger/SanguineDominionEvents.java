@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
+import com.vincenthuto.hemomancy.common.rite.zone.RiteZone;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
@@ -13,12 +14,10 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
-import java.util.List;
-
 /**
- * Handles tick-based effects for Blood Domains established by the Rite of
- * Sanguine Dominion. Non-allied entities within the domain take slow bleed
- * damage every 2 seconds.
+ * Blood Domains from the Rite of Sanguine Dominion. Non-allied entities within
+ * a domain take slow bleed damage every 2 seconds, and the owner's
+ * manipulations are discounted through {@link #isInOwnDomain}.
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class SanguineDominionEvents {
@@ -31,64 +30,38 @@ public class SanguineDominionEvents {
 	@SubscribeEvent
 	public static void onLevelTick(LevelTickEvent.Post event) {
 		if (!(event.getLevel() instanceof ServerLevel sLevel)) return;
-
-		// Only process every BLEED_INTERVAL ticks for performance
 		if (sLevel.getGameTime() % BLEED_INTERVAL != 0) return;
 
-		SanguineDominionSavedData data = SanguineDominionSavedData.get(sLevel.getServer().overworld());
-		String dimension = sLevel.dimension().location().toString();
+		ServerLevel overworld = sLevel.getServer().overworld();
+		SanguineDominionSavedData data = SanguineDominionSavedData.get(overworld);
+		if (data.zones().isEmpty()) return;
 
-		for (SanguineDominionSavedData.DominionEntry dom : data.getDominions()) {
-			if (!dom.dimension().equals(dimension)) continue;
-
-			int blockRadius = dom.chunkRadius() * 16;
+		for (RiteZone dom : data.activeIn(sLevel.dimension(), sLevel.getGameTime())) {
+			int blockRadius = dom.blockRadius();
 			AABB domainBounds = new AABB(dom.center()).inflate(blockRadius, 64, blockRadius);
 
-			// Get the owner's bloodline for alliance checks
-			Bloodline ownerBloodline = null;
-			BloodlineSavedData bloodlineData = BloodlineSavedData.get(sLevel.getServer().overworld());
-			Bloodline foundLine = bloodlineData.getBloodlineForPlayer(dom.ownerUUID());
-			if (foundLine != null && foundLine.isValid()) {
-				ownerBloodline = foundLine;
-			}
+			Bloodline foundLine = BloodlineSavedData.get(overworld).getBloodlineForPlayer(dom.owner());
+			Bloodline ownerBloodline = foundLine != null && foundLine.isValid() ? foundLine : null;
 
-			List<LivingEntity> entities = sLevel.getEntitiesOfClass(LivingEntity.class, domainBounds,
-					entity -> entity.isAlive()
-							&& !HemoEntityPredicates.NOBLOOD.test(entity)
+			for (LivingEntity entity : sLevel.getEntitiesOfClass(LivingEntity.class, domainBounds,
+					candidate -> candidate.isAlive()
+							&& !HemoEntityPredicates.NOBLOOD.test(candidate)
 							&& !CardinalRiteThreatRules.isProtectedFromPassiveRiteDamage(
-									entity.getPersistentData().getBoolean(
-											CardinalRiteThreatRules.RITE_BOUND_TAG)));
-
-			for (LivingEntity entity : entities) {
-				// Skip the domain owner
-				if (entity instanceof Player player && player.getUUID().equals(dom.ownerUUID())) {
+									candidate.getPersistentData().getBoolean(
+											CardinalRiteThreatRules.RITE_BOUND_TAG)))) {
+				if (entity instanceof Player player && (player.getUUID().equals(dom.owner())
+						|| ownerBloodline != null && ownerBloodline.hasMember(player.getUUID()))) {
 					continue;
 				}
-
-				// Skip bloodline allies
-				if (ownerBloodline != null && entity instanceof Player player
-						&& ownerBloodline.hasMember(player.getUUID())) {
-					continue;
-				}
-
-				// Apply slow bleed damage
-				if (entity instanceof ServerPlayer targetPlayer) {
-					entity.hurt(targetPlayer.damageSources().magic(), BLEED_DAMAGE);
-				} else {
-					entity.hurt(sLevel.damageSources().magic(), BLEED_DAMAGE);
-				}
+				entity.hurt(sLevel.damageSources().magic(), BLEED_DAMAGE);
 			}
 		}
 	}
 
-	/**
-	 * Checks if the given player owns the Blood Domain at their current position.
-	 * Used by manipulation cost reduction logic.
-	 */
+	/** True when the player stands inside a Blood Domain they own. */
 	public static boolean isInOwnDomain(ServerPlayer player) {
-		ServerLevel overworld = player.server.overworld();
-		SanguineDominionSavedData data = SanguineDominionSavedData.get(overworld);
-		String dimension = player.level().dimension().location().toString();
-		return data.isOwnerAt(player.getUUID(), player.blockPosition(), dimension);
+		SanguineDominionSavedData data = SanguineDominionSavedData.get(player.server.overworld());
+		return !data.zones().isEmpty()
+				&& data.isOwnerAt(player.getUUID(), player.blockPosition(), player.level().dimension());
 	}
 }

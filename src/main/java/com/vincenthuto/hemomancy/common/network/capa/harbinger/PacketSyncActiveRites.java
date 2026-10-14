@@ -94,6 +94,22 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 				buf.writeEnum(blob.kind());
 				buf.writeEnum(blob.role());
 			}
+			buf.writeVarIntArray(entry.getAnchorStates());
+			buf.writeVarInt(entry.getEscalation());
+			buf.writeVarInt(entry.getEscalationTotal());
+			buf.writeVarInt(entry.getProblems().size());
+			for (var problem : entry.getProblems()) {
+				buf.writeUtf(problem.key());
+				buf.writeVarInt(problem.args().size());
+				for (String arg : problem.args()) buf.writeUtf(arg);
+			}
+			buf.writeVarInt(entry.getSocketMarkers().size());
+			for (ActiveRiteClientData.SocketMarker marker : entry.getSocketMarkers()) {
+				buf.writeBlockPos(marker.pos());
+				buf.writeUtf(marker.sigil());
+			}
+			buf.writeVarInt(entry.getOpenRings());
+			buf.writeVarIntArray(entry.getAnchorRequirements());
 		}
 	}
 
@@ -160,9 +176,42 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 					footprintRadius, checklist,
 					boundarySegments, sigilSegments, sanguineBlobs, plantedStaff, owner,
 					cancellationTicks, staffPlantingTicks,
-					fogProfile, fogLightning, boundaryDome, phaseTicks));
+					fogProfile, fogLightning, boundaryDome, phaseTicks).withAnchorStates(buf.readVarIntArray())
+					.withEscalation(buf.readVarInt(), buf.readVarInt())
+					.withGuidance(readProblems(buf), readSocketMarkers(buf))
+					.withRings(buf.readVarInt(), buf.readVarIntArray()));
 		}
 		return new PacketSyncActiveRites(entries);
+	}
+
+	private static final int MAX_SYNCED_PROBLEMS = 16;
+	private static final int MAX_SYNCED_MARKERS = 32;
+
+	private static List<com.vincenthuto.hemomancy.common.rite.CardinalRiteProblems.RiteProblem> readProblems(
+			FriendlyByteBuf buf) {
+		int count = buf.readVarInt();
+		List<com.vincenthuto.hemomancy.common.rite.CardinalRiteProblems.RiteProblem> problems = new ArrayList<>();
+		for (int i = 0; i < count; i++) {
+			String key = buf.readUtf();
+			int argCount = buf.readVarInt();
+			List<String> args = new ArrayList<>(Math.min(argCount, 8));
+			for (int arg = 0; arg < argCount; arg++) args.add(buf.readUtf());
+			if (i < MAX_SYNCED_PROBLEMS) {
+				problems.add(new com.vincenthuto.hemomancy.common.rite.CardinalRiteProblems.RiteProblem(key, args));
+			}
+		}
+		return problems;
+	}
+
+	private static List<ActiveRiteClientData.SocketMarker> readSocketMarkers(FriendlyByteBuf buf) {
+		int count = buf.readVarInt();
+		List<ActiveRiteClientData.SocketMarker> markers = new ArrayList<>();
+		for (int i = 0; i < count; i++) {
+			BlockPos pos = buf.readBlockPos();
+			String sigil = buf.readUtf();
+			if (i < MAX_SYNCED_MARKERS) markers.add(new ActiveRiteClientData.SocketMarker(pos, sigil));
+		}
+		return markers;
 	}
 
 	public static void handle(final PacketSyncActiveRites msg, final IPayloadContext ctx) {

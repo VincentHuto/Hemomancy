@@ -77,28 +77,25 @@ public class RenderTypeInit extends RenderType {
 					.setLightmapState(NO_LIGHTMAP)
 					.createCompositeState(false));
 
-	// Unstained cardinal rite boundary — hollow rhombus, white/ice-blue palette
-	public static final RenderType UNSTAINED_RITE_BOUNDARY_CORE = create("UnstainedRiteBoundaryCore",
+	/**
+	 * Additive bloom over the rite boundary: heartbeat swell on the vessel rims and the bright beats (anchor
+	 * pulses, seals, flushes). Colour-only, so it brightens what is behind it without hiding it.
+	 */
+	public static final RenderType RITE_BOUNDARY_BLOOM = create("RiteBoundaryBloom",
 			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, true,
 			RenderType.CompositeState.builder()
 					.setShaderState(RENDERTYPE_LIGHTNING_SHADER)
-					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-					.setDepthTestState(LEQUAL_DEPTH_TEST)
-					.setWriteMaskState(COLOR_DEPTH_WRITE)
-					.setCullState(NO_CULL)
-					.setLightmapState(NO_LIGHTMAP)
-					.createCompositeState(false));
-
-	public static final RenderType UNSTAINED_RITE_BOUNDARY_GLOW = create("UnstainedRiteBoundaryGlow",
-			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, true,
-			RenderType.CompositeState.builder()
-					.setShaderState(RENDERTYPE_LIGHTNING_SHADER)
-					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+					.setTransparencyState(LIGHTNING_TRANSPARENCY)
 					.setDepthTestState(LEQUAL_DEPTH_TEST)
 					.setWriteMaskState(COLOR_WRITE)
 					.setCullState(NO_CULL)
 					.setLightmapState(NO_LIGHTMAP)
 					.createCompositeState(false));
+
+	// Unstained cardinal rite boundary: the same flat-colour material; the renderer supplies the white/ice palette.
+	public static final RenderType UNSTAINED_RITE_BOUNDARY_CORE = RITE_BOUNDARY_CORE;
+
+	public static final RenderType UNSTAINED_RITE_BOUNDARY_GLOW = RITE_BOUNDARY_GLOW;
 
 	public static final RenderType MONOLITH_SHATTER_TRIANGLES = create("MonolithShatterTriangles",
 			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.TRIANGLES, 256, false, true,

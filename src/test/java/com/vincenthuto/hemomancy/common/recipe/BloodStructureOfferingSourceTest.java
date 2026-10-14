@@ -49,7 +49,7 @@ public final class BloodStructureOfferingSourceTest {
 				"center.offset(-blockPattern.getWidth()");
 		assertContains("helper consumes one brazier per required item", craftingHelper, "consumeMatchedOfferings");
 		assertContains("helper requires lit braziers for offerings", craftingHelper, "BrazierBlock.isLit(level.getBlockState(pos))");
-		assertContains("helper unlights consumed offering braziers", craftingHelper, "unlightOfferingBrazier");
+		assertContains("helper unlights consumed offering braziers", craftingHelper, "brazier.consumeForRite(true)");
 		assertNotContains("crafting does not light offering braziers", craftingHelper,
 				"private static void lightOfferingBrazier");
 		assertContains("feed manager validates offerings before blood drain", feedManager, "match.offerings()");

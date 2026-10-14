@@ -70,6 +70,7 @@
       "lightning": false,
       "dome": false
     },
-    "failure": "offering_loss"
+    "failure": "offering_loss",
+    "culmination": "ascension"
   }
 }

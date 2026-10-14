@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCancellationRules;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteMath;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 
@@ -21,20 +22,6 @@ public final class CardinalRitePlantedStaffGeometry {
 				focus.getY() + EMBEDDED_ORIGIN_OFFSET,
 				focus.getZ() + 0.725D),
 				0.0F, PLANTED_SCALE);
-	}
-
-	public static DissolvePose dissolvePose(BlockPos focus, float cancellationScale, float opacity) {
-		Pose planted = pose(focus);
-		float clampedScale = Math.max(0.0F, Math.min(1.0F, cancellationScale));
-		Vec3 focusAnchor = new Vec3(
-				focus.getX() + 0.5D,
-				focus.getY() + 0.95D,
-				focus.getZ() + 0.5D);
-		return new DissolvePose(
-				focusAnchor.lerp(planted.position(), clampedScale),
-				planted.pitchDegrees(),
-				planted.scale() * clampedScale,
-				Math.max(0.0F, Math.min(1.0F, opacity)));
 	}
 
 	public static AbsorptionPose absorptionPose(BlockPos focus, float cancellationTicks) {
@@ -72,18 +59,14 @@ public final class CardinalRitePlantedStaffGeometry {
 	}
 
 	private static float smoothstep(float value) {
-		float clamped = clamp(value);
-		return clamped * clamped * (3.0F - 2.0F * clamped);
+		return CardinalRiteMath.smoothstep(value);
 	}
 
 	private static float clamp(float value) {
-		return Math.max(0.0F, Math.min(1.0F, value));
+		return CardinalRiteMath.clamp01(value);
 	}
 
 	public record Pose(Vec3 position, float pitchDegrees, float scale) {
-	}
-
-	public record DissolvePose(Vec3 position, float pitchDegrees, float scale, float opacity) {
 	}
 
 	public record AbsorptionPose(

@@ -56,10 +56,14 @@ public final class BrazierFlames {
         Vec3 right = new Vec3(toward.z, 0, -toward.x);
         right = right.lengthSqr() > 1e-4 ? right.normalize()
                 : new Vec3(new Vector3f(1, 0, 0).rotate(camera.rotation())).multiply(1, 0, 1).normalize();
-        Vec3 up = new Vec3(0, 1, 0);
-        double scale = (sanguine ? 1.2 : 1.0) * (.35 + .65 * fill);
-        int shape = sanguine ? TORCH : FLAME;
-        int color = sanguine ? TORCH_COLOR : WHITE;
+        // A deepening rite leans its braziers toward the Focus, feeds them taller and turns them sanguine from
+        // halfway; strain gutters them.
+        var flame = com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteWorldState.flameAt(pos, time);
+        boolean hot = sanguine || flame.sanguine();
+        Vec3 up = new Vec3(flame.leanX(), 1, flame.leanZ()).normalize();
+        double scale = (hot ? 1.2 : 1.0) * (.35 + .65 * fill) * flame.height();
+        int shape = hot ? TORCH : FLAME;
+        int color = hot ? TORCH_COLOR : WHITE;
         VertexConsumer vertices = buffers.getBuffer(ThermalRenderTypes.STEADY_FLAME);
         Vec3 surface = new Vec3(.5, surfaceY, .5);
 
@@ -74,8 +78,8 @@ public final class BrazierFlames {
             tongue(poses, vertices, at, right, up, .13 * scale, .25 * scale * swell, shape, seed + 7 + i * 13,
                     color, .8F);
         }
-        if (!sanguine) ThermalGeometry.smoke(poses, vertices, surface.add(0, .9 * scale, 0), right, up, .22, .32, seed + 3, .18F);
-        feed(pos, sanguine, seed);
+        if (!hot) ThermalGeometry.smoke(poses, vertices, surface.add(0, .9 * scale, 0), right, up, .22, .32, seed + 3, .18F);
+        feed(pos, hot, seed);
     }
 
     /** The blood in the bowl: rippled by any pour, simmered and lit from above only while the fire burns. */

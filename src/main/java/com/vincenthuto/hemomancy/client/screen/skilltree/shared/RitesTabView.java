@@ -723,7 +723,7 @@ public final class RitesTabView {
 		int lineH = 12;
 
 		// Name
-		String name = rite.getRiteName();
+		String name = rite.displayName().getString();
 		if (name == null || name.isEmpty()) {
 			String p = rite.getId().getPath();
 			if (p.contains("/")) p = p.substring(p.lastIndexOf('/') + 1);
@@ -751,7 +751,7 @@ public final class RitesTabView {
 		y += 6;
 
 		// Description
-		String desc = rite.getRiteDescription();
+		String desc = rite.displayDescription().getString();
 		if (desc != null && !desc.isEmpty()) {
 			for (String line : ScreenDrawUtils.wrapText(ctx.font(), desc, panelW)) {
 				gfx.drawString(ctx.font(), Component.literal(line)
@@ -930,7 +930,7 @@ public final class RitesTabView {
 		int y     = 0;
 		int lineH = 12;
 
-		String name = rite.getRiteName();
+		String name = rite.displayName().getString();
 		if (name == null || name.isEmpty()) {
 			String p = rite.getId().getPath();
 			if (p.contains("/")) p = p.substring(p.lastIndexOf('/') + 1);
@@ -938,7 +938,7 @@ public final class RitesTabView {
 		}
 		y += lineH + 4 + 1 + 6;
 
-		String desc = rite.getRiteDescription();
+		String desc = rite.displayDescription().getString();
 		if (desc != null && !desc.isEmpty())
 			y += ScreenDrawUtils.wrapText(font, desc, panelW).size() * lineH + 4;
 

@@ -166,6 +166,7 @@
       "lightning": true,
       "dome": true
     },
-    "failure": "collapse"
+    "failure": "collapse",
+    "culmination": "grounding"
   }
 }

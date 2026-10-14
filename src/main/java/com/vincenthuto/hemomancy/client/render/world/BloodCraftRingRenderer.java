@@ -12,6 +12,8 @@ import org.joml.Matrix4f;
 
 import java.util.List;
 
+import static com.vincenthuto.hemomancy.client.render.world.rite.RiteQuads.emitQuad;
+
 /**
  * Renders a collapsing, undulating bloody ring when a blood structure
  * recipe is activated. Very similar to {@link CardinalRiteBoundaryRenderer}
@@ -289,20 +291,5 @@ public class BloodCraftRingRenderer {
 
 	private static double hashVein(int index) {
 		return (index * 0.6180339887) % 1.0;
-	}
-
-	// ═══════════════════════════════════════════════════════════════
-	//  Quad helper
-	// ═══════════════════════════════════════════════════════════════
-
-	private static void emitQuad(VertexConsumer vc, Matrix4f mat,
-			float x1, float y1, float z1, float r1, float g1, float b1, float a1,
-			float x2, float y2, float z2, float r2, float g2, float b2, float a2,
-			float x3, float y3, float z3, float r3, float g3, float b3, float a3,
-			float x4, float y4, float z4, float r4, float g4, float b4, float a4) {
-		vc.addVertex(mat, x1, y1, z1).setColor(r1, g1, b1, a1);
-		vc.addVertex(mat, x2, y2, z2).setColor(r2, g2, b2, a2);
-		vc.addVertex(mat, x3, y3, z3).setColor(r3, g3, b3, a3);
-		vc.addVertex(mat, x4, y4, z4).setColor(r4, g4, b4, a4);
 	}
 }

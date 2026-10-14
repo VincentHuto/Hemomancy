@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.rite.unstained;
 
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.PathMutualExclusionHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
@@ -9,6 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedEntryRules;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
@@ -22,6 +22,8 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodMoon;
+import com.vincenthuto.hemomancy.common.rite.zone.RiteZone;
+import com.vincenthuto.hemomancy.common.rite.zone.RiteZoneSavedData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -37,29 +39,18 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 
 /**
- * Completion handlers for Unstained cardinal rites.
+ * Completion handlers for Unstained cardinal rites. Every refusal lives in
+ * {@link #preflight}; a handler only reports failure for a condition that
+ * cannot be known until the moment of completion.
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class UnstainedCardinalRiteEvents {
-	@SubscribeEvent
-	public static void onZoneCleanupTick(LevelTickEvent.Post event) {
-		if (!(event.getLevel() instanceof ServerLevel level)) return;
-		if (level != level.getServer().overworld()) return;
-		long currentTick = level.getGameTime();
-		if (currentTick % 100 != 0) return;
-
-		StillWatersSavedData.get(level).removeExpired(currentTick);
-		PaleConsecrationSavedData.get(level).removeExpired(currentTick);
-		LetheCovenantSavedData.get(level).removeExpired(currentTick);
-	}
 	//  Unstained rite paths 
 	private static final String LETHEAN_BAPTISM_RITE = "cardinal_rite/lethean_baptism";
 	private static final String SILVER_VEIL_RITE = "cardinal_rite/silver_veil";
@@ -119,8 +110,7 @@ public class UnstainedCardinalRiteEvents {
 			return false;
 		}
 		if (LETHEAN_BAPTISM_RITE.equals(ritePath)) {
-			completeLetheanBaptism(sLevel, caster);
-			return true;
+			return completeLetheanBaptism(sLevel, caster);
 		}
 		if (SILVER_VEIL_RITE.equals(ritePath)) {
 			completeSilverVeil(sLevel, caster);
@@ -183,8 +173,7 @@ public class UnstainedCardinalRiteEvents {
 			return true;
 		}
 		if (SEVERED_COVENANT_RITE.equals(ritePath)) {
-			completeSeveredCovenant(sLevel, caster);
-			return true;
+			return completeSeveredCovenant(sLevel, caster);
 		}
 		return false;
 	}
@@ -201,6 +190,8 @@ public class UnstainedCardinalRiteEvents {
 				&& (blood.getBloodLine() == null || !blood.getBloodLine().isValid());
 		boolean severanceEligible = founder && !degree.isFounderIntegrationSevered()
 				&& progress != null && progress.isAnnettaSeveranceUnlocked();
+		boolean leadsFoundersCovenant = founder && leadsValidBloodline(caster);
+		boolean bloodMoonActive = BloodMoonSavedData.get(caster.server.overworld()).isActive();
 		return UnstainedRitePreflight.check(ritePath, new UnstainedRitePreflight.State(
 				maySeekCure,
 				progress != null && progress.isInfectionSuppressed(),
@@ -211,7 +202,15 @@ public class UnstainedCardinalRiteEvents {
 				progress != null && progress.isClarityPrepared(),
 				progress != null && progress.hasClarityUnlocked(),
 				cleanBlood,
-				severanceEligible));
+				severanceEligible,
+				leadsFoundersCovenant,
+				progress != null ? progress.getPurity() : 0.0f,
+				bloodMoonActive));
+	}
+
+	private static boolean leadsValidBloodline(ServerPlayer caster) {
+		Bloodline line = BloodlineSavedData.get(caster.server.overworld()).getBloodlineForPlayer(caster.getUUID());
+		return line != null && line.isValid() && caster.getUUID().equals(line.getLeaderUUID());
 	}
 
 	public static void announceFailure(ServerPlayer caster, UnstainedRitePreflight.Failure failure) {
@@ -226,30 +225,27 @@ public class UnstainedCardinalRiteEvents {
 			case CURE_NOT_READY -> "Closed Vein can restore your baseline only at full Purity.";
 			case CLOSED_VEIN_MEMBER_ONLY -> "Only a pledged Unstained may repeat the Closed Vein.";
 			case SEVERANCE_NOT_READY -> "The exceptional severance has not been earned from the unleashed infection.";
+			case NO_FOUNDERS_COVENANT -> "No founder's covenant answers the rite.";
+			case VEIL_PURITY_TOO_LOW -> "Your soul needs more Purity to bear the Silver Veil.";
+			case TIDE_PURITY_TOO_LOW -> "The tide will not answer: your purity is insufficient.";
+			case NO_BLOOD_MOON -> "There is no Blood Moon to cleanse.";
+			case CLARITY_REQUIRED -> "You must have unlocked Clarity to perform the Rite of the Silver Dawn.";
 			case NONE -> "The rite is ready.";
 		};
 		caster.displayClientMessage(Component.literal(message)
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
 	}
 
-	private static void completeSeveredCovenant(ServerLevel level, ServerPlayer caster) {
+	/** Founder eligibility and leadership are settled by {@link #preflight}. */
+	private static boolean completeSeveredCovenant(ServerLevel level, ServerPlayer caster) {
 		var degree = HemoCapabilityAccess.requireInitiatoryDegree(caster);
-		var unstained = HemoCapabilityAccess.getUnstainedProgress(caster).orElse(null);
-		if (!degree.hasFoundedBloodline() || degree.isFounderIntegrationSevered()
-				|| unstained == null || !unstained.isAnnettaSeveranceUnlocked()) {
-			caster.displayClientMessage(Component.literal(
-					"The exceptional cut is not yours to make. Only a founder who survived an unleashed infection knows its shape.")
-					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
-			return;
-		}
 		BloodlineSavedData savedData = BloodlineSavedData.get(level.getServer().overworld());
 		Bloodline line = savedData.getBloodlineForPlayer(caster.getUUID());
-		if (line == null || !line.isValid() || !caster.getUUID().equals(line.getLeaderUUID())) {
-			caster.displayClientMessage(Component.literal("No founder's covenant answers the rite."), false);
-			return;
+		Bloodline disbanded = line == null ? null : savedData.disbandBloodline(line.getBloodlineUUID());
+		if (disbanded == null) {
+			announceFailure(caster, UnstainedRitePreflight.Failure.NO_FOUNDERS_COVENANT);
+			return false;
 		}
-		Bloodline disbanded = savedData.disbandBloodline(line.getBloodlineUUID());
-		if (disbanded == null) return;
 		BloodlineDisbandHelper.removeOwnedFanes(level.getServer(), disbanded);
 		BloodlineDisbandHelper.resetOnlineMembers(level.getServer(), disbanded,
 				member -> Component.literal("The founder's covenant has been severed.")
@@ -259,18 +255,45 @@ public class UnstainedCardinalRiteEvents {
 		caster.displayClientMessage(Component.literal(
 				"The bloodline is gone. The infection's collapse taught your own infection how to release you.")
 				.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
+		return true;
 	}
 	// 
 	// Unstained Rite Completion Handlers
 	// 
 
 	/**
+	 * Applies {@code blessing} to every living player within {@code radius} of
+	 * {@code center} whose Unstained progress passes {@code eligible}.
+	 *
+	 * @return how many players were blessed
+	 */
+	private static int blessNearby(ServerLevel level, BlockPos center, int radius,
+			Predicate<IUnstainedProgress> eligible, BiConsumer<ServerPlayer, IUnstainedProgress> blessing) {
+		int blessed = 0;
+		AABB area = new AABB(center).inflate(radius);
+		for (ServerPlayer target : level.getEntitiesOfClass(ServerPlayer.class, area, ServerPlayer::isAlive)) {
+			IUnstainedProgress progress = HemoCapabilityAccess.getUnstainedProgress(target).orElse(null);
+			if (progress == null || !eligible.test(progress)) continue;
+			blessing.accept(target, progress);
+			blessed++;
+		}
+		return blessed;
+	}
+
+	/** Opens a timed zone of the store's kind, centred on the rite, in the rite's dimension. */
+	private static void openZone(ServerLevel level, RiteZoneSavedData store, ServerPlayer caster, BlockPos center,
+			int blockRadius, long durationTicks) {
+		store.addZone(RiteZone.timed(store.kind(), caster.getUUID(), center, level.dimension(),
+				blockRadius, level.getGameTime() + durationTicks));
+	}
+
+	/**
 	 * Rite of Lethean Baptism (Minor, 0 blood):
 	 * Treatment rite that begins purification without granting Church membership.
 	 */
-	private static void completeLetheanBaptism(ServerLevel sLevel, ServerPlayer caster) {
+	private static boolean completeLetheanBaptism(ServerLevel sLevel, ServerPlayer caster) {
 		var unstained = HemoCapabilityAccess.getUnstainedProgress(caster).orElse(null);
-		if (unstained == null) return;
+		if (unstained == null) return false;
 		var degree = HemoCapabilityAccess.getInitiatoryDegree(caster).orElse(null);
 		int degreeNumber = degree != null ? degree.getDegreeNumber() : 0;
 		boolean severedFounder = degree != null && degree.hasFoundedBloodline()
@@ -286,22 +309,16 @@ public class UnstainedCardinalRiteEvents {
 		sLevel.sendParticles(ParticleTypes.END_ROD,
 				caster.getX(), caster.getY() + 1.0, caster.getZ(),
 				30, 0.5, 1.0, 0.5, 0.05);
+		return true;
 	}
 
 	/**
 	 * Rite of the Silver Veil (Lesser, 0 blood):
 	 * Grants the early Verdigris Aura effect for 30 minutes and adds 10 purity.
-	 * Requires purity >= 25 (Tainted stage).
+	 * Requires purity >= 25 (Tainted stage), checked by {@link #preflight}.
 	 */
 	private static void completeSilverVeil(ServerLevel sLevel, ServerPlayer caster) {
 		HemoCapabilityAccess.getUnstainedProgress(caster).ifPresent(unstained -> {
-			if (unstained.getPurity() < 25.0f) {
-				caster.displayClientMessage(
-						Component.literal("Your soul needs more Purity to bear the Silver Veil.")
-								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
-						false);
-				return;
-			}
 			unstained.addPurity(10.0f);
 			UnstainedProgressEvents.syncProgress(caster, unstained);
 
@@ -372,31 +389,25 @@ public class UnstainedCardinalRiteEvents {
 					.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD), false);
 			return;
 		}
+		int blessed = blessNearby(sLevel, center, CLOSED_VEIN_RADIUS, IUnstainedProgress::hasBegunPurification,
+				(target, progress) -> {
+					target.removeEffect(EffectInit.blood_loss);
+					target.addEffect(new MobEffectInstance(EffectInit.silver_ward, CLOSED_VEIN_EFFECT_TICKS, 1, false, true, true));
+					if (progress.hasClarityUnlocked()) {
+						progress.addClarity(2.0f);
+						UnstainedProgressEvents.syncProgress(target, progress);
+					}
+					target.displayClientMessage(Component.literal("The vein closes. The old leak is denied.")
+							.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), true);
+				});
+
 		AABB area = new AABB(center).inflate(CLOSED_VEIN_RADIUS);
-		List<ServerPlayer> nearbyPlayers = sLevel.getEntitiesOfClass(ServerPlayer.class, area, ServerPlayer::isAlive);
-		int[] blessed = { 0 };
-
-		for (ServerPlayer target : nearbyPlayers) {
-			HemoCapabilityAccess.getUnstainedProgress(target).ifPresent(progress -> {
-				if (!progress.hasBegunPurification()) return;
-				target.removeEffect(EffectInit.blood_loss);
-				target.addEffect(new MobEffectInstance(EffectInit.silver_ward, CLOSED_VEIN_EFFECT_TICKS, 1, false, true, true));
-				if (progress.hasClarityUnlocked()) {
-					progress.addClarity(2.0f);
-					UnstainedProgressEvents.syncProgress(target, progress);
-				}
-				target.displayClientMessage(Component.literal("The vein closes. The old leak is denied.")
-						.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), true);
-				blessed[0]++;
-			});
-		}
-
 		for (Monster monster : sLevel.getEntitiesOfClass(Monster.class, area, Monster::isAlive)) {
 			monster.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 180, 1, false, true, true));
 			monster.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 180, 0, false, true, true));
 		}
 
-		caster.displayClientMessage(Component.literal("The Rite of the Closed Vein blesses " + blessed[0] + " Unstained soul(s).")
+		caster.displayClientMessage(Component.literal("The Rite of the Closed Vein blesses " + blessed + " Unstained soul(s).")
 				.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC), false);
 		sLevel.playSound(null, center, SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 1.2f, 0.8f);
 		sLevel.sendParticles(ParticleTypes.END_ROD, center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
@@ -404,14 +415,8 @@ public class UnstainedCardinalRiteEvents {
 	}
 
 	private static void completeAntisepticGround(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
-		ServerLevel overworld = sLevel.getServer().overworld();
-		PaleConsecrationSavedData data = PaleConsecrationSavedData.get(overworld);
-		String dimension = sLevel.dimension().location().toString();
-		long expiryTick = sLevel.getGameTime() + ANTISEPTIC_GROUND_DURATION_TICKS;
-
-		PaleConsecrationSavedData.ConsecrationEntry entry = new PaleConsecrationSavedData.ConsecrationEntry(
-				caster.getUUID(), center, dimension, ANTISEPTIC_GROUND_RADIUS, expiryTick);
-		data.addEntry(entry);
+		openZone(sLevel, PaleConsecrationSavedData.get(sLevel.getServer().overworld()), caster, center,
+				ANTISEPTIC_GROUND_RADIUS, ANTISEPTIC_GROUND_DURATION_TICKS);
 
 		caster.addEffect(new MobEffectInstance(EffectInit.verdigris_aura, 12000, 1, false, true, true));
 		caster.displayClientMessage(Component.literal("Antiseptic ground takes hold for 15 minutes.")
@@ -422,28 +427,21 @@ public class UnstainedCardinalRiteEvents {
 	}
 
 	private static void completeGlassLungs(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
-		AABB area = new AABB(center).inflate(GLASS_LUNGS_RADIUS);
-		List<ServerPlayer> nearbyPlayers = sLevel.getEntitiesOfClass(ServerPlayer.class, area, ServerPlayer::isAlive);
-		int[] blessed = { 0 };
+		int blessed = blessNearby(sLevel, center, GLASS_LUNGS_RADIUS, IUnstainedProgress::hasBegunPurification,
+				(target, progress) -> {
+					target.removeEffect(MobEffects.POISON);
+					target.removeEffect(MobEffects.WITHER);
+					target.clearFire();
+					target.setAirSupply(target.getMaxAirSupply());
+					target.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, GLASS_LUNGS_EFFECT_TICKS, 0, false, true, true));
+					target.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 2400, 0, false, true, true));
+					if (progress.hasClarityUnlocked()) {
+						progress.addClarity(3.0f);
+						UnstainedProgressEvents.syncProgress(target, progress);
+					}
+				});
 
-		for (ServerPlayer target : nearbyPlayers) {
-			HemoCapabilityAccess.getUnstainedProgress(target).ifPresent(progress -> {
-				if (!progress.hasBegunPurification()) return;
-				target.removeEffect(MobEffects.POISON);
-				target.removeEffect(MobEffects.WITHER);
-				target.clearFire();
-				target.setAirSupply(target.getMaxAirSupply());
-				target.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, GLASS_LUNGS_EFFECT_TICKS, 0, false, true, true));
-				target.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 2400, 0, false, true, true));
-				if (progress.hasClarityUnlocked()) {
-					progress.addClarity(3.0f);
-					UnstainedProgressEvents.syncProgress(target, progress);
-				}
-				blessed[0]++;
-			});
-		}
-
-		caster.displayClientMessage(Component.literal("Glass lungs open in " + blessed[0] + " Unstained body(s).")
+		caster.displayClientMessage(Component.literal("Glass lungs open in " + blessed + " Unstained body(s).")
 				.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC), false);
 		sLevel.playSound(null, center, SoundEvents.GLASS_PLACE, SoundSource.BLOCKS, 1.0f, 1.2f);
 		sLevel.sendParticles(ParticleTypes.SNOWFLAKE, center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
@@ -453,23 +451,16 @@ public class UnstainedCardinalRiteEvents {
 	private static void completeMoonWashedCopper(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
 		boolean isNight = sLevel.getDayTime() % 24000L >= 13000L && sLevel.getDayTime() % 24000L <= 23000L;
 		float clarityGain = isNight ? 10.0f : 5.0f;
-		AABB area = new AABB(center).inflate(MOON_WASHED_COPPER_RADIUS);
-		List<ServerPlayer> nearbyPlayers = sLevel.getEntitiesOfClass(ServerPlayer.class, area, ServerPlayer::isAlive);
-		int[] blessed = { 0 };
-
-		for (ServerPlayer target : nearbyPlayers) {
-			HemoCapabilityAccess.getUnstainedProgress(target).ifPresent(progress -> {
-				if (!progress.hasClarityUnlocked()) return;
-				progress.addClarity(clarityGain);
-				UnstainedProgressEvents.syncProgress(target, progress);
-				target.addEffect(new MobEffectInstance(EffectInit.verdigris_aura, MOON_WASHED_COPPER_EFFECT_TICKS, 2, false, true, true));
-				target.addEffect(new MobEffectInstance(EffectInit.silver_ward, MOON_WASHED_COPPER_EFFECT_TICKS, 1, false, true, true));
-				blessed[0]++;
-			});
-		}
+		int blessed = blessNearby(sLevel, center, MOON_WASHED_COPPER_RADIUS, IUnstainedProgress::hasClarityUnlocked,
+				(target, progress) -> {
+					progress.addClarity(clarityGain);
+					UnstainedProgressEvents.syncProgress(target, progress);
+					target.addEffect(new MobEffectInstance(EffectInit.verdigris_aura, MOON_WASHED_COPPER_EFFECT_TICKS, 2, false, true, true));
+					target.addEffect(new MobEffectInstance(EffectInit.silver_ward, MOON_WASHED_COPPER_EFFECT_TICKS, 1, false, true, true));
+				});
 
 		String moonText = isNight ? "under the moon" : "without moonlight";
-		caster.displayClientMessage(Component.literal("Moon-washed copper blesses " + blessed[0] + " clarity-bearer(s) " + moonText + ".")
+		caster.displayClientMessage(Component.literal("Moon-washed copper blesses " + blessed + " clarity-bearer(s) " + moonText + ".")
 				.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), false);
 		sLevel.playSound(null, center, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.4f, isNight ? 1.7f : 1.25f);
 		sLevel.sendParticles(ParticleTypes.WAX_OFF, center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
@@ -558,20 +549,10 @@ public class UnstainedCardinalRiteEvents {
 	/**
 	 * Rite of the Silver Dawn: converts blood-faction blocks in a radius
 	 * around the altar into their cleansed equivalents and grants a
-	 * long-duration Verdigris Aura to the caster.
+	 * long-duration Verdigris Aura to the caster. Requires unlocked Clarity,
+	 * checked by {@link #preflight}.
 	 */
 	private static void completeSilverDawn(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
-		// Require clarity to perform this rite
-		boolean hasClarityUnlocked = HemoCapabilityAccess.getUnstainedProgress(caster)
-				.map(p -> p.hasClarityUnlocked()).orElse(false);
-		if (!hasClarityUnlocked) {
-			caster.displayClientMessage(
-					Component.literal("You must have unlocked Clarity to perform the Rite of the Silver Dawn.")
-							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
-					false);
-			return;
-		}
-
 		// Convert blood-faction blocks in radius
 		int converted = 0;
 		Map<Block, Block> conversions = getSilverDawnConversions();
@@ -631,14 +612,8 @@ public class UnstainedCardinalRiteEvents {
 	 * is reduced by 30%, countering Sanguine Dominion bleeds and other threats.
 	 */
 	private static void completeStillWaters(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
-		ServerLevel overworld = sLevel.getServer().overworld();
-		StillWatersSavedData data = StillWatersSavedData.get(overworld);
-		String dimension = sLevel.dimension().location().toString();
-		long expiryTick = sLevel.getGameTime() + STILL_WATERS_DURATION_TICKS;
-
-		StillWatersSavedData.StillWatersEntry entry = new StillWatersSavedData.StillWatersEntry(
-				caster.getUUID(), center, dimension, STILL_WATERS_RADIUS, expiryTick);
-		data.addEntry(entry);
+		openZone(sLevel, StillWatersSavedData.get(sLevel.getServer().overworld()), caster, center,
+				STILL_WATERS_RADIUS, STILL_WATERS_DURATION_TICKS);
 		recordNovitiateProtection(sLevel, caster, center, STILL_WATERS_RADIUS);
 
 		long durationMinutes = STILL_WATERS_DURATION_TICKS / 1200;
@@ -668,14 +643,8 @@ public class UnstainedCardinalRiteEvents {
 	 * damage and Slowness I. Lasts 10 minutes.
 	 */
 	private static void completePaleConsecration(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
-		ServerLevel overworld = sLevel.getServer().overworld();
-		PaleConsecrationSavedData data = PaleConsecrationSavedData.get(overworld);
-		String dimension = sLevel.dimension().location().toString();
-		long expiryTick = sLevel.getGameTime() + PALE_CONSECRATION_DURATION_TICKS;
-
-		PaleConsecrationSavedData.ConsecrationEntry entry = new PaleConsecrationSavedData.ConsecrationEntry(
-				caster.getUUID(), center, dimension, PALE_CONSECRATION_RADIUS, expiryTick);
-		data.addEntry(entry);
+		openZone(sLevel, PaleConsecrationSavedData.get(sLevel.getServer().overworld()), caster, center,
+				PALE_CONSECRATION_RADIUS, PALE_CONSECRATION_DURATION_TICKS);
 		recordNovitiateProtection(sLevel, caster, center, PALE_CONSECRATION_RADIUS);
 
 		long durationMinutes = PALE_CONSECRATION_DURATION_TICKS / 1200;
@@ -720,32 +689,23 @@ public class UnstainedCardinalRiteEvents {
 	}
 
 	private static void completeSilthmereRemembrance(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
-		AABB area = new AABB(center).inflate(REMEMBRANCE_RADIUS);
-		List<ServerPlayer> nearby = sLevel.getEntitiesOfClass(
-				ServerPlayer.class, area, p -> true);
+		int affected = blessNearby(sLevel, center, REMEMBRANCE_RADIUS, IUnstainedProgress::hasBegunPurification,
+				(target, progress) -> {
+					progress.addPurity(REMEMBRANCE_PURITY);
+					UnstainedProgressEvents.syncProgress(target, progress);
 
-		int[] affected = {0};
-		for (ServerPlayer target : nearby) {
-			HemoCapabilityAccess.getUnstainedProgress(target).ifPresent(progress -> {
-				if (!progress.hasBegunPurification()) return;
+					target.addEffect(new MobEffectInstance(
+							EffectInit.verdigris_aura, REMEMBRANCE_VERDIGRIS_DURATION, 1,
+							false, true, true));
 
-				progress.addPurity(REMEMBRANCE_PURITY);
-				UnstainedProgressEvents.syncProgress(target, progress);
+					target.displayClientMessage(
+							Component.literal("Still water answers the title Silthmere. Purity blooms within.")
+									.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+							false);
+				});
 
-				target.addEffect(new MobEffectInstance(
-						EffectInit.verdigris_aura, REMEMBRANCE_VERDIGRIS_DURATION, 1,
-						false, true, true));
-
-				target.displayClientMessage(
-						Component.literal("Still water answers the title Silthmere. Purity blooms within.")
-								.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
-						false);
-				affected[0]++;
-			});
-		}
-
-		String msg = affected[0] > 0
-				? "The title Silthmere is answered. " + affected[0] + " Unstained soul(s) have been blessed."
+		String msg = affected > 0
+				? "The title Silthmere is answered. " + affected + " Unstained soul(s) have been blessed."
 				: "Silthmere's invocation echoes, but no Unstained walk near enough to hear it.";
 		caster.displayClientMessage(
 				Component.literal(msg).withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
@@ -772,16 +732,10 @@ public class UnstainedCardinalRiteEvents {
 	 * and slowly grows the purity of Unstained players inside it.
 	 */
 	private static void completeLetheCovenantRite(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
-		ServerLevel overworld = sLevel.getServer().overworld();
-		LetheCovenantSavedData data = LetheCovenantSavedData.get(overworld);
-		String dimension = sLevel.dimension().location().toString();
-		long expiryTick = sLevel.getGameTime() + LETHE_COVENANT_DURATION_TICKS;
-
-		LetheCovenantSavedData.CovenantEntry entry = new LetheCovenantSavedData.CovenantEntry(
-				caster.getUUID(), center, dimension, LETHE_COVENANT_CHUNK_RADIUS, expiryTick);
-		data.addEntry(entry);
-
 		int blockRadius = LETHE_COVENANT_CHUNK_RADIUS * 16;
+		openZone(sLevel, LetheCovenantSavedData.get(sLevel.getServer().overworld()), caster, center,
+				blockRadius, LETHE_COVENANT_DURATION_TICKS);
+
 		long durationMinutes = LETHE_COVENANT_DURATION_TICKS / 1200;
 		caster.displayClientMessage(
 				Component.literal("The Lethe Covenant is sealed! A domain of stillness spreads "
@@ -800,29 +754,13 @@ public class UnstainedCardinalRiteEvents {
 	/**
 	 * Rite of the Lethean Tide (Greater, 0 blood, Unstained):
 	 * Forcibly ends an active Blood Moon, broadcasts a cleansing message,
-	 * and grants the caster +10 purity. Requires purity >= 50.
+	 * and grants the caster +10 purity. Requires purity >= 50 and an active
+	 * Blood Moon, both checked by {@link #preflight}.
 	 */
 	private static void completeLetheanTide(ServerLevel sLevel, ServerPlayer caster) {
 		HemoCapabilityAccess.getUnstainedProgress(caster).ifPresent(unstained -> {
-			if (!unstained.hasBegunPurification() || unstained.getPurity() < 50f) {
-				caster.displayClientMessage(
-						Component.literal("The tide will not answer your purity is insufficient.")
-								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
-						false);
-				return;
-			}
-
 			ServerLevel overworld = sLevel.getServer().overworld();
-			BloodMoonSavedData bloodMoonData = BloodMoonSavedData.get(overworld);
-			if (!bloodMoonData.isActive()) {
-				caster.displayClientMessage(
-						Component.literal("There is no Blood Moon to cleanse.")
-								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
-						false);
-				return;
-			}
-
-			bloodMoonData.stop();
+			BloodMoonSavedData.get(overworld).stop();
 			for (ServerPlayer p : overworld.getPlayers(ServerPlayer::isAlive)) {
 				p.sendSystemMessage(Component.translatable("hemomancy.lethean_tide.end")
 						.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD));
@@ -853,32 +791,24 @@ public class UnstainedCardinalRiteEvents {
 	 * 30 min), and Verdigris Aura (amp 2, 30 min).
 	 */
 	private static void completePaleVigil(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
-		AABB area = new AABB(center).inflate(PALE_VIGIL_RADIUS);
-		List<ServerPlayer> nearby = sLevel.getEntitiesOfClass(ServerPlayer.class, area, p -> true);
+		int affected = blessNearby(sLevel, center, PALE_VIGIL_RADIUS, IUnstainedProgress::hasClarityUnlocked,
+				(target, progress) -> {
+					progress.addClarity(PALE_VIGIL_CLARITY);
+					UnstainedProgressEvents.syncProgress(target, progress);
 
-		int[] affected = { 0 };
-		for (ServerPlayer target : nearby) {
-			HemoCapabilityAccess.getUnstainedProgress(target).ifPresent(progress -> {
-				if (!progress.hasClarityUnlocked()) return;
+					target.addEffect(new MobEffectInstance(
+							EffectInit.silver_ward, PALE_VIGIL_EFFECT_TICKS, 2, false, true, true));
+					target.addEffect(new MobEffectInstance(
+							EffectInit.verdigris_aura, PALE_VIGIL_EFFECT_TICKS, 2, false, true, true));
 
-				progress.addClarity(PALE_VIGIL_CLARITY);
-				UnstainedProgressEvents.syncProgress(target, progress);
+					target.displayClientMessage(
+							Component.literal("The Pale Vigil watches. Clarity deepens within you.")
+									.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
+							false);
+				});
 
-				target.addEffect(new MobEffectInstance(
-						EffectInit.silver_ward, PALE_VIGIL_EFFECT_TICKS, 2, false, true, true));
-				target.addEffect(new MobEffectInstance(
-						EffectInit.verdigris_aura, PALE_VIGIL_EFFECT_TICKS, 2, false, true, true));
-
-				target.displayClientMessage(
-						Component.literal("The Pale Vigil watches. Clarity deepens within you.")
-								.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
-						false);
-				affected[0]++;
-			});
-		}
-
-		String msg = affected[0] > 0
-				? "The Pale Vigil holds. " + affected[0] + " soul(s) draw clarity from its light."
+		String msg = affected > 0
+				? "The Pale Vigil holds. " + affected + " soul(s) draw clarity from its light."
 				: "The Pale Vigil shines, but no clarity-bearers stand near enough to receive it.";
 		caster.displayClientMessage(
 				Component.literal(msg).withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC), false);
@@ -907,50 +837,35 @@ public class UnstainedCardinalRiteEvents {
 	 * 1 hour). The full inverse of Sanguine Dominion.
 	 */
 	private static void completeLetheanFont(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
-		ServerLevel overworld = sLevel.getServer().overworld();
-		LetheCovenantSavedData data = LetheCovenantSavedData.get(overworld);
-		String dimension = sLevel.dimension().location().toString();
-		long expiryTick = sLevel.getGameTime() + LETHEAN_FONT_DOMAIN_TICKS;
-
-		LetheCovenantSavedData.CovenantEntry entry = new LetheCovenantSavedData.CovenantEntry(
-				caster.getUUID(), center, dimension, LETHEAN_FONT_CHUNK_RADIUS, expiryTick);
-		data.addEntry(entry);
-
-		// Clarity burst to all nearby clarity-bearers
-		AABB area = new AABB(center).inflate(LETHEAN_FONT_BURST_RADIUS);
-		List<ServerPlayer> nearby = sLevel.getEntitiesOfClass(ServerPlayer.class, area, p -> true);
-
-		int[] affected = { 0 };
-		for (ServerPlayer target : nearby) {
-			HemoCapabilityAccess.getUnstainedProgress(target).ifPresent(progress -> {
-				if (!progress.hasClarityUnlocked()) return;
-
-				progress.addClarity(LETHEAN_FONT_CLARITY);
-				UnstainedProgressEvents.syncProgress(target, progress);
-
-				target.addEffect(new MobEffectInstance(
-						EffectInit.silver_ward, LETHEAN_FONT_EFFECT_TICKS, 3, false, true, true));
-				target.addEffect(new MobEffectInstance(
-						EffectInit.verdigris_aura, LETHEAN_FONT_EFFECT_TICKS, 3, false, true, true));
-
-				target.displayClientMessage(
-						Component.literal("Lethe's source flows through you. The font of all clarity is open.")
-								.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD),
-						false);
-				affected[0]++;
-			});
-		}
-
 		int blockRadius = LETHEAN_FONT_CHUNK_RADIUS * 16;
+		openZone(sLevel, LetheCovenantSavedData.get(sLevel.getServer().overworld()), caster, center,
+				blockRadius, LETHEAN_FONT_DOMAIN_TICKS);
+
+		int affected = blessNearby(sLevel, center, LETHEAN_FONT_BURST_RADIUS, IUnstainedProgress::hasClarityUnlocked,
+				(target, progress) -> {
+					progress.addClarity(LETHEAN_FONT_CLARITY);
+					UnstainedProgressEvents.syncProgress(target, progress);
+
+					target.addEffect(new MobEffectInstance(
+							EffectInit.silver_ward, LETHEAN_FONT_EFFECT_TICKS, 3, false, true, true));
+					target.addEffect(new MobEffectInstance(
+							EffectInit.verdigris_aura, LETHEAN_FONT_EFFECT_TICKS, 3, false, true, true));
+
+					target.displayClientMessage(
+							Component.literal("Lethe's source flows through you. The font of all clarity is open.")
+									.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD),
+							false);
+				});
+
 		long durationMinutes = LETHEAN_FONT_DOMAIN_TICKS / 1200;
 		caster.displayClientMessage(
 				Component.literal("The Lethean Font is open! A domain of ultimate stillness spreads "
 						+ blockRadius + " blocks for " + durationMinutes + " minutes.")
 						.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD),
 				false);
-		if (affected[0] > 0) {
+		if (affected > 0) {
 			caster.displayClientMessage(
-					Component.literal(affected[0] + " soul(s) have been blessed by the Font.")
+					Component.literal(affected + " soul(s) have been blessed by the Font.")
 							.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
 					false);
 		}

@@ -1,19 +1,15 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.rite;
 
-import com.vincenthuto.hemomancy.common.init.ParticleInit;
-import com.vincenthuto.hemomancy.client.particle.data.BloodCellData;
 import com.vincenthuto.hemomancy.common.block.harbinger.BlockBloodEndpoint;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponGraftRite;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
-import com.vincenthuto.hemomancy.common.rite.MemoryBrazierRite;
-import com.vincenthuto.hemomancy.common.rite.ScarBrazierRite;
+import com.vincenthuto.hemomancy.common.rite.brazier.BrazierRites;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -58,18 +54,18 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * The ritual phase property tracks the brazier's state:
  * <ul>
  *   <li><b>0</b> — Unlit (cold)</li>
- *   <li><b>1</b> — Normal fire (lit)</li>
- *   <li><b>2</b> — Sanguine flames (reagents accepted, awaiting echo)</li>
+ *   <li><b>1</b> — Lit</li>
  * </ul>
+ * Phase 2 (the retired "sanguine flames" reagent state) is never set any more. The property keeps its 0-2 range
+ * because the blockstate file still keys a model on it and older worlds may hold it; such a brazier simply reads
+ * as lit.
  */
 public class BrazierBlock extends Block implements EntityBlock, SimpleWaterloggedBlock, BlockBloodEndpoint {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	public static final double BLOOD_TO_LIGHT = 50.0D;
 
-	/**
-	 * Ritual phase: 0 = unlit, 1 = normal fire, 2 = sanguine flames (awaiting echo).
-	 */
+	/** Ritual phase: 0 = unlit, 1 = lit; 2 is retired (see the class comment) and treated as lit. */
 	public static final IntegerProperty RITUAL_PHASE = IntegerProperty.create("ritual_phase", 0, 2);
 
 	// Dais, vertebral stem, and the bowl up to its talon tips (tools/model_export/iron_brazier.py).
@@ -95,8 +91,7 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 	@Override
 	public void animateTick(BlockState pState, Level pLevel, BlockPos pPos, RandomSource pRandom) {
 		super.animateTick(pState, pLevel, pPos, pRandom);
-		int phase = pState.getValue(RITUAL_PHASE);
-		if (phase == 0) {
+		if (!isLit(pState)) {
 			return;
 		}
 		double x = pPos.getX() + 0.5D;
@@ -106,24 +101,13 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 		for (int i = 0; i < 3; i++) {
 			double ox = (pRandom.nextDouble() - 0.5D) * 0.36D;
 			double oz = (pRandom.nextDouble() - 0.5D) * 0.36D;
-			pLevel.addParticle(HemoParticleData.emberSpark(phase == 2 ? SANGUINE_EMBER : EMBER,
+			pLevel.addParticle(HemoParticleData.emberSpark(EMBER,
 					0.05F + pRandom.nextFloat() * 0.035F, 0.85F, 26 + pRandom.nextInt(14)),
 					x + ox, pPos.getY() + POOL_TOP, z + oz, -ox * 0.03D, 0.022D + pRandom.nextDouble() * 0.018D,
 					-oz * 0.03D);
 		}
 		pLevel.addParticle(HemoParticleData.darkGlow(SOOT), x + (pRandom.nextDouble() - 0.5D) * 0.2D,
 				pPos.getY() + FLAME_TOP, z + (pRandom.nextDouble() - 0.5D) * 0.2D, 0.0D, 0.012D, 0.0D);
-		if (phase == 2) {
-			// Sanguine flames: blood cells wheel up round the offering while the rite awaits its echo.
-			for (int i = 0; i < 3; i++) {
-				double angle = pRandom.nextDouble() * Math.PI * 2.0D;
-				double cos = Math.cos(angle) * 0.2D;
-				double sin = Math.sin(angle) * 0.2D;
-				pLevel.addParticle(HemoParticleData.bloodCell(SANGUINE_EMBER), x + cos,
-						pPos.getY() + FLAME_TOP - 0.25D + pRandom.nextDouble() * 0.3D, z + sin,
-						-sin * 0.12D, 0.035D, cos * 0.12D);
-			}
-		}
 	}
 
 	@Override
@@ -206,7 +190,6 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 			ItemStack stack) {
 		if (worldIn.isClientSide) return InteractionResult.SUCCESS;
 
-		int phase = state.getValue(RITUAL_PHASE);
 		BlockEntity be = worldIn.getBlockEntity(pos);
 		IronBrazierBlockEntity brazierTE = be instanceof IronBrazierBlockEntity brazier ? brazier : null;
 		if (player.isShiftKeyDown() && brazierTE != null && brazierTE.hasOffering()) {
@@ -217,29 +200,9 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 			return InteractionResult.SUCCESS;
 		}
 
-		if (phase == 0) {
-			if (tryInsertOffering(worldIn, pos, player, stack, brazierTE, false)) {
-				return InteractionResult.SUCCESS;
-			}
-			return InteractionResult.PASS;
-		}
-
-		if (phase == 1) {
-			if (tryInsertOffering(worldIn, pos, player, stack, brazierTE, true)) {
-				return InteractionResult.SUCCESS;
-			}
-
-			return InteractionResult.PASS;
-		}
-
-		if (phase == 2) {
-			if (tryInsertOffering(worldIn, pos, player, stack, brazierTE, true)) {
-				return InteractionResult.SUCCESS;
-			}
-			return InteractionResult.PASS;
-		}
-
-		return InteractionResult.PASS;
+		return tryInsertOffering(worldIn, pos, player, stack, brazierTE, isLit(state))
+				? InteractionResult.SUCCESS
+				: InteractionResult.PASS;
 	}
 
 	private static boolean tryInsertOffering(Level level, BlockPos pos, Player player, ItemStack stack,
@@ -290,7 +253,7 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 			double maxAmount) {
 		if (level.getBlockEntity(pos) instanceof IronBrazierBlockEntity brazier
 				&& BrazierBloodInteractionRules.shouldExtinguishOnAbsorption(
-						state.getValue(RITUAL_PHASE) > 0, !brazier.hasOffering(), maxAmount)) {
+						isLit(state), !brazier.hasOffering(), maxAmount)) {
 			brazier.resetItemAbsorptionProgress();
 			// The fire is drawn out with its blood: the bowl drains over about a second and goes out once it is dry.
 			double pooled = brazier.getPooledBlood() > 0.0D ? brazier.getPooledBlood() : BLOOD_TO_LIGHT;
@@ -310,20 +273,14 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 			level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.55F, 1.0F);
 			return drawn;
 		}
-		double memoryHandled = MemoryBrazierRite.tryAbsorb(level, pos, state, player, maxAmount);
-		if (memoryHandled > 0.0D) {
-			return memoryHandled;
-		}
-		double scarHandled = ScarBrazierRite.tryAbsorb(level, pos, state, player, maxAmount);
-		return scarHandled > 0.0D
-				? scarHandled
-				: LivingWeaponGraftRite.tryAbsorb(level, pos, state, player, maxAmount);
+		// An offering is drawn out by whichever brazier rite claims it (Memory, Scar, Living Weapon Graft).
+		return BrazierRites.absorb(level, pos, state, player, maxAmount);
 	}
 
 	@Override
 	public double projectBloodIntoBlock(ServerLevel level, BlockPos pos, BlockState state, ServerPlayer player,
 			double maxAmount) {
-		if (state.getValue(WATERLOGGED) || state.getValue(RITUAL_PHASE) > 0 || maxAmount <= 0.0D
+		if (state.getValue(WATERLOGGED) || isLit(state) || maxAmount <= 0.0D
 				|| !(level.getBlockEntity(pos) instanceof IronBrazierBlockEntity brazier)) {
 			return 0.0D;
 		}
@@ -350,7 +307,7 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 		}
 		ItemStack offering = brazier.getOfferingDisplayStack();
 		level.setBlock(pos, state.setValue(RITUAL_PHASE, 1), Block.UPDATE_ALL);
-		HLParticleUtils.spawnPoof(level, pos, new BloodCellData(ParticleInit.blood_cell.get(), ParticleColor.BLOOD));
+		HLParticleUtils.spawnPoof(level, pos, HemoParticleData.bloodCell(ParticleColor.BLOOD));
 		BrazierSpecialOfferingEffects.spawn(level, pos, offering, true,
 				BrazierSpecialOfferingRules.shouldEmitOnIgnition(false, true, !offering.isEmpty()));
 		level.playSound(null, pos, SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS, 0.55F, 0.75F);
@@ -372,13 +329,6 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 				Containers.dropItemStack(level, pos.getX() + 0.5D, pos.getY() + 0.9D, pos.getZ() + 0.5D, offering);
 			}
 		}
-	}
-
-	/**
-	 * Convenience to check whether the brazier is in sanguine flame state.
-	 */
-	public static boolean isSanguineFlame(BlockState state) {
-		return state.getBlock() instanceof BrazierBlock && state.getValue(RITUAL_PHASE) == 2;
 	}
 
 	/**

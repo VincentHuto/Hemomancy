@@ -23,8 +23,6 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.particles.ItemParticleOption;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
@@ -44,7 +42,6 @@ import java.util.function.Predicate;
 public final class CellHandParticleEffects {
 	private static final int GLOBAL_PARTICLE_COUNT = 20;
 	private static final int ABSORBED_ITEM_PARTICLES_PER_TICK = 2;
-	private static final float ABSORBED_ITEM_PARTICLE_SCALE = 0.55F;
 	private static final ParticleColor WILL_ABSORPTION_GLOW = ParticleColor.BLACK;
 	private static final ProjectionParticleEmissionGate PROJECTION_EMISSION_GATE =
 			new ProjectionParticleEmissionGate();
@@ -191,13 +188,17 @@ public final class CellHandParticleEffects {
 				.map(rite -> Vec3.atCenterOf(rite.getCenter()).add(0.0D, 0.45D, 0.0D));
 	}
 
-	public static void spawnBrazierItemAbsorptionParticles(ItemStack offeringStack, Vec3 source) {
+	/**
+	 * Draws a brazier offering into the hand of the player channelling it. Sent to everyone near the brazier, so the
+	 * caster may be the local player (first or third person) or another player seen from outside.
+	 */
+	public static void spawnBrazierItemAbsorptionParticles(int casterId, ItemStack offeringStack, Vec3 source) {
 		Minecraft mc = Minecraft.getInstance();
-		if (mc.isPaused() || offeringStack.isEmpty()) {
+		if (mc.isPaused() || mc.level == null || offeringStack.isEmpty()) {
 			return;
 		}
-		LocalPlayer player = mc.player;
-		if (player == null || !player.isUsingItem() || player.getUseItemRemainingTicks() <= 0) {
+		if (!(mc.level.getEntity(casterId) instanceof Player player) || !player.isUsingItem()
+				|| player.getUseItemRemainingTicks() <= 0) {
 			return;
 		}
 		ItemStack activeStack = player.getUseItem();
@@ -208,14 +209,16 @@ public final class CellHandParticleEffects {
 		HumanoidArm activeArm = player.getUsedItemHand() == InteractionHand.MAIN_HAND
 				? player.getMainArm()
 				: player.getMainArm().getOpposite();
-		Vec3 origin = mc.options.getCameraType().isFirstPerson()
+		boolean firstPerson = player == mc.player && mc.options.getCameraType().isFirstPerson();
+		Vec3 origin = firstPerson
 				? fallbackFirstPersonHandOrigin(activeArm)
 				: calculateThirdPersonHandOrigin(player, activeArm);
-		spawnItemParticlesAlongAbsorptionPath(mc, offeringStack, origin, source);
+		spawnItemParticlesAlongAbsorptionPath(mc, offeringStack, origin, source,
+				firstPerson ? Optional.of(worldToFirstPersonAnchor(origin)) : Optional.empty());
 	}
 
 	private static void spawnItemParticlesAlongAbsorptionPath(Minecraft mc, ItemStack offeringStack, Vec3 origin,
-			Vec3 source) {
+			Vec3 source, Optional<Vec3> firstPersonTargetAnchor) {
 		if (mc.level == null) {
 			return;
 		}
@@ -237,13 +240,8 @@ public final class CellHandParticleEffects {
 			double velocityX = inwardVelocity.x + (rand.nextDouble() - 0.5D) * 0.025D;
 			double velocityY = inwardVelocity.y + (rand.nextDouble() - 0.5D) * 0.025D;
 			double velocityZ = inwardVelocity.z + (rand.nextDouble() - 0.5D) * 0.025D;
-			Particle itemParticle = mc.particleEngine.createParticle(
-					new ItemParticleOption(ParticleTypes.ITEM, offeringStack),
-					point.x, point.y, point.z,
-					velocityX, velocityY, velocityZ);
-			if (itemParticle != null) {
-				itemParticle.scale(ABSORBED_ITEM_PARTICLE_SCALE);
-			}
+			// The offering streams into the hand as absorbed cells in its own colour, alongside the glow.
+			spawnAbsorbedBloodParticle(mc, origin, source, absorptionItemColor, rand, firstPersonTargetAnchor);
 			mc.level.addParticle(GlowParticleFactory.createData(absorptionItemColor),
 					point.x + side.x * 0.35D, point.y + side.y * 0.35D, point.z + side.z * 0.35D,
 					velocityX * 0.75D, velocityY * 0.75D, velocityZ * 0.75D);

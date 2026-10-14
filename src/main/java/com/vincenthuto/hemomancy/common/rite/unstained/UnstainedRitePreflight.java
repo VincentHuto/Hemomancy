@@ -5,9 +5,19 @@ public final class UnstainedRitePreflight {
 	private static final String CLARITY_ASCENSION = "cardinal_rite/clarity_ascension";
 	private static final String CLOSED_VEIN = "cardinal_rite/closed_vein";
 	private static final String SEVERED_COVENANT = "cardinal_rite/severed_covenant";
+	private static final String SILVER_VEIL = "cardinal_rite/silver_veil";
+	private static final String LETHEAN_TIDE = "cardinal_rite/lethean_tide";
+	private static final String SILVER_DAWN = "cardinal_rite/silver_dawn";
+	static final float SILVER_VEIL_MIN_PURITY = 25.0f;
+	static final float LETHEAN_TIDE_MIN_PURITY = 50.0f;
 
 	private UnstainedRitePreflight() {}
 
+	/**
+	 * Every refusal an Unstained rite can make. It runs at activation and again
+	 * just before completion consumes anything, so a refused rite never starts
+	 * or never spends its offerings.
+	 */
 	public static Result check(String ritePath, State state) {
 		if (LETHEAN_BAPTISM.equals(ritePath)) {
 			if (!state.maySeekCure()) return Result.failed(Failure.FOUNDER_CANNOT_ENTER);
@@ -27,8 +37,21 @@ public final class UnstainedRitePreflight {
 			if (state.baselineRestored()) return Result.failed(Failure.CLOSED_VEIN_MEMBER_ONLY);
 			if (!state.begunPurification() || !state.purified()) return Result.failed(Failure.CURE_NOT_READY);
 		}
-		if (SEVERED_COVENANT.equals(ritePath) && !state.severedCovenantEligible()) {
-			return Result.failed(Failure.SEVERANCE_NOT_READY);
+		if (SEVERED_COVENANT.equals(ritePath)) {
+			if (!state.severedCovenantEligible()) return Result.failed(Failure.SEVERANCE_NOT_READY);
+			if (!state.leadsFoundersCovenant()) return Result.failed(Failure.NO_FOUNDERS_COVENANT);
+		}
+		if (SILVER_VEIL.equals(ritePath) && state.purity() < SILVER_VEIL_MIN_PURITY) {
+			return Result.failed(Failure.VEIL_PURITY_TOO_LOW);
+		}
+		if (LETHEAN_TIDE.equals(ritePath)) {
+			if (!state.begunPurification() || state.purity() < LETHEAN_TIDE_MIN_PURITY) {
+				return Result.failed(Failure.TIDE_PURITY_TOO_LOW);
+			}
+			if (!state.bloodMoonActive()) return Result.failed(Failure.NO_BLOOD_MOON);
+		}
+		if (SILVER_DAWN.equals(ritePath) && !state.clarityUnlocked()) {
+			return Result.failed(Failure.CLARITY_REQUIRED);
 		}
 		return Result.accepted();
 	}
@@ -36,7 +59,8 @@ public final class UnstainedRitePreflight {
 	public record State(boolean maySeekCure, boolean infectionSuppressed, boolean begunPurification,
 			boolean purified, boolean baselineRestored, boolean novitiateVowsComplete,
 			boolean clarityPrepared, boolean clarityUnlocked, boolean cleanBlood,
-			boolean severedCovenantEligible) {}
+			boolean severedCovenantEligible, boolean leadsFoundersCovenant, float purity,
+			boolean bloodMoonActive) {}
 
 	public record Result(boolean success, Failure failure) {
 		private static Result accepted() {
@@ -59,6 +83,11 @@ public final class UnstainedRitePreflight {
 		CLARITY_NOT_PREPARED,
 		CURE_NOT_READY,
 		CLOSED_VEIN_MEMBER_ONLY,
-		SEVERANCE_NOT_READY
+		SEVERANCE_NOT_READY,
+		NO_FOUNDERS_COVENANT,
+		VEIL_PURITY_TOO_LOW,
+		TIDE_PURITY_TOO_LOW,
+		NO_BLOOD_MOON,
+		CLARITY_REQUIRED
 	}
 }

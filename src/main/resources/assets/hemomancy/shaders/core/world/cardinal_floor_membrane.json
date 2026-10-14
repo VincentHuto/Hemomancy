@@ -31,6 +31,14 @@
     { "name": "FocusOffset", "type": "float", "count": 2, "values": [ 0.0, 0.0 ] },
     { "name": "BaseColor", "type": "float", "count": 3, "values": [ 0.16, 0.04, 0.05 ] },
     { "name": "VeinColor", "type": "float", "count": 3, "values": [ 0.70, 0.08, 0.12 ] },
-    { "name": "GlowColor", "type": "float", "count": 3, "values": [ 1.0, 0.54, 0.45 ] }
+    { "name": "GlowColor", "type": "float", "count": 3, "values": [ 1.0, 0.54, 0.45 ] },
+    { "name": "RiteRings", "type": "float", "count": 4, "values": [ 0.0, 0.0, 0.0, 0.0 ] },
+    { "name": "RiteSurge", "type": "float", "count": 4, "values": [ 0.0, 0.0, 0.0, 0.0 ] },
+    { "name": "RiteDraw", "type": "float", "count": 4, "values": [ 0.0, 0.0, 0.0, 0.0 ] },
+    { "name": "RiteMood", "type": "float", "count": 4, "values": [ 0.0, 0.0, 0.0, 0.0 ] },
+    { "name": "RiteSwell", "type": "float", "count": 4, "values": [ 0.0, 0.0, 0.0, 0.0 ] },
+    { "name": "WoundAngles", "type": "float", "count": 4, "values": [ 0.0, 0.0, 0.0, 0.0 ] },
+    { "name": "WoundLevels", "type": "float", "count": 4, "values": [ 0.0, 0.0, 0.0, 0.0 ] },
+    { "name": "RiteBlood", "type": "float", "count": 4, "values": [ 0.0, 0.0, 0.0, 0.0 ] }
   ]
 }

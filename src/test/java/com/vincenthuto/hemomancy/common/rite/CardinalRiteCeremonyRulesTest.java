@@ -35,29 +35,32 @@ public final class CardinalRiteCeremonyRulesTest {
 		assertEquals(8, CardinalRiteCeremonyRules.anchorCount(5), "degree five anchors");
 		assertEquals(12, CardinalRiteCeremonyRules.anchorCount(6), "degree six anchors");
 		assertEquals(12, CardinalRiteCeremonyRules.anchorCount(7), "degree seven anchors");
-		assertEquals(200, CardinalRiteCeremonyRules.upfrontBloodCost(1), "degree one blood");
-		assertEquals(200, CardinalRiteCeremonyRules.upfrontBloodCost(4), "degree four blood");
-		assertEquals(400, CardinalRiteCeremonyRules.upfrontBloodCost(5), "degree five blood");
-		assertEquals(600, CardinalRiteCeremonyRules.upfrontBloodCost(7), "degree seven blood");
 	}
 
 	@Test
-	void wavesAndStillIntervalsScaleByForm() {
-		assertEquals(2, CardinalRiteCeremonyRules.fullWaveCount(0), "minor waves");
-		assertEquals(3, CardinalRiteCeremonyRules.fullWaveCount(1), "lesser waves");
-		assertEquals(4, CardinalRiteCeremonyRules.fullWaveCount(2), "greater waves");
-		assertEquals(6, CardinalRiteCeremonyRules.fullWaveCount(3), "grand waves");
+	void stillIntervalsScaleByForm() {
 		assertEquals(200, CardinalRiteCeremonyRules.stillIntervalTicks(0), "minor still interval");
 		assertEquals(80, CardinalRiteCeremonyRules.stillIntervalTicks(3), "grand still interval");
 	}
 
 	@Test
-	void onlyUpperDegreesReceiveAllies() {
-		assertEquals(0, CardinalRiteCeremonyRules.allyQuota(4), "degree four quota");
-		assertEquals(0, CardinalRiteCeremonyRules.allyQuota(5), "degree five quota");
-		assertEquals(1, CardinalRiteCeremonyRules.allyQuota(6), "degree six quota");
-		assertEquals(3, CardinalRiteCeremonyRules.allyQuota(7), "degree seven quota");
-		assertEquals(3, CardinalRiteCeremonyRules.allyQuota(8), "degree eight quota");
+	void waveCountsFollowAuthoredCountThenDegree() {
+		var atmosphere = new CardinalRiteCeremonyDefinition.Atmosphere("faint", false, false);
+		var pool = new CardinalRiteCeremonyDefinition(null, java.util.List.of(), java.util.List.of(),
+				java.util.List.of("bloodlicker_siphon", "rogue_will"), java.util.List.of(), java.util.List.of(),
+				1, "living_staff", 0, java.util.List.of(), 0, atmosphere, "safe_retry");
+		assertEquals(0, CardinalRiteCeremonyRules.waveCount(pool, 4), "below degree five");
+		assertEquals(1, CardinalRiteCeremonyRules.waveCount(pool, 5), "degree five");
+		assertEquals(3, CardinalRiteCeremonyRules.waveCount(pool, 6), "degree six");
+		assertEquals(4, CardinalRiteCeremonyRules.waveCount(pool, 7), "degree seven minimum");
+		var authored = new CardinalRiteCeremonyDefinition(null, java.util.List.of(), java.util.List.of(),
+				java.util.List.of("bloodlicker_siphon"), java.util.List.of(), java.util.List.of(),
+				1, "living_staff", 0, java.util.List.of(), 0, atmosphere, "safe_retry", 2, "");
+		assertEquals(2, CardinalRiteCeremonyRules.waveCount(authored, 4), "authored count wins");
+		var empty = new CardinalRiteCeremonyDefinition(null, java.util.List.of(), java.util.List.of(),
+				java.util.List.of(), java.util.List.of(), java.util.List.of(),
+				1, "living_staff", 0, java.util.List.of(), 0, atmosphere, "safe_retry");
+		assertEquals(0, CardinalRiteCeremonyRules.waveCount(empty, 7), "no pool means no waves");
 	}
 
 	@Test

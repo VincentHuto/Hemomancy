@@ -7,11 +7,21 @@ import java.util.*;
 
 public final class CardinalRiteFogState {
 	private static final float FADE_IN_TICKS = 10.0F;
-	private static final float FADE_OUT_TICKS = 16.0F;
+	/** Fade-out when a rite simply stops being synced; endings may ask for a longer one. */
+	public static final float FADE_OUT_TICKS = 16.0F;
 
 	private final Map<BlockPos, TrackedRite> trackedRites = new HashMap<>();
 
 	public List<Sample> update(List<ActiveRiteClientData.RiteEntry> activeRites, float time) {
+		return update(activeRites, time, center -> FADE_OUT_TICKS);
+	}
+
+	/**
+	 * @param fadeOut ticks a vanished rite's fog takes to thin away, by centre;
+	 *                read once when the rite leaves the sync list so endings can
+	 *                keep the fog for as long as their own choreography runs
+	 */
+	public List<Sample> update(List<ActiveRiteClientData.RiteEntry> activeRites, float time, FadeOut fadeOut) {
 		for (TrackedRite tracked : trackedRites.values()) {
 			tracked.active = false;
 		}
@@ -24,6 +34,7 @@ public final class CardinalRiteFogState {
 					rite.getCenter(), ignored -> new TrackedRite(rite, time));
 			tracked.rite = rite;
 			tracked.active = true;
+			tracked.fadeOutTicks = -1.0F;
 		}
 
 		List<Sample> samples = new ArrayList<>(trackedRites.size());
@@ -31,19 +42,24 @@ public final class CardinalRiteFogState {
 		while (iterator.hasNext()) {
 			TrackedRite tracked = iterator.next();
 			float elapsed = Math.max(0.0F, time - tracked.lastTime);
-			float step = elapsed / (tracked.active ? FADE_IN_TICKS : FADE_OUT_TICKS);
 			float targetOpacity = fogOpacity(tracked.rite.getFogProfile());
-			tracked.opacity = tracked.active
-					? Math.min(targetOpacity, tracked.opacity + step * targetOpacity)
-					: Math.max(0.0F, tracked.opacity - step);
+			if (tracked.active) {
+				tracked.opacity = Math.min(targetOpacity,
+						tracked.opacity + elapsed / FADE_IN_TICKS * targetOpacity);
+			} else {
+				if (tracked.fadeOutTicks < 0.0F) {
+					tracked.fadeOutTicks = Math.max(1.0F, fadeOut.ticks(tracked.rite.getCenter()));
+				}
+				tracked.opacity = Math.max(0.0F, tracked.opacity - elapsed / tracked.fadeOutTicks);
+			}
 			tracked.lastTime = time;
 			if (!tracked.active && tracked.opacity <= 0.001F) {
 				iterator.remove();
 			} else {
-				samples.add(new Sample(tracked.rite, tracked.opacity));
+				samples.add(new Sample(tracked.rite, tracked.opacity, tracked.active));
 			}
 		}
-		return List.copyOf(samples);
+		return samples;
 	}
 
 	private static float fogOpacity(String profile) {
@@ -59,7 +75,12 @@ public final class CardinalRiteFogState {
 		trackedRites.clear();
 	}
 
-	public record Sample(ActiveRiteClientData.RiteEntry rite, float opacity) {
+	@FunctionalInterface
+	public interface FadeOut {
+		float ticks(BlockPos center);
+	}
+
+	public record Sample(ActiveRiteClientData.RiteEntry rite, float opacity, boolean active) {
 	}
 
 	private static final class TrackedRite {
@@ -67,6 +88,7 @@ public final class CardinalRiteFogState {
 		private float opacity;
 		private float lastTime;
 		private boolean active;
+		private float fadeOutTicks = -1.0F;
 
 		private TrackedRite(ActiveRiteClientData.RiteEntry rite, float time) {
 			this.rite = rite;

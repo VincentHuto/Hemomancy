@@ -107,7 +107,7 @@ public final class StationUpgradeRites {
         state.putInt("BloodAtStage", 0);
         station.setRiteLocked(true);
         for (var offering : offerings) {
-            ItemStack consumed = ((IronBrazierBlockEntity) level.getBlockEntity(offering.pos())).consumeOffering();
+            ItemStack consumed = ((IronBrazierBlockEntity) level.getBlockEntity(offering.pos())).consumeForRite(false);
             if (consumed.isEmpty()) {
                 recover(level, rite);
                 return false;

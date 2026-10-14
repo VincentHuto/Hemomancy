@@ -113,7 +113,7 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 			List<CardinalRiteRecipe> rites = CardinalRiteRecipe.getAllRecipes(Minecraft.getInstance().level);
 			for (CardinalRiteRecipe recipe : rites) {
 				String name = recipe.getRiteName() != null && !recipe.getRiteName().isEmpty()
-						? recipe.getRiteName()
+						? recipe.displayName().getString()
 						: formatName(recipe.getId().getPath());
 				entries.add(new StructureEntry(
 						recipe.getId(),

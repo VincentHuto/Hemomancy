@@ -48,6 +48,16 @@ final class CardinalRiteFogStateTest {
 	}
 
 	@Test
+	void endingsCanHoldTheirFogLongerThanAPlainVanish() {
+		CardinalRiteFogState state = new CardinalRiteFogState();
+		state.update(List.of(rite(false)), 0.0F, center -> 40.0F);
+		state.update(List.of(rite(false)), 10.0F, center -> 40.0F);
+
+		assertEquals(0.5F, state.update(List.of(), 30.0F, center -> 40.0F).getFirst().opacity());
+		assertTrue(state.update(List.of(), 50.0F, center -> 40.0F).isEmpty());
+	}
+
+	@Test
 	void authoredNoneAtmosphereNeverEntersFogState() {
 		CardinalRiteFogState state = new CardinalRiteFogState();
 

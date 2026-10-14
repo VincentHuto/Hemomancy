@@ -266,10 +266,10 @@ public final class BloodStructureCraftingHelper {
 		List<ConsumedOffering> consumed = new ArrayList<>();
 		for (BlockPos pos : positions) {
 			if (level.getBlockEntity(pos) instanceof IronBrazierBlockEntity brazier) {
-				ItemStack stack = brazier.consumeOffering();
+				// Each offering brazier is spent by the formation it fed: the offering is taken and the fire goes out.
+				ItemStack stack = brazier.consumeForRite(true);
 				if (!stack.isEmpty()) {
 					consumed.add(new ConsumedOffering(pos.immutable(), stack.copy()));
-					unlightOfferingBrazier(level, pos);
 				}
 			}
 		}
@@ -297,14 +297,6 @@ public final class BloodStructureCraftingHelper {
 		if (!recipe.getId().getNamespace().equals("hemomancy")
 				|| !recipe.getId().getPath().equals("blood_structure/resonant_forge")) return true;
 		return com.vincenthuto.hemomancy.common.item.harbinger.CylinderMedia.blank(stack);
-	}
-
-	private static void unlightOfferingBrazier(ServerLevel level, BlockPos pos) {
-		BlockState state = level.getBlockState(pos);
-		if (state.getBlock() instanceof BrazierBlock
-				&& state.getValue(BrazierBlock.RITUAL_PHASE) > 0) {
-			level.setBlock(pos, state.setValue(BrazierBlock.RITUAL_PHASE, 0), Block.UPDATE_ALL);
-		}
 	}
 
 	public static Component checkPathAlignment(Player player, BloodStructureRecipe recipe) {

@@ -367,4 +367,30 @@ public class SoundInit {
 	public static final DeferredHolder<SoundEvent, SoundEvent> MANIPULATION_HEMATIC_RIPOSTE_SWAT = registerSoundEvent(
 			"manipulation.hematic_riposte.swat");
 
+	// Cardinal Rite beats. Each event aliases one existing sample in sounds.json until bespoke audio exists;
+	// moments that need two layers play two events.
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_STAFF_IMPACT = registerSoundEvent("rite.staff_impact");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_CONSECRATE = registerSoundEvent("rite.consecrate");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_ANCHOR_FILL = registerSoundEvent("rite.anchor_fill");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_ANCHOR_REPAIR = registerSoundEvent("rite.anchor_repair");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_SEGMENT_SEAL = registerSoundEvent("rite.segment_seal");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_ANCHOR_BREAK = registerSoundEvent("rite.anchor_break");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_SEAL = registerSoundEvent("rite.seal");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_SIGIL_AWAKEN = registerSoundEvent("rite.sigil_awaken");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_WAVE_START = registerSoundEvent("rite.wave_start");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_WAVE_CLEAR = registerSoundEvent("rite.wave_clear");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_OFFERING_DRAWN = registerSoundEvent("rite.offering_drawn");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_CULMINATION = registerSoundEvent("rite.culmination");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_COMPLETE = registerSoundEvent("rite.complete");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_COLLAPSE = registerSoundEvent("rite.collapse");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_CANCEL_DRAW = registerSoundEvent("rite.cancel_draw");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_CANCEL = registerSoundEvent("rite.cancel");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_FLOOR_FORM = registerSoundEvent("rite.floor_form");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_BACKLASH = registerSoundEvent("rite.backlash");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_ESCALATE = registerSoundEvent("rite.escalate");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_RING_OPEN = registerSoundEvent("rite.ring_open");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_AMBIENT_DRONE = registerSoundEvent("rite.ambient.drone");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_AMBIENT_HEARTBEAT = registerSoundEvent("rite.ambient.heartbeat");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_AMBIENT_STORM = registerSoundEvent("rite.ambient.storm");
+
 }

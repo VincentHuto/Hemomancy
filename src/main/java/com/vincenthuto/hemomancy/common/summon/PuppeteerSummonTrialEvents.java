@@ -80,6 +80,9 @@ public final class PuppeteerSummonTrialEvents {
 				summon.hemomancy$getSummonName())
 				&& rite.markPuppeteerTrialDefeated(event.getEntity().getUUID())) {
 			saved.setDirty();
+			// The trial reaches culmination from this death, outside the rite tick that announces phases.
+			com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents.announceCulmination(
+					caster.serverLevel(), rite, recipe);
 		}
 	}
 }

@@ -105,7 +105,7 @@ public class RitesTabState {
 	}
 
 	public static String displayName(CardinalRiteRecipe recipe) {
-		String name = recipe.getRiteName();
+		String name = recipe.displayName().getString();
 		if (name != null && !name.isEmpty()) return name;
 		String path = recipe.getId().getPath();
 		if (path.contains("/")) path = path.substring(path.lastIndexOf('/') + 1);

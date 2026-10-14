@@ -18,8 +18,7 @@ final class CardinalRiteStructureFailureSourceTest {
 				.replace("\r\n", "\n");
 
 		assertTrue(events.contains(
-				"if (sLevel.getGameTime() % 20 == 0 && !verifyRiteStructure(sLevel, rite)) {\n"
-						+ "\t\t\t\t\tif (StationUpgradeRites.isRite(rite.getRecipeId())) continue;\n"
+				"if (gameTime % 20 == 0 && !verifyRiteStructure(sLevel, rite)) {\n"
 						+ "\t\t\t\t\tfailRite(sLevel, caster, rite);\n"
 						+ "\t\t\t\t\ttoRemove.add(playerUUID);\n"
 						+ "\t\t\t\t\tcontinue;\n"
@@ -49,7 +48,7 @@ final class CardinalRiteStructureFailureSourceTest {
 
 		assertTrue(events.contains("recipe == null && rite.getPhase() != CardinalRitePhase.LEGACY"),
 				"datapack updates must retire active ceremonies whose recipes no longer exist");
-		assertTrue(events.contains("CardinalRiteStaffEscrow.restore(caster, rite);"),
+		assertTrue(events.contains("CardinalRiteTermination.end(sLevel, caster, rite, Outcome.RETIRED);"),
 				"retiring a removed rite must return an escrowed Living Staff");
 		assertTrue(events.contains("toRemove.add(playerUUID);"),
 				"the orphaned rite must be removed from saved and synced active state");

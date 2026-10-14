@@ -6,16 +6,32 @@ import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
+import com.vincenthuto.hemomancy.client.render.world.floor.AnchorSores;
+import com.vincenthuto.hemomancy.client.render.world.rite.CardinalRiteCeremonyLayout;
+import com.vincenthuto.hemomancy.client.render.world.rite.CardinalRiteEndingRules;
+import com.vincenthuto.hemomancy.client.render.world.rite.CardinalRiteHelixEffects;
+import com.vincenthuto.hemomancy.client.render.world.rite.RiteQuads;
+import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffFittingHelper;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteBoundaryProgress;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteCancellationRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteEventKind;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteMath;
+import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorVisualRules;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAnchorVisualRules;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilLandmarkGeometry;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilOrganicGeometry;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRenderPalette;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
+import com.vincenthuto.hutoslib.client.HLRenderTypeInit;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -25,1066 +41,996 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.BlockPos;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.ClientHooks;
 import org.joml.Matrix4f;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
- * Renders a living, undulating glowing red boundary circle for active cardinal
- * rites. The ring breathes — its radius wobbles per-segment — and vein-like
- * branches sprout inward, tapering to nothing, giving an organic capillary
- * feel. All geometry is flat POSITION_COLOR quads with proper depth testing.
+ * The living boundary of a Harbinger Cardinal Rite: concentric blood vessels
+ * joined by anchor sockets, inward capillaries and the black stain they leave
+ * on the floor. Rings, sockets and floor beat on the shared rite heartbeat and
+ * lean toward the consecrated floor's palette, react to the rite's beats
+ * (anchors filling, breaking and knitting, seals, waves, the staff impact),
+ * and play the rite's ending out from its ghost instead of vanishing.
+ *
+ * <p>Three passes: a colour-only glow pass (halos and stains), a depth-writing
+ * core pass (the vessels themselves), and an additive bloom pass for the
+ * heartbeat swell and bright beats.
  */
 public class CardinalRiteBoundaryRenderer {
+	/** How long a collapsed or broken rite's boundary takes to tear away. */
+	public static final float VIOLENT_ENDING_TICKS = CardinalRiteEndingRules.VIOLENT_TICKS;
+	/** How long a completed rite's boundary takes to draw into the Focus. */
+	public static final float COMPLETED_ENDING_TICKS = CardinalRiteEndingRules.COMPLETED_TICKS;
 
 	// ── Ring geometry ──
-	private static final int SEGMENTS = 96;
-	private static final float CORE_WIDTH = 0.09f;
-	private static final float GLOW_WIDTH = 0.22f;
-	private static final int ANCHOR_SOCKET_SEGMENTS = 24;
-	private static final float ANCHOR_SOCKET_RADIUS = 0.34F;
-	private static final float ANCHOR_SOCKET_CORE_WIDTH = 0.055F;
-	private static final float ANCHOR_SOCKET_GLOW_WIDTH = 0.14F;
-	private static final float ANCHOR_SOCKET_UNDULATION_SCALE = 0.15F;
-	private static final double ANCHOR_SOCKET_GATE_HALF_ANGLE = 0.38D;
+	private static final int SEGMENTS = CardinalRiteCeremonyLayout.RING_SEGMENTS;
+	private static final float CORE_WIDTH = 0.075F;
+	private static final float GLOW_WIDTH = 0.20F;
+	/** The dark groove either side of the vessel, so it reads as sunk into the floor rather than laid on it. */
+	private static final float GROOVE_WIDTH = 0.035F;
+	/** How narrow the vessel pinches as it dives into an anchor's sore. */
+	private static final float SORE_DIVE_PINCH = 0.45F;
+	/** How far along the ring, in blocks, the vessel fades out before its end inside a sore's mouth. */
+	private static final float SORE_DIVE_BLOCKS = 0.32F;
+	private static final float BLOOM_WIDTH = 0.15F;
+	/** Bloom sits just above the vessel so the additive pass never z-fights the depth-writing core. */
+	private static final float BLOOM_LIFT = 0.004F;
+	private static final int SOCKET_SEGMENTS = 24;
+	private static final float SOCKET_RADIUS = CardinalRiteCeremonyLayout.SOCKET_RADIUS;
+	private static final float SOCKET_CORE_WIDTH = CardinalRiteCeremonyLayout.SOCKET_CORE_WIDTH;
+	private static final float SOCKET_GLOW_WIDTH = 0.14F;
+	private static final float SOCKET_UNDULATION_SCALE = 0.15F;
 	private static final double BOUNDARY_SOCKET_WAVE_FADE_ANGLE = 0.20D;
-	private static final double SOCKET_GATE_WAVE_FADE_ANGLE = 0.16D;
-	private static final int EFFECT_DISC_SEGMENTS = 12;
 	private static final int SOCKET_STAIN_SEGMENTS = 16;
-	private static final int STAIN_RADIAL_SEGMENTS = 6;
-
-	// ── Undulation parameters ──
-	/** How many "bumps" around the circumference at any moment. */
-	private static final double UNDULATE_FREQ = 6.0;
-	/** Max radial displacement of the undulation (blocks). */
-	private static final float UNDULATE_AMP = 0.12f;
-	/** How fast the undulation pattern crawls around the ring. */
-	private static final double UNDULATE_SPEED = 0.045;
-	/** Secondary higher-frequency wobble layered on top. */
-	private static final double UNDULATE_FREQ2 = 13.0;
-	private static final float UNDULATE_AMP2 = 0.04f;
-	private static final double UNDULATE_SPEED2 = 0.09;
-
-	// ── Vein parameters ──
-	/** How many vein branches around the ring. */
-	private static final int VEIN_COUNT = 12;
-	/** Number of quad segments per vein branch. */
-	private static final int VEIN_SEGS = 6;
 	private static final int SIGIL_VESSEL_SEGMENTS = 7;
-	/** Max inward reach of a vein (blocks). */
-	private static final float VEIN_LENGTH = 0.7f;
-	/** Width at root of vein. */
-	private static final float VEIN_ROOT_WIDTH = 0.04f;
-	/** How fast veins crawl around the ring. */
-	private static final double VEIN_CRAWL_SPEED = 0.012;
+	private static final float EFFECT_Y = 0.024F;
+
+	// ── Undulation ──
+	private static final double UNDULATE_FREQ = 6.0D;
+	private static final float UNDULATE_AMP = 0.12F;
+	private static final double UNDULATE_SPEED = 0.045D;
+	private static final double UNDULATE_FREQ2 = 13.0D;
+	private static final float UNDULATE_AMP2 = 0.04F;
+	private static final double UNDULATE_SPEED2 = 0.09D;
+	private static final float RING_SURFACE_WAVE = 0.012F;
+	private static final float SOCKET_SURFACE_WAVE = 0.006F;
+
+	// ── Veins ──
+	private static final int VEIN_COUNT = 18;
+	private static final int VEIN_SEGS = 8;
+	private static final float VEIN_LENGTH = 0.62F;
+	private static final float VEIN_ROOT_WIDTH = 0.016F;
+	/** Capillaries keep this far (in radians round the ring) from an anchor's sore. */
+	private static final double VEIN_SORE_CLEARANCE = 0.35D;
+
+	// ── Palette accents (Riposte standard: one hot core, one dark clot) ──
+	private static final float HOT_R = 1.0F;
+	private static final float HOT_G = 0.82F;
+	private static final float HOT_B = 0.77F;
+	private static final float BRUISE_R = 0.10F;
+	private static final float BRUISE_G = 0.015F;
+	private static final float BRUISE_B = 0.085F;
+	/** How far ring vessels lean toward the floor style's vein colour. */
+	private static final float FLOOR_VEIN_LEAN = 0.28F;
+	/** How far ring halos lean toward the floor style's glow colour. */
+	private static final float FLOOR_GLOW_LEAN = 0.18F;
+
+	// ── Caches ──
+	private static final int LAYOUT_REFRESH_TICKS = 100;
+	private static final float[] SOCKET_COS = new float[SOCKET_SEGMENTS + 1];
+	private static final float[] SOCKET_SIN = new float[SOCKET_SEGMENTS + 1];
+	private static final float[] STAIN_COS = new float[SOCKET_STAIN_SEGMENTS + 1];
+	private static final float[] STAIN_SIN = new float[SOCKET_STAIN_SEGMENTS + 1];
+	private static final Map<ResourceLocation, CachedLayout> LAYOUTS = new HashMap<>();
+	private static WeakReference<Level> layoutLevel = new WeakReference<>(null);
+	private static final Map<UUID, Integer> OWNER_STAFF_VISUALS = new HashMap<>();
+	private static final Map<String, ModelResourceLocation> STAFF_MODELS = new HashMap<>();
+	private static ItemStack plantedStaffStack;
+
+	static {
+		for (int index = 0; index <= SOCKET_SEGMENTS; index++) {
+			double angle = Math.PI * 2.0D * index / SOCKET_SEGMENTS;
+			SOCKET_COS[index] = (float) Math.cos(angle);
+			SOCKET_SIN[index] = (float) Math.sin(angle);
+		}
+		for (int index = 0; index <= SOCKET_STAIN_SEGMENTS; index++) {
+			double angle = Math.PI * 2.0D * index / SOCKET_STAIN_SEGMENTS;
+			STAIN_COS[index] = (float) Math.cos(angle);
+			STAIN_SIN[index] = (float) Math.sin(angle);
+		}
+	}
+
+	private enum Pass {
+		GLOW,
+		CORE,
+		BLOOM
+	}
 
 	public static void render(PoseStack poseStack, float partialTick) {
-		List<ActiveRiteClientData.RiteEntry> rites = ActiveRiteClientData.getActiveRites();
-
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.level == null) return;
-
+		List<ActiveRiteClientData.RiteEntry> rites = ActiveRiteClientData.getActiveRites();
 		MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
 		float currentTime = mc.level.getGameTime() + partialTick;
-		Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
+		Camera camera = mc.gameRenderer.getMainCamera();
+		Vec3 cam = camera.getPosition();
+
+		List<RiteFrame> frames = prepareFrames(mc, poseStack, rites, currentTime, partialTick, cam);
 
 		// Enclose the live ritual space in the established black/red Fane
 		// material. From inside the circle this shades the world beyond the
 		// outermost completed ring while leaving the ritual interior clear.
-		for (ActiveRiteClientData.RiteEntry rite : rites) {
-			if (rite.isUnstained()) continue;
-			drawExteriorField(poseStack, buffer, rite, currentTime, cam);
+		for (RiteFrame frame : frames) {
+			drawExteriorField(poseStack, buffer, frame, currentTime, cam);
 		}
 
-		CardinalRiteFogRenderer.render(poseStack, buffer, rites, currentTime,
-				mc.gameRenderer.getMainCamera());
-		if (rites.isEmpty()) return;
-		playBoundaryCompletionSounds(mc, rites);
+		CardinalRiteFogRenderer.render(poseStack, buffer, rites, currentTime, camera);
+		CardinalRiteHelixEffects.tick(mc, rites, currentTime, cam);
+		if (frames.isEmpty()) return;
+		playBoundaryCompletionSounds(mc, frames);
 
-		// Two separate passes so only one non-fixed render type is active at a time.
+		// Separate passes so only one non-fixed render type is active at a time.
 		// NeoForge 1.21.1's sequential BufferSource flushes the current type when a
 		// second different type is requested, leaving the first VertexConsumer dead.
 		VertexConsumer glowVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
-		for (ActiveRiteClientData.RiteEntry rite : rites) {
-			if (rite.isUnstained()) continue;
-			drawBoundaryRing(poseStack, glowVC, null, rite, currentTime, partialTick, cam);
-			drawSigilSegments(poseStack, glowVC, rite, currentTime, cam, true);
-			drawSanguineBlobs(poseStack, glowVC, rite, currentTime, cam, true);
-			drawStaffTendrils(poseStack, glowVC, rite, currentTime, partialTick, cam, true);
+		for (RiteFrame frame : frames) {
+			drawRite(poseStack, glowVC, Pass.GLOW, frame, currentTime, partialTick, cam);
 		}
 		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_GLOW);
 
 		VertexConsumer coreVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE);
-		for (ActiveRiteClientData.RiteEntry rite : rites) {
-			if (rite.isUnstained()) continue;
-			drawBoundaryRing(poseStack, null, coreVC, rite, currentTime, partialTick, cam);
-			drawSigilSegments(poseStack, coreVC, rite, currentTime, cam, false);
-			drawSanguineBlobs(poseStack, coreVC, rite, currentTime, cam, false);
-			drawStaffTendrils(poseStack, coreVC, rite, currentTime, partialTick, cam, false);
+		for (RiteFrame frame : frames) {
+			drawRite(poseStack, coreVC, Pass.CORE, frame, currentTime, partialTick, cam);
 		}
 		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_CORE);
-		for (ActiveRiteClientData.RiteEntry rite : rites) {
-			if (rite.hasPlantedStaff()) drawPlantedStaff(poseStack, buffer, rite, cam, partialTick);
+
+		VertexConsumer bloomVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_BLOOM);
+		for (RiteFrame frame : frames) {
+			drawRite(poseStack, bloomVC, Pass.BLOOM, frame, currentTime, partialTick, cam);
+		}
+		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_BLOOM);
+
+		for (RiteFrame frame : frames) {
+			if (frame.entry.hasPlantedStaff()) drawPlantedStaff(poseStack, buffer, frame, cam, partialTick);
 		}
 		buffer.endBatch();
-	}
 
-	private static void drawStaffTendrils(PoseStack poseStack, VertexConsumer consumer,
-			ActiveRiteClientData.RiteEntry rite, float currentTime, float partialTick,
-			Vec3 camera, boolean glowPass) {
-		if (!rite.hasPlantedStaff()) return;
-		float visibilityProgress = CardinalRiteStaffTendrilGeometry.visibilityProgress(
-				rite.staffPlantingRenderTicks(partialTick),
-				rite.cancellationRenderTicks(partialTick));
-		CardinalRiteStaffTendrilRenderer.render(poseStack, consumer, rite.getCenter(),
-				currentTime, camera, visibilityProgress, glowPass);
-	}
-
-	private static void drawPlantedStaff(PoseStack poseStack, MultiBufferSource.BufferSource buffer,
-			ActiveRiteClientData.RiteEntry rite, Vec3 camera, float partialTick) {
-		Minecraft mc = Minecraft.getInstance();
-		float cancellationTicks = rite.cancellationRenderTicks(partialTick);
-		CardinalRitePlantedStaffGeometry.AbsorptionPose plantedPose =
-				CardinalRitePlantedStaffGeometry.absorptionPose(
-						rite.getCenter(), cancellationTicks);
-		if (plantedPose.scale() <= 0.001F || plantedPose.opacity() <= 0.001F) return;
-		poseStack.pushPose();
-		poseStack.translate(
-				plantedPose.position().x - camera.x,
-				plantedPose.position().y - camera.y,
-				plantedPose.position().z - camera.z);
-		if (plantedPose.pitchDegrees() != 0.0F) {
-			poseStack.mulPose(Axis.XP.rotationDegrees(plantedPose.pitchDegrees()));
+		// The staff's binding strands are HutosLib tendril tubes, glow under core as HutosLib draws them. They come
+		// after the staff: their render types test depth but never write it, so the staff must already be in the
+		// depth buffer for the strands to pass in front of it and behind it.
+		VertexConsumer tendrilGlowVC = buffer.getBuffer(HLRenderTypeInit.TENDRIL_GLOW);
+		for (RiteFrame frame : frames) {
+			drawStaffTendrils(poseStack, tendrilGlowVC, frame, currentTime, partialTick, cam, true);
 		}
-		poseStack.scale(plantedPose.scale(), plantedPose.scale(), plantedPose.scale());
-		ItemStack staff = new ItemStack(ItemInit.living_staff.get());
-		int visual = LivingStaffFittingHelper.staffVisualFor(mc.player);
-		BakedModel model = mc.getModelManager().getModel(ModelResourceLocation.standalone(
-				Hemomancy.rloc("item/" + CardinalRitePlantedStaffModels.modelName(visual))));
-		model = ClientHooks.handleCameraTransforms(
-				poseStack, model, ItemDisplayContext.FIXED, false);
-		poseStack.translate(-0.5F, -0.5F, -0.5F);
-		CardinalRitePlantedStaffGeometry.MeltStyle melt = plantedPose.melt();
-		RenderType staffRenderType;
-		if (melt.active()) {
-			staffRenderType = HemoRenderTypes.cardinalStaffBloodMelt(
-					(float) (mc.level.getGameTime() + partialTick),
-					melt.seed(), melt.wiggleAmplitude(),
-					(float) (melt.poolCenter().x - camera.x),
-					(float) (melt.poolCenter().y - camera.y),
-					(float) (melt.poolCenter().z - camera.z),
-					melt.shaderProgress(),
-					(float) (melt.poolCenter().y - camera.y),
-					melt.height());
-		} else {
-			staffRenderType = RenderType.entityTranslucent(TextureAtlas.LOCATION_BLOCKS);
+		buffer.endBatch(HLRenderTypeInit.TENDRIL_GLOW);
+		VertexConsumer tendrilCoreVC = buffer.getBuffer(HLRenderTypeInit.TENDRIL_CORE);
+		for (RiteFrame frame : frames) {
+			drawStaffTendrils(poseStack, tendrilCoreVC, frame, currentTime, partialTick, cam, false);
 		}
-		VertexConsumer fadingConsumer = new CardinalRiteFadingVertexConsumer(
-				buffer.getBuffer(staffRenderType),
-				plantedPose.opacity());
-		for (BakedModel renderPass : model.getRenderPasses(staff, true)) {
-			mc.getItemRenderer().renderModelLists(renderPass, staff,
-					LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY,
-					poseStack, fadingConsumer);
-		}
-		buffer.endBatch(staffRenderType);
-		poseStack.popPose();
+		buffer.endBatch(HLRenderTypeInit.TENDRIL_CORE);
 	}
 
-	private static void drawExteriorField(PoseStack poseStack, MultiBufferSource.BufferSource buffer,
-			ActiveRiteClientData.RiteEntry rite, float currentTime, Vec3 cam) {
-		if (!rite.hasBoundaryDome()) return;
-		if (!CardinalRiteBoundaryGeometry.shouldRenderExterior(rite.getTotalRings())) return;
-		boolean legacy = "LEGACY".equals(rite.getPhase());
-		float fogPerimeterRadius = CardinalRiteFogGeometry.perimeterRadius(
-				rite.getFootprintRadius(), rite.getRiteSize(), rite.getCompletedRings(),
-				rite.getTotalRings(), legacy);
-		if (fogPerimeterRadius <= 0.0F) return;
-		float domeRadius = CardinalRiteFogGeometry.enclosingDomeRadius(
-				fogPerimeterRadius, CardinalRiteFogRenderer.fogVerticalOffset());
-		float seed = FaneBoundaryRenderer.revealedFaneStyleSeed(rite.getCenter(), domeRadius);
-		BlockPos surface = CardinalRiteAnchorVisualRules.riteSurface(rite.getCenter());
-		FaneBoundaryRenderer.drawRevealedFaneStyleDome(
-				poseStack, buffer, cam, surface, domeRadius, currentTime, seed);
+	/** Forgets cached ceremony layouts and staff visuals, e.g. after a datapack reload. */
+	public static void clearCaches() {
+		LAYOUTS.clear();
+		OWNER_STAFF_VISUALS.clear();
+		layoutLevel = new WeakReference<>(null);
 	}
 
-	private static void playBoundaryCompletionSounds(Minecraft mc,
-			List<ActiveRiteClientData.RiteEntry> rites) {
-		if (mc.level == null) return;
+	// ════════════════════════════════════════════════════════════════════════
+	//  Frame preparation: everything shared by the three passes, once per rite
+	// ════════════════════════════════════════════════════════════════════════
+
+	private static List<RiteFrame> prepareFrames(Minecraft mc, PoseStack stack,
+			List<ActiveRiteClientData.RiteEntry> rites, float time, float partialTick, Vec3 cam) {
+		List<RiteFrame> frames = new ArrayList<>(rites.size() + 1);
+		int renderDistance = mc.options.renderDistance().get();
 		for (ActiveRiteClientData.RiteEntry rite : rites) {
-			if (rite.isUnstained() || "LEGACY".equals(rite.getPhase())) continue;
-			for (CardinalRiteBoundaryProgress.Segment segment : rite.getBoundarySegments()) {
-				if (!rite.consumeBoundaryCompletion(segment)) continue;
-				float ringRadius = CardinalRiteBoundaryGeometry.interactiveRingRadius(segment.ring());
-				double midpoint = segment.startAngle() + segment.sweepAngle() * 0.5D;
-				double x = rite.getCenter().getX() + 0.5D + Math.cos(midpoint) * ringRadius;
-				double y = CardinalRiteBoundaryGeometry.boundaryPlaneY(rite.getCenter().getY());
-				double z = rite.getCenter().getZ() + 0.5D + Math.sin(midpoint) * ringRadius;
-				mc.level.playLocalSound(x, y, z, SoundEvents.WARDEN_HEARTBEAT,
-						SoundSource.BLOCKS, 0.26F, 1.45F, false);
-				mc.level.playLocalSound(x, y, z, SoundEvents.RESPAWN_ANCHOR_CHARGE,
-						SoundSource.BLOCKS, 0.14F, 0.58F, false);
-			}
+			if (rite.isUnstained()) continue;
+			CardinalRiteEventClientState.Ghost ghost = CardinalRiteEventClientState.ghostAt(rite.getCenter());
+			if (ghost != null && supersedes(ghost, rite, partialTick)) continue;
+			RiteFrame frame = buildFrame(mc, stack, rite, null, 0.0F, time, partialTick, cam, renderDistance);
+			if (frame != null) frames.add(frame);
 		}
+		for (CardinalRiteEventClientState.Ghost ghost : CardinalRiteEventClientState.ghosts()) {
+			if (ghost.entry().isUnstained()) continue;
+			float age = ghost.age(partialTick);
+			if (CardinalRiteEndingRules.finished(ghost.kind(), age)) continue;
+			RiteFrame frame = buildFrame(mc, stack, ghost.entry(), ghost.kind(), age, time, partialTick, cam,
+					renderDistance);
+			if (frame != null) frames.add(frame);
+		}
+		return frames;
 	}
-
-	// ════════════════════════════════════════════════════════════════════════
-	//  Main ring + veins
-	// ════════════════════════════════════════════════════════════════════════
 
 	/**
-	 * Draws one rite's boundary ring for a single pass.
-	 * Pass {@code glowVC} non-null and {@code coreVC} null for the glow pass,
-	 * or {@code glowVC} null and {@code coreVC} non-null for the core pass.
+	 * A rite's ending takes over from its live entry while the server may still
+	 * be sending the last snapshots of the same rite.
 	 */
-	private static void drawBoundaryRing(PoseStack stack, VertexConsumer glowVC, VertexConsumer coreVC,
-			ActiveRiteClientData.RiteEntry rite, float currentTime, float partialTick, Vec3 cam) {
+	private static boolean supersedes(CardinalRiteEventClientState.Ghost ghost,
+			ActiveRiteClientData.RiteEntry live, float partialTick) {
+		if (ghost.entry() == live) return true;
+		if (!Objects.equals(ghost.entry().getRecipeId(), live.getRecipeId())) return false;
+		return live.isPhase(CardinalRitePhase.COMPLETE) || live.isPhase(CardinalRitePhase.COLLAPSED)
+				|| ghost.age(partialTick) < CardinalRiteEndingRules.duration(ghost.kind());
+	}
 
+	private static RiteFrame buildFrame(Minecraft mc, PoseStack stack, ActiveRiteClientData.RiteEntry rite,
+			CardinalRiteEventKind ending, float endingAge, float time, float partialTick, Vec3 cam,
+			int renderDistance) {
 		BlockPos center = rite.getCenter();
-		float baseRadius = (float) (rite.getRiteSize() / 2.0 + 1.0);
-		double cx = center.getX() + 0.5;
-		double cy = CardinalRiteBoundaryGeometry.boundaryPlaneY(center.getY());
-		double cz = center.getZ() + 0.5;
-
-		// Derive the rite tier from the size: MINOR=3→1, LESSER=5→2, GREATER=7→3, GRAND=9→4
-		boolean legacy = "LEGACY".equals(rite.getPhase());
+		boolean legacy = rite.isLegacy();
 		int riteTier = (rite.getRiteSize() - 1) / 2;
 		int ringCount = legacy ? Math.max(1, riteTier) : rite.getTotalRings();
-		if (ringCount <= 0) return;
-		CardinalRiteRecipe recipe = legacy ? null
-				: CardinalRiteRecipe.getRiteByLocation(Minecraft.getInstance().level, rite.getRecipeId());
-		CardinalRiteCeremonyDefinition ceremony = recipe == null ? null : recipe.getCeremony();
-		boolean hasAnchorSockets = ceremony != null;
-		float stainOpacity = legacy ? 1.0F
-				: CardinalRiteBoundaryGeometry.stainOpacity(
-						rite.stainFadeProgress(partialTick));
+		double cx = center.getX() + 0.5D;
+		double cy = CardinalRiteBoundaryGeometry.boundaryPlaneY(center.getY());
+		double cz = center.getZ() + 0.5D;
+		float outerRadius = legacy ? (float) (rite.getRiteSize() / 2.0D + 1.0D + ringCount * 2.0D)
+				: CardinalRiteBoundaryGeometry.interactiveRingRadius(ringCount) + 1.0F;
+		double reach = Math.max(1, renderDistance) * 16.0D + Math.max(outerRadius, rite.getFootprintRadius()) + 4.0D;
+		double dx = cx - cam.x;
+		double dz = cz - cam.z;
+		if (dx * dx + dz * dz > reach * reach) return null;
+
+		CardinalRiteCeremonyLayout layout = legacy ? null : layoutFor(mc.level, rite.getRecipeId(), (long) time);
+		RiteFrame frame = new RiteFrame(rite, ending, endingAge, legacy, ringCount, layout);
+		frame.heartbeat = CardinalRiteMath.heartbeat(time);
+		frame.fade = CardinalRiteEndingRules.fade(ending, endingAge);
+		frame.stainOpacity = (legacy ? 1.0F
+				: CardinalRiteBoundaryGeometry.stainOpacity(rite.stainFadeProgress(partialTick))) * frame.fade;
+		frame.tint = floorTint(mc.level, center);
+		collectBeats(frame, partialTick);
+
 		stack.pushPose();
 		stack.translate(cx - cam.x, cy - cam.y, cz - cam.z);
-		Matrix4f baseMat = stack.last().pose();
-
+		frame.baseMatrix = new Matrix4f(stack.last().pose());
+		float baseRadius = (float) (rite.getRiteSize() / 2.0D + 1.0D);
+		frame.rings = new RingFrame[Math.max(0, ringCount)];
 		for (int ring = 0; ring < ringCount; ring++) {
-			final int activeRing = ring;
-			float nominalRingRadius = legacy ? baseRadius + ring * 2.0f
+			float radius = legacy ? baseRadius + ring * 2.0F
+					: layout != null ? layout.ringRadius(ring)
 					: CardinalRiteBoundaryGeometry.interactiveRingRadius(ring);
-			float ringRadius = !hasAnchorSockets ? nominalRingRadius
-					: CardinalRiteBoundaryGeometry.anchorAlignedRingRadius(
-							nominalRingRadius,
-							ceremony.anchors().stream()
-									.filter(anchor -> anchor.ring() == activeRing)
-									.map(CardinalRiteCeremonyDefinition.Anchor::offset)
-									.toList());
-			List<CardinalRiteBoundaryProgress.Segment> visibleSegments = legacy
-					? List.of()
-					: rite.getBoundarySegments().stream()
-							.filter(segment -> segment.ring() == activeRing)
-							.toList();
-			List<Double> socketEndpoints = hasAnchorSockets
-					? socketEndpointAngles(ceremony, ring, ringRadius)
-					: List.of();
-			List<CardinalRiteBoundaryProgress.Segment> visibleArcs = legacy
-					? List.of(new CardinalRiteBoundaryProgress.Segment(ring, 0.0D, Math.PI * 2.0D))
-					: visibleSegments.stream()
-							.flatMap(segment -> {
-								SegmentClearances clearances = hasAnchorSockets ? segmentClearances(
-										segment, ceremony, ringRadius) : new SegmentClearances(0.0D, 0.0D);
-								return CardinalRiteBoundaryGeometry.animatedSocketArcs(
-										segment, rite.boundaryGrowth(segment, partialTick),
-										clearances.start(), clearances.end()).stream();
-							})
-							.toList();
-			if (!legacy && glowVC != null && hasAnchorSockets) {
-				List<CardinalRiteBoundaryProgress.Segment> backingArcs =
-						CardinalRiteBoundaryProgress.authoredSegments(
-									ceremony.anchors()).stream()
-								.filter(segment -> segment.ring() == activeRing)
-								.toList();
-				List<CardinalRiteCeremonyDefinition.Anchor> stainAnchors =
-						ceremony.anchors().stream()
-								.filter(anchor -> anchor.ring() == activeRing)
-								.toList();
-				drawBoundaryFloorStain(
-						glowVC, baseMat, ringRadius, backingArcs,
-						stainAnchors, ring, stainOpacity);
+			RingFrame ringFrame = new RingFrame(ring, radius);
+			ringFrame.arcs = visibleArcs(rite, layout, legacy, ring, partialTick);
+			ringFrame.endpoints = layout == null ? List.of() : layout.socketEndpoints(ring);
+			CardinalRiteCompletionRingTheatrics.RingPose pose = CardinalRiteCompletionRingTheatrics.pose(
+					rite.ritePhase(), rite.phaseRenderTicks(partialTick), rite.ringSpinTicks(partialTick),
+					ring, ringCount, radius);
+			float scale = pose.radialScale();
+			float lift = pose.verticalOffset();
+			float opacity = pose.opacity();
+			if (ending == CardinalRiteEventKind.COMPLETED) {
+				float contraction = CardinalRiteEndingRules.completionContraction(endingAge);
+				scale *= 1.0F - contraction * 0.94F;
+				lift += contraction * 0.35F;
+				opacity *= frame.fade;
+			} else if (ending == CardinalRiteEventKind.CANCELLED) {
+				opacity *= frame.fade;
+			} else if (CardinalRiteEndingRules.violent(ending)) {
+				// Whatever has not drained by the end of the tear is gone with the ghost.
+				opacity *= 1.0F - CardinalRiteMath.smoothstep((endingAge - 30.0F) / 10.0F);
 			}
-			if (visibleArcs.isEmpty()) continue;
-			CardinalRiteCompletionRingTheatrics.RingPose finalePose =
-					CardinalRiteCompletionRingTheatrics.pose(
-						rite.getPhase(), rite.phaseRenderTicks(partialTick),
-						currentTime, ring, ringCount, ringRadius);
-			if (finalePose.opacity() <= 0.001F || finalePose.radialScale() <= 0.001F) continue;
+			ringFrame.radialScale = Math.max(0.001F, scale);
+			ringFrame.opacity = opacity;
+			ringFrame.socketVisibility = CardinalRiteCompletionRingTheatrics.socketVisibility(
+					rite.ritePhase(), rite.phaseRenderTicks(partialTick)) * (ending == null ? 1.0F : frame.fade);
+			ringFrame.directionSign = ring % 2 == 0 ? 1.0F : -1.0F;
+			ringFrame.ringFade = Math.max(0.1F, 1.0F - ring * 0.15F);
+			ringFrame.colors = RingColors.of(ring, ringCount, frame.tint);
 			stack.pushPose();
-			stack.translate(0.0F, finalePose.verticalOffset(), 0.0F);
-			stack.mulPose(Axis.YP.rotation(finalePose.rotationRadians()));
-			stack.scale(finalePose.radialScale(), 1.0F, finalePose.radialScale());
-			Matrix4f ringMat = stack.last().pose();
-			// Alternate rotation direction: even rings go forward, odd rings reverse
-			float directionSign = (ring % 2 == 0) ? 1.0f : -1.0f;
-			// Outer rings become progressively more transparent
-			float ringFade = 1.0f - ring * 0.15f;
-			// Outer rings shift from dark blood-red toward a lighter, brighter red
-			// lighten goes 0.0 (innermost, darkest) → ~0.6 (outermost, lightest)
-			float lighten = (ringCount > 1) ? (float) ring / (ringCount - 1) * 0.6f : 0f;
+			stack.translate(0.0F, lift, 0.0F);
+			stack.mulPose(Axis.YP.rotation(pose.rotationRadians()));
+			stack.scale(ringFrame.radialScale, 1.0F, ringFrame.radialScale);
+			ringFrame.matrix = new Matrix4f(stack.last().pose());
+			stack.popPose();
+			frame.rings[ring] = ringFrame;
+		}
+		stack.popPose();
+		return frame;
+	}
 
-			float heartbeat = IchorianSigilOrganicGeometry.heartbeat(currentTime);
-			float coreAlpha = (0.76F + (heartbeat - 0.92F) * 0.8F)
-					* ringFade * finalePose.opacity();
-			float glowAlpha = (0.12F + (heartbeat - 0.92F) * 0.5F)
-					* ringFade * finalePose.opacity();
+	private static List<CardinalRiteBoundaryProgress.Segment> visibleArcs(ActiveRiteClientData.RiteEntry rite,
+			CardinalRiteCeremonyLayout layout, boolean legacy, int ring, float partialTick) {
+		if (legacy) return List.of(new CardinalRiteBoundaryProgress.Segment(ring, 0.0D, Math.PI * 2.0D));
+		List<CardinalRiteBoundaryProgress.Segment> arcs = new ArrayList<>(4);
+		boolean hasAnchorSockets = layout != null;
+		for (CardinalRiteBoundaryProgress.Segment segment : rite.getBoundarySegments()) {
+			if (segment.ring() != ring) continue;
+			// A rite whose recipe was removed by a datapack update keeps zero-clearance arcs.
+			double startClearance = hasAnchorSockets ? layout.startClearance(segment) : 0.0D;
+			double endClearance = hasAnchorSockets ? layout.endClearance(segment) : 0.0D;
+			arcs.addAll(CardinalRiteBoundaryGeometry.animatedSocketArcs(
+					segment, rite.boundaryGrowth(segment, partialTick), startClearance, endClearance));
+		}
+		return arcs;
+	}
 
-			float coreR = 0.34F + lighten * 0.10F;
-			float coreG = 0.008F + lighten * 0.018F;
-			float coreB = 0.012F + lighten * 0.014F;
-			float glowR = 0.72F + lighten * 0.12F;
-			float glowG = 0.025F + lighten * 0.04F;
-			float glowB = 0.03F + lighten * 0.03F;
+	private static CardinalRiteCeremonyLayout layoutFor(Level level, ResourceLocation recipeId, long gameTime) {
+		if (level == null || recipeId == null) return null;
+		if (layoutLevel.get() != level) {
+			LAYOUTS.clear();
+			layoutLevel = new WeakReference<>(level);
+		}
+		CachedLayout cached = LAYOUTS.get(recipeId);
+		if (cached != null && gameTime < cached.refreshAt() && gameTime >= cached.refreshAt() - LAYOUT_REFRESH_TICKS) {
+			return cached.layout();
+		}
+		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, recipeId);
+		// A rite from an old world whose recipe was removed falls back to plain boundary geometry.
+		CardinalRiteCeremonyDefinition ceremony = recipe == null ? null : recipe.getCeremony();
+		CardinalRiteCeremonyLayout layout = cached != null && cached.ceremony() == ceremony
+				? cached.layout() : CardinalRiteCeremonyLayout.of(ceremony);
+		LAYOUTS.put(recipeId, new CachedLayout(ceremony, layout, gameTime + LAYOUT_REFRESH_TICKS));
+		return layout;
+	}
 
-			// ── Draw the undulating ring ──
-			List<CardinalRiteBoundaryGeometry.AngularArc> boundaryPieces =
-					visibleArcs.stream()
-							.flatMap(arc -> CardinalRiteBoundaryGeometry.tessellateArc(
-									arc.startAngle(), arc.sweepAngle(), SEGMENTS).stream())
-							.toList();
-			for (CardinalRiteBoundaryGeometry.AngularArc piece : boundaryPieces) {
-				double a1 = piece.startAngle();
-				double a2 = a1 + piece.sweepAngle();
-				float arcIntegrity = legacy ? 1.0F
-						: arcIntegrity(visibleArcs, (a1 + a2) * 0.5D, currentTime);
-				if (arcIntegrity <= 0.01F) continue;
-				float segmentCoreAlpha = coreAlpha * arcIntegrity;
-				float segmentGlowAlpha = glowAlpha * arcIntegrity;
-				float dry = CardinalRiteBoundaryGeometry.integrityBrightness(arcIntegrity);
-				float arterial = CardinalRiteBoundaryGeometry.arterialHighlight(
-						(a1 + a2) * 0.5D, currentTime, ring);
-				float segmentCoreR = Math.min(1.0F, coreR * dry + arterial * 0.34F * arcIntegrity);
-				float segmentCoreG = coreG * dry + arterial * 0.018F;
-				float segmentCoreB = coreB * dry + arterial * 0.012F;
+	private static FloorTint floorTint(Level level, BlockPos center) {
+		if (level == null || !(level.getBlockEntity(center) instanceof CardinalFocusBlockEntity focus)) return null;
+		ResourceLocation floorId = focus.getFormedFloor() != null ? focus.getFormedFloor() : focus.getFadingFloor();
+		if (floorId == null) return null;
+		return CardinalRiteFloorRegistry.get(floorId)
+				.map(floor -> FloorTint.of(CardinalRiteFloorVisualRules.palette(
+						CardinalRiteFloorVisualRules.styleIndex(floor.style()))))
+				.orElse(null);
+	}
 
-				float waveScale1 = legacy ? 1.0F
-						: CardinalRiteBoundaryGeometry.endpointWaveScale(
-								a1, socketEndpoints,
-								BOUNDARY_SOCKET_WAVE_FADE_ANGLE);
-				float waveScale2 = legacy ? 1.0F
-						: CardinalRiteBoundaryGeometry.endpointWaveScale(
-								a2, socketEndpoints,
-								BOUNDARY_SOCKET_WAVE_FADE_ANGLE);
-				float r1 = ringRadius
-						+ undulation(a1, currentTime, directionSign) * waveScale1;
-				float r2 = ringRadius
-						+ undulation(a2, currentTime, directionSign) * waveScale2;
+	/** Reads the rite's recent beats into ring-wide flashes and per-anchor effects. */
+	private static void collectBeats(RiteFrame frame, float partialTick) {
+		float flash = 0.0F;
+		float dim = 0.0F;
+		for (CardinalRiteEventClientState.RiteEvent event
+				: CardinalRiteEventClientState.recent(frame.entry.getCenter())) {
+			float age = event.age(partialTick);
+			switch (event.kind()) {
+				case WAVE_CLEARED -> flash += CardinalRiteMath.pulse(age, 2.0F, 26.0F);
+				case CONSECRATED -> flash += 1.2F * CardinalRiteMath.pulse(age, 3.0F, 34.0F);
+				case SEALED -> flash += 0.8F * CardinalRiteMath.pulse(age, 2.0F, 24.0F);
+				case SIGIL_AWAKENED -> flash += 0.4F * CardinalRiteMath.pulse(age, 2.0F, 16.0F);
+				case WAVE_START -> dim += 0.35F * CardinalRiteMath.pulse(age, 1.0F, 12.0F);
+				case STAFF_IMPACT -> {
+					if (age < IMPACT_TICKS) frame.impactAge = age;
+					flash += 0.5F * CardinalRiteMath.pulse(age, 1.0F, 14.0F);
+				}
+				case ANCHOR_FILLED, ANCHOR_BROKEN, ANCHOR_REPAIRED -> {
+					if (age < anchorBeatLength(event.kind())) {
+						frame.beats.add(new AnchorBeat(event.kind(), event.index(), age));
+					}
+				}
+				default -> {
+				}
+			}
+		}
+		if (CardinalRiteEndingRules.violent(frame.ending) && frame.layout != null) {
+			for (int index = 0; index < frame.layout.anchors().size(); index++) {
+				float age = frame.endingAge - CardinalRiteEndingRules.socketBurstDelay(index);
+				if (age >= 0.0F && age < anchorBeatLength(CardinalRiteEventKind.ANCHOR_BROKEN)) {
+					frame.beats.add(new AnchorBeat(CardinalRiteEventKind.ANCHOR_BROKEN, index, age));
+				}
+			}
+		}
+		frame.flash = Math.min(1.5F, flash);
+		frame.dim = 1.0F - Math.min(0.6F, dim);
+	}
 
-				// Subtle Y wave so it's not perfectly flat
-				float y1 = CardinalRiteBoundaryGeometry.surfaceSafeOffset(
-						(float) (Math.sin(a1 * 5.0 + currentTime * 0.06 * directionSign)
-								* 0.012) * waveScale1);
-				float y2 = CardinalRiteBoundaryGeometry.surfaceSafeOffset(
-						(float) (Math.sin(a2 * 5.0 + currentTime * 0.06 * directionSign)
-								* 0.012) * waveScale2);
+	private static final float IMPACT_TICKS = 14.0F;
+	private static final float FILL_BEAT_TICKS = 26.0F;
+	private static final float BREAK_BEAT_TICKS = 30.0F;
+	private static final float REPAIR_BEAT_TICKS = 18.0F;
+
+	private static float anchorBeatLength(CardinalRiteEventKind kind) {
+		return switch (kind) {
+			case ANCHOR_FILLED -> FILL_BEAT_TICKS;
+			case ANCHOR_BROKEN -> BREAK_BEAT_TICKS;
+			default -> REPAIR_BEAT_TICKS;
+		};
+	}
+
+	// ════════════════════════════════════════════════════════════════════════
+	//  Per-pass drawing
+	// ════════════════════════════════════════════════════════════════════════
+
+	private static void drawRite(PoseStack stack, VertexConsumer vc, Pass pass, RiteFrame frame,
+			float time, float partialTick, Vec3 cam) {
+		boolean hasAnchorSockets = frame.layout != null;
+		// Transparent stains feather out, so they stay on the colour-only glow pass and never write depth.
+		if (pass == Pass.GLOW && !frame.legacy && hasAnchorSockets) {
+			for (RingFrame ring : frame.rings) drawBoundaryFloorStain(vc, frame, ring);
+		}
+		for (RingFrame ring : frame.rings) {
+			drawRing(vc, pass, frame, ring, time);
+			drawVeins(vc, pass, frame, ring, time);
+			if (hasAnchorSockets) {
+				// Anchors open as sores in the consecrated floor (floor.AnchorSores); the boundary only adds their beats.
+				drawAnchorBeats(vc, pass, frame, ring);
+			}
+		}
+		if (!frame.legacy && hasAnchorSockets && frame.ending == null) {
+			drawSegmentSeals(vc, pass, frame, partialTick);
+		}
+		drawFinaleFlash(vc, pass, frame, partialTick);
+		drawImpactShock(vc, pass, frame);
+		if (pass == Pass.BLOOM) return;
+		boolean glow = pass == Pass.GLOW;
+		drawSigilSegments(stack, vc, frame, time, cam, glow);
+		drawSanguineBlobs(stack, vc, frame, time, cam, glow);
+	}
+
+	// ── Main ring ──
+
+	private static void drawRing(VertexConsumer vc, Pass pass, RiteFrame frame, RingFrame ring, float time) {
+		if (ring.arcs.isEmpty() || ring.opacity <= 0.001F || ring.radialScale <= 0.001F) return;
+		Matrix4f mat = ring.matrix;
+		RingColors colors = ring.colors;
+		float inverseScale = 1.0F / ring.radialScale;
+		float beat = frame.heartbeat;
+		float baseAlpha = ring.ringFade * ring.opacity * frame.dim;
+		float coreAlpha = (0.78F + beat * 0.18F) * baseAlpha;
+		float glowAlpha = (0.07F + beat * 0.07F + frame.flash * 0.22F) * baseAlpha;
+		float grooveAlpha = 0.42F * baseAlpha;
+		float bloomAlpha = (0.10F + beat * 0.36F + frame.flash * 0.80F) * baseAlpha;
+		float coreWidthBase = CORE_WIDTH * inverseScale * (1.0F + beat * 0.16F);
+		float glowWidthBase = GLOW_WIDTH * inverseScale;
+		float bloomWidthBase = BLOOM_WIDTH * inverseScale * (1.0F + frame.flash * 0.6F);
+		boolean violent = CardinalRiteEndingRules.violent(frame.ending);
+		double tearStart = CardinalRiteEndingRules.hash(frame.entry.getCenter().hashCode(), ring.index)
+				* Math.PI * 2.0D;
+		double chunkSweep = Math.PI * 2.0D / CardinalRiteEndingRules.RUPTURE_CHUNKS_PER_RING;
+
+		for (CardinalRiteBoundaryProgress.Segment arc : ring.arcs) {
+			int pieces = CardinalRiteBoundaryGeometry.pieceCount(arc.sweepAngle(), SEGMENTS);
+			double pieceSweep = arc.sweepAngle() / Math.max(1, pieces);
+			for (int piece = 0; piece < pieces; piece++) {
+				double a1 = arc.startAngle() + pieceSweep * piece;
+				double a2 = a1 + pieceSweep;
+				double midpoint = (a1 + a2) * 0.5D;
+				float integrity = frame.legacy ? 1.0F : arcIntegrity(ring.arcs, midpoint, time);
+				if (integrity <= 0.01F) continue;
+
+				float waveScale1 = frame.legacy ? 1.0F : CardinalRiteBoundaryGeometry.endpointWaveScale(
+						a1, ring.endpoints, BOUNDARY_SOCKET_WAVE_FADE_ANGLE);
+				float waveScale2 = frame.legacy ? 1.0F : CardinalRiteBoundaryGeometry.endpointWaveScale(
+						a2, ring.endpoints, BOUNDARY_SOCKET_WAVE_FADE_ANGLE);
+				float r1 = ring.radius + undulation(a1, time, ring.directionSign) * waveScale1;
+				float r2 = ring.radius + undulation(a2, time, ring.directionSign) * waveScale2;
+				float y1 = surfaceWave(a1, time, ring.directionSign, 0.0D, RING_SURFACE_WAVE * waveScale1);
+				float y2 = surfaceWave(a2, time, ring.directionSign, 0.0D, RING_SURFACE_WAVE * waveScale2);
+
+				float pieceAlpha = integrity;
+				float bruise = 0.0F;
+				float widthScale = 1.0F;
+				if (violent) {
+					// The tear runs around the ring; each torn chunk pinches apart, sags into the floor,
+					// drifts outward and darkens to a bruise before it drains away.
+					double fromTear = CardinalRiteMath.normalizeAngle(midpoint - tearStart);
+					int chunk = (int) (fromTear / chunkSweep);
+					float jitter = CardinalRiteEndingRules.hash(chunk, ring.index * 31 + 7);
+					float order = chunk / (float) CardinalRiteEndingRules.RUPTURE_CHUNKS_PER_RING;
+					float tear = CardinalRiteEndingRules.rupture(frame.endingAge, ring.index, order, jitter);
+					float tremor = (1.0F - tear) * CardinalRiteMath.clamp01(frame.endingAge / 6.0F);
+					r1 += (float) Math.sin(time * 2.3F + a1 * 11.0D) * 0.035F * tremor;
+					r2 += (float) Math.sin(time * 2.3F + a2 * 11.0D) * 0.035F * tremor;
+					if (tear > 0.0F) {
+						double chunkCenter = tearStart + (chunk + 0.5D) * chunkSweep;
+						float pinch = 1.0F - 0.55F * CardinalRiteMath.easeOutCubic(tear);
+						a1 = chunkCenter + CardinalRiteMath.normalizeAngle(a1 - chunkCenter + Math.PI) * pinch
+								- Math.PI * pinch;
+						a2 = chunkCenter + CardinalRiteMath.normalizeAngle(a2 - chunkCenter + Math.PI) * pinch
+								- Math.PI * pinch;
+						float drift = CardinalRiteMath.easeOutCubic(tear) * (0.22F + jitter * 0.45F)
+								* (jitter > 0.25F ? 1.0F : -0.6F);
+						r1 += drift;
+						r2 += drift;
+						float sag = CardinalRiteMath.easeInCubic(tear) * 0.20F;
+						y1 -= sag;
+						y2 -= sag;
+						bruise = CardinalRiteMath.smoothstep(tear * 1.4F);
+						widthScale = 1.0F - 0.5F * tear;
+						pieceAlpha *= 1.0F - CardinalRiteMath.smoothstep((tear - 0.35F) / 0.65F);
+						if (pieceAlpha <= 0.005F) continue;
+					}
+				}
 
 				float cos1 = (float) Math.cos(a1);
 				float sin1 = (float) Math.sin(a1);
 				float cos2 = (float) Math.cos(a2);
 				float sin2 = (float) Math.sin(a2);
-
-				float integrityCoreWidth = CardinalRiteBoundaryGeometry.integrityWidth(
-						CORE_WIDTH / finalePose.radialScale(), arcIntegrity);
-				float integrityGlowWidth = CardinalRiteBoundaryGeometry.integrityWidth(
-						GLOW_WIDTH / finalePose.radialScale(), arcIntegrity);
-				float iGlow1 = r1 - integrityGlowWidth - integrityCoreWidth * 0.5f;
-				float iCore1 = r1 - integrityCoreWidth * 0.5f;
-				float oCore1 = r1 + integrityCoreWidth * 0.5f;
-				float oGlow1 = r1 + integrityGlowWidth + integrityCoreWidth * 0.5f;
-
-				float iGlow2 = r2 - integrityGlowWidth - integrityCoreWidth * 0.5f;
-				float iCore2 = r2 - integrityCoreWidth * 0.5f;
-				float oCore2 = r2 + integrityCoreWidth * 0.5f;
-				float oGlow2 = r2 + integrityGlowWidth + integrityCoreWidth * 0.5f;
-
-				if (glowVC != null) {
-					// Inner glow
-					emitQuad(glowVC, ringMat,
-							cos1 * iGlow1, y1, sin1 * iGlow1, glowR, glowG, glowB, 0f,
-							cos1 * iCore1, y1, sin1 * iCore1, glowR, glowG, glowB, segmentGlowAlpha,
-							cos2 * iCore2, y2, sin2 * iCore2, glowR, glowG, glowB, segmentGlowAlpha,
-							cos2 * iGlow2, y2, sin2 * iGlow2, glowR, glowG, glowB, 0f);
-
-					// Outer glow
-					emitQuad(glowVC, ringMat,
-							cos1 * oCore1, y1, sin1 * oCore1, glowR, glowG, glowB, segmentGlowAlpha,
-							cos1 * oGlow1, y1, sin1 * oGlow1, glowR, glowG, glowB, 0f,
-							cos2 * oGlow2, y2, sin2 * oGlow2, glowR, glowG, glowB, 0f,
-							cos2 * oCore2, y2, sin2 * oCore2, glowR, glowG, glowB, segmentGlowAlpha);
-				}
-
-				if (coreVC != null) {
-					// Core
-					emitQuad(coreVC, ringMat,
-							cos1 * iCore1, y1, sin1 * iCore1, segmentCoreR, segmentCoreG, segmentCoreB, segmentCoreAlpha,
-							cos1 * oCore1, y1, sin1 * oCore1, segmentCoreR, segmentCoreG, segmentCoreB, segmentCoreAlpha,
-							cos2 * oCore2, y2, sin2 * oCore2, segmentCoreR, segmentCoreG, segmentCoreB, segmentCoreAlpha,
-							cos2 * iCore2, y2, sin2 * iCore2, segmentCoreR, segmentCoreG, segmentCoreB, segmentCoreAlpha);
+				float coreWidth = CardinalRiteBoundaryGeometry.integrityWidth(coreWidthBase, integrity) * widthScale;
+				// The vessel pinches as it nears a sore, so it dives into the pit instead of butting against it.
+				float halfCore1 = coreWidth * 0.5F * (1.0F - SORE_DIVE_PINCH * (1.0F - waveScale1));
+				float halfCore2 = coreWidth * 0.5F * (1.0F - SORE_DIVE_PINCH * (1.0F - waveScale2));
+				// ...and fades out over its last stretch, so its end is lost in the pit rather than cut off.
+				float dive1 = frame.legacy ? 1.0F : CardinalRiteBoundaryGeometry.endpointWaveScale(
+						a1, ring.endpoints, SORE_DIVE_BLOCKS / Math.max(0.5F, ring.radius));
+				float dive2 = frame.legacy ? 1.0F : CardinalRiteBoundaryGeometry.endpointWaveScale(
+						a2, ring.endpoints, SORE_DIVE_BLOCKS / Math.max(0.5F, ring.radius));
+				float dry = CardinalRiteBoundaryGeometry.integrityBrightness(integrity) * (1.0F - bruise);
+				float arterial = CardinalRiteBoundaryGeometry.arterialHighlight(midpoint, time, ring.index)
+						* integrity * (1.0F - bruise);
+				switch (pass) {
+					case GLOW -> {
+						float glowWidth = CardinalRiteBoundaryGeometry.integrityWidth(glowWidthBase, integrity)
+								* widthScale;
+						float alpha = glowAlpha * pieceAlpha;
+						float red = mix(colors.glowR * dry, BRUISE_R, bruise);
+						float green = mix(colors.glowG * dry, BRUISE_G, bruise);
+						float blue = mix(colors.glowB * dry, BRUISE_B, bruise);
+						// A soft inflamed bleed into the tissue, then a dark groove hugging the vessel's walls.
+						RiteQuads.fadedBandPiece(vc, mat, dive1, dive2,
+								cos1, sin1, y1, r1 - halfCore1 - glowWidth, r1 - halfCore1,
+								cos2, sin2, y2, r2 - halfCore2 - glowWidth, r2 - halfCore2,
+								red, green, blue, 0.0F, red, green, blue, alpha);
+						RiteQuads.fadedBandPiece(vc, mat, dive1, dive2,
+								cos1, sin1, y1, r1 + halfCore1, r1 + halfCore1 + glowWidth,
+								cos2, sin2, y2, r2 + halfCore2, r2 + halfCore2 + glowWidth,
+								red, green, blue, alpha, red, green, blue, 0.0F);
+						float groove = grooveAlpha * pieceAlpha;
+						float groove1 = GROOVE_WIDTH * waveScale1 * widthScale;
+						float groove2 = GROOVE_WIDTH * waveScale2 * widthScale;
+						RiteQuads.fadedBandPiece(vc, mat, dive1, dive2,
+								cos1, sin1, y1, r1 - halfCore1 - groove1, r1 - halfCore1,
+								cos2, sin2, y2, r2 - halfCore2 - groove2, r2 - halfCore2,
+								BRUISE_R, BRUISE_G, BRUISE_B, 0.0F, BRUISE_R, BRUISE_G, BRUISE_B, groove);
+						RiteQuads.fadedBandPiece(vc, mat, dive1, dive2,
+								cos1, sin1, y1, r1 + halfCore1, r1 + halfCore1 + groove1,
+								cos2, sin2, y2, r2 + halfCore2, r2 + halfCore2 + groove2,
+								BRUISE_R, BRUISE_G, BRUISE_B, groove, BRUISE_R, BRUISE_G, BRUISE_B, 0.0F);
+					}
+					case CORE -> {
+						// A vessel in cross-section: bright walls around a darker lumen, with the arterial
+						// pulse brightening the blood as it passes.
+						float alpha = coreAlpha * pieceAlpha;
+						// Walls stay close to the lumen so the vessel reads as blood under skin, not a lit tube.
+						float wallR = mix(Math.min(1.0F, colors.rimR * dry * 0.82F + arterial * 0.20F), BRUISE_R, bruise);
+						float wallG = mix(colors.rimG * dry * 0.82F + arterial * 0.03F, BRUISE_G, bruise);
+						float wallB = mix(colors.rimB * dry * 0.82F + arterial * 0.02F, BRUISE_B, bruise);
+						float lumenR = mix(Math.min(1.0F, colors.coreR * dry * 0.78F + arterial * 0.34F),
+								BRUISE_R * 0.6F, bruise);
+						float lumenG = mix(colors.coreG * dry * 0.7F + arterial * 0.018F, BRUISE_G * 0.6F, bruise);
+						float lumenB = mix(colors.coreB * dry * 0.8F + arterial * 0.012F, BRUISE_B * 0.6F, bruise);
+						RiteQuads.fadedBandPiece(vc, mat, dive1, dive2,
+								cos1, sin1, y1, r1 - halfCore1, r1,
+								cos2, sin2, y2, r2 - halfCore2, r2,
+								wallR, wallG, wallB, alpha, lumenR, lumenG, lumenB, alpha);
+						RiteQuads.fadedBandPiece(vc, mat, dive1, dive2,
+								cos1, sin1, y1, r1, r1 + halfCore1,
+								cos2, sin2, y2, r2, r2 + halfCore2,
+								lumenR, lumenG, lumenB, alpha, wallR, wallG, wallB, alpha);
+					}
+					case BLOOM -> {
+						float alpha = (bloomAlpha + arterial * 0.22F) * pieceAlpha * (1.0F - bruise);
+						if (alpha <= 0.004F) continue;
+						float hot = CardinalRiteMath.clamp01(frame.flash * 0.45F + arterial * 0.25F);
+						float red = mix(colors.rimR, HOT_R, hot);
+						float green = mix(colors.rimG, HOT_G * 0.4F, hot);
+						float blue = mix(colors.rimB, HOT_B * 0.4F, hot);
+						// Hug the vessel walls and leave the lumen dark, so the swell reads as a rim light.
+						float bloomWidth = bloomWidthBase * widthScale;
+						float wall1 = halfCore1 * 0.4F;
+						float wall2 = halfCore2 * 0.4F;
+						RiteQuads.fadedBandPiece(vc, mat, dive1, dive2,
+								cos1, sin1, y1 + BLOOM_LIFT, r1 - halfCore1 - bloomWidth, r1 - wall1,
+								cos2, sin2, y2 + BLOOM_LIFT, r2 - halfCore2 - bloomWidth, r2 - wall2,
+								red, green, blue, 0.0F, red, green, blue, alpha);
+						RiteQuads.fadedBandPiece(vc, mat, dive1, dive2,
+								cos1, sin1, y1 + BLOOM_LIFT, r1 + wall1, r1 + halfCore1 + bloomWidth,
+								cos2, sin2, y2 + BLOOM_LIFT, r2 + wall2, r2 + halfCore2 + bloomWidth,
+								red, green, blue, alpha, red, green, blue, 0.0F);
+					}
 				}
 			}
-
-			// ── Draw vein branches sprouting inward from each ring ──
-			drawVeins(glowVC, coreVC, ringMat, ringRadius, currentTime, directionSign,
-					coreR, coreG, coreB, coreAlpha, glowR, glowG, glowB,
-					visibleArcs, legacy);
-			stack.popPose();
 		}
-		drawFinaleCollapseFlash(glowVC, baseMat, rite, partialTick);
-
-		if (!legacy && hasAnchorSockets) {
-			drawBoundaryCompletionEffects(
-					glowVC, coreVC, baseMat, rite, ceremony, partialTick);
-		}
-		if (hasAnchorSockets) {
-			drawAnchorSockets(glowVC, coreVC, baseMat, rite, ceremony,
-					currentTime, partialTick, ringCount, stainOpacity);
-		}
-
-		stack.popPose();
 	}
 
-	private static void drawFinaleCollapseFlash(VertexConsumer glowVC, Matrix4f mat,
-			ActiveRiteClientData.RiteEntry rite, float partialTick) {
-		if (glowVC == null || !"CULMINATION".equals(rite.getPhase())) return;
-		float alpha = CardinalRiteCompletionRingTheatrics.flashAlpha(
-				rite.phaseRenderTicks(partialTick));
-		if (alpha <= 0.001F) return;
-		drawFlatDisc(glowVC, mat, 0.0F, 0.0F, 1.35F,
-				1.25F + alpha * 1.6F, 1.0F, 0.18F, 0.14F, alpha * 0.72F);
-		drawEffectRing(glowVC, mat, 0.0F, 0.0F, 1.38F,
-				0.65F + alpha * 1.8F, 0.28F, 1.0F, 0.55F, 0.48F, alpha);
+	// ── Floor stain ──
+
+	private static void drawBoundaryFloorStain(VertexConsumer vc, RiteFrame frame, RingFrame ring) {
+		float[] mesh = frame.layout.stainMesh(ring.index);
+		if (mesh.length == 0 || frame.stainOpacity <= 0.001F) return;
+		float alpha = CardinalRiteBoundaryGeometry.boundaryStainAlpha(ring.index) * frame.stainOpacity;
+		float y = CardinalRiteBoundaryGeometry.boundaryStainSurfaceOffset();
+		Matrix4f mat = frame.baseMatrix;
+		int stride = CardinalRiteCeremonyLayout.STAIN_VERTEX_STRIDE;
+		for (int vertex = 0; vertex + stride <= mesh.length; vertex += stride) {
+			boolean outer = mesh[vertex + 3] > 0.5F;
+			vc.addVertex(mat, mesh[vertex], y, mesh[vertex + 1])
+					.setColor(outer ? 0.008F : 0.006F, 0.0F, outer ? 0.012F : 0.010F, alpha * mesh[vertex + 2]);
+		}
 	}
 
-	private static void drawBoundaryFloorStain(VertexConsumer consumer, Matrix4f mat,
-			float ringRadius, List<CardinalRiteBoundaryProgress.Segment> backingArcs,
-			List<CardinalRiteCeremonyDefinition.Anchor> stainAnchors,
-			int ring, float stainOpacity) {
-		if (backingArcs.isEmpty()) return;
-		float halfWidth = CardinalRiteBoundaryGeometry.boundaryStainWidth() * 0.5F;
-		float boundaryAlpha =
-				CardinalRiteBoundaryGeometry.boundaryStainAlpha(ring) * stainOpacity;
-		float stainY = CardinalRiteBoundaryGeometry.boundaryStainSurfaceOffset();
-		List<CardinalRiteBoundaryGeometry.AngularArc> stainPieces =
-				backingArcs.stream()
-						.flatMap(arc -> CardinalRiteBoundaryGeometry.tessellateArc(
-								arc.startAngle(), arc.sweepAngle(), SEGMENTS).stream())
-						.toList();
-		for (CardinalRiteBoundaryGeometry.AngularArc piece : stainPieces) {
-			double a1 = piece.startAngle();
-			double a2 = a1 + piece.sweepAngle();
+	// ── Veins ──
+
+	private static void drawVeins(VertexConsumer vc, Pass pass, RiteFrame frame, RingFrame ring, float time) {
+		if (pass == Pass.BLOOM || ring.arcs.isEmpty() || ring.opacity <= 0.001F) return;
+		float veinFade = CardinalRiteEndingRules.violent(frame.ending)
+				? 1.0F - CardinalRiteMath.smoothstep(frame.endingAge / 16.0F) : 1.0F;
+		float coreAlpha = (0.70F + frame.heartbeat * 0.18F) * ring.ringFade * ring.opacity * frame.dim * veinFade;
+		if (coreAlpha <= 0.004F) return;
+		float directionSign = ring.directionSign;
+		int ringSeed = frame.entry.getCenter().hashCode() * 31 + ring.index;
+		for (int v = 0; v < VEIN_COUNT; v++) {
+			// Capillaries root at fixed, uneven points and only sway, so nothing crawls round the ring like teeth.
+			float jitter = CardinalRiteEndingRules.hash(ringSeed, v);
+			double baseAngle = (Math.PI * 2.0D / VEIN_COUNT) * (v + jitter * 0.7D);
+			if (!frame.legacy && CardinalRiteBoundaryGeometry.endpointWaveScale(
+					baseAngle, ring.endpoints, VEIN_SORE_CLEARANCE) < 0.999F) continue;
+			if (!frame.legacy && !CardinalRiteBoundaryGeometry.hasVisibleBeamAt(ring.arcs, baseAngle)) continue;
+			float rootIntegrity = frame.legacy ? 1.0F : arcIntegrity(ring.arcs, baseAngle, time);
+			if (rootIntegrity <= 0.01F) continue;
+			float surfaceY = CardinalRiteBoundaryGeometry.veinSurfaceOffset(
+					surfaceWave(baseAngle, time, directionSign, 0.0D, RING_SURFACE_WAVE));
+			float rootRadius = ring.radius + undulation(baseAngle, time, directionSign);
+			float side = (v & 1) == 0 ? -1.0F : 1.0F;
+			float halfCore = CORE_WIDTH * 0.5F;
+			float length = VEIN_LENGTH * (0.55F + 0.45F * CardinalRiteEndingRules.hash(ringSeed, v + 101));
+			double veinPulse = (Math.sin(time * 0.1D + v * 1.7D) + 1.0D) * 0.5D;
+			float alpha = (float) (0.35D + 0.35D * veinPulse) * rootIntegrity * coreAlpha;
+			float phase = jitter * 40.0F;
+			drawCapillary(vc, pass, ring, rootRadius + side * halfCore * 0.6F, baseAngle, side, length,
+					VEIN_ROOT_WIDTH, alpha, phase, time, surfaceY, veinFade);
+			// Most capillaries fork once partway along, the branch peeling off to one side.
+			if (CardinalRiteEndingRules.hash(ringSeed, v + 211) > 0.3F) {
+				float forkAt = 0.35F + 0.2F * CardinalRiteEndingRules.hash(ringSeed, v + 307);
+				float forkSign = CardinalRiteEndingRules.hash(ringSeed, v + 401) > 0.5F ? 1.0F : -1.0F;
+				double[] fork = capillaryPoint(rootRadius + side * halfCore * 0.6F, baseAngle, side, length,
+						forkAt, phase, time);
+				drawCapillary(vc, pass, ring, (float) fork[0], fork[1] + forkSign * 0.04D / Math.max(1.0D, fork[0]),
+						side, length * 0.5F, VEIN_ROOT_WIDTH * (1.0F - forkAt * 0.7F) * 0.8F,
+						alpha * 0.8F, phase + forkSign * 9.0F, time, surfaceY, veinFade);
+			}
+		}
+	}
+
+	/** A point along a capillary: its radius and angle {@code t} of the way out from its root. */
+	private static double[] capillaryPoint(float rootRadius, double baseAngle, float side, float length, float t,
+			float phase, float time) {
+		double radius = rootRadius + side * t * length;
+		// Lateral wander in blocks, turned into an angle at this radius; a slow sway keeps it alive.
+		double wander = (Math.sin(phase + t * 5.3D) * 0.09D + Math.sin(phase * 1.7D + t * 11.0D) * 0.025D) * t
+				+ Math.sin(time * 0.03D + phase) * 0.02D * t;
+		return new double[] {radius, baseAngle + wander / Math.max(0.5D, radius)};
+	}
+
+	/** A thin capillary threading off the vessel into the floor, fading out rather than ending in a point. */
+	private static void drawCapillary(VertexConsumer vc, Pass pass, RingFrame ring, float rootRadius,
+			double baseAngle, float side, float length, float rootWidth, float alpha, float phase, float time,
+			float surfaceY, float veinFade) {
+		RingColors colors = ring.colors;
+		Matrix4f mat = ring.matrix;
+		double[] previous = capillaryPoint(rootRadius, baseAngle, side, length, 0.0F, phase, time);
+		for (int s = 0; s < VEIN_SEGS; s++) {
+			float t0 = (float) s / VEIN_SEGS;
+			float t1 = (float) (s + 1) / VEIN_SEGS;
+			double[] next = capillaryPoint(rootRadius, baseAngle, side, length, t1, phase, time);
+			float rad0 = (float) previous[0];
+			float rad1 = (float) next[0];
+			float cos0 = (float) Math.cos(previous[1]);
+			float sin0 = (float) Math.sin(previous[1]);
+			float cos1 = (float) Math.cos(next[1]);
+			float sin1 = (float) Math.sin(next[1]);
+			previous = next;
+			float w0 = rootWidth * (1.0F - t0 * 0.7F);
+			float w1 = rootWidth * (1.0F - t1 * 0.7F);
+			float a0 = alpha * (1.0F - CardinalRiteMath.smoothstep(t0));
+			float a1 = alpha * (1.0F - CardinalRiteMath.smoothstep(t1));
+			// Width runs along the ring's tangent at each end.
+			float px0 = -sin0;
+			float pz0 = cos0;
+			float px1 = -sin1;
+			float pz1 = cos1;
+			if (pass == Pass.CORE) {
+				float cR = colors.coreR * 0.8F;
+				float cG = colors.coreG * 0.8F;
+				float cB = colors.coreB * 0.8F;
+				RiteQuads.emitQuad(vc, mat,
+						cos0 * rad0 - px0 * w0, surfaceY, sin0 * rad0 - pz0 * w0, cR, cG, cB, a0,
+						cos0 * rad0 + px0 * w0, surfaceY, sin0 * rad0 + pz0 * w0, cR, cG, cB, a0,
+						cos1 * rad1 + px1 * w1, surfaceY, sin1 * rad1 + pz1 * w1, cR, cG, cB, a1,
+						cos1 * rad1 - px1 * w1, surfaceY, sin1 * rad1 - pz1 * w1, cR, cG, cB, a1);
+			} else {
+				// A faint flush either side, as if the blood shows through the tissue around it.
+				float gR = colors.glowR;
+				float gG = colors.glowG;
+				float gB = colors.glowB;
+				float gw0 = w0 * 3.0F;
+				float gw1 = w1 * 3.0F;
+				float ga0 = a0 * 0.22F * veinFade;
+				float ga1 = a1 * 0.22F * veinFade;
+				RiteQuads.emitQuad(vc, mat,
+						cos0 * rad0 - px0 * gw0, surfaceY, sin0 * rad0 - pz0 * gw0, gR, gG, gB, 0.0F,
+						cos0 * rad0 - px0 * w0, surfaceY, sin0 * rad0 - pz0 * w0, gR, gG, gB, ga0,
+						cos1 * rad1 - px1 * w1, surfaceY, sin1 * rad1 - pz1 * w1, gR, gG, gB, ga1,
+						cos1 * rad1 - px1 * gw1, surfaceY, sin1 * rad1 - pz1 * gw1, gR, gG, gB, 0.0F);
+				RiteQuads.emitQuad(vc, mat,
+						cos0 * rad0 + px0 * w0, surfaceY, sin0 * rad0 + pz0 * w0, gR, gG, gB, ga0,
+						cos0 * rad0 + px0 * gw0, surfaceY, sin0 * rad0 + pz0 * gw0, gR, gG, gB, 0.0F,
+						cos1 * rad1 + px1 * gw1, surfaceY, sin1 * rad1 + pz1 * gw1, gR, gG, gB, 0.0F,
+						cos1 * rad1 + px1 * w1, surfaceY, sin1 * rad1 + pz1 * w1, gR, gG, gB, ga1);
+			}
+		}
+	}
+
+	// ── Anchor sockets ──
+
+	// ── Anchor beats: filled pulse and bolus, rupture, knitting ──
+
+	private static void drawAnchorBeats(VertexConsumer vc, Pass pass, RiteFrame frame, RingFrame ring) {
+		if (frame.beats.isEmpty()) return;
+		List<CardinalRiteCeremonyDefinition.Anchor> anchors = frame.layout.anchors();
+		for (AnchorBeat beat : frame.beats) {
+			if (beat.index() < 0 || beat.index() >= anchors.size()) continue;
+			CardinalRiteCeremonyDefinition.Anchor anchor = anchors.get(beat.index());
+			if (Math.max(0, anchor.ring()) != ring.index) continue;
+			float x = anchor.x();
+			float z = anchor.z();
+			switch (beat.kind()) {
+				case ANCHOR_FILLED -> drawFilledPulse(vc, pass, frame, ring, beat.index(), x, z, beat.age());
+				case ANCHOR_BROKEN -> drawRupture(vc, pass, ring, beat.index(), x, z, beat.age());
+				case ANCHOR_REPAIRED -> drawKnit(vc, pass, ring, x, z, beat.age());
+				default -> {
+				}
+			}
+		}
+	}
+
+	/** A bright bead runs once round the socket, a flash ring opens, then a bolus races along both arcs. */
+	private static void drawFilledPulse(VertexConsumer vc, Pass pass, RiteFrame frame, RingFrame ring,
+			int anchorIndex, float x, float z, float age) {
+		Matrix4f mat = ring.matrix;
+		RingColors colors = ring.colors;
+		float y = EFFECT_Y + (pass == Pass.BLOOM ? BLOOM_LIFT : 0.0F);
+		if (age < 12.0F) {
+			float lap = CardinalRiteMath.easeOutCubic(age / 10.0F);
+			float alpha = 1.0F - CardinalRiteMath.smoothstep((age - 7.0F) / 5.0F);
+			for (int trail = 0; trail < 6; trail++) {
+				double angle = -Math.PI * 0.5D + (lap - trail * 0.035F) * Math.PI * 2.0D;
+				float bx = x + (float) Math.cos(angle) * SOCKET_RADIUS;
+				float bz = z + (float) Math.sin(angle) * SOCKET_RADIUS;
+				float trailAlpha = alpha * (1.0F - trail / 6.0F);
+				switch (pass) {
+					case GLOW -> RiteQuads.disc(vc, mat, bx, bz, y, 0.16F, colors.glowR, colors.glowG, colors.glowB,
+							trailAlpha * 0.4F);
+					case CORE -> RiteQuads.disc(vc, mat, bx, bz, y + 0.002F, 0.05F - trail * 0.006F,
+							HOT_R, HOT_G * 0.55F, HOT_B * 0.5F, trailAlpha * 0.95F);
+					case BLOOM -> RiteQuads.disc(vc, mat, bx, bz, y, 0.12F, HOT_R, HOT_G * 0.4F, HOT_B * 0.4F,
+							trailAlpha * 0.8F);
+				}
+			}
+			if (pass != Pass.CORE) {
+				float ringAlpha = CardinalRiteMath.pulse(age, 1.0F, 12.0F);
+				float radius = SOCKET_RADIUS + CardinalRiteMath.easeOutCubic(age / 10.0F) * 0.5F;
+				RiteQuads.flashRing(vc, mat, x, z, y, radius, 0.16F, colors.rimR, colors.rimG, colors.rimB,
+						ringAlpha * (pass == Pass.BLOOM ? 0.9F : 0.45F));
+			}
+		}
+		if (age >= 4.0F) {
+			float progress = CardinalRiteMath.smoothstep((age - 4.0F) / (FILL_BEAT_TICKS - 4.0F));
+			float bolusAlpha = (float) Math.sin(progress * Math.PI);
+			double anchorAngle = frame.layout.anchorAngle(anchorIndex);
+			double forward = anchorAngle + frame.layout.forwardSweep(anchorIndex) * progress;
+			double backward = anchorAngle - frame.layout.backwardSweep(anchorIndex) * progress;
+			drawBolus(vc, pass, ring, forward, bolusAlpha, y);
+			drawBolus(vc, pass, ring, backward, bolusAlpha, y);
+		}
+	}
+
+	private static void drawBolus(VertexConsumer vc, Pass pass, RingFrame ring, double angle, float alpha, float y) {
+		if (alpha <= 0.004F || !CardinalRiteBoundaryGeometry.hasVisibleBeamAt(ring.arcs, angle)) return;
+		float x = (float) Math.cos(angle) * ring.radius;
+		float z = (float) Math.sin(angle) * ring.radius;
+		switch (pass) {
+			case GLOW -> RiteQuads.disc(vc, ring.matrix, x, z, y, 0.17F, 1.0F, 0.075F, 0.035F, alpha * 0.30F);
+			case CORE -> RiteQuads.disc(vc, ring.matrix, x, z, y + 0.002F, 0.055F, 1.0F, 0.075F, 0.035F,
+					alpha * 0.92F);
+			case BLOOM -> RiteQuads.disc(vc, ring.matrix, x, z, y, 0.14F, HOT_R, HOT_G * 0.35F, HOT_B * 0.3F,
+					alpha * 0.7F);
+		}
+	}
+
+	/** The socket bursts: fragments of its wall fling outward and bruise, over a dark spreading stain. */
+	private static void drawRupture(VertexConsumer vc, Pass pass, RingFrame ring, int anchorIndex,
+			float x, float z, float age) {
+		Matrix4f mat = ring.matrix;
+		RingColors colors = ring.colors;
+		float t = CardinalRiteMath.clamp01(age / BREAK_BEAT_TICKS);
+		if (pass == Pass.GLOW) {
+			float stain = CardinalRiteMath.pulse(age, 3.0F, BREAK_BEAT_TICKS);
+			RiteQuads.disc(vc, mat, x, z, EFFECT_Y - 0.006F, 0.45F + t * 0.45F,
+					BRUISE_R * 0.5F, BRUISE_G * 0.5F, BRUISE_B * 0.5F, stain * 0.55F);
+		}
+		if (pass == Pass.BLOOM) {
+			float flash = CardinalRiteMath.pulse(age, 0.5F, 6.0F);
+			RiteQuads.disc(vc, mat, x, z, EFFECT_Y + BLOOM_LIFT, 0.55F, HOT_R, HOT_G * 0.3F, HOT_B * 0.3F,
+					flash * 0.9F);
+		}
+		int fragments = 8;
+		double fragmentSweep = Math.PI * 2.0D / fragments * 0.7D;
+		float fling = CardinalRiteMath.easeOutCubic(age / 16.0F);
+		float bruise = CardinalRiteMath.smoothstep(t * 1.6F);
+		float alpha = 1.0F - CardinalRiteMath.smoothstep((t - 0.25F) / 0.75F);
+		if (alpha <= 0.004F) return;
+		for (int fragment = 0; fragment < fragments; fragment++) {
+			float jitter = CardinalRiteEndingRules.hash(anchorIndex * 17 + fragment, 91);
+			double center = Math.PI * 2.0D * fragment / fragments + jitter * 0.5D;
+			double spin = (jitter - 0.5D) * 1.4D * fling;
+			double a1 = center - fragmentSweep * 0.5D + spin;
+			double a2 = center + fragmentSweep * 0.5D + spin;
+			float radius = SOCKET_RADIUS + fling * (0.45F + jitter * 0.7F);
+			float lift = EFFECT_Y + (float) Math.sin(Math.min(1.0F, age / 16.0F) * Math.PI) * 0.14F * (0.5F + jitter);
+			float width = SOCKET_CORE_WIDTH * (1.4F - t);
 			float cos1 = (float) Math.cos(a1);
 			float sin1 = (float) Math.sin(a1);
 			float cos2 = (float) Math.cos(a2);
 			float sin2 = (float) Math.sin(a2);
-			float inner = ringRadius - halfWidth;
-			float outer = ringRadius + halfWidth;
-			for (int radial = 0; radial < STAIN_RADIAL_SEGMENTS; radial++) {
-				float t0 = radial / (float) STAIN_RADIAL_SEGMENTS;
-				float t1 = (radial + 1) / (float) STAIN_RADIAL_SEGMENTS;
-				float radius0 = inner + (outer - inner) * t0;
-				float radius1 = inner + (outer - inner) * t1;
-				float x10 = cos1 * radius0;
-				float z10 = sin1 * radius0;
-				float x11 = cos1 * radius1;
-				float z11 = sin1 * radius1;
-				float x21 = cos2 * radius1;
-				float z21 = sin2 * radius1;
-				float x20 = cos2 * radius0;
-				float z20 = sin2 * radius0;
-				float alpha10 = boundaryAlpha * stainRadialProfile(t0)
-						* boundaryStainSocketMask(x10, z10, stainAnchors);
-				float alpha11 = boundaryAlpha * stainRadialProfile(t1)
-						* boundaryStainSocketMask(x11, z11, stainAnchors);
-				float alpha21 = boundaryAlpha * stainRadialProfile(t1)
-						* boundaryStainSocketMask(x21, z21, stainAnchors);
-				float alpha20 = boundaryAlpha * stainRadialProfile(t0)
-						* boundaryStainSocketMask(x20, z20, stainAnchors);
-				emitQuad(consumer, mat,
-						x10, stainY, z10, 0.006F, 0.0F, 0.010F, alpha10,
-						x11, stainY, z11, 0.008F, 0.0F, 0.012F, alpha11,
-						x21, stainY, z21, 0.008F, 0.0F, 0.012F, alpha21,
-						x20, stainY, z20, 0.006F, 0.0F, 0.010F, alpha20);
+			float red = mix(colors.glowR, BRUISE_R, bruise);
+			float green = mix(colors.glowG, BRUISE_G, bruise);
+			float blue = mix(colors.glowB, BRUISE_B, bruise);
+			switch (pass) {
+				case GLOW -> RiteQuads.bandPiece(vc, mat, x, z,
+						cos1, sin1, lift, radius - width * 2.5F, radius + width * 2.5F,
+						cos2, sin2, lift, radius - width * 2.5F, radius + width * 2.5F,
+						red, green, blue, alpha * 0.25F, red, green, blue, 0.0F);
+				case CORE -> RiteQuads.bandPiece(vc, mat, x, z,
+						cos1, sin1, lift, radius - width, radius + width,
+						cos2, sin2, lift, radius - width, radius + width,
+						mix(colors.rimR, BRUISE_R, bruise), mix(colors.rimG, BRUISE_G, bruise),
+						mix(colors.rimB, BRUISE_B, bruise), alpha,
+						red * 0.7F, green * 0.7F, blue * 0.7F, alpha);
+				case BLOOM -> {
+					float hot = alpha * (1.0F - bruise) * 0.6F;
+					if (hot > 0.004F) {
+						RiteQuads.bandPiece(vc, mat, x, z,
+								cos1, sin1, lift + BLOOM_LIFT, radius - width * 2.0F, radius + width * 2.0F,
+								cos2, sin2, lift + BLOOM_LIFT, radius - width * 2.0F, radius + width * 2.0F,
+								colors.rimR, colors.rimG, colors.rimB, hot, colors.rimR, colors.rimG, colors.rimB, 0.0F);
+					}
+				}
 			}
 		}
 	}
 
-	private static float stainRadialProfile(float position) {
-		return Math.max(0.0F, 1.0F - Math.abs(position * 2.0F - 1.0F));
-	}
-
-	private static float boundaryStainSocketMask(
-			float x, float z,
-			List<CardinalRiteCeremonyDefinition.Anchor> anchors) {
-		float mask = 1.0F;
-		float featherStart =
-				CardinalRiteBoundaryGeometry.socketStainFeatherStartRadius(
-						ANCHOR_SOCKET_RADIUS);
-		float outerRadius = CardinalRiteBoundaryGeometry.socketStainOuterRadius(
-				ANCHOR_SOCKET_RADIUS);
-		for (CardinalRiteCeremonyDefinition.Anchor anchor : anchors) {
-			mask = Math.min(mask,
-					CardinalRiteBoundaryGeometry.boundaryStainSocketMask(
-							x, z, anchor.x(), anchor.z(),
-							featherStart, outerRadius - featherStart));
+	/** A bright ring contracts onto the socket as it knits shut. */
+	private static void drawKnit(VertexConsumer vc, Pass pass, RingFrame ring, float x, float z, float age) {
+		float alpha = CardinalRiteMath.pulse(age, 2.0F, REPAIR_BEAT_TICKS);
+		if (alpha <= 0.004F) return;
+		float radius = CardinalRiteMath.lerp(CardinalRiteMath.easeInCubic(age / REPAIR_BEAT_TICKS),
+				SOCKET_RADIUS * 2.6F, SOCKET_RADIUS);
+		RingColors colors = ring.colors;
+		switch (pass) {
+			case GLOW -> RiteQuads.flashRing(vc, ring.matrix, x, z, EFFECT_Y, radius, 0.22F,
+					colors.glowR, colors.glowG, colors.glowB, alpha * 0.5F);
+			case CORE -> RiteQuads.flashRing(vc, ring.matrix, x, z, EFFECT_Y + 0.002F, radius, 0.035F,
+					HOT_R, HOT_G * 0.7F, HOT_B * 0.65F, alpha);
+			case BLOOM -> RiteQuads.flashRing(vc, ring.matrix, x, z, EFFECT_Y + BLOOM_LIFT, radius, 0.18F,
+					HOT_R, HOT_G * 0.45F, HOT_B * 0.4F, alpha * 0.9F);
 		}
-		return mask;
 	}
 
-	private static void drawBoundaryCompletionEffects(VertexConsumer glowVC, VertexConsumer coreVC,
-			Matrix4f mat, ActiveRiteClientData.RiteEntry rite,
-			CardinalRiteCeremonyDefinition ceremony, float partialTick) {
-		for (CardinalRiteBoundaryProgress.Segment segment : rite.getBoundarySegments()) {
-			float effectAge = rite.boundaryEffectAge(segment, partialTick);
+	// ── Segment seals (growth completed) ──
+
+	private static void drawSegmentSeals(VertexConsumer vc, Pass pass, RiteFrame frame, float partialTick) {
+		for (CardinalRiteBoundaryProgress.Segment segment : frame.entry.getBoundarySegments()) {
+			float effectAge = frame.entry.boundaryEffectAge(segment, partialTick);
 			if (effectAge < 0.0F || effectAge > 17.0F) continue;
-			float ringRadius = CardinalRiteBoundaryGeometry.interactiveRingRadius(segment.ring());
-			SegmentClearances clearances = segmentClearances(
-					segment, ceremony, ringRadius);
-			List<CardinalRiteBoundaryProgress.Segment> clipped =
-					CardinalRiteBoundaryGeometry.animatedSocketArcs(
-							segment, 1.0F, clearances.start(), clearances.end());
+			if (segment.ring() < 0 || segment.ring() >= frame.rings.length) continue;
+			RingFrame ring = frame.rings[segment.ring()];
+			List<CardinalRiteBoundaryProgress.Segment> clipped = CardinalRiteBoundaryGeometry.animatedSocketArcs(
+					segment, 1.0F, frame.layout.startClearance(segment), frame.layout.endClearance(segment));
 			if (clipped.isEmpty()) continue;
 			CardinalRiteBoundaryProgress.Segment arc = clipped.getFirst();
 			double midpoint = arc.startAngle() + arc.sweepAngle() * 0.5D;
+			double halfSweep = arc.sweepAngle() * 0.5D;
+			Matrix4f mat = ring.matrix;
 			float sealAlpha = CardinalRiteBoundaryGeometry.sealPulseAlpha(effectAge);
-			float sealTravel = CardinalRiteBoundaryGeometry.sealTravel(effectAge);
-			float midpointX = (float) Math.cos(midpoint) * ringRadius;
-			float midpointZ = (float) Math.sin(midpoint) * ringRadius;
 			if (sealAlpha > 0.0F) {
+				float sealTravel = CardinalRiteBoundaryGeometry.sealTravel(effectAge);
+				float midpointX = (float) Math.cos(midpoint) * ring.radius;
+				float midpointZ = (float) Math.sin(midpoint) * ring.radius;
 				float sealRadius = 0.10F + sealTravel * 0.16F;
-				if (glowVC != null) {
-					drawEffectRing(glowVC, mat, midpointX, midpointZ, 0.020F,
-							sealRadius, 0.085F, 0.94F, 0.035F, 0.025F,
-							sealAlpha * 0.44F);
+				switch (pass) {
+					case GLOW -> RiteQuads.flashRing(vc, mat, midpointX, midpointZ, 0.020F,
+							sealRadius, 0.085F, 0.94F, 0.035F, 0.025F, sealAlpha * 0.44F);
+					case CORE -> RiteQuads.flashRing(vc, mat, midpointX, midpointZ, 0.022F,
+							sealRadius, 0.028F, 0.72F, 0.012F, 0.014F, sealAlpha * 0.92F);
+					case BLOOM -> RiteQuads.flashRing(vc, mat, midpointX, midpointZ, 0.022F + BLOOM_LIFT,
+							sealRadius, 0.14F, HOT_R, HOT_G * 0.4F, HOT_B * 0.4F, sealAlpha * 0.7F);
 				}
-				if (coreVC != null) {
-					drawEffectRing(coreVC, mat, midpointX, midpointZ, 0.022F,
-							sealRadius, 0.028F, 0.72F, 0.012F, 0.014F,
-							sealAlpha * 0.92F);
-				}
-				double halfSweep = arc.sweepAngle() * 0.5D;
-				double firstHead = midpoint - halfSweep * sealTravel;
-				double secondHead = midpoint + halfSweep * sealTravel;
-				drawBoundaryEffectPair(glowVC, coreVC, mat, ringRadius,
-						firstHead, secondHead, 0.065F, sealAlpha * 0.68F,
-						0.78F, 0.018F, 0.02F);
+				drawBoundaryEffectPair(vc, pass, mat, ring.radius, midpoint - halfSweep * sealTravel,
+						midpoint + halfSweep * sealTravel, 0.065F, sealAlpha * 0.68F, 0.78F, 0.018F, 0.02F);
 			}
-
 			float bolusAlpha = CardinalRiteBoundaryGeometry.bolusAlpha(effectAge);
 			if (bolusAlpha > 0.0F) {
 				float bolusProgress = CardinalRiteBoundaryGeometry.bolusProgress(effectAge);
-				double halfSweep = arc.sweepAngle() * 0.5D;
-				double firstBolus = midpoint - halfSweep * bolusProgress;
-				double secondBolus = midpoint + halfSweep * bolusProgress;
-				drawBoundaryEffectPair(glowVC, coreVC, mat, ringRadius,
-						firstBolus, secondBolus, 0.047F, bolusAlpha,
-						1.0F, 0.075F, 0.035F);
+				drawBoundaryEffectPair(vc, pass, mat, ring.radius, midpoint - halfSweep * bolusProgress,
+						midpoint + halfSweep * bolusProgress, 0.047F, bolusAlpha, 1.0F, 0.075F, 0.035F);
 			}
 		}
 	}
 
-	private static void drawBoundaryEffectPair(VertexConsumer glowVC, VertexConsumer coreVC,
-			Matrix4f mat, float ringRadius, double firstAngle, double secondAngle,
-			float coreRadius, float alpha, float red, float green, float blue) {
-		for (double angle : new double[] {firstAngle, secondAngle}) {
-			float x = (float) Math.cos(angle) * ringRadius;
-			float z = (float) Math.sin(angle) * ringRadius;
-			if (glowVC != null) {
-				drawFlatDisc(glowVC, mat, x, z, 0.024F,
-						coreRadius * 3.1F, red, green, blue, alpha * 0.28F);
-			}
-			if (coreVC != null) {
-				drawFlatDisc(coreVC, mat, x, z, 0.026F,
-						coreRadius, red, green, blue, alpha * 0.92F);
-			}
+	private static void drawBoundaryEffectPair(VertexConsumer vc, Pass pass, Matrix4f mat, float ringRadius,
+			double firstAngle, double secondAngle, float coreRadius, float alpha,
+			float red, float green, float blue) {
+		drawBoundaryEffect(vc, pass, mat, ringRadius, firstAngle, coreRadius, alpha, red, green, blue);
+		drawBoundaryEffect(vc, pass, mat, ringRadius, secondAngle, coreRadius, alpha, red, green, blue);
+	}
+
+	private static void drawBoundaryEffect(VertexConsumer vc, Pass pass, Matrix4f mat, float ringRadius,
+			double angle, float coreRadius, float alpha, float red, float green, float blue) {
+		float x = (float) Math.cos(angle) * ringRadius;
+		float z = (float) Math.sin(angle) * ringRadius;
+		switch (pass) {
+			case GLOW -> RiteQuads.disc(vc, mat, x, z, 0.024F, coreRadius * 3.1F, red, green, blue, alpha * 0.28F);
+			case CORE -> RiteQuads.disc(vc, mat, x, z, 0.026F, coreRadius, red, green, blue, alpha * 0.92F);
+			case BLOOM -> RiteQuads.disc(vc, mat, x, z, 0.026F + BLOOM_LIFT, coreRadius * 2.4F,
+					red, green * 0.6F, blue * 0.6F, alpha * 0.55F);
 		}
 	}
 
-	private static void drawAnchorSockets(VertexConsumer glowVC, VertexConsumer coreVC, Matrix4f mat,
-			ActiveRiteClientData.RiteEntry rite, CardinalRiteCeremonyDefinition ceremony,
-			float currentTime, float partialTick, int ringCount, float stainOpacity) {
-		BlockPos center = rite.getCenter();
-		List<CardinalRiteCeremonyDefinition.Anchor> anchors = ceremony.anchors();
-		for (int anchorIndex = 0; anchorIndex < anchors.size(); anchorIndex++) {
-			CardinalRiteCeremonyDefinition.Anchor anchor = anchors.get(anchorIndex);
-			int ring = Math.max(0, anchor.ring());
-			float directionSign = ring % 2 == 0 ? 1.0F : -1.0F;
-			float ringFade = 1.0F - ring * 0.15F;
-			float lighten = ringCount > 1
-					? (float) ring / (ringCount - 1) * 0.6F
-					: 0.0F;
-			float integrity = anchorIntegrity(rite, anchorIndex);
-			float dry = CardinalRiteBoundaryGeometry.integrityBrightness(integrity);
-			float visibility = 0.24F + integrity * 0.76F;
-			double worldX = center.getX() + anchor.x() + 0.5D;
-			double worldZ = center.getZ() + anchor.z() + 0.5D;
-			float blobRadius = boundaryBlobRadius(rite, worldX, worldZ, partialTick);
-			float fill = CardinalRiteBoundaryGeometry.socketFill(blobRadius);
-			float intensity = CardinalRiteBoundaryGeometry.socketIntensity(blobRadius);
-			float heartbeat = IchorianSigilOrganicGeometry.heartbeat(currentTime);
-			float coreAlpha = (0.76F + (heartbeat - 0.92F) * 0.8F)
-					* ringFade * intensity * visibility;
-			float glowAlpha = (0.12F + (heartbeat - 0.92F) * 0.5F)
-					* ringFade * intensity * visibility;
-			float coreR = (0.34F + lighten * 0.10F) * dry;
-			float coreG = (0.008F + lighten * 0.018F) * dry;
-			float coreB = (0.012F + lighten * 0.014F) * dry;
-			float glowR = (0.72F + lighten * 0.12F) * dry;
-			float glowG = (0.025F + lighten * 0.04F) * dry;
-			float glowB = (0.03F + lighten * 0.03F) * dry;
-			CardinalRiteBoundaryGeometry.SocketDistortion centerDistortion =
-					CardinalRiteBoundaryGeometry.socketDistortion(
-							0.0D, currentTime, anchorIndex, integrity);
-			float localX = anchor.x() + centerDistortion.offsetX();
-			float localZ = anchor.z() + centerDistortion.offsetZ();
-			if (glowVC != null) {
-				drawSocketStain(glowVC, mat, localX, localZ, intensity, stainOpacity);
-			}
+	// ── Finale flash and the staff's impact shock ──
 
-			List<CardinalRiteBoundaryGeometry.AngularArc> socketPieces =
-					CardinalRiteBoundaryGeometry.socketOverlayArcs().stream()
-							.flatMap(arc -> CardinalRiteBoundaryGeometry.tessellateArc(
-									arc.startAngle(), arc.sweepAngle(),
-									ANCHOR_SOCKET_SEGMENTS).stream())
-							.toList();
-			for (CardinalRiteBoundaryGeometry.AngularArc piece : socketPieces) {
-				double a1 = piece.startAngle();
-				double a2 = a1 + piece.sweepAngle();
-				double phaseOffset = anchorIndex * 0.73D;
-				CardinalRiteBoundaryGeometry.SocketDistortion distortion1 =
-						CardinalRiteBoundaryGeometry.socketDistortion(
-								a1, currentTime, anchorIndex, integrity);
-				CardinalRiteBoundaryGeometry.SocketDistortion distortion2 =
-						CardinalRiteBoundaryGeometry.socketDistortion(
-								a2, currentTime, anchorIndex, integrity);
-				float waveScale1 = 1.0F;
-				float waveScale2 = 1.0F;
-				float distortionScale1 = 1.0F
-						+ (distortion1.radialScale() - 1.0F) * waveScale1;
-				float distortionScale2 = 1.0F
-						+ (distortion2.radialScale() - 1.0F) * waveScale2;
-				float r1 = (ANCHOR_SOCKET_RADIUS + undulation(
-						a1 + phaseOffset, currentTime, directionSign)
-						* ANCHOR_SOCKET_UNDULATION_SCALE * waveScale1)
-						* distortionScale1;
-				float r2 = (ANCHOR_SOCKET_RADIUS + undulation(
-						a2 + phaseOffset, currentTime, directionSign)
-						* ANCHOR_SOCKET_UNDULATION_SCALE * waveScale2)
-						* distortionScale2;
-				float y1 = CardinalRiteBoundaryGeometry.surfaceSafeOffset(
-						(float) Math.sin(a1 * 5.0D
-								+ currentTime * 0.06D * directionSign + phaseOffset)
-								* 0.006F * waveScale1);
-				float y2 = CardinalRiteBoundaryGeometry.surfaceSafeOffset(
-						(float) Math.sin(a2 * 5.0D
-								+ currentTime * 0.06D * directionSign + phaseOffset)
-								* 0.006F * waveScale2);
-				float cos1 = (float) Math.cos(a1);
-				float sin1 = (float) Math.sin(a1);
-				float cos2 = (float) Math.cos(a2);
-				float sin2 = (float) Math.sin(a2);
-				float coreWidth = CardinalRiteBoundaryGeometry.integrityWidth(
-						ANCHOR_SOCKET_CORE_WIDTH, integrity);
-				float glowWidth = CardinalRiteBoundaryGeometry.integrityWidth(
-						ANCHOR_SOCKET_GLOW_WIDTH, integrity);
-				float iGlow1 = r1 - glowWidth - coreWidth * 0.5F;
-				float iCore1 = r1 - coreWidth * 0.5F;
-				float oCore1 = r1 + coreWidth * 0.5F;
-				float oGlow1 = r1 + glowWidth + coreWidth * 0.5F;
-				float iGlow2 = r2 - glowWidth - coreWidth * 0.5F;
-				float iCore2 = r2 - coreWidth * 0.5F;
-				float oCore2 = r2 + coreWidth * 0.5F;
-				float oGlow2 = r2 + glowWidth + coreWidth * 0.5F;
-				float arterial = CardinalRiteBoundaryGeometry.arterialHighlight(
-						(a1 + a2) * 0.5D + phaseOffset, currentTime, ring);
-				float highlightedCoreR = Math.min(1.0F,
-						coreR + arterial * 0.34F * integrity);
-				float highlightedCoreG = coreG + arterial * 0.018F;
-				float highlightedCoreB = coreB + arterial * 0.012F;
-
-				if (glowVC != null) {
-					emitQuad(glowVC, mat,
-							localX + cos1 * iGlow1, y1, localZ + sin1 * iGlow1,
-							glowR, glowG, glowB, 0.0F,
-							localX + cos1 * iCore1, y1, localZ + sin1 * iCore1,
-							glowR, glowG, glowB, glowAlpha,
-							localX + cos2 * iCore2, y2, localZ + sin2 * iCore2,
-							glowR, glowG, glowB, glowAlpha,
-							localX + cos2 * iGlow2, y2, localZ + sin2 * iGlow2,
-							glowR, glowG, glowB, 0.0F);
-					emitQuad(glowVC, mat,
-							localX + cos1 * oCore1, y1, localZ + sin1 * oCore1,
-							glowR, glowG, glowB, glowAlpha,
-							localX + cos1 * oGlow1, y1, localZ + sin1 * oGlow1,
-							glowR, glowG, glowB, 0.0F,
-							localX + cos2 * oGlow2, y2, localZ + sin2 * oGlow2,
-							glowR, glowG, glowB, 0.0F,
-							localX + cos2 * oCore2, y2, localZ + sin2 * oCore2,
-							glowR, glowG, glowB, glowAlpha);
-				}
-				if (coreVC != null) {
-					emitQuad(coreVC, mat,
-							localX + cos1 * iCore1, y1, localZ + sin1 * iCore1,
-							highlightedCoreR, highlightedCoreG, highlightedCoreB, coreAlpha,
-							localX + cos1 * oCore1, y1, localZ + sin1 * oCore1,
-							highlightedCoreR, highlightedCoreG, highlightedCoreB, coreAlpha,
-							localX + cos2 * oCore2, y2, localZ + sin2 * oCore2,
-							highlightedCoreR, highlightedCoreG, highlightedCoreB, coreAlpha,
-							localX + cos2 * iCore2, y2, localZ + sin2 * iCore2,
-							highlightedCoreR, highlightedCoreG, highlightedCoreB, coreAlpha);
-				}
-			}
-			drawOrbitingBlood(glowVC, coreVC, mat, localX, localZ,
-					currentTime, anchorIndex, fill, directionSign);
+	private static void drawFinaleFlash(VertexConsumer vc, Pass pass, RiteFrame frame, float partialTick) {
+		if (pass == Pass.CORE || !frame.entry.isPhase(CardinalRitePhase.CULMINATION)) return;
+		float alpha = CardinalRiteCompletionRingTheatrics.flashAlpha(frame.entry.phaseRenderTicks(partialTick))
+				* (frame.ending == null ? 1.0F : frame.fade);
+		if (alpha <= 0.001F) return;
+		Matrix4f mat = frame.baseMatrix;
+		if (pass == Pass.GLOW) {
+			RiteQuads.disc(vc, mat, 0.0F, 0.0F, 1.35F, 1.25F + alpha * 1.6F, 1.0F, 0.18F, 0.14F, alpha * 0.72F);
+			RiteQuads.flashRing(vc, mat, 0.0F, 0.0F, 1.38F, 0.65F + alpha * 1.8F, 0.28F, 1.0F, 0.55F, 0.48F, alpha);
+		} else {
+			RiteQuads.disc(vc, mat, 0.0F, 0.0F, 1.36F, 0.9F + alpha * 1.2F, HOT_R, HOT_G * 0.5F, HOT_B * 0.45F,
+					alpha * 0.8F);
 		}
 	}
 
-	private static void drawSocketNecks(
-			VertexConsumer glowVC, VertexConsumer coreVC, Matrix4f mat,
-			double anchorAngle, float socketCenterRadius,
-			int ring, float socketX, float socketZ,
-			float currentTime, float directionSign, int anchorIndex, float integrity,
-			float coreR, float coreG, float coreB, float coreAlpha,
-			float glowR, float glowG, float glowB, float glowAlpha) {
-		float ringRadius = CardinalRiteBoundaryGeometry.interactiveRingRadius(ring);
-		float throatRadius = CardinalRiteBoundaryGeometry.socketThroatRadius(
-				ANCHOR_SOCKET_RADIUS, ANCHOR_SOCKET_CORE_WIDTH);
-		float authoredSocketX = (float) Math.cos(anchorAngle) * socketCenterRadius;
-		float authoredSocketZ = (float) Math.sin(anchorAngle) * socketCenterRadius;
-		CardinalRiteBoundaryGeometry.SocketJunction firstJunction =
-				CardinalRiteBoundaryGeometry.socketJunction(
-						ringRadius, authoredSocketX, authoredSocketZ,
-						throatRadius, -1);
-		CardinalRiteBoundaryGeometry.SocketJunction secondJunction =
-				CardinalRiteBoundaryGeometry.socketJunction(
-						ringRadius, authoredSocketX, authoredSocketZ,
-						throatRadius, 1);
-		double firstGateAngle = Math.atan2(
-				firstJunction.z() - socketZ, firstJunction.x() - socketX);
-		double secondGateAngle = Math.atan2(
-				secondJunction.z() - socketZ, secondJunction.x() - socketX);
-		for (CardinalRiteBoundaryGeometry.SocketJunction junction
-				: new CardinalRiteBoundaryGeometry.SocketJunction[] {
-						firstJunction, secondJunction}) {
-			double boundaryAngle = junction.boundaryAngle();
-			double gateCenter = junction == firstJunction
-					? firstGateAngle : secondGateAngle;
-			float boundaryRadius = ringRadius;
-			float throatY = CardinalRiteBoundaryGeometry.surfaceSafeOffset(0.0F);
-			float radialX = (float) Math.cos(boundaryAngle);
-			float radialZ = (float) Math.sin(boundaryAngle);
-			float throatX = radialX * boundaryRadius;
-			float throatZ = radialZ * boundaryRadius;
-			float boundaryHalfWidth = CardinalRiteBoundaryGeometry.integrityWidth(
-					CORE_WIDTH, integrity) * 0.5F;
-			float throatInnerX = radialX * (boundaryRadius - boundaryHalfWidth);
-			float throatInnerZ = radialZ * (boundaryRadius - boundaryHalfWidth);
-			float throatOuterX = radialX * (boundaryRadius + boundaryHalfWidth);
-			float throatOuterZ = radialZ * (boundaryRadius + boundaryHalfWidth);
-
-			double gateMinus = gateCenter - ANCHOR_SOCKET_GATE_HALF_ANGLE;
-			double gatePlus = gateCenter + ANCHOR_SOCKET_GATE_HALF_ANGLE;
-			SocketBandEdge minus = socketBandEdge(
-					socketX, socketZ, gateMinus, currentTime, directionSign,
-					anchorIndex, integrity, firstGateAngle, secondGateAngle);
-			SocketBandEdge plus = socketBandEdge(
-					socketX, socketZ, gatePlus, currentTime, directionSign,
-					anchorIndex, integrity, firstGateAngle, secondGateAngle);
-			boolean minusIsOuter = Math.cos(gateMinus - anchorAngle)
-					> Math.cos(gatePlus - anchorAngle);
-			SocketBandEdge outerBranch = minusIsOuter ? minus : plus;
-			SocketBandEdge innerBranch = minusIsOuter ? plus : minus;
-
-			if (glowVC != null) {
-				emitSocketNeckPass(glowVC, mat,
-						throatX, throatZ, throatInnerX, throatInnerZ,
-						throatOuterX, throatOuterZ, throatY,
-						outerBranch, innerBranch,
-						glowR, glowG, glowB, glowAlpha * 0.72F);
-			}
-			if (coreVC != null) {
-				emitSocketNeckPass(coreVC, mat,
-						throatX, throatZ, throatInnerX, throatInnerZ,
-						throatOuterX, throatOuterZ, throatY,
-						outerBranch, innerBranch,
-						coreR, coreG, coreB, coreAlpha);
-			}
+	private static void drawImpactShock(VertexConsumer vc, Pass pass, RiteFrame frame) {
+		if (pass == Pass.CORE || frame.impactAge < 0.0F || frame.rings.length == 0) return;
+		float t = frame.impactAge / IMPACT_TICKS;
+		float outer = frame.rings[frame.rings.length - 1].radius + 0.6F;
+		float radius = 0.45F + CardinalRiteMath.easeOutCubic(t) * outer;
+		float alpha = (1.0F - t) * (1.0F - t);
+		RingColors colors = frame.rings[0].colors;
+		if (pass == Pass.GLOW) {
+			RiteQuads.flashRing(vc, frame.baseMatrix, 0.0F, 0.0F, EFFECT_Y, radius, 0.6F,
+					colors.glowR, colors.glowG, colors.glowB, alpha * 0.35F);
+		} else {
+			RiteQuads.flashRing(vc, frame.baseMatrix, 0.0F, 0.0F, EFFECT_Y + BLOOM_LIFT, radius, 0.32F,
+					HOT_R, HOT_G * 0.45F, HOT_B * 0.4F, alpha * 0.85F);
 		}
 	}
 
-	private static void emitSocketNeckPass(
-			VertexConsumer consumer, Matrix4f mat,
-			float throatX, float throatZ,
-			float throatInnerX, float throatInnerZ,
-			float throatOuterX, float throatOuterZ, float throatY,
-			SocketBandEdge outerBranch, SocketBandEdge innerBranch,
-			float red, float green, float blue, float alpha) {
-		emitQuad(consumer, mat,
-				throatX, throatY, throatZ, red, green, blue, alpha,
-				throatOuterX, throatY, throatOuterZ, red, green, blue, alpha,
-				outerBranch.outerX(), outerBranch.y(), outerBranch.outerZ(),
-				red, green, blue, alpha,
-				outerBranch.innerX(), outerBranch.y(), outerBranch.innerZ(),
-				red, green, blue, alpha);
-		emitQuad(consumer, mat,
-				throatInnerX, throatY, throatInnerZ, red, green, blue, alpha,
-				throatX, throatY, throatZ, red, green, blue, alpha,
-				innerBranch.innerX(), innerBranch.y(), innerBranch.innerZ(),
-				red, green, blue, alpha,
-				innerBranch.outerX(), innerBranch.y(), innerBranch.outerZ(),
-				red, green, blue, alpha);
-	}
+	// ── Sigils, landmarks and staff tendrils (world space) ──
 
-	private static SocketBandEdge socketBandEdge(
-			float socketX, float socketZ, double angle,
-			float currentTime, float directionSign, int anchorIndex, float integrity,
-			double firstGateAngle, double secondGateAngle) {
-		double phaseOffset = anchorIndex * 0.73D;
-		CardinalRiteBoundaryGeometry.SocketDistortion distortion =
-				CardinalRiteBoundaryGeometry.socketDistortion(
-						angle, currentTime, anchorIndex, integrity);
-		float waveScale = CardinalRiteBoundaryGeometry.socketGateWaveScale(
-				angle, firstGateAngle, secondGateAngle,
-				ANCHOR_SOCKET_GATE_HALF_ANGLE,
-				SOCKET_GATE_WAVE_FADE_ANGLE);
-		float distortionScale = 1.0F
-				+ (distortion.radialScale() - 1.0F) * waveScale;
-		float radius = (ANCHOR_SOCKET_RADIUS + undulation(
-				angle + phaseOffset, currentTime, directionSign)
-				* ANCHOR_SOCKET_UNDULATION_SCALE * waveScale) * distortionScale;
-		float halfWidth = CardinalRiteBoundaryGeometry.integrityWidth(
-				ANCHOR_SOCKET_CORE_WIDTH, integrity) * 0.5F;
-		float y = CardinalRiteBoundaryGeometry.surfaceSafeOffset(
-				(float) Math.sin(angle * 5.0D
-						+ currentTime * 0.06D * directionSign + phaseOffset)
-						* 0.006F * waveScale);
-		float cos = (float) Math.cos(angle);
-		float sin = (float) Math.sin(angle);
-		return new SocketBandEdge(
-				socketX + cos * (radius - halfWidth),
-				socketZ + sin * (radius - halfWidth),
-				socketX + cos * (radius + halfWidth),
-				socketZ + sin * (radius + halfWidth),
-				y);
-	}
-
-	private record SocketBandEdge(
-			float innerX, float innerZ, float outerX, float outerZ, float y) {
-	}
-
-	private static SegmentClearances segmentClearances(
-			CardinalRiteBoundaryProgress.Segment segment,
-			CardinalRiteCeremonyDefinition ceremony, float ringRadius) {
-		double fallback = CardinalRiteBoundaryGeometry.socketClearanceAngle(
-				ringRadius, ringRadius,
-				CardinalRiteBoundaryGeometry.socketThroatRadius(
-						ANCHOR_SOCKET_RADIUS, ANCHOR_SOCKET_CORE_WIDTH));
-		if (ceremony == null || segment.startAnchorIndex() < 0
-				|| segment.startAnchorIndex() >= ceremony.anchors().size()) {
-			return new SegmentClearances(fallback, fallback);
-		}
-		CardinalRiteCeremonyDefinition.Anchor start =
-				ceremony.anchors().get(segment.startAnchorIndex());
-		double endAngle = normalizeAngle(
-				segment.startAngle() + segment.sweepAngle());
-		CardinalRiteCeremonyDefinition.Anchor end = null;
-		double nearest = Double.POSITIVE_INFINITY;
-		for (CardinalRiteCeremonyDefinition.Anchor candidate : ceremony.anchors()) {
-			if (candidate.ring() != segment.ring()) continue;
-			double candidateAngle = Math.atan2(candidate.z(), candidate.x());
-			double distance = angularDistance(candidateAngle, endAngle);
-			if (distance < nearest) {
-				nearest = distance;
-				end = candidate;
-			}
-		}
-		return new SegmentClearances(
-				socketClearance(start, ringRadius),
-				end == null ? fallback : socketClearance(end, ringRadius));
-	}
-
-	private static List<Double> socketEndpointAngles(
-			CardinalRiteCeremonyDefinition ceremony, int ring, float ringRadius) {
-		if (ceremony == null) return List.of();
-		List<Double> endpoints = new java.util.ArrayList<>();
-		for (CardinalRiteCeremonyDefinition.Anchor anchor : ceremony.anchors()) {
-			if (anchor.ring() != ring) continue;
-			double anchorAngle = Math.atan2(anchor.z(), anchor.x());
-			double clearance = socketClearance(anchor, ringRadius);
-			endpoints.add(anchorAngle - clearance);
-			endpoints.add(anchorAngle + clearance);
-		}
-		return List.copyOf(endpoints);
-	}
-
-	private static double socketClearance(
-			CardinalRiteCeremonyDefinition.Anchor anchor, float ringRadius) {
-		float socketCenterRadius = (float) Math.hypot(anchor.x(), anchor.z());
-		return CardinalRiteBoundaryGeometry.socketClearanceAngle(
-				ringRadius, socketCenterRadius,
-				CardinalRiteBoundaryGeometry.socketThroatRadius(
-						ANCHOR_SOCKET_RADIUS, ANCHOR_SOCKET_CORE_WIDTH));
-	}
-
-	private static double angularDistance(double first, double second) {
-		double clockwise = normalizeAngle(first - second);
-		return Math.min(clockwise, Math.PI * 2.0D - clockwise);
-	}
-
-	private record SegmentClearances(double start, double end) {
-	}
-
-	private static float anchorIntegrity(ActiveRiteClientData.RiteEntry rite, int anchorIndex) {
-		for (CardinalRiteBoundaryProgress.Segment segment : rite.getBoundarySegments()) {
-			if (segment.startAnchorIndex() == anchorIndex) return segment.integrity();
-		}
-		return 1.0F;
-	}
-
-	private static float boundaryBlobRadius(ActiveRiteClientData.RiteEntry rite,
-			double worldX, double worldZ, float partialTick) {
-		for (ActiveRiteClientData.SanguineBlob blob : rite.getSanguineBlobs()) {
-			if (blob.kind() != ActiveRiteClientData.NodeKind.BOUNDARY_ANCHOR) continue;
-			if (Math.abs(blob.x() - worldX) <= 0.01D
-					&& Math.abs(blob.z() - worldZ) <= 0.01D) {
-				return blob.renderRadius(partialTick);
-			}
-		}
-		return 0.0F;
-	}
-
-	private static void drawSocketStain(VertexConsumer consumer, Matrix4f mat,
-			float centerX, float centerZ, float intensity, float stainOpacity) {
-		float innerAlpha = CardinalRiteBoundaryGeometry.socketStainInnerAlpha(intensity)
-				* stainOpacity;
-		float edgeAlpha = CardinalRiteBoundaryGeometry.socketStainEdgeAlpha(intensity)
-				* stainOpacity;
-		float innerRadius = 0.025F;
-		float featherStart =
-				CardinalRiteBoundaryGeometry.socketStainFeatherStartRadius(
-						ANCHOR_SOCKET_RADIUS);
-		float outerRadius = CardinalRiteBoundaryGeometry.socketStainOuterRadius(
-				ANCHOR_SOCKET_RADIUS);
-		float outerAlpha = CardinalRiteBoundaryGeometry.socketStainFeatherAlpha(
-				intensity, ANCHOR_SOCKET_RADIUS, outerRadius) * stainOpacity;
-		float stainY = CardinalRiteBoundaryGeometry.socketStainSurfaceOffset();
-		for (int index = 0; index < SOCKET_STAIN_SEGMENTS; index++) {
-			double a1 = Math.PI * 2.0D * index / SOCKET_STAIN_SEGMENTS;
-			double a2 = Math.PI * 2.0D * (index + 1) / SOCKET_STAIN_SEGMENTS;
-			float cos1 = (float) Math.cos(a1);
-			float sin1 = (float) Math.sin(a1);
-			float cos2 = (float) Math.cos(a2);
-			float sin2 = (float) Math.sin(a2);
-			emitQuad(consumer, mat,
-					centerX + cos1 * innerRadius, stainY,
-					centerZ + sin1 * innerRadius, 0.008F, 0.0F, 0.012F, innerAlpha,
-					centerX + cos2 * innerRadius, stainY,
-					centerZ + sin2 * innerRadius, 0.008F, 0.0F, 0.012F, innerAlpha,
-					centerX + cos2 * featherStart, stainY,
-					centerZ + sin2 * featherStart, 0.004F, 0.0F, 0.008F, edgeAlpha,
-					centerX + cos1 * featherStart, stainY,
-					centerZ + sin1 * featherStart, 0.004F, 0.0F, 0.008F, edgeAlpha);
-			emitQuad(consumer, mat,
-					centerX + cos1 * featherStart, stainY,
-					centerZ + sin1 * featherStart, 0.004F, 0.0F, 0.008F, edgeAlpha,
-					centerX + cos2 * featherStart, stainY,
-					centerZ + sin2 * featherStart, 0.004F, 0.0F, 0.008F, edgeAlpha,
-					centerX + cos2 * outerRadius, stainY,
-					centerZ + sin2 * outerRadius, 0.004F, 0.0F, 0.008F, outerAlpha,
-					centerX + cos1 * outerRadius, stainY,
-					centerZ + sin1 * outerRadius, 0.004F, 0.0F, 0.008F, outerAlpha);
-		}
-	}
-
-	private static void drawOrbitingBlood(VertexConsumer glowVC, VertexConsumer coreVC,
-			Matrix4f mat, float centerX, float centerZ, float currentTime,
-			int anchorIndex, float fill, float directionSign) {
-		if (fill <= 0.02F || fill >= 0.98F) return;
-		float envelope = (float) Math.sin(fill * Math.PI);
-		float orbitRadius = 0.25F - fill * 0.06F;
-		float beadRadius = 0.016F + fill * 0.014F;
-		for (int bead = 0; bead < 3; bead++) {
-			double angle = currentTime * 0.24D * directionSign
-					+ anchorIndex * 1.17D + bead * Math.PI * 2.0D / 3.0D;
-			float x = centerX + (float) Math.cos(angle) * orbitRadius;
-			float z = centerZ + (float) Math.sin(angle) * orbitRadius;
-			if (glowVC != null) {
-				drawFlatDisc(glowVC, mat, x, z, 0.030F,
-						beadRadius * 3.0F, 0.86F, 0.018F, 0.025F,
-						envelope * 0.30F);
-			}
-			if (coreVC != null) {
-				drawFlatDisc(coreVC, mat, x, z, 0.032F,
-						beadRadius, 0.72F, 0.008F, 0.015F,
-						envelope * 0.86F);
-			}
-		}
-	}
-
-	private static void drawFlatDisc(VertexConsumer consumer, Matrix4f mat,
-			float centerX, float centerZ, float y, float radius,
-			float red, float green, float blue, float alpha) {
-		for (int index = 0; index < EFFECT_DISC_SEGMENTS; index++) {
-			double a1 = Math.PI * 2.0D * index / EFFECT_DISC_SEGMENTS;
-			double a2 = Math.PI * 2.0D * (index + 1) / EFFECT_DISC_SEGMENTS;
-			emitQuad(consumer, mat,
-					centerX, y, centerZ, red, green, blue, alpha,
-					centerX, y, centerZ, red, green, blue, alpha,
-					centerX + (float) Math.cos(a2) * radius, y,
-					centerZ + (float) Math.sin(a2) * radius,
-					red, green, blue, 0.0F,
-					centerX + (float) Math.cos(a1) * radius, y,
-					centerZ + (float) Math.sin(a1) * radius,
-					red, green, blue, 0.0F);
-		}
-	}
-
-	private static void drawEffectRing(VertexConsumer consumer, Matrix4f mat,
-			float centerX, float centerZ, float y, float radius, float width,
-			float red, float green, float blue, float alpha) {
-		float inner = Math.max(0.0F, radius - width * 0.5F);
-		float outer = radius + width * 0.5F;
-		for (int index = 0; index < EFFECT_DISC_SEGMENTS; index++) {
-			double a1 = Math.PI * 2.0D * index / EFFECT_DISC_SEGMENTS;
-			double a2 = Math.PI * 2.0D * (index + 1) / EFFECT_DISC_SEGMENTS;
-			float cos1 = (float) Math.cos(a1);
-			float sin1 = (float) Math.sin(a1);
-			float cos2 = (float) Math.cos(a2);
-			float sin2 = (float) Math.sin(a2);
-			emitQuad(consumer, mat,
-					centerX + cos1 * inner, y, centerZ + sin1 * inner,
-					red, green, blue, alpha,
-					centerX + cos1 * outer, y, centerZ + sin1 * outer,
-					red, green, blue, 0.0F,
-					centerX + cos2 * outer, y, centerZ + sin2 * outer,
-					red, green, blue, 0.0F,
-					centerX + cos2 * inner, y, centerZ + sin2 * inner,
-					red, green, blue, alpha);
-		}
-	}
-
-	private static void drawSigilSegments(PoseStack stack, VertexConsumer consumer,
-			ActiveRiteClientData.RiteEntry rite, float currentTime, Vec3 cam, boolean glow) {
-		if (rite.getSigilSegments().isEmpty()) return;
-		float pulse = (float) ((Math.sin(currentTime * 0.12D) + 1.0D) * 0.5D);
+	private static void drawSigilSegments(PoseStack stack, VertexConsumer consumer, RiteFrame frame,
+			float currentTime, Vec3 cam, boolean glow) {
+		ActiveRiteClientData.RiteEntry rite = frame.entry;
+		if (rite.getSigilSegments().isEmpty() || frame.fade <= 0.001F) return;
+		float beat = frame.heartbeat;
 		float halfWidth = glow ? 0.18F : 0.055F;
-		float alpha = glow ? 0.20F + pulse * 0.16F : 0.72F + pulse * 0.24F;
+		float alpha = (glow ? 0.20F + beat * 0.20F : 0.72F + beat * 0.24F) * frame.fade;
 		Matrix4f matrix = stack.last().pose();
 		IchorianSigilRenderPalette.Color vesselColor = IchorianSigilRenderPalette.vessel(glow);
+		List<IchorianSigilOrganicGeometry.Sample> samples = new ArrayList<>(SIGIL_VESSEL_SEGMENTS + 1);
 		for (ActiveRiteClientData.SigilSegment segment : rite.getSigilSegments()) {
 			long seed = Double.doubleToLongBits(segment.startX())
 					^ Long.rotateLeft(Double.doubleToLongBits(segment.startZ()), 17)
 					^ Long.rotateLeft(Double.doubleToLongBits(segment.endX()), 31)
 					^ segment.color();
-			List<IchorianSigilOrganicGeometry.Sample> samples =
-					new java.util.ArrayList<>(SIGIL_VESSEL_SEGMENTS + 1);
+			samples.clear();
 			for (int step = 0; step <= SIGIL_VESSEL_SEGMENTS; step++) {
 				samples.add(IchorianSigilOrganicGeometry.sample(
 						segment.startX(), segment.startY(), segment.startZ(),
@@ -1108,7 +1054,7 @@ public class CardinalRiteBoundaryRenderer {
 		float endRed = Math.min(1.0F, red * end.redIntensity());
 		float startY = (float) (start.centerY() - cam.y);
 		float endY = (float) (end.centerY() - cam.y);
-		emitQuad(consumer, matrix,
+		RiteQuads.emitQuad(consumer, matrix,
 				(float) (start.leftX() - cam.x), startY,
 				(float) (start.leftZ() - cam.z), startRed, green, blue, glow ? 0.0F : alpha,
 				(float) (start.rightX() - cam.x), startY,
@@ -1119,14 +1065,18 @@ public class CardinalRiteBoundaryRenderer {
 				(float) (end.leftZ() - cam.z), endRed, green, blue, glow ? 0.0F : alpha);
 	}
 
-	private static void drawSanguineBlobs(PoseStack stack, VertexConsumer consumer,
-			ActiveRiteClientData.RiteEntry rite, float currentTime, Vec3 cam, boolean glow) {
-		for (ActiveRiteClientData.SanguineBlob blob : rite.getSanguineBlobs()) {
-			boolean boundaryAnchor =
-					blob.kind() == ActiveRiteClientData.NodeKind.BOUNDARY_ANCHOR;
+	private static void drawSanguineBlobs(PoseStack stack, VertexConsumer consumer, RiteFrame frame,
+			float currentTime, Vec3 cam, boolean glow) {
+		if (frame.fade <= 0.001F) return;
+		float partialTick = currentTime - (float) Math.floor(currentTime);
+		// On a consecrated floor the anchors are sores in it; an orb there would sit on the pit and clip the floor.
+		boolean sored = AnchorSores.opened(frame.entry.getCenter(), (long) Math.floor(currentTime));
+		for (ActiveRiteClientData.SanguineBlob blob : frame.entry.getSanguineBlobs()) {
+			boolean boundaryAnchor = blob.kind() == ActiveRiteClientData.NodeKind.BOUNDARY_ANCHOR;
+			if (boundaryAnchor && sored) continue;
 			float radius = CardinalRiteBoundaryGeometry.landmarkRenderRadius(
-					blob.renderRadius(currentTime - (float) Math.floor(currentTime)),
-					boundaryAnchor, glow);
+					blob.renderRadius(partialTick), boundaryAnchor, glow) * frame.fade;
+			if (radius <= 0.001F) continue;
 			stack.pushPose();
 			stack.translate(blob.x() - cam.x, blob.y() - cam.y, blob.z() - cam.z);
 			var recipe = boundaryAnchor
@@ -1139,13 +1089,149 @@ public class CardinalRiteBoundaryRenderer {
 		}
 	}
 
+	private static void drawStaffTendrils(PoseStack poseStack, VertexConsumer consumer, RiteFrame frame,
+			float currentTime, float partialTick, Vec3 camera, boolean glowPass) {
+		ActiveRiteClientData.RiteEntry rite = frame.entry;
+		if (!rite.hasPlantedStaff()) return;
+		float visibilityProgress = CardinalRiteStaffTendrilGeometry.visibilityProgress(
+				rite.staffPlantingRenderTicks(partialTick), staffMeltTicks(frame, partialTick));
+		CardinalRiteStaffTendrilRenderer.render(poseStack, consumer, rite.getCenter(),
+				currentTime, camera, visibilityProgress, glowPass);
+	}
+
+	private static float staffMeltTicks(RiteFrame frame, float partialTick) {
+		return CardinalRiteEndingRules.staffMeltTicks(frame.ending, frame.endingAge,
+				frame.entry.cancellationRenderTicks(partialTick), CardinalRiteCancellationRules.TOTAL_TICKS);
+	}
+
+	// ── Planted staff ──
+
+	private static void drawPlantedStaff(PoseStack poseStack, MultiBufferSource.BufferSource buffer,
+			RiteFrame frame, Vec3 camera, float partialTick) {
+		Minecraft mc = Minecraft.getInstance();
+		ActiveRiteClientData.RiteEntry rite = frame.entry;
+		CardinalRitePlantedStaffGeometry.AbsorptionPose plantedPose =
+				CardinalRitePlantedStaffGeometry.absorptionPose(rite.getCenter(), staffMeltTicks(frame, partialTick));
+		if (plantedPose.scale() <= 0.001F || plantedPose.opacity() <= 0.001F) return;
+		poseStack.pushPose();
+		poseStack.translate(
+				plantedPose.position().x - camera.x,
+				plantedPose.position().y - camera.y,
+				plantedPose.position().z - camera.z);
+		if (plantedPose.pitchDegrees() != 0.0F) {
+			poseStack.mulPose(Axis.XP.rotationDegrees(plantedPose.pitchDegrees()));
+		}
+		poseStack.scale(plantedPose.scale(), plantedPose.scale(), plantedPose.scale());
+		ItemStack staff = plantedStaffStack();
+		// The rite owner's fitting, not the viewer's.
+		BakedModel model = mc.getModelManager().getModel(staffModel(staffVisual(mc, rite.getOwner())));
+		model = ClientHooks.handleCameraTransforms(poseStack, model, ItemDisplayContext.FIXED, false);
+		poseStack.translate(-0.5F, -0.5F, -0.5F);
+		CardinalRitePlantedStaffGeometry.MeltStyle melt = plantedPose.melt();
+		RenderType staffRenderType;
+		if (melt.active()) {
+			staffRenderType = HemoRenderTypes.cardinalStaffBloodMelt(
+					(float) (mc.level.getGameTime() + partialTick),
+					melt.seed(), melt.wiggleAmplitude(),
+					(float) (melt.poolCenter().x - camera.x),
+					(float) (melt.poolCenter().y - camera.y),
+					(float) (melt.poolCenter().z - camera.z),
+					melt.shaderProgress(),
+					(float) (melt.poolCenter().y - camera.y),
+					melt.height());
+		} else {
+			staffRenderType = RenderType.entityTranslucent(TextureAtlas.LOCATION_BLOCKS);
+		}
+		VertexConsumer fadingConsumer = new CardinalRiteFadingVertexConsumer(
+				buffer.getBuffer(staffRenderType), plantedPose.opacity());
+		for (BakedModel renderPass : model.getRenderPasses(staff, true)) {
+			mc.getItemRenderer().renderModelLists(renderPass, staff,
+					LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY,
+					poseStack, fadingConsumer);
+		}
+		buffer.endBatch(staffRenderType);
+		poseStack.popPose();
+	}
+
+	private static ItemStack plantedStaffStack() {
+		if (plantedStaffStack == null) plantedStaffStack = new ItemStack(ItemInit.living_staff.get());
+		return plantedStaffStack;
+	}
+
+	private static int staffVisual(Minecraft mc, UUID owner) {
+		if (owner == null || mc.level == null) return 0;
+		Player player = mc.level.getPlayerByUUID(owner);
+		if (player == null) return OWNER_STAFF_VISUALS.getOrDefault(owner, 0);
+		int visual = LivingStaffFittingHelper.staffVisualFor(player);
+		OWNER_STAFF_VISUALS.put(owner, visual);
+		return visual;
+	}
+
+	private static ModelResourceLocation staffModel(int visual) {
+		return STAFF_MODELS.computeIfAbsent(CardinalRitePlantedStaffModels.modelName(visual),
+				name -> ModelResourceLocation.standalone(Hemomancy.rloc("item/" + name)));
+	}
+
+	// ── Exterior dome ──
+
+	private static void drawExteriorField(PoseStack poseStack, MultiBufferSource.BufferSource buffer,
+			RiteFrame frame, float currentTime, Vec3 cam) {
+		ActiveRiteClientData.RiteEntry rite = frame.entry;
+		if (!rite.hasBoundaryDome()) return;
+		if (!CardinalRiteBoundaryGeometry.shouldRenderExterior(rite.getTotalRings())) return;
+		float fogPerimeterRadius = CardinalRiteFogGeometry.perimeterRadius(
+				rite.getFootprintRadius(), rite.getRiteSize(), rite.getCompletedRings(),
+				rite.getTotalRings(), frame.legacy);
+		if (fogPerimeterRadius <= 0.0F) return;
+		float domeRadius = CardinalRiteFogGeometry.enclosingDomeRadius(
+				fogPerimeterRadius, CardinalRiteFogRenderer.fogVerticalOffset());
+		float sink = CardinalRiteEndingRules.domeSink(frame.ending, frame.endingAge) * domeRadius;
+		if (sink >= domeRadius) return;
+		float seed = FaneBoundaryRenderer.revealedFaneStyleSeed(rite.getCenter(), domeRadius);
+		BlockPos surface = CardinalRiteAnchorVisualRules.riteSurface(rite.getCenter());
+		poseStack.pushPose();
+		// An ending sinks the shell into the floor rather than popping it out of existence.
+		if (sink > 0.0F) poseStack.translate(0.0F, -sink, 0.0F);
+		FaneBoundaryRenderer.drawRevealedFaneStyleDome(
+				poseStack, buffer, cam, surface, domeRadius, currentTime, seed);
+		poseStack.popPose();
+	}
+
+	// ── Sounds ──
+
+	private static void playBoundaryCompletionSounds(Minecraft mc, List<RiteFrame> frames) {
+		if (mc.level == null) return;
+		for (RiteFrame frame : frames) {
+			if (frame.legacy || frame.ending != null) continue;
+			ActiveRiteClientData.RiteEntry rite = frame.entry;
+			for (CardinalRiteBoundaryProgress.Segment segment : rite.getBoundarySegments()) {
+				if (!rite.consumeBoundaryCompletion(segment)) continue;
+				float ringRadius = segment.ring() >= 0 && segment.ring() < frame.rings.length
+						? frame.rings[segment.ring()].radius
+						: CardinalRiteBoundaryGeometry.interactiveRingRadius(segment.ring());
+				double midpoint = segment.startAngle() + segment.sweepAngle() * 0.5D;
+				double x = rite.getCenter().getX() + 0.5D + Math.cos(midpoint) * ringRadius;
+				double y = CardinalRiteBoundaryGeometry.boundaryPlaneY(rite.getCenter().getY());
+				double z = rite.getCenter().getZ() + 0.5D + Math.sin(midpoint) * ringRadius;
+				float pitch = 0.92F + CardinalRiteEndingRules.hash(segment.startAnchorIndex(), segment.ring()) * 0.16F;
+				mc.level.playLocalSound(x, y, z, SoundInit.RITE_SEGMENT_SEAL.get(),
+						SoundSource.BLOCKS, 0.6F, pitch, false);
+			}
+		}
+	}
+
+	// ════════════════════════════════════════════════════════════════════════
+	//  Shared helpers
+	// ════════════════════════════════════════════════════════════════════════
+
 	private static float arcIntegrity(List<CardinalRiteBoundaryProgress.Segment> arcs,
 			double angle, float currentTime) {
-		double normalizedAngle = normalizeAngle(angle);
+		double normalizedAngle = CardinalRiteMath.normalizeAngle(angle);
 		for (CardinalRiteBoundaryProgress.Segment arc : arcs) {
-			double fromStart = normalizeAngle(normalizedAngle - normalizeAngle(arc.startAngle()));
+			double fromStart = CardinalRiteMath.normalizeAngle(
+					normalizedAngle - CardinalRiteMath.normalizeAngle(arc.startAngle()));
 			if (fromStart > arc.sweepAngle()) continue;
-			float integrity = Math.max(0.0F, Math.min(1.0F, arc.integrity()));
+			float integrity = CardinalRiteMath.clamp01(arc.integrity());
 			if (integrity <= 0.0F || integrity >= 1.0F) return integrity;
 			float flicker = (float) ((Math.sin(
 					currentTime * 1.65F + arc.startAngle() * 3.0D) + 1.0D) * 0.5D);
@@ -1154,156 +1240,129 @@ public class CardinalRiteBoundaryRenderer {
 		return 0.0F;
 	}
 
-	private static double normalizeAngle(double angle) {
-		double fullCircle = Math.PI * 2.0D;
-		double normalized = angle % fullCircle;
-		return normalized < 0.0D ? normalized + fullCircle : normalized;
-	}
-
-	// ════════════════════════════════════════════════════════════════════════
-	//  Undulation — layered sine waves that make the ring breathe
-	// ════════════════════════════════════════════════════════════════════════
-
-	/** Returns radial offset for a given angle at the current time.
-	 *  @param directionSign +1 for forward crawl, -1 for reverse crawl */
+	/**
+	 * Radial breathing of a ring or socket at an angle: a slow crawling wave, a
+	 * faster counter-wave and a global throb.
+	 *
+	 * @param directionSign +1 for forward crawl, -1 for reverse crawl
+	 */
 	private static float undulation(double angleRad, float time, float directionSign) {
-		// Primary slow, large wave
 		double w1 = Math.sin(angleRad * UNDULATE_FREQ + time * UNDULATE_SPEED * directionSign) * UNDULATE_AMP;
-		// Secondary faster, smaller wave for complexity
 		double w2 = Math.sin(angleRad * UNDULATE_FREQ2 - time * UNDULATE_SPEED2 * directionSign) * UNDULATE_AMP2;
-		// Tertiary ultra-slow global throb (all segments expand/contract together)
-		double throb = Math.sin(time * 0.04) * 0.035;
+		double throb = Math.sin(time * 0.04D) * 0.035D;
 		return (float) (w1 + w2 + throb);
 	}
 
+	/** Height of a vessel above the floor at an angle: a small travelling wave kept clear of the surface. */
+	private static float surfaceWave(double angle, float time, float directionSign, double phaseOffset,
+			float amplitude) {
+		return CardinalRiteBoundaryGeometry.surfaceSafeOffset(
+				(float) Math.sin(angle * 5.0D + time * 0.06D * directionSign + phaseOffset) * amplitude);
+	}
+
+	private static float mix(float from, float to, float amount) {
+		return from + (to - from) * amount;
+	}
+
 	// ════════════════════════════════════════════════════════════════════════
-	//  Vein branches — tapered quads that sprout inward from the ring
+	//  Frame data
 	// ════════════════════════════════════════════════════════════════════════
 
-	private static void drawVeins(VertexConsumer glowVC, VertexConsumer coreVC, Matrix4f mat,
-			float baseRadius, float time, float directionSign,
-			float cR, float cG, float cB, float cA,
-			float gR, float gG, float gB,
-			List<CardinalRiteBoundaryProgress.Segment> visibleArcs, boolean legacy) {
+	private static final class RiteFrame {
+		private final ActiveRiteClientData.RiteEntry entry;
+		/** How the rite ended, or {@code null} while it is live. */
+		private final CardinalRiteEventKind ending;
+		private final float endingAge;
+		private final boolean legacy;
+		private final int ringCount;
+		/** Ceremony layout; {@code null} for legacy rites and rites whose recipe is gone. */
+		private final CardinalRiteCeremonyLayout layout;
+		private final List<AnchorBeat> beats = new ArrayList<>(2);
+		private Matrix4f baseMatrix;
+		private RingFrame[] rings;
+		private FloorTint tint;
+		private float heartbeat;
+		private float fade = 1.0F;
+		private float stainOpacity = 1.0F;
+		private float flash;
+		private float dim = 1.0F;
+		private float impactAge = -1.0F;
 
-		// Veins are evenly spaced but their angular position crawls slowly over time
-		double crawlOffset = time * VEIN_CRAWL_SPEED * directionSign;
-
-		for (int v = 0; v < VEIN_COUNT; v++) {
-			double baseAngle = crawlOffset + (Math.PI * 2.0 / VEIN_COUNT) * v;
-			float boundarySurfaceY = CardinalRiteBoundaryGeometry.surfaceSafeOffset(
-					(float) (Math.sin(baseAngle * 5.0D
-							+ time * 0.06D * directionSign) * 0.012D));
-			float surfaceY = CardinalRiteBoundaryGeometry.veinSurfaceOffset(boundarySurfaceY);
-			if (!legacy && !CardinalRiteBoundaryGeometry.hasVisibleBeamAt(
-					visibleArcs, baseAngle)) continue;
-			float rootIntegrity = legacy ? 1.0F
-					: arcIntegrity(visibleArcs, baseAngle, time);
-			if (rootIntegrity <= 0.01F) continue;
-
-			// Each vein has a slightly different length and curve based on its index
-			// Use a deterministic hash-like value from the vein index for variety
-			double veinSeed = hashVein(v);
-			float length = VEIN_LENGTH * (0.6f + 0.4f * (float) veinSeed);
-
-			// Vein pulsing — individual veins throb at slightly offset phases
-			double veinPulse = (Math.sin(time * 0.1 + v * 1.7) + 1.0) * 0.5;
-			float veinAlpha = (float) (0.3 + 0.5 * veinPulse) * rootIntegrity;
-
-			// Slight angular wander as it grows inward (gives curve)
-			double curvature = Math.sin(veinSeed * 17.3) * 0.35;
-			float rootRadius = CardinalRiteBoundaryGeometry.veinRootRadius(
-					baseRadius, CORE_WIDTH,
-					undulation(baseAngle, time, directionSign));
-
-			for (int s = 0; s < VEIN_SEGS; s++) {
-				float t0 = (float) s / VEIN_SEGS;
-				float t1 = (float) (s + 1) / VEIN_SEGS;
-
-				// Radius decreases inward from the ring
-				float rad0 = rootRadius - t0 * length;
-				float rad1 = rootRadius - t1 * length;
-
-				// Angular position curves slightly
-				double ang0 = baseAngle + curvature * t0 * t0;
-				double ang1 = baseAngle + curvature * t1 * t1;
-
-				// Width tapers from root to tip
-				float w0 = VEIN_ROOT_WIDTH * (1.0f - t0 * 0.85f);
-				float w1 = VEIN_ROOT_WIDTH * (1.0f - t1 * 0.85f);
-
-				// Alpha fades toward the tip
-				float a0 = veinAlpha * (1.0f - t0 * 0.6f);
-				float a1 = veinAlpha * (1.0f - t1 * 0.9f);
-
-				float cos0 = (float) Math.cos(ang0);
-				float sin0 = (float) Math.sin(ang0);
-				float cos1 = (float) Math.cos(ang1);
-				float sin1 = (float) Math.sin(ang1);
-
-				// Perpendicular direction for width (tangent to the circle)
-				float px0 = (float) -Math.sin(ang0);
-				float pz0 = (float) Math.cos(ang0);
-				float px1 = (float) -Math.sin(ang1);
-				float pz1 = (float) Math.cos(ang1);
-
-				if (coreVC != null) {
-					// Core vein quad
-					emitQuad(coreVC, mat,
-							cos0 * rad0 - px0 * w0, surfaceY, sin0 * rad0 - pz0 * w0, cR, cG, cB, a0 * cA,
-							cos0 * rad0 + px0 * w0, surfaceY, sin0 * rad0 + pz0 * w0, cR, cG, cB, a0 * cA,
-							cos1 * rad1 + px1 * w1, surfaceY, sin1 * rad1 + pz1 * w1, cR, cG, cB, a1 * cA,
-							cos1 * rad1 - px1 * w1, surfaceY, sin1 * rad1 - pz1 * w1, cR, cG, cB, a1 * cA);
-				}
-
-				if (glowVC != null) {
-					// Glow halo around vein (wider, more transparent)
-					float gw0 = w0 * 3.0f;
-					float gw1 = w1 * 3.0f;
-					float ga0 = a0 * 0.35f;
-					float ga1 = a1 * 0.25f;
-
-					emitQuad(glowVC, mat,
-							cos0 * rad0 - px0 * gw0, surfaceY, sin0 * rad0 - pz0 * gw0, gR, gG, gB, 0f,
-							cos0 * rad0 + px0 * gw0, surfaceY, sin0 * rad0 + pz0 * gw0, gR, gG, gB, 0f,
-							cos1 * rad1 + px1 * gw1, surfaceY, sin1 * rad1 + pz1 * gw1, gR, gG, gB, 0f,
-							cos1 * rad1 - px1 * gw1, surfaceY, sin1 * rad1 - pz1 * gw1, gR, gG, gB, 0f);
-
-					// Inner part of glow (brighter core of the halo)
-					emitQuad(glowVC, mat,
-							cos0 * rad0 - px0 * gw0, surfaceY, sin0 * rad0 - pz0 * gw0, gR, gG, gB, 0f,
-							cos0 * rad0 - px0 * w0, surfaceY, sin0 * rad0 - pz0 * w0, gR, gG, gB, ga0,
-							cos1 * rad1 - px1 * w1, surfaceY, sin1 * rad1 - pz1 * w1, gR, gG, gB, ga1,
-							cos1 * rad1 - px1 * gw1, surfaceY, sin1 * rad1 - pz1 * gw1, gR, gG, gB, 0f);
-
-					emitQuad(glowVC, mat,
-							cos0 * rad0 + px0 * w0, surfaceY, sin0 * rad0 + pz0 * w0, gR, gG, gB, ga0,
-							cos0 * rad0 + px0 * gw0, surfaceY, sin0 * rad0 + pz0 * gw0, gR, gG, gB, 0f,
-							cos1 * rad1 + px1 * gw1, surfaceY, sin1 * rad1 + pz1 * gw1, gR, gG, gB, 0f,
-							cos1 * rad1 + px1 * w1, surfaceY, sin1 * rad1 + pz1 * w1, gR, gG, gB, ga1);
-				}
-			}
+		private RiteFrame(ActiveRiteClientData.RiteEntry entry, CardinalRiteEventKind ending, float endingAge,
+				boolean legacy, int ringCount, CardinalRiteCeremonyLayout layout) {
+			this.entry = entry;
+			this.ending = ending;
+			this.endingAge = endingAge;
+			this.legacy = legacy;
+			this.ringCount = ringCount;
+			this.layout = layout;
 		}
 	}
 
-	/** Deterministic pseudo-random 0..1 value for a given vein index. */
-	private static double hashVein(int index) {
-		// Simple golden-ratio hash
-		return (index * 0.6180339887) % 1.0;
+	private static final class RingFrame {
+		private final int index;
+		private final float radius;
+		private List<CardinalRiteBoundaryProgress.Segment> arcs = List.of();
+		private List<Double> endpoints = List.of();
+		private Matrix4f matrix;
+		private float radialScale = 1.0F;
+		private float opacity = 1.0F;
+		private float socketVisibility = 1.0F;
+		private float directionSign = 1.0F;
+		private float ringFade = 1.0F;
+		private RingColors colors;
+
+		private RingFrame(int index, float radius) {
+			this.index = index;
+			this.radius = radius;
+		}
 	}
 
-	// ════════════════════════════════════════════════════════════════════════
-	//  Quad helper
-	// ════════════════════════════════════════════════════════════════════════
+	private record AnchorBeat(CardinalRiteEventKind kind, int index, float age) {
+	}
 
-	private static void emitQuad(VertexConsumer vc, Matrix4f mat,
-			float x1, float y1, float z1, float r1, float g1, float b1, float a1,
-			float x2, float y2, float z2, float r2, float g2, float b2, float a2,
-			float x3, float y3, float z3, float r3, float g3, float b3, float a3,
-			float x4, float y4, float z4, float r4, float g4, float b4, float a4) {
-		vc.addVertex(mat, x1, y1, z1).setColor(r1, g1, b1, a1);
-		vc.addVertex(mat, x2, y2, z2).setColor(r2, g2, b2, a2);
-		vc.addVertex(mat, x3, y3, z3).setColor(r3, g3, b3, a3);
-		vc.addVertex(mat, x4, y4, z4).setColor(r4, g4, b4, a4);
+	private record CachedLayout(CardinalRiteCeremonyDefinition ceremony, CardinalRiteCeremonyLayout layout,
+			long refreshAt) {
+	}
+
+	/** The consecrated floor's vein and glow colours, which ring vessels lean toward. */
+	private record FloorTint(float veinR, float veinG, float veinB, float glowR, float glowG, float glowB) {
+		private static FloorTint of(CardinalRiteFloorVisualRules.Palette palette) {
+			return new FloorTint(
+					((palette.vein() >> 16) & 0xFF) / 255.0F, ((palette.vein() >> 8) & 0xFF) / 255.0F,
+					(palette.vein() & 0xFF) / 255.0F,
+					((palette.glow() >> 16) & 0xFF) / 255.0F, ((palette.glow() >> 8) & 0xFF) / 255.0F,
+					(palette.glow() & 0xFF) / 255.0F);
+		}
+	}
+
+	/**
+	 * The one ring palette: inner rings dark venous red, outer rings brighter,
+	 * leaned toward the floor style so rings, sockets and membrane read as one
+	 * organism. Rim is the bright vessel wall, core the blood inside.
+	 */
+	private record RingColors(float coreR, float coreG, float coreB,
+			float glowR, float glowG, float glowB,
+			float rimR, float rimG, float rimB) {
+		private static RingColors of(int ring, int ringCount, FloorTint tint) {
+			float lighten = ringCount > 1 ? (float) ring / (ringCount - 1) * 0.6F : 0.0F;
+			float coreR = 0.34F + lighten * 0.10F;
+			float coreG = 0.008F + lighten * 0.018F;
+			float coreB = 0.012F + lighten * 0.014F;
+			float glowR = 0.72F + lighten * 0.12F;
+			float glowG = 0.025F + lighten * 0.04F;
+			float glowB = 0.03F + lighten * 0.03F;
+			if (tint != null) {
+				coreR = mix(coreR, tint.veinR() * 0.55F, FLOOR_VEIN_LEAN);
+				coreG = mix(coreG, tint.veinG() * 0.55F, FLOOR_VEIN_LEAN);
+				coreB = mix(coreB, tint.veinB() * 0.55F, FLOOR_VEIN_LEAN);
+				glowR = mix(glowR, tint.glowR(), FLOOR_GLOW_LEAN);
+				// Keep the halo in the red family whatever the floor's highlight.
+				glowG = Math.min(mix(glowG, tint.glowG(), FLOOR_GLOW_LEAN), glowR * 0.35F);
+				glowB = Math.min(mix(glowB, tint.glowB(), FLOOR_GLOW_LEAN), glowR * 0.32F);
+			}
+			return new RingColors(coreR, coreG, coreB, glowR, glowG, glowB,
+					mix(coreR, glowR, 0.55F), mix(coreG, glowG, 0.45F), mix(coreB, glowB, 0.45F));
+		}
 	}
 }

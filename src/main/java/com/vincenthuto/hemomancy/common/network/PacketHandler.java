@@ -295,6 +295,9 @@ public class PacketHandler {
 
         // ── Cardinal rites ────────────────────────────────────────────────────
         net.playToClient(PacketSyncActiveRites.TYPE, PacketSyncActiveRites.STREAM_CODEC, PacketSyncActiveRites::handle);
+        net.playToClient(com.vincenthuto.hemomancy.common.network.capa.harbinger.CardinalRiteEventPacket.TYPE,
+                com.vincenthuto.hemomancy.common.network.capa.harbinger.CardinalRiteEventPacket.STREAM_CODEC,
+                com.vincenthuto.hemomancy.common.network.capa.harbinger.CardinalRiteEventPacket::handle);
         net.playToClient(PacketCardinalRiteStaffPlanting.TYPE,
                 PacketCardinalRiteStaffPlanting.STREAM_CODEC,
                 PacketCardinalRiteStaffPlanting::handle);
@@ -354,6 +357,7 @@ public class PacketHandler {
 
         // ── World events ──────────────────────────────────────────────────────
         net.playToClient(PacketSyncQliphothBlooms.TYPE, PacketSyncQliphothBlooms.STREAM_CODEC, PacketSyncQliphothBlooms::handle);
+        net.playToClient(com.vincenthuto.hemomancy.common.rite.zone.RiteZoneSyncPacket.TYPE, com.vincenthuto.hemomancy.common.rite.zone.RiteZoneSyncPacket.STREAM_CODEC, com.vincenthuto.hemomancy.common.rite.zone.RiteZoneSyncPacket::handle);
         net.playToClient(PacketSyncBloodMoon.TYPE, PacketSyncBloodMoon.STREAM_CODEC, PacketSyncBloodMoon::handle);
 
         // ── Visceral Mirror ───────────────────────────────────────────────────

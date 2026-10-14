@@ -7,6 +7,9 @@ import com.vincenthuto.hemomancy.common.entity.mob.animal.BloodlickerEntity;
 import com.vincenthuto.hemomancy.common.entity.utility.HumanitySpriteEntity;
 import com.vincenthuto.hemomancy.common.entity.utility.UnsettledIchorEntity;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteEventKind;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteInstability;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.particle.CardinalRiteImpactPacket;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
@@ -22,13 +25,10 @@ import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEnti
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ItemParticleOption;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -39,14 +39,20 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
  * Tick controller for interactive ceremony phases and reshuffled ordeal waves.
  */
 public final class CardinalRiteOrdealEngine {
-	private static final String RITE_CASTER = "HemomancyRiteCaster";
 	private static final int WAVE_TIMEOUT_TICKS = CardinalRiteWaveRules.DEADLINE_TICKS;
+	/** Counterfeit anchors raised by a false-omens wave, relative to the rite centre. */
+	static final BlockPos[] FALSE_OMEN_OFFSETS = {
+			new BlockPos(2, 1, 2), new BlockPos(-2, 1, -2), new BlockPos(2, 1, -2)
+	};
+	/** Blood the covenant presses out of every anchor each second until the Seal is traced. */
+	private static final int COVENANT_PRESSURE_ML = 4;
 
 	private CardinalRiteOrdealEngine() {
 	}
@@ -63,6 +69,7 @@ public final class CardinalRiteOrdealEngine {
 				drawSupportSockets(level, rite, recipe);
 				drawAllyStations(level, rite);
 			}
+			case STATION_PROJECTION -> rite.tryFinishStationProjection();
 			case ORDEAL -> tickOrdeal(level, caster, rite, recipe);
 			case STILL_INTERVAL -> tickStillInterval(caster, rite, recipe);
 			case OFFERING_PROCESSION -> tickOfferingProcession(level, caster, rite);
@@ -72,61 +79,72 @@ public final class CardinalRiteOrdealEngine {
 		}
 	}
 
+	/**
+	 * The daemon hovers over the planted staff while the floor draws each burning
+	 * offering into it in turn. Draws are staggered by procession time; each one
+	 * is taken from its brazier when it starts (a tampered brazier collapses the
+	 * rite) and swells the daemon when it arrives.
+	 */
 	private static void tickOfferingProcession(ServerLevel level, ServerPlayer caster,
 			ActiveCardinalRite rite) {
-		HumanitySpriteEntity daemon = findOrCreateDaemon(level, rite,
-				CardinalRiteFinaleTiming.PROCESSION_SCALE);
+		int total = rite.getOfferingItinerary().size();
+		int arrived = CardinalRiteFinaleTiming.offeringsArrived(rite.getPhaseTicks(), total);
+		float scale = CardinalRiteFinaleTiming.daemonScale(arrived);
+		HumanitySpriteEntity daemon = findOrCreateDaemon(level, rite, scale);
 		if (daemon == null) {
 			rite.markCollapsed();
 			return;
 		}
-		daemon.setSpriteScale(CardinalRiteFinaleTiming.PROCESSION_SCALE);
-		if (rite.tickOfferingDwell()) return;
+		Vec3 hover = centerPosition(rite, scale);
+		daemon.setPos(daemon.position().lerp(hover, 0.25D));
+		daemon.setSpriteScale(scale);
 
-		ActiveCardinalRite.RiteOffering offering = rite.getCurrentOffering();
-		Vec3 target = rite.isReturningFromOfferings() || offering == null
-				? centerPosition(rite, CardinalRiteFinaleTiming.PROCESSION_SCALE)
-				: Vec3.atCenterOf(offering.pos()).add(0.0D, 1.15D, 0.0D);
-		if (!moveDaemonToward(daemon, target)) return;
+		int due = CardinalRiteFinaleTiming.offeringsDue(rite.getPhaseTicks(), total);
+		while (rite.getOfferingVisitIndex() < due) {
+			int index = rite.getOfferingVisitIndex();
+			ActiveCardinalRite.RiteOffering offering = rite.getCurrentOffering();
+			if (offering == null) break;
+			ItemStack drawn = offering.stack() == null ? ItemStack.EMPTY : offering.stack().copy();
+			if (!StationUpgradeRites.isRite(rite.getRecipeId())) {
+				// Station upgrades escrowed their offerings at activation; others are taken now.
+				if (!(level.getBlockEntity(offering.pos()) instanceof IronBrazierBlockEntity brazier)) {
+					rite.markCollapsed();
+					return;
+				}
+				ItemStack present = brazier.getOfferingForMatching();
+				if (present.isEmpty() || offering.stack() == null
+						|| !ItemStack.isSameItemSameComponents(present, offering.stack())) {
+					rite.markCollapsed();
+					return;
+				}
+				drawn = brazier.consumeForRite(false);
+				if (drawn.isEmpty()) {
+					rite.markCollapsed();
+					return;
+				}
+			}
+			rite.markOfferingDrawn();
+			Vec3 brazierTop = Vec3.atCenterOf(offering.pos()).add(0.0D, 0.75D, 0.0D);
+			CardinalRiteBeats.send(level, rite, CardinalRiteEventKind.OFFERING_DRAWN, index, "",
+					java.util.List.of(brazierTop, hover), drawn);
+			CardinalRiteBeats.sound(level, offering.pos(), SoundInit.RITE_OFFERING_DRAWN,
+					0.9F, 0.9F + level.random.nextFloat() * 0.2F);
+		}
 
-		if (rite.isReturningFromOfferings() || offering == null) {
-			rite.finishOfferingProcession();
+		if (rite.isReturningFromOfferings()
+				&& CardinalRiteFinaleTiming.processionFinished(rite.getPhaseTicks(), total)
+				&& rite.finishOfferingProcession()) {
 			caster.displayClientMessage(Component.literal(
-					"The daemon returns to the staff and swells with the offerings.")
-					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
-			return;
+					"The daemon swells with the offerings.")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
 		}
-		if (StationUpgradeRites.isRite(rite.getRecipeId())) {
-			emitOfferingAbsorption(level, daemon, offering.pos(), offering.stack());
-			rite.absorbCurrentOffering();
-			return;
-		}
-		if (!(level.getBlockEntity(offering.pos()) instanceof IronBrazierBlockEntity brazier)) {
-			rite.markCollapsed();
-			return;
-		}
-		ItemStack present = brazier.getOfferingForMatching();
-		if (present.isEmpty() || offering.stack() == null
-				|| !ItemStack.isSameItemSameComponents(present, offering.stack())) {
-			rite.markCollapsed();
-			return;
-		}
-		ItemStack consumed = brazier.consumeOffering();
-		if (consumed.isEmpty()) {
-			rite.markCollapsed();
-			return;
-		}
-		emitOfferingAbsorption(level, daemon, offering.pos(), consumed);
-		rite.absorbCurrentOffering();
-		level.playSound(null, offering.pos(), SoundEvents.FIRECHARGE_USE,
-				SoundSource.BLOCKS, 0.9F, 0.65F + level.random.nextFloat() * 0.2F);
 	}
 
 	private static void tickCulmination(ServerLevel level, ServerPlayer caster,
 			ActiveCardinalRite rite) {
-		double growth = CardinalRiteFinaleTiming.growthProgress(rite.getPhaseTicks());
-		float matureScale = matureDaemonScale(rite);
-		float scale = (float) lerp(growth, CardinalRiteFinaleTiming.PROCESSION_SCALE, matureScale);
+		// It keeps the size its offerings left it: it gathers over the staff while they fade, then merges.
+		int total = rite.getOfferingItinerary().size();
+		float scale = CardinalRiteFinaleTiming.daemonScale(total);
 		HumanitySpriteEntity daemon = findOrCreateDaemon(level, rite, scale);
 		if (daemon == null) {
 			rite.markCollapsed();
@@ -139,10 +157,15 @@ public final class CardinalRiteOrdealEngine {
 		daemon.setPos(center.lerp(player, merge));
 		daemon.setSpriteScale((float) lerp(merge, scale, HumanitySpriteEntity.MIN_SCALE));
 		daemon.faceDirection(player.x - center.x, player.z - center.z);
-		daemon.setFlying(merge > 0.0D);
 		if (CardinalRiteFinaleTiming.isImpactTick(rite.getPhaseTicks())) {
-			PacketHandler.sendToPlayer(caster, new CardinalRiteImpactPacket(
-					8, 0.52F, level.random.nextInt()));
+			CardinalRiteImpactPacket impact = new CardinalRiteImpactPacket(8, 0.52F, level.random.nextInt());
+			PacketHandler.sendToPlayer(caster, impact);
+			for (UUID ally : rite.getAllyRoles().keySet()) {
+				if (level.getPlayerByUUID(ally) instanceof ServerPlayer witness
+						&& witness.distanceToSqr(caster) < 48.0D * 48.0D) {
+					PacketHandler.sendToPlayer(witness, new CardinalRiteImpactPacket(6, 0.32F, level.random.nextInt()));
+				}
+			}
 		}
 		if (rite.getPhaseTicks() >= CardinalRiteFinaleTiming.TOTAL_TICKS) {
 			rite.markComplete();
@@ -162,41 +185,9 @@ public final class CardinalRiteOrdealEngine {
 		return level.addFreshEntity(daemon) ? daemon : null;
 	}
 
-	private static boolean moveDaemonToward(HumanitySpriteEntity daemon, Vec3 target) {
-		Vec3 delta = target.subtract(daemon.position());
-		double distance = delta.length();
-		if (distance <= CardinalRiteFinaleTiming.DAEMON_TRAVEL_BLOCKS_PER_TICK) {
-			daemon.setPos(target);
-			daemon.setFlying(false);
-			return true;
-		}
-		Vec3 step = delta.scale(CardinalRiteFinaleTiming.DAEMON_TRAVEL_BLOCKS_PER_TICK / distance);
-		daemon.setPos(daemon.position().add(step));
-		daemon.faceDirection(delta.x, delta.z);
-		daemon.setFlying(true);
-		return false;
-	}
-
 	private static Vec3 centerPosition(ActiveCardinalRite rite, float scale) {
 		return Vec3.atCenterOf(rite.getCenterPos()).add(0.0D,
 				0.5D + CardinalRiteHumanityGeometry.DEFAULT_ENTITY_HEIGHT * scale * 0.5D, 0.0D);
-	}
-
-	private static float matureDaemonScale(ActiveCardinalRite rite) {
-		double matureHeight = 3.0D + rite.getRiteSize() * 0.5D;
-		return (float) (matureHeight / CardinalRiteHumanityGeometry.DEFAULT_ENTITY_HEIGHT);
-	}
-
-	private static void emitOfferingAbsorption(ServerLevel level, HumanitySpriteEntity daemon,
-			BlockPos brazierPos, ItemStack stack) {
-		double x = brazierPos.getX() + 0.5D;
-		double y = brazierPos.getY() + 1.2D;
-		double z = brazierPos.getZ() + 0.5D;
-		Vec3 pull = daemon.position().subtract(x, y, z).normalize().scale(0.18D);
-		level.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, stack),
-				x, y, z, 32, 0.22D, 0.18D, 0.22D, 0.12D);
-		level.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, stack),
-				x, y, z, 12, Math.abs(pull.x), Math.abs(pull.y), Math.abs(pull.z), 0.18D);
 	}
 
 	private static double smoothstep(double value) {
@@ -210,7 +201,6 @@ public final class CardinalRiteOrdealEngine {
 	private static void tickConsecration(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite,
 			CardinalRiteRecipe recipe) {
 		if (!StationUpgradeRites.isRite(rite.getRecipeId())) rite.incrementIdleTicks();
-		drawAnchors(level, rite, recipe);
 		if (rite.getIdleTicks() >= CardinalRiteCeremonyRules.CONSECRATION_TIMEOUT_TICKS) {
 			rite.markCollapsed();
 			caster.displayClientMessage(Component.literal("The untouched consecration gutters out.")
@@ -221,7 +211,7 @@ public final class CardinalRiteOrdealEngine {
 	private static void tickOrdeal(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite,
 			CardinalRiteRecipe recipe) {
 		if (rite.getPhaseTicks() == 1) beginWave(level, caster, rite);
-		drawAnchors(level, rite, recipe);
+		if (rite.getPhaseTicks() == 1 + CardinalRiteThreatRules.WAVE_TELEGRAPH_TICKS) spawnWave(level, caster, rite);
 		tickAllies(level, rite);
 		pruneThreats(level, rite);
 		ResourceLocation sigilId = CardinalRiteInteractionHandler.sigilForWave(rite);
@@ -238,15 +228,19 @@ public final class CardinalRiteOrdealEngine {
 					new BlockPos(placement.x(), placement.y(), placement.z()), progressKey);
 			IchorianSigilDefinition sigil = IchorianSigilRegistry.get(sigilId);
 			traced = sigil != null && rite.getSigilProgress().getOrDefault(progressKey, 0) >= sigil.nodes().size();
+			if ("covenant_pressure".equals(wave) && !traced && rite.getPhaseTicks() % 20 == 0) {
+				applyCovenantPressure(rite);
+			}
 			if (traced && rite.areAnchorsConsecrated()) {
-				rite.completeWave();
+				clearWave(level, rite);
 				return;
 			}
 		} else {
 			applyThreatPressure(level, caster, rite, recipe);
-			if (rite.getPhaseTicks() > 40 && rite.getRiteThreats().isEmpty()
+			if (rite.getPhaseTicks() > CardinalRiteThreatRules.WAVE_TELEGRAPH_TICKS + 40
+					&& rite.getRiteThreats().isEmpty()
 					&& rite.areAnchorsConsecrated()) {
-				rite.completeWave();
+				clearWave(level, rite);
 				return;
 			}
 		}
@@ -263,39 +257,80 @@ public final class CardinalRiteOrdealEngine {
 		if (rite.getPhaseTicks() == WAVE_TIMEOUT_TICKS) {
 			if (!attendantCatchesMiss(level, rite)) {
 				rite.addInstability(12 + CardinalRiteCeremonyRules.formIndex(recipe.getRiteType()) * 3);
+				CardinalRiteBeats.sound(level, rite.getCenterPos(), SoundInit.RITE_ANCHOR_BREAK, 1.0F, 0.8F);
+				caster.displayClientMessage(Component.literal("The ordeal outlasts you and the boundary strains.")
+						.withStyle(ChatFormatting.DARK_RED), true);
 			}
 			clearThreats(level, rite);
-			if (rite.areAnchorsConsecrated()) rite.completeWave();
+			if (rite.areAnchorsConsecrated()) clearWave(level, rite);
 			else caster.displayClientMessage(Component.literal(
 					"The ordeal cannot advance while the cardinal stations run dry.")
 					.withStyle(ChatFormatting.DARK_RED), false);
 		}
 		if (rite.getPhaseTicks() % 20 == 0) {
 			rite.applyAnchorDeficitPressure();
+			applyStrain(level, caster, rite);
 		}
+	}
+
+	private static void clearWave(ServerLevel level, ActiveCardinalRite rite) {
+		rite.completeWave();
+		CardinalRiteBeats.send(level, rite, CardinalRiteEventKind.WAVE_CLEARED);
+		CardinalRiteBeats.sound(level, rite.getCenterPos(), SoundInit.RITE_WAVE_CLEAR, 1.0F, 1.0F);
+	}
+
+	/**
+	 * Instability bites before it breaks the rite. Once strained, the outermost
+	 * protected anchor bleeds a little each second; once rupturing, rite-bound
+	 * threats also feed on the instability and grow stronger and faster.
+	 */
+	private static void applyStrain(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite) {
+		CardinalRiteInstability band = rite.getInstabilityBand();
+		if (band == CardinalRiteInstability.STABLE) return;
+		rite.drainOutermostProtectedAnchor(band == CardinalRiteInstability.RUPTURING ? 2 : 1);
+		if (band != CardinalRiteInstability.RUPTURING) return;
+		for (UUID id : rite.getRiteThreats()) {
+			if (level.getEntity(id) instanceof Mob mob) {
+				mob.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 40, 0, false, true, true));
+				mob.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 40, 0, false, true, true));
+			}
+		}
+		if (rite.getPhaseTicks() % 100 == 0) {
+			caster.displayClientMessage(Component.literal("The boundary ruptures. Repair the broken anchors.")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), true);
+		}
+	}
+
+	/** The covenant presses blood out of every anchor until the demanded Seal is traced. */
+	private static void applyCovenantPressure(ActiveCardinalRite rite) {
+		for (int i = 0; i < rite.getAnchorBloodMl().length; i++) rite.drainAnchor(i, COVENANT_PRESSURE_ML);
 	}
 
 	private static void tickStillInterval(ServerPlayer caster, ActiveCardinalRite rite,
 			CardinalRiteRecipe recipe) {
-		if (rite.getPhaseTicks() == 1) {
+		if (rite.getPhaseTicks() == 1 && !rite.isHeldBeforeFinale()) {
 			caster.displayClientMessage(Component.literal("A still interval: repair, reinforce, and breathe.")
 					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
 		}
 		drawSupportSockets(caster.serverLevel(), rite, recipe);
-		drawAnchors(caster.serverLevel(), rite, recipe);
+		if (rite.isHeldBeforeFinale()) {
+			if (rite.tickFinaleHold()) {
+				if (!rite.isHeldBeforeFinale() && rite.areAnchorsConsecrated()) rite.finishStillInterval();
+				return;
+			}
+		}
 		int duration = recipe.getCeremony().stillIntervalTicks();
 		if (rite.getPhaseTicks() >= duration) {
 			if (rite.areAnchorsConsecrated()) {
 				rite.finishStillInterval();
 			} else {
-				if (rite.getPhaseTicks() == duration) {
+				if (rite.getPhaseTicks() == Math.max(1, duration)) {
 					caster.displayClientMessage(Component.literal(
 							"The rite waits: restore every cardinal station.")
 							.withStyle(ChatFormatting.DARK_RED), false);
 				}
 				if (rite.getPhaseTicks() % 20 == 0) {
-					rite.addInstability(CardinalRiteCeremonyRules.anchorDeficitInstability(
-							rite.getAnchorBloodMl()));
+					rite.applyStillIntervalPressure(duration);
 				}
 			}
 		}
@@ -308,6 +343,7 @@ public final class CardinalRiteOrdealEngine {
 			case "fargone_dive" -> "A Fargone stoops toward your living blood.";
 			case "rogue_will" -> "A rogue will claws at the boundary's intent.";
 			case "false_omens" -> "Counterfeit anchors bloom. Find the puppeteer.";
+			case "covenant_pressure" -> "The covenant presses on every anchor. Trace the Seal to bear it.";
 			default -> wave.startsWith("discover_")
 					? "An unknown Ichorian shape wakes. Read it before it reads you."
 					: "A response sigil is demanded.";
@@ -315,15 +351,38 @@ public final class CardinalRiteOrdealEngine {
 		caster.displayClientMessage(Component.literal(cue).withStyle(ChatFormatting.DARK_RED), false);
 		caster.displayClientMessage(Component.literal(CardinalRiteWaveRules.deadlineHint(wave)
 				+ ". Restore every anchor before advancing.").withStyle(ChatFormatting.GRAY), false);
-		if (!wave.startsWith("discover_") && !"response_sigil".equals(wave)) {
-			spawnThreats(level, caster, rite, wave);
+		List<Vec3> spawns = spawnsThreats(wave) ? threatSpawnPoints(rite, wave) : List.of();
+		CardinalRiteBeats.send(level, rite, CardinalRiteEventKind.WAVE_START, rite.getCurrentWave(), wave,
+				spawns, ItemStack.EMPTY);
+		CardinalRiteBeats.sound(level, rite.getCenterPos(), SoundInit.RITE_WAVE_START, 1.2F, 1.0F);
+	}
+
+	private static boolean spawnsThreats(String wave) {
+		return !wave.startsWith("discover_") && !"response_sigil".equals(wave) && !"covenant_pressure".equals(wave);
+	}
+
+	/** Threats step out of the fog where the wave's warning struck. */
+	private static void spawnWave(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite) {
+		String wave = currentWave(rite);
+		if (spawnsThreats(wave)) spawnThreats(level, caster, rite, wave);
+	}
+
+	private static List<Vec3> threatSpawnPoints(ActiveCardinalRite rite, String wave) {
+		int count = Math.max(1, 1 + rite.getDegree() / 3);
+		List<Vec3> points = new ArrayList<>(count);
+		double radius = rite.getRiteSize() / 2.0D + 4.0D;
+		for (int i = 0; i < count; i++) {
+			double angle = Math.PI * 2.0D * i / count;
+			points.add(new Vec3(rite.getCenterPos().getX() + 0.5D + Math.cos(angle) * radius,
+					rite.getCenterPos().getY() + ("fargone_dive".equals(wave) ? 5.0D : 1.0D),
+					rite.getCenterPos().getZ() + 0.5D + Math.sin(angle) * radius));
 		}
+		return points;
 	}
 
 	private static void spawnThreats(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite,
 			String wave) {
-		int count = Math.max(1, 1 + rite.getDegree() / 3);
-		for (int i = 0; i < count; i++) {
+		for (Vec3 point : threatSpawnPoints(rite, wave)) {
 			Entity entity = switch (wave) {
 				case "fargone_dive" -> EntityInit.fargone.get().create(level);
 				case "rogue_will" -> EntityInit.will.get().create(level);
@@ -331,14 +390,10 @@ public final class CardinalRiteOrdealEngine {
 				default -> EntityInit.bloodlicker.get().create(level);
 			};
 			if (entity == null) continue;
-			double angle = Math.PI * 2.0D * i / count;
-			double radius = rite.getRiteSize() / 2.0D + 4.0D;
-			entity.moveTo(rite.getCenterPos().getX() + 0.5D + Math.cos(angle) * radius,
-					rite.getCenterPos().getY() + ("fargone_dive".equals(wave) ? 5.0D : 1.0D),
-					rite.getCenterPos().getZ() + 0.5D + Math.sin(angle) * radius,
-					(float) Math.toDegrees(angle), 0.0F);
+			float yaw = (float) Math.toDegrees(Math.atan2(point.z - rite.getCenterPos().getZ() - 0.5D,
+					point.x - rite.getCenterPos().getX() - 0.5D));
+			entity.moveTo(point.x, point.y, point.z, yaw, 0.0F);
 			entity.getPersistentData().putBoolean(CardinalRiteThreatRules.RITE_BOUND_TAG, true);
-			entity.getPersistentData().putUUID(RITE_CASTER, rite.getPlayerUUID());
 			if (entity instanceof Monster monster) monster.setTarget(caster);
 			if (entity instanceof Mob mob) mob.getNavigation().moveTo(caster, 1.15D);
 			if (level.addFreshEntity(entity)) rite.addRiteThreat(entity.getUUID());
@@ -525,24 +580,6 @@ public final class CardinalRiteOrdealEngine {
 		}
 	}
 
-	private static void drawAnchors(ServerLevel level, ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
-		if (level.getGameTime() % 3 != 0) return;
-		int[] blood = rite.getAnchorBloodMl();
-		for (int i = 0; i < recipe.getCeremony().anchors().size() && i < blood.length; i++) {
-			BlockPos offset = recipe.getCeremony().anchors().get(i).offset();
-			float fill = blood[i] / (float) CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML;
-			if (rite.isInstabilityDamagedAnchor(i)) continue;
-			if (CardinalRiteAnchorVisualRules.boundaryVisual(
-					blood[i], CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML)
-					== CardinalRiteAnchorVisualRules.Visual.SANGUINE_BLOB) continue;
-			ParticleColor color = new ParticleColor(130 + (int) (100 * fill), 15, 25);
-			Vec3 aimPoint = CardinalRiteTargetGeometry.anchorAimPoint(rite.getCenterPos(), offset);
-			drawInteractionMarker(level, color,
-					aimPoint.x, aimPoint.y, aimPoint.z,
-					i % 4 == 0 ? 4 : 2, 0.14D, 0.02D, 0.14D);
-		}
-	}
-
 	private static int nearestAnchor(CardinalRiteRecipe recipe, ActiveCardinalRite rite, BlockPos from) {
 		int nearest = 0;
 		double nearestDistance = Double.MAX_VALUE;
@@ -563,11 +600,6 @@ public final class CardinalRiteOrdealEngine {
 		ResourceLocation id = ResourceLocation.fromNamespaceAndPath("hemomancy", path);
 		IchorianSigilDefinition definition = IchorianSigilRegistry.get(id);
 		return definition != null && rite.isSigilComplete(id.toString(), definition.nodes().size());
-	}
-
-	private static void drawSigil(ServerLevel level, ActiveCardinalRite rite, ResourceLocation id,
-			BlockPos offset) {
-		drawSigil(level, rite, id, offset, id.toString());
 	}
 
 	private static void drawSigil(ServerLevel level, ActiveCardinalRite rite, ResourceLocation id,
@@ -593,16 +625,12 @@ public final class CardinalRiteOrdealEngine {
 
 	private static void drawFalseOmens(ServerLevel level, ActiveCardinalRite rite) {
 		if (level.getGameTime() % 3 != 0) return;
-		BlockPos[] fakes = {
-				rite.getCenterPos().offset(2, 1, 2),
-				rite.getCenterPos().offset(-2, 1, -2),
-				rite.getCenterPos().offset(2, 1, -2)
-		};
 		boolean revealed = CardinalRiteSupportSigilRules.revealsFalseOmens(
 				isComplete(rite, "mnemonic"), isComplete(rite, "lens"));
 		ParticleColor fakeColor = revealed ? new ParticleColor(90, 210, 255)
 				: new ParticleColor(185, 40, 220);
-		for (BlockPos fake : fakes) {
+		for (BlockPos offset : FALSE_OMEN_OFFSETS) {
+			BlockPos fake = rite.getCenterPos().offset(offset);
 			drawInteractionMarker(level, fakeColor,
 					fake.getX() + 0.5D, fake.getY() + 0.12D, fake.getZ() + 0.5D,
 					revealed ? 1 : 3, 0.18D, 0.02D, 0.18D);

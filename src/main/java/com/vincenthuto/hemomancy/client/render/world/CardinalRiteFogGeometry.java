@@ -1,17 +1,32 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteMath;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class CardinalRiteFogGeometry {
-	private static final float RENDER_MARGIN = 0.0F;
-	private static final int MINIMUM_PUFFS = 165;
-	private static final int MAXIMUM_PUFFS = 165;
-	private static final float PUFFS_PER_RADIUS = 12.25F;
+	/** Primary cloud-mass billboards: a fixed budget, whatever the rite radius. */
+	private static final int PRIMARY_PUFFS = 165;
 	private static final float COMPACT_MULTI_RING_MINIMUM_RADIUS = 6.75F;
+	private static final int PUFF_CACHE_LIMIT = 16;
+	private static final float PARTING_OPEN_TICKS = 6.0F;
+	private static final float PARTING_HOLD_END = 26.0F;
+	/** Last tick of a wave's fog parting. */
+	public static final float PARTING_CLOSE_END = 50.0F;
+	/** Horizontal radius of the clearing a wave tears in the fog bank. */
+	public static final float PARTING_RADIUS = 2.4F;
+	/** Puff layouts are deterministic per (seed, radius); rebuilding them every frame was the fog's main cost. */
+	private static final Map<PuffKey, List<FogPuff>> PUFF_CACHE = new LinkedHashMap<>(16, 0.75F, true) {
+		@Override
+		protected boolean removeEldestEntry(Map.Entry<PuffKey, List<FogPuff>> eldest) {
+			return size() > PUFF_CACHE_LIMIT;
+		}
+	};
 
 	private CardinalRiteFogGeometry() {
 	}
@@ -39,16 +54,29 @@ public final class CardinalRiteFogGeometry {
 			float radius, int renderDistanceChunks) {
 		double dx = center.getX() + 0.5D - camera.x;
 		double dz = center.getZ() + 0.5D - camera.z;
-		double limit = Math.max(1, renderDistanceChunks) * 16.0D + radius + RENDER_MARGIN;
+		double limit = Math.max(1, renderDistanceChunks) * 16.0D + radius;
 		return dx * dx + dz * dz <= limit * limit;
 	}
 
+	/** The rite's fog billboards, built once per (seed, radius) and then shared. */
 	public static List<FogPuff> puffs(float seed, float radius) {
-		int puffCount = Math.max(MINIMUM_PUFFS, Math.min(MAXIMUM_PUFFS,
-				Math.round(Math.max(0.0F, radius) * (float) (Math.PI * 2.0D) * PUFFS_PER_RADIUS)));
+		PuffKey key = new PuffKey(seed, radius);
+		synchronized (PUFF_CACHE) {
+			List<FogPuff> cached = PUFF_CACHE.get(key);
+			if (cached != null) return cached;
+		}
+		List<FogPuff> built = buildPuffs(seed, radius);
+		synchronized (PUFF_CACHE) {
+			PUFF_CACHE.put(key, built);
+		}
+		return built;
+	}
+
+	private static List<FogPuff> buildPuffs(float seed, float radius) {
+		int puffCount = PRIMARY_PUFFS;
 		int scatterCount = Math.max(90, Math.round(puffCount * 1.65F));
 		double rotation = puffNoise(seed, 0, 0.37F) * Math.PI * 2.0D;
-		int clusterCount = Math.max(8, Math.min(14, Math.round(Math.max(1.0F, radius) * 02.78F)));
+		int clusterCount = Math.max(8, Math.min(14, Math.round(Math.max(1.0F, radius) * 2.78F)));
 		double[] clusterAngles = new double[clusterCount];
 		float[] clusterWeights = new float[clusterCount];
 		float[] clusterSpreads = new float[clusterCount];
@@ -160,6 +188,13 @@ public final class CardinalRiteFogGeometry {
 	}
 
 	public static PuffPosition position(FogPuff puff, float radius, float time) {
+		float[] out = new float[3];
+		positionInto(puff, radius, time, out);
+		return new PuffPosition(out[0], out[1], out[2]);
+	}
+
+	/** {@link #position} without allocating: writes local x, y, z into {@code out}. */
+	public static void positionInto(FogPuff puff, float radius, float time, float[] out) {
 		float wave = time * puff.driftSpeed() + puff.phase();
 		float radialDistance = radius + puff.radialOffset()
 				+ (float) Math.sin(wave) * puff.radialDrift();
@@ -174,8 +209,22 @@ public final class CardinalRiteFogGeometry {
 				* puff.verticalDrift() * 1.65F;
 		float stormBob = (float) Math.sin(time * (0.012F + puff.driftSpeed() * 2.8F)
 				+ puff.phase() * 1.37F) * (0.10F + puff.verticalDrift() * 0.65F);
-		float y = puff.heightOffset() + billow + stormBob;
-		return new PuffPosition(x, y, z);
+		out[0] = x;
+		out[1] = puff.heightOffset() + billow + stormBob;
+		out[2] = z;
+	}
+
+	/**
+	 * How far the fog bank has parted around an incoming wave's spawn point, by
+	 * ticks since the wave began: it opens quickly, holds while the threats
+	 * gather (the server spawns them about 20 ticks in), then closes again.
+	 */
+	public static float partingStrength(float waveAge) {
+		if (waveAge < 0.0F || waveAge >= PARTING_CLOSE_END) return 0.0F;
+		if (waveAge < PARTING_OPEN_TICKS) return CardinalRiteMath.smoothstep(waveAge / PARTING_OPEN_TICKS);
+		if (waveAge < PARTING_HOLD_END) return 1.0F;
+		return 1.0F - CardinalRiteMath.smoothstep(
+				(waveAge - PARTING_HOLD_END) / (PARTING_CLOSE_END - PARTING_HOLD_END));
 	}
 
 	public static float opacityMultiplier(FogPuff puff, float time) {
@@ -191,8 +240,7 @@ public final class CardinalRiteFogGeometry {
 	}
 
 	private static double normalizeAngle(double angle) {
-		double normalized = angle % (Math.PI * 2.0D);
-		return normalized < 0.0D ? normalized + Math.PI * 2.0D : normalized;
+		return CardinalRiteMath.normalizeAngle(angle);
 	}
 
 	private static float puffNoise(float seed, int puff, float salt) {
@@ -223,5 +271,8 @@ public final class CardinalRiteFogGeometry {
 	}
 
 	public record PuffPosition(float x, float y, float z) {
+	}
+
+	private record PuffKey(float seed, float radius) {
 	}
 }

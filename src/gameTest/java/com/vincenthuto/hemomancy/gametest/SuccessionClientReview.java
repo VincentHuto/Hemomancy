@@ -559,7 +559,7 @@ public final class SuccessionClientReview {
         if (rite == null || !rite.getRecipeId().equals(Hemomancy.rloc("cardinal_rite/covenant_vigil")))
             throw new IllegalStateException("Vigil reward review requires its supplied rite");
         try {
-            var handler = com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents.class
+            var handler = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletionEffects.class
                     .getDeclaredMethod("completeCovenantVigil", net.minecraft.server.level.ServerLevel.class,
                             ServerPlayer.class, ActiveCardinalRite.class);
             handler.setAccessible(true);

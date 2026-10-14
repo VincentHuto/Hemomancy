@@ -242,6 +242,15 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 
 	@Override
 	public InteractionResult useOn(UseOnContext context) {
+		// On the client, clicking a Cardinal Focus with no rite of your own running is a planting gesture:
+		// consume it so the same click does not also start a projection channel.
+		if (context.getLevel().isClientSide && context.getPlayer() != null
+				&& context.getLevel().getBlockState(context.getClickedPos())
+						.is(com.vincenthuto.hemomancy.common.init.BlockInit.cardinal_focus.get())
+				&& com.vincenthuto.hemomancy.client.data.ActiveRiteClientData.getActiveRites().stream()
+						.noneMatch(rite -> context.getPlayer().getUUID().equals(rite.getOwner()))) {
+			return InteractionResult.SUCCESS;
+		}
 		if (!context.getLevel().isClientSide
 				&& context.getPlayer() instanceof ServerPlayer serverPlayer
 				&& BloodCraftingKeyPressPacket.tryStartCardinalRite(
@@ -257,9 +266,17 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 		ItemStack stack = playerIn.getItemInHand(handIn);
 		if (playerIn.isShiftKeyDown()) return InteractionResultHolder.pass(stack);
 		if (hookLookedAtThread(worldIn, playerIn, handIn)) return InteractionResultHolder.sidedSuccess(stack, worldIn.isClientSide);
+		if (!worldIn.isClientSide && isPlantingStaff(playerIn)) return InteractionResultHolder.fail(stack);
 		playerIn.startUsingItem(handIn);
 		if (!worldIn.isClientSide) clearUtilityBloodHandled(playerIn);
 		return InteractionResultHolder.consume(stack);
+	}
+
+	/** While a staff is being driven into a Focus, no other staff in hand may open a channel. */
+	private static boolean isPlantingStaff(Player player) {
+		if (!(player.level() instanceof net.minecraft.server.level.ServerLevel level)) return false;
+		var rite = com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData.get(level).getRite(player.getUUID());
+		return rite != null && rite.isStaffPlanting();
 	}
 
 	/** A slack frayed thread in reach is hooked home instead of opening a blood channel; the server weaves it. */

@@ -118,6 +118,56 @@ final class CardinalRiteLayeredRecipeDataTest {
 		}
 	}
 
+	@Test
+	void everyAuthoredAnchorOccupiesItsOwnRingPosition() throws IOException {
+		try (var paths = Files.list(RITE_ROOT)) {
+			for (Path path : paths.filter(p -> p.toString().endsWith(".json")).toList()) {
+				JsonObject recipe = read(path);
+				if (!recipe.has("ceremony") || !recipe.getAsJsonObject("ceremony").has("anchors")) continue;
+				Set<String> positions = new HashSet<>();
+				for (JsonElement element : recipe.getAsJsonObject("ceremony").getAsJsonArray("anchors")) {
+					JsonObject anchor = element.getAsJsonObject();
+					if (!anchor.has("ring")) continue;
+					// CardinalRiteRingTuning places four anchors per ring at order % 4.
+					String slot = anchor.get("ring").getAsInt() + ":" + Math.floorMod(anchor.get("order").getAsInt(), 4);
+					assertTrue(positions.add(slot), path + " stacks two anchors on ring slot " + slot);
+				}
+			}
+		}
+	}
+
+	@Test
+	void rankRitesGrantTheDegreeAboveTheirRequirement() throws IOException {
+		Map<String, Integer> legacyTargets = Map.of(
+				"sanguine_brotherhood", 4, "illuminatus_rite", 5, "sanctified_rite", 6,
+				"archon_rite", 7, "apotheos_rite", 8);
+		int rankRites = 0;
+		try (var paths = Files.list(RITE_ROOT)) {
+			for (Path path : paths.filter(p -> p.toString().endsWith(".json")).toList()) {
+				JsonObject recipe = read(path);
+				if (!recipe.has("rankup") || !recipe.get("rankup").getAsBoolean()) continue;
+				rankRites++;
+				String name = path.getFileName().toString().replace(".json", "");
+				assertEquals(legacyTargets.get(name), recipe.get("required_degree").getAsInt() + 1,
+						path + " must grant exactly the degree above its requirement");
+			}
+		}
+		assertEquals(legacyTargets.size(), rankRites);
+	}
+
+	@Test
+	void authoredCulminationsNameAKnownStyle() throws IOException {
+		try (var paths = Files.list(RITE_ROOT)) {
+			for (Path path : paths.filter(p -> p.toString().endsWith(".json")).toList()) {
+				JsonObject recipe = read(path);
+				if (!recipe.has("ceremony") || !recipe.getAsJsonObject("ceremony").has("culmination")) continue;
+				String style = recipe.getAsJsonObject("ceremony").get("culmination").getAsString();
+				assertNotNull(com.vincenthuto.hemomancy.common.rite.CardinalRiteCulmination.byId(style),
+						path + " names unknown culmination " + style);
+			}
+		}
+	}
+
 	private static JsonObject read(Path path) throws IOException {
 		return JsonParser.parseString(Files.readString(path)).getAsJsonObject();
 	}

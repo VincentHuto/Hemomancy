@@ -69,7 +69,8 @@ public class ShaderInit {
 
 	public static ShaderHolder CARDINAL_FLOOR_MEMBRANE = new ShaderHolder(Hemomancy.rloc("world/cardinal_floor_membrane"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "FloorSeed", "FloorStyle", "FloorHalf", "Spread",
-			"Front", "Beat", "FloorLight", "FocusOffset", "BaseColor", "VeinColor", "GlowColor");
+			"Front", "Beat", "FloorLight", "FocusOffset", "BaseColor", "VeinColor", "GlowColor",
+			"RiteRings", "RiteSurge", "RiteDraw", "RiteMood", "RiteSwell", "WoundAngles", "WoundLevels", "RiteBlood");
 
 	public static ShaderHolder MNEMONIC_LOWTIDE_LAKE = new ShaderHolder(Hemomancy.rloc("world/mnemonic_lowtide_lake"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "LakeSeed", "WaveStrength", "WaveDetailScale",
@@ -121,6 +122,13 @@ public class ShaderInit {
 
 	public static ShaderHolder CARDINAL_RITE_FOG = new ShaderHolder(Hemomancy.rloc("world/cardinal_rite_fog"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "FogSeed");
+	public static ShaderHolder CARDINAL_RITE_SKY_WOUND = new ShaderHolder(Hemomancy.rloc("world/cardinal_rite_sky_wound"),
+			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "WoundSeed", "WoundShape", "BaseColor", "VeinColor",
+			"GlowColor");
+	public static ShaderHolder CARDINAL_DAEMON_HAZE = new ShaderHolder(Hemomancy.rloc("world/cardinal_daemon_haze"),
+			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "HazeSeed", "HazeState", "HazeTint", "HazeLean", "HazeCamera", "HazeShape", "HazeHead", "HazeTilt", "HazeFlow");
+	public static ShaderHolder CARDINAL_STAFF_HAZE = new ShaderHolder(Hemomancy.rloc("world/cardinal_staff_haze"),
+			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "HazeSeed", "HazeState", "HazeCamera", "HazeShape");
 
 	public static ShaderHolder SILENT_ARCHON_STORM_CLOUD = new ShaderHolder(Hemomancy.rloc("world/silent_archon_storm_cloud"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "CloudSeed", "CloudDensity");
@@ -194,6 +202,9 @@ public class ShaderInit {
         registerShader(event, MNEMONIC_LOWTIDE_PARCHMENT.createInstance(provider));
         registerShader(event, SILENT_ARCHON_FOG.createInstance(provider));
         registerShader(event, CARDINAL_RITE_FOG.createInstance(provider));
+        registerShader(event, CARDINAL_RITE_SKY_WOUND.createInstance(provider));
+        registerShader(event, CARDINAL_DAEMON_HAZE.createInstance(provider));
+        registerShader(event, CARDINAL_STAFF_HAZE.createInstance(provider));
         registerShader(event, MANIPULATION_LUX.createInstance(provider));
         registerShader(event, MANIPULATION_ANIMUS.createInstance(provider));
         registerShader(event, MANIPULATION_ANIMUS_MODEL.createInstance(provider));

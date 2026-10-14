@@ -1,13 +1,13 @@
 package com.vincenthuto.hemomancy.common.rite;
 
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
-import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper.MemoryGrantResult;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper.MemoryGrantStatus;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
-import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
+import com.vincenthuto.hemomancy.common.rite.brazier.BrazierRite;
+import com.vincenthuto.hemomancy.common.rite.brazier.BrazierRites;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.ChatFormatting;
@@ -20,47 +20,49 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
-public final class MemoryBrazierRite {
+/** Burning a Blood Memory into the caster's blood. */
+public final class MemoryBrazierRite implements BrazierRite<BloodMemoryItem> {
+	public static final MemoryBrazierRite INSTANCE = new MemoryBrazierRite();
+
 	private MemoryBrazierRite() {
 	}
 
 	public static double tryAbsorb(ServerLevel level, BlockPos pos, BlockState state, ServerPlayer player,
 			double maxAmount) {
-		if (!(level.getBlockEntity(pos) instanceof IronBrazierBlockEntity brazier)) {
-			return 0.0D;
-		}
-		ItemStack offering = brazier.getOfferingForMatching();
-		BloodMemoryItem memory = offering.getItem() instanceof BloodMemoryItem bloodMemory ? bloodMemory : null;
-		boolean lit = state.hasProperty(BrazierBlock.RITUAL_PHASE)
-				&& state.getValue(BrazierBlock.RITUAL_PHASE) > 0;
-		if (!MemoryBrazierAbsorptionRules.shouldAttempt(lit, memory != null,
-				BloodAbsorptionItem.isChannelingBloodAbsorption(player), maxAmount)) {
-			if (memory != null) {
-				brazier.resetItemAbsorptionProgress();
-			}
-			return 0.0D;
-		}
+		return BrazierRites.run(INSTANCE, level, pos, state, player, maxAmount);
+	}
 
+	@Override
+	public boolean accepts(ItemStack offering) {
+		return offering.getItem() instanceof BloodMemoryItem;
+	}
+
+	@Override
+	public Gate<BloodMemoryItem> preflight(Channel channel) {
+		ServerPlayer player = channel.player();
+		BloodMemoryItem memory = (BloodMemoryItem) channel.offering().getItem();
+		if (!MemoryBrazierAbsorptionRules.shouldAttempt(channel.lit(), true,
+				BloodAbsorptionItem.isChannelingBloodAbsorption(player), channel.maxAmount())) {
+			return Gate.refuse(true, false);
+		}
 		MemoryGrantResult check = KnownManipulationGrantHelper.checkMemoryGrant(player, memory.getManip(), memory);
 		if (!check.success()) {
-			brazier.resetItemAbsorptionProgress();
-			reportFailure(level, player, check);
-			return maxAmount;
+			reportFailure(channel.level(), player, check);
+			return Gate.refuse(true, true);
 		}
-		int progress = BrazierItemAbsorptionRite.advance(level, pos, player, brazier,
-				"memory:" + memory.getManip().getName(), offering);
-		if (!BrazierItemAbsorptionRite.isComplete(progress)) {
-			return maxAmount;
-		}
+		return Gate.pass("memory:" + memory.getManip().getName(), memory);
+	}
 
+	@Override
+	public Completion complete(Channel channel, BloodMemoryItem memory) {
+		ServerLevel level = channel.level();
+		ServerPlayer player = channel.player();
+		BlockPos pos = channel.pos();
 		MemoryGrantResult result = KnownManipulationGrantHelper.grantMemory(player, memory.getManip(), memory);
 		if (!result.success()) {
-			brazier.resetItemAbsorptionProgress();
 			reportFailure(level, player, result);
-			return maxAmount;
+			return Completion.kept(true);
 		}
-
-		BrazierItemAbsorptionRite.complete(level, pos, brazier);
 		player.displayClientMessage(Component.literal(result.status() == MemoryGrantStatus.GRANTED_EQUIPPED
 					? "The burning memory enters your blood and settles into an open manipulation slot."
 					: "The burning memory enters your blood. Recall it at a Mnemonic Reliquary.")
@@ -69,13 +71,10 @@ public final class MemoryBrazierRite {
 		level.sendParticles(HemoParticleData.glow(new ParticleColor(190, 0, 24)),
 				pos.getX() + 0.5D, pos.getY() + 1.0D, pos.getZ() + 0.5D,
 				32, 0.45D, 0.35D, 0.45D, 0.03D);
-		return maxAmount;
+		return Completion.CONSUMED;
 	}
 
 	private static void reportFailure(ServerLevel level, ServerPlayer player, MemoryGrantResult result) {
-		if (level.getGameTime() % 20L != 0L) {
-			return;
-		}
 		String text = switch (result.status()) {
 			case ALREADY_KNOWN -> "Your blood already carries this memory.";
 			case NO_ACTIVE_BLOOD -> "The memory finds no living blood to enter.";
@@ -85,6 +84,6 @@ public final class MemoryBrazierRite {
 			case RETIRED -> "This memory has gone dormant.";
 			default -> "The burning memory will not take.";
 		};
-		player.displayClientMessage(Component.literal(text).withStyle(ChatFormatting.DARK_RED), true);
+		BrazierRites.messageEverySecond(level, player, text, ChatFormatting.DARK_RED);
 	}
 }

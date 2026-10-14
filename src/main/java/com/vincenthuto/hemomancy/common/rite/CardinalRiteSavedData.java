@@ -111,6 +111,14 @@ public class CardinalRiteSavedData extends SavedData {
 		return activeRites.containsKey(playerUUID);
 	}
 
+	/** Rites are saved per level; a caster may only carry one rite across every dimension. */
+	public static boolean hasActiveRiteAnywhere(net.minecraft.server.MinecraftServer server, UUID playerUUID) {
+		for (ServerLevel level : server.getAllLevels()) {
+			if (get(level).hasActiveRite(playerUUID)) return true;
+		}
+		return false;
+	}
+
 	public boolean hasRiteAt(net.minecraft.core.BlockPos centerPos) {
 		return activeRites.values().stream().anyMatch(rite -> rite.getCenterPos().equals(centerPos));
 	}

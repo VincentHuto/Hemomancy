@@ -9,7 +9,8 @@ public final class CardinalRiteWaveRules {
     private CardinalRiteWaveRules() {}
 
     public static Objective objective(String wave) {
-        if (wave != null && (wave.startsWith("discover_") || wave.equals("response_sigil"))) return Objective.TRACE;
+        if (wave != null && (wave.startsWith("discover_") || wave.equals("response_sigil")
+                || wave.equals("covenant_pressure"))) return Objective.TRACE;
         return "false_omens".equals(wave) ? Objective.DEFEAT : Objective.SURVIVE;
     }
 

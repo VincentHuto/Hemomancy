@@ -10,7 +10,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public record SpawnBrazierItemAbsorptionParticlesPacket(Vec3 source, ItemStack stack)
+/** Draws an offering out of a brazier into the channelling player's hand, for every player near the brazier. */
+public record SpawnBrazierItemAbsorptionParticlesPacket(int casterId, Vec3 source, ItemStack stack)
 		implements CustomPacketPayload {
 	public static final Type<SpawnBrazierItemAbsorptionParticlesPacket> TYPE =
 			new Type<>(Hemomancy.rloc("spawn_brazier_item_absorption_particles"));
@@ -23,6 +24,7 @@ public record SpawnBrazierItemAbsorptionParticlesPacket(Vec3 source, ItemStack s
 	}
 
 	public static void encode(FriendlyByteBuf buf, SpawnBrazierItemAbsorptionParticlesPacket packet) {
+		buf.writeVarInt(packet.casterId);
 		buf.writeDouble(packet.source.x);
 		buf.writeDouble(packet.source.y);
 		buf.writeDouble(packet.source.z);
@@ -30,14 +32,15 @@ public record SpawnBrazierItemAbsorptionParticlesPacket(Vec3 source, ItemStack s
 	}
 
 	public static SpawnBrazierItemAbsorptionParticlesPacket decode(FriendlyByteBuf buf) {
+		int casterId = buf.readVarInt();
 		Vec3 source = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
 		ItemStack stack = ItemStack.OPTIONAL_STREAM_CODEC.decode((RegistryFriendlyByteBuf) buf);
-		return new SpawnBrazierItemAbsorptionParticlesPacket(source, stack);
+		return new SpawnBrazierItemAbsorptionParticlesPacket(casterId, source, stack);
 	}
 
 	public static void handle(SpawnBrazierItemAbsorptionParticlesPacket packet, IPayloadContext ctx) {
 		ctx.enqueueWork(() -> CellHandParticleEffects.spawnBrazierItemAbsorptionParticles(
-				packet.stack, packet.source));
+				packet.casterId, packet.stack, packet.source));
 	}
 
 	@Override

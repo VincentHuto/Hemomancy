@@ -279,7 +279,7 @@ public class RiteHintScreen extends Screen {
 		int lineH = 12;
 
 		// ── Rite name ──
-		String name = rite.getRiteName();
+		String name = rite.displayName().getString();
 		if (name == null || name.isEmpty()) {
 			String ritePath = rite.getId().getPath();
 			if (ritePath.contains("/")) ritePath = ritePath.substring(ritePath.lastIndexOf('/') + 1);
@@ -297,7 +297,7 @@ public class RiteHintScreen extends Screen {
 		y += 6;
 
 		// ── Description ──
-		String desc = rite.getRiteDescription();
+		String desc = rite.displayDescription().getString();
 		if (desc != null && !desc.isEmpty()) {
 			for (String line : ScreenDrawUtils.wrapText(font, desc, panelW)) {
 				gfx.drawString(font, Component.literal(line)
@@ -407,7 +407,7 @@ public class RiteHintScreen extends Screen {
 		int lineH = 12;
 
 		// Name
-		String name = rite.getRiteName();
+		String name = rite.displayName().getString();
 		if (name == null || name.isEmpty()) {
 			String ritePath = rite.getId().getPath();
 			if (ritePath.contains("/")) ritePath = ritePath.substring(ritePath.lastIndexOf('/') + 1);
@@ -417,7 +417,7 @@ public class RiteHintScreen extends Screen {
 		y += 4 + 1 + 6;
 
 		// Description
-		String desc = rite.getRiteDescription();
+		String desc = rite.displayDescription().getString();
 		if (desc != null && !desc.isEmpty()) {
 			y += ScreenDrawUtils.wrapText(font, desc, panelW).size() * lineH + 4;
 		}

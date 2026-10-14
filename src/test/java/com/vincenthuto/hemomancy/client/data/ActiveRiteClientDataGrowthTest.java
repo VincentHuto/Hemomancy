@@ -63,6 +63,7 @@ public final class ActiveRiteClientDataGrowthTest {
 	void newlyVisibleBoundarySegmentsGrowAcrossTwentyClientTicks() {
 		CardinalRiteBoundaryProgress.Segment segment =
 				new CardinalRiteBoundaryProgress.Segment(0, 0.0D, Math.PI / 2.0D, 0, 1.0F);
+		ActiveRiteClientData.set(List.of(riteWithSegments(List.of())));
 		ActiveRiteClientData.set(List.of(riteWithSegments(List.of(segment))));
 		ActiveRiteClientData.RiteEntry rite = currentRite();
 
@@ -98,6 +99,7 @@ public final class ActiveRiteClientDataGrowthTest {
 	void refreshedBoundarySegmentsPreserveTheirVisibleProgress() {
 		CardinalRiteBoundaryProgress.Segment segment =
 				new CardinalRiteBoundaryProgress.Segment(0, 0.0D, Math.PI / 2.0D, 0, 1.0F);
+		ActiveRiteClientData.set(List.of(riteWithSegments(List.of())));
 		ActiveRiteClientData.set(List.of(riteWithSegments(List.of(segment))));
 		for (int tick = 0; tick < 6; tick++) ActiveRiteClientData.tick();
 		float beforeRefresh = currentRite().boundaryGrowth(segment, 1.0F);
@@ -126,6 +128,7 @@ public final class ActiveRiteClientDataGrowthTest {
 	void completedBoundarySegmentsEmitOneSealEventAndTrackEffectAge() {
 		CardinalRiteBoundaryProgress.Segment segment =
 				new CardinalRiteBoundaryProgress.Segment(0, 0.0D, Math.PI / 2.0D, 0, 1.0F);
+		ActiveRiteClientData.set(List.of(riteWithSegments(List.of())));
 		ActiveRiteClientData.set(List.of(riteWithSegments(List.of(segment))));
 		ActiveRiteClientData.RiteEntry rite = currentRite();
 
@@ -139,6 +142,71 @@ public final class ActiveRiteClientDataGrowthTest {
 		ActiveRiteClientData.tick();
 		assertFloatEquals(0.5F, rite.boundaryEffectAge(segment, 0.5F),
 				"completion effect partial-tick age");
+	}
+
+	@Test
+	void joiningARiteShowsItsSealedSegmentsWithoutReplayingGrowthOrSeals() {
+		CardinalRiteBoundaryProgress.Segment first =
+				new CardinalRiteBoundaryProgress.Segment(0, 0.0D, Math.PI / 2.0D, 0, 1.0F);
+		CardinalRiteBoundaryProgress.Segment second =
+				new CardinalRiteBoundaryProgress.Segment(0, Math.PI / 2.0D, Math.PI / 2.0D, 1, 1.0F);
+		ActiveRiteClientData.set(List.of(riteWithSegments(List.of(first))));
+		ActiveRiteClientData.RiteEntry joined = currentRite();
+
+		assertFloatEquals(1.0F, joined.boundaryGrowth(first, 0.0F), "existing seal shown complete");
+		assertFloatEquals(-1.0F, joined.boundaryEffectAge(first, 1.0F), "no seal effect replayed");
+		assertFloatEquals(1.0F, joined.stainFadeProgress(0.0F), "existing stain shown at full strength");
+		for (int tick = 0; tick < 25; tick++) ActiveRiteClientData.tick();
+		assertTrue(!joined.consumeBoundaryCompletion(first), "no seal sound replayed on join");
+
+		ActiveRiteClientData.set(List.of(riteWithSegments(List.of(first, second))));
+		assertFloatEquals(0.0F, currentRite().boundaryGrowth(second, 0.0F),
+				"a segment sealed after joining still grows in");
+		assertFloatEquals(1.0F, currentRite().boundaryGrowth(first, 0.0F), "earlier seal stays complete");
+	}
+
+	@Test
+	void finaleSpinContinuesFromProcessionIntoCulmination() {
+		ActiveRiteClientData.set(List.of(riteInPhase("OFFERING_PROCESSION", 30)));
+		assertFloatEquals(30.0F, currentRite().ringSpinTicks(0.0F), "procession spins from its start");
+		for (int tick = 0; tick < 10; tick++) ActiveRiteClientData.tick();
+		ActiveRiteClientData.set(List.of(riteInPhase("CULMINATION", 0)));
+
+		assertFloatEquals(40.0F, currentRite().ringSpinTicks(0.0F),
+				"culmination carries the procession spin forward");
+		ActiveRiteClientData.tick();
+		assertFloatEquals(41.0F, currentRite().ringSpinTicks(1.0F), "spin keeps advancing");
+	}
+
+	@Test
+	void ringsStayStillOutsideTheFinale() {
+		ActiveRiteClientData.set(List.of(riteInPhase("ORDEAL", 300)));
+		assertFloatEquals(0.0F, currentRite().ringSpinTicks(1.0F), "ordeal rings do not spin");
+	}
+
+	@Test
+	void successionIsItsOwnClientPhaseRatherThanLegacy() {
+		ActiveRiteClientData.set(List.of(riteInPhase("SUCCESSION", 0)));
+		assertTrue(currentRite().isSuccession(), "succession recognised");
+		assertTrue(!currentRite().isLegacy(), "succession is not a legacy rite");
+		assertTrue(currentRite().ritePhase() == null, "succession has no server phase");
+
+		ActiveRiteClientData.set(List.of(riteInPhase("LEGACY", 0)));
+		assertTrue(currentRite().isLegacy(), "legacy recognised");
+		ActiveRiteClientData.set(List.of(riteInPhase("CULMINATION", 0)));
+		assertTrue(currentRite().isPhase(
+				com.vincenthuto.hemomancy.common.rite.CardinalRitePhase.CULMINATION), "typed phase");
+	}
+
+	@Test
+	void riteThatLeftTheSyncListCanStillBeFoundBriefly() {
+		ActiveRiteClientData.set(List.of(riteWithSegments(List.of())));
+		ActiveRiteClientData.RiteEntry ended = currentRite();
+		ActiveRiteClientData.set(List.of());
+
+		assertTrue(ActiveRiteClientData.recentlyEnded(BlockPos.ZERO) == ended, "ended rite is remembered");
+		for (int tick = 0; tick < 25; tick++) ActiveRiteClientData.tick();
+		assertTrue(ActiveRiteClientData.recentlyEnded(BlockPos.ZERO) == null, "and forgotten after a second");
 	}
 
 	@Test
@@ -199,6 +267,16 @@ public final class ActiveRiteClientDataGrowthTest {
 				false, "CONSECRATION", 0, 0, 1, 0, 1,
 				0, 200, 0, 0, 0, "",
 				0.0F, List.of(), segments, List.of(), List.of());
+	}
+
+	private static ActiveRiteClientData.RiteEntry riteInPhase(String phase, int phaseTicks) {
+		return new ActiveRiteClientData.RiteEntry(
+				BlockPos.ZERO, 3, 0.0D,
+				ResourceLocation.fromNamespaceAndPath("hemomancy", "growth_test"),
+				false, phase, 0, 0, 1, 0, 1,
+				0, 200, 0, 0, 0, "",
+				0.0F, List.of(), List.of(), List.of(), List.of(),
+				false, null, 0, -1, "storm", true, true, phaseTicks);
 	}
 
 	private static ActiveRiteClientData.RiteEntry riteWithCancellationTicks(int cancellationTicks) {

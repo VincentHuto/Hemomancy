@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteStationMatcher;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
@@ -18,7 +19,6 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
@@ -49,6 +49,9 @@ public class CardinalFocusBlockEntity extends BlockEntity {
 	// Client-side start of the formation animation, when it must wait for a collapse or resume one; NaN uses the
 	// server's formation time.
 	private float clientFormStart = Float.NaN;
+	// Client-side: how far the floor's heart has quickened for a rite held here, eased by the floor renderer.
+	private float riteQuick;
+	private float riteIntense;
 
 	public CardinalFocusBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.cardinal_focus.get(), pos, state);
@@ -120,6 +123,20 @@ public class CardinalFocusBlockEntity extends BlockEntity {
 	/** When the formed floor's formation animation starts on this client. */
 	public float getFormationStart() { return Float.isNaN(clientFormStart) ? formedSince : clientFormStart; }
 
+	/**
+	 * The floor's heartbeat at this time: the resting lub-dub, quickened while a rite is held on the floor. The floor
+	 * renderer sets how quickened it is each frame, and the membrane, its seats and the Focus's particles share it.
+	 */
+	public float heartbeat(double time) {
+		return CardinalRiteFloorVisualRules.riteHeartbeat(time, riteQuick, riteIntense);
+	}
+
+	/** Client-side: how far a rite has quickened the floor's heart, each 0 to 1, already eased by the caller. */
+	public void setRiteTempo(float quick, float intense) {
+		riteQuick = quick;
+		riteIntense = intense;
+	}
+
 	/** Whether a broken or replaced floor is still drawing back into the Focus at this time. */
 	public boolean isCollapsing(float now) {
 		return fadingFloor != null && !CardinalRiteFloorVisualRules.collapsed(now - fadingSince);
@@ -138,10 +155,10 @@ public class CardinalFocusBlockEntity extends BlockEntity {
 		if (newFloor) {
 			focus.formedSince = level.getGameTime();
 			if (id != null) {
-				level.playSound(null, pos, SoundEvents.SCULK_CATALYST_BLOOM, SoundSource.BLOCKS, 1.4F, 0.62F);
-				level.playSound(null, pos, SoundEvents.WARDEN_HEARTBEAT, SoundSource.BLOCKS, 0.9F, 0.72F);
+				level.playSound(null, pos, SoundInit.RITE_FLOOR_FORM.get(), SoundSource.BLOCKS, 1.3F, 1.0F);
 			} else {
-				level.playSound(null, pos, SoundEvents.SCULK_BLOCK_BREAK, SoundSource.BLOCKS, 0.8F, 0.55F);
+				// The membrane tearing back into the Focus: a quiet rupture, not a rite failing.
+				level.playSound(null, pos, SoundInit.RITE_ANCHOR_BREAK.get(), SoundSource.BLOCKS, 0.45F, 0.7F);
 			}
 		}
 		focus.markDirtyAndSync();
@@ -181,14 +198,14 @@ public class CardinalFocusBlockEntity extends BlockEntity {
 			}
 			return;
 		}
-		if (random.nextInt(5) == 0) {
-			// A blood cell surfaces from the membrane and drifts up.
+		// A blood cell surfaces from the membrane and drifts up, more often while a rite quickens it.
+		if (random.nextInt(focus.riteQuick > 0.5F ? 3 : 5) == 0) {
 			double x = (random.nextDouble() * 2.0D - 1.0D) * (half + 0.4D);
 			double z = (random.nextDouble() * 2.0D - 1.0D) * (half + 0.4D);
 			level.addParticle(HemoParticleData.bloodCell(color(palette.vein())), cx + x, top, cz + z,
 					0.0D, 0.012D, 0.0D);
 		}
-		float beat = CardinalRiteFloorVisualRules.heartbeat(level.getGameTime());
+		float beat = focus.heartbeat(level.getGameTime());
 		if (beat > 0.85F && random.nextInt(3) == 0) {
 			level.addParticle(HemoParticleData.glow(color(palette.glow())), cx, top + 0.05D, cz,
 					0.0D, 0.02D, 0.0D);

@@ -13,7 +13,6 @@ import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonFactory;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -135,12 +134,13 @@ public final class PuppeteerTrialRiteController {
 		for (CardinalRiteStationMatcher.BrazierMatch offering : station.braziers()) {
 			if (offering.consumeOnSuccess()
 					&& level.getBlockEntity(offering.pos()) instanceof IronBrazierBlockEntity brazier) {
-				ItemStack consumed = brazier.consumeOffering();
+				ItemStack consumed = brazier.consumeForRite(false);
 				if (!consumed.isEmpty()) {
 					offeringBursts.add(new PacketBloodStructureOfferingBurst.OfferingBurst(offering.pos(), consumed));
 				}
 			}
-			level.sendParticles(ParticleTypes.CRIMSON_SPORE,
+			level.sendParticles(com.vincenthuto.hemomancy.common.particle.HemoParticleData.bloodCell(
+					new com.vincenthuto.hutoslib.client.particle.util.ParticleColor(170, 8, 20)),
 					offering.pos().getX() + 0.5, offering.pos().getY() + 1.0, offering.pos().getZ() + 0.5,
 					12, 0.08, 0.2, 0.08, 0.02);
 		}

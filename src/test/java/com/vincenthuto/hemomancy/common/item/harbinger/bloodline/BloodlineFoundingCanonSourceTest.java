@@ -8,7 +8,8 @@ public final class BloodlineFoundingCanonSourceTest {
 	private BloodlineFoundingCanonSourceTest() {}
 	public static void main(String[] args) throws IOException {
 		String ledger = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/bloodline/UnsignedLedgerItem.java");
-		String rites = read("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java");
+		String rites = read("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java")
+				+ read("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletionEffects.java");
 		assertNotContains(ledger, "new Bloodline(bloodLineName");
 		assertContains(ledger, "Only the Bloodline Founding rite can write the first name");
 		assertContains(rites, "degree.setHasFoundedBloodline(true)");

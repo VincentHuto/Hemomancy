@@ -46,6 +46,12 @@ public final class CardinalRiteBoundaryProgress {
 
 	public static List<Segment> completedSegments(
 			List<CardinalRiteCeremonyDefinition.Anchor> anchors, int[] anchorBloodMl) {
+		return completedSegments(anchors, anchorBloodMl, null);
+	}
+
+	/** Arcs between neighbouring anchors that are both fed to their own requirement; 0 marks a sleeping anchor. */
+	public static List<Segment> completedSegments(
+			List<CardinalRiteCeremonyDefinition.Anchor> anchors, int[] anchorBloodMl, int[] requiredMl) {
 		if (anchors == null || anchors.isEmpty() || anchorBloodMl == null) return List.of();
 		List<Segment> result = new ArrayList<>();
 		int maxRing = anchors.stream().mapToInt(CardinalRiteCeremonyDefinition.Anchor::ring).max().orElse(-1);
@@ -63,7 +69,8 @@ public final class CardinalRiteBoundaryProgress {
 			for (int index = 0; index < ringAnchors.size(); index++) {
 				IndexedAnchor start = ringAnchors.get(index);
 				IndexedAnchor end = ringAnchors.get((index + 1) % ringAnchors.size());
-				if (!complete(anchorBloodMl, start.index()) || !complete(anchorBloodMl, end.index())) continue;
+				if (!complete(anchorBloodMl, requiredMl, start.index())
+						|| !complete(anchorBloodMl, requiredMl, end.index())) continue;
 				double startAngle = Math.atan2(start.anchor().z(), start.anchor().x());
 				double endAngle = Math.atan2(end.anchor().z(), end.anchor().x());
 				double sweep = normalizeAngle(endAngle - startAngle);
@@ -73,9 +80,11 @@ public final class CardinalRiteBoundaryProgress {
 		return List.copyOf(result);
 	}
 
-	private static boolean complete(int[] blood, int index) {
-		return index >= 0 && index < blood.length
-				&& blood[index] >= CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML;
+	private static boolean complete(int[] blood, int[] requiredMl, int index) {
+		if (index < 0 || index >= blood.length) return false;
+		int required = requiredMl != null && index < requiredMl.length
+				? requiredMl[index] : CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML;
+		return required > 0 && blood[index] >= required;
 	}
 
 	private record IndexedAnchor(int index, CardinalRiteCeremonyDefinition.Anchor anchor) {

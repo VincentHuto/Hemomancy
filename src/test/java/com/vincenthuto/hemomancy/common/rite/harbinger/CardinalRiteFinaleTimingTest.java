@@ -24,9 +24,11 @@ final class CardinalRiteFinaleTimingTest {
 	}
 
 	@Test
-	void daemonStaysAtProcessionSizeUntilItReturnsFromTheBraziers() {
-		assertEquals(0.8D, CardinalRiteFinaleTiming.preProcessionHeight(0.8D), 0.0001D);
-		assertEquals(1.4D, CardinalRiteFinaleTiming.preProcessionHeight(4.5D), 0.0001D);
+	void theDaemonKeepsOneSizeAndSwellsOnlyWithItsOfferings() {
+		assertEquals(CardinalRiteFinaleTiming.PROCESSION_SCALE, CardinalRiteFinaleTiming.daemonScale(0), 1e-6F,
+				"from the moment it appears, not grown into");
+		assertEquals(0.35F * 1.36F, CardinalRiteFinaleTiming.daemonScale(3), 1e-6F, "each offering swells it");
+		assertEquals(CardinalRiteFinaleTiming.daemonScale(0), CardinalRiteFinaleTiming.daemonScale(-2), 1e-6F);
 	}
 
 	@Test

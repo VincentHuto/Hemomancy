@@ -128,8 +128,44 @@ public class IronBrazierBlockEntity extends BlockEntity {
 		return extracted;
 	}
 
+	/** Takes the offering for a rite and leaves the fire burning; see {@link #consumeForRite(boolean)}. */
 	public ItemStack consumeOffering() {
-		return extractOffering();
+		return consumeForRite(false);
+	}
+
+	/**
+	 * Removes and returns the single seated offering for a rite, or {@link ItemStack#EMPTY} when the bowl holds
+	 * none. Channel progress is cleared and the block entity is synced, as with {@link #extractOffering()}.
+	 * <p>
+	 * With {@code extinguish}, and only when an offering was actually taken, the fire goes out silently by dropping
+	 * the brazier to ritual phase 0; the bowl's pooled blood then settles on the next server tick. Who extinguishes:
+	 * <ul>
+	 *   <li>Brazier item absorption ({@code BrazierItemAbsorptionRite.complete}, shared by the Memory, Scar and
+	 *   Living Weapon Graft rites) does: the offering is drawn out with its fire, so the brazier must be lit again
+	 *   by Blood Projection before the next offering.</li>
+	 *   <li>Blood Structure crafting ({@code BloodStructureCraftingHelper.consumeMatchedOfferings}) does: each
+	 *   offering brazier is spent by the formation it fed.</li>
+	 *   <li>The cardinal rite offering procession, station upgrade, Puppeteer and succession rites do not (they call
+	 *   {@link #consumeOffering()}): the procession draws offerings one by one while the circle's braziers keep
+	 *   burning as part of the rite.</li>
+	 * </ul>
+	 */
+	public ItemStack consumeForRite(boolean extinguish) {
+		ItemStack consumed = extractOffering();
+		if (extinguish && !consumed.isEmpty()) {
+			extinguish();
+		}
+		return consumed;
+	}
+
+	private void extinguish() {
+		if (level == null || level.isClientSide) {
+			return;
+		}
+		BlockState state = level.getBlockState(worldPosition);
+		if (BrazierBlock.isLit(state)) {
+			level.setBlock(worldPosition, state.setValue(BrazierBlock.RITUAL_PHASE, 0), Block.UPDATE_ALL);
+		}
 	}
 
 	public int advanceItemAbsorption(ServerPlayer player, String riteId, int requiredTicks) {

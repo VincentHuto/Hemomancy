@@ -17,6 +17,7 @@ public final class LivingWeaponGraftRiteSourceTest {
 		String memoryOfVesper = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/MemoryOfVesperItem.java");
 		String packetHandler = read("src/main/java/com/vincenthuto/hemomancy/common/network/PacketHandler.java");
 		String cellHandParticles = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/harbinger/CellHandParticleEffects.java");
+		String rites = read("src/main/java/com/vincenthuto/hemomancy/common/rite/brazier/BrazierRites.java");
 
 		assertContains("brazier tracks absorption player", blockEntity, "itemAbsorptionPlayer");
 		assertContains("brazier tracks absorption rite", blockEntity, "itemAbsorptionRiteId");
@@ -26,32 +27,37 @@ public final class LivingWeaponGraftRiteSourceTest {
 		assertContains("brazier clears absorption when offering changes", blockEntity, "resetItemAbsorptionProgress()");
 		assertNotContains("shared brazier state is no longer graft-specific", blockEntity, "graftRiteProgressTicks");
 
-		assertContains("brazier absorb endpoint delegates graft rite", block, "LivingWeaponGraftRite.tryAbsorb");
+		assertContains("brazier absorb endpoint delegates to the brazier rites", block, "BrazierRites.absorb");
+		assertContains("brazier rites include the graft rite", rites, "LivingWeaponGraftRite.INSTANCE");
 		assertContains("brazier still uses block blood endpoint", block, "implements EntityBlock, SimpleWaterloggedBlock, BlockBloodEndpoint");
 
 		assertContains("rite shares the standard brazier item absorption duration", rite,
 				"REQUIRED_CHANNEL_TICKS = BrazierItemAbsorptionRite.REQUIRED_CHANNEL_TICKS");
-		assertContains("rite uses shared completion lifecycle", rite, "BrazierItemAbsorptionRite.complete");
+		assertContains("rite uses shared completion lifecycle", rite, "implements BrazierRite<");
+		assertContains("shared lifecycle completes through the absorption rite", rites,
+				"BrazierItemAbsorptionRite.complete");
 		assertNotContains("rite no longer duplicates offering consumption", rite, "consumeOffering()");
 		assertNotContains("rite no longer duplicates brazier extinguishing", rite, "extinguishBrazier");
-		assertContains("rite uses the shared item particle channel", rite, "BrazierItemAbsorptionRite.advance");
+		assertContains("rite uses the shared item particle channel", rites, "BrazierItemAbsorptionRite.advance");
 		assertContains("absorption particle packet is registered", packetHandler, "SpawnBrazierItemAbsorptionParticlesPacket.TYPE");
 		assertContains("absorption particles use the first-person fallback outside an item render callback",
 				cellHandParticles, "fallbackFirstPersonHandOrigin(activeArm)");
-		assertContains("absorption particles use item particle option", cellHandParticles, "new ItemParticleOption(ParticleTypes.ITEM, offeringStack)");
-		assertContains("absorbed item fragments use a sparse per-tick count", cellHandParticles,
+		assertNotContains("absorbed offerings no longer break into vanilla item particles", cellHandParticles,
+				"ParticleTypes.ITEM");
+		assertContains("absorbed offerings stream in as tinted absorbed cells", cellHandParticles,
+				"spawnAbsorbedBloodParticle(mc, origin, source, absorptionItemColor, rand, firstPersonTargetAnchor)");
+		assertContains("absorbed offering cells use a sparse per-tick count", cellHandParticles,
 				"ABSORBED_ITEM_PARTICLES_PER_TICK = 2");
-		assertContains("absorbed item fragments render at a reduced scale", cellHandParticles,
-				"ABSORBED_ITEM_PARTICLE_SCALE = 0.55F");
-		assertContains("absorbed item fragments apply their reduced scale", cellHandParticles,
-				"itemParticle.scale(ABSORBED_ITEM_PARTICLE_SCALE)");
+		assertContains("the offering stream follows whichever player channels it", cellHandParticles,
+				"mc.level.getEntity(casterId) instanceof Player player");
 		assertContains("absorption particles read graft form data when present", cellHandParticles, "LivingWeaponGraftData.fromStack(offeringStack)");
 		assertContains("graft particles use manipulation tendency color", cellHandParticles, "form.manipulationHolder().get().getTend().getColor()");
 		assertContains("absorption particles add hutoslib glow", cellHandParticles, "GlowParticleFactory.createData(absorptionItemColor)");
 		assertContains("generic client absorption entry point", cellHandParticles, "spawnBrazierItemAbsorptionParticles");
-		assertContains("graft rite requires a lit brazier", rite, "getValue(BrazierBlock.RITUAL_PHASE) > 0");
-		assertBefore("lit check happens before channel progress", rite,
-				"getValue(BrazierBlock.RITUAL_PHASE) > 0", "BrazierItemAbsorptionRite.advance");
+		assertContains("graft rite requires a lit brazier", rite, "if (!channel.lit())");
+		assertContains("brazier rites read the lit state from the block", rites, "BrazierBlock.isLit(state)");
+		assertBefore("preflight happens before channel progress", rites,
+				"rite.preflight(channel)", "BrazierItemAbsorptionRite.advance");
 		assertNotContains("graft rite no longer auto-lights the brazier", rite,
 				"setValue(BrazierBlock.RITUAL_PHASE, 2)");
 		assertContains("rite grants through form memory helper", rite, "LivingWeaponMemoryUnlocks.grantFormMemory");
@@ -62,7 +68,7 @@ public final class LivingWeaponGraftRiteSourceTest {
 		assertContains("rite checks earned condition", rite, "hasEarnedRecipeUnlock");
 		assertContains("rite bypasses earned condition for creative testing", rite, "player.isCreative()");
 		assertContains("rite refuses already known forms", rite, "ALREADY_KNOWN");
-		assertContains("rite returns handled blood amount", rite, "return maxAmount");
+		assertContains("rite lifecycle returns handled blood amount", rites, "return maxAmount");
 
 		assertContains("vesper memory item guides to brazier rite", memoryOfVesper,
 				"hemomancy.memory_of_vesper.rite_guidance");

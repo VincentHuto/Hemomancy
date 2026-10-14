@@ -19,8 +19,9 @@ class CardinalRiteOverlayGeometryTest {
 	@Test
 	void renderedHudIsCompactAtSmallGuiWidths() {
 		assertEquals(0.72F, CardinalRiteOverlayGeometry.HUD_SCALE);
-		assertEquals(166, CardinalRiteOverlayGeometry.renderedHudWidth());
-		assertTrue(CardinalRiteOverlayGeometry.renderedHudWidth() <= 256 * 2 / 3,
+		int renderedHudWidth = Math.round(CardinalRiteOverlayGeometry.HUD_WIDTH * CardinalRiteOverlayGeometry.HUD_SCALE);
+		assertEquals(166, renderedHudWidth);
+		assertTrue(renderedHudWidth <= 256 * 2 / 3,
 				"the rite readout should not dominate a 256-wide GUI");
 		assertEquals(356, CardinalRiteOverlayGeometry.virtualScreenWidth(256));
 	}

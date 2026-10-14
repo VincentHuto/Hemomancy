@@ -82,7 +82,7 @@ public class RitesTabController implements IProgressTab {
                     mapRites.put(r.getId(), r);
                     String path = r.getId().getPath();
                     mapEntries.add(new RecipeMapEntry(new RecipeMapKey(RecipeMapEntry.Kind.RITE, r.getId()),
-                            r.getRiteName(), r.getRiteDescription(), RecipeDegreeGates.getRequiredDegree(r),
+                            r.displayName().getString(), r.displayDescription().getString(), RecipeDegreeGates.getRequiredDegree(r),
                             HarbingerRecipeMapDefinitions.riteFamily(path),
                             HarbingerRecipeMapDefinitions.riteOrder(path), discovered,
                             discovered && ctx.playerDegree() >= RecipeDegreeGates.getRequiredDegree(r)));

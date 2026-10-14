@@ -16,6 +16,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.SporiticThuribleReso
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomEvents;
+import com.vincenthuto.hemomancy.common.rite.harbinger.SanguineDominionEvents;
 import com.vincenthuto.hemomancy.config.HemoMnAConfig;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -73,6 +74,10 @@ public final class ManipulationCostLedger {
 
 		if (player instanceof ServerPlayer serverPlayer && QliphothBloomEvents.isInQliphothBloom(serverPlayer)) {
 			addIfNotNeutral(contributions, "qliphoth_bloom", "Qliphoth Bloom", Category.RITE, 0.75D);
+		}
+
+		if (player instanceof ServerPlayer serverPlayer && SanguineDominionEvents.isInOwnDomain(serverPlayer)) {
+			addIfNotNeutral(contributions, "sanguine_dominion", "Sanguine Dominion", Category.RITE, 0.75D);
 		}
 
 		long pomeExpiry = HemoCapabilityAccess.getInitiatoryDegree(player)

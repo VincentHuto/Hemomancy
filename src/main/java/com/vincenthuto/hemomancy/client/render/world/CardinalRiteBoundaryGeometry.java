@@ -1,12 +1,11 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteBoundaryProgress;
-import com.vincenthuto.hemomancy.common.rite.CardinalRiteFootprintRules;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteMath;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAnchorVisualRules;
 import net.minecraft.core.BlockPos;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Shared geometry rules for the visible Cardinal Rite rings and the enclosing
@@ -55,122 +54,23 @@ public final class CardinalRiteBoundaryGeometry {
 		return Math.acos(Math.max(-1.0D, Math.min(1.0D, cosine)));
 	}
 
-	public static SocketJunction socketJunction(
-			float ringRadius, float socketX, float socketZ,
-			float socketRadius, int side) {
-		double anchorAngle = Math.atan2(socketZ, socketX);
-		float socketCenterRadius = (float) Math.hypot(socketX, socketZ);
-		double clearance = socketClearanceAngle(
-				ringRadius, socketCenterRadius, socketRadius);
-		double boundaryAngle = anchorAngle + (side < 0 ? -clearance : clearance);
-		float x = (float) Math.cos(boundaryAngle) * ringRadius;
-		float z = (float) Math.sin(boundaryAngle) * ringRadius;
-		double socketAngle = Math.atan2(z - socketZ, x - socketX);
-		return new SocketJunction(boundaryAngle, socketAngle, x, z);
-	}
-
-	public static List<AngularArc> socketBodyArcs(
-			double tangentAngle, double gateHalfAngle) {
-		return socketBodyArcsBetweenGates(
-				tangentAngle, tangentAngle + Math.PI, gateHalfAngle);
-	}
-
-	public static List<AngularArc> socketOverlayArcs() {
-		return List.of(new AngularArc(0.0D, Math.PI * 2.0D));
-	}
-
-	public static List<AngularArc> socketBodyArcsBetweenGates(
-			double firstGateAngle, double secondGateAngle,
-			double gateHalfAngle) {
-		double clampedGate = Math.max(0.0D,
-				Math.min(Math.PI * 0.45D, gateHalfAngle));
-		double first = normalizeAngle(firstGateAngle);
-		double second = normalizeAngle(secondGateAngle);
-		double firstSweep = Math.max(0.0D,
-				normalizeAngle(second - first) - clampedGate * 2.0D);
-		double secondSweep = Math.max(0.0D,
-				normalizeAngle(first - second) - clampedGate * 2.0D);
-		return List.of(
-				new AngularArc(first + clampedGate, firstSweep),
-				new AngularArc(second + clampedGate, secondSweep));
-	}
-
-	public static double normalizeRadians(double angle) {
-		return normalizeAngle(angle);
-	}
-
-	public static List<AngularArc> tessellateArc(
-			double startAngle, double sweepAngle, int fullCircleSegments) {
-		if (sweepAngle <= 0.0D || fullCircleSegments <= 0) return List.of();
-		double maximumSweep = Math.PI * 2.0D / fullCircleSegments;
-		int pieceCount = Math.max(1, (int) Math.ceil(sweepAngle / maximumSweep));
-		double pieceSweep = sweepAngle / pieceCount;
-		java.util.ArrayList<AngularArc> pieces = new java.util.ArrayList<>(pieceCount);
-		for (int index = 0; index < pieceCount; index++) {
-			pieces.add(new AngularArc(startAngle + pieceSweep * index, pieceSweep));
-		}
-		return List.copyOf(pieces);
-	}
-
-	public static float socketEndpointWaveScale(
-			double angle, List<CardinalRiteBoundaryProgress.Segment> segments,
-			float ringRadius, float socketThroatRadius, double fadeAngle) {
-		if (segments.isEmpty() || ringRadius <= 0.0F || fadeAngle <= 0.0D) {
-			return 1.0F;
-		}
-		double ratio = Math.max(0.0D, Math.min(1.0D,
-				socketThroatRadius / (ringRadius * 2.0D)));
-		double clearance = 2.0D * Math.asin(ratio);
-		double nearest = Double.POSITIVE_INFINITY;
-		for (CardinalRiteBoundaryProgress.Segment segment : segments) {
-			double start = segment.startAngle() + clearance;
-			double end = segment.startAngle() + segment.sweepAngle() - clearance;
-			nearest = Math.min(nearest, angularDistance(angle, start));
-			nearest = Math.min(nearest, angularDistance(angle, end));
-		}
-		return smoothstep((float) Math.min(1.0D, nearest / fadeAngle));
+	/**
+	 * Number of equal pieces a sweep is cut into so no piece is wider than one
+	 * segment of a full circle; the last piece ends exactly on the sweep's end.
+	 */
+	public static int pieceCount(double sweepAngle, int fullCircleSegments) {
+		if (sweepAngle <= 0.0D || fullCircleSegments <= 0) return 0;
+		return Math.max(1, (int) Math.ceil(sweepAngle / (Math.PI * 2.0D / fullCircleSegments)));
 	}
 
 	public static float endpointWaveScale(
 			double angle, List<Double> endpointAngles, double fadeAngle) {
 		if (endpointAngles.isEmpty() || fadeAngle <= 0.0D) return 1.0F;
-		double nearest = endpointAngles.stream()
-				.mapToDouble(endpoint -> angularDistance(angle, endpoint))
-				.min()
-				.orElse(fadeAngle);
-		return smoothstep((float) Math.min(1.0D, nearest / fadeAngle));
-	}
-
-	public static float socketGateWaveScale(
-			double angle, double tangentAngle, double gateHalfAngle,
-			double fadeAngle) {
-		return socketGateWaveScale(angle, tangentAngle,
-				tangentAngle + Math.PI, gateHalfAngle, fadeAngle);
-	}
-
-	public static float socketGateWaveScale(
-			double angle, double firstGateAngle, double secondGateAngle,
-			double gateHalfAngle, double fadeAngle) {
-		if (fadeAngle <= 0.0D) return 1.0F;
-		double nearest = Double.POSITIVE_INFINITY;
-		for (double gateCenter : new double[] {
-				firstGateAngle, secondGateAngle}) {
-			nearest = Math.min(nearest,
-					angularDistance(angle, gateCenter - gateHalfAngle));
-			nearest = Math.min(nearest,
-					angularDistance(angle, gateCenter + gateHalfAngle));
+		double nearest = fadeAngle;
+		for (int index = 0; index < endpointAngles.size(); index++) {
+			nearest = Math.min(nearest, CardinalRiteMath.angularDistance(angle, endpointAngles.get(index)));
 		}
-		return smoothstep((float) Math.min(1.0D, nearest / fadeAngle));
-	}
-
-	private static double angularDistance(double first, double second) {
-		double difference = normalizeAngle(first - second);
-		return Math.min(difference, Math.PI * 2.0D - difference);
-	}
-
-	private static float smoothstep(float value) {
-		float clamped = Math.max(0.0F, Math.min(1.0F, value));
-		return clamped * clamped * (3.0F - 2.0F * clamped);
+		return CardinalRiteMath.smoothstep((float) Math.min(1.0D, nearest / fadeAngle));
 	}
 
 	public static float veinRootRadius(float boundaryRadius, float boundaryWidth, float undulation) {
@@ -211,22 +111,10 @@ public final class CardinalRiteBoundaryGeometry {
 				: interactiveRingRadius(ringCount - 1);
 	}
 
-	public static float footprintRadius(List<BlockPos> boundaryPoints, List<BlockPos> sigilPoints) {
-		return CardinalRiteFootprintRules.radius(boundaryPoints, sigilPoints);
-	}
-
-	public static List<CardinalRiteBoundaryProgress.Segment> animatedSocketArcs(
-			CardinalRiteBoundaryProgress.Segment segment, float growth,
-			float ringRadius, float socketRadius) {
-		double clearance = socketClearanceAngle(
-				ringRadius, ringRadius, socketRadius);
-		return animatedSocketArcs(segment, growth, clearance, clearance);
-	}
-
 	public static List<CardinalRiteBoundaryProgress.Segment> animatedSocketArcs(
 			CardinalRiteBoundaryProgress.Segment segment, float growth,
 			double startClearance, double endClearance) {
-		float clampedGrowth = Math.max(0.0F, Math.min(1.0F, growth));
+		float clampedGrowth = CardinalRiteMath.clamp01(growth);
 		if (clampedGrowth <= 0.0F) return List.of();
 		double clampedStart = Math.max(0.0D, startClearance);
 		double clampedEnd = Math.max(0.0D, endClearance);
@@ -248,23 +136,6 @@ public final class CardinalRiteBoundaryGeometry {
 						endpointSweep, segment.startAnchorIndex(), segment.integrity()));
 	}
 
-	public static Optional<CardinalRiteBoundaryProgress.Segment> completedSocketArc(
-			CardinalRiteBoundaryProgress.Segment segment, float growth,
-			float ringRadius, float socketRadius) {
-		double clearance = socketClearanceAngle(
-				ringRadius, ringRadius, socketRadius);
-		return completedSocketArc(segment, growth, clearance, clearance);
-	}
-
-	public static Optional<CardinalRiteBoundaryProgress.Segment> completedSocketArc(
-			CardinalRiteBoundaryProgress.Segment segment, float growth,
-			double startClearance, double endClearance) {
-		if (growth < 1.0F) return Optional.empty();
-		List<CardinalRiteBoundaryProgress.Segment> arcs =
-				animatedSocketArcs(segment, 1.0F, startClearance, endClearance);
-		return arcs.isEmpty() ? Optional.empty() : Optional.of(arcs.getFirst());
-	}
-
 	public static float socketIntensity(float blobRadius) {
 		float fill = socketFill(blobRadius);
 		return DORMANT_SOCKET_INTENSITY
@@ -272,24 +143,21 @@ public final class CardinalRiteBoundaryGeometry {
 	}
 
 	public static float socketFill(float blobRadius) {
-		return Math.max(0.0F, Math.min(1.0F,
-				blobRadius / FULL_BOUNDARY_BLOB_RADIUS));
+		return CardinalRiteMath.clamp01(blobRadius / FULL_BOUNDARY_BLOB_RADIUS);
 	}
 
 	public static float sealPulseAlpha(float effectAge) {
 		if (effectAge < 0.0F) return 0.0F;
-		float remaining = Math.max(0.0F, Math.min(1.0F,
-				1.0F - effectAge / 10.0F));
+		float remaining = CardinalRiteMath.clamp01(1.0F - effectAge / 10.0F);
 		return remaining * remaining;
 	}
 
 	public static float sealTravel(float effectAge) {
-		return Math.max(0.0F, Math.min(1.0F, effectAge / 8.0F));
+		return CardinalRiteMath.clamp01(effectAge / 8.0F);
 	}
 
 	public static float bolusProgress(float effectAge) {
-		return Math.max(0.0F, Math.min(1.0F,
-				(effectAge - 3.0F) / 14.0F));
+		return CardinalRiteMath.clamp01((effectAge - 3.0F) / 14.0F);
 	}
 
 	public static float bolusAlpha(float effectAge) {
@@ -300,7 +168,8 @@ public final class CardinalRiteBoundaryGeometry {
 
 	public static SocketDistortion socketDistortion(
 			double angle, float time, int anchorIndex, float integrity) {
-		float damage = 1.0F - Math.max(0.0F, Math.min(1.0F, integrity));
+		float damage = 1.0F - CardinalRiteMath.clamp01(integrity);
+		if (damage <= 0.0F) return SocketDistortion.NONE;
 		float offsetX = (float) Math.sin(time * 0.91F + anchorIndex * 1.7F)
 				* 0.06F * damage;
 		float offsetZ = (float) Math.cos(time * 1.13F + anchorIndex * 0.83F)
@@ -312,40 +181,32 @@ public final class CardinalRiteBoundaryGeometry {
 	}
 
 	public record SocketDistortion(float offsetX, float offsetZ, float radialScale) {
-	}
-
-	public record AngularArc(double startAngle, double sweepAngle) {
-	}
-
-	public record SocketJunction(
-			double boundaryAngle, double socketAngle, float x, float z) {
+		public static final SocketDistortion NONE = new SocketDistortion(0.0F, 0.0F, 1.0F);
 	}
 
 	public static boolean hasVisibleBeamAt(
 			List<CardinalRiteBoundaryProgress.Segment> arcs, double angle) {
-		double normalizedAngle = normalizeAngle(angle);
-		for (CardinalRiteBoundaryProgress.Segment arc : arcs) {
+		double normalizedAngle = CardinalRiteMath.normalizeAngle(angle);
+		for (int index = 0; index < arcs.size(); index++) {
+			CardinalRiteBoundaryProgress.Segment arc = arcs.get(index);
 			if (arc.integrity() <= 0.01F) continue;
-			double fromStart = normalizeAngle(
-					normalizedAngle - normalizeAngle(arc.startAngle()));
+			double fromStart = CardinalRiteMath.normalizeAngle(
+					normalizedAngle - CardinalRiteMath.normalizeAngle(arc.startAngle()));
 			if (fromStart <= arc.sweepAngle()) return true;
 		}
 		return false;
 	}
 
 	public static float integrityWidth(float healthyWidth, float integrity) {
-		float clamped = Math.max(0.0F, Math.min(1.0F, integrity));
-		return healthyWidth * (0.22F + 0.78F * clamped);
+		return healthyWidth * (0.22F + 0.78F * CardinalRiteMath.clamp01(integrity));
 	}
 
 	public static float integrityBrightness(float integrity) {
-		float clamped = Math.max(0.0F, Math.min(1.0F, integrity));
-		return 0.12F + 0.88F * clamped;
+		return 0.12F + 0.88F * CardinalRiteMath.clamp01(integrity);
 	}
 
 	public static float arterialHighlight(double angle, float time, int ring) {
-		double phase = normalizeAngle(angle - arterialHighlightPosition(time, ring));
-		double distance = Math.min(phase, Math.PI * 2.0D - phase);
+		double distance = CardinalRiteMath.angularDistance(angle, arterialHighlightPosition(time, ring));
 		double normalized = Math.max(0.0D, 1.0D - distance / 0.42D);
 		return (float) (normalized * normalized * (3.0D - 2.0D * normalized));
 	}
@@ -359,8 +220,7 @@ public final class CardinalRiteBoundaryGeometry {
 	}
 
 	public static float stainOpacity(float progress) {
-		float clamped = Math.max(0.0F, Math.min(1.0F, progress));
-		return clamped * clamped * (3.0F - 2.0F * clamped);
+		return CardinalRiteMath.smoothstep(progress);
 	}
 
 	public static float socketStainOuterRadius(float socketRadius) {
@@ -381,13 +241,7 @@ public final class CardinalRiteBoundaryGeometry {
 		if (radialDistance <= featherStart) return socketStainEdgeAlpha(intensity);
 		if (radialDistance >= outerRadius) return 0.0F;
 		float progress = (radialDistance - featherStart) / (outerRadius - featherStart);
-		return socketStainEdgeAlpha(intensity) * (1.0F - smoothstep(progress));
-	}
-
-	public static double socketStainClearanceAngle(
-			float ringRadius, float socketCenterRadius, float socketRadius) {
-		return socketClearanceAngle(
-				ringRadius, socketCenterRadius, socketStainOuterRadius(socketRadius));
+		return socketStainEdgeAlpha(intensity) * (1.0F - CardinalRiteMath.smoothstep(progress));
 	}
 
 	public static float boundaryStainSocketMask(
@@ -397,7 +251,7 @@ public final class CardinalRiteBoundaryGeometry {
 		float safeRadius = Math.max(0.0F, socketRadius);
 		if (distance <= safeRadius) return 0.0F;
 		if (feather <= 0.0F) return 1.0F;
-		return smoothstep((distance - safeRadius) / feather);
+		return CardinalRiteMath.smoothstep((distance - safeRadius) / feather);
 	}
 
 	public static float socketStainInnerAlpha(float intensity) {
@@ -409,12 +263,6 @@ public final class CardinalRiteBoundaryGeometry {
 	}
 
 	public static double arterialHighlightPosition(float time, int ring) {
-		return normalizeAngle(time * 0.035D + ring * 0.73D);
-	}
-
-	private static double normalizeAngle(double angle) {
-		double fullCircle = Math.PI * 2.0D;
-		double normalized = angle % fullCircle;
-		return normalized < 0.0D ? normalized + fullCircle : normalized;
+		return CardinalRiteMath.normalizeAngle(time * 0.035D + ring * 0.73D);
 	}
 }

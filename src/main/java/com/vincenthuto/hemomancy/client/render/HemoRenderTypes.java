@@ -1,5 +1,8 @@
 package com.vincenthuto.hemomancy.client.render;
 
+import com.vincenthuto.hemomancy.client.render.world.rite.DaemonHaze;
+import com.vincenthuto.hemomancy.client.render.world.rite.DaemonHazeQueue;
+
 import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -12,6 +15,9 @@ import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Client-local render types used by animated item renderers.
@@ -491,7 +497,61 @@ public final class HemoRenderTypes {
 				spread, front, beat, floorLight, baseColor, veinColor, glowColor, focusX, focusZ);
 	}
 
+	/**
+	 * Rite render types are cached by their exact uniform values: repeated requests within a frame (the floor asks
+	 * for its membrane several times) share one type, so they batch together instead of each allocating a type and
+	 * flushing the last. Different values still get distinct types, so every batch keeps its own uniforms.
+	 */
+	private static final int RITE_TYPE_CACHE_LIMIT = 32;
+	private static final Map<CardinalFloorKey, RenderType> CARDINAL_FLOOR_TYPES = riteTypeCache();
+	private static final Map<CardinalStaffMeltKey, RenderType> CARDINAL_STAFF_MELT_TYPES = riteTypeCache();
+	/** One fog type per rite seed; its time uniform is updated in place because the fog ends its batch per rite. */
+	private static final Map<Float, CardinalRiteFogType> CARDINAL_RITE_FOG_TYPES = riteTypeCache();
+
+	private static <K, V> Map<K, V> riteTypeCache() {
+		return new LinkedHashMap<>(16, 0.75F, true) {
+			@Override
+			protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
+				return size() > RITE_TYPE_CACHE_LIMIT;
+			}
+		};
+	}
+
+	private record CardinalFloorKey(String name, float gameTime, float seed, int style, int floorHalf, float spread,
+			float front, float beat, float floorLight, int baseColor, int veinColor, int glowColor, float focusX,
+			float focusZ) {
+	}
+
+	private record CardinalStaffMeltKey(float gameTime, float blockSeed, float wiggleAmp, float centerX,
+			float centerY, float centerZ, float finalizeProgress, float meltGroundY, float meltHeight) {
+	}
+
+	private static final class CardinalRiteFogType {
+		private final float seed;
+		private float gameTime;
+		private final RenderType type;
+
+		private CardinalRiteFogType(float seed) {
+			this.seed = seed;
+			this.type = createCardinalRiteFog(this);
+		}
+	}
+
 	private static RenderType cardinalFloor(String name, RenderStateShard.WriteMaskStateShard writeMask,
+			float gameTime, float seed, int style, int floorHalf, float spread, float front, float beat,
+			float floorLight, int baseColor, int veinColor, int glowColor, float focusX, float focusZ) {
+		CardinalFloorKey key = new CardinalFloorKey(name, gameTime, seed, style, floorHalf, spread, front, beat,
+				floorLight, baseColor, veinColor, glowColor, focusX, focusZ);
+		RenderType cached = CARDINAL_FLOOR_TYPES.get(key);
+		if (cached == null) {
+			cached = createCardinalFloor(name, writeMask, gameTime, seed, style, floorHalf, spread, front, beat,
+					floorLight, baseColor, veinColor, glowColor, focusX, focusZ);
+			CARDINAL_FLOOR_TYPES.put(key, cached);
+		}
+		return cached;
+	}
+
+	private static RenderType createCardinalFloor(String name, RenderStateShard.WriteMaskStateShard writeMask,
 			float gameTime, float seed, int style, int floorHalf, float spread, float front, float beat,
 			float floorLight, int baseColor, int veinColor, int glowColor, float focusX, float focusZ) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
@@ -635,6 +695,20 @@ public final class HemoRenderTypes {
 	}
 
 	public static RenderType cardinalStaffBloodMelt(float gameTime, float blockSeed, float wiggleAmp,
+			float centerX, float centerY, float centerZ, float finalizeProgress,
+			float meltGroundY, float meltHeight) {
+		CardinalStaffMeltKey key = new CardinalStaffMeltKey(gameTime, blockSeed, wiggleAmp, centerX, centerY,
+				centerZ, finalizeProgress, meltGroundY, meltHeight);
+		RenderType cached = CARDINAL_STAFF_MELT_TYPES.get(key);
+		if (cached == null) {
+			cached = createCardinalStaffBloodMelt(gameTime, blockSeed, wiggleAmp, centerX, centerY, centerZ,
+					finalizeProgress, meltGroundY, meltHeight);
+			CARDINAL_STAFF_MELT_TYPES.put(key, cached);
+		}
+		return cached;
+	}
+
+	private static RenderType createCardinalStaffBloodMelt(float gameTime, float blockSeed, float wiggleAmp,
 			float centerX, float centerY, float centerZ, float finalizeProgress,
 			float meltGroundY, float meltHeight) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
@@ -969,13 +1043,27 @@ public final class HemoRenderTypes {
 						.createCompositeState(false));
 	}
 
+	/**
+	 * The fog type for one rite. It is cached per seed and its time is updated in place, so callers must end the
+	 * batch (as {@code CardinalRiteFogRenderer} does per rite) before asking for the same seed at a new time.
+	 */
 	public static RenderType cardinalRiteFog(float gameTime, float fogSeed) {
+		CardinalRiteFogType fog = CARDINAL_RITE_FOG_TYPES.get(fogSeed);
+		if (fog == null) {
+			fog = new CardinalRiteFogType(fogSeed);
+			CARDINAL_RITE_FOG_TYPES.put(fogSeed, fog);
+		}
+		fog.gameTime = gameTime;
+		return fog.type;
+	}
+
+	private static RenderType createCardinalRiteFog(CardinalRiteFogType fog) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
 				"cardinal_rite_fog_uniforms",
 				() -> {
 					ShaderInstance shader = ShaderInit.CARDINAL_RITE_FOG.getInstance().get();
-					setUniform(shader, "HemoTime", gameTime);
-					setUniform(shader, "FogSeed", fogSeed);
+					setUniform(shader, "HemoTime", fog.gameTime);
+					setUniform(shader, "FogSeed", fog.seed);
 					setUniform(shader, "ColorModulator", 1.0F, 1.0F, 1.0F, 1.0F);
 				},
 				() -> {
@@ -991,6 +1079,221 @@ public final class HemoRenderTypes {
 						.setTexturingState(uniforms)
 						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
 						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
+	/**
+	 * One sky-wound type per seed; its uniforms are updated in place, so callers end the batch per wound. It writes
+	 * depth (its shader discards empty sky), so Fabulous graphics composite it in front of the clouds behind it.
+	 */
+	private static final Map<Float, CardinalSkyWoundType> CARDINAL_SKY_WOUND_TYPES = riteTypeCache();
+
+	private static final class CardinalSkyWoundType {
+		private final float seed;
+		private float gameTime;
+		private float grow;
+		private float open;
+		private float flash;
+		private float strain;
+		private int baseColor;
+		private int veinColor;
+		private int glowColor;
+		private final RenderType type;
+
+		private CardinalSkyWoundType(float seed) {
+			this.seed = seed;
+			this.type = createCardinalSkyWound(this);
+		}
+	}
+
+	public static RenderType cardinalRiteSkyWound(float gameTime, float seed, float grow, float open, float flash,
+			float strain, int baseColor, int veinColor, int glowColor) {
+		CardinalSkyWoundType wound = CARDINAL_SKY_WOUND_TYPES.get(seed);
+		if (wound == null) {
+			wound = new CardinalSkyWoundType(seed);
+			CARDINAL_SKY_WOUND_TYPES.put(seed, wound);
+		}
+		wound.gameTime = gameTime;
+		wound.grow = grow;
+		wound.open = open;
+		wound.flash = flash;
+		wound.strain = strain;
+		wound.baseColor = baseColor;
+		wound.veinColor = veinColor;
+		wound.glowColor = glowColor;
+		return wound.type;
+	}
+
+	private static RenderType createCardinalSkyWound(CardinalSkyWoundType wound) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"cardinal_rite_sky_wound_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.CARDINAL_RITE_SKY_WOUND.getInstance().get();
+					setUniform(shader, "HemoTime", wound.gameTime);
+					setUniform(shader, "WoundSeed", wound.seed);
+					setUniform(shader, "WoundShape", wound.grow, wound.open, wound.flash, wound.strain);
+					setRgbUniform(shader, "BaseColor", wound.baseColor);
+					setRgbUniform(shader, "VeinColor", wound.veinColor);
+					setRgbUniform(shader, "GlowColor", wound.glowColor);
+					setUniform(shader, "ColorModulator", 1.0F, 1.0F, 1.0F, 1.0F);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.CARDINAL_RITE_SKY_WOUND.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("cardinal_rite_sky_wound",
+				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 256, false, false,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.CARDINAL_RITE_SKY_WOUND.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_DEPTH_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
+	/** One haze type per daemon seed; its uniforms change in place, so the queue ends its batch per daemon. */
+	private static final Map<Float, CardinalDaemonHazeType> CARDINAL_DAEMON_HAZE_TYPES = riteTypeCache();
+
+	private static final class CardinalDaemonHazeType {
+		private DaemonHazeQueue.Draw draw;
+		private float cameraX;
+		private float cameraY;
+		private float cameraZ;
+		private final RenderType type;
+		/** With the camera inside the box, whatever shares the box must not hide the smoke in front of it. */
+		private final RenderType insideType;
+
+		private CardinalDaemonHazeType() {
+			this.type = createCardinalDaemonHaze(this, false);
+			this.insideType = createCardinalDaemonHaze(this, true);
+		}
+	}
+
+	/** The daemon's smoke volume; the camera position is relative to the daemon's centre. */
+	public static RenderType cardinalDaemonHaze(DaemonHazeQueue.Draw draw, float cameraX, float cameraY,
+			float cameraZ) {
+		CardinalDaemonHazeType haze = CARDINAL_DAEMON_HAZE_TYPES.get(draw.seed());
+		if (haze == null) {
+			haze = new CardinalDaemonHazeType();
+			CARDINAL_DAEMON_HAZE_TYPES.put(draw.seed(), haze);
+		}
+		haze.draw = draw;
+		haze.cameraX = cameraX;
+		haze.cameraY = cameraY;
+		haze.cameraZ = cameraZ;
+		return DaemonHaze.cameraInside(cameraX, cameraY, cameraZ, draw.halfWidth(), draw.halfHeight())
+				? haze.insideType : haze.type;
+	}
+
+	private static RenderType createCardinalDaemonHaze(CardinalDaemonHazeType haze, boolean inside) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"cardinal_daemon_haze_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.CARDINAL_DAEMON_HAZE.getInstance().get();
+					DaemonHazeQueue.Draw draw = haze.draw;
+					if (draw == null) return;
+					setUniform(shader, "HemoTime", draw.time());
+					setUniform(shader, "HazeSeed", draw.seed());
+					setUniform(shader, "HazeState", draw.emergence(), draw.strength(), draw.swallow(), draw.eyes());
+					setUniform(shader, "HazeTint", ((draw.tint() >> 16) & 0xFF) / 255.0F,
+							((draw.tint() >> 8) & 0xFF) / 255.0F, (draw.tint() & 0xFF) / 255.0F, draw.flare());
+					setUniform(shader, "HazeLean", draw.trailX(), draw.trailY(), draw.trailZ(), draw.recall());
+					setUniform(shader, "HazeCamera", haze.cameraX, haze.cameraY, haze.cameraZ);
+					setUniform(shader, "HazeShape", draw.height(), draw.yaw(), draw.halfWidth(), draw.halfHeight());
+					setUniform(shader, "HazeHead", draw.headYaw());
+					setUniform(shader, "HazeTilt", draw.tiltX(), 0.0F, draw.tiltZ(), draw.tiltAngle());
+					setUniform(shader, "HazeFlow", draw.flow(), draw.stream());
+					setUniform(shader, "ColorModulator", 1.0F, 1.0F, 1.0F, 1.0F);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.CARDINAL_DAEMON_HAZE.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create(inside ? "cardinal_daemon_haze_inside" : "cardinal_daemon_haze",
+				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 256, false, false,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.CARDINAL_DAEMON_HAZE.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(inside ? RenderType.NO_DEPTH_TEST : RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
+
+	/** One staff haze type per seed, with an inside variant; uniforms change in place, so each ends its batch. */
+	private static final Map<Float, CardinalStaffHazeType> CARDINAL_STAFF_HAZE_TYPES = riteTypeCache();
+
+	private static final class CardinalStaffHazeType {
+		private DaemonHazeQueue.StaffDraw draw;
+		private float cameraX;
+		private float cameraY;
+		private float cameraZ;
+		private final RenderType type;
+		private final RenderType insideType;
+
+		private CardinalStaffHazeType() {
+			this.type = createCardinalStaffHaze(this, false);
+			this.insideType = createCardinalStaffHaze(this, true);
+		}
+	}
+
+	/** The haze curling off a planted staff; the camera position is relative to the haze box's centre. */
+	public static RenderType cardinalStaffHaze(DaemonHazeQueue.StaffDraw draw, float cameraX, float cameraY,
+			float cameraZ) {
+		CardinalStaffHazeType haze = CARDINAL_STAFF_HAZE_TYPES.get(draw.seed());
+		if (haze == null) {
+			haze = new CardinalStaffHazeType();
+			CARDINAL_STAFF_HAZE_TYPES.put(draw.seed(), haze);
+		}
+		haze.draw = draw;
+		haze.cameraX = cameraX;
+		haze.cameraY = cameraY;
+		haze.cameraZ = cameraZ;
+		return DaemonHaze.cameraInside(cameraX, cameraY, cameraZ, DaemonHaze.STAFF_HAZE_HALF_WIDTH,
+				DaemonHaze.STAFF_HAZE_HALF_HEIGHT) ? haze.insideType : haze.type;
+	}
+
+	private static RenderType createCardinalStaffHaze(CardinalStaffHazeType haze, boolean inside) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"cardinal_staff_haze_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.CARDINAL_STAFF_HAZE.getInstance().get();
+					DaemonHazeQueue.StaffDraw draw = haze.draw;
+					if (draw == null) return;
+					setUniform(shader, "HemoTime", draw.time());
+					setUniform(shader, "HazeSeed", draw.seed());
+					setUniform(shader, "HazeState", draw.emergence(), draw.strength(), 0.0F, 0.0F);
+					setUniform(shader, "HazeCamera", haze.cameraX, haze.cameraY, haze.cameraZ);
+					setUniform(shader, "HazeShape", 0.0F, 0.0F, (float) DaemonHaze.STAFF_HAZE_HALF_WIDTH,
+							(float) DaemonHaze.STAFF_HAZE_HALF_HEIGHT);
+					setUniform(shader, "ColorModulator", 1.0F, 1.0F, 1.0F, 1.0F);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.CARDINAL_STAFF_HAZE.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create(inside ? "cardinal_staff_haze_inside" : "cardinal_staff_haze",
+				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 256, false, false,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.CARDINAL_STAFF_HAZE.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(inside ? RenderType.NO_DEPTH_TEST : RenderType.LEQUAL_DEPTH_TEST)
 						.setWriteMaskState(RenderType.COLOR_WRITE)
 						.setCullState(RenderType.NO_CULL)
 						.setLightmapState(RenderType.NO_LIGHTMAP)

@@ -66,4 +66,22 @@ public final class CardinalRiteBoundaryProgressTest {
 			throw new AssertionError(label + ": expected " + expected + " but got " + actual);
 		}
 	}
+
+	@Test
+	void arcsJoinOnlyFedOpenAnchorsAtTheirOwnRequirement() {
+		var anchors = java.util.List.of(
+				new CardinalRiteCeremonyDefinition.Anchor(3, 0, 0, 1, 0), new CardinalRiteCeremonyDefinition.Anchor(0, 0, 3, 1, 1),
+				new CardinalRiteCeremonyDefinition.Anchor(-3, 0, 0, 1, 2), new CardinalRiteCeremonyDefinition.Anchor(0, 0, -3, 1, 3));
+		int[] blood = {63, 63, 50, 63};
+
+		org.junit.jupiter.api.Assertions.assertEquals(2,
+				CardinalRiteBoundaryProgress.completedSegments(anchors, blood, new int[] {63, 63, 63, 63}).size(),
+				"only the arcs between anchors at 63 mL");
+		org.junit.jupiter.api.Assertions.assertTrue(
+				CardinalRiteBoundaryProgress.completedSegments(anchors, new int[4], new int[4]).isEmpty(),
+				"a sleeping ring (requirement 0) is never complete");
+		org.junit.jupiter.api.Assertions.assertEquals(4,
+				CardinalRiteBoundaryProgress.completedSegments(anchors, new int[] {50, 50, 50, 50}).size(),
+				"the flat overload keeps the flat cost");
+	}
 }

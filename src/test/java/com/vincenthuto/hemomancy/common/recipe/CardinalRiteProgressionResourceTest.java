@@ -82,9 +82,11 @@ final class CardinalRiteProgressionResourceTest {
 	void riteRewardsHaveCheckedWorldDropFallbacks() throws IOException {
 		String completion = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java"));
-		assertTrue(completion.contains("giveOrDropAtRite(sLevel, caster, center, blob)"));
+		String effects = Files.readString(Path.of(
+				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletionEffects.java"));
+		assertTrue(effects.contains("giveOrDropAtRite(ctx.level(), ctx.caster(), ctx.center(), new ItemStack(ItemInit.sanguine_blob.get()))"));
+		assertTrue(effects.contains("if (!level.addFreshEntity(drop)) player.drop(stack, false);"));
 		assertTrue(completion.contains("if (!sLevel.addFreshEntity(resultDrop)) caster.drop(resultStack, false);"));
-		assertTrue(completion.contains("if (!level.addFreshEntity(drop) && !player.addItem(spine)) player.drop(spine, false);"));
 	}
 
 	@Test
@@ -153,12 +155,15 @@ final class CardinalRiteProgressionResourceTest {
 				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java"));
 		completionSource += Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/station/StationUpgradeCatalog.java"));
+		completionSource += Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletionEffects.java"));
 		try (var paths = Files.list(ROOT)) {
 			for (Path path : paths.filter(p -> p.toString().endsWith(".json")).toList()) {
 				JsonObject json = read(path);
 				if (json.has("unstained") && json.get("unstained").getAsBoolean()) continue;
 				if (json.has("result")) continue;
 				if (json.has("puppeteer_trial")) continue;
+				// Rank rites resolve through their recipe-carried target degree.
+				if (json.has("rankup") && json.get("rankup").getAsBoolean()) continue;
 				String id = path.getFileName().toString().replace(".json", "");
 				assertTrue(com.vincenthuto.hemomancy.common.succession.SuccessionRites.isRecipe(
 						net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/" + id))

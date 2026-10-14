@@ -26,6 +26,7 @@ public class HemoClientConfig {
 	public static ModConfigSpec.BooleanValue RENDER_OCULIFLORA_REVEAL;
 	public static ModConfigSpec.EnumValue<LowtideRuinStructureQuality> LOWTIDE_RUIN_STRUCTURE_QUALITY;
 	public static ModConfigSpec.BooleanValue USE_LOW_POLY_VESPER_FIGHT_OUTER_RING;
+	public static ModConfigSpec.EnumValue<CardinalRiteHudMode> CARDINAL_RITE_HUD;
 
 	public enum LowtideRuinStructureQuality {
 		HIGH,
@@ -37,6 +38,11 @@ public class HemoClientConfig {
 		ATTACHED,
 		LEGACY_ICON,
 		OFF
+	}
+
+	public enum CardinalRiteHudMode {
+		OFF,
+		FULL
 	}
 
 	public static void registerClientConfig(ModConfigSpec.Builder CLIENT_BUILDER) {
@@ -129,6 +135,10 @@ public class HemoClientConfig {
 				.comment("Moves the diffuse cardinal rite smoke ring up or down in blocks.")
 				.defineInRange("cardinalRiteFogVerticalOffset", 0.0D, -4.0D, 8.0D);
 
+		CARDINAL_RITE_HUD = CLIENT_BUILDER
+				.comment("Cardinal Rite status panel. OFF (default) lets the world show the rite: its sores, the world stage, visible strain and short action-bar lines. FULL restores the panel at the top of the screen.")
+				.defineEnum("cardinalRiteHud", CardinalRiteHudMode.OFF);
+
 		RENDER_OCULIFLORA_REVEAL = CLIENT_BUILDER
 				.comment("Render Oculiflora Reticularis local network-sight markers.")
 				.define("renderOculifloraReveal", true);
@@ -158,6 +168,10 @@ public class HemoClientConfig {
 	public static boolean useTexturedDialogueStyle() {
 		return USE_TEXTURED_DIALOGUE_STYLE == null
 				|| USE_TEXTURED_DIALOGUE_STYLE.get();
+	}
+
+	public static CardinalRiteHudMode cardinalRiteHud() {
+		return CARDINAL_RITE_HUD == null ? CardinalRiteHudMode.OFF : CARDINAL_RITE_HUD.get();
 	}
 
 }

@@ -194,6 +194,17 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		requireCeremonyField(atmosphere, recipeId, "fog");
 		requireCeremonyField(atmosphere, recipeId, "lightning");
 		requireCeremonyField(atmosphere, recipeId, "dome");
+		String failure = GsonHelper.getAsString(ceremony, "failure");
+		if (!java.util.Set.of("safe_retry", "offering_loss", "fragile_damage", "collapse").contains(failure)) {
+			throw new JsonSyntaxException("Harbinger cardinal rite " + recipeId
+					+ " names unknown failure profile '" + failure + "'");
+		}
+		String culmination = GsonHelper.getAsString(ceremony, "culmination", "");
+		if (!culmination.isBlank()
+				&& com.vincenthuto.hemomancy.common.rite.CardinalRiteCulmination.byId(culmination) == null) {
+			throw new JsonSyntaxException("Harbinger cardinal rite " + recipeId
+					+ " names unknown culmination '" + culmination + "'");
+		}
 		return new CardinalRiteCeremonyDefinition(profile, anchors, sockets, waves, guaranteed, fragile,
 				GsonHelper.getAsInt(ceremony, "target_duration_ticks"),
 				GsonHelper.getAsString(ceremony, "focus"),
@@ -204,7 +215,9 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 						GsonHelper.getAsString(atmosphere, "fog"),
 						GsonHelper.getAsBoolean(atmosphere, "lightning"),
 						GsonHelper.getAsBoolean(atmosphere, "dome")),
-				GsonHelper.getAsString(ceremony, "failure"));
+				GsonHelper.getAsString(ceremony, "failure"),
+				GsonHelper.getAsInt(ceremony, "wave_count", -1),
+				GsonHelper.getAsString(ceremony, "culmination", ""));
 	}
 
 	private static void requireCeremonyField(JsonObject ceremony, ResourceLocation recipeId, String field) {
@@ -550,9 +563,11 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 				new CardinalRiteCeremonyDefinition.Atmosphere(
 						buffer.readUtf(), buffer.readBoolean(), buffer.readBoolean());
 		String failureProfile = buffer.readUtf();
+		int waveCount = buffer.readVarInt() - 1;
+		String culmination = buffer.readUtf();
 		return new CardinalRiteCeremonyDefinition(profile, anchors, sockets, waves, guaranteed, fragile,
 				targetDurationTicks, focusMode, requiredHelpers, helperRoles, stillIntervalTicks,
-				atmosphere, failureProfile);
+				atmosphere, failureProfile, waveCount, culmination);
 	}
 
 	private static void writeCeremony(RegistryFriendlyByteBuf buffer, CardinalRiteCeremonyDefinition ceremony) {
@@ -586,6 +601,8 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		buffer.writeBoolean(ceremony.atmosphere().lightning());
 		buffer.writeBoolean(ceremony.atmosphere().dome());
 		buffer.writeUtf(ceremony.failureProfile());
+		buffer.writeVarInt(ceremony.waveCount() + 1);
+		buffer.writeUtf(ceremony.culmination());
 	}
 
 	private static List<String> readStrings(RegistryFriendlyByteBuf buffer) {

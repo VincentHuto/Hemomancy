@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.data;
 
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteBoundaryProgress;
+import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRitePlantingSequence;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilAnatomy;
 import net.minecraft.core.BlockPos;
@@ -19,12 +20,16 @@ public class ActiveRiteClientData {
 	}
 
 	public static class RiteEntry {
+		/** Added to an anchor's blood in {@link #getAnchorStates()} when the anchor is broken. */
+		public static final int ANCHOR_DAMAGED = 1000;
 		private final BlockPos center;
 		private final int riteSize;
 		private final double progress;
 		private final ResourceLocation recipeId;
 		private final boolean unstained;
 		private final String phase;
+		/** Parsed {@link #phase}; {@code null} for the client-only SUCCESSION phase. */
+		private final CardinalRitePhase ritePhase;
 		private final int phaseTicks;
 		private final int instability;
 		private final int currentWave;
@@ -49,6 +54,15 @@ public class ActiveRiteClientData {
 		private final List<CardinalRiteBoundaryProgress.Segment> boundarySegments;
 		private final List<SigilSegment> sigilSegments;
 		private final List<SanguineBlob> sanguineBlobs;
+		/** Per authored anchor: blood in mL, plus {@link #ANCHOR_DAMAGED} when instability has broken it. */
+		private int[] anchorStates = new int[0];
+		/** The rite's world stage and how many steps it has; see {@code CardinalRiteEscalation}. */
+		private int escalation;
+		private int escalationTotal;
+		private int openRings = -1;
+		private int[] anchorRequirements = new int[0];
+		private List<com.vincenthuto.hemomancy.common.rite.CardinalRiteProblems.RiteProblem> problems = List.of();
+		private List<SocketMarker> socketMarkers = List.of();
 		private final Map<BoundarySegmentKey, BoundaryGrowth> boundaryGrowth;
 		private float previousStainFade;
 		private float currentStainFade;
@@ -58,6 +72,8 @@ public class ActiveRiteClientData {
 		private float currentStaffPlantingTicks;
 		private float previousPhaseTicks;
 		private float currentPhaseTicks;
+		/** Procession spin carried into culmination so the rings keep turning without a snap. */
+		private float carriedSpinTicks;
 
 		public RiteEntry(BlockPos center, int riteSize, double progress, ResourceLocation recipeId, boolean unstained) {
 			this(center, riteSize, progress, recipeId, unstained, "LEGACY", 0, 0, 0,
@@ -155,7 +171,8 @@ public class ActiveRiteClientData {
 			this.progress = progress;
 			this.recipeId = recipeId;
 			this.unstained = unstained;
-			this.phase = phase;
+			this.phase = phase == null ? "LEGACY" : phase;
+			this.ritePhase = SUCCESSION_PHASE.equals(this.phase) ? null : CardinalRitePhase.byName(this.phase);
 			this.phaseTicks = Math.max(0, phaseTicks);
 			this.instability = instability;
 			this.currentWave = currentWave;
@@ -219,6 +236,11 @@ public class ActiveRiteClientData {
 			};
 		}
 		public String getPhase() { return phase; }
+		/** The typed phase, or {@code null} for the client-only SUCCESSION phase. */
+		public CardinalRitePhase ritePhase() { return ritePhase; }
+		public boolean isPhase(CardinalRitePhase candidate) { return ritePhase == candidate; }
+		public boolean isLegacy() { return ritePhase == CardinalRitePhase.LEGACY; }
+		public boolean isSuccession() { return ritePhase == null; }
 		public int getPhaseTicks() { return phaseTicks; }
 		public int getInstability() { return instability; }
 		public int getCurrentWave() { return currentWave; }
@@ -244,6 +266,47 @@ public class ActiveRiteClientData {
 		public List<CardinalRiteBoundaryProgress.Segment> getBoundarySegments() { return boundarySegments; }
 		public List<SigilSegment> getSigilSegments() { return sigilSegments; }
 		public List<SanguineBlob> getSanguineBlobs() { return sanguineBlobs; }
+		public int[] getAnchorStates() { return anchorStates; }
+		public RiteEntry withAnchorStates(int[] states) {
+			anchorStates = states == null ? new int[0] : states.clone();
+			return this;
+		}
+		public int getEscalation() { return escalation; }
+		public int getEscalationTotal() { return escalationTotal; }
+		/** Rings woken so far; every ring when the server sent none. */
+		public int getOpenRings() { return openRings < 0 ? totalRings : openRings; }
+		public int[] getAnchorRequirements() { return anchorRequirements; }
+		/** An anchor's requirement in mL; the flat cost when the server sent none. */
+		public int anchorRequirement(int anchorIndex) {
+			return anchorIndex >= 0 && anchorIndex < anchorRequirements.length ? anchorRequirements[anchorIndex]
+					: com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyRules.BLOOD_PER_ANCHOR_ML;
+		}
+		/** Whether this anchor's ring still sleeps. */
+		public boolean anchorDormant(int anchorIndex) {
+			return anchorIndex >= 0 && anchorIndex < anchorRequirements.length && anchorRequirements[anchorIndex] == 0;
+		}
+		public RiteEntry withRings(int open, int[] requirements) {
+			openRings = Math.max(0, open);
+			anchorRequirements = requirements == null ? new int[0] : requirements.clone();
+			return this;
+		}
+		public RiteEntry withEscalation(int stage, int total) {
+			escalationTotal = Math.max(0, total);
+			escalation = Math.clamp(stage, 0, escalationTotal);
+			return this;
+		}
+		public List<com.vincenthuto.hemomancy.common.rite.CardinalRiteProblems.RiteProblem> getProblems() {
+			return problems;
+		}
+		public List<SocketMarker> getSocketMarkers() { return socketMarkers; }
+		public RiteEntry withGuidance(List<com.vincenthuto.hemomancy.common.rite.CardinalRiteProblems.RiteProblem> problems,
+				List<SocketMarker> markers) {
+			this.problems = problems == null ? List.of() : List.copyOf(problems);
+			this.socketMarkers = markers == null ? List.of() : List.copyOf(markers);
+			return this;
+		}
+		public static int anchorBlood(int state) { return state % ANCHOR_DAMAGED; }
+		public static boolean anchorDamaged(int state) { return state >= ANCHOR_DAMAGED; }
 
 		public float boundaryGrowth(CardinalRiteBoundaryProgress.Segment segment, float partialTick) {
 			BoundaryGrowth growth = boundaryGrowth.get(BoundarySegmentKey.of(segment));
@@ -256,27 +319,30 @@ public class ActiveRiteClientData {
 		}
 
 		public float stainFadeProgress(float partialTick) {
-			float clampedPartialTick = Math.max(0.0F, Math.min(1.0F, partialTick));
-			return previousStainFade
-					+ (currentStainFade - previousStainFade) * clampedPartialTick;
+			return interpolate(previousStainFade, currentStainFade, partialTick);
 		}
 
 		public float cancellationRenderTicks(float partialTick) {
-			float clampedPartialTick = Math.max(0.0F, Math.min(1.0F, partialTick));
-			return previousCancellationTicks
-					+ (currentCancellationTicks - previousCancellationTicks) * clampedPartialTick;
+			return interpolate(previousCancellationTicks, currentCancellationTicks, partialTick);
 		}
 
 		public float staffPlantingRenderTicks(float partialTick) {
-			float clampedPartialTick = Math.max(0.0F, Math.min(1.0F, partialTick));
-			return previousStaffPlantingTicks
-					+ (currentStaffPlantingTicks - previousStaffPlantingTicks) * clampedPartialTick;
+			return interpolate(previousStaffPlantingTicks, currentStaffPlantingTicks, partialTick);
 		}
 
 		public float phaseRenderTicks(float partialTick) {
-			float clampedPartialTick = Math.max(0.0F, Math.min(1.0F, partialTick));
-			return previousPhaseTicks
-					+ (currentPhaseTicks - previousPhaseTicks) * clampedPartialTick;
+			return interpolate(previousPhaseTicks, currentPhaseTicks, partialTick);
+		}
+
+		/**
+		 * Ticks the finale rings have been spinning: procession ticks, then
+		 * culmination ticks on top of the procession this client saw, so the spin
+		 * starts from rest and stays continuous across the phase change.
+		 */
+		public float ringSpinTicks(float partialTick) {
+			if (ritePhase == CardinalRitePhase.OFFERING_PROCESSION) return phaseRenderTicks(partialTick);
+			if (ritePhase == CardinalRitePhase.CULMINATION) return carriedSpinTicks + phaseRenderTicks(partialTick);
+			return 0.0F;
 		}
 
 		public boolean consumeBoundaryCompletion(CardinalRiteBoundaryProgress.Segment segment) {
@@ -296,6 +362,10 @@ public class ActiveRiteClientData {
 				float continuedPhaseTicks = Math.max(previous.currentPhaseTicks, phaseTicks);
 				previousPhaseTicks = continuedPhaseTicks;
 				currentPhaseTicks = continuedPhaseTicks;
+				carriedSpinTicks = previous.carriedSpinTicks;
+			} else if (ritePhase == CardinalRitePhase.CULMINATION
+					&& previous.ritePhase == CardinalRitePhase.OFFERING_PROCESSION) {
+				carriedSpinTicks = previous.carriedSpinTicks + previous.currentPhaseTicks;
 			}
 			for (var entry : boundaryGrowth.entrySet()) {
 				BoundaryGrowth previousGrowth = previous.boundaryGrowth.get(entry.getKey());
@@ -303,9 +373,22 @@ public class ActiveRiteClientData {
 			}
 		}
 
+		/**
+		 * First sight of a rite (joining, changing dimension, walking into range):
+		 * what is already sealed is shown sealed, without replaying its growth or
+		 * its seal sounds. Only segments that appear later grow in.
+		 */
+		private void showExistingProgress() {
+			for (BoundaryGrowth growth : boundaryGrowth.values()) growth.completeSilently();
+			if (!boundarySegments.isEmpty() || phaseTicks >= STAIN_FADE_TICKS) {
+				previousStainFade = 1.0F;
+				currentStainFade = 1.0F;
+			}
+		}
+
 		private void tickBoundaryGrowth() {
 			previousStainFade = currentStainFade;
-			currentStainFade = Math.min(1.0F, currentStainFade + 1.0F / 30.0F);
+			currentStainFade = Math.min(1.0F, currentStainFade + 1.0F / STAIN_FADE_TICKS);
 			previousCancellationTicks = currentCancellationTicks;
 			if (currentCancellationTicks < cancellationTicks) {
 				currentCancellationTicks = Math.min(cancellationTicks, currentCancellationTicks + 1.0F);
@@ -322,6 +405,13 @@ public class ActiveRiteClientData {
 			previousPhaseTicks = currentPhaseTicks;
 			currentPhaseTicks++;
 			for (BoundaryGrowth growth : boundaryGrowth.values()) growth.tick();
+		}
+	}
+
+	/** A required support socket whose sigil still sleeps; the client raises a blood thread over it. */
+	public record SocketMarker(BlockPos pos, String sigil) {
+		public SocketMarker {
+			sigil = sigil == null ? "" : sigil;
 		}
 	}
 
@@ -384,9 +474,7 @@ public class ActiveRiteClientData {
 		public IchorianSigilAnatomy.Role role() { return role; }
 
 		public float renderRadius(float partialTick) {
-			float clampedPartialTick = Math.max(0.0F, Math.min(1.0F, partialTick));
-			return previousRenderRadius
-					+ (currentRenderRadius - previousRenderRadius) * clampedPartialTick;
+			return interpolate(previousRenderRadius, currentRenderRadius, partialTick);
 		}
 
 		private void beginGrowth() {
@@ -409,7 +497,19 @@ public class ActiveRiteClientData {
 		}
 	}
 
+	private static final String SUCCESSION_PHASE = "SUCCESSION";
+	private static final float STAIN_FADE_TICKS = 30.0F;
+	/** How long a rite that left the sync list can still be found for its ending. */
+	private static final int RECENTLY_ENDED_TICKS = 20;
+
 	private static List<RiteEntry> activeRites = Collections.emptyList();
+	private static final Map<BlockPos, EndedRite> RECENTLY_ENDED = new HashMap<>();
+	private static long clientTicks;
+
+	private static float interpolate(float previous, float current, float partialTick) {
+		float clampedPartialTick = Math.max(0.0F, Math.min(1.0F, partialTick));
+		return previous + (current - previous) * clampedPartialTick;
+	}
 
 	public static void set(List<RiteEntry> rites) {
 		Map<BlobKey, SanguineBlob> previousBlobs = new HashMap<>();
@@ -421,9 +521,13 @@ public class ActiveRiteClientData {
 			}
 		}
 		for (RiteEntry entry : rites) {
-			RiteEntry previousRite = previousRites.get(
+			RiteEntry previousRite = previousRites.remove(
 					new RiteKey(entry.getCenter(), entry.getRecipeId()));
-			if (previousRite != null) entry.continueBoundaryGrowthFrom(previousRite);
+			if (previousRite != null) {
+				entry.continueBoundaryGrowthFrom(previousRite);
+			} else {
+				entry.showExistingProgress();
+			}
 			for (SanguineBlob blob : entry.getSanguineBlobs()) {
 				SanguineBlob previous = previousBlobs.get(new BlobKey(entry.getCenter(), blob.seed()));
 				if (previous == null) {
@@ -433,10 +537,25 @@ public class ActiveRiteClientData {
 				}
 			}
 		}
+		for (RiteEntry ended : previousRites.values()) {
+			RECENTLY_ENDED.put(ended.getCenter(), new EndedRite(ended, clientTicks));
+		}
 		activeRites = Collections.unmodifiableList(new ArrayList<>(rites));
 	}
 
+	/**
+	 * A rite that left the sync list within the last second at this centre, or
+	 * {@code null}. Lets a terminal event that arrives just after the snapshot
+	 * that removed its rite still find the rite's last state for its ending.
+	 */
+	public static RiteEntry recentlyEnded(BlockPos center) {
+		EndedRite ended = RECENTLY_ENDED.get(center);
+		return ended == null ? null : ended.entry();
+	}
+
 	public static void tick() {
+		clientTicks++;
+		RECENTLY_ENDED.values().removeIf(ended -> clientTicks - ended.endedTick() > RECENTLY_ENDED_TICKS);
 		for (RiteEntry entry : activeRites) {
 			entry.tickBoundaryGrowth();
 			for (SanguineBlob blob : entry.getSanguineBlobs()) {
@@ -451,6 +570,7 @@ public class ActiveRiteClientData {
 
 	public static void clear() {
 		activeRites = Collections.emptyList();
+		RECENTLY_ENDED.clear();
 	}
 
 	public static boolean isStaffPlanted(UUID playerId) {
@@ -462,6 +582,9 @@ public class ActiveRiteClientData {
 	}
 
 	private record RiteKey(BlockPos center, ResourceLocation recipeId) {
+	}
+
+	private record EndedRite(RiteEntry entry, long endedTick) {
 	}
 
 	private record BoundarySegmentKey(
@@ -483,8 +606,15 @@ public class ActiveRiteClientData {
 		private boolean completionPending;
 
 		private float render(float partialTick) {
-			float clampedPartialTick = Math.max(0.0F, Math.min(1.0F, partialTick));
-			return previous + (current - previous) * clampedPartialTick;
+			return interpolate(previous, current, partialTick);
+		}
+
+		private void completeSilently() {
+			previous = 1.0F;
+			current = 1.0F;
+			previousEffectAge = -1.0F;
+			currentEffectAge = -1.0F;
+			completionPending = false;
 		}
 
 		private void continueFrom(BoundaryGrowth source) {
@@ -512,9 +642,7 @@ public class ActiveRiteClientData {
 
 		private float renderEffectAge(float partialTick) {
 			if (currentEffectAge < 0.0F) return -1.0F;
-			float clampedPartialTick = Math.max(0.0F, Math.min(1.0F, partialTick));
-			return previousEffectAge
-					+ (currentEffectAge - previousEffectAge) * clampedPartialTick;
+			return interpolate(previousEffectAge, currentEffectAge, partialTick);
 		}
 
 		private boolean consumeCompletion() {

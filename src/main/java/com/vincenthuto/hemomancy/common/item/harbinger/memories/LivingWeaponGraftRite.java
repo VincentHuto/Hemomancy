@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.memories;
 
-import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
@@ -14,9 +13,10 @@ import com.vincenthuto.hemomancy.common.item.component.LivingWeaponForm;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponGraftData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.rite.BrazierItemAbsorptionRite;
-import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
-import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
+import com.vincenthuto.hemomancy.common.rite.brazier.BrazierRite;
+import com.vincenthuto.hemomancy.common.rite.brazier.BrazierRites;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -29,77 +29,89 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-public final class LivingWeaponGraftRite {
+/**
+ * Receiving a Living Weapon graft (or Vesper's memory) from a lit brazier through Living Staff absorption: the blood
+ * remembers the limb's form, or the staff-bond takes Vesper's refusal.
+ */
+public final class LivingWeaponGraftRite implements BrazierRite<LivingWeaponGraftRite.GraftPlan> {
 	public static final int REQUIRED_CHANNEL_TICKS = BrazierItemAbsorptionRite.REQUIRED_CHANNEL_TICKS;
+	public static final LivingWeaponGraftRite INSTANCE = new LivingWeaponGraftRite();
 
 	private LivingWeaponGraftRite() {
 	}
 
 	public static double tryAbsorb(ServerLevel level, BlockPos pos, BlockState state, ServerPlayer player,
 			double maxAmount) {
-		if (!(level.getBlockEntity(pos) instanceof IronBrazierBlockEntity brazier) || maxAmount <= 0.0D) {
-			return 0.0D;
+		return BrazierRites.run(INSTANCE, level, pos, state, player, maxAmount);
+	}
+
+	/** A graft offering's form, or none for Vesper's memory. */
+	public record GraftPlan(boolean vesperMemory, LivingWeaponForm form) {
+	}
+
+	@Override
+	public boolean accepts(ItemStack offering) {
+		return LivingWeaponGraftData.fromStack(offering).isPresent() || offering.is(ItemInit.memory_of_vesper.get());
+	}
+
+	@Override
+	public Gate<GraftPlan> preflight(Channel channel) {
+		if (channel.maxAmount() <= 0.0D) {
+			return Gate.refuse(false, false);
 		}
-		ItemStack offering = brazier.getOfferingForMatching();
+		ServerLevel level = channel.level();
+		ServerPlayer player = channel.player();
+		ItemStack offering = channel.offering();
 		LivingWeaponGraftData data = LivingWeaponGraftData.fromStack(offering).orElse(null);
 		boolean vesperMemoryOffering = offering.is(ItemInit.memory_of_vesper.get());
-		if (data == null && !vesperMemoryOffering) {
-			return 0.0D;
-		}
 		LivingWeaponForm form = data == null ? null : data.form();
-		boolean lit = state.hasProperty(BrazierBlock.RITUAL_PHASE)
-				&& state.getValue(BrazierBlock.RITUAL_PHASE) > 0;
-		if (!lit) {
-			brazier.resetItemAbsorptionProgress();
+		if (!channel.lit()) {
 			messageEverySecond(level, player, "Light the brazier before receiving its offering.");
-			return 0.0D;
+			return Gate.refuse(true, false);
 		}
 		if (!LivingStaffItem.isLivingStaffAbsorptionUse(player, player.getUseItem())) {
-			brazier.resetItemAbsorptionProgress();
 			messageEverySecond(level, player, vesperMemoryOffering
 					? "Hold the Living Staff to receive the memory."
 					: "Hold the Living Staff to receive the limb.");
-			return 0.0D;
+			return Gate.refuse(true, false);
 		}
 		if (vesperMemoryOffering) {
 			if (!checkVesperMemory(level, player)) {
-				brazier.resetItemAbsorptionProgress();
-				return 0.0D;
+				return Gate.refuse(true, false);
 			}
 		} else {
 			MemoryGrantResult check = LivingWeaponMemoryUnlocks.checkFormMemory(player, form);
 			if (!check.success()) {
-				brazier.resetItemAbsorptionProgress();
 				reportFailure(level, player, check);
-				return 0.0D;
+				return Gate.refuse(true, false);
 			}
 			if (!hasEarnedRecipeUnlockOrCreative(player, form)) {
-				brazier.resetItemAbsorptionProgress();
 				messageEverySecond(level, player, "The graft knows the shape. Your blood has not earned it.");
-				return 0.0D;
+				return Gate.refuse(true, false);
 			}
 		}
-		int progress = BrazierItemAbsorptionRite.advance(level, pos, player, brazier,
-				vesperMemoryOffering ? "memory_of_vesper" : form.serializedName(), offering);
-		if (!BrazierItemAbsorptionRite.isComplete(progress)) {
-			return maxAmount;
-		}
-		if (vesperMemoryOffering) {
+		return Gate.pass(vesperMemoryOffering ? "memory_of_vesper" : form.serializedName(),
+				new GraftPlan(vesperMemoryOffering, form));
+	}
+
+	@Override
+	public Completion complete(Channel channel, GraftPlan plan) {
+		ServerLevel level = channel.level();
+		ServerPlayer player = channel.player();
+		LivingWeaponForm form = plan.form();
+		if (plan.vesperMemory()) {
 			if (!awakenVesperMemory(level, player)) {
-				brazier.resetItemAbsorptionProgress();
-				return 0.0D;
+				return Completion.kept(false);
 			}
 		} else {
 			MemoryGrantResult result = LivingWeaponMemoryUnlocks.grantFormMemory(player, form);
 			if (!result.success()) {
-				brazier.resetItemAbsorptionProgress();
 				reportFailure(level, player, result);
-				return 0.0D;
+				return Completion.kept(false);
 			}
 			ArtificerAssignments.onLivingWeaponGraftComplete(player);
 		}
-		BrazierItemAbsorptionRite.complete(level, pos, brazier);
-		if (vesperMemoryOffering) {
+		if (plan.vesperMemory()) {
 			player.displayClientMessage(Component.translatable("hemomancy.memory_of_vesper.awakened")
 					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 		} else {
@@ -107,9 +119,9 @@ public final class LivingWeaponGraftRite {
 							+ ". The staff will answer this shape when called.")
 					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 		}
-		level.playSound(null, pos, SoundEvents.BLAZE_SHOOT, SoundSource.BLOCKS, 0.55F, 0.65F);
-		spawnCompletionParticles(level, pos);
-		return maxAmount;
+		level.playSound(null, channel.pos(), SoundEvents.BLAZE_SHOOT, SoundSource.BLOCKS, 0.55F, 0.65F);
+		spawnCompletionParticles(level, channel.pos());
+		return Completion.CONSUMED;
 	}
 
 	private static boolean checkVesperMemory(ServerLevel level, ServerPlayer player) {
@@ -176,14 +188,12 @@ public final class LivingWeaponGraftRite {
 	}
 
 	private static void messageEverySecond(ServerLevel level, ServerPlayer player, String text) {
-		if (level.getGameTime() % 20L == 0L) {
-			player.displayClientMessage(Component.literal(text).withStyle(ChatFormatting.DARK_RED), true);
-		}
+		BrazierRites.messageEverySecond(level, player, text, ChatFormatting.DARK_RED);
 	}
 
 	private static void spawnCompletionParticles(ServerLevel level, BlockPos pos) {
 		Vec3 center = Vec3.atCenterOf(pos).add(0.0D, 0.75D, 0.0D);
-		level.sendParticles(new ColorParticleData(new ParticleColor(180, 10, 30)),
+		level.sendParticles(HemoParticleData.glow(new ParticleColor(180, 10, 30)),
 				center.x, center.y, center.z, 36, 0.55D, 0.35D, 0.55D, 0.02D);
 	}
 }

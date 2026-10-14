@@ -9,24 +9,21 @@ import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class FoundingFaneHeartLayoutSourceTest {
-	private static final Path ACTIVATION = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/BloodCraftingKeyPressPacket.java");
-	private static final Path COMPLETION = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java");
+	private static final Path EFFECTS = Path.of(
+			"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletionEffects.java");
 
 	@Test
 	void foundingFaneHeartManifestsThreeBlocksAboveTheRiteCenter() throws IOException {
-		String activation = Files.readString(ACTIVATION).replace("\r\n", "\n");
-		String completion = Files.readString(COMPLETION).replace("\r\n", "\n");
+		String effects = Files.readString(EFFECTS).replace("\r\n", "\n");
 
-		String activationGate = section(activation,
-				"private static boolean canManifestFoundingFaneHeart", "private static BlockPattern.BlockPatternMatch");
-		String completionGate = section(completion,
-				"private static boolean completeFoundingFane", "\n}\n");
+		String activationGate = section(effects,
+				"static Component faneRefusal", "\n\t}\n");
+		String completionGate = section(effects,
+				"private static boolean completeFoundingFane", "\n\t}\n");
 
-		assertTrue(activationGate.contains("BlockPos heartPos = centerPos.above(3)"),
+		assertTrue(effects.contains("faneRefusal(ctx.level(), ctx.caster(), ctx.center().above(3))"),
 				"Founding Fane activation must check the future bloodwell position three blocks above the focus");
-		assertTrue(activationGate.contains("level.getBlockState(heartPos)"),
+		assertTrue(activationGate.contains("sLevel.getBlockState(heartPos)"),
 				"Founding Fane clearance must inspect the offset heart rather than the Cardinal Focus");
 		assertTrue(completionGate.contains("BlockPos heartPos = center.above(3)"),
 				"Founding Fane completion must derive the same offset heart position");

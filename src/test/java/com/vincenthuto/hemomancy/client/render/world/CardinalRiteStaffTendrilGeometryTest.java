@@ -21,7 +21,7 @@ final class CardinalRiteStaffTendrilGeometryTest {
 			Vec3 root = joints.getFirst().center();
 			Vec3 tip = joints.getLast().center();
 
-			assertEquals(64.86D, root.y, 0.0001D, "the root must remain seated in the focus");
+			assertEquals(64.8D, root.y, 0.0001D, "the root must stay seated under the Focus throat's flesh");
 			assertTrue(tip.y - root.y >= 0.70D, "each tendril must visibly climb the staff");
 			assertTrue(radialDistance(tip, focus) < radialDistance(root, focus),
 					"the coil must tighten as it climbs");

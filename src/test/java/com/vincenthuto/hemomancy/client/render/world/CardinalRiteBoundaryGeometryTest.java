@@ -51,13 +51,6 @@ public final class CardinalRiteBoundaryGeometryTest {
 	}
 
 	@Test
-	void footprintEnclosesDisplacedSigilNodesBeyondTheOuterRing() {
-		assertEquals(11.75F, CardinalRiteBoundaryGeometry.footprintRadius(
-				List.of(new BlockPos(7, 0, 0)),
-				List.of(new BlockPos(11, 0, 0))), "sigil footprint plus marker clearance");
-	}
-
-	@Test
 	void thornsOnlyRootInsideVisibleBoundaryArcs() {
 		var quarterArc = List.of(new CardinalRiteBoundaryProgress.Segment(
 				0, -Math.PI / 2.0D, Math.PI / 2.0D));
@@ -101,12 +94,13 @@ public final class CardinalRiteBoundaryGeometryTest {
 		double clearance = 2.0D * Math.asin(0.34D / 6.0D);
 		double availableSweep = Math.PI / 2.0D - clearance * 2.0D;
 
+		double socketClearance = CardinalRiteBoundaryGeometry.socketClearanceAngle(3.0F, 3.0F, 0.34F);
 		var invisible = CardinalRiteBoundaryGeometry.animatedSocketArcs(
-				segment, 0.0F, 3.0F, 0.34F);
+				segment, 0.0F, socketClearance, socketClearance);
 		var halfway = CardinalRiteBoundaryGeometry.animatedSocketArcs(
-				segment, 0.5F, 3.0F, 0.34F);
+				segment, 0.5F, socketClearance, socketClearance);
 		var complete = CardinalRiteBoundaryGeometry.animatedSocketArcs(
-				segment, 1.0F, 3.0F, 0.34F);
+				segment, 1.0F, socketClearance, socketClearance);
 
 		assertEquals(0, invisible.size(), "zero-growth arc count");
 		assertEquals(2, halfway.size(), "half-growth arc count");
@@ -126,32 +120,13 @@ public final class CardinalRiteBoundaryGeometryTest {
 				1, 6.1D, 0.6D, 7, 1.0F);
 		double clearance = 2.0D * Math.asin(0.34D / 8.0D);
 
+		double socketClearance = CardinalRiteBoundaryGeometry.socketClearanceAngle(4.0F, 4.0F, 0.34F);
 		var arcs = CardinalRiteBoundaryGeometry.animatedSocketArcs(
-				wrapped, 1.0F, 4.0F, 0.34F);
+				wrapped, 1.0F, socketClearance, socketClearance);
 
 		assertEquals(1, arcs.size(), "wrapped arc count");
 		assertNear(6.1D + clearance, arcs.get(0).startAngle(), "wrapped authored start");
 		assertNear(0.6D - clearance * 2.0D, arcs.get(0).sweepAngle(), "wrapped clipped sweep");
-	}
-
-	@Test
-	void floorStainAppearsOnlyAfterTheConnectionIsComplete() {
-		var segment = new CardinalRiteBoundaryProgress.Segment(
-				0, 0.0D, Math.PI / 2.0D, 3, 0.6F);
-		double clearance = 2.0D * Math.asin(0.34D / 6.0D);
-
-		var growing = CardinalRiteBoundaryGeometry.completedSocketArc(
-				segment, 0.99F, 3.0F, 0.34F);
-		var complete = CardinalRiteBoundaryGeometry.completedSocketArc(
-				segment, 1.0F, 3.0F, 0.34F);
-
-		assertTrue(growing.isEmpty(), "growing connection has no floor stain");
-		assertTrue(complete.isPresent(), "completed connection has a floor stain");
-		assertNear(clearance, complete.orElseThrow().startAngle(),
-				"completed stain begins outside the socket");
-		assertNear(Math.PI / 2.0D - clearance * 2.0D,
-				complete.orElseThrow().sweepAngle(),
-				"completed stain ends outside the other socket");
 	}
 
 	@Test
@@ -206,22 +181,6 @@ public final class CardinalRiteBoundaryGeometryTest {
 				CardinalRiteBoundaryGeometry.socketStainFeatherAlpha(
 						intensity, socketRadius, outerRadius),
 				"socket stain reaches full transparency at its outer edge");
-	}
-
-	@Test
-	void boundaryStainStopsAtTheAnchorStainInsteadOfOverlappingIt() {
-		double redClearance = CardinalRiteBoundaryGeometry.socketClearanceAngle(
-				3.0F, 3.0F, 0.34F);
-		double stainClearance = CardinalRiteBoundaryGeometry.socketStainClearanceAngle(
-				3.0F, 3.0F, 0.34F);
-
-		assertTrue(stainClearance > redClearance,
-				"black boundary backing is clipped at the wider anchor stain");
-		assertNear(
-				CardinalRiteBoundaryGeometry.socketClearanceAngle(
-						3.0F, 3.0F,
-						CardinalRiteBoundaryGeometry.socketStainOuterRadius(0.34F)),
-				stainClearance, "stain layers meet at the same radius");
 	}
 
 	@Test
@@ -291,42 +250,6 @@ public final class CardinalRiteBoundaryGeometryTest {
 	}
 
 	@Test
-	void diagonalSocketUsesItsActualCircleIntersection() {
-		float ringRadius = 3.0F;
-		float socketRadius = 0.34F;
-		var junction = CardinalRiteBoundaryGeometry.socketJunction(
-				ringRadius, 2.0F, 2.0F, socketRadius, 1);
-
-		assertNear(ringRadius, Math.hypot(junction.x(), junction.z()),
-				"junction remains on the boundary circle");
-		assertNear(socketRadius,
-				Math.hypot(junction.x() - 2.0D, junction.z() - 2.0D),
-				"junction also lies on the offset socket circle");
-		assertNear(junction.socketAngle(),
-				Math.atan2(junction.z() - 2.0D, junction.x() - 2.0D),
-				"socket gate faces the real junction instead of an assumed tangent");
-	}
-
-	@Test
-	void offsetSocketBodyOpensAroundItsTwoRealJunctions() {
-		var first = CardinalRiteBoundaryGeometry.socketJunction(
-				3.0F, 2.0F, 2.0F, 0.34F, -1);
-		var second = CardinalRiteBoundaryGeometry.socketJunction(
-				3.0F, 2.0F, 2.0F, 0.34F, 1);
-		var body = CardinalRiteBoundaryGeometry.socketBodyArcsBetweenGates(
-				first.socketAngle(), second.socketAngle(), 0.12D);
-
-		assertEquals(2, body.size(), "two complementary socket body arcs");
-		assertNear(CardinalRiteBoundaryGeometry.normalizeRadians(
-						first.socketAngle() + 0.12D),
-				CardinalRiteBoundaryGeometry.normalizeRadians(
-						body.getFirst().startAngle()),
-				"first body begins after the real first gate");
-		assertTrue(body.stream().allMatch(arc -> arc.sweepAngle() > 0.0D),
-				"offset gates do not create crossed body arcs");
-	}
-
-	@Test
 	void connectionSupportsDifferentClearanceAtEachEndpoint() {
 		var segment = new CardinalRiteBoundaryProgress.Segment(
 				0, 0.0D, Math.PI / 2.0D, 3, 0.6F);
@@ -342,65 +265,12 @@ public final class CardinalRiteBoundaryGeometryTest {
 	}
 
 	@Test
-	void socketBodyLeavesTwoExactGatesForBoundaryNecks() {
-		double halfGate = 0.35D;
-		var arcs = CardinalRiteBoundaryGeometry.socketBodyArcs(0.0D, halfGate);
-
-		assertEquals(2, arcs.size(), "two socket body arcs");
-		assertNear(halfGate, arcs.get(0).startAngle(), "first body start");
-		assertNear(Math.PI - halfGate * 2.0D, arcs.get(0).sweepAngle(),
-				"first body sweep");
-		assertNear(Math.PI + halfGate, arcs.get(1).startAngle(), "second body start");
-		assertNear(Math.PI - halfGate * 2.0D, arcs.get(1).sweepAngle(),
-				"second body sweep");
-	}
-
-	@Test
-	void socketOverlayStaysContinuousAcrossBoundaryConnections() {
-		var arcs = CardinalRiteBoundaryGeometry.socketOverlayArcs();
-
-		assertEquals(1, arcs.size(), "continuous socket arc count");
-		assertNear(0.0D, arcs.getFirst().startAngle(), "continuous socket start");
-		assertNear(Math.PI * 2.0D, arcs.getFirst().sweepAngle(),
-				"continuous socket covers both connection seams");
-	}
-
-	@Test
-	void boundaryTessellationPreservesExactJunctionEndpoints() {
-		var pieces = CardinalRiteBoundaryGeometry.tessellateArc(
-				0.13D, 0.90D, 96);
-
-		assertNear(0.13D, pieces.getFirst().startAngle(), "exact arc start");
-		var last = pieces.getLast();
-		assertNear(1.03D, last.startAngle() + last.sweepAngle(), "exact arc end");
-		assertTrue(pieces.stream().allMatch(piece ->
-				piece.sweepAngle() <= Math.PI * 2.0D / 96.0D + 0.0001D),
-				"pieces retain the original ring resolution");
-	}
-
-	@Test
-	void boundaryUndulationFadesOutAtSocketThroats() {
-		var segment = new CardinalRiteBoundaryProgress.Segment(
-				0, 0.0D, Math.PI / 2.0D, 3, 1.0F);
-		double clearance = 2.0D * Math.asin(0.34D / 6.0D);
-		double start = clearance;
-		double end = Math.PI / 2.0D - clearance;
-		double fadeAngle = 0.20D;
-
-		assertNear(0.0D, CardinalRiteBoundaryGeometry.socketEndpointWaveScale(
-				start, List.of(segment), 3.0F, 0.34F, fadeAngle),
-				"first socket throat is pinned");
-		assertNear(0.0D, CardinalRiteBoundaryGeometry.socketEndpointWaveScale(
-				end, List.of(segment), 3.0F, 0.34F, fadeAngle),
-				"second socket throat is pinned");
-		assertNear(0.5D, CardinalRiteBoundaryGeometry.socketEndpointWaveScale(
-				start + fadeAngle * 0.5D, List.of(segment),
-				3.0F, 0.34F, fadeAngle),
-				"undulation eases smoothly away from the throat");
-		assertNear(1.0D, CardinalRiteBoundaryGeometry.socketEndpointWaveScale(
-				start + fadeAngle, List.of(segment),
-				3.0F, 0.34F, fadeAngle),
-				"the rest of the boundary keeps its full undulation");
+	void boundaryPiecesKeepTheOriginalRingResolution() {
+		assertEquals(14, CardinalRiteBoundaryGeometry.pieceCount(0.90D, 96), "0.9 rad at 96 segments");
+		assertEquals(1, CardinalRiteBoundaryGeometry.pieceCount(0.01D, 96), "a sliver is still one piece");
+		assertEquals(0, CardinalRiteBoundaryGeometry.pieceCount(0.0D, 96), "nothing to draw");
+		assertTrue(0.90D / CardinalRiteBoundaryGeometry.pieceCount(0.90D, 96) <= Math.PI * 2.0D / 96.0D + 0.0001D,
+				"pieces never exceed one ring segment");
 	}
 
 	@Test
@@ -428,35 +298,6 @@ public final class CardinalRiteBoundaryGeometryTest {
 				"diagonal boundary passes through all authored socket centers");
 		assertNear(3.0D, CardinalRiteBoundaryGeometry.anchorAlignedRingRadius(
 				3.0F, List.of()), "ring without authored sockets keeps its nominal radius");
-	}
-
-	@Test
-	void socketUndulationFadesOutAtNeckGates() {
-		double tangent = 0.7D;
-		double halfGate = 0.38D;
-		double gate = tangent + halfGate;
-
-		assertNear(0.0D, CardinalRiteBoundaryGeometry.socketGateWaveScale(
-				gate, tangent, halfGate, 0.16D), "socket gate is pinned");
-		assertNear(0.5D, CardinalRiteBoundaryGeometry.socketGateWaveScale(
-				gate + 0.08D, tangent, halfGate, 0.16D),
-				"socket wave eases away from its gate");
-		assertNear(1.0D, CardinalRiteBoundaryGeometry.socketGateWaveScale(
-				gate + 0.16D, tangent, halfGate, 0.16D),
-				"socket body retains its full wave");
-	}
-
-	@Test
-	void offsetSocketUndulationPinsBothNonOppositeGates() {
-		double firstGate = -0.28D;
-		double secondGate = 1.86D;
-
-		assertNear(0.0D, CardinalRiteBoundaryGeometry.socketGateWaveScale(
-				firstGate + 0.38D, firstGate, secondGate,
-				0.38D, 0.16D), "first offset gate edge is pinned");
-		assertNear(0.0D, CardinalRiteBoundaryGeometry.socketGateWaveScale(
-				secondGate - 0.38D, firstGate, secondGate,
-				0.38D, 0.16D), "second offset gate edge is pinned");
 	}
 
 	@Test

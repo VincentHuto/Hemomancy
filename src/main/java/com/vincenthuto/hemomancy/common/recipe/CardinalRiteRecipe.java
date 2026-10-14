@@ -264,6 +264,30 @@ public class CardinalRiteRecipe extends CustomRecipe {
 		return riteDescription;
 	}
 
+	/** {@code hemomancy.rite.<rite>.name}; the recipe's authored name is the fallback. */
+	public String nameKey() {
+		return "hemomancy.rite." + riteKeyId() + ".name";
+	}
+
+	public String descriptionKey() {
+		return "hemomancy.rite." + riteKeyId() + ".desc";
+	}
+
+	/** Localized rite name, falling back to the recipe's {@code riteName}. */
+	public net.minecraft.network.chat.MutableComponent displayName() {
+		return net.minecraft.network.chat.Component.translatableWithFallback(nameKey(), riteName);
+	}
+
+	/** Localized rite description, falling back to the recipe's {@code riteDescription}. */
+	public net.minecraft.network.chat.MutableComponent displayDescription() {
+		return net.minecraft.network.chat.Component.translatableWithFallback(descriptionKey(), riteDescription);
+	}
+
+	private String riteKeyId() {
+		String path = getId().getPath();
+		return path.startsWith("cardinal_rite/") ? path.substring("cardinal_rite/".length()) : path;
+	}
+
 	@Override
 	public RecipeSerializer<?> getSerializer() {
 		return RecipeInit.cardinal_rite_recipe_serializer.get();

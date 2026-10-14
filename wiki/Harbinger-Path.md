@@ -118,7 +118,11 @@ Besides degree advancement, the Cardinal Altar enables **utility rites** for pra
 
 Once the floor is complete, a living membrane spreads from the Focus across it and tears a gash in the ground around it, through every brazier socket, which swells into a clot pool where each brazier stands. A broken floor withers. Sockets sit just outside the floor edge; when you enlarge a floor, slide each brazier one block outward.
 
-The Artificer teaches Living Staff construction at D2, while its formation remains craftable at D1. Forming it earns the bond: select **Conjure Staff** with an empty hand to recall it. Select **Blood Absorption** or **Blood Projection**, then hold the Staff to channel that utility. Selecting a Thelemic memory does not leave the previous Staff utility running. Staff ownership does not raise your degree; positive-degree Harbinger rites require active blood before the server plants or escrows it.
+The Artificer teaches Living Staff construction at D2, while its formation remains craftable at D1. Forming it earns the bond: select **Conjure Staff** with an empty hand to recall it. Select **Blood Absorption** or **Blood Projection**, then hold the Staff to channel that utility. Selecting a Thelemic memory does not leave the previous Staff utility running. Staff ownership does not raise your degree; positive-degree Harbinger rites require active blood before the server plants or escrows it. Planting the Staff in a Cardinal Focus leaves a Blood Projection hand in its place with Projection selected, ready to feed the anchors. When the rite ends, the Staff returns to that hand.
+
+As a Cardinal Rite deepens, the world around it changes with each filled ring, the seal, the procession and culmination: blood-coloured fog, a filling trench, membrane creeping over the ground, a vortex gathering in the sky, blood rain, and a red eye opening overhead at the end. Strain shows as closing fog, guttering braziers and a bruised, receding creep. The top-of-screen rite panel is off by default; set `cardinalRiteHud` to `FULL` in the client config to bring it back.
+
+A rite with several rings of anchors does not open them all at once. Only the innermost ring hungers at first; the others lie in the floor as closed scars. Each time the sealed rite moves on (a station projection, an ordeal wave, a still interval, the offering procession), the next ring tears open, and that part of the rite cannot end until you feed it. If a rite has no such stages, its outer rings wake as soon as the first is fed, and the altar will not seal until they are full too. Each ring asks more blood per sore than the one inside it, and each tears open more violently than the last.
 
 At D2, the Vicar teaches **Rooted Vein** as a first practical ceremony. Prepare its Lesser floor with an empty Focus and keep the block above it clear. Put one Blood Rock in an Iron Brazier on a floor socket and light it with Blood Projection. Use the Living Staff on the Focus, project 50 mL into each of the four anchors, then project into the daemon. Stay inside the boundary through its offering procession and return. No helper, support sigil, or ordeal is required. Completion returns the Staff and replaces the Focus with Venous Stone supporting a permanent Earthen Vein; it does not promote your degree.
 
@@ -126,11 +130,8 @@ Cardinal Rites teach their ritual vocabulary progressively:
 
 Keep the sigil surface intact and aim at its visible nodes. Once a shape awakens, continuing to hold Blood Projection over its completed markers does not spend more blood or craft into the terrain behind them. This protection lasts while that support or current response belongs to the active rite phase; aiming elsewhere still uses ordinary Projection.
 
-- **Sanguine Initiation (D0):** performed on the prepared Blood Temple floor
-  after the Hermit's temple-bound oath. It uses an iron-nugget medium, with no
-  anchors, sigils, offerings, fog, ordeal, or helper.
-- **Degree 1:** the player builds the floor, seats another crude medium, and
-  learns one ring of four blood anchors.
+- **Initiation (D0-D1):** handled by the Hermit and the Vicar in person; it is
+  not a Cardinal Rite.
 - **Degrees 2-3:** the Living Staff and normally one brazier offering enter the
   loop; faint fog appears, but sigils and ordeals do not.
 - **Degree 4:** the first required support sigil and dense fog appear.
@@ -152,6 +153,19 @@ empty Focus. The medium is locked while its rite is active and consumed only on
 successful completion, so cancellation or failure leaves it available for
 shift-right-click recovery. Bloom of the Qliphoth uses a Qliphoth Seed this way,
 while Founding Fane uses Sanguine Quintessence.
+
+### How a Rite Runs
+
+- **Planting.** The Living Staff strikes the Focus and a shock runs through the floor. The membrane quickens for as long as the rite lives.
+- **Consecration.** Each anchor you fill sends a pulse along the floor toward it and seals its arc of the boundary.
+- **Ordeal.** A wave announces itself first: warning bolts strike from the fog where its threats will step out a second later. Answer it before its deadline. A covenant-pressure wave presses blood out of every anchor until you trace the Seal sigil it demands.
+- **Instability** bruises the floor and breaks anchors before it collapses the rite. Once strained, the outer anchors bleed; once rupturing, the ordeal's threats grow stronger. Repair broken anchors with projected blood.
+- **The finale waits** if something the rite needs is missing, such as bloodline members online for the Scarlet Summons or a clear space for the Earthen Vein. It holds in a still interval and tells you why, without consuming your offerings. Fix it, or recall the rite.
+- **Offerings.** The daemon hovers over the staff while the floor draws each burning offering into it along the trench, one after another; each one swells it. Then it merges into you.
+- **The Reservoir pays back.** If you awakened the optional Reservoir sigil and the rite held together cleanly (little instability and no broken anchor), it returns half of the anchors' blood.
+- **Exsanguination** demands a sacrifice: a name-tagged creature kept inside the circle bleeds 200 mL into the anchors before the daemon will seal.
+
+Each family of rites ends differently: rank rites raise a blood pillar through you, vessel and station rites forge their result onto the Focus, bloodline rites bind vessels to the people present, territorial rites swell a dome to the domain's edge, and earth rites send a ring out through the ground. A Sanguine Dominion stays visible afterwards as a slow vein along its edge, and lowers your manipulation costs by a quarter while you stand inside it.
 
 ### Cancelling an Active Rite
 

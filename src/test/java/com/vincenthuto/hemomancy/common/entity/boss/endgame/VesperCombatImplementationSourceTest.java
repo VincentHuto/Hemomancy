@@ -248,7 +248,7 @@ final class VesperCombatImplementationSourceTest {
 		if (!Files.exists(ribbonPath) || !Files.exists(cocoonPath)) return;
 		String cocoon = read("client/render/layer/mob/endgame/VesperTransitionCocoonRenderer.java");
 
-		assertTrue(cardinalRenderer.contains("SanguineTendrilRibbonRenderer.render"));
+		assertTrue(cardinalRenderer.contains("TendrilGeometry.createTubeQuads"));
 		assertTrue(cocoon.contains("TendrilRenderer.INSTANCE.add"));
 		assertTrue(cocoon.contains("TendrilEffectData"));
 		assertTrue(cocoon.contains("TendrilEffectConfig"));

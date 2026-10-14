@@ -67,65 +67,9 @@ public final class CardinalRiteFloorVisualRules {
 		return (float) Math.sin(Math.PI * t) * (1.0F - t * 0.35F);
 	}
 
-	/** The braid around the Focus mouth swells in over the first second of formation, before the membrane settles. */
-	public static float braidGrowth(float ticksSinceFormed) {
+	/** The pad over the Focus mouth swells in over the first second of formation, before the membrane settles. */
+	public static float padGrowth(float ticksSinceFormed) {
 		return smoothstep(clamp01(ticksSinceFormed / 20.0F));
-	}
-
-	/** Width, in radians, of the arc over which a braid strand sinks into the floor. */
-	public static final float BRAID_DIVE_WIDTH = 0.6F;
-
-	/**
-	 * Where the Focus braid's strands sink into the floor: strand {@code i} of four dives at {@code i * PI/4} and
-	 * opposite it, so the eight dives are evenly spaced. The membrane shader draws each strand's tributary from the
-	 * same angles, so keep the two in step.
-	 *
-	 * @return 0 away from a dive, rising to 1 at its deepest point
-	 */
-	public static float braidDive(int strand, float theta) {
-		float deepest = 0.0F;
-		for (int side = 0; side < 2; side++) {
-			double centre = strand * Math.PI / 4.0D + side * Math.PI;
-			double offset = Math.abs(Math.IEEEremainder(theta - centre, Math.PI * 2.0D));
-			if (offset >= BRAID_DIVE_WIDTH) continue;
-			float t = (float) (offset / BRAID_DIVE_WIDTH);
-			deepest = Math.max(deepest, (1.0F - t * t) * (1.0F - t * t));
-		}
-		return deepest;
-	}
-
-	/** The mound's inner lip, just inside the Focus basin's square opening, where the iron rim sits. */
-	public static final float MOUND_INNER = 0.40F;
-	/**
-	 * Where the mound settles back to the floor. The membrane shader cuts the flat surface away inside this radius so
-	 * the two never stack; keep its MOUND_OUTER in step.
-	 */
-	public static final float MOUND_OUTER = 1.45F;
-	private static final float MOUND_LIP = 0.035F;
-	private static final float MOUND_PEAK = 0.11F;
-	private static final float MOUND_CREST = 0.58F;
-
-	/**
-	 * Height of the swelling the Focus braid sits in, above the flat membrane: a lip at the iron rim, a crest under
-	 * the braid, and an easing back to the floor. It is lumpy around its circumference and bulges where the braid's
-	 * strands dive in.
-	 */
-	public static float moundHeight(float radius, float theta) {
-		if (radius >= MOUND_OUTER) return 0.0F;
-		float profile;
-		if (radius <= MOUND_CREST) {
-			float t = clamp01((radius - MOUND_INNER) / (MOUND_CREST - MOUND_INNER));
-			profile = MOUND_LIP + (MOUND_PEAK - MOUND_LIP) * smoothstep(t);
-		} else {
-			float t = (radius - MOUND_CREST) / (MOUND_OUTER - MOUND_CREST);
-			profile = MOUND_PEAK * 0.5F * (1.0F + (float) Math.cos(Math.PI * t));
-		}
-		float lumps = 1.0F + 0.18F * (float) Math.sin(theta * 3.0F + 0.7F) + 0.08F * (float) Math.sin(theta * 7.0F);
-		float dive = 0.0F;
-		for (int strand = 0; strand < 4; strand++) dive = Math.max(dive, braidDive(strand, theta));
-		float divePoint = (radius - 0.72F) / 0.22F;
-		float swell = 0.035F * dive * (float) Math.exp(-divePoint * divePoint);
-		return profile * lumps + swell * (1.0F - smoothstep(clamp01((radius - 1.1F) / 0.35F)));
 	}
 
 	/**
@@ -167,6 +111,241 @@ public final class CardinalRiteFloorVisualRules {
 	/** How brightly the dig front glows where the trench is mid-carve: nothing before it or once dug. */
 	public static float digGlow(float progress) {
 		return 4.0F * progress * (1.0F - progress);
+	}
+
+	// ---- The floor as the rite's body: how the membrane answers each beat of a rite held on it ----
+
+	/** A staff strike's shock leaves the Focus and runs past the floor's edge over this many ticks. */
+	public static final float SHOCK_TICKS = 20.0F;
+	/** A filled anchor's blood pulse runs from the Focus out to the anchor over this many ticks. */
+	public static final float SURGE_TICKS = 18.0F;
+	/** A drawn offering lights its stretch of trench, then runs in across the membrane to the Focus. */
+	public static final float OFFERING_TICKS = 24.0F;
+	/** The membrane's flinch when a wave arrives. */
+	public static final float FLINCH_TICKS = 12.0F;
+	/** The flush of relief when a wave is answered. */
+	public static final float RELIEF_TICKS = 40.0F;
+	/** The culmination swell reaches its fullest after this many ticks of the phase. */
+	public static final float CULMINATION_SWELL_TICKS = 100.0F;
+	/** A completed rite's flush settles over this many ticks. */
+	public static final float COMPLETION_SETTLE_TICKS = 90.0F;
+	/** A grounding rite's ring runs out of the floor and this far into the surrounding ground. */
+	public static final float GROUND_RING_BEYOND = 8.0F;
+	public static final float GROUND_RING_TICKS = 40.0F;
+	/**
+	 * A collapsed or broken rite tears the membrane back toward the Focus at about three times the collapse rate,
+	 * down to this share of its spread, holds a moment, then regrows: the floor itself is still formed.
+	 */
+	public static final float TEAR_EXTENT = 0.4F;
+	public static final float TEAR_TICKS = 13.0F;
+	public static final float TEAR_HOLD_TICKS = 5.0F;
+	public static final float TEAR_REGROW_TICKS = 60.0F;
+	/** A cancelled rite dims the membrane gently, and it recovers over this many ticks. */
+	public static final float CANCEL_TICKS = 60.0F;
+
+	/** No rite, a rite in progress, and a rite at its most demanding (inscription or an ordeal). */
+	public static final int TEMPO_IDLE = 0;
+	public static final int TEMPO_ACTIVE = 1;
+	public static final int TEMPO_INTENSE = 2;
+
+	/** Formation age at which the membrane has spread {@link #TEAR_EXTENT} of the way. */
+	private static final float TEAR_AGE = FORM_TICKS * inverseSmoothstep(TEAR_EXTENT);
+
+	/** How hard the floor's heart works during a rite phase, by the phase's name. */
+	public static int riteTempo(String phase) {
+		if (phase == null || phase.isEmpty()) return TEMPO_IDLE;
+		return switch (phase) {
+			case "COMPLETE", "COLLAPSED" -> TEMPO_IDLE;
+			case "INSCRIPTION", "ORDEAL", "PUPPET_TRIAL", "CULMINATION" -> TEMPO_INTENSE;
+			default -> TEMPO_ACTIVE;
+		};
+	}
+
+	/** Heartbeat rate relative to rest: a live rite quickens it by half, a demanding phase doubles it. */
+	public static float tempoRate(int tempo) {
+		return tempo >= TEMPO_INTENSE ? 2.0F : tempo == TEMPO_ACTIVE ? 1.5F : 1.0F;
+	}
+
+	/** How much brighter the vessels run at a tempo. */
+	public static float tempoVigor(int tempo) {
+		return tempo >= TEMPO_INTENSE ? 0.55F : tempo == TEMPO_ACTIVE ? 0.3F : 0.0F;
+	}
+
+	/**
+	 * The floor's heartbeat during a rite: the resting beat crossfaded toward the quickened one by {@code quick}, which
+	 * leans toward the racing one by {@code intense}. The rates are 1, 1.5 and 2 times rest, so all three line up every
+	 * two resting beats, and the time is reduced to that span first so large game times keep their precision.
+	 */
+	public static float riteHeartbeat(double time, float quick, float intense) {
+		float local = (float) (time - Math.floor(time / (HEARTBEAT_TICKS * 2.0D)) * (HEARTBEAT_TICKS * 2.0D));
+		float rest = heartbeat(local);
+		if (quick <= 0.0F) return rest;
+		float active = mix(heartbeat(local * tempoRate(TEMPO_ACTIVE)), heartbeat(local * tempoRate(TEMPO_INTENSE)),
+				clamp01(intense));
+		return mix(rest, active, clamp01(quick));
+	}
+
+	/** Radius of a staff strike's shock ring: it bursts from the Focus and slows as it outruns the floor's edge. */
+	public static float shockRadius(float ticksSinceImpact, float reach) {
+		float t = clamp01(ticksSinceImpact / SHOCK_TICKS);
+		return reach * 1.15F * (1.0F - (1.0F - t) * (1.0F - t));
+	}
+
+	/** Strength of the shock: a hard attack in a tick and a half, then a long fall, gone by {@link #SHOCK_TICKS}. */
+	public static float shockStrength(float ticksSinceImpact) {
+		if (ticksSinceImpact < 0.0F || ticksSinceImpact >= SHOCK_TICKS) return 0.0F;
+		float fall = 1.0F - ticksSinceImpact / SHOCK_TICKS;
+		return clamp01(ticksSinceImpact / 1.5F) * fall * fall;
+	}
+
+	/** How far from the Focus a filled anchor's blood pulse has run toward it. */
+	public static float surgeRadius(float ticksSinceFilled, float anchorDistance) {
+		return anchorDistance * smoothstep(clamp01(ticksSinceFilled / SURGE_TICKS));
+	}
+
+	/** Strength of the anchor pulse: quick to rise, fading as it arrives. */
+	public static float surgeStrength(float ticksSinceFilled) {
+		float end = SURGE_TICKS + 6.0F;
+		if (ticksSinceFilled < 0.0F || ticksSinceFilled >= end) return 0.0F;
+		float release = clamp01((ticksSinceFilled - SURGE_TICKS * 0.7F) / (end - SURGE_TICKS * 0.7F));
+		return clamp01(ticksSinceFilled / 2.0F) * (1.0F - smoothstep(release));
+	}
+
+	/**
+	 * Glow of the trench at {@code arcDistance} blocks along its loop from the brazier an offering was drawn from: the
+	 * stretch beside it lights at once and the glow runs a little way both ways along the trench as it fades.
+	 */
+	public static float offeringTrenchGlow(float ticksSinceDrawn, float arcDistance) {
+		if (ticksSinceDrawn < 0.0F || ticksSinceDrawn >= OFFERING_TICKS) return 0.0F;
+		float envelope = clamp01(ticksSinceDrawn / 2.0F) * (1.0F - smoothstep(clamp01((ticksSinceDrawn - 6.0F) / 14.0F)));
+		float run = 0.6F + 2.4F * smoothstep(clamp01(ticksSinceDrawn / 10.0F));
+		float beyond = Math.max(0.0F, Math.abs(arcDistance) - run);
+		return envelope * (float) Math.exp(-beyond * beyond / 0.35F) * (1.0F - 0.35F * clamp01(Math.abs(arcDistance) / 3.5F));
+	}
+
+	/** Where the offering's pulse is on its run in across the membrane, from the trench to the Focus. */
+	public static float offeringDrawRadius(float ticksSinceDrawn, float startRadius) {
+		return startRadius * (1.0F - smoothstep(clamp01((ticksSinceDrawn - 5.0F) / (OFFERING_TICKS - 8.0F))));
+	}
+
+	/** Strength of the offering's inward pulse: it leaves the trench once that has lit, and is gone on arrival. */
+	public static float offeringDrawStrength(float ticksSinceDrawn) {
+		if (ticksSinceDrawn < 3.0F || ticksSinceDrawn >= OFFERING_TICKS + 4.0F) return 0.0F;
+		return clamp01((ticksSinceDrawn - 3.0F) / 3.0F) * (1.0F - smoothstep(clamp01((ticksSinceDrawn - 19.0F) / 9.0F)));
+	}
+
+	/** The Focus mouth flares as the offering's pulse reaches it. */
+	public static float offeringFocusFlare(float ticksSinceDrawn) {
+		float arrival = OFFERING_TICKS - 3.0F;
+		float distance = Math.abs(ticksSinceDrawn - arrival) / 6.0F;
+		return distance >= 1.0F ? 0.0F : 1.0F - smoothstep(distance);
+	}
+
+	/** The membrane blanches for a moment when a wave arrives. */
+	public static float flinchBlanch(float ticksSinceWave) {
+		if (ticksSinceWave < 0.0F || ticksSinceWave >= FLINCH_TICKS) return 0.0F;
+		return clamp01(ticksSinceWave / 1.5F) * (1.0F - smoothstep(ticksSinceWave / FLINCH_TICKS));
+	}
+
+	/** The flinch's contraction ripple runs in from the floor's edge to the Focus. */
+	public static float flinchRippleRadius(float ticksSinceWave, float reach) {
+		return reach * (1.0F - smoothstep(clamp01(ticksSinceWave / FLINCH_TICKS)));
+	}
+
+	public static float flinchRippleStrength(float ticksSinceWave) {
+		if (ticksSinceWave < 0.0F || ticksSinceWave >= FLINCH_TICKS) return 0.0F;
+		return (float) Math.sin(Math.PI * ticksSinceWave / FLINCH_TICKS);
+	}
+
+	/** A flush of relief through the vessels when a wave is answered. */
+	public static float reliefFlush(float ticksSinceCleared) {
+		if (ticksSinceCleared < 0.0F || ticksSinceCleared >= RELIEF_TICKS) return 0.0F;
+		float fall = 1.0F - ticksSinceCleared / RELIEF_TICKS;
+		return clamp01(ticksSinceCleared / 3.0F) * fall * fall;
+	}
+
+	/** The whole membrane swells and brightens as culmination goes on. */
+	public static float culminationSwell(float ticksInCulmination) {
+		return smoothstep(clamp01(ticksInCulmination / CULMINATION_SWELL_TICKS));
+	}
+
+	/** A completed rite's flush: a fast rise, then a slow settle. */
+	public static float completionFlush(float ticksSinceCompleted) {
+		if (ticksSinceCompleted < 0.0F || ticksSinceCompleted >= COMPLETION_SETTLE_TICKS) return 0.0F;
+		return clamp01(ticksSinceCompleted / 4.0F) * (1.0F - smoothstep(ticksSinceCompleted / COMPLETION_SETTLE_TICKS));
+	}
+
+	/** The culmination's swell easing back down after completion. */
+	public static float completionSwell(float ticksSinceCompleted) {
+		if (ticksSinceCompleted < 0.0F) return 0.0F;
+		return 1.0F - smoothstep(clamp01(ticksSinceCompleted / (COMPLETION_SETTLE_TICKS * 0.75F)));
+	}
+
+	/** Radius of a grounding rite's ring: from the Focus, out past the floor's edge into the ground around it. */
+	public static float groundRingRadius(float ticksSinceCompleted, float reach) {
+		float t = clamp01(ticksSinceCompleted / GROUND_RING_TICKS);
+		return (reach + GROUND_RING_BEYOND) * (1.0F - (1.0F - t) * (1.0F - t));
+	}
+
+	public static float groundRingStrength(float ticksSinceCompleted) {
+		if (ticksSinceCompleted < 0.0F || ticksSinceCompleted >= GROUND_RING_TICKS) return 0.0F;
+		float fade = clamp01((ticksSinceCompleted - GROUND_RING_TICKS * 0.55F) / (GROUND_RING_TICKS * 0.45F));
+		return clamp01(ticksSinceCompleted / 2.0F) * (1.0F - smoothstep(fade));
+	}
+
+	/** Whether a collapse or break this long ago is still tearing or regrowing the membrane. */
+	public static boolean tearing(float ticksSinceEnded) {
+		return ticksSinceEnded >= 0.0F && ticksSinceEnded < TEAR_TICKS + TEAR_HOLD_TICKS + TEAR_REGROW_TICKS;
+	}
+
+	/**
+	 * The formation age a torn membrane shows: it plays formation backwards at about three times the collapse rate
+	 * down to {@link #TEAR_EXTENT} of its spread, holds, then plays it forwards again until fully formed.
+	 */
+	public static float tearAge(float ticksSinceEnded) {
+		if (!tearing(ticksSinceEnded)) return FORM_TICKS;
+		if (ticksSinceEnded < TEAR_TICKS) return FORM_TICKS - (FORM_TICKS - TEAR_AGE) * ticksSinceEnded / TEAR_TICKS;
+		float regrow = clamp01((ticksSinceEnded - TEAR_TICKS - TEAR_HOLD_TICKS) / TEAR_REGROW_TICKS);
+		return TEAR_AGE + (FORM_TICKS - TEAR_AGE) * regrow;
+	}
+
+	/** Dark bruising over a torn membrane: it floods in as it tears and drains away as it regrows. */
+	public static float tearBruise(float ticksSinceEnded) {
+		if (!tearing(ticksSinceEnded)) return 0.0F;
+		float heal = clamp01((ticksSinceEnded - TEAR_TICKS - TEAR_HOLD_TICKS) / TEAR_REGROW_TICKS);
+		return 0.85F * clamp01(ticksSinceEnded / 4.0F) * (1.0F - smoothstep(heal));
+	}
+
+	/** A cancelled rite dims the membrane a little, and it recovers. */
+	public static float cancelDim(float ticksSinceCancelled) {
+		if (ticksSinceCancelled < 0.0F || ticksSinceCancelled >= CANCEL_TICKS) return 0.0F;
+		return 0.35F * clamp01(ticksSinceCancelled / 8.0F)
+				* (1.0F - smoothstep(clamp01((ticksSinceCancelled - 8.0F) / (CANCEL_TICKS - 8.0F))));
+	}
+
+	/** How bruised the whole membrane is at a rite's instability, 0 to 100. */
+	public static float instabilityBruise(int instability) {
+		return 0.85F * smoothstep(clamp01((instability - 5) / 90.0F));
+	}
+
+	/** A local bruise toward an anchor from its integrity, 0 broken to 1 whole. */
+	public static float anchorWound(float integrity) {
+		return clamp01(1.0F - integrity);
+	}
+
+	/** A freshly broken anchor flares a bruise toward it that eases off; a lasting break is carried by its integrity. */
+	public static float brokenWound(float ticksSinceBroken) {
+		if (ticksSinceBroken < 0.0F || ticksSinceBroken >= 160.0F) return 0.0F;
+		return 1.0F - 0.5F * smoothstep(clamp01(ticksSinceBroken / 40.0F))
+				- 0.5F * smoothstep(clamp01((ticksSinceBroken - 40.0F) / 120.0F));
+	}
+
+	static float inverseSmoothstep(float y) {
+		return 0.5F - (float) Math.sin(Math.asin(1.0D - 2.0D * clamp01(y)) / 3.0D);
+	}
+
+	static float mix(float a, float b, float t) {
+		return a + (b - a) * t;
 	}
 
 	private static float beat(float phase, float centre, float width) {

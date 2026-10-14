@@ -102,7 +102,10 @@ public final class RegistryBackedScarRefactorSourceTest {
 		assertContains("scar pattern stores selected scar ids", pattern, "TAG_SCAR_IDS");
 		assertContains("scar pattern creates prepared loadouts", pattern, "createPreparedPattern");
 		assertContains("iron brazier routes scar offerings through absorption", brazierBlock,
-				"ScarBrazierRite.tryAbsorb");
+				"BrazierRites.absorb");
+		assertContains("brazier rites include the scar rite",
+				read("src/main/java/com/vincenthuto/hemomancy/common/rite/brazier/BrazierRites.java"),
+				"ScarBrazierRite.INSTANCE");
 		assertContains("brazier learns from scar items", brazier, "tryLearnScar");
 		assertContains("brazier commits scar pattern loadouts", brazier, "tryCommitLoadout");
 		assertContains("brazier clears loadouts from blank motif paper", brazier, "tryClearLoadout");

@@ -1,14 +1,16 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
+import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.Comparator;
 
 /**
- * Prototype bossbar-style ceremony readout. It deliberately combines color,
- * labels, bar shapes, and pips so none of the live cues depend on color alone.
+ * Bossbar-style readout for the nearest Harbinger ceremony. It deliberately
+ * combines color, labels, bar shapes, and pips so none of the live cues depend
+ * on color alone.
  */
 public final class CardinalRiteOverlay {
 	public static CardinalRiteOverlay instance;
@@ -17,10 +19,11 @@ public final class CardinalRiteOverlay {
 	private long lastRenderNanos;
 
 	public void renderHUD(GuiGraphics graphics, int screenWidth, int screenHeight, float partialTicks) {
+		if (HemoClientConfig.cardinalRiteHud() != HemoClientConfig.CardinalRiteHudMode.FULL) return;
 		Minecraft minecraft = Minecraft.getInstance();
 		if (minecraft.player == null || minecraft.options.hideGui) return;
 		ActiveRiteClientData.RiteEntry rite = ActiveRiteClientData.getActiveRites().stream()
-				.filter(entry -> !entry.isUnstained() && !"LEGACY".equals(entry.getPhase()))
+				.filter(entry -> !entry.isUnstained() && !entry.isLegacy())
 				.filter(entry -> entry.getCenter().distToCenterSqr(minecraft.player.position()) <= 128.0D * 128.0D)
 				.min(Comparator.comparingDouble(
 						entry -> entry.getCenter().distToCenterSqr(minecraft.player.position())))
@@ -48,7 +51,7 @@ public final class CardinalRiteOverlay {
 		drawCentered(graphics, title, screenWidth / 2, y, 0xFFF3D5D9);
 		drawBar(graphics, x, y + 12, displayedProgress, 0xFF651423, 0xFFE33A53);
 
-        if ("SUCCESSION".equals(rite.getPhase())) {
+        if (rite.isSuccession()) {
             drawCentered(graphics, net.minecraft.network.chat.Component.translatable(rite.getCue()).getString(),
                     screenWidth / 2, y + 28, 0xFFFFD36A);
             drawCentered(graphics, net.minecraft.network.chat.Component.translatable("hemomancy.succession.rite_hint").getString(),
@@ -66,7 +69,7 @@ public final class CardinalRiteOverlay {
 				CardinalRiteOverlayGeometry.instabilityBarWidth(), instability,
 				0xFF241A1C, instabilityColor);
 
-		String pips = "Rings " + pips(rite.getCompletedRings(), rite.getTotalRings())
+		String pips = "Rings " + pips(rite.getCompletedRings(), rite.getOpenRings(), rite.getTotalRings())
 				+ "  " + waveSummary(rite.getCurrentWave(), rite.getTotalWaves());
 		graphics.drawString(minecraft.font, pips, x, y + 34, 0xFFFFC4CB, false);
 		String resources = "Anchors " + rite.getCommittedBloodMl() + "/" + rite.getUpfrontBloodMl() + "ml"
@@ -101,9 +104,10 @@ public final class CardinalRiteOverlay {
 		graphics.fill(x + 1, y + 1, x + 1 + filled, y + 6, fill);
 	}
 
-	private static String pips(int complete, int total) {
+	/** Fed rings solid, woken rings hollow diamonds, sleeping rings hollow circles. */
+	static String pips(int complete, int open, int total) {
 		StringBuilder result = new StringBuilder();
-		for (int i = 0; i < total; i++) result.append(i < complete ? "◆" : "◇");
+		for (int i = 0; i < total; i++) result.append(i < complete ? "◆" : i < open ? "◇" : "○");
 		return result.toString();
 	}
 

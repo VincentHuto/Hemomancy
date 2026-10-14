@@ -48,8 +48,6 @@ public class ParticleInit {
 
 	public static final DeferredHolder<ParticleType<?>, ParticleType<BloodCellData>> blood_cell = PARTICLE_TYPES.register("blood_cell",
 			() -> new BloodCellParticleType());
-	public static final DeferredHolder<ParticleType<?>, ParticleType<RitePillarData>> rite_pillar =
-			PARTICLE_TYPES.register("rite_pillar", RitePillarParticleType::new);
 	public static final DeferredHolder<ParticleType<?>, ParticleType<BloodClawData>> blood_claw = PARTICLE_TYPES.register("blood_claw",
 			() -> new BloodClawParticleType());
 
@@ -73,7 +71,6 @@ public class ParticleInit {
 		Minecraft.getInstance().particleEngine.register(sporitic_spore.get(), SporiticSporeParticleFactory::new);
 		Minecraft.getInstance().particleEngine.register(serpent.get(), SerpentParticleFactory::new);
 		Minecraft.getInstance().particleEngine.register(blood_cell.get(), BloodCellParticleFactory::new);
-		Minecraft.getInstance().particleEngine.register(rite_pillar.get(), RitePillarParticleFactory::new);
 		Minecraft.getInstance().particleEngine.register(blood_claw.get(), BloodClawParticleFactory::new);
 		Minecraft.getInstance().particleEngine.register(absorbed_blood_cell.get(), AbsorbedBloodCellParticleFactory::new);
 

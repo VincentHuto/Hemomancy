@@ -21,7 +21,7 @@ public final class BloodlineDisbandFaneSourceTest {
 		String helper = Files.readString(HELPER).replace("\r\n", "\n");
 		String ledgerPacket = Files.readString(LEDGER_PACKET).replace("\r\n", "\n");
 		String command = Files.readString(COMMAND).replace("\r\n", "\n");
-		String riteEvents = Files.readString(RITE_EVENTS).replace("\r\n", "\n");
+		String riteEvents = (Files.readString(RITE_EVENTS) + Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletionEffects.java"))).replace("\r\n", "\n");
 
 		assertContains("helper removes fanes from the fane saved data", helper, "FoundingFaneSavedData");
 		assertContains("helper checks every loaded dimension", helper, "server.getAllLevels()");

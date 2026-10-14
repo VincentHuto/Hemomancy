@@ -20,25 +20,6 @@ final class CardinalRitePlantedStaffGeometryTest {
 	}
 
 	@Test
-	void dissolvingStaffConvergesOnThePhysicalFocusWithRealOpacity() {
-		BlockPos focus = new BlockPos(20, 64, -10);
-
-		var halfway = CardinalRitePlantedStaffGeometry.dissolvePose(focus, 0.5F, 0.4F);
-		assertEquals(20.4625D, halfway.position().x, 0.0001D);
-		assertEquals(65.45D, halfway.position().y, 0.0001D);
-		assertEquals(-9.3875D, halfway.position().z, 0.0001D);
-		assertEquals(0.875F, halfway.scale(), 0.0001F);
-		assertEquals(0.4F, halfway.opacity(), 0.0001F);
-
-		var gone = CardinalRitePlantedStaffGeometry.dissolvePose(focus, 0.0F, 0.0F);
-		assertEquals(20.5D, gone.position().x, 0.0001D);
-		assertEquals(64.95D, gone.position().y, 0.0001D);
-		assertEquals(-9.5D, gone.position().z, 0.0001D);
-		assertEquals(0.0F, gone.scale(), 0.0001F);
-		assertEquals(0.0F, gone.opacity(), 0.0001F);
-	}
-
-	@Test
 	void staffKeepsItsSilhouetteWhileTheBloodShaderMeltsItIntoTheFocusPool() {
 		BlockPos focus = new BlockPos(20, 64, -10);
 

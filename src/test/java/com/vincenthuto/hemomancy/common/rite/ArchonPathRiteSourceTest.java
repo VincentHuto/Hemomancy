@@ -9,7 +9,8 @@ public final class ArchonPathRiteSourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String dialogue = read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java");
-		String rites = read("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java");
+		String rites = read("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java")
+				+ read("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletionEffects.java");
 		String ordeal = read("src/main/java/com/vincenthuto/hemomancy/common/worldgen/VesperOrdealManager.java");
 		assertContains(dialogue, "EnumArchonPath.SILENT_PENDING");
 		assertContains(dialogue, "EnumArchonPath.APOTHEOS_PENDING");

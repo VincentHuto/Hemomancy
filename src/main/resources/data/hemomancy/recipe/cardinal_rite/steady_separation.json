@@ -116,6 +116,7 @@
       "lightning": false,
       "dome": false
     },
-    "failure": "safe_retry"
+    "failure": "safe_retry",
+    "culmination": "forging"
   }
 }

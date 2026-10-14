@@ -115,6 +115,7 @@
       "lightning": true,
       "dome": false
     },
-    "failure": "fragile_damage"
+    "failure": "fragile_damage",
+    "culmination": "binding"
   }
 }

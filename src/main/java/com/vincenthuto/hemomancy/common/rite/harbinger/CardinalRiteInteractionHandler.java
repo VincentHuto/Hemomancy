@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.entity.utility.AwakenedIchorianSigilEnti
 import com.vincenthuto.hemomancy.common.entity.utility.HumanitySpriteEntity;
 import com.vincenthuto.hemomancy.common.event.SanguineProjectionTargeting;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.*;
 import com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilPlacementRules;
@@ -24,7 +25,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -45,8 +45,8 @@ import java.util.function.IntUnaryOperator;
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class CardinalRiteInteractionHandler {
-	private static final int FALSE_STROKE_OUTER_BLACK = 0xE806020A;
-	private static final int FALSE_STROKE_INNER_PURPLE = 0xFF5A167D;
+	private static final int FALSE_STROKE_OUTER_BLACK = CardinalRiteLightningPalette.OUTER_BLACK;
+	private static final int FALSE_STROKE_INNER_PURPLE = CardinalRiteLightningPalette.INNER_PURPLE;
 
 	private CardinalRiteInteractionHandler() {
 	}
@@ -68,15 +68,18 @@ public final class CardinalRiteInteractionHandler {
 						CardinalRiteVirtualTargeting.PROJECTION_RANGE, CardinalRiteVirtualTargeting.TARGET_RADIUS,
 						java.util.stream.IntStream.range(0, StationUpgradeRites.circuits(rite.getRecipeId()))
 								.mapToObj(i -> StationUpgradeRites.targetSurface(serverLevel, rite, i)).toList());
-				if (aimed != stage) return CardinalRiteProjectionResult.handled(0.0D);
-				int paid = spendBlood(player, rite,
-						Math.min(rite.upgradeBloodNeeded(), Math.max(1, (int) Math.floor(projectionRate))));
-				if (paid > 0 && rite.fillUpgradeCircuit(stage, paid)) {
-					data.setDirty();
-					serverLevel.playSound(null, StationUpgradeRites.target(rite, stage),
-							SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.BLOCKS, 0.5F, 0.85F + stage * 0.1F);
+				if (aimed == stage) {
+					int paid = spendBlood(player, rite,
+							Math.min(rite.upgradeBloodNeeded(), Math.max(1, (int) Math.floor(projectionRate))));
+					if (paid > 0 && rite.fillUpgradeCircuit(stage, paid)) {
+						data.setDirty();
+						serverLevel.playSound(null, StationUpgradeRites.target(rite, stage),
+								SoundInit.RITE_ANCHOR_FILL.get(), SoundSource.BLOCKS, 0.6F, 0.85F + stage * 0.1F);
+					}
+					return CardinalRiteProjectionResult.handled(paid);
 				}
-				return CardinalRiteProjectionResult.handled(paid);
+				// A woken ring is fed through its sores while the circuits wait.
+				if (rite.hungryLaterRingAnchors() <= 0) return CardinalRiteProjectionResult.handled(0.0D);
 			}
 			if (tryProjectSeal(serverLevel, player, rite)) {
 				data.setDirty();
@@ -84,7 +87,10 @@ public final class CardinalRiteInteractionHandler {
 			}
 			BlockPos target = virtualProjectionTarget(serverLevel, player, rite);
 			if (target == null) target = physicalTarget;
-			if (target == null) continue;
+			if (target == null) {
+				if (rite.getPhase() == CardinalRitePhase.STATION_PROJECTION) return CardinalRiteProjectionResult.handled(0.0D);
+				continue;
+			}
 			double falseOmen = tryProjectFalseOmen(serverLevel, player, rite, target, projectionRate);
 			if (falseOmen > 0.0D) {
 				data.setDirty();
@@ -97,7 +103,10 @@ public final class CardinalRiteInteractionHandler {
 				return CardinalRiteProjectionResult.handled(sigilOffer.spent());
 			}
 			int anchor = anchorAt(serverLevel, rite, target);
-			if (anchor < 0) continue;
+			if (anchor < 0) {
+				if (rite.getPhase() == CardinalRitePhase.STATION_PROJECTION) return CardinalRiteProjectionResult.handled(0.0D);
+				continue;
+			}
 			int repairNeeded = rite.instabilityRepairBloodNeeded(anchor);
 			if (repairNeeded > 0) {
 				int requested = Math.min(repairNeeded, Math.max(1, (int) Math.floor(projectionRate)));
@@ -105,8 +114,8 @@ public final class CardinalRiteInteractionHandler {
 				if (committed <= 0) return CardinalRiteProjectionResult.handled(0.0D);
 				rite.offerInstabilityRepair(anchor, committed);
 				data.setDirty();
-				serverLevel.playSound(null, target, SoundEvents.RESPAWN_ANCHOR_CHARGE,
-						SoundSource.PLAYERS, 0.4F, 0.6F + anchor * 0.012F);
+				serverLevel.playSound(null, target, SoundInit.RITE_ANCHOR_REPAIR.get(),
+						SoundSource.PLAYERS, 0.6F, 0.9F + anchor * 0.012F);
 				return CardinalRiteProjectionResult.handled(committed);
 			}
 			int needed = rite.bloodNeededForAnchor(anchor);
@@ -122,8 +131,8 @@ public final class CardinalRiteInteractionHandler {
 						.withStyle(ChatFormatting.DARK_RED), false);
 			}
 			data.setDirty();
-			serverLevel.playSound(null, target, SoundEvents.BUCKET_FILL,
-					SoundSource.PLAYERS, 0.35F, 0.65F + anchor * 0.015F);
+			serverLevel.playSound(null, target, SoundInit.RITE_ANCHOR_FILL.get(),
+					SoundSource.PLAYERS, 0.5F, 0.9F + anchor * 0.015F);
 			return CardinalRiteProjectionResult.handled(committed);
 		}
 		return CardinalRiteProjectionResult.unhandled();
@@ -140,7 +149,22 @@ public final class CardinalRiteInteractionHandler {
 				CardinalRiteVirtualTargeting.TARGET_RADIUS,
 				List.of(daemon.position())) < 0) return false;
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
-		if (recipe == null || !sealMediumReady(level, rite, recipe)) return true;
+		if (recipe == null) return true;
+		if (!CardinalRiteStationMatcher.mediumMatches(level, rite.getCenterPos(), recipe)) {
+			player.displayClientMessage(Component.literal(recipe.hasMedium()
+							? "The rite's medium must remain seated in the Cardinal Focus."
+							: "The Cardinal Focus must be empty before this altar can be sealed.")
+					.withStyle(ChatFormatting.DARK_RED), true);
+			return true;
+		}
+		if (CardinalRiteThreatRules.allowsPassiveSacrifice(rite.getRecipeId().getPath())
+				&& rite.getSacrificeMl() < CardinalRiteThreatRules.SACRIFICE_REQUIRED_ML) {
+			player.displayClientMessage(Component.literal("The daemon will not seal until a named creature has bled "
+							+ CardinalRiteThreatRules.SACRIFICE_REQUIRED_ML + " mL inside the circle ("
+							+ rite.getSacrificeMl() + " so far).")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), true);
+			return true;
+		}
 		if (!CardinalRiteAllyService.hasRequiredHelpers(level, rite)) {
 			player.displayClientMessage(Component.literal("Required bloodline helpers must take their stations before the rite can seal.")
 					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), false);
@@ -155,10 +179,21 @@ public final class CardinalRiteInteractionHandler {
 				return true;
 			}
 		}
+		if (!rite.areAnchorsConsecrated()) {
+			player.displayClientMessage(Component.literal("The woken ring hungers. Feed its sores before the altar will seal.")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD), true);
+			return true;
+		}
 		prepareWaveDeck(rite, recipe);
 		rite.sealAltar(recipe.getCeremony().stillIntervalTicks() > 0);
-		level.playSound(null, rite.getCenterPos(), SoundEvents.BEACON_POWER_SELECT,
-				SoundSource.BLOCKS, 1.0F, 0.8F);
+		CardinalRiteBeats.sound(level, rite.getCenterPos(), SoundInit.RITE_SEAL, 1.0F, 1.0F);
+		CardinalRiteBeats.send(level, rite, CardinalRiteEventKind.SEALED);
+		if (rite.getPhase() == CardinalRitePhase.OFFERING_PROCESSION
+				|| rite.getPhase() == CardinalRitePhase.CULMINATION) {
+			// A rite with no ordeal and no still interval seals straight into its finale.
+			ServerPlayer caster = level.getServer().getPlayerList().getPlayer(rite.getPlayerUUID());
+			if (caster != null) HarbingerCardinalRiteEvents.enterFinale(level, caster, rite, recipe);
+		}
 		player.displayClientMessage(Component.literal(rite.getTotalWaves() > 0
 						? "The altar is sealed. Endure the ordeal."
 						: rite.getPhase() == CardinalRitePhase.STILL_INTERVAL
@@ -215,10 +250,7 @@ public final class CardinalRiteInteractionHandler {
 		if (rite.getPhase() == CardinalRitePhase.ORDEAL
 				&& rite.getCurrentWave() < rite.getWaveDeck().size()
 				&& "false_omens".equals(rite.getWaveDeck().get(rite.getCurrentWave()))) {
-			for (BlockPos offset : List.of(
-					new BlockPos(2, 1, 2),
-					new BlockPos(-2, 1, -2),
-					new BlockPos(2, 1, -2))) {
+			for (BlockPos offset : CardinalRiteOrdealEngine.FALSE_OMEN_OFFSETS) {
 				BlockPos target = rite.getCenterPos().offset(offset);
 				targets.add(new ProjectionTarget(target,
 						new Vec3(target.getX() + 0.5D, target.getY() + 0.12D, target.getZ() + 0.5D)));
@@ -379,8 +411,10 @@ public final class CardinalRiteInteractionHandler {
 		entity.initialize(rite.getPlayerUUID(), sigil.id(), rite.getCenterPos(),
 				originX, originY, originZ, orbitRadius, startingAngle);
 		level.addFreshEntity(entity);
-		level.playSound(null, surface, SoundEvents.BEACON_ACTIVATE,
-				SoundSource.PLAYERS, 0.8F, 1.35F);
+		level.playSound(null, surface, SoundInit.RITE_SIGIL_AWAKEN.get(),
+				SoundSource.PLAYERS, 0.9F, 1.0F);
+		CardinalRiteBeats.send(level, rite, CardinalRiteEventKind.SIGIL_AWAKENED, 0, sigil.id().toString(),
+				List.of(new Vec3(originX, originY, originZ)), net.minecraft.world.item.ItemStack.EMPTY);
 	}
 
 	private record SigilOffer(boolean handled, int spent) {
@@ -391,22 +425,6 @@ public final class CardinalRiteInteractionHandler {
 		private static SigilOffer handled(int spent) {
 			return new SigilOffer(true, Math.max(0, spent));
 		}
-	}
-
-	private static boolean hasActionableSigilNodeAt(ServerLevel level, ActiveCardinalRite rite, BlockPos target) {
-		for (SigilPlacement placement : activeSigils(level, rite)) {
-			IchorianSigilDefinition sigil = IchorianSigilRegistry.get(placement.id());
-			if (sigil == null || sigil.nodes().isEmpty()) {
-				continue;
-			}
-			int touched = nodeAt(level, rite, placement, sigil, target);
-			int completed = rite.getSigilProgress().getOrDefault(placement.progressKey(), 0);
-			if (CardinalRiteSigilRules.isActionableNode(
-					touched, completed, sigil.nodes().size())) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	private static int spendBlood(ServerPlayer player, ActiveCardinalRite rite, int requested) {
@@ -429,12 +447,8 @@ public final class CardinalRiteInteractionHandler {
 		if (rite.getPhase() != CardinalRitePhase.ORDEAL
 				|| rite.getCurrentWave() >= rite.getWaveDeck().size()
 				|| !"false_omens".equals(rite.getWaveDeck().get(rite.getCurrentWave()))) return 0.0D;
-		BlockPos[] falseAnchors = {
-				rite.getCenterPos().offset(2, 1, 2),
-				rite.getCenterPos().offset(-2, 1, -2),
-				rite.getCenterPos().offset(2, 1, -2)
-		};
-		for (BlockPos falseAnchor : falseAnchors) {
+		for (BlockPos offset : CardinalRiteOrdealEngine.FALSE_OMEN_OFFSETS) {
+			BlockPos falseAnchor = rite.getCenterPos().offset(offset);
 			if (!target.closerThan(falseAnchor, 1.4D) && !target.closerThan(falseAnchor.below(), 1.4D)) continue;
 			int spent = spendBlood(player, rite, Math.max(1, Math.min(50, (int) projectionRate)));
 			if (spent > 0) {
@@ -524,6 +538,26 @@ public final class CardinalRiteInteractionHandler {
 		return occupied;
 	}
 
+	/** World positions of required support sockets whose sigil still sleeps, for the client's markers. */
+	public static List<com.vincenthuto.hemomancy.client.data.ActiveRiteClientData.SocketMarker> sleepingRequiredSockets(
+			ServerLevel level, ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
+		if (rite.getPhase() != CardinalRitePhase.INSCRIPTION || recipe == null || recipe.getCeremony() == null) {
+			return List.of();
+		}
+		List<CardinalRiteCeremonyDefinition.SupportSocket> sockets = recipe.getCeremony().supportSockets();
+		List<SigilPlacement> placements = supportSigils(recipe);
+		List<com.vincenthuto.hemomancy.client.data.ActiveRiteClientData.SocketMarker> markers = new ArrayList<>();
+		for (int i = 0; i < sockets.size() && i < placements.size(); i++) {
+			SigilPlacement placement = placements.get(i);
+			if (!sockets.get(i).required() || rite.isSigilAwakened(placement.progressKey())) continue;
+			BlockPos surface = CardinalRiteSigilRules.surfaceAirPosition(level,
+					rite.getCenterPos().offset(0, placement.y(), 0), placement.x(), placement.z());
+			markers.add(new com.vincenthuto.hemomancy.client.data.ActiveRiteClientData.SocketMarker(surface,
+					sockets.get(i).suggestedSigil()));
+		}
+		return markers;
+	}
+
 	static List<SigilPlacement> supportSigils(CardinalRiteRecipe recipe) {
 		if (recipe == null || recipe.getCeremony() == null) return List.of();
 		Set<BlockPos> occupied = new HashSet<>();
@@ -552,6 +586,7 @@ public final class CardinalRiteInteractionHandler {
 		if (rite.getCurrentWave() >= rite.getWaveDeck().size()) return null;
 		String wave = rite.getWaveDeck().get(rite.getCurrentWave());
 		if (wave.startsWith("discover_")) return Hemomancy.rloc(wave.substring("discover_".length()));
+		if ("covenant_pressure".equals(wave)) return Hemomancy.rloc("seal");
 		if ("response_sigil".equals(wave)) {
 			String[] ids = { "suture", "shunt", "seal", "cage", "lens" };
 			return Hemomancy.rloc(ids[Math.floorMod(rite.getCurrentWave() + rite.getDegree(), ids.length)]);
@@ -574,12 +609,6 @@ public final class CardinalRiteInteractionHandler {
 
 	public static String responseProgressKey(int wave, ResourceLocation id) {
 		return CardinalRiteSigilRules.responseProgressKey(wave, id);
-	}
-
-	public static String currentWaveSigilProgressKey(ActiveCardinalRite rite, ResourceLocation id) {
-		if (rite.getCurrentWave() < rite.getWaveDeck().size()
-				&& rite.getWaveDeck().get(rite.getCurrentWave()).startsWith("discover_")) return id.toString();
-		return responseProgressKey(rite.getCurrentWave(), id);
 	}
 
 	record SigilPlacement(ResourceLocation id, int x, int y, int z, String progressKey) {
@@ -630,39 +659,30 @@ public final class CardinalRiteInteractionHandler {
 	private static int anchorAt(ServerLevel level, ActiveCardinalRite rite, BlockPos target) {
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
 		if (recipe == null || recipe.getCeremony() == null) return -1;
-		return CardinalRiteTargetGeometry.nearestAnchorIndex(
+		var anchors = recipe.getCeremony().anchors();
+		List<Integer> open = java.util.stream.IntStream.range(0, anchors.size())
+				.filter(rite::isAnchorOpen).boxed().toList();
+		int nearest = CardinalRiteTargetGeometry.nearestAnchorIndex(
 				CardinalRiteAnchorVisualRules.riteSurface(rite.getCenterPos()),
-				recipe.getCeremony().anchors().stream()
-						.map(com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition.Anchor::offset)
-						.toList(),
-				target, 1.6D);
+				open.stream().map(index -> anchors.get(index).offset()).toList(), target, 1.6D);
+		return nearest < 0 ? -1 : open.get(nearest);
 	}
 
 	private static void prepareWaveDeck(ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
 		rite.getWaveDeck().clear();
 		rite.getWaveDeck().addAll(recipe.getCeremony().guaranteedWaves());
-		List<String> shuffled = new ArrayList<>(recipe.getCeremony().waves());
-		Collections.shuffle(shuffled);
-		for (String wave : shuffled) {
-			if (rite.getWaveDeck().size() >= rite.getTotalWaves()) break;
-			rite.getWaveDeck().add(wave);
-		}
+		List<String> pool = recipe.getCeremony().waves().isEmpty()
+				? List.of("bloodlicker_siphon") : recipe.getCeremony().waves();
+		// Deal the authored pool in shuffled passes so a deck longer than its pool repeats
+		// every authored ordeal before any one of them comes back.
+		List<String> pass = new ArrayList<>();
 		while (rite.getWaveDeck().size() < rite.getTotalWaves()) {
-			rite.getWaveDeck().add("bloodlicker_siphon");
+			if (pass.isEmpty()) {
+				pass.addAll(pool);
+				Collections.shuffle(pass);
+			}
+			rite.getWaveDeck().add(pass.remove(0));
 		}
-	}
-
-	static boolean sealMediumReady(ServerLevel level, ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
-		boolean ready = CardinalRiteStationMatcher.mediumMatches(level, rite.getCenterPos(), recipe);
-		if (!ready) {
-			ServerPlayer caster = level.getServer().getPlayerList().getPlayer(rite.getPlayerUUID());
-			if (caster != null) caster.displayClientMessage(
-					Component.literal(recipe.hasMedium()
-							? "The rite's medium must remain seated in the Cardinal Focus."
-							: "The Cardinal Focus must be empty before this altar can be sealed.")
-							.withStyle(ChatFormatting.DARK_RED), false);
-		}
-		return ready;
 	}
 
 	private static void consume(PlayerInteractEvent.RightClickBlock event) {

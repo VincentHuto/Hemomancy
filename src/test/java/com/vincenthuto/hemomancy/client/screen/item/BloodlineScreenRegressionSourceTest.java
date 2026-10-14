@@ -20,7 +20,7 @@ public final class BloodlineScreenRegressionSourceTest {
 	public static void main(String[] args) throws IOException {
 		String ledgerScreen = Files.readString(LEDGER_SCREEN).replace("\r\n", "\n");
 		String poolScreen = Files.readString(POOL_SCREEN).replace("\r\n", "\n");
-		String harbingerRites = Files.readString(HARBINGER_RITES).replace("\r\n", "\n");
+		String harbingerRites = (Files.readString(HARBINGER_RITES) + Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletionEffects.java"))).replace("\r\n", "\n");
 		String bloodCraftPacket = Files.readString(BLOOD_CRAFT_PACKET).replace("\r\n", "\n");
 		String foundingFaneGate = section(bloodCraftPacket, "private static boolean canStartFoundingFane",
 				"private static boolean hasActiveFane");

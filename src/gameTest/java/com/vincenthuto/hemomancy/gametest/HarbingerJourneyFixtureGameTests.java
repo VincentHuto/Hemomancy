@@ -1406,7 +1406,7 @@ public final class HarbingerJourneyFixtureGameTests {
 			FoundingFaneSavedData oldData = FoundingFaneSavedData.get(oldLevel);
 			oldData.consecrateHeart(player.getUUID(), oldHeart);
 			helper.assertTrue(oldData.addStake(player.getUUID(), oldStake, 3), "The old stake must be registered");
-			Method complete = HarbingerCardinalRiteEvents.class.getDeclaredMethod("completeFoundingFane",
+			Method complete = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletionEffects.class.getDeclaredMethod("completeFoundingFane",
 					net.minecraft.server.level.ServerLevel.class, ServerPlayer.class, BlockPos.class);
 			complete.setAccessible(true);
 			FoundingFaneSavedData newData = FoundingFaneSavedData.get(helper.getLevel());

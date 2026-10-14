@@ -216,7 +216,7 @@ public final class HarbingerPilotGameTests {
 
 		try {
 			var complete = Class.forName(
-					"com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents")
+					"com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletionEffects")
 					.getDeclaredMethod("completeRootedVein", net.minecraft.server.level.ServerLevel.class,
 							BlockPos.class);
 			complete.setAccessible(true);
@@ -382,6 +382,67 @@ public final class HarbingerPilotGameTests {
 					"Creative mode must not retain the planted Living Staff");
 			helper.assertTrue(listener.sawEmptySlot,
 					"Staff removal must be synchronized immediately to the creative client");
+			helper.succeed();
+		} finally {
+			player.discard();
+		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void plantedStaffArmsProjectionHandAndReturnsToIt(GameTestHelper helper) {
+		ServerPlayer player = connectedTestPlayer(helper);
+		try {
+			HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
+			var known = HemoCapabilityAccess.getKnownManipulations(player).orElseThrow();
+			var projection = com.vincenthuto.hemomancy.common.init.ManipulationInit.blood_projection.get();
+			known.getKnownManips().putIfAbsent(projection, new com.vincenthuto.hemomancy.common.manipulation.ManipLevel(1, 0));
+			known.setEquippedManipNames(new java.util.ArrayList<>());
+			known.setSelectedManip(com.vincenthuto.hemomancy.common.manipulation.BloodManipulation.BLANK);
+			player.getInventory().selected = 0;
+			player.getInventory().setItem(0, new ItemStack(ItemInit.living_staff.get()));
+
+			ItemStack staff = CardinalRiteStaffEscrow.capture(player);
+			var rite = new com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite(
+					player.getUUID(), helper.absolutePos(BlockPos.ZERO), Hemomancy.rloc("test_rite"), 100, 1);
+			rite.setEscrowedStaff(staff, player.registryAccess());
+			CardinalRiteStaffEscrow.armProjectionHand(player);
+
+			helper.assertTrue(player.getMainHandItem().is(ItemInit.blood_projection.get()),
+					"Planting the staff must leave a Blood Projection hand in its place");
+			helper.assertTrue("blood_projection".equals(known.getSelectedManip().getName()),
+					"Blood Projection must become the selected manipulation");
+
+			CardinalRiteStaffEscrow.restore(player, rite);
+			helper.assertTrue(player.getMainHandItem().is(ItemInit.living_staff.get()),
+					"The released staff must return to the projection hand");
+			helper.assertTrue(player.getInventory().countItem(ItemInit.blood_projection.get()) == 0,
+					"The stand-in projection hand must not linger in the inventory");
+			helper.succeed();
+		} finally {
+			player.discard();
+		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
+	public static void plantedStaffLeavesAnOccupiedHandAlone(GameTestHelper helper) {
+		ServerPlayer player = connectedTestPlayer(helper);
+		try {
+			HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
+			var known = HemoCapabilityAccess.getKnownManipulations(player).orElseThrow();
+			var projection = com.vincenthuto.hemomancy.common.init.ManipulationInit.blood_projection.get();
+			known.getKnownManips().putIfAbsent(projection, new com.vincenthuto.hemomancy.common.manipulation.ManipLevel(1, 0));
+			known.setEquippedManipNames(new java.util.ArrayList<>());
+			player.getInventory().selected = 0;
+			player.getInventory().setItem(0, new ItemStack(Items.IRON_SWORD));
+			player.getInventory().setItem(5, new ItemStack(ItemInit.living_staff.get()));
+
+			CardinalRiteStaffEscrow.capture(player);
+			CardinalRiteStaffEscrow.armProjectionHand(player);
+
+			helper.assertTrue(player.getMainHandItem().is(Items.IRON_SWORD),
+					"An item the caster is holding must not be replaced");
+			helper.assertTrue("blood_projection".equals(known.getSelectedManip().getName()),
+					"Blood Projection is still selected for the rite");
 			helper.succeed();
 		} finally {
 			player.discard();

@@ -74,7 +74,7 @@ public final class FaneHeartAndStakeSourceTest {
 		String clientEvents = Files.readString(CLIENT_EVENTS).replace("\r\n", "\n");
 		String stakeAuthorityEvents = Files.readString(STAKE_AUTHORITY_EVENTS).replace("\r\n", "\n");
 		String faneData = Files.readString(FANE_DATA).replace("\r\n", "\n");
-		String harbingerRites = Files.readString(HARBINGER_RITES).replace("\r\n", "\n");
+		String harbingerRites = (Files.readString(HARBINGER_RITES) + Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletionEffects.java"))).replace("\r\n", "\n");
 		String stakeItemModel = Files.readString(STAKE_ITEM_MODEL).replace("\r\n", "\n");
 		String stakeBlockModel = Files.readString(STAKE_BLOCK_MODEL).replace("\r\n", "\n");
 		String lang = Files.readString(LANG).replace("\r\n", "\n");

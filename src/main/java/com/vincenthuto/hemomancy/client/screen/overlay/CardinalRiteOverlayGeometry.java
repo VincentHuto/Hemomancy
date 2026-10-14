@@ -12,10 +12,6 @@ public final class CardinalRiteOverlayGeometry {
 		return HUD_WIDTH - INSTABILITY_BAR_OFFSET;
 	}
 
-	public static int renderedHudWidth() {
-		return Math.round(HUD_WIDTH * HUD_SCALE);
-	}
-
 	public static int virtualScreenWidth(int screenWidth) {
 		return Math.round(screenWidth / HUD_SCALE);
 	}

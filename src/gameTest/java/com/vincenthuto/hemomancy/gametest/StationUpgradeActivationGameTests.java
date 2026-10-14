@@ -290,6 +290,9 @@ public final class StationUpgradeActivationGameTests {
                     var result = CardinalRiteInteractionHandler.tryProject(helper.getLevel(), player, tier.bloodPerCircuit());
                     helper.assertTrue(result.bloodSpent() == tier.bloodPerCircuit(), "real projection did not spend circuit blood");
                 }
+                // A tier-2 rite's outer ring woke with the projection; the finale waits until it is fed.
+                for (int anchor = 0; anchor < rite.getAnchorBloodMl().length; anchor++)
+                    rite.fillAnchor(anchor, rite.bloodNeededForAnchor(anchor));
                 var recipe = CardinalRiteRecipe.getRiteByLocation(helper.getLevel(), tier.rite());
                 for (int ticks = 0; ticks < 3000 && !rite.isComplete(); ticks++)
                     CardinalRiteOrdealEngine.tick(helper.getLevel(), player, rite, recipe);

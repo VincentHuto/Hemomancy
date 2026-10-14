@@ -180,3 +180,16 @@ Floor definitions used to reach clients only through shared statics, so blueprin
   - **Pass 35 (user follow-up):**
     - **Dark band at ledges.** A wall's ground sample next to a ledge landed in air. It returned 0 (black), and interpolating toward that darkened the topsoil band. `groundColour` now also rejects non-sturdy tops. A missing side falls back to the block under the trench centre, then the other wall's block, then a default earth brown.
     - **Tan band.** The tan fat band read as dirt under any ground. It is now a thin (0.008 to 0.018) glossy membrane in the floor's vein colours, so the cut runs from the ground block straight into flesh.
+  - **Pass 36 (rite cleanup, unverified in game):** the floor became the rite's body.
+    - **Rite response.** `FloorRiteResponse` reads the live rite at each Focus (`ActiveRiteClientData`) and its beats (`CardinalRiteEventClientState`). New zero-at-rest membrane uniforms (`RiteRings`, `RiteSurge`, `RiteDraw`, `RiteMood`, `RiteSwell`, `WoundAngles`, `WoundLevels`) drive:
+      - a shock band from the Focus on staff impact;
+      - a directional vessel surge toward each anchor as it fills;
+      - quickening (1×/1.5×/2× heartbeats that realign every 72 ticks) and vigor while a rite runs;
+      - purple-black bruising with instability, localised wounds at broken anchors;
+      - a blanch and contraction crease on wave start, a relief flush on wave clear;
+      - trench glow running inward from each brazier as its offering is drawn;
+      - swell through culmination, a flush on completion, and an outward ground ring for `grounding` rites;
+      - on collapse, the membrane tears back to 40% at about 3× collapse speed, holds 5 ticks, then regrows over 60; a cancel dims gently.
+    - **Mesh cache.** `FloorMesh` caches the per-Focus static geometry (membrane cells, drapes, trench grounding, reaches, ground colours, seat profiles). Every 5 ticks it hashes the footprint's block states and rebuilds on change; resource reloads clear it and the ground-colour cache.
+    - **Cleanup.** The braid and the Focus mound are removed (`CardinalFocusBraidRenderer` deleted); seated-brazier mounds remain. `EXTEND_TO_GASH` is permanent. `DIG_BLOCK_DUST` stays as the documented vanilla-particle exception. The shader's `noise3` became `valueNoise3` to avoid GLSL's deprecated built-in.
+    - **Sound.** Formation plays `rite.floor_form`; breaking plays a quiet `rite.anchor_break`.

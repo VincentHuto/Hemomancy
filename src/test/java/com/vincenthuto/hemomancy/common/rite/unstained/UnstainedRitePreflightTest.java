@@ -78,11 +78,52 @@ final class UnstainedRitePreflightTest {
 		assertTrue(UnstainedRitePreflight.check("cardinal_rite/severed_covenant", eligible).success());
 	}
 
+	@Test
+	void severedCovenantAlsoNeedsTheFoundersOwnLivingCovenant() {
+		var noCovenant = new UnstainedRitePreflight.State(false, false, false, false, false, false, false, false,
+				false, true, false, 0.0f, false);
+
+		assertEquals(UnstainedRitePreflight.Failure.NO_FOUNDERS_COVENANT,
+				UnstainedRitePreflight.check("cardinal_rite/severed_covenant", noCovenant).failure());
+	}
+
+	@Test
+	void silverVeilRefusesBeforeCommitBelowTaintedPurity() {
+		assertEquals(UnstainedRitePreflight.Failure.VEIL_PURITY_TOO_LOW,
+				UnstainedRitePreflight.check("cardinal_rite/silver_veil", withPurity(24.9f, false, false)).failure());
+		assertTrue(UnstainedRitePreflight.check("cardinal_rite/silver_veil", withPurity(25.0f, false, false)).success());
+	}
+
+	@Test
+	void letheanTideNeedsPurityAndALiveBloodMoonBeforeCommit() {
+		assertEquals(UnstainedRitePreflight.Failure.TIDE_PURITY_TOO_LOW,
+				UnstainedRitePreflight.check("cardinal_rite/lethean_tide", withPurity(49.0f, true, true)).failure());
+		assertEquals(UnstainedRitePreflight.Failure.NO_BLOOD_MOON,
+				UnstainedRitePreflight.check("cardinal_rite/lethean_tide", withPurity(60.0f, true, false)).failure());
+		assertTrue(UnstainedRitePreflight.check("cardinal_rite/lethean_tide", withPurity(60.0f, true, true)).success());
+	}
+
+	@Test
+	void silverDawnRequiresClarityBeforeCommit() {
+		var noClarity = state(true, false, true, true, true, false, false, false, true, false);
+		var clarity = state(true, false, true, true, true, false, false, true, true, false);
+
+		assertEquals(UnstainedRitePreflight.Failure.CLARITY_REQUIRED,
+				UnstainedRitePreflight.check("cardinal_rite/silver_dawn", noClarity).failure());
+		assertTrue(UnstainedRitePreflight.check("cardinal_rite/silver_dawn", clarity).success());
+	}
+
+	private static UnstainedRitePreflight.State withPurity(float purity, boolean begunPurification,
+			boolean bloodMoonActive) {
+		return new UnstainedRitePreflight.State(true, true, begunPurification, false, false, false, false, false,
+				false, false, false, purity, bloodMoonActive);
+	}
+
 	private static UnstainedRitePreflight.State state(boolean maySeekCure, boolean infectionSuppressed,
 			boolean begunPurification, boolean purified, boolean baselineRestored, boolean novitiateVowsComplete,
 			boolean clarityPrepared, boolean clarityUnlocked, boolean cleanBlood, boolean severedCovenantEligible) {
 		return new UnstainedRitePreflight.State(maySeekCure, infectionSuppressed, begunPurification, purified,
 				baselineRestored, novitiateVowsComplete, clarityPrepared, clarityUnlocked, cleanBlood,
-				severedCovenantEligible);
+				severedCovenantEligible, severedCovenantEligible, purified ? 100.0f : 0.0f, false);
 	}
 }

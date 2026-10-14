@@ -10,15 +10,11 @@ public final class CardinalRiteCeremonyRules {
 	public static final int BLOOD_PER_ANCHOR_ML = 50;
 	public static final int ANCHORS_PER_DEGREE = 4;
 	public static final int ICHOR_TTL_TICKS = 200;
-	public static final int NPC_RESERVE_ML = 1_000;
-	public static final int BLOODSPENT_RECOVERY_TICKS = 24_000;
 	public static final int CONSECRATION_TIMEOUT_TICKS = 12_000;
 	public static final int DISCONNECT_GRACE_TICKS = 200;
 	public static final int COLLAPSE_INSTABILITY = 100;
 
-	private static final int[] FULL_WAVES = { 2, 3, 4, 6 };
 	private static final int[] STILL_INTERVALS = { 200, 160, 120, 80 };
-	private static final double[] ANCHOR_DECAY_PER_SECOND = { 0.0D, 0.25D, 0.5D, 0.75D };
 	private static final int[] COLLAPSE_FRAGILE_BLOCKS = { 0, 1, 2, 3 };
 	private static final float[] COLLAPSE_DAMAGE = { 2.0F, 4.0F, 6.0F, 8.0F };
 
@@ -31,24 +27,29 @@ public final class CardinalRiteCeremonyRules {
 		return ANCHORS_PER_DEGREE * 3;
 	}
 
-	public static int upfrontBloodCost(int degree) {
-		return anchorCount(degree) * BLOOD_PER_ANCHOR_ML;
+	/**
+	 * Ordeal waves a ceremony runs. An authored {@code wave_count} wins; otherwise the
+	 * degree decides (D5 one, D6 three, D7+ four to six from the authored pool), and a
+	 * rite with no wave pool runs only its guaranteed waves.
+	 */
+	public static int waveCount(CardinalRiteCeremonyDefinition ceremony, int requiredDegree) {
+		if (ceremony == null) return 0;
+		if (ceremony.hasAuthoredWaveCount()) return ceremony.waveCount();
+		if (ceremony.waves().isEmpty()) return ceremony.guaranteedWaves().size();
+		int byDegree = requiredDegree == 5 ? 1
+				: requiredDegree == 6 ? 3
+				: requiredDegree >= 7 ? Math.min(6, Math.max(4, ceremony.waves().size()))
+				: 0;
+		return Math.max(ceremony.guaranteedWaves().size(), byDegree);
 	}
 
-	public static int fullWaveCount(int formIndex) {
-		return FULL_WAVES[clampForm(formIndex)];
-	}
-
-	public static int fullWaveCount(CardinalRiteType type) {
-		return fullWaveCount(formIndex(type));
-	}
+	/** Instability below this with no broken anchor counts as a clean rite. */
+	public static final int CLEAN_RITE_INSTABILITY = 25;
+	/** Share of the anchors' blood an awakened Reservoir returns after a clean rite. */
+	public static final float CLEAN_RITE_REFUND = 0.5F;
 
 	public static int stillIntervalTicks(int formIndex) {
 		return STILL_INTERVALS[clampForm(formIndex)];
-	}
-
-	public static double anchorDecayPerSecond(int formIndex) {
-		return ANCHOR_DECAY_PER_SECOND[clampForm(formIndex)];
 	}
 
 	public static int fragileBlocksOnCollapse(int formIndex) {
@@ -78,12 +79,6 @@ public final class CardinalRiteCeremonyRules {
 		};
 	}
 
-	public static int allyQuota(int degree) {
-		if (degree < 6) return 0;
-		if (degree == 6) return 1;
-		return 3;
-	}
-
 	public static CardinalRiteInstability instabilityBand(int instability) {
 		if (instability >= COLLAPSE_INSTABILITY) return CardinalRiteInstability.COLLAPSED;
 		if (instability >= 70) return CardinalRiteInstability.RUPTURING;
@@ -92,10 +87,16 @@ public final class CardinalRiteCeremonyRules {
 	}
 
 	public static int anchorDeficitInstability(int[] anchorBloodMl) {
+		return anchorDeficitInstability(anchorBloodMl, null);
+	}
+
+	/** Pressure from anchors below their own requirement; a requirement of 0 (a sleeping anchor) presses nothing. */
+	public static int anchorDeficitInstability(int[] anchorBloodMl, int[] requiredMl) {
 		if (anchorBloodMl == null) return 0;
 		int pressure = 0;
-		for (int blood : anchorBloodMl) {
-			int missing = Math.max(0, BLOOD_PER_ANCHOR_ML - blood);
+		for (int i = 0; i < anchorBloodMl.length; i++) {
+			int required = requiredMl != null && i < requiredMl.length ? requiredMl[i] : BLOOD_PER_ANCHOR_ML;
+			int missing = Math.max(0, required - anchorBloodMl[i]);
 			pressure += (missing + 9) / 10;
 		}
 		return Math.min(10, pressure);
@@ -112,7 +113,7 @@ public final class CardinalRiteCeremonyRules {
 	}
 
 	private static int clampForm(int formIndex) {
-		return Math.max(0, Math.min(FULL_WAVES.length - 1, formIndex));
+		return Math.max(0, Math.min(STILL_INTERVALS.length - 1, formIndex));
 	}
 
 	private static String requireFailureProfile(String failureProfile) {

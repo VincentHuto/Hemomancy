@@ -8,7 +8,7 @@ import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class CardinalRiteThreatEvents {
-	private static final String RITE_BOUND = "HemomancyRiteBound";
+	private static final String RITE_BOUND = CardinalRiteThreatRules.RITE_BOUND_TAG;
 
 	private CardinalRiteThreatEvents() {
 	}
