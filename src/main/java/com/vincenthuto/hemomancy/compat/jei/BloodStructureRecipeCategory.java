@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.CraftingMapRecipe;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
 import com.vincenthuto.hutoslib.math.MultiblockPattern.MaterialCount;
@@ -13,6 +14,7 @@ import com.vincenthuto.hutoslib.math.MultiblockPatternKey;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
@@ -20,6 +22,7 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -27,7 +30,8 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Style;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -44,50 +48,49 @@ import java.util.List;
 
 /**
  * JEI recipe category for structure crafts — fully programmatic rendering.
- * Shows a rotating 3D preview of the multiblock, input slots for the catalyst,
- * the activate block (or, for a Working craft, the Cardinal Focus), and the
- * structure blocks, plus brazier offerings, the output and blood cost. One
- * instance serves floorless Blood Structures, another Working crafts.
+ * Reads left to right: what anchors the craft (the Cardinal Focus and its
+ * seated medium, or a floorless structure's activate block and catalyst) and
+ * the blocks to lay, a rotating preview captioned with the floor it needs,
+ * then the result and the brazier offerings. A footer gives the blood drawn;
+ * hovering the title or preview shows the rite's description and steps.
+ * One instance serves floorless Blood Structures, another Working crafts.
  */
 public class BloodStructureRecipeCategory implements IRecipeCategory<CraftingMapRecipe> {
 
 	// ── Layout constants ──
-	private static final int BG_W = 150;
-	private static final int BG_H = 110;
+	private static final int BG_W = 164;
+	private static final int BG_H = 142;
+
+	private static final int TITLE_Y = 4;
+	private static final int DIVIDER_Y = 14;
+	private static final int HEADER_Y = 18;
+	private static final int TOP_SLOT_Y = 27;
+	private static final int GRID_HEADER_Y = 49;
+	private static final int GRID_SLOT_Y = 58;
+	private static final int SLOT_SPACING = 20;
+	/** Block materials and offerings each fill a two-wide, three-tall grid. */
+	private static final int MAX_GRID_SLOTS = 6;
+
+	private static final int LEFT_X = 5;
+	private static final int RIGHT_X = 124;
+	private static final int OUTPUT_SLOT_X = 134;
 
 	// Preview area (3D multiblock render)
-	private static final int PREVIEW_X = 27;
-	private static final int PREVIEW_Y = 14;
-	private static final int PREVIEW_W = 70;
-	private static final int PREVIEW_H = 70;
-
-	// Slot positions
-	private static final int INPUT_SLOT_X = 5;
-	private static final int HELD_ITEM_SLOT_Y = 21;
-	private static final int HIT_BLOCK_SLOT_Y = 41;
-	private static final int PATTERN_SLOT_START_Y = 61;
-	private static final int PATTERN_SLOT_SPACING = 20;
-	private static final int MAX_PATTERN_SLOTS = 2;
-	private static final int OUTPUT_SLOT_X = 115;
-	private static final int OUTPUT_SLOT_Y = 41;
-	private static final int OFFERING_SLOT_START_X = 105;
-	private static final int OFFERING_SLOT_Y = 66;
-	private static final int OFFERING_SLOT_SPACING = 20;
-	/** Offerings sit in a two-by-two grid below the output. */
-	private static final int MAX_OFFERING_SLOTS = 4;
+	private static final int PREVIEW_X = 47;
+	private static final int PREVIEW_Y = 18;
+	private static final int PREVIEW_W = 72;
+	private static final int PREVIEW_H = 98;
+	private static final int CAPTION_Y = 121;
+	private static final int FOOTER_Y = 131;
 
 	// Colors
-	private static final int BG_COLOR = 0xFF0A0204;
+	private static final JeiPanel.Theme THEME = JeiPanel.BLOOD;
 	private static final int PREVIEW_BG = 0xFF1A0808;
-	private static final int BORDER_OUTER = 0xFF330808;
-	private static final int BORDER_INNER = 0xFF220606;
-	private static final int SLOT_BG = 0xFF1A0808;
-	private static final int SLOT_BORDER_DARK = 0xFF0D0303;
-	private static final int SLOT_BORDER_LIGHT = 0xFF3A1212;
-	private static final int COST_COLOR = 0xFFAA0000;
-	private static final int LABEL_COLOR = 0xFF888888;
+	private static final int TITLE_COLOR = 0xFFE8D0C8;
+	private static final int COST_COLOR = 0xFFCC2222;
+	private static final int LABEL_COLOR = 0xFF9A7A74;
+	private static final int CAPTION_COLOR = 0xFFB06A60;
 
-	private final IDrawable background;
 	private final IDrawable icon;
 	private final boolean working;
 
@@ -97,7 +100,6 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<CraftingMap
 
 	public BloodStructureRecipeCategory(IGuiHelper guiHelper, boolean working) {
 		this.working = working;
-		this.background = guiHelper.createBlankDrawable(BG_W, BG_H);
 		this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK,
 				new ItemStack(working ? BlockInit.cardinal_focus.get().asItem() : ItemInit.sanguine_formation.get()));
 	}
@@ -106,11 +108,14 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<CraftingMap
 	//  IRecipeCategory overrides
 	// ═══════════════════════════════════════════════════════════════
 
-	@SuppressWarnings("removal")
-	@Nonnull
 	@Override
-	public IDrawable getBackground() {
-		return background;
+	public int getWidth() {
+		return BG_W;
+	}
+
+	@Override
+	public int getHeight() {
+		return BG_H;
 	}
 
 	@Override
@@ -128,7 +133,6 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<CraftingMap
 	public Component getTitle() {
 		return Component.translatable(working ? "hemomancy.jei.working_craft" : "hemomancy.jei.blood_crafting");
 	}
-	private float animTime = 0f;
 
 	// ═══════════════════════════════════════════════════════════════
 	//  Drawing
@@ -138,107 +142,184 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<CraftingMap
 	public void draw(CraftingMapRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics gfx,
 			double mouseX, double mouseY) {
 
-		animTime += 0.016f; // ~60 FPS approximation
+		float time = JeiPanel.time();
+		Font font = Minecraft.getInstance().font;
 
-		float time = animTime;
-		// ── Dark background with subtle glow ──
-		gfx.fill(0, 0, BG_W, BG_H, BG_COLOR);
-		drawSubtleGlow(gfx, BG_W / 2, BG_H / 2, time);
+		// ── Panel, with the floor caption and blood in the footer band ──
+		JeiPanel.panel(gfx, THEME, BG_W, BG_H, CAPTION_Y - 4);
+		JeiPanel.glow(gfx, PREVIEW_X + PREVIEW_W / 2, PREVIEW_Y + PREVIEW_H / 2, 50, 56, 0xFF60080A,
+				0.5f + 0.5f * JeiPanel.pulse(time, 1.8f));
 
-		// ── Outer border ──
-		drawBorder(gfx, 0, 0, BG_W, BG_H, BORDER_OUTER, BORDER_INNER);
-
-		// ── Preview area border ──
-		drawBorder(gfx, PREVIEW_X - 1, PREVIEW_Y - 1, PREVIEW_W + 2, PREVIEW_H + 2,
-				BORDER_INNER, BORDER_OUTER);
-
-		// ── Slot frames ──
-		drawSlotFrame(gfx, INPUT_SLOT_X - 1, HELD_ITEM_SLOT_Y - 1);
-		drawSlotFrame(gfx, INPUT_SLOT_X - 1, HIT_BLOCK_SLOT_Y - 1);
-		drawSlotFrame(gfx, OUTPUT_SLOT_X - 1, OUTPUT_SLOT_Y - 1);
-		for (int i = 0; i < Math.min(MAX_OFFERING_SLOTS, recipe.getOfferings().size()); i++) {
-			drawSlotFrame(gfx, offeringX(i) - 1, offeringY(i) - 1);
+		// ── Title row: name and degree gate ──
+		int titleRight = BG_W - 5;
+		if (recipe.requiredDegree() > 0) {
+			Component degree = Component.translatable("hemomancy.jei.craft.degree", recipe.requiredDegree());
+			titleRight -= font.width(degree);
+			gfx.drawString(font, degree, titleRight, TITLE_Y, COST_COLOR, false);
+			titleRight -= 6;
 		}
+		drawTrimmed(gfx, font, recipe.name(), LEFT_X, TITLE_Y, titleRight - LEFT_X, TITLE_COLOR);
+		gfx.fill(4, DIVIDER_Y, BG_W - 4, DIVIDER_Y + 1, THEME.ring());
 
-		// Pattern block slot frames
-		if (recipe.getPattern() != null && recipe.getPattern().getSymbolList() != null) {
-			int slotCount = 0;
-			for (MaterialCount material : recipe.getPattern().getMaterialCounts(false)) {
-				if (slotCount >= MAX_PATTERN_SLOTS) {
-					break;
-				}
-				if (!itemStacksFor(material.key(), material.count()).isEmpty()) {
-					drawSlotFrame(gfx, INPUT_SLOT_X - 1,
-							PATTERN_SLOT_START_Y + (slotCount * PATTERN_SLOT_SPACING) - 1);
-					slotCount++;
-				}
+		// ── Left column: the anchor, then the blocks to lay ──
+		JeiPanel.labelLeft(gfx, font, Component.translatable(recipe.isWorking()
+				? "hemomancy.jei.craft.focus" : "hemomancy.jei.craft.activate"), LEFT_X, HEADER_Y + 2, LABEL_COLOR);
+		if (recipe.isWorking() || recipe.getHitBlock() != null) {
+			drawSlotFrame(gfx, LEFT_X - 1, TOP_SLOT_Y - 1);
+		}
+		if (!recipe.getHeldItem().isEmpty()) {
+			drawSlotFrame(gfx, LEFT_X + SLOT_SPACING - 1, TOP_SLOT_Y - 1);
+		}
+		int materials = materialSlots(recipe).size();
+		if (materials > 0) {
+			JeiPanel.labelLeft(gfx, font, Component.translatable(recipe.hasStructure()
+					? "hemomancy.jei.craft.build" : "hemomancy.jei.craft.floor"), LEFT_X, GRID_HEADER_Y + 2, LABEL_COLOR);
+			for (int i = 0; i < materials; i++) {
+				drawSlotFrame(gfx, gridX(LEFT_X, i) - 1, gridY(i) - 1);
 			}
 		}
 
-		// ── Arrow indicator ──
-		JeiProgressArrow.draw(gfx, 99, OUTPUT_SLOT_Y + 7, OUTPUT_SLOT_X - 6, time,
-				0x553A1212, 0x665A1816, 170, 42, 35);
+		// ── Preview ──
+		JeiPanel.bevel(gfx, PREVIEW_X - 1, PREVIEW_Y - 1, PREVIEW_W + 2, PREVIEW_H + 2, THEME.slotDark(), THEME.slotLight());
+		render3DPreview(recipe, gfx);
 
-		// ── Labels ──
-		Font font = Minecraft.getInstance().font;
-
-		MutableComponent costText = Component.literal(!working ? "Blood: " + (int) recipe.getBloodCost()
-				: recipe.hasStructure() ? "Feed: " + (int) recipe.getBloodCost() : "Rite");
-		int costWidth = font.width(costText);
-		gfx.drawString(font, costText, BG_W - costWidth - 3, 3, COST_COLOR, false);
-
-		gfx.drawString(font, Component.literal("In"), INPUT_SLOT_X, HELD_ITEM_SLOT_Y - 10, LABEL_COLOR, false);
-		gfx.drawString(font, Component.literal("Out"), OUTPUT_SLOT_X, OUTPUT_SLOT_Y - 10, LABEL_COLOR, false);
-		if (!recipe.getOfferings().isEmpty()) {
-			gfx.drawString(font, Component.literal("Offer"), OFFERING_SLOT_START_X, OFFERING_SLOT_Y - 10,
-					LABEL_COLOR, false);
+		// ── Right column: the result, then the brazier offerings ──
+		JeiPanel.labelLeft(gfx, font, Component.translatable("hemomancy.jei.craft.result"), RIGHT_X, HEADER_Y + 2, LABEL_COLOR);
+		JeiPanel.tintedSlot(gfx, THEME, OUTPUT_SLOT_X, TOP_SLOT_Y, THEME.accent());
+		JeiProgressArrow.draw(gfx, PREVIEW_X + PREVIEW_W + 2, TOP_SLOT_Y + 7, OUTPUT_SLOT_X - 4, time, THEME);
+		int offerings = Math.min(MAX_GRID_SLOTS, recipe.getOfferings().size());
+		if (offerings > 0) {
+			JeiPanel.labelLeft(gfx, font, Component.translatable("hemomancy.jei.craft.braziers"), RIGHT_X, GRID_HEADER_Y + 2,
+					LABEL_COLOR);
+			for (int i = 0; i < offerings; i++) {
+				drawSlotFrame(gfx, gridX(RIGHT_X, i) - 1, gridY(i) - 1);
+			}
 		}
 
-		// ── 3D multiblock preview ──
-		render3DPreview(recipe, gfx);
+		// ── Footer: the floor it is performed on, and the blood drawn ──
+		Component caption = caption(recipe);
+		int captionW = Math.min(font.width(caption), BG_W - 10);
+		drawTrimmed(gfx, font, caption, (BG_W - captionW) / 2, CAPTION_Y, BG_W - 10, CAPTION_COLOR);
+		Component cost = costLine(recipe);
+		int costX = (BG_W - font.width(cost) + 8) / 2;
+		JeiPanel.icon(gfx, JeiPanel.Icon.BLOOD, costX - 8, FOOTER_Y, COST_COLOR);
+		gfx.drawString(font, cost, costX, FOOTER_Y, COST_COLOR, false);
+	}
+
+	@Override
+	public void getTooltip(ITooltipBuilder tooltip, CraftingMapRecipe recipe, IRecipeSlotsView recipeSlotsView,
+			double mouseX, double mouseY) {
+		boolean overTitle = mouseY >= TITLE_Y - 1 && mouseY < DIVIDER_Y;
+		boolean overPreview = mouseX >= PREVIEW_X && mouseX < PREVIEW_X + PREVIEW_W
+				&& mouseY >= PREVIEW_Y && mouseY < PREVIEW_Y + PREVIEW_H;
+		if (!overTitle && !overPreview) {
+			return;
+		}
+		tooltip.add(recipe.name().copy().withStyle(ChatFormatting.RED));
+		if (recipe.description() != null && !recipe.description().getString().isBlank()) {
+			Font font = Minecraft.getInstance().font;
+			for (FormattedText line : font.getSplitter().splitLines(recipe.description(), 180, Style.EMPTY)) {
+				tooltip.add(Component.literal(line.getString()).withStyle(ChatFormatting.GRAY));
+			}
+		}
+		if (recipe.requiredDegree() > 0) {
+			tooltip.add(Component.translatable("hemomancy.jei.craft.degree_full", recipe.requiredDegree())
+					.withStyle(ChatFormatting.DARK_RED));
+		}
+		tooltip.add(caption(recipe).copy().withStyle(ChatFormatting.DARK_GRAY));
+		tooltip.add(Component.translatable(steps(recipe)).withStyle(ChatFormatting.DARK_GRAY));
 	}
 
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, CraftingMapRecipe recipe, IFocusGroup focuses) {
-		// Held item
-		builder.addSlot(RecipeIngredientRole.INPUT, INPUT_SLOT_X, HELD_ITEM_SLOT_Y)
-				.addIngredient(VanillaTypes.ITEM_STACK, recipe.getHeldItem());
-
-		// Activate block, or the Cardinal Focus a Working craft is built beside
-		builder.addSlot(RecipeIngredientRole.INPUT, INPUT_SLOT_X, HIT_BLOCK_SLOT_Y)
-				.addIngredient(VanillaTypes.ITEM_STACK, recipe.getHitBlock() == null
-						? new ItemStack(BlockInit.cardinal_focus.get())
-						: new ItemStack(recipe.getHitBlock().asItem()));
-
-		// Pattern block inputs (deduplicated with counts)
-		if (recipe.getPattern() != null && recipe.getPattern().getSymbolList() != null) {
-			int slotIndex = 0;
-			for (MaterialCount material : recipe.getPattern().getMaterialCounts(false)) {
-				if (slotIndex >= MAX_PATTERN_SLOTS) {
-					break;
-				}
-				List<ItemStack> stacks = itemStacksFor(material.key(), material.count());
-				if (!stacks.isEmpty()) {
-					int slotY = PATTERN_SLOT_START_Y + (slotIndex * PATTERN_SLOT_SPACING);
-					builder.addSlot(RecipeIngredientRole.INPUT, INPUT_SLOT_X, slotY)
-							.addIngredients(VanillaTypes.ITEM_STACK, stacks);
-					slotIndex++;
-				}
-			}
+		// Anchor: the Cardinal Focus and its medium, or the activate block and held catalyst
+		if (recipe.isWorking()) {
+			builder.addSlot(RecipeIngredientRole.CATALYST, LEFT_X, TOP_SLOT_Y)
+					.addIngredient(VanillaTypes.ITEM_STACK, new ItemStack(BlockInit.cardinal_focus.get()))
+					.addRichTooltipCallback((view, tip) -> tip.add(hint("hemomancy.jei.craft.tip.focus")));
+		} else if (recipe.getHitBlock() != null) {
+			builder.addSlot(RecipeIngredientRole.CATALYST, LEFT_X, TOP_SLOT_Y)
+					.addIngredient(VanillaTypes.ITEM_STACK, new ItemStack(recipe.getHitBlock().asItem()))
+					.addRichTooltipCallback((view, tip) -> tip.add(hint("hemomancy.jei.craft.tip.activate")));
+		}
+		if (!recipe.getHeldItem().isEmpty()) {
+			String heldHint = recipe.isWorking() ? "hemomancy.jei.craft.tip.medium" : "hemomancy.jei.craft.tip.held";
+			builder.addSlot(RecipeIngredientRole.INPUT, LEFT_X + SLOT_SPACING, TOP_SLOT_Y)
+					.addIngredient(VanillaTypes.ITEM_STACK, recipe.getHeldItem())
+					.addRichTooltipCallback((view, tip) -> tip.add(hint(heldHint)));
 		}
 
-		// Result
-		builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_SLOT_X, OUTPUT_SLOT_Y)
+		// Blocks to lay: the structure or subject, or a making rite's floor
+		String materialHint = !recipe.isWorking() ? "hemomancy.jei.craft.tip.structure"
+				: recipe.hasStructure() ? "hemomancy.jei.craft.tip.subject" : "hemomancy.jei.craft.tip.floor";
+		List<List<ItemStack>> materials = materialSlots(recipe);
+		for (int i = 0; i < materials.size(); i++) {
+			builder.addSlot(recipe.hasStructure() ? RecipeIngredientRole.INPUT : RecipeIngredientRole.CATALYST,
+					gridX(LEFT_X, i), gridY(i))
+					.addIngredients(VanillaTypes.ITEM_STACK, materials.get(i))
+					.addRichTooltipCallback((view, tip) -> tip.add(hint(materialHint)));
+		}
+
+		builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_SLOT_X, TOP_SLOT_Y)
 				.addIngredient(VanillaTypes.ITEM_STACK, recipe.getResult());
 
-		for (int i = 0; i < Math.min(MAX_OFFERING_SLOTS, recipe.getOfferings().size()); i++) {
-			CraftingMapRecipe.Offering offering = recipe.getOfferings().get(i);
-			List<ItemStack> stacks = ingredientStacksFor(offering);
+		for (int i = 0; i < Math.min(MAX_GRID_SLOTS, recipe.getOfferings().size()); i++) {
+			List<ItemStack> stacks = ingredientStacksFor(recipe.getOfferings().get(i));
 			if (!stacks.isEmpty()) {
-				builder.addSlot(RecipeIngredientRole.INPUT, offeringX(i), offeringY(i))
-						.addIngredients(VanillaTypes.ITEM_STACK, stacks);
+				builder.addSlot(RecipeIngredientRole.INPUT, gridX(RIGHT_X, i), gridY(i))
+						.addIngredients(VanillaTypes.ITEM_STACK, stacks)
+						.addRichTooltipCallback((view, tip) -> tip.add(hint("hemomancy.jei.craft.tip.offering")));
 			}
 		}
+	}
+
+	// ═══════════════════════════════════════════════════════════════
+	//  Text
+	// ═══════════════════════════════════════════════════════════════
+
+	/** The floor a Working craft is performed on, or a floorless structure's note. */
+	private static Component caption(CraftingMapRecipe recipe) {
+		if (!recipe.isWorking()) {
+			return Component.translatable("hemomancy.jei.craft.floorless");
+		}
+		return CardinalRiteFloorRegistry.get(recipe.floorId())
+				.<Component>map(floor -> Component.literal(floor.displayName()))
+				.orElse(Component.translatable("hemomancy.jei.craft.floor"));
+	}
+
+	private static Component costLine(CraftingMapRecipe recipe) {
+		int feed = (int) recipe.getBloodCost();
+		int rite = (int) recipe.riteCost();
+		if (!recipe.isWorking()) {
+			return Component.translatable("hemomancy.jei.craft.blood", feed);
+		}
+		if (!recipe.hasStructure()) {
+			return rite > 0 ? Component.translatable("hemomancy.jei.craft.rite", rite)
+					: Component.translatable("hemomancy.jei.craft.rite_free");
+		}
+		return rite > 0 ? Component.translatable("hemomancy.jei.craft.feed_and_rite", feed, rite)
+				: Component.translatable("hemomancy.jei.craft.feed", feed);
+	}
+
+	private static String steps(CraftingMapRecipe recipe) {
+		if (!recipe.isWorking()) {
+			return "hemomancy.jei.craft.steps.floorless";
+		}
+		return recipe.hasStructure() ? "hemomancy.jei.craft.steps.working" : "hemomancy.jei.craft.steps.making";
+	}
+
+	private static Component hint(String key) {
+		return Component.translatable(key).withStyle(ChatFormatting.DARK_RED);
+	}
+
+	private static void drawTrimmed(GuiGraphics gfx, Font font, Component text, int x, int y, int maxWidth,
+			int color) {
+		if (font.width(text) <= maxWidth) {
+			gfx.drawString(font, text, x, y, color, false);
+			return;
+		}
+		String trimmed = font.plainSubstrByWidth(text.getString(), maxWidth - font.width("..")) + "..";
+		gfx.drawString(font, trimmed, x, y, color, false);
 	}
 
 	// ═══════════════════════════════════════════════════════════════
@@ -282,7 +363,8 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<CraftingMap
 			int patH = recipe.getPattern().getBlockPattern().getHeight();
 			int patD = recipe.getPattern().getBlockPattern().getDepth();
 			float avgDim = (float) Math.sqrt(patW * patW + patH * patH + patD * patD);
-			float previewScale = (float) ((2 + Math.exp(2 - (avgDim / 5))) / 1.5);
+			// Fit the exploded structure (1.5 block spacing) to most of the preview box.
+			float previewScale = Mth.clamp(Math.min(PREVIEW_W, PREVIEW_H) * 0.7f / (avgDim * 1.5f), 4f, 22f);
 			gfx.pose().scale(previewScale, -previewScale, previewScale);
 
 			drawRotatingMultiblock(recipe, gfx, buffers);
@@ -329,12 +411,32 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<CraftingMap
 	//  Drawing helpers
 	// ═══════════════════════════════════════════════════════════════
 
-	private static int offeringX(int index) {
-		return OFFERING_SLOT_START_X + (index % 2) * OFFERING_SLOT_SPACING;
+	private static int gridX(int columnX, int index) {
+		return columnX + (index % 2) * SLOT_SPACING;
 	}
 
-	private static int offeringY(int index) {
-		return OFFERING_SLOT_Y + (index / 2) * OFFERING_SLOT_SPACING;
+	private static int gridY(int index) {
+		return GRID_SLOT_Y + (index / 2) * SLOT_SPACING;
+	}
+
+	/** One slot per distinct block of the pattern, carrying its count; any overflow cycles in the last slot. */
+	private static List<List<ItemStack>> materialSlots(CraftingMapRecipe recipe) {
+		List<List<ItemStack>> slots = new ArrayList<>();
+		if (recipe.getPattern() == null || recipe.getPattern().getSymbolList() == null) {
+			return slots;
+		}
+		for (MaterialCount material : recipe.getPattern().getMaterialCounts(false)) {
+			List<ItemStack> stacks = itemStacksFor(material.key(), material.count());
+			if (stacks.isEmpty()) {
+				continue;
+			}
+			if (slots.size() < MAX_GRID_SLOTS) {
+				slots.add(new ArrayList<>(stacks));
+			} else {
+				slots.get(MAX_GRID_SLOTS - 1).addAll(stacks);
+			}
+		}
+		return slots;
 	}
 
 	private long materialCycleIndex() {
@@ -345,7 +447,7 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<CraftingMap
 		return System.currentTimeMillis() / 2000L;
 	}
 
-	private List<ItemStack> itemStacksFor(MultiblockPatternKey key, int count) {
+	private static List<ItemStack> itemStacksFor(MultiblockPatternKey key, int count) {
 		List<ItemStack> stacks = new ArrayList<>();
 		for (Block block : key.displayBlocks()) {
 			if (block == null || block == Blocks.AIR) {
@@ -359,7 +461,7 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<CraftingMap
 		return stacks;
 	}
 
-	private List<ItemStack> ingredientStacksFor(CraftingMapRecipe.Offering offering) {
+	private static List<ItemStack> ingredientStacksFor(CraftingMapRecipe.Offering offering) {
 		List<ItemStack> stacks = new ArrayList<>();
 		for (ItemStack stack : offering.ingredient().getItems()) {
 			if (!stack.isEmpty()) {
@@ -369,32 +471,9 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<CraftingMap
 		return stacks;
 	}
 
-	/** Draws a subtle pulsing red glow in the background. */
-	private void drawSubtleGlow(GuiGraphics gfx, int cx, int cy, float time) {
-		float pulse = 0.5f + 0.5f * Mth.sin(time * 1.8f);
-		for (int ring = 35; ring > 0; ring -= 5) {
-			int alpha = (int) (6 * pulse * ((float) ring / 35));
-			if (alpha <= 0) continue;
-			int color = (alpha << 24) | (0x60 << 16) | (0x08 << 8) | 0x04;
-			gfx.fill(cx - ring, cy - ring, cx + ring, cy + ring, color);
-		}
-	}
-
-	/** Draws a beveled border rectangle. */
-	private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h, int light, int dark) {
-		gfx.fill(x, y, x + w, y + 1, light);
-		gfx.fill(x, y + h - 1, x + w, y + h, dark);
-		gfx.fill(x, y, x + 1, y + h, light);
-		gfx.fill(x + w - 1, y, x + w, y + h, dark);
-	}
-
-	/** Draws an 18x18 item slot frame. */
+	/** Draws an 18x18 item slot frame whose top-left is (x, y). */
 	private void drawSlotFrame(GuiGraphics gfx, int x, int y) {
-		gfx.fill(x, y, x + 18, y + 18, SLOT_BG);
-		gfx.fill(x, y, x + 18, y + 1, SLOT_BORDER_DARK);
-		gfx.fill(x, y, x + 1, y + 18, SLOT_BORDER_DARK);
-		gfx.fill(x, y + 17, x + 18, y + 18, SLOT_BORDER_LIGHT);
-		gfx.fill(x + 17, y, x + 18, y + 18, SLOT_BORDER_LIGHT);
+		JeiPanel.slot(gfx, THEME, x + 1, y + 1);
 	}
 
 }

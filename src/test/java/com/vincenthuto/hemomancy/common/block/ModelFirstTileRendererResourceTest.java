@@ -389,7 +389,7 @@ public final class ModelFirstTileRendererResourceTest {
 		for (String hook : new String[]{"renderCops(te, stack", "drawVeins(vc, px, te", "drawGanglion(vc, px, te",
 				"drawWarp(vc, px, te", "drawWovenBands(vc, px, te", "renderVials(te, stack", "echo.render(te, partialTicks, stack, buffer)"})
 			assertContains("somatic loom draws its state on the loom: " + hook, loomRenderer, hook);
-		assertContains("ganglionic feelers glow toward slack threads", loomRenderer, "drawFeelers(vc, px, te");
+		assertContains("ganglionic feelers glow while the weaver listens", loomRenderer, "drawFeelers(vc, px, te");
 		String loomEcho = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/tile/harbinger/crafting/SomaticLoomEcho.java"));
 		assertContains("the echo follows the loom's stage", loomEcho, "SomaticLoomEffectRules.echoLook(te.upgradeTier())");

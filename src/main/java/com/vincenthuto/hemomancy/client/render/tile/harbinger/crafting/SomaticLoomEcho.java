@@ -34,10 +34,11 @@ import net.minecraft.world.phys.Vec3;
 import static com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomGeometry.*;
 
 /**
- * The memory's echo: a past Harbinger, translucent and colour-shifted, standing on the warp and casting the memory
- * on loop with the real casting clip for its school and rank. Each loose thread is a limb torn from it, flickering
- * where it was; each woven thread makes it more solid. At the climax it grows whole, turns to the weaver, casts
- * once more in the memory's full colour and sinks into the fell.
+ * The memory's echo: a past Harbinger, translucent and colour-shifted, standing on the warp. While the engram is
+ * unrecalled it barely holds together, limbs flickering where they should be, gathered in a slow held breath. Each
+ * fragment threaded home makes it more whole and has it perform that beat of the memory with the real casting clip
+ * and cast; a fragment the weaver listens to plays small and dim, and a false one plays a different memory. At the
+ * climax it grows whole, turns to the weaver, casts once more in the memory's full colour and sinks into the fell.
  * <p>
  * The loom's stage decides how much of the memory it can hold (SomaticLoomEffectRules.echoLook): a base loom shows
  * a small grey figure that stutters; a Ganglionic loom holds it steady and coloured; a Cortical loom sees the past
@@ -50,8 +51,13 @@ final class SomaticLoomEcho {
 	private static final float[] ASH = {0.78f, 0.7f, 0.7f};
 	private final ModelPart whole;
 	private final ModelPart head, body, rightArm, leftArm, rightLeg, leftLeg;
-	/** Limbs a loose thread tears away, in the order threads fray. */
+	/** Limbs an unrecalled memory lacks, in the order it regains them backwards. */
 	private final ModelPart[] frayOrder;
+	/** Ticks a beat's release and recovery take. */
+	private static final float BEAT_TICKS = 22f;
+	/** The beat each loom's echo is playing: when it began, whose memory it shows, and how strongly. */
+	private record Beat(float start, BloodManipulation manip, float strength) {}
+	private static final java.util.Map<net.minecraft.core.BlockPos, Beat> BEATS = new java.util.concurrent.ConcurrentHashMap<>();
 
 	SomaticLoomEcho(BlockEntityRendererProvider.Context context) {
 		ModelPart root = context.bakeLayer(HarbingerMnemonistModel.LAYER_LOCATION);
@@ -66,18 +72,33 @@ final class SomaticLoomEcho {
 	}
 
 	/** Draws in the loom's model frame (already turned to its facing); `stack` is in block units. */
-	void render(SomaticLoomBlockEntity te, float partialTicks, PoseStack stack, MultiBufferSource buffer) {
-		BloodManipulation manip = te.getWeaveManipulation();
-		if (manip == null || !te.isWeaving() || te.getLevel() == null) return;
-		boolean climax = te.isInClimax();
-		float loop = climax ? 0 : (te.getWeaveTicks() + partialTicks) % SomaticWeaveRules.LOOP_TICKS;
+	void render(SomaticLoomBlockEntity te, float partialTicks, PoseStack stack, MultiBufferSource buffer, float dissolve) {
+		// A broken weave's echo comes apart with its engram: its limbs tear away one by one, then it fades.
+		boolean dissolving = dissolve >= 0F;
+		var snapshot = dissolving ? com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.engram.EngramDissolve.snapshot(te.getBlockPos()) : null;
+		BloodManipulation manip = dissolving ? snapshot == null ? null : snapshot.manip() : te.getWeaveManipulation();
+		if (manip == null || !dissolving && !te.isWeaving() || te.getLevel() == null) return;
+		boolean climax = !dissolving && te.isInClimax();
 		float c = climax ? Mth.clamp((te.getClimaxTicks() + partialTicks) / SomaticWeaveRules.CLIMAX_TICKS, 0, 1) : 0;
 		float time = te.getLevel().getGameTime() + partialTicks;
-		long total = te.getWeaveThreads().size();
-		long woven = te.getWeaveThreads().stream().filter(t -> t.state() == SomaticLoomBlockEntity.WeaveThread.State.WOVEN).count();
-		int loose = (int) te.getWeaveThreads().stream().filter(t -> t.state() == SomaticLoomBlockEntity.WeaveThread.State.LOOSE).count();
-
-		pose(manip, climax ? climaxPhase(c) : loopPhase(loop), climax ? climaxTime(c) : loopTime(loop));
+		int total = 0, woven = 0;
+		var board = dissolving ? snapshot.board() : te.getEngram();
+		if (board != null)
+			for (int i = 0; i < board.fragmentCount(); i++) {
+				if (board.fragment(i).intrusion()) continue;
+				total++;
+				if (com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramWeaveRules.connected(board, i)) woven++;
+			}
+		if (climax) woven = total;
+		Beat beat = BEATS.get(te.getBlockPos());
+		float beatAge = beat == null ? BEAT_TICKS : time - beat.start();
+		boolean beating = !climax && beatAge >= 0 && beatAge < BEAT_TICKS;
+		if (climax) pose(manip, climaxPhase(c), climaxTime(c));
+		else if (beating) pose(beat.manip(), beatAge < 6 ? CastPhase.RELEASE : CastPhase.RECOVERY, beatAge < 6 ? beatAge : Math.min(14, beatAge - 6));
+		// Unrecalled, the memory hangs in a slow held gather it never releases.
+		else pose(manip, CastPhase.HOLD, 4 + 3 * Mth.sin(time * 0.05f));
+		int loose = total == 0 ? 0 : Math.round((1 - woven / (float) total) * frayOrder.length);
+		if (dissolving) loose = SomaticLoomEffectRules.echoTornLimbs(loose, frayOrder.length, dissolve);
 		SomaticLoomEffectRules.EchoLook look = SomaticLoomEffectRules.echoLook(te.upgradeTier());
 		float grow = climax ? smooth(Mth.clamp(c / 0.3f, 0, 1)) : 0;
 		float sink = climax ? smooth(Mth.clamp((c - 0.7f) / 0.3f, 0, 1)) : 0;
@@ -86,7 +107,10 @@ final class SomaticLoomEcho {
 		float scale = Mth.lerp(grow, look.weavingScale(), look.climaxScale()) * (1 - 0.85f * sink);
 		float solidity = total == 0 ? 0 : woven / (float) total;
 		float alpha = climax ? (0.95f + 0.05f * brighten) * (1 - sink) : look.alphaMin() + look.alphaSpan() * solidity;
-		if (te.isPaused()) alpha *= 0.45f;
+		// A beat brightens it for a moment; a false beat flickers wrongly.
+		if (beating) alpha = Math.min(1f, alpha + 0.35f * beat.strength() * (1 - beatAge / BEAT_TICKS));
+		if (!dissolving && te.isPaused()) alpha *= 0.45f;
+		if (dissolving) alpha *= SomaticLoomEffectRules.dissolveFade(dissolve);
 		// Breathe faintly, as the loom's heartbeat does; a base loom also loses its grip on the memory now and then.
 		alpha *= 0.9f + 0.1f * Mth.sin(time * 0.15f);
 		if (!climax) alpha *= SomaticLoomEffectRules.echoStutter(time, look.stutter());
@@ -144,7 +168,27 @@ final class SomaticLoomEcho {
 		for (ModelPart limb : frayOrder) limb.visible = true;
 		stack.popPose();
 
-		fireRelease(te, manip, climax, loop, c, scale);
+		if (climax) fireClimax(te, manip, c, scale);
+	}
+
+	/**
+	 * Has the echo perform a beat of `manip`: the real cast, sized by the echo and by `strength` (a fragment heard
+	 * through the staff plays small and dim; a lane threaded home plays at full stature).
+	 */
+	void playBeat(SomaticLoomBlockEntity te, BloodManipulation manip, float strength) {
+		var level = Minecraft.getInstance().level;
+		if (level == null || manip == null) return;
+		float time = level.getGameTime() + Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
+		BEATS.put(te.getBlockPos().immutable(), new Beat(time, manip, strength));
+		float figure = SomaticLoomEffectRules.echoLook(te.upgradeTier()).weavingScale() * (0.55f + 0.45f * strength);
+		Vec3 front = forward(te);
+		Vec3 feet = te.echoAnchor();
+		Vec3 hands = feet.add(front.scale(0.25 * figure)).add(0, 1.25 * figure, 0);
+		EchoCasts.releaseSafely(manip.getName(), new EchoCast.EchoContext(level, hands, feet, front, figure, manip));
+	}
+
+	static void clear() {
+		BEATS.clear();
 	}
 
 	private void pose(BloodManipulation manip, CastPhase phase, float t) {
@@ -165,21 +209,6 @@ final class SomaticLoomEcho {
 		part.xRot += r.x();
 		part.yRot += r.y();
 		part.zRot += r.z();
-	}
-
-	/** One loop: opening 0-6, a held gather to the release at 40, release 40-46, recovery, then a breath. */
-	private static CastPhase loopPhase(float loop) {
-		if (loop < 6) return CastPhase.OPENING;
-		if (loop < SomaticWeaveRules.RELEASE_TICK) return CastPhase.HOLD;
-		if (loop < SomaticWeaveRules.RELEASE_TICK + 6) return CastPhase.RELEASE;
-		return CastPhase.RECOVERY;
-	}
-
-	private static float loopTime(float loop) {
-		if (loop < 6) return loop;
-		if (loop < SomaticWeaveRules.RELEASE_TICK) return loop - 6;
-		if (loop < SomaticWeaveRules.RELEASE_TICK + 6) return loop - SomaticWeaveRules.RELEASE_TICK;
-		return Math.min(14, loop - SomaticWeaveRules.RELEASE_TICK - 6);
 	}
 
 	private static CastPhase climaxPhase(float c) {
@@ -218,16 +247,10 @@ final class SomaticLoomEcho {
 		return front.subtract(back).normalize();
 	}
 
-	private static void fireRelease(SomaticLoomBlockEntity te, BloodManipulation manip, boolean climax, float loop, float c,
-			float scale) {
+	private static void fireClimax(SomaticLoomBlockEntity te, BloodManipulation manip, float c, float scale) {
 		var level = Minecraft.getInstance().level;
-		if (level == null) return;
-		long beat = te.getWeaveTicks() / SomaticWeaveRules.LOOP_TICKS;
-		boolean due = climax ? c >= 0.35f && !te.echoClimaxFired()
-				: loop >= SomaticWeaveRules.RELEASE_TICK && te.echoLastLoopFired() != beat && !te.isPaused();
-		if (!due) return;
-		if (climax) te.markEchoClimaxFired();
-		else te.markEchoLoopFired(beat);
+		if (level == null || c < 0.35f || te.echoClimaxFired()) return;
+		te.markEchoClimaxFired();
 		Vec3 front = forward(te);
 		Vec3 feet = te.echoAnchor();
 		Vec3 hands = feet.add(front.scale(0.25 * scale)).add(0, 1.25 * scale, 0);

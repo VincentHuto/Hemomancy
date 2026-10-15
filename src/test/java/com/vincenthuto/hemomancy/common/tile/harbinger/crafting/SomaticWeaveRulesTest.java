@@ -8,45 +8,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SomaticWeaveRulesTest {
 	@Test
-	void threadsTearLooseOncePerEchoLoopAfterTheRelease() {
-		assertFalse(SomaticWeaveRules.frayDue(0));
-		assertTrue(SomaticWeaveRules.frayDue(SomaticWeaveRules.FRAY_TICK));
-		assertTrue(SomaticWeaveRules.frayDue(SomaticWeaveRules.FRAY_TICK + SomaticWeaveRules.LOOP_TICKS));
-		assertFalse(SomaticWeaveRules.frayDue(SomaticWeaveRules.FRAY_TICK + 1));
-		assertTrue(SomaticWeaveRules.FRAY_TICK > SomaticWeaveRules.RELEASE_TICK);
+	void noWeaveCanKillAtAnyRank() {
+		for (EnumManipulationRank r : EnumManipulationRank.values()) assertFalse(SomaticWeaveRules.lethal(r), r.name());
 	}
 
 	@Test
-	void lowRanksHoldTwoThreadsAndCannotKill() {
-		for (EnumManipulationRank r : new EnumManipulationRank[]{HUMILIS, MEDIOCRITAS}) {
-			assertEquals(2, SomaticWeaveRules.maxLoose(r));
-			assertFalse(SomaticWeaveRules.lethal(r));
-		}
-		for (EnumManipulationRank r : new EnumManipulationRank[]{SUMMA, MAGISTER, PERFECTUS}) {
-			assertEquals(3, SomaticWeaveRules.maxLoose(r));
-			assertTrue(SomaticWeaveRules.lethal(r));
-		}
-	}
-
-	@Test
-	void strikingStrainsFasterThanWaitingAndHigherRanksEndureMore() {
-		for (EnumManipulationRank r : EnumManipulationRank.values()) {
-			float perAttack = SomaticWeaveRules.strainPerAttack(r);
-			float perHit = SomaticWeaveRules.strainPerHit(r);
-			assertTrue(perHit > 0 && perHit < perAttack, r.name());
-			assertTrue(perAttack <= 0.5f, "every thread attacks at least twice: " + r);
-		}
-		assertTrue(SomaticWeaveRules.strainPerAttack(PERFECTUS) < SomaticWeaveRules.strainPerAttack(HUMILIS));
+	void anIntrusionStrikesHarderAtHigherRanks() {
 		assertTrue(SomaticWeaveRules.attackPower(PERFECTUS) > SomaticWeaveRules.attackPower(HUMILIS));
-		assertTrue(SomaticWeaveRules.attackInterval(PERFECTUS) < SomaticWeaveRules.attackInterval(HUMILIS));
-		assertTrue(SomaticWeaveRules.attackInterval(PERFECTUS) >= 40);
-	}
-
-	@Test
-	void eachEnzymeUnitIsOneThreadCappedPerTendency() {
-		assertEquals(0, SomaticWeaveRules.threadsFor(0));
-		assertEquals(4, SomaticWeaveRules.threadsFor(4));
-		assertEquals(8, SomaticWeaveRules.threadsFor(20));
+		assertTrue(SomaticWeaveRules.WINDUP_TICKS >= 20, "every bite has a tell");
 	}
 
 	@Test
@@ -82,18 +51,7 @@ class SomaticWeaveRulesTest {
 	}
 
 	@Test
-	void windingUpThreadsDiveIntoStaffReach() {
-		assertTrue(SomaticWeaveRules.holdDistance(5.5, true) < 3.0, "a winding thread comes within melee reach");
-		assertEquals(5.5, SomaticWeaveRules.holdDistance(5.5, false), 1e-9);
-		assertEquals(1.5, SomaticWeaveRules.holdDistance(1.5, true), 1e-9);
-	}
-
-	@Test
-	void ganglionicLoomsCatchSlackThreadsAndReachFurther() {
-		assertEquals(0.0, SomaticWeaveRules.autoCatchRadius(0), 1e-9);
-		assertTrue(SomaticWeaveRules.autoCatchRadius(1) >= 4.0);
-		assertEquals(SomaticWeaveRules.autoCatchRadius(1), SomaticWeaveRules.autoCatchRadius(2), 1e-9);
-		assertTrue(SomaticWeaveRules.hookReach(1) > SomaticWeaveRules.hookReach(0));
-		assertEquals(SomaticWeaveRules.hookReach(1), SomaticWeaveRules.hookReach(2), 1e-9);
+	void theRitualAreaHoldsTheLargestEngram() {
+		assertTrue(SomaticWeaveRules.RITUAL_RADIUS > com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramWeaveRules.tipRadius(2) + 2);
 	}
 }

@@ -20,6 +20,13 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramAim;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramBoard;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramBoardGenerator;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramRecollections;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramSigilGeometry;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramWeaveRules;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramWeaveSession;
 import com.vincenthuto.hemomancy.common.tile.shared.IMultiBlockEntity;
 import com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog;
 import com.vincenthuto.hemomancy.common.station.UpgradeStation;
@@ -76,21 +83,27 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 	private static final String TAG_CRAFT_PHASE = "craftPhase";
 	private static final String TAG_RITUAL_BLOOD_CHARGED = "ritualBloodCharged";
 	private static final String TAG_STORED_ENZYMES = "storedEnzymes";
-	private static final String TAG_WEAVE_THREADS = "weaveThreads";
+	private static final String TAG_LEGACY_WEAVE_THREADS = "weaveThreads";
+	private static final String TAG_ENGRAM = "engram";
 	private static final String TAG_WEAVER = "weaver";
 	private static final String TAG_WEAVE_TICKS = "weaveTicks";
 	private static final String TAG_CLIMAX_TICKS = "climaxTicks";
 	private static final String TAG_PAUSED_TICKS = "pausedTicks";
-	private static final String TAG_SPUN = "spun";
+	private static final String TAG_LEGACY_SPUN = "spun";
+	/** 2: stored enzyme is kept in spans of thread and a paid weave is an engram. */
+	private static final int SAVE_VERSION = 2;
 	private static final String TAG_LEGACY_RITUAL_ORBS = "ritualOrbs";
 
 	public static final int PHASE_IDLE = 0;
 	public static final int PHASE_AWAITING_BLOOD = 1;
 	public static final int PHASE_WEAVING = 2;
-	/** Every thread is woven: the echo grows whole and the memory crystallizes. */
+	/** Every fragment is home: the echo grows whole and the memory crystallizes. */
 	public static final int PHASE_CLIMAX = 3;
 
-	public static final int ENZYME_CAPACITY = 64;
+	/** Spans of thread each tendency's vial holds: sixty-four enzymes, three spans each. */
+	public static final int ENZYME_CAPACITY = EngramWeaveRules.SPAN_CAPACITY;
+	/** Where the engram is centred, in the north-facing model's pixels: the middle of the loom's footprint. */
+	private static final double SIGIL_X = 8.0D, SIGIL_Z = 8.0D;
 	/** Soot shed by a strand as it is drawn home into the warp. */
 	private static final ParticleColor STRAND_SOOT = new ParticleColor(22, 2, 6);
 
@@ -101,8 +114,11 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 
 	private final EnumMap<EnumBloodTendency, Integer> storedEnzymes =
 			MemoryWeavingRecipe.blankEnzymeRequirements();
-	private final List<WeaveThread> weaveThreads = new ArrayList<>();
-	private final EnumMap<EnumBloodTendency, Integer> spun = MemoryWeavingRecipe.blankEnzymeRequirements();
+	/** The live engram: its board, the lane in the weaver's staff, and the beats clients replay. */
+	private final EngramWeaveSession engram = new EngramWeaveSession();
+	/** The engram a payer would recall for the selected memory, kept while their blood is projected. */
+	@Nullable private EngramBoard pendingBoard;
+	private String pendingKey = "";
 	@Nullable private UUID weaver;
 	/** The weaver as last seen; players not on the server list (fakes, test fixtures) resolve through it. */
 	@Nullable private Player weaverRef;
@@ -113,9 +129,9 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 	private int climaxTicks;
 	private int pausedTicks;
 	private boolean paused;
-	/** Client-only bookkeeping so the echo fires its cast once per loop and once at the climax. */
-	private long echoLastLoop = -1;
-	/** Client-smoothed spun thread and vial stock, so payment visibly draws liquid up into thread. */
+	/** Client-only: the last engram beat this client has played, so each landing, snap or scar plays once. */
+	private int beatSeen = -1;
+	/** Client-smoothed thread on the pirns and vial stock, in spans, so threading visibly draws liquid up into thread. */
 	private final float[] shownSpun = new float[EnumBloodTendency.values().length];
 	private final float[] shownStock = new float[EnumBloodTendency.values().length];
 	private boolean echoClimaxFired;
@@ -137,6 +153,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 	}
 
 	public static void clientTick(Level level, BlockPos worldPosition, BlockState state, SomaticLoomBlockEntity self) {
+		self.trackEngram();
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
 			int i = tend.ordinal();
 			self.shownSpun[i] += (self.getSpun(tend) - self.shownSpun[i]) * 0.08F;
@@ -157,6 +174,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 	}
 
 	public static void serverTick(Level level, BlockPos worldPosition, BlockState state, SomaticLoomBlockEntity self) {
+		self.trackEngram();
 		if (self.curRecipe == null || level.getGameTime() % 20L == 0L) self.refreshRecipe();
 		if (level instanceof ServerLevel server && self.isWeaving() && !self.recoveryRequired) self.tickWeave(server);
 	}
@@ -241,15 +259,16 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 	private void depositEnzyme(@Nullable Player player, ItemStack stack, EnzymeItem enzyme, boolean bulk) {
 		EnumBloodTendency tend = enzyme.getTend();
 		int current = storedEnzymes.getOrDefault(tend, 0);
-		int room = ENZYME_CAPACITY - current;
+		// Each enzyme dissolves into three spans of thread; the vial takes only whole enzymes.
+		int room = (ENZYME_CAPACITY - current) / EngramWeaveRules.SPANS_PER_ENZYME;
 		if (room <= 0) {
 			msg(player, tend.name() + " enzyme reservoir is full.", ChatFormatting.DARK_RED, true);
 			return;
 		}
 		int amount = bulk ? Math.min(room, stack.getCount()) : 1;
-		storedEnzymes.put(tend, current + amount);
+		storedEnzymes.put(tend, current + amount * EngramWeaveRules.SPANS_PER_ENZYME);
 		stack.shrink(amount);
-		msg(player, tend.name() + " enzymes: " + storedEnzymes.get(tend) + "/" + ENZYME_CAPACITY,
+		msg(player, tend.name() + " thread: " + storedEnzymes.get(tend) + "/" + ENZYME_CAPACITY + " spans",
 				ChatFormatting.DARK_PURPLE, true);
 		refreshRecipe();
 		markDirtyAndSync();
@@ -403,13 +422,18 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		return true;
 	}
 
+	/** Enough thread for the shortest possible engram: three spans per fragment. The payer's own engram may need more. */
 	private boolean hasStoredEnzymesFor(MemoryWeavingRecipe recipe) {
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			if (storedEnzymes.getOrDefault(tend, 0) < recipe.getEnzymeRequirement(tend)) {
+			if (storedEnzymes.getOrDefault(tend, 0) < minimumSpans(recipe, tend)) {
 				return false;
 			}
 		}
 		return true;
+	}
+
+	private static int minimumSpans(MemoryWeavingRecipe recipe, EnumBloodTendency tend) {
+		return recipe.getEnzymeRequirement(tend) * EngramWeaveRules.SPANS_PER_ENZYME;
 	}
 
 	public boolean isCrafting() {
@@ -517,9 +541,23 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 			provideTendencyFeedback(player);
 			return false;
 		}
-		if (!hasStoredEnzymesFor(curRecipe)) {
+		if (level.isClientSide && !hasStoredEnzymesFor(curRecipe)) {
 			provideMissingEnzymeFeedback(player);
 			return false;
+		}
+		if (!level.isClientSide) {
+			// The payer recalls their own engram; its reference lanes must be affordable before any blood is taken.
+			// Plying can make that cheaper than three spans a fragment, so the engram, not the recipe, decides.
+			EngramBoard board = engramFor(player);
+			int lacking = EngramWeaveRules.shortTendency(storedSpans(), board.reference());
+			if (lacking >= 0) {
+				EnumBloodTendency tend = EnumBloodTendency.values()[lacking];
+				int missing = board.reference()[lacking] - storedEnzymes.getOrDefault(tend, 0);
+				msg(player, Component.literal("The engram this memory recalls in you needs " + missing + " more spans of ")
+						.append(EnumBloodTendency.getRepEnzyme(tend).getDescription())
+						.append(" thread (each enzyme spins three)."), ChatFormatting.YELLOW, true);
+				return false;
+			}
 		}
 
 		IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
@@ -558,7 +596,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 	public void cancelRitual(@Nullable Player player) {
 		if (!isCrafting() || refuseWhileRiteHeld(player)) return;
 		if (player != null) {
-			msg(player, "The weave collapses. Spent blood and enzymes are lost.", ChatFormatting.RED, true);
+			msg(player, "The engram withdraws into the loom. Spent blood is lost; its thread returns to the vials.", ChatFormatting.RED, true);
 		}
 		playSound(SoundEvents.BEACON_DEACTIVATE, 0.7f, 0.8f);
 		clearActiveRitual(true);
@@ -575,16 +613,10 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		climaxTicks = 0;
 		pausedTicks = 0;
 		paused = false;
-		weaveThreads.clear();
-		// Payment draws each required enzyme out of its vial and spins it onto the pirn as thread.
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			int required = curRecipe.getEnzymeRequirement(tend);
-			if (required <= 0) continue;
-			consumeStoredEnzyme(tend, required);
-			spun.put(tend, required);
-			for (int i = 0; i < SomaticWeaveRules.threadsFor(required); i++) weaveThreads.add(new WeaveThread(tend));
-		}
-		msg(player, "The echo of the memory takes shape over the warp. Its threads will fight being bound.",
+		EngramBoard board = EngramBoard.load(engramFor(player).save());
+		dressIntrusions(board, player.getUUID());
+		engram.start(board);
+		msg(player, "The engram unfurls around the loom. Listen to each fragment with a Living Staff, then thread it home.",
 				ChatFormatting.DARK_PURPLE, true);
 		playSound(SoundEvents.END_PORTAL_FRAME_FILL, 0.8f, 0.55f);
 		if (level instanceof ServerLevel serverLevel)
@@ -598,7 +630,6 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 			return;
 		}
 		if (weaver == null) adoptNearestWeaver(server);
-		reconcileLooseThreads(server);
 		Player player = weaverPlayer(server);
 		boolean present = player != null && SomaticWeaveRules.weaverPresent(player.isAlive(),
 				player.level() == server, player.distanceToSqr(Vec3.atCenterOf(worldPosition)));
@@ -606,47 +637,24 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		boolean shouldPause = !present || pausedTicks > 0;
 		if (shouldPause != paused) {
 			paused = shouldPause;
-			if (paused) recallLooseThreads(server);
+			if (paused) engram.release();
 			markDirtyAndSync();
 		}
 		if (paused) return;
-		catchWithFeelers(server, player);
+		if (!engram.live()) recallMigratedEngram(player);
 		weaveTicks++;
-		if (SomaticWeaveRules.frayDue(weaveTicks) && looseCount() < SomaticWeaveRules.maxLoose(getWeaveRank())) {
-			weaveThreads.stream().filter(t -> t.state == WeaveThread.State.HELD).findFirst().ifPresent(thread -> {
-				thread.state = WeaveThread.State.LOOSE;
-				thread.entity = FrayedThreadEntity.spawn(server, this, thread.tendency, getWeaveRank()).getUUID();
-				markDirtyAndSync();
-			});
-		}
 	}
 
-	private long looseCount() {
-		return weaveThreads.stream().filter(t -> t.state == WeaveThread.State.LOOSE).count();
-	}
-
-	/** Loose threads whose entity has gone (unloaded, killed by commands) return to the echo. */
-	private void reconcileLooseThreads(ServerLevel server) {
-		boolean changed = false;
-		for (WeaveThread thread : weaveThreads) {
-			if (thread.state == WeaveThread.State.LOOSE
-					&& (thread.entity == null || !(server.getEntity(thread.entity) instanceof FrayedThreadEntity))) {
-				thread.state = WeaveThread.State.HELD;
-				thread.entity = null;
-				changed = true;
-			}
-		}
-		if (changed) markDirtyAndSync();
-	}
-
-	private void recallLooseThreads(ServerLevel server) {
-		for (WeaveThread thread : weaveThreads) {
-			if (thread.state != WeaveThread.State.LOOSE) continue;
-			if (thread.entity != null && server.getEntity(thread.entity) instanceof FrayedThreadEntity entity)
-				entity.discard();
-			thread.state = WeaveThread.State.HELD;
-			thread.entity = null;
-		}
+	/** A weave paid before engrams existed recalls one now, for its weaver, with its vials topped up to the reference. */
+	private void recallMigratedEngram(@Nullable Player player) {
+		if (player == null || curRecipe == null || level == null) return;
+		EngramBoard board = EngramBoard.load(engramFor(player).save());
+		int[] reference = board.reference();
+		for (EnumBloodTendency tend : EnumBloodTendency.values())
+			storedEnzymes.put(tend, Math.min(ENZYME_CAPACITY, Math.max(storedEnzymes.getOrDefault(tend, 0), reference[tend.ordinal()])));
+		dressIntrusions(board, player.getUUID());
+		engram.start(board);
+		markDirtyAndSync();
 	}
 
 	/** A weave carried over from an older save, or whose weaver is unknown, is taken up by the nearest player. */
@@ -662,65 +670,185 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		}
 	}
 
-	public boolean weaveHome(FrayedThreadEntity entity, Player by) {
-		for (WeaveThread thread : weaveThreads) {
-			if (thread.state != WeaveThread.State.LOOSE || !entity.getUUID().equals(thread.entity)) continue;
-			thread.state = WeaveThread.State.WOVEN;
-			thread.entity = null;
-			spun.merge(thread.tendency, -1, (a, b) -> Math.max(0, a + b));
-			entity.discard();
-			playWeaveFeedback(thread.tendency);
-			if (weaveThreads.stream().allMatch(t -> t.state == WeaveThread.State.WOVEN)) {
-				craftingPhase = PHASE_CLIMAX;
-				climaxTicks = 0;
-			}
+	//  Engram Weaving: the star unfurled around the loom and threaded with the weaver's Living Staff
+
+	/** The engram a payer recalls for the selected memory: generated once per payer and kept while blood is projected. */
+	private EngramBoard engramFor(Player player) {
+		String key = selectedRecipeId + "|" + player.getUUID();
+		if (pendingBoard == null || !key.equals(pendingKey)) {
+			long worldSeed = level instanceof ServerLevel server ? server.getSeed() : 0L;
+			pendingBoard = EngramBoardGenerator.generate(EngramBoardGenerator.seed(worldSeed, selectedRecipeId, player.getUUID()),
+					enzymeCounts(curRecipe), rankOf(curRecipe));
+			pendingKey = key;
+		}
+		return pendingBoard;
+	}
+
+	private static int[] enzymeCounts(MemoryWeavingRecipe recipe) {
+		int[] counts = new int[EnumBloodTendency.values().length];
+		if (recipe == null) return counts;
+		for (EnumBloodTendency tend : EnumBloodTendency.values()) counts[tend.ordinal()] = recipe.getEnzymeRequirement(tend);
+		return counts;
+	}
+
+	private int[] storedSpans() {
+		int[] stock = new int[EnumBloodTendency.values().length];
+		for (EnumBloodTendency tend : EnumBloodTendency.values()) stock[tend.ordinal()] = storedEnzymes.getOrDefault(tend, 0);
+		return stock;
+	}
+
+	/** False fragments replay another memory of their tendency; a bloodline that already wove this one marks them. */
+	private void dressIntrusions(EngramBoard board, UUID weaverId) {
+		java.util.Random random = new java.util.Random(pendingKey.hashCode());
+		for (int i = 0; i < board.fragmentCount(); i++) {
+			EngramBoard.Fragment fragment = board.fragment(i);
+			if (fragment.intrusion() && fragment.decoy().isEmpty()) board.setDecoy(i, decoyFor(fragment.colour(), random));
+		}
+		if (level instanceof ServerLevel server
+				&& EngramRecollections.get(server).bloodlineRemembers(server, weaverId, selectedRecipeId))
+			board.premarkIntrusions();
+	}
+
+	private String decoyFor(int colour, java.util.Random random) {
+		BloodManipulation own = getWeaveManipulation();
+		List<BloodManipulation> same = new ArrayList<>(), any = new ArrayList<>();
+		for (BloodManipulation manip : com.vincenthuto.hemomancy.common.init.ManipulationInit.getAllEntries()) {
+			if (own != null && manip.getName().equals(own.getName())) continue;
+			any.add(manip);
+			if (manip.getTend().ordinal() == colour) same.add(manip);
+		}
+		List<BloodManipulation> pool = same.isEmpty() ? any : same;
+		pool.sort(java.util.Comparator.comparing(BloodManipulation::getName));
+		return pool.isEmpty() ? "" : pool.get(random.nextInt(pool.size())).getName();
+	}
+
+	/**
+	 * The weaver's Living Staff on `node`: a press takes a lane or threads the held one there, holding sweeps it on,
+	 * a sneaking press cuts it back. Nobody else threads, and nothing threads while the weave is paused.
+	 */
+	public EngramWeaveRules.Step engramStep(Player player, int node, boolean sneaking, boolean press) {
+		if (!(level instanceof ServerLevel server) || craftingPhase != PHASE_WEAVING || paused || !engram.live()
+				|| curRecipe == null || weaver == null || !weaver.equals(player.getUUID())) return EngramWeaveRules.Step.IDLE;
+		int serial = engram.serial();
+		EngramWeaveSession.Result result = engram.step(node, sneaking, press, storedSpans());
+		if (result.changed()) {
+			playTraceFeedback(server, node, result.step(), serial);
+			settleIntrusions(server, player);
+			if (EngramWeaveRules.complete(engram.board(), enzymeCounts(curRecipe))) completeEngram(server);
+		}
+		if (result.step() == EngramWeaveRules.Step.NO_STOCK && engram.serial() != serial) {
+			int colour = EngramWeaveRules.payColour(engram.board(), result.fragment());
+			msg(player, Component.literal("The vial is out of thread. Add more ")
+					.append(EnumBloodTendency.getRepEnzyme(EnumBloodTendency.values()[Math.max(0, colour)]).getDescription())
+					.append(" to the loom, or find a shorter way."), ChatFormatting.YELLOW, true);
+		}
+		if (result.changed() || engram.serial() != serial || press) markDirtyAndSync();
+		return result.step();
+	}
+
+	/** The weaver let go of the staff: no lane is held until the next press. */
+	public void releaseEngram(Player player) {
+		if (weaver != null && weaver.equals(player.getUUID()) && engram.active() >= 0) {
+			engram.release();
 			markDirtyAndSync();
-			return true;
-		}
-		return false;
-	}
-
-	/** Ganglionic feelers take slack threads that drift near the echo; taut threads still fight. */
-	private void catchWithFeelers(ServerLevel server, Player weaver) {
-		double radius = SomaticWeaveRules.autoCatchRadius(upgradeTier());
-		if (radius <= 0) return;
-		Vec3 anchor = echoAnchor();
-		for (FrayedThreadEntity thread : looseThreadEntities(server)) {
-			if (!thread.isSlack() || thread.distanceToSqr(anchor) > radius * radius) continue;
-			Vec3 from = nearestFeelerTip(thread.position());
-			Vec3 to = thread.position();
-			var colour = thread.tendency().getColor();
-			for (int i = 0; i <= 8; i++) {
-				Vec3 at = from.lerp(to, i / 8.0D);
-				server.sendParticles(HemoParticleData.glow(colour), at.x, at.y, at.z, 1, 0.02D, 0.02D, 0.02D, 0.0D);
-			}
-			weaveHome(thread, weaver);
 		}
 	}
 
-	private Vec3 nearestFeelerTip(Vec3 to) {
-		Direction facing = getBlockState().hasProperty(SomaticLoomBlock.FACING)
-				? getBlockState().getValue(SomaticLoomBlock.FACING) : Direction.NORTH;
-		Vec3 best = echoAnchor();
-		double bestDistance = Double.MAX_VALUE;
-		for (float[] tip : SomaticLoomGeometry.FEELER_TIPS) {
-			Vec3 at = SomaticLoomFrame.toWorld(worldPosition, facing, tip[0], tip[1], tip[2]);
-			double distance = at.distanceToSqr(to);
-			if (distance < bestDistance) {
-				bestDistance = distance;
-				best = at;
+	private void playTraceFeedback(ServerLevel server, int node, EngramWeaveRules.Step step, int since) {
+		Vec3 at = nodeWorld(node);
+		if (step == EngramWeaveRules.Step.RETRACTED)
+			server.playSound(null, at.x, at.y, at.z, SoundEvents.HONEY_BLOCK_SLIDE, SoundSource.BLOCKS, 0.5F, 1.3F);
+		else
+			server.playSound(null, at.x, at.y, at.z, SoundEvents.SLIME_SQUISH_SMALL, SoundSource.BLOCKS, 0.45F,
+					0.7F + server.random.nextFloat() * 0.3F);
+		for (EngramWeaveSession.Beat beat : engram.beats())
+			if (beat.serial() > since && beat.event() == EngramWeaveSession.Event.LAND) playWeaveFeedback(
+					EnumBloodTendency.values()[Math.max(0, EngramWeaveRules.payColour(engram.board(), beat.fragment()))]);
+	}
+
+	/** Every false lane that reached home tears loose and costs what its rank asks. */
+	private void settleIntrusions(ServerLevel server, Player player) {
+		EngramBoard board = engram.board();
+		for (int fragment : EngramWeaveRules.connectedIntrusions(board)) {
+			EngramBoard.Fragment lie = board.fragment(fragment);
+			EnumBloodTendency tend = EnumBloodTendency.values()[Math.max(0, lie.colour())];
+			int spans = engram.snap(fragment);
+			Vec3 at = nodeWorld(lie.node());
+			server.playSound(null, at.x, at.y, at.z, SoundEvents.WOOL_BREAK, SoundSource.BLOCKS, 1.0F, 0.5F);
+			server.playSound(null, at.x, at.y, at.z, SoundEvents.SCULK_SHRIEKER_SHRIEK, SoundSource.BLOCKS, 0.35F, 1.6F);
+			switch (EngramWeaveRules.stakeFor(getWeaveRank())) {
+				case BURN -> burnSpans(player, tend, spans);
+				case PRESSURE -> addPressure(server, player);
+				case BITE -> {
+					com.vincenthuto.hemomancy.common.entity.weave.FrayedThreadEntity.spawnIntrusion(server, this, tend, at, getWeaveRank());
+					msg(player, "A failed Harbinger's memory tears loose from the engram.", ChatFormatting.DARK_RED, true);
+				}
+				case NONE -> {
+				}
 			}
 		}
-		return best;
+	}
+
+	/** A Mediocritas mistake burns the false lane's spans from what the vials hold beyond the reserve; blood pays the rest. */
+	private void burnSpans(Player player, EnumBloodTendency tend, int spans) {
+		EngramBoard board = engram.board();
+		int stock = storedEnzymes.getOrDefault(tend, 0);
+		int burnt = EngramWeaveRules.burnable(spans, stock, board.reference()[tend.ordinal()],
+				EngramWeaveRules.committed(board, tend.ordinal()));
+		storedEnzymes.put(tend, stock - burnt);
+		int unpaid = spans - burnt;
+		if (unpaid > 0 && player instanceof ServerPlayer serverPlayer)
+			HemoCapabilityAccess.getBloodVolume(serverPlayer).ifPresent(volume -> {
+				if (volume.isActive() && volume.drain(Math.min(volume.getBloodVolume(), unpaid * EngramWeaveRules.BURN_BLOOD_PER_SPAN)))
+					PacketHandler.sendToPlayer(serverPlayer,
+							new com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket(volume));
+			});
+		msg(player, "The false memory burns " + spans + " spans of " + tend.name().toLowerCase(java.util.Locale.ROOT)
+				+ " thread" + (unpaid > 0 ? ", and takes the rest from your blood." : "."), ChatFormatting.RED, true);
+	}
+
+	/** Summa and Magister mistakes build fungal pressure; when it boils over the engram's flesh scars or recalls a lie. */
+	private void addPressure(ServerLevel server, Player player) {
+		EngramBoard board = engram.board();
+		board.setPressure(board.pressure() + 1);
+		if (board.pressure() < EngramWeaveRules.PRESSURE_LIMIT) {
+			msg(player, "Fungal pressure gathers in the engram (" + board.pressure() + "/" + EngramWeaveRules.PRESSURE_LIMIT + ").",
+					ChatFormatting.DARK_GREEN, true);
+			return;
+		}
+		board.setPressure(0);
+		java.util.Random random = new java.util.Random(server.getGameTime() ^ worldPosition.asLong());
+		int colour = 0;
+		List<Integer> colours = new ArrayList<>();
+		for (EngramBoard.Fragment f : board.fragments()) if (!f.grey()) colours.add(f.colour());
+		if (!colours.isEmpty()) colour = colours.get(random.nextInt(colours.size()));
+		int node = EngramWeaveRules.applyPressure(board, random, colour, decoyFor(colour, random));
+		if (node < 0) return;
+		boolean intrusion = board.fragmentAt(node) >= 0;
+		if (intrusion && weaver != null && EngramRecollections.get(server).bloodlineRemembers(server, weaver, selectedRecipeId))
+			board.premarkIntrusions();
+		engram.logPressure(node, intrusion);
+		msg(player, intrusion ? "The pressure boils over: another false memory surfaces." : "The pressure boils over: the engram's flesh scars.",
+				ChatFormatting.DARK_GREEN, true);
+	}
+
+	/** Every true fragment is home: the thread its lanes hold is spent and the climax begins. */
+	private void completeEngram(ServerLevel server) {
+		EngramBoard board = engram.board();
+		int[] spent = new int[EnumBloodTendency.values().length];
+		for (int i = 0; i < board.fragmentCount(); i++)
+			if (!board.fragment(i).intrusion()) spent[EngramWeaveRules.payColour(board, i)] += EngramWeaveRules.laneSpans(board, i);
+		for (EnumBloodTendency tend : EnumBloodTendency.values())
+			storedEnzymes.put(tend, Math.max(0, storedEnzymes.getOrDefault(tend, 0) - spent[tend.ordinal()]));
+		engram.release();
+		craftingPhase = PHASE_CLIMAX;
+		climaxTicks = 0;
+		Vec3 at = echoAnchor();
+		server.playSound(null, at.x, at.y, at.z, SoundEvents.BEACON_POWER_SELECT, SoundSource.BLOCKS, 0.9F, 0.6F);
 	}
 
 	public void blackout() {
 		pausedTicks = SomaticWeaveRules.BLACKOUT_TICKS;
-	}
-
-	public boolean ownsLooseThread(UUID entity) {
-		return isWeaving() && weaveThreads.stream()
-				.anyMatch(t -> t.state == WeaveThread.State.LOOSE && entity.equals(t.entity));
 	}
 
 	@Nullable
@@ -731,14 +859,63 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		return weaverRef != null && !weaverRef.isRemoved() && weaver.equals(weaverRef.getUUID()) ? weaverRef : null;
 	}
 
-	public List<FrayedThreadEntity> looseThreadEntities(ServerLevel server) {
-		List<FrayedThreadEntity> out = new ArrayList<>();
-		for (WeaveThread thread : weaveThreads)
-			if (thread.state == WeaveThread.State.LOOSE && thread.entity != null
-					&& server.getEntity(thread.entity) instanceof FrayedThreadEntity entity)
-				out.add(entity);
-		return out;
+	//  Where the engram lies: centred on the loom's footprint, on the floor the loom stands on, turned with the loom
+
+	public Vec3 sigilCentre() {
+		Vec3 at = SomaticLoomFrame.toWorld(worldPosition, facing(), SIGIL_X, 0, SIGIL_Z);
+		return new Vec3(at.x, worldPosition.getY(), at.z);
 	}
+
+	/** Quarter turns clockwise from north, the way the loom's model is turned. */
+	public int sigilTurns() {
+		return switch (facing()) {
+			case EAST -> 1;
+			case SOUTH -> 2;
+			case WEST -> 3;
+			default -> 0;
+		};
+	}
+
+	public double sigilRadius() {
+		return EngramWeaveRules.tipRadius(upgradeTier());
+	}
+
+	/** A node of the engram in the world, on the plane of the loom's floor. */
+	public Vec3 nodeWorld(int node) {
+		double[] unit = EngramSigilGeometry.unit(node);
+		double radius = sigilRadius();
+		double[] world = EngramAim.toWorld(unit[0] * radius, unit[1] * radius, sigilTurns());
+		return sigilCentre().add(world[0], 0, world[1]);
+	}
+
+	private Direction facing() {
+		return getBlockState().hasProperty(SomaticLoomBlock.FACING) ? getBlockState().getValue(SomaticLoomBlock.FACING) : Direction.NORTH;
+	}
+
+	@Nullable
+	public EngramBoard getEngram() {
+		return engram.board();
+	}
+
+	/** A copy of the engram `player` would recall if they paid for the chosen memory now; null with none chosen. */
+	@Nullable
+	public EngramBoard engramPreview(Player player) {
+		if (level == null || level.isClientSide) return null;
+		refreshRecipe();
+		return curRecipe == null || isWeaving() ? null : EngramBoard.load(engramFor(player).save());
+	}
+
+	public int engramActive() {
+		return engram.active();
+	}
+
+	public List<EngramWeaveSession.Beat> engramBeats() {
+		return engram.beats();
+	}
+
+	/** Client-only: beats already played. */
+	public int beatSeen() { return beatSeen; }
+	public void markBeatSeen(int serial) { beatSeen = serial; }
 
 	public Vec3 echoAnchor() {
 		Direction facing = getBlockState().hasProperty(SomaticLoomBlock.FACING)
@@ -791,7 +968,6 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 	public boolean isWeaving() { return craftingPhase == PHASE_WEAVING || craftingPhase == PHASE_CLIMAX; }
 	public boolean isInClimax() { return craftingPhase == PHASE_CLIMAX; }
 	public boolean isPaused() { return paused; }
-	public List<WeaveThread> getWeaveThreads() { return List.copyOf(weaveThreads); }
 	@Nullable public UUID getWeaver() { return weaver; }
 	@Nullable public ResourceLocation getWeaverTheme() { return weaverTheme; }
 
@@ -802,12 +978,13 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 	}
 	public long getWeaveTicks() { return weaveTicks; }
 	public int getClimaxTicks() { return climaxTicks; }
-	public int getSpun(EnumBloodTendency tendency) { return spun.getOrDefault(tendency, 0); }
+	/** Spans of a tendency's thread the engram's lanes hold: wound on its pirn until the weave completes or is cut back. */
+	public int getSpun(EnumBloodTendency tendency) {
+		return engram.live() ? EngramWeaveRules.committed(engram.board(), tendency.ordinal()) : 0;
+	}
 	public float displayedSpun(EnumBloodTendency tendency) { return shownSpun[tendency.ordinal()]; }
 	public float displayedStock(EnumBloodTendency tendency) { return shownStock[tendency.ordinal()]; }
 
-	public long echoLastLoopFired() { return echoLastLoop; }
-	public void markEchoLoopFired(long loop) { echoLastLoop = loop; }
 	public boolean echoClimaxFired() { return echoClimaxFired; }
 	public void markEchoClimaxFired() { echoClimaxFired = true; }
 
@@ -830,15 +1007,6 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		}
 	}
 
-	private boolean consumeStoredEnzyme(EnumBloodTendency tendency, int amount) {
-		int current = storedEnzymes.getOrDefault(tendency, 0);
-		if (current < amount) {
-			return false;
-		}
-		storedEnzymes.put(tendency, current - amount);
-		return true;
-	}
-
 	private void tickCompletion(@Nullable Player player) {
 		MemoryWeavingRecipe completedRecipe = curRecipe;
 		EnumManipulationRank completedRank = getWeaveRank();
@@ -857,6 +1025,8 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 
 		msg(player, "The memory crystallizes.", ChatFormatting.DARK_PURPLE, false);
 		playSound(SoundEvents.END_PORTAL_SPAWN, 0.5f, 1.5f);
+		if (level instanceof ServerLevel server && weaver != null && !selectedRecipeId.isEmpty())
+			EngramRecollections.get(server).record(weaver, selectedRecipeId);
 		if (player instanceof ServerPlayer serverPlayer) {
 			var stationProgress = HemoCapabilityAccess.stationUpgrades(serverPlayer);
 			stationProgress.recordUse(UpgradeStation.LOOM, StationUpgradeCatalog.LOOM_WEAVE);
@@ -904,9 +1074,9 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		recoveryRequired = false;
 		curRecipe = null;
 		recipePath = "";
-		if (level instanceof ServerLevel server) recallLooseThreads(server);
-		weaveThreads.clear();
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) spun.put(tend, 0);
+		engram.clear();
+		pendingBoard = null;
+		pendingKey = "";
 		weaver = null;
 		weaverRef = null;
 		weaverTheme = null;
@@ -933,17 +1103,24 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 			return;
 		}
 		if (isWeaving()) {
-			msg(player, "Survive the frayed threads or strike them with a Living Staff until they go slack, then use the staff on a slack thread to weave it home. Crouch-use cancels and loses spent blood and enzymes.", ChatFormatting.DARK_PURPLE, false);
+			msg(player, "With a Living Staff in hand, rest your gaze on a fragment to hear its memory, then press it and sweep its thread along the star's lines into the loom. A colour never crosses another; it may ply into its own. Crouch-use the staff on a lane to cut it back; crouch-use the loom to cancel (the blood is lost, the thread returns).", ChatFormatting.DARK_PURPLE, false);
 			return;
 		}
 		msg(player, Component.literal("Selected: ").append(curRecipe.getResultItem(level.registryAccess()).getHoverName())
 				.append(" - " + (int) curRecipe.getBloodCost() + " blood. Empty-hand use cycles outputs before payment."), ChatFormatting.DARK_PURPLE, false);
+		// The payer's own engram decides the price: say exactly what it asks before any blood is taken.
+		int[] reference = player != null && !level.isClientSide ? engramFor(player).reference() : null;
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
 			int needed = curRecipe.getEnzymeRequirement(tend);
-			if (needed > 0) msg(player, Component.literal(needed + " × ").append(EnumBloodTendency.getRepEnzyme(tend).getDescription())
-					.append(" (" + storedEnzymes.getOrDefault(tend, 0) + " stored)."), ChatFormatting.GRAY, false);
+			if (needed <= 0) continue;
+			int spans = reference != null ? reference[tend.ordinal()] : minimumSpans(curRecipe, tend);
+			int stored = storedEnzymes.getOrDefault(tend, 0);
+			msg(player, Component.literal(needed + (needed == 1 ? " fragment of " : " fragments of ")).append(EnumBloodTendency.getRepEnzyme(tend).getDescription())
+					.append(": your engram needs " + spans + " spans (" + stored + " stored" + (stored < spans ? ", "
+							+ Math.ceilDiv(spans - stored, EngramWeaveRules.SPANS_PER_ENZYME) + " more enzyme" : "") + ")."),
+					stored < spans ? ChatFormatting.YELLOW : ChatFormatting.GRAY, false);
 		}
-		msg(player, "Have a Living Staff ready: its threads will tear loose and fight you, and the staff strikes them slack and weaves them home.", ChatFormatting.GRAY, false);
+		msg(player, "Have a Living Staff ready: the paid blood unfurls the engram around the loom, and the staff threads its fragments home.", ChatFormatting.GRAY, false);
 		if (player instanceof ServerPlayer serverPlayer && curRecipe.getResultItem(level.registryAccess()).getItem() instanceof BloodMemoryItem memory) {
 			var check = KnownManipulationGrantHelper.checkMemoryGrant(serverPlayer, memory.getManip(), memory);
 			String requirement = switch (check.status()) {
@@ -960,10 +1137,13 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 	private boolean provideMissingEnzymeFeedback(@Nullable Player player) {
 		MemoryWeavingRecipe recipe = curRecipe;
 		if (recipe == null) return false;
+		// With a player in hand, their own engram's price; otherwise the shortest lanes' (three spans a fragment).
+		int[] reference = player != null && level != null && !level.isClientSide ? engramFor(player).reference() : null;
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			int needed = recipe.getEnzymeRequirement(tend);
-			int stored = storedEnzymes.getOrDefault(tend, 0);
-			if (stored < needed) {
+			int spans = reference != null ? reference[tend.ordinal()] : minimumSpans(recipe, tend);
+			int needed = Math.ceilDiv(spans, EngramWeaveRules.SPANS_PER_ENZYME);
+			int stored = storedEnzymes.getOrDefault(tend, 0) / EngramWeaveRules.SPANS_PER_ENZYME;
+			if (storedEnzymes.getOrDefault(tend, 0) < spans) {
 				msg(player, missingEnzymeMessage(EnumBloodTendency.getRepEnzyme(tend).getDescription(), stored, needed),
 						ChatFormatting.YELLOW, true);
 				return true;
@@ -1017,6 +1197,19 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		if (level == null) return;
 		sendUpdates();
 		VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+	}
+
+	/** A loom with its engram unfurled is where a Living Staff looks for one. */
+	private void trackEngram() {
+		if (level == null) return;
+		if (craftingPhase == PHASE_WEAVING && engram.live()) com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.ActiveEngramLooms.track(level, worldPosition);
+		else com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.ActiveEngramLooms.untrack(level, worldPosition);
+	}
+
+	@Override
+	public void setRemoved() {
+		super.setRemoved();
+		if (level != null) com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.ActiveEngramLooms.untrack(level, worldPosition);
 	}
 
 	public AABB getRenderBoundingBox() {
@@ -1124,7 +1317,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		ContainerHelper.saveAllItems(tag, contents, registries);
 		tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
 		tag.putString(TAG_RECIPE, recipePath);
-		tag.putInt("weaveSaveVersion", 1);
+		tag.putInt("weaveSaveVersion", SAVE_VERSION);
 		tag.putBoolean("RiteLocked", riteLocked);
 		tag.putUUID("MachineIdentity", machineIdentity);
 		if (lastUpgradeRite != null) tag.putUUID("LastUpgradeRite", lastUpgradeRite);
@@ -1139,18 +1332,13 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		}
 		tag.put(TAG_STORED_ENZYMES, enzymeTag);
 
-		ListTag threads = new ListTag();
-		for (WeaveThread thread : weaveThreads) threads.add(thread.save());
-		tag.put(TAG_WEAVE_THREADS, threads);
+		tag.put(TAG_ENGRAM, engram.save());
 		if (weaver != null) tag.putUUID(TAG_WEAVER, weaver);
 		if (weaverTheme != null) tag.putString("weaverTheme", weaverTheme.toString());
 		tag.putLong(TAG_WEAVE_TICKS, weaveTicks);
 		tag.putInt(TAG_CLIMAX_TICKS, climaxTicks);
 		tag.putInt(TAG_PAUSED_TICKS, pausedTicks);
 		tag.putBoolean("paused", paused);
-		CompoundTag spunTag = new CompoundTag();
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) spunTag.putInt(tend.name(), spun.getOrDefault(tend, 0));
-		tag.put(TAG_SPUN, spunTag);
 	}
 
 	private void loadShared(CompoundTag tag, HolderLookup.Provider registries) {
@@ -1169,36 +1357,46 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		if (tag.hasUUID("MachineIdentity")) machineIdentity = tag.getUUID("MachineIdentity");
 		lastUpgradeRite = tag.hasUUID("LastUpgradeRite") ? tag.getUUID("LastUpgradeRite") : null;
 
+		// Older saves counted whole enzymes; each is now three spans of thread.
+		boolean legacy = tag.getInt("weaveSaveVersion") < SAVE_VERSION;
+		int scale = legacy ? EngramWeaveRules.SPANS_PER_ENZYME : 1;
 		CompoundTag enzymeTag = tag.getCompound(TAG_STORED_ENZYMES);
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			storedEnzymes.put(tend, Mth.clamp(enzymeTag.getInt(tend.name()), 0, ENZYME_CAPACITY));
+			storedEnzymes.put(tend, Mth.clamp(enzymeTag.getInt(tend.name()) * scale, 0, ENZYME_CAPACITY));
 		}
 
-		weaveThreads.clear();
-		if (tag.contains(TAG_WEAVE_THREADS)) {
-			ListTag threads = tag.getList(TAG_WEAVE_THREADS, Tag.TAG_COMPOUND);
-			for (int i = 0; i < threads.size(); i++) weaveThreads.add(WeaveThread.load(threads.getCompound(i)));
-			CompoundTag spunTag = tag.getCompound(TAG_SPUN);
-			for (EnumBloodTendency tend : EnumBloodTendency.values()) spun.put(tend, spunTag.getInt(tend.name()));
-		} else if (tag.contains(TAG_LEGACY_RITUAL_ORBS)) {
-			// Pre-witnessed saves: completed orbs are woven, the rest are held with their enzyme still on the pirn.
-			for (EnumBloodTendency tend : EnumBloodTendency.values()) spun.put(tend, 0);
-			ListTag orbs = tag.getList(TAG_LEGACY_RITUAL_ORBS, Tag.TAG_COMPOUND);
-			for (int i = 0; i < orbs.size(); i++) {
-				CompoundTag orb = orbs.getCompound(i);
-				WeaveThread thread = new WeaveThread(EnumBloodTendency.valueOf(orb.getString("tendency")));
-				if (orb.getBoolean("completed")) thread.state = WeaveThread.State.WOVEN;
-				else spun.merge(thread.tendency, 1, Integer::sum);
-				weaveThreads.add(thread);
+		engram.load(tag.getCompound(TAG_ENGRAM));
+		if (legacy && craftingPhase >= PHASE_WEAVING) {
+			// A witnessed weave's thread still on the pirns (or a pre-witnessed save's unwoven orbs) returns to its
+			// vials; the weave recalls a fresh engram for its weaver, its blood already paid.
+			int[] returned = new int[EnumBloodTendency.values().length];
+			if (tag.contains(TAG_LEGACY_WEAVE_THREADS)) {
+				CompoundTag spunTag = tag.getCompound(TAG_LEGACY_SPUN);
+				for (EnumBloodTendency tend : EnumBloodTendency.values()) returned[tend.ordinal()] = spunTag.getInt(tend.name());
+			} else if (tag.contains(TAG_LEGACY_RITUAL_ORBS)) {
+				ListTag orbs = tag.getList(TAG_LEGACY_RITUAL_ORBS, Tag.TAG_COMPOUND);
+				for (int i = 0; i < orbs.size(); i++) {
+					CompoundTag orb = orbs.getCompound(i);
+					if (!orb.getBoolean("completed")) {
+						try {
+							returned[EnumBloodTendency.valueOf(orb.getString("tendency")).ordinal()]++;
+						} catch (IllegalArgumentException ignored) {
+						}
+					}
+				}
 			}
+			for (EnumBloodTendency tend : EnumBloodTendency.values())
+				storedEnzymes.put(tend, Math.min(ENZYME_CAPACITY,
+						storedEnzymes.getOrDefault(tend, 0) + returned[tend.ordinal()] * EngramWeaveRules.SPANS_PER_ENZYME));
+			engram.clear();
+			if (craftingPhase == PHASE_CLIMAX) craftingPhase = PHASE_WEAVING;
 		}
 		weaver = tag.hasUUID(TAG_WEAVER) ? tag.getUUID(TAG_WEAVER) : null;
 		weaverTheme = tag.contains("weaverTheme") ? ResourceLocation.tryParse(tag.getString("weaverTheme")) : null;
 		weaveTicks = tag.getLong(TAG_WEAVE_TICKS);
-		// The client never runs clearActiveRitual: a new or restarted weave must replay its loop and climax casts.
-		// A client running ahead of a lagging server is pulled back within the same beat; that beat stays fired.
+		// The client never runs clearActiveRitual: a new weave must replay its climax, and its beats from the start.
 		if (craftingPhase != PHASE_CLIMAX) echoClimaxFired = false;
-		if (craftingPhase < PHASE_WEAVING || weaveTicks / SomaticWeaveRules.LOOP_TICKS < echoLastLoop) echoLastLoop = -1;
+		if (craftingPhase < PHASE_WEAVING || engram.serial() < beatSeen) beatSeen = -1;
 		climaxTicks = tag.getInt(TAG_CLIMAX_TICKS);
 		pausedTicks = tag.getInt(TAG_PAUSED_TICKS);
 		paused = tag.getBoolean("paused");
@@ -1210,37 +1408,5 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 			items.add(ItemStack.EMPTY);
 		}
 		return items;
-	}
-
-	/** One enzyme's thread: still held in the echo, loose as a hostile entity, or woven into the cloth. */
-	public static final class WeaveThread {
-		public enum State { HELD, LOOSE, WOVEN }
-
-		private final EnumBloodTendency tendency;
-		private State state = State.HELD;
-		@Nullable private UUID entity;
-
-		private WeaveThread(EnumBloodTendency tendency) {
-			this.tendency = tendency;
-		}
-
-		public EnumBloodTendency tendency() { return tendency; }
-		public State state() { return state; }
-		@Nullable public UUID entity() { return entity; }
-
-		private CompoundTag save() {
-			CompoundTag tag = new CompoundTag();
-			tag.putString("tendency", tendency.name());
-			tag.putString("state", state.name());
-			if (entity != null) tag.putUUID("entity", entity);
-			return tag;
-		}
-
-		private static WeaveThread load(CompoundTag tag) {
-			WeaveThread thread = new WeaveThread(EnumBloodTendency.valueOf(tag.getString("tendency")));
-			thread.state = State.valueOf(tag.getString("state"));
-			if (tag.hasUUID("entity")) thread.entity = tag.getUUID("entity");
-			return thread;
-		}
 	}
 }

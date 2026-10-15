@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public record AdvancedBrewingDisplay(ItemStack input, ItemStack catalyst, ItemStack catalyst2,
-                                     ItemStack output, int blood, int ticks, int degree, String note) {
+                                     ItemStack output, int blood, int ticks, int degree, AlembicTier tier, String note) {
     public static List<AdvancedBrewingDisplay> all(Level level) {
         List<AdvancedBrewingDisplay> displays = new ArrayList<>();
         for (var holder : level.getRecipeManager().getAllRecipesFor(RecipeInit.advanced_brewing_type.get())) {
@@ -24,7 +24,7 @@ public record AdvancedBrewingDisplay(ItemStack input, ItemStack catalyst, ItemSt
                     recipe.catalyst().getItems()[0], ItemStack.EMPTY,
                     recipe.getResultItem(level.registryAccess()), recipe.blood(),
                     AlembicTier.fromSaved(recipe.tier()).processingTicks(recipe.ticks()),
-                    recipe.tier() == 1 ? 3 : 5, "refine"));
+                    recipe.tier() == 1 ? 3 : 5, AlembicTier.fromSaved(recipe.tier()), "refine"));
         }
         ItemStack strength = PotionContents.createItemStack(Items.POTION, Potions.STRENGTH);
         ItemStack speed = PotionContents.createItemStack(Items.POTION, Potions.SWIFTNESS);
@@ -42,6 +42,6 @@ public record AdvancedBrewingDisplay(ItemStack input, ItemStack catalyst, ItemSt
     private static void add(List<AdvancedBrewingDisplay> displays, BrewingMatch match, AlembicTier tier, String note) {
         if (match == null) return;
         displays.add(new AdvancedBrewingDisplay(match.input(), match.catalyst(), match.catalyst2(),
-                match.result(), match.blood(), tier.processingTicks(match.ticks()), tier == AlembicTier.CONDENSER ? 3 : 5, note));
+                match.result(), match.blood(), tier.processingTicks(match.ticks()), tier == AlembicTier.CONDENSER ? 3 : 5, tier, note));
     }
 }

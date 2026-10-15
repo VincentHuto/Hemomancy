@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.WhiteHumorPurificationRecipe;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
@@ -20,6 +21,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * JEI category for white humor pool purification.
@@ -29,32 +31,22 @@ public class WhiteHumorPurificationRecipeCategory implements IRecipeCategory<Whi
 	public static final RecipeType<WhiteHumorPurificationRecipe> JEI_TYPE =
 			RecipeType.create(Hemomancy.MOD_ID, "white_humor_purification", WhiteHumorPurificationRecipe.class);
 
-	private static final int BG_W = 170;
-	private static final int BG_H = 82;
-	private static final int INPUT_X = 19;
-	private static final int INPUT_Y = 32;
-	private static final int OUTPUT_X = 134;
-	private static final int OUTPUT_Y = 32;
-	private static final int POOL_X = 58;
-	private static final int POOL_Y = 24;
+	private static final int BG_W = 176;
+	private static final int BG_H = 92;
+	private static final int FOOTER_Y = 76;
+	private static final int INPUT_X = 16;
+	private static final int INPUT_Y = 34;
+	private static final int OUTPUT_X = 140;
+	private static final int OUTPUT_Y = 34;
+	private static final int POOL_X = 61;
+	private static final int POOL_Y = 26;
 	private static final int POOL_W = 54;
 	private static final int POOL_H = 28;
 
-	private static final int BG_COLOR = 0xFF071018;
-	private static final int BORDER_OUTER = 0xFFBFD8E8;
-	private static final int BORDER_INNER = 0xFF476273;
-	private static final int SLOT_BG = 0xFF0C1820;
-	private static final int SLOT_BORDER_DARK = 0xFF031018;
-	private static final int SLOT_BORDER_LIGHT = 0xFF8FB6C9;
-	private static final int LABEL_COLOR = 0xFFE9F8FF;
-	private static final int MUTED_LABEL_COLOR = 0xFF91AFC0;
 
-	private final IDrawable background;
 	private final IDrawable icon;
-	private float animTime = 0f;
 
 	public WhiteHumorPurificationRecipeCategory(IGuiHelper guiHelper) {
-		this.background = guiHelper.createBlankDrawable(BG_W, BG_H);
 		this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK,
 				new ItemStack(ItemInit.pale_humor_flask.get()));
 	}
@@ -71,12 +63,8 @@ public class WhiteHumorPurificationRecipeCategory implements IRecipeCategory<Whi
 		return Component.translatable("hemomancy.jei.white_humor_purification");
 	}
 
-	@SuppressWarnings("removal")
-	@Override
-	@Nonnull
-	public IDrawable getBackground() {
-		return background;
-	}
+	@Override public int getWidth() { return BG_W; }
+	@Override public int getHeight() { return BG_H; }
 
 	@Override
 	@Nonnull
@@ -96,39 +84,34 @@ public class WhiteHumorPurificationRecipeCategory implements IRecipeCategory<Whi
 	@Override
 	public void draw(@Nonnull WhiteHumorPurificationRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView,
 			@Nonnull GuiGraphics gfx, double mouseX, double mouseY) {
-		animTime += 0.016f;
-		float time = animTime;
 		Font font = Minecraft.getInstance().font;
+		JeiPanel.Theme t = JeiPanel.STILL;
+		float time = JeiPanel.time();
 
-		drawBackground(gfx, time);
-		drawSlot(gfx, INPUT_X, INPUT_Y);
-		drawSlot(gfx, OUTPUT_X, OUTPUT_Y);
-		JeiProgressArrow.draw(gfx, INPUT_X + 23, INPUT_Y + 7, POOL_X - 5, time,
-				0x55476273, 0x665F8297, 200, 220, 235);
-		JeiProgressArrow.draw(gfx, POOL_X + POOL_W + 5, OUTPUT_Y + 7, OUTPUT_X - 5, time,
-				0x55476273, 0x665F8297, 200, 220, 235);
+		JeiPanel.panel(gfx, t, BG_W, BG_H, FOOTER_Y);
+		JeiPanel.glow(gfx, POOL_X + POOL_W / 2, POOL_Y + POOL_H / 2, 46, 24, 0xFFD8F1FF, 0.65f + 0.35f * JeiPanel.pulse(time, 1.8f));
+		JeiPanel.label(gfx, font, Component.translatable("hemomancy.jei.pool.offer"), INPUT_X + 9, INPUT_Y - 10, t.muted());
+		JeiPanel.slot(gfx, t, INPUT_X + 1, INPUT_Y + 1);
+		JeiProgressArrow.draw(gfx, INPUT_X + 23, INPUT_Y + 8, POOL_X - 6, time, t);
+		JeiProgressArrow.draw(gfx, POOL_X + POOL_W + 6, OUTPUT_Y + 8, OUTPUT_X - 6, time + 0.5f, t);
 		drawWhiteHumorPool(gfx, time);
-
-		Component fluidLabel = Component.translatable("fluid.hemomancy.white_humor");
-		gfx.drawString(font, fluidLabel, (BG_W - font.width(fluidLabel)) / 2, 6, LABEL_COLOR, false);
-		drawTransformTime(recipe, gfx, font);
+		JeiPanel.label(gfx, font, Component.translatable("fluid.hemomancy.white_humor"), POOL_X + POOL_W / 2, POOL_Y - 13, t.title());
+		JeiPanel.label(gfx, font, Component.translatable("hemomancy.jei.pool.emerges"), OUTPUT_X + 9, OUTPUT_Y - 12, t.muted());
+		JeiPanel.resultSlot(gfx, t, OUTPUT_X + 1, OUTPUT_Y + 1, t.accent(), time);
+		JeiPanel.footer(gfx, font, footer(recipe), BG_W, FOOTER_Y);
 	}
 
-	private void drawBackground(GuiGraphics gfx, float time) {
-		gfx.fill(0, 0, BG_W, BG_H, BG_COLOR);
-		int glowX = POOL_X + POOL_W / 2;
-		int glowY = POOL_Y + POOL_H / 2;
-		float pulse = 0.65f + 0.35f * Mth.sin(time * 1.6f);
-		for (int ring = 44; ring > 0; ring -= 4) {
-			float falloff = 1f - ring / 44f;
-			int alpha = (int) (18 * falloff * pulse);
-			gfx.fill(glowX - ring, glowY - ring / 2, glowX + ring, glowY + ring / 2,
-					(alpha << 24) | (0xD8 << 16) | (0xF1 << 8) | 0xFF);
-		}
-		gfx.fill(0, 0, BG_W, 1, BORDER_OUTER);
-		gfx.fill(0, BG_H - 1, BG_W, BG_H, BORDER_INNER);
-		gfx.fill(0, 0, 1, BG_H, BORDER_OUTER);
-		gfx.fill(BG_W - 1, 0, BG_W, BG_H, BORDER_INNER);
+	private static List<JeiPanel.Stat> footer(WhiteHumorPurificationRecipe recipe) {
+		JeiPanel.Theme t = JeiPanel.STILL;
+		return List.of(
+				JeiPanel.Stat.of(JeiPanel.Icon.NONE, Component.translatable("hemomancy.jei.white_humor_purification.hint"), t.text(),
+						Component.translatable("hemomancy.jei.white_humor_purification.hint.tip")),
+				JeiPanel.Stat.of(JeiPanel.Icon.TIME, JeiPanel.secondsText(Math.max(0, recipe.getTransformTime())), t.text()));
+	}
+
+	@Override
+	public void getTooltip(ITooltipBuilder tooltip, WhiteHumorPurificationRecipe recipe, IRecipeSlotsView slots, double mouseX, double mouseY) {
+		JeiPanel.footerTooltip(tooltip, Minecraft.getInstance().font, footer(recipe), BG_W, FOOTER_Y, BG_H, mouseX, mouseY);
 	}
 
 	private void drawWhiteHumorPool(GuiGraphics gfx, float time) {
@@ -154,18 +137,4 @@ public class WhiteHumorPurificationRecipeCategory implements IRecipeCategory<Whi
 		}
 	}
 
-	private void drawSlot(GuiGraphics gfx, int x, int y) {
-		gfx.fill(x - 1, y - 1, x + 17, y + 17, SLOT_BORDER_DARK);
-		gfx.fill(x, y, x + 16, y + 16, SLOT_BG);
-		gfx.fill(x + 16, y, x + 17, y + 17, SLOT_BORDER_LIGHT);
-		gfx.fill(x, y + 16, x + 17, y + 17, SLOT_BORDER_LIGHT);
-	}
-
-	private void drawTransformTime(WhiteHumorPurificationRecipe recipe, GuiGraphics gfx, Font font) {
-		int ticks = Math.max(0, recipe.getTransformTime());
-		Component timeText = Component.translatable("gui.jei.category.smelting.time.seconds", ticks / 20.0f);
-		gfx.drawString(font, timeText, BG_W - font.width(timeText) - 4, BG_H - 11, MUTED_LABEL_COLOR, false);
-		Component hint = Component.translatable("hemomancy.jei.white_humor_purification.hint");
-		gfx.drawString(font, hint, 4, BG_H - 11, MUTED_LABEL_COLOR, false);
-	}
 }

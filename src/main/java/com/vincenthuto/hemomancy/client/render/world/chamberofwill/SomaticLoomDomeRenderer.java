@@ -10,6 +10,7 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.SomaticLoomEffectRules;
+import com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.engram.EngramDissolve;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticLoomBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticWeaveRules;
 import net.minecraft.client.Minecraft;
@@ -59,9 +60,9 @@ public final class SomaticLoomDomeRenderer {
 	private SomaticLoomDomeRenderer() {
 	}
 
-	/** Called by the loom's renderer each frame it draws: a Cortical weave in view may raise a dome. */
-	public static void track(SomaticLoomBlockEntity loom) {
-		if (loom.getLevel() == null || loom.upgradeTier() < 2 || !loom.isWeaving()) return;
+	/** Called by the loom's renderer each frame it draws: a Cortical weave in view (or one dissolving) may raise a dome. */
+	public static void track(SomaticLoomBlockEntity loom, boolean dissolving) {
+		if (loom.getLevel() == null || loom.upgradeTier() < 2 || !loom.isWeaving() && !dissolving) return;
 		TRACKED.put(loom.getBlockPos().immutable(), new Tracked(loom, loom.getLevel().getGameTime()));
 	}
 
@@ -76,7 +77,8 @@ public final class SomaticLoomDomeRenderer {
 		long now = level.getGameTime();
 		Vec3 cam = event.getCamera().getPosition();
 		TRACKED.values().removeIf(t -> t.loom().isRemoved() || t.loom().getLevel() != level || now - t.seen() > 5
-				|| !t.loom().isWeaving() || t.loom().upgradeTier() < 2);
+				|| !t.loom().isWeaving() && EngramDissolve.progress(t.loom().getBlockPos(), level, 0F) < 0F
+				|| t.loom().upgradeTier() < 2);
 		List<Tracked> near = new ArrayList<>();
 		for (Tracked t : TRACKED.values())
 			if (Vec3.atCenterOf(t.loom().getBlockPos()).distanceToSqr(cam) < RANGE * RANGE) near.add(t);
@@ -89,8 +91,12 @@ public final class SomaticLoomDomeRenderer {
 	private static void renderDome(RenderLevelStageEvent event, SomaticLoomBlockEntity loom, Vec3 cam, float partial) {
 		float climax = loom.isInClimax()
 				? Mth.clamp((loom.getClimaxTicks() + partial) / SomaticWeaveRules.CLIMAX_TICKS, 0, 1) : 0;
-		float radius = SomaticLoomEffectRules.domeRadius(loom.upgradeTier(), loom.isWeaving(),
-				loom.getWeaveTicks() + (loom.isPaused() ? 0 : partial), loom.isInClimax(), climax);
+		// A broken weave's dome sinks away from where it stood, under the sky it was raised with.
+		float dissolve = loom.isWeaving() ? -1F : EngramDissolve.progress(loom.getBlockPos(), loom.getLevel(), partial);
+		EngramDissolve.Snapshot snapshot = dissolve >= 0F ? EngramDissolve.snapshot(loom.getBlockPos()) : null;
+		float radius = snapshot != null ? SomaticLoomEffectRules.dissolvingDomeRadius(snapshot.domeRadius(), dissolve)
+				: SomaticLoomEffectRules.domeRadius(loom.upgradeTier(), loom.isWeaving(),
+						loom.getWeaveTicks() + (loom.isPaused() ? 0 : partial), loom.isInClimax(), climax);
 		if (radius < 0.25F) return;
 		Minecraft minecraft = Minecraft.getInstance();
 		var target = minecraft.getMainRenderTarget();
@@ -101,7 +107,8 @@ public final class SomaticLoomDomeRenderer {
 		}
 		// A shader pack draws the world into its own targets, whose stencil this portal does not own: skip it.
 		if (GL11.glGetInteger(GL30.GL_DRAW_FRAMEBUFFER_BINDING) != target.frameBufferId) return;
-		ResourceLocation themeId = loom.getWeaverTheme() == null ? ChamberSkyThemeRegistry.DEFAULT.id() : loom.getWeaverTheme();
+		ResourceLocation themeId = snapshot != null && snapshot.theme() != null ? snapshot.theme()
+				: loom.getWeaverTheme() == null ? ChamberSkyThemeRegistry.DEFAULT.id() : loom.getWeaverTheme();
 		ChamberSkyTheme theme = ChamberSkyThemeRegistry.byId(themeId);
 		Vec3 centre = Vec3.atBottomCenterOf(loom.getBlockPos()).add(0, 0.5D, 0);
 

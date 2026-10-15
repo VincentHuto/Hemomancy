@@ -292,6 +292,10 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 		BlockEntity tile = worldIn.getBlockEntity(pos);
 		if (!(tile instanceof SomaticLoomBlockEntity te)) return InteractionResult.PASS;
 		if (isProjectionTool(stack)) return InteractionResult.PASS;
+		// Thread is a revolving stock: a weave in progress may always be topped up, and a sneaking bulk insert must
+		// never fall through to the empty-hand cancel.
+		if (stack.getItem() instanceof com.vincenthuto.hemomancy.common.item.harbinger.EnzymeItem)
+			return te.addItem(player, stack, handIn) ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
 		if (te.isWeaving()) return InteractionResult.PASS;
 		return te.addItem(player, stack, handIn) ? InteractionResult.SUCCESS : InteractionResult.PASS;
 	}

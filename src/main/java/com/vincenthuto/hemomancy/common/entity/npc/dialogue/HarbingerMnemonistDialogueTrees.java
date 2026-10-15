@@ -341,7 +341,8 @@ public final class HarbingerMnemonistDialogueTrees {
 	private static DialogueNode loomNode() {
 		return new DialogueNode("loom", List.of(
 				"hemomancy.mnemonist.loom.line1",
-				"hemomancy.mnemonist.loom.line2"
+				"hemomancy.mnemonist.loom.line2",
+				"hemomancy.mnemonist.loom.line3"
 		), List.of(new DialogueOption("hemomancy.dialogue.mnemonist.option.leave", null, null)));
 	}
 

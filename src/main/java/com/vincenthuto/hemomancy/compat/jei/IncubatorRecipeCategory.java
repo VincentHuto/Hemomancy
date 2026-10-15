@@ -3,8 +3,10 @@ package com.vincenthuto.hemomancy.compat.jei;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.MorphlingIncubatorBlockEntity;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
@@ -12,6 +14,7 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -20,250 +23,141 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
- * JEI recipe category for the Morphling Incubator — polyp crafting.
- * Displays the center polyp input, up to 4 catalyst inputs arranged in a
- * cardinal pattern around it, and the morphling output.
- * Fully programmatic rendering (no texture atlas required).
+ * JEI category for the Morphling Incubator: a polyp in the centre socket, up to four catalysts at the cardinal
+ * points feeding it, and the same crimson gestation ring the incubator screen shows.
  */
 public class IncubatorRecipeCategory implements IRecipeCategory<IncubatorRecipe> {
 
-	// Layout constants
-	private static final int BG_W = 170;
-	private static final int BG_H = 100;
+	private static final int W = 176;
+	private static final int H = 110;
+	private static final int FOOTER_Y = 94;
 
-	// Center slot position (polyp input)
-	private static final int CENTER_X = 60;
-	private static final int CENTER_Y = 42;
+	private static final int CENTER_X = 54;
+	private static final int CENTER_Y = 44;
+	private static final int[][] CATALYST_OFFSETS = { { 0, -30 }, { 30, 0 }, { 0, 30 }, { -30, 0 } };
+	private static final int OUTPUT_X = 146;
+	private static final int OUTPUT_Y = CENTER_Y;
 
-	// Catalyst slot positions (top, right, bottom, left — relative to center)
-	private static final int[][] CATALYST_OFFSETS = {
-			{  0, -30 }, // top
-			{ 30,   0 }, // right
-			{  0,  30 }, // bottom
-			{-30,   0 }  // left
-	};
-
-	// Output slot position
-	private static final int OUTPUT_X = 140;
-	private static final int OUTPUT_Y = 42;
-
-	// Progress ring constants — matching MorphlingIncubatorScreen.renderProgressRing
+	// Gestation ring — mirrors MorphlingIncubatorScreen.renderProgressRing
 	private static final int RING_OUTER_RADIUS = 24;
-	private static final int RING_INNER_RADIUS = 19;
+	private static final int RING_INNER_RADIUS = 20;
 	private static final int RING_SEGMENTS = 64;
-	private static final int RING_EMPTY_COLOR = 0x30200808;
-	private static final float RING_ANIM_PERIOD = 10f; // seconds per full cycle in JEI
+	private static final float RING_PERIOD = 10f;
 
-	// Colors — dark, fleshy theme matching the mod's aesthetic
-	private static final int BG_COLOR        = 0xFF0A0204;
-	private static final int BORDER_OUTER    = 0xFF330808;
-	private static final int SLOT_BG         = 0xFF1A0808;
-	private static final int SLOT_BORDER_DARK  = 0xFF0D0303;
-	private static final int SLOT_BORDER_LIGHT = 0xFF3A1212;
-
-	private final IDrawable background;
 	private final IDrawable icon;
 
 	public IncubatorRecipeCategory(IGuiHelper guiHelper) {
-		background = guiHelper.createBlankDrawable(BG_W, BG_H);
 		icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK,
 				new ItemStack(BlockInit.morphling_incubator.get()));
 	}
 
-	// ── Drawing ──────────────────────────────────────────────────────
-	private float animTime = 0f;
+	@Nonnull @Override public IDrawable getIcon() { return icon; }
+	@Override public int getWidth() { return W; }
+	@Override public int getHeight() { return H; }
+	@Override public RecipeType<IncubatorRecipe> getRecipeType() { return JEIPlugin.incubator_recipe_type; }
+	@Nonnull @Override public Component getTitle() { return Component.translatable("hemomancy.jei.morphling_incubator"); }
 
 	@Override
-	public void draw(IncubatorRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics gfx,
-			double mouseX, double mouseY) {
+	public void setRecipe(IRecipeLayoutBuilder builder, IncubatorRecipe recipe, IFocusGroup focuses) {
+		builder.addSlot(RecipeIngredientRole.INPUT, CENTER_X, CENTER_Y)
+				.addIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ItemInit.morphling_polyp.get()))
+				.addRichTooltipCallback((view, tip) -> tip.add(Component.translatable(
+						"hemomancy.jei.incubator.polyp.tip").withStyle(ChatFormatting.GRAY)));
 
-		animTime += 0.016f; // ~60 FPS approximation
-
-		float time = animTime;
-		// Dark background fill
-		gfx.fill(0, 0, BG_W, BG_H, BG_COLOR);
-
-		// Subtle radial glow behind center
-		int cx = CENTER_X + 8;
-		int cy = CENTER_Y + 8;
-		for (int ring = 36; ring > 0; ring -= 3) {
-			float t = ring / 36f;
-			int alpha = (int) (14 * (1f - t));
-			int red   = (int) (25 * (1f - t));
-			gfx.fill(cx - ring, cy - ring, cx + ring, cy + ring, (alpha << 24) | (red << 16));
+		var catalysts = recipe.getCatalysts();
+		for (int i = 0; i < catalysts.size() && i < 4; i++) {
+			builder.addSlot(RecipeIngredientRole.INPUT, CENTER_X + CATALYST_OFFSETS[i][0], CENTER_Y + CATALYST_OFFSETS[i][1])
+					.addIngredients(catalysts.get(i));
 		}
 
-		// Border
-		gfx.fill(0, 0, BG_W, 1, BORDER_OUTER);
-		gfx.fill(0, BG_H - 1, BG_W, BG_H, BORDER_OUTER);
-		gfx.fill(0, 0, 1, BG_H, BORDER_OUTER);
-		gfx.fill(BG_W - 1, 0, BG_W, BG_H, BORDER_OUTER);
+		builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_X, OUTPUT_Y)
+				.addIngredient(VanillaTypes.ITEM_STACK, recipe.getResultItemStack().copy());
+	}
 
-		// ── Circular progress ring around center (matches incubator screen) ──
-		renderProgressRing(gfx, cx, cy, time);
+	private static List<JeiPanel.Stat> footer() {
+		int blood = Math.round(MorphlingIncubatorBlockEntity.CRAFT_TIME * MorphlingIncubatorBlockEntity.BLOOD_COST_PER_TICK);
+		return List.of(
+				JeiPanel.Stat.of(JeiPanel.Icon.BLOOD, Component.translatable("hemomancy.jei.stat.blood", blood),
+						JeiPanel.BLOOD_RED, Component.translatable("hemomancy.jei.incubator.blood.tip")),
+				JeiPanel.Stat.of(JeiPanel.Icon.TIME, JeiPanel.secondsText(MorphlingIncubatorBlockEntity.CRAFT_TIME),
+						JeiPanel.BLOOD.text(), Component.translatable("hemomancy.jei.incubator.time.tip")));
+	}
 
-		// ── Slot backgrounds ──
-		// Center polyp slot
-		drawSlot(gfx, CENTER_X, CENTER_Y);
+	@Override
+	public void draw(IncubatorRecipe recipe, IRecipeSlotsView slots, GuiGraphics gfx, double mouseX, double mouseY) {
+		Font font = Minecraft.getInstance().font;
+		JeiPanel.Theme t = JeiPanel.BLOOD;
+		float time = JeiPanel.time();
+		int cx = CENTER_X + 8, cy = CENTER_Y + 8;
 
-		// Catalyst slots (only draw slots that are used by this recipe + up to 4)
+		JeiPanel.panel(gfx, t, W, H, FOOTER_Y);
+		JeiPanel.glow(gfx, cx, cy, 36, 36, 0xFF7A0A10, 0.5f + 0.5f * JeiPanel.pulse(time, 1.4f));
+
+		drawRing(gfx, cx, cy, time);
 		int catalystCount = recipe.getCatalysts().size();
 		for (int i = 0; i < 4; i++) {
 			int sx = CENTER_X + CATALYST_OFFSETS[i][0];
 			int sy = CENTER_Y + CATALYST_OFFSETS[i][1];
 			if (i < catalystCount) {
-				drawSlot(gfx, sx, sy);
-				// Connecting line from catalyst to center
-				drawConnectingLine(gfx, sx + 8, sy + 8, cx, cy, time, i);
+				drawFeed(gfx, sx + 8, sy + 8, cx, cy, time, i);
+				JeiPanel.slot(gfx, t, sx, sy);
 			} else {
-				// Empty slot outline — dimmed
-				drawEmptySlot(gfx, sx, sy);
+				JeiPanel.ghostSlot(gfx, t, sx, sy);
 			}
 		}
 
-		// Output slot (highlighted)
-		drawSlot(gfx, OUTPUT_X, OUTPUT_Y);
-		gfx.fill(OUTPUT_X, OUTPUT_Y, OUTPUT_X + 16, OUTPUT_Y + 16, 0x18FF4444);
-		JeiProgressArrow.draw(gfx, CENTER_X + 52, CENTER_Y + 7, OUTPUT_X - 8, time,
-				0x553A1212, 0x665A1816, 170, 42, 35);
+		JeiPanel.tintedSlot(gfx, t, CENTER_X, CENTER_Y, 0xFF8A1A22);
 
+		JeiProgressArrow.draw(gfx, CENTER_X + 48, OUTPUT_Y + 7, OUTPUT_X - 8, time, t);
+		JeiPanel.label(gfx, font, Component.translatable("hemomancy.jei.incubator.morphling"), OUTPUT_X + 8, OUTPUT_Y - 13, t.muted());
+		JeiPanel.resultSlot(gfx, t, OUTPUT_X, OUTPUT_Y, t.accent(), time);
 
-		// ── Label ──
-		Font font = Minecraft.getInstance().font;
-		Component title = Component.literal("Incubation");
-		int tw = font.width(title);
-		gfx.drawString(font, title, (BG_W - tw) / 2, 2, 0xFF884444, false);
-
-		// Blood cost hint
-		Component bloodHint = Component.literal("\u2764 Requires Blood");
-		gfx.drawString(font, bloodHint, 4, BG_H - 11, 0xFF773333, false);
+		JeiPanel.footer(gfx, font, footer(), W, FOOTER_Y);
 	}
 
-	/**
-	 * Draws the circular progress ring exactly matching
-	 * MorphlingIncubatorScreen.renderProgressRing — pixel-by-pixel arc,
-	 * 64 segments, inner/outer radius, pulsing crimson fill, dim track,
-	 * and leading-edge glow dot. Animated on a timer since JEI has no
-	 * real crafting progress.
-	 */
-	private void renderProgressRing(GuiGraphics gfx, int cx, int cy, float time) {
-		// Animated progress cycles over RING_ANIM_PERIOD seconds
-		float progress = (time % RING_ANIM_PERIOD) / RING_ANIM_PERIOD;
-		int filledSegments = (int) (RING_SEGMENTS * progress);
-
+	/** The incubator's gestation ring, cycling on a timer since JEI has no real progress. */
+	private static void drawRing(GuiGraphics gfx, int cx, int cy, float time) {
+		float progress = (time % RING_PERIOD) / RING_PERIOD;
+		int filled = (int) (RING_SEGMENTS * progress);
 		for (int i = 0; i < RING_SEGMENTS; i++) {
-			double angle1 = -Math.PI / 2 + (2 * Math.PI / RING_SEGMENTS) * i;
-			double angle2 = -Math.PI / 2 + (2 * Math.PI / RING_SEGMENTS) * (i + 1);
-
-			// Draw arc segment pixel by pixel along the radial
+			double a0 = -Math.PI / 2 + (2 * Math.PI / RING_SEGMENTS) * i;
+			double a1 = a0 + 2 * Math.PI / RING_SEGMENTS;
+			int color;
+			if (i < filled) {
+				float pulse = 0.7f + 0.3f * Mth.sin(time * 3f + i * 0.1f);
+				color = (0xDD << 24) | ((int) (200 * pulse) << 16) | ((int) (20 * pulse) << 8) | 0x15;
+			} else {
+				color = 0x40300A0C;
+			}
 			for (int r = RING_INNER_RADIUS; r <= RING_OUTER_RADIUS; r++) {
-				// Sample a few points along the arc
-				for (double a = angle1; a < angle2; a += 0.04) {
+				for (double a = a0; a < a1; a += 0.04) {
 					int px = cx + (int) (r * Math.cos(a));
 					int py = cy + (int) (r * Math.sin(a));
-
-					int color;
-					if (i < filledSegments) {
-						// Filled — bright pulsing crimson
-						float pulse = 0.7f + 0.3f * Mth.sin(time * 3f + i * 0.1f);
-						int red = (int) (200 * pulse);
-						int green = (int) (20 * pulse);
-						color = (0xDD << 24) | (red << 16) | (green << 8) | 0x15;
-					} else {
-						// Empty — dim dark track
-						color = RING_EMPTY_COLOR;
-					}
 					gfx.fill(px, py, px + 1, py + 1, color);
 				}
 			}
 		}
-
-		// Draw a subtle glow at the leading edge of progress
-		if (filledSegments > 0 && filledSegments < RING_SEGMENTS) {
-			double leadAngle = -Math.PI / 2 + (2 * Math.PI / RING_SEGMENTS) * filledSegments;
-			int leadX = cx + (int) ((RING_INNER_RADIUS + RING_OUTER_RADIUS) / 2.0 * Math.cos(leadAngle));
-			int leadY = cy + (int) ((RING_INNER_RADIUS + RING_OUTER_RADIUS) / 2.0 * Math.sin(leadAngle));
-
-			float pulse = 0.5f + 0.5f * Mth.sin(time * 5f);
-			int glowAlpha = (int) (120 * pulse);
-			int glowColor = (glowAlpha << 24) | (0xFF << 16) | (0x30 << 8) | 0x20;
-			// Small 3x3 glow dot
-			gfx.fill(leadX - 1, leadY - 1, leadX + 2, leadY + 2, glowColor);
+		if (filled > 0 && filled < RING_SEGMENTS) {
+			double lead = -Math.PI / 2 + (2 * Math.PI / RING_SEGMENTS) * filled;
+			int r = (RING_INNER_RADIUS + RING_OUTER_RADIUS) / 2;
+			int lx = cx + (int) (r * Math.cos(lead)), ly = cy + (int) (r * Math.sin(lead));
+			gfx.fill(lx - 1, ly - 1, lx + 2, ly + 2, JeiPanel.withAlpha(0xFFFF3020, (int) (120 + 120 * JeiPanel.pulse(time, 5f))));
 		}
 	}
 
-	/** Draws a pulsing connecting line between a catalyst slot and the center. */
-	private void drawConnectingLine(GuiGraphics gfx, int x1, int y1, int x2, int y2, float time, int index) {
-		int steps = 8;
-		for (int s = 0; s < steps; s++) {
-			float t = (float) s / steps;
-			int px = (int) Mth.lerp(t, x1, x2);
-			int py = (int) Mth.lerp(t, y1, y2);
-			float pulse = 0.4f + 0.6f * Mth.sin(time * 4f + s * 0.8f + index * 1.5f);
-			int alpha = (int) (80 * pulse);
-			int r = (int) (70 * pulse);
-			gfx.fill(px, py, px + 1, py + 1, (alpha << 24) | (r << 16) | 0x0808);
-		}
-	}
-
-
-	private void drawSlot(GuiGraphics gfx, int sx, int sy) {
-		gfx.fill(sx - 1, sy - 1, sx + 17, sy + 17, SLOT_BORDER_DARK);
-		gfx.fill(sx, sy, sx + 16, sy + 16, SLOT_BG);
-		gfx.fill(sx + 16, sy, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
-		gfx.fill(sx, sy + 16, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
-	}
-
-	private void drawEmptySlot(GuiGraphics gfx, int sx, int sy) {
-		gfx.fill(sx - 1, sy - 1, sx + 17, sy + 17, 0x20202020);
-		gfx.fill(sx, sy, sx + 16, sy + 16, 0x10101010);
-	}
-
-	// ── IRecipeCategory impl ─────────────────────────────────────────
-
-	@SuppressWarnings("removal")
-	@Nonnull
-	@Override
-	public IDrawable getBackground() {
-		return background;
-	}
-
-	@Nonnull
-	@Override
-	public IDrawable getIcon() {
-		return icon;
+	/** A catalyst's thread into the polyp, with a mote running inward. */
+	private static void drawFeed(GuiGraphics gfx, int x0, int y0, int x1, int y1, float time, int index) {
+		JeiPanel.line(gfx, x0, y0, x1, y1, JeiPanel.BLOOD.ring());
+		float p = (time * 0.8f + index * 0.25f) % 1f;
+		int mx = Math.round(Mth.lerp(p, x0, x1)), my = Math.round(Mth.lerp(p, y0, y1));
+		gfx.fill(mx - 1, my - 1, mx + 1, my + 1, JeiPanel.withAlpha(0xFFE0303A, (int) (230 * (1f - p * 0.6f))));
 	}
 
 	@Override
-	public RecipeType<IncubatorRecipe> getRecipeType() {
-		return JEIPlugin.incubator_recipe_type;
-	}
-
-	@Nonnull
-	@Override
-	public Component getTitle() {
-		return Component.translatable("hemomancy.jei.morphling_incubator");
-	}
-
-	@Override
-	public void setRecipe(IRecipeLayoutBuilder builder, IncubatorRecipe recipe, IFocusGroup focuses) {
-		// Center input — morphling polyp (always required)
-		builder.addSlot(RecipeIngredientRole.INPUT, CENTER_X, CENTER_Y)
-				.addIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ItemInit.morphling_polyp.get()));
-
-		// Catalyst inputs — positioned around the center
-		var catalysts = recipe.getCatalysts();
-		for (int i = 0; i < catalysts.size() && i < 4; i++) {
-			int sx = CENTER_X + CATALYST_OFFSETS[i][0];
-			int sy = CENTER_Y + CATALYST_OFFSETS[i][1];
-			builder.addSlot(RecipeIngredientRole.INPUT, sx, sy)
-					.addIngredients(catalysts.get(i));
-		}
-
-		// Output slot
-		builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_X, OUTPUT_Y)
-				.addIngredient(VanillaTypes.ITEM_STACK, recipe.getResultItemStack().copy());
+	public void getTooltip(ITooltipBuilder tooltip, IncubatorRecipe recipe, IRecipeSlotsView slots, double mouseX, double mouseY) {
+		JeiPanel.footerTooltip(tooltip, Minecraft.getInstance().font, footer(), W, FOOTER_Y, H, mouseX, mouseY);
 	}
 }

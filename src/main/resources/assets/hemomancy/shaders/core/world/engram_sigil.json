@@ -1,0 +1,39 @@
+{
+  "blend": {
+    "func": "add",
+    "srcrgb": "srcalpha",
+    "dstrgb": "1-srcalpha"
+  },
+  "vertex": "hemomancy:world/engram_sigil",
+  "fragment": "hemomancy:world/engram_sigil",
+  "attributes": [
+    "Position",
+    "Color",
+    "UV0"
+  ],
+  "samplers": [],
+  "uniforms": [
+    { "name": "ModelViewMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+    { "name": "ProjMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+    { "name": "ColorModulator", "type": "float", "count": 4, "values": [ 1.0, 1.0, 1.0, 1.0 ] },
+    { "name": "FogStart", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "FogEnd", "type": "float", "count": 1, "values": [ 1.0 ] },
+    { "name": "FogColor", "type": "float", "count": 4, "values": [ 0.0, 0.0, 0.0, 0.0 ] },
+    { "name": "FogShape", "type": "int", "count": 1, "values": [ 0 ] },
+    { "name": "HemoTime", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "SigilSeed", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "SigilLayer", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "SigilRadius", "type": "float", "count": 1, "values": [ 5.0 ] },
+    { "name": "Unfurl", "type": "float", "count": 1, "values": [ 1.0 ] },
+    { "name": "Withdraw", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "Beat", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "Pressure", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "Keyed", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "Rotation", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "Turns", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "Dim", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "FloorLight", "type": "float", "count": 1, "values": [ 1.0 ] },
+    { "name": "AimPoint", "type": "float", "count": 3, "values": [ 0.0, 0.0, 0.0 ] },
+    { "name": "Dissolve", "type": "float", "count": 1, "values": [ 0.0 ] }
+  ]
+}

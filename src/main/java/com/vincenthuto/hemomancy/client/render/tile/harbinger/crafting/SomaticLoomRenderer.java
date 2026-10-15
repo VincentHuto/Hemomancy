@@ -40,13 +40,13 @@ import static com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticL
  * {@link com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomGeometry}). Stored enzymes wind dyed thread onto the pirns and the reservoir fills the
  * upright veins. A selected weave colours its share of the warp; projected blood pulses up the veins into a
  * beating ganglion; each strand drawn home lights its threads and lays a band at the fell. The memory floats
- * over the fell, catalysts lie on the fresh cloth and the pattern hangs above the ganglion. Loose threads are
- * entities (FrayedThreadRenderer); this draws only what stays on the loom.
+ * over the fell, catalysts lie on the fresh cloth and the pattern hangs above the ganglion. The engram unfurled
+ * around the loom while it weaves is drawn by EngramSigilRenderer, called from here.
  */
 public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlockEntity> {
 	public static final List<String> PART_MODELS = parts();
 
-	/** Threads range across the ritual area, and the loom keeps drawing them while its block is off screen. */
+	/** The engram spreads across the ritual area, and the loom keeps drawing it while its block is off screen. */
 	private static final double RENDER_BOUNDS = SomaticWeaveRules.RITUAL_RADIUS;
 
 	/** Clotted blood in the veins, plus the visual standard's hot core and clot accents. */
@@ -92,28 +92,70 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		float time = te.getLevel().getGameTime() + partialTicks;
 		Direction facing = te.getBlockState().getValue(SomaticLoomBlock.FACING);
 
+		// The engram lies on the ground in world axes, so it is drawn before the pose turns to the loom's facing.
+		// A weave broken before its climax leaves everything it raised to dissolve rather than vanish.
+		float dissolve = com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.engram.EngramDissolve.update(te, partialTicks, liveDomeRadius(te, partialTicks));
+		boolean dissolving = dissolve >= 0F;
+		com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.engram.EngramSigilRenderer.render(te, partialTicks, stack, buffer, dissolve);
+		com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.engram.EngramGlyphs.render(te, partialTicks, stack, buffer, dissolve);
+		playEngramBeats(te);
+
 		// Textured parts first: fetching their buffers would end a flat-colour batch already in progress.
 		stack.pushPose();
 		toLoomFrame(stack, facing);
 		renderCops(te, stack, buffer, combinedLight, combinedOverlay);
 		renderVials(te, stack, buffer, combinedLight, combinedOverlay);
 		renderItems(te, partialTicks, stack, buffer, combinedLight, combinedOverlay);
-		echo.render(te, partialTicks, stack, buffer);
-		com.vincenthuto.hemomancy.client.render.world.chamberofwill.SomaticLoomDomeRenderer.track(te);
+		echo.render(te, partialTicks, stack, buffer, dissolve);
+		com.vincenthuto.hemomancy.client.render.world.chamberofwill.SomaticLoomDomeRenderer.track(te, dissolving);
 
 		stack.pushPose();
 		stack.scale(1 / 16f, 1 / 16f, 1 / 16f);
 		Matrix4f px = stack.last().pose();
 		VertexConsumer vc = buffer.getBuffer(RenderTypeInit.LOOM_EFFECT);
-		float charge = ritualCharge(te);
-		drawVeins(vc, px, te, charge, time);
-		drawGanglion(vc, px, te, charge, time);
-		drawFeelers(vc, px, te, time);
+		float fade = dissolving ? SomaticLoomEffectRules.dissolveFade(dissolve) : 1f;
+		float charge = dissolving ? fade : ritualCharge(te);
+		drawVeins(vc, px, te, charge, time, dissolving);
+		drawGanglion(vc, px, te, charge, time, dissolving);
+		drawFeelers(vc, px, te, time, dissolving, fade);
 		drawWarp(vc, px, te, time);
-		drawWovenBands(vc, px, te, time);
+		drawWovenBands(vc, px, te, time, dissolving, fade);
 		stack.popPose();
 		stack.popPose();
 
+	}
+
+	/**
+	 * The engram's beats this client has not yet played: each fragment heard plays its memory small and dim on the echo
+	 * (a false one plays the other memory it carries), each lane threaded home plays its beat at full stature, and
+	 * every beat shows where it happened. A client first seeing a weave already under way skips what came before.
+	 */
+	private void playEngramBeats(SomaticLoomBlockEntity te) {
+		var board = te.getEngram();
+		var manip = te.getWeaveManipulation();
+		if (board == null || manip == null) return;
+		for (var heard : com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.engram.EngramClientState.takeHeard(te.getBlockPos())) {
+			if (heard.fragment() < 0 || heard.fragment() >= board.fragmentCount()) continue;
+			var fragment = board.fragment(heard.fragment());
+			var memory = fragment.intrusion()
+					? com.vincenthuto.hemomancy.common.init.ManipulationInit.getByName(fragment.decoy()) : manip;
+			echo.playBeat(te, memory == null ? manip : memory, 0.45f);
+			com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.engram.EngramBeatEffects.heard(te, heard.fragment());
+		}
+		var beats = te.engramBeats();
+		int seen = te.beatSeen();
+		int latest = beats.isEmpty() ? 0 : beats.getLast().serial();
+		if (seen < 0) {
+			te.markBeatSeen(latest);
+			return;
+		}
+		for (var beat : beats) {
+			if (beat.serial() <= seen) continue;
+			com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.engram.EngramBeatEffects.play(te, beat);
+			if (beat.event() == com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramWeaveSession.Event.LAND)
+				echo.playBeat(te, manip, 1f);
+		}
+		te.markBeatSeen(Math.max(seen, latest));
 	}
 
 	/** Turns the pose into the north-facing model's frame, matching the blockstate's y rotation. */
@@ -127,6 +169,13 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		return switch (facing) {
 			case EAST -> -90; case SOUTH -> 180; case WEST -> 90; default -> 0;
 		};
+	}
+
+	/** The dome a live Cortical weave stands under now, kept so a broken weave's dome can sink from where it was. */
+	private static float liveDomeRadius(SomaticLoomBlockEntity te, float partialTicks) {
+		return SomaticLoomEffectRules.domeRadius(te.upgradeTier(), te.isWeaving(),
+				te.getWeaveTicks() + (te.isPaused() ? 0 : partialTicks), te.isInClimax(),
+				com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.engram.EngramSigilRenderer.climax(te, partialTicks));
 	}
 
 	/** 0 before any blood is projected, rising to 1 once the weave is paid; full while the orbs are woven. */
@@ -233,9 +282,11 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 
 	//  Veins and ganglion: the reservoir, projected blood and the loom's heartbeat
 
-	private static void drawVeins(VertexConsumer vc, Matrix4f px, SomaticLoomBlockEntity te, float charge, float time) {
+	private static void drawVeins(VertexConsumer vc, Matrix4f px, SomaticLoomBlockEntity te, float charge, float time,
+			boolean dissolving) {
 		float reservoir = SomaticLoomEffectRules.fill(te.getBloodVolume(), te.getMaxBloodVolume());
-		boolean ritual = te.isAwaitingBlood() || te.isWeaving();
+		// A broken weave's charge drains out of the veins rather than snapping off.
+		boolean ritual = te.isAwaitingBlood() || te.isWeaving() || dissolving;
 		float beat = SomaticLoomEffectRules.heartbeat(time, charge);
 		for (float[] v : UPRIGHT_VEINS) {
 			float top = v[1] + (v[4] - v[1]) * (ritual ? Math.max(reservoir, charge) : reservoir);
@@ -264,12 +315,14 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		}
 	}
 
-	private static void drawGanglion(VertexConsumer vc, Matrix4f px, SomaticLoomBlockEntity te, float charge, float time) {
+	private static void drawGanglion(VertexConsumer vc, Matrix4f px, SomaticLoomBlockEntity te, float charge, float time,
+			boolean dissolving) {
 		float alpha, swell;
-		if (te.isAwaitingBlood() || te.isWeaving()) {
+		if (te.isAwaitingBlood() || te.isWeaving() || dissolving) {
 			float beat = SomaticLoomEffectRules.heartbeat(time, charge);
-			// Paid weaves keep a steady low glow so the ganglion reads as alive, not as a lit lantern.
-			alpha = (te.isWeaving() ? 0.12f + 0.12f * charge : 0.18f + 0.4f * charge) * (0.45f + 0.55f * beat);
+			// Paid weaves keep a steady low glow so the ganglion reads as alive, not as a lit lantern; a broken one dims out.
+			alpha = (te.isWeaving() ? 0.12f + 0.12f * charge : dissolving ? 0.24f * charge : 0.18f + 0.4f * charge)
+					* (0.45f + 0.55f * beat);
 			swell = 0.2f + 0.45f * beat;
 		} else if (te.getPreviewRecipe() != null) {
 			// A weave is chosen: the ganglion breathes slowly while it holds the pattern.
@@ -283,26 +336,26 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		float radius = GANGLION_RADII[stage], foot = GANGLION_FEET[stage], top = GANGLION_TOPS[stage];
 		octagon(vc, px, GANGLION_X, GANGLION_Z, radius + swell, foot - swell * 0.5f, top + swell * 0.5f, BLOOD, alpha);
 		octagon(vc, px, GANGLION_X, GANGLION_Z, radius + swell + 0.35f, foot - swell, top + swell,
-				te.isWeaving() ? HOT : BLOOD, alpha * 0.35f);
+				te.isWeaving() || dissolving ? HOT : BLOOD, alpha * 0.35f);
 	}
 
 	/**
-	 * Ganglionic feelers: their tips glow faintly while a weave runs, and flare when a slack thread drifts into
-	 * their reach, a moment before the loom takes it home.
+	 * Ganglionic feelers: their tips glow faintly while the engram is unfurled, and quicken and flare while the weaver
+	 * listens to a fragment, for the feelers are what let a Ganglionic loom hear one from anywhere on its engram.
 	 */
-	private static void drawFeelers(VertexConsumer vc, Matrix4f px, SomaticLoomBlockEntity te, float time) {
-		double reach = com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticWeaveRules.autoCatchRadius(te.upgradeTier());
-		if (reach <= 0 || !te.isWeaving() || te.getLevel() == null) return;
-		Vec3 anchor = te.echoAnchor();
-		boolean slackNear = !te.getLevel().getEntitiesOfClass(com.vincenthuto.hemomancy.common.entity.weave.FrayedThreadEntity.class,
-				new net.minecraft.world.phys.AABB(anchor, anchor).inflate(reach + 1.0D),
-				thread -> thread.isSlack() && thread.distanceToSqr(anchor) <= (reach + 1.0D) * (reach + 1.0D)).isEmpty();
+	private static void drawFeelers(VertexConsumer vc, Matrix4f px, SomaticLoomBlockEntity te, float time, boolean dissolving,
+			float fade) {
+		if (te.upgradeTier() < 1 || !te.isWeaving() && !dissolving || te.getLevel() == null) return;
+		boolean listening = com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.engram.EngramClientState
+				.listening(te.getBlockPos(), -1) > 0;
 		for (int k = 0; k < FEELER_TIPS.length; k++) {
 			float[] tip = FEELER_TIPS[k];
-			float beat = 0.5f + 0.5f * Mth.sin(time * (slackNear ? 0.6f : 0.08f) + k * 1.9f);
-			float alpha = slackNear ? 0.35f + 0.45f * beat : 0.06f + 0.08f * beat;
-			float r = slackNear ? 0.42f + 0.18f * beat : 0.3f;
-			octagon(vc, px, tip[0], tip[2], r, tip[1] - r, tip[1] + r, slackNear ? HOT : BLOOD, alpha);
+			float beat = 0.5f + 0.5f * Mth.sin(time * (listening ? 0.6f : 0.08f) + k * 1.9f);
+			float alpha = listening ? 0.35f + 0.45f * beat : 0.06f + 0.08f * beat;
+			float r = listening ? 0.42f + 0.18f * beat : 0.3f;
+			// Listening, they droop toward the engram.
+			float droop = listening ? 1.4f + 0.5f * beat : 0f;
+			octagon(vc, px, tip[0], tip[2], r, tip[1] - r - droop, tip[1] + r - droop, listening ? HOT : BLOOD, alpha * fade);
 		}
 	}
 
@@ -316,11 +369,14 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		int[] required = new int[tendencies.length];
 		int[] orbs = new int[tendencies.length], done = new int[tendencies.length];
 		for (int t = 0; t < tendencies.length; t++) required[t] = recipe.getEnzymeRequirement(tendencies[t]);
-		if (weaving) {
-			for (SomaticLoomBlockEntity.WeaveThread thread : te.getWeaveThreads()) {
-				int t = thread.tendency().ordinal();
+		var board = te.getEngram();
+		if (weaving && board != null) {
+			for (int i = 0; i < board.fragmentCount(); i++) {
+				var fragment = board.fragment(i);
+				if (fragment.intrusion()) continue;
+				int t = fragment.trueColour();
 				orbs[t]++;
-				if (thread.state() == SomaticLoomBlockEntity.WeaveThread.State.WOVEN) done[t]++;
+				if (te.isInClimax() || com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramWeaveRules.connected(board, i)) done[t]++;
 			}
 		}
 		int[] threads = SomaticLoomEffectRules.threadTendencies(required, WARP_X.length);
@@ -328,8 +384,8 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 			int t = threads[k];
 			if (t < 0) continue;
 			int stored = te.getStoredEnzyme(tendencies[t]);
-			// Once paid, the enzyme is already spun onto the pirns, so a weave in progress can never run short.
-			boolean shortStock = !weaving && stored < required[t];
+			// A paid weave has reserved its thread, so a weave in progress never shows as short.
+			boolean shortStock = !weaving && stored < required[t] * com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramWeaveRules.SPANS_PER_ENZYME;
 			float completed = weaving && orbs[t] > 0 ? done[t] / (float) orbs[t] : 0f;
 			float alpha = SomaticLoomEffectRules.threadGlow(completed, shortStock, time, k);
 			float[] colour = ThreadKnotGeometry.vivid(tendencies[t].getColor());
@@ -341,18 +397,26 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		}
 	}
 
-	private static void drawWovenBands(VertexConsumer vc, Matrix4f px, SomaticLoomBlockEntity te, float time) {
-		if (!te.isWeaving()) return;
+	private static void drawWovenBands(VertexConsumer vc, Matrix4f px, SomaticLoomBlockEntity te, float time, boolean dissolving,
+			float fade) {
+		var snapshot = dissolving ? com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.engram.EngramDissolve.snapshot(te.getBlockPos()) : null;
+		var board = dissolving ? snapshot == null ? null : snapshot.board() : te.getEngram();
+		if (!te.isWeaving() && !dissolving || board == null) return;
 		List<EnumBloodTendency> woven = new ArrayList<>();
-		for (SomaticLoomBlockEntity.WeaveThread thread : te.getWeaveThreads())
-			if (thread.state() == SomaticLoomBlockEntity.WeaveThread.State.WOVEN) woven.add(thread.tendency());
-		float step = SomaticLoomEffectRules.bandStep(te.getWeaveThreads().size(), FELL_Z - CLOTH_FRONT_Z - 1f);
+		int total = 0;
+		for (int i = 0; i < board.fragmentCount(); i++) {
+			if (board.fragment(i).intrusion()) continue;
+			total++;
+			if (te.isInClimax() || com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramWeaveRules.connected(board, i))
+				woven.add(EnumBloodTendency.values()[board.fragment(i).trueColour()]);
+		}
+		float step = SomaticLoomEffectRules.bandStep(total, FELL_Z - CLOTH_FRONT_Z - 1f);
 		// The newest pick lies at the fell; earlier ones have been beaten toward the breast beam.
 		for (int b = 0; b < woven.size(); b++) {
 			float z1 = FELL_Z - 0.55f - (woven.size() - 1 - b) * step;
 			float shimmer = 0.8f + 0.2f * Mth.sin(time * 0.15f + b * 1.3f);
 			flat(vc, px, CLOTH_X0, CLOTH_X1, CLOTH_TOP + 0.1f, z1 - step * 0.75f, z1,
-					ThreadKnotGeometry.vivid(woven.get(b).getColor()), 0.85f * shimmer);
+					ThreadKnotGeometry.vivid(woven.get(b).getColor()), 0.85f * shimmer * fade);
 		}
 	}
 

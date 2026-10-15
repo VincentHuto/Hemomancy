@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SomaticLoomEffectRulesTest {
@@ -63,8 +64,8 @@ class SomaticLoomEffectRulesTest {
 		assertEquals(1f, SomaticLoomEffectRules.vialFill(64f, 64), 1e-6);
 		assertTrue(SomaticLoomEffectRules.vialFill(1f, 64) >= .125f, "a single enzyme still shows in its vial");
 		assertEquals(0f, SomaticLoomEffectRules.spunFill(0f), 1e-6);
-		assertEquals(0.5f, SomaticLoomEffectRules.spunFill(4f), 1e-6);
-		assertEquals(1f, SomaticLoomEffectRules.spunFill(12f), 1e-6);
+		assertEquals(0.5f, SomaticLoomEffectRules.spunFill(12f), 1e-6, "pirns hold thread in spans: eight enzymes' worth is full");
+		assertEquals(1f, SomaticLoomEffectRules.spunFill(30f), 1e-6);
 	}
 
 	@Test
@@ -215,5 +216,31 @@ class SomaticLoomEffectRulesTest {
 		assertEquals(1f, SomaticLoomEffectRules.sinewTension(400, false, 0), 1e-6f);
 		assertEquals(1f, SomaticLoomEffectRules.sinewTension(0, true, 0.6f), 1e-6f);
 		assertEquals(0f, SomaticLoomEffectRules.sinewTension(0, true, 0.8f), 1e-6f, "they snap before the dome closes");
+	}
+
+	@Test
+	void onlyAWeaveBrokenInSightDissolves() {
+		assertTrue(SomaticLoomEffectRules.engramDissolves(false, 1), "a weave cancelled while in view comes apart");
+		assertFalse(SomaticLoomEffectRules.engramDissolves(true, 1), "a weave woven home already drew back at its climax");
+		assertFalse(SomaticLoomEffectRules.engramDissolves(false, 40), "a weave that ended out of view has nothing to show");
+	}
+
+	@Test
+	void aBrokenEngramFadesOutSmoothlyAndCompletely() {
+		assertEquals(1f, SomaticLoomEffectRules.dissolveFade(0f), 1e-6f);
+		assertEquals(0f, SomaticLoomEffectRules.dissolveFade(1f), 1e-6f);
+		float a = SomaticLoomEffectRules.dissolveFade(0.3f), b = SomaticLoomEffectRules.dissolveFade(0.6f);
+		assertTrue(a < 1f && b < a && b > 0f, "it falls steadily");
+		assertEquals(6f, SomaticLoomEffectRules.dissolvingDomeRadius(6f, 0f), 1e-6f);
+		assertEquals(0f, SomaticLoomEffectRules.dissolvingDomeRadius(6f, 1f), 1e-6f, "the dome sinks away with it");
+	}
+
+	@Test
+	void theEchoLosesItsLimbsOneByOneBeforeItFades() {
+		assertEquals(1, SomaticLoomEffectRules.echoTornLimbs(1, 4, 0f), "it starts as it was left");
+		int partway = SomaticLoomEffectRules.echoTornLimbs(1, 4, 0.35f);
+		assertTrue(partway > 1 && partway < 4, "limbs tear away one at a time: " + partway);
+		assertEquals(4, SomaticLoomEffectRules.echoTornLimbs(1, 4, 0.7f), "every limb is gone before the body fades out");
+		assertEquals(4, SomaticLoomEffectRules.echoTornLimbs(4, 4, 0.2f));
 	}
 }

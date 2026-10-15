@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.MorphicNectarRecipe;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
@@ -20,6 +21,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * JEI recipe category for Morphic Nectar item transformations.
@@ -30,36 +32,26 @@ public class MorphicNectarRecipeCategory implements IRecipeCategory<MorphicNecta
 	public static final RecipeType<MorphicNectarRecipe> JEI_TYPE =
 			RecipeType.create(Hemomancy.MOD_ID, "morphic_nectar", MorphicNectarRecipe.class);
 
-	private static final int BG_W = 170;
-	private static final int BG_H = 82;
+	private static final int BG_W = 176;
+	private static final int BG_H = 92;
+	private static final int FOOTER_Y = 76;
 
-	private static final int INPUT_X = 19;
-	private static final int INPUT_Y = 32;
-	private static final int OUTPUT_X = 134;
-	private static final int OUTPUT_Y = 32;
+	private static final int INPUT_X = 16;
+	private static final int INPUT_Y = 34;
+	private static final int OUTPUT_X = 140;
+	private static final int OUTPUT_Y = 34;
 
-	private static final int POOL_X = 58;
-	private static final int POOL_Y = 24;
+	private static final int POOL_X = 61;
+	private static final int POOL_Y = 26;
 	private static final int POOL_W = 54;
 	private static final int POOL_H = 28;
 
-	private static final int BG_COLOR = 0xFF071006;
-	private static final int BORDER_OUTER = 0xFF243D0A;
-	private static final int BORDER_INNER = 0xFF101F05;
-	private static final int SLOT_BG = 0xFF101807;
-	private static final int SLOT_BORDER_DARK = 0xFF071003;
-	private static final int SLOT_BORDER_LIGHT = 0xFF2F4D12;
 	private static final int NECTAR_VEIN = 0xBFC7F03A;
 	private static final int NECTAR_SHADOW = 0xEE111A04;
-	private static final int LABEL_COLOR = 0xFFB6D85A;
-	private static final int MUTED_LABEL_COLOR = 0xFF6F8740;
 
-	private final IDrawable background;
 	private final IDrawable icon;
-	private float animTime = 0f;
 
 	public MorphicNectarRecipeCategory(IGuiHelper guiHelper) {
-		this.background = guiHelper.createBlankDrawable(BG_W, BG_H);
 		this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK,
 				new ItemStack(ItemInit.hemolytic_vial.get()));
 	}
@@ -76,12 +68,8 @@ public class MorphicNectarRecipeCategory implements IRecipeCategory<MorphicNecta
 		return Component.translatable("hemomancy.jei.morphic_nectar");
 	}
 
-	@SuppressWarnings("removal")
-	@Override
-	@Nonnull
-	public IDrawable getBackground() {
-		return background;
-	}
+	@Override public int getWidth() { return BG_W; }
+	@Override public int getHeight() { return BG_H; }
 
 	@Override
 	@Nonnull
@@ -102,44 +90,34 @@ public class MorphicNectarRecipeCategory implements IRecipeCategory<MorphicNecta
 	@Override
 	public void draw(@Nonnull MorphicNectarRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, @Nonnull GuiGraphics gfx,
 			double mouseX, double mouseY) {
-		animTime += 0.016f;
-		float time = animTime;
-
 		Font font = Minecraft.getInstance().font;
+		JeiPanel.Theme t = JeiPanel.FUNGAL;
+		float time = JeiPanel.time();
 
-		drawBackground(gfx, time);
-		drawSlot(gfx, INPUT_X, INPUT_Y);
-		drawSlot(gfx, OUTPUT_X, OUTPUT_Y);
-		JeiProgressArrow.draw(gfx, INPUT_X + 23, INPUT_Y + 7, POOL_X - 5, time,
-				0x553A5010, 0x66526E18, 160, 205, 32);
-		JeiProgressArrow.draw(gfx, POOL_X + POOL_W + 5, OUTPUT_Y + 7, OUTPUT_X - 5, time,
-				0x553A5010, 0x66526E18, 160, 205, 32);
+		JeiPanel.panel(gfx, t, BG_W, BG_H, FOOTER_Y);
+		JeiPanel.glow(gfx, POOL_X + POOL_W / 2, POOL_Y + POOL_H / 2, 46, 24, 0xFF8AB818, 0.65f + 0.35f * JeiPanel.pulse(time, 1.8f));
+		JeiPanel.label(gfx, font, Component.translatable("hemomancy.jei.pool.offer"), INPUT_X + 9, INPUT_Y - 10, t.muted());
+		JeiPanel.slot(gfx, t, INPUT_X + 1, INPUT_Y + 1);
+		JeiProgressArrow.draw(gfx, INPUT_X + 23, INPUT_Y + 8, POOL_X - 6, time, t);
+		JeiProgressArrow.draw(gfx, POOL_X + POOL_W + 6, OUTPUT_Y + 8, OUTPUT_X - 6, time + 0.5f, t);
 		drawNectarPool(gfx, time);
-
-		Component fluidLabel = Component.translatable("fluid.hemomancy.morphic_nectar");
-		int fluidLabelWidth = font.width(fluidLabel);
-		gfx.drawString(font, fluidLabel, (BG_W - fluidLabelWidth) / 2, 6, LABEL_COLOR, false);
-
-		drawTransformTime(recipe, gfx, font);
+		JeiPanel.label(gfx, font, Component.translatable("fluid.hemomancy.morphic_nectar"), POOL_X + POOL_W / 2, POOL_Y - 13, t.title());
+		JeiPanel.label(gfx, font, Component.translatable("hemomancy.jei.pool.emerges"), OUTPUT_X + 9, OUTPUT_Y - 12, t.muted());
+		JeiPanel.resultSlot(gfx, t, OUTPUT_X + 1, OUTPUT_Y + 1, t.accent(), time);
+		JeiPanel.footer(gfx, font, footer(recipe), BG_W, FOOTER_Y);
 	}
 
-	private void drawBackground(GuiGraphics gfx, float time) {
-		gfx.fill(0, 0, BG_W, BG_H, BG_COLOR);
+	private static List<JeiPanel.Stat> footer(MorphicNectarRecipe recipe) {
+		JeiPanel.Theme t = JeiPanel.FUNGAL;
+		return List.of(
+				JeiPanel.Stat.of(JeiPanel.Icon.NONE, Component.translatable("hemomancy.jei.morphic_nectar.hint"), t.text(),
+						Component.translatable("hemomancy.jei.morphic_nectar.hint.tip")),
+				JeiPanel.Stat.of(JeiPanel.Icon.TIME, JeiPanel.secondsText(Math.max(0, recipe.getTransformTime())), t.text()));
+	}
 
-		int glowX = POOL_X + POOL_W / 2;
-		int glowY = POOL_Y + POOL_H / 2;
-		float pulse = 0.65f + 0.35f * Mth.sin(time * 2.0f);
-		for (int ring = 44; ring > 0; ring -= 4) {
-			float falloff = 1f - ring / 44f;
-			int alpha = (int) (22 * falloff * pulse);
-			int color = (alpha << 24) | (0x8A << 16) | (0xB8 << 8) | 0x18;
-			gfx.fill(glowX - ring, glowY - ring / 2, glowX + ring, glowY + ring / 2, color);
-		}
-
-		gfx.fill(0, 0, BG_W, 1, BORDER_OUTER);
-		gfx.fill(0, BG_H - 1, BG_W, BG_H, BORDER_INNER);
-		gfx.fill(0, 0, 1, BG_H, BORDER_OUTER);
-		gfx.fill(BG_W - 1, 0, BG_W, BG_H, BORDER_INNER);
+	@Override
+	public void getTooltip(ITooltipBuilder tooltip, MorphicNectarRecipe recipe, IRecipeSlotsView slots, double mouseX, double mouseY) {
+		JeiPanel.footerTooltip(tooltip, Minecraft.getInstance().font, footer(recipe), BG_W, FOOTER_Y, BG_H, mouseX, mouseY);
 	}
 
 	private void drawNectarPool(GuiGraphics gfx, float time) {
@@ -215,23 +193,4 @@ public class MorphicNectarRecipeCategory implements IRecipeCategory<MorphicNecta
 		}
 	}
 
-	private void drawSlot(GuiGraphics gfx, int x, int y) {
-		gfx.fill(x - 1, y - 1, x + 17, y + 17, SLOT_BORDER_DARK);
-		gfx.fill(x, y, x + 16, y + 16, SLOT_BG);
-		gfx.fill(x + 16, y, x + 17, y + 17, SLOT_BORDER_LIGHT);
-		gfx.fill(x, y + 16, x + 17, y + 17, SLOT_BORDER_LIGHT);
-	}
-
-	private void drawTransformTime(MorphicNectarRecipe recipe, GuiGraphics gfx, Font font) {
-		int ticks = Math.max(0, recipe.getTransformTime());
-		Component timeText = Component.translatable("gui.jei.category.smelting.time.seconds", ticks / 20.0f);
-		int width = font.width(timeText);
-		gfx.drawString(font, timeText, BG_W - width - 4, BG_H - 11, MUTED_LABEL_COLOR, false);
-
-		Component hint = Component.translatable("hemomancy.jei.morphic_nectar.hint");
-		gfx.drawString(font, hint, 4, BG_H - 11, MUTED_LABEL_COLOR, false);
-	}
 }
-
-
-

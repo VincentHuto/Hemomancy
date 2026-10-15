@@ -18,10 +18,9 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 /**
- * Low-rank weaves cannot kill: a low-rank thread's own blow, and in the window after a thread harmed its weaver
- * the burning, frost and poison it left (or the landing from a Ferric launch, or a spike outliving its thread),
- * stops at the floor instead. Only the weaver blacks out, pausing the weave. Lava, fire blocks, other attackers
- * and every lethal-rank weave are untouched.
+ * No weave can kill: an intrusion's own blow, and in the window after an intrusion harmed its weaver the burning,
+ * frost and poison it left (or the landing from a Ferric launch, or a spike outliving its intrusion), stops at the
+ * floor instead. Only the weaver blacks out, pausing the weave. Lava, fire blocks and other attackers are untouched.
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class WeaveDamageEvents {

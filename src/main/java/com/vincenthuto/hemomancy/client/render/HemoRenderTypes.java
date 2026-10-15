@@ -494,6 +494,69 @@ public final class HemoRenderTypes {
 	}
 
 	/**
+	 * The engram a Somatic Loom unfurls while it weaves (shaders/core/world/engram_sigil): layer 0 its skin and empty
+	 * star, 1 its lanes of ichor, 2 its node caps. Cached by every uniform value, as the Cardinal floor's types are,
+	 * so each loom's draw in a frame keeps its own engram.
+	 */
+	public static RenderType engramSigil(EngramSigilParams params) {
+		RenderType cached = ENGRAM_SIGIL_TYPES.get(params);
+		if (cached == null) {
+			cached = createEngramSigil(params);
+			ENGRAM_SIGIL_TYPES.put(params, cached);
+		}
+		return cached;
+	}
+
+	/** One engram draw's uniforms. Layer: 0 skin, 1 lanes, 2 caps. AimZ above one half means the staff points at it. */
+	public record EngramSigilParams(int layer, float gameTime, float seed, float radius, float unfurl, float withdraw,
+			float beat, float pressure, boolean keyed, int rotation, int turns, float dim, float light, float aimX,
+			float aimY, float aimZ, float dissolve) {
+	}
+
+	private static final Map<EngramSigilParams, RenderType> ENGRAM_SIGIL_TYPES = riteTypeCache();
+
+	private static RenderType createEngramSigil(EngramSigilParams p) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"engram_sigil_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.ENGRAM_SIGIL.getInstance().get();
+					setUniform(shader, "HemoTime", p.gameTime());
+					setUniform(shader, "SigilSeed", p.seed());
+					setUniform(shader, "SigilLayer", p.layer());
+					setUniform(shader, "SigilRadius", p.radius());
+					setUniform(shader, "Unfurl", p.unfurl());
+					setUniform(shader, "Withdraw", p.withdraw());
+					setUniform(shader, "Beat", p.beat());
+					setUniform(shader, "Pressure", p.pressure());
+					setUniform(shader, "Keyed", p.keyed() ? 1.0F : 0.0F);
+					setUniform(shader, "Rotation", p.rotation());
+					setUniform(shader, "Turns", p.turns());
+					setUniform(shader, "Dim", p.dim());
+					setUniform(shader, "FloorLight", p.light());
+					setUniform(shader, "AimPoint", p.aimX(), p.aimY(), p.aimZ());
+					setUniform(shader, "Dissolve", p.dissolve());
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.ENGRAM_SIGIL.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		// The skin and lanes lie on the ground without writing depth, so the loom, the weaver and the echo stand in them.
+		return RenderType.create("engram_sigil_" + p.layer(),
+				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 8192, false, false,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.ENGRAM_SIGIL.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
+	/**
 	 * @param focusX the Focus centre's x relative to the camera; with {@code focusZ}, it lets the shader rebuild
 	 *               ground positions from camera-relative ones for the brazier trench
 	 */

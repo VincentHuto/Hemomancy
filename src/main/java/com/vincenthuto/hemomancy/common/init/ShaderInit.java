@@ -67,6 +67,10 @@ public class ShaderInit {
 	public static ShaderHolder BLOOD_POOL = new ShaderHolder(Hemomancy.rloc("world/blood_pool"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "PoolSeed");
 
+	public static ShaderHolder ENGRAM_SIGIL = new ShaderHolder(Hemomancy.rloc("world/engram_sigil"),
+			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "SigilSeed", "SigilLayer", "SigilRadius", "Unfurl",
+			"Withdraw", "Beat", "Pressure", "Keyed", "Rotation", "Turns", "Dim", "FloorLight", "AimPoint");
+
 	public static ShaderHolder CARDINAL_FLOOR_MEMBRANE = new ShaderHolder(Hemomancy.rloc("world/cardinal_floor_membrane"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "FloorSeed", "FloorStyle", "FloorHalf", "Spread",
 			"Front", "Beat", "FloorLight", "FocusOffset", "BaseColor", "VeinColor", "GlowColor",
@@ -196,6 +200,7 @@ public class ShaderInit {
         registerShader(event, MYCELIAL_CRUCIBLE_BASIN.createInstance(provider));
         registerShader(event, BLOOD_POOL.createInstance(provider));
         registerShader(event, CARDINAL_FLOOR_MEMBRANE.createInstance(provider));
+        registerShader(event, ENGRAM_SIGIL.createInstance(provider));
         registerShader(event, MNEMONIC_LOWTIDE_LAKE.createInstance(provider));
         registerShader(event, MNEMONIC_LOWTIDE_SKYBOX_BASE.createInstance(provider));
         registerShader(event, MNEMONIC_LOWTIDE_SKYBOX.createInstance(provider));

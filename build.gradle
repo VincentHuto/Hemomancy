@@ -253,6 +253,26 @@ neoForge {
             programArguments.addAll '--username', 'BrazierReview', '--width', '1280', '--height', '720'
         }
 
+        jeiReviewClient {
+            client()
+            gameDirectory = project.file('build/jei-client-review')
+            additionalRuntimeClasspathConfiguration.extendsFrom(clientLocalRuntime)
+            jvmArguments.addAll("-Xms2G", "-Xmx6G")
+            systemProperty 'hemomancy.gameplayDriver', 'true'
+            systemProperty 'hemomancy.jeiReview', 'true'
+            programArguments.addAll '--username', 'JeiReview', '--width', '1280', '--height', '720'
+        }
+
+        loomReviewClient {
+            client()
+            gameDirectory = project.file('build/loom-client-review')
+            additionalRuntimeClasspathConfiguration.extendsFrom(clientLocalRuntime)
+            jvmArguments.addAll("-Xms2G", "-Xmx6G")
+            systemProperty 'hemomancy.gameplayDriver', 'true'
+            systemProperty 'hemomancy.loomReview', 'true'
+            programArguments.addAll '--username', 'LoomReview', '--width', '1280', '--height', '720'
+        }
+
         successionReviewClient {
             client()
             gameDirectory = project.file('build/succession-client')

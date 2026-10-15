@@ -60,14 +60,14 @@ public final class SomaticLoomEffectRules {
         return (float) Math.min(1.0D, amount / capacity);
     }
 
-    /** Vial liquid height for stored stock: square-root, so a weave's few enzymes still show against 64. */
+    /** Vial liquid height for stored stock: square-root, so a weave's few spans still show against a full vial. */
     public static float vialFill(float stock, int capacity) {
         return (float) Math.sqrt(fill(stock, capacity));
     }
 
-    /** Pirn thread height for enzyme spun for the current weave; a tendency never needs more than 8. */
+    /** Pirn thread height for the spans an engram's lanes hold; eight enzymes' worth (24 spans) fills it. */
     public static float spunFill(float spun) {
-        return fill(spun, 8);
+        return fill(spun, 24);
     }
 
     /** A sharp 0..1 heartbeat that quickens as the ritual charge rises. */
@@ -169,6 +169,34 @@ public final class SomaticLoomEffectRules {
         }
         float rise = Math.max(0f, Math.min(1f, weaveTicks / DOME_RISE_TICKS));
         return DOME_RADIUS * (1f - (1f - rise) * (1f - rise));
+    }
+
+    /** A loom last seen weaving longer ago than this (in ticks) was out of view when its weave ended. */
+    public static final long DISSOLVE_STALE_TICKS = 4;
+
+    /**
+     * Whether a weave that just ended leaves its engram to dissolve: only one broken before its climax (a weave woven
+     * home has drawn back into the loom already) and only if it was in view a moment ago.
+     */
+    public static boolean engramDissolves(boolean endedInClimax, long ticksSinceSeen) {
+        return !endedInClimax && ticksSinceSeen <= DISSOLVE_STALE_TICKS;
+    }
+
+    /** How much of a broken engram's light remains (1 to 0) as it dissolves. */
+    public static float dissolveFade(float progress) {
+        float t = clamp01(progress);
+        return 1f - t * t * (3f - 2f * t);
+    }
+
+    /** A Cortical dome sinking away with its broken engram. */
+    public static float dissolvingDomeRadius(float radius, float progress) {
+        return radius * dissolveFade(progress);
+    }
+
+    /** The echo of a broken weave tears its remaining limbs away one by one, all gone by seven tenths of the way. */
+    public static int echoTornLimbs(int loose, int limbs, float progress) {
+        int left = Math.max(0, limbs - loose);
+        return Math.min(limbs, loose + (int) Math.ceil(left * clamp01(progress / 0.7f) - 1.0E-4f));
     }
 
     private static float clamp01(float v) {

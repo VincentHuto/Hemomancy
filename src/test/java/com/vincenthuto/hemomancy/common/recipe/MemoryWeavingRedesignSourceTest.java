@@ -41,7 +41,9 @@ public final class MemoryWeavingRedesignSourceTest {
 		assertContains("serializer reads explicit blood field", serializer, "\"blood\"");
 		assertContains("serializer keeps legacy ingredient fallback", serializer, "has(\"ingredient\")");
 
-		assertContains("loom stores sixty-four enzymes per tendency", loom, "ENZYME_CAPACITY = 64");
+		String rules = read("src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/crafting/engram/EngramWeaveRules.java");
+		assertContains("loom stores sixty-four enzymes' thread per tendency", loom, "ENZYME_CAPACITY = EngramWeaveRules.SPAN_CAPACITY");
+		assertContains("a vial holds sixty-four enzymes of three spans", rules, "SPAN_CAPACITY = 64 * SPANS_PER_ENZYME");
 		assertContains("loom has awaiting blood phase", loom, "PHASE_AWAITING_BLOOD");
 		assertContains("loom has a weaving phase", loom, "PHASE_WEAVING");
 		assertContains("loom tracks ritual blood charge", loom, "ritualBloodCharged");
@@ -64,10 +66,28 @@ public final class MemoryWeavingRedesignSourceTest {
 				"MemoryWeavingRecipe recipe = getWeaveRecipe();");
 		assertContains("the warp tints from the client-resolvable weave recipe", renderer,
 				"weaving ? te.getWeaveRecipe() : te.getPreviewRecipe()");
-		assertContains("loom spins required enzymes onto the pirns at payment", loom, "consumeStoredEnzyme(tend, required)");
-		assertContains("loom threads tear loose on the echo loop", loom, "SomaticWeaveRules.frayDue(weaveTicks)");
-		assertContains("loom recalls loose threads when the weave pauses", loom, "recallLooseThreads(server)");
+		assertContains("payment unfurls the payer's own engram", loom, "engram.start(board)");
+		assertContains("payment is gated by the payer's engram reference, not the recipe", loom,
+				"EngramWeaveRules.shortTendency(storedSpans(), board.reference())");
+		assertContains("the engram completes by the rules", loom, "EngramWeaveRules.complete(engram.board(), enzymeCounts(curRecipe))");
+		assertContains("pausing lets go of the held lane", loom, "if (paused) engram.release();");
 		assertContains("loom migrates pre-witnessed orb saves", loom, "TAG_LEGACY_RITUAL_ORBS");
+		assertContains("loom migrates witnessed-weave saves", loom, "TAG_LEGACY_WEAVE_THREADS");
+		for (String retired : new String[]{"frayDue", "recallLooseThreads", "weaveHome", "catchWithFeelers", "WeaveThread"})
+			assertDoesNotContain("the witnessed weave's fight is retired: " + retired, loom, retired);
+		assertContains("the living staff threads engrams", staff, "EngramTracing.begin(playerIn, false)");
+		assertContains("a tracing staff opens no blood channel", staff, "EngramTracing.isTracing(player)");
+		assertDoesNotContain("the living staff no longer hooks threads", staff, "lookedAtSlackThread");
+		assertContains("the engram sigil shader is registered", shaderInit, "ENGRAM_SIGIL");
+		assertContains("the loom draws its engram", renderer, "EngramSigilRenderer.render(te, partialTicks, stack, buffer, dissolve)");
+		for (String engramClient : new String[]{"EngramSigilRenderer", "EngramSigilMesh", "EngramGlyphs", "EngramBeatEffects",
+				"EngramAimClient"}) {
+			String source = read("src/main/java/com/vincenthuto/hemomancy/client/render/tile/harbinger/crafting/engram/" + engramClient + ".java");
+			assertDoesNotContain(engramClient + " uses Hemomancy/HutosLib particles, not vanilla ones", source, "ParticleTypes.");
+			assertDoesNotContain(engramClient + " marks the staff's point with fine pixel motes, not the large animated hit burst",
+					source, "hitGlow(");
+		}
+		assertDoesNotContain("the loom renderer uses no vanilla particles", renderer, "ParticleTypes.");
 		assertDoesNotContain("loom no longer drags orbs at a fixed depth", loom, "dragSelectedOrb");
 		assertDoesNotContain("loom instructions no longer teach the retired strand drag", loom, "captured distance");
 		assertDoesNotContain("the loom tier refusal never floods chat while blood is channelled", loom, "msg(player, tierRequired(held), ChatFormatting.YELLOW, false)");
@@ -85,10 +105,10 @@ public final class MemoryWeavingRedesignSourceTest {
 			assertDoesNotContain("loom strands should not be drawn as writhing yarn balls: " + yarnBall, renderer,
 					yarnBall);
 		String threadRenderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/entity/weave/FrayedThreadRenderer.java");
-		assertContains("frayed threads draw as knotted thread-ends", threadRenderer, "ThreadKnotGeometry.knot(");
+		assertContains("intrusions draw as knotted thread-ends", threadRenderer, "ThreadKnotGeometry.knot(");
 		assertContains("frayed threads stay tethered to the echo", threadRenderer, "ThreadKnotGeometry.tether(");
 		assertContains("frayed threads telegraph their attacks", threadRenderer, "thread.windup()");
-		assertContains("slack threads dim and sink", threadRenderer, "thread.isSlack()");
+		assertContains("a spent intrusion comes apart", threadRenderer, "thread.unravelling()");
 		for (String yarnBall : new String[]{"loomOrbShell", "drawOrbSphere", "drawOrbUnraveledStrands", "fracLine"})
 			assertDoesNotContain("frayed threads are not writhing yarn balls: " + yarnBall, threadRenderer, yarnBall);
 		for (String weaveSource : new String[]{"FrayedThreadEntity", "ThreadBoltEntity", "ThreadHazardEntity", "ThreadAttacks"})

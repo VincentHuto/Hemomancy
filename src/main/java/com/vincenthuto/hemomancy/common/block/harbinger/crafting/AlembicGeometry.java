@@ -653,7 +653,8 @@ public final class AlembicGeometry {
                                 if (!clipped.isEmpty()) cells.merge(offset, clipped, Shapes::or);
                             }
                 }
-                cells.replaceAll((offset, shape) -> shape.optimize());
+                // One box per cell keeps the hover outline readable over the glass; collision follows it.
+                cells.replaceAll((offset, shape) -> Shapes.create(shape.bounds()));
                 result[stage][facing.get2DDataValue()] = Map.copyOf(cells);
             }
         }

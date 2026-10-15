@@ -47,10 +47,10 @@ import java.util.List;
 public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity implements IBloodReservoir, IBloodContainerSlotAccess {
 
 	static final String TAG_BLOOD_LEVEL = "bloodLevel";
-	private static final int CRAFT_TIME = 200;
+	public static final int CRAFT_TIME = 200;
 	private static final int ENZYME_TIME_BASE = 100;
 	private static final int ENZYME_TIME_PER_ITEM = 60;
-	private static final float BLOOD_COST_PER_TICK = 0.5f;
+	public static final float BLOOD_COST_PER_TICK = 0.5f;
 
 	// Slot layout:
 	// 0 = center (polyp or morphling)

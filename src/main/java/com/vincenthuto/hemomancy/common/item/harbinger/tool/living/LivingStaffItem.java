@@ -101,6 +101,12 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 	@Override
 	public void onUseTick(Level pLevel, LivingEntity pLivingEntity, ItemStack pStack, int pRemainingUseDuration) {
 		super.onUseTick(pLevel, pLivingEntity, pStack, pRemainingUseDuration);
+		if (pLivingEntity instanceof Player tracer
+				&& com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramTracing.isTracing(tracer)) {
+			// Threading an engram: the held staff sweeps its lane and opens no blood channel.
+			com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramTracing.tick(tracer);
+			return;
+		}
 		if (pLivingEntity instanceof Player player
 				&& isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_ABSORPTION)) {
 			BloodAbsorptionItem.applyChannelMovementPenalty(player);
@@ -192,7 +198,19 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 	}
 
 	@Override
+	public void onStopUsing(ItemStack stack, LivingEntity entity, int count) {
+		super.onStopUsing(stack, entity, count);
+		if (entity instanceof Player player)
+			com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramTracing.end(player);
+	}
+
+	@Override
 	public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
+		if (entityLiving instanceof Player tracer
+				&& com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramTracing.end(tracer)) {
+			tracer.awardStat(Stats.ITEM_USED.get(this));
+			return;
+		}
 		if (entityLiving instanceof Player player) {
 			boolean selectedUtility = isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_ABSORPTION)
 					|| isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_PROJECTION);
@@ -264,8 +282,18 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
-		if (playerIn.isShiftKeyDown()) return InteractionResultHolder.pass(stack);
-		if (hookLookedAtThread(worldIn, playerIn, handIn)) return InteractionResultHolder.sidedSuccess(stack, worldIn.isClientSide);
+		if (playerIn.isShiftKeyDown()) {
+			// A sneaking press on the weaver's own engram cuts a lane back; anywhere else the staff stays idle.
+			if (com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramTracing.begin(playerIn, true)) {
+				playerIn.swing(handIn);
+				return InteractionResultHolder.sidedSuccess(stack, worldIn.isClientSide);
+			}
+			return InteractionResultHolder.pass(stack);
+		}
+		if (com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramTracing.begin(playerIn, false)) {
+			playerIn.startUsingItem(handIn);
+			return InteractionResultHolder.consume(stack);
+		}
 		if (!worldIn.isClientSide && isPlantingStaff(playerIn)) return InteractionResultHolder.fail(stack);
 		playerIn.startUsingItem(handIn);
 		if (!worldIn.isClientSide) clearUtilityBloodHandled(playerIn);
@@ -277,15 +305,6 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 		if (!(player.level() instanceof net.minecraft.server.level.ServerLevel level)) return false;
 		var rite = com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData.get(level).getRite(player.getUUID());
 		return rite != null && rite.isStaffPlanting();
-	}
-
-	/** A slack frayed thread in reach is hooked home instead of opening a blood channel; the server weaves it. */
-	private static boolean hookLookedAtThread(Level level, Player player, InteractionHand hand) {
-		var thread = com.vincenthuto.hemomancy.common.entity.weave.FrayedThreadEntity.lookedAtSlackThread(player);
-		if (thread == null) return false;
-		if (level instanceof net.minecraft.server.level.ServerLevel) thread.tryHook(player);
-		player.swing(hand);
-		return true;
 	}
 
 	private static boolean tryAbsorbFromLookedAtBlockWithStaff(Level level, Player player,
@@ -391,6 +410,7 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 		return stack.getItem() instanceof LivingStaffItem
 				&& living instanceof Player player
 				&& living.isUsingItem()
+				&& !com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramTracing.isTracing(player)
 				&& isSelectedStaffUtility(player, manipName);
 	}
 

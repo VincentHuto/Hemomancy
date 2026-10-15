@@ -1,8 +1,10 @@
 package com.vincenthuto.hemomancy.compat.jei;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.FungalScarCultivationRecipe;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
@@ -10,6 +12,7 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -17,126 +20,120 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.Locale;
 
 /**
- * JEI recipe category for the Mycelial Crucible — two-phase fungal scar cultivation.
- *
- * <p>Displays the configured seed as input, the immature culture as
- * intermediate, and the final scar as output. A small progress arc and tendency label
- * communicate the alignment requirement.
+ * JEI category for the Mycelial Crucible's two-phase fungal scar cultivation: blood grows the seed into an
+ * immature culture, then aligned enzymes mature it into the scar. Everything is tinted by the recipe's tendency.
  */
 public class MycelialCrucibleRecipeCategory implements IRecipeCategory<FungalScarCultivationRecipe> {
 
     public static final RecipeType<FungalScarCultivationRecipe> JEI_TYPE =
             RecipeType.create("hemomancy", "mycelial_crucible", FungalScarCultivationRecipe.class);
 
-    private static final int BG_W = 170;
-    private static final int BG_H = 90;
-
-    // Input slot: configured seed ingredient
-    private static final int SEED_X = 20;
-    private static final int SEED_Y = 37;
-
-    // Intermediate: immature scar
-    private static final int IMMATURE_X = 76;
-    private static final int IMMATURE_Y = 37;
-
-    // Output: mature scar
-    private static final int OUTPUT_X = 134;
-    private static final int OUTPUT_Y = 37;
-
-    private static final int BG_COLOR      = 0xFF070A04;
-    private static final int BORDER_COLOR  = 0xFF1A2C0A;
-    private static final int SLOT_BG       = 0xFF101807;
-    private static final int SLOT_BORDER_D = 0xFF090E03;
-    private static final int SLOT_BORDER_L = 0xFF223A0C;
-    private static final int LABEL_COLOR   = 0xFF66CC44;
+    private static final int W = 176;
+    private static final int H = 102;
+    private static final int FOOTER_Y = 86;
+    private static final int SLOT_Y = 34;
+    private static final int SEED_X = 12;
+    private static final int IMMATURE_X = 78;
+    private static final int OUTPUT_X = 146;
+    private static final int ENZYME_X = 108;
+    private static final int ENZYME_Y = 58;
 
     private final IDrawable icon;
-    private float animTime = 0f;
 
     public MycelialCrucibleRecipeCategory(IGuiHelper helpers) {
-        this.icon       = helpers.createDrawableItemStack(new ItemStack(BlockInit.mycelial_crucible.get()));
+        this.icon = helpers.createDrawableItemStack(new ItemStack(BlockInit.mycelial_crucible.get()));
     }
 
-    @Override @Nonnull
-    public RecipeType<FungalScarCultivationRecipe> getRecipeType() { return JEI_TYPE; }
-
-    @Override @Nonnull
-    public Component getTitle() { return Component.literal("Mycelial Crucible"); }
-
-    @Override
-    public int getWidth() { return BG_W; }
+    @Override @Nonnull public RecipeType<FungalScarCultivationRecipe> getRecipeType() { return JEI_TYPE; }
+    @Override @Nonnull public Component getTitle() { return Component.translatable("block.hemomancy.mycelial_crucible"); }
+    @Override public int getWidth() { return W; }
+    @Override public int getHeight() { return H; }
+    @Override @Nonnull public IDrawable getIcon() { return icon; }
 
     @Override
-    public int getHeight() { return BG_H; }
-
-    @Override @Nonnull
-    public IDrawable getIcon() { return icon; }
-
-    @Override
-    public void setRecipe(@Nonnull IRecipeLayoutBuilder builder,
-            @Nonnull FungalScarCultivationRecipe recipe,
+    public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, @Nonnull FungalScarCultivationRecipe recipe,
             @Nonnull IFocusGroup focuses) {
-        // Seed: the item consumed to begin Phase 1
-        builder.addSlot(RecipeIngredientRole.INPUT, SEED_X + 1, SEED_Y + 1)
+        builder.addSlot(RecipeIngredientRole.INPUT, SEED_X, SLOT_Y)
                 .addItemStack(recipe.getSeedItemStack());
-
-        // Immature intermediate
-        builder.addSlot(RecipeIngredientRole.CATALYST, IMMATURE_X + 1, IMMATURE_Y + 1)
-                .addItemStack(recipe.getImmatureResult());
-
-        // Output: finished scar
-        builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_X + 1, OUTPUT_Y + 1)
+        builder.addSlot(RecipeIngredientRole.CATALYST, IMMATURE_X, SLOT_Y)
+                .addItemStack(recipe.getImmatureResult())
+                .addRichTooltipCallback((view, tip) -> tip.add(Component.translatable(
+                        "hemomancy.jei.crucible.immature.tip").withStyle(ChatFormatting.GRAY)));
+        int power = recipe.getMaturationThreshold();
+        builder.addSlot(RecipeIngredientRole.INPUT, ENZYME_X, ENZYME_Y)
+                .addItemStack(new ItemStack(EnumBloodTendency.getRepEnzyme(recipe.getTendency())))
+                .addRichTooltipCallback((view, tip) -> tip.add(Component.translatable(
+                        "hemomancy.jei.crucible.enzyme.tip", power).withStyle(ChatFormatting.GRAY)));
+        builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_X, SLOT_Y)
                 .addItemStack(recipe.getResultItemStack().copy());
+    }
+
+    private static List<JeiPanel.Stat> footer(FungalScarCultivationRecipe recipe) {
+        JeiPanel.Theme t = JeiPanel.FUNGAL;
+        return List.of(
+                JeiPanel.Stat.of(JeiPanel.Icon.BLOOD, Component.translatable("hemomancy.jei.stat.blood",
+                        (int) recipe.getBloodCostPhase1()), JeiPanel.BLOOD_RED,
+                        Component.translatable("hemomancy.jei.crucible.blood.tip")),
+                JeiPanel.Stat.of(JeiPanel.Icon.TIME, JeiPanel.secondsText(recipe.getPhase1Duration()), t.text(),
+                        Component.translatable("hemomancy.jei.crucible.time.tip")));
+    }
+
+    private static int tendColor(FungalScarCultivationRecipe recipe) {
+        return JeiPanel.brighten(recipe.getTendency().getColor().getColor());
     }
 
     @Override
     public void draw(@Nonnull FungalScarCultivationRecipe recipe,
             @Nonnull IRecipeSlotsView slots, @Nonnull GuiGraphics gfx, double mouseX, double mouseY) {
         Font font = Minecraft.getInstance().font;
-        animTime += 0.016f;
-        float time = animTime;
+        JeiPanel.Theme t = JeiPanel.FUNGAL;
+        float time = JeiPanel.time();
+        int tend = tendColor(recipe);
+        String tendName = recipe.getTendency().name().toLowerCase(Locale.ROOT);
 
-        // Background
-        gfx.fill(0, 0, BG_W, BG_H, BG_COLOR);
-        gfx.fill(0, 0, BG_W, 1, BORDER_COLOR);
-        gfx.fill(0, BG_H - 1, BG_W, BG_H, BORDER_COLOR);
-        gfx.fill(0, 0, 1, BG_H, BORDER_COLOR);
-        gfx.fill(BG_W - 1, 0, BG_W, BG_H, BORDER_COLOR);
+        JeiPanel.panel(gfx, t, W, H, FOOTER_Y);
+        JeiPanel.diamond(gfx, 9, 8, 3, JeiPanel.darken(tend, 0.5f));
+        JeiPanel.diamond(gfx, 9, 8, 1, tend);
+        JeiPanel.title(gfx, font, t, Component.translatable("hemomancy.jei.crucible.alignment",
+                Character.toUpperCase(tendName.charAt(0)) + tendName.substring(1)), 16, 4, W - 22, W);
 
-        // Slot decorations
-        drawSlot(gfx, SEED_X, SEED_Y);
-        drawSlot(gfx, IMMATURE_X, IMMATURE_Y);
-        drawSlot(gfx, OUTPUT_X, OUTPUT_Y);
+        JeiPanel.label(gfx, font, Component.translatable("hemomancy.jei.crucible.seed"), SEED_X + 8, SLOT_Y - 11, t.muted());
+        JeiPanel.slot(gfx, t, SEED_X, SLOT_Y);
 
-        // Arrow: seed → immature
-        JeiProgressArrow.draw(gfx, SEED_X + 22, SEED_Y + 7, IMMATURE_X - 5, time,
-                0x553A5010, 0x66526E18, 120, 185, 32);
+        // Phase I: blood grows the culture
+        JeiProgressArrow.draw(gfx, SEED_X + 22, SLOT_Y + 7, IMMATURE_X - 8, time, t);
+        JeiPanel.label(gfx, font, Component.translatable("hemomancy.jei.crucible.phase1"), (SEED_X + IMMATURE_X) / 2 + 8,
+                SLOT_Y + 13, t.muted());
 
-        // Arrow: immature → output (with enzymes label)
-        JeiProgressArrow.draw(gfx, IMMATURE_X + 22, IMMATURE_Y + 7, OUTPUT_X - 5, time + 0.45f,
-                0x553A5010, 0x66526E18, 120, 185, 32);
+        JeiPanel.glow(gfx, IMMATURE_X + 8, SLOT_Y + 8, 18, 18, tend, 0.6f + 0.4f * JeiPanel.pulse(time, 1.7f));
+        JeiPanel.label(gfx, font, Component.translatable("hemomancy.jei.crucible.culture"), IMMATURE_X + 8, SLOT_Y - 11, t.muted());
+        JeiPanel.tintedSlot(gfx, t, IMMATURE_X, SLOT_Y, JeiPanel.darken(tend, 0.8f));
 
-        // Phase labels
+        // Phase II: aligned enzymes mature it, fed up from the enzyme socket
+        JeiProgressArrow.draw(gfx, IMMATURE_X + 22, SLOT_Y + 7, OUTPUT_X - 8, time + 0.45f, t);
+        JeiPanel.label(gfx, font, Component.translatable("hemomancy.jei.crucible.phase2"), (IMMATURE_X + OUTPUT_X) / 2 + 8,
+                SLOT_Y - 6, t.muted());
+        int feedX = ENZYME_X + 8;
+        gfx.fill(feedX, SLOT_Y + 11, feedX + 1, ENZYME_Y - 1, JeiPanel.darken(tend, 0.5f));
+        float p = (time * 0.8f) % 1f;
+        int my = Math.round(ENZYME_Y - 2 - p * (ENZYME_Y - SLOT_Y - 13));
+        gfx.fill(feedX - 1, my, feedX + 2, my + 2, JeiPanel.withAlpha(tend, (int) (240 * (1f - p * 0.6f))));
+        JeiPanel.tintedSlot(gfx, t, ENZYME_X, ENZYME_Y, tend);
+        JeiPanel.labelLeft(gfx, font, Component.translatable("hemomancy.jei.crucible.power", recipe.getMaturationThreshold()),
+                ENZYME_X + 21, ENZYME_Y + 5, tend);
 
-        gfx.drawString(font, "Phase 1", SEED_X, SEED_Y - 10, LABEL_COLOR, false);
-        gfx.drawString(font, "Phase 2", IMMATURE_X, IMMATURE_Y - 10, LABEL_COLOR, false);
+        JeiPanel.label(gfx, font, Component.translatable("hemomancy.jei.crucible.scar"), OUTPUT_X + 8, SLOT_Y - 13, t.muted());
+        JeiPanel.resultSlot(gfx, t, OUTPUT_X, SLOT_Y, tend, time);
 
-        // Tendency label
-        String tend = "Alignment: " + recipe.getTendency().name();
-        gfx.drawString(font, tend, BG_W / 2 - font.width(tend) / 2, 2, LABEL_COLOR, false);
-
-        // Blood cost label
-        String blood = "Blood: " + (int) recipe.getBloodCostPhase1() + " + " + recipe.getMaturationThreshold() + " enzyme pts";
-        gfx.drawString(font, blood, BG_W / 2 - font.width(blood) / 2, BG_H - 12, 0xFF5A6030, false);
+        JeiPanel.footer(gfx, font, footer(recipe), W, FOOTER_Y);
     }
 
-    private void drawSlot(GuiGraphics gfx, int x, int y) {
-        gfx.fill(x - 1, y - 1, x + 17, y + 17, SLOT_BORDER_D);
-        gfx.fill(x, y, x + 16, y + 16, SLOT_BG);
-        gfx.fill(x + 16, y, x + 17, y + 17, SLOT_BORDER_L);
-        gfx.fill(x, y + 16, x + 17, y + 17, SLOT_BORDER_L);
+    @Override
+    public void getTooltip(ITooltipBuilder tooltip, FungalScarCultivationRecipe recipe, IRecipeSlotsView slots, double mouseX, double mouseY) {
+        JeiPanel.footerTooltip(tooltip, Minecraft.getInstance().font, footer(recipe), W, FOOTER_Y, H, mouseX, mouseY);
     }
-
 }

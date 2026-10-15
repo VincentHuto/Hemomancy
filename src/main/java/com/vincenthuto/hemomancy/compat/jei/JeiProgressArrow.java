@@ -7,6 +7,13 @@ final class JeiProgressArrow {
 	private JeiProgressArrow() {
 	}
 
+	/** Themed arrow: the track and resting head come from the panel's ring colour, the travelling glint from its arrow colour. */
+	static void draw(GuiGraphics gfx, int startX, int y, int tipX, float time, JeiPanel.Theme theme) {
+		int lit = theme.arrowLit();
+		draw(gfx, startX, y, tipX, time, JeiPanel.withAlpha(theme.ring(), 0xCC), JeiPanel.withAlpha(theme.slotLight(), 0xDD),
+				Math.max(0, ((lit >> 16) & 0xFF) - 65), Math.max(0, ((lit >> 8) & 0xFF) - 50), Math.max(0, (lit & 0xFF) - 66));
+	}
+
 	static void draw(GuiGraphics gfx, int startX, int y, int tipX, float time,
 			int trackColor, int dimHeadColor, int redBase, int greenBase, int blueBase) {
 		int shaftEnd = tipX - 5;

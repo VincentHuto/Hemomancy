@@ -3703,8 +3703,8 @@ public final class ClinicalBloodProgressionGameTests {
             h.assertTrue(blood.getBloodVolume() == 50 && loom.getRitualBloodCharged() == 50,
                     "Continued Projection must preserve the single payment");
             loom.provideTendencyFeedback(p);
-            h.assertTrue(feedback.size() == 1 && feedback.getFirst().getString().contains("Survive the frayed threads or strike them with a Living Staff"),
-                    "Explicit empty-hand feedback must still explain strand handling");
+            h.assertTrue(feedback.size() == 1 && feedback.getFirst().getString().contains("rest your gaze on a fragment to hear its memory"),
+                    "Explicit empty-hand feedback must still explain threading the engram");
 
             feedback.clear();
             var saved = loom.saveWithoutMetadata(h.getLevel().registryAccess());

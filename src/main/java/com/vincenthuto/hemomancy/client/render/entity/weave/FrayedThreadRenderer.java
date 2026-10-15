@@ -24,8 +24,9 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 /**
- * A frayed thread: a hostile knot of its tendency trailing fibres, tethered back to the loom's echo. A windup
- * swells it and flushes it hot; a spent thread shrinks and dims; Tenebris threads nearly vanish while faded.
+ * An intrusion's bite: a failed Harbinger's memory as a knot of its tendency trailing fibres, tethered back to the
+ * loom's echo it tore from. Its windup swells it and flushes it hot; once it has struck it comes apart, widening and
+ * fading as it rises; Tenebris ones nearly vanish while faded.
  */
 public class FrayedThreadRenderer extends EntityRenderer<FrayedThreadEntity> {
 	public FrayedThreadRenderer(EntityRendererProvider.Context context) {
@@ -50,10 +51,12 @@ public class FrayedThreadRenderer extends EntityRenderer<FrayedThreadEntity> {
 		float time = thread.tickCount + partialTicks;
 		float seed = (thread.getId() * 0.618f) % 1f;
 		float[] colour = ThreadKnotGeometry.vivid(thread.tendency().getColor());
-		float alpha = thread.isFaded() ? 0.15f : thread.isSlack() ? 0.45f : 1f;
+		float unravel = thread.unravelling() <= 0 ? 0f
+				: Mth.clamp((thread.unravelling() + partialTicks) / FrayedThreadEntity.UNRAVEL_TICKS, 0f, 1f);
+		float alpha = (thread.isFaded() ? 0.15f : 1f) * (1f - unravel);
 		float scale;
-		if (thread.isSlack()) {
-			scale = 0.75f;
+		if (unravel > 0) {
+			scale = 1.3f + 1.1f * unravel;
 		} else if (thread.windup() > 0) {
 			float progress = 1f - thread.windup() / (float) SomaticWeaveRules.WINDUP_TICKS;
 			scale = 1.3f + 0.6f * progress + 0.15f * Mth.sin(time * 1.2f);

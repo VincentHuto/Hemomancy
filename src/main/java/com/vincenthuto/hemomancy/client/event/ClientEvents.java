@@ -645,6 +645,7 @@ public class ClientEvents {
 		com.vincenthuto.hemomancy.client.render.world.floor.FloorRiteResponse.clear();
 		com.vincenthuto.hemomancy.client.render.world.rite.CardinalRiteOfferingMemory.clear();
 		ChamberOfWillClientData.clear();
+		com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.engram.EngramClientState.clearAll();
 		FungalWhisperVignetteOverlay.clear();
         CardinalRiteFogRenderer.clear();
 		VesperFightClientData.clear();
@@ -678,6 +679,7 @@ public class ClientEvents {
 		com.vincenthuto.hemomancy.client.render.world.rite.CardinalRiteOfferingMemory.clear();
 		CardinalRiteFogRenderer.clear();
 		ChamberOfWillClientData.clear();
+		com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.engram.EngramClientState.clearAll();
 		FungalWhisperVignetteOverlay.clear();
 	}
 

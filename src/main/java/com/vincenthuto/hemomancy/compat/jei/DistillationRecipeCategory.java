@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
@@ -11,180 +12,54 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
- * JEI recipe category for the Ghastly Alembic — fully programmatic rendering.
+ * JEI category for the Ghastly Alembic and the Pallid Retort. Reads left to right: the charge and its catalyst,
+ * the still over its fire with a falling drip, then the distillate and the vessel it is drawn into. The footer
+ * carries blood or white humor, experience and time.
  */
 public class DistillationRecipeCategory implements IRecipeCategory<DistillationRecipe> {
 
-	private static final int BG_W = 150;
-	private static final int BG_H = 110;
+	private static final int W = 176;
+	private static final int H = 86;
+	private static final int FOOTER_Y = 70;
 
-	private static final int BORDER_OUTER = 0xFF330808;
-	private static final int BORDER_INNER = 0xFF220606;
-	private static final int SLOT_BG_GHASTLY = 0xFF1A0808;
-	private static final int SLOT_BORDER_DARK_GHASTLY = 0xFF0D0303;
-	private static final int SLOT_BORDER_LIGHT_GHASTLY = 0xFF3A1212;
-	private static final int SLOT_BG_PALLID = 0xFF101418;
-	private static final int SLOT_BORDER_DARK_PALLID = 0xFF0A0F12;
-	private static final int SLOT_BORDER_LIGHT_PALLID = 0xFF3A454C;
+	private static final int INPUT_X = 12;
+	private static final int CATALYST_X = 42;
+	private static final int SLOT_Y = 24;
+	private static final int HEAT_X = 80;
+	private static final int HEAT_Y = 44;
+	private static final int OUTPUT_X = 132;
+	private static final int VESSEL_X = 156;
 
-	private final IDrawable background;
 	private final IDrawable icon;
 	private final boolean pallid;
 
 	public DistillationRecipeCategory(IGuiHelper guiHelper, boolean pallid) {
 		this.pallid = pallid;
-		background = guiHelper.createBlankDrawable(BG_W, BG_H);
 		icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK,
 				new ItemStack(pallid ? BlockInit.pallid_retort.get() : BlockInit.ghastly_alembic.get()));
 	}
-	private float animTime = 0f;
 
-	@Override
-	public void draw(DistillationRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics gfx, double mouseX,
-			double mouseY) {
-
-		animTime += 0.016f; // ~60 FPS approximation
-
-		float time = animTime;
-		// ── Dark background ──
-		gfx.fill(0, 0, BG_W, BG_H, pallid ? 0xFF060A1E : 0xFF0A0204);
-		// Subtle radial glow
-		int cx = BG_W / 2;
-		int cy = BG_H / 2;
-		for (int ring = 40; ring > 0; ring -= 4) {
-			float t = ring / 40f;
-			int alpha = (int) (20 * (1f - t));
-			int red = (int) ((pallid ? 20 : 30) * (1f - t));
-			int green = (int) ((pallid ? 24 : 0) * (1f - t));
-			int blue = (int) ((pallid ? 32 : 0) * (1f - t));
-			gfx.fill(cx - ring, cy - ring, cx + ring, cy + ring, (alpha << 24) | (red << 16) | (green << 8) | blue);
-		}
-
-		// ── Border ──
-		gfx.fill(0, 0, BG_W, 1, BORDER_OUTER);
-		gfx.fill(0, BG_H - 1, BG_W, BG_H, BORDER_OUTER);
-		gfx.fill(0, 0, 1, BG_H, BORDER_OUTER);
-		gfx.fill(BG_W - 1, 0, BG_W, BG_H, BORDER_OUTER);
-
-		// ── Slot backgrounds ──
-		drawSlot(gfx, 20, 24);   // Input
-		drawSlot(gfx, 110, 24);  // Output (reddish tint)
-		gfx.fill(110, 24, 126, 40, pallid ? 0x20DDEEFF : 0x20FF4444);
-
-		// ── Catalyst slot (top-left) — always rendered ──
-		drawSlot(gfx, 1, 1);
-		{
-			Font font = Minecraft.getInstance().font;
-			gfx.drawString(font, Component.literal("Catalyst"), 20, 3, pallid ? 0xFF7B8DAA : 0xFF886644, false);
-		}
-		if (recipe.requiresVesselInput()) {
-			drawSlot(gfx, 110, 50);
-		}
-
-		// ── Fire indicator (campfire catalyst) ──
-		drawSlot(gfx, 20, 50);   // Campfire hint slot
-		// Animated flame above campfire slot
-		int flameX = 20;
-		int flameY = 44;
-		for (int row = 0; row < 6; row++) {
-			float rowT = (float) row / 6;
-			float flicker = 0.6f + 0.4f * Mth.sin(time * 7f + row * 0.6f);
-			for (int col = 3; col < 13; col++) {
-				float center = 8f;
-				float dist = Math.abs(col - center) / center;
-				float taper = 1f - dist * (1f - rowT * 0.5f);
-				if (taper < 0.15f) continue;
-				float a = rowT * taper * flicker;
-				int r = (int) ((pallid ? 190 : 255) * a);
-				int g = (int) (Mth.clamp((pallid ? 210 : 160) * rowT * a, 0, 255));
-				int b = (int) (Mth.clamp((pallid ? 255 : 16) * rowT * a, 0, 255));
-				int px = flameX + col;
-				int py = flameY - row;
-				int alpha = (int) (180 * a);
-				if (alpha < 5) continue;
-				gfx.fill(px, py, px + 1, py + 1, (alpha << 24) | (r << 16) | (g << 8) | b);
-			}
-		}
-
-		// ── Progress arrow ──
-		JeiProgressArrow.draw(gfx, 47, 31, 104, time,
-				pallid ? 0x55304A60 : 0x553A1212,
-				pallid ? 0x665F8297 : 0x665A1816,
-				pallid ? 60 : 170,
-				pallid ? 140 : 42,
-				pallid ? 220 : 35);
-
-		// ── Text ──
-		drawExperience(recipe, gfx, BG_H - 20);
-		drawCookTime(recipe, gfx, BG_H - 10);
-		if (recipe.getBloodCost() > 0) gfx.drawString(Minecraft.getInstance().font,
-				Component.translatable("container.hemomancy.alembic.advanced.cost", recipe.getBloodCost()),
-				2, BG_H - 10, 0xFFCC7777, false);
-
-		// "Requires fire below" hint
-		Font font = Minecraft.getInstance().font;
-		MutableComponent hint = Component.translatable("gui.hemomancy.ghastly_alembic.requires_fire");
-		gfx.drawString(font, hint, 42, 74, pallid ? 0xFF8AA4C4 : 0xFF884400, false);
+	private JeiPanel.Theme theme() {
+		return pallid ? JeiPanel.STILL : JeiPanel.BLOOD;
 	}
 
-	private void drawSlot(GuiGraphics gfx, int sx, int sy) {
-		int slotBorderDark = pallid ? SLOT_BORDER_DARK_PALLID : SLOT_BORDER_DARK_GHASTLY;
-		int slotBg = pallid ? SLOT_BG_PALLID : SLOT_BG_GHASTLY;
-		int slotBorderLight = pallid ? SLOT_BORDER_LIGHT_PALLID : SLOT_BORDER_LIGHT_GHASTLY;
-		gfx.fill(sx - 1, sy - 1, sx + 17, sy + 17, slotBorderDark);
-		gfx.fill(sx, sy, sx + 16, sy + 16, slotBg);
-		gfx.fill(sx + 16, sy, sx + 17, sy + 17, slotBorderLight);
-		gfx.fill(sx, sy + 16, sx + 17, sy + 17, slotBorderLight);
-	}
-
-	protected void drawCookTime(DistillationRecipe recipe, GuiGraphics graphics, int y) {
-		int cookTime = recipe.getCookingTime();
-		if (cookTime > 0) {
-			int cookTimeSeconds = cookTime / 20;
-			MutableComponent timeString = Component.translatable("gui.jei.category.smelting.time.seconds",
-					cookTimeSeconds);
-			Font fontRenderer = Minecraft.getInstance().font;
-			int stringWidth = fontRenderer.width(timeString);
-			graphics.drawString(fontRenderer, timeString, BG_W - stringWidth - 2, y, 0xFF808080, false);
-		}
-	}
-
-	protected void drawExperience(DistillationRecipe recipe, GuiGraphics graphics, int y) {
-		float experience = recipe.getExperience();
-		if (experience > 0) {
-			MutableComponent experienceString = Component.translatable("gui.jei.category.smelting.experience",
-					experience);
-			Font fontRenderer = Minecraft.getInstance().font;
-			int stringWidth = fontRenderer.width(experienceString);
-			graphics.drawString(fontRenderer, experienceString, BG_W - stringWidth - 2, y, 0xFF808080, false);
-		}
-	}
-
-	@Nonnull
-	@Override
-	@SuppressWarnings("removal")
-	public IDrawable getBackground() {
-		return background;
-	}
-
-	@Nonnull
-	@Override
-	public IDrawable getIcon() {
-		return icon;
-	}
+	@Override public int getWidth() { return W; }
+	@Override public int getHeight() { return H; }
+	@Nonnull @Override public IDrawable getIcon() { return icon; }
 
 	@Override
 	public RecipeType<DistillationRecipe> getRecipeType() {
@@ -199,29 +74,106 @@ public class DistillationRecipeCategory implements IRecipeCategory<DistillationR
 
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, DistillationRecipe recipe, IFocusGroup focuses) {
-		// Input ingredient slot
-		builder.addSlot(RecipeIngredientRole.INPUT, 21, 25)
+		builder.addSlot(RecipeIngredientRole.INPUT, INPUT_X, SLOT_Y)
 				.addIngredients(VanillaTypes.ITEM_STACK, Arrays.asList(recipe.getIngredient().getItems()));
 
-		// Catalyst slot (top-left) — always present; populated only when recipe needs one
 		if (recipe.requiresCatalyst()) {
-			builder.addSlot(recipe.consumesCatalyst() ? RecipeIngredientRole.INPUT : RecipeIngredientRole.CATALYST, 2, 2)
-					.addIngredients(VanillaTypes.ITEM_STACK, Arrays.asList(recipe.getCatalyst().getItems()));
-		} else {
-			builder.addSlot(RecipeIngredientRole.CATALYST, 2, 2);
-		}
-		if (recipe.requiresVesselInput()) {
-			builder.addSlot(RecipeIngredientRole.INPUT, 111, 51)
-					.addIngredients(VanillaTypes.ITEM_STACK, Arrays.asList(recipe.getVesselInput().getItems()));
+			boolean consumed = recipe.consumesCatalyst();
+			builder.addSlot(consumed ? RecipeIngredientRole.INPUT : RecipeIngredientRole.CATALYST, CATALYST_X, SLOT_Y)
+					.addIngredients(VanillaTypes.ITEM_STACK, Arrays.asList(recipe.getCatalyst().getItems()))
+					.addRichTooltipCallback((view, tip) -> tip.add(Component.translatable(consumed
+							? "hemomancy.jei.distillation.catalyst.consumed" : "hemomancy.jei.distillation.catalyst.kept")
+							.withStyle(ChatFormatting.GRAY)));
 		}
 
-		var heatSlot = builder.addSlot(RecipeIngredientRole.CATALYST, 21, 51)
-				.addIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Items.CAMPFIRE));
-		if (!pallid) heatSlot.addTooltipCallback((slot, tooltip) ->
-				tooltip.add(Component.translatable("hemomancy.jei.alembic.athanor_hint")));
+		var heat = builder.addSlot(RecipeIngredientRole.CATALYST, HEAT_X, HEAT_Y)
+				.addIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Items.CAMPFIRE))
+				.addRichTooltipCallback((view, tip) -> tip.add(Component.translatable(
+						"gui.hemomancy.ghastly_alembic.requires_fire").withStyle(ChatFormatting.GRAY)));
+		if (!pallid) heat.addRichTooltipCallback((view, tip) -> tip.add(Component.translatable(
+				"hemomancy.jei.alembic.athanor_hint").withStyle(ChatFormatting.DARK_RED)));
 
-		// Output slot
-		builder.addSlot(RecipeIngredientRole.OUTPUT, 111, 25)
+		builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_X, SLOT_Y)
 				.addIngredient(VanillaTypes.ITEM_STACK, recipe.getResultItem(null));
+
+		if (recipe.requiresVesselInput()) {
+			builder.addSlot(RecipeIngredientRole.INPUT, VESSEL_X, SLOT_Y)
+					.addIngredients(VanillaTypes.ITEM_STACK, Arrays.asList(recipe.getVesselInput().getItems()))
+					.addRichTooltipCallback((view, tip) -> tip.add(Component.translatable(
+							"hemomancy.jei.distillation.vessel.tip").withStyle(ChatFormatting.GRAY)));
+		}
+	}
+
+	private List<JeiPanel.Stat> footer(DistillationRecipe recipe) {
+		JeiPanel.Theme t = theme();
+		List<JeiPanel.Stat> stats = new ArrayList<>();
+		if (recipe.getBloodCost() > 0) {
+			stats.add(JeiPanel.Stat.of(JeiPanel.Icon.BLOOD,
+					Component.translatable("hemomancy.jei.stat.blood", recipe.getBloodCost()), JeiPanel.BLOOD_RED,
+					Component.translatable("hemomancy.jei.distillation.blood.tip")));
+		}
+		if (pallid) {
+			int humor = recipe.getWhiteHumorCost();
+			stats.add(humor > 0
+					? JeiPanel.Stat.of(JeiPanel.Icon.HUMOR, Component.translatable("hemomancy.jei.stat.humor", humor),
+							t.accent(), Component.translatable("hemomancy.jei.distillation.humor.cost.tip"))
+					: JeiPanel.Stat.of(JeiPanel.Icon.HUMOR, Component.translatable("hemomancy.jei.distillation.humor.yield"),
+							t.accent(), Component.translatable("hemomancy.jei.distillation.humor.yield.tip")));
+		}
+		if (recipe.getExperience() > 0) {
+			stats.add(JeiPanel.Stat.of(JeiPanel.Icon.XP,
+					Component.translatable("hemomancy.jei.stat.xp", formatXp(recipe.getExperience())), 0xFFB8E070));
+		}
+		if (recipe.getCookingTime() > 0) {
+			stats.add(JeiPanel.Stat.of(JeiPanel.Icon.TIME, JeiPanel.secondsText(recipe.getCookingTime()), t.text(),
+					pallid ? null : Component.translatable("hemomancy.jei.alembic.athanor_hint")));
+		}
+		return stats;
+	}
+
+	private static String formatXp(float xp) {
+		return xp == Math.floor(xp) ? String.valueOf((int) xp) : String.format("%.1f", xp);
+	}
+
+	@Override
+	public void draw(DistillationRecipe recipe, IRecipeSlotsView slots, GuiGraphics gfx, double mouseX, double mouseY) {
+		Font font = Minecraft.getInstance().font;
+		JeiPanel.Theme t = theme();
+		float time = JeiPanel.time();
+
+		JeiPanel.panel(gfx, t, W, H, FOOTER_Y);
+
+		// Charge + catalyst
+		JeiPanel.label(gfx, font, Component.translatable("hemomancy.jei.distillation.charge"), INPUT_X + 8, SLOT_Y - 11, t.muted());
+		JeiPanel.slot(gfx, t, INPUT_X, SLOT_Y);
+		if (recipe.requiresCatalyst()) {
+			JeiPanel.plus(gfx, (INPUT_X + 16 + CATALYST_X) / 2, SLOT_Y + 8, t.text());
+			JeiPanel.label(gfx, font, Component.translatable("hemomancy.jei.distillation.catalyst"), CATALYST_X + 8, SLOT_Y - 11, t.muted());
+			JeiPanel.slot(gfx, t, CATALYST_X, SLOT_Y);
+		}
+
+		// The still: the arrow runs over its fire
+		int arrowStart = (recipe.requiresCatalyst() ? CATALYST_X : INPUT_X) + 22;
+		JeiProgressArrow.draw(gfx, arrowStart, SLOT_Y + 7, OUTPUT_X - 8, time, t);
+		int heat = pallid ? 0xFF8AC4E4 : 0xFFE8743A;
+		JeiPanel.glow(gfx, HEAT_X + 8, HEAT_Y + 4, 18, 10, heat, JeiPanel.pulse(time, 3f));
+		JeiPanel.shimmer(gfx, HEAT_X + 8, HEAT_Y - 2, 9, time, heat);
+		JeiPanel.slot(gfx, t, HEAT_X, HEAT_Y);
+		JeiPanel.label(gfx, font, Component.translatable("hemomancy.jei.distillation.heat"), HEAT_X + 8, HEAT_Y + 19, t.muted());
+
+		// Distillate + vessel
+		JeiPanel.label(gfx, font, Component.translatable("hemomancy.jei.distillation.distillate"), OUTPUT_X + 8, SLOT_Y - 13, t.muted());
+		JeiPanel.resultSlot(gfx, t, OUTPUT_X, SLOT_Y, t.accent(), time);
+		if (recipe.requiresVesselInput()) {
+			JeiPanel.label(gfx, font, Component.translatable("hemomancy.jei.distillation.vessel"), VESSEL_X + 8, SLOT_Y + 23, t.muted());
+			JeiPanel.slot(gfx, t, VESSEL_X, SLOT_Y);
+		}
+
+		JeiPanel.footer(gfx, font, footer(recipe), W, FOOTER_Y);
+	}
+
+	@Override
+	public void getTooltip(ITooltipBuilder tooltip, DistillationRecipe recipe, IRecipeSlotsView slots, double mouseX, double mouseY) {
+		JeiPanel.footerTooltip(tooltip, Minecraft.getInstance().font, footer(recipe), W, FOOTER_Y, H, mouseX, mouseY);
 	}
 }

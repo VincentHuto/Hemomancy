@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -35,10 +36,13 @@ public final class CraftingMapRecipe {
 	private final boolean unstained;
 	private final int requiredDegree;
 	private final boolean structure;
+	private final Component name;
+	private final Component description;
+	private final double riteCost;
 
 	private CraftingMapRecipe(ResourceLocation id, ItemStack result, MultiblockPattern pattern, double bloodCost,
 			ItemStack catalyst, Block hitBlock, List<Offering> offerings, ResourceLocation floorId, boolean unstained,
-			int requiredDegree, boolean structure) {
+			int requiredDegree, boolean structure, Component name, Component description, double riteCost) {
 		this.id = id;
 		this.result = result;
 		this.pattern = pattern;
@@ -50,12 +54,15 @@ public final class CraftingMapRecipe {
 		this.unstained = unstained;
 		this.requiredDegree = requiredDegree;
 		this.structure = structure;
+		this.name = name;
+		this.description = description;
+		this.riteCost = riteCost;
 	}
 
 	public static CraftingMapRecipe of(BloodStructureRecipe recipe) {
 		return new CraftingMapRecipe(recipe.getId(), recipe.getResult(), recipe.getPattern(), recipe.getBloodCost(),
 				recipe.getHeldItem(), recipe.getHitBlock(), List.of(), null, recipe.isUnstained(),
-				RecipeDegreeGates.getRequiredDegree(recipe), true);
+				RecipeDegreeGates.getRequiredDegree(recipe), true, recipe.getResult().getHoverName(), null, 0);
 	}
 
 	public static CraftingMapRecipe of(CardinalRiteRecipe craft) {
@@ -66,7 +73,8 @@ public final class CraftingMapRecipe {
 				media.length == 0 ? ItemStack.EMPTY : media[0], null,
 				craft.getBrazierSignature().stream()
 						.map(requirement -> new Offering(requirement.ingredient(), requirement.count())).toList(),
-				craft.getFloorId(), false, RecipeDegreeGates.getRequiredDegree(craft), craft.isWorkingCraft());
+				craft.getFloorId(), false, RecipeDegreeGates.getRequiredDegree(craft), craft.isWorkingCraft(),
+				craft.displayName(), craft.displayDescription(), craft.getBloodCost());
 	}
 
 	public ResourceLocation getId() {
@@ -121,6 +129,21 @@ public final class CraftingMapRecipe {
 	/** Whether there is a structure to build and feed; false for a making rite performed on its floor alone. */
 	public boolean hasStructure() {
 		return structure;
+	}
+
+	/** The rite's name, or the result's name for a floorless structure. */
+	public Component name() {
+		return name;
+	}
+
+	/** The rite's description, or null for a floorless structure. */
+	public Component description() {
+		return description;
+	}
+
+	/** Blood the rite itself draws on its floor, apart from what the subject is fed; zero for a floorless structure. */
+	public double riteCost() {
+		return riteCost;
 	}
 
 	public MnemonicBlueprintTarget blueprintTarget() {
