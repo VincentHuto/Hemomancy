@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.common.item.shared.MnemonicBlueprintItem;
-import com.vincenthuto.hemomancy.common.recipe.BloodStructureOffering;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
@@ -320,9 +319,6 @@ public class BloodStructureHintScreen extends Screen {
 				: "Build the structure shown on the left. "
 						+ "Equip Blood Projection, hold the required catalyst in your offhand, "
 						+ "then project into the activate block until the formation is filled.";
-		if (!structure.getOfferings().isEmpty()) {
-			instructions += " Place each listed offering in its own nearby Iron Brazier before completion.";
-		}
 		for (String line : ScreenDrawUtils.wrapText(font, instructions, panelW)) {
 			gfx.drawString(font, Component.literal(line)
 					.withStyle(s -> s.withColor(DESC_COLOR)), panelX, y, 0);
@@ -350,29 +346,6 @@ public class BloodStructureHintScreen extends Screen {
 		y += 4;
 
 		// ── Materials list ──
-		if (!structure.getOfferings().isEmpty()) {
-			gfx.drawString(font, Component.literal("Brazier Offerings:").withStyle(s -> s.withColor(LABEL_COLOR)),
-					panelX, y, 0);
-			y += lineH;
-			for (BloodStructureOffering offering : structure.getOfferings()) {
-				List<ItemStack> stacks = List.of(offering.ingredient().getItems());
-				if (stacks.isEmpty()) {
-					continue;
-				}
-				ItemStack display = stacks.get((int) (materialCycleIndex() % stacks.size()));
-				gfx.renderItem(display, panelX + 2, y);
-				String countPrefix = " x" + offering.count() + " braziers  ";
-				List<String> offeringLines = ScreenDrawUtils.wrapText(font,
-						countPrefix + display.getHoverName().getString(), panelW - 20);
-				for (int li = 0; li < offeringLines.size(); li++) {
-					gfx.drawString(font, Component.literal(offeringLines.get(li))
-							.withStyle(s -> s.withColor(VALUE_COLOR)), panelX + 20, y + 4 + li * lineH, 0);
-				}
-				y += Math.max(18, offeringLines.size() * lineH + 4);
-			}
-			y += 4;
-		}
-
 		if (structure.getPattern() != null) {
 			List<MultiblockPattern.MaterialCount> materials = structure.getPattern().getMaterialCounts(false);
 			if (!materials.isEmpty()) {
@@ -450,9 +423,6 @@ public class BloodStructureHintScreen extends Screen {
 				: "Build the structure shown on the left. "
 						+ "Equip Blood Projection, hold the required catalyst in your offhand, "
 						+ "then project into the activate block until the formation is filled.";
-		if (!structure.getOfferings().isEmpty()) {
-			instructions += " Place each listed offering in its own nearby Iron Brazier before completion.";
-		}
 		y += ScreenDrawUtils.wrapText(font, instructions, panelW).size() * lineH + 6;
 
 		// Result
@@ -464,22 +434,6 @@ public class BloodStructureHintScreen extends Screen {
 		}
 
 		y += 4;
-
-		if (!structure.getOfferings().isEmpty()) {
-			y += lineH;
-			for (BloodStructureOffering offering : structure.getOfferings()) {
-				List<ItemStack> stacks = List.of(offering.ingredient().getItems());
-				if (stacks.isEmpty()) {
-					continue;
-				}
-				ItemStack display = stacks.get((int) (materialCycleIndex() % stacks.size()));
-				String countPrefix = " x" + offering.count() + " braziers  ";
-				List<String> offeringLines = ScreenDrawUtils.wrapText(font,
-						countPrefix + display.getHoverName().getString(), panelW - 20);
-				y += Math.max(18, offeringLines.size() * lineH + 4);
-			}
-			y += 4;
-		}
 
 		// Materials
 		if (structure.getPattern() != null) {

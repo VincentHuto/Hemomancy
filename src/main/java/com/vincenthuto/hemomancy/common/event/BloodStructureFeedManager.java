@@ -45,7 +45,8 @@ public final class BloodStructureFeedManager {
 			double feedRate) {
 		var candidate = BloodStructureCraftingHelper.findProjectionCraftMatch(player, level, hitPos, offhandCatalyst);
 		if (candidate.isEmpty()) {
-			return false;
+			// A Working craft's frame is raised by its rite, not fed by hand; say how and take the projection.
+			return com.vincenthuto.hemomancy.common.rite.harbinger.WorkingCraftRites.hintAt(player, level, hitPos);
 		}
 
 		var match = candidate.get();
@@ -98,7 +99,7 @@ public final class BloodStructureFeedManager {
 
 		if (BloodStructureFeedRules.isComplete(progress.bloodFed, recipe.getBloodCost())) {
 			completeFeed(player, level, hitPos, offhandCatalyst, match.match(), blockPattern, recipe, positions,
-					match.offerings(), match.stakeFormation(), key);
+					match.stakeFormation(), key);
 		}
 		return true;
 	}
@@ -129,22 +130,18 @@ public final class BloodStructureFeedManager {
 
 	private static void completeFeed(ServerPlayer player, ServerLevel level, BlockPos hitPos, ItemStack offhandCatalyst,
 			BlockPattern.BlockPatternMatch match, BlockPattern blockPattern, BloodStructureRecipe recipe,
-			List<BlockPos> positions, List<BlockPos> offerings,
-			HematicStakeBlock.Formation stakeFormation,
+			List<BlockPos> positions, HematicStakeBlock.Formation stakeFormation,
 			FeedKey key) {
 		if (!player.getAbilities().instabuild) {
 			offhandCatalyst.shrink(1);
 		}
 
-		List<BloodStructureCraftingHelper.ConsumedOffering> consumedOfferings =
-				BloodStructureCraftingHelper.consumeMatchedOfferings(level, offerings);
 		AABB bounds = BloodStructureCraftingHelper.getMatchBounds(match, blockPattern);
 		BlockPos ringCenter = BlockPos.containing(bounds.getCenter().x, bounds.minY, bounds.getCenter().z);
 		float centerY = (float) bounds.getCenter().y;
 		float startRadius = (float) Math.max(bounds.getXsize(), bounds.getZsize()) / 2.0f + 2.0f;
 
 		sendFeedSync(level, positions, 1.0f, false, COMPLETION_VISIBLE_TICKS);
-		sendOfferingBurst(level, hitPos, consumedOfferings);
 		PacketDistributor.sendToAllPlayers(new PacketBloodCraftRing(ringCenter, startRadius,
 				centerY, CRAFT_ANIMATION_TICKS));
 
@@ -155,19 +152,6 @@ public final class BloodStructureFeedManager {
 				CRAFT_ANIMATION_TICKS, player, stakeFormation));
 		ACTIVE_FEEDS.remove(key);
 		COMPLETING_FEEDS.put(key, level.getGameTime() + COMPLETION_LOCK_TICKS);
-	}
-
-	private static void sendOfferingBurst(ServerLevel level, BlockPos center,
-			List<BloodStructureCraftingHelper.ConsumedOffering> consumedOfferings) {
-		if (consumedOfferings.isEmpty()) {
-			return;
-		}
-		List<PacketBloodStructureOfferingBurst.OfferingBurst> bursts = consumedOfferings.stream()
-				.map(offering -> new PacketBloodStructureOfferingBurst.OfferingBurst(offering.pos(), offering.stack()))
-				.toList();
-		PacketDistributor.sendToPlayersNear(level, null, center.getX() + 0.5D, center.getY() + 0.5D,
-				center.getZ() + 0.5D, FEED_SYNC_RANGE,
-				new PacketBloodStructureOfferingBurst(bursts, center, CRAFT_ANIMATION_TICKS));
 	}
 
 	private static void sendFeedSync(ServerLevel level, List<BlockPos> positions, float progress, boolean clear) {

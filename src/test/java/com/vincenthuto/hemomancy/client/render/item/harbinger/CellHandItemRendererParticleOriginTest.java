@@ -41,7 +41,9 @@ public final class CellHandItemRendererParticleOriginTest {
 		String cardinalRiteHandler = Files.readString(CARDINAL_RITE_HANDLER).replace("\r\n", "\n");
 
 		assertContains("projection particles configure an explicit source and target",
-				effects, "particle.setProjectionPath(origin, trace.getLocation()");
+				effects, "particle.setProjectionPath(origin, target,");
+		assertContains("projection particles target the struck surface, or a feeding craft's fill line",
+				effects, ": trace.getLocation();");
 		assertContains("projection particles use the shared gameplay reach",
 				effects, "SanguineProjectionTargeting.PROJECTION_REACH");
 		assertDoesNotContain("projection endpoints must not be lifted above the selected surface",

@@ -12,7 +12,7 @@ public final class DendriticDistributorSynapticLoadoutSourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String block = read("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/DendriticDistributorBlock.java");
-		String recipe = read("src/main/resources/data/hemomancy/recipe/blood_structure/dendritic_distributor.json");
+		String recipe = read("src/main/resources/data/hemomancy/recipe/cardinal_rite/working/dendritic_distributor.json");
 		String screen = read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/SynapticLoadoutScreen.java");
 		String clientSync = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/KnownManipulationClientPacket.java");
 		String action = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/SynapticLoadoutActionPacket.java");

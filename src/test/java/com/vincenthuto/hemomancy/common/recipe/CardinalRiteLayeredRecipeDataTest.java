@@ -43,13 +43,10 @@ final class CardinalRiteLayeredRecipeDataTest {
 	}
 
 	@Test
-	void everyFloorPlacesBrazierSocketsInTheAirAboveItsBlocks() throws IOException {
-		try (var paths = Files.list(FLOOR_ROOT)) {
-			for (Path path : paths.filter(p -> p.toString().endsWith(".json")).toList()) {
-				for (JsonElement socket : read(path).getAsJsonArray("brazier_sockets")) {
-					assertEquals(1, socket.getAsJsonArray().get(1).getAsInt(),
-							path + " brazier socket must be one block above the floor plane");
-				}
+	void everyGashCellIsOneBlockAboveTheFloorPlane() {
+		for (int half = 1; half <= 4; half++) {
+			for (var cell : com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteGashRules.cells(half)) {
+				assertEquals(1, cell.getY(), "a brazier stands on the floor, one block above its plane");
 			}
 		}
 	}
@@ -95,17 +92,25 @@ final class CardinalRiteLayeredRecipeDataTest {
 	@Test
 	void simultaneouslyAvailableHarbingerSelectorsAreNotIndistinguishable() throws IOException {
 		Map<String, java.util.List<JsonObject>> selectors = new HashMap<>();
-		try (var paths = Files.list(RITE_ROOT)) {
+		int workingCrafts = 0;
+		// Walk subfolders too: Working crafts live under cardinal_rite/working/.
+		try (var paths = Files.walk(RITE_ROOT)) {
 			for (Path path : paths.filter(p -> p.toString().endsWith(".json")).toList()) {
 				JsonObject recipe = read(path);
 				if (recipe.has("unstained") && recipe.get("unstained").getAsBoolean()) continue;
-				String selector = recipe.get("floor") + "|"
+				if (recipe.has("subject")) workingCrafts++;
+				// A larger floor of the same style also accepts a smaller rite, so rites collide by style.
+				String floor = recipe.get("floor").getAsString();
+				String selector = floor.substring(0, floor.lastIndexOf('_')) + "|"
 						+ recipe.getAsJsonArray("brazier_signature") + "|"
+						+ (recipe.has("medium") ? recipe.get("medium") : "no medium") + "|"
 						+ (recipe.has("required_structure")
-								? recipe.getAsJsonObject("required_structure").get("pattern") : "none");
+								? recipe.getAsJsonObject("required_structure").get("pattern") : "none") + "|"
+						+ (recipe.has("subject") ? recipe.getAsJsonObject("subject").get("pattern") : "no subject");
 				selectors.computeIfAbsent(selector, ignored -> new java.util.ArrayList<>()).add(recipe);
 			}
 		}
+		assertTrue(workingCrafts >= 20, "the selector check must reach the Working crafts, found " + workingCrafts);
 		for (java.util.List<JsonObject> duplicates : selectors.values()) {
 			if (duplicates.size() < 2) continue;
 			Set<Integer> degrees = new HashSet<>();

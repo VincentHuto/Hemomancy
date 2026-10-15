@@ -2,6 +2,7 @@
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 1400,
   "riteType": "lesser",
+  "purpose": "world",
   "required_degree": 5,
   "riteName": "Mnemonist Puppet Ordeal",
   "riteDescription": "Bind the defeated Mnemonist Puppet shape to an attuned Marionette Crossbar.",

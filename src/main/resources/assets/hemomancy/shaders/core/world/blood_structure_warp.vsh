@@ -24,6 +24,7 @@ out float vertexDistance;
 out vec4 vertexColor;
 out vec2 texCoord0;
 out float pulse;
+out float fillHeight;
 
 float hash1(float n) {
     return fract(sin(n) * 43758.5453123);
@@ -64,4 +65,6 @@ void main() {
     vertexColor = Color;
     texCoord0 = UV0;
     pulse = 0.55 + 0.45 * sin(HemoTime * 0.36 + BlockSeed * 17.0 + Progress * 3.14159);
+    // Camera-relative height before the wiggle, so a Working floor's fill line stays put on the faces.
+    fillHeight = Position.y;
 }

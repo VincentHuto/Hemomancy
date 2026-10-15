@@ -3,6 +3,7 @@
   "id": "hemomancy:cardinal_rite/monolithic_armature",
   "bloodCost": 0,
   "riteType": "greater",
+  "purpose": "making",
   "required_degree": 7,
   "rankup": false,
   "riteName": "Rite of the Monolithic Armature",

@@ -24,6 +24,14 @@ public record MnemonicBlueprintTarget(Type type, ResourceLocation recipeId) {
 	public MnemonicBlueprintTarget {
 		Objects.requireNonNull(type, "type");
 		Objects.requireNonNull(recipeId, "recipeId");
+		// Machines that left the floorless tier are Working crafts now; old blueprints follow them.
+		if (type == Type.BLOOD_STRUCTURE) {
+			var moved = com.vincenthuto.hemomancy.common.recipe.LegacyBloodStructureIds.remap(recipeId);
+			if (moved.isPresent()) {
+				type = Type.CARDINAL_RITE;
+				recipeId = moved.get();
+			}
+		}
 	}
 
 	public enum Type implements StringRepresentable {

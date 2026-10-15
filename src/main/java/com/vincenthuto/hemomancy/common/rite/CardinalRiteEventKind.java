@@ -38,7 +38,19 @@ public enum CardinalRiteEventKind {
 	/** The rite pushed the world a step further; {@code index} is its new stage. */
 	ESCALATION,
 	/** A later anchor ring wakes: index is its rank, style the rite's ring count, points its anchors' aim points. */
-	RING_OPENED;
+	RING_OPENED,
+	/** A world rite's daemon struck the sky at {@code points[0]}; {@code index} seeds the flash. */
+	SKY_STRUCK,
+	/**
+	 * A world rite's daemon slammed into the ground at {@code points[0]}; {@code index} seeds the cracks and
+	 * {@code style} is how far they reach, in blocks.
+	 */
+	GROUND_SLAMMED,
+	/**
+	 * A Working craft's daemon broke the escrowed {@code item} where it sat in the brazier at {@code points[0]},
+	 * hanging over it at {@code points[1]}; {@code index} is the offering.
+	 */
+	OFFERING_DISSOLVED;
 
 	private static final CardinalRiteEventKind[] VALUES = values();
 

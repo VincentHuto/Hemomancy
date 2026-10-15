@@ -229,6 +229,17 @@ public class HarbingerCardinalRiteEvents {
 				// A station rite waits for its caster instead of collapsing.
 				if (caster == null || caster.level() != sLevel || !caster.isAlive()) continue;
 			}
+			boolean craftRite = WorkingCraftRites.isRite(rite);
+			if (craftRite) {
+				if (!sLevel.hasChunkAt(rite.getCenterPos())) continue;
+				if (!StationUpgradeRites.focusPresent(sLevel, rite)) {
+					CardinalRiteTermination.end(sLevel, usable(caster), rite, Outcome.BROKEN);
+					toRemove.add(playerUUID);
+					continue;
+				}
+				// Like a station upgrade, a Working craft waits for its caster.
+				if (caster == null || caster.level() != sLevel || !caster.isAlive()) continue;
+			}
 
 			if (caster == null || caster.level() != sLevel) {
 				if (rite.getPhase() != CardinalRitePhase.LEGACY) {
@@ -317,9 +328,15 @@ public class HarbingerCardinalRiteEvents {
 			}
 			if (outsideLeash) rite.interruptCancellation();
 
-			if (stationRite) {
-				// Station rites pause while the caster is away or the station is disturbed.
+			if (stationRite || craftRite) {
+				// Working rites pause while the caster is away or the floor is disturbed.
 				if (outsideLeash || !stationStructureValid(sLevel, rite)) continue;
+				// A craft whose structure is broken or changed lets go and returns its escrow.
+				if (craftRite && gameTime % 20 == 0 && !WorkingCraftRites.subjectIntact(sLevel, rite)) {
+					failRite(sLevel, caster, rite);
+					toRemove.add(playerUUID);
+					continue;
+				}
 			} else if (outsideLeash) {
 				// === Caster boundary enforcement ===
 				// Only the caster is bound; the rite does not advance while they are outside.
@@ -400,7 +417,7 @@ public class HarbingerCardinalRiteEvents {
 			savedData.setDirty();
 
 			if (rite.getPhase() == CardinalRitePhase.COLLAPSED) {
-				if (!stationRite) collapseInteractiveRite(sLevel, caster, rite, recipe);
+				if (!stationRite && !craftRite) collapseInteractiveRite(sLevel, caster, rite, recipe);
 				CardinalRiteTermination.end(sLevel, caster, rite, Outcome.COLLAPSED);
 				toRemove.add(playerUUID);
 				continue;
@@ -409,7 +426,7 @@ public class HarbingerCardinalRiteEvents {
 			if (rite.isComplete()) {
 				// === Final structure integrity check ===
 				if (!verifyRiteStructure(sLevel, rite)) {
-					if (stationRite) continue;
+					if (stationRite || craftRite) continue;
 					failRite(sLevel, caster, rite);
 					toRemove.add(playerUUID);
 					continue;
@@ -580,7 +597,7 @@ public class HarbingerCardinalRiteEvents {
 		}
 		return CardinalRiteCulmination.resolve(
 				recipe.getCeremony() == null ? "" : recipe.getCeremony().culmination(),
-				recipe.isRankup(), !recipe.getResult().isEmpty(), floorStyle).id();
+				recipe.isRankup(), recipe.getPurpose(), !recipe.getResult().isEmpty(), floorStyle).id();
 	}
 
 	@SubscribeEvent
@@ -872,7 +889,7 @@ public class HarbingerCardinalRiteEvents {
 
 		BlockPos center = rite.getCenterPos();
 		if (recipe.hasLayeredStation()) {
-			boolean valid = (StationUpgradeRites.isRite(rite.getRecipeId())
+			boolean valid = (StationUpgradeRites.isRite(rite.getRecipeId()) || rite.isWorkingCraft()
 					|| rite.getOfferingVisitIndex() > 0 || rite.isPuppeteerTrialManifested()
 					? layeredStructureMatch(sLevel, rite, recipe)
 					: layeredStationMatch(sLevel, rite, recipe)) != null;
@@ -1073,7 +1090,12 @@ public class HarbingerCardinalRiteEvents {
 				.withEscalation(unstained ? 0 : rite.getEscalationStage(), unstained ? 0 : rite.getEscalationTotal())
 				.withGuidance(unstained || succession ? List.of() : CardinalRiteProblems.of(problemFacts(level, rite, recipe)),
 						unstained ? List.of() : CardinalRiteInteractionHandler.sleepingRequiredSockets(level, rite, recipe))
-				.withRings(rite.getOpenRings(), unstained ? new int[0] : rite.anchorRequirements());
+				.withRings(rite.getOpenRings(), unstained ? new int[0] : rite.anchorRequirements())
+				.withSubject(rite.isWorkingCraft() ? WorkingCraftRites.subjectPositions(rite) : List.of(),
+						rite.isWorkingCraft() ? WorkingCraftRites.subjectStates(level, rite).stream()
+								.mapToInt(net.minecraft.world.level.block.Block::getId).toArray() : new int[0],
+						rite.getPhase() == CardinalRitePhase.SUBJECT_FEEDING ? rite.subjectFill()
+								: rite.isWorkingCraft() ? 1.0F : 0.0F);
 	}
 
 	private static String sacrificeLine(ActiveCardinalRite rite) {
@@ -1192,6 +1214,13 @@ public class HarbingerCardinalRiteEvents {
                 lines.add(0, sacrificeLine(rite));
             }
             return List.copyOf(lines);
+		}
+		if (rite.getPhase() == CardinalRitePhase.SUBJECT_FEEDING) {
+			int required = rite.craft().getInt("FeedRequired");
+			return java.util.List.of(
+					"Structure fed: " + (required - rite.subjectFeedNeeded()) + "/" + required + " mL",
+					"Project blood into the structure beside the Focus",
+					"The Working floor climbs it as it fills");
 		}
 		if (rite.getPhase() == CardinalRitePhase.STATION_PROJECTION) {
 			int stage = rite.upgrade().getInt("Stage");
@@ -1460,6 +1489,7 @@ public class HarbingerCardinalRiteEvents {
 						.append(refusal.copy().withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)), false);
 				return false;
 			}
+			if (WorkingCraftRites.isRite(rite)) return WorkingCraftRites.complete(sLevel, caster, rite, recipe);
 		}
 
 		// Interactive Harbinger ceremonies already paid their base cost node by

@@ -50,6 +50,7 @@ public final class TransientServerStateEvents {
 		SanguineFormationProjectionHandler.clear();
 		BloodStructureFeedManager.clear();
 		BloodInfusionManager.clear();
+		com.vincenthuto.hemomancy.common.rite.harbinger.WorkingCraftRites.clear();
 		HematicSalvageEvents.clearSessionState();
 		RootedStateHelper.clearSessionState();
 		ConserveStateHelper.clearSessionState();

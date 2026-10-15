@@ -63,6 +63,10 @@ public class ActiveRiteClientData {
 		private int[] anchorRequirements = new int[0];
 		private List<com.vincenthuto.hemomancy.common.rite.CardinalRiteProblems.RiteProblem> problems = List.of();
 		private List<SocketMarker> socketMarkers = List.of();
+		/** A Working craft's subject blocks, their block state ids, and how full the floor's climb is. */
+		private List<BlockPos> subjectPositions = List.of();
+		private int[] subjectStateIds = new int[0];
+		private float subjectFill;
 		private final Map<BoundarySegmentKey, BoundaryGrowth> boundaryGrowth;
 		private float previousStainFade;
 		private float currentStainFade;
@@ -303,6 +307,16 @@ public class ActiveRiteClientData {
 				List<SocketMarker> markers) {
 			this.problems = problems == null ? List.of() : List.copyOf(problems);
 			this.socketMarkers = markers == null ? List.of() : List.copyOf(markers);
+			return this;
+		}
+		public List<BlockPos> getSubjectPositions() { return subjectPositions; }
+		public int[] getSubjectStateIds() { return subjectStateIds; }
+		public float getSubjectFill() { return subjectFill; }
+		public boolean hasSubject() { return !subjectPositions.isEmpty(); }
+		public RiteEntry withSubject(List<BlockPos> positions, int[] stateIds, float fill) {
+			subjectPositions = positions == null ? List.of() : List.copyOf(positions);
+			subjectStateIds = stateIds == null ? new int[0] : stateIds.clone();
+			subjectFill = Math.clamp(fill, 0.0F, 1.0F);
 			return this;
 		}
 		public static int anchorBlood(int state) { return state % ANCHOR_DAMAGED; }

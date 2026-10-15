@@ -243,6 +243,16 @@ neoForge {
             programArguments.addAll '--username', 'MembraneReview'
         }
 
+        brazierReviewClient {
+            client()
+            gameDirectory = project.file('build/brazier-client-review')
+            additionalRuntimeClasspathConfiguration.extendsFrom(clientLocalRuntime)
+            jvmArguments.addAll("-Xms2G", "-Xmx6G")
+            systemProperty 'hemomancy.gameplayDriver', 'true'
+            systemProperty 'hemomancy.brazierReview', 'true'
+            programArguments.addAll '--username', 'BrazierReview', '--width', '1280', '--height', '720'
+        }
+
         successionReviewClient {
             client()
             gameDirectory = project.file('build/succession-client')

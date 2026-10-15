@@ -3,6 +3,8 @@
   "id": "hemomancy:cardinal_rite/apotheos_rite",
   "bloodCost": 0,
   "riteType": "grand",
+  "purpose": "self",
+  "special": true,
   "required_degree": 7,
   "riteName": "Rite of Apotheos",
   "riteDescription": "The Eighth Degree rite. The practitioner crosses beyond Archon after completing Qliphoth Communion, accepting the final hush behind the Order's mask.",

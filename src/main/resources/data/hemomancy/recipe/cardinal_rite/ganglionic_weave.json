@@ -3,6 +3,7 @@
   "id": "hemomancy:cardinal_rite/ganglionic_weave",
   "bloodCost": 0,
   "riteType": "greater",
+  "purpose": "making",
   "required_degree": 5,
   "rankup": false,
   "riteName": "Rite of the Ganglionic Weave",

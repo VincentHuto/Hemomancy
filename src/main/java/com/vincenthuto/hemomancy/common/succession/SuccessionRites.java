@@ -49,13 +49,9 @@ public final class SuccessionRites {
         var forward = station.floorMatch().getForwards();
         var up = station.floorMatch().getUp();
         var right = forward.getNormal().cross(up.getNormal());
-        for (int i = 0; i < offerings.size(); i++) {
-            var socket = station.floor().brazierSockets().get(i);
-            var expected = rite.getCenterPos().offset(right.getX()*socket.getX()+forward.getStepX()*socket.getZ(),
-                    socket.getY(), right.getZ()*socket.getX()+forward.getStepZ()*socket.getZ());
-            if (!offerings.get(i).pos().equals(expected)) return fail(player, "offerings");
-        }
-        // Floor socket order, not sample identity, assigns the donor and officiant roles.
+        // Braziers count anywhere in the space above the floor; their order clockwise round the Focus from its left,
+        // then nearest, then lowest (the order the station matcher reports them in), not sample identity, assigns the
+        // donor and officiant roles.
         var first = offerings.get(0).stack(); var will = offerings.get(1).stack();
         if (!(will.getItem() instanceof BloodVialItem) || SuccessionSamples.identity(will).isEmpty()) return fail(player, "legacy_sample");
         var data = SuccessionSavedData.get(level);

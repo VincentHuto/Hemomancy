@@ -1,0 +1,71 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "id": "hemomancy:cardinal_rite/working/mnemonic_reliquary",
+  "bloodCost": 0,
+  "riteType": "greater",
+  "purpose": "making",
+  "required_degree": 3,
+  "rankup": false,
+  "riteName": "Working of the Mnemonic Reliquary",
+  "riteDescription": "Build the Mnemonic Reliquary beside the Cardinal Focus, feed it, and let the Working floor take it.",
+  "floor": "hemomancy:working_greater",
+  "medium": {
+    "item": "hemomancy:sanguine_formation"
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:book"
+      },
+      "count": 1
+    }
+  ],
+  "subject": {
+    "pattern": [
+      [
+        "VTV"
+      ],
+      [
+        "THT"
+      ],
+      [
+        "VTV"
+      ]
+    ],
+    "key": {
+      "V": {
+        "block": "minecraft:chiseled_stone_bricks"
+      },
+      "T": {
+        "block": "hemomancy:hematic_iron_block"
+      },
+      "H": {
+        "block": "hemomancy:venous_stone"
+      }
+    },
+    "feed": 75
+  },
+  "result": {
+    "id": "hemomancy:mnemonic_reliquary"
+  },
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "fragile_offsets": [],
+    "target_duration_ticks": 600,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry",
+    "culmination": "forging"
+  }
+}

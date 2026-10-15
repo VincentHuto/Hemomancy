@@ -4,8 +4,8 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.recipe.BloodStructureOffering;
-import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
+import com.vincenthuto.hemomancy.client.screen.skilltree.shared.CraftingMapRecipe;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
 import com.vincenthuto.hutoslib.math.MultiblockPattern.MaterialCount;
@@ -43,11 +43,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * JEI recipe category for Blood Structure crafting — fully programmatic rendering.
- * Shows a rotating 3D preview of the multiblock, input slots for the held item,
- * hit block, and required structure blocks, plus the output and blood cost.
+ * JEI recipe category for structure crafts — fully programmatic rendering.
+ * Shows a rotating 3D preview of the multiblock, input slots for the catalyst,
+ * the activate block (or, for a Working craft, the Cardinal Focus), and the
+ * structure blocks, plus brazier offerings, the output and blood cost. One
+ * instance serves floorless Blood Structures, another Working crafts.
  */
-public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStructureRecipe> {
+public class BloodStructureRecipeCategory implements IRecipeCategory<CraftingMapRecipe> {
 
 	// ── Layout constants ──
 	private static final int BG_W = 150;
@@ -71,7 +73,8 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 	private static final int OFFERING_SLOT_START_X = 105;
 	private static final int OFFERING_SLOT_Y = 66;
 	private static final int OFFERING_SLOT_SPACING = 20;
-	private static final int MAX_OFFERING_SLOTS = 2;
+	/** Offerings sit in a two-by-two grid below the output. */
+	private static final int MAX_OFFERING_SLOTS = 4;
 
 	// Colors
 	private static final int BG_COLOR = 0xFF0A0204;
@@ -86,11 +89,17 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 
 	private final IDrawable background;
 	private final IDrawable icon;
+	private final boolean working;
 
 	public BloodStructureRecipeCategory(IGuiHelper guiHelper) {
+		this(guiHelper, false);
+	}
+
+	public BloodStructureRecipeCategory(IGuiHelper guiHelper, boolean working) {
+		this.working = working;
 		this.background = guiHelper.createBlankDrawable(BG_W, BG_H);
 		this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK,
-				new ItemStack(ItemInit.sanguine_formation.get()));
+				new ItemStack(working ? BlockInit.cardinal_focus.get().asItem() : ItemInit.sanguine_formation.get()));
 	}
 
 	// ═══════════════════════════════════════════════════════════════
@@ -110,14 +119,14 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 	}
 
 	@Override
-	public RecipeType<BloodStructureRecipe> getRecipeType() {
-		return JEIPlugin.blood_structure_recipe_type;
+	public RecipeType<CraftingMapRecipe> getRecipeType() {
+		return working ? JEIPlugin.working_craft_recipe_type : JEIPlugin.blood_structure_recipe_type;
 	}
 
 	@Nonnull
 	@Override
 	public Component getTitle() {
-		return Component.translatable("hemomancy.jei.blood_crafting");
+		return Component.translatable(working ? "hemomancy.jei.working_craft" : "hemomancy.jei.blood_crafting");
 	}
 	private float animTime = 0f;
 
@@ -126,7 +135,7 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 	// ═══════════════════════════════════════════════════════════════
 
 	@Override
-	public void draw(BloodStructureRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics gfx,
+	public void draw(CraftingMapRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics gfx,
 			double mouseX, double mouseY) {
 
 		animTime += 0.016f; // ~60 FPS approximation
@@ -148,7 +157,7 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 		drawSlotFrame(gfx, INPUT_SLOT_X - 1, HIT_BLOCK_SLOT_Y - 1);
 		drawSlotFrame(gfx, OUTPUT_SLOT_X - 1, OUTPUT_SLOT_Y - 1);
 		for (int i = 0; i < Math.min(MAX_OFFERING_SLOTS, recipe.getOfferings().size()); i++) {
-			drawSlotFrame(gfx, OFFERING_SLOT_START_X + (i * OFFERING_SLOT_SPACING) - 1, OFFERING_SLOT_Y - 1);
+			drawSlotFrame(gfx, offeringX(i) - 1, offeringY(i) - 1);
 		}
 
 		// Pattern block slot frames
@@ -173,7 +182,8 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 		// ── Labels ──
 		Font font = Minecraft.getInstance().font;
 
-		MutableComponent costText = Component.literal("Blood: " + (int) recipe.getBloodCost());
+		MutableComponent costText = Component.literal(!working ? "Blood: " + (int) recipe.getBloodCost()
+				: recipe.hasStructure() ? "Feed: " + (int) recipe.getBloodCost() : "Rite");
 		int costWidth = font.width(costText);
 		gfx.drawString(font, costText, BG_W - costWidth - 3, 3, COST_COLOR, false);
 
@@ -189,14 +199,16 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 	}
 
 	@Override
-	public void setRecipe(IRecipeLayoutBuilder builder, BloodStructureRecipe recipe, IFocusGroup focuses) {
+	public void setRecipe(IRecipeLayoutBuilder builder, CraftingMapRecipe recipe, IFocusGroup focuses) {
 		// Held item
 		builder.addSlot(RecipeIngredientRole.INPUT, INPUT_SLOT_X, HELD_ITEM_SLOT_Y)
 				.addIngredient(VanillaTypes.ITEM_STACK, recipe.getHeldItem());
 
-		// Hit block
+		// Activate block, or the Cardinal Focus a Working craft is built beside
 		builder.addSlot(RecipeIngredientRole.INPUT, INPUT_SLOT_X, HIT_BLOCK_SLOT_Y)
-				.addIngredient(VanillaTypes.ITEM_STACK, new ItemStack(recipe.getHitBlock().asItem()));
+				.addIngredient(VanillaTypes.ITEM_STACK, recipe.getHitBlock() == null
+						? new ItemStack(BlockInit.cardinal_focus.get())
+						: new ItemStack(recipe.getHitBlock().asItem()));
 
 		// Pattern block inputs (deduplicated with counts)
 		if (recipe.getPattern() != null && recipe.getPattern().getSymbolList() != null) {
@@ -220,11 +232,10 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 				.addIngredient(VanillaTypes.ITEM_STACK, recipe.getResult());
 
 		for (int i = 0; i < Math.min(MAX_OFFERING_SLOTS, recipe.getOfferings().size()); i++) {
-			BloodStructureOffering offering = recipe.getOfferings().get(i);
+			CraftingMapRecipe.Offering offering = recipe.getOfferings().get(i);
 			List<ItemStack> stacks = ingredientStacksFor(offering);
 			if (!stacks.isEmpty()) {
-				builder.addSlot(RecipeIngredientRole.INPUT,
-								OFFERING_SLOT_START_X + (i * OFFERING_SLOT_SPACING), OFFERING_SLOT_Y)
+				builder.addSlot(RecipeIngredientRole.INPUT, offeringX(i), offeringY(i))
 						.addIngredients(VanillaTypes.ITEM_STACK, stacks);
 			}
 		}
@@ -234,7 +245,7 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 	//  3D multiblock preview
 	// ═══════════════════════════════════════════════════════════════
 
-	private void render3DPreview(BloodStructureRecipe recipe, GuiGraphics gfx) {
+	private void render3DPreview(CraftingMapRecipe recipe, GuiGraphics gfx) {
 		if (recipe.getPattern() == null) return;
 
 		try {
@@ -284,7 +295,7 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 		}
 	}
 
-	private void drawRotatingMultiblock(BloodStructureRecipe recipe, GuiGraphics gfx,
+	private void drawRotatingMultiblock(CraftingMapRecipe recipe, GuiGraphics gfx,
 			MultiBufferSource.BufferSource buffers) {
 
 		double rotation = Math.toDegrees(HLClientUtils.getWorld().getGameTime()) / 15.0;
@@ -318,6 +329,14 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 	//  Drawing helpers
 	// ═══════════════════════════════════════════════════════════════
 
+	private static int offeringX(int index) {
+		return OFFERING_SLOT_START_X + (index % 2) * OFFERING_SLOT_SPACING;
+	}
+
+	private static int offeringY(int index) {
+		return OFFERING_SLOT_Y + (index / 2) * OFFERING_SLOT_SPACING;
+	}
+
 	private long materialCycleIndex() {
 		Minecraft minecraft = Minecraft.getInstance();
 		if (minecraft.level != null) {
@@ -340,7 +359,7 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 		return stacks;
 	}
 
-	private List<ItemStack> ingredientStacksFor(BloodStructureOffering offering) {
+	private List<ItemStack> ingredientStacksFor(CraftingMapRecipe.Offering offering) {
 		List<ItemStack> stacks = new ArrayList<>();
 		for (ItemStack stack : offering.ingredient().getItems()) {
 			if (!stack.isEmpty()) {

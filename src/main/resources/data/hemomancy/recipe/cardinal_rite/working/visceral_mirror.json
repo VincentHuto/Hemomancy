@@ -1,0 +1,86 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "id": "hemomancy:cardinal_rite/working/visceral_mirror",
+  "bloodCost": 0,
+  "riteType": "greater",
+  "purpose": "making",
+  "required_degree": 4,
+  "rankup": false,
+  "riteName": "Working of the Visceral Mirror",
+  "riteDescription": "Build the Visceral Mirror beside the Cardinal Focus, feed it, and let the Working floor take it.",
+  "floor": "hemomancy:working_greater",
+  "medium": {
+    "item": "hemomancy:sanguine_formation"
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:ink_sac"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:quartz"
+      },
+      "count": 1
+    }
+  ],
+  "subject": {
+    "pattern": [
+      [
+        " T ",
+        " P ",
+        " T "
+      ],
+      [
+        "TGT",
+        "PHP",
+        "TGT"
+      ],
+      [
+        " T ",
+        " P ",
+        " T "
+      ]
+    ],
+    "key": {
+      "T": {
+        "block": "hemomancy:hematic_iron_block"
+      },
+      "P": {
+        "block": "minecraft:deepslate_bricks"
+      },
+      "G": {
+        "block": "minecraft:tinted_glass"
+      },
+      "H": {
+        "block": "hemomancy:sanguine_glass"
+      }
+    },
+    "feed": 200
+  },
+  "result": {
+    "id": "hemomancy:visceral_mirror"
+  },
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "fragile_offsets": [],
+    "target_duration_ticks": 600,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry",
+    "culmination": "forging"
+  }
+}

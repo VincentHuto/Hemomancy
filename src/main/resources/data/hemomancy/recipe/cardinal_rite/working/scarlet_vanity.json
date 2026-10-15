@@ -1,0 +1,76 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "id": "hemomancy:cardinal_rite/working/scarlet_vanity",
+  "bloodCost": 0,
+  "riteType": "minor",
+  "purpose": "making",
+  "required_degree": 3,
+  "rankup": false,
+  "riteName": "Working of the Scarlet Vanity",
+  "riteDescription": "Build the Scarlet Vanity beside the Cardinal Focus, feed it, and let the Working floor take it.",
+  "floor": "hemomancy:working_minor",
+  "medium": {
+    "item": "hemomancy:sanguine_formation"
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "hemomancy:dried_gourd"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:leather"
+      },
+      "count": 1
+    }
+  ],
+  "subject": {
+    "pattern": [
+      [
+        " G ",
+        "BTB",
+        " C "
+      ]
+    ],
+    "key": {
+      "B": {
+        "block": "minecraft:iron_bars"
+      },
+      "C": {
+        "block": "hemomancy:chiseled_hematic_iron_block"
+      },
+      "G": {
+        "block": "hemomancy:sanguine_glass"
+      },
+      "T": {
+        "block": "hemomancy:hematic_iron_block"
+      }
+    },
+    "feed": 300
+  },
+  "result": {
+    "id": "hemomancy:scarlet_vanity"
+  },
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "fragile_offsets": [],
+    "target_duration_ticks": 600,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry",
+    "culmination": "forging"
+  }
+}

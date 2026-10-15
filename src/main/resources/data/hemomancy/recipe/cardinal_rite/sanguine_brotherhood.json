@@ -2,6 +2,7 @@
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "lesser",
+  "purpose": "self",
   "required_degree": 3,
   "riteName": "Rite of the Sanguine Brotherhood",
   "riteDescription": "The fourth rite of the Hematic Order, proving mastery of the foundational blood arts.",

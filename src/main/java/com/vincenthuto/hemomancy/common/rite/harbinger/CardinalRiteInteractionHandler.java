@@ -62,6 +62,24 @@ public final class CardinalRiteInteractionHandler {
 		CardinalRiteSavedData data = CardinalRiteSavedData.get(serverLevel);
 		for (ActiveCardinalRite rite : data.getActiveRites().values()) {
 			if (!mayParticipate(player, rite)) continue;
+			if (rite.getPhase() == CardinalRitePhase.SUBJECT_FEEDING) {
+				// A Working craft is fed through its own structure; a miss elsewhere on its floor takes nothing.
+				if (physicalTarget == null || !WorkingCraftRites.subjectPositions(rite).contains(physicalTarget)) {
+					if (physicalTarget != null && com.vincenthuto.hemomancy.common.rite.WorkingCraftBed.withinFloor(
+							rite.getCenterPos(), physicalTarget, HarbingerCardinalRiteEvents.ritualFootprintRadius(rite,
+									CardinalRiteRecipe.getRiteByLocation(serverLevel, rite.getRecipeId())))) {
+						return CardinalRiteProjectionResult.handled(0.0D);
+					}
+					continue;
+				}
+				int paid = spendBlood(player, rite, Math.min(rite.subjectFeedNeeded(),
+						Math.max(1, (int) Math.floor(projectionRate))));
+				if (paid > 0 && rite.feedSubject(paid)) {
+					data.setDirty();
+					WorkingCraftRites.onFed(serverLevel, player, rite);
+				}
+				return CardinalRiteProjectionResult.handled(paid);
+			}
 			if (rite.getPhase() == CardinalRitePhase.STATION_PROJECTION) {
 				int stage = rite.upgrade().getInt("Stage");
 				int aimed = CardinalRiteVirtualTargeting.closestTarget(player.getEyePosition(), player.getLookAngle(),

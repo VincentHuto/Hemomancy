@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GameTestHarnessSourceContractTest {
@@ -385,23 +386,16 @@ class GameTestHarnessSourceContractTest {
 		String showcase = read(
 				"src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/DebugShowcaseItem.java");
 
-		assertTrue(placement.contains("bloodStructure.getOfferings()"),
-				"Blood structure offerings must be passed into Structure Spawner placement");
-		assertTrue(placement.contains("BloodStructureOfferingPlacement.plan("),
-				"Structure Spawner offerings must use the shared deterministic planner");
+		// Offerings belong to rites: only layered Cardinal Rite placement lights braziers.
+		assertFalse(placement.contains("BloodStructureOfferingPlacement"),
+				"Floorless Blood Structures take no offering braziers");
+		assertFalse(showcase.contains("BloodStructureOfferingPlacement"),
+				"Floorless Blood Structures take no offering braziers");
 		assertTrue(placement.contains("BlockInit.iron_brazier.get().defaultBlockState()"));
 		assertTrue(placement.contains("setValue(BrazierBlock.RITUAL_PHASE, 1)"),
-				"Structure Spawner offering braziers must spawn lit");
+				"Structure Spawner rite braziers must spawn lit");
 		assertTrue(placement.contains("insertOffering(null, offeringStack)"),
-				"Structure Spawner offering braziers must contain representative recipe items");
-		assertTrue(showcase.contains("recipe.getOfferings()"),
-				"Debug Showcase must pass each Blood Structure recipe's offerings into placement");
-		assertTrue(showcase.contains("BloodStructureOfferingPlacement.plan("),
-				"Debug Showcase offerings must use the shared deterministic planner");
-		assertTrue(showcase.contains("setValue(BrazierBlock.RITUAL_PHASE, 1)"),
-				"Debug Showcase offering braziers must spawn lit");
-		assertTrue(showcase.contains("insertOffering(null, offeringStack)"),
-				"Debug Showcase offering braziers must contain representative recipe items");
+				"Structure Spawner rite braziers must contain representative recipe items");
 		assertTrue(showcase.contains("recipe.hasLayeredStation()"),
 				"Debug Showcase must branch away from the nullable legacy pattern for layered rites");
 		assertTrue(showcase.contains("PlaceStructurePacket.placeLayeredCardinalRite("),

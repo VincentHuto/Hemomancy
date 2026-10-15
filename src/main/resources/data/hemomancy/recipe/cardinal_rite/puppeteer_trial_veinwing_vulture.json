@@ -2,6 +2,7 @@
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 500,
   "riteType": "lesser",
+  "purpose": "world",
   "required_degree": 3,
   "riteName": "Veinwing Vulture Ordeal",
   "riteDescription": "Bind the defeated Veinwing Vulture shape to an attuned Marionette Crossbar.",

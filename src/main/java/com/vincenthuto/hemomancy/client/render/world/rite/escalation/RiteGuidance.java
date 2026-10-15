@@ -79,7 +79,7 @@ public final class RiteGuidance {
 	/** The guide line for a phase, or null when the phase speaks for itself. */
 	static String phaseKey(String phase) {
 		return switch (phase == null ? "" : phase) {
-			case "CONSECRATION", "INSCRIPTION", "STATION_PROJECTION", "PUPPET_TRIAL", "STILL_INTERVAL",
+			case "CONSECRATION", "INSCRIPTION", "STATION_PROJECTION", "SUBJECT_FEEDING", "PUPPET_TRIAL", "STILL_INTERVAL",
 					"OFFERING_PROCESSION", "CULMINATION" -> "hemomancy.rite.guide." + phase.toLowerCase(Locale.ROOT);
 			default -> null;
 		};

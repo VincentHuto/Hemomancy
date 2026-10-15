@@ -52,18 +52,18 @@ final class WarpChairAssetTest {
 	@Test
 	void survivalAndProgressionResourcesArePresent() throws IOException {
 		Path data = Path.of("src/main/resources/data/hemomancy");
-		Path recipePath = data.resolve("recipe/blood_structure/warp_chair.json");
+		Path recipePath = data.resolve("recipe/cardinal_rite/working/warp_chair.json");
 		assertFalse(Files.exists(data.resolve("recipe/warp_chair.json")));
 		JsonObject recipe = readJson(recipePath);
-		assertEquals("hemomancy:blood_structure_recipe", recipe.get("type").getAsString());
-		assertEquals(250, recipe.get("bloodCost").getAsInt());
+		assertEquals("hemomancy:cardinal_rite_recipe", recipe.get("type").getAsString());
+		assertEquals("making", recipe.get("purpose").getAsString());
+		assertEquals(250, recipe.getAsJsonObject("subject").get("feed").getAsInt());
 		assertEquals(3, recipe.get("required_degree").getAsInt());
-		assertEquals("hemomancy:sanguine_formation", recipe.get("heldItem").getAsString());
-		assertEquals("hemomancy:blood_wood_planks", recipe.get("hitBlock").getAsString());
+		assertEquals("hemomancy:sanguine_formation", recipe.getAsJsonObject("medium").get("item").getAsString());
 		assertEquals("hemomancy:warp_chair",
 				recipe.getAsJsonObject("result").get("id").getAsString());
 
-		JsonArray pattern = recipe.getAsJsonArray("pattern");
+		JsonArray pattern = recipe.getAsJsonObject("subject").getAsJsonArray("pattern");
 		assertEquals(3, pattern.size(), "chair structure needs three depth aisles");
 		for (int aisle = 0; aisle < pattern.size(); aisle++) {
 			JsonArray rows = pattern.get(aisle).getAsJsonArray();
@@ -73,7 +73,7 @@ final class WarpChairAssetTest {
 			}
 		}
 
-		JsonArray offerings = recipe.getAsJsonArray("offerings");
+		JsonArray offerings = recipe.getAsJsonArray("brazier_signature");
 		assertEquals(2, offerings.size());
 		assertOffering(offerings.get(0).getAsJsonObject(), "hemomancy:blood_crystal", 2);
 		assertOffering(offerings.get(1).getAsJsonObject(), "minecraft:ender_pearl", 2);

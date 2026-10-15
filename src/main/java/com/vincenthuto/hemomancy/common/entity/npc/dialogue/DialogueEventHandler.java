@@ -1244,15 +1244,15 @@ public class DialogueEventHandler {
 
 	/**
 	 * Gives the player a mnemonic blueprint pre-configured for the Sanguine Monolith
-	 * blood structure. The item is dropped
+	 * Working craft. The item is dropped
 	 * at the NPC entity's position so the player can pick it up naturally.
 	 * If the NPC entity cannot be found, the item is given directly to the player's
 	 * inventory instead.
 	 */
 	private static void handleGiveSanguineMonolithBlueprint(ServerPlayer player, int entityId) {
 		ItemStack hint = MnemonicBlueprintItem.create(ItemInit.mnemonic_blueprint.get(),
-				new MnemonicBlueprintTarget(MnemonicBlueprintTarget.Type.BLOOD_STRUCTURE,
-						ResourceLocation.tryBuild(Hemomancy.MOD_ID, "blood_structure/sanguine_monolith")));
+				new MnemonicBlueprintTarget(MnemonicBlueprintTarget.Type.CARDINAL_RITE,
+						ResourceLocation.tryBuild(Hemomancy.MOD_ID, "cardinal_rite/working/sanguine_monolith")));
 
 		giveOrDropAtEntity(player, entityId, hint);
 

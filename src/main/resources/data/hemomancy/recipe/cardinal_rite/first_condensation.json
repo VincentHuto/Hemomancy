@@ -3,6 +3,7 @@
   "id": "hemomancy:cardinal_rite/first_condensation",
   "bloodCost": 0,
   "riteType": "lesser",
+  "purpose": "making",
   "required_degree": 4,
   "rankup": false,
   "riteName": "Rite of the First Condensation",

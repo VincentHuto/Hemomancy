@@ -166,10 +166,15 @@ Hemomancy's JEI integration covers the custom crafting systems. This branch load
 - Input: Blood + materials
 - Output: Bound recall point
 
-**Blood Structure**
-- Shows multi-block structure recipes
-- Input: Components + ritual items
+**Blood Structure Crafting**
+- Shows floorless structure recipes (Living Staff, Liber, Centrifuge, Alembic...)
+- Input: Catalyst + structure blocks
 - Output: Functional structure
+
+**Working Crafts**
+- Shows machines raised on a Working floor
+- Input: Focus medium, brazier offerings, structure blocks
+- Output: Machine forged on the Cardinal Focus
 
 **Morphling Incubator**
 - Shows creature mutation recipes

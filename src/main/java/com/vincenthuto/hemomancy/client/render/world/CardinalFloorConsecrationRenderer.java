@@ -150,7 +150,7 @@ public final class CardinalFloorConsecrationRenderer {
 			mesh.emitCreep(consumer, matrix, level, origin, rite.creepRadius(), 255);
 		}
 		if (mesh.loop() != null) {
-			mesh.emitGash(consumer, matrix, age, rite.trenchGlow(mesh));
+			mesh.emitGash(consumer, matrix, age, rite.trenchGlow(mesh), time);
 			if (DIG_BLOCK_DUST) spawnDigDust(level, origin, mesh, age);
 		}
 		// Depth-writing flesh: brazier seats swallow their feet, and the Focus throat grips a planted staff's.
@@ -160,7 +160,7 @@ public final class CardinalFloorConsecrationRenderer {
 			VertexConsumer mound = buffers.getBuffer(CardinalFloorRenderTypes.withRite(HemoRenderTypes.cardinalFloorMound(
 					now, seed, style, half, spread, front, beat, floorLight, palette.base(), palette.vein(),
 					palette.glow(), focusX, focusZ), rite));
-			if (seats) mesh.emitSeats(mound, matrix, beat, spread, 255);
+			if (seats) mesh.emitSeats(mound, matrix, beat, spread, 255, time);
 			FloorMesh.emitThroat(mound, matrix, grip, beat, now, seed, 255);
 		}
 		if (grip >= 0.999F) spawnSwallowTendrils(origin, level.getGameTime(), partialTick);

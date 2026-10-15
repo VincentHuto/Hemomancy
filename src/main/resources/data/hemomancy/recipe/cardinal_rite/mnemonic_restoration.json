@@ -2,9 +2,10 @@
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "greater",
+  "purpose": "world",
   "required_degree": 5,
   "riteName": "Rite of Mnemonic Restoration",
-  "riteDescription": "Place the effigy beside the Focus on a Venous Stone plinth. Seat Sanguine Quintessence in the Focus. In clockwise floor socket order, offer a Bound Mnemonic Remnant, then your own identity-bearing blood vial. A free compatible workplace is required inside your fane. The body forms over sixty seconds.",
+  "riteDescription": "Place the effigy beside the Focus on a Venous Stone plinth. Seat Sanguine Quintessence in the Focus. In braziers anywhere above the floor, read clockwise round the Focus from its left, nearest and lowest first, offer a Bound Mnemonic Remnant, then your own identity-bearing blood vial. A free compatible workplace is required inside your fane. The body forms over sixty seconds.",
   "floor": "hemomancy:dominion_greater",
   "medium": {
     "item": "hemomancy:sanguine_quintessence"

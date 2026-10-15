@@ -31,7 +31,10 @@ public final class BloodProjectionStructureCraftingResourceTest {
 		String clientData = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/data/ActiveBloodStructureFeedClientData.java"));
 		String renderer = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/render/world/BloodStructureFeedWarpRenderer.java"));
+				"com/vincenthuto/hemomancy/client/render/world/BloodStructureFeedWarpRenderer.java"))
+				// The shell's face topology lives in the helper shared with the Working floor swallow.
+				+ read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/client/render/world/BlockShellFaces.java"));
 		String spiralParticles = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/world/BloodStructureFeedSpiralParticles.java"));
 		String feedAbocipherParticle = read(SOURCE_ROOT.resolve(

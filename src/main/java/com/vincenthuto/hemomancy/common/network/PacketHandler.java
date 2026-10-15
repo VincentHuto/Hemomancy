@@ -316,7 +316,6 @@ public class PacketHandler {
         net.playToClient(PacketBloodStructureFeed.TYPE, PacketBloodStructureFeed.STREAM_CODEC, PacketBloodStructureFeed::handle);
         net.playToClient(PacketSanguineFormationProjection.TYPE,
                 PacketSanguineFormationProjection.STREAM_CODEC, PacketSanguineFormationProjection::handle);
-        net.playToClient(PacketBloodStructureOfferingBurst.TYPE, PacketBloodStructureOfferingBurst.STREAM_CODEC, PacketBloodStructureOfferingBurst::handle);
 
         // ── Degree / Unstained progress ───────────────────────────────────────
         net.playToClient(PacketSyncDegree.TYPE, PacketSyncDegree.STREAM_CODEC, PacketSyncDegree::handle);

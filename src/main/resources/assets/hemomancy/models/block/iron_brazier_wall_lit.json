@@ -1,0 +1,405 @@
+{
+ "parent": "minecraft:block/block",
+ "render_type": "minecraft:cutout",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "hemomancy:block/hematic_iron_block",
+  "ember": "hemomancy:block/iron_brazier_embers"
+ },
+ "elements": [
+  {
+   "name": "ember_bed",
+   "from": [
+    3.15,
+    7.1,
+    5.9911
+   ],
+   "to": [
+    12.85,
+    7.5,
+    10.0089
+   ],
+   "faces": {
+    "up": {
+     "uv": [
+      3.15,
+      5.991,
+      12.85,
+      10.009
+     ],
+     "texture": "#ember"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "ember_bed",
+   "from": [
+    5.9911,
+    7.14,
+    3.15
+   ],
+   "to": [
+    10.0089,
+    7.46,
+    12.85
+   ],
+   "faces": {
+    "up": {
+     "uv": [
+      5.991,
+      3.15,
+      10.009,
+      12.85
+     ],
+     "texture": "#ember"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "ember_bed",
+   "from": [
+    3.15,
+    7.18,
+    5.9911
+   ],
+   "to": [
+    12.85,
+    7.42,
+    10.0089
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     -4.0,
+     8.0
+    ]
+   },
+   "faces": {
+    "up": {
+     "uv": [
+      3.15,
+      5.991,
+      12.85,
+      10.009
+     ],
+     "texture": "#ember"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "ember_bed",
+   "from": [
+    3.15,
+    7.22,
+    5.9911
+   ],
+   "to": [
+    12.85,
+    7.38,
+    10.0089
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     -4.0,
+     8.0
+    ]
+   },
+   "faces": {
+    "up": {
+     "uv": [
+      3.15,
+      5.991,
+      12.85,
+      10.009
+     ],
+     "texture": "#ember"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "ember",
+   "from": [
+    5.7,
+    7.9,
+    6.5
+   ],
+   "to": [
+    6.7,
+    8.15,
+    7.5
+   ],
+   "faces": {
+    "up": {
+     "uv": [
+      5.7,
+      6.5,
+      6.7,
+      7.5
+     ],
+     "texture": "#ember"
+    },
+    "north": {
+     "uv": [
+      5.7,
+      3.85,
+      6.7,
+      4.1
+     ],
+     "texture": "#ember"
+    },
+    "south": {
+     "uv": [
+      5.7,
+      3.85,
+      6.7,
+      4.1
+     ],
+     "texture": "#ember"
+    },
+    "east": {
+     "uv": [
+      6.5,
+      3.85,
+      7.5,
+      4.1
+     ],
+     "texture": "#ember"
+    },
+    "west": {
+     "uv": [
+      6.5,
+      3.85,
+      7.5,
+      4.1
+     ],
+     "texture": "#ember"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "ember",
+   "from": [
+    9.0,
+    7.8,
+    6.2
+   ],
+   "to": [
+    9.8,
+    8.05,
+    7.0
+   ],
+   "faces": {
+    "up": {
+     "uv": [
+      9.0,
+      6.2,
+      9.8,
+      7.0
+     ],
+     "texture": "#ember"
+    },
+    "north": {
+     "uv": [
+      9.0,
+      3.95,
+      9.8,
+      4.2
+     ],
+     "texture": "#ember"
+    },
+    "south": {
+     "uv": [
+      9.0,
+      3.95,
+      9.8,
+      4.2
+     ],
+     "texture": "#ember"
+    },
+    "east": {
+     "uv": [
+      6.2,
+      3.95,
+      7.0,
+      4.2
+     ],
+     "texture": "#ember"
+    },
+    "west": {
+     "uv": [
+      6.2,
+      3.95,
+      7.0,
+      4.2
+     ],
+     "texture": "#ember"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "ember",
+   "from": [
+    7.8,
+    8.0,
+    9.0
+   ],
+   "to": [
+    9.0,
+    8.25,
+    10.2
+   ],
+   "faces": {
+    "up": {
+     "uv": [
+      7.8,
+      9.0,
+      9.0,
+      10.2
+     ],
+     "texture": "#ember"
+    },
+    "north": {
+     "uv": [
+      7.8,
+      3.75,
+      9.0,
+      4.0
+     ],
+     "texture": "#ember"
+    },
+    "south": {
+     "uv": [
+      7.8,
+      3.75,
+      9.0,
+      4.0
+     ],
+     "texture": "#ember"
+    },
+    "east": {
+     "uv": [
+      9.0,
+      3.75,
+      10.2,
+      4.0
+     ],
+     "texture": "#ember"
+    },
+    "west": {
+     "uv": [
+      9.0,
+      3.75,
+      10.2,
+      4.0
+     ],
+     "texture": "#ember"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "ember",
+   "from": [
+    5.25,
+    7.75,
+    9.05
+   ],
+   "to": [
+    5.95,
+    8.0,
+    9.75
+   ],
+   "faces": {
+    "up": {
+     "uv": [
+      5.25,
+      9.05,
+      5.95,
+      9.75
+     ],
+     "texture": "#ember"
+    },
+    "north": {
+     "uv": [
+      5.25,
+      4.0,
+      5.95,
+      4.25
+     ],
+     "texture": "#ember"
+    },
+    "south": {
+     "uv": [
+      5.25,
+      4.0,
+      5.95,
+      4.25
+     ],
+     "texture": "#ember"
+    },
+    "east": {
+     "uv": [
+      9.05,
+      4.0,
+      9.75,
+      4.25
+     ],
+     "texture": "#ember"
+    },
+    "west": {
+     "uv": [
+      9.05,
+      4.0,
+      9.75,
+      4.25
+     ],
+     "texture": "#ember"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  }
+ ]
+}

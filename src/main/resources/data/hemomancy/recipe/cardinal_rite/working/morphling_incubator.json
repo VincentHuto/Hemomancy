@@ -1,0 +1,83 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "id": "hemomancy:cardinal_rite/working/morphling_incubator",
+  "bloodCost": 0,
+  "riteType": "greater",
+  "purpose": "making",
+  "required_degree": 5,
+  "rankup": false,
+  "riteName": "Working of the Morphling Incubator",
+  "riteDescription": "Build the Morphling Incubator beside the Cardinal Focus, feed it, and let the Working floor take it.",
+  "floor": "hemomancy:working_greater",
+  "medium": {
+    "item": "hemomancy:morphling_polyp"
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "hemomancy:swollen_leech"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:slime_ball"
+      },
+      "count": 1
+    }
+  ],
+  "subject": {
+    "pattern": [
+      [
+        "TGT",
+        "TGT",
+        "   "
+      ],
+      [
+        "GGG",
+        "GIG",
+        " T "
+      ],
+      [
+        "TGT",
+        "TGT",
+        "   "
+      ]
+    ],
+    "key": {
+      "T": {
+        "block": "hemomancy:hematic_iron_block"
+      },
+      "G": {
+        "block": "hemomancy:sanguine_glass"
+      },
+      "I": {
+        "block": "minecraft:moss_block"
+      }
+    },
+    "feed": 200
+  },
+  "result": {
+    "id": "hemomancy:morphling_incubator"
+  },
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "fragile_offsets": [],
+    "target_duration_ticks": 600,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry",
+    "culmination": "forging"
+  }
+}

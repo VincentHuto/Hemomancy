@@ -1,0 +1,90 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "id": "hemomancy:cardinal_rite/working/fungal_implantation_pylon",
+  "bloodCost": 0,
+  "riteType": "lesser",
+  "purpose": "making",
+  "required_degree": 4,
+  "rankup": false,
+  "riteName": "Working of the Fungal Implantation Pylon",
+  "riteDescription": "Build the Fungal Implantation Pylon beside the Cardinal Focus, feed it, and let the Working floor take it.",
+  "floor": "hemomancy:working_lesser",
+  "medium": {
+    "item": "hemomancy:hyphal_substrate"
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "hemomancy:neurotic_spores"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:bone_meal"
+      },
+      "count": 1
+    }
+  ],
+  "subject": {
+    "pattern": [
+      [
+        " M ",
+        "ICI",
+        " H "
+      ],
+      [
+        " E ",
+        "WTW",
+        " E "
+      ]
+    ],
+    "key": {
+      "C": {
+        "block": "hemomancy:chiseled_hematic_iron_block"
+      },
+      "E": {
+        "block": "hemomancy:erythrocytic_mycelium"
+      },
+      "H": {
+        "block": "hemomancy:hematic_iron_block"
+      },
+      "I": {
+        "block": "minecraft:iron_bars"
+      },
+      "M": {
+        "block": "minecraft:brown_mushroom_block"
+      },
+      "T": {
+        "block": "hemomancy:hyphae_block"
+      },
+      "W": {
+        "block": "hemomancy:infested_wood"
+      }
+    },
+    "feed": 1200
+  },
+  "result": {
+    "id": "hemomancy:fungal_implantation_pylon"
+  },
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "fragile_offsets": [],
+    "target_duration_ticks": 600,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry",
+    "culmination": "forging"
+  }
+}

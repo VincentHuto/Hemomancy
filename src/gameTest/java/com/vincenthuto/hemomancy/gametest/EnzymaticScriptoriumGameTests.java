@@ -292,7 +292,7 @@ public final class EnzymaticScriptoriumGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 100, batch = "scriptorium")
-    public static void bloodStructureMatchesEnchantingTableFormation(GameTestHelper helper) {
+    public static void workingCraftMatchesEnchantingTableSubject(GameTestHelper helper) {
         var level = helper.getLevel();
         BlockPos center = helper.absolutePos(new BlockPos(5, 3, 5));
         level.setBlockAndUpdate(center, Blocks.ENCHANTING_TABLE.defaultBlockState());
@@ -300,11 +300,11 @@ public final class EnzymaticScriptoriumGameTests {
             level.setBlockAndUpdate(center.relative(direction), BlockInit.hematic_iron_block.get().defaultBlockState());
         for (int x : new int[]{-1, 1}) for (int z : new int[]{-1, 1})
             level.setBlockAndUpdate(center.offset(x, 0, z), BlockInit.sanguine_glass.get().defaultBlockState());
-        var recipe = BloodStructureRecipe.getStructureByLocation(level, Hemomancy.rloc("enzymatic_scriptorium"));
-        helper.assertTrue(recipe != null, "D3 recipe did not load");
-        helper.assertTrue(BloodStructureCraftingHelper.findStructurePatternAtHit(recipe, level, center) != null,
-                "Authoritative Blood Structure matcher rejected the formation");
-        helper.assertTrue(recipe.getBloodCost() == 500, "D3 blood cost drifted");
+        var recipe = CardinalRiteRecipe.getRiteByLocation(level, Hemomancy.rloc("cardinal_rite/working/enzymatic_scriptorium"));
+        helper.assertTrue(recipe != null && recipe.isWorkingCraft(), "D3 Working craft did not load");
+        helper.assertTrue(BloodStructureCraftingHelper.findPatternAtHit(recipe.getSubject().getBlockPattern(), level, center) != null,
+                "The Working craft's subject pattern rejected the formation");
+        helper.assertTrue(recipe.getSubjectFeedMl() == 500, "D3 feed drifted");
         helper.succeed();
     }
 
@@ -314,9 +314,9 @@ public final class EnzymaticScriptoriumGameTests {
                 Hemomancy.rloc("cardinal_rite/eightfold_script")) != null, "Eightfold rite failed to load");
         helper.assertTrue(CardinalRiteRecipe.getRiteByLocation(helper.getLevel(),
                 Hemomancy.rloc("cardinal_rite/palimpsest")) != null, "Palimpsest rite failed to load");
-        helper.assertTrue(BloodStructureRecipe.getAllRecipes(helper.getLevel()).stream()
-                .anyMatch(recipe -> recipe.getId().equals(Hemomancy.rloc("blood_structure/enzymatic_scriptorium"))),
-                "D3 Blood Structure recipe failed to load");
+        helper.assertTrue(CardinalRiteRecipe.getRiteByLocation(helper.getLevel(),
+                Hemomancy.rloc("cardinal_rite/working/enzymatic_scriptorium")) != null,
+                "D3 Working craft failed to load");
         helper.assertTrue(ScriptoriumAffinities.get(net.minecraft.resources.ResourceLocation.parse("minecraft:efficiency")) != null,
                 "Efficiency affinity failed to load");
         helper.succeed();

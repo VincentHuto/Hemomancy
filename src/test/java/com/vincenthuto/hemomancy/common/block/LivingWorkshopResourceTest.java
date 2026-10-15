@@ -12,7 +12,7 @@ public final class LivingWorkshopResourceTest {
 	}
 
 	public static void main(String[] args) throws IOException {
-		String lantern = readResource("data/hemomancy/recipe/blood_structure/mycelial_lantern.json");
+		String lantern = readResource("data/hemomancy/recipe/cardinal_rite/working/mycelial_lantern.json");
 		String tap = readResource("data/hemomancy/recipe/gourdvine_tap.json");
 		String salve = readResource("data/hemomancy/recipe/sanguine_salve.json");
 		String poultice = readResource("data/hemomancy/recipe/vascular_poultice.json");

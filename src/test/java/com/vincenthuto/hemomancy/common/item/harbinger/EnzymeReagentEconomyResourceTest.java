@@ -59,7 +59,7 @@ public final class EnzymeReagentEconomyResourceTest {
 		assertContains("hyphal substrate uses hematic powder",
 				read(RECIPES.resolve("hyphal_substrate.json")), "hemomancy:hematic_iron_powder");
 		assertContains("mycelial lantern held reagent uses ferric binder",
-				read(RECIPES.resolve("blood_structure/mycelial_lantern.json")), "\"heldItem\": \"hemomancy:ferric_binder\"");
+				read(RECIPES.resolve("cardinal_rite/working/mycelial_lantern.json")), "\"item\": \"hemomancy:ferric_binder\"");
 		assertContains("vial centrifuge held reagent uses ferric binder",
 				read(RECIPES.resolve("blood_structure/vial_centrifuge.json")), "\"heldItem\": \"hemomancy:ferric_binder\"");
 	}

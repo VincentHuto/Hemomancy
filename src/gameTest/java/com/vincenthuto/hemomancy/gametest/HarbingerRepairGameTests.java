@@ -1511,7 +1511,9 @@ public final class HarbingerRepairGameTests {
                 for (int copy = 0; copy < requirement.count(); copy++) {
                     var socket = floor.brazierSockets().get(index++);
                     var pos = focus.offset(new net.minecraft.core.BlockPos(socket.getX(), socket.getY(), -socket.getZ()).rotate(rotation));
-                    level.setBlockAndUpdate(pos.below(), net.minecraft.world.level.block.Blocks.STONE.defaultBlockState());
+                    // Sockets stand on the floor's outer ring: only a socket off the floor needs a support of its own.
+                    if (!level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), net.minecraft.core.Direction.UP))
+                        level.setBlockAndUpdate(pos.below(), net.minecraft.world.level.block.Blocks.STONE.defaultBlockState());
                     level.setBlockAndUpdate(pos, com.vincenthuto.hemomancy.common.init.BlockInit.iron_brazier.get().defaultBlockState()
                             .setValue(com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock.RITUAL_PHASE, 1));
                     var brazier = (com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity) level.getBlockEntity(pos);

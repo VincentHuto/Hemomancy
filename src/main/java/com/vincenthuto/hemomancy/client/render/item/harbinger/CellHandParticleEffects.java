@@ -326,8 +326,11 @@ public final class CellHandParticleEffects {
 				AbsorbedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
 				origin.x, origin.y, origin.z, 0.0D, 0.0D, 0.0D);
 		if (created instanceof AbsorbedBloodCellParticle particle) {
-			particle.setProjectionPath(origin, trace.getLocation(),
-					projectionDeviation(origin, trace.getLocation(), rand));
+			// Into a feeding Working craft, the blood lands on the fill line climbing its structure.
+			Vec3 target = trace instanceof net.minecraft.world.phys.BlockHitResult block
+					? com.vincenthuto.hemomancy.client.render.world.WorkingCraftSwallowRenderer.projectionLanding(origin, block)
+					: trace.getLocation();
+			particle.setProjectionPath(origin, target, projectionDeviation(origin, target, rand));
 		}
 	}
 

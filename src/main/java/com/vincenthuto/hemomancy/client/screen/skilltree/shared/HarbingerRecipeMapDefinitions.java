@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.recipe.LegacyBloodStructureIds;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -46,7 +47,7 @@ public final class HarbingerRecipeMapDefinitions {
 		registerCrafting("Apparatus", "vial_centrifuge", "ghastly_alembic", "mnemonic_reliquary", "somatic_loom",
 				"sporitic_thurible", "morphling_incubator", "mycelial_lantern");
 		registerCrafting("Ritual Infrastructure", "runic_chisel_station", "visceral_mirror", "dendritic_distributor",
-				"consecrated_bloodwell", "hematic_stake", "sanguine_monolith", "covenant_throne");
+				"hematic_stake", "sanguine_monolith", "covenant_throne");
 		registerCrafting("Constructs/Effigies", "semi_sentient_construct", "mason_effigy", "mind_spike", "vacant_effigy",
 				"vascular_effigy");
 		registerCrafting("Stations", "enzymatic_scriptorium", "resonant_forge", "scarlet_vanity", "warp_chair",
@@ -157,12 +158,11 @@ public final class HarbingerRecipeMapDefinitions {
 		linkCrafting("blood_structure/vial_centrifuge", "blood_structure/morphling_incubator", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/vial_centrifuge", "blood_structure/mycelial_lantern", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/runic_chisel_station", "blood_structure/visceral_mirror", RecipeMapLink.Kind.CONCEPTUAL);
-		linkCrafting("blood_structure/runic_chisel_station", "blood_structure/consecrated_bloodwell", RecipeMapLink.Kind.CONCEPTUAL);
+		linkCrafting("blood_structure/runic_chisel_station", "blood_structure/hematic_stake", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/runic_chisel_station", "blood_structure/dendritic_distributor", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/runic_chisel_station", "blood_structure/covenant_throne", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/runic_chisel_station", "blood_structure/sanguine_monolith", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/sanguine_monolith", "blood_structure/covenant_throne", RecipeMapLink.Kind.PROGRESSION);
-		linkCrafting("blood_structure/consecrated_bloodwell", "blood_structure/hematic_stake", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/semi_sentient_construct", "blood_structure/mason_effigy", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/semi_sentient_construct", "blood_structure/mind_spike", RecipeMapLink.Kind.CONCEPTUAL);
 		linkCrafting("blood_structure/semi_sentient_construct", "blood_structure/vacant_effigy", RecipeMapLink.Kind.CONCEPTUAL);
@@ -174,16 +174,19 @@ public final class HarbingerRecipeMapDefinitions {
 
 	public static Set<String> ritePaths() { return Set.copyOf(RITES.keySet()); }
 	public static Set<String> craftingPaths() {
-		return CRAFTING.keySet().stream().filter(path -> path.startsWith("blood_structure/")).collect(java.util.stream.Collectors.toUnmodifiableSet());
+		return CRAFTING.keySet().stream().filter(path -> path.startsWith("blood_structure/")
+				|| path.startsWith(LegacyBloodStructureIds.WORKING_PREFIX)).collect(java.util.stream.Collectors.toUnmodifiableSet());
 	}
 	public static Set<String> puppetryPaths() {
 		return RITES.entrySet().stream().filter(entry -> "Puppetry".equals(entry.getValue()))
 				.map(Map.Entry::getKey).collect(java.util.stream.Collectors.toUnmodifiableSet());
 	}
 	public static String riteFamily(String path) { return RITES.getOrDefault(path, RecipeMapLayout.MISC_FAMILY); }
-	public static String craftingFamily(String path) { return CRAFTING.getOrDefault(path, RecipeMapLayout.MISC_FAMILY); }
+	public static String craftingFamily(String path) {
+		return CRAFTING.getOrDefault(LegacyBloodStructureIds.remapPath(path), RecipeMapLayout.MISC_FAMILY);
+	}
 	public static int riteOrder(String path) { return orderWithinFamily(RITES, path); }
-	public static int craftingOrder(String path) { return orderWithinFamily(CRAFTING, path); }
+	public static int craftingOrder(String path) { return orderWithinFamily(CRAFTING, LegacyBloodStructureIds.remapPath(path)); }
 	public static List<RecipeMapLink> riteLinks() { return List.copyOf(RITE_LINKS); }
 	public static List<RecipeMapLink> craftingLinks() { return List.copyOf(CRAFTING_LINKS); }
 	public static Map<RecipeMapKey, RecipeMapLayout.AuthoredPosition> ritePositions() { return Map.copyOf(RITE_POSITIONS); }
@@ -196,7 +199,7 @@ public final class HarbingerRecipeMapDefinitions {
 	}
 
 	private static void registerCrafting(String family, String... paths) {
-		for (String path : paths) CRAFTING.put("blood_structure/" + path, family);
+		for (String path : paths) CRAFTING.put(LegacyBloodStructureIds.remapPath("blood_structure/" + path), family);
 	}
 
 	private static void linkRites(String from, String to, RecipeMapLink.Kind kind) {
@@ -253,6 +256,6 @@ public final class HarbingerRecipeMapDefinitions {
 
 	private static RecipeMapKey craftingKey(String path) {
 		return new RecipeMapKey(RecipeMapEntry.Kind.CRAFTING,
-				ResourceLocation.fromNamespaceAndPath("hemomancy", path));
+				ResourceLocation.fromNamespaceAndPath("hemomancy", LegacyBloodStructureIds.remapPath(path)));
 	}
 }

@@ -2,6 +2,7 @@
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 900,
   "riteType": "lesser",
+  "purpose": "world",
   "required_degree": 4,
   "riteName": "Cinder Bellows Ordeal",
   "riteDescription": "Weather the breathing cycle and bind its shape to an attuned Crossbar.",

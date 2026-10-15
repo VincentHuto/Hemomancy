@@ -265,7 +265,28 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 						GsonHelper.getAsBoolean(structure, "consume_on_success", false));
 			}
 			recipe.setBrazierSignature(brazierSignatureFromJson(pJson, jsonOps));
+			if (pJson.has("subject")) {
+				JsonObject subject = GsonHelper.getAsJsonObject(pJson, "subject");
+				recipe.setSubject(CardinalRitePatternJson.parse(subject), GsonHelper.getAsInt(subject, "feed"));
+			}
 		}
+		CardinalRitePurpose purpose = CardinalRitePurpose.byId(GsonHelper.getAsString(pJson, "purpose", ""));
+		boolean special = GsonHelper.getAsBoolean(pJson, "special", false);
+		if (!unstained) {
+			String violation = CardinalRitePurpose.violation(purpose, special,
+					recipe.getFloorId() == null ? "" : recipe.getFloorId().getPath());
+			if (violation != null) {
+				throw new JsonSyntaxException("Harbinger cardinal rite " + pRecipeId + " " + violation);
+			}
+		}
+		recipe.setPurpose(purpose);
+		recipe.setSpecial(special);
+		String worldFinale = pJson.has("world_finale") ? GsonHelper.getAsString(pJson, "world_finale") : null;
+		String finaleViolation = CardinalRiteDaemonFinale.violation(purpose, worldFinale);
+		if (finaleViolation != null) {
+			throw new JsonSyntaxException("Cardinal rite " + pRecipeId + " " + finaleViolation);
+		}
+		recipe.setDaemonFinale(CardinalRiteDaemonFinale.resolve(purpose, worldFinale));
 		recipe.setMedium(mediumFromJson(pJson, pRecipeId, jsonOps));
 		recipe.setConsumeMediumOnSuccess(CardinalRiteMediumRules.consumeOnSuccessFromNullable(
 				pJson.has("consume_medium_on_success")
@@ -277,12 +298,19 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			// Station upgrade rites declare their "id" so the codec path is real here.
 			String policyPath = pRecipeId.getPath();
 			List<String> violations = CardinalRiteProgressionPolicy.violations(
-					policyPath, requiredDegree, recipe.getCeremony(), offeringCount);
+					policyPath, requiredDegree, recipe.getCeremony(), offeringCount, recipe.isWorkingCraft());
 			if (!violations.isEmpty()) {
 				throw new JsonSyntaxException("Harbinger cardinal rite " + pRecipeId
 						+ " exceeds its degree " + requiredDegree + " ceremony ceiling: "
 						+ String.join("; ", violations));
 			}
+		}
+		if (recipe.isWorkingCraft()) {
+			String violation = WorkingCraftRecipeRules.violation(purpose,
+					recipe.getFloorId() == null ? "" : recipe.getFloorId().getPath(),
+					recipe.getSubject().getPatternArray(), recipe.getSubjectFeedMl(),
+					recipe.getCeremony() == null ? 0 : recipe.getCeremony().anchors().size(), (int) recipe.getBloodCost());
+			if (violation != null) throw new JsonSyntaxException("Working craft " + pRecipeId + " " + violation);
 		}
 		if (pJson.has("puppeteer_trial")) {
 			JsonObject trial = GsonHelper.getAsJsonObject(pJson, "puppeteer_trial");
@@ -341,7 +369,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 					"result", "required_degree", "required_purity", "required_clarity",
 					"breakBlocksOnCreation", "unstained", "rankup", "ceremony", "floor",
 					"required_structure", "brazier_signature", "medium", "consume_medium_on_success",
-					"puppeteer_trial").map(ops::createString);
+					"puppeteer_trial", "purpose", "special", "world_finale", "subject").map(ops::createString);
 		}
 
 		@Override
@@ -374,6 +402,9 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			prefix.add("breakBlocksOnCreation", ops.createBoolean(recipe.shouldBreakBlocksOnCreation()));
 			prefix.add("unstained", ops.createBoolean(recipe.isUnstained()));
 			prefix.add("rankup", ops.createBoolean(recipe.isRankup()));
+			if (recipe.getPurpose() != null) prefix.add("purpose", ops.createString(recipe.getPurpose().id()));
+			if (recipe.isSpecial()) prefix.add("special", ops.createBoolean(true));
+			if (recipe.getDaemonFinale() == CardinalRiteDaemonFinale.SKY) prefix.add("world_finale", ops.createString("sky"));
 			if (recipe.hasMedium()) {
 				prefix.add("medium", Ingredient.CODEC.encodeStart(ops, recipe.getMedium()));
 			}
@@ -416,6 +447,9 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 				riteDescription, requiredDegree, breakBlocksOnCreation, unstained, rankup);
 		recipe.setRequiredPurity(requiredPurity);
 		recipe.setRequiredClarity(requiredClarity);
+		recipe.setPurpose(CardinalRitePurpose.byId(pBuffer.readUtf()));
+		recipe.setSpecial(pBuffer.readBoolean());
+		recipe.setDaemonFinale(pBuffer.readEnum(CardinalRiteDaemonFinale.class));
 		if (pBuffer.readBoolean()) {
 			recipe.setCeremony(readCeremony(pBuffer));
 		}
@@ -429,6 +463,10 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 						Ingredient.CONTENTS_STREAM_CODEC.decode(pBuffer), pBuffer.readVarInt(), pBuffer.readBoolean()));
 			}
 			recipe.setBrazierSignature(requirements);
+			if (pBuffer.readBoolean()) {
+				MultiblockPattern subject = readPattern(pBuffer);
+				recipe.setSubject(subject, pBuffer.readVarInt());
+			}
 		}
 		if (pBuffer.readBoolean()) {
 			recipe.setMedium(Ingredient.CONTENTS_STREAM_CODEC.decode(pBuffer));
@@ -494,6 +532,9 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		pBuffer.writeBoolean(pRecipe.shouldBreakBlocksOnCreation());
 		pBuffer.writeBoolean(pRecipe.isUnstained());
 		pBuffer.writeBoolean(pRecipe.isRankup());
+		pBuffer.writeUtf(pRecipe.getPurpose() == null ? "" : pRecipe.getPurpose().id());
+		pBuffer.writeBoolean(pRecipe.isSpecial());
+		pBuffer.writeEnum(pRecipe.getDaemonFinale());
 		pBuffer.writeBoolean(pRecipe.getCeremony() != null);
 		if (pRecipe.getCeremony() != null) {
 			writeCeremony(pBuffer, pRecipe.getCeremony());
@@ -509,6 +550,11 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 				Ingredient.CONTENTS_STREAM_CODEC.encode(pBuffer, requirement.ingredient());
 				pBuffer.writeVarInt(requirement.count());
 				pBuffer.writeBoolean(requirement.consumeOnSuccess());
+			}
+			pBuffer.writeBoolean(pRecipe.isWorkingCraft());
+			if (pRecipe.isWorkingCraft()) {
+				writePattern(pBuffer, pRecipe.getSubject());
+				pBuffer.writeVarInt(pRecipe.getSubjectFeedMl());
 			}
 		}
 		pBuffer.writeBoolean(pRecipe.hasMedium());

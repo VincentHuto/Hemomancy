@@ -2,13 +2,14 @@
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "greater",
+  "purpose": "making",
   "required_degree": 4,
   "riteName": "Rite of the Crimson Vessel",
   "riteDescription": "The pallid vessel is steeped in the deepest scarlet, its walls drinking in the vitality of the blood arts until they flush crimson with purpose.",
   "result": {
     "id": "hemomancy:blood_gourd_red"
   },
-  "floor": "hemomancy:threshold_greater",
+  "floor": "hemomancy:working_greater",
   "brazier_signature": [
     {
       "ingredient": {

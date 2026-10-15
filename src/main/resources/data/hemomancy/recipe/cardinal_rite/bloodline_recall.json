@@ -2,6 +2,7 @@
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "lesser",
+  "purpose": "bond",
   "required_degree": 5,
   "riteName": "Rite of Bloodline Recall",
   "riteDescription": "A penitent rite that reconjures a lost ancestral ledger from the caster's blood memory. The covenant does not forget but neither does it forgive carelessness lightly.",

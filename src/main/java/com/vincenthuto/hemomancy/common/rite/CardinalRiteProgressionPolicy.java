@@ -20,6 +20,11 @@ public final class CardinalRiteProgressionPolicy {
 
 	public static List<String> violations(String ritePath, int degree,
 			CardinalRiteCeremonyDefinition ceremony, int offeringCount) {
+		return violations(ritePath, degree, ceremony, offeringCount, false);
+	}
+
+	public static List<String> violations(String ritePath, int degree,
+			CardinalRiteCeremonyDefinition ceremony, int offeringCount, boolean workingCraft) {
 		if (ceremony == null) return List.of("ceremony is missing");
 		Limits limits = degree == 7 && "cardinal_rite/apotheos_rite".equals(ritePath)
 				? new Limits(32, 4, 3, 6, 1, 0, "living_staff", 3, true, true, 3)
@@ -43,9 +48,10 @@ public final class CardinalRiteProgressionPolicy {
 			problems.add("ordeal waves " + waveOptions + " exceed " + limits.maxWaveOptions());
 		}
 		// Station upgrade rites always take the upgrade item plus five offerings, whatever their degree.
+		// Working crafts carry the components of what they make, so they share the same allowance.
 		int maxOfferings = com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.isUpgradeRitePath(ritePath)
 				? com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.OFFERINGS_PER_RITE
-				: limits.maxOfferings();
+				: workingCraft ? WorkingCraftRecipeRules.MAX_OFFERINGS : limits.maxOfferings();
 		if (offeringCount > maxOfferings) {
 			problems.add("offerings " + offeringCount + " exceed " + maxOfferings);
 		}

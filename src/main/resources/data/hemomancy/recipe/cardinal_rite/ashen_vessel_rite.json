@@ -2,13 +2,14 @@
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "greater",
+  "purpose": "making",
   "required_degree": 5,
   "riteName": "Rite of the Ashen Vessel",
   "riteDescription": "Through fire and ash the vessel is reborn blackened, hardened, and hungry. The ashen gourd drinks deeper than any before it.",
   "result": {
     "id": "hemomancy:blood_gourd_black"
   },
-  "floor": "hemomancy:threshold_greater",
+  "floor": "hemomancy:working_greater",
   "brazier_signature": [
     {
       "ingredient": {

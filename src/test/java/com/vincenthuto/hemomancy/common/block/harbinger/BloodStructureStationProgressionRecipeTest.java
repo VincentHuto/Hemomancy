@@ -7,6 +7,7 @@ import java.nio.file.Path;
 public final class BloodStructureStationProgressionRecipeTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
 	private static final String BLOOD_STRUCTURE_RECIPE = "\"type\": \"hemomancy:blood_structure_recipe\"";
+	private static final String WORKING_CRAFT_RECIPE = "\"type\": \"hemomancy:cardinal_rite_recipe\"";
 
 	private BloodStructureStationProgressionRecipeTest() {
 	}
@@ -14,9 +15,9 @@ public final class BloodStructureStationProgressionRecipeTest {
 	public static void main(String[] args) throws IOException {
 		assertStationRecipe("Vial Centrifuge", "vial_centrifuge", 1, "hemomancy:vial_centrifuge");
 		assertStationRecipe("Ghastly Alembic", "ghastly_alembic", 2, "hemomancy:ghastly_alembic");
-		assertStationRecipe("Somatic Loom", "somatic_loom", 3, "hemomancy:somatic_loom");
-		assertStationRecipe("Cerebral Scarring Station", "runic_chisel_station", 4, "hemomancy:scar_station");
-		assertStationRecipe("Mason's Effigy", "mason_effigy", 4, "hemomancy:mason_effigy");
+		assertWorkingCraft("Somatic Loom", "somatic_loom", 3, "hemomancy:somatic_loom");
+		assertWorkingCraft("Cerebral Scarring Station", "runic_chisel_station", 4, "hemomancy:scar_station");
+		assertWorkingCraft("Mason's Effigy", "mason_effigy", 4, "hemomancy:mason_effigy");
 		assertStationRecipe("Liber Sanguinium", "liber_sanguinum", 1, "hemomancy:liber_sanguinum");
 		assertStationRecipe("Hematic Iron Block", "hematic_iron_block", 1, "hemomancy:hematic_iron_block");
 	}
@@ -25,6 +26,15 @@ public final class BloodStructureStationProgressionRecipeTest {
 			throws IOException {
 		String recipe = read("src/main/resources/data/hemomancy/recipe/blood_structure/" + recipeName + ".json");
 		assertContains(label + " is blood-structure crafted", recipe, BLOOD_STRUCTURE_RECIPE);
+		assertContains(label + " unlocks at expected degree", recipe, "\"required_degree\": " + degree);
+		assertContains(label + " crafts the expected block", recipe, "\"id\": \"" + resultId + "\"");
+	}
+
+	private static void assertWorkingCraft(String label, String recipeName, int degree, String resultId)
+			throws IOException {
+		String recipe = read("src/main/resources/data/hemomancy/recipe/cardinal_rite/working/" + recipeName + ".json");
+		assertContains(label + " is a Working craft", recipe, WORKING_CRAFT_RECIPE);
+		assertContains(label + " is a making rite", recipe, "\"purpose\": \"making\"");
 		assertContains(label + " unlocks at expected degree", recipe, "\"required_degree\": " + degree);
 		assertContains(label + " crafts the expected block", recipe, "\"id\": \"" + resultId + "\"");
 	}

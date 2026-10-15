@@ -2,6 +2,8 @@
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "grand",
+  "purpose": "bond",
+  "special": true,
   "required_degree": 7,
   "riteName": "Rite of Ancestral Communion",
   "riteDescription": "The ultimate rite of revelation. The caster opens a channel to the ancient fungal consciousness, receiving cryptic lore and hidden truths about the origins of hemomancy itself.",

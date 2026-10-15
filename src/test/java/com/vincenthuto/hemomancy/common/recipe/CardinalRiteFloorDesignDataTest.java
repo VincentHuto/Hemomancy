@@ -4,14 +4,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteRingTuning;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteGashRules;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,40 +43,57 @@ final class CardinalRiteFloorDesignDataTest {
 	}
 
 	@Test
-	void socketsFlankTheAnchorLanesOutsideTheFloorWithFullSymmetry() throws IOException {
+	void floorsAuthorNoSocketsBecauseBraziersStandAnywhereAlongTheGash() throws IOException {
 		for (String style : STYLES) {
 			for (String tier : TIERS) {
-				JsonObject floor = floor(style, tier);
-				int half = floor.getAsJsonArray("pattern").size() / 2;
-				float footprint = floor.get("footprint_radius").getAsFloat();
-				Set<Long> sockets = sockets(floor);
-				for (long packed : sockets) {
-					int x = x(packed);
-					int z = z(packed);
-					String name = style + "_" + tier + " socket " + x + "," + z;
-					assertFalse(onAnchorLane(x, z), name + " sits where a ceremony anchor can be planted");
-					assertTrue(Math.max(Math.abs(x), Math.abs(z)) > half, name + " is on the floor");
-					assertTrue(Math.hypot(x, z) < footprint, name + " is outside the rite footprint");
-					for (long image : List.of(pack(-x, z), pack(x, -z), pack(z, x), pack(-z, -x))) {
-						assertTrue(sockets.contains(image), name + " has no mirror at " + x(image) + "," + z(image));
-					}
-				}
+				assertFalse(floor(style, tier).has("brazier_sockets"),
+						style + "_" + tier + " still pins braziers to fixed sockets; the gash decides where they stand");
 			}
 		}
 	}
 
 	@Test
-	void upgradingAFloorSlidesEachSocketOneBlockOutward() throws IOException {
-		for (String style : STYLES) {
-			for (int tier = 0; tier < TIERS.size() - 1; tier++) {
-				Set<Long> larger = sockets(floor(style, TIERS.get(tier + 1)));
-				for (long packed : sockets(floor(style, TIERS.get(tier)))) {
-					int x = x(packed);
-					int z = z(packed);
-					long slid = Math.abs(x) > Math.abs(z) ? pack(x + Integer.signum(x), z) : pack(x, z + Integer.signum(z));
-					assertTrue(larger.contains(slid), style + " " + TIERS.get(tier) + " socket " + x + "," + z
-							+ " has no outward successor on the " + TIERS.get(tier + 1) + " floor");
+	void everyFloorsGashHoldsEnoughBraziersForTheRitesItAccepts() throws IOException {
+		Path rites = Path.of("src/main/resources/data/hemomancy/recipe/cardinal_rite");
+		java.util.Map<String, Integer> needed = new java.util.HashMap<>();
+		try (var paths = Files.walk(rites)) {
+			for (Path path : paths.filter(p -> p.toString().endsWith(".json")).toList()) {
+				JsonObject rite = JsonParser.parseString(Files.readString(path)).getAsJsonObject();
+				if (!rite.has("floor") || !rite.has("brazier_signature")) continue;
+				int count = 0;
+				for (JsonElement requirement : rite.getAsJsonArray("brazier_signature")) {
+					JsonObject entry = requirement.getAsJsonObject();
+					count += entry.has("count") ? entry.get("count").getAsInt() : 1;
 				}
+				needed.merge(rite.get("floor").getAsString().replace("hemomancy:", ""), count, Math::max);
+			}
+		}
+		for (String style : STYLES) {
+			int most = 0;
+			for (String tier : TIERS) {
+				// A larger floor of a style also accepts the smaller floors' rites.
+				most = Math.max(most, needed.getOrDefault(style + "_" + tier, 0));
+				int half = floor(style, tier).getAsJsonArray("pattern").size() / 2;
+				assertTrue(CardinalRiteGashRules.cells(half).size() >= most,
+						style + "_" + tier + "'s gash takes fewer braziers than its rites need: " + most);
+			}
+		}
+	}
+
+	@Test
+	void theGashFillsFromTheBackSoCraftsAndStationsStayClearOfTheBed() {
+		// The spawner and the order of play fill gash cells in order; a craft stands on the bed south of the Focus.
+		// The first half of each Working floor's gash (six cells at least where it has them) must lie outside that bed.
+		int[][] beds = {{3, 1}, {3, 2}, {3, 3}, {5, 4}};
+		for (int tier = 0; tier < TIERS.size(); tier++) {
+			List<net.minecraft.core.BlockPos> cells = CardinalRiteGashRules.cells(tier + 1);
+			int width = beds[tier][0];
+			int depth = beds[tier][1];
+			for (int i = 0; i < Math.min(6, cells.size() / 2); i++) {
+				int worldX = cells.get(i).getX();
+				int worldZ = -cells.get(i).getZ();
+				assertFalse(Math.abs(worldX) <= width / 2 && worldZ >= 1 && worldZ <= depth,
+						"working_" + TIERS.get(tier) + " gash cell " + i + " stands in the south craft bed");
 			}
 		}
 	}
@@ -128,27 +144,6 @@ final class CardinalRiteFloorDesignDataTest {
 	private static String block(JsonObject floor, char symbol) {
 		JsonObject key = floor.getAsJsonObject("key").getAsJsonObject(String.valueOf(symbol));
 		return key.has("tag") ? "#" + key.get("tag").getAsString() : key.get("block").getAsString();
-	}
-
-	private static Set<Long> sockets(JsonObject floor) {
-		Set<Long> sockets = new HashSet<>();
-		for (JsonElement socket : floor.getAsJsonArray("brazier_sockets")) {
-			var values = socket.getAsJsonArray();
-			assertTrue(sockets.add(pack(values.get(0).getAsInt(), values.get(2).getAsInt())), "duplicate socket");
-		}
-		return sockets;
-	}
-
-	private static long pack(int x, int z) {
-		return ((long) x << 32) ^ (z & 0xFFFFFFFFL);
-	}
-
-	private static int x(long packed) {
-		return (int) (packed >> 32);
-	}
-
-	private static int z(long packed) {
-		return (int) packed;
 	}
 
 	private static JsonObject floor(String style, String tier) throws IOException {

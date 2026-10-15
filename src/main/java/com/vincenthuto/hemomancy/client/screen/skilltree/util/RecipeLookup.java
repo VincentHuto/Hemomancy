@@ -25,6 +25,7 @@ public final class RecipeLookup {
 		GHASTLY_ALEMBIC,
 		MEMORY_WEAVING,
 		BLOOD_STRUCTURE,
+		WORKING_CRAFT,
 		CHISEL,
 		INCUBATOR
 	}
@@ -89,6 +90,17 @@ public final class RecipeLookup {
 			ItemStack result = r.getResult();
 			if (result != null && !result.isEmpty()) {
 				CACHE.putIfAbsent(result.getItem(), new FoundRecipe(r, RecipeKind.BLOOD_STRUCTURE));
+			}
+		}
+
+		// Working crafts: machines raised beside a Cardinal Focus and swallowed by the floor
+		for (var holder : rm.getAllRecipesFor(RecipeInit.cardinal_rite_recipe_type.get())) {
+			com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe r = holder.value();
+			if (!r.isWorkingCraft()) continue;
+			r.setId(holder.id());
+			ItemStack result = r.getResult();
+			if (result != null && !result.isEmpty()) {
+				CACHE.putIfAbsent(result.getItem(), new FoundRecipe(r, RecipeKind.WORKING_CRAFT));
 			}
 		}
 

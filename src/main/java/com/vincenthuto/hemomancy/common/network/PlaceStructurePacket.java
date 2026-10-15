@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.common.network;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.recipe.BloodStructureOfferingPlacement;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteFoundationRules;
@@ -27,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.List;
@@ -40,26 +40,44 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 
 	public enum StructureType {
 		BLOOD_STRUCTURE,
-		CARDINAL_RITE
+		CARDINAL_RITE,
+		/** A whole Cardinal Rite floor with its Focus and a lit, empty brazier on every socket. */
+		RITE_FLOOR
 	}
 
 	private final ResourceLocation recipeId;
 	private final StructureType type;
+	/** Shift-click: also raise everything the craft needs to run (its Working floor, medium and lit offerings). */
+	private final boolean fullSetup;
 
-	public PlaceStructurePacket(ResourceLocation recipeId, StructureType type) {
+	public PlaceStructurePacket(ResourceLocation recipeId, StructureType type, boolean fullSetup) {
 		this.recipeId = recipeId;
 		this.type = type;
+		this.fullSetup = fullSetup;
+	}
+
+	public ResourceLocation recipeId() {
+		return recipeId;
+	}
+
+	public StructureType structureType() {
+		return type;
+	}
+
+	public boolean fullSetup() {
+		return fullSetup;
 	}
 
 	public static void encode(FriendlyByteBuf buf, PlaceStructurePacket msg) {
 		buf.writeResourceLocation(msg.recipeId);
 		buf.writeEnum(msg.type);
+		buf.writeBoolean(msg.fullSetup);
 	}
 
 	public static PlaceStructurePacket decode(FriendlyByteBuf buf) {
 		ResourceLocation id = buf.readResourceLocation();
 		StructureType type = buf.readEnum(StructureType.class);
-		return new PlaceStructurePacket(id, type);
+		return new PlaceStructurePacket(id, type, buf.readBoolean());
 	}
 
 	public static void handle(final PlaceStructurePacket msg, final IPayloadContext ctx) {
@@ -71,151 +89,159 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 					return;
 				}
 
-				ServerLevel level = player.serverLevel();
-				MultiblockPattern pattern = null;
-				BloodStructureRecipe bloodStructure = null;
-				CardinalRiteRecipe cardinalRite = null;
-
-				if (msg.type == StructureType.BLOOD_STRUCTURE) {
-					BloodStructureRecipe recipe = BloodStructureRecipe.getStructureByLocation(level, msg.recipeId);
-					if (recipe != null) {
-						pattern = recipe.getPattern();
-						bloodStructure = recipe;
-					}
-				} else if (msg.type == StructureType.CARDINAL_RITE) {
-					CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, msg.recipeId);
-					if (recipe != null) {
-						cardinalRite = recipe;
-						pattern = recipe.getPattern();
-					}
-				}
-
-				if (cardinalRite != null && cardinalRite.hasLayeredStation()) {
-					int placed = placeLayeredCardinalRite(level, player.blockPosition(), cardinalRite, player);
-					if (placed >= 0) {
-						player.sendSystemMessage(Component.literal(
-								"§aPlaced " + placed + " blocks for: " + msg.recipeId.getPath()));
-					}
-					return;
-				}
-
-				if (pattern == null) {
-					player.sendSystemMessage(Component.literal("§cCould not find recipe: " + msg.recipeId));
-					return;
-				}
-
-				// Get structure dimensions for centering
-				List<BlockPosBlockPair> blockPairs = pattern.getBlockPosBlockList();
-				if (blockPairs.isEmpty()) {
-					player.sendSystemMessage(Component.literal("§cRecipe has no blocks to place!"));
-					return;
-				}
-
-				// Find bounding box
-				int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
-				int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
-				int minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE;
-				for (BlockPosBlockPair pair : blockPairs) {
-					BlockPos pos = pair.getPos();
-					minX = Math.min(minX, pos.getX());
-					maxX = Math.max(maxX, pos.getX());
-					minY = Math.min(minY, pos.getY());
-					maxY = Math.max(maxY, pos.getY());
-					minZ = Math.min(minZ, pos.getZ());
-					maxZ = Math.max(maxZ, pos.getZ());
-				}
-
-				// Center offsets
-				int centerX = (minX + maxX) / 2;
-				int centerZ = (minZ + maxZ) / 2;
-
-				BlockPos playerPos = player.blockPosition();
-				int placed = 0;
-				List<BlockPos> placedPositions = new java.util.ArrayList<>();
-
-				if (cardinalRite != null) {
-					float footprintRadius = CardinalRiteFootprintResolver.radius(cardinalRite, null);
-					BlockPos floorCenter = playerPos.offset(0, minY, 0);
-					for (BlockPos foundationPos : CardinalRiteFoundationRules.squareBelow(
-							floorCenter, footprintRadius, FOUNDING_FANE_RITE.equals(cardinalRite.getId()))) {
-						level.setBlock(foundationPos, Blocks.STONE.defaultBlockState(), Block.UPDATE_CLIENTS);
-						placed++;
-					}
-				}
-
-				// Sort by Y ascending so support blocks are placed before blocks that
-				// depend on them (e.g. befouling ash trails need a solid block below).
-				blockPairs.sort(java.util.Comparator.comparingInt(p -> p.getPos().getY()));
-
-				// Pre-pass: clear the entire structure volume to air so positions marked
-				// as spaces in the pattern are guaranteed to match. Some pattern helpers
-				// only expose non-air blocks, so iterating blockPairs is not enough for
-				// large hollow structures like the Crimson Lodge.
-				for (int x = minX; x <= maxX; x++) {
-					for (int y = minY; y <= maxY; y++) {
-						for (int z = minZ; z <= maxZ; z++) {
-							BlockPos relativePos = new BlockPos(x, y, z);
-					BlockPos worldPos = playerPos.offset(
-							relativePos.getX() - centerX,
-							relativePos.getY(),
-							relativePos.getZ() - centerZ
-					);
-							level.setBlock(worldPos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(),
-									Block.UPDATE_CLIENTS);
-						}
-					}
-				}
-
-				// Main pass: place all non-air blocks with UPDATE_CLIENTS only
-				// (flag 2) to avoid neighbor-update cascades that can break
-				// canSurvive-dependent blocks like befouling ash trails.
-				for (BlockPosBlockPair pair : blockPairs) {
-					Block block = pair.getBlock();
-					if (block == null || block == net.minecraft.world.level.block.Blocks.AIR) continue;
-
-					BlockPos relativePos = pair.getPos();
-					BlockPos worldPos = playerPos.offset(
-							relativePos.getX() - centerX,
-							relativePos.getY(),
-							relativePos.getZ() - centerZ
-					);
-
-					level.setBlock(worldPos, block.defaultBlockState(), Block.UPDATE_CLIENTS);
-					placedPositions.add(worldPos);
-					placed++;
-				}
-
-				// Post-pass: notify neighbors so blocks update their shapes
-				// (e.g. ash trail connections) now that all blocks are present.
-				for (BlockPos pos : placedPositions) {
-					level.blockUpdated(pos, level.getBlockState(pos).getBlock());
-					level.updateNeighborsAt(pos, level.getBlockState(pos).getBlock());
-				}
-
-				if (bloodStructure != null) {
-					BlockPos offeringCenter = playerPos.offset(0, minY, 0);
-					int halfWidth = Math.max(centerX - minX, maxX - centerX);
-					int halfDepth = Math.max(centerZ - minZ, maxZ - centerZ);
-					for (var slot : BloodStructureOfferingPlacement.plan(
-							offeringCenter, halfWidth, halfDepth, 1, bloodStructure.getOfferings())) {
-						BlockPos support = slot.pos().below();
-						if (!level.getBlockState(support).isFaceSturdy(level, support,
-								net.minecraft.core.Direction.UP)) {
-							level.setBlock(support, Blocks.SMOOTH_STONE.defaultBlockState(), Block.UPDATE_CLIENTS);
-						}
-						BlockState brazierState = BlockInit.iron_brazier.get().defaultBlockState()
-								.setValue(BrazierBlock.RITUAL_PHASE, 1);
-						level.setBlock(slot.pos(), brazierState, Block.UPDATE_ALL);
-						if (level.getBlockEntity(slot.pos()) instanceof IronBrazierBlockEntity brazier) {
-							var offeringStack = slot.representativeStack().copy();
-							brazier.insertOffering(null, offeringStack);
-						}
-					}
-				}
-
-				player.sendSystemMessage(Component.literal("§aPlaced " + placed + " blocks for: " + msg.recipeId.getPath()));
+				spawn(player, msg.recipeId, msg.type, msg.fullSetup);
 			}
 		});
+	}
+
+	/**
+	 * Spawns a structure, rite or floor at the player's feet. A Working craft spawns only its
+	 * structure unless {@code fullSetup} (a shift-click) also raises its Working floor, with the
+	 * medium seated in the Focus and the offerings lit in their braziers.
+	 *
+	 * @return blocks placed, or -1 when nothing could be spawned
+	 */
+	public static int spawn(ServerPlayer player, ResourceLocation recipeId, StructureType type, boolean fullSetup) {
+		ServerLevel level = player.serverLevel();
+		if (type == StructureType.RITE_FLOOR) {
+			CardinalRiteFloorDefinition floor = CardinalRiteFloorRegistry.get(recipeId).orElse(null);
+			if (floor == null) {
+				player.sendSystemMessage(Component.literal("§cCould not find Cardinal Rite floor: " + recipeId));
+				return -1;
+			}
+			int placed = placeRiteFloor(level, player.blockPosition(), floor);
+			player.sendSystemMessage(Component.literal(
+					"§aPlaced " + placed + " blocks for: " + floor.displayName()));
+			return placed;
+		}
+		MultiblockPattern pattern = null;
+		BloodStructureRecipe bloodStructure = null;
+		CardinalRiteRecipe cardinalRite = null;
+
+		if (type == StructureType.BLOOD_STRUCTURE) {
+			BloodStructureRecipe recipe = BloodStructureRecipe.getStructureByLocation(level, recipeId);
+			if (recipe != null) {
+				pattern = recipe.getPattern();
+				bloodStructure = recipe;
+			}
+		} else if (type == StructureType.CARDINAL_RITE) {
+			CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, recipeId);
+			if (recipe != null) {
+				cardinalRite = recipe;
+				pattern = recipe.getPattern();
+			}
+		}
+
+		boolean craftStructureOnly = cardinalRite != null && cardinalRite.isWorkingCraft() && !fullSetup;
+		if (craftStructureOnly) {
+			// Just the structure, placed like a floorless Blood Structure; shift-click raises its Working floor too.
+			pattern = cardinalRite.getSubject();
+			cardinalRite = null;
+		} else if (cardinalRite != null && cardinalRite.hasLayeredStation()) {
+			int placed = placeLayeredCardinalRite(level, player.blockPosition(), cardinalRite, player);
+			if (placed >= 0) {
+				player.sendSystemMessage(Component.literal(
+						"§aPlaced " + placed + " blocks for: " + recipeId.getPath()));
+			}
+			return placed;
+		}
+
+		if (pattern == null) {
+			player.sendSystemMessage(Component.literal("§cCould not find recipe: " + recipeId));
+			return -1;
+		}
+
+		// Get structure dimensions for centering
+		List<BlockPosBlockPair> blockPairs = pattern.getBlockPosBlockList();
+		if (blockPairs.isEmpty()) {
+			player.sendSystemMessage(Component.literal("§cRecipe has no blocks to place!"));
+			return -1;
+		}
+
+		// Find bounding box
+		int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
+		int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
+		int minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE;
+		for (BlockPosBlockPair pair : blockPairs) {
+			BlockPos pos = pair.getPos();
+			minX = Math.min(minX, pos.getX());
+			maxX = Math.max(maxX, pos.getX());
+			minY = Math.min(minY, pos.getY());
+			maxY = Math.max(maxY, pos.getY());
+			minZ = Math.min(minZ, pos.getZ());
+			maxZ = Math.max(maxZ, pos.getZ());
+		}
+
+		// Center offsets
+		int centerX = (minX + maxX) / 2;
+		int centerZ = (minZ + maxZ) / 2;
+
+		BlockPos playerPos = player.blockPosition();
+		int placed = 0;
+		List<BlockPos> placedPositions = new java.util.ArrayList<>();
+
+		if (cardinalRite != null) {
+			float footprintRadius = CardinalRiteFootprintResolver.radius(cardinalRite, null);
+			BlockPos floorCenter = playerPos.offset(0, minY, 0);
+			for (BlockPos foundationPos : CardinalRiteFoundationRules.squareBelow(
+					floorCenter, footprintRadius, FOUNDING_FANE_RITE.equals(cardinalRite.getId()))) {
+				level.setBlock(foundationPos, Blocks.STONE.defaultBlockState(), Block.UPDATE_CLIENTS);
+				placed++;
+			}
+		}
+
+		// Sort by Y ascending so support blocks are placed before blocks that
+		// depend on them (e.g. befouling ash trails need a solid block below).
+		blockPairs.sort(java.util.Comparator.comparingInt(p -> p.getPos().getY()));
+
+		// Pre-pass: clear the entire structure volume to air so positions marked
+		// as spaces in the pattern are guaranteed to match. Some pattern helpers
+		// only expose non-air blocks, so iterating blockPairs is not enough for
+		// large hollow structures like the Crimson Lodge.
+		for (int x = minX; x <= maxX; x++) {
+			for (int y = minY; y <= maxY; y++) {
+				for (int z = minZ; z <= maxZ; z++) {
+					BlockPos relativePos = new BlockPos(x, y, z);
+			BlockPos worldPos = playerPos.offset(
+					relativePos.getX() - centerX,
+					relativePos.getY(),
+					relativePos.getZ() - centerZ
+			);
+					level.setBlock(worldPos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(),
+							Block.UPDATE_CLIENTS);
+				}
+			}
+		}
+
+		// Main pass: place all non-air blocks with UPDATE_CLIENTS only
+		// (flag 2) to avoid neighbor-update cascades that can break
+		// canSurvive-dependent blocks like befouling ash trails.
+		for (BlockPosBlockPair pair : blockPairs) {
+			Block block = pair.getBlock();
+			if (block == null || block == net.minecraft.world.level.block.Blocks.AIR) continue;
+
+			BlockPos relativePos = pair.getPos();
+			BlockPos worldPos = playerPos.offset(
+					relativePos.getX() - centerX,
+					relativePos.getY(),
+					relativePos.getZ() - centerZ
+			);
+
+			level.setBlock(worldPos, block.defaultBlockState(), Block.UPDATE_CLIENTS);
+			placedPositions.add(worldPos);
+			placed++;
+		}
+
+		// Post-pass: notify neighbors so blocks update their shapes
+		// (e.g. ash trail connections) now that all blocks are present.
+		for (BlockPos pos : placedPositions) {
+			level.blockUpdated(pos, level.getBlockState(pos).getBlock());
+			level.updateNeighborsAt(pos, level.getBlockState(pos).getBlock());
+		}
+
+		player.sendSystemMessage(Component.literal("§aPlaced " + placed + " blocks for: " + recipeId.getPath()
+				+ (craftStructureOnly ? " §7(shift-click to raise its Working floor, medium and offerings too)" : "")));
+		return placed;
 	}
 
 	public static int placeLayeredCardinalRite(ServerLevel level, BlockPos focusPos,
@@ -250,15 +276,8 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 		}
 
 		List<BlockPos> placedPositions = new java.util.ArrayList<>();
-		int placed = 0;
-		float footprintRadius = CardinalRiteFootprintResolver.radius(recipe, floor);
-		for (BlockPos foundationPos : CardinalRiteFoundationRules.squareBelow(
-				focusPos, footprintRadius, FOUNDING_FANE_RITE.equals(recipe.getId()))) {
-			level.setBlock(foundationPos, Blocks.STONE.defaultBlockState(), Block.UPDATE_CLIENTS);
-			placed++;
-		}
-		placed += placePatternAtCell(level, floor.pattern(), focusPos,
-				floor.focus().getX(), floor.focus().getY(), floor.focus().getZ(), placedPositions);
+		int placed = placeFloor(level, focusPos, floor, CardinalRiteFootprintResolver.radius(recipe, floor),
+				FOUNDING_FANE_RITE.equals(recipe.getId()), placedPositions);
 		if (recipe.hasMedium()) {
 			ItemStack mediumStack = recipe.getMedium().getItems()[0].copyWithCount(1);
 			if (!(level.getBlockEntity(focusPos) instanceof CardinalFocusBlockEntity focus)
@@ -266,6 +285,12 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 				player.sendSystemMessage(Component.literal("§cCould not seat the rite's medium in its Cardinal Focus"));
 				return -1;
 			}
+		}
+
+		// Reset every socket so spawning another rite at this station cannot leave stale offerings that make exact
+		// brazier-signature matching fail. Before the structures: a socket on the floor's ring can lie in a craft's bed.
+		for (BlockPos socket : floor.brazierSockets()) {
+			level.setBlock(riteOffset(focusPos, socket), Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
 		}
 
 		MultiblockPattern requiredStructure = recipe.getRequiredStructure();
@@ -277,27 +302,14 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 					placedPositions);
 		}
 
-		// Reset every socket so spawning another rite at this station cannot leave
-		// stale offerings that make exact brazier-signature matching fail.
-		for (BlockPos socket : floor.brazierSockets()) {
-			level.setBlock(riteOffset(focusPos, socket), Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
-		}
+		placed += placeWorkingSubject(level, focusPos, recipe, placedPositions);
+
 
 		int socketIndex = 0;
 		for (CardinalRiteRecipe.BrazierRequirement requirement : recipe.getBrazierSignature()) {
 			for (int copy = 0; copy < requirement.count(); copy++) {
 				BlockPos socketPos = riteOffset(focusPos, floor.brazierSockets().get(socketIndex++));
-				BlockPos supportPos = socketPos.below();
-				if (!level.getBlockState(supportPos).isFaceSturdy(level, supportPos, Direction.UP)) {
-					level.setBlock(supportPos, Blocks.SMOOTH_STONE.defaultBlockState(), Block.UPDATE_CLIENTS);
-					placedPositions.add(supportPos);
-					placed++;
-				}
-				BlockState brazierState = BlockInit.iron_brazier.get().defaultBlockState()
-						.setValue(BrazierBlock.RITUAL_PHASE, 1);
-				level.setBlock(socketPos, brazierState, Block.UPDATE_ALL);
-				placedPositions.add(socketPos);
-				placed++;
+				placed += placeLitBrazier(level, socketPos, placedPositions);
 				if (level.getBlockEntity(socketPos) instanceof IronBrazierBlockEntity brazier) {
 					ItemStack offeringStack = requirement.ingredient().getItems()[0].copy();
 					offeringStack.setCount(1);
@@ -309,6 +321,70 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 
 		notifyPlacedBlocks(level, placedPositions);
 		return placed;
+	}
+
+	/** The most braziers any rite takes; a spawned floor gets this many along its gash. */
+	public static final int SPAWNED_BRAZIERS = 6;
+
+	/**
+	 * A whole rite floor around {@code focusPos}: foundation, floor and Focus, and {@link #SPAWNED_BRAZIERS} lit, empty
+	 * braziers on the first cells of its gash (its back and sides, clear of a craft's bed).
+	 */
+	public static int placeRiteFloor(ServerLevel level, BlockPos focusPos, CardinalRiteFloorDefinition floor) {
+		List<BlockPos> placedPositions = new java.util.ArrayList<>();
+		int placed = placeFloor(level, focusPos, floor, floor.footprintRadius(), false, placedPositions);
+		for (BlockPos socket : floor.brazierSockets().subList(0, Math.min(SPAWNED_BRAZIERS, floor.brazierSockets().size()))) {
+			placed += placeLitBrazier(level, riteOffset(focusPos, socket), placedPositions);
+		}
+		notifyPlacedBlocks(level, placedPositions);
+		return placed;
+	}
+
+	/** A Working craft's subject on the bed south of the Focus, its first aisle against it; 0 for other rites. */
+	public static int placeWorkingSubject(ServerLevel level, BlockPos focusPos, CardinalRiteRecipe recipe) {
+		List<BlockPos> placedPositions = new java.util.ArrayList<>();
+		int placed = placeWorkingSubject(level, focusPos, recipe, placedPositions);
+		notifyPlacedBlocks(level, placedPositions);
+		return placed;
+	}
+
+	private static int placeWorkingSubject(ServerLevel level, BlockPos focusPos, CardinalRiteRecipe recipe,
+			List<BlockPos> placedPositions) {
+		MultiblockPattern subject = recipe.getSubject();
+		if (subject == null) return 0;
+		BlockPattern subjectPattern = subject.getBlockPattern();
+		return placePatternAtCell(level, subject, focusPos.above().south(),
+				subjectPattern.getWidth() / 2, subjectPattern.getHeight() - 1, subjectPattern.getDepth() - 1,
+				placedPositions);
+	}
+
+	private static int placeFloor(ServerLevel level, BlockPos focusPos, CardinalRiteFloorDefinition floor,
+			float footprintRadius, boolean faneBoundary, List<BlockPos> placedPositions) {
+		int placed = 0;
+		for (BlockPos foundationPos : CardinalRiteFoundationRules.squareBelow(focusPos, footprintRadius, faneBoundary)) {
+			level.setBlock(foundationPos, Blocks.STONE.defaultBlockState(), Block.UPDATE_CLIENTS);
+			placed++;
+		}
+		return placed + placePatternAtCell(level, floor.pattern(), focusPos,
+				floor.focus().getX(), floor.focus().getY(), floor.focus().getZ(), placedPositions);
+	}
+
+	/** A fresh, lit, empty iron brazier at {@code socketPos}, on a sturdy support. */
+	private static int placeLitBrazier(ServerLevel level, BlockPos socketPos, List<BlockPos> placedPositions) {
+		// Clear first: replacing a brazier with a brazier keeps its block entity and any old offering.
+		level.setBlock(socketPos, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
+		int placed = 0;
+		BlockPos supportPos = socketPos.below();
+		if (!level.getBlockState(supportPos).isFaceSturdy(level, supportPos, Direction.UP)) {
+			level.setBlock(supportPos, Blocks.SMOOTH_STONE.defaultBlockState(), Block.UPDATE_CLIENTS);
+			placedPositions.add(supportPos);
+			placed++;
+		}
+		BlockState brazierState = BlockInit.iron_brazier.get().defaultBlockState()
+				.setValue(BrazierBlock.RITUAL_PHASE, 1);
+		level.setBlock(socketPos, brazierState, Block.UPDATE_ALL);
+		placedPositions.add(socketPos);
+		return placed + 1;
 	}
 
 	/**

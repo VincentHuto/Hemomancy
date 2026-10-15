@@ -31,7 +31,6 @@ import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
-import com.vincenthuto.hemomancy.common.recipe.BloodStructureOfferingPlacement;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRules.ArmatureTier;
@@ -1702,20 +1701,6 @@ public final class HemoJourneyFixtures {
 		placePattern(player, recipe.getPattern(), hit, 1, 1, 1);
 		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.blood_projection.get()));
 		player.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(ItemInit.ferric_binder.get()));
-		var offeringSlots = BloodStructureOfferingPlacement.plan(hit, 1, 1, 1, recipe.getOfferings());
-		for (var slot : offeringSlots) {
-			BlockPos support = slot.pos().below();
-			if (!fixtureLevel(player).getBlockState(support).isFaceSturdy(fixtureLevel(player), support, Direction.UP)) {
-				set(player, support, Blocks.SMOOTH_STONE);
-			}
-			set(player, slot.pos(), BlockInit.iron_brazier.get());
-			fixtureLevel(player).setBlock(slot.pos(), fixtureLevel(player).getBlockState(slot.pos())
-					.setValue(BrazierBlock.RITUAL_PHASE, 1), Block.UPDATE_ALL);
-			if (!(fixtureLevel(player).getBlockEntity(slot.pos()) instanceof IronBrazierBlockEntity brazier)
-					|| !brazier.insertOffering(null, slot.representativeStack().copy())) {
-				throw new IllegalStateException("Vial Centrifuge offering brazier could not be prepared");
-			}
-		}
 		var blood = HemoCapabilityAccess.requireBloodVolume(player);
 		blood.setBloodVolume(Math.max(blood.getBloodVolume(), recipe.getBloodCost()));
 	}

@@ -1,0 +1,1350 @@
+{
+ "parent": "minecraft:block/block",
+ "render_type": "minecraft:cutout",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "hemomancy:block/hematic_iron_block",
+  "vein": "hemomancy:block/hemorrhagic_crust"
+ },
+ "elements": [
+  {
+   "name": "bowl_drip_lit",
+   "from": [
+    13.92,
+    4.86,
+    7.66
+   ],
+   "to": [
+    14.2,
+    6.58,
+    8.34
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     4.86,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      13.92,
+      3.42,
+      14.2,
+      5.14
+     ],
+     "texture": "#vein"
+    },
+    "south": {
+     "uv": [
+      13.92,
+      3.42,
+      14.2,
+      5.14
+     ],
+     "texture": "#vein"
+    },
+    "east": {
+     "uv": [
+      7.66,
+      3.42,
+      8.34,
+      5.14
+     ],
+     "texture": "#vein"
+    },
+    "west": {
+     "uv": [
+      7.66,
+      3.42,
+      8.34,
+      5.14
+     ],
+     "texture": "#vein"
+    },
+    "up": {
+     "uv": [
+      13.92,
+      7.66,
+      14.2,
+      8.34
+     ],
+     "texture": "#vein"
+    },
+    "down": {
+     "uv": [
+      13.92,
+      7.66,
+      14.2,
+      8.34
+     ],
+     "texture": "#vein"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "bowl_drip_lit",
+   "from": [
+    13.92,
+    5.71,
+    6.91
+   ],
+   "to": [
+    14.2,
+    6.58,
+    7.44
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     5.71,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      13.92,
+      3.42,
+      14.2,
+      4.29
+     ],
+     "texture": "#vein"
+    },
+    "south": {
+     "uv": [
+      13.92,
+      3.42,
+      14.2,
+      4.29
+     ],
+     "texture": "#vein"
+    },
+    "east": {
+     "uv": [
+      6.91,
+      3.42,
+      7.44,
+      4.29
+     ],
+     "texture": "#vein"
+    },
+    "west": {
+     "uv": [
+      6.91,
+      3.42,
+      7.44,
+      4.29
+     ],
+     "texture": "#vein"
+    },
+    "up": {
+     "uv": [
+      13.92,
+      6.91,
+      14.2,
+      7.44
+     ],
+     "texture": "#vein"
+    },
+    "down": {
+     "uv": [
+      13.92,
+      6.91,
+      14.2,
+      7.44
+     ],
+     "texture": "#vein"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "bowl_drip_lit",
+   "from": [
+    13.92,
+    5.31,
+    8.56
+   ],
+   "to": [
+    14.2,
+    6.58,
+    9.09
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     5.31,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      13.92,
+      3.42,
+      14.2,
+      4.69
+     ],
+     "texture": "#vein"
+    },
+    "south": {
+     "uv": [
+      13.92,
+      3.42,
+      14.2,
+      4.69
+     ],
+     "texture": "#vein"
+    },
+    "east": {
+     "uv": [
+      8.56,
+      3.42,
+      9.09,
+      4.69
+     ],
+     "texture": "#vein"
+    },
+    "west": {
+     "uv": [
+      8.56,
+      3.42,
+      9.09,
+      4.69
+     ],
+     "texture": "#vein"
+    },
+    "up": {
+     "uv": [
+      13.92,
+      8.56,
+      14.2,
+      9.09
+     ],
+     "texture": "#vein"
+    },
+    "down": {
+     "uv": [
+      13.92,
+      8.56,
+      14.2,
+      9.09
+     ],
+     "texture": "#vein"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "bowl_drip_lit",
+   "from": [
+    1.8,
+    4.86,
+    7.66
+   ],
+   "to": [
+    2.08,
+    6.58,
+    8.34
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     4.86,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      1.8,
+      3.42,
+      2.08,
+      5.14
+     ],
+     "texture": "#vein"
+    },
+    "south": {
+     "uv": [
+      1.8,
+      3.42,
+      2.08,
+      5.14
+     ],
+     "texture": "#vein"
+    },
+    "east": {
+     "uv": [
+      7.66,
+      3.42,
+      8.34,
+      5.14
+     ],
+     "texture": "#vein"
+    },
+    "west": {
+     "uv": [
+      7.66,
+      3.42,
+      8.34,
+      5.14
+     ],
+     "texture": "#vein"
+    },
+    "up": {
+     "uv": [
+      1.8,
+      7.66,
+      2.08,
+      8.34
+     ],
+     "texture": "#vein"
+    },
+    "down": {
+     "uv": [
+      1.8,
+      7.66,
+      2.08,
+      8.34
+     ],
+     "texture": "#vein"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "bowl_drip_lit",
+   "from": [
+    1.8,
+    5.71,
+    8.56
+   ],
+   "to": [
+    2.08,
+    6.58,
+    9.09
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     5.71,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      1.8,
+      3.42,
+      2.08,
+      4.29
+     ],
+     "texture": "#vein"
+    },
+    "south": {
+     "uv": [
+      1.8,
+      3.42,
+      2.08,
+      4.29
+     ],
+     "texture": "#vein"
+    },
+    "east": {
+     "uv": [
+      8.56,
+      3.42,
+      9.09,
+      4.29
+     ],
+     "texture": "#vein"
+    },
+    "west": {
+     "uv": [
+      8.56,
+      3.42,
+      9.09,
+      4.29
+     ],
+     "texture": "#vein"
+    },
+    "up": {
+     "uv": [
+      1.8,
+      8.56,
+      2.08,
+      9.09
+     ],
+     "texture": "#vein"
+    },
+    "down": {
+     "uv": [
+      1.8,
+      8.56,
+      2.08,
+      9.09
+     ],
+     "texture": "#vein"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "bowl_drip_lit",
+   "from": [
+    1.8,
+    5.31,
+    6.91
+   ],
+   "to": [
+    2.08,
+    6.58,
+    7.44
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     5.31,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      1.8,
+      3.42,
+      2.08,
+      4.69
+     ],
+     "texture": "#vein"
+    },
+    "south": {
+     "uv": [
+      1.8,
+      3.42,
+      2.08,
+      4.69
+     ],
+     "texture": "#vein"
+    },
+    "east": {
+     "uv": [
+      6.91,
+      3.42,
+      7.44,
+      4.69
+     ],
+     "texture": "#vein"
+    },
+    "west": {
+     "uv": [
+      6.91,
+      3.42,
+      7.44,
+      4.69
+     ],
+     "texture": "#vein"
+    },
+    "up": {
+     "uv": [
+      1.8,
+      6.91,
+      2.08,
+      7.44
+     ],
+     "texture": "#vein"
+    },
+    "down": {
+     "uv": [
+      1.8,
+      6.91,
+      2.08,
+      7.44
+     ],
+     "texture": "#vein"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "bowl_drip_lit",
+   "from": [
+    1.8,
+    4.86,
+    7.66
+   ],
+   "to": [
+    2.08,
+    6.58,
+    8.34
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     4.86,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      1.8,
+      3.42,
+      2.08,
+      5.14
+     ],
+     "texture": "#vein"
+    },
+    "south": {
+     "uv": [
+      1.8,
+      3.42,
+      2.08,
+      5.14
+     ],
+     "texture": "#vein"
+    },
+    "east": {
+     "uv": [
+      7.66,
+      3.42,
+      8.34,
+      5.14
+     ],
+     "texture": "#vein"
+    },
+    "west": {
+     "uv": [
+      7.66,
+      3.42,
+      8.34,
+      5.14
+     ],
+     "texture": "#vein"
+    },
+    "up": {
+     "uv": [
+      1.8,
+      7.66,
+      2.08,
+      8.34
+     ],
+     "texture": "#vein"
+    },
+    "down": {
+     "uv": [
+      1.8,
+      7.66,
+      2.08,
+      8.34
+     ],
+     "texture": "#vein"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "bowl_drip_lit",
+   "from": [
+    1.8,
+    5.71,
+    8.56
+   ],
+   "to": [
+    2.08,
+    6.58,
+    9.09
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     5.71,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      1.8,
+      3.42,
+      2.08,
+      4.29
+     ],
+     "texture": "#vein"
+    },
+    "south": {
+     "uv": [
+      1.8,
+      3.42,
+      2.08,
+      4.29
+     ],
+     "texture": "#vein"
+    },
+    "east": {
+     "uv": [
+      8.56,
+      3.42,
+      9.09,
+      4.29
+     ],
+     "texture": "#vein"
+    },
+    "west": {
+     "uv": [
+      8.56,
+      3.42,
+      9.09,
+      4.29
+     ],
+     "texture": "#vein"
+    },
+    "up": {
+     "uv": [
+      1.8,
+      8.56,
+      2.08,
+      9.09
+     ],
+     "texture": "#vein"
+    },
+    "down": {
+     "uv": [
+      1.8,
+      8.56,
+      2.08,
+      9.09
+     ],
+     "texture": "#vein"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "bowl_drip_lit",
+   "from": [
+    1.8,
+    5.31,
+    6.91
+   ],
+   "to": [
+    2.08,
+    6.58,
+    7.44
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     5.31,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      1.8,
+      3.42,
+      2.08,
+      4.69
+     ],
+     "texture": "#vein"
+    },
+    "south": {
+     "uv": [
+      1.8,
+      3.42,
+      2.08,
+      4.69
+     ],
+     "texture": "#vein"
+    },
+    "east": {
+     "uv": [
+      6.91,
+      3.42,
+      7.44,
+      4.69
+     ],
+     "texture": "#vein"
+    },
+    "west": {
+     "uv": [
+      6.91,
+      3.42,
+      7.44,
+      4.69
+     ],
+     "texture": "#vein"
+    },
+    "up": {
+     "uv": [
+      1.8,
+      6.91,
+      2.08,
+      7.44
+     ],
+     "texture": "#vein"
+    },
+    "down": {
+     "uv": [
+      1.8,
+      6.91,
+      2.08,
+      7.44
+     ],
+     "texture": "#vein"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "bowl_drip_lit",
+   "from": [
+    13.92,
+    4.86,
+    7.66
+   ],
+   "to": [
+    14.2,
+    6.58,
+    8.34
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     4.86,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      13.92,
+      3.42,
+      14.2,
+      5.14
+     ],
+     "texture": "#vein"
+    },
+    "south": {
+     "uv": [
+      13.92,
+      3.42,
+      14.2,
+      5.14
+     ],
+     "texture": "#vein"
+    },
+    "east": {
+     "uv": [
+      7.66,
+      3.42,
+      8.34,
+      5.14
+     ],
+     "texture": "#vein"
+    },
+    "west": {
+     "uv": [
+      7.66,
+      3.42,
+      8.34,
+      5.14
+     ],
+     "texture": "#vein"
+    },
+    "up": {
+     "uv": [
+      13.92,
+      7.66,
+      14.2,
+      8.34
+     ],
+     "texture": "#vein"
+    },
+    "down": {
+     "uv": [
+      13.92,
+      7.66,
+      14.2,
+      8.34
+     ],
+     "texture": "#vein"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "bowl_drip_lit",
+   "from": [
+    13.92,
+    5.71,
+    6.91
+   ],
+   "to": [
+    14.2,
+    6.58,
+    7.44
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     5.71,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      13.92,
+      3.42,
+      14.2,
+      4.29
+     ],
+     "texture": "#vein"
+    },
+    "south": {
+     "uv": [
+      13.92,
+      3.42,
+      14.2,
+      4.29
+     ],
+     "texture": "#vein"
+    },
+    "east": {
+     "uv": [
+      6.91,
+      3.42,
+      7.44,
+      4.29
+     ],
+     "texture": "#vein"
+    },
+    "west": {
+     "uv": [
+      6.91,
+      3.42,
+      7.44,
+      4.29
+     ],
+     "texture": "#vein"
+    },
+    "up": {
+     "uv": [
+      13.92,
+      6.91,
+      14.2,
+      7.44
+     ],
+     "texture": "#vein"
+    },
+    "down": {
+     "uv": [
+      13.92,
+      6.91,
+      14.2,
+      7.44
+     ],
+     "texture": "#vein"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "bowl_drip_lit",
+   "from": [
+    13.92,
+    5.31,
+    8.56
+   ],
+   "to": [
+    14.2,
+    6.58,
+    9.09
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     5.31,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      13.92,
+      3.42,
+      14.2,
+      4.69
+     ],
+     "texture": "#vein"
+    },
+    "south": {
+     "uv": [
+      13.92,
+      3.42,
+      14.2,
+      4.69
+     ],
+     "texture": "#vein"
+    },
+    "east": {
+     "uv": [
+      8.56,
+      3.42,
+      9.09,
+      4.69
+     ],
+     "texture": "#vein"
+    },
+    "west": {
+     "uv": [
+      8.56,
+      3.42,
+      9.09,
+      4.69
+     ],
+     "texture": "#vein"
+    },
+    "up": {
+     "uv": [
+      13.92,
+      8.56,
+      14.2,
+      9.09
+     ],
+     "texture": "#vein"
+    },
+    "down": {
+     "uv": [
+      13.92,
+      8.56,
+      14.2,
+      9.09
+     ],
+     "texture": "#vein"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "spout_channel_lit",
+   "from": [
+    7.5,
+    6.7,
+    0.55
+   ],
+   "to": [
+    8.5,
+    6.87,
+    2.4
+   ],
+   "faces": {
+    "up": {
+     "uv": [
+      7.5,
+      0.55,
+      8.5,
+      2.4
+     ],
+     "texture": "#vein"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "bowl_finial_drip_lit",
+   "from": [
+    7.45,
+    0.36,
+    7.7722
+   ],
+   "to": [
+    8.55,
+    1.02,
+    8.2278
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.45,
+      14.98,
+      8.55,
+      15.64
+     ],
+     "texture": "#vein"
+    },
+    "south": {
+     "uv": [
+      7.45,
+      14.98,
+      8.55,
+      15.64
+     ],
+     "texture": "#vein"
+    },
+    "east": {
+     "uv": [
+      7.772,
+      14.98,
+      8.228,
+      15.64
+     ],
+     "texture": "#vein"
+    },
+    "west": {
+     "uv": [
+      7.772,
+      14.98,
+      8.228,
+      15.64
+     ],
+     "texture": "#vein"
+    },
+    "up": {
+     "uv": [
+      7.45,
+      7.772,
+      8.55,
+      8.228
+     ],
+     "texture": "#vein"
+    },
+    "down": {
+     "uv": [
+      7.45,
+      7.772,
+      8.55,
+      8.228
+     ],
+     "texture": "#vein"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "bowl_finial_drip_lit",
+   "from": [
+    7.7722,
+    0.4,
+    7.45
+   ],
+   "to": [
+    8.2278,
+    0.98,
+    8.55
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7.772,
+      15.02,
+      8.228,
+      15.6
+     ],
+     "texture": "#vein"
+    },
+    "south": {
+     "uv": [
+      7.772,
+      15.02,
+      8.228,
+      15.6
+     ],
+     "texture": "#vein"
+    },
+    "east": {
+     "uv": [
+      7.45,
+      15.02,
+      8.55,
+      15.6
+     ],
+     "texture": "#vein"
+    },
+    "west": {
+     "uv": [
+      7.45,
+      15.02,
+      8.55,
+      15.6
+     ],
+     "texture": "#vein"
+    },
+    "up": {
+     "uv": [
+      7.772,
+      7.45,
+      8.228,
+      8.55
+     ],
+     "texture": "#vein"
+    },
+    "down": {
+     "uv": [
+      7.772,
+      7.45,
+      8.228,
+      8.55
+     ],
+     "texture": "#vein"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "bowl_finial_drip_lit",
+   "from": [
+    7.45,
+    0.44,
+    7.7722
+   ],
+   "to": [
+    8.55,
+    0.94,
+    8.2278
+   ],
+   "rotation": {
+    "angle": 45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     0,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      7.45,
+      15.06,
+      8.55,
+      15.56
+     ],
+     "texture": "#vein"
+    },
+    "south": {
+     "uv": [
+      7.45,
+      15.06,
+      8.55,
+      15.56
+     ],
+     "texture": "#vein"
+    },
+    "east": {
+     "uv": [
+      7.772,
+      15.06,
+      8.228,
+      15.56
+     ],
+     "texture": "#vein"
+    },
+    "west": {
+     "uv": [
+      7.772,
+      15.06,
+      8.228,
+      15.56
+     ],
+     "texture": "#vein"
+    },
+    "up": {
+     "uv": [
+      7.45,
+      7.772,
+      8.55,
+      8.228
+     ],
+     "texture": "#vein"
+    },
+    "down": {
+     "uv": [
+      7.45,
+      7.772,
+      8.55,
+      8.228
+     ],
+     "texture": "#vein"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "bowl_finial_drip_lit",
+   "from": [
+    7.45,
+    0.48,
+    7.7722
+   ],
+   "to": [
+    8.55,
+    0.9,
+    8.2278
+   ],
+   "rotation": {
+    "angle": -45,
+    "axis": "y",
+    "origin": [
+     8.0,
+     0,
+     8.0
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      7.45,
+      15.1,
+      8.55,
+      15.52
+     ],
+     "texture": "#vein"
+    },
+    "south": {
+     "uv": [
+      7.45,
+      15.1,
+      8.55,
+      15.52
+     ],
+     "texture": "#vein"
+    },
+    "east": {
+     "uv": [
+      7.772,
+      15.1,
+      8.228,
+      15.52
+     ],
+     "texture": "#vein"
+    },
+    "west": {
+     "uv": [
+      7.772,
+      15.1,
+      8.228,
+      15.52
+     ],
+     "texture": "#vein"
+    },
+    "up": {
+     "uv": [
+      7.45,
+      7.772,
+      8.55,
+      8.228
+     ],
+     "texture": "#vein"
+    },
+    "down": {
+     "uv": [
+      7.45,
+      7.772,
+      8.55,
+      8.228
+     ],
+     "texture": "#vein"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  }
+ ]
+}

@@ -1,12 +1,13 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
+import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierMount;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketBloodStructureOfferingBurst;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteEventKind;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteStationMatcher;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonFactory;
@@ -19,9 +20,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -130,25 +129,24 @@ public final class PuppeteerTrialRiteController {
 			return;
 		}
 		com.vincenthuto.hemomancy.common.summon.PuppetStrings.descend(created.get());
-		List<PacketBloodStructureOfferingBurst.OfferingBurst> offeringBursts = new ArrayList<>();
+		net.minecraft.world.phys.Vec3 manifestation = net.minecraft.world.phys.Vec3.atCenterOf(rite.getCenterPos())
+				.add(0.0D, 1.5D, 0.0D);
+		int drawn = 0;
 		for (CardinalRiteStationMatcher.BrazierMatch offering : station.braziers()) {
 			if (offering.consumeOnSuccess()
 					&& level.getBlockEntity(offering.pos()) instanceof IronBrazierBlockEntity brazier) {
 				ItemStack consumed = brazier.consumeForRite(false);
 				if (!consumed.isEmpty()) {
-					offeringBursts.add(new PacketBloodStructureOfferingBurst.OfferingBurst(offering.pos(), consumed));
+					// The floor draws each offering into the manifesting puppet, as in any rite's procession.
+					CardinalRiteBeats.send(level, rite, CardinalRiteEventKind.OFFERING_DRAWN, drawn++, "",
+							List.of(BrazierMount.bowl(level.getBlockState(offering.pos()), offering.pos(), 0.75D),
+									manifestation), consumed);
 				}
 			}
+			net.minecraft.world.phys.Vec3 bowl = BrazierMount.bowl(level.getBlockState(offering.pos()), offering.pos(), 0.5D);
 			level.sendParticles(com.vincenthuto.hemomancy.common.particle.HemoParticleData.bloodCell(
 					new com.vincenthuto.hutoslib.client.particle.util.ParticleColor(170, 8, 20)),
-					offering.pos().getX() + 0.5, offering.pos().getY() + 1.0, offering.pos().getZ() + 0.5,
-					12, 0.08, 0.2, 0.08, 0.02);
-		}
-		if (!offeringBursts.isEmpty()) {
-			PacketDistributor.sendToPlayersNear(level, null,
-					rite.getCenterPos().getX() + 0.5D, rite.getCenterPos().getY() + 0.5D,
-					rite.getCenterPos().getZ() + 0.5D, 64.0D,
-					new PacketBloodStructureOfferingBurst(offeringBursts, rite.getCenterPos(), 30));
+					bowl.x, bowl.y, bowl.z, 12, 0.08, 0.2, 0.08, 0.02);
 		}
 		HemoCapabilityAccess.getBloodVolume(caster).ifPresent(volume -> {
 			volume.drain(recipe.getBloodCost());

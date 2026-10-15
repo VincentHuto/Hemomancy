@@ -65,7 +65,7 @@ final class RecipeMapLayoutDataTest {
 
 		assertEquals(2, byId.get(id("communion_minor")).column());
 		assertEquals(2, byId.get(id("working_minor")).column(), "unused minor floors ring with communion_minor");
-		assertEquals(5, byId.get(id("working_grand")).column(), "unused grand floor rings with dominion_grand");
+		assertEquals(6, byId.get(id("working_grand")).column(), "the Horn of Culmination first uses the grand Working floor");
 		assertEquals(4, byId.get(id("bastion")).column());
 		assertEquals(4, byId.get(id("shunt")).column(), "unused tier-2 sigil rings with bastion");
 	}

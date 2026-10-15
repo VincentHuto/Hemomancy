@@ -7,12 +7,9 @@ import com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilRules;
 import com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog;
 import com.vincenthuto.hemomancy.common.station.StationUpgradeTier;
 import com.vincenthuto.hemomancy.common.station.UpgradeableStation;
-import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -27,9 +24,6 @@ import java.util.UUID;
 
 /** Prepares, escrows, completes and recovers every station-upgrade Cardinal Rite. */
 public final class StationUpgradeRites {
-    private static final String ESCROWED = "ESCROWED";
-    private static final String CONSUMED = "CONSUMED";
-    private static final String RETURNED = "RETURNED";
 
     private StationUpgradeRites() {}
 
@@ -89,30 +83,18 @@ public final class StationUpgradeRites {
                 || !station.readyForUpgradeRite(level, forward(rite))) return false;
         List<ActiveCardinalRite.RiteOffering> offerings = rite.getOfferingItinerary();
         if (offerings.size() != StationUpgradeCatalog.OFFERINGS_PER_RITE) return false;
-        for (var offering : offerings) {
-            if (!(level.getBlockEntity(offering.pos()) instanceof IronBrazierBlockEntity brazier)
-                    || offering.stack() == null
-                    || !ItemStack.isSameItemSameComponents(offering.stack(), brazier.getOfferingForMatching()))
-                return false;
-        }
+        if (!RiteOfferingEscrow.itineraryPresent(level, offerings)) return false;
         CompoundTag state = rite.upgrade();
-        state.putUUID("RiteIdentity", UUID.randomUUID());
+        RiteOfferingEscrow.open(state);
         state.putUUID("SubjectIdentity", station.machineIdentity());
         state.putInt("SourceTier", station.upgradeTier());
         state.put("SubjectSnapshot", station.upgradeSnapshot(level.registryAccess()));
-        ListTag escrow = new ListTag();
-        state.put("Offerings", escrow);
-        state.putString("EscrowState", ESCROWED);
         state.putInt("Stage", 0);
         state.putInt("BloodAtStage", 0);
         station.setRiteLocked(true);
-        for (var offering : offerings) {
-            ItemStack consumed = ((IronBrazierBlockEntity) level.getBlockEntity(offering.pos())).consumeForRite(false);
-            if (consumed.isEmpty()) {
-                recover(level, rite);
-                return false;
-            }
-            escrow.add(consumed.save(level.registryAccess()));
+        if (!RiteOfferingEscrow.take(level, state, offerings)) {
+            recover(level, rite);
+            return false;
         }
         return true;
     }
@@ -135,9 +117,9 @@ public final class StationUpgradeRites {
         CompoundTag state = rite.upgrade();
         UpgradeableStation station = station(level, rite);
         UUID riteId = state.hasUUID("RiteIdentity") ? state.getUUID("RiteIdentity") : null;
-        if (state.getString("EscrowState").equals(CONSUMED)) {
+        if (RiteOfferingEscrow.isConsumed(state)) {
             if (station == null || !station.wasUpgradedBy(riteId)) return false;
-            releaseStaff(level, rite, riteId);
+            RiteOfferingEscrow.releaseStaffToRecovery(level, rite, riteId);
             station.setRiteLocked(false);
             return true;
         }
@@ -150,9 +132,8 @@ public final class StationUpgradeRites {
             return false;
         }
         notifyOwner(level, rite, station);
-        state.putString("EscrowState", CONSUMED);
-        state.remove("Offerings");
-        releaseStaff(level, rite, riteId);
+        RiteOfferingEscrow.markConsumed(state);
+        RiteOfferingEscrow.releaseStaffToRecovery(level, rite, riteId);
         CardinalRiteSavedData.get(level).setDirty();
         return true;
     }
@@ -176,31 +157,20 @@ public final class StationUpgradeRites {
             if (station != null) station.setRiteLocked(false);
             return;
         }
-        if (!escrowState.equals(ESCROWED)) return;
+        if (!RiteOfferingEscrow.isEscrowed(state)) return;
         UpgradeableStation station = station(level, rite);
         UUID riteId = state.getUUID("RiteIdentity");
         if (station != null && state.hasUUID("SubjectIdentity")
                 && station.machineIdentity().equals(state.getUUID("SubjectIdentity"))
                 && station.wasUpgradedBy(riteId)) {
-            state.putString("EscrowState", CONSUMED);
-            state.remove("Offerings");
+            RiteOfferingEscrow.markConsumed(state);
             notifyOwner(level, rite, station);
-            releaseStaff(level, rite, riteId);
+            RiteOfferingEscrow.releaseStaffToRecovery(level, rite, riteId);
             station.setRiteLocked(false);
             CardinalRiteSavedData.get(level).setDirty();
             return;
         }
-        state.putString("EscrowState", RETURNED);
-        List<ItemStack> items = new ArrayList<>();
-        ListTag escrow = state.getList("Offerings", Tag.TAG_COMPOUND);
-        for (int i = 0; i < escrow.size(); i++)
-            items.add(ItemStack.parseOptional(level.registryAccess(), escrow.getCompound(i)));
-        ItemStack staff = rite.releaseEscrowedStaff(level.registryAccess());
-        if (!staff.isEmpty()) items.add(staff);
-        CardinalRiteSavedData saved = CardinalRiteSavedData.get(level.getServer().overworld());
-        saved.addRecovery(rite.getPlayerUUID(), riteId, items);
-        ServerPlayer owner = level.getServer().getPlayerList().getPlayer(rite.getPlayerUUID());
-        if (owner != null && owner.level() == level && owner.isAlive()) saved.deliverRecovery(owner);
+        RiteOfferingEscrow.returnEscrow(level, rite, state);
         cleanup(level, rite);
     }
 
@@ -228,12 +198,5 @@ public final class StationUpgradeRites {
     private static void notifyOwner(ServerLevel level, ActiveCardinalRite rite, UpgradeableStation station) {
         ServerPlayer owner = level.getServer().getPlayerList().getPlayer(rite.getPlayerUUID());
         if (owner != null) station.onUpgraded(owner);
-    }
-
-    private static void releaseStaff(ServerLevel level, ActiveCardinalRite rite, UUID riteId) {
-        ItemStack staff = rite.releaseEscrowedStaff(level.registryAccess());
-        if (!staff.isEmpty()) CardinalRiteSavedData.get(level.getServer().overworld())
-                .addRecovery(rite.getPlayerUUID(), UUID.nameUUIDFromBytes(
-                        (riteId + ":staff").getBytes(StandardCharsets.UTF_8)), List.of(staff));
     }
 }

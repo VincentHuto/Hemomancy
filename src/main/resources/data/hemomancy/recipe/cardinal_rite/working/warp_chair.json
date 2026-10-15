@@ -1,0 +1,80 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "id": "hemomancy:cardinal_rite/working/warp_chair",
+  "bloodCost": 0,
+  "riteType": "greater",
+  "purpose": "making",
+  "required_degree": 3,
+  "rankup": false,
+  "riteName": "Working of the Somnolent Seat",
+  "riteDescription": "Build the Somnolent Seat beside the Cardinal Focus, feed it, and let the Working floor take it.",
+  "floor": "hemomancy:working_greater",
+  "medium": {
+    "item": "hemomancy:sanguine_formation"
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "hemomancy:blood_crystal"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:ender_pearl"
+      },
+      "count": 2
+    }
+  ],
+  "subject": {
+    "pattern": [
+      [
+        "   ",
+        "WWW",
+        "H H"
+      ],
+      [
+        "W W",
+        "WWW",
+        "H H"
+      ],
+      [
+        "WWW",
+        "WWW",
+        "H H"
+      ]
+    ],
+    "key": {
+      "W": {
+        "block": "hemomancy:blood_wood_planks"
+      },
+      "H": {
+        "block": "hemomancy:hematic_iron_block"
+      }
+    },
+    "feed": 250
+  },
+  "result": {
+    "id": "hemomancy:warp_chair"
+  },
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "fragile_offsets": [],
+    "target_duration_ticks": 600,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry",
+    "culmination": "forging"
+  }
+}

@@ -72,8 +72,6 @@ public class BloodStructureRecipe extends CustomRecipe {
 
 	protected boolean unstained;
 
-	protected List<BloodStructureOffering> offerings;
-
 	/**
 	 * Minimum initiatory degree (Harbinger) or Unstained stage required to perform
 	 * this structure craft.
@@ -94,12 +92,6 @@ public class BloodStructureRecipe extends CustomRecipe {
 
 	public BloodStructureRecipe(ResourceLocation pId, double bloodCost, MultiblockPattern pattern, ItemStack heldItem,
 			Block hitBlock, ItemStack result, boolean unstained, int requiredDegree) {
-		this(pId, bloodCost, pattern, heldItem, hitBlock, result, unstained, requiredDegree, List.of());
-	}
-
-	public BloodStructureRecipe(ResourceLocation pId, double bloodCost, MultiblockPattern pattern, ItemStack heldItem,
-			Block hitBlock, ItemStack result, boolean unstained, int requiredDegree,
-			List<BloodStructureOffering> offerings) {
 		super(CraftingBookCategory.MISC);
 		this.id = pId;
 		this.bloodCost = bloodCost;
@@ -109,7 +101,6 @@ public class BloodStructureRecipe extends CustomRecipe {
 		this.result = result;
 		this.unstained = unstained;
 		this.requiredDegree = requiredDegree;
-		this.offerings = List.copyOf(offerings == null ? List.of() : offerings);
 	}
 
 	public ResourceLocation getId() { return id; }
@@ -154,10 +145,6 @@ public class BloodStructureRecipe extends CustomRecipe {
 		return result;
 	}
 
-	public List<BloodStructureOffering> getOfferings() {
-		return offerings;
-	}
-
 	@Override
 	public ItemStack getResultItem(HolderLookup.Provider a) {
 		return this.result;
@@ -200,10 +187,6 @@ public class BloodStructureRecipe extends CustomRecipe {
 
 	public void setResult(ItemStack result) {
 		this.result = result;
-	}
-
-	public void setOfferings(List<BloodStructureOffering> offerings) {
-		this.offerings = List.copyOf(offerings == null ? List.of() : offerings);
 	}
 
 	/**

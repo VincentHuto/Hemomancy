@@ -116,7 +116,7 @@ public final class MaterialsData {
                 true, UnlockPredicate.minDegree(3)));
 
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("scarlet_vanity", "Scarlet Vanity",
-                "Degree-3 Blood Structure station for equipping charms, gourds, morphlings, and staff fittings.",
+                "Degree-3 station, raised as a Working craft, for equipping charms, gourds, morphlings, and staff fittings.",
                 "Functional Blocks", () -> new ItemStack(BlockInit.scarlet_vanity.get()),
                 true, UnlockPredicate.minDegree(3)));
 
@@ -126,7 +126,7 @@ public final class MaterialsData {
                 true, UnlockPredicate.minDegree(4)));
 
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("fungal_implantation_pylon", "Fungal Implantation Pylon",
-                "Degree-4 Blood Structure station for installing one cultivated fungal scar.",
+                "Degree-4 station, raised as a Working craft, for installing one cultivated fungal scar.",
                 "Functional Blocks", () -> new ItemStack(BlockInit.fungal_implantation_pylon.get()),
                 true, UnlockPredicate.minDegree(4)));
 

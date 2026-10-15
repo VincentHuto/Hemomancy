@@ -501,7 +501,9 @@ public class RiteHintScreen extends Screen {
 		y = drawFloorValue(gfx, panelX, y, "Style: ", style);
 		y = drawFloorValue(gfx, panelX, y, "Tier: ", tier);
 		y = drawFloorValue(gfx, panelX, y, "Dimensions: ", width + "x" + height + "x" + depth);
-		y = drawFloorValue(gfx, panelX, y, "Brazier Sockets: ", Integer.toString(floor.brazierSockets().size()));
+		int space = 2 * floor.half() + 1;
+		y = drawFloorValue(gfx, panelX, y, "Braziers count anywhere in: ",
+				"the " + space + "x" + space + "x" + space + " cube the floor is the base of");
 		y += 6;
 		gfx.drawString(font, Component.literal("How to Build:").withStyle(s -> s.withColor(TITLE_COLOR)), panelX, y, 0);
 		y += lineH;
@@ -601,19 +603,34 @@ public class RiteHintScreen extends Screen {
 		if (!rite.hasLayeredStation()) {
 			return "Build the structure shown on the left using the required materials. ";
 		}
+		if (rite.isWorkingCraft()) {
+			return "Build at least the " + rite.getFloorId().getPath().replace('_', ' ')
+					+ " floor; higher tiers of the same style also work. Raise the shown structure on the floor "
+					+ "anywhere that leaves the Cardinal Focus clear, in any rotation; the Working floor swallows it. "
+					+ (rite.getBrazierSignature().isEmpty() ? ""
+							: "Place the exact offerings in lit braziers anywhere in the space above the floor: "
+									+ "standing, on a wall or hanging. ");
+		}
 		String structure = rite.getRequiredStructure() == null ? "No upper structure is required. "
 				: rite.shouldConsumeRequiredStructure()
 						? "Build the shown upper structure; it is consumed only on success. "
 						: "Build the shown reusable upper structure. ";
 		String offerings = rite.getBrazierSignature().isEmpty()
 				? ""
-				: "Place the exact offerings in lit braziers at the marked floor sockets. ";
+				: "Place the exact offerings in lit braziers anywhere in the space above the floor: "
+						+ "standing, on a wall or hanging. ";
 		return "Build at least the " + rite.getFloorId().getPath().replace('_', ' ')
 				+ " floor; higher tiers of the same style also work. " + structure + offerings;
 	}
 
 	private String ceremonyInstructions() {
 		if (rite.getCeremony() == null) return "";
+		if (rite.isWorkingCraft()) {
+			return "Seat the medium in the Focus and plant your Living Staff. Then project "
+					+ rite.getSubjectFeedMl() + " mL of blood into the structure; the floor climbs it, "
+					+ "draws in the offerings and forges the result on the Focus. Recalling the rite returns "
+					+ "the offerings and staff; blood already fed is spent.";
+		}
 		int anchors = rite.getCeremony().anchors().size();
 		long requiredSigils = rite.getCeremony().supportSockets().stream()
 				.filter(com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition.SupportSocket::required)

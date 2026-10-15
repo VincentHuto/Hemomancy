@@ -1,14 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.HematicStakeBlock;
-import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.recipe.BloodStructureOffering;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
-import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -44,10 +41,6 @@ public final class BloodStructureCraftingHelper {
 				continue;
 			}
 
-			if (isRiteExclusive(recipe)) {
-				return Optional.of(ProjectionCraftMatch.invalid(recipe, match, riteExclusiveMessage()));
-			}
-
 			if (!offhandCatalyst.is(recipe.getHeldItem().getItem())) {
 				return Optional.of(ProjectionCraftMatch.invalid(recipe, match, missingOffhandCatalystMessage(recipe)));
 			}
@@ -65,11 +58,6 @@ public final class BloodStructureCraftingHelper {
 				return Optional.of(ProjectionCraftMatch.invalid(recipe, match, alignError));
 			}
 
-			OfferingMatch offeringMatch = findOfferingMatch(recipe, level, match);
-			if (!offeringMatch.valid()) {
-				return Optional.of(ProjectionCraftMatch.invalid(recipe, match, offeringMatch.error()));
-			}
-
 			HematicStakeBlock.Formation stakeFormation = null;
 			if (recipe.getResult().is(BlockInit.hematic_stake.get().asItem())) {
 				stakeFormation = findStakeFormation(level, player, match, recipe.getPattern().getBlockPattern());
@@ -80,7 +68,7 @@ public final class BloodStructureCraftingHelper {
 				}
 			}
 
-			return Optional.of(ProjectionCraftMatch.valid(recipe, match, offeringMatch.positions(), stakeFormation));
+			return Optional.of(ProjectionCraftMatch.valid(recipe, match, stakeFormation));
 		}
 		return Optional.empty();
 	}
@@ -204,100 +192,6 @@ public final class BloodStructureCraftingHelper {
 		return new AABB(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1);
 	}
 
-	public static void clearMatchedPattern(ServerLevel level, BlockPattern.BlockPatternMatch match,
-			BlockPattern blockPattern) {
-		for (int i = 0; i < blockPattern.getWidth(); ++i) {
-			for (int j = 0; j < blockPattern.getHeight(); ++j) {
-				for (int k = 0; k < blockPattern.getDepth(); ++k) {
-					BlockInWorld cachedBlockInfo = match.getBlock(i, j, k);
-					BlockPos pos = cachedBlockInfo.getPos();
-					level.levelEvent(2001, pos, Block.getId(level.getBlockState(pos)));
-					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
-				}
-			}
-		}
-	}
-
-	public static OfferingMatch findOfferingMatch(
-			BloodStructureRecipe recipe, ServerLevel level, BlockPattern.BlockPatternMatch match) {
-		if (recipe.getOfferings().isEmpty()) {
-			return OfferingMatch.valid(List.of());
-		}
-
-		List<BlockPos> candidates = new ArrayList<>(offeringSearchBounds(match, recipe.getPattern().getBlockPattern()));
-		candidates.sort(Comparator.comparingLong(BlockPos::asLong));
-
-		List<BlockPos> matched = new ArrayList<>();
-		Set<BlockPos> used = new HashSet<>();
-		for (BloodStructureOffering offering : recipe.getOfferings()) {
-			for (int required = 0; required < offering.count(); required++) {
-				BlockPos offeringPos = findUnusedOfferingBrazier(recipe, level, candidates, used, offering);
-				if (offeringPos == null) {
-					return OfferingMatch.invalid(missingOfferingMessage(offering));
-				}
-				used.add(offeringPos);
-				matched.add(offeringPos);
-			}
-		}
-		return OfferingMatch.valid(matched);
-	}
-
-	public static List<BlockPos> offeringSearchBounds(BlockPattern.BlockPatternMatch match, BlockPattern blockPattern) {
-		List<BlockPos> positions = new ArrayList<>();
-		AABB bounds = getMatchBounds(match, blockPattern);
-		BlockPos min = BlockPos.containing(
-				bounds.minX - blockPattern.getWidth(),
-				bounds.minY - blockPattern.getHeight(),
-				bounds.minZ - blockPattern.getDepth());
-		BlockPos max = BlockPos.containing(
-				bounds.maxX - 1 + blockPattern.getWidth(),
-				bounds.maxY - 1 + blockPattern.getHeight(),
-				bounds.maxZ - 1 + blockPattern.getDepth());
-		for (BlockPos pos : BlockPos.betweenClosed(min, max)) {
-			positions.add(pos.immutable());
-		}
-		return List.copyOf(positions);
-	}
-
-	public static List<ConsumedOffering> consumeMatchedOfferings(ServerLevel level, List<BlockPos> positions) {
-		if (positions.isEmpty()) {
-			return List.of();
-		}
-		List<ConsumedOffering> consumed = new ArrayList<>();
-		for (BlockPos pos : positions) {
-			if (level.getBlockEntity(pos) instanceof IronBrazierBlockEntity brazier) {
-				// Each offering brazier is spent by the formation it fed: the offering is taken and the fire goes out.
-				ItemStack stack = brazier.consumeForRite(true);
-				if (!stack.isEmpty()) {
-					consumed.add(new ConsumedOffering(pos.immutable(), stack.copy()));
-				}
-			}
-		}
-		return List.copyOf(consumed);
-	}
-
-	private static BlockPos findUnusedOfferingBrazier(BloodStructureRecipe recipe, ServerLevel level,
-			List<BlockPos> candidates, Set<BlockPos> used,
-			BloodStructureOffering offering) {
-		for (BlockPos pos : candidates) {
-			if (used.contains(pos)) {
-				continue;
-			}
-			if (level.getBlockEntity(pos) instanceof IronBrazierBlockEntity brazier
-					&& BrazierBlock.isLit(level.getBlockState(pos))
-					&& offering.ingredient().test(brazier.getOfferingForMatching())
-					&& isValidSpecialOffering(recipe, brazier.getOfferingForMatching())) {
-				return pos;
-			}
-		}
-		return null;
-	}
-
-	private static boolean isValidSpecialOffering(BloodStructureRecipe recipe, ItemStack stack) {
-		if (!recipe.getId().getNamespace().equals("hemomancy")
-				|| !recipe.getId().getPath().equals("blood_structure/resonant_forge")) return true;
-		return com.vincenthuto.hemomancy.common.item.harbinger.CylinderMedia.blank(stack);
-	}
 
 	public static Component checkPathAlignment(Player player, BloodStructureRecipe recipe) {
 		boolean harbingerProgressBlocked = HemoCapabilityAccess.getUnstainedProgress(player)
@@ -312,15 +206,6 @@ public final class BloodStructureCraftingHelper {
 	public static Component projectionHintMessage() {
 		return Component.literal("Use Blood Projection on this formation with its catalyst in your offhand.")
 				.withStyle(ChatFormatting.DARK_RED);
-	}
-
-	public static boolean isRiteExclusive(BloodStructureRecipe recipe) {
-		return recipe.getResult().is(BlockInit.consecrated_bloodwell.get().asItem());
-	}
-
-	public static Component riteExclusiveMessage() {
-		return Component.literal("Consecrated Bloodwells may only be manifested by the Rite of the Founding Fane.")
-				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC);
 	}
 
 	private static Component missingOffhandCatalystMessage(BloodStructureRecipe recipe) {
@@ -338,54 +223,20 @@ public final class BloodStructureCraftingHelper {
 				.append(Component.literal(".").withStyle(ChatFormatting.RED));
 	}
 
-	private static Component missingOfferingMessage(BloodStructureOffering offering) {
-		return Component.literal("This formation needs " + offering.count() + " matching brazier offering"
-				+ (offering.count() == 1 ? "." : "s."))
-				.withStyle(ChatFormatting.RED);
-	}
-
 	public record ProjectionCraftMatch(BloodStructureRecipe recipe, BlockPattern.BlockPatternMatch match,
-			List<BlockPos> offerings, HematicStakeBlock.Formation stakeFormation, Component error) {
-		public ProjectionCraftMatch {
-			offerings = List.copyOf(offerings == null ? List.of() : offerings);
-		}
-
+			HematicStakeBlock.Formation stakeFormation, Component error) {
 		static ProjectionCraftMatch valid(BloodStructureRecipe recipe, BlockPattern.BlockPatternMatch match,
-				List<BlockPos> offerings, HematicStakeBlock.Formation stakeFormation) {
-			return new ProjectionCraftMatch(recipe, match, offerings, stakeFormation, null);
+				HematicStakeBlock.Formation stakeFormation) {
+			return new ProjectionCraftMatch(recipe, match, stakeFormation, null);
 		}
 
 		static ProjectionCraftMatch invalid(BloodStructureRecipe recipe, BlockPattern.BlockPatternMatch match,
 				Component error) {
-			return new ProjectionCraftMatch(recipe, match, List.of(), null, error);
+			return new ProjectionCraftMatch(recipe, match, null, error);
 		}
 
 		public boolean valid() {
 			return error == null;
-		}
-	}
-
-	public record OfferingMatch(List<BlockPos> positions, Component error) {
-		public OfferingMatch {
-			positions = List.copyOf(positions == null ? List.of() : positions);
-		}
-
-		static OfferingMatch valid(List<BlockPos> positions) {
-			return new OfferingMatch(positions, null);
-		}
-
-		static OfferingMatch invalid(Component error) {
-			return new OfferingMatch(List.of(), error);
-		}
-
-		public boolean valid() {
-			return error == null;
-		}
-	}
-
-	public record ConsumedOffering(BlockPos pos, ItemStack stack) {
-		public ConsumedOffering {
-			stack = stack.copy();
 		}
 	}
 }

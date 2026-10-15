@@ -3,6 +3,7 @@
   "id": "hemomancy:cardinal_rite/steady_separation",
   "bloodCost": 0,
   "riteType": "greater",
+  "purpose": "making",
   "required_degree": 4,
   "rankup": false,
   "riteName": "Rite of the Steady Separation",

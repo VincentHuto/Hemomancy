@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.recipe;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
@@ -49,18 +50,19 @@ public final class RecipeDegreeGates {
 
 	public static boolean playerMeets(Player player, BloodStructureRecipe recipe) {
 		return getPlayerLevel(player, recipe.isUnstained()) >= getRequiredDegree(recipe)
-				&& (!(player instanceof ServerPlayer serverPlayer) || !isMnemonicReliquary(recipe)
-						|| MnemonicReliquaryProgression.isTaught(serverPlayer))
 				&& meetsUnstainedThresholds(player, recipe.isUnstained(), recipe.getRequiredPurity(), recipe.getRequiredClarity());
 	}
 
-	private static boolean isMnemonicReliquary(BloodStructureRecipe recipe) {
-		return recipe != null && recipe.getId() != null
-				&& "blood_structure/mnemonic_reliquary".equals(recipe.getId().getPath());
+	/** The Mnemonic Reliquary's Working craft also waits for the Mnemonist's lesson. */
+	static boolean needsReliquaryLesson(ResourceLocation id) {
+		return id != null && Hemomancy.MOD_ID.equals(id.getNamespace())
+				&& "cardinal_rite/working/mnemonic_reliquary".equals(id.getPath());
 	}
 
 	public static boolean playerMeets(Player player, CardinalRiteRecipe recipe) {
 		return getPlayerLevel(player, recipe.isUnstained()) >= getRequiredDegree(recipe)
+				&& (!(player instanceof ServerPlayer serverPlayer) || !needsReliquaryLesson(recipe.getId())
+						|| MnemonicReliquaryProgression.isTaught(serverPlayer))
 				&& meetsUnstainedThresholds(player, recipe.isUnstained(), recipe.getRequiredPurity(), recipe.getRequiredClarity());
 	}
 
@@ -92,14 +94,14 @@ public final class RecipeDegreeGates {
 	}
 
 	public static String requirementLabel(BloodStructureRecipe recipe) {
-		if (isMnemonicReliquary(recipe)) {
-			return "the Mnemonist's Reliquary lesson at Degree 3";
-		}
 		return requirementLabel(recipe.isUnstained(), recipe.getRequiredDegree(), recipe.getRequiredPurity(),
 				recipe.getRequiredClarity());
 	}
 
 	public static String requirementLabel(CardinalRiteRecipe recipe) {
+		if (needsReliquaryLesson(recipe.getId())) {
+			return "the Mnemonist's Reliquary lesson at Degree 3";
+		}
 		return requirementLabel(recipe.isUnstained(), recipe.getRequiredDegree(), recipe.getRequiredPurity(),
 				recipe.getRequiredClarity());
 	}

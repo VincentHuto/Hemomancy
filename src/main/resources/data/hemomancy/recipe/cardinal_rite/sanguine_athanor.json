@@ -3,6 +3,7 @@
   "id": "hemomancy:cardinal_rite/sanguine_athanor",
   "bloodCost": 0,
   "riteType": "greater",
+  "purpose": "making",
   "required_degree": 6,
   "rankup": false,
   "riteName": "Rite of the Sanguine Athanor",

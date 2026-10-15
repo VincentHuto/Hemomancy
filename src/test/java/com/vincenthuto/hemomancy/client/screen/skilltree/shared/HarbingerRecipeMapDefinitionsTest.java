@@ -14,7 +14,8 @@ final class HarbingerRecipeMapDefinitionsTest {
 	@Test
 	void everyBuiltInHarbingerEntryHasAnAuthoredFamily() {
 		assertEquals(52, HarbingerRecipeMapDefinitions.ritePaths().size());
-		assertEquals(29, HarbingerRecipeMapDefinitions.craftingPaths().size());
+		// 8 floorless Blood Structures and 20 Working crafts.
+		assertEquals(28, HarbingerRecipeMapDefinitions.craftingPaths().size());
 		assertEquals(4, HarbingerRecipeMapDefinitions.puppetryPaths().size());
 		assertEquals("Order", HarbingerRecipeMapDefinitions.riteFamily("cardinal_rite/initiate_rite"));
 		assertEquals("Qliphoth/Forbidden", HarbingerRecipeMapDefinitions.riteFamily("cardinal_rite/bloom_of_qliphoth"));

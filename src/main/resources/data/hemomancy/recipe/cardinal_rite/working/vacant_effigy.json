@@ -1,0 +1,77 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "id": "hemomancy:cardinal_rite/working/vacant_effigy",
+  "bloodCost": 0,
+  "riteType": "greater",
+  "purpose": "making",
+  "required_degree": 5,
+  "rankup": false,
+  "riteName": "Working of the Vacant Effigy",
+  "riteDescription": "Build the Vacant Effigy beside the Cardinal Focus, feed it, and let the Working floor take it.",
+  "floor": "hemomancy:working_greater",
+  "medium": {
+    "item": "hemomancy:sanguine_formation"
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:armor_stand"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:blood_stained_stone"
+      },
+      "count": 1
+    }
+  ],
+  "subject": {
+    "pattern": [
+      [
+        "CIC"
+      ],
+      [
+        "IVI"
+      ],
+      [
+        "CIC"
+      ]
+    ],
+    "key": {
+      "C": {
+        "block": "hemomancy:conscious_mass"
+      },
+      "I": {
+        "block": "hemomancy:hematic_iron_block"
+      },
+      "V": {
+        "block": "hemomancy:venous_stone"
+      }
+    },
+    "feed": 250
+  },
+  "result": {
+    "id": "hemomancy:vacant_effigy"
+  },
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "fragile_offsets": [],
+    "target_duration_ticks": 600,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry",
+    "culmination": "forging"
+  }
+}

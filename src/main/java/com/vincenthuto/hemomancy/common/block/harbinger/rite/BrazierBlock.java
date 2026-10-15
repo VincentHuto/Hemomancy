@@ -31,6 +31,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -39,13 +40,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
@@ -59,18 +61,20 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * Phase 2 (the retired "sanguine flames" reagent state) is never set any more. The property keeps its 0-2 range
  * because the blockstate file still keys a model on it and older worlds may hold it; such a brazier simply reads
  * as lit.
+ * <p>
+ * {@link #FACE} is its mount ({@link BrazierMount}): standing on a block (the default, so older worlds keep standing
+ * braziers), a sconce on the side of one, or hanging from the underside of one. A sconce or hanging brazier falls,
+ * spilling its offering, when what holds it up is gone.
  */
 public class BrazierBlock extends Block implements EntityBlock, SimpleWaterloggedBlock, BlockBloodEndpoint {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+	public static final EnumProperty<AttachFace> FACE = BlockStateProperties.ATTACH_FACE;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	public static final double BLOOD_TO_LIGHT = 50.0D;
 
 	/** Ritual phase: 0 = unlit, 1 = lit; 2 is retired (see the class comment) and treated as lit. */
 	public static final IntegerProperty RITUAL_PHASE = IntegerProperty.create("ritual_phase", 0, 2);
 
-	// Dais, vertebral stem, and the bowl up to its talon tips (tools/model_export/iron_brazier.py).
-	private static final VoxelShape SHAPE = Shapes.or(Block.box(3, 0, 3, 13, 2.2, 13),
-			Block.box(6, 2.2, 6, 10, 8.4, 10), Block.box(1.5, 8.4, 1.5, 14.5, 18.5, 14.5));
 	// Coal bed from the same model, and the blood pool and flame tips BrazierFlames draws when lit, in blocks above
 	// the brazier's base.
 	private static final double COAL_TOP = 11.3D / 16.0D;
@@ -84,6 +88,7 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 		super(properties);
 		this.registerDefaultState(this.stateDefinition.any()
 				.setValue(FACING, Direction.SOUTH)
+				.setValue(FACE, AttachFace.FLOOR)
 				.setValue(RITUAL_PHASE, 0)
 				.setValue(WATERLOGGED, false));
 	}
@@ -96,6 +101,7 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 		}
 		double x = pPos.getX() + 0.5D;
 		double z = pPos.getZ() + 0.5D;
+		double base = pPos.getY() + BrazierMount.drop(BrazierMount.face(pState));
 		// Crimson embers lift off the burning blood and burn out around the offering. The flame's hot core is
 		// BrazierFlames' shader, so no white spark is thrown here.
 		for (int i = 0; i < 3; i++) {
@@ -103,16 +109,16 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 			double oz = (pRandom.nextDouble() - 0.5D) * 0.36D;
 			pLevel.addParticle(HemoParticleData.emberSpark(EMBER,
 					0.05F + pRandom.nextFloat() * 0.035F, 0.85F, 26 + pRandom.nextInt(14)),
-					x + ox, pPos.getY() + POOL_TOP, z + oz, -ox * 0.03D, 0.022D + pRandom.nextDouble() * 0.018D,
+					x + ox, base + POOL_TOP, z + oz, -ox * 0.03D, 0.022D + pRandom.nextDouble() * 0.018D,
 					-oz * 0.03D);
 		}
 		pLevel.addParticle(HemoParticleData.darkGlow(SOOT), x + (pRandom.nextDouble() - 0.5D) * 0.2D,
-				pPos.getY() + FLAME_TOP, z + (pRandom.nextDouble() - 0.5D) * 0.2D, 0.0D, 0.012D, 0.0D);
+				base + FLAME_TOP, z + (pRandom.nextDouble() - 0.5D) * 0.2D, 0.0D, 0.012D, 0.0D);
 	}
 
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		builder.add(FACING, RITUAL_PHASE, WATERLOGGED);
+		builder.add(FACING, FACE, RITUAL_PHASE, WATERLOGGED);
 	}
 
 	@Override
@@ -122,14 +128,36 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return SHAPE;
+		return BrazierMount.shape(state.getValue(FACE), state.getValue(FACING));
 	}
 
+	/**
+	 * Mounts the brazier on the face the player clicked, as a torch or lantern does: onto a block's top, a wall's side
+	 * or a ceiling, falling back through the player's other looking directions when that face cannot hold it.
+	 */
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite())
-				.setValue(RITUAL_PHASE, 0)
+		BlockState base = this.defaultBlockState().setValue(RITUAL_PHASE, 0)
 				.setValue(WATERLOGGED, WaterloggedBlockSupport.waterloggedForPlacement(context));
+		for (Direction looking : context.getNearestLookingDirections()) {
+			AttachFace face = BrazierMount.placement(looking);
+			Direction facing = face == AttachFace.WALL ? looking.getOpposite()
+					: context.getHorizontalDirection().getOpposite();
+			BlockState state = base.setValue(FACE, face).setValue(FACING, facing);
+			if (state.canSurvive(context.getLevel(), context.getClickedPos())) return state;
+		}
+		return null;
+	}
+
+	/** A standing brazier keeps today's rules; a sconce needs its wall and a hanging brazier its ceiling. */
+	@Override
+	protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+		AttachFace face = state.getValue(FACE);
+		if (face == AttachFace.FLOOR) return true;
+		Direction support = BrazierMount.support(face, state.getValue(FACING));
+		BlockPos holder = pos.relative(support);
+		return face == AttachFace.CEILING ? Block.canSupportCenter(level, holder, Direction.DOWN)
+				: level.getBlockState(holder).isFaceSturdy(level, holder, support.getOpposite());
 	}
 
 	@Override
@@ -149,6 +177,7 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 
 	@Override
 	public BlockState mirror(BlockState state, Mirror mirrorIn) {
+		// The mount is kept; only the facing turns.
 		return state.rotate(mirrorIn.getRotation(state.getValue(FACING))).setValue(RITUAL_PHASE, 0);
 	}
 
@@ -183,6 +212,12 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 	public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level,
 			BlockPos currentPos, BlockPos facingPos) {
 		WaterloggedBlockSupport.scheduleWaterTick(state, level, currentPos);
+		if (state.getValue(FACE) != AttachFace.FLOOR
+				&& facing == BrazierMount.support(state.getValue(FACE), state.getValue(FACING))
+				&& !state.canSurvive(level, currentPos)) {
+			// Its wall or ceiling is gone: it falls, and onRemove spills its offering.
+			return Blocks.AIR.defaultBlockState();
+		}
 		return super.updateShape(state, facing, facingState, level, currentPos, facingPos);
 	}
 
@@ -266,10 +301,11 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 				return drawn;
 			}
 			level.setBlock(pos, state.setValue(RITUAL_PHASE, 0), Block.UPDATE_ALL);
-			level.sendParticles(HemoParticleData.darkGlow(SOOT), pos.getX() + 0.5D, pos.getY() + COAL_TOP + 0.15D,
+			double coals = pos.getY() + BrazierMount.drop(BrazierMount.face(state)) + COAL_TOP;
+			level.sendParticles(HemoParticleData.darkGlow(SOOT), pos.getX() + 0.5D, coals + 0.15D,
 					pos.getZ() + 0.5D, 18, 0.18D, 0.12D, 0.18D, 0.025D);
 			level.sendParticles(HemoParticleData.emberSpark(SANGUINE_EMBER, 0.06F, 0.8F, 18), pos.getX() + 0.5D,
-					pos.getY() + COAL_TOP, pos.getZ() + 0.5D, 10, 0.2D, 0.04D, 0.2D, 0.02D);
+					coals, pos.getZ() + 0.5D, 10, 0.2D, 0.04D, 0.2D, 0.02D);
 			level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.55F, 1.0F);
 			return drawn;
 		}
@@ -326,7 +362,7 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 		if (level.getBlockEntity(pos) instanceof IronBrazierBlockEntity brazier) {
 			ItemStack offering = brazier.extractOffering();
 			if (!offering.isEmpty()) {
-				Containers.dropItemStack(level, pos.getX() + 0.5D, pos.getY() + 0.9D, pos.getZ() + 0.5D, offering);
+				Containers.dropItemStack(level, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, offering);
 			}
 		}
 	}

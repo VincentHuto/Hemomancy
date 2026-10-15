@@ -61,7 +61,7 @@ public final class MiniRecipeRenderer {
 			case VANILLA_CRAFTING -> 58;
 			case GHASTLY_ALEMBIC      -> 34;
 			case MEMORY_WEAVING   -> 40;
-			case BLOOD_STRUCTURE  -> 44;
+			case BLOOD_STRUCTURE, WORKING_CRAFT -> 44;
 			case CHISEL           -> 56;
 			case INCUBATOR        -> 38;
 		};
@@ -93,7 +93,12 @@ public final class MiniRecipeRenderer {
 			case VANILLA_CRAFTING -> drawVanillaCrafting(gfx, font, (CraftingRecipe) found.recipe(), x, y, maxW, theme);
 			case GHASTLY_ALEMBIC      -> drawGhastlyAlembic(gfx, font, (DistillationRecipe) found.recipe(), x, y, maxW, theme);
 			case MEMORY_WEAVING   -> drawMemoryWeaving(gfx, font, (MemoryWeavingRecipe) found.recipe(), x, y, maxW, theme);
-			case BLOOD_STRUCTURE  -> drawBloodStructure(gfx, font, (BloodStructureRecipe) found.recipe(), x, y, maxW, theme);
+			case BLOOD_STRUCTURE  -> drawBloodStructure(gfx, font,
+					com.vincenthuto.hemomancy.client.screen.skilltree.shared.CraftingMapRecipe.of(
+							(BloodStructureRecipe) found.recipe()), x, y, maxW, theme);
+			case WORKING_CRAFT    -> drawBloodStructure(gfx, font,
+					com.vincenthuto.hemomancy.client.screen.skilltree.shared.CraftingMapRecipe.of(
+							(com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe) found.recipe()), x, y, maxW, theme);
 			case CHISEL           -> drawChisel(gfx, font, (ScarRecipe) found.recipe(), x, y, maxW, theme);
 			case INCUBATOR        -> drawIncubator(gfx, font, (IncubatorRecipe) found.recipe(), x, y, maxW, theme);
 		};
@@ -273,7 +278,8 @@ public final class MiniRecipeRenderer {
 		return SLOT_SIZE + 12;
 	}
 
-	private static int drawBloodStructure(GuiGraphics gfx, Font font, BloodStructureRecipe recipe,
+	private static int drawBloodStructure(GuiGraphics gfx, Font font,
+										   com.vincenthuto.hemomancy.client.screen.skilltree.shared.CraftingMapRecipe recipe,
 										   int x, int y, int maxW, Theme theme) {
 		// Held item slot
 		int cx = x;
@@ -287,10 +293,12 @@ public final class MiniRecipeRenderer {
 		gfx.drawString(font, "+", cx, y + 5, theme.labelDim(), false);
 		cx += 8;
 
-		// Hit block slot
+		// Hit block slot, or the Cardinal Focus a Working craft is raised beside
 		drawSlot(gfx, cx, y, theme);
-		if (recipe.getHitBlock() != null) {
-			ItemStack hitStack = new ItemStack(recipe.getHitBlock().asItem());
+		{
+			ItemStack hitStack = recipe.getHitBlock() == null
+					? new ItemStack(com.vincenthuto.hemomancy.common.init.BlockInit.cardinal_focus.get())
+					: new ItemStack(recipe.getHitBlock().asItem());
 			if (!hitStack.isEmpty()) {
 				renderSlotItem(gfx, hitStack, cx + 1, y + 1);
 			}
@@ -501,6 +509,7 @@ public final class MiniRecipeRenderer {
 			case GHASTLY_ALEMBIC      -> "Ghastly Alembic Recipe:";
 			case MEMORY_WEAVING   -> "Memory Weaving:";
 			case BLOOD_STRUCTURE  -> "Blood Structure:";
+			case WORKING_CRAFT    -> "Working Craft:";
 			case CHISEL           -> "Chisel Recipe:";
 			case INCUBATOR        -> "Incubation Recipe:";
 		};

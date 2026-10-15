@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
+import com.vincenthuto.hemomancy.common.rite.harbinger.WorkingCraftSubjectMatcher;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -37,7 +38,10 @@ public final class CardinalRiteStationMatcher {
                         matchRequiredStructure(level, focusPos, floorMatch, recipe.getRequiredStructure());
                 if (recipe.getRequiredStructure() != null && structureMatch == null) continue;
                 List<BrazierMatch> braziers = matchedBraziers(level, focusPos, floorMatch, actual, recipe);
-                if (braziers != null) return Optional.of(new StationMatch(actual, floorMatch, structureMatch, braziers));
+                if (braziers == null) continue;
+                WorkingCraftSubjectMatcher.SubjectMatch subject = subjectFor(level, focusPos, actual, recipe);
+                if (recipe.isWorkingCraft() && subject == null) continue;
+                return Optional.of(new StationMatch(actual, floorMatch, structureMatch, braziers, subject));
             }
 		}
 		return Optional.empty();
@@ -61,6 +65,7 @@ public final class CardinalRiteStationMatcher {
             return new Resolution(Status.AMBIGUOUS_FLOOR, List.of());
         }
 		List<ResolvedRecipe> resolved = new ArrayList<>();
+		boolean subjectMissing = false;
 		for (CardinalRiteRecipe recipe : recipes) {
 			if (!recipe.hasLayeredStation()) continue;
 			if (!mediumMatches(level, focusPos, recipe)) continue;
@@ -74,14 +79,19 @@ public final class CardinalRiteStationMatcher {
                 List<BrazierMatch> braziers = matchedBraziers(
                         level, focusPos, actual.match(), actual.floor(), recipe);
                 if (braziers == null) continue;
+                WorkingCraftSubjectMatcher.SubjectMatch subject = subjectFor(level, focusPos, actual.floor(), recipe);
+                if (recipe.isWorkingCraft() && subject == null) {
+                    subjectMissing = true;
+                    continue;
+                }
                 resolved.add(new ResolvedRecipe(recipe,
-                        new StationMatch(actual.floor(), actual.match(), structure, braziers)));
+                        new StationMatch(actual.floor(), actual.match(), structure, braziers, subject)));
                 // Multiple valid orientations of one recipe are not different rites.
                 break;
             }
 		}
 		return new Resolution(resolved.size() > 1 ? Status.AMBIGUOUS_RITE
-				: resolved.isEmpty() ? Status.NO_RITE : Status.MATCHED, resolved);
+				: !resolved.isEmpty() ? Status.MATCHED : subjectMissing ? Status.NO_SUBJECT : Status.NO_RITE, resolved);
 	}
 
 	/** The highest-tier floor built around the focus, or empty when none or two styles tie, as {@link #resolve} treats them. */
@@ -108,7 +118,7 @@ public final class CardinalRiteStationMatcher {
 				level, focusPos, structure.floorMatch(), structure.floor(), recipe);
 		return braziers == null ? Optional.empty()
 				: Optional.of(new StationMatch(structure.floor(), structure.floorMatch(),
-						structure.structureMatch(), braziers));
+						structure.structureMatch(), braziers, null));
 	}
 
 	public static Optional<StationMatch> findCapturedStructure(ServerLevel level, BlockPos focusPos,
@@ -125,7 +135,7 @@ public final class CardinalRiteStationMatcher {
 		BlockPattern.BlockPatternMatch structure =
 				matchRequiredStructure(level, focusPos, floorMatch, recipe.getRequiredStructure());
 		if (recipe.getRequiredStructure() != null && structure == null) return Optional.empty();
-		return Optional.of(new StationMatch(floor, floorMatch, structure, List.of()));
+		return Optional.of(new StationMatch(floor, floorMatch, structure, List.of(), null));
 	}
 
 	public static boolean mediumMatches(ServerLevel level, BlockPos focusPos, CardinalRiteRecipe recipe) {
@@ -165,7 +175,8 @@ public final class CardinalRiteStationMatcher {
 	private static List<BrazierMatch> matchedBraziers(ServerLevel level, BlockPos focusPos,
 			BlockPattern.BlockPatternMatch floorMatch, CardinalRiteFloorDefinition floor, CardinalRiteRecipe recipe) {
 		List<BrazierMatch> offered = new ArrayList<>();
-		for (BlockPos socket : floor.brazierSockets()) {
+		// Braziers count anywhere in the cube above the floor, standing, wall-mounted or hanging.
+		for (BlockPos socket : floor.brazierSpace()) {
 			BlockPos worldPos = offset(focusPos, floorMatch.getForwards(), floorMatch.getUp(), socket);
 			var state = level.getBlockState(worldPos);
 			if (!state.is(BlockInit.iron_brazier.get())
@@ -201,7 +212,7 @@ public final class CardinalRiteStationMatcher {
 		if (index == required.size()) return true;
 		for (int offeredIndex = 0; offeredIndex < offered.size(); offeredIndex++) {
 			if (used.contains(offeredIndex)
-					|| !required.get(index).ingredient().test(offered.get(offeredIndex).stack())) continue;
+					|| !offeringAccepted(required.get(index), offered.get(offeredIndex).stack())) continue;
 			used.add(offeredIndex);
 			assignments[offeredIndex] = index;
 			if (assign(required, offered, index + 1, used, assignments)) return true;
@@ -209,6 +220,13 @@ public final class CardinalRiteStationMatcher {
 			used.remove(offeredIndex);
 		}
 		return false;
+	}
+
+	/** Rites never consume a recorded Wax Cylinder; only a blank one answers a cylinder offering. */
+	static boolean offeringAccepted(CardinalRiteRecipe.BrazierRequirement requirement, ItemStack stack) {
+		return requirement.ingredient().test(stack)
+				&& (!stack.is(com.vincenthuto.hemomancy.common.init.ItemInit.wax_cylinder.get())
+						|| com.vincenthuto.hemomancy.common.item.harbinger.CylinderMedia.blank(stack));
 	}
 
 	private static BlockPos originForCell(BlockPos cell, Direction forwards, Direction up, int x, int y, int z) {
@@ -227,10 +245,22 @@ public final class CardinalRiteStationMatcher {
 				right.getZ() * relative.getX() + up.getStepZ() * relative.getY() + forwards.getStepZ() * relative.getZ());
 	}
 
+	/** A Working craft's built subject in its bed; null for other rites. */
+	private static WorkingCraftSubjectMatcher.SubjectMatch subjectFor(ServerLevel level, BlockPos focusPos,
+			CardinalRiteFloorDefinition floor, CardinalRiteRecipe recipe) {
+		if (!recipe.isWorkingCraft()) return null;
+		return WorkingCraftSubjectMatcher.find(level, focusPos, floor.tier(), recipe.getSubject()).orElse(null);
+	}
+
+	/**
+	 * @param subject a Working craft's subject in its bed, or null for other rites
+	 *                and for re-validation of a running rite (which checks its captured subject)
+	 */
 	public record StationMatch(CardinalRiteFloorDefinition floor,
 			BlockPattern.BlockPatternMatch floorMatch,
 			BlockPattern.BlockPatternMatch structureMatch,
-			List<BrazierMatch> braziers) {
+			List<BrazierMatch> braziers,
+			WorkingCraftSubjectMatcher.SubjectMatch subject) {
 	}
 
 	public record BrazierMatch(BlockPos pos, ItemStack stack, boolean consumeOnSuccess) {
@@ -255,6 +285,8 @@ public final class CardinalRiteStationMatcher {
 		MATCHED,
 		NO_FLOOR,
 		NO_RITE,
+		/** A Working craft's floor, medium and offerings match, but its subject is not standing in a bed. */
+		NO_SUBJECT,
 		AMBIGUOUS_FLOOR,
 		AMBIGUOUS_RITE
 	}

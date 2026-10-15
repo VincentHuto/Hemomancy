@@ -1,0 +1,86 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "id": "hemomancy:cardinal_rite/working/semi_sentient_construct",
+  "bloodCost": 0,
+  "riteType": "greater",
+  "purpose": "making",
+  "required_degree": 3,
+  "rankup": false,
+  "riteName": "Working of the Semi Sentient Construct",
+  "riteDescription": "Build the Semi Sentient Construct beside the Cardinal Focus, feed it, and let the Working floor take it.",
+  "floor": "hemomancy:working_greater",
+  "medium": {
+    "item": "hemomancy:befouling_ash_trail"
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:rotten_flesh"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:bone"
+      },
+      "count": 1
+    }
+  ],
+  "subject": {
+    "pattern": [
+      [
+        "B B",
+        "STS"
+      ],
+      [
+        " C ",
+        "TVT"
+      ],
+      [
+        "B B",
+        "STS"
+      ]
+    ],
+    "key": {
+      "V": {
+        "block": "minecraft:nether_wart_block"
+      },
+      "T": {
+        "block": "hemomancy:hematic_iron_block"
+      },
+      "B": {
+        "block": "hemomancy:befouling_ash_trail"
+      },
+      "S": {
+        "block": "minecraft:soul_sand"
+      },
+      "C": {
+        "block": "hemomancy:conscious_mass"
+      }
+    },
+    "feed": 250
+  },
+  "result": {
+    "id": "hemomancy:semi_sentient_construct"
+  },
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "fragile_offsets": [],
+    "target_duration_ticks": 600,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry",
+    "culmination": "forging"
+  }
+}

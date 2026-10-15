@@ -9,6 +9,8 @@ public enum CardinalRitePhase {
 	CONSECRATION,
 	INSCRIPTION,
 	STATION_PROJECTION,
+	/** A Working craft: the caster feeds blood into the built subject. */
+	SUBJECT_FEEDING,
 	ORDEAL,
 	PUPPET_TRIAL,
 	STILL_INTERVAL,

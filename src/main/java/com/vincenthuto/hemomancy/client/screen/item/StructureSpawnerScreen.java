@@ -6,10 +6,13 @@ import com.vincenthuto.hemomancy.common.network.PlaceStructurePacket;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -74,6 +77,11 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 	// Blood structure tier thresholds (must match BloodCraftingKeyPressPacket)
 
 	private static final int HEADER_HEIGHT = 14;
+	/** Whole rite floors list above the degree sections. */
+	private static final int FLOOR_SECTION = -1;
+	private static final Component CRAFT_SPAWN_HINT = Component.literal("Click: the structure only.\n")
+			.append(Component.literal("Shift-click: also its Working floor, with the medium seated in the Focus"
+					+ " and the offerings lit in their braziers.").withStyle(ChatFormatting.GRAY));
 
 	private final List<StructureEntry> entries = new ArrayList<>();
 	/** Flat display list: mix of section headers (null recipeId) and clickable entries. */
@@ -102,10 +110,12 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 				entries.add(new StructureEntry(
 						recipe.getId(),
 						name,
-						createEntryLabel(PlaceStructurePacket.StructureType.BLOOD_STRUCTURE, name),
+						createEntryLabel(PlaceStructurePacket.StructureType.BLOOD_STRUCTURE, false, name),
 						PlaceStructurePacket.StructureType.BLOOD_STRUCTURE,
 						RecipeDegreeGates.getRequiredDegree(recipe),
-						recipe.isUnstained()
+						0,
+						recipe.isUnstained(),
+						false
 				));
 			}
 
@@ -118,15 +128,33 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 				entries.add(new StructureEntry(
 						recipe.getId(),
 						name,
-						createEntryLabel(PlaceStructurePacket.StructureType.CARDINAL_RITE, name),
+						createEntryLabel(PlaceStructurePacket.StructureType.CARDINAL_RITE, recipe.isWorkingCraft(), name),
 						PlaceStructurePacket.StructureType.CARDINAL_RITE,
 						RecipeDegreeGates.getRequiredDegree(recipe),
-						recipe.isUnstained()
+						0,
+						recipe.isUnstained(),
+						recipe.isWorkingCraft()
+				));
+			}
+
+			// Whole rite floors with their Focus and lit, empty braziers, ready for any rite or Working craft
+			for (CardinalRiteFloorDefinition floor : CardinalRiteFloorRegistry.all().values()) {
+				String name = floor.displayName();
+				entries.add(new StructureEntry(
+						floor.id(),
+						name,
+						createEntryLabel(PlaceStructurePacket.StructureType.RITE_FLOOR, false, name),
+						PlaceStructurePacket.StructureType.RITE_FLOOR,
+						FLOOR_SECTION,
+						CardinalRiteFloorDefinition.listOrder(floor.style(), floor.tier()),
+						false,
+						false
 				));
 			}
 		}
 
-		entries.sort(Comparator.comparingInt(StructureEntry::sortOrder).thenComparing(StructureEntry::displayName));
+		entries.sort(Comparator.comparingInt(StructureEntry::sortOrder).thenComparingInt(StructureEntry::rank)
+				.thenComparing(StructureEntry::displayName));
 		buildDisplayRows();
 		scrollOffset = 0;
 		rebuildTabButtons();
@@ -141,13 +169,16 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 			if (entry.unstained() != selectedTab.unstained) continue;
 			if (entry.sortOrder() != lastDegree) {
 				lastDegree = entry.sortOrder();
-				displayRows.add(new ListRow(null, getSectionSortLabel(lastDegree), getSectionLabel(lastDegree), null, lastDegree, true));
+				displayRows.add(new ListRow(null, getSectionSortLabel(lastDegree), getSectionLabel(lastDegree), null, lastDegree, true, false));
 			}
-			displayRows.add(new ListRow(entry.recipeId(), entry.displayName(), entry.displayComponent(), entry.type(), entry.sortOrder(), false));
+			displayRows.add(new ListRow(entry.recipeId(), entry.displayName(), entry.displayComponent(), entry.type(), entry.sortOrder(), false, entry.workingCraft()));
 		}
 	}
 
 	private String getSectionSortLabel(int level) {
+		if (level == FLOOR_SECTION) {
+			return "-- Rite Floors --";
+		}
 		if (selectedTab == PathTab.UNSTAINED) {
 			return "-- Stage " + level + " - " + RecipeDegreeGates.unstainedStageLabel(level) + " --";
 		}
@@ -158,14 +189,16 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 		return Component.literal(getSectionSortLabel(level)).withStyle(sectionTextStyle());
 	}
 
-	private static Component createEntryLabel(PlaceStructurePacket.StructureType type, String name) {
-		ChatFormatting prefixColor = switch (type) {
+	private static Component createEntryLabel(PlaceStructurePacket.StructureType type, boolean workingCraft, String name) {
+		ChatFormatting prefixColor = workingCraft ? ChatFormatting.RED : switch (type) {
 			case BLOOD_STRUCTURE -> ChatFormatting.AQUA;
 			case CARDINAL_RITE -> ChatFormatting.LIGHT_PURPLE;
+			case RITE_FLOOR -> ChatFormatting.GOLD;
 		};
-		String prefix = switch (type) {
+		String prefix = workingCraft ? "[Craft] " : switch (type) {
 			case BLOOD_STRUCTURE -> "[Structure] ";
 			case CARDINAL_RITE -> "[Rite] ";
+			case RITE_FLOOR -> "[Floor] ";
 		};
 		return Component.literal(prefix).withStyle(prefixColor)
 				.append(Component.literal(name).withStyle(ChatFormatting.WHITE));
@@ -229,12 +262,16 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 			} else {
 				if (currentY + ENTRY_HEIGHT > LIST_HEIGHT) break;
 				final ListRow entryRow = row;
+				// Shift-click a Working craft to raise its floor, seat its medium and light its offerings too.
 				Button btn = Button.builder(entryRow.displayComponent(), (press) -> {
 					PacketHandler.sendToServer(
-							new PlaceStructurePacket(entryRow.recipeId(), entryRow.type())
+							new PlaceStructurePacket(entryRow.recipeId(), entryRow.type(), hasShiftDown())
 					);
 					onClose();
 				}).bounds(x, startY + currentY, LIST_WIDTH, ENTRY_HEIGHT - 2).build();
+				if (entryRow.workingCraft()) {
+					btn.setTooltip(Tooltip.create(CRAFT_SPAWN_HINT));
+				}
 
 				entryButtons.add(btn);
 				addRenderableWidget(btn);
@@ -463,8 +500,9 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 		}
 	}
 
-	private record StructureEntry(ResourceLocation recipeId, String displayName, Component displayComponent, PlaceStructurePacket.StructureType type, int sortOrder, boolean unstained) {}
+	/** {@code rank} orders entries inside a section before their names do. */
+	private record StructureEntry(ResourceLocation recipeId, String displayName, Component displayComponent, PlaceStructurePacket.StructureType type, int sortOrder, int rank, boolean unstained, boolean workingCraft) {}
 
 	/** A row in the display list - either a section header or a clickable entry. */
-	private record ListRow(ResourceLocation recipeId, String displayName, Component displayComponent, PlaceStructurePacket.StructureType type, int sortOrder, boolean isHeader) {}
+	private record ListRow(ResourceLocation recipeId, String displayName, Component displayComponent, PlaceStructurePacket.StructureType type, int sortOrder, boolean isHeader, boolean workingCraft) {}
 }

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world.floor;
 
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteGashRules;
 import net.minecraft.core.BlockPos;
 
 import java.util.ArrayList;
@@ -23,6 +24,16 @@ public final class GashLoop {
 	 */
 	private static final float SEAT_DETOUR = 1.1F;
 	private static final float SEAT_DETOUR_SPREAD = 1.3F;
+	/**
+	 * On the gash's circle the trench swings out round the back of each seated brazier, so the brazier stands on the
+	 * membrane inside it: its centre line keeps this far from the brazier, its inner lip tucked under the mound's
+	 * faded rim. A little tighter than {@link #SEAT_DETOUR}, since the gash already runs near the floor's edge.
+	 */
+	public static final float MOAT_CLEARANCE = 0.85F;
+	/** The moat bulges no further than this beyond the gash's circle. */
+	public static final float MOAT_OUTERMOST = 1.2F;
+	/** Along the loop, the moat eases in and out of its bow over about this many blocks. */
+	private static final float MOAT_EASE = 0.6F;
 
 	private final List<BlockPos> sockets;
 	private final boolean[] seated;
@@ -80,6 +91,66 @@ public final class GashLoop {
 		}
 		detoured[samples] = detoured[0];
 		return new GashLoop(List.copyOf(sorted), seated, points, detoured);
+	}
+
+	/**
+	 * The trench along the floor's gash: a circle just inside its edge ({@link CardinalRiteGashRules}). Braziers stand
+	 * anywhere along it; {@code seated} are the centres (local to the Focus block) of those standing there now, and the
+	 * trench swings out round the back of each like a moat, leaving it standing on the membrane.
+	 */
+	public static GashLoop circle(int half, List<float[]> seated) {
+		float[] whole = new float[seated.size()];
+		java.util.Arrays.fill(whole, 1.0F);
+		return circle(half, seated, whole);
+	}
+
+	/**
+	 * {@link #circle(int, List)} with each brazier's moat grown {@code weights[i]} of the way out (0 none, 1 whole), as a
+	 * brazier set on or taken off the gash eases it in or out ({@link SeatTransitions}).
+	 */
+	public static GashLoop circle(int half, List<float[]> seated, float[] weights) {
+		int samples = 8 * GASH_STEPS;
+		double radius = CardinalRiteGashRules.radius(half);
+		// How far out along each sample's heading the line must run to pass behind every seated brazier.
+		double[] hard = new double[samples];
+		for (int i = 0; i < samples; i++) {
+			double angle = Math.PI * 2.0D * i / samples;
+			double reach = radius;
+			for (int s = 0; s < seated.size(); s++) {
+				float[] seat = seated.get(s);
+				double sx = seat[0] - 0.5D;
+				double sz = seat[1] - 0.5D;
+				double along = sx * Math.cos(angle) + sz * Math.sin(angle);
+				double across = Math.abs(-sx * Math.sin(angle) + sz * Math.cos(angle));
+				if (along <= 0.0D || across >= MOAT_CLEARANCE) continue;
+				double halfChord = Math.sqrt(MOAT_CLEARANCE * MOAT_CLEARANCE - across * across);
+				double needed = radius + (along + halfChord - radius) * weights[s];
+				if (reach < needed) reach = needed;
+			}
+			hard[i] = Math.min(radius + MOAT_OUTERMOST, reach);
+		}
+		// Ease the bow: the highest reach nearby, then averaged twice over the same span. Each eased value only draws on
+		// reaches within its own window, so the line never cuts back across a brazier, and neighbours share one bow.
+		int window = Math.max(1, (int) Math.round(MOAT_EASE / radius / (Math.PI * 2.0D / samples)));
+		double[] eased = average(average(highest(hard, 2 * window), window), window);
+		float[][] centre = new float[samples + 1][];
+		for (int i = 0; i < samples; i++) {
+			double angle = Math.PI * 2.0D * i / samples;
+			centre[i] = new float[] {(float) (0.5D + eased[i] * Math.cos(angle)), (float) (0.5D + eased[i] * Math.sin(angle))};
+		}
+		centre[samples] = centre[0];
+		boolean[] flags = new boolean[seated.size()];
+		java.util.Arrays.fill(flags, true);
+		return new GashLoop(List.of(), flags, seated.toArray(float[][]::new), centre);
+	}
+
+	/**
+	 * The trench as a rounded frame just inside the floor's own edge ({@link FloorRimRules}), so the membrane fits the
+	 * floor the player laid. It passes through no sockets: braziers beyond it are wired in by roots.
+	 */
+	public static GashLoop rim(int half) {
+		float[][] centre = FloorRimRules.rimLoop(half, 8 * GASH_STEPS);
+		return new GashLoop(List.of(), new boolean[0], new float[0][], centre);
 	}
 
 	/** The sockets in loop order, sorted by angle around the Focus. */
@@ -143,6 +214,28 @@ public final class GashLoop {
 	public boolean reachesOutside(int x, int z) {
 		return distance(x, z) < 0.05F || distance(x + 1, z) < 0.05F
 				|| distance(x, z + 1) < 0.05F || distance(x + 1, z + 1) < 0.05F;
+	}
+
+	/** The highest value within {@code window} samples either side, round a closed loop. */
+	private static double[] highest(double[] values, int window) {
+		double[] out = new double[values.length];
+		for (int i = 0; i < values.length; i++) {
+			double low = values[i];
+			for (int k = -window; k <= window; k++) low = Math.max(low, values[Math.floorMod(i + k, values.length)]);
+			out[i] = low;
+		}
+		return out;
+	}
+
+	/** The mean within {@code window} samples either side, round a closed loop. */
+	private static double[] average(double[] values, int window) {
+		double[] out = new double[values.length];
+		for (int i = 0; i < values.length; i++) {
+			double sum = 0.0D;
+			for (int k = -window; k <= window; k++) sum += values[Math.floorMod(i + k, values.length)];
+			out[i] = sum / (2 * window + 1);
+		}
+		return out;
 	}
 
 	private static float[] catmullRom(float[] p0, float[] p1, float[] p2, float[] p3, float t) {

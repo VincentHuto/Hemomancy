@@ -64,6 +64,10 @@ public class ActiveCardinalRite {
     /** Escrow, circuit progress and subject snapshot of a station-upgrade rite. */
     public CompoundTag upgrade() { return upgrade; }
     public CompoundTag succession() { return succession; }
+	private CompoundTag craft = new CompoundTag();
+	/** Subject, feed and escrow state of a Working craft rite. */
+	public CompoundTag craft() { return craft; }
+	public boolean isWorkingCraft() { return craft.contains("FeedRequired"); }
     public void beginSuccession(CompoundTag context) {
         succession = context.copy();
         setPhase(CardinalRitePhase.CULMINATION);
@@ -157,6 +161,43 @@ public class ActiveCardinalRite {
 		rite.anchorBloodMl = new int[0];
 		rite.instabilityRepairBloodMl = new int[0];
 		return rite;
+	}
+
+	/** A Working craft: no anchors; its blood is fed into the built subject until the rite seals. */
+	public static ActiveCardinalRite workingCraft(UUID playerUUID, BlockPos centerPos, ResourceLocation recipeId,
+			int riteSize, int feedMl) {
+		ActiveCardinalRite rite = new ActiveCardinalRite(playerUUID, centerPos, recipeId, 1, riteSize);
+		rite.phase = CardinalRitePhase.SUBJECT_FEEDING;
+		rite.degree = 1;
+		rite.anchorBloodMl = new int[0];
+		rite.instabilityRepairBloodMl = new int[0];
+		rite.craft.putInt("FeedRequired", Math.max(1, feedMl));
+		return rite;
+	}
+
+	public int subjectFeedNeeded() {
+		if (phase != CardinalRitePhase.SUBJECT_FEEDING) return 0;
+		return Math.max(0, craft.getInt("FeedRequired") - craft.getInt("Fed"));
+	}
+
+	/** Takes blood into the subject; a full subject seals the rite into its finale. */
+	public boolean feedSubject(int paidMl) {
+		int needed = subjectFeedNeeded();
+		if (paidMl <= 0 || needed <= 0) return false;
+		int accepted = Math.min(needed, paidMl);
+		craft.putInt("Fed", craft.getInt("Fed") + accepted);
+		committedBloodMl += accepted;
+		idleTicks = 0;
+		if (subjectFeedNeeded() == 0) {
+			altarSealed = true;
+			setPhase(finalePhase());
+		}
+		return true;
+	}
+
+	public float subjectFill() {
+		int required = craft.getInt("FeedRequired");
+		return required <= 0 ? 0.0F : Math.min(1.0F, craft.getInt("Fed") / (float) required);
 	}
 
 	public void beginPuppeteerTrial(String summonName, UUID entityId, UUID crossbarId) {
@@ -1057,6 +1098,7 @@ public class ActiveCardinalRite {
 			case STATION_PROJECTION -> 0.25D + 0.55D * (upgrade.getInt("Stage")
 					+ upgrade.getInt("BloodAtStage") / (double) com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.bloodPerCircuit(recipeId))
 					/ com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.circuits(recipeId);
+			case SUBJECT_FEEDING -> 0.10D + 0.70D * subjectFill();
 			case ORDEAL -> 0.25D + (totalWaves == 0 ? 0.0D : 0.5D * currentWave / totalWaves);
 			case PUPPET_TRIAL -> puppeteerTrialProgress;
 			case STILL_INTERVAL -> 0.75D + 0.10D * boundedPhaseProgress(stillIntervalTicks);
@@ -1131,6 +1173,7 @@ public class ActiveCardinalRite {
 		tag.put("WaveDeck", waves);
 		if (!escrowedStaff.isEmpty()) tag.put("EscrowedStaff", escrowedStaff.copy());
 		if (!upgrade.isEmpty()) tag.put("StationUpgrade", upgrade.copy());
+		if (!craft.isEmpty()) tag.put("Craft", craft.copy());
 		tag.putBoolean("CompletionCommitted", completionCommitted);
 		if (matchedFloorId != null) tag.putString("MatchedFloor", matchedFloorId.toString());
 		tag.putString("FloorForwards", floorForwards.getName());
@@ -1288,6 +1331,7 @@ public class ActiveCardinalRite {
 				: tag.getCompound("AlembicUpgrade")).copy();
 		rite.completionCommitted = tag.getBoolean("CompletionCommitted");
         rite.succession = tag.getCompound("Succession").copy();
+		rite.craft = tag.getCompound("Craft").copy();
 		if (tag.contains("MatchedFloor")) rite.matchedFloorId =
 				ResourceLocation.parse(tag.getString("MatchedFloor"));
 		rite.floorForwards = Direction.byName(tag.getString("FloorForwards"));

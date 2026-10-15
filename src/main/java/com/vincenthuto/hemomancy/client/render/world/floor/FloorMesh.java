@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.world.floor;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierMount;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorGeometry;
@@ -14,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -103,6 +105,12 @@ public final class FloorMesh {
 	private static final int SEAT_SECTORS = 56;
 	private static final float SEAT_STEP = 0.02F;
 	/**
+	 * A brazier beside the Focus would push its mound through the Focus throat, so a mound melts into the floor
+	 * between these distances from the Focus centre: gone over the throat's lumpy rim, whole by the near dais's edge.
+	 */
+	private static final float SEAT_THROAT_GONE = 0.55F;
+	private static final float SEAT_THROAT_WHOLE = 0.8F;
+	/**
 	 * Green 166 marks a brazier's flesh mound for the shader, which shades it as the floor membrane itself; red carries
 	 * its slope shading.
 	 */
@@ -150,6 +158,11 @@ public final class FloorMesh {
 	private static final int CACHE_LIMIT = 128;
 	/** How often the blocks under a cached mesh are re-checked for changes. */
 	private static final int FOOTPRINT_CHECK_TICKS = 5;
+	/**
+	 * While a brazier's mound and moat ease in or out, the mesh is rebuilt every tick, and each frame blends from the
+	 * build before it to this one, so the trench and mound move continuously between ticks.
+	 */
+	private static final int TRANSITION_STEP_TICKS = 1;
 	/** How far past the floor's half-width the mesh can read blocks: the trench, its reaches and the drapes. */
 	private static final int FOOTPRINT_MARGIN = 5;
 	private static final Map<Long, Cached> CACHE = new HashMap<>();
@@ -172,11 +185,18 @@ public final class FloorMesh {
 	private final int[] swell;
 	private final float[] sampleRadius;
 	private final List<Seat> seats;
+	/** A root from the floor's rim to each seated brazier beyond it. */
+	private final List<Root> roots;
 	private final float seatGround;
 	private List<float[]> ringCells;
 	private CreepCells creepCells;
+	/** The build this one replaced while a mound and moat were easing, blended from over a tick; null when settled. */
+	private FloorMesh previous;
+	/** The game tick this mesh was built on. */
+	private long builtAt;
 
-	private FloorMesh(int half, GashLoop loop, VertexList surface, Gash gash, List<Seat> seats, float seatGround) {
+	private FloorMesh(int half, GashLoop loop, VertexList surface, Gash gash, List<Seat> seats, List<Root> roots,
+			float seatGround) {
 		this.half = half;
 		this.loop = loop;
 		this.surface = surface.data;
@@ -192,29 +212,51 @@ public final class FloorMesh {
 		this.swell = gash == null ? new int[0] : gash.swell;
 		this.sampleRadius = gash == null ? new float[0] : gash.radius;
 		this.seats = seats;
+		this.roots = roots;
 		this.seatGround = seatGround;
 	}
 
 	/**
 	 * The mesh for a Focus's formed floor, built on first use and kept until the floor, its orientation or the blocks
-	 * in its footprint change, or resources reload.
+	 * in its footprint change, or resources reload. A brazier set on or taken off the floor eases its mound and moat in
+	 * or out ({@link SeatTransitions}), the mesh rebuilt every few ticks until it settles.
 	 */
 	public static FloorMesh of(Level level, CardinalRiteFloorDefinition floor, BlockPos origin, Direction forwards) {
 		long tick = level.getGameTime();
 		int half = CardinalRiteFloorGeometry.halfWidth(floor);
 		List<BlockPos> sockets = CardinalRiteFloorGeometry.sockets(floor, origin, forwards);
+		List<BlockPos> standing = CardinalRiteFloorGeometry.standingCells(floor, origin, forwards);
 		Cached cached = CACHE.get(origin.asLong());
 		if (cached != null && cached.floor.equals(floor.id()) && cached.forwards == forwards
 				&& cached.generation == generation && cached.level == System.identityHashCode(level)) {
-			if (tick >= cached.checkedAt && tick - cached.checkedAt < FOOTPRINT_CHECK_TICKS) return cached.mesh;
+			boolean easing = !cached.transitions.settled(cached.builtAt);
+			long since = tick - (easing ? cached.builtAt : cached.checkedAt);
+			if (tick >= cached.checkedAt && since >= 0 && since < (easing ? TRANSITION_STEP_TICKS : FOOTPRINT_CHECK_TICKS)) {
+				return cached.mesh;
+			}
 			long footprint = footprint(level, origin, half, sockets);
 			cached.checkedAt = tick;
-			if (footprint == cached.footprint) return cached.mesh;
+			if (footprint != cached.footprint) {
+				cached.transitions.target(seatedSockets(level, standing), tick);
+			} else if (!easing) {
+				return cached.mesh;
+			}
+			FloorMesh before = cached.mesh;
+			before.previous = null;
+			cached.mesh = build(level, floor, origin, forwards, half, sockets, cached.transitions, tick);
+			cached.mesh.previous = before;
+			cached.mesh.builtAt = tick;
+			cached.footprint = footprint;
+			cached.builtAt = tick;
+			cached.transitions.prune(tick);
+			return cached.mesh;
 		}
 		if (CACHE.size() > CACHE_LIMIT) CACHE.clear();
-		FloorMesh mesh = build(level, floor, origin, forwards, half, sockets);
+		SeatTransitions transitions = SeatTransitions.settledWith(seatedSockets(level, standing));
+		FloorMesh mesh = build(level, floor, origin, forwards, half, sockets, transitions, tick);
+		mesh.builtAt = tick;
 		CACHE.put(origin.asLong(), new Cached(System.identityHashCode(level), floor.id(), forwards, generation,
-				footprint(level, origin, half, sockets), tick, mesh));
+				footprint(level, origin, half, sockets), tick, mesh, transitions));
 		return mesh;
 	}
 
@@ -313,9 +355,14 @@ public final class FloorMesh {
 	 * The trench, carved around the loop by the dig front as the floor forms. {@code riteGlow}, if given, adds the
 	 * rite's own glow per centre-line sample on top of the dig front's.
 	 */
-	public void emitGash(VertexConsumer consumer, Matrix4f matrix, float age, float[] riteGlow) {
+	public void emitGash(VertexConsumer consumer, Matrix4f matrix, float age, float[] riteGlow, double time) {
 		if (loop == null) return;
 		float[][] centre = loop.centre();
+		// While a moat is easing, the trench slides from the build before this one to this one across the tick.
+		float blend = blend(time);
+		FloorMesh from = blend < 1.0F && previous != null && previous.loop != null && previous.samples == samples
+				? previous : null;
+		float[][] fromCentre = from == null ? null : from.loop.centre();
 		// While the dig front is still going round, the trench pinches shut behind it at the point where it started,
 		// instead of ending in a flat cut; once the front meets it again the loop joins.
 		float joined = CardinalRiteFloorVisualRules.digProgress(age, samples - 1, samples);
@@ -330,23 +377,60 @@ public final class FloorMesh {
 			int glowB = digAlpha(digB, riteGlow == null ? 0.0F : riteGlow[i + 1]);
 			float carveA = Math.min(taper[i], digA * Math.max(digTail(fromStart[i]), joined));
 			float carveB = Math.min(taper[i + 1], digB * Math.max(digTail(fromStart[i + 1]), joined));
-			gashVertex(consumer, matrix, centre[i], normals[i], carveA, 1.0F, reaches[i][0], swell[i], glowA,
+			float[] centreA = centre[i];
+			float[] centreB = centre[i + 1];
+			float[] normalA = normals[i];
+			float[] normalB = normals[next];
+			float[] reachA = reaches[i];
+			float[] reachB = reaches[next];
+			if (from != null) {
+				centreA = mix(fromCentre[i], centreA, blend);
+				centreB = mix(fromCentre[i + 1], centreB, blend);
+				normalA = normalised(mix(from.normals[i], normalA, blend));
+				normalB = normalised(mix(from.normals[next], normalB, blend));
+				reachA = mix(from.reaches[i], reachA, blend);
+				reachB = mix(from.reaches[next], reachB, blend);
+			}
+			gashVertex(consumer, matrix, centreA, normalA, carveA, 1.0F, reachA[0], swell[i], glowA,
 					groundColours[i][0]);
-			gashVertex(consumer, matrix, centre[i], normals[i], carveA, -1.0F, reaches[i][1], swell[i], glowA,
+			gashVertex(consumer, matrix, centreA, normalA, carveA, -1.0F, reachA[1], swell[i], glowA,
 					groundColours[i][1]);
-			gashVertex(consumer, matrix, centre[i + 1], normals[next], carveB, -1.0F, reaches[next][1], swell[i + 1],
+			gashVertex(consumer, matrix, centreB, normalB, carveB, -1.0F, reachB[1], swell[i + 1],
 					glowB, groundColours[next][1]);
-			gashVertex(consumer, matrix, centre[i + 1], normals[next], carveB, 1.0F, reaches[next][0], swell[i + 1],
+			gashVertex(consumer, matrix, centreB, normalB, carveB, 1.0F, reachB[0], swell[i + 1],
 					glowB, groundColours[next][0]);
 		}
+	}
+
+	/** How far a frame at {@code time} has blended from the previous build to this one, 0 to 1. */
+	private float blend(double time) {
+		if (previous == null) return 1.0F;
+		return (float) Math.max(0.0D, Math.min(1.0D, (time - builtAt) / TRANSITION_STEP_TICKS));
+	}
+
+	private static float[] mix(float[] a, float[] b, float t) {
+		float[] out = new float[b.length];
+		for (int i = 0; i < b.length; i++) out[i] = a[i] + (b[i] - a[i]) * t;
+		return out;
+	}
+
+	private static float[] normalised(float[] v) {
+		float length = (float) Math.sqrt(v[0] * v[0] + v[1] * v[1]);
+		return length < 1.0e-6F ? v : new float[] {v[0] / length, v[1] / length};
 	}
 
 	public boolean hasSeats() {
 		return !seats.isEmpty();
 	}
 
+	/** How many roots wire seated braziers into the floor. */
+	public int rootCount() {
+		return roots.size();
+	}
+
 	/** A lumpy mound of flesh around each seated brazier, swallowing its dais and the foot of its stem. */
-	public void emitSeats(VertexConsumer consumer, Matrix4f matrix, float beat, float spread, int alpha) {
+	public void emitSeats(VertexConsumer consumer, Matrix4f matrix, float beat, float spread, int alpha, double time) {
+		float blend = blend(time);
 		if (alpha <= 2) return;
 		float swelling = 1.0F + 0.05F * beat;
 		int points = (SEAT_RINGS + 1) * SEAT_SECTORS;
@@ -354,12 +438,14 @@ public final class FloorMesh {
 		float[] shades = new float[points];
 		for (Seat seat : seats) {
 			// The mound rises as the membrane's edge reaches it, and sinks back as a collapsing floor draws away.
-			float rise = CardinalRiteFloorVisualRules.seatRise(spread, seat.distance);
+			float grown = seat.previousWeight + (seat.weight - seat.previousWeight) * blend;
+			float rise = CardinalRiteFloorVisualRules.seatRise(spread, seat.distance) * grown;
 			if (rise <= 0.01F) continue;
+			int seatAlpha = Math.round(alpha * Math.min(1.0F, grown));
 			for (int k = 0; k < points; k++) {
-				heights[k] = (seat.h0[k] * swelling + seat.wrinkle[k]) * rise;
-				float dr = (seat.h0Radial[k] * swelling + seat.wrinkleRadial[k]) * rise / (2.0F * SEAT_STEP);
-				float dt = (seat.h0Around[k] * swelling + seat.wrinkleAround[k]) * rise
+				heights[k] = (seat.h0[k] * swelling + seat.wrinkle[k]) * rise * seat.clear[k];
+				float dr = (seat.h0Radial[k] * swelling + seat.wrinkleRadial[k]) * rise * seat.clear[k] / (2.0F * SEAT_STEP);
+				float dt = (seat.h0Around[k] * swelling + seat.wrinkleAround[k]) * rise * seat.clear[k]
 						/ (2.0F * SEAT_STEP * Math.max(seat.radius[k], 0.05F));
 				float cos = seat.cos[k];
 				float sin = seat.sin[k];
@@ -372,12 +458,18 @@ public final class FloorMesh {
 			for (int ring = 0; ring < SEAT_RINGS; ring++) {
 				for (int sector = 0; sector < SEAT_SECTORS; sector++) {
 					int after = (sector + 1) % SEAT_SECTORS;
-					seatVertex(consumer, matrix, seat, ring * SEAT_SECTORS + sector, heights, shades, alpha);
-					seatVertex(consumer, matrix, seat, (ring + 1) * SEAT_SECTORS + sector, heights, shades, alpha);
-					seatVertex(consumer, matrix, seat, (ring + 1) * SEAT_SECTORS + after, heights, shades, alpha);
-					seatVertex(consumer, matrix, seat, ring * SEAT_SECTORS + after, heights, shades, alpha);
+					seatVertex(consumer, matrix, seat, ring * SEAT_SECTORS + sector, heights, shades, seatAlpha);
+					seatVertex(consumer, matrix, seat, (ring + 1) * SEAT_SECTORS + sector, heights, shades, seatAlpha);
+					seatVertex(consumer, matrix, seat, (ring + 1) * SEAT_SECTORS + after, heights, shades, seatAlpha);
+					seatVertex(consumer, matrix, seat, ring * SEAT_SECTORS + after, heights, shades, seatAlpha);
 				}
 			}
+		}
+		// Each root grows out from the rim as the membrane's edge reaches its brazier, and swells on the beat.
+		for (Root root : roots) {
+			float rise = CardinalRiteFloorVisualRules.seatRise(spread, root.distance);
+			if (rise <= 0.01F) continue;
+			root.emit(consumer, matrix, rise, swelling, alpha);
 		}
 	}
 
@@ -517,16 +609,34 @@ public final class FloorMesh {
 	// ---- Building ----
 
 	private static FloorMesh build(Level level, CardinalRiteFloorDefinition floor, BlockPos origin,
-			Direction forwards, int half, List<BlockPos> sockets) {
-		GashLoop loop = GashLoop.through(origin, sockets, seatedSockets(level, sockets));
-		VertexList surface = buildMembrane(level, floor, origin, forwards, half, loop);
-		if (loop == null) return new FloorMesh(half, null, surface, null, List.of(), 0.0F);
-		Gash gash = buildGash(level, origin, loop);
+			Direction forwards, int half, List<BlockPos> sockets, SeatTransitions transitions, long tick) {
+		float seatGround = sockets.isEmpty() ? 1.0F : sockets.getFirst().getY() - origin.getY();
+		// The trench runs round the floor's gash, a circle just inside its edge. A brazier standing anywhere on the floor
+		// sinks into a mound of membrane; the trench swings out round the back of each one on the gash, like a moat, so
+		// it stands on the membrane. Sconces and hanging braziers leave the floor alone. (Roots wiring off-floor
+		// braziers in are kept for later use: Root, GashLoop.rim.)
+		Set<BlockPos> gashCells = new HashSet<>(sockets);
+		List<float[]> moatCentres = new ArrayList<>();
+		List<Float> moatWeights = new ArrayList<>();
 		List<Seat> seats = new ArrayList<>();
-		for (int i = 0; i < loop.points().length; i++) {
-			if (loop.seated()[i]) seats.add(new Seat(loop.points()[i]));
+		for (BlockPos cell : transitions.cells()) {
+			float weight = transitions.weight(cell, tick);
+			float before = transitions.weight(cell, tick - TRANSITION_STEP_TICKS);
+			if (weight <= 0.0F && before <= 0.0F) continue;
+			float[] centre = {cell.getX() - origin.getX() + 0.5F, cell.getZ() - origin.getZ() + 0.5F};
+			seats.add(new Seat(centre, before, weight));
+			if (gashCells.contains(cell)) {
+				moatCentres.add(centre);
+				moatWeights.add(weight);
+			}
 		}
-		return new FloorMesh(half, loop, surface, gash, seats, loop.sockets().getFirst().getY() - origin.getY());
+		float[] weights = new float[moatWeights.size()];
+		for (int i = 0; i < weights.length; i++) weights[i] = moatWeights.get(i);
+		GashLoop loop = GashLoop.circle(half, moatCentres, weights);
+		List<Root> roots = List.of();
+		VertexList surface = buildMembrane(level, floor, origin, forwards, half, loop);
+		Gash gash = buildGash(level, origin, loop, seatGround + GASH_Y);
+		return new FloorMesh(half, loop, surface, gash, seats, roots, seatGround);
 	}
 
 	private static VertexList buildMembrane(Level level, CardinalRiteFloorDefinition floor, BlockPos origin,
@@ -695,11 +805,11 @@ public final class FloorMesh {
 		out.add(x, y, z, surfaceX - 0.5F, surfaceZ - 0.5F, Math.round(255 * (1.0F - hang)), green, blue);
 	}
 
-	private static Gash buildGash(Level level, BlockPos origin, GashLoop gash) {
+	private static Gash buildGash(Level level, BlockPos origin, GashLoop gash, float y) {
 		float[][] points = gash.points();
 		float[][] centre = gash.centre();
 		int samples = centre.length - 1;
-		Gash out = new Gash(samples, gash.sockets().getFirst().getY() - origin.getY() + GASH_Y);
+		Gash out = new Gash(samples, y);
 		for (int i = 0; i < samples; i++) out.grounded[i] = gashGround(level, origin, centre[i]);
 		out.grounded[samples] = out.grounded[0];
 		gashTaper(centre, out.grounded, samples, out.taper);
@@ -748,7 +858,8 @@ public final class FloorMesh {
 		Set<BlockPos> seated = new HashSet<>();
 		for (BlockPos socket : sockets) {
 			BlockPos ground = socket.below();
-			if (level.getBlockState(socket).is(BlockInit.iron_brazier.get())
+			BlockState state = level.getBlockState(socket);
+			if (state.is(BlockInit.iron_brazier.get()) && BrazierMount.face(state) == AttachFace.FLOOR
 					&& level.getBlockState(ground).isFaceSturdy(level, ground, Direction.UP)) {
 				seated.add(socket);
 			}
@@ -1014,12 +1125,17 @@ public final class FloorMesh {
 		private final ResourceLocation floor;
 		private final Direction forwards;
 		private final int generation;
-		private final long footprint;
-		private final FloorMesh mesh;
+		private long footprint;
+		private FloorMesh mesh;
 		private long checkedAt;
+		/** When the mesh was last built, so easing mounds and moats rebuild it every few ticks. */
+		private long builtAt;
+		private final SeatTransitions transitions;
 
 		private Cached(int level, ResourceLocation floor, Direction forwards, int generation, long footprint,
-				long checkedAt, FloorMesh mesh) {
+				long checkedAt, FloorMesh mesh, SeatTransitions transitions) {
+			this.builtAt = checkedAt;
+			this.transitions = transitions;
 			this.level = level;
 			this.floor = floor;
 			this.forwards = forwards;
@@ -1061,6 +1177,141 @@ public final class FloorMesh {
 	 * scaled by how risen it is, so the profile and its finite-difference slopes are kept split that way and a
 	 * frame only combines them.
 	 */
+	/**
+	 * Flesh wiring a seated brazier into the floor: a main root and two thinner rootlets twisting about it, leaving the
+	 * membrane at the rim facing the brazier, arching across the gap and diving into its mound. Shaded like the seat
+	 * mounds, so it reads as the same flesh as the floor.
+	 */
+	private static final class Root {
+		private static final int SAMPLES = 20;
+		private static final int SECTORS = 10;
+		private static final float MAIN_RADIUS = 0.12F;
+		private static final float RIDGE_RADIUS = 0.045F;
+		/** How far the rootlets swing out from the main root at its middle. */
+		private static final float RIDGE_SPREAD = 0.15F;
+		/** The root fades in from the membrane over its first part, so there is no seam where it leaves the floor. */
+		private static final float EMERGE = 0.15F;
+		private final float distance;
+		private final float[][] path;
+		private final float[][] side;
+		private final float[][] up;
+		private final float phase;
+
+		private Root(float distance, float[][] path, float phase) {
+			this.distance = distance;
+			this.path = path;
+			this.phase = phase;
+			side = new float[path.length][];
+			up = new float[path.length][];
+			for (int i = 0; i < path.length; i++) {
+				float[] a = path[Math.max(0, i - 1)];
+				float[] b = path[Math.min(path.length - 1, i + 1)];
+				float tx = b[0] - a[0];
+				float ty = b[1] - a[1];
+				float tz = b[2] - a[2];
+				float tl = (float) Math.sqrt(tx * tx + ty * ty + tz * tz);
+				tx /= tl;
+				ty /= tl;
+				tz /= tl;
+				// Side lies level across the root; up completes the frame round it.
+				float sx = -tz;
+				float sz = tx;
+				float sl = (float) Math.sqrt(sx * sx + sz * sz);
+				if (sl < 1.0e-5F) {
+					sx = 1.0F;
+					sz = 0.0F;
+					sl = 1.0F;
+				}
+				sx /= sl;
+				sz /= sl;
+				side[i] = new float[] {sx, 0.0F, sz};
+				up[i] = new float[] {ty * sz, tz * sx - tx * sz, -ty * sx};
+			}
+		}
+
+		/** The root to a brazier centred at {@code socket} (x, z) whose mound stands on {@code ground}. */
+		private static Root toward(int half, float[] socket, float ground) {
+			float[] rim = FloorRimRules.rimPoint(half, socket[0], socket[1]);
+			float dx = socket[0] - rim[0];
+			float dz = socket[1] - rim[1];
+			float length = Math.max(1.0e-4F, (float) Math.sqrt(dx * dx + dz * dz));
+			// It dives into the mound's flank, short of the brazier's stem.
+			float into = Math.min(0.32F, length * 0.4F);
+			float[] start = {rim[0], SURFACE_Y - 0.02F, rim[1]};
+			float[] end = {socket[0] - dx / length * into, ground + 0.1F, socket[1] - dz / length * into};
+			float phase = (float) (Math.floorMod((long) Math.floor(socket[0] * 31.0F + socket[1] * 17.0F), 628L) / 100.0D);
+			return new Root((float) Math.hypot(socket[0] - 0.5F, socket[1] - 0.5F),
+					FloorRimRules.rootPath(start, end, SAMPLES), phase);
+		}
+
+		private void emit(VertexConsumer consumer, Matrix4f matrix, float rise, float swelling, int alpha) {
+			// The root grows out from the rim to the brazier as the floor forms.
+			int reach = Math.max(1, Math.round(SAMPLES * rise));
+			tube(consumer, matrix, reach, 0.0F, MAIN_RADIUS, swelling, alpha);
+			tube(consumer, matrix, reach, RIDGE_SPREAD, RIDGE_RADIUS, swelling, alpha);
+			tube(consumer, matrix, reach, -RIDGE_SPREAD, RIDGE_RADIUS, swelling, alpha);
+		}
+
+		/** One strand: {@code spread} swings it out from the spine at the middle, twisting as it goes. */
+		private void tube(VertexConsumer consumer, Matrix4f matrix, int reach, float spread, float radius,
+				float swelling, int alpha) {
+			float[][] ring = new float[SECTORS][];
+			float[][] previous = null;
+			int[] previousShade = new int[SECTORS];
+			int[] shade = new int[SECTORS];
+			float previousAlpha = 0.0F;
+			for (int i = 0; i <= reach; i++) {
+				float t = i / (float) SAMPLES;
+				float swing = spread * (float) Math.sin(Math.PI * t);
+				float twist = t * 5.0F + phase;
+				float ox = (float) (side[i][0] * Math.cos(twist) + up[i][0] * Math.sin(twist)) * swing;
+				float oy = (float) (up[i][1] * Math.sin(twist)) * swing;
+				float oz = (float) (side[i][2] * Math.cos(twist) + up[i][2] * Math.sin(twist)) * swing;
+				float r = radius * (1.0F - 0.35F * t) * swelling * (1.0F + 0.15F * (float) Math.sin(t * 9.0F + phase));
+				for (int k = 0; k < SECTORS; k++) {
+					double theta = Math.PI * 2.0D * k / SECTORS;
+					float nx = (float) (up[i][0] * Math.cos(theta) + side[i][0] * Math.sin(theta));
+					float ny = (float) (up[i][1] * Math.cos(theta));
+					float nz = (float) (up[i][2] * Math.cos(theta) + side[i][2] * Math.sin(theta));
+					ring[k] = new float[] {path[i][0] + ox + nx * r, path[i][1] + oy + ny * r, path[i][2] + oz + nz * r};
+					float lit = nx * SLOPE_LIGHT.x() + ny * SLOPE_LIGHT.y() + nz * SLOPE_LIGHT.z();
+					shade[k] = Math.round(255 * Math.min(1.0F, (0.55F + 0.45F * Math.max(0.0F, lit)) / FLAT_SHADE));
+				}
+				float fade = smooth(Math.min(1.0F, t / EMERGE));
+				if (previous != null) {
+					int a0 = Math.round(alpha * previousAlpha);
+					int a1 = Math.round(alpha * fade);
+					for (int k = 0; k < SECTORS; k++) {
+						int after = (k + 1) % SECTORS;
+						rootVertex(consumer, matrix, previous[k], previousShade[k], a0);
+						rootVertex(consumer, matrix, ring[k], shade[k], a1);
+						rootVertex(consumer, matrix, ring[after], shade[after], a1);
+						rootVertex(consumer, matrix, previous[after], previousShade[after], a0);
+					}
+				}
+				previous = ring.clone();
+				ring = new float[SECTORS][];
+				System.arraycopy(shade, 0, previousShade, 0, SECTORS);
+				previousAlpha = fade;
+			}
+		}
+
+		private static void rootVertex(VertexConsumer consumer, Matrix4f matrix, float[] at, int shade, int alpha) {
+			consumer.addVertex(matrix, at[0], at[1], at[2]).setUv(at[0] - 0.5F, at[2] - 0.5F)
+					.setColor(shade, SEAT_LAYER, 255, alpha);
+		}
+	}
+
+	/**
+	 * How much of a seat mound may stand at this point (local to the Focus block, its centre at 0.5, 0.5): none over the
+	 * Focus throat, all of it clear of it, eased between so the mound melts into the floor instead of cutting the throat.
+	 */
+	static float throatClearance(float x, float z) {
+		float distance = (float) Math.hypot(x - 0.5F, z - 0.5F);
+		float t = Math.max(0.0F, Math.min(1.0F, (distance - SEAT_THROAT_GONE) / (SEAT_THROAT_WHOLE - SEAT_THROAT_GONE)));
+		return t * t * (3.0F - 2.0F * t);
+	}
+
 	private static final class Seat {
 		private final float distance;
 		private final float[] x;
@@ -1069,6 +1320,8 @@ public final class FloorMesh {
 		private final float[] cos;
 		private final float[] sin;
 		private final float[] rim;
+		/** How much of the mound stands here, clear of the Focus throat (see {@link #throatClearance}). */
+		private final float[] clear;
 		private final float[] h0;
 		private final float[] wrinkle;
 		private final float[] h0Radial;
@@ -1076,7 +1329,13 @@ public final class FloorMesh {
 		private final float[] h0Around;
 		private final float[] wrinkleAround;
 
-		private Seat(float[] centre) {
+		/** How far the mound had grown in (or sunk away) one build before, and at this build, 0 to 1. */
+		private final float previousWeight;
+		private final float weight;
+
+		private Seat(float[] centre, float previousWeight, float weight) {
+			this.previousWeight = previousWeight;
+			this.weight = weight;
 			distance = (float) Math.hypot(centre[0] - 0.5F, centre[1] - 0.5F);
 			float phase = (float) (Math.floorMod((long) Math.floor(centre[0] * 31.0F + centre[1] * 17.0F), 628L)
 					/ 100.0D);
@@ -1087,6 +1346,7 @@ public final class FloorMesh {
 			cos = new float[points];
 			sin = new float[points];
 			rim = new float[points];
+			clear = new float[points];
 			h0 = new float[points];
 			wrinkle = new float[points];
 			h0Radial = new float[points];
@@ -1104,7 +1364,8 @@ public final class FloorMesh {
 					sin[k] = (float) Math.sin(theta);
 					x[k] = centre[0] + cos[k] * r;
 					z[k] = centre[1] + sin[k] * r;
-					rim[k] = edge * edge * (3.0F - 2.0F * edge);
+					clear[k] = throatClearance(x[k], z[k]);
+					rim[k] = edge * edge * (3.0F - 2.0F * edge) * clear[k];
 					h0[k] = seatProfile(r, theta, phase);
 					wrinkle[k] = seatWrinkle(r, theta, phase);
 					h0Radial[k] = seatProfile(r + SEAT_STEP, theta, phase) - seatProfile(r - SEAT_STEP, theta, phase);

@@ -2,10 +2,12 @@
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "greater",
+  "purpose": "world",
+  "world_finale": "sky",
   "required_degree": 4,
   "riteName": "Rite of the Sanguine Eclipse",
   "riteDescription": "A forbidden rite that tears the veil between night and will. The caster forces a Blood Moon to rise, empowering all Harbingers while weakening the uninitiated.",
-  "floor": "hemomancy:working_greater",
+  "floor": "hemomancy:dominion_greater",
   "brazier_signature": [
     {
       "ingredient": {

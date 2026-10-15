@@ -26,6 +26,12 @@ public class IronBrazierBlockEntity extends BlockEntity {
 	private static final String TAG_POOLED_BLOOD = "PooledBlood";
 
 	private ItemStack offering = ItemStack.EMPTY;
+	/**
+	 * An offering a running rite has taken into escrow, still shown in the bowl until the daemon breaks it.
+	 * Display only: it never matches, cannot be extracted, and is forgotten once its rite no longer exists.
+	 */
+	private ItemStack escrowShown = ItemStack.EMPTY;
+	private UUID escrowRite;
 	private UUID itemAbsorptionPlayer;
 	private String itemAbsorptionRiteId = "";
 	private int itemAbsorptionProgressTicks;
@@ -55,6 +61,12 @@ public class IronBrazierBlockEntity extends BlockEntity {
 		if (te.itemAbsorptionProgressTicks > 0
 				&& (te.offering.isEmpty() || level.getGameTime() - te.itemAbsorptionLastTick > 8L)) {
 			te.resetItemAbsorptionProgress();
+		}
+		// An escrow display outlives its rite only if the rite's data was lost; let it go.
+		if (level instanceof net.minecraft.server.level.ServerLevel serverLevel && !te.escrowShown.isEmpty()
+				&& level.getGameTime() % 40L == 0L
+				&& !com.vincenthuto.hemomancy.common.rite.harbinger.RiteOfferingEscrow.isLive(serverLevel, te.escrowRite)) {
+			te.clearEscrowed();
 		}
 	}
 
@@ -96,6 +108,28 @@ public class IronBrazierBlockEntity extends BlockEntity {
 		return offering.copy();
 	}
 
+	/** What the bowl shows: its offering, or an escrowed offering waiting for the daemon. */
+	public ItemStack getRenderedOfferingStack() {
+		return offering.isEmpty() ? escrowShown.copy() : offering.copy();
+	}
+
+	public void showEscrowed(ItemStack stack, UUID riteId) {
+		escrowShown = stack.copyWithCount(1);
+		escrowRite = riteId;
+		markDirtyAndSync();
+	}
+
+	public void clearEscrowed() {
+		if (escrowShown.isEmpty()) return;
+		escrowShown = ItemStack.EMPTY;
+		escrowRite = null;
+		markDirtyAndSync();
+	}
+
+	public UUID escrowRite() {
+		return escrowShown.isEmpty() ? null : escrowRite;
+	}
+
 	public ItemStack getOfferingForMatching() {
 		return offering;
 	}
@@ -105,7 +139,7 @@ public class IronBrazierBlockEntity extends BlockEntity {
 	}
 
 	public boolean insertOffering(Player player, ItemStack stack) {
-		if (stack.isEmpty() || !offering.isEmpty()) {
+		if (stack.isEmpty() || !offering.isEmpty() || !escrowShown.isEmpty()) {
 			return false;
 		}
 		resetItemAbsorptionProgress();
@@ -209,6 +243,10 @@ public class IronBrazierBlockEntity extends BlockEntity {
 		if (pooledBlood > 0.0D) {
 			tag.putDouble(TAG_POOLED_BLOOD, pooledBlood);
 		}
+		if (!escrowShown.isEmpty()) {
+			tag.put("EscrowShown", escrowShown.save(provider));
+			if (escrowRite != null) tag.putUUID("EscrowRite", escrowRite);
+		}
 	}
 
 	@Override
@@ -218,6 +256,10 @@ public class IronBrazierBlockEntity extends BlockEntity {
 				? ItemStack.parseOptional(provider, tag.getCompound(TAG_OFFERING))
 				: ItemStack.EMPTY;
 		pooledBlood = tag.getDouble(TAG_POOLED_BLOOD);
+		escrowShown = tag.contains("EscrowShown")
+				? ItemStack.parseOptional(provider, tag.getCompound("EscrowShown"))
+				: ItemStack.EMPTY;
+		escrowRite = tag.hasUUID("EscrowRite") ? tag.getUUID("EscrowRite") : null;
 	}
 
 	@Override

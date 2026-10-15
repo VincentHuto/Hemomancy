@@ -5,6 +5,7 @@ import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.client.render.world.BrazierFlames;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBloodInteractionRules;
+import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierMount;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -29,6 +30,8 @@ public class IronBrazierRenderer implements BlockEntityRenderer<IronBrazierBlock
 		long gameTime = te.getLevel() != null ? te.getLevel().getGameTime() : 0L;
 		float time = gameTime + partialTicks;
 		BlockState state = te.getBlockState();
+		// A sconce or hanging brazier holds its bowl lower than a standing one.
+		float drop = (float) BrazierMount.drop(BrazierMount.face(state));
 		int phase = state.hasProperty(BrazierBlock.RITUAL_PHASE) ? state.getValue(BrazierBlock.RITUAL_PHASE) : 0;
 		float target = BrazierBloodInteractionRules.poolFraction(phase > 0, te.getPooledBlood(),
 				BrazierBlock.BLOOD_TO_LIGHT);
@@ -36,10 +39,11 @@ public class IronBrazierRenderer implements BlockEntityRenderer<IronBrazierBlock
 		if ((phase > 0 || fill > 0.002F) && te.getLevel() != null) {
 			// Blood running in or out leads the drawn level; that lag is how hard the surface ripples.
 			float pour = Mth.clamp(Math.abs(target - fill) * 8.0F, 0.0F, 1.0F);
-			BrazierFlames.render(poseStack, buffer, te.getBlockPos(), phase > 0, phase == 2, fill, pour, time);
+			BrazierFlames.render(poseStack, buffer, te.getBlockPos(), phase > 0, phase == 2, fill, pour, time, drop);
 		}
 
-		ItemStack displayed = te.getOfferingDisplayStack();
+		// Includes an offering a rite has escrowed, shown until the daemon breaks it.
+		ItemStack displayed = te.getRenderedOfferingStack();
 		if (displayed.isEmpty()) {
 			return;
 		}
@@ -48,7 +52,7 @@ public class IronBrazierRenderer implements BlockEntityRenderer<IronBrazierBlock
 		float spin = (time * 2.0F) % 360.0F;
 
 		poseStack.pushPose();
-		poseStack.translate(0.5F, 1.05F + bob, 0.5F);
+		poseStack.translate(0.5F, 1.05F + bob + drop, 0.5F);
 		poseStack.mulPose(Axis.YP.rotationDegrees(spin));
 		poseStack.mulPose(Axis.XP.rotationDegrees(12.0F));
 		poseStack.scale(0.5F, 0.5F, 0.5F);

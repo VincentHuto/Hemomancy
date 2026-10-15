@@ -39,7 +39,6 @@ import com.vincenthuto.hemomancy.common.mission.shared.NoeticDiscoveryProgressio
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.StartCentrifugeButtonPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.scars.PacketScarCraftingEvent;
-import com.vincenthuto.hemomancy.common.recipe.BloodStructureOfferingPlacement;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
@@ -380,7 +379,6 @@ public final class HarbingerJourneyAutomation {
 		BloodStructureRecipe recipe = BloodStructureRecipe.getStructureByLocation(player.serverLevel(),
 				Hemomancy.rloc("blood_structure/" + recipePath));
 		if (recipe == null) throw new IllegalStateException("Missing blood structure recipe: " + recipePath);
-		prepareOfferings(player, origin, hit, recipe);
 		if (!BloodStructureFeedManager.feedStructure(player, player.serverLevel(), hit,
 				player.getOffhandItem(), recipe.getBloodCost() + 1.0D)) {
 			throw new IllegalStateException("Blood structure did not accept projection: " + recipePath);
@@ -393,27 +391,6 @@ public final class HarbingerJourneyAutomation {
 			BlockHitResult placement = new BlockHitResult(Vec3.atCenterOf(support), Direction.UP, support, false);
 			player.gameMode.useItemOn(player, player.serverLevel(), player.getMainHandItem(),
 					InteractionHand.MAIN_HAND, placement);
-		}
-	}
-
-	private static void prepareOfferings(ServerPlayer player, BlockPos origin, BlockPos hit,
-			BloodStructureRecipe recipe) {
-		if (recipe.getOfferings().isEmpty()) return;
-		var slots = BloodStructureOfferingPlacement.plan(hit, 1, 1, 1, recipe.getOfferings());
-		for (var slot : slots) {
-			if (!(player.serverLevel().getBlockEntity(slot.pos()) instanceof IronBrazierBlockEntity brazier)) {
-				throw new IllegalStateException("Missing offering brazier at " + slot.pos());
-			}
-			if (!brazier.hasOffering() && !brazier.insertOffering(player, slot.representativeStack().copy())) {
-				throw new IllegalStateException("Offering was rejected");
-			}
-			// Projection pours the lighting cost in over several ticks; keep pouring until the brazier takes.
-			for (int pour = 0; pour < 64
-					&& player.serverLevel().getBlockState(slot.pos()).getValue(BrazierBlock.RITUAL_PHASE) == 0; pour++) {
-				if (((BrazierBlock) player.serverLevel().getBlockState(slot.pos()).getBlock()).projectBloodIntoBlock(
-						player.serverLevel(), slot.pos(), player.serverLevel().getBlockState(slot.pos()), player,
-						BrazierBlock.BLOOD_TO_LIGHT) <= 0.0D) break;
-			}
 		}
 	}
 

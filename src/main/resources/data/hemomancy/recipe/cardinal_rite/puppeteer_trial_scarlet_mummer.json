@@ -2,6 +2,7 @@
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 950,
   "riteType": "lesser",
+  "purpose": "world",
   "required_degree": 4,
   "riteName": "Scarlet Mummer Ordeal",
   "riteDescription": "Hold the Scarlet Mummer's attention and bind the defeated shape to an attuned Marionette Crossbar.",

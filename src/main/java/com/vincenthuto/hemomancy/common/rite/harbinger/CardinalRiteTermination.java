@@ -67,7 +67,11 @@ public final class CardinalRiteTermination {
 		// A rite ends once: lethal backlash can reach the death handler before the caller finishes.
 		if (!rite.markEnded()) return;
 		CardinalRiteOrdealEngine.clearThreats(level, rite);
-		if (outcome != Outcome.COMPLETED) StationUpgradeRites.recover(level, rite);
+		if (outcome != Outcome.COMPLETED) {
+			StationUpgradeRites.recover(level, rite);
+			WorkingCraftRites.recover(level, rite);
+		}
+		RiteOfferingEscrow.clearShown(level, rite);
 		StationUpgradeRites.cleanup(level, rite);
 		SuccessionRites.cleanup(level, rite);
 		CardinalRiteAllyService.returnNpcAlliesToFane(level, rite);

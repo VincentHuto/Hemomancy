@@ -2,10 +2,11 @@
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "grand",
+  "purpose": "self",
   "required_degree": 6,
   "riteName": "Rite of the Chamber of Will",
   "riteDescription": "A grand inward rite for the Sanctified. The caster folds blood-memory around a stable point of will, entering the private chamber that grows with their scars, infection, and ascension.",
-  "floor": "hemomancy:communion_grand",
+  "floor": "hemomancy:threshold_grand",
   "required_structure": {
     "pattern": [
       [

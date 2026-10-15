@@ -5,8 +5,6 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PlaceStructurePacket;
-import com.vincenthuto.hemomancy.common.recipe.BloodStructureOffering;
-import com.vincenthuto.hemomancy.common.recipe.BloodStructureOfferingPlacement;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
@@ -378,8 +376,7 @@ public class DebugShowcaseItem extends Item {
 			z += 2;
 
 			for (BloodStructureRecipe recipe : structures) {
-				z = placeStructurePattern(level, origin, z, recipe.getPattern(),
-						recipe.getId().getPath(), recipe.getOfferings());
+				z = placeStructurePattern(level, origin, z, recipe.getPattern(), recipe.getId().getPath());
 				z += 3;
 			}
 		}
@@ -406,7 +403,7 @@ public class DebugShowcaseItem extends Item {
 							.orElse(floorDepth);
 					z += Math.max(Math.max(floorDepth, upperDepth), footprintDepth);
 				} else {
-					z = placeStructurePattern(level, origin, z, recipe.getPattern(), name, List.of());
+					z = placeStructurePattern(level, origin, z, recipe.getPattern(), name);
 				}
 				z += 3;
 			}
@@ -422,8 +419,7 @@ public class DebugShowcaseItem extends Item {
 	 * Returns the Z position after the structure.
 	 */
 	private int placeStructurePattern(ServerLevel level, BlockPos origin, int z,
-									  MultiblockPattern pattern, String name,
-									  List<BloodStructureOffering> offerings) {
+									  MultiblockPattern pattern, String name) {
 		if (pattern == null) return z;
 		List<BlockPosBlockPair> blockPairs = pattern.getBlockPosBlockList();
 		if (blockPairs.isEmpty()) return z;
@@ -472,22 +468,7 @@ public class DebugShowcaseItem extends Item {
 			}
 		}
 
-		BlockPos offeringCenter = placeOrigin.offset(0, minY, 0);
-		int halfWidth = Math.max(centerX - minX, maxX - centerX);
-		int halfDepth = Math.max(centerZ - minZ, maxZ - centerZ);
-		for (var slot : BloodStructureOfferingPlacement.plan(
-				offeringCenter, halfWidth, halfDepth, 1, offerings)) {
-			level.setBlock(slot.pos().below(), Blocks.SMOOTH_STONE.defaultBlockState(), Block.UPDATE_CLIENTS);
-			BlockState brazierState = BlockInit.iron_brazier.get().defaultBlockState()
-					.setValue(BrazierBlock.RITUAL_PHASE, 1);
-			level.setBlock(slot.pos(), brazierState, Block.UPDATE_ALL);
-			if (level.getBlockEntity(slot.pos()) instanceof IronBrazierBlockEntity brazier) {
-				ItemStack offeringStack = slot.representativeStack().copy();
-				brazier.insertOffering(null, offeringStack);
-			}
-		}
-
-		return z + structWidth + (offerings.isEmpty() ? 1 : 3);
+		return z + structWidth + 1;
 	}
 
 	// ===================== HELPER METHODS =====================

@@ -116,7 +116,7 @@ Besides degree advancement, the Cardinal Altar enables **utility rites** for pra
 - **Communion:** a Polished Venous Stone and Blood Wood checker.
 - **Working:** Polished Venous Stone Bricks with a Bone Block cross and diagonal. Harbinger floors never use copper.
 
-Once the floor is complete, a living membrane spreads from the Focus across it and tears a gash in the ground around it, through every brazier socket, which swells into a clot pool where each brazier stands. A broken floor withers. Sockets sit just outside the floor edge; when you enlarge a floor, slide each brazier one block outward.
+Once the floor is complete, a living membrane spreads from the Focus across it and tears a round gash just inside its edge. A rite answers any lit brazier inside the cube its floor is the base of (a 7×7 floor reaches six blocks up): stand braziers on the floor, mount them on a wall or hang them from a ceiling. Only the column over the Focus and the few floor spots where an anchor sore opens stay clear. A standing brazier sits in a mound of flesh, and the gash swings out around the back of any on it like a moat. A sconce or hanging brazier falls, spilling its offering, if its wall or ceiling is broken. A broken floor withers. Keep a craft's braziers off the side its structure stands on.
 
 The Artificer teaches Living Staff construction at D2, while its formation remains craftable at D1. Forming it earns the bond: select **Conjure Staff** with an empty hand to recall it. Select **Blood Absorption** or **Blood Projection**, then hold the Staff to channel that utility. Selecting a Thelemic memory does not leave the previous Staff utility running. Staff ownership does not raise your degree; positive-degree Harbinger rites require active blood before the server plants or escrows it. Planting the Staff in a Cardinal Focus leaves a Blood Projection hand in its place with Projection selected, ready to feed the anchors. When the rite ends, the Staff returns to that hand.
 
@@ -124,7 +124,7 @@ As a Cardinal Rite deepens, the world around it changes with each filled ring, t
 
 A rite with several rings of anchors does not open them all at once. Only the innermost ring hungers at first; the others lie in the floor as closed scars. Each time the sealed rite moves on (a station projection, an ordeal wave, a still interval, the offering procession), the next ring tears open, and that part of the rite cannot end until you feed it. If a rite has no such stages, its outer rings wake as soon as the first is fed, and the altar will not seal until they are full too. Each ring asks more blood per sore than the one inside it, and each tears open more violently than the last.
 
-At D2, the Vicar teaches **Rooted Vein** as a first practical ceremony. Prepare its Lesser floor with an empty Focus and keep the block above it clear. Put one Blood Rock in an Iron Brazier on a floor socket and light it with Blood Projection. Use the Living Staff on the Focus, project 50 mL into each of the four anchors, then project into the daemon. Stay inside the boundary through its offering procession and return. No helper, support sigil, or ordeal is required. Completion returns the Staff and replaces the Focus with Venous Stone supporting a permanent Earthen Vein; it does not promote your degree.
+At D2, the Vicar teaches **Rooted Vein** as a first practical ceremony. It changes the world, so prepare a Lesser **Dominion** floor (deepslate tiles or bricks with eight Chiseled Hematic Iron studs) with an empty Focus, and keep the block above it clear. Put one Blood Rock in an Iron Brazier on a floor socket and light it with Blood Projection. Use the Living Staff on the Focus, project 50 mL into each of the four anchors, then project into the daemon. Stay inside the boundary through its offering procession and return. No helper, support sigil, or ordeal is required. Completion returns the Staff and replaces the Focus with Venous Stone supporting a permanent Earthen Vein; it does not promote your degree.
 
 Cardinal Rites teach their ritual vocabulary progressively:
 
@@ -248,7 +248,7 @@ As Archon, you can ritually sever members who betray the covenant. Severance res
 ## Key Mechanics
 
 ### Somatic Loom (Memory Weaving)
-The Somatic Loom is where you craft **Hematic Memories** to learn new manipulations.
+The Somatic Loom is where you craft **Hematic Memories** to learn new manipulations. It is your first **Working craft**: at Degree 3, build a Lesser Working floor (bone blocks and polished Venous Stone Bricks around a Cardinal Focus), raise the Loom's frame beside the Focus, seat a Sanguine Formation, light String and Neurotic Enzyme in braziers, plant your Living Staff and feed the frame 150 mL. The floor climbs and swallows the frame, then forges the Loom on the Focus. Every later machine is made the same way; only the Living Staff, Liber, Iron Brazier, Hematic Iron, Dried Gourd, Hematic Stake, Vial Centrifuge and Ghastly Alembic stay floorless.
 
 **Process:**
 1. Craft or obtain **Blank Hematic Memories**

@@ -1,0 +1,94 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "id": "hemomancy:cardinal_rite/working/vascular_effigy",
+  "bloodCost": 0,
+  "riteType": "grand",
+  "purpose": "making",
+  "required_degree": 6,
+  "rankup": false,
+  "riteName": "Working of the Sanguine Vigil",
+  "riteDescription": "Build the Sanguine Vigil beside the Cardinal Focus, feed it, and let the Working floor take it.",
+  "floor": "hemomancy:working_grand",
+  "medium": {
+    "item": "hemomancy:sanguine_formation"
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "hemomancy:vascular_poultice"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:tendon_line"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:sanguine_quintessence"
+      },
+      "count": 1
+    }
+  ],
+  "subject": {
+    "pattern": [
+      [
+        "   ",
+        "PIP",
+        "   "
+      ],
+      [
+        "PIP",
+        "IBI",
+        "PIP"
+      ],
+      [
+        "   ",
+        "PIP",
+        "   "
+      ],
+      [
+        "   ",
+        " P ",
+        "   "
+      ]
+    ],
+    "key": {
+      "P": {
+        "block": "hemomancy:hematic_iron_pillar"
+      },
+      "I": {
+        "block": "hemomancy:hematic_iron_block"
+      },
+      "B": {
+        "block": "hemomancy:conscious_mass"
+      }
+    },
+    "feed": 6500
+  },
+  "result": {
+    "id": "hemomancy:sanguine_vigil"
+  },
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "fragile_offsets": [],
+    "target_duration_ticks": 600,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry",
+    "culmination": "forging"
+  }
+}

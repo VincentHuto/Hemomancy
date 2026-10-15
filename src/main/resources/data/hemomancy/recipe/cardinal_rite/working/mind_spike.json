@@ -1,0 +1,84 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "id": "hemomancy:cardinal_rite/working/mind_spike",
+  "bloodCost": 0,
+  "riteType": "greater",
+  "purpose": "making",
+  "required_degree": 4,
+  "rankup": false,
+  "riteName": "Working of the Mind Spike",
+  "riteDescription": "Build the Mind Spike beside the Cardinal Focus, feed it, and let the Working floor take it.",
+  "floor": "hemomancy:working_greater",
+  "medium": {
+    "item": "hemomancy:sanguine_formation"
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "hemomancy:neurotic_enzyme"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:amethyst_shard"
+      },
+      "count": 1
+    }
+  ],
+  "subject": {
+    "pattern": [
+      [
+        " T ",
+        "TST",
+        " T "
+      ],
+      [
+        " S ",
+        "SHS",
+        " S "
+      ],
+      [
+        " T ",
+        "TST",
+        " T "
+      ]
+    ],
+    "key": {
+      "T": {
+        "block": "hemomancy:hematic_iron_block"
+      },
+      "S": {
+        "tag": "hemomancy:progression/nether_ritual_stone",
+        "fallback": "minecraft:polished_basalt"
+      },
+      "H": {
+        "block": "hemomancy:polished_venous_stone"
+      }
+    },
+    "feed": 500
+  },
+  "result": {
+    "id": "hemomancy:mind_spike"
+  },
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "fragile_offsets": [],
+    "target_duration_ticks": 600,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry",
+    "culmination": "forging"
+  }
+}

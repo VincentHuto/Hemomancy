@@ -423,7 +423,8 @@ public final class RitesTabView {
 		for (String line : List.of("Style: " + style, "Rite Form: " + tier,
 				"Floor Size: " + floor.tier().getSize() + "x" + floor.tier().getSize(),
 				"Footprint Radius: " + String.format(java.util.Locale.ROOT, "%.1f", floor.footprintRadius()),
-				"Offering Sockets: " + floor.brazierSockets().size())) {
+				"Braziers count in: the " + (2 * floor.half() + 1) + "x" + (2 * floor.half() + 1) + "x"
+						+ (2 * floor.half() + 1) + " cube on the floor")) {
 			gfx.drawString(ctx.font(), line, info.left(), y, 0xFF999999, false);
 			y += 12;
 		}

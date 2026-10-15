@@ -1,0 +1,89 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "id": "hemomancy:cardinal_rite/working/sanguine_monolith",
+  "bloodCost": 0,
+  "riteType": "greater",
+  "purpose": "making",
+  "required_degree": 6,
+  "rankup": false,
+  "riteName": "Working of the Sanguine Monolith",
+  "riteDescription": "Build the Sanguine Monolith beside the Cardinal Focus, feed it, and let the Working floor take it.",
+  "floor": "hemomancy:working_greater",
+  "medium": {
+    "item": "hemomancy:sanguine_formation"
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "hemomancy:sanguine_quintessence"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:echo_shard"
+      },
+      "count": 1
+    }
+  ],
+  "subject": {
+    "pattern": [
+      [
+        "PSP",
+        "SIS",
+        "PSP"
+      ],
+      [
+        "SCS",
+        "III",
+        "SIS"
+      ],
+      [
+        "PGP",
+        "GIG",
+        "PGP"
+      ]
+    ],
+    "key": {
+      "P": {
+        "block": "hemomancy:hematic_iron_pillar"
+      },
+      "S": {
+        "block": "minecraft:polished_basalt"
+      },
+      "I": {
+        "block": "hemomancy:hematic_iron_block"
+      },
+      "C": {
+        "block": "hemomancy:conscious_mass"
+      },
+      "G": {
+        "block": "minecraft:tinted_glass"
+      }
+    },
+    "feed": 175
+  },
+  "result": {
+    "id": "hemomancy:sanguine_monolith"
+  },
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "fragile_offsets": [],
+    "target_duration_ticks": 600,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry",
+    "culmination": "forging"
+  }
+}

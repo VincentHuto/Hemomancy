@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
-import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.resources.ResourceLocation;
@@ -28,8 +27,8 @@ public class CraftingTabState {
 	public static final int[]    TIER_DEGREE_REQ  = RecipeDegreeGates.LEVELS;
 
 	// ── Loaded recipe data ───────────────────────────────────────
-	public final List<BloodStructureRecipe> craftingRecipes = new ArrayList<>();
-	public final Map<String, List<BloodStructureRecipe>> craftingByTier = new LinkedHashMap<>();
+	public final List<CraftingMapRecipe> craftingRecipes = new ArrayList<>();
+	public final Map<String, List<CraftingMapRecipe>> craftingByTier = new LinkedHashMap<>();
 	/** Sidebar name lines per recipe (one or two), wrapped by the view against the live font. */
 	public final Map<ResourceLocation, List<String>> sidebarLabels = new HashMap<>();
 
@@ -77,17 +76,17 @@ public class CraftingTabState {
 	public void rebuildTierMap() {
 		craftingByTier.clear();
 		for (String name : TIER_NAMES) craftingByTier.put(name, new ArrayList<>());
-		for (BloodStructureRecipe r : craftingRecipes) {
-			int degree = RecipeDegreeGates.getRequiredDegree(r);
+		for (CraftingMapRecipe r : craftingRecipes) {
+			int degree = r.requiredDegree();
 			craftingByTier.get(TIER_NAMES[degree]).add(r);
 		}
-		for (List<BloodStructureRecipe> list : craftingByTier.values()) {
+		for (List<CraftingMapRecipe> list : craftingByTier.values()) {
 			list.sort(RitesTabState.sidebarOrder(recipe -> recipe.getId().getPath(), CraftingTabState::displayName));
 		}
 	}
 
 	/** The crafted item's name, falling back to the recipe path when the result is empty. */
-	public static String displayName(BloodStructureRecipe recipe) {
+	public static String displayName(CraftingMapRecipe recipe) {
 		ItemStack result = recipe.getResult();
 		if (result != null && !result.isEmpty()) return result.getHoverName().getString();
 		String path = recipe.getId().getPath();
@@ -107,15 +106,15 @@ public class CraftingTabState {
 		return hideEmptyTiers && craftingByTier.getOrDefault(tierName, List.of()).isEmpty();
 	}
 
-	public int recipeRowHeight(BloodStructureRecipe recipe) {
+	public int recipeRowHeight(CraftingMapRecipe recipe) {
 		return sidebarLabels.getOrDefault(recipe.getId(), List.of()).size() > 1
 				? RitesTabState.RECIPE_ROW_H_WRAPPED : RitesTabState.RECIPE_ROW_H;
 	}
 
 	/** Height of an expanded tier's recipe rows, including the gap after each. */
-	public int expandedRowsHeight(List<BloodStructureRecipe> recipes) {
+	public int expandedRowsHeight(List<CraftingMapRecipe> recipes) {
 		int total = 0;
-		for (BloodStructureRecipe recipe : recipes) total += recipeRowHeight(recipe) + RitesTabState.RECIPE_ROW_GAP;
+		for (CraftingMapRecipe recipe : recipes) total += recipeRowHeight(recipe) + RitesTabState.RECIPE_ROW_GAP;
 		return total;
 	}
 

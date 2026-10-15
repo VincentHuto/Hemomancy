@@ -1,0 +1,92 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "id": "hemomancy:cardinal_rite/working/covenant_throne",
+  "bloodCost": 0,
+  "riteType": "greater",
+  "purpose": "making",
+  "required_degree": 6,
+  "rankup": false,
+  "riteName": "Working of the Covenant Throne",
+  "riteDescription": "Build the Covenant Throne beside the Cardinal Focus, feed it, and let the Working floor take it.",
+  "floor": "hemomancy:working_greater",
+  "medium": {
+    "item": "hemomancy:sanguine_formation"
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "hemomancy:sanguine_quintessence"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:blood_crystal"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:crying_obsidian"
+      },
+      "count": 1
+    }
+  ],
+  "subject": {
+    "pattern": [
+      [
+        "PCP",
+        "CMC",
+        "PCP"
+      ],
+      [
+        "CSC",
+        "MMM",
+        "CMC"
+      ],
+      [
+        "PCP",
+        "CMC",
+        "PCP"
+      ]
+    ],
+    "key": {
+      "P": {
+        "block": "hemomancy:hematic_iron_pillar"
+      },
+      "C": {
+        "block": "hemomancy:chiseled_hematic_iron_block"
+      },
+      "M": {
+        "block": "hemomancy:conscious_mass"
+      },
+      "S": {
+        "block": "hemomancy:sanguine_monolith"
+      }
+    },
+    "feed": 8000
+  },
+  "result": {
+    "id": "hemomancy:covenant_throne"
+  },
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "fragile_offsets": [],
+    "target_duration_ticks": 600,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry",
+    "culmination": "forging"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "id": "hemomancy:cardinal_rite/working/somatic_loom",
+  "bloodCost": 0,
+  "riteType": "lesser",
+  "purpose": "making",
+  "required_degree": 3,
+  "rankup": false,
+  "riteName": "Working of the Somatic Loom",
+  "riteDescription": "Build the Somatic Loom beside the Cardinal Focus, feed it, and let the Working floor take it.",
+  "floor": "hemomancy:working_lesser",
+  "medium": {
+    "item": "hemomancy:sanguine_formation"
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:string"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:neurotic_enzyme"
+      },
+      "count": 1
+    }
+  ],
+  "subject": {
+    "pattern": [
+      [
+        "P P",
+        "TIT"
+      ],
+      [
+        "P P",
+        "TIT"
+      ]
+    ],
+    "key": {
+      "P": {
+        "block": "minecraft:iron_bars"
+      },
+      "T": {
+        "block": "hemomancy:hematic_iron_block"
+      },
+      "I": {
+        "block": "minecraft:bookshelf"
+      }
+    },
+    "feed": 150
+  },
+  "result": {
+    "id": "hemomancy:somatic_loom"
+  },
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "fragile_offsets": [],
+    "target_duration_ticks": 600,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry",
+    "culmination": "forging"
+  }
+}

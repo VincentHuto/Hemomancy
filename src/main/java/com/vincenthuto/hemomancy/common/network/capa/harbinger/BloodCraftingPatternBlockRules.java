@@ -9,11 +9,11 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Map;
 
-final class BloodCraftingPatternBlockRules {
+public final class BloodCraftingPatternBlockRules {
 	private BloodCraftingPatternBlockRules() {
 	}
 
-	static boolean patternMayContainBlock(MultiblockPattern pattern, BlockState hitState) {
+	public static boolean patternMayContainBlock(MultiblockPattern pattern, BlockState hitState) {
 		if (pattern == null || hitState == null) {
 			return true;
 		}

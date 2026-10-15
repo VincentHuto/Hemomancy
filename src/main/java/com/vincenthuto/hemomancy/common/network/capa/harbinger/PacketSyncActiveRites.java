@@ -110,7 +110,18 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 			}
 			buf.writeVarInt(entry.getOpenRings());
 			buf.writeVarIntArray(entry.getAnchorRequirements());
+			buf.writeVarInt(entry.getSubjectPositions().size());
+			for (BlockPos pos : entry.getSubjectPositions()) buf.writeBlockPos(pos);
+			buf.writeVarIntArray(entry.getSubjectStateIds());
+			buf.writeFloat(entry.getSubjectFill());
 		}
+	}
+
+	private static List<BlockPos> readPositions(FriendlyByteBuf buf) {
+		int count = buf.readVarInt();
+		List<BlockPos> positions = new ArrayList<>(count);
+		for (int i = 0; i < count; i++) positions.add(buf.readBlockPos());
+		return positions;
 	}
 
 	public static PacketSyncActiveRites decode(FriendlyByteBuf buf) {
@@ -179,7 +190,8 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 					fogProfile, fogLightning, boundaryDome, phaseTicks).withAnchorStates(buf.readVarIntArray())
 					.withEscalation(buf.readVarInt(), buf.readVarInt())
 					.withGuidance(readProblems(buf), readSocketMarkers(buf))
-					.withRings(buf.readVarInt(), buf.readVarIntArray()));
+					.withRings(buf.readVarInt(), buf.readVarIntArray())
+					.withSubject(readPositions(buf), buf.readVarIntArray(), buf.readFloat()));
 		}
 		return new PacketSyncActiveRites(entries);
 	}

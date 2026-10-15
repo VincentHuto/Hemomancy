@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.compat.jei;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.screen.skilltree.shared.CraftingMapRecipe;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.*;
@@ -34,8 +35,10 @@ public class JEIPlugin implements IModPlugin {
 			"memory_weaving", MemoryWeavingRecipe.class);
 	public static final RecipeType<ArmatureUpgradeRecipe> armature_upgrade_type = RecipeType.create(Hemomancy.MOD_ID,
 			"armature_upgrade", ArmatureUpgradeRecipe.class);
-	public static final RecipeType<BloodStructureRecipe> blood_structure_recipe_type = RecipeType
-			.create(Hemomancy.MOD_ID, "blood_structure", BloodStructureRecipe.class);
+	public static final RecipeType<CraftingMapRecipe> blood_structure_recipe_type = RecipeType
+			.create(Hemomancy.MOD_ID, "blood_structure", CraftingMapRecipe.class);
+	public static final RecipeType<CraftingMapRecipe> working_craft_recipe_type = RecipeType
+			.create(Hemomancy.MOD_ID, "working_craft", CraftingMapRecipe.class);
 	public static final RecipeType<BloodInfusionRecipe> blood_infusion_recipe_type =
 			BloodInfusionRecipeCategory.JEI_TYPE;
 	public static final RecipeType<ScarRecipe> scar_station_recipe_type = RecipeType.create(Hemomancy.MOD_ID,
@@ -68,6 +71,7 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipeCategories(new MemoryWeavingRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new HematicArmatureRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new BloodStructureRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new BloodStructureRecipeCategory(registry.getJeiHelpers().getGuiHelper(), true));
 		registry.addRecipeCategories(new BloodInfusionRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new ScarStationRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new IncubatorRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
@@ -89,6 +93,7 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.somatic_loom.get()), memory_weaving_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.hematic_armature.get()), armature_upgrade_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.hematic_iron_block.get()), blood_structure_recipe_type);
+		registry.addRecipeCatalyst(new ItemStack(BlockInit.cardinal_focus.get()), working_craft_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(ItemInit.blood_projection.get()), blood_infusion_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.scar_station.get()), scar_station_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.morphling_incubator.get()), incubator_recipe_type);
@@ -116,7 +121,10 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipes(AdvancedBrewingRecipeCategory.TYPE, AdvancedBrewingDisplay.all(world));
 		registry.addRecipes(memory_weaving_type, MemoryWeavingRecipe.getAllRecipes(world));
 		registry.addRecipes(armature_upgrade_type, ArmatureUpgradeRecipe.getAllRecipes(world));
-		registry.addRecipes(blood_structure_recipe_type, BloodStructureRecipe.getAllRecipes(world));
+		registry.addRecipes(blood_structure_recipe_type, BloodStructureRecipe.getAllRecipes(world).stream()
+				.map(CraftingMapRecipe::of).toList());
+		registry.addRecipes(working_craft_recipe_type, CardinalRiteRecipe.getAllRecipes(world).stream()
+				.filter(CardinalRiteRecipe::isCataloguedAsMaking).map(CraftingMapRecipe::of).toList());
 		registry.addRecipes(SuccessionRecipeCategory.TYPE, CardinalRiteRecipe.getAllRecipes(world).stream()
 				.filter(recipe -> com.vincenthuto.hemomancy.common.succession.SuccessionRites.isRecipe(recipe.getId())).toList());
 		registry.addRecipes(blood_infusion_recipe_type, BloodInfusionRecipe.getAllRecipes(world));

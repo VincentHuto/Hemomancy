@@ -74,7 +74,7 @@ public final class CellHandRenderingResourceTest {
 		assertContains("absorbed first-person particles follow the active hand target", particleEffects,
 				"particle.setFirstPersonTargetAnchor(anchor);");
 		assertContains("projection particles use an explicit source-to-surface path", particleEffects,
-				"particle.setProjectionPath(origin, trace.getLocation()");
+				"particle.setProjectionPath(origin, target,");
 		assertDoesNotContain("projection particles do not compensate above the block surface", particleEffects,
 				"trace.getLocation().add(0.0D, 1.05D, 0.0D)");
 		assertContains("third-person absorbed cells do not sag below the hand target", particleEffects,

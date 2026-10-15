@@ -3,6 +3,7 @@
   "id": "hemomancy:cardinal_rite/eightfold_script",
   "bloodCost": 0,
   "riteType": "greater",
+  "purpose": "making",
   "required_degree": 5,
   "rankup": false,
   "riteName": "Rite of the Eightfold Script",

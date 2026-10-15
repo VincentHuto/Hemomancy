@@ -2,9 +2,10 @@
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "greater",
+  "purpose": "world",
   "required_degree": 5,
   "riteName": "Rite of Hematic Succession",
-  "riteDescription": "Place the effigy beside the Focus on a Venous Stone plinth. Seat Sanguine Quintessence in the Focus. In clockwise floor socket order, offer the donated professional vial, your own identity-bearing vial, then Mnemonic Ambergris. A free compatible workplace is required inside your fane. The body forms over sixty seconds.",
+  "riteDescription": "Place the effigy beside the Focus on a Venous Stone plinth. Seat Sanguine Quintessence in the Focus. In braziers anywhere above the floor, read clockwise round the Focus from its left, nearest and lowest first, offer the donated professional vial, your own identity-bearing vial, then Mnemonic Ambergris. A free compatible workplace is required inside your fane. The body forms over sixty seconds.",
   "floor": "hemomancy:dominion_greater",
   "medium": {
     "item": "hemomancy:sanguine_quintessence"

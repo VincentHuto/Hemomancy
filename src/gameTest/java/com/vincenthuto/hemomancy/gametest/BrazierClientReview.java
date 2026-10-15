@@ -13,6 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -20,8 +21,9 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 
 /**
  * With hemomancy.brazierReview, places Iron Braziers in each ritual phase (unlit, lit, sanguine, and an east-facing
- * sanguine one) holding offerings in a disposable world, and captures them by day and night into
- * build/brazier-client-review/screenshots. Excluded from release jars.
+ * sanguine one) holding offerings in a disposable world, with lit sconces on a wall behind them and a lit brazier
+ * hanging from a ceiling beside them, and captures them by day and night into build/brazier-client-review/screenshots.
+ * Run with brazierReviewClient. Excluded from release jars.
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class BrazierClientReview {
@@ -39,6 +41,9 @@ public final class BrazierClientReview {
             // The unlit bowl half poured, then the lit bowl drawn down to a third (POURED_SHOT, DRAINED_SHOT).
             {-3, 1.75, -.6, -2.5, .74, .5, 0}, {-1, 1.75, -.6, -.5, .74, .5, 0},
             {0, 2.4, -5.5, .5, .9, .5, 1}, {-1, 1.6, -2.1, -.5, .75, .5, 1}, {1, 1.6, -2.1, 1.5, .75, .5, 1},
+            // The sconces on the wall behind, then close; the hanging brazier from below and level, then by night.
+            {0, 3.0, -3.0, .5, 2.2, 2.0, 0}, {-2.6, 2.7, -.6, -1.5, 2.3, 1.5, 0}, {4.2, 1.4, -2.4, 6.5, 3.0, .5, 0},
+            {4.0, 2.9, -1.6, 6.5, 2.9, .5, 0}, {0, 3.0, -3.0, .5, 2.2, 2.0, 1}, {4.2, 1.4, -2.4, 6.5, 3.0, .5, 1},
             {0, 2.0, -4.0, .5, .9, .5, 0}};
 
     @SubscribeEvent
@@ -74,7 +79,22 @@ public final class BrazierClientReview {
                             .setValue(BrazierBlock.RITUAL_PHASE, (int) placements[i][2]), 3);
                     ((IronBrazierBlockEntity) level.getBlockEntity(pos)).insertOffering(null, offerings[i].copy());
                 }
-                Hemomancy.LOGGER.info("BRAZIER_REVIEW placed {} braziers at {}", placements.length, row);
+                // A wall two blocks behind the row with two lit sconces facing out of it, and a ceiling to the east with
+                // a lit brazier hanging under it.
+                for (BlockPos pos : BlockPos.betweenClosed(row.offset(-3, 0, 2), row.offset(3, 3, 2)))
+                    level.setBlock(pos, BlockInit.polished_venous_stone_bricks.get().defaultBlockState(), 2);
+                for (BlockPos pos : BlockPos.betweenClosed(row.offset(5, 4, -1), row.offset(7, 4, 1)))
+                    level.setBlock(pos, BlockInit.polished_venous_stone_bricks.get().defaultBlockState(), 2);
+                Object[][] mounted = {{row.offset(-2, 2, 1), AttachFace.WALL, 1, new ItemStack(Items.BONE)},
+                        {row.offset(2, 2, 1), AttachFace.WALL, 2, new ItemStack(ItemInit.vivacious_enzyme.get())},
+                        {row.offset(6, 3, 0), AttachFace.CEILING, 1, new ItemStack(ItemInit.morphling_polyp.get())}};
+                for (Object[] mount : mounted) {
+                    var pos = (BlockPos) mount[0];
+                    level.setBlock(pos, brazier.defaultBlockState().setValue(BrazierBlock.FACE, (AttachFace) mount[1])
+                            .setValue(BrazierBlock.FACING, Direction.NORTH).setValue(BrazierBlock.RITUAL_PHASE, (int) mount[2]), 3);
+                    ((IronBrazierBlockEntity) level.getBlockEntity(pos)).insertOffering(null, ((ItemStack) mount[3]).copy());
+                }
+                Hemomancy.LOGGER.info("BRAZIER_REVIEW placed {} braziers at {}", placements.length + mounted.length, row);
             });
         }
         if (ticks < 80 || row == null) return;

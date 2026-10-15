@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierMount;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnBrazierItemAbsorptionParticlesPacket;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
@@ -52,7 +53,7 @@ public final class BrazierItemAbsorptionRite {
 	}
 
 	private static void spawnChannelParticles(ServerLevel level, BlockPos pos) {
-		Vec3 center = Vec3.atCenterOf(pos).add(0.0D, 0.55D, 0.0D);
+		Vec3 center = BrazierMount.bowl(level.getBlockState(pos), pos, 0.55D);
 		// The rite flame flares crimson round the offering while it is drawn out.
 		level.sendParticles(HemoParticleData.ember(CHANNEL_FLARE, 0.07F, 0.9F, 22), center.x, center.y, center.z,
 				4, 0.22D, 0.12D, 0.22D, 0.012D);
@@ -62,7 +63,7 @@ public final class BrazierItemAbsorptionRite {
 			ItemStack offering) {
 		ItemStack particleStack = offering.copy();
 		particleStack.setCount(1);
-		Vec3 source = Vec3.atCenterOf(pos).add(0.0D, 0.65D, 0.0D);
+		Vec3 source = BrazierMount.bowl(level.getBlockState(pos), pos, 0.65D);
 		// Everyone near the brazier sees the offering stream into the channelling hand, not only the channeller.
 		PacketDistributor.sendToPlayersNear(level, null, source.x, source.y, source.z, ITEM_STREAM_VIEW_RADIUS,
 				new SpawnBrazierItemAbsorptionParticlesPacket(player.getId(), source, particleStack));

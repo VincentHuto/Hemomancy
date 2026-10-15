@@ -82,6 +82,11 @@ public class CardinalRiteRecipe extends CustomRecipe {
 	protected Ingredient medium = Ingredient.EMPTY;
 	protected boolean consumeMediumOnSuccess = true;
 	protected PuppeteerTrial puppeteerTrial;
+	protected com.vincenthuto.hemomancy.common.rite.CardinalRitePurpose purpose;
+	protected com.vincenthuto.hemomancy.common.rite.CardinalRiteDaemonFinale daemonFinale;
+	protected boolean special;
+	protected MultiblockPattern subject;
+	protected int subjectFeedMl;
 
 	public record PuppeteerTrial(String summonName) {
 		public PuppeteerTrial {
@@ -245,6 +250,60 @@ public class CardinalRiteRecipe extends CustomRecipe {
 
 	public void setPuppeteerTrial(PuppeteerTrial puppeteerTrial) {
 		this.puppeteerTrial = puppeteerTrial;
+	}
+
+	/** What the rite is for; decides its floor style. Null for Unstained rites. */
+	public com.vincenthuto.hemomancy.common.rite.CardinalRitePurpose getPurpose() {
+		return purpose;
+	}
+
+	public void setPurpose(com.vincenthuto.hemomancy.common.rite.CardinalRitePurpose purpose) {
+		this.purpose = purpose;
+	}
+
+	/** Where the daemon goes at the culmination: into the caster, or for a world rite, the sky or the ground. */
+	public com.vincenthuto.hemomancy.common.rite.CardinalRiteDaemonFinale getDaemonFinale() {
+		return daemonFinale != null ? daemonFinale
+				: com.vincenthuto.hemomancy.common.rite.CardinalRiteDaemonFinale.resolve(purpose, null);
+	}
+
+	public void setDaemonFinale(com.vincenthuto.hemomancy.common.rite.CardinalRiteDaemonFinale daemonFinale) {
+		this.daemonFinale = daemonFinale;
+	}
+
+	/** The structure a Working craft swallows, or null for every other rite. */
+	public MultiblockPattern getSubject() {
+		return subject;
+	}
+
+	/** Blood the caster feeds into the subject before the rite seals. */
+	public int getSubjectFeedMl() {
+		return subjectFeedMl;
+	}
+
+	public void setSubject(MultiblockPattern subject, int feedMl) {
+		this.subject = subject;
+		this.subjectFeedMl = feedMl;
+	}
+
+	/** A Working craft: a making rite whose built subject is consumed into its result. */
+	public boolean isWorkingCraft() {
+		return subject != null;
+	}
+
+	/** Listed with the Working crafts: every craft, and every other Harbinger making rite with a result item. */
+	public boolean isCataloguedAsMaking() {
+		return isWorkingCraft() || !isUnstained() && purpose == com.vincenthuto.hemomancy.common.rite.CardinalRitePurpose.MAKING
+				&& getResult() != null && !getResult().isEmpty();
+	}
+
+	/** A special rite keeps its purpose but may name a floor of any style. */
+	public boolean isSpecial() {
+		return special;
+	}
+
+	public void setSpecial(boolean special) {
+		this.special = special;
 	}
 
 	public ItemStack getResult() {

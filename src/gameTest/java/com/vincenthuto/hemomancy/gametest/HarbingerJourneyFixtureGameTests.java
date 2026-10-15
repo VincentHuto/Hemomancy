@@ -36,8 +36,6 @@ import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
 import com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket;
-import com.vincenthuto.hemomancy.common.recipe.BloodStructureOffering;
-import com.vincenthuto.hemomancy.common.recipe.BloodStructureOfferingPlacement;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
@@ -2100,21 +2098,6 @@ public final class HarbingerJourneyFixtureGameTests {
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
-	public static void offeringPlannerExpandsDistinctPerimeterSlots(GameTestHelper helper) {
-		BlockPos center = helper.absolutePos(new BlockPos(4, 3, 4));
-		List<BloodStructureOffering> offerings = List.of(
-				new BloodStructureOffering(Ingredient.of(Items.GLASS_BOTTLE), 1),
-				new BloodStructureOffering(Ingredient.of(Items.COPPER_INGOT), 2));
-		var slots = BloodStructureOfferingPlacement.plan(center, 1, 1, 1, offerings);
-		helper.assertTrue(slots.size() == 3, "Offering counts must expand into distinct braziers");
-		helper.assertTrue(slots.stream().map(slot -> slot.pos()).distinct().count() == 3,
-				"Offering brazier positions must be unique");
-		helper.assertTrue(slots.stream().noneMatch(slot -> Math.abs(slot.pos().getX() - center.getX()) <= 1
-				&& Math.abs(slot.pos().getZ() - center.getZ()) <= 1), "Offering braziers must be outside the structure");
-		helper.succeed();
-	}
-
-	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void centrifugeJourneySpawnsCompleteReadyStructure(GameTestHelper helper) {
 		withFixture(helper, HemoJourneyStage.CENTRIFUGE_PREPARED, (origin, player) -> {
 			BloodStructureRecipe recipe = BloodStructureRecipe.getStructureByLocation(helper.getLevel(),
@@ -2128,11 +2111,8 @@ public final class HarbingerJourneyFixtureGameTests {
 				}
 			}
 			for (BlockPos brazierPos : List.of(origin.offset(-2, 2, 0), origin.offset(2, 2, 0))) {
-				assertBlock(helper, brazierPos, BlockInit.iron_brazier.get());
-				helper.assertTrue(helper.getLevel().getBlockState(brazierPos).getValue(BrazierBlock.RITUAL_PHASE) == 1,
-						"Journey offering braziers must begin lit");
-				helper.assertTrue(helper.getLevel().getBlockEntity(brazierPos) instanceof IronBrazierBlockEntity brazier
-						&& brazier.hasOffering(), "Journey offering braziers must begin filled");
+				helper.assertFalse(helper.getLevel().getBlockState(brazierPos).is(BlockInit.iron_brazier.get()),
+						"The floorless Vial Centrifuge takes no offering braziers");
 			}
 			helper.assertTrue(HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume()
 					>= 150.0D, "Journey blood budget must cover the structure craft");

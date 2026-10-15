@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
+import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierMount;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
@@ -8,6 +9,7 @@ import com.vincenthuto.hemomancy.common.entity.utility.HumanitySpriteEntity;
 import com.vincenthuto.hemomancy.common.entity.utility.UnsettledIchorEntity;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteDaemonFinale;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteEventKind;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteInstability;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -73,7 +75,7 @@ public final class CardinalRiteOrdealEngine {
 			case ORDEAL -> tickOrdeal(level, caster, rite, recipe);
 			case STILL_INTERVAL -> tickStillInterval(caster, rite, recipe);
 			case OFFERING_PROCESSION -> tickOfferingProcession(level, caster, rite);
-			case CULMINATION -> tickCulmination(level, caster, rite);
+			case CULMINATION -> tickCulmination(level, caster, rite, recipe);
 			default -> {
 			}
 		}
@@ -87,6 +89,10 @@ public final class CardinalRiteOrdealEngine {
 	 */
 	private static void tickOfferingProcession(ServerLevel level, ServerPlayer caster,
 			ActiveCardinalRite rite) {
+		if (rite.isWorkingCraft()) {
+			tickCraftProcession(level, caster, rite);
+			return;
+		}
 		int total = rite.getOfferingItinerary().size();
 		int arrived = CardinalRiteFinaleTiming.offeringsArrived(rite.getPhaseTicks(), total);
 		float scale = CardinalRiteFinaleTiming.daemonScale(arrived);
@@ -105,8 +111,8 @@ public final class CardinalRiteOrdealEngine {
 			ActiveCardinalRite.RiteOffering offering = rite.getCurrentOffering();
 			if (offering == null) break;
 			ItemStack drawn = offering.stack() == null ? ItemStack.EMPTY : offering.stack().copy();
-			if (!StationUpgradeRites.isRite(rite.getRecipeId())) {
-				// Station upgrades escrowed their offerings at activation; others are taken now.
+			if (!StationUpgradeRites.isRite(rite.getRecipeId()) && !rite.isWorkingCraft()) {
+				// Station upgrades and Working crafts escrowed their offerings at activation; others are taken now.
 				if (!(level.getBlockEntity(offering.pos()) instanceof IronBrazierBlockEntity brazier)) {
 					rite.markCollapsed();
 					return;
@@ -124,7 +130,9 @@ public final class CardinalRiteOrdealEngine {
 				}
 			}
 			rite.markOfferingDrawn();
-			Vec3 brazierTop = Vec3.atCenterOf(offering.pos()).add(0.0D, 0.75D, 0.0D);
+			// A station upgrade's escrowed offering leaves its bowl as the vessel draws it.
+			RiteOfferingEscrow.releaseShown(level, offering.pos());
+			Vec3 brazierTop = BrazierMount.bowl(level.getBlockState(offering.pos()), offering.pos(), 0.75D);
 			CardinalRiteBeats.send(level, rite, CardinalRiteEventKind.OFFERING_DRAWN, index, "",
 					java.util.List.of(brazierTop, hover), drawn);
 			CardinalRiteBeats.sound(level, offering.pos(), SoundInit.RITE_OFFERING_DRAWN,
@@ -140,8 +148,101 @@ public final class CardinalRiteOrdealEngine {
 		}
 	}
 
+	/**
+	 * A Working craft's daemon does not wait over the staff: it swoops to each lit
+	 * brazier in turn and drinks the escrowed offering there, swelling with each,
+	 * then returns over the staff.
+	 */
+	private static void tickCraftProcession(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite) {
+		List<ActiveCardinalRite.RiteOffering> itinerary = rite.getOfferingItinerary();
+		int total = itinerary.size();
+		int ticks = rite.getPhaseTicks();
+		int absorbed = WorkingCraftDaemonPath.drawsDue(ticks, total);
+		float scale = CardinalRiteFinaleTiming.daemonScale(absorbed);
+		HumanitySpriteEntity daemon = findOrCreateDaemon(level, rite, scale);
+		if (daemon == null) {
+			rite.markCollapsed();
+			return;
+		}
+		Vec3 hover = centerPosition(rite, scale);
+		// Over a standing bowl, out from a sconce, below and beside a hanging one: never inside a wall or ceiling.
+		Vec3 focus = Vec3.atCenterOf(rite.getCenterPos());
+		List<Vec3> stops = itinerary.stream()
+				.map(offering -> BrazierMount.daemonStop(level.getBlockState(offering.pos()), offering.pos(), focus))
+				.toList();
+		Vec3 at = WorkingCraftDaemonPath.processionPosition(ticks, hover, stops);
+		Vec3 ahead = WorkingCraftDaemonPath.processionPosition(ticks + 1, hover, stops);
+		daemon.setPos(at);
+		if (ahead.distanceToSqr(at) > 1.0E-4D) daemon.faceDirection(ahead.x - at.x, ahead.z - at.z);
+		daemon.setSpriteScale(scale);
+
+		while (rite.getOfferingVisitIndex() < absorbed) {
+			int index = rite.getOfferingVisitIndex();
+			ActiveCardinalRite.RiteOffering offering = rite.getCurrentOffering();
+			if (offering == null) break;
+			// The offering was escrowed at activation and still shows in its bowl: the daemon breaks it there.
+			ItemStack broken = offering.stack() == null ? ItemStack.EMPTY : offering.stack().copy();
+			rite.markOfferingDrawn();
+			RiteOfferingEscrow.releaseShown(level, offering.pos());
+			Vec3 brazierTop = BrazierMount.bowl(level.getBlockState(offering.pos()), offering.pos(), 0.75D);
+			CardinalRiteBeats.send(level, rite, CardinalRiteEventKind.OFFERING_DISSOLVED, index, "",
+					List.of(brazierTop, at), broken);
+			CardinalRiteBeats.sound(level, offering.pos(), SoundInit.RITE_OFFERING_DRAWN,
+					0.9F, 0.75F + level.random.nextFloat() * 0.15F);
+		}
+
+		if (rite.isReturningFromOfferings()
+				&& WorkingCraftDaemonPath.processionFinished(ticks, total)
+				&& rite.finishOfferingProcession()) {
+			caster.displayClientMessage(Component.literal(
+					"The daemon has drunk the offerings. It turns toward the structure.")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+		}
+	}
+
+	/**
+	 * A Working craft's culmination: the daemon dives into the structure and pours
+	 * itself in, and the structure darkens and throbs with it until the floor takes it.
+	 */
+	private static void tickCraftCulmination(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite) {
+		float scale = CardinalRiteFinaleTiming.daemonScale(rite.getOfferingItinerary().size());
+		HumanitySpriteEntity daemon = findOrCreateDaemon(level, rite, scale);
+		if (daemon == null) {
+			rite.markCollapsed();
+			return;
+		}
+		int ticks = rite.getPhaseTicks();
+		Vec3 hover = centerPosition(rite, scale);
+		Vec3 heart = WorkingCraftRites.subjectHeart(rite);
+		Vec3 at = WorkingCraftDaemonPath.divePosition(ticks, hover, heart);
+		daemon.setPos(at);
+		daemon.faceDirection(heart.x - hover.x, heart.z - hover.z);
+		daemon.setSpriteScale(WorkingCraftDaemonPath.diveScale(ticks, scale, HumanitySpriteEntity.MIN_SCALE));
+		BlockPos heartPos = BlockPos.containing(heart);
+		if (ticks == WorkingCraftDaemonPath.DIVE_TICKS) {
+			CardinalRiteBeats.sound(level, heartPos, SoundInit.RITE_SUBJECT_RISE, 1.0F, 0.5F);
+			caster.displayClientMessage(Component.literal("The daemon pours itself into the structure.")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+		} else if (ticks > WorkingCraftDaemonPath.DIVE_TICKS && (ticks - WorkingCraftDaemonPath.DIVE_TICKS) % 16 == 0) {
+			// The possessed structure beats like a heart until the floor takes it.
+			CardinalRiteBeats.sound(level, heartPos, SoundInit.RITE_AMBIENT_HEARTBEAT, 0.9F, 0.7F);
+		}
+		if (ticks >= CardinalRiteFinaleTiming.TOTAL_TICKS) {
+			rite.markComplete();
+		}
+	}
+
 	private static void tickCulmination(ServerLevel level, ServerPlayer caster,
-			ActiveCardinalRite rite) {
+			ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
+		if (rite.isWorkingCraft()) {
+			tickCraftCulmination(level, caster, rite);
+			return;
+		}
+		CardinalRiteDaemonFinale finale = recipe == null ? CardinalRiteDaemonFinale.MERGE : recipe.getDaemonFinale();
+		if (finale != CardinalRiteDaemonFinale.MERGE) {
+			tickWorldCulmination(level, caster, rite, recipe, finale);
+			return;
+		}
 		// It keeps the size its offerings left it: it gathers over the staff while they fade, then merges.
 		int total = rite.getOfferingItinerary().size();
 		float scale = CardinalRiteFinaleTiming.daemonScale(total);
@@ -169,6 +270,62 @@ public final class CardinalRiteOrdealEngine {
 		}
 		if (rite.getPhaseTicks() >= CardinalRiteFinaleTiming.TOTAL_TICKS) {
 			rite.markComplete();
+		}
+	}
+
+	/**
+	 * A world rite sends its daemon out into the world. After gathering over the
+	 * staff it either shoots up and strikes the sky, which flashes red, or climbs,
+	 * rears and slams into the floor, cracking the ground open in blazing red and
+	 * black. The strike lands on the impact tick, as the rite takes effect.
+	 */
+	private static void tickWorldCulmination(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite,
+			CardinalRiteRecipe recipe, CardinalRiteDaemonFinale finale) {
+		float scale = CardinalRiteFinaleTiming.daemonScale(rite.getOfferingItinerary().size());
+		HumanitySpriteEntity daemon = findOrCreateDaemon(level, rite, scale);
+		if (daemon == null) {
+			rite.markCollapsed();
+			return;
+		}
+		int ticks = rite.getPhaseTicks();
+		Vec3 hover = centerPosition(rite, scale);
+		Vec3 ground = Vec3.atBottomCenterOf(rite.getCenterPos().above());
+		boolean sky = finale == CardinalRiteDaemonFinale.SKY;
+		Vec3 at = sky ? WorldRiteFinalePath.skyPosition(ticks, hover, level.getMaxBuildHeight() - 2.0D)
+				: WorldRiteFinalePath.groundPosition(ticks, hover, ground);
+		daemon.setPos(at);
+		daemon.setSpriteScale(scale);
+		if (ticks == CardinalRiteFinaleTiming.GROWTH_TICKS + 1) {
+			// The daemon tears loose from the staff.
+			CardinalRiteBeats.sound(level, rite.getCenterPos(), SoundInit.RITE_ESCALATE, 1.2F, sky ? 1.2F : 0.7F);
+		}
+		if (CardinalRiteFinaleTiming.isImpactTick(ticks)) {
+			int seed = level.random.nextInt();
+			if (sky) {
+				CardinalRiteBeats.send(level, rite, CardinalRiteEventKind.SKY_STRUCK, seed, "", List.of(at), ItemStack.EMPTY);
+				CardinalRiteBeats.sound(level, rite.getCenterPos(), SoundInit.RITE_CULMINATION, 3.0F, 0.75F);
+				shakeNearby(level, rite.getCenterPos(), 64.0D, 10, 0.55F, seed);
+			} else {
+				float reach = Math.max(4.0F, HarbingerCardinalRiteEvents.ritualFootprintRadius(rite, recipe) + 1.5F);
+				CardinalRiteBeats.send(level, rite, CardinalRiteEventKind.GROUND_SLAMMED, seed, Float.toString(reach),
+						List.of(ground), ItemStack.EMPTY);
+				CardinalRiteBeats.sound(level, rite.getCenterPos(), SoundInit.RITE_SUBJECT_THUD, 2.0F, 0.6F);
+				CardinalRiteBeats.sound(level, rite.getCenterPos(), SoundInit.RITE_CULMINATION, 2.0F, 0.6F);
+				shakeNearby(level, rite.getCenterPos(), 32.0D, 14, 0.3F, seed);
+			}
+			daemon.setSpriteScale(HumanitySpriteEntity.MIN_SCALE);
+		}
+		if (ticks >= CardinalRiteFinaleTiming.TOTAL_TICKS) {
+			rite.markComplete();
+		}
+	}
+
+	/** Every player near the rite feels the strike: a shudder and, for the sky, a red flash. */
+	private static void shakeNearby(ServerLevel level, BlockPos center, double range, int duration, float flash, int seed) {
+		for (ServerPlayer witness : level.players()) {
+			if (witness.distanceToSqr(Vec3.atCenterOf(center)) < range * range) {
+				PacketHandler.sendToPlayer(witness, new CardinalRiteImpactPacket(duration, flash, seed));
+			}
 		}
 	}
 

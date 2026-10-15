@@ -384,8 +384,22 @@ public final class HemoRenderTypes {
 						.createCompositeState(false));
 	}
 
+	/** No fill line: the whole structure shell shows. */
+	public static final float NO_FILL_LINE = 100000.0F;
+
 	public static RenderType bloodStructureWarp(float gameTime, float progress, float blockSeed, float wiggleAmp,
 			float centerX, float centerY, float centerZ, float finalizeProgress, float meltGroundY, float meltHeight) {
+		return bloodStructureWarp(gameTime, progress, blockSeed, wiggleAmp, centerX, centerY, centerZ,
+				finalizeProgress, meltGroundY, meltHeight, NO_FILL_LINE);
+	}
+
+	/**
+	 * The structure warp shell cut at {@code fillLine} (camera-relative height), with a bright wet meniscus
+	 * there. A Working floor uses it to climb the structure it is about to swallow.
+	 */
+	public static RenderType bloodStructureWarp(float gameTime, float progress, float blockSeed, float wiggleAmp,
+			float centerX, float centerY, float centerZ, float finalizeProgress, float meltGroundY, float meltHeight,
+			float fillLine) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
 				"blood_structure_warp_uniforms",
 				() -> {
@@ -398,6 +412,7 @@ public final class HemoRenderTypes {
 					setUniform(shader, "FinalizeProgress", finalizeProgress);
 					setUniform(shader, "MeltGroundY", meltGroundY);
 					setUniform(shader, "MeltHeight", meltHeight);
+					setUniform(shader, "FillLine", fillLine);
 				},
 				() -> {
 					ShaderInstance shader = ShaderInit.BLOOD_STRUCTURE_WARP.getInstance().get();

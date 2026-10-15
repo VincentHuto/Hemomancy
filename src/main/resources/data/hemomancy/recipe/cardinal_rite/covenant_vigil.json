@@ -2,6 +2,7 @@
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "greater",
+  "purpose": "bond",
   "required_degree": 6,
   "riteName": "Rite of the Covenant Vigil",
   "riteDescription": "A bloodline vigil in which one sworn helper shares the boundary and survives a full Grand ordeal beside the caster. Every assigned survivor gains ten minutes of resistance and regeneration.",

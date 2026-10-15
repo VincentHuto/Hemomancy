@@ -50,7 +50,7 @@ public final class IronBrazierOfferingSourceTest {
 		assertNotContains("empty hand no longer lights brazier", block, "player.hurt(player.damageSources().generic(), 1.5f)");
 		assertNotContains("flint and steel no longer lights brazier", block, "Items.FLINT_AND_STEEL");
 		assertContains("breaking drops offering", block, "dropOffering");
-		assertContains("renderer draws stored item", renderer, "getOfferingDisplayStack");
+		assertContains("renderer draws the stored item, or an escrowed one awaiting the daemon", renderer, "getRenderedOfferingStack");
 		assertContains("renderer uses item renderer", renderer, "renderStatic");
 		assertContains("iron brazier renderer registered", clientEvents, "IronBrazierRenderer::new");
 	}

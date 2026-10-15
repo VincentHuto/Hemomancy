@@ -55,6 +55,12 @@ public record MnemonicBlueprintPattern(List<Cell> cells, MnemonicBlueprintPlacem
 		if (rite == null) return empty();
 		if (!rite.hasLayeredStation()) return from(rite.getPattern());
 		MnemonicBlueprintPattern floor = from(rite.getFloorPattern());
+		if (rite.isWorkingCraft()) {
+			// The subject stands on the bed beside the Focus, its first aisle against it.
+			MultiblockPattern subject = rite.getSubject();
+			return composeRiteLayers(floor, riteFloorFocus(rite), from(subject),
+					new BlockPos(subject.getBlockPattern().getWidth() / 2, 0, -1));
+		}
 		MultiblockPattern upperPattern = rite.getRequiredStructure();
 		if (upperPattern == null) {
 			return translate(floor, riteFloorFocus(rite).multiply(-1));

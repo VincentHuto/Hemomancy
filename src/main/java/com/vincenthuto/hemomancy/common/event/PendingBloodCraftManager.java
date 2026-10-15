@@ -3,13 +3,15 @@ package com.vincenthuto.hemomancy.common.event;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.HematicStakeBlock;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffBondHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
@@ -27,6 +29,7 @@ import java.util.UUID;
 public class PendingBloodCraftManager {
 
 	private static final List<PendingCraft> pendingCrafts = new ArrayList<>();
+	private static final ParticleOptions CRAFT_CELL = HemoParticleData.bloodCell(new ParticleColor(150, 6, 16));
 
 	public static class PendingCraft {
 		private final ServerLevel level;
@@ -81,16 +84,17 @@ public class PendingBloodCraftManager {
 						if (stakePlaced && cachedBlockInfo.getPos().equals(stakeFormation.pos())) {
 							continue;
 						}
-						level.setBlock(cachedBlockInfo.getPos(),
-								Blocks.AIR.defaultBlockState(), 2);
-						level.levelEvent(2001, cachedBlockInfo.getPos(),
-								Block.getId(cachedBlockInfo.getState()));
+						BlockPos pos = cachedBlockInfo.getPos();
+						boolean solid = !level.getBlockState(pos).isAir();
+						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
+						if (solid) level.sendParticles(CRAFT_CELL, pos.getX() + 0.5D, pos.getY() + 0.5D,
+								pos.getZ() + 0.5D, 6, 0.3D, 0.3D, 0.3D, 0.03D);
 					}
 				}
 			}
 
 			// Sound & result
-			level.playSound(null, hitPos, SoundEvents.ENDERMAN_SCREAM, SoundSource.BLOCKS, 1, 1);
+			level.playSound(null, hitPos, SoundInit.RITE_COMPLETE.get(), SoundSource.BLOCKS, 0.8F, 1.15F);
 			if (!stakePlaced) {
 				level.addFreshEntity(new ItemEntity(level,
 						hitPos.getX() + 0.5, hitPos.getY() + 0.5, hitPos.getZ() + 0.5, result));

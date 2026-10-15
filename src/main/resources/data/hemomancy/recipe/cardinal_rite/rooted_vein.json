@@ -2,10 +2,11 @@
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "lesser",
+  "purpose": "world",
   "required_degree": 2,
   "riteName": "Rite of the Rooted Vein",
   "riteDescription": "A blood-fed stone is rooted into the earth, growing a permanent Earthen Vein where the Cardinal Focus stood.",
-  "floor": "hemomancy:working_lesser",
+  "floor": "hemomancy:dominion_lesser",
   "brazier_signature": [
     {
       "ingredient": {

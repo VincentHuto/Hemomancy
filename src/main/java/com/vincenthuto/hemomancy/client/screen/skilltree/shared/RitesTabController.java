@@ -76,6 +76,8 @@ public class RitesTabController implements IProgressTab {
         if (mc.player != null && mc.level != null) {
             for (CardinalRiteRecipe r : CardinalRiteRecipe.getAllRecipes(mc.level)) {
                 if (r.isUnstained() != unstained) continue;
+                // Working crafts are browsed with the other crafts in the Crafting tab.
+                if (r.isWorkingCraft()) continue;
                 boolean discovered = RiteUnlockRegistry.get(r.getId()).isUnlocked(mc.player);
                 if (discovered) state.riteRecipes.add(r);
                 if (!unstained) {

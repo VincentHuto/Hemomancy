@@ -145,7 +145,8 @@ final class BloodStructureFeedWarpRendererTest {
 
 	private static Method connectedFaceEmitter() {
 		try {
-			Method method = BloodStructureFeedWarpRenderer.class.getDeclaredMethod("emitUnitFace",
+			// The connected-shell emitter is shared with the Working floor's swallow shell.
+			Method method = BlockShellFaces.class.getDeclaredMethod("emitUnitFace",
 					VertexConsumer.class, PoseStack.Pose.class, Direction.class, Set.class,
 					BlockPos.class, Vec3.class, int.class);
 			method.setAccessible(true);

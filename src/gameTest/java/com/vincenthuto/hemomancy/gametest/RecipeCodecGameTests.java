@@ -24,31 +24,16 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @PrefixGameTestTemplate(false)
 public final class RecipeCodecGameTests {
     @GameTest(template = "empty")
-    public static void nestedOfferingRetainsContextAndPropagatesErrors(GameTestHelper helper) {
+    public static void bloodStructuresRejectBrazierOfferings(GameTestHelper helper) {
         var ops = helper.getLevel().registryAccess().createSerializationContext(JsonOps.INSTANCE);
-        var sword = ItemStack.CODEC.parse(ops, JsonParser.parseString("""
-                {"id":"minecraft:diamond_sword","components":{
-                "minecraft:enchantments":{"levels":{"minecraft:unbreaking":2}}}}
-                """)).getOrThrow();
-        var ingredient = net.neoforged.neoforge.common.crafting.DataComponentIngredient.of(false, sword);
         var json = JsonParser.parseString("""
                 {"bloodCost":10,"heldItem":"minecraft:stick","hitBlock":"minecraft:stone",
                  "pattern":[["S"]],"key":{"S":{"block":"minecraft:stone"}},
-                 "result":"minecraft:diamond","offerings":[{"count":2}]}
+                 "result":"minecraft:diamond","offerings":[{"ingredient":{"item":"minecraft:stick"},"count":1}]}
                 """).getAsJsonObject();
-        json.getAsJsonArray("offerings").get(0).getAsJsonObject().add("ingredient",
-                Ingredient.CODEC_NONEMPTY.encodeStart(ops, ingredient).getOrThrow());
-        var codec = new BloodStructureRecipeSerializer().codec().codec();
-        var recipe = codec.parse(ops, json).getOrThrow();
-        helper.assertTrue(recipe.getOfferings().getFirst().ingredient().test(sword), "Offering components lost");
-        var encoded = codec.encodeStart(ops, recipe).getOrThrow().getAsJsonObject();
-        helper.assertTrue(encoded.get("heldItem").getAsString().equals("minecraft:stick"), "heldItem schema changed");
-        var offering = encoded.getAsJsonArray("offerings").get(0).getAsJsonObject();
-        var restored = Ingredient.CODEC_NONEMPTY.parse(ops, offering.get("ingredient")).getOrThrow();
-        helper.assertTrue(restored.test(sword) && !restored.test(new ItemStack(Items.DIAMOND_SWORD))
-                && offering.get("count").getAsInt() == 2, "Offering predicate or count changed");
-        helper.assertTrue(codec.encodeStart(JsonOps.INSTANCE, recipe).error().isPresent(),
-                "Nested offering encoding error silently omitted");
+        var result = new BloodStructureRecipeSerializer().codec().codec().parse(ops, json);
+        helper.assertTrue(result.error().map(error -> error.message().contains("take no brazier offerings"))
+                .orElse(false), "Floorless Blood Structures must refuse brazier offerings");
         helper.succeed();
     }
 
@@ -84,7 +69,7 @@ public final class RecipeCodecGameTests {
 
     @GameTest(template = "empty")
     public static void bloodStructureRetainsResultFormatsAndRegistryContext(GameTestHelper helper) throws Exception {
-        checkFamily(helper, new BloodStructureRecipeSerializer().codec().codec(), "blood_structure/consecrated_bloodwell");
+        checkFamily(helper, new BloodStructureRecipeSerializer().codec().codec(), "blood_structure/hematic_stake");
         helper.succeed();
     }
 

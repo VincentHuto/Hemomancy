@@ -10,11 +10,13 @@ uniform float HemoTime;
 uniform float Progress;
 uniform float BlockSeed;
 uniform float FinalizeProgress;
+uniform float FillLine;
 
 in float vertexDistance;
 in vec4 vertexColor;
 in vec2 texCoord0;
 in float pulse;
+in float fillHeight;
 
 out vec4 fragColor;
 
@@ -27,6 +29,12 @@ float mottleNoise(vec2 p) {
 }
 
 void main() {
+    // A Working floor climbs the structure up to a ragged, wet line; nothing shows above it.
+    float ragged = 0.05 * sin(texCoord0.x * 13.0 + HemoTime * 0.21 + BlockSeed * 5.0)
+            + 0.03 * sin(texCoord0.x * 31.0 - HemoTime * 0.13);
+    float edge = FillLine + ragged;
+    if (fillHeight > edge) discard;
+    float meniscus = 1.0 - smoothstep(0.0, 0.14, edge - fillHeight);
     vec2 tileUv = fract(texCoord0);
     vec2 centered = tileUv - vec2(0.5);
     float rim = smoothstep(0.55, 0.18, length(centered));
@@ -39,10 +47,12 @@ void main() {
     float useVertexTint = 1.0 - step(0.999, min(vertexColor.r, min(vertexColor.g, vertexColor.b)));
     vec3 tintedColor = vertexColor.rgb * mix(0.52, 1.08, bloodGlow);
     color = mix(color, tintedColor, useVertexTint) * ColorModulator.rgb;
+    color = mix(color, vec3(1.0, 0.82, 0.77), meniscus * 0.55);
     float finalizeFade = 1.0 - smoothstep(0.84, 1.0, FinalizeProgress);
     float alpha = clamp((0.20 + Progress * 0.28 + bloodMottle * 0.08 + rim * 0.08) * vertexColor.a * ColorModulator.a,
             0.0, 0.72);
     alpha *= finalizeFade;
+    alpha = max(alpha, meniscus * 0.62 * vertexColor.a * ColorModulator.a);
 
     fragColor = linear_fog(vec4(color, alpha), vertexDistance, FogStart, FogEnd, FogColor);
 }

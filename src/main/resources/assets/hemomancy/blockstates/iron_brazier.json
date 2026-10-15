@@ -5,6 +5,7 @@
         "model": "hemomancy:block/iron_brazier"
       },
       "when": {
+        "face": "floor",
         "facing": "north"
       }
     },
@@ -13,6 +14,7 @@
         "model": "hemomancy:block/iron_brazier_lit"
       },
       "when": {
+        "face": "floor",
         "facing": "north",
         "ritual_phase": "1|2"
       }
@@ -22,6 +24,7 @@
         "model": "hemomancy:block/iron_brazier_sanguine"
       },
       "when": {
+        "face": "floor",
         "facing": "north",
         "ritual_phase": "2"
       }
@@ -32,6 +35,7 @@
         "y": 90
       },
       "when": {
+        "face": "floor",
         "facing": "east"
       }
     },
@@ -41,6 +45,7 @@
         "y": 90
       },
       "when": {
+        "face": "floor",
         "facing": "east",
         "ritual_phase": "1|2"
       }
@@ -51,6 +56,7 @@
         "y": 90
       },
       "when": {
+        "face": "floor",
         "facing": "east",
         "ritual_phase": "2"
       }
@@ -61,6 +67,7 @@
         "y": 180
       },
       "when": {
+        "face": "floor",
         "facing": "south"
       }
     },
@@ -70,6 +77,7 @@
         "y": 180
       },
       "when": {
+        "face": "floor",
         "facing": "south",
         "ritual_phase": "1|2"
       }
@@ -80,6 +88,7 @@
         "y": 180
       },
       "when": {
+        "face": "floor",
         "facing": "south",
         "ritual_phase": "2"
       }
@@ -90,6 +99,7 @@
         "y": 270
       },
       "when": {
+        "face": "floor",
         "facing": "west"
       }
     },
@@ -99,6 +109,7 @@
         "y": 270
       },
       "when": {
+        "face": "floor",
         "facing": "west",
         "ritual_phase": "1|2"
       }
@@ -109,6 +120,257 @@
         "y": 270
       },
       "when": {
+        "face": "floor",
+        "facing": "west",
+        "ritual_phase": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_wall"
+      },
+      "when": {
+        "face": "wall",
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_wall_lit"
+      },
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "ritual_phase": "1|2"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_wall_sanguine"
+      },
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "ritual_phase": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_wall",
+        "y": 90
+      },
+      "when": {
+        "face": "wall",
+        "facing": "east"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_wall_lit",
+        "y": 90
+      },
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "ritual_phase": "1|2"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_wall_sanguine",
+        "y": 90
+      },
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "ritual_phase": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_wall",
+        "y": 180
+      },
+      "when": {
+        "face": "wall",
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_wall_lit",
+        "y": 180
+      },
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "ritual_phase": "1|2"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_wall_sanguine",
+        "y": 180
+      },
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "ritual_phase": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_wall",
+        "y": 270
+      },
+      "when": {
+        "face": "wall",
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_wall_lit",
+        "y": 270
+      },
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "ritual_phase": "1|2"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_wall_sanguine",
+        "y": 270
+      },
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "ritual_phase": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_hanging"
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_hanging_lit"
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "north",
+        "ritual_phase": "1|2"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_hanging_sanguine"
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "north",
+        "ritual_phase": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_hanging",
+        "y": 90
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "east"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_hanging_lit",
+        "y": 90
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "east",
+        "ritual_phase": "1|2"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_hanging_sanguine",
+        "y": 90
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "east",
+        "ritual_phase": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_hanging",
+        "y": 180
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_hanging_lit",
+        "y": 180
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "south",
+        "ritual_phase": "1|2"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_hanging_sanguine",
+        "y": 180
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "south",
+        "ritual_phase": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_hanging",
+        "y": 270
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_hanging_lit",
+        "y": 270
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "west",
+        "ritual_phase": "1|2"
+      }
+    },
+    {
+      "apply": {
+        "model": "hemomancy:block/iron_brazier_hanging_sanguine",
+        "y": 270
+      },
+      "when": {
+        "face": "ceiling",
         "facing": "west",
         "ritual_phase": "2"
       }

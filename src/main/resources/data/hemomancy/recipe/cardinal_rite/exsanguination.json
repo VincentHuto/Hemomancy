@@ -2,6 +2,7 @@
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "lesser",
+  "purpose": "making",
   "required_degree": 3,
   "riteName": "Rite of Exsanguination",
   "riteDescription": "A sacrifice rite. A named creature held inside the circle bleeds into the anchors; once it has given 200 mL the daemon can be sealed, and its lifeblood crystallizes into Sanguine Quintessence.",

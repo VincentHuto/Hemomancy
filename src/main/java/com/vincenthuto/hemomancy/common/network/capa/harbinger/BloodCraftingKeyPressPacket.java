@@ -85,15 +85,6 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				for (BloodStructureRecipe targetPattern : BloodCraftingPatternSearchRules.sortedByPatternSearchCost(
 						BloodStructureRecipe.getAllRecipes(player.level()),
 						recipe -> recipe.getPattern().getPatternArray())) {
-					if (BloodStructureCraftingHelper.isRiteExclusive(targetPattern)) {
-						BlockPattern.BlockPatternMatch forbiddenMatch = findStructurePatternAtHit(targetPattern, sLevel, hitPos);
-						if (forbiddenMatch != null) {
-							player.displayClientMessage(BloodStructureCraftingHelper.riteExclusiveMessage(), false);
-							handled = true;
-							break;
-						}
-						continue;
-					}
 					if (!targetPattern.isUnstained()) {
 						BlockPattern.BlockPatternMatch projectionMatch = findStructurePatternAtHit(targetPattern, sLevel, hitPos);
 						if (projectionMatch != null) {
@@ -208,11 +199,6 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 							BloodStructureRecipe.getAllRecipes(player.level()),
 							targetPattern -> targetPattern.getPattern().getPatternArray())) {
 						BlockPattern.BlockPatternMatch match = findStructurePatternAtHit(recipe, sLevel, hitPos);
-						if (match != null && BloodStructureCraftingHelper.isRiteExclusive(recipe)) {
-							player.displayClientMessage(BloodStructureCraftingHelper.riteExclusiveMessage(), false);
-							handled = true;
-							break;
-						}
 						if (match != null && !recipe.isUnstained()) {
 							showProjectionHint(player);
 							handled = true;
@@ -521,6 +507,9 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				ActiveCardinalRite rite = recipe.isPuppeteerTrial()
 						? ActiveCardinalRite.puppeteerTrial(player.getUUID(), centerPos, recipe.getId(),
 								recipe.getRiteType().getSize())
+						: recipe.isWorkingCraft()
+						? ActiveCardinalRite.workingCraft(player.getUUID(), centerPos, recipe.getId(),
+								recipe.getRiteType().getSize(), recipe.getSubjectFeedMl())
 						: recipe.hasInteractiveCeremony()
 						? ActiveCardinalRite.interactive(
 								player.getUUID(), centerPos, recipe.getId(), castingDuration,
@@ -537,7 +526,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 							com.vincenthuto.hemomancy.common.rite.CardinalRiteInstabilityBoundaryRules
 												.damagePriority(recipe.getCeremony().anchors()).stream()
 									.mapToInt(Integer::intValue).toArray());
-					if (!recipe.isPuppeteerTrial() && !recipe.isUnstained()) {
+					if (!recipe.isPuppeteerTrial() && !recipe.isUnstained() && !recipe.isWorkingCraft()) {
 						// Ring 0 opens now; each later ring wakes at a later phase of the rite.
 						rite.configureRings(com.vincenthuto.hemomancy.common.rite.CardinalRiteRingRules.ranksOf(
 								recipe.getCeremony().anchors()), recipe.getCeremony().stillIntervalTicks() > 0);
@@ -581,6 +570,14 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 							.withStyle(ChatFormatting.RED), false);
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
+				if (recipe.isWorkingCraft() && !com.vincenthuto.hemomancy.common.rite.harbinger.WorkingCraftRites.prepare(
+						sLevel, rite, stationMatch == null ? null : stationMatch.subject())) {
+					CardinalRiteStaffEscrow.restore(serverPlayer, rite);
+					player.displayClientMessage(Component.literal(
+							"The Working floor cannot take hold: keep the structure on its bed and each offering in its lit brazier.")
+							.withStyle(ChatFormatting.DARK_RED), false);
+					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
+				}
 				if (!com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.prepare(sLevel, rite)) {
 					CardinalRiteStaffEscrow.restore(serverPlayer, rite);
 					player.displayClientMessage(Component.literal(
@@ -603,7 +600,9 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 
 				// Notify the player
 				player.displayClientMessage(
-						Component.literal("The ").append(recipe.displayName()).append(recipe.hasInteractiveCeremony()
+						Component.literal("The ").append(recipe.displayName()).append(recipe.isWorkingCraft()
+								? " begins. Project blood into the structure until the floor climbs it."
+								: recipe.hasInteractiveCeremony()
                                 && !com.vincenthuto.hemomancy.common.succession.SuccessionRites.is(rite)
 								? " awaits consecration. Fill the crimson anchors."
 								: " begins... (" + castingDuration / 20 + "s)")
@@ -617,10 +616,12 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 			}
 		}
 		if (hitState.is(BlockInit.cardinal_focus.get())) {
-			player.displayClientMessage(Component.literal(layeredResolution.status()
-							== CardinalRiteStationMatcher.Status.NO_FLOOR
-							? "The Cardinal Focus cannot find a complete rite floor."
-							: "The floor answers, but no structure and lit-brazier signature names a valid rite.")
+			player.displayClientMessage(Component.literal(switch (layeredResolution.status()) {
+						case NO_FLOOR -> "The Cardinal Focus cannot find a complete rite floor.";
+						case NO_SUBJECT -> "The Working floor cannot find its subject: raise the structure on the floor"
+								+ " against one side of the Focus, inside that side's bed.";
+						default -> "The floor answers, but no structure, lit-brazier signature and Working subject names a valid rite.";
+					})
 					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 			return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 		}
@@ -743,21 +744,6 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 		return CardinalRiteMediumRules.matches(recipe.getMedium(), focus.getMediumForMatching());
 	}
 
-	private static void clearMatchedPattern(ServerLevel level, BlockPattern.BlockPatternMatch match,
-			BlockPattern blockPattern) {
-		int width = blockPattern.getWidth();
-		int height = blockPattern.getHeight();
-		int depth = blockPattern.getDepth();
-		for (int i = 0; i < width; ++i) {
-			for (int j = 0; j < height; ++j) {
-				for (int k = 0; k < depth; ++k) {
-					BlockPos pos = match.getBlock(i, j, k).getPos();
-					level.levelEvent(2001, pos, net.minecraft.world.level.block.Block.getId(level.getBlockState(pos)));
-					level.setBlock(pos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 2);
-				}
-			}
-		}
-	}
 
 	private static AABB getMatchBounds(BlockPattern.BlockPatternMatch match, BlockPattern blockPattern) {
 		int width = blockPattern.getWidth();

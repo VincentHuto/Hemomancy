@@ -34,6 +34,15 @@ public final class CardinalRiteFloorGeometry {
 		return sockets;
 	}
 
+	/** Every air block on the floor a standing brazier may count from: the bottom layer of its brazier space. */
+	public static List<BlockPos> standingCells(CardinalRiteFloorDefinition floor, BlockPos focus, Direction forwards) {
+		List<BlockPos> cells = new ArrayList<>();
+		for (BlockPos cell : floor.brazierSpace()) {
+			if (cell.getY() == 1) cells.add(toWorld(focus, forwards, cell.getX(), cell.getY(), cell.getZ()));
+		}
+		return cells;
+	}
+
 	/** The ring of blocks just outside the floor's square, level with it. */
 	public static List<BlockPos> margin(CardinalRiteFloorDefinition floor, BlockPos focus) {
 		int reach = halfWidth(floor) + 1;

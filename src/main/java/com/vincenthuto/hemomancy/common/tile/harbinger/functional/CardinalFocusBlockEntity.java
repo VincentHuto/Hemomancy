@@ -34,10 +34,13 @@ public class CardinalFocusBlockEntity extends BlockEntity {
 	private static final String TAG_FLOOR = "FormedFloor";
 	private static final String TAG_FLOOR_FORWARDS = "FormedFloorForwards";
 	private static final String TAG_FLOOR_SINCE = "FormedFloorSince";
+	private static final String TAG_SETTLED_CRAFT = "SettledCraft";
 	private static final int FLOOR_CHECK_INTERVAL = 20;
 	private BlockPos templeDisplay;
 	private java.util.UUID templeHermit;
 	private ItemStack medium = ItemStack.EMPTY;
+	/** The last Working craft this Focus settled, saved with the chunk that lost its structure. */
+	private java.util.UUID settledCraft;
 	// The floor the server last matched here. Visual only: rites still match their own station.
 	private ResourceLocation formedFloor;
 	private Direction formedForwards = Direction.NORTH;
@@ -223,12 +226,26 @@ public class CardinalFocusBlockEntity extends BlockEntity {
 		}
 	}
 
+	/**
+	 * Witnesses that this Focus settled a Working craft. A rite reloaded from an
+	 * older save than its chunk can then tell its structure was already taken.
+	 */
+	public void markCraftSettled(java.util.UUID riteId) {
+		settledCraft = riteId;
+		setChanged();
+	}
+
+	public boolean settledCraft(java.util.UUID riteId) {
+		return riteId != null && riteId.equals(settledCraft);
+	}
+
 	@Override
 	protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 		super.saveAdditional(tag, registries);
 		if (templeDisplay != null) tag.putLong("TempleDisplay", templeDisplay.asLong());
 		if (templeHermit != null) tag.putUUID("TempleHermit", templeHermit);
 		if (!medium.isEmpty()) tag.put(TAG_MEDIUM, medium.save(registries));
+		if (settledCraft != null) tag.putUUID(TAG_SETTLED_CRAFT, settledCraft);
 		if (formedFloor != null) {
 			tag.putString(TAG_FLOOR, formedFloor.toString());
 			tag.putString(TAG_FLOOR_FORWARDS, formedForwards.getSerializedName());
@@ -244,6 +261,7 @@ public class CardinalFocusBlockEntity extends BlockEntity {
 		medium = tag.contains(TAG_MEDIUM)
 				? ItemStack.parseOptional(registries, tag.getCompound(TAG_MEDIUM))
 				: ItemStack.EMPTY;
+		settledCraft = tag.hasUUID(TAG_SETTLED_CRAFT) ? tag.getUUID(TAG_SETTLED_CRAFT) : null;
 		formedFloor = tag.contains(TAG_FLOOR) ? ResourceLocation.tryParse(tag.getString(TAG_FLOOR)) : null;
 		Direction forwards = Direction.byName(tag.getString(TAG_FLOOR_FORWARDS));
 		formedForwards = forwards == null || forwards.getAxis().isVertical() ? Direction.NORTH : forwards;

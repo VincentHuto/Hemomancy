@@ -37,12 +37,13 @@ public final class BrazierFlames {
      * Draws a brazier's blood and fire in its block space, and feeds a lit fire a lick every few game ticks while it is
      * in view. fill is how full the bowl is, 0 to 1; pour is how fast blood is running in or out of it, which ripples
      * its surface. The fire burns lower as the bowl drains. Sanguine flames, awaiting the echo, burn taller in the
-     * hotter torch palette and simmer the blood.
+     * hotter torch palette and simmer the blood. drop is how far the brazier's mount holds its bowl below a standing
+     * one's (BrazierMount), in blocks.
      */
     public static void render(PoseStack poses, MultiBufferSource buffers, BlockPos pos, boolean lit, boolean sanguine,
-            float fill, float pour, double time) {
+            float fill, float pour, double time, double drop) {
         int seed = Long.hashCode(pos.asLong());
-        double surfaceY = POOL_EMPTY_Y + (POOL_Y - POOL_EMPTY_Y) * fill;
+        double surfaceY = drop + POOL_EMPTY_Y + (POOL_Y - POOL_EMPTY_Y) * fill;
         if (fill > .002F) {
             pool(poses.last().pose(), buffers.getBuffer(HemoRenderTypes.bloodPool((float) (time % 24000), seed % 1000)),
                     (float) surfaceY, lit, sanguine, pour);
@@ -79,7 +80,7 @@ public final class BrazierFlames {
                     color, .8F);
         }
         if (!hot) ThermalGeometry.smoke(poses, vertices, surface.add(0, .9 * scale, 0), right, up, .22, .32, seed + 3, .18F);
-        feed(pos, hot, seed);
+        feed(pos, hot, seed, drop);
     }
 
     /** The blood in the bowl: rippled by any pour, simmered and lit from above only while the fire burns. */
@@ -95,7 +96,7 @@ public final class BrazierFlames {
                 shape, seed, color, alpha);
     }
 
-    private static void feed(BlockPos pos, boolean sanguine, int seed) {
+    private static void feed(BlockPos pos, boolean sanguine, int seed, double drop) {
         ClientLevel level = Minecraft.getInstance().level;
         if (level == null) return;
         if (world != level) { FED.clear(); world = level; }
@@ -108,7 +109,7 @@ public final class BrazierFlames {
         double angle = random.nextDouble() * Math.PI * 2, reach = Math.sqrt(random.nextDouble()) * .16;
         double x = Math.cos(angle) * reach, z = Math.sin(angle) * reach;
         // Licks lean in toward the main tongue as they rise.
-        ThermalParticles.lick(Vec3.atLowerCornerOf(pos).add(.5 + x, POOL_Y + .08, .5 + z),
+        ThermalParticles.lick(Vec3.atLowerCornerOf(pos).add(.5 + x, drop + POOL_Y + .08, .5 + z),
                 new Vec3(-x * .03, .024 + random.nextDouble() * .01, -z * .03), seed + (int) now,
                 24 + random.nextInt(8), (sanguine ? .26 : .22) + random.nextDouble() * .06);
     }

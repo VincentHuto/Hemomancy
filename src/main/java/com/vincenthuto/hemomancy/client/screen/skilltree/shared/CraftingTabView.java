@@ -5,8 +5,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.recipe.BloodStructureOffering;
-import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import com.vincenthuto.hutoslib.math.MultiblockPatternKey;
@@ -87,7 +85,7 @@ public final class CraftingTabView {
 			return;
 		}
 
-		List<BloodStructureRecipe> tierRecipes =
+		List<CraftingMapRecipe> tierRecipes =
 				state.craftingByTier.getOrDefault(state.selectedCraftingTier, List.of());
 		if (tierRecipes.isEmpty()) {
 			gfx.pose().pushPose();
@@ -100,7 +98,7 @@ public final class CraftingTabView {
 		}
 		if (state.selectedCraftingIndexInTier >= tierRecipes.size())
 			state.selectedCraftingIndexInTier = 0;
-		BloodStructureRecipe recipe = tierRecipes.get(state.selectedCraftingIndexInTier);
+		CraftingMapRecipe recipe = tierRecipes.get(state.selectedCraftingIndexInTier);
 
 		int modelAreaW = contentW / 2;
 		int modelX  = contentX;
@@ -156,7 +154,7 @@ public final class CraftingTabView {
 			String tierLabel = state.tierLabel(i);
 			boolean locked   = state.enableDegreeLock && ctx.playerDegree() < CraftingTabState.TIER_DEGREE_REQ[i];
 			boolean selected = tierName.equals(state.selectedCraftingTier);
-			List<BloodStructureRecipe> recipes =
+			List<CraftingMapRecipe> recipes =
 					state.craftingByTier.getOrDefault(tierName, List.of());
 
 			boolean hovered = mouseX >= sx && mouseX <= sx + sw
@@ -187,7 +185,7 @@ public final class CraftingTabView {
 			if (selected && !locked) {
 				sy += rowH + 2;
 				for (int j = 0; j < recipes.size(); j++) {
-					BloodStructureRecipe r = recipes.get(j);
+					CraftingMapRecipe r = recipes.get(j);
 					int recH = state.recipeRowHeight(r);
 					boolean recSel = (j == state.selectedCraftingIndexInTier);
 					boolean recHov = mouseX >= sx + 4 && mouseX <= sx + sw - 4
@@ -228,13 +226,13 @@ public final class CraftingTabView {
 	public static void cacheSidebarLabels(net.minecraft.client.gui.Font font, CraftingTabState state) {
 		state.sidebarLabels.clear();
 		int width = ProgressScreenContext.TIER_SIDEBAR_W - 8 - 16;
-		for (BloodStructureRecipe recipe : state.craftingRecipes) {
+		for (CraftingMapRecipe recipe : state.craftingRecipes) {
 			state.sidebarLabels.put(recipe.getId(), RitesTabView.twoLines(font, CraftingTabState.displayName(recipe), width));
 		}
 	}
 
 	private static List<String> sidebarLines(net.minecraft.client.gui.Font font, CraftingTabState state,
-			BloodStructureRecipe recipe) {
+			CraftingMapRecipe recipe) {
 		List<String> cached = state.sidebarLabels.get(recipe.getId());
 		return cached != null ? cached : List.of(ScreenDrawUtils.truncateText(font, CraftingTabState.displayName(recipe),
 				ProgressScreenContext.TIER_SIDEBAR_W - 8 - 16));
@@ -250,7 +248,7 @@ public final class CraftingTabView {
 	 */
 	public static void drawModel(GuiGraphics gfx, CraftingTabState state,
 								 int areaX, int areaY, int areaW, int areaH,
-								 BloodStructureRecipe recipe) {
+								 CraftingMapRecipe recipe) {
 		if (recipe.getPattern() == null) return;
 		List<BlockPosBlockPair> blockPairs = recipe.getPattern().getDisplayBlockPosBlockList(materialCycleIndex());
 		if (blockPairs.isEmpty()) return;
@@ -331,7 +329,7 @@ public final class CraftingTabView {
 	}
 
 	public static void drawMapInspector(GuiGraphics gfx, ProgressScreenContext ctx, CraftingTabState state,
-			BloodStructureRecipe recipe, RecipeMapInspectorLayout layout, int mouseX, int mouseY) {
+			CraftingMapRecipe recipe, RecipeMapInspectorLayout layout, int mouseX, int mouseY) {
 		gfx.pose().pushPose();
 		gfx.pose().translate(0, 0, 500);
 		RecipeMapInspectorView.drawChrome(gfx, ctx, layout, 0xF20A0303, state.tabColor, mouseX, mouseY);
@@ -367,7 +365,7 @@ public final class CraftingTabView {
 	// ────────────────────────────────────────────────────────────
 
 	public static void drawInfoPanel(GuiGraphics gfx, ProgressScreenContext ctx,
-									 CraftingTabState state, BloodStructureRecipe recipe,
+									 CraftingTabState state, CraftingMapRecipe recipe,
 									 int panelX, int panelY, int panelW) {
 		int clipTop    = panelY;
 		int clipBottom = ctx.guiTop() + ctx.guiHeight() - 8;
@@ -394,17 +392,26 @@ public final class CraftingTabView {
 		y += 6;
 
 		// Blood cost
-		gfx.drawString(ctx.font(), Component.literal("Blood Cost: ")
+		gfx.drawString(ctx.font(), Component.literal(recipe.isWorking() ? "Feed: " : "Blood Cost: ")
 				.withStyle(s -> s.withColor(0x888888))
 				.append(Component.literal((int) recipe.getBloodCost() + " mL")
 						.withStyle(s -> s.withColor(0xAA4444))),
 				panelX, y, 0);
 		y += lineH + 4;
 
+		if (recipe.isWorking()) {
+			gfx.drawString(ctx.font(), Component.literal("Floor: ")
+					.withStyle(s -> s.withColor(0x888888))
+					.append(Component.literal(CraftingTabController.floorLabel(recipe))
+							.withStyle(s -> s.withColor(0xDDDDDD))),
+					panelX, y, 0);
+			y += lineH + 4;
+		}
+
 		// Held item
 		ItemStack heldItem = recipe.getHeldItem();
 		if (heldItem != null && !heldItem.isEmpty()) {
-			gfx.drawString(ctx.font(), Component.literal("Held Item:")
+			gfx.drawString(ctx.font(), Component.literal(recipe.isWorking() ? "Seat in the Focus:" : "Held Item:")
 					.withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
 			y += lineH;
 			gfx.renderItem(heldItem, panelX, y);
@@ -466,7 +473,7 @@ public final class CraftingTabView {
 			y += lineH;
 			int offeringTextX = panelX + 20;
 			int offeringWrapW = panelW - 24;
-			for (BloodStructureOffering offering : recipe.getOfferings()) {
+			for (CraftingMapRecipe.Offering offering : recipe.getOfferings()) {
 				List<ItemStack> stacks = List.of(offering.ingredient().getItems());
 				if (stacks.isEmpty()) {
 					continue;
@@ -528,13 +535,14 @@ public final class CraftingTabView {
 
 	/** Measures the total (un-clipped) height of the crafting info panel. */
 	public static int measureInfoPanelHeight(net.minecraft.client.gui.Font font,
-											  BloodStructureRecipe recipe, int panelW) {
+											  CraftingMapRecipe recipe, int panelW) {
 		int y     = 0;
 		int lineH = 12;
 
 		String name = CraftingTabState.displayName(recipe);
 		y += ScreenDrawUtils.wrapText(font, name, panelW).size() * lineH + 4 + 1 + 6;
 		y += lineH + 4; // blood cost
+		if (recipe.isWorking()) y += lineH + 4; // floor
 
 		ItemStack heldItem = recipe.getHeldItem();
 		if (heldItem != null && !heldItem.isEmpty()) {
@@ -564,7 +572,7 @@ public final class CraftingTabView {
 		if (!recipe.getOfferings().isEmpty()) {
 			y += lineH;
 			int offeringWrapW = panelW - 24;
-			for (BloodStructureOffering offering : recipe.getOfferings()) {
+			for (CraftingMapRecipe.Offering offering : recipe.getOfferings()) {
 				List<ItemStack> stacks = List.of(offering.ingredient().getItems());
 				if (stacks.isEmpty()) {
 					continue;
@@ -617,7 +625,7 @@ public final class CraftingTabView {
 		for (int i = 0; i < CraftingTabState.TIER_NAMES.length; i++) {
 			String tierName = CraftingTabState.TIER_NAMES[i];
 			boolean selected = tierName.equals(state.selectedCraftingTier);
-			List<BloodStructureRecipe> recipes =
+			List<CraftingMapRecipe> recipes =
 					state.craftingByTier.getOrDefault(tierName, List.of());
 			if (state.isTierHidden(tierName)) continue;
 			if (mx >= sx && mx <= sx + sw && my >= sy && my <= sy + rowH
@@ -632,7 +640,7 @@ public final class CraftingTabView {
 	public static int recipeUnder(ProgressScreenContext ctx,
 								   CraftingTabState state, double mx, double my) {
 		if (state.selectedCraftingTier == null) return -1;
-		List<BloodStructureRecipe> recipes =
+		List<CraftingMapRecipe> recipes =
 				state.craftingByTier.getOrDefault(state.selectedCraftingTier, List.of());
 		if (recipes.isEmpty()) return -1;
 
@@ -648,7 +656,7 @@ public final class CraftingTabView {
 		for (int i = 0; i < CraftingTabState.TIER_NAMES.length; i++) {
 			String tierName = CraftingTabState.TIER_NAMES[i];
 			boolean selected = tierName.equals(state.selectedCraftingTier);
-			List<BloodStructureRecipe> tierRecipes =
+			List<CraftingMapRecipe> tierRecipes =
 					state.craftingByTier.getOrDefault(tierName, List.of());
 			if (state.isTierHidden(tierName)) continue;
 			sy += rowH + 2;

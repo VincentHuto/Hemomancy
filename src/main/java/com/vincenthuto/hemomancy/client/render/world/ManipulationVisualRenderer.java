@@ -131,6 +131,8 @@ public final class ManipulationVisualRenderer {
         BloodFlowEffects.tick();
         BloodProjectileEffects.tick();
         BloodBindingTendrilRenderer.tick();
+        WorkingCraftSwallowRenderer.tick();
+        WorldRiteFinaleGeometry.tick();
         FerricDuctilisEffects.tick();
         ThermalParticles.tick();
         LivingTorchFlames.tick();
@@ -437,6 +439,8 @@ public final class ManipulationVisualRenderer {
         BloodEffectParticles.render(poses,FLOWS,camera,right,up,time);
         BloodFlowEffects.render(poses,FLOWS,camera,right,up,time,partial);
         BloodBindingTendrilRenderer.collect(poses,FLOWS,camera,partial);
+        WorkingCraftSwallowGeometry.collect(poses,FLOWS,camera,partial);
+        WorldRiteFinaleGeometry.collect(poses,FLOWS,camera,partial);
         LuxUmbraEffects.render(poses, FLOWS, camera, right, up, time, partial);
         FerricDuctilisEffects.render(poses,FLOWS,FerricDuctilisGeometry.DISCARD,camera,right,up,time,partial,false);
         BlackVeilRenderer.collect(poses, FLOWS, partial);

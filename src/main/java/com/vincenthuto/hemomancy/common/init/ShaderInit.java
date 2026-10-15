@@ -50,12 +50,12 @@ public class ShaderInit {
 			DefaultVertexFormat.NEW_ENTITY);
 
 	public static ShaderHolder BLOOD_STRUCTURE_WARP = new ShaderHolder(Hemomancy.rloc("world/blood_structure_warp"),
-			DefaultVertexFormat.BLOCK, "HemoTime", "Progress", "BlockSeed", "WiggleAmp");
+			DefaultVertexFormat.BLOCK, "HemoTime", "Progress", "BlockSeed", "WiggleAmp", "FillLine");
 
 	public static ShaderHolder BLOOD_STRUCTURE_WARP_ENTITY = new ShaderHolder(
 			Hemomancy.rloc("world/blood_structure_warp"),
 			DefaultVertexFormat.NEW_ENTITY, "HemoTime", "Progress", "BlockSeed", "WiggleAmp",
-			"WarpCenter", "FinalizeProgress", "MeltGroundY", "MeltHeight");
+			"WarpCenter", "FinalizeProgress", "MeltGroundY", "MeltHeight", "FillLine");
 
 	public static ShaderHolder LOOM_ORB = new ShaderHolder(Hemomancy.rloc("world/loom_orb"),
 			DefaultVertexFormat.POSITION_COLOR, "HemoTime", "OrbSeed", "OrbCenter", "OrbRadius", "WritheStrength",

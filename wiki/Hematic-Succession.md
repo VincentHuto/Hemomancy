@@ -6,7 +6,7 @@ At Degree 5, a member of a bloodline with an established fane can ask an origina
 
 Hold a Living Syringe with an empty vial in its rack when choosing the donor's donation dialogue. Donations have no cooldown or extra fee. Sneak-use another empty vial to sample your own blood for 100 mL. Older samples without individual identity cannot start either rite.
 
-Manufacture a **Vacant Effigy** using Sanguine Formation, 250 mL blood, and this horizontal D5 blood structure. Target its Venous Stone center:
+Make a **Vacant Effigy** as a D5 Working craft: raise this flat frame beside a Cardinal Focus on a Greater Working floor, seat a Sanguine Formation in the Focus, light an Armor Stand and a Blood Stained Stone in braziers, plant your Living Staff, and feed the frame 250 mL. The floor swallows the frame and forges the effigy on the Focus:
 
 ```
 Conscious Mass | Hematic Iron | Conscious Mass
@@ -30,7 +30,7 @@ One physical workplace supports one successor. Players may still use claimed mac
 
 Use the **Greater Dominion** floor. Place a Venous Stone plinth two blocks horizontally from the Cardinal Focus and one block above the floor; place the effigy on top. The plinth determines the rite's orientation. Seat Sanguine Quintessence in the Focus.
 
-Light the first three marked Iron Brazier sockets: **1 donor blood**, **2 your own blood**, **3 Mnemonic Ambergris**. For an east-side plinth the socket offsets from the Focus are `(5,1,0)`, `(4,1,-2)`, `(3,1,-4)`; rotate the assembly together. Nearby braziers show their roles while the body is placed. JEI lists both rites and the effigy manufacturing recipe.
+Offer in three lit Iron Braziers anywhere in the cube the floor is the base of (standing, on a wall or hanging): **1 donor blood**, **2 your own blood**, **3 Mnemonic Ambergris**. The rite reads them clockwise round the Focus from its left (with the plinth on the Focus's right), nearest and then lowest first. Offered braziers show the role they hold while the body is placed, so rearrange them until the labels read right. JEI lists both rites and the effigy manufacturing recipe.
 
 Plant a Living Staff using the normal Cardinal Rite interaction. After planting, remain in the circle for the 60-second sequence: Form, Identity, Life, Memory, Recognition, Resolution. Normal cancellation controls apply. There are no combat waves. Offerings are committed as the phases advance; cancellation retains already-spent costs and leaves unconsumed offerings.
 

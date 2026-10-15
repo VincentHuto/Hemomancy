@@ -12,7 +12,6 @@ import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
 
 public final class CardinalRiteFloorLoader
 		extends JsonResourceReloadListener<CardinalRiteFloorLoader.Sourced> {
@@ -32,10 +31,8 @@ public final class CardinalRiteFloorLoader
 		String style = root.get("style").getAsString();
 		CardinalRiteType tier = CardinalRiteType.byName(root.get("tier").getAsString());
 		BlockPos focus = blockPos(root.get("focus"));
-		var sockets = new ArrayList<BlockPos>();
-		for (JsonElement socket : root.getAsJsonArray("brazier_sockets")) {
-			sockets.add(blockPos(socket));
-		}
+		// Braziers stand anywhere along the floor's gash, so the floor derives its sockets instead of authoring them.
+		var sockets = CardinalRiteGashRules.cells(Math.max(focus.getX(), focus.getZ()));
 		float footprint = root.has("footprint_radius")
 				? root.get("footprint_radius").getAsFloat()
 				: tier.getSize() * 0.5F + 2.0F;

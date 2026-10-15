@@ -213,7 +213,6 @@ public class ClientEvents {
         StillArtCooldownOverlay.tick();
         ActiveBloodCraftClientData.tick();
         ActiveBloodStructureFeedClientData.tick();
-        ActiveBloodStructureOfferingBurstClientData.tick();
         ActiveSanguineFormationProjectionClientData.tick();
         ActiveRiteClientData.tick();
         com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState.tick();
@@ -636,6 +635,7 @@ public class ClientEvents {
         FaneBoundaryClientData.clear();
         ActiveRiteClientData.clear();
         com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState.clear();
+        WorkingCraftSwallowRenderer.clear();
         com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteGuidance.clear();
         com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteWorldState.clear();
         com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteSkyWound.clear();
@@ -667,6 +667,7 @@ public class ClientEvents {
 		if (!(event.getLevel() instanceof net.minecraft.client.multiplayer.ClientLevel)) return;
 		ActiveRiteClientData.clear();
 		com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState.clear();
+		WorkingCraftSwallowRenderer.clear();
 		com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteGuidance.clear();
 		com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteWorldState.clear();
 		com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteSkyWound.clear();
@@ -751,7 +752,9 @@ public class ClientEvents {
 			VesperFightFloorRenderer.renderFadingPerimeter(event);
 			VesperFightFloorRenderer.renderFissures(event.getPoseStack(), partialTick);
             CardinalRiteBoundaryRenderer.render(event.getPoseStack(), partialTick);
+            WorkingCraftSwallowRenderer.render(event.getPoseStack(), partialTick);
             com.vincenthuto.hemomancy.client.render.world.rite.CardinalRiteOfferingRenderer.render(event.getPoseStack(), partialTick);
+            com.vincenthuto.hemomancy.client.render.world.rite.CardinalRiteOfferingDissolveRenderer.render(event.getPoseStack(), partialTick);
             com.vincenthuto.hemomancy.client.render.world.rite.CardinalRiteAnchorJetRenderer.render(event.getPoseStack(), partialTick);
             com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteSocketMarkerRenderer.render(event.getPoseStack(), partialTick);
             com.vincenthuto.hemomancy.client.render.world.rite.CardinalRiteCulminationRenderer.render(event.getPoseStack(), partialTick);

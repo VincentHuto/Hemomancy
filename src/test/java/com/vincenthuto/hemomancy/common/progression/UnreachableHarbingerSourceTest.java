@@ -8,7 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public final class UnreachableHarbingerSourceTest {
-	private static final Path RECIPES = Path.of("src/main/resources/data/hemomancy/recipe/blood_structure");
+	private static final Path RECIPES = Path.of("src/main/resources/data/hemomancy/recipe/cardinal_rite/working");
 
 	private UnreachableHarbingerSourceTest() {
 	}
@@ -22,13 +22,13 @@ public final class UnreachableHarbingerSourceTest {
 	private static void assertBloodStructureSource(String file, int degree, String result) throws IOException {
 		Path path = RECIPES.resolve(file);
 		if (!Files.isRegularFile(path)) {
-			throw new AssertionError(result + " has no survival Blood Structure source");
+			throw new AssertionError(result + " has no survival Working craft source");
 		}
 		JsonObject recipe = JsonParser.parseString(Files.readString(path)).getAsJsonObject();
-		assertEquals(file + " recipe type", "hemomancy:blood_structure_recipe", recipe.get("type").getAsString());
+		assertEquals(file + " recipe type", "hemomancy:cardinal_rite_recipe", recipe.get("type").getAsString());
 		assertEquals(file + " degree", degree, recipe.get("required_degree").getAsInt());
 		assertEquals(file + " output", result, recipe.getAsJsonObject("result").get("id").getAsString());
-		if (recipe.getAsJsonArray("pattern").isEmpty()) {
+		if (recipe.getAsJsonObject("subject").getAsJsonArray("pattern").isEmpty()) {
 			throw new AssertionError(file + " must consume an authored world structure");
 		}
 	}

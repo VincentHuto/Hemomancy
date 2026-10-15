@@ -2,6 +2,7 @@
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "greater",
+  "purpose": "self",
   "required_degree": 5,
   "riteName": "Rite of the Bloodline Covenant",
   "riteDescription": "The sixth rite of the Hematic Order, consecrating the practitioner fully to the Bloodline Covenant.",

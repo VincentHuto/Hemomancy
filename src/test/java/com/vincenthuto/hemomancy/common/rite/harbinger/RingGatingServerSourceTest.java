@@ -19,7 +19,8 @@ final class RingGatingServerSourceTest {
 	void activationConfiguresRingsForHarbingerCeremoniesOnly() throws IOException {
 		String packet = read(ROOT + "common/network/capa/harbinger/BloodCraftingKeyPressPacket.java");
 		assertTrue(packet.contains("rite.configureRings(com.vincenthuto.hemomancy.common.rite.CardinalRiteRingRules.ranksOf("));
-		assertTrue(packet.contains("if (!recipe.isPuppeteerTrial() && !recipe.isUnstained()) {"));
+		// Working crafts have no anchors, so they configure no rings.
+		assertTrue(packet.contains("if (!recipe.isPuppeteerTrial() && !recipe.isUnstained() && !recipe.isWorkingCraft()) {"));
 	}
 
 	@Test

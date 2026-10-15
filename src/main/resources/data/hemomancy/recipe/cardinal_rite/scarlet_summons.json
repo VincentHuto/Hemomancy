@@ -2,10 +2,11 @@
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "greater",
+  "purpose": "bond",
   "required_degree": 5,
   "riteName": "Rite of the Scarlet Summons",
   "riteDescription": "A commanding rite that draws upon the shared bloodline pool to teleport all online bloodline members to the rite location. The cost scales with the number of members summoned.",
-  "floor": "hemomancy:dominion_greater",
+  "floor": "hemomancy:communion_greater",
   "required_structure": {
     "pattern": [
       [

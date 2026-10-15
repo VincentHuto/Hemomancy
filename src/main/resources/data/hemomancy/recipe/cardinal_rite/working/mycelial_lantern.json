@@ -1,0 +1,84 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "id": "hemomancy:cardinal_rite/working/mycelial_lantern",
+  "bloodCost": 0,
+  "riteType": "lesser",
+  "purpose": "making",
+  "required_degree": 3,
+  "rankup": false,
+  "riteName": "Working of the Mycelial Lantern",
+  "riteDescription": "Build the Mycelial Lantern beside the Cardinal Focus, feed it, and let the Working floor take it.",
+  "floor": "hemomancy:working_lesser",
+  "medium": {
+    "item": "hemomancy:ferric_binder"
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "minecraft:brown_mushroom"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:glowstone_dust"
+      },
+      "count": 1
+    }
+  ],
+  "subject": {
+    "pattern": [
+      [
+        " G ",
+        "SBS",
+        " G "
+      ],
+      [
+        " H ",
+        "HCH",
+        " H "
+      ]
+    ],
+    "key": {
+      "G": {
+        "block": "hemomancy:sanguine_glass"
+      },
+      "S": {
+        "block": "minecraft:brown_mushroom_block"
+      },
+      "B": {
+        "block": "hemomancy:hematic_iron_block"
+      },
+      "H": {
+        "block": "hemomancy:polished_venous_stone"
+      },
+      "C": {
+        "block": "hemomancy:chiseled_hematic_iron_block"
+      }
+    },
+    "feed": 2500
+  },
+  "result": {
+    "id": "hemomancy:mycelial_lantern"
+  },
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "fragile_offsets": [],
+    "target_duration_ticks": 600,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry",
+    "culmination": "forging"
+  }
+}

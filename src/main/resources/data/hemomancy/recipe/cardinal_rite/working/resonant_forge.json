@@ -1,0 +1,69 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "id": "hemomancy:cardinal_rite/working/resonant_forge",
+  "bloodCost": 0,
+  "riteType": "minor",
+  "purpose": "making",
+  "required_degree": 3,
+  "rankup": false,
+  "riteName": "Working of the Resonant Forge",
+  "riteDescription": "Build the Resonant Forge beside the Cardinal Focus, feed it, and let the Working floor take it.",
+  "floor": "hemomancy:working_minor",
+  "medium": {
+    "item": "hemomancy:ferric_binder"
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "hemomancy:wax_cylinder"
+      },
+      "count": 1
+    }
+  ],
+  "subject": {
+    "pattern": [
+      [
+        "H H",
+        "ACG"
+      ]
+    ],
+    "key": {
+      "H": {
+        "block": "hemomancy:hematic_iron_block"
+      },
+      "A": {
+        "block": "minecraft:anvil"
+      },
+      "C": {
+        "block": "minecraft:cauldron"
+      },
+      "G": {
+        "block": "minecraft:grindstone"
+      }
+    },
+    "feed": 500
+  },
+  "result": {
+    "id": "hemomancy:resonant_forge"
+  },
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "fragile_offsets": [],
+    "target_duration_ticks": 600,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry",
+    "culmination": "forging"
+  }
+}

@@ -23,7 +23,7 @@ import java.util.Optional;
 
 public final class HemoTestScenarioCatalog {
 	private static final ResourceLocation COVENANT_THRONE_RECIPE =
-			Hemomancy.rloc("blood_structure/covenant_throne");
+			Hemomancy.rloc("cardinal_rite/working/covenant_throne");
 	private static final ResourceLocation SANGUINE_INITIATION_RITE =
 			Hemomancy.rloc("cardinal_rite/sanguine_initiation");
 	private static final ResourceLocation VOTARY_RITE = Hemomancy.rloc("cardinal_rite/votary_rite");
@@ -165,9 +165,10 @@ public final class HemoTestScenarioCatalog {
 	}
 
 	private static HemoTestResult verifyRecipeGate(ServerPlayer player, boolean expected) {
-		BloodStructureRecipe recipe = BloodStructureRecipe.getStructureByLocation(player.level(), COVENANT_THRONE_RECIPE);
-		if (recipe == null) {
-			return HemoTestResult.fail("Covenant Throne recipe was not loaded");
+		// The Covenant Throne is a Degree 6 Working craft; its degree gate is the recipe's.
+		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(player.level(), COVENANT_THRONE_RECIPE);
+		if (recipe == null || !recipe.isWorkingCraft()) {
+			return HemoTestResult.fail("Covenant Throne Working craft was not loaded");
 		}
 		boolean actual = RecipeDegreeGates.playerMeets(player, recipe);
 		if (recipe.getRequiredDegree() != 6) {

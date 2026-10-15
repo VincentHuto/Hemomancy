@@ -31,6 +31,20 @@ public enum CardinalRiteCulmination {
 	}
 
 	/**
+	 * Resolves the authored culmination, then rank rites ascend, then the rite's
+	 * purpose decides. Rites without a purpose (Unstained, legacy) keep the
+	 * item and floor-style fallback.
+	 */
+	public static CardinalRiteCulmination resolve(String authored, boolean rankup, CardinalRitePurpose purpose,
+			boolean producesItem, String floorStyle) {
+		CardinalRiteCulmination explicit = byId(authored);
+		if (explicit != null) return explicit;
+		if (rankup) return ASCENSION;
+		if (purpose != null) return purpose.defaultCulmination();
+		return resolve("", false, producesItem, floorStyle);
+	}
+
+	/**
 	 * Resolves the authored culmination, falling back to one implied by the rite:
 	 * rank rites ascend, item-producing rites forge, then the floor style decides.
 	 */

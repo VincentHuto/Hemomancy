@@ -389,6 +389,9 @@ public class SoundInit {
 	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_BACKLASH = registerSoundEvent("rite.backlash");
 	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_ESCALATE = registerSoundEvent("rite.escalate");
 	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_RING_OPEN = registerSoundEvent("rite.ring_open");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_SUBJECT_RISE = registerSoundEvent("rite.subject_rise");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_SUBJECT_SINK = registerSoundEvent("rite.subject_sink");
+	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_SUBJECT_THUD = registerSoundEvent("rite.subject_thud");
 	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_AMBIENT_DRONE = registerSoundEvent("rite.ambient.drone");
 	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_AMBIENT_HEARTBEAT = registerSoundEvent("rite.ambient.heartbeat");
 	public static final DeferredHolder<SoundEvent, SoundEvent> RITE_AMBIENT_STORM = registerSoundEvent("rite.ambient.storm");

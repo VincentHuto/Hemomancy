@@ -7,7 +7,6 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenCont
 import com.vincenthuto.hemomancy.common.item.shared.MnemonicBlueprintTarget;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.ImprintMnemonicBlueprintPacket;
-import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -23,7 +22,7 @@ public class CraftingTabController implements IProgressTab {
     private final CraftingTabState state = new CraftingTabState();
     private final boolean unstained;
     private final RecipeMapCanvas mapCanvas = new RecipeMapCanvas(RecipeMapEntry.Kind.CRAFTING);
-    private final Map<ResourceLocation, BloodStructureRecipe> mapRecipes = new HashMap<>();
+    private final Map<ResourceLocation, CraftingMapRecipe> mapRecipes = new HashMap<>();
 
 	@Override
 	public void onClose() {
@@ -62,26 +61,29 @@ public class CraftingTabController implements IProgressTab {
         state.craftingRecipes.clear();
         mapRecipes.clear();
         if (mc.player != null && mc.level != null)
-            for (BloodStructureRecipe r : BloodStructureRecipe.getAllRecipes(mc.level))
-                if (r.isUnstained() == unstained) state.craftingRecipes.add(r);
+            for (var r : com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe.getAllRecipes(mc.level))
+                if (r.isUnstained() == unstained) state.craftingRecipes.add(CraftingMapRecipe.of(r));
+        if (!unstained && mc.level != null)
+            for (var craft : com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getAllRecipes(mc.level))
+                if (craft.isWorkingCraft()) state.craftingRecipes.add(CraftingMapRecipe.of(craft));
         state.rebuildTierMap();
         if (unstained) {
             CraftingTabView.cacheSidebarLabels(ctx.font(), state);
             state.autoSelectFirstTier(ctx.playerDegree());
         } else {
             List<RecipeMapEntry> entries = new ArrayList<>();
-            for (BloodStructureRecipe recipe : state.craftingRecipes) {
+            for (CraftingMapRecipe recipe : state.craftingRecipes) {
                 mapRecipes.put(recipe.getId(), recipe);
                 String path = recipe.getId().getPath();
 				String name = CraftingTabState.displayName(recipe);
-                int degree = RecipeDegreeGates.getRequiredDegree(recipe);
+                int degree = recipe.requiredDegree();
                 entries.add(new RecipeMapEntry(new RecipeMapKey(RecipeMapEntry.Kind.CRAFTING, recipe.getId()),
                         name, tooltipDescription(recipe), degree, HarbingerRecipeMapDefinitions.craftingFamily(path),
                         HarbingerRecipeMapDefinitions.craftingOrder(path), true, ctx.playerDegree() >= degree));
             }
 			mapCanvas.initialise(ctx, entries, HarbingerRecipeMapDefinitions.CRAFTING_FAMILIES,
 					HarbingerRecipeMapDefinitions.craftingLinks(), HarbingerRecipeMapDefinitions.craftingPositions(), entry -> {
-                BloodStructureRecipe recipe = mapRecipes.get(entry.id());
+                CraftingMapRecipe recipe = mapRecipes.get(entry.id());
 				ItemStack fallback = recipe == null ? ItemStack.EMPTY : recipe.getResult();
 				return HarbingerRecipeMapDefinitions.craftingIcon(entry.id().getPath(), fallback);
             });
@@ -89,12 +91,26 @@ public class CraftingTabController implements IProgressTab {
         }
     }
 
-	private static String tooltipDescription(BloodStructureRecipe recipe) {
+	private static String tooltipDescription(CraftingMapRecipe recipe) {
+		if (recipe.isWorking()) return workingTooltip(recipe);
 		ItemStack held = recipe.getHeldItem();
 		ItemStack hit = recipe.getHitBlock() == null ? ItemStack.EMPTY : new ItemStack(recipe.getHitBlock());
 		return tooltipDescription((int) recipe.getBloodCost(),
 				held == null || held.isEmpty() ? "the required item" : held.getHoverName().getString(),
 				hit.isEmpty() ? "the required structure" : hit.getHoverName().getString());
+	}
+
+	private static String workingTooltip(CraftingMapRecipe recipe) {
+		ItemStack medium = recipe.getHeldItem();
+		return "Build it beside a Cardinal Focus on a " + floorLabel(recipe) + ", seat "
+				+ (medium.isEmpty() ? "its medium" : medium.getHoverName().getString())
+				+ " in the Focus, light its braziers and feed it " + (int) recipe.getBloodCost() + " mL.";
+	}
+
+	static String floorLabel(CraftingMapRecipe recipe) {
+		String path = recipe.floorId() == null ? "" : recipe.floorId().getPath();
+		String tier = path.substring(path.lastIndexOf('_') + 1);
+		return tier.isEmpty() ? "Working floor" : tier + " Working floor";
 	}
 
 	static String tooltipDescription(int bloodCost, String heldItem, String hitBlock) {
@@ -106,7 +122,7 @@ public class CraftingTabController implements IProgressTab {
         if (!unstained) {
             mapCanvas.render(gfx, ctx, mx, my, state.tabColor);
             RecipeMapKey selected = mapCanvas.selected();
-            BloodStructureRecipe recipe = selected == null ? null : mapRecipes.get(selected.id());
+            CraftingMapRecipe recipe = selected == null ? null : mapRecipes.get(selected.id());
             if (selected != null) {
                 if (!state.craftingDragging) state.craftingRotationAngle += partial * 0.4f;
                 CraftingTabView.drawMapInspector(gfx, ctx, state, recipe, mapCanvas.inspectorLayout(ctx), mx, my);
@@ -128,8 +144,9 @@ public class CraftingTabController implements IProgressTab {
 			if (btn == 1 && net.minecraft.client.gui.screens.Screen.hasShiftDown()) {
 				RecipeMapEntry entry = mapCanvas.entryAt(ctx, mx, my);
 				if (entry != null && entry.key().kind() == RecipeMapEntry.Kind.CRAFTING) {
-					PacketHandler.sendToServer(new ImprintMnemonicBlueprintPacket(new MnemonicBlueprintTarget(
-							MnemonicBlueprintTarget.Type.BLOOD_STRUCTURE, entry.id())));
+					CraftingMapRecipe recipe = mapRecipes.get(entry.id());
+					PacketHandler.sendToServer(new ImprintMnemonicBlueprintPacket(recipe != null ? recipe.blueprintTarget()
+							: new MnemonicBlueprintTarget(MnemonicBlueprintTarget.Type.BLOOD_STRUCTURE, entry.id())));
 					return true;
 				}
 			}

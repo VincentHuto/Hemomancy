@@ -3,6 +3,7 @@
   "id": "hemomancy:cardinal_rite/enduring_pattern",
   "bloodCost": 0,
   "riteType": "greater",
+  "purpose": "making",
   "required_degree": 7,
   "rankup": false,
   "riteName": "Rite of the Enduring Pattern",

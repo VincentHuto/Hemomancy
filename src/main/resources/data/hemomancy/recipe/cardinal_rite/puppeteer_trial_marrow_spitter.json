@@ -2,6 +2,7 @@
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 750,
   "riteType": "lesser",
+  "purpose": "world",
   "required_degree": 3,
   "riteName": "Marrow Spitter Ordeal",
   "riteDescription": "Bind the defeated Marrow Spitter shape to an attuned Marionette Crossbar.",

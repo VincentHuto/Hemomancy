@@ -2,10 +2,11 @@
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 0,
   "riteType": "lesser",
+  "purpose": "self",
   "required_degree": 4,
   "riteName": "Rite of Hematic Fortification",
   "riteDescription": "Permanently reduces vascular and manipulation strain by 15%.",
-  "floor": "hemomancy:dominion_lesser",
+  "floor": "hemomancy:threshold_lesser",
   "brazier_signature": [
     {
       "ingredient": {

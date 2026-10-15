@@ -2,6 +2,7 @@
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 1100,
   "riteType": "lesser",
+  "purpose": "world",
   "required_degree": 4,
   "riteName": "Gorebound Hulk Ordeal",
   "riteDescription": "Bind the defeated Gorebound Hulk shape to an attuned Marionette Crossbar.",

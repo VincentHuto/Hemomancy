@@ -1,0 +1,83 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "id": "hemomancy:cardinal_rite/working/enzymatic_scriptorium",
+  "bloodCost": 0,
+  "riteType": "greater",
+  "purpose": "making",
+  "required_degree": 3,
+  "rankup": false,
+  "riteName": "Working of the Enzymatic Scriptorium",
+  "riteDescription": "Build the Enzymatic Scriptorium beside the Cardinal Focus, feed it, and let the Working floor take it.",
+  "floor": "hemomancy:working_greater",
+  "medium": {
+    "item": "hemomancy:ferric_binder"
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "hemomancy:enzyme_primer"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:blood_crystal_shard"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:lapis_block"
+      },
+      "count": 1
+    }
+  ],
+  "subject": {
+    "pattern": [
+      [
+        "GTG"
+      ],
+      [
+        "TET"
+      ],
+      [
+        "GTG"
+      ]
+    ],
+    "key": {
+      "G": {
+        "block": "hemomancy:sanguine_glass"
+      },
+      "T": {
+        "block": "hemomancy:hematic_iron_block"
+      },
+      "E": {
+        "block": "minecraft:enchanting_table"
+      }
+    },
+    "feed": 500
+  },
+  "result": {
+    "id": "hemomancy:enzymatic_scriptorium"
+  },
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "fragile_offsets": [],
+    "target_duration_ticks": 600,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry",
+    "culmination": "forging"
+  }
+}

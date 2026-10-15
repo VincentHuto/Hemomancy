@@ -1,0 +1,74 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "id": "hemomancy:cardinal_rite/working/dendritic_distributor",
+  "bloodCost": 0,
+  "riteType": "greater",
+  "purpose": "making",
+  "required_degree": 5,
+  "rankup": false,
+  "riteName": "Working of the Dendritic Distributor",
+  "riteDescription": "Build the Dendritic Distributor beside the Cardinal Focus, feed it, and let the Working floor take it.",
+  "floor": "hemomancy:working_greater",
+  "medium": {
+    "item": "hemomancy:sanguine_formation"
+  },
+  "brazier_signature": [
+    {
+      "ingredient": {
+        "item": "hemomancy:tendon_line"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "hemomancy:ferric_binder"
+      },
+      "count": 1
+    }
+  ],
+  "subject": {
+    "pattern": [
+      [
+        " V "
+      ],
+      [
+        "VIV"
+      ],
+      [
+        " V "
+      ]
+    ],
+    "key": {
+      "V": {
+        "block": "minecraft:iron_bars"
+      },
+      "I": {
+        "block": "hemomancy:infested_venous_stone"
+      }
+    },
+    "feed": 500
+  },
+  "result": {
+    "id": "hemomancy:dendritic_distributor"
+  },
+  "ceremony": {
+    "profile": "simple",
+    "anchors": [],
+    "support_sockets": [],
+    "waves": [],
+    "guaranteed_waves": [],
+    "fragile_offsets": [],
+    "target_duration_ticks": 600,
+    "focus": "living_staff",
+    "required_helpers": 0,
+    "helper_roles": [],
+    "still_interval_ticks": 0,
+    "atmosphere": {
+      "fog": "faint",
+      "lightning": false,
+      "dome": false
+    },
+    "failure": "safe_retry",
+    "culmination": "forging"
+  }
+}
