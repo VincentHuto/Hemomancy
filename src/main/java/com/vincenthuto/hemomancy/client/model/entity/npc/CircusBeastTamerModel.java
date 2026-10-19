@@ -19,7 +19,7 @@ public final class CircusBeastTamerModel extends CircusFacultyModel {
 	private final ModelPart leftCoatTail;
 
 	public CircusBeastTamerModel(ModelPart root) {
-		super(root);
+		super(root, 2.0F);
 		whipCoil = body.getChild("whip_coil");
 		whipHandle = rightArm.getChild("whip_handle");
 		ModelPart segment = whipHandle;

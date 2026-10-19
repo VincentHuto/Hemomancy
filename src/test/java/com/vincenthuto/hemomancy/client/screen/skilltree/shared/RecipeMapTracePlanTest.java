@@ -90,12 +90,12 @@ final class RecipeMapTracePlanTest {
 		assertEquals(4, deep.rings().size());
 		assertEquals(1, surface.connections().size());
 		assertEquals(1, deep.connections().stream().filter(connection -> !connection.hubStub()).count());
-		assertEquals(List.of(72, 120, 170, 220, 270),
+		assertEquals(List.of(170, 220, 270, 320, 370),
 				surface.rings().stream().map(RecipeMapTracePlan.Ring::radius).toList());
-		assertEquals(List.of(170, 220, 270, 320),
+		assertEquals(List.of(220, 270, 320, 370),
 				deep.rings().stream().map(RecipeMapTracePlan.Ring::radius).toList());
-		assertEquals(270.0, spokeEndRadius(layout, surface.spokes().getFirst()), 1.0);
-		assertEquals(320.0, spokeEndRadius(layout, deep.spokes().getFirst()), 1.0);
+		assertEquals(370.0, spokeEndRadius(layout, surface.spokes().getFirst()), 1.0);
+		assertEquals(370.0, spokeEndRadius(layout, deep.spokes().getFirst()), 1.0);
 	}
 
 	@Test

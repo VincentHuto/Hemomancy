@@ -8,8 +8,12 @@ import net.minecraft.util.Mth;
 
 /** Shared rig behaviour for the faculty figures authored by tools/circus/build_faculty.py. */
 public abstract class CircusFacultyModel extends HumanoidModel<CircusFacultyEntity> {
-	protected CircusFacultyModel(ModelPart root) {
+	private final CircusDownedPose downedPose;
+
+	/** @param seatDepth how far the authored legs reach behind their pivots */
+	protected CircusFacultyModel(ModelPart root, float seatDepth) {
 		super(root);
+		downedPose = new CircusDownedPose(this, seatDepth, 0.0F);
 	}
 
 	@Override
@@ -23,11 +27,7 @@ public abstract class CircusFacultyModel extends HumanoidModel<CircusFacultyEnti
 		leftArm.z = -Mth.sin(body.yRot) * leftArm.getInitialPose().x;
 		ActState state = entity.getActState();
 		animateCostume(state, limbSwing, limbSwingAmount, ageInTicks);
-		if (state == ActState.DOWNED) {
-			body.xRot = 1.25F;
-			head.xRot = 0.55F;
-			rightArm.xRot = leftArm.xRot = -0.8F;
-		}
+		downedPose.apply(state == ActState.DOWNED, ageInTicks);
 	}
 
 	/** Poses the costume parts; called every frame after the humanoid pose, so reset what you move. */

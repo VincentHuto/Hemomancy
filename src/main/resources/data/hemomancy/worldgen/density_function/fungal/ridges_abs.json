@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:abs",
+    "argument": "hemomancy:fungal/ridges"
+  }
+}

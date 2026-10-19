@@ -27,12 +27,20 @@ public final class HemoDamageTypes {
 			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("phantasmal_echo"));
 	public static final ResourceKey<DamageType> VESPER_IMPALE =
 			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("vesper_impale"));
+	public static final ResourceKey<DamageType> VESPER_REND =
+			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("vesper_rend"));
 	public static final ResourceKey<DamageType> VESPER_SCUTE =
 			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("vesper_scute"));
 	public static final ResourceKey<DamageType> LIVING_TORCH_BREATH =
 			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("living_torch_breath"));
 	public static final ResourceKey<DamageType> LIVING_FLAIL_FREEZE =
 			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("living_flail_freeze"));
+	/** The Mycophant's claim on a held or siphoned player: never scaled by difficulty, so the nonlethal clamp holds. */
+	public static final ResourceKey<DamageType> MYCOPHANT_CLAIM =
+			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("mycophant_claim"));
+	/** A broken fusion's bonus wound: bypasses the hurt cooldown so it never swallows the blows around it. */
+	public static final ResourceKey<DamageType> MYCOPHANT_REFUSAL =
+			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("mycophant_refusal"));
 	public static final ResourceKey<DamageType> PALE_INTERCESSION =
 			ResourceKey.create(Registries.DAMAGE_TYPE, Hemomancy.rloc("pale_intercession"));
 	/** Endless Hour repayment: already-mitigated debt, so it bypasses armor, effects and enchantments but not totems. */
@@ -52,6 +60,12 @@ public final class HemoDamageTypes {
 	public static DamageSource vesperImpale(Level level, Entity boss) {
 		return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
 				.getHolderOrThrow(VESPER_IMPALE), boss, boss);
+	}
+
+	/** The burrowing mount's claws raking up through the floor; ignores armor. */
+	public static DamageSource vesperRend(Level level, Entity boss) {
+		return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
+				.getHolderOrThrow(VESPER_REND), boss, boss);
 	}
 
 	public static DamageSource vesperScute(Level level, Entity projectile, Entity boss) {
@@ -78,6 +92,16 @@ public final class HemoDamageTypes {
 	public static DamageSource endlessHourDebt(Level level) {
 		return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
 				.getHolderOrThrow(ENDLESS_HOUR_DEBT));
+	}
+
+	public static DamageSource mycophantClaim(Level level, Entity boss) {
+		return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
+				.getHolderOrThrow(MYCOPHANT_CLAIM), boss, boss);
+	}
+
+	public static DamageSource mycophantRefusal(Level level, Entity player) {
+		return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
+				.getHolderOrThrow(MYCOPHANT_REFUSAL), player, player);
 	}
 
 	public static DamageSource paleIntercession(Level level, Entity manifestation, Entity owner) {

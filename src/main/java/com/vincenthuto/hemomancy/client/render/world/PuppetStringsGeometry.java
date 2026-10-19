@@ -38,7 +38,7 @@ final class PuppetStringsGeometry {
         int seed = Math.floorMod(packet.entityId(), 113);
         int strings = PuppetStringsRules.strings(packet.count());
         if (packet.form() == Form.PUPPET_DESCEND) descend(p, v, camera, right, up, time, age, alpha, height, width, seed, strings);
-        else unspool(p, v, camera, right, up, time, age, alpha, height, width, seed, strings);
+        else unspool(p, v, camera, right, up, time, age, alpha, height, width, seed, packet.count() < 0 ? 0 : strings);
     }
 
     private static void descend(PoseStack p, VertexConsumer v, Vec3 camera, Vec3 right, Vec3 up, double time,

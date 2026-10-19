@@ -43,12 +43,6 @@
         "weight": 3,
         "minCount": 1,
         "maxCount": 1
-      },
-      {
-        "type": "minecraft:ghast",
-        "weight": 10,
-        "minCount": 1,
-        "maxCount": 1
       }
     ],
     "underground_water_creature": [],
@@ -76,7 +70,6 @@
       "hemomancy:morphic_pool",
       "hemomancy:ore_hematic_iron",
       "hemomancy:venous_ridge",
-      "hemomancy:mushroom/canopy_mushrooms_sparse",
       "hemomancy:infested_venous_stone_blob"
     ],
     [],

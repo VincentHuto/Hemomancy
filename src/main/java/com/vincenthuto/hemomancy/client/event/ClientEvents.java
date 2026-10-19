@@ -650,6 +650,8 @@ public class ClientEvents {
         CardinalRiteFogRenderer.clear();
 		VesperFightClientData.clear();
 		MycophantFightClientData.clear();
+		com.vincenthuto.hemomancy.client.boss.MycophantIntroClientState.INSTANCE.start(
+				com.vincenthuto.hemomancy.client.boss.MycophantIntroClientState.CLEAR, 0);
 		VesperFightFloorRenderer.clear();
 		ArborOfWillRenderer.clearCaches();
 		QliphothBloomRenderer.clearCaches();
@@ -753,6 +755,7 @@ public class ClientEvents {
 			CircusPerceptionOverlay.renderWorld(event.getPoseStack(), partialTick);
 			VesperFightFloorRenderer.renderFadingPerimeter(event);
 			VesperFightFloorRenderer.renderFissures(event.getPoseStack(), partialTick);
+			com.vincenthuto.hemomancy.client.render.world.chamberofwill.VesperBurrowFissureRenderer.render(event.getPoseStack(), partialTick);
             CardinalRiteBoundaryRenderer.render(event.getPoseStack(), partialTick);
             WorkingCraftSwallowRenderer.render(event.getPoseStack(), partialTick);
             com.vincenthuto.hemomancy.client.render.world.rite.CardinalRiteOfferingRenderer.render(event.getPoseStack(), partialTick);
@@ -1018,6 +1021,10 @@ public class ClientEvents {
             event.registerEntityRenderer(EntityInit.drudge.get(),DrudgeRenderer::new);
             event.registerEntityRenderer(EntityInit.hemorath.get(), HemorathRenderer::new);
             event.registerEntityRenderer(EntityInit.annetta_knowles.get(), AnnettaKnowlesRenderer::new);
+            event.registerEntityRenderer(EntityInit.annetta_pool.get(), com.vincenthuto.hemomancy.client.render.entity.boss.annetta.AnnettaPoolRenderer::new);
+            event.registerEntityRenderer(EntityInit.infected_bolt.get(), com.vincenthuto.hemomancy.client.render.entity.boss.annetta.InfectedBoltRenderer::new);
+            event.registerEntityRenderer(EntityInit.stained_lance.get(), com.vincenthuto.hemomancy.client.render.entity.boss.annetta.StainedLanceRenderer::new);
+            event.registerEntityRenderer(EntityInit.priestess_eruption.get(), com.vincenthuto.hemomancy.client.render.entity.boss.annetta.PriestessEruptionRenderer::new);
             event.registerEntityRenderer(EntityInit.stained_priestess.get(), StainedPriestessRenderer::new);
             event.registerEntityRenderer(EntityInit.latent_annetta_infection.get(), LatentAnnettaInfectionRenderer::new);
             event.registerEntityRenderer(EntityInit.putriciel.get(), PutricielRenderer::new);
@@ -1426,6 +1433,9 @@ public class ClientEvents {
 							graphics, graphics.guiWidth(), graphics.guiHeight()));
 			event.registerAboveAll(Hemomancy.rloc("chamber_visit"), (graphics, deltaTracker) ->
 					ChamberVisitOverlay.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight()));
+			event.registerAboveAll(Hemomancy.rloc("mycophant_waking"), (graphics, deltaTracker) ->
+					MycophantIntroClientEvents.renderOverlay(graphics, graphics.guiWidth(), graphics.guiHeight(),
+							deltaTracker.getGameTimeDeltaPartialTick(true)));
             event.registerAboveAll(Hemomancy.rloc("cardinal_rite"), (graphics, deltaTracker) -> {
                 if (CardinalRiteOverlay.instance != null) {
                     float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(true);

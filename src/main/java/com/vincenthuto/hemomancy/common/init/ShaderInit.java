@@ -57,6 +57,10 @@ public class ShaderInit {
 			DefaultVertexFormat.NEW_ENTITY, "HemoTime", "Progress", "BlockSeed", "WiggleAmp",
 			"WarpCenter", "FinalizeProgress", "MeltGroundY", "MeltHeight", "FillLine");
 
+	public static ShaderHolder VESPER_WOUND_DRAW = new ShaderHolder(Hemomancy.rloc("entity/vesper_wound_draw"),
+			DefaultVertexFormat.NEW_ENTITY, "HemoTime", "WoundCenter", "BodyYaw", "DrainProgress", "DrainFlash",
+			"DrawSeed");
+
 	public static ShaderHolder LOOM_ORB = new ShaderHolder(Hemomancy.rloc("world/loom_orb"),
 			DefaultVertexFormat.POSITION_COLOR, "HemoTime", "OrbSeed", "OrbCenter", "OrbRadius", "WritheStrength",
 			"ThreadScale", "GlowLayer");
@@ -66,6 +70,14 @@ public class ShaderInit {
 
 	public static ShaderHolder BLOOD_POOL = new ShaderHolder(Hemomancy.rloc("world/blood_pool"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "PoolSeed");
+
+	/** Annetta's spilled infected blood: the blood pool's surface with ichor veins through it and a ragged splash edge. */
+	public static ShaderHolder INFECTED_POOL = new ShaderHolder(Hemomancy.rloc("world/infected_pool"),
+			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "PoolSeed");
+
+	/** The Latent Infection's living skin: crawling, heart-pumped ichor veins and a wet rim over its flesh. */
+	public static ShaderHolder LATENT_INFECTION_SKIN = new ShaderHolder(Hemomancy.rloc("entity/latent_infection_skin"),
+			DefaultVertexFormat.NEW_ENTITY, "HemoTime");
 
 	public static ShaderHolder ENGRAM_SIGIL = new ShaderHolder(Hemomancy.rloc("world/engram_sigil"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "SigilSeed", "SigilLayer", "SigilRadius", "Unfurl",
@@ -196,9 +208,12 @@ public class ShaderInit {
         registerShader(event, LUX_GLINT.createInstance(provider));
         registerShader(event, BLOOD_STRUCTURE_WARP.createInstance(provider));
         registerShader(event, BLOOD_STRUCTURE_WARP_ENTITY.createInstance(provider));
+        registerShader(event, VESPER_WOUND_DRAW.createInstance(provider));
         registerShader(event, LOOM_ORB.createInstance(provider));
         registerShader(event, MYCELIAL_CRUCIBLE_BASIN.createInstance(provider));
         registerShader(event, BLOOD_POOL.createInstance(provider));
+        registerShader(event, INFECTED_POOL.createInstance(provider));
+        registerShader(event, LATENT_INFECTION_SKIN.createInstance(provider));
         registerShader(event, CARDINAL_FLOOR_MEMBRANE.createInstance(provider));
         registerShader(event, ENGRAM_SIGIL.createInstance(provider));
         registerShader(event, MNEMONIC_LOWTIDE_LAKE.createInstance(provider));

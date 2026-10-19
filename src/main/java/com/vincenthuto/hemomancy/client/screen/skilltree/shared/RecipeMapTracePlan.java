@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 record RecipeMapTracePlan(List<Ring> rings, List<Line> spokes, List<Connection> connections) {
 	private static final int SPOKE_INNER_RADIUS = 32;
@@ -19,6 +20,12 @@ record RecipeMapTracePlan(List<Ring> rings, List<Line> spokes, List<Connection> 
 
 	static RecipeMapTracePlan build(RecipeMapLayout.Result layout, List<RecipeMapLink> links,
 			Integer degreeFilter, String familyFilter, int accent, SkillTreeLayer layer) {
+		return buildFiltered(layout, links, degreeFilter,
+				family -> familyFilter == null || familyFilter.equals(family), accent, layer);
+	}
+
+	static RecipeMapTracePlan buildFiltered(RecipeMapLayout.Result layout, List<RecipeMapLink> links,
+			Integer degreeFilter, Predicate<String> familyFilter, int accent, SkillTreeLayer layer) {
 		List<Ring> rings = new ArrayList<>();
 		for (int degree = 0; degree <= 8; degree++) {
 			if (SkillTreeLayerRules.layerForDegree(degree) != layer) continue;
@@ -57,7 +64,7 @@ record RecipeMapTracePlan(List<Ring> rings, List<Line> spokes, List<Connection> 
 	 * would run through another deep node are left out.
 	 */
 	private static List<Connection> hubStubs(RecipeMapLayout.Result layout, List<RecipeMapLink> links,
-			Set<RecipeMapKey> linkedInLayer, Integer degreeFilter, String familyFilter, int accent) {
+			Set<RecipeMapKey> linkedInLayer, Integer degreeFilter, Predicate<String> familyFilter, int accent) {
 		Map<RecipeMapKey, RecipeMapLink.Kind> stubKinds = new LinkedHashMap<>();
 		for (RecipeMapLink link : links) {
 			RecipeMapLayout.NodeBounds from = layout.node(link.from());
@@ -81,7 +88,7 @@ record RecipeMapTracePlan(List<Ring> rings, List<Line> spokes, List<Connection> 
 	}
 
 	private static boolean pathIsClear(RecipeMapLayout.Result layout, RecipeMapLayout.NodeBounds child,
-			Integer degreeFilter, String familyFilter) {
+			Integer degreeFilter, Predicate<String> familyFilter) {
 		for (RecipeMapLayout.NodeBounds other : layout.nodes().values()) {
 			if (other == child || !included(other.entry(), degreeFilter, familyFilter, SkillTreeLayer.DEEP)) continue;
 			if (distanceToSegment(other.centerX(), other.centerY(), layout.centerX(), layout.centerY(),
@@ -109,12 +116,12 @@ record RecipeMapTracePlan(List<Ring> rings, List<Line> spokes, List<Connection> 
 				withAlpha(accent, 0x24));
 	}
 
-	private static boolean included(RecipeMapEntry entry, Integer degreeFilter, String familyFilter,
+	private static boolean included(RecipeMapEntry entry, Integer degreeFilter, Predicate<String> familyFilter,
 			SkillTreeLayer layer) {
 		return entry.visible()
 				&& layerOf(entry) == layer
 				&& (degreeFilter == null || entry.column() == degreeFilter)
-				&& (familyFilter == null || familyFilter.equals(entry.family()));
+				&& familyFilter.test(entry.family());
 	}
 
 	private static SkillTreeLayer layerOf(RecipeMapEntry entry) {

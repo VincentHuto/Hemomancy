@@ -47,6 +47,15 @@ public enum CardinalRitePurpose {
 		return null;
 	}
 
+	/** The purpose a standard floor style implies, or null for a special style that declares its own. */
+	public static CardinalRitePurpose ofFloorStyle(String style) {
+		if (style == null) return null;
+		for (CardinalRitePurpose purpose : values()) {
+			if (purpose.floorStyle.equals(style)) return purpose;
+		}
+		return null;
+	}
+
 	/** Floor ids are {@code <style>_<tier>}; the style is everything before the last underscore. */
 	public static String floorStyleOf(String floorPath) {
 		int split = floorPath.lastIndexOf('_');

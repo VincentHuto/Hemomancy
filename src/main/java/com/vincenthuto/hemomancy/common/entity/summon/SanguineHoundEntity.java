@@ -121,6 +121,11 @@ public class SanguineHoundEntity extends Wolf implements SyncedBoundSummon {
 		return entityData.get(DATA_CUR);
 	}
 
+	/** A Blood Cur loosed by the Evening Star's borrowed Hound attack: a trial cur that hunts his ordeal owner. */
+	public void configureEncounterCur(UUID ordealOwner) {
+		configureCur(null, true, ordealOwner);
+	}
+
 	private void configureCur(UUID ownerId, boolean trial, UUID trialCaster) {
 		entityData.set(DATA_CUR, true);
 		entityData.set(DATA_CUR_OWNER_UUID, Optional.ofNullable(ownerId));

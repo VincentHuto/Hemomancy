@@ -16,7 +16,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 /**
- * Shared upkeep for every timed rite zone: expiry, client sync and the spawn
+ * Shared upkeep for every timed rite zone and rite space: expiry, client sync and the spawn
  * precedence between Lethe Covenant and Sanguine Fervor. Zone-specific
  * effects stay in each zone's own events class.
  */
@@ -42,12 +42,16 @@ public final class RiteZoneEvents {
 		if (gameTime % SYNC_INTERVAL_TICKS == 0 && RiteZoneSync.consumeChanged()) {
 			RiteZoneSync.broadcast(level.getServer());
 		}
+		if (gameTime % SYNC_INTERVAL_TICKS == 0 && RiteSpaces.consumeChanged()) {
+			RiteSpaces.broadcast(level.getServer());
+		}
 	}
 
 	@SubscribeEvent
 	public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
 			RiteZoneSync.sendTo(player, player.level().dimension());
+			RiteSpaces.sendTo(player, player.level().dimension());
 		}
 	}
 
@@ -55,6 +59,7 @@ public final class RiteZoneEvents {
 	public static void onChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
 			RiteZoneSync.sendTo(player, event.getTo());
+			RiteSpaces.sendTo(player, event.getTo());
 		}
 	}
 
@@ -62,6 +67,7 @@ public final class RiteZoneEvents {
 	public static void onRespawn(PlayerEvent.PlayerRespawnEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
 			RiteZoneSync.sendTo(player, player.level().dimension());
+			RiteSpaces.sendTo(player, player.level().dimension());
 		}
 	}
 

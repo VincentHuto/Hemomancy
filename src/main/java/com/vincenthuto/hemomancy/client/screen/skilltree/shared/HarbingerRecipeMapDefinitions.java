@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.LegacyBloodStructureIds;
+import com.vincenthuto.hemomancy.common.rite.CardinalRitePurpose;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -10,11 +11,26 @@ import java.util.*;
 import java.util.function.Supplier;
 
 public final class HarbingerRecipeMapDefinitions {
-	public static final List<String> RITE_FAMILIES = List.of("Order", "Vessel", "Bloodline/Fane",
-			"Body/Will", "Domain/World", "Qliphoth/Forbidden", "Puppetry", "Trials", "Station Upgrades",
-			RecipeMapLayout.MISC_FAMILY);
-	public static final List<String> CRAFTING_FAMILIES = List.of("Foundations", "Apparatus",
-			"Ritual Infrastructure", "Constructs/Effigies", "Stations", RecipeMapLayout.MISC_FAMILY);
+	public static final String SIGIL_FAMILY = "Ichorian Sigils";
+	private static final Map<String, RecipeMapPurposeGroup> FAMILY_GROUPS = new LinkedHashMap<>();
+	private static final Map<CardinalRitePurpose, String> FLOOR_FAMILIES = new EnumMap<>(CardinalRitePurpose.class);
+
+	static {
+		families(RecipeMapPurposeGroup.FLOORLESS, "Floorless Crafts");
+		families(RecipeMapPurposeGroup.SELF, "Order", "Body/Will", "Threshold Floors");
+		families(RecipeMapPurposeGroup.WORLD, "Domain/World", "Fane", "Qliphoth", "Puppetry", "Trials", "Dominion Floors");
+		families(RecipeMapPurposeGroup.MAKING, "Vessel", "Apparatus", "Stations", "Ritual Infrastructure",
+				"Constructs/Effigies", "Station Upgrades", "Working Floors");
+		families(RecipeMapPurposeGroup.BOND, "Bloodline", "Ancestral", "Communion Floors");
+		families(RecipeMapPurposeGroup.REFERENCE, SIGIL_FAMILY, RecipeMapLayout.MISC_FAMILY);
+		FLOOR_FAMILIES.put(CardinalRitePurpose.SELF, "Threshold Floors");
+		FLOOR_FAMILIES.put(CardinalRitePurpose.WORLD, "Dominion Floors");
+		FLOOR_FAMILIES.put(CardinalRitePurpose.MAKING, "Working Floors");
+		FLOOR_FAMILIES.put(CardinalRitePurpose.BOND, "Communion Floors");
+	}
+
+	/** Every family of the Rites &amp; Crafts map, purpose group by purpose group. */
+	public static final List<String> FAMILIES = List.copyOf(FAMILY_GROUPS.keySet());
 
 	private static final Map<String, String> RITES = new LinkedHashMap<>();
 	private static final Map<String, String> CRAFTING = new LinkedHashMap<>();
@@ -29,25 +45,29 @@ public final class HarbingerRecipeMapDefinitions {
 		// <recipe-map-editor>
 		registerRites("Order", "initiate_rite", "sanguine_brotherhood",
 				"illuminatus_rite", "sanctified_rite", "archon_rite", "apotheos_rite");
-		registerRites("Vessel", "pallid_vessel_rite", "crimson_vessel_rite", "ashen_vessel_rite", "horn_of_culmination_rite");
-		registerRites("Bloodline/Fane", "bloodline_recall", "hematic_unbinding", "bloodline_founding", "scarlet_summons",
-				"founding_fane", "sanguine_dominion", "hematic_succession", "mnemonic_restoration", "covenant_vigil");
 		registerRites("Body/Will", "vascular_mending", "sanguine_attunement", "crimson_beacon", "hematic_fortification",
 				"eternal_covenant", "chamber_of_will");
-		registerRites("Domain/World", "rooted_vein", "hungering_earth", "exsanguination", "sanguine_fervor", "sanguine_eclipse", "pallid_shadow");
-		registerRites("Qliphoth/Forbidden", "ancestral_communion", "bloom_of_qliphoth");
+		registerRites("Domain/World", "rooted_vein", "hungering_earth", "sanguine_fervor", "sanguine_eclipse", "pallid_shadow");
+		registerRites("Fane", "founding_fane", "sanguine_dominion", "hematic_succession", "mnemonic_restoration");
+		registerRites("Qliphoth", "bloom_of_qliphoth");
 		registerRites("Puppetry", "puppeteer_trial_marrow_spitter", "puppeteer_trial_veinwing_vulture",
 				"puppeteer_trial_gorebound_hulk", "puppeteer_trial_mnemonist_puppet");
 		registerRites("Trials", "puppeteer_trial_cinder_bellows", "puppeteer_trial_sanguine_hound", "puppeteer_trial_scarlet_mummer");
+		registerRites("Vessel", "pallid_vessel_rite", "crimson_vessel_rite", "ashen_vessel_rite", "horn_of_culmination_rite",
+				"exsanguination");
 		registerRites("Station Upgrades", "first_condensation", "sanguine_athanor", "steady_separation", "second_fraction",
 				"true_groove", "enduring_pattern", "armature_consecration", "monolithic_armature",
 				"eightfold_script", "palimpsest", "ganglionic_weave", "cortical_weave");
+		registerRites("Bloodline", "bloodline_recall", "hematic_unbinding", "bloodline_founding", "scarlet_summons",
+				"covenant_vigil");
+		registerRites("Ancestral", "ancestral_communion");
 
-		registerCrafting("Foundations", "dried_gourd", "hematic_iron_block", "iron_brazier", "liber_sanguinum", "living_staff");
-		registerCrafting("Apparatus", "vial_centrifuge", "ghastly_alembic", "mnemonic_reliquary", "somatic_loom",
-				"sporitic_thurible", "morphling_incubator", "mycelial_lantern");
+		registerCrafting("Floorless Crafts", "dried_gourd", "hematic_iron_block", "iron_brazier", "liber_sanguinum",
+				"living_staff", "vial_centrifuge", "ghastly_alembic", "hematic_stake");
+		registerCrafting("Apparatus", "mnemonic_reliquary", "somatic_loom", "sporitic_thurible", "morphling_incubator",
+				"mycelial_lantern");
 		registerCrafting("Ritual Infrastructure", "runic_chisel_station", "visceral_mirror", "dendritic_distributor",
-				"hematic_stake", "sanguine_monolith", "covenant_throne");
+				"sanguine_monolith", "covenant_throne");
 		registerCrafting("Constructs/Effigies", "semi_sentient_construct", "mason_effigy", "mind_spike", "vacant_effigy",
 				"vascular_effigy");
 		registerCrafting("Stations", "enzymatic_scriptorium", "resonant_forge", "scarlet_vanity", "warp_chair",
@@ -189,10 +209,28 @@ public final class HarbingerRecipeMapDefinitions {
 	public static int craftingOrder(String path) { return orderWithinFamily(CRAFTING, LegacyBloodStructureIds.remapPath(path)); }
 	public static List<RecipeMapLink> riteLinks() { return List.copyOf(RITE_LINKS); }
 	public static List<RecipeMapLink> craftingLinks() { return List.copyOf(CRAFTING_LINKS); }
+	/** Rite and craft links together, for the merged map. */
+	public static List<RecipeMapLink> links() {
+		List<RecipeMapLink> links = new ArrayList<>(RITE_LINKS);
+		links.addAll(CRAFTING_LINKS);
+		return links;
+	}
+	/** The purpose group a family belongs to; unknown families count as reference. */
+	public static RecipeMapPurposeGroup group(String family) {
+		return FAMILY_GROUPS.getOrDefault(family, RecipeMapPurposeGroup.REFERENCE);
+	}
+	/** The floors family of a purpose: where its standard and special floors are listed. */
+	public static String floorFamily(CardinalRitePurpose purpose) {
+		return purpose == null ? RecipeMapLayout.MISC_FAMILY : FLOOR_FAMILIES.get(purpose);
+	}
 	public static Map<RecipeMapKey, RecipeMapLayout.AuthoredPosition> ritePositions() { return Map.copyOf(RITE_POSITIONS); }
 	public static Map<RecipeMapKey, RecipeMapLayout.AuthoredPosition> craftingPositions() { return Map.copyOf(CRAFTING_POSITIONS); }
 	public static ItemStack riteIcon(String path, ItemStack fallback) { return resolveIcon(RITE_ICONS.get(riteKey(path)), fallback); }
 	public static ItemStack craftingIcon(String path, ItemStack fallback) { return resolveIcon(CRAFTING_ICONS.get(craftingKey(path)), fallback); }
+
+	private static void families(RecipeMapPurposeGroup group, String... families) {
+		for (String family : families) FAMILY_GROUPS.put(family, group);
+	}
 
 	private static void registerRites(String family, String... paths) {
 		for (String path : paths) RITES.put("cardinal_rite/" + path, family);

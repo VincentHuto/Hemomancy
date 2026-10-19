@@ -12,7 +12,7 @@
   "result": {
     "id": "hemomancy:sanguine_quintessence"
   },
-  "floor": "hemomancy:threshold_grand",
+  "floor": "hemomancy:apotheos_grand",
   "required_structure": {
     "pattern": [
       [

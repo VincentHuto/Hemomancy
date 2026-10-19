@@ -20,7 +20,10 @@ final class VesperCombatImplementationSourceTest {
 		assertTrue(crowned.contains("VesperCombatRules.healthFloor"));
 		assertTrue(crowned.contains("breakAnchor"));
 		assertTrue(crowned.contains("tickVesperTransformation"));
-		assertTrue(crowned.contains("setNoAi(true)"));
+		assertFalse(crowned.contains("setNoAi(true)"));
+		assertTrue(crowned.contains("new VesperMountController(this)"));
+		assertFalse(crowned.contains("new MeleeAttackGoal"));
+		assertFalse(crowned.contains("new MoveTowardsTargetGoal"));
 		assertTrue(crowned.contains("refreshAnchorDimensions"));
 		assertTrue(crowned.contains("part.xOld = part.getX()"));
 		assertTrue(crowned.contains("part.yOld = part.getY()"));
@@ -33,40 +36,34 @@ final class VesperCombatImplementationSourceTest {
 	}
 
 	@Test
-	void vulnerableAnchorStateIsSynchronizedLockedRenderedAndOnlyFeedbacksAcceptedHits() throws Exception {
+	void woundsOpenAtTheirSocketsAndDrainThroughBloodAbsorptionWithoutFreezingTheMount() throws Exception {
 		String crowned = read("common/entity/boss/endgame/VesperTheCrownedRefusalEntity.java");
 		String anchor = read("common/entity/boss/endgame/VesperThroneAnchorPart.java");
 		String actions = read("common/entity/boss/endgame/EndgameBossActions.java");
-		String model = read("client/model/entity/boss/endgame/VesperTheCrownedRefusalModel.java");
+		String wound = read("common/entity/boss/endgame/VesperWound.java");
+		String absorb = read("common/entity/boss/endgame/VesperBloodAbsorptionInteractions.java");
 		String renderer = read("client/render/entity/boss/endgame/VesperTheCrownedRefusalRenderer.java");
-		String layer = read("client/render/layer/mob/endgame/VesperThroneAnchorLayer.java");
-		String conduit = read("client/render/tile/harbinger/functional/SanguineConduitBlockRenderer.java");
+		String layer = read("client/render/layer/mob/endgame/VesperWoundLayer.java");
 
-		assertTrue(crowned.contains("DATA_VULNERABLE_YAW"));
-		assertTrue(crowned.contains("DATA_ACTIVE_ANCHOR_DAMAGE"));
+		assertFalse(crowned.contains("DATA_VULNERABLE_YAW"), "the wounded mount fights back instead of locking");
+		assertFalse(crowned.contains("enforceVulnerableYawLock"));
+		assertTrue(crowned.contains("DATA_WOUND_DRAINED"));
 		assertTrue(crowned.contains("DATA_ANCHOR_FLASH_TICKS"));
-		assertTrue(crowned.contains("enforceVulnerableYawLock()"));
-		for (String field : new String[] { "setYRot(yaw)", "yRotO = yaw", "setYBodyRot(yaw)",
-				"yBodyRotO = yaw", "setYHeadRot(yaw)", "yHeadRotO = yaw" }) {
-			assertTrue(crowned.contains(field), "missing vulnerable rotation lock field: " + field);
-		}
-		assertTrue(crowned.contains("goalSelector.disableControlFlag(Goal.Flag.LOOK)"));
-		assertTrue(crowned.contains("getLookControl().setLookAt"));
-		assertTrue(crowned.contains("getNavigation().stop()"));
-		assertTrue(crowned.contains("VulnerableYaw"));
-		assertTrue(crowned.contains("ActiveAnchorDamage"));
-		assertTrue(crowned.contains("VesperCombatRules.anchorCenter"));
+		assertTrue(crowned.contains("VesperWoundRules.load(tag)"));
+		assertTrue(crowned.contains("VesperWoundRules.worldOffset"));
+		assertTrue(crowned.contains("VesperWound.tickGuard"));
+		assertTrue(crowned.contains("VesperWoundRules.tear(wound)"));
+		assertTrue(crowned.contains("volume.fill("));
 		assertTrue(anchor.contains("ANCHOR_HITBOX_WIDTH"));
 		assertTrue(anchor.contains("ANCHOR_HITBOX_HEIGHT"));
 		assertTrue(actions.contains("hitThroneAnchor"));
-		assertTrue(actions.contains("SoundEvents.IRON_GOLEM_DAMAGE"));
-		assertTrue(actions.contains("VesperVisualEffects.bloodCells"));
-		assertTrue(actions.contains("VesperVisualEffects.darkGlow"));
+		assertTrue(actions.contains("openThroneWound"));
 		assertTrue(actions.contains("VesperVisualEffects.lightning"));
-		assertTrue(renderer.contains("new VesperThroneAnchorLayer(this)"));
+		assertTrue(wound.contains("HemoParticleData.absorbedBloodCell"));
+		assertTrue(absorb.contains("drainWound(player, progressPerTick)"));
+		assertTrue(renderer.contains("new VesperWoundLayer(this)"));
 		assertTrue(layer.contains("SanguineConduitCoreGeometry.render"));
-		assertTrue(conduit.contains("SanguineConduitCoreGeometry.render"));
-		assertTrue(model.contains("if (entity.getActiveAnchor() < 0)"));
+		assertTrue(layer.contains("translateToSocket"));
 	}
 
 	@Test
@@ -130,7 +127,7 @@ final class VesperCombatImplementationSourceTest {
 		assertTrue(combat.contains("case SICKLE_HOOK"));
 		assertTrue(combat.contains("fireSickleHook"));
 		assertTrue(combat.contains("LivingSickleHookEntity"));
-		assertTrue(model.contains("case SICKLE_HOOK"));
+		assertTrue(read("client/model/entity/boss/endgame/VesperEveningStarMoves.java").contains("case SICKLE_HOOK"));
 		assertTrue(layer.contains("isSickleHookReleased"));
 	}
 
@@ -154,7 +151,7 @@ final class VesperCombatImplementationSourceTest {
 	void encounterPuppetsHaveBacklashNoRewardsAndAttemptCleanup() throws Exception {
 		String events = read("common/entity/boss/endgame/VesperEncounterPuppetEvents.java");
 		String ordeal = read("common/worldgen/VesperOrdealManager.java");
-		String actions = read("common/entity/boss/endgame/EndgameBossActions.java");
+		String actions = read("common/entity/boss/endgame/VesperMountMoves.java");
 		String threads = read("client/render/world/PuppeteerThreadRenderer.java");
 		assertTrue(events.contains("applyPuppetBacklash"));
 		assertTrue(events.contains("event.setCanceled(true)"));
@@ -162,17 +159,23 @@ final class VesperCombatImplementationSourceTest {
 		assertTrue(ordeal.contains("HemomancyVesperEncounterPuppet"));
 		assertTrue(ordeal.contains("VesperPhaseTwoCombat.cancel"));
 		assertTrue(actions.contains("VESPER_PUPPET_MUSTER_SIZE = 3"));
+		assertTrue(actions.contains("PuppetStrings.descend(puppet)"));
+		assertTrue(actions.contains("BoundSummonBehavior.applyTrialStats"));
+		assertTrue(actions.contains("boss.roster().nextMuster"));
+		assertTrue(ordeal.contains("to.setInheritedPuppets(from.roster().survivors())"));
+		assertTrue(read("common/entity/boss/endgame/EndgameBossActions.java").contains("PuppetStrings::unspool"));
+		assertTrue(events.contains("crowned.strikePuppet"));
 		assertTrue(actions.contains("bound.hemomancy$setOwnerUUID(boss.getUUID())"));
 		assertTrue(threads.contains("VesperTheCrownedRefusalEntity"));
 	}
 
 	@Test
-	void vulnerablePoseStillLowersVesperTowardTheExposedWeakpoint() throws Exception {
-		String model = read("client/model/entity/boss/endgame/VesperTheCrownedRefusalModel.java");
-		String animations = read("client/model/entity/boss/endgame/VesperTheCrownedRefusalAnimations.java");
-		assertTrue(model.contains("VesperTheCrownedRefusalAnimations.VULNERABLE"));
-		assertTrue(animations.contains("KeyframeAnimations.posVec(0.0F, -7.0F, 0.0F)"));
-		assertTrue(animations.contains("KeyframeAnimations.degreeVec(18.33465F, 0.0F, 0.0F)"));
+	void woundedMountSagsAndTheRiderRecoils() throws Exception {
+		String rider = read("client/model/entity/boss/endgame/VesperTheCrownedRefusalModel.java");
+		String mount = read("client/model/entity/boss/endgame/VesperMountModel.java");
+		assertTrue(rider.contains("woundRecoil(motion.riderRecoil(), ageInTicks)"));
+		assertTrue(mount.contains("idle(ageInTicks, entity.getActiveAnchor() >= 0)"));
+		assertTrue(mount.contains("this.body.y += 3.0F"));
 	}
 
 	@Test
@@ -189,12 +192,11 @@ final class VesperCombatImplementationSourceTest {
 		assertTrue(crowned.contains("VesperPhaseTransitionRules.isComplete(transition)"));
 		assertTrue(crowned.contains("dismountLandingPosition()"));
 		assertTrue(actions.contains("HemoParticleData.absorbedBloodCell(ParticleColor.BLOOD)"));
-		assertTrue(model.contains("VesperPhaseTransitionRules.dismountProgress"));
-		assertTrue(model.contains("VesperPhaseTransitionRules.collapseProgress"));
-		assertTrue(model.contains("this.head.zRot += 0.42F * collapse"));
-		assertTrue(model.contains("this.leftArm.xRot"));
+		String mount = read("client/model/entity/boss/endgame/VesperMountModel.java");
+		assertTrue(model.contains("VesperTheCrownedRefusalAnimations.TRANSFORMATION"));
 		assertTrue(model.contains("renderVesperOnly"));
-		assertTrue(model.contains("renderMountAssembly"));
+		assertTrue(mount.contains("VesperPhaseTransitionRules.absorptionProgress"));
+		assertTrue(mount.contains("renderMountAssembly"));
 		assertTrue(renderer.contains("new VesperMountAbsorptionLayer(this)"));
 		assertTrue(layer.contains("cardinalStaffBloodMelt"));
 	}
@@ -207,7 +209,8 @@ final class VesperCombatImplementationSourceTest {
 		if (!Files.exists(layerPath)) return;
 		String layer = read("client/render/layer/mob/endgame/VesperCrownedWeaponLayer.java");
 
-		assertTrue(renderer.contains("new VesperCrownedWeaponLayer(this)"));
+		assertTrue(renderer.contains("new VesperCrownedWeaponLayer(this, rider)"));
+		assertTrue(renderer.contains("new VesperRiderLayer(this, context.getModelSet())"));
 		assertTrue(layer.contains("ItemInit.living_staff"));
 		assertTrue(layer.contains("translateToRiderWeapon"));
 		assertTrue(layer.contains("ItemDisplayContext.THIRD_PERSON_RIGHT_HAND"));
@@ -315,6 +318,60 @@ final class VesperCombatImplementationSourceTest {
 		assertTrue(weapon.contains("weaponDissolveProgress"));
 		assertTrue(weapon.contains("hermitFarewellDissolve"));
 		assertTrue(evening.contains("isDefeatAnimationComplete"));
+	}
+
+	@Test
+	void reviewFixesKeepRupturesTethersChipsAndPuppetsHonest() throws Exception {
+		String crowned = read("common/entity/boss/endgame/VesperTheCrownedRefusalEntity.java");
+		String actions = read("common/entity/boss/endgame/EndgameBossActions.java");
+		String effects = read("common/entity/boss/endgame/VesperVisualEffects.java");
+		String burrow = read("common/entity/boss/endgame/VesperBurrow.java");
+		String combat = read("common/entity/boss/endgame/VesperPhaseTwoCombat.java");
+		String evening = read("common/entity/boss/endgame/VesperTheEveningStarEntity.java");
+		String controller = read("common/entity/boss/endgame/VesperEveningStarController.java");
+		String puppets = read("common/entity/boss/endgame/VesperEncounterPuppetEvents.java");
+
+		// A rupture or a tear bursts at the wound that broke, not at socket 0 after the anchor is cleared.
+		assertTrue(crowned.contains("public Vec3 woundCenter(int anchor)"));
+		assertTrue(actions.contains("exposedAnchorCenter(boss, anchor)"));
+		assertFalse(actions.contains("return boss.woundCenter();"));
+		// Torn floor is drawn in the authored suite, never vanilla block debris.
+		assertFalse(effects.contains("BlockParticleOption"));
+		assertFalse(effects.contains("ParticleTypes.BLOCK"));
+		// Summoned Vespers surface on the actual ground at the strike, not at the recorded spawn height.
+		assertTrue(burrow.contains("EndgameBossActions.findGround"));
+		// A cancelled move lets go of the hook, and the string it belonged to ends with it.
+		String cancel = combat.substring(combat.indexOf("private static void cancelInternal"),
+				combat.indexOf("private static void cleanupArenaEffects"));
+		assertTrue(cancel.contains("boss.releaseHook()"));
+		assertTrue(controller.contains("endSickleString()"));
+		String hooked = evening.substring(evening.indexOf("LivingEntity hookedTarget()"),
+				evening.indexOf("float reelDamage()"));
+		assertTrue(hooked.contains("isSpectator()") && hooked.contains("isCreative()"));
+		assertTrue(combat.contains("VesperSickleRules.holdsTether(action)"));
+		assertTrue(combat.contains("VesperSickleRules.landed(action"));
+		// His puppets hunt the ordeal owner, stay in the arena, and unspool if their conductor is gone.
+		assertTrue(puppets.contains("EntityTickEvent.Post"));
+		assertTrue(puppets.contains("VesperPuppetLeashRules.order("));
+		assertTrue(puppets.contains("VesperPuppetLeashRules.prefersOwner("));
+		// Draining a wound feeds an opted-in drainer and their blood bar shows it.
+		String drain = crowned.substring(crowned.indexOf("public float drainWound("),
+				crowned.indexOf("private void updateWound("));
+		assertTrue(drain.contains("volume.isActive()"));
+		assertTrue(drain.contains("new BloodVolumeServerPacket(volume)"));
+	}
+
+	@Test
+	void recallCastsVesperStringsFromTheCrossbarAndHaulsOnlyWhatTheyHooked() throws Exception {
+		String moves = read("common/entity/boss/endgame/VesperMountMoves.java");
+		String renderer = read("client/render/world/ManipulationVisualRenderer.java");
+		String strings = read("client/render/world/PuppetStringsGeometry.java");
+		assertTrue(moves.contains("ManipulationVisuals.Form.VESPER_RECALL"));
+		assertTrue(moves.contains("VesperRecallRules.HAUL_TICK"));
+		assertTrue(moves.contains("PuppetStrings.unspool(puppet, !hooked)"), "his strings replace the puppet's own");
+		assertTrue(renderer.contains("VesperRecallGeometry.draw"));
+		assertTrue(renderer.contains("VesperRecallRules.crossbarOffset"), "strings follow the live Crossbar");
+		assertTrue(strings.contains("packet.count() < 0 ? 0 : strings"));
 	}
 
 	private static String read(String relative) throws Exception {

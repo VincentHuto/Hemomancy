@@ -408,7 +408,9 @@ public final class FloorMesh {
 		return (float) Math.max(0.0D, Math.min(1.0D, (time - builtAt) / TRANSITION_STEP_TICKS));
 	}
 
-	private static float[] mix(float[] a, float[] b, float t) {
+	static float[] mix(float[] a, float[] b, float t) {
+		// The previous build only fills samples whose ground held; an ungrounded one has nothing to blend from.
+		if (a == null || a.length != b.length) return b;
 		float[] out = new float[b.length];
 		for (int i = 0; i < b.length; i++) out[i] = a[i] + (b[i] - a[i]) * t;
 		return out;

@@ -101,6 +101,11 @@ public final class HemoRenderTypes {
 					.setLightmapState(RenderType.NO_LIGHTMAP)
 					.createCompositeState(false));
 
+	/** The Abocipher font atlas, which the Dominion floor's seal spells its runes from. */
+	public static final ResourceLocation ABOCIPHER_FONT_TEXTURE = Hemomancy.rloc("textures/font/abocipher.png");
+	/** The engram runes packed a to z (tools/assets/build_engram_atlas.py), filtered smoothly for the Communion floor's inscriptions. */
+	public static final ResourceLocation ENGRAM_ATLAS_TEXTURE = Hemomancy.rloc("textures/world/rite_floor/engram_atlas.png");
+
 	public static final ResourceLocation MNEMONIC_LOWTIDE_PARCHMENT_TEXTURE = Hemomancy.rloc(
 			"textures/world/lowtide_parchment/parchment_atlas.png");
 
@@ -384,6 +389,42 @@ public final class HemoRenderTypes {
 						.createCompositeState(false));
 	}
 
+	/** Vesper's open-wound tell: an additive blood skin whose vessels beat toward the wound (camera-relative centre). */
+	public static RenderType vesperWoundDraw(ResourceLocation texture, float gameTime, float woundX, float woundY,
+			float woundZ, float bodyYawRadians, float drainProgress, float flash, float seed) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"vesper_wound_draw_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.VESPER_WOUND_DRAW.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "WoundCenter", woundX, woundY, woundZ);
+					setUniform(shader, "BodyYaw", bodyYawRadians);
+					setUniform(shader, "DrainProgress", drainProgress);
+					setUniform(shader, "DrainFlash", flash);
+					setUniform(shader, "DrawSeed", seed);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.VESPER_WOUND_DRAW.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("vesper_wound_draw",
+				DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 1536, true, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.VESPER_WOUND_DRAW.getShard())
+						.setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.LIGHTNING_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.setOverlayState(RenderType.NO_OVERLAY)
+						.createCompositeState(false));
+	}
+
 	/** No fill line: the whole structure shell shows. */
 	public static final float NO_FILL_LINE = 100000.0F;
 
@@ -466,6 +507,59 @@ public final class HemoRenderTypes {
 	 * A pool of blood standing in a vessel (the Iron Brazier's bowl, the Consecrated Bloodwell's basin). Vertex red is a
 	 * jet falling into it, green the heat simmering it, blue a fire over it, and alpha its opacity.
 	 */
+	/** The Latent Infection's skin shader, drawn over its model; samples the skin texture to stay on its flesh. */
+	public static RenderType latentInfectionSkin(ResourceLocation skin, float gameTime) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"latent_infection_skin_uniforms",
+				() -> setUniform(ShaderInit.LATENT_INFECTION_SKIN.getInstance().get(), "HemoTime", gameTime),
+				() -> {
+					ShaderInstance shader = ShaderInit.LATENT_INFECTION_SKIN.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("latent_infection_skin",
+				DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 1536, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.LATENT_INFECTION_SKIN.getShard())
+						.setTextureState(new RenderStateShard.TextureStateShard(skin, false, false))
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
+	/** Spilled infected blood on a floor, in the infected pool shader; same vertex layout as {@link #bloodPool}. */
+	public static RenderType infectedPool(float gameTime, float poolSeed) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"infected_pool_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.INFECTED_POOL.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "PoolSeed", poolSeed);
+				},
+				() -> {
+					ShaderInstance shader = ShaderInit.INFECTED_POOL.getInstance().get();
+					if (shader instanceof ExtendedShaderInstance extended) {
+						extended.setUniformDefaults();
+					}
+				});
+		return RenderType.create("infected_pool",
+				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 256, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.INFECTED_POOL.getShard())
+						.setTexturingState(uniforms)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.NO_LIGHTMAP)
+						.createCompositeState(false));
+	}
+
 	public static RenderType bloodPool(float gameTime, float poolSeed) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
 				"blood_pool_uniforms",
@@ -660,6 +754,10 @@ public final class HemoRenderTypes {
 				DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 8192, false, false,
 				RenderType.CompositeState.builder()
 						.setShaderState(ShaderInit.CARDINAL_FLOOR_MEMBRANE.getShard())
+						.setTextureState(RenderStateShard.MultiTextureStateShard.builder()
+								.add(ABOCIPHER_FONT_TEXTURE, false, false)
+								.add(ENGRAM_ATLAS_TEXTURE, true, false)
+								.build())
 						.setTexturingState(uniforms)
 						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
 						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)

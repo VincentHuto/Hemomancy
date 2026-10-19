@@ -36,13 +36,15 @@ public final class CraftingMapRecipe {
 	private final boolean unstained;
 	private final int requiredDegree;
 	private final boolean structure;
+	private final boolean showsStructure;
 	private final Component name;
 	private final Component description;
 	private final double riteCost;
 
 	private CraftingMapRecipe(ResourceLocation id, ItemStack result, MultiblockPattern pattern, double bloodCost,
 			ItemStack catalyst, Block hitBlock, List<Offering> offerings, ResourceLocation floorId, boolean unstained,
-			int requiredDegree, boolean structure, Component name, Component description, double riteCost) {
+			int requiredDegree, boolean structure, boolean showsStructure, Component name, Component description,
+			double riteCost) {
 		this.id = id;
 		this.result = result;
 		this.pattern = pattern;
@@ -54,6 +56,7 @@ public final class CraftingMapRecipe {
 		this.unstained = unstained;
 		this.requiredDegree = requiredDegree;
 		this.structure = structure;
+		this.showsStructure = showsStructure;
 		this.name = name;
 		this.description = description;
 		this.riteCost = riteCost;
@@ -62,18 +65,21 @@ public final class CraftingMapRecipe {
 	public static CraftingMapRecipe of(BloodStructureRecipe recipe) {
 		return new CraftingMapRecipe(recipe.getId(), recipe.getResult(), recipe.getPattern(), recipe.getBloodCost(),
 				recipe.getHeldItem(), recipe.getHitBlock(), List.of(), null, recipe.isUnstained(),
-				RecipeDegreeGates.getRequiredDegree(recipe), true, recipe.getResult().getHoverName(), null, 0);
+				RecipeDegreeGates.getRequiredDegree(recipe), true, true, recipe.getResult().getHoverName(), null, 0);
 	}
 
 	public static CraftingMapRecipe of(CardinalRiteRecipe craft) {
 		ItemStack[] media = craft.getMedium().getItems();
-		MultiblockPattern shown = craft.getSubject() != null || craft.getFloorId() == null ? craft.getSubject()
+		MultiblockPattern shown = craft.getSubject() != null ? craft.getSubject()
+				: craft.getRequiredStructure() != null ? craft.getRequiredStructure()
+				: craft.getFloorId() == null ? null
 				: CardinalRiteFloorRegistry.get(craft.getFloorId()).map(CardinalRiteFloorDefinition::pattern).orElse(null);
 		return new CraftingMapRecipe(craft.getId(), craft.getResult(), shown, craft.getSubjectFeedMl(),
 				media.length == 0 ? ItemStack.EMPTY : media[0], null,
 				craft.getBrazierSignature().stream()
 						.map(requirement -> new Offering(requirement.ingredient(), requirement.count())).toList(),
 				craft.getFloorId(), false, RecipeDegreeGates.getRequiredDegree(craft), craft.isWorkingCraft(),
+				craft.getSubject() != null || craft.getRequiredStructure() != null,
 				craft.displayName(), craft.displayDescription(), craft.getBloodCost());
 	}
 
@@ -85,7 +91,7 @@ public final class CraftingMapRecipe {
 		return result;
 	}
 
-	/** The structure to build (floorless pattern or Working subject), or a structureless rite's Working floor. */
+	/** The structure to build (floorless pattern, Working subject or a rite's required structure), else the rite's floor. */
 	public MultiblockPattern getPattern() {
 		return pattern;
 	}
@@ -122,11 +128,23 @@ public final class CraftingMapRecipe {
 		return floorId;
 	}
 
+	/** "greater Working floor", from the minimum floor's tier. */
+	public String floorLabel() {
+		String path = floorId == null ? "" : floorId.getPath();
+		String tier = path.substring(path.lastIndexOf('_') + 1);
+		return tier.isEmpty() ? "Working floor" : tier + " Working floor";
+	}
+
 	public boolean isWorking() {
 		return floorId != null;
 	}
 
 	/** Whether there is a structure to build and feed; false for a making rite performed on its floor alone. */
+	/** Whether the preview is something built on or beside the floor, rather than the floor itself. */
+	public boolean showsStructure() {
+		return showsStructure;
+	}
+
 	public boolean hasStructure() {
 		return structure;
 	}

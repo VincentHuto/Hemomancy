@@ -21,11 +21,17 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 
 public final class FungalGardenTravelHelper {
 	public static final double TRAVEL_BLOOD_COST = 500.0;
 	public static final int MIN_DEGREE = 7;
+	private static final int GROUND_CEILING_Y = 160;
+	private static final int SKY_GAP = 16;
+	private static final int FLOATING_FLOOR_Y = 72;
+	private static final int GROUND_SEARCH_RADIUS = 64;
+	private static final int GROUND_SEARCH_STEP = 16;
 	public static final int TRAVEL_COOLDOWN = 100;
 
 	public static final String RETURN_X = "hemomancy:fungal_return_x";
@@ -219,6 +225,17 @@ public final class FungalGardenTravelHelper {
 	}
 
 	public static BlockPos findSafePos(ServerLevel destination, int x, int z) {
+		// Prefer dry ground under the floating islands and spire tips, searching outward off the sea.
+		for (int radius = 0; radius <= GROUND_SEARCH_RADIUS; radius += GROUND_SEARCH_STEP) {
+			int samples = radius == 0 ? 1 : 8;
+			for (int i = 0; i < samples; i++) {
+				double angle = Math.PI * 2 * i / samples;
+				BlockPos ground = findGround(destination, x + (int) Math.round(Math.cos(angle) * radius),
+						z + (int) Math.round(Math.sin(angle) * radius));
+				if (ground != null) return ground;
+			}
+		}
+
 		destination.getChunk(x >> 4, z >> 4);
 
 		int y = destination.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
@@ -244,5 +261,45 @@ public final class FungalGardenTravelHelper {
 		}
 
 		return new BlockPos(x, 64, z);
+	}
+
+	private static BlockPos findGround(ServerLevel level, int x, int z) {
+		level.getChunk(x >> 4, z >> 4);
+		int top = Math.min(level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z), GROUND_CEILING_Y);
+		BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos(x, top, z);
+		for (int y = top; y > level.getMinBuildHeight() + 1; y--) {
+			cursor.set(x, y, z);
+			if (!level.getBlockState(cursor).getFluidState().isEmpty()) return null;
+			if (!standable(level, cursor)) continue;
+			// Floating islands hang over open air: look for the ground beneath them.
+			if (y > FLOATING_FLOOR_Y && hangsOverSky(level, x, y - 1, z)) continue;
+			// The first real surface decides; a needle-thin spire tip sends the search to the next column.
+			return broadFooting(level, x, y - 1, z) ? new BlockPos(x, y, z) : null;
+		}
+		return null;
+	}
+
+	private static boolean standable(ServerLevel level, BlockPos.MutableBlockPos feet) {
+		BlockState floor = level.getBlockState(feet.below());
+		return floor.blocksMotion() && floor.getFluidState().isEmpty() && level.getBlockState(feet).isAir()
+				&& level.getBlockState(feet.above()).isAir();
+	}
+
+	private static boolean broadFooting(ServerLevel level, int x, int y, int z) {
+		return level.getBlockState(new BlockPos(x + 1, y, z)).blocksMotion()
+				&& level.getBlockState(new BlockPos(x - 1, y, z)).blocksMotion()
+				&& level.getBlockState(new BlockPos(x, y, z + 1)).blocksMotion()
+				&& level.getBlockState(new BlockPos(x, y, z - 1)).blocksMotion();
+	}
+
+	private static boolean hangsOverSky(ServerLevel level, int x, int floorY, int z) {
+		int y = floorY;
+		while (y > level.getMinBuildHeight() && !level.getBlockState(new BlockPos(x, y, z)).isAir()) y--;
+		int gap = 0;
+		while (y > level.getMinBuildHeight() && level.getBlockState(new BlockPos(x, y, z)).isAir()) {
+			if (++gap >= SKY_GAP) return true;
+			y--;
+		}
+		return false;
 	}
 }

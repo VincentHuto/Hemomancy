@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "id": "hemomancy:mycophant_tendril"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.hive_heir.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.hive_heir.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "parent": "hemomancy:hemomancy/mycophant_defeated",
+  "criteria": {
+    "manual": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "manual"
+    ]
+  ]
+}

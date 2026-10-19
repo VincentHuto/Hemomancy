@@ -395,66 +395,18 @@ The boss you face if you **resist** at Apotheos.
 ### The Mycophant
 
 **Who/What:**
-The endpoint if you **embrace** dissolution at Apotheos.
+The Spawn Mother: the hivemind's brood cultivator and the mother of every Erythromycelium strain. She is the gate an Apotheos Harbinger must pass.
 
 **Lore:**
-- You willingly become the fruiting body
-- Serve as Entity's reproductive culmination
-- Immense power, loss of self
-- Transform into something beyond human
+- She absorbs whoever transcends and breeds new strains from them, and tends every life her infection made
+- A genderless brood-mother: motherly, never sexual
+- She treats the Apotheos candidate as her finest specimen come home
 
 **Encounter:**
-- Not a fight, more a transformation
-- Witness the final bloom
-- Become part of the network
-
-**Rewards:**
-- Guaranteed unique loot (top-tier)
-- Ultimate blood powers
-- Lore endpoint: you spread spores to new worlds
-- Transcendence at cost of identity
-
-**Status:** Entity, rendering, sound, music, and loot wired; summoning ritual WIP
-
----
-
-## Moral Philosophy
-
-### The Mod's Core Themes
-
-**Moral Ambiguity:**
-- Neither faction is objectively correct
-- Both have costs and benefits
-- Every choice matters
-- No simple good vs evil
-
-**Found Family vs Biology:**
-- Harbingers prioritize covenant over blood relation
-- Found family language throughout
-- Bloodlines are chosen, not born
-- Community matters more than DNA
-
-**Body Horror and Agency:**
-- Your body is changing whether you want it or not
-- Can you resist? Should you?
-- What does it mean to be human?
-- Preservation vs growth as philosophies
-
-**Knowledge and Consequences:**
-- Learning the truth changes you
-- Some knowledge can't be unlearned
-- Each degree reveals more horror
-- Is ignorance better?
-
-**Nature as Amoral:**
-- The Entity isn't evil, just alien
-- The Pale Lady isn't good, just defensive
-- Biology has no morality
-- Forces of nature are neutral
-
----
-
-## The Two Endings
+- You wake bound in her Morphic Nursery as she tends her brood, back turned; she turns, roars and rushes to embrace you
+- First she tries to take you back like a stray child: holds against her gestation sac, a feeding siphon, brood that herd you to her
+- At half health her skull splits over a flowering face of eyes and hyphae wings grow: she tries to join with you as an equal
+- Survive every claim and she yields, offers you her Tendril, and the hive names you its heir
 
 At Apotheos, Harbingers face a choice:
 

@@ -1,0 +1,54 @@
+{
+  "style": "ancestral",
+  "tier": "grand",
+  "purpose": "bond",
+  "pattern": [
+    [
+      "WWWWWWWWW"
+    ],
+    [
+      "WMBBBBBMW"
+    ],
+    [
+      "WBMMMMMBW"
+    ],
+    [
+      "WBMMBMMBW"
+    ],
+    [
+      "WBMBFBMBW"
+    ],
+    [
+      "WBMMBMMBW"
+    ],
+    [
+      "WBMMMMMBW"
+    ],
+    [
+      "WMBBBBBMW"
+    ],
+    [
+      "WWWWWWWWW"
+    ]
+  ],
+  "key": {
+    "W": {
+      "block": "hemomancy:blood_wood_planks"
+    },
+    "M": {
+      "block": "hemomancy:mnemonic_ambergris_block"
+    },
+    "B": {
+      "block": "hemomancy:polished_venous_stone_bricks"
+    },
+    "F": {
+      "block": "hemomancy:cardinal_focus"
+    }
+  },
+  "focus": [
+    4,
+    0,
+    4
+  ],
+  "footprint_radius": 7.5
+}

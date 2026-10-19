@@ -1,5 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.damage.HemoDamageTypes;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
@@ -37,6 +40,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.entity.PartEntity;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -51,9 +55,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 			VesperTheCrownedRefusalEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> DATA_TRANSITION_TICK = SynchedEntityData.defineId(
 			VesperTheCrownedRefusalEntity.class, EntityDataSerializers.INT);
-	private static final EntityDataAccessor<Float> DATA_VULNERABLE_YAW = SynchedEntityData.defineId(
-			VesperTheCrownedRefusalEntity.class, EntityDataSerializers.FLOAT);
-	private static final EntityDataAccessor<Float> DATA_ACTIVE_ANCHOR_DAMAGE = SynchedEntityData.defineId(
+	private static final EntityDataAccessor<Float> DATA_WOUND_DRAINED = SynchedEntityData.defineId(
 			VesperTheCrownedRefusalEntity.class, EntityDataSerializers.FLOAT);
 	private static final EntityDataAccessor<Integer> DATA_ANCHOR_FLASH_TICKS = SynchedEntityData.defineId(
 			VesperTheCrownedRefusalEntity.class, EntityDataSerializers.INT);
@@ -74,6 +76,16 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 	private static final EntityDataAccessor<Float> DATA_LOCKED_AIM_Y = SynchedEntityData.defineId(
 			VesperTheCrownedRefusalEntity.class, EntityDataSerializers.FLOAT);
 	private static final EntityDataAccessor<Float> DATA_LOCKED_AIM_Z = SynchedEntityData.defineId(
+			VesperTheCrownedRefusalEntity.class, EntityDataSerializers.FLOAT);
+	private static final EntityDataAccessor<Integer> DATA_STAGGER_TICK = SynchedEntityData.defineId(
+			VesperTheCrownedRefusalEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Integer> DATA_BURROW_TICK = SynchedEntityData.defineId(
+			VesperTheCrownedRefusalEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Integer> DATA_BURROW_HUNT = SynchedEntityData.defineId(
+			VesperTheCrownedRefusalEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Float> DATA_BANK = SynchedEntityData.defineId(
+			VesperTheCrownedRefusalEntity.class, EntityDataSerializers.FLOAT);
+	private static final EntityDataAccessor<Float> DATA_PITCH = SynchedEntityData.defineId(
 			VesperTheCrownedRefusalEntity.class, EntityDataSerializers.FLOAT);
 
     private boolean spawnedEveningStar = false;
@@ -97,6 +109,20 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 	private long bloomOrigin;
 	private UUID bloomId;
 	public final AnimationState transformationAnimationState = new AnimationState();
+	private final VesperMountController controller = new VesperMountController(this);
+	private final java.util.List<Vec3> plannedPoints = new java.util.ArrayList<>();
+	private final java.util.List<String> plannedShapes = new java.util.ArrayList<>();
+	private VesperPuppetRoster roster = new VesperPuppetRoster();
+	private double circleAngle;
+	@Nullable private VesperWoundRules.Wound wound;
+	@Nullable private UUID lastDrainer;
+	private final VesperWound.GuardState guardState = new VesperWound.GuardState();
+	@Nullable private VesperBurrowRules.State burrowState;
+	private double burrowFloorY;
+	private int burrowCooldown;
+	private int diveCount;
+	private Vec3 passDirection = new Vec3(1.0D, 0.0D, 0.0D);
+	private Vec3 diveVelocity = new Vec3(0.0D, -1.25D, 0.0D);
 
     private final ServerBossEvent bossEvent = new ServerBossEvent(
             Component.translatable("entity.hemomancy.vesper_crowned_refusal"),
@@ -113,6 +139,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 		this.setId(ENTITY_COUNTER.getAndAdd(this.throneAnchors.length + 1) + 1);
         this.setPersistenceRequired();
         this.xpReward = 0;
+		this.moveControl = new VesperMountMoveControl(this);
     }
 
 	@Override
@@ -123,8 +150,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 		builder.define(DATA_BROKEN_ANCHORS, 0);
 		builder.define(DATA_ACTIVE_ANCHOR, -1);
 		builder.define(DATA_TRANSITION_TICK, 0);
-		builder.define(DATA_VULNERABLE_YAW, 0.0F);
-		builder.define(DATA_ACTIVE_ANCHOR_DAMAGE, 0.0F);
+		builder.define(DATA_WOUND_DRAINED, 0.0F);
 		builder.define(DATA_ANCHOR_FLASH_TICKS, 0);
 		builder.define(DATA_CARAPACE_EXPOSED, false);
 		builder.define(DATA_CARAPACE_COOLDOWN, 0);
@@ -135,15 +161,17 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 		builder.define(DATA_LOCKED_AIM_X, 0.0F);
 		builder.define(DATA_LOCKED_AIM_Y, 0.0F);
 		builder.define(DATA_LOCKED_AIM_Z, 0.0F);
+		builder.define(DATA_STAGGER_TICK, 0);
+		builder.define(DATA_BURROW_TICK, -1);
+		builder.define(DATA_BURROW_HUNT, 0);
+		builder.define(DATA_BANK, 0.0F);
+		builder.define(DATA_PITCH, 0.0F);
 	}
 
 	@Override
 	public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
 		super.onSyncedDataUpdated(key);
 		if (DATA_ACTIVE_ANCHOR.equals(key)) refreshAnchorDimensions();
-		if ((DATA_ACTIVE_ANCHOR.equals(key) || DATA_VULNERABLE_YAW.equals(key)) && getActiveAnchor() >= 0) {
-			enforceVulnerableYawLock();
-		}
 		if (DATA_TRANSITION_TICK.equals(key) && level().isClientSide()) {
 			VesperPhaseTransitionRules.syncAnimationState(
 					transformationAnimationState, tickCount, getTransitionTick());
@@ -173,17 +201,14 @@ public class VesperTheCrownedRefusalEntity extends Monster {
                 .add(Attributes.ATTACK_DAMAGE, 12.0D)
                 .add(Attributes.FOLLOW_RANGE, 56.0D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
-                .add(Attributes.ARMOR, 16.0D);
+                .add(Attributes.ARMOR, 16.0D)
+                .add(Attributes.STEP_HEIGHT, 1.5D);
     }
 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0D, false));
-        this.goalSelector.addGoal(2, new MoveTowardsTargetGoal(this, 1.25D, 56.0F));
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.12D));
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 28.0F));
-        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+        // Movement, facing and attacks belong to VesperMountController; no vanilla goal competes for the body.
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
@@ -191,7 +216,6 @@ public class VesperTheCrownedRefusalEntity extends Monster {
     @Override
     public void aiStep() {
         super.aiStep();
-		if (getActiveAnchor() >= 0) enforceVulnerableYawLock();
 		updateAnchorPositions();
         if (!this.level().isClientSide) {
             this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
@@ -199,6 +223,16 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 				tickEncounter();
             }
         }
+    }
+
+    /**
+     * The mount turns as one rigid body on the controller's yaw. Vanilla body rotation would let the client body lag
+     * the head by up to 75 degrees while standing and then lurch round, and swing toward a sidestep's direction.
+     */
+    @Override
+    protected float tickHeadTurn(float yRot, float animStep) {
+        this.yBodyRot = this.getYRot();
+        return animStep;
     }
 
     @Override
@@ -280,9 +314,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 		tag.putInt("VesperAttack", getAttack().ordinal());
 		tag.putInt("VesperAttackTick", getAttackTick());
 		tag.putInt("BrokenThroneAnchors", getBrokenAnchorMask());
-		tag.putInt("ActiveThroneAnchor", getActiveAnchor());
-		tag.putFloat("ActiveAnchorDamage", getActiveAnchorDamage());
-		new VesperVulnerableRotation(getActiveAnchor() >= 0, getVulnerableYaw()).save(tag);
+		VesperWoundRules.save(wound, tag);
 		tag.putInt("TransitionTick", getTransitionTick());
 		tag.putInt("AttackStep", attackStep);
 		tag.putInt("LastVesperAttack", lastAttack.ordinal());
@@ -296,6 +328,10 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 		tag.putInt("SortieCount", sortieCount);
 		tag.putInt("FlightHitMask", flightHitMask);
 		tag.putInt("PostAttackCircleTicks", postAttackCircleTicks);
+		if (burrowState != null) burrowState.save(tag);
+		tag.putDouble("BurrowFloorY", burrowFloorY);
+		tag.put("VesperRoster", roster.save());
+		tag.putInt("BurrowCooldown", burrowCooldown);
 		tag.putFloat("LockedFlightAimX", entityData.get(DATA_LOCKED_AIM_X));
 		tag.putFloat("LockedFlightAimY", entityData.get(DATA_LOCKED_AIM_Y));
 		tag.putFloat("LockedFlightAimZ", entityData.get(DATA_LOCKED_AIM_Z));
@@ -319,9 +355,10 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 				tag.getInt("VesperAttack")))]);
 		entityData.set(DATA_ATTACK_TICK, tag.getInt("VesperAttackTick"));
 		entityData.set(DATA_BROKEN_ANCHORS, tag.getInt("BrokenThroneAnchors"));
-		entityData.set(DATA_ACTIVE_ANCHOR, tag.contains("ActiveThroneAnchor") ? tag.getInt("ActiveThroneAnchor") : -1);
-		entityData.set(DATA_ACTIVE_ANCHOR_DAMAGE,
-				VesperCombatRules.clampAnchorDamage(tag.getFloat("ActiveAnchorDamage")));
+		// Reads the new wound or migrates an old save's exposed throne anchor into an opened wound.
+		wound = VesperWoundRules.load(tag);
+		entityData.set(DATA_ACTIVE_ANCHOR, wound == null ? -1 : wound.site().ordinal());
+		syncWound();
 		entityData.set(DATA_TRANSITION_TICK, tag.getInt("TransitionTick"));
 		attackStep = tag.getInt("AttackStep");
 		lastAttack = VesperPhaseOneAttack.values()[Math.max(0, Math.min(VesperPhaseOneAttack.values().length - 1,
@@ -336,6 +373,23 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 		sortieCount = Math.max(0, tag.getInt("SortieCount"));
 		flightHitMask = tag.getInt("FlightHitMask");
 		postAttackCircleTicks = Math.max(0, tag.getInt("PostAttackCircleTicks"));
+		burrowFloorY = tag.contains("BurrowFloorY") ? tag.getDouble("BurrowFloorY") : getY();
+		roster = tag.contains("VesperRoster") ? VesperPuppetRoster.load(tag.getCompound("VesperRoster"))
+				: new VesperPuppetRoster();
+		burrowCooldown = Math.max(0, tag.getInt("BurrowCooldown"));
+		VesperBurrowRules.State savedBurrow = VesperBurrowRules.State.load(tag);
+		if (savedBurrow != null) {
+			// Never resume an unseen hunt after a reload: surface where it was and gather itself.
+			VesperBurrowRules.State resumed = VesperBurrowRules.afterReload(savedBurrow);
+			setBurrowState(resumed);
+			setAttack(VesperPhaseOneAttack.BURROW);
+			noPhysics = false;
+			setNoGravity(false);
+			setInvisible(false);
+			setPos(resumed.x(), burrowFloorY, resumed.z());
+		} else if (getAttack() == VesperPhaseOneAttack.BURROW) {
+			setAttack(VesperPhaseOneAttack.IDLE);
+		}
 		entityData.set(DATA_LOCKED_AIM_X, tag.getFloat("LockedFlightAimX"));
 		entityData.set(DATA_LOCKED_AIM_Y, tag.getFloat("LockedFlightAimY"));
 		entityData.set(DATA_LOCKED_AIM_Z, tag.getFloat("LockedFlightAimZ"));
@@ -350,41 +404,88 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 		entityData.set(DATA_CARAPACE_EXPOSED,
 				getAttack() == VesperPhaseOneAttack.CARAPACE_ANEURYSM
 						&& VesperMountAttackRules.isCarapaceExposed(getAttackTick()));
-		VesperVulnerableRotation lock = VesperVulnerableRotation.load(
-				tag, getActiveAnchor() >= 0, getYRot());
-		entityData.set(DATA_VULNERABLE_YAW, lock.yaw());
-		if (lock.active()) {
-			setNoAi(true);
-			enforceVulnerableYawLock();
-		}
+		// Older saves persisted NoAI during a vulnerable window; the controller never needs it.
+		setNoAi(false);
 		refreshAnchorDimensions();
 	}
 
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
-		if (getTransitionTick() > 0 || getActiveAnchor() >= 0) return false;
+		if (getTransitionTick() > 0 || getActiveAnchor() >= 0 || isSubmerged()) return false;
 		amount *= isCarapaceExposed() ? 1.5F : 1.0F;
 		float floor = VesperCombatRules.healthFloor(getMaxHealth(), getBrokenAnchorMask());
 		float allowed = Math.max(0.0F, getHealth() - floor);
 		return allowed > 0.0F && super.hurt(source, Math.min(amount, allowed));
 	}
 
+	/** A hit on the open wound keeps it from scabbing and drains it only at the fallback rate. */
 	boolean hurtAnchor(int anchorIndex, DamageSource source, float amount) {
-		if (level().isClientSide || anchorIndex != getActiveAnchor() || amount <= 0.0F) return false;
-		applyAnchorDamage(anchorIndex, amount);
+		if (level().isClientSide || wound == null || anchorIndex != getActiveAnchor() || amount <= 0.0F) return false;
+		updateWound(VesperWoundRules.hit(wound, amount));
+		EndgameBossActions.hitThroneAnchor(this, anchorIndex);
 		return true;
 	}
 
+	/** A puppet of his killed while a wound is open tears it further. */
 	void applyPuppetBacklash() {
-		if (!level().isClientSide && getActiveAnchor() >= 0) applyAnchorDamage(getActiveAnchor(), 10.0F);
+		if (level().isClientSide || wound == null) return;
+		int anchor = getActiveAnchor();
+		updateWound(VesperWoundRules.tear(wound));
+		EndgameBossActions.hitThroneAnchor(this, anchor);
 	}
 
-	private void applyAnchorDamage(int anchorIndex, float amount) {
-		VesperCombatRules.AnchorHit hit = VesperCombatRules.hitAnchor(getActiveAnchorDamage(), amount);
-		entityData.set(DATA_ACTIVE_ANCHOR_DAMAGE, hit.accumulatedDamage());
-		entityData.set(DATA_ANCHOR_FLASH_TICKS, VesperCombatRules.ANCHOR_HIT_FLASH_TICKS);
-		EndgameBossActions.hitThroneAnchor(this, anchorIndex);
-		if (hit.broken()) breakAnchor(anchorIndex);
+	public boolean canDrainWound(LivingEntity user) {
+		if (level().isClientSide) return getActiveAnchor() >= 0;
+		return user instanceof ServerPlayer player && VesperAbsorptionEligibilityRules.canDrainWound(
+				wound != null && getTransitionTick() <= 0, ordealOwner, player.getUUID());
+	}
+
+	/** Blood Absorption held on the open wound: pulls his blood out, weakening him and feeding the drainer. */
+	public float drainWound(ServerPlayer player, float progress) {
+		if (!canDrainWound(player) || progress <= 0.0F) return 0.0F;
+		lastDrainer = player.getUUID();
+		HemoCapabilityAccess.getBloodVolume(player).filter(volume -> volume.isActive()).ifPresent(volume -> {
+			volume.fill(progress * 2.0D);
+			PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(volume));
+		});
+		VesperWound.drainStream(this, player);
+		updateWound(VesperWoundRules.drain(wound, progress));
+		return progress;
+	}
+
+	private void updateWound(VesperWoundRules.Wound next) {
+		int anchor = getActiveAnchor();
+		boolean surged = next.drained() > (wound == null ? 0.0F : wound.drained());
+		wound = next;
+		if (surged) entityData.set(DATA_ANCHOR_FLASH_TICKS, VesperCombatRules.ANCHOR_HIT_FLASH_TICKS);
+		syncWound();
+		if (VesperWoundRules.broken(next)) breakAnchor(anchor);
+	}
+
+	private void syncWound() {
+		entityData.set(DATA_WOUND_DRAINED, wound == null ? 0.0F : wound.drained());
+	}
+
+	/** The open wound's centre in world space, at its socket on the mount. */
+	public Vec3 woundCenter() {
+		return woundCenter(getActiveAnchor());
+	}
+
+	/** A given wound site's centre in world space; a rupture uses this after the active anchor is cleared. */
+	public Vec3 woundCenter(int anchor) {
+		anchor = Mth.clamp(anchor, 0, 2);
+		double[] offset = VesperWoundRules.worldOffset(
+				VesperWoundRules.socket(VesperWoundRules.Site.fromIndex(anchor)), getYRot());
+		return position().add(offset[0], offset[1], offset[2]);
+	}
+
+	VesperWound.GuardState guardState() {
+		return guardState;
+	}
+
+	@Nullable
+	UUID lastDrainer() {
+		return lastDrainer;
 	}
 
     @Override
@@ -434,8 +535,8 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 	public int getBrokenAnchorMask() { return entityData.get(DATA_BROKEN_ANCHORS); }
 	public int getActiveAnchor() { return entityData.get(DATA_ACTIVE_ANCHOR); }
 	public int getTransitionTick() { return entityData.get(DATA_TRANSITION_TICK); }
-	public float getVulnerableYaw() { return entityData.get(DATA_VULNERABLE_YAW); }
-	public float getActiveAnchorDamage() { return entityData.get(DATA_ACTIVE_ANCHOR_DAMAGE); }
+	/** Drain progress of the open wound, 0..{@link VesperWoundRules#DRAIN_REQUIRED}. */
+	public float getWoundDrained() { return entityData.get(DATA_WOUND_DRAINED); }
 	public int getAnchorFlashTicks() { return entityData.get(DATA_ANCHOR_FLASH_TICKS); }
 	public boolean isCarapaceExposed() { return entityData.get(DATA_CARAPACE_EXPOSED); }
 	public int getCarapaceCooldown() { return entityData.get(DATA_CARAPACE_COOLDOWN); }
@@ -468,22 +569,9 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 		summonedFlightArenaBound = true;
 	}
 
-	public VesperCombatRules.AnchorCenter getInterpolatedAnchorCenter(float partialTick) {
-		double entityX = Mth.lerp(partialTick, xOld, getX());
-		double entityY = Mth.lerp(partialTick, yOld, getY());
-		double entityZ = Mth.lerp(partialTick, zOld, getZ());
-		float yaw = Mth.rotLerp(partialTick, yRotO, getYRot());
-		VesperCombatRules.AnchorCenter fallback = VesperCombatRules.anchorCenter(entityX, entityY, entityZ, yaw);
-		int activeAnchor = getActiveAnchor();
-		if (activeAnchor < 0 || activeAnchor >= throneAnchors.length) return fallback;
-		VesperThroneAnchorPart part = throneAnchors[activeAnchor];
-		return new VesperCombatRules.AnchorCenter(
-				Mth.lerp(partialTick, part.xOld, part.getX()),
-				Mth.lerp(partialTick, part.yOld, part.getY()) + part.getBbHeight() * 0.5D,
-				Mth.lerp(partialTick, part.zOld, part.getZ()));
-	}
-
 	private void tickEncounter() {
+		if (burrowCooldown > 0) burrowCooldown--;
+		if (tickCount % 40 == 0) reconcileRoster();
 		if (getCarapaceCooldown() > 0) {
 			entityData.set(DATA_CARAPACE_COOLDOWN, VesperMountAttackRules.tickCooldown(getCarapaceCooldown()));
 		}
@@ -517,23 +605,35 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 			tickFlight(flightArena.orElse(null));
 			return;
 		}
+		if (burrowState != null) {
+			VesperBurrow.tick(this, controller.target(), flightArena.orElse(null));
+			return;
+		}
 		int anchor = VesperCombatRules.lockedAnchorIndex(getHealth(), getMaxHealth(), getBrokenAnchorMask());
 		if (anchor >= 0 && getActiveAnchor() < 0 && getFlightMode().airborne()) {
 			beginLanding(flightArena.orElse(null));
 			tickFlight(flightArena.orElse(null));
 			return;
 		}
-		if (anchor >= 0 && getActiveAnchor() < 0) exposeAnchor(anchor);
-		if (getActiveAnchor() >= 0) {
-			forceGroundedFlightState();
-			enforceVulnerableYawLock();
-			setDeltaMovement(0.0D, getDeltaMovement().y, 0.0D);
-			EndgameBossActions.tickExposedThroneAnchor(this, getActiveAnchor(), getActiveAnchorDamage());
-			return;
-		}
+		if (anchor >= 0 && getActiveAnchor() < 0) controller.request(VesperMountControllerRules.Priority.WOUND);
 		if (VesperWingedFlightRules.shouldStartWingGrowth(getHealth(), getMaxHealth(), hasWingsGrown(),
 				false, false)) {
+			controller.request(VesperMountControllerRules.Priority.WING_GROWTH);
+		}
+		VesperMountControllerRules.Priority granted = controller.takeGranted();
+		if (granted == VesperMountControllerRules.Priority.WOUND && anchor >= 0 && getActiveAnchor() < 0) {
+			exposeAnchor(anchor);
+		} else if (granted == VesperMountControllerRules.Priority.WING_GROWTH && !hasWingsGrown()
+				&& getActiveAnchor() < 0) {
 			startWingGrowth();
+			return;
+		}
+		if (getActiveAnchor() >= 0 && wound != null) {
+			if (getFlightMode() != VesperWingedFlightRules.FlightMode.GROUNDED) forceGroundedFlightState();
+			updateWound(VesperWoundRules.tick(wound));
+			if (getActiveAnchor() < 0) return;
+			EndgameBossActions.tickExposedThroneAnchor(this, getActiveAnchor(), getWoundDrained());
+			VesperWound.tickGuard(this, controller, controller.target());
 			return;
 		}
 		if (getFlightMode() != VesperWingedFlightRules.FlightMode.GROUNDED) {
@@ -542,52 +642,192 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 		}
 		setNoGravity(false);
 		if (hasWingsGrown()) groundedFlightTicks++;
-		if (getAttack() == VesperPhaseOneAttack.IDLE) {
-			if (--idleTicks <= 0) {
-				if (VesperWingedFlightRules.mayStartSortie(groundedFlightTicks, hasWingsGrown(), flightArena.isPresent())) {
-					startTakeoff(flightArena.get());
-					return;
-				}
-				LivingEntity candidate = getTarget();
-				boolean grabEligible = isGrabEligible(candidate);
-				VesperPhaseOneAttack selected = VesperMountAttackRules.selectAttack(attackStep++, lastAttack,
-						getCarapaceCooldown(), grabEligible, false);
-				setAttack(selected);
-				if (selected == VesperPhaseOneAttack.CARAPACE_ANEURYSM) {
-					entityData.set(DATA_CARAPACE_COOLDOWN, VesperMountAttackRules.startAneurysmCooldown());
-				}
-				if (selected == VesperPhaseOneAttack.GRAB_IMPALEMENT) grabHitMask = 0;
-				entityData.set(DATA_ATTACK_TICK, 0);
-			}
+		LivingEntity target = controller.target();
+		if (controller.tickGround(target, flightArena.orElse(null))) return;
+		if (--idleTicks > 0) return;
+		if (VesperWingedFlightRules.mayStartSortie(groundedFlightTicks, hasWingsGrown(), flightArena.isPresent())) {
+			startTakeoff(flightArena.get());
 			return;
 		}
-		int attackTick = getAttackTick() + 1;
-		entityData.set(DATA_ATTACK_TICK, attackTick);
-		if (EndgameBossActions.tickVesperPhaseOneAttack(this, getAttack(), attackTick)) {
-			lastAttack = getAttack();
-			entityData.set(DATA_CARAPACE_EXPOSED, false);
-			releaseRestrainedVictim(false);
-			setAttack(VesperPhaseOneAttack.IDLE);
-			entityData.set(DATA_ATTACK_TICK, 0);
-			idleTicks = getHealth() <= getMaxHealth() * 0.42F ? 24 : 36;
+		if (burrowCooldown <= 0 && target != null && lastAttack != VesperPhaseOneAttack.BURROW
+				&& (hasWingsGrown() || getHealth() <= getMaxHealth() * 0.7F) && getRandom().nextFloat() < 0.35F) {
+			startBurrow(false);
+			return;
+		}
+		VesperPhaseOneAttack selected = VesperMountAttackRules.selectAttack(attackStep++, lastAttack,
+				getCarapaceCooldown(), isGrabEligible(target), false);
+		if (selected == VesperPhaseOneAttack.IDLE) return;
+		// A muster with every slot filled (or nothing left to call) recalls tired puppets instead, if any.
+		boolean musterBlocked = roster.nextMuster(getRandom()).isEmpty();
+		if (selected == VesperPhaseOneAttack.PUPPET_MUSTER && musterBlocked) {
+			selected = VesperMountMoves.hasRecallablePuppet(this) ? VesperPhaseOneAttack.RECALL
+					: VesperPhaseOneAttack.ROYAL_SCUTTLE;
+		} else if (selected != VesperPhaseOneAttack.CARAPACE_ANEURYSM && getRandom().nextFloat() < 0.15F
+				&& VesperMountMoves.hasRecallablePuppet(this)) {
+			selected = VesperPhaseOneAttack.RECALL;
+		}
+		if (selected == VesperPhaseOneAttack.CARAPACE_ANEURYSM) {
+			entityData.set(DATA_CARAPACE_COOLDOWN, VesperMountAttackRules.startAneurysmCooldown());
+		}
+		if (selected == VesperPhaseOneAttack.GRAB_IMPALEMENT) grabHitMask = 0;
+		controller.begin(selected, target);
+	}
+
+	void beginGroundAttack(VesperPhaseOneAttack attack) {
+		setAttack(attack);
+		entityData.set(DATA_ATTACK_TICK, 0);
+	}
+
+	void setAttackTick(int tick) {
+		entityData.set(DATA_ATTACK_TICK, tick);
+	}
+
+	/** Ends the current grounded move, whether it completed or was staggered out of its wind-up. */
+	void endGroundAttack() {
+		plannedPoints.clear();
+		plannedShapes.clear();
+		lastAttack = getAttack();
+		entityData.set(DATA_CARAPACE_EXPOSED, false);
+		releaseRestrainedVictim(false);
+		setAttack(VesperPhaseOneAttack.IDLE);
+		entityData.set(DATA_ATTACK_TICK, 0);
+		idleTicks = getHealth() <= getMaxHealth() * 0.42F ? 24 : 36;
+	}
+
+	/** Telegraphed spawn points for the current move (spike volleys, puppet landings); never persisted. */
+	java.util.List<Vec3> plannedPoints() {
+		return plannedPoints;
+	}
+
+	java.util.List<String> plannedShapes() {
+		return plannedShapes;
+	}
+
+	public VesperPuppetRoster roster() {
+		return roster;
+	}
+
+	/** A shape marked out whose body is gone without being killed (unloaded, cleared) goes back to the roster. */
+	private void reconcileRoster() {
+		java.util.Set<String> live = new java.util.HashSet<>();
+		for (Mob puppet : VesperMountMoves.ownedPuppets(this)) {
+			if (puppet instanceof BoundPuppeteerSummon bound) live.add(bound.hemomancy$getSummonName());
+		}
+		for (String shape : VesperPuppetRoster.SHAPES) {
+			if (roster.slot(shape) == VesperPuppetRoster.Slot.OUT && !live.contains(shape)) roster.recall(shape);
 		}
 	}
 
+	/** A puppet the player killed is struck from the roster for the rest of the fight. */
+	void strikePuppet(String shape) {
+		roster.strike(shape);
+	}
+
+	public int getStaggerTick() { return entityData.get(DATA_STAGGER_TICK); }
+
+	/** True from the dive until the eruption; the rider tucks and grips the nape throughout. */
+	public boolean isBurrowing() {
+		VesperBurrowRules.Stage stage = getBurrowStage();
+		return stage != null && stage != VesperBurrowRules.Stage.RECOVERY && stage != VesperBurrowRules.Stage.COMPLETE;
+	}
+
+	/** Underground and out of reach: invisible, unhittable, not collidable. */
+	public boolean isSubmerged() {
+		return isBurrowing() && isInvisible();
+	}
+
+	@Nullable
+	public VesperBurrowRules.Stage getBurrowStage() {
+		int tick = entityData.get(DATA_BURROW_TICK);
+		if (tick < 0) return null;
+		return VesperBurrowRules.stageAt(new VesperBurrowRules.Plan(entityData.get(DATA_BURROW_HUNT), false), tick);
+	}
+
+	public int getBurrowHuntTicks() {
+		return entityData.get(DATA_BURROW_HUNT);
+	}
+
+	public int getBurrowTick() {
+		return entityData.get(DATA_BURROW_TICK);
+	}
+
+	@Nullable
+	VesperBurrowRules.State getBurrowState() {
+		return burrowState;
+	}
+
+	void setBurrowState(@Nullable VesperBurrowRules.State state) {
+		burrowState = state;
+		entityData.set(DATA_BURROW_TICK, state == null ? -1 : state.tick());
+		entityData.set(DATA_BURROW_HUNT, state == null ? 0 : state.plan().huntTicks());
+	}
+
+	double getBurrowFloorY() {
+		return burrowFloorY;
+	}
+
+	void faceFlat(Vec3 point) {
+		controller.face(point, VesperMountMoveControl.GROUND_TURN_DEGREES);
+	}
+
+	private void startBurrow(boolean fromDive) {
+		releaseRestrainedVictim(false);
+		burrowFloorY = getY();
+		setAttack(VesperPhaseOneAttack.BURROW);
+		entityData.set(DATA_ATTACK_TICK, 0);
+		VesperBurrow.begin(this, fromDive);
+	}
+
+	void endBurrow() {
+		lastAttack = VesperPhaseOneAttack.BURROW;
+		setAttack(VesperPhaseOneAttack.IDLE);
+		entityData.set(DATA_ATTACK_TICK, 0);
+		burrowCooldown = 400;
+		idleTicks = 20;
+	}
+
+	@Override
+	public boolean isPickable() {
+		return super.isPickable() && !isSubmerged();
+	}
+
+	@Override
+	public boolean isPushable() {
+		return super.isPushable() && !isSubmerged();
+	}
+
+	/** Flight roll in degrees, positive banking right; zero on the ground. */
+	public float getFlightBank() { return entityData.get(DATA_BANK); }
+
+	/** Flight pitch in degrees, negative nose-down. */
+	public float getFlightPitch() { return entityData.get(DATA_PITCH); }
+
+	void setFlightAttitude(float bank, float pitch) {
+		entityData.set(DATA_BANK, bank);
+		entityData.set(DATA_PITCH, pitch);
+	}
+
+	void setStaggerTick(int ticks) {
+		entityData.set(DATA_STAGGER_TICK, Math.max(0, ticks));
+	}
+
+	/** The threshold splits a wound open: the mount staggers and shrieks, and he is drainable there. */
 	private void exposeAnchor(int anchor) {
 		releaseRestrainedVictim(false);
 		forceGroundedFlightState();
 		entityData.set(DATA_CARAPACE_EXPOSED, false);
-		VesperVulnerableRotation lock = VesperVulnerableRotation.capture(getYRot());
-		entityData.set(DATA_VULNERABLE_YAW, lock.yaw());
+		wound = VesperWoundRules.open(VesperWoundRules.Site.fromIndex(anchor));
 		entityData.set(DATA_ACTIVE_ANCHOR, anchor);
-		entityData.set(DATA_ACTIVE_ANCHOR_DAMAGE, 0.0F);
+		syncWound();
 		entityData.set(DATA_ANCHOR_FLASH_TICKS, 0);
 		setAttack(VesperPhaseOneAttack.IDLE);
 		entityData.set(DATA_ATTACK_TICK, 0);
-		setNoAi(true);
-		enforceVulnerableYawLock();
-		setDeltaMovement(0.0D, 0.0D, 0.0D);
+		setStaggerTick(VesperMountControllerRules.STAGGER_TICKS * 2);
+		VesperWound.resetGuard(this);
 		refreshAnchorDimensions();
+		updateAnchorPositions();
+		EndgameBossActions.openThroneWound(this, anchor);
+		playSound(SoundInit.ENTITY_VESPER_HURT.get(), 2.0F, 0.6F + anchor * 0.1F);
 		playSound(SoundEvents.IRON_GOLEM_DAMAGE, 1.8F, 0.55F + anchor * 0.12F);
 	}
 
@@ -595,10 +835,11 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 		int mask = getBrokenAnchorMask() | (1 << anchor);
 		entityData.set(DATA_BROKEN_ANCHORS, mask);
 		entityData.set(DATA_ACTIVE_ANCHOR, -1);
-		clearVulnerableYawLock();
+		wound = null;
+		syncWound();
 		refreshAnchorDimensions();
-		entityData.set(DATA_ACTIVE_ANCHOR_DAMAGE, 0.0F);
 		entityData.set(DATA_ANCHOR_FLASH_TICKS, 0);
+		setStaggerTick(VesperMountControllerRules.STAGGER_TICKS);
 		EndgameBossActions.breakThroneAnchor(this, anchor);
 		if (mask == 7) {
 			forceGroundedFlightState();
@@ -606,7 +847,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 			entityData.set(DATA_TRANSITION_TICK, 1);
 			setInvulnerable(true);
 			setAttack(VesperPhaseOneAttack.IDLE);
-		} else setNoAi(false);
+		}
 	}
 
 	private void refreshAnchorDimensions() {
@@ -712,8 +953,10 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 			beginLanding(null);
 			return;
 		}
-		steerToward(clampFlightPoint(getX(), arena.floorY() + 6.0D, getZ(), arena), 0.24D);
+		fly(clampFlightPoint(getX(), arena.floorY() + 6.0D, getZ(), arena), 0.3D, 0.045D, 8.0F);
 		if (tick >= VesperWingedFlightRules.TAKEOFF_TICKS) {
+			Vec3 offset = position().subtract(arena.centerX(), 0.0D, arena.centerZ());
+			circleAngle = Math.atan2(offset.z, offset.x);
 			setFlightMode(VesperWingedFlightRules.FlightMode.CIRCLING);
 		}
 	}
@@ -723,10 +966,11 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 			beginLanding(arena);
 			return;
 		}
-		double angle = (airborneTicks * 0.11D) + sortieCount * 1.7D;
-		Vec3 desired = clampFlightPoint(target.getX() + Math.cos(angle) * 8.0D,
-				arena.floorY() + 7.0D, target.getZ() + Math.sin(angle) * 8.0D, arena);
-		steerToward(desired, 0.32D);
+		// The orbit point leads the mount around the target; steering turns it into a banked arc.
+		circleAngle += 0.055D;
+		Vec3 desired = VesperFlightSteeringRules.circlePoint(target.position(), 9.0D, circleAngle + 0.6D,
+				arena.floorY() + 7.0D);
+		fly(clampFlightPoint(desired.x, desired.y, desired.z, arena), 0.55D, 0.05D, 6.0F);
 		if (postAttackCircleTicks > 0) {
 			if (--postAttackCircleTicks <= 0) beginLanding(arena);
 			return;
@@ -740,6 +984,10 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 			setFlightMode(VesperWingedFlightRules.FlightMode.DIVE_TELEGRAPH);
 			setAttack(VesperPhaseOneAttack.DIVING_REND);
 		} else {
+			Vec3 across = aim.subtract(position()).multiply(1.0D, 0.0D, 1.0D);
+			if (across.lengthSqr() < 0.01D) across = new Vec3(1.0D, 0.0D, 0.0D);
+			across = across.normalize();
+			passDirection = new Vec3(-across.z, 0.0D, across.x).scale((sortieCount & 1) == 0 ? 1.0D : -1.0D);
 			setFlightMode(VesperWingedFlightRules.FlightMode.TAIL_FUSILLADE);
 			setAttack(VesperPhaseOneAttack.TAIL_NEEDLE_FUSILLADE);
 		}
@@ -752,8 +1000,13 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 			VesperVisualEffects.telegraphRing(server, aim, 3.5D, VesperVisualEffects.BLOOD, 32);
 			VesperVisualEffects.telegraphLine(server, position(), aim, VesperVisualEffects.BLOOD);
 		}
-		if (arena != null) steerToward(clampFlightPoint(getX(), arena.floorY() + 8.0D, getZ(), arena), 0.18D);
+		// Wings cup and brake: it bleeds speed, climbs a little and swings its head onto the mark.
+		if (arena != null) fly(clampFlightPoint(getX(), arena.floorY() + 8.5D, getZ(), arena), 0.12D, 0.07D, 0.0F);
+		controller.face(aim, 12.0F);
+		setFlightAttitude(0.0F, -12.0F * Math.min(1.0F, tick / 10.0F));
 		if (tick >= VesperWingedFlightRules.DIVE_TELEGRAPH_TICKS) {
+			Vec3 line = aim.subtract(position());
+			diveVelocity = line.lengthSqr() < 0.01D ? new Vec3(0.0D, -1.25D, 0.0D) : line.normalize().scale(1.25D);
 			setFlightMode(VesperWingedFlightRules.FlightMode.DIVING_REND);
 		}
 	}
@@ -761,22 +1014,32 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 	private void tickDivingRend(VesperOrdealManager.FlightArena arena, int tick) {
 		Vec3 aim = arena == null ? getLockedFlightAim() : clampGroundPoint(
 				getLockedFlightAim().x, getLockedFlightAim().z, arena);
-		steerToward(aim, 1.25D);
-		if ((distanceToSqr(aim) <= 12.25D || tick >= VesperWingedFlightRules.DIVE_TICKS)
+		// Committed: no steering once the dive starts, so a sidestep at the last moment dodges it.
+		setDeltaMovement(diveVelocity);
+		hasImpulse = true;
+		float pitch = (float) (Mth.atan2(diveVelocity.y, diveVelocity.horizontalDistance()) * Mth.RAD_TO_DEG);
+		setFlightAttitude(0.0F, Math.max(-VesperFlightSteeringRules.PITCH_MAX, pitch));
+		if ((distanceToSqr(aim) <= 12.25D || onGround() || tick >= VesperWingedFlightRules.DIVE_TICKS)
 				&& (flightHitMask & 1) == 0) {
 			flightHitMask |= 1;
-			applyDivingRendImpact(aim);
-			beginLanding(arena);
+			applyDivingRendImpact(new Vec3(getX(), aim.y, getZ()));
+			// Every second dive drives on into the floor and becomes a short burrow.
+			if (arena != null && (diveCount++ & 1) == 1) {
+				setPos(getX(), arena.floorY() + 1.0D, getZ());
+				forceGroundedFlightState();
+				startBurrow(true);
+			} else {
+				beginLanding(arena);
+			}
 		}
 	}
 
 	private void tickTailFusillade(VesperOrdealManager.FlightArena arena, int tick) {
 		if (arena != null) {
+			// A strafing run across the mark, firing as it passes over.
 			Vec3 aim = getLockedFlightAim();
-			Vec3 away = position().subtract(aim).multiply(1.0D, 0.0D, 1.0D);
-			if (away.lengthSqr() < 0.01D) away = new Vec3(1.0D, 0.0D, 0.0D);
-			steerToward(clampFlightPoint(aim.x + away.normalize().x * 8.0D, arena.floorY() + 7.0D,
-					aim.z + away.normalize().z * 8.0D, arena), 0.22D);
+			Vec3 desired = aim.add(passDirection.scale(14.0D));
+			fly(clampFlightPoint(desired.x, arena.floorY() + 7.0D, desired.z, arena), 0.6D, 0.06D, 7.0F);
 		}
 		if (VesperWingedFlightRules.fusilladeNeedleCount(tick) == 5) fireNeedleBurst(tick);
 		if (tick >= VesperWingedFlightRules.TAIL_FUSILLADE_TICKS) {
@@ -804,12 +1067,14 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 	private void tickLanding(VesperOrdealManager.FlightArena arena, int tick) {
 		Vec3 aim = getLockedFlightAim();
 		if (arena != null) aim = clampGroundPoint(aim.x, aim.z, arena);
-		Vec3 direction = aim.subtract(position());
-		if (direction.lengthSqr() > 0.01D) setDeltaMovement(direction.normalize().scale(Math.min(0.38D, direction.length())));
-		else setDeltaMovement(Vec3.ZERO);
+		// Wings flare and brake into a short skid instead of a straight drop onto the mark.
+		fly(aim, 0.38D, 0.05D, 9.0F);
 		if (onGround() || tick >= VesperWingedFlightRules.LANDING_TICKS) {
-			if (arena != null) setPos(aim.x, arena.floorY() + 1.0D, aim.z);
+			if (arena != null && !onGround()) setPos(getX(), arena.floorY() + 1.0D, getZ());
+			Vec3 skid = getDeltaMovement().multiply(0.8D, 0.0D, 0.8D);
 			forceGroundedFlightState();
+			setDeltaMovement(skid);
+			setStaggerTick(VesperMountControllerRules.STAGGER_TICKS);
 			idleTicks = 25;
 		}
 	}
@@ -826,17 +1091,17 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 		return new Vec3(point.x(), point.y(), point.z());
 	}
 
-	private void steerToward(Vec3 desired, double speed) {
-		Vec3 delta = desired.subtract(position());
-		if (delta.lengthSqr() < 1.0E-4D) {
-			setDeltaMovement(Vec3.ZERO);
-			return;
+	/** One steered flight tick: capped turn, eased acceleration, and the bank and pitch the model leans into. */
+	private void fly(Vec3 desired, double maxSpeed, double accel, float maxTurn) {
+		VesperFlightSteeringRules.Steer steer = VesperFlightSteeringRules.step(position(), getDeltaMovement(),
+				getYRot(), desired, maxSpeed, accel, Math.max(0.001F, maxTurn));
+		setDeltaMovement(steer.velocity());
+		if (maxTurn > 0.0F) {
+			setYRot(steer.yaw());
+			setYBodyRot(steer.yaw());
+			setYHeadRot(steer.yaw());
 		}
-		Vec3 motion = delta.normalize().scale(Math.min(speed, delta.length()));
-		setDeltaMovement(motion);
-		float yaw = (float) (Mth.atan2(motion.z, motion.x) * Mth.RAD_TO_DEG) - 90.0F;
-		setYRot(yaw);
-		setYBodyRot(yaw);
+		setFlightAttitude(steer.bank(), steer.pitch());
 		hasImpulse = true;
 	}
 
@@ -845,6 +1110,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 		setFlightMode(VesperWingedFlightRules.FlightMode.GROUNDED);
 		airborneTicks = 0;
 		postAttackCircleTicks = 0;
+		setFlightAttitude(0.0F, 0.0F);
 		setDeltaMovement(getDeltaMovement().multiply(1.0D, 0.0D, 1.0D));
 	}
 
@@ -992,9 +1258,9 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 	}
 
 	private void updateAnchorPositions() {
-		VesperCombatRules.AnchorCenter center = VesperCombatRules.anchorCenter(
-				getX(), getY(), getZ(), getYRot());
 		for (int i = 0; i < throneAnchors.length; i++) {
+			double[] offset = VesperWoundRules.worldOffset(
+					VesperWoundRules.socket(VesperWoundRules.Site.fromIndex(i)), getYRot());
 			VesperThroneAnchorPart part = throneAnchors[i];
 			part.xo = part.getX();
 			part.yo = part.getY();
@@ -1002,32 +1268,14 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 			part.xOld = part.getX();
 			part.yOld = part.getY();
 			part.zOld = part.getZ();
-			part.setPos(center.x(), center.y() - VesperCombatRules.ANCHOR_HITBOX_HEIGHT * 0.5D, center.z());
+			part.setPos(getX() + offset[0], getY() + offset[1] - VesperCombatRules.ANCHOR_HITBOX_HEIGHT * 0.5D,
+					getZ() + offset[2]);
 		}
-	}
-
-	private void enforceVulnerableYawLock() {
-		float yaw = getVulnerableYaw();
-		setYRot(yaw);
-		yRotO = yaw;
-		setYBodyRot(yaw);
-		yBodyRotO = yaw;
-		setYHeadRot(yaw);
-		yHeadRotO = yaw;
-		goalSelector.disableControlFlag(Goal.Flag.LOOK);
-		getLookControl().setLookAt(getX(), getEyeY(), getZ());
-		getNavigation().stop();
-	}
-
-	private void clearVulnerableYawLock() {
-		entityData.set(DATA_VULNERABLE_YAW, VesperVulnerableRotation.inactive().yaw());
-		goalSelector.enableControlFlag(Goal.Flag.LOOK);
 	}
 
 	@Override
 	public void remove(RemovalReason reason) {
 		if (!level().isClientSide()) releaseRestrainedVictim(false);
-		clearVulnerableYawLock();
 		super.remove(reason);
 	}
 }

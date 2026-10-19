@@ -16,11 +16,14 @@ import java.util.function.ToIntFunction;
 public final class RecipeMapCanvas {
 	static final int FAMILY_LABEL_OFFSET = 22;
 	static final int FAMILY_LABEL_WRAP_WIDTH = 90;
+	static final int GROUP_ARC_OFFSET = 9;
+	private static final double GROUP_ARC_GAP_RADIANS = Math.toRadians(1.5);
 	private static final double LABEL_SIDE_COSINE = 0.3;
 	private static final RecipeMapRecentHistory RITE_RECENTS = new RecipeMapRecentHistory(5);
 	private static final RecipeMapRecentHistory CRAFTING_RECENTS = new RecipeMapRecentHistory(5);
 
-	private final RecipeMapEntry.Kind primaryKind;
+	private final String hubLabel;
+	private final Function<String, RecipeMapPurposeGroup> groups;
 	private final PanZoomState surfacePanZoom = new PanZoomState();
 	private final PanZoomState deepPanZoom = new PanZoomState();
 	private final SkillTreeDiveState diveState = new SkillTreeDiveState();
@@ -32,6 +35,7 @@ public final class RecipeMapCanvas {
 	private final Map<RecipeMapKey, ItemStack> icons = new HashMap<>();
 	private Integer degreeFilter;
 	private String familyFilter;
+	private RecipeMapPurposeGroup groupFilter;
 	private RecipeMapKey selected;
 	private boolean inspectorExpanded;
 	private boolean traceDirty = true;
@@ -40,7 +44,16 @@ public final class RecipeMapCanvas {
 	private RecipeMapEntry hoveredTooltipEntry;
 
 	public RecipeMapCanvas(RecipeMapEntry.Kind primaryKind) {
-		this.primaryKind = primaryKind;
+		this(primaryKind == RecipeMapEntry.Kind.CRAFTING ? "Craft" : "Rites", null);
+	}
+
+	/**
+	 * @param groups the purpose group of each family, or null for a map without groups. With groups, families run
+	 *               round the map group by group, take their group's colour, and the filter cycles groups.
+	 */
+	public RecipeMapCanvas(String hubLabel, Function<String, RecipeMapPurposeGroup> groups) {
+		this.hubLabel = hubLabel;
+		this.groups = groups;
 	}
 
 	public void initialise(ProgressScreenContext ctx, List<RecipeMapEntry> entries, List<String> families,
@@ -53,7 +66,8 @@ public final class RecipeMapCanvas {
 			Function<RecipeMapEntry, ItemStack> iconProvider) {
 		this.families = List.copyOf(families);
 		this.links = List.copyOf(links);
-		this.layout = RecipeMapLayout.build(entries, families, authoredPositions);
+		this.layout = RecipeMapLayout.build(entries, families, authoredPositions,
+				groups == null ? family -> 0 : family -> groups.apply(family).ordinal());
 		this.traceDirty = true;
 		this.icons.clear();
 		for (RecipeMapEntry entry : entries) {
@@ -75,11 +89,11 @@ public final class RecipeMapCanvas {
 		float deepAlpha = deepFade;
 		PanZoomState deepView = diveState.isDeepActive() ? deepPanZoom : surfacePanZoom;
 		if (traceDirty || cachedTraceAccent != accent) {
-			surfaceTraceCache.rebuildIfNeeded(RecipeMapTracePlan.build(
-					layout, links, degreeFilter, familyFilter, accent, SkillTreeLayer.SURFACE),
+			surfaceTraceCache.rebuildIfNeeded(RecipeMapTracePlan.buildFiltered(
+					layout, links, degreeFilter, this::acceptsFamily, accent, SkillTreeLayer.SURFACE),
 					layout.contentWidth(), layout.contentHeight());
-			deepTraceCache.rebuildIfNeeded(RecipeMapTracePlan.build(
-					layout, links, degreeFilter, familyFilter, accent, SkillTreeLayer.DEEP),
+			deepTraceCache.rebuildIfNeeded(RecipeMapTracePlan.buildFiltered(
+					layout, links, degreeFilter, this::acceptsFamily, accent, SkillTreeLayer.DEEP),
 					layout.contentWidth(), layout.contentHeight());
 			traceDirty = false;
 			cachedTraceAccent = accent;
@@ -194,7 +208,7 @@ public final class RecipeMapCanvas {
 				hubSize, hubSize, fadeColor(withAlpha(accent, 0xCC), alpha));
 		HarbingerChromeRenderer.drawFrame(gfx, centerX - hubSize / 2, centerY - hubSize / 2,
 				hubSize, hubSize, fadeColor(accent, alpha), HarbingerChromeRenderer.State.ACTIVE);
-		gfx.drawCenteredString(ctx.font(), primaryKind == RecipeMapEntry.Kind.RITE ? "Rites" : "Craft",
+		gfx.drawCenteredString(ctx.font(), hubLabel,
 				centerX, centerY - 8, fadeColor(withAlpha(accent, 0xEE), alpha));
 		gfx.drawCenteredString(ctx.font(), layer == SkillTreeLayer.SURFACE ? "0-4" : "5-8",
 				centerX, centerY + 3, fadeColor(0xFF999999, alpha));
@@ -204,8 +218,9 @@ public final class RecipeMapCanvas {
 			SkillTreeLayer layer, float alpha) {
 		int anchorRadius = layout.rimRadius(layer) + FAMILY_LABEL_OFFSET;
 		int lineHeight = ctx.font().lineHeight;
-		int color = fadeColor(withAlpha(accent, 0xD8), alpha);
+		if (groups != null) drawGroupArcs(gfx, layer, alpha);
 		for (RecipeMapLayout.Sector sector : layout.sectors(layer)) {
+			int color = fadeColor(withAlpha(groups == null ? accent : groups.apply(sector.family()).color(), 0xD8), alpha);
 			List<Component> lines = familyLabelLines(sector.family(),
 					text -> ctx.font().width(boldLabel(text))).stream().map(RecipeMapCanvas::boldLabel).toList();
 			int width = lines.stream().mapToInt(line -> ctx.font().width(line)).max().orElse(0);
@@ -220,6 +235,29 @@ public final class RecipeMapCanvas {
 						: origin[0] + (width - lineWidth) / 2;
 				gfx.drawString(ctx.font(), lines.get(line), lineX, origin[1] + line * lineHeight, color, false);
 			}
+		}
+	}
+
+	/** A thin arc in each purpose group's colour just beyond the rim, spanning that group's sectors. */
+	private void drawGroupArcs(GuiGraphics gfx, SkillTreeLayer layer, float alpha) {
+		int radius = layout.rimRadius(layer) + GROUP_ARC_OFFSET;
+		List<RecipeMapLayout.Sector> sectors = layout.sectors(layer);
+		int start = 0;
+		while (start < sectors.size()) {
+			RecipeMapPurposeGroup group = groups.apply(sectors.get(start).family());
+			int end = start;
+			while (end + 1 < sectors.size() && groups.apply(sectors.get(end + 1).family()) == group) end++;
+			double from = sectors.get(start).startAngle() + GROUP_ARC_GAP_RADIANS;
+			double to = sectors.get(end).endAngle() - GROUP_ARC_GAP_RADIANS;
+			int color = fadeColor(withAlpha(group.color(), 0xB0), alpha);
+			int steps = Math.max(2, (int) Math.ceil((to - from) * radius / 2.0));
+			for (int step = 0; step <= steps && to > from; step++) {
+				double angle = from + (to - from) * step / steps;
+				int x = layout.centerX() + (int) Math.round(Math.cos(angle) * radius);
+				int y = layout.centerY() + (int) Math.round(Math.sin(angle) * radius);
+				gfx.fill(x, y, x + 2, y + 2, color);
+			}
+			start = end + 1;
 		}
 	}
 
@@ -347,8 +385,9 @@ public final class RecipeMapCanvas {
 		RecipeMapControlsLayout.Result controls = RecipeMapControlsLayout.calculate(viewport);
 		ProgressFilterControlsView.draw(gfx, ctx, controls.degree(),
 				degreeFilter == null ? "Degree: All" : "Degree: " + degreeFilter, accent, mouseX, mouseY);
-		ProgressFilterControlsView.draw(gfx, ctx, controls.family(),
-				FamilyFilterLabels.display(FamilyFilterLabels.nickname(familyFilter)), accent, mouseX, mouseY);
+		ProgressFilterControlsView.draw(gfx, ctx, controls.family(), groups == null
+				? FamilyFilterLabels.display(FamilyFilterLabels.nickname(familyFilter))
+				: groupFilter == null ? "Purpose: All" : groupFilter.label(), accent, mouseX, mouseY);
 		ProgressFilterControlsView.draw(gfx, ctx, controls.layer(),
 				"Layer: " + (diveState.isDeepActive() ? "5-8" : "0-4"), accent, mouseX, mouseY);
 		List<RecipeMapKey> recents = history().entries();
@@ -391,7 +430,8 @@ public final class RecipeMapCanvas {
 			return new ClickResult(true, null);
 		}
 		if (controls.family().contains(mouseX, mouseY)) {
-			cycleFamily(button == 1 ? -1 : 1);
+			if (groups == null) cycleFamily(button == 1 ? -1 : 1);
+			else cycleGroup(button == 1 ? -1 : 1);
 			return new ClickResult(true, null);
 		}
 		if (controls.layer().contains(mouseX, mouseY)) {
@@ -488,7 +528,7 @@ public final class RecipeMapCanvas {
 					ctx.guiLeft() + ctx.guiWidth(), ctx.guiTop(), 0, 0);
 			return new RecipeMapInspectorLayout(full, empty, empty, empty, false, false);
 		}
-		if (primaryKind == RecipeMapEntry.Kind.CRAFTING) {
+		if (selected.kind() == RecipeMapEntry.Kind.CRAFTING) {
 			return RecipeMapInspectorLayout.calculateCrafting(
 					ctx.guiLeft(), ctx.guiTop(), ctx.guiWidth(), ctx.guiHeight(), inspectorExpanded);
 		}
@@ -515,8 +555,23 @@ public final class RecipeMapCanvas {
 	public RecipeMapLayout.Result layout() { return layout; }
 
 	private boolean passesFilters(RecipeMapEntry entry) {
-		return (degreeFilter == null || entry.column() == degreeFilter)
-				&& (familyFilter == null || familyFilter.equals(entry.family()));
+		return (degreeFilter == null || entry.column() == degreeFilter) && acceptsFamily(entry.family());
+	}
+
+	private boolean acceptsFamily(String family) {
+		if (groups != null) return groupFilter == null || groups.apply(family) == groupFilter;
+		return familyFilter == null || familyFilter.equals(family);
+	}
+
+	private void cycleGroup(int direction) {
+		List<RecipeMapPurposeGroup> available = new ArrayList<>();
+		available.add(null);
+		for (RecipeMapPurposeGroup group : RecipeMapPurposeGroup.values()) {
+			if (layout.entries().stream().anyMatch(entry -> groups.apply(entry.family()) == group)) available.add(group);
+		}
+		int index = Math.floorMod(available.indexOf(groupFilter) + direction, available.size());
+		groupFilter = available.get(index);
+		traceDirty = true;
 	}
 
 	private void cycleDegree(int direction) {
@@ -555,7 +610,7 @@ public final class RecipeMapCanvas {
 	}
 
 	private RecipeMapRecentHistory history() {
-		return primaryKind == RecipeMapEntry.Kind.RITE ? RITE_RECENTS : CRAFTING_RECENTS;
+		return "Craft".equals(hubLabel) ? CRAFTING_RECENTS : RITE_RECENTS;
 	}
 
 	private static void drawKindGlyph(GuiGraphics gfx, ProgressScreenContext ctx, RecipeMapEntry entry,

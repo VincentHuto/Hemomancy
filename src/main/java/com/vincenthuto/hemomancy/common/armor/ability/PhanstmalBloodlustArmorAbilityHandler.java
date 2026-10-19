@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.common.armor.ability;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.summon.PhantasmalEchoEntity;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager;
+import com.vincenthuto.hemomancy.common.worldgen.VesperOrdealManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
@@ -12,8 +14,10 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -143,13 +147,36 @@ public final class PhanstmalBloodlustArmorAbilityHandler {
 			for (int x = -2; x <= 2; x++) {
 				for (int z = -2; z <= 2; z++) {
 					BlockPos candidate = center.offset(x, y, z);
-					if (isSafeLanding(player, candidate)) {
+					if (isSafeLanding(player, candidate) && canDisplaceTo(attacker, candidate)) {
 						return candidate;
 					}
 				}
 			}
 		}
 		return null;
+	}
+
+	// The shove must not pass through a wall: boss arenas are sealed with barrier shells, and a
+	// two-block air check alone happily lands a boss on the far side of one.
+	private static boolean canDisplaceTo(LivingEntity attacker, BlockPos pos) {
+		Vec3 landing = new Vec3(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D);
+		if (!staysInArena(attacker, landing)) return false;
+		if (!attacker.level().noCollision(attacker, attacker.getBoundingBox().move(landing.subtract(attacker.position())))) {
+			return false;
+		}
+		double midHeight = attacker.getBbHeight() * 0.5D;
+		Vec3 from = attacker.position().add(0.0D, midHeight, 0.0D);
+		Vec3 to = landing.add(0.0D, midHeight, 0.0D);
+		return attacker.level().clip(new ClipContext(from, to, ClipContext.Block.COLLIDER,
+				ClipContext.Fluid.NONE, attacker)).getType() == HitResult.Type.MISS;
+	}
+
+	// Vesper's walls are only a few blocks high, so a flying boss can clear them without touching one.
+	private static boolean staysInArena(LivingEntity attacker, Vec3 landing) {
+		return VesperOrdealManager.arenaInteriorAt(attacker.level(), attacker.position())
+				.or(() -> MycophantEncounterManager.arenaInteriorAt(attacker.level(), attacker.position()))
+				.map(interior -> interior.contains(landing))
+				.orElse(true);
 	}
 
 	private static boolean isSafeLanding(ServerPlayer player, BlockPos pos) {

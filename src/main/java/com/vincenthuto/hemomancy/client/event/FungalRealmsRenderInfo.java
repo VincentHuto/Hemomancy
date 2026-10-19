@@ -42,13 +42,15 @@ public class FungalRealmsRenderInfo extends DimensionSpecialEffects {
         if (player != null) {
             Optional<ResourceKey<Biome>> biome = player.level().getBiome(player.blockPosition()).unwrapKey();
             if (biome.isPresent()) {
-                boolean fungalGardens = biome.get().equals(BiomeInit.FUNGAL_GARDENS);
+                if (biome.get().equals(BiomeInit.MYCELIAL_DEPTHS)) {
+                    return true;
+                }
 
                 if (player.position().y > 20) {
                     return false;
                 }
 
-                return !fungalGardens;
+                return !biome.get().equals(BiomeInit.MYCELIAL_MEADOWS);
             }
         }
 

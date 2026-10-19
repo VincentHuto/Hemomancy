@@ -44,6 +44,14 @@ public final class PuppetStrings {
 
 	/** Turns the body into a shell its strings haul away; it is removed once the haul has finished. */
 	public static void unspool(Mob body) {
+		unspool(body, true);
+	}
+
+	/**
+	 * Hauls the body away; {@code ownStrings} false when someone else's strings already hold it (Vesper's Recall), so
+	 * the cue carries a negative string count and only the body's peel and flash are drawn.
+	 */
+	public static void unspool(Mob body, boolean ownStrings) {
 		if (body.isRemoved() || isUnspooling(body)) return;
 		if (!(body.level() instanceof ServerLevel level)) {
 			body.discard();
@@ -59,7 +67,7 @@ public final class PuppetStrings {
 		// The missing-Crossbar countdown blinks the body; the haul replaces it.
 		if (body instanceof BoundPuppeteerSummon summon) summon.hemomancy$setDismissalTicks(0);
 		ManipulationVisuals.attached(body, ManipulationVisuals.Form.PUPPET_UNSPOOL, size(body), body.getBbHeight(),
-				PuppetStringsRules.UNSPOOL_TICKS + 6, strings(body));
+				PuppetStringsRules.UNSPOOL_TICKS + 6, ownStrings ? strings(body) : -1);
 		Vec3 head = body.position().add(0, body.getBbHeight(), 0);
 		level.sendParticles(HemoParticleData.hitGlow(HOT_CORE), head.x, head.y, head.z, 3, 0.1, 0.05, 0.1, 0.01);
 		level.sendParticles(HemoParticleData.bloodCell(ANIMUS_RED), head.x, head.y - body.getBbHeight() * 0.4, head.z,

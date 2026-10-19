@@ -10,292 +10,67 @@
   {
    "name": "vial_flammeus",
    "from": [
-    -7.05,
-    4.4,
-    2.9893
+    -7.3,
+    3.7,
+    2.3
    ],
    "to": [
-    -5.55,
-    5.4,
-    3.6107
+    -5.3,
+    4.7,
+    4.3
    ],
    "faces": {
     "north": {
      "uv": [
-      0,
-      10.6,
-      16,
-      11.6
+      8.7,
+      11.3,
+      10.7,
+      12.3
      ],
      "texture": "#liq_flammeus"
     },
     "south": {
      "uv": [
-      0,
-      10.6,
-      16,
-      11.6
+      8.7,
+      11.3,
+      10.7,
+      12.3
      ],
      "texture": "#liq_flammeus"
     },
     "east": {
      "uv": [
-      0,
-      10.6,
-      16,
-      11.6
+      2.3,
+      11.3,
+      4.3,
+      12.3
      ],
      "texture": "#liq_flammeus"
     },
     "west": {
      "uv": [
-      0,
-      10.6,
-      16,
-      11.6
+      2.3,
+      11.3,
+      4.3,
+      12.3
      ],
      "texture": "#liq_flammeus"
     },
     "up": {
      "uv": [
-      8.95,
-      2.989,
-      10.45,
-      3.611
+      8.7,
+      2.3,
+      10.7,
+      4.3
      ],
      "texture": "#liq_flammeus"
     },
     "down": {
      "uv": [
-      8.95,
-      2.989,
-      10.45,
-      3.611
-     ],
-     "texture": "#liq_flammeus"
-    }
-   }
-  },
-  {
-   "name": "vial_flammeus",
-   "from": [
-    -6.6107,
-    4.44,
-    2.55
-   ],
-   "to": [
-    -5.9893,
-    5.36,
-    4.05
-   ],
-   "faces": {
-    "north": {
-     "uv": [
-      0,
-      10.64,
-      16,
-      11.56
-     ],
-     "texture": "#liq_flammeus"
-    },
-    "south": {
-     "uv": [
-      0,
-      10.64,
-      16,
-      11.56
-     ],
-     "texture": "#liq_flammeus"
-    },
-    "east": {
-     "uv": [
-      0,
-      10.64,
-      16,
-      11.56
-     ],
-     "texture": "#liq_flammeus"
-    },
-    "west": {
-     "uv": [
-      0,
-      10.64,
-      16,
-      11.56
-     ],
-     "texture": "#liq_flammeus"
-    },
-    "up": {
-     "uv": [
-      9.389,
-      2.55,
-      10.011,
-      4.05
-     ],
-     "texture": "#liq_flammeus"
-    },
-    "down": {
-     "uv": [
-      9.389,
-      2.55,
-      10.011,
-      4.05
-     ],
-     "texture": "#liq_flammeus"
-    }
-   }
-  },
-  {
-   "name": "vial_flammeus",
-   "from": [
-    -7.05,
-    4.48,
-    2.9893
-   ],
-   "to": [
-    -5.55,
-    5.32,
-    3.6107
-   ],
-   "rotation": {
-    "angle": 45,
-    "axis": "y",
-    "origin": [
-     -6.3,
-     0,
-     3.3
-    ]
-   },
-   "faces": {
-    "north": {
-     "uv": [
-      0,
-      10.68,
-      16,
-      11.52
-     ],
-     "texture": "#liq_flammeus"
-    },
-    "south": {
-     "uv": [
-      0,
-      10.68,
-      16,
-      11.52
-     ],
-     "texture": "#liq_flammeus"
-    },
-    "east": {
-     "uv": [
-      0,
-      10.68,
-      16,
-      11.52
-     ],
-     "texture": "#liq_flammeus"
-    },
-    "west": {
-     "uv": [
-      0,
-      10.68,
-      16,
-      11.52
-     ],
-     "texture": "#liq_flammeus"
-    },
-    "up": {
-     "uv": [
-      8.95,
-      2.989,
-      10.45,
-      3.611
-     ],
-     "texture": "#liq_flammeus"
-    },
-    "down": {
-     "uv": [
-      8.95,
-      2.989,
-      10.45,
-      3.611
-     ],
-     "texture": "#liq_flammeus"
-    }
-   }
-  },
-  {
-   "name": "vial_flammeus",
-   "from": [
-    -7.05,
-    4.52,
-    2.9893
-   ],
-   "to": [
-    -5.55,
-    5.28,
-    3.6107
-   ],
-   "rotation": {
-    "angle": -45,
-    "axis": "y",
-    "origin": [
-     -6.3,
-     0,
-     3.3
-    ]
-   },
-   "faces": {
-    "north": {
-     "uv": [
-      0,
-      10.72,
-      16,
-      11.48
-     ],
-     "texture": "#liq_flammeus"
-    },
-    "south": {
-     "uv": [
-      0,
-      10.72,
-      16,
-      11.48
-     ],
-     "texture": "#liq_flammeus"
-    },
-    "east": {
-     "uv": [
-      0,
-      10.72,
-      16,
-      11.48
-     ],
-     "texture": "#liq_flammeus"
-    },
-    "west": {
-     "uv": [
-      0,
-      10.72,
-      16,
-      11.48
-     ],
-     "texture": "#liq_flammeus"
-    },
-    "up": {
-     "uv": [
-      8.95,
-      2.989,
-      10.45,
-      3.611
-     ],
-     "texture": "#liq_flammeus"
-    },
-    "down": {
-     "uv": [
-      8.95,
-      2.989,
-      10.45,
-      3.611
+      8.7,
+      2.3,
+      10.7,
+      4.3
      ],
      "texture": "#liq_flammeus"
     }

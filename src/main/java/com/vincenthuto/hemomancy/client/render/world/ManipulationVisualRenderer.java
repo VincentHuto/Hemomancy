@@ -96,6 +96,10 @@ public final class ManipulationVisualRenderer {
         var entity=level.getEntity(packet.entityId());
         // An arrival cue can beat the body's spawn packet; wait briefly for it rather than retiring.
         if(entity==null && packet.form()==ManipulationVisuals.Form.PUPPET_DESCEND && level.getGameTime()-cue.life.born<6)return true;
+        // Once the haul begins the Recall carries on past its discarded body: the last clot still reels into the Crossbar.
+        if(packet.form()==ManipulationVisuals.Form.VESPER_RECALL && level.getGameTime()-cue.life.born>=
+                com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperRecallRules.HAUL_TICK
+                && (entity==null || !entity.isAlive()))return level.getGameTime()-cue.life.born<packet.ticks();
         if(entity==null || !entity.isAlive())return false;
         cue.lastFrom=entity.position();
         if(packet.form().name().endsWith("_CHARGE"))cue.lastFrom=cue.lastFrom.add(0,entity.getEyeHeight(),0);
@@ -172,6 +176,8 @@ public final class ManipulationVisualRenderer {
         var buffers = mc.renderBuffers().bufferSource();
         SchoolStateVisuals.collect(poses, FLOWS, solids ? buffers.getBuffer(FerricDuctilisRenderTypes.IRON) : null,
                 camera, time, partial, solids);
+        if (!solids) MycophantSiphonTetherGeometry.collect(world, poses, FLOWS.vertices(LuxUmbraBatch.Material.CRUOR),
+                camera, time, partial);
         for (Cue cue : CUES) {
             var packet = cue.packet;
             if(solids && !FerricDuctilisGeometry.handles(packet.form()) && !LodestoneCollapseGeometry.handles(packet.form())
@@ -181,19 +187,22 @@ public final class ManipulationVisualRenderer {
             if (!cue.life.retiring() && packet.entityId() >= 0) {
                 var entity = world.getEntity(packet.entityId());
                 if (!sourceActive(cue,world)) {retire(cue,world);continue;}
-                if (entity==null) continue;
-                if(AnimusMortemGeometry.handles(packet.form()) && entity.isInvisible())continue;
-                from = entity.getPosition(partial);
-                if (packet.form().name().endsWith("_CHARGE")) from = from.add(0,entity.getEyeHeight(),0);
-                cue.lastFrom=from;
-                if ((packet.form()==ManipulationVisuals.Form.IRON_HEART || packet.form()==ManipulationVisuals.Form.BLACK_HEART
-                        || RadiantWakeGeometry.handles(packet.form())
-                        || packet.form()==ManipulationVisuals.Form.RIPOSTE || PhoenixDebtGeometry.handles(packet.form()))
-                        && entity instanceof net.minecraft.world.entity.LivingEntity living) {
-                    cue.bodyYaw=Mth.rotLerp(partial,living.yBodyRotO,living.yBodyRot);
-                    cue.headYaw=Mth.rotLerp(partial,living.yHeadRotO,living.yHeadRot);
-                    cue.bodyScale=living.getScale();
-                    cue.crouching=living.isCrouching();
+                // A Recall whose body has been hauled off keeps drawing at its last position.
+                if (entity==null && !VesperRecallGeometry.handles(packet.form())) continue;
+                if (entity!=null) {
+                    if(AnimusMortemGeometry.handles(packet.form()) && entity.isInvisible())continue;
+                    from = entity.getPosition(partial);
+                    if (packet.form().name().endsWith("_CHARGE")) from = from.add(0,entity.getEyeHeight(),0);
+                    cue.lastFrom=from;
+                    if ((packet.form()==ManipulationVisuals.Form.IRON_HEART || packet.form()==ManipulationVisuals.Form.BLACK_HEART
+                            || RadiantWakeGeometry.handles(packet.form())
+                            || packet.form()==ManipulationVisuals.Form.RIPOSTE || PhoenixDebtGeometry.handles(packet.form()))
+                            && entity instanceof net.minecraft.world.entity.LivingEntity living) {
+                        cue.bodyYaw=Mth.rotLerp(partial,living.yBodyRotO,living.yBodyRot);
+                        cue.headYaw=Mth.rotLerp(partial,living.yHeadRotO,living.yHeadRot);
+                        cue.bodyScale=living.getScale();
+                        cue.crouching=living.isCrouching();
+                    }
                 }
             }
             if (from.distanceToSqr(camera) > 128 * 128) continue;
@@ -298,6 +307,21 @@ public final class ManipulationVisualRenderer {
                 var source=packet.entityId()>=0?world.getEntity(packet.entityId()):null;
                 if(source!=null && source.isInvisible()) {poses.popPose();continue;}
                 PuppetStringsGeometry.draw(packet,poses,FLOWS.vertices(LuxUmbraBatch.Material.ANIMUS),camera.subtract(from),right,up,time,age,opacity);
+                poses.popPose();continue;
+            }
+            if(VesperRecallGeometry.handles(packet.form())) {
+                // Vesper's strings run to his raised Crossbar wherever the mount is now, not where it stood at the cast.
+                float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):1;
+                var puppet=packet.entityId()>=0?world.getEntity(packet.entityId()):null;
+                var vesper=world.getEntity(packet.count());
+                Vec3 crossbar=packet.to();
+                if(vesper instanceof net.minecraft.world.entity.LivingEntity mount) {
+                    double[] tip=com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperRecallRules.crossbarOffset(
+                            Mth.rotLerp(partial,mount.yBodyRotO,mount.yBodyRot));
+                    crossbar=mount.getPosition(partial).add(tip[0],tip[1],tip[2]);
+                }
+                VesperRecallGeometry.draw(packet,poses,FLOWS.vertices(LuxUmbraBatch.Material.ANIMUS),camera.subtract(from),right,up,
+                        time,age,opacity,crossbar.subtract(from),puppet==null?0.6:puppet.getBbWidth());
                 poses.popPose();continue;
             }
             if(BloodShotGeometry.handles(packet.form())) {

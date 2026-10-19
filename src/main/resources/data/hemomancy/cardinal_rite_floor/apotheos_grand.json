@@ -1,0 +1,54 @@
+{
+  "style": "apotheos",
+  "tier": "grand",
+  "purpose": "self",
+  "pattern": [
+    [
+      "AAAAAAAAA"
+    ],
+    [
+      "ABBBBBBBA"
+    ],
+    [
+      "ABAAAAABA"
+    ],
+    [
+      "ABABIBABA"
+    ],
+    [
+      "ABAIFIABA"
+    ],
+    [
+      "ABABIBABA"
+    ],
+    [
+      "ABAAAAABA"
+    ],
+    [
+      "ABBBBBBBA"
+    ],
+    [
+      "AAAAAAAAA"
+    ]
+  ],
+  "key": {
+    "A": {
+      "block": "hemomancy:chiseled_polished_venous_stone"
+    },
+    "B": {
+      "block": "hemomancy:polished_venous_stone"
+    },
+    "I": {
+      "block": "hemomancy:hematic_iron_block"
+    },
+    "F": {
+      "block": "hemomancy:cardinal_focus"
+    }
+  },
+  "focus": [
+    4,
+    0,
+    4
+  ],
+  "footprint_radius": 7.5
+}

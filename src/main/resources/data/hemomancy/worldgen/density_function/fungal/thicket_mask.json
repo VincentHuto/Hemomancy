@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:spline",
+    "spline": {
+      "coordinate": "hemomancy:fungal/humidity",
+      "points": [
+        {
+          "location": 0.1,
+          "value": 0.0,
+          "derivative": 0.0
+        },
+        {
+          "location": 0.4,
+          "value": 1.0,
+          "derivative": 0.0
+        }
+      ]
+    }
+  }
+}

@@ -7,7 +7,7 @@
   "required_degree": 7,
   "riteName": "Rite of Ancestral Communion",
   "riteDescription": "The ultimate rite of revelation. The caster opens a channel to the ancient fungal consciousness, receiving cryptic lore and hidden truths about the origins of hemomancy itself.",
-  "floor": "hemomancy:communion_grand",
+  "floor": "hemomancy:ancestral_grand",
   "required_structure": {
     "pattern": [
       [

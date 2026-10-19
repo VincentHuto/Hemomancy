@@ -402,7 +402,7 @@ public final class CraftingTabView {
 		if (recipe.isWorking()) {
 			gfx.drawString(ctx.font(), Component.literal("Floor: ")
 					.withStyle(s -> s.withColor(0x888888))
-					.append(Component.literal(CraftingTabController.floorLabel(recipe))
+					.append(Component.literal(recipe.floorLabel())
 							.withStyle(s -> s.withColor(0xDDDDDD))),
 					panelX, y, 0);
 			y += lineH + 4;

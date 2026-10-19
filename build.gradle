@@ -243,6 +243,39 @@ neoForge {
             programArguments.addAll '--username', 'MembraneReview'
         }
 
+        annettaReviewClient {
+            client()
+            gameDirectory = project.file('build/annetta-client-review')
+            additionalRuntimeClasspathConfiguration.extendsFrom(clientLocalRuntime)
+            jvmArguments.addAll("-Xms2G", "-Xmx6G")
+            systemProperty 'hemomancy.gameplayDriver', 'true'
+            systemProperty 'hemomancy.annettaReview', 'true'
+            systemProperty 'hemomancy.annettaReview.only', providers.gradleProperty('annettaReviewOnly').getOrElse('')
+            programArguments.addAll '--username', 'AnnettaReview', '--width', '1280', '--height', '720'
+        }
+
+        mycophantReviewClient {
+            client()
+            gameDirectory = project.file('build/mycophant-client-review')
+            additionalRuntimeClasspathConfiguration.extendsFrom(clientLocalRuntime)
+            jvmArguments.addAll("-Xms2G", "-Xmx6G")
+            systemProperty 'hemomancy.gameplayDriver', 'true'
+            systemProperty 'hemomancy.mycophantReview', 'true'
+            systemProperty 'hemomancy.mycophantReview.only', providers.gradleProperty('mycophantReviewOnly').getOrElse('')
+            programArguments.addAll '--username', 'MycophantReview', '--width', '1280', '--height', '720'
+        }
+
+        vesperReviewClient {
+            client()
+            gameDirectory = project.file('build/vesper-client-review')
+            additionalRuntimeClasspathConfiguration.extendsFrom(clientLocalRuntime)
+            jvmArguments.addAll("-Xms2G", "-Xmx6G")
+            systemProperty 'hemomancy.gameplayDriver', 'true'
+            systemProperty 'hemomancy.vesperReview', 'true'
+            systemProperty 'hemomancy.vesperReview.only', providers.gradleProperty('vesperReviewOnly').getOrElse('')
+            programArguments.addAll '--username', 'VesperReview', '--width', '1280', '--height', '720'
+        }
+
         brazierReviewClient {
             client()
             gameDirectory = project.file('build/brazier-client-review')
@@ -271,6 +304,17 @@ neoForge {
             systemProperty 'hemomancy.gameplayDriver', 'true'
             systemProperty 'hemomancy.loomReview', 'true'
             programArguments.addAll '--username', 'LoomReview', '--width', '1280', '--height', '720'
+        }
+
+        riteFloorReviewClient {
+            client()
+            gameDirectory = project.file('build/rite-floor-client-review')
+            additionalRuntimeClasspathConfiguration.extendsFrom(clientLocalRuntime)
+            jvmArguments.addAll("-Xms2G", "-Xmx6G")
+            systemProperty 'hemomancy.gameplayDriver', 'true'
+            systemProperty 'hemomancy.riteFloorReview', 'true'
+            systemProperty 'hemomancy.riteFloorReviewSpecial', providers.gradleProperty('riteFloorReviewSpecial').getOrElse('true')
+            programArguments.addAll '--username', 'RiteFloorReview', '--width', '1280', '--height', '720'
         }
 
         successionReviewClient {

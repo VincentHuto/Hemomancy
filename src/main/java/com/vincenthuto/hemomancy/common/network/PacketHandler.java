@@ -136,6 +136,9 @@ public class PacketHandler {
                 PacketSyncVesperFightScene.STREAM_CODEC, PacketSyncVesperFightScene::handle);
         net.playToClient(PacketSyncMycophantFightScene.TYPE,
                 PacketSyncMycophantFightScene.STREAM_CODEC, PacketSyncMycophantFightScene::handle);
+        net.playToClient(com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketMycophantIntro.TYPE,
+                com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketMycophantIntro.STREAM_CODEC,
+                com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketMycophantIntro::handle);
         net.playToClient(LivingStaffProgressServerPacket.TYPE,
                 LivingStaffProgressServerPacket.STREAM_CODEC, LivingStaffProgressServerPacket::handle);
 
@@ -357,6 +360,7 @@ public class PacketHandler {
         // ── World events ──────────────────────────────────────────────────────
         net.playToClient(PacketSyncQliphothBlooms.TYPE, PacketSyncQliphothBlooms.STREAM_CODEC, PacketSyncQliphothBlooms::handle);
         net.playToClient(com.vincenthuto.hemomancy.common.rite.zone.RiteZoneSyncPacket.TYPE, com.vincenthuto.hemomancy.common.rite.zone.RiteZoneSyncPacket.STREAM_CODEC, com.vincenthuto.hemomancy.common.rite.zone.RiteZoneSyncPacket::handle);
+        net.playToClient(com.vincenthuto.hemomancy.common.rite.zone.RiteSpaceSyncPacket.TYPE, com.vincenthuto.hemomancy.common.rite.zone.RiteSpaceSyncPacket.STREAM_CODEC, com.vincenthuto.hemomancy.common.rite.zone.RiteSpaceSyncPacket::handle);
         net.playToClient(PacketSyncBloodMoon.TYPE, PacketSyncBloodMoon.STREAM_CODEC, PacketSyncBloodMoon::handle);
 
         // ── Visceral Mirror ───────────────────────────────────────────────────

@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.ConcentricTreeGeom
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -22,11 +23,16 @@ public final class RecipeMapLayout {
 	/** Centre-to-centre chord between neighbours: the 38 px minimum plus room for integer rounding. */
 	static final int SLOT_SPACING = NODE_SIZE + 12;
 	static final int STAGGER_OFFSET = 12;
-	static final double STAGGER_THRESHOLD = 0.85;
+	static final double STAGGER_THRESHOLD = 1.0;
 	static final double LABEL_GAP_RADIANS = Math.toRadians(14.0);
 	static final int LABEL_MARGIN = 100;
-	/** Deep degrees skip the two innermost radii so D5, the busiest ring, gets a usable circumference. */
-	private static final int DEEP_RING_SHIFT = 3;
+	/**
+	 * Surface degrees sit two radii further out than the skill tree's rings: the Rites &amp; Crafts map carries about
+	 * twenty families, and the inner radii cannot seat the five Degree 1 floorless crafts beside the rest.
+	 */
+	private static final int SURFACE_RING_SKIP = 2;
+	/** Deep degrees start at the fourth radius, so D5, the busiest deep ring, gets a usable circumference. */
+	private static final int DEEP_RING_OFFSET = -2;
 	private static final double NORTH = -Math.PI / 2.0;
 
 	private RecipeMapLayout() {}
@@ -34,7 +40,7 @@ public final class RecipeMapLayout {
 	public static int ringRadius(int degree) {
 		int clamped = Math.max(0, Math.min(8, degree));
 		return ConcentricTreeGeometry.radiusForDegree(
-				clamped <= SkillTreeLayerRules.SURFACE_MAX_DEGREE ? clamped : clamped - DEEP_RING_SHIFT);
+				clamped <= SkillTreeLayerRules.SURFACE_MAX_DEGREE ? clamped + SURFACE_RING_SKIP : clamped + DEEP_RING_OFFSET);
 	}
 
 	public static int outerRingRadius(SkillTreeLayer layer) {
@@ -47,6 +53,15 @@ public final class RecipeMapLayout {
 
 	public static Result build(List<RecipeMapEntry> sourceEntries, List<String> authoredFamilies,
 			Map<RecipeMapKey, AuthoredPosition> authoredPositions) {
+		return build(sourceEntries, authoredFamilies, authoredPositions, family -> 0);
+	}
+
+	/**
+	 * Lays out the map with families gathered by {@code groupRank} first (lower ranks run clockwise from the
+	 * north gap), then by their earliest degree, then in authored order.
+	 */
+	public static Result build(List<RecipeMapEntry> sourceEntries, List<String> authoredFamilies,
+			Map<RecipeMapKey, AuthoredPosition> authoredPositions, Function<String, Integer> groupRank) {
 		List<String> familyList = new ArrayList<>(new LinkedHashSet<>(authoredFamilies));
 		if (!familyList.contains(MISC_FAMILY)) familyList.add(MISC_FAMILY);
 		List<RecipeMapEntry> known = sourceEntries.stream()
@@ -58,7 +73,8 @@ public final class RecipeMapLayout {
 		Map<String, Integer> earliestDegree = new HashMap<>();
 		for (RecipeMapEntry entry : known) earliestDegree.merge(entry.family(), entry.column(), Math::min);
 		List<String> familyOrder = familyList.stream().filter(earliestDegree::containsKey)
-				.sorted(Comparator.comparingInt((String family) -> earliestDegree.get(family))
+				.sorted(Comparator.comparingInt((String family) -> groupRank.apply(family))
+						.thenComparingInt(family -> earliestDegree.get(family))
 						.thenComparingInt(familyList::indexOf))
 				.toList();
 		List<RecipeMapEntry> entries = known.stream()

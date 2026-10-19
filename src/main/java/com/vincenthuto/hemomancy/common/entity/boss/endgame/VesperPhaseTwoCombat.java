@@ -37,68 +37,6 @@ public final class VesperPhaseTwoCombat {
 
 	private VesperPhaseTwoCombat() { }
 
-	public static void tick(VesperTheEveningStarEntity boss, EnumBloodTendency tendency, int stanceTick) {
-		LivingEntity target = target(boss);
-		if (target == null) {
-			cancel(boss);
-			return;
-		}
-		if (!boss.hasLineOfSight(target)) {
-			if (boss.getWeaponAction() != VesperWeaponAction.NONE) cancel(boss);
-			boss.getNavigation().moveTo(target, 1.0D);
-			return;
-		}
-		if (VesperCombatRules.isMorphTelegraph(stanceTick)) {
-			cancel(boss);
-			boss.getNavigation().stop();
-			pulse(boss, tendency, stanceTick < 10 ? 18 : 8);
-			return;
-		}
-		if (boss.getWeaponAction() == VesperWeaponAction.NONE) {
-			positionForWeapon(boss, target, tendency);
-			if (boss.getActionCooldown() > 0) {
-				boss.setActionCooldown(boss.getActionCooldown() - 1);
-				return;
-			}
-			boolean advanced = boss.getHealth() <= boss.getMaxHealth() * 0.60F;
-			VesperWeaponAction action = VesperWeaponCombatRules.selectAction(tendency, advanced,
-					boss.getLastWeaponAction(), boss.distanceTo(target), attackAngle(boss, target),
-					target.getY() - boss.getY(), true);
-			if (!readyToCommit(tendency, boss.distanceTo(target), action)) return;
-			boss.beginWeaponAction(action, predictedAim(target, action));
-			boss.getNavigation().stop();
-			return;
-		}
-		tickAction(boss, target);
-	}
-
-	public static void tickRage(VesperTheEveningStarEntity boss) {
-		LivingEntity target = target(boss);
-		if (target == null) {
-			cancel(boss);
-			return;
-		}
-		if (!boss.hasLineOfSight(target)) {
-			if (boss.getWeaponAction() != VesperWeaponAction.NONE) boss.clearWeaponAction();
-			boss.getNavigation().moveTo(target, 1.35D);
-			return;
-		}
-		if (boss.getWeaponAction() == VesperWeaponAction.NONE) {
-			positionForRage(boss, target);
-			if (boss.distanceTo(target) > 16.0D) return;
-			if (boss.getActionCooldown() > 0) {
-				boss.setActionCooldown(boss.getActionCooldown() - 1);
-				return;
-			}
-			VesperWeaponAction action = VesperRageCombatRules.selectAction(
-					boss.getLastWeaponAction(), boss.distanceTo(target), boss.getActionVariant());
-			boss.beginWeaponAction(action, predictedAim(target, action));
-			boss.getNavigation().stop();
-			return;
-		}
-		tickAction(boss, target);
-	}
-
 	public static void cancel(VesperTheEveningStarEntity boss) {
 		cancelInternal(boss, true);
 	}
@@ -113,6 +51,7 @@ public final class VesperPhaseTwoCombat {
 
 	private static void cancelInternal(VesperTheEveningStarEntity boss, boolean clearWeaponAction) {
 		if (clearWeaponAction) boss.clearWeaponAction();
+		boss.releaseHook();
 		boss.setActionCooldown(0);
 		boss.removeEffect(EffectInit.iron_retort);
 		boss.removeEffect(EffectInit.blood_rush);
@@ -134,7 +73,7 @@ public final class VesperPhaseTwoCombat {
 				.forEach(EntityIronSpike::discard);
 	}
 
-	private static void tickAction(VesperTheEveningStarEntity boss, LivingEntity target) {
+	static void tickAction(VesperTheEveningStarEntity boss, LivingEntity target) {
         var hit = com.vincenthuto.hemomancy.common.damage.SchoolHitContext.load(
                 boss.getPersistentData().getCompound("hemomancy:weapon_school_hit"));
         try (var schoolAction = com.vincenthuto.hemomancy.common.damage.SchoolDamage.scope(hit, boss)) {
@@ -166,6 +105,41 @@ public final class VesperPhaseTwoCombat {
 			case BRANDING_THRUSTS -> brandingThrusts(boss, target, tick);
 			case UPDRAFT_IMPALEMENT -> updraftImpalement(boss, target, tick);
 			case FLAMMEUS_CONCENTRATION -> flammeusConcentration(boss, target, tick);
+			case BLADE_RISING_CUT -> bladeRisingCut(boss, target, tick);
+			case BLADE_DRAWING_STEP -> bladeDrawingStep(boss, target, tick);
+			case AXE_HAFT_SHOVE -> axeHaftShove(boss, target, tick);
+			case AXE_GRAVE_SPLITTER -> axeGraveSplitter(boss, target, tick);
+			case SPEAR_VAULT_KICK -> spearVaultKick(boss, target, tick);
+			case SPEAR_PINNING_THRUST -> spearPinningThrust(boss, target, tick);
+			case CLAW_SHADOW_FEINT -> clawShadowFeint(boss, target, tick);
+			case CLAW_EVISCERATE -> clawEviscerate(boss, target, tick);
+			case CROSSBOW_SNAP_SHOT -> crossbowSnapShot(boss, target, tick);
+			case CROSSBOW_BOLT_RAIN -> crossbowBoltRain(boss, target, tick);
+			case TORCH_CINDER_SWEEP -> torchCinderSweep(boss, target, tick);
+			case FLAIL_ORBIT -> flailOrbit(boss, target, tick);
+			case FLAIL_SHATTER_SLAM -> flailShatterSlam(boss, target, tick);
+			case STAFF_LODESTONE_SWEEP -> staffLodestoneSweep(boss, target, tick);
+			case STAFF_PILLAR_VAULT -> staffPillarVault(boss, target, tick);
+			case SICKLE_REAP_L -> sickleReap(boss, target, tick, true);
+			case SICKLE_REAP_R -> sickleReap(boss, target, tick, false);
+			case SICKLE_HOOK_REEL -> sickleHookReel(boss, target, tick);
+			case SICKLE_REEL_CYCLONE -> sickleReelCyclone(boss, target, tick);
+			case SICKLE_REAPERS_RISE -> sickleReapersRise(boss, target, tick);
+			case SICKLE_PASS_THROUGH -> sicklePassThrough(boss, target, tick);
+			case SICKLE_GALLOWS_WHEEL -> sickleGallowsWheel(boss, target, tick);
+			case SICKLE_TRAVELLING_CYCLONE -> sickleTravellingCyclone(boss, target, tick);
+			case SICKLE_REVERSE_CYCLONE -> sickleReverseCyclone(boss, target, tick);
+			case SICKLE_FEINT_CYCLONE -> sickleFeintCyclone(boss, target, tick);
+			case SICKLE_POUNCE_FEINT -> sicklePounceFeint(boss, target, tick);
+			case SICKLE_CRESCENT_FAN -> sickleCrescentFan(boss, target, tick);
+			case SICKLE_CRESCENT_STAGGER -> sickleCrescentStagger(boss, target, tick);
+			case SICKLE_CRESCENT_SKIM -> sickleCrescentSkim(boss, target, tick);
+			case SICKLE_CRESCENT_RETURN -> sickleCrescentReturn(boss, target, tick);
+			case SICKLE_ANCHOR_HOOK -> sickleAnchorHook(boss, target, tick);
+			case SICKLE_HARVEST -> sickleHarvest(boss, target, tick);
+			case BORROWED_HULK_YANK, BORROWED_MARROW_VOLLEY, BORROWED_VULTURE_DIVE, BORROWED_MUMMER_DECOYS,
+					BORROWED_HOUND_CURS, BORROWED_BELLOWS_BREATH, BORROWED_MNEMONIC_LASH ->
+					VesperBorrowedAttacks.tick(boss, target, action, tick);
 			case CHAIN_SWEEP -> chainSweep(boss, target, tick);
 			case HOOK_AND_CRUSH -> hookAndCrush(boss, target, tick);
 			case MAGNETIC_AXIS -> magneticAxis(boss, target, tick);
@@ -354,6 +328,390 @@ public final class VesperPhaseTwoCombat {
 		}
 	}
 
+	// ---- chained-moveset additions
+
+	/** Blade follow-up: a rising cut out of the low line that pops the target into the air. */
+	private static void bladeRisingCut(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		if (tick == 10) {
+			moveCommitted(boss, 0.5D, 0.2D);
+			if (hitArc(boss, target, 4.0D, 120.0D, 9.0F, 0)) target.push(0.0D, 0.55D, 0.0D);
+		}
+	}
+
+	/** Blade finisher: a drawing step straight through the target, then a turning cut on the far side. */
+	private static void bladeDrawingStep(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		if (tick < 16) stopHorizontal(boss);
+		if (tick == 16) {
+			dashThrough(boss, 1.6D, true);
+			hitLine(boss, target, 6.5D, 1.1D, 12.0F, 0);
+		}
+		if (tick == 24 && hitArc(boss, target, 4.5D, 140.0D, 10.0F, 1)) cast(boss, target, "blood_aneurysm", 0.6D);
+	}
+
+	/** Axe opener: a short haft shove that knocks a crowding target off him. */
+	private static void axeHaftShove(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		stopHorizontal(boss);
+		if (tick == 10 && hitArc(boss, target, 3.5D, 100.0D, 6.0F, 0)) pushAway(boss, target, 1.1D);
+	}
+
+	/** Axe finisher: an overhead splitting the floor along a lane, then the split bursts where it was aimed. */
+	private static void axeGraveSplitter(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		stopHorizontal(boss);
+		if (tick == 24 && hitLine(boss, target, 7.0D, 1.4D, 18.0F, 0)) cast(boss, target, "grave_debt", 0.6D);
+		if (tick == 30) hitArea(boss, target, boss.getLockedActionAim(), 4.0D, 8.0F, 1);
+	}
+
+	/** Spear follow-up: vaults off the planted spear into a kick, then a knee that drives the target away. */
+	private static void spearVaultKick(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		if (tick == 12) {
+			moveToward(boss, target.position(), 0.9D, 0.55D);
+			hitArc(boss, target, 3.5D, 140.0D, 7.0F, 0);
+		}
+		if (tick == 18 && hitNear(boss, target, 3.2D, 6.0F, 1)) pushAway(boss, target, 1.0D);
+	}
+
+	/** Spear finisher: a long lunging thrust that pins the target in place and flares. */
+	private static void spearPinningThrust(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		if (tick < 18) stopHorizontal(boss);
+		if (tick == 18) {
+			moveCommitted(boss, 0.9D, 0.0D);
+			if (hitLine(boss, target, 6.5D, 1.0D, 15.0F, 0)) {
+				target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 3));
+				cast(boss, target, "hematic_flare", 0.6D);
+			}
+		}
+	}
+
+	/** Claw opener: a feint that slips to the flank before the real rake lands. */
+	private static void clawShadowFeint(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		if (tick == 6) safeFlank(boss, target);
+		if (tick == 14) hitArc(boss, target, 3.8D, 160.0D, 8.0F, 0);
+	}
+
+	/** Claw finisher: three quick rakes and a disembowelling hook that lacerates. */
+	private static void clawEviscerate(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		int bit = tick == 12 ? 0 : tick == 16 ? 1 : tick == 20 ? 2 : -1;
+		if (bit >= 0) {
+			moveCommitted(boss, 0.25D, 0.0D);
+			hitArc(boss, target, 3.6D, 140.0D, 4.0F, bit);
+		}
+		if (tick == 24 && hitArc(boss, target, 4.0D, 160.0D, 9.0F, 3)) cast(boss, target, "gloam_laceration", 0.7D);
+	}
+
+	/** Crossbow opener: a snap shot fired while hopping back out of reach. */
+	private static void crossbowSnapShot(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		if (tick == 10) {
+			fireBolt(boss, target, 0.0F);
+			Vec3 back = committedDirection(boss).scale(-0.6D);
+			boss.setDeltaMovement(back.x, 0.2D, back.z);
+		}
+	}
+
+	/** Crossbow follow-up: a staggered rain of bolts walking across the target's lane. */
+	private static void crossbowBoltRain(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		stopHorizontal(boss);
+		if (tick == 20) fireBolt(boss, target, -7.0F);
+		if (tick == 26) fireBolt(boss, target, 7.0F);
+		if (tick == 32) fireBolt(boss, target, 0.0F);
+	}
+
+	/** Torch follow-up: a wide burning sweep that sets the target alight. */
+	private static void torchCinderSweep(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		stopHorizontal(boss);
+		if (tick == 14 && hitArc(boss, target, 4.8D, 170.0D, 10.0F, 0)) {
+			target.setRemainingFireTicks(60);
+			cast(boss, target, "sanguine_ignition", 0.6D);
+		}
+	}
+
+	/** Flail follow-up: the head orbits him three times, catching anything inside its reach. */
+	private static void flailOrbit(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		stopHorizontal(boss);
+		int bit = tick == 12 ? 0 : tick == 20 ? 1 : tick == 28 ? 2 : -1;
+		if (bit >= 0 && hitNear(boss, target, 5.5D, 6.0F, bit)) pushAway(boss, target, 0.4D);
+	}
+
+	/** Flail finisher: the head comes down where he aimed it and the ground freezes and shatters. */
+	private static void flailShatterSlam(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		stopHorizontal(boss);
+		if (tick == 22 && hitArea(boss, target, boss.getLockedActionAim(), 4.5D, 16.0F, 0)) {
+			cast(boss, target, "cryogenic_pulse", 0.65D);
+		}
+	}
+
+	/** Staff follow-up: a broad sweep that drags the target in on lodestone pull. */
+	private static void staffLodestoneSweep(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		stopHorizontal(boss);
+		if (tick == 14 && hitArc(boss, target, 5.5D, 180.0D, 9.0F, 0)) pull(boss, target, 0.7D);
+	}
+
+	/** Staff follow-up: raises an iron lane and vaults off it to land on the target. */
+	private static void staffPillarVault(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		if (tick == 16) {
+			spawnIronLane(boss, 2);
+			markOwnedIronPillars(boss);
+			moveToward(boss, boss.getLockedActionAim(), 1.0D, 0.6D);
+		}
+		if (tick == 22 && hitArea(boss, target, boss.position(), 4.0D, 11.0F, 1)) {
+			cast(boss, target, "sanguine_magnetism", 0.55D);
+		}
+	}
+
+	// ---- the expanded sickle act
+
+	private static void sickleReap(VesperTheEveningStarEntity boss, LivingEntity target, int tick, boolean left) {
+		if (tick == 10) {
+			dashThrough(boss, 0.55D, !left);
+			if (hitArc(boss, target, 4.0D, 150.0D, 5.5F, 0)) sickleSlashVisual(boss, target, left, 1.1F);
+		}
+	}
+
+	/** Throws the hook (with a glint first); a catch reels the target in until the reel breaks or the hook lands. */
+	private static void sickleHookReel(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		stopHorizontal(boss);
+		if (tick == 12) fireSickleHook(boss, target);
+		if (tick > 12 && tick <= 24) reel(boss, 0.38D);
+		if (tick == 24) hitNear(boss, target, 3.0D, 4.0F, 1);
+	}
+
+	/** Spins while reeling: the hooked target is dragged into the turning blades. */
+	private static void sickleReelCyclone(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		stopHorizontal(boss);
+		reel(boss, 0.22D);
+		int bit = contactIndex(VesperWeaponAction.SICKLE_REEL_CYCLONE, tick);
+		if (bit >= 0 && hitNear(boss, target, 4.5D, 5.0F, bit)) sickleSlashVisual(boss, target, (bit & 1) == 0, 1.2F);
+	}
+
+	/** A rising cut off the reel that launches the target into the air. */
+	private static void sickleReapersRise(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		stopHorizontal(boss);
+		if (tick == 12 && hitArc(boss, target, 3.5D, 140.0D, 9.0F, 0)) {
+			target.push(0.0D, 0.95D, 0.0D);
+			target.hurtMarked = true;
+			sickleSlashVisual(boss, target, true, 1.4F);
+			sickleSlashVisual(boss, target, false, 1.4F);
+		}
+	}
+
+	/** Reels himself past the target instead, and cuts back from behind. */
+	private static void sicklePassThrough(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		if (tick == 10) {
+			Vec3 through = target.position().subtract(boss.position()).multiply(1.0D, 0.0D, 1.0D);
+			if (through.lengthSqr() > 1.0E-4D) moveToward(boss, target.position().add(through.normalize().scale(2.5D)),
+					1.5D, 0.1D);
+			hitNear(boss, target, 2.5D, 5.0F, 0);
+		}
+		if (tick == 18) {
+			boss.getLookControl().setLookAt(target, 180.0F, 30.0F);
+			if (hitNear(boss, target, 4.0D, 9.0F, 1)) sickleSlashVisual(boss, target, false, 1.3F);
+		}
+	}
+
+	/**
+	 * Both hooks thrown wide on tethers that cross the target's position; he spins and the lines sweep around him.
+	 * The lines run at waist height: jump them or get out of the ring.
+	 */
+	private static void sickleGallowsWheel(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		stopHorizontal(boss);
+		if (tick < 16 || tick > 40) return;
+		double base = Math.toRadians(boss.getYRot() + 90.0D);
+		double sweep = (tick - 16) * 0.26D;
+		if (boss.level() instanceof ServerLevel server && tick % 2 == 0) {
+			for (int line = 0; line < 2; line++) {
+				double angle = base + sweep + line * Math.PI;
+				Vec3 end = boss.position().add(Math.cos(angle) * 6.0D, 1.0D, Math.sin(angle) * 6.0D);
+				VesperVisualEffects.tendril(server, boss.position().add(0.0D, 1.0D, 0.0D), end, false,
+						boss.getId() * 7L + tick + line);
+			}
+		}
+		int bit = contactIndex(VesperWeaponAction.SICKLE_GALLOWS_WHEEL, tick);
+		if (bit < 0) return;
+		Vec3 to = target.position().subtract(boss.position());
+		double distance = to.horizontalDistance();
+		boolean jumped = target.getY() > boss.getY() + 1.8D;
+		if (distance < 2.0D || distance > 6.5D || jumped) return;
+		double targetAngle = Math.atan2(to.z, to.x);
+		for (int line = 0; line < 2; line++) {
+			double lineAngle = base + sweep + line * Math.PI;
+			if (Math.abs(Mth.wrapDegrees(Math.toDegrees(targetAngle - lineAngle))) < 22.0D
+					&& hitNear(boss, target, 6.5D, 5.0F, bit)) {
+				pull(boss, target, 0.25D);
+				break;
+			}
+		}
+	}
+
+	/** A spin that walks after the target at a capped turn rate; the speed-up into it is the tell. */
+	private static void sickleTravellingCyclone(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		float progress = tick / (float) VesperWeaponAction.SICKLE_TRAVELLING_CYCLONE.durationTicks();
+		float rate = VesperSickleRules.spinRate(progress);
+		if (tick >= 8 && tick <= 40) {
+			Vec3 toward = target.position().subtract(boss.position()).multiply(1.0D, 0.0D, 1.0D);
+			if (toward.lengthSqr() > 0.01D) setSafeMovement(boss, toward.normalize().scale(0.3D * rate + 0.06D));
+		}
+		int bit = contactIndex(VesperWeaponAction.SICKLE_TRAVELLING_CYCLONE, tick);
+		if (bit >= 0 && hitNear(boss, target, 4.2D, 4.5F, bit)) sickleSlashVisual(boss, target, (bit & 1) == 0, 1.2F);
+	}
+
+	/** A slow vortex draws the target in, then the spin reverses into an outward burst. */
+	private static void sickleReverseCyclone(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		stopHorizontal(boss);
+		if (tick >= 4 && tick < 20 && boss.distanceTo(target) < 9.0F) {
+			pull(boss, target, 0.12D);
+			if (boss.level() instanceof ServerLevel server && tick % 3 == 0) {
+				VesperVisualEffects.telegraphRing(server, boss.position(), 5.0D - tick * 0.15D,
+						VesperVisualEffects.BLACK, 24);
+			}
+		}
+		if ((tick == 20 || tick == 32) && hitNear(boss, target, 5.0D, 7.0F, tick == 20 ? 0 : 1)) {
+			pushAway(boss, target, 1.2D);
+		}
+	}
+
+	/** A short fake spin that cuts straight into a pounce. */
+	private static void sickleFeintCyclone(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		stopHorizontal(boss);
+		if (tick == 10) hitNear(boss, target, 3.8D, 4.0F, 0);
+	}
+
+	/** Leaps and lands short on purpose; the hook comes out of the landing. */
+	private static void sicklePounceFeint(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		if (tick == 8) {
+			Vec3 toward = boss.getLockedActionAim().subtract(boss.position()).multiply(1.0D, 0.0D, 1.0D);
+			Vec3 shortLanding = toward.lengthSqr() > 9.0D
+					? boss.getLockedActionAim().subtract(toward.normalize().scale(3.0D)) : boss.position();
+			moveToward(boss, shortLanding, 1.2D, 0.5D);
+		}
+	}
+
+	private static void sickleCrescentFan(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		stopHorizontal(boss);
+		if (tick == 14) {
+			for (int i = -2; i <= 2; i++) fireSickleArc(boss, target, i * 12.0F);
+			sickleArcVisual(boss, true, 1.6F);
+		}
+	}
+
+	private static void sickleCrescentStagger(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		stopHorizontal(boss);
+		int wave = contactIndex(VesperWeaponAction.SICKLE_CRESCENT_STAGGER, tick);
+		if (wave >= 0) {
+			fireSickleArc(boss, target, (wave & 1) == 0 ? -6.0F : 6.0F);
+			sickleArcVisual(boss, (wave & 1) == 0, 1.3F);
+		}
+	}
+
+	/** Low crescents skimming the floor: jump them. */
+	private static void sickleCrescentSkim(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		stopHorizontal(boss);
+		if (tick == 12 || tick == 20) {
+			fireSickleArcLow(boss, target, tick == 12 ? -4.0F : 4.0F);
+			sickleArcVisual(boss, tick == 12, 1.4F);
+		}
+	}
+
+	/** A crescent thrown out past the target that comes back through it from behind. */
+	private static void sickleCrescentReturn(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		stopHorizontal(boss);
+		if (tick == 12) {
+			fireSickleArc(boss, target, 0.0F);
+			sickleArcVisual(boss, true, 1.4F);
+		}
+		if (tick == 30) fireReturningArc(boss, target);
+	}
+
+	/** Hooks the floor off to one side and slingshots himself out of the corner. */
+	private static void sickleAnchorHook(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		Vec3 toward = target.position().subtract(boss.position()).multiply(1.0D, 0.0D, 1.0D);
+		if (toward.lengthSqr() < 1.0E-4D) toward = new Vec3(1.0D, 0.0D, 0.0D);
+		Vec3 side = new Vec3(-toward.z, 0.0D, toward.x).normalize().scale(((boss.getActionVariant() & 1) == 0) ? 7.0D : -7.0D);
+		Vec3 anchor = boss.position().add(side).add(toward.normalize().scale(2.0D));
+		if (tick == 12 && boss.level() instanceof ServerLevel server) {
+			VesperVisualEffects.tendril(server, boss.position().add(0.0D, 1.0D, 0.0D), anchor, false, boss.getId() * 11L);
+			VesperVisualEffects.floorChips(server, anchor, 10, 0.6D);
+		}
+		if (tick > 12 && tick < 20) moveToward(boss, anchor, 1.3D, 0.15D);
+		if (tick == 20) hitNear(boss, target, 3.0D, 5.0F, 1);
+	}
+
+	/** His last stand, once, below a tenth of his health: hook, reel, reel-spin, cross rend, returning volley. */
+	private static void sickleHarvest(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
+		if (tick == 1) boss.playSound(SoundEvents.WITHER_AMBIENT, 1.4F, 0.5F);
+		if (tick < 14) stopHorizontal(boss);
+		if (tick == 14) fireSickleHook(boss, target);
+		if (tick > 14 && tick <= 30) reel(boss, 0.4D);
+		if (tick == 30 || tick == 38) {
+			if (hitNear(boss, target, 4.5D, 6.0F, tick == 30 ? 1 : 2)) sickleSlashVisual(boss, target, tick == 30, 1.4F);
+		}
+		if (tick == 46 && hitArc(boss, target, 4.8D, 170.0D, 10.0F, 3)) {
+			sickleSlashVisual(boss, target, true, 1.6F);
+			sickleSlashVisual(boss, target, false, 1.6F);
+		}
+		if (tick == 54) for (int i = -1; i <= 1; i++) fireSickleArc(boss, target, i * 14.0F);
+		if (tick == 62) fireReturningArc(boss, target);
+		if (tick == 70 && hitArea(boss, target, boss.position(), 5.0D, 14.0F, 4)) pushAway(boss, target, 1.4D);
+	}
+
+	/** Pulls the hooked target in along the tether, drawing the line taut; the reel snaps if it is fought. */
+	private static void reel(VesperTheEveningStarEntity boss, double strength) {
+		LivingEntity hooked = boss.hookedTarget();
+		if (hooked == null) return;
+		if (VesperSickleRules.reelBreaks(boss.reelDamage(), boss.reelSprintTicks())) {
+			boss.breakReel();
+			return;
+		}
+		Vec3 toward = boss.position().subtract(hooked.position()).multiply(1.0D, 0.0D, 1.0D);
+		if (toward.lengthSqr() > 2.25D) {
+			Vec3 away = toward.normalize().scale(-1.0D);
+			boolean fighting = hooked instanceof net.minecraft.world.entity.player.Player player && player.isSprinting()
+					&& hooked.getDeltaMovement().dot(away) > 0.05D;
+			boss.addReelSprint(fighting ? 1 : 0);
+			hooked.setDeltaMovement(hooked.getDeltaMovement().scale(0.4D).add(toward.normalize().scale(strength)));
+			hooked.hurtMarked = true;
+		}
+		if (boss.level() instanceof ServerLevel server && boss.tickCount % 3 == 0) {
+			VesperVisualEffects.tendril(server, boss.position().add(0.0D, 1.1D, 0.0D),
+					hooked.position().add(0.0D, hooked.getBbHeight() * 0.5D, 0.0D), false, boss.getId() * 3L + boss.tickCount);
+		}
+	}
+
+	private static int contactIndex(VesperWeaponAction action, int tick) {
+		for (int i = 0; i < action.contactCount(); i++) if (action.contactTick(i) == tick) return i;
+		return -1;
+	}
+
+	private static void fireSickleArcLow(VesperTheEveningStarEntity boss, LivingEntity target, float yawOffset) {
+		if (!(boss.level() instanceof ServerLevel server)) return;
+		BloodBoltEntity bolt = new BloodBoltEntity(server, boss, new ItemStack(ItemInit.living_sickle.get()));
+		Vec3 start = boss.position().add(0.0D, 0.35D, 0.0D);
+		bolt.setPos(start.x, start.y, start.z);
+		Vec3 aim = boss.getLockedActionAim().add(0.0D, 0.3D, 0.0D).subtract(start);
+		double yaw = Math.atan2(aim.z, aim.x) + Math.toRadians(yawOffset);
+		double horizontal = Math.sqrt(aim.x * aim.x + aim.z * aim.z);
+		bolt.shoot(Math.cos(yaw) * horizontal, 0.0D, Math.sin(yaw) * horizontal, 1.5F, 0.5F);
+		bolt.setNoGravity(true);
+		bolt.setBaseDamage(5.0D);
+		server.addFreshEntity(bolt);
+		if (boss.level() instanceof ServerLevel s) {
+			VesperVisualEffects.telegraphLine(s, start, start.add(aim.normalize().scale(10.0D)), VesperVisualEffects.BLOOD);
+		}
+		boss.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, 1.2F, 0.7F);
+	}
+
+	private static void fireReturningArc(VesperTheEveningStarEntity boss, LivingEntity target) {
+		if (!(boss.level() instanceof ServerLevel server)) return;
+		BloodBoltEntity bolt = new BloodBoltEntity(server, boss, new ItemStack(ItemInit.living_sickle.get()));
+		Vec3 behind = target.position().add(target.position().subtract(boss.position()).multiply(1.0D, 0.0D, 1.0D)
+				.normalize().scale(5.0D)).add(0.0D, target.getBbHeight() * 0.55D, 0.0D);
+		bolt.setPos(behind.x, behind.y, behind.z);
+		Vec3 back = boss.position().add(0.0D, 1.0D, 0.0D).subtract(behind);
+		bolt.shoot(back.x, back.y, back.z, 1.6F, 0.5F);
+		bolt.setBaseDamage(6.0D);
+		server.addFreshEntity(bolt);
+		VesperVisualEffects.darkGlow(server, behind, VesperVisualEffects.BLACK, 10, 0.4D, 0.4D, 0.4D, 0.04D);
+		boss.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, 1.25F, 0.55F);
+	}
+
 	private static void sickleCyclone(VesperTheEveningStarEntity boss, LivingEntity target, int tick) {
 		if (tick < 10) stopHorizontal(boss);
 		if (tick >= 10 && tick <= 24) {
@@ -531,13 +889,29 @@ public final class VesperPhaseTwoCombat {
 
 	private static void finish(VesperTheEveningStarEntity boss) {
 		float fraction = boss.getMaxHealth() <= 0.0F ? 1.0F : boss.getHealth() / boss.getMaxHealth();
+		VesperWeaponAction action = boss.getWeaponAction();
+		boss.setLastActionLanded(VesperSickleRules.landed(action, boss.getActionHitMask() != 0,
+				boss.hookedTarget() != null));
+		// A Hook and Reel catch stays on the line for the reel-spin, rise or pass-through that follows it.
+		boolean holdTether = VesperSickleRules.holdsTether(action) && boss.hookedTarget() != null;
 		boss.clearWeaponAction();
+		// Links inside a string flow straight on; only a finisher (or an unchained move) earns the full recovery.
+		boolean link = VesperChainGraph.inGraph(action) && action.role() != VesperChainGraph.Role.FINISHER;
 		boss.setActionCooldown(boss.isRaging() ? VesperRageCombatRules.recoveryTicks()
-				: VesperWeaponCombatRules.recoveryTicks(10, fraction));
+				: link ? 3 : VesperWeaponCombatRules.recoveryTicks(10, fraction));
+		double carry = VesperSickleRules.carryVelocity(action);
+		if (carry > 0.0D) {
+			// A spin's leftover momentum slingshots into whatever comes next instead of stopping dead.
+			Vec3 forward = committedDirection(boss).scale(carry);
+			boss.setDeltaMovement(forward.x, boss.getDeltaMovement().y, forward.z);
+			if (!holdTether) boss.releaseHook();
+			return;
+		}
+		if (!holdTether) boss.releaseHook();
 		stopHorizontal(boss);
 	}
 
-	private static void positionForRage(VesperTheEveningStarEntity boss, LivingEntity target) {
+	static void positionForRage(VesperTheEveningStarEntity boss, LivingEntity target, int strafeSide) {
 		double distance = boss.distanceTo(target);
 		boss.getLookControl().setLookAt(target, 55.0F, 45.0F);
 		if (distance > 13.0D) {
@@ -548,14 +922,14 @@ public final class VesperPhaseTwoCombat {
 		Vec3 toward = target.position().subtract(boss.position()).multiply(1.0D, 0.0D, 1.0D);
 		if (toward.lengthSqr() < 0.01D) return;
 		toward = toward.normalize();
-		double direction = ((boss.tickCount / 6 + boss.getActionVariant()) & 1) == 0 ? 1.0D : -1.0D;
+		double direction = strafeSide;
 		Vec3 side = new Vec3(-toward.z, 0.0D, toward.x).scale(0.48D * direction);
 		double forward = distance < 3.0D ? -0.22D : distance > 8.0D ? 0.24D : 0.04D * direction;
-		setSafeMovement(boss, side.add(toward.scale(forward)));
+		steer(boss, side.add(toward.scale(forward)));
 	}
 
-	private static void positionForWeapon(VesperTheEveningStarEntity boss, LivingEntity target,
-			EnumBloodTendency tendency) {
+	static void positionForWeapon(VesperTheEveningStarEntity boss, LivingEntity target,
+			EnumBloodTendency tendency, int side) {
 		VesperWeaponCombatRules.RangeBand band = VesperWeaponCombatRules.rangeBand(tendency);
 		double distance = boss.distanceTo(target);
 		double haste = boss.getHealth() <= boss.getMaxHealth() * 0.25F ? 1.2D : 1.0D;
@@ -571,9 +945,9 @@ public final class VesperPhaseTwoCombat {
 		if (distance < band.minimum()) {
 			double retreat = tendency == EnumBloodTendency.DUCTILIS ? 0.38D
 					: tendency == EnumBloodTendency.FERRIC ? 0.28D : 0.22D;
-			setSafeMovement(boss, away.scale(retreat * haste));
+			steer(boss, away.scale(retreat * haste));
 		} else {
-			double direction = (boss.getActionVariant() & 1) == 0 ? 1.0D : -1.0D;
+			double direction = side;
 			double orbitSpeed = switch (tendency) {
 				case TENEBRIS -> 0.32D;
 				case LUX, DUCTILIS -> 0.22D;
@@ -584,18 +958,18 @@ public final class VesperPhaseTwoCombat {
 			};
 			Vec3 orbit = new Vec3(-away.z, 0.0D, away.x).scale(direction * orbitSpeed * haste);
 			if (tendency == EnumBloodTendency.FLAMMEUS) orbit = orbit.add(away.scale(-0.08D * direction));
-			setSafeMovement(boss, orbit);
+			steer(boss, orbit);
 		}
 	}
 
-	private static boolean readyToCommit(EnumBloodTendency tendency, double distance, VesperWeaponAction action) {
+	static boolean readyToCommit(EnumBloodTendency tendency, double distance, VesperWeaponAction action) {
 		VesperWeaponCombatRules.RangeBand band = VesperWeaponCombatRules.rangeBand(tendency);
 		if (distance >= band.minimum() && distance <= band.maximum()) return true;
 		return (action == VesperWeaponAction.STORM_LOCK && distance <= 4.0D)
 				|| (action == VesperWeaponAction.IRON_RETORT && distance <= 5.0D);
 	}
 
-	private static LivingEntity target(VesperTheEveningStarEntity boss) {
+	static LivingEntity target(VesperTheEveningStarEntity boss) {
 		LivingEntity target = boss.getTarget();
 		if (target instanceof net.minecraft.world.entity.player.Player player && target.isAlive()
 				&& !player.isCreative() && !player.isSpectator()
@@ -604,13 +978,18 @@ public final class VesperPhaseTwoCombat {
 				boss.getBoundingBox().inflate(TARGET_RANGE), entity -> entity.isAlive() && entity != boss
 						&& entity instanceof net.minecraft.world.entity.player.Player player
 						&& !player.isCreative() && !player.isSpectator());
-		if (targets.isEmpty()) return null;
+		if (targets.isEmpty()) {
+			// With no player in reach he still answers whatever he is fighting (a pet that bit him, a summon).
+			LivingEntity current = boss.getTarget();
+			return current != null && current.isAlive() && current != boss
+					&& boss.distanceToSqr(current) <= TARGET_RANGE * TARGET_RANGE ? current : null;
+		}
 		target = targets.stream().min(java.util.Comparator.comparingDouble(boss::distanceToSqr)).orElse(null);
 		boss.setTarget(target);
 		return target;
 	}
 
-	private static Vec3 predictedAim(LivingEntity target, VesperWeaponAction action) {
+	static Vec3 predictedAim(LivingEntity target, VesperWeaponAction action) {
 		double lead = switch (action) {
 			case SKY_LANCE, LEAPING_CLEAVE, PREDATOR_POUNCE, SICKLE_POUNCE -> 7.0D;
 			case CONDUCTIVE_VOLLEY, STORM_LOCK -> 5.0D;
@@ -620,7 +999,7 @@ public final class VesperPhaseTwoCombat {
 		return target.position().add(target.getDeltaMovement().multiply(lead, 0.0D, lead));
 	}
 
-	private static double attackAngle(VesperTheEveningStarEntity boss, LivingEntity target) {
+	static double attackAngle(VesperTheEveningStarEntity boss, LivingEntity target) {
 		Vec3 facing = boss.getLookAngle().multiply(1.0D, 0.0D, 1.0D);
 		Vec3 toward = target.position().subtract(boss.position()).multiply(1.0D, 0.0D, 1.0D);
 		if (facing.lengthSqr() < 0.01D || toward.lengthSqr() < 0.01D) return 0.0D;
@@ -628,6 +1007,16 @@ public final class VesperPhaseTwoCombat {
 	}
 
 	private static void telegraph(VesperTheEveningStarEntity boss, VesperWeaponAction action, int tick) {
+		boolean hookThrow = action == VesperWeaponAction.SICKLE_HOOK_REEL || action == VesperWeaponAction.SICKLE_HARVEST
+				|| action == VesperWeaponAction.SICKLE_HOOK;
+		int release = action == VesperWeaponAction.SICKLE_HARVEST ? 14 : action.impactTick();
+		if (hookThrow && tick == release - 6 && boss.level() instanceof ServerLevel glintLevel) {
+			// The blade glints before every hook throw.
+			Vec3 blade = boss.getEyePosition().add(boss.getLookAngle().scale(0.8D)).subtract(0.0D, 0.3D, 0.0D);
+			glintLevel.sendParticles(com.vincenthuto.hemomancy.common.particle.HemoParticleData.hitGlow(VesperVisualEffects.WHITE), blade.x, blade.y, blade.z,
+					2, 0.05D, 0.05D, 0.05D, 0.0D);
+			boss.playSound(SoundEvents.TRIDENT_RETURN, 0.9F, 1.6F);
+		}
 		int telegraphEnd = action == VesperWeaponAction.STORM_LOCK ? 44 : action.impactTick();
 		if (!(boss.level() instanceof ServerLevel server) || tick > telegraphEnd || tick % 2 != 0) return;
 		if (action == VesperWeaponAction.LEAPING_CLEAVE || action == VesperWeaponAction.SICKLE_POUNCE
@@ -693,7 +1082,7 @@ public final class VesperPhaseTwoCombat {
 				&& hitNear(boss, target, length, damage, bit);
 	}
 
-	private static boolean cast(VesperTheEveningStarEntity boss, LivingEntity target, String name, double scale) {
+	static boolean cast(VesperTheEveningStarEntity boss, LivingEntity target, String name, double scale) {
 		var manipulation = ManipulationInit.MANIPS_TYPE_REGISTRY.get(com.vincenthuto.hemomancy.Hemomancy.rloc(name));
 		if (manipulation == null) return false;
 		ManipulationCastContext context = new ManipulationCastContext(boss, boss.level(), boss.getLivingWeaponStack(),
@@ -763,7 +1152,7 @@ public final class VesperPhaseTwoCombat {
 		return origin.add(Math.cos(angle) * 2.8D, 0.0D, Math.sin(angle) * 2.8D);
 	}
 
-	private static void safeFlank(VesperTheEveningStarEntity boss, LivingEntity target) {
+	static void safeFlank(VesperTheEveningStarEntity boss, LivingEntity target) {
 		Vec3 look = target.getLookAngle().multiply(1.0D, 0.0D, 1.0D).normalize();
 		Vec3 horizontal = target.position().subtract(look.scale(2.8D));
 		for (int dy = 1; dy >= -4; dy--) {
@@ -808,7 +1197,7 @@ public final class VesperPhaseTwoCombat {
 		}
 	}
 
-	private static void markOwnedIronPillars(VesperTheEveningStarEntity boss) {
+	static void markOwnedIronPillars(VesperTheEveningStarEntity boss) {
 		for (EntityIronPillar pillar : boss.level().getEntitiesOfClass(EntityIronPillar.class,
 				boss.getBoundingBox().inflate(24.0D), candidate -> candidate.getCreator() == boss)) {
 			pillar.getPersistentData().putUUID(VESPER_IRON_OWNER, boss.getUUID());
@@ -870,11 +1259,41 @@ public final class VesperPhaseTwoCombat {
 	}
 
 	private static void setSafeMovement(VesperTheEveningStarEntity boss, Vec3 movement) {
-		if (boss.level().noCollision(boss, boss.getBoundingBox().move(movement))) {
+		AABB box = boss.getBoundingBox();
+		if (boss.level().noCollision(boss, box.move(movement))) {
 			boss.setDeltaMovement(movement);
-		} else {
-			stopHorizontal(boss);
+			return;
 		}
+		// A lip in the floor or a block-high step: vanilla movement climbs it, so only a real wall stops him. Refusing
+		// these moves outright left him stalling and lurching on every bump of uneven ground.
+		if (boss.onGround() && boss.level().noCollision(boss,
+				box.move(movement.x, Math.max(0.0D, movement.y) + boss.maxUpStep(), movement.z))) {
+			boss.setDeltaMovement(movement);
+			return;
+		}
+		// Glancing off a wall: keep the part of the move that runs along it.
+		Vec3 alongX = new Vec3(movement.x, movement.y, 0.0D);
+		Vec3 alongZ = new Vec3(0.0D, movement.y, movement.z);
+		Vec3 first = Math.abs(movement.x) >= Math.abs(movement.z) ? alongX : alongZ;
+		Vec3 second = first == alongX ? alongZ : alongX;
+		for (Vec3 slide : new Vec3[] { first, second }) {
+			if (slide.horizontalDistanceSqr() > 1.0E-4D && boss.level().noCollision(boss, box.move(slide))) {
+				boss.setDeltaMovement(slide);
+				return;
+			}
+		}
+		stopHorizontal(boss);
+	}
+
+	/**
+	 * Footwork between strikes eases into a new heading over a few ticks instead of reversing in one, so a strafe
+	 * that flips sides plants and pushes off rather than teleporting its velocity.
+	 */
+	private static void steer(VesperTheEveningStarEntity boss, Vec3 desired) {
+		Vec3 realized = new Vec3(boss.getX() - boss.xo, 0.0D, boss.getZ() - boss.zo);
+		if (realized.lengthSqr() > 1.0D) realized = Vec3.ZERO;
+		Vec3 eased = realized.lerp(new Vec3(desired.x, 0.0D, desired.z), 0.4D);
+		setSafeMovement(boss, new Vec3(eased.x, desired.y, eased.z));
 	}
 
 	private static void pull(VesperTheEveningStarEntity boss, LivingEntity target, double strength) {

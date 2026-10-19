@@ -21,6 +21,7 @@ ext.gameTestSuites = [
     'distillation_validation': [alpha: true, run: 'distillationGameTestServer', directory: 'build/distillation-gametest'],
     'registration_validation': [alpha: true, run: 'registrationGameTestServer', directory: 'build/registration-gametest'],
     'unstained_zone_validation': [alpha: true, run: 'unstainedZoneGameTestServer', directory: 'build/unstained-zone-gametest'],
+    'rite_space_validation': [alpha: true, run: 'riteSpaceGameTestServer', directory: 'build/rite-space-gametest'],
     'excoriated_spawn_validation': [alpha: false, run: 'excoriatedSpawnGameTestServer', directory: 'build/excoriated-spawn-gametest', reason: 'Existing focused suite remains opt-in; this rollout adds consolidation coverage.'],
     'clinical_validation': [alpha: false, run: 'clinicalGameTestServer', directory: 'build/clinical-gametest', reason: 'Existing focused suite remains opt-in; this rollout adds consolidation coverage.'],
     'choir_keeper_validation': [alpha: false, run: 'choirKeeperGameTestServer', directory: 'build/choir-keeper-gametest', reason: 'Existing focused suite remains opt-in; this rollout adds consolidation coverage.'],
@@ -31,6 +32,7 @@ ext.gameTestSuites = [
     'naeglerophaeon_validation': [alpha: false, run: 'naeglerophaeonGameTestServer', directory: 'build/naeglerophaeon-validation', reason: 'Existing focused suite remains opt-in; this rollout adds consolidation coverage.'],
     'casting_animation_validation': [alpha: false, run: 'castingAnimationGameTestServer', directory: 'build/casting-animation-gametest', reason: 'Existing focused suite remains opt-in; this rollout adds consolidation coverage.'],
     'living_weapon_validation': [alpha: false, run: 'livingWeaponGameTest', directory: 'build/living-weapons-gametest', reason: 'Restores the previously external focused launcher; gate scope stays unchanged.'],
+    'fungal_gardens_worldgen_validation': [alpha: false, run: 'fungalGardensValidationServer', directory: 'build/fungal-gardens-validation', reason: 'Renders the Fungal Gardens terrain map from a seeded dimension; review output by eye.'],
     'phlegethontic_validation': [alpha: false, run: 'phlegethonticValidationServer', directory: null, reason: 'Requires a fresh seeded world and validation mixins.', generator: 'com.vincenthuto.hemomancy.gametest.PhlegethonticWorldValidation']
 ]
 

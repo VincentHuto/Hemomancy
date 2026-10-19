@@ -10,292 +10,67 @@
   {
    "name": "vial_congeatio",
    "from": [
-    21.55,
-    4.4,
-    2.9893
+    21.3,
+    3.7,
+    2.3
    ],
    "to": [
-    23.05,
-    5.4,
-    3.6107
+    23.3,
+    4.7,
+    4.3
    ],
    "faces": {
     "north": {
      "uv": [
-      0,
-      10.6,
-      16,
-      11.6
+      5.3,
+      11.3,
+      7.3,
+      12.3
      ],
      "texture": "#liq_congeatio"
     },
     "south": {
      "uv": [
-      0,
-      10.6,
-      16,
-      11.6
+      5.3,
+      11.3,
+      7.3,
+      12.3
      ],
      "texture": "#liq_congeatio"
     },
     "east": {
      "uv": [
-      0,
-      10.6,
-      16,
-      11.6
+      2.3,
+      11.3,
+      4.3,
+      12.3
      ],
      "texture": "#liq_congeatio"
     },
     "west": {
      "uv": [
-      0,
-      10.6,
-      16,
-      11.6
+      2.3,
+      11.3,
+      4.3,
+      12.3
      ],
      "texture": "#liq_congeatio"
     },
     "up": {
      "uv": [
-      5.55,
-      2.989,
-      7.05,
-      3.611
+      5.3,
+      2.3,
+      7.3,
+      4.3
      ],
      "texture": "#liq_congeatio"
     },
     "down": {
      "uv": [
-      5.55,
-      2.989,
-      7.05,
-      3.611
-     ],
-     "texture": "#liq_congeatio"
-    }
-   }
-  },
-  {
-   "name": "vial_congeatio",
-   "from": [
-    21.9893,
-    4.44,
-    2.55
-   ],
-   "to": [
-    22.6107,
-    5.36,
-    4.05
-   ],
-   "faces": {
-    "north": {
-     "uv": [
-      0,
-      10.64,
-      16,
-      11.56
-     ],
-     "texture": "#liq_congeatio"
-    },
-    "south": {
-     "uv": [
-      0,
-      10.64,
-      16,
-      11.56
-     ],
-     "texture": "#liq_congeatio"
-    },
-    "east": {
-     "uv": [
-      0,
-      10.64,
-      16,
-      11.56
-     ],
-     "texture": "#liq_congeatio"
-    },
-    "west": {
-     "uv": [
-      0,
-      10.64,
-      16,
-      11.56
-     ],
-     "texture": "#liq_congeatio"
-    },
-    "up": {
-     "uv": [
-      5.989,
-      2.55,
-      6.611,
-      4.05
-     ],
-     "texture": "#liq_congeatio"
-    },
-    "down": {
-     "uv": [
-      5.989,
-      2.55,
-      6.611,
-      4.05
-     ],
-     "texture": "#liq_congeatio"
-    }
-   }
-  },
-  {
-   "name": "vial_congeatio",
-   "from": [
-    21.55,
-    4.48,
-    2.9893
-   ],
-   "to": [
-    23.05,
-    5.32,
-    3.6107
-   ],
-   "rotation": {
-    "angle": 45,
-    "axis": "y",
-    "origin": [
-     22.3,
-     0,
-     3.3
-    ]
-   },
-   "faces": {
-    "north": {
-     "uv": [
-      0,
-      10.68,
-      16,
-      11.52
-     ],
-     "texture": "#liq_congeatio"
-    },
-    "south": {
-     "uv": [
-      0,
-      10.68,
-      16,
-      11.52
-     ],
-     "texture": "#liq_congeatio"
-    },
-    "east": {
-     "uv": [
-      0,
-      10.68,
-      16,
-      11.52
-     ],
-     "texture": "#liq_congeatio"
-    },
-    "west": {
-     "uv": [
-      0,
-      10.68,
-      16,
-      11.52
-     ],
-     "texture": "#liq_congeatio"
-    },
-    "up": {
-     "uv": [
-      5.55,
-      2.989,
-      7.05,
-      3.611
-     ],
-     "texture": "#liq_congeatio"
-    },
-    "down": {
-     "uv": [
-      5.55,
-      2.989,
-      7.05,
-      3.611
-     ],
-     "texture": "#liq_congeatio"
-    }
-   }
-  },
-  {
-   "name": "vial_congeatio",
-   "from": [
-    21.55,
-    4.52,
-    2.9893
-   ],
-   "to": [
-    23.05,
-    5.28,
-    3.6107
-   ],
-   "rotation": {
-    "angle": -45,
-    "axis": "y",
-    "origin": [
-     22.3,
-     0,
-     3.3
-    ]
-   },
-   "faces": {
-    "north": {
-     "uv": [
-      0,
-      10.72,
-      16,
-      11.48
-     ],
-     "texture": "#liq_congeatio"
-    },
-    "south": {
-     "uv": [
-      0,
-      10.72,
-      16,
-      11.48
-     ],
-     "texture": "#liq_congeatio"
-    },
-    "east": {
-     "uv": [
-      0,
-      10.72,
-      16,
-      11.48
-     ],
-     "texture": "#liq_congeatio"
-    },
-    "west": {
-     "uv": [
-      0,
-      10.72,
-      16,
-      11.48
-     ],
-     "texture": "#liq_congeatio"
-    },
-    "up": {
-     "uv": [
-      5.55,
-      2.989,
-      7.05,
-      3.611
-     ],
-     "texture": "#liq_congeatio"
-    },
-    "down": {
-     "uv": [
-      5.55,
-      2.989,
-      7.05,
-      3.611
+      5.3,
+      2.3,
+      7.3,
+      4.3
      ],
      "texture": "#liq_congeatio"
     }

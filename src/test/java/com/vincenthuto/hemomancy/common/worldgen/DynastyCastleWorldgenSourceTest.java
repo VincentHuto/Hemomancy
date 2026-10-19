@@ -22,7 +22,10 @@ class DynastyCastleWorldgenSourceTest {
 		String set = Files.readString(SET);
 		assertTrue(set.contains("random_spread"));
 		assertTrue(set.contains("\"separation\""));
-		assertTrue(Files.readString(BIOME_TAG).contains("hemomancy:fungal_gardens"));
+		String biomes = Files.readString(BIOME_TAG);
+		assertTrue(biomes.contains("hemomancy:mycelial_meadows"));
+		// fungal_gardens is the Overworld swamp/jungle replacement; castles belong to the dimension.
+		assertFalse(biomes.contains("hemomancy:fungal_gardens"));
 		assertTrue(Files.readString(STRUCTURE_INIT).contains("dynasty_castle"));
 	}
 

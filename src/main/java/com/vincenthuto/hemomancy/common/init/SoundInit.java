@@ -325,6 +325,17 @@ public class SoundInit {
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MORTARBOUND_HURT = registerSoundEvent("entity.mortarbound.hurt");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_MORTARBOUND_DEATH = registerSoundEvent("entity.mortarbound.death");
 
+	// ===== Stained Priestess =====
+
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_STAINED_PRIESTESS_AMBIENT = registerSoundEvent("entity.stained_priestess.ambient");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_STAINED_PRIESTESS_HURT = registerSoundEvent("entity.stained_priestess.hurt");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_STAINED_PRIESTESS_DEATH = registerSoundEvent("entity.stained_priestess.death");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_STAINED_PRIESTESS_MUSIC = registerSoundEvent("entity.stained_priestess.music");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_STAINED_PRIESTESS_FLARE = registerSoundEvent("entity.stained_priestess.flare");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_STAINED_PRIESTESS_SUMMON = registerSoundEvent("entity.stained_priestess.summon");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_STAINED_PRIESTESS_YELL = registerSoundEvent("entity.stained_priestess.yell");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_STAINED_PRIESTESS_SCREAM = registerSoundEvent("entity.stained_priestess.scream");
+
 	// ===== Endgame Bosses =====
 
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_VESPER_AMBIENT = registerSoundEvent(

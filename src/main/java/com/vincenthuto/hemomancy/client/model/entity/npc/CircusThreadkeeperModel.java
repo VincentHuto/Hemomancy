@@ -14,7 +14,7 @@ public final class CircusThreadkeeperModel extends CircusFacultyModel {
 	private final ModelPart spindle;
 
 	public CircusThreadkeeperModel(ModelPart root) {
-		super(root);
+		super(root, 1.5F);
 		spindle = body.getChild("spindle");
 	}
 

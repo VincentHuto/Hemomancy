@@ -1,0 +1,54 @@
+{
+  "style": "qliphoth",
+  "tier": "grand",
+  "purpose": "world",
+  "pattern": [
+    [
+      "GGGGNGGGG"
+    ],
+    [
+      "GNPPPPPNG"
+    ],
+    [
+      "GPGGNGGPG"
+    ],
+    [
+      "GPGGPGGPG"
+    ],
+    [
+      "GNPPFPPNG"
+    ],
+    [
+      "GPGGPGGPG"
+    ],
+    [
+      "GPGGNGGPG"
+    ],
+    [
+      "GNPPPPPNG"
+    ],
+    [
+      "GGGGPGGGG"
+    ]
+  ],
+  "key": {
+    "G": {
+      "block": "hemomancy:calcified_hyphae"
+    },
+    "P": {
+      "block": "hemomancy:hyphae_block"
+    },
+    "N": {
+      "block": "minecraft:shroomlight"
+    },
+    "F": {
+      "block": "hemomancy:cardinal_focus"
+    }
+  },
+  "focus": [
+    4,
+    0,
+    4
+  ],
+  "footprint_radius": 7.5
+}

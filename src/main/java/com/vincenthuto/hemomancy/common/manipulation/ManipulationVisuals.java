@@ -28,7 +28,8 @@ public final class ManipulationVisuals {
         ANEURYSM_RUPTURE, SOVEREIGN_LASH,
         // Encoded by ordinal: append new forms here.
         PUPPET_DESCEND, PUPPET_UNSPOOL, UMBRAL_REND, LODESTONE_COLLAPSE,
-        SEARING_LASH, CRUOR_JAVELIN, RADIANT_WAKE, CONTAGION, NERVE_COMMAND, LODESTONE_FIELD
+        SEARING_LASH, CRUOR_JAVELIN, RADIANT_WAKE, CONTAGION, NERVE_COMMAND, LODESTONE_FIELD,
+        VESPER_RECALL
     }
 
     public static void burst(ServerLevel level, Form form, Vec3 from, Vec3 to, double radius, int ticks) {

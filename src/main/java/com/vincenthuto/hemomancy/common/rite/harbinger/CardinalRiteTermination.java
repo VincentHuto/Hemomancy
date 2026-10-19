@@ -79,6 +79,10 @@ public final class CardinalRiteTermination {
 		returnStaff(level, caster, rite);
 		// Unstained rites keep their own still-water presentation; blood-rite endings are Harbinger-only.
 		var recipe = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
+		if (outcome == Outcome.COMPLETED) {
+			// The floor keeps the rite's space: rite-bound things work inside it until the floor is broken.
+			com.vincenthuto.hemomancy.common.rite.zone.RiteSpaces.consecrate(level, rite, recipe);
+		}
 		if (recipe == null || !recipe.isUnstained()) {
 			CardinalRiteBeats.send(level, rite, outcome.beat(), style == null ? "" : style);
 		}

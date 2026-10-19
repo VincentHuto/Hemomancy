@@ -16,9 +16,11 @@ public final class CircusKnifeThrowerModel extends HumanoidModel<CircusKnifeThro
 	private final ModelPart knifeFan;
 	private final ModelPart sideCowl;
 	private final ModelPart[] jugglingKnives;
+	private final CircusDownedPose downedPose;
 
 	public CircusKnifeThrowerModel(ModelPart root) {
 		super(root);
+		downedPose = new CircusDownedPose(this, 2.0F, 0.3F);
 		knifeFan = body.getChild("knife_fan");
 		sideCowl = head.getChild("side_cowl");
 		jugglingKnives = new ModelPart[] { root.getChild("juggle_knife_0"),
@@ -135,9 +137,6 @@ public final class CircusKnifeThrowerModel extends HumanoidModel<CircusKnifeThro
 			rightArm.xRot = -1.55F + Mth.sin(ageInTicks * 0.32F) * 0.35F;
 			leftArm.xRot = -0.45F;
 		}
-		if (entity.getActState() == ActState.DOWNED) {
-			body.xRot = 1.3F;
-			rightArm.xRot = leftArm.xRot = -0.7F;
-		}
+		downedPose.apply(entity.getActState() == ActState.DOWNED, ageInTicks);
 	}
 }

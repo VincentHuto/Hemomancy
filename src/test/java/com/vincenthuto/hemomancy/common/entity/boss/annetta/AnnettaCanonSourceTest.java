@@ -28,6 +28,14 @@ public final class AnnettaCanonSourceTest {
 		assertNotContains(infection, "AnnettaSeveranceUnlocked");
 		assertContains(priestess, "degree.hasFoundedBloodline()");
 		assertContains(priestess, "progress.setAnnettaSeveranceUnlocked(true)");
+		// Staged scenes hold her facing so the look goals cannot spin her body mid-scene.
+		assertBefore(annetta, "holdSceneFacing();", "case BREAKING -> tickBreak(server);");
+		assertContains(annetta, "state == EncounterState.COWERING || state == EncounterState.BREAKING || state == EncounterState.PURGING");
+		// Peaceful keeps Annetta, so it must keep what rises out of her, or the break and the purge stall.
+		assertContains(priestess, "protected boolean shouldDespawnInPeaceful() {");
+		assertContains(infection, "protected boolean shouldDespawnInPeaceful() {");
+		// Her boss bar reads the entity name; the main lang file shadows the generated one.
+		assertContains(lang, "\"entity.hemomancy.annetta_knowles\": \"Annetta Knowles\"");
 		assertNotContains(lang, "she understood what they had smelled in her");
 		assertNotContains(lang, "Annetta's breath catches on the shape of the truth");
 		assertContains(lore, "never knew she was infected");

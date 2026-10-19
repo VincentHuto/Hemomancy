@@ -461,18 +461,22 @@ public final class WorkingCraftGameTests {
 	}
 
 	@GameTest(template = TEMPLATE, timeoutTicks = 100, batch = "working_craft")
-	public static void theWorkingCatalogueListsEveryMakingRiteWithAResult(GameTestHelper helper) {
+	public static void theWorkingCatalogueListsEveryMakingRite(GameTestHelper helper) {
 		var catalogued = CardinalRiteRecipe.getAllRecipes(helper.getLevel()).stream()
-				.filter(CardinalRiteRecipe::isCataloguedAsMaking).map(recipe -> recipe.getId().getPath()).toList();
+				.filter(recipe -> recipe.isCataloguedUnder(com.vincenthuto.hemomancy.common.rite.CardinalRitePurpose.MAKING))
+				.map(recipe -> recipe.getId().getPath()).toList();
 		for (String rite : List.of("pallid_vessel_rite", "crimson_vessel_rite", "ashen_vessel_rite",
 				"horn_of_culmination_rite", "exsanguination", "working/somatic_loom", "working/vascular_effigy")) {
 			helper.assertTrue(catalogued.contains("cardinal_rite/" + rite), rite + " must appear among Working crafts");
 		}
 		helper.assertTrue(catalogued.stream().filter(path -> path.startsWith("cardinal_rite/working/")).count() == 20,
 				"All twenty Working crafts must be catalogued");
-		for (String rite : List.of("sanguine_athanor", "true_groove", "rooted_vein", "sanguine_brotherhood")) {
+		for (String rite : List.of("sanguine_athanor", "true_groove")) {
+			helper.assertTrue(catalogued.contains("cardinal_rite/" + rite), rite + " is a making rite and must be listed");
+		}
+		for (String rite : List.of("rooted_vein", "sanguine_brotherhood", "bloodline_founding")) {
 			helper.assertTrue(!catalogued.contains("cardinal_rite/" + rite),
-					rite + " makes no item (or is not a making rite) and must stay out");
+					rite + " is not a making rite and belongs to another purpose's category");
 		}
 		helper.succeed();
 	}

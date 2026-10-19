@@ -17,43 +17,60 @@ final class VesperModelAssetContractTest {
 			"src/main/resources/assets/hemomancy/textures/entity/boss/endgame");
 
 	@Test
-	void crownedRefusalUsesTheAuthoredThroneAndSixLeggedMountHierarchy() {
+	void crownedRefusalSplitsTheBlockbenchRiderFromTheGeneratedSixLeggedMount() {
 		ModelPart whole = VesperTheCrownedRefusalModel.createBodyLayer().bakeRoot().getChild("whole");
 		ModelPart rider = whole.getChild("vesper");
-		ModelPart mount = whole.getChild("lowerBody");
-
-		assertNotNull(mount.getChild("throne"));
-		assertNotNull(mount.getChild("head").getChild("upperJaw"));
+		assertThrows(java.util.NoSuchElementException.class, () -> whole.getChild("lowerBody"),
+				"the rider model must no longer carry the old mount");
 		assertNotNull(rider.getChild("head2").getChild("crown"));
 		assertNotNull(rider.getChild("leftArm").getChild("lShoulder").getChild("lElbow"));
-		assertNotNull(mount.getChild("fLeftArm"));
-		assertNotNull(mount.getChild("fRightArm"));
-		assertNotNull(mount.getChild("scutes_front"));
-		assertNotNull(mount.getChild("scutes_mid"));
-		assertNotNull(mount.getChild("scutes_rear"));
-		assertNotNull(mount.getChild("grab_socket"));
-		assertNotNull(mount.getChild("head").getChild("bite_socket"));
-		assertNotNull(mount.getChild("backAbdomen").getChild("tail").getChild("tail2")
-				.getChild("tail3").getChild("tail4").getChild("tail5").getChild("impale_socket"));
-		assertNotNull(mount.getChild("lLegs").getChild("fLeg3"));
-		assertNotNull(mount.getChild("lLegs2").getChild("fLeg6"));
-		assertNotNull(mount.getChild("backAbdomen").getChild("tail")
-				.getChild("tail2").getChild("tail3").getChild("tail4").getChild("tail5").getChild("stinger"));
+
+		ModelPart body = VesperMountModel.createBodyLayer().bakeRoot().getChild("root").getChild("body");
+		ModelPart thorax = body.getChild("thorax");
+		assertNotNull(thorax.getChild("seat"));
+		assertNotNull(thorax.getChild("neck").getChild("head").getChild("mandible_r"));
+		assertNotNull(thorax.getChild("neck").getChild("burrow_neck_grip"));
+		assertNotNull(thorax.getChild("neck").getChild("wound_neck"));
+		assertNotNull(thorax.getChild("claw_arm_l").getChild("claw_fore_l").getChild("pincer_l")
+				.getChild("pincer_finger_l"));
+		for (int pair = 0; pair < 3; pair++) {
+			for (String side : new String[] { "r", "l" }) {
+				assertNotNull(thorax.getChild("leg" + pair + "_coxa_" + side).getChild("leg" + pair + "_femur_" + side)
+						.getChild("leg" + pair + "_tibia_" + side).getChild("leg" + pair + "_tarsus_" + side));
+			}
+		}
+		for (String wing : new String[] { "wing_fore_r", "wing_fore_l", "wing_hind_r", "wing_hind_l" }) {
+			assertNotNull(thorax.getChild(wing).getChild(wing.replace("_r", "_membrane_r").replace("_l", "_membrane_l")));
+		}
+		ModelPart abdomen = body.getChild("abdomen");
+		assertNotNull(abdomen.getChild("wound_carapace"));
+		assertNotNull(abdomen.getChild("wound_tail"));
+		assertNotNull(abdomen.getChild("scute_front"));
+		assertNotNull(abdomen.getChild("scute_mid"));
+		assertNotNull(abdomen.getChild("scute_rear"));
+		assertNotNull(abdomen.getChild("tail0").getChild("tail1").getChild("tail2").getChild("tail3")
+				.getChild("tail4").getChild("tail5").getChild("stinger").getChild("stinger_tip"));
 	}
 
 	@Test
 	void eveningStarUsesTheAuthoredClothAndWeaponAttachmentHierarchy() {
 		ModelPart whole = VesperTheEveningStarModel.createBodyLayer().bakeRoot().getChild("whole");
 
-		assertNotNull(whole.getChild("head").getChild("crown"));
-		assertNotNull(whole.getChild("head").getChild("hood"));
-		assertNotNull(whole.getChild("head").getChild("hair"));
-		assertNotNull(whole.getChild("body").getChild("ClothBack").getChild("ClothBack1")
-				.getChild("ClothBack2"));
-		assertNotNull(whole.getChild("leftArm").getChild("rShoulder2").getChild("rElbow2"));
-		assertNotNull(whole.getChild("rightArm").getChild("rShoulder").getChild("rElbow"));
-		assertNotNull(whole.getChild("leftLeg").getChild("leftLeg2"));
-		assertNotNull(whole.getChild("rightLeg").getChild("rightLeg2"));
+		// The head and arms ride the torso, so a lean or a twist carries the shoulders and neck with it.
+		ModelPart body = whole.getChild("body");
+		assertNotNull(body.getChild("head").getChild("crown"));
+		assertNotNull(body.getChild("head").getChild("hood"));
+		assertNotNull(body.getChild("head").getChild("hair"));
+		assertNotNull(body.getChild("ClothBack").getChild("ClothBack1").getChild("ClothBack2"));
+		assertNotNull(body.getChild("leftArm").getChild("rShoulder2").getChild("rElbow2"));
+		// A real elbow: the sleeve splits into an upper arm and a forearm that carries the hand.
+		assertNotNull(body.getChild("rightArm").getChild("rShoulder").getChild("rElbow").getChild("rForearm"));
+		assertNotNull(body.getChild("leftArm").getChild("rShoulder2").getChild("rElbow2").getChild("lForearm"));
+		// Boots hinge at the ankle; the shin plates belong to the shin.
+		assertNotNull(whole.getChild("leftLeg").getChild("leftLeg2").getChild("leftBoot"));
+		assertNotNull(whole.getChild("leftLeg").getChild("leftLeg2").getChild("lShin"));
+		assertNotNull(whole.getChild("rightLeg").getChild("rightLeg2").getChild("rightBoot"));
+		assertNotNull(whole.getChild("rightLeg").getChild("rightLeg2").getChild("rshin2"));
 	}
 
 	@Test
@@ -64,22 +81,26 @@ final class VesperModelAssetContractTest {
 		assertPartPosition(crownedHead.getChild("hood1"), 22.0F, 3.075F, -0.375F);
 
 		ModelPart eveningWhole = VesperTheEveningStarModel.createBodyLayer().bakeRoot().getChild("whole");
-		ModelPart eveningHead = eveningWhole.getChild("head");
-		assertPartPosition(eveningHead, -0.0219F, -9.942F, 0.9744F);
+		ModelPart eveningHead = eveningWhole.getChild("body").getChild("head");
+		assertPartPosition(eveningHead, -0.3813F, -19.942F, 1.3466F);
 		assertPartPosition(eveningHead.getChild("hood"), 20.125F, 3.075F, -0.375F);
 	}
 
 	@Test
-	void eveningStarBodyRotatesAroundTheAuthoredTorsoPivot() {
+	void eveningStarBodyRotatesAroundTheWaist() {
 		ModelPart whole = VesperTheEveningStarModel.createBodyLayer().bakeRoot().getChild("whole");
 		ModelPart body = whole.getChild("body");
 
-		assertPartPosition(body, 0.3594F, -4.0066F, -0.3722F);
-		assertPartPosition(body.getChild("ClothBack"), 19.4937F, 15.5896F, 7.5716F);
-		assertPartPosition(body.getChild("SideclothL"), 5.4438F, 15.5146F, 0.9716F);
-		assertPartPosition(body.getChild("SideclothL4"), -6.9562F, 15.5146F, 0.9716F);
-		assertPartPosition(body.getChild("cloak"), -1.5063F, -2.359F, 6.8371F);
-		assertPartPosition(body.getChild("belt"), -0.5062F, 34.3229F, 1.2216F);
+		// The torso hinges just above the hips, so a lean folds at the waist instead of swinging the hips off the
+		// legs; every child moved with the pivot and still sits where it was authored.
+		assertPartPosition(body, 0.3594F, 10.0F, -0.3722F);
+		assertPartPosition(body.getChild("ClothBack"), 19.4937F, 1.583F, 7.5716F);
+		assertPartPosition(body.getChild("SideclothL"), 5.4438F, 1.508F, 0.9716F);
+		assertPartPosition(body.getChild("SideclothL4"), -6.9562F, 1.508F, 0.9716F);
+		assertPartPosition(body.getChild("cloak"), -1.5063F, -16.3656F, 6.8371F);
+		assertPartPosition(body.getChild("belt"), -0.5062F, 20.3163F, 1.2216F);
+		assertPartPosition(body.getChild("rightArm"), -7.2563F, -13.867F, 0.9716F);
+		assertPartPosition(body.getChild("leftArm"), 6.2437F, -13.867F, 0.9716F);
 	}
 
 	@Test

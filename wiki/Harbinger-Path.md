@@ -116,6 +116,13 @@ Besides degree advancement, the Cardinal Altar enables **utility rites** for pra
 - **Communion:** a Polished Venous Stone and Blood Wood checker.
 - **Working:** Polished Venous Stone Bricks with a Bone Block cross and diagonal. Harbinger floors never use copper.
 
+**Special floors.** The three Degree 7 rites that stand apart have grand floors of their own:
+- **The Hush** (Rite of Apotheos): Polished Venous Stone, rings of Chiseled Polished Venous Stone two and four blocks out, and Hematic Iron Blocks on the Focus's four sides. Its membrane mirrors the Apotheos Chamber: dark ribbed slate crossed by pale white and gold tendrils, banded around a black mouth ringed in prismatic light and circled by a molten orange trench, and its heart barely beats.
+- **The inverted tree** (Bloom of the Qliphoth): Calcified Hyphae, Hyphae Block paths and nine Shroomlight husks. The husks swell with each beat.
+- **The lineage** (Rite of Ancestral Communion): Polished Venous Stone Bricks, a Blood Wood border, a Mnemonic Ambergris ring and ambergris threads to the corners. Flecks of remembered blood drift out along the threads.
+
+**Rite spaces.** When a rite completes, its floor keeps the space above it (the same cube its braziers counted in) for the purpose of that rite. A later rite on the same floor changes the purpose. Faint motes trace the space's edges. The space lasts until the floor is broken, changed or grown, or the Focus is removed. Some things are **rite-bound** and only work inside a space of their purpose: their tooltip says which. The first is the **Sanguine Omen**, which can only be set down, and only answers, inside a Dominion rite space.
+
 Once the floor is complete, a living membrane spreads from the Focus across it and tears a round gash just inside its edge. A rite answers any lit brazier inside the cube its floor is the base of (a 7×7 floor reaches six blocks up): stand braziers on the floor, mount them on a wall or hang them from a ceiling. Only the column over the Focus and the few floor spots where an anchor sore opens stay clear. A standing brazier sits in a mound of flesh, and the gash swings out around the back of any on it like a moat. A sconce or hanging brazier falls, spilling its offering, if its wall or ceiling is broken. A broken floor withers. Keep a craft's braziers off the side its structure stands on.
 
 The Artificer teaches Living Staff construction at D2, while its formation remains craftable at D1. Forming it earns the bond: select **Conjure Staff** with an empty hand to recall it. Select **Blood Absorption** or **Blood Projection**, then hold the Staff to channel that utility. Selecting a Thelemic memory does not leave the previous Staff utility running. Staff ownership does not raise your degree; positive-degree Harbinger rites require active blood before the server plants or escrows it. Planting the Staff in a Cardinal Focus leaves a Blood Projection hand in its place with Projection selected, ready to feed the anchors. When the rite ends, the Staff returns to that hand.
@@ -143,7 +150,7 @@ Keep the sigil surface intact and aim at its visible nodes. Once a shape awakens
   vocabulary.
 
 A later-degree utility rite may remain deliberately simple. Degree is a ceiling,
-not a demand that every rite use every mechanic. The Sanguine Conduit's Rites tab
+not a demand that every rite use every mechanic. The Sanguine Conduit's Rites & Crafts tab
 and each Rite Hint show the exact authored requirements.
 
 Some rites author a **medium** in addition to their brazier offerings. Seat one
@@ -208,7 +215,7 @@ Carry the gourd or equip it in the Scarlet Vanity's gourd slot. Use a carried go
   within ten minutes
 - **Effect:** Frees all members, returns shared blood, and removes owned fanes
 
-More utility rites exist. For the exact authored list, use the Sanguine Conduit's Rites tab.
+More utility rites exist. For the exact authored list, use the Sanguine Conduit's Rites & Crafts tab, where rites are grouped by what they are for: Self, World, Making or Bond.
 
 ---
 

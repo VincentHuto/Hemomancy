@@ -23,6 +23,17 @@ final class BloodInfusionRecipeResourceTest {
 	}
 
 	@Test
+	void glassInfusesIntoSanguineGlassForFiftyBlood() throws Exception {
+		Path path = Path.of("src/main/resources/data/hemomancy/recipe/blood_infusion/sanguine_glass.json");
+		JsonObject recipe = JsonParser.parseString(Files.readString(path)).getAsJsonObject();
+
+		assertEquals("hemomancy:blood_infusion", recipe.get("type").getAsString());
+		assertEquals("minecraft:glass", recipe.get("input").getAsString());
+		assertEquals(50.0D, recipe.get("blood_cost").getAsDouble());
+		assertEquals("hemomancy:sanguine_glass", recipe.get("result").getAsString());
+	}
+
+	@Test
 	void jeiRegistersTheRecipeAndBloodProjectionCatalyst() throws Exception {
 		String plugin = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/compat/jei/JEIPlugin.java"));

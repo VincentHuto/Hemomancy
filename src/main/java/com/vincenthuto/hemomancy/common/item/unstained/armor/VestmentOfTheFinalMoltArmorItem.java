@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
@@ -52,6 +53,15 @@ public class VestmentOfTheFinalMoltArmorItem extends ArmorItem implements HemoCl
 					return model;
 				}
 				return IClientItemExtensions.super.getHumanoidArmorModel(entityLiving, itemStack, armorSlot, _default);
+			}
+
+			@Override
+			public void setupModelAnimations(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot,
+					Model model, float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks,
+					float netHeadYaw, float headPitch) {
+				if (model instanceof VestmentOfTheFinalMoltArmorModel<?> vestment) {
+					vestment.animateCloak(limbSwing, limbSwingAmount, ageInTicks);
+				}
 			}
 
 			@Override

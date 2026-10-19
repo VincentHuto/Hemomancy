@@ -16,9 +16,11 @@ public final class CircusStiltWalkerModel extends HumanoidModel<CircusStiltWalke
 	private final ModelPart leftCord;
 	private final ModelPart rightCord;
 	private final ModelPart crown;
+	private final CircusDownedPose downedPose;
 
 	public CircusStiltWalkerModel(ModelPart root) {
 		super(root);
+		downedPose = new CircusDownedPose(this, 2.0F, 0.0F);
 		leftCord = body.getChild("left_cord");
 		rightCord = body.getChild("right_cord");
 		crown = head.getChild("crown");
@@ -142,9 +144,6 @@ public final class CircusStiltWalkerModel extends HumanoidModel<CircusStiltWalke
 			}
 		}
 		if (entity.getActState() == ActState.ALERT) leftArm.xRot = rightArm.xRot = -0.55F;
-		if (entity.getActState() == ActState.DOWNED) {
-			body.xRot = 1.1F;
-			rightLeg.xRot = leftLeg.xRot = -1.1F;
-		}
+		downedPose.apply(entity.getActState() == ActState.DOWNED, ageInTicks);
 	}
 }

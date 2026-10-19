@@ -23,6 +23,9 @@ import net.minecraft.world.item.ItemStack;
 
 public final class VesperLivingWeaponLayer
 		extends RenderLayer<VesperTheEveningStarEntity, VesperTheEveningStarModel> {
+	private static final float SICKLE_PITCH = 80.0F;
+	private static final float ALONG_FOREARM = 90.0F;
+	private static final double SICKLE_CHOKE = 0.4D;
 	private final LivingFlailModel<VesperTheEveningStarEntity> flailModel;
 
 	public VesperLivingWeaponLayer(RenderLayerParent<VesperTheEveningStarEntity, VesperTheEveningStarModel> parent) {
@@ -59,7 +62,8 @@ public final class VesperLivingWeaponLayer
 			poseStack.popPose();
 			return;
 		}
-		if (!entity.isRaging()) applyWeaponGrip(poseStack, entity.getActiveTendency(), leftHand);
+		if (entity.isRaging()) applySickleGrip(poseStack, leftHand);
+		else applyWeaponGrip(poseStack, entity.getActiveTendency(), leftHand);
 		poseStack.scale(scale, scale, scale);
 		MultiBufferSource weaponBuffer = dissolve > 0.0F
 				? ignored -> buffer.getBuffer(HemoRenderTypes.hermitFarewellDissolve(
@@ -71,9 +75,17 @@ public final class VesperLivingWeaponLayer
 		poseStack.popPose();
 	}
 
+	/** While a thrown hook is out on its tether, the right hand is empty. */
 	private static boolean isSickleHookReleased(VesperTheEveningStarEntity entity, boolean leftHand) {
-		return entity.getWeaponAction() == VesperWeaponAction.SICKLE_HOOK
-				&& !leftHand && entity.getActionTick() >= VesperWeaponAction.SICKLE_HOOK.impactTick();
+		if (leftHand) return false;
+		VesperWeaponAction action = entity.getWeaponAction();
+		int tick = entity.getActionTick();
+		return switch (action) {
+			case SICKLE_HOOK, SICKLE_HOOK_REEL, SICKLE_ANCHOR_HOOK -> tick >= action.impactTick()
+					&& tick <= action.lastImpactTick();
+			case SICKLE_HARVEST -> tick >= 14 && tick <= 30;
+			default -> false;
+		};
 	}
 
 	private void renderFlail(PoseStack poseStack, MultiBufferSource buffer, int packedLight,
@@ -93,11 +105,28 @@ public final class VesperLivingWeaponLayer
 		}
 	}
 
+	/**
+	 * The sickle's own hand transform is written for a player's arm frame, so give it that frame at his hand: the
+	 * grip then sits in the fist with the handle across the palm and the curve reaching forward, as a player holds it.
+	 */
+	private static void applySickleGrip(PoseStack poseStack, boolean leftHand) {
+		// The left anchor sits up the sleeve for the claws; a sickle belongs in the fist, mirroring the right hand.
+		if (leftHand) poseStack.translate(-0.05D, 0.36D, -0.37D);
+		// Tip the handle forward off the forearm so the blade hooks down ahead of him in a reaping guard, and hold
+		// it by the butt rather than just under the blade.
+		poseStack.mulPose(Axis.XP.rotationDegrees(SICKLE_PITCH));
+		poseStack.translate(0.0D, 0.0D, -SICKLE_CHOKE);
+		poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
+		poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
+	}
+
 	private static void applyWeaponGrip(PoseStack poseStack, EnumBloodTendency tendency, boolean leftHand) {
 		poseStack.mulPose(Axis.XP.rotationDegrees(switch (tendency) {
-			case DUCTILIS -> -90.0F;
+			// The spear and the crossbow lie along the forearm, so a thrust or a shot points where the arm points.
+			case DUCTILIS -> -90.0F + ALONG_FOREARM;
+			case LUX -> -98.0F + ALONG_FOREARM;
 			case TENEBRIS -> leftHand?72.0F:-72.0f;
-			case LUX, FLAMMEUS -> -98.0F;
+			case FLAMMEUS -> -98.0F;
 			default -> -90.0F;
 		}));
 		poseStack.mulPose(Axis.YP.rotationDegrees(VesperWeaponGripRules.yawDegrees(tendency, leftHand)));

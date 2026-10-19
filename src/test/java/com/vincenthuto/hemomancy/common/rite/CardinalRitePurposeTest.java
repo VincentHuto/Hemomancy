@@ -31,6 +31,14 @@ final class CardinalRitePurposeTest {
 	}
 
 	@Test
+	void onlyTheFourStandardStylesImplyAPurpose() {
+		assertEquals(CardinalRitePurpose.SELF, CardinalRitePurpose.ofFloorStyle("threshold"));
+		assertEquals(CardinalRitePurpose.BOND, CardinalRitePurpose.ofFloorStyle("communion"));
+		assertNull(CardinalRitePurpose.ofFloorStyle("qliphoth"));
+		assertNull(CardinalRitePurpose.ofFloorStyle(null));
+	}
+
+	@Test
 	void floorMustMatchPurposeUnlessSpecial() {
 		assertNull(CardinalRitePurpose.violation(CardinalRitePurpose.MAKING, false, "working_greater"));
 		assertNotNull(CardinalRitePurpose.violation(CardinalRitePurpose.MAKING, false, "threshold_greater"));

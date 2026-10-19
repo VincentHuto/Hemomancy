@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.render.layer.mob.endgame;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperTheCrownedRefusalModel;
+import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperMountModel;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseTransitionRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefusalEntity;
@@ -18,11 +18,11 @@ import net.minecraft.world.phys.Vec3;
 
 /** Blood-crafting-style shimmer over the throne and mount while Vesper absorbs them. */
 public final class VesperMountAbsorptionLayer
-		extends RenderLayer<VesperTheCrownedRefusalEntity, VesperTheCrownedRefusalModel> {
+		extends RenderLayer<VesperTheCrownedRefusalEntity, VesperMountModel> {
 	private static final int BLOOD_RED = 0xE6FF1208;
 
 	public VesperMountAbsorptionLayer(
-			RenderLayerParent<VesperTheCrownedRefusalEntity, VesperTheCrownedRefusalModel> parent) {
+			RenderLayerParent<VesperTheCrownedRefusalEntity, VesperMountModel> parent) {
 		super(parent);
 	}
 

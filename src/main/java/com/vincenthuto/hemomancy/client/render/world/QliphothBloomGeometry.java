@@ -232,6 +232,30 @@ public final class QliphothBloomGeometry {
         return result;
     }
 
+    /** Parallel-transported {normals, binormals} along a limb path. */
+    public static Point[][] tubeFrames(List<Point> points) {
+        Point[] normals = new Point[points.size()];
+        Point[] bins = new Point[points.size()];
+        for (int i = 0; i < points.size(); i++) {
+            Point tangent = points.get(Math.min(i + 1, points.size() - 1))
+                    .subtract(points.get(Math.max(0, i - 1))).normalized();
+            if (i == 0) {
+                Point ref = Math.abs(tangent.y) > .88 ? new Point(1, 0, 0) : new Point(0, 1, 0);
+                normals[i] = tangent.cross(ref).normalized();
+            } else {
+                Point projected = normals[i - 1].subtract(tangent.scale(normals[i - 1].dot(tangent)));
+                if (projected.length() < 1.0e-5) projected = bins[i - 1].cross(tangent);
+                normals[i] = projected.normalized();
+            }
+            bins[i] = tangent.cross(normals[i]).normalized();
+        }
+        return new Point[][] { normals, bins };
+    }
+
+    public static Point ringPoint(Point center, Point n, Point b, double radius, double angle) {
+        return center.add(n.scale(Math.cos(angle) * radius)).add(b.scale(Math.sin(angle) * radius));
+    }
+
     private static List<Point> animate(List<Point> rest, int seed, double time, double maximum, boolean fixStart) {
         List<Point> result = new ArrayList<>(rest.size());
         double twitchWave = Math.sin(time * .173 + seed * 7.13);
@@ -316,6 +340,7 @@ public final class QliphothBloomGeometry {
         public Point normalized() { double l = length(); return l < 1e-9 ? new Point(0, 1, 0) : scale(1 / l); }
         public Point cross(Point p) { return new Point(y * p.z - z * p.y, z * p.x - x * p.z, x * p.y - y * p.x); }
         public double distanceTo(Point p) { return subtract(p).length(); }
+        public double dot(Point p) { return x * p.x + y * p.y + z * p.z; }
         public double radialDistance() { return Math.sqrt(x * x + z * z); }
         public Point lerp(Point p, double t) { return new Point(x + (p.x - x) * t, y + (p.y - y) * t, z + (p.z - z) * t); }
     }

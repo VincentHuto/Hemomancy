@@ -1041,6 +1041,62 @@
     ],
     "subtitle": "subtitle.hemomancy.item.qliphoth_pome.communion"
   },
+  "entity.stained_priestess.ambient": {
+    "category": "entity",
+    "sounds": [
+      "hemomancy:entity/stained_priestess/ambient"
+    ],
+    "subtitle": "subtitle.hemomancy.entity.stained_priestess.ambient"
+  },
+  "entity.stained_priestess.hurt": {
+    "category": "entity",
+    "sounds": [
+      "hemomancy:entity/stained_priestess/hurt"
+    ],
+    "subtitle": "subtitle.hemomancy.entity.stained_priestess.hurt"
+  },
+  "entity.stained_priestess.death": {
+    "category": "entity",
+    "sounds": [
+      "hemomancy:entity/stained_priestess/death"
+    ],
+    "subtitle": "subtitle.hemomancy.entity.stained_priestess.death"
+  },
+  "entity.stained_priestess.music": {
+    "category": "record",
+    "sounds": [
+      {"name": "hemomancy:entity/stained_priestess/music", "stream": true}
+    ],
+    "subtitle": "subtitle.hemomancy.entity.stained_priestess.music"
+  },
+  "entity.stained_priestess.flare": {
+    "category": "entity",
+    "sounds": [
+      "hemomancy:entity/stained_priestess/flare"
+    ],
+    "subtitle": "subtitle.hemomancy.entity.stained_priestess.flare"
+  },
+  "entity.stained_priestess.summon": {
+    "category": "entity",
+    "sounds": [
+      "hemomancy:entity/stained_priestess/summon"
+    ],
+    "subtitle": "subtitle.hemomancy.entity.stained_priestess.summon"
+  },
+  "entity.stained_priestess.yell": {
+    "category": "entity",
+    "sounds": [
+      "hemomancy:entity/stained_priestess/yell"
+    ],
+    "subtitle": "subtitle.hemomancy.entity.stained_priestess.yell"
+  },
+  "entity.stained_priestess.scream": {
+    "category": "entity",
+    "sounds": [
+      "hemomancy:entity/stained_priestess/scream"
+    ],
+    "subtitle": "subtitle.hemomancy.entity.stained_priestess.scream"
+  },
   "entity.vesper.ambient": {
     "category": "entity",
     "sounds": [

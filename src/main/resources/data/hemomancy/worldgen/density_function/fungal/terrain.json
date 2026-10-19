@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:max",
+  "argument1": {
+    "type": "minecraft:add",
+    "argument1": "hemomancy:fungal/ground",
+    "argument2": "hemomancy:fungal/spires"
+  },
+  "argument2": "hemomancy:fungal/floating"
+}

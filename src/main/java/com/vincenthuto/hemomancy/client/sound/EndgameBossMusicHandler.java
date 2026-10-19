@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.sound;
 
+import com.vincenthuto.hemomancy.common.entity.boss.annetta.StainedPriestessEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefusalEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
@@ -67,7 +68,11 @@ public final class EndgameBossMusicHandler {
 		if (entity instanceof VesperTheEveningStarEntity eveningStar) {
 			return new BossMusicTarget(eveningStar, SoundInit.ENTITY_VESPER_MUSIC.get(), 0.5F);
 		}
+		if (entity instanceof StainedPriestessEntity priestess) {
+			return new BossMusicTarget(priestess, SoundInit.ENTITY_STAINED_PRIESTESS_MUSIC.get(), 0.5F);
+		}
 		if (entity instanceof MycophantEntity mycophant) {
+			if (mycophant.isMusicSilent()) return null;
 			return new BossMusicTarget(mycophant, SoundInit.ENTITY_MYCOPHANT_MUSIC.get(), 1.0F);
 		}
 		return null;

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 
+import com.vincenthuto.hemomancy.common.rite.CardinalRitePurpose;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -18,8 +19,9 @@ final class HarbingerRecipeMapDefinitionsTest {
 		assertEquals(28, HarbingerRecipeMapDefinitions.craftingPaths().size());
 		assertEquals(4, HarbingerRecipeMapDefinitions.puppetryPaths().size());
 		assertEquals("Order", HarbingerRecipeMapDefinitions.riteFamily("cardinal_rite/initiate_rite"));
-		assertEquals("Qliphoth/Forbidden", HarbingerRecipeMapDefinitions.riteFamily("cardinal_rite/bloom_of_qliphoth"));
-		assertEquals("Foundations", HarbingerRecipeMapDefinitions.craftingFamily("blood_structure/living_staff"));
+		assertEquals("Qliphoth", HarbingerRecipeMapDefinitions.riteFamily("cardinal_rite/bloom_of_qliphoth"));
+		assertEquals("Ancestral", HarbingerRecipeMapDefinitions.riteFamily("cardinal_rite/ancestral_communion"));
+		assertEquals("Floorless Crafts", HarbingerRecipeMapDefinitions.craftingFamily("blood_structure/living_staff"));
 		assertEquals("Puppetry", HarbingerRecipeMapDefinitions.riteFamily(
 				"cardinal_rite/puppeteer_trial_gorebound_hulk"));
 	}
@@ -34,14 +36,17 @@ final class HarbingerRecipeMapDefinitionsTest {
 		for (String trial : List.of("cinder_bellows", "sanguine_hound", "scarlet_mummer")) {
 			assertEquals("Trials", HarbingerRecipeMapDefinitions.riteFamily("cardinal_rite/puppeteer_trial_" + trial), trial);
 		}
-		assertEquals("Bloodline/Fane", HarbingerRecipeMapDefinitions.riteFamily("cardinal_rite/hematic_succession"));
-		assertEquals("Bloodline/Fane", HarbingerRecipeMapDefinitions.riteFamily("cardinal_rite/mnemonic_restoration"));
+		assertEquals("Fane", HarbingerRecipeMapDefinitions.riteFamily("cardinal_rite/hematic_succession"));
+		assertEquals("Fane", HarbingerRecipeMapDefinitions.riteFamily("cardinal_rite/mnemonic_restoration"));
+		assertEquals("Bloodline", HarbingerRecipeMapDefinitions.riteFamily("cardinal_rite/bloodline_founding"));
+		assertEquals("Vessel", HarbingerRecipeMapDefinitions.riteFamily("cardinal_rite/exsanguination"));
 		for (String station : List.of("enzymatic_scriptorium", "resonant_forge", "scarlet_vanity", "warp_chair",
 				"fungal_implantation_pylon")) {
 			assertEquals("Stations", HarbingerRecipeMapDefinitions.craftingFamily("blood_structure/" + station), station);
 		}
 		assertEquals("Constructs/Effigies", HarbingerRecipeMapDefinitions.craftingFamily("blood_structure/vacant_effigy"));
-		assertEquals("Ritual Infrastructure", HarbingerRecipeMapDefinitions.craftingFamily("blood_structure/hematic_stake"));
+		assertEquals("Floorless Crafts", HarbingerRecipeMapDefinitions.craftingFamily("blood_structure/hematic_stake"));
+		assertEquals("Ritual Infrastructure", HarbingerRecipeMapDefinitions.craftingFamily("blood_structure/sanguine_monolith"));
 		assertEquals(RecipeMapLayout.MISC_FAMILY, HarbingerRecipeMapDefinitions.riteFamily("cardinal_rite/addon_rite"),
 				"unregistered rites still fall back to Miscellaneous");
 	}
@@ -91,5 +96,23 @@ final class HarbingerRecipeMapDefinitionsTest {
 				null, "recipe result"));
 		assertEquals("authored item", HarbingerRecipeMapDefinitions.resolveDisplayOverride(
 				() -> "authored item", "recipe result"));
+	}
+
+	@Test
+	void familiesRunRoundTheMapInContiguousPurposeGroups() {
+		assertEquals(RecipeMapPurposeGroup.WORLD, HarbingerRecipeMapDefinitions.group("Fane"));
+		assertEquals(RecipeMapPurposeGroup.FLOORLESS, HarbingerRecipeMapDefinitions.group("Floorless Crafts"));
+		assertEquals(RecipeMapPurposeGroup.REFERENCE, HarbingerRecipeMapDefinitions.group(HarbingerRecipeMapDefinitions.SIGIL_FAMILY));
+		for (CardinalRitePurpose purpose : CardinalRitePurpose.values()) {
+			assertEquals(RecipeMapPurposeGroup.of(purpose),
+					HarbingerRecipeMapDefinitions.group(HarbingerRecipeMapDefinitions.floorFamily(purpose)));
+		}
+		int lastGroup = -1;
+		for (String family : HarbingerRecipeMapDefinitions.FAMILIES) {
+			if (family.equals(RecipeMapLayout.MISC_FAMILY)) continue;
+			int group = HarbingerRecipeMapDefinitions.group(family).ordinal();
+			assertTrue(group >= lastGroup, family + " breaks its purpose group's run");
+			lastGroup = group;
+		}
 	}
 }

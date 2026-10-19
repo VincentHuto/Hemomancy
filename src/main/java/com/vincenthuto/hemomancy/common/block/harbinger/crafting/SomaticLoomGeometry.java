@@ -44,7 +44,7 @@ public final class SomaticLoomGeometry {
     /** Catalysts lie in a row on the fresh cloth in front of the fell. */
     public static final float CATALYST_X0 = 3.5f, CATALYST_X1 = 12.5f, CATALYST_Y = 17.0f, CATALYST_Z = 2.2f;
     /** Enzyme vials share the pirn (x, z); liquid stands from VIAL_FLOOR up to VIAL_DEPTH pixels at full stock. */
-    public static final float VIAL_FLOOR = 4.4f, VIAL_DEPTH = 2.2f;
+    public static final float VIAL_FLOOR = 3.7f, VIAL_DEPTH = 2.4f;
     /** Where the echo's feet stand on the warp. */
     public static final float ECHO_X = 8.0f, ECHO_Y = 15.0f, ECHO_Z = 12.5f;
 

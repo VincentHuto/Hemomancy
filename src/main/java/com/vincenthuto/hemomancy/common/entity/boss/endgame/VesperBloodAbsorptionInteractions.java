@@ -6,7 +6,10 @@ import net.minecraft.world.level.Level;
 
 import java.util.Comparator;
 
-/** Routes the ordinary Blood Absorption channel into Vesper's required final defeat. */
+/**
+ * Routes the ordinary Blood Absorption channel into Vesper: the Crowned Refusal's open wounds while he rides, and
+ * the Evening Star's required final defeat.
+ */
 public final class VesperBloodAbsorptionInteractions {
 	private VesperBloodAbsorptionInteractions() {
 	}
@@ -15,6 +18,14 @@ public final class VesperBloodAbsorptionInteractions {
 		if (level.isClientSide || !(user instanceof ServerPlayer player)) {
 			return 0.0D;
 		}
+		double wound = level.getEntitiesOfClass(VesperTheCrownedRefusalEntity.class,
+				player.getBoundingBox().inflate(range + 4.0D), vesper -> vesper.canDrainWound(player)
+						&& vesper.woundCenter().distanceToSqr(player.getEyePosition()) <= (range + 2.0D) * (range + 2.0D))
+				.stream()
+				.min(Comparator.comparingDouble(vesper -> vesper.woundCenter().distanceToSqr(player.getEyePosition())))
+				.map(vesper -> (double) vesper.drainWound(player, progressPerTick))
+				.orElse(0.0D);
+		if (wound > 0.0D) return wound;
 		return level.getEntitiesOfClass(VesperTheEveningStarEntity.class,
 				player.getBoundingBox().inflate(range), vesper -> vesper.canBeAbsorbedBy(player))
 				.stream()

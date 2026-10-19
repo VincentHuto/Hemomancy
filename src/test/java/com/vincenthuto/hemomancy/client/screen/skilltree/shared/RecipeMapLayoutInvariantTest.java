@@ -27,9 +27,9 @@ final class RecipeMapLayoutInvariantTest {
 	void crowdedCellsSplitIntoTwoStaggeredRowsAndKeepTheirSpacing() {
 		List<RecipeMapEntry> entries = new ArrayList<>();
 		List<String> families = new ArrayList<>();
-		for (int index = 0; index < 8; index++) entries.add(entry("crowded_" + index, 5, "Crowded", index, true));
+		for (int index = 0; index < 14; index++) entries.add(entry("crowded_" + index, 5, "Crowded", index, true));
 		families.add("Crowded");
-		for (int family = 0; family < 6; family++) {
+		for (int family = 0; family < 8; family++) {
 			families.add("Family " + family);
 			for (int index = 0; index < 3; index++) {
 				entries.add(entry("f" + family + "_" + index, 5, "Family " + family, index, true));
@@ -41,7 +41,7 @@ final class RecipeMapLayoutInvariantTest {
 		assertMinimumSpacing(layout, entries);
 		int ring = RecipeMapLayout.ringRadius(5);
 		Set<Integer> rows = new TreeSet<>();
-		for (int index = 0; index < 8; index++) {
+		for (int index = 0; index < 14; index++) {
 			double radius = distanceFromCenter(layout, layout.node(id("crowded_" + index)));
 			int row = radius < ring ? -1 : 1;
 			rows.add(row);
@@ -174,9 +174,9 @@ final class RecipeMapLayoutInvariantTest {
 
 		RecipeMapLayout.Result layout = RecipeMapLayout.build(entries, families);
 
-		assertEquals(420, layout.centerX());
-		assertEquals(840, layout.contentWidth());
-		int[][] expected = {{523, 358}, {512, 563}, {460, 255}, {200, 426}, {497, 282}, {536, 280}, {596, 466}, {374, 244}};
+		assertEquals(470, layout.centerX());
+		assertEquals(940, layout.contentWidth());
+		int[][] expected = {{643, 333}, {669, 653}, {519, 256}, {154, 520}, {580, 280}, {613, 303}, {684, 520}, {412, 258}};
 		String[] ids = {"stray", "order_0", "order_1", "vessel_1", "crowded_0", "crowded_1", "crowded_7", "f4_3"};
 		for (int index = 0; index < ids.length; index++) {
 			RecipeMapLayout.NodeBounds node = layout.node(id(ids[index]));

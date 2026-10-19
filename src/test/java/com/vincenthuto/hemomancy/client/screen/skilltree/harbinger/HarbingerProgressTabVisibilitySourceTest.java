@@ -14,8 +14,10 @@ public final class HarbingerProgressTabVisibilitySourceTest {
 		String progressScreen = Files.readString(ROOT.resolve(
 				"src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/HarbingerProgressScreen.java"));
 
-		assertContains("crafting tab is visible by default",
-				progressScreen, "CRAFTING(\"Crafting\", 0xFFAA2222, 0, false)");
+		assertContains("the merged rites and crafts tab is visible by default",
+				progressScreen, "RITES(\"Rites & Crafts\", 0xFF8844CC, 0, false)");
+		assertNotContains("crafting no longer occupies a separate top-level tab",
+				progressScreen, "CRAFTING(\"Crafting\"");
 		assertContains("tendencies tab is hidden until degree 3",
 				progressScreen, "TENDENCIES(\"Tendencies\", 0xFFCC8833, 3, false)");
 		assertNotContains("scars no longer occupy a separate top-level tab",

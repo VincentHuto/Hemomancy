@@ -100,7 +100,7 @@ public class ModelBackedArmorItemRenderer extends BlockEntityWithoutLevelRendere
 		if (displayContext == ItemDisplayContext.GUI ){
 			if( stack.is(ItemInit.vestment_of_the_final_molt.get())) {
 				poseStack.translate(0.0F, 0F, 0.0F);
-				poseStack.scale(0.6F, 0.6F, 0.6F);
+				poseStack.scale(0.52F, 0.52F, 0.52F);
 			}
 			if( stack.is(ItemInit.covenant_mantle.get())) {
 				poseStack.translate(0.0F, 0F, 0.0F);

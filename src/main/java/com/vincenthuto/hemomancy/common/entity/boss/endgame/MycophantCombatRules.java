@@ -17,22 +17,6 @@ public final class MycophantCombatRules {
 		return health <= maxHealth * 0.5F ? 2 : 1;
 	}
 
-	public static int sweepCadenceTicks(int phase) {
-		return phase >= 2 ? 70 : 100;
-	}
-
-	public static int cocoonCadenceTicks(int phase) {
-		return phase >= 2 ? 180 : 280;
-	}
-
-	public static int surgeCadenceTicks(int phase) {
-		return phase >= 2 ? 240 : 360;
-	}
-
-	public static int cocoonNodeCount(int phase) {
-		return phase >= 2 ? 4 : 3;
-	}
-
 	public static float pressureAfterEscape(float pressure, boolean empowered) {
 		return Mth.clamp(pressure - (empowered ? 20.0F : 10.0F), 0.0F, 100.0F);
 	}

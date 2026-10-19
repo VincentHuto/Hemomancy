@@ -33,12 +33,12 @@ public final class VesperVisualRules {
 
 	public static String weaponScene(VesperWeaponAction action) {
 		return switch (action) {
-			case ICHIMONJI, CROSSCUT -> "blood_blade";
-			case LEAPING_CLEAVE, REAPER_SWEEP -> "living_axe";
-			case SKY_LANCE, LANCE_FLURRY -> "living_spear";
-			case TWIN_REND, PREDATOR_POUNCE -> "gloam_claw";
-			case BRANDING_THRUSTS, UPDRAFT_IMPALEMENT -> "crimson_torch";
-			case CHAIN_SWEEP, HOOK_AND_CRUSH -> "glacial_flail";
+			case ICHIMONJI, CROSSCUT, BLADE_RISING_CUT, BLADE_DRAWING_STEP -> "blood_blade";
+			case LEAPING_CLEAVE, REAPER_SWEEP, AXE_HAFT_SHOVE, AXE_GRAVE_SPLITTER -> "living_axe";
+			case SKY_LANCE, LANCE_FLURRY, SPEAR_VAULT_KICK, SPEAR_PINNING_THRUST -> "living_spear";
+			case TWIN_REND, PREDATOR_POUNCE, CLAW_SHADOW_FEINT, CLAW_EVISCERATE -> "gloam_claw";
+			case BRANDING_THRUSTS, UPDRAFT_IMPALEMENT, TORCH_CINDER_SWEEP -> "crimson_torch";
+			case CHAIN_SWEEP, HOOK_AND_CRUSH, FLAIL_ORBIT, FLAIL_SHATTER_SLAM -> "glacial_flail";
 			default -> "none";
 		};
 	}

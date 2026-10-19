@@ -26,6 +26,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.portal.DimensionTransition;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -186,6 +187,8 @@ public final class VesperOrdealManager {
 
 	public static void copyOrdeal(VesperTheCrownedRefusalEntity from, VesperTheEveningStarEntity to) {
 		to.setOrdeal(from.getOrdealOwner(), from.getBloomOrigin(), from.getBloomId());
+		// Every puppet the player failed to kill hands the Evening Star its borrowed attack.
+		to.setInheritedPuppets(from.roster().survivors());
 	}
 
 	private static boolean matchesActiveBloom(ServerPlayer owner, long origin, UUID bloomId) {
@@ -221,6 +224,16 @@ public final class VesperOrdealManager {
 			return Optional.empty();
 		}
 		return Optional.of(new FlightArena(center.getX() + 0.5D, center.getY(), center.getZ() + 0.5D));
+	}
+
+	/** Interior of the barrier-walled ordeal arena containing {@code pos}, if any; walls sit one block inside the floor. */
+	public static Optional<AABB> arenaInteriorAt(Level level, Vec3 pos) {
+		if (!level.dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)) return Optional.empty();
+		BlockPos center = new BlockPos(ARENA_X, ChamberOfWillManager.FLOOR_Y,
+				(int) Math.round(pos.z / ARENA_SPACING) * ARENA_SPACING);
+		if (!new AABB(center).inflate(ARENA_HALF, level.getHeight(), ARENA_HALF).contains(pos)) return Optional.empty();
+		return Optional.of(new AABB(center.getX() - (ARENA_HALF - 2), center.getY() + 1, center.getZ() - (ARENA_HALF - 2),
+				center.getX() + ARENA_HALF - 1, level.getMaxBuildHeight(), center.getZ() + ARENA_HALF - 1));
 	}
 
 	public record FlightArena(double centerX, double floorY, double centerZ) {
@@ -367,7 +380,11 @@ public final class VesperOrdealManager {
 				VesperPhaseTwoCombat.cancel(evening);
 				evening.discard();
 			} else if (entity.getPersistentData().getBoolean("HemomancyVesperEncounterPuppet")) {
-				entity.discard();
+				if (entity instanceof net.minecraft.world.entity.Mob mob) {
+					com.vincenthuto.hemomancy.common.summon.PuppetStrings.unspool(mob);
+				} else {
+					entity.discard();
+				}
 			}
 		}
 	}

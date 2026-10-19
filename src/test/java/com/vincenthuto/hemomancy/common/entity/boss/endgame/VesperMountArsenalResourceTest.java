@@ -32,9 +32,9 @@ final class VesperMountArsenalResourceTest {
 		String clients = Files.readString(ROOT.resolve("java/com/vincenthuto/hemomancy/client/event/ClientEvents.java"));
 		String sounds = Files.readString(ROOT.resolve("resources/assets/hemomancy/sounds.json"));
 		String crowned = Files.readString(ROOT.resolve("java/com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperTheCrownedRefusalEntity.java"));
-		String actions = Files.readString(ROOT.resolve("java/com/vincenthuto/hemomancy/common/entity/boss/endgame/EndgameBossActions.java"));
+		String actions = Files.readString(ROOT.resolve("java/com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperMountMoves.java"));
 		String projectile = Files.readString(ROOT.resolve("java/com/vincenthuto/hemomancy/common/entity/projectile/VesperScuteProjectileEntity.java"));
-		String model = Files.readString(ROOT.resolve("java/com/vincenthuto/hemomancy/client/model/entity/boss/endgame/VesperTheCrownedRefusalModel.java"));
+		String model = Files.readString(ROOT.resolve("java/com/vincenthuto/hemomancy/client/model/entity/boss/endgame/VesperMountModel.java"));
 		assertTrue(entities.contains("vesper_scute_projectile"));
 		assertTrue(clients.contains("VesperScuteProjectileRenderer::new"));
 		for (String sound : new String[] { "entity.vesper.scute_launch", "entity.vesper.carapace_reform",

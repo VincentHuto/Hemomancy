@@ -96,6 +96,13 @@ public class DialogueEventHandler {
             }
             return;
         }
+        if (event.getEventId().startsWith("annetta_")) {
+            if (player.level().getEntity(event.getEntityId())
+                    instanceof com.vincenthuto.hemomancy.common.entity.boss.annetta.AnnettaKnowlesEntity annetta) {
+                event.setRewardDelivered(annetta.handleDialogueChoice(player, event.getEventId()));
+            }
+            return;
+        }
         if (event.getEventId().startsWith("circus_school_")) {
             event.setRewardDelivered(com.vincenthuto.hemomancy.common.circus.CircusSchoolDialogue.handle(event));
             return;

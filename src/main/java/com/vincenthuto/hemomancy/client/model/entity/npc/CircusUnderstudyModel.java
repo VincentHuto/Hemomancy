@@ -16,7 +16,7 @@ public final class CircusUnderstudyModel extends CircusFacultyModel {
 	private final ModelPart leftShawlTail;
 
 	public CircusUnderstudyModel(ModelPart root) {
-		super(root);
+		super(root, 1.5F);
 		halfMask = head.getChild("half_mask");
 		rightShawlTail = body.getChild("right_shawl_tail");
 		leftShawlTail = body.getChild("left_shawl_tail");

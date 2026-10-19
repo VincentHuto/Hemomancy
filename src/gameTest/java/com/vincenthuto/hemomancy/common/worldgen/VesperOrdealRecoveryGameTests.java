@@ -79,4 +79,97 @@ public final class VesperOrdealRecoveryGameTests {
 			owner.discard();
 		}
 	}
+
+	@GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", timeoutTicks = 80,
+			batch = "vesperOrdealRecovery")
+	public static void reloadMidBurrowSurfacesIntoRecovery(GameTestHelper helper) {
+		var level = helper.getLevel();
+		BlockPos center = helper.absolutePos(new BlockPos(8, 3, 8));
+		VesperTheCrownedRefusalEntity boss = EntityInit.vesper_crowned_refusal.get().create(level);
+		boss.moveTo(center.getX(), center.getY(), center.getZ());
+		level.addFreshEntity(boss);
+		call(boss, "startBurrow", new Class<?>[] { boolean.class }, false);
+		for (int i = 0; i < 40; i++) boss.tick();
+		helper.assertTrue(boss.isBurrowing(), "the burrow must be underway before the save");
+		net.minecraft.nbt.CompoundTag saved = boss.saveWithoutId(new net.minecraft.nbt.CompoundTag());
+		boss.discard();
+		VesperTheCrownedRefusalEntity loaded = EntityInit.vesper_crowned_refusal.get().create(level);
+		loaded.load(saved);
+		helper.assertTrue(loaded.getBurrowStage() == com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperBurrowRules.Stage.RECOVERY,
+				"a reload never resumes an unseen hunt; it surfaces into recovery");
+		helper.assertTrue(!loaded.isInvisible() && !loaded.isSubmerged() && !loaded.isNoAi(),
+				"the reloaded mount is visible, hittable and never left without AI");
+		helper.succeed();
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", timeoutTicks = 80,
+			batch = "vesperOrdealRecovery")
+	public static void reloadMidWoundKeepsProgress(GameTestHelper helper) {
+		var level = helper.getLevel();
+		BlockPos center = helper.absolutePos(new BlockPos(8, 3, 8));
+		ServerPlayer drainer = new ServerPlayer(level.getServer(), level,
+				new GameProfile(UUID.randomUUID(), "vesper-drainer"), ClientInformation.createDefault());
+		try {
+			VesperTheCrownedRefusalEntity boss = EntityInit.vesper_crowned_refusal.get().create(level);
+			boss.moveTo(center.getX(), center.getY(), center.getZ());
+			level.addFreshEntity(boss);
+			call(boss, "exposeAnchor", new Class<?>[] { int.class }, 1);
+			boss.drainWound(drainer, 30.0F);
+			helper.assertTrue(Math.abs(boss.getWoundDrained() - 30.0F) < 0.01F, "the drain must register");
+			net.minecraft.nbt.CompoundTag saved = boss.saveWithoutId(new net.minecraft.nbt.CompoundTag());
+			boss.discard();
+			VesperTheCrownedRefusalEntity loaded = EntityInit.vesper_crowned_refusal.get().create(level);
+			loaded.load(saved);
+			helper.assertTrue(loaded.getActiveAnchor() == 1, "the neck wound stays open across a reload");
+			helper.assertTrue(Math.abs(loaded.getWoundDrained() - 30.0F) < 0.01F, "drain progress survives a reload");
+			helper.assertTrue(!loaded.isNoAi(), "an open wound never persists NoAI");
+			helper.succeed();
+		} finally {
+			drainer.discard();
+		}
+	}
+
+	@GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", timeoutTicks = 80,
+			batch = "vesperOrdealRecovery")
+	public static void encounterCleanupUnspoolsPuppetsInsteadOfPoppingThem(GameTestHelper helper) {
+		var level = helper.getLevel();
+		BlockPos center = helper.absolutePos(new BlockPos(8, 3, 8));
+		VesperTheCrownedRefusalEntity boss = EntityInit.vesper_crowned_refusal.get().create(level);
+		boss.moveTo(center.getX(), center.getY(), center.getZ());
+		level.addFreshEntity(boss);
+		net.minecraft.world.entity.Mob puppet = EntityInit.gorebound_hulk.get().create(level);
+		puppet.moveTo(center.getX() + 3, center.getY(), center.getZ());
+		puppet.addTag("HemomancyVesperPuppet");
+		level.addFreshEntity(puppet);
+		Class<?> actions;
+		try {
+			actions = Class.forName("com.vincenthuto.hemomancy.common.entity.boss.endgame.EndgameBossActions");
+		} catch (ClassNotFoundException missing) {
+			throw new IllegalStateException(missing);
+		}
+		callStatic(actions, "clearVesperPuppets", new Class<?>[] { net.minecraft.world.entity.Mob.class }, boss);
+		helper.assertTrue(com.vincenthuto.hemomancy.common.summon.PuppetStrings.isUnspooling(puppet),
+				"phase-end cleanup hauls puppets away on their strings");
+		helper.succeed();
+	}
+
+	private static void call(Object target, String name, Class<?>[] types, Object... args) {
+		try {
+			var method = target.getClass().getDeclaredMethod(name, types);
+			method.setAccessible(true);
+			method.invoke(target, args);
+		} catch (ReflectiveOperationException exception) {
+			throw new IllegalStateException(name, exception);
+		}
+	}
+
+	private static void callStatic(Class<?> owner, String name, Class<?>[] types, Object... args) {
+		try {
+			var method = owner.getDeclaredMethod(name, types);
+			method.setAccessible(true);
+			method.invoke(null, args);
+		} catch (ReflectiveOperationException exception) {
+			throw new IllegalStateException(name, exception);
+		}
+	}
 }

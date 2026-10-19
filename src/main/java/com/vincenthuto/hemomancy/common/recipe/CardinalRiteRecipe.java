@@ -291,10 +291,9 @@ public class CardinalRiteRecipe extends CustomRecipe {
 		return subject != null;
 	}
 
-	/** Listed with the Working crafts: every craft, and every other Harbinger making rite with a result item. */
-	public boolean isCataloguedAsMaking() {
-		return isWorkingCraft() || !isUnstained() && purpose == com.vincenthuto.hemomancy.common.rite.CardinalRitePurpose.MAKING
-				&& getResult() != null && !getResult().isEmpty();
+	/** Listed in the JEI rite category of a purpose: every Harbinger rite of that purpose, crafts included. */
+	public boolean isCataloguedUnder(com.vincenthuto.hemomancy.common.rite.CardinalRitePurpose purpose) {
+		return !isUnstained() && this.purpose != null && this.purpose == purpose;
 	}
 
 	/** A special rite keeps its purpose but may name a floor of any style. */

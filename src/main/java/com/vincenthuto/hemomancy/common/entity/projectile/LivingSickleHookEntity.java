@@ -71,6 +71,9 @@ public final class LivingSickleHookEntity extends ThrowableProjectile {
                 target.hurt(com.vincenthuto.hemomancy.common.damage.SchoolDamage.projectileSource(
                         TendencyWeaponHelper.createWeaponDamageSource(target, owner), this, owner), entityData.get(ATTACK_DAMAGE));
 			pullTowardOwner(target, owner);
+			if (owner instanceof com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity vesper) {
+				vesper.onSickleHookCaught(target);
+			}
 			emitImpact(target);
 			owner.playSound(SoundEvents.CHAIN_HIT, 1.0F, 0.72F);
 		}

@@ -22,36 +22,36 @@
    "faces": {
     "north": {
      "uv": [
-      0,
+      5.0,
       5,
-      16,
+      5.2,
       11.5
      ],
      "texture": "#sanguine"
     },
     "south": {
      "uv": [
-      0,
+      5.0,
       5,
-      16,
+      5.2,
       11.5
      ],
      "texture": "#sanguine"
     },
     "east": {
      "uv": [
-      0,
+      6.757,
       5,
-      16,
+      9.243,
       11.5
      ],
      "texture": "#sanguine"
     },
     "west": {
      "uv": [
-      0,
+      6.757,
       5,
-      16,
+      9.243,
       11.5
      ],
      "texture": "#sanguine"
@@ -73,36 +73,36 @@
    "faces": {
     "north": {
      "uv": [
-      0,
+      6.757,
       5,
-      16,
+      9.243,
       11.5
      ],
      "texture": "#sanguine"
     },
     "south": {
      "uv": [
-      0,
+      6.757,
       5,
-      16,
+      9.243,
       11.5
      ],
      "texture": "#sanguine"
     },
     "east": {
      "uv": [
-      0,
+      5.0,
       5,
-      16,
+      5.2,
       11.5
      ],
      "texture": "#sanguine"
     },
     "west": {
      "uv": [
-      0,
+      5.0,
       5,
-      16,
+      5.2,
       11.5
      ],
      "texture": "#sanguine"
@@ -124,36 +124,36 @@
    "faces": {
     "north": {
      "uv": [
-      0,
+      10.8,
       5,
-      16,
+      11.0,
       11.5
      ],
      "texture": "#sanguine"
     },
     "south": {
      "uv": [
-      0,
+      10.8,
       5,
-      16,
+      11.0,
       11.5
      ],
      "texture": "#sanguine"
     },
     "east": {
      "uv": [
-      0,
+      6.757,
       5,
-      16,
+      9.243,
       11.5
      ],
      "texture": "#sanguine"
     },
     "west": {
      "uv": [
-      0,
+      6.757,
       5,
-      16,
+      9.243,
       11.5
      ],
      "texture": "#sanguine"
@@ -175,36 +175,36 @@
    "faces": {
     "north": {
      "uv": [
-      0,
+      6.757,
       5,
-      16,
+      9.243,
       11.5
      ],
      "texture": "#sanguine"
     },
     "south": {
      "uv": [
-      0,
+      6.757,
       5,
-      16,
+      9.243,
       11.5
      ],
      "texture": "#sanguine"
     },
     "east": {
      "uv": [
-      0,
+      10.8,
       5,
-      16,
+      11.0,
       11.5
      ],
      "texture": "#sanguine"
     },
     "west": {
      "uv": [
-      0,
+      10.8,
       5,
-      16,
+      11.0,
       11.5
      ],
      "texture": "#sanguine"
@@ -235,36 +235,36 @@
    "faces": {
     "north": {
      "uv": [
-      0,
+      5.0,
       5,
-      16,
+      5.2,
       11.5
      ],
      "texture": "#sanguine"
     },
     "south": {
      "uv": [
-      0,
+      5.0,
       5,
-      16,
+      5.2,
       11.5
      ],
      "texture": "#sanguine"
     },
     "east": {
      "uv": [
-      0,
+      6.757,
       5,
-      16,
+      9.243,
       11.5
      ],
      "texture": "#sanguine"
     },
     "west": {
      "uv": [
-      0,
+      6.757,
       5,
-      16,
+      9.243,
       11.5
      ],
      "texture": "#sanguine"
@@ -295,36 +295,36 @@
    "faces": {
     "north": {
      "uv": [
-      0,
+      6.757,
       5,
-      16,
+      9.243,
       11.5
      ],
      "texture": "#sanguine"
     },
     "south": {
      "uv": [
-      0,
+      6.757,
       5,
-      16,
+      9.243,
       11.5
      ],
      "texture": "#sanguine"
     },
     "east": {
      "uv": [
-      0,
+      5.0,
       5,
-      16,
+      5.2,
       11.5
      ],
      "texture": "#sanguine"
     },
     "west": {
      "uv": [
-      0,
+      5.0,
       5,
-      16,
+      5.2,
       11.5
      ],
      "texture": "#sanguine"
@@ -355,36 +355,36 @@
    "faces": {
     "north": {
      "uv": [
-      0,
+      10.8,
       5,
-      16,
+      11.0,
       11.5
      ],
      "texture": "#sanguine"
     },
     "south": {
      "uv": [
-      0,
+      10.8,
       5,
-      16,
+      11.0,
       11.5
      ],
      "texture": "#sanguine"
     },
     "east": {
      "uv": [
-      0,
+      6.757,
       5,
-      16,
+      9.243,
       11.5
      ],
      "texture": "#sanguine"
     },
     "west": {
      "uv": [
-      0,
+      6.757,
       5,
-      16,
+      9.243,
       11.5
      ],
      "texture": "#sanguine"
@@ -415,36 +415,36 @@
    "faces": {
     "north": {
      "uv": [
-      0,
+      6.757,
       5,
-      16,
+      9.243,
       11.5
      ],
      "texture": "#sanguine"
     },
     "south": {
      "uv": [
-      0,
+      6.757,
       5,
-      16,
+      9.243,
       11.5
      ],
      "texture": "#sanguine"
     },
     "east": {
      "uv": [
-      0,
+      10.8,
       5,
-      16,
+      11.0,
       11.5
      ],
      "texture": "#sanguine"
     },
     "west": {
      "uv": [
-      0,
+      10.8,
       5,
-      16,
+      11.0,
       11.5
      ],
      "texture": "#sanguine"

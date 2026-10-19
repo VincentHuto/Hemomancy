@@ -74,7 +74,7 @@ final class RitesTabUnstainedListTest {
 		tiers.put(dominionGrand, "grand");
 		tiers.put(lonely, "unused");
 
-		Map<ResourceLocation, Integer> degrees = RitesTabController.firstUseDegrees(tiers,
+		Map<ResourceLocation, Integer> degrees = RitesAndCraftsTabController.firstUseDegrees(tiers,
 				Map.of(communionMinor, 2, dominionGrand, 5),
 				Map.of(communionMinor, 0, threshold, 0, workingGrand, 3, dominionGrand, 3, lonely, 4));
 

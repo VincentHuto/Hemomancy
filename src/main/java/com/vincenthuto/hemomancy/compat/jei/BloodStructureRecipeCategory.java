@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.CraftingMapRecipe;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.rite.CardinalRitePurpose;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
@@ -53,7 +54,8 @@ import java.util.List;
  * the blocks to lay, a rotating preview captioned with the floor it needs,
  * then the result and the brazier offerings. A footer gives the blood drawn;
  * hovering the title or preview shows the rite's description and steps.
- * One instance serves floorless Blood Structures, another Working crafts.
+ * One instance serves floorless Blood Structures, and one each the Harbinger rites of
+ * every purpose: Threshold, Dominion, Working (crafts included) and Communion.
  */
 public class BloodStructureRecipeCategory implements IRecipeCategory<CraftingMapRecipe> {
 
@@ -92,16 +94,27 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<CraftingMap
 	private static final int CAPTION_COLOR = 0xFFB06A60;
 
 	private final IDrawable icon;
-	private final boolean working;
+	/** The purpose whose rites this category lists, or null for the floorless Blood Structures. */
+	private final CardinalRitePurpose purpose;
 
 	public BloodStructureRecipeCategory(IGuiHelper guiHelper) {
-		this(guiHelper, false);
+		this(guiHelper, null);
 	}
 
-	public BloodStructureRecipeCategory(IGuiHelper guiHelper, boolean working) {
-		this.working = working;
-		this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK,
-				new ItemStack(working ? BlockInit.cardinal_focus.get().asItem() : ItemInit.sanguine_formation.get()));
+	public BloodStructureRecipeCategory(IGuiHelper guiHelper, CardinalRitePurpose purpose) {
+		this.purpose = purpose;
+		this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, iconFor(purpose));
+	}
+
+	/** Each rite category shows the block its floor style is studded with. */
+	private static ItemStack iconFor(CardinalRitePurpose purpose) {
+		if (purpose == null) return new ItemStack(ItemInit.sanguine_formation.get());
+		return new ItemStack(switch (purpose) {
+			case SELF -> BlockInit.hematic_iron_block.get();
+			case WORLD -> BlockInit.chiseled_hematic_iron_block.get();
+			case MAKING -> Blocks.BONE_BLOCK;
+			case BOND -> BlockInit.blood_wood_planks.get();
+		});
 	}
 
 	// ═══════════════════════════════════════════════════════════════
@@ -125,13 +138,19 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<CraftingMap
 
 	@Override
 	public RecipeType<CraftingMapRecipe> getRecipeType() {
-		return working ? JEIPlugin.working_craft_recipe_type : JEIPlugin.blood_structure_recipe_type;
+		return purpose == null ? JEIPlugin.blood_structure_recipe_type : JEIPlugin.riteTypeFor(purpose);
 	}
 
 	@Nonnull
 	@Override
 	public Component getTitle() {
-		return Component.translatable(working ? "hemomancy.jei.working_craft" : "hemomancy.jei.blood_crafting");
+		if (purpose == null) return Component.translatable("hemomancy.jei.blood_crafting");
+		return Component.translatable(switch (purpose) {
+			case SELF -> "hemomancy.jei.threshold_rite";
+			case WORLD -> "hemomancy.jei.dominion_rite";
+			case MAKING -> "hemomancy.jei.working_craft";
+			case BOND -> "hemomancy.jei.communion_rite";
+		});
 	}
 
 	// ═══════════════════════════════════════════════════════════════
@@ -172,7 +191,7 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<CraftingMap
 		}
 		int materials = materialSlots(recipe).size();
 		if (materials > 0) {
-			JeiPanel.labelLeft(gfx, font, Component.translatable(recipe.hasStructure()
+			JeiPanel.labelLeft(gfx, font, Component.translatable(recipe.showsStructure()
 					? "hemomancy.jei.craft.build" : "hemomancy.jei.craft.floor"), LEFT_X, GRID_HEADER_Y + 2, LABEL_COLOR);
 			for (int i = 0; i < materials; i++) {
 				drawSlotFrame(gfx, gridX(LEFT_X, i) - 1, gridY(i) - 1);
@@ -251,17 +270,20 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<CraftingMap
 
 		// Blocks to lay: the structure or subject, or a making rite's floor
 		String materialHint = !recipe.isWorking() ? "hemomancy.jei.craft.tip.structure"
-				: recipe.hasStructure() ? "hemomancy.jei.craft.tip.subject" : "hemomancy.jei.craft.tip.floor";
+				: recipe.hasStructure() ? "hemomancy.jei.craft.tip.subject"
+				: recipe.showsStructure() ? "hemomancy.jei.craft.tip.structure" : "hemomancy.jei.craft.tip.floor";
 		List<List<ItemStack>> materials = materialSlots(recipe);
 		for (int i = 0; i < materials.size(); i++) {
-			builder.addSlot(recipe.hasStructure() ? RecipeIngredientRole.INPUT : RecipeIngredientRole.CATALYST,
+			builder.addSlot(recipe.showsStructure() ? RecipeIngredientRole.INPUT : RecipeIngredientRole.CATALYST,
 					gridX(LEFT_X, i), gridY(i))
 					.addIngredients(VanillaTypes.ITEM_STACK, materials.get(i))
 					.addRichTooltipCallback((view, tip) -> tip.add(hint(materialHint)));
 		}
 
-		builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_SLOT_X, TOP_SLOT_Y)
-				.addIngredient(VanillaTypes.ITEM_STACK, recipe.getResult());
+		if (!recipe.getResult().isEmpty()) {
+			builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_SLOT_X, TOP_SLOT_Y)
+					.addIngredient(VanillaTypes.ITEM_STACK, recipe.getResult());
+		}
 
 		for (int i = 0; i < Math.min(MAX_GRID_SLOTS, recipe.getOfferings().size()); i++) {
 			List<ItemStack> stacks = ingredientStacksFor(recipe.getOfferings().get(i));
@@ -301,11 +323,13 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<CraftingMap
 				: Component.translatable("hemomancy.jei.craft.feed", feed);
 	}
 
-	private static String steps(CraftingMapRecipe recipe) {
+	private String steps(CraftingMapRecipe recipe) {
 		if (!recipe.isWorking()) {
 			return "hemomancy.jei.craft.steps.floorless";
 		}
-		return recipe.hasStructure() ? "hemomancy.jei.craft.steps.working" : "hemomancy.jei.craft.steps.making";
+		if (recipe.hasStructure()) return "hemomancy.jei.craft.steps.working";
+		return purpose == null || purpose == CardinalRitePurpose.MAKING ? "hemomancy.jei.craft.steps.making"
+				: "hemomancy.jei.craft.steps." + purpose.id();
 	}
 
 	private static Component hint(String key) {

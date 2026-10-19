@@ -8,29 +8,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class VesperRageCombatRulesTest {
 	@Test
-	void rageStartsOnlyBelowThirtyPercentHealth() throws Exception {
+	void rageStartsAtTheLastThirdOfHealth() throws Exception {
 		Method threshold = rules().getMethod("isRageThreshold", float.class, float.class);
-		assertFalse((boolean) threshold.invoke(null, 192.0F, 640.0F));
-		assertTrue((boolean) threshold.invoke(null, 191.9F, 640.0F));
+		assertFalse((boolean) threshold.invoke(null, 213.4F, 640.0F));
+		assertTrue((boolean) threshold.invoke(null, 213.3F, 640.0F));
 		assertFalse((boolean) threshold.invoke(null, 1.0F, 0.0F));
-	}
-
-	@Test
-	void rageAlternatesCloseAndLongRangeSickleAttacksWithoutRepeating() throws Exception {
-		Method select = rules().getMethod("selectAction", VesperWeaponAction.class, double.class, int.class);
-		VesperWeaponAction cyclone = action("SICKLE_CYCLONE");
-		VesperWeaponAction crossRend = action("SICKLE_CROSS_REND");
-		VesperWeaponAction pounce = action("SICKLE_POUNCE");
-		VesperWeaponAction hook = action("SICKLE_HOOK");
-
-		assertEquals(cyclone, select.invoke(null, VesperWeaponAction.NONE, 3.0D, 0));
-		assertEquals(crossRend, select.invoke(null, cyclone, 3.0D, 0));
-		assertEquals(hook, select.invoke(null, VesperWeaponAction.NONE, 14.0D, 0));
-		assertEquals(pounce, select.invoke(null, hook, 14.0D, 0));
-
-		VesperWeaponAction previous = crossRend;
-		VesperWeaponAction selected = (VesperWeaponAction) select.invoke(null, previous, 7.0D, 1);
-		assertNotEquals(previous, selected);
 	}
 
 	@Test

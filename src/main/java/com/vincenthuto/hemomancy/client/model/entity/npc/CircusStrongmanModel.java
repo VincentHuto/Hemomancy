@@ -16,7 +16,7 @@ public final class CircusStrongmanModel extends CircusFacultyModel {
 	private final ModelPart barbell;
 
 	public CircusStrongmanModel(ModelPart root) {
-		super(root);
+		super(root, 2.5F);
 		barbell = body.getChild("barbell");
 	}
 

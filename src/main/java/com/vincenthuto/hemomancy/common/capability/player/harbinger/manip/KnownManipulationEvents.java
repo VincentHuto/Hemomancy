@@ -183,7 +183,7 @@ public class KnownManipulationEvents {
 	 * the manipulation-use milestones.
 	 */
 	public static void onManipulationUsed(ServerPlayer player, BloodManipulation manip, float rewardScale) {
-		com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.ruptureCocoon(player, true);
+		com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onCast(player);
 		// 1. Vascular strain on the manip's associated vein section
 		VascularSystemEvents.applyManipStrain(player, manip);
 

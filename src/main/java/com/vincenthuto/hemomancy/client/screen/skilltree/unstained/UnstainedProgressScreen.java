@@ -64,8 +64,8 @@ public class UnstainedProgressScreen extends Screen {
 	private UTab activeTab = UTab.PROGRESS;
 	private static final int TAB_HEIGHT = 16;
 	private static final int TAB_PAD = 4;
-	private final RitesTabController ritesTab = new RitesTabController(true);
-	private final CraftingTabController craftingTab = new CraftingTabController(true);
+	private final RitesTabController ritesTab = new RitesTabController();
+	private final CraftingTabController craftingTab = new CraftingTabController();
 	private final MaterialsTabController materialsTab = new MaterialsTabController(
 			MaterialAtlasPath.UNSTAINED, MaterialsData.getUnstainedEntries(), EnumNodeShape.DIAMOND,
 			UTab.MATERIALS.color, 0x0080B0A0, 0xFF6088B0,

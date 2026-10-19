@@ -15,6 +15,16 @@ final class RecipeCodecJson {
         return ops instanceof RegistryOps<?> registries ? registries.withParent(JsonOps.INSTANCE) : JsonOps.INSTANCE;
     }
 
+    /**
+     * A boolean field that also reads the 0/1 bytes NBT stores booleans as: a recipe decoded through NBT reaches
+     * {@link #toJsonObject} with numbers where its JSON had {@code true}/{@code false}.
+     */
+    static boolean booleanField(JsonObject json, String name, boolean fallback) {
+        if (!json.has(name) || !json.get(name).isJsonPrimitive()) return fallback;
+        var value = json.getAsJsonPrimitive(name);
+        return value.isNumber() ? value.getAsInt() != 0 : value.getAsBoolean();
+    }
+
     static <T> JsonObject toJsonObject(DynamicOps<T> ops, MapLike<T> input) {
         var jsonOps = jsonOps(ops);
         JsonObject json = new JsonObject();

@@ -39,7 +39,11 @@ final class CardinalRiteLayeredRecipeDataTest {
 				assertTrue(pairs.contains(style + "/" + tier), "missing " + style + "/" + tier);
 			}
 		}
-		assertEquals(16, pairs.size());
+		// The special rites' floors come in the grand tier only.
+		for (String special : new String[] {"apotheos/grand", "qliphoth/grand", "ancestral/grand"}) {
+			assertTrue(pairs.contains(special), "missing special floor " + special);
+		}
+		assertEquals(19, pairs.size(), "four standard styles in four tiers, plus three grand special floors");
 	}
 
 	@Test

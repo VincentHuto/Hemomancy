@@ -189,7 +189,7 @@ public class HemoLanguageProvider extends LanguageProvider {
             add("item.minecraft.potion.effect.potion_of_" + i.getId().getPath(),
                     "Potion of " + HLTextUtils.convertInitToLang(i.getId().getPath()));
             add("item.minecraft.splash_potion.effect.potion_of_" + i.getId().getPath(),
-                    "Spash Potion of " + HLTextUtils.convertInitToLang(i.getId().getPath()));
+                    "Splash Potion of " + HLTextUtils.convertInitToLang(i.getId().getPath()));
             add("item.minecraft.lingering_potion.effect.potion_of_" + i.getId().getPath(),
                     "Lingering Potion of " + HLTextUtils.convertInitToLang(i.getId().getPath()));
             add("item.minecraft.tipped_arrow.effect.potion_of_" + i.getId().getPath(),

@@ -40,7 +40,8 @@ public final class JeiClientReview implements IModPlugin {
             JEIPlugin.armature_upgrade_type, JEIPlugin.incubator_recipe_type, JEIPlugin.living_weapon_graft_type,
             MycelialCrucibleRecipeCategory.JEI_TYPE, MorphicNectarRecipeCategory.JEI_TYPE,
             WhiteHumorPurificationRecipeCategory.JEI_TYPE, JEIPlugin.scar_station_recipe_type, SuccessionRecipeCategory.TYPE,
-            JEIPlugin.blood_structure_recipe_type, JEIPlugin.working_craft_recipe_type);
+            JEIPlugin.blood_structure_recipe_type, JEIPlugin.threshold_rite_recipe_type,
+            JEIPlugin.dominion_rite_recipe_type, JEIPlugin.working_craft_recipe_type, JEIPlugin.communion_rite_recipe_type);
 
     @Override
     public ResourceLocation getPluginUid() {

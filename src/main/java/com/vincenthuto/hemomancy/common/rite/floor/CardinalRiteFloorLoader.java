@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.data.JsonResourceReloadListener;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
 import com.vincenthuto.hemomancy.common.recipe.serializer.CardinalRitePatternJson;
+import com.vincenthuto.hemomancy.common.rite.CardinalRitePurpose;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
@@ -38,7 +39,26 @@ public final class CardinalRiteFloorLoader
 				: tier.getSize() * 0.5F + 2.0F;
 		var pattern = CardinalRitePatternJson.parse(root);
 		validateFocus(id, pattern, focus);
-		return new CardinalRiteFloorDefinition(id, style, tier, pattern, focus, sockets, footprint);
+		return new CardinalRiteFloorDefinition(id, style, tier, pattern, focus, sockets, footprint,
+				purpose(id, style, root));
+	}
+
+	/** A standard style implies its purpose; a special style must declare one, and a declared one must agree. */
+	static CardinalRitePurpose purpose(ResourceLocation id, String style, JsonObject root) {
+		CardinalRitePurpose implied = CardinalRitePurpose.ofFloorStyle(style);
+		CardinalRitePurpose declared = root.has("purpose")
+				? CardinalRitePurpose.byId(root.get("purpose").getAsString()) : null;
+		if (root.has("purpose") && declared == null) {
+			throw new JsonSyntaxException("Cardinal Rite floor " + id + " declares an unknown purpose");
+		}
+		if (implied == null && declared == null) {
+			throw new JsonSyntaxException("Special Cardinal Rite floor " + id + " must declare a purpose");
+		}
+		if (implied != null && declared != null && implied != declared) {
+			throw new JsonSyntaxException("Cardinal Rite floor " + id + " is a " + style
+					+ " floor and cannot declare purpose " + declared.id());
+		}
+		return implied != null ? implied : declared;
 	}
 
 	private static void validateFocus(ResourceLocation id,

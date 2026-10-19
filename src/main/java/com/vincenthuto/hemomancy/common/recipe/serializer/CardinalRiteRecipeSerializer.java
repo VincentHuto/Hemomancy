@@ -247,11 +247,11 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			result = RecipeResultStackParser.parseResultStack(pJson, "result", jsonOps);
 		}
 		int requiredDegree = requiredDegreeFromJson(pJson);
-		boolean unstained = GsonHelper.getAsBoolean(pJson, "unstained", false);
+		boolean unstained = RecipeCodecJson.booleanField(pJson, "unstained", false);
 		boolean layered = pJson.has("floor");
 		MultiblockPattern mbPattern = layered ? null : CardinalRitePatternJson.parse(pJson);
-		boolean breakBlocksOnCreation = GsonHelper.getAsBoolean(pJson, "breakBlocksOnCreation", !layered);
-		boolean rankup = GsonHelper.getAsBoolean(pJson, "rankup", false);
+		boolean breakBlocksOnCreation = RecipeCodecJson.booleanField(pJson, "breakBlocksOnCreation", !layered);
+		boolean rankup = RecipeCodecJson.booleanField(pJson, "rankup", false);
 		CardinalRiteRecipe recipe = new CardinalRiteRecipe(pRecipeId, cost, riteType, mbPattern, result, riteName,
 				riteDescription, requiredDegree, breakBlocksOnCreation, unstained, rankup);
 		recipe.setRequiredPurity(GsonHelper.getAsFloat(pJson, "required_purity", -1.0f));
@@ -271,7 +271,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 			}
 		}
 		CardinalRitePurpose purpose = CardinalRitePurpose.byId(GsonHelper.getAsString(pJson, "purpose", ""));
-		boolean special = GsonHelper.getAsBoolean(pJson, "special", false);
+		boolean special = RecipeCodecJson.booleanField(pJson, "special", false);
 		if (!unstained) {
 			String violation = CardinalRitePurpose.violation(purpose, special,
 					recipe.getFloorId() == null ? "" : recipe.getFloorId().getPath());
@@ -290,7 +290,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		recipe.setMedium(mediumFromJson(pJson, pRecipeId, jsonOps));
 		recipe.setConsumeMediumOnSuccess(CardinalRiteMediumRules.consumeOnSuccessFromNullable(
 				pJson.has("consume_medium_on_success")
-						? pJson.get("consume_medium_on_success").getAsBoolean() : null));
+						? RecipeCodecJson.booleanField(pJson, "consume_medium_on_success", false) : null));
 		if (!unstained) {
 			recipe.setCeremony(ceremonyFromJson(pJson, pRecipeId, riteType, requiredDegree));
 			int offeringCount = recipe.getBrazierSignature().stream()

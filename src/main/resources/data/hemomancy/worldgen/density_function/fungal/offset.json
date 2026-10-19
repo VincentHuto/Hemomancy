@@ -1,0 +1,266 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:add",
+    "argument1": {
+      "type": "minecraft:add",
+      "argument1": {
+        "type": "minecraft:add",
+        "argument1": "hemomancy:fungal/base_offset",
+        "argument2": {
+          "type": "minecraft:add",
+          "argument1": {
+            "type": "minecraft:mul",
+            "argument1": 0.1,
+            "argument2": "hemomancy:fungal/highland_mask"
+          },
+          "argument2": {
+            "type": "minecraft:add",
+            "argument1": {
+              "type": "minecraft:mul",
+              "argument1": 0.31,
+              "argument2": "hemomancy:fungal/mesa_mask"
+            },
+            "argument2": {
+              "type": "minecraft:add",
+              "argument1": {
+                "type": "minecraft:mul",
+                "argument1": 0.03,
+                "argument2": "hemomancy:fungal/spire_mask"
+              },
+              "argument2": {
+                "type": "minecraft:mul",
+                "argument1": -0.03,
+                "argument2": "hemomancy:fungal/drift_mask"
+              }
+            }
+          }
+        }
+      },
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": {
+          "type": "minecraft:mul",
+          "argument1": "hemomancy:fungal/sea_mask",
+          "argument2": {
+            "type": "minecraft:spline",
+            "spline": {
+              "coordinate": "hemomancy:fungal/isle_noise",
+              "points": [
+                {
+                  "location": 0.18,
+                  "value": 0.0,
+                  "derivative": 0.0
+                },
+                {
+                  "location": 0.34,
+                  "value": 1.0,
+                  "derivative": 0.0
+                }
+              ]
+            }
+          }
+        },
+        "argument2": {
+          "type": "minecraft:add",
+          "argument1": {
+            "type": "minecraft:spline",
+            "spline": {
+              "coordinate": "hemomancy:fungal/isle_noise",
+              "points": [
+                {
+                  "location": 0.18,
+                  "value": -0.8594,
+                  "derivative": 0.0
+                },
+                {
+                  "location": 0.34,
+                  "value": -0.8203,
+                  "derivative": 0.2056
+                },
+                {
+                  "location": 0.75,
+                  "value": -0.7422,
+                  "derivative": 0.0
+                }
+              ]
+            }
+          },
+          "argument2": {
+            "type": "minecraft:mul",
+            "argument1": -1,
+            "argument2": {
+              "type": "minecraft:add",
+              "argument1": "hemomancy:fungal/base_offset",
+              "argument2": {
+                "type": "minecraft:add",
+                "argument1": {
+                  "type": "minecraft:mul",
+                  "argument1": 0.1,
+                  "argument2": "hemomancy:fungal/highland_mask"
+                },
+                "argument2": {
+                  "type": "minecraft:add",
+                  "argument1": {
+                    "type": "minecraft:mul",
+                    "argument1": 0.31,
+                    "argument2": "hemomancy:fungal/mesa_mask"
+                  },
+                  "argument2": {
+                    "type": "minecraft:add",
+                    "argument1": {
+                      "type": "minecraft:mul",
+                      "argument1": 0.03,
+                      "argument2": "hemomancy:fungal/spire_mask"
+                    },
+                    "argument2": {
+                      "type": "minecraft:mul",
+                      "argument1": -0.03,
+                      "argument2": "hemomancy:fungal/drift_mask"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "argument2": {
+      "type": "minecraft:mul",
+      "argument1": "hemomancy:fungal/depths_mask",
+      "argument2": {
+        "type": "minecraft:add",
+        "argument1": -0.7812,
+        "argument2": {
+          "type": "minecraft:mul",
+          "argument1": -1,
+          "argument2": {
+            "type": "minecraft:add",
+            "argument1": {
+              "type": "minecraft:add",
+              "argument1": "hemomancy:fungal/base_offset",
+              "argument2": {
+                "type": "minecraft:add",
+                "argument1": {
+                  "type": "minecraft:mul",
+                  "argument1": 0.1,
+                  "argument2": "hemomancy:fungal/highland_mask"
+                },
+                "argument2": {
+                  "type": "minecraft:add",
+                  "argument1": {
+                    "type": "minecraft:mul",
+                    "argument1": 0.31,
+                    "argument2": "hemomancy:fungal/mesa_mask"
+                  },
+                  "argument2": {
+                    "type": "minecraft:add",
+                    "argument1": {
+                      "type": "minecraft:mul",
+                      "argument1": 0.03,
+                      "argument2": "hemomancy:fungal/spire_mask"
+                    },
+                    "argument2": {
+                      "type": "minecraft:mul",
+                      "argument1": -0.03,
+                      "argument2": "hemomancy:fungal/drift_mask"
+                    }
+                  }
+                }
+              }
+            },
+            "argument2": {
+              "type": "minecraft:mul",
+              "argument1": {
+                "type": "minecraft:mul",
+                "argument1": "hemomancy:fungal/sea_mask",
+                "argument2": {
+                  "type": "minecraft:spline",
+                  "spline": {
+                    "coordinate": "hemomancy:fungal/isle_noise",
+                    "points": [
+                      {
+                        "location": 0.18,
+                        "value": 0.0,
+                        "derivative": 0.0
+                      },
+                      {
+                        "location": 0.34,
+                        "value": 1.0,
+                        "derivative": 0.0
+                      }
+                    ]
+                  }
+                }
+              },
+              "argument2": {
+                "type": "minecraft:add",
+                "argument1": {
+                  "type": "minecraft:spline",
+                  "spline": {
+                    "coordinate": "hemomancy:fungal/isle_noise",
+                    "points": [
+                      {
+                        "location": 0.18,
+                        "value": -0.8594,
+                        "derivative": 0.0
+                      },
+                      {
+                        "location": 0.34,
+                        "value": -0.8203,
+                        "derivative": 0.2056
+                      },
+                      {
+                        "location": 0.75,
+                        "value": -0.7422,
+                        "derivative": 0.0
+                      }
+                    ]
+                  }
+                },
+                "argument2": {
+                  "type": "minecraft:mul",
+                  "argument1": -1,
+                  "argument2": {
+                    "type": "minecraft:add",
+                    "argument1": "hemomancy:fungal/base_offset",
+                    "argument2": {
+                      "type": "minecraft:add",
+                      "argument1": {
+                        "type": "minecraft:mul",
+                        "argument1": 0.1,
+                        "argument2": "hemomancy:fungal/highland_mask"
+                      },
+                      "argument2": {
+                        "type": "minecraft:add",
+                        "argument1": {
+                          "type": "minecraft:mul",
+                          "argument1": 0.31,
+                          "argument2": "hemomancy:fungal/mesa_mask"
+                        },
+                        "argument2": {
+                          "type": "minecraft:add",
+                          "argument1": {
+                            "type": "minecraft:mul",
+                            "argument1": 0.03,
+                            "argument2": "hemomancy:fungal/spire_mask"
+                          },
+                          "argument2": {
+                            "type": "minecraft:mul",
+                            "argument1": -0.03,
+                            "argument2": "hemomancy:fungal/drift_mask"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -28,4 +28,12 @@ final class VesperAbsorptionEligibilityRulesTest {
 		assertFalse(VesperAbsorptionEligibilityRules.canAbsorb(true, 39, false, null, OTHER_PLAYER));
 		assertFalse(VesperAbsorptionEligibilityRules.canAbsorb(true, 40, true, null, OTHER_PLAYER));
 	}
+
+	@Test
+	void openWoundsDrainOnlyForTheOrdealOwnerOrAnyoneOnASummonedVesper() {
+		assertTrue(VesperAbsorptionEligibilityRules.canDrainWound(true, OWNER, OWNER));
+		assertFalse(VesperAbsorptionEligibilityRules.canDrainWound(true, OWNER, OTHER_PLAYER));
+		assertTrue(VesperAbsorptionEligibilityRules.canDrainWound(true, null, OTHER_PLAYER));
+		assertFalse(VesperAbsorptionEligibilityRules.canDrainWound(false, null, OTHER_PLAYER));
+	}
 }

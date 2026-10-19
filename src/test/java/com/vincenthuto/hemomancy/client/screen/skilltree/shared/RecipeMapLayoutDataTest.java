@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.shared;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.vincenthuto.hemomancy.common.rite.CardinalRitePurpose;
 import net.minecraft.resources.ResourceLocation;
 import org.junit.jupiter.api.Test;
 
@@ -19,43 +20,38 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** Lays out the authored Harbinger Rites and Crafting maps from the shipped recipe data. */
+/** Lays out the authored Harbinger Rites &amp; Crafts map from the shipped recipe data. */
 final class RecipeMapLayoutDataTest {
 	private static final Path DATA = Path.of("src/main/resources/data/hemomancy");
 	private static final double MIN_CENTRE_DISTANCE = RecipeMapLayout.NODE_SIZE + 10;
 
 	@Test
-	void shippedRitesMapKeepsEveryNodeApartOnBothLayers() throws IOException {
+	void shippedRitesAndCraftsMapKeepsEveryNodeApartOnBothLayers() throws IOException {
 		List<RecipeMapEntry> entries = riteEntries();
-		List<String> families = new ArrayList<>(HarbingerRecipeMapDefinitions.RITE_FAMILIES);
-		families.add(families.size() - 1, "Ritual Floors");
-		families.add(families.size() - 1, "Ichorian Sigils");
-
-		RecipeMapLayout.Result layout = RecipeMapLayout.build(entries, families,
-				HarbingerRecipeMapDefinitions.ritePositions());
-
-		assertSpacedAndRinged(layout);
-		assertTrue(entries.stream().noneMatch(entry -> entry.family().equals(RecipeMapLayout.MISC_FAMILY)),
-				"every shipped Harbinger rite has a named family");
-	}
-
-	@Test
-	void shippedCraftingMapKeepsEveryNodeApartOnBothLayers() throws IOException {
-		List<RecipeMapEntry> entries = new ArrayList<>();
 		for (Map.Entry<String, JsonObject> recipe : recipes("blood_structure").entrySet()) {
 			if (unstained(recipe.getValue())) continue;
-			String path = recipe.getKey();
-			entries.add(new RecipeMapEntry(key(RecipeMapEntry.Kind.CRAFTING, path), path,
-					degree(recipe.getValue()), HarbingerRecipeMapDefinitions.craftingFamily(path),
-					HarbingerRecipeMapDefinitions.craftingOrder(path), true, true));
+			entries.add(craftEntry(recipe.getKey(), recipe.getValue()));
+		}
+		for (Map.Entry<String, JsonObject> recipe : recipes("cardinal_rite/working").entrySet()) {
+			entries.add(craftEntry(recipe.getKey(), recipe.getValue()));
 		}
 
-		RecipeMapLayout.Result layout = RecipeMapLayout.build(entries, HarbingerRecipeMapDefinitions.CRAFTING_FAMILIES,
-				HarbingerRecipeMapDefinitions.craftingPositions());
+		Map<RecipeMapKey, RecipeMapLayout.AuthoredPosition> positions = new HashMap<>(HarbingerRecipeMapDefinitions.ritePositions());
+		positions.putAll(HarbingerRecipeMapDefinitions.craftingPositions());
+		RecipeMapLayout.Result layout = RecipeMapLayout.build(entries, HarbingerRecipeMapDefinitions.FAMILIES, positions,
+				family -> HarbingerRecipeMapDefinitions.group(family).ordinal());
 
 		assertSpacedAndRinged(layout);
 		assertTrue(entries.stream().noneMatch(entry -> entry.family().equals(RecipeMapLayout.MISC_FAMILY)),
-				"every shipped Harbinger crafting recipe has a named family");
+				"every shipped Harbinger rite, craft and floor has a named family");
+		assertTrue(entries.stream().allMatch(entry -> HarbingerRecipeMapDefinitions.FAMILIES.contains(entry.family())),
+				"every family is on the merged map");
+	}
+
+	private static RecipeMapEntry craftEntry(String path, JsonObject json) {
+		return new RecipeMapEntry(key(RecipeMapEntry.Kind.CRAFTING, path), path, degree(json),
+				HarbingerRecipeMapDefinitions.craftingFamily(path), HarbingerRecipeMapDefinitions.craftingOrder(path),
+				true, true);
 	}
 
 	@Test
@@ -64,7 +60,8 @@ final class RecipeMapLayoutDataTest {
 		for (RecipeMapEntry entry : riteEntries()) byId.put(entry.id(), entry);
 
 		assertEquals(2, byId.get(id("communion_minor")).column());
-		assertEquals(2, byId.get(id("working_minor")).column(), "unused minor floors ring with communion_minor");
+		assertEquals(3, byId.get(id("working_minor")).column(), "the minor Working crafts first use the minor Working floor");
+		assertEquals(2, byId.get(id("dominion_minor")).column(), "unused minor floors ring with communion_minor");
 		assertEquals(6, byId.get(id("working_grand")).column(), "the Horn of Culmination first uses the grand Working floor");
 		assertEquals(4, byId.get(id("bastion")).column());
 		assertEquals(4, byId.get(id("shunt")).column(), "unused tier-2 sigil rings with bastion");
@@ -107,18 +104,25 @@ final class RecipeMapLayoutDataTest {
 			collectSigils(json, degree, sigilUse);
 		}
 
+		for (JsonObject craft : recipes("cardinal_rite/working").values()) {
+			floorUse.merge(ResourceLocation.parse(craft.get("floor").getAsString()), degree(craft), Math::min);
+		}
 		Map<ResourceLocation, String> floorTiers = new LinkedHashMap<>();
 		Map<ResourceLocation, Integer> floorFallback = new HashMap<>();
+		Map<ResourceLocation, String> floorFamilies = new HashMap<>();
 		for (Map.Entry<String, JsonObject> floor : definitions("cardinal_rite_floor").entrySet()) {
 			String tier = floor.getValue().get("tier").getAsString();
+			String purpose = floor.getValue().has("purpose") ? floor.getValue().get("purpose").getAsString()
+					: CardinalRitePurpose.ofFloorStyle(floor.getValue().get("style").getAsString()).id();
+			floorFamilies.put(id(floor.getKey()), HarbingerRecipeMapDefinitions.floorFamily(CardinalRitePurpose.byId(purpose)));
 			floorTiers.put(id(floor.getKey()), tier);
 			floorFallback.put(id(floor.getKey()), List.of("minor", "lesser", "greater", "grand").indexOf(tier));
 		}
-		Map<ResourceLocation, Integer> floorDegrees = RitesTabController.firstUseDegrees(floorTiers, floorUse, floorFallback);
+		Map<ResourceLocation, Integer> floorDegrees = RitesAndCraftsTabController.firstUseDegrees(floorTiers, floorUse, floorFallback);
 		int order = 0;
 		for (ResourceLocation floor : floorTiers.keySet()) {
 			entries.add(new RecipeMapEntry(new RecipeMapKey(RecipeMapEntry.Kind.FLOOR, floor), floor.getPath(),
-					floorDegrees.get(floor), "Ritual Floors", order++, true, true));
+					floorDegrees.get(floor), floorFamilies.get(floor), order++, true, true));
 		}
 
 		Map<ResourceLocation, Integer> sigilTiers = new LinkedHashMap<>();
@@ -126,11 +130,11 @@ final class RecipeMapLayoutDataTest {
 			JsonObject json = sigil.getValue();
 			sigilTiers.put(id(sigil.getKey()), json.has("tier") ? json.get("tier").getAsInt() : 1);
 		}
-		Map<ResourceLocation, Integer> sigilDegrees = RitesTabController.firstUseDegrees(sigilTiers, sigilUse, sigilTiers);
+		Map<ResourceLocation, Integer> sigilDegrees = RitesAndCraftsTabController.firstUseDegrees(sigilTiers, sigilUse, sigilTiers);
 		order = 0;
 		for (ResourceLocation sigil : sigilTiers.keySet()) {
 			entries.add(new RecipeMapEntry(new RecipeMapKey(RecipeMapEntry.Kind.SIGIL, sigil), sigil.getPath(),
-					sigilDegrees.get(sigil), "Ichorian Sigils", order++, false, false));
+					sigilDegrees.get(sigil), HarbingerRecipeMapDefinitions.SIGIL_FAMILY, order++, false, false));
 		}
 		return entries;
 	}

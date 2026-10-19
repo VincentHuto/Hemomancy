@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:add",
+  "argument1": {
+    "type": "minecraft:mul",
+    "argument1": 4.0,
+    "argument2": "hemomancy:fungal/depth"
+  },
+  "argument2": {
+    "type": "minecraft:mul",
+    "argument1": "hemomancy:fungal/relief_amplitude",
+    "argument2": {
+      "type": "minecraft:noise",
+      "noise": "hemomancy:fungal/relief",
+      "xz_scale": 1.0,
+      "y_scale": 0.5
+    }
+  }
+}

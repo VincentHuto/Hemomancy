@@ -88,9 +88,13 @@ final class CardinalRiteFloorVisualRulesTest {
 		assertEquals(CardinalRiteFloorVisualRules.STYLE_DOMINION, CardinalRiteFloorVisualRules.styleIndex("dominion"));
 		assertEquals(CardinalRiteFloorVisualRules.STYLE_COMMUNION, CardinalRiteFloorVisualRules.styleIndex("communion"));
 		assertEquals(CardinalRiteFloorVisualRules.STYLE_WORKING, CardinalRiteFloorVisualRules.styleIndex("working"));
+		assertEquals(CardinalRiteFloorVisualRules.STYLE_APOTHEOS, CardinalRiteFloorVisualRules.styleIndex("apotheos"));
+		assertEquals(CardinalRiteFloorVisualRules.STYLE_QLIPHOTH, CardinalRiteFloorVisualRules.styleIndex("qliphoth"));
+		assertEquals(CardinalRiteFloorVisualRules.STYLE_ANCESTRAL, CardinalRiteFloorVisualRules.styleIndex("ancestral"));
 		assertEquals(CardinalRiteFloorVisualRules.STYLE_THRESHOLD, CardinalRiteFloorVisualRules.styleIndex(null));
+		assertEquals(CardinalRiteFloorVisualRules.STYLE_THRESHOLD, CardinalRiteFloorVisualRules.styleIndex("pale"));
 		var seen = new java.util.HashSet<CardinalRiteFloorVisualRules.Palette>();
-		for (int style = 0; style < 4; style++) assertTrue(seen.add(CardinalRiteFloorVisualRules.palette(style)));
+		for (int style = 0; style < 7; style++) assertTrue(seen.add(CardinalRiteFloorVisualRules.palette(style)));
 	}
 
 	@Test

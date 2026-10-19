@@ -17,14 +17,21 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 
+import java.util.List;
+
 /**
  * With hemomancy.riteFloorReview, builds one greater Cardinal Rite floor of each style in a disposable world and
  * captures them forming, settled, at night, and withering after a block is broken, into
- * build/rite-floor-client-review/screenshots. Excluded from release jars.
+ * build/rite-floor-client-review/screenshots. With hemomancy.riteFloorReviewSpecial it builds the three grand special
+ * floors instead, then raises the player to Degree 8 and captures the Liber's Rites &amp; Crafts map.
+ * Excluded from release jars.
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class RiteFloorClientReview {
-    private static final String[] STYLES = {"threshold", "dominion", "communion", "working"};
+    private static final String[] STANDARD = {"threshold_greater", "dominion_greater", "communion_greater", "working_greater"};
+    private static final String[] SPECIAL = {"apotheos_grand", "qliphoth_grand", "ancestral_grand"};
+    private static final int LIBER_OPEN = 40;
+    private static final int LIBER_SHOT = 120;
     private static final int SPACING = 14;
     private static final int BUILD_TICK = 40;
     /** Ticks after the build, then eye offset and look offset from the row centre, then 1 for night. */
@@ -90,11 +97,14 @@ public final class RiteFloorClientReview {
                 for (BlockPos pos : BlockPos.betweenClosed(row.offset(-14, 0, -9), row.offset(-1, 0, 9))) {
                     level.setBlock(pos, Blocks.STONE.defaultBlockState(), 2);
                 }
-                for (int i = 0; i < STYLES.length; i++) {
-                    build(level, row.offset(i * SPACING - SPACING * 3 / 2, 0, 0), STYLES[i] + "_greater", i == 3);
+                String[] floors = floors();
+                for (int i = 0; i < floors.length; i++) {
+                    build(level, row.offset(i * SPACING - SPACING * 3 / 2, 0, 0), floors[i], i == floors.length - 1);
                 }
                 // A two-block pit along the threshold floor's near edge, so its membrane has a ledge to droop over.
-                for (BlockPos pos : BlockPos.betweenClosed(row.offset(-26, -2, -9), row.offset(-16, 0, -4))) {
+                // The grand special floors reach that edge, so they keep their ground.
+                for (BlockPos pos : special() ? List.<BlockPos>of()
+                        : BlockPos.betweenClosed(row.offset(-26, -2, -9), row.offset(-16, 0, -4))) {
                     level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
                 }
                 // East of the working floor: a one-block notch cut through the ground toward the floor, and a cliff
@@ -105,7 +115,7 @@ public final class RiteFloorClientReview {
                 for (BlockPos pos : BlockPos.betweenClosed(row.offset(27, -2, -6), row.offset(30, 0, 6))) {
                     level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
                 }
-                Hemomancy.LOGGER.info("RITE_FLOOR_REVIEW built {} floors at {}", STYLES.length, row);
+                Hemomancy.LOGGER.info("RITE_FLOOR_REVIEW built {} floors at {}", floors.length, row);
             });
         }
         if (row == null || ticks <= BUILD_TICK) return;
@@ -117,8 +127,13 @@ public final class RiteFloorClientReview {
         for (int i = 0; i < DISSOLVE_SHOTS.length; i++) {
             if (since == DISSOLVE_SHOTS[i]) capture(mc, "rite-floor-dissolve-" + i + ".png");
         }
-        if (since > DISSOLVE_SHOTS[DISSOLVE_SHOTS.length - 1] + 10) {
+        int afterFloors = since - (DISSOLVE_SHOTS[DISSOLVE_SHOTS.length - 1] + 10);
+        if (afterFloors > 0 && !special()) {
             mc.stop();
+            return;
+        }
+        if (afterFloors > 0) {
+            reviewLiber(mc, server, uuid, afterFloors);
             return;
         }
         if (shot >= SHOTS.length) return;
@@ -130,6 +145,49 @@ public final class RiteFloorClientReview {
             if (shot < SHOTS.length && SHOTS[shot][0] - 12 <= since) look(server, uuid, SHOTS[shot]);
         }
         if (shot == SHOTS.length && since == BREAK_TICK - 12) look(server, uuid, SHOTS[SHOTS.length - 1]);
+    }
+
+    private static boolean special() {
+        return Boolean.getBoolean("hemomancy.riteFloorReviewSpecial");
+    }
+
+    private static String[] floors() {
+        return special() ? SPECIAL : STANDARD;
+    }
+
+    /** At Degree 8, opens the Harbinger progress screen on its Rites &amp; Crafts tab and captures the map. */
+    private static void reviewLiber(Minecraft mc, net.minecraft.server.MinecraftServer server, java.util.UUID uuid, int tick) {
+        if (tick == 1) {
+            mc.options.hideGui = false;
+            server.execute(() -> {
+                var player = server.getPlayerList().getPlayer(uuid);
+                var source = player.createCommandSourceStack().withPermission(4).withSuppressedOutput();
+                server.getCommands().performPrefixedCommand(source, "gamemode survival");
+                server.getCommands().performPrefixedCommand(source, "hemo degree set 8");
+            });
+        } else if (tick == LIBER_OPEN) {
+            var screen = new com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen();
+            mc.setScreen(screen);
+            selectRitesTab(screen);
+        } else if (tick == LIBER_SHOT) {
+            capture(mc, "liber-rites-and-crafts.png");
+        } else if (tick > LIBER_SHOT + 10) {
+            mc.stop();
+        }
+    }
+
+    private static void selectRitesTab(Object screen) {
+        try {
+            Class<?> tabs = Class.forName(
+                    "com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen$Tab");
+            Object rites = java.util.Arrays.stream(tabs.getEnumConstants())
+                    .filter(tab -> tab.toString().equals("RITES")).findFirst().orElseThrow();
+            var switchTab = screen.getClass().getDeclaredMethod("switchTab", tabs);
+            switchTab.setAccessible(true);
+            switchTab.invoke(screen, rites);
+        } catch (ReflectiveOperationException exception) {
+            Hemomancy.LOGGER.error("RITE_FLOOR_REVIEW could not open the Rites & Crafts tab", exception);
+        }
     }
 
     private static void build(ServerLevel level, BlockPos focus, String floorId, boolean withBraziers) {

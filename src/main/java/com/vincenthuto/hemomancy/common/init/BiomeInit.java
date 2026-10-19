@@ -39,6 +39,8 @@ public class BiomeInit {
 	public static final ResourceKey<Biome> FUNGAL_ISLES = register("fungal_isles");
 	public static final ResourceKey<Biome> SPORECROWN_THICKET = register("sporecrown_thicket");
 	public static final ResourceKey<Biome> MYCELIAL_DEPTHS = register("mycelial_depths");
+	// Fungal Gardens dimension lowlands; fungal_gardens itself is the Overworld region biome.
+	public static final ResourceKey<Biome> MYCELIAL_MEADOWS = register("mycelial_meadows");
 	public static final ResourceKey<Biome> HEMORRHAGIC_PLATEAU = register("hemorrhagic_plateau");
 	public static final ResourceKey<Biome> ERYTHROCORAL_REEF = register("erythrocoral_reef");
 	public static final ResourceKey<Biome> CORTICAL_DRIFT = register("cortical_drift");

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.compat.jei;
 
+import com.vincenthuto.hemomancy.common.rite.CardinalRitePurpose;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.CraftingMapRecipe;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -37,8 +38,14 @@ public class JEIPlugin implements IModPlugin {
 			"armature_upgrade", ArmatureUpgradeRecipe.class);
 	public static final RecipeType<CraftingMapRecipe> blood_structure_recipe_type = RecipeType
 			.create(Hemomancy.MOD_ID, "blood_structure", CraftingMapRecipe.class);
+	public static final RecipeType<CraftingMapRecipe> threshold_rite_recipe_type = RecipeType
+			.create(Hemomancy.MOD_ID, "threshold_rite", CraftingMapRecipe.class);
+	public static final RecipeType<CraftingMapRecipe> dominion_rite_recipe_type = RecipeType
+			.create(Hemomancy.MOD_ID, "dominion_rite", CraftingMapRecipe.class);
 	public static final RecipeType<CraftingMapRecipe> working_craft_recipe_type = RecipeType
 			.create(Hemomancy.MOD_ID, "working_craft", CraftingMapRecipe.class);
+	public static final RecipeType<CraftingMapRecipe> communion_rite_recipe_type = RecipeType
+			.create(Hemomancy.MOD_ID, "communion_rite", CraftingMapRecipe.class);
 	public static final RecipeType<BloodInfusionRecipe> blood_infusion_recipe_type =
 			BloodInfusionRecipeCategory.JEI_TYPE;
 	public static final RecipeType<ScarRecipe> scar_station_recipe_type = RecipeType.create(Hemomancy.MOD_ID,
@@ -71,7 +78,9 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipeCategories(new MemoryWeavingRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new HematicArmatureRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new BloodStructureRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
-		registry.addRecipeCategories(new BloodStructureRecipeCategory(registry.getJeiHelpers().getGuiHelper(), true));
+		for (CardinalRitePurpose purpose : CardinalRitePurpose.values()) {
+			registry.addRecipeCategories(new BloodStructureRecipeCategory(registry.getJeiHelpers().getGuiHelper(), purpose));
+		}
 		registry.addRecipeCategories(new BloodInfusionRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new ScarStationRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new IncubatorRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
@@ -93,7 +102,10 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.somatic_loom.get()), memory_weaving_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.hematic_armature.get()), armature_upgrade_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.hematic_iron_block.get()), blood_structure_recipe_type);
-		registry.addRecipeCatalyst(new ItemStack(BlockInit.cardinal_focus.get()), working_craft_recipe_type);
+		for (CardinalRitePurpose purpose : CardinalRitePurpose.values()) {
+			registry.addRecipeCatalyst(new ItemStack(BlockInit.cardinal_focus.get()), riteTypeFor(purpose));
+			registry.addRecipeCatalyst(new ItemStack(ItemInit.living_staff.get()), riteTypeFor(purpose));
+		}
 		registry.addRecipeCatalyst(new ItemStack(ItemInit.blood_projection.get()), blood_infusion_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.scar_station.get()), scar_station_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.morphling_incubator.get()), incubator_recipe_type);
@@ -103,6 +115,16 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.iron_brazier.get()), living_weapon_graft_type);
 		registry.addRecipeCatalyst(new ItemStack(ItemInit.living_staff.get()), living_weapon_graft_type);
 		registry.addRecipeCatalyst(new ItemStack(ItemInit.living_weapon_graft.get()), living_weapon_graft_type);
+	}
+
+	/** The JEI rite category that lists every Harbinger rite of a purpose. */
+	public static RecipeType<CraftingMapRecipe> riteTypeFor(CardinalRitePurpose purpose) {
+		return switch (purpose) {
+			case SELF -> threshold_rite_recipe_type;
+			case WORLD -> dominion_rite_recipe_type;
+			case MAKING -> working_craft_recipe_type;
+			case BOND -> communion_rite_recipe_type;
+		};
 	}
 
 	@Override
@@ -123,8 +145,13 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipes(armature_upgrade_type, ArmatureUpgradeRecipe.getAllRecipes(world));
 		registry.addRecipes(blood_structure_recipe_type, BloodStructureRecipe.getAllRecipes(world).stream()
 				.map(CraftingMapRecipe::of).toList());
-		registry.addRecipes(working_craft_recipe_type, CardinalRiteRecipe.getAllRecipes(world).stream()
-				.filter(CardinalRiteRecipe::isCataloguedAsMaking).map(CraftingMapRecipe::of).toList());
+		for (CardinalRitePurpose purpose : CardinalRitePurpose.values()) {
+			// Succession and Restoration keep their own category, laid out around the effigy.
+			registry.addRecipes(riteTypeFor(purpose), CardinalRiteRecipe.getAllRecipes(world).stream()
+					.filter(recipe -> recipe.isCataloguedUnder(purpose))
+					.filter(recipe -> !com.vincenthuto.hemomancy.common.succession.SuccessionRites.isRecipe(recipe.getId()))
+					.map(CraftingMapRecipe::of).toList());
+		}
 		registry.addRecipes(SuccessionRecipeCategory.TYPE, CardinalRiteRecipe.getAllRecipes(world).stream()
 				.filter(recipe -> com.vincenthuto.hemomancy.common.succession.SuccessionRites.isRecipe(recipe.getId())).toList());
 		registry.addRecipes(blood_infusion_recipe_type, BloodInfusionRecipe.getAllRecipes(world));

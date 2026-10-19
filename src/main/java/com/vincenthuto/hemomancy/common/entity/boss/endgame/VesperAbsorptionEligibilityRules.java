@@ -11,4 +11,9 @@ final class VesperAbsorptionEligibilityRules {
 		return awaitingAbsorption && VesperCombatRules.isDefeatAnimationComplete(downedTicks) && !ordealResolved
 				&& (ordealOwner == null || ordealOwner.equals(player));
 	}
+
+	/** An open Crowned Refusal wound: the ordeal's owner alone, or anyone on a summoned Vesper. */
+	static boolean canDrainWound(boolean woundOpen, UUID ordealOwner, UUID player) {
+		return woundOpen && (ordealOwner == null || ordealOwner.equals(player));
+	}
 }

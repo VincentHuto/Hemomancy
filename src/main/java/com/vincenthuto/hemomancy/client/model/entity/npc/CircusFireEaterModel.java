@@ -15,9 +15,11 @@ public final class CircusFireEaterModel extends HumanoidModel<CircusFireEaterEnt
 	private final ModelPart throatFrame;
 	private final ModelPart leftCowl;
 	private final ModelPart rightCowl;
+	private final CircusDownedPose downedPose;
 
 	public CircusFireEaterModel(ModelPart root) {
 		super(root);
+		downedPose = new CircusDownedPose(this, 1.7F, 0.3F);
 		throatFrame = head.getChild("throat_frame");
 		leftCowl = head.getChild("left_cowl");
 		rightCowl = head.getChild("right_cowl");
@@ -104,10 +106,6 @@ public final class CircusFireEaterModel extends HumanoidModel<CircusFireEaterEnt
 			leftArm.xRot = -0.8F + Mth.sin(ageInTicks * 0.18F) * 0.08F;
 			throatFrame.xScale = throatFrame.zScale = 1.08F;
 		}
-		if (entity.getActState() == ActState.DOWNED) {
-			body.xRot = 1.25F;
-			head.xRot = 0.55F;
-			rightArm.xRot = leftArm.xRot = -0.8F;
-		}
+		downedPose.apply(entity.getActState() == ActState.DOWNED, ageInTicks);
 	}
 }

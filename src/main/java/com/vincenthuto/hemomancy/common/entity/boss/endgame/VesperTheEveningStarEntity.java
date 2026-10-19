@@ -66,11 +66,28 @@ public class VesperTheEveningStarEntity extends Monster {
 			VesperTheEveningStarEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> DATA_FINAL_COLLAPSE_TICK = SynchedEntityData.defineId(
 			VesperTheEveningStarEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Integer> DATA_ACT = SynchedEntityData.defineId(
+			VesperTheEveningStarEntity.class, EntityDataSerializers.INT);
 
     private int deathTicks;
 	private long tendencySeed;
 	private int stanceIndex = -1;
 	private UUID ordealOwner;
+	private final VesperEveningStarController controller = new VesperEveningStarController(this);
+	private boolean lastActionLanded;
+	private int hookedTargetId = -1;
+	private float reelDamage;
+	private int reelSprintTicks;
+	private boolean harvestUsed;
+	private final java.util.List<Pool> marrowPools = new java.util.ArrayList<>();
+	private final java.util.List<Vec3> decoys = new java.util.ArrayList<>();
+	private float biggestRecentHit;
+	private long biggestRecentHitTime;
+
+	/** A caustic marrow pool from a borrowed volley, and the game time it dries up. */
+	public record Pool(Vec3 at, long expires) {
+	}
+	private java.util.List<String> inheritedPuppets = java.util.List.of();
 	private long bloomOrigin;
 	private UUID bloomId;
 	private boolean ordealResolved;
@@ -107,6 +124,7 @@ public class VesperTheEveningStarEntity extends Monster {
 		builder.define(DATA_HOOD_REMOVAL_TICK, -1);
 		builder.define(DATA_DEFEAT_ABSORPTION_PROGRESS, 0);
 		builder.define(DATA_FINAL_COLLAPSE_TICK, 0);
+		builder.define(DATA_ACT, VesperEveningStarAct.LOCKED.ordinal());
 	}
 
 	@Override
@@ -127,7 +145,9 @@ public class VesperTheEveningStarEntity extends Monster {
                 .add(Attributes.ATTACK_DAMAGE, 15.0D)
                 .add(Attributes.FOLLOW_RANGE, 64.0D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
-                .add(Attributes.ARMOR, 18.0D);
+                .add(Attributes.ARMOR, 18.0D)
+				// He walks up a block-high step instead of hopping it, so rough ground reads as footwork.
+                .add(Attributes.STEP_HEIGHT, 1.0D);
     }
 
     @Override
@@ -211,6 +231,13 @@ public class VesperTheEveningStarEntity extends Monster {
 	}
 
 	public UUID getOrdealOwner() { return ordealOwner; }
+
+	/** Puppet shapes that survived phase one; each grants one borrowed attack. */
+	public java.util.List<String> getInheritedPuppets() { return inheritedPuppets; }
+
+	public void setInheritedPuppets(java.util.List<String> shapes) {
+		inheritedPuppets = java.util.List.copyOf(shapes);
+	}
 	public long getBloomOrigin() { return bloomOrigin; }
 	public UUID getBloomId() { return bloomId; }
 
@@ -222,6 +249,10 @@ public class VesperTheEveningStarEntity extends Monster {
 		if (bloomId != null) tag.putUUID("BloomId", bloomId);
 		tag.putLong("TendencySeed", tendencySeed);
 		tag.putInt("StanceIndex", stanceIndex);
+		tag.putBoolean("HarvestUsed", harvestUsed);
+		net.minecraft.nbt.ListTag inherited = new net.minecraft.nbt.ListTag();
+		for (String shape : inheritedPuppets) inherited.add(net.minecraft.nbt.StringTag.valueOf(shape));
+		tag.put("InheritedPuppets", inherited);
 		tag.putInt("StanceTick", getStanceTick());
 		tag.putInt("ActiveTendency", getActiveTendency().ordinal());
 		tag.putBoolean("AwaitingBloodAbsorption", isAwaitingAbsorption());
@@ -254,6 +285,13 @@ public class VesperTheEveningStarEntity extends Monster {
 		bloomId = tag.hasUUID("BloomId") ? tag.getUUID("BloomId") : null;
 		tendencySeed = tag.getLong("TendencySeed");
 		stanceIndex = tag.contains("StanceIndex") ? tag.getInt("StanceIndex") : -1;
+		java.util.List<String> inherited = new java.util.ArrayList<>();
+		net.minecraft.nbt.ListTag list = tag.getList("InheritedPuppets", net.minecraft.nbt.Tag.TAG_STRING);
+		for (int i = 0; i < list.size(); i++) {
+			if (VesperPuppetRoster.SHAPES.contains(list.getString(i))) inherited.add(list.getString(i));
+		}
+		inheritedPuppets = java.util.List.copyOf(inherited);
+		harvestUsed = tag.getBoolean("HarvestUsed");
 		entityData.set(DATA_STANCE_TICK, tag.getInt("StanceTick"));
 		int tendency = tag.getInt("ActiveTendency");
 		entityData.set(DATA_TENDENCY, Math.max(0, Math.min(EnumBloodTendency.values().length - 1, tendency)));
@@ -300,8 +338,73 @@ public class VesperTheEveningStarEntity extends Monster {
 
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
-		return !isAwaitingAbsorption() && !isAwakening() && super.hurt(source, amount);
+		boolean hurt = !isAwaitingAbsorption() && !isAwakening() && super.hurt(source, amount);
+		if (hurt && hookedTargetId >= 0) reelDamage += amount;
+		if (hurt && source.getEntity() instanceof net.minecraft.world.entity.player.Player) {
+			long now = level().getGameTime();
+			if (now - biggestRecentHitTime > 200L || amount >= biggestRecentHit) {
+				biggestRecentHit = amount;
+				biggestRecentHitTime = now;
+			}
+		}
+		return hurt;
 	}
+
+	/** Called by his Living Sickle hook on a catch; a raised shield is ripped aside before the reel starts. */
+	public void onSickleHookCaught(LivingEntity target) {
+		if (level().isClientSide) return;
+		hookedTargetId = target.getId();
+		reelDamage = 0.0F;
+		reelSprintTicks = 0;
+		if (target.isBlocking()) EndgameBossActions.disableShieldOnHit(this, target, 100);
+		setLastActionLanded(true);
+	}
+
+	@javax.annotation.Nullable
+	LivingEntity hookedTarget() {
+		if (hookedTargetId < 0) return null;
+		net.minecraft.world.entity.Entity entity = level().getEntity(hookedTargetId);
+		if (!(entity instanceof LivingEntity living) || !living.isAlive()) return null;
+		if (living instanceof net.minecraft.world.entity.player.Player player
+				&& (player.isCreative() || player.isSpectator())) return null;
+		return living;
+	}
+
+	float reelDamage() { return reelDamage; }
+	int reelSprintTicks() { return reelSprintTicks; }
+	void addReelSprint(int ticks) { reelSprintTicks = ticks > 0 ? reelSprintTicks + ticks : Math.max(0, reelSprintTicks - 1); }
+
+	void releaseHook() {
+		hookedTargetId = -1;
+		reelDamage = 0.0F;
+		reelSprintTicks = 0;
+	}
+
+	/** Damaged hard enough or out-sprinted mid-reel: the tether snaps and he staggers. */
+	void breakReel() {
+		releaseHook();
+		clearWeaponAction();
+		setActionCooldown(20);
+		playSound(SoundEvents.CHAIN_BREAK, 1.4F, 0.7F);
+		if (level() instanceof ServerLevel server) {
+			VesperVisualEffects.bloodCells(server, position().add(0.0D, 1.2D, 0.0D), VesperVisualEffects.BLOOD,
+					16, 0.6D, 0.6D, 0.6D, 0.08D);
+		}
+	}
+
+	boolean harvestUsed() { return harvestUsed; }
+
+	java.util.List<Pool> marrowPools() { return marrowPools; }
+
+	void addMarrowPool(Vec3 at, long expires) { marrowPools.add(new Pool(at, expires)); }
+
+	java.util.List<Vec3> decoys() { return decoys; }
+
+	/** The largest single hit a player landed on him in the last ten seconds. */
+	float biggestRecentHit() {
+		return level().getGameTime() - biggestRecentHitTime > 200L ? 0.0F : biggestRecentHit;
+	}
+	void markHarvestUsed() { harvestUsed = true; }
 
     @Override
     protected void tickDeath() {
@@ -403,6 +506,7 @@ public class VesperTheEveningStarEntity extends Monster {
 			setNoAi(false);
 			refreshDimensions();
 			EndgameBossActions.finishVesperAwakening(this);
+			VesperBorrowedAttacks.flareInheritance(this);
 		}
 	}
 	VesperWeaponAction getLastWeaponAction() { return lastWeaponAction; }
@@ -413,6 +517,16 @@ public class VesperTheEveningStarEntity extends Monster {
 	void setActionTick(int tick) { entityData.set(DATA_ACTION_TICK, tick); }
 	void setActionCooldown(int ticks) { actionCooldown = Math.max(0, ticks); }
 	void setActionHitMask(int mask) { actionHitMask = mask; }
+	boolean lastActionLanded() { return lastActionLanded; }
+	void setLastActionLanded(boolean landed) { lastActionLanded = landed; }
+
+	/** A cross-school link in the Open act: the weapon morphs into the next school's mid-strike, no pause. */
+	void morphTo(com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency tendency) {
+		if (getActiveTendency() == tendency) return;
+		entityData.set(DATA_TENDENCY, tendency.ordinal());
+		entityData.set(DATA_STANCE_TICK, 0);
+		playSound(SoundEvents.BEACON_POWER_SELECT, 0.9F, 0.9F + tendency.ordinal() * 0.05F);
+	}
 
 	void beginWeaponAction(VesperWeaponAction action, Vec3 aim) {
         if (action.tendency() != null) getPersistentData().put("hemomancy:weapon_school_hit",
@@ -519,21 +633,33 @@ public class VesperTheEveningStarEntity extends Monster {
 	}
 
 	private void tickTendencyCombat() {
-		if (!isRaging() && VesperRageCombatRules.isRageThreshold(getHealth(), getMaxHealth())) enterRage();
-		if (isRaging()) {
-			VesperPhaseTwoCombat.tickRage(this);
-			return;
-		}
-		if (tendencySeed == 0L) tendencySeed = getUUID().getMostSignificantBits() ^ getUUID().getLeastSignificantBits();
-		if (stanceIndex < 0) advanceStance();
-		int stanceTick = getStanceTick() + 1;
-		entityData.set(DATA_STANCE_TICK, stanceTick);
-		VesperPhaseTwoCombat.tick(this, getActiveTendency(), stanceTick);
-		if (VesperWeaponCombatRules.mayAdvanceStance(stanceTick,
-				VesperCombatRules.stanceDuration(getHealth(), getMaxHealth()), getWeaponAction())) advanceStance();
+		// A no-AI Evening Star (a staged or frozen one) holds whatever he is doing instead of fighting.
+		if (isNoAi()) return;
+		controller.tick();
 	}
 
-	private void enterRage() {
+	void ensureStance() {
+		if (tendencySeed == 0L) tendencySeed = getUUID().getMostSignificantBits() ^ getUUID().getLeastSignificantBits();
+		if (stanceIndex < 0) advanceStance();
+	}
+
+	int advanceStanceTick() {
+		int stanceTick = getStanceTick() + 1;
+		entityData.set(DATA_STANCE_TICK, stanceTick);
+		return stanceTick;
+	}
+
+	public VesperEveningStarAct getAct() {
+		int ordinal = entityData.get(DATA_ACT);
+		VesperEveningStarAct[] acts = VesperEveningStarAct.values();
+		return acts[Math.max(0, Math.min(acts.length - 1, ordinal))];
+	}
+
+	void setAct(VesperEveningStarAct act) {
+		if (getAct() != act) entityData.set(DATA_ACT, act.ordinal());
+	}
+
+	void enterRage() {
 		VesperPhaseTwoCombat.cancel(this);
 		entityData.set(DATA_RAGING, true);
 		entityData.set(DATA_STANCE_TICK, 30);
@@ -559,8 +685,8 @@ public class VesperTheEveningStarEntity extends Monster {
 		}
 	}
 
-	private void advanceStance() {
-		VesperPhaseTwoCombat.cancel(this);
+	/** The morph is folded into the next strike (the model blends it), so changing stance no longer freezes him. */
+	void advanceStance() {
 		stanceIndex++;
 		entityData.set(DATA_TENDENCY, VesperCombatRules.tendencyAt(tendencySeed, stanceIndex).ordinal());
 		entityData.set(DATA_STANCE_TICK, 0);

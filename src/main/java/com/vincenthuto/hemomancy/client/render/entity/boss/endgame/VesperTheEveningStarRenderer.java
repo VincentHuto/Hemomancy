@@ -2,12 +2,14 @@ package com.vincenthuto.hemomancy.client.render.entity.boss.endgame;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperEveningStarAnimState;
 import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperTheEveningStarModel;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.client.render.layer.mob.endgame.*;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperEveningStarPresentationRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseTransitionRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.MobRenderer;
@@ -28,6 +30,18 @@ public class VesperTheEveningStarRenderer
 		this.addLayer(new VesperTendencySigilLayer(this));
 		this.addLayer(new VesperLivingWeaponLayer(this));
     }
+
+	@Override
+	public void render(VesperTheEveningStarEntity entity, float entityYaw, float partialTick, PoseStack poseStack,
+			MultiBufferSource buffer, int packedLight) {
+		VesperEveningStarAnimState state = VesperEveningStarAnimState.of(entity);
+		state.update(entity, partialTick);
+		// A step up lands in one server tick; draw the body easing onto it instead of popping.
+		poseStack.pushPose();
+		poseStack.translate(0.0D, state.visualOffset(), 0.0D);
+		super.render(entity, entityYaw, partialTick, poseStack, buffer, packedLight);
+		poseStack.popPose();
+	}
 
     @Override
     public ResourceLocation getTextureLocation(VesperTheEveningStarEntity entity) {

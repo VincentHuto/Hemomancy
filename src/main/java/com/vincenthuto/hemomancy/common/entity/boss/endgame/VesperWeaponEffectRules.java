@@ -22,8 +22,16 @@ public final class VesperWeaponEffectRules {
 			case UPDRAFT_IMPALEMENT -> tick >= 14 && tick <= 24 && (tick & 1) == 0;
 			case CHAIN_SWEEP -> tick >= 12 && tick <= 18 && (tick & 1) == 0;
 			case HOOK_AND_CRUSH -> tick == 14 || tick >= 24 && tick <= 28 && (tick & 1) == 0;
+			case BLADE_RISING_CUT, AXE_HAFT_SHOVE, CLAW_SHADOW_FEINT, TORCH_CINDER_SWEEP, SPEAR_PINNING_THRUST,
+					FLAIL_SHATTER_SLAM -> isContact(action, tick);
+			case BLADE_DRAWING_STEP, AXE_GRAVE_SPLITTER, SPEAR_VAULT_KICK, CLAW_EVISCERATE, FLAIL_ORBIT -> isContact(action, tick);
 			default -> false;
 		};
+	}
+
+	private static boolean isContact(VesperWeaponAction action, int tick) {
+		for (int i = 0; i < action.contactCount(); i++) if (action.contactTick(i) == tick) return true;
+		return false;
 	}
 
 	public static double arcDegrees(VesperWeaponAction action) {

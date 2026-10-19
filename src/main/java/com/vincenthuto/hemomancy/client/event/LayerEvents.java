@@ -204,6 +204,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(PutricielModel.LAYER_LOCATION, PutricielModel::createBodyLayer);
 		event.registerLayerDefinition(VelorumModel.LAYER_LOCATION, VelorumModel::createBodyLayer);
 		event.registerLayerDefinition(VesperTheCrownedRefusalModel.LAYER_LOCATION, VesperTheCrownedRefusalModel::createBodyLayer);
+		event.registerLayerDefinition(com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperMountModel.LAYER_LOCATION, com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperMountModel::createBodyLayer);
 		event.registerLayerDefinition(VesperTheEveningStarModel.LAYER_LOCATION, VesperTheEveningStarModel::createBodyLayer);
 		event.registerLayerDefinition(MycophantModel.LAYER_LOCATION, MycophantModel::createBodyLayer);
 		event.registerLayerDefinition(SeraphaeModel.LAYER_LOCATION, SeraphaeModel::createBodyLayer);

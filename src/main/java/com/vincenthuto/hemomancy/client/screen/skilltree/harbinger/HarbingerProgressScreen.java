@@ -1,9 +1,8 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.vincenthuto.hemomancy.client.screen.skilltree.shared.CraftingTabController;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialsTabController;
-import com.vincenthuto.hemomancy.client.screen.skilltree.shared.RitesTabController;
+import com.vincenthuto.hemomancy.client.screen.skilltree.shared.RitesAndCraftsTabController;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.SkillsTabController;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -21,8 +20,7 @@ public class HarbingerProgressScreen extends Screen {
     private enum Tab {
         SKILLS("Skills", 0xFFCC3333, 0, false),
         TENDENCIES("Tendencies", 0xFFCC8833, 3, false),
-        RITES("Rites", 0xFF8844CC, 0, false),
-        CRAFTING("Crafting", 0xFFAA2222, 0, false),
+        RITES("Rites & Crafts", 0xFF8844CC, 0, false),
         MATERIALS("Materials", 0xFFCC6644, 0, false),
         SUMMONS("Summons", 0xFFBB3355, 2, true),
         BESTIARY("Bestiary", 0xFF77AA66, 2, true);
@@ -99,8 +97,7 @@ public class HarbingerProgressScreen extends Screen {
         return switch (tab) {
 			case SKILLS -> new SkillsTabController();
 			case TENDENCIES -> new ManipulationsTabController();
-			case RITES -> new RitesTabController();
-			case CRAFTING -> new CraftingTabController();
+			case RITES -> new RitesAndCraftsTabController();
 			case SUMMONS -> new SummonsTabController();
 			case MATERIALS -> new MaterialsTabController();
 			case BESTIARY -> new BestiaryTabController();

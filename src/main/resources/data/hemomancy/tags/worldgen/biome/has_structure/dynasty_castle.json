@@ -1,12 +1,8 @@
 {
   "replace": false,
   "values": [
-    "hemomancy:fungal_gardens",
-    "hemomancy:drifting_mycelium",
-    "hemomancy:hyphal_spires",
-    "hemomancy:fungal_isles",
+    "hemomancy:mycelial_meadows",
     "hemomancy:sporecrown_thicket",
-    "hemomancy:mycelial_depths",
     "hemomancy:hemorrhagic_plateau"
   ]
 }

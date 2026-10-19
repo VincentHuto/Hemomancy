@@ -70,54 +70,11 @@ final class VesperCombatRulesTest {
 	}
 
 	@Test
-	void throneAnchorBreaksAfterFortyDamageAndClampsOverkill() {
-		assertEquals(new VesperCombatRules.AnchorHit(27.0F, false),
-				VesperCombatRules.hitAnchor(13.0F, 14.0F));
-		assertEquals(new VesperCombatRules.AnchorHit(40.0F, true),
-				VesperCombatRules.hitAnchor(36.0F, 12.0F));
-	}
-
-	@Test
-	void throneAnchorUsesTheForgivingDimensionsAndAWorldSpaceCenter() {
-		assertEquals(2.0F, VesperCombatRules.ANCHOR_HITBOX_WIDTH, 0.001F);
-		assertEquals(2.2F, VesperCombatRules.ANCHOR_HITBOX_HEIGHT, 0.001F);
-		assertAnchorCenter(0.0F, 10.0D, 20.0D, 30.0D, 10.0D, 23.1D, 32.0D);
-		assertAnchorCenter(90.0F, 10.0D, 20.0D, 30.0D, 8.0D, 23.1D, 30.0D);
-		assertAnchorCenter(180.0F, 10.0D, 20.0D, 30.0D, 10.0D, 23.1D, 28.0D);
-		assertAnchorCenter(-90.0F, 10.0D, 20.0D, 30.0D, 12.0D, 23.1D, 30.0D);
-	}
-
-	@Test
-	void acceptedAnchorDamageHasNoInternalThrottleAndUsesThreeReadabilityBands() {
-		float accumulated = 0.0F;
-		for (int hit = 0; hit < 4; hit++) {
-			accumulated = VesperCombatRules.hitAnchor(accumulated, 10.0F).accumulatedDamage();
-		}
-		assertEquals(40.0F, accumulated, 0.001F);
-		assertEquals(VesperCombatRules.AnchorDamageBand.LOW, VesperCombatRules.anchorDamageBand(15.99F));
-		assertEquals(VesperCombatRules.AnchorDamageBand.MEDIUM, VesperCombatRules.anchorDamageBand(16.0F));
-		assertEquals(VesperCombatRules.AnchorDamageBand.MEDIUM, VesperCombatRules.anchorDamageBand(27.99F));
-		assertEquals(VesperCombatRules.AnchorDamageBand.HIGH, VesperCombatRules.anchorDamageBand(28.0F));
-		assertEquals(0.0F, VesperCombatRules.clampAnchorDamage(-5.0F), 0.001F);
-		assertEquals(40.0F, VesperCombatRules.clampAnchorDamage(50.0F), 0.001F);
-	}
-
-	@Test
 	void anchorHitFlashLastsExactlyFourTicks() {
 		assertEquals(0.0F, VesperCombatRules.anchorFlashStrength(0), 0.001F);
 		assertEquals(0.25F, VesperCombatRules.anchorFlashStrength(1), 0.001F);
 		assertEquals(1.0F, VesperCombatRules.anchorFlashStrength(4), 0.001F);
 		assertEquals(1.0F, VesperCombatRules.anchorFlashStrength(8), 0.001F);
-	}
-
-	@Test
-	void anchorCorePulseAndAgitationEscalateAcrossDamageBands() {
-		assertEquals(0.08F, VesperCombatRules.anchorPulseSpeed(0.0F), 0.001F);
-		assertEquals(0.14F, VesperCombatRules.anchorPulseSpeed(16.0F), 0.001F);
-		assertEquals(0.22F, VesperCombatRules.anchorPulseSpeed(28.0F), 0.001F);
-		assertEquals(0.35F, VesperCombatRules.anchorSurfaceAgitation(0.0F), 0.001F);
-		assertEquals(0.70F, VesperCombatRules.anchorSurfaceAgitation(16.0F), 0.001F);
-		assertEquals(1.15F, VesperCombatRules.anchorSurfaceAgitation(28.0F), 0.001F);
 	}
 
 	@Test
@@ -129,17 +86,7 @@ final class VesperCombatRulesTest {
 	}
 
 	@Test
-	void throneAnchorForwardOffsetFollowsTheBossAtEveryCardinalYaw() {
-		assertAnchorOffset(0.0F, 0.0D, 2.0D);
-		assertAnchorOffset(90.0F, -2.0D, 0.0D);
-		assertAnchorOffset(180.0F, 0.0D, -2.0D);
-		assertAnchorOffset(-90.0F, 2.0D, 0.0D);
-	}
-
-	@Test
 	void phaseTwoUsesAThirtyTickMorphThenPrimaryAndSecondaryBeats() {
-		assertTrue(VesperCombatRules.isMorphTelegraph(0));
-		assertTrue(VesperCombatRules.isMorphTelegraph(29));
 		assertEquals(40, VesperCombatRules.primaryAttackTick());
 		assertEquals(118, VesperCombatRules.secondaryAttackTick());
 		assertEquals(VesperCombatRules.tendencyTour(77L).get(0), VesperCombatRules.tendencyAt(77L, 0));
@@ -318,19 +265,5 @@ final class VesperCombatRulesTest {
 		assertEquals(weapon, profile.weapon());
 		assertEquals(primary, profile.primaryManipulation());
 		assertEquals(secondary, profile.secondaryManipulation());
-	}
-
-	private static void assertAnchorOffset(float yawDegrees, double expectedX, double expectedZ) {
-		VesperCombatRules.AnchorOffset offset = VesperCombatRules.anchorForwardOffset(yawDegrees, 2.0D);
-		assertEquals(expectedX, offset.x(), 0.0001D, "x offset at yaw " + yawDegrees);
-		assertEquals(expectedZ, offset.z(), 0.0001D, "z offset at yaw " + yawDegrees);
-	}
-
-	private static void assertAnchorCenter(float yawDegrees, double x, double y, double z,
-			double expectedX, double expectedY, double expectedZ) {
-		VesperCombatRules.AnchorCenter center = VesperCombatRules.anchorCenter(x, y, z, yawDegrees);
-		assertEquals(expectedX, center.x(), 0.0001D, "x center at yaw " + yawDegrees);
-		assertEquals(expectedY, center.y(), 0.0001D, "y center at yaw " + yawDegrees);
-		assertEquals(expectedZ, center.z(), 0.0001D, "z center at yaw " + yawDegrees);
 	}
 }

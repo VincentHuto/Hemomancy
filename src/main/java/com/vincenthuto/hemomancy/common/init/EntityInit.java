@@ -295,14 +295,42 @@ public class EntityInit {
     public static final DeferredHolder<EntityType<?>, EntityType<StainedPriestessEntity>> stained_priestess = ENTITY_TYPES.register(
             "stained_priestess",
             () -> EntityType.Builder.of(StainedPriestessEntity::new, MobCategory.MONSTER)
-                    .sized(0.9F, 2.6F)
+                    .sized(0.9F, 2.2F)
                     .clientTrackingRange(10)
                     .build(Hemomancy.rloc("stained_priestess").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.vincenthuto.hemomancy.common.entity.boss.annetta.AnnettaPoolEntity>> annetta_pool = ENTITY_TYPES.register(
+            "annetta_pool",
+            () -> EntityType.Builder.<com.vincenthuto.hemomancy.common.entity.boss.annetta.AnnettaPoolEntity>of(
+                            com.vincenthuto.hemomancy.common.entity.boss.annetta.AnnettaPoolEntity::new, MobCategory.MISC)
+                    .sized(1.0F, 0.1F).clientTrackingRange(10).updateInterval(5)
+                    .build(Hemomancy.rloc("annetta_pool").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.vincenthuto.hemomancy.common.entity.boss.annetta.InfectedBoltEntity>> infected_bolt = ENTITY_TYPES.register(
+            "infected_bolt",
+            () -> EntityType.Builder.<com.vincenthuto.hemomancy.common.entity.boss.annetta.InfectedBoltEntity>of(
+                            com.vincenthuto.hemomancy.common.entity.boss.annetta.InfectedBoltEntity::new, MobCategory.MISC)
+                    .sized(0.5F, 0.5F).clientTrackingRange(10).updateInterval(1)
+                    .build(Hemomancy.rloc("infected_bolt").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.vincenthuto.hemomancy.common.entity.boss.annetta.StainedLanceEntity>> stained_lance = ENTITY_TYPES.register(
+            "stained_lance",
+            () -> EntityType.Builder.<com.vincenthuto.hemomancy.common.entity.boss.annetta.StainedLanceEntity>of(
+                            com.vincenthuto.hemomancy.common.entity.boss.annetta.StainedLanceEntity::new, MobCategory.MISC)
+                    .sized(0.5F, 0.5F).clientTrackingRange(10).updateInterval(1)
+                    .build(Hemomancy.rloc("stained_lance").toString()));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.vincenthuto.hemomancy.common.entity.boss.annetta.PriestessEruptionEntity>> priestess_eruption = ENTITY_TYPES.register(
+            "priestess_eruption",
+            () -> EntityType.Builder.<com.vincenthuto.hemomancy.common.entity.boss.annetta.PriestessEruptionEntity>of(
+                            com.vincenthuto.hemomancy.common.entity.boss.annetta.PriestessEruptionEntity::new, MobCategory.MISC)
+                    .sized(1.0F, 0.5F).clientTrackingRange(10).updateInterval(20)
+                    .build(Hemomancy.rloc("priestess_eruption").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<LatentAnnettaInfectionEntity>> latent_annetta_infection = ENTITY_TYPES.register(
             "latent_annetta_infection",
             () -> EntityType.Builder.of(LatentAnnettaInfectionEntity::new, MobCategory.MONSTER)
-                    .sized(1.0F, 2.2F)
+                    .sized(1.6F, 4.5F)
                     .clientTrackingRange(10)
                     .build(Hemomancy.rloc("latent_annetta_infection").toString()));
 
@@ -342,7 +370,7 @@ public class EntityInit {
     public static final DeferredHolder<EntityType<?>, EntityType<MycophantEntity>> mycophant = ENTITY_TYPES.register(
             "mycophant",
             () -> EntityType.Builder.of(MycophantEntity::new, MobCategory.MONSTER)
-                    .sized(4.0F, 6.0F)
+                    .sized(4.5F, 5.0F)
                     .clientTrackingRange(12)
                     .fireImmune()
                     .build(Hemomancy.rloc("mycophant").toString()));

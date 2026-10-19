@@ -1,0 +1,99 @@
+{
+  "temperature": 0.9,
+  "downfall": 1,
+  "has_precipitation": false,
+  "spawn_costs": {},
+  "carvers": {
+    "air": [
+      "hemomancy:fungal_cave",
+      "hemomancy:fungal_cave_large",
+      "hemomancy:fungal_canyon"
+    ]
+  },
+  "effects": {
+    "sky_color": 2236962,
+    "fog_color": 1974812,
+    "water_color": 10980608,
+    "water_fog_color": 10980608,
+    "particle": {
+      "options": {
+        "type": "minecraft:warped_spore"
+      },
+      "probability": 0.012
+    },
+    "mood_sound": {
+      "sound": "minecraft:ambient.cave",
+      "tick_delay": 6000,
+      "block_search_extent": 8,
+      "offset": 2
+    },
+    "music": {
+      "sound": "minecraft:music.end",
+      "min_delay": 6000,
+      "max_delay": 24000,
+      "replace_current_music": true
+    }
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "hemomancy:fungal_floor",
+      "hemomancy:morphic_pool",
+      "hemomancy:hyphae_tendril",
+      "hemomancy:mushroom/canopy_mushrooms_sparse",
+      "hemomancy:huge_fungus",
+      "hemomancy:mycelium_blob"
+    ],
+    [],
+    [],
+    [
+      "hemomancy:bleeding_hearts",
+      "hemomancy:patch_hyphae",
+      "hemomancy:small_infected_fungus",
+      "hemomancy:stink_horns"
+    ],
+    []
+  ],
+  "spawners": {
+    "ambient": [],
+    "axolotls": [],
+    "creature": [
+      {
+        "type": "hemomancy:fungling",
+        "weight": 10,
+        "minCount": 2,
+        "maxCount": 4
+      }
+    ],
+    "misc": [],
+    "monster": [
+      {
+        "type": "hemomancy:abhorent_thought",
+        "weight": 10,
+        "minCount": 1,
+        "maxCount": 3
+      },
+      {
+        "type": "hemomancy:fargone",
+        "weight": 8,
+        "minCount": 1,
+        "maxCount": 2
+      }
+    ],
+    "underground_water_creature": [],
+    "water_ambient": [
+      {
+        "type": "hemomancy:barbed_urchin",
+        "weight": 1,
+        "minCount": 1,
+        "maxCount": 2
+      }
+    ],
+    "water_creature": []
+  }
+}

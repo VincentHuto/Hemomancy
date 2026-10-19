@@ -18,6 +18,10 @@ public final class CardinalRiteFloorVisualRules {
 	public static final int STYLE_DOMINION = 1;
 	public static final int STYLE_COMMUNION = 2;
 	public static final int STYLE_WORKING = 3;
+	/** Special floors: one per special rite. */
+	public static final int STYLE_APOTHEOS = 4;
+	public static final int STYLE_QLIPHOTH = 5;
+	public static final int STYLE_ANCESTRAL = 6;
 
 	private static final Palette[] PALETTES = {
 			// Threshold: arterial red over iron-dark crust.
@@ -26,8 +30,14 @@ public final class CardinalRiteFloorVisualRules {
 			new Palette(0xFF120507, 0xFF7A1020, 0xFFE0303C),
 			// Communion: warm flesh membrane laced with capillaries.
 			new Palette(0xFF4A1A1E, 0xFFC23A44, 0xFFFFC2B0),
-			// Working: ivory bone fibre tied with red sinew.
-			new Palette(0xFF6B5A4C, 0xFF9E1622, 0xFFFFD2C4),
+			// Working: lacquered hematic iron plates, crimson conduits, a cherry glow of blood at work.
+			new Palette(0xFF1A1620, 0xFFC8102E, 0xFFFF4F6E),
+			// Apotheos: the Chamber of Will's slate wall membrane, its ceiling hivemind's orange, its portal's magenta.
+			new Palette(0xFF1C2430, 0xFFE0560E, 0xFFFF3CC0),
+			// Qliphoth: monolith black glass, arterial fault-red, a hot red horizon glow (its violet is the corona's).
+			new Palette(0xFF07030A, 0xFF8E0A16, 0xFFFF3A26),
+			// Ancestral: dark amber with ochre vessels and a honey glow of remembered blood.
+			new Palette(0xFF3A2410, 0xFFB0581C, 0xFFFFCC78),
 	};
 
 	private CardinalRiteFloorVisualRules() {
@@ -39,6 +49,9 @@ public final class CardinalRiteFloorVisualRules {
 			case "dominion" -> STYLE_DOMINION;
 			case "communion" -> STYLE_COMMUNION;
 			case "working" -> STYLE_WORKING;
+			case "apotheos" -> STYLE_APOTHEOS;
+			case "qliphoth" -> STYLE_QLIPHOTH;
+			case "ancestral" -> STYLE_ANCESTRAL;
 			default -> STYLE_THRESHOLD;
 		};
 	}

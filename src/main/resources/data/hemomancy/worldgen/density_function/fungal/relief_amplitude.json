@@ -1,0 +1,48 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:mul",
+    "argument1": {
+      "type": "minecraft:add",
+      "argument1": 0.2,
+      "argument2": {
+        "type": "minecraft:add",
+        "argument1": {
+          "type": "minecraft:mul",
+          "argument1": 0.45,
+          "argument2": "hemomancy:fungal/thicket_mask"
+        },
+        "argument2": {
+          "type": "minecraft:add",
+          "argument1": {
+            "type": "minecraft:mul",
+            "argument1": 0.45,
+            "argument2": "hemomancy:fungal/highland_mask"
+          },
+          "argument2": {
+            "type": "minecraft:add",
+            "argument1": {
+              "type": "minecraft:mul",
+              "argument1": 0.25,
+              "argument2": "hemomancy:fungal/spire_mask"
+            },
+            "argument2": {
+              "type": "minecraft:mul",
+              "argument1": 0.1,
+              "argument2": "hemomancy:fungal/drift_mask"
+            }
+          }
+        }
+      }
+    },
+    "argument2": {
+      "type": "minecraft:add",
+      "argument1": 1.0,
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": -0.5,
+        "argument2": "hemomancy:fungal/depths_mask"
+      }
+    }
+  }
+}

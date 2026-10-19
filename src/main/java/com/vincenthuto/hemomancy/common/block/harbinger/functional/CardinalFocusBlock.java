@@ -102,6 +102,9 @@ public class CardinalFocusBlock extends Block implements EntityBlock {
 	@Override
 	protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState,
 			boolean movedByPiston) {
+		if (!state.is(newState.getBlock())) {
+			com.vincenthuto.hemomancy.common.rite.zone.RiteSpaces.release(level, pos);
+		}
 		if (!state.is(newState.getBlock())
 				&& level.getBlockEntity(pos) instanceof CardinalFocusBlockEntity focus) {
 			ItemStack medium = focus.extractMedium();

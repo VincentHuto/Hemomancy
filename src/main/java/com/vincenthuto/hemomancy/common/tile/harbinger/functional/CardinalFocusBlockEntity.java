@@ -150,6 +150,7 @@ public class CardinalFocusBlockEntity extends BlockEntity {
 				|| Math.floorMod(level.getGameTime() + pos.asLong(), FLOOR_CHECK_INTERVAL) != 0) return;
 		var formed = CardinalRiteStationMatcher.formedFloor(server, pos).orElse(null);
 		ResourceLocation id = formed == null ? null : formed.floor().id();
+		com.vincenthuto.hemomancy.common.rite.zone.RiteSpaces.onFloorCheck(server, pos, id);
 		Direction forwards = formed == null ? Direction.NORTH : formed.forwards();
 		if (java.util.Objects.equals(id, focus.formedFloor) && forwards == focus.formedForwards) return;
 		boolean newFloor = !java.util.Objects.equals(id, focus.formedFloor);

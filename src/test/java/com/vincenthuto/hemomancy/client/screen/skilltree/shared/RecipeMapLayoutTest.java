@@ -50,9 +50,9 @@ final class RecipeMapLayoutTest {
 		RecipeMapLayout.NodeBounds first = layout.node(FIRST);
 		RecipeMapLayout.NodeBounds hidden = layout.node(HIDDEN);
 		RecipeMapLayout.NodeBounds last = layout.node(LAST);
-		assertEquals(72.0, distanceFromCenter(layout, first), 1.0);
-		assertEquals(120.0, distanceFromCenter(layout, hidden), 1.0);
-		assertEquals(120.0, distanceFromCenter(layout, last), 1.0);
+		assertEquals(170.0, distanceFromCenter(layout, first), 1.0, "surface degrees skip the two innermost radii");
+		assertEquals(220.0, distanceFromCenter(layout, hidden), 1.0);
+		assertEquals(220.0, distanceFromCenter(layout, last), 1.0);
 		assertTrue(hidden.centerX() != last.centerX() || hidden.centerY() != last.centerY(),
 				"authored slots on the same family ring must remain distinct");
 		assertEquals(LAST, layout.nodeAt(last.centerX(), last.centerY()).entry().id());
@@ -68,8 +68,8 @@ final class RecipeMapLayoutTest {
 
 		RecipeMapLayout.NodeBounds orderNode = layout.node(FIRST);
 		RecipeMapLayout.NodeBounds vesselNode = layout.node(vessel);
-		assertEquals(220.0, distanceFromCenter(layout, orderNode), 1.0);
-		assertEquals(220.0, distanceFromCenter(layout, vesselNode), 1.0);
+		assertEquals(320.0, distanceFromCenter(layout, orderNode), 1.0);
+		assertEquals(320.0, distanceFromCenter(layout, vesselNode), 1.0);
 		assertTrue(Math.hypot(orderNode.centerX() - vesselNode.centerX(),
 				orderNode.centerY() - vesselNode.centerY()) > RecipeMapLayout.NODE_SIZE * 2.0);
 	}
@@ -82,8 +82,8 @@ final class RecipeMapLayoutTest {
 				entry(degreeFive, "Degree Five", 5, "Order", 0, true),
 				entry(degreeEight, "Degree Eight", 8, "Order", 0, true)), List.of("Order"));
 
-		assertEquals(170.0, distanceFromCenter(layout, layout.node(degreeFive)), 1.0);
-		assertEquals(320.0, distanceFromCenter(layout, layout.node(degreeEight)), 1.0);
+		assertEquals(220.0, distanceFromCenter(layout, layout.node(degreeFive)), 1.0);
+		assertEquals(370.0, distanceFromCenter(layout, layout.node(degreeEight)), 1.0);
 	}
 
 	@Test
@@ -117,5 +117,20 @@ final class RecipeMapLayoutTest {
 
 	private static double distanceFromCenter(RecipeMapLayout.Result layout, RecipeMapLayout.NodeBounds node) {
 		return Math.hypot(node.centerX() - layout.centerX(), node.centerY() - layout.centerY());
+	}
+
+	@Test
+	void familiesRunInPurposeGroupOrderBeforeDegreeOrder() {
+		ResourceLocation late = ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/late_group");
+		ResourceLocation early = ResourceLocation.fromNamespaceAndPath("hemomancy", "cardinal_rite/early_group");
+		RecipeMapLayout.Result layout = RecipeMapLayout.build(List.of(
+				entry(late, "Late", 0, "Second Group", 0, true),
+				entry(early, "Early", 3, "First Group", 0, true)),
+				List.of("Second Group", "First Group"), java.util.Map.of(),
+				family -> family.equals("First Group") ? 0 : 1);
+
+		List<RecipeMapLayout.Sector> sectors = layout.sectors(SkillTreeLayer.SURFACE);
+		assertEquals("First Group", sectors.get(0).family(), "a lower group rank leads even with a later degree");
+		assertEquals("Second Group", sectors.get(1).family());
 	}
 }

@@ -16,15 +16,22 @@ public record CardinalRiteFloorDefinition(
 		MultiblockPattern pattern,
 		BlockPos focus,
 		List<BlockPos> brazierSockets,
-		float footprintRadius) {
+		float footprintRadius,
+		CardinalRitePurpose purpose) {
 	public CardinalRiteFloorDefinition {
 		Objects.requireNonNull(id, "id");
 		Objects.requireNonNull(style, "style");
 		Objects.requireNonNull(tier, "tier");
 		Objects.requireNonNull(pattern, "pattern");
 		Objects.requireNonNull(focus, "focus");
+		Objects.requireNonNull(purpose, "purpose");
 		brazierSockets = List.copyOf(brazierSockets);
 		if (footprintRadius <= 0.0F) throw new IllegalArgumentException("Floor footprint must be positive");
+	}
+
+	/** A floor whose style is not one of the four purpose styles: it declares its purpose and hosts special rites. */
+	public boolean special() {
+		return CardinalRitePurpose.ofFloorStyle(style) == null;
 	}
 
 	/** Blocks from the Focus to the floor's edge. */

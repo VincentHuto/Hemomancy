@@ -16,9 +16,11 @@ public final class CircusAcrobatModel extends HumanoidModel<CircusAcrobatEntity>
 	private final ModelPart aerialRibbon;
 	private final ModelPart leftTail;
 	private final ModelPart rightTail;
+	private final CircusDownedPose downedPose;
 
 	public CircusAcrobatModel(ModelPart root) {
 		super(root);
+		downedPose = new CircusDownedPose(this, 1.7F, 0.3F);
 		aerialRibbon = body.getChild("aerial_ribbon");
 		leftTail = head.getChild("left_tail");
 		rightTail = head.getChild("right_tail");
@@ -114,9 +116,6 @@ public final class CircusAcrobatModel extends HumanoidModel<CircusAcrobatEntity>
 			leftArm.zRot = -0.15F;
 			rightArm.zRot = 0.15F;
 		}
-		if (entity.getActState() == ActState.DOWNED) {
-			body.xRot = 1.35F;
-			leftArm.xRot = rightArm.xRot = -0.5F;
-		}
+		downedPose.apply(entity.getActState() == ActState.DOWNED, ageInTicks);
 	}
 }

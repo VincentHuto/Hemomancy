@@ -37,7 +37,7 @@ final class RecipeMapTooltipTest {
 	@Test
 	void craftingTooltipSummarizesTheSameActivationDetailsAsTheInspector() {
 		assertEquals("Hold Ferric Binder and activate Hematic Iron Block. Blood cost: 150 mL.",
-				CraftingTabController.tooltipDescription(150, "Ferric Binder", "Hematic Iron Block"));
+				RitesAndCraftsTabController.tooltipDescription(150, "Ferric Binder", "Hematic Iron Block"));
 	}
 
 	@Test

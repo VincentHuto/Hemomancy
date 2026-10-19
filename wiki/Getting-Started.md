@@ -68,7 +68,7 @@ temple floor:
 This first rite has no anchors to fill, sigils to draw, braziers to prepare, fog,
 ordeal, or helper requirement. On success the lodged nugget breaks the temple
 Focus, your blood volume becomes active, and you receive a **Sanguine Conduit**.
-The Conduit's Rites tab explains how later ceremonies add each mechanic.
+The Conduit's Rites & Crafts tab explains how later ceremonies add each mechanic.
 
 ---
 

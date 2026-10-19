@@ -2,10 +2,13 @@ package com.vincenthuto.hemomancy.client.render.entity.boss.endgame;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperTheCrownedRefusalModel;
+import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.VesperMountModel;
 import com.vincenthuto.hemomancy.client.render.layer.mob.endgame.VesperCrownedWeaponLayer;
 import com.vincenthuto.hemomancy.client.render.layer.mob.endgame.VesperMountAbsorptionLayer;
-import com.vincenthuto.hemomancy.client.render.layer.mob.endgame.VesperThroneAnchorLayer;
+import com.vincenthuto.hemomancy.client.render.layer.mob.endgame.VesperMountWingMembraneLayer;
+import com.vincenthuto.hemomancy.client.render.layer.mob.endgame.VesperRiderLayer;
+import com.vincenthuto.hemomancy.client.render.layer.mob.endgame.VesperWoundDrawLayer;
+import com.vincenthuto.hemomancy.client.render.layer.mob.endgame.VesperWoundLayer;
 import com.vincenthuto.hemomancy.client.render.layer.mob.endgame.VesperTransitionCocoonRenderer;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseTransitionRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefusalEntity;
@@ -19,15 +22,19 @@ import net.minecraft.resources.ResourceLocation;
 import javax.annotation.Nullable;
 
 public class VesperTheCrownedRefusalRenderer
-        extends MobRenderer<VesperTheCrownedRefusalEntity, VesperTheCrownedRefusalModel> {
+        extends MobRenderer<VesperTheCrownedRefusalEntity, VesperMountModel> {
     private static final ResourceLocation TEXTURE =
-            Hemomancy.rloc("textures/entity/boss/endgame/vesper_crowned_refusal.png");
+            Hemomancy.rloc("textures/entity/boss/endgame/vesper_mount.png");
 
     public VesperTheCrownedRefusalRenderer(Context context) {
-        super(context, new VesperTheCrownedRefusalModel(context.bakeLayer(VesperTheCrownedRefusalModel.LAYER_LOCATION)), 4.5F);
-        addLayer(new VesperCrownedWeaponLayer(this));
+        super(context, new VesperMountModel(context.bakeLayer(VesperMountModel.LAYER_LOCATION)), 4.5F);
+        VesperRiderLayer rider = new VesperRiderLayer(this, context.getModelSet());
+        addLayer(new VesperMountWingMembraneLayer(this));
+        addLayer(rider);
+        addLayer(new VesperCrownedWeaponLayer(this, rider));
         addLayer(new VesperMountAbsorptionLayer(this));
-        addLayer(new VesperThroneAnchorLayer(this));
+        addLayer(new VesperWoundLayer(this));
+        addLayer(new VesperWoundDrawLayer(this, rider));
     }
 
     @Override

@@ -12,8 +12,6 @@ public final class VesperCombatRules {
 	public static final float ANCHOR_HITBOX_WIDTH = 2.0F;
 	public static final float ANCHOR_HITBOX_HEIGHT = 2.2F;
 	public static final int ANCHOR_HIT_FLASH_TICKS = 4;
-	private static final double ANCHOR_FORWARD_DISTANCE = 2.0D;
-	private static final double ANCHOR_BASE_Y_OFFSET = 2.0D;
 	private static final float[] ANCHOR_THRESHOLDS = { 0.72F, 0.42F, 0.12F };
 	private static final Map<EnumBloodTendency, StanceProfile> STANCES = createStances();
 
@@ -49,10 +47,6 @@ public final class VesperCombatRules {
 	public static EnumBloodTendency tendencyAt(long seed, int stanceIndex) {
 		List<EnumBloodTendency> tour = tendencyTour(seed);
 		return tour.get(Math.floorMod(stanceIndex, tour.size()));
-	}
-
-	public static boolean isMorphTelegraph(int stanceTick) {
-		return stanceTick >= 0 && stanceTick < 30;
 	}
 
 	public static int primaryAttackTick() { return 40; }
@@ -124,55 +118,12 @@ public final class VesperCombatRules {
 		return cycle[Math.floorMod(attackStep, cycle.length)];
 	}
 
-	public static AnchorHit hitAnchor(float accumulatedDamage, float incomingDamage) {
-		float damage = clampAnchorDamage(Math.max(0.0F, accumulatedDamage) + Math.max(0.0F, incomingDamage));
-		return new AnchorHit(damage, damage >= ANCHOR_MAX_DAMAGE);
-	}
-
-	public static float clampAnchorDamage(float damage) {
-		return Math.max(0.0F, Math.min(ANCHOR_MAX_DAMAGE, damage));
-	}
-
-	public static AnchorDamageBand anchorDamageBand(float accumulatedDamage) {
-		float ratio = clampAnchorDamage(accumulatedDamage) / ANCHOR_MAX_DAMAGE;
-		if (ratio >= 0.70F) return AnchorDamageBand.HIGH;
-		if (ratio >= 0.40F) return AnchorDamageBand.MEDIUM;
-		return AnchorDamageBand.LOW;
-	}
-
 	public static float anchorFlashStrength(int remainingTicks) {
 		return Math.max(0.0F, Math.min(1.0F, remainingTicks / (float) ANCHOR_HIT_FLASH_TICKS));
 	}
 
-	public static float anchorPulseSpeed(float accumulatedDamage) {
-		return switch (anchorDamageBand(accumulatedDamage)) {
-			case LOW -> 0.08F;
-			case MEDIUM -> 0.14F;
-			case HIGH -> 0.22F;
-		};
-	}
-
-	public static float anchorSurfaceAgitation(float accumulatedDamage) {
-		return switch (anchorDamageBand(accumulatedDamage)) {
-			case LOW -> 0.35F;
-			case MEDIUM -> 0.70F;
-			case HIGH -> 1.15F;
-		};
-	}
-
 	public static float anchorHitboxScale(int anchorIndex, int activeAnchorIndex) {
 		return anchorIndex == activeAnchorIndex ? 1.0F : 0.0F;
-	}
-
-	public static AnchorOffset anchorForwardOffset(float yawDegrees, double distance) {
-		double yawRadians = Math.toRadians(yawDegrees);
-		return new AnchorOffset(-Math.sin(yawRadians) * distance, Math.cos(yawRadians) * distance);
-	}
-
-	public static AnchorCenter anchorCenter(double x, double y, double z, float yawDegrees) {
-		AnchorOffset forward = anchorForwardOffset(yawDegrees, ANCHOR_FORWARD_DISTANCE);
-		return new AnchorCenter(x + forward.x(), y + ANCHOR_BASE_Y_OFFSET + ANCHOR_HITBOX_HEIGHT * 0.5D,
-				z + forward.z());
 	}
 
 	private static Map<EnumBloodTendency, StanceProfile> createStances() {
@@ -191,18 +142,4 @@ public final class VesperCombatRules {
 	public record StanceProfile(String weapon, String primaryManipulation, String secondaryManipulation) {
 	}
 
-	public record AnchorHit(float accumulatedDamage, boolean broken) {
-	}
-
-	public record AnchorOffset(double x, double z) {
-	}
-
-	public record AnchorCenter(double x, double y, double z) {
-	}
-
-	public enum AnchorDamageBand {
-		LOW,
-		MEDIUM,
-		HIGH
-	}
 }
