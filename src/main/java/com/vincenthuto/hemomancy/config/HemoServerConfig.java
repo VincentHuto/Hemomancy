@@ -7,6 +7,7 @@ import net.neoforged.neoforge.common.ModConfigSpec.Builder;
 public class HemoServerConfig {
 
 	public static ModConfigSpec.IntValue SUCCESSORS_PER_BLOODLINE;
+	public static ModConfigSpec.IntValue CAST_OUTPOURING_REAL_EFFECT_MIN_RANK;
     public static ModConfigSpec.IntValue SUCCESSORS_GLOBAL;
 
 	// ===== Blood Volume =====
@@ -562,6 +563,13 @@ public class HemoServerConfig {
 				.comment("Minimum Harbinger degree for ambient Rogue Will ambushes.")
 				.defineInRange("minDegree", 4, 0, 8);
 
+		builder.pop();
+
+		// ───── Cast Outpouring ─────
+		builder.comment("Cast Outpouring Settings").push("cast_outpouring");
+		CAST_OUTPOURING_REAL_EFFECT_MIN_RANK = builder
+				.comment("Lowest manipulation rank (0 Humilis .. 4 Perfectus) whose cast outpouring may change the world. -1 keeps outpourings purely visual.")
+				.defineInRange("realEffectMinRank", -1, -1, 4);
 		builder.pop();
 	}
 

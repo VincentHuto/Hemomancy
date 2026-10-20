@@ -58,7 +58,7 @@ See [Clinical Blood Tools](../wiki/Clinical-Blood-Tools.md) for player instructi
 
 ## Casting presentations (2026-09-16)
 
-`CastingAnimationManager` sends transient, sequenced phase snapshots after successful server actions and for charge/channel lifecycle changes. `CastingClips` authors all 40 school/rank tracks; purpose and bespoke style resolve through `CastPresentation` outside saved manipulation data. The existing player model and item renderer apply separate first- and third-person tracks, while `CastingAnimationLayer` attaches blood meshes to live hand transforms. See [casting implementation, preview and validation](../wiki/Casting-Animations.md).
+`CastingAnimationManager` sends transient, sequenced phase snapshots after successful server actions and for charge/channel lifecycle changes. `CastingClips` authors all 40 school/rank tracks; purpose and bespoke style resolve through `CastPresentation` outside saved manipulation data. The existing player model and item renderer apply separate first- and third-person tracks, while the cast outpouring (`client/render/outpouring/`, 2026-10-19) draws the caster's own blood. It leaves the manipulation's vascular section, shader veins spread from that section over skin and armour, the blood transforms by tendency, it scales with rank, and it leaves fading client-only marks. Nothing is drawn detached behind the caster. See [casting implementation, preview and validation](../wiki/Casting-Animations.md).
 
 ## Specimen machine screen styling (2026-09-15)
 
@@ -449,6 +449,12 @@ Hemomancy registers active server, client, and common config specs through `Hemo
 | `claimedWillBonusCapSilentArchon` | Int | `1` | 0-8 | Extra claimed-Will cap for the Silent Archon edge |
 | `puppeteerSpawnChance` | Double | `0.2` | 0.0-1.0 | Chance to replace the first Broken Will slot with a Blood Drunk Puppeteer archetype |
 | `minDegree` | Int | `4` | 0-8 | Minimum Harbinger degree for ambient Will ambushes |
+
+**Cast Outpouring** (`cast_outpouring`):
+
+| Key | Type | Default | Range | Description |
+|-----|------|---------|-------|-------------|
+| `realEffectMinRank` | Int | `-1` | -1-4 | Lowest manipulation rank whose cast outpouring may change the world; `-1` keeps outpourings purely visual (every effect is a no-op today) |
 
 ### 3.2 Client Config (`HemoClientConfig`)
 
@@ -2260,6 +2266,8 @@ The Rite of Clarity Ascension, after Consecrated Copper preparation at the Unsta
 | `hemomancy/enlightened_seeker` | ENLIGHTENED | Autoimmune Edge |
 
 On login, `playerLoggedIn` calls `grantEligibleArts()` to backfill any arts the player should already have based on current `IUnstainedProgress` clarity. The radial selection screen (`RadialChooseStillArtScreen`) is opened from the existing charm/radial key once Clarity is unlocked.
+
+**Still Art presentation.** A successful Still Art plays an Unstained casting animation in both views. After `action.cast(...)` succeeds, `StillArt.performAction` calls `CastingAnimationManager.releaseStillArt`, which sends one RELEASE `CastingAnimationPacket` on the `CastLane.UNSTAINED` lane to the caster and trackers; refusals (unknown art, cooldown, clarity too low, or an action block: Paralysis, Disrupted or axonal travel) send nothing. The packet carries the art's required clarity stage, which picks one of five stage tracks (`StillArtTracks`: Awakened moves the main arm only, later stages both arms, Enlightened stands perfectly still), and its `StillArtEnding`, which works as the Unstained aim layer: Rebuke (Silver Rebuke, Autoimmune Edge), Hush (Lethean Mute, Quietus Bell), Stillness (Still Pulse, and `StillArt.BLANK`), Sight (Pale Diagnosis), Shear (Memory Shear), Step (Absolving Step) and Intercession (Pale Intercession). Releases are slow (8 to 12 ticks) and settle over 14 to 24 ticks to stillness; accents are a pale hand ring and, from Discerning, a still-water ring at the feet, both on the `LUX` material with no blood tint, and the arts' own motes use `HemoParticleData.glow`. The ending is presentation only and never touches gameplay or saved data. See `wiki/Casting-Animations.md`.
 
 ### 15.2 Unstained Cardinal Rites
 
@@ -4820,7 +4828,7 @@ The Unstained faction has moved from mostly planned design notes into a broad im
 | Quiet-work stations | `Implemented` | `StillwaterCondenserBlock` provides environment-driven Lethean Dew production at Purity 50. `VerdigrisLatticeBlock` passively wards Unstained players, suppresses tagged Hemomancy mobs, and doubles nearby condenser output. |
 | Unstained advancement branch | `Implemented` | `UnstainedAdvancementGranter` and `UnstainedMilestoneHandler` grant altar, purity-stage, and clarity-stage advancements. JSONs exist for `unstained`, `path_of_purity`, `blessed_by_the_altar`, `tainted`, `cleansing`, `absolved`, `purified`, `clarity_awakened`, `discerning`, `vigilant`, `resolute_stage`, `enlightened_seeker`, and `lady_of_forgotten_waters`. |
 | Silver Ward / Verdigris Aura indicators | `Implemented` | `SilverWardEffect` spawns ambient END_ROD particles and reduces hemomancy-mob damage; `VerdigrisAuraEffect` spawns SCRAPE ring particles and weakens hemomancy mobs. `UnstainedProgressScreen` exposes toggles through `PacketToggleUnstainedBonus`, and `PacketSyncUnstainedProgress` syncs toggle state. |
-| Still Arts | `Implemented` | `StillArtInit`, `IKnownStillArts`, `KnownStillArtEvents`, Still Art packets, radial screen, cooldown overlay, and advancement-backed grants are active. See §15.1. |
+| Still Arts | `Implemented` | `StillArtInit`, `IKnownStillArts`, `KnownStillArtEvents`, Still Art packets, radial screen, cooldown overlay, and advancement-backed grants are active. Still Art presentation (Unstained lane, clarity-stage tracks, `StillArtEnding` endings, pale accents) is implemented; live captures pending. See §15.1. |
 | Unstained Cardinal Rites | `Implemented` | Purity and clarity rites are authored under `data/hemomancy/recipe/cardinal_rite/` and handled by Unstained rite event systems. See §15.2. |
 | White Humor purification | `Implemented` | Recipe type/serializer, placed White Humor pools, finite pool charges, witness-block acceleration, JEI category, and Liber Immaculatus page are present. See §15.4. |
 

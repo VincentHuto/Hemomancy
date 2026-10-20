@@ -161,12 +161,6 @@ final class LuxUmbraGeometry {
             case WELL_CHARGE -> {
                 Vec3 focus = end.lengthSqr() > 1e-8 ? end.normalize().scale(1.15) : new Vec3(0, 0, 1.15);
                 card(p, v, focus, right, up, .24 + r * .2, .22 + r * .16, WISP, seed, 0xFFFFFF, opacity);
-                for (int i = 0; i < 4; i++) {
-                    double a = i * Math.PI / 2 + time * .018;
-                    Vec3 from = focus.add(right.scale(Math.cos(a) * .65)).add(up.scale(Math.sin(a) * .46));
-                    stream(p, v, from, focus, camera, .17, .13, i + time * .025,
-                            RIBBON, seed + i, 0xFFFFFF, opacity * .8f);
-                }
             }
             case VEIL -> {
                 for (int i = 0; i < 6; i++) {

@@ -74,6 +74,11 @@ public final class PlayerAnimationClientState {
 
 	public static void applyThirdPersonPose(LivingEntity entity, HumanoidModel<?> model, float partialTick) {
 		if (!(entity instanceof Player player)) return;
+		// Vanilla never resets these; the casting waist pivot assigns them, so clear last frame's offset first.
+		model.body.z = 0;
+		model.head.z = 0;
+		model.hat.z = 0;
+		if (model instanceof PlayerModel<?> playerModel) playerModel.jacket.z = 0;
         CastingPlayerPose.apply(player, model, partialTick);
         var microscope = HematicMicroscopeClientState.animation(player);
         if (microscope != null) {

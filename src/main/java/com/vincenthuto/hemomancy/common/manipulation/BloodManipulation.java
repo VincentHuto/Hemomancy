@@ -550,6 +550,7 @@ public class BloodManipulation implements EntityCastableManipulation {
 					if (creditUse && type != EnumManipulationType.CONTINUOUS) {
 						if (type != EnumManipulationType.PASSIVE) {
                             com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager.release((ServerPlayer) player, this);
+                            com.vincenthuto.hemomancy.common.manipulation.outpouring.OutpouringWorldEffects.release((ServerPlayer) player, this);
                         }
 						ManipulationCastSounds.play(world, player, this);
 						ManipulationParticles.activate(player, this);

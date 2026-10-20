@@ -19,6 +19,28 @@ public record CastPresentation(CastPurpose purpose, CastStyle style) {
             case "unclosing_eye" -> CastStyle.UNCLOSING_EYE;
             case "bloom_of_rot" -> CastStyle.BLOOM_OF_ROT;
             case "endless_hour" -> CastStyle.ENDLESS_HOUR;
+            case "crimson_coronation" -> CastStyle.CRIMSON_CORONATION;
+            case "synaptic_storm" -> CastStyle.SYNAPTIC_STORM;
+            case "white_verdict" -> CastStyle.WHITE_VERDICT;
+            case "funeral_bell" -> CastStyle.FUNERAL_BELL;
+            case "absolute_stillness" -> CastStyle.ABSOLUTE_STILLNESS;
+            case "lodestone_collapse" -> CastStyle.LODESTONE_COLLAPSE;
+            case "eclipse_well" -> CastStyle.ECLIPSE_WELL;
+            case "phoenix_debt" -> CastStyle.PHOENIX_DEBT;
+            case "hematic_riposte" -> CastStyle.RIPOSTE;
+            case "blood_rush" -> CastStyle.BLOOD_RUSH;
+            case "deadly_gaze" -> CastStyle.DEADLY_GAZE;
+            case "sanguine_marionette" -> CastStyle.MARIONETTE;
+            case "lignum_mortis", "canopy_mortis", "worked_lignum" -> CastStyle.GROUND_TOUCH;
+            case "vascular_dowsing" -> CastStyle.DOWSING;
+            case "furnace_veins" -> CastStyle.FURNACE_VEINS;
+            case "living_circuit" -> CastStyle.LIVING_CIRCUIT;
+            case "iron_choir" -> CastStyle.IRON_CHOIR;
+            case "carrion_communion" -> CastStyle.CARRION_COMMUNION;
+            case "penumbral_drift" -> CastStyle.PENUMBRAL_DRIFT;
+            case "radiant_wake" -> CastStyle.RADIANT_WAKE;
+            case "blackhearted" -> CastStyle.BLACKHEARTED;
+            case "sovereign_instinct" -> CastStyle.SOVEREIGN_INSTINCT;
             default -> CastStyle.SCHOOL;
         });
     }
@@ -30,7 +52,7 @@ public record CastPresentation(CastPurpose purpose, CastStyle style) {
             case "blood_rush", "summon_avatar", "summon_avatar_arms", "summon_avatar_armor", "summon_avatar_legs",
                     "summon_avatar_complete", "iron_retort", "ironhearted", "void_shroud", "black_veil_covenant",
                     "insatiable_hunger", "grave_debt", "blackhearted", "sovereign_instinct", "phoenix_debt",
-                    "living_circuit", "furnace_veins", "crimson_tithe", "endless_hour", "hematic_riposte" -> SELF;
+                    "living_circuit", "furnace_veins", "crimson_tithe", "endless_hour", "hematic_riposte", "axonal_transduction" -> SELF;
             case "sanguine_halo", "blood_cloud", "expansive_blood_cloud", "pursuing_blood_cloud", "sanguine_tempest",
                     "blood_aneurysm", "vital_effusion", "activation_potential", "sanguine_ward", "hemolymphal_pulse",
                     "hematic_flare", "hematic_beacon", "cryogenic_pulse", "osseous_bloom", "vitric_combustion",

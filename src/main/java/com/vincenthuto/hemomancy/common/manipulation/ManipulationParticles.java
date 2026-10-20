@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.network.particle.ManipulationAccentPacke
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -13,6 +14,8 @@ public final class ManipulationParticles {
 
     public static void activate(LivingEntity caster,BloodManipulation manipulation) {
         if (!manipulation.usesDefaultActivationParticles()) return;
+        // Players cast with the outpouring: their own blood leaves the vascular section instead of a generic burst.
+        if (caster instanceof Player) return;
         if(!(caster.level() instanceof ServerLevel level))return;
         Vec3 at=caster.position().add(0,caster.getBbHeight()*.55,0);
         send(level,new ManipulationAccentPacket(manipulation.getTend(),manipulation.getSecondaryTend(),

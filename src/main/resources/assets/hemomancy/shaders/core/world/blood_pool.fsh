@@ -14,6 +14,8 @@ uniform float FogEnd;
 uniform vec4 FogColor;
 uniform float HemoTime;
 uniform float PoolSeed;
+// 0 is a vessel's round pool; above 0 the blood lies loose on the ground with a lobed, slowly quivering edge.
+uniform float Ragged;
 
 in float vertexDistance;
 in vec4 vertexColor;
@@ -111,7 +113,10 @@ float relief(vec2 p, float heat, float jet) {
 
 void main() {
     vec2 p = texCoord0 * 2.0 - 1.0;
-    float r = length(p);
+    vec2 heading = p / max(length(p), 0.0001);
+    float lobes = fbm(heading * 1.7 + PoolSeed * 0.37 + HemoTime * 0.004) - 0.5;
+    float rim = 1.0 - Ragged * (0.32 + 0.55 * lobes + 0.08 * sin(atan(p.y, p.x) * 5.0 + PoolSeed));
+    float r = length(p) / max(rim, 0.35);
     if (r > 1.0) {
         discard;
     }

@@ -5,9 +5,11 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.npc.HarbingerMnemonistModel;
-import com.vincenthuto.hemomancy.client.player.CastingClips;
+import com.vincenthuto.hemomancy.client.player.CastingTrack;
+import com.vincenthuto.hemomancy.client.player.CastingTrackRules;
+import com.vincenthuto.hemomancy.client.player.tracks.AimLayers;
+import com.vincenthuto.hemomancy.client.player.tracks.CastingTracks;
 import com.vincenthuto.hemomancy.client.player.CastingPose;
-import com.vincenthuto.hemomancy.client.player.CastingPoseModifiers;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.echo.EchoCast;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.echo.EchoCasts;
 import com.vincenthuto.hemomancy.client.render.world.ThreadKnotGeometry;
@@ -53,8 +55,6 @@ final class SomaticLoomEcho {
 	private final ModelPart head, body, rightArm, leftArm, rightLeg, leftLeg;
 	/** Limbs an unrecalled memory lacks, in the order it regains them backwards. */
 	private final ModelPart[] frayOrder;
-	/** Ticks a beat's release and recovery take. */
-	private static final float BEAT_TICKS = 22f;
 	/** The beat each loom's echo is playing: when it began, whose memory it shows, and how strongly. */
 	private record Beat(float start, BloodManipulation manip, float strength) {}
 	private static final java.util.Map<net.minecraft.core.BlockPos, Beat> BEATS = new java.util.concurrent.ConcurrentHashMap<>();
@@ -91,12 +91,20 @@ final class SomaticLoomEcho {
 			}
 		if (climax) woven = total;
 		Beat beat = BEATS.get(te.getBlockPos());
-		float beatAge = beat == null ? BEAT_TICKS : time - beat.start();
-		boolean beating = !climax && beatAge >= 0 && beatAge < BEAT_TICKS;
-		if (climax) pose(manip, climaxPhase(c), climaxTime(c));
-		else if (beating) pose(beat.manip(), beatAge < 6 ? CastPhase.RELEASE : CastPhase.RECOVERY, beatAge < 6 ? beatAge : Math.min(14, beatAge - 6));
+		CastingTrack beatTrack = beat == null ? null : track(beat.manip());
+		// A beat lasts as long as its track's release and recovery.
+		int beatRelease = beatTrack == null ? 0 : CastingTrackRules.phaseDuration(beatTrack, CastPhase.RELEASE, false);
+		int beatRecovery = beatTrack == null ? 0 : CastingTrackRules.phaseDuration(beatTrack, CastPhase.RECOVERY, false);
+		float beatTicks = beatRelease + beatRecovery;
+		float beatAge = beat == null ? 0 : time - beat.start();
+		boolean beating = !climax && beat != null && beatAge >= 0 && beatAge < beatTicks;
+		if (climax) {
+			CastingTrack track = track(manip);
+			pose(manip, track, climaxPhase(c), climaxTime(track, c));
+		} else if (beating) pose(beat.manip(), beatTrack, beatAge < beatRelease ? CastPhase.RELEASE : CastPhase.RECOVERY,
+				beatAge < beatRelease ? beatAge : Math.min(beatRecovery, beatAge - beatRelease));
 		// Unrecalled, the memory hangs in a slow held gather it never releases.
-		else pose(manip, CastPhase.HOLD, 4 + 3 * Mth.sin(time * 0.05f));
+		else pose(manip, track(manip), CastPhase.HOLD, 4 + 3 * Mth.sin(time * 0.05f));
 		int loose = total == 0 ? 0 : Math.round((1 - woven / (float) total) * frayOrder.length);
 		if (dissolving) loose = SomaticLoomEffectRules.echoTornLimbs(loose, frayOrder.length, dissolve);
 		SomaticLoomEffectRules.EchoLook look = SomaticLoomEffectRules.echoLook(te.upgradeTier());
@@ -108,7 +116,7 @@ final class SomaticLoomEcho {
 		float solidity = total == 0 ? 0 : woven / (float) total;
 		float alpha = climax ? (0.95f + 0.05f * brighten) * (1 - sink) : look.alphaMin() + look.alphaSpan() * solidity;
 		// A beat brightens it for a moment; a false beat flickers wrongly.
-		if (beating) alpha = Math.min(1f, alpha + 0.35f * beat.strength() * (1 - beatAge / BEAT_TICKS));
+		if (beating) alpha = Math.min(1f, alpha + 0.35f * beat.strength() * (1 - beatAge / beatTicks));
 		if (!dissolving && te.isPaused()) alpha *= 0.45f;
 		if (dissolving) alpha *= SomaticLoomEffectRules.dissolveFade(dissolve);
 		// Breathe faintly, as the loom's heartbeat does; a base loom also loses its grip on the memory now and then.
@@ -191,13 +199,20 @@ final class SomaticLoomEcho {
 		BEATS.clear();
 	}
 
-	private void pose(BloodManipulation manip, CastPhase phase, float t) {
+	/** The memory's track: its bespoke style, else its school at its rank. */
+	private static CastingTrack track(BloodManipulation manip) {
+		var track = CastingTracks.style(manip.getCastPresentation().style());
+		return track != null ? track : CastingTracks.base(manip.getTend(), manip.getRank());
+	}
+
+	private void pose(BloodManipulation manip, CastingTrack track, CastPhase phase, float t) {
 		for (ModelPart part : new ModelPart[]{whole, head, body, rightArm, leftArm, rightLeg, leftLeg}) part.resetPose();
 		CastPresentation presentation = manip.getCastPresentation();
-		CastingPose pose = CastingPoseModifiers.apply(CastingClips.get(manip.getTend(), manip.getRank()).sample(phase, t),
-				presentation.purpose(), presentation.style(), phase, t, false);
+		CastingPose pose = CastingTrackRules.compose(track, CastingTracks.bespoke(presentation.style()) ? null : AimLayers.purpose(presentation.purpose()), phase, t, 0, false).toModel();
 		turn(head, pose.head());
 		turn(body, pose.body());
+		// Not a vanilla humanoid: the robe hangs from the body, so the track's waist lean is a plain body pitch.
+		body.xRot += pose.pitch();
 		turn(rightArm, pose.rightArm());
 		turn(leftArm, pose.leftArm());
 		turn(rightLeg, pose.rightLeg());
@@ -215,8 +230,11 @@ final class SomaticLoomEcho {
 		return c < 0.35f ? CastPhase.OPENING : c < 0.45f ? CastPhase.RELEASE : CastPhase.RECOVERY;
 	}
 
-	private static float climaxTime(float c) {
-		return c < 0.35f ? Math.min(6, c / 0.35f * 6) : c < 0.45f ? (c - 0.35f) / 0.1f * 6 : Math.min(14, (c - 0.45f) * 30);
+	/** The climax plays the track's own opening, release and recovery, the recovery settled before the echo sinks. */
+	private static float climaxTime(CastingTrack track, float c) {
+		if (c < 0.35f) return c / 0.35f * CastingTrackRules.phaseDuration(track, CastPhase.OPENING, false);
+		if (c < 0.45f) return (c - 0.35f) / 0.1f * CastingTrackRules.phaseDuration(track, CastPhase.RELEASE, false);
+		return Math.min(1, (c - 0.45f) / 0.47f) * CastingTrackRules.phaseDuration(track, CastPhase.RECOVERY, false);
 	}
 
 	private static float smooth(float t) {

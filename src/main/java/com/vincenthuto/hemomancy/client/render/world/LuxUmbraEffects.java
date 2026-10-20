@@ -96,12 +96,15 @@ public final class LuxUmbraEffects {
             if (mist.at.distanceToSqr(camera) > 48 * 48) continue;
             float age = (float) (time - mist.born), life = age / mist.life;
             Vec3 at = mist.at.add(mist.velocity.scale(age));
+            // Mist breathed from the viewer's own arms would otherwise sit on the lens; it thins out near the eye.
+            float near = ManipulationLifecycle.smooth((float) ((at.distanceTo(camera) - .7) / 1.6));
+            if (near <= 0) continue;
             var packet = new ManipulationVisualPacket(mist.umbra ? Form.UMBRA_MIST : Form.LUX_MIST,
                     -1, at, at, mist.size, mist.life, 1);
             p.pushPose();
             p.translate(at.x - camera.x, at.y - camera.y, at.z - camera.z);
             LuxUmbraGeometry.draw(packet, p, batch.vertices(mist.umbra),
-                    camera.subtract(at), right, up, time, age, 1, (float) Math.sin(Math.PI * net.minecraft.util.Mth.clamp(life, 0, 1)));
+                    camera.subtract(at), right, up, time, age, 1, near * (float) Math.sin(Math.PI * net.minecraft.util.Mth.clamp(life, 0, 1)));
             p.popPose();
         }
     }

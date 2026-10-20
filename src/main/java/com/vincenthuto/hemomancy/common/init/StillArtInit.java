@@ -6,9 +6,11 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityS
 import com.vincenthuto.hemomancy.common.entity.summon.PaleIntercessionRules;
 import com.vincenthuto.hemomancy.common.entity.summon.PaleIntercessionSummonService;
 import com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArt;
+import com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArtEnding;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Registry;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
@@ -29,6 +31,10 @@ import java.util.Comparator;
 import java.util.List;
 
 public class StillArtInit {
+	/** Still-water motes: pale, small and slow. No blood tint anywhere in the Unstained lane. */
+	private static final ParticleColor STILL_WHITE = new ParticleColor(244, 246, 248);
+	private static final ParticleColor STILL_SILVER = new ParticleColor(201, 209, 217);
+
 	public static final ResourceKey<Registry<StillArt>> STILL_ART_KEY = ResourceKey
 			.createRegistryKey(Hemomancy.rloc("still_arts"));
 
@@ -40,7 +46,7 @@ public class StillArtInit {
 					.defaultKey(Hemomancy.rloc("silver_rebuke")));
 
 	public static final DeferredHolder<StillArt, StillArt> silver_rebuke = STILL_ARTS.register("silver_rebuke",
-			() -> new StillArt("silver_rebuke", EnumClarityStage.AWAKENED, 200, (player, level, heldItem, pos, art) -> {
+			() -> new StillArt("silver_rebuke", EnumClarityStage.AWAKENED, 200, StillArtEnding.REBUKE, (player, level, heldItem, pos, art) -> {
 				AABB area = player.getBoundingBox().inflate(5.0);
 				Vec3 look = player.getLookAngle().normalize();
 				List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, area,
@@ -51,13 +57,13 @@ public class StillArtInit {
 					target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 80, 0, false, true));
 				}
 				level.playSound(null, player.blockPosition(), SoundEvents.SHIELD_BLOCK, SoundSource.PLAYERS, 1.0f, 1.45f);
-				level.sendParticles(ParticleTypes.END_ROD, player.getX(), player.getY() + 1.0, player.getZ(),
-						24, 1.1, 0.6, 1.1, 0.03);
+				level.sendParticles(HemoParticleData.glow(STILL_WHITE), player.getX(), player.getY() + 1.0, player.getZ(),
+						24, 1.1, 0.6, 1.1, 0.01);
 				return true;
 			}));
 
 	public static final DeferredHolder<StillArt, StillArt> lethean_mute = STILL_ARTS.register("lethean_mute",
-			() -> new StillArt("lethean_mute", EnumClarityStage.AWAKENED, 320, (player, level, heldItem, pos, art) -> {
+			() -> new StillArt("lethean_mute", EnumClarityStage.AWAKENED, 320, StillArtEnding.HUSH, (player, level, heldItem, pos, art) -> {
 				AABB area = player.getBoundingBox().inflate(6.0);
 				List<Monster> targets = level.getEntitiesOfClass(Monster.class, area, Monster::isAlive);
 				targets.forEach(target -> {
@@ -71,17 +77,17 @@ public class StillArtInit {
 			}));
 
 	public static final DeferredHolder<StillArt, StillArt> still_pulse = STILL_ARTS.register("still_pulse",
-			() -> new StillArt("still_pulse", EnumClarityStage.DISCERNING, 260, (player, level, heldItem, pos, art) -> {
+			() -> new StillArt("still_pulse", EnumClarityStage.DISCERNING, 260, StillArtEnding.STILLNESS, (player, level, heldItem, pos, art) -> {
 				level.getEntitiesOfClass(Monster.class, player.getBoundingBox().inflate(7.0), Monster::isAlive)
 						.forEach(target -> target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 2, false, true)));
 				player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 60, 0, false, true));
-				level.sendParticles(ParticleTypes.SNOWFLAKE, player.getX(), player.getY() + 0.5, player.getZ(),
-						40, 2.5, 0.25, 2.5, 0.02);
+				level.sendParticles(HemoParticleData.glow(STILL_SILVER), player.getX(), player.getY() + 0.5, player.getZ(),
+						40, 2.5, 0.25, 2.5, 0.005);
 				return true;
 			}));
 
 	public static final DeferredHolder<StillArt, StillArt> pale_diagnosis = STILL_ARTS.register("pale_diagnosis",
-			() -> new StillArt("pale_diagnosis", EnumClarityStage.DISCERNING, 240, (player, level, heldItem, pos, art) -> {
+			() -> new StillArt("pale_diagnosis", EnumClarityStage.DISCERNING, 240, StillArtEnding.SIGHT, (player, level, heldItem, pos, art) -> {
 				List<LivingEntity> targets = level.getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT,
 						player, player.getBoundingBox().inflate(18.0));
 				int marked = 0;
@@ -102,7 +108,7 @@ public class StillArtInit {
 			}));
 
 	public static final DeferredHolder<StillArt, StillArt> memory_shear = STILL_ARTS.register("memory_shear",
-			() -> new StillArt("memory_shear", EnumClarityStage.VIGILANT, 300, (player, level, heldItem, pos, art) -> {
+			() -> new StillArt("memory_shear", EnumClarityStage.VIGILANT, 300, StillArtEnding.SHEAR, (player, level, heldItem, pos, art) -> {
 				Monster target = level.getEntitiesOfClass(Monster.class, player.getBoundingBox().inflate(10.0), Monster::isAlive)
 						.stream().min(Comparator.comparingDouble(player::distanceToSqr)).orElse(null);
 				if (target == null) {
@@ -113,26 +119,26 @@ public class StillArtInit {
 				target.setTarget(null);
 				target.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 160, 1, false, true));
 				target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 80, 0, false, true));
-				level.sendParticles(ParticleTypes.WAX_OFF, target.getX(), target.getY() + 1.0, target.getZ(),
-						20, 0.4, 0.6, 0.4, 0.02);
+				level.sendParticles(HemoParticleData.glow(STILL_WHITE), target.getX(), target.getY() + 1.0, target.getZ(),
+						20, 0.4, 0.6, 0.4, 0.01);
 				return true;
 			}));
 
 	public static final DeferredHolder<StillArt, StillArt> absolving_step = STILL_ARTS.register("absolving_step",
-			() -> new StillArt("absolving_step", EnumClarityStage.VIGILANT, 220, (player, level, heldItem, pos, art) -> {
+			() -> new StillArt("absolving_step", EnumClarityStage.VIGILANT, 220, StillArtEnding.STEP, (player, level, heldItem, pos, art) -> {
 				Vec3 look = player.getLookAngle().normalize();
 				player.setDeltaMovement(look.x * 1.6, Math.max(0.15, player.getDeltaMovement().y), look.z * 1.6);
 				player.move(MoverType.SELF, player.getDeltaMovement());
 				player.clearFire();
 				player.removeEffect(MobEffects.POISON);
 				player.removeEffect(MobEffects.WITHER);
-				level.sendParticles(ParticleTypes.END_ROD, player.getX(), player.getY() + 0.2, player.getZ(),
-						18, 0.35, 0.15, 0.35, 0.04);
+				level.sendParticles(HemoParticleData.glow(STILL_WHITE), player.getX(), player.getY() + 0.2, player.getZ(),
+						18, 0.35, 0.15, 0.35, 0.01);
 				return true;
 			}));
 
 	public static final DeferredHolder<StillArt, StillArt> quietus_bell = STILL_ARTS.register("quietus_bell",
-			() -> new StillArt("quietus_bell", EnumClarityStage.RESOLUTE, 420, (player, level, heldItem, pos, art) -> {
+			() -> new StillArt("quietus_bell", EnumClarityStage.RESOLUTE, 420, StillArtEnding.HUSH, (player, level, heldItem, pos, art) -> {
 				player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 160, 1, false, true));
 				player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 120, 0, false, true));
 				level.getEntitiesOfClass(Monster.class, player.getBoundingBox().inflate(8.0), Monster::isAlive)
@@ -142,7 +148,7 @@ public class StillArtInit {
 			}));
 
 	public static final DeferredHolder<StillArt, StillArt> autoimmune_edge = STILL_ARTS.register("autoimmune_edge",
-			() -> new StillArt("autoimmune_edge", EnumClarityStage.ENLIGHTENED, 600, (player, level, heldItem, pos, art) -> {
+			() -> new StillArt("autoimmune_edge", EnumClarityStage.ENLIGHTENED, 600, StillArtEnding.REBUKE, (player, level, heldItem, pos, art) -> {
 				List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(5.0),
 						target -> target != player && target.isAlive());
 				targets.forEach(target -> {
@@ -152,14 +158,14 @@ public class StillArtInit {
 				player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0, false, true));
 				player.displayClientMessage(Component.literal("The immune will cuts outward.")
 						.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC), true);
-				level.sendParticles(ParticleTypes.WAX_OFF, player.getX(), player.getY() + 1.0, player.getZ(),
-						60, 2.2, 1.0, 2.2, 0.04);
+				level.sendParticles(HemoParticleData.glow(STILL_SILVER), player.getX(), player.getY() + 1.0, player.getZ(),
+						60, 2.2, 1.0, 2.2, 0.01);
 				return true;
 			}));
 
 	public static final DeferredHolder<StillArt, StillArt> pale_intercession = STILL_ARTS.register("pale_intercession",
 			() -> new StillArt("pale_intercession", EnumClarityStage.RESOLUTE,
-					PaleIntercessionRules.COOLDOWN_TICKS,
+					PaleIntercessionRules.COOLDOWN_TICKS, StillArtEnding.INTERCESSION,
 					(player, level, heldItem, pos, art) -> PaleIntercessionSummonService.summonOrRecall(player)));
 
 	public static StillArt getByName(String name) {

@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.init.StillArtInit;
+import com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.unstained.StillArtCooldownPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
@@ -20,7 +21,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class StillArt {
-	public static final StillArt BLANK = new StillArt("no_selected", EnumClarityStage.AWAKENED, 0, StillArtAction.NOOP);
+	public static final StillArt BLANK = new StillArt("no_selected", EnumClarityStage.AWAKENED, 0, StillArtEnding.STILLNESS, StillArtAction.NOOP);
 
 	private static final double TICKS_PER_SECOND = 20.0;
 	private static final Map<UUID, Long> UNIVERSAL_COOLDOWN_MAP = new ConcurrentHashMap<>();
@@ -32,12 +33,14 @@ public class StillArt {
 	private final String name;
 	private final EnumClarityStage requiredStage;
 	private final int cooldownTicks;
+	private final StillArtEnding ending;
 	private final StillArtAction action;
 
-	public StillArt(String name, EnumClarityStage requiredStage, int cooldownTicks, StillArtAction action) {
+	public StillArt(String name, EnumClarityStage requiredStage, int cooldownTicks, StillArtEnding ending, StillArtAction action) {
 		this.name = name;
 		this.requiredStage = requiredStage;
 		this.cooldownTicks = cooldownTicks;
+		this.ending = ending;
 		this.action = action;
 	}
 
@@ -55,6 +58,11 @@ public class StillArt {
 
 	public int getCooldownTicks() {
 		return cooldownTicks;
+	}
+
+	/** Presentation only: the closing gesture of the cast. Never affects gameplay or saved data. */
+	public StillArtEnding getEnding() {
+		return ending;
 	}
 
 	public static StillArt byName(String name) {
@@ -101,7 +109,7 @@ public class StillArt {
 		if (!(player instanceof ServerPlayer serverPlayer) || !(level instanceof ServerLevel serverLevel)) {
 			return;
 		}
-        if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.isParalyzed(player)) return;
+        if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(player)) return;
 		if (this == BLANK || "no_selected".equals(name)) {
 			serverPlayer.displayClientMessage(Component.literal("No Still Art selected.")
 					.withStyle(ChatFormatting.GRAY), true);
@@ -131,6 +139,7 @@ public class StillArt {
 		if (action.cast(serverPlayer, serverLevel, heldItem, position, this)) {
 			startCooldown(serverPlayer);
 			PacketHandler.sendToPlayer(serverPlayer, new StillArtCooldownPacket(cooldownTicks));
+			CastingAnimationManager.releaseStillArt(serverPlayer, this);
 		}
 	}
 }

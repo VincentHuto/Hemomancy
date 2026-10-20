@@ -69,7 +69,7 @@ public class ShaderInit {
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "BasinSeed", "SwirlIntensity");
 
 	public static ShaderHolder BLOOD_POOL = new ShaderHolder(Hemomancy.rloc("world/blood_pool"),
-			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "PoolSeed");
+			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "PoolSeed", "Ragged");
 
 	/** Annetta's spilled infected blood: the blood pool's surface with ichor veins through it and a ragged splash edge. */
 	public static ShaderHolder INFECTED_POOL = new ShaderHolder(Hemomancy.rloc("world/infected_pool"),
@@ -129,6 +129,17 @@ public class ShaderInit {
     public static ShaderHolder MANIPULATION_CRUOR = thermal("cruor");
     public static ShaderHolder MANIPULATION_SKIN = new ShaderHolder(Hemomancy.rloc("world/manipulation_skin"),
             DefaultVertexFormat.NEW_ENTITY, "ColorModulator");
+
+    /** Cast outpouring veins on the player model; the body atlas rides Sampler0. */
+    public static ShaderHolder CAST_VEINS = new ShaderHolder(Hemomancy.rloc("entity/cast_veins"),
+            DefaultVertexFormat.NEW_ENTITY, "HemoTime", "ColorModulator");
+
+    /** Depth-reading full-screen passes: Lux outpouring light and Tenebris outpouring darkness. */
+    public static ShaderHolder CAST_LUMEN = new ShaderHolder(Hemomancy.rloc("screen/cast_lumen"),
+            DefaultVertexFormat.POSITION_TEX, "HemoTime", "InvProj", "InvView", "LightsA", "LightsB", "Count");
+    public static ShaderHolder CAST_UMBRA = new ShaderHolder(Hemomancy.rloc("screen/cast_umbra"),
+            DefaultVertexFormat.POSITION_TEX, "HemoTime", "InvProj", "InvView", "LightsA", "LightsB", "Count", "SelfShade",
+            "ShadeInfo");
 
     private static ShaderHolder thermal(String material) {
         return new ShaderHolder(Hemomancy.rloc("world/manipulation_" + material),
@@ -238,6 +249,9 @@ public class ShaderInit {
         registerShader(event, MANIPULATION_GLASS.createInstance(provider));
         registerShader(event, MANIPULATION_CRUOR.createInstance(provider));
         registerShader(event, MANIPULATION_SKIN.createInstance(provider));
+        registerShader(event, CAST_VEINS.createInstance(provider));
+        registerShader(event, CAST_LUMEN.createInstance(provider));
+        registerShader(event, CAST_UMBRA.createInstance(provider));
         registerShader(event, SILENT_ARCHON_STORM_CLOUD.createInstance(provider));
         registerShader(event, QLIPHOTH_BLACK_HOLE.createInstance(provider));
         registerShader(event, APOTHEOS_FLOOR_FUNNEL.createInstance(provider));

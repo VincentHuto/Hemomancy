@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.event;
 
+import com.vincenthuto.hemomancy.client.render.outpouring.CastVeinsLayer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.armor.*;
 import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel.EnumBloodLustMaskTypes;
@@ -388,6 +389,7 @@ public class LayerEvents {
 			livingRenderer.addLayer(new CardinalRiteStaffPlantingLayer(livingRenderer));
             livingRenderer.addLayer(new BloodVialInjectionLayer(livingRenderer));
             livingRenderer.addLayer(new com.vincenthuto.hemomancy.client.render.layer.player.CastingAnimationLayer(livingRenderer));
+            livingRenderer.addLayer(new CastVeinsLayer(livingRenderer));
             livingRenderer.addLayer(new com.vincenthuto.hemomancy.client.render.layer.player.HematicMicroscopeLayer(livingRenderer));
 			livingRenderer.addLayer(new SilentArchonArmorOverlayLayer(livingRenderer));
 			livingRenderer.addLayer(new EdaciousBloodLustWingLayer(livingRenderer));

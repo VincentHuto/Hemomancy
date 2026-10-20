@@ -120,6 +120,14 @@
       "values": [
         0.0
       ]
+    },
+    {
+      "name": "Ragged",
+      "type": "float",
+      "count": 1,
+      "values": [
+        0.0
+      ]
     }
   ]
 }

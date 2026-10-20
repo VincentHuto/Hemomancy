@@ -129,7 +129,7 @@ public final class CastingAnimationGameTests {
     @GameTest(template="empty") public static void allSchoolRankPhasePacketsRoundTrip(GameTestHelper h) {
         var id=UUID.randomUUID();
         for(var school:EnumBloodTendency.values())for(var rank:EnumManipulationRank.values())for(var phase:CastPhase.values()) {
-            var packet=new CastingAnimationPacket(42,id,"blood_shot",73,school,EnumBloodTendency.MORTEM,rank,
+            var packet=CastingAnimationPacket.harbinger(42,id,"blood_shot",73,school,EnumBloodTendency.MORTEM,rank,
                     CastPurpose.AREA,CastStyle.SCHOOL,phase,12345,12350,5,40,net.minecraft.world.InteractionHand.OFF_HAND);
             var buffer=new net.minecraft.network.FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
             try {

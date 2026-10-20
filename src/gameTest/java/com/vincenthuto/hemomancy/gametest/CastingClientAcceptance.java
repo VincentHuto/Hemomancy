@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.gametest;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
+import com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArtEnding;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.*;
 import com.vincenthuto.hemomancy.common.manipulation.animation.*;
@@ -28,7 +30,7 @@ public final class CastingClientAcceptance {
     @SubscribeEvent public static void tick(ServerTickEvent.Post event) {
         if(!Boolean.getBoolean("hemomancy.castingReview"))return;
         var server=event.getServer();
-        if(++waiting>12000) { server.halt(false);return; }
+        if(++waiting>24000) { server.halt(false);return; }
         var caster=server.getPlayerList().getPlayers().stream().filter(p -> p.getName().getString().startsWith("CastCaster")).findFirst().orElse(null);
         var observer=server.getPlayerList().getPlayerByName("CastObserver");
         if(caster==null || observer==null)return;
@@ -37,7 +39,7 @@ public final class CastingClientAcceptance {
             var level=caster.serverLevel();
             level.getGameRules().getRule(GameRules.RULE_DAYLIGHT).set(false,server);
             level.getGameRules().getRule(GameRules.RULE_DOMOBSPAWNING).set(false,server);
-            level.setDayTime(6000);level.setWeatherParameters(100000,0,false,false);
+            level.setDayTime(Boolean.getBoolean("hemomancy.castingReviewNight")?18000:6000);level.setWeatherParameters(100000,0,false,false);
             for(int x=-9;x<=9;x++)for(int z=-9;z<=9;z++) {
                 var floor=new BlockPos(x,99,z);
                 level.setBlockAndUpdate(floor,Blocks.SMOOTH_QUARTZ.defaultBlockState());
@@ -55,17 +57,21 @@ public final class CastingClientAcceptance {
         }
         int age=ticks++;
         if(age<80) { if(age==60)shot(server,"baseline",caster); return; }
-        int scene=(age-80)/40+(Boolean.getBoolean("hemomancy.castingReviewIntegrationOnly")?46:0),frame=(age-80)%40;
+        int raw=(age-80)/40+(Boolean.getBoolean("hemomancy.castingReviewIntegrationOnly")?46+BESPOKE_SCENES:0),frame=(age-80)%40;
+        if(raw>=40 && raw<40+BESPOKE_SCENES) { bespoke(server,caster,raw-40,frame);return; }
+        // Older scenes keep their original numbers (and therefore shot names) after the bespoke block.
+        int scene=raw<40?raw:raw-BESPOKE_SCENES;
         if(scene<40) {
             var school=EnumBloodTendency.values()[scene/5];
             var rank=EnumManipulationRank.values()[scene%5];
             long now=caster.level().getGameTime();
             if(frame==0)started=now;
-            if(frame==0 || frame==16)send(caster,new CastingAnimationPacket(caster.getId(),caster.getUUID(),"review",
+            // The client re-resolves a track only when the manipulation id changes, so every profile needs its own id.
+            if(frame==0 || frame==16)send(caster,CastingAnimationPacket.harbinger(caster.getId(),caster.getUUID(),"review-"+scene,
                     -1000+scene,school,null,rank,CastPurpose.AREA,CastStyle.SCHOOL,frame==0?CastPhase.OPENING:CastPhase.HOLD,started,now,20,40,InteractionHand.MAIN_HAND));
             if(frame==10)shot(server,school.name().toLowerCase()+"-"+rank.name().toLowerCase()+"-hold",caster);
             if(frame==20)shot(server,school.name().toLowerCase()+"-"+rank.name().toLowerCase()+"-held",caster);
-            if(frame==22)send(caster,new CastingAnimationPacket(caster.getId(),caster.getUUID(),"review",-1000+scene,
+            if(frame==22)send(caster,CastingAnimationPacket.harbinger(caster.getId(),caster.getUUID(),"review-"+scene,-1000+scene,
                     school,null,rank,CastPurpose.AREA,CastStyle.SCHOOL,CastPhase.RELEASE,now,now,40,40,InteractionHand.MAIN_HAND));
             if(frame==25 && rank==EnumManipulationRank.SUMMA)shot(server,school.name().toLowerCase()+"-release",caster);
             return;
@@ -94,7 +100,7 @@ public final class CastingClientAcceptance {
             var school=EnumBloodTendency.FERRIC;
             for(var p:server.getPlayerList().getPlayers()) {
                 long now=p.level().getGameTime();
-                if(frame==0 || frame==16)send(p,new CastingAnimationPacket(p.getId(),p.getUUID(),"review-pair",
+                if(frame==0 || frame==16)send(p,CastingAnimationPacket.harbinger(p.getId(),p.getUUID(),"review-pair",
                         20000+scene,school,null,EnumManipulationRank.PERFECTUS,CastPurpose.AREA,CastStyle.SCHOOL,
                         CastPhase.HOLD,now-frame,now,20,40,InteractionHand.MAIN_HAND));
             }
@@ -109,6 +115,8 @@ public final class CastingClientAcceptance {
             };
             if(frame==0) {
                 caster.stopUsingItem();
+                // Walking carries the caster off the 19-block stage within two scenes; start every later scene on the mark.
+                if(scene>50)caster.teleportTo(caster.serverLevel(),.5,100,.5,0,0);
                 if(scene==46) {
                     caster.setItemSlot(net.minecraft.world.entity.EquipmentSlot.CHEST,new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.DIAMOND_CHESTPLATE));
                     caster.setItemSlot(net.minecraft.world.entity.EquipmentSlot.HEAD,new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.DIAMOND_HELMET));
@@ -126,15 +134,70 @@ public final class CastingClientAcceptance {
             }
             long now=caster.level().getGameTime();
             var phase=scene==52?CastPhase.CANCEL:scene==53?CastPhase.RELEASE:CastPhase.HOLD;
-            if(frame==0 || frame==16 && phase.sustained())send(caster,new CastingAnimationPacket(caster.getId(),caster.getUUID(),"review-integration",
+            if(frame==0 || frame==16 && phase.sustained())send(caster,CastingAnimationPacket.harbinger(caster.getId(),caster.getUUID(),"review-integration",
                     30000+scene,EnumBloodTendency.LUX,null,EnumManipulationRank.SUMMA,CastPurpose.AREA,CastStyle.SCHOOL,
                     phase,now-frame,now,20,40,InteractionHand.MAIN_HAND));
             if(frame==(scene==52?5:20))shot(server,name,caster);
             return;
         }
         for(var p:server.getPlayerList().getPlayers())p.sendSystemMessage(Component.literal("CAST_REVIEW_DONE"));
-        Hemomancy.LOGGER.info("CAST_REVIEW complete: 40 profiles, release frames, late tracking, cleanup and simultaneous casters");
+        Hemomancy.LOGGER.info("CAST_REVIEW complete: 40 profiles, {} bespoke styles, {} Still Art stages, release frames, late tracking, cleanup and simultaneous casters",
+                STYLES.length,EnumClarityStage.values().length);
         server.halt(false);
+    }
+
+    /** Every non-school style, each played through the registered manipulation that owns it. */
+    private static final CastStyle[] STYLES=java.util.Arrays.stream(CastStyle.values()).filter(s -> s!=CastStyle.SCHOOL).toArray(CastStyle[]::new);
+    private static final String[] STYLE_IDS={"ironhearted","umbral_step","umbral_reversal","summon_avatar_complete","conjure_staff",
+            "crimson_tithe","unclosing_eye","bloom_of_rot","endless_hour",
+            "crimson_coronation","synaptic_storm","white_verdict","funeral_bell","absolute_stillness","lodestone_collapse","eclipse_well","phoenix_debt",
+            "hematic_riposte","blood_rush","deadly_gaze","sanguine_marionette",
+            "lignum_mortis","vascular_dowsing","furnace_veins","living_circuit","iron_choir","carrion_communion","penumbral_drift","radiant_wake",
+            "blackhearted","sovereign_instinct"};
+    private static final StillArtEnding[] STILL_ENDINGS={StillArtEnding.REBUKE,StillArtEnding.HUSH,StillArtEnding.SIGHT,StillArtEnding.SHEAR,StillArtEnding.INTERCESSION};
+    private static final String[] STILL_ARTS={"silver_rebuke","lethean_mute","pale_diagnosis","memory_shear","pale_intercession"};
+    private static final int BESPOKE_SCENES=STYLE_IDS.length+STILL_ENDINGS.length;
+
+    // Sequences stay above the school sweep (-1000..-961) and below the integration scenes: the client guard drops lower sequences per player.
+    private static void bespoke(net.minecraft.server.MinecraftServer server,ServerPlayer caster,int index,int frame) {
+        long now=caster.level().getGameTime();
+        if(index>=STYLES.length) {
+            int i=index-STYLES.length;
+            var stage=EnumClarityStage.values()[i];
+            String name="still-"+stage.name().toLowerCase();
+            if(frame==0)send(caster,CastingAnimationPacket.stillArt(caster.getId(),caster.getUUID(),STILL_ARTS[i],-900+i,
+                    stage,STILL_ENDINGS[i],CastPhase.RELEASE,now,now,InteractionHand.MAIN_HAND));
+            if(frame==4)shot(server,name+"-release",caster);
+            if(frame==16)shot(server,name+"-settle",caster);
+            return;
+        }
+        var style=STYLES[index];
+        String id=STYLE_IDS[index];
+        var m=ManipulationInit.getByName(id);
+        if(m==null)throw new IllegalStateException("CAST_REVIEW style manipulation missing: "+id);
+        if(com.vincenthuto.hemomancy.common.manipulation.animation.CastPresentation.forId(id).style()!=style)
+            throw new IllegalStateException("CAST_REVIEW "+id+" does not resolve "+style);
+        var school=m.getTend();var rank=m.getRank();
+        String name="style-"+style.name().toLowerCase();
+        long sequence=-950+index;
+        if(m.getType()==EnumManipulationType.PASSIVE) {
+            if(frame==0)send(caster,CastingAnimationPacket.harbinger(caster.getId(),caster.getUUID(),id,sequence,school,null,rank,
+                    CastPurpose.AREA,style,CastPhase.RELEASE,now,now,0,0,InteractionHand.MAIN_HAND));
+            if(frame==20)send(caster,CastingAnimationPacket.harbinger(caster.getId(),caster.getUUID(),id,sequence,school,null,rank,
+                    CastPurpose.AREA,style,CastPhase.CANCEL,now,now,0,0,InteractionHand.MAIN_HAND));
+            if(frame==8)shot(server,name+"-on",caster);
+            if(frame==27)shot(server,name+"-off",caster);
+            return;
+        }
+        boolean charged=m.getType()==EnumManipulationType.CHARGED;
+        if(frame==0)started=now;
+        if(frame==0 || frame==16)send(caster,CastingAnimationPacket.harbinger(caster.getId(),caster.getUUID(),id,sequence,school,null,rank,
+                CastPurpose.AREA,style,frame==0?CastPhase.OPENING:CastPhase.HOLD,started,now,charged?(frame==0?20:40):0,charged?40:0,InteractionHand.MAIN_HAND));
+        if(frame==10)shot(server,name+"-hold",caster);
+        if(frame==20)shot(server,name+"-held",caster);
+        if(frame==22)send(caster,CastingAnimationPacket.harbinger(caster.getId(),caster.getUUID(),id,sequence,school,null,rank,
+                CastPurpose.AREA,style,CastPhase.RELEASE,now,now,charged?40:0,charged?40:0,InteractionHand.MAIN_HAND));
+        if(frame==25)shot(server,name+"-release",caster);
     }
     private static void ready(ServerPlayer p,BloodManipulation m) {
         var volume=HemoCapabilityAccess.requireBloodVolume(p);volume.setActive(true);volume.fill(5000);

@@ -276,6 +276,17 @@ neoForge {
             programArguments.addAll '--username', 'VesperReview', '--width', '1280', '--height', '720'
         }
 
+        outpouringReviewClient {
+            client()
+            gameDirectory = project.file('build/outpouring-client-review')
+            additionalRuntimeClasspathConfiguration.extendsFrom(clientLocalRuntime)
+            jvmArguments.addAll("-Xms2G", "-Xmx6G")
+            systemProperty 'hemomancy.gameplayDriver', 'true'
+            systemProperty 'hemomancy.outpouringReview', 'true'
+            systemProperty 'hemomancy.outpouringReview.only', providers.gradleProperty('outpouringReviewOnly').getOrElse('')
+            programArguments.addAll '--username', 'OutpouringReview', '--width', '1280', '--height', '720'
+        }
+
         brazierReviewClient {
             client()
             gameDirectory = project.file('build/brazier-client-review')

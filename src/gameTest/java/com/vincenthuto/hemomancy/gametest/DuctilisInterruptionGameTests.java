@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis;
 import com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArt;
+import com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArtEnding;
 import com.vincenthuto.hemomancy.common.network.ManipulationInterruptedPacket;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -39,7 +40,7 @@ public final class DuctilisInterruptionGameTests {
             h.assertTrue(Paralysis.apply(p,20),"Passive fixture paralysis rejected");
             h.assertTrue(phoenix.tryPerformPassiveTrigger(p),"Paralysis disabled an automatic Phoenix Debt trigger");
             int[] casts={0};
-            var art=new StillArt("ductilis_action_fixture",EnumClarityStage.AWAKENED,20,(player,level,item,pos,self)->{casts[0]++;return true;});
+            var art=new StillArt("ductilis_action_fixture",EnumClarityStage.AWAKENED,20,StillArtEnding.STILLNESS,(player,level,item,pos,self)->{casts[0]++;return true;});
             HemoCapabilityAccess.getKnownStillArts(p).orElseThrow().learnArt(art);
             var clarity=HemoCapabilityAccess.getUnstainedProgress(p).orElseThrow();clarity.setClarityUnlocked(true);clarity.setClarity(100);
             art.performAction(p,h.getLevel(),ItemStack.EMPTY,p.blockPosition());

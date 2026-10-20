@@ -561,12 +561,18 @@ public final class HemoRenderTypes {
 	}
 
 	public static RenderType bloodPool(float gameTime, float poolSeed) {
+		return bloodPool(gameTime, poolSeed, 0F);
+	}
+
+	/** A pool of loose blood on the ground: {@code ragged} above 0 lobes its edge instead of a vessel's round rim. */
+	public static RenderType bloodPool(float gameTime, float poolSeed, float ragged) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
 				"blood_pool_uniforms",
 				() -> {
 					ShaderInstance shader = ShaderInit.BLOOD_POOL.getInstance().get();
 					setUniform(shader, "HemoTime", gameTime);
 					setUniform(shader, "PoolSeed", poolSeed);
+					setUniform(shader, "Ragged", ragged);
 				},
 				() -> {
 					ShaderInstance shader = ShaderInit.BLOOD_POOL.getInstance().get();
