@@ -9,6 +9,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * Emits the outward faces of a set of blocks as one connected shell, with
@@ -25,6 +26,20 @@ final class BlockShellFaces {
 	static void emit(VertexConsumer consumer, PoseStack.Pose pose, Set<BlockPos> positions, Vec3 camera, int color) {
 		for (Direction direction : Direction.values()) {
 			emitExposedFaces(consumer, pose, direction, positions, camera, color);
+		}
+	}
+
+	/** As {@link #emit}, but also skips faces the world covers, where {@code covered} holds for the block beyond. */
+	static void emitVisible(VertexConsumer consumer, PoseStack.Pose pose, Set<BlockPos> positions,
+			Predicate<BlockPos> covered, Vec3 camera, int color) {
+		for (Direction direction : Direction.values()) {
+			for (BlockPos pos : positions) {
+				BlockPos beyond = pos.relative(direction);
+				if (positions.contains(beyond) || covered.test(beyond)) {
+					continue;
+				}
+				emitUnitFace(consumer, pose, direction, positions, pos, camera, color);
+			}
 		}
 	}
 

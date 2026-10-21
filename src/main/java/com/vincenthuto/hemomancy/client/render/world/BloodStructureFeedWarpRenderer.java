@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.client.data.ActiveBloodStructureFeedClientData;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.event.BloodFeedStyle;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
@@ -83,12 +84,22 @@ public final class BloodStructureFeedWarpRenderer {
 		BlockPos block = feed.getPositions().getFirst();
 		Vec3 origin = feed.getOrigin(partialTick);
 		Direction struck = struckFace(block, origin);
+		// The sore and the first of the veins bleed over onto the solid blocks around, so a strike near an edge
+		// is not cut off at the block's border.
+		ClientLevel level = Minecraft.getInstance().level;
+		Set<BlockPos> stained = new HashSet<>(positions);
+		for (BlockPos near : BlockPos.betweenClosed(block.offset(-1, -1, -1), block.offset(1, 1, 1))) {
+			if (level.getBlockState(near).isSolidRender(level, near)) {
+				stained.add(near.immutable());
+			}
+		}
 		RenderType veins = HemoRenderTypes.bloodInfusionVeins(time, feed.getProgress(), seed,
 				feed.getFinalizeProgress(), feed.getCrackShare(),
 				(float) (origin.x - camera.x), (float) (origin.y - camera.y), (float) (origin.z - camera.z),
 				struck.getStepX(), struck.getStepY(), struck.getStepZ(),
 				(float) (block.getX() - camera.x), (float) (block.getY() - camera.y), (float) (block.getZ() - camera.z));
-		BlockShellFaces.emit(buffer.getBuffer(veins), poseStack.last(), positions, camera, color);
+		BlockShellFaces.emitVisible(buffer.getBuffer(veins), poseStack.last(), stained,
+				beyond -> level.getBlockState(beyond).isSolidRender(level, beyond), camera, color);
 		buffer.endBatch(veins);
 	}
 

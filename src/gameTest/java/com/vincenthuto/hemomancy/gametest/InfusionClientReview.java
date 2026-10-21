@@ -34,7 +34,9 @@ public final class InfusionClientReview {
             // The middle block's strike point sweeps across its face; a second look shows the veins following it.
             {0, 1.2, -1.9, .5, .5, .5, 0},
             // The still block again, later, so the sore's writhing edge can be compared with row-3.
-            {-2, 1.2, -1.9, -1.5, .5, .5, 0}};
+            {-2, 1.2, -1.9, -1.5, .5, .5, 0},
+            // A block set into the floor, struck right by its edge: the sore must carry over onto its neighbour.
+            {-.5, 2.2, -4.4, -.4, 0, -2.5, 0}};
     /** Ticks into the completion linger at which the finale is captured. */
     private static final int[] FINALE_FRAMES = {3, 9, 15, 21, 26, 29, 33, 38, 44, 50};
     private static int ticks;
@@ -67,6 +69,7 @@ public final class InfusionClientReview {
                             : Blocks.AIR.defaultBlockState(), 2);
                 for (int i = 0; i < ROW_PROGRESS.length; i++)
                     level.setBlock(rowBlock(base, i), Blocks.STONE.defaultBlockState(), 3);
+                level.setBlock(floorBlock(base), Blocks.STONE.defaultBlockState(), 3);
                 level.setBlock(finaleBlock(base), Blocks.STONE.defaultBlockState(), 3);
                 row = base;
                 Hemomancy.LOGGER.info("INFUSION_REVIEW placed row at {}", base);
@@ -110,6 +113,12 @@ public final class InfusionClientReview {
             feed(pos, new Vec3(pos.getX() + 0.5D + sweep, pos.getY() + 0.55D - sweep * 0.5D, pos.getZ()),
                     ROW_PROGRESS[i], 40);
         }
+        BlockPos floor = floorBlock(row);
+        feed(floor, new Vec3(floor.getX() + 0.93D, floor.getY() + 1.0D, floor.getZ() + 0.45D), 0.45F, 40);
+    }
+
+    private static BlockPos floorBlock(BlockPos base) {
+        return base.offset(-1, -1, -3);
     }
 
     private static void feed(BlockPos pos, float progress, int visibleTicks) {

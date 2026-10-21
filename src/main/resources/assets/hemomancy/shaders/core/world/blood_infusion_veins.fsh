@@ -107,7 +107,8 @@ void main() {
 
     // The strike is a sore: a lobed, swollen patch that throbs with the heartbeat and grows as the block takes
     // blood. Its shape is laid out from the strike point, so it keeps its shape as the aim drags it across the face.
-    vec3 local = v * 16.0;
+    // Turned off the block's axes so the noise never lies flat on a lattice plane (that reads as blocky combs).
+    vec3 local = mat3(0.80, 0.36, -0.48, -0.60, 0.48, -0.64, 0.0, 0.80, 0.60) * (v * 16.0) + vec3(0.37, 0.61, 0.83);
     float throb = 0.5 + 0.5 * sin(-HemoTime * 0.9);
     float soreRadius = (1.8 + clamp(Progress, 0.0, 1.0) * 2.6) * (1.0 + throb * 0.06);
     // Its edge writhes: the lobes churn through a slowly drifting, self-warping field, and ripples crawl round the
@@ -166,11 +167,17 @@ void main() {
             * (1.0 - smoothstep(0.3, 0.62, sore)) * (1.0 - darken);
     wound = mix(wound, vec3(0.95, 0.42, 0.38), gloss * 0.6);
 
+    // On the blocks around the infused one only the sore shows whole; the veins and bruising bleed a few pixels
+    // over the border and fade.
+    vec3 fromCentre = abs(surfacePos - (VeinAnchor + vec3(0.5)));
+    float outside = length(max(fromCentre - vec3(0.5), vec3(0.0))) * 16.0;
+    float spill = 1.0 - smoothstep(2.0, 7.0, outside);
+
     vec3 rgb = vec3(0.0);
     float alpha = 0.0;
-    layer(rgb, alpha, vec3(0.14, 0.0, 0.03), wall * (0.28 + darken * 0.2));
-    layer(rgb, alpha, bruise, inflamed * (0.25 + bruiseMottle * 0.3));
-    layer(rgb, alpha, vesselColour * glow, vein * 0.95 * (1.0 - thin * 0.35));
+    layer(rgb, alpha, vec3(0.14, 0.0, 0.03), wall * (0.28 + darken * 0.2) * spill);
+    layer(rgb, alpha, bruise, inflamed * (0.25 + bruiseMottle * 0.3) * mix(spill, 1.0, 0.5));
+    layer(rgb, alpha, vesselColour * glow, vein * 0.95 * (1.0 - thin * 0.35) * spill);
     layer(rgb, alpha, swollen, rim * 0.8);
     layer(rgb, alpha, wound, raw * 0.93);
     // The block breaks at the end of the strain; nothing of these veins outlives it.

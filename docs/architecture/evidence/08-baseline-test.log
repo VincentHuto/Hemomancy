@@ -1,0 +1,115 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.8/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :createMinecraftArtifacts UP-TO-DATE
+> Task :HutosLib:createMinecraftArtifacts UP-TO-DATE
+> Task :HutosLib:compileJava UP-TO-DATE
+> Task :HutosLib:generateModMetadata UP-TO-DATE
+> Task :HutosLib:processResources UP-TO-DATE
+> Task :HutosLib:classes UP-TO-DATE
+> Task :HutosLib:jarJar NO-SOURCE
+> Task :HutosLib:jar UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :compileJava UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :compileTestJava UP-TO-DATE
+> Task :processTestResources UP-TO-DATE
+> Task :testClasses UP-TO-DATE
+
+> Task :verifyGameTestSuites
+Verified 33 GameTest suites. Combined gate: crimson_troupe_validation, unstained_zone_validation, minecraft, mnemonic_whale_validation, book_kit_validation, pelagic_ecology_validation, owner_snapshot_validation, recipe_codec_validation, gore_wound_harpoon_validation, distillation_validation, rite_space_validation, osteophage_validation, combat_order_validation, ice_fish_validation, somatic_loom_validation, hemomancy, item_inventory_validation, mob_drop_validation, station_upgrade_validation, blood_injection_validation, registration_validation
+Opt-in: pelagic_worldgen_validation - Requires a fresh seeded noise Overworld.
+Opt-in: excoriated_spawn_validation - Existing focused suite remains opt-in; this rollout adds consolidation coverage.
+Opt-in: clinical_validation - Existing focused suite remains opt-in; this rollout adds consolidation coverage.
+Opt-in: choir_keeper_validation - Existing focused suite remains opt-in; this rollout adds consolidation coverage.
+Opt-in: scriptorium_validation - Existing focused suite remains opt-in; this rollout adds consolidation coverage.
+Opt-in: advanced_brewing_validation - Existing focused suite remains opt-in; this rollout adds consolidation coverage.
+Opt-in: antecedent_validation - Existing focused suite remains opt-in; this rollout adds consolidation coverage.
+Opt-in: succession_validation - Existing focused suite remains opt-in; this rollout adds consolidation coverage.
+Opt-in: naeglerophaeon_validation - Existing focused suite remains opt-in; this rollout adds consolidation coverage.
+Opt-in: casting_animation_validation - Existing focused suite remains opt-in; this rollout adds consolidation coverage.
+Opt-in: living_weapon_validation - Restores the previously external focused launcher; gate scope stays unchanged.
+Opt-in: fungal_gardens_worldgen_validation - Renders the Fungal Gardens terrain map from a seeded dimension; review output by eye.
+Opt-in: phlegethontic_validation - Requires a fresh seeded world and validation mixins.
+
+> Task :test
+
+HematicArmatureModelSourceTest > everyRenderedSectionAndPartIsGeneratedAndRegistered() FAILED
+    org.opentest4j.AssertionFailedError at HematicArmatureModelSourceTest.java:43
+
+HematicArmatureModelSourceTest > stageBodiesAndBlockstateComeFromTheGenerator() FAILED
+    org.opentest4j.AssertionFailedError at HematicArmatureModelSourceTest.java:52
+
+VialCentrifugeModelSourceTest > everyRenderedPartIsGeneratedAndRegistered() FAILED
+    org.opentest4j.AssertionFailedError at VialCentrifugeModelSourceTest.java:42
+
+VialCentrifugeModelSourceTest > stageBodiesAndBlockstateComeFromTheGenerator() FAILED
+    org.opentest4j.AssertionFailedError at VialCentrifugeModelSourceTest.java:52
+
+MnemonicReliquaryModelSourceTest > bodyLidAndRelicComeFromTheGenerator() FAILED
+    org.opentest4j.AssertionFailedError at MnemonicReliquaryModelSourceTest.java:38
+
+CardinalRitePlantedStaffModelTest > everyPlantedStaffAppearanceOmitsItsFistElements() FAILED
+    org.opentest4j.AssertionFailedError at CardinalRitePlantedStaffModelTest.java:52
+
+PhlegethonticBombardierResourceTest > naturalSpawnIsBasinOnlyAndLootIsExplicitlyEmpty() FAILED
+    org.opentest4j.AssertionFailedError at PhlegethonticBombardierResourceTest.java:30
+
+BloodProfileMigrationTest > preservesEveryShippedMembership() FAILED
+    org.opentest4j.AssertionFailedError at BloodProfileMigrationTest.java:42
+
+LivingSickleFeatureSourceTest > allHeldSickleViewsUseTheSharedHandGripRotation() FAILED
+    org.opentest4j.AssertionFailedError at LivingSickleFeatureSourceTest.java:112
+
+ClientModelTextureCoverageTest > inventoryAndCrossbowModelsResolveTheirLocalTextures() FAILED
+    org.opentest4j.AssertionFailedError at ClientModelTextureCoverageTest.java:70
+
+EnglishLocalizationEncodingTest > playerFacingTextDoesNotContainMojibake() FAILED
+    org.opentest4j.AssertionFailedError at EnglishLocalizationEncodingTest.java:38
+
+GameTestHarnessSourceContractTest > isolatedJourneyClientRunAndOperatorGuideRemainAvailable() FAILED
+    java.nio.charset.MalformedInputException at GameTestHarnessSourceContractTest.java:443
+
+GameTestHarnessSourceContractTest > devOnlyHarnessProvidesCommandsAndEarlyHarbingerScenarios() FAILED
+    java.nio.charset.MalformedInputException at GameTestHarnessSourceContractTest.java:443
+
+LegacyMainTestAdapterTest > legacyMainTests() > com.vincenthuto.hemomancy.common.block.ModelFirstTileRendererResourceTest FAILED
+    java.lang.AssertionError at LegacyMainTestAdapterTest.java:70
+
+LegacyMainTestAdapterTest > legacyMainTests() > com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingLumenlaceRenameResourceTest FAILED
+    java.lang.AssertionError at LegacyMainTestAdapterTest.java:70
+
+LegacyMainTestAdapterTest > legacyMainTests() > com.vincenthuto.hemomancy.common.item.unstained.VestmentOfTheFinalMoltResourceTest FAILED
+    java.lang.AssertionError at LegacyMainTestAdapterTest.java:70
+
+LegacyMainTestAdapterTest > legacyMainTests() > com.vincenthuto.hemomancy.common.recipe.ArmorPreparationResourceTest FAILED
+    java.lang.AssertionError at LegacyMainTestAdapterTest.java:70
+
+LegacyMainTestAdapterTest > legacyMainTests() > com.vincenthuto.hemomancy.common.resource.UtilityPolishResourceTest FAILED
+    java.lang.AssertionError at LegacyMainTestAdapterTest.java:70
+
+LegacyMainTestAdapterTest > legacyMainTests() > com.vincenthuto.hemomancy.common.tile.LivingWeaponGraftRiteSourceTest FAILED
+    java.lang.AssertionError at LegacyMainTestAdapterTest.java:70
+
+LegacyMainTestSuiteContractTest > discoversEveryExistingLegacyMainTest() FAILED
+    org.opentest4j.AssertionFailedError at LegacyMainTestSuiteContractTest.java:10
+
+3908 tests completed, 20 failed
+
+> Task :test FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':test'.
+> There were failing tests. See the report at: file:///C:/Users/Vince/Desktop/My%20MC%20Mods/NeoForge/1.21.1/Hemomancy/build/reports/tests/test/index.html
+
+* Try:
+> Run with --scan to get full insights.
+
+BUILD FAILED in 50s
+12 actionable tasks: 2 executed, 10 up-to-date
+
+real	0m51.093s
+user	0m0.092s
+sys	0m0.182s
+EXIT=1
