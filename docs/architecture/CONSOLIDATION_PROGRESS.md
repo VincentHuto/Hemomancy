@@ -7,7 +7,7 @@ Every consolidation session reads this file first and updates it last, following
 
 | Step | Roadmap phase(s) | Status | Commit(s) | Date |
 |---|---|---|---|---|
-| 1 | Urgent defect fixes (F-1, F-2, F-3) | NOT STARTED | | |
+| 1 | Urgent defect fixes (F-1, F-2, F-3) | DONE | `025f2b18f` | 2026-10-21 |
 | 2 | Phase 0: green baseline and test infrastructure | NOT STARTED | | |
 | 3 | Phase 1: verified dead-code removal and packaging | NOT STARTED | | |
 | 4 | Phase 2: network hygiene | NOT STARTED | | |
@@ -54,9 +54,9 @@ under *Pending approvals*. IDs refer to [ARCHITECTURE_AUDIT](ARCHITECTURE_AUDIT.
 
 | ID | Item | Step | Decision | Notes |
 |---|---|---|---|---|
-| F-1 | Reject non-finite or non-positive blood donations | 1 | PENDING | Step 1 prompt approves |
-| F-2 | Register the 4 client-only bidirectional payloads as server-to-client only | 1 | PENDING | Step 1 prompt approves |
-| F-3 | Remove the client-class call from `WillEntity` | 1 | PENDING | Step 1 prompt approves |
+| F-1 | Reject non-finite or non-positive blood donations | 1 | APPROVED | Approved in the step 1 prompt; done in `025f2b18f` |
+| F-2 | Register the 4 client-only bidirectional payloads as server-to-client only | 1 | APPROVED | Approved in the step 1 prompt; done in `025f2b18f` |
+| F-3 | Remove the client-class call from `WillEntity` | 1 | APPROVED | Approved in the step 1 prompt; done in `025f2b18f` |
 | M-1 | Hand-edited models vs their generators (Armature, Centrifuge, Reliquary, loom) | 2 | PENDING | Regenerate / accept edits, per model |
 | M-2 | Five unregistered mobs (Abyssal Siphon, Cruor Fiend, Frozen Clot, Synapse Hound, Void Drinker) | 3 | PENDING | Delete / archive branch / keep |
 | M-3 | Other "REQUIRES VERIFICATION" dead code (audit section E) | 3 | PENDING | Per item |
@@ -100,7 +100,9 @@ them green.
 
 | Test | Added in step | Protects |
 |---|---|---|
-| | | |
+| `common/capability/player/harbinger/bloodvolume/LumpDonationValidationTest` | 1 | F-1: NaN, infinite, zero and negative lump donations give nothing |
+| `architecture/ClientBoundPayloadRegistrationTest` | 1 | F-2: the 4 client-handled payloads have exactly one registration, `playToClient` |
+| `architecture/WillEntityClientIsolationTest` | 1 | F-3: `WillEntity` has no `net.minecraft.client.` or `com.vincenthuto.hemomancy.client.` reference |
 
 ## Step entries
 
@@ -117,3 +119,35 @@ them green.
 - Not verified (needs in-game or visual check):
 - Handoff notes for the next step:
 -->
+
+### Step 1: Urgent defect fixes
+- **Status / date / commits:** DONE, 2026-10-21. Code in `025f2b18f`; this ledger update follows it in a second `consolidation(step-1):` commit.
+- **Test counts before → after:**
+  - `test`: 3,911 tests, 20 failed → 3,919 tests, 20 failed. The failure set is identical to the baseline list above.
+  - The 8 new tests all pass. The two updated main-style tests (`CellHandRenderingResourceTest`, `WillBloodUtilitySourceTest`) pass through `LegacyMainTestAdapterTest`.
+  - `runGameTestServer`: the dedicated server loads and runs all 999 GameTests. 3 fail. On the stashed pre-change tree the same run fails 4: the same 3 plus `carrioncannothealfromoverkill`, which is flaky. No new failure. See *Known issues* below.
+- **Metrics:**
+  - Main code: 25 lines added, 11 removed across 6 files. One method removed (`WillAbsorptionGlowParticleFactory.createPulseData`). Two methods added (`BloodVolumeTransferRules.donationAmount`, `HemoParticleData.willAbsorptionGlowPulse`).
+  - Tests: 3 new files (113 lines). 2 source-text tests repointed (4 lines added, 3 removed).
+  - Call sites migrated: 1 donation path, 4 registrations, 1 particle call. Remaining `createPulseData` callers: 0.
+  - Remaining legacy: the 4 payload handlers still live in `common/network` and call `Minecraft` / `LayerEvents` directly. Moving them to `client/**` is Phase 2 item 3 (step 4).
+- **Guardrails added:** `LumpDonationValidationTest`, `ClientBoundPayloadRegistrationTest`, `WillEntityClientIsolationTest` (see the table).
+- **Approved items implemented:** F-1, F-2, F-3.
+- **Pending approvals:** none new. Everything else in *Decisions* is untouched.
+- **Deviations from the roadmap:**
+  - F-2 changes only the registration direction. All four payloads are built and sent server-side through `PacketHandler.sendToPlayer`, so their handlers never run on a server and moving them was not needed. Step 4 moves them into `client/**` with the other client handlers.
+  - The new guardrails read source text directly because the shared `SourceAssertions` helper arrives in step 2. Step 2 should switch them to it.
+  - `alphaCheck` was not run as one task. It depends on `test` and `runGameTestServer`, which both fail on the baseline, so it cannot go green before step 2. Its three parts were checked one by one:
+    - `test`: as above.
+    - GameTests: as above. Neither log has a Hemomancy `/ERROR]` line, which is the resource-log rule.
+    - `verifyPackagedClientResources`: fails on 18 paths under `textures/item/old/sanguine formation/` (space in the folder name, from `08eea4acd`). That predates this step and no resources were touched.
+- **Not verified (needs in-game or visual check):**
+  - The F-3 crash path itself: completing a Will absorption on a dedicated server. The server now loads with `WillEntity` free of client references, but no GameTest completes an absorption.
+  - The Will absorption pulse visual. The particle data is byte-identical (same type, colour, `outwardPulse = true`), so no review client was run.
+- **Known issues (pre-existing, unrelated to this step):**
+  - GameTests failing on the baseline: `selectedloomrecipesurvivesstockandchargedreload`, `hemojellyfloatsatsurfaceandfeedsonsmallfish`, `blockitemexceptionskeeptheirowners`, and `carrioncannothealfromoverkill` (flaky).
+  - The `verifyPackagedClientResources` path failure above.
+- **Handoff notes for step 2:**
+  - Step 2 baseline: 3,919 JUnit tests with the 20 known failures. Also record the 4 GameTest failures and the packaged-resource failure above, since `alphaCheck` must be green at its end.
+  - The GameTest task is `runGameTestServer`. `AGENTS.md` and the step prompts say `gameTestServer`, which Gradle does not have.
+  - When step 2 adds `support/SourceAssertions`, move the two new architecture tests onto it.
