@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.client.particle.data.DaemonDiffuseGlowParticleD
 import com.vincenthuto.hemomancy.client.particle.data.HermitEdgeGlowParticleData;
 import com.vincenthuto.hemomancy.client.particle.data.SerpentParticleData;
 import com.vincenthuto.hemomancy.client.particle.data.SporiticSporeParticleData;
+import com.vincenthuto.hemomancy.client.particle.data.WillAbsorptionGlowParticleData;
 import com.vincenthuto.hemomancy.common.init.ParticleInit;
 import com.vincenthuto.hemomancy.common.particle.data.HitColorParticleData;
 import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
@@ -76,5 +77,9 @@ public final class HemoParticleData {
 
     public static ParticleOptions bloodClaw(ParticleColor color) {
         return new BloodClawData(ParticleInit.blood_claw.get(), color);
+    }
+
+    public static ParticleOptions willAbsorptionGlowPulse(ParticleColor color) {
+        return new WillAbsorptionGlowParticleData(ParticleInit.will_absorption_glow.get(), color, true);
     }
 }

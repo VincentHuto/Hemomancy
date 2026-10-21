@@ -17,10 +17,6 @@ public class WillAbsorptionGlowParticleFactory implements ParticleProvider<WillA
 		return new WillAbsorptionGlowParticleData(ParticleInit.will_absorption_glow.get(), color, false);
 	}
 
-	public static ParticleOptions createPulseData(ParticleColor color) {
-		return new WillAbsorptionGlowParticleData(ParticleInit.will_absorption_glow.get(), color, true);
-	}
-
 	private final SpriteSet spriteSet;
 
 	public WillAbsorptionGlowParticleFactory(SpriteSet spriteSet) {

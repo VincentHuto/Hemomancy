@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster.will;
 
-import com.vincenthuto.hemomancy.client.particle.factory.WillAbsorptionGlowParticleFactory;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
@@ -12,6 +11,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.common.manipulation.WillManipulationCaster;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
 import com.vincenthuto.hemomancy.config.HemoConfigValues;
@@ -572,7 +572,7 @@ public class WillEntity extends Monster implements SyncedBoundSummon {
 						random.nextDouble() * 1.6D - 0.55D,
 						random.nextDouble() * 2.0D - 1.0D).normalize();
 				double speed = 0.12D + random.nextDouble() * 0.16D;
-				serverLevel.sendParticles(WillAbsorptionGlowParticleFactory.createPulseData(ParticleColor.BLACK),
+				serverLevel.sendParticles(HemoParticleData.willAbsorptionGlowPulse(ParticleColor.BLACK),
 						center.x, center.y, center.z, 0,
 						direction.x * speed, direction.y * speed, direction.z * speed, 1.0D);
 			}

@@ -63,7 +63,7 @@ public final class WillBloodUtilitySourceTest {
 		assertContains("Will absorption particles include absorbing phase", will,
 				"getPhase() == WillPhase.ABSORBING");
 		assertContains("Will absorption completion pulse uses the Will glow particle", will,
-				"WillAbsorptionGlowParticleFactory.createPulseData(ParticleColor.BLACK)");
+				"HemoParticleData.willAbsorptionGlowPulse(ParticleColor.BLACK)");
 		assertContains("Will projection subtracts tendency", will, "addTendencyAlignment(getSchool(), -3.0F)");
 		assertContains("Will projection banishes without dissolve loot", will, "projectBanishWithBlood");
 		assertContains("Will projection creates a burst cloud", will, "spawnProjectedBanishmentBurst");

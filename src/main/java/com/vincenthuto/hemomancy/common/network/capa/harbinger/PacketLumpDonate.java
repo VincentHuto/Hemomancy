@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeTransferRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -53,7 +54,7 @@ public class PacketLumpDonate implements CustomPacketPayload {
 					return;
 				}
 
-				double donateAmount = Math.min(msg.amount, volume.getBloodVolume());
+				double donateAmount = BloodVolumeTransferRules.donationAmount(msg.amount, volume.getBloodVolume());
 				if (donateAmount <= 0) {
 					player.displayClientMessage(
 							Component.literal("Not enough blood to donate!").withStyle(ChatFormatting.RED), true);

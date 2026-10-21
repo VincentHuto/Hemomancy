@@ -159,10 +159,10 @@ public class PacketHandler {
 				PacketSyncBodyIdiomState.STREAM_CODEC, PacketSyncBodyIdiomState::handle);
 
         // ── Scar system ───────────────────────────────────────────────────────
-        net.playBidirectional(PacketEquipmentSync.TYPE, PacketEquipmentSync.STREAM_CODEC, PacketEquipmentSync::handle);
+        net.playToClient(PacketEquipmentSync.TYPE, PacketEquipmentSync.STREAM_CODEC, PacketEquipmentSync::handle);
         net.playToClient(PacketSyncScarsState.TYPE, PacketSyncScarsState.STREAM_CODEC, PacketSyncScarsState::handle);
         net.playToServer(PacketPrepareScarPattern.TYPE, PacketPrepareScarPattern.STREAM_CODEC, PacketPrepareScarPattern::handle);
-        net.playBidirectional(PacketGourdScarSync.TYPE, PacketGourdScarSync.STREAM_CODEC, PacketGourdScarSync::handle);
+        net.playToClient(PacketGourdScarSync.TYPE, PacketGourdScarSync.STREAM_CODEC, PacketGourdScarSync::handle);
         net.playBidirectional(PacketOpenScarsInv.TYPE, PacketOpenScarsInv.STREAM_CODEC, PacketOpenScarsInv::handle);
         net.playBidirectional(PacketOpenSporeInv.TYPE, PacketOpenSporeInv.STREAM_CODEC, PacketOpenSporeInv::handle);
         net.playBidirectional(PacketOpenNormalInv.TYPE, PacketOpenNormalInv.STREAM_CODEC, PacketOpenNormalInv::handle);
@@ -172,7 +172,7 @@ public class PacketHandler {
         net.playBidirectional(PacketLoadScarPattern.TYPE, PacketLoadScarPattern.STREAM_CODEC, PacketLoadScarPattern::handle);
         net.playBidirectional(PacketOpenScarBinder.TYPE, PacketOpenScarBinder.STREAM_CODEC, PacketOpenScarBinder::handle);
         net.playBidirectional(PacketToggleBinderMessage.TYPE, PacketToggleBinderMessage.STREAM_CODEC, PacketToggleBinderMessage::handle);
-        net.playBidirectional(PacketCurvedHornAnimation.TYPE, PacketCurvedHornAnimation.STREAM_CODEC, PacketCurvedHornAnimation::handle);
+        net.playToClient(PacketCurvedHornAnimation.TYPE, PacketCurvedHornAnimation.STREAM_CODEC, PacketCurvedHornAnimation::handle);
         net.playBidirectional(ToggleGourdKeyPacket.TYPE, ToggleGourdKeyPacket.STREAM_CODEC, ToggleGourdKeyPacket::handle);
         net.playToServer(ToggleEquipmentLayerVisibilityPacket.TYPE,
                 ToggleEquipmentLayerVisibilityPacket.STREAM_CODEC, ToggleEquipmentLayerVisibilityPacket::handle);
@@ -200,7 +200,7 @@ public class PacketHandler {
                 SelectEarthenVeinDestinationPacket.STREAM_CODEC, SelectEarthenVeinDestinationPacket::handle);
         net.playToClient(EarthenVeinTravelVisualPacket.TYPE,
                 EarthenVeinTravelVisualPacket.STREAM_CODEC, EarthenVeinTravelVisualPacket::handle);
-        net.playBidirectional(SyncTrackingAvatarPacket.TYPE, SyncTrackingAvatarPacket.STREAM_CODEC, SyncTrackingAvatarPacket::handle);
+        net.playToClient(SyncTrackingAvatarPacket.TYPE, SyncTrackingAvatarPacket.STREAM_CODEC, SyncTrackingAvatarPacket::handle);
         net.playBidirectional(UpdateCurrentVeinPacket.TYPE, UpdateCurrentVeinPacket.STREAM_CODEC, UpdateCurrentVeinPacket::handle);
         net.playBidirectional(StartCentrifugeButtonPacket.TYPE, StartCentrifugeButtonPacket.STREAM_CODEC, StartCentrifugeButtonPacket::handle);
         net.playToServer(ClearLoomStatePacket.TYPE, ClearLoomStatePacket.STREAM_CODEC, ClearLoomStatePacket::handle);

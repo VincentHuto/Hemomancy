@@ -19,6 +19,7 @@ public final class CellHandRenderingResourceTest {
 		String absorbedBloodCellParticle = read("src/main/java/com/vincenthuto/hemomancy/client/particle/AbsorbedBloodCellParticle.java");
 		String willAbsorptionGlowParticle = read("src/main/java/com/vincenthuto/hemomancy/client/particle/WillAbsorptionGlowParticle.java");
 		String willAbsorptionGlowFactory = read("src/main/java/com/vincenthuto/hemomancy/client/particle/factory/WillAbsorptionGlowParticleFactory.java");
+		String hemoParticleData = read("src/main/java/com/vincenthuto/hemomancy/common/particle/HemoParticleData.java");
 		String particleInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ParticleInit.java");
 		String projectionItem = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodProjectionItem.java");
 		String absorptionItem = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodAbsorptionItem.java");
@@ -114,8 +115,8 @@ public final class CellHandRenderingResourceTest {
 				"WillAbsorptionGlowParticleFactory::new");
 		assertContains("Will absorption glow factory creates its registered data", willAbsorptionGlowFactory,
 				"ParticleInit.will_absorption_glow.get()");
-		assertContains("Will absorption glow factory creates pulse data with same particle type", willAbsorptionGlowFactory,
-				"createPulseData");
+		assertContains("Will absorption pulse data is built common-side with the same particle type", hemoParticleData,
+				"new WillAbsorptionGlowParticleData(ParticleInit.will_absorption_glow.get(), color, true)");
 		assertContains("Will absorption glow factory passes pulse mode into particle", willAbsorptionGlowFactory,
 				"data.outwardPulse");
 		assertContains("Will absorption glow uses dark particle compositing", willAbsorptionGlowParticle,
