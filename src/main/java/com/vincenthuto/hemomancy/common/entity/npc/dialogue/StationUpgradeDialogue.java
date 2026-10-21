@@ -41,6 +41,7 @@ public final class StationUpgradeDialogue {
             case ALEMBIC, CENTRIFUGE -> entity instanceof HarbingerAlchemistEntity;
             case RESONANT_FORGE -> entity instanceof HarbingerArtificerEntity;
             case SCRIPTORIUM, LOOM -> entity instanceof HarbingerMnemonistEntity;
+            case CONDENSER -> entity instanceof com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity;
             case ARMATURE -> false;
         };
     }

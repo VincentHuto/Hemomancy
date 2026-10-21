@@ -5,10 +5,9 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -39,11 +38,7 @@ public class FerricResonanceManip extends BloodManipulation {
 		player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, DURATION_TICKS, 0, false, true, true));
 		player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, DURATION_TICKS, 0, false, true, true));
 
-		if (world instanceof ServerLevel sLevel) {
-			sLevel.sendParticles(ParticleTypes.CRIT,
-					player.getX(), player.getY() + 1.0, player.getZ(),
-					24, 0.4, 0.4, 0.4, 0.08);
-		}
+		ManipulationVisuals.attached(player, ManipulationVisuals.Form.FERRIC_CONJURE, .5, 20, 1);
 
 		world.playSound(null, player.blockPosition(),
 				SoundEvents.ANVIL_USE, SoundSource.PLAYERS, 0.6f, 1.4f);

@@ -791,6 +791,10 @@ public class BlockInit {
 					.noOcclusion()
 					.sound(SoundType.GRASS)));
 
+	public static final DeferredHolder<Block, Block> sanguine_condenser = MODELEDBLOCKS.register("sanguine_condenser",
+			() -> new SanguineCondenserBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL)
+					.requiresCorrectToolForDrops().strength(2.0F).sound(SoundType.METAL).noOcclusion()));
+
 	public static final DeferredHolder<Block, Block> covenant_throne = MODELEDBLOCKS.register("covenant_throne",
 			() -> new CovenantThroneBlock(
 					BlockBehaviour.Properties.of().requiresCorrectToolForDrops()

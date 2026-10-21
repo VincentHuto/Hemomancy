@@ -1,6 +1,6 @@
 # Station upgrades: shared implementation contract
 
-Current contract: 2026-10-11 (Somatic Loom added as the sixth station). Read before adding or changing **any station upgrade**, kit, teacher, rite, recipe, book page, dialogue, or tests. Current source/resources remain authoritative; update this contract when intentionally changing them. Station projects are not new degree-promotion checklists.
+Current contract: 2026-10-20 (Sanguine Condenser added as the seventh station). Read before adding or changing **any station upgrade**, kit, teacher, rite, recipe, book page, dialogue, or tests. Current source/resources remain authoritative; update this contract when intentionally changing them. Station projects are not new degree-promotion checklists.
 
 ## Rules for every upgradeable station
 
@@ -18,11 +18,11 @@ Current contract: 2026-10-11 (Somatic Loom added as the sixth station). Read bef
 
 ### Creative-only direct kit use
 
-Creative players may right-click any of the six stations (including linked filler parts) with that station's catalog upgrade item to install its corresponding stage immediately. Tier-two items can upgrade a base station directly; equal/lower-tier items never downgrade it. The item is not consumed. This server-authoritative exception bypasses degree, active blood, personal practice, claims, rites, offerings, blood costs, idle/occupancy/lock requirements, and Alembic clearance. It preserves the existing block entity, identity, inventory, stored blood, facing, processing state, and any active rite lock. It does not grant personal practice or free-kit claims. Survival and Adventure retain the ordinary rite requirements, and other stations' kits do not apply.
+Creative players may right-click any of the seven stations (including linked filler parts) with that station's catalog upgrade item to install its corresponding stage immediately. Tier-two items can upgrade a base station directly; equal/lower-tier items never downgrade it. The item is not consumed. This server-authoritative exception bypasses degree, active blood, personal practice, claims, rites, offerings, blood costs, idle/occupancy/lock requirements, and Alembic clearance. It preserves the existing block entity, identity, inventory, stored blood, facing, processing state, and any active rite lock. It does not grant personal practice or free-kit claims. Survival and Adventure retain the ordinary rite requirements, and other stations' kits do not apply.
 
 Alembic linked fillers are expanded when the target footprint has room. A blocked footprint still permits Creative stage conversion without deleting obstructing blocks; expanded collision parts cannot be placed until the footprint is clear. An already running rite retains its lock and escrow and follows normal subject-stage revalidation/recovery if Creative changes its subject's stage.
 
-Usage is cumulative: tier 2 also requires tier 1 eligibility. Degree numbers below are upgrade gates, not base-machine access gates. All ten require active blood; shared claim/rite eligibility does not add Purifying or Clarity checks.
+Usage is cumulative: tier 2 also requires tier 1 eligibility. Degree numbers below are upgrade gates, not base-machine access gates. All of them require active blood; shared claim/rite eligibility does not add Purifying or Clarity checks.
 
 | Station | Upgrade / degree | Item ID | Free-kit teacher | Required personal use | Rite path | Circuits |
 |---|---|---|---|---|---|---|
@@ -38,6 +38,8 @@ Usage is cumulative: tier 2 also requires tier 1 eligibility. Degree numbers bel
 | Enzymatic Scriptorium | Palimpsest / D7 | `palimpsest_burin` | Mnemonist | Complete a targeted enchant | `palimpsest` | 3 × 50 mL |
 | Somatic Loom | Ganglionic / D5 | `ganglionic_harness` | Mnemonist | Complete any weave (`loom_weave`) | `ganglionic_weave` | 2 × 50 mL |
 | Somatic Loom | Cortical / D6 | `cortical_crown` | Mnemonist | Complete a Magister-or-higher weave on a Ganglionic or Cortical loom (`loom_weave_ganglionic`) | `cortical_weave` | 3 × 50 mL |
+| Sanguine Condenser | Latticed / D3 | `clotting_lattice` | Vicar | Personally collect a condensed formation from any Condenser (`condense`) | `first_clotting` | 2 × 50 mL |
+| Sanguine Condenser | Druse / D5 | `druse_heart` | Vicar | Personally collect a condensed formation from a Latticed or Druse Condenser (`condense_latticed`) | `druse_crystallization` | 3 × 50 mL |
 
 IDs use namespace `hemomancy`; rite paths are under `cardinal_rite/`. Repeat-craft recipe IDs equal item IDs. `vicars_consecration_kit` displays as **Armature Consecration Kit**; retain the registry ID. It and the Cornerstone are not current Scriptorium upgrade items.
 
@@ -71,12 +73,14 @@ Each rite consumes **one of each of six items**: its upgrade item and the five c
 | Palimpsest | `echo_shard`, `glow_ink_sac`, `mnemonic_folio`, `axonal_slate`, `myelin_sheath` |
 | Ganglionic Weave | `neurotic_enzyme`, `nerve_fiber`, `puppeteering_thread`, `sanguine_formation`, `blood_crystal_shard` |
 | Cortical Weave | `nerve_bundle`, `synaptic_node`, `mnemonic_ambergris`, `blood_stained_stone`, `sanguine_glass` |
+| First Clotting | `hematic_iron_scrap`, `befouling_ash_trail`, `venous_stone`, `blood_stained_stone`, `sanguine_formation` |
+| Druse Crystallization | `amethyst_shard`, `blood_crystal_shard`, `sanguine_glass`, `hematic_iron_block`, `sanguine_quintessence` |
 
 Vanilla companions use `minecraft`; mod companions use `hemomancy`. Verify quantities/consumers against `src/main/resources/data/hemomancy/recipe/cardinal_rite/`, not historical prose or item names alone.
 
 ## Shared ceremony, layout, and recovery
 
-First Condensation uses the lesser working floor; all other upgrades use the greater working floor. Each has six lit offering braziers, a Cardinal Focus, a planted Living Staff, and the matching source-stage station. Tier 1 uses four anchors and two circuits; tier 2 uses eight anchors and three circuits. Fill anchors, seal the daemon, project through circuits in order, then finish the procession/finale. A tier-2 rite's outer ring of anchors sleeps until the station projection begins; the last circuit then waits until that ring is fed (see `HEMOMANCY_REFERENCE.md`, "Rings wake one phase at a time"). No sigils, helpers, or ordeal waves are required. Failure uses `safe_retry`.
+First Condensation and First Clotting use the lesser working floor; all other upgrades use the greater working floor (`UpgradeStation.lesserFirstTier()` decides which first tiers are lesser). Each has six lit offering braziers, a Cardinal Focus, a planted Living Staff, and the matching source-stage station. Tier 1 uses four anchors and two circuits; tier 2 uses eight anchors and three circuits. Fill anchors, seal the daemon, project through circuits in order, then finish the procession/finale. A tier-2 rite's outer ring of anchors sleeps until the station projection begins; the last circuit then waits until that ring is fed (see `HEMOMANCY_REFERENCE.md`, "Rings wake one phase at a time"). No sigils, helpers, or ordeal waves are required. Failure uses `safe_retry`.
 
 Inner-ring anchors take 50 mL each and the tier-2 outer ring 63 mL each, in addition to circuit costs: 300/602 mL for the non-Forge first/second upgrades and 700/1,202 mL for Forge upgrades. A recipe's `bloodCost: 0` is not a blood-free ceremony.
 
@@ -107,6 +111,18 @@ All stages are authored in `tools/model_export/ghastly_alembic.py`, which writes
 The same ritual grammar serves every station. Material identity and teacher voice distinguish recollection, separation, resonance, and vestment work; they do not imply separate progression engines. Teachers recognize practiced work and offer a gift, rather than granting permission by handing over an object. A crafted or gifted tool cannot supply knowledge the practitioner has not earned.
 
 The Scriptorium's former bespoke ceremony was an early implementation holdover, not intentional lore. Do not restore orb-writing, colored connections, Bloodlicker waves, or upgrade enzyme charges. Enzymes still matter for ordinary enchanting. Quill and Burin are tools of recollection, not sacred objects. Armor remaking on the body remains distinct from upgrading the Armature apparatus.
+
+### Sanguine Condenser stages
+
+The Condenser's base is not crafted: Blood Projection into an empty vanilla cauldron converts it to stage 0, the **Sanguine Cauldron** (vanilla cauldron model), owned by the projector. Its seat distance is 1, like the Alembic, and both rites use the 3×3 `[" S "]` subject pattern. The Vicar gives the free kits; collection by hand is the personal practice, and the Vicar's separate D1 First Bloodcraft formation proof also requires that the collector projected into that Condenser.
+
+| Stage | Pool | Cost / time per formation | Holds | Collapse | Bonus |
+|---|---|---|---|---|---|
+| 0 Sanguine Cauldron | 300 mL | 150 mL / 200 ticks | 1 | 25% − 5% per owner Sanguine Crystallization level | — |
+| 1 Latticed | 750 mL | 125 mL / 120 ticks | 4 | none | — |
+| 2 Druse | 1,500 mL | 100 mL / 60 ticks | 8 | none | 25% second formation |
+
+Only Blood Projection fills a Condenser: blood routing and Thrall couriers refuse it (`canReceiveBlood` is false), so hoppers beneath are the only automation. It needs no support block, so a hopper can sit under it. Blood Absorption, routing and couriers now honour every station's `canReceiveBlood`/`canProvideBlood`, so no rite-locked station loses or gains blood mid-rite. Upgrades keep blood, formations, owner and contributors. A rite-locked Condenser takes no blood, gives up no formations (by hand or hopper) and does not revert. A spent stage 0 reverts to a vanilla cauldron and drops a cauldron when broken; stages 1–2 drop the Condenser with its stage. `tools/model_export/sanguine_condenser.py` builds both upgraded stages on the vanilla cauldron's exact body (walls, floor, L-shaped legs) with native 16×16 textures from `sanguine_condenser_textures.json` (side/top/inner/bottom like vanilla, under `textures/block/sanguine_condenser/`): the Latticed stage in lacquer-lipped, banded hematic iron on bone feet with a slim clot-beaded lattice under the lip; the Druse stage in crystal-veined iron with a druse-lined interior and lit crystal clusters splaying from the corners and rims. It also writes the blockstate and `.bbmodel` projects; `export_condenser_kit_sprites.py` writes the native 16×16 kit sprites from `condenser_kit_sprites.json`. `SanguineCondenserRenderer` draws the blood pool (shared `BloodPoolSurface` with `HemoRenderTypes.squareBloodPool`, the pool shader's `Square` mode, filling the 12/16 mouth wall to wall), the setting bead (`SanguineSphereRenderer`) and the resting formations; `condenserReviewClient` captures them.
 
 ### Somatic Loom stages
 

@@ -27,6 +27,7 @@ public final class StationUpgradeTooltips {
                 case ALEMBIC, CENTRIFUGE -> "entity.hemomancy.harbinger_alchemist";
                 case RESONANT_FORGE -> "entity.hemomancy.harbinger_artificer";
                 case SCRIPTORIUM, LOOM -> "entity.hemomancy.harbinger_mnemonist";
+                case CONDENSER -> "entity.hemomancy.harbinger_vicar";
                 case ARMATURE -> tier.tier() == 1 ? "entity.hemomancy.harbinger_artificer" : "block.hemomancy.sanguine_monolith";
             };
             event.getToolTip().add(Component.translatable("item.hemomancy.station_upgrade.free_kit",

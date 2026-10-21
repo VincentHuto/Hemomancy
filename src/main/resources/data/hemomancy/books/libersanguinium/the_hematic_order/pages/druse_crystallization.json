@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 10,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Druse Crystallization",
+  "subtitle": "The Greater rite of the Sanguine Condenser",
+  "text": "Draw a formation from a Latticed Condenser yourself. At the fifth Degree the Vicar offers a free Druse Heart. Seat the Latticed Condenser one block behind a Cardinal Focus on a Greater working floor. Light six braziers: the heart, an Amethyst Shard, a Blood Crystal Shard, Sanguine Glass, a Hematic Iron Block and Sanguine Quintessence. Fill all eight anchors, seal the daemon, close three circuits with 50 mL each, then finish the procession. The Druse Condenser holds 1,500 mL and eight formations, sets each in three seconds for 100 mL, and one time in four sets a second formation beside the first.",
+  "icon": "hemomancy:druse_heart"
+}

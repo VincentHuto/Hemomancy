@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 9,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The First Clotting",
+  "subtitle": "The Lesser rite of the Sanguine Condenser",
+  "text": "Draw a condensed formation from a cauldron yourself. At the third Degree, with your blood awake, the Vicar offers a free Clotting Lattice; a crafted one works too, but never replaces your practice. Seat the Sanguine Cauldron one block behind a Cardinal Focus on a Lesser working floor. Light six braziers: the lattice, Hematic Iron Scrap, Befouling Ash, Venous Stone, Blood Stained Stone and a Sanguine Formation. Plant your Living Staff, fill four anchors, seal the daemon, close two circuits with 50 mL each, then finish the procession. The Latticed Condenser holds 750 mL and four formations, sets each in six seconds for 125 mL, and never collapses. It keeps its blood, its formations and its tier when moved.",
+  "icon": "hemomancy:clotting_lattice"
+}

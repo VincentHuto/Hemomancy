@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.render.entity.misc;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import com.vincenthuto.hemomancy.client.render.world.SanguineFormationProjectionRenderer;
+import com.vincenthuto.hemomancy.client.render.world.SanguineSphereRenderer;
 import com.vincenthuto.hemomancy.common.entity.utility.AwakenedIchorianSigilEntity;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.rite.sigil.*;
@@ -99,7 +99,7 @@ public final class AwakenedIchorianSigilRenderer extends EntityRenderer<Awakened
 					time, sigil.id().hashCode(), index);
 			Matrix4f translated = new Matrix4f(matrix).translate(
 					(float) node.x(), 0.0F, (float) node.z());
-			SanguineFormationProjectionRenderer.renderSphere(
+			SanguineSphereRenderer.renderSphere(
 					consumer, translated, (glow ? 0.28F : 0.17F) * nodePulse,
 					time, sigil.id().hashCode() * 31L + index,
 					nodeColor.red(), nodeColor.green(), nodeColor.blue(), alpha);

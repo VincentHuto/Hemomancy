@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.event.BloodFeedStyle;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
@@ -212,7 +213,8 @@ public class LignumMortisManip extends BloodManipulation {
 		long channelId = channelId(player, band);
 		PacketBloodStructureFeed packet = positions.isEmpty()
 				? new PacketBloodStructureFeed(List.of(), BAND_PROGRESS[band], 1, true, channelId)
-				: new PacketBloodStructureFeed(positions, BAND_PROGRESS[band], FEED_VISIBLE_TICKS, false, channelId);
+				: new PacketBloodStructureFeed(positions, BAND_PROGRESS[band], FEED_VISIBLE_TICKS, false, channelId,
+						BloodFeedStyle.PLAIN, Vec3.ZERO);
 		PacketDistributor.sendToPlayersNear(level, null, session.origin.getX() + 0.5D,
 				session.origin.getY() + 0.5D, session.origin.getZ() + 0.5D, FEED_SYNC_RANGE, packet);
 	}

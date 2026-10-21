@@ -17,7 +17,7 @@ class StationUpgradeCatalogTest {
             assertTrue(StationUpgradeCatalog.get(station, 2).requiredDegree()
                     > StationUpgradeCatalog.get(station, 1).requiredDegree(), station.name());
         }
-        assertEquals(12, StationUpgradeCatalog.all().size());
+        assertEquals(14, StationUpgradeCatalog.all().size());
     }
 
     @Test
@@ -53,6 +53,27 @@ class StationUpgradeCatalogTest {
     }
 
     @Test
+    void theCondenserGrowsAtThreeAndFive() {
+        UpgradeStation condenser = UpgradeStation.byName("condenser");
+        assertNotNull(condenser);
+        assertEquals(ResourceLocation.parse("hemomancy:sanguine_condenser"), condenser.blockId());
+        assertEquals(1, condenser.seatDistance());
+        StationUpgradeTier lattice = StationUpgradeCatalog.get(condenser, 1);
+        StationUpgradeTier druse = StationUpgradeCatalog.get(condenser, 2);
+        assertEquals(3, lattice.requiredDegree());
+        assertEquals(5, druse.requiredDegree());
+        assertEquals(ResourceLocation.parse("hemomancy:clotting_lattice"), lattice.upgradeItem());
+        assertEquals(ResourceLocation.parse("hemomancy:druse_heart"), druse.upgradeItem());
+        assertEquals("cardinal_rite/first_clotting", lattice.ritePath());
+        assertEquals("cardinal_rite/druse_crystallization", druse.ritePath());
+        assertEquals(java.util.List.of(StationUpgradeCatalog.CONDENSE), lattice.requiredUsage());
+        assertEquals(java.util.List.of(StationUpgradeCatalog.CONDENSE_LATTICED), druse.requiredUsage());
+        assertEquals("lesser", lattice.riteType());
+        assertEquals("greater", druse.riteType());
+        assertTrue(lattice.dialogueKey().startsWith("hemomancy.vicar.condenser."));
+    }
+
+    @Test
     void upgradeItemsAreUniquePerTier() {
         Set<ResourceLocation> items = new HashSet<>();
         for (StationUpgradeTier tier : StationUpgradeCatalog.all())
@@ -79,7 +100,7 @@ class StationUpgradeCatalogTest {
         for (StationUpgradeTier tier : StationUpgradeCatalog.all()) {
             assertEquals(tier.tier() == 1 ? 2 : 3, tier.circuits(), tier.ritePath());
             assertEquals(tier.tier() == 1 ? 4 : 8, tier.anchors(), tier.ritePath());
-            boolean lesser = tier.station() == UpgradeStation.ALEMBIC && tier.tier() == 1;
+            boolean lesser = tier.station().lesserFirstTier() && tier.tier() == 1;
             assertEquals(lesser ? "lesser" : "greater", tier.riteType(), tier.ritePath());
             assertEquals(lesser ? "hemomancy:working_lesser" : "hemomancy:working_greater", tier.floor());
             assertEquals(tier.station() == UpgradeStation.RESONANT_FORGE ? 250 : 50, tier.bloodPerCircuit());

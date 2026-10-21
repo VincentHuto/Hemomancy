@@ -61,7 +61,7 @@ public final class BloodRoutingHelper {
         }
 
         BlockEntity be = level.getBlockEntity(targetPos);
-        if (be == null) {
+        if (be == null || be instanceof IBloodReservoir closed && !closed.canReceiveBlood()) {
             return 0;
         }
 

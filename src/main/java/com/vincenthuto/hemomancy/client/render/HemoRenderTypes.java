@@ -441,6 +441,24 @@ public final class HemoRenderTypes {
 	public static RenderType bloodStructureWarp(float gameTime, float progress, float blockSeed, float wiggleAmp,
 			float centerX, float centerY, float centerZ, float finalizeProgress, float meltGroundY, float meltHeight,
 			float fillLine) {
+		return bloodStructureWarp(gameTime, progress, blockSeed, wiggleAmp, centerX, centerY, centerZ,
+				finalizeProgress, meltGroundY, meltHeight, fillLine, 0.0F, 0.0F);
+	}
+
+	/**
+	 * The structure warp shell as a single-block infusion times it: absent while the veins spread, it swallows
+	 * the block over the end of the first {@code crackShare} of the finalize and melts only after the break.
+	 */
+	public static RenderType bloodInfusionWarp(float gameTime, float progress, float blockSeed, float wiggleAmp,
+			float centerX, float centerY, float centerZ, float finalizeProgress, float meltGroundY, float meltHeight,
+			float crackShare) {
+		return bloodStructureWarp(gameTime, progress, blockSeed, wiggleAmp, centerX, centerY, centerZ,
+				finalizeProgress, meltGroundY, meltHeight, NO_FILL_LINE, 1.0F, crackShare);
+	}
+
+	private static RenderType bloodStructureWarp(float gameTime, float progress, float blockSeed, float wiggleAmp,
+			float centerX, float centerY, float centerZ, float finalizeProgress, float meltGroundY, float meltHeight,
+			float fillLine, float infusionTiming, float crackShare) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
 				"blood_structure_warp_uniforms",
 				() -> {
@@ -454,6 +472,8 @@ public final class HemoRenderTypes {
 					setUniform(shader, "MeltGroundY", meltGroundY);
 					setUniform(shader, "MeltHeight", meltHeight);
 					setUniform(shader, "FillLine", fillLine);
+					setUniform(shader, "InfusionTiming", infusionTiming);
+					setUniform(shader, "CrackShare", crackShare);
 				},
 				() -> {
 					ShaderInstance shader = ShaderInit.BLOOD_STRUCTURE_WARP.getInstance().get();
@@ -465,6 +485,44 @@ public final class HemoRenderTypes {
 				DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 2048, false, true,
 				RenderType.CompositeState.builder()
 						.setShaderState(ShaderInit.BLOOD_STRUCTURE_WARP.getShard())
+						.setTexturingState(uniforms)
+						.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
+						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+						.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+						.setWriteMaskState(RenderType.COLOR_WRITE)
+						.setCullState(RenderType.NO_CULL)
+						.setLightmapState(RenderType.LIGHTMAP)
+						.createCompositeState(false));
+	}
+
+	/**
+	 * Veins on the faces of a block being infused, spreading out from the camera-relative {@code origin} (where the
+	 * projection is aimed) on the face whose outward normal is {@code normal}. The web itself is fixed to the block
+	 * through the camera-relative {@code anchor}, its minimum corner. The veins darken over the first
+	 * {@code crackShare} of the finalize.
+	 */
+	public static RenderType bloodInfusionVeins(float gameTime, float progress, float blockSeed,
+			float finalizeProgress, float crackShare, float originX, float originY, float originZ,
+			float normalX, float normalY, float normalZ, float anchorX, float anchorY, float anchorZ) {
+		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
+				"blood_infusion_veins_uniforms",
+				() -> {
+					ShaderInstance shader = ShaderInit.BLOOD_INFUSION_VEINS.getInstance().get();
+					setUniform(shader, "HemoTime", gameTime);
+					setUniform(shader, "Progress", progress);
+					setUniform(shader, "BlockSeed", blockSeed);
+					setUniform(shader, "FinalizeProgress", finalizeProgress);
+					setUniform(shader, "CrackShare", crackShare);
+					setUniform(shader, "VeinOrigin", originX, originY, originZ);
+					setUniform(shader, "VeinNormal", normalX, normalY, normalZ);
+					setUniform(shader, "VeinAnchor", anchorX, anchorY, anchorZ);
+				},
+				() -> {
+				});
+		return RenderType.create("blood_infusion_veins",
+				DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, true,
+				RenderType.CompositeState.builder()
+						.setShaderState(ShaderInit.BLOOD_INFUSION_VEINS.getShard())
 						.setTexturingState(uniforms)
 						.setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
 						.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
@@ -566,6 +624,15 @@ public final class HemoRenderTypes {
 
 	/** A pool of loose blood on the ground: {@code ragged} above 0 lobes its edge instead of a vessel's round rim. */
 	public static RenderType bloodPool(float gameTime, float poolSeed, float ragged) {
+		return bloodPool(gameTime, poolSeed, ragged, 0F);
+	}
+
+	/** Blood filling a square vessel's mouth, such as a cauldron's; draw it with the mouth's half-width as radius. */
+	public static RenderType squareBloodPool(float gameTime, float poolSeed) {
+		return bloodPool(gameTime, poolSeed, 0F, 1F);
+	}
+
+	private static RenderType bloodPool(float gameTime, float poolSeed, float ragged, float square) {
 		RenderStateShard.TexturingStateShard uniforms = new RenderStateShard.TexturingStateShard(
 				"blood_pool_uniforms",
 				() -> {
@@ -573,6 +640,7 @@ public final class HemoRenderTypes {
 					setUniform(shader, "HemoTime", gameTime);
 					setUniform(shader, "PoolSeed", poolSeed);
 					setUniform(shader, "Ragged", ragged);
+					setUniform(shader, "Square", square);
 				},
 				() -> {
 					ShaderInstance shader = ShaderInit.BLOOD_POOL.getInstance().get();

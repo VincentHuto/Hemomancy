@@ -352,7 +352,7 @@ public final class JourneyAutomationGameTests {
 			player.setYRot(180.0F);
 			player.setXRot(0.0F);
 			for (int tick = 0; tick < 2; tick++) JourneyAutoRunner.tickForTest(player);
-			player.serverLevel().setBlockAndUpdate(origin.above(), BlockInit.venous_stone.get().defaultBlockState());
+			player.serverLevel().setBlockAndUpdate(origin.above(), net.minecraft.world.level.block.Blocks.CAULDRON.defaultBlockState());
 			for (int tick = 0; tick < 22; tick++) JourneyAutoRunner.tickForTest(player);
 			helper.assertTrue(HemoJourneyStage.LIBER_CRAFTED.id().equals(
 					player.getPersistentData().getString(HemoJourneySnapshot.STAGE_KEY)),

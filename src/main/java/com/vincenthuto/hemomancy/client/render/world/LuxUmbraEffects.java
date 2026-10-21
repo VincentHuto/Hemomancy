@@ -45,10 +45,13 @@ public final class LuxUmbraEffects {
         }
     }
 
-    static void mist(Vec3 at, Vec3 velocity, boolean umbra, float size, int life) {
+    static void mist(Vec3 at, Vec3 velocity, boolean umbra, float size, int life) { mist(at, velocity, umbra, size, life, -1); }
+
+    /** As {@link #mist(Vec3, Vec3, boolean, float, int)}, thinning over the body of entity {@code clearOf} (-1 for none). */
+    static void mist(Vec3 at, Vec3 velocity, boolean umbra, float size, int life, int clearOf) {
         if (!ready() || !Double.isFinite(at.lengthSqr()) || !Double.isFinite(velocity.lengthSqr())) return;
         if (MISTS.size() >= 128) MISTS.removeFirst();
-        MISTS.add(new Mist(at, velocity, umbra, size, world.getGameTime(), life));
+        MISTS.add(new Mist(at, velocity, umbra, size, world.getGameTime(), life, clearOf));
     }
 
     static void tick() {
@@ -99,6 +102,12 @@ public final class LuxUmbraEffects {
             // Mist breathed from the viewer's own arms would otherwise sit on the lens; it thins out near the eye.
             float near = ManipulationLifecycle.smooth((float) ((at.distanceTo(camera) - .7) / 1.6));
             if (near <= 0) continue;
+            var owner = mist.clearOf < 0 ? null : world.getEntity(mist.clearOf);
+            if (owner != null) {
+                Vec3 feet = owner.getPosition(partial);
+                near *= com.vincenthuto.hemomancy.client.render.outpouring.OutpouringRules.smokeNearBody(
+                        at.x - feet.x, at.y - feet.y, at.z - feet.z);
+            }
             var packet = new ManipulationVisualPacket(mist.umbra ? Form.UMBRA_MIST : Form.LUX_MIST,
                     -1, at, at, mist.size, mist.life, 1);
             p.pushPose();
@@ -109,7 +118,7 @@ public final class LuxUmbraEffects {
         }
     }
 
-    private record Mist(Vec3 at, Vec3 velocity, boolean umbra, float size, long born, int life) {}
+    private record Mist(Vec3 at, Vec3 velocity, boolean umbra, float size, long born, int life, int clearOf) {}
 
     private static final class Connection {
         final LuxUmbraFlow flow;

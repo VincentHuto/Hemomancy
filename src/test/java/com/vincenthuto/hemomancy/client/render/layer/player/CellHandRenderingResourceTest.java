@@ -61,12 +61,13 @@ public final class CellHandRenderingResourceTest {
 				"spawnFirstPersonParticlesForStack(stack, side, matrixStackIn);");
 		assertContains("first-person particles only emit while the camera is first person", particleEffects,
 				"!mc.options.getCameraType().isFirstPerson()");
+		// The palm is shared with the cast geometry through FirstPersonPalm, recorded from the rendered arm pose.
+		String palm = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/harbinger/FirstPersonPalm.java");
 		assertContains("first-person particles receive a pose-derived origin", itemRenderer,
-				"CellHandRenderOrigin.fromPose");
-		assertContains("first-person palm origin includes the rendered model-part transform", itemRenderer,
-				"arm.translateAndRotate(poseStack)");
-		assertContains("first-person palm origin uses the arm endpoint", itemRenderer,
-				"CellHandRenderOrigin.PALM_OFFSET_Y");
+				"FirstPersonPalm.record(poseStack.last().pose(), arm, hand);");
+		assertContains("first-person palm origin includes the rendered model-part transform", palm,
+				"armPart.translateAndRotate(stack);");
+		assertContains("first-person palm origin uses the arm endpoint", palm, "PALM_Y = 10");
 		assertContains("first-person particles are anchored while alive", particleEffects,
 				"particle.setFirstPersonAnchor(localOffset);");
 		assertContains("absorbed first-person particles are created directly for hand targeting", particleEffects,

@@ -22,7 +22,6 @@ class TransientServerStateLifecycleTest {
 			"ChummedWatersAreaManager.clearSessionState()",
 			"BlackVeilCovenantManager.clearSessionState()",
 			"TemporaryIceManager.clearSessionState()",
-			"SanguineFormationProjectionHandler.clear()",
 			"BloodStructureFeedManager.clear()",
 			"HematicSalvageEvents.clearSessionState()",
 			"RootedStateHelper.clearSessionState()",

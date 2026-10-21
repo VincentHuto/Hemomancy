@@ -115,6 +115,8 @@ public final class OutpouringBrushes {
         BloodEffectParticles.emit(at, direction, mortem, count, soft, false);
     }
     public static void mist(Vec3 at, Vec3 velocity, boolean umbra, float size, int life) { LuxUmbraEffects.mist(at, velocity, umbra, size, life); }
+    /** Mist that thins over the body of the caster it came from, so it never hides them. */
+    public static void mist(Vec3 at, Vec3 velocity, boolean umbra, float size, int life, int clearOf) { LuxUmbraEffects.mist(at, velocity, umbra, size, life, clearOf); }
 
     /** A Ductilis bolt as the live manipulations strike it: a yellow sheath around a white core (world space). */
     public static void bolt(Vec3 from, Vec3 to, long seed, int fract, float maxOffset, float size) {

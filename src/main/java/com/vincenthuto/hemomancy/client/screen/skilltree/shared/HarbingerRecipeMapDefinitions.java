@@ -57,7 +57,8 @@ public final class HarbingerRecipeMapDefinitions {
 				"exsanguination");
 		registerRites("Station Upgrades", "first_condensation", "sanguine_athanor", "steady_separation", "second_fraction",
 				"true_groove", "enduring_pattern", "armature_consecration", "monolithic_armature",
-				"eightfold_script", "palimpsest", "ganglionic_weave", "cortical_weave");
+				"eightfold_script", "palimpsest", "ganglionic_weave", "cortical_weave", "first_clotting",
+				"druse_crystallization");
 		registerRites("Bloodline", "bloodline_recall", "hematic_unbinding", "bloodline_founding", "scarlet_summons",
 				"covenant_vigil");
 		registerRites("Ancestral", "ancestral_communion");
@@ -132,6 +133,8 @@ public final class HarbingerRecipeMapDefinitions {
 		iconRites("cardinal_rite/palimpsest", () -> new ItemStack(ItemInit.palimpsest_burin.get()));
 		iconRites("cardinal_rite/ganglionic_weave", () -> new ItemStack(ItemInit.ganglionic_harness.get()));
 		iconRites("cardinal_rite/cortical_weave", () -> new ItemStack(ItemInit.cortical_crown.get()));
+		iconRites("cardinal_rite/first_clotting", () -> new ItemStack(ItemInit.clotting_lattice.get()));
+		iconRites("cardinal_rite/druse_crystallization", () -> new ItemStack(ItemInit.druse_heart.get()));
 
 		linkRites("cardinal_rite/initiate_rite", "cardinal_rite/sanguine_brotherhood", RecipeMapLink.Kind.CONCEPTUAL);
 		linkRites("cardinal_rite/sanguine_brotherhood", "cardinal_rite/illuminatus_rite", RecipeMapLink.Kind.PROGRESSION);

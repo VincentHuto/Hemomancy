@@ -16,6 +16,8 @@ uniform float HemoTime;
 uniform float PoolSeed;
 // 0 is a vessel's round pool; above 0 the blood lies loose on the ground with a lobed, slowly quivering edge.
 uniform float Ragged;
+// 1 fills a square vessel's mouth (a cauldron): the rim, its shadow and meniscus follow the walls instead of a circle.
+uniform float Square;
 
 in float vertexDistance;
 in vec4 vertexColor;
@@ -116,7 +118,7 @@ void main() {
     vec2 heading = p / max(length(p), 0.0001);
     float lobes = fbm(heading * 1.7 + PoolSeed * 0.37 + HemoTime * 0.004) - 0.5;
     float rim = 1.0 - Ragged * (0.32 + 0.55 * lobes + 0.08 * sin(atan(p.y, p.x) * 5.0 + PoolSeed));
-    float r = length(p) / max(rim, 0.35);
+    float r = mix(length(p) / max(rim, 0.35), max(abs(p.x), abs(p.y)), Square);
     if (r > 1.0) {
         discard;
     }

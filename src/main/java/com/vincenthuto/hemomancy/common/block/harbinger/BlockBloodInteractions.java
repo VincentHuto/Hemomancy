@@ -119,7 +119,8 @@ public final class BlockBloodInteractions {
 	private static double tryAbsorbFromReservoir(ServerLevel level, BlockPos pos, ServerPlayer player,
 			double maxAmount) {
 		BlockEntity be = resolveBloodReservoir(level, pos);
-		if (be == null) {
+		// A station mid-rite keeps its blood: it is part of the upgrade snapshot.
+		if (be == null || be instanceof IBloodReservoir closed && !closed.canProvideBlood()) {
 			return 0.0D;
 		}
 		IBloodVolume reservoirVolume = HemoCapabilityAccess.getBloodVolume(be).orElse(null);

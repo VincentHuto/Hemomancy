@@ -28,7 +28,7 @@ class TierThreeVisualsTest {
     }
 
     @Test void minorAnimusFormsStayFiniteAndBounded() {
-        for (Form form : new Form[] { Form.COMMAND, Form.RUSH, Form.GROWTH, Form.COMMUNION, Form.ANIMUS_CONJURE, Form.MORTEM_CONJURE })
+        for (Form form : new Form[] { Form.COMMAND, Form.GROWTH, Form.COMMUNION, Form.ANIMUS_CONJURE, Form.MORTEM_CONJURE })
             for (float age : new float[] { 1, 6, 30 }) {
                 var mesh = draw(form, new Vec3(1, 1, 3), age);
                 assertFalse(mesh.points.isEmpty(), form + " at " + age);

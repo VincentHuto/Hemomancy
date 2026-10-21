@@ -8,7 +8,8 @@ public enum UpgradeStation {
     RESONANT_FORGE("resonant_forge", "resonant_forge", 2),
     ARMATURE("armature", "hematic_armature", 2),
     SCRIPTORIUM("scriptorium", "enzymatic_scriptorium", 2),
-    LOOM("loom", "somatic_loom", 2);
+    LOOM("loom", "somatic_loom", 2),
+    CONDENSER("condenser", "sanguine_condenser", 1);
 
     private final String serializedName;
     private final String blockPath;
@@ -24,6 +25,8 @@ public enum UpgradeStation {
     public ResourceLocation blockId() { return ResourceLocation.fromNamespaceAndPath("hemomancy", blockPath); }
     /** Blocks behind the Cardinal Focus (opposite the rite's forward direction) where the station must sit. */
     public int seatDistance() { return seatDistance; }
+    /** Stations whose first upgrade is raised on the Lesser Working floor rather than the Greater. */
+    public boolean lesserFirstTier() { return this == ALEMBIC || this == CONDENSER; }
 
     public static UpgradeStation byName(String name) {
         for (UpgradeStation station : values()) if (station.serializedName.equals(name)) return station;

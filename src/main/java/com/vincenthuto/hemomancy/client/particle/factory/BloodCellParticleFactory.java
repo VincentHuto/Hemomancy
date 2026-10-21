@@ -16,7 +16,7 @@ public class BloodCellParticleFactory implements ParticleProvider<BloodCellData>
 	public static final double FEED_SPIRAL_MARKER = AbocipherParticleFactory.FEED_SPIRAL_MARKER;
 	private static final float FEED_ALPHA = 1.0f;
 	private static final float FEED_SCALE = 0.18f;
-	private static final int FEED_LIFETIME_TICKS = 28;
+	private static final int FEED_LIFETIME_TICKS = 14;
 
 	public static ParticleOptions createData(ParticleColor color) {
 		return new BloodCellData(ParticleInit.blood_cell.get(), color);

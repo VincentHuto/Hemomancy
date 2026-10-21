@@ -18,6 +18,13 @@ public final class CastingAnimationLayer extends RenderLayer<AbstractClientPlaye
     public CastingAnimationLayer(RenderLayerParent<AbstractClientPlayer,PlayerModel<AbstractClientPlayer>> parent) { super(parent); }
     @Override public void render(PoseStack poses,MultiBufferSource buffer,int light,AbstractClientPlayer player,
             float limbSwing,float limbSwingAmount,float partial,float age,float yaw,float pitch) {
+        // Hand-anchored visuals (conjured weapons, cell hands, mending) grow from the posed hand even outside a cast.
+        if(!player.isInvisible()) {
+            OutpouringAnchors.recordHand(player,getParentModel(),poses);
+            // Conjured weapons harden on the weapon as it is actually held.
+            for(var arm:HumanoidArm.values())
+                com.vincenthuto.hemomancy.client.render.item.harbinger.HeldWeaponPose.recordThirdPerson(player,getParentModel(),poses,arm);
+        }
         var animation=CastingAnimationClientState.animation(player);
         if(animation==null || player.isInvisible() || CastingPlayerPose.exclusive(player))return;
         // Harbinger casts are drawn by the outpouring (veins layer and world renderer); this layer only records where the

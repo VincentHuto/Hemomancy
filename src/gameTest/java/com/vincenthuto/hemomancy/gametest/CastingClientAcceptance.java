@@ -25,6 +25,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 @EventBusSubscriber(modid=Hemomancy.MOD_ID)
 public final class CastingClientAcceptance {
     private static int ticks,waiting;
+    private static net.minecraft.world.entity.Entity drained;
     private static boolean initialized;
     private static long started;
     @SubscribeEvent public static void tick(ServerTickEvent.Post event) {
@@ -57,6 +58,8 @@ public final class CastingClientAcceptance {
         }
         int age=ticks++;
         if(age<80) { if(age==60)shot(server,"baseline",caster); return; }
+        if(Boolean.getBoolean("hemomancy.castingReviewImpactsOnly")) { impacts(server,caster,observer,age-80); return; }
+        if(Boolean.getBoolean("hemomancy.castingReviewBasicsOnly")) { basics(server,caster,observer,age-80); return; }
         int raw=(age-80)/40+(Boolean.getBoolean("hemomancy.castingReviewIntegrationOnly")?46+BESPOKE_SCENES:0),frame=(age-80)%40;
         if(raw>=40 && raw<40+BESPOKE_SCENES) { bespoke(server,caster,raw-40,frame);return; }
         // Older scenes keep their original numbers (and therefore shot names) after the bespoke block.
@@ -146,6 +149,153 @@ public final class CastingClientAcceptance {
         server.halt(false);
     }
 
+    /**
+     * Cast impacts on the caster's body: every school with every delivery, blows travelling across the observer's view so
+     * streaks read side-on, then one hit through the real {@code CastImpacts.landed} path. Shots at the flash, burst and fray.
+     */
+    private static void impacts(net.minecraft.server.MinecraftServer server,ServerPlayer caster,ServerPlayer observer,int age) {
+        var deliveries=com.vincenthuto.hemomancy.common.manipulation.impact.CastImpactRules.Delivery.values();
+        int views=deliveries.length+1,scene=age/20,frame=age%20,total=EnumBloodTendency.values().length*views;
+        var level=caster.serverLevel();
+        net.minecraft.world.phys.Vec3 at=caster.position().add(0,1.15,0);
+        net.minecraft.world.phys.Vec3 view=caster.position().subtract(observer.position()).multiply(1,0,1).normalize();
+        net.minecraft.world.phys.Vec3 across=new net.minecraft.world.phys.Vec3(-view.z,0,view.x);
+        if(scene<total) {
+            var school=EnumBloodTendency.values()[scene/views];
+            // The last view per school is the attacker's: a melee blow travelling away from the observer.
+            boolean attacker=scene%views==deliveries.length;
+            var delivery=attacker?com.vincenthuto.hemomancy.common.manipulation.impact.CastImpactRules.Delivery.MELEE:deliveries[scene%views];
+            var dir=attacker?view:delivery==com.vincenthuto.hemomancy.common.manipulation.impact.CastImpactRules.Delivery.TETHER?across.scale(-1):across;
+            var secondary=school==EnumBloodTendency.ANIMUS?EnumBloodTendency.LUX:null;
+            String name="impact-"+school.name().toLowerCase()+"-"+(attacker?"attacker":delivery.name().toLowerCase());
+            // As the server does: on the struck side of the body, just outside it (areas sit at the body centre).
+            var contact=delivery==com.vincenthuto.hemomancy.common.manipulation.impact.CastImpactRules.Delivery.AREA?at:at.subtract(dir.scale(.38));
+            if(frame==0)ManipulationVisuals.burst(level,ManipulationVisuals.Form.CAST_IMPACT,contact,contact.add(dir),.84,
+                    com.vincenthuto.hemomancy.common.manipulation.impact.CastImpactRules.LIFE,
+                    com.vincenthuto.hemomancy.common.manipulation.impact.CastImpactRules.encode(school,secondary,delivery,1));
+            if(frame==1)shot(server,name+"-flash",caster);
+            if(frame==4)shot(server,name+"-burst",caster);
+            if(frame==8)shot(server,name+"-fray",caster);
+            return;
+        }
+        if(scene==total) {
+            if(frame==0)com.vincenthuto.hemomancy.common.manipulation.impact.CastImpacts.landed(caster,
+                    level.damageSources().playerAttack(observer),
+                    com.vincenthuto.hemomancy.common.damage.SchoolHitContext.direct(Hemomancy.rloc("blood_shot"),EnumBloodTendency.FERRIC,null,observer),6);
+            if(frame==4)shot(server,"impact-real-path",caster);
+            return;
+        }
+        for(var p:server.getPlayerList().getPlayers())p.sendSystemMessage(Component.literal("CAST_REVIEW_DONE"));
+        Hemomancy.LOGGER.info("CAST_REVIEW complete: impacts, {} scenes",total+1);
+        server.halt(false);
+    }
+
+    /** Staff forms in WeaponConjureRules order; the ninth scene restores the staff itself. */
+    private static final String[] ARSENAL={"conjure_blade","conjure_axe","conjure_spear","conjure_claws","conjure_crossbow",
+            "conjure_torch","conjure_flail","conjure_sickle"};
+    private static final String[] AVATARS={"summon_avatar","summon_avatar_arms","summon_avatar_armor","summon_avatar_legs","summon_avatar_complete"};
+
+    /** Body-anchored cast visuals: rush, ward, mending, every conjured weapon, the cell hands and the avatar. */
+    private static void basics(net.minecraft.server.MinecraftServer server,ServerPlayer caster,ServerPlayer observer,int age) {
+        int scene=age/30,frame=age%30;
+        var level=caster.serverLevel();
+        if(age==0) {
+            // Closer than the sweep's observer: these effects sit on the body and hand.
+            observer.teleportTo(level,2.9,100,3.4,144,0);
+            observer.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES,caster.position().add(0,1.1,0));
+        }
+        if(frame==0) {
+            caster.teleportTo(level,.5,100,.5,0,0);
+            caster.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
+        }
+        if(scene==0) {
+            if(frame==0) { var m=ManipulationInit.blood_rush.get(); ready(caster,m); m.getAction(caster,level,caster.getMainHandItem(),caster.blockPosition());
+                caster.hurtMarked=true; }
+            for(int f:new int[]{2,5,9,14})if(frame==f)shot(server,"basics-rush-"+f,caster);
+            return;
+        }
+        if(scene==1 || scene==2) {
+            int pool=scene==1?6:3;
+            if(frame==0)ManipulationVisuals.replay(caster,ManipulationVisuals.Form.WARD,1,25,pool);
+            if(frame==3)shot(server,"basics-ward-"+pool+"-raise",caster);
+            if(frame==15)shot(server,"basics-ward-"+pool+"-held",caster);
+            if(frame==26)ManipulationVisuals.attached(caster,ManipulationVisuals.Form.WARD,0,0,0);
+            return;
+        }
+        if(scene==3) {
+            if(frame==0) { var pick=new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_PICKAXE);pick.setDamageValue(200);
+                caster.setItemInHand(InteractionHand.MAIN_HAND,pick);
+                ManipulationVisuals.replay(caster,ManipulationVisuals.Form.MENDING,1,18,1); }
+            for(int f:new int[]{3,8,13})if(frame==f)shot(server,"basics-mending-"+f,caster);
+            if(frame==29)caster.getInventory().clearContent();
+            return;
+        }
+        int weapons=com.vincenthuto.hemomancy.common.manipulation.ferric.WeaponConjureRules.WEAPONS;
+        if(scene<4+weapons) {
+            int weapon=scene-4;
+            // The real Living Arsenal: the staff reshapes through the same helper the key press uses, so the morph,
+            // the conjured item and the cue all come from gameplay.
+            if(frame==0) {
+                if(weapon==0) { caster.getInventory().clearContent();
+                    caster.setItemInHand(InteractionHand.MAIN_HAND,new net.minecraft.world.item.ItemStack(
+                            com.vincenthuto.hemomancy.common.init.ItemInit.living_staff.get())); }
+                if(weapon<ARSENAL.length) { var m=ManipulationInit.getByName(ARSENAL[weapon]); ready(caster,m);
+                    com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormHelper.applySelection(caster,m); }
+                else com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormHelper.restoreMainHand(caster);
+            }
+            for(int f:new int[]{3,9,13,17,22})if(frame==f)shot(server,"basics-weapon-"+weapon+"-"+f,caster);
+            return;
+        }
+        int hands=4+weapons;
+        if(scene<hands+4) {
+            int mode=scene-hands;
+            if(mode==0) {
+                if(frame==0) { var m=ManipulationInit.blood_projection.get(); caster.getInventory().clearContent(); ready(caster,m);
+                    m.getAction(caster,level,caster.getMainHandItem(),caster.blockPosition()); }
+                for(int f:new int[]{2,6,10})if(frame==f)shot(server,"basics-hand-summon-"+f,caster);
+            } else if(mode<3) {
+                // Real use: the client holds right-click and sweeps its view, so the palm, the cell particles and the
+                // geometry are all checked against the drawn first-person hand at several facings.
+                String name=mode==1?"projecting":"absorbing";
+                if(mode==2 && frame==0) { var m=ManipulationInit.blood_absorption.get(); caster.getInventory().clearContent(); ready(caster,m);
+                    m.getAction(caster,level,caster.getMainHandItem(),caster.blockPosition()); }
+                // Absorption needs a body to drain: a still pig in front of the caster.
+                if(mode==2 && frame==1) {
+                    var pig=net.minecraft.world.entity.EntityType.PIG.create(level);
+                    if(pig!=null) { pig.moveTo(.5,100,3.2,180,0); pig.setNoAi(true); level.addFreshEntity(pig); drained=pig; }
+                }
+                if(frame==2)mode(server,"use-sweep");
+                for(int f:new int[]{10,18,26})if(frame==f)shot(server,"basics-hand-"+name+"-"+f,caster);
+                if(frame==29) { mode(server,"none"); if(drained!=null) { drained.discard(); drained=null; } }
+            } else {
+                if(frame==0) { com.vincenthuto.hemomancy.common.manipulation.ferric.ConjurationManip.dispelled(caster,caster.getMainHandItem());
+                    caster.getInventory().clearContent(); }
+                for(int f:new int[]{3,7})if(frame==f)shot(server,"basics-hand-dispel-"+f,caster);
+            }
+            return;
+        }
+        int avatars=hands+4;
+        if(scene<avatars+AVATARS.length) {
+            int stage=scene-avatars;
+            if(frame==0) { var m=(com.vincenthuto.hemomancy.common.manipulation.animus.SummonAvatarManip)ManipulationInit.getByName(AVATARS[stage]);
+                ready(caster,m);
+                var known=HemoCapabilityAccess.requireKnownManipulations(caster);
+                var forms=new java.util.LinkedHashSet<>(known.getGrandfatheredFamilyForms());forms.add(m.getName());
+                known.setGrandfatheredFamilyForms(forms);
+                com.vincenthuto.hemomancy.common.manipulation.animus.AvatarManifestationManager.toggle(caster,m); }
+            for(int f:new int[]{4,10,16})if(frame==f)shot(server,"basics-avatar-"+stage+"-"+f,caster);
+            return;
+        }
+        if(scene==avatars+AVATARS.length) {
+            if(frame==0)com.vincenthuto.hemomancy.common.manipulation.animus.AvatarManifestationManager.dismiss(caster);
+            for(int f:new int[]{3,9,15})if(frame==f)shot(server,"basics-avatar-dismiss-"+f,caster);
+            return;
+        }
+        for(var p:server.getPlayerList().getPlayers())p.sendSystemMessage(Component.literal("CAST_REVIEW_DONE"));
+        Hemomancy.LOGGER.info("CAST_REVIEW complete: basics, {} scenes",scene);
+        server.halt(false);
+    }
+
     /** Every non-school style, each played through the registered manipulation that owns it. */
     private static final CastStyle[] STYLES=java.util.Arrays.stream(CastStyle.values()).filter(s -> s!=CastStyle.SCHOOL).toArray(CastStyle[]::new);
     private static final String[] STYLE_IDS={"ironhearted","umbral_step","umbral_reversal","summon_avatar_complete","conjure_staff",
@@ -204,9 +354,15 @@ public final class CastingClientAcceptance {
         var known=HemoCapabilityAccess.requireKnownManipulations(p);known.getKnownManips().put(m,new ManipLevel(0,0));
         known.setSelectedManip(m);known.setEquippedManipNames(java.util.List.of(m.getName()));
         HemoCapabilityAccess.getBloodTendency(p).orElseThrow().setTendencyAlignment(m.getTend(),100);
+        // Items such as the cell hands check the client's copy of the volume before they start being used.
+        com.vincenthuto.hemomancy.common.network.PacketHandler.sendToPlayer(p,
+                new com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket(volume));
     }
     private static void send(ServerPlayer p,CastingAnimationPacket packet) {
         PacketDistributor.sendToPlayersTrackingEntityAndSelf(p,packet);
+    }
+    private static void mode(net.minecraft.server.MinecraftServer server,String mode) {
+        for(var p:server.getPlayerList().getPlayers())p.sendSystemMessage(Component.literal("CAST_REVIEW_MODE "+mode));
     }
     private static void shot(net.minecraft.server.MinecraftServer server,String name,ServerPlayer caster) {
         for(var p:server.getPlayerList().getPlayers())p.sendSystemMessage(Component.literal("CAST_REVIEW_SHOT "+name+" "+caster.getId()));
@@ -240,7 +396,13 @@ public final class CastingClientAcceptance {
                 mc.options.mainHand().set(mode.equals("left-handed")?net.minecraft.world.entity.HumanoidArm.LEFT:net.minecraft.world.entity.HumanoidArm.RIGHT);
                 mc.options.keyUp.setDown(mode.equals("walking"));
                 mc.options.keyShift.setDown(mode.equals("crouching"));
-                mc.options.keyUse.setDown(mode.equals("shield-priority"));
+                mc.options.keyUse.setDown(mode.equals("shield-priority") || mode.equals("use-sweep"));
+                if(mode.equals("use-sweep")) {
+                    // Turn and tilt the view while the hand is in use, to check it stays on the drawn palm.
+                    double t=mc.player.tickCount;
+                    mc.player.setYRot((float)(30*Math.sin(t*.15)));mc.player.setXRot((float)(28+14*Math.sin(t*.1)));
+                    mc.player.setYHeadRot(mc.player.getYRot());
+                }
             }
             mc.getTutorial().setStep(net.minecraft.client.tutorial.TutorialSteps.NONE);
             if(mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen)mc.setScreen(null);
@@ -268,6 +430,13 @@ public final class CastingClientAcceptance {
                     mc.getUser().getName(),parts[1],animation==null?"none":animation.packet().phase(),
                     animation==null?0:animation.playback.elapsed(mc.level.getGameTime(),0),
                     frames,frames==0?0:sum/frames,max);
+            if(parts[1].startsWith("basics-hand") && mc.player!=null) {
+                var camera=mc.gameRenderer.getMainCamera();
+                Hemomancy.LOGGER.info("CAST_REVIEW_PALM {} {} world={} camera={} look={} using={}",parts[1],
+                        com.vincenthuto.hemomancy.client.render.item.harbinger.FirstPersonPalm.describe(),
+                        com.vincenthuto.hemomancy.client.render.item.harbinger.FirstPersonPalm.world(mc.player.getMainArm()),
+                        camera.getPosition(),new net.minecraft.world.phys.Vec3(camera.getLookVector()),mc.player.isUsingItem());
+            }
             net.minecraft.client.Screenshot.grab(mc.gameDirectory,"casting-"+parts[1]+".png",mc.getMainRenderTarget(),ignored -> {});
             frames=0;sum=0;max=0;previousFrame=0;
             event.setCanceled(true);

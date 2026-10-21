@@ -183,7 +183,7 @@ public final class HemoJourneyFixtures {
 						new ItemStack(ItemInit.bloody_jug.get()));
 				case FIRST_BLOODCRAFT_PROOFS -> prepareFirstBloodcraftProofs(player, origin);
 				case FORMATION_PROJECTED -> {
-					set(player, origin.above(), BlockInit.venous_stone.get());
+					set(player, origin.above(), Blocks.CAULDRON);
 					player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.blood_projection.get()));
 				}
 				case LIBER_CRAFTED -> {

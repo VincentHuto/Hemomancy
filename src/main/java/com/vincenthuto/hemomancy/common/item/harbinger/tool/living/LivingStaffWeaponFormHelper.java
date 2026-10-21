@@ -7,6 +7,8 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
+import com.vincenthuto.hemomancy.common.manipulation.ferric.WeaponConjureRules;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketLivingStaffMorph;
@@ -277,6 +279,12 @@ public final class LivingStaffWeaponFormHelper {
 
 		PacketDistributor.sendToPlayersTrackingEntityAndSelf(serverPlayer,
 				new PacketLivingStaffMorph(serverPlayer.getId(), beforeMain, afterMain, beforeOff, afterOff));
+		// Blood hardens into whichever form the arsenal took, timed with the morph's dissolve and form.
+		if (mainChanged && isLivingArsenalStack(afterMain)) {
+			int weapon = WeaponConjureRules.weapon(currentFormName(afterMain));
+			ManipulationVisuals.replay(serverPlayer, ManipulationVisuals.Form.WEAPON_CONJURE, 1,
+					WeaponConjureRules.VISUAL_TICKS, WeaponConjureRules.encode(weapon, serverPlayer.getRandom().nextInt(8)));
+		}
 		serverPlayer.level().playSound(null, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(),
 				SoundEvents.HOGLIN_CONVERTED_TO_ZOMBIFIED, SoundSource.PLAYERS, 0.2F,
 				0.9F + serverPlayer.getRandom().nextFloat() * 0.1F);

@@ -95,6 +95,7 @@ public final class MaterialAtlasSpec {
 	private static void registerHarbingerEntries() {
 		MaterialAtlasPath h = MaterialAtlasPath.HARBINGER;
 		entryAt("sanguine_formation", h, "bloodcraft_core", a(), 498, 520, "mortal_display");
+		entryAt("sanguine_condenser", h, "bloodcraft_core", d(1), 498, 565, "mortal_display");
 		entryAt("blood_crystal_shard", h, "bloodcraft_core", a(), 533, 470, "sanguine_formation");
 		entryAt("blood_rock", h, "bloodcraft_core", a(), 402, 480);
 		entryAt("blood_stained_stone", h, "bloodcraft_core", a(), 463, 430, "mortal_display");

@@ -94,6 +94,8 @@ public final class LiberEntryDefinitions {
 		registerUpgradeLesson("cardinal_rite/palimpsest", "tendency/pages/palimpsest");
 		registerUpgradeLesson("cardinal_rite/ganglionic_weave", "manipulations/pages/ganglionic_weave");
 		registerUpgradeLesson("cardinal_rite/cortical_weave", "manipulations/pages/cortical_weave");
+		registerUpgradeLesson("cardinal_rite/first_clotting", "the_hematic_order/pages/first_clotting");
+		registerUpgradeLesson("cardinal_rite/druse_crystallization", "the_hematic_order/pages/druse_crystallization");
 		register(BLOOD_MEMORIES, CommonDiscoverySource.ITEM_PICKUP, HemomancyDiscoverySource.RITE,
 				HemomancyDiscoverySource.BLOOD_ECHO, HemomancyDiscoverySource.RITE_FRAGMENT);
 		register(MNEMONIC_AMBERGRIS, CommonDiscoverySource.ITEM_PICKUP);

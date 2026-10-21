@@ -2083,10 +2083,10 @@ public final class HarbingerJourneyFixtureGameTests {
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
-	public static void attunedProjectorTarget(GameTestHelper helper) {
+	public static void formationFixtureTargetsAnEmptyCauldron(GameTestHelper helper) {
 		withFixture(helper, HemoJourneyStage.FORMATION_PROJECTED, (origin, player) -> helper.assertTrue(
-				helper.getLevel().getBlockState(origin.above()).is(SanguineFormationProjectionHandler.PROJECTOR_TAG),
-				"Expected an attuned formation projector at the fixture target"));
+				helper.getLevel().getBlockState(origin.above()).is(net.minecraft.world.level.block.Blocks.CAULDRON),
+				"Expected an empty cauldron at the formation fixture target"));
 	}
 
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)

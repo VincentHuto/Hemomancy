@@ -236,6 +236,40 @@ Active Morphling damage is direct. On-hit/on-hurt secondary damage uses the trig
 
 ## Presentation and verification
 
+**Cast impacts (2026-10-19).** Every DIRECT school hit that deals health or absorption damage sends one `CAST_IMPACT` cue from `SchoolCombatEvents.commit` through `CastImpacts.landed`. Periodic and reaction ticks send none. Each target shows at most one impact every 5 ticks; a hit of 10 damage or more always shows. The cue is presentation only.
+
+`CastImpactRules` decides how the hit landed:
+- A projectile entity: PROJECTILE.
+- A weapon or Will strike: MELEE.
+- Otherwise the cast purpose decides:
+  - PROJECTILE → PROJECTILE
+  - AREA, SELF and CONSTRUCTION → AREA
+  - TARGETED → TETHER
+  - CONJURATION and TRAVEL → MELEE
+
+The impact sits just outside the struck surface. `CastImpactGeometry` plays a 10-tick flash, burst and fray in the school's material:
+- MELEE: a diagonal three-streak rake.
+- PROJECTILE: an entry ring and a spall cone.
+- AREA: a ripple ring with spurts.
+- TETHER: a taut strand, a cinching knot and barbs.
+
+Each school adds its own flourish:
+
+| School | Flourish |
+|---|---|
+| Animus | Clots |
+| Flammeus | Flame tongues that burn down to smoke |
+| Congeatio | Blood-ice shards |
+| Ductilis | Re-striking nerve bolts |
+| Lux | A white-gold starburst |
+| Mortem | Slow sinking blobs, with the whole impact at about 0.65× speed |
+| Ferric | Solid iron splinters (solid pass) and molten sparks |
+| Tenebris | Rays drawn inward, then a dark puff |
+
+A secondary school adds two thin rays. Reaction payoff bursts and bespoke impacts such as the Riposte strike and the Blood Shot splash still draw on top.
+
+To review, run the casting harness with `-PcastingImpactsOnly=true` (`tools/oneoff/casting-animation-review.init.gradle`). It captures 8 schools × 5 views (four deliveries plus an attacker's-eye melee) at the flash, the burst and the fray, plus one hit through the real `CastImpacts.landed` path.
+
 Each state has its own status icon and counter tooltip. Body-relative buildup uses the existing authored school materials: pressure droplets, Necrosis wounds, iron signatures, crimson burns, layered Rime, a broken action cue, a Lux halo, and shadow wisps. Marionette has a moving hand-to-body tendon and separate move/attack order markers. These world cues remain visible with Minimal particles.
 
 Dedicated tests cover actual native damage/absorption, raised shields, immunity, captured projectile attribution and weapon switching, affinity, state expiry/refresh/cleanse/save/reload, thermal opposition, rupture/shatter/combustion/exposure, conduction budgets, skeleton ranged perception, melee pursuit, Brain perception, boss continuity, and real Marionette navigation and attacks. Pure JVM rules test numeric caps and channel limits. Source inventory assertions are bookkeeping only, not combat acceptance.

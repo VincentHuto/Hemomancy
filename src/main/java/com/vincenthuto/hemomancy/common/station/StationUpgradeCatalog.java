@@ -23,6 +23,10 @@ public final class StationUpgradeCatalog {
     public static final String LOOM_WEAVE = "loom_weave";
     /** A Magister-or-higher memory woven on a Ganglionic Loom. */
     public static final String LOOM_WEAVE_GANGLIONIC = "loom_weave_ganglionic";
+    /** A condensed formation collected by hand from any Sanguine Condenser. */
+    public static final String CONDENSE = "condense";
+    /** A condensed formation collected by hand from a Latticed or Druse Condenser. */
+    public static final String CONDENSE_LATTICED = "condense_latticed";
 
     private static final List<StationUpgradeTier> TIERS = List.of(
             new StationUpgradeTier(UpgradeStation.ALEMBIC, 1, 4, "hematic_condenser_kit",
@@ -60,7 +64,13 @@ public final class StationUpgradeCatalog {
                     "hemomancy.mnemonist.loom.ganglionic"),
             new StationUpgradeTier(UpgradeStation.LOOM, 2, 6, "cortical_crown",
                     "cardinal_rite/cortical_weave", List.of(LOOM_WEAVE_GANGLIONIC), 3, 50,
-                    "hemomancy.mnemonist.loom.cortical"));
+                    "hemomancy.mnemonist.loom.cortical"),
+            new StationUpgradeTier(UpgradeStation.CONDENSER, 1, 3, "clotting_lattice",
+                    "cardinal_rite/first_clotting", List.of(CONDENSE), 2, 50,
+                    "hemomancy.vicar.condenser.lattice"),
+            new StationUpgradeTier(UpgradeStation.CONDENSER, 2, 5, "druse_heart",
+                    "cardinal_rite/druse_crystallization", List.of(CONDENSE_LATTICED), 3, 50,
+                    "hemomancy.vicar.condenser.druse"));
 
     private StationUpgradeCatalog() {}
 

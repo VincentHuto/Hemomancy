@@ -1,0 +1,40 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "name": "minecraft:cauldron",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "hemomancy:sanguine_condenser",
+                  "properties": {"stage": "0"}
+                }
+              ]
+            },
+            {
+              "type": "minecraft:item",
+              "name": "hemomancy:sanguine_condenser",
+              "functions": [
+                {
+                  "function": "minecraft:copy_state",
+                  "block": "hemomancy:sanguine_condenser",
+                  "properties": ["stage"]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "conditions": [
+        {"condition": "minecraft:survives_explosion"}
+      ]
+    }
+  ]
+}

@@ -29,7 +29,7 @@ final class FerricDuctilisGeometry {
     static void begin(){ribbons=0;}
     static boolean handles(Form form) {
         return switch(form) {
-            case IRON_HEART,IRON_CHARGE,CHOIR,RETORT,MENDING,MAGNET,MARK,CIRCUIT,WARD,LIGHTNING_CHARGE,THREAD,THREAD_CHARGE,
+            case IRON_HEART,IRON_CHARGE,CHOIR,RETORT,MAGNET,MARK,CIRCUIT,LIGHTNING_CHARGE,THREAD,THREAD_CHARGE,
                     FERRIC_IMPACT,FERRIC_CONJURE,NERVE_PULSE,NERVE_HIT,PARALYSIS -> true;
             default -> false;
         };
@@ -86,7 +86,7 @@ final class FerricDuctilisGeometry {
                     ribbon(p,flow,at,tip,.022,.02,time,seed+i,camera,BLOOD,opacity);
                 }
             }
-            case FERRIC_CONJURE,MENDING -> {
+            case FERRIC_CONJURE -> {
                 Vec3 at=body==null?Vec3.ZERO:hand(body,(float)(time-Math.floor(time)));
                 for(int i=0;i<4;i++) {
                     double a=i*Math.PI/2+time*.014;
@@ -94,22 +94,12 @@ final class FerricDuctilisGeometry {
                     ribbon(p,flow,root,at.add(0,.28,0),.038,.08,time,seed+i,camera,BLOOD,opacity);
                 }
                 card(p,flow,at,right,up,.21,.32,3,seed,NERVE,opacity*.6f);
-                if(packet.form()==Form.FERRIC_CONJURE) {
-                    // Plates of blood-iron condense at the hand, one after another.
-                    for(int i=0;i<3;i++) {
-                        float own=Mth.clamp(formation*3-i,0,1);
-                        if(own<=0)continue;
-                        double a=i*Math.PI*2/3+time*.02;
-                        plate(p,iron,at.add(Math.cos(a)*.16,.12+i*.05,Math.sin(a)*.16),.12*own,.18*own,.03,seed+40+i,opacity*own);
-                    }
-                } else {
-                    // Mending: blood stitches draw a wound across the chest closed.
-                    double gap=.24*(1-Math.min(1,age/12.0));
-                    Vec3 chest=new Vec3(0,height*.62,0);
-                    for(int i=0;i<4;i++) {
-                        Vec3 row=chest.add(0,(i-1.5)*.1,0);
-                        ribbon(p,flow,row.add(-gap-.06,0,0),row.add(gap+.06,.03,0),.022,.01,time,seed+50+i,camera,BLOOD,opacity);
-                    }
+                // Plates of blood-iron condense at the hand, one after another.
+                for(int i=0;i<3;i++) {
+                    float own=Mth.clamp(formation*3-i,0,1);
+                    if(own<=0)continue;
+                    double a=i*Math.PI*2/3+time*.02;
+                    plate(p,iron,at.add(Math.cos(a)*.16,.12+i*.05,Math.sin(a)*.16),.12*own,.18*own,.03,seed+40+i,opacity*own);
                 }
             }
             case MAGNET -> field(p,flow,Vec3.ZERO,Math.min(8,packet.radius()),time,seed,camera,opacity);
@@ -126,23 +116,6 @@ final class FerricDuctilisGeometry {
                     ribbon(p,flow,mid,mid.add(Math.cos(a)*width*.55,.22,Math.sin(a)*width*.55),.022,.025,time,seed+i+8,camera,NERVE,opacity*.8f);
                 }
                 if(paralyzed)card(p,flow,head,right,up,.22,.2,3,seed,NERVE,opacity*.7f);
-            }
-            case WARD -> {
-                int count=Math.min(8,packet.count());
-                for(int i=0;i<count;i++) {
-                    double a=i*Math.PI*2/8+time*.009;
-                    Vec3 root=new Vec3(Math.cos(a)*.74,.35,Math.sin(a)*.74);
-                    Vec3 tip=new Vec3(Math.cos(a+.2)*.8,1.65,Math.sin(a+.2)*.8);
-                    ribbon(p,flow,root,tip,.045,.1,time,seed+i,camera,NERVE,opacity);
-                    if(i<count-1)ribbon(p,flow,tip,new Vec3(Math.cos(a+Math.PI/4)*.8,1.5,Math.sin(a+Math.PI/4)*.8),.028,.04,time,seed+i+8,camera,NERVE,opacity*.7f);
-                    // A soft glow under each live strand so the sheath reads as current, not wire.
-                    card(p,flow,root.lerp(tip,.5),right,up,.16,.5,1,seed+i+16,NERVE,opacity*.45f);
-                }
-                if(count>=8) {
-                    List<Vec3> crown=new ArrayList<>(17);
-                    for(int i=0;i<=16;i++) {double a=i*Math.PI/8+time*.009;crown.add(new Vec3(Math.cos(a)*.8,1.62,Math.sin(a)*.8));}
-                    LuxUmbraGeometry.ribbonPath(p,flow,crown,camera,.06,0,seed+30,NERVE,opacity*.6f);
-                }
             }
             case LIGHTNING_CHARGE -> {
                 Vec3 focus=ChargeVisualGeometry.focus(packet.form(),aim);

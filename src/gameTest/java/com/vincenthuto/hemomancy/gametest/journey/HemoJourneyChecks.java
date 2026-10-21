@@ -527,7 +527,7 @@ public final class HemoJourneyChecks {
 		double current = HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume();
 		boolean output = outputPresent(player, HemoJourneyStage.FORMATION_PROJECTED, origin, claimOutputs);
 		require(unmet, HemoJourneyCheckpointRules.formationPassed(start, current, output),
-				"The attuned projection did not spend at least 100 mL and produce its formation.");
+				"The cauldron projection did not spend at least 100 mL and yield its condensed formation.");
 		require(unmet, output,
 				"No attributable Sanguine Formation output was produced after preparation.");
 	}

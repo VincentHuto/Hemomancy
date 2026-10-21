@@ -79,6 +79,7 @@ public class UseQuickManipKeyPacket implements CustomPacketPayload {
 								if (selectedManip instanceof ConjurationManip conjure) {
 									if (!mainStack.isEmpty()) {
 										if (mainStack.getItem()instanceof IDispellable dispel) {
+											ConjurationManip.dispelled(player, mainStack);
 											mainStack.shrink(1);
 											double bloodCost = dispel.getBaseCost();
 											double bloodRefund = Math

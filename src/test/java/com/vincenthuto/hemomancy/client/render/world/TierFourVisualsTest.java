@@ -32,7 +32,7 @@ class TierFourVisualsTest {
     }
 
     @Test void ductilisAndFerricExtrasDrawWithinBudget() {
-        for (Form form : new Form[] { Form.LIGHTNING_CHARGE, Form.NERVE_HIT, Form.FERRIC_CONJURE, Form.MENDING })
+        for (Form form : new Form[] { Form.LIGHTNING_CHARGE, Form.NERVE_HIT, Form.FERRIC_CONJURE })
             for (float age : new float[] { 1, 6, 20 }) {
                 FerricDuctilisGeometry.begin();
                 var iron = new HematicRiposteGeometryTest.Capture();

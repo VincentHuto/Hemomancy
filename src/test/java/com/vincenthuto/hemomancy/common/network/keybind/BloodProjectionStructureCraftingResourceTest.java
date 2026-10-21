@@ -167,7 +167,7 @@ public final class BloodProjectionStructureCraftingResourceTest {
 		assertContains("Abocipher factory dispatches short feed particles", abocipherFactory,
 				"new BloodStructureFeedAbocipherParticle");
 		assertContains("feed Abocipher particle has short lifetime", feedAbocipherParticle,
-				"LIFETIME_TICKS = 28");
+				"LIFETIME_TICKS = 14");
 		assertContains("feed Abocipher particle damps travel", feedAbocipherParticle,
 				"this.xd *= DRIFT_DAMPING");
 		assertContains("blood cell factory exposes feed data helper", bloodCellFactory,

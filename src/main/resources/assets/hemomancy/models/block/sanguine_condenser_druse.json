@@ -1,0 +1,3546 @@
+{
+ "parent": "minecraft:block/block",
+ "render_type": "minecraft:cutout",
+ "ambientocclusion": false,
+ "gui_light": "front",
+ "display": {
+  "gui": {
+   "rotation": [
+    30,
+    225,
+    0
+   ],
+   "translation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.625,
+    0.625,
+    0.625
+   ]
+  },
+  "ground": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "translation": [
+    0,
+    3,
+    0
+   ],
+   "scale": [
+    0.25,
+    0.25,
+    0.25
+   ]
+  },
+  "fixed": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "translation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.5,
+    0.5,
+    0.5
+   ]
+  },
+  "thirdperson_righthand": {
+   "rotation": [
+    75,
+    45,
+    0
+   ],
+   "translation": [
+    0,
+    2.5,
+    0
+   ],
+   "scale": [
+    0.375,
+    0.375,
+    0.375
+   ]
+  },
+  "thirdperson_lefthand": {
+   "rotation": [
+    75,
+    45,
+    0
+   ],
+   "translation": [
+    0,
+    2.5,
+    0
+   ],
+   "scale": [
+    0.375,
+    0.375,
+    0.375
+   ]
+  },
+  "firstperson_righthand": {
+   "rotation": [
+    0,
+    45,
+    0
+   ],
+   "translation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.4,
+    0.4,
+    0.4
+   ]
+  },
+  "firstperson_lefthand": {
+   "rotation": [
+    0,
+    225,
+    0
+   ],
+   "translation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.4,
+    0.4,
+    0.4
+   ]
+  }
+ },
+ "textures": {
+  "particle": "hemomancy:block/sanguine_condenser/druse_side",
+  "druse_side": "hemomancy:block/sanguine_condenser/druse_side",
+  "druse_inner": "hemomancy:block/sanguine_condenser/druse_inner",
+  "druse_top": "hemomancy:block/sanguine_condenser/druse_top",
+  "druse_bottom": "hemomancy:block/sanguine_condenser/druse_bottom",
+  "crystal": "hemomancy:block/sanguine_condenser/crystal"
+ },
+ "elements": [
+  {
+   "name": "wall_west",
+   "from": [
+    0,
+    3,
+    0
+   ],
+   "to": [
+    2,
+    16.0,
+    16
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      0.0,
+      2,
+      13.0
+     ],
+     "texture": "#druse_side"
+    },
+    "south": {
+     "uv": [
+      0,
+      0.0,
+      2,
+      13.0
+     ],
+     "texture": "#druse_side"
+    },
+    "east": {
+     "uv": [
+      0,
+      0.0,
+      16,
+      13.0
+     ],
+     "texture": "#druse_inner"
+    },
+    "west": {
+     "uv": [
+      0,
+      0.0,
+      16,
+      13.0
+     ],
+     "texture": "#druse_side"
+    },
+    "up": {
+     "uv": [
+      0,
+      0,
+      2,
+      16
+     ],
+     "texture": "#druse_top"
+    },
+    "down": {
+     "uv": [
+      0,
+      0,
+      2,
+      16
+     ],
+     "texture": "#druse_inner"
+    }
+   }
+  },
+  {
+   "name": "wall_east",
+   "from": [
+    14,
+    3,
+    0
+   ],
+   "to": [
+    16,
+    16.0,
+    16
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      14,
+      0.0,
+      16,
+      13.0
+     ],
+     "texture": "#druse_side"
+    },
+    "south": {
+     "uv": [
+      14,
+      0.0,
+      16,
+      13.0
+     ],
+     "texture": "#druse_side"
+    },
+    "east": {
+     "uv": [
+      0,
+      0.0,
+      16,
+      13.0
+     ],
+     "texture": "#druse_side"
+    },
+    "west": {
+     "uv": [
+      0,
+      0.0,
+      16,
+      13.0
+     ],
+     "texture": "#druse_inner"
+    },
+    "up": {
+     "uv": [
+      14,
+      0,
+      16,
+      16
+     ],
+     "texture": "#druse_top"
+    },
+    "down": {
+     "uv": [
+      14,
+      0,
+      16,
+      16
+     ],
+     "texture": "#druse_inner"
+    }
+   }
+  },
+  {
+   "name": "wall_north",
+   "from": [
+    2,
+    3,
+    0
+   ],
+   "to": [
+    14,
+    16.0,
+    2
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      2,
+      0.0,
+      14,
+      13.0
+     ],
+     "texture": "#druse_side"
+    },
+    "south": {
+     "uv": [
+      2,
+      0.0,
+      14,
+      13.0
+     ],
+     "texture": "#druse_inner"
+    },
+    "up": {
+     "uv": [
+      2,
+      0,
+      14,
+      2
+     ],
+     "texture": "#druse_top"
+    },
+    "down": {
+     "uv": [
+      2,
+      0,
+      14,
+      2
+     ],
+     "texture": "#druse_inner"
+    }
+   }
+  },
+  {
+   "name": "wall_south",
+   "from": [
+    2,
+    3,
+    14
+   ],
+   "to": [
+    14,
+    16.0,
+    16
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      2,
+      0.0,
+      14,
+      13.0
+     ],
+     "texture": "#druse_inner"
+    },
+    "south": {
+     "uv": [
+      2,
+      0.0,
+      14,
+      13.0
+     ],
+     "texture": "#druse_side"
+    },
+    "up": {
+     "uv": [
+      2,
+      14,
+      14,
+      16
+     ],
+     "texture": "#druse_top"
+    },
+    "down": {
+     "uv": [
+      2,
+      14,
+      14,
+      16
+     ],
+     "texture": "#druse_inner"
+    }
+   }
+  },
+  {
+   "name": "floor",
+   "from": [
+    2,
+    3,
+    2
+   ],
+   "to": [
+    14,
+    4,
+    14
+   ],
+   "faces": {
+    "up": {
+     "uv": [
+      2,
+      2,
+      14,
+      14
+     ],
+     "texture": "#druse_inner"
+    },
+    "down": {
+     "uv": [
+      2,
+      2,
+      14,
+      14
+     ],
+     "texture": "#druse_inner"
+    }
+   }
+  },
+  {
+   "name": "leg",
+   "from": [
+    0,
+    0,
+    0
+   ],
+   "to": [
+    4,
+    3,
+    2
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      13,
+      4,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "south": {
+     "uv": [
+      0,
+      13,
+      4,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "east": {
+     "uv": [
+      0,
+      13,
+      2,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "west": {
+     "uv": [
+      0,
+      13,
+      2,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "down": {
+     "uv": [
+      0,
+      0,
+      4,
+      2
+     ],
+     "texture": "#druse_bottom"
+    }
+   }
+  },
+  {
+   "name": "leg",
+   "from": [
+    0,
+    0,
+    2
+   ],
+   "to": [
+    2,
+    3,
+    4
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      13,
+      2,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "south": {
+     "uv": [
+      0,
+      13,
+      2,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "east": {
+     "uv": [
+      2,
+      13,
+      4,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "west": {
+     "uv": [
+      2,
+      13,
+      4,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "down": {
+     "uv": [
+      0,
+      2,
+      2,
+      4
+     ],
+     "texture": "#druse_bottom"
+    }
+   }
+  },
+  {
+   "name": "leg",
+   "from": [
+    12,
+    0,
+    0
+   ],
+   "to": [
+    16,
+    3,
+    2
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      12,
+      13,
+      16,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "south": {
+     "uv": [
+      12,
+      13,
+      16,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "east": {
+     "uv": [
+      0,
+      13,
+      2,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "west": {
+     "uv": [
+      0,
+      13,
+      2,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "down": {
+     "uv": [
+      12,
+      0,
+      16,
+      2
+     ],
+     "texture": "#druse_bottom"
+    }
+   }
+  },
+  {
+   "name": "leg",
+   "from": [
+    14,
+    0,
+    2
+   ],
+   "to": [
+    16,
+    3,
+    4
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      14,
+      13,
+      16,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "south": {
+     "uv": [
+      14,
+      13,
+      16,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "east": {
+     "uv": [
+      2,
+      13,
+      4,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "west": {
+     "uv": [
+      2,
+      13,
+      4,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "down": {
+     "uv": [
+      14,
+      2,
+      16,
+      4
+     ],
+     "texture": "#druse_bottom"
+    }
+   }
+  },
+  {
+   "name": "leg",
+   "from": [
+    0,
+    0,
+    14
+   ],
+   "to": [
+    4,
+    3,
+    16
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      13,
+      4,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "south": {
+     "uv": [
+      0,
+      13,
+      4,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "east": {
+     "uv": [
+      14,
+      13,
+      16,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "west": {
+     "uv": [
+      14,
+      13,
+      16,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "down": {
+     "uv": [
+      0,
+      14,
+      4,
+      16
+     ],
+     "texture": "#druse_bottom"
+    }
+   }
+  },
+  {
+   "name": "leg",
+   "from": [
+    0,
+    0,
+    12
+   ],
+   "to": [
+    2,
+    3,
+    14
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      13,
+      2,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "south": {
+     "uv": [
+      0,
+      13,
+      2,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "east": {
+     "uv": [
+      12,
+      13,
+      14,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "west": {
+     "uv": [
+      12,
+      13,
+      14,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "down": {
+     "uv": [
+      0,
+      12,
+      2,
+      14
+     ],
+     "texture": "#druse_bottom"
+    }
+   }
+  },
+  {
+   "name": "leg",
+   "from": [
+    12,
+    0,
+    14
+   ],
+   "to": [
+    16,
+    3,
+    16
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      12,
+      13,
+      16,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "south": {
+     "uv": [
+      12,
+      13,
+      16,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "east": {
+     "uv": [
+      14,
+      13,
+      16,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "west": {
+     "uv": [
+      14,
+      13,
+      16,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "down": {
+     "uv": [
+      12,
+      14,
+      16,
+      16
+     ],
+     "texture": "#druse_bottom"
+    }
+   }
+  },
+  {
+   "name": "leg",
+   "from": [
+    14,
+    0,
+    12
+   ],
+   "to": [
+    16,
+    3,
+    14
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      14,
+      13,
+      16,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "south": {
+     "uv": [
+      14,
+      13,
+      16,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "east": {
+     "uv": [
+      12,
+      13,
+      14,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "west": {
+     "uv": [
+      12,
+      13,
+      14,
+      16
+     ],
+     "texture": "#druse_side"
+    },
+    "down": {
+     "uv": [
+      14,
+      12,
+      16,
+      14
+     ],
+     "texture": "#druse_bottom"
+    }
+   }
+  },
+  {
+   "name": "spire",
+   "from": [
+    0.2,
+    16.0,
+    0.2
+   ],
+   "to": [
+    1.8,
+    19.5,
+    1.8
+   ],
+   "rotation": {
+    "angle": -22.5,
+    "axis": "x",
+    "origin": [
+     1,
+     16.0,
+     1
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      8,
+      7.6,
+      11.5
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      8,
+      7.6,
+      11.5
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      8,
+      7.6,
+      11.5
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      8,
+      7.6,
+      11.5
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      5.6,
+      1.6
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      5.6,
+      1.6
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "spire_tip",
+   "from": [
+    0.6,
+    19.5,
+    0.6
+   ],
+   "to": [
+    1.4,
+    21.0,
+    1.4
+   ],
+   "rotation": {
+    "angle": -22.5,
+    "axis": "x",
+    "origin": [
+     1,
+     16.0,
+     1
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      0.0,
+      6.8,
+      1.5
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      0.0,
+      6.8,
+      1.5
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      0.0,
+      6.8,
+      1.5
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      0.0,
+      6.8,
+      1.5
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      4.8,
+      0.7999999999999999
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      4.8,
+      0.7999999999999999
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "spur",
+   "from": [
+    1.4,
+    16.0,
+    0.5
+   ],
+   "to": [
+    2.4,
+    18.1,
+    1.5
+   ],
+   "rotation": {
+    "angle": 22.5,
+    "axis": "z",
+    "origin": [
+     1.9,
+     16.0,
+     1
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      6,
+      7.0,
+      8.1
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      6,
+      7.0,
+      8.1
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      6,
+      7.0,
+      8.1
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      6,
+      7.0,
+      8.1
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      5.0,
+      1.0
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      5.0,
+      1.0
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "spur_tip",
+   "from": [
+    1.65,
+    18.1,
+    0.75
+   ],
+   "to": [
+    2.15,
+    19.0,
+    1.25
+   ],
+   "rotation": {
+    "angle": 22.5,
+    "axis": "z",
+    "origin": [
+     1.9,
+     16.0,
+     1
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.9
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.9
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.9
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.9
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      4.5,
+      0.5
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      4.5,
+      0.5
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "spur",
+   "from": [
+    0.5,
+    16.0,
+    1.4
+   ],
+   "to": [
+    1.5,
+    17.54,
+    2.4
+   ],
+   "rotation": {
+    "angle": -22.5,
+    "axis": "x",
+    "origin": [
+     1,
+     16.0,
+     1.9
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.54
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.54
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.54
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.54
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      5.0,
+      1.0
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      5.0,
+      1.0
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "spur_tip",
+   "from": [
+    0.75,
+    17.54,
+    1.65
+   ],
+   "to": [
+    1.25,
+    18.2,
+    2.15
+   ],
+   "rotation": {
+    "angle": -22.5,
+    "axis": "x",
+    "origin": [
+     1,
+     16.0,
+     1.9
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.66
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.66
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.66
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.66
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      4.5,
+      0.5
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      4.5,
+      0.5
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "spire",
+   "from": [
+    14.2,
+    16.0,
+    0.2
+   ],
+   "to": [
+    15.8,
+    19.5,
+    1.8
+   ],
+   "rotation": {
+    "angle": -22.5,
+    "axis": "x",
+    "origin": [
+     15,
+     16.0,
+     1
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      8,
+      7.6,
+      11.5
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      8,
+      7.6,
+      11.5
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      8,
+      7.6,
+      11.5
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      8,
+      7.6,
+      11.5
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      5.600000000000001,
+      1.6000000000000014
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      5.600000000000001,
+      1.6000000000000014
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "spire_tip",
+   "from": [
+    14.6,
+    19.5,
+    0.6
+   ],
+   "to": [
+    15.4,
+    21.0,
+    1.4
+   ],
+   "rotation": {
+    "angle": -22.5,
+    "axis": "x",
+    "origin": [
+     15,
+     16.0,
+     1
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      0.0,
+      6.8,
+      1.5
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      0.0,
+      6.8,
+      1.5
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      0.0,
+      6.8,
+      1.5
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      0.0,
+      6.8,
+      1.5
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      4.800000000000001,
+      0.8000000000000007
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      4.800000000000001,
+      0.8000000000000007
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "spur",
+   "from": [
+    13.6,
+    16.0,
+    0.5
+   ],
+   "to": [
+    14.6,
+    18.1,
+    1.5
+   ],
+   "rotation": {
+    "angle": -22.5,
+    "axis": "z",
+    "origin": [
+     14.1,
+     16.0,
+     1
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      6,
+      7.0,
+      8.1
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      6,
+      7.0,
+      8.1
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      6,
+      7.0,
+      8.1
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      6,
+      7.0,
+      8.1
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      5.0,
+      1.0
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      5.0,
+      1.0
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "spur_tip",
+   "from": [
+    13.85,
+    18.1,
+    0.75
+   ],
+   "to": [
+    14.35,
+    19.0,
+    1.25
+   ],
+   "rotation": {
+    "angle": -22.5,
+    "axis": "z",
+    "origin": [
+     14.1,
+     16.0,
+     1
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.9
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.9
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.9
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.9
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      4.5,
+      0.5
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      4.5,
+      0.5
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "spur",
+   "from": [
+    14.5,
+    16.0,
+    1.4
+   ],
+   "to": [
+    15.5,
+    17.54,
+    2.4
+   ],
+   "rotation": {
+    "angle": -22.5,
+    "axis": "x",
+    "origin": [
+     15,
+     16.0,
+     1.9
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.54
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.54
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.54
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.54
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      5.0,
+      1.0
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      5.0,
+      1.0
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "spur_tip",
+   "from": [
+    14.75,
+    17.54,
+    1.65
+   ],
+   "to": [
+    15.25,
+    18.2,
+    2.15
+   ],
+   "rotation": {
+    "angle": -22.5,
+    "axis": "x",
+    "origin": [
+     15,
+     16.0,
+     1.9
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.66
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.66
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.66
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.66
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      4.5,
+      0.5
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      4.5,
+      0.5
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "spire",
+   "from": [
+    0.2,
+    16.0,
+    14.2
+   ],
+   "to": [
+    1.8,
+    19.5,
+    15.8
+   ],
+   "rotation": {
+    "angle": 22.5,
+    "axis": "x",
+    "origin": [
+     1,
+     16.0,
+     15
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      8,
+      7.6,
+      11.5
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      8,
+      7.6,
+      11.5
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      8,
+      7.6,
+      11.5
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      8,
+      7.6,
+      11.5
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      5.6,
+      1.6
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      5.6,
+      1.6
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "spire_tip",
+   "from": [
+    0.6,
+    19.5,
+    14.6
+   ],
+   "to": [
+    1.4,
+    21.0,
+    15.4
+   ],
+   "rotation": {
+    "angle": 22.5,
+    "axis": "x",
+    "origin": [
+     1,
+     16.0,
+     15
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      0.0,
+      6.8,
+      1.5
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      0.0,
+      6.8,
+      1.5
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      0.0,
+      6.8,
+      1.5
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      0.0,
+      6.8,
+      1.5
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      4.8,
+      0.7999999999999999
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      4.8,
+      0.7999999999999999
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "spur",
+   "from": [
+    1.4,
+    16.0,
+    14.5
+   ],
+   "to": [
+    2.4,
+    18.1,
+    15.5
+   ],
+   "rotation": {
+    "angle": 22.5,
+    "axis": "z",
+    "origin": [
+     1.9,
+     16.0,
+     15
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      6,
+      7.0,
+      8.1
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      6,
+      7.0,
+      8.1
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      6,
+      7.0,
+      8.1
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      6,
+      7.0,
+      8.1
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      5.0,
+      1.0
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      5.0,
+      1.0
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "spur_tip",
+   "from": [
+    1.65,
+    18.1,
+    14.75
+   ],
+   "to": [
+    2.15,
+    19.0,
+    15.25
+   ],
+   "rotation": {
+    "angle": 22.5,
+    "axis": "z",
+    "origin": [
+     1.9,
+     16.0,
+     15
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.9
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.9
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.9
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.9
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      4.5,
+      0.5
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      4.5,
+      0.5
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "spur",
+   "from": [
+    0.5,
+    16.0,
+    13.6
+   ],
+   "to": [
+    1.5,
+    17.54,
+    14.6
+   ],
+   "rotation": {
+    "angle": 22.5,
+    "axis": "x",
+    "origin": [
+     1,
+     16.0,
+     14.1
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.54
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.54
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.54
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.54
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      5.0,
+      1.0
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      5.0,
+      1.0
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "spur_tip",
+   "from": [
+    0.75,
+    17.54,
+    13.85
+   ],
+   "to": [
+    1.25,
+    18.2,
+    14.35
+   ],
+   "rotation": {
+    "angle": 22.5,
+    "axis": "x",
+    "origin": [
+     1,
+     16.0,
+     14.1
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.66
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.66
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.66
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.66
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      4.5,
+      0.5
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      4.5,
+      0.5
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "spire",
+   "from": [
+    14.2,
+    16.0,
+    14.2
+   ],
+   "to": [
+    15.8,
+    19.5,
+    15.8
+   ],
+   "rotation": {
+    "angle": 22.5,
+    "axis": "x",
+    "origin": [
+     15,
+     16.0,
+     15
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      8,
+      7.6,
+      11.5
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      8,
+      7.6,
+      11.5
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      8,
+      7.6,
+      11.5
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      8,
+      7.6,
+      11.5
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      5.600000000000001,
+      1.6000000000000014
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      5.600000000000001,
+      1.6000000000000014
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "spire_tip",
+   "from": [
+    14.6,
+    19.5,
+    14.6
+   ],
+   "to": [
+    15.4,
+    21.0,
+    15.4
+   ],
+   "rotation": {
+    "angle": 22.5,
+    "axis": "x",
+    "origin": [
+     15,
+     16.0,
+     15
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      0.0,
+      6.8,
+      1.5
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      0.0,
+      6.8,
+      1.5
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      0.0,
+      6.8,
+      1.5
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      0.0,
+      6.8,
+      1.5
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      4.800000000000001,
+      0.8000000000000007
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      4.800000000000001,
+      0.8000000000000007
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "spur",
+   "from": [
+    13.6,
+    16.0,
+    14.5
+   ],
+   "to": [
+    14.6,
+    18.1,
+    15.5
+   ],
+   "rotation": {
+    "angle": -22.5,
+    "axis": "z",
+    "origin": [
+     14.1,
+     16.0,
+     15
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      6,
+      7.0,
+      8.1
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      6,
+      7.0,
+      8.1
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      6,
+      7.0,
+      8.1
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      6,
+      7.0,
+      8.1
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      5.0,
+      1.0
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      5.0,
+      1.0
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "spur_tip",
+   "from": [
+    13.85,
+    18.1,
+    14.75
+   ],
+   "to": [
+    14.35,
+    19.0,
+    15.25
+   ],
+   "rotation": {
+    "angle": -22.5,
+    "axis": "z",
+    "origin": [
+     14.1,
+     16.0,
+     15
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.9
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.9
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.9
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.9
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      4.5,
+      0.5
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      4.5,
+      0.5
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "spur",
+   "from": [
+    14.5,
+    16.0,
+    13.6
+   ],
+   "to": [
+    15.5,
+    17.54,
+    14.6
+   ],
+   "rotation": {
+    "angle": 22.5,
+    "axis": "x",
+    "origin": [
+     15,
+     16.0,
+     14.1
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.54
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.54
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.54
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.54
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      5.0,
+      1.0
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      5.0,
+      1.0
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "spur_tip",
+   "from": [
+    14.75,
+    17.54,
+    13.85
+   ],
+   "to": [
+    15.25,
+    18.2,
+    14.35
+   ],
+   "rotation": {
+    "angle": 22.5,
+    "axis": "x",
+    "origin": [
+     15,
+     16.0,
+     14.1
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.66
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.66
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.66
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.66
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      4.5,
+      0.5
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      4.5,
+      0.5
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "rim_point",
+   "from": [
+    7.5,
+    16.0,
+    0.5
+   ],
+   "to": [
+    8.5,
+    17.68,
+    1.5
+   ],
+   "rotation": {
+    "angle": -22.5,
+    "axis": "x",
+    "origin": [
+     8,
+     16.0,
+     1
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.68
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.68
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.68
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.68
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      5.0,
+      1.0
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      5.0,
+      1.0
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "rim_point_tip",
+   "from": [
+    7.75,
+    17.68,
+    0.75
+   ],
+   "to": [
+    8.25,
+    18.4,
+    1.25
+   ],
+   "rotation": {
+    "angle": -22.5,
+    "axis": "x",
+    "origin": [
+     8,
+     16.0,
+     1
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.72
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.72
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.72
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.72
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      4.5,
+      0.5
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      4.5,
+      0.5
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "rim_point",
+   "from": [
+    7.5,
+    16.0,
+    14.5
+   ],
+   "to": [
+    8.5,
+    17.68,
+    15.5
+   ],
+   "rotation": {
+    "angle": 22.5,
+    "axis": "x",
+    "origin": [
+     8,
+     16.0,
+     15
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.68
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.68
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.68
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.68
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      5.0,
+      1.0
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      5.0,
+      1.0
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "rim_point_tip",
+   "from": [
+    7.75,
+    17.68,
+    14.75
+   ],
+   "to": [
+    8.25,
+    18.4,
+    15.25
+   ],
+   "rotation": {
+    "angle": 22.5,
+    "axis": "x",
+    "origin": [
+     8,
+     16.0,
+     15
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.72
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.72
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.72
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.72
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      4.5,
+      0.5
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      4.5,
+      0.5
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "rim_point",
+   "from": [
+    0.5,
+    16.0,
+    7.5
+   ],
+   "to": [
+    1.5,
+    17.68,
+    8.5
+   ],
+   "rotation": {
+    "angle": 22.5,
+    "axis": "z",
+    "origin": [
+     1,
+     16.0,
+     8
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.68
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.68
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.68
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.68
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      5.0,
+      1.0
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      5.0,
+      1.0
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "rim_point_tip",
+   "from": [
+    0.75,
+    17.68,
+    7.75
+   ],
+   "to": [
+    1.25,
+    18.4,
+    8.25
+   ],
+   "rotation": {
+    "angle": 22.5,
+    "axis": "z",
+    "origin": [
+     1,
+     16.0,
+     8
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.72
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.72
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.72
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.72
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      4.5,
+      0.5
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      4.5,
+      0.5
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "rim_point",
+   "from": [
+    14.5,
+    16.0,
+    7.5
+   ],
+   "to": [
+    15.5,
+    17.68,
+    8.5
+   ],
+   "rotation": {
+    "angle": -22.5,
+    "axis": "z",
+    "origin": [
+     15,
+     16.0,
+     8
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.68
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.68
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.68
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      5,
+      7.0,
+      6.68
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      5.0,
+      1.0
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      5.0,
+      1.0
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  },
+  {
+   "name": "rim_point_tip",
+   "from": [
+    14.75,
+    17.68,
+    7.75
+   ],
+   "to": [
+    15.25,
+    18.4,
+    8.25
+   ],
+   "rotation": {
+    "angle": -22.5,
+    "axis": "z",
+    "origin": [
+     15,
+     16.0,
+     8
+    ]
+   },
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.72
+     ],
+     "texture": "#crystal"
+    },
+    "south": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.72
+     ],
+     "texture": "#crystal"
+    },
+    "east": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.72
+     ],
+     "texture": "#crystal"
+    },
+    "west": {
+     "uv": [
+      6,
+      0.0,
+      6.5,
+      0.72
+     ],
+     "texture": "#crystal"
+    },
+    "up": {
+     "uv": [
+      4,
+      0,
+      4.5,
+      0.5
+     ],
+     "texture": "#crystal"
+    },
+    "down": {
+     "uv": [
+      4,
+      0,
+      4.5,
+      0.5
+     ],
+     "texture": "#crystal"
+    }
+   },
+   "shade": false,
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
+   }
+  }
+ ]
+}

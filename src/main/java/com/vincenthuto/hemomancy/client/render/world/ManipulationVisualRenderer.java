@@ -130,7 +130,8 @@ public final class ManipulationVisualRenderer {
     @SubscribeEvent
     public static void tick(ClientTickEvent.Post event) {
         ClientLevel current = Minecraft.getInstance().level;
-        if (world != current) { CUES.clear(); ManipulationMotes.clear(); ManipulationAmbientParticles.clear(); PuppetStringStates.clear(); world = current; }
+        if (world != current) { CUES.clear(); ManipulationMotes.clear(); ManipulationAmbientParticles.clear(); PuppetStringStates.clear();
+            com.vincenthuto.hemomancy.client.render.item.harbinger.HeldWeaponPose.clear(); world = current; }
         LuxUmbraEffects.tick();
         BloodFlowEffects.tick();
         BloodProjectileEffects.tick();
@@ -164,6 +165,7 @@ public final class ManipulationVisualRenderer {
         Vec3 camera = event.getCamera().getPosition();
         Vec3 right = new Vec3(new org.joml.Vector3f(1, 0, 0).rotate(event.getCamera().rotation()));
         Vec3 up = new Vec3(new org.joml.Vector3f(0, 1, 0).rotate(event.getCamera().rotation()));
+        if(!solids)com.vincenthuto.hemomancy.client.render.item.harbinger.FirstPersonPalm.worldProjection(event.getProjectionMatrix());
         LuxUmbraRenderTypes.begin(time);
         ThermalRenderTypes.begin(time);
         AnimusMortemRenderTypes.begin(time);
@@ -182,7 +184,8 @@ public final class ManipulationVisualRenderer {
             var packet = cue.packet;
             if(solids && !FerricDuctilisGeometry.handles(packet.form()) && !LodestoneCollapseGeometry.handles(packet.form())
                     && !LodestoneFieldGeometry.handles(packet.form())
-                    && !ForgedNeedleGeometry.handlesCharge(packet.form()))continue;
+                    && !WeaponConjureGeometry.handles(packet.form()) && !SanguineMendingGeometry.handles(packet.form())
+                    && !ForgedNeedleGeometry.handlesCharge(packet.form()) && !CastImpactGeometry.handles(packet.form()))continue;
             Vec3 from = cue.lastFrom;
             if (!cue.life.retiring() && packet.entityId() >= 0) {
                 var entity = world.getEntity(packet.entityId());
@@ -195,6 +198,7 @@ public final class ManipulationVisualRenderer {
                     if (packet.form().name().endsWith("_CHARGE")) from = from.add(0,entity.getEyeHeight(),0);
                     cue.lastFrom=from;
                     if ((packet.form()==ManipulationVisuals.Form.IRON_HEART || packet.form()==ManipulationVisuals.Form.BLACK_HEART
+                            || bodyAnchored(packet.form())
                             || RadiantWakeGeometry.handles(packet.form())
                             || packet.form()==ManipulationVisuals.Form.RIPOSTE || PhoenixDebtGeometry.handles(packet.form()))
                             && entity instanceof net.minecraft.world.entity.LivingEntity living) {
@@ -232,6 +236,49 @@ public final class ManipulationVisualRenderer {
             poses.translate(from.x - camera.x, from.y - camera.y, from.z - camera.z);
             if(packet.form()==ManipulationVisuals.Form.IRON_HEART || packet.form()==ManipulationVisuals.Form.BLACK_HEART)
                 IronHeartAttachment.apply(poses,cue.bodyYaw,cue.bodyScale*.9f,cue.crouching);
+            if(bodyAnchored(packet.form())) {
+                // Body-anchored casts author their own timelines from the caster's pose, like the riposte swing.
+                float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):1;
+                var source=packet.entityId()>=0?world.getEntity(packet.entityId()):null;
+                if(source!=null && source.isInvisible()) {poses.popPose();continue;}
+                CasterFrame frame=casterFrame(cue,source,partial,from);
+                Vec3 eye=camera.subtract(from);
+                var form=packet.form();
+                if(WeaponConjureGeometry.handles(form)) {
+                    // Harden on the weapon as it is actually held; the paired claws harden in both hands.
+                    WeaponConjureGeometry.Held main=null,off=null;
+                    if(source instanceof net.minecraft.world.entity.player.Player player) {
+                        main=heldWeapon(player,player.getMainArm(),player.getMainHandItem(),from);
+                        if(com.vincenthuto.hemomancy.common.manipulation.ferric.WeaponConjureRules.decodeWeapon(packet.count())
+                                ==com.vincenthuto.hemomancy.common.manipulation.ferric.WeaponConjureRules.CLAWS)
+                            off=heldWeapon(player,player.getMainArm().getOpposite(),player.getOffhandItem(),from);
+                    }
+                    WeaponConjureGeometry.draw(packet,poses,FLOWS,solids?buffers.getBuffer(FerricDuctilisRenderTypes.IRON):FerricDuctilisGeometry.DISCARD,
+                            solids?FerricDuctilisGeometry.DISCARD:buffers.getBuffer(ThermalRenderTypes.CORE),solids,eye,right,up,time,age,opacity,frame,main,off);
+                }
+                else if(SanguineMendingGeometry.handles(form))
+                    SanguineMendingGeometry.draw(packet,poses,solids?buffers.getBuffer(FerricDuctilisRenderTypes.IRON):FerricDuctilisGeometry.DISCARD,
+                            solids?FerricDuctilisGeometry.DISCARD:FLOWS.vertices(LuxUmbraBatch.Material.DUCTILIS),eye,right,up,time,age,opacity,frame);
+                else if(BloodRushGeometry.handles(form))
+                    BloodRushGeometry.draw(packet,poses,FLOWS.vertices(LuxUmbraBatch.Material.ANIMUS),FLOWS.vertices(LuxUmbraBatch.Material.FLAME),
+                            eye,right,up,time,age,opacity,frame);
+                else if(SanguineWardGeometry.handles(form))
+                    SanguineWardGeometry.draw(packet,poses,FLOWS.vertices(LuxUmbraBatch.Material.DUCTILIS),eye,right,up,time,age,opacity,frame,
+                            source==null?1.8:source.getBbHeight(),source==null?.6:source.getBbWidth());
+                else if(CellHandGeometry.handles(form)) {
+                    // Reach whatever the hand is draining or pouring into, resolved exactly as the cell particles do.
+                    java.util.List<Vec3> targets=java.util.List.of();
+                    if(source instanceof net.minecraft.world.entity.LivingEntity living) {
+                        Vec3 palm=from.add(frame.hand());
+                        var found=com.vincenthuto.hemomancy.client.render.item.harbinger.CellHandParticleEffects.useTargets(living,palm);
+                        if(found!=null) { Vec3 feet=from; targets=found.points().stream().map(t -> t.subtract(feet)).toList(); }
+                    }
+                    CellHandGeometry.draw(packet,poses,FLOWS.vertices(LuxUmbraBatch.Material.ANIMUS),eye,right,up,time,age,opacity,frame,targets,from);
+                }
+                else
+                    AvatarManifestGeometry.draw(packet,poses,FLOWS.vertices(LuxUmbraBatch.Material.ANIMUS),eye,right,up,time,age,opacity,frame);
+                poses.popPose();continue;
+            }
             if(FerricDuctilisGeometry.handles(packet.form())) {
                 float formation=cue.life.retiring()?cue.life.retiredFormation():cue.life.formation(time);
                 float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):cue.life.presence(time);
@@ -289,6 +336,14 @@ public final class ManipulationVisualRenderer {
                 // The rend authors its own gather, tear and fray, like the riposte swing.
                 float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):1;
                 UmbralRendGeometry.draw(packet,poses,FLOWS.vertices(LuxUmbraBatch.Material.UMBRA),camera.subtract(from),right,up,time,age,opacity);
+                poses.popPose();continue;
+            }
+            if(CastImpactGeometry.handles(packet.form())) {
+                // Impacts author their own flash, burst and fray; iron splinters go to the solid pass, the rest to the flow pass.
+                float opacity=cue.life.retiring()?cue.life.retiredOpacity()*cue.life.residue(time):1;
+                CastImpactGeometry.draw(packet,poses,FLOWS,
+                        solids?buffers.getBuffer(FerricDuctilisRenderTypes.IRON):FerricDuctilisGeometry.DISCARD,solids,
+                        camera.subtract(from),right,up,time,age,opacity);
                 poses.popPose();continue;
             }
             if(HematicRiposteGeometry.handles(packet.form())) {
@@ -480,6 +535,42 @@ public final class ManipulationVisualRenderer {
         buffers.endBatch(HemoRenderTypes.MANIPULATION_LOCATOR);
         renderBoundaries(poses,buffers,camera,time,true);
         renderBoundaries(poses,buffers,camera,time,false);
+    }
+
+    /** Casts drawn from the caster's own pose: the early-game basics, the Living Arsenal, the cell hands and the avatar. */
+    static boolean bodyAnchored(ManipulationVisuals.Form form) {
+        return BloodRushGeometry.handles(form) || SanguineWardGeometry.handles(form) || SanguineMendingGeometry.handles(form)
+                || WeaponConjureGeometry.handles(form) || CellHandGeometry.handles(form) || AvatarManifestGeometry.handles(form);
+    }
+
+    private static WeaponConjureGeometry.Held heldWeapon(net.minecraft.world.entity.player.Player player,
+            net.minecraft.world.entity.HumanoidArm arm,net.minecraft.world.item.ItemStack stack,Vec3 from) {
+        var held=com.vincenthuto.hemomancy.client.render.item.harbinger.HeldWeaponPose.held(player,arm,stack,from);
+        return held==null?null:new WeaponConjureGeometry.Held(held.faces(),held.grip());
+    }
+
+    private static CasterFrame casterFrame(Cue cue,net.minecraft.world.entity.Entity source,float partial,Vec3 from) {
+        var mc=Minecraft.getInstance();
+        boolean firstPerson=source==mc.player && mc.options.getCameraType().isFirstPerson();
+        Vec3 look=source==null?Vec3.ZERO:source.getViewVector(partial);
+        Vec3 motion=source==null?Vec3.ZERO:new Vec3(source.getX()-source.xo,source.getY()-source.yo,source.getZ()-source.zo);
+        int side=source instanceof net.minecraft.world.entity.LivingEntity living
+                && living.getMainArm()==net.minecraft.world.entity.HumanoidArm.LEFT?-1:1;
+        Vec3 hand=null,fingers=null;
+        if(firstPerson && source instanceof net.minecraft.world.entity.player.Player player) {
+            // First person follows the drawn cell hand's palm, or where vanilla holds an ordinary item.
+            var arm=player.getMainArm();
+            Vec3 palm=com.vincenthuto.hemomancy.client.render.item.harbinger.FirstPersonPalm.world(arm);
+            if(palm!=null) { hand=palm.subtract(from); fingers=com.vincenthuto.hemomancy.client.render.item.harbinger.FirstPersonPalm.fingers(arm); }
+            else hand=com.vincenthuto.hemomancy.client.render.item.harbinger.FirstPersonPalm.itemHand(arm).subtract(from);
+        } else if(source instanceof net.minecraft.world.entity.player.Player player) {
+            // Third person follows the posed model's real hand.
+            Vec3 captured=com.vincenthuto.hemomancy.client.render.outpouring.OutpouringAnchors.capturedMainHand(player);
+            if(captured!=null && captured.distanceToSqr(from)<9)hand=captured.subtract(from);
+        }
+        if(hand==null)hand=CasterFrame.estimateHand(firstPerson?cue.headYaw:cue.bodyYaw,cue.bodyScale,cue.crouching,firstPerson,look,side);
+        return new CasterFrame(cue.bodyYaw,cue.headYaw,cue.bodyScale,cue.crouching,firstPerson,hand,look,motion,
+                cue.packet.from().subtract(from),fingers);
     }
 
     private static void renderBoundaries(PoseStack poses,MultiBufferSource.BufferSource buffers,

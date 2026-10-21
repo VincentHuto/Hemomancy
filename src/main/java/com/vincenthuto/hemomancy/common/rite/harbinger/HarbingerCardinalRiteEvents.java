@@ -183,7 +183,6 @@ public class HarbingerCardinalRiteEvents {
 		PendingBloodCraftManager.tick();
 		BloodStructureFeedManager.tick(sLevel);
 		BloodInfusionManager.tick(sLevel);
-		SanguineFormationProjectionHandler.tick(sLevel);
 
 		// Periodically sync Qliphoth Bloom data to clients for tree rendering
 		// (must be outside the active-rite block since blooms persist after rites end)

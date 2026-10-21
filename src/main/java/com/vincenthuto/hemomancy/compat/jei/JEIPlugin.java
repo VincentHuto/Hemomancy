@@ -130,6 +130,10 @@ public class JEIPlugin implements IModPlugin {
 	@Override
 	public void registerRecipes(@Nonnull IRecipeRegistration registry) {
 		registry.addRecipes(living_weapon_graft_type, LivingWeaponGraftJeiRecipe.all());
+		registry.addItemStackInfo(java.util.List.of(new ItemStack(net.minecraft.world.item.Items.CAULDRON),
+				new ItemStack(BlockInit.sanguine_condenser.get()),
+				new ItemStack(com.vincenthuto.hemomancy.common.init.ItemInit.sanguine_formation.get())),
+				net.minecraft.network.chat.Component.translatable("jei.hemomancy.sanguine_condenser.info"));
 
 		ClientLevel world = Minecraft.getInstance().level;
 		if (world == null) {

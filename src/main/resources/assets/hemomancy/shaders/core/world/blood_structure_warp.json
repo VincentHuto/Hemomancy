@@ -30,6 +30,8 @@
     { "name": "FinalizeProgress", "type": "float", "count": 1, "values": [ 0.0 ] },
     { "name": "MeltGroundY", "type": "float", "count": 1, "values": [ 0.0 ] },
     { "name": "MeltHeight", "type": "float", "count": 1, "values": [ 1.0 ] },
-    { "name": "FillLine", "type": "float", "count": 1, "values": [ 100000.0 ] }
+    { "name": "FillLine", "type": "float", "count": 1, "values": [ 100000.0 ] },
+    { "name": "InfusionTiming", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "CrackShare", "type": "float", "count": 1, "values": [ 0.0 ] }
   ]
 }

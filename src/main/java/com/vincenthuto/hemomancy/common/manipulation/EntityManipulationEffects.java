@@ -23,7 +23,6 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -242,14 +241,11 @@ public final class EntityManipulationEffects {
 		for (LivingEntity target : targetsAroundCaster(context, 24.0D)) {
 			target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 300, 0, false, false));
 			tagged++;
+			DuctilisLightningEffects.sensoryResponse(target);
 		}
 		if (context.level() instanceof ServerLevel serverLevel) {
-			for (int i = 0; i < 32; i++) {
-				double angle = i * Math.PI * 2.0D / 32.0D;
-				serverLevel.sendParticles(ParticleTypes.CRIMSON_SPORE,
-						context.caster().getX() + Math.cos(angle) * 7.0D, context.caster().getY() + 1.0D,
-						context.caster().getZ() + Math.sin(angle) * 7.0D, 1, 0.0D, 0.0D, 0.0D, 0.1D);
-			}
+			ManipulationVisuals.burst(serverLevel, ManipulationVisuals.Form.NERVE_PULSE, context.caster().position(),
+					context.caster().position(), 7.0D, 32);
 		}
 		context.level().playSound(null, context.origin(), SoundEvents.WARDEN_HEARTBEAT, SoundSource.HOSTILE, 0.8F, 0.6F);
 		if (tagged > 0) {

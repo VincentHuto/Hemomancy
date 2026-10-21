@@ -33,7 +33,7 @@ The Hematic Order publicly recognizes seven degrees. Apotheos is the hidden eigh
 - **Rite:** Formal Vicar initiation
 - **Theme:** Crimson Veil; blood becomes a deliberate living resource
 - **Core progression:** Blood Absorption, Blood Projection, first structures, early tendency awareness
-- The Vicar asks for four proofs in any order: absorb 500 ml with Blood Absorption, project a Sanguine Formation and Venous Stone, and craft either a Liber Sanguinium or Hematic Iron Block using a blood formation. Ask for hints and recipe blueprints while the work is active.
+- The Vicar asks for four proofs in any order: absorb 500 ml with Blood Absorption, fill an empty cauldron with Blood Projection and collect the Sanguine Formation it condenses, project Venous Stone into ordinary stone, and craft either a Liber Sanguinium or Hematic Iron Block using a blood formation. Ask for hints and recipe blueprints while the work is active.
 - The first Vicar contacted grants or replaces the Assignment Ledger. Return after the four First Bloodcraft proofs for Degree 2. **The Hermit Road** remains an optional Side assignment.
 
 ### Degree 2: Votary

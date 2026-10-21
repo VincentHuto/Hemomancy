@@ -999,6 +999,12 @@ public class ItemInit {
     public static final DeferredHolder<Item, Item> cortical_crown = BASEITEMS.register("cortical_crown",
             () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
 
+    //Sanguine Condenser upgrade items
+    public static final DeferredHolder<Item, Item> clotting_lattice = BASEITEMS.register("clotting_lattice",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
+    public static final DeferredHolder<Item, Item> druse_heart = BASEITEMS.register("druse_heart",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+
 
     // Unstained Our Lady of Still Waters materials
     public static final DeferredHolder<Item, Item> hemolytic_solution = BASEITEMS.register("hemolytic_solution",

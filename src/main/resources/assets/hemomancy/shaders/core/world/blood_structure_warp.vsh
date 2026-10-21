@@ -13,6 +13,8 @@ uniform vec3 WarpCenter;
 uniform float FinalizeProgress;
 uniform float MeltGroundY;
 uniform float MeltHeight;
+uniform float InfusionTiming;
+uniform float CrackShare;
 
 in vec3 Position;
 in vec4 Color;
@@ -44,12 +46,15 @@ void main() {
     vec3 faceNormal = normalize(Normal);
     vec3 p = Position + wiggleOffset(Position, faceNormal);
     p += faceNormal * Progress * 0.012;
+    // An infusion's shell melts only once the block has broken, at CrackShare of the finalize.
+    float infusionMelt = clamp((FinalizeProgress - CrackShare) / max(1.0 - CrackShare, 0.001), 0.0, 1.0);
+    float meltClock = mix(FinalizeProgress, infusionMelt, InfusionTiming);
     float heightAboveGround = max(Position.y - MeltGroundY, 0.0);
     float heightRatio = clamp(heightAboveGround / max(MeltHeight, 0.001), 0.0, 1.0);
     float heightDelay = heightRatio * 0.46;
-    float liquidMelt = smoothstep(0.12, 1.0, FinalizeProgress);
-    float bottomOutMelt = smoothstep(0.14 + heightDelay, 0.72 + heightDelay * 0.42, FinalizeProgress);
-    float bottomPuddleSpread = smoothstep(0.08, 0.72, FinalizeProgress);
+    float liquidMelt = smoothstep(0.12, 1.0, meltClock);
+    float bottomOutMelt = smoothstep(0.14 + heightDelay, 0.72 + heightDelay * 0.42, meltClock);
+    float bottomPuddleSpread = smoothstep(0.08, 0.72, meltClock);
     float puddleSpread = bottomPuddleSpread * mix(1.0 - heightRatio, 1.0, bottomOutMelt);
     vec2 fromCenter = Position.xz - WarpCenter.xz;
     vec2 outward = normalize(fromCenter + vec2(0.001));

@@ -2277,6 +2277,11 @@ public class MycophantModel extends HierarchicalModel<MycophantEntity> {
 			.hand(-40, 70, -30, -1, -0.5F, 0.5F, 0.0F).siphon(40, 70, -28, 1, -0.5F, 0.5F, -0.3F).drag(50, 10, -56, 62, 4, -26);
 	private static final Pose STAGGER = new Pose().set(0.28F, -0.15F, 0.1F, 0.2F, 0.7F, 0.2F, -0.2F, 2.0F, 0.2F).wing(0.0F, -0.7F, 0.1F)
 			.hand(-38, 52, -30, -1, -0.3F, 0.4F, 0.1F).siphon(38, 54, -26, 1, -0.3F, 0.4F, -0.1F).drag(52, 0, -52, 64, 0, -18);
+	/** The split's strain (hunched, head bowed, the hand clutching toward the cracking face) and its wing display. */
+	private static final Pose STRAIN = new Pose().set(-0.12F, -0.3F, -0.4F, 0.0F, 0.35F, 0.4F, 0.3F, -2.5F, 0.2F).wing(0.0F, -0.5F, 0.08F)
+			.hand(-20, 64, -52, -1, -0.4F, 0.3F, 0.95F).siphon(22, 66, -50, 1, -0.4F, 0.3F, 0.7F).drag(46, 0, -58, 60, 0, -24);
+	private static final Pose SPLIT_DISPLAY = new Pose().set(0.2F, 0.05F, 0.05F, 0.8F, 0.4F, 0.2F, 0.0F, 1.0F, 0.3F).wing(0.15F, 0.35F, 0.55F)
+			.hand(-46, 70, -30, -1, -0.5F, 0.5F, 0.2F).siphon(46, 70, -28, 1, -0.5F, 0.5F, -0.2F).drag(50, 20, -54, 62, 4, -26);
 	private static final Pose YIELDED = new Pose().set(-0.35F, -0.45F, -0.55F, -0.2F, 0.0F, 0.6F, 0.9F, -12.0F, 0.0F).wing(-0.3F, -1.2F, -0.4F)
 			.hand(-30, 12, -54, -1, -0.5F, 0.2F, 0.2F).siphon(16, 26, -74, 1, 0.2F, 0.2F, -0.1F).drag(56, 0, -46, 66, 0, -14);
 
@@ -2292,6 +2297,8 @@ public class MycophantModel extends HierarchicalModel<MycophantEntity> {
 	/** Intro accents: how still the facial tentacles hold (0..1), the roar's tremble (0..1), the dropped fungling's fall (-1 = none). */
 	private float tentacleCalm;
 	private float roarTremble;
+	/** The split's strain before the skull gives (0..1): the head shudders on its neck. */
+	private float splitShudder;
 	private float fungDrop = -1.0F;
 	private float bodyBaseY = Float.NaN;
 	private float thoraxBaseY;
@@ -2325,6 +2332,7 @@ public class MycophantModel extends HierarchicalModel<MycophantEntity> {
 		this.siphonLatched = false;
 		this.tentacleCalm = 0.0F;
 		this.roarTremble = 0.0F;
+		this.splitShudder = 0.0F;
 		this.fungDrop = -1.0F;
 		boolean cradle = false;
 
@@ -2363,11 +2371,7 @@ public class MycophantModel extends HierarchicalModel<MycophantEntity> {
 					float rise = ease(s / 6.0F) * (1.0F - ease((s - 10.0F) / 20.0F));
 					this.pose.mix(STALK, STAGGER, rise);
 				}
-				case SPLIT -> {
-					float s = splitT;
-					this.pose.mix(STAGGER, ROAR, ease((s - 6.0F) / 30.0F));
-					this.pose.head += Mth.sin(s * 0.9F) * 0.25F * (1.0F - ease(s / 60.0F));
-				}
+				case SPLIT -> splitPose(splitT);
 				case YIELD -> {
 					float y = entity.getYieldTick() + partial;
 					this.pose.mix(STALK, YIELDED, ease(MycophantYieldRules.lower((int) y) * 0.6F + MycophantYieldRules.fold((int) y) * 0.4F));
@@ -2445,6 +2449,37 @@ public class MycophantModel extends HierarchicalModel<MycophantEntity> {
 			// settle low and forward: the stance the Rushing Embrace's wind-up starts from
 			this.pose.mix(ROAR, STALK, ease((r - hold) / settleTicks));
 		}
+	}
+
+	/**
+	 * The split, by the controller's tick: she hunches and strains with her head bowed while the seam opens, rears into a
+	 * bellow as the halves snap apart, throbs forward at the push, lifts into a display as the wings unfurl, then lowers
+	 * into her ordinary stance so phase 2 picks up without a pop.
+	 */
+	private void splitPose(float s) {
+		float snap = MycophantSplitRules.snapTick();
+		if (s < snap) {
+			this.pose.mix(STALK, STRAIN, ease(s / 8.0F));
+			this.splitShudder = MycophantSplitRules.crack(s);
+			return;
+		}
+		float r = s - snap;
+		float rear = ease(r / 5.0F);
+		float wings = MycophantSplitRules.wings(s);
+		this.pose.mix(STRAIN, this.poseB.mix(ROAR, SPLIT_DISPLAY, wings), rear);
+		this.pose.thorax += Mth.sin(Mth.clamp(r / 10.0F, 0.0F, 1.0F) * Mth.PI) * 0.1F;
+		// the push: a forward throb as the pulp blooms and the shove lands
+		float throb = Mth.sin(Mth.clamp((s - MycophantSplitRules.pushTick() + 3.0F) / 10.0F, 0.0F, 1.0F) * Mth.PI);
+		this.pose.thorax -= throb * 0.12F;
+		this.pose.head -= throb * 0.1F;
+		this.pose.tentFwd += throb * 0.6F;
+		// the bellow trembles until the wings take over
+		this.roarTremble = rear * (1.0F - ease((s - 46.0F) / 12.0F));
+		this.pose.maw *= 0.85F + Mth.sin(r * 1.7F) * 0.15F * this.roarTremble;
+		// the collar stays folded through the snap so the halves swing clear in silhouette, then flares as the pulp blooms
+		this.pose.frill = Mth.lerp(ease((s - 24.0F) / 14.0F), STRAIN.frill, this.pose.frill);
+		float settle = MycophantSplitRules.settle(s);
+		if (settle > 0.0F) this.pose.mix(this.poseA.copy(this.pose), STALK, settle);
 	}
 
 	/** She pivots round on her claws during the intro's turn instead of spinning in place. */
@@ -2556,8 +2591,11 @@ public class MycophantModel extends HierarchicalModel<MycophantEntity> {
 		this.thorax.xRot = -(p.thorax + breathe * 0.015F);
 		this.neck.xRot = -p.neck;
 		this.head.xRot = -p.head;
-		this.head.yRot = -Mth.sin(time * 0.6F) * 0.06F * (1.0F - this.tentacleCalm) + Mth.sin(ageInTicks * 2.3F) * 0.05F * this.roarTremble;
-		this.head.zRot = Mth.sin(time * 0.8F) * 0.04F + Mth.sin(ageInTicks * 1.9F + 1.0F) * 0.06F * this.roarTremble;
+		this.head.yRot = -Mth.sin(time * 0.6F) * 0.06F * (1.0F - this.tentacleCalm) + Mth.sin(ageInTicks * 2.3F) * 0.05F * this.roarTremble
+				+ Mth.sin(ageInTicks * 3.3F) * 0.05F * this.splitShudder;
+		this.head.zRot = Mth.sin(time * 0.8F) * 0.04F + Mth.sin(ageInTicks * 1.9F + 1.0F) * 0.06F * this.roarTremble
+				+ Mth.sin(ageInTicks * 2.6F + 2.0F) * 0.06F * this.splitShudder;
+		this.head.xRot += Mth.sin(ageInTicks * 4.1F) * 0.03F * this.splitShudder;
 
 		// the abdomen breathes and pulses when spawning
 		this.abdomen.xRot = -(0.03F + breathe * 0.01F + p.vents * Mth.sin(time * 6.0F) * 0.01F);
@@ -2618,33 +2656,44 @@ public class MycophantModel extends HierarchicalModel<MycophantEntity> {
 			}
 		}
 
-		// phase 2: the skull cracks and its halves hang off the sides, the pulp blooms, the wings grow
-		float crack = splitT >= 999.0F ? 1.0F : MycophantSplitRules.crack((int) splitT);
-		float halves = splitT >= 999.0F ? 1.0F : MycophantSplitRules.halves((int) splitT);
-		float bloom = splitT >= 999.0F ? 1.0F : MycophantSplitRules.pulp((int) splitT);
-		float wings = splitT >= 999.0F ? 1.0F : MycophantSplitRules.wings((int) splitT);
-		float jitter = crack > 0.0F && halves < 0.05F ? Mth.sin(ageInTicks * 3.1F) * 0.03F * crack : 0.0F;
-		this.skullHalfL.xRot = -halves * 0.35F;
-		this.skullHalfL.yRot = -halves * 1.25F - jitter;
-		this.skullHalfL.zRot = halves * 0.55F;
-		this.skullHalfR.xRot = -halves * 0.35F;
-		this.skullHalfR.yRot = halves * 1.25F + jitter;
-		this.skullHalfR.zRot = -halves * 0.55F;
-		this.pulp.visible = bloom > 0.01F;
-		float pulpScale = Math.max(0.01F, Math.min(1.0F, bloom * 1.3F));
+		// phase 2: the skull strains along its seam, snaps, flings its halves out past their rest and lets them drop to hang
+		// off the sides; the pulp swells forward through the gap and throbs at the push; the wings bud and unfurl
+		boolean opened = splitT >= 999.0F;
+		float crack = opened ? 1.0F : MycophantSplitRules.crack(splitT);
+		float hinge = opened ? 1.0F : MycophantSplitRules.hinge(splitT);
+		float droop = opened ? 1.0F : MycophantSplitRules.droop(splitT);
+		float bloom = opened ? 1.0F : MycophantSplitRules.pulp(splitT);
+		float wings = opened ? 1.0F : MycophantSplitRules.wings(splitT);
+		// before the snap the seam only ever parts outward, in shudders, so the halves never pass through each other
+		float seam = hinge > 0.0F ? 0.0F : crack * (0.025F + 0.035F * Math.abs(Mth.sin(ageInTicks * 2.7F)));
+		float swing = hinge * 1.25F + seam;
+		this.skullHalfL.xRot = -droop * 0.35F;
+		this.skullHalfL.yRot = -swing;
+		this.skullHalfL.zRot = droop * 0.55F;
+		this.skullHalfR.xRot = -droop * 0.35F;
+		this.skullHalfR.yRot = swing;
+		this.skullHalfR.zRot = -droop * 0.55F;
+		this.pulp.visible = opened || hinge > 0.0F;
+		float pushThrob = opened ? 0.0F : Mth.sin(Mth.clamp((splitT - MycophantSplitRules.pushTick() + 2.0F) / 10.0F, 0.0F, 1.0F) * Mth.PI);
+		float pulpScale = Mth.lerp(bloom, 0.5F, 1.0F) + pushThrob * 0.08F;
 		this.pulp.xScale = pulpScale;
 		this.pulp.yScale = pulpScale;
 		this.pulp.zScale = pulpScale;
+		this.pulp.z += (1.0F - bloom) * 2.0F;
+		float writhe = Mth.lerp(bloom, 0.3F, 1.0F);
 		for (int i = 0; i < this.pulpTentacles.length; i++) {
 			ModelPart[] chain = this.pulpTentacles[i];
 			for (int k = 0; k < chain.length; k++) {
-				chain[k].xRot += -Mth.sin(time * 3.0F + i + k * 0.8F) * 0.25F;
-				chain[k].zRot += Mth.cos(time * 2.4F + i * 2.0F + k * 0.6F) * 0.25F;
+				chain[k].xRot += (1.0F - bloom) * 0.5F - Mth.sin(time * 3.0F + i + k * 0.8F) * 0.25F * writhe;
+				chain[k].zRot += Mth.cos(time * 2.4F + i * 2.0F + k * 0.6F) * 0.25F * writhe;
 			}
 		}
-		this.wingL.visible = wings > 0.01F;
-		this.wingR.visible = wings > 0.01F;
-		float wingScale = Math.max(0.01F, wings);
+		// each spar buds coiled like a fiddlehead with the lattice bunched, swells fast, then unrolls base first while the
+		// spars fan out to their angles; a shiver runs through the lattice once it is open
+		this.wingL.visible = opened || wings > 0.0F;
+		this.wingR.visible = this.wingL.visible;
+		float swell = 1.0F - (1.0F - wings) * (1.0F - wings) * (1.0F - wings);
+		float wingScale = Mth.lerp(swell, 0.08F, 1.0F);
 		this.wingL.xScale = this.wingL.yScale = this.wingL.zScale = wingScale;
 		this.wingR.xScale = this.wingR.yScale = this.wingR.zScale = wingScale;
 		float flap = Mth.sin(time * 1.1F) * 0.03F;
@@ -2654,10 +2703,19 @@ public class MycophantModel extends HierarchicalModel<MycophantEntity> {
 		this.wingR.xRot = -p.wing[0];
 		this.wingR.yRot = -p.wing[1];
 		this.wingR.zRot = p.wing[2] - flap;
+		float fan = ease((wings - 0.2F) / 0.6F);
+		float shiver = opened ? 0.0F : Mth.sin(Mth.clamp((splitT - 62.0F) / 16.0F, 0.0F, 1.0F) * Mth.PI);
 		for (int s = 0; s < this.wingSpars.length; s++) {
 			ModelPart[] chain = this.wingSpars[s];
-			float sign = s < this.wingSpars.length / 2 ? -1.0F : 1.0F;
-			for (int k = 1; k < chain.length; k++) chain[k].zRot += sign * Mth.sin(time * 1.4F - k * 0.5F + s) * 0.025F;
+			boolean left = s < this.wingSpars.length / 2;
+			float bunch = Mth.wrapDegrees(((left ? Mth.PI - 0.55F : 0.55F) - chain[0].zRot) * Mth.RAD_TO_DEG) * Mth.DEG_TO_RAD;
+			chain[0].zRot += bunch * (1.0F - fan);
+			for (int k = 1; k < chain.length; k++) {
+				float start = 0.15F + 0.6F * (k - 1) / (chain.length - 1);
+				chain[k].zRot += (left ? 0.75F : -0.75F) * (1.0F - ease((wings - start) / 0.25F))
+						+ (left ? -1.0F : 1.0F) * Mth.sin(time * 1.4F - k * 0.5F + s) * 0.025F
+						+ Mth.sin(time * 9.0F - k * 0.9F + s) * 0.05F * shiver;
+			}
 		}
 
 		// the four claws drag the belly along; the right front one rakes

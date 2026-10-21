@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
+import com.vincenthuto.hemomancy.common.manipulation.ferric.CellHandRules;
 import com.vincenthuto.hemomancy.client.event.ClientEvents.ClientModBusEvents;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.CellHandItemRenderer;
@@ -122,6 +124,8 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 		if (worldIn.isClientSide) {
 			return;
 		}
+		if (count % CellHandRules.USE_REFRESH == 0)
+			ManipulationVisuals.attached(player, ManipulationVisuals.Form.CELL_HAND, 1, CellHandRules.USE_TICKS, CellHandRules.ABSORBING);
 		double vesperHandled = VesperBloodAbsorptionInteractions.tryAbsorb(worldIn, player,
 				LivingStaffFocusRules.bareAbsorptionRange(), WillAbsorptionRules.bareProgressPerTick());
 		if (vesperHandled > 0.0D) {

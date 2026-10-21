@@ -47,7 +47,6 @@ public final class TransientServerStateEvents {
 		ChummedWatersAreaManager.clearSessionState();
 		BlackVeilCovenantManager.clearSessionState();
 		TemporaryIceManager.clearSessionState();
-		SanguineFormationProjectionHandler.clear();
 		BloodStructureFeedManager.clear();
 		BloodInfusionManager.clear();
 		com.vincenthuto.hemomancy.common.rite.harbinger.WorkingCraftRites.clear();

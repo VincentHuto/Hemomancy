@@ -11,6 +11,8 @@ uniform float Progress;
 uniform float BlockSeed;
 uniform float FinalizeProgress;
 uniform float FillLine;
+uniform float InfusionTiming;
+uniform float CrackShare;
 
 in float vertexDistance;
 in vec4 vertexColor;
@@ -51,7 +53,12 @@ void main() {
     float finalizeFade = 1.0 - smoothstep(0.84, 1.0, FinalizeProgress);
     float alpha = clamp((0.20 + Progress * 0.28 + bloodMottle * 0.08 + rim * 0.08) * vertexColor.a * ColorModulator.a,
             0.0, 0.72);
-    alpha *= finalizeFade;
+    // An infusion's shell stays away while its veins spread over the block, swallows the darkened block just
+    // before it breaks, then melts after it.
+    float swallow = smoothstep(CrackShare * 0.82, CrackShare, FinalizeProgress);
+    float infusionMelt = clamp((FinalizeProgress - CrackShare) / max(1.0 - CrackShare, 0.001), 0.0, 1.0);
+    float infusionFade = swallow * (1.0 - smoothstep(0.84, 1.0, infusionMelt));
+    alpha *= mix(finalizeFade, infusionFade, InfusionTiming);
     alpha = max(alpha, meniscus * 0.62 * vertexColor.a * ColorModulator.a);
 
     fragColor = linear_fog(vec4(color, alpha), vertexDistance, FogStart, FogEnd, FogColor);

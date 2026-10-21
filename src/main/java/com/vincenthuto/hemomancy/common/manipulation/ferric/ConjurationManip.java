@@ -4,6 +4,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.Enu
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.CellHandFormHelper;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.ICellHand;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingArsenalInventoryGuard;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
@@ -49,12 +51,24 @@ public class ConjurationManip extends BloodManipulation {
 		if (heldItemMainhand.isEmpty()) {
 			if (item.get() == ItemInit.living_staff.get()
 					&& LivingArsenalInventoryGuard.summonOrRecoverStaff(player, heldItemMainhand)) {
+				ManipulationVisuals.replay(player, ManipulationVisuals.Form.WEAPON_CONJURE, 1, WeaponConjureRules.VISUAL_TICKS,
+						WeaponConjureRules.encode(WeaponConjureRules.STAFF, player.getRandom().nextInt(8)));
 				return;
 			}
 			player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item.get()));
+			if (item.get() instanceof ICellHand) {
+				int mode = CellHandRules.summonMode(item.get() == ItemInit.blood_absorption.get());
+				ManipulationVisuals.replay(player, ManipulationVisuals.Form.CELL_HAND, 1, CellHandRules.ticks(mode), mode);
+			}
 		}
 	        }
     }
+
+	/** The cell hand unravels back into the arm when a conjured hand is dispelled. */
+	public static void dispelled(Player player, ItemStack held) {
+		if (held.getItem() instanceof ICellHand)
+			ManipulationVisuals.replay(player, ManipulationVisuals.Form.CELL_HAND, 1, CellHandRules.DISPEL_TICKS, CellHandRules.DISPEL);
+	}
 
 	@Override
 	public boolean usesDefaultActivationParticles() {

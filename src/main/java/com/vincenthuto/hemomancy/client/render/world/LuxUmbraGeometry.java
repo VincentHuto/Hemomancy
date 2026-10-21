@@ -315,6 +315,15 @@ final class LuxUmbraGeometry {
     static void ribbonPath(PoseStack p, VertexConsumer v, List<Vec3> points, Vec3 camera, double startWidth,
             double endWidth, int shape, int seed, int color, float alpha) {
         if (points.size() < 2 || Math.max(startWidth, endWidth) <= 0 || alpha <= 0) return;
+        double[] widths = new double[points.size()];
+        for (int i = 0; i < widths.length; i++) widths[i] = Mth.lerp(i / (widths.length - 1.0), startWidth, endWidth);
+        ribbonPath(p, v, points, camera, widths, shape, seed, color, alpha);
+    }
+
+    /** A path with its own half-width at every point, for streams that bulge and pinch along their length. */
+    static void ribbonPath(PoseStack p, VertexConsumer v, List<Vec3> points, Vec3 camera, double[] widths,
+            int shape, int seed, int color, float alpha) {
+        if (points.size() < 2 || widths.length < points.size() || alpha <= 0) return;
         Vec3 previousLeft = null, previousRight = null, previousSide = null;
         for (int i = 0; i < points.size(); i++) {
             Vec3 at = points.get(i);
@@ -325,7 +334,7 @@ final class LuxUmbraGeometry {
                     : facingSide(tangent, camera.subtract(at));
             if (previousSide != null && side.dot(previousSide) < 0) side = side.scale(-1);
             // Keep inner edges from folding past neighboring stations on short, tightly curved flows.
-            double localWidth = Mth.lerp(i / (points.size() - 1.0), startWidth, endWidth);
+            double localWidth = Math.max(0, widths[i]);
             if (i > 0) localWidth = Math.min(localWidth, joinWidth(at.subtract(points.get(i - 1)), side));
             if (i + 1 < points.size()) localWidth = Math.min(localWidth, joinWidth(points.get(i + 1).subtract(at), side));
             Vec3 left = at.subtract(side.scale(localWidth)), right = at.add(side.scale(localWidth));
@@ -360,6 +369,11 @@ final class LuxUmbraGeometry {
         Vec3 x = right.scale(width), y = up.scale(height);
         quad(p, v, at.subtract(x).subtract(y), at.add(x).subtract(y), at.add(x).add(y), at.subtract(x).add(y),
                 shape, seed, color, alpha, 0, 1);
+    }
+
+    /** A shader surface over any four corners, such as the face of a held weapon's model. */
+    static void surface(PoseStack p, VertexConsumer v, Vec3 a, Vec3 b, Vec3 c, Vec3 d, int shape, int seed, int color, float alpha) {
+        quad(p, v, a, b, c, d, shape, seed, color, alpha, 0, 1);
     }
 
     static void ground(PoseStack p, VertexConsumer v, Vec3 at, double radius, int shape, int seed, int color, float alpha) {

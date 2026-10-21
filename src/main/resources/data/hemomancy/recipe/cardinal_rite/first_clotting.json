@@ -1,0 +1,33 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "id": "hemomancy:cardinal_rite/first_clotting",
+  "bloodCost": 0,
+  "riteType": "lesser",
+  "purpose": "making",
+  "required_degree": 3,
+  "rankup": false,
+  "riteName": "Rite of the First Clotting",
+  "riteDescription": "Seat a Sanguine Cauldron behind the Focus and close its two blood circuits so the lattice can take hold.",
+  "floor": "hemomancy:working_lesser",
+  "required_structure": {
+    "pattern": [[" S "], ["   "], ["   "]],
+    "key": {"S": {"block": "hemomancy:sanguine_condenser"}}
+  },
+  "brazier_signature": [
+    {"ingredient": {"item": "hemomancy:clotting_lattice"}, "count": 1},
+    {"ingredient": {"item": "hemomancy:hematic_iron_scrap"}, "count": 1},
+    {"ingredient": {"item": "hemomancy:befouling_ash_trail"}, "count": 1},
+    {"ingredient": {"item": "hemomancy:venous_stone"}, "count": 1},
+    {"ingredient": {"item": "hemomancy:blood_stained_stone"}, "count": 1},
+    {"ingredient": {"item": "hemomancy:sanguine_formation"}, "count": 1}
+  ],
+  "ceremony": {
+    "profile": "ceremonial", "layout": "cardinal",
+    "anchors": [{"y": 1, "ring": 0, "order": 0}, {"y": 1, "ring": 0, "order": 1},
+      {"y": 1, "ring": 0, "order": 2}, {"y": 1, "ring": 0, "order": 3}],
+    "support_sockets": [], "waves": [], "guaranteed_waves": [], "fragile_offsets": [],
+    "target_duration_ticks": 2400, "focus": "living_staff", "required_helpers": 0,
+    "helper_roles": ["anchor", "attendant", "warden"], "still_interval_ticks": 0,
+    "atmosphere": {"fog": "faint", "lightning": false, "dome": false}, "failure": "safe_retry", "culmination": "forging"
+  }
+}

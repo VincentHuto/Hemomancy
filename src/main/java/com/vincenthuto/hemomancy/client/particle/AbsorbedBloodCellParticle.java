@@ -4,6 +4,7 @@ package com.vincenthuto.hemomancy.client.particle;
 
 import com.vincenthuto.hutoslib.client.HLRenderTypeInit;
 
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -32,6 +33,7 @@ public class AbsorbedBloodCellParticle extends TextureSheetParticle {
 	private Vec3 projectionSource;
 	private Vec3 projectionTarget;
 	private Vec3 projectionDeviation;
+	private AbsorptionStreamRider rider;
 
 	public AbsorbedBloodCellParticle(ClientLevel worldIn, double x, double y, double z, double vx, double vy, double vz,
 			float r, float g, float b, float a, float scale, int lifetime, SpriteSet sprite) {
@@ -80,6 +82,43 @@ public class AbsorbedBloodCellParticle extends TextureSheetParticle {
 
 	public void setTargetYOffset(double targetYOffset) {
 		this.targetYOffset = targetYOffset;
+	}
+
+	/**
+	 * Draws this drop into {@code casterId}'s cell hand as it is each frame. {@code ridesStream} keeps it inside the
+	 * absorption stream drawn to its source; otherwise it runs straight to the live palm.
+	 */
+	public void drawInto(int casterId, boolean ridesStream) {
+		this.rider = new AbsorptionStreamRider(casterId, new Vec3(this.sourceX, this.sourceY, this.sourceZ), ridesStream,
+				0.012D + this.random.nextDouble() * 0.022D, this.random.nextDouble() * Math.PI * 2.0D);
+	}
+
+	/** Moves the drop onto its stream for {@code partial} ticks past its age, returning false to keep its old path. */
+	private boolean ride(float partial) {
+		if (this.rider == null) {
+			return false;
+		}
+		Vec3 at = this.rider.at(this.level, (this.age + partial) / (double) this.lifetime, this.age, partial);
+		if (at == null) {
+			return false;
+		}
+		if (partial == 0.0F) {
+			this.setPos(at.x, at.y, at.z);
+		} else {
+			this.xo = this.x = at.x;
+			this.yo = this.y = at.y;
+			this.zo = this.z = at.z;
+		}
+		return true;
+	}
+
+	@Override
+	public void render(VertexConsumer buffer, Camera camera, float partialTicks) {
+		// Placed on the stream as drawn this frame, so the drop never lags a tick behind the moving hand.
+		if (this.projectionSource == null) {
+			this.ride(partialTicks);
+		}
+		super.render(buffer, camera, partialTicks);
 	}
 
 	public void setProjectionPath(Vec3 source, Vec3 target, Vec3 deviation) {
@@ -162,6 +201,9 @@ public class AbsorbedBloodCellParticle extends TextureSheetParticle {
 			float f1 = 1.0F - f;
 			f1 = f1 * f1;
 			f1 = f1 * f1;
+			if (this.ride(0.0F)) {
+				return;
+			}
 			if (this.firstPersonTargetAnchor != null) {
 				this.setPosFromFirstPersonTarget();
 			} else {

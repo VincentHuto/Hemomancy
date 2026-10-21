@@ -297,6 +297,26 @@ neoForge {
             programArguments.addAll '--username', 'BrazierReview', '--width', '1280', '--height', '720'
         }
 
+        condenserReviewClient {
+            client()
+            gameDirectory = project.file('build/condenser-client-review')
+            additionalRuntimeClasspathConfiguration.extendsFrom(clientLocalRuntime)
+            jvmArguments.addAll("-Xms2G", "-Xmx6G")
+            systemProperty 'hemomancy.gameplayDriver', 'true'
+            systemProperty 'hemomancy.condenserReview', 'true'
+            programArguments.addAll '--username', 'CondenserReview', '--width', '1280', '--height', '720'
+        }
+
+        infusionReviewClient {
+            client()
+            gameDirectory = project.file('build/infusion-client-review')
+            additionalRuntimeClasspathConfiguration.extendsFrom(clientLocalRuntime)
+            jvmArguments.addAll("-Xms2G", "-Xmx6G")
+            systemProperty 'hemomancy.gameplayDriver', 'true'
+            systemProperty 'hemomancy.infusionReview', 'true'
+            programArguments.addAll '--username', 'InfusionReview', '--width', '1280', '--height', '720'
+        }
+
         jeiReviewClient {
             client()
             gameDirectory = project.file('build/jei-client-review')

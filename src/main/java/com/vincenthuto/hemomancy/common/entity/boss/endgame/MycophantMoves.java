@@ -307,15 +307,19 @@ final class MycophantMoves {
 		if (!(boss.level() instanceof ServerLevel level)) return;
 		Vec3 head = boss.bodyPoint(0.0D, 5.4D, 2.4D);
 		if (t == 1) level.playSound(null, boss.blockPosition(), SoundInit.ENTITY_MYCOPHANT_TELEPORT.get(), SoundSource.HOSTILE, 1.6F, 0.55F);
-		if (t <= 12 && t % 2 == 0) BossTelegraphs.glow(level, head, BONE, 3, 0.25D);
-		if (t == 12) {
+		int snap = MycophantSplitRules.snapTick();
+		if (t <= snap && t % 2 == 0) BossTelegraphs.glow(level, head, BONE, 3, 0.25D);
+		if (t == snap) {
 			level.playSound(null, boss.blockPosition(), SoundEvents.SKELETON_HURT, SoundSource.HOSTILE, 2.0F, 0.4F);
 			BossTelegraphs.bloodCells(level, head, CRIMSON, 40, 0.6D, 0.2D);
 		}
-		if (t > 25 && t < 50 && t % 3 == 0) BossTelegraphs.glow(level, head, YOLK, 4, 0.5D);
-		if (t > 35 && t < 70 && t % 4 == 0) {
-			BossTelegraphs.spores(level, boss.bodyPoint(-2.6D, 4.6D, -0.5D), SPORE, 4, 0.6D, 0.04D);
-			BossTelegraphs.spores(level, boss.bodyPoint(2.6D, 4.6D, -0.5D), SPORE, 4, 0.6D, 0.04D);
+		if (t > snap && t < 44 && t % 3 == 0) BossTelegraphs.glow(level, head, YOLK, 4, 0.5D);
+		float wings = MycophantSplitRules.wings(t);
+		if (wings > 0.0F && wings < 1.0F && t % 4 == 0) {
+			// spores shed along the growing wings, from the shoulder buds out toward the opening tips
+			double reach = 1.2D + wings * 2.0D;
+			BossTelegraphs.spores(level, boss.bodyPoint(-reach, 3.9D + wings * 0.8D, -0.2D), SPORE, 4, 0.6D, 0.04D);
+			BossTelegraphs.spores(level, boss.bodyPoint(reach, 3.9D + wings * 0.8D, -0.2D), SPORE, 4, 0.6D, 0.04D);
 		}
 		if (t == MycophantSplitRules.pushTick()) {
 			BossTelegraphs.ring(level, boss.position(), 6.0D, YOLK, 40);

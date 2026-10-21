@@ -204,6 +204,10 @@ public final class StationUpgradeGameTests {
     public static void scriptoriumEightfoldUpgrade(GameTestHelper h) { assertUpgradeCompletes(h, UpgradeStation.SCRIPTORIUM, 1); }
     @GameTest(template = "empty", timeoutTicks = 100, batch = "station_upgrade_scriptorium_2")
     public static void scriptoriumPalimpsestUpgrade(GameTestHelper h) { assertUpgradeCompletes(h, UpgradeStation.SCRIPTORIUM, 2); }
+    @GameTest(template = "empty", timeoutTicks = 100, batch = "station_upgrade_condenser_1")
+    public static void condenserLatticeUpgrade(GameTestHelper h) { assertUpgradeCompletes(h, UpgradeStation.CONDENSER, 1); }
+    @GameTest(template = "empty", timeoutTicks = 100, batch = "station_upgrade_condenser_2")
+    public static void condenserDruseUpgrade(GameTestHelper h) { assertUpgradeCompletes(h, UpgradeStation.CONDENSER, 2); }
 
     @GameTest(template = "empty", timeoutTicks = 100, batch = "station_upgrade_recover")
     public static void everyStationRecoversEscrowOnceAndUnlocks(GameTestHelper helper) {

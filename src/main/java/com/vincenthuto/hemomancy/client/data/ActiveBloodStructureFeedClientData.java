@@ -1,7 +1,10 @@
 package com.vincenthuto.hemomancy.client.data;
 
+import com.vincenthuto.hemomancy.common.event.BloodFeedStyle;
+import com.vincenthuto.hemomancy.common.event.BloodInfusionRules;
 import com.vincenthuto.hemomancy.common.event.BloodStructureFeedRules;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.*;
 
@@ -16,6 +19,11 @@ public final class ActiveBloodStructureFeedClientData {
 	}
 
 	public static void upsert(long channelId, List<BlockPos> positions, float progress, int visibleTicks) {
+		upsert(channelId, positions, progress, visibleTicks, BloodFeedStyle.STRUCTURE, Vec3.ZERO);
+	}
+
+	public static void upsert(long channelId, List<BlockPos> positions, float progress, int visibleTicks,
+			BloodFeedStyle style, Vec3 origin) {
 		if (positions.isEmpty()) {
 			return;
 		}
@@ -23,7 +31,7 @@ public final class ActiveBloodStructureFeedClientData {
 		FeedEntry previous = ACTIVE_FEEDS.get(key);
 		ACTIVE_FEEDS.put(key, new FeedEntry(channelId, List.copyOf(sorted(positions)),
 				Math.max(0.0f, Math.min(1.0f, progress)), visibleTicks,
-				previous == null ? 0 : previous.engulfmentTicks));
+				previous == null ? 0 : previous.engulfmentTicks, style, origin, previous));
 	}
 
 	public static void clear(List<BlockPos> positions) {
@@ -83,25 +91,59 @@ public final class ActiveBloodStructureFeedClientData {
 	public static final class FeedEntry {
 		private static final int COMPLETION_LINGER_VISIBLE_TICKS = 20;
 		private static final int ENGULFMENT_TICKS = 20;
+		private static final double ORIGIN_GLIDE = 0.35D;
 		private final long channelId;
 		private final List<BlockPos> positions;
 		private final float progress;
 		private final int initialVisibleTicks;
+		private final BloodFeedStyle style;
+		private final Vec3 origin;
+		/** Where the veins are drawn from: glides after {@code origin} as the player sweeps the block. */
+		private Vec3 shownOrigin;
+		private Vec3 lastShownOrigin;
 		private int remainingTicks;
 		private int engulfmentTicks;
 
 		private FeedEntry(long channelId, List<BlockPos> positions, float progress, int visibleTicks,
-				int engulfmentTicks) {
+				int engulfmentTicks, BloodFeedStyle style, Vec3 origin, FeedEntry previous) {
 			this.channelId = channelId;
 			this.positions = positions;
 			this.progress = progress;
 			this.initialVisibleTicks = Math.max(1, visibleTicks);
 			this.remainingTicks = this.initialVisibleTicks;
 			this.engulfmentTicks = engulfmentTicks;
+			this.style = style;
+			this.origin = origin;
+			boolean glide = previous != null && previous.style == style
+					&& sameFace(positions, previous.shownOrigin, origin);
+			this.shownOrigin = glide ? previous.shownOrigin : origin;
+			this.lastShownOrigin = glide ? previous.lastShownOrigin : origin;
 		}
 
 		public List<BlockPos> getPositions() {
 			return positions;
+		}
+
+		/** Only multi-block Blood Structure crafts get the Abocipher spiral. */
+		public boolean hasStructureEffects() {
+			return style == BloodFeedStyle.STRUCTURE;
+		}
+
+		public BloodFeedStyle getStyle() {
+			return style;
+		}
+
+		/** World point an infusion's veins crawl out from, following the player's aim. */
+		public Vec3 getOrigin(float partialTick) {
+			return lastShownOrigin.lerp(shownOrigin, partialTick);
+		}
+
+		/**
+		 * Share of the completion linger an infusion spends glowing and cracking: up to the moment the
+		 * server breaks the block, after which the shell melts.
+		 */
+		public float getCrackShare() {
+			return Math.min(0.9f, BloodInfusionRules.COLLAPSE_TICKS / (float) initialVisibleTicks);
 		}
 
 		public long getChannelId() {
@@ -135,8 +177,31 @@ public final class ActiveBloodStructureFeedClientData {
 		}
 
 		private boolean tick() {
+			lastShownOrigin = shownOrigin;
+			shownOrigin = shownOrigin.lerp(origin, ORIGIN_GLIDE);
 			engulfmentTicks++;
 			return --remainingTicks <= 0;
+		}
+
+		/** Gliding across a corner would cut through the block, so a jump to another face snaps instead. */
+		private static boolean sameFace(List<BlockPos> positions, Vec3 from, Vec3 to) {
+			if (positions.isEmpty()) {
+				return false;
+			}
+			BlockPos pos = positions.getFirst();
+			return faceOf(pos, from) == faceOf(pos, to);
+		}
+
+		private static int faceOf(BlockPos pos, Vec3 point) {
+			double[] gaps = {point.x - pos.getX(), pos.getX() + 1 - point.x, point.y - pos.getY(),
+					pos.getY() + 1 - point.y, point.z - pos.getZ(), pos.getZ() + 1 - point.z};
+			int face = 0;
+			for (int i = 1; i < gaps.length; i++) {
+				if (Math.abs(gaps[i]) < Math.abs(gaps[face])) {
+					face = i;
+				}
+			}
+			return face;
 		}
 	}
 }

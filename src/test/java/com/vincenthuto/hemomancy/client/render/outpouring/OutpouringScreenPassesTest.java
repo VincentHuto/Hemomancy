@@ -50,4 +50,17 @@ class OutpouringScreenPassesTest {
             assertFalse(fsh.matches("(?s).*\\b(half|packed|distance|offset)\\s*[=;,)].*"), name);
         }
     }
+    @Test void bothPassesKeepTheCastersBodyReadable() throws IOException {
+        String passes = Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/client/render/outpouring/OutpouringScreenPasses.java"));
+        assertTrue(passes.contains("OutpouringClientState.casters(camera, partial, school)"), "each pass clears only its own casters");
+        assertTrue(passes.contains("\"Casters\"") && passes.contains("\"CasterCount\""));
+        for (String name : new String[]{"cast_lumen", "cast_umbra"}) {
+            String fsh = Files.readString(Path.of("src/main/resources/assets/hemomancy/shaders/core/screen/" + name + ".fsh"));
+            String json = Files.readString(Path.of("src/main/resources/assets/hemomancy/shaders/core/screen/" + name + ".json"));
+            assertTrue(fsh.contains("bodyCover("), name + " must clear the caster's body");
+            assertTrue(json.contains("\"Casters\"") && json.contains("\"CasterCount\""), name + " declares the caster uniforms");
+        }
+        String lumen = Files.readString(Path.of("src/main/resources/assets/hemomancy/shaders/core/screen/cast_lumen.fsh"));
+        assertTrue(lumen.contains("knee("), "Lux relight must roll highlights off rather than clip to white");
+    }
 }

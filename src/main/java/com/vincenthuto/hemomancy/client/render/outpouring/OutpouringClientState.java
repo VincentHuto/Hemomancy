@@ -141,6 +141,21 @@ public final class OutpouringClientState {
         return shades;
     }
 
+    /**
+     * Camera-relative feet of the casters whose own {@code school} pass is drawing, so each keeps their body readable in
+     * their own light or shade. Another school's caster gets no clearance: a Lux caster inside an enemy's shade stays hidden.
+     */
+    static List<double[]> casters(Vec3 camera, float partial, EnumBloodTendency school) {
+        List<double[]> feet = new ArrayList<>();
+        var mc = Minecraft.getInstance();
+        for (var cast : TRACKER.casts()) {
+            if (cast.school != school || !lit(cast, camera)) continue;
+            Vec3 at = mc.level.getEntity(cast.entityId).getPosition(partial);
+            feet.add(new double[]{at.x - camera.x, at.y - camera.y, at.z - camera.z, 1});
+        }
+        return feet;
+    }
+
     /** Screen effects follow the same rules as the blood: a visible caster, near enough, with particles beyond Minimal. */
     private static boolean lit(OutpouringTracker.Cast cast, Vec3 camera) {
         var mc = Minecraft.getInstance();

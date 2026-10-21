@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketBloodCraftRing;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketBloodStructureFeed;
 import com.vincenthuto.hemomancy.common.recipe.BloodInfusionRecipe;
 import net.minecraft.core.BlockPos;
@@ -19,6 +18,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.*;
@@ -33,6 +33,12 @@ public final class BloodInfusionManager {
 	}
 
 	public static boolean feedBlock(ServerPlayer player, ServerLevel level, BlockPos pos, double feedRate) {
+		return feedBlock(player, level, pos, pos.getCenter().add(0.0D, 0.5D, 0.0D), feedRate);
+	}
+
+	/** {@code hit} is where the projection strikes now; the veins spread out from wherever it is aimed. */
+	public static boolean feedBlock(ServerPlayer player, ServerLevel level, BlockPos pos, Vec3 hit,
+			double feedRate) {
 		RecipeHolder<BloodInfusionRecipe> holder = findRecipe(level, pos);
 		if (holder == null) {
 			return false;
@@ -46,11 +52,11 @@ public final class BloodInfusionManager {
 		BloodInfusionRecipe recipe = holder.value();
 		Progress progress = ACTIVE.get(key);
 		if (progress != null && !progress.recipeId.equals(holder.id())) {
-			sync(level, pos, 0.0F, true, BloodStructureFeedRules.PROGRESS_TIMEOUT_TICKS);
+			sync(level, pos, progress.origin, 0.0F, true, BloodStructureFeedRules.PROGRESS_TIMEOUT_TICKS);
 			progress = null;
 		}
 		if (progress == null) {
-			progress = new Progress(holder.id());
+			progress = new Progress(holder.id(), hit);
 			ACTIVE.put(key, progress);
 		}
 
@@ -62,19 +68,17 @@ public final class BloodInfusionManager {
 		}
 
 		blood.drain(amount);
+		progress.origin = hit;
 		progress.bloodFed += amount;
 		progress.lastFedGameTime = level.getGameTime();
 		PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(blood));
 		float normalized = (float) Math.min(1.0D, progress.bloodFed / recipe.bloodCost());
-		sync(level, pos, normalized, false, BloodStructureFeedRules.PROGRESS_TIMEOUT_TICKS);
+		sync(level, pos, progress.origin, normalized, false, BloodStructureFeedRules.PROGRESS_TIMEOUT_TICKS);
 
 		if (BloodStructureFeedRules.isComplete(progress.bloodFed, recipe.bloodCost())) {
 			ACTIVE.remove(key);
 			PENDING.put(key, new Pending(recipe, BloodInfusionRules.COLLAPSE_TICKS, player.getUUID()));
-			sync(level, pos, 1.0F, false, COMPLETION_VISIBLE_TICKS);
-			PacketDistributor.sendToPlayersNear(level, null, pos.getX() + 0.5D, pos.getY() + 0.5D,
-					pos.getZ() + 0.5D, SYNC_RANGE,
-					new PacketBloodCraftRing(pos, 2.5F, pos.getY() + 0.5F, BloodInfusionRules.COLLAPSE_TICKS));
+			sync(level, pos, progress.origin, 1.0F, false, COMPLETION_VISIBLE_TICKS);
 		}
 		return true;
 	}
@@ -86,7 +90,8 @@ public final class BloodInfusionManager {
 			Map.Entry<TargetKey, Progress> entry = active.next();
 			if (entry.getKey().dimension.equals(level.dimension())
 					&& BloodStructureFeedRules.isExpired(gameTime, entry.getValue().lastFedGameTime)) {
-				sync(level, entry.getKey().pos, 0.0F, true, BloodStructureFeedRules.PROGRESS_TIMEOUT_TICKS);
+				sync(level, entry.getKey().pos, entry.getValue().origin, 0.0F, true,
+						BloodStructureFeedRules.PROGRESS_TIMEOUT_TICKS);
 				active.remove();
 			}
 		}
@@ -118,7 +123,7 @@ public final class BloodInfusionManager {
 	private static void complete(ServerLevel level, BlockPos pos, BloodInfusionRecipe recipe, UUID playerId) {
 		boolean matches = level.getBlockState(pos).is(recipe.input());
 		if (!BloodInfusionRules.canComplete(matches, level.getBlockEntity(pos) != null)) {
-			sync(level, pos, 0.0F, true, BloodStructureFeedRules.PROGRESS_TIMEOUT_TICKS);
+			sync(level, pos, pos.getCenter(), 0.0F, true, BloodStructureFeedRules.PROGRESS_TIMEOUT_TICKS);
 			return;
 		}
 		level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
@@ -132,10 +137,11 @@ public final class BloodInfusionManager {
 		}
 	}
 
-	private static void sync(ServerLevel level, BlockPos pos, float progress, boolean clear, int visibleTicks) {
+	private static void sync(ServerLevel level, BlockPos pos, Vec3 origin, float progress, boolean clear,
+			int visibleTicks) {
 		PacketDistributor.sendToPlayersNear(level, null, pos.getX() + 0.5D, pos.getY() + 0.5D,
 				pos.getZ() + 0.5D, SYNC_RANGE,
-				new PacketBloodStructureFeed(List.of(pos), progress, visibleTicks, clear));
+				PacketBloodStructureFeed.infusion(pos, origin, progress, visibleTicks, clear));
 	}
 
 	private record TargetKey(ResourceKey<Level> dimension, BlockPos pos) {
@@ -143,11 +149,13 @@ public final class BloodInfusionManager {
 
 	private static final class Progress {
 		private final ResourceLocation recipeId;
+		private Vec3 origin;
 		private double bloodFed;
 		private long lastFedGameTime;
 
-		private Progress(ResourceLocation recipeId) {
+		private Progress(ResourceLocation recipeId, Vec3 origin) {
 			this.recipeId = recipeId;
+			this.origin = origin;
 		}
 	}
 

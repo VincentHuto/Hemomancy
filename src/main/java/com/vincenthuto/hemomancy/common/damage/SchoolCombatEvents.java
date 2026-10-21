@@ -223,6 +223,8 @@ public final class SchoolCombatEvents {
                 if (discharge == null || !discharge.enqueueReaction(arc)) arc.run();
             }
         }
+        // Presentation last, after every gameplay consequence of the hit has been settled.
+        com.vincenthuto.hemomancy.common.manipulation.impact.CastImpacts.landed(target, event.getSource(), hit, event.getNewDamage());
     }
 
     /** Spend part of the Necrosis debt; whatever a partial toll leaves unpaid still releases at expiry. */

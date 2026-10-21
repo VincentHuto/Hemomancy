@@ -70,7 +70,8 @@ public final class LivingStaffMorphClientEvents {
 		poseStack.popPose();
 	}
 
-	private static void applyHeldItemTransform(PoseStack poseStack, HumanoidArm arm,
+	/** The first-person held-item transform the morph draws with; shared so conjure visuals sit on the same weapon. */
+	public static void applyHeldItemTransform(PoseStack poseStack, HumanoidArm arm,
 			float equipProgress, float swingProgress) {
 		float side = arm == HumanoidArm.RIGHT ? 1.0F : -1.0F;
 		float root = Mth.sqrt(swingProgress);

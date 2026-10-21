@@ -105,6 +105,14 @@ public final class OutpouringRules {
         };
     }
 
+    /**
+     * Opacity scale for smoke at an offset from the caster's feet: the body (a standing capsule) keeps only a trace so
+     * dark smoke never hides who is casting; the screen passes' {@code bodyCover} uses the same shape.
+     */
+    public static float smokeNearBody(double dx, double dy, double dz) {
+        double spine = Math.clamp(dy, 0, 1.85), r = Math.sqrt(dx * dx + (dy - spine) * (dy - spine) + dz * dz);
+        return .12f + .88f * smooth((float) ((r - .4) / .45));
+    }
     static float clamp(float value) { return Math.clamp(value, 0f, 1f); }
     static float smooth(float t) { t = clamp(t); return t * t * (3 - 2 * t); }
 }

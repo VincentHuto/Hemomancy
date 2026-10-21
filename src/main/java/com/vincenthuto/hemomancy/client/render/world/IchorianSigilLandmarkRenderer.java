@@ -40,7 +40,7 @@ public final class IchorianSigilLandmarkRenderer {
 			stack.translate(primitive.x() * radius, primitive.y() * radius,
 					primitive.z() * radius);
 			stack.scale(primitive.scaleX(), primitive.scaleY(), primitive.scaleZ());
-			SanguineFormationProjectionRenderer.renderSphere(
+			SanguineSphereRenderer.renderSphere(
 					consumer, stack.last().pose(), radius, time,
 					seed + index * 31L, color.red(), color.green(), color.blue(), alpha);
 			stack.popPose();

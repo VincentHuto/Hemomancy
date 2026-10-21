@@ -41,7 +41,8 @@ final class CardinalRitePurposeDataTest {
 			Map.entry("enduring_pattern", "making"), Map.entry("armature_consecration", "making"),
 			Map.entry("monolithic_armature", "making"), Map.entry("eightfold_script", "making"),
 			Map.entry("palimpsest", "making"), Map.entry("ganglionic_weave", "making"),
-			Map.entry("cortical_weave", "making"),
+			Map.entry("cortical_weave", "making"), Map.entry("first_clotting", "making"),
+			Map.entry("druse_crystallization", "making"),
 			Map.entry("bloodline_founding", "bond"), Map.entry("bloodline_recall", "bond"),
 			Map.entry("hematic_unbinding", "bond"), Map.entry("scarlet_summons", "bond"),
 			Map.entry("covenant_vigil", "bond"), Map.entry("ancestral_communion", "bond"));

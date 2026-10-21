@@ -52,6 +52,10 @@ public class ShaderInit {
 	public static ShaderHolder BLOOD_STRUCTURE_WARP = new ShaderHolder(Hemomancy.rloc("world/blood_structure_warp"),
 			DefaultVertexFormat.BLOCK, "HemoTime", "Progress", "BlockSeed", "WiggleAmp", "FillLine");
 
+	public static ShaderHolder BLOOD_INFUSION_VEINS = new ShaderHolder(Hemomancy.rloc("world/blood_infusion_veins"),
+			DefaultVertexFormat.BLOCK, "HemoTime", "Progress", "BlockSeed", "FinalizeProgress", "CrackShare",
+			"VeinOrigin", "VeinNormal", "VeinAnchor");
+
 	public static ShaderHolder BLOOD_STRUCTURE_WARP_ENTITY = new ShaderHolder(
 			Hemomancy.rloc("world/blood_structure_warp"),
 			DefaultVertexFormat.NEW_ENTITY, "HemoTime", "Progress", "BlockSeed", "WiggleAmp",
@@ -69,7 +73,7 @@ public class ShaderInit {
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "BasinSeed", "SwirlIntensity");
 
 	public static ShaderHolder BLOOD_POOL = new ShaderHolder(Hemomancy.rloc("world/blood_pool"),
-			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "PoolSeed", "Ragged");
+			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "PoolSeed", "Ragged", "Square");
 
 	/** Annetta's spilled infected blood: the blood pool's surface with ichor veins through it and a ragged splash edge. */
 	public static ShaderHolder INFECTED_POOL = new ShaderHolder(Hemomancy.rloc("world/infected_pool"),
@@ -219,6 +223,7 @@ public class ShaderInit {
         registerShader(event, LUX_GLINT.createInstance(provider));
         registerShader(event, BLOOD_STRUCTURE_WARP.createInstance(provider));
         registerShader(event, BLOOD_STRUCTURE_WARP_ENTITY.createInstance(provider));
+        registerShader(event, BLOOD_INFUSION_VEINS.createInstance(provider));
         registerShader(event, VESPER_WOUND_DRAW.createInstance(provider));
         registerShader(event, LOOM_ORB.createInstance(provider));
         registerShader(event, MYCELIAL_CRUCIBLE_BASIN.createInstance(provider));

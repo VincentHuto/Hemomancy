@@ -11,8 +11,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class BloodStructureFeedAbocipherParticle extends TextureSheetParticle {
-	private static final int LIFETIME_TICKS = 28;
-	private static final int LIFETIME_VARIANCE_TICKS = 8;
+	private static final int LIFETIME_TICKS = 14;
+	private static final int LIFETIME_VARIANCE_TICKS = 4;
 	private static final double DRIFT_DAMPING = 0.90D;
 	private static final float FADE_START = 0.55F;
 	private final float initialQuadSize;

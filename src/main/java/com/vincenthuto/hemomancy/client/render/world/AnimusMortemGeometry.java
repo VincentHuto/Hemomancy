@@ -16,7 +16,7 @@ final class AnimusMortemGeometry {
     private AnimusMortemGeometry() {}
     static boolean handles(Form form) {
         return switch(form) {
-            case CLOUD,GROWTH,COMMAND,RUSH,RUPTURE,
+            case CLOUD,GROWTH,COMMAND,RUPTURE,
                     MORTAR_CHARGE,DRAIN,WOUND,HUNGER,
                     GRAVE,BLACK_HEART,BLOOM,DEBT,ANIMUS_IMPACT,ANIMUS_CONJURE,MORTEM_CONJURE,
                     MORTEM_BURST,GRAVE_REFUND,HUNGER_COLLAPSE,BLACKHEART_RUPTURE,TITHE_RETURN,TITHE_COLLECT,
@@ -85,19 +85,6 @@ final class AnimusMortemGeometry {
                     Vec3 top=crown.add(Math.cos(a)*.34,.08,Math.sin(a)*.34);
                     double tug=Math.sin(time*.15+i*2)*.04;
                     ribbonPath(p,v,List.of(top,top.lerp(holds[i],.5).add(tug,0,0),holds[i]),camera,.012,.008,RIBBON,seed+20+i,CLOT,alpha*.7f);
-                }
-            }
-            case RUSH -> {
-                spiral(p,v,new Vec3(0,.35,0),camera,.38,1.2,-age*.35,3,seed,alpha*.7f);
-                // Blood pumps up the body in rings, one beat after another.
-                for(int ring=0;ring<3;ring++) {
-                    double cycle=(age*.06+ring/3.0)%1;
-                    List<Vec3> loop=new ArrayList<>(13);
-                    for(int i=0;i<=12;i++) {
-                        double a=i*Math.PI/6;
-                        loop.add(new Vec3(Math.cos(a)*.42,.15+cycle*1.6,Math.sin(a)*.42));
-                    }
-                    ribbonPath(p,v,loop,camera,.05,RIBBON,seed+10+ring,ring==0?CLOT:TINT,alpha*(float)Math.sin(cycle*Math.PI));
                 }
             }
             case GROWTH -> {

@@ -492,6 +492,7 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
                 }
             }
 
+            if (be instanceof IBloodReservoir closed && !closed.canProvideBlood()) return false;
             IBloodVolume srcVol = HemoCapabilityAccess.getBloodVolume(be).orElse(null);
             if (srcVol == null) return false;
 
@@ -511,7 +512,7 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
         /** Try to deposit blood into the destination tile. Returns true if work was done. */
         private boolean tryDeposit() {
             BlockEntity be = thrall.level().getBlockEntity(thrall.getDestPos());
-            if (be == null) return false;
+            if (be == null || be instanceof IBloodReservoir closed && !closed.canReceiveBlood()) return false;
             IBloodVolume destVol = HemoCapabilityAccess.getBloodVolume(be).orElse(null);
             if (destVol == null) return false;
 

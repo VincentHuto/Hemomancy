@@ -29,7 +29,7 @@ public final class ManipulationVisuals {
         // Encoded by ordinal: append new forms here.
         PUPPET_DESCEND, PUPPET_UNSPOOL, UMBRAL_REND, LODESTONE_COLLAPSE,
         SEARING_LASH, CRUOR_JAVELIN, RADIANT_WAKE, CONTAGION, NERVE_COMMAND, LODESTONE_FIELD,
-        VESPER_RECALL
+        VESPER_RECALL, CAST_IMPACT, WEAPON_CONJURE, CELL_HAND, AVATAR_MANIFEST
     }
 
     public static void burst(ServerLevel level, Form form, Vec3 from, Vec3 to, double radius, int ticks) {
@@ -56,6 +56,12 @@ public final class ManipulationVisuals {
             send(level, new ManipulationVisualPacket(form, entity.getId(), entity.position(),
                     entity.position(), (float) radius, ticks, count));
         }
+    }
+
+    /** Restarts an entity's keyed cue, so a recast replays its whole timeline instead of refreshing a dying one. */
+    public static void replay(Entity entity, Form form, double radius, int ticks, int count) {
+        attached(entity, form, 0, 0, 0);
+        attached(entity, form, radius, ticks, count);
     }
 
     private static void send(ServerLevel level, ManipulationVisualPacket packet) {

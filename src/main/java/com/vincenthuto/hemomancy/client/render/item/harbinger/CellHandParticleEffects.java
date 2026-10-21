@@ -65,21 +65,22 @@ public final class CellHandParticleEffects {
 			Optional<Vec3> blockSource = findCardinalRiteCancellationSource(living)
 					.or(() -> BlockBloodInteractions.findLookedAtBloodBlockSource(world, living));
 			if (blockSource.isPresent()) {
-				spawnAbsorbedBloodParticle(mc, origin, blockSource.get(), ParticleColor.BLOOD, rand, Optional.empty());
+				spawnAbsorbedBloodParticle(mc, living.getId(), true, origin, blockSource.get(), ParticleColor.BLOOD, rand,
+						Optional.empty());
 			} else {
 				Optional<WillEntity> willTarget = getFalteringWillAbsorptionParticleTarget(living, activeStack);
 				if (willTarget.isPresent()) {
 					WillEntity will = willTarget.get();
-					spawnWillAbsorptionGlowParticle(mc, origin,
+					spawnWillAbsorptionGlowParticle(mc, living.getId(), origin,
 							will.position().add(0.0D, will.getBbHeight() * 0.55D, 0.0D), rand, Optional.empty());
-					spawnWillAbsorptionTendencySpiralParticle(mc, origin, will, rand, Optional.empty());
+					spawnWillAbsorptionTendencySpiralParticle(mc, living.getId(), origin, will, rand, Optional.empty());
 				} else {
 					for (LivingEntity livingTarget : getAbsorptionParticleTargets(living, activeStack)) {
 						Vector3 targetVec = Vector3.fromEntityCenter(livingTarget);
 						Predicate<Entity> targetPred = EntityParticleUtils.getEntityPredicate(livingTarget);
 						ParticleColor targetColor = EntityParticleUtils.getColorFromPredicate(targetPred);
-						spawnAbsorbedBloodParticle(mc, origin, new Vec3(targetVec.x, targetVec.y, targetVec.z),
-								targetColor, rand, Optional.empty());
+						spawnAbsorbedBloodParticle(mc, living.getId(), true, origin,
+								new Vec3(targetVec.x, targetVec.y, targetVec.z), targetColor, rand, Optional.empty());
 					}
 				}
 			}
@@ -133,22 +134,22 @@ public final class CellHandParticleEffects {
 			Optional<Vec3> blockSource = findCardinalRiteCancellationSource(player)
 					.or(() -> BlockBloodInteractions.findLookedAtBloodBlockSource(world, player));
 			if (blockSource.isPresent()) {
-				spawnAbsorbedBloodParticle(mc, origin, blockSource.get(), ParticleColor.BLOOD, rand,
+				spawnAbsorbedBloodParticle(mc, player.getId(), true, origin, blockSource.get(), ParticleColor.BLOOD, rand,
 						Optional.of(anchor));
 			} else {
 				Optional<WillEntity> willTarget = getFalteringWillAbsorptionParticleTarget(player, stack);
 				if (willTarget.isPresent()) {
 					WillEntity will = willTarget.get();
-					spawnWillAbsorptionGlowParticle(mc, origin,
+					spawnWillAbsorptionGlowParticle(mc, player.getId(), origin,
 							will.position().add(0.0D, will.getBbHeight() * 0.55D, 0.0D), rand, Optional.of(anchor));
-					spawnWillAbsorptionTendencySpiralParticle(mc, origin, will, rand, Optional.of(anchor));
+					spawnWillAbsorptionTendencySpiralParticle(mc, player.getId(), origin, will, rand, Optional.of(anchor));
 				} else {
 					for (LivingEntity livingTarget : getAbsorptionParticleTargets(player, stack)) {
 						Vector3 targetVec = Vector3.fromEntityCenter(livingTarget);
 						Predicate<Entity> targetPred = EntityParticleUtils.getEntityPredicate(livingTarget);
 						ParticleColor targetColor = EntityParticleUtils.getColorFromPredicate(targetPred);
-						spawnAbsorbedBloodParticle(mc, origin, new Vec3(targetVec.x, targetVec.y, targetVec.z),
-								targetColor, rand, Optional.of(anchor));
+						spawnAbsorbedBloodParticle(mc, player.getId(), true, origin,
+								new Vec3(targetVec.x, targetVec.y, targetVec.z), targetColor, rand, Optional.of(anchor));
 					}
 				}
 			}
@@ -178,6 +179,44 @@ public final class CellHandParticleEffects {
 
 	public static void spawnFirstPersonParticlesForStack(ItemStack stack, HumanoidArm hand) {
 		spawnFirstPersonParticlesForStack(stack, hand, fallbackFirstPersonHandOrigin(hand));
+	}
+
+	/** What a cell hand in use is drawing from (absorption) or pouring into (projection), in world space. */
+	public record UseTargets(boolean absorbing, List<Vec3> points) {
+	}
+
+	/**
+	 * Resolves the cell hand's current targets exactly as the particles do, so the cast geometry reaches the same
+	 * block, Will, rite or bodies. Null when {@code living} is not using a cell hand.
+	 */
+	public static UseTargets useTargets(LivingEntity living, Vec3 origin) {
+		if (!living.isUsingItem()) return null;
+		ItemStack stack = living.getUseItem();
+		if (!(stack.getItem() instanceof ICellHand)) return null;
+		Level world = living.level();
+		if (isAbsorptionMode(living, stack)) {
+			Optional<Vec3> blockSource = findCardinalRiteCancellationSource(living)
+					.or(() -> BlockBloodInteractions.findLookedAtBloodBlockSource(world, living));
+			if (blockSource.isPresent()) return new UseTargets(true, List.of(blockSource.get()));
+			Optional<WillEntity> will = getFalteringWillAbsorptionParticleTarget(living, stack);
+			if (will.isPresent())
+				return new UseTargets(true, List.of(will.get().position().add(0.0D, will.get().getBbHeight() * 0.55D, 0.0D)));
+			List<Vec3> bodies = new java.util.ArrayList<>();
+			for (LivingEntity target : getAbsorptionParticleTargets(living, stack)) {
+				Vector3 center = Vector3.fromEntityCenter(target);
+				bodies.add(new Vec3(center.x, center.y, center.z));
+			}
+			return new UseTargets(true, bodies);
+		}
+		if (isProjectionMode(living, stack)) {
+			HitResult trace = SanguineProjectionTargeting.pick(world, living, SanguineProjectionTargeting.PROJECTION_REACH, true);
+			if (trace.getType() != HitResult.Type.BLOCK) return new UseTargets(false, List.of());
+			Vec3 target = trace instanceof net.minecraft.world.phys.BlockHitResult block
+					? com.vincenthuto.hemomancy.client.render.world.WorkingCraftSwallowRenderer.projectionLanding(origin, block)
+					: trace.getLocation();
+			return new UseTargets(false, List.of(target));
+		}
+		return null;
 	}
 
 	private static Optional<Vec3> findCardinalRiteCancellationSource(LivingEntity caster) {
@@ -213,11 +252,11 @@ public final class CellHandParticleEffects {
 		Vec3 origin = firstPerson
 				? fallbackFirstPersonHandOrigin(activeArm)
 				: calculateThirdPersonHandOrigin(player, activeArm);
-		spawnItemParticlesAlongAbsorptionPath(mc, offeringStack, origin, source,
+		spawnItemParticlesAlongAbsorptionPath(mc, casterId, offeringStack, origin, source,
 				firstPerson ? Optional.of(worldToFirstPersonAnchor(origin)) : Optional.empty());
 	}
 
-	private static void spawnItemParticlesAlongAbsorptionPath(Minecraft mc, ItemStack offeringStack, Vec3 origin,
+	private static void spawnItemParticlesAlongAbsorptionPath(Minecraft mc, int casterId, ItemStack offeringStack, Vec3 origin,
 			Vec3 source, Optional<Vec3> firstPersonTargetAnchor) {
 		if (mc.level == null) {
 			return;
@@ -241,7 +280,8 @@ public final class CellHandParticleEffects {
 			double velocityY = inwardVelocity.y + (rand.nextDouble() - 0.5D) * 0.025D;
 			double velocityZ = inwardVelocity.z + (rand.nextDouble() - 0.5D) * 0.025D;
 			// The offering streams into the hand as absorbed cells in its own colour, alongside the glow.
-			spawnAbsorbedBloodParticle(mc, origin, source, absorptionItemColor, rand, firstPersonTargetAnchor);
+			// No stream is drawn to an offering, so its cells run straight into the hand as it is now.
+			spawnAbsorbedBloodParticle(mc, casterId, false, origin, source, absorptionItemColor, rand, firstPersonTargetAnchor);
 			mc.level.addParticle(GlowParticleFactory.createData(absorptionItemColor),
 					point.x + side.x * 0.35D, point.y + side.y * 0.35D, point.z + side.z * 0.35D,
 					velocityX * 0.75D, velocityY * 0.75D, velocityZ * 0.75D);
@@ -258,7 +298,7 @@ public final class CellHandParticleEffects {
 				.orElse(ParticleColor.BLOOD);
 	}
 
-	private static void spawnWillAbsorptionTendencySpiralParticle(Minecraft mc, Vec3 origin, WillEntity will,
+	private static void spawnWillAbsorptionTendencySpiralParticle(Minecraft mc, int casterId, Vec3 origin, WillEntity will,
 			Random rand, Optional<Vec3> firstPersonTargetAnchor) {
 		double age = will.tickCount + HLClientUtils.getPartialTicks();
 		double spiralAngle = age * 0.42D + rand.nextDouble() * Math.PI * 0.45D;
@@ -281,10 +321,11 @@ public final class CellHandParticleEffects {
 			} else {
 				particle.setTargetYOffset(0.0D);
 			}
+			particle.drawInto(casterId, false);
 		}
 	}
 
-	private static void spawnWillAbsorptionGlowParticle(Minecraft mc, Vec3 origin, Vec3 source, Random rand,
+	private static void spawnWillAbsorptionGlowParticle(Minecraft mc, int casterId, Vec3 origin, Vec3 source, Random rand,
 			Optional<Vec3> firstPersonTargetAnchor) {
 		Vec3 finalPos = source.subtract(origin);
 		Particle created = mc.particleEngine.createParticle(
@@ -299,10 +340,15 @@ public final class CellHandParticleEffects {
 			} else {
 				particle.setTargetYOffset(0.0D);
 			}
+			particle.drawInto(casterId, true);
 		}
 	}
 
-	private static void spawnAbsorbedBloodParticle(Minecraft mc, Vec3 origin, Vec3 source,
+	/**
+	 * A cell drawn from {@code source} into {@code casterId}'s hand. {@code ridesStream} carries it inside the
+	 * absorption stream the cast draws to that source; either way it lands on the palm as drawn each frame.
+	 */
+	private static void spawnAbsorbedBloodParticle(Minecraft mc, int casterId, boolean ridesStream, Vec3 origin, Vec3 source,
 			ParticleColor targetColor, Random rand, Optional<Vec3> firstPersonTargetAnchor) {
 		Vec3 finalPos = source.subtract(origin);
 		Particle created = mc.particleEngine.createParticle(
@@ -318,6 +364,7 @@ public final class CellHandParticleEffects {
 			} else {
 				particle.setTargetYOffset(0.0D);
 			}
+			particle.drawInto(casterId, ridesStream);
 		}
 	}
 

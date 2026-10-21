@@ -158,6 +158,7 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 								ItemStack beforeOff = player.getOffhandItem().copy();
 								if (!mainStack.isEmpty()) {
 									if (mainStack.getItem() instanceof IDispellable dispel) {
+										ConjurationManip.dispelled(player, mainStack);
 										mainStack.shrink(1);
 										double bloodCost = dispel.getBaseCost();
 										double bloodRefund = Math

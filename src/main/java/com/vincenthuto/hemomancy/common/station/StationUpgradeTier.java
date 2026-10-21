@@ -14,7 +14,7 @@ public record StationUpgradeTier(UpgradeStation station, int tier, int requiredD
     public ResourceLocation rite() { return ResourceLocation.fromNamespaceAndPath("hemomancy", ritePath); }
     /** Repeat-craft recipes share the upgrade item's id. */
     public ResourceLocation craftingRecipe() { return upgradeItem(); }
-    public boolean lesser() { return station == UpgradeStation.ALEMBIC && tier == 1; }
+    public boolean lesser() { return tier == 1 && station.lesserFirstTier(); }
     public String riteType() { return lesser() ? "lesser" : "greater"; }
     public String floor() { return lesser() ? "hemomancy:working_lesser" : "hemomancy:working_greater"; }
     public int anchors() { return tier == 1 ? 4 : 8; }

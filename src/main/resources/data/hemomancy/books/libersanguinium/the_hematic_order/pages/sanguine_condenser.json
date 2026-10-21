@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 8,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Sanguine Condenser",
+  "subtitle": "Where formations are set",
+  "text": "Hold Blood Projection on an empty cauldron and it keeps your blood: a Sanguine Cauldron. Given 150 mL it sets one Sanguine Formation over ten seconds and holds it until you draw it out with an empty hand. A bare cauldron may let the shape slump away; Sanguine Crystallization steadies it. Ordinary stone takes projection differently and stains to Venous Stone. An emptied cauldron returns to plain iron, and breaking it gives the cauldron back. The Vicar counts a formation only for the one who fed that cauldron. At the third Degree the Rite of the First Clotting raises it into a Latticed Condenser; at the fifth, Druse Crystallization lines it in crystal.",
+  "icon": "minecraft:cauldron"
+}

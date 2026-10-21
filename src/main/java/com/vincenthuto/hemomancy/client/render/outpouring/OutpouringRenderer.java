@@ -78,6 +78,11 @@ public final class OutpouringRenderer {
                 if (self && at.lengthSqr() < NEAR_SELF * NEAR_SELF) continue;
                 float age = m.age + partial;
                 float alpha = Math.clamp(age / 2f, 0, 1) * Math.clamp((m.life - age) / (m.life * .25f), 0, 1);
+                // Smoke (Tenebris puffs, burnt-out flame) thins over the caster's own body so it frames them instead.
+                if (entity != null && (m.kind == OutpouringSim.Kind.PUFF || m.kind == OutpouringSim.Kind.FLAME && age / m.life >= .65f)) {
+                    Vec3 feet = entity.getPosition(partial);
+                    alpha *= OutpouringRules.smokeNearBody(x - feet.x, y - feet.y, z - feet.z);
+                }
                 if (alpha > .01f) mote(view, cast.school, m, at, age, alpha);
             }
         }

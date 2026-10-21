@@ -308,9 +308,14 @@ public final class MaterialsData {
 
         // ── Raw Materials ──
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("sanguine_formation", "Sanguine Formation",
-                "Raw blood crystal; basic crafting ingredient.",
+                "Raw blood crystal; basic crafting ingredient. Condensed in a cauldron filled by Blood Projection.",
                 "Materials", () -> new ItemStack(ItemInit.sanguine_formation.get()),
                 true, UnlockPredicate.always()));
+
+                                                                                                                                                                                                                                                                                list.add(new MaterialEntry("sanguine_condenser", "Sanguine Condenser",
+                "An empty cauldron that has taken projected blood. It sets Sanguine Formations; Working rites grow it into a Latticed and then a Druse Condenser.",
+                "Materials", () -> new ItemStack(BlockInit.sanguine_condenser.get()),
+                true, UnlockPredicate.minDegree(1)));
 
                                                                                                                                                                                                                                                                                 list.add(new MaterialEntry("hematic_iron_scrap", "Hematic Iron Scrap",
                 "Scrap metal infused with blood iron. Smelt into ingots.",

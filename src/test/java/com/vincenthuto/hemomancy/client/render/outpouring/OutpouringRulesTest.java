@@ -93,4 +93,11 @@ class OutpouringRulesTest {
         var build = OutpouringRules.pulse(CHARGED, CastPhase.HOLD, .5f, 0, 0, PERFECTUS);
         assertEquals(0, OutpouringRules.bodyContact(build, PERFECTUS));
     }
+    @Test void smokeThinsOverTheCastersBodyAndKeepsItsWeightAway() {
+        // Offsets from the caster's feet: chest, beside the shoulder, a step away.
+        assertTrue(OutpouringRules.smokeNearBody(0, 1.2, 0) <= .2f, "smoke on the chest must not hide the caster");
+        assertTrue(OutpouringRules.smokeNearBody(.5, 1.2, 0) > OutpouringRules.smokeNearBody(.1, 1.2, 0));
+        assertEquals(1f, OutpouringRules.smokeNearBody(1.2, .5, 0), 1e-6f);
+        assertEquals(1f, OutpouringRules.smokeNearBody(0, 3.2, 0), 1e-6f, "well above the head is clear of the body");
+    }
 }

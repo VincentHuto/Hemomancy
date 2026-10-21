@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.animus;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
@@ -52,6 +53,8 @@ public final class AvatarManifestationManager {
 		STATES.put(player.getUUID(), new State(now + 20, now + 100));
 		applyAttributes(player, avatar.getName());
 		sync(player, known);
+		AvatarManifestationRules.stats(avatar.getName()).ifPresent(stats -> ManipulationVisuals.replay(player,
+				ManipulationVisuals.Form.AVATAR_MANIFEST, 1, AvatarManifestRules.VISUAL_TICKS, AvatarManifestRules.manifest(stats.stage())));
         com.vincenthuto.hemomancy.common.manipulation.ManipulationCastSounds.play(player.level(), player, avatar);
 		return true;
 	}
@@ -61,7 +64,10 @@ public final class AvatarManifestationManager {
 		removeAttributes(player);
 		HemoCapabilityAccess.getKnownManipulations(player).ifPresent(known -> {
 			if (known.getActiveAvatarForm().isBlank()) return;
+			int stage = AvatarManifestationRules.stats(known.getActiveAvatarForm()).map(AvatarManifestationRules.Stats::stage).orElse(0);
 			known.setActiveAvatarForm("");
+			if (player.isAlive()) ManipulationVisuals.replay(player, ManipulationVisuals.Form.AVATAR_MANIFEST, 1,
+					AvatarManifestRules.VISUAL_TICKS, AvatarManifestRules.dismiss(stage));
 			sync(player, known);
 		});
 	}

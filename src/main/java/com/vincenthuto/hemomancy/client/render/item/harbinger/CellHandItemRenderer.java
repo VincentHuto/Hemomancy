@@ -199,11 +199,10 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 		ModelPart arm = hand == HumanoidArm.RIGHT
 				? playerRenderer.getModel().rightArm
 				: playerRenderer.getModel().leftArm;
-		poseStack.pushPose();
-		arm.translateAndRotate(poseStack);
-		Vec3 origin = CellHandRenderOrigin.fromPose(poseStack.last().pose(),
-				mc.gameRenderer.getMainCamera().getPosition(), 0.0F, CellHandRenderOrigin.PALM_OFFSET_Y, 0.0F);
-		poseStack.popPose();
-		CellHandParticleEffects.spawnFirstPersonParticlesForStack(stack, hand, origin);
+		// The arm is posed in view space; the palm is carried into the world through the camera so particles and the
+		// cast geometry both leave the drawn palm whichever way the player faces.
+		FirstPersonPalm.record(poseStack.last().pose(), arm, hand);
+		Vec3 origin = FirstPersonPalm.world(hand);
+		if (origin != null) CellHandParticleEffects.spawnFirstPersonParticlesForStack(stack, hand, origin);
 	}
 }

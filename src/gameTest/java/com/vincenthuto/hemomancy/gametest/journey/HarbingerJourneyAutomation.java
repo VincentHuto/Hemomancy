@@ -365,13 +365,33 @@ public final class HarbingerJourneyAutomation {
 		}
 	}
 
+	/** Fills the fixture cauldron by projection, lets it condense, then collects by hand (retrying a collapse). */
 	private static void projectFormation(ServerPlayer player, BlockPos origin) {
-		player.lookAt(EntityAnchorArgument.Anchor.EYES, Vec3.atCenterOf(origin.above()));
+		BlockPos target = origin.above();
+		player.lookAt(EntityAnchorArgument.Anchor.EYES, Vec3.atCenterOf(target));
 		ItemStack projection = player.getMainHandItem();
-		projection.getItem().use(player.serverLevel(), player, InteractionHand.MAIN_HAND);
-		projection.getItem().onUseTick(player.serverLevel(), player, projection,
-				projection.getUseDuration(player) - 1);
-		player.stopUsingItem();
+		double cost = com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineCondenserRules.formationCost(0);
+		for (int attempt = 0; attempt < 8; attempt++) {
+			projection.getItem().use(player.serverLevel(), player, InteractionHand.MAIN_HAND);
+			for (int use = 0; use < 200 && !(player.serverLevel().getBlockEntity(target)
+					instanceof com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineCondenserBlockEntity filled
+					&& filled.getBloodVolume() >= cost); use++) {
+				projection.getItem().onUseTick(player.serverLevel(), player, projection,
+						projection.getUseDuration(player) - 1 - use);
+			}
+			player.stopUsingItem();
+			if (!(player.serverLevel().getBlockEntity(target)
+					instanceof com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineCondenserBlockEntity condenser))
+				return;
+			int cycle = com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineCondenserRules.ticksPerFormation(0);
+			for (int tick = 0; tick < cycle && condenser.heldFormations() == 0 && !condenser.isRemoved(); tick++)
+				com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineCondenserBlockEntity.serverTick(
+						player.serverLevel(), target, condenser.getBlockState(), condenser);
+			if (condenser.heldFormations() > 0) {
+				condenser.collect(player);
+				return;
+			}
+		}
 	}
 
 	private static void craftStructure(ServerPlayer player, BlockPos origin, String recipePath, BlockPos hit,

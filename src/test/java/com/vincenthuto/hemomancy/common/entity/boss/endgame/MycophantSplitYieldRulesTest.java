@@ -26,10 +26,38 @@ final class MycophantSplitYieldRulesTest {
 	void splitBeats() {
 		assertEquals(80, MycophantSplitRules.length());
 		assertEquals(40, MycophantSplitRules.pushTick());
-		assertWindow(MycophantSplitRules::crack, 0, 10, 80);
-		assertWindow(MycophantSplitRules::halves, 10, 35, 80);
-		assertWindow(MycophantSplitRules::pulp, 25, 50, 80);
-		assertWindow(MycophantSplitRules::wings, 35, 70, 80);
+		assertEquals(12, MycophantSplitRules.snapTick());
+		assertWindow(MycophantSplitRules::crack, 0, 12, 80);
+		assertWindow(MycophantSplitRules::halves, 12, 30, 80);
+		assertWindow(MycophantSplitRules::droop, 15, 34, 80);
+		assertWindow(MycophantSplitRules::pulp, 12, 42, 80);
+		assertWindow(MycophantSplitRules::wings, 34, 70, 80);
+		assertWindow(MycophantSplitRules::settle, 66, 80, 80);
+	}
+
+	@Test
+	void theHalvesSnapOpenPastTheirRestThenSettleToHang() {
+		assertEquals(0.0F, MycophantSplitRules.hinge(MycophantSplitRules.snapTick()), 1.0E-6F);
+		assertEquals(0.0F, MycophantSplitRules.hinge(0.0F), 1.0E-6F);
+		float peak = 0.0F;
+		for (float t = 0.0F; t <= 80.0F; t += 0.25F) {
+			float hinge = MycophantSplitRules.hinge(t);
+			assertTrue(hinge >= 0.0F, "never closes past the seam at " + t);
+			peak = Math.max(peak, hinge);
+		}
+		assertTrue(peak > 1.05F && peak < 1.25F, "a visible but bounded overshoot: " + peak);
+		assertTrue(MycophantSplitRules.hinge(MycophantSplitRules.snapTick() + 5.0F) > 0.9F, "the snap is fast");
+		assertEquals(1.0F, MycophantSplitRules.hinge(36.0F), 0.01F);
+		assertEquals(1.0F, MycophantSplitRules.hinge(MycophantSplitRules.length()), 1.0E-3F);
+	}
+
+	@Test
+	void theSplitBeatsLineUp() {
+		// the pulp is at full bloom by the push's throb end, the wings open before she settles, the settle ends the split
+		assertTrue(MycophantSplitRules.pulp(MycophantSplitRules.pushTick()) > 0.9F);
+		assertEquals(1.0F, MycophantSplitRules.wings(70.0F), 1.0E-6F);
+		assertEquals(0.0F, MycophantSplitRules.settle(66.0F), 1.0E-6F);
+		assertEquals(1.0F, MycophantSplitRules.settle(MycophantSplitRules.length()), 1.0E-6F);
 	}
 
 	@Test

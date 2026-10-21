@@ -17,8 +17,6 @@ public final class CellHandItemRendererParticleOriginTest {
 			"src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodProjectionItem.java");
 	private static final Path BLOCK_INTERACTIONS = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/BlockBloodInteractions.java");
-	private static final Path FORMATION_HANDLER = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/event/SanguineFormationProjectionHandler.java");
 	private static final Path CARDINAL_RITE_HANDLER = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteInteractionHandler.java");
 
@@ -37,7 +35,6 @@ public final class CellHandItemRendererParticleOriginTest {
 		String thirdPersonLayer = Files.readString(THIRD_PERSON_LAYER).replace("\r\n", "\n");
 		String projectionItem = Files.readString(PROJECTION_ITEM).replace("\r\n", "\n");
 		String blockInteractions = Files.readString(BLOCK_INTERACTIONS).replace("\r\n", "\n");
-		String formationHandler = Files.readString(FORMATION_HANDLER).replace("\r\n", "\n");
 		String cardinalRiteHandler = Files.readString(CARDINAL_RITE_HANDLER).replace("\r\n", "\n");
 
 		assertContains("projection particles configure an explicit source and target",
@@ -51,7 +48,12 @@ public final class CellHandItemRendererParticleOriginTest {
 		assertOccurrences("only absorption may turn the animated hand into a particle destination",
 				effects, "particle.setFirstPersonTargetAnchor(anchor);", 1);
 		assertContains("first-person origin is captured from the rendered arm pose",
-				itemRenderer, "CellHandRenderOrigin.fromPose");
+				itemRenderer, "FirstPersonPalm.record(poseStack.last().pose(), arm, hand);");
+		String palm = Files.readString(EFFECTS.resolveSibling("FirstPersonPalm.java")).replace("\r\n", "\n");
+		assertContains("the shared first-person palm applies the arm part's own pivot and rotation",
+				palm, "armPart.translateAndRotate(stack);");
+		assertDoesNotContain("the posed hand is already in world axes; rotating it by the camera again flips it behind the player",
+				palm, "rotation().transform");
 		assertContains("third-person origin follows the parent model arm",
 				thirdPersonLayer, "getParentModel().translateToHand(side, poseStack)");
 		assertContains("third-person origin is captured from the rendered pose",
@@ -60,7 +62,6 @@ public final class CellHandItemRendererParticleOriginTest {
 				thirdPersonLayer, "double bodyYaw = Math.toRadians(living.yBodyRot)");
 		assertSharedProjectionTargeting("blood projection fallback", projectionItem);
 		assertSharedProjectionTargeting("block projection endpoints", blockInteractions);
-		assertSharedProjectionTargeting("formation projection", formationHandler);
 		assertSharedProjectionTargeting("cardinal rite projection", cardinalRiteHandler);
 	}
 

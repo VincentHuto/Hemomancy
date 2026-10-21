@@ -213,7 +213,6 @@ public class ClientEvents {
         StillArtCooldownOverlay.tick();
         ActiveBloodCraftClientData.tick();
         ActiveBloodStructureFeedClientData.tick();
-        ActiveSanguineFormationProjectionClientData.tick();
         ActiveRiteClientData.tick();
         com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState.tick();
         com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteGuidance.tick(Minecraft.getInstance());
@@ -767,7 +766,6 @@ public class ClientEvents {
             com.vincenthuto.hemomancy.client.render.world.zone.RiteZoneBoundaryRenderer.render(event.getPoseStack(), partialTick);
             GourdVineRenderer.render(event.getPoseStack(), partialTick);
             BloodStructureFeedWarpRenderer.render(event.getPoseStack(), partialTick);
-            SanguineFormationProjectionRenderer.render(event.getPoseStack(), partialTick);
             FaneBoundaryRenderer.renderWorldMask(event.getPoseStack(), partialTick);
             BloodCraftRingRenderer.render(event.getPoseStack(), partialTick);
             QliphothBloomRenderer.render(event.getPoseStack(), partialTick, event.getFrustum());
@@ -1091,6 +1089,8 @@ public class ClientEvents {
             BlockEntityRenderers.register(BlockEntityInit.specimen_jar.get(), SpecimenJarRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.unstained_podium.get(), UnstainedPodiumRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.scrying_podium.get(), ScryingPodiumRenderer::new);
+            BlockEntityRenderers.register(BlockEntityInit.sanguine_condenser.get(),
+                    com.vincenthuto.hemomancy.client.render.tile.harbinger.functional.SanguineCondenserRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.scarlet_vanity.get(), ScarletVanityRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.mason_effigy.get(), MasonsEffigyRenderer::new);
             BlockEntityRenderers.register(BlockEntityInit.iron_brazier.get(), IronBrazierRenderer::new);

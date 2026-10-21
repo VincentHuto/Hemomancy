@@ -217,6 +217,8 @@ public final class StationUpgradeActivationGameTests {
     public static void centrifugeActivationAndFinale(GameTestHelper helper) { upgradeBoth(helper, UpgradeStation.CENTRIFUGE); }
     @GameTest(templateNamespace = "station_upgrade_validation", template = "empty", timeoutTicks = 100, batch = "station_loom_activation")
     public static void loomActivationAndFinale(GameTestHelper helper) { upgradeBoth(helper, UpgradeStation.LOOM); }
+    @GameTest(templateNamespace = "station_upgrade_validation", template = "empty", timeoutTicks = 100, batch = "station_condenser_activation")
+    public static void condenserActivationAndFinale(GameTestHelper helper) { upgradeBoth(helper, UpgradeStation.CONDENSER); }
 
     private static BlockPos prepare(GameTestHelper helper, StationUpgradeTier tier) {
         var level = helper.getLevel();

@@ -28,11 +28,15 @@ final class ManipulationMotes {
         if(FerricDuctilisGeometry.handles(form))return;
         if(ThermalGeometry.handles(form))return;
         if(PhoenixDebtGeometry.handles(form))return;
+        // Impacts author their own fray; expiry must not rain the default blood motes for every school.
+        if(CastImpactGeometry.handles(form))return;
         if(UmbralTearGeometry.handles(form))return;
         if(CrimsonCoronationGeometry.handles(form))return;
         if(FuneralBellGeometry.handles(form))return;
         if(PuppetStringsGeometry.handles(form))return;
         if(VesperRecallGeometry.handles(form))return;
+        // Body-anchored casts shed their own drops as they fray.
+        if(ManipulationVisualRenderer.bodyAnchored(form))return;
         if (LuxUmbraGeometry.handles(form)) {
             if (expiry) LuxUmbraEffects.mist(packet.from(), new Vec3(0, .012, 0),
                     LuxUmbraGeometry.umbra(form), Math.min(.45f, packet.radius() * .18f), 18);

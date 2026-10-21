@@ -10,6 +10,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.shader.ExtendedShaderInstance;
 import com.vincenthuto.hemomancy.client.render.shader.ShaderHolder;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.ShaderInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.phys.Vec3;
@@ -32,7 +33,7 @@ import java.util.List;
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class OutpouringScreenPasses {
     public record Packed(float[] values, int count) {}
-    static final int MAX = 8;
+    static final int MAX = 8, MAX_CASTERS = 4;
     private static TextureTarget scene;
 
     private OutpouringScreenPasses() {}
@@ -75,15 +76,19 @@ public final class OutpouringScreenPasses {
         Matrix4f invProj = new Matrix4f(event.getProjectionMatrix()).invert();
         Matrix4f invView = new Matrix4f(event.getModelViewMatrix()).invert();
         float time = (float) ((mc.level.getGameTime() + partial) % 24000);
-        if (!lights.isEmpty()) pass(ShaderInit.CAST_LUMEN, pack(lights), null, invProj, invView, time);
+        if (!lights.isEmpty()) pass(ShaderInit.CAST_LUMEN, pack(lights), null, casters(camera, partial, EnumBloodTendency.LUX), invProj, invView, time);
         if (!shades.isEmpty()) {
             List<double[]> spheres = new ArrayList<>(), info = new ArrayList<>();
             for (double[] s : shades) { spheres.add(new double[]{s[0], s[1], s[2], s[3]}); info.add(new double[]{s[4], s[5]}); }
-            pass(ShaderInit.CAST_UMBRA, pack(spheres), shadeInfo(info), invProj, invView, time);
+            pass(ShaderInit.CAST_UMBRA, pack(spheres), shadeInfo(info), casters(camera, partial, EnumBloodTendency.TENEBRIS), invProj, invView, time);
         }
     }
 
-    private static void pass(ShaderHolder holder, Packed packed, float[] info, Matrix4f invProj, Matrix4f invView, float time) {
+    private static Packed casters(Vec3 camera, float partial, EnumBloodTendency school) {
+        return pack(nearest(OutpouringClientState.casters(camera, partial, school), MAX_CASTERS));
+    }
+
+    private static void pass(ShaderHolder holder, Packed packed, float[] info, Packed casters, Matrix4f invProj, Matrix4f invView, float time) {
         ExtendedShaderInstance shader = (ExtendedShaderInstance) holder.getInstance().get();
         if (shader == null) return;
         var mc = Minecraft.getInstance();
@@ -108,6 +113,8 @@ public final class OutpouringScreenPasses {
         shader.safeGetUniform("LightsA").set(new Matrix4f().set(java.util.Arrays.copyOfRange(v, 0, 16)));
         shader.safeGetUniform("LightsB").set(new Matrix4f().set(java.util.Arrays.copyOfRange(v, 16, 32)));
         shader.safeGetUniform("Count").set((float) packed.count());
+        shader.safeGetUniform("Casters").set(new Matrix4f().set(java.util.Arrays.copyOfRange(casters.values(), 0, 16)));
+        shader.safeGetUniform("CasterCount").set((float) casters.count());
         boolean firstPerson = mc.options.getCameraType().isFirstPerson();
         if (info != null) shader.safeGetUniform("SelfShade").set(firstPerson ? .2f : 1f);
         if (info != null) shader.safeGetUniform("ShadeInfo").set(new Matrix4f().set(info));

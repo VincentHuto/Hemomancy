@@ -243,6 +243,8 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.succe
                     hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_COVENANT_THRONE_BOUND),
                     hasAdvancement(serverPlayer, HarbingerAdvancementGranter.ADV_COVENANT_VIGIL_COMPLETED));
         }
+        tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.StationUpgradeDialogue.append(tree, serverPlayer,
+                com.vincenthuto.hemomancy.common.station.UpgradeStation.CONDENSER, "hemomancy.dialogue.vicar.option.leave");
         return withFieldResearch(tree, serverPlayer, degree);
     }
 

@@ -53,7 +53,7 @@ final class OutpouringAccents {
             }
             case TENEBRIS -> {
                 if (now % (2L * every) == 0) for (int i = 0; i < exitCount; i++)
-                    OutpouringBrushes.mist(point(exits, i), point(outward, i).scale(.012).add(0, -.035, 0), true, .2f + .04f * rank, 40);
+                    OutpouringBrushes.mist(point(exits, i).add(point(outward, i).scale(.3)), point(outward, i).scale(.02).add(0, -.035, 0), true, .16f + .03f * rank, 40, cast.entityId);
             }
             case DUCTILIS -> lightning(cast, exits, contacts, now, rank, reduced);
             default -> {}

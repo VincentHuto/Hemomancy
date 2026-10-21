@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
+import com.vincenthuto.hemomancy.common.manipulation.ferric.CellHandRules;
 import com.vincenthuto.hemomancy.client.event.ClientEvents.ClientModBusEvents;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.CellHandItemRenderer;
@@ -11,7 +13,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBl
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBloodUtilityInteractions;
 import com.vincenthuto.hemomancy.common.event.BloodInfusionManager;
 import com.vincenthuto.hemomancy.common.event.BloodStructureFeedManager;
-import com.vincenthuto.hemomancy.common.event.SanguineFormationProjectionHandler;
+import com.vincenthuto.hemomancy.common.event.SanguineCondenserProjection;
 import com.vincenthuto.hemomancy.common.event.SanguineProjectionTargeting;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
@@ -90,6 +92,8 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 
 	@Override
 	public void onUseTick(Level worldIn, LivingEntity player, ItemStack stack, int count) {
+		if (!worldIn.isClientSide && count % CellHandRules.USE_REFRESH == 0)
+			ManipulationVisuals.attached(player, ManipulationVisuals.Form.CELL_HAND, 1, CellHandRules.USE_TICKS, CellHandRules.PROJECTING);
 		projectFromEntity(worldIn, player,
 				LivingStaffFocusRules.structureProjectionRate(false, LivingStaffFocusProfile.NONE),
 				LivingStaffFocusRules.bloodTileProjectionRate(false, LivingStaffFocusProfile.NONE), false);
@@ -147,9 +151,17 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 							player.getOffhandItem(), structureFeedRate)) {
 				return Math.max(0.0D, beforeBlood - playerVolume.getBloodVolume());
 			}
+			if (player instanceof ServerPlayer serverPlayer && worldIn instanceof ServerLevel serverLevel) {
+				java.util.OptionalDouble condensed = SanguineCondenserProjection.tryProject(serverLevel, serverPlayer,
+						targetPos, tileTransferRate);
+				if (condensed.isPresent()) {
+					return condensed.getAsDouble();
+				}
+			}
 			if (player instanceof ServerPlayer serverPlayer
 					&& worldIn instanceof ServerLevel serverLevel
-					&& BloodInfusionManager.feedBlock(serverPlayer, serverLevel, targetPos, structureFeedRate)) {
+					&& BloodInfusionManager.feedBlock(serverPlayer, serverLevel, targetPos,
+							trace.getLocation(), structureFeedRate)) {
 				return Math.max(0.0D, beforeBlood - playerVolume.getBloodVolume());
 			}
 
@@ -204,12 +216,6 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 					}
 					
 				}
-			}
-
-			double formationHandled = SanguineFormationProjectionHandler.tryProjectAtLookTarget(worldIn, player,
-					structureFeedRate);
-			if (formationHandled > 0.0D) {
-				return formationHandled;
 			}
 		}
 		if (player instanceof ServerPlayer serverPlayer) {

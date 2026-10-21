@@ -71,6 +71,9 @@ public final class MycophantClientReview {
             new Scene("live_phase_one", null, 18.0, 4.0, 1.0, 0.0, attackShots(PHASE_ONE, 1), attackLength(PHASE_ONE, 1)),
             new Scene("live_phase_two", null, 18.0, 4.0, 1.0, 0.0, attackShots(PHASE_TWO, 2), attackLength(PHASE_TWO, 2)),
             new Scene("split", null, 15.0, 2.0, 0.5, 0.0, new int[]{12, 20, 28, 36, 44, 52, 60, 76, 92}, 96),
+            // close on the face as it cracks and opens, then behind the shoulder as the wings grow (split tick = tick - 5)
+            new Scene("split_head", null, 7.0, 0.2, 0.3, 3.6, everyOther(6, 60), 64),
+            new Scene("split_wings", null, 7.5, 2.0, 2.2, 1.6, everyOther(36, 92), 94),
             new Scene("yield", null, 15.0, 2.0, 0.6, 0.0, new int[]{10, 25, 40, 55, 70, 90, 110, 128}, 130),
             new Scene("intro_pov", null, 0.0, 0.0, 0.0, 0.0, new int[]{4, 20, 30, 44, 60, 76, 80, 84, 90, 110, 125, 140, 155, 175, 195, 205}, 210),
             new Scene("nursery_wide", "tending", 17.0, 2.0, 0.5), new Scene("nursery_high", "tending", 12.0, 9.0, 2.6),
@@ -303,7 +306,7 @@ public final class MycophantClientReview {
             int phase = name.equals("live_phase_one") ? 1 : 2;
             for (int i = 0; i < attacks.length; i++) if (tick == start(attacks, i, phase)) begin(actor, attacks[i]);
             if (dummy != null) actor.setTarget(dummy);
-        } else if (name.equals("split") && tick == 4) {
+        } else if (name.startsWith("split") && tick == 4) {
             Object controller = invoke(actor, "controller", new Class<?>[0]);
             invoke(controller, "requestSplit", new Class<?>[0]);
         } else if (name.equals("yield") && tick == 4) {

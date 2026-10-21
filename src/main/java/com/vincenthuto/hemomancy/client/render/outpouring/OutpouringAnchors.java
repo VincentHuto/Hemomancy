@@ -24,6 +24,9 @@ import java.util.UUID;
 public final class OutpouringAnchors {
     private record Captured(long tick, EnumVeinSections section, double[] exits, double[] outward) {}
     private static final Map<UUID, Captured> CAPTURED = new HashMap<>();
+    private record Hand(long tick, Vec3 at) {}
+    /** The posed main hand of every rendered player, cast or not, for visuals that grow from the hand. */
+    private static final Map<UUID, Hand> HANDS = new HashMap<>();
 
     private OutpouringAnchors() {}
 
@@ -157,7 +160,28 @@ public final class OutpouringAnchors {
         CAPTURED.put(player.getUUID(), new Captured(player.level().getGameTime(), cast.section, e, o));
     }
 
-    public static void clear() { CAPTURED.clear(); }
+    public static void clear() { CAPTURED.clear(); HANDS.clear(); }
+
+    /** Records where the posed third-person main hand is this frame, whether or not the player is casting. */
+    public static void recordHand(AbstractClientPlayer player, PlayerModel<AbstractClientPlayer> model, PoseStack poses) {
+        Vec3 camera = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+        double[] exit = new double[3], outward = new double[3];
+        hand(poses, model, player.getMainArm(), camera, exit, outward, 0);
+        Vec3 at = new Vec3(exit[0], exit[1], exit[2]);
+        // The inventory doll and mirrors pose the model far from the player; only a world render places the real hand.
+        if (at.distanceToSqr(player.position()) > 9) return;
+        HANDS.put(player.getUUID(), new Hand(player.level().getGameTime(), at));
+    }
+
+    /** The main hand from this or last frame's posed model (an arm cast's capture first), or null before one was drawn. */
+    public static Vec3 capturedMainHand(Player player) {
+        long now = player.level().getGameTime();
+        var captured = CAPTURED.get(player.getUUID());
+        if (captured != null && captured.section == EnumVeinSections.ARMS && now - captured.tick <= 2)
+            return new Vec3(captured.exits[0], captured.exits[1], captured.exits[2]);
+        var hand = HANDS.get(player.getUUID());
+        return hand == null || now - hand.tick > 2 ? null : hand.at;
+    }
 
     private static int hand(PoseStack poses, PlayerModel<?> model, HumanoidArm arm, Vec3 camera, double[] exits, double[] outward, int n) {
         ModelPart part = arm == HumanoidArm.RIGHT ? model.rightArm : model.leftArm;

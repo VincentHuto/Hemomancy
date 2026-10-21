@@ -91,8 +91,6 @@ public class VitalEffusionManip extends BloodManipulation {
 				for (int i = 0; i < growths; i++) {
 					bb.performBonemeal(sLevel, world.random, p.immutable(), world.getBlockState(p.immutable()));
 				}
-				sLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.HAPPY_VILLAGER,
-						p.getX() + 0.5, p.getY() + 1.1, p.getZ() + 0.5, 3, 0.3, 0.2, 0.3, 0.0);
 				ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.GROWTH, Vec3.atBottomCenterOf(p.above()), Vec3.atCenterOf(p), .35, 24);
                 grew++;
 			}

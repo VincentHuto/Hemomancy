@@ -10,8 +10,27 @@ uniform mat4 LightsB;
 uniform float Count;
 uniform float HemoTime;
 in vec2 texCoord0;
+// Casters holds up to four camera-relative caster feet positions (xyz, unused w), one per column. The caster's own body
+// stays readable: 1 on a standing player's silhouette, easing to 0 a little beyond it.
+uniform mat4 Casters;
+uniform float CasterCount;
+float bodyCover(vec3 q) {
+    float best=0.0;
+    int casters=int(CasterCount+.5);
+    for(int i=0;i<4;i++) {
+        if(i>=casters) break;
+        vec3 d=q-Casters[i].xyz;
+        float spine=clamp(d.y,0.0,1.85);
+        float r=length(vec3(d.x,d.y-spine,d.z));
+        best=max(best,1.0-smoothstep(.4,.75,r));
+    }
+    return best;
+}
+
 out vec4 fragColor;
 
+// Rolls highlights off toward white instead of clipping them, so relit skin keeps its shading.
+float knee(float c) { return c<.75?c:.75+.25*(1.0-exp(-(c-.75)/.25)); }
 vec3 worldAt(vec2 uv,float depth) {
     vec4 view=InvProj*vec4(uv*2.0-1.0,depth*2.0-1.0,1.0);
     view/=view.w;
@@ -45,6 +64,11 @@ void main() {
         float miss=length(light.xyz-dir*along);
         haze+=colour*light.w*exp(-miss*miss*6.0)*.18*step(along,length(p)+.5);
     }
+    // The orbs bud from the caster's own veins: relighting that body bleached it white, so it takes only a trace.
+    float body=sky?0.0:bodyCover(p);
+    surface*=1.0-.85*body;
+    haze*=1.0-.75*body;
     vec3 lit=scene.rgb+scene.rgb*surface*1.4+surface*.08+haze;
+    lit=vec3(knee(lit.r),knee(lit.g),knee(lit.b));
     fragColor=vec4(lit,1.0);
 }

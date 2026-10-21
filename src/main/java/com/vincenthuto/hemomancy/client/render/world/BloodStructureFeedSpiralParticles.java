@@ -13,6 +13,7 @@ public final class BloodStructureFeedSpiralParticles {
 	private static final int BLOOD_CELL_INTERVAL_TICKS = 3;
 	private static final int SPIRAL_PERIOD_TICKS = 62;
 	private static final double SPIRAL_TURNS = 1.85D;
+	private static final double SPIRAL_RADIUS_SCALE = 0.6D;
 
 	private BloodStructureFeedSpiralParticles() {
 	}
@@ -26,7 +27,7 @@ public final class BloodStructureFeedSpiralParticles {
 
 		long gameTime = level.getGameTime();
 		for (ActiveBloodStructureFeedClientData.FeedEntry feed : ActiveBloodStructureFeedClientData.getActiveFeeds()) {
-			if (feed.getPositions().isEmpty()) {
+			if (feed.getPositions().isEmpty() || !feed.hasStructureEffects()) {
 				continue;
 			}
 			spawnForFeed(level, feed, gameTime);
@@ -66,7 +67,7 @@ public final class BloodStructureFeedSpiralParticles {
 		double climb = Math.floorMod(gameTime + (long) (offset * 11.0D) + (long) (bounds.seed() * 31.0F),
 				SPIRAL_PERIOD_TICKS) / (double) SPIRAL_PERIOD_TICKS;
 		double spiralAngle = seedAngle + offset + climb * Mth.TWO_PI * SPIRAL_TURNS;
-		double radius = bounds.radius() * (0.92D + progress * 0.08D);
+		double radius = bounds.radius() * SPIRAL_RADIUS_SCALE * (0.92D + progress * 0.08D);
 		double centerX = bounds.worldCenterX();
 		double centerZ = bounds.worldCenterZ();
 		double height = Math.max(1.4D, bounds.height() + 0.55D);

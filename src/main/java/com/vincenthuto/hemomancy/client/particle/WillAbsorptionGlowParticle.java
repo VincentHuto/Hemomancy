@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.particle;
 
 import com.vincenthuto.hutoslib.client.HLRenderTypeInit;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -24,6 +25,7 @@ public class WillAbsorptionGlowParticle extends TextureSheetParticle {
 	private final boolean outwardPulse;
 	private double targetYOffset = 0.0D;
 	private Vec3 firstPersonTargetAnchor;
+	private AbsorptionStreamRider rider;
 
 	public WillAbsorptionGlowParticle(ClientLevel level, double x, double y, double z,
 			double vx, double vy, double vz, float r, float g, float b, float alpha, float scale, boolean outwardPulse,
@@ -84,6 +86,43 @@ public class WillAbsorptionGlowParticle extends TextureSheetParticle {
 		this.targetYOffset = targetYOffset;
 	}
 
+	/**
+	 * Draws this drop into {@code casterId}'s cell hand as it is each frame. {@code ridesStream} keeps it inside the
+	 * absorption stream drawn to its source; otherwise it runs straight to the live palm.
+	 */
+	public void drawInto(int casterId, boolean ridesStream) {
+		this.rider = new AbsorptionStreamRider(casterId, new Vec3(this.sourceX, this.sourceY, this.sourceZ), ridesStream,
+				0.012D + this.random.nextDouble() * 0.022D, this.random.nextDouble() * Math.PI * 2.0D);
+	}
+
+	/** Moves the drop onto its stream for {@code partial} ticks past its age, returning false to keep its old path. */
+	private boolean ride(float partial) {
+		if (this.rider == null) {
+			return false;
+		}
+		Vec3 at = this.rider.at(this.level, (this.age + partial) / (double) this.lifetime, this.age, partial);
+		if (at == null) {
+			return false;
+		}
+		if (partial == 0.0F) {
+			this.setPos(at.x, at.y, at.z);
+		} else {
+			this.xo = this.x = at.x;
+			this.yo = this.y = at.y;
+			this.zo = this.z = at.z;
+		}
+		return true;
+	}
+
+	@Override
+	public void render(VertexConsumer buffer, Camera camera, float partialTicks) {
+		// Placed on the stream as drawn this frame, so the drop never lags a tick behind the moving hand.
+		if (!this.outwardPulse) {
+			this.ride(partialTicks);
+		}
+		super.render(buffer, camera, partialTicks);
+	}
+
 	@Override
 	public int getLightColor(float partialTick) {
 		return 255;
@@ -109,13 +148,15 @@ public class WillAbsorptionGlowParticle extends TextureSheetParticle {
 			return;
 		}
 
-		if (this.firstPersonTargetAnchor != null) {
-			this.setPosFromFirstPersonTarget();
-		} else if (this.outwardPulse) {
+		if (this.outwardPulse) {
 			this.move(this.xd, this.yd, this.zd);
 			this.xd *= 0.88D;
 			this.yd *= 0.88D;
 			this.zd *= 0.88D;
+		} else if (this.ride(0.0F)) {
+			// Carried into the hand as it is now.
+		} else if (this.firstPersonTargetAnchor != null) {
+			this.setPosFromFirstPersonTarget();
 		} else {
 			float f = 1.0F - (float) this.age / (float) this.lifetime;
 			float falloff = 1.0F - f;

@@ -13,6 +13,23 @@ uniform float Count;
 uniform float SelfShade;
 uniform float HemoTime;
 in vec2 texCoord0;
+// Casters holds up to four camera-relative caster feet positions (xyz, unused w), one per column. The caster's own body
+// stays readable: 1 on a standing player's silhouette, easing to 0 a little beyond it.
+uniform mat4 Casters;
+uniform float CasterCount;
+float bodyCover(vec3 q) {
+    float best=0.0;
+    int casters=int(CasterCount+.5);
+    for(int i=0;i<4;i++) {
+        if(i>=casters) break;
+        vec3 d=q-Casters[i].xyz;
+        float spine=clamp(d.y,0.0,1.85);
+        float r=length(vec3(d.x,d.y-spine,d.z));
+        best=max(best,1.0-smoothstep(.4,.75,r));
+    }
+    return best;
+}
+
 out vec4 fragColor;
 
 vec3 worldAt(vec2 uv,float depth) {
@@ -38,6 +55,9 @@ void main() {
     // The caster must still see to fight: their own fog keeps to the corners as a thin vignette.
     float clearCentre=smoothstep(.3,.72,length(texCoord0-.5));
     vec3 rgb=scene.rgb;
+    // The caster stays readable inside their own darkness: their silhouette keeps most of its light and the fog in front
+    // of it thins, so the shade frames them rather than swallowing them.
+    float body=depth>=.99999?0.0:bodyCover(p);
     int count=int(Count+.5);
     for(int i=0;i<8;i++) {
         if(i>=count) break;
@@ -48,7 +68,7 @@ void main() {
         float scale=self?SelfShade*clearCentre:1.0;
         float radius=sphere.w;
         // Surfaces inside the sphere lose their light and colour.
-        float dark=(1.0-smoothstep(radius*.35,radius,length(p-sphere.xyz)))*strength*.88*scale;
+        float dark=(1.0-smoothstep(radius*.35,radius,length(p-sphere.xyz)))*strength*.88*scale*(1.0-.8*body);
         float grey=dot(rgb,vec3(.299,.587,.114));
         rgb=mix(rgb,mix(vec3(grey),vec3(.02,0.0,.04),.7),dark);
         // Fog: march the stretch of the view ray inside the sphere, stopping at the scene.
@@ -62,11 +82,11 @@ void main() {
                     vec3 at=dir*(enter+(float(s)+.5)*stepLength);
                     vec3 local=at-sphere.xyz;
                     // Heavy fog: it sinks to the ground around the caster and rolls slowly downward and outward.
-                    float body=max(0.0,1.0-length(local*vec3(1.0,1.4,1.0))/radius)*smoothstep(radius*.55,-radius*.45,local.y);
+                    float mass=max(0.0,1.0-length(local*vec3(1.0,1.4,1.0))/radius)*smoothstep(radius*.55,-radius*.45,local.y);
                     float roll=fbm(local*.9+vec3(0.0,HemoTime*.012,0.0));
-                    fog+=body*smoothstep(.35,.8,roll)*stepLength;
+                    fog+=mass*smoothstep(.35,.8,roll)*stepLength*(1.0-.85*bodyCover(at));
                 }
-                float amount=clamp(fog*1.3*strength*scale,0.0,.8);
+                float amount=clamp(fog*1.3*strength*scale,0.0,.8)*(1.0-.7*body);
                 // Thin fog at the edges glows the crimson of the blood it came from; the dense heart stays black-violet.
                 vec3 ink=mix(vec3(.42,.03,.07),vec3(.05,.01,.08),smoothstep(.12,.55,amount));
                 rgb=mix(rgb,ink,amount);
