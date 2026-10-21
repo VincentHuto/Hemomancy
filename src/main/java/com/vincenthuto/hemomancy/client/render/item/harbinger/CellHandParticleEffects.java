@@ -6,6 +6,8 @@ import com.vincenthuto.hemomancy.client.particle.factory.AbsorbedBloodCellPartic
 import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.client.particle.factory.WillAbsorptionGlowParticleFactory;
 import com.vincenthuto.hemomancy.client.particle.util.EntityParticleUtils;
+import com.vincenthuto.hemomancy.client.render.world.CellHandStreams;
+import com.vincenthuto.hemomancy.client.render.world.ManipulationVisualRenderer;
 import com.vincenthuto.hemomancy.common.block.harbinger.BlockBloodInteractions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.ILivingStaffProgress;
@@ -14,6 +16,7 @@ import com.vincenthuto.hemomancy.common.event.SanguineProjectionTargeting;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.component.LivingWeaponGraftData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.*;
+import com.vincenthuto.hemomancy.common.manipulation.ferric.CellHandRules;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
@@ -177,8 +180,11 @@ public final class CellHandParticleEffects {
 		}
 	}
 
+	/** A Living Staff channelling in first person: the cells gather at its head as drawn, like a cell hand's palm. */
 	public static void spawnFirstPersonParticlesForStack(ItemStack stack, HumanoidArm hand) {
-		spawnFirstPersonParticlesForStack(stack, hand, fallbackFirstPersonHandOrigin(hand));
+		LocalPlayer player = Minecraft.getInstance().player;
+		Vec3 head = player == null ? null : CellHandStreams.staffHead(player);
+		spawnFirstPersonParticlesForStack(stack, hand, head != null ? head : fallbackFirstPersonHandOrigin(hand));
 	}
 
 	/** What a cell hand in use is drawing from (absorption) or pouring into (projection), in world space. */
@@ -187,12 +193,12 @@ public final class CellHandParticleEffects {
 
 	/**
 	 * Resolves the cell hand's current targets exactly as the particles do, so the cast geometry reaches the same
-	 * block, Will, rite or bodies. Null when {@code living} is not using a cell hand.
+	 * block, Will, rite or bodies. Null when {@code living} is not using a cell hand or channelling a Living Staff.
 	 */
 	public static UseTargets useTargets(LivingEntity living, Vec3 origin) {
 		if (!living.isUsingItem()) return null;
 		ItemStack stack = living.getUseItem();
-		if (!(stack.getItem() instanceof ICellHand)) return null;
+		if (!(stack.getItem() instanceof ICellHand) && !(stack.getItem() instanceof LivingStaffItem)) return null;
 		Level world = living.level();
 		if (isAbsorptionMode(living, stack)) {
 			Optional<Vec3> blockSource = findCardinalRiteCancellationSource(living)
@@ -249,7 +255,9 @@ public final class CellHandParticleEffects {
 				? player.getMainArm()
 				: player.getMainArm().getOpposite();
 		boolean firstPerson = player == mc.player && mc.options.getCameraType().isFirstPerson();
-		Vec3 origin = firstPerson
+		Vec3 staffHead = CellHandStreams.staffHead(player);
+		Vec3 origin = staffHead != null ? staffHead
+				: firstPerson
 				? fallbackFirstPersonHandOrigin(activeArm)
 				: calculateThirdPersonHandOrigin(player, activeArm);
 		spawnItemParticlesAlongAbsorptionPath(mc, casterId, offeringStack, origin, source,
@@ -388,13 +396,28 @@ public final class CellHandParticleEffects {
 	}
 
 	private static boolean isAbsorptionMode(LivingEntity living, ItemStack stack) {
-		return stack.getItem() instanceof BloodAbsorptionItem
-				|| LivingStaffItem.isLivingStaffAbsorptionUse(living, stack);
+		return stack.getItem() instanceof BloodAbsorptionItem || isStaffChannel(living, stack, true);
 	}
 
 	private static boolean isProjectionMode(LivingEntity living, ItemStack stack) {
 		return stack.getItem() instanceof ICellHand && !(stack.getItem() instanceof BloodAbsorptionItem)
-				|| LivingStaffItem.isLivingStaffProjectionUse(living, stack);
+				|| isStaffChannel(living, stack, false);
+	}
+
+	/** Whether {@code living} is channelling Blood Absorption or Projection through the Living Staff {@code stack}. */
+	public static boolean isStaffChannel(LivingEntity living, ItemStack stack) {
+		return isStaffChannel(living, stack, true) || isStaffChannel(living, stack, false);
+	}
+
+	/**
+	 * The local player's own selection decides; anyone else's selected utility is not synced to this client, so their
+	 * staff is read from the cell-hand cue the server sends while they channel it.
+	 */
+	private static boolean isStaffChannel(LivingEntity living, ItemStack stack, boolean absorption) {
+		if (absorption ? LivingStaffItem.isLivingStaffAbsorptionUse(living, stack)
+				: LivingStaffItem.isLivingStaffProjectionUse(living, stack)) return true;
+		return stack.getItem() instanceof LivingStaffItem && living.isUsingItem() && living != Minecraft.getInstance().player
+				&& ManipulationVisualRenderer.cellHandUse(living.getId()) == CellHandRules.useMode(absorption);
 	}
 
 	private static List<LivingEntity> getAbsorptionParticleTargets(LivingEntity living, ItemStack stack) {
@@ -403,7 +426,7 @@ public final class CellHandParticleEffects {
 					.stream()
 					.toList();
 		}
-		if (!(living instanceof Player player) || !LivingStaffItem.isLivingStaffAbsorptionUse(player, stack)) {
+		if (!(living instanceof Player player) || !isStaffChannel(player, stack, true)) {
 			return List.of();
 		}
 		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
@@ -421,7 +444,7 @@ public final class CellHandParticleEffects {
 		double range;
 		if (stack.getItem() instanceof BloodAbsorptionItem) {
 			range = LivingStaffFocusRules.bareAbsorptionRange();
-		} else if (living instanceof Player player && LivingStaffItem.isLivingStaffAbsorptionUse(player, stack)) {
+		} else if (living instanceof Player player && isStaffChannel(player, stack, true)) {
 			ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
 			LivingStaffFocusProfile focus = LivingStaffFocusProfile.fromPlayer(player, progress);
 			range = LivingStaffFocusRules.absorptionRange(focus);

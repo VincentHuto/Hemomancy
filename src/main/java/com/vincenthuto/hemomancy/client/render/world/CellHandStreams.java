@@ -1,9 +1,13 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
 import com.vincenthuto.hemomancy.client.render.item.harbinger.FirstPersonPalm;
+import com.vincenthuto.hemomancy.client.render.item.harbinger.HeldWeaponPose;
 import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringAnchors;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
@@ -67,13 +71,26 @@ public final class CellHandStreams {
 
     /**
      * The palm the cast geometry draws the streams into, as it is this frame: the drawn first-person cell hand, or the
-     * posed third-person hand. Null when neither has been captured lately.
+     * posed third-person hand, or the head of a Living Staff channelling through it. Null when none has been captured lately.
      */
     public static Vec3 livePalm(Entity caster) {
         if (!(caster instanceof Player player)) return null;
+        Vec3 staff = staffHead(player);
+        if (staff != null) return staff;
         var mc = Minecraft.getInstance();
         if (player == mc.player && mc.options.getCameraType().isFirstPerson()) return FirstPersonPalm.world(player.getMainArm());
         Vec3 captured = OutpouringAnchors.capturedMainHand(player);
         return captured != null && captured.distanceToSqr(player.position()) < 9 ? captured : null;
+    }
+
+    /**
+     * A Living Staff channels the cell hands' utilities through its head: where that head is drawn this frame while
+     * {@code player} holds the staff in use, or null when they are not or that hand was not drawn just now.
+     */
+    public static Vec3 staffHead(Player player) {
+        if (!player.isUsingItem() || !(player.getUseItem().getItem() instanceof LivingStaffItem)) return null;
+        HumanoidArm arm = player.getUsedItemHand() == InteractionHand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
+        Vec3 head = HeldWeaponPose.top(player, arm, player.getUseItem());
+        return head != null && head.distanceToSqr(player.position()) < 9 ? head : null;
     }
 }

@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
-import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.CellHandParticleEffects;
 import com.vincenthuto.hemomancy.common.block.harbinger.BlockBloodInteractions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -15,14 +14,14 @@ import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillAbsorptionRu
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBloodUtilityInteractions;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
+import com.vincenthuto.hemomancy.common.manipulation.ferric.CellHandRules;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCancellationHandler;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -44,14 +43,12 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.loading.FMLEnvironment;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Random;
 
 public class LivingStaffItem extends LivingItem implements IDispellable {
 	private static final String UTILITY_SESSION_BLOOD_HANDLED_KEY = "HemomancyLivingStaffUtilityBloodHandled";
@@ -111,44 +108,16 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 				&& isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_ABSORPTION)) {
 			BloodAbsorptionItem.applyChannelMovementPenalty(player);
 		}
-		if (pLivingEntity.level().isClientSide) {
-			if (pLivingEntity.isShiftKeyDown()) {
-				Random rand = new Random();
-				Level worldIn = pLivingEntity.level();
-				int radius = 2;
-				BlockPos pos = pLivingEntity.blockPosition();
-				// Absorbs from ground
-				for (int i = -radius; i <= radius; ++i) {
-					for (int j = -radius; j <= radius; ++j) {
-						if (i > -radius && i < radius && j == -1) {
-							j = radius;
-						}
-						if (rand.nextInt(3) == 0) {
-							for (int k = 0; k <= 1; ++k) {
-								Vec3 vec = pLivingEntity.position();
-								BlockPos blockpos = pos.offset(i, k, j);
-								if (worldIn.getBlockState(blockpos).getEnchantPowerBonus(worldIn, blockpos) == 0) {
-									if (!worldIn.isEmptyBlock(pos.offset(i / radius, 0, j / radius))) {
-										break;
-									}
-
-									worldIn.addParticle(
-											HemoParticleData.absorbedBloodCell(ParticleColor.genRandomColor()),
-											vec.x(), vec.y() + 2D, vec.z(), i + rand.nextFloat() - 0.5D,
-											k - rand.nextFloat() - 1.0F, j + rand.nextFloat() - 0.5D);
-
-								}
-							}
-						}
-					}
-				}
-			}
-			if (pLivingEntity instanceof Player player
-					&& (isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_ABSORPTION)
-					|| isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_PROJECTION))) {
+		if (pLivingEntity instanceof Player player
+				&& (isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_ABSORPTION)
+				|| isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_PROJECTION))) {
+			if (pLevel.isClientSide) {
 				spawnStaffUtilityParticles(player, pStack);
+			} else if (pRemainingUseDuration % CellHandRules.USE_REFRESH == 0) {
+				// The staff channels the cell hands' utilities, so it draws the same streams from its head.
+				ManipulationVisuals.attached(player, ManipulationVisuals.Form.CELL_HAND, 1, CellHandRules.USE_TICKS,
+						CellHandRules.useMode(isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_ABSORPTION)));
 			}
-
 		}
 		if (!pLevel.isClientSide && pLivingEntity instanceof Player player) {
 			if (player instanceof ServerPlayer serverPlayer

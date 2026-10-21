@@ -27,7 +27,13 @@ public final class LivingStaffUtilitySourceTest {
 		assertContains("staff emits the shared cell-hand first-person particles while held",
 				staff, "CellHandParticleEffects.spawnFirstPersonParticlesForStack");
 		assertContains("third-person blood hand layer recognizes active living staff utility use",
-				layer, "LivingStaffItem.isLivingStaffUtilityUse");
+				layer, "CellHandParticleEffects.isStaffChannel(living, stack)");
+		assertContains("staff utility use sends the shared cell-hand cast cue",
+				onUseTick, "ManipulationVisuals.Form.CELL_HAND");
+		assertContains("staff cell-hand cue carries the selected utility's use mode",
+				onUseTick, "CellHandRules.useMode(");
+		assertNotContains("staff no longer sprays loose ground particles while sneaking",
+				onUseTick, "absorbedBloodCell(ParticleColor.genRandomColor())");
 		assertNotContains("staff absorption pulses do not rewrite stack custom data during held use",
 				absorbWithStaff, "LivingStaffFocusRules.addBloodHandled");
 		assertNotContains("staff projection pulses do not rewrite stack custom data during held use",

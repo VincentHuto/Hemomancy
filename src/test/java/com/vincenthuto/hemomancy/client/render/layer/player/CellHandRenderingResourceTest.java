@@ -33,7 +33,7 @@ public final class CellHandRenderingResourceTest {
 		assertContains("third-person particles share the cell-hand particle helper", layer,
 				"CellHandParticleEffects.spawnThirdPersonParticlesFromOrigin");
 		assertContains("third-person blood hand presentation includes living staff utility use", layer,
-				"LivingStaffItem.isLivingStaffUtilityUse");
+				"CellHandParticleEffects.isStaffChannel(living, stack)");
 		assertDoesNotContain("third-person particles do not spawn from the camera", layer,
 				"living.position()");
 		assertContains("third-person blood arm copies the active parent pose", layer,

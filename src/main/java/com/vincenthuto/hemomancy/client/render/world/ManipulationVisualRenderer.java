@@ -537,6 +537,18 @@ public final class ManipulationVisualRenderer {
         renderBoundaries(poses,buffers,camera,time,false);
     }
 
+    /**
+     * The cell-hand use mode ({@code CellHandRules.PROJECTING} or {@code ABSORBING}) {@code entityId} is channelling by
+     * its live cue, or 0. Another player's selected utility is not synced here, so their Living Staff is read from this.
+     */
+    public static int cellHandUse(int entityId) {
+        for(Cue cue:CUES)
+            if(!cue.life.retiring() && cue.packet.entityId()==entityId && CellHandGeometry.handles(cue.packet.form())
+                    && com.vincenthuto.hemomancy.common.manipulation.ferric.CellHandRules.using(cue.packet.count()))
+                return cue.packet.count();
+        return 0;
+    }
+
     /** Casts drawn from the caster's own pose: the early-game basics, the Living Arsenal, the cell hands and the avatar. */
     static boolean bodyAnchored(ManipulationVisuals.Form form) {
         return BloodRushGeometry.handles(form) || SanguineWardGeometry.handles(form) || SanguineMendingGeometry.handles(form)
@@ -557,7 +569,12 @@ public final class ManipulationVisualRenderer {
         int side=source instanceof net.minecraft.world.entity.LivingEntity living
                 && living.getMainArm()==net.minecraft.world.entity.HumanoidArm.LEFT?-1:1;
         Vec3 hand=null,fingers=null;
-        if(firstPerson && source instanceof net.minecraft.world.entity.player.Player player) {
+        Vec3 staff=CellHandGeometry.handles(cue.packet.form()) && source instanceof net.minecraft.world.entity.player.Player channeller
+                ?CellHandStreams.staffHead(channeller):null;
+        if(staff!=null) {
+            // A Living Staff channels the cell hand's utilities through its head; the streams reach where it looks.
+            hand=staff.subtract(from);
+        } else if(firstPerson && source instanceof net.minecraft.world.entity.player.Player player) {
             // First person follows the drawn cell hand's palm, or where vanilla holds an ordinary item.
             var arm=player.getMainArm();
             Vec3 palm=com.vincenthuto.hemomancy.client.render.item.harbinger.FirstPersonPalm.world(arm);

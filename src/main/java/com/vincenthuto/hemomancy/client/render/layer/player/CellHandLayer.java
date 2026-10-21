@@ -7,8 +7,8 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.BloodArmModel;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.CellHandParticleEffects;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.CellHandRenderOrigin;
+import com.vincenthuto.hemomancy.client.render.world.CellHandStreams;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.ICellHand;
-import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.EntityModel;
@@ -23,6 +23,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
@@ -103,13 +104,16 @@ public class CellHandLayer<T extends LivingEntity, M extends EntityModel<T> & Ar
 					? living.getMainArm()
 					: living.getMainArm().getOpposite();
 			if (activeArm == side) {
-				this.spawnParticleFromOrigin(calculateThirdPersonHandOrigin(poseStack, side), living, stack);
+				// A channelling staff gathers the cells at its head, where the cast streams run to.
+				Vec3 staffHead = living instanceof Player player ? CellHandStreams.staffHead(player) : null;
+				this.spawnParticleFromOrigin(staffHead != null ? staffHead : calculateThirdPersonHandOrigin(poseStack, side),
+						living, stack);
 			}
 		}
 	}
 
 	private boolean isCellHandPresentation(LivingEntity living, ItemStack stack) {
-		return stack.getItem() instanceof ICellHand || LivingStaffItem.isLivingStaffUtilityUse(living, stack);
+		return stack.getItem() instanceof ICellHand || CellHandParticleEffects.isStaffChannel(living, stack);
 	}
 
 	private Vec3 calculateThirdPersonHandOrigin(PoseStack poseStack, HumanoidArm side) {

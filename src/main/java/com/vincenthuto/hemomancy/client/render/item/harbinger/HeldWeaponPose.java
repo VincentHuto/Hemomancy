@@ -10,11 +10,13 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
@@ -48,6 +50,9 @@ public final class HeldWeaponPose {
 
     private static final Map<Key, Posed> POSES = new HashMap<>();
     private static final Map<ShapeKey, List<Vector3f[]>> SHAPES = new HashMap<>();
+    private static final Map<ShapeKey, Vector3f> TOPS = new HashMap<>();
+    /** How far below an item's highest point still counts as its top: two model pixels. */
+    private static final float TOP_BAND = 2 / 16f;
 
     /** A weapon in the world: its faces and grip as offsets from {@code origin}. */
     public record Held(List<Vec3[]> faces, Vec3 grip) {}
@@ -62,8 +67,18 @@ public final class HeldWeaponPose {
         poses.mulPose(Axis.XP.rotationDegrees(-90.0F));
         poses.mulPose(Axis.YP.rotationDegrees(180.0F));
         poses.translate((arm == HumanoidArm.LEFT ? -1.0F : 1.0F) / 16.0F, 0.125F, -0.625F);
-        POSES.put(new Key(player.getUUID(), arm), new Posed(new Matrix4f(poses.last().pose()), false, System.nanoTime()));
+        Matrix4f pose = new Matrix4f(poses.last().pose());
         poses.popPose();
+        // Podium figurines and inventory dolls draw this same player elsewhere; recording them would replace the real
+        // pose (in first person, the only one there is) whenever one is on screen.
+        if (worldRender(pose, Minecraft.getInstance().gameRenderer.getMainCamera().getPosition(), player.position()))
+            POSES.put(new Key(player.getUUID(), arm), new Posed(pose, false, System.nanoTime()));
+    }
+
+    /** Whether a third-person held pose is the player's own world render: its grip lies within reach of where they stand. */
+    static boolean worldRender(Matrix4f pose, Vec3 camera, Vec3 feet) {
+        Vector3f grip = pose.transformPosition(new Vector3f());
+        return camera.add(grip.x, grip.y, grip.z).distanceToSqr(feet) <= 9;
     }
 
     /** First person: records the held-item pose of each hand as the hand render is about to draw it. */
@@ -74,9 +89,30 @@ public final class HeldWeaponPose {
         HumanoidArm arm = event.getHand() == net.minecraft.world.InteractionHand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
         PoseStack poses = event.getPoseStack();
         poses.pushPose();
-        LivingStaffMorphClientEvents.applyHeldItemTransform(poses, arm, event.getEquipProgress(), event.getSwingProgress());
+        if (player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && player.getUsedItemHand() == event.getHand()
+                && event.getItemStack().getUseAnimation() == UseAnim.BOW)
+            applyBowDrawTransform(poses, player, arm, event.getItemStack(), event.getEquipProgress(), event.getPartialTick());
+        else
+            LivingStaffMorphClientEvents.applyHeldItemTransform(poses, arm, event.getEquipProgress(), event.getSwingProgress());
         POSES.put(new Key(player.getUUID(), arm), new Posed(new Matrix4f(poses.last().pose()), true, System.nanoTime()));
         poses.popPose();
+    }
+
+    /** Vanilla's first-person bow draw (ItemInHandRenderer), which a drawn staff channelling its utility is held with. */
+    private static void applyBowDrawTransform(PoseStack poses, Player player, HumanoidArm arm, ItemStack stack,
+            float equipProgress, float partial) {
+        float side = arm == HumanoidArm.RIGHT ? 1.0F : -1.0F;
+        poses.translate(side * 0.56F, -0.52F + equipProgress * -0.6F, -0.72F);
+        poses.translate(side * -0.2785682F, 0.18344387F, 0.15731531F);
+        poses.mulPose(Axis.XP.rotationDegrees(-13.935F));
+        poses.mulPose(Axis.YP.rotationDegrees(side * 35.3F));
+        poses.mulPose(Axis.ZP.rotationDegrees(side * -9.785F));
+        float held = stack.getUseDuration(player) - (player.getUseItemRemainingTicks() - partial + 1.0F);
+        float draw = Math.min(1.0F, (held / 20.0F * (held / 20.0F) + held / 20.0F * 2.0F) / 3.0F);
+        if (draw > 0.1F) poses.translate(0.0F, Mth.sin((held - 0.1F) * 1.3F) * (draw - 0.1F) * 0.004F, 0.0F);
+        poses.translate(0.0F, 0.0F, draw * 0.04F);
+        poses.scale(1.0F, 1.0F, 1.0F + draw * 0.2F);
+        poses.mulPose(Axis.YN.rotationDegrees(side * 45.0F));
     }
 
     /**
@@ -85,17 +121,11 @@ public final class HeldWeaponPose {
      * projection does (see {@link FirstPersonPalm}).
      */
     public static Held held(Player player, HumanoidArm arm, ItemStack stack, Vec3 origin) {
-        Posed posed = POSES.get(new Key(player.getUUID(), arm));
-        if (posed == null || stack.isEmpty() || System.nanoTime() - posed.nanos > STALE_NANOS) return null;
-        var mc = Minecraft.getInstance();
-        boolean firstPerson = player == mc.player && mc.options.getCameraType().isFirstPerson();
-        if (posed.firstPerson != firstPerson) return null;
-        ItemDisplayContext context = firstPerson
-                ? arm == HumanoidArm.RIGHT ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : ItemDisplayContext.FIRST_PERSON_LEFT_HAND
-                : arm == HumanoidArm.RIGHT ? ItemDisplayContext.THIRD_PERSON_RIGHT_HAND : ItemDisplayContext.THIRD_PERSON_LEFT_HAND;
-        List<Vector3f[]> shape = shape(stack, context);
+        Posed posed = posed(player, arm, stack);
+        if (posed == null) return null;
+        List<Vector3f[]> shape = shape(stack, context(posed, arm));
         if (shape.isEmpty()) return null;
-        Vec3 camera = mc.gameRenderer.getMainCamera().getPosition().subtract(origin);
+        Vec3 camera = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition().subtract(origin);
         List<Vec3[]> faces = new ArrayList<>(shape.size());
         for (Vector3f[] face : shape) {
             Vec3[] placed = new Vec3[4];
@@ -103,6 +133,46 @@ public final class HeldWeaponPose {
             faces.add(placed);
         }
         return new Held(faces, place(posed, new Vector3f(), camera));
+    }
+
+    /**
+     * The top of the item in {@code player}'s {@code arm} as drawn this frame (a staff's head), in world space, or null
+     * when that hand was not drawn just now.
+     */
+    public static Vec3 top(Player player, HumanoidArm arm, ItemStack stack) {
+        Posed posed = posed(player, arm, stack);
+        if (posed == null) return null;
+        ShapeKey key = new ShapeKey(stack.getItem(), context(posed, arm));
+        Vector3f top = TOPS.computeIfAbsent(key, k -> top(shape(stack, k.context())));
+        return top == null ? null : place(posed, top, Minecraft.getInstance().gameRenderer.getMainCamera().getPosition());
+    }
+
+    /** The middle of the item's uppermost faces in its held space, where held items stand upright. */
+    private static Vector3f top(List<Vector3f[]> shape) {
+        if (shape.isEmpty()) return null;
+        float highest = Float.NEGATIVE_INFINITY;
+        for (Vector3f[] face : shape) for (Vector3f point : face) highest = Math.max(highest, point.y);
+        Vector3f sum = new Vector3f();
+        int count = 0;
+        for (Vector3f[] face : shape)
+            for (Vector3f point : face)
+                if (point.y >= highest - TOP_BAND) { sum.add(point); count++; }
+        // The very top is the head's crown; settle a little down into the head.
+        return sum.div(count).sub(0, TOP_BAND, 0);
+    }
+
+    private static Posed posed(Player player, HumanoidArm arm, ItemStack stack) {
+        Posed posed = POSES.get(new Key(player.getUUID(), arm));
+        if (posed == null || stack.isEmpty() || System.nanoTime() - posed.nanos > STALE_NANOS) return null;
+        var mc = Minecraft.getInstance();
+        boolean firstPerson = player == mc.player && mc.options.getCameraType().isFirstPerson();
+        return posed.firstPerson == firstPerson ? posed : null;
+    }
+
+    private static ItemDisplayContext context(Posed posed, HumanoidArm arm) {
+        return posed.firstPerson
+                ? arm == HumanoidArm.RIGHT ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : ItemDisplayContext.FIRST_PERSON_LEFT_HAND
+                : arm == HumanoidArm.RIGHT ? ItemDisplayContext.THIRD_PERSON_RIGHT_HAND : ItemDisplayContext.THIRD_PERSON_LEFT_HAND;
     }
 
     private static Vec3 place(Posed posed, Vector3f point, Vec3 camera) {
@@ -181,5 +251,6 @@ public final class HeldWeaponPose {
     public static void clear() {
         POSES.clear();
         SHAPES.clear();
+        TOPS.clear();
     }
 }
