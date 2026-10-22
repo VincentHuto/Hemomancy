@@ -14,7 +14,7 @@ Every consolidation session reads this file first and updates it last, following
 | 5 | Phase 3: player-state plumbing | DONE | `dceced30a` … `7911eaa1f` (5 commits) | 2026-10-22 |
 | 6 | Phase 4: shared small utilities | DONE | `48127a923` … `07d4a4183` (6 commits) | 2026-10-22 |
 | 7 | Phase 5: blood accounting | DONE | `8338c98da` | 2026-10-22 |
-| 8 | Phase 7: registration and client registration | NOT STARTED | | |
+| 8 | Phase 7: registration and client registration | DONE | `3e8b213d4`, `291731d6f` | 2026-10-22 |
 | 9 | Phase 6: combat targeting and damage attribution | NOT STARTED | | |
 | 10 | Phases 8 + 9: rendering plumbing and animation conventions | NOT STARTED | | |
 | 11 | Phase 10: god-class decomposition | NOT STARTED | | |
@@ -89,7 +89,7 @@ under *Pending approvals*. IDs refer to [ARCHITECTURE_AUDIT](ARCHITECTURE_AUDIT.
 | F-13 | Scar upkeep becomes reserve-protected and synced | 7 | PENDING | Balance. The sync half arrived in step 7, because every payment ends in `syncVolume`. What remains is one flag: `ScarDefinition.UPKEEP` `reserveProtected = true` |
 | F-14 | Passive scar effects survive milk | 7 | PENDING | Design |
 | F-15 | Living weapons check `isActive()` and stop wiping the reserve | 7 | PENDING | Balance. The sites are the `BLOOD_PRICE` payments in the Living Axe, Blade, Crossbow and Tool |
-| F-22 | Hide the legacy Dictation Table from the main creative tab | 8 | PENDING | |
+| F-22 | Hide the legacy Dictation Table from the main creative tab | 8 | PENDING | Still a no-op check in `CreativeTabInit.shouldShowItemInCreativeTab`, with a comment. Once approved, the fix is a block-side exclusion; the frozen creative-tab snapshot (`dictation_table` at line 633) must be updated in the same change |
 | G-1 / F-18 | Explicit damage stages and one death-save stage | 9 | PENDING | Balance: blood lost per hit changes |
 | F-16 | Attribute AoE damage from armour, Still Arts, Sheolic and Saprovitta; respect allies and PvP | 9 | PENDING | Balance |
 | F-17 | Curved Horn uses `LastRiteHelper` | 9 | PENDING | |
@@ -152,6 +152,10 @@ them green.
 | `common/capability/player/harbinger/bloodvolume/BloodPaymentRulesTest` | 7 | Every flag combination of a blood payment: covered, overstrain (one-off and upkeep), full-amount refusal, Sanguine Reserve on/off and protected/unprotected, dormant volumes, spend counting |
 | `architecture/BloodAccountingGuardrailTest` | 7 | G-3 / L-2: a player volume is drained, subtracted or spend-counted only in `BloodAccounting`; every other `drain(` / `subtractBloodVolume(` / `addBloodSpend(` is allow-listed by file and count with its reason (stale entries fail); `BloodVolumeServerPacket` is built only in `syncVolume` and its own decoder; payments record and sync |
 | gameTest `BloodAccountingGameTests` (batch `blood_accounting`) | 7 | Exact volume before and after for an item (Living Axe), machine (projection into a Vial Centrifuge), rite (brazier lighting, with spend) and armour (Bloodburst) payment, each ending in `syncVolume`; the pending F-12 rite-lock behaviour is pinned |
+| gameTest `FrozenIdentifierGameTests` (batch `registration_validation`) | 8 | Every Hemomancy id in every loaded registry (1,991) and the exact order of both creative tabs (693 lines) match `src/gameTest/resources/frozen/`, captured from `de8e25ba1`. Payload ids stay with `PayloadProtocolVersionTest` |
+| `architecture/RegistrationStyleGuardrailTest` | 8 | R-1 / R-2 / R-3 / R-4 / R-5 / R-7: the two subscriber forms only, no `bus=`; the mod constructor adds only lifecycle listeners; no `BlockEntityRenderers.register`, `particleEngine.register` or `initializeClient`; `ClientEvents` and the client inits stay out of `common/init`; one ordered world-effect dispatcher; registry lookups; typed data components; one WIP list and one tab builder |
+| `architecture/ClientSessionCacheTest` | 8 | P-10: every static entity-id-keyed collection in `client/**` is cleared in `ClientSessionEvents.onClientPlayerLogout`, or exempt with a reason (stale entries fail) |
+| `architecture/CommonClientIsolationTest` | 8 | V-8: nothing under `common/` names a `net.minecraft.client` or `hemomancy.client` class except inside an item's `hemomancy$getClientItemExtensions()` / `IClientItemExtensions` body; no wildcard client imports; every `ClientPayloadHandlers::dispatch` payload has exactly one client registration |
 
 ## Step entries
 
@@ -652,3 +656,82 @@ them green.
   - A new blood cost is `BloodAccounting.pay(player, amount, SOURCE)` with a `private static final BloodAccounting.Source` constant. `BloodAccountingGuardrailTest` fails on a raw player drain, `subtractBloodVolume`, `addBloodSpend` or bare `BloodVolumeServerPacket`.
   - A block entity that takes projected blood implements `ProjectedBloodSink`; an `IBloodReservoir` gets the default.
   - Approving F-12, F-13 or F-15 is now a flag or one-line change at the sites named in *Decisions*. F-14 (passive scar effects and milk) is untouched by this step.
+
+### Step 8: Phase 7, registration and client registration
+- **Status / date / commits:** DONE, 2026-10-22. Two commits on `neo-1.21.1`:
+  - `3e8b213d4`: 8a, registration and client registration (items 1-8 of the prompt)
+  - `291731d6f`: 8b, client code out of `common/` (the guardrail)
+
+  A further `consolidation(step-8):` commit records this entry.
+- **Test counts before → after:**
+  - `test`: 3,993 → 4,004, 0 failures.
+  - `alphaCheck`: green, with all 1,018 required GameTests passing (1,016 before; 2 new), `verifyGameTestResourceLog` and `verifyPackagedClientResources`.
+  - `runRegistrationGameTestServer`: 11/11, including both frozen snapshots.
+  - The `gameTestServer` run asked for is the dedicated-server GameTest run inside `alphaCheck` (`runGameTestServer`; the task has no other name). It loads every moved class on a dedicated server.
+  - Client (`runConsolidationClient` from a scratch init script, game directory `build/consolidation-client`): loaded to the title screen (sound engine started) with 0 ERROR lines and no shader, particle-provider or renderer warnings. The only Hemomancy warnings are the old `SynchedEntityData.defineId` notices.
+- **Frozen identifiers (new):** step 2 never added the snapshot the prompts refer to, so this step did. `FrozenIdentifierGameTests` lists every Hemomancy id in every loaded registry (static, NeoForge custom and datapack: 1,991 ids) and both creative tabs in display order (693 lines). The committed lists were generated by running that GameTest on `de8e25ba1` in a temporary worktree (`HEMOMANCY_FROZEN_SNAPSHOT_OUT`), and the changed tree matches them exactly. Registry ids and creative-tab order are therefore proven unchanged.
+- **What changed (8a):**
+  - **Subscribers (R-1):** 40 annotations normalised to `@EventBusSubscriber(modid = Hemomancy.MOD_ID[, value = Dist.CLIENT])`; the six `bus = MOD` arguments and the two modid-less forms are gone. The `Hemomancy` constructor keeps only `commonSetup`, the GameTest hook and the reload listeners.
+    - The level tick (`ChamberOfWillManager.onLevelTick`) and server start (`EngramTextureCache.onServerAboutToStart`) became static subscribers at `HIGH`, so they still run before the other `NORMAL` handlers, as the constructor listeners did.
+    - `LiberDiscoveryEvents.commonSetup` and `UnstainedProgressEvents.commonSetup` are called at the end of `Hemomancy.commonSetup` instead of from two wrapper lambdas, keeping their order. `MorphlingMutationRegistry.init` moved to client setup.
+    - `PacketHandler.registerChannels`' misnamed `forgeBus` parameter is now `modBus`.
+  - **Creative tabs (R-2):** `common/init/CreativeTabInit` holds both tabs and one ordered WIP list (42 items, 17 blocks) that fills the WIP tab and keeps the same entries out of the main tab. `BlockInit.WIP_BLOCKS` is gone; `itemDecision` asks `CreativeTabInit.isWipBlock`. The ids are compared by holder id, so the block check works while items are still registering. F-22 is not implemented.
+  - **Registry lookups (R-3):** `ManipulationInit.getByName` and `StillArtInit.getByName` use `common/util/RegistryLookup.byName`, which uses `getOptional` so a defaulted registry never answers an unknown name with its default. All 123 manipulation and 9 Still Art names equal their registry paths, so every lookup returns the same object. A null name now gives null / `BLANK` instead of an NPE.
+  - **Client registration (R-4):** 50 block-entity renderers via `registerBlockEntityRenderer`, 12 particle providers via `registerSpriteSet` (`client/registry/ParticleProviderRegistrar`), and the three fluids' textures and tints via `RegisterClientExtensionsEvent` (`FluidClientExtensions`), replacing `FluidType.initializeClient`. Each event method calls the same vanilla registry the old code did.
+  - **`ClientEvents` split (R-5):** `client/registry/` now holds `KeyMappings`, `EntityRendererRegistrar`, `ModelRegistrar`, `MenuScreenRegistrar`, `GuiLayerRegistrar`, `ClientExtensionsRegistrar`, `ItemPropertiesRegistrar`, `ItemColorRegistrar`, `ItemDecorationRegistrar`, `DimensionEffectsRegistrar`, `RenderBufferRegistrar`, `RecipeBookRegistrar`, `ClientReloadListenerRegistrar`, `ClientSetupRegistrar` and `ParticleProviderRegistrar`. The runtime handlers live in `client/event/{ClientTickEvents, ClientInputEvents, ManipulationChargeInput, ArmatureCameraEvents, ItemTooltipEvents, ClientSessionEvents, ScreenOverlayEvents, PlayerRenderEvents}`. Members were copied verbatim by a brace-matching script.
+    - The ordered world-effect dispatcher moved intact to `client/render/world/WorldEffectDispatcher`.
+    - The per-tick fan-out stays one handler in its old order.
+    - The unused `renderPlayerArm` was dropped.
+  - **Client classes out of `common/init` (V-8):** `ShaderInit` moved to `client/render/shader`, `RenderTypeInit` to `client/render` and `FungalSkyBoxRenderer` to `client/render/world`. The 18 particle type and data classes moved from `client/particle/{type,data}` to `common/particle/{type,data}`, because the server builds them. `ParticleInit` keeps the register.
+  - **Data components (R-7):** `DeferredRegister.DataComponents` with `registerComponentType`, with the same ids and codecs and `cacheEncoding` on the same four.
+  - **Client caches (P-10):** 13 entity-id caches (Crimson Fire, Monolithic Dislocation, blood binding tendrils, torch breath loops, vial injection, microscope, staff morph, seed tendril pulses, dislocation shell layer, projectile trails, cinder breath, puppet strings, staff planting) gained `clear()`, which also drops their level reference, and are cleared on `ClientPlayerNetworkEvent.LoggingOut`.
+- **What changed (8b, the guardrail):**
+  - **Client-bound payloads:** the 68 handlers that reached client classes moved verbatim to `client/network/Clientbound{State,Effect,Screen}Handlers`. `PacketHandler` registers them as `ClientPayloadHandlers::dispatch`, a common table the client fills at `FMLClientSetupEvent`.
+    - Field reads became accessor calls; the 17 class-based payloads gained accessors.
+    - `AntecedentEffectPacket` keeps its server branch and dispatches its client branch.
+    - The redundant `FMLEnvironment.dist` checks in the Liber and Unstained syncs were dropped, since that code is now client-only.
+    - Byte layouts and `PROTOCOL_VERSION` are unchanged, and `payload-registry.txt` still matches.
+  - **`common/util/ClientBridge`:** a common interface that the client implements (`client/ClientBridgeImpl`, installed first in client setup). Its defaults are neutral (null player, `false` Shift, the key itself as its translation, no-op screens). It replaces 35 direct client calls in 20 files: screen openers (Synaptic Loadout, Harbinger Progress via `ItemSanguineConduit`'s former reflection hack too, bloodline pool, ledger, scar binder, vascular status, Unstained progress, rite and structure hints, blood-structure guide page and renderer), the blueprint projection, Shift and `I18n` in tooltips, the local player and level, client registries for the item handlers, the rite-space lookup and the active-rite list.
+  - **Shared types moved to common:** `ActiveRiteClientData`'s nested sync records (`RiteEntry`, `SocketMarker`, `SigilSegment`, `SanguineBlob`, `NodeKind` and their growth helpers) moved to `common/rite/harbinger/ActiveRiteData`, and `QliphothBloomClientData.BloomEntry` to `QliphothBloomData`. `EnumNodeShape`, `ManipulationTreeEntry`, `EntityParticleUtils` and `HemoClientItemExtensionsProvider` also moved to common; `HemoItemProperties` moved to `client/registry`.
+  - **Render hooks:** `IRenderHarbingerEquipment` (one implementer) is gone; `RenderScarsLayer` draws the fungal scar itself. `ICellHand` is a marker; `ModelRegistrar.cellHandModel` picks the baked hand model.
+  - The local skill-tree editor (`tools/skill_tree_editor/src/server/skillParser.ts`, not version-controlled) writes the new `EnumNodeShape` import path, so it keeps producing compiling branch files.
+- **Metrics:**
+  - `src/main`: +4,993 / −3,738 lines in 391 files: 36 added, 4 deleted (`ClientEvents`, `IRenderHarbingerEquipment`, `ItemInventoryClientAccess` and `ActiveRiteClientData`'s data half, counted as a modification), 25 renamed.
+  - `src/test`: +630 / −217 in 96 files. `src/gameTest`: +2,813 / −26, mostly the two frozen lists (2,684 lines).
+  - Call sites migrated: 40 annotations, 50 block-entity renderers, 12 particle providers, 3 fluid extensions, 33 `getByName` callers (now through the registry), 68 payload handlers, 35 bridge calls, and about 60 files repointed for moved classes.
+  - Remaining legacy instances:
+    - non-canonical subscribers: 0
+    - `bus=`: 0
+    - legacy client registration calls: 0
+    - client references under `common/` outside item client extensions: 0 (57 item extension files, checked span by span)
+    - `ClientEvents`: gone
+- **Tests rewritten:**
+  - The 57 tests that read `ClientEvents` now read the file that holds each pin. Nine needed two or three files, and `SharedMemoryInputSourceTest` follows `tick()`.
+  - The 8 creative-tab pins read `CreativeTabInit`. `HemomancyCreativeTabsSourceTest` used to assert the duplication ("appears at least twice"); it now requires each WIP entry exactly once in the one list. The order itself is a behaviour test now: the frozen creative-tab snapshot.
+  - 13 handler-body pins read `client/network`; 17 path pins follow moved files; 4 particle-provider pins read `ParticleProviderRegistrar`.
+- **Guardrails added:** `FrozenIdentifierGameTests`, `RegistrationStyleGuardrailTest`, `ClientSessionCacheTest`, `CommonClientIsolationTest` (see the table).
+- **Approved items implemented:** none needed; nothing in this step was marked APPROVAL.
+- **Pending approvals:** F-22 (unchanged, see *Decisions*).
+- **Deviations from the roadmap:**
+  - **`ParticleInit` stays in `common/init`.** The prompt says to move it into `client/**`, but it holds the `PARTICLE_TYPES` register the server needs. Its provider half moved to `client/registry/ParticleProviderRegistrar`, as the audit recommends.
+  - **Client isolation went past `common/init`.** The guardrail ("no client import anywhere under `common/`") required moving the client halves of 68 payloads and 20 other files. Phase 2 (step 4) had moved only the handlers that used `Minecraft.getInstance()`.
+  - **The allow-list is structural, not a file list.** A `common/` file may name client classes only if it is a `HemoClientItemExtensionsProvider`, and only inside `hemomancy$getClientItemExtensions()` or an `IClientItemExtensions` body. The 57 such files are counted, not listed by name, so a new extension needs no list edit, and client code that leaks outside the extension body fails.
+  - **Frozen-identifier snapshot added here,** because step 2 had not added one (see above).
+  - **`HIGH` priority for the two former constructor listeners** keeps them ahead of the other Hemomancy `NORMAL` handlers. Against other mods' handlers for the same events, the order is now explicit rather than set by load order. No other handler depends on either.
+- **Final review:** one reviewer read the whole diff from `de8e25ba1` and found no defects.
+  - Confirmed clean: call order in the tick fan-out and the world-effect dispatcher, every registration line, verbatim handler bodies with correct accessors, `enqueueWork` placement, codecs, data component flags, the WIP order, F-22 untouched, no line-ending rewrites, no client reach from `common/`.
+  - From its notes, the guardrail now also rejects wildcard client imports.
+  - Accepted as is: the guardrail does not scan `com.vincenthuto.hutoslib.client` (`ClientBridge` names HutosLib's `BookBodyRenderer` in one signature) or `com.mojang.blaze3d`, which datagen uses. `SporiticThuribleItem.currentGameTime()` now answers 0 on a dedicated server instead of crashing; only client tooltip and item-bar paths call it.
+- **Not verified (needs in-game check):**
+  - Opening each bridged screen and each dispatched payload's effect in a world. The client start proves registration, not every handler. The handler bodies are verbatim, and the dispatch table is pinned by `CommonClientIsolationTest`.
+  - Block-entity renderers and particles in a world (identical registry calls, now made at resource load instead of client setup).
+  - Relogging into a second world to see the cleared entity-id caches.
+- **Known issues (pre-existing, not fixed here):**
+  - Static `ClientLevel` fields in about 17 client render classes (listed in the step 8 impact map, section 8) still hold the last level until the next world loads. They are not entity-id caches, so P-10 did not cover them.
+  - Clinical and succession opt-in failures as in step 5 (not re-run; this step does not touch their code paths beyond moved client handlers).
+- **Handoff notes for step 9 (Phase 6, combat targeting and damage attribution):**
+  - The baseline is fully green: 4,004 JUnit tests and 1,018 required GameTests.
+  - **Client calls from common code:** a new client-bound payload that needs client classes registers `ClientPayloadHandlers::dispatch` in `PacketHandler`, with its body as a `handle` overload in the matching `client/network/Clientbound*Handlers`, registered in that class's `register`. Any other client call from common code adds a method to `ClientBridge` (with a neutral default) and `ClientBridgeImpl`.
+  - **Registration:** new client registration goes in the matching `client/registry/*` class, and new world-space effects go in `WorldEffectDispatcher`, in order. New creative-tab WIP entries go in `CreativeTabInit.WIP`.
+  - **Frozen snapshot:** a registry id or creative-order change now fails `FrozenIdentifierGameTests`. Regenerate the lists only for an approved migration, with `HEMOMANCY_FROZEN_SNAPSHOT_OUT` set during a `runRegistrationGameTestServer` run.
+  - **Baseline comparisons:** a temporary `git worktree` beside the repository works for this. Junction `libs/` into it, run one suite, then remove the junction with `rmdir` before `git worktree remove --force`. Removing the worktree first would follow the junction into the real `libs/`.
