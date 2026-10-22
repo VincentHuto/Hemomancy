@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.player;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.util.Mth;
@@ -22,12 +23,12 @@ public final class BloodVialInjectionPose {
     }
 
     public static Motion motion(float tick) {
-        float raise = smooth(tick / 8);
-        float cock = smooth((tick - 8) / 4);
-        float strike = smooth((tick - 12) / 4);
-        float recover = smooth((tick - 18) / 6);
+        float raise = HemoEasing.smoothstep(tick / 8);
+        float cock = HemoEasing.smoothstep((tick - 8) / 4);
+        float strike = HemoEasing.smoothstep((tick - 12) / 4);
+        float recover = HemoEasing.smoothstep((tick - 18) / 6);
         return new Motion(-1.15F * raise - .65F * cock + 1.25F * strike,
-                strike, smooth(tick / 3) * (1 - recover), raise, cock, recover);
+                strike, HemoEasing.smoothstep(tick / 3) * (1 - recover), raise, cock, recover);
     }
 
     public static void apply(HumanoidModel<?> model, float tick, boolean right) {
@@ -124,11 +125,6 @@ public final class BloodVialInjectionPose {
         return new Vector3f(side * (.48F - .10F * m.raise + .08F * m.strike),
                 -.48F + .32F * m.raise + .10F * m.cock - .64F * m.strike + .22F * m.recover,
                 -.68F - .08F * m.raise + .15F * m.strike);
-    }
-
-    private static float smooth(float t) {
-        t = Mth.clamp(t, 0, 1);
-        return t * t * (3 - 2 * t);
     }
 
     public record Motion(float armPitch, float strike, float weight, float raise, float cock, float recover) { }

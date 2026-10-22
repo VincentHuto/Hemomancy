@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.flammeus;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 /**
  * Presentation timeline for Searing Lash, free of Minecraft types so it can be tested on the JVM.
  * A whip of boiling blood uncoils from the hand, cracks against the target, then sags and burns away.
@@ -23,7 +25,7 @@ public final class SearingLashRules {
 
     /** How much of the line between hand and target the whip has reached. */
     public static double extent(double age) {
-        double t = clamp(age / UNCOIL_END);
+        double t = HemoEasing.clamp01(age / UNCOIL_END);
         return 1 - Math.pow(1 - t, 3);
     }
 
@@ -44,15 +46,6 @@ public final class SearingLashRules {
 
     /** How far the spent whip has sagged and burned away, 0 taut to 1 gone. */
     public static double slack(double age) {
-        return smooth((age - CRACK_END) / (VISUAL_TICKS - CRACK_END));
-    }
-
-    public static double smooth(double t) {
-        double c = clamp(t);
-        return c * c * (3 - 2 * c);
-    }
-
-    private static double clamp(double t) {
-        return Math.max(0, Math.min(1, t));
+        return HemoEasing.smoothstep((age - CRACK_END) / (VISUAL_TICKS - CRACK_END));
     }
 }

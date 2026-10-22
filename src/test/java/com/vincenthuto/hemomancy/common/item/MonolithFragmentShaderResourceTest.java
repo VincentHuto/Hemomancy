@@ -82,7 +82,7 @@ public final class MonolithFragmentShaderResourceTest {
 		assertContains("renderer interpolates between triangle shape states", renderer,
 				"morphNoise(");
 		assertContains("renderer eases triangle shape transitions", renderer,
-				"smoothStep(");
+				"HemoEasing.smoothstepUnclamped(");
 		assertNotContains("renderer avoids discrete per-frame shape targets", renderer,
 				"Math.floor(timeSeconds * MORPH_PHASE_RATE)");
 		assertNotContains("renderer avoids old unreadable tick-fast morph rate", renderer,

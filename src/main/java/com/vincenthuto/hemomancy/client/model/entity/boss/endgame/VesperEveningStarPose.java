@@ -58,12 +58,6 @@ public final class VesperEveningStarPose {
 		return wrapped;
 	}
 
-	/** 0..1 ramp, eased at both ends. */
-	public static float smooth(float t) {
-		float c = Mth.clamp(t, 0.0F, 1.0F);
-		return c * c * (3.0F - 2.0F * c);
-	}
-
 	/** Thigh swing for a leg at {@code phase} (cycles); positive is forward. */
 	public static float legSwing(float phase) {
 		return Mth.sin(phase * Mth.TWO_PI);

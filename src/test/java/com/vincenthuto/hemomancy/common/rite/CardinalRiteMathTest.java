@@ -4,17 +4,9 @@ import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorVisualRules;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/** The easing this class used to hold lives in {@code HemoEasing}; see {@code HemoEasingTest}. */
 final class CardinalRiteMathTest {
-	@Test
-	void smoothstepClampsAndEasesBothEnds() {
-		assertEquals(0.0F, CardinalRiteMath.smoothstep(-1.0F), 0.0001F);
-		assertEquals(0.5F, CardinalRiteMath.smoothstep(0.5F), 0.0001F);
-		assertEquals(1.0F, CardinalRiteMath.smoothstep(4.0F), 0.0001F);
-		assertEquals(0.5F, CardinalRiteMath.smoothstep(2.0F, 4.0F, 3.0F), 0.0001F);
-	}
-
 	@Test
 	void anglesWrapAndMeasureTheShortWayRound() {
 		assertEquals(Math.PI * 1.5D, CardinalRiteMath.normalizeAngle(-Math.PI * 0.5D), 0.0001D);
@@ -27,14 +19,5 @@ final class CardinalRiteMathTest {
 		for (float time = 0.0F; time < 72.0F; time += 1.5F) {
 			assertEquals(CardinalRiteFloorVisualRules.heartbeat(time), CardinalRiteMath.heartbeat(time), 0.0F);
 		}
-	}
-
-	@Test
-	void pulseRisesThenDecaysToNothing() {
-		assertEquals(0.0F, CardinalRiteMath.pulse(-1.0F, 2.0F, 10.0F), 0.0001F);
-		assertEquals(1.0F, CardinalRiteMath.pulse(2.0F, 2.0F, 10.0F), 0.0001F);
-		float later = CardinalRiteMath.pulse(6.0F, 2.0F, 10.0F);
-		assertTrue(later > 0.0F && later < 1.0F);
-		assertEquals(0.0F, CardinalRiteMath.pulse(10.0F, 2.0F, 10.0F), 0.0001F);
 	}
 }

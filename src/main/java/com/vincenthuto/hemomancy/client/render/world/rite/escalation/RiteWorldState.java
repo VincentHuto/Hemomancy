@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteInstability;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteMath;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.core.BlockPos;
 
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public final class RiteWorldState {
 			CardinalRitePhase phase, RiteFloor floor, RiteWorldMath.Ending ending, float endingAge) {
 		/** The eased level between ticks. */
 		public float level(float partialTick) {
-			return previousLevel + (level - previousLevel) * RiteWorldMath.clamp01(partialTick);
+			return previousLevel + (level - previousLevel) * HemoEasing.clamp01(partialTick);
 		}
 
 		public boolean ended() {

@@ -30,6 +30,7 @@ import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilLandmarkGeometry
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilOrganicGeometry;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRenderPalette;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hutoslib.client.HLRenderTypeInit;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -323,7 +324,7 @@ public class CardinalRiteBoundaryRenderer {
 				opacity *= frame.fade;
 			} else if (CardinalRiteEndingRules.violent(ending)) {
 				// Whatever has not drained by the end of the tear is gone with the ghost.
-				opacity *= 1.0F - CardinalRiteMath.smoothstep((endingAge - 30.0F) / 10.0F);
+				opacity *= 1.0F - HemoEasing.smoothstep((endingAge - 30.0F) / 10.0F);
 			}
 			ringFrame.radialScale = Math.max(0.001F, scale);
 			ringFrame.opacity = opacity;
@@ -397,14 +398,14 @@ public class CardinalRiteBoundaryRenderer {
 				: CardinalRiteEventClientState.recent(frame.entry.getCenter())) {
 			float age = event.age(partialTick);
 			switch (event.kind()) {
-				case WAVE_CLEARED -> flash += CardinalRiteMath.pulse(age, 2.0F, 26.0F);
-				case CONSECRATED -> flash += 1.2F * CardinalRiteMath.pulse(age, 3.0F, 34.0F);
-				case SEALED -> flash += 0.8F * CardinalRiteMath.pulse(age, 2.0F, 24.0F);
-				case SIGIL_AWAKENED -> flash += 0.4F * CardinalRiteMath.pulse(age, 2.0F, 16.0F);
-				case WAVE_START -> dim += 0.35F * CardinalRiteMath.pulse(age, 1.0F, 12.0F);
+				case WAVE_CLEARED -> flash += HemoEasing.pulse(age, 2.0F, 26.0F);
+				case CONSECRATED -> flash += 1.2F * HemoEasing.pulse(age, 3.0F, 34.0F);
+				case SEALED -> flash += 0.8F * HemoEasing.pulse(age, 2.0F, 24.0F);
+				case SIGIL_AWAKENED -> flash += 0.4F * HemoEasing.pulse(age, 2.0F, 16.0F);
+				case WAVE_START -> dim += 0.35F * HemoEasing.pulse(age, 1.0F, 12.0F);
 				case STAFF_IMPACT -> {
 					if (age < IMPACT_TICKS) frame.impactAge = age;
-					flash += 0.5F * CardinalRiteMath.pulse(age, 1.0F, 14.0F);
+					flash += 0.5F * HemoEasing.pulse(age, 1.0F, 14.0F);
 				}
 				case ANCHOR_FILLED, ANCHOR_BROKEN, ANCHOR_REPAIRED -> {
 					if (age < anchorBeatLength(event.kind())) {
@@ -521,26 +522,26 @@ public class CardinalRiteBoundaryRenderer {
 					float jitter = CardinalRiteEndingRules.hash(chunk, ring.index * 31 + 7);
 					float order = chunk / (float) CardinalRiteEndingRules.RUPTURE_CHUNKS_PER_RING;
 					float tear = CardinalRiteEndingRules.rupture(frame.endingAge, ring.index, order, jitter);
-					float tremor = (1.0F - tear) * CardinalRiteMath.clamp01(frame.endingAge / 6.0F);
+					float tremor = (1.0F - tear) * HemoEasing.clamp01(frame.endingAge / 6.0F);
 					r1 += (float) Math.sin(time * 2.3F + a1 * 11.0D) * 0.035F * tremor;
 					r2 += (float) Math.sin(time * 2.3F + a2 * 11.0D) * 0.035F * tremor;
 					if (tear > 0.0F) {
 						double chunkCenter = tearStart + (chunk + 0.5D) * chunkSweep;
-						float pinch = 1.0F - 0.55F * CardinalRiteMath.easeOutCubic(tear);
+						float pinch = 1.0F - 0.55F * HemoEasing.easeOutCubic(tear);
 						a1 = chunkCenter + CardinalRiteMath.normalizeAngle(a1 - chunkCenter + Math.PI) * pinch
 								- Math.PI * pinch;
 						a2 = chunkCenter + CardinalRiteMath.normalizeAngle(a2 - chunkCenter + Math.PI) * pinch
 								- Math.PI * pinch;
-						float drift = CardinalRiteMath.easeOutCubic(tear) * (0.22F + jitter * 0.45F)
+						float drift = HemoEasing.easeOutCubic(tear) * (0.22F + jitter * 0.45F)
 								* (jitter > 0.25F ? 1.0F : -0.6F);
 						r1 += drift;
 						r2 += drift;
-						float sag = CardinalRiteMath.easeInCubic(tear) * 0.20F;
+						float sag = HemoEasing.easeInCubic(tear) * 0.20F;
 						y1 -= sag;
 						y2 -= sag;
-						bruise = CardinalRiteMath.smoothstep(tear * 1.4F);
+						bruise = HemoEasing.smoothstep(tear * 1.4F);
 						widthScale = 1.0F - 0.5F * tear;
-						pieceAlpha *= 1.0F - CardinalRiteMath.smoothstep((tear - 0.35F) / 0.65F);
+						pieceAlpha *= 1.0F - HemoEasing.smoothstep((tear - 0.35F) / 0.65F);
 						if (pieceAlpha <= 0.005F) continue;
 					}
 				}
@@ -566,9 +567,9 @@ public class CardinalRiteBoundaryRenderer {
 						float glowWidth = CardinalRiteBoundaryGeometry.integrityWidth(glowWidthBase, integrity)
 								* widthScale;
 						float alpha = glowAlpha * pieceAlpha;
-						float red = mix(colors.glowR * dry, BRUISE_R, bruise);
-						float green = mix(colors.glowG * dry, BRUISE_G, bruise);
-						float blue = mix(colors.glowB * dry, BRUISE_B, bruise);
+						float red = HemoEasing.lerp(colors.glowR * dry, BRUISE_R, bruise);
+						float green = HemoEasing.lerp(colors.glowG * dry, BRUISE_G, bruise);
+						float blue = HemoEasing.lerp(colors.glowB * dry, BRUISE_B, bruise);
 						// A soft inflamed bleed into the tissue, then a dark groove hugging the vessel's walls.
 						RiteQuads.fadedBandPiece(vc, mat, dive1, dive2,
 								cos1, sin1, y1, r1 - halfCore1 - glowWidth, r1 - halfCore1,
@@ -595,13 +596,13 @@ public class CardinalRiteBoundaryRenderer {
 						// pulse brightening the blood as it passes.
 						float alpha = coreAlpha * pieceAlpha;
 						// Walls stay close to the lumen so the vessel reads as blood under skin, not a lit tube.
-						float wallR = mix(Math.min(1.0F, colors.rimR * dry * 0.82F + arterial * 0.20F), BRUISE_R, bruise);
-						float wallG = mix(colors.rimG * dry * 0.82F + arterial * 0.03F, BRUISE_G, bruise);
-						float wallB = mix(colors.rimB * dry * 0.82F + arterial * 0.02F, BRUISE_B, bruise);
-						float lumenR = mix(Math.min(1.0F, colors.coreR * dry * 0.78F + arterial * 0.34F),
+						float wallR = HemoEasing.lerp(Math.min(1.0F, colors.rimR * dry * 0.82F + arterial * 0.20F), BRUISE_R, bruise);
+						float wallG = HemoEasing.lerp(colors.rimG * dry * 0.82F + arterial * 0.03F, BRUISE_G, bruise);
+						float wallB = HemoEasing.lerp(colors.rimB * dry * 0.82F + arterial * 0.02F, BRUISE_B, bruise);
+						float lumenR = HemoEasing.lerp(Math.min(1.0F, colors.coreR * dry * 0.78F + arterial * 0.34F),
 								BRUISE_R * 0.6F, bruise);
-						float lumenG = mix(colors.coreG * dry * 0.7F + arterial * 0.018F, BRUISE_G * 0.6F, bruise);
-						float lumenB = mix(colors.coreB * dry * 0.8F + arterial * 0.012F, BRUISE_B * 0.6F, bruise);
+						float lumenG = HemoEasing.lerp(colors.coreG * dry * 0.7F + arterial * 0.018F, BRUISE_G * 0.6F, bruise);
+						float lumenB = HemoEasing.lerp(colors.coreB * dry * 0.8F + arterial * 0.012F, BRUISE_B * 0.6F, bruise);
 						RiteQuads.fadedBandPiece(vc, mat, dive1, dive2,
 								cos1, sin1, y1, r1 - halfCore1, r1,
 								cos2, sin2, y2, r2 - halfCore2, r2,
@@ -614,10 +615,10 @@ public class CardinalRiteBoundaryRenderer {
 					case BLOOM -> {
 						float alpha = (bloomAlpha + arterial * 0.22F) * pieceAlpha * (1.0F - bruise);
 						if (alpha <= 0.004F) continue;
-						float hot = CardinalRiteMath.clamp01(frame.flash * 0.45F + arterial * 0.25F);
-						float red = mix(colors.rimR, HOT_R, hot);
-						float green = mix(colors.rimG, HOT_G * 0.4F, hot);
-						float blue = mix(colors.rimB, HOT_B * 0.4F, hot);
+						float hot = HemoEasing.clamp01(frame.flash * 0.45F + arterial * 0.25F);
+						float red = HemoEasing.lerp(colors.rimR, HOT_R, hot);
+						float green = HemoEasing.lerp(colors.rimG, HOT_G * 0.4F, hot);
+						float blue = HemoEasing.lerp(colors.rimB, HOT_B * 0.4F, hot);
 						// Hug the vessel walls and leave the lumen dark, so the swell reads as a rim light.
 						float bloomWidth = bloomWidthBase * widthScale;
 						float wall1 = halfCore1 * 0.4F;
@@ -657,7 +658,7 @@ public class CardinalRiteBoundaryRenderer {
 	private static void drawVeins(VertexConsumer vc, Pass pass, RiteFrame frame, RingFrame ring, float time) {
 		if (pass == Pass.BLOOM || ring.arcs.isEmpty() || ring.opacity <= 0.001F) return;
 		float veinFade = CardinalRiteEndingRules.violent(frame.ending)
-				? 1.0F - CardinalRiteMath.smoothstep(frame.endingAge / 16.0F) : 1.0F;
+				? 1.0F - HemoEasing.smoothstep(frame.endingAge / 16.0F) : 1.0F;
 		float coreAlpha = (0.70F + frame.heartbeat * 0.18F) * ring.ringFade * ring.opacity * frame.dim * veinFade;
 		if (coreAlpha <= 0.004F) return;
 		float directionSign = ring.directionSign;
@@ -725,8 +726,8 @@ public class CardinalRiteBoundaryRenderer {
 			previous = next;
 			float w0 = rootWidth * (1.0F - t0 * 0.7F);
 			float w1 = rootWidth * (1.0F - t1 * 0.7F);
-			float a0 = alpha * (1.0F - CardinalRiteMath.smoothstep(t0));
-			float a1 = alpha * (1.0F - CardinalRiteMath.smoothstep(t1));
+			float a0 = alpha * (1.0F - HemoEasing.smoothstep(t0));
+			float a1 = alpha * (1.0F - HemoEasing.smoothstep(t1));
 			// Width runs along the ring's tangent at each end.
 			float px0 = -sin0;
 			float pz0 = cos0;
@@ -794,8 +795,8 @@ public class CardinalRiteBoundaryRenderer {
 		RingColors colors = ring.colors;
 		float y = EFFECT_Y + (pass == Pass.BLOOM ? BLOOM_LIFT : 0.0F);
 		if (age < 12.0F) {
-			float lap = CardinalRiteMath.easeOutCubic(age / 10.0F);
-			float alpha = 1.0F - CardinalRiteMath.smoothstep((age - 7.0F) / 5.0F);
+			float lap = HemoEasing.easeOutCubic(age / 10.0F);
+			float alpha = 1.0F - HemoEasing.smoothstep((age - 7.0F) / 5.0F);
 			for (int trail = 0; trail < 6; trail++) {
 				double angle = -Math.PI * 0.5D + (lap - trail * 0.035F) * Math.PI * 2.0D;
 				float bx = x + (float) Math.cos(angle) * SOCKET_RADIUS;
@@ -811,14 +812,14 @@ public class CardinalRiteBoundaryRenderer {
 				}
 			}
 			if (pass != Pass.CORE) {
-				float ringAlpha = CardinalRiteMath.pulse(age, 1.0F, 12.0F);
-				float radius = SOCKET_RADIUS + CardinalRiteMath.easeOutCubic(age / 10.0F) * 0.5F;
+				float ringAlpha = HemoEasing.pulse(age, 1.0F, 12.0F);
+				float radius = SOCKET_RADIUS + HemoEasing.easeOutCubic(age / 10.0F) * 0.5F;
 				RiteQuads.flashRing(vc, mat, x, z, y, radius, 0.16F, colors.rimR, colors.rimG, colors.rimB,
 						ringAlpha * (pass == Pass.BLOOM ? 0.9F : 0.45F));
 			}
 		}
 		if (age >= 4.0F) {
-			float progress = CardinalRiteMath.smoothstep((age - 4.0F) / (FILL_BEAT_TICKS - 4.0F));
+			float progress = HemoEasing.smoothstep((age - 4.0F) / (FILL_BEAT_TICKS - 4.0F));
 			float bolusAlpha = (float) Math.sin(progress * Math.PI);
 			double anchorAngle = frame.layout.anchorAngle(anchorIndex);
 			double forward = anchorAngle + frame.layout.forwardSweep(anchorIndex) * progress;
@@ -846,22 +847,22 @@ public class CardinalRiteBoundaryRenderer {
 			float x, float z, float age) {
 		Matrix4f mat = ring.matrix;
 		RingColors colors = ring.colors;
-		float t = CardinalRiteMath.clamp01(age / BREAK_BEAT_TICKS);
+		float t = HemoEasing.clamp01(age / BREAK_BEAT_TICKS);
 		if (pass == Pass.GLOW) {
-			float stain = CardinalRiteMath.pulse(age, 3.0F, BREAK_BEAT_TICKS);
+			float stain = HemoEasing.pulse(age, 3.0F, BREAK_BEAT_TICKS);
 			RiteQuads.disc(vc, mat, x, z, EFFECT_Y - 0.006F, 0.45F + t * 0.45F,
 					BRUISE_R * 0.5F, BRUISE_G * 0.5F, BRUISE_B * 0.5F, stain * 0.55F);
 		}
 		if (pass == Pass.BLOOM) {
-			float flash = CardinalRiteMath.pulse(age, 0.5F, 6.0F);
+			float flash = HemoEasing.pulse(age, 0.5F, 6.0F);
 			RiteQuads.disc(vc, mat, x, z, EFFECT_Y + BLOOM_LIFT, 0.55F, HOT_R, HOT_G * 0.3F, HOT_B * 0.3F,
 					flash * 0.9F);
 		}
 		int fragments = 8;
 		double fragmentSweep = Math.PI * 2.0D / fragments * 0.7D;
-		float fling = CardinalRiteMath.easeOutCubic(age / 16.0F);
-		float bruise = CardinalRiteMath.smoothstep(t * 1.6F);
-		float alpha = 1.0F - CardinalRiteMath.smoothstep((t - 0.25F) / 0.75F);
+		float fling = HemoEasing.easeOutCubic(age / 16.0F);
+		float bruise = HemoEasing.smoothstep(t * 1.6F);
+		float alpha = 1.0F - HemoEasing.smoothstep((t - 0.25F) / 0.75F);
 		if (alpha <= 0.004F) return;
 		for (int fragment = 0; fragment < fragments; fragment++) {
 			float jitter = CardinalRiteEndingRules.hash(anchorIndex * 17 + fragment, 91);
@@ -876,9 +877,9 @@ public class CardinalRiteBoundaryRenderer {
 			float sin1 = (float) Math.sin(a1);
 			float cos2 = (float) Math.cos(a2);
 			float sin2 = (float) Math.sin(a2);
-			float red = mix(colors.glowR, BRUISE_R, bruise);
-			float green = mix(colors.glowG, BRUISE_G, bruise);
-			float blue = mix(colors.glowB, BRUISE_B, bruise);
+			float red = HemoEasing.lerp(colors.glowR, BRUISE_R, bruise);
+			float green = HemoEasing.lerp(colors.glowG, BRUISE_G, bruise);
+			float blue = HemoEasing.lerp(colors.glowB, BRUISE_B, bruise);
 			switch (pass) {
 				case GLOW -> RiteQuads.bandPiece(vc, mat, x, z,
 						cos1, sin1, lift, radius - width * 2.5F, radius + width * 2.5F,
@@ -887,8 +888,8 @@ public class CardinalRiteBoundaryRenderer {
 				case CORE -> RiteQuads.bandPiece(vc, mat, x, z,
 						cos1, sin1, lift, radius - width, radius + width,
 						cos2, sin2, lift, radius - width, radius + width,
-						mix(colors.rimR, BRUISE_R, bruise), mix(colors.rimG, BRUISE_G, bruise),
-						mix(colors.rimB, BRUISE_B, bruise), alpha,
+						HemoEasing.lerp(colors.rimR, BRUISE_R, bruise), HemoEasing.lerp(colors.rimG, BRUISE_G, bruise),
+						HemoEasing.lerp(colors.rimB, BRUISE_B, bruise), alpha,
 						red * 0.7F, green * 0.7F, blue * 0.7F, alpha);
 				case BLOOM -> {
 					float hot = alpha * (1.0F - bruise) * 0.6F;
@@ -905,10 +906,9 @@ public class CardinalRiteBoundaryRenderer {
 
 	/** A bright ring contracts onto the socket as it knits shut. */
 	private static void drawKnit(VertexConsumer vc, Pass pass, RingFrame ring, float x, float z, float age) {
-		float alpha = CardinalRiteMath.pulse(age, 2.0F, REPAIR_BEAT_TICKS);
+		float alpha = HemoEasing.pulse(age, 2.0F, REPAIR_BEAT_TICKS);
 		if (alpha <= 0.004F) return;
-		float radius = CardinalRiteMath.lerp(CardinalRiteMath.easeInCubic(age / REPAIR_BEAT_TICKS),
-				SOCKET_RADIUS * 2.6F, SOCKET_RADIUS);
+		float radius = HemoEasing.lerp(SOCKET_RADIUS * 2.6F, SOCKET_RADIUS, HemoEasing.easeInCubic(age / REPAIR_BEAT_TICKS));
 		RingColors colors = ring.colors;
 		switch (pass) {
 			case GLOW -> RiteQuads.flashRing(vc, ring.matrix, x, z, EFFECT_Y, radius, 0.22F,
@@ -1001,7 +1001,7 @@ public class CardinalRiteBoundaryRenderer {
 		if (pass == Pass.CORE || frame.impactAge < 0.0F || frame.rings.length == 0) return;
 		float t = frame.impactAge / IMPACT_TICKS;
 		float outer = frame.rings[frame.rings.length - 1].radius + 0.6F;
-		float radius = 0.45F + CardinalRiteMath.easeOutCubic(t) * outer;
+		float radius = 0.45F + HemoEasing.easeOutCubic(t) * outer;
 		float alpha = (1.0F - t) * (1.0F - t);
 		RingColors colors = frame.rings[0].colors;
 		if (pass == Pass.GLOW) {
@@ -1231,7 +1231,7 @@ public class CardinalRiteBoundaryRenderer {
 			double fromStart = CardinalRiteMath.normalizeAngle(
 					normalizedAngle - CardinalRiteMath.normalizeAngle(arc.startAngle()));
 			if (fromStart > arc.sweepAngle()) continue;
-			float integrity = CardinalRiteMath.clamp01(arc.integrity());
+			float integrity = HemoEasing.clamp01(arc.integrity());
 			if (integrity <= 0.0F || integrity >= 1.0F) return integrity;
 			float flicker = (float) ((Math.sin(
 					currentTime * 1.65F + arc.startAngle() * 3.0D) + 1.0D) * 0.5D);
@@ -1258,10 +1258,6 @@ public class CardinalRiteBoundaryRenderer {
 			float amplitude) {
 		return CardinalRiteBoundaryGeometry.surfaceSafeOffset(
 				(float) Math.sin(angle * 5.0D + time * 0.06D * directionSign + phaseOffset) * amplitude);
-	}
-
-	private static float mix(float from, float to, float amount) {
-		return from + (to - from) * amount;
 	}
 
 	// ════════════════════════════════════════════════════════════════════════
@@ -1353,16 +1349,16 @@ public class CardinalRiteBoundaryRenderer {
 			float glowG = 0.025F + lighten * 0.04F;
 			float glowB = 0.03F + lighten * 0.03F;
 			if (tint != null) {
-				coreR = mix(coreR, tint.veinR() * 0.55F, FLOOR_VEIN_LEAN);
-				coreG = mix(coreG, tint.veinG() * 0.55F, FLOOR_VEIN_LEAN);
-				coreB = mix(coreB, tint.veinB() * 0.55F, FLOOR_VEIN_LEAN);
-				glowR = mix(glowR, tint.glowR(), FLOOR_GLOW_LEAN);
+				coreR = HemoEasing.lerp(coreR, tint.veinR() * 0.55F, FLOOR_VEIN_LEAN);
+				coreG = HemoEasing.lerp(coreG, tint.veinG() * 0.55F, FLOOR_VEIN_LEAN);
+				coreB = HemoEasing.lerp(coreB, tint.veinB() * 0.55F, FLOOR_VEIN_LEAN);
+				glowR = HemoEasing.lerp(glowR, tint.glowR(), FLOOR_GLOW_LEAN);
 				// Keep the halo in the red family whatever the floor's highlight.
-				glowG = Math.min(mix(glowG, tint.glowG(), FLOOR_GLOW_LEAN), glowR * 0.35F);
-				glowB = Math.min(mix(glowB, tint.glowB(), FLOOR_GLOW_LEAN), glowR * 0.32F);
+				glowG = Math.min(HemoEasing.lerp(glowG, tint.glowG(), FLOOR_GLOW_LEAN), glowR * 0.35F);
+				glowB = Math.min(HemoEasing.lerp(glowB, tint.glowB(), FLOOR_GLOW_LEAN), glowR * 0.32F);
 			}
 			return new RingColors(coreR, coreG, coreB, glowR, glowG, glowB,
-					mix(coreR, glowR, 0.55F), mix(coreG, glowG, 0.45F), mix(coreB, glowB, 0.45F));
+					HemoEasing.lerp(coreR, glowR, 0.55F), HemoEasing.lerp(coreG, glowG, 0.45F), HemoEasing.lerp(coreB, glowB, 0.45F));
 		}
 	}
 }

@@ -6,6 +6,7 @@ import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.LodestoneCollapseRules;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -36,7 +37,7 @@ final class LodestoneCollapseGeometry {
         // 1. Field: the magnetic lines run inward and tighten as the shards are drawn.
         if (age < LodestoneCollapseRules.CRUSH_END + 2)
             FerricDuctilisGeometry.field(p, flow, Vec3.ZERO, radius * LodestoneCollapseRules.fieldRadius(age), time, seed,
-                    camera, alpha * (float) (1 - LodestoneCollapseRules.smooth((age - LodestoneCollapseRules.DRAW_END) / 4)));
+                    camera, alpha * (float) (1 - HemoEasing.smoothstep((double) ((age - LodestoneCollapseRules.DRAW_END) / 4))));
 
         // 2. Shards: forged iron spirals in from the rim, each dragging a thread of blood out behind it.
         for (int i = 0; i < LodestoneCollapseRules.SHARDS; i++) {
@@ -89,6 +90,6 @@ final class LodestoneCollapseGeometry {
         double distance = polar[1] * radius;
         Vec3 out = new Vec3(Math.cos(polar[0]) * distance, polar[2] * 1.4 + 0.2, Math.sin(polar[0]) * distance);
         // Close in, everything converges on the knot rather than the floor beneath it.
-        return out.lerp(knot, LodestoneCollapseRules.smooth((t - 0.75) / 0.25));
+        return out.lerp(knot, HemoEasing.smoothstep((t - 0.75) / 0.25));
     }
 }

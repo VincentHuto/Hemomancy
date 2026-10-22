@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.util.Mth;
 
 /** Shared timing and easing for the Living Staff's Cardinal Rite planting motion. */
@@ -21,7 +22,7 @@ public final class CardinalRitePlantingSequence {
 
 	public static float windupProgress(float elapsedTicks) {
 		float progress = Mth.clamp(elapsedTicks / WINDUP_END_TICK, 0.0F, 1.0F);
-		return smoothstep(progress);
+		return HemoEasing.smoothstepUnclamped(progress);
 	}
 
 	public static float strikeProgress(float elapsedTicks) {
@@ -37,16 +38,12 @@ public final class CardinalRitePlantingSequence {
 		float progress = Mth.clamp(
 				(elapsedTicks - IMPACT_TICK) / (DURATION_TICKS - IMPACT_TICK),
 				0.0F, 1.0F);
-		return smoothstep(progress);
+		return HemoEasing.smoothstepUnclamped(progress);
 	}
 
 	public static float cameraPitchShake(float elapsedTicks) {
 		float sinceImpact = elapsedTicks - IMPACT_TICK;
 		if (sinceImpact < 0.0F || elapsedTicks >= DURATION_TICKS) return 0.0F;
 		return (float) (Math.exp(-0.32D * sinceImpact) * Math.cos(1.7D * sinceImpact));
-	}
-
-	private static float smoothstep(float value) {
-		return value * value * (3.0F - 2.0F * value);
 	}
 }

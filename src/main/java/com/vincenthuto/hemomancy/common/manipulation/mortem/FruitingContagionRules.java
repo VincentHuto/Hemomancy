@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.mortem;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 /**
  * Presentation timeline for Fruiting Contagion, free of Minecraft types so it can be tested on the JVM.
  * Pale stalks fruit out of a carrier and burst; where the rot spreads, a spore arc carries it to the neighbour,
@@ -21,7 +23,7 @@ public final class FruitingContagionRules {
 
     /** How far the stalks have grown out of the carrier. */
     public static double growth(double age) {
-        return smooth(age / FRUIT_END);
+        return HemoEasing.smoothstep(age / FRUIT_END);
     }
 
     /** The caps bursting into spore clouds, a pulse peaking mid-burst. */
@@ -32,26 +34,21 @@ public final class FruitingContagionRules {
 
     /** How far the spore arc has carried toward the neighbour. */
     public static double arc(double age) {
-        return smooth((age - FRUIT_END) / (ARC_END - FRUIT_END));
+        return HemoEasing.smoothstep((age - FRUIT_END) / (ARC_END - FRUIT_END));
     }
 
     /** The neighbour's own small bloom, sprouting once the spores land. */
     public static double bloom(double age) {
-        return smooth((age - ARC_END + 1) / 4);
+        return HemoEasing.smoothstep((age - ARC_END + 1) / 4);
     }
 
     /** Fade-out, 0 present to 1 gone. */
     public static double wither(double age) {
-        return smooth((age - ARC_END - 2) / (VISUAL_TICKS - ARC_END - 2));
+        return HemoEasing.smoothstep((age - ARC_END - 2) / (VISUAL_TICKS - ARC_END - 2));
     }
 
     /** Height of the spore arc above the straight line at {@code t} along it, as a fraction of the distance. */
     public static double lift(double t) {
         return 0.35 * 4 * t * (1 - t);
-    }
-
-    public static double smooth(double t) {
-        double c = Math.max(0, Math.min(1, t));
-        return c * c * (3 - 2 * c);
     }
 }

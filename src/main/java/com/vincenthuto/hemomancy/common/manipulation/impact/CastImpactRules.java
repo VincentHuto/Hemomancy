@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.manipulation.impact;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.manipulation.animation.CastPurpose;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import javax.annotation.Nullable;
 
 /**
@@ -53,18 +54,13 @@ public final class CastImpactRules {
     }
 
     /** The contact flash: full at once, gone by the end of the flash phase. */
-    public static float flash(float age) { return 1 - smooth(age / (FLASH_END + 1f)); }
+    public static float flash(float age) { return 1 - HemoEasing.smoothstep(age / (FLASH_END + 1f)); }
 
     /** Burst growth: 0 at contact, 1 when the burst is fully thrown. */
-    public static float burst(float age) { return smooth(age / BURST_END); }
+    public static float burst(float age) { return HemoEasing.smoothstep(age / BURST_END); }
 
     /** Whole-impact opacity: holds through the burst and frays out over the rest of the life. */
     public static float presence(float age) {
-        return age <= BURST_END ? 1 : 1 - smooth((age - BURST_END) / (LIFE - BURST_END));
-    }
-
-    static float smooth(float t) {
-        float c = Math.clamp(t, 0f, 1f);
-        return c * c * (3 - 2 * c);
+        return age <= BURST_END ? 1 : 1 - HemoEasing.smoothstep((age - BURST_END) / (LIFE - BURST_END));
     }
 }

@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.item;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.common.item.MorphicNectarMutationRules;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.Mth;
@@ -80,7 +81,7 @@ final class MorphicNectarTendrilRenderer {
 
 	private static float curveX(float[] config, float t, float time, float layerPhase) {
 		float angle = config[2] + Mth.sin(time * 0.28F + config[6]) * 0.14F;
-		float length = config[3] * eased(t);
+		float length = config[3] * HemoEasing.smoothstepUnclamped(t);
 		float base = config[0] + Mth.cos(angle) * length;
 		float normal = Mth.cos(angle + Mth.HALF_PI);
 		return base + normal * wave(config, t, time, layerPhase);
@@ -88,7 +89,7 @@ final class MorphicNectarTendrilRenderer {
 
 	private static float curveY(float[] config, float t, float time, float layerPhase) {
 		float angle = config[2] + Mth.sin(time * 0.28F + config[6]) * 0.14F;
-		float length = config[3] * eased(t);
+		float length = config[3] * HemoEasing.smoothstepUnclamped(t);
 		float base = config[1] + Mth.sin(angle) * length;
 		float normal = Mth.sin(angle + Mth.HALF_PI);
 		return base + normal * wave(config, t, time, layerPhase);
@@ -99,10 +100,6 @@ final class MorphicNectarTendrilRenderer {
 		float main = Mth.sin(t * Mth.TWO_PI * 1.28F + time * config[5] + config[6] + layerPhase);
 		float small = Mth.sin(t * Mth.TWO_PI * 3.1F - time * 0.34F + config[6]);
 		return (main * 0.78F + small * 0.22F) * config[4] * taper;
-	}
-
-	private static float eased(float value) {
-		return value * value * (3.0F - 2.0F * value);
 	}
 
 	private static float widthAt(float width, float t) {

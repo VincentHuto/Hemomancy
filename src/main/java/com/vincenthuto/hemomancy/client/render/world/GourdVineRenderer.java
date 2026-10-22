@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -214,12 +215,12 @@ public class GourdVineRenderer {
 			float a1 = vineAlpha * (1.0f - t1 * 0.3f) * growFade1;
 
 			// Color: lerp from brown (base) to green (tip)
-			float coreR0 = lerp(BASE_R, TIP_R, t0);
-			float coreG0 = lerp(BASE_G, TIP_G, t0);
-			float coreB0 = lerp(BASE_B, TIP_B, t0);
-			float coreR1 = lerp(BASE_R, TIP_R, t1);
-			float coreG1 = lerp(BASE_G, TIP_G, t1);
-			float coreB1 = lerp(BASE_B, TIP_B, t1);
+			float coreR0 = HemoEasing.lerp(BASE_R, TIP_R, t0);
+			float coreG0 = HemoEasing.lerp(BASE_G, TIP_G, t0);
+			float coreB0 = HemoEasing.lerp(BASE_B, TIP_B, t0);
+			float coreR1 = HemoEasing.lerp(BASE_R, TIP_R, t1);
+			float coreG1 = HemoEasing.lerp(BASE_G, TIP_G, t1);
+			float coreB1 = HemoEasing.lerp(BASE_B, TIP_B, t1);
 
 			// Core quad (the solid vine body)
             if (!glowPass) {
@@ -271,10 +272,6 @@ public class GourdVineRenderer {
 		h = ((h >>> 16) ^ h) * 0x45d9f3b;
 		h = (h >>> 16) ^ h;
 		return (h & 0x7FFFFFFF) / (double) 0x7FFFFFFF;
-	}
-
-	private static float lerp(float a, float b, float t) {
-		return a + (b - a) * t;
 	}
 
 	private static void emitQuad(VertexConsumer vc, Matrix4f mat,

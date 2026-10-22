@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
@@ -47,16 +48,16 @@ public final class BloodBindingTendrilGeometry {
 	}
 
 	private static float groundVisibility(float ageTicks, float retractionTicks) {
-		if (retractionTicks <= 0.0F) return clamp(ageTicks / GROUND_FORM_TICKS);
+		if (retractionTicks <= 0.0F) return HemoEasing.clamp01(ageTicks / GROUND_FORM_TICKS);
 		if (retractionTicks <= COIL_FORM_TICKS) return 1.0F;
-		return 1.0F - clamp((retractionTicks - COIL_FORM_TICKS) / GROUND_FORM_TICKS);
+		return 1.0F - HemoEasing.clamp01((retractionTicks - COIL_FORM_TICKS) / GROUND_FORM_TICKS);
 	}
 
 	private static float coilVisibility(float ageTicks, float retractionTicks) {
-		float formed = clamp((ageTicks - GROUND_FORM_TICKS) / COIL_FORM_TICKS);
+		float formed = HemoEasing.clamp01((ageTicks - GROUND_FORM_TICKS) / COIL_FORM_TICKS);
 		return retractionTicks <= 0.0F
 				? formed
-				: formed * (1.0F - clamp(retractionTicks / COIL_FORM_TICKS));
+				: formed * (1.0F - HemoEasing.clamp01(retractionTicks / COIL_FORM_TICKS));
 	}
 
 	private static List<Joint> groundJoints(Vec3 casterFeet, Vec3 targetFeet, long seed,
@@ -111,7 +112,7 @@ public final class BloodBindingTendrilGeometry {
 
 	private static List<Joint> visibleJoints(List<Joint> joints, float visibility) {
 		if (visibility <= 0.0F || joints.size() < 2) return List.of();
-		float visibleSegments = clamp(visibility) * (joints.size() - 1);
+		float visibleSegments = HemoEasing.clamp01(visibility) * (joints.size() - 1);
 		int completeSegments = Math.min(joints.size() - 1, (int) Math.floor(visibleSegments));
 		List<Joint> visible = new ArrayList<>(completeSegments + 2);
 		for (int index = 0; index <= completeSegments; index++) visible.add(joints.get(index));
@@ -131,10 +132,6 @@ public final class BloodBindingTendrilGeometry {
 		long mixed = seed ^ (strandIndex * 0x9E3779B97F4A7C15L);
 		return ((mixed >>> 12) & 0xffffL) / 65535.0D * Math.PI * 2.0D
 				+ strandIndex * Math.PI * 2.0D / strandCount(seed);
-	}
-
-	private static float clamp(float value) {
-		return Math.max(0.0F, Math.min(1.0F, value));
 	}
 
 	public record Strand(int index, List<Joint> joints) implements SanguineTendrilRibbonRenderer.Strand {

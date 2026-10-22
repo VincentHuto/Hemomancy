@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.world.rite;
 
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteEventKind;
-import com.vincenthuto.hemomancy.common.rite.CardinalRiteMath;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 
 /**
  * Timing for how a finished rite's boundary leaves the world, from the ghost a
@@ -49,13 +49,13 @@ public final class CardinalRiteEndingRules {
 	public static float fade(CardinalRiteEventKind kind, float age) {
 		if (kind == null) return 1.0F;
 		float hold = violent(kind) ? 8.0F : 0.0F;
-		return 1.0F - CardinalRiteMath.smoothstep((age - hold) / (duration(kind) - hold));
+		return 1.0F - HemoEasing.smoothstep((age - hold) / (duration(kind) - hold));
 	}
 
 	/** How far the dome has sunk into the floor, as a fraction of its radius. */
 	public static float domeSink(CardinalRiteEventKind kind, float age) {
 		if (kind == null) return 0.0F;
-		return CardinalRiteMath.easeInCubic(age / duration(kind)) * 1.05F;
+		return HemoEasing.easeInCubic(age / duration(kind)) * 1.05F;
 	}
 
 	/**
@@ -65,7 +65,7 @@ public final class CardinalRiteEndingRules {
 	public static float staffMeltTicks(CardinalRiteEventKind kind, float age, float liveTicks, float totalTicks) {
 		if (kind == null) return liveTicks;
 		float meltTicks = violent(kind) ? 22.0F : kind == CardinalRiteEventKind.COMPLETED ? 16.0F : 10.0F;
-		return Math.max(liveTicks, totalTicks * CardinalRiteMath.clamp01(age / meltTicks));
+		return Math.max(liveTicks, totalTicks * HemoEasing.clamp01(age / meltTicks));
 	}
 
 	/**
@@ -77,7 +77,7 @@ public final class CardinalRiteEndingRules {
 	 */
 	public static float rupture(float age, int ring, float order, float jitter) {
 		float delay = order * RUPTURE_SWEEP_TICKS + Math.min(Math.max(0, ring), 6) * 1.5F + jitter * 3.0F;
-		return CardinalRiteMath.clamp01((age - delay) / RUPTURE_TICKS);
+		return HemoEasing.clamp01((age - delay) / RUPTURE_TICKS);
 	}
 
 	/** Ticks after the ending began that a socket bursts. */
@@ -87,7 +87,7 @@ public final class CardinalRiteEndingRules {
 
 	/** Contraction of the rings into the Focus after a completion, 0 to 1. */
 	public static float completionContraction(float age) {
-		return CardinalRiteMath.easeInCubic(age / COMPLETED_TICKS);
+		return HemoEasing.easeInCubic(age / COMPLETED_TICKS);
 	}
 
 	/** A stable hash in [0,1) for per-chunk and per-fragment variation. */

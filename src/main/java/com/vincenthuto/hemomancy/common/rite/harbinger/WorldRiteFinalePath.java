@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -27,7 +28,7 @@ public final class WorldRiteFinalePath {
 	/** Straight up, ever faster, never past the world's ceiling. */
 	public static Vec3 skyPosition(double ticks, Vec3 hover, double ceilingY) {
 		if (ticks <= GATHER) return hover;
-		double t = clamp((ticks - GATHER) / (double) (IMPACT - GATHER));
+		double t = HemoEasing.clamp01((ticks - GATHER) / (double) (IMPACT - GATHER));
 		double top = Math.min(hover.y + SKY_HEIGHT, ceilingY);
 		return new Vec3(hover.x, hover.y + (top - hover.y) * Math.pow(t, 2.6D), hover.z);
 	}
@@ -44,11 +45,7 @@ public final class WorldRiteFinalePath {
 			double t = (ticks - CLIMB_END) / (double) (HOLD_END - CLIMB_END);
 			return apex.add(0.0D, 0.35D * Math.sin(Math.PI * t), 0.0D);
 		}
-		double t = clamp((ticks - HOLD_END) / (double) (IMPACT - HOLD_END));
+		double t = HemoEasing.clamp01((ticks - HOLD_END) / (double) (IMPACT - HOLD_END));
 		return apex.lerp(ground, t * t * t);
-	}
-
-	private static double clamp(double value) {
-		return Math.max(0.0D, Math.min(1.0D, value));
 	}
 }

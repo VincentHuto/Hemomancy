@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
@@ -76,8 +77,8 @@ final class ManipulationUndulation {
         return new Vec3(out.x,out.y,out.z);
     }
 
+    /** Smoothstep between two edges, with a minimum span so equal edges cannot divide by zero. */
     private static float smooth(double start,double end,double value) {
-        double t=Mth.clamp((value-start)/Math.max(.00001,end-start),0,1);
-        return (float)(t*t*(3-2*t));
+        return (float)HemoEasing.smoothstep((value-start)/Math.max(.00001,end-start));
     }
 }

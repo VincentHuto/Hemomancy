@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.world.entity.AnimationState;
 
 /** Timing shared by the server phase gate and the client dismount/absorption animation. */
@@ -25,15 +26,15 @@ public final class VesperPhaseTransitionRules {
 	}
 
 	public static float dismountProgress(float transitionTick) {
-		return clamp(transitionTick / DISMOUNT_TICKS);
+		return HemoEasing.clamp01(transitionTick / DISMOUNT_TICKS);
 	}
 
 	public static float absorptionProgress(float transitionTick) {
-		return clamp((transitionTick - DISMOUNT_TICKS) / MOUNT_ABSORPTION_TICKS);
+		return HemoEasing.clamp01((transitionTick - DISMOUNT_TICKS) / MOUNT_ABSORPTION_TICKS);
 	}
 
 	public static float collapseProgress(float transitionTick) {
-		return smooth(dismountProgress(transitionTick));
+		return HemoEasing.smoothstepUnclamped(dismountProgress(transitionTick));
 	}
 
 	public static float jumpArc(float transitionTick) {
@@ -42,15 +43,15 @@ public final class VesperPhaseTransitionRules {
 	}
 
 	public static float cocoonFormationProgress(float transitionTick) {
-		return clamp((transitionTick - COCOON_START_TICK) / COCOON_FORMATION_TICKS);
+		return HemoEasing.clamp01((transitionTick - COCOON_START_TICK) / COCOON_FORMATION_TICKS);
 	}
 
 	public static float cocoonBeamProgress(float transitionTick) {
-		return clamp((transitionTick - COCOON_BEAM_START_TICK) / COCOON_BEAM_TICKS);
+		return HemoEasing.clamp01((transitionTick - COCOON_BEAM_START_TICK) / COCOON_BEAM_TICKS);
 	}
 
 	public static float cocoonBurstProgress(float transitionTick) {
-		return clamp((transitionTick - COCOON_BURST_START_TICK) / COCOON_BURST_TICKS);
+		return HemoEasing.clamp01((transitionTick - COCOON_BURST_START_TICK) / COCOON_BURST_TICKS);
 	}
 
 	public static float cocoonVisibility(float transitionTick) {
@@ -69,14 +70,14 @@ public final class VesperPhaseTransitionRules {
 	}
 
 	public static float awakeningScale(float awakeningTick) {
-		float progress = clamp((awakeningTick - AWAKENING_SIGIL_START_TICK)
+		float progress = HemoEasing.clamp01((awakeningTick - AWAKENING_SIGIL_START_TICK)
 				/ (AWAKENING_GROWTH_END_TICK - AWAKENING_SIGIL_START_TICK));
-		return 1.0F + (EVENING_STAR_SCALE - 1.0F) * smooth(progress);
+		return 1.0F + (EVENING_STAR_SCALE - 1.0F) * HemoEasing.smoothstepUnclamped(progress);
 	}
 
 	public static float awakeningGlow(float awakeningTick) {
 		if (awakeningTick <= AWAKENING_GLOW_TICKS) return 1.0F;
-		return 1.0F - clamp((awakeningTick - AWAKENING_GLOW_TICKS)
+		return 1.0F - HemoEasing.clamp01((awakeningTick - AWAKENING_GLOW_TICKS)
 				/ (AWAKENING_GROWTH_END_TICK - AWAKENING_GLOW_TICKS));
 	}
 
@@ -99,13 +100,5 @@ public final class VesperPhaseTransitionRules {
 		} else if (!state.isStarted()) {
 			state.start(entityTickCount - transitionTick);
 		}
-	}
-
-	private static float clamp(float value) {
-		return Math.max(0.0F, Math.min(1.0F, value));
-	}
-
-	private static float smooth(float value) {
-		return value * value * (3.0F - 2.0F * value);
 	}
 }

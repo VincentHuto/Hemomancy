@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -712,7 +713,7 @@ public final class ManipulationVisualRenderer {
     }
 
     public static VertexConsumer formingProjectile(VertexConsumer vertices,float age) {
-        return new CoalescingVertexConsumer(vertices,.6F+.4F*ManipulationLifecycle.smooth(age/3),0);
+        return new CoalescingVertexConsumer(vertices,.6F+.4F*HemoEasing.smoothstep(age/3),0);
     }
 
     @SubscribeEvent

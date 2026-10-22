@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.layer.mob.endgame;
 
 import com.vincenthuto.hemomancy.client.render.world.SanguineTendrilRibbonRenderer;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
@@ -21,8 +22,8 @@ public final class VesperTransitionCocoonGeometry {
 
 	public static List<Strand> strands(Vec3 base, float time, float formationProgress,
 			float burstProgress) {
-		float formation = clamp(formationProgress);
-		float burst = clamp(burstProgress);
+		float formation = HemoEasing.clamp01(formationProgress);
+		float burst = HemoEasing.clamp01(burstProgress);
 		List<Strand> strands = new ArrayList<>(STRAND_COUNT);
 		for (int strandIndex = 0; strandIndex < STRAND_COUNT; strandIndex++) {
 			double baseAngle = strandIndex * GOLDEN_ANGLE;
@@ -79,10 +80,6 @@ public final class VesperTransitionCocoonGeometry {
 					Mth.lerp(partial, first.opacity(), second.opacity())));
 		}
 		return List.copyOf(visible);
-	}
-
-	private static float clamp(float value) {
-		return Math.max(0.0F, Math.min(1.0F, value));
 	}
 
 	public record Strand(int index, List<Joint> joints) implements SanguineTendrilRibbonRenderer.Strand {

@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.annetta;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 /**
  * Pure rules for the Stained Priestess: her rise out of the blood, the flight mode cycle, where she hovers and how
  * her wings sit in each mode. No Minecraft types.
@@ -67,11 +69,11 @@ public final class PriestessCombatRules {
     private PriestessCombatRules() {}
 
     public static float wingGrowth(float emergeTick) {
-        return AnnettaEncounterRules.smooth((emergeTick - 18.0F) / (EMERGE_LENGTH - 18.0F));
+        return HemoEasing.smoothstep((emergeTick - 18.0F) / (EMERGE_LENGTH - 18.0F));
     }
 
     public static float headGrowth(float emergeTick) {
-        return AnnettaEncounterRules.smooth((emergeTick - 8.0F) / 50.0F);
+        return HemoEasing.smoothstep((emergeTick - 8.0F) / 50.0F);
     }
 
     public static boolean airborne(Mode mode) {
@@ -127,7 +129,7 @@ public final class PriestessCombatRules {
     public static float heldSpear(float javelinTick) {
         if (javelinTick < JAVELIN_RELEASE) return 1.0F;
         if (javelinTick < JAVELIN_REFORM_START) return 0.0F;
-        return AnnettaEncounterRules.smooth((javelinTick - JAVELIN_REFORM_START) / (JAVELIN_LENGTH - 2 - JAVELIN_REFORM_START));
+        return HemoEasing.smoothstep((javelinTick - JAVELIN_REFORM_START) / (JAVELIN_LENGTH - 2 - JAVELIN_REFORM_START));
     }
 
     /**

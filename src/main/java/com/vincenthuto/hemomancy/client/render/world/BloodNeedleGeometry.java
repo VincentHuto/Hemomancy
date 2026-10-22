@@ -5,6 +5,7 @@ import static com.vincenthuto.hemomancy.client.render.world.LuxUmbraGeometry.*;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
@@ -52,7 +53,7 @@ final class BloodNeedleGeometry {
         if (path.size() >= 2 && wake > 0)
             ribbonPath(p, v, path, camera, .004, lance ? .05 : .035, RIBBON, seed, TINT, wake * .6f);
         Vec3 axis = heading.lengthSqr() > 1e-8 ? heading.normalize() : new Vec3(0, -1, 0);
-        double length = (lance ? LANCE_LENGTH : LENGTH) * (.7 + .3 * smooth(age / 2.0));
+        double length = (lance ? LANCE_LENGTH : LENGTH) * (.7 + .3 * HemoEasing.smoothstep(age / 2.0));
         Vec3 tip = head.add(axis.scale(length * .5)), base = head.subtract(axis.scale(length * .5));
         float glint = (float) (.55 + .45 * Math.pow(Math.max(0, Math.sin(time * .6 + seed)), 4));
         if (lodged) {

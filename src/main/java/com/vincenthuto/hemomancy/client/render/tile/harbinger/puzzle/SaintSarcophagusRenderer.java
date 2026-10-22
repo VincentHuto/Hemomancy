@@ -7,6 +7,7 @@ import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.puzzle.SaintSarcophagusBlock;
 import com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -47,7 +48,7 @@ public class SaintSarcophagusRenderer implements BlockEntityRenderer<SaintSarcop
 
 		// The lid slides east off the tomb, then leans down over the rim edge.
 		pose.pushPose();
-		float slide = smooth(Math.min(open / .7F, 1)), tip = smooth(Math.max((open - .6F) / .4F, 0));
+		float slide = HemoEasing.smoothstepUnclamped(Math.min(open / .7F, 1)), tip = HemoEasing.smoothstepUnclamped(Math.max((open - .6F) / .4F, 0));
 		pose.translate(LID_PIVOT_X / 16F, LID_PIVOT_Y / 16F, 0);
 		pose.mulPose(Axis.ZP.rotationDegrees(-LID_TIP * tip));
 		pose.translate(-LID_PIVOT_X / 16F + LID_SLIDE * slide / 16F, -LID_PIVOT_Y / 16F, 0);
@@ -79,10 +80,6 @@ public class SaintSarcophagusRenderer implements BlockEntityRenderer<SaintSarcop
 		}
 
 		pose.popPose();
-	}
-
-	private static float smooth(float t) {
-		return t * t * (3 - 2 * t);
 	}
 
 	private static void renderPart(Minecraft mc, String name, PoseStack pose, MultiBufferSource buffers, int light,

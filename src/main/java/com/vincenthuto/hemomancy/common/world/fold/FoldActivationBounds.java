@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.world.fold;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import java.util.Optional;
 
 public final class FoldActivationBounds {
@@ -48,8 +49,8 @@ public final class FoldActivationBounds {
 			return Optional.empty();
 		}
 
-		double lateral = lerp(previous.lateral(), current.lateral(), t);
-		double vertical = lerp(previous.vertical(), current.vertical(), t);
+		double lateral = HemoEasing.lerp(previous.lateral(), current.lateral(), t);
+		double vertical = HemoEasing.lerp(previous.vertical(), current.vertical(), t);
 		FoldTransform.FoldCoordinates crossing = new FoldTransform.FoldCoordinates(lateral, vertical, 0.0D, 0.0D);
 		return insideEntryAperture(spec, crossing) ? Optional.of(new EntryCrossing(entrySide, t)) : Optional.empty();
 	}
@@ -108,10 +109,6 @@ public final class FoldActivationBounds {
 		return Math.abs(coordinates.lateral()) <= maxEntryLateral
 				&& coordinates.vertical() >= -LOOSE_APERTURE_EPSILON
 				&& coordinates.vertical() <= spec.apertureHeight() + LOOSE_APERTURE_EPSILON;
-	}
-
-	private static double lerp(double start, double end, double t) {
-		return start + (end - start) * t;
 	}
 
 	public record EntryCrossing(FoldViewerSide entrySide, double fraction) {

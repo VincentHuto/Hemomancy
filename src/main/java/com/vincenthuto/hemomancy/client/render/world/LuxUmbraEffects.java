@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationFlowPacket;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hutoslib.client.particle.data.TendrilGeometry;
 import com.vincenthuto.hutoslib.common.tendril.TendrilAnchor;
 import com.vincenthuto.hutoslib.common.tendril.TendrilEffectConfig;
@@ -100,7 +101,7 @@ public final class LuxUmbraEffects {
             float age = (float) (time - mist.born), life = age / mist.life;
             Vec3 at = mist.at.add(mist.velocity.scale(age));
             // Mist breathed from the viewer's own arms would otherwise sit on the lens; it thins out near the eye.
-            float near = ManipulationLifecycle.smooth((float) ((at.distanceTo(camera) - .7) / 1.6));
+            float near = HemoEasing.smoothstep((float) ((at.distanceTo(camera) - .7) / 1.6));
             if (near <= 0) continue;
             var owner = mist.clearOf < 0 ? null : world.getEntity(mist.clearOf);
             if (owner != null) {

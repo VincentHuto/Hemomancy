@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -159,21 +160,21 @@ public final class CardinalRiteHumanityGeometry {
 	}
 
 	public static double contractionScale(double riteProgress) {
-		return lerp(absorptionProgress(riteProgress), 1.0D, 0.12D);
+		return HemoEasing.lerp(1.0D, 0.12D, absorptionProgress(riteProgress));
 	}
 
 	private static double contour(double heightFraction) {
 		if (heightFraction < 0.12D) {
-			return lerp(heightFraction / 0.12D, 0.08D, 0.25D);
+			return HemoEasing.lerp(0.08D, 0.25D, heightFraction / 0.12D);
 		}
 		if (heightFraction < 0.58D) {
-			return lerp((heightFraction - 0.12D) / 0.46D, 0.25D, 0.72D);
+			return HemoEasing.lerp(0.25D, 0.72D, (heightFraction - 0.12D) / 0.46D);
 		}
 		if (heightFraction < 0.72D) {
-			return lerp((heightFraction - 0.58D) / 0.14D, 0.72D, 1.0D);
+			return HemoEasing.lerp(0.72D, 1.0D, (heightFraction - 0.58D) / 0.14D);
 		}
 		if (heightFraction < 0.78D) {
-			return lerp((heightFraction - 0.72D) / 0.06D, 1.0D, 0.48D);
+			return HemoEasing.lerp(1.0D, 0.48D, (heightFraction - 0.72D) / 0.06D);
 		}
 		double headAxis = (heightFraction - 0.89D) / 0.11D;
 		return 0.08D + 0.48D * Math.sqrt(Math.max(0.0D, 1.0D - headAxis * headAxis));
@@ -229,15 +230,11 @@ public final class CardinalRiteHumanityGeometry {
 		double growth = clamp((height - 0.75D) / 4.25D, 0.0D, 1.0D);
 		double swayWeight = heightFraction * heightFraction * (3.0D - 2.0D * heightFraction);
 		double lateralSway = Math.sin(phase * 0.22D) * width
-				* lerp(growth, 0.06D, 0.22D) * swayWeight;
+				* HemoEasing.lerp(0.06D, 0.22D, growth) * swayWeight;
 		double depthSway = Math.sin(phase * 0.17D + 1.1D) * width
-				* lerp(growth, 0.025D, 0.09D) * swayWeight;
+				* HemoEasing.lerp(0.025D, 0.09D, growth) * swayWeight;
 		addColoredLocal(points, layer, localX + lateralSway, y, localZ + depthSway,
 				red, green, blue, rightX, rightZ, forwardX, forwardZ);
-	}
-
-	private static double lerp(double amount, double start, double end) {
-		return start + (end - start) * amount;
 	}
 
 	private static double clamp(double value, double minimum, double maximum) {

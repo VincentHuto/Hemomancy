@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
@@ -52,7 +53,7 @@ final class BloodAneurysmGeometry {
         Vec3 focus = ChargeVisualGeometry.focus(Form.ANEURYSM_CHARGE, aim).add(shake);
         Vec3[] b = basis(aim);
         double beat = 1 + .14 * Math.pow(Math.max(0, Math.sin(time * beatRate(progress) * Math.PI)), 6);
-        double size = (.05 + .11 * smooth(progress)) * beat;
+        double size = (.05 + .11 * HemoEasing.smoothstep(progress)) * beat;
 
         // 1. Feeding vessels from the wrist, thinning as the knot fills.
         Vec3 source = focus.subtract(aim.scale(.75)).add(b[1].scale(-.3));
@@ -98,15 +99,15 @@ final class BloodAneurysmGeometry {
         double r = Math.max(1, packet.radius());
         int seed = Math.floorMod(packet.from().hashCode(), 113);
         Vec3 caster = packet.to().subtract(packet.from());
-        double swell = smooth(age / SWELL_END);
+        double swell = HemoEasing.smoothstep((double) (age / SWELL_END));
         boolean torn = age >= SWELL_END;
-        float settle = (float) smooth((age - 12) / (RUPTURE_TICKS - 12.0));
+        float settle = (float) HemoEasing.smoothstep((age - 12) / (RUPTURE_TICKS - 12.0));
 
         // 1. Swell: a bulging vessel reaches the victim, a veined sac swelling inside them.
         if (!torn) {
             if (caster.lengthSqr() > 1) {
                 Vec3 mid = caster.scale(.5).add(UP.scale(Math.min(1.2, caster.length() * .12)));
-                double reach = smooth(age / 2.0);
+                double reach = HemoEasing.smoothstep(age / 2.0);
                 List<Vec3> vessel = new ArrayList<>(13);
                 for (int i = 0; i <= 12; i++) {
                     double t = 1 - i / 12.0 * reach;
@@ -140,7 +141,7 @@ final class BloodAneurysmGeometry {
         // 3. Ruptured vessels whip outward, then hang limp.
         for (int i = 0; i < 6; i++) {
             Vec3 tip = spray(i, seed + 7, age, r * .8);
-            double limp = smooth((age - TEAR_END) / 8.0);
+            double limp = HemoEasing.smoothstep((age - TEAR_END) / 8.0);
             Vec3 mid = tip.scale(.5).add(0, .2 * (1 - limp) - .25 * limp, 0);
             ribbonPath(p, v, List.of(Vec3.ZERO, mid, tip), camera, .09, .012, RIBBON, seed + 20 + i, i % 2 == 0 ? CLOT : TINT, body);
         }
@@ -161,7 +162,7 @@ final class BloodAneurysmGeometry {
         }
 
         // 5. Clotted haze lingers where it burst.
-        float haze = alpha * (float) smooth((age - TEAR_END) / 4.0) * (1 - (float) smooth((age - 18) / 10.0));
+        float haze = alpha * (float) HemoEasing.smoothstep((age - TEAR_END) / 4.0) * (1 - (float) HemoEasing.smoothstep((age - 18) / 10.0));
         for (int i = 0; i < 5; i++) {
             double a = i * 1.7 + seed;
             Vec3 at = new Vec3(Math.cos(a) * r * .3, -.2 + age * .015, Math.sin(a) * r * .3);

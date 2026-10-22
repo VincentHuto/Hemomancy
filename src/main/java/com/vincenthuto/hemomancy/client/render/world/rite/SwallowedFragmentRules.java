@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world.rite;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -28,13 +29,13 @@ public final class SwallowedFragmentRules {
 	 */
 	public static Vec3 offset(float age, int index, double time, Vec3 start, double girth, double halfLength) {
 		float own = age - index * TRAIL_DELAY;
-		double condense = 1.0D - 0.4D * smooth(Math.max(0.0F, own - TRAVEL_TICKS) / CONDENSE_TICKS);
+		double condense = 1.0D - 0.4D * HemoEasing.smoothstep((double) (Math.max(0.0F, own - TRAVEL_TICKS) / CONDENSE_TICKS));
 		// The line circles the body, each crumb a step behind the last, travelling up and down its length.
 		double angle = time * 0.22D - index * 0.32D;
 		double along = Math.sin(time * 0.07D - index * 0.12D) * 0.9D * halfLength;
 		double around = girth * condense;
 		Vec3 coil = new Vec3(Math.cos(angle) * around, along, Math.sin(angle) * around);
-		return start.lerp(coil, smooth(own / TRAVEL_TICKS));
+		return start.lerp(coil, HemoEasing.smoothstep((double) (own / TRAVEL_TICKS)));
 	}
 
 	/**
@@ -59,11 +60,6 @@ public final class SwallowedFragmentRules {
 
 	/** Each crumb's half-size: it wears down as the daemon digests it, but never quite vanishes while it lasts. */
 	public static float size(float age) {
-		return (float) (0.05D * (1.0D - 0.4D * smooth(Math.max(0.0F, age - TRAVEL_TICKS) / CONDENSE_TICKS)));
-	}
-
-	private static double smooth(double t) {
-		double c = Math.max(0.0D, Math.min(1.0D, t));
-		return c * c * (3.0D - 2.0D * c);
+		return (float) (0.05D * (1.0D - 0.4D * HemoEasing.smoothstep((double) (Math.max(0.0F, age - TRAVEL_TICKS) / CONDENSE_TICKS))));
 	}
 }

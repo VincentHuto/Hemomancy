@@ -1,13 +1,13 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
 import static com.vincenthuto.hemomancy.client.render.world.BloodShotGeometry.basis;
-import static com.vincenthuto.hemomancy.client.render.world.BloodShotGeometry.smooth;
 import static com.vincenthuto.hemomancy.client.render.world.LuxUmbraGeometry.*;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -49,7 +49,7 @@ final class DeadlyGazeGeometry {
 
     /** How far the eye's lids have parted at a charge {@code progress}. */
     static double opening(double progress) {
-        return smooth(Mth.clamp(progress, 0, 1) * 1.25);
+        return HemoEasing.smoothstep(Mth.clamp(progress, 0, 1) * 1.25);
     }
 
     private static void charge(ManipulationVisualPacket packet, PoseStack p, VertexConsumer nerve, VertexConsumer ink,
@@ -141,8 +141,8 @@ final class DeadlyGazeGeometry {
         double height = body == null ? 1.8 : body.getBbHeight(), width = body == null ? .6 : body.getBbWidth();
         boolean charged = packet.count() >= 2;
         int seed = Math.floorMod(packet.entityId(), 113);
-        double seize = smooth(age / SEIZE_END), tighten = smooth((age - SEIZE_END) / 4.0);
-        float release = 1 - (float) smooth((age - HOLD_END) / (GRIP_TICKS - HOLD_END + 2.0));
+        double seize = HemoEasing.smoothstep((double) (age / SEIZE_END)), tighten = HemoEasing.smoothstep((age - SEIZE_END) / 4.0);
+        float release = 1 - (float) HemoEasing.smoothstep((age - HOLD_END) / (GRIP_TICKS - HOLD_END + 2.0));
         float a = alpha * release;
         if (a <= .002) return;
         int count = charged ? 6 : 5;
@@ -166,7 +166,7 @@ final class DeadlyGazeGeometry {
         // 3. Tether: a taut line from the knot back to the caster's eyes.
         Vec3 eye = packet.to().subtract(origin);
         if (seize > .3 && eye.subtract(knot).lengthSqr() > .25) {
-            double reach = smooth((age - 1) / 3.0);
+            double reach = HemoEasing.smoothstep((age - 1) / 3.0);
             Vec3 tip = knot.lerp(eye, reach);
             ribbonPath(p, ink, List.of(knot, knot.lerp(tip, .5), tip), camera, .035, .012, INK_LINE, seed + 30, INK, a * .3f);
             nerveLine(p, nerve, List.of(knot, knot.lerp(tip, .5), tip), camera, .014, .004, LINE, seed + 31, NERVE, a * .7f);
@@ -189,8 +189,8 @@ final class DeadlyGazeGeometry {
             Vec3 right, Vec3 up, double time, float age, float alpha) {
         int seed = Math.floorMod(packet.from().hashCode(), 113);
         double r = Math.max(.6, packet.radius());
-        double burst = smooth(age / 6.0);
-        float fade = alpha * (1 - (float) smooth((age - 6) / (SLAM_TICKS - 6.0)));
+        double burst = HemoEasing.smoothstep(age / 6.0);
+        float fade = alpha * (1 - (float) HemoEasing.smoothstep((age - 6) / (SLAM_TICKS - 6.0)));
         if (fade <= .002) return;
 
         // 1. Strike: the nerves snap straight down, with a flash where the body lands.

@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -96,7 +97,7 @@ public class AnnettaPoolEntity extends Entity {
         }
         if (grown < growTicks) {
             grown++;
-            float t = AnnettaEncounterRules.smooth(grown / (float) growTicks);
+            float t = HemoEasing.smoothstep(grown / (float) growTicks);
             this.entityData.set(RADIUS, growFrom + (growTo - growFrom) * t);
         }
         if (--life <= 0) {

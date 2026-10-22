@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.manipulation.tenebris.UmbralRendRules;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ final class UmbralRendGeometry {
         double[] offsets = slashOffsets();
 
         // 1. Gather: the shadow already on the body is pulled taut toward it before the tear.
-        float drawIn = alpha * (float) (1 - UmbralRendRules.smooth((age - UmbralRendRules.REND_END) / 2.0));
+        float drawIn = alpha * (float) (1 - HemoEasing.smoothstep((age - UmbralRendRules.REND_END) / 2.0));
         if (drawIn > 0.002)
             for (int i = 0; i < 6; i++) {
                 double angle = i * Math.PI / 3 + seed;

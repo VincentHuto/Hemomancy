@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.model.entity.boss.endgame;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperWeaponAction;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.util.Mth;
 
 /** Fractional-tick motion curves for Vesper's living-weapon poses. */
@@ -13,8 +14,8 @@ public final class VesperWeaponAnimationRules {
 
 	public static float actionBlend(VesperWeaponAction action, float tick) {
 		if (action == VesperWeaponAction.NONE || action.durationTicks() <= 0) return 0.0F;
-		float entry = smootherstep(tick / ENTRY_TICKS);
-		float exit = smootherstep((action.durationTicks() - tick) / EXIT_TICKS);
+		float entry = HemoEasing.smootherstep(tick / ENTRY_TICKS);
+		float exit = HemoEasing.smootherstep((action.durationTicks() - tick) / EXIT_TICKS);
 		return Math.min(entry, exit);
 	}
 
@@ -24,11 +25,11 @@ public final class VesperWeaponAnimationRules {
 		float loaded = Math.max(1.0F, contact - 3.0F);
 		float followThrough = Math.min(action.durationTicks(), contact + 1.0F);
 		if (tick <= 0.0F || tick >= action.durationTicks()) return 0.0F;
-		if (tick <= loaded) return -smootherstep(tick / loaded);
+		if (tick <= loaded) return -HemoEasing.smootherstep(tick / loaded);
 		if (tick <= followThrough) {
-			return Mth.lerp(smootherstep((tick - loaded) / Math.max(1.0F, followThrough - loaded)), -1.0F, 1.0F);
+			return Mth.lerp(HemoEasing.smootherstep((tick - loaded) / Math.max(1.0F, followThrough - loaded)), -1.0F, 1.0F);
 		}
-		return 1.0F - smootherstep((tick - followThrough)
+		return 1.0F - HemoEasing.smootherstep((tick - followThrough)
 				/ Math.max(1.0F, action.durationTicks() - followThrough));
 	}
 
@@ -41,9 +42,9 @@ public final class VesperWeaponAnimationRules {
 			float loaded = Math.max(start + 1.0F, first - 3.0F);
 			if (tick <= start) return 0.0F;
 			if (tick <= loaded) {
-				return Mth.lerp(smootherstep((tick - start) / Math.max(1.0F, loaded - start)), 0.0F, -0.32F * sign);
+				return Mth.lerp(HemoEasing.smootherstep((tick - start) / Math.max(1.0F, loaded - start)), 0.0F, -0.32F * sign);
 			}
-			return Mth.lerp(smootherstep((tick - loaded) / Math.max(1.0F, first - loaded)), -0.32F * sign, sign);
+			return Mth.lerp(HemoEasing.smootherstep((tick - loaded) / Math.max(1.0F, first - loaded)), -0.32F * sign, sign);
 		}
 		for (int i = 0; i < action.contactCount() - 1; i++) {
 			float fromTick = action.contactTick(i);
@@ -51,47 +52,47 @@ public final class VesperWeaponAnimationRules {
 			if (tick <= toTick) {
 				float from = (i & 1) == 0 ? 1.0F : -1.0F;
 				float to = -from;
-				return Mth.lerp(smootherstep((tick - fromTick) / Math.max(1.0F, toTick - fromTick)), from, to);
+				return Mth.lerp(HemoEasing.smootherstep((tick - fromTick) / Math.max(1.0F, toTick - fromTick)), from, to);
 			}
 		}
 		int lastIndex = action.contactCount() - 1;
 		float lastTick = action.contactTick(lastIndex);
 		float lastSign = (lastIndex & 1) == 0 ? 1.0F : -1.0F;
-		return lastSign * (1.0F - smootherstep((tick - lastTick)
+		return lastSign * (1.0F - HemoEasing.smootherstep((tick - lastTick)
 				/ Math.max(1.0F, action.durationTicks() - lastTick)));
 	}
 
 	public static float stanceBlend(float stanceTick) {
-		return smoothstep(stanceTick / 30.0F);
+		return HemoEasing.smoothstep(stanceTick / 30.0F);
 	}
 
 	public static float cycloneSpin(VesperWeaponAction action, float tick, float direction) {
 		if (action == VesperWeaponAction.NONE || action.durationTicks() <= 0) return 0.0F;
 		float contact = Math.max(1.0F, action.impactTick());
-		if (tick <= contact) return -0.7F * smootherstep(tick / contact) * direction;
-		float recovery = smootherstep((tick - contact)
+		if (tick <= contact) return -0.7F * HemoEasing.smootherstep(tick / contact) * direction;
+		float recovery = HemoEasing.smootherstep((tick - contact)
 				/ Math.max(1.0F, action.durationTicks() - contact));
 		return Mth.lerp(recovery, -0.7F, Mth.TWO_PI * 2.0F) * direction;
 	}
 
 	public static float broodTramplePitch(float tick) {
-		if (tick <= 22.0F) return Mth.lerp(smootherstep(tick / 22.0F), 0.0F, -0.16F);
+		if (tick <= 22.0F) return Mth.lerp(HemoEasing.smootherstep(tick / 22.0F), 0.0F, -0.16F);
 		if (tick <= 32.0F) return -0.16F;
-		if (tick <= 38.0F) return Mth.lerp(smootherstep((tick - 32.0F) / 6.0F), -0.16F, 0.22F);
-		return Mth.lerp(smootherstep((tick - 38.0F) / 24.0F), 0.22F, 0.0F);
+		if (tick <= 38.0F) return Mth.lerp(HemoEasing.smootherstep((tick - 32.0F) / 6.0F), -0.16F, 0.22F);
+		return Mth.lerp(HemoEasing.smootherstep((tick - 38.0F) / 24.0F), 0.22F, 0.0F);
 	}
 
 	public static float stingerMotion(float tick) {
 		if (tick <= 8.0F) return 0.0F;
-		if (tick <= 16.0F) return smootherstep((tick - 8.0F) / 8.0F);
+		if (tick <= 16.0F) return HemoEasing.smootherstep((tick - 8.0F) / 8.0F);
 		float[] contacts = { 16.0F, 28.0F, 40.0F, 52.0F };
 		for (int i = 0; i < contacts.length - 1; i++) {
 			if (tick <= contacts[i + 1]) {
 				float from = (i & 1) == 0 ? 1.0F : -1.0F;
-				return Mth.lerp(smootherstep((tick - contacts[i]) / 12.0F), from, -from);
+				return Mth.lerp(HemoEasing.smootherstep((tick - contacts[i]) / 12.0F), from, -from);
 			}
 		}
-		return Mth.lerp(smootherstep((tick - 52.0F) / 16.0F), -1.0F, 0.0F);
+		return Mth.lerp(HemoEasing.smootherstep((tick - 52.0F) / 16.0F), -1.0F, 0.0F);
 	}
 
 	public static float flailArmMotion(VesperWeaponAction action, float tick) {
@@ -179,7 +180,7 @@ public final class VesperWeaponAnimationRules {
 		for (int i = 2; i < keys.length; i += 2) {
 			if (tick <= keys[i]) {
 				float progress = (tick - keys[i - 2]) / Math.max(1.0F, keys[i] - keys[i - 2]);
-				return Mth.lerp(smootherstep(progress), keys[i - 1], keys[i + 1]);
+				return Mth.lerp(HemoEasing.smootherstep(progress), keys[i - 1], keys[i + 1]);
 			}
 		}
 		return keys[keys.length - 1];
@@ -187,14 +188,4 @@ public final class VesperWeaponAnimationRules {
 
 	public record OffhandGrip(float armX, float armY, float armZ,
 			float elbowX, float elbowY, float elbowZ) { }
-
-	private static float smoothstep(float value) {
-		float t = Mth.clamp(value, 0.0F, 1.0F);
-		return t * t * (3.0F - 2.0F * t);
-	}
-
-	private static float smootherstep(float value) {
-		float t = Mth.clamp(value, 0.0F, 1.0F);
-		return t * t * t * (t * (t * 6.0F - 15.0F) + 10.0F);
-	}
 }

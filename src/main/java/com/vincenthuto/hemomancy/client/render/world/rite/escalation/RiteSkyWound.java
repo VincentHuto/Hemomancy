@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.client.render.world.CardinalRiteFogLightning;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteInstability;
-import com.vincenthuto.hemomancy.common.rite.CardinalRiteMath;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -42,7 +42,7 @@ public final class RiteSkyWound {
 		if (presence <= 0.003F) return null;
 		float radius = RiteWorldMath.woundRadius(world.footprint(), level) * (closes ? Math.max(0.0F, ending) : 1.0F);
 		float grow = RiteWorldMath.ramp(level, RiteWorldMath.WOUND_FROM);
-		float open = world.culminating() ? CardinalRiteMath.smoothstep(0.9F, 1.0F, level) : 0.0F;
+		float open = world.culminating() ? HemoEasing.smoothstep(0.9F, 1.0F, level) : 0.0F;
 		float flash = RiteWorldMath.woundFlash(world.ending(), world.endingAge(), world.surge());
 		float strain = world.strain() == CardinalRiteInstability.STABLE ? 0.0F
 				: world.strain() == CardinalRiteInstability.STRAINED ? 0.5F : 1.0F;

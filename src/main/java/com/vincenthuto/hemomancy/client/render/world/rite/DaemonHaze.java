@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world.rite;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -103,14 +104,14 @@ public final class DaemonHaze {
 
 	/** The eyes open only at the very end of emergence. */
 	public static float eyesOpen(float emergence) {
-		return (float) CardinalRiteVisualRules.smooth((emergence - 0.8D) / 0.2D);
+		return (float) HemoEasing.smoothstep((emergence - 0.8D) / 0.2D);
 	}
 
 	/** The haze's flash after an offering arrives: quick to rise, gone by {@link #SWALLOW_TICKS}. */
 	public static float swallow(float sinceArrival) {
 		if (sinceArrival < 0.0F) return 0.0F;
-		return (float) (CardinalRiteVisualRules.smooth(sinceArrival / 3.0D)
-				* (1.0D - CardinalRiteVisualRules.smooth(sinceArrival / SWALLOW_TICKS)));
+		return (float) (HemoEasing.smoothstep(sinceArrival / 3.0D)
+				* (1.0D - HemoEasing.smoothstep((double) (sinceArrival / SWALLOW_TICKS))));
 	}
 
 	/** Density of the haze: loose before the seal, thinned to a quarter as it is drawn back into the staff. */
@@ -120,7 +121,7 @@ public final class DaemonHaze {
 	}
 
 	public static double sinkProgress(float sinceArrival) {
-		return CardinalRiteVisualRules.smooth(sinceArrival / SWALLOW_TICKS);
+		return HemoEasing.smoothstep((double) (sinceArrival / SWALLOW_TICKS));
 	}
 
 	/** A swallowed offering's place {x, y, z} relative to the entity and its item scale, drifting to the chest. */

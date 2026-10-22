@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
 import com.vincenthuto.hemomancy.common.rite.harbinger.WorkingCraftDaemonPath;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public final class WorkingCraftSwallowRules {
 
 	/** World height of the fill line over a subject whose foot is {@code bottomY}. */
 	public static double fillLine(double bottomY, double height, float fill) {
-		return bottomY + height * clamp01(fill);
+		return bottomY + height * HemoEasing.clamp01(fill);
 	}
 
 	/**
@@ -60,7 +61,7 @@ public final class WorkingCraftSwallowRules {
 	 */
 	public static double sinkOffset(float age, double height) {
 		if (age < ANTICIPATION_TICKS) return 0.04D * Math.abs(Math.sin(age * 2.6D));
-		double t = clamp01((age - ANTICIPATION_TICKS) / DRAG_TICKS);
+		double t = HemoEasing.clamp01((age - ANTICIPATION_TICKS) / DRAG_TICKS);
 		return t * t * t * (height + SINK_OVERSHOOT);
 	}
 
@@ -68,12 +69,12 @@ public final class WorkingCraftSwallowRules {
 	public static float possession(float culminationTicks) {
 		float start = WorkingCraftDaemonPath.DIVE_TICKS - 4.0F;
 		float end = WorkingCraftDaemonPath.DIVE_TICKS + 16.0F;
-		return smoothstep(clamp01((culminationTicks - start) / (end - start)));
+		return HemoEasing.smoothstep((culminationTicks - start) / (end - start));
 	}
 
 	/** The membrane's colour darkening toward clotted blood as the daemon possesses the structure. */
 	public static int possessionTint(int rgb, float possession) {
-		float p = clamp01(possession);
+		float p = HemoEasing.clamp01(possession);
 		int dark = 0x3A0208;
 		int r = Math.round((rgb >> 16 & 0xFF) + ((dark >> 16 & 0xFF) - (rgb >> 16 & 0xFF)) * p);
 		int g = Math.round((rgb >> 8 & 0xFF) + ((dark >> 8 & 0xFF) - (rgb >> 8 & 0xFF)) * p);
@@ -90,15 +91,15 @@ public final class WorkingCraftSwallowRules {
 	public static List<Vec3> tentacleSpine(double cornerX, double cornerZ, double outX, double outZ, double top,
 			double time, int seed, float grip) {
 		int points = 10;
-		double tight = 1.0D - 0.5D * clamp01(grip);
-		double speed = 0.22D + 0.18D * clamp01(grip);
+		double tight = 1.0D - 0.5D * HemoEasing.clamp01(grip);
+		double speed = 0.22D + 0.18D * HemoEasing.clamp01(grip);
 		List<Vec3> spine = new ArrayList<>(points);
 		for (int i = 0; i < points; i++) {
 			double t = i / (points - 1.0D);
 			double flare = 0.34D * (1.0D - t) * (1.0D - t) * tight;
 			double wave = Math.sin(t * 7.0D - time * speed + seed) * (0.10D + 0.08D * t) * tight;
 			double breathe = Math.sin(t * 4.0D - time * speed * 0.7D + seed * 0.7D) * 0.05D * t;
-			double hook = smoothstep(clamp01((float) ((t - 0.75D) / 0.25D)));
+			double hook = HemoEasing.smoothstep((float) ((t - 0.75D) / 0.25D));
 			double away = flare + 0.04D + breathe - 0.45D * hook;
 			spine.add(new Vec3(cornerX + outX * away + outZ * wave * 0.7D,
 					0.02D + top * t + 0.25D * hook,
@@ -109,20 +110,12 @@ public final class WorkingCraftSwallowRules {
 
 	/** The fill of a craft that ended without completing, draining back into the floor. */
 	public static float drainFill(float startFill, float age) {
-		return clamp01(startFill) * (1.0F - smoothstep(clamp01(age / DRAIN_TICKS)));
+		return HemoEasing.clamp01(startFill) * (1.0F - HemoEasing.smoothstep(age / DRAIN_TICKS));
 	}
 
 	/** One hard pulse up the structure when it seals; {@code age} below zero means no seal is remembered. */
 	public static float sealPulse(float age) {
 		if (age < 0.0F) return 0.0F;
-		return 1.0F - smoothstep(clamp01(age / SEAL_PULSE_TICKS));
-	}
-
-	static float smoothstep(float value) {
-		return value * value * (3.0F - 2.0F * value);
-	}
-
-	static float clamp01(float value) {
-		return Math.max(0.0F, Math.min(1.0F, value));
+		return 1.0F - HemoEasing.smoothstep(age / SEAL_PULSE_TICKS);
 	}
 }

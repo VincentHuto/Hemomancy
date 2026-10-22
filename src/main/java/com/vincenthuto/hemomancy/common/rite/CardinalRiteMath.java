@@ -12,40 +12,6 @@ public final class CardinalRiteMath {
 	private CardinalRiteMath() {
 	}
 
-	public static float clamp01(float value) {
-		return Math.max(0.0F, Math.min(1.0F, value));
-	}
-
-	public static double clamp01(double value) {
-		return Math.max(0.0D, Math.min(1.0D, value));
-	}
-
-	/** Hermite smoothstep of a value clamped to [0,1]. */
-	public static float smoothstep(float value) {
-		float clamped = clamp01(value);
-		return clamped * clamped * (3.0F - 2.0F * clamped);
-	}
-
-	/** Smoothstep of {@code value} between two edges. */
-	public static float smoothstep(float edge0, float edge1, float value) {
-		if (edge1 == edge0) return value < edge0 ? 0.0F : 1.0F;
-		return smoothstep((value - edge0) / (edge1 - edge0));
-	}
-
-	public static float lerp(float amount, float start, float end) {
-		return start + (end - start) * amount;
-	}
-
-	public static float easeOutCubic(float value) {
-		float inverse = 1.0F - clamp01(value);
-		return 1.0F - inverse * inverse * inverse;
-	}
-
-	public static float easeInCubic(float value) {
-		float clamped = clamp01(value);
-		return clamped * clamped * clamped;
-	}
-
 	/** An angle wrapped into [0, 2π). */
 	public static double normalizeAngle(double angle) {
 		double normalized = angle % FULL_CIRCLE;
@@ -64,13 +30,5 @@ public final class CardinalRiteMath {
 	 */
 	public static float heartbeat(float time) {
 		return CardinalRiteFloorVisualRules.heartbeat(time);
-	}
-
-	/** A one-shot envelope: rises over {@code attack} ticks, then decays to zero by {@code length}. */
-	public static float pulse(float age, float attack, float length) {
-		if (age < 0.0F || age >= length) return 0.0F;
-		if (age < attack) return smoothstep(age / Math.max(0.0001F, attack));
-		float decay = 1.0F - (age - attack) / Math.max(0.0001F, length - attack);
-		return decay * decay;
 	}
 }

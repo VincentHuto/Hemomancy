@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCancellationRules;
-import com.vincenthuto.hemomancy.common.rite.CardinalRiteMath;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRitePlantingSequence;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
@@ -26,12 +26,10 @@ public final class CardinalRiteStaffTendrilGeometry {
 	}
 
 	public static float visibilityProgress(float staffPlantingTicks, float cancellationTicks) {
-		float formation = staffPlantingTicks < 0.0F ? 1.0F : clamp(
-				(staffPlantingTicks - CardinalRitePlantingSequence.IMPACT_TICK)
+		float formation = staffPlantingTicks < 0.0F ? 1.0F : HemoEasing.clamp01((staffPlantingTicks - CardinalRitePlantingSequence.IMPACT_TICK)
 						/ (CardinalRitePlantingSequence.DURATION_TICKS
 								- CardinalRitePlantingSequence.IMPACT_TICK));
-		float retraction = 1.0F - clamp(
-				cancellationTicks / CardinalRiteCancellationRules.TOTAL_TICKS);
+		float retraction = 1.0F - HemoEasing.clamp01(cancellationTicks / CardinalRiteCancellationRules.TOTAL_TICKS);
 		return Math.min(formation, retraction);
 	}
 
@@ -39,7 +37,7 @@ public final class CardinalRiteStaffTendrilGeometry {
 		if (joints == null || joints.size() < 2 || visibilityProgress <= 0.0F) {
 			return List.of();
 		}
-		float visibleSegments = clamp(visibilityProgress) * (joints.size() - 1);
+		float visibleSegments = HemoEasing.clamp01(visibilityProgress) * (joints.size() - 1);
 		int completeSegments = Math.min(joints.size() - 1, (int) Math.floor(visibleSegments));
 		List<Joint> visible = new ArrayList<>(completeSegments + 2);
 		for (int index = 0; index <= completeSegments; index++) {
@@ -100,10 +98,6 @@ public final class CardinalRiteStaffTendrilGeometry {
 			strands.add(new Strand(strandIndex, List.copyOf(joints)));
 		}
 		return List.copyOf(strands);
-	}
-
-	private static float clamp(float value) {
-		return CardinalRiteMath.clamp01(value);
 	}
 
 	public record Strand(int index, List<Joint> joints) implements SanguineTendrilRibbonRenderer.Strand {

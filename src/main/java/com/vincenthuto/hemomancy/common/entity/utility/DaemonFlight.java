@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.utility;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 /**
  * How the daemon's smoke carries itself as it moves, eased tick by tick on the client from how it actually moved:
  * a smoothed velocity; the way its crown points (straight up while it hovers, swinging over to lead along its path,
@@ -48,7 +50,7 @@ public final class DaemonFlight {
 		velocityY += (motionY - velocityY) * VELOCITY_RATE;
 		velocityZ += (motionZ - velocityZ) * VELOCITY_RATE;
 		double speed = Math.sqrt(velocityX * velocityX + velocityY * velocityY + velocityZ * velocityZ);
-		double lean = smooth((speed - HOVER_SPEED) / (FULL_SPEED - HOVER_SPEED));
+		double lean = HemoEasing.smoothstep((speed - HOVER_SPEED) / (FULL_SPEED - HOVER_SPEED));
 		double forwardX = -Math.sin(yaw);
 		double forwardZ = Math.cos(yaw);
 
@@ -131,11 +133,6 @@ public final class DaemonFlight {
 
 	private static double length(double[] v) {
 		return Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-	}
-
-	private static double smooth(double value) {
-		double t = clamp(value, 0.0D, 1.0D);
-		return t * t * (3.0D - 2.0D * t);
 	}
 
 	private static double clamp(double value, double min, double max) {

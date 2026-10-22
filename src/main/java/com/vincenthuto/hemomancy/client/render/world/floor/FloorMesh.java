@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorGeometry;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorVisualRules;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
@@ -576,13 +577,9 @@ public final class FloorMesh {
 
 	/** The throat's height {@code t} of the way in from its rim: a slope falling away, then a cuff riding back up. */
 	private static float throatHeight(float t, float depth, float cuff) {
-		float fall = smooth(Math.min(1.0F, t / 0.82F));
-		float rise = smooth(Math.max(0.0F, (t - 0.78F) / 0.22F));
+		float fall = HemoEasing.smoothstepUnclamped(Math.min(1.0F, t / 0.82F));
+		float rise = HemoEasing.smoothstepUnclamped(Math.max(0.0F, (t - 0.78F) / 0.22F));
 		return THROAT_TOP - depth * fall + cuff * rise;
-	}
-
-	private static float smooth(float t) {
-		return t * t * (3.0F - 2.0F * t);
 	}
 
 	private static void throatVertex(VertexConsumer consumer, Matrix4f matrix, int k, float[] xs, float[] ys,
@@ -1279,7 +1276,7 @@ public final class FloorMesh {
 					float lit = nx * SLOPE_LIGHT.x() + ny * SLOPE_LIGHT.y() + nz * SLOPE_LIGHT.z();
 					shade[k] = Math.round(255 * Math.min(1.0F, (0.55F + 0.45F * Math.max(0.0F, lit)) / FLAT_SHADE));
 				}
-				float fade = smooth(Math.min(1.0F, t / EMERGE));
+				float fade = HemoEasing.smoothstepUnclamped(Math.min(1.0F, t / EMERGE));
 				if (previous != null) {
 					int a0 = Math.round(alpha * previousAlpha);
 					int a1 = Math.round(alpha * fade);

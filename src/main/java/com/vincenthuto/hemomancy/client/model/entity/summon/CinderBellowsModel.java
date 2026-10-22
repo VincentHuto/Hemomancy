@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.summon.CinderBellowsEntity;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -103,11 +104,11 @@ public class CinderBellowsModel extends EntityModel<CinderBellowsEntity> {
     }
 
     private static float inhale(float cycle) {
-        return smooth(cycle <= 20 ? cycle / 20 : cycle <= 60 ? 1 : (100 - cycle) / 40);
+        return HemoEasing.smoothstep(cycle <= 20 ? cycle / 20 : cycle <= 60 ? 1 : (100 - cycle) / 40);
     }
 
     private static float exhale(float cycle) {
-        return smooth((cycle - 20) / 5) * (1 - smooth((cycle - 60) / 12));
+        return HemoEasing.smoothstep((cycle - 20) / 5) * (1 - HemoEasing.smoothstep((cycle - 60) / 12));
     }
 
     /** Shared posing entry point for runtime rendering and authoring previews. */
@@ -147,11 +148,6 @@ public class CinderBellowsModel extends EntityModel<CinderBellowsEntity> {
             forearms[i].xRot -= exhale * .3F;
             hands[i].xRot += Mth.sin(age * .05F + i * Mth.PI) * .035F;
         }
-    }
-
-    private static float smooth(float value) {
-        float t = Mth.clamp(value, 0, 1);
-        return t * t * (3 - 2 * t);
     }
 
     @Override

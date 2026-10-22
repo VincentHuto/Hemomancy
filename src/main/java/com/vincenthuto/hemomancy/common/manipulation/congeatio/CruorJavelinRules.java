@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.congeatio;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 /**
  * Presentation timeline for Cruor Javelin, free of Minecraft types so it can be tested on the JVM.
  * The shaft freezes together at the hand, flies, bursts into frost fingers on the body, then shatters.
@@ -15,31 +17,22 @@ public final class CruorJavelinRules {
 
     /** How much of the shaft has frozen together at the hand. */
     public static double formation(double age) {
-        return smooth(age / FORM_END);
+        return HemoEasing.smoothstep(age / FORM_END);
     }
 
     /** Fraction of the flight covered, accelerating like a thrown weight. */
     public static double travel(double age) {
-        double t = clamp((age - FORM_END) / (FLIGHT_END - FORM_END));
+        double t = HemoEasing.clamp01((age - FORM_END) / (FLIGHT_END - FORM_END));
         return t * t;
     }
 
     /** Frost bursting from the point of impact, 0 to 1. */
     public static double impact(double age) {
-        return smooth((age - FLIGHT_END) / (IMPACT_END - FLIGHT_END));
+        return HemoEasing.smoothstep((age - FLIGHT_END) / (IMPACT_END - FLIGHT_END));
     }
 
     /** The lodged shaft shattering and melting away, 0 whole to 1 gone. */
     public static double shatter(double age) {
-        return smooth((age - IMPACT_END) / (VISUAL_TICKS - IMPACT_END));
-    }
-
-    public static double smooth(double t) {
-        double c = clamp(t);
-        return c * c * (3 - 2 * c);
-    }
-
-    private static double clamp(double t) {
-        return Math.max(0, Math.min(1, t));
+        return HemoEasing.smoothstep((age - IMPACT_END) / (VISUAL_TICKS - IMPACT_END));
     }
 }

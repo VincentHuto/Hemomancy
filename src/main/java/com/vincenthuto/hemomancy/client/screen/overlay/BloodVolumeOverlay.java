@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeClientPacket;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -851,9 +852,9 @@ public class BloodVolumeOverlay {
     private int alphaBlend(int base, int overlay) {
         float overlayA = alpha(overlay) / 255.0f;
         int a = Math.max(alpha(base), alpha(overlay));
-        int r = (int) (red(base) * (1.0f - overlayA) + red(overlay) * overlayA);
-        int g = (int) (green(base) * (1.0f - overlayA) + green(overlay) * overlayA);
-        int b = (int) (blue(base) * (1.0f - overlayA) + blue(overlay) * overlayA);
+        int r = (int) HemoEasing.crossfade(red(base), red(overlay), overlayA);
+        int g = (int) HemoEasing.crossfade(green(base), green(overlay), overlayA);
+        int b = (int) HemoEasing.crossfade(blue(base), blue(overlay), overlayA);
         return (a << 24) | (r << 16) | (g << 8) | b;
     }
 

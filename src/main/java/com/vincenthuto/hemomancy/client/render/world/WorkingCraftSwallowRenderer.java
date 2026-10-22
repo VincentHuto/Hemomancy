@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteEventKind;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorVisualRules;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -190,7 +191,7 @@ public final class WorkingCraftSwallowRenderer {
 			if (ghost.kind() == CardinalRiteEventKind.COMPLETED) {
 				if (age > WorkingCraftSwallowRules.THUD_TICK + 8) continue;
 				// Still possessed while it is dragged under; the membrane closes over it after the thud.
-				float fade = 1.0F - WorkingCraftSwallowRules.clamp01((age - WorkingCraftSwallowRules.THUD_TICK) / 8.0F);
+				float fade = 1.0F - HemoEasing.clamp01((age - WorkingCraftSwallowRules.THUD_TICK) / 8.0F);
 				view = view(entry, 1.0F, -1.0D, fade, 0.0F, 1.0F);
 				if (view != null) view = withSink(view, WorkingCraftSwallowRules.sinkOffset(age, view.height()));
 			} else {

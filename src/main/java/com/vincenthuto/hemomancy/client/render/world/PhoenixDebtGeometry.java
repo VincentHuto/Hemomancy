@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
-import static com.vincenthuto.hemomancy.client.render.world.BloodShotGeometry.smooth;
 import static com.vincenthuto.hemomancy.client.render.world.LuxUmbraGeometry.card;
 import static com.vincenthuto.hemomancy.client.render.world.LuxUmbraGeometry.facingSide;
 import static com.vincenthuto.hemomancy.client.render.world.LuxUmbraGeometry.ground;
@@ -12,6 +11,7 @@ import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.manipulation.animus.HematicRiposteRules;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -52,18 +52,18 @@ final class PhoenixDebtGeometry {
 
     /** How far the wings have spread: emerge folded, unfurl past full, hold through the beats, fold as they burn away. */
     static double spread(double age) {
-        if (age < ERUPT_END) return .25 * smooth(age / ERUPT_END);
+        if (age < ERUPT_END) return .25 * HemoEasing.smoothstep(age / ERUPT_END);
         if (age < SPREAD_END) {
             double t = (age - ERUPT_END) / (SPREAD_END - ERUPT_END), c = 1.6;
             return .25 + .75 * (1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2));
         }
         if (age < BEAT_END) return 1;
-        return 1 - .7 * smooth((age - BEAT_END) / (TICKS - BEAT_END));
+        return 1 - .7 * HemoEasing.smoothstep((age - BEAT_END) / (TICKS - BEAT_END));
     }
 
     /** Wing elevation through the beats, from -1 (down stroke) to 1 (raised), easing in and out of the beat phase. */
     static double beat(double age) {
-        double envelope = smooth((age - (SPREAD_END - 2)) / 4) * (1 - smooth((age - BEAT_END) / 4));
+        double envelope = HemoEasing.smoothstep((age - (SPREAD_END - 2)) / 4) * (1 - HemoEasing.smoothstep((age - BEAT_END) / 4));
         return envelope <= 0 ? 0 : Math.sin((age - SPREAD_END) * Math.PI * 2 / BEAT_PERIOD) * envelope;
     }
 
@@ -90,18 +90,18 @@ final class PhoenixDebtGeometry {
         double s = frame.scale(), r = Math.max(1, packet.radius());
         Vec3 f = vec(HematicRiposteRules.forward(frame.bodyYaw())), side = vec(HematicRiposteRules.right(frame.bodyYaw()));
         double spread = spread(age), beat = beat(age);
-        float burn = (float) smooth((age - BEAT_END) / (TICKS - BEAT_END));
+        float burn = (float) HemoEasing.smoothstep((double) ((age - BEAT_END) / (TICKS - BEAT_END)));
 
         // 1. Eruption: a flame column and a molten shock pool racing out to the blast's edge.
         if (age < ERUPT_END + 6 && !frame.firstPerson()) {
-            float surge = alpha * (1 - (float) smooth((age - 2) / (ERUPT_END + 4.0)));
-            double height = 1.8 * s * (.6 + .4 * smooth(age / 2.0));
+            float surge = alpha * (1 - (float) HemoEasing.smoothstep((age - 2) / (ERUPT_END + 4.0)));
+            double height = 1.8 * s * (.6 + .4 * HemoEasing.smoothstep(age / 2.0));
             card(p, flame, UP.scale(height * .75), right, UP, .55 * s, height, TORCH, seed, WHITE, surge);
             card(p, flame, UP.scale(height * .7), right, UP, .9 * s, height * 1.1, FLAME, seed + 1, WHITE, surge * .7f);
         }
         if (age < 20) {
-            double wave = r * smooth(age / 8.0);
-            float pool = alpha * (1 - (float) smooth((age - 8) / 12.0));
+            double wave = r * HemoEasing.smoothstep(age / 8.0);
+            float pool = alpha * (1 - (float) HemoEasing.smoothstep((age - 8) / 12.0));
             ground(p, molten, new Vec3(0, .05, 0), wave, MOLTEN_POOL, seed + 2, WHITE, pool * .9f);
             if (age > 3 && age < 14)
                 for (int i = 0; i < 10; i++) {
@@ -117,7 +117,7 @@ final class PhoenixDebtGeometry {
         // 3. Wings.
         Vec3 root = UP.scale((frame.crouching() ? 1.12 : 1.35) * s).add(f.scale(-.2 * s));
         float body = alpha * (1 - burn * .85f);
-        double grow = smooth((age - 1) / 8.0);
+        double grow = HemoEasing.smoothstep((age - 1) / 8.0);
         for (int w = -1; w <= 1; w += 2) {
             Vec3 shoulder = root.add(side.scale(w * .12 * s));
             Vec3[] bone = new Vec3[4];

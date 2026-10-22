@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.player;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelPart;
@@ -15,12 +16,12 @@ public final class HematicMicroscopePose {
     public static final float VIAL_SCALE = .38F;
     private HematicMicroscopePose() { }
 
-    public static float weight(float tick) { return smooth(tick / 6); }
-    public static float overlayAlpha(float tick) { return smooth((tick - 12) / 4); }
+    public static float weight(float tick) { return HemoEasing.smoothstep(tick / 6); }
+    public static float overlayAlpha(float tick) { return HemoEasing.smoothstep((tick - 12) / 4); }
     public static Vector3f seatedHead(boolean right) { return new Vector3f(right ? -.075F : .075F, .125F, 0); }
 
     public static void firstPersonInstrument(PoseStack poses, float tick, boolean right) {
-        float raise = smooth(tick / 6), viewing = overlayAlpha(tick), side = right ? 1 : -1;
+        float raise = HemoEasing.smoothstep(tick / 6), viewing = overlayAlpha(tick), side = right ? 1 : -1;
         poses.translate(side * Mth.lerp(viewing, .25F, 0),
                 Mth.lerp(viewing, -.48F + .32F * raise, 0), Mth.lerp(viewing, -.7F, -.2F));
         poses.scale(INSTRUMENT_SCALE, INSTRUMENT_SCALE, INSTRUMENT_SCALE);
@@ -29,7 +30,7 @@ public final class HematicMicroscopePose {
 
     public static void thirdPersonInstrument(PoseStack poses, HumanoidModel<?> model, float tick, boolean right) {
         model.head.translateAndRotate(poses);
-        float raise = smooth(tick / 6), viewing = overlayAlpha(tick), side = right ? -1 : 1;
+        float raise = HemoEasing.smoothstep(tick / 6), viewing = overlayAlpha(tick), side = right ? -1 : 1;
         poses.translate(side * Mth.lerp(viewing, .18F, .125F),
                 Mth.lerp(viewing, .35F - .25F * raise, -.25F), Mth.lerp(viewing, -.65F, -.25F));
         poses.mulPose(Axis.ZP.rotationDegrees(180));
@@ -40,9 +41,9 @@ public final class HematicMicroscopePose {
     public static void vial(PoseStack poses, PoseStack instrument, float tick, boolean right) {
         poses.mulPose(instrument.last().pose());
         var head = seatedHead(right);
-        float inserted = smooth((tick - 6) / 6);
+        float inserted = HemoEasing.smoothstep((tick - 6) / 6);
         head.x += (right ? -1 : 1) * .42F * (1 - inserted);
-        head.y -= .15F * (1 - smooth(tick / 6));
+        head.y -= .15F * (1 - HemoEasing.smoothstep(tick / 6));
         poses.translate(head.x, head.y, head.z);
         poses.mulPose(new Quaternionf().rotationTo(new Vector3f(1, 1, 0).normalize(),
                 new Vector3f(right ? 1 : -1, 0, 0)));
@@ -82,10 +83,5 @@ public final class HematicMicroscopePose {
 
     private static float lerpRadians(float weight, float from, float to) {
         return from + weight * (float) Math.atan2(Math.sin(to - from), Math.cos(to - from));
-    }
-
-    private static float smooth(float t) {
-        t = Mth.clamp(t, 0, 1);
-        return t * t * (3 - 2 * t);
     }
 }

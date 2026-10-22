@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite.sigil;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,9 +17,9 @@ public final class IchorianSigilOrganicGeometry {
 			float time, long seed, int step, int steps, float baseHalfWidth) {
 		int safeSteps = Math.max(1, steps);
 		double progress = Math.max(0.0D, Math.min(1.0D, step / (double) safeSteps));
-		double x = lerp(startX, endX, progress);
-		double y = lerp(startY, endY, progress);
-		double z = lerp(startZ, endZ, progress);
+		double x = HemoEasing.lerp(startX, endX, progress);
+		double y = HemoEasing.lerp(startY, endY, progress);
+		double z = HemoEasing.lerp(startZ, endZ, progress);
 		double dx = endX - startX;
 		double dz = endZ - startZ;
 		double horizontalLength = Math.hypot(dx, dz);
@@ -165,10 +166,6 @@ public final class IchorianSigilOrganicGeometry {
 		mixed *= 0xff51afd7ed558ccdL;
 		mixed ^= mixed >>> 33;
 		return (mixed & 0xFFFFL) / 65535.0D * Math.PI * 2.0D;
-	}
-
-	private static double lerp(double start, double end, double progress) {
-		return start + (end - start) * progress;
 	}
 
 	public record Sample(double x, double y, double z, float halfWidth, float redIntensity) {

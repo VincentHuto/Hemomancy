@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.animus;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 /**
  * Presentation timeline for Blood Rush, free of Minecraft types so it can be tested on the JVM. The heart pumps blood
  * down into the legs, the body launches inside a streaming sheath of it, and the sheath frays off behind. The server
@@ -20,7 +22,7 @@ public final class BloodRushRules {
 
     /** 0 → 1 over the surge. */
     public static double surge(double age) {
-        return smooth(age / SURGE_END);
+        return HemoEasing.smoothstep(age / SURGE_END);
     }
 
     /** Wake length factor: grows through the launch, then holds while the sheath frays. */
@@ -32,7 +34,7 @@ public final class BloodRushRules {
 
     /** 0 → 1 as the sheath frays apart after the launch. */
     public static double fray(double age) {
-        return smooth((age - LAUNCH_END) / (VISUAL_TICKS - LAUNCH_END));
+        return HemoEasing.smoothstep((age - LAUNCH_END) / (VISUAL_TICKS - LAUNCH_END));
     }
 
     /**
@@ -43,10 +45,5 @@ public final class BloodRushRules {
         double t = (age - ring * 0.8) / 2.4;
         if (t < 0) return 1;
         return t > 1 ? -1 : 1 - t;
-    }
-
-    static double smooth(double t) {
-        double c = Math.max(0, Math.min(1, t));
-        return c * c * (3 - 2 * c);
     }
 }

@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.world;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteBoundaryProgress;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteMath;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAnchorVisualRules;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.core.BlockPos;
 
 import java.util.List;
@@ -70,7 +71,7 @@ public final class CardinalRiteBoundaryGeometry {
 		for (int index = 0; index < endpointAngles.size(); index++) {
 			nearest = Math.min(nearest, CardinalRiteMath.angularDistance(angle, endpointAngles.get(index)));
 		}
-		return CardinalRiteMath.smoothstep((float) Math.min(1.0D, nearest / fadeAngle));
+		return HemoEasing.smoothstep((float) Math.min(1.0D, nearest / fadeAngle));
 	}
 
 	public static float veinRootRadius(float boundaryRadius, float boundaryWidth, float undulation) {
@@ -114,7 +115,7 @@ public final class CardinalRiteBoundaryGeometry {
 	public static List<CardinalRiteBoundaryProgress.Segment> animatedSocketArcs(
 			CardinalRiteBoundaryProgress.Segment segment, float growth,
 			double startClearance, double endClearance) {
-		float clampedGrowth = CardinalRiteMath.clamp01(growth);
+		float clampedGrowth = HemoEasing.clamp01(growth);
 		if (clampedGrowth <= 0.0F) return List.of();
 		double clampedStart = Math.max(0.0D, startClearance);
 		double clampedEnd = Math.max(0.0D, endClearance);
@@ -143,21 +144,21 @@ public final class CardinalRiteBoundaryGeometry {
 	}
 
 	public static float socketFill(float blobRadius) {
-		return CardinalRiteMath.clamp01(blobRadius / FULL_BOUNDARY_BLOB_RADIUS);
+		return HemoEasing.clamp01(blobRadius / FULL_BOUNDARY_BLOB_RADIUS);
 	}
 
 	public static float sealPulseAlpha(float effectAge) {
 		if (effectAge < 0.0F) return 0.0F;
-		float remaining = CardinalRiteMath.clamp01(1.0F - effectAge / 10.0F);
+		float remaining = HemoEasing.clamp01(1.0F - effectAge / 10.0F);
 		return remaining * remaining;
 	}
 
 	public static float sealTravel(float effectAge) {
-		return CardinalRiteMath.clamp01(effectAge / 8.0F);
+		return HemoEasing.clamp01(effectAge / 8.0F);
 	}
 
 	public static float bolusProgress(float effectAge) {
-		return CardinalRiteMath.clamp01((effectAge - 3.0F) / 14.0F);
+		return HemoEasing.clamp01((effectAge - 3.0F) / 14.0F);
 	}
 
 	public static float bolusAlpha(float effectAge) {
@@ -168,7 +169,7 @@ public final class CardinalRiteBoundaryGeometry {
 
 	public static SocketDistortion socketDistortion(
 			double angle, float time, int anchorIndex, float integrity) {
-		float damage = 1.0F - CardinalRiteMath.clamp01(integrity);
+		float damage = 1.0F - HemoEasing.clamp01(integrity);
 		if (damage <= 0.0F) return SocketDistortion.NONE;
 		float offsetX = (float) Math.sin(time * 0.91F + anchorIndex * 1.7F)
 				* 0.06F * damage;
@@ -198,11 +199,11 @@ public final class CardinalRiteBoundaryGeometry {
 	}
 
 	public static float integrityWidth(float healthyWidth, float integrity) {
-		return healthyWidth * (0.22F + 0.78F * CardinalRiteMath.clamp01(integrity));
+		return healthyWidth * (0.22F + 0.78F * HemoEasing.clamp01(integrity));
 	}
 
 	public static float integrityBrightness(float integrity) {
-		return 0.12F + 0.88F * CardinalRiteMath.clamp01(integrity);
+		return 0.12F + 0.88F * HemoEasing.clamp01(integrity);
 	}
 
 	public static float arterialHighlight(double angle, float time, int ring) {
@@ -220,7 +221,7 @@ public final class CardinalRiteBoundaryGeometry {
 	}
 
 	public static float stainOpacity(float progress) {
-		return CardinalRiteMath.smoothstep(progress);
+		return HemoEasing.smoothstep(progress);
 	}
 
 	public static float socketStainOuterRadius(float socketRadius) {
@@ -241,7 +242,7 @@ public final class CardinalRiteBoundaryGeometry {
 		if (radialDistance <= featherStart) return socketStainEdgeAlpha(intensity);
 		if (radialDistance >= outerRadius) return 0.0F;
 		float progress = (radialDistance - featherStart) / (outerRadius - featherStart);
-		return socketStainEdgeAlpha(intensity) * (1.0F - CardinalRiteMath.smoothstep(progress));
+		return socketStainEdgeAlpha(intensity) * (1.0F - HemoEasing.smoothstep(progress));
 	}
 
 	public static float boundaryStainSocketMask(
@@ -251,7 +252,7 @@ public final class CardinalRiteBoundaryGeometry {
 		float safeRadius = Math.max(0.0F, socketRadius);
 		if (distance <= safeRadius) return 0.0F;
 		if (feather <= 0.0F) return 1.0F;
-		return CardinalRiteMath.smoothstep((distance - safeRadius) / feather);
+		return HemoEasing.smoothstep((distance - safeRadius) / feather);
 	}
 
 	public static float socketStainInnerAlpha(float intensity) {

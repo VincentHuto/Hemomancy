@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.ferric;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 /**
  * Presentation rules for the cell hands (Blood Projection and Blood Absorption), free of Minecraft types so they can be
  * tested on the JVM. Summoning bursts the forearm's veins and wraps the blood into the hardened hand; dispelling
@@ -52,12 +54,12 @@ public final class CellHandRules {
 
     /** 0 → 1 as the strands leave the forearm. */
     public static double erupt(double age) {
-        return smooth(age / ERUPT_END);
+        return HemoEasing.smoothstep(age / ERUPT_END);
     }
 
     /** 0 → 1 as the strands wrap the hand. */
     public static double wrap(double age) {
-        return smooth((age - ERUPT_END) / (WRAP_END - ERUPT_END));
+        return HemoEasing.smoothstep((age - ERUPT_END) / (WRAP_END - ERUPT_END));
     }
 
     /** Flash strength at the set, peaking a tick in. */
@@ -68,12 +70,12 @@ public final class CellHandRules {
 
     /** 0 → 1 as a summon's leftover strands fray after the set. */
     public static double settle(double age) {
-        return smooth((age - SET_END) / (SUMMON_TICKS - SET_END));
+        return HemoEasing.smoothstep((age - SET_END) / (SUMMON_TICKS - SET_END));
     }
 
     /** 0 → 1 as a dispelled hand unravels and its blood sinks back into the arm. */
     public static double unravel(double age) {
-        return smooth(age / (DISPEL_TICKS * 0.75));
+        return HemoEasing.smoothstep(age / (DISPEL_TICKS * 0.75));
     }
 
     /**
@@ -83,10 +85,5 @@ public final class CellHandRules {
     public static double usePulse(double time, int ring, boolean absorption) {
         double phase = (time * 0.07 + ring / 3.0) % 1;
         return absorption ? 1 - phase : phase;
-    }
-
-    static double smooth(double t) {
-        double c = Math.max(0, Math.min(1, t));
-        return c * c * (3 - 2 * c);
     }
 }

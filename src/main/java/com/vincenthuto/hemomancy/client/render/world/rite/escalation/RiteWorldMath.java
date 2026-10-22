@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.world.rite.escalation;
 
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteInstability;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 
 /**
  * Every number the rite's world layers use: when each layer arrives, how far it reaches, how strain bends it and
@@ -31,21 +32,12 @@ public final class RiteWorldMath {
 	private RiteWorldMath() {
 	}
 
-	public static float clamp01(float value) {
-		return Math.max(0.0F, Math.min(1.0F, value));
-	}
-
-	private static float smoothstep(float edge0, float edge1, float value) {
-		float t = clamp01((value - edge0) / (edge1 - edge0));
-		return t * t * (3.0F - 2.0F * t);
-	}
-
 	private static boolean ruptured(CardinalRiteInstability strain) {
 		return strain == CardinalRiteInstability.RUPTURING || strain == CardinalRiteInstability.COLLAPSED;
 	}
 
 	public static float level(int stage, int total) {
-		return total <= 0 ? 0.0F : clamp01(stage / (float) total);
+		return total <= 0 ? 0.0F : HemoEasing.clamp01(stage / (float) total);
 	}
 
 	/** The first step of a rite with {@code total} steps that reaches a threshold. */
@@ -59,16 +51,16 @@ public final class RiteWorldMath {
 	 * the rite's step count. With no step count it fades in over {@link #ARRIVAL_SOFTNESS} below the threshold.
 	 */
 	public static float arrival(float level, float from, int total) {
-		if (total <= 0) return smoothstep(from - ARRIVAL_SOFTNESS, from, level);
+		if (total <= 0) return HemoEasing.smoothstep(from - ARRIVAL_SOFTNESS, from, level);
 		int first = firstStep(from, total);
 		// The edges are computed exactly as level(stage, total) is, so the step before reads exactly 0.
-		return smoothstep((first - 1) / (float) total, first / (float) total, level);
+		return HemoEasing.smoothstep((first - 1) / (float) total, first / (float) total, level);
 	}
 
 	/** How far past {@code from} the level has gone, 0 to 1. */
 	public static float ramp(float level, float from) {
 		if (from >= 1.0F) return level >= 1.0F ? 1.0F : 0.0F;
-		return clamp01((level - from) / (1.0F - from));
+		return HemoEasing.clamp01((level - from) / (1.0F - from));
 	}
 
 	/** A layer that arrives showing {@code start} of itself on its own step and grows to the whole by level 1. */
@@ -107,17 +99,17 @@ public final class RiteWorldMath {
 
 	/** The far-plane multiplier a rite asks for at full viewer weight. */
 	public static float farPlaneScale(float level, String profile, CardinalRiteInstability strain) {
-		return (1.0F + (farPlaneAtFull(profile) - 1.0F) * clamp01(level)) * strainFarScale(strain);
+		return (1.0F + (farPlaneAtFull(profile) - 1.0F) * HemoEasing.clamp01(level)) * strainFarScale(strain);
 	}
 
 	/** Applies a far-plane multiplier at a viewer weight, never pulling the fog inside {@link #MIN_FAR_PLANE}. */
 	public static float applyFarPlane(float far, float scale, float weight) {
 		if (far <= MIN_FAR_PLANE) return far;
-		return Math.max(MIN_FAR_PLANE, far * (1.0F + (scale - 1.0F) * clamp01(weight)));
+		return Math.max(MIN_FAR_PLANE, far * (1.0F + (scale - 1.0F) * HemoEasing.clamp01(weight)));
 	}
 
 	public static float trenchFill(float level) {
-		return clamp01(level);
+		return HemoEasing.clamp01(level);
 	}
 
 	public static float overflow(float level, int total) {
@@ -152,7 +144,7 @@ public final class RiteWorldMath {
 
 	/** Ticks between a storm rite's ambient strikes from its wound: rarer early, more frequent as it deepens. */
 	public static int woundStrikeInterval(float level) {
-		return Math.round(80.0F - 50.0F * clamp01(level));
+		return Math.round(80.0F - 50.0F * HemoEasing.clamp01(level));
 	}
 
 	public static float rainLevel(float level, int total) {
@@ -162,20 +154,20 @@ public final class RiteWorldMath {
 	public static int rainPerTick(float rainLevel, float footprint, float particleScale,
 			CardinalRiteInstability strain) {
 		float thick = strain == CardinalRiteInstability.STABLE ? 1.0F : 1.25F;
-		int count = Math.round(clamp01(rainLevel) * (2.0F + 0.5F * footprint) * thick);
+		int count = Math.round(HemoEasing.clamp01(rainLevel) * (2.0F + 0.5F * footprint) * thick);
 		return Math.round(Math.min(MAX_RAIN_PER_TICK, count) * Math.max(0.0F, particleScale));
 	}
 
 	/** A brazier fire's height multiplier: fed taller as the rite deepens, guttered by strain. */
 	public static float flameHeight(float level, CardinalRiteInstability strain, float beat, float flicker) {
-		float height = 1.0F + 0.5F * clamp01(level);
+		float height = 1.0F + 0.5F * HemoEasing.clamp01(level);
 		if (strain == CardinalRiteInstability.STRAINED) return height * 0.75F * flicker;
-		if (ruptured(strain)) return height * (0.15F + 0.85F * clamp01(beat));
+		if (ruptured(strain)) return height * (0.15F + 0.85F * HemoEasing.clamp01(beat));
 		return height;
 	}
 
 	public static float flameLeanDegrees(float level) {
-		return 20.0F * clamp01(level);
+		return 20.0F * HemoEasing.clamp01(level);
 	}
 
 	/** Braziers burn in the sanguine palette once the rite is halfway through. */
@@ -185,7 +177,7 @@ public final class RiteWorldMath {
 
 	public static float droneVolume(float level, float weight, boolean still) {
 		if (still || level <= 0.0F) return 0.0F;
-		return weight * (0.35F + 0.4F * clamp01(level));
+		return weight * (0.35F + 0.4F * HemoEasing.clamp01(level));
 	}
 
 	public static float heartbeatVolume(float level, int total, float weight, boolean still) {
@@ -213,10 +205,10 @@ public final class RiteWorldMath {
 	public static float groundEnding(Ending ending, float age) {
 		return switch (ending) {
 			case NONE -> 1.0F;
-			case COMPLETED -> 1.0F - clamp01(age / 60.0F);
-			case COLLAPSED -> 1.0F - clamp01(age / 20.0F);
-			case CANCELLED -> 1.0F - clamp01(age / 80.0F);
-			case VANISHED -> 1.0F - clamp01(age / 16.0F);
+			case COMPLETED -> 1.0F - HemoEasing.clamp01(age / 60.0F);
+			case COLLAPSED -> 1.0F - HemoEasing.clamp01(age / 20.0F);
+			case CANCELLED -> 1.0F - HemoEasing.clamp01(age / 80.0F);
+			case VANISHED -> 1.0F - HemoEasing.clamp01(age / 16.0F);
 		};
 	}
 
@@ -224,9 +216,9 @@ public final class RiteWorldMath {
 	public static float airEnding(Ending ending, float age) {
 		return switch (ending) {
 			case NONE -> 1.0F;
-			case COMPLETED -> 1.0F - clamp01(age / 60.0F);
-			case COLLAPSED, CANCELLED -> 1.0F - clamp01(age / 80.0F);
-			case VANISHED -> 1.0F - clamp01(age / 16.0F);
+			case COMPLETED -> 1.0F - HemoEasing.clamp01(age / 60.0F);
+			case COLLAPSED, CANCELLED -> 1.0F - HemoEasing.clamp01(age / 80.0F);
+			case VANISHED -> 1.0F - HemoEasing.clamp01(age / 16.0F);
 		};
 	}
 
@@ -234,13 +226,13 @@ public final class RiteWorldMath {
 	public static float collapseSurge(Ending ending, float age) {
 		if (ending != Ending.COLLAPSED || age < 0.0F) return 1.0F;
 		if (age < 10.0F) return 1.0F - 0.2F * (age / 10.0F);
-		return 0.8F + 0.2F * clamp01((age - 10.0F) / 70.0F);
+		return 0.8F + 0.2F * HemoEasing.clamp01((age - 10.0F) / 70.0F);
 	}
 
 	public static float rainEnding(Ending ending, float age) {
 		return switch (ending) {
 			case NONE -> 1.0F;
-			case CANCELLED -> 1.0F - clamp01(age / 80.0F);
+			case CANCELLED -> 1.0F - HemoEasing.clamp01(age / 80.0F);
 			default -> 0.0F;
 		};
 	}
@@ -248,10 +240,10 @@ public final class RiteWorldMath {
 	public static float soundEnding(Ending ending, float age) {
 		return switch (ending) {
 			case NONE -> 1.0F;
-			case COMPLETED -> 1.0F - clamp01(age / 40.0F);
+			case COMPLETED -> 1.0F - HemoEasing.clamp01(age / 40.0F);
 			case COLLAPSED -> 0.0F;
-			case CANCELLED -> 1.0F - clamp01(age / 80.0F);
-			case VANISHED -> 1.0F - clamp01(age / 16.0F);
+			case CANCELLED -> 1.0F - HemoEasing.clamp01(age / 80.0F);
+			case VANISHED -> 1.0F - HemoEasing.clamp01(age / 16.0F);
 		};
 	}
 
@@ -259,16 +251,16 @@ public final class RiteWorldMath {
 	public static float woundEnding(Ending ending, float age) {
 		return switch (ending) {
 			case NONE -> 1.0F;
-			case COMPLETED -> 1.0F - smoothstep(0.0F, 14.0F, age);
-			case COLLAPSED -> (1.0F - smoothstep(4.0F, 30.0F, age)) * (1.0F + 0.12F * (float) Math.sin(age * 2.1F));
-			case CANCELLED -> 1.0F - clamp01(age / 80.0F);
-			case VANISHED -> 1.0F - clamp01(age / 16.0F);
+			case COMPLETED -> 1.0F - HemoEasing.smoothstep(0.0F, 14.0F, age);
+			case COLLAPSED -> (1.0F - HemoEasing.smoothstep(4.0F, 30.0F, age)) * (1.0F + 0.12F * (float) Math.sin(age * 2.1F));
+			case CANCELLED -> 1.0F - HemoEasing.clamp01(age / 80.0F);
+			case VANISHED -> 1.0F - HemoEasing.clamp01(age / 16.0F);
 		};
 	}
 
 	/** A flash in the wound: a step's surge, or a completion closing it. */
 	public static float woundFlash(Ending ending, float age, float surge) {
 		float closing = ending == Ending.COMPLETED ? Math.max(0.0F, 1.0F - age / 8.0F) : 0.0F;
-		return Math.max(clamp01(surge), closing);
+		return Math.max(HemoEasing.clamp01(surge), closing);
 	}
 }

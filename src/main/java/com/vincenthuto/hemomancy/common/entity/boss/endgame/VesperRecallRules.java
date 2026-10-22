@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
 import com.vincenthuto.hemomancy.common.summon.PuppetStringsRules;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 
 /**
  * The Recall's string timeline, shared by the server cue and the client geometry. Vesper raises his Crossbar and casts
@@ -28,7 +29,7 @@ public final class VesperRecallRules {
 
 	/** How far the strings have run out from the Crossbar toward the puppet, 0 to 1. */
 	public static double reach(double age) {
-		return PuppetStringsRules.smooth(age / CAST_END);
+		return HemoEasing.smoothstep(age / CAST_END);
 	}
 
 	/** How far the strings sag: loose as they land, drawing taut through the wind-up, rigid from the haul. */
@@ -36,13 +37,13 @@ public final class VesperRecallRules {
 		if (age <= CAST_END) return CAST_SLACK;
 		if (age >= HAUL_TICK) return 0.0D;
 		double t = (age - CAST_END) / (HAUL_TICK - CAST_END);
-		return HOOK_SLACK + (CAST_SLACK - HOOK_SLACK) * (1.0D - PuppetStringsRules.smooth(t));
+		return HOOK_SLACK + (CAST_SLACK - HOOK_SLACK) * (1.0D - HemoEasing.smoothstep(t));
 	}
 
 	/** Strain before the haul: the strings tremble harder the closer it comes. */
 	public static double strain(double age) {
 		if (age <= CAST_END || age >= HAUL_TICK + PuppetStringsRules.SNAP_END) return 0.0D;
-		return PuppetStringsRules.smooth((age - CAST_END) / (HAUL_TICK - CAST_END));
+		return HemoEasing.smoothstep((age - CAST_END) / (HAUL_TICK - CAST_END));
 	}
 
 	/**
@@ -51,7 +52,7 @@ public final class VesperRecallRules {
 	 */
 	public static double reelIn(double age) {
 		double start = HAUL_TICK + PuppetStringsRules.HAUL_END - 1.0D;
-		return PuppetStringsRules.smooth((age - start) / (CUE_TICKS - 2.0D - start));
+		return HemoEasing.smoothstep((age - start) / (CUE_TICKS - 2.0D - start));
 	}
 
 	/** The flash at the Crossbar as the reeled-in remains arrive. */

@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 
 import java.util.*;
 
@@ -68,22 +69,22 @@ public final class VesperCombatRules {
 	}
 
 	public static float defeatRecoilProgress(float downedTicks) {
-		float phase = clamp(downedTicks / 6.0F);
+		float phase = HemoEasing.clamp01(downedTicks / 6.0F);
 		return 1.0F - Math.abs(phase * 2.0F - 1.0F);
 	}
 
 	public static float defeatKneelProgress(float downedTicks) {
-		return smoothstep(clamp((downedTicks - 6.0F) / 26.0F));
+		return HemoEasing.smoothstep((downedTicks - 6.0F) / 26.0F);
 	}
 
 	public static float weaponDissolveProgress(float downedTicks) {
-		return smoothstep(clamp(downedTicks / WEAPON_DISSOLVE_TICKS));
+		return HemoEasing.smoothstep(downedTicks / WEAPON_DISSOLVE_TICKS);
 	}
 
 	public static float sigilFizzleProgress(float downedTicks, int sigilIndex) {
 		int reverseIndex = 7 - Math.max(0, Math.min(7, sigilIndex));
 		float startTick = 4.0F + reverseIndex * 4.0F;
-		return smoothstep(clamp((downedTicks - startTick) / 8.0F));
+		return HemoEasing.smoothstep((downedTicks - startTick) / 8.0F);
 	}
 
 	public static boolean isDefeatAnimationComplete(int downedTicks) {
@@ -97,14 +98,6 @@ public final class VesperCombatRules {
 
 	public static boolean isDefeatAbsorptionComplete(float progress) {
 		return progress >= DEFEAT_ABSORPTION_REQUIRED;
-	}
-
-	private static float clamp(float value) {
-		return Math.max(0.0F, Math.min(1.0F, value));
-	}
-
-	private static float smoothstep(float value) {
-		return value * value * (3.0F - 2.0F * value);
 	}
 
 	public static VesperPhaseOneAttack phaseOneAttack(int attackStep) {

@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
-import static com.vincenthuto.hemomancy.client.render.world.BloodShotGeometry.smooth;
 import static com.vincenthuto.hemomancy.client.render.world.LuxUmbraGeometry.*;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -34,8 +34,8 @@ final class UmbralTearGeometry {
 
     /** How far the tear gapes: open quickly, hold while the body passes, seal. */
     static double opening(Form form, double age) {
-        if (form == Form.TELEPORT) return smooth(age / 3) * (1 - smooth((age - 9) / 5));
-        return smooth(age / 4) * (1 - smooth((age - 12) / 4));
+        if (form == Form.TELEPORT) return HemoEasing.smoothstep(age / 3) * (1 - HemoEasing.smoothstep((age - 9) / 5));
+        return HemoEasing.smoothstep(age / 4) * (1 - HemoEasing.smoothstep((age - 12) / 4));
     }
 
     /**
@@ -43,7 +43,7 @@ final class UmbralTearGeometry {
      * This is the silhouette's horizontal spread.
      */
     static double presence(Form form, double age) {
-        return form == Form.TELEPORT ? 1 - smooth((age - 2) / 8) : smooth((age - 3) / 9);
+        return form == Form.TELEPORT ? 1 - HemoEasing.smoothstep((age - 2) / 8) : HemoEasing.smoothstep((age - 3) / 9);
     }
 
     static void draw(ManipulationVisualPacket packet, PoseStack p, VertexConsumer v, Vec3 camera, Vec3 right, Vec3 up,
@@ -56,7 +56,7 @@ final class UmbralTearGeometry {
         Vec3 flat = new Vec3(right.x, 0, right.z);
         Vec3 side = flat.lengthSqr() < 1e-6 ? new Vec3(1, 0, 0) : flat.normalize();
         double open = opening(form, age), body = presence(form, age);
-        float life = (float) (1 - smooth((age - (depart ? 14 : 17)) / (depart ? 4.0 : 5.0)));
+        float life = (float) (1 - HemoEasing.smoothstep((age - (depart ? 14 : 17)) / (depart ? 4.0 : 5.0)));
         float a = alpha * life;
         if (a <= .002) return;
 
@@ -106,7 +106,7 @@ final class UmbralTearGeometry {
             ribbonPath(p, v, List.of(UP.scale(.1), center, UP.scale(HEIGHT)), camera, .09, .09, CUT, seed + 30, INK, flash);
         }
         if (!depart) {
-            double pool = .55 * smooth((age - 2) / 6) * (1 - smooth((age - 15) / 7));
+            double pool = .55 * HemoEasing.smoothstep((double) ((age - 2) / 6)) * (1 - HemoEasing.smoothstep((double) ((age - 15) / 7)));
             if (pool > .02) ground(p, v, new Vec3(0, .04, 0), pool, VOID, seed + 31, INK, a);
         }
         for (int i = 0; i < 3; i++) {

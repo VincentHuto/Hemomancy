@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.worldgen.pelagic;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,7 +13,7 @@ class PelagicReefBlendTest {
         blend.cachedWeight(0, 0, mask);
         int warmed = probes[0];
         for (int i = 0; i < 256; i++) {
-            assertEquals(.25 + .5 * PelagicTerrainSampler.smooth(0, 16, 15), blend.cachedWeight(-1, 0, mask), 0);
+            assertEquals(.25 + .5 * HemoEasing.smoothstep(0.0D, 16.0D, 15.0D), blend.cachedWeight(-1, 0, mask), 0);
             assertEquals(.75, blend.cachedWeight(0, 0, mask), 0);
         }
         assertEquals(warmed, probes[0], "Landmark scans revisit neighboring chunks without resampling climate");
@@ -26,7 +27,7 @@ class PelagicReefBlendTest {
             return x >= 0;
         };
         for (int x = -16; x < 0; x++) for (int z = 16; z < 32; z++) {
-            double u = PelagicTerrainSampler.smooth(0, 16, x + 16);
+            double u = HemoEasing.smoothstep(0.0D, 16.0D, (double) (x + 16));
             assertEquals(.25 + .5 * u, blend.cachedWeight(x, z, mask), 1e-12);
         }
         assertTrue(probes[0] <= 36, "A chunk shares four blend nodes; biome probes: " + probes[0]);

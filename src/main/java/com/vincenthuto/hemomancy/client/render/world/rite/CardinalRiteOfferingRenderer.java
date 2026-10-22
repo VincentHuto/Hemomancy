@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState.RiteEvent;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteEventKind;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
@@ -114,10 +115,10 @@ public final class CardinalRiteOfferingRenderer {
 
 	/** Linear position along the sampled arc. */
 	private static void along(double t, double[] out) {
-		double f = clamp01(t) * SAMPLES;
+		double f = HemoEasing.clamp01(t) * SAMPLES;
 		int i = Math.min(SAMPLES - 1, (int) f);
 		double r = f - i;
-		for (int c = 0; c < 3; c++) out[c] = lerp(r, STATION[i * 3 + c], STATION[(i + 1) * 3 + c]);
+		for (int c = 0; c < 3; c++) out[c] = HemoEasing.lerp(STATION[i * 3 + c], STATION[(i + 1) * 3 + c], r);
 	}
 
 	private static void drawVessel(PoseStack poseStack, VertexConsumer v, RiteEvent event, Vec3 camera, double time,
@@ -138,7 +139,7 @@ public final class CardinalRiteOfferingRenderer {
 			// 1. Shell: a broad translucent sheath.
 			SPINE.clear();
 			for (int i = 0; i <= 12; i++) {
-				double t = lerp(i / 12.0, tail, head);
+				double t = HemoEasing.lerp(tail, head, i / 12.0);
 				along(t, P);
 				SPINE.add(P[0], P[1], P[2], 0.2 * (1 - 0.4 * t));
 			}
@@ -147,7 +148,7 @@ public final class CardinalRiteOfferingRenderer {
 			for (int strand = 0; strand < 2; strand++) {
 				STRAND.clear();
 				for (int i = 0; i <= 12; i++) {
-					double t = lerp(i / 12.0, tail, head);
+					double t = HemoEasing.lerp(tail, head, i / 12.0);
 					along(t, P);
 					double angle = t * 14 + strand * Math.PI + time * 0.2;
 					double swell = 1 + 1.4 * Math.exp(-Math.pow((t - travel) * 9, 2));

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.util.Mth;
 
 final class BloodFillPixels {
@@ -66,9 +67,9 @@ final class BloodFillPixels {
     private static int alphaBlend(int base, int overlay) {
         float a = alpha(overlay) / 255.0f;
         return (Math.max(alpha(base), alpha(overlay)) << 24)
-                | ((int) (red(base) * (1.0f - a) + red(overlay) * a) << 16)
-                | ((int) (green(base) * (1.0f - a) + green(overlay) * a) << 8)
-                | (int) (blue(base) * (1.0f - a) + blue(overlay) * a);
+                | ((int) HemoEasing.crossfade(red(base), red(overlay), a) << 16)
+                | ((int) HemoEasing.crossfade(green(base), green(overlay), a) << 8)
+                | (int) HemoEasing.crossfade(blue(base), blue(overlay), a);
     }
 
     private static int multiplyColor(int color, float factor) {

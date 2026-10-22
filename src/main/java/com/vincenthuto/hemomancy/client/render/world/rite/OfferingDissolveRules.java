@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.world.rite;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 /**
  * Timing for a Working craft's daemon breaking an offering where it sits: the
  * offering is pulled up out of the bowl toward the hovering daemon, swells and
@@ -22,23 +24,19 @@ public final class OfferingDissolveRules {
 
 	/** How far from the bowl toward the daemon the offering has been pulled. */
 	public static float lift(float age) {
-		float t = clamp01(age / BREAK_TICKS);
+		float t = HemoEasing.clamp01(age / BREAK_TICKS);
 		return PULL * (1.0F - (1.0F - t) * (1.0F - t));
 	}
 
 	/** How hard it shudders: barely at first, violently just before it breaks. */
 	public static float strain(float age) {
-		float t = clamp01(age / BREAK_TICKS);
+		float t = HemoEasing.clamp01(age / BREAK_TICKS);
 		return 0.01F + 0.07F * t * t;
 	}
 
 	/** Its size: swelling as it strains, then nothing once it has broken. */
 	public static float scale(float age) {
 		if (age >= BREAK_TICKS) return 0.0F;
-		return 0.42F * (1.0F + 0.25F * clamp01(age / BREAK_TICKS));
-	}
-
-	private static float clamp01(float value) {
-		return Math.max(0.0F, Math.min(1.0F, value));
+		return 0.42F * (1.0F + 0.25F * HemoEasing.clamp01(age / BREAK_TICKS));
 	}
 }

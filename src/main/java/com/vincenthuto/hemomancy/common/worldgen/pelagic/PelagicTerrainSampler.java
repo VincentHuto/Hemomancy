@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.worldgen.pelagic;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 /** Coordinate-only ocean geology, shared by density, surfaces and biome selection. */
 public final class PelagicTerrainSampler {
     public enum Surface { VANILLA, ROCKPOOL, REEF, OPEN }
@@ -20,11 +22,11 @@ public final class PelagicTerrainSampler {
     }
 
     private static double oceanInfluence(double c) {
-        return smooth(-1.05, -1.0, c) * (1 - smooth(-.24, -.19, c));
+        return HemoEasing.smoothstep(-1.05, -1.0, c) * (1 - HemoEasing.smoothstep(-.24, -.19, c));
     }
 
     private static double shoreInfluence(double c) {
-        return smooth(-.22, -.197, c) * (1 - smooth(-.13, -.11, c));
+        return HemoEasing.smoothstep(-.22, -.197, c) * (1 - HemoEasing.smoothstep(-.13, -.11, c));
     }
 
     public Column sample(int x, int z, double continentalness, double erosion, double ridges, Surface surface) {
@@ -39,8 +41,8 @@ public final class PelagicTerrainSampler {
         double base = bathymetry(continentalness + erosion * .004);
         double wx = x + noise(x / 170.0, z / 170.0, 11) * 24;
         double wz = z + noise(x / 170.0, z / 170.0, 12) * 24;
-        double channel = 1 - smooth(.015, .16, Math.abs(noise(wx / 74, wz / 74, 31)));
-        double tributary = 1 - smooth(.012, .07, Math.abs(noise(wx / 34, wz / 34, 32)));
+        double channel = 1 - HemoEasing.smoothstep(.015, .16, Math.abs(noise(wx / 74, wz / 74, 31)));
+        double tributary = 1 - HemoEasing.smoothstep(.012, .07, Math.abs(noise(wx / 34, wz / 34, 32)));
         double incision = Math.max(channel, tributary * .64);
         double floor;
         Form form;
@@ -48,24 +50,24 @@ public final class PelagicTerrainSampler {
         if (surface == Surface.REEF) {
             // Flat-topped lobes leave 5x5 footholds for the existing coral clusters.
             double lobe = Math.floor((noise(wx / 24, wz / 24, 21) + 1) * 2.5);
-            double reef = 41 + lobe - 4.5 * smooth(.25, .9, channel);
-            double shelf = smooth(-.44, -.38, continentalness) * (1 - smooth(-.245, -.20, continentalness));
-            floor = lerp(base, reef, shelf);
+            double reef = 41 + lobe - 4.5 * HemoEasing.smoothstep(.25, .9, channel);
+            double shelf = HemoEasing.smoothstep(-.44, -.38, continentalness) * (1 - HemoEasing.smoothstep(-.245, -.20, continentalness));
+            floor = HemoEasing.lerp(base, reef, shelf);
             form = Form.REEF;
         } else {
             double scallop = noise(wx / 42, wz / 42, 41);
-            double twilight = 3 * scallop - 6 * smooth(.15, .75, -scallop) - 2 * channel;
+            double twilight = 3 * scallop - 6 * HemoEasing.smoothstep(.15, .75, -scallop) - 2 * channel;
             double midnight = 3.5 * noise(wx / 32, wz / 55, 42) - 16 * incision;
             // Long, shallow ripples settle into fans below the canyon mouths.
             double fan = 1.7 * noise(wx / 100, wz / 38, 51)
                     + .65 * Math.sin(wx / 8 + noise(wx / 90, wz / 90, 52) * 5);
             double plain = 1.6 + 2.2 * noise(x / 105.0, z / 105.0, 61)
                     + .8 * noise(x / 36.0, z / 48.0, 62);
-            if (base < -43) plain += ventMounds(x, z) * smooth(-43, -51, base);
-            double relief = lerp(plain, fan, smooth(-49, -30, base));
-            relief = lerp(relief, midnight, smooth(-29, -6, base));
-            relief = lerp(relief, twilight, smooth(8, 23, base));
-            relief = lerp(relief, 2 * noise(wx / 58, wz / 58, 71), smooth(31, 45, base));
+            if (base < -43) plain += ventMounds(x, z) * HemoEasing.smoothstep(-43, -51, base);
+            double relief = HemoEasing.lerp(plain, fan, HemoEasing.smoothstep(-49, -30, base));
+            relief = HemoEasing.lerp(relief, midnight, HemoEasing.smoothstep(-29, -6, base));
+            relief = HemoEasing.lerp(relief, twilight, HemoEasing.smoothstep(8, 23, base));
+            relief = HemoEasing.lerp(relief, 2 * noise(wx / 58, wz / 58, 71), HemoEasing.smoothstep(31, 45, base));
             floor = Math.max(-54.9, base + relief);
             form = base > 33 ? Form.BANK : base > 12 ? Form.TWILIGHT
                     : base > -16 ? Form.CANYON : base > -43 ? Form.FAN : Form.PLAIN;
@@ -74,7 +76,7 @@ public final class PelagicTerrainSampler {
         // Isolated elongated banks occupy a small fraction of deep basins.
         if (base < -35) {
             double bank = seamount(wx, wz);
-            floor += bank * smooth(-35, -49, base);
+            floor += bank * HemoEasing.smoothstep(-35, -49, base);
             if (bank > 3) form = Form.BANK;
         }
         return new Column(Math.max(-54.9, Math.min(58, floor)), influence, form, incision, false);
@@ -89,8 +91,8 @@ public final class PelagicTerrainSampler {
         if (influence == 0) return a;
         double portion = second / influence;
         var dominant = portion >= .5 ? b : a;
-        return new Column(lerp(a.floor(), b.floor(), portion), influence, dominant.form(),
-                lerp(a.incision(), b.incision(), portion), dominant.pool());
+        return new Column(HemoEasing.lerp(a.floor(), b.floor(), portion), influence, dominant.form(),
+                HemoEasing.lerp(a.incision(), b.incision(), portion), dominant.pool());
     }
 
     private Column shore(int x, int z, double c) {
@@ -98,7 +100,7 @@ public final class PelagicTerrainSampler {
         double bank = 60 + (c + .19) * 115;
         double joints = noise(x / 36.0, z / 58.0, 81);
         double platform = Math.floor((bank + joints * 1.3) / 2) * 2 + .3;
-        double floor = lerp(bank, platform, smooth(60, 63, bank));
+        double floor = HemoEasing.lerp(bank, platform, HemoEasing.smoothstep(60, 63, bank));
         boolean pool = false;
         if (bank >= 63 && bank <= 67) {
             int cellX = Math.floorDiv(x, 16), cellZ = Math.floorDiv(z, 16);
@@ -112,7 +114,7 @@ public final class PelagicTerrainSampler {
                 double pocket = Math.sqrt(dx * dx + dz * dz)
                         + noise(x / 3.5, z / 3.5, 83) * .16;
                 if (pocket < 1) {
-                    floor = 59.8 + smooth(.25, 1, pocket) * 1.7;
+                    floor = 59.8 + HemoEasing.smoothstep(.25, 1, pocket) * 1.7;
                     pool = true;
                 } else if (pocket < 1.4 && !pool) {
                     floor = Math.max(63.2, floor);
@@ -134,7 +136,7 @@ public final class PelagicTerrainSampler {
             double u = (dx * Math.cos(angle) + dz * Math.sin(angle)) / 44;
             double v = (-dx * Math.sin(angle) + dz * Math.cos(angle)) / 83;
             double radius = Math.sqrt(u * u + v * v);
-            double bell = 1 - smooth(0, 1, radius);
+            double bell = 1 - HemoEasing.smoothstep(0, 1, radius);
             result = Math.max(result, bell * bell * (56 + unit(mix(salt + 3)) * 26));
         }
         return result;
@@ -162,7 +164,7 @@ public final class PelagicTerrainSampler {
             double v = (-dx * Math.sin(site.angle()) + dz * Math.cos(site.angle())) / 20;
             double radius = Math.sqrt(u * u + v * v);
             radius *= 1 + noise(x / 13.0, z / 13.0, 205) * .16;
-            height = Math.max(height, (1 - smooth(.05, 1, radius)) * (5 + unit(mix(site.salt() + 9)) * 3));
+            height = Math.max(height, (1 - HemoEasing.smoothstep(.05, 1, radius)) * (5 + unit(mix(site.salt() + 9)) * 3));
         }
         return height;
     }
@@ -179,8 +181,8 @@ public final class PelagicTerrainSampler {
     public double noise(double x, double z, long salt) {
         int ix = (int)Math.floor(x), iz = (int)Math.floor(z);
         double u = fade(x - ix), v = fade(z - iz);
-        return lerp(lerp(unit(hash(ix, iz, salt)), unit(hash(ix + 1, iz, salt)), u),
-                lerp(unit(hash(ix, iz + 1, salt)), unit(hash(ix + 1, iz + 1, salt)), u), v) * 2 - 1;
+        return HemoEasing.lerp(HemoEasing.lerp(unit(hash(ix, iz, salt)), unit(hash(ix + 1, iz, salt)), u),
+                HemoEasing.lerp(unit(hash(ix, iz + 1, salt)), unit(hash(ix + 1, iz + 1, salt)), u), v) * 2 - 1;
     }
 
     public long hash(int x, int z, long salt) {
@@ -199,14 +201,9 @@ public final class PelagicTerrainSampler {
         if (c <= CONTINENTALNESS[0]) return DEPTH[0];
         for (int i = 1; i < CONTINENTALNESS.length; i++)
             if (c < CONTINENTALNESS[i])
-                return lerp(DEPTH[i - 1], DEPTH[i], (c - CONTINENTALNESS[i - 1]) / (CONTINENTALNESS[i] - CONTINENTALNESS[i - 1]));
+                return HemoEasing.lerp(DEPTH[i - 1], DEPTH[i], (c - CONTINENTALNESS[i - 1]) / (CONTINENTALNESS[i] - CONTINENTALNESS[i - 1]));
         return DEPTH[DEPTH.length - 1];
     }
 
-    public static double smooth(double start, double end, double value) {
-        double t = Math.max(0, Math.min(1, (value - start) / (end - start)));
-        return t * t * (3 - 2 * t);
-    }
     private static double fade(double t) { return t * t * t * (t * (t * 6 - 15) + 10); }
-    private static double lerp(double a, double b, double t) { return a + t * (b - a); }
 }

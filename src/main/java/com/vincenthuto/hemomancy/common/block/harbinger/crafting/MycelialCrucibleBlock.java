@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.MycelialCrucibleBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 import net.minecraft.core.BlockPos;
@@ -138,9 +139,9 @@ public class MycelialCrucibleBlock extends Block implements EntityBlock, IMultiB
         for (int i = 0; i < count; i++) {
             double t = (i + random.nextDouble() * 0.65D) / count;
             double curve = Math.sin(t * Math.PI) * 0.12D;
-            double x = lerp(rotatedSource.x(), rotatedTarget.x(), t) / 16.0D;
-            double y = (lerp(rotatedSource.y(), rotatedTarget.y(), t) / 16.0D) - curve;
-            double z = lerp(rotatedSource.z(), rotatedTarget.z(), t) / 16.0D;
+            double x = HemoEasing.lerp(rotatedSource.x(), rotatedTarget.x(), t) / 16.0D;
+            double y = (HemoEasing.lerp(rotatedSource.y(), rotatedTarget.y(), t) / 16.0D) - curve;
+            double z = HemoEasing.lerp(rotatedSource.z(), rotatedTarget.z(), t) / 16.0D;
             double jitter = 0.0125D;
             level.addParticle(particle,
                     pos.getX() + x + random.triangle(0.0D, jitter),
@@ -158,10 +159,6 @@ public class MycelialCrucibleBlock extends Block implements EntityBlock, IMultiB
             case WEST -> new ModelPoint(point.z(), point.y(), 16.0D - point.x());
             default -> point;
         };
-    }
-
-    private static double lerp(double start, double end, double delta) {
-        return start + (end - start) * delta;
     }
 
     private record ModelPoint(double x, double y, double z) {

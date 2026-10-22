@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.event;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.damage.SchoolState;
 import com.vincenthuto.hemomancy.common.damage.SchoolStates;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.api.distmarker.Dist;
@@ -18,8 +19,8 @@ public final class SchoolDarknessPresentation {
                 || !SchoolStates.has(viewer, SchoolState.OBSCURED)) return;
         double strength = Minecraft.getInstance().options.darknessEffectScale().get();
         if (strength <= 0) return;
-        event.setNearPlaneDistance((float)(event.getNearPlaneDistance() * (1 - strength) + 4 * strength));
-        event.setFarPlaneDistance((float)(event.getFarPlaneDistance() * (1 - strength) + 12 * strength));
+        event.setNearPlaneDistance((float) HemoEasing.crossfade(event.getNearPlaneDistance(), 4.0D, strength));
+        event.setFarPlaneDistance((float) HemoEasing.crossfade(event.getFarPlaneDistance(), 12.0D, strength));
         event.setCanceled(true);
     }
 }

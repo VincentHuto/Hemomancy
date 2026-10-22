@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
@@ -34,7 +35,7 @@ final class CrimsonCoronationGeometry {
     /** How formed sword {@code slot} is at an overall {@code formation}; each condenses after the one before. */
     static double swordFormed(double formation, int slot, int swords) {
         if (swords <= 0 || slot >= swords) return 0;
-        return smooth(Mth.clamp(formation, 0, 1) * (swords + 1.5) - slot);
+        return HemoEasing.smoothstep(Mth.clamp(formation, 0, 1) * (swords + 1.5) - slot);
     }
 
     /** Where spike {@code slot} rises from the crown, turning with the swords it holds. */
@@ -56,7 +57,7 @@ final class CrimsonCoronationGeometry {
         float pulse = (float) Math.pow(Math.max(0, Math.sin(time * .45 + seed)), 4);
 
         // 1. Crown: a ring of blood with a clotted core.
-        double crown = smooth(progress * 2);
+        double crown = HemoEasing.smoothstep(progress * 2);
         List<Vec3> ring = new ArrayList<>(25);
         for (int i = 0; i <= 24; i++) {
             double a = i * Math.PI * 2 / 24 + time * .025;

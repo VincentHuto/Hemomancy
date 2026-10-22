@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
@@ -288,7 +289,7 @@ final class LuxUmbraGeometry {
 
     private static float beamSideVisibility(Vec3 from, Vec3 to, Vec3 camera, double radius) {
         double distance = to.subtract(from).normalize().cross(camera.subtract(from)).length();
-        return ManipulationLifecycle.smooth((float) ((distance / Math.max(.001, radius) - .25) / .75));
+        return HemoEasing.smoothstep((float) ((distance / Math.max(.001, radius) - .25) / .75));
     }
 
     static void stream(PoseStack p, VertexConsumer v, Vec3 start, Vec3 end, Vec3 camera, double width,

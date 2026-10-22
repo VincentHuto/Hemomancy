@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.rite.floor;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 /**
  * Timeline and palette for a consecrated Cardinal Rite floor. The server only decides that a floor is formed; this
  * shapes how the client shows it: a membrane spreading out from the Focus, then a slow heartbeat across the floor.
@@ -67,7 +69,7 @@ public final class CardinalRiteFloorVisualRules {
 
 	/** 0 at formation, 1 once the membrane has covered the floor; growth eases in and settles. */
 	public static float formProgress(float ticksSinceFormed) {
-		return smoothstep(clamp01(ticksSinceFormed / FORM_TICKS));
+		return HemoEasing.smoothstep(ticksSinceFormed / FORM_TICKS);
 	}
 
 	public static float spreadRadius(float ticksSinceFormed, int floorHalfWidth) {
@@ -76,13 +78,13 @@ public final class CardinalRiteFloorVisualRules {
 
 	/** Brightness of the spreading edge: strongest mid-growth, gone once the floor settles. */
 	public static float frontIntensity(float ticksSinceFormed) {
-		float t = clamp01(ticksSinceFormed / FORM_TICKS);
+		float t = HemoEasing.clamp01(ticksSinceFormed / FORM_TICKS);
 		return (float) Math.sin(Math.PI * t) * (1.0F - t * 0.35F);
 	}
 
 	/** The pad over the Focus mouth swells in over the first second of formation, before the membrane settles. */
 	public static float padGrowth(float ticksSinceFormed) {
-		return smoothstep(clamp01(ticksSinceFormed / 20.0F));
+		return HemoEasing.smoothstep(ticksSinceFormed / 20.0F);
 	}
 
 	/**
@@ -90,7 +92,7 @@ public final class CardinalRiteFloorVisualRules {
 	 * to nothing over {@link #COLLAPSE_TICKS}.
 	 */
 	public static float collapseAge(float ticksSinceBroken) {
-		return FORM_TICKS * (1.0F - clamp01(ticksSinceBroken / COLLAPSE_TICKS));
+		return FORM_TICKS * (1.0F - HemoEasing.clamp01(ticksSinceBroken / COLLAPSE_TICKS));
 	}
 
 	public static boolean collapsed(float ticksSinceBroken) {
@@ -99,7 +101,7 @@ public final class CardinalRiteFloorVisualRules {
 
 	/** How risen a seated brazier's mound is, 0 to 1, as the membrane's edge reaches and covers it. */
 	public static float seatRise(float spread, float seatDistance) {
-		return smoothstep(clamp01((spread - seatDistance + 0.2F) / 0.9F));
+		return HemoEasing.smoothstep((spread - seatDistance + 0.2F) / 0.9F);
 	}
 
 	/** A lub-dub pulse in [0,1]: a strong beat, a softer echo, then rest. */
@@ -118,7 +120,7 @@ public final class CardinalRiteFloorVisualRules {
 	 */
 	public static float digProgress(float ticksSinceFormed, int sample, int samples) {
 		float start = FORM_TICKS * 0.5F + (samples <= 0 ? 0.0F : FORM_TICKS * 0.4F * sample / (float) samples);
-		return smoothstep(clamp01((ticksSinceFormed - start) / DIG_TICKS));
+		return HemoEasing.smoothstep((ticksSinceFormed - start) / DIG_TICKS);
 	}
 
 	/** How brightly the dig front glows where the trench is mid-carve: nothing before it or once dug. */
@@ -193,14 +195,14 @@ public final class CardinalRiteFloorVisualRules {
 		float local = (float) (time - Math.floor(time / (HEARTBEAT_TICKS * 2.0D)) * (HEARTBEAT_TICKS * 2.0D));
 		float rest = heartbeat(local);
 		if (quick <= 0.0F) return rest;
-		float active = mix(heartbeat(local * tempoRate(TEMPO_ACTIVE)), heartbeat(local * tempoRate(TEMPO_INTENSE)),
-				clamp01(intense));
-		return mix(rest, active, clamp01(quick));
+		float active = HemoEasing.lerp(heartbeat(local * tempoRate(TEMPO_ACTIVE)), heartbeat(local * tempoRate(TEMPO_INTENSE)),
+				HemoEasing.clamp01(intense));
+		return HemoEasing.lerp(rest, active, HemoEasing.clamp01(quick));
 	}
 
 	/** Radius of a staff strike's shock ring: it bursts from the Focus and slows as it outruns the floor's edge. */
 	public static float shockRadius(float ticksSinceImpact, float reach) {
-		float t = clamp01(ticksSinceImpact / SHOCK_TICKS);
+		float t = HemoEasing.clamp01(ticksSinceImpact / SHOCK_TICKS);
 		return reach * 1.15F * (1.0F - (1.0F - t) * (1.0F - t));
 	}
 
@@ -208,20 +210,20 @@ public final class CardinalRiteFloorVisualRules {
 	public static float shockStrength(float ticksSinceImpact) {
 		if (ticksSinceImpact < 0.0F || ticksSinceImpact >= SHOCK_TICKS) return 0.0F;
 		float fall = 1.0F - ticksSinceImpact / SHOCK_TICKS;
-		return clamp01(ticksSinceImpact / 1.5F) * fall * fall;
+		return HemoEasing.clamp01(ticksSinceImpact / 1.5F) * fall * fall;
 	}
 
 	/** How far from the Focus a filled anchor's blood pulse has run toward it. */
 	public static float surgeRadius(float ticksSinceFilled, float anchorDistance) {
-		return anchorDistance * smoothstep(clamp01(ticksSinceFilled / SURGE_TICKS));
+		return anchorDistance * HemoEasing.smoothstep(ticksSinceFilled / SURGE_TICKS);
 	}
 
 	/** Strength of the anchor pulse: quick to rise, fading as it arrives. */
 	public static float surgeStrength(float ticksSinceFilled) {
 		float end = SURGE_TICKS + 6.0F;
 		if (ticksSinceFilled < 0.0F || ticksSinceFilled >= end) return 0.0F;
-		float release = clamp01((ticksSinceFilled - SURGE_TICKS * 0.7F) / (end - SURGE_TICKS * 0.7F));
-		return clamp01(ticksSinceFilled / 2.0F) * (1.0F - smoothstep(release));
+		float release = HemoEasing.clamp01((ticksSinceFilled - SURGE_TICKS * 0.7F) / (end - SURGE_TICKS * 0.7F));
+		return HemoEasing.clamp01(ticksSinceFilled / 2.0F) * (1.0F - HemoEasing.smoothstepUnclamped(release));
 	}
 
 	/**
@@ -230,39 +232,39 @@ public final class CardinalRiteFloorVisualRules {
 	 */
 	public static float offeringTrenchGlow(float ticksSinceDrawn, float arcDistance) {
 		if (ticksSinceDrawn < 0.0F || ticksSinceDrawn >= OFFERING_TICKS) return 0.0F;
-		float envelope = clamp01(ticksSinceDrawn / 2.0F) * (1.0F - smoothstep(clamp01((ticksSinceDrawn - 6.0F) / 14.0F)));
-		float run = 0.6F + 2.4F * smoothstep(clamp01(ticksSinceDrawn / 10.0F));
+		float envelope = HemoEasing.clamp01(ticksSinceDrawn / 2.0F) * (1.0F - HemoEasing.smoothstep((ticksSinceDrawn - 6.0F) / 14.0F));
+		float run = 0.6F + 2.4F * HemoEasing.smoothstep(ticksSinceDrawn / 10.0F);
 		float beyond = Math.max(0.0F, Math.abs(arcDistance) - run);
-		return envelope * (float) Math.exp(-beyond * beyond / 0.35F) * (1.0F - 0.35F * clamp01(Math.abs(arcDistance) / 3.5F));
+		return envelope * (float) Math.exp(-beyond * beyond / 0.35F) * (1.0F - 0.35F * HemoEasing.clamp01(Math.abs(arcDistance) / 3.5F));
 	}
 
 	/** Where the offering's pulse is on its run in across the membrane, from the trench to the Focus. */
 	public static float offeringDrawRadius(float ticksSinceDrawn, float startRadius) {
-		return startRadius * (1.0F - smoothstep(clamp01((ticksSinceDrawn - 5.0F) / (OFFERING_TICKS - 8.0F))));
+		return startRadius * (1.0F - HemoEasing.smoothstep((ticksSinceDrawn - 5.0F) / (OFFERING_TICKS - 8.0F)));
 	}
 
 	/** Strength of the offering's inward pulse: it leaves the trench once that has lit, and is gone on arrival. */
 	public static float offeringDrawStrength(float ticksSinceDrawn) {
 		if (ticksSinceDrawn < 3.0F || ticksSinceDrawn >= OFFERING_TICKS + 4.0F) return 0.0F;
-		return clamp01((ticksSinceDrawn - 3.0F) / 3.0F) * (1.0F - smoothstep(clamp01((ticksSinceDrawn - 19.0F) / 9.0F)));
+		return HemoEasing.clamp01((ticksSinceDrawn - 3.0F) / 3.0F) * (1.0F - HemoEasing.smoothstep((ticksSinceDrawn - 19.0F) / 9.0F));
 	}
 
 	/** The Focus mouth flares as the offering's pulse reaches it. */
 	public static float offeringFocusFlare(float ticksSinceDrawn) {
 		float arrival = OFFERING_TICKS - 3.0F;
 		float distance = Math.abs(ticksSinceDrawn - arrival) / 6.0F;
-		return distance >= 1.0F ? 0.0F : 1.0F - smoothstep(distance);
+		return distance >= 1.0F ? 0.0F : 1.0F - HemoEasing.smoothstepUnclamped(distance);
 	}
 
 	/** The membrane blanches for a moment when a wave arrives. */
 	public static float flinchBlanch(float ticksSinceWave) {
 		if (ticksSinceWave < 0.0F || ticksSinceWave >= FLINCH_TICKS) return 0.0F;
-		return clamp01(ticksSinceWave / 1.5F) * (1.0F - smoothstep(ticksSinceWave / FLINCH_TICKS));
+		return HemoEasing.clamp01(ticksSinceWave / 1.5F) * (1.0F - HemoEasing.smoothstepUnclamped(ticksSinceWave / FLINCH_TICKS));
 	}
 
 	/** The flinch's contraction ripple runs in from the floor's edge to the Focus. */
 	public static float flinchRippleRadius(float ticksSinceWave, float reach) {
-		return reach * (1.0F - smoothstep(clamp01(ticksSinceWave / FLINCH_TICKS)));
+		return reach * (1.0F - HemoEasing.smoothstep(ticksSinceWave / FLINCH_TICKS));
 	}
 
 	public static float flinchRippleStrength(float ticksSinceWave) {
@@ -274,36 +276,36 @@ public final class CardinalRiteFloorVisualRules {
 	public static float reliefFlush(float ticksSinceCleared) {
 		if (ticksSinceCleared < 0.0F || ticksSinceCleared >= RELIEF_TICKS) return 0.0F;
 		float fall = 1.0F - ticksSinceCleared / RELIEF_TICKS;
-		return clamp01(ticksSinceCleared / 3.0F) * fall * fall;
+		return HemoEasing.clamp01(ticksSinceCleared / 3.0F) * fall * fall;
 	}
 
 	/** The whole membrane swells and brightens as culmination goes on. */
 	public static float culminationSwell(float ticksInCulmination) {
-		return smoothstep(clamp01(ticksInCulmination / CULMINATION_SWELL_TICKS));
+		return HemoEasing.smoothstep(ticksInCulmination / CULMINATION_SWELL_TICKS);
 	}
 
 	/** A completed rite's flush: a fast rise, then a slow settle. */
 	public static float completionFlush(float ticksSinceCompleted) {
 		if (ticksSinceCompleted < 0.0F || ticksSinceCompleted >= COMPLETION_SETTLE_TICKS) return 0.0F;
-		return clamp01(ticksSinceCompleted / 4.0F) * (1.0F - smoothstep(ticksSinceCompleted / COMPLETION_SETTLE_TICKS));
+		return HemoEasing.clamp01(ticksSinceCompleted / 4.0F) * (1.0F - HemoEasing.smoothstepUnclamped(ticksSinceCompleted / COMPLETION_SETTLE_TICKS));
 	}
 
 	/** The culmination's swell easing back down after completion. */
 	public static float completionSwell(float ticksSinceCompleted) {
 		if (ticksSinceCompleted < 0.0F) return 0.0F;
-		return 1.0F - smoothstep(clamp01(ticksSinceCompleted / (COMPLETION_SETTLE_TICKS * 0.75F)));
+		return 1.0F - HemoEasing.smoothstep(ticksSinceCompleted / (COMPLETION_SETTLE_TICKS * 0.75F));
 	}
 
 	/** Radius of a grounding rite's ring: from the Focus, out past the floor's edge into the ground around it. */
 	public static float groundRingRadius(float ticksSinceCompleted, float reach) {
-		float t = clamp01(ticksSinceCompleted / GROUND_RING_TICKS);
+		float t = HemoEasing.clamp01(ticksSinceCompleted / GROUND_RING_TICKS);
 		return (reach + GROUND_RING_BEYOND) * (1.0F - (1.0F - t) * (1.0F - t));
 	}
 
 	public static float groundRingStrength(float ticksSinceCompleted) {
 		if (ticksSinceCompleted < 0.0F || ticksSinceCompleted >= GROUND_RING_TICKS) return 0.0F;
-		float fade = clamp01((ticksSinceCompleted - GROUND_RING_TICKS * 0.55F) / (GROUND_RING_TICKS * 0.45F));
-		return clamp01(ticksSinceCompleted / 2.0F) * (1.0F - smoothstep(fade));
+		float fade = HemoEasing.clamp01((ticksSinceCompleted - GROUND_RING_TICKS * 0.55F) / (GROUND_RING_TICKS * 0.45F));
+		return HemoEasing.clamp01(ticksSinceCompleted / 2.0F) * (1.0F - HemoEasing.smoothstepUnclamped(fade));
 	}
 
 	/** Whether a collapse or break this long ago is still tearing or regrowing the membrane. */
@@ -318,60 +320,48 @@ public final class CardinalRiteFloorVisualRules {
 	public static float tearAge(float ticksSinceEnded) {
 		if (!tearing(ticksSinceEnded)) return FORM_TICKS;
 		if (ticksSinceEnded < TEAR_TICKS) return FORM_TICKS - (FORM_TICKS - TEAR_AGE) * ticksSinceEnded / TEAR_TICKS;
-		float regrow = clamp01((ticksSinceEnded - TEAR_TICKS - TEAR_HOLD_TICKS) / TEAR_REGROW_TICKS);
+		float regrow = HemoEasing.clamp01((ticksSinceEnded - TEAR_TICKS - TEAR_HOLD_TICKS) / TEAR_REGROW_TICKS);
 		return TEAR_AGE + (FORM_TICKS - TEAR_AGE) * regrow;
 	}
 
 	/** Dark bruising over a torn membrane: it floods in as it tears and drains away as it regrows. */
 	public static float tearBruise(float ticksSinceEnded) {
 		if (!tearing(ticksSinceEnded)) return 0.0F;
-		float heal = clamp01((ticksSinceEnded - TEAR_TICKS - TEAR_HOLD_TICKS) / TEAR_REGROW_TICKS);
-		return 0.85F * clamp01(ticksSinceEnded / 4.0F) * (1.0F - smoothstep(heal));
+		float heal = HemoEasing.clamp01((ticksSinceEnded - TEAR_TICKS - TEAR_HOLD_TICKS) / TEAR_REGROW_TICKS);
+		return 0.85F * HemoEasing.clamp01(ticksSinceEnded / 4.0F) * (1.0F - HemoEasing.smoothstepUnclamped(heal));
 	}
 
 	/** A cancelled rite dims the membrane a little, and it recovers. */
 	public static float cancelDim(float ticksSinceCancelled) {
 		if (ticksSinceCancelled < 0.0F || ticksSinceCancelled >= CANCEL_TICKS) return 0.0F;
-		return 0.35F * clamp01(ticksSinceCancelled / 8.0F)
-				* (1.0F - smoothstep(clamp01((ticksSinceCancelled - 8.0F) / (CANCEL_TICKS - 8.0F))));
+		return 0.35F * HemoEasing.clamp01(ticksSinceCancelled / 8.0F)
+				* (1.0F - HemoEasing.smoothstep((ticksSinceCancelled - 8.0F) / (CANCEL_TICKS - 8.0F)));
 	}
 
 	/** How bruised the whole membrane is at a rite's instability, 0 to 100. */
 	public static float instabilityBruise(int instability) {
-		return 0.85F * smoothstep(clamp01((instability - 5) / 90.0F));
+		return 0.85F * HemoEasing.smoothstep((instability - 5) / 90.0F);
 	}
 
 	/** A local bruise toward an anchor from its integrity, 0 broken to 1 whole. */
 	public static float anchorWound(float integrity) {
-		return clamp01(1.0F - integrity);
+		return HemoEasing.clamp01(1.0F - integrity);
 	}
 
 	/** A freshly broken anchor flares a bruise toward it that eases off; a lasting break is carried by its integrity. */
 	public static float brokenWound(float ticksSinceBroken) {
 		if (ticksSinceBroken < 0.0F || ticksSinceBroken >= 160.0F) return 0.0F;
-		return 1.0F - 0.5F * smoothstep(clamp01(ticksSinceBroken / 40.0F))
-				- 0.5F * smoothstep(clamp01((ticksSinceBroken - 40.0F) / 120.0F));
+		return 1.0F - 0.5F * HemoEasing.smoothstep(ticksSinceBroken / 40.0F)
+				- 0.5F * HemoEasing.smoothstep((ticksSinceBroken - 40.0F) / 120.0F);
 	}
 
 	static float inverseSmoothstep(float y) {
-		return 0.5F - (float) Math.sin(Math.asin(1.0D - 2.0D * clamp01(y)) / 3.0D);
-	}
-
-	static float mix(float a, float b, float t) {
-		return a + (b - a) * t;
+		return 0.5F - (float) Math.sin(Math.asin(1.0D - 2.0D * HemoEasing.clamp01(y)) / 3.0D);
 	}
 
 	private static float beat(float phase, float centre, float width) {
 		float distance = Math.abs(phase - centre) / width;
-		return distance >= 1.0F ? 0.0F : 1.0F - smoothstep(distance);
-	}
-
-	static float smoothstep(float t) {
-		return t * t * (3.0F - 2.0F * t);
-	}
-
-	static float clamp01(float value) {
-		return value < 0.0F ? 0.0F : Math.min(1.0F, value);
+		return distance >= 1.0F ? 0.0F : 1.0F - HemoEasing.smoothstepUnclamped(distance);
 	}
 
 	/** ARGB colours: the membrane base, the vein network, and the hot edge or socket glow. */

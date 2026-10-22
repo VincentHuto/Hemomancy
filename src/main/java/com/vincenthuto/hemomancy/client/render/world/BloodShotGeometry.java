@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ final class BloodShotGeometry {
             double time, float age, int form, int seed, float alpha, float wake, boolean flying, Vec3 tether) {
         if (path.isEmpty()) return;
         Vec3 head = path.getLast();
-        double s = size(form) * (.6 + .4 * smooth(age / 3.0));
+        double s = size(form) * (.6 + .4 * HemoEasing.smoothstep(age / 3.0));
         float pulse = (float) Math.pow(Math.max(0, Math.sin(time * .6 + seed)), 4);
 
         if (path.size() >= 2 && wake > 0) {
@@ -134,8 +135,8 @@ final class BloodShotGeometry {
         double r = Math.max(.3, packet.radius());
         int seed = Math.floorMod(packet.from().hashCode(), 113);
         Vec3[] basis = basis(d);
-        double grow = smooth(age / (double) FLASH_END);
-        float settle = (float) smooth((age - CROWN_END) / (double) (SPLASH_TICKS - CROWN_END));
+        double grow = HemoEasing.smoothstep(age / (double) FLASH_END);
+        float settle = (float) HemoEasing.smoothstep((age - CROWN_END) / (double) (SPLASH_TICKS - CROWN_END));
 
         // 1. Flash: a hot core inside a bursting sheath.
         if (age < FLASH_END + 2) {
@@ -150,7 +151,7 @@ final class BloodShotGeometry {
             double stain = r * .45 * grow * (1 + settle * .15);
             card(p, v, d.scale(-.03), basis[0], basis[1], stain, stain, POOL, seed + 2, TINT, alpha * .85f * (1 - settle * .85f));
         } else if (variant == MORTAR) {
-            double ring = r * (.3 + 1.3 * smooth(age / 10.0));
+            double ring = r * (.3 + 1.3 * HemoEasing.smoothstep(age / 10.0));
             ground(p, v, new Vec3(0, .05, 0), ring, RIPPLE, seed + 2, TINT, alpha * .7f * (1 - settle));
         }
 
@@ -216,10 +217,5 @@ final class BloodShotGeometry {
         Vec3 reference = Math.abs(a.y) > .9 ? new Vec3(1, 0, 0) : UP;
         Vec3 first = a.cross(reference).normalize();
         return new Vec3[] { first, first.cross(a).normalize() };
-    }
-
-    static double smooth(double t) {
-        double c = Math.max(0, Math.min(1, t));
-        return c * c * (3 - 2 * c);
     }
 }

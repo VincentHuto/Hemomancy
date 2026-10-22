@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
@@ -95,7 +96,7 @@ public class MonolithImbuedClothItemRenderer extends BlockEntityWithoutLevelRend
 		float y = (0.5f - v) * height;
 
 		float edge = Math.min(Math.min(u, 1.0f - u), Math.min(v, 1.0f - v));
-		float rag = (1.0f - smoothStep(edge * 5.0f)) * 0.028f;
+		float rag = (1.0f - HemoEasing.smoothstep(edge * 5.0f)) * 0.028f;
 		x += seedNoise(seed, (int) (u * 97.0f) + (int) (v * 131.0f) + 5) * rag;
 		y += seedNoise(seed, (int) (u * 157.0f) + (int) (v * 83.0f) + 11) * rag;
 
@@ -115,11 +116,6 @@ public class MonolithImbuedClothItemRenderer extends BlockEntityWithoutLevelRend
 		vc.addVertex(mat, a.x(), a.y(), a.z()).setColor(red, green, blue, alpha).setUv(a.u(), a.v()).setLight(light);
 		vc.addVertex(mat, b.x(), b.y(), b.z()).setColor(red, green, blue, alpha).setUv(b.u(), b.v()).setLight(light);
 		vc.addVertex(mat, c.x(), c.y(), c.z()).setColor(red, green, blue, alpha).setUv(c.u(), c.v()).setLight(light);
-	}
-
-	private static float smoothStep(float value) {
-		float clamped = Math.max(0.0f, Math.min(1.0f, value));
-		return clamped * clamped * (3.0f - 2.0f * clamped);
 	}
 
 	private static float seedNoise(float seed, int salt) {

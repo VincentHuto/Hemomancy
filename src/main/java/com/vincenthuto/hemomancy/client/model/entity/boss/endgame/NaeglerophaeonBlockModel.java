@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.NaeglerophaeonCombatRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.NaeglerophaeonEntity;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -139,15 +140,15 @@ public final class NaeglerophaeonBlockModel {
         };
         if(shake>0) stack.translate(Math.sin(input.time()*2.9)*shake,Math.sin(input.time()*3.7+1)*shake,Math.sin(input.time()*3.1+2)*shake);
         if(phase==NaeglerophaeonEntity.LASH && input.phaseTicks()>=LASH_STRIKE)
-            stack.mulPose(new Quaternionf().rotationZ((float)(smooth((float)((input.phaseTicks()-LASH_STRIKE)/6))*Math.PI*2)));
+            stack.mulPose(new Quaternionf().rotationZ((float)(HemoEasing.smoothstep((float)((input.phaseTicks()-LASH_STRIKE)/6))*Math.PI*2)));
         float size=bodyScale(input);
         if(size!=1) stack.scale(size,size,size);
     }
 
     /** Collapses into a synaptic node on a dive and unfolds again on emergence. */
     public static float bodyScale(NaeglerophaeonModel.Input input) {
-        if(input.phase()==NaeglerophaeonEntity.NERVE_DIVE) return 1-.85F*smooth((float)(input.phaseTicks()/12));
-        if(input.phase()==NaeglerophaeonEntity.NERVE_EMERGE) return .15F+.85F*smooth((float)(input.phaseTicks()/6));
+        if(input.phase()==NaeglerophaeonEntity.NERVE_DIVE) return 1-.85F*HemoEasing.smoothstep((float)(input.phaseTicks()/12));
+        if(input.phase()==NaeglerophaeonEntity.NERVE_EMERGE) return .15F+.85F*HemoEasing.smoothstep((float)(input.phaseTicks()/6));
         return 1;
     }
 
@@ -167,15 +168,10 @@ public final class NaeglerophaeonBlockModel {
         };
     }
 
-    private static float smooth(float t) {
-        t=Mth.clamp(t,0,1);
-        return t*t*(3-2*t);
-    }
-
     private static float propulsionStroke(double time) {
         double cycle=Math.floorMod((long)Math.floor(time),100)+(time-Math.floor(time));
-        if(cycle<72) return smooth((float)(cycle/72));
-        if(cycle<84) return 1-smooth((float)((cycle-72)/12));
+        if(cycle<72) return HemoEasing.smoothstep((float)(cycle/72));
+        if(cycle<84) return 1-HemoEasing.smoothstep((float)((cycle-72)/12));
         return 0;
     }
 
@@ -193,25 +189,25 @@ public final class NaeglerophaeonBlockModel {
         float swim=hunting[segment]+(float)Math.sin(input.time()*.26-segment*.35)*(2.4F-segment*.5F);
         float base=Mth.lerp((float)input.hunting(),idle,swim);
         double t=input.phaseTicks();
-        float in=smooth((float)(t/4));
+        float in=HemoEasing.smoothstep((float)(t/4));
         return switch(input.phase()) {
-            case NaeglerophaeonEntity.LUNGE_WINDUP -> Mth.lerp(smooth((float)(t/LUNGE_WINDUP)),base,FLARE[segment]);
-            case NaeglerophaeonEntity.LUNGE -> Mth.lerp(smooth((float)(t/2)),FLARE[segment],TUCK[segment]);
+            case NaeglerophaeonEntity.LUNGE_WINDUP -> Mth.lerp(HemoEasing.smoothstep((float)(t/LUNGE_WINDUP)),base,FLARE[segment]);
+            case NaeglerophaeonEntity.LUNGE -> Mth.lerp(HemoEasing.smoothstep((float)(t/2)),FLARE[segment],TUCK[segment]);
             case NaeglerophaeonEntity.LASH -> t<LASH_STRIKE
                     ?Mth.lerp(in,base,TUCK[segment])+(float)Math.sin(t*1.7+limb)*1.5F
-                    :Mth.lerp(smooth((float)((t-LASH_STRIKE)/2)),TUCK[segment],RADIAL[segment]);
+                    :Mth.lerp(HemoEasing.smoothstep((float)((t-LASH_STRIKE)/2)),TUCK[segment],RADIAL[segment]);
             case NaeglerophaeonEntity.NOVA -> t<NOVA_WINDUP
                     ?Mth.lerp(in,base,TUCK[segment]-2)+(float)(Math.sin(t*2.3+limb*1.3)*t/NOVA_WINDUP*2)
-                    :Mth.lerp(smooth((float)((t-NOVA_WINDUP)/2)),TUCK[segment],RADIAL[segment]);
+                    :Mth.lerp(HemoEasing.smoothstep((float)((t-NOVA_WINDUP)/2)),TUCK[segment],RADIAL[segment]);
             case NaeglerophaeonEntity.CONDUCT, NaeglerophaeonEntity.CHARGE -> Mth.lerp(in*.6F,base,REACH[segment]);
             case NaeglerophaeonEntity.TRANSITION -> Mth.lerp(in,base,FLARE[segment])+(float)Math.sin(input.time()*1.9+limb*2.1+segment)*6;
             case NaeglerophaeonEntity.NERVE_DIVE -> Mth.lerp(in,base,TUCK[segment]);
-            case NaeglerophaeonEntity.NERVE_EMERGE -> Mth.lerp(smooth((float)(t/6)),FLARE[segment],base);
-            case NaeglerophaeonEntity.OVERLOAD -> Mth.lerp(smooth((float)(t/20)),base,UMBRELLA[segment])
+            case NaeglerophaeonEntity.NERVE_EMERGE -> Mth.lerp(HemoEasing.smoothstep((float)(t/6)),FLARE[segment],base);
+            case NaeglerophaeonEntity.OVERLOAD -> Mth.lerp(HemoEasing.smoothstep((float)(t/20)),base,UMBRELLA[segment])
                     +(float)(Math.sin(input.time()*.9+limb*1.7+segment*.8)*(3+segment*1.5));
             case NaeglerophaeonEntity.DRAINED -> LIMP[segment]+(float)Math.sin(input.time()*.05+limb)*1.2F
                     +(Math.floorMod((long)input.time()+limb*7,53)<2?(float)Math.sin(input.time()*4)*4:0);
-            case NaeglerophaeonEntity.RECOVERY -> Mth.lerp(smooth((float)(t/10)),EASED[segment],base);
+            case NaeglerophaeonEntity.RECOVERY -> Mth.lerp(HemoEasing.smoothstep((float)(t/10)),EASED[segment],base);
             default -> base;
         };
     }

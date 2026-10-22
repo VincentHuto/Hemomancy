@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
-import static com.vincenthuto.hemomancy.client.render.world.BloodShotGeometry.smooth;
 import static com.vincenthuto.hemomancy.client.render.world.LuxUmbraGeometry.*;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
@@ -40,7 +40,7 @@ final class FuneralBellGeometry {
     /** Radius of echo {@code ring} {@code age} ticks after the toll, or a negative value before it starts or after it fades. */
     static double echo(int ring, double age, double reach) {
         double t = (age - ring * ECHO_SPACING) / ECHO_LIFE;
-        return t < 0 || t > 1 ? -1 : reach * smooth(t);
+        return t < 0 || t > 1 ? -1 : reach * HemoEasing.smoothstep(t);
     }
 
     static void draw(ManipulationVisualPacket packet, PoseStack p, VertexConsumer v, Vec3 camera, Vec3 right, Vec3 up,
@@ -64,7 +64,7 @@ final class FuneralBellGeometry {
         }
 
         double reach = Math.max(1, packet.radius());
-        float fade = alpha * (1 - (float) smooth((age - 28) / 12.0));
+        float fade = alpha * (1 - (float) HemoEasing.smoothstep((age - 28) / 12.0));
         Vec3 pivot = new Vec3(0, 2.2 + BELL_HALF_HEIGHT, 0);
         double angle = swing(age);
         Vec3 mouth = pivot.add(rotate(UP.scale(-BELL_HALF_HEIGHT * 2), axis, angle));
@@ -81,7 +81,7 @@ final class FuneralBellGeometry {
             double burst = 1.2 + age * .35;
             card(p, v, mouth, right, up, burst, burst, RING, seed + 8, TINT, alpha * (1 - age / 10f));
         }
-        double pool = reach * .6 * smooth(age / 10.0);
+        double pool = reach * .6 * HemoEasing.smoothstep(age / 10.0);
         ground(p, v, new Vec3(0, .05, 0), pool, ROT_POOL, seed + 9, TINT, fade * .75f);
         for (int ring = 0; ring < 3; ring++) {
             double radius = echo(ring, age, reach);

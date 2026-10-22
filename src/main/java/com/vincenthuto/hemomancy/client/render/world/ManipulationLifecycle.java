@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.util.Mth;
 
 /** Presentation clock; refreshing a paid/status cue never restarts its formation. */
@@ -38,18 +39,15 @@ final class ManipulationLifecycle {
     float retiredFormation() {return retiredFormation;}
     float retiredOpacity() {return retiredOpacity;}
     boolean finished(long now) {return retiring() && now>=retired+8;}
-    float formation(double time) {return smooth((float)((time-born)/entrance));}
+    float formation(double time) {return HemoEasing.smoothstep((float)((time-born)/entrance));}
     float presence(double time) {
-        return formation(time)*(sustained?1:smooth((float)((until-time)/exit)));
+        return formation(time)*(sustained?1:HemoEasing.smoothstep((float)((until-time)/exit)));
     }
-    float residue(double time) {return retiring()?1-smooth((float)((time-retired)/8)):0;}
-    float departure(double time) {return sustained?0:1-smooth((float)((until-time)/exit));}
+    float residue(double time) {return retiring()?1-HemoEasing.smoothstep((float)((time-retired)/8)):0;}
+    float departure(double time) {return sustained?0:1-HemoEasing.smoothstep((float)((until-time)/exit));}
 
     static float reveal(float progress,float x,float y,float z) {
         float vein=.5F+.24F*Mth.sin(x*4+y*2+z*3)+.12F*Mth.sin(y*7-x*2);
-        return smooth((progress-vein*.65F)/.35F);
-    }
-    static float smooth(float value) {
-        float t=Mth.clamp(value,0,1);return t*t*(3-2*t);
+        return HemoEasing.smoothstep((progress-vein*.65F)/.35F);
     }
 }

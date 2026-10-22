@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.entity.misc;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborCanopyGeometry;
 import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborFruitGeometry;
 import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborOfWillVisualRules;
@@ -65,7 +66,7 @@ final class ArborFruitMeshes {
 
     private static double heartRadius(double t, double phi) {
         return .80 * R * Math.pow(Math.sin(Math.PI * Math.pow(t, 1.45)), .85)
-                * (1 + .10 * Math.cos(2 * phi) * smooth((t - .55) / .45));
+                * (1 + .10 * Math.cos(2 * phi) * HemoEasing.smoothstep((t - .55) / .45));
     }
 
     private static void heart(PoseStack.Pose pose, VertexConsumer out, int light, int color) {
@@ -490,11 +491,6 @@ final class ArborFruitMeshes {
     /** Deterministic blotchy noise in [-1, 1] so cached fruit keep the same mottling. */
     static double mottle(double t, double phi, int seed) {
         return Math.sin(t * 41.3 + phi * 7.1 + seed) * Math.sin(t * 17.9 - phi * 5.3 + seed * 1.7);
-    }
-
-    private static double smooth(double x) {
-        double t = Math.max(0, Math.min(1, x));
-        return t * t * (3 - 2 * t);
     }
 
     private static ArborCanopyGeometry.Point p(double x, double y, double z) {

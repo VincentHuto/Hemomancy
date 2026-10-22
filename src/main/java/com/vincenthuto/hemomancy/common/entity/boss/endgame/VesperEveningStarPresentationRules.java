@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 /** Pure thresholds and interpolation for the Evening Star's presentation-only state. */
 public final class VesperEveningStarPresentationRules {
 	public static final int HOOD_REMOVAL_TICKS = 30;
@@ -29,11 +31,11 @@ public final class VesperEveningStarPresentationRules {
 	}
 
 	public static float absorptionProgress(float progress) {
-		return smoothstep(clamp(progress / VesperCombatRules.DEFEAT_ABSORPTION_REQUIRED));
+		return HemoEasing.smoothstep(progress / VesperCombatRules.DEFEAT_ABSORPTION_REQUIRED);
 	}
 
 	public static float absorptionScale(float progress) {
-		return lerp(absorptionProgress(progress), 1.0F, 0.08F);
+		return HemoEasing.lerp(1.0F, 0.08F, absorptionProgress(progress));
 	}
 
 	public static float absorptionLowering(float progress) {
@@ -45,26 +47,14 @@ public final class VesperEveningStarPresentationRules {
 	}
 
 	public static float finalCollapseProgress(float progress) {
-		return smoothstep(clamp((progress - 95.0F) / 5.0F));
+		return HemoEasing.smoothstep((progress - 95.0F) / 5.0F);
 	}
 
 	public static float finalCollapseScale(int collapseTick) {
-		return lerp(smoothstep(clamp(collapseTick / (float) FINAL_COLLAPSE_TICKS)), 1.0F, 0.5F);
+		return HemoEasing.lerp(1.0F, 0.5F, HemoEasing.smoothstep(collapseTick / (float) FINAL_COLLAPSE_TICKS));
 	}
 
 	public static boolean isFinalCollapseComplete(int collapseTick) {
 		return collapseTick >= FINAL_COLLAPSE_TICKS;
-	}
-
-	private static float clamp(float value) {
-		return Math.max(0.0F, Math.min(1.0F, value));
-	}
-
-	private static float smoothstep(float value) {
-		return value * value * (3.0F - 2.0F * value);
-	}
-
-	private static float lerp(float progress, float start, float end) {
-		return start + (end - start) * progress;
 	}
 }

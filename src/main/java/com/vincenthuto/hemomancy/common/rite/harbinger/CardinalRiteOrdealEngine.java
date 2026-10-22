@@ -24,6 +24,7 @@ import com.vincenthuto.hemomancy.common.rite.sigil.CardinalRiteSigilRules;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -251,12 +252,12 @@ public final class CardinalRiteOrdealEngine {
 			rite.markCollapsed();
 			return;
 		}
-		double merge = smoothstep(CardinalRiteFinaleTiming.mergeProgress(rite.getPhaseTicks()));
+		double merge = HemoEasing.smoothstepUnclamped(CardinalRiteFinaleTiming.mergeProgress(rite.getPhaseTicks()));
 		Vec3 center = centerPosition(rite, scale);
 		Vec3 player = new Vec3(caster.getX(),
 				caster.getY() + caster.getBbHeight() * 0.55D, caster.getZ());
 		daemon.setPos(center.lerp(player, merge));
-		daemon.setSpriteScale((float) lerp(merge, scale, HumanitySpriteEntity.MIN_SCALE));
+		daemon.setSpriteScale((float) HemoEasing.lerp(scale, HumanitySpriteEntity.MIN_SCALE, merge));
 		daemon.faceDirection(player.x - center.x, player.z - center.z);
 		if (CardinalRiteFinaleTiming.isImpactTick(rite.getPhaseTicks())) {
 			CardinalRiteImpactPacket impact = new CardinalRiteImpactPacket(8, 0.52F, level.random.nextInt());
@@ -345,14 +346,6 @@ public final class CardinalRiteOrdealEngine {
 	private static Vec3 centerPosition(ActiveCardinalRite rite, float scale) {
 		return Vec3.atCenterOf(rite.getCenterPos()).add(0.0D,
 				0.5D + CardinalRiteHumanityGeometry.DEFAULT_ENTITY_HEIGHT * scale * 0.5D, 0.0D);
-	}
-
-	private static double smoothstep(double value) {
-		return value * value * (3.0D - 2.0D * value);
-	}
-
-	private static double lerp(double amount, double start, double end) {
-		return start + (end - start) * amount;
 	}
 
 	private static void tickConsecration(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite,

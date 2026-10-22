@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
 import com.vincenthuto.hemomancy.common.init.ShaderInit;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteEventKind;
-import com.vincenthuto.hemomancy.common.rite.CardinalRiteMath;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -110,7 +110,7 @@ public final class CardinalRiteFogRenderer {
 			return 1.0F;
 		}
 		float age = ghost.age(time - (float) Math.floor(time));
-		return 1.0F + 0.55F * CardinalRiteMath.pulse(age, 3.0F, 16.0F);
+		return 1.0F + 0.55F * HemoEasing.pulse(age, 3.0F, 16.0F);
 	}
 
 	private static boolean enabled() {

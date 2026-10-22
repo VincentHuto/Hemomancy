@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -51,11 +52,11 @@ public final class CardinalRiteCancellationRules {
 	}
 
 	public static double daemonAbsorptionProgress(int channelTicks) {
-		return clamp(channelTicks / (double) DAEMON_ABSORPTION_TICKS);
+		return HemoEasing.clamp01(channelTicks / (double) DAEMON_ABSORPTION_TICKS);
 	}
 
 	public static double staffDissolutionProgress(int channelTicks) {
-		return clamp((channelTicks - DAEMON_ABSORPTION_TICKS)
+		return HemoEasing.clamp01((channelTicks - DAEMON_ABSORPTION_TICKS)
 				/ (double) STAFF_DISSOLUTION_TICKS);
 	}
 
@@ -65,9 +66,5 @@ public final class CardinalRiteCancellationRules {
 
 	public static boolean canAnimateDaemon(boolean daemonAlreadyExists) {
 		return daemonAlreadyExists;
-	}
-
-	private static double clamp(double value) {
-		return Math.max(0.0D, Math.min(1.0D, value));
 	}
 }

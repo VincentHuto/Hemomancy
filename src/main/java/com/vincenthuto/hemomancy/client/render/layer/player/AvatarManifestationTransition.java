@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.layer.player;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -88,14 +89,10 @@ public final class AvatarManifestationTransition {
 		public float presence() {
 			return switch (phase) {
 				case SUMMONING -> summonBurst();
-				case DISMISSING -> 1.0F - smooth(progress);
+				case DISMISSING -> 1.0F - HemoEasing.smoothstepUnclamped(progress);
 				case ACTIVE -> 1.0F;
 				case NONE -> 0.0F;
 			};
-		}
-
-		private static float smooth(float value) {
-			return value * value * (3.0F - 2.0F * value);
 		}
 
 		private float summonBurst() {

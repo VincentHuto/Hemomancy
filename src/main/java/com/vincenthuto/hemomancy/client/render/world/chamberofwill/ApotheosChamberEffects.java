@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hutoslib.client.particle.data.TendrilGeometry;
 import com.vincenthuto.hutoslib.common.tendril.TendrilEffectConfig;
 import net.minecraft.client.Minecraft;
@@ -448,7 +449,7 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 	private static void addApotheosWallVertex(VertexConsumer consumer, Matrix4f matrix, float skyDistance,
 			float angleT, float heightT) {
 		float angle = angleT * Mth.TWO_PI;
-		float lowWall = 1.0F - smoothstep(0.12F, 0.46F, heightT);
+		float lowWall = 1.0F - HemoEasing.smoothstep(0.12F, 0.46F, heightT);
 		float radiusRipple = Mth.sin(angle * 7.0F + heightT * 12.0F) * 0.006F
 				+ Mth.sin(angle * 3.0F - heightT * 17.0F) * 0.004F;
 		float radius = skyDistance * (APOTHEOS_WALL_RADIUS_SCALE - lowWall * 0.010F + radiusRipple);
@@ -537,8 +538,8 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 		float offsetZ = dx / horizontalLength * width;
 		float heightMid = (startHeightT + endHeightT) * 0.5F;
 		int alpha = (int) (118.0F * apotheosWallCeilingFade(heightMid)
-				* (1.0F - smoothstep(0.60F, 0.82F, heightMid)));
-		int red = (int) Mth.lerp(1.0F - smoothstep(0.10F, 0.42F, heightMid), 132.0F, 190.0F);
+				* (1.0F - HemoEasing.smoothstep(0.60F, 0.82F, heightMid)));
+		int red = (int) Mth.lerp(1.0F - HemoEasing.smoothstep(0.10F, 0.42F, heightMid), 132.0F, 190.0F);
 		int green = 158;
 		int blue = 196;
 		addApotheosWallFrameVertex(consumer, matrix, x0 - offsetX, y0, z0 - offsetZ, red, green, blue, alpha);
@@ -567,20 +568,20 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 
 	private static float apotheosWallRibWidth(float skyDistance, float heightT, boolean majorRib, float phase) {
 		float baseWidth = majorRib ? 0.017F : 0.010F;
-		float lowerRoot = 1.0F - smoothstep(0.10F, 0.48F, heightT);
+		float lowerRoot = 1.0F - HemoEasing.smoothstep(0.10F, 0.48F, heightT);
 		float taper = 1.0F - heightT * 0.32F;
 		float organicWaver = 0.86F + Mth.sin(heightT * 11.0F + phase) * 0.14F;
 		return skyDistance * baseWidth * taper * organicWaver * (1.0F + lowerRoot * 0.22F);
 	}
 
 	private static int apotheosWallRibRed(float heightT, boolean majorRib) {
-		float lowRed = 1.0F - smoothstep(0.08F, 0.44F, heightT);
+		float lowRed = 1.0F - HemoEasing.smoothstep(0.08F, 0.44F, heightT);
 		return (int) Mth.lerp(lowRed, majorRib ? 42.0F : 28.0F, majorRib ? 136.0F : 92.0F);
 	}
 
 	private static int apotheosWallRibAlpha(float heightT, boolean majorRib) {
 		float ceilingFade = apotheosWallCeilingFade(heightT);
-		float lowerStrength = 0.82F + (1.0F - smoothstep(0.12F, 0.54F, heightT)) * 0.18F;
+		float lowerStrength = 0.82F + (1.0F - HemoEasing.smoothstep(0.12F, 0.54F, heightT)) * 0.18F;
 		float alpha = (majorRib ? 224.0F : 166.0F) * ceilingFade * lowerStrength;
 		return (int) Mth.clamp(alpha, 0.0F, 238.0F);
 	}
@@ -633,7 +634,7 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 		float y = apotheosCeilingCoreY(skyDistance, radialT, stableAngleT)
 				+ apotheosCeilingCoreInnerRidge(skyDistance, stableAngleT, radialT);
 		float z = Mth.sin(angle) * radius;
-		float edgePresence = 1.0F - smoothstep(0.92F, 1.0F, radialT) * 0.28F;
+		float edgePresence = 1.0F - HemoEasing.smoothstep(0.92F, 1.0F, radialT) * 0.28F;
 		float alpha = Mth.clamp(214.0F + radialT * 28.0F, 0.0F, 246.0F) * edgePresence;
 		consumer.addVertex(matrix, x, y, z).setUv(stableAngleT, radialT)
 				.setColor(255, 255, 255, (int) Mth.clamp(alpha, 0.0F, 248.0F));
@@ -649,7 +650,7 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 		float x = Mth.cos(angle) * radius;
 		float y = apotheosCeilingAtmosphereY(skyDistance, radialT, stableAngleT);
 		float z = Mth.sin(angle) * radius;
-		float shellPresence = smoothstep(0.04F, 0.22F, radialT) * (1.0F - smoothstep(0.94F, 1.0F, radialT));
+		float shellPresence = HemoEasing.smoothstep(0.04F, 0.22F, radialT) * (1.0F - HemoEasing.smoothstep(0.94F, 1.0F, radialT));
 		float alpha = Mth.clamp(255.0F * shellPresence, 0.0F, 255.0F);
 		consumer.addVertex(matrix, x, y, z).setUv(stableAngleT, radialT)
 				.setColor(255, 255, 255, (int) alpha);
@@ -1013,7 +1014,7 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 	}
 
 	private static float apotheosCeilingPlanetoidRadiusT(float radialT) {
-		float smoothed = smoothstep(0.0F, 1.0F, radialT);
+		float smoothed = HemoEasing.smoothstep(0.0F, 1.0F, radialT);
 		return Mth.lerp(radialT, smoothed, 0.72F);
 	}
 
@@ -1022,7 +1023,7 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 		float centerDrop = (float) Math.pow(1.0F - planetoidDepthT, 1.20F) * APOTHEOS_CEILING_DROP_SCALE
 				* skyDistance;
 		float edgeRise = Mth.square(radialT) * skyDistance * 0.030F;
-		float centerRippleMask = smoothstep(0.24F, 0.68F, radialT);
+		float centerRippleMask = HemoEasing.smoothstep(0.24F, 0.68F, radialT);
 		float ripple = Mth.sin(angleT * Mth.TWO_PI * 6.0F + radialT * 12.0F) * skyDistance * 0.0045F
 				* centerRippleMask;
 		return skyDistance * APOTHEOS_CEILING_Y_SCALE - centerDrop + edgeRise + ripple;
@@ -1047,12 +1048,12 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 	}
 
 	private static float apotheosCeilingCoreInnerIrregularityMask(float radialT) {
-		return smoothstep(0.05F, 0.20F, radialT) * (1.0F - smoothstep(0.58F, 0.93F, radialT));
+		return HemoEasing.smoothstep(0.05F, 0.20F, radialT) * (1.0F - HemoEasing.smoothstep(0.58F, 0.93F, radialT));
 	}
 
 	private static float apotheosCeilingAtmosphereY(float skyDistance, float radialT, float angleT) {
 		float coreY = apotheosCeilingCoreY(skyDistance, radialT, angleT);
-		float shellLift = skyDistance * (0.045F + smoothstep(0.12F, 0.86F, radialT) * 0.045F);
+		float shellLift = skyDistance * (0.045F + HemoEasing.smoothstep(0.12F, 0.86F, radialT) * 0.045F);
 		float stormSag = skyDistance * APOTHEOS_CEILING_ATMOSPHERE_Y_OFFSET_SCALE;
 		return coreY + shellLift + stormSag;
 	}
@@ -1062,12 +1063,7 @@ final class ApotheosChamberEffects extends AbstractChamberThemeEffects {
 	}
 
 	private static float apotheosWallCeilingFade(float heightT) {
-		return 1.0F - smoothstep(APOTHEOS_WALL_CEILING_FADE_START, APOTHEOS_WALL_CEILING_FADE_END, heightT);
-	}
-
-	private static float smoothstep(float edge0, float edge1, float value) {
-		float t = Mth.clamp((value - edge0) / (edge1 - edge0), 0.0F, 1.0F);
-		return t * t * (3.0F - 2.0F * t);
+		return 1.0F - HemoEasing.smoothstep(APOTHEOS_WALL_CEILING_FADE_START, APOTHEOS_WALL_CEILING_FADE_END, heightT);
 	}
 
 	private static float apotheosWallHash(float value) {

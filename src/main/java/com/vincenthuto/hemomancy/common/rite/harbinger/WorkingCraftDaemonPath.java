@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
@@ -71,13 +72,13 @@ public final class WorkingCraftDaemonPath {
 
 	/** Diving from over the staff into the structure's heart, then staying inside it. */
 	public static Vec3 divePosition(double culminationTicks, Vec3 hover, Vec3 structure) {
-		double t = clamp(culminationTicks / DIVE_TICKS);
+		double t = HemoEasing.clamp01(culminationTicks / DIVE_TICKS);
 		return swoop(hover, structure, t * t * (3.0D - 2.0D * t), DIVE_ARC);
 	}
 
 	/** The daemon shrinks as it pours itself into the structure. */
 	public static float diveScale(double culminationTicks, float startScale, float minScale) {
-		double t = clamp(culminationTicks / DIVE_TICKS);
+		double t = HemoEasing.clamp01(culminationTicks / DIVE_TICKS);
 		double eased = t * t * (3.0D - 2.0D * t);
 		return (float) (startScale + (minScale - startScale) * eased);
 	}
@@ -88,9 +89,5 @@ public final class WorkingCraftDaemonPath {
 
 	private static double easeInOut(double t) {
 		return t < 0.5D ? 4.0D * t * t * t : 1.0D - Math.pow(-2.0D * t + 2.0D, 3.0D) / 2.0D;
-	}
-
-	private static double clamp(double value) {
-		return Math.max(0.0D, Math.min(1.0D, value));
 	}
 }

@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 /**
  * Frame-rate-independent easing for the server-authoritative rite progress
  * shown by the HUD.
@@ -10,7 +12,7 @@ final class CardinalRiteProgressSmoother {
 	private double displayedProgress;
 
 	double update(long newRiteKey, double targetProgress, double elapsedSeconds) {
-		double target = clamp(targetProgress);
+		double target = HemoEasing.clamp01(targetProgress);
 		if (riteKey != newRiteKey) {
 			riteKey = newRiteKey;
 			displayedProgress = target;
@@ -30,9 +32,5 @@ final class CardinalRiteProgressSmoother {
 	void clear() {
 		riteKey = Long.MIN_VALUE;
 		displayedProgress = 0.0D;
-	}
-
-	private static double clamp(double value) {
-		return Math.max(0.0D, Math.min(1.0D, value));
 	}
 }

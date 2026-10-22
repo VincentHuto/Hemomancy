@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.ferric;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 /**
  * Presentation rules for the Living Arsenal's "blood hardening into a weapon" cue, free of Minecraft types so they can
  * be tested on the JVM. Blood leaves the forearm, sketches the weapon's outline in the air above the hand, hardens
@@ -114,7 +116,7 @@ public final class WeaponConjureRules {
 
     /** 0 → 1 as blood coils at the palm. */
     public static double gather(double age) {
-        return smooth(age / GATHER_END);
+        return HemoEasing.smoothstep(age / GATHER_END);
     }
 
     /**
@@ -130,23 +132,23 @@ public final class WeaponConjureRules {
 
     /** How far (0 grip, 1 far end) blood has spread over a held weapon, evenly through the sketch. */
     public static double spread(double age) {
-        return smooth((age - GATHER_END + 1) / (SKETCH_END - GATHER_END + 1));
+        return HemoEasing.smoothstep((age - GATHER_END + 1) / (SKETCH_END - GATHER_END + 1));
     }
 
     /** 0 fresh blood → 1 the weapon's school. */
     public static double harden(double age) {
-        return smooth((age - SKETCH_END + 1) / (HARDEN_END - SKETCH_END + 1));
+        return HemoEasing.smoothstep((age - SKETCH_END + 1) / (HARDEN_END - SKETCH_END + 1));
     }
 
     /** Fraction of the outline's full size while it seats into the grip: 1 held in the air, 0.25 seated. */
     public static double seat(double age) {
-        double t = smooth((age - HARDEN_END) / (SEAT_END - HARDEN_END));
+        double t = HemoEasing.smoothstep((age - HARDEN_END) / (SEAT_END - HARDEN_END));
         return 1 - 0.75 * t;
     }
 
     /** 0 → 1 as the seated outline frays into falling drops. */
     public static double fray(double age) {
-        return smooth((age - SEAT_END) / (VISUAL_TICKS - SEAT_END));
+        return HemoEasing.smoothstep((age - SEAT_END) / (VISUAL_TICKS - SEAT_END));
     }
 
     private static Stroke s(double width, double... points) {
@@ -156,10 +158,5 @@ public final class WeaponConjureRules {
     /** A cutting edge: it gets the pale core line once hardened. */
     private static Stroke e(double width, double... points) {
         return new Stroke(points, width, true);
-    }
-
-    static double smooth(double t) {
-        double c = Math.max(0, Math.min(1, t));
-        return c * c * (3 - 2 * c);
     }
 }

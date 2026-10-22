@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperMountControlle
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperMoveTimeline;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseOneAttack;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperWingedFlightRules;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 
 /** Which of Vesper's rider poses apply, and how strongly, for the Crowned Refusal's current state. */
 public final class VesperRiderMotion {
@@ -33,8 +34,8 @@ public final class VesperRiderMotion {
 			return 0.0F;
 		}
 		VesperMoveTimeline timeline = VesperMountControllerRules.timeline(state.attack());
-		float rise = VesperMountMotionRules.smooth(state.attackTick() / 10.0F);
-		float fall = 1.0F - VesperMountMotionRules.smooth(
+		float rise = HemoEasing.smoothstep(state.attackTick() / 10.0F);
+		float fall = 1.0F - HemoEasing.smoothstep(
 				(state.attackTick() - timeline.windup() - timeline.active()) / Math.max(1.0F, timeline.recovery()));
 		return Math.min(rise, fall);
 	}

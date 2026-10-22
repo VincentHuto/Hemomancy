@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteMath;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 
@@ -221,10 +222,9 @@ public final class CardinalRiteFogGeometry {
 	 */
 	public static float partingStrength(float waveAge) {
 		if (waveAge < 0.0F || waveAge >= PARTING_CLOSE_END) return 0.0F;
-		if (waveAge < PARTING_OPEN_TICKS) return CardinalRiteMath.smoothstep(waveAge / PARTING_OPEN_TICKS);
+		if (waveAge < PARTING_OPEN_TICKS) return HemoEasing.smoothstep(waveAge / PARTING_OPEN_TICKS);
 		if (waveAge < PARTING_HOLD_END) return 1.0F;
-		return 1.0F - CardinalRiteMath.smoothstep(
-				(waveAge - PARTING_HOLD_END) / (PARTING_CLOSE_END - PARTING_HOLD_END));
+		return 1.0F - HemoEasing.smoothstep((waveAge - PARTING_HOLD_END) / (PARTING_CLOSE_END - PARTING_HOLD_END));
 	}
 
 	public static float opacityMultiplier(FogPuff puff, float time) {

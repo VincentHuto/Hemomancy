@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.item.harbinger.MonolithFragmentBurdenRules;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -177,16 +178,8 @@ public class MonolithFragmentItemRenderer extends BlockEntityWithoutLevelRendere
 
 	private static float morphNoise(int seed, float morphPhase) {
 		float basePhase = (float) Math.floor(morphPhase);
-		float blend = smoothStep(morphPhase - basePhase);
-		return lerp(noise(seed, basePhase), noise(seed, basePhase + 1.0f), blend);
-	}
-
-	private static float smoothStep(float value) {
-		return value * value * (3.0f - 2.0f * value);
-	}
-
-	private static float lerp(float from, float to, float blend) {
-		return from + (to - from) * blend;
+		float blend = HemoEasing.smoothstepUnclamped(morphPhase - basePhase);
+		return HemoEasing.lerp(noise(seed, basePhase), noise(seed, basePhase + 1.0f), blend);
 	}
 
 	private static float noise(int seed, float morphPhase) {

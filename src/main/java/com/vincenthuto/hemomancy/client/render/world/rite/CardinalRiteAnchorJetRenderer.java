@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyDefinition;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteRingRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteEventKind;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteMath;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
@@ -107,10 +108,6 @@ public final class CardinalRiteAnchorJetRenderer {
 		return height;
 	}
 
-	private static double lerp(double amount, double start, double end) {
-		return start + (end - start) * amount;
-	}
-
 	private static void drawJet(PoseStack poseStack, VertexConsumer v, Minecraft mc, Vec3 camera, double x, double y,
 			double z, double time, int anchorIndex, float burstAge) {
 		VIEW.set(camera.x, camera.y, camera.z, x, y, z, mc.gameRenderer.getMainCamera().rotation());
@@ -128,7 +125,7 @@ public final class CardinalRiteAnchorJetRenderer {
 		for (int s = 0; s < STATIONS; s++) {
 			double t = s / (STATIONS - 1.0D);
 			double waver = Math.sin(time * 0.55D + t * 8.0D + anchorIndex) * 0.018D * t;
-			PATH.add(waver, lerp(t, ROOT_Y, height), waver * 0.6D, lerp(t, 0.075D, 0.028D) * (bursting ? 1.3D : 1.0D));
+			PATH.add(waver, HemoEasing.lerp(ROOT_Y, height, t), waver * 0.6D, HemoEasing.lerp(0.075D, 0.028D, t) * (bursting ? 1.3D : 1.0D));
 		}
 		ribbon(m, v, VIEW, PATH, RIBBON, seed, TINT, 0.92F);
 		// A welling pool on the sore's blood where the column leaves it, so the jet rises out of the pit instead of
@@ -145,7 +142,7 @@ public final class CardinalRiteAnchorJetRenderer {
 			for (int s = 0; s <= 5; s++) {
 				double t = s / 5.0D;
 				PATH.add(Math.cos(angle) * spread * t, height + 0.1D * t - 0.42D * t * t, Math.sin(angle) * spread * t,
-						lerp(t, 0.026D, 0.012D));
+						HemoEasing.lerp(0.026D, 0.012D, t));
 			}
 			ribbon(m, v, VIEW, PATH, RIBBON, seed + 2 + d, d % 2 == 0 ? TINT : CLOT, 0.75F);
 		}

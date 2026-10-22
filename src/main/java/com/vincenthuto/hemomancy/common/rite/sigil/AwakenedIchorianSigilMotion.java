@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite.sigil;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.resources.ResourceLocation;
 
 public final class AwakenedIchorianSigilMotion {
@@ -17,9 +18,9 @@ public final class AwakenedIchorianSigilMotion {
 		if (remainingSteps <= 1) return target;
 		double progress = 1.0D / remainingSteps;
 		return new Position(
-				lerp(current.x(), target.x(), progress),
-				lerp(current.y(), target.y(), progress),
-				lerp(current.z(), target.z(), progress));
+				HemoEasing.lerp(current.x(), target.x(), progress),
+				HemoEasing.lerp(current.y(), target.y(), progress),
+				HemoEasing.lerp(current.z(), target.z(), progress));
 	}
 
 	public static Position position(double originX, double originY, double originZ,
@@ -40,9 +41,9 @@ public final class AwakenedIchorianSigilMotion {
 		double orbitBobY = orbitY + offset.y();
 		double peel = peelProgress(ageTicks);
 		return new Position(
-				lerp(originX, orbitX, peel),
-				lerp(originY, orbitBobY, peel),
-				lerp(originZ, orbitZ, peel));
+				HemoEasing.lerp(originX, orbitX, peel),
+				HemoEasing.lerp(originY, orbitBobY, peel),
+				HemoEasing.lerp(originZ, orbitZ, peel));
 	}
 
 	private static Offset offsetFor(ResourceLocation sigilId, double radius,
@@ -137,10 +138,6 @@ public final class AwakenedIchorianSigilMotion {
 		if (distance <= radius || distance == 0.0D) return new Offset(x, y, z);
 		double scale = radius / distance;
 		return new Offset(x * scale, y, z * scale);
-	}
-
-	private static double lerp(double start, double end, double progress) {
-		return start + (end - start) * progress;
 	}
 
 	public record Position(double x, double y, double z) {

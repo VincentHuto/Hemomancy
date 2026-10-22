@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.ferric;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 /**
  * Presentation timeline for Lodestone Collapse, free of Minecraft types so it can be tested on the JVM.
  * The magnetic field contracts, iron shards spiral in from the edge, crush together at the point, then sink.
@@ -17,14 +19,14 @@ public final class LodestoneCollapseRules {
 
     /** Field ring radius as a fraction of the cast radius: it tightens as the shards are drawn. */
     public static double fieldRadius(double age) {
-        return 1 - 0.75 * smooth((age - 1) / (DRAW_END - 1));
+        return 1 - 0.75 * HemoEasing.smoothstep((age - 1) / (DRAW_END - 1));
     }
 
     /** How far shard {@code index} has travelled from the edge to the point, 0..1; shards set off staggered. */
     public static double draw(double age, int index) {
         double start = FIELD_END + (index % 4) * STAGGER;
         // Every group has the same flight time, so the last to leave still lands as the crush begins.
-        return easeIn((age - start) / (DRAW_END - FIELD_END - 3 * STAGGER));
+        return HemoEasing.easeInCubic((age - start) / (DRAW_END - FIELD_END - 3 * STAGGER));
     }
 
     /**
@@ -47,16 +49,6 @@ public final class LodestoneCollapseRules {
 
     /** Sink and dissolve, 0 intact to 1 gone. */
     public static double sink(double age) {
-        return smooth((age - CRUSH_END) / (VISUAL_TICKS - CRUSH_END));
-    }
-
-    public static double smooth(double t) {
-        double c = Math.max(0, Math.min(1, t));
-        return c * c * (3 - 2 * c);
-    }
-
-    static double easeIn(double t) {
-        double c = Math.max(0, Math.min(1, t));
-        return c * c * c;
+        return HemoEasing.smoothstep((age - CRUSH_END) / (VISUAL_TICKS - CRUSH_END));
     }
 }

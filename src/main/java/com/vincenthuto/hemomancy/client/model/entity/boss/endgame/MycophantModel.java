@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantSplitRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantState;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantYieldRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperMoveTimeline;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -2304,11 +2305,6 @@ public class MycophantModel extends HierarchicalModel<MycophantEntity> {
 	private float thoraxBaseY;
 	private float thoraxBaseZ;
 
-	private static float ease(float x) {
-		x = Mth.clamp(x, 0.0F, 1.0F);
-		return x * x * (3.0F - 2.0F * x);
-	}
-
 	/** A blockout point (pixels, Y up) as model units relative to the ground part. */
 	private static float bx(float x) { return -x / 2.0F; }
 	private static float by(float y) { return -y / 2.0F; }
@@ -2368,13 +2364,13 @@ public class MycophantModel extends HierarchicalModel<MycophantEntity> {
 				case ATTACK -> attackPose(entity, partial);
 				case STAGGER -> {
 					float s = entity.getStateTick() + partial;
-					float rise = ease(s / 6.0F) * (1.0F - ease((s - 10.0F) / 20.0F));
+					float rise = HemoEasing.smoothstep(s / 6.0F) * (1.0F - HemoEasing.smoothstep((s - 10.0F) / 20.0F));
 					this.pose.mix(STALK, STAGGER, rise);
 				}
 				case SPLIT -> splitPose(splitT);
 				case YIELD -> {
 					float y = entity.getYieldTick() + partial;
-					this.pose.mix(STALK, YIELDED, ease(MycophantYieldRules.lower((int) y) * 0.6F + MycophantYieldRules.fold((int) y) * 0.4F));
+					this.pose.mix(STALK, YIELDED, HemoEasing.smoothstep(MycophantYieldRules.lower((int) y) * 0.6F + MycophantYieldRules.fold((int) y) * 0.4F));
 					this.pose.frill = Mth.lerp(MycophantYieldRules.fold((int) y), STALK.frill, -0.3F);
 				}
 				default -> this.pose.copy(STALK);
@@ -2411,7 +2407,7 @@ public class MycophantModel extends HierarchicalModel<MycophantEntity> {
 			return true;
 		}
 		// the notice: the head snaps up a little past its mark and the tentacles freeze, listening
-		float perk = ease((t - notice) / 7.0F);
+		float perk = HemoEasing.smoothstep((t - notice) / 7.0F);
 		float overshoot = Mth.sin(Mth.clamp((t - notice) / 14.0F, 0.0F, 1.0F) * Mth.PI) * 0.12F;
 		if (rematch) this.pose.copy(NOTICE);
 		else this.pose.mix(TENDING, NOTICE, perk);
@@ -2419,8 +2415,8 @@ public class MycophantModel extends HierarchicalModel<MycophantEntity> {
 		this.tentacleCalm = perk;
 		if (rematch || t < drop) return !rematch;
 		// the drop: the hand opens and lowers, and the fungling falls away into the nectar
-		float release = ease((t - drop) / 6.0F);
-		this.pose.mix(this.poseA.copy(this.pose), STALK, ease((t - drop) / 16.0F));
+		float release = HemoEasing.smoothstep((t - drop) / 6.0F);
+		this.pose.mix(this.poseA.copy(this.pose), STALK, HemoEasing.smoothstep((t - drop) / 16.0F));
 		this.pose.grip = Mth.lerp(release, NOTICE.grip, 0.0F);
 		this.fungDrop = Mth.clamp((t - drop) / 9.0F, 0.0F, 1.0F);
 		return t < drop + 9.0F;
@@ -2436,18 +2432,18 @@ public class MycophantModel extends HierarchicalModel<MycophantEntity> {
 		crouch.frill = 0.2F;
 		crouch.maw = 0.1F;
 		if (r < 0.0F) {
-			this.pose.mix(STALK, crouch, ease((r + 10.0F) / 10.0F));
-			this.tentacleCalm = 1.0F - ease((r + 10.0F) / 10.0F);
+			this.pose.mix(STALK, crouch, HemoEasing.smoothstep((r + 10.0F) / 10.0F));
+			this.tentacleCalm = 1.0F - HemoEasing.smoothstep((r + 10.0F) / 10.0F);
 		} else if (r < hold) {
 			// a fast rear with a small overshoot, then the bellow held with a tremble
-			float rear = ease(r / 6.0F);
+			float rear = HemoEasing.smoothstep(r / 6.0F);
 			this.pose.mix(crouch, ROAR, rear);
 			this.pose.thorax += Mth.sin(Mth.clamp(r / 12.0F, 0.0F, 1.0F) * Mth.PI) * 0.08F;
-			this.roarTremble = rear * (1.0F - ease((r - hold + 8.0F) / 8.0F));
+			this.roarTremble = rear * (1.0F - HemoEasing.smoothstep((r - hold + 8.0F) / 8.0F));
 			this.pose.maw = ROAR.maw * (0.85F + Mth.sin(r * 1.7F) * 0.15F * this.roarTremble);
 		} else {
 			// settle low and forward: the stance the Rushing Embrace's wind-up starts from
-			this.pose.mix(ROAR, STALK, ease((r - hold) / settleTicks));
+			this.pose.mix(ROAR, STALK, HemoEasing.smoothstep((r - hold) / settleTicks));
 		}
 	}
 
@@ -2459,12 +2455,12 @@ public class MycophantModel extends HierarchicalModel<MycophantEntity> {
 	private void splitPose(float s) {
 		float snap = MycophantSplitRules.snapTick();
 		if (s < snap) {
-			this.pose.mix(STALK, STRAIN, ease(s / 8.0F));
+			this.pose.mix(STALK, STRAIN, HemoEasing.smoothstep(s / 8.0F));
 			this.splitShudder = MycophantSplitRules.crack(s);
 			return;
 		}
 		float r = s - snap;
-		float rear = ease(r / 5.0F);
+		float rear = HemoEasing.smoothstep(r / 5.0F);
 		float wings = MycophantSplitRules.wings(s);
 		this.pose.mix(STRAIN, this.poseB.mix(ROAR, SPLIT_DISPLAY, wings), rear);
 		this.pose.thorax += Mth.sin(Mth.clamp(r / 10.0F, 0.0F, 1.0F) * Mth.PI) * 0.1F;
@@ -2474,10 +2470,10 @@ public class MycophantModel extends HierarchicalModel<MycophantEntity> {
 		this.pose.head -= throb * 0.1F;
 		this.pose.tentFwd += throb * 0.6F;
 		// the bellow trembles until the wings take over
-		this.roarTremble = rear * (1.0F - ease((s - 46.0F) / 12.0F));
+		this.roarTremble = rear * (1.0F - HemoEasing.smoothstep((s - 46.0F) / 12.0F));
 		this.pose.maw *= 0.85F + Mth.sin(r * 1.7F) * 0.15F * this.roarTremble;
 		// the collar stays folded through the snap so the halves swing clear in silhouette, then flares as the pulp blooms
-		this.pose.frill = Mth.lerp(ease((s - 24.0F) / 14.0F), STRAIN.frill, this.pose.frill);
+		this.pose.frill = Mth.lerp(HemoEasing.smoothstep((s - 24.0F) / 14.0F), STRAIN.frill, this.pose.frill);
 		float settle = MycophantSplitRules.settle(s);
 		if (settle > 0.0F) this.pose.mix(this.poseA.copy(this.pose), STALK, settle);
 	}
@@ -2498,9 +2494,9 @@ public class MycophantModel extends HierarchicalModel<MycophantEntity> {
 		float w = Math.max(1, timeline.windup());
 		float a = Math.max(1, timeline.active());
 		float r = Math.max(1, timeline.recovery());
-		float wind = ease(t / w);
-		float act = ease((t - w) / a);
-		float rec = ease((t - w - a) / r);
+		float wind = HemoEasing.smoothstep(t / w);
+		float act = HemoEasing.smoothstep((t - w) / a);
+		float rec = HemoEasing.smoothstep((t - w - a) / r);
 		switch (attack) {
 			case RUSHING_EMBRACE, FUSION_EMBRACE -> {
 				if (entity.isHolding()) {
@@ -2512,7 +2508,7 @@ public class MycophantModel extends HierarchicalModel<MycophantEntity> {
 				} else if (t < w) {
 					this.pose.mix(STALK, ROAR, wind);
 				} else if (t < w + a) {
-					this.pose.mix(ROAR, EMBRACE, ease((t - w) / (a * 0.5F)));
+					this.pose.mix(ROAR, EMBRACE, HemoEasing.smoothstep((t - w) / (a * 0.5F)));
 				} else {
 					this.pose.mix(EMBRACE, STALK, rec);
 				}
@@ -2548,12 +2544,12 @@ public class MycophantModel extends HierarchicalModel<MycophantEntity> {
 			}
 			case WING_SWEEP -> {
 				if (t < w) this.pose.mix(STALK, SWEEP_WIND, wind);
-				else if (t < w + a) this.pose.mix(SWEEP_WIND, SWEEP, ease((t - w) / (a * 0.4F)));
+				else if (t < w + a) this.pose.mix(SWEEP_WIND, SWEEP, HemoEasing.smoothstep((t - w) / (a * 0.4F)));
 				else this.pose.mix(SWEEP, STALK, rec);
 			}
 			case PULP_BLOOM -> {
 				if (t < w) this.pose.mix(STALK, BLOOM_WIND, wind);
-				else if (t < w + a) this.pose.mix(BLOOM_WIND, BLOOM, ease((t - w) / (a * 0.5F)));
+				else if (t < w + a) this.pose.mix(BLOOM_WIND, BLOOM, HemoEasing.smoothstep((t - w) / (a * 0.5F)));
 				else this.pose.mix(BLOOM, STALK, rec);
 			}
 			case NONE -> this.pose.copy(STALK);
@@ -2703,7 +2699,7 @@ public class MycophantModel extends HierarchicalModel<MycophantEntity> {
 		this.wingR.xRot = -p.wing[0];
 		this.wingR.yRot = -p.wing[1];
 		this.wingR.zRot = p.wing[2] - flap;
-		float fan = ease((wings - 0.2F) / 0.6F);
+		float fan = HemoEasing.smoothstep((wings - 0.2F) / 0.6F);
 		float shiver = opened ? 0.0F : Mth.sin(Mth.clamp((splitT - 62.0F) / 16.0F, 0.0F, 1.0F) * Mth.PI);
 		for (int s = 0; s < this.wingSpars.length; s++) {
 			ModelPart[] chain = this.wingSpars[s];
@@ -2712,7 +2708,7 @@ public class MycophantModel extends HierarchicalModel<MycophantEntity> {
 			chain[0].zRot += bunch * (1.0F - fan);
 			for (int k = 1; k < chain.length; k++) {
 				float start = 0.15F + 0.6F * (k - 1) / (chain.length - 1);
-				chain[k].zRot += (left ? 0.75F : -0.75F) * (1.0F - ease((wings - start) / 0.25F))
+				chain[k].zRot += (left ? 0.75F : -0.75F) * (1.0F - HemoEasing.smoothstep((wings - start) / 0.25F))
 						+ (left ? -1.0F : 1.0F) * Mth.sin(time * 1.4F - k * 0.5F + s) * 0.025F
 						+ Mth.sin(time * 9.0F - k * 0.9F + s) * 0.05F * shiver;
 			}

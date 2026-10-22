@@ -20,6 +20,7 @@ import com.vincenthuto.hemomancy.common.manipulation.animation.CastPhase;
 import com.vincenthuto.hemomancy.common.manipulation.animation.CastPresentation;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticLoomBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticWeaveRules;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.LightTexture;
@@ -108,8 +109,8 @@ final class SomaticLoomEcho {
 		int loose = total == 0 ? 0 : Math.round((1 - woven / (float) total) * frayOrder.length);
 		if (dissolving) loose = SomaticLoomEffectRules.echoTornLimbs(loose, frayOrder.length, dissolve);
 		SomaticLoomEffectRules.EchoLook look = SomaticLoomEffectRules.echoLook(te.upgradeTier());
-		float grow = climax ? smooth(Mth.clamp(c / 0.3f, 0, 1)) : 0;
-		float sink = climax ? smooth(Mth.clamp((c - 0.7f) / 0.3f, 0, 1)) : 0;
+		float grow = climax ? HemoEasing.smoothstepUnclamped(Mth.clamp(c / 0.3f, 0, 1)) : 0;
+		float sink = climax ? HemoEasing.smoothstepUnclamped(Mth.clamp((c - 0.7f) / 0.3f, 0, 1)) : 0;
 		// A whole figure has nowhere to grow: it brightens instead.
 		float brighten = look.climaxScale() > look.weavingScale() ? 0 : grow;
 		float scale = Mth.lerp(grow, look.weavingScale(), look.climaxScale()) * (1 - 0.85f * sink);
@@ -235,10 +236,6 @@ final class SomaticLoomEcho {
 		if (c < 0.35f) return c / 0.35f * CastingTrackRules.phaseDuration(track, CastPhase.OPENING, false);
 		if (c < 0.45f) return (c - 0.35f) / 0.1f * CastingTrackRules.phaseDuration(track, CastPhase.RELEASE, false);
 		return Math.min(1, (c - 0.45f) / 0.47f) * CastingTrackRules.phaseDuration(track, CastPhase.RECOVERY, false);
-	}
-
-	private static float smooth(float t) {
-		return t * t * (3 - 2 * t);
 	}
 
 	/** Degrees, in the loom's frame, to face the weaver; the echo faces the loom's front (-z) at rest. */

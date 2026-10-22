@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenCont
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -96,7 +97,7 @@ final class TendencyTraceLayerCache {
 
 	void render(GuiGraphics gfx, ProgressScreenContext ctx, PanZoomState panZoom, float alpha) {
 		if (texture == null) return;
-		float clampedAlpha = clamp01(alpha);
+		float clampedAlpha = HemoEasing.clamp01(alpha);
 		if (clampedAlpha <= 0.01f) return;
 
 		RenderSystem.enableBlend();
@@ -364,10 +365,6 @@ final class TendencyTraceLayerCache {
 
 	private static int withAlpha(int color, int alpha) {
 		return (color & 0x00FFFFFF) | (Math.max(0, Math.min(255, alpha)) << 24);
-	}
-
-	private static float clamp01(float v) {
-		return Math.max(0.0f, Math.min(1.0f, v));
 	}
 
 	private record TracePoint(int x, int y) {}

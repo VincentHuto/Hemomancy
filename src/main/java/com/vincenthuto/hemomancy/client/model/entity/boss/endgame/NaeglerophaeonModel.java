@@ -5,6 +5,7 @@ import java.util.List;
 import net.minecraft.world.phys.Vec3;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.NaeglerophaeonCombatRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.NaeglerophaeonEntity;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 
 /** Arc-length sampled, continuous swimmer geometry. All returned points are relative to entity feet. */
 public final class NaeglerophaeonModel {
@@ -88,7 +89,7 @@ public final class NaeglerophaeonModel {
             }
             centers[limb]=resample(raw,tail?30:12,count);
             if(tail && input.victim!=null && (input.phase==NaeglerophaeonEntity.CAPTURE || input.phase==NaeglerophaeonEntity.GRAB)) {
-                double blend=input.phase==NaeglerophaeonEntity.GRAB?1:smooth(input.phaseTicks/20);
+                double blend=input.phase==NaeglerophaeonEntity.GRAB?1:HemoEasing.smoothstep(input.phaseTicks/20);
                 Vec3[] reaching=captureCurve(input,centers[limb][0],count);
                 for(int j=0;j<=count;j++) centers[limb][j]=centers[limb][j].lerp(reaching[j],blend);
             }
@@ -196,5 +197,4 @@ public final class NaeglerophaeonModel {
     public static Vec3 bezier(Vec3 a,Vec3 b,Vec3 c,Vec3 d,double t) {
         double s=1-t; return a.scale(s*s*s).add(b.scale(3*s*s*t)).add(c.scale(3*s*t*t)).add(d.scale(t*t*t));
     }
-    public static double smooth(double t) { t=Math.clamp(t,0,1); return t*t*(3-2*t); }
 }

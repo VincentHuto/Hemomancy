@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWe
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.animation.CastPhase;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import java.util.Locale;
 
 /**
@@ -58,11 +59,11 @@ public final class OutpouringRules {
         int r = rank == null ? 0 : rank.ordinal();
         if (phase == CastPhase.CANCEL) {
             if (sincePhase >= 6) return new Pulse(0, Stage.DONE);
-            return new Pulse(carried * (1 - clamp(sincePhase / 6)), Stage.WITHDRAW);
+            return new Pulse(carried * (1 - HemoEasing.clamp01(sincePhase / 6)), Stage.WITHDRAW);
         }
         if (phase.sustained()) {
-            if (type == EnumManipulationType.CHARGED) return new Pulse(.15f + .6f * clamp(charge), Stage.BUILD);
-            return new Pulse(.8f * clamp(sincePhase / (10 + 2.5f * r)), Stage.BUILD);
+            if (type == EnumManipulationType.CHARGED) return new Pulse(.15f + .6f * HemoEasing.clamp01(charge), Stage.BUILD);
+            return new Pulse(.8f * HemoEasing.clamp01(sincePhase / (10 + 2.5f * r)), Stage.BUILD);
         }
         boolean passive = type == EnumManipulationType.PASSIVE;
         int aftermath = passive ? PASSIVE_AFTERMATH : profile(rank).aftermath();
@@ -70,7 +71,7 @@ public final class OutpouringRules {
         if (sincePhase < 2) return new Pulse(scale * (carried + (1 - carried) * sincePhase / 2), Stage.PEAK);
         if (sincePhase < PEAK_TICKS) return new Pulse(scale, Stage.PEAK);
         if (sincePhase < PEAK_TICKS + aftermath)
-            return new Pulse(scale * (1 - smooth((sincePhase - PEAK_TICKS) / aftermath)), Stage.AFTERMATH);
+            return new Pulse(scale * (1 - HemoEasing.smoothstep((sincePhase - PEAK_TICKS) / aftermath)), Stage.AFTERMATH);
         return new Pulse(0, Stage.DONE);
     }
 
@@ -111,8 +112,6 @@ public final class OutpouringRules {
      */
     public static float smokeNearBody(double dx, double dy, double dz) {
         double spine = Math.clamp(dy, 0, 1.85), r = Math.sqrt(dx * dx + (dy - spine) * (dy - spine) + dz * dz);
-        return .12f + .88f * smooth((float) ((r - .4) / .45));
+        return .12f + .88f * HemoEasing.smoothstep((float) ((r - .4) / .45));
     }
-    static float clamp(float value) { return Math.clamp(value, 0f, 1f); }
-    static float smooth(float t) { t = clamp(t); return t * t * (3 - 2 * t); }
 }

@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.entity.boss.annetta.AnnettaEncounterRule
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.LatentAnnettaInfectionEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.LatentCombatRules;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.LatentCombatRules.Attack;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hutoslib.client.HLRenderTypeInit;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -53,7 +54,7 @@ final class LatentInfectionLayer extends RenderLayer<LatentAnnettaInfectionEntit
     }
 
     private static float window(float t, float in, float peak, float out) {
-        return AnnettaEncounterRules.smooth((t - in) / (peak - in)) * (1.0F - AnnettaEncounterRules.smooth((t - peak) / (out - peak)));
+        return HemoEasing.smoothstep((t - in) / (peak - in)) * (1.0F - HemoEasing.smoothstep((t - peak) / (out - peak)));
     }
 
     /** Two thumps every two seconds, matching the skin shader's beat. */

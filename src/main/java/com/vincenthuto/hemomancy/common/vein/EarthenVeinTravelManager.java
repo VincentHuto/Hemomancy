@@ -16,6 +16,7 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServer
 import com.vincenthuto.hemomancy.common.network.vein.EarthenVeinTravelVisualPacket;
 import com.vincenthuto.hemomancy.common.network.vein.OpenEarthenVeinDisplayPacket;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.EarthenVeinBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
@@ -209,7 +210,7 @@ public final class EarthenVeinTravelManager {
 				0.0F, 1.0F);
 		Vec3 start = CINEMATIC_STARTS.getOrDefault(player.getUUID(), player.position());
 		Vec3 mouth = Vec3.atBottomCenterOf(session.sourcePos()).add(0.0D, 0.22D, 0.0D);
-		Vec3 current = start.lerp(mouth, smooth(progress));
+		Vec3 current = start.lerp(mouth, HemoEasing.smoothstepUnclamped(progress));
 		player.teleportTo(current.x, current.y, current.z);
 		player.setDeltaMovement(Vec3.ZERO);
 		player.fallDistance = 0.0F;
@@ -268,7 +269,7 @@ public final class EarthenVeinTravelManager {
 				0.0F, 1.0F);
 		Vec3 start = CINEMATIC_STARTS.getOrDefault(player.getUUID(), player.position());
 		Vec3 end = Vec3.atBottomCenterOf(destination.position()).add(0.0D, 1.05D, 0.0D);
-		Vec3 current = start.lerp(end, smooth(progress));
+		Vec3 current = start.lerp(end, HemoEasing.smoothstepUnclamped(progress));
 		player.teleportTo(current.x, current.y, current.z);
 		player.setDeltaMovement(Vec3.ZERO);
 		player.fallDistance = 0.0F;
@@ -461,10 +462,6 @@ public final class EarthenVeinTravelManager {
 		EarthenVeinTravelSession session = BY_PLAYER.remove(playerId);
 		if (session != null) SOURCE_OWNERS.remove(new SourceKey(session.sourceDimension(), session.sourcePos()), playerId);
 		CINEMATIC_STARTS.remove(playerId);
-	}
-
-	private static float smooth(float value) {
-		return value * value * (3.0F - 2.0F * value);
 	}
 
 	private record SourceKey(ResourceLocation dimension, BlockPos pos) {

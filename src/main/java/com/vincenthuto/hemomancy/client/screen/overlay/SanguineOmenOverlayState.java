@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 public final class SanguineOmenOverlayState {
 	private int durationTicks;
 	private int remainingTicks;
@@ -38,11 +40,11 @@ public final class SanguineOmenOverlayState {
 		float progress = progress(partialTicks);
 		float envelope;
 		if (progress < 0.12F) {
-			envelope = smooth(progress / 0.12F);
+			envelope = HemoEasing.smoothstep(progress / 0.12F);
 		} else if (progress < 0.68F) {
 			envelope = 1.0F;
 		} else {
-			envelope = 1.0F - smooth((progress - 0.68F) / 0.32F);
+			envelope = 1.0F - HemoEasing.smoothstep((progress - 0.68F) / 0.32F);
 		}
 
 		float pulse = 0.94F + 0.06F * (float) Math.sin(progress * Math.PI * 8.0F);
@@ -59,11 +61,6 @@ public final class SanguineOmenOverlayState {
 
 	public int seed() {
 		return seed;
-	}
-
-	private static float smooth(float value) {
-		float clamped = clamp(value, 0.0F, 1.0F);
-		return clamped * clamped * (3.0F - 2.0F * clamped);
 	}
 
 	private static float clamp(float value, float min, float max) {

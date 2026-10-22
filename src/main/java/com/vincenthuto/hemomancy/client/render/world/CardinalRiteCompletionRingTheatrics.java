@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
-import com.vincenthuto.hemomancy.common.rite.CardinalRiteMath;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteFinaleTiming;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 
 /**
  * Pure client-side pose math for the boundary rings during the rite finale.
@@ -39,22 +39,22 @@ public final class CardinalRiteCompletionRingTheatrics {
 			int ringIndex, int ringCount, float originalRadius) {
 		if (ringCount <= 0 || originalRadius <= 0.0F) return RingPose.DEFAULT;
 		float ringFraction = ringCount <= 1 ? 0.0F
-				: CardinalRiteMath.clamp01(ringIndex / (float) (ringCount - 1));
+				: HemoEasing.clamp01(ringIndex / (float) (ringCount - 1));
 		float direction = (ringIndex & 1) == 0 ? 1.0F : -1.0F;
 		float rotation = spinAngle(spinTicks) * direction;
 		if (phase == CardinalRitePhase.OFFERING_PROCESSION) {
-			float rise = CardinalRiteMath.smoothstep(phaseTicks / FUNNEL_RISE_TICKS);
+			float rise = HemoEasing.smoothstep(phaseTicks / FUNNEL_RISE_TICKS);
 			return new RingPose(1.0F, MAX_FUNNEL_HEIGHT * ringFraction * rise, rotation, 1.0F);
 		}
 		if (phase != CardinalRitePhase.CULMINATION) return RingPose.DEFAULT;
 
-		float contraction = CardinalRiteMath.smoothstep(phaseTicks / CONTRACT_TICKS);
+		float contraction = HemoEasing.smoothstep(phaseTicks / CONTRACT_TICKS);
 		float funnelHeight = MAX_FUNNEL_HEIGHT * ringFraction;
 		float stackHeight = STACK_BASE_HEIGHT + STACK_SPACING * ringIndex;
 		float targetScale = TARGET_RADIUS / originalRadius;
-		float scale = CardinalRiteMath.lerp(contraction, 1.0F, targetScale);
-		float height = CardinalRiteMath.lerp(contraction, funnelHeight, stackHeight);
-		float collapse = CardinalRiteMath.smoothstep((phaseTicks - COLLAPSE_START_TICK)
+		float scale = HemoEasing.lerp(1.0F, targetScale, contraction);
+		float height = HemoEasing.lerp(funnelHeight, stackHeight, contraction);
+		float collapse = HemoEasing.smoothstep((phaseTicks - COLLAPSE_START_TICK)
 				/ (CardinalRiteFinaleTiming.GROWTH_TICKS - COLLAPSE_START_TICK));
 		return new RingPose(scale * (1.0F - collapse), height, rotation, 1.0F - collapse);
 	}
@@ -74,7 +74,7 @@ public final class CardinalRiteCompletionRingTheatrics {
 	/** How much of each anchor socket still shows while culmination folds the rings inward. */
 	public static float socketVisibility(CardinalRitePhase phase, float phaseTicks) {
 		if (phase != CardinalRitePhase.CULMINATION) return 1.0F;
-		return 1.0F - CardinalRiteMath.smoothstep(phaseTicks / SOCKET_FOLD_TICKS);
+		return 1.0F - HemoEasing.smoothstep(phaseTicks / SOCKET_FOLD_TICKS);
 	}
 
 	public static float flashAlpha(float culminationTicks) {

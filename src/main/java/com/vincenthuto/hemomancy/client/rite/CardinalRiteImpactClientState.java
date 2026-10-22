@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.rite;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 /** Short-lived camera impulse for the daemon's arrival at its caster. */
 public final class CardinalRiteImpactClientState {
 	private int durationTicks;
@@ -28,8 +30,8 @@ public final class CardinalRiteImpactClientState {
 
 	public float pitchShake(float partialTick) {
 		if (!isActive()) return 0.0F;
-		float elapsed = durationTicks - remainingTicks + clamp(partialTick);
-		float envelope = 1.0F - clamp(elapsed / durationTicks);
+		float elapsed = durationTicks - remainingTicks + HemoEasing.clamp01(partialTick);
+		float envelope = 1.0F - HemoEasing.clamp01(elapsed / durationTicks);
 		float direction = (seed & 1) == 0 ? 1.0F : -1.0F;
 		return direction * 3.2F * envelope
 				* (float) Math.cos(elapsed * Math.PI * 1.35F);
@@ -37,9 +39,5 @@ public final class CardinalRiteImpactClientState {
 
 	public float rollShake(float partialTick) {
 		return pitchShake(partialTick) * 0.42F;
-	}
-
-	private static float clamp(float value) {
-		return Math.max(0.0F, Math.min(1.0F, value));
 	}
 }

@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.boss;
 
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantIntroRules;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 
 /**
  * The player's side of being taken by the Mycophant, as one continuous scene:
@@ -192,7 +193,7 @@ public final class MycophantIntroClientState {
 		if (waking()) return 1.0F;
 		if (!capturing()) return 0.0F;
 		float start = 4.0F + (f * 7 % FIBERS) * 5.0F;
-		return clamp((time(partial) - start) / 46.0F);
+		return HemoEasing.clamp01((time(partial) - start) / 46.0F);
 	}
 
 	/** The pull before the snap: fibers straighten and tremble as the player tries to rise (0..1). */
@@ -210,7 +211,7 @@ public final class MycophantIntroClientState {
 	/** 0 while fiber {@code f} holds, rising to 1 as its halves recoil. */
 	public float fiberBreak(int f, float partial) {
 		if (!waking()) return 0.0F;
-		return clamp((time(partial) - fiberSnapTick(f)) / SNAP_TICKS);
+		return HemoEasing.clamp01((time(partial) - fiberSnapTick(f)) / SNAP_TICKS);
 	}
 
 	/** The mycelial vignette at the edge of the view: the webbing's bed, the hunt's watching. */
@@ -232,7 +233,7 @@ public final class MycophantIntroClientState {
 
 	public float bloomVeil(float partial) {
 		if (bloomLeft <= 0) return 0.0F;
-		return clamp((bloomLeft - partial) / BLOOM_TICKS);
+		return HemoEasing.clamp01((bloomLeft - partial) / BLOOM_TICKS);
 	}
 
 	/** Piecewise smooth curve through (time, value) pairs; flat before the first and after the last. */
@@ -240,14 +241,10 @@ public final class MycophantIntroClientState {
 		if (t <= pairs[0]) return pairs[1];
 		for (int i = 2; i < pairs.length; i += 2) {
 			if (t <= pairs[i]) {
-				float x = clamp((t - pairs[i - 2]) / (pairs[i] - pairs[i - 2]));
+				float x = HemoEasing.clamp01((t - pairs[i - 2]) / (pairs[i] - pairs[i - 2]));
 				return pairs[i - 1] + (pairs[i + 1] - pairs[i - 1]) * x * x * (3.0F - 2.0F * x);
 			}
 		}
 		return pairs[pairs.length - 1];
-	}
-
-	private static float clamp(float value) {
-		return Math.max(0.0F, Math.min(1.0F, value));
 	}
 }

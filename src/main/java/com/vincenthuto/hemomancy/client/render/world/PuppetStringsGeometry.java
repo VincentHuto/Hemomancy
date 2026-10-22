@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
 import com.vincenthuto.hemomancy.common.summon.PuppetStringsRules;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ final class PuppetStringsGeometry {
 
         // Sinew knits up the body from its feet while it is lowered, then sinks into it.
         double knit = PuppetStringsRules.knit(age);
-        float knitAlpha = alpha * (float) (1 - PuppetStringsRules.smooth((age - PuppetStringsRules.LOWER_END) / 2.0));
+        float knitAlpha = alpha * (float) (1 - HemoEasing.smoothstep((age - PuppetStringsRules.LOWER_END) / 2.0));
         if (knit > 0 && knitAlpha > 0) {
             double radius = 0.55 * width * scale;
             for (int strand = 0; strand < 3; strand++) {
@@ -84,7 +85,7 @@ final class PuppetStringsGeometry {
         }
 
         // A brief bloom where the feet will land.
-        float landing = alpha * (float) (1 - PuppetStringsRules.smooth(age / 6.0)) * 0.5f;
+        float landing = alpha * (float) (1 - HemoEasing.smoothstep(age / 6.0)) * 0.5f;
         if (landing > 0) card(p, v, new Vec3(0, 0.05, 0), right, up, 0.9 * width, 0.5 * width, FOCUS, seed, TINT, landing);
     }
 
@@ -96,7 +97,7 @@ final class PuppetStringsGeometry {
         double twist = PuppetStringsRules.unspoolTwist(age);
         double fray = PuppetStringsRules.unspoolFray(age);
         double flash = PuppetStringsRules.flash(age);
-        double release = PuppetStringsRules.smooth((age - PuppetStringsRules.HAUL_END) / 3.0);
+        double release = HemoEasing.smoothstep((age - PuppetStringsRules.HAUL_END) / 3.0);
         float pulse = heartbeat(time);
         Vec3 heart = new Vec3(0, lift + height - height * scale * 0.5, 0);
 

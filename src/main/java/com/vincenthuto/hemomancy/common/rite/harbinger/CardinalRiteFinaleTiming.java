@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 public final class CardinalRiteFinaleTiming {
 	public static final int GROWTH_TICKS = 40;
 	public static final int MERGE_TICKS = 40;
@@ -37,11 +39,11 @@ public final class CardinalRiteFinaleTiming {
 	}
 
 	public static double growthProgress(int phaseTicks) {
-		return clamp(phaseTicks / (double) GROWTH_TICKS);
+		return HemoEasing.clamp01(phaseTicks / (double) GROWTH_TICKS);
 	}
 
 	public static double mergeProgress(int phaseTicks) {
-		return clamp((phaseTicks - GROWTH_TICKS) / (double) MERGE_TICKS);
+		return HemoEasing.clamp01((phaseTicks - GROWTH_TICKS) / (double) MERGE_TICKS);
 	}
 
 	public static double offeringParticleStrength(int phaseTicks) {
@@ -58,9 +60,5 @@ public final class CardinalRiteFinaleTiming {
 	 */
 	public static float daemonScale(int arrivedOfferings) {
 		return PROCESSION_SCALE * (1.0F + OFFERING_GROWTH_PER_ARRIVAL * Math.max(0, arrivedOfferings));
-	}
-
-	private static double clamp(double value) {
-		return Math.max(0.0D, Math.min(1.0D, value));
 	}
 }

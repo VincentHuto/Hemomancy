@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.manipulation.animus.HematicRiposteRules;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -46,11 +47,11 @@ final class HematicRiposteGeometry {
         double endHeight = (1.18 + (tilt - 2) * 0.14 - (frame.firstPerson() ? 0.1 : 0)) * s;
         double theta, reach;
         if (age < HematicRiposteRules.EMERGE_END) {
-            double e = smooth(age / HematicRiposteRules.EMERGE_END);
+            double e = HemoEasing.smoothstep(age / HematicRiposteRules.EMERGE_END);
             theta = side * BEHIND;
             reach = 0.3 + 0.9 * e;
         } else if (age < HematicRiposteRules.SWEEP_END) {
-            double e = easeInOut((age - HematicRiposteRules.EMERGE_END)
+            double e = HemoEasing.easeInOutCubic((age - HematicRiposteRules.EMERGE_END)
                     / (HematicRiposteRules.SWEEP_END - HematicRiposteRules.EMERGE_END));
             theta = side * BEHIND * (1 - e);
             reach = 1.2 + 1.0 * e;
@@ -60,7 +61,7 @@ final class HematicRiposteGeometry {
             theta = -side * OVERSHOOT * Math.sin(t * Math.PI / 2);
             reach = 2.2 + 0.35 * Math.sin(t * Math.PI);
         } else {
-            double d = smooth((age - HematicRiposteRules.STRIKE_END)
+            double d = HemoEasing.smoothstep((age - HematicRiposteRules.STRIKE_END)
                     / (HematicRiposteRules.VISUAL_TICKS - HematicRiposteRules.STRIKE_END));
             theta = -side * OVERSHOOT;
             reach = 2.2 - 0.6 * d;
@@ -84,8 +85,8 @@ final class HematicRiposteGeometry {
         Vec3 over = root.add(f.scale(-0.35 * s)).add(UP.scale(0.55 * s)).add(r.scale(side * 0.25 * s));
         Vec3 elbow = hand.subtract(reachDir.scale(0.7 * s)).add(UP.scale(0.25 * s));
 
-        float grow = (float) smooth(age / HematicRiposteRules.EMERGE_END);
-        float dissolve = (float) smooth((age - HematicRiposteRules.STRIKE_END)
+        float grow = (float) HemoEasing.smoothstep((double) (age / HematicRiposteRules.EMERGE_END));
+        float dissolve = (float) HemoEasing.smoothstep((age - HematicRiposteRules.STRIKE_END)
                 / (double) (HematicRiposteRules.VISUAL_TICKS - HematicRiposteRules.STRIKE_END));
         float pulse = (float) Math.pow(Math.max(0, Math.sin(time * 0.6)), 4);
         float body = alpha * (1 - dissolve * 0.85f);
@@ -146,7 +147,7 @@ final class HematicRiposteGeometry {
         Vec3 swing = motion.lengthSqr() < 1e-6 ? r.scale(-side) : motion.normalize();
         // Fingers spread vertically, so the open palm leads the horizontal slap.
         Vec3 fan = basis(reachDir)[1].dot(UP) < 0 ? basis(reachDir)[1].scale(-1) : basis(reachDir)[1];
-        double curl = smooth((age - HematicRiposteRules.SWEEP_END) / 2.0) * (1 - dissolve * 0.5);
+        double curl = HemoEasing.smoothstep((age - HematicRiposteRules.SWEEP_END) / 2.0) * (1 - dissolve * 0.5);
         card(p, v, hand, right, up, 0.24 * s * grow, 0.20 * s * grow, FOCUS, seed + 3, TINT, body);
         for (int claw = 0; claw < 4; claw++) {
             double spread = claw - 1.5;
@@ -235,15 +236,5 @@ final class HematicRiposteGeometry {
 
     private static Vec3 vec(double[] xyz) {
         return new Vec3(xyz[0], xyz[1], xyz[2]);
-    }
-
-    private static double smooth(double t) {
-        double c = Math.max(0, Math.min(1, t));
-        return c * c * (3 - 2 * c);
-    }
-
-    private static double easeInOut(double t) {
-        double c = Math.max(0, Math.min(1, t));
-        return c < 0.5 ? 4 * c * c * c : 1 - Math.pow(-2 * c + 2, 3) / 2;
     }
 }

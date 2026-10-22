@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.entity.boss.annetta;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 /**
  * Pure maths for the Stained Priestess's tendril wings: pose tables, pose blending and the curvature-wave
  * integrator that turns a heading into a living centre line. Units are model pixels in body space
@@ -66,8 +68,8 @@ public final class PriestessTendrilRules {
     /** Fingers fan from the arm's root (down and back) to its tip; in a beat they lag the arm. */
     public static Heading fingerHeading(int finger, float[] weights, float time, float beat) {
         float f = finger / (FINGERS - 1.0F);
-        float azimuth = lerp(f, blend(weights, 2), blend(weights, 3));
-        float elevation = lerp(f, blend(weights, 4), blend(weights, 5));
+        float azimuth = HemoEasing.lerp(blend(weights, 2), blend(weights, 3), f);
+        float elevation = HemoEasing.lerp(blend(weights, 4), blend(weights, 5), f);
         elevation += 16.0F * (float) Math.sin(time * 0.25F - 0.8F - 0.12F * finger) * beat;
         return new Heading(azimuth, elevation);
     }
@@ -125,8 +127,4 @@ public final class PriestessTendrilRules {
 
     private static final float TAU = (float) (Math.PI * 2.0D);
     private static final double HALF_PI = Math.PI / 2.0D;
-
-    private static float lerp(float t, float a, float b) {
-        return a + (b - a) * t;
-    }
 }

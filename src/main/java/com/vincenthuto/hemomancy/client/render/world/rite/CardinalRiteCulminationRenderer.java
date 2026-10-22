@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCulmination;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteEventKind;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteLightningPalette;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hutoslib.client.particle.BoltRenderer;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.lightning.LightningTestBoltFactory;
@@ -257,10 +258,10 @@ public final class CardinalRiteCulminationRenderer {
 					a * 0.8F * (float) Math.sin(t * Math.PI));
 		}
 		// The crown bursting as the pillar tops out, and the floor rippling at its root.
-		float crown = a * (float) (1 - smooth((age - ASCENSION_RISE_TICKS) / 10.0));
+		float crown = a * (float) (1 - HemoEasing.smoothstep((age - ASCENSION_RISE_TICKS) / 10.0));
 		card(m, v, VIEW, 0, height, 0, 0.7, 0.7, FOCUS, seed + 25, TINT, crown);
 		ground(m, v, 0, 0.05, 0, (1 + age * 0.15) / 0.76, RIPPLE, seed + 26, TINT,
-				0.6F * (float) (1 - smooth(age / 40.0)));
+				0.6F * (float) (1 - HemoEasing.smoothstep(age / 40.0)));
 		ground(m, v, 0, 0.04, 0, 1.3, POOL, seed + 27, TINT, 0.5F * a);
 	}
 
@@ -286,7 +287,7 @@ public final class CardinalRiteCulminationRenderer {
 			if (phase < 0.5) {
 				double r = Math.max(1, floorRadius) * phase / 0.5;
 				ground(m, v, 0, 0.06, 0, r / 0.76, RIPPLE, seed + 40, TINT,
-						0.4F * (float) ((1 - phase / 0.5) * smooth(age / 20.0)));
+						0.4F * (float) ((1 - phase / 0.5) * HemoEasing.smoothstep(age / 20.0)));
 			}
 			return;
 		}
@@ -311,7 +312,7 @@ public final class CardinalRiteCulminationRenderer {
 			PATH.clear();
 			for (int i = 0; i <= 8; i++) {
 				double t = i / 8.0;
-				double d = lerp(t, inner, r);
+				double d = HemoEasing.lerp(inner, r, t);
 				double jitter = Math.sin(d * 1.7 + k * 3.1) * 0.25;
 				double ax = Math.cos(angle), az = Math.sin(angle);
 				PATH.add(ax * d - az * jitter, 0.07, az * d + ax * jitter, 0.08 - 0.03 * t);
@@ -319,7 +320,7 @@ public final class CardinalRiteCulminationRenderer {
 			ribbon(m, v, VIEW, PATH, RIBBON, seed + 50 + k, TINT, 0.7F * fade);
 			ribbon(m, v, VIEW, PATH, 6, 9, 1.2, SLASH, seed + 66 + k, CLOT, 0.6F * fade);
 		}
-		card(m, v, VIEW, 0, 0.3, 0, 0.8, 0.8, FOCUS, seed + 82, TINT, (float) (1 - smooth(age / 10.0)));
+		card(m, v, VIEW, 0, 0.3, 0, 0.8, 0.8, FOCUS, seed + 82, TINT, (float) (1 - HemoEasing.smoothstep(age / 10.0)));
 	}
 
 	private static double floorRadius(BlockPos center) {
@@ -349,7 +350,7 @@ public final class CardinalRiteCulminationRenderer {
 			int s = seed + b * 7;
 			if (!release) {
 				// Faint threads feel for the participants while the daemon merges.
-				double reach = smooth((age - 20) / 60.0);
+				double reach = HemoEasing.smoothstep((age - 20) / 60.0);
 				if (reach > 0) vessel(m, v, 0, reach, time, s, 0.25F * (float) reach, true);
 				continue;
 			}
@@ -382,7 +383,7 @@ public final class CardinalRiteCulminationRenderer {
 		if (to - from < 0.02 || alpha <= 0.003F) return;
 		PATH.clear();
 		for (int i = 0; i <= 14; i++) {
-			bezier(CTRL, lerp(i / 14.0, from, to), P);
+			bezier(CTRL, HemoEasing.lerp(from, to, i / 14.0), P);
 			PATH.add(P[0], P[1], P[2], threadOnly ? 0.05 : 0.14);
 		}
 		if (threadOnly) {
@@ -394,7 +395,7 @@ public final class CardinalRiteCulminationRenderer {
 		for (int strand = 0; strand < 2; strand++) {
 			PATH.clear();
 			for (int i = 0; i <= 14; i++) {
-				double t = lerp(i / 14.0, from, to);
+				double t = HemoEasing.lerp(from, to, i / 14.0);
 				bezier(CTRL, t, P);
 				double angle = t * 16 + strand * Math.PI - time * 0.2;
 				PATH.add(P[0] + Math.cos(angle) * 0.06, P[1] + Math.sin(angle) * 0.06, P[2] + Math.sin(angle) * 0.04,
@@ -427,7 +428,7 @@ public final class CardinalRiteCulminationRenderer {
 		float pulse = heartbeat(time);
 		if (!release) {
 			double condense = forgingCondense(age);
-			float appear = (float) smooth(age / 10.0);
+			float appear = (float) HemoEasing.smoothstep(age / 10.0);
 			double y = FORGING_KNOT_HEIGHT;
 			for (int k = 0; k < 6; k++) {
 				PATH.clear();
@@ -468,7 +469,7 @@ public final class CardinalRiteCulminationRenderer {
 			}
 		}
 		ground(m, v, 0, 0.04, 0, 0.8, POOL, seed + 113, TINT, 0.5F * (float) fadeOut(age, FORGING_TICKS, 20)
-				* (float) smooth((age - FORGING_DROP_TICKS) / 2.0));
+				* (float) HemoEasing.smoothstep((age - FORGING_DROP_TICKS) / 2.0));
 	}
 
 	// ── Domain ──
@@ -486,7 +487,7 @@ public final class CardinalRiteCulminationRenderer {
 	// ── Collapse ──
 
 	private static void collapseBlood(Matrix4f m, VertexConsumer v, float age, double time, int seed) {
-		float torn = (float) (1 - smooth(age / 30.0));
+		float torn = (float) (1 - HemoEasing.smoothstep(age / 30.0));
 		for (int k = 0; k < 6; k++) {
 			direction(k, 6, seed, P);
 			double d = collapseReach(age, 0.7 + 0.5 * hash(k + seed));
@@ -497,13 +498,13 @@ public final class CardinalRiteCulminationRenderer {
 			ribbon(m, v, VIEW, PATH, RIBBON, seed + 130 + k, CLOT, torn);
 			card(m, v, VIEW, P[0] * d, P[1] * d - drop, P[2] * d, 0.08, 0.08, FOCUS, seed + 136 + k, CLOT, torn);
 		}
-		card(m, v, VIEW, 0, 0, 0, 0.9, 0.9, FOCUS, seed + 142, CLOT, (float) (1 - smooth(age / 6.0)));
+		card(m, v, VIEW, 0, 0, 0, 0.9, 0.9, FOCUS, seed + 142, CLOT, (float) (1 - HemoEasing.smoothstep(age / 6.0)));
 	}
 
 	private static void collapseDecay(Matrix4f m, VertexConsumer v, float age, double time, int seed) {
 		double core = 0.6 + age * 0.1;
-		card(m, v, VIEW, 0, 0, 0, core, core, FOCUS, seed + 150, TINT, (float) (1 - smooth(age / 16.0)));
-		float cells = (float) (1 - smooth((age - 10) / 30.0));
+		card(m, v, VIEW, 0, 0, 0, core, core, FOCUS, seed + 150, TINT, (float) (1 - HemoEasing.smoothstep(age / 16.0)));
+		float cells = (float) (1 - HemoEasing.smoothstep((age - 10) / 30.0));
 		for (int k = 0; k < 18; k++) {
 			direction(k, 18, seed, P);
 			double d = collapseReach(age, 0.6 + 0.6 * hash(k * 3 + seed));

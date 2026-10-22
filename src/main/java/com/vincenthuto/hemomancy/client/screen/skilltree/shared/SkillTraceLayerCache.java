@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumSkill
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoint;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgressClientCache;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -128,7 +129,7 @@ final class SkillTraceLayerCache {
 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, clamp01(alpha));
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, HemoEasing.clamp01(alpha));
         PoseStack pose = gfx.pose();
         pose.pushPose();
         pose.translate(ctx.guiLeft() + panZoom.panX, ctx.guiTop() + panZoom.panY, 0);
@@ -147,7 +148,7 @@ final class SkillTraceLayerCache {
         if (heartbeatTexture == null) return;
         float pulse = heartbeatPulse(animTime);
         if (pulse <= 0.015f) return;
-        float clampedAlpha = clamp01(alpha);
+        float clampedAlpha = HemoEasing.clamp01(alpha);
         if (clampedAlpha <= 0.01f) return;
 
         RenderSystem.enableBlend();
@@ -165,7 +166,7 @@ final class SkillTraceLayerCache {
 
     void renderFlow(GuiGraphics gfx, ProgressScreenContext ctx, PanZoomState panZoom, float animTime, float alpha) {
         if (flowTraces.isEmpty() || panZoom.zoom < 0.45f) return;
-        float clampedAlpha = clamp01(alpha);
+        float clampedAlpha = HemoEasing.clamp01(alpha);
         if (clampedAlpha <= 0.01f) return;
 
         int size = panZoom.zoom >= 1.85f ? 2 : 1;
@@ -182,7 +183,7 @@ final class SkillTraceLayerCache {
     }
 
     void renderPortalPulse(GuiGraphics gfx, ProgressScreenContext ctx, PanZoomState panZoom, float progress, boolean locked) {
-        float pulse = clamp01(progress);
+        float pulse = HemoEasing.clamp01(progress);
         if (pulse <= 0.01f) return;
         int centerX = panZoom.sx(ctx.guiLeft(), COMPASS_CENTER_X);
         int centerY = panZoom.sy(ctx.guiTop(), COMPASS_CENTER_Y);
@@ -196,7 +197,7 @@ final class SkillTraceLayerCache {
     }
 
     void renderScreenTransitionPulse(GuiGraphics gfx, ProgressScreenContext ctx, PanZoomState panZoom, float progress, boolean enteringDeep) {
-        float pulse = clamp01(progress);
+        float pulse = HemoEasing.clamp01(progress);
         if (pulse <= 0.01f) return;
         float elapsed = 1.0f - pulse;
         float eased = 1.0f - (1.0f - elapsed) * (1.0f - elapsed);
@@ -557,11 +558,7 @@ final class SkillTraceLayerCache {
 
     private static int multiplyAlpha(int color, float multiplier) {
         int alpha = (color >>> 24) & 0xFF;
-        return withAlpha(color, Math.round(alpha * clamp01(multiplier)));
-    }
-
-    private static float clamp01(float value) {
-        return Math.max(0.0f, Math.min(1.0f, value));
+        return withAlpha(color, Math.round(alpha * HemoEasing.clamp01(multiplier)));
     }
 
     private static float heartbeatPulse(float animTime) {

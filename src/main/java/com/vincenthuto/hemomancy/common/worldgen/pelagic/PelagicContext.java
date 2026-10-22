@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.worldgen.pelagic;
 
 import net.minecraft.core.*;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.*;
 import net.minecraft.world.level.levelgen.*;
@@ -70,7 +71,7 @@ public final class PelagicContext {
             double reefWeight = reefBlend.get().cachedWeight(x, z, reefMask);
             double shoreWeight = shoreBlend.get().cachedWeight(x, z, shoreMask);
             // Narrow beaches need a fully shaped core for enclosed pools and grounded rock stacks.
-            shoreWeight = PelagicTerrainSampler.smooth(0, .75, shoreWeight);
+            shoreWeight = HemoEasing.smoothstep(0, .75, shoreWeight);
             var open = terrain.sample(x, z, continentalness, eroded, ridge, PelagicTerrainSampler.Surface.OPEN);
             var reef = reefWeight > 0
                     ? terrain.sample(x, z, continentalness, eroded, ridge, PelagicTerrainSampler.Surface.REEF) : open;

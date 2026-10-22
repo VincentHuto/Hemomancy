@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.summon;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 /**
  * Timelines for a puppet arriving on and leaving by its strings. The server uses {@link #UNSPOOL_TICKS} to keep
  * the body as a shell until it has been hauled away; the client poses the body and draws the strings from the same
@@ -38,22 +40,22 @@ public final class PuppetStringsRules {
 	}
 
 	public static double descendScale(double age) {
-		return 0.85D + 0.15D * smooth(age / LOWER_END);
+		return 0.85D + 0.15D * HemoEasing.smoothstep(age / LOWER_END);
 	}
 
 	/** How far the falling strings have reached down to the body, 0 to 1. */
 	public static double stringReach(double age) {
-		return smooth(age / DROP_END);
+		return HemoEasing.smoothstep(age / DROP_END);
 	}
 
 	/** How high the knitting sinew has climbed the body, 0 to 1. */
 	public static double knit(double age) {
-		return smooth((age - 2.0D) / (LOWER_END - 2.0D));
+		return HemoEasing.smoothstep((age - 2.0D) / (LOWER_END - 2.0D));
 	}
 
 	/** The arrival strings fraying away once the body stands. */
 	public static double descendFray(double age) {
-		return smooth((age - LOWER_END) / (DESCEND_TICKS - LOWER_END));
+		return HemoEasing.smoothstep((age - LOWER_END) / (DESCEND_TICKS - LOWER_END));
 	}
 
 	/** Strings snapping taut, overshooting slightly before they hold. */
@@ -61,7 +63,7 @@ public final class PuppetStringsRules {
 		if (age <= 0.0D) return 0.0D;
 		if (age >= SNAP_END) return 1.0D;
 		double t = age / SNAP_END;
-		return Math.min(1.08D, smooth(t) + 0.25D * Math.sin(t * Math.PI));
+		return Math.min(1.08D, HemoEasing.smoothstep(t) + 0.25D * Math.sin(t * Math.PI));
 	}
 
 	/** Blocks the departing body has been hauled up: held during the snap, then accelerating away. */
@@ -79,12 +81,12 @@ public final class PuppetStringsRules {
 	}
 
 	public static double unspoolTwist(double age) {
-		return MAX_TWIST * smooth((age - SNAP_END) / (HAUL_END - SNAP_END));
+		return MAX_TWIST * HemoEasing.smoothstep((age - SNAP_END) / (HAUL_END - SNAP_END));
 	}
 
 	/** The body fraying into sinew as it rises, 0 to 1. */
 	public static double unspoolFray(double age) {
-		return smooth((age - SNAP_END) / (HAUL_END - SNAP_END));
+		return HemoEasing.smoothstep((age - SNAP_END) / (HAUL_END - SNAP_END));
 	}
 
 	/** The flash that swallows the last of the body where it meets its strings. */
@@ -95,17 +97,12 @@ public final class PuppetStringsRules {
 
 	/** The puppeteer's control thread lets go as the strings above take the body. */
 	public static double controlThreadFade(double age) {
-		return 1.0D - smooth(age / HAUL_END);
+		return 1.0D - HemoEasing.smoothstep(age / HAUL_END);
 	}
 
 	/** String count is carried in the cue's count, which must stay at least 1. */
 	public static int strings(int count) {
 		return Math.max(MIN_STRINGS, Math.min(MAX_STRINGS, count));
-	}
-
-	public static double smooth(double t) {
-		double c = Math.max(0.0D, Math.min(1.0D, t));
-		return c * c * (3.0D - 2.0D * c);
 	}
 
 	private static double easeOut(double t) {

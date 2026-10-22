@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.rite.TempleOathRules;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -197,7 +198,7 @@ public class HarbingerHermitEntity extends PathfinderMob implements ProgressionD
 
     private FarewellSurfaceSample sampleFarewellDissolveSurface() {
         double localY = 0.58D + this.random.nextDouble() * 1.03D;
-        double yNorm = clamp01((localY - 0.58D) / 1.03D);
+        double yNorm = HemoEasing.clamp01((localY - 0.58D) / 1.03D);
         double torsoBias = 0.78D + Math.sin(yNorm * Math.PI) * 0.22D;
         double roll = this.random.nextDouble();
 
@@ -288,8 +289,8 @@ public class HarbingerHermitEntity extends PathfinderMob implements ProgressionD
                 double tornNoise = farewellHash21(Math.floor((deltaX + idX) * 19.0D) + idX * 1.37D,
                         Math.floor((deltaY + idY) * 19.0D) + idY * 1.37D, seed) - 0.5D;
                 double distance = Math.hypot(deltaX, deltaY) * (1.0D + angularWobble * 0.075D) + tornNoise * 0.018D;
-                double softness = lerp(0.022D, 0.070D, growth);
-                best = Math.max(best, smoothstep(radius + softness * 0.55D, radius - softness, distance));
+                double softness = HemoEasing.lerp(0.022D, 0.070D, growth);
+                best = Math.max(best, HemoEasing.smoothstep(radius + softness * 0.55D, radius - softness, distance));
             }
         }
 
@@ -297,7 +298,7 @@ public class HarbingerHermitEntity extends PathfinderMob implements ProgressionD
     }
 
     private static double farewellSpotGrowthForProgress(double progress) {
-        return lerp(0.24D, 1.12D, smoothstep(0.04D, 0.86D, clamp01(progress)));
+        return HemoEasing.lerp(0.24D, 1.12D, HemoEasing.smoothstep(0.04D, 0.86D, HemoEasing.clamp01(progress)));
     }
 
     private static double farewellHash21(double x, double y, double seed) {
@@ -310,7 +311,7 @@ public class HarbingerHermitEntity extends PathfinderMob implements ProgressionD
     }
 
     private static double farewellCutForProgress(double progress) {
-        return lerp(1.08D, 0.14D, smoothstep(0.08D, 0.94D, clamp01(progress)));
+        return HemoEasing.lerp(1.08D, 0.14D, HemoEasing.smoothstep(0.08D, 0.94D, HemoEasing.clamp01(progress)));
     }
 
     private Vec3 transformFarewellLocalToWorld(double localX, double localY, double localZ) {
@@ -331,19 +332,6 @@ public class HarbingerHermitEntity extends PathfinderMob implements ProgressionD
                                          double uvX, double uvY,
                                          double normalX, double normalZ,
                                          double tangentX, double tangentZ) {
-    }
-
-    private static double smoothstep(double edge0, double edge1, double value) {
-        double t = clamp01((value - edge0) / (edge1 - edge0));
-        return t * t * (3.0D - 2.0D * t);
-    }
-
-    private static double lerp(double from, double to, double amount) {
-        return from + (to - from) * amount;
-    }
-
-    private static double clamp01(double value) {
-        return Math.max(0.0D, Math.min(1.0D, value));
     }
 
     private static double fract(double value) {

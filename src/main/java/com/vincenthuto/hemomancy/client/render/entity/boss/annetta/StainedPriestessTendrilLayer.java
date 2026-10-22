@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.client.render.entity.boss.annetta.PriestessTend
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.AnnettaEncounterRules;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.PriestessCombatRules;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.StainedPriestessEntity;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hutoslib.client.HLRenderTypeInit;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -128,7 +129,7 @@ final class StainedPriestessTendrilLayer extends RenderLayer<StainedPriestessEnt
             TendrilTube.core(head, core, knot[i], TendrilTube.taper(knot[i].length / 3, 0.85F, 0.06F, 1.0F, seed + i), i * 0.13F, light, overlay, 0.95F);
         }
         VertexConsumer eyes = buffer.getBuffer(RenderType.eyes(EYE));
-        float blink = motion.alive() * AnnettaEncounterRules.smooth(motion.headGrowth() * 1.4F - 0.4F);
+        float blink = motion.alive() * HemoEasing.smoothstep(motion.headGrowth() * 1.4F - 0.4F);
         TendrilTube.card(head, eyes, 0.0F, -3.4F, -2.75F, 2.8F * blink, 1.4F, 0.0F, 1.0F);
         TendrilTube.card(head, eyes, -1.95F, -4.6F, -2.72F, 1.7F * blink, 0.85F, -22.0F, 1.0F);
         TendrilTube.card(head, eyes, 1.95F, -4.6F, -2.72F, 1.7F * blink, 0.85F, 22.0F, 1.0F);

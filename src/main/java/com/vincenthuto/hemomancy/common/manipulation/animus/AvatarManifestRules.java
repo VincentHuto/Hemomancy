@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.animus;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 /**
  * Presentation rules for the blood avatar's manifestation and dismissal cue, free of Minecraft types so they can be
  * tested on the JVM. The timeline matches the avatar layer's 20-tick transition: blood wells from the body and climbs
@@ -46,7 +48,7 @@ public final class AvatarManifestRules {
     }
 
     public static double rise(double age) {
-        return smooth(age / RISE_END);
+        return HemoEasing.smoothstep(age / RISE_END);
     }
 
     /** How far sinew has lashed out to the grown parts, with a slight overshoot before it settles. */
@@ -64,17 +66,17 @@ public final class AvatarManifestRules {
 
     /** 0 → 1 as everything left over frays upward after the emergence. */
     public static double fray(double age) {
-        return smooth((age - GROW_END - 1) / (VISUAL_TICKS - GROW_END - 1));
+        return HemoEasing.smoothstep((age - GROW_END - 1) / (VISUAL_TICKS - GROW_END - 1));
     }
 
     /** Height fraction the dismissing shell has slid down to: 1 the crown, 0 the feet. */
     public static double melt(double age) {
-        return 1 - smooth(age / MELT_END);
+        return 1 - HemoEasing.smoothstep(age / MELT_END);
     }
 
     /** 0 → 1 as the ground pool drains back up into the legs. */
     public static double drain(double age) {
-        return smooth((age - DRAIN_START) / (VISUAL_TICKS - DRAIN_START));
+        return HemoEasing.smoothstep((age - DRAIN_START) / (VISUAL_TICKS - DRAIN_START));
     }
 
     /**
@@ -84,15 +86,10 @@ public final class AvatarManifestRules {
     public static double ringHeight(double age, int ring, int rings) {
         double start = ring * RISE_END * 0.5 / Math.max(1, rings);
         double t = (age - start) / (RISE_END * 0.8);
-        return t < 0 ? -1 : Math.min(1, smooth(t));
+        return t < 0 ? -1 : Math.min(1, HemoEasing.smoothstep(t));
     }
 
     private static int clampStage(int stage) {
         return Math.max(0, Math.min(STAGES - 1, stage));
-    }
-
-    static double smooth(double t) {
-        double c = Math.max(0, Math.min(1, t));
-        return c * c * (3 - 2 * c);
     }
 }

@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.ferric;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 /**
  * Presentation timeline for one Sanguine Mending pulse, free of Minecraft types so it can be tested on the JVM. Blood
  * leaves the wrist and winds along the held tool, each crack in it is stitched closed and riveted with blood-iron, and
@@ -17,27 +19,22 @@ public final class SanguineMendingRules {
 
     /** 0 → 1 as the strands wind out along the tool. */
     public static double draw(double age) {
-        return smooth(age / DRAW_END);
+        return HemoEasing.smoothstep(age / DRAW_END);
     }
 
     /** 0 → 1 as crack {@code index} is stitched closed; cracks close one after another. */
     public static double seal(double age, int index) {
         double span = (SEAL_END - DRAW_END) / (double) CRACKS;
-        return smooth((age - DRAW_END - index * span) / (span * 1.4));
+        return HemoEasing.smoothstep((age - DRAW_END - index * span) / (span * 1.4));
     }
 
     /** 0 → 1 as the strands draw back into the wrist. */
     public static double recede(double age) {
-        return smooth((age - SEAL_END) / (VISUAL_TICKS - SEAL_END));
+        return HemoEasing.smoothstep((age - SEAL_END) / (VISUAL_TICKS - SEAL_END));
     }
 
     /** Where along the tool (0 grip, 1 tip) crack {@code index} sits. */
     public static double crackAt(int index) {
         return 0.3 + 0.6 * (index + 0.5) / CRACKS;
-    }
-
-    static double smooth(double t) {
-        double c = Math.max(0, Math.min(1, t));
-        return c * c * (3 - 2 * c);
     }
 }

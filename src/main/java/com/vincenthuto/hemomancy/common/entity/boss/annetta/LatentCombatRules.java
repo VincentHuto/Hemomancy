@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.annetta;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 /** Pure rules for the Latent Infection: its emergence and which attack it reaches for. No Minecraft types. */
 public final class LatentCombatRules {
     public enum Attack { WHIP_LASH, SPEAR_THRUST, CLAW_RAKE, INFECTION_BLOOM, ROOT_ERUPTION }
@@ -11,7 +13,7 @@ public final class LatentCombatRules {
     private LatentCombatRules() {}
 
     public static float rise(float emergeTick) {
-        return AnnettaEncounterRules.smooth((emergeTick - EMERGE_HIDDEN) / (float) (EMERGE_END - EMERGE_HIDDEN));
+        return HemoEasing.smoothstep((emergeTick - EMERGE_HIDDEN) / (float) (EMERGE_END - EMERGE_HIDDEN));
     }
 
     public static Attack choose(double distance, int roll, boolean bloomReady, boolean rootsReady) {

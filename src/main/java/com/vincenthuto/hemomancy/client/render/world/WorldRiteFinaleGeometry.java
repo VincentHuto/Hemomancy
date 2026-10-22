@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteEventKind;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -147,7 +148,7 @@ final class WorldRiteFinaleGeometry {
 				event.index() + 2, HEAT, flash);
 		// The shock ring spreading across the sky.
 		double radius = WorldRiteFinaleRules.ringRadius(age);
-		float ringFade = (1.0F - WorldRiteFinaleRules.clamp01(age / WorldRiteFinaleRules.FLASH_TICKS));
+		float ringFade = (1.0F - HemoEasing.clamp01(age / WorldRiteFinaleRules.FLASH_TICKS));
 		List<Vec3> ring = new ArrayList<>(49);
 		for (int i = 0; i <= 48; i++) {
 			double angle = i / 48.0D * Math.PI * 2.0D;

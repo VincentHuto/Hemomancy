@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.AnnettaEncounterRules;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.LatentAnnettaInfectionEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.LatentCombatRules;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -45,7 +46,7 @@ public class LatentAnnettaInfectionRenderer extends MobRenderer<LatentAnnettaInf
 
     /** It bleeds where it stands: the infected pool's surface, spreading as it tears free and drying as it dies. */
     private static void renderStain(LatentAnnettaInfectionEntity entity, float partialTick, PoseStack poseStack, MultiBufferSource buffer) {
-        float spread = AnnettaEncounterRules.smooth((entity.getEmergeTick() + partialTick - LatentCombatRules.EMERGE_HIDDEN) / 14.0F);
+        float spread = HemoEasing.smoothstep((entity.getEmergeTick() + partialTick - LatentCombatRules.EMERGE_HIDDEN) / 14.0F);
         float dying = entity.deathTime > 0 ? 1.0F - Math.min(1.0F, (entity.deathTime + partialTick) / 20.0F) : 1.0F;
         if (spread <= 0.0F || dying <= 0.0F) return;
         float shaderTime = (float) ((entity.level().getGameTime() + partialTick) % 24000.0D);

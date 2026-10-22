@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.radial;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +31,7 @@ final class RadialVeinBorderGeometry {
         result.add(new VeinPath(perimeter, true, .9f));
         for (int i = 1; i <= 3; i++) {
             boolean fromInner = i % 2 == 0;
-            float angle = lerp(first, last, i / 4f);
+            float angle = HemoEasing.lerp(first, last, i / 4f);
             Point root = closest(perimeter, new Point(angle, fromInner ? innerEdge : outerEdge));
             float reach = Math.min(6.5f, (outer - inner) * .3f);
             float bend = (fromInner ? -1 : 1) * reach * .5f / Math.max(1, root.radius());
@@ -51,7 +52,7 @@ final class RadialVeinBorderGeometry {
         int steps = Math.max(8, (int)Math.ceil(Math.abs(end - start) * radius / 5));
         for (int i = 0; i < steps; i++) {
             float t = i / (float)steps;
-            float angle = lerp(start, end, t);
+            float angle = HemoEasing.lerp(start, end, t);
             float drift = (float)(Math.sin(t * Math.PI)
                     * (.5 + .5 * Math.sin(angle * radius * .17 + seed + time * .08)));
             points.add(new Point(angle, radius + drift * wave));
@@ -65,7 +66,7 @@ final class RadialVeinBorderGeometry {
             float t = i / (float)steps;
             float drift = (float)(Math.sin(t * Math.PI)
                     * (.6 + .4 * Math.sin(t * Math.PI * 2 + seed + time * .08)));
-            points.add(new Point(angle + direction * drift * .008f, lerp(from, to, t)));
+            points.add(new Point(angle + direction * drift * .008f, HemoEasing.lerp(from, to, t)));
         }
     }
 
@@ -93,9 +94,8 @@ final class RadialVeinBorderGeometry {
     }
 
     private static Point mix(Point from, Point to, float t) {
-        return new Point(lerp(from.angle(), to.angle(), t), lerp(from.radius(), to.radius(), t));
+        return new Point(HemoEasing.lerp(from.angle(), to.angle(), t), HemoEasing.lerp(from.radius(), to.radius(), t));
     }
 
-    private static float lerp(float from, float to, float progress) { return from + (to - from) * progress; }
     private static float clamp(float value, float min, float max) { return Math.max(min, Math.min(max, value)); }
 }

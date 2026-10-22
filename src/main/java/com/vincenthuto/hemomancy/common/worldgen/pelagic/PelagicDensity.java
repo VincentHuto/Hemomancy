@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.worldgen.pelagic;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 public final class PelagicDensity {
     private PelagicDensity() {}
     public static double shape(double original, PelagicTerrainSampler.Column column, int y, boolean preliminary, boolean hollow) {
@@ -12,9 +14,9 @@ public final class PelagicDensity {
         double shaped = preliminary ? .390625 + linear : linear + (capped - linear) * column.influence();
         if (!preliminary && hollow) shaped = -.35;
         // Keep caves beneath fully shaped shelves, with an unbroken skin under the ocean.
-        double skin = 1 - PelagicTerrainSampler.smooth(8, 18, distance);
+        double skin = 1 - HemoEasing.smoothstep(8, 18, distance);
         // Connect a transitional shelf to the old seabed instead of exposing a detached rock wall.
-        skin += (1 - skin) * (1 - PelagicTerrainSampler.smooth(.5, 1, column.influence()));
+        skin += (1 - skin) * (1 - HemoEasing.smoothstep(.5, 1, column.influence()));
         if (column.floor() < -45) skin = 1;
         double influence = column.influence() * (preliminary ? 1 : skin);
         return original + influence * (shaped - original);

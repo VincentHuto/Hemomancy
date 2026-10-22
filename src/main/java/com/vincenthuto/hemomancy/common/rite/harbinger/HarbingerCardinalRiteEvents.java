@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
 import com.vincenthuto.hemomancy.common.init.ParticleInit;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -742,9 +743,9 @@ public class HarbingerCardinalRiteEvents {
 			emitDaemonEmergence(level, center, sprite.tickCount);
 		}
 		sprite.setPos(
-				lerp(absorption, sourceX, targetX),
-				lerp(absorption, sourceY, targetY),
-				lerp(absorption, sourceZ, targetZ));
+				HemoEasing.lerp(sourceX, targetX, absorption),
+				HemoEasing.lerp(sourceY, targetY, absorption),
+				HemoEasing.lerp(sourceZ, targetZ, absorption));
 		sprite.setSpriteScale((float) (CardinalRiteFinaleTiming.daemonScale(0) * contraction));
 		sprite.faceDirection(targetX - sourceX, targetZ - sourceZ);
 	}
@@ -837,10 +838,6 @@ public class HarbingerCardinalRiteEvents {
 		level.sendParticles(
 				new BloodCellData(ParticleInit.blood_cell.get(), new ParticleColor(190, 0, 12)),
 				x, y, z, 24, 0.30D, 0.42D, 0.30D, 0.20D);
-	}
-
-	private static double lerp(double amount, double start, double end) {
-		return start + (end - start) * amount;
 	}
 
 	/**

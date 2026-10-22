@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.boss.endgame.*;
 import com.vincenthuto.hemomancy.client.screen.overlay.NaeglerophaeonCaptureOverlay;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.NaeglerophaeonEntity;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hutoslib.client.particle.BoltRenderer;
 import com.vincenthuto.hutoslib.common.lightning.*;
 import java.util.*;
@@ -93,10 +94,10 @@ public final class NaeglerophaeonRenderer extends EntityRenderer<NaeglerophaeonE
                 capturing || state.releaseTick==Long.MIN_VALUE?0:Math.max(0,1-(tick+partial-state.releaseTick)/40.0),
                 state.huntBlend,state.pose.turnLag(partial),entity.isEnraged());
         float lookWeight=switch(entity.animationPhase()) {
-            case NaeglerophaeonEntity.CAPTURE -> (float)NaeglerophaeonModel.smooth(input.phaseTicks()/20);
+            case NaeglerophaeonEntity.CAPTURE -> (float)HemoEasing.smoothstep(input.phaseTicks()/20);
             case NaeglerophaeonEntity.GRAB -> 1;
             case NaeglerophaeonEntity.DISCHARGE,NaeglerophaeonEntity.RECOVERY ->
-                    (float)NaeglerophaeonModel.smooth(input.releaseBlend());
+                    (float)HemoEasing.smoothstep(input.releaseBlend());
             default -> 0;
         };
         boolean dynamicTail=capturing || input.releaseBlend()>0 && state.lastTail!=null;
@@ -109,7 +110,7 @@ public final class NaeglerophaeonRenderer extends EntityRenderer<NaeglerophaeonE
                         input.victimHeight(),input.history(),null,0,input.hunting(),input.turns());
                 Vec3[] target=NaeglerophaeonModel.build(reach,1).centers()[12];
                 double blend=entity.animationPhase()==NaeglerophaeonEntity.CAPTURE
-                        ?NaeglerophaeonModel.smooth(input.phaseTicks()/20):1;
+                        ?HemoEasing.smoothstep(input.phaseTicks()/20):1;
                 for(int j=0;j<tail.length;j++)
                     tail[j]=tail[j].lerp(NaeglerophaeonModel.sample(target,j/48D),blend);
             } else if(input.releaseBlend()>0 && input.releasedTail()!=null) {

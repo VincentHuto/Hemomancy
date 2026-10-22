@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 /**
  * Pure timing and allocation maths for the Somatic Loom's ritual effects: which warp threads carry which
  * tendency, how full the pirns and veins stand, and how the ganglion beats. No Minecraft types.
@@ -184,7 +186,7 @@ public final class SomaticLoomEffectRules {
 
     /** How much of a broken engram's light remains (1 to 0) as it dissolves. */
     public static float dissolveFade(float progress) {
-        float t = clamp01(progress);
+        float t = HemoEasing.clamp01(progress);
         return 1f - t * t * (3f - 2f * t);
     }
 
@@ -196,15 +198,7 @@ public final class SomaticLoomEffectRules {
     /** The echo of a broken weave tears its remaining limbs away one by one, all gone by seven tenths of the way. */
     public static int echoTornLimbs(int loose, int limbs, float progress) {
         int left = Math.max(0, limbs - loose);
-        return Math.min(limbs, loose + (int) Math.ceil(left * clamp01(progress / 0.7f) - 1.0E-4f));
-    }
-
-    private static float clamp01(float v) {
-        return Math.max(0f, Math.min(1f, v));
-    }
-
-    private static float smooth(float t) {
-        return t * t * (3f - 2f * t);
+        return Math.min(limbs, loose + (int) Math.ceil(left * HemoEasing.clamp01(progress / 0.7f) - 1.0E-4f));
     }
 
     /**
@@ -212,19 +206,19 @@ public final class SomaticLoomEffectRules {
      * the dome rises and knits shut as the echo sinks at the end of the climax.
      */
     public static float seamOpen(float weaveTicks, boolean climax, float climaxProgress) {
-        if (climax) return 1f - smooth(clamp01((climaxProgress - 0.7f) / 0.3f));
-        return clamp01(weaveTicks / 30f);
+        if (climax) return 1f - HemoEasing.smoothstep((climaxProgress - 0.7f) / 0.3f);
+        return HemoEasing.clamp01(weaveTicks / 30f);
     }
 
     /** How far the seam's veins have crept across the floor: after the tear, and gone before the seam closes. */
     public static float veinGrowth(float weaveTicks, boolean climax, float climaxProgress) {
-        if (climax) return 1f - smooth(clamp01((climaxProgress - 0.7f) / 0.2f));
-        return smooth(clamp01((weaveTicks - 10f) / 50f));
+        if (climax) return 1f - HemoEasing.smoothstep((climaxProgress - 0.7f) / 0.2f);
+        return HemoEasing.smoothstep((weaveTicks - 10f) / 50f);
     }
 
     /** Sinews tie the sky to the ground once the seam is open, and snap when the echo begins to sink. */
     public static float sinewTension(float weaveTicks, boolean climax, float climaxProgress) {
         if (climax) return climaxProgress < 0.7f ? 1f : 0f;
-        return clamp01((weaveTicks - 30f) / 20f);
+        return HemoEasing.clamp01((weaveTicks - 30f) / 20f);
     }
 }

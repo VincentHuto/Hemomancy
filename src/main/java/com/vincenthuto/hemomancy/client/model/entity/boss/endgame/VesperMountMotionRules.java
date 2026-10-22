@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.model.entity.boss.endgame;
 
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperWingedFlightRules;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.util.Mth;
 
 /** Pure gait, settle and wing curves for the mount's procedural animation. */
@@ -38,7 +39,7 @@ public final class VesperMountMotionRules {
 	public static float wingSpread(VesperWingedFlightRules.FlightMode mode, float flightTicks) {
 		return switch (mode) {
 			case GROUNDED -> 0.0F;
-			case WING_GROWTH -> smooth(flightTicks / VesperWingedFlightRules.WING_GROWTH_TICKS);
+			case WING_GROWTH -> HemoEasing.smoothstep(flightTicks / VesperWingedFlightRules.WING_GROWTH_TICKS);
 			default -> 1.0F;
 		};
 	}
@@ -49,7 +50,7 @@ public final class VesperMountMotionRules {
 	 */
 	public static float stepSweep(float phase) {
 		float p = frac(phase);
-		if (p < 0.5F) return -1.0F + 2.0F * smooth(p * 2.0F);
+		if (p < 0.5F) return -1.0F + 2.0F * HemoEasing.smoothstep(p * 2.0F);
 		return 1.0F - 4.0F * (p - 0.5F);
 	}
 
@@ -112,11 +113,6 @@ public final class VesperMountMotionRules {
 		double b = (n * (sxh * szz - sxz * szh) - sh * (sx * szz - sxz * sz) + sz * (sx * szh - sxh * sz)) / det;
 		double c = (n * (sxx * szh - sxh * sxz) - sx * (sx * szh - sxh * sz) + sh * (sx * sxz - sxx * sz)) / det;
 		return new float[] { (float) a, (float) b, (float) c };
-	}
-
-	public static float smooth(float t) {
-		float x = Mth.clamp(t, 0.0F, 1.0F);
-		return x * x * (3.0F - 2.0F * x);
 	}
 
 	private static float frac(float value) {

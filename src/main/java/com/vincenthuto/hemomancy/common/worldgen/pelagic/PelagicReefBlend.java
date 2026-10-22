@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.worldgen.pelagic;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 /** Smooth reef coverage from immutable biome inputs, without reading neighboring chunks. */
 public final class PelagicReefBlend {
     @FunctionalInterface
@@ -24,15 +26,15 @@ public final class PelagicReefBlend {
             gridZ = gz;
             initialized = true;
         }
-        double u = PelagicTerrainSampler.smooth(0, 16, x - gx);
-        double v = PelagicTerrainSampler.smooth(0, 16, z - gz);
+        double u = HemoEasing.smoothstep(0.0D, 16.0D, (double) (x - gx));
+        double v = HemoEasing.smoothstep(0.0D, 16.0D, (double) (z - gz));
         return interpolate(u, v, a, b, c, d);
     }
 
     public static double weight(int x, int z, ReefMask mask) {
         int gx = Math.floorDiv(x, 16) * 16, gz = Math.floorDiv(z, 16) * 16;
-        double u = PelagicTerrainSampler.smooth(0, 16, x - gx);
-        double v = PelagicTerrainSampler.smooth(0, 16, z - gz);
+        double u = HemoEasing.smoothstep(0.0D, 16.0D, (double) (x - gx));
+        double v = HemoEasing.smoothstep(0.0D, 16.0D, (double) (z - gz));
         double a = node(gx, gz, mask), b = node(gx + 16, gz, mask);
         double c = node(gx, gz + 16, mask), d = node(gx + 16, gz + 16, mask);
         return interpolate(u, v, a, b, c, d);

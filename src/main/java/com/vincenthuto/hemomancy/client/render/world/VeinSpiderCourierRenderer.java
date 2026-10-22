@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.client.data.VeinSpiderCourierClientData;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LightTexture;
@@ -42,7 +43,7 @@ public final class VeinSpiderCourierRenderer {
         List<RenderedCourierItem> items = new ArrayList<>(entries.size());
 
         for (VeinSpiderCourierClientData.Entry entry : entries) {
-            float progress = smooth(entry.progress(partialTick));
+            float progress = Mth.clamp(HemoEasing.smoothstepUnclamped(entry.progress(partialTick)), 0.0F, 1.0F);
             float alpha = entry.alpha(partialTick);
             Vec3 from = Vec3.atCenterOf(entry.from()).add(0.0D, 0.18D, 0.0D);
             Vec3 to = Vec3.atCenterOf(entry.to()).add(0.0D, 0.18D, 0.0D);
@@ -126,10 +127,6 @@ public final class VeinSpiderCourierRenderer {
         mc.getItemRenderer().renderStatic(entry.stack(), ItemDisplayContext.GROUND,
                 LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, poseStack, buffer, null, entry.seed());
         poseStack.popPose();
-    }
-
-    private static float smooth(float progress) {
-        return Mth.clamp(progress * progress * (3.0F - 2.0F * progress), 0.0F, 1.0F);
     }
 
     private record RenderedCourierItem(Vec3 pos, VeinSpiderCourierClientData.Entry entry, float time) {

@@ -1,13 +1,13 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
 import static com.vincenthuto.hemomancy.client.render.world.BloodShotGeometry.basis;
-import static com.vincenthuto.hemomancy.client.render.world.BloodShotGeometry.smooth;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.ForgedNeedleRules;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
@@ -81,7 +81,7 @@ final class ForgedNeedleGeometry {
         if (path.isEmpty() || alpha <= 0) return;
         Vec3 head = path.getLast();
         Vec3 axis = heading.lengthSqr() > 1e-8 ? heading.normalize() : new Vec3(0, -1, 0);
-        double length = (lance ? ForgedNeedleRules.LANCE_LENGTH : ForgedNeedleRules.LENGTH) * (.7 + .3 * smooth(age / 2.0));
+        double length = (lance ? ForgedNeedleRules.LANCE_LENGTH : ForgedNeedleRules.LENGTH) * (.7 + .3 * HemoEasing.smoothstep(age / 2.0));
         Vec3 base = head.subtract(axis.scale(length * .5));
         if (lodged) {
             // The buried point stays put while the shaft shivers.

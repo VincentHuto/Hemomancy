@@ -6,6 +6,7 @@ import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.LodestoneFieldRules;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -84,7 +85,7 @@ final class LodestoneFieldGeometry {
         double lean = LodestoneFieldRules.toothLean(age);
         for (int i = 0; i < LodestoneFieldRules.TEETH; i++) {
             double a = i * Math.PI * 2 / LodestoneFieldRules.TEETH + seed * 0.1;
-            double grow = LodestoneFieldRules.smooth((age - 2 - (i % 3)) / 4.0);
+            double grow = HemoEasing.smoothstep((age - 2 - (i % 3)) / 4.0);
             if (grow <= 0) continue;
             p.pushPose();
             p.translate(Math.cos(a) * radius, -gone * 0.3, Math.sin(a) * radius);
@@ -96,7 +97,7 @@ final class LodestoneFieldGeometry {
 
         // 4. Flux: arched field lines from the rim up into the lodestone, brightening on each pulse.
         if (age > LodestoneFieldRules.RISE_END - 1) {
-            float flux = body * (float) (0.4 + 0.5 * pulse) * (float) LodestoneFieldRules.smooth((age - 2) / 5.0);
+            float flux = body * (float) (0.4 + 0.5 * pulse) * (float) HemoEasing.smoothstep((age - 2) / 5.0);
             for (int i = 0; i < LodestoneFieldRules.FLUX_LINES; i++) {
                 double a = i * Math.PI * 2 / LodestoneFieldRules.FLUX_LINES + seed * 0.1 + Math.PI / LodestoneFieldRules.TEETH;
                 Vec3 rim = new Vec3(Math.cos(a) * radius, 0.08, Math.sin(a) * radius);
@@ -115,8 +116,8 @@ final class LodestoneFieldGeometry {
         // 5. Filings: small iron flakes stand on end along the flux, creep inward and lurch with each pulse.
         for (int i = 0; i < LodestoneFieldRules.FILINGS; i++) {
             double t = LodestoneFieldRules.filing(age, i);
-            double fade = LodestoneFieldRules.smooth(t / 0.1) * LodestoneFieldRules.smooth((1 - t) / 0.12)
-                    * LodestoneFieldRules.smooth((age - LodestoneFieldRules.SHOCK_END) / 4.0);
+            double fade = HemoEasing.smoothstep(t / 0.1) * HemoEasing.smoothstep((1 - t) / 0.12)
+                    * HemoEasing.smoothstep((age - LodestoneFieldRules.SHOCK_END) / 4.0);
             if (fade <= 0.01) continue;
             double a = i * 2.39996 + seed + t * 0.9;
             double distance = radius * (0.95 - t * 0.8);

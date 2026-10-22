@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -70,39 +71,31 @@ public final class WorldRiteFinaleRules {
 
 	/** How far along their length the cracks have torn, {@code age} ticks after the slam. */
 	public static float crackReach(float age) {
-		float t = clamp01(age / TEAR_TICKS);
+		float t = HemoEasing.clamp01(age / TEAR_TICKS);
 		return 1.0F - (1.0F - t) * (1.0F - t) * (1.0F - t);
 	}
 
 	/** The red heat in the cracks. */
 	public static float blaze(float age) {
 		if (age <= BLAZE_TICKS) return 1.0F;
-		return 1.0F - smoothstep(clamp01((age - BLAZE_TICKS) / (COOL_END_TICKS - BLAZE_TICKS)));
+		return 1.0F - HemoEasing.smoothstep((age - BLAZE_TICKS) / (COOL_END_TICKS - BLAZE_TICKS));
 	}
 
 	/** The black char along the cracks, outlasting the heat. */
 	public static float charred(float age) {
 		if (age <= COOL_END_TICKS) return 1.0F;
-		return 1.0F - smoothstep(clamp01((age - COOL_END_TICKS) / (LIFETIME_TICKS - COOL_END_TICKS)));
+		return 1.0F - HemoEasing.smoothstep((age - COOL_END_TICKS) / (LIFETIME_TICKS - COOL_END_TICKS));
 	}
 
 	/** The sky flash: full at the strike, gone almost at once. */
 	public static float skyFlash(float age) {
-		float t = clamp01(age / FLASH_TICKS);
+		float t = HemoEasing.clamp01(age / FLASH_TICKS);
 		return (1.0F - t) * (1.0F - t) * (1.0F - t);
 	}
 
 	/** The shock ring spreading across the sky from the strike. */
 	public static double ringRadius(float age) {
-		float t = clamp01(age / FLASH_TICKS);
+		float t = HemoEasing.clamp01(age / FLASH_TICKS);
 		return 4.0D + 46.0D * (1.0D - (1.0D - t) * (1.0D - t));
-	}
-
-	static float smoothstep(float value) {
-		return value * value * (3.0F - 2.0F * value);
-	}
-
-	static float clamp01(float value) {
-		return Math.max(0.0F, Math.min(1.0F, value));
 	}
 }

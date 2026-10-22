@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.outpouring;
 import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringRules.Detail;
 import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringRules.Mode;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.world.phys.Vec3;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -124,8 +125,8 @@ public final class OutpouringMarks {
     static double[] faceUv(OutpouringSim.Contact c) {
         Vec3[] axes = OutpouringGeometry.faceAxes(OutpouringGeometry.faceNormal(c.face()));
         double lx = c.hx() - c.bx(), ly = c.hy() - c.by(), lz = c.hz() - c.bz();
-        return new double[]{clamp01(lx * axes[0].x + ly * axes[0].y + lz * axes[0].z),
-                clamp01(lx * axes[1].x + ly * axes[1].y + lz * axes[1].z)};
+        return new double[]{HemoEasing.clamp01(lx * axes[0].x + ly * axes[0].y + lz * axes[0].z),
+                HemoEasing.clamp01(lx * axes[1].x + ly * axes[1].y + lz * axes[1].z)};
     }
 
     /** Lays this tick's contacts for a cast into the client store. Returns how many were laid. */
@@ -158,7 +159,7 @@ public final class OutpouringMarks {
         double age = now - m.born() + partial;
         double cu = m.u(), cv = m.v();
         double half = m.size() / 2;
-        double u0 = clamp01(cu - half), u1 = clamp01(cu + half), v0 = clamp01(cv - half), v1 = clamp01(cv + half);
+        double u0 = HemoEasing.clamp01(cu - half), u1 = HemoEasing.clamp01(cu + half), v0 = HemoEasing.clamp01(cv - half), v1 = HemoEasing.clamp01(cv + half);
         // The face plane: the block's near or far side along the normal, nudged outward.
         double ox = m.bx() + (normal.x > 0 ? 1 : 0), oy = m.by() + (normal.y > 0 ? 1 : 0), oz = m.bz() + (normal.z > 0 ? 1 : 0);
         ox += normal.x * .004; oy += normal.y * .004; oz += normal.z * .004;
@@ -174,6 +175,4 @@ public final class OutpouringMarks {
         }
         return out;
     }
-
-    private static double clamp01(double value) { return Math.clamp(value, 0, 1); }
 }

@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.world.rite;
 
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorVisualRules;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteFinaleTiming;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 
 /**
  * Timelines and shapes for the Cardinal Rite daemon, offering draws and culminations. Pure maths with no Minecraft
@@ -64,30 +65,6 @@ public final class CardinalRiteVisualRules {
 
 	// ── Easing ──
 
-	public static double clamp01(double value) {
-		return value < 0 ? 0 : value > 1 ? 1 : value;
-	}
-
-	public static double smooth(double t) {
-		double c = clamp01(t);
-		return c * c * (3 - 2 * c);
-	}
-
-	public static double easeInOut(double t) {
-		double c = clamp01(t);
-		return c < 0.5 ? 4 * c * c * c : 1 - Math.pow(-2 * c + 2, 3) / 2;
-	}
-
-	public static double easeOutCubic(double t) {
-		double c = 1 - clamp01(t);
-		return 1 - c * c * c;
-	}
-
-	public static double easeIn(double t) {
-		double c = clamp01(t);
-		return c * c * c;
-	}
-
 	/** Pulse shared with the consecrated floor, so the daemon beats with the membrane it stands over. */
 	public static float heartbeat(double time) {
 		return CardinalRiteFloorVisualRules.heartbeat((float) time);
@@ -107,10 +84,10 @@ public final class CardinalRiteVisualRules {
 	 * a chest swelling to the shoulders, a pinched neck and a rounded head.
 	 */
 	public static double contour(double h) {
-		if (h < 0.12) return lerp(h / 0.12, 0.08, 0.25);
-		if (h < 0.58) return lerp((h - 0.12) / 0.46, 0.25, 0.72);
-		if (h < 0.72) return lerp((h - 0.58) / 0.14, 0.72, 1.0);
-		if (h < 0.78) return lerp((h - 0.72) / 0.06, 1.0, 0.48);
+		if (h < 0.12) return HemoEasing.lerp(0.08, 0.25, h / 0.12);
+		if (h < 0.58) return HemoEasing.lerp(0.25, 0.72, (h - 0.12) / 0.46);
+		if (h < 0.72) return HemoEasing.lerp(0.72, 1.0, (h - 0.58) / 0.14);
+		if (h < 0.78) return HemoEasing.lerp(1.0, 0.48, (h - 0.72) / 0.06);
 		double head = (h - 0.89) / 0.11;
 		return 0.08 + 0.48 * Math.sqrt(Math.max(0.0, 1.0 - head * head));
 	}
@@ -122,7 +99,7 @@ public final class CardinalRiteVisualRules {
 
 	/** How firm the daemon reads, from loose smoke before sealing to a tight body after. */
 	public static double firmness(float sealedAge, boolean pastSealing) {
-		if (sealedAge >= 0) return lerp(smooth(sealedAge / SEAL_FIRM_TICKS), 0.55, 1.0);
+		if (sealedAge >= 0) return HemoEasing.lerp(0.55, 1.0, HemoEasing.smoothstep((double) (sealedAge / SEAL_FIRM_TICKS)));
 		return pastSealing ? 1.0 : 0.55;
 	}
 
@@ -141,42 +118,42 @@ public final class CardinalRiteVisualRules {
 
 	/** How far an absorbed item has sunk toward its nodule, 0 at the skin to 1 dissolved. */
 	public static double noduleSink(float ageSinceArrival) {
-		return smooth(ageSinceArrival / NODULE_SINK_TICKS);
+		return HemoEasing.smoothstep((double) (ageSinceArrival / NODULE_SINK_TICKS));
 	}
 
 	// ── Offering draw ──
 
 	/** How far the vessel has reached from the brazier, 0 to 1. */
 	public static double offeringReach(float age) {
-		return smooth(age / OFFERING_EXTEND_TICKS);
+		return HemoEasing.smoothstep((double) (age / OFFERING_EXTEND_TICKS));
 	}
 
 	/** How far the vessel's brazier end has withdrawn toward the daemon, 0 to 1. */
 	public static double offeringTail(float age) {
-		return smooth((age - OFFERING_ARRIVE_TICKS) / (OFFERING_RETRACT_END_TICKS - OFFERING_ARRIVE_TICKS));
+		return HemoEasing.smoothstep((double) ((age - OFFERING_ARRIVE_TICKS) / (OFFERING_RETRACT_END_TICKS - OFFERING_ARRIVE_TICKS)));
 	}
 
 	/** The offering's position along the vessel, 0 at the brazier to 1 inside the daemon. */
 	public static double offeringTravel(float age) {
-		return easeInOut((age - OFFERING_DEPART_TICKS) / (OFFERING_ARRIVE_TICKS - OFFERING_DEPART_TICKS));
+		return HemoEasing.easeInOutCubic((age - OFFERING_DEPART_TICKS) / (OFFERING_ARRIVE_TICKS - OFFERING_DEPART_TICKS));
 	}
 
 	/** Item scale: whole while carried, dissolving through the last quarter of the journey. */
 	public static double offeringItemScale(float age) {
-		if (age < OFFERING_DEPART_TICKS) return smooth(age / OFFERING_DEPART_TICKS);
-		return 1.0 - smooth((offeringTravel(age) - 0.75) / 0.25);
+		if (age < OFFERING_DEPART_TICKS) return HemoEasing.smoothstep((double) (age / OFFERING_DEPART_TICKS));
+		return 1.0 - HemoEasing.smoothstep((offeringTravel(age) - 0.75) / 0.25);
 	}
 
 	/** Brazier-end flare, bright on the draw and spent by the time the item is halfway. */
 	public static double offeringFlare(float age) {
-		return smooth(age / 2.0) * (1.0 - smooth((age - 4.0) / 12.0));
+		return HemoEasing.smoothstep(age / 2.0) * (1.0 - HemoEasing.smoothstep((age - 4.0) / 12.0));
 	}
 
 	/** Arrival burst at the daemon. */
 	public static double offeringArrival(float age) {
 		double since = age - OFFERING_ARRIVE_TICKS + 1.0;
 		if (since < 0) return 0;
-		return smooth(since / 2.0) * (1.0 - smooth((since - 2.0) / (OFFERING_TOTAL_TICKS - OFFERING_ARRIVE_TICKS - 2.0)));
+		return HemoEasing.smoothstep(since / 2.0) * (1.0 - HemoEasing.smoothstep((since - 2.0) / (OFFERING_TOTAL_TICKS - OFFERING_ARRIVE_TICKS - 2.0)));
 	}
 
 	public static boolean offeringVisible(float age) {
@@ -190,8 +167,8 @@ public final class CardinalRiteVisualRules {
 	public static void offeringArc(double ax, double ay, double az, double bx, double by, double bz, double floorY,
 			double t, double[] out) {
 		double low = Math.min(ay, floorY + 0.3);
-		double p1x = lerp(0.30, ax, bx), p1y = low, p1z = lerp(0.30, az, bz);
-		double p2x = lerp(0.72, ax, bx), p2y = low + 0.15 + Math.max(0, by - floorY) * 0.12, p2z = lerp(0.72, az, bz);
+		double p1x = HemoEasing.lerp(ax, bx, 0.30), p1y = low, p1z = HemoEasing.lerp(az, bz, 0.30);
+		double p2x = HemoEasing.lerp(ax, bx, 0.72), p2y = low + 0.15 + Math.max(0, by - floorY) * 0.12, p2z = HemoEasing.lerp(az, bz, 0.72);
 		double u = 1 - t;
 		double c0 = u * u * u, c1 = 3 * u * u * t, c2 = 3 * u * t * t, c3 = t * t * t;
 		out[0] = ax * c0 + p1x * c1 + p2x * c2 + bx * c3;
@@ -203,66 +180,66 @@ public final class CardinalRiteVisualRules {
 
 	/** Final fade shared by every culmination: full, then out over the last stretch. */
 	public static double fadeOut(float age, float total, float fadeTicks) {
-		return 1.0 - smooth((age - (total - fadeTicks)) / fadeTicks);
+		return 1.0 - HemoEasing.smoothstep((double) ((age - (total - fadeTicks)) / fadeTicks));
 	}
 
 	public static double ascensionHeight(float age) {
-		return ASCENSION_HEIGHT * easeOutCubic(age / ASCENSION_RISE_TICKS);
+		return ASCENSION_HEIGHT * HemoEasing.easeOutCubic((double) (age / ASCENSION_RISE_TICKS));
 	}
 
 	/** Fray: widths grow, alpha falls and strands drift upward. */
 	public static double ascensionFray(float age) {
-		return smooth((age - ASCENSION_FRAY_START) / (ASCENSION_TICKS - ASCENSION_FRAY_START));
+		return HemoEasing.smoothstep((double) ((age - ASCENSION_FRAY_START) / (ASCENSION_TICKS - ASCENSION_FRAY_START)));
 	}
 
 	/** The thin thread that rises through the caster while the daemon merges, before the rite completes. */
 	public static double ascensionThread(float culminationAge) {
-		return smooth((culminationAge - MERGE_START_TICKS) / (CULMINATION_TICKS - MERGE_START_TICKS));
+		return HemoEasing.smoothstep((double) ((culminationAge - MERGE_START_TICKS) / (CULMINATION_TICKS - MERGE_START_TICKS)));
 	}
 
 	public static double groundingFront(float age, double floorRadius) {
-		return (Math.max(1.0, floorRadius) + GROUNDING_REACH_PAST_FLOOR) * easeOutCubic(age / GROUNDING_FRONT_TICKS);
+		return (Math.max(1.0, floorRadius) + GROUNDING_REACH_PAST_FLOOR) * HemoEasing.easeOutCubic((double) (age / GROUNDING_FRONT_TICKS));
 	}
 
 	public static double bindingReach(float age) {
-		return smooth(age / BINDING_REACH_TICKS);
+		return HemoEasing.smoothstep((double) (age / BINDING_REACH_TICKS));
 	}
 
 	/** 0 while the vessels hold, rising to 1 as they snap and recoil. */
 	public static double bindingSnap(float age) {
-		return smooth((age - BINDING_SNAP_TICKS) / 10.0);
+		return HemoEasing.smoothstep((age - BINDING_SNAP_TICKS) / 10.0);
 	}
 
 	/** Knot height above the Focus: hovering through the culmination, then dropping on completion. */
 	public static double forgingKnotHeight(float completedAge) {
 		if (completedAge < 0) return FORGING_KNOT_HEIGHT;
-		return lerp(easeIn(completedAge / FORGING_DROP_TICKS), FORGING_KNOT_HEIGHT, 0.12);
+		return HemoEasing.lerp(FORGING_KNOT_HEIGHT, 0.12, HemoEasing.easeInCubic((double) (completedAge / FORGING_DROP_TICKS)));
 	}
 
 	/** How condensed the forging knot is during the culmination, 0 to 1. */
 	public static double forgingCondense(float culminationAge) {
-		return smooth(culminationAge / CULMINATION_TICKS);
+		return HemoEasing.smoothstep((double) (culminationAge / CULMINATION_TICKS));
 	}
 
 	/** Flash after the knot lands. */
 	public static double forgingFlash(float completedAge) {
 		double since = completedAge - FORGING_DROP_TICKS;
 		if (since < 0) return 0;
-		return 1.0 - smooth(since / 12.0);
+		return 1.0 - HemoEasing.smoothstep(since / 12.0);
 	}
 
 	public static double domainRadius(float age) {
-		return DOMAIN_RADIUS * easeOutCubic(age / DOMAIN_SWELL_TICKS);
+		return DOMAIN_RADIUS * HemoEasing.easeOutCubic((double) (age / DOMAIN_SWELL_TICKS));
 	}
 
 	/** How far the swollen dome has sunk into the ground, 0 to 1. */
 	public static double domainSink(float age) {
-		return smooth((age - DOMAIN_SWELL_TICKS) / (DOMAIN_TICKS - DOMAIN_SWELL_TICKS));
+		return HemoEasing.smoothstep((double) ((age - DOMAIN_SWELL_TICKS) / (DOMAIN_TICKS - DOMAIN_SWELL_TICKS)));
 	}
 
 	/** Distance a collapse cell has flown, with a slight drop. */
 	public static double collapseReach(float age, double speed) {
-		return speed * easeOutCubic(age / 18.0) * 3.2;
+		return speed * HemoEasing.easeOutCubic(age / 18.0) * 3.2;
 	}
 
 	// ── Helpers ──
@@ -274,9 +251,5 @@ public final class CardinalRiteVisualRules {
 		x *= 0xBF58476D1CE4E5B9L;
 		x ^= x >>> 29;
 		return (x >>> 11) * 0x1.0p-53;
-	}
-
-	public static double lerp(double t, double a, double b) {
-		return a + (b - a) * t;
 	}
 }

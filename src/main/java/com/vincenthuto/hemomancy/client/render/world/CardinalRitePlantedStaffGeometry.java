@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCancellationRules;
-import com.vincenthuto.hemomancy.common.rite.CardinalRiteMath;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 
@@ -26,9 +26,9 @@ public final class CardinalRitePlantedStaffGeometry {
 
 	public static AbsorptionPose absorptionPose(BlockPos focus, float cancellationTicks) {
 		Pose planted = pose(focus);
-		float meltProgress = clamp(cancellationTicks
+		float meltProgress = HemoEasing.clamp01(cancellationTicks
 				/ CardinalRiteCancellationRules.TOTAL_TICKS);
-		float easedMelt = smoothstep(meltProgress);
+		float easedMelt = HemoEasing.smoothstep(meltProgress);
 		float opacity = 1.0F - easedMelt;
 		float silhouetteScale = 1.0F - easedMelt * MELT_SILHOUETTE_CONTRACTION;
 		Vec3 poolCenter = new Vec3(
@@ -56,14 +56,6 @@ public final class CardinalRitePlantedStaffGeometry {
 		value *= 0xff51afd7ed558ccdL;
 		value ^= value >>> 33;
 		return (float) ((value & 0xFFFFL) / 65535.0D);
-	}
-
-	private static float smoothstep(float value) {
-		return CardinalRiteMath.smoothstep(value);
-	}
-
-	private static float clamp(float value) {
-		return CardinalRiteMath.clamp01(value);
 	}
 
 	public record Pose(Vec3 position, float pitchDegrees, float scale) {

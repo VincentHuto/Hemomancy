@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.annetta;
 
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
+
 /**
  * Pure timing and decision rules for Annetta herself: when the Harbinger break may begin, the beats of the break
  * and of the Unstained purge, and which frantic move she reaches for in Phase 1. No Minecraft types.
@@ -51,16 +53,16 @@ public final class AnnettaEncounterRules {
 
     /** How far the reanimating blood has crept up her fallen body. */
     public static float creep(float sceneTick) {
-        return smooth((sceneTick - FALL_END) / (float) (RISE - FALL_END));
+        return HemoEasing.smoothstep((sceneTick - FALL_END) / (float) (RISE - FALL_END));
     }
 
     public static float reanimationPoolRadius(float sceneTick) {
-        return 0.4F + 2.4F * smooth((sceneTick - FALL_END + 10) / (float) (RISE - FALL_END));
+        return 0.4F + 2.4F * HemoEasing.smoothstep((sceneTick - FALL_END + 10) / (float) (RISE - FALL_END));
     }
 
     /** Red draining out of her hair while the Draught works. */
     public static float hairDrain(float sceneTick) {
-        return smooth((sceneTick - DRINK_END) / (float) (TEAR - DRINK_END));
+        return HemoEasing.smoothstep((sceneTick - DRINK_END) / (float) (TEAR - DRINK_END));
     }
 
     /** She fights frantically: close in she cuts, guards when hit and slips away; further out she throws and dashes. */
@@ -105,11 +107,6 @@ public final class AnnettaEncounterRules {
 
     /** How swollen the tick is in the break: its usual Phase 1 size until the stab, then it fills against the blade. */
     public static float breakSwell(float sceneTick, float phaseSwell) {
-        return phaseSwell + (0.5F * (1.0F - phaseSwell) + 0.25F) * smooth((sceneTick - STAB) / (float) (BURST - STAB));
-    }
-
-    public static float smooth(float t) {
-        t = Math.max(0.0F, Math.min(1.0F, t));
-        return t * t * (3.0F - 2.0F * t);
+        return phaseSwell + (0.5F * (1.0F - phaseSwell) + 0.25F) * HemoEasing.smoothstep((sceneTick - STAB) / (float) (BURST - STAB));
     }
 }

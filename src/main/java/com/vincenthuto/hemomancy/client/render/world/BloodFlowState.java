@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
 import com.vincenthuto.hemomancy.common.network.particle.BloodFlowPacket;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hutoslib.common.tendril.TendrilAnchor;
 import net.minecraft.world.phys.Vec3;
 
@@ -19,9 +20,9 @@ final class BloodFlowState {
         start=a.get();end=b.get();return true;
     }
     float opacity(double now) {
-        float grow=ManipulationLifecycle.smooth((float)(now-born)/2);
-        float fade=ManipulationLifecycle.smooth((float)(until-now)/8);
-        float stop=retired==Long.MAX_VALUE?1:1-ManipulationLifecycle.smooth((float)(now-retired)/8);
+        float grow=HemoEasing.smoothstep((float)(now-born)/2);
+        float fade=HemoEasing.smoothstep((float)(until-now)/8);
+        float stop=retired==Long.MAX_VALUE?1:1-HemoEasing.smoothstep((float)(now-retired)/8);
         return grow*fade*stop;
     }
     boolean finished(long now){return now>=until||retired!=Long.MAX_VALUE&&now>=retired+8;}

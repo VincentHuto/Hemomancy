@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperRecallRules;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
 import com.vincenthuto.hemomancy.common.summon.PuppetStringsRules;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -49,10 +50,10 @@ final class VesperRecallGeometry {
         double hook = age < VesperRecallRules.CAST_END ? 0
                 : Math.max(0, 1 - (age - VesperRecallRules.CAST_END) / 4.0);
         // The strings let go of nothing once the clot is in his hand: they fade as it arrives.
-        float stringAlpha = alpha * (float) (1 - PuppetStringsRules.smooth((reel - 0.75) / 0.25));
+        float stringAlpha = alpha * (float) (1 - HemoEasing.smoothstep((reel - 0.75) / 0.25));
 
         // The sinew collar cinching the shoulders while the strings hold them.
-        float collar = alpha * (float) (PuppetStringsRules.smooth((age - VesperRecallRules.CAST_END) / 3.0) * (1 - reel));
+        float collar = alpha * (float) (HemoEasing.smoothstep((age - VesperRecallRules.CAST_END) / 3.0) * (1 - reel));
         if (collar > 0) {
             double radius = (0.42 - 0.12 * strain) * width * scale;
             double y = lift + height * (1 - 0.1 * scale);

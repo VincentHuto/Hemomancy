@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.client.render.world.rite;
 
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
-import com.vincenthuto.hemomancy.common.rite.CardinalRiteMath;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.ParticleStatus;
@@ -60,11 +60,11 @@ public final class CardinalRiteHelixEffects {
 		double cy = center.getY() + 1.0D;
 		double cz = center.getZ() + 0.5D;
 		if (camera.distanceToSqr(cx, cy, cz) > CULL_DISTANCE * CULL_DISTANCE) return;
-		float progress = (float) CardinalRiteMath.clamp01(rite.getProgress());
+		float progress = (float) HemoEasing.clamp01(rite.getProgress());
 		double height = (3.0D + rite.getRiteSize() * 0.5D) * progress;
 		if (height < 0.05D) return;
 		float density = rite.isPhase(CardinalRitePhase.CULMINATION)
-				? 1.0F - CardinalRiteMath.smoothstep(rite.getPhaseTicks() / CULMINATION_FADE_TICKS)
+				? 1.0F - HemoEasing.smoothstep(rite.getPhaseTicks() / CULMINATION_FADE_TICKS)
 				: 1.0F;
 		if (density <= 0.05F) return;
 		boolean unstained = rite.isUnstained();
