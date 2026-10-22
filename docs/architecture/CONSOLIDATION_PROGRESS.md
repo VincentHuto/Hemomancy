@@ -440,10 +440,26 @@ them green.
   - **Confirmed (fixed in `7911eaa1f`):** clearing the Lantern Tick map on server stop could orphan a helmet light placed as a single-player world closed. Logout now removes it while the level is loaded. A guardrail locks this in.
   - **Low-risk, accepted:** a few setters mark `KnownManipulations` dirty by reference or unconditionally, which means at most one extra end-of-tick resend. First Separation tools now store unparseable entries after the remaining ones instead of in their old positions.
   - Everything else was checked clean: inlined returns, `orElse` defaults, `isEmpty` semantics, shadowing, precedence, frozen identifiers and client isolation.
-- **Not verified (needs in-game check):**
-  - Multiplayer tracking: a second player seeing scars, morphling, muscle memory and equipment layers after the first player logs in, respawns or changes dimension.
-  - A real relog with pending claims in an observational Chamber visit.
-  - The client screens whose `Optional` code was rewritten (bloodline pool, diagnostics, radial menus, still-art radial) were only compile- and start-checked, not opened.
+- **Verified afterwards in a live multiplayer session (2026-10-22):** one dedicated server and two driven clients, using the opt-in `/hemoverify` command (`-Dhemomancy.mpVerify=true`) and the driver's `connect`, `peers` and `screen` actions, both in `src/gameTest`.
+  - **Tracking:** player A was given a fungal scar, an equipped morphling, two active muscle memories and jar, charm and gourd equipment. Player B's client copy of A matched the server's copy exactly after each of these:
+    - the initial change;
+    - layer-visibility toggles;
+    - A's respawn;
+    - A's trip to the Nether and back, in both orders (B arriving first and A arriving first);
+    - A's relog;
+    - B's relog;
+    - removing everything and putting it back.
+  - Screenshots from B show the layers rendering. The morphling and active muscle memories leaving on death is the existing death rule (the morphling goes back to its jar).
+  - **Chamber relog, case 1:** all six claims were recorded during a guided visit while the player had free space. They stayed owed through the visit, and the player relogged mid-visit. Everything arrived once at login in the Overworld, the player's own items were untouched, and later retries added nothing.
+  - **Chamber relog, case 2:** the real inventory was full and only the visit copy had space. Nothing landed in the copy. After the relog the inventory and equipment came back intact and every claim was still owed. All of it arrived once on the first retry after real space was freed.
+  - **Screens:** each of these opened with synced data and threw no errors:
+    - bloodline pool, ledger, vascular status;
+    - Harbinger and Unstained progress;
+    - synaptic loadout, mnemonic reliquary, morphling jar, Puppeteer's spindle;
+    - scrying diagnostics, tendency view, vascular view;
+    - the blood volume and Unstained gauge overlays.
+  - The manipulation and Still Art radials opened and drew their opening frames, then closed because the driver cannot hold a physical key.
+  - The server and both client logs had 0 ERROR lines.
 - **Known issues (pre-existing, not fixed here):**
   - **Intermittent GameTests in the combined run.** `mandatoryjigsawwingsassemble` failed in 4 of about 10 runs this session. It passes alone (`runRegistrationGameTestServer`) and failed at `0e2d0678c` without the later changes. Also seen once each: `harbingerrunneradvancesthroughhermitroadwithoutopeningscreens`, `obscuredmeleemobcanpursueandhitanearbyenemy` (at `86d2d8157`), and the step-4 cluster `circus*runnercompletesatdegreefour`, `ferricrampartletsfriendlyshotsthrough`, `magnetismcrusheswhatitpulledwhenthepillarexpires` and `bloodcloudkeepsitscastmastery`. Missing entities and wrong combat values suggest batch-mates sharing chunks; a later step should isolate them.
   - **Opt-in suites:** clinical fails `journeyacceptssilentchoiceafterrealprojection` and `journeyrestoresnumericfungalprojectionstate`; succession fails `legacyvialsarerejectedbeforeconsumption` and `manufactureconsumespatternandtwohundredfiftyblood`. All four fail identically at `86d2d8157`.

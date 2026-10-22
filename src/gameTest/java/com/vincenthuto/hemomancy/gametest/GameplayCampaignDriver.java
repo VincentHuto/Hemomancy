@@ -288,6 +288,31 @@ public final class GameplayCampaignDriver {
             case "command" -> mc.player.connection.sendCommand(c.get("value").getAsString());
             case "disconnect" -> { release(); mc.level.disconnect(); mc.disconnect(); mc.setScreen(new TitleScreen()); }
             case "stop" -> { release(); mc.stop(); }
+            case "connect" -> {
+                String address = c.get("address").getAsString();
+                net.minecraft.client.gui.screens.ConnectScreen.startConnecting(new TitleScreen(), mc,
+                        net.minecraft.client.multiplayer.resolver.ServerAddress.parseString(address),
+                        new net.minecraft.client.multiplayer.ServerData("Operator", address,
+                                net.minecraft.client.multiplayer.ServerData.Type.OTHER), false, null);
+            }
+            case "peers" -> {
+                log("self", mc.player.getName().getString() + " " + MultiplayerVerification.digest(mc.player));
+                for (var other : mc.level.players()) if (other != mc.player)
+                    log("peer", other.getName().getString() + " " + MultiplayerVerification.digest(other));
+            }
+            case "screen" -> mc.setScreen(switch (c.get("name").getAsString()) {
+                case "bloodlinePool" -> new com.vincenthuto.hemomancy.client.screen.item.BloodlinePoolScreen();
+                case "ledger" -> new com.vincenthuto.hemomancy.client.screen.item.LedgerScreen();
+                case "vascularStatus" -> new com.vincenthuto.hemomancy.client.screen.item.VascularStatusScreen();
+                case "harbingerProgress" -> new com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen();
+                case "unstainedProgress" -> new com.vincenthuto.hemomancy.client.screen.skilltree.unstained.UnstainedProgressScreen();
+                case "stillArtRadial" -> new com.vincenthuto.hemomancy.client.screen.unstained.RadialChooseStillArtScreen();
+                case "manipRadial" -> new com.vincenthuto.hemomancy.client.screen.manips.RadialChooseManipScreen(
+                        HemoCapabilityAccess.getEquipment(mc.player));
+                case "synapticLoadout" -> new com.vincenthuto.hemomancy.client.screen.tile.functional.SynapticLoadoutScreen(
+                        mc.player.blockPosition());
+                default -> throw new IllegalArgumentException("Unknown screen " + c.get("name").getAsString());
+            });
             default -> throw new IllegalArgumentException("Unknown operator action " + op);
         }
     }
