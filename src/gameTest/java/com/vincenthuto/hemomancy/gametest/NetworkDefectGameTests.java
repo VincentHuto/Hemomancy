@@ -2,7 +2,9 @@ package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketLedgerAction;
+import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketUpdatePoolSettings;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import com.mojang.authlib.GameProfile;
@@ -50,6 +52,30 @@ public final class NetworkDefectGameTests {
         player.setPos(helper.absoluteVec(new Vec3(2, 2, 2)));
         helper.getLevel().addNewPlayer(player);
         return player;
+    }
+
+    /** F-8: non-finite bloodline pool settings are rejected instead of slipping past the min/max clamps. */
+    @GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 20)
+    public static void poolSettingsRejectNonFiniteValues(GameTestHelper helper) {
+        var player = connectedPlayer(helper, new ArrayList<>());
+        try {
+            var volume = HemoCapabilityAccess.requireBloodVolume(player);
+            volume.setTrickleRate(5.0D);
+            volume.setAutoDrawThreshold(0.5D);
+            var context = new ServerPayloadContext(player.connection, PacketUpdatePoolSettings.TYPE.id());
+
+            PacketUpdatePoolSettings.handle(new PacketUpdatePoolSettings(true, Double.NaN, true, 0.25D), context);
+            PacketUpdatePoolSettings.handle(new PacketUpdatePoolSettings(true, 2.0D, true, Double.POSITIVE_INFINITY), context);
+            helper.assertTrue(volume.getTrickleRate() == 5.0D && volume.getAutoDrawThreshold() == 0.5D,
+                    "Non-finite pool settings must change nothing");
+
+            PacketUpdatePoolSettings.handle(new PacketUpdatePoolSettings(true, 2.0D, true, 0.25D), context);
+            helper.assertTrue(volume.getTrickleRate() == 2.0D && volume.getAutoDrawThreshold() == 0.25D,
+                    "Finite pool settings still apply");
+            helper.succeed();
+        } finally {
+            player.discard();
+        }
     }
 
     /** F-6: ledger actions run only while the sender holds the ledger. */

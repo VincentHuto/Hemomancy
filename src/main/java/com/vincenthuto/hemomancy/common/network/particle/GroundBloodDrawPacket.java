@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
+import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.EngramBlock;
@@ -47,7 +48,7 @@ public class GroundBloodDrawPacket implements CustomPacketPayload {
 			Player player = ctx.player();
 			if (player == null)
 				return;
-			float pTic = message.parTick;
+			float pTic = ServerboundGuards.partialTick(message.parTick);
 			if (player.getMainHandItem().getItem() == ItemInit.living_staff.get()) {
 				IBloodVolume bloodVol = HemoCapabilityAccess.getBloodVolume(player)
 						.orElseThrow(NullPointerException::new);

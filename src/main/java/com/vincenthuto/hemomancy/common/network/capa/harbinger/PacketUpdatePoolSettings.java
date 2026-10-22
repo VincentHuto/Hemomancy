@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
+import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
@@ -49,6 +50,8 @@ public class PacketUpdatePoolSettings implements CustomPacketPayload {
 		ctx.enqueueWork(() -> {
 			Player packetPlayer = ctx.player();
 			if (!(packetPlayer instanceof ServerPlayer player)) return;
+			// NaN passes Math.min/max untouched, so reject non-finite settings outright (F-8).
+			if (!ServerboundGuards.finite(msg.trickleRate, msg.autoDrawThreshold)) return;
 
 			HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 				volume.setTrickleEnabled(msg.trickleEnabled);

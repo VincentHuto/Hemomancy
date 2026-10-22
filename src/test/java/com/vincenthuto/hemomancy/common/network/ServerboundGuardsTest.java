@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.network;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -15,5 +16,14 @@ class ServerboundGuardsTest {
 		assertFalse(ServerboundGuards.finite(1.0D, Double.POSITIVE_INFINITY));
 		assertFalse(ServerboundGuards.finite(Double.NEGATIVE_INFINITY, 1.0D));
 		assertFalse(ServerboundGuards.finite(Float.NaN));
+	}
+
+	@Test
+	void partialTickIsClampedToOneTick() {
+		assertEquals(0.25F, ServerboundGuards.partialTick(0.25F));
+		assertEquals(0.0F, ServerboundGuards.partialTick(-3.0F));
+		assertEquals(1.0F, ServerboundGuards.partialTick(40.0F));
+		assertEquals(1.0F, ServerboundGuards.partialTick(Float.NaN));
+		assertEquals(1.0F, ServerboundGuards.partialTick(Float.POSITIVE_INFINITY));
 	}
 }

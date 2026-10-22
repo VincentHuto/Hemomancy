@@ -69,6 +69,14 @@ public final class ServerboundGuards {
 		return ItemStack.EMPTY;
 	}
 
+	/**
+	 * A client-reported partial tick, clamped to [0, 1]. A larger value would extrapolate the player's eye past where
+	 * it is and stretch reach checks; NaN and infinity become 1.
+	 */
+	public static float partialTick(float reported) {
+		return Float.isFinite(reported) ? Math.clamp(reported, 0.0F, 1.0F) : 1.0F;
+	}
+
 	/** Every value is a finite number: no NaN and no infinity. */
 	public static boolean finite(double... values) {
 		for (double value : values) {
