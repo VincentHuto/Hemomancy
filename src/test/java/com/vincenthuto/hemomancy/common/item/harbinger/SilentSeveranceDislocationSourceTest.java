@@ -20,7 +20,7 @@ public final class SilentSeveranceDislocationSourceTest {
 		String packetHandler = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/network/PacketHandler.java"));
 		String visualPacket = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/network/capa/harbinger/SyncMonolithicDislocationVisualS2CPacket.java"));
+				"com/vincenthuto/hemomancy/common/network/particle/EntityVisualPacket.java"));
 		String lang = read(RESOURCES_ROOT.resolve(
 				"assets/hemomancy/lang/en_us.json"));
 		String docs = read(DOCS_ROOT.resolve("HEMOMANCY_REFERENCE.md"));
@@ -72,13 +72,13 @@ public final class SilentSeveranceDislocationSourceTest {
 		assertContains("damage is suppressed", handler, "event.setNewDamage(0.0F);");
 
 		assertContains("visual sync packet registered", packetHandler,
-				"SyncMonolithicDislocationVisualS2CPacket.TYPE");
+				"EntityVisualPacket.TYPE");
 		assertContains("visual sync helper exists", packetHandler,
 				"sendMonolithicDislocationVisual(LivingEntity target, int durationTicks)");
 		assertContains("visual sync tracks entity and self", packetHandler,
 				"sendTracking(target");
-		assertContains("visual packet type", visualPacket,
-				"SyncMonolithicDislocationVisualS2CPacket");
+		assertContains("visual helper sends the dislocation kind", packetHandler,
+				"EntityVisualPacket.Kind.MONOLITHIC_DISLOCATION");
 		assertContains("visual packet writes entity id", visualPacket,
 				"buffer.writeVarInt(packet.entityId())");
 		assertContains("visual packet writes duration", visualPacket,

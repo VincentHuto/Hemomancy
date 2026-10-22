@@ -1,6 +1,6 @@
 # Registered Hemomancy payloads for this PROTOCOL_VERSION, checked by PayloadProtocolVersionTest.
 # When the set changes, bump PacketHandler.PROTOCOL_VERSION and rewrite this file.
-version 2
+version 3
 playToServer ActivateArmorSetAbilityC2SPacket
 playBidirectional AntecedentEffectPacket
 playToServer ArborFruitInteractPacket
@@ -31,6 +31,7 @@ playToServer DialogueRewardChoicePacket
 playToClient DialogueRewardResultPacket
 playToServer DialogueTopicOpenedPacket
 playToClient EarthenVeinTravelVisualPacket
+playToClient EntityVisualPacket
 playToServer EquipManipulationPacket
 playToServer GroundBloodDrawPacket
 playToServer ImprintMnemonicBlueprintPacket
@@ -122,6 +123,7 @@ playToServer PacketUnlockSkill
 playToServer PacketUpdateLivingStaffMorph
 playToServer PacketUpdatePoolSettings
 playToServer PacketUpdateScarPattern
+playToClient ParticleBurstPacket
 playToClient PhlegethonticCurrentPacket
 playToServer PlaceStructurePacket
 playToServer ResidentsRequestPacket
@@ -129,25 +131,17 @@ playToClient ResidentsSnapshotPacket
 playToClient RiteSpaceSyncPacket
 playToClient RiteZoneSyncPacket
 playToServer SelectEarthenVeinDestinationPacket
-playToClient SpawnAvatarParticlesPacket
 playToClient SpawnBlackVeilPacket
-playToClient SpawnBloodClawParticlesPacket
 playToClient SpawnBrazierItemAbsorptionParticlesPacket
 playToClient SpawnClawSlashPacket
-playToClient SpawnFlaskParticlesPacket
-playToClient SpawnLivingToolParticlesPacket
-playToClient SpawnMonolithShatterBurstPacket
-playToClient SpawnPomePulsePacket
 playToClient SpawnSanguineOmenEffectPacket
 playToServer StartCentrifugeButtonPacket
 playToClient StillArtCooldownPacket
 playToServer SynapticLoadoutActionPacket
 playToClient SyncArmorSetAbilityCooldownS2CPacket
 playToClient SyncBloodBindingTendrilS2CPacket
-playToClient SyncCrimsonFireVisualS2CPacket
 playToClient SyncEquipmentLayerVisibilityPacket
 playToClient SyncEquippedMorphlingPacket
-playToClient SyncMonolithicDislocationVisualS2CPacket
 playToClient SyncSchoolCombatS2CPacket
 playToClient SyncSilentSlippingStateS2CPacket
 playToClient SyncTrackingAvatarPacket

@@ -17,7 +17,7 @@ public final class CrimsonFireVisualSourceTest {
 		String packetHandler = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/network/PacketHandler.java"));
 		String packet = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/network/capa/harbinger/SyncCrimsonFireVisualS2CPacket.java"));
+				"com/vincenthuto/hemomancy/common/network/particle/EntityVisualPacket.java"));
 		String clientState = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/data/CrimsonFireClientState.java"));
 		String renderer = read(SOURCE_ROOT.resolve(
@@ -45,7 +45,8 @@ public final class CrimsonFireVisualSourceTest {
 		assertContains("helper reads actual remaining fire", helper, "target.getRemainingFireTicks()");
 		assertContains("helper syncs tracking clients", helper, "PacketHandler.sendCrimsonFireVisual(living, durationTicks)");
 
-		assertContains("packet registered", packetHandler, "SyncCrimsonFireVisualS2CPacket.TYPE");
+		assertContains("packet registered", packetHandler, "EntityVisualPacket.TYPE");
+		assertContains("helper sends the crimson fire kind", packetHandler, "EntityVisualPacket.Kind.CRIMSON_FIRE");
 		assertContains("packet helper exists", packetHandler,
 				"sendCrimsonFireVisual(LivingEntity target, int durationTicks)");
 		assertContains("packet tracks entity and self", packetHandler,

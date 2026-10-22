@@ -59,9 +59,10 @@ public class PacketHandler {
      *   <li>{@code "hemomancy"}: the mod ID, used as the version before it was tracked.</li>
      *   <li>{@code "2"}: consolidation step 4 removed 18 never-sent payloads and registered 15 client-to-server
      *   payloads in their real direction.</li>
+     *   <li>{@code "3"}: eight single-purpose VFX payloads folded into ParticleBurstPacket and EntityVisualPacket.</li>
      * </ul>
      */
-    public static final String PROTOCOL_VERSION = "2";
+    public static final String PROTOCOL_VERSION = "3";
 
     // ─────────────────────────────────────────────────────────────────────────
     // ─────────────────────────────────────────────────────────────────────────
@@ -239,32 +240,22 @@ public class PacketHandler {
                 ToggleSilentSlippingC2SPacket::handle);
         net.playToClient(SyncSilentSlippingStateS2CPacket.TYPE, SyncSilentSlippingStateS2CPacket.STREAM_CODEC,
                 SyncSilentSlippingStateS2CPacket::handle);
-        net.playToClient(SyncMonolithicDislocationVisualS2CPacket.TYPE,
-                SyncMonolithicDislocationVisualS2CPacket.STREAM_CODEC,
-                SyncMonolithicDislocationVisualS2CPacket::handle);
         net.playToClient(SyncSchoolCombatS2CPacket.TYPE, SyncSchoolCombatS2CPacket.STREAM_CODEC, SyncSchoolCombatS2CPacket::handle);
-        net.playToClient(SyncCrimsonFireVisualS2CPacket.TYPE,
-                SyncCrimsonFireVisualS2CPacket.STREAM_CODEC,
-                SyncCrimsonFireVisualS2CPacket::handle);
         net.playToClient(SyncBloodBindingTendrilS2CPacket.TYPE,
                 SyncBloodBindingTendrilS2CPacket.STREAM_CODEC,
                 SyncBloodBindingTendrilS2CPacket::handle);
 
         // ── Particles ─────────────────────────────────────────────────────────
+        net.playToClient(ParticleBurstPacket.TYPE, ParticleBurstPacket.STREAM_CODEC, ParticleBurstPacket::handle);
+        net.playToClient(EntityVisualPacket.TYPE, EntityVisualPacket.STREAM_CODEC, EntityVisualPacket::handle);
         net.playToServer(GroundBloodDrawPacket.TYPE, GroundBloodDrawPacket.STREAM_CODEC, GroundBloodDrawPacket::handle);
-        net.playToClient(SpawnFlaskParticlesPacket.TYPE, SpawnFlaskParticlesPacket.STREAM_CODEC, SpawnFlaskParticlesPacket::handle);
-        net.playToClient(SpawnAvatarParticlesPacket.TYPE, SpawnAvatarParticlesPacket.STREAM_CODEC, SpawnAvatarParticlesPacket::handle);
-        net.playToClient(SpawnBloodClawParticlesPacket.TYPE, SpawnBloodClawParticlesPacket.STREAM_CODEC, SpawnBloodClawParticlesPacket::handle);
         net.playToClient(SpawnClawSlashPacket.TYPE, SpawnClawSlashPacket.STREAM_CODEC, SpawnClawSlashPacket::handle);
         net.playToClient(SpawnBrazierItemAbsorptionParticlesPacket.TYPE,
                 SpawnBrazierItemAbsorptionParticlesPacket.STREAM_CODEC,
                 SpawnBrazierItemAbsorptionParticlesPacket::handle);
-        net.playToClient(SpawnLivingToolParticlesPacket.TYPE, SpawnLivingToolParticlesPacket.STREAM_CODEC, SpawnLivingToolParticlesPacket::handle);
-        net.playToClient(SpawnMonolithShatterBurstPacket.TYPE, SpawnMonolithShatterBurstPacket.STREAM_CODEC, SpawnMonolithShatterBurstPacket::handle);
         net.playToClient(SpawnSanguineOmenEffectPacket.TYPE, SpawnSanguineOmenEffectPacket.STREAM_CODEC, SpawnSanguineOmenEffectPacket::handle);
         net.playToClient(CardinalRiteImpactPacket.TYPE, CardinalRiteImpactPacket.STREAM_CODEC, CardinalRiteImpactPacket::handle);
         net.playToClient(SpawnBlackVeilPacket.TYPE, SpawnBlackVeilPacket.STREAM_CODEC, SpawnBlackVeilPacket::handle);
-        net.playToClient(SpawnPomePulsePacket.TYPE, SpawnPomePulsePacket.STREAM_CODEC, SpawnPomePulsePacket::handle);
         net.playToClient(WillPresenceCuePacket.TYPE, WillPresenceCuePacket.STREAM_CODEC, WillPresenceCuePacket::handle);
         // HutosLib registers this payload in HLPacketHandler; re-registering here causes
         // "already registered" crashes for hutoslib:packet_spawn_lightning.
@@ -373,19 +364,19 @@ public class PacketHandler {
     public static void sendAvatarHitParticles(Vec3 pos, ParticleColor color, double radius,
             ServerLevel level) {
         sendNear(level, pos.x, pos.y, pos.z, radius,
-                new SpawnAvatarParticlesPacket(pos, color));
+                new ParticleBurstPacket(ParticleBurstPacket.Kind.AVATAR_HIT, pos, color));
     }
 
     public static void sendBloodFlaskParticles(Vec3 pos, ParticleColor color, double radius,
             ServerLevel level) {
         sendNear(level, pos.x, pos.y, pos.z, radius,
-                new SpawnFlaskParticlesPacket(pos, color));
+                new ParticleBurstPacket(ParticleBurstPacket.Kind.BLOOD_FLASK, pos, color));
     }
 
     public static void sendClawParticles(Vec3 pos, ParticleColor color, double radius,
             ServerLevel level) {
         sendNear(level, pos.x, pos.y, pos.z, radius,
-                new SpawnBloodClawParticlesPacket(pos, color));
+                new ParticleBurstPacket(ParticleBurstPacket.Kind.BLOOD_CLAW, pos, color));
     }
 
     public static void sendClawSlash(Vec3 pos, Vec3 forward, ParticleColor color, boolean ambush, float scale,
@@ -397,17 +388,17 @@ public class PacketHandler {
     public static void sendLivingToolBreakParticles(Vec3 pos, ParticleColor color, double radius,
             ServerLevel level) {
         sendNear(level, pos.x, pos.y, pos.z, radius,
-                new SpawnLivingToolParticlesPacket(pos, color));
+                new ParticleBurstPacket(ParticleBurstPacket.Kind.LIVING_TOOL_BREAK, pos, color));
     }
 
     public static void sendMonolithShatterBurst(Vec3 pos, double radius, ServerLevel level) {
         sendNear(level, pos.x, pos.y, pos.z, radius,
-                new SpawnMonolithShatterBurstPacket(pos));
+                new ParticleBurstPacket(ParticleBurstPacket.Kind.MONOLITH_SHATTER, pos));
     }
 
     public static void sendMonolithShardPulse(Vec3 pos, double radius, ServerLevel level) {
         sendNear(level, pos.x, pos.y, pos.z, radius,
-                new SpawnMonolithShatterBurstPacket(pos, true));
+                new ParticleBurstPacket(ParticleBurstPacket.Kind.MONOLITH_SHARD_PULSE, pos));
     }
 
     public static void sendSanguineOmenEffect(Vec3 pos, double radius, ServerLevel level, int durationTicks, float peakAlpha) {
@@ -421,7 +412,7 @@ public class PacketHandler {
 
     public static void sendPomePulse(Vec3 pos, double radius, ServerLevel level) {
         sendNear(level, pos.x, pos.y, pos.z, radius,
-                new SpawnPomePulsePacket(pos));
+                new ParticleBurstPacket(ParticleBurstPacket.Kind.POME_PULSE, pos));
     }
 
     public static void sendBlackVeil(Vec3 pos, double radius, ServerLevel level, int durationTicks) {
@@ -431,12 +422,12 @@ public class PacketHandler {
 
     public static void sendMonolithicDislocationVisual(LivingEntity target, int durationTicks) {
         sendTracking(target,
-                new SyncMonolithicDislocationVisualS2CPacket(target.getId(), durationTicks));
+                new EntityVisualPacket(EntityVisualPacket.Kind.MONOLITHIC_DISLOCATION, target.getId(), durationTicks));
     }
 
     public static void sendCrimsonFireVisual(LivingEntity target, int durationTicks) {
         sendTracking(target,
-                new SyncCrimsonFireVisualS2CPacket(target.getId(), durationTicks));
+                new EntityVisualPacket(EntityVisualPacket.Kind.CRIMSON_FIRE, target.getId(), durationTicks));
     }
 
     public static void sendBloodBindingTendril(LivingEntity caster, LivingEntity target,

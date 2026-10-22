@@ -18,7 +18,7 @@ public final class SilentSlippingNoClipSourceTest {
 		String packetHandler = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/network/PacketHandler.java"));
 		String shardPacket = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/network/particle/SpawnMonolithShatterBurstPacket.java"));
+				"com/vincenthuto/hemomancy/client/particle/ParticleBurstEffects.java"));
 		String shardRenderer = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/world/SanguineMonolithShatterRenderer.java"));
 		String entityMixin = read(SOURCE_ROOT.resolve(
@@ -45,11 +45,9 @@ public final class SilentSlippingNoClipSourceTest {
 
 		assertContains("packet handler exposes shard-only helper", packetHandler, "sendMonolithShardPulse");
 		assertContains("shard helper sends shard-only packet", packetHandler,
-				"new SpawnMonolithShatterBurstPacket(pos, true)");
-		assertContains("shatter packet has shard-only mode", shardPacket, "boolean shardOnly");
-		assertContains("shatter packet encodes shard-only mode", shardPacket, "buf.writeBoolean(msg.isShardOnly())");
-		assertContains("shatter packet decodes shard-only mode", shardPacket, "buf.readBoolean()");
-		assertContains("shatter packet routes shard-only renderer", shardPacket, "spawnShardPulse");
+				"new ParticleBurstPacket(ParticleBurstPacket.Kind.MONOLITH_SHARD_PULSE, pos)");
+		assertContains("shard-pulse bursts route to the shard-only renderer", shardPacket,
+				"case MONOLITH_SHARD_PULSE -> SanguineMonolithShatterRenderer.spawnShardPulse(pos, level.random)");
 		assertContains("renderer exposes shard-only pulse", shardRenderer, "spawnShardPulse");
 		assertContains("renderer uses smaller shard-only count", shardRenderer, "SHARD_PULSE_COUNT");
 
