@@ -113,8 +113,8 @@ public final class ArtificerProgressionGameTests {
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void armatureKitBelongsToArtificerAndKeepsLegacyClaim(GameTestHelper helper) {
 		ServerPlayer player = player(helper, "armature-kit");
-		HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(5);
-		HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
+		HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(5);
+		HemoCapabilityAccess.getBloodVolume(player).setActive(true);
 		HemoCapabilityAccess.stationUpgrades(player).recordUse(
 				com.vincenthuto.hemomancy.common.station.UpgradeStation.ARMATURE,
 				com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.ARMOR_UPGRADE);
@@ -146,8 +146,8 @@ public final class ArtificerProgressionGameTests {
 		helper.assertTrue(!forged.wasRewardDelivered(), "A direct distant event granted the kit");
 		player.setPos(origin);
 		ServerPlayer early = player(helper, "early-kit");
-		HemoCapabilityAccess.requireInitiatoryDegree(early).setDegreeNumber(4);
-		HemoCapabilityAccess.requireBloodVolume(early).setActive(true);
+		HemoCapabilityAccess.getInitiatoryDegree(early).setDegreeNumber(4);
+		HemoCapabilityAccess.getBloodVolume(early).setActive(true);
 		early.setPos(origin);
 		helper.assertTrue(!DialogueOptionPacket.dispatch(early, newEvent, artificer.getId()).wasRewardDelivered(),
 				"Degree 4 claimed the consecration kit");
@@ -163,8 +163,8 @@ public final class ArtificerProgressionGameTests {
 		helper.assertTrue(!hasEvent(artificer.progressionDialogue(player).getNode("late_armature"), newEvent),
 				"Claimed kit remained an active Artificer option");
 		ServerPlayer legacy = player(helper, "old-kit-claim");
-		HemoCapabilityAccess.requireInitiatoryDegree(legacy).setDegreeNumber(5);
-		HemoCapabilityAccess.requireBloodVolume(legacy).setActive(true);
+		HemoCapabilityAccess.getInitiatoryDegree(legacy).setDegreeNumber(5);
+		HemoCapabilityAccess.getBloodVolume(legacy).setActive(true);
 		legacy.getPersistentData().putBoolean("hemomancy.vicar_consecration_kit_claimed", true);
 		legacy.setPos(origin);
 		com.vincenthuto.hemomancy.common.station.StationUpgradeMigration.migrate(legacy);
@@ -242,7 +242,7 @@ public final class ArtificerProgressionGameTests {
 		helper.assertTrue(ArtificerAssignments.counselThreeAnswers(player).is(ItemInit.aculeate_vitriol.get()),
 				"normal Alchemist correspondence reward failed");
 
-		var bestiary = HemoCapabilityAccess.requireSpecimenBestiary(player);
+		var bestiary = HemoCapabilityAccess.getSpecimenBestiary(player);
 		bestiary.recordSpecimen(Hemomancy.rloc("barbed_urchin"));
 		bestiary.recordSpecimen(Hemomancy.rloc("desiccant"));
 		helper.assertTrue(ArtificerAssignments.claimForkResearchReward(player).isEmpty(),
@@ -285,8 +285,8 @@ public final class ArtificerProgressionGameTests {
 				target.damageSources().playerAttack(player)));
 		helper.assertTrue(ArtificerAssignments.has(player,
 				ArtificerAssignments.ASSUMED_LIMB_DEMONSTRATED), "Living Arsenal kill was not recorded");
-		HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-		HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(7);
+		HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+		HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(7);
 		for (LivingWeaponForm form : LivingWeaponForm.values()) {
 			LivingWeaponMemoryUnlocks.grantFormMemory(player, form);
 		}
@@ -349,10 +349,9 @@ public final class ArtificerProgressionGameTests {
 	private static void testD7(GameTestHelper helper, D7Lineage lineage, Item firstPiece, Item reagent,
 			net.minecraft.resources.ResourceLocation ability) {
 		ServerPlayer player = player(helper, "d7-" + lineage.serializedName());
-		HemoCapabilityAccess.getBloodVolume(player).ifPresent(blood -> {
-			blood.setActive(true);
-			blood.setBloodVolume(5000.0D);
-		});
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
+		blood.setActive(true);
+		blood.setBloodVolume(5000.0D);
 		ArtificerAssignments.brief(player, ArtificerAssignments.WEIGHT_OF_FRAME_BRIEFED);
 		ArtificerAssignments.onArmatureTierApplied(player, ArmatureTier.MONOLITHIC);
 		ArtificerAssignments.onArmatureUpgrade(player, new ItemStack(firstPiece), 7);

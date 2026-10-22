@@ -65,7 +65,7 @@ public final class EarthenVeinTravelManager {
 	public static boolean begin(ServerPlayer player, BlockPos sourcePos) {
 		if (!(player.level() instanceof ServerLevel sourceLevel)
 				|| !(sourceLevel.getBlockEntity(sourcePos) instanceof EarthenVeinBlockEntity source)) return false;
-		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 		if (known == null || !ownsSource(player, sourceLevel, sourcePos, source, known)) {
 			player.displayClientMessage(Component.literal("You do not control this vein!").withStyle(ChatFormatting.DARK_RED), true);
 			return false;
@@ -111,7 +111,7 @@ public final class EarthenVeinTravelManager {
 		EarthenVeinTravelSession session = BY_PLAYER.get(player.getUUID());
 		if (session == null || !session.nonce().equals(nonce)
 				|| session.phase() != EarthenVeinTravelPhase.SELECTING || !nearSource(player, session)) return;
-		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 		if (known == null) return;
 		VeinLocation claimed = known.getVeinList().stream()
 				.filter(vein -> vein.getUUID().equals(destinationId)).findFirst().orElse(null);
@@ -134,7 +134,7 @@ public final class EarthenVeinTravelManager {
 		if (session == null || session.phase() != EarthenVeinTravelPhase.FEEDING
 				|| !session.sourceDimension().equals(level.dimension().location())
 				|| !session.sourcePos().equals(pos) || !nearSource(player, session)) return 0.0D;
-		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player);
 		if (blood == null || !blood.isActive()) return 0.0D;
 		double accepted = session.feed(player.getUUID(), offered, blood.getBloodVolume(), level.getGameTime());
 		if (accepted <= 0.0D || !blood.drain(accepted)) return 0.0D;
@@ -228,7 +228,7 @@ public final class EarthenVeinTravelManager {
 			cancel(player.getUUID(), player.server, true);
 			return;
 		}
-		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 		VeinLocation claimed = known == null ? null : known.getVeinList().stream()
 				.filter(vein -> vein.getUUID().equals(destination.id())).findFirst().orElse(null);
 		EarthenVeinDestination validated = claimed == null ? null : validateDestination(player, known, claimed, false);

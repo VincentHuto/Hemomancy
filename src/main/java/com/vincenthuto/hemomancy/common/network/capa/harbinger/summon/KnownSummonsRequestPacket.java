@@ -31,8 +31,7 @@ public class KnownSummonsRequestPacket implements CustomPacketPayload {
 			if (!(packetPlayer instanceof ServerPlayer player)) {
 				return;
 			}
-			HemoCapabilityAccess.getKnownSummons(player)
-					.ifPresent(known -> KnownSummonEvents.sync(player, known));
+			KnownSummonEvents.sync(player, HemoCapabilityAccess.getKnownSummons(player));
 		});
 	}
 

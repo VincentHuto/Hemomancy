@@ -64,31 +64,30 @@ public final class UnstainedObservances {
 	private UnstainedObservances() {}
 
 	public static void handle(ServerPlayer player, Observance observance) {
-		HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
-			if (!isAvailable(progress, observance)) {
-				notify(player, "This observance belongs to a later step of the Unstained path.", ChatFormatting.GRAY);
-				return;
-			}
-			if ((progress.getClaimedObservances() & observance.mask()) != 0) {
-				notify(player, "You have already fulfilled this observance.", ChatFormatting.AQUA);
-				return;
-			}
-			if ((progress.getAcceptedObservances() & observance.mask()) == 0) {
-				progress.setAcceptedObservances(progress.getAcceptedObservances() | observance.mask());
-				giveJournal(player);
-				UnstainedProgressEvents.syncProgress(player, progress);
-				notify(player, "Observance accepted. Consult the Book of Observances for its requirements.", ChatFormatting.AQUA);
-				return;
-			}
-			if (!consumeOffering(player, observance)) {
-				notify(player, requirement(observance), ChatFormatting.GRAY);
-				return;
-			}
-			applyReward(player, progress, observance);
-			progress.setClaimedObservances(progress.getClaimedObservances() | observance.mask());
+		var progress = HemoCapabilityAccess.getUnstainedProgress(player);
+		if (!isAvailable(progress, observance)) {
+			notify(player, "This observance belongs to a later step of the Unstained path.", ChatFormatting.GRAY);
+			return;
+		}
+		if ((progress.getClaimedObservances() & observance.mask()) != 0) {
+			notify(player, "You have already fulfilled this observance.", ChatFormatting.AQUA);
+			return;
+		}
+		if ((progress.getAcceptedObservances() & observance.mask()) == 0) {
+			progress.setAcceptedObservances(progress.getAcceptedObservances() | observance.mask());
+			giveJournal(player);
 			UnstainedProgressEvents.syncProgress(player, progress);
-			notify(player, "Observance fulfilled. Your patient work leaves the blood quieter.", ChatFormatting.GREEN);
-		});
+			notify(player, "Observance accepted. Consult the Book of Observances for its requirements.", ChatFormatting.AQUA);
+			return;
+		}
+		if (!consumeOffering(player, observance)) {
+			notify(player, requirement(observance), ChatFormatting.GRAY);
+			return;
+		}
+		applyReward(player, progress, observance);
+		progress.setClaimedObservances(progress.getClaimedObservances() | observance.mask());
+		UnstainedProgressEvents.syncProgress(player, progress);
+		notify(player, "Observance fulfilled. Your patient work leaves the blood quieter.", ChatFormatting.GREEN);
 	}
 
 	public static boolean isAvailable(IUnstainedProgress progress, Observance observance) {
@@ -129,10 +128,10 @@ public final class UnstainedObservances {
 			case RING_THE_PALE_WATCH -> has(player, ItemInit.pale_silver_bell.get(), 1);
 			case NOVITIATE_GATHER_REMEDIES -> has(player, BlockInit.ghost_pipe.get().asItem(), 4)
 					&& has(player, BlockInit.lethean_poppy.get().asItem(), 4);
-			case NOVITIATE_GENTLE_SEPARATION -> HemoCapabilityAccess.requireUnstainedProgress(player).isNovitiateRetortComplete();
-			case NOVITIATE_STILLWATER_LABOR -> HemoCapabilityAccess.requireUnstainedProgress(player).getNovitiateDewProduced() >= 4;
-			case NOVITIATE_CLEAN_LABOR -> HemoCapabilityAccess.requireUnstainedProgress(player).getNovitiateBlocksConsecrated() >= 8;
-			case NOVITIATE_SHELTER_AFFLICTED -> HemoCapabilityAccess.requireUnstainedProgress(player).isNovitiateProtectionComplete();
+			case NOVITIATE_GENTLE_SEPARATION -> HemoCapabilityAccess.getUnstainedProgress(player).isNovitiateRetortComplete();
+			case NOVITIATE_STILLWATER_LABOR -> HemoCapabilityAccess.getUnstainedProgress(player).getNovitiateDewProduced() >= 4;
+			case NOVITIATE_CLEAN_LABOR -> HemoCapabilityAccess.getUnstainedProgress(player).getNovitiateBlocksConsecrated() >= 8;
+			case NOVITIATE_SHELTER_AFFLICTED -> HemoCapabilityAccess.getUnstainedProgress(player).isNovitiateProtectionComplete();
 		};
 	}
 
@@ -239,12 +238,11 @@ public final class UnstainedObservances {
 
 	private static void record(ServerPlayer player, Observance observance,
 			java.util.function.Consumer<IUnstainedProgress> update) {
-		HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
-			if ((progress.getAcceptedObservances() & observance.mask()) == 0
-					|| (progress.getClaimedObservances() & observance.mask()) != 0) return;
-			update.accept(progress);
-			UnstainedProgressEvents.syncProgress(player, progress);
-		});
+		var progress = HemoCapabilityAccess.getUnstainedProgress(player);
+		if ((progress.getAcceptedObservances() & observance.mask()) == 0
+				|| (progress.getClaimedObservances() & observance.mask()) != 0) return;
+		update.accept(progress);
+		UnstainedProgressEvents.syncProgress(player, progress);
 	}
 
 	private static boolean isNovitiate(Observance observance) {

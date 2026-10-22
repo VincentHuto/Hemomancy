@@ -128,7 +128,7 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable, IT
 					if (shooter instanceof Player) {
 						Player playerIn = (Player) shooter;
 						IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(playerIn)
-								.orElseThrow(NullPointerException::new);
+								;
 						float damageMod = 50f;
 						if (playerVolume.getBloodVolume() > damageMod) {
 							playerVolume.drain(damageMod);
@@ -289,7 +289,7 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable, IT
 				} else {
 					Player playerIn = (Player) entityIn;
 					IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(playerIn)
-							.orElseThrow(NullPointerException::new);
+							;
 					if (playerVolume.getBloodVolume() >= 0) {
 						itemstack = new ItemStack(ItemInit.blood_bolt.get());
 						itemstack1 = itemstack.copy();
@@ -534,7 +534,7 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable, IT
 			return InteractionResultHolder.consume(itemstack);
 		} else {
 			IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(playerIn)
-					.orElseThrow(NullPointerException::new);
+					;
 			double vol = volume.getBloodVolume();
 			if (vol >= 0) {
 				if (!isCharged(itemstack)) {

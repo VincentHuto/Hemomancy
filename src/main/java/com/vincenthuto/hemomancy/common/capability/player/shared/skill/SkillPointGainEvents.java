@@ -25,7 +25,7 @@ public class SkillPointGainEvents {
 
 	public static void syncSkills(ServerPlayer player) {
 		PacketHandler.sendToPlayer(player,
-				new PacketSyncSkills(HemoCapabilityAccess.requireSkillProgress(player).toSyncTag()));
+				new PacketSyncSkills(HemoCapabilityAccess.getSkillProgress(player).toSyncTag()));
 	}
 
 	@SubscribeEvent
@@ -37,7 +37,7 @@ public class SkillPointGainEvents {
 		String fullId = advId.toString();
 		if (!fullId.startsWith(HEMO_ADV_PREFIX)) return;
 
-		SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(serverPlayer);
+		SkillProgress progress = HemoCapabilityAccess.getSkillProgress(serverPlayer);
 		boolean changed = false;
 		String advName = fullId.substring(HEMO_ADV_PREFIX.length());
 		String milestoneId = ADV_TO_MILESTONE.getOrDefault(advName, advName);
@@ -57,12 +57,10 @@ public class SkillPointGainEvents {
 		if (!(event.getSource().getEntity() instanceof ServerPlayer player)) return;
 		if (victim.getType().getCategory() != MobCategory.MONSTER) return;
 
-		boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player)
-				.map(vol -> vol.isActive() && vol.getBloodVolume() > 0)
-				.orElse(false);
+		boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player).isActive() && HemoCapabilityAccess.getBloodVolume(player).getBloodVolume() > 0;
 		if (!bloodActive) return;
 
-		SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(player);
+		SkillProgress progress = HemoCapabilityAccess.getSkillProgress(player);
 		int total = progress.incrementKillsWithBlood();
 		boolean changed = false;
 		if (total >= 10) changed |= progress.tryAwardMilestone(HemoMilestone.BLOOD_SPILLER_I);
@@ -73,7 +71,7 @@ public class SkillPointGainEvents {
 	}
 
 	public static void onManipulationUsed(ServerPlayer player) {
-		SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(player);
+		SkillProgress progress = HemoCapabilityAccess.getSkillProgress(player);
 		int total = progress.incrementManipulationUses();
 		boolean changed = false;
 
@@ -86,7 +84,7 @@ public class SkillPointGainEvents {
 	}
 
 	public static void onRiteCompleted(ServerPlayer player) {
-		SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(player);
+		SkillProgress progress = HemoCapabilityAccess.getSkillProgress(player);
 		int total = progress.incrementRitesCompleted();
 		boolean changed = false;
 
@@ -98,7 +96,7 @@ public class SkillPointGainEvents {
 	}
 
 	public static void onDegreeReached(ServerPlayer player, int degree) {
-		SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(player);
+		SkillProgress progress = HemoCapabilityAccess.getSkillProgress(player);
 		boolean changed = switch (degree) {
 			case 1 -> progress.tryAwardMilestone(HemoMilestone.SANGUINE_INITIATION);
 			case 2 -> progress.tryAwardMilestone(HemoMilestone.VOTARY_ASCENSION);
@@ -123,17 +121,17 @@ public class SkillPointGainEvents {
 	}
 
 	public static void onMorphlingEquipped(ServerPlayer player) {
-		SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(player);
+		SkillProgress progress = HemoCapabilityAccess.getSkillProgress(player);
 		if (progress.tryAwardMilestone(HemoMilestone.FIRST_MORPHLING_BOND)) syncSkills(player);
 	}
 
 	public static void onMemoryWeavingCompleted(ServerPlayer player) {
-		SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(player);
+		SkillProgress progress = HemoCapabilityAccess.getSkillProgress(player);
 		if (progress.tryAwardMilestone(HemoMilestone.FIRST_MEMORY_WEAVING)) syncSkills(player);
 	}
 
 	public static void onBloodlineJoined(ServerPlayer player) {
-		SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(player);
+		SkillProgress progress = HemoCapabilityAccess.getSkillProgress(player);
 		if (progress.tryAwardMilestone(HemoMilestone.FIRST_BLOODLINE)) syncSkills(player);
 	}
 }

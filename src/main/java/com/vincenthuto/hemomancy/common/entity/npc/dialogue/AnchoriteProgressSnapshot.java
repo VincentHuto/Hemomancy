@@ -12,9 +12,9 @@ public record AnchoriteProgressSnapshot(int degree, boolean activeBlood, boolean
         boolean d6Loadout, boolean d6SecondRoute, boolean d6Ready, boolean d6Reward, int replacementTier) {
     public static AnchoriteProgressSnapshot from(ServerPlayer player) {
         return new AnchoriteProgressSnapshot(HemoCapabilityAccess.getPlayerDegreeNumber(player),
-                HemoCapabilityAccess.getBloodVolume(player).map(volume -> volume.isActive()).orElse(false),
-                HemoCapabilityAccess.getUnstainedProgress(player).map(progress -> progress.hasBegunPurification()).orElse(false),
-                HemoCapabilityAccess.getUnstainedProgress(player).map(progress -> progress.hasClarityUnlocked()).orElse(false),
+                HemoCapabilityAccess.getBloodVolume(player).isActive(),
+                HemoCapabilityAccess.getUnstainedProgress(player).hasBegunPurification(),
+                HemoCapabilityAccess.getUnstainedProgress(player).hasClarityUnlocked(),
                 HarbingerAdvancementGranter.isVeinMasonFirstLesson(player),
                 HarbingerAdvancementGranter.isVeinMasonFirstScarLearned(player),
                 HarbingerAdvancementGranter.isVeinMasonFirstEffigyPattern(player),
@@ -22,7 +22,7 @@ public record AnchoriteProgressSnapshot(int degree, boolean activeBlood, boolean
                 HarbingerAdvancementGranter.isVeinMasonRewardClaimed(player),
                 has(player, VeinMasonAssignments.D5_VARICOSE), has(player, VeinMasonAssignments.D5_DIAGNOSED),
                 has(player, VeinMasonAssignments.D5_TREATED),
-                HemoCapabilityAccess.getInitiatoryDegree(player).map(degree -> degree.hasHematicFortification()).orElse(false),
+                HemoCapabilityAccess.getInitiatoryDegree(player).hasHematicFortification(),
                 has(player, VeinMasonAssignments.D5_READY), has(player, VeinMasonAssignments.D5_REWARD),
                 has(player, VeinMasonAssignments.D6_REFERRAL), has(player, VeinMasonAssignments.D6_COUNSEL),
                 has(player, VeinMasonAssignments.D6_FIRST_ROUTE), has(player, VeinMasonAssignments.D6_LOADOUT),

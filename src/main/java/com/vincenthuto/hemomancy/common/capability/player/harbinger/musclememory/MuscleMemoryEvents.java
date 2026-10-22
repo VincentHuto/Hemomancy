@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.EmberfangMorphlingItem;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncMuscleMemory;
 import net.minecraft.server.level.ServerPlayer;
@@ -54,7 +54,7 @@ public final class MuscleMemoryEvents {
         boolean directMelee = direct == player && event.getSource().isDirect()
                 && isPrimaryAttack(player, event.getEntity(), gameTime);
         boolean duplicate = recentlyTriggered(player, event.getEntity(), gameTime);
-        MuscleMemoryState state = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+        MuscleMemoryState state = HemoCapabilityAccess.muscleMemory(player);
         SanguineFistsRules.Result result = SanguineFistsRules.evaluate(
                 state.isEnabled(MuscleMemory.SANGUINE_FISTS), directMelee, duplicate, Double.MAX_VALUE);
         if (!result.triggers()) {
@@ -100,7 +100,7 @@ public final class MuscleMemoryEvents {
 
     public static void sync(ServerPlayer player) {
         PacketSyncMuscleMemory packet = new PacketSyncMuscleMemory(player.getId(),
-                player.getData(HemoAttachmentTypes.MUSCLE_MEMORY));
+                HemoCapabilityAccess.muscleMemory(player));
         if (player.connection != null) {
             PacketHandler.sendTracking(player, packet);
         }
@@ -109,7 +109,7 @@ public final class MuscleMemoryEvents {
     @SubscribeEvent
 	public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
-			player.getData(HemoAttachmentTypes.MUSCLE_MEMORY).migrateLegacyPriming(player.level().getGameTime());
+			HemoCapabilityAccess.muscleMemory(player).migrateLegacyPriming(player.level().getGameTime());
 			sync(player);
 		}
 	}
@@ -126,7 +126,7 @@ public final class MuscleMemoryEvents {
         if (event.getEntity() instanceof ServerPlayer observer
                 && event.getTarget() instanceof ServerPlayer target) {
             PacketHandler.sendToPlayer(observer, new PacketSyncMuscleMemory(target.getId(),
-                    target.getData(HemoAttachmentTypes.MUSCLE_MEMORY)));
+                    HemoCapabilityAccess.muscleMemory(target)));
         }
     }
 
@@ -141,7 +141,7 @@ public final class MuscleMemoryEvents {
     @SubscribeEvent
     public static void onRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            player.getData(HemoAttachmentTypes.MUSCLE_MEMORY).clearPrimed();
+            HemoCapabilityAccess.muscleMemory(player).clearPrimed();
             PRIMARY_ATTACKS.remove(player.getUUID());
             LAST_TARGET_TRIGGER.remove(player.getUUID());
             MuscleMemoryWorldEvents.clearRuntime(player);

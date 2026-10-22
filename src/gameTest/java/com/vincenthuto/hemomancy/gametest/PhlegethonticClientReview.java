@@ -60,7 +60,7 @@ public final class PhlegethonticClientReview {
                         JsonObject entry=new JsonObject();entry.addProperty("name",player.getGameProfile().getName());
                         entry.addProperty("health",player.getHealth());entry.addProperty("position",player.position().toString());
                         entry.addProperty("sneaking",player.isShiftKeyDown());
-                        var volume=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+                        var volume=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(player);
                         entry.addProperty("bloodActive",volume!=null && volume.isActive());
                         entry.addProperty("tethers",player.serverLevel().getEntitiesOfClass(
                                 com.vincenthuto.hemomancy.common.entity.projectile.RecallBarbEntity.class,player.getBoundingBox().inflate(40),

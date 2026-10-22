@@ -23,7 +23,7 @@ public final class LivingStaffBondHelper {
 			return false;
 		}
 		boolean changed = false;
-		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
+		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player);
 		if (progress != null && progress.unlockLivingStaffBond()) {
 			changed = true;
 			player.displayClientMessage(Component.translatable("hemomancy.living_staff.bond_unlocked")
@@ -32,7 +32,7 @@ public final class LivingStaffBondHelper {
 		}
 
 		if (ManipulationInit.conjure_staff.isBound()) {
-			IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+			IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 			if (known != null && KnownManipulationGrantHelper.learnAndEquipIfPossible(known,
 					ManipulationInit.conjure_staff.get(), ManipSlotHelper.getMaxSlots(player))) {
 				changed = true;
@@ -46,11 +46,11 @@ public final class LivingStaffBondHelper {
 		if (player == null || !ManipulationInit.conjure_staff.isBound()) {
 			return false;
 		}
-		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
+		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player);
 		if (progress == null || !progress.hasLivingStaffBond()) {
 			return false;
 		}
-		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 		if (known == null) {
 			return false;
 		}
@@ -64,9 +64,9 @@ public final class LivingStaffBondHelper {
 
 	public static boolean ensureVesperSickleKnown(ServerPlayer player) {
 		if (player == null || !ManipulationInit.conjure_sickle.isBound()) return false;
-		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
+		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player);
 		if (progress == null || !progress.hasLivingStaffBond() || !progress.isVesperMemoryAwakened()) return false;
-		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 		if (known == null) return false;
 		if (known.doesListContainName(known.getKnownManips(), ManipulationInit.conjure_sickle.get())) return true;
 		boolean changed = KnownManipulationGrantHelper.learnAndEquipIfPossible(known,
@@ -80,7 +80,6 @@ public final class LivingStaffBondHelper {
 		if (player == null) {
 			return;
 		}
-		HemoCapabilityAccess.getLivingStaffProgress(player).ifPresent(progress ->
-				PacketHandler.sendToPlayer(player, new LivingStaffProgressServerPacket(progress)));
+		PacketHandler.sendToPlayer(player, new LivingStaffProgressServerPacket(HemoCapabilityAccess.getLivingStaffProgress(player)));
 	}
 }

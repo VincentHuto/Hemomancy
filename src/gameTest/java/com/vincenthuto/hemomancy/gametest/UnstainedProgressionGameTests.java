@@ -140,7 +140,7 @@ public final class UnstainedProgressionGameTests {
 	public static void unstainedJourneyReachesClarityWithNinePurificationObservances(GameTestHelper helper) {
 		ServerPlayer player = testPlayer(helper);
 		try {
-			var progress = HemoCapabilityAccess.requireUnstainedProgress(player);
+			var progress = HemoCapabilityAccess.getUnstainedProgress(player);
 			UnstainedCardinalRiteEvents.completeRite(helper.getLevel(), player, player.blockPosition(),
 					"cardinal_rite/lethean_baptism");
 			helper.assertTrue(!progress.hasBegunPurification(),
@@ -163,7 +163,7 @@ public final class UnstainedProgressionGameTests {
 					new ItemStack(ItemInit.hemolytic_solution.get(), 2));
 
 			progress.setPurity(100f);
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(2);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(2);
 			UnstainedCardinalRiteEvents.completeRite(helper.getLevel(), player, player.blockPosition(),
 					"cardinal_rite/closed_vein");
 			helper.assertTrue(progress.isBaselineRestored() && !progress.hasClarityUnlocked(),
@@ -186,9 +186,9 @@ public final class UnstainedProgressionGameTests {
 					"cardinal_rite/clarity_ascension");
 			helper.assertTrue(progress.hasClarityUnlocked() && !progress.isClarityPrepared(),
 					"Prepared Clarity Ascension must unlock Clarity and consume its preparation");
-			helper.assertTrue(HemoCapabilityAccess.requireInitiatoryDegree(player).getDegreeNumber() == 0,
+			helper.assertTrue(HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber() == 0,
 					"Clarity must remove remaining Harbinger degree state");
-			helper.assertTrue(HemoCapabilityAccess.requireKnownStillArts(player).isKnown(StillArtInit.silver_rebuke.get()),
+			helper.assertTrue(HemoCapabilityAccess.getKnownStillArts(player).isKnown(StillArtInit.silver_rebuke.get()),
 					"Clarity Ascension must teach Silver Rebuke");
 			helper.assertTrue(player.getInventory().countItem(ItemInit.absolution_dagger.get()) == 1,
 					"Clarity Ascension must grant exactly one pledge dagger");
@@ -214,7 +214,7 @@ public final class UnstainedProgressionGameTests {
 	public static void fiveNovitiateObservancesRequireAcceptedWorkAndRewardOnce(GameTestHelper helper) {
 		ServerPlayer player = testPlayer(helper);
 		try {
-			var progress = HemoCapabilityAccess.requireUnstainedProgress(player);
+			var progress = HemoCapabilityAccess.getUnstainedProgress(player);
 			UnstainedObservances.recordDewProduced(player, 4);
 			helper.assertTrue(progress.getNovitiateDewProduced() == 0, "Unaccepted work must not gain credit");
 			for (var observance : UnstainedObservances.Observance.values()) {

@@ -189,34 +189,30 @@ public class BloodVolumeOverlay {
         LocalPlayer player = this.mc.player;
         if (player == null) return;
 
-        HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(cap -> {
-            if (UnstainedAccessRules.blocksKnownBloodPowerUse(cap)) return;
+        var cap = HemoCapabilityAccess.getUnstainedProgress(player);
+        if (UnstainedAccessRules.blocksKnownBloodPowerUse(cap)) return;
 
-            HemoCapabilityAccess.getBloodVolume(player).ifPresent(bloodCap -> {
-                if (bloodCap == null || !bloodCap.isActive()) return;
-                HemoCapabilityAccess.getEquipment(player).ifPresent(inv -> {
-                    if (inv.getStackInSlot(5).getItem() instanceof VasculariumCharmItem) {
-                        if (refreshClock.due(player.tickCount)) {
-                            PacketHandler.sendToServer(new BloodVolumeClientPacket());
-                        }
+        var bloodCap = HemoCapabilityAccess.getBloodVolume(player);
+        if (bloodCap == null || !bloodCap.isActive()) return;
+        var inv = HemoCapabilityAccess.getEquipment(player);
+                            if (inv.getStackInSlot(5).getItem() instanceof VasculariumCharmItem) {
+                                if (refreshClock.due(player.tickCount)) {
+                                    PacketHandler.sendToServer(new BloodVolumeClientPacket());
+                                }
 
-                        int posX = getConfiguredBarX(width);
-                        int posY = getConfiguredBarY(player, height);
-						float animationTime = EquippedMorphlingOverlayPlacement.animationTimeSeconds(
-								mc.level.getGameTime(), partialTicks);
-						renderBloodBar(gfx, posX, posY, bloodCap, player, mc.level, animationTime, width, height);
-						HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(morphlingCap -> {
-							ItemStack equipped = morphlingCap.getEquippedMorphling();
-							if (EquippedMorphlingOverlay.instance != null) {
-								EquippedMorphlingOverlay.instance.renderForBloodBar(gfx, equipped,
-										isConfiguredOnLeftSide(), posX, posY, getBarWidth(), getBarHeight(),
-										animationTime);
-							}
-						});
-                    }
-                });
-            });
-        });
+                                int posX = getConfiguredBarX(width);
+                                int posY = getConfiguredBarY(player, height);
+        						float animationTime = EquippedMorphlingOverlayPlacement.animationTimeSeconds(
+        								mc.level.getGameTime(), partialTicks);
+        						renderBloodBar(gfx, posX, posY, bloodCap, player, mc.level, animationTime, width, height);
+        						var morphlingCap = HemoCapabilityAccess.getEquippedMorphling(player);
+        						ItemStack equipped = morphlingCap.getEquippedMorphling();
+        						if (EquippedMorphlingOverlay.instance != null) {
+        							EquippedMorphlingOverlay.instance.renderForBloodBar(gfx, equipped,
+        									isConfiguredOnLeftSide(), posX, posY, getBarWidth(), getBarHeight(),
+        									animationTime);
+        						}
+                            }
     }
 
     private void renderBloodBar(GuiGraphics gfx, int posX, int posY, IBloodVolume bloodCap,
@@ -239,9 +235,7 @@ public class BloodVolumeOverlay {
         double maxVol = bloodCap.getMaxBloodVolume();
         double ratio = maxVol > 0 ? Mth.clamp(vol / maxVol, 0, 1) : 0;
 
-        int pomeProgress = HemoCapabilityAccess.getInitiatoryDegree(player)
-                .map(d -> d.getTotalPomesConsumed())
-                .orElse(0);
+        int pomeProgress = HemoCapabilityAccess.getInitiatoryDegree(player).getTotalPomesConsumed();
         pomeProgress = Mth.clamp(pomeProgress, 0, 9);
 
         int degreeNumber = Mth.clamp(HemoCapabilityAccess.getPlayerDegreeNumber(player), 0, 8);
@@ -682,59 +676,58 @@ public class BloodVolumeOverlay {
 
     private void renderEquippedGourd(GuiGraphics gfx, Player player, int posX, int posY, int screenWidth, int screenHeight,
                                      int degreeNumber, int pomeProgress, float time) {
-        HemoCapabilityAccess.getEquipment(player).ifPresent(scars -> {
-            ItemStack gourdStack = scars.getStackInSlot(HarbingerEquipmentMenu.GOURD_SLOT_INDEX);
-            if (!(gourdStack.getItem() instanceof BloodGourdItem)) {
-                return;
-            }
+        var scars = HemoCapabilityAccess.getEquipment(player);
+        ItemStack gourdStack = scars.getStackInSlot(HarbingerEquipmentMenu.GOURD_SLOT_INDEX);
+        if (!(gourdStack.getItem() instanceof BloodGourdItem)) {
+            return;
+        }
 
-            IBloodVolume gourdVolume = HemoCapabilityAccess.getBloodVolume(gourdStack).orElse(null);
-            if (gourdVolume == null) {
-                return;
-            }
+        IBloodVolume gourdVolume = HemoCapabilityAccess.getBloodVolume(gourdStack).orElse(null);
+        if (gourdVolume == null) {
+            return;
+        }
 
-            double maxVol = gourdVolume.getMaxBloodVolume();
-            double ratio = maxVol > 0 ? Mth.clamp(gourdVolume.getBloodVolume() / maxVol, 0, 1) : 0;
-            boolean curvedHorn = gourdStack.is(ItemInit.curved_horn.get());
-            boolean rib = gourdStack.is(ItemInit.hemorath_rib.get());
-            int iconW = GOURD_W;
-            int iconH = curvedHorn ? HORN_H : rib ? RIB_H : GOURD_H;
-            int centerX = posX + OVERLAY_W / 2;
-            int gourdX = centerX - iconW / 2;
-            int gourdY = posY + VESSEL_BOTTOM + 30;
+        double maxVol = gourdVolume.getMaxBloodVolume();
+        double ratio = maxVol > 0 ? Mth.clamp(gourdVolume.getBloodVolume() / maxVol, 0, 1) : 0;
+        boolean curvedHorn = gourdStack.is(ItemInit.curved_horn.get());
+        boolean rib = gourdStack.is(ItemInit.hemorath_rib.get());
+        int iconW = GOURD_W;
+        int iconH = curvedHorn ? HORN_H : rib ? RIB_H : GOURD_H;
+        int centerX = posX + OVERLAY_W / 2;
+        int gourdX = centerX - iconW / 2;
+        int gourdY = posY + VESSEL_BOTTOM + 30;
 
-            if (gourdY + iconH + 10 > screenHeight) {
-                gourdY = posY - iconH - 8;
-            }
-            gourdX = Mth.clamp(gourdX, 2, screenWidth - iconW - 2);
+        if (gourdY + iconH + 10 > screenHeight) {
+            gourdY = posY - iconH - 8;
+        }
+        gourdX = Mth.clamp(gourdX, 2, screenWidth - iconW - 2);
 
-            int textColor = getGourdTextColor(gourdStack);
-            if (isOpenGourd(gourdStack)) {
-                ResourceLocation halo = curvedHorn ? HORN_HALO_TEXTURE : rib ? RIB_HALO_TEXTURE : GOURD_HALO_TEXTURE;
-                RenderSystem.enableBlend();
-                RenderSystem.defaultBlendFunc();
-                RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f,
-                        0.92f + 0.08f * Mth.sin(time * 2.1f));
-                gfx.blit(halo, gourdX - 6, gourdY - 6, 0, 0, 44, iconH + 12, 44, iconH + 12);
-                RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-            }
+        int textColor = getGourdTextColor(gourdStack);
+        if (isOpenGourd(gourdStack)) {
+            ResourceLocation halo = curvedHorn ? HORN_HALO_TEXTURE : rib ? RIB_HALO_TEXTURE : GOURD_HALO_TEXTURE;
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
+            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f,
+                    0.92f + 0.08f * Mth.sin(time * 2.1f));
+            gfx.blit(halo, gourdX - 6, gourdY - 6, 0, 0, 44, iconH + 12, 44, iconH + 12);
+            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        }
 
-            if (curvedHorn) {
-                renderSpecialGourd(gfx, gourdX, gourdY, ratio, HORN_H, HORN_BACK_TEXTURE,
-                        HORN_FRAME_TEXTURE, HORN_MASK_TEXTURE, degreeNumber, pomeProgress, time);
-            } else if (rib) {
-                renderSpecialGourd(gfx, gourdX, gourdY, ratio, RIB_H, RIB_BACK_TEXTURE,
-                        RIB_FRAME_TEXTURE, RIB_MASK_TEXTURE, degreeNumber, pomeProgress, time);
-            } else {
-                renderTwoLobedGourd(gfx, gourdX, gourdY, ratio, gourdStack,
-                        degreeNumber, pomeProgress, time);
-            }
+        if (curvedHorn) {
+            renderSpecialGourd(gfx, gourdX, gourdY, ratio, HORN_H, HORN_BACK_TEXTURE,
+                    HORN_FRAME_TEXTURE, HORN_MASK_TEXTURE, degreeNumber, pomeProgress, time);
+        } else if (rib) {
+            renderSpecialGourd(gfx, gourdX, gourdY, ratio, RIB_H, RIB_BACK_TEXTURE,
+                    RIB_FRAME_TEXTURE, RIB_MASK_TEXTURE, degreeNumber, pomeProgress, time);
+        } else {
+            renderTwoLobedGourd(gfx, gourdX, gourdY, ratio, gourdStack,
+                    degreeNumber, pomeProgress, time);
+        }
 
-            String volumeText = String.format("%.0f", gourdVolume.getBloodVolume());
-            int textX = gourdX + (iconW / 2) - (mc.font.width(volumeText) / 2);
-            gfx.drawString(mc.font, Component.literal(volumeText), textX, gourdY + iconH + 1,
-                    textColor, true);
-        });
+        String volumeText = String.format("%.0f", gourdVolume.getBloodVolume());
+        int textX = gourdX + (iconW / 2) - (mc.font.width(volumeText) / 2);
+        gfx.drawString(mc.font, Component.literal(volumeText), textX, gourdY + iconH + 1,
+                textColor, true);
     }
 
     private boolean isOpenGourd(ItemStack stack) {

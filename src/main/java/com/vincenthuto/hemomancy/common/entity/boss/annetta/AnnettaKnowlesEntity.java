@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.annetta;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.AnnettaEncounterRules.Move;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AnnettaDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
@@ -1135,19 +1134,16 @@ public class AnnettaKnowlesEntity extends Monster {
 
     private boolean isHarbinger(Player player) {
         boolean activeBlood = HemoCapabilityAccess.getBloodVolume(player)
-                .map(IBloodVolume::isActive)
-                .orElse(false);
+                .isActive();
         return activeBlood && HemoCapabilityAccess.getPlayerDegreeNumber(player) > 0;
     }
 
     private static boolean bloodActive(Player player) {
-        return HemoCapabilityAccess.getBloodVolume(player).map(IBloodVolume::isActive).orElse(false);
+        return HemoCapabilityAccess.getBloodVolume(player).isActive();
     }
 
     private boolean canPurify(Player player) {
-        return HemoCapabilityAccess.getUnstainedProgress(player)
-                .map(progress -> progress.hasClarityUnlocked())
-                .orElse(false) && !isHarbinger(player);
+        return HemoCapabilityAccess.getUnstainedProgress(player).hasClarityUnlocked() && !isHarbinger(player);
     }
 
     private boolean isToothPecksJar(ItemStack stack) {

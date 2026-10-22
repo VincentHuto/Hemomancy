@@ -32,7 +32,7 @@ public final class SanguineCondenserProjection {
         boolean cauldron = level.getBlockState(target).is(Blocks.CAULDRON);
         if (!cauldron && !(level.getBlockEntity(target) instanceof SanguineCondenserBlockEntity))
             return OptionalDouble.empty();
-        IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+        IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player);
         if (blood == null || !blood.isActive() || blood.getBloodVolume() <= 0.0D || tileTransferRate <= 0.0D)
             return OptionalDouble.of(0.0D);
 

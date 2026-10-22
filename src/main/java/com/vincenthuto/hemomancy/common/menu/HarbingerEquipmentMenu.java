@@ -63,7 +63,7 @@ public class HarbingerEquipmentMenu extends AbstractContainerMenu {
         this.player = playerInventory.player;
         this.openedFromScarletVanity = openedFromScarletVanity;
 
-        this.equipment = HemoCapabilityAccess.requireEquipment(this.player);
+        this.equipment = HemoCapabilityAccess.getEquipment(this.player);
 
         for (int k = 0; k < 4; ++k) {
             final EquipmentSlot EquipmentSlot = VALID_EQUIPMENT_SLOTS[k];

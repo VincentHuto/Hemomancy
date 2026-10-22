@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.client.screen.tile.functional;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.manips.ManipulationIconResolver;
-import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.*;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
@@ -164,36 +163,35 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 			tendencyGroups.put(tend, new ArrayList<>());
 		}
 
-		HemoCapabilityAccess.getKnownManipulations(player).ifPresent(known -> {
-			List<String> equipped = known.getEquippedManipNames();
-			equippedNames.addAll(equipped);
-			known.getKnownManips().keySet().stream().filter(Objects::nonNull)
-					.filter(known::isManipulationAvailable)
-					.map(BloodManipulation::getName).forEach(availableManipNames::add);
+		var known = HemoCapabilityAccess.getKnownManipulations(player);
+		List<String> equipped = known.getEquippedManipNames();
+		equippedNames.addAll(equipped);
+		known.getKnownManips().keySet().stream().filter(Objects::nonNull)
+				.filter(known::isManipulationAvailable)
+				.map(BloodManipulation::getName).forEach(availableManipNames::add);
 
-			Set<String> listedFamilies = new HashSet<>();
-			for (BloodManipulation manip : known.getKnownManips().keySet()) {
-				if (!known.isManipulationAvailable(manip)) continue;
-				if (ManipulationEquipHelper.isFixedMechanicalManip(manip.getName())
-						|| ManipulationRetirementRules.isRetiredManipulation(manip)) {
-					continue;
-				}
-				String displayId = ManipulationFamilyRegistry.baselineId(manip.getName());
-				if (!listedFamilies.add(displayId)) continue;
-				BloodManipulation displayManip = availableManipNames.contains(displayId)
-						? ManipulationInit.getByName(displayId) : manip;
-				if (displayManip == null) displayManip = manip;
-				EnumBloodTendency tend = displayManip.getTend();
-				if (tend != null && tendencyGroups.containsKey(tend)) {
-					tendencyGroups.get(tend).add(displayManip);
-				}
+		Set<String> listedFamilies = new HashSet<>();
+		for (BloodManipulation manip : known.getKnownManips().keySet()) {
+			if (!known.isManipulationAvailable(manip)) continue;
+			if (ManipulationEquipHelper.isFixedMechanicalManip(manip.getName())
+					|| ManipulationRetirementRules.isRetiredManipulation(manip)) {
+				continue;
 			}
+			String displayId = ManipulationFamilyRegistry.baselineId(manip.getName());
+			if (!listedFamilies.add(displayId)) continue;
+			BloodManipulation displayManip = availableManipNames.contains(displayId)
+					? ManipulationInit.getByName(displayId) : manip;
+			if (displayManip == null) displayManip = manip;
+			EnumBloodTendency tend = displayManip.getTend();
+			if (tend != null && tendencyGroups.containsKey(tend)) {
+				tendencyGroups.get(tend).add(displayManip);
+			}
+		}
 
-			ManipulationWheelOrder.resolve(known.getManipList(), equipped).stream()
-					.map(ManipulationWheelOrder.Entry::manipulation)
-					.forEach(equippedManips::add);
-		});
-		var muscleState = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+		ManipulationWheelOrder.resolve(known.getManipList(), equipped).stream()
+				.map(ManipulationWheelOrder.Entry::manipulation)
+				.forEach(equippedManips::add);
+		var muscleState = HemoCapabilityAccess.muscleMemory(player);
 		knownMuscleMemories.addAll(muscleState.knownMemories());
 		knownMuscleMemories.sort(Comparator.comparingInt(Enum::ordinal));
 		for (MuscleMemory memory : knownMuscleMemories) {
@@ -654,7 +652,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		PreparedMuscleIcon prepared = getHoveredPreparedMuscle(mouseX, mouseY);
 		if (prepared != null) {
 			MuscleMemory memory = prepared.memory;
-			long seconds = (Minecraft.getInstance().player.getData(HemoAttachmentTypes.MUSCLE_MEMORY)
+			long seconds = (HemoCapabilityAccess.muscleMemory(Minecraft.getInstance().player)
 					.reserveTicks(memory) + 19L) / 20L;
 			List<Component> tooltip = List.of(
 					Component.translatable("item.hemomancy.tincture_" + memory.id()).withStyle(s -> s.withBold(true)),

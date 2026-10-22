@@ -42,9 +42,8 @@ public final class PuppeteerTrialRiteController {
 
 	public static boolean canBegin(ServerPlayer caster, ItemStack crossbar, String summonName, double bloodCost,
 			boolean notify) {
-		boolean unresolved = HemoCapabilityAccess.getInitiatoryDegree(caster)
-				.map(degree -> HarbingerPathPermissions.isChoiceUnresolved(
-						degree.getTotalPomesConsumed(), degree.getArchonPath())).orElse(false);
+		boolean unresolved = HarbingerPathPermissions.isChoiceUnresolved(
+						HemoCapabilityAccess.getInitiatoryDegree(caster).getTotalPomesConsumed(), HemoCapabilityAccess.getInitiatoryDegree(caster).getArchonPath());
 		if (unresolved) {
 			if (notify) caster.displayClientMessage(
 					Component.literal("The void has claimed your will — only one path remains, and one way back.")
@@ -61,8 +60,7 @@ public final class PuppeteerTrialRiteController {
 			}), true);
 			return false;
 		}
-		boolean known = HemoCapabilityAccess.getKnownSummons(caster)
-				.map(value -> value.getKnownSummonNames().contains(summonName)).orElse(false);
+		boolean known = HemoCapabilityAccess.getKnownSummons(caster).getKnownSummonNames().contains(summonName);
 		if (known) {
 			if (notify) caster.displayClientMessage(Component.translatable("hemomancy.summon.trial.already_known"), true);
 			return false;
@@ -73,8 +71,7 @@ public final class PuppeteerTrialRiteController {
 			if (notify) caster.displayClientMessage(Component.translatable("hemomancy.circus.school.instruction_required"), true);
 			return false;
 		}
-		boolean enoughBlood = HemoCapabilityAccess.getBloodVolume(caster)
-				.map(value -> value.getBloodVolume() >= bloodCost).orElse(false);
+		boolean enoughBlood = HemoCapabilityAccess.getBloodVolume(caster).getBloodVolume() >= bloodCost;
 		if (!enoughBlood && notify) {
 			caster.displayClientMessage(Component.translatable("hemomancy.summon.trial.no_blood"), true);
 		}
@@ -148,10 +145,9 @@ public final class PuppeteerTrialRiteController {
 					new com.vincenthuto.hutoslib.client.particle.util.ParticleColor(170, 8, 20)),
 					bowl.x, bowl.y, bowl.z, 12, 0.08, 0.2, 0.08, 0.02);
 		}
-		HemoCapabilityAccess.getBloodVolume(caster).ifPresent(volume -> {
-			volume.drain(recipe.getBloodCost());
-			BloodVolumeEvents.syncVolume(caster, volume);
-		});
+		var volume = HemoCapabilityAccess.getBloodVolume(caster);
+		volume.drain(recipe.getBloodCost());
+		BloodVolumeEvents.syncVolume(caster, volume);
 		Mob puppet = created.get();
 		rite.beginPuppeteerTrial(summonName, puppet.getUUID(), crossbarId);
 		rite.addRiteThreat(puppet.getUUID());

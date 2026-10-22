@@ -136,24 +136,23 @@ public class ScarletVanityRenderer implements BlockEntityRenderer<ScarletVanityB
 			return;
 		}
 
-		HemoCapabilityAccess.getEquipment(player).ifPresent(equipment -> {
-			Direction facing = te.getBlockState().getValue(HorizontalDirectionalBlock.FACING);
-			poseStack.pushPose();
-			poseStack.translate(0.5D, 0.0D, 0.5D);
-			poseStack.mulPose(Axis.YP.rotationDegrees(rotationForFacing(facing)));
-			poseStack.translate(-0.5D, 0.0D, -0.5D);
+		var equipment = HemoCapabilityAccess.getEquipment(player);
+		Direction facing = te.getBlockState().getValue(HorizontalDirectionalBlock.FACING);
+		poseStack.pushPose();
+		poseStack.translate(0.5D, 0.0D, 0.5D);
+		poseStack.mulPose(Axis.YP.rotationDegrees(rotationForFacing(facing)));
+		poseStack.translate(-0.5D, 0.0D, -0.5D);
 
-			renderEquippedItem(te, facing, equipment, HarbingerEquipmentMenu.GOURD_SLOT_INDEX, poseStack, bufferIn,
-					combinedLightIn, combinedOverlayIn, 0.25D, 0.88D, 0.36D, -18.0F, 0.42F);
-			renderEquippedItem(te, facing, equipment, HarbingerEquipmentMenu.CHARM_SLOT_INDEX, poseStack, bufferIn,
-					combinedLightIn, combinedOverlayIn, 0.72D, 0.885D, 0.36D, 24.0F, 0.34F);
-			renderEquippedItem(te, facing, equipment, HarbingerEquipmentMenu.JAR_SLOT_INDEX, poseStack, bufferIn,
-					combinedLightIn, combinedOverlayIn, 0.74D, 0.89D, 0.70D, -36.0F, 0.36F);
-			renderEquippedItem(te, facing, equipment, HarbingerEquipmentMenu.FITTING_SLOT_INDEX, poseStack, bufferIn,
-					combinedLightIn, combinedOverlayIn, 0.28D, 0.89D, 0.70D, 36.0F, 0.30F);
+		renderEquippedItem(te, facing, equipment, HarbingerEquipmentMenu.GOURD_SLOT_INDEX, poseStack, bufferIn,
+				combinedLightIn, combinedOverlayIn, 0.25D, 0.88D, 0.36D, -18.0F, 0.42F);
+		renderEquippedItem(te, facing, equipment, HarbingerEquipmentMenu.CHARM_SLOT_INDEX, poseStack, bufferIn,
+				combinedLightIn, combinedOverlayIn, 0.72D, 0.885D, 0.36D, 24.0F, 0.34F);
+		renderEquippedItem(te, facing, equipment, HarbingerEquipmentMenu.JAR_SLOT_INDEX, poseStack, bufferIn,
+				combinedLightIn, combinedOverlayIn, 0.74D, 0.89D, 0.70D, -36.0F, 0.36F);
+		renderEquippedItem(te, facing, equipment, HarbingerEquipmentMenu.FITTING_SLOT_INDEX, poseStack, bufferIn,
+				combinedLightIn, combinedOverlayIn, 0.28D, 0.89D, 0.70D, 36.0F, 0.30F);
 
-			poseStack.popPose();
-		});
+		poseStack.popPose();
 	}
 
 	private static void renderEquippedItem(ScarletVanityBlockEntity te, Direction facing, IHarbingerEquipmentItemHandler equipment, int slot,

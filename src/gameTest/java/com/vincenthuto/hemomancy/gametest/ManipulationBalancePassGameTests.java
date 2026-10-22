@@ -96,7 +96,7 @@ public final class ManipulationBalancePassGameTests {
             stale.setTend(EnumBloodTendency.ANIMUS);
             stale.setSecondaryTend(EnumBloodTendency.FERRIC);
             stale.setCost(999);
-            var known = HemoCapabilityAccess.requireKnownManipulations(p);
+            var known = HemoCapabilityAccess.getKnownManipulations(p);
             known.getKnownManips().put(stale, new ManipLevel(1, 0));
             com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules.sanitizeKnownManipulations(known);
             h.assertTrue(stale.getTend() == EnumBloodTendency.FERRIC && stale.getSecondaryTend() == EnumBloodTendency.ANIMUS,
@@ -390,7 +390,7 @@ public final class ManipulationBalancePassGameTests {
     }
 
     private static double blood(ServerPlayer p) {
-        return HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume();
+        return HemoCapabilityAccess.getBloodVolume(p).getBloodVolume();
     }
 
     private static void near(GameTestHelper h, double expected, double actual, String message) {
@@ -398,7 +398,7 @@ public final class ManipulationBalancePassGameTests {
     }
 
     private static void select(ServerPlayer p, BloodManipulation m) {
-        var known = HemoCapabilityAccess.requireKnownManipulations(p);
+        var known = HemoCapabilityAccess.getKnownManipulations(p);
         known.getKnownManips().put(m, new ManipLevel(4, 185));
         known.setEquippedManipNames(List.of(m.getName()));
         known.setSelectedManip(m);
@@ -413,11 +413,11 @@ public final class ManipulationBalancePassGameTests {
             @Override public void send(net.minecraft.network.protocol.Packet<?> packet) { }
         };
         p.setPos(h.absoluteVec(new Vec3(2.5, 2, 2.5)));
-        var blood = HemoCapabilityAccess.requireBloodVolume(p);
+        var blood = HemoCapabilityAccess.getBloodVolume(p);
         blood.setActive(true);
         blood.setBloodVolume(2000);
         for (var tendency : EnumBloodTendency.values())
-            HemoCapabilityAccess.getBloodTendency(p).orElseThrow().setTendencyAlignment(tendency, 100);
+            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(tendency, 100);
         return p;
     }
 }

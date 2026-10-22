@@ -151,7 +151,7 @@ public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider
 			}
 			return 0.0D;
 		}
-		var scars = HemoCapabilityAccess.getScarState(player).orElse(null);
+		var scars = HemoCapabilityAccess.getScarState(player);
 		for (ResourceLocation id : selectedScarIds) {
 			var definition = ScarInit.getByName(id.toString());
 			if (definition == null || definition.getScarType() != ScarType.CEREBRAL
@@ -163,7 +163,7 @@ public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider
 				return 0.0D;
 			}
 		}
-		IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player);
 		if (playerVolume == null || !playerVolume.isActive() || playerVolume.getBloodVolume() <= 0) {
 			if (level.getGameTime() % 20L == 0L) {
 				player.displayClientMessage(Component.literal("No blood answers the Effigy.")
@@ -225,7 +225,7 @@ public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider
 	}
 
 	public void updateStateFor(Player player) {
-		int known = HemoCapabilityAccess.getScarState(player).map(scars -> scars.getKnownCerebralScars().size()).orElse(0);
+		int known = HemoCapabilityAccess.getScarState(player).getKnownCerebralScars().size();
 		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 		EffigyState next = EffigyState.UNMARKED;
 		if (degree >= 6 && known >= 4) {
@@ -250,12 +250,9 @@ public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider
 
 	@Override
 	public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
-		List<ResourceLocation> known = HemoCapabilityAccess.getScarState(player)
-				.map(scars -> sortedIds(scars.getKnownCerebralScars()))
-				.orElseGet(List::of);
-		List<ResourceLocation> active = HemoCapabilityAccess.getScarState(player)
-				.map(scars -> sortedIds(scars.getActiveCerebralScars()))
-				.orElseGet(List::of);
+		var scars = HemoCapabilityAccess.getScarState(player);
+		List<ResourceLocation> known = sortedIds(scars.getKnownCerebralScars());
+		List<ResourceLocation> active = sortedIds(scars.getActiveCerebralScars());
 		return new MasonsEffigyMenu(id, inventory, worldPosition, known, active);
 	}
 

@@ -57,11 +57,9 @@ public class PacketGourdScarSync implements CustomPacketPayload {
 				}
 				Entity p = level.getEntity(msg.playerId);
 				if (p instanceof Player player) {
-					HemoCapabilityAccess.getEquipment(player).ifPresent(b -> {
-						bloodVolume.setBloodVolume(msg.amount);
-						b.setStackInSlot(msg.slot, msg.mindscar);
-
-					});
+					var b = HemoCapabilityAccess.getEquipment(player);
+					bloodVolume.setBloodVolume(msg.amount);
+					b.setStackInSlot(msg.slot, msg.mindscar);
 				}
 			}
 		});

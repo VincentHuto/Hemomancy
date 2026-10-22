@@ -58,7 +58,7 @@ public final class ManipulationChargeVisualReview {
         int held = scene < 3 ? duration : duration * 2 / 3;
         ClientEvents.useManip.setDown(phase >= 16 && phase < 16 + held);
         if (phase == 40) LOGGER.info("CHARGE_REVIEW INPUT scene={} selected={} charging={} held={} down={}", scene,
-                HemoCapabilityAccess.requireKnownManipulations(mc.player).getSelectedManip().getName(),
+                HemoCapabilityAccess.getKnownManipulations(mc.player).getSelectedManip().getName(),
                 ClientEvents.getChargingManipulationName(), ClientEvents.getManipulationChargeTicks(), ClientEvents.useManip.isDown());
         var id = mc.player.getUUID();
         double x = 5000.5 + scene * 32;
@@ -78,12 +78,12 @@ public final class ManipulationChargeVisualReview {
                 player.setGameMode(GameType.CREATIVE);
                 player.teleportTo(level, x, 100, 0, 0, 5);
                 BloodManipulation.clearSessionState();
-                var blood = HemoCapabilityAccess.requireBloodVolume(player);
+                var blood = HemoCapabilityAccess.getBloodVolume(player);
                 blood.setActive(true);
                 blood.setBloodVolume(2000);
                 for (var school : EnumBloodTendency.values())
-                    HemoCapabilityAccess.getBloodTendency(player).orElseThrow().setTendencyAlignment(school, 100);
-                var known = HemoCapabilityAccess.requireKnownManipulations(player);
+                    HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(school, 100);
+                var known = HemoCapabilityAccess.getKnownManipulations(player);
                 for (var entry : ManipulationInit.MANIPS.getEntries())
                     known.getKnownManips().put(entry.get(), new ManipLevel(4, 185));
                 known.setSelectedManip(BloodManipulation.deserialize(manipulation.serialize()));
@@ -105,7 +105,7 @@ public final class ManipulationChargeVisualReview {
         if (phase == 16 + held + 12) server.execute(() -> {
             var player = server.getPlayerList().getPlayer(id);
             if (player == null) return;
-            double blood = HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume();
+            double blood = HemoCapabilityAccess.getBloodVolume(player).getBloodVolume();
             if (blood >= 2000) throw new AssertionError("Charge review did not cast " + manipulation.getName());
             LOGGER.info("CHARGE_REVIEW CAST scene={} spell={} blood={}", scene, manipulation.getName(), blood);
         });

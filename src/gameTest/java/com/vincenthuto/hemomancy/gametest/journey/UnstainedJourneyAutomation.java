@@ -156,7 +156,7 @@ public final class UnstainedJourneyAutomation {
 	}
 
 	private static void syncProgress(ServerPlayer player) {
-		var progress = HemoCapabilityAccess.requireUnstainedProgress(player);
+		var progress = HemoCapabilityAccess.getUnstainedProgress(player);
 		UnstainedProgressEvents.syncProgress(player, progress);
 	}
 }

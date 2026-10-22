@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
@@ -59,8 +58,7 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 			if (player == null)
 				return;
             try {
-			boolean bloodPowersBlocked = HemoCapabilityAccess.getUnstainedProgress(player)
-					.map(UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false);
+			boolean bloodPowersBlocked = UnstainedAccessRules.blocksKnownBloodPowerUse(HemoCapabilityAccess.getUnstainedProgress(player));
 			if (message.action == Action.STOP_CONTINUOUS) {
 				ManipulationChannelManager.stop((net.minecraft.server.level.ServerPlayer) player, true);
 				return;
@@ -74,7 +72,7 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 			}
 			float pTic = message.parTick;
 
-			IKnownManipulations knownCheck = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+			IKnownManipulations knownCheck = HemoCapabilityAccess.getKnownManipulations(player);
 			if (knownCheck != null && knownCheck.getSelectedMemoryRef().kind() == MemoryEntryKind.MUSCLE_MEMORY) {
 				if (bloodPowersBlocked) return;
 				handleMuscleMemoryUse(player, knownCheck);
@@ -111,9 +109,9 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 			}
 			if (bloodPowersBlocked) return;
 			IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
-					.orElseThrow(NullPointerException::new);
+					;
 			IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
-					.orElseThrow(NullPointerException::new);
+					;
 			if (volume.isActive()) {
 				if (known.getSelectedManip() != null) {
 					ItemStack mainStack = player.getMainHandItem();
@@ -211,9 +209,8 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 				LivingStaffWeaponFormRules.isStaffWeaponFormManip(manip.getName()), manip instanceof ConjurationManip,
 				manip.isOnCooldown(player))) return;
 		if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.isParalyzed(player)) return;
-		boolean bloodPowersBlocked = HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false);
-		if (bloodPowersBlocked || !HemoCapabilityAccess.getBloodVolume(player).map(IBloodVolume::isActive).orElse(false))
+		boolean bloodPowersBlocked = UnstainedAccessRules.blocksKnownBloodPowerUse(HemoCapabilityAccess.getUnstainedProgress(player));
+		if (bloodPowersBlocked || !HemoCapabilityAccess.getBloodVolume(player).isActive())
 			return;
 		try {
 			manip.performAction(player, player.level(), player.getMainHandItem(), player.blockPosition(), 0);
@@ -227,7 +224,7 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 		var selected = known.getSelectedMemoryRef();
 		MuscleMemory memory = selected.muscleMemory().orElse(null);
 		if (memory == null || !known.isMemoryEquipped(selected)) return;
-		var state = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+		var state = HemoCapabilityAccess.muscleMemory(player);
 		if (player.isShiftKeyDown()) {
 			if (state.isEnabled(memory)) {
 				state.armOverexertion(memory, player.level().getGameTime());
@@ -242,7 +239,7 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 			MuscleMemoryEvents.sync(serverPlayer);
 			return;
 		}
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		boolean dead = VascularSystemEvents.isSectionDead(player, memory.section());
 		if (volume == null || !volume.isActive() || dead || !state.activate(memory)) {
 			player.displayClientMessage(Component.translatable(

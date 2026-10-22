@@ -61,83 +61,77 @@ public class EquippedMorphlingEvents {
 	public static void playerTick(PlayerTickEvent.Post event) {
 		Player player = event.getEntity();
 		if (player.level().isClientSide) return;
-		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(morphCap -> {
-			if (morphCap.hasMorphling()) {
-				ItemStack stack = morphCap.getEquippedMorphling();
-				LastRiteHelper.armForMorphlingIfUnarmed(player, stack);
-				MorphlingItem.applyHungerTick(player, stack);
-				if (stack.getItem() instanceof WinterShroudMorphlingItem) {
-					WinterShroudMorphlingItem.applyColdBloodedTick(player, stack);
-				}
-				if (stack.getItem() instanceof EmberfangMorphlingItem) {
-					EmberfangMorphlingItem.applyHotheadedTick(player, stack);
-				} else {
-					EmberfangMorphlingItem.clearHeatModifiers(player);
-				}
+		var morphCap = HemoCapabilityAccess.getEquippedMorphling(player);
+		if (morphCap.hasMorphling()) {
+			ItemStack stack = morphCap.getEquippedMorphling();
+			LastRiteHelper.armForMorphlingIfUnarmed(player, stack);
+			MorphlingItem.applyHungerTick(player, stack);
+			if (stack.getItem() instanceof WinterShroudMorphlingItem) {
+				WinterShroudMorphlingItem.applyColdBloodedTick(player, stack);
+			}
+			if (stack.getItem() instanceof EmberfangMorphlingItem) {
+				EmberfangMorphlingItem.applyHotheadedTick(player, stack);
 			} else {
-				MorphlingItem.clearMorphlingPassiveEffects(player);
+				EmberfangMorphlingItem.clearHeatModifiers(player);
 			}
-		});
-		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(morphCap -> {
-			int drainInterval = HemoServerConfig.MORPHLING_DRAIN_INTERVAL.get();
-			boolean intervalElapsed = player.tickCount % drainInterval == 0;
-			if (!MorphlingUpkeepRules.shouldRunEquippedTick(morphCap.hasMorphling(), intervalElapsed)) return;
+		} else {
+			MorphlingItem.clearMorphlingPassiveEffects(player);
+		}
+		int drainInterval = HemoServerConfig.MORPHLING_DRAIN_INTERVAL.get();
+		boolean intervalElapsed = player.tickCount % drainInterval == 0;
+		if (!MorphlingUpkeepRules.shouldRunEquippedTick(morphCap.hasMorphling(), intervalElapsed)) return;
 
-			ItemStack equippedStack = morphCap.getEquippedMorphling();
-			if (!(equippedStack.getItem() instanceof IMorphling morphling)) return;
+		ItemStack equippedStack = morphCap.getEquippedMorphling();
+		if (!(equippedStack.getItem() instanceof IMorphling morphling)) return;
 
-			double upkeep = MorphlingUpkeepRules.upkeepAmount(
-					HemoServerConfig.MORPHLING_PASSIVE_DRAIN_ENABLED.get(),
-					HemoServerConfig.MORPHLING_DRAIN_RATE.get(), morphling.getBloodCost());
-			boolean inCombat = player.getLastHurtByMob() != null
-					&& player.tickCount - player.getLastHurtByMobTimestamp() < 200;
-			boolean needsBonding = !MorphlingItem.isBondingReady(equippedStack);
-			if (MorphlingMetabolismRules.suspendUpkeep(SkillPointHelper.isTechniqueEnabled(player,
-					SkillPointInit.skill_dormant_symbiote), inCombat, needsBonding)) {
-				if (morphCap.hasMorphling()) MorphlingCombat.tick(morphling, player, equippedStack);
-				return;
+		double upkeep = MorphlingUpkeepRules.upkeepAmount(
+				HemoServerConfig.MORPHLING_PASSIVE_DRAIN_ENABLED.get(),
+				HemoServerConfig.MORPHLING_DRAIN_RATE.get(), morphling.getBloodCost());
+		boolean inCombat = player.getLastHurtByMob() != null
+				&& player.tickCount - player.getLastHurtByMobTimestamp() < 200;
+		boolean needsBonding = !MorphlingItem.isBondingReady(equippedStack);
+		if (MorphlingMetabolismRules.suspendUpkeep(SkillPointHelper.isTechniqueEnabled(player,
+				SkillPointInit.skill_dormant_symbiote), inCombat, needsBonding)) {
+			if (morphCap.hasMorphling()) MorphlingCombat.tick(morphling, player, equippedStack);
+			return;
+		}
+		boolean symbiotic = SkillPointHelper.isTechniqueEnabled(player,
+				SkillPointInit.skill_symbiotic_metabolism);
+		boolean starving = MorphlingItem.hungerState(equippedStack, player.level().getGameTime())
+				== com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingHungerRules.HungerState.STARVING;
+		MorphlingMetabolismRules.Upkeep metabolic = MorphlingMetabolismRules.splitUpkeep(symbiotic,
+				starving, player.getFoodData().getFoodLevel(), 20, upkeep);
+		double ordinaryBloodUpkeep = metabolic.blood();
+		upkeep = MorphlingUpkeepRules.withPuppetInterference(ordinaryBloodUpkeep,
+				BoundSummonBehavior.hasActiveOwnedTether((ServerPlayer) player));
+		final double effectiveUpkeep = upkeep;
+		if (metabolic.hungerEquivalent() > 0.0D) {
+			player.getFoodData().addExhaustion(EmberfangMorphlingItem.scaleExhaustion(player,
+					(float) (metabolic.hungerEquivalent() * 0.1D)));
+		}
+
+		var volume = HemoCapabilityAccess.getBloodVolume(player);
+		if (effectiveUpkeep > 0.0D && volume.isActive()) {
+			BloodFlowLedger.DrainResult drain = BloodFlowLedger.applyDrain((ServerPlayer) player, volume,
+					"morphling_upkeep", "Morphling Upkeep", Category.MORPHLING, effectiveUpkeep, drainInterval, true);
+			if (drain.satisfied()) {
+				MorphlingItem.recordBondingBlood(equippedStack,
+						MorphlingUpkeepRules.bondingCredit(drain.actual(), ordinaryBloodUpkeep));
+				syncToClient((ServerPlayer) player);
+			} else {
+				// Not enough blood: unequip the morphling.
+				morphCap.clearMorphling();
+				LastRiteHelper.clearMorphlingRites(player);
+				syncToClient((ServerPlayer) player);
+				player.displayClientMessage(
+						Component.literal("Your morphling withers from blood starvation...")
+								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
 			}
-			boolean symbiotic = SkillPointHelper.isTechniqueEnabled(player,
-					SkillPointInit.skill_symbiotic_metabolism);
-			boolean starving = MorphlingItem.hungerState(equippedStack, player.level().getGameTime())
-					== com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingHungerRules.HungerState.STARVING;
-			MorphlingMetabolismRules.Upkeep metabolic = MorphlingMetabolismRules.splitUpkeep(symbiotic,
-					starving, player.getFoodData().getFoodLevel(), 20, upkeep);
-			double ordinaryBloodUpkeep = metabolic.blood();
-			upkeep = MorphlingUpkeepRules.withPuppetInterference(ordinaryBloodUpkeep,
-					BoundSummonBehavior.hasActiveOwnedTether((ServerPlayer) player));
-			final double effectiveUpkeep = upkeep;
-			if (metabolic.hungerEquivalent() > 0.0D) {
-				player.getFoodData().addExhaustion(EmberfangMorphlingItem.scaleExhaustion(player,
-						(float) (metabolic.hungerEquivalent() * 0.1D)));
-			}
+		}
 
-			if (effectiveUpkeep > 0.0D) {
-				HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-					if (!volume.isActive()) return;
-
-					BloodFlowLedger.DrainResult drain = BloodFlowLedger.applyDrain((ServerPlayer) player, volume,
-							"morphling_upkeep", "Morphling Upkeep", Category.MORPHLING, effectiveUpkeep, drainInterval, true);
-					if (drain.satisfied()) {
-						MorphlingItem.recordBondingBlood(equippedStack,
-								MorphlingUpkeepRules.bondingCredit(drain.actual(), ordinaryBloodUpkeep));
-						syncToClient((ServerPlayer) player);
-					} else {
-						// Not enough blood: unequip the morphling.
-						morphCap.clearMorphling();
-						LastRiteHelper.clearMorphlingRites(player);
-						syncToClient((ServerPlayer) player);
-						player.displayClientMessage(
-								Component.literal("Your morphling withers from blood starvation...")
-										.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
-					}
-				});
-			}
-
-			if (morphCap.hasMorphling()) {
-				MorphlingCombat.tick(morphling, player, equippedStack);
-			}
-		});
+		if (morphCap.hasMorphling()) {
+			MorphlingCombat.tick(morphling, player, equippedStack);
+		}
 	}
 
 	/**
@@ -150,21 +144,20 @@ public class EquippedMorphlingEvents {
 		if (!(event.getEntity() instanceof Player player)) return;
 		if (player.level().isClientSide) return;
 
-		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(morphCap -> {
-			if (!morphCap.hasMorphling()) return;
-			ItemStack morphStack = morphCap.getEquippedMorphling();
-			if (morphStack.getItem() instanceof IMorphling morphling) {
-				float damage = event.getNewDamage();
-				if (morphStack.getItem() instanceof WinterShroudMorphlingItem) {
-					damage = WinterShroudMorphlingItem.adjustIncomingColdDamage(
-							player, morphStack, event.getSource(), damage);
-				} else if (morphStack.getItem() instanceof EmberfangMorphlingItem) {
-					damage = EmberfangMorphlingItem.adjustIncomingDamage(player, morphStack, damage);
-				}
-				event.setNewDamage(damage);
-
+		var morphCap = HemoCapabilityAccess.getEquippedMorphling(player);
+		if (!morphCap.hasMorphling()) return;
+		ItemStack morphStack = morphCap.getEquippedMorphling();
+		if (morphStack.getItem() instanceof IMorphling morphling) {
+			float damage = event.getNewDamage();
+			if (morphStack.getItem() instanceof WinterShroudMorphlingItem) {
+				damage = WinterShroudMorphlingItem.adjustIncomingColdDamage(
+						player, morphStack, event.getSource(), damage);
+			} else if (morphStack.getItem() instanceof EmberfangMorphlingItem) {
+				damage = EmberfangMorphlingItem.adjustIncomingDamage(player, morphStack, damage);
 			}
-		});
+			event.setNewDamage(damage);
+
+		}
 	}
 
 	/**
@@ -179,32 +172,30 @@ public class EquippedMorphlingEvents {
 		if (target.level().isClientSide) return;
 		if (!(event.getSource().getEntity() instanceof Player player)) return;
 
-		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(morphCap -> {
-			if (!morphCap.hasMorphling()) return;
-			ItemStack morphStack = morphCap.getEquippedMorphling();
-			if (morphStack.getItem() instanceof IMorphling morphling) {
-                // Blood transfer is independent of school buildup and damage reactions.
-                if (MorphlingCombat.isFollowUp(event.getSource()) && !(morphling instanceof DeadmansPurseMorphlingItem)) return;
-                try (var scope = MorphlingCombat.scope(morphling, player, morphStack, event.getSource())) {
-                    morphling.onEquippedAttack(player, morphStack, target, event.getNewDamage());
-                }
-			}
-		});
+		var morphCap = HemoCapabilityAccess.getEquippedMorphling(player);
+					if (!morphCap.hasMorphling()) return;
+					ItemStack morphStack = morphCap.getEquippedMorphling();
+					if (morphStack.getItem() instanceof IMorphling morphling) {
+		                // Blood transfer is independent of school buildup and damage reactions.
+		                if (MorphlingCombat.isFollowUp(event.getSource()) && !(morphling instanceof DeadmansPurseMorphlingItem)) return;
+		                try (var scope = MorphlingCombat.scope(morphling, player, morphStack, event.getSource())) {
+		                    morphling.onEquippedAttack(player, morphStack, target, event.getNewDamage());
+		                }
+					}
 	}
 
     @SubscribeEvent
     public static void onConfirmedPlayerHurt(LivingDamageEvent.Post event) {
         if (!(event.getEntity() instanceof Player player) || player.level().isClientSide
                 || !SchoolDamage.hasHealthOrAbsorptionDamage(event)) return;
-        HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
-            ItemStack stack = cap.getEquippedMorphling();
-            if (cap.hasMorphling() && stack.getItem() instanceof IMorphling morphling) {
-                try (var scope = MorphlingCombat.scope(morphling, player, stack, event.getSource())) {
-                    morphling.onEquippedHurt(player, stack, event.getSource(), event.getNewDamage(),
-                            !MorphlingCombat.isFollowUp(event.getSource()));
-                }
+        var cap = HemoCapabilityAccess.getEquippedMorphling(player);
+        ItemStack stack = cap.getEquippedMorphling();
+        if (cap.hasMorphling() && stack.getItem() instanceof IMorphling morphling) {
+            try (var scope = MorphlingCombat.scope(morphling, player, stack, event.getSource())) {
+                morphling.onEquippedHurt(player, stack, event.getSource(), event.getNewDamage(),
+                        !MorphlingCombat.isFollowUp(event.getSource()));
             }
-        });
+        }
     }
 
 	/**
@@ -218,15 +209,14 @@ public class EquippedMorphlingEvents {
 		if (victim.level().isClientSide) return;
 		if (!(event.getSource().getEntity() instanceof Player player)) return;
 
-		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(morphCap -> {
-			if (!morphCap.hasMorphling()) return;
-			ItemStack morphStack = morphCap.getEquippedMorphling();
-			if (morphStack.getItem() instanceof IMorphling morphling) {
-                try (var scope = MorphlingCombat.scope(morphling, player, morphStack, event.getSource())) {
-                    morphling.onEquippedKill(player, morphStack, victim, !MorphlingCombat.isFollowUp(event.getSource()));
-                }
-			}
-		});
+		var morphCap = HemoCapabilityAccess.getEquippedMorphling(player);
+					if (!morphCap.hasMorphling()) return;
+					ItemStack morphStack = morphCap.getEquippedMorphling();
+					if (morphStack.getItem() instanceof IMorphling morphling) {
+		                try (var scope = MorphlingCombat.scope(morphling, player, morphStack, event.getSource())) {
+		                    morphling.onEquippedKill(player, morphStack, victim, !MorphlingCombat.isFollowUp(event.getSource()));
+		                }
+					}
 	}
 
 	/**
@@ -241,15 +231,14 @@ public class EquippedMorphlingEvents {
 		// Only trigger on falls that would actually cause damage (distance > 3)
 		if (event.getDistance() <= 3.0f) return;
 
-		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(morphCap -> {
-			if (!morphCap.hasMorphling()) return;
-			ItemStack morphStack = morphCap.getEquippedMorphling();
-			if (morphStack.getItem() instanceof IMorphling morphling) {
-				if (morphling.onEquippedFall(player, morphStack, event.getDistance())) {
-					event.setCanceled(true);
-				}
+		var morphCap = HemoCapabilityAccess.getEquippedMorphling(player);
+		if (!morphCap.hasMorphling()) return;
+		ItemStack morphStack = morphCap.getEquippedMorphling();
+		if (morphStack.getItem() instanceof IMorphling morphling) {
+			if (morphling.onEquippedFall(player, morphStack, event.getDistance())) {
+				event.setCanceled(true);
 			}
-		});
+		}
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
@@ -258,7 +247,7 @@ public class EquippedMorphlingEvents {
 			return;
 		}
 
-		IEquippedMorphling morphling = HemoCapabilityAccess.getEquippedMorphling(player).orElse(null);
+		IEquippedMorphling morphling = HemoCapabilityAccess.getEquippedMorphling(player);
 		if (morphling == null || !morphling.hasMorphling()) {
 			return;
 		}
@@ -288,9 +277,8 @@ public class EquippedMorphlingEvents {
 			addJarHandler(player.getInventory().getItem(slot), jars);
 		}
 		addJarHandler(player.getOffhandItem(), jars);
-		HemoCapabilityAccess.getEquipment(player)
-				.map(equipment -> equipment.getStackInSlot(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.JAR_SLOT_INDEX))
-				.ifPresent(jar -> addJarHandler(jar, jars));
+		addJarHandler(HemoCapabilityAccess.getEquipment(player)
+				.getStackInSlot(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.JAR_SLOT_INDEX), jars);
 		return jars;
 	}
 
@@ -311,13 +299,12 @@ public class EquippedMorphlingEvents {
 		BlockPos pos = event.getPos();
 		BlockState state = event.getState();
 
-		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(morphCap -> {
-			if (!morphCap.hasMorphling()) return;
-			ItemStack morphStack = morphCap.getEquippedMorphling();
-			if (morphStack.getItem() instanceof IMorphling morphling) {
-				morphling.onEquippedBlockBreak(player, morphStack, pos, state);
-			}
-		});
+		var morphCap = HemoCapabilityAccess.getEquippedMorphling(player);
+		if (!morphCap.hasMorphling()) return;
+		ItemStack morphStack = morphCap.getEquippedMorphling();
+		if (morphStack.getItem() instanceof IMorphling morphling) {
+			morphling.onEquippedBlockBreak(player, morphStack, pos, state);
+		}
 	}
 
 	/**
@@ -421,7 +408,7 @@ public class EquippedMorphlingEvents {
 
 	public static void persistEquippedMorphling(ServerPlayer player) {
 		ItemStack equipped = HemoCapabilityAccess.getEquippedMorphling(player)
-				.map(IEquippedMorphling::getEquippedMorphling).orElse(ItemStack.EMPTY);
+				.getEquippedMorphling();
 		String identity = com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingIdentity.identity(equipped);
 		if (identity.isEmpty()) return;
 		MorphlingJarItemHandler owner = null;
@@ -449,17 +436,15 @@ public class EquippedMorphlingEvents {
 
 	public static void syncToClient(ServerPlayer player) {
 		persistEquippedMorphling(player);
-		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
-			PacketHandler.sendTracking(player,
-					new SyncEquippedMorphlingPacket(player.getUUID(), cap.getEquippedMorphling().copy()));
-		});
+		var cap = HemoCapabilityAccess.getEquippedMorphling(player);
+		PacketHandler.sendTracking(player,
+				new SyncEquippedMorphlingPacket(player.getUUID(), cap.getEquippedMorphling().copy()));
 	}
 
 	public static void syncToPlayer(ServerPlayer source, ServerPlayer receiver) {
-		HemoCapabilityAccess.getEquippedMorphling(source).ifPresent(cap -> {
-			PacketHandler.sendToPlayer(receiver,
-					new SyncEquippedMorphlingPacket(source.getUUID(), cap.getEquippedMorphling().copy()));
-		});
+		var cap = HemoCapabilityAccess.getEquippedMorphling(source);
+		PacketHandler.sendToPlayer(receiver,
+				new SyncEquippedMorphlingPacket(source.getUUID(), cap.getEquippedMorphling().copy()));
 	}
 
 }

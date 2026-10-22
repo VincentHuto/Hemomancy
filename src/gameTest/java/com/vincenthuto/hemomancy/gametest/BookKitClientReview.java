@@ -58,7 +58,7 @@ public final class BookKitClientReview {
                     var table=(com.vincenthuto.hutoslib.common.block.entity.DictationTableBlockEntity)level.getBlockEntity(pos);
                     table.setBook(new ItemStack(ItemInit.liber_sanguinum.get()));
                     var memo=Hemomancy.rloc("fixture/desk_visual");
-                    var knowledge=player.getData(com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes.LIBER_KNOWLEDGE);
+                    var knowledge=HemoCapabilityAccess.getLiberKnowledge(player);
                     knowledge.removePendingMemos(java.util.List.copyOf(knowledge.getPendingMemos()));
                     if(data.has("pending")&&data.get("pending").getAsBoolean())knowledge.recordPendingMemo(memo);
                     PacketDistributor.sendToPlayer(player,new PacketSyncLiberKnowledge(knowledge));
@@ -74,19 +74,17 @@ public final class BookKitClientReview {
                     if(op.equals("setup")) {
                         player.getInventory().add(new ItemStack(ItemInit.liber_sanguinum.get()));
                         player.getInventory().add(new ItemStack(ItemInit.liber_immaculatus.get()));
-                        HemoCapabilityAccess.getLiberKnowledge(player).ifPresent(knowledge-> {
-                            for(String name:new String[]{"libersanguinium","liberimmaculatus"}) {
-                                var book=BookPlaceboReloadListener.INSTANCE.getBookByTitle(Hemomancy.rloc(name));
-                                book.getChapters().forEach(chapter->chapter.getPages().forEach(page->knowledge.unlockEntry(page.getId(),CommonDiscoverySource.OTHER)));
-                            }
-                            PacketDistributor.sendToPlayer(player,new PacketSyncLiberKnowledge(knowledge));
-                        });
+                        var knowledge = HemoCapabilityAccess.getLiberKnowledge(player);
+                        for(String name:new String[]{"libersanguinium","liberimmaculatus"}) {
+                            var book=BookPlaceboReloadListener.INSTANCE.getBookByTitle(Hemomancy.rloc(name));
+                            book.getChapters().forEach(chapter->chapter.getPages().forEach(page->knowledge.unlockEntry(page.getId(),CommonDiscoverySource.OTHER)));
+                        }
+                        PacketDistributor.sendToPlayer(player,new PacketSyncLiberKnowledge(knowledge));
                         player.getInventory().setChanged();player.containerMenu.broadcastChanges();
                     }
-                    HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress-> {
-                        progress.setClarityUnlocked(true);progress.setClarity(data.has("value")?data.get("value").getAsFloat():100);
-                        PacketDistributor.sendToPlayer(player,new PacketSyncUnstainedProgress(progress));
-                    });
+                    var progress = HemoCapabilityAccess.getUnstainedProgress(player);
+                    progress.setClarityUnlocked(true);progress.setClarity(data.has("value")?data.get("value").getAsFloat():100);
+                    PacketDistributor.sendToPlayer(player,new PacketSyncUnstainedProgress(progress));
                 });
             } else if(op.equals("open")) {
                 String name=data.get("book").getAsString();
@@ -105,15 +103,14 @@ public final class BookKitClientReview {
                 var player=data.has("playerName")?mc.getSingleplayerServer().getPlayerList().getPlayerByName(data.get("playerName").getAsString())
                         :mc.getSingleplayerServer().getPlayerList().getPlayer(mc.player.getUUID());
                 var id=ResourceLocation.parse(data.get("id").getAsString());
-                HemoCapabilityAccess.getLiberKnowledge(player).ifPresent(knowledge-> {
-                    if(data.get("allow").getAsBoolean())knowledge.unlockEntry(id,CommonDiscoverySource.OTHER);
-                    else {
-                        var copy=new com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledge();
-                        knowledge.getUnlockedEntries().stream().filter(entry->!entry.equals(id)).forEach(entry->copy.unlockEntry(entry,CommonDiscoverySource.OTHER));
-                        knowledge.getKnownMemos().forEach(copy::recordMemo);knowledge.setFrom(copy);
-                    }
-                    PacketDistributor.sendToPlayer(player,new PacketSyncLiberKnowledge(knowledge,data.get("allow").getAsBoolean()?java.util.Set.of(id):java.util.Set.of()));
-                });
+                var knowledge = HemoCapabilityAccess.getLiberKnowledge(player);
+                if(data.get("allow").getAsBoolean())knowledge.unlockEntry(id,CommonDiscoverySource.OTHER);
+                else {
+                    var copy=new com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledge();
+                    knowledge.getUnlockedEntries().stream().filter(entry->!entry.equals(id)).forEach(entry->copy.unlockEntry(entry,CommonDiscoverySource.OTHER));
+                    knowledge.getKnownMemos().forEach(copy::recordMemo);knowledge.setFrom(copy);
+                }
+                PacketDistributor.sendToPlayer(player,new PacketSyncLiberKnowledge(knowledge,data.get("allow").getAsBoolean()?java.util.Set.of(id):java.util.Set.of()));
             });
             else if(op.equals("reload"))mc.reloadResourcePacks();
             else if(op.equals("char"))data.get("text").getAsString().chars().forEach(c->mc.screen.charTyped((char)c,0));

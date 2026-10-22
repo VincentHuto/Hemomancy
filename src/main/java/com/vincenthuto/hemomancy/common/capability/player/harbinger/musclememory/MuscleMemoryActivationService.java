@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory;
 
-import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
@@ -40,7 +39,7 @@ public final class MuscleMemoryActivationService {
     private static TriggerResult tryTriggerDetailed(ServerPlayer player, MuscleMemory memory,
             int normalActiveTicks, int overexertedActiveTicks, boolean allowBorrowed) {
         long now = player.level().getGameTime();
-        MuscleMemoryState state = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+        MuscleMemoryState state = HemoCapabilityAccess.muscleMemory(player);
         boolean deadSection = VascularSystemEvents.isSectionDead(player, memory.section());
         if (!state.isEnabled(memory) || deadSection) return TriggerResult.REJECTED;
         MuscleMemoryResonanceRules.Resonance resonance = resonance(player, memory);
@@ -49,7 +48,7 @@ public final class MuscleMemoryActivationService {
         boolean armed = state.isOverexertionArmed(memory, now);
         double maximumCost = armed ? cost * MuscleMemoryPrimingRules.OVEREXERT_BLOOD_MULTIPLIER : cost;
         double borrowedAvailable = purse ? Math.min(maximumCost * .5D, BorrowedBloodReserve.get(player)) : 0D;
-        double available = HemoCapabilityAccess.getBloodVolume(player).map(v -> v.getBloodVolume()).orElse(0D) + borrowedAvailable;
+        double available = HemoCapabilityAccess.getBloodVolume(player).getBloodVolume() + borrowedAvailable;
         MuscleMemoryActivationRules.Result eligibility = MuscleMemoryActivationRules.evaluate(
                 true, state.isCooldownReady(memory, now), available,
                 memory.bloodCost(), memory.vascularStrain(), resonance);
@@ -60,10 +59,8 @@ public final class MuscleMemoryActivationService {
         double borrowed = purse ? BorrowedBloodReserve.drainToCover(player,
                 Math.min(payment.bloodCost() * .5D, borrowedAvailable)) : 0D;
         double bloodCost = payment.bloodCost() - borrowed;
-        boolean paid = bloodCost <= .000001D || HemoCapabilityAccess.getBloodVolume(player)
-                .map(volume -> BloodFlowLedger.applyDrain(player, volume, "muscle_memory_" + memory.id(),
-                        displayName(memory), Category.MUSCLE_MEMORY, bloodCost, 1, true).satisfied())
-                .orElse(false);
+        boolean paid = bloodCost <= .000001D || BloodFlowLedger.applyDrain(player, HemoCapabilityAccess.getBloodVolume(player), "muscle_memory_" + memory.id(),
+                        displayName(memory), Category.MUSCLE_MEMORY, bloodCost, 1, true).satisfied();
         if (!paid) {
             if (borrowed > 0D) BorrowedBloodReserve.deposit(player, borrowed);
             return TriggerResult.REJECTED;
@@ -72,21 +69,20 @@ public final class MuscleMemoryActivationService {
             state.consumeOverexertion(memory, now);
         }
 
-        if (HemoServerConfig.VASCULAR_DEGRADATION_ON_MANIP_ENABLED.get()) HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
+        if (HemoServerConfig.VASCULAR_DEGRADATION_ON_MANIP_ENABLED.get()) {
+            var vascular = HemoCapabilityAccess.getVascularSystem(player);
             EnumBloodFlow before = vascular.getBloodFlowBySection(memory.section());
-            boolean fortified = HemoCapabilityAccess.getInitiatoryDegree(player)
-                    .map(degree -> degree.hasHematicFortification()).orElse(false);
+            boolean fortified = HemoCapabilityAccess.getInitiatoryDegree(player).hasHematicFortification();
             vascular.setVascularSectionHealth(memory.section(),
                     -HematicFortificationRules.adjustedStrain(payment.strain(), fortified));
             VascularSystemEvents.syncVascular(player, vascular);
             VeinMasonAssignments.onThelemicStrain(player, before,
                     vascular.getBloodFlowBySection(memory.section()));
-        });
-        HemoCapabilityAccess.getBloodTendency(player).ifPresent(tendency -> {
-            tendency.addTendencyAlignment(memory.primaryTendency(), .075F);
-            tendency.addTendencyAlignment(memory.secondaryTendency(), .025F);
-            BloodTendencyEvents.syncTendency(player, tendency);
-        });
+        }
+        var tendency = HemoCapabilityAccess.getBloodTendency(player);
+        tendency.addTendencyAlignment(memory.primaryTendency(), .075F);
+        tendency.addTendencyAlignment(memory.secondaryTendency(), .025F);
+        BloodTendencyEvents.syncTendency(player, tendency);
         state.setCooldownUntil(memory, now + memory.cooldownTicks());
         int activeTicks = payment.overexerted() ? overexertedActiveTicks : normalActiveTicks;
         if (activeTicks > 0) state.setActiveUntil(memory, now + activeTicks);
@@ -98,14 +94,12 @@ public final class MuscleMemoryActivationService {
     }
 
     public static boolean hasSignatureMorphling(ServerPlayer player, Class<?> type) {
-        ItemStack stack = HemoCapabilityAccess.getEquippedMorphling(player)
-                .map(cap -> cap.getEquippedMorphling()).orElse(ItemStack.EMPTY);
+        ItemStack stack = HemoCapabilityAccess.getEquippedMorphling(player).getEquippedMorphling();
         return !stack.isEmpty() && type.isInstance(stack.getItem());
     }
 
     private static MuscleMemoryResonanceRules.Resonance resonance(ServerPlayer player, MuscleMemory memory) {
-        ItemStack stack = HemoCapabilityAccess.getEquippedMorphling(player)
-                .map(cap -> cap.getEquippedMorphling()).orElse(ItemStack.EMPTY);
+        ItemStack stack = HemoCapabilityAccess.getEquippedMorphling(player).getEquippedMorphling();
         if (stack.getItem() instanceof IMorphling morphling) {
             return MuscleMemoryResonanceRules.resolve(memory, morphling.getPreferredTendency(), morphling.getSecondaryTendency(), isSignature(memory, stack.getItem()));
         }

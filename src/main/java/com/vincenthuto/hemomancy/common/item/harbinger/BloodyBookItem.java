@@ -42,7 +42,7 @@ public class BloodyBookItem extends ItemGuideBook {
         }
 
         if (lvl.isClientSide && book != null) {
-            BookReaderScreen.open(book, this, null, HemoCapabilityAccess.getLiberKnowledge(player).orElse(null));
+            BookReaderScreen.open(book, this, null, HemoCapabilityAccess.getLiberKnowledge(player));
         }
 
         return super.use(lvl, player, hand);

@@ -320,7 +320,7 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 				|| !(level.getBlockEntity(pos) instanceof IronBrazierBlockEntity brazier)) {
 			return 0.0D;
 		}
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		double poured = volume == null || !volume.isActive() ? 0.0D
 				: BrazierBloodInteractionRules.fillStep(brazier.getPooledBlood(), BLOOD_TO_LIGHT, maxAmount,
 						volume.getBloodVolume());

@@ -63,8 +63,7 @@ public class VerdigrisLatticeBlock extends Block {
 	private static void applyWard(ServerLevel level, BlockPos pos) {
 		AABB ward = new AABB(pos).inflate(8.0);
 		for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class, ward)) {
-			if (living instanceof Player player && HemoCapabilityAccess.getUnstainedProgress(player)
-					.map(progress -> progress.hasBegunPurification()).orElse(false)) {
+			if (living instanceof Player player && HemoCapabilityAccess.getUnstainedProgress(player).hasBegunPurification()) {
 				living.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 240, 0, true, false));
 			} else if (living.getType().is(EntityInit.HEMOMANCY_MOB)) {
 				living.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 240, 0, true, true));

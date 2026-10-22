@@ -37,16 +37,15 @@ public class BloodPylonBlockEntity extends BlockEntity {
         AABB range = new AABB(pos).inflate(DRAIN_RADIUS);
         List<Player> players = level.getEntitiesOfClass(Player.class, range);
         for (Player player : players) {
-            HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-                if (!volume.isEmpty() && volume.drain(DRAIN_AMOUNT)) {
-                    if (player instanceof ServerPlayer sp) {
-                        sp.displayClientMessage(
-                            Component.translatable("message.hemomancy.blood_pylon.draining")
-                                .withStyle(ChatFormatting.DARK_RED),
-                            true);
-                    }
+            var volume = HemoCapabilityAccess.getBloodVolume(player);
+            if (!volume.isEmpty() && volume.drain(DRAIN_AMOUNT)) {
+                if (player instanceof ServerPlayer sp) {
+                    sp.displayClientMessage(
+                        Component.translatable("message.hemomancy.blood_pylon.draining")
+                            .withStyle(ChatFormatting.DARK_RED),
+                        true);
                 }
-            });
+            }
         }
     }
 

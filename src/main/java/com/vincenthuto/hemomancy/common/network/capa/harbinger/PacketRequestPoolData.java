@@ -36,19 +36,18 @@ public class PacketRequestPoolData implements CustomPacketPayload {
 			Player packetPlayer = ctx.player();
 			if (!(packetPlayer instanceof ServerPlayer player)) return;
 
-			HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-				Bloodline bloodline = volume.getBloodLine();
-				if (bloodline.isValid()) {
-					ServerLevel overworld = player.server.overworld();
-					BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
-					Bloodline globalLine = savedData.getBloodline(bloodline.getBloodlineUUID());
-					if (globalLine != null) {
-						PacketHandler.sendToPlayer(player, new PacketSyncBloodlinePool(globalLine.getBloodVolume(),
-										globalLine.getMaxBloodVolume(),
-										globalLine.getPlayerUUIDS().size()));
-					}
+			var volume = HemoCapabilityAccess.getBloodVolume(player);
+			Bloodline bloodline = volume.getBloodLine();
+			if (bloodline.isValid()) {
+				ServerLevel overworld = player.server.overworld();
+				BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
+				Bloodline globalLine = savedData.getBloodline(bloodline.getBloodlineUUID());
+				if (globalLine != null) {
+					PacketHandler.sendToPlayer(player, new PacketSyncBloodlinePool(globalLine.getBloodVolume(),
+									globalLine.getMaxBloodVolume(),
+									globalLine.getPlayerUUIDS().size()));
 				}
-			});
+			}
 		});
 	}
 

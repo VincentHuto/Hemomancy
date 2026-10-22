@@ -138,7 +138,7 @@ public final class ScarBrazierRite implements BrazierRite<ScarBrazierRite.ScarPl
 					"The Iron Brazier answers this scar rite only at the Fourth Degree and above.",
 					ChatFormatting.RED);
 		}
-		IScars scars = HemoCapabilityAccess.getScarState(player).orElse(null);
+		IScars scars = HemoCapabilityAccess.getScarState(player);
 		if (scars == null) {
 			return Preflight.denied("Your scar memory is silent.", ChatFormatting.RED);
 		}
@@ -196,7 +196,7 @@ public final class ScarBrazierRite implements BrazierRite<ScarBrazierRite.ScarPl
 	}
 
 	private static boolean hasBlood(Player player, double cost) {
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		return volume != null && volume.isActive() && volume.getBloodVolume() >= cost;
 	}
 
@@ -279,7 +279,7 @@ public final class ScarBrazierRite implements BrazierRite<ScarBrazierRite.ScarPl
 
 	/** Spends blood a passing preflight has already confirmed through {@link #hasBlood}. */
 	private static void spendBlood(Player player, double cost) {
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElseThrow();
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		volume.drain(cost);
 		volume.addBloodSpend(cost);
 		if (player instanceof ServerPlayer serverPlayer) {

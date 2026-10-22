@@ -137,10 +137,9 @@ public class LanternTickEntity extends PathfinderMob {
 
 	private void drainOrDamage(Player player) {
 		this.entityData.set(BITE_TICKS, BITE_ANIMATION_TICKS);
-		boolean drained = HemoCapabilityAccess.getBloodVolume(player)
-				.filter(volume -> volume.isActive() && volume.getBloodVolume() > 0.0D)
-				.map(volume -> volume.drain(LanternTickRules.BLOOD_DRAIN_PER_TICK_BITE))
-				.orElse(false);
+		var volume = HemoCapabilityAccess.getBloodVolume(player);
+		boolean drained = volume.isActive() && volume.getBloodVolume() > 0.0D
+				&& volume.drain(LanternTickRules.BLOOD_DRAIN_PER_TICK_BITE);
 		if (!drained) {
 			player.hurt(this.damageSources().mobAttack(this), LanternTickRules.FALLBACK_DAMAGE_PER_BITE);
 		}

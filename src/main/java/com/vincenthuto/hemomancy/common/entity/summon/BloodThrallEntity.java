@@ -294,7 +294,7 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
 
             if (player.isShiftKeyDown()) {
                 // ── Shift+click: reabsorb thrall back into blood volume ──
-                IBloodVolume playerVol = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+                IBloodVolume playerVol = HemoCapabilityAccess.getBloodVolume(player);
                 if (playerVol != null) {
                     double bloodBack = ABSORB_BLOOD_RETURN + getCarriedBlood();
                     playerVol.fill(bloodBack);
@@ -312,7 +312,7 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
                 return InteractionResult.SUCCESS;
             } else {
                 // ── Right-click: absorb thrall back into blood volume ──
-                IBloodVolume playerVol = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+                IBloodVolume playerVol = HemoCapabilityAccess.getBloodVolume(player);
                 if (playerVol != null) {
                     double bloodBack = ABSORB_BLOOD_RETURN + getCarriedBlood();
                     playerVol.fill(bloodBack);

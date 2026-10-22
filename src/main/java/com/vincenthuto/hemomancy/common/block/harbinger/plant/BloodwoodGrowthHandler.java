@@ -42,7 +42,7 @@ public final class BloodwoodGrowthHandler {
 			return 0.0D;
 		}
 
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null || !volume.isActive() || volume.getBloodVolume() <= 0.0D) {
 			player.displayClientMessage(Component.literal("No active blood answers the dead bush.")
 					.withStyle(ChatFormatting.DARK_RED), true);

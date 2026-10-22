@@ -38,10 +38,8 @@ public class OpenMorphlingJarPacket implements CustomPacketPayload {
 			// Find jar in inventory first, then check scar slot 7
 			ItemStack jarStack = Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class);
 			if (jarStack.isEmpty()) {
-				jarStack = HemoCapabilityAccess.getEquipment(player)
-						.map(r -> r.getStackInSlot(7))
-						.filter(s -> s.getItem() instanceof ItemMorphlingJar)
-						.orElse(ItemStack.EMPTY);
+				ItemStack equipped = HemoCapabilityAccess.getEquipment(player).getStackInSlot(7);
+				jarStack = equipped.getItem() instanceof ItemMorphlingJar ? equipped : ItemStack.EMPTY;
 			}
 			if (!jarStack.isEmpty()) {
 				final ItemStack finalJar = jarStack;

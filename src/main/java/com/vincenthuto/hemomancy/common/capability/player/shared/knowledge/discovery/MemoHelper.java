@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery;
 
-import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledge;
@@ -59,7 +58,7 @@ public final class MemoHelper {
 			return CaptureResult.INVALID;
 		}
 		migrateLegacyFieldNotes(player);
-		LiberKnowledge knowledge = player.getData(HemoAttachmentTypes.LIBER_KNOWLEDGE);
+		LiberKnowledge knowledge = HemoCapabilityAccess.getLiberKnowledge(player);
 		if (knowledge.knowsMemo(memoId)) {
 			player.displayClientMessage(Component.translatable("message.hemomancy.memo.already_written")
 					.withStyle(ChatFormatting.GRAY), true);
@@ -88,7 +87,7 @@ public final class MemoHelper {
 			return DictationResult.NO_LIBER;
 		}
 
-		LiberKnowledge knowledge = player.getData(HemoAttachmentTypes.LIBER_KNOWLEDGE);
+		LiberKnowledge knowledge = HemoCapabilityAccess.getLiberKnowledge(player);
 		migrateLegacyLiberStack(liber, knowledge);
 		migrateLegacyFieldNotes(player);
 
@@ -139,7 +138,7 @@ public final class MemoHelper {
 		}
 
 		int cost = getDictationBloodCost(knowledge.getKnownMemos().size(), newMemoCount);
-		IBloodVolume volume = player.getData(HemoAttachmentTypes.BLOOD_VOLUME);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (!volume.isActive() || volume.getBloodVolume() < cost) {
 			player.displayClientMessage(Component.translatable("message.hemomancy.memo.not_enough_blood", cost)
 					.withStyle(ChatFormatting.DARK_RED), true);
@@ -158,7 +157,7 @@ public final class MemoHelper {
 
     public static boolean hasPendingForLiber(net.minecraft.world.entity.player.Player player, ItemStack liber) {
         if (player == null || !isLiber(liber)) return false;
-        var knowledge = player.getData(HemoAttachmentTypes.LIBER_KNOWLEDGE);
+        var knowledge = HemoCapabilityAccess.getLiberKnowledge(player);
         return getDictatableMemosForPath(knowledge.getPendingMemos(), pathForLiber(liber)).stream()
                 .anyMatch(memo -> !knowledge.knowsMemo(memo));
     }
@@ -202,14 +201,13 @@ public final class MemoHelper {
 	}
 
 	public static void migrateLegacyLiberStack(ServerPlayer player, ItemStack liber) {
-		HemoCapabilityAccess.getLiberKnowledge(player).ifPresent(knowledge -> {
-			migrateLegacyLiberStack(liber, knowledge);
-			LiberKnowledgeEvents.sync(player);
-		});
+		var knowledge = HemoCapabilityAccess.getLiberKnowledge(player);
+		migrateLegacyLiberStack(liber, knowledge);
+		LiberKnowledgeEvents.sync(player);
 	}
 
 	public static boolean migrateLegacyFieldNotes(ServerPlayer player) {
-		LiberKnowledge knowledge = player.getData(HemoAttachmentTypes.LIBER_KNOWLEDGE);
+		LiberKnowledge knowledge = HemoCapabilityAccess.getLiberKnowledge(player);
 		boolean changed = false;
 		changed |= migrateLegacyFieldNotesStack(player.getMainHandItem(), knowledge);
 		changed |= migrateLegacyFieldNotesStack(player.getOffhandItem(), knowledge);

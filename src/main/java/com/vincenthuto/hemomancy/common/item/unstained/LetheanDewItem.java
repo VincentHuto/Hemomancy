@@ -41,7 +41,7 @@ public class LetheanDewItem extends Item {
 		}
 
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
-				.orElseThrow(NullPointerException::new);
+				;
 
 		if (known.getKnownManips().containsKey(known.getSelectedManip())) {
 			known.getKnownManips().remove(known.getSelectedManip());

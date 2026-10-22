@@ -99,7 +99,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 					if (patternHelper == null) continue;
 
 					IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(player)
-							.orElseThrow(NullPointerException::new);
+							;
 
 					// Explicit recipe degree / stage check.
 					int requiredDegree = RecipeDegreeGates.getRequiredDegree(targetPattern);
@@ -262,7 +262,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 		CardinalRiteSavedData savedData = CardinalRiteSavedData.get(sLevel);
 
 		IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(player)
-				.orElseThrow(NullPointerException::new);
+				;
 
 		var hitState = sLevel.getBlockState(hitPos);
 		List<CardinalRiteRecipe> allRites = CardinalRiteRecipe.getAllRecipes(player.level());
@@ -407,8 +407,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 				}
 
 				//  Path alignment gate 
-				boolean harbingerProgressBlocked = HemoCapabilityAccess.getUnstainedProgress(player)
-						.map(UnstainedAccessRules::blocksHarbingerProgress).orElse(false);
+				boolean harbingerProgressBlocked = UnstainedAccessRules.blocksHarbingerProgress(HemoCapabilityAccess.getUnstainedProgress(player));
 				if (!recipe.isUnstained() && harbingerProgressBlocked) {
 					player.displayClientMessage(
 							Component.literal("Purification bars access to the Hematic Order rites.")
@@ -419,8 +418,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 
 				//  Apotheos gate: requires completed Qliphoth Communion 
 				if (APOTHEOS_RITE_ID.equals(recipe.getId())
-						&& !HemoCapabilityAccess.getInitiatoryDegree(player)
-								.map(d -> d.isQliphothCommunionDone()).orElse(false)) {
+						&& !HemoCapabilityAccess.getInitiatoryDegree(player).isQliphothCommunionDone()) {
 					player.displayClientMessage(
 							Component.literal("The Eighth Degree remains sealed. Consume all nine Qliphoth husks from a single bloom.")
 									.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
@@ -437,9 +435,8 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 					return CardinalRiteActivationRules.ActivationAttempt.HANDLED;
 				}
 
-				boolean pathPermitsRite = HemoCapabilityAccess.getInitiatoryDegree(player)
-						.map(d -> HarbingerPathPermissions.canPerformRite(d.getTotalPomesConsumed(),
-								d.getArchonPath(), APOTHEOS_RITE_ID.equals(recipe.getId()))).orElse(false);
+				boolean pathPermitsRite = HarbingerPathPermissions.canPerformRite(HemoCapabilityAccess.getInitiatoryDegree(player).getTotalPomesConsumed(),
+								HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath(), APOTHEOS_RITE_ID.equals(recipe.getId()));
 				if (!recipe.isUnstained() && !pathPermitsRite) {
 					player.displayClientMessage(Component.literal(
 							"This rite cannot answer your current path. Resolve the ninth husk's choice first."), false);
@@ -632,8 +629,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 
 	private static boolean canStartFoundingFane(ServerPlayer player, BlockPos requestedCenter) {
 		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(player)
-				.map(IBloodVolume::getBloodLine)
-				.orElse(Bloodline.NOBLOODLINE);
+				.getBloodLine();
 		if (bloodline == null || !bloodline.isValid()) {
 			player.displayClientMessage(
 					Component.literal("The Founding Fane requires an established bloodline.")
@@ -748,8 +744,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 	 * {@code null} if the recipe is accessible.
 	 */
 	private static net.minecraft.network.chat.Component checkPathAlignment(Player player, BloodStructureRecipe recipe) {
-		boolean harbingerProgressBlocked = HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(UnstainedAccessRules::blocksHarbingerProgress).orElse(false);
+		boolean harbingerProgressBlocked = UnstainedAccessRules.blocksHarbingerProgress(HemoCapabilityAccess.getUnstainedProgress(player));
 		if (!recipe.isUnstained() && harbingerProgressBlocked) {
 			return Component.literal("Purification bars access to the Hematic Order formations.")
 					.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC);
@@ -758,9 +753,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 	}
 
 	private static boolean bypassesUnstainedLevelGate(Player player, String recipePath) {
-		return HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(progress -> UnstainedAccessRules.bypassesUnstainedLevelGate(recipePath, progress))
-				.orElse(false);
+		return UnstainedAccessRules.bypassesUnstainedLevelGate(recipePath, HemoCapabilityAccess.getUnstainedProgress(player));
 	}
 
 	public ItemStack heldStack;

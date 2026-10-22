@@ -38,10 +38,9 @@ public class BestiaryTabController implements IProgressTab {
 			state.rebuild(Set.of(), Set.of(), Set.of());
 			return;
 		}
-		HemoCapabilityAccess.getSpecimenBestiary(mc.player)
-				.ifPresentOrElse(progress -> state.rebuild(progress.recordedSpecimens(),
-								progress.surrenderedSpecimens(), progress.recordedMorphlingLayers()),
-						() -> state.rebuild(Set.of(), Set.of(), Set.of()));
+		var progress = HemoCapabilityAccess.getSpecimenBestiary(mc.player);
+		state.rebuild(progress.recordedSpecimens(),
+								progress.surrenderedSpecimens(), progress.recordedMorphlingLayers());
 	}
 
 	@Override

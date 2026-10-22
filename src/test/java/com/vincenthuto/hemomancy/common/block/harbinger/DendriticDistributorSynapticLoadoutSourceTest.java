@@ -66,7 +66,7 @@ public final class DendriticDistributorSynapticLoadoutSourceTest {
 				"slotIndex >= known.getLoadouts().size()");
 		assertContains("Synaptic render uses display loadouts for missing slots", screen, "displayLoadout");
 		assertContains("Synaptic screen open refreshes skill sync", clientSync, "PacketSyncSkills");
-		assertContains("Synaptic skill sync is sent with manipulation sync", clientSync, "requireSkillProgress(sender).toSyncTag()");
+		assertContains("Synaptic skill sync is sent with manipulation sync", clientSync, "HemoCapabilityAccess.getSkillProgress(sender).toSyncTag()");
 		assertContains("Synaptic save captures memorized wheel entries", action, "memorizedEquippedNames");
 		assertDoesNotContain("Synaptic save is not selected-only or normal-only", action, "normalEquippedNames");
 		assertContains("Synaptic apply counts only normal entries against capacity", action,

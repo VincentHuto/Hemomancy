@@ -181,14 +181,13 @@ public class SanguineVigilBlock extends BaseEntityBlock implements IMultiBlock {
         if (!(level.getBlockEntity(pos) instanceof SanguineVigilBlockEntity vigil))
             return InteractionResult.SUCCESS;
 
-        var playerBloodOpt = HemoCapabilityAccess.getBloodVolume(player);
-        if (playerBloodOpt.isEmpty() || !playerBloodOpt.get().isActive()) {
+        IBloodVolume playerBlood = HemoCapabilityAccess.getBloodVolume(player);
+        if (!playerBlood.isActive()) {
             player.sendSystemMessage(Component.translatable(
                     "block.hemomancy.sanguine_vigil.inactive").withStyle(ChatFormatting.GRAY));
             return InteractionResult.SUCCESS;
         }
 
-        IBloodVolume playerBlood = playerBloodOpt.get();
         var vigilBloodOpt = HemoCapabilityAccess.getBloodVolume(vigil);
         if (vigilBloodOpt.isEmpty()) return InteractionResult.SUCCESS;
         IBloodVolume storage = vigilBloodOpt.get();

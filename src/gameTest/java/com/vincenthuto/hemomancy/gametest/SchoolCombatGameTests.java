@@ -201,11 +201,11 @@ public final class SchoolCombatGameTests {
         var maturity = new net.minecraft.nbt.CompoundTag();
         maturity.putFloat("EnzymePower", 100);
         specimen.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(maturity));
-        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireEquippedMorphling(player).setEquippedMorphling(specimen);
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getEquippedMorphling(player).setEquippedMorphling(specimen);
         try {
             var periodic = hit(player, "periodic_probe", EnumBloodTendency.MORTEM).child(SchoolHitContext.Kind.PERIODIC);
             victim.hurt(SchoolDamage.attributed(h.getLevel().damageSources().magic(), periodic, player), 200);
-            var equipped = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireEquippedMorphling(player).getEquippedMorphling();
+            var equipped = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getEquippedMorphling(player).getEquippedMorphling();
             h.assertTrue(com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem.getHusbandryProgress(equipped) >= 2,
                     "Periodic kill erased Gravecap's non-damaging reward");
             h.assertTrue(!SchoolStates.has(nearby, SchoolState.NECROSIS), "Periodic kill started another offensive chain");
@@ -280,7 +280,7 @@ public final class SchoolCombatGameTests {
         target.setSchool(EnumBloodTendency.MORTEM);
         target.getAttribute(Attributes.ARMOR).setBaseValue(0);
         try {
-            com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodTendency(player).orElseThrow()
+            com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodTendency(player)
                     .setTendencyAlignment(EnumBloodTendency.ANIMUS, 100);
             player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,
                     new net.minecraft.world.item.ItemStack(com.vincenthuto.hemomancy.common.init.ItemInit.living_torch.get()));
@@ -304,7 +304,7 @@ public final class SchoolCombatGameTests {
         var target = body(h, com.vincenthuto.hemomancy.common.init.EntityInit.will.get(), 6);
         target.setSchool(EnumBloodTendency.MORTEM);
         target.getAttribute(Attributes.ARMOR).setBaseValue(0);
-        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodTendency(player).orElseThrow()
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodTendency(player)
                 .setTendencyAlignment(EnumBloodTendency.ANIMUS, 100);
         var context = SchoolHitContext.direct(Hemomancy.rloc("crimson_coronation"), EnumBloodTendency.ANIMUS,
                 null, player).child(SchoolHitContext.Kind.REACTION);
@@ -330,7 +330,7 @@ public final class SchoolCombatGameTests {
         maturity.putFloat("EnzymePower", 100);
         specimen.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(maturity));
         com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem.setLastAbilityTick(specimen, "TunMolt", -100000);
-        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireEquippedMorphling(player).setEquippedMorphling(specimen);
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getEquippedMorphling(player).setEquippedMorphling(specimen);
         player.removeAllEffects();
         player.setHealth(20);
         player.hurt(h.getLevel().damageSources().magic(), 10);
@@ -353,9 +353,9 @@ public final class SchoolCombatGameTests {
         maturity.putFloat("EnzymePower", 100);
         specimen.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(maturity));
         com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem.setLastAbilityTick(specimen, "InkMantleReprieve", -100000);
-        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireEquippedMorphling(player).setEquippedMorphling(specimen);
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getEquippedMorphling(player).setEquippedMorphling(specimen);
         com.vincenthuto.hemomancy.common.event.LastRiteHelper.arm(player, com.vincenthuto.hemomancy.common.event.LastRiteHelper.INK_MANTLE_ID);
-        var blood = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireBloodVolume(player);
+        var blood = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(player);
         blood.setActive(true); blood.setBloodVolume(1000);
         player.removeAllEffects(); player.setHealth(20);
         player.hurt(h.getLevel().damageSources().magic(), 10);

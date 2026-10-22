@@ -126,9 +126,9 @@ final class CircusJourneyAutomation {
 	static boolean hasReward(ServerPlayer player, String mode) {
 		boolean topper = player.getInventory().contains(new net.minecraft.world.item.ItemStack(ItemInit.ringmaster_topper.get()));
 		if (!topper) return false;
-		if ("liberation".equals(mode)) return HemoCapabilityAccess.requireKnownManipulations(player)
+		if ("liberation".equals(mode)) return HemoCapabilityAccess.getKnownManipulations(player)
 				.getKnownManips().containsKey(ManipulationInit.thread_ripper.get());
-		return HemoCapabilityAccess.requireKnownSummons(player).getKnownSummonNames()
+		return HemoCapabilityAccess.getKnownSummons(player).getKnownSummonNames()
 				.contains(PuppeteerSummonDefinitions.RINGMASTER_PATTERN);
 	}
 }

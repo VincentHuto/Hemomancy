@@ -56,12 +56,12 @@ public final class ManipulationChargeVisualGameTests {
         var players = mutablePlayers(level);
         players.add(player);
         try {
-            var blood = HemoCapabilityAccess.requireBloodVolume(player);
+            var blood = HemoCapabilityAccess.getBloodVolume(player);
             blood.setActive(true);
             blood.setBloodVolume(2000);
             for (var school : EnumBloodTendency.values())
-                HemoCapabilityAccess.getBloodTendency(player).orElseThrow().setTendencyAlignment(school, 100);
-            var known = HemoCapabilityAccess.requireKnownManipulations(player);
+                HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(school, 100);
+            var known = HemoCapabilityAccess.getKnownManipulations(player);
             for (var entry : ManipulationInit.MANIPS.getEntries())
                 known.getKnownManips().put(entry.get(), new ManipLevel(4, 185));
             var context = new ServerPayloadContext(player.connection, ManipulationChargeVisualPacket.TYPE.id());

@@ -41,9 +41,7 @@ public class LetheanChaliceItem extends Item {
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 		if (!level.isClientSide) {
-			boolean onPath = HemoCapabilityAccess.getUnstainedProgress(player)
-					.map(progress -> progress.hasBegunPurification())
-					.orElse(false);
+			boolean onPath = HemoCapabilityAccess.getUnstainedProgress(player).hasBegunPurification();
 			if (!onPath) {
 				player.displayClientMessage(Component.literal("The chalice remains cold and empty.")
 						.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), true);
@@ -59,9 +57,7 @@ public class LetheanChaliceItem extends Item {
 
 			player.clearFire();
 			player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 120, 0, false, true, true));
-			if (HemoCapabilityAccess.getUnstainedProgress(player)
-					.map(progress -> progress.hasClarityUnlocked())
-					.orElse(false)) {
+			if (HemoCapabilityAccess.getUnstainedProgress(player).hasClarityUnlocked()) {
 				player.addEffect(new MobEffectInstance(EffectInit.verdigris_aura, 300, 0, false, true, true));
 			}
 

@@ -89,9 +89,7 @@ public class HemolyticVialEntity extends ThrowableItemProjectile {
 
     private boolean isHarbingerPlayer(LivingEntity entity) {
         if (!(entity instanceof Player player)) return false;
-        return HemoCapabilityAccess.getInitiatoryDegree(player)
-                .map(d -> d.getDegreeNumber() > 0)
-                .orElse(false);
+        return HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber() > 0;
     }
 
     private boolean hasActiveBloodVolume(LivingEntity entity) {

@@ -92,40 +92,39 @@ public class RadialChooseStillArtScreen extends Screen {
 			return;
 		}
 
-		HemoCapabilityAccess.getKnownStillArts(mc.player).ifPresent(known -> {
-			StillArt selected = known.getSelectedArt();
-			String selectedName = selected.getName();
-			if (selected != StillArt.BLANK && selected.isUnlockedFor(mc.player)) {
-				menu.setCentralText(Component.translatable("hemomancy.still_art.radial.selected",
-						selected.getProperName()));
-			} else {
-				menu.setCentralText(Component.translatable("hemomancy.still_art.radial.prompt"));
+		var known = HemoCapabilityAccess.getKnownStillArts(mc.player);
+		StillArt selected = known.getSelectedArt();
+		String selectedName = selected.getName();
+		if (selected != StillArt.BLANK && selected.isUnlockedFor(mc.player)) {
+			menu.setCentralText(Component.translatable("hemomancy.still_art.radial.selected",
+					selected.getProperName()));
+		} else {
+			menu.setCentralText(Component.translatable("hemomancy.still_art.radial.prompt"));
+		}
+		for (StillArt art : known.getKnownArts()) {
+			if (!art.isUnlockedFor(mc.player)) {
+				continue;
 			}
-			for (StillArt art : known.getKnownArts()) {
-				if (!art.isUnlockedFor(mc.player)) {
-					continue;
+			TextRadialMenuItem item = new TextRadialMenuItem(menu,
+					Component.literal(shortLabel(art)),
+					art.getName().equals(selectedName) ? 0xFFFFFFFF : 0xFFBFEFFF) {
+				@Override
+				public boolean onClick() {
+					PacketHandler.sendToServer(new UpdateSelectedStillArtPacket(art.getName()));
+					RadialChooseStillArtScreen.this.menu.close();
+					return true;
 				}
-				TextRadialMenuItem item = new TextRadialMenuItem(menu,
-						Component.literal(shortLabel(art)),
-						art.getName().equals(selectedName) ? 0xFFFFFFFF : 0xFFBFEFFF) {
-					@Override
-					public boolean onClick() {
-						PacketHandler.sendToServer(new UpdateSelectedStillArtPacket(art.getName()));
-						RadialChooseStillArtScreen.this.menu.close();
-						return true;
-					}
-				};
-				MutableComponent central = Component.literal(art.getProperName());
-				central.append(Component.literal("\n" + art.getRequiredStage().getTitle()));
-				if (art.getName().equals(selectedName)) {
-					central.append(Component.literal("\n"))
-							.append(Component.translatable("hemomancy.still_art.radial.current"));
-				}
-				item.setCentralText(central);
-				item.setVisible(true);
-				cachedMenuItems.add(item);
+			};
+			MutableComponent central = Component.literal(art.getProperName());
+			central.append(Component.literal("\n" + art.getRequiredStage().getTitle()));
+			if (art.getName().equals(selectedName)) {
+				central.append(Component.literal("\n"))
+						.append(Component.translatable("hemomancy.still_art.radial.current"));
 			}
-		});
+			item.setCentralText(central);
+			item.setVisible(true);
+			cachedMenuItems.add(item);
+		}
 		menu.clear();
 		menu.addAll(cachedMenuItems);
 		needsRecheckArts = false;
@@ -146,9 +145,7 @@ public class RadialChooseStillArtScreen extends Screen {
 	}
 
 	private boolean canUseStillArts() {
-		return mc.player != null && HemoCapabilityAccess.getUnstainedProgress(mc.player)
-				.map(progress -> progress.hasClarityUnlocked())
-				.orElse(false);
+		return mc.player != null && HemoCapabilityAccess.getUnstainedProgress(mc.player).hasClarityUnlocked();
 	}
 
 	@Override

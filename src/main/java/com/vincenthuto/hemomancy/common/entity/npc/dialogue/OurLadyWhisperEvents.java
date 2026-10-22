@@ -59,64 +59,63 @@ public class OurLadyWhisperEvents {
 		// Coarse pre-check: only evaluate once every ~10 seconds
 		if ((player.tickCount + stagger) % 200 != 0) return;
 
-		HemoCapabilityAccess.getUnstainedProgress(serverPlayer).ifPresent(progress -> {
-			if (!progress.hasBegunPurification()) return;
+		var progress = HemoCapabilityAccess.getUnstainedProgress(serverPlayer);
+		if (!progress.hasBegunPurification()) return;
 
-			float purity = progress.getPurity();
-			boolean clarityUnlocked = progress.hasClarityUnlocked();
-			float clarity = progress.getClarity();
+		float purity = progress.getPurity();
+		boolean clarityUnlocked = progress.hasClarityUnlocked();
+		float clarity = progress.getClarity();
 
-			int interval;
-			boolean useClarity;
-			int stageLevel;
+		int interval;
+		boolean useClarity;
+		int stageLevel;
 
-			if (clarityUnlocked) {
-				// Phase 2: clarity whispers
-				EnumClarityStage clarityStage = EnumClarityStage.byClarity(clarity);
-				if (clarityStage.getLevel() < EnumClarityStage.DISCERNING.getLevel()) {
-					// AWAKENED clarity just unlocked, not yet discerning; no whispers yet
-					return;
-				}
-				useClarity = true;
-				stageLevel = clarityStage.getLevel();
-				interval = switch (clarityStage) {
-					case DISCERNING  -> DISCERNING_INTERVAL;
-					case VIGILANT    -> VIGILANT_INTERVAL;
-					case RESOLUTE    -> RESOLUTE_INTERVAL;
-					case ENLIGHTENED -> ENLIGHTENED_INTERVAL;
-					default          -> DISCERNING_INTERVAL;
-				};
-			} else {
-				// Phase 1: purity whispers
-				EnumPurityStage purityStage = EnumPurityStage.byPurity(purity);
-				if (purityStage.getLevel() < EnumPurityStage.TAINTED.getLevel()) {
-					// CORRUPTED too early for whispers
-					return;
-				}
-				useClarity = false;
-				stageLevel = purityStage.getLevel();
-				interval = switch (purityStage) {
-					case TAINTED   -> TAINTED_INTERVAL;
-					case CLEANSING -> CLEANSING_INTERVAL;
-					case ABSOLVED  -> ABSOLVED_INTERVAL;
-					case PURIFIED  -> PURIFIED_INTERVAL;
-					default        -> TAINTED_INTERVAL;
-				};
+		if (clarityUnlocked) {
+			// Phase 2: clarity whispers
+			EnumClarityStage clarityStage = EnumClarityStage.byClarity(clarity);
+			if (clarityStage.getLevel() < EnumClarityStage.DISCERNING.getLevel()) {
+				// AWAKENED clarity just unlocked, not yet discerning; no whispers yet
+				return;
 			}
+			useClarity = true;
+			stageLevel = clarityStage.getLevel();
+			interval = switch (clarityStage) {
+				case DISCERNING  -> DISCERNING_INTERVAL;
+				case VIGILANT    -> VIGILANT_INTERVAL;
+				case RESOLUTE    -> RESOLUTE_INTERVAL;
+				case ENLIGHTENED -> ENLIGHTENED_INTERVAL;
+				default          -> DISCERNING_INTERVAL;
+			};
+		} else {
+			// Phase 1: purity whispers
+			EnumPurityStage purityStage = EnumPurityStage.byPurity(purity);
+			if (purityStage.getLevel() < EnumPurityStage.TAINTED.getLevel()) {
+				// CORRUPTED too early for whispers
+				return;
+			}
+			useClarity = false;
+			stageLevel = purityStage.getLevel();
+			interval = switch (purityStage) {
+				case TAINTED   -> TAINTED_INTERVAL;
+				case CLEANSING -> CLEANSING_INTERVAL;
+				case ABSOLVED  -> ABSOLVED_INTERVAL;
+				case PURIFIED  -> PURIFIED_INTERVAL;
+				default        -> TAINTED_INTERVAL;
+			};
+		}
 
-			if ((player.tickCount + stagger) % interval != 0) return;
+		if ((player.tickCount + stagger) % interval != 0) return;
 
-			int variant = (int) ((player.tickCount / interval) % VARIANT_COUNT);
-			var memo = useClarity
-					? OurLadyWhisperDialogueTrees.memoForClarityStage(stageLevel, variant)
-					: OurLadyWhisperDialogueTrees.memoForPurityStage(stageLevel, variant);
-			if (!OurLadyWhisperDialogueTrees.shouldOfferMemoWhisper(player, memo)) return;
+		int variant = (int) ((player.tickCount / interval) % VARIANT_COUNT);
+		var memo = useClarity
+				? OurLadyWhisperDialogueTrees.memoForClarityStage(stageLevel, variant)
+				: OurLadyWhisperDialogueTrees.memoForPurityStage(stageLevel, variant);
+		if (!OurLadyWhisperDialogueTrees.shouldOfferMemoWhisper(player, memo)) return;
 
-			DialogueTree tree = useClarity
-					? OurLadyWhisperDialogueTrees.forClarityStage(stageLevel, variant)
-					: OurLadyWhisperDialogueTrees.forPurityStage(stageLevel, variant);
+		DialogueTree tree = useClarity
+				? OurLadyWhisperDialogueTrees.forClarityStage(stageLevel, variant)
+				: OurLadyWhisperDialogueTrees.forPurityStage(stageLevel, variant);
 
-			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
-		});
+		PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
 	}
 }

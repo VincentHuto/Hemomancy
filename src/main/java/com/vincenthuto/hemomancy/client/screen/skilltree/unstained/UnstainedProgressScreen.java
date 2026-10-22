@@ -202,33 +202,32 @@ public class UnstainedProgressScreen extends Screen {
 
 	private void cachePlayerData() {
 		if (Minecraft.getInstance().player != null) {
-			HemoCapabilityAccess.getUnstainedProgress(Minecraft.getInstance().player).ifPresent(cap -> {
-				phase                = UnstainedAccessRules.phase(cap);
-				begunPurification    = cap.hasBegunPurification();
-				purity               = cap.getPurity();
-				clarityPrepared      = cap.isClarityPrepared();
-				clarityUnlocked      = cap.hasClarityUnlocked();
-				clarity              = cap.getClarity();
-				silverWardStrength   = cap.getSilverWardStrength();
-				verdigrisAura        = cap.getVerdigrisAura();
-				silverWardEnabled    = cap.isSilverWardEnabled();
-				verdigrisAuraEnabled = cap.isVerdigrisAuraEnabled();
-				currentPurityStage   = EnumPurityStage.byPurity(purity);
-				currentClarityStage  = EnumClarityStage.byClarity(clarity);
-				// Milestones
-				mSleptHemolysis     = cap.hasSleptWithHemolysis();
-				mFirstHemoKill      = cap.hasKilledFirstHemoMob();
-				mReachedAbstinence  = cap.hasReachedAbstinence();
-				mEmptiedBlood       = cap.hasEmptiedBlood();
-				mEarnedAdvancement  = cap.hasEarnedAdvancement();
-				acceptedObservances = cap.getAcceptedObservances();
-				claimedObservances  = cap.getClaimedObservances();
-				int available = 0;
-				for (Observance observance : Observance.values()) {
-					if (UnstainedObservances.isAvailable(cap, observance)) available |= observance.mask();
-				}
-				availableObservances = available;
-			});
+			var cap = HemoCapabilityAccess.getUnstainedProgress(Minecraft.getInstance().player);
+			phase                = UnstainedAccessRules.phase(cap);
+			begunPurification    = cap.hasBegunPurification();
+			purity               = cap.getPurity();
+			clarityPrepared      = cap.isClarityPrepared();
+			clarityUnlocked      = cap.hasClarityUnlocked();
+			clarity              = cap.getClarity();
+			silverWardStrength   = cap.getSilverWardStrength();
+			verdigrisAura        = cap.getVerdigrisAura();
+			silverWardEnabled    = cap.isSilverWardEnabled();
+			verdigrisAuraEnabled = cap.isVerdigrisAuraEnabled();
+			currentPurityStage   = EnumPurityStage.byPurity(purity);
+			currentClarityStage  = EnumClarityStage.byClarity(clarity);
+			// Milestones
+			mSleptHemolysis     = cap.hasSleptWithHemolysis();
+			mFirstHemoKill      = cap.hasKilledFirstHemoMob();
+			mReachedAbstinence  = cap.hasReachedAbstinence();
+			mEmptiedBlood       = cap.hasEmptiedBlood();
+			mEarnedAdvancement  = cap.hasEarnedAdvancement();
+			acceptedObservances = cap.getAcceptedObservances();
+			claimedObservances  = cap.getClaimedObservances();
+			int available = 0;
+			for (Observance observance : Observance.values()) {
+				if (UnstainedObservances.isAvailable(cap, observance)) available |= observance.mask();
+			}
+			availableObservances = available;
 		}
 		UnstainedProgressLayout.Progress progress = new UnstainedProgressLayout.Progress(
 				phase, currentPurityStage, clarityPrepared, clarityUnlocked, currentClarityStage, begunPurification);

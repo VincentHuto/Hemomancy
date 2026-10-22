@@ -40,7 +40,7 @@ public class ChangeSelectedManipPacket implements CustomPacketPayload {
 			if (player == null)
 				return;
 			IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
-					.orElseThrow(NullPointerException::new);
+					;
 			// Build a list of only equipped manipulations
 			List<String> equippedNames = known.getEquippedManipNames();
 			List<BloodManipulation> allManips = known.getManipList();

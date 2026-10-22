@@ -129,35 +129,32 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock, SimpleWa
 	}
 
 	private void handleUnstainedInteraction(Level worldIn, BlockPos pos, Player player, ItemStack stack) {
-		boolean maySeekCure = HemoCapabilityAccess.getInitiatoryDegree(player)
-				.map(degree -> UnstainedEntryRules.canBeginCure(
-						degree.hasFoundedBloodline(), degree.isFounderIntegrationSevered()))
-				.orElse(true);
-		HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(unstained -> {
-			if (!unstained.hasBegunPurification() && !maySeekCure) {
-				player.displayClientMessage(Component.literal(
-						"The covenant you founded is rooted through every vein. Ordinary cure can no longer reach you.")
-						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
-				return;
-			}
+		boolean maySeekCure = UnstainedEntryRules.canBeginCure(
+						HemoCapabilityAccess.getInitiatoryDegree(player).hasFoundedBloodline(), HemoCapabilityAccess.getInitiatoryDegree(player).isFounderIntegrationSevered());
+		var unstained = HemoCapabilityAccess.getUnstainedProgress(player);
+		if (!unstained.hasBegunPurification() && !maySeekCure) {
+			player.displayClientMessage(Component.literal(
+					"The covenant you founded is rooted through every vein. Ordinary cure can no longer reach you.")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+			return;
+		}
 
-			if (stack.getItem() == ItemInit.hemolytic_solution.get()) {
-				handleHemolyticSolution(worldIn, pos, player, stack, unstained);
-			} else if (stack.getItem() == ItemInit.consecrated_copper_ingot.get()) {
-				handleConsecratedCopper(worldIn, pos, player, stack, unstained);
-			} else if (stack.getItem() == ItemInit.hemolytic_plating.get()) {
-				handleHemolyticPlating(worldIn, pos, player, stack, unstained);
-			} else {
-				// Empty-hand or unrecognized item — show purity/clarity stage lore
-				showUnstainedProgress(player, unstained);
-			}
-		});
+		if (stack.getItem() == ItemInit.hemolytic_solution.get()) {
+			handleHemolyticSolution(worldIn, pos, player, stack, unstained);
+		} else if (stack.getItem() == ItemInit.consecrated_copper_ingot.get()) {
+			handleConsecratedCopper(worldIn, pos, player, stack, unstained);
+		} else if (stack.getItem() == ItemInit.hemolytic_plating.get()) {
+			handleHemolyticPlating(worldIn, pos, player, stack, unstained);
+		} else {
+			// Empty-hand or unrecognized item — show purity/clarity stage lore
+			showUnstainedProgress(player, unstained);
+		}
 	}
 
 	private void handleHemolyticSolution(Level worldIn, BlockPos pos, Player player, ItemStack stack,
 			IUnstainedProgress unstained) {
-		var degree = HemoCapabilityAccess.getInitiatoryDegree(player).orElse(null);
-		var blood = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		boolean eligible = degree != null && blood != null && UnstainedEntryRules.canSuppressForCure(
 				blood.isActive(), degree.getDegreeNumber(), degree.hasFoundedBloodline(),
 				degree.isFounderIntegrationSevered());
@@ -186,8 +183,7 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock, SimpleWa
 	private void handleConsecratedCopper(Level worldIn, BlockPos pos, Player player, ItemStack stack,
 			IUnstainedProgress unstained) {
 		boolean vowsComplete = UnstainedAccessRules.hasCompletedNovitiateVows(unstained.getClaimedObservances());
-		boolean cleanBlood = HemoCapabilityAccess.getBloodVolume(player)
-				.map(volume -> !volume.isActive() && volume.getBloodVolume() <= 0).orElse(true);
+		boolean cleanBlood = !HemoCapabilityAccess.getBloodVolume(player).isActive() && HemoCapabilityAccess.getBloodVolume(player).getBloodVolume() <= 0;
 		if (!(unstained.isBaselineRestored() || vowsComplete) || !cleanBlood) return;
 		if (unstained.isClarityPrepared() || unstained.hasClarityUnlocked()) return;
 		stack.shrink(1);

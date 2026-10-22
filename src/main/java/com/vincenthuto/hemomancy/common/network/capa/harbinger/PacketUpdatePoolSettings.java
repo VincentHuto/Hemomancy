@@ -53,13 +53,12 @@ public class PacketUpdatePoolSettings implements CustomPacketPayload {
 			// NaN passes Math.min/max untouched, so reject non-finite settings outright (F-8).
 			if (!ServerboundGuards.finite(msg.trickleRate, msg.autoDrawThreshold)) return;
 
-			HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-				volume.setTrickleEnabled(msg.trickleEnabled);
-				volume.setTrickleRate(Math.max(0.01, Math.min(100.0, msg.trickleRate)));
-				volume.setAutoDrawEnabled(msg.autoDrawEnabled);
-				volume.setAutoDrawThreshold(Math.max(0.0, Math.min(1.0, msg.autoDrawThreshold)));
-				BloodVolumeEvents.syncVolume(player, volume);
-			});
+			var volume = HemoCapabilityAccess.getBloodVolume(player);
+			volume.setTrickleEnabled(msg.trickleEnabled);
+			volume.setTrickleRate(Math.max(0.01, Math.min(100.0, msg.trickleRate)));
+			volume.setAutoDrawEnabled(msg.autoDrawEnabled);
+			volume.setAutoDrawThreshold(Math.max(0.0, Math.min(1.0, msg.autoDrawThreshold)));
+			BloodVolumeEvents.syncVolume(player, volume);
 		});
 	}
 

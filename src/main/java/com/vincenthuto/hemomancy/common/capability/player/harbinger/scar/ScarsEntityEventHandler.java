@@ -64,38 +64,36 @@ public class ScarsEntityEventHandler {
 	public static void playerTickScars(PlayerTickEvent.Post event) {
 		Player player = event.getEntity();
 
-		HemoCapabilityAccess.getScarState(player).ifPresent(IScars::tick);
+		HemoCapabilityAccess.getScarState(player).tick();
 
 		if (!player.level().isClientSide && player.tickCount % 20 == 0) {
 			checkScarSynergy(player);
 		}
 
 		if (!player.level().isClientSide) {
-			HemoCapabilityAccess.getScarState(player).ifPresent(scars -> {
-				ItemStack fungalSlot = scars.getFungalScar();
-				RootedStateHelper.tick(player, fungalSlot);
-				AfflictionDigestHelper.tick(player, fungalSlot);
-				ConserveStateHelper.tick(player, fungalSlot);
-			});
+			var scars = HemoCapabilityAccess.getScarState(player);
+			ItemStack fungalSlot = scars.getFungalScar();
+			RootedStateHelper.tick(player, fungalSlot);
+			AfflictionDigestHelper.tick(player, fungalSlot);
+			ConserveStateHelper.tick(player, fungalSlot);
 		}
 
 		if (!player.level().isClientSide && player.tickCount % SaprovittaVestigiumItem.TRAIL_INTERVAL_TICKS == 0) {
-			HemoCapabilityAccess.getScarState(player).ifPresent(scars -> {
-				ItemStack fungalSlot = scars.getFungalScar();
-				if (fungalSlot.getItem() instanceof SaprovittaVestigiumItem) {
-					double movSq = player.getDeltaMovement().horizontalDistanceSqr();
-					if (movSq > SaprovittaVestigiumItem.MOVEMENT_THRESHOLD_SQ) {
-						int symbiosis = SkillPointHelper.getFungalSymbiosisLevel(player);
-						AABB area = player.getBoundingBox().inflate(SaprovittaVestigiumItem.TRAIL_RADIUS
-								+ symbiosis * 0.4D);
-						float damage = SaprovittaVestigiumItem.TRAIL_DAMAGE * (1.0F + symbiosis * 0.08F);
-						List<Monster> mobs = player.level().getEntitiesOfClass(Monster.class, area);
-						for (Monster mob : mobs) {
-							mob.hurt(player.damageSources().magic(), damage);
-						}
+			var scars = HemoCapabilityAccess.getScarState(player);
+			ItemStack fungalSlot = scars.getFungalScar();
+			if (fungalSlot.getItem() instanceof SaprovittaVestigiumItem) {
+				double movSq = player.getDeltaMovement().horizontalDistanceSqr();
+				if (movSq > SaprovittaVestigiumItem.MOVEMENT_THRESHOLD_SQ) {
+					int symbiosis = SkillPointHelper.getFungalSymbiosisLevel(player);
+					AABB area = player.getBoundingBox().inflate(SaprovittaVestigiumItem.TRAIL_RADIUS
+							+ symbiosis * 0.4D);
+					float damage = SaprovittaVestigiumItem.TRAIL_DAMAGE * (1.0F + symbiosis * 0.08F);
+					List<Monster> mobs = player.level().getEntitiesOfClass(Monster.class, area);
+					for (Monster mob : mobs) {
+						mob.hurt(player.damageSources().magic(), damage);
 					}
 				}
-			});
+			}
 		}
 	}
 
@@ -105,13 +103,11 @@ public class ScarsEntityEventHandler {
 		Entity sourceEntity = event.getContainer().getSource().getEntity();
 
 		if (sourceEntity instanceof Player player && !player.level().isClientSide) {
-			HemoCapabilityAccess.getScarState(player).ifPresent(scars ->
-					scars.forEachActiveCerebralScar(scar -> scar.onPlayerAttack(player, harmed)));
+			HemoCapabilityAccess.getScarState(player).forEachActiveCerebralScar(scar -> scar.onPlayerAttack(player, harmed));
 		}
 
 		if (harmed instanceof Player player && !player.level().isClientSide && sourceEntity instanceof LivingEntity attacker) {
-			HemoCapabilityAccess.getScarState(player).ifPresent(scars ->
-					scars.forEachActiveCerebralScar(scar -> scar.onPlayerDefend(player, attacker)));
+			HemoCapabilityAccess.getScarState(player).forEachActiveCerebralScar(scar -> scar.onPlayerDefend(player, attacker));
 		}
 	}
 
@@ -119,57 +115,53 @@ public class ScarsEntityEventHandler {
 	public static void onEntityKilledByPlayer(LivingDeathEvent event) {
 		if (event.getSource().getEntity() instanceof Player player && !player.level().isClientSide) {
 			LivingEntity killed = event.getEntity();
-			HemoCapabilityAccess.getScarState(player).ifPresent(scars ->
-					scars.forEachActiveCerebralScar(scar -> scar.onPlayerKill(player, killed)));
+			HemoCapabilityAccess.getScarState(player).forEachActiveCerebralScar(scar -> scar.onPlayerKill(player, killed));
 		}
 	}
 
 	private static void checkScarSynergy(Player player) {
-		HemoCapabilityAccess.getScarState(player).ifPresent(scars -> {
-			EnumMap<EnumBloodTendency, Integer> counts = new EnumMap<>(EnumBloodTendency.class);
-			scars.forEachActiveCerebralScar(scar -> counts.merge(scar.getAssignedTendency(), 1, Integer::sum));
+		var scars = HemoCapabilityAccess.getScarState(player);
+		EnumMap<EnumBloodTendency, Integer> counts = new EnumMap<>(EnumBloodTendency.class);
+		scars.forEachActiveCerebralScar(scar -> counts.merge(scar.getAssignedTendency(), 1, Integer::sum));
 
-			for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
-				SynergyBonus bonus = SYNERGY_BONUSES.get(tendency);
-				if (bonus == null) {
-					continue;
-				}
+		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
+			SynergyBonus bonus = SYNERGY_BONUSES.get(tendency);
+			if (bonus == null) {
+				continue;
+			}
 
-				AttributeInstance attr = player.getAttribute(bonus.attribute());
-				if (attr == null) {
-					continue;
-				}
+			AttributeInstance attr = player.getAttribute(bonus.attribute());
+			if (attr == null) {
+				continue;
+			}
 
-				boolean hasSynergy = counts.getOrDefault(tendency, 0) >= 2;
-				boolean hasModifier = attr.getModifier(bonus.modifierId()) != null;
-				double scaledAmount = bonus.amount() * SkillPointHelper.getScarAffinityMultiplier(player);
+			boolean hasSynergy = counts.getOrDefault(tendency, 0) >= 2;
+			boolean hasModifier = attr.getModifier(bonus.modifierId()) != null;
+			double scaledAmount = bonus.amount() * SkillPointHelper.getScarAffinityMultiplier(player);
 
-				if (hasSynergy) {
-					if (hasModifier) {
-						attr.removeModifier(bonus.modifierId());
-					}
-					attr.addPermanentModifier(new AttributeModifier(
-							bonus.modifierId(), scaledAmount, bonus.operation()));
-				} else if (hasModifier) {
+			if (hasSynergy) {
+				if (hasModifier) {
 					attr.removeModifier(bonus.modifierId());
 				}
+				attr.addPermanentModifier(new AttributeModifier(
+						bonus.modifierId(), scaledAmount, bonus.operation()));
+			} else if (hasModifier) {
+				attr.removeModifier(bonus.modifierId());
 			}
-		});
+		}
 	}
 
 	@SubscribeEvent
 	public static void onBlockBreak(BreakEvent event) {
-		HemoCapabilityAccess.getScarState(event.getPlayer()).ifPresent(scars -> {
-			HemoCapabilityAccess.getKnownManipulations(event.getPlayer()).ifPresent(manips -> {
-				if (scars.getFungalScar().getItem() == ItemInit.talaromyces_minus.get()
-						&& event.getPlayer().isShiftKeyDown()) {
-					if (manips.getLastVeinMineStart() == BlockPos.ZERO && event.getState().is(Tags.Blocks.ORES)) {
-						VeinMinerHelper.tryVeinMine(event.getPlayer().getMainHandItem(), event.getPlayer(),
-								event.getPos());
-					}
-				}
-			});
-		});
+		var scars = HemoCapabilityAccess.getScarState(event.getPlayer());
+		var manips = HemoCapabilityAccess.getKnownManipulations(event.getPlayer());
+		if (scars.getFungalScar().getItem() == ItemInit.talaromyces_minus.get()
+				&& event.getPlayer().isShiftKeyDown()) {
+			if (manips.getLastVeinMineStart() == BlockPos.ZERO && event.getState().is(Tags.Blocks.ORES)) {
+				VeinMinerHelper.tryVeinMine(event.getPlayer().getMainHandItem(), event.getPlayer(),
+						event.getPos());
+			}
+		}
 	}
 
 	private record SynergyBonus(Holder<Attribute> attribute, ResourceLocation modifierId, double amount,

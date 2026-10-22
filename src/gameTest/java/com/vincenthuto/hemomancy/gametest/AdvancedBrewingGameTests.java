@@ -81,7 +81,7 @@ public final class AdvancedBrewingGameTests {
         ItemStack fire = PotionContents.createItemStack(Items.POTION, Potions.FIRE_RESISTANCE);
         ItemStack bound = BrewingResolver.resolve(helper.getLevel(), AlembicTier.ATHANOR,
                 strength, speed, fire).result().copy();
-        var volume = HemoCapabilityAccess.getBloodVolume(player).orElseThrow();
+        var volume = HemoCapabilityAccess.getBloodVolume(player);
         volume.setActive(true);
         volume.setBloodVolume(999);
         AdvancedPotionUse.finishVessel(bound, player);
@@ -100,7 +100,7 @@ public final class AdvancedBrewingGameTests {
     public static void boundPotionUsesTheOrdinaryPotionCompletionHook(GameTestHelper helper) {
         var player = player(helper);
         player.getAbilities().instabuild = false;
-        var volume = HemoCapabilityAccess.getBloodVolume(player).orElseThrow();
+        var volume = HemoCapabilityAccess.getBloodVolume(player);
         volume.setActive(true);
         volume.setBloodVolume(0);
         ItemStack bound = BrewingResolver.resolve(helper.getLevel(), AlembicTier.ATHANOR,

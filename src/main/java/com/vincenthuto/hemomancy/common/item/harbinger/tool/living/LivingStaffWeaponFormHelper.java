@@ -206,7 +206,7 @@ public final class LivingStaffWeaponFormHelper {
 	}
 
 	private static boolean chargeHotSwapCost(Player player) {
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null || !volume.isActive()) {
 			player.displayClientMessage(Component.literal("The staff finds no active blood in you.")
 					.withStyle(ChatFormatting.RED), true);

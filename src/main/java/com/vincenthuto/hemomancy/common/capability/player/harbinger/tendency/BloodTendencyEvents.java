@@ -54,8 +54,7 @@ public class BloodTendencyEvents {
 		if (player.level().isClientSide) return;
 		if (!HemoServerConfig.TENDENCY_SHIFT_ON_KILL_ENABLED.get()) return;
 
-		boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player)
-				.map(vol -> vol.isActive()).orElse(false);
+		boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player).isActive();
 		if (!bloodActive) return;
 
 		LivingEntity victim = event.getEntity();
@@ -65,10 +64,9 @@ public class BloodTendencyEvents {
 		TendencyShift shift = determineTendencyFromKill(victim, base, bossMult);
 		if (shift == null) return;
 
-		HemoCapabilityAccess.getBloodTendency(player).ifPresent(cap -> {
-			shift.amounts().forEach(cap::addTendencyAlignment);
-			syncTendency((ServerPlayer) player, cap);
-		});
+		var cap = HemoCapabilityAccess.getBloodTendency(player);
+		shift.amounts().forEach(cap::addTendencyAlignment);
+		syncTendency((ServerPlayer) player, cap);
 	}
 
 	/**
@@ -135,14 +133,13 @@ public class BloodTendencyEvents {
 				* net.minecraft.util.Mth.clamp(scale, 0.0F, 1.0F);
 		if (amount <= 0) return;
 
-		HemoCapabilityAccess.getBloodTendency(player).ifPresent(cap -> {
-			cap.addTendencyAlignment(tendency, amount);
-			if (secondaryTendency != null && secondaryTendency != tendency) {
-				cap.addTendencyAlignment(secondaryTendency,
-						com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules.secondaryTendencyGain(amount));
-			}
-			syncTendency(player, cap);
-		});
+		var cap = HemoCapabilityAccess.getBloodTendency(player);
+		cap.addTendencyAlignment(tendency, amount);
+		if (secondaryTendency != null && secondaryTendency != tendency) {
+			cap.addTendencyAlignment(secondaryTendency,
+					com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules.secondaryTendencyGain(amount));
+		}
+		syncTendency(player, cap);
 	}
 
 	// Sync
@@ -154,10 +151,10 @@ public class BloodTendencyEvents {
 	public static void syncOwnerSnapshot(ServerPlayer player, boolean respawn) {
 		if (respawn) {
 			syncTendency(player, HemoCapabilityAccess.getBloodTendency(player)
-					.orElseThrow(IllegalArgumentException::new));
+					);
 		} else {
 			Map<EnumBloodTendency, Float> tendency = HemoCapabilityAccess.getBloodTendency(player)
-					.map(IBloodTendency::getTendency).orElse(Map.of());
+					.getTendency();
 			PacketHandler.sendToPlayer(player, new BloodTendencyServerPacket(tendency));
 		}
 	}

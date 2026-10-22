@@ -172,8 +172,7 @@ public record PacketSyncIchorianKnowledge(Map<ResourceLocation, BitSet> partial,
 	public static void handle(PacketSyncIchorianKnowledge packet, IPayloadContext context) {
 		context.enqueueWork(() -> {
 			IchorianSigilRegistry.reload(packet.definitions);
-			HemoCapabilityAccess.getIchorianKnowledge(context.player())
-					.ifPresent(knowledge -> knowledge.replaceFrom(packet.partial, packet.known));
+			HemoCapabilityAccess.getIchorianKnowledge(context.player()).replaceFrom(packet.partial, packet.known);
 		});
 	}
 

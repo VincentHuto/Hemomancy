@@ -239,19 +239,19 @@ public final class ManipulationBalancePass2StateGameTests {
         ServerPlayer p = player(h);
         try {
             var phoenix = ManipulationInit.phoenix_debt.get();
-            var known = HemoCapabilityAccess.requireKnownManipulations(p);
+            var known = HemoCapabilityAccess.getKnownManipulations(p);
             known.getKnownManips().put(phoenix, new ManipLevel(4, 185));
             known.setEquippedManipNames(List.of(phoenix.getName()));
             known.togglePassive(phoenix.getName());
             LastRiteHelper.arm(p, LastRiteHelper.PHOENIX_DEBT_ID);
-            var blood = HemoCapabilityAccess.requireBloodVolume(p);
+            var blood = HemoCapabilityAccess.getBloodVolume(p);
             double price = com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostLedger
                     .collect(p, phoenix).effectiveCost();
             h.assertTrue(price > 500, "Fixture price is too low to test an unaffordable debt: " + price);
             blood.setBloodVolume(price);
             h.assertTrue(ManipulationReactiveEvents.phoenixDebtReady(p), "Phoenix Debt was not ready at its full price");
             // A dead section refuses the trigger, so the debt must not show ready through it either.
-            var veins = HemoCapabilityAccess.requireVascularSystem(p).getVascularSystem();
+            var veins = HemoCapabilityAccess.getVascularSystem(p).getVascularSystem();
             Float sectionHealth = veins.get(phoenix.getSection());
             veins.put(phoenix.getSection(), 0F);
             h.assertTrue(!ManipulationReactiveEvents.phoenixDebtReady(p), "Phoenix Debt showed ready through a dead section");
@@ -343,7 +343,7 @@ public final class ManipulationBalancePass2StateGameTests {
     }
 
     private static void select(ServerPlayer p, BloodManipulation m) {
-        var known = HemoCapabilityAccess.requireKnownManipulations(p);
+        var known = HemoCapabilityAccess.getKnownManipulations(p);
         known.getKnownManips().put(m, new ManipLevel(4, 185));
         known.setEquippedManipNames(List.of(m.getName()));
         known.setSelectedManip(m);
@@ -358,11 +358,11 @@ public final class ManipulationBalancePass2StateGameTests {
             @Override public void send(net.minecraft.network.protocol.Packet<?> packet) { }
         };
         p.setPos(h.absoluteVec(new Vec3(2.5, 2, 2.5)));
-        var blood = HemoCapabilityAccess.requireBloodVolume(p);
+        var blood = HemoCapabilityAccess.getBloodVolume(p);
         blood.setActive(true);
         blood.setBloodVolume(2000);
         for (var tendency : EnumBloodTendency.values())
-            HemoCapabilityAccess.getBloodTendency(p).orElseThrow().setTendencyAlignment(tendency, 100);
+            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(tendency, 100);
         return p;
     }
 }

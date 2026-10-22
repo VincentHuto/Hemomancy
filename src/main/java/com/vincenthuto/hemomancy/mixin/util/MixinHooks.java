@@ -30,21 +30,17 @@ public class MixinHooks {
 	public static boolean canWalkOnPowderSnow(Entity entity, boolean vanillaResult) {
 		if (entity instanceof LivingEntity living && living.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.cryoprotection)) return true;
 		if (vanillaResult || !(entity instanceof Player player)) return vanillaResult;
-		return HemoCapabilityAccess.getEquippedMorphling(player)
-				.filter(cap -> cap.hasMorphling()
-						&& cap.getEquippedMorphling().getItem() instanceof WinterShroudMorphlingItem)
-				.map(cap -> WinterShroudResilienceRules.canTraversePowderSnow(
-						MorphlingItem.getMaturityLevel(cap.getEquippedMorphling())))
-				.orElse(false);
+		var cap = HemoCapabilityAccess.getEquippedMorphling(player);
+		return cap.hasMorphling()
+				&& cap.getEquippedMorphling().getItem() instanceof WinterShroudMorphlingItem
+				&& WinterShroudResilienceRules.canTraversePowderSnow(MorphlingItem.getMaturityLevel(cap.getEquippedMorphling()));
 	}
 
 	private static float scaleForClarity(LivingEntity entity, float amount, ClarityScaler scaler) {
 		if (!(entity instanceof Player player)) {
 			return amount;
 		}
-		return HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(progress -> scaler.scale(amount, progress.hasClarityUnlocked(), progress.getClarity()))
-				.orElse(amount);
+		return scaler.scale(amount, HemoCapabilityAccess.getUnstainedProgress(player).hasClarityUnlocked(), HemoCapabilityAccess.getUnstainedProgress(player).getClarity());
 	}
 
 	@FunctionalInterface

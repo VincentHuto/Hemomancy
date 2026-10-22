@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.gametest;
 
-import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoHelper;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -60,7 +60,7 @@ public final class DictationDeskGameTests {
     public static void bloodDictationRequiresEscritoireAndRetainsNotesOnFailure(GameTestHelper h) {
         var pos=h.absolutePos(new BlockPos(1,2,1));var level=h.getLevel();var player=player(h);
         var memo=ResourceLocation.parse("hemomancy:fixture/shared_note");
-        var knowledge=player.getData(HemoAttachmentTypes.LIBER_KNOWLEDGE);
+        var knowledge=HemoCapabilityAccess.getLiberKnowledge(player);
         knowledge.recordPendingMemo(memo);
         var book=new ItemStack(ItemInit.liber_sanguinum.get());
         h.assertTrue(!FieldNotes.hasPending(player,book,HLBlockInit.dictation_table.get()),"Ordinary table must not bypass the Escritoire");
@@ -68,7 +68,7 @@ public final class DictationDeskGameTests {
         level.setBlock(pos,BlockInit.harbinger_escritoire.get().defaultBlockState(),3);
         var desk=(DictationTableBlockEntity)level.getBlockEntity(pos);desk.setBook(book);
         var hit=new BlockHitResult(pos.getCenter(),Direction.UP,pos,false);
-        var blood=player.getData(HemoAttachmentTypes.BLOOD_VOLUME);blood.setActive(true);blood.setBloodVolume(0);
+        var blood=HemoCapabilityAccess.getBloodVolume(player);blood.setActive(true);blood.setBloodVolume(0);
         desk.getBlockState().useWithoutItem(level,player,hit);
         h.assertTrue(knowledge.getPendingMemos().contains(memo)&&!knowledge.knowsMemo(memo),"Insufficient blood must not consume notes");
         blood.setMaxBloodVolume(2000);blood.setBloodVolume(2000);
@@ -91,7 +91,7 @@ public final class DictationDeskGameTests {
         level.setBlock(pos,BlockInit.harbinger_escritoire.get().defaultBlockState(),3);
         var desk=(DictationTableBlockEntity)level.getBlockEntity(pos);desk.loadWithComponents(saved,level.registryAccess());
         h.assertTrue(desk.getBook().is(ItemInit.liber_immaculatus.get()),"Legacy inventory format must load in shared desk");
-        var knowledge=player.getData(HemoAttachmentTypes.LIBER_KNOWLEDGE);
+        var knowledge=HemoCapabilityAccess.getLiberKnowledge(player);
         var memo=ResourceLocation.parse("hemomancy:fixture/pale_note");knowledge.recordPendingMemo(memo);
         player.experienceLevel=0;
         var hit=new BlockHitResult(pos.getCenter(),Direction.UP,pos,false);

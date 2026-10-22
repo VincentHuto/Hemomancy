@@ -39,18 +39,19 @@ public final class EarlyInitiation {
     private EarlyInitiation() {}
 
     public static boolean attached(Player player) {
-        return HemoCapabilityAccess.getEquipment(player).map(e -> e.getStackInSlot(5).is(ItemInit.charm_of_vascularium.get())).orElse(false);
+        return HemoCapabilityAccess.getEquipment(player).getStackInSlot(5).is(ItemInit.charm_of_vascularium.get());
     }
     public static boolean eligible(Player player) {
         return player.isAlive() && !player.isSpectator() && HemoCapabilityAccess.getPlayerDegreeNumber(player) == 0
-                && attached(player) && HemoCapabilityAccess.getBloodVolume(player).map(v -> v.isActive()).orElse(false);
+                && attached(player) && HemoCapabilityAccess.getBloodVolume(player).isActive();
     }
     public static boolean near(Player player, Entity npc) {
         return npc != null && npc.isAlive() && npc.level() == player.level() && player.distanceToSqr(npc) <= 64;
     }
     public static void activate(ServerPlayer player) {
         if (!attached(player)) return;
-        HemoCapabilityAccess.getBloodVolume(player).ifPresent(v -> { v.setActive(true); BloodVolumeEvents.syncVolume(player, v); });
+        var v = HemoCapabilityAccess.getBloodVolume(player);
+        v.setActive(true); BloodVolumeEvents.syncVolume(player, v);
         HarbingerAdvancementGranter.grantIfNotDone(player, Hemomancy.rloc("hemomancy/the_first_awakening"));
     }
     public static void give(ServerPlayer player, ItemStack stack) {
@@ -72,8 +73,8 @@ public final class EarlyInitiation {
         return hit != null && hit.getEntity() instanceof ServerPlayer recruit && begin(recruit, founder);
     }
     private static Bloodline foundedBloodline(ServerPlayer founder) {
-        var degree = HemoCapabilityAccess.requireInitiatoryDegree(founder);
-        var volume = HemoCapabilityAccess.getBloodVolume(founder).orElseThrow();
+        var degree = HemoCapabilityAccess.getInitiatoryDegree(founder);
+        var volume = HemoCapabilityAccess.getBloodVolume(founder);
         if (!founder.isAlive() || founder.isRemoved() || founder.isSpectator() || founder.isSleeping()
                 || degree.getDegreeNumber() < 5 || !degree.hasFoundedBloodline()
                 || degree.isFounderIntegrationSevered() || !volume.isActive()) return null;
@@ -84,7 +85,7 @@ public final class EarlyInitiation {
     private static boolean canJoin(ServerPlayer recruit, UUID bloodline) {
         var data = BloodlineSavedData.get(recruit.serverLevel().getServer().overworld());
         var existing = data.getBloodlineForPlayer(recruit.getUUID());
-        var personal = HemoCapabilityAccess.getBloodVolume(recruit).orElseThrow().getBloodLine();
+        var personal = HemoCapabilityAccess.getBloodVolume(recruit).getBloodLine();
         return (existing == null || existing.getBloodlineUUID().equals(bloodline))
                 && (!personal.isValid() || personal.getBloodlineUUID().equals(bloodline));
     }
@@ -111,8 +112,9 @@ public final class EarlyInitiation {
     }
     public static boolean release(ServerPlayer player, Entity npc) {
         if (!(npc instanceof HarbingerVicarEntity) || !near(player, npc) || !eligible(player) || ACTIVE.containsKey(player.getUUID())) return false;
-        HemoCapabilityAccess.getEquipment(player).ifPresent(e -> e.setStackInSlot(5, ItemStack.EMPTY));
-        HemoCapabilityAccess.getBloodVolume(player).ifPresent(v -> { v.setActive(false); BloodVolumeEvents.syncVolume(player, v); });
+        HemoCapabilityAccess.getEquipment(player).setStackInSlot(5, ItemStack.EMPTY);
+        var v = HemoCapabilityAccess.getBloodVolume(player);
+        v.setActive(false); BloodVolumeEvents.syncVolume(player, v);
         TempleOathRules.clear(player);
         player.displayClientMessage(Component.translatable("hemomancy.initiation.released"), false);
         return true;
@@ -150,10 +152,9 @@ public final class EarlyInitiation {
         player.displayClientMessage(Component.translatable("hemomancy.initiation.bloodline", line.getName()), false);
     }
     private static void syncMembership(ServerPlayer player, Bloodline line) {
-        HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-            volume.setBloodLine(line);
-            BloodVolumeEvents.syncVolume(player, volume);
-        });
+        var volume = HemoCapabilityAccess.getBloodVolume(player);
+        volume.setBloodLine(line);
+        BloodVolumeEvents.syncVolume(player, volume);
         PacketHandler.sendToPlayer(player, new PacketSyncBloodlinePool(
                 line.getBloodVolume(), line.getMaxBloodVolume(), line.getPlayerUUIDS().size()));
     }

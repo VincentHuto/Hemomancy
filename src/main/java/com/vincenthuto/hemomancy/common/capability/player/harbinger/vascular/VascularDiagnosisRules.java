@@ -48,9 +48,10 @@ public final class VascularDiagnosisRules {
 
 	public static Diagnosis diagnosePlayer(Player player) {
 		List<ScarDefinition> active = new ArrayList<>();
-		HemoCapabilityAccess.getScarState(player).ifPresent(scars -> scars.forEachActiveCerebralScar(active::add));
+		HemoCapabilityAccess.getScarState(player).forEachActiveCerebralScar(active::add);
 		List<MemoryRoute> routes = new ArrayList<>();
-		HemoCapabilityAccess.getKnownManipulations(player).ifPresent(known -> known.getEquippedMemoryRefs().forEach(ref -> {
+		var known = HemoCapabilityAccess.getKnownManipulations(player);
+		known.getEquippedMemoryRefs().forEach(ref -> {
 			if (ref.expression() == HematicMemoryExpression.THELEMIC) {
 				ref.muscleMemory().ifPresent(memory -> routes.add(new MemoryRoute(memory.section(),
 						HematicMemoryExpression.THELEMIC, memory.id(), 0)));
@@ -59,9 +60,8 @@ public final class VascularDiagnosisRules {
 						.ifPresent(manip -> routes.add(new MemoryRoute(manip.getSection(), HematicMemoryExpression.NOETIC,
 								manip.getName(), ScarNoeticRoutingRules.bestMatchingTier(manip.getTend(), active))));
 			}
-		}));
-		Map<EnumVeinSections, Float> system = HemoCapabilityAccess.getVascularSystem(player)
-				.map(IVascularSystem::getVascularSystem).orElseGet(Map::of);
+		});
+		Map<EnumVeinSections, Float> system = HemoCapabilityAccess.getVascularSystem(player).getVascularSystem();
 		return diagnose(system, routes);
 	}
 

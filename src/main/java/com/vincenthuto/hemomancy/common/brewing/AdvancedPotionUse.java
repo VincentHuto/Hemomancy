@@ -33,7 +33,7 @@ public final class AdvancedPotionUse {
 
         if (!player.getAbilities().instabuild) {
             boolean paidBlood = false;
-            var volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+            var volume = HemoCapabilityAccess.getBloodVolume(player);
             if (volume != null && volume.isActive() && !volume.wouldOverstrain(1000)
                     && BoundBrewRules.substitutesDose(volume.getBloodVolume(), player.getRandom().nextDouble())) {
                 paidBlood = volume.drain(1000);

@@ -115,8 +115,7 @@ public class HarbingerProgressScreen extends Screen {
         clearWidgets();
 
         if (Minecraft.getInstance().player != null) {
-            playerDegree = HemoCapabilityAccess.getInitiatoryDegree(Minecraft.getInstance().player)
-                    .map(d -> d.getDegreeNumber()).orElse(0);
+            playerDegree = HemoCapabilityAccess.getInitiatoryDegree(Minecraft.getInstance().player).getDegreeNumber();
         }
         if (!activeTab.visibleAtDegree(playerDegree)) {
             activeTab = firstVisibleTab(playerDegree);

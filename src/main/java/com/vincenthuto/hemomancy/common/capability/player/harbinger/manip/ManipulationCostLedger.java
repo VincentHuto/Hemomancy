@@ -48,10 +48,8 @@ public final class ManipulationCostLedger {
 		addIfNotNeutral(contributions, "purity", "Purity", Category.TENDENCY, purityCostMultiplier,
 				purityCostMultiplier <= 0.0D ? "Manipulation blocked" : "");
 
-		double levelCostMultiplier = HemoCapabilityAccess.getKnownManipulations(player)
-				.map(k -> k.getManipLevel(manipulation))
-				.map(ManipLevel::getCostMultiplier)
-				.orElse(1.0D);
+		ManipLevel manipLevel = HemoCapabilityAccess.getKnownManipulations(player).getManipLevel(manipulation);
+		double levelCostMultiplier = manipLevel != null ? manipLevel.getCostMultiplier() : 1.0D;
 		addIfNotNeutral(contributions, "manipulation_mastery", "Manipulation Mastery", Category.MASTERY,
 				levelCostMultiplier);
 
@@ -80,8 +78,7 @@ public final class ManipulationCostLedger {
 			addIfNotNeutral(contributions, "sanguine_dominion", "Sanguine Dominion", Category.RITE, 0.75D);
 		}
 
-		long pomeExpiry = HemoCapabilityAccess.getInitiatoryDegree(player)
-				.map(d -> d.getPomeEmpowermentExpiry()).orElse(0L);
+		long pomeExpiry = HemoCapabilityAccess.getInitiatoryDegree(player).getPomeEmpowermentExpiry();
 		if (player.level().getGameTime() < pomeExpiry) {
 			addIfNotNeutral(contributions, "qliphoth_pome_empowerment", "Qliphoth Pome Empowerment",
 					Category.RITE,
@@ -94,12 +91,8 @@ public final class ManipulationCostLedger {
 		}
 
 		var degreeData = HemoCapabilityAccess.getInitiatoryDegree(player);
-		int pomesConsumed = degreeData
-				.map(d -> d.getTotalPomesConsumed())
-				.orElse(0);
-		boolean blockedByPomes = pomesConsumed >= 9 && degreeData
-				.map(d -> d.getDegreeNumber() < 8)
-				.orElse(true);
+		int pomesConsumed = degreeData.getTotalPomesConsumed();
+		boolean blockedByPomes = pomesConsumed >= 9 && degreeData.getDegreeNumber() < 8;
 		if (blockedByPomes) {
 			addIfNotNeutral(contributions, "pome_corruption_block", "Pome Corruption", Category.RITE,
 					1.0D, "Manipulation blocked until Apotheos");
@@ -115,9 +108,7 @@ public final class ManipulationCostLedger {
 		addIfNotNeutral(contributions, "mnemonic_screams", "Mnemonic Screams", Category.EFFECT,
 				MnemonicPotionRules.manipulationCostMultiplier(player.hasEffect(EffectInit.mnemonic_screams)));
 
-		boolean clotted = HemoCapabilityAccess.getVascularSystem(player)
-				.map(vascular -> vascular.getBloodFlowBySection(manipulation.getSection()) == EnumBloodFlow.ClOTTED)
-				.orElse(false);
+		boolean clotted = HemoCapabilityAccess.getVascularSystem(player).getBloodFlowBySection(manipulation.getSection()) == EnumBloodFlow.ClOTTED;
 		if (clotted) {
 			addIfNotNeutral(contributions, "clotted_vein", "Clotted vein", Category.OTHER,
 					CLOTTED_VEIN_COST_MULTIPLIER);
@@ -130,11 +121,7 @@ public final class ManipulationCostLedger {
 		if (player == null) {
 			return 1.0D;
 		}
-		var optUnstained = HemoCapabilityAccess.getUnstainedProgress(player);
-		if (optUnstained.isEmpty()) {
-			return 1.0D;
-		}
-		var unstained = optUnstained.orElseThrow(IllegalStateException::new);
+		var unstained = HemoCapabilityAccess.getUnstainedProgress(player);
 		if (!unstained.hasBegunPurification()) {
 			return 1.0D;
 		}
@@ -149,7 +136,7 @@ public final class ManipulationCostLedger {
 	}
 
 	private static boolean matchesStrongestTendency(Player player, EnumBloodTendency manipulationTendency) {
-		IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(player).orElse(null);
+		IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(player);
 		if (tendency == null || manipulationTendency == null) {
 			return false;
 		}

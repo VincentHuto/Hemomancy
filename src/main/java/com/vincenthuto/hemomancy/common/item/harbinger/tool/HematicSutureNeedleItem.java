@@ -90,12 +90,11 @@ public class HematicSutureNeedleItem extends Item {
         ItemStack stack = player.getItemInHand(hand);
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
             if (player.isShiftKeyDown()) {
-                IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+                IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
                 if (volume != null && volume.isActive()) {
                     boolean enabled = !volume.isBloodRoutingOptInEnabled();
                     volume.setBloodRoutingOptInEnabled(enabled);
-                    HemoCapabilityAccess.getBloodVolume(player).ifPresent(v ->
-                            BloodVolumeEvents.syncVolume(serverPlayer, v));
+                    BloodVolumeEvents.syncVolume(serverPlayer, HemoCapabilityAccess.getBloodVolume(player));
                     message(serverPlayer,
                             enabled ? "item.hemomancy.hematic_suture_needle.opt_in_on"
                                     : "item.hemomancy.hematic_suture_needle.opt_in_off",
@@ -135,7 +134,7 @@ public class HematicSutureNeedleItem extends Item {
     }
 
     private boolean hasBloodlinePermission(ServerPlayer player) {
-        IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+        IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
         if (volume == null) {
             return false;
         }

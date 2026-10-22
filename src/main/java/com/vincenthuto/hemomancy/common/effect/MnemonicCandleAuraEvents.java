@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.common.effect;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.shared.MnemonicCandleBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.core.BlockPos;
@@ -31,8 +30,7 @@ public final class MnemonicCandleAuraEvents {
 			return;
 		}
 		boolean activeBlood = HemoCapabilityAccess.getBloodVolume(serverPlayer)
-				.map(IBloodVolume::isActive)
-				.orElse(false);
+				.isActive();
 		if (!activeBlood || !hasLitMnemonicCandleNearby(serverPlayer)) {
 			return;
 		}

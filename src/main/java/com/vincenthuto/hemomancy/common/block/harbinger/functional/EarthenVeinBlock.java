@@ -129,7 +129,7 @@ public class EarthenVeinBlock extends Block implements EntityBlock, SimpleWaterl
 			return InteractionResult.SUCCESS;
 		}
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
-				.orElseThrow(NullPointerException::new);
+				;
 		if (worldIn.getBlockEntity(pos)instanceof EarthenVeinBlockEntity te) {
 			boolean usedClaimItem = stack.getItem() == Blocks.IRON_BARS.asItem();
 			boolean usedNameTag = stack.getItem() == Items.NAME_TAG;

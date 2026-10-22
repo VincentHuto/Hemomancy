@@ -41,7 +41,7 @@ public final class AvatarManifestationManager {
 	}
 
 	public static boolean toggle(ServerPlayer player, SummonAvatarManip avatar) {
-		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 		if (known == null || !isKnownAndEquipped(known, avatar.getName())) return false;
 		if (avatar.getName().equals(known.getActiveAvatarForm())) {
 			dismiss(player);
@@ -62,20 +62,19 @@ public final class AvatarManifestationManager {
 	public static void dismiss(ServerPlayer player) {
 		STATES.remove(player.getUUID());
 		removeAttributes(player);
-		HemoCapabilityAccess.getKnownManipulations(player).ifPresent(known -> {
-			if (known.getActiveAvatarForm().isBlank()) return;
-			int stage = AvatarManifestationRules.stats(known.getActiveAvatarForm()).map(AvatarManifestationRules.Stats::stage).orElse(0);
-			known.setActiveAvatarForm("");
-			if (player.isAlive()) ManipulationVisuals.replay(player, ManipulationVisuals.Form.AVATAR_MANIFEST, 1,
-					AvatarManifestRules.VISUAL_TICKS, AvatarManifestRules.dismiss(stage));
-			sync(player, known);
-		});
+		var known = HemoCapabilityAccess.getKnownManipulations(player);
+		if (known.getActiveAvatarForm().isBlank()) return;
+		int stage = AvatarManifestationRules.stats(known.getActiveAvatarForm()).map(AvatarManifestationRules.Stats::stage).orElse(0);
+		known.setActiveAvatarForm("");
+		if (player.isAlive()) ManipulationVisuals.replay(player, ManipulationVisuals.Form.AVATAR_MANIFEST, 1,
+				AvatarManifestRules.VISUAL_TICKS, AvatarManifestRules.dismiss(stage));
+		sync(player, known);
 	}
 
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent.Post event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
-		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 		if (known == null) return;
 		String active = known.getActiveAvatarForm();
 		State state = STATES.get(player.getUUID());
@@ -88,8 +87,7 @@ public final class AvatarManifestationManager {
 		}
 		SummonAvatarManip avatar = ManipulationInit.getByName(active) instanceof SummonAvatarManip current
 				? current : null;
-		boolean blocked = HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false);
+		boolean blocked = UnstainedAccessRules.blocksKnownBloodPowerUse(HemoCapabilityAccess.getUnstainedProgress(player));
 		if (!player.isAlive() || blocked || avatar == null || !isKnownAndEquipped(known, active)) {
 			dismiss(player);
 			return;
@@ -128,8 +126,7 @@ public final class AvatarManifestationManager {
 		if (event.getEntity() instanceof ServerPlayer player) {
 			STATES.remove(player.getUUID());
 			removeAttributes(player);
-			HemoCapabilityAccess.getKnownManipulations(player)
-					.ifPresent(known -> known.setActiveAvatarForm(""));
+			HemoCapabilityAccess.getKnownManipulations(player).setActiveAvatarForm("");
 		}
 	}
 

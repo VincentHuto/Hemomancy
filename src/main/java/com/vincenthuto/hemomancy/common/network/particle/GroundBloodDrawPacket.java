@@ -51,7 +51,7 @@ public class GroundBloodDrawPacket implements CustomPacketPayload {
 			float pTic = ServerboundGuards.partialTick(message.parTick);
 			if (player.getMainHandItem().getItem() == ItemInit.living_staff.get()) {
 				IBloodVolume bloodVol = HemoCapabilityAccess.getBloodVolume(player)
-						.orElseThrow(NullPointerException::new);
+						;
 				ServerLevel sLevel = (ServerLevel) player.level();
 				HitResult trace = player.pick(6, pTic, false);
 

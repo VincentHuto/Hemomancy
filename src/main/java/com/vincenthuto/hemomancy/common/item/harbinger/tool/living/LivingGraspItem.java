@@ -60,7 +60,7 @@ public class LivingGraspItem extends Item {
 		if (entityLiving instanceof Player) {
 			Player player = (Player) entityLiving;
 			IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player)
-					.orElseThrow(NullPointerException::new);
+					;
 			if (playerVolume.getBloodVolume() > 50f) {
 				if (!worldIn.isClientSide) {
 					playerVolume.drain(50f);

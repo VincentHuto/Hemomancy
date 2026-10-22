@@ -86,7 +86,7 @@ public final class HarbingerRecruitmentDialogueSourceTest {
 	private static void assertEntityHidesDuplicateTypeRecruitment(String label, String source) {
 		assertContains(label + " computes recruitment visibility", source, "canShowRecruitment(player, this)");
 		assertContains(label + " checks shared recruitment rules", source,
-				"HarbingerRecruitmentRules.canRecruitNpc(vol.getBloodLine(), npc)");
+				"HarbingerRecruitmentRules.canRecruitNpc(line, npc)");
 	}
 
 	private static void assertBloodlineStoresNpcTypes(String source) {

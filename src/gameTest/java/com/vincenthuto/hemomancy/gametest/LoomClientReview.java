@@ -363,10 +363,9 @@ public final class LoomClientReview {
         var front = te.sigilCentre().add(facing.getStepX() * 2.5D, 0, facing.getStepZ() * 2.5D);
         weaver.moveTo(front.x, pos.getY(), front.z);
         var paying = payer == null ? weaver : payer;
-        HemoCapabilityAccess.getBloodVolume(paying).ifPresent(v -> {
-            v.setActive(true);
-            v.setBloodVolume(v.getMaxBloodVolume());
-        });
+        var v = HemoCapabilityAccess.getBloodVolume(paying);
+        v.setActive(true);
+        v.setBloodVolume(v.getMaxBloodVolume());
         te.tryChargeRitualBlood(paying, 10_000, false);
         WEAVERS.put(pos.immutable(), weaver);
         return te;

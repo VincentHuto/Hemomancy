@@ -382,10 +382,8 @@ public final class BoundSummonBehavior {
 	}
 
 	public static int claimedWillBonusCap(Player owner) {
-		boolean silentArchon = HemoCapabilityAccess.getInitiatoryDegree(owner)
-				.map(degree -> HarbingerPathPermissions.isProvenSilentArchon(
-						degree.getDegreeNumber(), degree.getArchonPath()))
-				.orElse(false);
+		boolean silentArchon = HarbingerPathPermissions.isProvenSilentArchon(
+						HemoCapabilityAccess.getInitiatoryDegree(owner).getDegreeNumber(), HemoCapabilityAccess.getInitiatoryDegree(owner).getArchonPath());
 		if (!silentArchon) {
 			return 0;
 		}
@@ -424,8 +422,7 @@ public final class BoundSummonBehavior {
 	}
 
 	public static boolean hasEquippedMorphling(Player owner) {
-		return owner != null && HemoCapabilityAccess.getEquippedMorphling(owner)
-				.map(cap -> cap.hasMorphling()).orElse(false);
+		return owner != null && HemoCapabilityAccess.getEquippedMorphling(owner).hasMorphling();
 	}
 
 	public static boolean hasActiveOwnedTether(ServerPlayer owner) {
@@ -511,7 +508,7 @@ public final class BoundSummonBehavior {
 		int highStrungLevel = SkillPointHelper.getHighStrungLevel(owner);
 		upkeep = PuppeteerSummonRules.highStrungThreadUpkeep(upkeep, highStrungLevel);
 		double bloodUpkeep = PuppeteerSummonRules.highStrungBloodUpkeep(highStrungLevel);
-		IBloodVolume volume = bloodUpkeep > 0.0D ? HemoCapabilityAccess.getBloodVolume(owner).orElse(null) : null;
+		IBloodVolume volume = bloodUpkeep > 0.0D ? HemoCapabilityAccess.getBloodVolume(owner) : null;
 		if (MarionetteCrossbarItem.getThread(crossbar) < upkeep
 				|| bloodUpkeep > 0.0D && (volume == null || !volume.isActive()
 				|| volume.getBloodVolume() < bloodUpkeep)) {
@@ -525,10 +522,11 @@ public final class BoundSummonBehavior {
 			BloodVolumeEvents.syncVolume(owner, volume);
 		}
 		if (morphlingInterference) {
-			HemoCapabilityAccess.getEquippedMorphling(owner).filter(cap -> cap.hasMorphling()).ifPresent(cap -> {
+			var cap = HemoCapabilityAccess.getEquippedMorphling(owner);
+			if (cap.hasMorphling()) {
 				MorphlingItem.markFedNow(cap.getEquippedMorphling(), gameTime);
 				EquippedMorphlingEvents.syncToClient(owner);
-			});
+			}
 		}
 		return true;
 	}

@@ -88,14 +88,13 @@ public class PacketLedgerAction implements CustomPacketPayload {
 			// The ledger screen only opens from the item, so every action needs it in hand (F-6).
 			if (ServerboundGuards.heldItem(player, UnsignedLedgerItem.class).isEmpty()) return;
 
-			HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-				switch (msg.action) {
-					case ACTION_SUMMON_NPCS -> handleNpcSummon(player, volume);
-					case ACTION_RECALL_TO_LODGE -> handleLodgeRecall(player, volume);
-					case ACTION_SET_RECALL_POINT -> handleSetRecallPoint(player, volume);
-					case ACTION_DISBAND_BLOODLINE -> handleDisbandBloodline(player, volume);
-				}
-			});
+			var volume = HemoCapabilityAccess.getBloodVolume(player);
+			switch (msg.action) {
+				case ACTION_SUMMON_NPCS -> handleNpcSummon(player, volume);
+				case ACTION_RECALL_TO_LODGE -> handleLodgeRecall(player, volume);
+				case ACTION_SET_RECALL_POINT -> handleSetRecallPoint(player, volume);
+				case ACTION_DISBAND_BLOODLINE -> handleDisbandBloodline(player, volume);
+			}
 		});
 	}
 
@@ -407,7 +406,7 @@ public class PacketLedgerAction implements CustomPacketPayload {
 				continue;
 			}
 			Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(player)
-					.map(IBloodVolume::getBloodLine).orElse(Bloodline.NOBLOODLINE);
+					.getBloodLine();
 			if (!bloodline.isValid() || !bloodline.getBloodlineUUID().equals(pending.bloodlineId())
 					|| !isInsideOwnedFane(player, getFaneOwner(bloodline, player))) {
 				requests.remove();

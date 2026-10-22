@@ -54,10 +54,9 @@ public class KnownStillArtsServerPacket implements CustomPacketPayload {
 			if (player == null) {
 				return;
 			}
-			HemoCapabilityAccess.getKnownStillArts(player).ifPresent(known -> {
-				known.setKnownArtNames(msg.knownArtNames);
-				known.setSelectedArt(StillArt.byName(msg.selectedArtName));
-			});
+			var known = HemoCapabilityAccess.getKnownStillArts(player);
+			known.setKnownArtNames(msg.knownArtNames);
+			known.setSelectedArt(StillArt.byName(msg.selectedArtName));
 		});
 	}
 

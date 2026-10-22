@@ -85,8 +85,7 @@ public final class OculifloraRevealRenderer {
 	private static boolean isVisibleNetworkSignal(Entity entity, LivingEntity living) {
 		boolean hemoEntity = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).getNamespace()
 				.equals(Hemomancy.MOD_ID);
-		boolean bloodActivePlayer = entity instanceof Player player && HemoCapabilityAccess.getBloodVolume(player)
-				.map(volume -> volume.isActive()).orElse(false);
+		boolean bloodActivePlayer = entity instanceof Player player && HemoCapabilityAccess.getBloodVolume(player).isActive();
 		return hemoEntity || bloodActivePlayer || hemoEntity && living.hasEffect(MobEffects.INVISIBILITY);
 	}
 

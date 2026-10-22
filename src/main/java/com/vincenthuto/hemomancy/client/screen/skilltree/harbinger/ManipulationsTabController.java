@@ -276,19 +276,18 @@ public class ManipulationsTabController implements IProgressTab {
 		masteryLevels.clear();
         Minecraft mc = Minecraft.getInstance();
         if (mc.player != null) {
-            HemoCapabilityAccess.getKnownManipulations(mc.player).ifPresent(cap -> {
-				grandfatheredFamilyForms.addAll(cap.getGrandfatheredFamilyForms());
-				for (var entry : cap.getKnownManips().entrySet()) {
-					BloodManipulation m = entry.getKey();
-					if (m == null || m.getName() == null) continue;
-					knownManipNames.add(m.getName());
-					if (cap.isManipulationAvailable(m)) availableManipNames.add(m.getName());
-					if (entry.getValue() != null) {
-						String baseline = ManipulationFamilyRegistry.baselineId(m.getName());
-						masteryLevels.merge(baseline, entry.getValue().getCurrentLevel(), Math::max);
-					}
-                }
-            });
+            var cap = HemoCapabilityAccess.getKnownManipulations(mc.player);
+            				grandfatheredFamilyForms.addAll(cap.getGrandfatheredFamilyForms());
+            				for (var entry : cap.getKnownManips().entrySet()) {
+            					BloodManipulation m = entry.getKey();
+            					if (m == null || m.getName() == null) continue;
+            					knownManipNames.add(m.getName());
+            					if (cap.isManipulationAvailable(m)) availableManipNames.add(m.getName());
+            					if (entry.getValue() != null) {
+            						String baseline = ManipulationFamilyRegistry.baselineId(m.getName());
+            						masteryLevels.merge(baseline, entry.getValue().getCurrentLevel(), Math::max);
+            					}
+                            }
         }
         buildManipMemoryItemLookup();
     }

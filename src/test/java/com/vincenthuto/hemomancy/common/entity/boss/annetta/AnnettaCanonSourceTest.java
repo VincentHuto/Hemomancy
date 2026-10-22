@@ -19,14 +19,14 @@ public final class AnnettaCanonSourceTest {
 		assertBefore(annetta, "if (!server.addFreshEntity(priestess))", "this.discard()");
 		assertNotContains(annetta, "PendingSeverancePlayer");
 		assertNotContains(annetta, "grantPendingSeverance");
-		assertNotContains(annetta, "degree.hasFoundedBloodline()");
-		assertContains(annetta, ".orElse(false) && !isHarbinger(player)");
+		assertNotContains(annetta, "hasFoundedBloodline()");
+		assertContains(annetta, "getUnstainedProgress(player).hasClarityUnlocked() && !isHarbinger(player)");
 		assertContains(infection, "tag.putUUID(\"CuredAnnetta\", curedAnnetta)");
 		assertContains(infection, "server.getEntity(curedAnnetta) instanceof AnnettaKnowlesEntity");
 		assertContains(infection, "annetta.markResolvedAfterCure()");
 		assertNotContains(infection, "CuringPlayer");
 		assertNotContains(infection, "AnnettaSeveranceUnlocked");
-		assertContains(priestess, "degree.hasFoundedBloodline()");
+		assertContains(priestess, "getInitiatoryDegree(player).hasFoundedBloodline()");
 		assertContains(priestess, "progress.setAnnettaSeveranceUnlocked(true)");
 		// Staged scenes hold her facing so the look goals cannot spin her body mid-scene.
 		assertBefore(annetta, "holdSceneFacing();", "case BREAKING -> tickBreak(server);");

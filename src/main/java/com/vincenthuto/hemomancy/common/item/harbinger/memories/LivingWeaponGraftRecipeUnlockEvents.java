@@ -73,7 +73,7 @@ public final class LivingWeaponGraftRecipeUnlockEvents {
 	}
 
 	private static double bloodFraction(ServerPlayer player) {
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null || !volume.isActive() || volume.getMaxBloodVolume() <= 0.0D) {
 			return 0.0D;
 		}

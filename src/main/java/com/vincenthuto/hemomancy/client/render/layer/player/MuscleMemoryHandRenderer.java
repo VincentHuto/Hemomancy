@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.client.render.layer.player;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.BloodArmModel;
-import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.PlayerModel;
@@ -35,7 +35,7 @@ public final class MuscleMemoryHandRenderer {
         Minecraft minecraft = Minecraft.getInstance();
         AbstractClientPlayer player = event.getPlayer();
         long now = player.level().getGameTime();
-        var state = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+        var state = HemoCapabilityAccess.muscleMemory(player);
         var active = state.enabledMemory(EnumVeinSections.ARMS);
         if (active.isEmpty()) {
             return;

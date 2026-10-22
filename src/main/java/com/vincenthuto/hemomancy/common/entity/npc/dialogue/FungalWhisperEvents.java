@@ -55,9 +55,7 @@ public class FungalWhisperEvents {
 		if (degree < 4) return;
 
 		// Ensure the player has active blood
-		boolean hasBlood = HemoCapabilityAccess.getBloodVolume(player)
-				.map(vol -> vol.isActive())
-				.orElse(false);
+		boolean hasBlood = HemoCapabilityAccess.getBloodVolume(player).isActive();
 		if (!hasBlood) return;
 
 		// Don't trigger if the player already has a screen open

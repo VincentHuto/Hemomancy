@@ -120,8 +120,7 @@ public final class CrossbarRadialScreen extends Screen {
 	private Component unavailableReason(PuppeteerSummonDefinition definition, String selected) {
 		Minecraft minecraft = Minecraft.getInstance();
 		if (minecraft.player == null) return Component.translatable("screen.hemomancy.crossbar_radial.unavailable");
-		boolean known = HemoCapabilityAccess.getKnownSummons(minecraft.player)
-				.map(value -> value.isKnown(definition)).orElse(false);
+		boolean known = HemoCapabilityAccess.getKnownSummons(minecraft.player).isKnown(definition);
 		if (!known) return Component.translatable("screen.hemomancy.crossbar_radial.missing_trial");
 		if (definition.name().equals(selected)) return null;
 		int cost = MarionetteCrossbarItem.summonThreadCost(minecraft.player, definition);

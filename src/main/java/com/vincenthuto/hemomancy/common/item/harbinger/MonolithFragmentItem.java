@@ -30,9 +30,9 @@ public class MonolithFragmentItem extends Item implements HemoClientItemExtensio
 		if (level.getGameTime() % MonolithFragmentBurdenRules.BURDEN_CHECK_INTERVAL_TICKS != 0) {
 			return;
 		}
-		HemoCapabilityAccess.getInitiatoryDegree(player)
-				.filter(degree -> MonolithFragmentBurdenRules.shouldBurdenCarrier(degree.getDegreeNumber()))
-				.ifPresent(degree -> applyApotheosBurden(player));
+		if (MonolithFragmentBurdenRules.shouldBurdenCarrier(HemoCapabilityAccess.getPlayerDegreeNumber(player))) {
+			applyApotheosBurden(player);
+		}
 	}
 
 	private static void applyApotheosBurden(Player player) {

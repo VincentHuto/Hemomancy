@@ -46,11 +46,10 @@ public class LivingStaffProgressServerPacket implements CustomPacketPayload {
 			if (player == null) {
 				return;
 			}
-			HemoCapabilityAccess.getLivingStaffProgress(player).ifPresent(progress -> {
-				progress.setLivingStaffBond(packet.hasLivingStaffBond);
-				progress.setBloodHandled(packet.bloodHandled);
-				progress.setVesperMemoryAwakened(packet.vesperMemoryAwakened);
-			});
+			var progress = HemoCapabilityAccess.getLivingStaffProgress(player);
+			progress.setLivingStaffBond(packet.hasLivingStaffBond);
+			progress.setBloodHandled(packet.bloodHandled);
+			progress.setVesperMemoryAwakened(packet.vesperMemoryAwakened);
 		});
 	}
 

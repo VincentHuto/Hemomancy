@@ -89,7 +89,7 @@ public class PacketPrepareScarPattern implements CustomPacketPayload {
 				fail(player, "That pattern exceeds your current scar capacity.");
 				return;
 			}
-			var scars = HemoCapabilityAccess.getScarState(player).orElse(null);
+			var scars = HemoCapabilityAccess.getScarState(player);
 			if (scars == null) {
 				fail(player, "Your scar memory is silent.");
 				return;

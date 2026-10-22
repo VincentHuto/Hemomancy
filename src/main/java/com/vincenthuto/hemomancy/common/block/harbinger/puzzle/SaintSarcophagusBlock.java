@@ -414,7 +414,7 @@ if (heldStack.is(ItemInit.foul_paste.get())) {
 
 		if (hitFace == bowlFace) {
 		// Attempt to drain blood from the player
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null || volume.getBloodVolume() < BLOOD_COST_PER_OFFERING) {
 			player.displayClientMessage(
 				Component.literal("You lack sufficient blood to offer.")
@@ -658,7 +658,7 @@ private static void assignRandomSaint(Level level, SaintSarcophagusBlockEntity s
 }
 
 private static boolean isPlayerAlignedWithSaint(Player player, EnumSaintType saint) {
-	IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(player).orElse(null);
+	IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(player);
 	if (tendency == null) {
 		return false;
 	}

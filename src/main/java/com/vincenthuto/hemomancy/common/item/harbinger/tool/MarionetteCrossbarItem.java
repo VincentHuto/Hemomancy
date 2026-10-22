@@ -282,8 +282,7 @@ public class MarionetteCrossbarItem extends Item implements HemoClientItemExtens
 		tag.putInt(TAG_THREAD, PuppeteerSummonRules.clampThreadToCapacity(tag.getInt(TAG_THREAD), capacity));
 		crossbar.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 		ensureCrossbarId(crossbar);
-		HemoCapabilityAccess.getKnownSummons(player)
-				.ifPresent(knownSummons -> KnownSummonEvents.sync(player, knownSummons));
+		KnownSummonEvents.sync(player, HemoCapabilityAccess.getKnownSummons(player));
 		player.playSound(SoundEvents.CHAIN_PLACE, 0.5F, 0.8F);
 		player.displayClientMessage(Component.translatable("hemomancy.summon.bind.success"), true);
 		return true;
@@ -342,9 +341,7 @@ public class MarionetteCrossbarItem extends Item implements HemoClientItemExtens
 					.withStyle(ChatFormatting.GRAY), true);
 			return false;
 		}
-		boolean known = HemoCapabilityAccess.getKnownSummons(player)
-				.map(k -> k.isKnown(definition.get()))
-				.orElse(false);
+		boolean known = HemoCapabilityAccess.getKnownSummons(player).isKnown(definition.get());
 		if (!known) {
 			player.displayClientMessage(Component.translatable("hemomancy.summon.select.unknown")
 					.withStyle(ChatFormatting.GRAY), true);
@@ -399,9 +396,7 @@ public class MarionetteCrossbarItem extends Item implements HemoClientItemExtens
 		}
 		String selected = getSelectedSummonName(stack);
 		if (selected == null || selected.isBlank()) {
-			List<String> known = HemoCapabilityAccess.getKnownSummons(player)
-					.map(k -> k.getKnownSummonNames())
-					.orElse(List.of());
+			List<String> known = HemoCapabilityAccess.getKnownSummons(player).getKnownSummonNames();
 			if (!known.isEmpty()) {
 				selected = known.get(0);
 				setSelectedSummonName(stack, selected);
@@ -419,9 +414,7 @@ public class MarionetteCrossbarItem extends Item implements HemoClientItemExtens
 			return;
 		}
 		PuppeteerSummonDefinition definition = defOpt.get();
-		boolean known = HemoCapabilityAccess.getKnownSummons(player)
-				.map(k -> k.isKnown(definition))
-				.orElse(false);
+		boolean known = HemoCapabilityAccess.getKnownSummons(player).isKnown(definition);
 		if (!known) {
 			player.displayClientMessage(Component.translatable("hemomancy.summon.select.unknown")
 					.withStyle(ChatFormatting.GRAY), true);

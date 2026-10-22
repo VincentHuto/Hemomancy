@@ -31,18 +31,18 @@ public final class DuctilisInterruptionGameTests {
         var p=DuctilisGameTests.player(h);
         try {
             var phoenix=ManipulationInit.phoenix_debt.get();
-            var known=HemoCapabilityAccess.requireKnownManipulations(p);
+            var known=HemoCapabilityAccess.getKnownManipulations(p);
             known.getKnownManips().put(phoenix,new ManipLevel(4,185));
             known.setEquippedManipNames(java.util.List.of(phoenix.getName()));
             if(!known.isPassiveActive(phoenix.getName()))known.togglePassive(phoenix.getName());
-            var blood=HemoCapabilityAccess.requireBloodVolume(p);blood.setActive(true);blood.setBloodVolume(10000);
-            for(var tendency:EnumBloodTendency.values())HemoCapabilityAccess.getBloodTendency(p).orElseThrow().setTendencyAlignment(tendency,100);
+            var blood=HemoCapabilityAccess.getBloodVolume(p);blood.setActive(true);blood.setBloodVolume(10000);
+            for(var tendency:EnumBloodTendency.values())HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(tendency,100);
             h.assertTrue(Paralysis.apply(p,20),"Passive fixture paralysis rejected");
             h.assertTrue(phoenix.tryPerformPassiveTrigger(p),"Paralysis disabled an automatic Phoenix Debt trigger");
             int[] casts={0};
             var art=new StillArt("ductilis_action_fixture",EnumClarityStage.AWAKENED,20,StillArtEnding.STILLNESS,(player,level,item,pos,self)->{casts[0]++;return true;});
-            HemoCapabilityAccess.getKnownStillArts(p).orElseThrow().learnArt(art);
-            var clarity=HemoCapabilityAccess.getUnstainedProgress(p).orElseThrow();clarity.setClarityUnlocked(true);clarity.setClarity(100);
+            HemoCapabilityAccess.getKnownStillArts(p).learnArt(art);
+            var clarity=HemoCapabilityAccess.getUnstainedProgress(p);clarity.setClarityUnlocked(true);clarity.setClarity(100);
             art.performAction(p,h.getLevel(),ItemStack.EMPTY,p.blockPosition());
             h.assertTrue(casts[0]==0&&!art.isOnCooldown(p),"Paralyzed Still Art ran or spent its cooldown");
             Paralysis.onLogin(new PlayerEvent.PlayerLoggedInEvent(p));

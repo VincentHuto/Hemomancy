@@ -34,7 +34,7 @@ public class UpdateCurrentManipPacket implements CustomPacketPayload {
 				if (player == null)
 					return;
 				IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
-						.orElseThrow(NullPointerException::new);
+						;
 				List<BloodManipulation> manips = known.getManipList();
 				if (msg.selected >= 0 && msg.selected < manips.size() && manips.get(msg.selected) != null) {
 					BloodManipulation target = manips.get(msg.selected);

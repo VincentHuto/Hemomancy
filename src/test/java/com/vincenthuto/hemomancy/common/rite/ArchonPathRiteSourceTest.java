@@ -22,7 +22,7 @@ public final class ArchonPathRiteSourceTest {
 		assertContains(ordeal, "ADV_VESPER_DEFEATED");
 		assertNotContains(rites, "completePruningOfQliphoth");
 		assertContains(rites, "EnumArchonPath.APOTHEOS");
-		assertContains(rites, "degree.getArchonPath() != EnumArchonPath.APOTHEOS_PENDING");
+		assertContains(rites, "getInitiatoryDegree(caster).getArchonPath() != EnumArchonPath.APOTHEOS_PENDING");
 		assertNotContains(rites, "popFungalSpineFromBack(level, player)");
 	}
 

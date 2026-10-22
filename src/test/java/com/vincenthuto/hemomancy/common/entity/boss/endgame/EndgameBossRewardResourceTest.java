@@ -90,7 +90,7 @@ public final class EndgameBossRewardResourceTest {
 		assertGuaranteedEntityDrop("Mycophant loot table guarantees Tendril", mycophantLoot,
 				"hemomancy:mycophant_tendril");
 		assertContains("Tendril layer checks charm slot", tendrilLayer,
-				"inv.getStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX).is(ItemInit.mycophant_tendril.get())");
+				"getEquipment(player).getStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX).is(ItemInit.mycophant_tendril.get())");
 		assertContains("Tendril layer draws fungal head attachment", tendrilLayer,
 				"new MorphlingFungalHeadModel");
 		assertContains("Evening Star renderer keeps the glow layer", eveningStarRenderer,

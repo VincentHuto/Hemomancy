@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.*;
 import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
@@ -47,13 +46,13 @@ public class EquipManipulationPacket implements CustomPacketPayload {
 			if (!(player instanceof ServerPlayer serverPlayer)) return;
 
 			IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
-					.orElse(null);
+					;
 			if (known == null) return;
 
 			MemorySlotRef ref = MemorySlotRef.fromStorageKey(msg.manipName);
 			if (ref.kind() == MemoryEntryKind.MUSCLE_MEMORY) {
 				var memory = ref.muscleMemory().orElse(null);
-				if (memory == null || !player.getData(HemoAttachmentTypes.MUSCLE_MEMORY).knows(memory)) {
+				if (memory == null || !HemoCapabilityAccess.muscleMemory(player).knows(memory)) {
 					player.displayClientMessage(Component.literal("That Thelemic Memory is still unknown.")
 							.withStyle(ChatFormatting.RED), true);
 					return;

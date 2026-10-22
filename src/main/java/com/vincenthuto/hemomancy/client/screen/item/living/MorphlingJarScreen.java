@@ -184,18 +184,17 @@ public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu
 			return;
 		}
 
-		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
-			ItemStack equipped = cap.getEquippedMorphling();
-			if (equipped.isEmpty()) {
-				return;
+		var cap = HemoCapabilityAccess.getEquippedMorphling(player);
+		ItemStack equipped = cap.getEquippedMorphling();
+		if (equipped.isEmpty()) {
+			return;
+		}
+		for (int i = 0; i < this.menu.slotcount; i++) {
+			if (MorphlingIdentity.matches(this.menu.handler.getStackInSlot(i), equipped)) {
+				this.activeIndex = i;
+				break;
 			}
-			for (int i = 0; i < this.menu.slotcount; i++) {
-				if (MorphlingIdentity.matches(this.menu.handler.getStackInSlot(i), equipped)) {
-					this.activeIndex = i;
-					break;
-				}
-			}
-		});
+		}
 	}
 
 	private float getAnimationTime(float partialTicks) {

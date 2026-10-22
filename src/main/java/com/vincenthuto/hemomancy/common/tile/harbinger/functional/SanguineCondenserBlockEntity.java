@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
-import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
@@ -71,7 +70,7 @@ public class SanguineCondenserBlockEntity extends BlockEntity implements IBloodR
 
     @Override
     public IBloodVolume getBloodCapability() {
-        IBloodVolume volume = getData(HemoAttachmentTypes.BLOCK_BLOOD_VOLUME);
+        IBloodVolume volume = IBloodReservoir.super.getBloodCapability();
         volume.setActive(true);
         volume.setMaxBloodVolume(SanguineCondenserRules.poolCapacity(stage()));
         return volume;

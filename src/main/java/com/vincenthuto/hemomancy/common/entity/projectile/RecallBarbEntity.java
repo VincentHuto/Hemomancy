@@ -80,7 +80,7 @@ public class RecallBarbEntity extends AbstractArrow {
         if(age==20) {
             double ratio=victim.getHealth()/Math.max(1,victim.getMaxHealth());
             if(victim instanceof Player player) {
-                var volume=HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+                var volume=HemoCapabilityAccess.getBloodVolume(player);
                 if(volume!=null && volume.isActive() && volume.getMaxBloodVolume()>0)ratio=volume.getBloodVolume()/volume.getMaxBloodVolume();
             }
             if(PhlegethonticRules.pullToRiver(ratio))pullAnchor=deeperIchor(victim.blockPosition());
@@ -108,7 +108,7 @@ public class RecallBarbEntity extends AbstractArrow {
     }
     private void sever(LivingEntity victim) {
         if(victim instanceof ServerPlayer player) {
-            IBloodVolume volume=HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+            IBloodVolume volume=HemoCapabilityAccess.getBloodVolume(player);
             if(volume!=null && volume.isActive()) {
                 double cost=PhlegethonticRules.severCost(volume.getMaxBloodVolume());
                 if(cost>0 && volume.getBloodVolume()>=cost) {

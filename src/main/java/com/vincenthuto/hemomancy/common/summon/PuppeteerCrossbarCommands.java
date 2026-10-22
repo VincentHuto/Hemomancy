@@ -60,8 +60,7 @@ public final class PuppeteerCrossbarCommands {
 			return false;
 		}
 		Optional<PuppeteerSummonDefinition> definitionOpt = PuppeteerSummonDefinitions.byName(selectedName);
-		if (definitionOpt.isEmpty() || !HemoCapabilityAccess.getKnownSummons(player)
-				.map(known -> known.isKnown(definitionOpt.get())).orElse(false)) {
+		if (definitionOpt.isEmpty() || !HemoCapabilityAccess.getKnownSummons(player).isKnown(definitionOpt.get())) {
 			return false;
 		}
 

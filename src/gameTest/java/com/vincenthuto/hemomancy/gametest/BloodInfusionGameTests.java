@@ -37,7 +37,7 @@ public final class BloodInfusionGameTests {
 		BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
 		helper.getLevel().setBlock(pos, Blocks.STONE.defaultBlockState(), 3);
 		ServerPlayer player = player(helper);
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setActive(true);
 		blood.setBloodVolume(100.0D);
 

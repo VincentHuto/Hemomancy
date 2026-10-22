@@ -42,8 +42,7 @@ public final class AnchoriteGameTests {
     public static void strongestTendencyRewardsCarryTierTwoAndThreeTemplates(GameTestHelper helper) {
         ServerPlayer player = new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(),
                 new GameProfile(UUID.randomUUID(), "anchorite-test"), ClientInformation.createDefault());
-        HemoCapabilityAccess.getBloodTendency(player).ifPresent(tendency ->
-                tendency.setTendency(Map.of(EnumBloodTendency.LUX, 20F)));
+        HemoCapabilityAccess.getBloodTendency(player).setTendency(Map.of(EnumBloodTendency.LUX, 20F));
         ResourceLocation tierTwo = Hemomancy.rloc("scar_veil");
         ResourceLocation tierThree = Hemomancy.rloc("scar_transcendence");
         helper.assertTrue(ItemScarPattern.getScarIds(VeinMasonScarLesson.strongestForPlayer(player, 2).patternStack())

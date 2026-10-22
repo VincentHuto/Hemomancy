@@ -226,7 +226,7 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 		boolean migrateLegacyProgress = shouldMigrateLegacyProgress(level, bloomId);
 		if (entity instanceof ServerPlayer player && countsForCommunion(itemTag, player)
 				&& !itemTag.getBoolean(TAINTED_KEY)) {
-			var degree = HemoCapabilityAccess.requireInitiatoryDegree(player);
+			var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
 			int expected = bloomId == null
 					? degree.getPomesConsumedFromBloom(itemTag.getLong(BLOOM_ORIGIN_KEY))
 					: degree.getPomesConsumedFromBloom(bloomId, itemTag.getLong(BLOOM_ORIGIN_KEY), migrateLegacyProgress);
@@ -321,12 +321,11 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 	private static void applyNormalEffects(Player player, Level level, CompoundTag itemTag,
 			UUID bloomId, boolean migrateLegacyProgress) {
 		// ── Blood burst ──
-		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-			if (volume.isActive()) {
-				volume.fill(BLOOD_BURST);
-				BloodVolumeEvents.syncVolume((ServerPlayer) player, volume);
-			}
-		});
+		var volume = HemoCapabilityAccess.getBloodVolume(player);
+		if (volume.isActive()) {
+			volume.fill(BLOOD_BURST);
+			BloodVolumeEvents.syncVolume((ServerPlayer) player, volume);
+		}
 
 		// ── Regeneration II burst ──
 		player.addEffect(new MobEffectInstance(MobEffects.REGENERATION,
@@ -339,8 +338,7 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 		// ── Timed manipulation discount ──
 		long expiryTick = level.getGameTime()
 				+ QliphothPomeRules.empowermentDurationTicks(SkillPointHelper.getQliphothGestationLevel(player));
-		HemoCapabilityAccess.getInitiatoryDegree(player)
-				.ifPresent(d -> d.setPomeEmpowermentExpiry(expiryTick));
+		HemoCapabilityAccess.getInitiatoryDegree(player).setPomeEmpowermentExpiry(expiryTick);
 
 		// Husk-flavoured eat message (localized, one line per pome 1-9)
 		int huskIdx = resolveHuskIndex(itemTag);
@@ -364,8 +362,7 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 		}
 
 		// ── Total pome counter (drives the HUD tracker) ──
-		HemoCapabilityAccess.getInitiatoryDegree(player)
-				.ifPresent(d -> d.incrementTotalPomesConsumed());
+		HemoCapabilityAccess.getInitiatoryDegree(player).incrementTotalPomesConsumed();
 
 		// ── Per-bloom communion tracking (Apotheos gate) ──
 		long bloomOrigin = itemTag.getLong(BLOOM_ORIGIN_KEY);
@@ -406,35 +403,32 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 	 */
 	private static boolean trackCommunionProgress(ServerPlayer player, UUID bloomId, long bloomOrigin,
 			boolean migrateLegacyProgress) {
-		return HemoCapabilityAccess.getInitiatoryDegree(player).map(degree -> {
-			int count = bloomId == null ? degree.recordPomeConsumed(bloomOrigin)
-					: degree.recordPomeConsumed(bloomId, bloomOrigin, migrateLegacyProgress);
-			if (degree.isQliphothCommunionDone()) return false;
-			if (count >= 9) {
-				degree.setQliphothCommunionDone(true);
-				if (QliphothPomeRules.shouldGrantFungalSpine(count, degree.hasFungalSpineGranted())) {
-					QliphothBloomEvents.deliverPendingFungalSpine(player);
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
+		int count = bloomId == null ? degree.recordPomeConsumed(bloomOrigin)
+				: degree.recordPomeConsumed(bloomId, bloomOrigin, migrateLegacyProgress);
+		if (degree.isQliphothCommunionDone()) return false;
+		if (count >= 9) {
+			degree.setQliphothCommunionDone(true);
+			if (QliphothPomeRules.shouldGrantFungalSpine(count, degree.hasFungalSpineGranted())) {
+				QliphothBloomEvents.deliverPendingFungalSpine(player);
+				player.displayClientMessage(Component.literal(
+						"The ninth husk opens. A calcified thread tears free from your back.")
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
+				if (!degree.hasFungalSpineGranted()) {
 					player.displayClientMessage(Component.literal(
-							"The ninth husk opens. A calcified thread tears free from your back.")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
-					if (!degree.hasFungalSpineGranted()) {
-						player.displayClientMessage(Component.literal(
-								"Make room in your inventory to receive your Fungal Spine."), false);
-					}
+							"Make room in your inventory to receive your Fungal Spine."), false);
 				}
-				InitiatoryDegreeEvents.syncDegree(player, degree);
-				PacketHandler.sendToPlayer(player, new OpenDialoguePacket(
-						FungalWhisperDialogueTrees.qliphothCommunion()));
-				return true;
 			}
-			return false;
-		}).orElse(false);
+			InitiatoryDegreeEvents.syncDegree(player, degree);
+			PacketHandler.sendToPlayer(player, new OpenDialoguePacket(
+					FungalWhisperDialogueTrees.qliphothCommunion()));
+			return true;
+		}
+		return false;
 	}
 
 	private static void syncPomeProgress(ServerPlayer player) {
-		int progress = HemoCapabilityAccess.getInitiatoryDegree(player)
-				.map(degree -> degree.isQliphothCommunionDone() ? 9 : degree.getTotalPomesConsumed())
-				.orElse(0);
+		int progress = HemoCapabilityAccess.getInitiatoryDegree(player).isQliphothCommunionDone() ? 9 : HemoCapabilityAccess.getInitiatoryDegree(player).getTotalPomesConsumed();
 		PacketHandler.sendToPlayer(player, new PacketSyncPomeProgress(progress));
 	}
 

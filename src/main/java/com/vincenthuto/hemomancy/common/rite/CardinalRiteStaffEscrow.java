@@ -50,10 +50,9 @@ public final class CardinalRiteStaffEscrow {
 	 * An occupied hand is left alone; only the selection changes.
 	 */
 	public static void armProjectionHand(ServerPlayer player) {
-		if (!HemoCapabilityAccess.getBloodVolume(player).map(IBloodVolume::isActive).orElse(false)
-				|| HemoCapabilityAccess.getUnstainedProgress(player)
-						.map(UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false)) return;
-		var known = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+		if (!HemoCapabilityAccess.getBloodVolume(player).isActive()
+				|| UnstainedAccessRules.blocksKnownBloodPowerUse(HemoCapabilityAccess.getUnstainedProgress(player))) return;
+		var known = HemoCapabilityAccess.getKnownManipulations(player);
 		if (known == null
 				|| !known.isMemoryEquipped(MemorySlotRef.manipulation(ManipulationEquipHelper.BLOOD_PROJECTION))) return;
 		BloodManipulation projection = known.getManipList().stream()

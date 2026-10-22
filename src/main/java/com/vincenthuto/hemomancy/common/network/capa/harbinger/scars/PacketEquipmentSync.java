@@ -49,9 +49,8 @@ public class PacketEquipmentSync implements CustomPacketPayload {
 			}
 			Entity p = level.getEntity(msg.playerId);
 			if (p instanceof Player player) {
-				HemoCapabilityAccess.getEquipment(player).ifPresent(b -> {
-					b.setStackInSlot(msg.slot, msg.mindscar);
-				});
+				var b = HemoCapabilityAccess.getEquipment(player);
+				b.setStackInSlot(msg.slot, msg.mindscar);
 			}
 		});
 	}

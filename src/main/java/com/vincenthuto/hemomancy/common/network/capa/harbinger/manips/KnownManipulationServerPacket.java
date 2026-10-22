@@ -176,7 +176,7 @@ public class KnownManipulationServerPacket implements CustomPacketPayload {
 			if (player == null) {
 				return;
 			}
-			IKnownManipulations known = HemoCapabilityAccess.requireKnownManipulations(player);
+			IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 			known.setKnownManips(msg.known);
 			known.setGrandfatheredFamilyForms(msg.grandfatheredFamilyForms);
 			known.setSelectedManip(msg.selected);

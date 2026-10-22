@@ -139,20 +139,18 @@ public class LumenlaceMorphlingItem extends MorphlingItem {
 			long lastReprieve = getLastAbilityTick(stack, "InkMantleReprieve");
 			long now = player.level().getGameTime();
 			if (now - lastReprieve >= INK_MANTLE_REPRIEVE_COOLDOWN) {
-				HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-					if (!volume.isActive()) return;
-					double bloodCost = 500.0;
-					if (volume.getBloodVolume() > bloodCost) {
-						volume.drain(bloodCost);
-						player.setHealth(8.0f);
-						player.invulnerableTime = 40;
-						if (player instanceof ServerPlayer serverPlayer) {
-							BloodVolumeEvents.syncVolume(serverPlayer, volume);
-						}
-						setLastAbilityTick(stack, "InkMantleReprieve", now);
-						LastRiteHelper.consume(player, LastRiteHelper.INK_MANTLE_ID);
+				var volume = HemoCapabilityAccess.getBloodVolume(player);
+				double bloodCost = 500.0;
+				if (volume.isActive() && volume.getBloodVolume() > bloodCost) {
+					volume.drain(bloodCost);
+					player.setHealth(8.0f);
+					player.invulnerableTime = 40;
+					if (player instanceof ServerPlayer serverPlayer) {
+						BloodVolumeEvents.syncVolume(serverPlayer, volume);
 					}
-				});
+					setLastAbilityTick(stack, "InkMantleReprieve", now);
+					LastRiteHelper.consume(player, LastRiteHelper.INK_MANTLE_ID);
+				}
 			}
 		}
 

@@ -25,8 +25,8 @@ public final class BodyIdiomRules {
 
 	public static float maxIronHeartHealth(Player player) {
 		int[] bonusHearts = {0};
-		HemoCapabilityAccess.getScarState(player).ifPresent(scars -> scars.forEachActiveCerebralScar(
-				scar -> bonusHearts[0] += scar.getIronHeartCapacityBonus()));
+		HemoCapabilityAccess.getScarState(player).forEachActiveCerebralScar(
+				scar -> bonusHearts[0] += scar.getIronHeartCapacityBonus());
 		return maxIronHeartHealth(bonusHearts[0]);
 	}
 

@@ -47,7 +47,7 @@ public final class OwnerSnapshotGameTests {
             }
         };
         try {
-            var degree = (InitiatoryDegree) HemoCapabilityAccess.requireInitiatoryDegree(player);
+            var degree = (InitiatoryDegree) HemoCapabilityAccess.getInitiatoryDegree(player);
             degree.recordPomeConsumed(UUID.randomUUID(), 0L);
             degree.incrementTotalPomesConsumed();
             var saved = degree.serializeNBT(player.registryAccess());
@@ -95,8 +95,8 @@ public final class OwnerSnapshotGameTests {
             }
         };
         try {
-            var tendency = HemoCapabilityAccess.requireBloodTendency(player);
-            var vascular = HemoCapabilityAccess.requireVascularSystem(player);
+            var tendency = HemoCapabilityAccess.getBloodTendency(player);
+            var vascular = HemoCapabilityAccess.getVascularSystem(player);
             HemoCapabilityRegistrar.onLogin(new PlayerEvent.PlayerLoggedInEvent(player));
             assertPair(helper, packets, "login");
             packets.clear();

@@ -82,8 +82,7 @@ public abstract class MixinLivingEntityRenderer {
 		if (!(entity instanceof AbstractClientPlayer player)) {
 			return new AvatarManifestationTransition.Sample("", AvatarManifestationTransition.Phase.NONE, 0.0F);
 		}
-		String activeForm = HemoCapabilityAccess.getKnownManipulations(player)
-				.map(known -> known.getActiveAvatarForm()).orElse("");
+		String activeForm = HemoCapabilityAccess.getKnownManipulations(player).getActiveAvatarForm();
 		return AvatarManifestationTransition.sample(player.getUUID(), activeForm, player.tickCount, partialTick);
 	}
 

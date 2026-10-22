@@ -33,8 +33,7 @@ public class PacketSyncPomeProgress implements CustomPacketPayload {
 		ctx.enqueueWork(() -> {
 			Player player = ctx.player();
 			if (player != null) {
-				HemoCapabilityAccess.getInitiatoryDegree(player)
-						.ifPresent(degree -> degree.syncTotalPomesConsumed(msg.progress));
+				HemoCapabilityAccess.getInitiatoryDegree(player).syncTotalPomesConsumed(msg.progress);
 			}
 		});
 	}

@@ -113,9 +113,8 @@ public final class ManipulationChannelManager {
 	}
 
 	private static BloodManipulation selectedContinuous(ServerPlayer player) {
-		if (HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false)) return null;
-		var known = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+		if (UnstainedAccessRules.blocksKnownBloodPowerUse(HemoCapabilityAccess.getUnstainedProgress(player))) return null;
+		var known = HemoCapabilityAccess.getKnownManipulations(player);
 		if (known == null || known.getSelectedMemoryRef().kind() != MemoryEntryKind.MANIPULATION
 				|| known.getSelectedManip() == null) return null;
 		BloodManipulation selected = ManipulationInit.getByName(known.getSelectedManip().getName());

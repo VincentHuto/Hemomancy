@@ -115,14 +115,14 @@ public final class HemoTestScenarioCatalog {
 	private static void prepareDegree(ServerPlayer player, int degree) {
 		if (!player.getPersistentData().contains(DEGREE_SNAPSHOT_KEY)) {
 			player.getPersistentData().putInt(DEGREE_SNAPSHOT_KEY,
-					HemoCapabilityAccess.requireInitiatoryDegree(player).getDegreeNumber());
+					HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber());
 		}
-		HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(degree);
+		HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(degree);
 	}
 
 	private static void restoreDegree(ServerPlayer player) {
 		if (player.getPersistentData().contains(DEGREE_SNAPSHOT_KEY)) {
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(
 					player.getPersistentData().getInt(DEGREE_SNAPSHOT_KEY));
 			player.getPersistentData().remove(DEGREE_SNAPSHOT_KEY);
 		}

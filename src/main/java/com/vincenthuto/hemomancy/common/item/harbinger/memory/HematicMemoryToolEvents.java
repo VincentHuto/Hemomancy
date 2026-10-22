@@ -110,8 +110,8 @@ public final class HematicMemoryToolEvents {
             return;
         }
         for (ServerPlayer player : level.players()) {
-            if (!HemoCapabilityAccess.getBloodVolume(player).map(v -> v.isActive()
-                    && v.getBloodVolume() >= VeinSpiderRules.BLOOD_COST_PER_TRANSFER).orElse(false)) {
+            if (!(HemoCapabilityAccess.getBloodVolume(player).isActive()
+                    && HemoCapabilityAccess.getBloodVolume(player).getBloodVolume() >= VeinSpiderRules.BLOOD_COST_PER_TRANSFER)) {
                 continue;
             }
             for (ItemStack stack : player.getInventory().items) {
@@ -123,10 +123,9 @@ public final class HematicMemoryToolEvents {
                     continue;
                 }
                 if (tryTransfer(level, link.get())) {
-                    HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-                        volume.drain(VeinSpiderRules.BLOOD_COST_PER_TRANSFER);
-                        BloodVolumeEvents.syncVolume(player, volume);
-                    });
+                    var volume = HemoCapabilityAccess.getBloodVolume(player);
+                    volume.drain(VeinSpiderRules.BLOOD_COST_PER_TRANSFER);
+                    BloodVolumeEvents.syncVolume(player, volume);
                 }
             }
         }

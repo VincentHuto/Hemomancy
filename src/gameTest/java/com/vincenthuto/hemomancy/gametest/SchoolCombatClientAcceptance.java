@@ -122,12 +122,12 @@ public final class SchoolCombatClientAcceptance {
                 SchoolStates.apply(caster, target, SchoolState.ILLUMINATED, 170);
             } else {
                 target.setNoAi(false);
-                var known = HemoCapabilityAccess.requireKnownManipulations(caster);
+                var known = HemoCapabilityAccess.getKnownManipulations(caster);
                 known.getKnownManips().put(ManipulationInit.hematic_rebuke.get(), new ManipLevel(3, 0));
                 known.getKnownManips().put(ManipulationInit.sanguine_marionette.get(), new ManipLevel(3, 0));
                 known.setEquippedManipNames(java.util.List.of("sanguine_marionette"));
                 known.setSelectedManip(ManipulationInit.sanguine_marionette.get());
-                var volume = HemoCapabilityAccess.requireBloodVolume(caster);
+                var volume = HemoCapabilityAccess.getBloodVolume(caster);
                 volume.setActive(true); volume.setBloodVolume(3000);
                 ManipulationChannelManager.start(caster);
                 target.setOnGround(true);

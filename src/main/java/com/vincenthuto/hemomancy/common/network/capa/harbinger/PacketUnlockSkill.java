@@ -49,7 +49,7 @@ public class PacketUnlockSkill implements CustomPacketPayload {
 
 			SkillPoint skill = SkillPointInit.getById(msg.skillId);
 			if (skill == null) return;
-			SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(player);
+			SkillProgress progress = HemoCapabilityAccess.getSkillProgress(player);
 
 			if (skill.getRequiredDegree() > 0) {
 				int playerDegree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
@@ -129,7 +129,7 @@ public class PacketUnlockSkill implements CustomPacketPayload {
 	}
 
 	private static boolean tryDrainBlood(ServerPlayer player, double cost) {
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null || !volume.isActive()) {
 			player.displayClientMessage(Component.literal("Blood system inactive!")
 					.withStyle(ChatFormatting.RED), true);
@@ -147,7 +147,7 @@ public class PacketUnlockSkill implements CustomPacketPayload {
 
 	private static void syncSkills(ServerPlayer player) {
 		PacketHandler.sendToPlayer(player,
-				new PacketSyncSkills(HemoCapabilityAccess.requireSkillProgress(player).toSyncTag()));
+				new PacketSyncSkills(HemoCapabilityAccess.getSkillProgress(player).toSyncTag()));
 	}
 
 	@Override

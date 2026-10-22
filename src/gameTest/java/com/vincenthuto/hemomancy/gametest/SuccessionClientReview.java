@@ -147,7 +147,7 @@ public final class SuccessionClientReview {
             var state = new com.google.gson.JsonObject();
             state.addProperty("uuid", participant.getUUID().toString());
             state.addProperty("inventory", participant.getInventory().save(new net.minecraft.nbt.ListTag()).toString());
-            var equipment = (HarbingerEquipmentContainer) HemoCapabilityAccess.requireEquipment(participant);
+            var equipment = (HarbingerEquipmentContainer) HemoCapabilityAccess.getEquipment(participant);
             state.addProperty("equipment", equipment.serializeNBT(participant.registryAccess()).toString());
             players.add(state);
         }
@@ -247,7 +247,7 @@ public final class SuccessionClientReview {
         if (!player.server.getWorldData().getLevelName().equals("PriorityLedger_20261002"))
             throw new IllegalStateException("Ledger visual fixture requires its disposable world");
         var path = com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.valueOf(state);
-        var degree = HemoCapabilityAccess.requireInitiatoryDegree(player);
+        var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
         degree.setDegreeNumber(path == com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.APOTHEOS
                 || path == com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.SILENT_ARCHON ? 8 : 7);
         degree.setArchonPath(path);
@@ -265,11 +265,11 @@ public final class SuccessionClientReview {
     private static void setupPriorityScars(ServerPlayer player, Path root) {
         if (!player.server.getWorldData().getLevelName().equals("PriorityScars_20261002"))
             throw new IllegalStateException("Scar visual fixture requires its disposable world");
-        var degree = HemoCapabilityAccess.requireInitiatoryDegree(player);
+        var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
         degree.setDegreeNumber(6);
-        var progress = HemoCapabilityAccess.requireSkillProgress(player);
+        var progress = HemoCapabilityAccess.getSkillProgress(player);
         for (int rank = 0; rank < 3; rank++) progress.unlockOrLevel(SkillPointInit.skill_scar_resonance);
-        var scars = HemoCapabilityAccess.getScarState(player).orElseThrow();
+        var scars = HemoCapabilityAccess.getScarState(player);
         var ids = ScarInit.SCARS_TYPE_REGISTRY.keySet().stream()
                 .filter(id -> ScarInit.getByName(id.toString()).getScarType()
                         == com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarType.CEREBRAL)
@@ -335,7 +335,7 @@ public final class SuccessionClientReview {
         if (!data.getBlooms().isEmpty()) throw new IllegalStateException("Pome setup requires a fresh Bloom-free world");
         for (var participant : List.of(host,guest)) {
             if (!participant.isAlive() || participant.isSpectator()
-                    || HemoCapabilityAccess.requireInitiatoryDegree(participant).getTotalPomesConsumed() != 0
+                    || HemoCapabilityAccess.getInitiatoryDegree(participant).getTotalPomesConsumed() != 0
                     || !participant.getInventory().getItem(1).isEmpty())
                 throw new IllegalStateException("Pome participants must have no consumption progress and an empty hotbar slot 1");
             participant.getInventory().selected = 1;
@@ -349,12 +349,12 @@ public final class SuccessionClientReview {
         BloodlineSavedData.get(host.server.overworld()).registerBloodline(line);
         for (var participant : List.of(host,guest)) {
             participant.setGameMode(GameType.SURVIVAL);
-            var blood = HemoCapabilityAccess.requireBloodVolume(participant);
+            var blood = HemoCapabilityAccess.getBloodVolume(participant);
             blood.setBloodLine(line); blood.setActive(true); blood.setBloodVolume(1000);
-            HemoCapabilityAccess.requireInitiatoryDegree(participant).setDegreeNumber(7);
+            HemoCapabilityAccess.getInitiatoryDegree(participant).setDegreeNumber(7);
             BloodVolumeEvents.syncVolume(participant,blood);
             com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents
-                    .syncDegree(participant,HemoCapabilityAccess.requireInitiatoryDegree(participant));
+                    .syncDegree(participant,HemoCapabilityAccess.getInitiatoryDegree(participant));
             participant.teleportTo(level,participant == host ? .5 : 2.5,101,.5,0,20);
         }
         var center = new BlockPos(0,101,2);
@@ -387,7 +387,7 @@ public final class SuccessionClientReview {
         var players = new com.google.gson.JsonArray();
         for (var participant : List.of(host,guest)) {
             var state = new com.google.gson.JsonObject();
-            var degree = HemoCapabilityAccess.requireInitiatoryDegree(participant);
+            var degree = HemoCapabilityAccess.getInitiatoryDegree(participant);
             state.addProperty("name",participant.getGameProfile().getName());
             state.addProperty("uuid",participant.getUUID().toString());
             state.addProperty("gameMode",participant.gameMode.getGameModeForPlayer().getName());
@@ -500,12 +500,12 @@ public final class SuccessionClientReview {
         for (var participant : List.of(host, guest)) {
             participant.setGameMode(GameType.SURVIVAL);
             participant.removeAllEffects();
-            var blood = HemoCapabilityAccess.requireBloodVolume(participant);
+            var blood = HemoCapabilityAccess.getBloodVolume(participant);
             blood.setBloodLine(line); blood.setActive(true); blood.setBloodVolume(5000);
-            HemoCapabilityAccess.requireInitiatoryDegree(participant).setDegreeNumber(activation && participant == guest ? 0 : 6);
+            HemoCapabilityAccess.getInitiatoryDegree(participant).setDegreeNumber(activation && participant == guest ? 0 : 6);
             BloodVolumeEvents.syncVolume(participant, blood);
             com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents
-                    .syncDegree(participant, HemoCapabilityAccess.requireInitiatoryDegree(participant));
+                    .syncDegree(participant, HemoCapabilityAccess.getInitiatoryDegree(participant));
             if (ordeal) {
                 participant.getInventory().selected = 1;
                 participant.connection.send(new net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket(1));
@@ -538,7 +538,7 @@ public final class SuccessionClientReview {
             state.addProperty("alive", participant.isAlive());
             state.addProperty("gameMode", participant.gameMode.getGameModeForPlayer().getName());
             state.addProperty("degree", HemoCapabilityAccess.getPlayerDegreeNumber(participant));
-            state.addProperty("bloodMl", HemoCapabilityAccess.requireBloodVolume(participant).getBloodVolume());
+            state.addProperty("bloodMl", HemoCapabilityAccess.getBloodVolume(participant).getBloodVolume());
             state.addProperty("inventory", participant.getInventory().save(new net.minecraft.nbt.ListTag()).toString());
             state.addProperty("resistance", participant.hasEffect(net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE));
             state.addProperty("regeneration", participant.hasEffect(net.minecraft.world.effect.MobEffects.REGENERATION));
@@ -618,11 +618,11 @@ public final class SuccessionClientReview {
         FoundingFaneSavedData.get(level).consecrateHeart(line.getLeaderUUID(), heart);
         for (var player : List.of(host, member)) {
             player.setGameMode(GameType.SURVIVAL);
-            var blood = HemoCapabilityAccess.requireBloodVolume(player);
+            var blood = HemoCapabilityAccess.getBloodVolume(player);
             blood.setBloodLine(line);
             blood.setActive(true);
             blood.setBloodVolume(1000);
-            var degree = HemoCapabilityAccess.requireInitiatoryDegree(player);
+            var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
             degree.setDegreeNumber(5);
             BloodVolumeEvents.syncVolume(player, blood);
             com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents.syncDegree(player, degree);
@@ -641,7 +641,7 @@ public final class SuccessionClientReview {
             throw new IllegalStateException("Priority co-op status requires its disposable world");
         var result = new com.google.gson.JsonObject();
         result.addProperty("serverTick", host.serverLevel().getGameTime());
-        var line = HemoCapabilityAccess.requireBloodVolume(host).getBloodLine();
+        var line = HemoCapabilityAccess.getBloodVolume(host).getBloodLine();
         var canonical = BloodlineSavedData.get(host.server.overworld()).getBloodline(line.getBloodlineUUID());
         result.addProperty("poolBlood", canonical.getBloodVolume());
         var players = new com.google.gson.JsonArray();
@@ -650,8 +650,8 @@ public final class SuccessionClientReview {
             if (player == null) throw new IllegalStateException("Both co-op clients must remain connected");
             var state = new com.google.gson.JsonObject();
             state.addProperty("name", name);
-            state.addProperty("blood", HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume());
-            state.addProperty("degree", HemoCapabilityAccess.requireInitiatoryDegree(player).getDegreeNumber());
+            state.addProperty("blood", HemoCapabilityAccess.getBloodVolume(player).getBloodVolume());
+            state.addProperty("degree", HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber());
             state.addProperty("canonicalMember", canonical.hasMember(player.getUUID()));
             state.addProperty("covenantProof", com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter
                     .hasAdvancement(player, com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.ADV_COVENANT_WRITTEN_IN_PLACE));
@@ -673,8 +673,8 @@ public final class SuccessionClientReview {
         level.setDayTime(6000);level.setWeatherParameters(6000,0,false,false);
         var line=new Bloodline("Succession Review",p.getUUID(),UUID.randomUUID(),new ArrayList<>(List.of(p.getUUID())));
         BloodlineSavedData.get(p.server.overworld()).registerBloodline(line);
-        HemoCapabilityAccess.requireBloodVolume(p).setBloodLine(line);HemoCapabilityAccess.requireBloodVolume(p).setActive(true);HemoCapabilityAccess.requireBloodVolume(p).setBloodVolume(5000);
-        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(5);
+        HemoCapabilityAccess.getBloodVolume(p).setBloodLine(line);HemoCapabilityAccess.getBloodVolume(p).setActive(true);HemoCapabilityAccess.getBloodVolume(p).setBloodVolume(5000);
+        HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(5);
         var heart=center.offset(0,1,12);level.setBlock(heart,BlockInit.consecrated_bloodwell.get().defaultBlockState(),3);FoundingFaneSavedData.get(level).consecrateHeart(p.getUUID(),heart);
         var floor=CardinalRiteFloorRegistry.get(Hemomancy.rloc("dominion_greater")).orElseThrow();var pattern=floor.pattern().getPatternArray();
         for(int z=0;z<7;z++)for(int x=0;x<7;x++)level.setBlock(center.offset(x-3,0,3-z),floor.pattern().getSymbolList().get(String.valueOf(pattern[z][0].charAt(x))).defaultBlockState(),3);

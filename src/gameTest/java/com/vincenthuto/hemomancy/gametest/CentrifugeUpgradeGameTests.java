@@ -506,13 +506,13 @@ public final class CentrifugeUpgradeGameTests {
                 var progress = HemoCapabilityAccess.stationUpgrades(player);
                 first.requiredUsage().forEach(use -> progress.recordUse(station, use));
                 second.requiredUsage().forEach(use -> progress.recordUse(station, use));
-                HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(3);
+                HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(3);
                 helper.assertTrue(!progress.eligible(player, first), "D3 bypassed D4 gate");
-                HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(4);
+                HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(4);
                 helper.assertTrue(progress.eligible(player, first), "D4 first upgrade refused");
-                HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(5);
+                HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(5);
                 helper.assertTrue(!progress.eligible(player, second), "D5 bypassed D6 gate");
-                HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(6);
+                HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(6);
                 helper.assertTrue(progress.eligible(player, second), "D6 second upgrade refused");
                 var alchemist = EntityInit.harbinger_alchemist.get().create(helper.getLevel());
                 var artificer = EntityInit.harbinger_artificer.get().create(helper.getLevel());

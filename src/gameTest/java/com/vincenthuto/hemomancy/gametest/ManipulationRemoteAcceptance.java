@@ -54,8 +54,8 @@ public final class ManipulationRemoteAcceptance {
             caster.hurt(caster.damageSources().mobAttack(enemy),2);
         }
         if(phase==150) {
-            var known=HemoCapabilityAccess.requireKnownManipulations(caster);
-            double blood=HemoCapabilityAccess.requireBloodVolume(caster).getBloodVolume();
+            var known=HemoCapabilityAccess.getKnownManipulations(caster);
+            double blood=HemoCapabilityAccess.getBloodVolume(caster).getBloodVolume();
             if(scene==0)check(known.getKnownManips().containsKey(ManipulationInit.blood_shot.get())
                     && caster.getMainHandItem().isEmpty() && blood<beforeBlood-490,"crude memory use learned Shot, consumed shard and paid 500 mL");
             if(scene==1)check(enemy!=null && enemy.getHealth()<20,"network Blood Shot damaged ordinary hostile");
@@ -106,9 +106,9 @@ public final class ManipulationRemoteAcceptance {
         caster.removeAllEffects();observer.removeAllEffects();caster.setHealth(20);observer.setHealth(20);
         caster.getFoodData().setFoodLevel(20);observer.getFoodData().setFoodLevel(20);
         caster.getInventory().clearContent();caster.setItemInHand(InteractionHand.MAIN_HAND,ItemStack.EMPTY);
-        var volume=HemoCapabilityAccess.requireBloodVolume(caster);volume.setActive(true);volume.setMaxBloodVolume(6000);volume.setBloodVolume(scene==2?0:5000);
-        var known=HemoCapabilityAccess.requireKnownManipulations(caster);
-        HemoCapabilityAccess.getInitiatoryDegree(caster).orElseThrow().setDegreeNumber(scene==0?0:7);
+        var volume=HemoCapabilityAccess.getBloodVolume(caster);volume.setActive(true);volume.setMaxBloodVolume(6000);volume.setBloodVolume(scene==2?0:5000);
+        var known=HemoCapabilityAccess.getKnownManipulations(caster);
+        HemoCapabilityAccess.getInitiatoryDegree(caster).setDegreeNumber(scene==0?0:7);
         if(scene==0) {
             known.getKnownManips().clear();known.setEquippedManipNames(List.of());
             caster.setItemInHand(InteractionHand.MAIN_HAND,new ItemStack(ItemInit.crude_memory_blood_shot.get()));
@@ -116,7 +116,7 @@ public final class ManipulationRemoteAcceptance {
             var power=ManipulationInit.getByName(POWERS[scene]);
             if(scene!=1)known.getKnownManips().put(power,new ManipLevel(0,0));
             known.setEquippedManipNames(List.of(power.getName()));known.setSelectedManip(power);
-            HemoCapabilityAccess.getBloodTendency(caster).orElseThrow().setTendencyAlignment(power.getTend(),(float)power.getAlignLevel());
+            HemoCapabilityAccess.getBloodTendency(caster).setTendencyAlignment(power.getTend(),(float)power.getAlignLevel());
         }
         if(scene!=0 && scene!=3) {
             enemy=EntityType.HUSK.create(level);enemy.setPos(x+.5,100,7.5);enemy.setNoAi(true);level.addFreshEntity(enemy);

@@ -119,8 +119,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		if (level == null || level.isClientSide) return false;
 		if (phase != RitualPhase.IDLE) return false;
 
-		int degree = HemoCapabilityAccess.getInitiatoryDegree(player)
-				.map(d -> d.getDegreeNumber()).orElse(0);
+		int degree = HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber();
 		if (degree < REQUIRED_DEGREE) {
 			sendStatusToPlayer(player, "You lack the initiatory degree to peer into the visceral mirror.");
 			return false;
@@ -139,7 +138,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		}
 
 		IVisceralOrgans organs = HemoCapabilityAccess.getVisceralOrgans(player)
-				.orElse(null);
+				;
 		if (organs != null && organs.getOrganLevel(organ) >= 3) {
 			sendStatusToPlayer(player, "This organ has already reached its maximum modification.");
 			return false;
@@ -156,7 +155,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		}
 
 		double cost = organ.getTier() * BLOOD_COST_PER_TIER;
-		IBloodVolume vol = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume vol = HemoCapabilityAccess.getBloodVolume(player);
 		if (vol == null || vol.getBloodVolume() < cost) {
 			sendStatusToPlayer(player, "Insufficient blood to sustain the extraction ritual.");
 			return false;
@@ -195,14 +194,13 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		ritualTicks++;
 
 		double drainPerTick = (targetOrgan.getTier() * BLOOD_COST_PER_TIER) / totalRitualTicks;
-		HemoCapabilityAccess.getBloodVolume(player).ifPresent(vol -> {
-			if (!vol.drain(drainPerTick)) {
-				if (player instanceof ServerPlayer sp) {
-					sendProgressUpdate(sp, "Your blood runs dry. The ritual fails.");
-				}
-				cancelRitual(player);
+		var vol = HemoCapabilityAccess.getBloodVolume(player);
+		if (!vol.drain(drainPerTick)) {
+			if (player instanceof ServerPlayer sp) {
+				sendProgressUpdate(sp, "Your blood runs dry. The ritual fails.");
 			}
-		});
+			cancelRitual(player);
+		}
 
 		if (phase == RitualPhase.IDLE) return; // Was cancelled in drain check
 

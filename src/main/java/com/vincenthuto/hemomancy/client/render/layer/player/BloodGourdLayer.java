@@ -68,61 +68,60 @@ public class BloodGourdLayer<T extends LivingEntity, M extends HumanoidModel<T>>
             return;
         }
         if (ent instanceof Player player) {
-            HemoCapabilityAccess.getEquipment(player).ifPresent(inv -> {
-                if (!inv.isRenderLayerVisible(HarbingerEquipmentMenu.GOURD_SLOT_INDEX)) {
-                    return;
+            var inv = HemoCapabilityAccess.getEquipment(player);
+            if (!inv.isRenderLayerVisible(HarbingerEquipmentMenu.GOURD_SLOT_INDEX)) {
+                return;
+            }
+            var stack = inv.getStackInSlot(HarbingerEquipmentMenu.GOURD_SLOT_INDEX);
+            if (stack.getItem() instanceof BloodGourdItem gourd) {
+                this.translateToBody(matrixStack);
+
+                boolean isOpen = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
+                        .copyTag().getBoolean(BloodGourdItem.TAG_STATE);
+
+                ResourceLocation text;
+                if (gourd == ItemInit.curved_horn.get()) {
+                    text = isOpen ? curved_open : curved;
+                } else if (gourd == ItemInit.hemorath_rib.get()) {
+                    text = isOpen ? hemorath_rib_open : hemorath_rib;
+                } else if (gourd == ItemInit.dried_gourd.get()) {
+                    text = isOpen ? dried_open : dried;
+                } else if (gourd == ItemInit.blood_gourd_white.get()) {
+                    text = isOpen ? white_open : white;
+                } else if (gourd == ItemInit.blood_gourd_red.get()) {
+                    text = isOpen ? red_open : red;
+                } else if (gourd == ItemInit.blood_gourd_black.get()) {
+                    text = isOpen ? black_open : black;
+                } else {
+                    text = isOpen ? dried_open : dried;
                 }
-                var stack = inv.getStackInSlot(HarbingerEquipmentMenu.GOURD_SLOT_INDEX);
-                if (stack.getItem() instanceof BloodGourdItem gourd) {
-                    this.translateToBody(matrixStack);
 
-                    boolean isOpen = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
-                            .copyTag().getBoolean(BloodGourdItem.TAG_STATE);
-
-                    ResourceLocation text;
-                    if (gourd == ItemInit.curved_horn.get()) {
-                        text = isOpen ? curved_open : curved;
-                    } else if (gourd == ItemInit.hemorath_rib.get()) {
-                        text = isOpen ? hemorath_rib_open : hemorath_rib;
-                    } else if (gourd == ItemInit.dried_gourd.get()) {
-                        text = isOpen ? dried_open : dried;
-                    } else if (gourd == ItemInit.blood_gourd_white.get()) {
-                        text = isOpen ? white_open : white;
-                    } else if (gourd == ItemInit.blood_gourd_red.get()) {
-                        text = isOpen ? red_open : red;
-                    } else if (gourd == ItemInit.blood_gourd_black.get()) {
-                        text = isOpen ? black_open : black;
-                    } else {
-                        text = isOpen ? dried_open : dried;
-                    }
-
-                    if (gourd == ItemInit.curved_horn.get()) {
-                        VertexConsumer ivertexbuilder = buffer.getBuffer(RenderType.text(text));
-                        if (isOpen) {
-                            modelOpenCurvedHorn.renderToBuffer(matrixStack, ivertexbuilder, lightness,
-                                    OverlayTexture.NO_OVERLAY, -1);
-                        } else {
-                            modelCurvedHorn.renderToBuffer(matrixStack, ivertexbuilder, lightness,
-                                    OverlayTexture.NO_OVERLAY, -1);
-                        }
-                    } else if (gourd == ItemInit.hemorath_rib.get()) {
-                        VertexConsumer ivertexbuilder = buffer.getBuffer(RenderType.text(text));
-                        modelHemorathRib.renderToBuffer(matrixStack, ivertexbuilder, lightness,
+                if (gourd == ItemInit.curved_horn.get()) {
+                    VertexConsumer ivertexbuilder = buffer.getBuffer(RenderType.text(text));
+                    if (isOpen) {
+                        modelOpenCurvedHorn.renderToBuffer(matrixStack, ivertexbuilder, lightness,
                                 OverlayTexture.NO_OVERLAY, -1);
                     } else {
-                        VertexConsumer ivertexbuilder = buffer.getBuffer(RenderType.text(text));
-                        if (isOpen) {
-                            modelOpenBloodGourd.renderToBuffer(matrixStack, ivertexbuilder, lightness,
-                                    OverlayTexture.NO_OVERLAY, -1);
-                        } else {
-                            modelBloodGourd.renderToBuffer(matrixStack, ivertexbuilder, lightness,
-                                    OverlayTexture.NO_OVERLAY, -1);
-                        }
-
+                        modelCurvedHorn.renderToBuffer(matrixStack, ivertexbuilder, lightness,
+                                OverlayTexture.NO_OVERLAY, -1);
+                    }
+                } else if (gourd == ItemInit.hemorath_rib.get()) {
+                    VertexConsumer ivertexbuilder = buffer.getBuffer(RenderType.text(text));
+                    modelHemorathRib.renderToBuffer(matrixStack, ivertexbuilder, lightness,
+                            OverlayTexture.NO_OVERLAY, -1);
+                } else {
+                    VertexConsumer ivertexbuilder = buffer.getBuffer(RenderType.text(text));
+                    if (isOpen) {
+                        modelOpenBloodGourd.renderToBuffer(matrixStack, ivertexbuilder, lightness,
+                                OverlayTexture.NO_OVERLAY, -1);
+                    } else {
+                        modelBloodGourd.renderToBuffer(matrixStack, ivertexbuilder, lightness,
+                                OverlayTexture.NO_OVERLAY, -1);
                     }
 
                 }
-            });
+
+            }
         }
     }
 

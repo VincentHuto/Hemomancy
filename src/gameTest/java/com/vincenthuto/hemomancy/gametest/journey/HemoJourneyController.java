@@ -121,7 +121,7 @@ public final class HemoJourneyController {
 			player.getPersistentData().putString(VERIFIED_STAGE_KEY, current.id());
 		}
 		HemoJourneyStage next = HemoJourneyTransition.next(current, true, true,
-				HemoCapabilityAccess.requireInitiatoryDegree(player).getArchonPath(),
+				HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath(),
 				player.getPersistentData().getBoolean(MAIN_ONLY_KEY));
 		CompoundTag priorBaseline = player.getPersistentData().getCompound(HemoJourneyFixtures.BASELINE_KEY).copy();
 		BlockPos preparedOrigin = origin;

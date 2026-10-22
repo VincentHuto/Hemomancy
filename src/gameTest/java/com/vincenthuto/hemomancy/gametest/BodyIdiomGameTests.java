@@ -54,7 +54,7 @@ public final class BodyIdiomGameTests {
 	public static void standardFerricScarsStackIronHeartCapacity(GameTestHelper helper) {
 		ServerPlayer player = player(helper);
 		try {
-			var scars = HemoCapabilityAccess.requireScarState(player);
+			var scars = HemoCapabilityAccess.getScarState(player);
 			scars.activateCerebralScar(Hemomancy.rloc("scar_thorn"));
 			scars.activateCerebralScar(Hemomancy.rloc("scar_crucible"));
 			scars.activateCerebralScar(Hemomancy.rloc("scar_blood_honed"));
@@ -70,7 +70,7 @@ public final class BodyIdiomGameTests {
 	public static void removingFerricScarTrimsIronHeartsToNewCapacity(GameTestHelper helper) {
 		ServerPlayer player = player(helper);
 		try {
-			var scars = HemoCapabilityAccess.requireScarState(player);
+			var scars = HemoCapabilityAccess.getScarState(player);
 			scars.activateCerebralScar(Hemomancy.rloc("scar_thorn"));
 			scars.activateCerebralScar(Hemomancy.rloc("scar_crucible"));
 			var state = HemoCapabilityAccess.getPowerGuardrails(player);
@@ -89,11 +89,11 @@ public final class BodyIdiomGameTests {
 	public static void activeBlackheartedConvertsWitherDamage(GameTestHelper helper) {
 		ServerPlayer player = player(helper);
 		try {
-			var known = HemoCapabilityAccess.getKnownManipulations(player).orElseThrow();
+			var known = HemoCapabilityAccess.getKnownManipulations(player);
 			known.setEquippedManipNames(List.of("blackhearted"));
 			known.togglePassive("blackhearted");
-			HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-			HemoCapabilityAccess.getBloodTendency(player).orElseThrow().setTendencyAlignment(
+			HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+			HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(
 					com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.MORTEM, 35);
 			player.setHealth(10.0F);
 			LivingIncomingDamageEvent event = damage(player, helper.getLevel().damageSources().wither(), 4.0F);
@@ -115,7 +115,7 @@ public final class BodyIdiomGameTests {
 	public static void inactiveBlackheartedDoesNotConvertWitherDamage(GameTestHelper helper) {
 		ServerPlayer player = player(helper);
 		try {
-			HemoCapabilityAccess.getKnownManipulations(player).orElseThrow()
+			HemoCapabilityAccess.getKnownManipulations(player)
 					.setEquippedManipNames(List.of("blackhearted"));
 			LivingIncomingDamageEvent event = damage(player, helper.getLevel().damageSources().wither(), 4.0F);
 

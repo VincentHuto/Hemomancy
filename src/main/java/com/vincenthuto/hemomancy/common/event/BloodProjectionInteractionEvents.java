@@ -60,9 +60,8 @@ public final class BloodProjectionInteractionEvents {
 		boolean projecting = held.getItem() instanceof BloodProjectionItem
 				|| held.getItem() instanceof LivingStaffItem
 						&& LivingStaffItem.isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_PROJECTION);
-		return projecting && HemoCapabilityAccess.getBloodVolume(player)
-				.map(volume -> volume.getBloodLine().isValid()
-						&& volume.getBloodLine().hasNpcMember(target.getUUID())).orElse(false);
+		return projecting && (HemoCapabilityAccess.getBloodVolume(player).getBloodLine().isValid()
+						&& HemoCapabilityAccess.getBloodVolume(player).getBloodLine().hasNpcMember(target.getUUID()));
 	}
 
 	static boolean isBloodToolUse(Player player, ItemStack stack) {

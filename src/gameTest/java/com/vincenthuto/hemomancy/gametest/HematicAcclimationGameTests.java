@@ -36,7 +36,7 @@ public final class HematicAcclimationGameTests {
 		Cow cow = helper.spawn(EntityType.COW, new BlockPos(1, 1, 1));
 		Zombie zombie = helper.spawn(EntityType.ZOMBIE, new BlockPos(3, 1, 1));
 		try {
-			var blood = HemoCapabilityAccess.requireBloodVolume(player);
+			var blood = HemoCapabilityAccess.getBloodVolume(player);
 			blood.setMaxBloodVolume(5000.0D);
 			blood.setBloodVolume(0.0D);
 			long now = helper.getLevel().getGameTime();
@@ -66,7 +66,7 @@ public final class HematicAcclimationGameTests {
 		Cow cow = helper.spawn(EntityType.COW, new BlockPos(1, 1, 1));
 		Zombie zombie = helper.spawn(EntityType.ZOMBIE, new BlockPos(3, 1, 1));
 		try {
-			var blood = HemoCapabilityAccess.requireBloodVolume(player);
+			var blood = HemoCapabilityAccess.getBloodVolume(player);
 			blood.setMaxBloodVolume(5000.0D);
 			blood.setBloodVolume(0.0D);
 			long now = helper.getLevel().getGameTime();
@@ -96,7 +96,7 @@ public final class HematicAcclimationGameTests {
 		ServerPlayer player = player(helper);
 		Cow cow = helper.spawn(EntityType.COW, new BlockPos(1, 1, 1));
 		try {
-			var blood = HemoCapabilityAccess.requireBloodVolume(player);
+			var blood = HemoCapabilityAccess.getBloodVolume(player);
 			blood.setMaxBloodVolume(5000.0D);
 			blood.setBloodVolume(0.0D);
 			cow.setHealth(1.5F);

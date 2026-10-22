@@ -47,6 +47,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -186,7 +187,7 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock implements BlockB
 			return 0.0D;
 		}
 
-		IBloodVolume playerBlood = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume playerBlood = HemoCapabilityAccess.getBloodVolume(player);
 		if (playerBlood == null || !playerBlood.isActive()) {
 			player.displayClientMessage(Component.translatable(
 					"block.hemomancy.consecrated_bloodwell.inactive").withStyle(ChatFormatting.GRAY), true);
@@ -232,7 +233,7 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock implements BlockB
 			return 0.0D;
 		}
 
-		IBloodVolume playerBlood = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume playerBlood = HemoCapabilityAccess.getBloodVolume(player);
 		if (playerBlood == null || !playerBlood.isActive()) {
 			player.displayClientMessage(Component.translatable(
 					"block.hemomancy.consecrated_bloodwell.inactive").withStyle(ChatFormatting.GRAY), true);
@@ -269,8 +270,7 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock implements BlockB
 
 	public static boolean isInOwnFane(ServerPlayer player) {
 		FoundingFaneSavedData data = FoundingFaneSavedData.get((ServerLevel) player.level());
-		UUID owner = HemoCapabilityAccess.getBloodVolume(player)
-				.map(IBloodVolume::getBloodLine)
+		UUID owner = Optional.of(HemoCapabilityAccess.getBloodVolume(player).getBloodLine())
 				.filter(Bloodline::isValid)
 				.map(Bloodline::getLeaderUUID)
 				.orElse(player.getUUID());
@@ -278,8 +278,7 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock implements BlockB
 	}
 
 	public static boolean canUseBloodwell(ServerPlayer player, BlockPos bloodwellPos) {
-		return HemoCapabilityAccess.getBloodVolume(player)
-				.map(IBloodVolume::getBloodLine)
+		return Optional.of(HemoCapabilityAccess.getBloodVolume(player).getBloodLine())
 				.filter(Bloodline::isValid)
 				.filter(bloodline -> bloodline.hasMember(player.getUUID()))
 				.map(Bloodline::getLeaderUUID)
@@ -306,8 +305,7 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock implements BlockB
 	}
 
 	private static void syncLinkedPool(ServerPlayer player, BlockPos pos) {
-		HemoCapabilityAccess.getBloodVolume(player)
-				.map(IBloodVolume::getBloodLine)
+		Optional.of(HemoCapabilityAccess.getBloodVolume(player).getBloodLine())
 				.filter(Bloodline::isValid)
 				.filter(bloodline -> bloodline.hasMember(player.getUUID()))
 				.ifPresent(bloodline -> {

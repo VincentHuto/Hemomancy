@@ -102,8 +102,7 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.succe
     private static boolean hasClarityUnlocked(LivingEntity entity) {
         if(entity instanceof Player player) {
             return HemoCapabilityAccess.getUnstainedProgress(player)
-                    .map(IUnstainedProgress::hasClarityUnlocked)
-                    .orElse(false);
+                    .hasClarityUnlocked();
         }
         return false;
     }
@@ -114,31 +113,24 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.succe
      * Recruit and expel dialogue options are only offered when this is true.
      */
     private static boolean hasBloodline(Player player) {
-        return HemoCapabilityAccess.getBloodVolume(player)
-                .map(vol -> vol.getBloodLine().isValid())
-                .orElse(false);
+        return HemoCapabilityAccess.getBloodVolume(player).getBloodLine().isValid();
     }
 
     private static boolean isNpcInPlayerBloodline(Player player, Entity npc) {
-        return HemoCapabilityAccess.getBloodVolume(player)
-                .map(vol -> vol.getBloodLine().isValid() && vol.getBloodLine().hasNpcMember(npc.getUUID()))
-                .orElse(false);
+        return HemoCapabilityAccess.getBloodVolume(player).getBloodLine().isValid() && HemoCapabilityAccess.getBloodVolume(player).getBloodLine().hasNpcMember(npc.getUUID());
     }
 
     private static boolean canShowRecruitment(Player player, Entity npc) {
-        return HemoCapabilityAccess.getBloodVolume(player)
-                .map(vol -> vol.getBloodLine().isValid()
-                        && (vol.getBloodLine().hasNpcMember(npc.getUUID())
-                        || HarbingerRecruitmentRules.canRecruitNpc(vol.getBloodLine(), npc)))
-                .orElse(false);
+        var line = HemoCapabilityAccess.getBloodVolume(player).getBloodLine();
+        return line.isValid()
+                && (line.hasNpcMember(npc.getUUID()) || HarbingerRecruitmentRules.canRecruitNpc(line, npc));
     }
 
     /**
      * Returns true if the given player has begun purification but not yet entered Clarity. */
     private static boolean isPurifying(Player player) {
         return HemoCapabilityAccess.getUnstainedProgress(player)
-                .map(IUnstainedProgress::hasBegunPurification)
-                .orElse(false);
+                .hasBegunPurification();
     }
 
     private static boolean hasAbocipherLiteracy(Player player) {
@@ -155,7 +147,7 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.succe
      */
     private static boolean hasPomeEmpowerment(Player player) {
         long expiry = HemoCapabilityAccess.getInitiatoryDegree(player)
-                .map(IInitiatoryDegree::getPomeEmpowermentExpiry).orElse(0L);
+                .getPomeEmpowermentExpiry();
         return expiry > 0 && player.level().getGameTime() < expiry;
     }
 
@@ -230,9 +222,7 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.succe
         tree = HarbingerVicarDialogueTrees.withContinuingConsecration(tree, degree,
                 com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEventHandler.hasClaimedConsecrationKit(serverPlayer));
         if (degree == 5 || degree == 6) {
-            var bloodline = HemoCapabilityAccess.getBloodVolume(serverPlayer)
-                    .map(volume -> volume.getBloodLine()).orElse(
-                            com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline.NOBLOODLINE);
+            var bloodline = HemoCapabilityAccess.getBloodVolume(serverPlayer).getBloodLine();
             boolean foundedBloodline = bloodline.isValid()
                     && serverPlayer.getUUID().equals(bloodline.getLeaderUUID());
             boolean faneComplete = HarbingerChapterProgression.completedChapters(serverPlayer)

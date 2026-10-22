@@ -196,10 +196,10 @@ public final class PaleIntercessionGameTests {
 		};
 		BlockPos position = helper.absolutePos(new BlockPos(1, 2, 1));
 		player.setPos(position.getX() + .5, position.getY(), position.getZ() + .5);
-		var progress = HemoCapabilityAccess.requireUnstainedProgress(player);
+		var progress = HemoCapabilityAccess.getUnstainedProgress(player);
 		progress.setClarityUnlocked(true);
 		progress.setClarity(75);
-		HemoCapabilityAccess.requireKnownStillArts(player).learnArt(StillArtInit.pale_intercession.get());
+		HemoCapabilityAccess.getKnownStillArts(player).learnArt(StillArtInit.pale_intercession.get());
 		return player;
 	}
 }

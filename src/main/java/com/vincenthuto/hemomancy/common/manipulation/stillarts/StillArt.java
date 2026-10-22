@@ -71,7 +71,7 @@ public class StillArt {
 	}
 
 	public boolean isUnlockedFor(Player player) {
-		IUnstainedProgress progress = HemoCapabilityAccess.getUnstainedProgress(player).orElse(null);
+		IUnstainedProgress progress = HemoCapabilityAccess.getUnstainedProgress(player);
 		if (progress == null || !progress.hasClarityUnlocked()) {
 			return false;
 		}
@@ -115,9 +115,7 @@ public class StillArt {
 					.withStyle(ChatFormatting.GRAY), true);
 			return;
 		}
-		if (!HemoCapabilityAccess.getKnownStillArts(serverPlayer)
-				.map(known -> known.isKnown(this))
-				.orElse(false)) {
+		if (!HemoCapabilityAccess.getKnownStillArts(serverPlayer).isKnown(this)) {
 			serverPlayer.displayClientMessage(Component.literal("The Lady has not granted you this Still Art.")
 					.withStyle(ChatFormatting.GRAY), true);
 			return;

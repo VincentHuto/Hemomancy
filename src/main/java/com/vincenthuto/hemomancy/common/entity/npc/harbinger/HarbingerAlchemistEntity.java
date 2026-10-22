@@ -189,34 +189,26 @@ public class HarbingerAlchemistEntity extends com.vincenthuto.hemomancy.common.s
     /** Returns true if the given player has unlocked the Clarity phase (Unstained Phase 2). */
     private static boolean hasClarityUnlocked(Player player) {
         return HemoCapabilityAccess.getUnstainedProgress(player)
-                .map(IUnstainedProgress::hasClarityUnlocked)
-                .orElse(false);
+                .hasClarityUnlocked();
     }
 
     private static boolean hasBloodline(Player player) {
-        return HemoCapabilityAccess.getBloodVolume(player)
-                .map(vol -> vol.getBloodLine().isValid())
-                .orElse(false);
+        return HemoCapabilityAccess.getBloodVolume(player).getBloodLine().isValid();
     }
 
     private static boolean isNpcInPlayerBloodline(Player player, Entity npc) {
-        return HemoCapabilityAccess.getBloodVolume(player)
-                .map(vol -> vol.getBloodLine().isValid() && vol.getBloodLine().hasNpcMember(npc.getUUID()))
-                .orElse(false);
+        return HemoCapabilityAccess.getBloodVolume(player).getBloodLine().isValid() && HemoCapabilityAccess.getBloodVolume(player).getBloodLine().hasNpcMember(npc.getUUID());
     }
 
     private static boolean canShowRecruitment(Player player, Entity npc) {
-        return HemoCapabilityAccess.getBloodVolume(player)
-                .map(vol -> vol.getBloodLine().isValid()
-                        && (vol.getBloodLine().hasNpcMember(npc.getUUID())
-                        || HarbingerRecruitmentRules.canRecruitNpc(vol.getBloodLine(), npc)))
-                .orElse(false);
+        var line = HemoCapabilityAccess.getBloodVolume(player).getBloodLine();
+        return line.isValid()
+                && (line.hasNpcMember(npc.getUUID()) || HarbingerRecruitmentRules.canRecruitNpc(line, npc));
     }
 
     /** Returns true if the given player has begun purification but not yet entered Clarity. */
     private static boolean isPurifying(Player player) {
         return HemoCapabilityAccess.getUnstainedProgress(player)
-                .map(IUnstainedProgress::hasBegunPurification)
-                .orElse(false);
+                .hasBegunPurification();
     }
 }

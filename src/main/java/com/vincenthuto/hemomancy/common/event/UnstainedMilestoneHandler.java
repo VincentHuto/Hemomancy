@@ -44,55 +44,54 @@ public class UnstainedMilestoneHandler {
 		if (!(player instanceof ServerPlayer serverPlayer)) return;
 		if (player.tickCount % EFFECT_REFRESH_INTERVAL != 0) return;
 
-		HemoCapabilityAccess.getUnstainedProgress(serverPlayer).ifPresent(progress -> {
-			if (!progress.hasBegunPurification()) return;
+		var progress = HemoCapabilityAccess.getUnstainedProgress(serverPlayer);
+		if (!progress.hasBegunPurification()) return;
 
-			EnumPurityStage purityStage = EnumPurityStage.byPurity(progress.getPurity());
-			EnumClarityStage clarityStage = progress.hasClarityUnlocked()
-					? EnumClarityStage.byClarity(progress.getClarity())
-					: EnumClarityStage.AWAKENED;
+		EnumPurityStage purityStage = EnumPurityStage.byPurity(progress.getPurity());
+		EnumClarityStage clarityStage = progress.hasClarityUnlocked()
+				? EnumClarityStage.byClarity(progress.getClarity())
+				: EnumClarityStage.AWAKENED;
 
-			//  Grant purity stage advancements 
-			checkPurityStageAdvancements(serverPlayer, purityStage);
+		//  Grant purity stage advancements 
+		checkPurityStageAdvancements(serverPlayer, purityStage);
 
-			//  Grant clarity stage advancements 
-			if (progress.hasClarityUnlocked()) {
-				checkClarityStageAdvancements(serverPlayer, clarityStage);
+		//  Grant clarity stage advancements 
+		if (progress.hasClarityUnlocked()) {
+			checkClarityStageAdvancements(serverPlayer, clarityStage);
+		}
+
+		//  Verdigris Aura: unlocked at TAINTED (25+), amplifier scales with purity stage 
+		if (progress.isVerdigrisAuraEnabled() && purityStage.getLevel() >= EnumPurityStage.TAINTED.getLevel()) {
+			int auraAmplifier = purityStage.getLevel() - 1; // 0 at TAINTED, 1 at CLEANSING, 2 at ABSOLVED, 3 at PURIFIED
+			MobEffectInstance existing = serverPlayer.getEffect(EffectInit.verdigris_aura);
+			if (existing == null || existing.getAmplifier() < auraAmplifier || existing.getDuration() < 40) {
+				serverPlayer.addEffect(new MobEffectInstance(
+						EffectInit.verdigris_aura, AUTO_EFFECT_DURATION, auraAmplifier, false, false, false));
 			}
+		}
 
-			//  Verdigris Aura: unlocked at TAINTED (25+), amplifier scales with purity stage 
-			if (progress.isVerdigrisAuraEnabled() && purityStage.getLevel() >= EnumPurityStage.TAINTED.getLevel()) {
-				int auraAmplifier = purityStage.getLevel() - 1; // 0 at TAINTED, 1 at CLEANSING, 2 at ABSOLVED, 3 at PURIFIED
-				MobEffectInstance existing = serverPlayer.getEffect(EffectInit.verdigris_aura);
-				if (existing == null || existing.getAmplifier() < auraAmplifier || existing.getDuration() < 40) {
-					serverPlayer.addEffect(new MobEffectInstance(
-							EffectInit.verdigris_aura, AUTO_EFFECT_DURATION, auraAmplifier, false, false, false));
-				}
+		//  Silver Ward: unlocked at DISCERNING clarity (25+), amplifier scales with clarity stage 
+		if (progress.isSilverWardEnabled() && progress.hasClarityUnlocked()
+				&& clarityStage.getLevel() >= EnumClarityStage.DISCERNING.getLevel()) {
+			int wardAmplifier = clarityStage.getLevel() - 1; // 0 at DISCERNING, 1 at VIGILANT, 2 at RESOLUTE, 3 at ENLIGHTENED
+			MobEffectInstance existing = serverPlayer.getEffect(EffectInit.silver_ward);
+			if (existing == null || existing.getAmplifier() < wardAmplifier || existing.getDuration() < 40) {
+				serverPlayer.addEffect(new MobEffectInstance(
+						EffectInit.silver_ward, AUTO_EFFECT_DURATION, wardAmplifier, false, false, false));
 			}
+		}
 
-			//  Silver Ward: unlocked at DISCERNING clarity (25+), amplifier scales with clarity stage 
-			if (progress.isSilverWardEnabled() && progress.hasClarityUnlocked()
-					&& clarityStage.getLevel() >= EnumClarityStage.DISCERNING.getLevel()) {
-				int wardAmplifier = clarityStage.getLevel() - 1; // 0 at DISCERNING, 1 at VIGILANT, 2 at RESOLUTE, 3 at ENLIGHTENED
-				MobEffectInstance existing = serverPlayer.getEffect(EffectInit.silver_ward);
-				if (existing == null || existing.getAmplifier() < wardAmplifier || existing.getDuration() < 40) {
-					serverPlayer.addEffect(new MobEffectInstance(
-							EffectInit.silver_ward, AUTO_EFFECT_DURATION, wardAmplifier, false, false, false));
-				}
-			}
-
-			//  Vigilant+ clarity: apply Glowing to nearby hemomancy mobs 
-			if (progress.hasClarityUnlocked() && clarityStage.getLevel() >= EnumClarityStage.VIGILANT.getLevel()) {
-				double detectionRadius = 16.0 + clarityStage.getLevel() * 4.0;
-				serverPlayer.level().getEntitiesOfClass(LivingEntity.class,
-						serverPlayer.getBoundingBox().inflate(detectionRadius),
-						e -> e != serverPlayer && e.getType().is(EntityInit.HEMOMANCY_MOB)
-				).forEach(mob -> {
-					mob.addEffect(new MobEffectInstance(
-							net.minecraft.world.effect.MobEffects.GLOWING, AUTO_EFFECT_DURATION, 0, false, false, false));
-				});
-			}
-		});
+		//  Vigilant+ clarity: apply Glowing to nearby hemomancy mobs 
+		if (progress.hasClarityUnlocked() && clarityStage.getLevel() >= EnumClarityStage.VIGILANT.getLevel()) {
+			double detectionRadius = 16.0 + clarityStage.getLevel() * 4.0;
+			serverPlayer.level().getEntitiesOfClass(LivingEntity.class,
+					serverPlayer.getBoundingBox().inflate(detectionRadius),
+					e -> e != serverPlayer && e.getType().is(EntityInit.HEMOMANCY_MOB)
+			).forEach(mob -> {
+				mob.addEffect(new MobEffectInstance(
+						net.minecraft.world.effect.MobEffects.GLOWING, AUTO_EFFECT_DURATION, 0, false, false, false));
+			});
+		}
 	}
 
 	//
@@ -169,14 +168,13 @@ public class UnstainedMilestoneHandler {
 		if (event.getSource().getEntity() instanceof Player attacker && !attacker.level().isClientSide()) {
 			LivingEntity target = event.getEntity();
 			if (target.getType().is(EntityInit.HEMOMANCY_MOB)) {
-				HemoCapabilityAccess.getUnstainedProgress(attacker).ifPresent(progress -> {
-					if (progress.hasBegunPurification()) {
-						EnumPurityStage stage = EnumPurityStage.byPurity(progress.getPurity());
-						if (stage.getLevel() >= EnumPurityStage.ABSOLVED.getLevel()) {
-							event.setNewDamage(event.getNewDamage() + ABSOLVED_BONUS_DAMAGE);
-						}
+				var progress = HemoCapabilityAccess.getUnstainedProgress(attacker);
+				if (progress.hasBegunPurification()) {
+					EnumPurityStage stage = EnumPurityStage.byPurity(progress.getPurity());
+					if (stage.getLevel() >= EnumPurityStage.ABSOLVED.getLevel()) {
+						event.setNewDamage(event.getNewDamage() + ABSOLVED_BONUS_DAMAGE);
 					}
-				});
+				}
 			}
 		}
 	}

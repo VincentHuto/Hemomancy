@@ -64,7 +64,7 @@ public final class AxonalTransductionClientReview {
         if(tick==100) capture(mc,"axonal-camera-branch");
         if(tick==104) mc.getSingleplayerServer().execute(()->{
             var player=mc.getSingleplayerServer().getPlayerList().getPlayer(mc.player.getUUID());
-            HemoCapabilityAccess.requireKnownManipulations(player).togglePassive("axonal_transduction");
+            HemoCapabilityAccess.getKnownManipulations(player).togglePassive("axonal_transduction");
         });
         if(tick==120) {
             capture(mc,"axonal-camera-reformed");
@@ -99,10 +99,10 @@ public final class AxonalTransductionClientReview {
             level.setBlock(node,BlockInit.synaptic_node.get().defaultBlockState(),3);
         for(int x:java.util.List.of(0,48)) for(BlockPos b:BlockPos.betweenClosed(new BlockPos(x-2,103,-2),new BlockPos(x+2,105,2)))
             level.setBlock(b,Blocks.AIR.defaultBlockState(),3);
-        HemoCapabilityAccess.getInitiatoryDegree(p).orElseThrow().setDegreeNumber(6);
-        HemoCapabilityAccess.requireBloodVolume(p).setActive(true);HemoCapabilityAccess.requireBloodVolume(p).setBloodVolume(10000);
-        HemoCapabilityAccess.getBloodTendency(p).orElseThrow().setTendencyAlignment(EnumBloodTendency.DUCTILIS,100);
-        var known=HemoCapabilityAccess.requireKnownManipulations(p);
+        HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(6);
+        HemoCapabilityAccess.getBloodVolume(p).setActive(true);HemoCapabilityAccess.getBloodVolume(p).setBloodVolume(10000);
+        HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(EnumBloodTendency.DUCTILIS,100);
+        var known=HemoCapabilityAccess.getKnownManipulations(p);
         known.getKnownManips().put(ManipulationInit.axonal_transduction.get(),new ManipLevel(4,185));
         known.setEquippedManipNames(java.util.List.of("axonal_transduction"));
         if(!known.isPassiveActive("axonal_transduction"))known.togglePassive("axonal_transduction");

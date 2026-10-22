@@ -215,7 +215,7 @@ public final class ManipulationVisualRenderer {
                 if (entity!=null) {
                     float progress=cue.chargeProgress.sample(time);
                     if(entity==mc.player) {
-                        var selected=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireKnownManipulations(mc.player).getSelectedManip();
+                        var selected=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getKnownManipulations(mc.player).getSelectedManip();
                         int held=com.vincenthuto.hemomancy.client.event.ClientEvents.getManipulationChargeTicks();
                         if(selected!=null && held>0 && ManipulationVisuals.chargeForm(selected.getName())==packet.form())
                             progress=com.vincenthuto.hemomancy.common.manipulation.ManipulationCastingRules.chargeFraction(

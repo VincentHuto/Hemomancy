@@ -131,13 +131,12 @@ public class ArmorSetBonusHandler {
 
 		// Hematic Iron set bonus: passive blood regen (every HEMATIC_IRON_REGEN_INTERVAL ticks)
 		if (player.tickCount % HEMATIC_IRON_REGEN_INTERVAL == 0 && hasFullSet(player, EnumModArmorTiers.HEMATIC_IRON)) {
-			HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-				if (player instanceof ServerPlayer serverPlayer) {
-					BloodFlowLedger.applyCirculationIncome(serverPlayer, volume, "hematic_iron_set",
-							"Hematic Iron Set", Category.ARMOR, HEMATIC_IRON_BLOOD_REGEN,
-							HEMATIC_IRON_REGEN_INTERVAL, CirculationIncomeHelper.IncomeChannel.ARMOR);
-				}
-			});
+			var volume = HemoCapabilityAccess.getBloodVolume(player);
+			if (player instanceof ServerPlayer serverPlayer) {
+				BloodFlowLedger.applyCirculationIncome(serverPlayer, volume, "hematic_iron_set",
+						"Hematic Iron Set", Category.ARMOR, HEMATIC_IRON_BLOOD_REGEN,
+						HEMATIC_IRON_REGEN_INTERVAL, CirculationIncomeHelper.IncomeChannel.ARMOR);
+			}
 		}
 
 		if (player.tickCount % HEMATIC_IRON_REGEN_INTERVAL == 0 && !LastRiteHelper.hasArmedSource(player)) {
@@ -292,11 +291,10 @@ public class ArmorSetBonusHandler {
 	}
 
 	private static void armLegacyLastRiteSource(Player player) {
-		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(morphCap -> {
-			if (morphCap.hasMorphling()) {
-				LastRiteHelper.armForMorphling(player, morphCap.getEquippedMorphling());
-			}
-		});
+		var morphCap = HemoCapabilityAccess.getEquippedMorphling(player);
+		if (morphCap.hasMorphling()) {
+			LastRiteHelper.armForMorphling(player, morphCap.getEquippedMorphling());
+		}
 		if (!LastRiteHelper.hasArmedSource(player) && hasFullSet(player, EnumModArmorTiers.SILENT_ARCHON)) {
 			LastRiteHelper.arm(player, LastRiteHelper.SILENT_REFUSAL_ID);
 		}
@@ -313,14 +311,14 @@ public class ArmorSetBonusHandler {
 			return false;
 		}
 
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null || !volume.isActive()) {
 			return false;
 		}
 
 		long now = player.level().getGameTime();
 		long cooldownUntil = player.getPersistentData().getLong(SILENT_ARCHON_COOLDOWN_TAG);
-		IInitiatoryDegree degree = HemoCapabilityAccess.getInitiatoryDegree(player).orElse(null);
+		IInitiatoryDegree degree = HemoCapabilityAccess.getInitiatoryDegree(player);
 		if (degree == null) return false;
 		boolean canRefuse = SilentArchonArmorRules.canRefuseDeath(
 				hasFullSet(player, EnumModArmorTiers.SILENT_ARCHON),
@@ -362,7 +360,8 @@ public class ArmorSetBonusHandler {
 			case TENGU -> target.addEffect(new MobEffectInstance(EffectInit.blood_loss, 40, 0, false, true, true));
 			case GRINNING -> player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 60, 0, false, true, true));
 			case LODESTONE -> player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 80, 0, false, true, true));
-			case VELORUM -> HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
+			case VELORUM -> {
+				var volume = HemoCapabilityAccess.getBloodVolume(player);
 				if (volume.isActive() && !volume.isFull()) {
 					CirculationIncomeHelper.grant(player, volume, 4.0D,
 							CirculationIncomeHelper.IncomeChannel.ARMOR);
@@ -370,7 +369,7 @@ public class ArmorSetBonusHandler {
 						syncVolume(serverPlayer, volume);
 					}
 				}
-			});
+			}
 			default -> {
 			}
 		}
@@ -385,7 +384,7 @@ public class ArmorSetBonusHandler {
 	}
 
 	private static void pulseCovenantMantle(Player player) {
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null || !volume.isActive()
 				|| volume.getBloodVolume() < COVENANT_MANTLE_BLOOD_COST) {
 			return;
@@ -395,7 +394,7 @@ public class ArmorSetBonusHandler {
 		for (Player nearby : player.level().getEntitiesOfClass(Player.class,
 				player.getBoundingBox().inflate(8.0D),
 				nearby -> nearby != player && HemoCapabilityAccess.getBloodVolume(nearby)
-						.map(IBloodVolume::isActive).orElse(false))) {
+						.isActive())) {
 			nearby.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 60, 0, false, true, true));
 			granted = true;
 		}
@@ -457,9 +456,8 @@ public class ArmorSetBonusHandler {
 
 		boolean hasBlood = false;
 		if (hasCrown) {
-			hasBlood = HemoCapabilityAccess.getBloodVolume(player)
-					.map(vol -> vol.isActive() && vol.getBloodVolume() > vol.getMaxBloodVolume() * MARROW_CROWN_BLOOD_THRESHOLD)
-					.orElse(false);
+			var vol = HemoCapabilityAccess.getBloodVolume(player);
+			hasBlood = vol.isActive() && vol.getBloodVolume() > vol.getMaxBloodVolume() * MARROW_CROWN_BLOOD_THRESHOLD;
 		}
 
 		boolean shouldHaveBonus = hasCrown && hasBlood;

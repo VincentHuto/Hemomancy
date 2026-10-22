@@ -320,7 +320,7 @@ public final class GameplayCampaignDriver {
             JsonArray effects = new JsonArray();
             for (var effect : mc.player.getActiveEffects()) effects.add(effect.toString());
             state.add("effects", effects);
-            state.addProperty("pomes", HemoCapabilityAccess.requireInitiatoryDegree(mc.player).getTotalPomesConsumed());
+            state.addProperty("pomes", HemoCapabilityAccess.getInitiatoryDegree(mc.player).getTotalPomesConsumed());
             state.addProperty("gameMode", mc.gameMode.getPlayerMode().getName());
             state.addProperty("mainHand", mc.player.getMainHandItem().saveOptional(mc.level.registryAccess()).toString());
             JsonArray slots = new JsonArray();
@@ -346,29 +346,27 @@ public final class GameplayCampaignDriver {
                     var player=mc.getSingleplayerServer().getPlayerList().getPlayer(uuid); if(player==null)return;
                     JsonObject server=new JsonObject();
                     server.addProperty("tick",player.serverLevel().getGameTime());
-                    server.addProperty("degree",HemoCapabilityAccess.requireInitiatoryDegree(player).getDegreeNumber());
-                    var degree = HemoCapabilityAccess.requireInitiatoryDegree(player);
+                    server.addProperty("degree",HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber());
+                    var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
                     server.addProperty("archonPath", degree.getArchonPath().name());
                     server.addProperty("pomes", degree.getTotalPomesConsumed());
                     server.addProperty("communion", degree.isQliphothCommunionDone());
-                    HemoCapabilityAccess.getBloodVolume(player).ifPresent(v -> {server.addProperty("blood",v.getBloodVolume());server.addProperty("capacity",v.getMaxBloodVolume());server.addProperty("activeBlood",v.isActive());});
-                    HemoCapabilityAccess.getLivingStaffProgress(player).ifPresent(progress -> {
-                        server.addProperty("livingStaffBond", progress.hasLivingStaffBond());
-                        server.addProperty("staffBloodHandled", progress.getBloodHandled());
-                        server.addProperty("vesperMemoryAwakened", progress.isVesperMemoryAwakened());
-                    });
+                    var v = HemoCapabilityAccess.getBloodVolume(player);
+                    server.addProperty("blood",v.getBloodVolume());server.addProperty("capacity",v.getMaxBloodVolume());server.addProperty("activeBlood",v.isActive());
+                    var progress = HemoCapabilityAccess.getLivingStaffProgress(player);
+                    server.addProperty("livingStaffBond", progress.hasLivingStaffBond());
+                    server.addProperty("staffBloodHandled", progress.getBloodHandled());
+                    server.addProperty("vesperMemoryAwakened", progress.isVesperMemoryAwakened());
                     server.addProperty("persistent",player.getPersistentData().toString());
                     server.addProperty("experienceLevel", player.experienceLevel);
                     server.addProperty("experienceProgress", player.experienceProgress);
                     server.addProperty("totalExperience", player.totalExperience);
-                    HemoCapabilityAccess.getKnownManipulations(player).ifPresent(known -> {
-                        server.add("equippedMemories", JSON.toJsonTree(known.getEquippedManipNames()));
-                        server.addProperty("selectedMemory", known.getSelectedMemoryRef().storageKey());
-                        server.addProperty("legacySelectedManipulation", known.getSelectedManip().getName());
-                        server.add("loadouts", JSON.toJsonTree(known.getLoadouts()));
-                    });
-                    server.addProperty("muscleMemory", player.getData(
-                            com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes.MUSCLE_MEMORY)
+                    var known = HemoCapabilityAccess.getKnownManipulations(player);
+                    server.add("equippedMemories", JSON.toJsonTree(known.getEquippedManipNames()));
+                    server.addProperty("selectedMemory", known.getSelectedMemoryRef().storageKey());
+                    server.addProperty("legacySelectedManipulation", known.getSelectedManip().getName());
+                    server.add("loadouts", JSON.toJsonTree(known.getLoadouts()));
+                    server.addProperty("muscleMemory", HemoCapabilityAccess.muscleMemory(player)
                             .serializeNBT(player.registryAccess()).toString());
                     server.addProperty("channeling", com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager
                             .isChanneling(player.getUUID()));

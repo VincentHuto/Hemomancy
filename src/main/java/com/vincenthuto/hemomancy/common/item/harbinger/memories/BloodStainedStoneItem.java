@@ -68,9 +68,9 @@ public class BloodStainedStoneItem extends Item {
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
 		IBloodVolume volCap = HemoCapabilityAccess.getBloodVolume(playerIn)
-				.orElseThrow(NullPointerException::new);
+				;
 		IKnownManipulations manips = HemoCapabilityAccess.getKnownManipulations(playerIn)
-				.orElseThrow(NullPointerException::new);
+				;
 
 		if (volCap.isActive()) {
 			if (!worldIn.isClientSide) {

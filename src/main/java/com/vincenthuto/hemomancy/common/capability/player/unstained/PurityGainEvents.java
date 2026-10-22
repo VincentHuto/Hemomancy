@@ -89,12 +89,11 @@ public class PurityGainEvents {
 
     /** Add purity if the player has begun purification and isn't yet fully purified. */
     private static void tryAddPurity(ServerPlayer player, float amount) {
-        HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
-            if (progress.hasBegunPurification() && !progress.isPurified()) {
-                progress.addPurity(amount);
-                UnstainedProgressEvents.syncProgress(player, progress);
-            }
-        });
+        var progress = HemoCapabilityAccess.getUnstainedProgress(player);
+        if (progress.hasBegunPurification() && !progress.isPurified()) {
+            progress.addPurity(amount);
+            UnstainedProgressEvents.syncProgress(player, progress);
+        }
     }
 
     /** Whether the player has the Hemolysis effect active. */
@@ -151,18 +150,17 @@ public class PurityGainEvents {
         // Track milestones
         final float finalReward = reward;
         final boolean fHemo = isHemo, fUndead = isUndead, fHostile = isHostile, fFlawless = flawless;
-        HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
-            if (!progress.hasBegunPurification() || progress.isPurified()) return;
-            if (fHemo) {
-                progress.addHemoMobKill();
-                if (!progress.hasKilledFirstHemoMob()) progress.setKilledFirstHemoMob(true);
-            }
-            if (fUndead) progress.addUndeadKill();
-            if (fHostile) progress.addHostileKill();
-            if (fFlawless) progress.addFlawlessKill();
-            progress.addPurity(finalReward);
-            UnstainedProgressEvents.syncProgress(player, progress);
-        });
+        var progress = HemoCapabilityAccess.getUnstainedProgress(player);
+        if (!progress.hasBegunPurification() || progress.isPurified()) return;
+        if (fHemo) {
+            progress.addHemoMobKill();
+            if (!progress.hasKilledFirstHemoMob()) progress.setKilledFirstHemoMob(true);
+        }
+        if (fUndead) progress.addUndeadKill();
+        if (fHostile) progress.addHostileKill();
+        if (fFlawless) progress.addFlawlessKill();
+        progress.addPurity(finalReward);
+        UnstainedProgressEvents.syncProgress(player, progress);
     }
 
     //
@@ -177,13 +175,12 @@ public class PurityGainEvents {
 
         if (!hasHemolysis(player)) return;
         long gameTime = serverPlayer.serverLevel().getGameTime();
-        HemoCapabilityAccess.getUnstainedProgress(serverPlayer).ifPresent(progress -> {
-            if (!isOnUnstainedPath(progress) || !UnstainedPacingRules.cooldownReady(gameTime,
-                    progress.getLastXpRewardGameTime(), UnstainedPacingRules.XP_REWARD_COOLDOWN_TICKS)) return;
-            progress.addPurity(PURITY_XP_PICKUP);
-            progress.setLastXpRewardGameTime(gameTime);
-            UnstainedProgressEvents.syncProgress(serverPlayer, progress);
-        });
+        var progress = HemoCapabilityAccess.getUnstainedProgress(serverPlayer);
+        if (!isOnUnstainedPath(progress) || !UnstainedPacingRules.cooldownReady(gameTime,
+                progress.getLastXpRewardGameTime(), UnstainedPacingRules.XP_REWARD_COOLDOWN_TICKS)) return;
+        progress.addPurity(PURITY_XP_PICKUP);
+        progress.setLastXpRewardGameTime(gameTime);
+        UnstainedProgressEvents.syncProgress(serverPlayer, progress);
     }
 
     //
@@ -198,13 +195,12 @@ public class PurityGainEvents {
         if (event.wakeImmediately()) return;
 
         if (hasHemolysis(player)) {
-            HemoCapabilityAccess.getUnstainedProgress(serverPlayer).ifPresent(progress -> {
-                if (!progress.hasBegunPurification() || progress.isPurified()) return;
-                progress.addNightSlept();
-                if (!progress.hasSleptWithHemolysis()) progress.setSleptWithHemolysis(true);
-                progress.addPurity(PURITY_SLEEP);
-                UnstainedProgressEvents.syncProgress(serverPlayer, progress);
-            });
+            var progress = HemoCapabilityAccess.getUnstainedProgress(serverPlayer);
+            if (!progress.hasBegunPurification() || progress.isPurified()) return;
+            progress.addNightSlept();
+            if (!progress.hasSleptWithHemolysis()) progress.setSleptWithHemolysis(true);
+            progress.addPurity(PURITY_SLEEP);
+            UnstainedProgressEvents.syncProgress(serverPlayer, progress);
         }
     }
 
@@ -223,13 +219,12 @@ public class PurityGainEvents {
         if (player.level().isClientSide) return;
         if (!(player instanceof ServerPlayer serverPlayer)) return;
 
-        HemoCapabilityAccess.getUnstainedProgress(serverPlayer).ifPresent(progress -> {
-            if (!progress.hasBegunPurification() || progress.isPurified()) return;
-            progress.addAdvancementEarned();
-            if (!progress.hasEarnedAdvancement()) progress.setEarnedAdvancement(true);
-            progress.addPurity(PURITY_ADVANCEMENT);
-            UnstainedProgressEvents.syncProgress(serverPlayer, progress);
-        });
+        var progress = HemoCapabilityAccess.getUnstainedProgress(serverPlayer);
+        if (!progress.hasBegunPurification() || progress.isPurified()) return;
+        progress.addAdvancementEarned();
+        if (!progress.hasEarnedAdvancement()) progress.setEarnedAdvancement(true);
+        progress.addPurity(PURITY_ADVANCEMENT);
+        UnstainedProgressEvents.syncProgress(serverPlayer, progress);
     }
 
     //
@@ -244,12 +239,11 @@ public class PurityGainEvents {
         if (causer.level().isClientSide) return;
         if (!(causer instanceof ServerPlayer serverPlayer)) return;
 
-        HemoCapabilityAccess.getUnstainedProgress(serverPlayer).ifPresent(progress -> {
-            if (!progress.hasBegunPurification() || progress.isPurified()) return;
-            progress.addAnimalBreed();
-            progress.addPurity(PURITY_BREED_ANIMAL);
-            UnstainedProgressEvents.syncProgress(serverPlayer, progress);
-        });
+        var progress = HemoCapabilityAccess.getUnstainedProgress(serverPlayer);
+        if (!progress.hasBegunPurification() || progress.isPurified()) return;
+        progress.addAnimalBreed();
+        progress.addPurity(PURITY_BREED_ANIMAL);
+        UnstainedProgressEvents.syncProgress(serverPlayer, progress);
     }
 
     //
@@ -265,17 +259,16 @@ public class PurityGainEvents {
         if (state.is(net.minecraft.tags.BlockTags.CROPS)
                 || state.is(net.minecraft.tags.BlockTags.SAPLINGS)
                 || state.is(net.minecraft.tags.BlockTags.FLOWERS)) {
-            HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
-                if (!progress.hasBegunPurification() || progress.isPurified()) return;
-                progress.addCropPlanted();
-                long gameTime = player.serverLevel().getGameTime();
-                if (UnstainedPacingRules.cooldownReady(gameTime, progress.getLastCropRewardGameTime(),
-                        UnstainedPacingRules.CROP_REWARD_COOLDOWN_TICKS)) {
-                    progress.addPurity(PURITY_PLANT_CROP);
-                    progress.setLastCropRewardGameTime(gameTime);
-                }
-                UnstainedProgressEvents.syncProgress(player, progress);
-            });
+            var progress = HemoCapabilityAccess.getUnstainedProgress(player);
+            if (!progress.hasBegunPurification() || progress.isPurified()) return;
+            progress.addCropPlanted();
+            long gameTime = player.serverLevel().getGameTime();
+            if (UnstainedPacingRules.cooldownReady(gameTime, progress.getLastCropRewardGameTime(),
+                    UnstainedPacingRules.CROP_REWARD_COOLDOWN_TICKS)) {
+                progress.addPurity(PURITY_PLANT_CROP);
+                progress.setLastCropRewardGameTime(gameTime);
+            }
+            UnstainedProgressEvents.syncProgress(player, progress);
         }
     }
 
@@ -296,8 +289,8 @@ public class PurityGainEvents {
         if (entity instanceof net.minecraft.world.entity.TamableAnimal tamed && tamed.isTame()) {
             LivingEntity owner = tamed.getOwner();
             if (owner instanceof ServerPlayer serverOwner) {
-                HemoCapabilityAccess.getUnstainedProgress(serverOwner).ifPresent(progress -> {
-                    if (!progress.hasBegunPurification() || progress.isPurified()) return;
+                var progress = HemoCapabilityAccess.getUnstainedProgress(serverOwner);
+                if (progress.hasBegunPurification() && !progress.isPurified()) {
                     progress.addPetHealed();
                     long gameTime = serverOwner.serverLevel().getGameTime();
                     if (UnstainedPacingRules.cooldownReady(gameTime, progress.getLastPetHealRewardGameTime(),
@@ -306,17 +299,16 @@ public class PurityGainEvents {
                         progress.setLastPetHealRewardGameTime(gameTime);
                     }
                     UnstainedProgressEvents.syncProgress(serverOwner, progress);
-                });
+                }
             }
             return;
         }
 
         if (entity instanceof ServerPlayer player && event.getAmount() >= 2.0f) {
-            HemoCapabilityAccess.getBloodVolume(player).ifPresent(blood -> {
-                if (!blood.isActive() || blood.getBloodVolume() <= 0) {
-                    tryAddPurity(player, PURITY_HEAL);
-                }
-            });
+            var blood = HemoCapabilityAccess.getBloodVolume(player);
+            if (!blood.isActive() || blood.getBloodVolume() <= 0) {
+                tryAddPurity(player, PURITY_HEAL);
+            }
         }
     }
 
@@ -339,40 +331,38 @@ public class PurityGainEvents {
 
         if (player.tickCount % 20 != 0) return;
 
-        HemoCapabilityAccess.getUnstainedProgress(serverPlayer).ifPresent(progress -> {
-            if (!isOnUnstainedPath(progress)) return;
+        var progress = HemoCapabilityAccess.getUnstainedProgress(serverPlayer);
+        if (!isOnUnstainedPath(progress)) return;
 
-            long currentTick = serverPlayer.serverLevel().getGameTime();
-            boolean changed = false;
+        long currentTick = serverPlayer.serverLevel().getGameTime();
+        boolean changed = false;
 
-            //  Abstinence timer 
-            long lastManip = progress.getLastManipulationTick();
-            if (lastManip > 0 && (currentTick - lastManip) >= ABSTINENCE_INTERVAL_TICKS) {
-                progress.addPurity(PURITY_ABSTINENCE);
-                progress.setLastManipulationTick(currentTick); // reset timer
-                if (!progress.hasReachedAbstinence()) progress.setReachedAbstinence(true);
-                changed = true;
-            } else if (lastManip == 0 && progress.hasBegunPurification()) {
-                progress.setLastManipulationTick(currentTick);
+        //  Abstinence timer 
+        long lastManip = progress.getLastManipulationTick();
+        if (lastManip > 0 && (currentTick - lastManip) >= ABSTINENCE_INTERVAL_TICKS) {
+            progress.addPurity(PURITY_ABSTINENCE);
+            progress.setLastManipulationTick(currentTick); // reset timer
+            if (!progress.hasReachedAbstinence()) progress.setReachedAbstinence(true);
+            changed = true;
+        } else if (lastManip == 0 && progress.hasBegunPurification()) {
+            progress.setLastManipulationTick(currentTick);
+        }
+
+        //  Empty blood renunciation 
+        if (UnstainedPacingRules.cooldownReady(currentTick, progress.getLastEmptyBloodRewardGameTime(),
+                UnstainedPacingRules.EMPTY_BLOOD_REWARD_COOLDOWN_TICKS)) {
+            var blood = HemoCapabilityAccess.getBloodVolume(serverPlayer);
+            if (!blood.isActive() || blood.getBloodVolume() <= 0) {
+                progress.addPurity(PURITY_EMPTY_BLOOD);
+                progress.setLastEmptyBloodRewardGameTime(currentTick);
+                if (!progress.hasEmptiedBlood()) progress.setEmptiedBlood(true);
             }
+            changed = true;
+        }
 
-            //  Empty blood renunciation 
-            if (UnstainedPacingRules.cooldownReady(currentTick, progress.getLastEmptyBloodRewardGameTime(),
-                    UnstainedPacingRules.EMPTY_BLOOD_REWARD_COOLDOWN_TICKS)) {
-                HemoCapabilityAccess.getBloodVolume(serverPlayer).ifPresent(blood -> {
-                    if (!blood.isActive() || blood.getBloodVolume() <= 0) {
-                        progress.addPurity(PURITY_EMPTY_BLOOD);
-                        progress.setLastEmptyBloodRewardGameTime(currentTick);
-                        if (!progress.hasEmptiedBlood()) progress.setEmptiedBlood(true);
-                    }
-                });
-                changed = true;
-            }
-
-            if (changed) {
-                UnstainedProgressEvents.syncProgress(serverPlayer, progress);
-            }
-        });
+        if (changed) {
+            UnstainedProgressEvents.syncProgress(serverPlayer, progress);
+        }
     }
 
     //
@@ -384,11 +374,10 @@ public class PurityGainEvents {
      * uses any blood manipulation. Resets the abstinence timer.
      */
     public static void onBloodManipulationUsed(ServerPlayer player) {
-        HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
-            if (progress.hasBegunPurification()) {
-                progress.setLastManipulationTick(player.serverLevel().getGameTime());
-                UnstainedProgressEvents.syncProgress(player, progress);
-            }
-        });
+        var progress = HemoCapabilityAccess.getUnstainedProgress(player);
+        if (progress.hasBegunPurification()) {
+            progress.setLastManipulationTick(player.serverLevel().getGameTime());
+            UnstainedProgressEvents.syncProgress(player, progress);
+        }
     }
 }

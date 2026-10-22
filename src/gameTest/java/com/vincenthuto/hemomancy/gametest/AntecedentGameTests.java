@@ -55,8 +55,8 @@ public final class AntecedentGameTests {
         var p=player(h);var vicar=EntityInit.harbinger_vicar.get().create(h.getLevel());vicar.setNoAi(true);vicar.setPos(p.position());h.getLevel().addFreshEntity(vicar);
         var event=new com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEvent(p,"antecedent_recognition",vicar.getId());
         h.assertTrue(!AntecedentDialogue.handle(event),"Vicar recognized unobserved evidence");
-        var proof=HemoCapabilityAccess.antecedent(p);proof.record(CONTROLLED_REPLAY);HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(3);
-        h.assertTrue(!AntecedentDialogue.handle(event),"Recognition bypassed Degree 4");HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(4);
+        var proof=HemoCapabilityAccess.antecedent(p);proof.record(CONTROLLED_REPLAY);HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(3);
+        h.assertTrue(!AntecedentDialogue.handle(event),"Recognition bypassed Degree 4");HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(4);
         h.assertTrue(AntecedentDialogue.handle(event),"Vicar did not accept controlled replay");proof.record(ARCHIVE_RESPONSE);
         var exchange=new com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEvent(p,"antecedent_housing",vicar.getId());
         p.getInventory().add(new ItemStack(Items.IRON_NUGGET,4));
@@ -278,7 +278,7 @@ public final class AntecedentGameTests {
             @Override public void send(net.minecraft.network.protocol.Packet<?> packet) {}
         };
         p.setGameMode(GameType.SURVIVAL);p.setPos(h.absolutePos(new BlockPos(1,3,1)).getCenter());p.setNoGravity(true);
-        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(4);
+        HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(4);
         return p;
     }
     private static ItemStack sample(String kind,String source) { return AhaematicSample.create(kind,source); }
@@ -307,14 +307,14 @@ public final class AntecedentGameTests {
         String bearing = DeepDarkCommissionDialogue.BEARING;
         h.assertTrue(DialogueOptionPacket.dispatch(p, bearing, vicar.getId()) == null,
                 "The Vicar dispatched the Alchemist's Deep Dark bearing");
-        HemoCapabilityAccess.requireBloodVolume(p).setActive(true);
+        HemoCapabilityAccess.getBloodVolume(p).setActive(true);
         var lowRank = DialogueOptionPacket.dispatch(p, bearing, alchemist.getId());
         h.assertTrue(lowRank != null && !lowRank.wasRewardDelivered(), "D4 obtained the formal D5 bearing");
-        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(5);
-        HemoCapabilityAccess.requireBloodVolume(p).setActive(false);
+        HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(5);
+        HemoCapabilityAccess.getBloodVolume(p).setActive(false);
         var inactive = DialogueOptionPacket.dispatch(p, bearing, alchemist.getId());
         h.assertTrue(inactive != null && !inactive.wasRewardDelivered(), "Inactive blood obtained the bearing");
-        HemoCapabilityAccess.requireBloodVolume(p).setActive(true);
+        HemoCapabilityAccess.getBloodVolume(p).setActive(true);
         alchemist.setPos(p.position().add(10, 0, 0));
         h.assertTrue(DialogueOptionPacket.dispatch(p, bearing, alchemist.getId()) == null,
                 "Remote teacher dispatched a bearing");
@@ -334,7 +334,7 @@ public final class AntecedentGameTests {
 
     @GameTest(template="empty") public static void deepDarkCommissionAcceptsPriorAnalysisWithoutTakingTheSample(GameTestHelper h) {
         var p=player(h);
-        HemoCapabilityAccess.requireBloodVolume(p).setActive(true);
+        HemoCapabilityAccess.getBloodVolume(p).setActive(true);
         var alchemist=EntityInit.harbinger_alchemist.get().create(h.getLevel());
         alchemist.setNoAi(true);alchemist.setPos(p.position());h.getLevel().addFreshEntity(alchemist);
         var vicar=EntityInit.harbinger_vicar.get().create(h.getLevel());
@@ -350,7 +350,7 @@ public final class AntecedentGameTests {
         h.assertTrue(!DeepDarkCommission.report(p,alchemist),"Degree 4 completed a Degree 5 commission");
         h.assertTrue(alchemist.progressionDialogue(p).getNode("deep_dark_commission")==null,
                 "Degree 4 saw the formal commission");
-        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(5);
+        HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(5);
         h.assertTrue(alchemist.progressionDialogue(p).getNode("deep_dark_commission")!=null,
                 "Degree 5 could not reach the commission dialogue");
         h.assertTrue(!DeepDarkCommission.report(p,vicar),"The Vicar accepted the Alchemist's report");
@@ -392,11 +392,11 @@ public final class AntecedentGameTests {
         scar.use(h.getLevel(),p,InteractionHand.MAIN_HAND);
         h.assertTrue(ListeningScarItem.state(scar)==1 && !BloodSampleData.isFilled(p.getOffhandItem()) && p.getOffhandItem().is(ItemInit.bloody_vial.get()),"Housing did not return empty vessel");
         ListeningScarItem.awaken(p);p.setItemInHand(InteractionHand.MAIN_HAND,ItemStack.EMPTY);
-        HemoCapabilityAccess.requireEquipment(p).setStackInSlot(5,new ItemStack(ItemInit.charm_of_vascularium.get()));
+        HemoCapabilityAccess.getEquipment(p).setStackInSlot(5,new ItemStack(ItemInit.charm_of_vascularium.get()));
         var menu=new HarbingerEquipmentMenu(1,p.level(),p.blockPosition(),p.getInventory(),p,true);p.containerMenu=menu;
         menu.setCarried(scar);menu.clicked(45,0,ClickType.PICKUP,p);
         h.assertTrue(menu.getCarried().isEmpty() && ListeningScarItem.awake(menu.getSlot(45).getItem()),"Socket insertion failed");
-        var charm=HemoCapabilityAccess.requireEquipment(p).getStackInSlot(5);
+        var charm=HemoCapabilityAccess.getEquipment(p).getStackInSlot(5);
         var restored=ItemStack.parse(h.getLevel().registryAccess(),charm.save(h.getLevel().registryAccess())).orElseThrow();
         h.assertTrue(ListeningScarItem.awake(restored.get(DataComponentInit.CHARM_TALISMAN.get()).copyOne()),"Socket did not persist with charm");
         menu.clicked(45,0,ClickType.PICKUP,p);

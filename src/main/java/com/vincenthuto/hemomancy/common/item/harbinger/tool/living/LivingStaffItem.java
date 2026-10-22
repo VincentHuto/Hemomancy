@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperBloodAbsorptio
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillAbsorptionRules;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBloodUtilityInteractions;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.IEquippedMorphling;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.CellHandRules;
@@ -64,18 +65,16 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 		if (world != null && world.isClientSide) {
 			net.minecraft.client.player.LocalPlayer player = net.minecraft.client.Minecraft.getInstance().player;
 			if (player != null) {
-				HemoCapabilityAccess.getLivingStaffProgress(player).ifPresent(progress -> {
-					if (progress.isVesperMemoryAwakened()) {
-						tooltip.add(Component.translatable("item.hemomancy.living_staff.vesper_awakened.tooltip")
-								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
-					}
-				});
-				HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
-					ItemStack equipped = cap.getEquippedMorphling();
-					if (!equipped.isEmpty()) {
-						tooltip.add(equipped.getHoverName());
-					}
-				});
+				var progress = HemoCapabilityAccess.getLivingStaffProgress(player);
+				if (progress.isVesperMemoryAwakened()) {
+					tooltip.add(Component.translatable("item.hemomancy.living_staff.vesper_awakened.tooltip")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
+				}
+				var cap = HemoCapabilityAccess.getEquippedMorphling(player);
+				ItemStack equipped = cap.getEquippedMorphling();
+				if (!equipped.isEmpty()) {
+					tooltip.add(equipped.getHoverName());
+				}
 			}
 		}
 	}
@@ -122,7 +121,7 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 		if (!pLevel.isClientSide && pLivingEntity instanceof Player player) {
 			if (player instanceof ServerPlayer serverPlayer
 					&& isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_ABSORPTION)) {
-				ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
+				ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player);
 				LivingStaffFocusProfile focus = LivingStaffFocusProfile.fromPlayer(player, progress);
 				double vesperHandled = VesperBloodAbsorptionInteractions.tryAbsorb(pLevel, player,
 						LivingStaffFocusRules.absorptionRange(focus),
@@ -138,7 +137,7 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 				}
 			}
 			if (isSelectedStaffUtility(player, ManipulationEquipHelper.BLOOD_ABSORPTION)) {
-				ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
+				ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player);
 				LivingStaffFocusProfile focus = LivingStaffFocusProfile.fromPlayer(player, progress);
 				if (tryAbsorbFromLookedAtBlockWithStaff(pLevel, player, focus)) {
 					BloodAbsorptionItem.updateChannelStrain(player, false);
@@ -192,24 +191,7 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 				return;
 			}
 			if (player instanceof ServerPlayer serverPlayer && !player.isCrouching()) {
-				HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
-					ItemStack creature = cap.getEquippedMorphling();
-					if (!(creature.getItem() instanceof IMorphling morphling)) return;
-					if (!com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem.isPrimal(creature)) {
-						player.displayClientMessage(Component.literal("Your morphling has not reached its Primal stage."), true);
-						return;
-					}
-					if (!com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents
-							.isStoredInCarriedJar(player, creature)) return;
-					if (morphling.tryUse(player, player.getUsedItemHand(), creature, worldIn)) {
-						stack.hurtAndBreak(1, player, player.getUsedItemHand() == InteractionHand.MAIN_HAND
-								? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
-						worldIn.playSound(null, player.blockPosition(), SoundEvents.HOGLIN_CONVERTED_TO_ZOMBIFIED,
-								net.minecraft.sounds.SoundSource.PLAYERS, 0.2F, 0.8F + worldIn.random.nextFloat() * 0.2F);
-						com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents
-								.syncToClient(serverPlayer);
-					}
-				});
+				usePrimalMorphling(serverPlayer, HemoCapabilityAccess.getEquippedMorphling(player), stack, worldIn);
 			}
 		}
 
@@ -217,6 +199,25 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 			player.awardStat(Stats.ITEM_USED.get(this));
 		}
 
+	}
+
+	private void usePrimalMorphling(ServerPlayer player, IEquippedMorphling cap, ItemStack stack, Level worldIn) {
+		ItemStack creature = cap.getEquippedMorphling();
+		if (!(creature.getItem() instanceof IMorphling morphling)) return;
+		if (!com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem.isPrimal(creature)) {
+			player.displayClientMessage(Component.literal("Your morphling has not reached its Primal stage."), true);
+			return;
+		}
+		if (!com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents
+				.isStoredInCarriedJar(player, creature)) return;
+		if (morphling.tryUse(player, player.getUsedItemHand(), creature, worldIn)) {
+			stack.hurtAndBreak(1, player, player.getUsedItemHand() == InteractionHand.MAIN_HAND
+					? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
+			worldIn.playSound(null, player.blockPosition(), SoundEvents.HOGLIN_CONVERTED_TO_ZOMBIFIED,
+					net.minecraft.sounds.SoundSource.PLAYERS, 0.2F, 0.8F + worldIn.random.nextFloat() * 0.2F);
+			com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents
+					.syncToClient(player);
+		}
 	}
 
 	@Override
@@ -290,12 +291,12 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 
 	private static double absorbWithStaff(Level level, Player player, ItemStack stack) {
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
-				.orElseThrow(NullPointerException::new);
+				;
 		if (!BloodAbsorptionChannelRules.canDrainLivingTarget(volume.isActive(), volume.isFull(),
 				SkillPointHelper.isTechniqueEnabled(player, SkillPointInit.skill_sated_siphon))) {
 			return 0.0D;
 		}
-		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
+		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player);
 		LivingStaffFocusProfile focus = LivingStaffFocusProfile.fromPlayer(player, progress);
 		int targetCap = LivingStaffFocusRules.absorptionTargetCap(true, focus);
 		boolean distributed = SkillPointHelper.isTechniqueEnabled(player, SkillPointInit.skill_distributed_siphon);
@@ -320,11 +321,11 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 
 	private static void projectWithStaff(Level level, Player player, ItemStack stack) {
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
-				.orElseThrow(NullPointerException::new);
+				;
 		if (!volume.isActive() || volume.isEmpty()) {
 			return;
 		}
-		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
+		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player);
 		LivingStaffFocusProfile focus = LivingStaffFocusProfile.fromPlayer(player, progress);
 		double handled = BloodProjectionItem.projectFromEntity(level, player,
 				LivingStaffFocusRules.structureProjectionRate(true, focus),
@@ -349,12 +350,11 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 		CompoundTag data = player.getPersistentData();
 		double handled = data.getDouble(UTILITY_SESSION_BLOOD_HANDLED_KEY);
 		if (handled > 0.0D) {
-			HemoCapabilityAccess.getLivingStaffProgress(player).ifPresent(progress -> {
-				progress.addBloodHandled(handled);
-				if (player instanceof ServerPlayer serverPlayer) {
-					LivingStaffBondHelper.syncProgress(serverPlayer);
-				}
-			});
+			var progress = HemoCapabilityAccess.getLivingStaffProgress(player);
+			progress.addBloodHandled(handled);
+			if (player instanceof ServerPlayer serverPlayer) {
+				LivingStaffBondHelper.syncProgress(serverPlayer);
+			}
 		}
 		data.remove(UTILITY_SESSION_BLOOD_HANDLED_KEY);
 	}
@@ -384,23 +384,21 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 	}
 
 	public static boolean isSelectedStaffUtility(Player player, String manipName) {
-		return HemoCapabilityAccess.getKnownManipulations(player).map(known -> {
-			if (known.getManipList().isEmpty()) {
-				return false;
-			}
-			var selected = known.getSelectedMemoryRef();
-			return selected != null
-					&& selected.kind() == MemoryEntryKind.MANIPULATION
-					&& LivingStaffUtilitySelectionRules.isSelectedUtility(selected.id(), manipName);
-		}).orElse(false);
+		var known = HemoCapabilityAccess.getKnownManipulations(player);
+		if (known.getManipList().isEmpty()) {
+			return false;
+		}
+		var selected = known.getSelectedMemoryRef();
+		return selected != null
+				&& selected.kind() == MemoryEntryKind.MANIPULATION
+				&& LivingStaffUtilitySelectionRules.isSelectedUtility(selected.id(), manipName);
 	}
 
 	@OnlyIn(Dist.CLIENT)
 	private static boolean isClientPlayerVesperAwakened() {
 		net.minecraft.client.player.LocalPlayer player = net.minecraft.client.Minecraft.getInstance().player;
 		return player != null && HemoCapabilityAccess.getLivingStaffProgress(player)
-				.map(ILivingStaffProgress::isVesperMemoryAwakened)
-				.orElse(false);
+				.isVesperMemoryAwakened();
 	}
 
 	@OnlyIn(Dist.CLIENT)

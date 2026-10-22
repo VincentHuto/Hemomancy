@@ -113,14 +113,13 @@ public class BloodGourdItem extends Item implements IHarbingerEquipment, HemoCli
 			return;
 		}
 		if (entity instanceof Player player) {
-			HemoCapabilityAccess.getEquipment(player).ifPresent(equipment -> {
-				for (int slot = 0; slot < equipment.getSlots(); slot++) {
-					ItemStack stack = equipment.getStackInSlot(slot);
-					if (stack.getItem() == this) {
-						tickBloodTransfer(stack, player);
-					}
+			var equipment = HemoCapabilityAccess.getEquipment(player);
+			for (int slot = 0; slot < equipment.getSlots(); slot++) {
+				ItemStack stack = equipment.getStackInSlot(slot);
+				if (stack.getItem() == this) {
+					tickBloodTransfer(stack, player);
 				}
-			});
+			}
 		}
 	}
 
@@ -143,7 +142,7 @@ public class BloodGourdItem extends Item implements IHarbingerEquipment, HemoCli
 		}
 		if (data.getBoolean(TAG_STATE)) {
 			// Restore player blood
-			IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+			IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player);
 			if (playerVolume == null) {
 				return;
 			}

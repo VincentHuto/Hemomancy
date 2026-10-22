@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.client.data;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.ItemSanguineConduit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.SanguineBlobItem;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
@@ -70,8 +69,7 @@ public class BloodBallClientData {
 		if (!holdsBlob && !(holdsConduit && bloodOrbConduitRendererEnabled())) return false;
 
 		return HemoCapabilityAccess.getInitiatoryDegree(player)
-				.map(IInitiatoryDegree::getDegreeNumber)
-				.orElse(0) >= 3;
+				.getDegreeNumber() >= 3;
 	}
 
 	private static boolean bloodOrbConduitRendererEnabled() {

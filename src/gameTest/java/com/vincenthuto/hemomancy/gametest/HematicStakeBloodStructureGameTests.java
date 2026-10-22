@@ -54,8 +54,8 @@ public final class HematicStakeBloodStructureGameTests {
 		for (int i = 0; i < 5; i++) members.add(UUID.randomUUID());
 		Bloodline bloodline = new Bloodline("Stake Test", player.getUUID(), bloodlineId, members);
 		BloodlineSavedData.get(helper.getLevel().getServer().overworld()).registerBloodline(bloodline);
-		HemoCapabilityAccess.requireBloodVolume(player).setBloodLine(bloodline);
-		HemoCapabilityAccess.requireBloodVolume(player).setBloodVolume(1_000.0D);
+		HemoCapabilityAccess.getBloodVolume(player).setBloodLine(bloodline);
+		HemoCapabilityAccess.getBloodVolume(player).setBloodVolume(1_000.0D);
 		FoundingFaneSavedData fanes = FoundingFaneSavedData.get(helper.getLevel());
 		fanes.consecrateHeart(player.getUUID(), helper.absolutePos(new BlockPos(8, 2, 8)));
 
@@ -73,12 +73,12 @@ public final class HematicStakeBloodStructureGameTests {
 						.setValue(BloodCrystalBlock.FACING, direction));
 
 				ItemStack catalyst = new ItemStack(ItemInit.sanguine_formation.get());
-				double bloodBefore = HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume();
+				double bloodBefore = HemoCapabilityAccess.getBloodVolume(player).getBloodVolume();
 				helper.assertTrue(BloodStructureFeedManager.feedStructure(player, helper.getLevel(),
 						helper.absolutePos(bar), catalyst, 100.0D),
 						"The stake formation must accept " + direction + " projection");
 				helper.assertTrue(catalyst.isEmpty(), "The Sanguine Formation must be consumed");
-				helper.assertTrue(HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume() == bloodBefore - 100.0D,
+				helper.assertTrue(HemoCapabilityAccess.getBloodVolume(player).getBloodVolume() == bloodBefore - 100.0D,
 						"The stake formation must consume 100 blood");
 				for (int tick = 0; tick < 30; tick++) PendingBloodCraftManager.tick();
 
@@ -112,8 +112,8 @@ public final class HematicStakeBloodStructureGameTests {
 		Bloodline bloodline = new Bloodline("Invalid Stake Test", player.getUUID(), bloodlineId, new ArrayList<>());
 		BloodlineSavedData lines = BloodlineSavedData.get(helper.getLevel().getServer().overworld());
 		lines.registerBloodline(bloodline);
-		HemoCapabilityAccess.requireBloodVolume(player).setBloodLine(bloodline);
-		HemoCapabilityAccess.requireBloodVolume(player).setBloodVolume(500.0D);
+		HemoCapabilityAccess.getBloodVolume(player).setBloodLine(bloodline);
+		HemoCapabilityAccess.getBloodVolume(player).setBloodVolume(500.0D);
 		FoundingFaneSavedData fanes = FoundingFaneSavedData.get(helper.getLevel());
 		BlockPos heart = helper.absolutePos(new BlockPos(8, 2, 8));
 		fanes.consecrateHeart(player.getUUID(), heart);
@@ -132,14 +132,14 @@ public final class HematicStakeBloodStructureGameTests {
 			Bloodline otherLine = new Bloodline("Other Progenitor", otherLeader, otherLineId,
 					new ArrayList<>(java.util.List.of(player.getUUID())));
 			lines.registerBloodline(otherLine);
-			HemoCapabilityAccess.requireBloodVolume(player).setBloodLine(otherLine);
+			HemoCapabilityAccess.getBloodVolume(player).setBloodLine(otherLine);
 			fanes.consecrateHeart(otherLeader, heart);
 			placeFormation(helper, bar, Direction.EAST, Direction.Axis.X, true);
 			assertRejectedWithoutConsumption(helper, player, bar, catalyst, "non-Progenitor");
 			lines.disbandBloodline(otherLineId);
 			fanes.remove(otherLeader);
 
-			HemoCapabilityAccess.requireBloodVolume(player).setBloodLine(bloodline);
+			HemoCapabilityAccess.getBloodVolume(player).setBloodLine(bloodline);
 			fanes.consecrateHeart(player.getUUID(), heart);
 			for (int index = 0; index < FaneFootprint.BASE_STAKE_BUDGET + 1; index++) {
 				helper.assertTrue(fanes.addStake(player.getUUID(), heart.offset(index + 1, 0, 0),
@@ -165,8 +165,8 @@ public final class HematicStakeBloodStructureGameTests {
 		Bloodline bloodline = new Bloodline("Delayed Stake Test", player.getUUID(), bloodlineId, new ArrayList<>());
 		BloodlineSavedData lines = BloodlineSavedData.get(helper.getLevel().getServer().overworld());
 		lines.registerBloodline(bloodline);
-		HemoCapabilityAccess.requireBloodVolume(player).setBloodLine(bloodline);
-		HemoCapabilityAccess.requireBloodVolume(player).setBloodVolume(500.0D);
+		HemoCapabilityAccess.getBloodVolume(player).setBloodLine(bloodline);
+		HemoCapabilityAccess.getBloodVolume(player).setBloodVolume(500.0D);
 		FoundingFaneSavedData fanes = FoundingFaneSavedData.get(helper.getLevel());
 		fanes.consecrateHeart(player.getUUID(), helper.absolutePos(new BlockPos(8, 2, 8)));
 		BlockPos bar = new BlockPos(8, 5, 8);
@@ -207,12 +207,12 @@ public final class HematicStakeBloodStructureGameTests {
 
 	private static void assertRejectedWithoutConsumption(GameTestHelper helper, ServerPlayer player, BlockPos bar,
 			ItemStack catalyst, String reason) {
-		double bloodBefore = HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume();
+		double bloodBefore = HemoCapabilityAccess.getBloodVolume(player).getBloodVolume();
 		int catalystBefore = catalyst.getCount();
 		var match = BloodStructureCraftingHelper.findProjectionCraftMatch(player, helper.getLevel(),
 				helper.absolutePos(bar), catalyst);
 		helper.assertTrue(match.isPresent() && !match.orElseThrow().valid(), reason + " must be rejected");
-		helper.assertTrue(HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume() == bloodBefore,
+		helper.assertTrue(HemoCapabilityAccess.getBloodVolume(player).getBloodVolume() == bloodBefore,
 				reason + " must not drain blood");
 		helper.assertTrue(catalyst.getCount() == catalystBefore, reason + " must not consume the catalyst");
 	}
@@ -229,7 +229,7 @@ public final class HematicStakeBloodStructureGameTests {
 			public void send(net.minecraft.network.protocol.Packet<?> packet) {
 			}
 		};
-		HemoCapabilityAccess.getInitiatoryDegree(player).orElseThrow().setDegreeNumber(5);
+		HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(5);
 		return player;
 	}
 

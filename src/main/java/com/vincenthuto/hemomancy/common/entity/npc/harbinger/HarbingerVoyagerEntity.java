@@ -97,13 +97,11 @@ public class HarbingerVoyagerEntity extends PathfinderMob implements Progression
 
 	private static boolean hasClarityUnlocked(Player player) {
 		return HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(IUnstainedProgress::hasClarityUnlocked)
-				.orElse(false);
+				.hasClarityUnlocked();
 	}
 
 	private static boolean isPurifying(Player player) {
 		return HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(IUnstainedProgress::hasBegunPurification)
-				.orElse(false);
+				.hasBegunPurification();
 	}
 }

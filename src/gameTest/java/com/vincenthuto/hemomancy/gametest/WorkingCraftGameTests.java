@@ -206,7 +206,7 @@ public final class WorkingCraftGameTests {
 		var subject = CardinalRiteStationMatcher.resolve(level, focus, List.of(recipe)).matches().getFirst()
 				.station().subject();
 		BlockPos target = subject.positions().getFirst();
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setBloodVolume(1000.0D);
 		double before = blood.getBloodVolume();
 		helper.assertTrue(BloodStructureFeedManager.feedStructure(player, level, target, ItemStack.EMPTY),
@@ -283,7 +283,7 @@ public final class WorkingCraftGameTests {
 			helper.assertTrue(!brazier.getRenderedOfferingStack().isEmpty(),
 					"An escrowed offering stays visible in its brazier until the daemon breaks it");
 		}
-		HemoCapabilityAccess.requireBloodVolume(player).setBloodVolume(1000.0D);
+		HemoCapabilityAccess.getBloodVolume(player).setBloodVolume(1000.0D);
 		// Follow the daemon: it must swoop over each brazier to absorb its offering, then dive into the structure.
 		List<BlockPos> braziers = station.braziers().stream().map(offering -> offering.pos()).toList();
 		double[] nearestBrazier = new double[braziers.size()];
@@ -422,7 +422,7 @@ public final class WorkingCraftGameTests {
 		ServerPlayer onlooker = player(helper);
 		saved.startRite(craft.rite());
 		try {
-			var blood = HemoCapabilityAccess.requireBloodVolume(onlooker);
+			var blood = HemoCapabilityAccess.getBloodVolume(onlooker);
 			blood.setBloodVolume(1000.0D);
 			SENT.remove(onlooker.getUUID());
 			helper.assertTrue(BloodStructureFeedManager.feedStructure(onlooker, level, craft.subject().getFirst(), ItemStack.EMPTY),
@@ -507,8 +507,8 @@ public final class WorkingCraftGameTests {
 
 	private static ServerPlayer claimant(GameTestHelper helper, int degree) {
 		ServerPlayer player = player(helper);
-		HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(degree);
-		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> volume.setActive(true));
+		HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(degree);
+		HemoCapabilityAccess.getBloodVolume(player).setActive(true);
 		return player;
 	}
 

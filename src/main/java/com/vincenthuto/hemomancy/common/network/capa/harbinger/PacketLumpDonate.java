@@ -44,41 +44,40 @@ public class PacketLumpDonate implements CustomPacketPayload {
 			Player packetPlayer = ctx.player();
 			if (!(packetPlayer instanceof ServerPlayer player)) return;
 
-			HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-				if (!volume.isActive()) return;
+			var volume = HemoCapabilityAccess.getBloodVolume(player);
+			if (!volume.isActive()) return;
 
-				Bloodline bloodline = volume.getBloodLine();
-				if (!bloodline.isValid()) {
+			Bloodline bloodline = volume.getBloodLine();
+			if (!bloodline.isValid()) {
+				player.displayClientMessage(
+						Component.literal("No bloodline claims you!").withStyle(ChatFormatting.RED), true);
+				return;
+			}
+
+			double donateAmount = BloodVolumeTransferRules.donationAmount(msg.amount, volume.getBloodVolume());
+			if (donateAmount <= 0) {
+				player.displayClientMessage(
+						Component.literal("Not enough blood to donate!").withStyle(ChatFormatting.RED), true);
+				return;
+			}
+
+			ServerLevel overworld = player.server.overworld();
+			BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
+			Bloodline globalLine = savedData.getBloodline(bloodline.getBloodlineUUID());
+			if (globalLine != null && volume.drain(donateAmount)) {
+					globalLine.contributeBlood((float) donateAmount);
+					savedData.setDirty();
+					BloodVolumeEvents.syncVolume(player, volume);
+
+					// Sync pool data to the donor
+					PacketHandler.sendToPlayer(player, new PacketSyncBloodlinePool(globalLine.getBloodVolume(),
+									globalLine.getMaxBloodVolume(),
+									globalLine.getPlayerUUIDS().size()));
+
 					player.displayClientMessage(
-							Component.literal("No bloodline claims you!").withStyle(ChatFormatting.RED), true);
-					return;
-				}
-
-				double donateAmount = BloodVolumeTransferRules.donationAmount(msg.amount, volume.getBloodVolume());
-				if (donateAmount <= 0) {
-					player.displayClientMessage(
-							Component.literal("Not enough blood to donate!").withStyle(ChatFormatting.RED), true);
-					return;
-				}
-
-				ServerLevel overworld = player.server.overworld();
-				BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
-				Bloodline globalLine = savedData.getBloodline(bloodline.getBloodlineUUID());
-				if (globalLine != null && volume.drain(donateAmount)) {
-						globalLine.contributeBlood((float) donateAmount);
-						savedData.setDirty();
-						BloodVolumeEvents.syncVolume(player, volume);
-
-						// Sync pool data to the donor
-						PacketHandler.sendToPlayer(player, new PacketSyncBloodlinePool(globalLine.getBloodVolume(),
-										globalLine.getMaxBloodVolume(),
-										globalLine.getPlayerUUIDS().size()));
-
-						player.displayClientMessage(
-								Component.literal("Donated " + String.format("%.0f", donateAmount) + "ml to the bloodline pool!")
-										.withStyle(ChatFormatting.DARK_RED), true);
-				}
-			});
+							Component.literal("Donated " + String.format("%.0f", donateAmount) + "ml to the bloodline pool!")
+									.withStyle(ChatFormatting.DARK_RED), true);
+			}
 		});
 	}
 

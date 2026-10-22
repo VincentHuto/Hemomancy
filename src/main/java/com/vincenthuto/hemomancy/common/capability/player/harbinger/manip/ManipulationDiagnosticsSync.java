@@ -22,10 +22,7 @@ public final class ManipulationDiagnosticsSync {
 	}
 
 	private static ManipulationCostSnapshot selectedCostSnapshot(ServerPlayer player) {
-		return HemoCapabilityAccess.getKnownManipulations(player)
-				.map(ManipulationDiagnosticsSync::selectedManipulation)
-				.map(manipulation -> ManipulationCostLedger.collect(player, manipulation))
-				.orElse(ManipulationCostSnapshot.EMPTY);
+		return ManipulationCostLedger.collect(player, selectedManipulation(HemoCapabilityAccess.getKnownManipulations(player)));
 	}
 
 	private static BloodManipulation selectedManipulation(IKnownManipulations known) {

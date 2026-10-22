@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
-import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEquipRules;
@@ -66,14 +65,13 @@ public class MuscleMemoryTinctureItem extends Item {
         int remaining = TinctureDoseRules.consume(remainingDoses(stack));
         if (living instanceof ServerPlayer player) {
             CriteriaTriggers.CONSUME_ITEM.trigger(player, stack);
-            var state = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+            var state = HemoCapabilityAccess.muscleMemory(player);
             state.learnAndAddReserve(memory, MuscleMemoryPrimingRules.TICKS_PER_DOSE);
-            HemoCapabilityAccess.getKnownManipulations(player).ifPresent(known -> {
-                MemoryEquipRules.autoEquipMuscleMemory(known.getEquippedManipNames(), memory,
-                        ManipSlotHelper.getMaxSlots(player));
-				MnemonicReliquaryProgression.onCapacityChanged(player, known);
-                PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
-            });
+            var known = HemoCapabilityAccess.getKnownManipulations(player);
+                            MemoryEquipRules.autoEquipMuscleMemory(known.getEquippedManipNames(), memory,
+                                    ManipSlotHelper.getMaxSlots(player));
+            				MnemonicReliquaryProgression.onCapacityChanged(player, known);
+                            PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
             MuscleMemoryEvents.sync(player);
             if (memory == MuscleMemory.SANGUINE_FISTS) {
                 BodyAnswersAssignment.markComplete(player);

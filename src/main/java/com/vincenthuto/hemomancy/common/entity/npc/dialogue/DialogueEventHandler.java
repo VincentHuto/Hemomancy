@@ -261,7 +261,7 @@ public class DialogueEventHandler {
                 if (entity instanceof HarbingerHermitEntity hermit
                         && com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.near(player, hermit)
                         && !hermit.isFarewellDying() && HemoCapabilityAccess.getPlayerDegreeNumber(player) == 0
-                        && !HemoCapabilityAccess.getBloodVolume(player).map(v -> v.isActive()).orElse(true)) {
+                        && !HemoCapabilityAccess.getBloodVolume(player).isActive()) {
                     TempleOathRules.bless(player, hermit.getUUID());
                     player.displayClientMessage(Component.translatable("hemomancy.dialogue.event.hermit_heart_offered"), false);
                 }
@@ -449,10 +449,9 @@ public class DialogueEventHandler {
 				if (!player.getPersistentData().getBoolean(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING)) return;
 				player.getPersistentData().remove(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING);
 				// Archon chose to carry the truth in silence — they turn back from the Eighth Degree.
-				HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree -> {
-					degree.setArchonPath(EnumArchonPath.SILENT_PENDING);
-					InitiatoryDegreeEvents.syncDegree(player, degree);
-				});
+				var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
+				degree.setArchonPath(EnumArchonPath.SILENT_PENDING);
+				InitiatoryDegreeEvents.syncDegree(player, degree);
 				player.displayClientMessage(
 						Component.translatable("hemomancy.dialogue.event.archon_choice_silence")
 								.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
@@ -465,10 +464,9 @@ public class DialogueEventHandler {
 				player.getPersistentData().putString(
 						FungalGardenTravelHelper.ARCHON_CHOICE_KEY,
 						FungalGardenTravelHelper.ARCHON_CHOICE_APOTHEOS);
-				HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree -> {
-					degree.setArchonPath(EnumArchonPath.APOTHEOS_PENDING);
-					InitiatoryDegreeEvents.syncDegree(player, degree);
-				});
+				var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
+				degree.setArchonPath(EnumArchonPath.APOTHEOS_PENDING);
+				InitiatoryDegreeEvents.syncDegree(player, degree);
 				player.displayClientMessage(
 						Component.translatable("hemomancy.dialogue.event.archon_choice_eighth_degree")
 								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
@@ -499,9 +497,7 @@ public class DialogueEventHandler {
 				if (teacher instanceof HarbingerMnemonistEntity
 						&& player.distanceToSqr(teacher) <= 64
 						&& HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 3
-						&& HemoCapabilityAccess.getUnstainedProgress(player)
-								.map(progress -> !progress.hasBegunPurification() && !progress.hasClarityUnlocked())
-								.orElse(true)) {
+						&& (!HemoCapabilityAccess.getUnstainedProgress(player).hasBegunPurification() && !HemoCapabilityAccess.getUnstainedProgress(player).hasClarityUnlocked())) {
 					event.setRewardDelivered(MnemonicRecipeKnowledge.awardBlankMemory(player) > 0);
 				}
 			}
@@ -510,9 +506,7 @@ public class DialogueEventHandler {
 				if (teacher instanceof HarbingerMnemonistEntity && teacher.isAlive()
 						&& player.distanceToSqr(teacher) <= 64
 						&& HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 3
-						&& HemoCapabilityAccess.getUnstainedProgress(player)
-								.map(progress -> !progress.hasBegunPurification() && !progress.hasClarityUnlocked())
-								.orElse(true)) {
+						&& (!HemoCapabilityAccess.getUnstainedProgress(player).hasBegunPurification() && !HemoCapabilityAccess.getUnstainedProgress(player).hasClarityUnlocked())) {
 					event.setRewardDelivered(LiberKnowledgeHelper.unlockEntry(player,
 							LiberEntryDefinitions.SCRIPTORIUM, HemomancyDiscoverySource.DIALOGUE));
 				}
@@ -814,16 +808,13 @@ public class DialogueEventHandler {
 				return true;
 			}
 		}
-		return HemoCapabilityAccess.getEquipment(player)
-				.map(equipment -> {
-					for (int slot = 0; slot < equipment.getSlots(); slot++) {
-						if (equipment.getStackInSlot(slot).is(fitting.getItem())) {
-							return true;
-						}
-					}
-					return false;
-				})
-				.orElse(false);
+		var equipment = HemoCapabilityAccess.getEquipment(player);
+		for (int slot = 0; slot < equipment.getSlots(); slot++) {
+			if (equipment.getStackInSlot(slot).is(fitting.getItem())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@FunctionalInterface
@@ -833,15 +824,9 @@ public class DialogueEventHandler {
 
 	private static boolean handleVeinMasonFirstLesson(ServerPlayer player, int entityId) {
 		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-		boolean activeBlood = HemoCapabilityAccess.getBloodVolume(player)
-				.map(volume -> volume.isActive())
-				.orElse(false);
-		boolean purifying = HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(progress -> progress.hasBegunPurification())
-				.orElse(false);
-		boolean clarity = HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(progress -> progress.hasClarityUnlocked())
-				.orElse(false);
+		boolean activeBlood = HemoCapabilityAccess.getBloodVolume(player).isActive();
+		boolean purifying = HemoCapabilityAccess.getUnstainedProgress(player).hasBegunPurification();
+		boolean clarity = HemoCapabilityAccess.getUnstainedProgress(player).hasClarityUnlocked();
 		if (degree < 4 || !activeBlood || purifying || clarity) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.dialogue.event.vein_mason_unready")
@@ -1001,7 +986,7 @@ public class DialogueEventHandler {
 			return;
 		}
 
-		var progress = HemoCapabilityAccess.requireSpecimenBestiary(player);
+		var progress = HemoCapabilityAccess.getSpecimenBestiary(player);
 		if (HarbingerAlchemistDialogueTrees.EVENT_BESTIARY_RECORD.equals(eventId)) {
 			boolean newSpecimen = progress.recordSpecimen(specimenId);
 			int newLayers = 0;
@@ -1086,12 +1071,8 @@ public class DialogueEventHandler {
 	}
 
 	private static boolean handleMnemonistStarterMemory(ServerPlayer player, int entityId, MnemonistStarterMemoryChoice choice) {
-		boolean purifying = HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(progress -> progress.hasBegunPurification())
-				.orElse(false);
-		boolean clarity = HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(progress -> progress.hasClarityUnlocked())
-				.orElse(false);
+		boolean purifying = HemoCapabilityAccess.getUnstainedProgress(player).hasBegunPurification();
+		boolean clarity = HemoCapabilityAccess.getUnstainedProgress(player).hasClarityUnlocked();
 		boolean claimed = player.getPersistentData().getBoolean(MnemonistStarterMemoryChoice.CLAIM_KEY);
 		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 
@@ -1124,10 +1105,8 @@ public class DialogueEventHandler {
 	}
 
 	private static boolean knowsStarterManipulation(ServerPlayer player, String manipulationName) {
-		return HemoCapabilityAccess.getKnownManipulations(player)
-				.map(known -> known.getKnownManips().keySet().stream()
-						.anyMatch(manip -> manip != null && manipulationName.equals(manip.getName())))
-				.orElse(false);
+		return HemoCapabilityAccess.getKnownManipulations(player).getKnownManips().keySet().stream()
+						.anyMatch(manip -> manip != null && manipulationName.equals(manip.getName()));
 	}
 
 	private static ItemStack starterStack(MnemonistStarterMemoryChoice choice) {
@@ -1140,12 +1119,8 @@ public class DialogueEventHandler {
 
 	private static boolean handleMnemonistWovenVessel(ServerPlayer player, int entityId) {
 		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-		boolean purifying = HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(progress -> progress.hasBegunPurification())
-				.orElse(false);
-		boolean clarity = HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(progress -> progress.hasClarityUnlocked())
-				.orElse(false);
+		boolean purifying = HemoCapabilityAccess.getUnstainedProgress(player).hasBegunPurification();
+		boolean clarity = HemoCapabilityAccess.getUnstainedProgress(player).hasClarityUnlocked();
 
 		if (degree < 3 || purifying || clarity) {
 			player.displayClientMessage(
@@ -1312,89 +1287,87 @@ public class DialogueEventHandler {
 	}
 
 	private static void handleRecruitHarbinger(ServerPlayer player, int entityId) {
-		if (HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(UnstainedAccessRules::blocksHarbingerProgress).orElse(false)) return;
-		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-			Bloodline bloodline = volume.getBloodLine();
+		if (UnstainedAccessRules.blocksHarbingerProgress(HemoCapabilityAccess.getUnstainedProgress(player))) return;
+		var volume = HemoCapabilityAccess.getBloodVolume(player);
+		Bloodline bloodline = volume.getBloodLine();
 
-			// Must have a bloodline first (signed the ledger)
-			if (!bloodline.isValid()) {
-				player.displayClientMessage(
-						Component.translatable("hemomancy.dialogue.recruit.no_bloodline")
-								.withStyle(ChatFormatting.RED),
-						false);
-				return;
+		// Must have a bloodline first (signed the ledger)
+		if (!bloodline.isValid()) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.recruit.no_bloodline")
+							.withStyle(ChatFormatting.RED),
+					false);
+			return;
+		}
+
+		Entity entity = player.level().getEntity(entityId);
+		if (entity == null) {
+			return;
+		}
+		ResourceLocation npcType = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
+		String npcOutpost = HarbingerRecruitmentRules.findOutpostKey(entity);
+
+		if (bloodline.hasNpcMember(entity.getUUID())) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.recruit.already_member")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+		if (bloodline.hasNpcMemberType(npcType)) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.recruit.type_already_member")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+		if (bloodline.hasNpcMemberOutpost(npcOutpost)) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.recruit.outpost_already_member")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+
+		// Add the NPC to the bloodline in world-level saved data
+		ServerLevel overworld = player.server.overworld();
+		BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
+		Bloodline updatedLine = savedData.addNpcMember(
+				bloodline.getBloodlineUUID(), entity.getUUID(), npcType, npcOutpost);
+
+		if (updatedLine != null) {
+			// Update the player's local bloodline reference
+			volume.setBloodLine(updatedLine);
+
+			// Sync updated bloodline state to client
+			PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(volume));
+
+			// Success feedback
+			String npcName = entity.getName().getString();
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.recruit.success", npcName)
+							.withStyle(ChatFormatting.DARK_RED),
+					false);
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.recruit.pool_increased",
+							(int) updatedLine.getMaxBloodVolume(),
+							updatedLine.getNpcMemberCount())
+							.withStyle(ChatFormatting.DARK_RED),
+					false);
+
+			// Blood particles from the NPC as a visual oath
+			Vec3 npcPos = entity.position();
+			Vec3 playerPos = player.position();
+			for (int i = 0; i < 6; i++) {
+				Vec3 particlePos = npcPos.add(
+						entity.level().random.nextDouble() - 0.5,
+						entity.level().random.nextDouble() * 1.5 + 0.5,
+						entity.level().random.nextDouble() - 0.5);
+				HLPacketHandler.sendLightningSpawn(particlePos, playerPos.add(0, 1, 0),
+						64.0f, entity.level().dimension(),
+						ParticleColor.BLOOD, 2, 12, 4, 0.6f);
 			}
-
-			Entity entity = player.level().getEntity(entityId);
-			if (entity == null) {
-				return;
-			}
-			ResourceLocation npcType = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
-			String npcOutpost = HarbingerRecruitmentRules.findOutpostKey(entity);
-
-			if (bloodline.hasNpcMember(entity.getUUID())) {
-				player.displayClientMessage(
-						Component.translatable("hemomancy.dialogue.recruit.already_member")
-								.withStyle(ChatFormatting.GRAY),
-						false);
-				return;
-			}
-			if (bloodline.hasNpcMemberType(npcType)) {
-				player.displayClientMessage(
-						Component.translatable("hemomancy.dialogue.recruit.type_already_member")
-								.withStyle(ChatFormatting.GRAY),
-						false);
-				return;
-			}
-			if (bloodline.hasNpcMemberOutpost(npcOutpost)) {
-				player.displayClientMessage(
-						Component.translatable("hemomancy.dialogue.recruit.outpost_already_member")
-								.withStyle(ChatFormatting.GRAY),
-						false);
-				return;
-			}
-
-			// Add the NPC to the bloodline in world-level saved data
-			ServerLevel overworld = player.server.overworld();
-			BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
-			Bloodline updatedLine = savedData.addNpcMember(
-					bloodline.getBloodlineUUID(), entity.getUUID(), npcType, npcOutpost);
-
-			if (updatedLine != null) {
-				// Update the player's local bloodline reference
-				volume.setBloodLine(updatedLine);
-
-				// Sync updated bloodline state to client
-				PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(volume));
-
-				// Success feedback
-				String npcName = entity.getName().getString();
-				player.displayClientMessage(
-						Component.translatable("hemomancy.dialogue.recruit.success", npcName)
-								.withStyle(ChatFormatting.DARK_RED),
-						false);
-				player.displayClientMessage(
-						Component.translatable("hemomancy.dialogue.recruit.pool_increased",
-								(int) updatedLine.getMaxBloodVolume(),
-								updatedLine.getNpcMemberCount())
-								.withStyle(ChatFormatting.DARK_RED),
-						false);
-
-				// Blood particles from the NPC as a visual oath
-				Vec3 npcPos = entity.position();
-				Vec3 playerPos = player.position();
-				for (int i = 0; i < 6; i++) {
-					Vec3 particlePos = npcPos.add(
-							entity.level().random.nextDouble() - 0.5,
-							entity.level().random.nextDouble() * 1.5 + 0.5,
-							entity.level().random.nextDouble() - 0.5);
-					HLPacketHandler.sendLightningSpawn(particlePos, playerPos.add(0, 1, 0),
-							64.0f, entity.level().dimension(),
-							ParticleColor.BLOOD, 2, 12, 4, 0.6f);
-				}
-			}
-		});
+		}
 	}
 
 	/**
@@ -1402,61 +1375,59 @@ public class DialogueEventHandler {
 	 * bloodline progenitor/leader may expel members.
 	 */
 	private static void handleExpelHarbinger(ServerPlayer player, int entityId) {
-		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-			Bloodline bloodline = volume.getBloodLine();
-			if (!bloodline.isValid()) {
-				player.displayClientMessage(
-						Component.translatable("hemomancy.dialogue.recruit.no_bloodline")
-								.withStyle(ChatFormatting.RED),
-						false);
-				return;
-			}
-
-			if (!player.getUUID().equals(bloodline.getLeaderUUID())) {
-				player.displayClientMessage(
-						Component.translatable("hemomancy.dialogue.recruit.not_leader")
-								.withStyle(ChatFormatting.RED),
-						false);
-				return;
-			}
-
-			Entity entity = player.level().getEntity(entityId);
-			if (entity == null) {
-				return;
-			}
-			ResourceLocation npcType = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
-			String npcOutpost = HarbingerRecruitmentRules.findOutpostKey(entity);
-
-			if (!bloodline.hasNpcMember(entity.getUUID())) {
-				player.displayClientMessage(
-						Component.translatable("hemomancy.dialogue.recruit.not_member")
-								.withStyle(ChatFormatting.GRAY),
-						false);
-				return;
-			}
-
-			ServerLevel overworld = player.server.overworld();
-			BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
-			savedData.removeNpcMember(bloodline.getBloodlineUUID(), entity.getUUID(), npcType, npcOutpost);
-			Bloodline updatedLine = savedData.getBloodline(bloodline.getBloodlineUUID());
-			if (updatedLine == null) {
-				return;
-			}
-
-			for (ServerPlayer online : player.server.getPlayerList().getPlayers()) {
-				HemoCapabilityAccess.getBloodVolume(online).ifPresent(memberVolume -> {
-					if (updatedLine.hasMember(online.getUUID())) {
-						memberVolume.setBloodLine(updatedLine);
-						BloodVolumeEvents.syncVolume(online, memberVolume);
-					}
-				});
-			}
-
+		var volume = HemoCapabilityAccess.getBloodVolume(player);
+		Bloodline bloodline = volume.getBloodLine();
+		if (!bloodline.isValid()) {
 			player.displayClientMessage(
-					Component.translatable("hemomancy.dialogue.recruit.expel.success", entity.getName())
-							.withStyle(ChatFormatting.DARK_RED),
+					Component.translatable("hemomancy.dialogue.recruit.no_bloodline")
+							.withStyle(ChatFormatting.RED),
 					false);
-		});
+			return;
+		}
+
+		if (!player.getUUID().equals(bloodline.getLeaderUUID())) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.recruit.not_leader")
+							.withStyle(ChatFormatting.RED),
+					false);
+			return;
+		}
+
+		Entity entity = player.level().getEntity(entityId);
+		if (entity == null) {
+			return;
+		}
+		ResourceLocation npcType = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
+		String npcOutpost = HarbingerRecruitmentRules.findOutpostKey(entity);
+
+		if (!bloodline.hasNpcMember(entity.getUUID())) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.recruit.not_member")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+			return;
+		}
+
+		ServerLevel overworld = player.server.overworld();
+		BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
+		savedData.removeNpcMember(bloodline.getBloodlineUUID(), entity.getUUID(), npcType, npcOutpost);
+		Bloodline updatedLine = savedData.getBloodline(bloodline.getBloodlineUUID());
+		if (updatedLine == null) {
+			return;
+		}
+
+		for (ServerPlayer online : player.server.getPlayerList().getPlayers()) {
+			var memberVolume = HemoCapabilityAccess.getBloodVolume(online);
+			if (updatedLine.hasMember(online.getUUID())) {
+				memberVolume.setBloodLine(updatedLine);
+				BloodVolumeEvents.syncVolume(online, memberVolume);
+			}
+		}
+
+		player.displayClientMessage(
+				Component.translatable("hemomancy.dialogue.recruit.expel.success", entity.getName())
+						.withStyle(ChatFormatting.DARK_RED),
+				false);
 	}
 
 	private static void handleAnchoriteDiagnosis(ServerPlayer player) {
@@ -1501,29 +1472,28 @@ public class DialogueEventHandler {
 	}
 
 	private static void grantUnstainedStarterSupply(ServerPlayer player) {
-		HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
-			var grant = UnstainedStarterSupplyRules.grantFor(
-					progress.hasClaimedChurchStarterSupply(),
-					player.getInventory().countItem(ItemInit.hemolytic_solution.get()),
-					player.getInventory().contains(new ItemStack(ItemInit.liber_immaculatus.get())));
-			if (grant == UnstainedStarterSupplyRules.Grant.NONE) {
-				player.displayClientMessage(Component.translatable(
-						"hemomancy.dialogue.event.unstained_starter_already_claimed")
-						.withStyle(ChatFormatting.GRAY), false);
-				return;
-			}
-			if (grant.solutionCount() > 0) {
-				giveOrDrop(player, new ItemStack(ItemInit.hemolytic_solution.get(), grant.solutionCount()));
-			}
-			if (grant.guide()) {
-				giveOrDrop(player, new ItemStack(ItemInit.liber_immaculatus.get()));
-			}
-			progress.setClaimedChurchStarterSupply(true);
-			UnstainedProgressEvents.syncProgress(player, progress);
+		var progress = HemoCapabilityAccess.getUnstainedProgress(player);
+		var grant = UnstainedStarterSupplyRules.grantFor(
+				progress.hasClaimedChurchStarterSupply(),
+				player.getInventory().countItem(ItemInit.hemolytic_solution.get()),
+				player.getInventory().contains(new ItemStack(ItemInit.liber_immaculatus.get())));
+		if (grant == UnstainedStarterSupplyRules.Grant.NONE) {
 			player.displayClientMessage(Component.translatable(
-					"hemomancy.dialogue.event.unstained_starter_granted")
-					.withStyle(ChatFormatting.AQUA), false);
-		});
+					"hemomancy.dialogue.event.unstained_starter_already_claimed")
+					.withStyle(ChatFormatting.GRAY), false);
+			return;
+		}
+		if (grant.solutionCount() > 0) {
+			giveOrDrop(player, new ItemStack(ItemInit.hemolytic_solution.get(), grant.solutionCount()));
+		}
+		if (grant.guide()) {
+			giveOrDrop(player, new ItemStack(ItemInit.liber_immaculatus.get()));
+		}
+		progress.setClaimedChurchStarterSupply(true);
+		UnstainedProgressEvents.syncProgress(player, progress);
+		player.displayClientMessage(Component.translatable(
+				"hemomancy.dialogue.event.unstained_starter_granted")
+				.withStyle(ChatFormatting.AQUA), false);
 	}
 
 	private static void giveOrDrop(ServerPlayer player, ItemStack stack) {
@@ -1531,7 +1501,7 @@ public class DialogueEventHandler {
 	}
 
 	private static void replaceAbsolutionDagger(ServerPlayer player) {
-		var progress = HemoCapabilityAccess.getUnstainedProgress(player).orElse(null);
+		var progress = HemoCapabilityAccess.getUnstainedProgress(player);
 		if (progress == null) return;
 		boolean hasDagger = player.getInventory().contains(stack -> stack.is(ItemInit.absolution_dagger.get()));
 		if (!UnstainedDaggerReplacementRules.canExchange(progress.hasClarityUnlocked(), hasDagger,

@@ -89,7 +89,7 @@ public final class FungalGardenTravelHelper {
 						true);
 				return InteractionResult.SUCCESS;
 			}
-			var degreeState = HemoCapabilityAccess.requireInitiatoryDegree(player);
+			var degreeState = HemoCapabilityAccess.getInitiatoryDegree(player);
 			if (!degreeState.hasFungalSpineGranted()) {
 				player.displayClientMessage(Component.literal("You have found the wrong Spine. The ninth husk made another one yours.")
 						.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC), true);
@@ -142,10 +142,9 @@ public final class FungalGardenTravelHelper {
 		player.getPersistentData().remove(PROJECTION_ACTIVE);
 		player.getPersistentData().remove(PROJECTION_REMAINING);
 		player.getPersistentData().putBoolean(REVELATION_CHOICE_PENDING, true);
-		HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree -> {
-			degree.setFungalRevelationWitnessed(true);
-			InitiatoryDegreeEvents.syncDegree(player, degree);
-		});
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
+		degree.setFungalRevelationWitnessed(true);
+		InitiatoryDegreeEvents.syncDegree(player, degree);
 		performReturnTravel(player);
 		PacketHandler.sendToPlayer(player, new PacketSyncFungalProjection(false, 0,
 				FungalProjectionRules.FIRST_VISIT_TICKS));
@@ -163,9 +162,7 @@ public final class FungalGardenTravelHelper {
 	}
 
 	public static boolean drainTravelBlood(ServerPlayer player) {
-		var opt = HemoCapabilityAccess.getBloodVolume(player);
-		if (!opt.isPresent()) return false;
-		var volume = opt.orElseThrow(IllegalStateException::new);
+		var volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (!volume.isActive() || volume.getBloodVolume() < TRAVEL_BLOOD_COST) return false;
 		volume.drain(TRAVEL_BLOOD_COST);
 		BloodVolumeEvents.syncVolume(player, volume);

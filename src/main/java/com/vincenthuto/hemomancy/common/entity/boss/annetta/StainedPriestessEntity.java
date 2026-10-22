@@ -749,12 +749,11 @@ public class StainedPriestessEntity extends Monster {
 
     private void drain(LivingEntity target) {
         if (target instanceof Player player) {
-            HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-                if (volume.isActive() && volume.getBloodVolume() >= BLOOD_DRAIN) {
-                    volume.setBloodVolume(volume.getBloodVolume() - BLOOD_DRAIN);
-                    this.heal(3.0F);
-                }
-            });
+            var volume = HemoCapabilityAccess.getBloodVolume(player);
+            if (volume.isActive() && volume.getBloodVolume() >= BLOOD_DRAIN) {
+                volume.setBloodVolume(volume.getBloodVolume() - BLOOD_DRAIN);
+                this.heal(3.0F);
+            }
         }
     }
 
@@ -798,13 +797,10 @@ public class StainedPriestessEntity extends Monster {
     public void die(DamageSource source) {
         setFlying(false);
         if (!this.level().isClientSide && source.getEntity() instanceof ServerPlayer player
-                && HemoCapabilityAccess.getInitiatoryDegree(player)
-                .map(degree -> degree.hasFoundedBloodline())
-                .orElse(false)) {
-            HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
-                progress.setAnnettaSeveranceUnlocked(true);
-                UnstainedProgressEvents.syncProgress(player, progress);
-            });
+                && HemoCapabilityAccess.getInitiatoryDegree(player).hasFoundedBloodline()) {
+            var progress = HemoCapabilityAccess.getUnstainedProgress(player);
+            progress.setAnnettaSeveranceUnlocked(true);
+            UnstainedProgressEvents.syncProgress(player, progress);
             player.displayClientMessage(Component.literal(
                     "The infection's collapse reveals where a founder's covenant-root can be cut."), false);
         }

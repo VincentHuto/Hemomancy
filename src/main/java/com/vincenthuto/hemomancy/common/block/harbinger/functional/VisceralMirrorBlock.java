@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.EnumOrgan;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.IVisceralOrgans;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
@@ -176,18 +175,17 @@ public class VisceralMirrorBlock extends Block implements EntityBlock, IMultiBlo
 		int[] organLevels = new int[organs.length];
 		boolean[] hasEcho = new boolean[organs.length];
 
-		IVisceralOrgans organsCap = HemoCapabilityAccess.getVisceralOrgans(player).orElse(null);
+		IVisceralOrgans organsCap = HemoCapabilityAccess.getVisceralOrgans(player);
 		for (int i = 0; i < organs.length; i++) {
 			organLevels[i] = organsCap != null ? organsCap.getOrganLevel(organs[i]) : 0;
 			hasEcho[i] = playerHasEcho(player, organs[i]);
 		}
 
 		double bloodVol = HemoCapabilityAccess.getBloodVolume(player)
-				.map(IBloodVolume::getBloodVolume).orElse(0.0);
+				.getBloodVolume();
 		double maxBloodVol = HemoCapabilityAccess.getBloodVolume(player)
-				.map(IBloodVolume::getMaxBloodVolume).orElse(0.0);
-		int degree = HemoCapabilityAccess.getInitiatoryDegree(player)
-				.map(d -> d.getDegreeNumber()).orElse(0);
+				.getMaxBloodVolume();
+		int degree = HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber();
 
 		// Send the packet to open the screen
 		PacketHandler.sendToPlayer(serverPlayer, new OpenVisceralMirrorPacket(pos, organLevels, hasEcho, bloodVol, maxBloodVol, degree));

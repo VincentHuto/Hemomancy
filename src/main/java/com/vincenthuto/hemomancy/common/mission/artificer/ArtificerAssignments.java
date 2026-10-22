@@ -141,8 +141,7 @@ public final class ArtificerAssignments {
 	}
 
 	public static int forkResearchRecordedCount(ServerPlayer player) {
-		Set<String> recorded = HemoCapabilityAccess.getSpecimenBestiary(player)
-				.map(progress -> progress.recordedSpecimens()).orElse(Set.of());
+		Set<String> recorded = HemoCapabilityAccess.getSpecimenBestiary(player).recordedSpecimens();
 		return ArtificerProgressionRules.recordedForkResearchCount(firstForkFamily(player), recorded);
 	}
 
@@ -151,8 +150,7 @@ public final class ArtificerAssignments {
 	}
 
 	public static boolean canClaimForkResearchReward(ServerPlayer player) {
-		Set<String> recorded = HemoCapabilityAccess.getSpecimenBestiary(player)
-				.map(progress -> progress.recordedSpecimens()).orElse(Set.of());
+		Set<String> recorded = HemoCapabilityAccess.getSpecimenBestiary(player).recordedSpecimens();
 		boolean correspondenceComplete = has(player, THREE_ANSWERS_COUNSELED)
 				|| isArtificerLessonRewardClaimed(player, THREE_ANSWERS_REWARD_CLAIM_KEY);
 		return ArtificerProgressionRules.canClaimForkResearchReward(firstForkFamily(player), recorded,
@@ -313,19 +311,17 @@ public final class ArtificerAssignments {
 	}
 
 	public static int knownLivingWeaponFormCount(ServerPlayer player) {
-		return HemoCapabilityAccess.getKnownManipulations(player)
-				.map(known -> {
-					int count = 0;
-					for (LivingWeaponForm form : LivingWeaponForm.values()) {
-						boolean knownForm = known.getKnownManips().keySet().stream()
-								.anyMatch(manip -> manip != null
-										&& form.manipulationName().equals(manip.getName()));
-						if (knownForm) {
-							count++;
-						}
-					}
-					return count;
-				}).orElse(0);
+		var known = HemoCapabilityAccess.getKnownManipulations(player);
+		int count = 0;
+		for (LivingWeaponForm form : LivingWeaponForm.values()) {
+			boolean knownForm = known.getKnownManips().keySet().stream()
+					.anyMatch(manip -> manip != null
+							&& form.manipulationName().equals(manip.getName()));
+			if (knownForm) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 	public static boolean knowsFullLivingArsenal(ServerPlayer player) {
@@ -492,12 +488,11 @@ public final class ArtificerAssignments {
 		for (ItemStack stack : player.getInventory().items) if (stack.is(fitting)) return true;
 		for (ItemStack stack : player.getInventory().armor) if (stack.is(fitting)) return true;
 		for (ItemStack stack : player.getInventory().offhand) if (stack.is(fitting)) return true;
-		return HemoCapabilityAccess.getEquipment(player).map(equipment -> {
-			for (int slot = 0; slot < equipment.getSlots(); slot++) {
-				if (equipment.getStackInSlot(slot).is(fitting)) return true;
-			}
-			return false;
-		}).orElse(false);
+		var equipment = HemoCapabilityAccess.getEquipment(player);
+		for (int slot = 0; slot < equipment.getSlots(); slot++) {
+			if (equipment.getStackInSlot(slot).is(fitting)) return true;
+		}
+		return false;
 	}
 
 	private static ForkFamily forkFamily(ItemStack stack) {

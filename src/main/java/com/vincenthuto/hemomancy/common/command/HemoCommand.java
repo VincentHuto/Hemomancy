@@ -592,7 +592,7 @@ public class HemoCommand {
 
 	private static int getBlood(CommandSourceStack source, ServerPlayer player) {
 		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player)
-				.orElseThrow(IllegalStateException::new);
+				;
 		source.sendSuccess(() -> Component.literal("")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
 				.append(Component.literal(" Blood: ").withStyle(ChatFormatting.GRAY))
@@ -607,7 +607,7 @@ public class HemoCommand {
 
 	private static int setBlood(CommandSourceStack source, ServerPlayer player, double amount) {
 		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player)
-				.orElseThrow(IllegalStateException::new);
+				;
 		blood.setBloodVolume(Math.min(amount, blood.getMaxBloodVolume()));
 		BloodVolumeEvents.syncVolume(player, blood);
 		source.sendSuccess(() -> Component.literal("Set ")
@@ -620,7 +620,7 @@ public class HemoCommand {
 
 	private static int setMaxBlood(CommandSourceStack source, ServerPlayer player, double amount) {
 		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player)
-				.orElseThrow(IllegalStateException::new);
+				;
 		blood.setMaxBloodVolume(amount);
 		if (blood.getBloodVolume() > amount) {
 			blood.setBloodVolume(amount);
@@ -636,7 +636,7 @@ public class HemoCommand {
 
 	private static int fillBlood(CommandSourceStack source, ServerPlayer player) {
 		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player)
-				.orElseThrow(IllegalStateException::new);
+				;
 		blood.setBloodVolume(blood.getMaxBloodVolume());
 		BloodVolumeEvents.syncVolume(player, blood);
 		source.sendSuccess(() -> Component.literal("Filled ")
@@ -650,7 +650,7 @@ public class HemoCommand {
 
 	private static int activateBlood(CommandSourceStack source, ServerPlayer player) {
 		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player)
-				.orElseThrow(IllegalStateException::new);
+				;
 		blood.toggleActive();
 		BloodVolumeEvents.syncVolume(player, blood);
 		source.sendSuccess(() -> Component.literal("Toggled ")
@@ -664,7 +664,7 @@ public class HemoCommand {
 
 	private static int disbandBloodline(CommandSourceStack source, ServerPlayer player) {
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
-				.orElseThrow(IllegalStateException::new);
+				;
 		Bloodline localLine = volume.getBloodLine();
 
 		if (!localLine.isValid()) {
@@ -707,7 +707,7 @@ public class HemoCommand {
 
 	private static int getDegree(CommandSourceStack source, ServerPlayer player) {
 		IInitiatoryDegree degree = HemoCapabilityAccess.getInitiatoryDegree(player)
-				.orElseThrow(IllegalStateException::new);
+				;
 		int num = degree.getDegreeNumber();
 		EnumInitiatoryDegree enumDeg = EnumInitiatoryDegree.byNumber(num);
 		String title = (enumDeg != null) ? enumDeg.getTitle() : "Uninitiated";
@@ -721,7 +721,7 @@ public class HemoCommand {
 
 	private static int setDegree(CommandSourceStack source, ServerPlayer player, int degreeNum) {
 		IInitiatoryDegree degree = HemoCapabilityAccess.getInitiatoryDegree(player)
-				.orElseThrow(IllegalStateException::new);
+				;
 		degree.setDegreeNumber(degreeNum);
 		InitiatoryDegreeEvents.syncDegree(player, degree);
 		boolean resetUnstained = degreeNum > 0 && PathMutualExclusionHelper.resetUnstainedProgress(player);
@@ -739,7 +739,7 @@ public class HemoCommand {
 	}
 
 	private static int listKnownSummons(CommandSourceStack source, ServerPlayer player) {
-		List<String> names = HemoCapabilityAccess.requireKnownSummons(player).getKnownSummonNames();
+		List<String> names = HemoCapabilityAccess.getKnownSummons(player).getKnownSummonNames();
 		String display = names.isEmpty() ? "none" : String.join(", ", names);
 		source.sendSuccess(() -> Component.literal(player.getName().getString())
 				.append(Component.literal(" known puppeteer summons: ").withStyle(ChatFormatting.GRAY))
@@ -749,7 +749,7 @@ public class HemoCommand {
 	}
 
 	private static int addKnownSummon(CommandSourceStack source, ServerPlayer player, String summonName) {
-		IKnownSummons known = HemoCapabilityAccess.requireKnownSummons(player);
+		IKnownSummons known = HemoCapabilityAccess.getKnownSummons(player);
 		List<String> current = new ArrayList<>(known.getKnownSummonNames());
 		int added;
 		if ("all".equals(summonName)) {
@@ -791,7 +791,7 @@ public class HemoCommand {
 					+ "'. Valid: " + puppeteerSummonList()));
 			return 0;
 		}
-		IKnownSummons known = HemoCapabilityAccess.requireKnownSummons(player);
+		IKnownSummons known = HemoCapabilityAccess.getKnownSummons(player);
 		List<String> remaining = new ArrayList<>(known.getKnownSummonNames());
 		if (!remaining.remove(definition.name())) {
 			source.sendFailure(Component.literal(player.getName().getString() + " does not know "
@@ -808,7 +808,7 @@ public class HemoCommand {
 	}
 
 	private static int clearKnownSummons(CommandSourceStack source, ServerPlayer player) {
-		IKnownSummons known = HemoCapabilityAccess.requireKnownSummons(player);
+		IKnownSummons known = HemoCapabilityAccess.getKnownSummons(player);
 		int removed = known.getKnownSummonNames().size();
 		known.setKnownSummonNames(List.of());
 		KnownSummonEvents.sync(player, known);
@@ -871,7 +871,7 @@ public class HemoCommand {
 		boolean sourceUpdated = false;
 		if (target.source() == MorphlingCommandRules.Source.EQUIPPED) {
 			var cap = HemoCapabilityAccess.getEquippedMorphling(player)
-					.orElseThrow(IllegalStateException::new);
+					;
 			sourceUpdated = writeBackEquippedMorphlingSource(player, original, updated);
 			cap.setEquippedMorphling(updated);
 			LastRiteHelper.armForMorphling(player, updated);
@@ -910,11 +910,9 @@ public class HemoCommand {
 	}
 
 	private static MorphlingCommandTarget getMorphlingCommandTarget(CommandSourceStack source, ServerPlayer player) {
-		ItemStack equipped = HemoCapabilityAccess.getEquippedMorphling(player)
-				.filter(cap -> cap.hasMorphling())
-				.map(cap -> cap.getEquippedMorphling())
-				.filter(HemoCommand::isMorphling)
-				.orElse(ItemStack.EMPTY);
+		var morphCap = HemoCapabilityAccess.getEquippedMorphling(player);
+		ItemStack equipped = morphCap.hasMorphling() && isMorphling(morphCap.getEquippedMorphling())
+				? morphCap.getEquippedMorphling() : ItemStack.EMPTY;
 		ItemStack mainHand = player.getMainHandItem();
 		ItemStack offhand = player.getOffhandItem();
 		MorphlingCommandRules.Source selected = MorphlingCommandRules.chooseSource(!equipped.isEmpty(),
@@ -961,10 +959,10 @@ public class HemoCommand {
 		if (!inventoryJar.isEmpty()) {
 			changed |= updateMorphlingJarStack(inventoryJar, original, updated);
 		}
-		ItemStack scarJar = HemoCapabilityAccess.getEquipment(player)
-				.map(equipmentItemHandler -> equipmentItemHandler.getStackInSlot(7))
-				.filter(stack -> stack.getItem() instanceof ItemMorphlingJar)
-				.orElse(ItemStack.EMPTY);
+		ItemStack scarJar = HemoCapabilityAccess.getEquipment(player).getStackInSlot(7);
+		if (!(scarJar.getItem() instanceof ItemMorphlingJar)) {
+			scarJar = ItemStack.EMPTY;
+		}
 		if (!scarJar.isEmpty() && scarJar != inventoryJar) {
 			changed |= updateMorphlingJarStack(scarJar, original, updated);
 		}
@@ -1029,7 +1027,7 @@ public class HemoCommand {
 
 	private static int resetPomeProgress(CommandSourceStack source, ServerPlayer player) {
 		IInitiatoryDegree degree = HemoCapabilityAccess.getInitiatoryDegree(player)
-				.orElseThrow(IllegalStateException::new);
+				;
 		degree.resetPomeCommunion();
 		degree.setQliphothCommunionDone(false);
 		InitiatoryDegreeEvents.syncDegree(player, degree);
@@ -1053,7 +1051,7 @@ public class HemoCommand {
 
 	private static int setSilentArchonState(CommandSourceStack source, ServerPlayer player, String state) {
 		IInitiatoryDegree degree = HemoCapabilityAccess.getInitiatoryDegree(player)
-				.orElseThrow(IllegalStateException::new);
+				;
 		SilentArchonCommandRules.Transition transition =
 				SilentArchonCommandRules.transition(state, degree.getDegreeNumber());
 		degree.setDegreeNumber(transition.degreeNumber());
@@ -1078,7 +1076,7 @@ public class HemoCommand {
 	private static int setPomeProgress(CommandSourceStack source, ServerPlayer player, int count) {
 		int clamped = Math.max(0, Math.min(9, count));
 		IInitiatoryDegree degree = HemoCapabilityAccess.getInitiatoryDegree(player)
-				.orElseThrow(IllegalStateException::new);
+				;
 		degree.syncTotalPomesConsumed(clamped);
 		degree.setQliphothCommunionDone(clamped >= 9);
 		InitiatoryDegreeEvents.syncDegree(player, degree);
@@ -1159,7 +1157,7 @@ public class HemoCommand {
 	}
 
 	private static int getSkills(CommandSourceStack source, ServerPlayer player) {
-		SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(player);
+		SkillProgress progress = HemoCapabilityAccess.getSkillProgress(player);
 		source.sendSuccess(() -> Component.literal("Skill Points: ")
 				.append(Component.literal(String.valueOf(progress.getSkillPoints())).withStyle(ChatFormatting.AQUA)),
 				false);
@@ -1176,7 +1174,7 @@ public class HemoCommand {
 	}
 
 	private static int setSkillPoints(CommandSourceStack source, ServerPlayer player, int amount) {
-		HemoCapabilityAccess.requireSkillProgress(player).setSkillPoints(amount);
+		HemoCapabilityAccess.getSkillProgress(player).setSkillPoints(amount);
 		syncSkills(player);
 		source.sendSuccess(() -> Component.literal("Set skill points to ")
 				.append(Component.literal(String.valueOf(amount)).withStyle(ChatFormatting.AQUA)),
@@ -1185,7 +1183,7 @@ public class HemoCommand {
 	}
 
 	private static int resetSkills(CommandSourceStack source, ServerPlayer player) {
-		HemoCapabilityAccess.requireSkillProgress(player).reset();
+		HemoCapabilityAccess.getSkillProgress(player).reset();
 		syncSkills(player);
 		source.sendSuccess(() -> Component.literal("Reset all skills, milestones, and skill points").withStyle(ChatFormatting.YELLOW),
 				true);
@@ -1193,12 +1191,12 @@ public class HemoCommand {
 	}
 
 	private static void syncSkills(ServerPlayer player) {
-		PacketHandler.sendToPlayer(player, new PacketSyncSkills(HemoCapabilityAccess.requireSkillProgress(player).toSyncTag()));
+		PacketHandler.sendToPlayer(player, new PacketSyncSkills(HemoCapabilityAccess.getSkillProgress(player).toSyncTag()));
 	}
 
 	private static int getUnstainedOverview(CommandSourceStack source, ServerPlayer player) {
 		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
-				.orElseThrow(IllegalStateException::new);
+				;
 		EnumPurityStage pStage = EnumPurityStage.byPurity(cap.getPurity());
 		EnumClarityStage cStage = EnumClarityStage.byClarity(cap.getClarity());
 
@@ -1233,7 +1231,7 @@ public class HemoCommand {
 
 	private static int toggleBegun(CommandSourceStack source, ServerPlayer player) {
 		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
-				.orElseThrow(IllegalStateException::new);
+				;
 		cap.setBegunPurification(!cap.hasBegunPurification());
 		UnstainedProgressEvents.syncProgress(player, cap);
 		KnownStillArtEvents.grantEligibleArts(player, cap);
@@ -1248,7 +1246,7 @@ public class HemoCommand {
 
 	private static int getPurity(CommandSourceStack source, ServerPlayer player) {
 		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
-				.orElseThrow(IllegalStateException::new);
+				;
 		EnumPurityStage stage = EnumPurityStage.byPurity(cap.getPurity());
 		source.sendSuccess(() -> Component.literal("")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
@@ -1261,7 +1259,7 @@ public class HemoCommand {
 
 	private static int setPurity(CommandSourceStack source, ServerPlayer player, float value) {
 		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
-				.orElseThrow(IllegalStateException::new);
+				;
 		cap.setPurity(value);
 		UnstainedProgressEvents.syncProgress(player, cap);
 		EnumPurityStage stage = EnumPurityStage.byPurity(cap.getPurity());
@@ -1276,7 +1274,7 @@ public class HemoCommand {
 
 	private static int toggleClarityUnlock(CommandSourceStack source, ServerPlayer player) {
 		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
-				.orElseThrow(IllegalStateException::new);
+				;
 		cap.setClarityUnlocked(!cap.hasClarityUnlocked());
 		boolean resetHarbinger = PathMutualExclusionHelper.enforceHarbingerResetOnClarity(player, cap);
 		UnstainedProgressEvents.syncProgress(player, cap);
@@ -1294,7 +1292,7 @@ public class HemoCommand {
 
 	private static int getClarity(CommandSourceStack source, ServerPlayer player) {
 		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
-				.orElseThrow(IllegalStateException::new);
+				;
 		EnumClarityStage stage = EnumClarityStage.byClarity(cap.getClarity());
 		source.sendSuccess(() -> Component.literal("")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
@@ -1307,7 +1305,7 @@ public class HemoCommand {
 
 	private static int setClarity(CommandSourceStack source, ServerPlayer player, float value) {
 		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
-				.orElseThrow(IllegalStateException::new);
+				;
 		cap.setClarity(value);
 		boolean unlockedBySet = value > 0.0f && !cap.hasClarityUnlocked();
 		if (unlockedBySet) {
@@ -1342,7 +1340,7 @@ public class HemoCommand {
 
 	private static int maxUnstained(CommandSourceStack source, ServerPlayer player) {
 		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
-				.orElseThrow(IllegalStateException::new);
+				;
 		cap.setBegunPurification(false);
 		cap.setPurity(100);
 		cap.setBaselineRestored(true);
@@ -1369,7 +1367,7 @@ public class HemoCommand {
 	}
 
 	private static int getOrgans(CommandSourceStack source, ServerPlayer player) {
-		IVisceralOrgans organs = HemoCapabilityAccess.requireVisceralOrgans(player);
+		IVisceralOrgans organs = HemoCapabilityAccess.getVisceralOrgans(player);
 		source.sendSuccess(() -> {
 			MutableComponent msg = Component.literal(player.getName().getString())
 					.withStyle(ChatFormatting.GOLD)
@@ -1396,7 +1394,7 @@ public class HemoCommand {
 				return 0;
 			}
 		}
-		IVisceralOrgans organs = HemoCapabilityAccess.requireVisceralOrgans(player);
+		IVisceralOrgans organs = HemoCapabilityAccess.getVisceralOrgans(player);
 		organs.setOrganLevel(organ, level);
 		final String name = organ.getName();
 		source.sendSuccess(() -> Component.literal("Set ")
@@ -1407,7 +1405,7 @@ public class HemoCommand {
 	}
 
 	private static int resetOrgans(CommandSourceStack source, ServerPlayer player) {
-		IVisceralOrgans organs = HemoCapabilityAccess.requireVisceralOrgans(player);
+		IVisceralOrgans organs = HemoCapabilityAccess.getVisceralOrgans(player);
 		organs.resetAll();
 		source.sendSuccess(() -> Component.literal("Reset ")
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
@@ -1417,7 +1415,7 @@ public class HemoCommand {
 	}
 
 	private static int getTendency(CommandSourceStack source, ServerPlayer player) {
-		IBloodTendency bloodTendency = HemoCapabilityAccess.requireBloodTendency(player);
+		IBloodTendency bloodTendency = HemoCapabilityAccess.getBloodTendency(player);
 		float total = bloodTendency.getTotalAlignment();
 
 		source.sendSuccess(() -> Component.literal("")
@@ -1465,7 +1463,7 @@ public class HemoCommand {
 			return 0;
 		}
 
-		IBloodTendency bloodTendency = HemoCapabilityAccess.requireBloodTendency(player);
+		IBloodTendency bloodTendency = HemoCapabilityAccess.getBloodTendency(player);
 		bloodTendency.setTendencyAlignment(tendency, value);
 		BloodTendencyEvents.syncTendency(player, bloodTendency);
 
@@ -1481,7 +1479,7 @@ public class HemoCommand {
 	}
 
 	private static void setAllTendencies(ServerPlayer player, float value) {
-		IBloodTendency bloodTendency = HemoCapabilityAccess.requireBloodTendency(player);
+		IBloodTendency bloodTendency = HemoCapabilityAccess.getBloodTendency(player);
 		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
 			bloodTendency.setTendencyAlignment(tendency, value);
 		}
@@ -1530,7 +1528,7 @@ public class HemoCommand {
 	}
 
 	private static int listKnownManipulations(CommandSourceStack source, ServerPlayer player) {
-		List<String> names = HemoCapabilityAccess.requireKnownManipulations(player).getKnownManips().keySet().stream()
+		List<String> names = HemoCapabilityAccess.getKnownManipulations(player).getKnownManips().keySet().stream()
 				.map(BloodManipulation::getName).sorted().toList();
 		String display = names.isEmpty() ? "none" : String.join(", ", names);
 		source.sendSuccess(() -> Component.literal(player.getName().getString())
@@ -1541,7 +1539,7 @@ public class HemoCommand {
 	}
 
 	private static int addKnownManipulation(CommandSourceStack source, ServerPlayer player, String manipulationName) {
-		IKnownManipulations known = HemoCapabilityAccess.requireKnownManipulations(player);
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 		LinkedHashMap<BloodManipulation, ManipLevel> updated = new LinkedHashMap<>(known.getKnownManips());
 		int added = 0;
 		if ("all".equals(manipulationName)) {
@@ -1608,7 +1606,7 @@ public class HemoCommand {
 					+ "'. Use tab completion or 'all'."));
 			return 0;
 		}
-		IKnownManipulations known = HemoCapabilityAccess.requireKnownManipulations(player);
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 		boolean removed = known.getKnownManips().entrySet().removeIf(entry ->
 				manipulation.getName().equals(entry.getKey().getName()));
 		if (!removed) {
@@ -1632,7 +1630,7 @@ public class HemoCommand {
 	}
 
 	private static int clearKnownManipulations(CommandSourceStack source, ServerPlayer player) {
-		IKnownManipulations known = HemoCapabilityAccess.requireKnownManipulations(player);
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 		int removed = known.getKnownManips().size();
 		known.setKnownManips(new LinkedHashMap<>());
 		known.setSelectedManip(BloodManipulation.BLANK);
@@ -1645,7 +1643,7 @@ public class HemoCommand {
 	}
 
 	private static int setSelectedManipulationLevel(CommandSourceStack source, ServerPlayer player, int level) {
-		IKnownManipulations known = HemoCapabilityAccess.requireKnownManipulations(player);
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 		ManipLevel mastery = selectedEquippedManipulationLevel(known);
 		if (mastery == null) {
 			source.sendFailure(Component.literal(player.getName().getString()
@@ -1661,7 +1659,7 @@ public class HemoCommand {
 	}
 
 	private static int setSelectedManipulationXp(CommandSourceStack source, ServerPlayer player, double xp) {
-		IKnownManipulations known = HemoCapabilityAccess.requireKnownManipulations(player);
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 		ManipLevel mastery = selectedEquippedManipulationLevel(known);
 		if (mastery == null) {
 			source.sendFailure(Component.literal(player.getName().getString()
@@ -1724,7 +1722,7 @@ public class HemoCommand {
 
 	private static int getSlots(CommandSourceStack source, ServerPlayer player) {
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
-				.orElseThrow(IllegalStateException::new);
+				;
 		int maxSlots = ManipSlotHelper.getMaxSlots(player);
 		java.util.List<String> equipped = known.getEquippedManipNames();
 		int normalSlots = ManipulationEquipHelper.countNormalEquippedNames(equipped);
@@ -1743,7 +1741,7 @@ public class HemoCommand {
 
 	private static int equipManip(CommandSourceStack source, ServerPlayer player, String manipName) {
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
-				.orElseThrow(IllegalStateException::new);
+				;
 		int maxSlots = ManipSlotHelper.getMaxSlots(player);
 		if (known.equipManip(manipName, maxSlots)) {
 			int normalSlots = ManipulationEquipHelper.countNormalEquippedNames(known.getEquippedManipNames());
@@ -1762,7 +1760,7 @@ public class HemoCommand {
 
 	private static int unequipManip(CommandSourceStack source, ServerPlayer player, String manipName) {
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
-				.orElseThrow(IllegalStateException::new);
+				;
 		if (known.unequipManip(manipName)) {
 			source.sendSuccess(() -> Component.literal("Unequipped ")
 					.append(Component.literal(manipName).withStyle(ChatFormatting.YELLOW)),

@@ -57,17 +57,16 @@ public class UnstainedWarhammerItem extends DiggerItem implements HemoClientItem
 	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		if (attacker instanceof Player player && !player.level().isClientSide) {
 			// Apply knockback — warhammers are blunt impact weapons
-			HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
-				// Extra knockback at higher purity
-				double bonus = progress.getPurity() / 100.0 * 0.4;
-				double total = 0.8 + bonus;
-				double dx = player.getX() - target.getX();
-				double dz = player.getZ() - target.getZ();
-				double dist = Math.sqrt(dx * dx + dz * dz);
-				if (dist > 0.01) {
-					target.push((-dx / dist) * total, 0.25, (-dz / dist) * total);
-				}
-			});
+			var progress = HemoCapabilityAccess.getUnstainedProgress(player);
+			// Extra knockback at higher purity
+			double bonus = progress.getPurity() / 100.0 * 0.4;
+			double total = 0.8 + bonus;
+			double dx = player.getX() - target.getX();
+			double dz = player.getZ() - target.getZ();
+			double dist = Math.sqrt(dx * dx + dz * dz);
+			if (dist > 0.01) {
+				target.push((-dx / dist) * total, 0.25, (-dz / dist) * total);
+			}
 			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, CRIPPLE_DURATION, CRIPPLE_AMPLIFIER,
 					false, true, true));
 			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, CRIPPLE_DURATION, CRIPPLE_AMPLIFIER,
@@ -88,9 +87,7 @@ public class UnstainedWarhammerItem extends DiggerItem implements HemoClientItem
 	 * Purity-scaling damage bonus: up to +4 additional damage at full purity.
 	 */
 	public static float getPurityDamageBonus(Player player) {
-		return HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(progress -> progress.getPurity() / 100.0f * 4.0f)
-				.orElse(0.0f);
+		return HemoCapabilityAccess.getUnstainedProgress(player).getPurity() / 100.0f * 4.0f;
 	}
 
 	@Override

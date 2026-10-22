@@ -47,8 +47,7 @@ public class SyncEquippedMorphlingPacket implements CustomPacketPayload {
 			if (receiver == null || receiver.level() == null) return;
 			Player target = receiver.level().getPlayerByUUID(msg.playerUUID);
 			if (target == null) return;
-			HemoCapabilityAccess.getEquippedMorphling(target)
-					.ifPresent(cap -> cap.setEquippedMorphling(msg.morphlingStack.copy()));
+			HemoCapabilityAccess.getEquippedMorphling(target).setEquippedMorphling(msg.morphlingStack.copy());
 		});
 	}
 

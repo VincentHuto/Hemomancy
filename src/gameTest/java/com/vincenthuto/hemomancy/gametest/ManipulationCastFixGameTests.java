@@ -84,10 +84,10 @@ public final class ManipulationCastFixGameTests {
 		ServerPlayer player = player(helper, "venous-travel-test");
 		try {
 			BloodManipulation.clearSessionState();
-			var blood = HemoCapabilityAccess.requireBloodVolume(player);
+			var blood = HemoCapabilityAccess.getBloodVolume(player);
 			blood.setActive(true);
 			blood.setBloodVolume(2_000.0D);
-			var known = HemoCapabilityAccess.requireKnownManipulations(player);
+			var known = HemoCapabilityAccess.getKnownManipulations(player);
 			ManipLevel level = new ManipLevel(0, 0);
 			known.getKnownManips().put(ManipulationInit.venous_travel.get(), level);
 
@@ -180,7 +180,7 @@ public final class ManipulationCastFixGameTests {
 		Zombie target = zombie(helper, player.position().add(0.0D, 0.0D, 4.0D));
 		try {
 			BloodManipulation.clearSessionState();
-			var blood = HemoCapabilityAccess.requireBloodVolume(player);
+			var blood = HemoCapabilityAccess.getBloodVolume(player);
 			blood.setActive(true);
 			blood.setBloodVolume(500.0D);
 			select(player, ManipulationInit.blood_binding.get());
@@ -217,7 +217,7 @@ public final class ManipulationCastFixGameTests {
 		player.setPos(helper.absoluteVec(new Vec3(2.5D, 2.0D, 2.5D)));
 		try {
 			BloodManipulation.clearSessionState();
-			var blood = HemoCapabilityAccess.requireBloodVolume(player);
+			var blood = HemoCapabilityAccess.getBloodVolume(player);
 			blood.setActive(true);
 			blood.setBloodVolume(500.0D);
 			select(player, ManipulationInit.blood_binding.get());
@@ -246,7 +246,7 @@ public final class ManipulationCastFixGameTests {
 		Zombie target = zombie(helper, player.position().add(0.0D, 0.0D, 4.0D));
 		try {
 			BloodManipulation.clearSessionState();
-			var blood = HemoCapabilityAccess.requireBloodVolume(player);
+			var blood = HemoCapabilityAccess.getBloodVolume(player);
 			blood.setActive(true);
 			blood.setBloodVolume(500.0D);
 			select(player, ManipulationInit.blood_binding.get());
@@ -388,7 +388,7 @@ public final class ManipulationCastFixGameTests {
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void crimsonTitheUsesTheBorrowedReserveAndCollectsAutomatically(GameTestHelper helper) {
 		ServerPlayer player = player(helper, "crimson-tithe-debt-test");
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setActive(true);
 		blood.setBloodVolume(2_000.0D);
 		BorrowedBloodReserve.drainToCover(player, Double.MAX_VALUE);
@@ -553,10 +553,10 @@ public final class ManipulationCastFixGameTests {
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void phoenixDebtUsesSharedLastRiteArming(GameTestHelper helper) {
 		ServerPlayer player = player(helper, "phoenix-last-rite-test");
-		HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-		HemoCapabilityAccess.getBloodTendency(player).orElseThrow().setTendencyAlignment(EnumBloodTendency.FLAMMEUS, 75);
+		HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+		HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(EnumBloodTendency.FLAMMEUS, 75);
 		try {
-			var known = HemoCapabilityAccess.requireKnownManipulations(player);
+			var known = HemoCapabilityAccess.getKnownManipulations(player);
 			known.setEquippedManipNames(java.util.List.of("phoenix_debt"));
 			known.togglePassive("phoenix_debt");
 			ManipulationReactiveEvents.onPlayerTick(new PlayerTickEvent.Post(player));
@@ -639,12 +639,12 @@ public final class ManipulationCastFixGameTests {
 		ServerPlayer player = player(helper, "partial-ironheart-test");
 		try {
 			BloodManipulation.clearSessionState();
-			var blood = HemoCapabilityAccess.requireBloodVolume(player);
+			var blood = HemoCapabilityAccess.getBloodVolume(player);
 			blood.setActive(true);
 			blood.setBloodVolume(1_000.0D);
-			var tendency = HemoCapabilityAccess.requireBloodTendency(player);
+			var tendency = HemoCapabilityAccess.getBloodTendency(player);
 			tendency.setTendencyAlignment(ManipulationInit.ironhearted.get().getTend(), 45.0F);
-			var known = HemoCapabilityAccess.requireKnownManipulations(player);
+			var known = HemoCapabilityAccess.getKnownManipulations(player);
 			known.getKnownManips().put(ManipulationInit.ironhearted.get(), new ManipLevel(0, 0));
 
 			double bloodBefore = blood.getBloodVolume();
@@ -852,12 +852,12 @@ public final class ManipulationCastFixGameTests {
 	public static void continuousWardPaysUpkeepAndCoolsDownOnStop(GameTestHelper helper) {
 		ServerPlayer player = player(helper, "continuous-ward-test");
 		BloodManipulation.clearSessionState();
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setActive(true);
 		blood.setBloodVolume(300.0D);
-		HemoCapabilityAccess.requireBloodTendency(player)
+		HemoCapabilityAccess.getBloodTendency(player)
 				.setTendencyAlignment(ManipulationInit.sanguine_ward.get().getTend(), 10.0F);
-		var known = HemoCapabilityAccess.requireKnownManipulations(player);
+		var known = HemoCapabilityAccess.getKnownManipulations(player);
 		ManipLevel mastery = new ManipLevel(0, 0);
 		known.getKnownManips().put(ManipulationInit.sanguine_ward.get(), mastery);
 		known.setEquippedManipNames(java.util.List.of("sanguine_ward"));
@@ -903,12 +903,12 @@ public final class ManipulationCastFixGameTests {
 	public static void avatarPaysUpkeepAndAwardsMasteryEveryFiveSeconds(GameTestHelper helper) {
 		ServerPlayer player = player(helper, "avatar-mastery-test");
 		var avatar = (SummonAvatarManip) ManipulationInit.summon_avatar.get();
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setActive(true);
 		blood.setBloodVolume(525.0D);
-		HemoCapabilityAccess.requireBloodTendency(player)
+		HemoCapabilityAccess.getBloodTendency(player)
 				.setTendencyAlignment(avatar.getTend(), 50.0F);
-		var known = HemoCapabilityAccess.requireKnownManipulations(player);
+		var known = HemoCapabilityAccess.getKnownManipulations(player);
 		ManipLevel mastery = new ManipLevel(0, 0);
 		known.getKnownManips().put(avatar, mastery);
 		known.setEquippedManipNames(java.util.List.of(avatar.getName()));
@@ -949,7 +949,7 @@ public final class ManipulationCastFixGameTests {
 	public static void ferventHuskHasNoRightClickMasteryEffect(GameTestHelper helper) {
 		ServerPlayer player = player(helper, "fervent-husk-mastery-test");
 		try {
-			var known = HemoCapabilityAccess.requireKnownManipulations(player);
+			var known = HemoCapabilityAccess.getKnownManipulations(player);
 			BloodManipulation manipulation = ManipulationInit.blood_shot.get();
 			ManipLevel mastery = new ManipLevel(1, 10);
 			known.getKnownManips().put(manipulation, mastery);
@@ -975,7 +975,7 @@ public final class ManipulationCastFixGameTests {
 	public static void sanguineMendingRepairsPerPulseAndCoolsDownOnStop(GameTestHelper helper) {
 		ServerPlayer player = player(helper, "continuous-mending-test");
 		BloodManipulation.clearSessionState();
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setActive(true);
 		blood.setBloodVolume(500.0D);
 		ItemStack pickaxe = new ItemStack(Items.IRON_PICKAXE);
@@ -1009,7 +1009,7 @@ public final class ManipulationCastFixGameTests {
 	public static void vascularDowsingStopsWhenTheNextUpkeepCannotBePaid(GameTestHelper helper) {
 		ServerPlayer player = player(helper, "continuous-dowsing-test");
 		BloodManipulation.clearSessionState();
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setActive(true);
 		blood.setBloodVolume(100.0D);
 		select(player, ManipulationInit.vascular_dowsing.get());
@@ -1048,7 +1048,7 @@ public final class ManipulationCastFixGameTests {
 		helper.getLevel().setBlockAndUpdate(branch, net.minecraft.world.level.block.Blocks.OAK_LOG.defaultBlockState());
 		try {
 			BloodManipulation.clearSessionState();
-			var blood = HemoCapabilityAccess.requireBloodVolume(player);
+			var blood = HemoCapabilityAccess.getBloodVolume(player);
 			blood.setActive(true);
 			blood.setBloodVolume(1_000.0D);
 			select(player, ManipulationInit.lignum_mortis.get());
@@ -1089,7 +1089,7 @@ public final class ManipulationCastFixGameTests {
 				net.minecraft.world.level.block.Blocks.BROWN_MUSHROOM_BLOCK.defaultBlockState());
 		try {
 			BloodManipulation.clearSessionState();
-			var blood = HemoCapabilityAccess.requireBloodVolume(player);
+			var blood = HemoCapabilityAccess.getBloodVolume(player);
 			blood.setActive(true);
 			blood.setBloodVolume(1_000.0D);
 			select(player, ManipulationInit.lignum_mortis.get());
@@ -1133,7 +1133,7 @@ public final class ManipulationCastFixGameTests {
 	}
 
 	private static void select(ServerPlayer player, BloodManipulation manipulation) {
-		var known = HemoCapabilityAccess.requireKnownManipulations(player);
+		var known = HemoCapabilityAccess.getKnownManipulations(player);
 		known.getKnownManips().put(manipulation, new ManipLevel(0, 0));
 		known.setEquippedManipNames(java.util.List.of(manipulation.getName()));
 		known.setSelectedManip(manipulation);

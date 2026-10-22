@@ -44,9 +44,7 @@ public class VerdigrisCenserItem extends Item {
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 		if (!level.isClientSide) {
-			boolean onPath = HemoCapabilityAccess.getUnstainedProgress(player)
-					.map(progress -> progress.hasBegunPurification())
-					.orElse(false);
+			boolean onPath = HemoCapabilityAccess.getUnstainedProgress(player).hasBegunPurification();
 			if (!onPath) {
 				player.displayClientMessage(Component.literal("The censer smoke curls away from you.")
 						.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), true);
@@ -60,7 +58,7 @@ public class VerdigrisCenserItem extends Item {
 			for (LivingEntity entity : nearby) {
 				if (entity == player) continue;
 				boolean bloodActive = entity instanceof ServerPlayer other
-						&& HemoCapabilityAccess.getBloodVolume(other).map(volume -> volume.isActive()).orElse(false);
+						&& HemoCapabilityAccess.getBloodVolume(other).isActive();
 				if (bloodActive || entity instanceof Monster) {
 					entity.addEffect(new MobEffectInstance(MobEffects.GLOWING, 200, 0, false, true, true));
 					entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 0, false, true, true));

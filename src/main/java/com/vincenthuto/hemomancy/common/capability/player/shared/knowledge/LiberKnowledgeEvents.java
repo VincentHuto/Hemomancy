@@ -61,13 +61,11 @@ public final class LiberKnowledgeEvents {
 	}
 
 	public static void sync(ServerPlayer player) {
-		HemoCapabilityAccess.getLiberKnowledge(player)
-				.ifPresent(knowledge -> PacketHandler.sendToPlayer(player, new PacketSyncLiberKnowledge(knowledge)));
+		PacketHandler.sendToPlayer(player, new PacketSyncLiberKnowledge(HemoCapabilityAccess.getLiberKnowledge(player)));
 	}
 
 	public static void sync(ServerPlayer player, Set<ResourceLocation> markUnreadEntries) {
-		HemoCapabilityAccess.getLiberKnowledge(player)
-				.ifPresent(knowledge -> PacketHandler.sendToPlayer(player,
-						new PacketSyncLiberKnowledge(knowledge, markUnreadEntries)));
+		PacketHandler.sendToPlayer(player,
+						new PacketSyncLiberKnowledge(HemoCapabilityAccess.getLiberKnowledge(player), markUnreadEntries));
 	}
 }

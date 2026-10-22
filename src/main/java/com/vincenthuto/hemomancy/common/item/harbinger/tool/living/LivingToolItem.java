@@ -108,7 +108,7 @@ public class LivingToolItem extends DiggerItem implements IDispellable, ITendenc
 				if (!attacker.level().isClientSide) {
 					Player playerIn = (Player) attacker;
 					IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(playerIn)
-							.orElseThrow(NullPointerException::new);
+							;
 					float damageMod = this.getLivingAttackDamage() * 25f;
 					if (playerVolume.getBloodVolume() > damageMod) {
 						playerVolume.drain(damageMod);

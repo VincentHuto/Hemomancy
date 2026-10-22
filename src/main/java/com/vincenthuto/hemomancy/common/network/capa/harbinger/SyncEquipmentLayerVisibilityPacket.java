@@ -54,12 +54,11 @@ public class SyncEquipmentLayerVisibilityPacket implements CustomPacketPayload {
 
 			Entity entity = level.getEntity(msg.playerId);
 			if (entity instanceof Player player) {
-				HemoCapabilityAccess.getEquipment(player).ifPresent(equipment -> {
-					equipment.setRenderLayerVisible(IScars.FUNGAL_SLOT, msg.fungalVisible);
-					equipment.setRenderLayerVisible(HarbingerEquipmentMenu.JAR_SLOT_INDEX, msg.jarVisible);
-					equipment.setRenderLayerVisible(HarbingerEquipmentMenu.CHARM_SLOT_INDEX, msg.charmVisible);
-					equipment.setRenderLayerVisible(HarbingerEquipmentMenu.GOURD_SLOT_INDEX, msg.gourdVisible);
-				});
+				var equipment = HemoCapabilityAccess.getEquipment(player);
+				equipment.setRenderLayerVisible(IScars.FUNGAL_SLOT, msg.fungalVisible);
+				equipment.setRenderLayerVisible(HarbingerEquipmentMenu.JAR_SLOT_INDEX, msg.jarVisible);
+				equipment.setRenderLayerVisible(HarbingerEquipmentMenu.CHARM_SLOT_INDEX, msg.charmVisible);
+				equipment.setRenderLayerVisible(HarbingerEquipmentMenu.GOURD_SLOT_INDEX, msg.gourdVisible);
 			}
 		});
 	}

@@ -21,12 +21,9 @@ public final class PaleIntercessionSummonService {
 	private PaleIntercessionSummonService() { }
 
 	public static boolean summonOrRecall(ServerPlayer player) {
-		boolean eligible = HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(progress -> progress.hasClarityUnlocked()
-						&& EnumClarityStage.byClarity(progress.getClarity()).getLevel() >= EnumClarityStage.RESOLUTE.getLevel())
-				.orElse(false);
-		boolean known = HemoCapabilityAccess.getKnownStillArts(player)
-				.map(arts -> arts.isKnown(StillArtInit.pale_intercession.get())).orElse(false);
+		boolean eligible = HemoCapabilityAccess.getUnstainedProgress(player).hasClarityUnlocked()
+						&& EnumClarityStage.byClarity(HemoCapabilityAccess.getUnstainedProgress(player).getClarity()).getLevel() >= EnumClarityStage.RESOLUTE.getLevel();
+		boolean known = HemoCapabilityAccess.getKnownStillArts(player).isKnown(StillArtInit.pale_intercession.get());
 		if (!eligible || !known) return false;
 
 		List<PaleIntercessionEntity> bodies = new ArrayList<>();

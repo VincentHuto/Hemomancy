@@ -272,11 +272,10 @@ public class VelorumEntity extends Monster {
             player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 60, 0, false, true));
 
             // Blood-active players get Nausea — their blood recoils from the silence
-            HemoCapabilityAccess.getBloodVolume(player).ifPresent(vol -> {
-                if (vol.isActive()) {
-                    player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 80, 0, false, true));
-                }
-            });
+            var vol = HemoCapabilityAccess.getBloodVolume(player);
+            if (vol.isActive()) {
+                player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 80, 0, false, true));
+            }
         }
 
         broadcastMessage("Darkness closes in — silence answers.", ChatFormatting.DARK_BLUE);
@@ -290,12 +289,11 @@ public class VelorumEntity extends Monster {
 
         for (Player player : server.getEntitiesOfClass(Player.class,
                 new AABB(this.blockPosition()).inflate(SILENCE_DRAIN_RADIUS))) {
-            HemoCapabilityAccess.getBloodVolume(player).ifPresent(vol -> {
-                if (vol.isActive() && vol.getBloodVolume() >= SILENCE_BLOOD_DRAIN) {
-                    sendParticleLine(server, player.position().add(0.0D, 1.0D, 0.0D), this.position().add(0.0D, 1.2D, 0.0D), ParticleTypes.SOUL_FIRE_FLAME, 8);
-                    vol.setBloodVolume(vol.getBloodVolume() - SILENCE_BLOOD_DRAIN);
-                }
-            });
+            var vol = HemoCapabilityAccess.getBloodVolume(player);
+            if (vol.isActive() && vol.getBloodVolume() >= SILENCE_BLOOD_DRAIN) {
+                sendParticleLine(server, player.position().add(0.0D, 1.0D, 0.0D), this.position().add(0.0D, 1.2D, 0.0D), ParticleTypes.SOUL_FIRE_FLAME, 8);
+                vol.setBloodVolume(vol.getBloodVolume() - SILENCE_BLOOD_DRAIN);
+            }
         }
     }
 

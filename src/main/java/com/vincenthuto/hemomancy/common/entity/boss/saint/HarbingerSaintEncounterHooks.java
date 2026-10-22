@@ -35,8 +35,7 @@ public final class HarbingerSaintEncounterHooks {
 
 		if (!level.addFreshEntity(boss)) return false;
 		// Reset blood debt only after the encounter exists so a failed spawn cannot erase player state.
-		HemoCapabilityAccess.getBloodVolume(sourcePlayer)
-				.ifPresent(v -> v.resetBloodDebt());
+		HemoCapabilityAccess.getBloodVolume(sourcePlayer).resetBloodDebt();
 		return true;
 	}
 

@@ -183,9 +183,7 @@ public class HematicStakeBlock extends Block implements EntityBlock {
 		if (!isProgenitor(player) || !level.isEmptyBlock(pos) || !state.canSurvive(level, pos)) {
 			return false;
 		}
-		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(player)
-				.map(volume -> volume.getBloodLine())
-				.orElse(Bloodline.NOBLOODLINE);
+		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(player).getBloodLine();
 		UUID owner = bloodline.getLeaderUUID();
 		int budget = configuredStakeBudget(
 				bloodline.getPlayerUUIDS().size(),
@@ -210,9 +208,7 @@ public class HematicStakeBlock extends Block implements EntityBlock {
 		}
 
 		BlockState stake = stateForAttachment(direction, Direction.NORTH);
-		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(player)
-				.map(volume -> volume.getBloodLine())
-				.orElse(Bloodline.NOBLOODLINE);
+		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(player).getBloodLine();
 		int budget = configuredStakeBudget(bloodline.getPlayerUUIDS().size(), bloodline.getNpcMemberCount());
 		if (!isProgenitor(player)
 				|| !stake.canSurvive(level, barPos)
@@ -247,16 +243,12 @@ public class HematicStakeBlock extends Block implements EntityBlock {
 	}
 
 	public static boolean isProgenitor(ServerPlayer player) {
-		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(player)
-				.map(volume -> volume.getBloodLine())
-				.orElse(Bloodline.NOBLOODLINE);
+		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(player).getBloodLine();
 		return bloodline.isValid() && player.getUUID().equals(bloodline.getLeaderUUID());
 	}
 
 	private static void registerStake(ServerLevel level, ServerPlayer player, BlockPos pos) {
-		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(player)
-				.map(volume -> volume.getBloodLine())
-				.orElse(Bloodline.NOBLOODLINE);
+		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(player).getBloodLine();
 		if (!bloodline.isValid()) {
 			return;
 		}

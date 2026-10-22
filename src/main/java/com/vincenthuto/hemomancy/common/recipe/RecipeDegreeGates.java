@@ -86,11 +86,10 @@ public final class RecipeDegreeGates {
 		if (!unstained || (requiredPurity < 0 && requiredClarity < 0)) {
 			return true;
 		}
-		return HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(progress -> (requiredPurity < 0 || progress.getPurity() >= requiredPurity)
-						&& (requiredClarity < 0 || progress.hasClarityUnlocked()
-								&& progress.getClarity() >= requiredClarity))
-				.orElse(false);
+		var progress = HemoCapabilityAccess.getUnstainedProgress(player);
+		return (requiredPurity < 0 || progress.getPurity() >= requiredPurity)
+				&& (requiredClarity < 0 || progress.hasClarityUnlocked()
+						&& progress.getClarity() >= requiredClarity);
 	}
 
 	public static String requirementLabel(BloodStructureRecipe recipe) {

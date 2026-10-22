@@ -36,7 +36,7 @@ public class BloodVolumeServerPacket implements CustomPacketPayload {
 			Player player = ctx.player();
 			if (player != null) {
 				IBloodVolume capa = HemoCapabilityAccess.getBloodVolume(player)
-						.orElseThrow(NullPointerException::new);
+						;
 				capa.setActive(msg.active);
 				capa.setMaxBloodVolume(msg.max);
 				capa.setBloodVolume(msg.volume);

@@ -48,9 +48,8 @@ public class PacketSyncSpecimenBestiary implements CustomPacketPayload {
 		ctx.enqueueWork(() -> {
 			Player player = ctx.player();
 			if (player != null) {
-				HemoCapabilityAccess.getSpecimenBestiary(player)
-						.ifPresent(progress -> progress.replaceFromSync(msg.recordedSpecimens,
-								msg.surrenderedSpecimens, msg.recordedMorphlingLayers));
+				HemoCapabilityAccess.getSpecimenBestiary(player).replaceFromSync(msg.recordedSpecimens,
+								msg.surrenderedSpecimens, msg.recordedMorphlingLayers);
 			}
 		});
 	}

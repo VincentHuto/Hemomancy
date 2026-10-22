@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.client.render.layer.player;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.BloodArmModel;
-import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryState;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
@@ -45,7 +45,7 @@ public class MuscleMemoryLayer<T extends LivingEntity, M extends EntityModel<T> 
             return;
         }
         model.setAllVisible(false);
-        MuscleMemoryState state = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+        MuscleMemoryState state = HemoCapabilityAccess.muscleMemory(player);
         long now = player.level().getGameTime();
         boolean arms = state.enabledMemory(EnumVeinSections.ARMS).isPresent();
         boolean legs = state.enabledMemory(EnumVeinSections.LEGS).isPresent();

@@ -211,8 +211,7 @@ public class SporiticThuribleItem extends Item implements HemoClientItemExtensio
 
 	private static boolean canUseBlood(Player player) {
 		return HemoCapabilityAccess.getBloodVolume(player)
-				.map(IBloodVolume::isActive)
-				.orElse(false);
+				.isActive();
 	}
 
 	private static String formatBurnTime(int burnTicks) {

@@ -68,7 +68,7 @@ public final class ToggleableSkillEvents {
 			}
 		}
 		if (crossbar.isEmpty()) return false;
-		var volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		var volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null) return false;
 		BloodFlowLedger.DrainResult payment = BloodFlowLedger.applyDrain(player, volume,
 				"sanguine_spinning", "Sanguine Spinning", Category.TOOL,

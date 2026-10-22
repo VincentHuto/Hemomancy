@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemorySlotRef;
@@ -22,11 +21,11 @@ public record UpdateCurrentMemoryPacket(String storageKey) implements CustomPack
     public static void handle(UpdateCurrentMemoryPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> {
             if (!(context.player() instanceof ServerPlayer player)) return;
-            var known = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+            var known = HemoCapabilityAccess.getKnownManipulations(player);
             if (known == null) return;
             MemorySlotRef ref = MemorySlotRef.fromStorageKey(packet.storageKey);
             if (ref.kind() != MemoryEntryKind.MUSCLE_MEMORY || !known.isMemoryEquipped(ref)
-                    || ref.muscleMemory().filter(player.getData(HemoAttachmentTypes.MUSCLE_MEMORY)::knows).isEmpty()) {
+                    || ref.muscleMemory().filter(HemoCapabilityAccess.muscleMemory(player)::knows).isEmpty()) {
                 return;
             }
             known.setSelectedMemoryRef(ref);

@@ -118,15 +118,15 @@ public final class AnimusMortemVisualReview {
         if(phase==18)mc.getSingleplayerServer().execute(()->{
             var player=player(mc);if(player==null)return;
             var spell=ManipulationInit.getByName(name);boolean cast;
-            double before=HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume();
+            double before=HemoCapabilityAccess.getBloodVolume(player).getBloodVolume();
             if(npc && player.level().getEntity(npcId) instanceof LivingEntity caster && player.level().getEntity(targetId) instanceof LivingEntity target)
                 cast=EntityManipulationEffects.cast(spell,ManipulationCastContext.forWill(caster,target,ItemStack.EMPTY));
             else if(spell instanceof com.vincenthuto.hemomancy.common.manipulation.animus.SummonAvatarManip avatar)
                 cast=com.vincenthuto.hemomancy.common.manipulation.animus.AvatarManifestationManager.toggle(player,avatar);
             else if(spell.getType()==EnumManipulationType.CONTINUOUS){ManipulationChannelManager.start(player);cast=ManipulationChannelManager.isChanneling(player.getUUID());}
-            else if(spell.getType()==EnumManipulationType.PASSIVE){var known=HemoCapabilityAccess.requireKnownManipulations(player);if(!known.isPassiveActive(name))known.togglePassive(name);cast=true;}
+            else if(spell.getType()==EnumManipulationType.PASSIVE){var known=HemoCapabilityAccess.getKnownManipulations(player);if(!known.isPassiveActive(name))known.togglePassive(name);cast=true;}
             else cast=spell.tryPerformAction(player,player.level(),player.getMainHandItem(),player.blockPosition(),spell.getRequiredChargeTicks());
-            LOG.info("ANIMUS_MORTEM_CAST scene={} spell={} success={} bloodBefore={} bloodAfter={}",scene,name,cast,before,HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume());
+            LOG.info("ANIMUS_MORTEM_CAST scene={} spell={} success={} bloodBefore={} bloodAfter={}",scene,name,cast,before,HemoCapabilityAccess.getBloodVolume(player).getBloodVolume());
             if(name.equals("blackhearted"))player.hurt(player.damageSources().wither(),4);
             if(name.equals("crimson_coronation"))player.setYRot(0);
         });
@@ -179,9 +179,9 @@ public final class AnimusMortemVisualReview {
             if(level.getEntity(targetId) instanceof LivingEntity target)caster.setTarget(target);
             level.addFreshEntity(caster);npcId=caster.getId();player.teleportTo(level,x+6,100,-2,30,12);
         }
-        var blood=HemoCapabilityAccess.requireBloodVolume(player);blood.setActive(true);blood.setBloodVolume(10000);
-        for(var tendency:EnumBloodTendency.values())HemoCapabilityAccess.getBloodTendency(player).orElseThrow().setTendencyAlignment(tendency,100);
-        var spell=ManipulationInit.getByName(name);var known=HemoCapabilityAccess.requireKnownManipulations(player);
+        var blood=HemoCapabilityAccess.getBloodVolume(player);blood.setActive(true);blood.setBloodVolume(10000);
+        for(var tendency:EnumBloodTendency.values())HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(tendency,100);
+        var spell=ManipulationInit.getByName(name);var known=HemoCapabilityAccess.getKnownManipulations(player);
         if(!known.getKnownManips().containsKey(spell))known.getKnownManips().put(spell,new ManipLevel(4,185));known.setSelectedManip(spell);known.setEquippedManipNames(List.of(name));
         if(name.startsWith("conjure_"))player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,new ItemStack(ItemInit.living_staff.get()));
     }

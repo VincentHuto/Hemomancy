@@ -106,9 +106,7 @@ public class ViridSalisTrailHandler {
      * {@value #HARBINGER_DEGREE_THRESHOLD} or higher.
      */
     private static boolean isHighDegreeHarbinger(Player player) {
-        return HemoCapabilityAccess.getInitiatoryDegree(player)
-                .map(d -> d.getDegreeNumber() >= HARBINGER_DEGREE_THRESHOLD)
-                .orElse(false);
+        return HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber() >= HARBINGER_DEGREE_THRESHOLD;
     }
 
     /**

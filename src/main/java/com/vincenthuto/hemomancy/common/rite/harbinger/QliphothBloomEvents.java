@@ -50,16 +50,15 @@ public class QliphothBloomEvents {
 
 	public static void deliverPendingFungalSpine(ServerPlayer player) {
 		if (!player.isAlive() || com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isObservational(player)) return;
-		HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree -> {
-			if (!degree.isQliphothCommunionDone() || degree.hasFungalSpineGranted()) return;
-			if (player.getInventory().countItem(ItemInit.fungal_spine.get()) == 0) {
-				player.getInventory().add(new ItemStack(ItemInit.fungal_spine.get()));
-			}
-			if (player.getInventory().countItem(ItemInit.fungal_spine.get()) > 0) {
-				degree.setFungalSpineGranted(true);
-				InitiatoryDegreeEvents.syncDegree(player, degree);
-			}
-		});
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
+		if (!degree.isQliphothCommunionDone() || degree.hasFungalSpineGranted()) return;
+		if (player.getInventory().countItem(ItemInit.fungal_spine.get()) == 0) {
+			player.getInventory().add(new ItemStack(ItemInit.fungal_spine.get()));
+		}
+		if (player.getInventory().countItem(ItemInit.fungal_spine.get()) > 0) {
+			degree.setFungalSpineGranted(true);
+			InitiatoryDegreeEvents.syncDegree(player, degree);
+		}
 	}
 
 	@SubscribeEvent
@@ -101,11 +100,10 @@ public class QliphothBloomEvents {
 				player.addEffect(new MobEffectInstance(MobEffects.REGENERATION,
 						REGEN_DURATION, 0, true, false, true));
 
-				HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-					BloodFlowLedger.applyCirculationIncome(player, volume, "qliphoth_bloom",
-							"Qliphoth Bloom", Category.WORLD, BLOOD_REGEN_PER_TICK,
-							EFFECT_APPLICATION_INTERVAL_TICKS, CirculationIncomeHelper.IncomeChannel.OTHER);
-				});
+				var volume = HemoCapabilityAccess.getBloodVolume(player);
+				BloodFlowLedger.applyCirculationIncome(player, volume, "qliphoth_bloom",
+						"Qliphoth Bloom", Category.WORLD, BLOOD_REGEN_PER_TICK,
+						EFFECT_APPLICATION_INTERVAL_TICKS, CirculationIncomeHelper.IncomeChannel.OTHER);
 			}
 
 			tryRipenPome(sLevel, bloom);

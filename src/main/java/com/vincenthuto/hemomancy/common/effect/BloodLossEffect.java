@@ -42,7 +42,7 @@ public class BloodLossEffect extends MobEffect {
 					}
 
 					IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(playerIn)
-							.orElseThrow(NullPointerException::new);
+							;
 					BloodFlowLedger.applyDrain((ServerPlayer) playerIn, playerVolume, "blood_loss",
 							"Blood Loss", Category.EFFECT, 0.5f * (amplifier + 1), 1, false);
 

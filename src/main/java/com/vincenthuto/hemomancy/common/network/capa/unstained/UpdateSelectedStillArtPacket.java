@@ -37,27 +37,26 @@ public class UpdateSelectedStillArtPacket implements CustomPacketPayload {
 			if (!(ctx.player() instanceof ServerPlayer player)) {
 				return;
 			}
-			HemoCapabilityAccess.getKnownStillArts(player).ifPresent(known -> {
-				StillArt art = StillArt.byName(msg.artName);
-				if (art == StillArt.BLANK) {
-					player.displayClientMessage(Component.translatable("hemomancy.still_art.select.invalid")
-							.withStyle(ChatFormatting.GRAY), true);
-					return;
-				}
-				if (!known.isKnown(art)) {
-					player.displayClientMessage(Component.translatable("hemomancy.still_art.select.unknown")
-							.withStyle(ChatFormatting.GRAY), true);
-					return;
-				}
-				if (!art.isUnlockedFor(player)) {
-					player.displayClientMessage(Component.translatable("hemomancy.still_art.select.locked")
-							.withStyle(ChatFormatting.GRAY), true);
-					return;
-				}
-				known.setSelectedArt(art);
-				KnownStillArtEvents.sync(player, known);
-				player.displayClientMessage(Component.translatable("hemomancy.still_art.select.success", art.getProperName()), true);
-			});
+			var known = HemoCapabilityAccess.getKnownStillArts(player);
+			StillArt art = StillArt.byName(msg.artName);
+			if (art == StillArt.BLANK) {
+				player.displayClientMessage(Component.translatable("hemomancy.still_art.select.invalid")
+						.withStyle(ChatFormatting.GRAY), true);
+				return;
+			}
+			if (!known.isKnown(art)) {
+				player.displayClientMessage(Component.translatable("hemomancy.still_art.select.unknown")
+						.withStyle(ChatFormatting.GRAY), true);
+				return;
+			}
+			if (!art.isUnlockedFor(player)) {
+				player.displayClientMessage(Component.translatable("hemomancy.still_art.select.locked")
+						.withStyle(ChatFormatting.GRAY), true);
+				return;
+			}
+			known.setSelectedArt(art);
+			KnownStillArtEvents.sync(player, known);
+			player.displayClientMessage(Component.translatable("hemomancy.still_art.select.success", art.getProperName()), true);
 		});
 	}
 

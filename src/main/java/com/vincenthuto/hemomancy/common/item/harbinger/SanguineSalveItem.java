@@ -76,19 +76,19 @@ public class SanguineSalveItem extends Item {
 		ItemStack stack = player.getItemInHand(hand);
 
 		// Only usable when the blood system is active
-		boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player)
-				.map(vol -> vol.isActive()).orElse(false);
+		boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player).isActive();
 		if (!bloodActive) {
 			return InteractionResultHolder.fail(stack);
 		}
 
-		boolean needsHeal = HemoCapabilityAccess.getVascularSystem(player)
-				.map(vasc -> {
-					for (EnumVeinSections s : EnumVeinSections.values()) {
-						if (vasc.getHealthBySection(s) < 100f) return true;
-					}
-					return false;
-				}).orElse(false);
+		var vasc = HemoCapabilityAccess.getVascularSystem(player);
+		boolean needsHeal = false;
+		for (EnumVeinSections s : EnumVeinSections.values()) {
+			if (vasc.getHealthBySection(s) < 100f) {
+				needsHeal = true;
+				break;
+			}
+		}
 
 		if (!needsHeal) {
 			player.displayClientMessage(
@@ -105,9 +105,9 @@ public class SanguineSalveItem extends Item {
 		if (!(entity instanceof Player player)) return stack;
 		if (level.isClientSide) return stack;
 
-		HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
-			var result = VascularPoulticeRules.healMostDamaged(vascular.getVascularSystem(), healAmount).orElse(null);
-			if (result == null) return;
+		var vascular = HemoCapabilityAccess.getVascularSystem(player);
+		var result = VascularPoulticeRules.healMostDamaged(vascular.getVascularSystem(), healAmount).orElse(null);
+		if (result != null) {
 			EnumVeinSections worst = result.section();
 			float before = result.before();
 			float after = result.after();
@@ -126,7 +126,7 @@ public class SanguineSalveItem extends Item {
 
 			level.playSound(null, player.getX(), player.getY(), player.getZ(),
 					SoundEvents.HONEY_DRINK, SoundSource.PLAYERS, 0.8f, 0.9f);
-		});
+		}
 
 		// Consume the item
 		if (!player.getAbilities().instabuild) {

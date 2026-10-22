@@ -57,7 +57,7 @@ public final class StationUpgradeProgress implements INBTSerializable<CompoundTa
 
     public StationUpgradeRules.ClaimState claimState(ServerPlayer player, StationUpgradeTier tier) {
         boolean usageComplete = usageComplete(player, tier);
-        boolean activeBlood = HemoCapabilityAccess.getBloodVolume(player).map(IBloodVolume::isActive).orElse(false);
+        boolean activeBlood = HemoCapabilityAccess.getBloodVolume(player).isActive();
         return StationUpgradeRules.claimState(HemoCapabilityAccess.getPlayerDegreeNumber(player), activeBlood,
                 hasClaimed(tier.station(), tier.tier()),
                 tier.tier() == 1 || eligible(player, StationUpgradeCatalog.get(tier.station(), tier.tier() - 1)),
@@ -73,7 +73,7 @@ public final class StationUpgradeProgress implements INBTSerializable<CompoundTa
     /** Eligibility is personal and independent of whether the player accepted the free item. */
     public boolean eligible(ServerPlayer player, StationUpgradeTier tier) {
         return HemoCapabilityAccess.getPlayerDegreeNumber(player) >= tier.requiredDegree()
-                && HemoCapabilityAccess.getBloodVolume(player).map(IBloodVolume::isActive).orElse(false)
+                && HemoCapabilityAccess.getBloodVolume(player).isActive()
                 && usageComplete(player, tier)
                 && (tier.tier() == 1 || eligible(player, StationUpgradeCatalog.get(tier.station(), tier.tier() - 1)));
     }

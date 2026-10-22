@@ -187,9 +187,9 @@ public final class HarbingerPilotGameTests {
 		display.linkHermit(hermit);
 		ServerPlayer player = connectedTestPlayer(helper);
 		try {
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(0);
-			HemoCapabilityAccess.getBloodVolume(player).orElseThrow().setActive(false);
-			HemoCapabilityAccess.getEquipment(player).orElseThrow().setStackInSlot(5, ItemStack.EMPTY);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(0);
+			HemoCapabilityAccess.getBloodVolume(player).setActive(false);
+			HemoCapabilityAccess.getEquipment(player).setStackInSlot(5, ItemStack.EMPTY);
 			com.vincenthuto.hemomancy.common.rite.TempleOathRules.bless(player, hermit);
 			var hit = new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(displayPos),
 					net.minecraft.core.Direction.UP, displayPos, false);
@@ -199,7 +199,7 @@ public final class HarbingerPilotGameTests {
 			helper.assertTrue(helper.getLevel().getBlockState(displayPos).is(BlockInit.mortal_display.get())
 					&& display.isClaimedBy(player.getUUID()) && displayPos.equals(focus.getTempleDisplay()),
 					"Claiming the heart must preserve its linked Mortal Display and record the claimant");
-			helper.assertTrue(HemoCapabilityAccess.getEquipment(player).orElseThrow().getStackInSlot(5)
+			helper.assertTrue(HemoCapabilityAccess.getEquipment(player).getStackInSlot(5)
 					.is(ItemInit.charm_of_vascularium.get())
 					&& player.getInventory().countItem(ItemInit.covenant_waybill.get()) == 1,
 					"The claimed heart must equip the Charm and give the Waybill");
@@ -392,8 +392,8 @@ public final class HarbingerPilotGameTests {
 	public static void plantedStaffArmsProjectionHandAndReturnsToIt(GameTestHelper helper) {
 		ServerPlayer player = connectedTestPlayer(helper);
 		try {
-			HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-			var known = HemoCapabilityAccess.getKnownManipulations(player).orElseThrow();
+			HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+			var known = HemoCapabilityAccess.getKnownManipulations(player);
 			var projection = com.vincenthuto.hemomancy.common.init.ManipulationInit.blood_projection.get();
 			known.getKnownManips().putIfAbsent(projection, new com.vincenthuto.hemomancy.common.manipulation.ManipLevel(1, 0));
 			known.setEquippedManipNames(new java.util.ArrayList<>());
@@ -427,8 +427,8 @@ public final class HarbingerPilotGameTests {
 	public static void plantedStaffLeavesAnOccupiedHandAlone(GameTestHelper helper) {
 		ServerPlayer player = connectedTestPlayer(helper);
 		try {
-			HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-			var known = HemoCapabilityAccess.getKnownManipulations(player).orElseThrow();
+			HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+			var known = HemoCapabilityAccess.getKnownManipulations(player);
 			var projection = com.vincenthuto.hemomancy.common.init.ManipulationInit.blood_projection.get();
 			known.getKnownManips().putIfAbsent(projection, new com.vincenthuto.hemomancy.common.manipulation.ManipLevel(1, 0));
 			known.setEquippedManipNames(new java.util.ArrayList<>());
@@ -455,10 +455,10 @@ public final class HarbingerPilotGameTests {
 		try {
 			player.setGameMode(GameType.CREATIVE);
 			player.getPersistentData().putBoolean(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING, true);
-			var degree = HemoCapabilityAccess.requireInitiatoryDegree(player);
+			var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
 			degree.setDegreeNumber(0);
 			degree.setFungalSpineGranted(false);
-			var blood = HemoCapabilityAccess.requireBloodVolume(player);
+			var blood = HemoCapabilityAccess.getBloodVolume(player);
 			blood.setActive(false);
 			blood.setBloodVolume(0.0D);
 			player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ItemInit.fungal_spine.get()));

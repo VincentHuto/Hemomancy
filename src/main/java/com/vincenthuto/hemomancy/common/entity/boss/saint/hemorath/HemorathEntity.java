@@ -361,8 +361,7 @@ public class HemorathEntity extends Monster {
 			if (vessel.isAlive() && vessel.getTarget() == player) {
 				vessel.addAbsorbedBlood(player, amount);
 				if (vessel.isInPhase2()) {
-					HemoCapabilityAccess.getBloodVolume(player)
-							.ifPresent(v -> v.addDamage(amount * PHASE_2_BLOOD_SPEND_BONUS));
+					HemoCapabilityAccess.getBloodVolume(player).addDamage(amount * PHASE_2_BLOOD_SPEND_BONUS);
 				}
 				return;
 			}
@@ -403,8 +402,7 @@ public class HemorathEntity extends Monster {
 				Component.literal("The Vessel quiets. You carry the enzyme of Saint Hemorath.")
 						.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
 				false);
-		HemoCapabilityAccess.getBloodVolume(player)
-				.ifPresent(IBloodVolume::resetBloodDebt);
+		HemoCapabilityAccess.getBloodVolume(player).resetBloodDebt();
 	}
 
 	/**

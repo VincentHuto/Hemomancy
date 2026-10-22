@@ -208,38 +208,37 @@ public class PaleSilverBellsBlock extends Block implements SimpleWaterloggedBloc
 			return InteractionResult.CONSUME;
 		}
 
-		HemoCapabilityAccess.getUnstainedProgress(serverPlayer).ifPresent(progress -> {
-			if (!progress.hasBegunPurification()) {
-				player.displayClientMessage(Component.translatable("hemomancy.silver_bells.not_on_path"), false);
-				return;
-			}
-			if (progress.isPurified()) {
-				player.displayClientMessage(Component.translatable("hemomancy.silver_bells.already_pure"), false);
-				return;
-			}
-			float reward = UnstainedPacingRules.paleSilverBellReward(progress.hasClaimedPaleSilverBellReward());
-			if (reward <= 0.0F) {
-				player.displayClientMessage(Component.translatable("hemomancy.silver_bells.already_rung"), false);
-				return;
-			}
+		var progress = HemoCapabilityAccess.getUnstainedProgress(serverPlayer);
+		if (!progress.hasBegunPurification()) {
+			player.displayClientMessage(Component.translatable("hemomancy.silver_bells.not_on_path"), false);
+			return InteractionResult.CONSUME;
+		}
+		if (progress.isPurified()) {
+			player.displayClientMessage(Component.translatable("hemomancy.silver_bells.already_pure"), false);
+			return InteractionResult.CONSUME;
+		}
+		float reward = UnstainedPacingRules.paleSilverBellReward(progress.hasClaimedPaleSilverBellReward());
+		if (reward <= 0.0F) {
+			player.displayClientMessage(Component.translatable("hemomancy.silver_bells.already_rung"), false);
+			return InteractionResult.CONSUME;
+		}
 
-			progress.addPurity(reward);
-			progress.setClaimedPaleSilverBellReward(true);
-			UnstainedProgressEvents.syncProgress(serverPlayer, progress);
+		progress.addPurity(reward);
+		progress.setClaimedPaleSilverBellReward(true);
+		UnstainedProgressEvents.syncProgress(serverPlayer, progress);
 
-			level.setBlock(pos, state.setValue(RUNG, Boolean.TRUE), 3);
-			level.playSound(null, pos, SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 2.0f, 0.9f);
-			level.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.0f, 1.3f);
-			if (level instanceof ServerLevel serverLevel) {
-				serverLevel.sendParticles(ParticleTypes.END_ROD,
-						pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
-						32, 0.35, 0.6, 0.35, 0.03);
-				serverLevel.sendParticles(ParticleTypes.HAPPY_VILLAGER,
-						pos.getX() + 0.5, pos.getY() + 0.8, pos.getZ() + 0.5,
-						16, 0.45, 0.45, 0.45, 0.06);
-			}
-			player.displayClientMessage(Component.translatable("hemomancy.silver_bells.chimed"), false);
-		});
+		level.setBlock(pos, state.setValue(RUNG, Boolean.TRUE), 3);
+		level.playSound(null, pos, SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 2.0f, 0.9f);
+		level.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.0f, 1.3f);
+		if (level instanceof ServerLevel serverLevel) {
+			serverLevel.sendParticles(ParticleTypes.END_ROD,
+					pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
+					32, 0.35, 0.6, 0.35, 0.03);
+			serverLevel.sendParticles(ParticleTypes.HAPPY_VILLAGER,
+					pos.getX() + 0.5, pos.getY() + 0.8, pos.getZ() + 0.5,
+					16, 0.45, 0.45, 0.45, 0.06);
+		}
+		player.displayClientMessage(Component.translatable("hemomancy.silver_bells.chimed"), false);
 
 		return InteractionResult.CONSUME;
 	}

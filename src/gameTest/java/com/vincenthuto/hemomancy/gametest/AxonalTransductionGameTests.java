@@ -44,11 +44,11 @@ public final class AxonalTransductionGameTests {
                 if (packet instanceof ClientboundCustomPayloadPacket custom && custom.payload() instanceof AxonalStatePacket state && state.active()) token = state.token();
                 if (packet instanceof net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket pose) teleportId = pose.getId();
             });
-            HemoCapabilityAccess.getInitiatoryDegree(player).orElseThrow().setDegreeNumber(6);
-            HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-            HemoCapabilityAccess.requireBloodVolume(player).setBloodVolume(10000);
-            HemoCapabilityAccess.getBloodTendency(player).orElseThrow().setTendencyAlignment(EnumBloodTendency.DUCTILIS,100);
-            var known = HemoCapabilityAccess.requireKnownManipulations(player);
+            HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(6);
+            HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+            HemoCapabilityAccess.getBloodVolume(player).setBloodVolume(10000);
+            HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(EnumBloodTendency.DUCTILIS,100);
+            var known = HemoCapabilityAccess.getKnownManipulations(player);
             known.getKnownManips().put(ManipulationInit.axonal_transduction.get(),new ManipLevel(0,0));
             known.setEquippedManipNames(java.util.List.of("axonal_transduction"));
             if (!known.isPassiveActive("axonal_transduction")) known.togglePassive("axonal_transduction");
@@ -61,34 +61,34 @@ public final class AxonalTransductionGameTests {
     @GameTest(templateNamespace="naeglerophaeon_validation",template=ARENA,batch="axonal")
     public static void passiveEntryChargesOnceAndArrivesAtTheNextNode(GameTestHelper h) {
         try (Fixture f = new Fixture(h)) {
-            double before = HemoCapabilityAccess.requireBloodVolume(f.player).getBloodVolume(); f.enter();
+            double before = HemoCapabilityAccess.getBloodVolume(f.player).getBloodVolume(); f.enter();
             h.assertTrue(AxonalTransductionManager.isTraveling(f.player),"Node contact did not trigger the equipped passive");
             h.assertTrue(f.token > 0,"Owner did not receive a travel synchronization token");
-            double after = HemoCapabilityAccess.requireBloodVolume(f.player).getBloodVolume();
+            double after = HemoCapabilityAccess.getBloodVolume(f.player).getBloodVolume();
             h.assertTrue(Math.abs(before-after-150)<.001,"Entry did not pay exactly one base cost: "+(before-after));
             for (int i=0;i<3;i++) f.forward();
             h.assertTrue(!AxonalTransductionManager.isTraveling(f.player),"Destination node did not reform the traveler");
             h.assertTrue(f.player.position().distanceToSqr(Vec3.atBottomCenterOf(f.exit.above()))<.01,"Arrival skipped the node");
             AxonalTransductionManager.tick(f.player);
             h.assertTrue(!AxonalTransductionManager.isTraveling(f.player),"Arrival immediately sucked the player in again");
-            h.assertTrue(HemoCapabilityAccess.requireBloodVolume(f.player).getBloodVolume()==after,"Travel charged upkeep or duplicate entry");
+            h.assertTrue(HemoCapabilityAccess.getBloodVolume(f.player).getBloodVolume()==after,"Travel charged upkeep or duplicate entry");
             h.assertTrue(!f.player.noPhysics&&!f.player.isNoGravity(),"Arrival leaked movement flags");
         } h.succeed();
     }
     @GameTest(templateNamespace="naeglerophaeon_validation",template=ARENA,batch="axonal")
     public static void eligibilitySneakingAndMissingFibersRefuseEntryWithoutPayment(GameTestHelper h) {
         try (Fixture f=new Fixture(h)) {
-            double blood=HemoCapabilityAccess.requireBloodVolume(f.player).getBloodVolume();
+            double blood=HemoCapabilityAccess.getBloodVolume(f.player).getBloodVolume();
             f.player.setShiftKeyDown(true); f.enter(); h.assertTrue(!AxonalTransductionManager.isTraveling(f.player),"Sneaking did not bypass entry");
-            f.player.setShiftKeyDown(false); HemoCapabilityAccess.getInitiatoryDegree(f.player).orElseThrow().setDegreeNumber(5); f.enter();
+            f.player.setShiftKeyDown(false); HemoCapabilityAccess.getInitiatoryDegree(f.player).setDegreeNumber(5); f.enter();
             h.assertTrue(!AxonalTransductionManager.isTraveling(f.player),"D5 bypassed PERFECTUS eligibility");
-            HemoCapabilityAccess.getInitiatoryDegree(f.player).orElseThrow().setDegreeNumber(6);
-            HemoCapabilityAccess.getBloodTendency(f.player).orElseThrow().setTendencyAlignment(EnumBloodTendency.DUCTILIS,64); f.enter();
+            HemoCapabilityAccess.getInitiatoryDegree(f.player).setDegreeNumber(6);
+            HemoCapabilityAccess.getBloodTendency(f.player).setTendencyAlignment(EnumBloodTendency.DUCTILIS,64); f.enter();
             h.assertTrue(!AxonalTransductionManager.isTraveling(f.player),"Insufficient alignment entered the network");
-            HemoCapabilityAccess.getBloodTendency(f.player).orElseThrow().setTendencyAlignment(EnumBloodTendency.DUCTILIS,100);
+            HemoCapabilityAccess.getBloodTendency(f.player).setTendencyAlignment(EnumBloodTendency.DUCTILIS,100);
             h.getLevel().setBlock(f.source.offset(1,0,0),Blocks.AIR.defaultBlockState(),3); f.enter();
             h.assertTrue(!AxonalTransductionManager.isTraveling(f.player),"Isolated node entered a nonexistent route");
-            h.assertTrue(HemoCapabilityAccess.requireBloodVolume(f.player).getBloodVolume()==blood,"Refused entry spent blood");
+            h.assertTrue(HemoCapabilityAccess.getBloodVolume(f.player).getBloodVolume()==blood,"Refused entry spent blood");
         } h.succeed();
     }
     @GameTest(templateNamespace="naeglerophaeon_validation",template=ARENA,batch="axonal")
@@ -112,7 +112,7 @@ public final class AxonalTransductionGameTests {
         for (int reason=0;reason<3;reason++) try(Fixture f=new Fixture(h)) {
             f.enter(); f.forward();
             h.assertTrue(Paralysis.blocksActions(f.player),"Signal could still perform ordinary actions");
-            if(reason==0) { HemoCapabilityAccess.requireKnownManipulations(f.player).togglePassive("axonal_transduction"); AxonalTransductionManager.tick(f.player); }
+            if(reason==0) { HemoCapabilityAccess.getKnownManipulations(f.player).togglePassive("axonal_transduction"); AxonalTransductionManager.tick(f.player); }
             if(reason==1) AxonalTransductionManager.onLogout(new PlayerEvent.PlayerLoggedOutEvent(f.player));
             if(reason==2) AxonalTransductionManager.onLogin(new PlayerEvent.PlayerLoggedInEvent(f.player));
             h.assertTrue(!AxonalTransductionManager.isTraveling(f.player)&&!f.player.noPhysics&&!f.player.isNoGravity(),"Recovery leaked travel state: "+reason);
@@ -124,11 +124,11 @@ public final class AxonalTransductionGameTests {
     public static void recoveryCannotChargeAnotherEntryWhileStillTouchingTheSource(GameTestHelper h) {
         try(Fixture f=new Fixture(h)) {
             f.enter(); f.forward();
-            double paid=HemoCapabilityAccess.requireBloodVolume(f.player).getBloodVolume();
+            double paid=HemoCapabilityAccess.getBloodVolume(f.player).getBloodVolume();
             AxonalTransductionManager.end(f.player,true);
             AxonalTransductionManager.tick(f.player);
             h.assertTrue(!AxonalTransductionManager.isTraveling(f.player),"Recovery immediately recaptured its traveler");
-            h.assertTrue(HemoCapabilityAccess.requireBloodVolume(f.player).getBloodVolume()==paid,"Recovery charged a second entry");
+            h.assertTrue(HemoCapabilityAccess.getBloodVolume(f.player).getBloodVolume()==paid,"Recovery charged a second entry");
         } h.succeed();
     }
     @GameTest(templateNamespace="naeglerophaeon_validation",template=ARENA,batch="axonal")
@@ -224,12 +224,12 @@ public final class AxonalTransductionGameTests {
     @GameTest(templateNamespace="naeglerophaeon_validation",template=ARENA,batch="axonal")
     public static void recoveredLogoutAndColdLoginCannotRecaptureAtTheSource(GameTestHelper h) {
         try(Fixture f=new Fixture(h)) {
-            f.enter();f.forward();double paid=HemoCapabilityAccess.requireBloodVolume(f.player).getBloodVolume();
+            f.enter();f.forward();double paid=HemoCapabilityAccess.getBloodVolume(f.player).getBloodVolume();
             AxonalTransductionManager.onLogout(new PlayerEvent.PlayerLoggedOutEvent(f.player));
             AxonalTransductionManager.onLogin(new PlayerEvent.PlayerLoggedInEvent(f.player));
             AxonalTransductionManager.tick(f.player);
             h.assertTrue(!AxonalTransductionManager.isTraveling(f.player),"Reconnected player was recaptured before leaving contact");
-            h.assertTrue(HemoCapabilityAccess.requireBloodVolume(f.player).getBloodVolume()==paid,"Reconnect charged a second entry");
+            h.assertTrue(HemoCapabilityAccess.getBloodVolume(f.player).getBloodVolume()==paid,"Reconnect charged a second entry");
             var saved=f.player.getPersistentData().copy();
             AxonalTransductionManager.onLogout(new PlayerEvent.PlayerLoggedOutEvent(f.player));
             f.player.getPersistentData().merge(saved);

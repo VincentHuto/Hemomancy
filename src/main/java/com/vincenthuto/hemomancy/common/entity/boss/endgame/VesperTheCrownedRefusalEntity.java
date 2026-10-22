@@ -444,10 +444,11 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 	public float drainWound(ServerPlayer player, float progress) {
 		if (!canDrainWound(player) || progress <= 0.0F) return 0.0F;
 		lastDrainer = player.getUUID();
-		HemoCapabilityAccess.getBloodVolume(player).filter(volume -> volume.isActive()).ifPresent(volume -> {
+		var volume = HemoCapabilityAccess.getBloodVolume(player);
+		if (volume.isActive()) {
 			volume.fill(progress * 2.0D);
 			PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(volume));
-		});
+		}
 		VesperWound.drainStream(this, player);
 		updateWound(VesperWoundRules.drain(wound, progress));
 		return progress;

@@ -49,7 +49,7 @@ public final class CrimsonTroupePracticalGameTests {
         ServerPlayer pupil = StationUpgradeGameTests.claimant(h, 5);
         h.getLevel().addNewPlayer(pupil); onlinePlayers(h).put(pupil.getUUID(), pupil);
         var definition = PuppeteerSummonDefinitions.byName(shape).orElseThrow();
-        HemoCapabilityAccess.requireKnownSummons(pupil).learn(definition);
+        HemoCapabilityAccess.getKnownSummons(pupil).learn(definition);
         ItemStack crossbar = new ItemStack(ItemInit.marionette_crossbar.get());
         MarionetteCrossbarItem.bindCrossbar(crossbar, pupil); MarionetteCrossbarItem.addThread(crossbar, 200);
         pupil.setItemInHand(InteractionHand.MAIN_HAND, crossbar); MarionetteCrossbarItem.prepareSelectedSummon(crossbar, pupil, shape);

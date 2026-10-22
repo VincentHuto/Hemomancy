@@ -16,7 +16,7 @@ public final class UnstainedObservanceDialogueDecorator {
 
 	public static DialogueTree decorate(DialogueTree tree, ServerPlayer player,
 			UnstainedObservances.Issuer issuer) {
-		var progress = HemoCapabilityAccess.getUnstainedProgress(player).orElse(null);
+		var progress = HemoCapabilityAccess.getUnstainedProgress(player);
 		if (progress == null || !progress.hasBegunPurification()
 				&& ((progress.getAcceptedObservances() | progress.getClaimedObservances())
 						& UnstainedAccessRules.NOVITIATE_MASK) == 0) {

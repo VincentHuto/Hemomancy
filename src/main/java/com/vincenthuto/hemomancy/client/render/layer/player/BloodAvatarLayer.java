@@ -66,8 +66,7 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 	public void render(PoseStack ms, MultiBufferSource pBuffer, int pPackedLight, T ent, float pLimbSwing,
 			float pLimbSwingAmount, float pPartialTicks, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
 		if (!(ent instanceof Player player)) return;
-		String activeForm = HemoCapabilityAccess.getKnownManipulations(player)
-				.map(known -> known.getActiveAvatarForm()).orElse("");
+		String activeForm = HemoCapabilityAccess.getKnownManipulations(player).getActiveAvatarForm();
 		AvatarManifestationTransition.Sample transition = AvatarManifestationTransition.sample(
 				player.getUUID(), activeForm, player.tickCount, pPartialTicks);
 		if (!transition.renders()) return;

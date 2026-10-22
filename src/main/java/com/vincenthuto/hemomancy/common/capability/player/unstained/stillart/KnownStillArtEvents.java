@@ -29,15 +29,12 @@ public class KnownStillArtEvents {
 		if (!art.isUnlockedFor(player)) {
 			return false;
 		}
-		return HemoCapabilityAccess.getKnownStillArts(player)
-				.map(known -> {
-					boolean learned = known.learnArt(art);
-					if (learned) {
-						sync(player, known);
-					}
-					return learned;
-				})
-				.orElse(false);
+		var known = HemoCapabilityAccess.getKnownStillArts(player);
+		boolean learned = known.learnArt(art);
+		if (learned) {
+			sync(player, known);
+		}
+		return learned;
 	}
 
 	public static boolean grantEligibleArts(ServerPlayer player, IUnstainedProgress progress) {
@@ -74,20 +71,20 @@ public class KnownStillArtEvents {
 	@SubscribeEvent
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
-		HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> grantEligibleArts(player, progress));
-		HemoCapabilityAccess.getKnownStillArts(player).ifPresent(known -> sync(player, known));
+		grantEligibleArts(player, HemoCapabilityAccess.getUnstainedProgress(player));
+		sync(player, HemoCapabilityAccess.getKnownStillArts(player));
 	}
 
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
-		HemoCapabilityAccess.getKnownStillArts(player).ifPresent(known -> sync(player, known));
+		sync(player, HemoCapabilityAccess.getKnownStillArts(player));
 	}
 
 	@SubscribeEvent
 	public static void playerRespawn(PlayerRespawnEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
-			HemoCapabilityAccess.getKnownStillArts(player).ifPresent(known -> sync(player, known));
+			sync(player, HemoCapabilityAccess.getKnownStillArts(player));
 		}
 	}
 }

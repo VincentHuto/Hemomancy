@@ -129,7 +129,7 @@ public class RadialChooseManipScreen extends Screen {
 			}
 
 			IKnownManipulations manips = HemoCapabilityAccess.getKnownManipulations(mc.player)
-					.orElseThrow();
+					;
 
 			// Only show manipulations that are currently memorized (equipped) at the Mnemonic Reliquary
 			List<BloodManipulation> allManips = manips.getManipList();
@@ -147,7 +147,7 @@ public class RadialChooseManipScreen extends Screen {
 				this.cachedMenuItems.add(createManipulationItem(
 						entry.manipulation(), entry.knownIndex(), selectedManipName));
 			}
-			var memoryState = mc.player.getData(com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes.MUSCLE_MEMORY);
+			var memoryState = HemoCapabilityAccess.muscleMemory(mc.player);
 			EnumSet<EnumVeinSections> shownSections = EnumSet.noneOf(EnumVeinSections.class);
 			for (String key : equippedNames) {
 				MemorySlotRef ref = MemorySlotRef.fromStorageKey(key);
@@ -169,7 +169,7 @@ public class RadialChooseManipScreen extends Screen {
 				IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(inv.getStackInSlot(HarbingerEquipmentMenu.GOURD_SLOT_INDEX))
 						.orElseThrow(NullPointerException::new);
 				IBloodVolume volCap = HemoCapabilityAccess.getBloodVolume(mc.player)
-						.orElseThrow(NullPointerException::new);
+						;
 				textComponents.append(Component.literal("Self: "
 						+ BloodGourdItem.formatBloodAmount(volCap.getBloodVolume()) + " mL\n"));
 				textComponents.append(Component.literal("Gourd: "
@@ -304,9 +304,8 @@ public class RadialChooseManipScreen extends Screen {
 
 	private MuscleMemoryRadialMenuItem createMuscleMemoryItem(MuscleMemory memory, MemorySlotRef ref,
 			MemorySlotRef selected) {
-		var state = mc.player.getData(com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes.MUSCLE_MEMORY);
-		java.util.function.Supplier<EnumBloodFlow> flow = () -> HemoCapabilityAccess.getVascularSystem(mc.player)
-				.map(vascular -> vascular.getBloodFlowBySection(memory.section())).orElse(EnumBloodFlow.STABLE);
+		var state = HemoCapabilityAccess.muscleMemory(mc.player);
+		java.util.function.Supplier<EnumBloodFlow> flow = () -> HemoCapabilityAccess.getVascularSystem(mc.player).getBloodFlowBySection(memory.section());
 		java.util.function.Supplier<MuscleMemoryRadialPresentation.State> presentation = () -> {
 			long now = mc.level != null ? mc.level.getGameTime() : 0L;
 			return MuscleMemoryRadialPresentation.resolve(state.reserveTicks(memory), state.isEnabled(memory),

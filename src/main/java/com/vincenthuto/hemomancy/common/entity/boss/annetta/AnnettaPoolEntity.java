@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.annetta;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
@@ -145,7 +144,7 @@ public class AnnettaPoolEntity extends Entity {
     }
 
     private static boolean bloodActive(Player player) {
-        return HemoCapabilityAccess.getBloodVolume(player).map(IBloodVolume::isActive).orElse(false);
+        return HemoCapabilityAccess.getBloodVolume(player).isActive();
     }
 
     @Override

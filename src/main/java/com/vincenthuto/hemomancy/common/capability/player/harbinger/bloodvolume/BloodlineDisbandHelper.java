@@ -36,17 +36,16 @@ public final class BloodlineDisbandHelper {
 				continue;
 			}
 
-			HemoCapabilityAccess.getBloodVolume(online).ifPresent(volume -> {
-				volume.setBloodLine(Bloodline.NOBLOODLINE);
-				BloodVolumeEvents.syncVolume(online, volume);
-				burnBloodlineLedgers(online, disbandedLine);
-				if (notificationFactory != null) {
-					Component notification = notificationFactory.apply(online);
-					if (notification != null) {
-						online.displayClientMessage(notification, false);
-					}
+			var volume = HemoCapabilityAccess.getBloodVolume(online);
+			volume.setBloodLine(Bloodline.NOBLOODLINE);
+			BloodVolumeEvents.syncVolume(online, volume);
+			burnBloodlineLedgers(online, disbandedLine);
+			if (notificationFactory != null) {
+				Component notification = notificationFactory.apply(online);
+				if (notification != null) {
+					online.displayClientMessage(notification, false);
 				}
-			});
+			}
 			resetCount++;
 		}
 		return resetCount;

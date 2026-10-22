@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
 import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
@@ -78,8 +77,8 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 				return;
 			}
 
-			IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
-			IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+			IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
+			IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 			if (known == null || volume == null || !volume.isActive()) {
 				fail(player, "Blood system is not active.");
 				return;
@@ -165,7 +164,7 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 	 * Returns whether it applied.
 	 */
 	public static boolean applyLoadout(ServerPlayer player, int slotIndex) {
-		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 		return known != null && apply(player, known, slotIndex);
 	}
 
@@ -208,7 +207,7 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 				equipped.imposeCooldown(player, NEWLY_EQUIPPED_COOLDOWN_TICKS);
 			}
 		}
-		var muscleState = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+		var muscleState = HemoCapabilityAccess.muscleMemory(player);
 		boolean muscleStateChanged = false;
 		for (var memory : com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory.values()) {
 			if (muscleState.isEnabled(memory)
@@ -284,7 +283,7 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 		if (ref.kind() == MemoryEntryKind.MANIPULATION) {
 			return findKnownManipulation(known, ref.id()) != null;
 		}
-		return ref.muscleMemory().filter(memory -> player.getData(HemoAttachmentTypes.MUSCLE_MEMORY).knows(memory)).isPresent();
+		return ref.muscleMemory().filter(memory -> HemoCapabilityAccess.muscleMemory(player).knows(memory)).isPresent();
 	}
 
 	private static int currentRawExperience(Player player) {

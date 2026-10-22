@@ -105,7 +105,7 @@ public class BloodThrallItem extends Item {
 
             if (!level.isClientSide) {
                 // Blood cost
-                IBloodVolume playerVol = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+                IBloodVolume playerVol = HemoCapabilityAccess.getBloodVolume(player);
                 if (playerVol == null || playerVol.getBloodVolume() < SPAWN_BLOOD_COST) {
                     player.displayClientMessage(
                             Component.literal("§cNot enough blood! Need " + (int) SPAWN_BLOOD_COST + " mL."), true);

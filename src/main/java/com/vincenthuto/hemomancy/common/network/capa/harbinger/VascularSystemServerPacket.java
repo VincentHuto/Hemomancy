@@ -47,7 +47,7 @@ public class VascularSystemServerPacket implements CustomPacketPayload {
 			}
 
 			HemoCapabilityAccess.getVascularSystem(player)
-					.orElseThrow(IllegalStateException::new).setVascularSystem(msg.vascularSystem);
+					.setVascularSystem(msg.vascularSystem);
 
 		});
 	}

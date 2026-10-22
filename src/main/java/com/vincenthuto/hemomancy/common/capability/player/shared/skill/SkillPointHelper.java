@@ -20,7 +20,7 @@ public final class SkillPointHelper {
 		if (player == null || player.level().isClientSide) {
 			return SkillProgressClientCache.current();
 		}
-		return HemoCapabilityAccess.getSkillProgress(player).orElseGet(SkillProgressClientCache::current);
+		return HemoCapabilityAccess.getSkillProgress(player);
 	}
 
 	public static int getSkillLevel(@Nullable Player player, SkillPoint skill) {

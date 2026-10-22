@@ -70,9 +70,8 @@ public final class VeinMasonAssignments {
     public static void onMatchingNoeticCast(ServerPlayer player) {
         RoutingStep step = nextRoutingStep(has(player, D6_COUNSEL), has(player, D6_FIRST_ROUTE), has(player, D6_LOADOUT));
         if (step == RoutingStep.NONE || has(player, D6_SECOND_ROUTE)) return;
-        String build = HemoCapabilityAccess.getScarState(player)
-                .map(scars -> scars.getActiveCerebralScars().stream().map(ResourceLocation::toString).sorted()
-                        .collect(java.util.stream.Collectors.joining(";"))).orElse("");
+        String build = HemoCapabilityAccess.getScarState(player).getActiveCerebralScars().stream().map(ResourceLocation::toString).sorted()
+                        .collect(java.util.stream.Collectors.joining(";"));
         if (build.isEmpty()) return;
         var durable = player.getPersistentData().getCompound(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG);
         if (step == RoutingStep.FIRST || !durable.contains(FIRST_ROUTE_BUILD)) {
@@ -96,8 +95,7 @@ public final class VeinMasonAssignments {
     }
 
     public static void refreshD5(ServerPlayer player) {
-        boolean fortified = HemoCapabilityAccess.getInitiatoryDegree(player)
-                .map(degree -> degree.hasHematicFortification()).orElse(false);
+        boolean fortified = HemoCapabilityAccess.getInitiatoryDegree(player).hasHematicFortification();
         if (has(player, D5_VARICOSE) && has(player, D5_DIAGNOSED) && has(player, D5_TREATED) && fortified) {
             grant(player, D5_READY);
         }

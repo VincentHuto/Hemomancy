@@ -35,25 +35,24 @@ public class ArachnidAnastomosisEffect extends MobEffect {
 		if (entity == null || entity.level().isClientSide) return true;
 		if (!(entity instanceof Player player)) return true;
 
-		HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
-			float healAmount = 0.5f + amplifier * 0.25f;
-			boolean changed = false;
+		var vascular = HemoCapabilityAccess.getVascularSystem(player);
+		float healAmount = 0.5f + amplifier * 0.25f;
+		boolean changed = false;
 
-			for (EnumVeinSections section : EnumVeinSections.values()) {
-				float health = vascular.getHealthBySection(section);
-				if (health < 100f) {
-					float newHealth = Math.min(100f, health + healAmount);
-					Map<EnumVeinSections, Float> sys = vascular.getVascularSystem();
-					sys.put(section, newHealth);
-					vascular.setVascularSystem(sys);
-					changed = true;
-				}
+		for (EnumVeinSections section : EnumVeinSections.values()) {
+			float health = vascular.getHealthBySection(section);
+			if (health < 100f) {
+				float newHealth = Math.min(100f, health + healAmount);
+				Map<EnumVeinSections, Float> sys = vascular.getVascularSystem();
+				sys.put(section, newHealth);
+				vascular.setVascularSystem(sys);
+				changed = true;
 			}
+		}
 
-			if (changed) {
-				VascularSystemEvents.syncVascular((ServerPlayer) player, vascular);
-			}
-		});
+		if (changed) {
+			VascularSystemEvents.syncVascular((ServerPlayer) player, vascular);
+		}
 		return true;
 	}
 

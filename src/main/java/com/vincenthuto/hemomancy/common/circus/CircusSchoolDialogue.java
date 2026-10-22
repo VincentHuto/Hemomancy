@@ -57,7 +57,7 @@ public final class CircusSchoolDialogue {
             case "circus_school_teach" -> {
                 if (lesson == null || !CircusSchoolRules.canTeach(role, lesson.summon(),
                         HemoCapabilityAccess.getPlayerDegreeNumber(player),
-                        HemoCapabilityAccess.getBloodVolume(player).map(v -> v.isActive()).orElse(false),
+                        HemoCapabilityAccess.getBloodVolume(player).isActive(),
                         player.isAlive(), player.isSpectator())) {
                     player.displayClientMessage(Component.translatable("hemomancy.circus.school.not_ready"), false);
                     return false;

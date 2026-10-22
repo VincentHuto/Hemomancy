@@ -52,11 +52,10 @@ public class UnstainedShieldItem extends Item {
 				if (player.isBlocking()) {
 					// Every 40 ticks (2 seconds) while blocking, grant a tiny purity bonus
 					if (player.tickCount % 40 == 0) {
-						HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
-							if (progress.hasBegunPurification() && !progress.isPurified()) {
-								progress.addPurity(0.1f);
-							}
-						});
+						var progress = HemoCapabilityAccess.getUnstainedProgress(player);
+						if (progress.hasBegunPurification() && !progress.isPurified()) {
+							progress.addPurity(0.1f);
+						}
 					}
 				}
 			}

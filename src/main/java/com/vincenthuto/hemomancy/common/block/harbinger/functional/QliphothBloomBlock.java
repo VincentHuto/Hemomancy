@@ -176,10 +176,8 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 		}
 		if (bloomState.isPortalOpen()) {
 			if (!(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)
-					|| !HemoCapabilityAccess.getInitiatoryDegree(player)
-							.map(degree -> degree.getDegreeNumber() == 7
-									&& degree.getArchonPath() == EnumArchonPath.SILENT_PENDING)
-							.orElse(false)) {
+					|| !(HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber() == 7
+									&& HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath() == EnumArchonPath.SILENT_PENDING)) {
 				player.displayClientMessage(Component.literal("The wound rejects the path you carry.")
 						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
 				return InteractionResult.SUCCESS;
@@ -189,18 +187,17 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 		}
 		int huskIndex = data.getPendingPomeHuskIndex(bloom);
 		boolean claimed = data.isPendingPomeClaimed(bloom);
-		int consumedHere = HemoCapabilityAccess.getInitiatoryDegree(player)
-				.map(degree -> degree.getPomesConsumedFromBloom(bloom.bloomId(), pos.asLong(),
-						bloom.migratesLegacyProgress())).orElse(0);
+		int consumedHere = HemoCapabilityAccess.getInitiatoryDegree(player).getPomesConsumedFromBloom(bloom.bloomId(), pos.asLong(),
+						bloom.migratesLegacyProgress());
 		if (emptyHand && bloomState == SeveredQliphothState.LIVING && player.isShiftKeyDown()
 				&& data.getRemainingPomes(bloom) == 0 && consumedHere >= 9
 				&& player instanceof ServerPlayer serverPlayer
-				&& HemoCapabilityAccess.requireInitiatoryDegree(player).isQliphothCommunionDone()) {
+				&& HemoCapabilityAccess.getInitiatoryDegree(player).isQliphothCommunionDone()) {
 			if (player.getInventory().countItem(ItemInit.fungal_spine.get()) > 0) {
 				player.displayClientMessage(Component.literal("Your Fungal Spine is already with you.")
 						.withStyle(ChatFormatting.DARK_PURPLE), true);
 			} else {
-				var degree = HemoCapabilityAccess.requireInitiatoryDegree(player);
+				var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
 				boolean delivered;
 				if (degree.hasFungalSpineGranted()) {
 					delivered = player.getInventory().add(new ItemStack(ItemInit.fungal_spine.get()));
@@ -229,8 +226,7 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 					: Component.literal("The next pome is growing. Return when it ripens; this tree has "
 							+ data.getRemainingPomes(bloom) + " pomes left to bear.");
 			if (!claimed && data.getRemainingPomes(bloom) == 0) {
-				EnumArchonPath path = HemoCapabilityAccess.getInitiatoryDegree(player)
-						.map(degree -> degree.getArchonPath()).orElse(EnumArchonPath.NONE);
+				EnumArchonPath path = HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath();
 				message = Component.literal(switch (path) {
 					case NONE -> "Spine: visit the Gardens. Lost it? Sneak-use empty-handed.";
 					case SILENT_PENDING -> "Your refusal awaits its act. Sever this tree with your Living Arsenal to open the ordeal; ordinary pruning belongs to the Unstained path.";

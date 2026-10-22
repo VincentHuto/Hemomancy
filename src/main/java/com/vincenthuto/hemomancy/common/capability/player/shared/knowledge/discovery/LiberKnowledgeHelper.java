@@ -16,34 +16,28 @@ public final class LiberKnowledgeHelper {
 	}
 
 	public static boolean unlockEntry(ServerPlayer player, ResourceLocation entryId, IDiscoverySource source) {
-		return HemoCapabilityAccess.getLiberKnowledge(player)
-				.map(knowledge -> {
-					boolean changed = knowledge.unlockEntry(entryId, source);
-					if (changed) {
-						LiberKnowledgeEvents.sync(player, entryId != null ? Set.of(entryId) : Set.of());
-					}
-					return changed;
-				})
-				.orElse(false);
+		var knowledge = HemoCapabilityAccess.getLiberKnowledge(player);
+		boolean changed = knowledge.unlockEntry(entryId, source);
+		if (changed) {
+			LiberKnowledgeEvents.sync(player, entryId != null ? Set.of(entryId) : Set.of());
+		}
+		return changed;
 	}
 
 	public static boolean unlockEntries(ServerPlayer player, Iterable<ResourceLocation> entryIds, IDiscoverySource source) {
-		return HemoCapabilityAccess.getLiberKnowledge(player)
-				.map(knowledge -> {
-					boolean changed = false;
-					Set<ResourceLocation> markUnreadEntries = new LinkedHashSet<>();
-					for (ResourceLocation entryId : entryIds) {
-						if (knowledge.unlockEntry(entryId, source)) {
-							changed = true;
-							markUnreadEntries.add(entryId);
-						}
-					}
-					if (changed) {
-						LiberKnowledgeEvents.sync(player, markUnreadEntries);
-					}
-					return changed;
-				})
-				.orElse(false);
+		var knowledge = HemoCapabilityAccess.getLiberKnowledge(player);
+		boolean changed = false;
+		Set<ResourceLocation> markUnreadEntries = new LinkedHashSet<>();
+		for (ResourceLocation entryId : entryIds) {
+			if (knowledge.unlockEntry(entryId, source)) {
+				changed = true;
+				markUnreadEntries.add(entryId);
+			}
+		}
+		if (changed) {
+			LiberKnowledgeEvents.sync(player, markUnreadEntries);
+		}
+		return changed;
 	}
 
 	public static boolean unlockForRite(ServerPlayer player, String ritePath) {
@@ -70,26 +64,19 @@ public final class LiberKnowledgeHelper {
 	}
 
 	public static boolean unlockMemo(ServerPlayer player, ResourceLocation memoId, ResourceLocation entryId) {
-		return HemoCapabilityAccess.getLiberKnowledge(player)
-				.map(knowledge -> {
-					boolean changed = knowledge.unlockMemo(memoId, entryId);
-					if (changed) {
-						LiberKnowledgeEvents.sync(player, entryId != null ? Set.of(entryId) : Set.of());
-					}
-					return changed;
-				})
-				.orElse(false);
+		var knowledge = HemoCapabilityAccess.getLiberKnowledge(player);
+		boolean changed = knowledge.unlockMemo(memoId, entryId);
+		if (changed) {
+			LiberKnowledgeEvents.sync(player, entryId != null ? Set.of(entryId) : Set.of());
+		}
+		return changed;
 	}
 
 	public static boolean hasEntry(Player player, ResourceLocation entryId) {
-		return HemoCapabilityAccess.getLiberKnowledge(player)
-				.map(knowledge -> knowledge.hasEntry(entryId))
-				.orElse(false);
+		return HemoCapabilityAccess.getLiberKnowledge(player).hasEntry(entryId);
 	}
 
 	public static boolean knowsMemo(Player player, ResourceLocation memoId) {
-		return HemoCapabilityAccess.getLiberKnowledge(player)
-				.map(knowledge -> knowledge.knowsMemo(memoId))
-				.orElse(false);
+		return HemoCapabilityAccess.getLiberKnowledge(player).knowsMemo(memoId);
 	}
 }

@@ -160,7 +160,7 @@ public final class HematicRiposteGameTests {
     }
 
     private static void select(ServerPlayer p, BloodManipulation m) {
-        var known = HemoCapabilityAccess.requireKnownManipulations(p);
+        var known = HemoCapabilityAccess.getKnownManipulations(p);
         known.getKnownManips().put(m, new ManipLevel(0, 0));
         known.setEquippedManipNames(List.of(m.getName()));
         known.setSelectedManip(m);
@@ -178,11 +178,11 @@ public final class HematicRiposteGameTests {
         p.setYRot(0);
         p.setYBodyRot(0);
         p.setYHeadRot(0);
-        var blood = HemoCapabilityAccess.requireBloodVolume(p);
+        var blood = HemoCapabilityAccess.getBloodVolume(p);
         blood.setActive(true);
         blood.setBloodVolume(2000);
         for (var tendency : EnumBloodTendency.values())
-            HemoCapabilityAccess.getBloodTendency(p).orElseThrow().setTendencyAlignment(tendency, 100);
+            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(tendency, 100);
         return p;
     }
 }

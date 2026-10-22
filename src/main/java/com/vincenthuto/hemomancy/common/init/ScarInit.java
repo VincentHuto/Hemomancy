@@ -213,18 +213,17 @@ public class ScarInit {
 			int level = Math.max(sharpness, Math.max(smite, bane));
 			if (level <= 0) return;
 
-			HemoCapabilityAccess.getBloodVolume(player).ifPresent(blood -> {
-				if (!blood.isActive()) return;
-				float drain = level * BLOOD_DRAIN_PER_LEVEL;
-				if (blood.getBloodVolume() < drain) return;
+			var blood = HemoCapabilityAccess.getBloodVolume(player);
+			if (!blood.isActive()) return;
+			float drain = level * BLOOD_DRAIN_PER_LEVEL;
+			if (blood.getBloodVolume() < drain) return;
 
-				blood.drain(drain);
-				target.hurt(player.damageSources().playerAttack(player), level);
+			blood.drain(drain);
+			target.hurt(player.damageSources().playerAttack(player), level);
 
-				if (player instanceof ServerPlayer sp) {
-					PacketHandler.sendToPlayer(sp, new BloodVolumeServerPacket(blood));
-				}
-			});
+			if (player instanceof ServerPlayer sp) {
+				PacketHandler.sendToPlayer(sp, new BloodVolumeServerPacket(blood));
+			}
 		}
 
 		private static int getLevel(net.minecraft.core.HolderLookup.Provider registryAccess,

@@ -44,52 +44,51 @@ public class EquippedMorphlingHandRenderer {
 		if (player == null)
 			return;
 
-		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
-			ItemStack morphling = cap.getEquippedMorphling();
-			if (morphling.isEmpty())
-				return;
+		var cap = HemoCapabilityAccess.getEquippedMorphling(player);
+		ItemStack morphling = cap.getEquippedMorphling();
+		if (morphling.isEmpty())
+			return;
 
-			PoseStack poseStack = event.getPoseStack();
-			MultiBufferSource buffer = event.getMultiBufferSource();
-			int packedLight = event.getPackedLight();
-			float swingProgress = event.getSwingProgress();
-			float equipProgress = event.getEquipProgress();
+		PoseStack poseStack = event.getPoseStack();
+		MultiBufferSource buffer = event.getMultiBufferSource();
+		int packedLight = event.getPackedLight();
+		float swingProgress = event.getSwingProgress();
+		float equipProgress = event.getEquipProgress();
 
-			boolean rightHand = (player.getMainArm() == HumanoidArm.RIGHT);
-			float side = rightHand ? 1.0F : -1.0F;
+		boolean rightHand = (player.getMainArm() == HumanoidArm.RIGHT);
+		float side = rightHand ? 1.0F : -1.0F;
 
-			poseStack.pushPose();
+		poseStack.pushPose();
 
-			//  Vanilla applyItemArmTransform (positions the arm in first-person) 
-			poseStack.translate(side * 0.56F, -0.52F + equipProgress * -0.6F, -0.72F);
+		//  Vanilla applyItemArmTransform (positions the arm in first-person) 
+		poseStack.translate(side * 0.56F, -0.52F + equipProgress * -0.6F, -0.72F);
 
-			//  Vanilla applyItemArmAttackTransform (swing animation) 
-			float sqrtSwing = Mth.sqrt(swingProgress);
-			float sinSqrtPi = Mth.sin(sqrtSwing * (float) Math.PI);
-			poseStack.mulPose(Axis.YP.rotationDegrees(side * sinSqrtPi * -20.0F));
-			poseStack.mulPose(Axis.ZP.rotationDegrees(side * Mth.sin(swingProgress * swingProgress * (float) Math.PI) * -20.0F));
-			poseStack.mulPose(Axis.XP.rotationDegrees(sinSqrtPi * -80.0F));
+		//  Vanilla applyItemArmAttackTransform (swing animation) 
+		float sqrtSwing = Mth.sqrt(swingProgress);
+		float sinSqrtPi = Mth.sin(sqrtSwing * (float) Math.PI);
+		poseStack.mulPose(Axis.YP.rotationDegrees(side * sinSqrtPi * -20.0F));
+		poseStack.mulPose(Axis.ZP.rotationDegrees(side * Mth.sin(swingProgress * swingProgress * (float) Math.PI) * -20.0F));
+		poseStack.mulPose(Axis.XP.rotationDegrees(sinSqrtPi * -80.0F));
 
-			//  Vanilla arm positioning (same as renderPlayerArm) 
-			poseStack.mulPose(Axis.YP.rotationDegrees(side * 45.0F));
+		//  Vanilla arm positioning (same as renderPlayerArm) 
+		poseStack.mulPose(Axis.YP.rotationDegrees(side * 45.0F));
 
-			//  Now position the morphling icon flat on the forearm 
-			// Offset from the arm origin to the top of the forearm
-			poseStack.translate(side * -0.05F, -0.4F, 0.0F);
+		//  Now position the morphling icon flat on the forearm 
+		// Offset from the arm origin to the top of the forearm
+		poseStack.translate(side * -0.05F, -0.4F, 0.0F);
 
-			// Lay flat on the arm surface facing upward
-			poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
+		// Lay flat on the arm surface facing upward
+		poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
 
-			// Scale to fit on the arm (uniform scale)
-			float scale = 0.25F;
-			poseStack.scale(scale, scale, scale);
+		// Scale to fit on the arm (uniform scale)
+		float scale = 0.25F;
+		poseStack.scale(scale, scale, scale);
 
-			mc.getItemRenderer().renderStatic(
-					morphling, ItemDisplayContext.FIXED,
-					packedLight, OverlayTexture.NO_OVERLAY,
-					poseStack, buffer, player.level(), player.getId());
+		mc.getItemRenderer().renderStatic(
+				morphling, ItemDisplayContext.FIXED,
+				packedLight, OverlayTexture.NO_OVERLAY,
+				poseStack, buffer, player.level(), player.getId());
 
-			poseStack.popPose();
-		});
+		poseStack.popPose();
 	}
 }

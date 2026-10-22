@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityKeys;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -60,7 +60,7 @@ public class HarbingerEquipmentContainer extends ItemStackHandler implements IHa
 			for (int i = 0; i < getSlots(); i++) {
 				ItemStack stack = getStackInSlot(i);
 				if (!stack.isEmpty()) {
-					IHarbingerEquipment scar = stack.getCapability(HemoCapabilityKeys.ITEM_HARBINGER_EQUIPMENT);
+					IHarbingerEquipment scar = HemoCapabilityAccess.getScar(stack).orElse(null);
 					if (scar != null) {
 						scar.onEquipped(holder);
 					}
@@ -84,7 +84,7 @@ public class HarbingerEquipmentContainer extends ItemStackHandler implements IHa
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
-		IHarbingerEquipment mindscar = stack.getCapability(HemoCapabilityKeys.ITEM_HARBINGER_EQUIPMENT);
+		IHarbingerEquipment mindscar = HemoCapabilityAccess.getScar(stack).orElse(null);
 		if (stack.isEmpty() || mindscar == null)
 			return false;
 		if (holder == null)
@@ -128,11 +128,11 @@ public class HarbingerEquipmentContainer extends ItemStackHandler implements IHa
 
 		if (!blockEvents && holder != null && !ItemStack.isSameItemSameComponents(prev, now)) {
 			if (!prev.isEmpty()) {
-				IHarbingerEquipment prevScar = prev.getCapability(HemoCapabilityKeys.ITEM_HARBINGER_EQUIPMENT);
+				IHarbingerEquipment prevScar = HemoCapabilityAccess.getScar(prev).orElse(null);
 				if (prevScar != null) prevScar.onUnequipped(holder);
 			}
 			if (!now.isEmpty()) {
-				IHarbingerEquipment nowScar = now.getCapability(HemoCapabilityKeys.ITEM_HARBINGER_EQUIPMENT);
+				IHarbingerEquipment nowScar = HemoCapabilityAccess.getScar(now).orElse(null);
 				if (nowScar != null) nowScar.onEquipped(holder);
 			}
 		}
@@ -185,7 +185,7 @@ public class HarbingerEquipmentContainer extends ItemStackHandler implements IHa
 		List<Player> receivers = null;
 		for (byte i = 0; i < getSlots(); i++) {
 			ItemStack stack = getStackInSlot(i);
-			IHarbingerEquipment equipment = stack.getCapability(HemoCapabilityKeys.ITEM_HARBINGER_EQUIPMENT);
+			IHarbingerEquipment equipment = HemoCapabilityAccess.getScar(stack).orElse(null);
 			boolean autosync = equipment != null && equipment.willAutoSync(holder);
 			if (changed[i] || autosync && !ItemStack.isSameItemSameComponents(stack, syncPrevious[i])) {
 				if (receivers == null) {
@@ -207,7 +207,7 @@ public class HarbingerEquipmentContainer extends ItemStackHandler implements IHa
 		for (int i = 0; i < getSlots(); i++) {
 			ItemStack stack = getStackInSlot(i);
 			if (!stack.isEmpty() && stack.getItem() != Items.AIR) {
-				IHarbingerEquipment scar = stack.getCapability(HemoCapabilityKeys.ITEM_HARBINGER_EQUIPMENT);
+				IHarbingerEquipment scar = HemoCapabilityAccess.getScar(stack).orElse(null);
 				if (scar != null) scar.onWornTick(holder);
 			}
 		}

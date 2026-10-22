@@ -165,7 +165,7 @@ public final class SanguineCondenserGameTests {
     @GameTest(template = "empty", timeoutTicks = 60, batch = "sanguine_condenser")
     public static void projectionConvertsEmptyCauldronAndFills(GameTestHelper helper) {
         ServerPlayer player = StationUpgradeGameTests.claimant(helper, 1);
-        HemoCapabilityAccess.requireBloodVolume(player).setBloodVolume(1000);
+        HemoCapabilityAccess.getBloodVolume(player).setBloodVolume(1000);
         helper.getLevel().setBlock(helper.absolutePos(SUPPORT), Blocks.STONE.defaultBlockState(), 3);
         BlockPos seat = helper.absolutePos(SEAT);
         helper.getLevel().setBlock(seat, Blocks.CAULDRON.defaultBlockState(), 3);
@@ -174,7 +174,7 @@ public final class SanguineCondenserGameTests {
         helper.assertTrue(helper.getLevel().getBlockEntity(seat) instanceof SanguineCondenserBlockEntity condenser
                 && condenser.getBloodVolume() == 20 && condenser.isContributor(player.getUUID())
                 && player.getUUID().equals(condenser.owner()), "the cauldron did not become an owned, filled Condenser");
-        helper.assertTrue(HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume() == 980,
+        helper.assertTrue(HemoCapabilityAccess.getBloodVolume(player).getBloodVolume() == 980,
                 "the projector was not charged for the blood");
         player.discard();
         helper.succeed();
@@ -183,7 +183,7 @@ public final class SanguineCondenserGameTests {
     @GameTest(template = "empty", timeoutTicks = 60, batch = "sanguine_condenser")
     public static void projectionIgnoresFilledCauldronsAndStone(GameTestHelper helper) {
         ServerPlayer player = StationUpgradeGameTests.claimant(helper, 1);
-        HemoCapabilityAccess.requireBloodVolume(player).setBloodVolume(1000);
+        HemoCapabilityAccess.getBloodVolume(player).setBloodVolume(1000);
         BlockPos seat = helper.absolutePos(SEAT);
         for (var state : java.util.List.of(Blocks.WATER_CAULDRON.defaultBlockState(), Blocks.LAVA_CAULDRON.defaultBlockState(),
                 Blocks.POWDER_SNOW_CAULDRON.defaultBlockState(), Blocks.STONE.defaultBlockState())) {
@@ -192,7 +192,7 @@ public final class SanguineCondenserGameTests {
                     state + " was claimed by the Condenser branch");
             helper.assertTrue(helper.getLevel().getBlockState(seat) == state, state + " changed");
         }
-        helper.assertTrue(HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume() == 1000,
+        helper.assertTrue(HemoCapabilityAccess.getBloodVolume(player).getBloodVolume() == 1000,
                 "a refused target cost blood");
         player.discard();
         helper.succeed();
@@ -212,7 +212,7 @@ public final class SanguineCondenserGameTests {
         double blood = condenser.getBloodVolume();
 
         helper.assertTrue(StationUpgradeRites.prepare(level, rite), "First Clotting did not prepare");
-        HemoCapabilityAccess.requireBloodVolume(owner).setBloodVolume(500);
+        HemoCapabilityAccess.getBloodVolume(owner).setBloodVolume(500);
         var spent = SanguineCondenserProjection.tryProject(level, owner, condenser.getBlockPos(), 20);
         helper.assertTrue(spent.isPresent() && spent.getAsDouble() == 0 && condenser.getBloodVolume() == blood,
                 "a rite-locked Condenser took projected blood");
@@ -255,7 +255,7 @@ public final class SanguineCondenserGameTests {
         ServerPlayer owner = StationUpgradeGameTests.claimant(helper, 1);
         SanguineCondenserBlockEntity condenser = condenser(helper, owner, 0);
         condenser.receiveProjectedBlood(owner, 100);
-        var blood = HemoCapabilityAccess.requireBloodVolume(owner);
+        var blood = HemoCapabilityAccess.getBloodVolume(owner);
         blood.setBloodVolume(0);
         BlockPos seat = helper.absolutePos(SEAT);
         owner.moveTo(seat.getX() + .5, seat.getY(), seat.getZ() - 1.5, 0.0F, 0.0F);

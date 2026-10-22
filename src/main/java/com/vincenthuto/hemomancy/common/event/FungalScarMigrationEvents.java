@@ -37,14 +37,13 @@ public final class FungalScarMigrationEvents {
 		if (player.level().isClientSide) {
 			return;
 		}
-		boolean[] changed = { false };
-		HemoCapabilityAccess.getScarState(player).ifPresent(scars -> {
-			ItemStack current = scars.getFungalScar();
-			if (!ItemStack.isSameItemSameComponents(current, FungalScarMigrationRules.migrate(current))) {
-				scars.setFungalScar(FungalScarMigrationRules.migrate(current));
-				changed[0] = true;
-			}
-		});
+		boolean changed = false;
+		var scars = HemoCapabilityAccess.getScarState(player);
+		ItemStack fungalScar = scars.getFungalScar();
+		if (!ItemStack.isSameItemSameComponents(fungalScar, FungalScarMigrationRules.migrate(fungalScar))) {
+			scars.setFungalScar(FungalScarMigrationRules.migrate(fungalScar));
+			changed = true;
+		}
 
 		Inventory inventory = player.getInventory();
 		for (int i = 0; i < inventory.getContainerSize(); i++) {
@@ -52,14 +51,12 @@ public final class FungalScarMigrationEvents {
 			ItemStack migrated = FungalScarMigrationRules.migrate(current);
 			if (!ItemStack.isSameItemSameComponents(current, migrated)) {
 				inventory.setItem(i, migrated);
-				changed[0] = true;
+				changed = true;
 			}
 		}
 
-		if (changed[0] && player instanceof ServerPlayer serverPlayer) {
-			HemoCapabilityAccess.getScarState(serverPlayer)
-					.ifPresent(scars -> PacketHandler.sendToPlayer(serverPlayer,
-							new PacketSyncScarsState(serverPlayer, scars)));
+		if (changed && player instanceof ServerPlayer serverPlayer) {
+			PacketHandler.sendToPlayer(serverPlayer, new PacketSyncScarsState(serverPlayer, scars));
 		}
 	}
 }

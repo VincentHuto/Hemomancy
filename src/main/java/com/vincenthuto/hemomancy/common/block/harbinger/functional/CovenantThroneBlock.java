@@ -372,15 +372,14 @@ public class CovenantThroneBlock extends BaseEntityBlock implements IMultiBlock,
             return;
         }
 
-        var bloodOpt = HemoCapabilityAccess.getBloodVolume(player);
-        if (bloodOpt.isEmpty() || !bloodOpt.get().isActive()) {
+        IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player);
+        if (!blood.isActive()) {
             player.sendSystemMessage(Component.translatable(
                     "block.hemomancy.covenant_throne.no_blood")
                     .withStyle(ChatFormatting.GRAY));
             return;
         }
 
-        IBloodVolume blood = bloodOpt.get();
         if (blood.wouldOverstrain(TRANCE_BLOOD_COST)) {
             player.sendSystemMessage(Component.translatable(
                     "block.hemomancy.covenant_throne.insufficient_blood",
@@ -407,9 +406,9 @@ public class CovenantThroneBlock extends BaseEntityBlock implements IMultiBlock,
     }
 
     public static boolean isProgenitor(Player player) {
-        var bloodOpt = HemoCapabilityAccess.getBloodVolume(player);
-        if (bloodOpt.isEmpty() || !bloodOpt.get().isActive()) return false;
-        Bloodline bloodline = bloodOpt.get().getBloodLine();
+        IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player);
+        if (!blood.isActive()) return false;
+        Bloodline bloodline = blood.getBloodLine();
         return bloodline.isValid() && player.getUUID().equals(bloodline.getLeaderUUID());
     }
 

@@ -62,7 +62,7 @@ public final class AntecedentClientReview {
                     var machine=(ClairaudiographBlockEntity)level.getBlockEntity(MACHINE);
                     var sample=AhaematicSample.create("block","minecraft:sculk_catalyst");BloodSampleData.identify(sample);
                     machine.inventory.setStackInSlot(0,sample);machine.inventory.setStackInSlot(1,AncientRecordings.cylinder(AncientRecordings.SEVERED));
-                    p.setGameMode(GameType.CREATIVE);HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(4);teleport(p,LAYOUT.plan().vessel().offset(0,0,-1),180,15);
+                    p.setGameMode(GameType.CREATIVE);HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(4);teleport(p,LAYOUT.plan().vessel().offset(0,0,-1),180,15);
                 }
                 if(op.equals("play")) {var machine=(ClairaudiographBlockEntity)level.getBlockEntity(MACHINE);machine.stopPlayback();machine.startPlayback(false);p.openMenu(machine,MACHINE);}
                 if(op.equals("gallery"))teleport(p,new BlockPos(LAYOUT.plan().gallery().minX()+2,8,LAYOUT.plan().gallery().minZ()+9),-90,30);

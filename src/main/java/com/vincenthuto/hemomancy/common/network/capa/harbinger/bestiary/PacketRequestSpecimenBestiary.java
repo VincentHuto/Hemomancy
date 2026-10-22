@@ -32,8 +32,7 @@ public class PacketRequestSpecimenBestiary implements CustomPacketPayload {
 			if (!(packetPlayer instanceof ServerPlayer player)) {
 				return;
 			}
-			HemoCapabilityAccess.getSpecimenBestiary(player)
-					.ifPresent(progress -> SpecimenBestiaryEvents.sync(player, progress));
+			SpecimenBestiaryEvents.sync(player, HemoCapabilityAccess.getSpecimenBestiary(player));
 		});
 	}
 

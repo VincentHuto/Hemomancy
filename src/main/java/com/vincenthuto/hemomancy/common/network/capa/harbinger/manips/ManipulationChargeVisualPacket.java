@@ -23,7 +23,7 @@ public record ManipulationChargeVisualPacket(int heldTicks) implements CustomPac
         context.enqueueWork(() -> {
             if (!(context.player() instanceof ServerPlayer player)) return;
             if (packet.heldTicks>0 && com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.isParalyzed(player)) return;
-            var known=HemoCapabilityAccess.requireKnownManipulations(player);
+            var known=HemoCapabilityAccess.getKnownManipulations(player);
             if(packet.heldTicks>0 && known.getSelectedMemoryRef().kind()!=MemoryEntryKind.MANIPULATION) return;
             var saved=known.getSelectedManip();
             var selected=saved==null?null:ManipulationInit.getByName(saved.getName());

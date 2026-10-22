@@ -461,7 +461,7 @@ public final class ManipulationReactiveEvents {
 				|| VascularSystemEvents.isSectionDead(player, phoenix.getSection())) return false;
 		double price = com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostLedger
 				.collect(player, phoenix).effectiveCost();
-		return price >= 0 && HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume() >= price;
+		return price >= 0 && HemoCapabilityAccess.getBloodVolume(player).getBloodVolume() >= price;
 	}
 
 	private static boolean trigger(ServerPlayer player, BloodManipulation manipulation, int cooldown) {
@@ -478,9 +478,7 @@ public final class ManipulationReactiveEvents {
 	}
 
 	private static boolean selected(ServerPlayer player, String name) {
-		return HemoCapabilityAccess.getKnownManipulations(player)
-				.map(known -> known.getSelectedManip() != null && name.equals(known.getSelectedManip().getName()))
-				.orElse(false);
+		return HemoCapabilityAccess.getKnownManipulations(player).getSelectedManip() != null && name.equals(HemoCapabilityAccess.getKnownManipulations(player).getSelectedManip().getName());
 	}
 
 	private static void clear(Player entity) {

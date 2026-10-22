@@ -41,7 +41,7 @@ public class EnzymaticScriptoriumBlockEntity extends BaseContainerBlockEntity
     }
 
     @Override public com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume getBloodCapability() {
-        var volume = getData(com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes.BLOCK_BLOOD_VOLUME);
+        var volume = com.vincenthuto.hemomancy.common.tile.IBloodReservoir.super.getBloodCapability();
         volume.setActive(true);
         volume.setMaxBloodVolume(BLOOD_CAPACITY);
         return volume;

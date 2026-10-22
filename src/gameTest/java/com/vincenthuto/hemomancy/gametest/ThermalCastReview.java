@@ -86,11 +86,11 @@ public final class ThermalCastReview {
                     level.addFreshEntity(npc);npcId=npc.getId();
                 }
                 if(npcOnly)player.teleportTo(level,x+5,100,-1,35,14);
-                var blood=HemoCapabilityAccess.requireBloodVolume(player);blood.setActive(!npcOnly);
+                var blood=HemoCapabilityAccess.getBloodVolume(player);blood.setActive(!npcOnly);
                 if(!npcOnly) {
                     blood.setBloodVolume(10000);
-                    for(var tendency:EnumBloodTendency.values())HemoCapabilityAccess.getBloodTendency(player).orElseThrow().setTendencyAlignment(tendency,100);
-                    var manipulation=ManipulationInit.getByName(name);var known=HemoCapabilityAccess.requireKnownManipulations(player);
+                    for(var tendency:EnumBloodTendency.values())HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(tendency,100);
+                    var manipulation=ManipulationInit.getByName(name);var known=HemoCapabilityAccess.getKnownManipulations(player);
                     known.getKnownManips().put(manipulation,new ManipLevel(4,185));known.setSelectedManip(manipulation);known.setEquippedManipNames(List.of(name));
                     if(name.equals("phoenix_debt")) {
                         if(!known.isPassiveActive(name))known.togglePassive(name);
@@ -105,7 +105,7 @@ public final class ThermalCastReview {
         }
         if(phase==18)mc.getSingleplayerServer().execute(()->{
             ServerPlayer player=mc.getSingleplayerServer().getPlayerList().getPlayer(mc.player.getUUID());if(player==null)return;
-            var spell=ManipulationInit.getByName(name);double before=HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume();
+            var spell=ManipulationInit.getByName(name);double before=HemoCapabilityAccess.getBloodVolume(player).getBloodVolume();
             boolean cast;
             if(npcOnly)cast=castNpc(player,name);
             else if(spell.getType()==EnumManipulationType.CONTINUOUS){ManipulationChannelManager.start(player);cast=ManipulationChannelManager.isChanneling(player.getUUID());}
@@ -116,7 +116,7 @@ public final class ThermalCastReview {
                 ManipulationReactiveEvents.onFinalDamage(damage);cast=player.getHealth()==1;
             } else cast=spell.tryPerformAction(player,player.level(),player.getMainHandItem(),player.blockPosition(),spell.getRequiredChargeTicks());
             if(!cast)throw new IllegalStateException("Thermal review cast rejected: "+name);
-            org.slf4j.LoggerFactory.getLogger(ThermalCastReview.class).info("THERMAL CAST {} blood {} -> {}",name,before,HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume());
+            org.slf4j.LoggerFactory.getLogger(ThermalCastReview.class).info("THERMAL CAST {} blood {} -> {}",name,before,HemoCapabilityAccess.getBloodVolume(player).getBloodVolume());
         });
         if(phase==60)mc.getSingleplayerServer().execute(()->{
             var player=mc.getSingleplayerServer().getPlayerList().getPlayer(mc.player.getUUID());if(player==null)return;

@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
@@ -113,12 +114,14 @@ public final class LivingSicklePruning {
 			QliphothBloomSavedData data) {
 		return bloom.ownerUUID().equals(player.getUUID())
 				&& data.getState(bloom) == SeveredQliphothState.LIVING
-				&& HemoCapabilityAccess.getInitiatoryDegree(player)
-						.map(degree -> degree.getDegreeNumber() == 7
-								&& degree.getArchonPath() == EnumArchonPath.SILENT_PENDING
-								&& degree.isQliphothCommunionDone()
-								&& degree.getTotalPomesConsumed() >= 9)
-						.orElse(false);
+				&& isSilentPendingCommunicant(HemoCapabilityAccess.getInitiatoryDegree(player));
+	}
+
+	private static boolean isSilentPendingCommunicant(IInitiatoryDegree degree) {
+		return degree.getDegreeNumber() == 7
+				&& degree.getArchonPath() == EnumArchonPath.SILENT_PENDING
+				&& degree.isQliphothCommunionDone()
+				&& degree.getTotalPomesConsumed() >= 9;
 	}
 
 	private static ItemStack createTemporarySickle(ItemStack source,

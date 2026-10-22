@@ -47,11 +47,10 @@ public class LetheCovenantEvents {
 		for (ServerPlayer player : sLevel.players()) {
 			if (!data.contains(player.blockPosition(), sLevel.dimension(), tick)) continue;
 
-			HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
-				if (!progress.hasBegunPurification() || progress.isPurified()) return;
-				progress.addPurity(PURITY_PER_MINUTE);
-				UnstainedProgressEvents.syncProgress(player, progress);
-			});
+			var progress = HemoCapabilityAccess.getUnstainedProgress(player);
+			if (!progress.hasBegunPurification() || progress.isPurified()) continue;
+			progress.addPurity(PURITY_PER_MINUTE);
+			UnstainedProgressEvents.syncProgress(player, progress);
 		}
 	}
 

@@ -190,95 +190,90 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 
 	private void drawBloodVolume(GuiGraphics graphics, LocalPlayer player, int x, int y) {
 		drawSection(graphics, "Blood Volume", x, y);
-		HemoCapabilityAccess.getBloodVolume(player).ifPresentOrElse(volume -> {
-			MaxBloodSnapshot maxBlood = MaxBloodDiagnosticsClientData.get();
-			double totalMax = volume.isActive() ? maxBlood.totalMax() : volume.getMaxBloodVolume();
-			String reserve = format(volume.getBloodVolume()) + " / " + format(totalMax);
-			drawValue(graphics, "Reserve", reserve, x, y + 13, colorForBlood(volume, totalMax));
-			if (volume.isActive()) {
-				drawValue(graphics, "Max", format(totalMax) + " (" + signedWhole(maxBlood.netBonus()) + ")",
-						x, y + 25, colorForMaxBonus(maxBlood.netBonus()));
-				drawValue(graphics, "Mods", signedWhole(maxBlood.positiveBonus()) + " / "
-						+ signedWhole(-maxBlood.negativePenalty()), x, y + 37,
-						colorForMaxBonus(maxBlood.netBonus()));
-				maxBloodModsRegion = new HoverRegion(x, y + 37, 142, 10);
-			} else {
-				drawValue(graphics, "State", "Dormant", x, y + 25, WARN);
-			}
-		}, () -> drawLine(graphics, "No blood record found.", x, y + 13, BAD));
+		var volume = HemoCapabilityAccess.getBloodVolume(player);
+		MaxBloodSnapshot maxBlood = MaxBloodDiagnosticsClientData.get();
+		double totalMax = volume.isActive() ? maxBlood.totalMax() : volume.getMaxBloodVolume();
+		String reserve = format(volume.getBloodVolume()) + " / " + format(totalMax);
+		drawValue(graphics, "Reserve", reserve, x, y + 13, colorForBlood(volume, totalMax));
+		if (volume.isActive()) {
+			drawValue(graphics, "Max", format(totalMax) + " (" + signedWhole(maxBlood.netBonus()) + ")",
+					x, y + 25, colorForMaxBonus(maxBlood.netBonus()));
+			drawValue(graphics, "Mods", signedWhole(maxBlood.positiveBonus()) + " / "
+					+ signedWhole(-maxBlood.negativePenalty()), x, y + 37,
+					colorForMaxBonus(maxBlood.netBonus()));
+			maxBloodModsRegion = new HoverRegion(x, y + 37, 142, 10);
+		} else {
+			drawValue(graphics, "State", "Dormant", x, y + 25, WARN);
+		}
 	}
 
 	private void drawTendency(GuiGraphics graphics, LocalPlayer player, int x, int y) {
 		drawSection(graphics, "Dominant Tendency", x, y);
-		HemoCapabilityAccess.getBloodTendency(player).ifPresentOrElse(tendency -> {
-			EnumBloodTendency dominant = strongest(tendency);
-			EnumBloodTendency latent = weakest(tendency);
-			drawValue(graphics, "Dominant", tendencyLabel(tendency, dominant), x, y + 13, tendencyColor(dominant));
-			drawValue(graphics, "Latent", tendencyLabel(tendency, latent), x, y + 25, MUTED);
-		}, () -> drawLine(graphics, "No tendency record found.", x, y + 13, BAD));
+		var tendency = HemoCapabilityAccess.getBloodTendency(player);
+		EnumBloodTendency dominant = strongest(tendency);
+		EnumBloodTendency latent = weakest(tendency);
+		drawValue(graphics, "Dominant", tendencyLabel(tendency, dominant), x, y + 13, tendencyColor(dominant));
+		drawValue(graphics, "Latent", tendencyLabel(tendency, latent), x, y + 25, MUTED);
 	}
 
 	private void drawKnownMemories(GuiGraphics graphics, LocalPlayer player, int x, int y) {
 		drawSection(graphics, "Known Memories", x, y);
-		HemoCapabilityAccess.getKnownManipulations(player).ifPresentOrElse(known -> {
-			int knownCount = known.getKnownManips().size();
-			int equippedCount = ManipulationEquipHelper.countNormalEquippedNames(known.getEquippedManipNames());
-			ManipulationSlotSnapshot slots = ManipulationSlotDiagnosticsClientData.get();
-			ManipulationCostSnapshot cost = ManipulationCostDiagnosticsClientData.get();
-			String equipped = slots.maxSlots() > 0
-					? equippedCount + " / " + slots.appliedSlots()
-					: equippedCount + " slotted";
-			String costText = isEmptyCost(cost)
-					? "No selected cost"
-					: amount(cost.baseCost()) + " -> " + amount(cost.effectiveCost()) + " mL";
-			drawValue(graphics, "Carried", knownCount + " memories", x, y + 13, TEXT);
-			drawValue(graphics, "Equipped", equipped, x, y + 25,
-					slots.cappedOffSlots() > 0 ? WARN : TEXT);
-			drawValue(graphics, "Selected", trimToWidth(selectedManipName(known), PANEL_WIDTH - 106),
-					x, y + 37, TEXT);
-			drawValue(graphics, "Cost", trimToWidth(costText, PANEL_WIDTH - 106), x, y + 49,
-					colorForCost(cost));
-			manipulationSlotModsRegion = new HoverRegion(x, y + 25, 142, 10);
-			manipulationCostModsRegion = new HoverRegion(x, y + 49, 220, 10);
-		}, () -> drawLine(graphics, "No manipulation record found.", x, y + 13, BAD));
+		var known = HemoCapabilityAccess.getKnownManipulations(player);
+		int knownCount = known.getKnownManips().size();
+		int equippedCount = ManipulationEquipHelper.countNormalEquippedNames(known.getEquippedManipNames());
+		ManipulationSlotSnapshot slots = ManipulationSlotDiagnosticsClientData.get();
+		ManipulationCostSnapshot cost = ManipulationCostDiagnosticsClientData.get();
+		String equipped = slots.maxSlots() > 0
+				? equippedCount + " / " + slots.appliedSlots()
+				: equippedCount + " slotted";
+		String costText = isEmptyCost(cost)
+				? "No selected cost"
+				: amount(cost.baseCost()) + " -> " + amount(cost.effectiveCost()) + " mL";
+		drawValue(graphics, "Carried", knownCount + " memories", x, y + 13, TEXT);
+		drawValue(graphics, "Equipped", equipped, x, y + 25,
+				slots.cappedOffSlots() > 0 ? WARN : TEXT);
+		drawValue(graphics, "Selected", trimToWidth(selectedManipName(known), PANEL_WIDTH - 106),
+				x, y + 37, TEXT);
+		drawValue(graphics, "Cost", trimToWidth(costText, PANEL_WIDTH - 106), x, y + 49,
+				colorForCost(cost));
+		manipulationSlotModsRegion = new HoverRegion(x, y + 25, 142, 10);
+		manipulationCostModsRegion = new HoverRegion(x, y + 49, 220, 10);
 	}
 
 	private void drawTendencyProfile(GuiGraphics graphics, LocalPlayer player, int x, int y) {
 		drawSection(graphics, "Tendency Profile", x, y);
-		HemoCapabilityAccess.getBloodTendency(player).ifPresentOrElse(tendency -> {
-			EnumBloodTendency[] values = EnumBloodTendency.values();
-			for (int i = 0; i < values.length; i++) {
-				EnumBloodTendency value = values[i];
-				int col = i / 4;
-				int row = i % 4;
-				int rowX = x + col * 150;
-				int rowY = y + 14 + row * 14;
-				String label = trimToWidth(titleCase(value.name()), 70);
-				String amount = String.format(Locale.ROOT, "%.2f", tendency.getAlignmentByTendency(value));
-				graphics.drawString(this.font, label, rowX, rowY, tendencyColor(value));
-				graphics.drawString(this.font, amount, rowX + 78, rowY, TEXT);
-			}
-		}, () -> drawLine(graphics, "No tendency record found.", x, y + 13, BAD));
+		var tendency = HemoCapabilityAccess.getBloodTendency(player);
+		EnumBloodTendency[] values = EnumBloodTendency.values();
+		for (int i = 0; i < values.length; i++) {
+			EnumBloodTendency value = values[i];
+			int col = i / 4;
+			int row = i % 4;
+			int rowX = x + col * 150;
+			int rowY = y + 14 + row * 14;
+			String label = trimToWidth(titleCase(value.name()), 70);
+			String amount = String.format(Locale.ROOT, "%.2f", tendency.getAlignmentByTendency(value));
+			graphics.drawString(this.font, label, rowX, rowY, tendencyColor(value));
+			graphics.drawString(this.font, amount, rowX + 78, rowY, TEXT);
+		}
 	}
 
 	private void drawVascularHealth(GuiGraphics graphics, LocalPlayer player, int x, int y) {
 		drawSection(graphics, "Vascular Health", x, y);
-		HemoCapabilityAccess.getVascularSystem(player).ifPresentOrElse(vascular -> {
-			float average = averageHealth(vascular);
-			EnumVeinSections worst = weakestSection(vascular);
-			drawValue(graphics, "Average", String.format(Locale.ROOT, "%.0f%%", average), x, y + 13,
-					colorForHealth(average));
-			drawValue(graphics, "Weakest", titleCase(worst.name()) + " "
-					+ String.format(Locale.ROOT, "%.0f%%", vascular.getHealthBySection(worst)), x, y + 25,
-					colorForHealth(vascular.getHealthBySection(worst)));
-			drawValue(graphics, "Flow", titleCase(vascular.getBloodFlowBySection(worst).name()), x, y + 37, MUTED);
-		}, () -> drawLine(graphics, "No vascular record found.", x, y + 13, BAD));
+		var vascular = HemoCapabilityAccess.getVascularSystem(player);
+		float average = averageHealth(vascular);
+		EnumVeinSections worst = weakestSection(vascular);
+		drawValue(graphics, "Average", String.format(Locale.ROOT, "%.0f%%", average), x, y + 13,
+				colorForHealth(average));
+		drawValue(graphics, "Weakest", titleCase(worst.name()) + " "
+				+ String.format(Locale.ROOT, "%.0f%%", vascular.getHealthBySection(worst)), x, y + 25,
+				colorForHealth(vascular.getHealthBySection(worst)));
+		drawValue(graphics, "Flow", titleCase(vascular.getBloodFlowBySection(worst).name()), x, y + 37, MUTED);
 	}
 
 	private void drawRiteReadiness(GuiGraphics graphics, LocalPlayer player, int x, int y) {
 		drawSection(graphics, "Rite Readiness", x, y);
 		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null) {
 			drawLine(graphics, "Unreadable: no blood record.", x, y + 13, BAD);
 			return;
@@ -297,7 +292,7 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 
 	private void drawBloodFlow(GuiGraphics graphics, LocalPlayer player, int x, int y) {
 		drawSection(graphics, "Blood Flow", x, y);
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null) {
 			drawLine(graphics, "Unreadable: no blood record.", x, y + 13, BAD);
 			return;

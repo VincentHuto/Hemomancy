@@ -75,8 +75,7 @@ public class UnstainedZealotEntity extends PathfinderMob implements ProgressionD
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
-			float purity = HemoCapabilityAccess.getUnstainedProgress(player)
-					.map(progress -> progress.getPurity()).orElse(0f);
+			float purity = HemoCapabilityAccess.getUnstainedProgress(player).getPurity();
 			DialogueTree tree = progressionDialogue(serverPlayer);
             tree = DialogueItemInquiryNodes.withInventoryItemInquiries(tree, serverPlayer, "zealot", 0, purity);
             tree = DialogueHubFactory.decorate(tree, "zealot", serverPlayer);
@@ -89,8 +88,8 @@ public class UnstainedZealotEntity extends PathfinderMob implements ProgressionD
     @Override
     public DialogueTree progressionDialogue(ServerPlayer player) {
         int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-        IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
-        var progress = HemoCapabilityAccess.getUnstainedProgress(player).orElse(null);
+        IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
+        var progress = HemoCapabilityAccess.getUnstainedProgress(player);
         DialogueTree tree;
         if (progress != null && progress.hasBegunPurification()) {
             tree = ZealotDialogueTrees.alreadyOnPath(this.getId(), progress.getPurity(),

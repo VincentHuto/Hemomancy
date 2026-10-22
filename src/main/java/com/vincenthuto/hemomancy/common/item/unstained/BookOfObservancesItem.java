@@ -26,24 +26,23 @@ public class BookOfObservancesItem extends ItemGuideBook {
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 		if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-			HemoCapabilityAccess.getUnstainedProgress(serverPlayer).ifPresent(progress -> {
-				int availableMask = 0;
-				int readyMask = 0;
-				for (UnstainedObservances.Observance observance : UnstainedObservances.Observance.values()) {
-					if (UnstainedObservances.isAvailable(progress, observance)) {
-						availableMask |= observance.mask();
-					}
-					if ((progress.getAcceptedObservances() & observance.mask()) != 0
-							&& (progress.getClaimedObservances() & observance.mask()) == 0
-							&& UnstainedObservances.isReady(serverPlayer, observance)) {
-						readyMask |= observance.mask();
-					}
+			var progress = HemoCapabilityAccess.getUnstainedProgress(serverPlayer);
+			int availableMask = 0;
+			int readyMask = 0;
+			for (UnstainedObservances.Observance observance : UnstainedObservances.Observance.values()) {
+				if (UnstainedObservances.isAvailable(progress, observance)) {
+					availableMask |= observance.mask();
 				}
-				PacketHandler.sendToPlayer(serverPlayer, new OpenBookOfObservancesPacket(
-						progress.getAcceptedObservances(), progress.getClaimedObservances(),
-						availableMask, readyMask, progress.getPurity(), progress.getClarity(),
-						progress.hasClarityUnlocked()));
-			});
+				if ((progress.getAcceptedObservances() & observance.mask()) != 0
+						&& (progress.getClaimedObservances() & observance.mask()) == 0
+						&& UnstainedObservances.isReady(serverPlayer, observance)) {
+					readyMask |= observance.mask();
+				}
+			}
+			PacketHandler.sendToPlayer(serverPlayer, new OpenBookOfObservancesPacket(
+					progress.getAcceptedObservances(), progress.getClaimedObservances(),
+					availableMask, readyMask, progress.getPurity(), progress.getClarity(),
+					progress.hasClarityUnlocked()));
 		}
 		return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
 	}

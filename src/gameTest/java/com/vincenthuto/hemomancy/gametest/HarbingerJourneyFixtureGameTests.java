@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.common.armor.ability.ArmorSetAbilityRegistry;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.HematicArmatureBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.CovenantThroneBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock;
-import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
@@ -166,8 +165,8 @@ public final class HarbingerJourneyFixtureGameTests {
 			helper.assertTrue(captured.passed(), "Apotheos snapshot capture must succeed: " + captured.message());
 			HemoJourneyResult reset = HemoJourneySnapshot.resetForJourney(player);
 			helper.assertTrue(reset.passed(), "Apotheos reset must succeed: " + reset.message());
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(7);
-			HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(7);
+			HemoCapabilityAccess.getBloodVolume(player).setActive(true);
 
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.QLIPHOTH_COMMUNION, origin);
 			var bloom = com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData
@@ -187,7 +186,7 @@ public final class HarbingerJourneyFixtureGameTests {
 					&& helper.getLevel().getBlockState(bloom.center()).is(BlockInit.qliphoth_bloom.get()),
 					"The revelation must retain the Communion Bloom for either ending");
 			helper.assertTrue(!player.getPersistentData().getBoolean(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING)
-					&& !HemoCapabilityAccess.requireInitiatoryDegree(player).hasWitnessedFungalRevelation(),
+					&& !HemoCapabilityAccess.getInitiatoryDegree(player).hasWitnessedFungalRevelation(),
 					"Preparing the choice must not skip the first Spine projection");
 			ItemStack spine = player.getMainHandItem();
 			helper.assertTrue(spine.is(ItemInit.fungal_spine.get()),
@@ -199,7 +198,7 @@ public final class HarbingerJourneyFixtureGameTests {
 			FungalGardenTravelHelper.performForcedProjectionReturn(player);
 			helper.assertTrue(!FungalGardenTravelHelper.isProjectionActive(player)
 					&& player.getPersistentData().getBoolean(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING)
-					&& HemoCapabilityAccess.requireInitiatoryDegree(player).hasWitnessedFungalRevelation(),
+					&& HemoCapabilityAccess.getInitiatoryDegree(player).hasWitnessedFungalRevelation(),
 					"Only the projection return may offer the ending choice");
 			NeoForge.EVENT_BUS.post(new DialogueEvent(player, "archon_choice_eighth_degree", 0));
 			helper.assertTrue(HemoJourneyChecks.verify(player, HemoJourneyStage.APOTHEOS_CHOICE, origin).passed(),
@@ -223,7 +222,7 @@ public final class HarbingerJourneyFixtureGameTests {
 			HemoJourneyFixtures.cleanup(player, origin);
 			HemoJourneyResult restored = HemoJourneySnapshot.restore(player);
 			helper.assertTrue(restored.passed(), "Apotheos restore must succeed: " + restored.message());
-			var restoredDegree = HemoCapabilityAccess.requireInitiatoryDegree(player);
+			var restoredDegree = HemoCapabilityAccess.getInitiatoryDegree(player);
 			helper.assertTrue(restoredDegree.getTotalPomesConsumed() == 0
 					&& restoredDegree.getArchonPath() == EnumArchonPath.NONE
 					&& !player.getPersistentData().contains(FungalGardenTravelHelper.ARCHON_CHOICE_KEY),
@@ -248,7 +247,7 @@ public final class HarbingerJourneyFixtureGameTests {
 			helper.assertTrue(captured.passed(), "First Remnant snapshot capture must succeed: " + captured.message());
 			HemoJourneyResult reset = HemoJourneySnapshot.resetForJourney(player);
 			helper.assertTrue(reset.passed(), "First Remnant reset must succeed: " + reset.message());
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(1);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(1);
 
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.FIRST_REMNANT_DISCOVERED, origin);
 			BlockPos inscription = origin.above();
@@ -281,7 +280,7 @@ public final class HarbingerJourneyFixtureGameTests {
 							HarbingerAdvancementGranter.ADV_HERMIT_ROAD_LEDGER_GRANTED)
 					&& !HarbingerAdvancementGranter.hasAdvancement(player,
 							HarbingerAdvancementGranter.ADV_HERMIT_ROAD_REPORTED)
-					&& HemoCapabilityAccess.requireLiberKnowledge(player).getUnlockedEntries().isEmpty(),
+					&& HemoCapabilityAccess.getLiberKnowledge(player).getUnlockedEntries().isEmpty(),
 					"Snapshot restore must remove journey-owned inscription knowledge and advancement");
 			helper.succeed();
 		} catch (RuntimeException exception) {
@@ -307,8 +306,8 @@ public final class HarbingerJourneyFixtureGameTests {
 			helper.assertTrue(captured.passed(), "Living Staff snapshot capture must succeed");
 			HemoJourneyResult reset = HemoJourneySnapshot.resetForJourney(player);
 			helper.assertTrue(reset.passed(), "Living Staff reset must succeed");
-			HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(1);
+			HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(1);
 
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.LIVING_STAFF_CRAFTED, origin);
 			helper.assertTrue(helper.getLevel().getBlockState(origin.above(2)).is(Blocks.IRON_BARS),
@@ -323,14 +322,14 @@ public final class HarbingerJourneyFixtureGameTests {
 					"The real structure craft must produce a Living Staff and unlock its bond: "
 							+ crafted.message() + "; entitiesLoaded="
 							+ helper.getLevel().areEntitiesLoaded(new net.minecraft.world.level.ChunkPos(origin).toLong())
-							+ "; bond=" + HemoCapabilityAccess.getLivingStaffProgress(player).orElseThrow().hasLivingStaffBond());
+							+ "; bond=" + HemoCapabilityAccess.getLivingStaffProgress(player).hasLivingStaffBond());
 
 			ServerPlayer respawned = connectedTestPlayer(helper);
 			try {
 				respawned.restoreFrom(player, false);
-				helper.assertTrue(HemoCapabilityAccess.getLivingStaffProgress(respawned).orElseThrow()
+				helper.assertTrue(HemoCapabilityAccess.getLivingStaffProgress(respawned)
 						.hasLivingStaffBond(), "Death cloning lost the personally crafted Staff bond");
-				var recalled = HemoCapabilityAccess.requireKnownManipulations(respawned);
+				var recalled = HemoCapabilityAccess.getKnownManipulations(respawned);
 				helper.assertTrue(recalled.doesListContainName(recalled.getKnownManips(),
 						ManipulationInit.conjure_staff.get()), "Death cloning lost the earned Staff recall lesson");
 				helper.assertTrue(respawned.getMainHandItem().isEmpty(),
@@ -340,8 +339,8 @@ public final class HarbingerJourneyFixtureGameTests {
 				helper.assertTrue(respawned.getMainHandItem().is(ItemInit.living_staff.get())
 						&& respawned.getMainHandItem().getCount() == 1,
 						"The earned recall action did not restore one Staff after death cloning");
-				helper.assertTrue(HemoCapabilityAccess.getLivingStaffProgress(respawned).orElseThrow()
-						!= HemoCapabilityAccess.getLivingStaffProgress(player).orElseThrow(),
+				helper.assertTrue(HemoCapabilityAccess.getLivingStaffProgress(respawned)
+						!= HemoCapabilityAccess.getLivingStaffProgress(player),
 						"Death cloning shared mutable Staff progress with the old player");
 			} finally {
 				respawned.discard();
@@ -350,7 +349,7 @@ public final class HarbingerJourneyFixtureGameTests {
 			HemoJourneyFixtures.cleanup(player, origin);
 			HemoJourneyResult restored = HemoJourneySnapshot.restore(player);
 			helper.assertTrue(restored.passed()
-					&& !HemoCapabilityAccess.getLivingStaffProgress(player).orElseThrow().hasLivingStaffBond(),
+					&& !HemoCapabilityAccess.getLivingStaffProgress(player).hasLivingStaffBond(),
 					"Snapshot restore must remove the journey-owned Living Staff bond");
 			helper.succeed();
 		} finally {
@@ -367,9 +366,9 @@ public final class HarbingerJourneyFixtureGameTests {
 		try {
 			helper.assertTrue(HemoJourneySnapshot.capture(player).passed(), "Assumed Limb snapshot capture must succeed");
 			helper.assertTrue(HemoJourneySnapshot.resetForJourney(player).passed(), "Assumed Limb reset must succeed");
-			HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(5);
-			HemoCapabilityAccess.getLivingStaffProgress(player).orElseThrow().setLivingStaffBond(true);
+			HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(5);
+			HemoCapabilityAccess.getLivingStaffProgress(player).setLivingStaffBond(true);
 			ArtificerAssignments.brief(player, ArtificerAssignments.ASSUMED_LIMB_BRIEFED);
 
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.ARTIFICER_FIRST_LIVING_GRAFT, origin);
@@ -420,7 +419,7 @@ public final class HarbingerJourneyFixtureGameTests {
 			helper.assertTrue(captured.passed(), "Body Answers snapshot capture must succeed: " + captured.message());
 			HemoJourneyResult reset = HemoJourneySnapshot.resetForJourney(player);
 			helper.assertTrue(reset.passed(), "Body Answers reset must succeed: " + reset.message());
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(2);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(2);
 			HarbingerAdvancementGranter.grantIfNotDone(player, FirstSeparationAssignment.ADV_REWARD_CLAIMED);
 
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.BODY_ANSWERS_BRIEFING, origin);
@@ -452,7 +451,7 @@ public final class HarbingerJourneyFixtureGameTests {
 			helper.assertTrue(tincture.is(ItemInit.tincture_sanguine_fists.get()),
 					"The prepared real recipe must distil Sanguine Fists");
 			tincture.getItem().finishUsingItem(tincture, helper.getLevel(), player);
-			var memory = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+			var memory = HemoCapabilityAccess.muscleMemory(player);
 			helper.assertTrue(HemoJourneyChecks.verify(player, HemoJourneyStage.BODY_ANSWERS_TINCTURE, origin).passed()
 					&& memory.knows(MuscleMemory.SANGUINE_FISTS)
 					&& memory.reserveTicks(MuscleMemory.SANGUINE_FISTS) > 0,
@@ -461,7 +460,7 @@ public final class HarbingerJourneyFixtureGameTests {
 			HemoJourneyFixtures.cleanup(player, origin);
 			HemoJourneyResult restored = HemoJourneySnapshot.restore(player);
 			helper.assertTrue(restored.passed(), "Body Answers restore must succeed: " + restored.message());
-			helper.assertTrue(!player.getData(HemoAttachmentTypes.MUSCLE_MEMORY).knows(MuscleMemory.SANGUINE_FISTS)
+			helper.assertTrue(!HemoCapabilityAccess.muscleMemory(player).knows(MuscleMemory.SANGUINE_FISTS)
 					&& !HarbingerAdvancementGranter.hasAdvancement(player, BodyAnswersAssignment.ADV_BRIEFED)
 					&& !HarbingerAdvancementGranter.hasAdvancement(player, BodyAnswersAssignment.ADV_COMPLETE)
 					&& !player.getRecipeBook().contains(recipe),
@@ -484,7 +483,7 @@ public final class HarbingerJourneyFixtureGameTests {
 			helper.assertTrue(captured.passed(), "Red Taxonomy snapshot capture must succeed: " + captured.message());
 			HemoJourneyResult reset = HemoJourneySnapshot.resetForJourney(player);
 			helper.assertTrue(reset.passed(), "Red Taxonomy reset must succeed: " + reset.message());
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(2);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(2);
 			player.getInventory().add(new ItemStack(ItemInit.bloody_vial.get()));
 			player.getInventory().add(new ItemStack(BlockInit.specimen_jar.get()));
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.RED_TAXONOMY, origin);
@@ -520,14 +519,14 @@ public final class HarbingerJourneyFixtureGameTests {
 		var originalId = Hemomancy.rloc("barbed_urchin");
 		var journeyId = Hemomancy.rloc("crimson_doe");
 		try {
-			HemoCapabilityAccess.requireSpecimenBestiary(player).recordSpecimen(originalId);
+			HemoCapabilityAccess.getSpecimenBestiary(player).recordSpecimen(originalId);
 			HemoJourneyResult captured = HemoJourneySnapshot.capture(player);
 			helper.assertTrue(captured.passed(), "Living Bestiary snapshot capture must succeed: " + captured.message());
 			HemoJourneyResult reset = HemoJourneySnapshot.resetForJourney(player);
 			helper.assertTrue(reset.passed(), "Living Bestiary reset must succeed: " + reset.message());
-			helper.assertTrue(HemoCapabilityAccess.requireSpecimenBestiary(player).recordedSpecimenCount() == 0,
+			helper.assertTrue(HemoCapabilityAccess.getSpecimenBestiary(player).recordedSpecimenCount() == 0,
 					"Journey reset must clear existing Bestiary records");
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(2);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(2);
 
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.LIVING_BESTIARY_RECORD, origin);
 			CrimsonDoeEntity doe = helper.getLevel().getEntitiesOfClass(CrimsonDoeEntity.class,
@@ -559,7 +558,7 @@ public final class HarbingerJourneyFixtureGameTests {
 			HemoJourneyFixtures.cleanup(player, origin);
 			HemoJourneyResult restored = HemoJourneySnapshot.restore(player);
 			helper.assertTrue(restored.passed(), "Living Bestiary restore must succeed: " + restored.message());
-			var restoredBestiary = HemoCapabilityAccess.requireSpecimenBestiary(player);
+			var restoredBestiary = HemoCapabilityAccess.getSpecimenBestiary(player);
 			helper.assertTrue(restoredBestiary.recordedSpecimens().equals(java.util.Set.of(originalId.toString()))
 					&& restoredBestiary.surrenderedSpecimenCount() == 0,
 					"Snapshot restore must recover the exact pre-journey Bestiary catalogue");
@@ -601,7 +600,7 @@ public final class HarbingerJourneyFixtureGameTests {
 			helper.assertTrue(captured.passed(), "Worn Vow snapshot capture must succeed: " + captured.message());
 			HemoJourneyResult reset = HemoJourneySnapshot.resetForJourney(player);
 			helper.assertTrue(reset.passed(), "Worn Vow reset must succeed: " + reset.message());
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(2);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(2);
 
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.ARTIFICER_WORN_VOW_BRIEFING, origin);
 			HarbingerArtificerEntity artificer = helper.getLevel().getEntitiesOfClass(
@@ -705,7 +704,7 @@ public final class HarbingerJourneyFixtureGameTests {
 			helper.assertTrue(captured.passed(), "Three Answers snapshot capture must succeed: " + captured.message());
 			HemoJourneyResult reset = HemoJourneySnapshot.resetForJourney(player);
 			helper.assertTrue(reset.passed(), "Three Answers reset must succeed: " + reset.message());
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(3);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(3);
 
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.ARTIFICER_THREE_ANSWERS_BRIEFING, origin);
 			HarbingerArtificerEntity artificer = helper.getLevel().getEntitiesOfClass(
@@ -843,8 +842,8 @@ public final class HarbingerJourneyFixtureGameTests {
 			helper.assertTrue(captured.passed(), "Crimson Vestment snapshot capture must succeed");
 			HemoJourneyResult reset = HemoJourneySnapshot.resetForJourney(player);
 			helper.assertTrue(reset.passed(), "Crimson Vestment reset must succeed");
-			HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(5);
+			HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(5);
 
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.ARTIFICER_CRIMSON_VESTMENT_BRIEFING, origin);
 			HarbingerArtificerEntity artificer = helper.getLevel().getEntitiesOfClass(
@@ -950,8 +949,8 @@ public final class HarbingerJourneyFixtureGameTests {
 		ServerPlayer player = connectedTestPlayer(helper);
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 3, 14));
 		try {
-			HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(2);
+			HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(2);
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.ENZYME_MASTERY, origin);
 			BloodVolumeEvents.playerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(player));
 			helper.assertTrue(HemoJourneyChecks.verify(player, HemoJourneyStage.ENZYME_MASTERY, origin).passed(),
@@ -974,7 +973,7 @@ public final class HarbingerJourneyFixtureGameTests {
 			helper.assertTrue(captured.passed(), "Noetic recognition snapshot capture must succeed");
 			HemoJourneyResult reset = HemoJourneySnapshot.resetForJourney(player);
 			helper.assertTrue(reset.passed(), "Noetic recognition reset must succeed");
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(3);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(3);
 			HarbingerAdvancementGranter.grantIfNotDone(player,
 					HarbingerAdvancementGranter.ADV_MNEMONIST_FIRST_WEAVE_COMPLETE);
 
@@ -1014,7 +1013,7 @@ public final class HarbingerJourneyFixtureGameTests {
 			helper.assertTrue(captured.passed(), "First Culture snapshot capture must succeed: " + captured.message());
 			HemoJourneyResult reset = HemoJourneySnapshot.resetForJourney(player);
 			helper.assertTrue(reset.passed(), "First Culture reset must succeed: " + reset.message());
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(3);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(3);
 			HarbingerAdvancementGranter.grantIfNotDone(player,
 					HarbingerAdvancementGranter.ADV_ENZYME_MASTERY_VIVACIOUS);
 
@@ -1058,12 +1057,12 @@ public final class HarbingerJourneyFixtureGameTests {
 		ServerPlayer player = connectedTestPlayer(helper);
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 3, 14));
 		try {
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setHematicFortification(true);
-			HemoCapabilityAccess.requireBloodTendency(player)
+			HemoCapabilityAccess.getInitiatoryDegree(player).setHematicFortification(true);
+			HemoCapabilityAccess.getBloodTendency(player)
 					.setTendencyAlignment(com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.ANIMUS, 4.25F);
-			var originalDegree = player.getData(HemoAttachmentTypes.INITIATORY_DEGREE)
+			var originalDegree = HemoCapabilityAccess.getInitiatoryDegree(player)
 					.serializeNBT(player.registryAccess()).copy();
-			var originalTendency = player.getData(HemoAttachmentTypes.BLOOD_TENDENCY)
+			var originalTendency = HemoCapabilityAccess.getBloodTendency(player)
 					.serializeNBT(player.registryAccess()).copy();
 			helper.assertTrue(HemoJourneySnapshot.capture(player).passed(), "Degree-six snapshot capture must succeed");
 			helper.assertTrue(HemoJourneySnapshot.resetForJourney(player).passed(), "Degree-six journey reset must succeed");
@@ -1086,7 +1085,7 @@ public final class HarbingerJourneyFixtureGameTests {
 
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.VEIN_MASON_D6_FIRST_ROUTE, origin);
 			BloodManipulation.clearSessionState();
-			HemoCapabilityAccess.requireKnownManipulations(player).getSelectedManip()
+			HemoCapabilityAccess.getKnownManipulations(player).getSelectedManip()
 					.performAction(player, helper.getLevel(), ItemStack.EMPTY, player.blockPosition());
 			helper.assertTrue(HemoJourneyChecks.verify(player, HemoJourneyStage.VEIN_MASON_D6_FIRST_ROUTE, origin).passed(),
 					"A real matching manipulation cast must satisfy the first routing checkpoint");
@@ -1108,7 +1107,7 @@ public final class HarbingerJourneyFixtureGameTests {
 
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.VEIN_MASON_D6_SECOND_ROUTE, origin);
 			BloodManipulation.clearSessionState();
-			HemoCapabilityAccess.requireKnownManipulations(player).getSelectedManip()
+			HemoCapabilityAccess.getKnownManipulations(player).getSelectedManip()
 					.performAction(player, helper.getLevel(), ItemStack.EMPTY, player.blockPosition());
 			helper.assertTrue(HemoJourneyChecks.verify(player, HemoJourneyStage.VEIN_MASON_D6_SECOND_ROUTE, origin).passed(),
 					"A second real matching cast must close the routing assignment");
@@ -1123,10 +1122,10 @@ public final class HarbingerJourneyFixtureGameTests {
 
 			HemoJourneyFixtures.cleanup(player, origin);
 			helper.assertTrue(HemoJourneySnapshot.restore(player).passed(), "Degree-six snapshot restore must succeed");
-			helper.assertTrue(player.getData(HemoAttachmentTypes.INITIATORY_DEGREE)
+			helper.assertTrue(HemoCapabilityAccess.getInitiatoryDegree(player)
 					.serializeNBT(player.registryAccess()).equals(originalDegree),
 					"The exact Initiatory Degree attachment must be restored");
-			helper.assertTrue(player.getData(HemoAttachmentTypes.BLOOD_TENDENCY)
+			helper.assertTrue(HemoCapabilityAccess.getBloodTendency(player)
 					.serializeNBT(player.registryAccess()).equals(originalTendency),
 					"The exact base Blood Tendency map must be restored");
 			helper.succeed();
@@ -1157,7 +1156,7 @@ public final class HarbingerJourneyFixtureGameTests {
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 3, 14));
 		float originalArms = 37.5F;
 		try {
-			HemoCapabilityAccess.requireVascularSystem(player).getVascularSystem()
+			HemoCapabilityAccess.getVascularSystem(player).getVascularSystem()
 					.put(EnumVeinSections.ARMS, originalArms);
 			helper.assertTrue(HemoJourneySnapshot.capture(player).passed(), "Degree-five snapshot capture must succeed");
 			helper.assertTrue(HemoJourneySnapshot.resetForJourney(player).passed(), "Degree-five journey reset must succeed");
@@ -1208,10 +1207,10 @@ public final class HarbingerJourneyFixtureGameTests {
 
 			HemoJourneyFixtures.cleanup(player, origin);
 			helper.assertTrue(HemoJourneySnapshot.restore(player).passed(), "Degree-five snapshot restore must succeed");
-			helper.assertTrue(Float.compare(HemoCapabilityAccess.requireVascularSystem(player)
+			helper.assertTrue(Float.compare(HemoCapabilityAccess.getVascularSystem(player)
 					.getHealthBySection(EnumVeinSections.ARMS), originalArms) == 0,
 					"The exact pre-journey vascular state must be restored");
-			helper.assertTrue(!HemoCapabilityAccess.requireInitiatoryDegree(player).hasHematicFortification(),
+			helper.assertTrue(!HemoCapabilityAccess.getInitiatoryDegree(player).hasHematicFortification(),
 					"Journey-owned Hematic Fortification must be removed on restore");
 			helper.succeed();
 		} catch (Throwable error) {
@@ -1234,7 +1233,7 @@ public final class HarbingerJourneyFixtureGameTests {
 		String step = "registering original state";
 		try {
 			BloodlineSavedData.get(helper.getLevel().getServer().overworld()).registerBloodline(original);
-			HemoCapabilityAccess.requireBloodVolume(player).setBloodLine(original);
+			HemoCapabilityAccess.getBloodVolume(player).setBloodLine(original);
 			FoundingFaneSavedData.get(helper.getLevel()).consecrateHeart(player.getUUID(), originalHeart);
 			step = "capturing the snapshot";
 			HemoJourneyResult captured = HemoJourneySnapshot.capture(player);
@@ -1247,8 +1246,8 @@ public final class HarbingerJourneyFixtureGameTests {
 
 			step = "preparing the Founding Fane fixture";
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.FOUNDING_FANE, origin);
-			helper.assertTrue(HemoCapabilityAccess.requireBloodVolume(player).getBloodLine().isValid()
-					&& !HemoCapabilityAccess.requireBloodVolume(player).getBloodLine().getBloodlineUUID().equals(originalId),
+			helper.assertTrue(HemoCapabilityAccess.getBloodVolume(player).getBloodLine().isValid()
+					&& !HemoCapabilityAccess.getBloodVolume(player).getBloodLine().getBloodlineUUID().equals(originalId),
 					"The fixture must use an isolated temporary bloodline");
 			helper.assertTrue(helper.getLevel().getBlockEntity(origin.above()) instanceof CardinalFocusBlockEntity focus
 					&& focus.getMediumForMatching().is(ItemInit.sanguine_quintessence.get()),
@@ -1272,7 +1271,7 @@ public final class HarbingerJourneyFixtureGameTests {
 			step = "restoring the snapshot";
 			HemoJourneyResult restored = HemoJourneySnapshot.restore(player);
 			helper.assertTrue(restored.passed(), "World-state restore must succeed: " + restored.message());
-			helper.assertTrue(HemoCapabilityAccess.requireBloodVolume(player).getBloodLine().getBloodlineUUID().equals(originalId),
+			helper.assertTrue(HemoCapabilityAccess.getBloodVolume(player).getBloodLine().getBloodlineUUID().equals(originalId),
 					"The original player bloodline must be restored");
 			helper.assertTrue(originalHeart.equals(FoundingFaneSavedData.get(helper.getLevel()).getHeart(player.getUUID())),
 					"The original Founding Fane record must be restored");
@@ -1370,7 +1369,7 @@ public final class HarbingerJourneyFixtureGameTests {
 			helper.getLevel().removeBlock(heart, false);
 			CardinalRiteSavedData.get(helper.getLevel()).removeRite(player.getUUID());
 			HemoJourneyFixtures.cleanup(player, origin);
-			Bloodline line = HemoCapabilityAccess.requireBloodVolume(player).getBloodLine();
+			Bloodline line = HemoCapabilityAccess.getBloodVolume(player).getBloodLine();
 			if (line != null && line.isValid()) {
 				BloodlineSavedData.get(helper.getLevel().getServer().overworld())
 						.disbandBloodline(line.getBloodlineUUID());
@@ -1398,7 +1397,7 @@ public final class HarbingerJourneyFixtureGameTests {
 			Bloodline line = new Bloodline("Relocating Fane", player.getUUID(), bloodlineId,
 					new java.util.ArrayList<>());
 			BloodlineSavedData.get(helper.getLevel().getServer().overworld()).registerBloodline(line);
-			HemoCapabilityAccess.requireBloodVolume(player).setBloodLine(line);
+			HemoCapabilityAccess.getBloodVolume(player).setBloodLine(line);
 			oldLevel.setBlock(oldHeart, BlockInit.consecrated_bloodwell.get().defaultBlockState(), Block.UPDATE_ALL);
 			oldLevel.setBlock(oldStake, BlockInit.hematic_stake.get().defaultBlockState(), Block.UPDATE_ALL);
 			FoundingFaneSavedData oldData = FoundingFaneSavedData.get(oldLevel);
@@ -1451,7 +1450,7 @@ public final class HarbingerJourneyFixtureGameTests {
 			Bloodline line = new Bloodline("Legacy Founder", player.getUUID(), bloodlineId,
 					new java.util.ArrayList<>());
 			BloodlineSavedData.get(helper.getLevel().getServer().overworld()).registerBloodline(line);
-			HemoCapabilityAccess.requireBloodVolume(player).setBloodLine(line);
+			HemoCapabilityAccess.getBloodVolume(player).setBloodLine(line);
 			FoundingFaneSavedData.get(helper.getLevel()).consecrateHeart(player.getUUID(), heart);
 			helper.assertTrue(!helper.getLevel().getBlockState(heart).is(BlockInit.consecrated_bloodwell.get()),
 					"The saved Fane fixture must start without a bloodwell");
@@ -1498,7 +1497,7 @@ public final class HarbingerJourneyFixtureGameTests {
 			helper.assertTrue(activation == CardinalRiteActivationRules.ActivationAttempt.STARTED
 					&& rite != null && rite.hasEscrowedStaff(),
 					"The Fane rite must start with the player's staff planted");
-			Bloodline line = HemoCapabilityAccess.requireBloodVolume(player).getBloodLine();
+			Bloodline line = HemoCapabilityAccess.getBloodVolume(player).getBloodLine();
 			BloodlineSavedData.get(helper.getLevel().getServer().overworld())
 					.disbandBloodline(line.getBloodlineUUID());
 			for (int tick = 0; tick < 100 && rite.isStaffPlanting(); tick++) rite.tickStaffPlanting();
@@ -1539,9 +1538,9 @@ public final class HarbingerJourneyFixtureGameTests {
 			Bloodline line = new Bloodline("Lost Vigil Helper", player.getUUID(), lineId,
 					new java.util.ArrayList<>());
 			BloodlineSavedData.get(helper.getLevel().getServer().overworld()).registerBloodline(line);
-			HemoCapabilityAccess.requireBloodVolume(player).setBloodLine(line);
-			HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(6);
+			HemoCapabilityAccess.getBloodVolume(player).setBloodLine(line);
+			HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(6);
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.COVENANT_VIGIL, origin);
 			var activation = BloodCraftingKeyPressPacket.tryStartCardinalRite(player, origin.above(),
 					CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
@@ -1609,10 +1608,10 @@ public final class HarbingerJourneyFixtureGameTests {
 			line.addMember(observer.getUUID());
 			data.registerBloodline(line);
 			for (ServerPlayer player : java.util.List.of(member, observer)) {
-				HemoCapabilityAccess.requireBloodVolume(player).setBloodLine(line);
-				HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-				HemoCapabilityAccess.requireBloodVolume(player).fill(1000);
-				HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(5);
+				HemoCapabilityAccess.getBloodVolume(player).setBloodLine(line);
+				HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+				HemoCapabilityAccess.getBloodVolume(player).fill(1000);
+				HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(5);
 				player.teleportTo(heart.getX() + 1, heart.getY(), heart.getZ());
 			}
 			helper.getLevel().setBlock(heart, BlockInit.consecrated_bloodwell.get().defaultBlockState(), Block.UPDATE_ALL);
@@ -1659,9 +1658,9 @@ public final class HarbingerJourneyFixtureGameTests {
 	public static void scarResonanceCapacityReachesEffigyAndPatternStorage(GameTestHelper helper) {
 		ServerPlayer player = connectedTestPlayer(helper);
 		try {
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(6);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(6);
 			helper.assertTrue(ScarBrazierRite.getMaxActiveScars(player) == 4, "Uninvested capacity changed");
-			var progress = HemoCapabilityAccess.requireSkillProgress(player);
+			var progress = HemoCapabilityAccess.getSkillProgress(player);
 			for (int rank = 1; rank <= 3; rank++) {
 				progress.unlockOrLevel(SkillPointInit.skill_scar_resonance);
 				helper.assertTrue(ScarBrazierRite.getMaxActiveScars(player) == 4 + rank, "Purchased rank did not add a slot");
@@ -1672,21 +1671,21 @@ public final class HarbingerJourneyFixtureGameTests {
 			var ids = java.util.stream.IntStream.range(0, 7).mapToObj(i -> Hemomancy.rloc("capacity_test_" + i)).toList();
 			var pattern = ItemScarPattern.createPreparedPattern(ids);
 			helper.assertTrue(ItemScarPattern.getScarIds(pattern).equals(ids), "Pattern discarded bonus slots");
-			var known = HemoCapabilityAccess.getScarState(player).orElseThrow();
+			var known = HemoCapabilityAccess.getScarState(player);
 			var realIds = ScarInit.SCARS_TYPE_REGISTRY.keySet().stream()
 					.filter(id -> ScarInit.getByName(id.toString()).getScarType()
 							== com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarType.CEREBRAL)
 					.sorted(java.util.Comparator.comparing(ResourceLocation::toString)).limit(7).toList();
 			helper.assertTrue(realIds.size() == 7, "Seven cerebral scar fixtures are required");
 			realIds.forEach(known::addKnownCerebralScar);
-			HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-			HemoCapabilityAccess.requireBloodVolume(player).fill(1000);
+			HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+			HemoCapabilityAccess.getBloodVolume(player).fill(1000);
 			var realPattern = ItemScarPattern.createPreparedPattern(realIds);
 			ScarBrazierRite.burn(helper.getLevel(), player.blockPosition(), player, realPattern,
 					com.vincenthuto.hemomancy.common.rite.ScarBrazierInteractionRules.Burn.COMMIT);
 			helper.assertTrue(known.getActiveCerebralScars().size() == 7 && realPattern.isEmpty(),
 					"Server activation refused purchased seven-scar capacity");
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(3);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(3);
 			helper.assertTrue(ScarBrazierRite.getMaxActiveScars(player) == 0, "Purchased slots bypassed D4 gate");
 			helper.succeed();
 		} finally {
@@ -1730,9 +1729,9 @@ public final class HarbingerJourneyFixtureGameTests {
 		try {
 			Bloodline line = new Bloodline("Archon Test", player.getUUID(), lineId, new java.util.ArrayList<>());
 			BloodlineSavedData.get(helper.getLevel().getServer().overworld()).registerBloodline(line);
-			HemoCapabilityAccess.requireBloodVolume(player).setBloodLine(line);
-			HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(6);
+			HemoCapabilityAccess.getBloodVolume(player).setBloodLine(line);
+			HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(6);
 			HarbingerAdvancementGranter.grantIfNotDone(player,
 					HarbingerAdvancementGranter.ADV_LIVING_COVENANT_COMPLETE);
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.ARCHON_RITE, origin);
@@ -1776,9 +1775,9 @@ public final class HarbingerJourneyFixtureGameTests {
 			helper.assertTrue(reset.passed(), "Living Covenant reset must succeed: " + reset.message());
 			Bloodline line = new Bloodline("Vigil Test", player.getUUID(), lineId, new java.util.ArrayList<>());
 			BloodlineSavedData.get(helper.getLevel().getServer().overworld()).registerBloodline(line);
-			HemoCapabilityAccess.requireBloodVolume(player).setBloodLine(line);
-			HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(6);
+			HemoCapabilityAccess.getBloodVolume(player).setBloodLine(line);
+			HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(6);
 
 			step = "visiting the Chamber of Will";
 			if (helper.getLevel().getServer().getLevel(ChamberOfWillManager.CHAMBER_OF_WILL) != null) {
@@ -2055,7 +2054,7 @@ public final class HarbingerJourneyFixtureGameTests {
 					HemoJourneyFixtures.bounds(origin)).size() == 1,
 					"Initiation fixture must provide a Vicar");
 			helper.assertTrue(EarlyInitiation.attached(player)
-					&& HemoCapabilityAccess.requireBloodVolume(player).isActive(),
+					&& HemoCapabilityAccess.getBloodVolume(player).isActive(),
 					"Initiation fixture must attach the Charm and activate blood volume");
 			helper.assertTrue(HarbingerAdvancementGranter.hasAdvancement(player,
 					Hemomancy.rloc("hemomancy/the_first_awakening")),
@@ -2114,7 +2113,7 @@ public final class HarbingerJourneyFixtureGameTests {
 				helper.assertFalse(helper.getLevel().getBlockState(brazierPos).is(BlockInit.iron_brazier.get()),
 						"The floorless Vial Centrifuge takes no offering braziers");
 			}
-			helper.assertTrue(HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume()
+			helper.assertTrue(HemoCapabilityAccess.getBloodVolume(player).getBloodVolume()
 					>= 150.0D, "Journey blood budget must cover the structure craft");
 		});
 	}
@@ -2245,7 +2244,7 @@ public final class HarbingerJourneyFixtureGameTests {
 				origin.getZ() + 0.5D, new ItemStack(ItemInit.sanguine_formation.get()));
 		helper.getLevel().addFreshEntity(oldOutput);
 		try {
-			var blood = HemoCapabilityAccess.requireBloodVolume(player);
+			var blood = HemoCapabilityAccess.getBloodVolume(player);
 			blood.setActive(true);
 			blood.setBloodVolume(5000.0D);
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.FORMATION_PROJECTED, origin);
@@ -2265,7 +2264,7 @@ public final class HarbingerJourneyFixtureGameTests {
 		ServerPlayer player = detachedTestPlayer(helper);
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 10, 14));
 		try {
-			var blood = HemoCapabilityAccess.requireBloodVolume(player);
+			var blood = HemoCapabilityAccess.getBloodVolume(player);
 			blood.setActive(true);
 			blood.setBloodVolume(5000.0D);
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.FORMATION_PROJECTED, origin);
@@ -2295,7 +2294,7 @@ public final class HarbingerJourneyFixtureGameTests {
 				"Formation preparation and cleanup must stay inside the owned fixture");
 		ServerPlayer player = detachedTestPlayer(helper);
 		try {
-			var blood = HemoCapabilityAccess.requireBloodVolume(player);
+			var blood = HemoCapabilityAccess.getBloodVolume(player);
 			blood.setActive(true);
 			blood.setBloodVolume(5000.0D);
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.FORMATION_PROJECTED, origin);
@@ -2372,7 +2371,7 @@ public final class HarbingerJourneyFixtureGameTests {
 		ServerPlayer player = detachedTestPlayer(helper);
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 10, 14));
 		try {
-			var blood = HemoCapabilityAccess.requireBloodVolume(player);
+			var blood = HemoCapabilityAccess.getBloodVolume(player);
 			blood.setActive(true);
 			blood.setBloodVolume(5000.0D);
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.FORMATION_PROJECTED, origin);
@@ -2466,7 +2465,7 @@ public final class HarbingerJourneyFixtureGameTests {
 		ServerPlayer player = detachedTestPlayer(helper);
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 10, 14));
 		try {
-			var blood = HemoCapabilityAccess.requireBloodVolume(player);
+			var blood = HemoCapabilityAccess.getBloodVolume(player);
 			blood.setActive(true);
 			blood.setBloodVolume(5000.0D);
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.FORMATION_PROJECTED, origin);
@@ -2559,13 +2558,13 @@ public final class HarbingerJourneyFixtureGameTests {
 		ServerPlayer player = connectedTestPlayer(helper);
 		var scarId = Hemomancy.rloc("scar_heart");
 		try {
-			var scars = HemoCapabilityAccess.requireScarState(player);
-			var unstained = HemoCapabilityAccess.requireUnstainedProgress(player);
+			var scars = HemoCapabilityAccess.getScarState(player);
+			var unstained = HemoCapabilityAccess.getUnstainedProgress(player);
 			scars.addKnownCerebralScar(scarId);
 			scars.activateCerebralScar(scarId);
 			unstained.setBegunPurification(true);
 			unstained.setPurity(37.0F);
-			HemoCapabilityAccess.requireKnownStillArts(player).learnArt(StillArtInit.still_pulse.get());
+			HemoCapabilityAccess.getKnownStillArts(player).learnArt(StillArtInit.still_pulse.get());
 			UnstainedAdvancementGranter.grantIfNotDone(player, UnstainedAdvancementGranter.ADV_DISCERNING);
 			float capturedPurity = unstained.getPurity();
 			HemoJourneyResult captured = HemoJourneySnapshot.capture(player);
@@ -2576,13 +2575,13 @@ public final class HarbingerJourneyFixtureGameTests {
 					&& scars.getActiveCerebralScars().isEmpty(), "Journey reset must clear scar state");
 			helper.assertTrue(!unstained.hasBegunPurification() && unstained.getPurity() == 0.0F,
 					"Journey reset must clear conflicting Unstained progress");
-			helper.assertTrue(!HemoCapabilityAccess.requireKnownStillArts(player).isKnown(StillArtInit.still_pulse.get())
+			helper.assertTrue(!HemoCapabilityAccess.getKnownStillArts(player).isKnown(StillArtInit.still_pulse.get())
 					&& !HarbingerAdvancementGranter.hasAdvancement(player, UnstainedAdvancementGranter.ADV_DISCERNING),
 					"Journey reset must clear Unstained arts and advancements");
 			HemoJourneyResult restored = HemoJourneySnapshot.restore(player);
 			helper.assertTrue(restored.passed(), "Scar snapshot restore must succeed: " + restored.message());
-			var restoredScars = HemoCapabilityAccess.requireScarState(player);
-			var restoredUnstained = HemoCapabilityAccess.requireUnstainedProgress(player);
+			var restoredScars = HemoCapabilityAccess.getScarState(player);
+			var restoredUnstained = HemoCapabilityAccess.getUnstainedProgress(player);
 			helper.assertTrue(restoredScars.knowsCerebralScar(scarId)
 					&& restoredScars.getActiveCerebralScars().contains(scarId), "Journey restore must recover scar state");
 			helper.assertTrue(restoredUnstained.hasBegunPurification()
@@ -2590,7 +2589,7 @@ public final class HarbingerJourneyFixtureGameTests {
 					"Journey restore must recover Unstained progress; begun="
 							+ restoredUnstained.hasBegunPurification() + ", purity=" + restoredUnstained.getPurity()
 							+ ", expected=" + capturedPurity);
-			helper.assertTrue(HemoCapabilityAccess.requireKnownStillArts(player).isKnown(StillArtInit.still_pulse.get())
+			helper.assertTrue(HemoCapabilityAccess.getKnownStillArts(player).isKnown(StillArtInit.still_pulse.get())
 					&& HarbingerAdvancementGranter.hasAdvancement(player, UnstainedAdvancementGranter.ADV_DISCERNING),
 					"Journey restore must recover Unstained arts and advancements");
 			helper.succeed();
@@ -2804,7 +2803,7 @@ public final class HarbingerJourneyFixtureGameTests {
 					"Weight of the Frame snapshot capture must succeed");
 			helper.assertTrue(HemoJourneySnapshot.resetForJourney(player).passed(),
 					"Weight of the Frame reset must succeed");
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(7);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(7);
 
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.ARTIFICER_WEIGHT_OF_FRAME_BRIEFING, origin);
 			HarbingerArtificerEntity artificer = helper.getLevel().getEntitiesOfClass(

@@ -39,30 +39,27 @@ public class VascularSystemEvents {	/**
 		if (player.level().isClientSide) return;
 		if (!HemoServerConfig.VASCULAR_DEGRADATION_ON_DAMAGE_ENABLED.get()) return;
 
-		boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player)
-				.map(vol -> vol.isActive()).orElse(false);
+		boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player).isActive();
 		if (!bloodActive) return;
 
-		HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
-			boolean fortified = HemoCapabilityAccess.getInitiatoryDegree(player)
-					.map(degree -> degree.hasHematicFortification()).orElse(false);
-			float strain = HematicFortificationRules.adjustedStrain(
-					(float) (event.getNewDamage() * HemoServerConfig.VASCULAR_DAMAGE_PER_HIT.get().doubleValue()),
-					fortified);
-			EnumVeinSections section = determineSectionFromDamage(event, player);
+		var vascular = HemoCapabilityAccess.getVascularSystem(player);
+		boolean fortified = HemoCapabilityAccess.getInitiatoryDegree(player).hasHematicFortification();
+		float strain = HematicFortificationRules.adjustedStrain(
+				(float) (event.getNewDamage() * HemoServerConfig.VASCULAR_DAMAGE_PER_HIT.get().doubleValue()),
+				fortified);
+		EnumVeinSections section = determineSectionFromDamage(event, player);
 
-			// Negative value = damage to the section
-			vascular.setVascularSectionHealth(section, -strain);
+		// Negative value = damage to the section
+		vascular.setVascularSectionHealth(section, -strain);
 
-			// Clamp to 0 minimum
-			if (vascular.getHealthBySection(section) < 0) {
-				Map<EnumVeinSections, Float> sys = vascular.getVascularSystem();
-				sys.put(section, 0f);
-				vascular.setVascularSystem(sys);
-			}
+		// Clamp to 0 minimum
+		if (vascular.getHealthBySection(section) < 0) {
+			Map<EnumVeinSections, Float> sys = vascular.getVascularSystem();
+			sys.put(section, 0f);
+			vascular.setVascularSystem(sys);
+		}
 
-			syncVascular((ServerPlayer) player, vascular);
-		});
+		syncVascular((ServerPlayer) player, vascular);
 	}
 
 	/**
@@ -117,38 +114,34 @@ public class VascularSystemEvents {	/**
 	public static void applyManipStrain(ServerPlayer player, EnumVeinSections section) {
 		if (!HemoServerConfig.VASCULAR_DEGRADATION_ON_MANIP_ENABLED.get()) return;
 
-		HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
-			boolean fortified = HemoCapabilityAccess.getInitiatoryDegree(player)
-					.map(degree -> degree.hasHematicFortification()).orElse(false);
-			float strain = HematicFortificationRules.adjustedStrain(
-					HemoServerConfig.VASCULAR_MANIP_STRAIN.get().floatValue(), fortified);
-			vascular.setVascularSectionHealth(section, -strain);
+		var vascular = HemoCapabilityAccess.getVascularSystem(player);
+		boolean fortified = HemoCapabilityAccess.getInitiatoryDegree(player).hasHematicFortification();
+		float strain = HematicFortificationRules.adjustedStrain(
+				HemoServerConfig.VASCULAR_MANIP_STRAIN.get().floatValue(), fortified);
+		vascular.setVascularSectionHealth(section, -strain);
 
-			if (vascular.getHealthBySection(section) < 0) {
-				Map<EnumVeinSections, Float> sys = vascular.getVascularSystem();
-				sys.put(section, 0f);
-				vascular.setVascularSystem(sys);
-			}
+		if (vascular.getHealthBySection(section) < 0) {
+			Map<EnumVeinSections, Float> sys = vascular.getVascularSystem();
+			sys.put(section, 0f);
+			vascular.setVascularSystem(sys);
+		}
 
-			syncVascular(player, vascular);
-		});
+		syncVascular(player, vascular);
 	}
 
 	/** A DEAD section carries no blood: muscle memories and manipulations routed through it refuse to fire. */
 	public static boolean isSectionDead(Player player, EnumVeinSections section) {
-		return section != null && HemoCapabilityAccess.getVascularSystem(player)
-				.map(vascular -> vascular.getBloodFlowBySection(section) == EnumBloodFlow.DEAD)
-				.orElse(false);
+		return section != null && (HemoCapabilityAccess.getVascularSystem(player).getBloodFlowBySection(section) == EnumBloodFlow.DEAD);
 	}
 
 	public static void applyManipStrain(ServerPlayer player, BloodManipulation manipulation) {
 		ArrayList<ScarDefinition> active = new ArrayList<>();
-		HemoCapabilityAccess.getScarState(player).ifPresent(scars -> scars.forEachActiveCerebralScar(active::add));
+		HemoCapabilityAccess.getScarState(player).forEachActiveCerebralScar(active::add);
 		int tier = ScarNoeticRoutingRules.qualifies(manipulation.getName())
 				? ScarNoeticRoutingRules.bestMatchingTier(manipulation.getTend(), active) : 0;
-		if (HemoServerConfig.VASCULAR_DEGRADATION_ON_MANIP_ENABLED.get()) HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
-			boolean fortified = HemoCapabilityAccess.getInitiatoryDegree(player)
-					.map(degree -> degree.hasHematicFortification()).orElse(false);
+		if (HemoServerConfig.VASCULAR_DEGRADATION_ON_MANIP_ENABLED.get()) {
+			var vascular = HemoCapabilityAccess.getVascularSystem(player);
+			boolean fortified = HemoCapabilityAccess.getInitiatoryDegree(player).hasHematicFortification();
 			// Higher-rank manipulations tax their vein harder; the config value scales every rank.
 			float strain = HematicFortificationRules.adjustedStrain(
 					HemoServerConfig.VASCULAR_MANIP_STRAIN.get().floatValue() * manipulation.getRank().veinStrain(),
@@ -161,7 +154,7 @@ public class VascularSystemEvents {	/**
 				vascular.setVascularSystem(system);
 			}
 			syncVascular(player, vascular);
-		});
+		}
 		if (tier > 0) VeinMasonAssignments.onMatchingNoeticCast(player);
 	}
 
@@ -182,45 +175,43 @@ public class VascularSystemEvents {	/**
 		Player player = event.getEntity();
 		if (player.level().isClientSide) return;
 
-		boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player)
-				.map(vol -> vol.isActive()).orElse(false);
+		boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player).isActive();
 		if (!bloodActive) return;
 
-		HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
-			boolean changed = false;
+		var vascular = HemoCapabilityAccess.getVascularSystem(player);
+		boolean changed = false;
 
-			// Passive healing
-			if (HemoServerConfig.VASCULAR_PASSIVE_HEAL_ENABLED.get()) {
-				int healInterval = HemoServerConfig.VASCULAR_HEAL_INTERVAL.get();
-				if (player.tickCount % healInterval == 0) {
-					float healRate = (float) (HemoServerConfig.VASCULAR_HEAL_RATE.get().floatValue()
-							* ConserveStateHelper.vascularHealMultiplier(player));
+		// Passive healing
+		if (HemoServerConfig.VASCULAR_PASSIVE_HEAL_ENABLED.get()) {
+			int healInterval = HemoServerConfig.VASCULAR_HEAL_INTERVAL.get();
+			if (player.tickCount % healInterval == 0) {
+				float healRate = (float) (HemoServerConfig.VASCULAR_HEAL_RATE.get().floatValue()
+						* ConserveStateHelper.vascularHealMultiplier(player));
 
-					// Only heal if the player has enough food / saturation
-					boolean wellFed = player.getFoodData().getFoodLevel() > 6;
+				// Only heal if the player has enough food / saturation
+				boolean wellFed = player.getFoodData().getFoodLevel() > 6;
 
-					for (EnumVeinSections section : EnumVeinSections.values()) {
-						float health = vascular.getHealthBySection(section);
-						if (health < 100f && wellFed) {
-							float newHealth = Math.min(100f, health + healRate);
-							Map<EnumVeinSections, Float> sys = vascular.getVascularSystem();
-							sys.put(section, newHealth);
-							vascular.setVascularSystem(sys);
-							changed = true;
-						}
+				for (EnumVeinSections section : EnumVeinSections.values()) {
+					float health = vascular.getHealthBySection(section);
+					if (health < 100f && wellFed) {
+						float newHealth = Math.min(100f, health + healRate);
+						Map<EnumVeinSections, Float> sys = vascular.getVascularSystem();
+						sys.put(section, newHealth);
+						vascular.setVascularSystem(sys);
+						changed = true;
 					}
 				}
 			}
+		}
 
-			// Debuffs from damaged sections check every 2 seconds
-			if (HemoServerConfig.VASCULAR_DEBUFFS_ENABLED.get() && player.tickCount % 40 == 0) {
-				applyVascularDebuffs(player, vascular);
-			}
+		// Debuffs from damaged sections check every 2 seconds
+		if (HemoServerConfig.VASCULAR_DEBUFFS_ENABLED.get() && player.tickCount % 40 == 0) {
+			applyVascularDebuffs(player, vascular);
+		}
 
-			if (changed) {
-				syncVascular((ServerPlayer) player, vascular);
-			}
-		});
+		if (changed) {
+			syncVascular((ServerPlayer) player, vascular);
+		}
 	}
 
 	/**
@@ -258,8 +249,8 @@ public class VascularSystemEvents {	/**
 
 	public static void syncOwnerSnapshot(ServerPlayer player, boolean respawn) {
 		IVascularSystem vascular = respawn
-				? HemoCapabilityAccess.getVascularSystem(player).orElseThrow(IllegalArgumentException::new)
-				: HemoCapabilityAccess.requireVascularSystem(player);
+				? HemoCapabilityAccess.getVascularSystem(player)
+				: HemoCapabilityAccess.getVascularSystem(player);
 		syncVascular(player, vascular);
 	}
 

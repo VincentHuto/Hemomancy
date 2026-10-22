@@ -74,7 +74,7 @@ public final class CastVeinsLayer extends RenderLayer<AbstractClientPlayer, Play
     }
 
     private static boolean avatar(Player player, float partial) {
-        String form = HemoCapabilityAccess.getKnownManipulations(player).map(known -> known.getActiveAvatarForm()).orElse("");
+        String form = HemoCapabilityAccess.getKnownManipulations(player).getActiveAvatarForm();
         return form != null && !form.isEmpty()
                 && AvatarManifestationTransition.sample(player.getUUID(), form, player.tickCount, partial).renders();
     }

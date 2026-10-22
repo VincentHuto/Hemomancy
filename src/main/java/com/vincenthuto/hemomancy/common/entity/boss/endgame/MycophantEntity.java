@@ -345,11 +345,11 @@ public class MycophantEntity extends Monster implements BroodMother {
 		controller.skipToRecovery();
 		if (damage > 0.0F) held.hurt(HemoDamageTypes.mycophantClaim(this.level(), this), damage);
 		if (!held.isAlive() || held.level() != this.level()) return;
-		HemoCapabilityAccess.getBloodVolume(held).ifPresent(volume -> {
-			if (!volume.isActive()) return;
+		var volume = HemoCapabilityAccess.getBloodVolume(held);
+		if (volume.isActive()) {
 			volume.drain(volume.getMaxBloodVolume() * MycophantClaimRules.bloodDrainFraction(phase));
 			BloodVolumeEvents.syncVolume(held, volume);
-		});
+		}
 		pushAway(held, 0.9D, 0.35D);
 	}
 
@@ -456,13 +456,12 @@ public class MycophantEntity extends Monster implements BroodMother {
 		}
 		if (this.tickCount % 20 == 0) {
 			int phase = getPhase();
-			boolean drained = HemoCapabilityAccess.getBloodVolume(target).map(volume -> {
-				if (!volume.isActive() || volume.isEmpty()) return false;
+			var volume = HemoCapabilityAccess.getBloodVolume(target);
+			boolean drained = volume.isActive() && !volume.isEmpty();
+			if (drained) {
 				volume.drain(volume.getMaxBloodVolume() * (phase >= 2 ? 0.025D : 0.015D));
 				BloodVolumeEvents.syncVolume(target, volume);
-				return true;
-			}).orElse(false);
-			if (!drained) {
+			} else {
 				float damage = MycophantClaimRules.clampNonlethal(target.getHealth(), MycophantClaimRules.siphonDrainPerSecond(phase));
 				if (damage > 0.0F) target.hurt(HemoDamageTypes.mycophantClaim(this.level(), this), damage);
 			}

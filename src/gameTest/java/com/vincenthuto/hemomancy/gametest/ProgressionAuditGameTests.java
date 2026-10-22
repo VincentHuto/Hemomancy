@@ -130,7 +130,7 @@ public final class ProgressionAuditGameTests {
         BlockPos pos = helper.absolutePos(new BlockPos(0, 100, 0));
         helper.getLevel().setBlock(pos, BlockInit.sanguine_monolith.get().defaultBlockState(), 3);
         ServerPlayer player = player(helper);
-        HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(7);
+        HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(7);
         var hit = new BlockHitResult(Vec3.atCenterOf(pos), Direction.UP, pos, false);
         helper.getLevel().getBlockState(pos).useWithoutItem(helper.getLevel(), player, hit);
         helper.getLevel().getBlockState(pos).useWithoutItem(helper.getLevel(), player, hit);

@@ -121,8 +121,7 @@ public class LedgerScreen extends Screen {
 
 	private void updateRoleControls() {
 		LocalPlayer player = Minecraft.getInstance().player;
-		boolean canManage = player != null && HemoCapabilityAccess.getBloodVolume(player)
-				.map(volume -> volume.getBloodLine().canManage(player.getUUID())).orElse(false);
+		boolean canManage = player != null && HemoCapabilityAccess.getBloodVolume(player).getBloodLine().canManage(player.getUUID());
 		setRecallButton.active = canManage;
 		disbandButton.active = canManage;
 		setRecallButton.setTooltip(canManage ? null : Tooltip.create(Component.translatable("hemomancy.ledger.recall.not_leader")));
@@ -159,31 +158,30 @@ public class LedgerScreen extends Screen {
 		// Bloodline info
 		LocalPlayer player = Minecraft.getInstance().player;
 		if (player != null) {
-			HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-				Bloodline bloodline = volume.getBloodLine();
-				if (bloodline.isValid()) {
-					graphics.drawCenteredString(this.font,
-							Component.literal(bloodline.getName())
-									.withStyle(s -> s.withColor(0xFFDD6666).withBold(true)),
-							centerX, guiTop + 24, 0xFFFFFFFF);
+			var volume = HemoCapabilityAccess.getBloodVolume(player);
+			Bloodline bloodline = volume.getBloodLine();
+			if (bloodline.isValid()) {
+				graphics.drawCenteredString(this.font,
+						Component.literal(bloodline.getName())
+								.withStyle(s -> s.withColor(0xFFDD6666).withBold(true)),
+						centerX, guiTop + 24, 0xFFFFFFFF);
 
-					int npcCount = bloodline.getNpcMemberCount();
-					int memberCount = bloodline.getPlayerUUIDS().size();
-					graphics.drawCenteredString(this.font,
-							Component.literal("Members: " + memberCount + "  |  Recruits: " + npcCount),
-							centerX, guiTop + 38, 0xFFAAAAAA);
+				int npcCount = bloodline.getNpcMemberCount();
+				int memberCount = bloodline.getPlayerUUIDS().size();
+				graphics.drawCenteredString(this.font,
+						Component.literal("Members: " + memberCount + "  |  Recruits: " + npcCount),
+						centerX, guiTop + 38, 0xFFAAAAAA);
 
-					boolean isLeader = bloodline.getLeaderUUID().equals(player.getUUID());
-					String role = isLeader ? "Leader" : "Member";
-					graphics.drawCenteredString(this.font,
-							Component.literal("Role: " + role),
-							centerX, guiTop + 52, 0xFF888888);
-				} else {
-					graphics.drawCenteredString(this.font,
-							Component.literal("No bloodline — sign the ledger first."),
-							centerX, guiTop + 40, 0xFFAA4444);
-				}
-			});
+				boolean isLeader = bloodline.getLeaderUUID().equals(player.getUUID());
+				String role = isLeader ? "Leader" : "Member";
+				graphics.drawCenteredString(this.font,
+						Component.literal("Role: " + role),
+						centerX, guiTop + 52, 0xFF888888);
+			} else {
+				graphics.drawCenteredString(this.font,
+						Component.literal("No bloodline — sign the ledger first."),
+						centerX, guiTop + 40, 0xFFAA4444);
+			}
 		}
 
 		// Render widgets on top

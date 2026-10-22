@@ -25,8 +25,7 @@ public final class IchorianKnowledgeEvents {
 	}
 
 	public static void sync(ServerPlayer player) {
-		HemoCapabilityAccess.getIchorianKnowledge(player)
-				.ifPresent(knowledge -> PacketHandler.sendToPlayer(player,
-						new PacketSyncIchorianKnowledge(knowledge)));
+		PacketHandler.sendToPlayer(player,
+						new PacketSyncIchorianKnowledge(HemoCapabilityAccess.getIchorianKnowledge(player)));
 	}
 }

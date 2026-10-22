@@ -86,7 +86,7 @@ public final class SilentArchonArmorAbilityHandler {
 					.withStyle(ChatFormatting.RED), true);
 			return false;
 		}
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null || !volume.isActive() || volume.getBloodVolume() < SILENT_SLIPPING_BLOOD_COST
 				|| !volume.drain(SILENT_SLIPPING_BLOOD_COST)) {
 			player.displayClientMessage(Component.literal("Not enough blood.")

@@ -37,18 +37,17 @@ public class MorphlingJarLayer<T extends LivingEntity, M extends HumanoidModel<T
             return;
         }
         if (ent instanceof Player player) {
-            HemoCapabilityAccess.getEquipment(player).ifPresent(inv -> {
-                if (!inv.isRenderLayerVisible(HarbingerEquipmentMenu.JAR_SLOT_INDEX)) {
-                    return;
-                }
-                var stack = inv.getStackInSlot(HarbingerEquipmentMenu.JAR_SLOT_INDEX);
-                if (stack.getItem() instanceof ItemMorphlingJar jar) {
-                    this.translateToBody(matrixStack);
-                    VertexConsumer ivertexbuilder = buffer.getBuffer(RenderType.text(texture));
-                    modelMorphlingJar.renderToBuffer(matrixStack, ivertexbuilder, lightness,
-                            OverlayTexture.NO_OVERLAY, -1);
-                }
-            });
+            var inv = HemoCapabilityAccess.getEquipment(player);
+            if (!inv.isRenderLayerVisible(HarbingerEquipmentMenu.JAR_SLOT_INDEX)) {
+                return;
+            }
+            var stack = inv.getStackInSlot(HarbingerEquipmentMenu.JAR_SLOT_INDEX);
+            if (stack.getItem() instanceof ItemMorphlingJar jar) {
+                this.translateToBody(matrixStack);
+                VertexConsumer ivertexbuilder = buffer.getBuffer(RenderType.text(texture));
+                modelMorphlingJar.renderToBuffer(matrixStack, ivertexbuilder, lightness,
+                        OverlayTexture.NO_OVERLAY, -1);
+            }
         }
     }
 

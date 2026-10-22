@@ -1388,8 +1388,7 @@ public final class MaterialsData {
                                                                                                                                                                                                                         list.add(new MaterialEntry("memory_of_vesper", "Memory of Vesper",
                 "Earned once by defeating both faces of Vesper through your owned Qliphoth wound. Teach it to your Living Staff through an Iron Brazier and Blood Absorption.",
                 "Qliphoth Reagents", () -> new ItemStack(ItemInit.memory_of_vesper.get()),
-                true, UnlockPredicate.minDegree(7).and(player -> HemoCapabilityAccess.getInitiatoryDegree(player)
-                        .map(degree -> degree.hasWitnessedFungalRevelation()).orElse(false))));
+                true, UnlockPredicate.minDegree(7).and(player -> HemoCapabilityAccess.getInitiatoryDegree(player).hasWitnessedFungalRevelation())));
 
                                                                                                                                                                                                                         list.add(new MaterialEntry("monolith_fragment", "Monolith Fragment",
                 "A late-stage qliphoth reagent used in monolith and consecration work.",

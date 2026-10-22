@@ -74,7 +74,7 @@ public final class NetworkDefectGameTests {
     public static void poolSettingsRejectNonFiniteValues(GameTestHelper helper) {
         var player = connectedPlayer(helper, new ArrayList<>());
         try {
-            var volume = HemoCapabilityAccess.requireBloodVolume(player);
+            var volume = HemoCapabilityAccess.getBloodVolume(player);
             volume.setTrickleRate(5.0D);
             volume.setAutoDrawThreshold(0.5D);
             var context = new ServerPayloadContext(player.connection, PacketUpdatePoolSettings.TYPE.id());

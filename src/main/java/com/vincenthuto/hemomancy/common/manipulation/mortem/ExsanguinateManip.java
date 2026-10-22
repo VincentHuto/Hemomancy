@@ -102,7 +102,7 @@ public class ExsanguinateManip extends BloodManipulation {
 		HemomancyTendrilEffects.exsanguinate(player, target);
         ManipulationVisuals.burst(sLevel, ManipulationVisuals.Form.MORTEM_BURST, target.position(), target.position(), .7, 24);
 
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume != null && volume.isActive()) {
 			double toRestore = Math.min(BLOOD_RESTORE, volume.getMaxBloodVolume() - volume.getBloodVolume());
 			volume.addBloodVolume(toRestore);

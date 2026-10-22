@@ -466,7 +466,7 @@ public final class RitesTabView {
 		if (!state.ichorianSigilsExpanded) return y + 2;
 		Minecraft minecraft = Minecraft.getInstance();
 		var knowledge = minecraft.player == null ? null
-				: HemoCapabilityAccess.getIchorianKnowledge(minecraft.player).orElse(null);
+				: HemoCapabilityAccess.getIchorianKnowledge(minecraft.player);
 		List<IchorianSigilDefinition> definitions = sortedIchorianSigils();
 		for (IchorianSigilDefinition sigil : definitions) {
 			boolean known = knowledge != null && knowledge.isKnown(sigil.id());
@@ -503,7 +503,7 @@ public final class RitesTabView {
 		if (!state.ichorianSigilsExpanded) return 22;
 		Minecraft minecraft = Minecraft.getInstance();
 		var knowledge = minecraft.player == null ? null
-				: HemoCapabilityAccess.getIchorianKnowledge(minecraft.player).orElse(null);
+				: HemoCapabilityAccess.getIchorianKnowledge(minecraft.player);
 		long visible = IchorianSigilRegistry.all().stream().filter(sigil ->
 				knowledge != null && (knowledge.isKnown(sigil.id())
 						|| knowledge.discoveredNodeCount(sigil.id()) > 0)).count();
@@ -522,7 +522,7 @@ public final class RitesTabView {
 		if (!state.showIchorianSigils || !state.ichorianSigilsExpanded) return null;
 		Minecraft minecraft = Minecraft.getInstance();
 		var knowledge = minecraft.player == null ? null
-				: HemoCapabilityAccess.getIchorianKnowledge(minecraft.player).orElse(null);
+				: HemoCapabilityAccess.getIchorianKnowledge(minecraft.player);
 		if (knowledge == null) return null;
 		List<IchorianSigilDefinition> listed = sortedIchorianSigils().stream()
 				.filter(sigil -> knowledge.isKnown(sigil.id())

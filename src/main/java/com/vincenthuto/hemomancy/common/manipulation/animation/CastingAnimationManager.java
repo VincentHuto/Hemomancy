@@ -75,7 +75,7 @@ public final class CastingAnimationManager {
         } else publish(player,create(player,manipulation,CastPhase.OPENING,held));
     }
     private static boolean canPresent(ServerPlayer player,BloodManipulation manipulation) {
-        var known=HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+        var known=HemoCapabilityAccess.getKnownManipulations(player);
         return player.isAlive() && !ManipulationRetirementRules.isRetiredManipulation(manipulation)
                 && !com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(player)
                 && known!=null && known.getSelectedMemoryRef().kind()==MemoryEntryKind.MANIPULATION
@@ -86,8 +86,8 @@ public final class CastingAnimationManager {
     private static boolean canPresentStillArt(ServerPlayer player,StillArt art) {
         return art!=null && player.isAlive()
                 && !com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(player)
-                && HemoCapabilityAccess.getUnstainedProgress(player).map(IUnstainedProgress::hasClarityUnlocked).orElse(false)
-                && HemoCapabilityAccess.getKnownStillArts(player).map(k -> k.isKnown(art)).orElse(false);
+                && HemoCapabilityAccess.getUnstainedProgress(player).hasClarityUnlocked()
+                && HemoCapabilityAccess.getKnownStillArts(player).isKnown(art);
     }
     private static CastingAnimationPacket create(ServerPlayer player,BloodManipulation manipulation,CastPhase phase,int held) {
         long now=player.level().getGameTime();

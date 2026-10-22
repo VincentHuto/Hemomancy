@@ -107,11 +107,11 @@ public final class LuxUmbraRibbonReview {
             if (player == null) return;
             var manipulation = ManipulationInit.umbral_step.get();
             BloodManipulation.clearSessionState();
-            var blood = HemoCapabilityAccess.requireBloodVolume(player);
+            var blood = HemoCapabilityAccess.getBloodVolume(player);
             blood.setActive(true);
             blood.setBloodVolume(2000);
-            HemoCapabilityAccess.getBloodTendency(player).orElseThrow().setTendencyAlignment(EnumBloodTendency.TENEBRIS, 100);
-            HemoCapabilityAccess.requireKnownManipulations(player).getKnownManips().put(manipulation, new ManipLevel(4, 185));
+            HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(EnumBloodTendency.TENEBRIS, 100);
+            HemoCapabilityAccess.getKnownManipulations(player).getKnownManips().put(manipulation, new ManipLevel(4, 185));
             Vec3 origin = player.position();
             boolean cast = manipulation.tryPerformAction(player, player.serverLevel(), ItemStack.EMPTY, player.blockPosition(), 0);
             if (!cast || player.position().distanceToSqr(origin) < 1 || blood.getBloodVolume() >= 2000)

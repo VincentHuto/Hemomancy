@@ -76,9 +76,7 @@ public interface UnlockPredicate {
 	 * Returns {@code false} when the capability is absent (e.g. a non-Harbinger).
 	 */
 	static UnlockPredicate minDegree(int degree) {
-		return player -> HemoCapabilityAccess.getInitiatoryDegree(player)
-				.map(d -> d.getDegreeNumber() >= degree)
-				.orElse(false);
+		return player -> (HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber() >= degree);
 	}
 
 	/**
@@ -87,9 +85,7 @@ public interface UnlockPredicate {
 	 * player or a player who has not begun the Unstained path).
 	 */
 	static UnlockPredicate minPurity(float purity) {
-		return player -> HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(up -> up.getPurity() >= purity)
-				.orElse(false);
+		return player -> (HemoCapabilityAccess.getUnstainedProgress(player).getPurity() >= purity);
 	}
 
 	/**
@@ -97,8 +93,6 @@ public interface UnlockPredicate {
 	 * Returns {@code false} when the capability is absent.
 	 */
 	static UnlockPredicate minClarity(float clarity) {
-		return player -> HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(up -> up.getClarity() >= clarity)
-				.orElse(false);
+		return player -> (HemoCapabilityAccess.getUnstainedProgress(player).getClarity() >= clarity);
 	}
 }

@@ -429,7 +429,7 @@ public final class CellHandParticleEffects {
 		if (!(living instanceof Player player) || !isStaffChannel(player, stack, true)) {
 			return List.of();
 		}
-		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
+		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player);
 		LivingStaffFocusProfile focus = LivingStaffFocusProfile.fromPlayer(player, progress);
 		return player.level().getEntitiesOfClass(LivingEntity.class,
 						player.getBoundingBox().inflate(LivingStaffFocusRules.absorptionRange(focus)),
@@ -445,7 +445,7 @@ public final class CellHandParticleEffects {
 		if (stack.getItem() instanceof BloodAbsorptionItem) {
 			range = LivingStaffFocusRules.bareAbsorptionRange();
 		} else if (living instanceof Player player && isStaffChannel(player, stack, true)) {
-			ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
+			ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player);
 			LivingStaffFocusProfile focus = LivingStaffFocusProfile.fromPlayer(player, progress);
 			range = LivingStaffFocusRules.absorptionRange(focus);
 		} else {

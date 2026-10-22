@@ -84,7 +84,7 @@ public class CrudeMemoryShardItem extends Item {
 		if (level.isClientSide) return InteractionResultHolder.sidedSuccess(stack, true);
 
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
-				.orElse(null);
+				;
 		if (volume == null || !volume.isActive()) {
 			player.displayClientMessage(
 					Component.literal("You don't understand what you're holding yet.")
@@ -119,7 +119,7 @@ public class CrudeMemoryShardItem extends Item {
 		}
 
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
-				.orElse(null);
+				;
 		if (known == null) return InteractionResultHolder.fail(stack);
 
 		if (known.doesListContainName(known.getKnownManips(), manipulation)) {

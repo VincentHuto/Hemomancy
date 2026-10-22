@@ -49,7 +49,7 @@ public class UnstainedBookItem extends ItemGuideBook {
         }
 
         if (lvl.isClientSide && book != null) {
-              BookReaderScreen.open(book, this, null, HemoCapabilityAccess.getLiberKnowledge(p_41433_).orElse(null));
+              BookReaderScreen.open(book, this, null, HemoCapabilityAccess.getLiberKnowledge(p_41433_));
         }
 
         return super.use(lvl, p_41433_, p_41434_);

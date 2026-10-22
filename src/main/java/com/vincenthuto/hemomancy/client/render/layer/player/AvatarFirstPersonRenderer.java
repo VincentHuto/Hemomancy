@@ -52,8 +52,7 @@ public final class AvatarFirstPersonRenderer {
 		AbstractClientPlayer player = minecraft.player;
 		if (player == null || !(player.level() instanceof ClientLevel)
 				|| !minecraft.options.getCameraType().isFirstPerson()) return;
-		String activeForm = HemoCapabilityAccess.getKnownManipulations(player)
-				.map(known -> known.getActiveAvatarForm()).orElse("");
+		String activeForm = HemoCapabilityAccess.getKnownManipulations(player).getActiveAvatarForm();
 		float partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(true);
 		AvatarManifestationTransition.Sample transition = AvatarManifestationTransition.sample(
 				player.getUUID(), activeForm, player.tickCount, partialTick);

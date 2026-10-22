@@ -23,37 +23,33 @@ public class KnownSummonEvents {
 	}
 
 	public static boolean grantSummon(ServerPlayer player, PuppeteerSummonDefinition definition) {
-		if (HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(UnstainedAccessRules::blocksHarbingerProgress).orElse(false)) return false;
-		return HemoCapabilityAccess.getKnownSummons(player)
-				.map(known -> {
-					boolean learned = known.learn(definition);
-					if (learned) {
-						sync(player, known);
-					}
-					return learned;
-				})
-				.orElse(false);
+		if (UnstainedAccessRules.blocksHarbingerProgress(HemoCapabilityAccess.getUnstainedProgress(player))) return false;
+		var known = HemoCapabilityAccess.getKnownSummons(player);
+		boolean learned = known.learn(definition);
+		if (learned) {
+			sync(player, known);
+		}
+		return learned;
 	}
 
 	@SubscribeEvent
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
-			HemoCapabilityAccess.getKnownSummons(player).ifPresent(known -> sync(player, known));
+			sync(player, HemoCapabilityAccess.getKnownSummons(player));
 		}
 	}
 
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
-			HemoCapabilityAccess.getKnownSummons(player).ifPresent(known -> sync(player, known));
+			sync(player, HemoCapabilityAccess.getKnownSummons(player));
 		}
 	}
 
 	@SubscribeEvent
 	public static void playerRespawn(PlayerRespawnEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
-			HemoCapabilityAccess.getKnownSummons(player).ifPresent(known -> sync(player, known));
+			sync(player, HemoCapabilityAccess.getKnownSummons(player));
 		}
 	}
 }

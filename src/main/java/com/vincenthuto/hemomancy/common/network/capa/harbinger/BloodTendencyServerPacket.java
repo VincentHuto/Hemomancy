@@ -47,7 +47,7 @@ public class BloodTendencyServerPacket implements CustomPacketPayload {
 			}
 
 			HemoCapabilityAccess.getBloodTendency(player)
-					.orElseThrow(IllegalStateException::new).setTendency(msg.Tendency);
+					.setTendency(msg.Tendency);
 
 		});
 	}

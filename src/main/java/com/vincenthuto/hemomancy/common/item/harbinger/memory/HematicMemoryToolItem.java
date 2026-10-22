@@ -25,28 +25,27 @@ public class HematicMemoryToolItem extends Item {
             }
             return false;
         }
-        return HemoCapabilityAccess.getBloodVolume(player).map(IBloodVolume::isActive).orElse(false);
+        return HemoCapabilityAccess.getBloodVolume(player).isActive();
     }
 
     protected boolean canUseHematicToolSilently(Player player) {
         return HemoCapabilityAccess.getPlayerDegreeNumber(player) >= requiredDegree
-                && HemoCapabilityAccess.getBloodVolume(player).map(IBloodVolume::isActive).orElse(false);
+                && HemoCapabilityAccess.getBloodVolume(player).isActive();
     }
 
     protected boolean drainBlood(Player player, int cost) {
-        return HemoCapabilityAccess.getBloodVolume(player).map(volume -> {
-            if (!volume.isActive() || volume.getBloodVolume() < cost) {
-                if (!player.level().isClientSide) {
-                    player.displayClientMessage(Component.translatable("item.hemomancy.hematic_memory_tool.blood")
-                            .withStyle(ChatFormatting.DARK_RED), true);
-                }
-                return false;
+        var volume = HemoCapabilityAccess.getBloodVolume(player);
+        if (!volume.isActive() || volume.getBloodVolume() < cost) {
+            if (!player.level().isClientSide) {
+                player.displayClientMessage(Component.translatable("item.hemomancy.hematic_memory_tool.blood")
+                        .withStyle(ChatFormatting.DARK_RED), true);
             }
-            volume.drain(cost);
-            if (player instanceof ServerPlayer serverPlayer) {
-                BloodVolumeEvents.syncVolume(serverPlayer, volume);
-            }
-            return true;
-        }).orElse(false);
+            return false;
+        }
+        volume.drain(cost);
+        if (player instanceof ServerPlayer serverPlayer) {
+            BloodVolumeEvents.syncVolume(serverPlayer, volume);
+        }
+        return true;
     }
 }

@@ -69,7 +69,7 @@ public class LivingTorchItem extends LivingToolItem implements HemoClientItemExt
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
-		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player);
 		if (!level.isClientSide && (blood == null || !blood.isActive() || isBlockingCardinalRite(player))) {
 			return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
 		}
@@ -86,7 +86,7 @@ public class LivingTorchItem extends LivingToolItem implements HemoClientItemExt
 	public void onUseTick(Level level, LivingEntity living, ItemStack stack, int remainingUseDuration) {
 		if (level.isClientSide || !(living instanceof ServerPlayer player)) return;
 		InteractionHand hand = player.getUsedItemHand();
-		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player);
 		boolean valid = player.isUsingItem() && player.getUseItem() == stack && player.isAlive()
 				&& player.getServer() != null
 				&& player.getServer().getPlayerList().getPlayer(player.getUUID()) == player

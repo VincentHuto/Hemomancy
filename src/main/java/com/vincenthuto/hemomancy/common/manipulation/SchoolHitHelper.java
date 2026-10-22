@@ -160,13 +160,12 @@ public final class SchoolHitHelper {
 		if (!(owner instanceof ServerPlayer serverPlayer)) {
 			return;
 		}
-		HemoCapabilityAccess.getBloodVolume(serverPlayer).ifPresent(volume -> {
-			if (volume.isActive()) {
-				volume.fill(ManipulationStatusRules.GRAVE_DEBT_DEATH_REFUND);
-				BloodVolumeEvents.syncVolume(serverPlayer, volume);
-                BloodFlowVisuals.connect(serverPlayer,target,com.vincenthuto.hemomancy.common.network.particle.BloodFlowPacket.Style.EXTRACTION);
-			}
-		});
+		var volume = HemoCapabilityAccess.getBloodVolume(serverPlayer);
+					if (volume.isActive()) {
+						volume.fill(ManipulationStatusRules.GRAVE_DEBT_DEATH_REFUND);
+						BloodVolumeEvents.syncVolume(serverPlayer, volume);
+		                BloodFlowVisuals.connect(serverPlayer,target,com.vincenthuto.hemomancy.common.network.particle.BloodFlowPacket.Style.EXTRACTION);
+					}
 	}
 
 	@Nullable

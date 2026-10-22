@@ -122,7 +122,7 @@ public final class MachineAccessEvents {
 		if (!(player instanceof ServerPlayer student) || player.level() != level
 				|| !level.getBlockState(pos).is(BlockInit.scar_station.get())
 				|| HemoCapabilityAccess.getPlayerDegreeNumber(player) < 4
-				|| !HemoCapabilityAccess.getBloodVolume(player).map(volume -> volume.isActive()).orElse(false)
+				|| !HemoCapabilityAccess.getBloodVolume(player).isActive()
 				|| !HarbingerAdvancementGranter.isVeinMasonFirstLesson(student)
 				|| HarbingerAdvancementGranter.isVeinMasonFirstScarLearned(student)) return false;
 		return !level.getEntitiesOfClass(

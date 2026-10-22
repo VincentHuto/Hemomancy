@@ -51,8 +51,7 @@ public final class HarbingerChapterProgression {
 		if (HarbingerAdvancementGranter.hasAdvancement(player,
 				HarbingerAdvancementGranter.ADV_COVENANT_WRITTEN_IN_PLACE)) return;
 
-		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(player)
-				.map(volume -> volume.getBloodLine()).orElse(Bloodline.NOBLOODLINE);
+		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(player).getBloodLine();
 		if (!bloodline.isValid() || !player.getUUID().equals(bloodline.getLeaderUUID())) return;
 		Bloodline registered = BloodlineSavedData.get(player.getServer().overworld())
 				.getBloodline(bloodline.getBloodlineUUID());

@@ -53,7 +53,7 @@ public class VitalReservoirManip extends BloodManipulation {
 			return;
 		}
 
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null || !volume.isActive()) {
 			return;
 		}

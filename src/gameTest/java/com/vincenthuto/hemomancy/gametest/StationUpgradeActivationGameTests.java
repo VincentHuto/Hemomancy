@@ -37,7 +37,7 @@ public final class StationUpgradeActivationGameTests {
         var level = helper.getLevel();
         var player = StationUpgradeGameTests.player(helper);
         player.setGameMode(net.minecraft.world.level.GameType.CREATIVE);
-        HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> volume.setActive(false));
+        HemoCapabilityAccess.getBloodVolume(player).setActive(false);
         BlockPos pos = helper.absolutePos(new BlockPos(5, 3, 5));
         for (var station : UpgradeStation.values()) {
             for (int target = 1; target <= 2; target++) {
@@ -286,7 +286,7 @@ public final class StationUpgradeActivationGameTests {
                     helper.assertTrue(((IronBrazierBlockEntity) helper.getLevel().getBlockEntity(offering.pos())).getOfferingForMatching().isEmpty(), "offering not escrowed");
                 for (int anchor = 0; anchor < rite.getAnchorBloodMl().length; anchor++) rite.fillAnchor(anchor, 50);
                 helper.assertTrue(rite.enterInscription() && rite.sealAltar(false), "altar did not seal");
-                HemoCapabilityAccess.requireBloodVolume(player).setBloodVolume(1000);
+                HemoCapabilityAccess.getBloodVolume(player).setBloodVolume(1000);
                 for (int circuit = 0; circuit < tier.circuits(); circuit++) {
                     aim(player, StationUpgradeRites.targetSurface(helper.getLevel(), rite, circuit));
                     var result = CardinalRiteInteractionHandler.tryProject(helper.getLevel(), player, tier.bloodPerCircuit());

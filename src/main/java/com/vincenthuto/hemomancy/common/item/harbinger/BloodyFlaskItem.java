@@ -42,7 +42,7 @@ public class BloodyFlaskItem extends Item {
 		ItemStack stack = playerIn.getItemInHand(handIn);
 		if (!worldIn.isClientSide) {
 			IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(playerIn)
-					.orElseThrow(NullPointerException::new);
+					;
 
 			if (volume.isFull()) {
 				playerIn.displayClientMessage(Component.literal("Blood volume is full."), true);

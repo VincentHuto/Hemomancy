@@ -39,10 +39,9 @@ public class ToggleEquipmentLayerVisibilityPacket implements CustomPacketPayload
 				return;
 			}
 
-			HemoCapabilityAccess.getEquipment(player).ifPresent(equipment -> {
-				equipment.setRenderLayerVisible(msg.slot, !equipment.isRenderLayerVisible(msg.slot));
-				HarbingerEquipmentEntityEventHandler.syncLayerVisibilityToClient(player);
-			});
+			var equipment = HemoCapabilityAccess.getEquipment(player);
+			equipment.setRenderLayerVisible(msg.slot, !equipment.isRenderLayerVisible(msg.slot));
+			HarbingerEquipmentEntityEventHandler.syncLayerVisibilityToClient(player);
 		});
 	}
 

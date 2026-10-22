@@ -29,7 +29,7 @@ public class BloodVolumeClientPacket implements CustomPacketPayload {
 			Player player = ctx.player();
 			if (player instanceof ServerPlayer sender) {
 				IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(sender)
-						.orElseThrow(IllegalStateException::new);
+						;
 				PacketHandler.sendToPlayer(sender, new BloodVolumeServerPacket(volume));
 				PacketHandler.sendToPlayer(sender, new PacketSyncPomeProgress(computePomeProgress(sender)));
 			}
@@ -37,9 +37,7 @@ public class BloodVolumeClientPacket implements CustomPacketPayload {
 	}
 
 	private static int computePomeProgress(ServerPlayer player) {
-		return HemoCapabilityAccess.getInitiatoryDegree(player)
-				.map(d -> d.isQliphothCommunionDone() ? 9 : d.getTotalPomesConsumed())
-				.orElse(0);
+		return HemoCapabilityAccess.getInitiatoryDegree(player).isQliphothCommunionDone() ? 9 : HemoCapabilityAccess.getInitiatoryDegree(player).getTotalPomesConsumed();
 	}
 
 	public BloodVolumeClientPacket() {

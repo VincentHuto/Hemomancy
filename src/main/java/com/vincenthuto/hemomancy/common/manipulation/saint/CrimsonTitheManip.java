@@ -97,7 +97,7 @@ public class CrimsonTitheManip extends BloodManipulation {
 		double returned = BorrowedBloodReserve.drainToCover(player, issued);
 		double spent = Math.max(0.0D, issued - returned);
 		double due = spent * 2.0D;
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume != null && due > 0.0D) {
 			volume.drain(Math.min(due, Math.max(0.0D, volume.getBloodVolume())));
 			PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(volume));

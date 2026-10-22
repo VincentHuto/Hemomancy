@@ -52,32 +52,31 @@ public class PacketBloodlineMessage implements CustomPacketPayload {
 				return;
 			}
 
-			HemoCapabilityAccess.getBloodVolume(sender).ifPresent(volume -> {
-				Bloodline bloodline = volume.getBloodLine();
-				if (!bloodline.isValid()) {
-					sender.sendSystemMessage(
-							Component.literal("No bloodline claims you!").withStyle(ChatFormatting.RED));
-					return;
+			var volume = HemoCapabilityAccess.getBloodVolume(sender);
+			Bloodline bloodline = volume.getBloodLine();
+			if (!bloodline.isValid()) {
+				sender.sendSystemMessage(
+						Component.literal("No bloodline claims you!").withStyle(ChatFormatting.RED));
+				return;
+			}
+
+			ServerLevel overworld = sender.server.overworld();
+			BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
+			Bloodline globalLine = savedData.getBloodline(bloodline.getBloodlineUUID());
+			if (globalLine == null) return;
+
+			Component prefix = Component.literal(
+					"You begin to hear faint whispers as a message seems to manifest in your vision")
+					.withStyle(ChatFormatting.DARK_RED);
+			Component body = Component.literal("[" + sender.getName().getString() + "]: " + trimmed)
+					.withStyle(ChatFormatting.DARK_RED);
+
+			for (ServerPlayer onlinePlayer : sender.server.getPlayerList().getPlayers()) {
+				if (globalLine.hasMember(onlinePlayer.getUUID())) {
+					onlinePlayer.sendSystemMessage(prefix);
+					onlinePlayer.sendSystemMessage(body);
 				}
-
-				ServerLevel overworld = sender.server.overworld();
-				BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
-				Bloodline globalLine = savedData.getBloodline(bloodline.getBloodlineUUID());
-				if (globalLine == null) return;
-
-				Component prefix = Component.literal(
-						"You begin to hear faint whispers as a message seems to manifest in your vision")
-						.withStyle(ChatFormatting.DARK_RED);
-				Component body = Component.literal("[" + sender.getName().getString() + "]: " + trimmed)
-						.withStyle(ChatFormatting.DARK_RED);
-
-				for (ServerPlayer onlinePlayer : sender.server.getPlayerList().getPlayers()) {
-					if (globalLine.hasMember(onlinePlayer.getUUID())) {
-						onlinePlayer.sendSystemMessage(prefix);
-						onlinePlayer.sendSystemMessage(body);
-					}
-				}
-			});
+			}
 		});
 	}
 

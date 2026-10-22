@@ -17,7 +17,7 @@ public final class UnstainedJourneyChecks {
 	private UnstainedJourneyChecks() { }
 
 	public static UnstainedJourneyResult verify(ServerPlayer player, UnstainedJourneyStage stage, BlockPos origin) {
-		var progress = HemoCapabilityAccess.requireUnstainedProgress(player);
+		var progress = HemoCapabilityAccess.getUnstainedProgress(player);
 		List<String> unmet = new ArrayList<>();
 		switch (stage) {
 			case NOVITIATE_GATHER_REMEDIES -> observances(unmet, progress,
@@ -57,7 +57,7 @@ public final class UnstainedJourneyChecks {
 					"Complete Silthmere's Remembrance to reach 100 Purity.");
 			case CLOSED_VEIN -> require(unmet, progress.isBaselineRestored()
 					&& !progress.hasClarityUnlocked()
-					&& !HemoCapabilityAccess.requireBloodVolume(player).isActive(),
+					&& !HemoCapabilityAccess.getBloodVolume(player).isActive(),
 					"Complete Closed Vein to restore a clean, unpledged baseline.");
 			case CONSECRATED_COPPER_OBSERVANCE -> observances(unmet, progress,
 					UnstainedObservances.Observance.CONSECRATE_COPPER);
@@ -66,7 +66,7 @@ public final class UnstainedJourneyChecks {
 			case CLARITY_ASCENSION -> {
 				require(unmet, progress.hasClarityUnlocked() && !progress.isClarityPrepared(),
 						"Complete the prepared Rite of Clarity Ascension.");
-				require(unmet, HemoCapabilityAccess.requireInitiatoryDegree(player).getDegreeNumber() == 0,
+				require(unmet, HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber() == 0,
 						"Clarity Ascension did not clear the Harbinger degree.");
 				require(unmet, hasItem(player, origin, ItemInit.absolution_dagger.get()),
 						"Clarity Ascension did not grant the pledge dagger.");
@@ -122,7 +122,7 @@ public final class UnstainedJourneyChecks {
 
 	private static boolean knows(ServerPlayer player,
 			com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArt art) {
-		return HemoCapabilityAccess.requireKnownStillArts(player).isKnown(art);
+		return HemoCapabilityAccess.getKnownStillArts(player).isKnown(art);
 	}
 
 	private static boolean hasItem(ServerPlayer player, BlockPos origin, Item item) {

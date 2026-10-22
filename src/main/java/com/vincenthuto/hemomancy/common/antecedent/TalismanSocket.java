@@ -11,14 +11,14 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 public final class TalismanSocket extends ItemStackHandler {
     private final Player player;
     public TalismanSocket(Player player) { super(1); this.player=player; }
-    private ItemStack charm() { return HemoCapabilityAccess.requireEquipment(player).getStackInSlot(5); }
+    private ItemStack charm() { return HemoCapabilityAccess.getEquipment(player).getStackInSlot(5); }
     @Override public ItemStack getStackInSlot(int slot) { return charm().getItem() instanceof VasculariumCharmItem ? charm().getOrDefault(DataComponentInit.CHARM_TALISMAN.get(),net.minecraft.world.item.component.ItemContainerContents.EMPTY).copyOne() : ItemStack.EMPTY; }
     @Override public void setStackInSlot(int slot,ItemStack stack) {
         var charm=charm().copy();
         if(!(charm.getItem() instanceof VasculariumCharmItem)) return;
         if(stack.isEmpty()) charm.remove(DataComponentInit.CHARM_TALISMAN.get());
         else charm.set(DataComponentInit.CHARM_TALISMAN.get(),net.minecraft.world.item.component.ItemContainerContents.fromItems(java.util.List.of(stack.copyWithCount(1))));
-        HemoCapabilityAccess.requireEquipment(player).setStackInSlot(5,charm);
+        HemoCapabilityAccess.getEquipment(player).setStackInSlot(5,charm);
     }
     @Override public int getSlotLimit(int slot) { return 1; }
     @Override public boolean isItemValid(int slot,ItemStack stack) { return charm().getItem() instanceof VasculariumCharmItem && ListeningScarItem.awake(stack); }

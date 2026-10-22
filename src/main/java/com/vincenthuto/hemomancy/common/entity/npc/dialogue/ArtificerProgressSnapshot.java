@@ -20,13 +20,11 @@ public record ArtificerProgressSnapshot(int degree, boolean activeBlood, boolean
 
 	public static ArtificerProgressSnapshot from(ServerPlayer player) {
 		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-		boolean activeBlood = HemoCapabilityAccess.getBloodVolume(player).map(volume -> volume.isActive()).orElse(false);
-		boolean purifying = HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(progress -> progress.hasBegunPurification()).orElse(false);
-		boolean clarity = HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(progress -> progress.hasClarityUnlocked()).orElse(false);
+		boolean activeBlood = HemoCapabilityAccess.getBloodVolume(player).isActive();
+		boolean purifying = HemoCapabilityAccess.getUnstainedProgress(player).hasBegunPurification();
+		boolean clarity = HemoCapabilityAccess.getUnstainedProgress(player).hasClarityUnlocked();
 		boolean staffBond = HemoCapabilityAccess.getLivingStaffProgress(player)
-				.map(ILivingStaffProgress::hasLivingStaffBond).orElse(false);
+				.hasLivingStaffBond();
 		ForkFamily fork = ArtificerAssignments.firstForkFamily(player);
 		D7Lineage lineage = ArtificerAssignments.firstD7Lineage(player);
 

@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
-import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.DialogueKnowledge;
@@ -26,11 +25,10 @@ public final class DialogueHubFactory {
 			tree = addNewcomerGuidance(tree, npcId);
 		}
 		if (degree >= 7) {
-			EnumArchonPath path = HemoCapabilityAccess.getInitiatoryDegree(player)
-					.map(capability -> capability.getArchonPath()).orElse(EnumArchonPath.NONE);
+			EnumArchonPath path = HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath();
 			tree = withArchonAcknowledgment(tree, npcId, degree, path);
 		}
-		return decorate(tree, npcId, player.getData(HemoAttachmentTypes.DIALOGUE_KNOWLEDGE));
+		return decorate(tree, npcId, HemoCapabilityAccess.dialogueKnowledge(player));
 	}
 
 	static DialogueTree withArchonAcknowledgment(DialogueTree tree, String npcId, int degree,

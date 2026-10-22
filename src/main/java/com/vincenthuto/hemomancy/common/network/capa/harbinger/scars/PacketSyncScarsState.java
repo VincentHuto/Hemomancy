@@ -62,11 +62,10 @@ public class PacketSyncScarsState implements CustomPacketPayload {
 			}
 			Entity entity = level.getEntity(msg.playerId);
 			if (entity instanceof Player player) {
-				HemoCapabilityAccess.getScarState(player).ifPresent(scars -> {
-					if (scars instanceof ScarsContainer container) {
-						container.loadStateFromSync(msg.known, msg.active, msg.fungal);
-					}
-				});
+				var scars = HemoCapabilityAccess.getScarState(player);
+				if (scars instanceof ScarsContainer container) {
+					container.loadStateFromSync(msg.known, msg.active, msg.fungal);
+				}
 			}
 		});
 	}

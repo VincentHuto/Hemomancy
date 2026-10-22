@@ -35,34 +35,33 @@ public class EquippedMorphlingLayer<T extends LivingEntity, M extends HumanoidMo
 		if (!(entity instanceof Player player))
 			return;
 
-		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
-			ItemStack morphling = cap.getEquippedMorphling();
-			if (morphling.isEmpty())
-				return;
+		var cap = HemoCapabilityAccess.getEquippedMorphling(player);
+		ItemStack morphling = cap.getEquippedMorphling();
+		if (morphling.isEmpty())
+			return;
 
-			poseStack.pushPose();
+		poseStack.pushPose();
 
-			// Translate to the right arm
-			this.getParentModel().rightArm.translateAndRotate(poseStack);
+		// Translate to the right arm
+		this.getParentModel().rightArm.translateAndRotate(poseStack);
 
-			// Position on the outer face of the right arm, roughly mid-forearm
-			poseStack.translate(-0.0625F, 0.4375F, -0.125F);
+		// Position on the outer face of the right arm, roughly mid-forearm
+		poseStack.translate(-0.0625F, 0.4375F, -0.125F);
 
-			// Rotate to lay flat against the arm surface (facing outward)
-			poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
-			poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
+		// Rotate to lay flat against the arm surface (facing outward)
+		poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
+		poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
 
-			// Scale down so the 16x16 item fits nicely on the arm
-			float scale = 0.35F;
-			poseStack.scale(scale, scale, scale);
+		// Scale down so the 16x16 item fits nicely on the arm
+		float scale = 0.35F;
+		poseStack.scale(scale, scale, scale);
 
-			// Render the item as a flat icon
-			net.minecraft.client.Minecraft.getInstance().getItemRenderer().renderStatic(
-					morphling, ItemDisplayContext.FIXED,
-					packedLight, OverlayTexture.NO_OVERLAY,
-					poseStack, buffer, entity.level(), entity.getId());
+		// Render the item as a flat icon
+		net.minecraft.client.Minecraft.getInstance().getItemRenderer().renderStatic(
+				morphling, ItemDisplayContext.FIXED,
+				packedLight, OverlayTexture.NO_OVERLAY,
+				poseStack, buffer, entity.level(), entity.getId());
 
-			poseStack.popPose();
-		});
+		poseStack.popPose();
 	}
 }

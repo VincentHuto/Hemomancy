@@ -86,15 +86,14 @@ public class TerrestrialSpeculumItem extends HematicMemoryToolItem {
 
 	static boolean canManifestAt(Player player, BlockPos origin) {
 		boolean activeBlood = HemoCapabilityAccess.getBloodVolume(player)
-				.map(IBloodVolume::isActive).orElse(false);
+				.isActive();
 		return TerrestrialSpeculumRules.canManifest(HemoCapabilityAccess.getPlayerDegreeNumber(player),
 				activeBlood, hasKnownVeins(player) ? 1 : 0,
 				player.level().getBlockState(origin).canBeReplaced());
 	}
 
 	private static boolean hasKnownVeins(Player player) {
-		return HemoCapabilityAccess.getKnownManipulations(player)
-				.map(known -> !known.getVeinList().isEmpty()).orElse(false);
+		return !HemoCapabilityAccess.getKnownManipulations(player).getVeinList().isEmpty();
 	}
 
 	public static boolean dismissTemporaryOrigin(ServerPlayer player, BlockPos origin) {

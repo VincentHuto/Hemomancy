@@ -193,14 +193,14 @@ class GameTestHarnessSourceContractTest {
 		assertTrue(snapshot.contains("getContainerSize()"));
 		assertTrue(snapshot.contains("saveOptional(player.registryAccess())"));
 		assertTrue(snapshot.contains("ItemStack.parse(player.registryAccess(), saved)"));
-		assertTrue(snapshot.contains("requireSkillProgress(player).serializeNBT(player.registryAccess())"));
-		assertTrue(snapshot.contains("requireEquipment(player).getStackInSlot(VASC_SLOT)"));
-		assertTrue(snapshot.contains("requireInitiatoryDegree(player).getDegreeNumber()"));
+		assertTrue(snapshot.contains("HemoCapabilityAccess.getSkillProgress(player).serializeNBT(player.registryAccess())"));
+		assertTrue(snapshot.contains("HemoCapabilityAccess.getEquipment(player).getStackInSlot(VASC_SLOT)"));
+		assertTrue(snapshot.contains("HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber()"));
 		assertTrue(snapshot.contains("preflightSnapshot(player, snapshot)"));
 		assertTrue(snapshot.contains("validateSkillProgressSchema"));
 		assertTrue(snapshot.contains("validateLiberKnowledgeSchema"));
 		assertTrue(snapshot.contains("validateKnownManipulationsSchema"));
-		assertTrue(snapshot.contains("requireKnownManipulations(player) instanceof KnownManipulations"));
+		assertTrue(snapshot.contains("HemoCapabilityAccess.getKnownManipulations(player) instanceof KnownManipulations"));
 		assertTrue(snapshot.contains("HemoJourneyManipulationState.capture(knownManipulations"));
 		assertTrue(snapshot.contains("HemoJourneyManipulationState.apply(manipulations"));
 		assertTrue(snapshot.contains("HemoJourneyManipulationState.matches(manipulations"));

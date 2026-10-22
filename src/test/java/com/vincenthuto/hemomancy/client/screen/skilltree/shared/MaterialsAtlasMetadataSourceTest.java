@@ -45,7 +45,7 @@ public final class MaterialsAtlasMetadataSourceTest {
 			assertNotContains("no deferred Saint dependency for " + id, gate.group(), "blood_trial_altar");
 		}
 		assertContains("Memory teaching waits for the returned revelation", data,
-				"degree.hasWitnessedFungalRevelation()");
+				"getInitiatoryDegree(player).hasWitnessedFungalRevelation()");
 		assertContains("Seed traces from the Monolith", spec,
 				"entryAt(\"qliphoth_seed\", h, \"qliphoth_reagents\", d(7), 805, 65, \"sanguine_monolith\")");
 		assertContains("Bloom traces from its Seed", spec,

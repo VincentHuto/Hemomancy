@@ -121,7 +121,7 @@ public class HematicCollapseGoal extends Goal {
 		if (!(boss.level() instanceof ServerLevel server)) return;
 
 		IBloodVolume blood = target instanceof Player player
-				? HemoCapabilityAccess.getBloodVolume(player).orElse(null)
+				? HemoCapabilityAccess.getBloodVolume(player)
 				: null;
 		double debt = blood == null ? 0.0 : blood.getBloodDebt();
 		float damage = (float) Math.max(DAMAGE_FLOOR, debt * DAMAGE_MULTIPLIER);

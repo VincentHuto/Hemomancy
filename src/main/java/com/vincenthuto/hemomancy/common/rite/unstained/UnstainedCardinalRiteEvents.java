@@ -179,13 +179,13 @@ public class UnstainedCardinalRiteEvents {
 	}
 
 	public static UnstainedRitePreflight.Result preflight(ServerPlayer caster, String ritePath) {
-		var degree = HemoCapabilityAccess.getInitiatoryDegree(caster).orElse(null);
-		var progress = HemoCapabilityAccess.getUnstainedProgress(caster).orElse(null);
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(caster);
+		var progress = HemoCapabilityAccess.getUnstainedProgress(caster);
 		boolean founder = degree != null && degree.hasFoundedBloodline();
 		boolean severedFounder = founder && degree.isFounderIntegrationSevered();
 		boolean maySeekCure = degree == null || severedFounder || degree.getDegreeNumber() <= 5
 				&& UnstainedEntryRules.canBeginCure(founder, false);
-		var blood = HemoCapabilityAccess.getBloodVolume(caster).orElse(null);
+		var blood = HemoCapabilityAccess.getBloodVolume(caster);
 		boolean cleanBlood = blood == null || !blood.isActive() && blood.getBloodVolume() <= 0
 				&& (blood.getBloodLine() == null || !blood.getBloodLine().isValid());
 		boolean severanceEligible = founder && !degree.isFounderIntegrationSevered()
@@ -238,7 +238,7 @@ public class UnstainedCardinalRiteEvents {
 
 	/** Founder eligibility and leadership are settled by {@link #preflight}. */
 	private static boolean completeSeveredCovenant(ServerLevel level, ServerPlayer caster) {
-		var degree = HemoCapabilityAccess.requireInitiatoryDegree(caster);
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(caster);
 		BloodlineSavedData savedData = BloodlineSavedData.get(level.getServer().overworld());
 		Bloodline line = savedData.getBloodlineForPlayer(caster.getUUID());
 		Bloodline disbanded = line == null ? null : savedData.disbandBloodline(line.getBloodlineUUID());
@@ -272,7 +272,7 @@ public class UnstainedCardinalRiteEvents {
 		int blessed = 0;
 		AABB area = new AABB(center).inflate(radius);
 		for (ServerPlayer target : level.getEntitiesOfClass(ServerPlayer.class, area, ServerPlayer::isAlive)) {
-			IUnstainedProgress progress = HemoCapabilityAccess.getUnstainedProgress(target).orElse(null);
+			IUnstainedProgress progress = HemoCapabilityAccess.getUnstainedProgress(target);
 			if (progress == null || !eligible.test(progress)) continue;
 			blessing.accept(target, progress);
 			blessed++;
@@ -292,9 +292,9 @@ public class UnstainedCardinalRiteEvents {
 	 * Treatment rite that begins purification without granting Church membership.
 	 */
 	private static boolean completeLetheanBaptism(ServerLevel sLevel, ServerPlayer caster) {
-		var unstained = HemoCapabilityAccess.getUnstainedProgress(caster).orElse(null);
+		var unstained = HemoCapabilityAccess.getUnstainedProgress(caster);
 		if (unstained == null) return false;
-		var degree = HemoCapabilityAccess.getInitiatoryDegree(caster).orElse(null);
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(caster);
 		int degreeNumber = degree != null ? degree.getDegreeNumber() : 0;
 		boolean severedFounder = degree != null && degree.hasFoundedBloodline()
 				&& degree.isFounderIntegrationSevered();
@@ -318,22 +318,21 @@ public class UnstainedCardinalRiteEvents {
 	 * Requires purity >= 25 (Tainted stage), checked by {@link #preflight}.
 	 */
 	private static void completeSilverVeil(ServerLevel sLevel, ServerPlayer caster) {
-		HemoCapabilityAccess.getUnstainedProgress(caster).ifPresent(unstained -> {
-			unstained.addPurity(10.0f);
-			UnstainedProgressEvents.syncProgress(caster, unstained);
+		var unstained = HemoCapabilityAccess.getUnstainedProgress(caster);
+		unstained.addPurity(10.0f);
+		UnstainedProgressEvents.syncProgress(caster, unstained);
 
-			// Apply Verdigris Aura (early Purity defense; amplifier 1, 30 minutes)
-			caster.addEffect(new MobEffectInstance(
-					EffectInit.verdigris_aura, SILVER_VEIL_DURATION_TICKS, 1, false, true, true));
+		// Apply Verdigris Aura (early Purity defense; amplifier 1, 30 minutes)
+		caster.addEffect(new MobEffectInstance(
+				EffectInit.verdigris_aura, SILVER_VEIL_DURATION_TICKS, 1, false, true, true));
 
-			caster.displayClientMessage(
-					Component.literal("Verdigris smoke gathers into the first ward against awakened blood.")
-							.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
-					false);
-			sLevel.sendParticles(ParticleTypes.END_ROD,
-					caster.getX(), caster.getY() + 1.0, caster.getZ(),
-					50, 1.0, 1.5, 1.0, 0.02);
-		});
+		caster.displayClientMessage(
+				Component.literal("Verdigris smoke gathers into the first ward against awakened blood.")
+						.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+				false);
+		sLevel.sendParticles(ParticleTypes.END_ROD,
+				caster.getX(), caster.getY() + 1.0, caster.getZ(),
+				50, 1.0, 1.5, 1.0, 0.02);
 	}
 	/**
 	 * Rite of Clarity Ascension (Greater, 0 blood):
@@ -341,48 +340,46 @@ public class UnstainedCardinalRiteEvents {
 	 * Requires purity = 100 (Purified stage).
 	 */
 	private static void completeClarityAscension(ServerLevel sLevel, ServerPlayer caster) {
-		HemoCapabilityAccess.getUnstainedProgress(caster).ifPresent(unstained -> {
-			unstained.setPurity(100f);
-			unstained.setBaselineRestored(true);
-			unstained.setClarityUnlocked(true);
-			unstained.setClarity(0f);
-			unstained.setClarityPrepared(false);
-			UnstainedProgressEvents.syncProgress(caster, unstained);
-			PathMutualExclusionHelper.resetHarbingerProgress(caster);
-			HemoCapabilityAccess.getEquipment(caster).ifPresent(scars -> {
-				ItemStack charmStack = scars.getStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX);
-				if (charmStack.is(ItemInit.charm_of_vascularium.get())) {
-					scars.setStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX, ItemStack.EMPTY);
-					caster.displayClientMessage(
-							Component.literal("You feel the parasitic necklace burn away, starved of nutrients from your now silvery vital humor.")
-									.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
-							false);
-				}
-			});
-			if (caster.getInventory().countItem(ItemInit.absolution_dagger.get()) == 0) {
-				ItemStack dagger = new ItemStack(ItemInit.absolution_dagger.get());
-				if (!caster.addItem(dagger)) caster.drop(dagger, false);
-			}
-
+		var unstained = HemoCapabilityAccess.getUnstainedProgress(caster);
+		unstained.setPurity(100f);
+		unstained.setBaselineRestored(true);
+		unstained.setClarityUnlocked(true);
+		unstained.setClarity(0f);
+		unstained.setClarityPrepared(false);
+		UnstainedProgressEvents.syncProgress(caster, unstained);
+		PathMutualExclusionHelper.resetHarbingerProgress(caster);
+		var scars = HemoCapabilityAccess.getEquipment(caster);
+		ItemStack charmStack = scars.getStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX);
+		if (charmStack.is(ItemInit.charm_of_vascularium.get())) {
+			scars.setStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX, ItemStack.EMPTY);
 			caster.displayClientMessage(
-					Component.literal("The veil parts. True sight is yours clarity has been unlocked.")
-							.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD),
-					false);
-			caster.displayClientMessage(
-					Component.literal("Blood magic is no longer your domain. Walk the path of enlightenment.")
+					Component.literal("You feel the parasitic necklace burn away, starved of nutrients from your now silvery vital humor.")
 							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
 					false);
-			sLevel.sendParticles(ParticleTypes.END_ROD,
-					caster.getX(), caster.getY() + 1.0, caster.getZ(),
-					80, 1.5, 2.0, 1.5, 0.03);
+		}
+		if (caster.getInventory().countItem(ItemInit.absolution_dagger.get()) == 0) {
+			ItemStack dagger = new ItemStack(ItemInit.absolution_dagger.get());
+			if (!caster.addItem(dagger)) caster.drop(dagger, false);
+		}
 
-			com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.grantIfNotDone(
-					caster, com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.ADV_PLEDGED_UNSTAINED);
-		});
+		caster.displayClientMessage(
+				Component.literal("The veil parts. True sight is yours clarity has been unlocked.")
+						.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD),
+				false);
+		caster.displayClientMessage(
+				Component.literal("Blood magic is no longer your domain. Walk the path of enlightenment.")
+						.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+				false);
+		sLevel.sendParticles(ParticleTypes.END_ROD,
+				caster.getX(), caster.getY() + 1.0, caster.getZ(),
+				80, 1.5, 2.0, 1.5, 0.03);
+
+		com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.grantIfNotDone(
+				caster, com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.ADV_PLEDGED_UNSTAINED);
 	}
 
 	private static void completeClosedVein(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
-		var casterProgress = HemoCapabilityAccess.getUnstainedProgress(caster).orElse(null);
+		var casterProgress = HemoCapabilityAccess.getUnstainedProgress(caster);
 		if (casterProgress != null && !casterProgress.isBaselineRestored()) {
 			PathMutualExclusionHelper.completeUnstainedCure(caster, casterProgress);
 			caster.displayClientMessage(Component.literal("The last current stills. Your blood returns to a mortal baseline.")
@@ -479,30 +476,28 @@ public class UnstainedCardinalRiteEvents {
 
 		int[] affected = {0};
 		for (ServerPlayer target : nearbyPlayers) {
-			HemoCapabilityAccess.getBloodVolume(target).ifPresent(volume -> {
-				if (volume.isActive()) {
-					// Apply Hemolysis effect (amplifier 2, 30 seconds)
-					target.addEffect(new MobEffectInstance(
-							EffectInit.hemolysis, 600, 2, false, true, true));
+			var volume = HemoCapabilityAccess.getBloodVolume(target);
+			if (volume.isActive()) {
+				// Apply Hemolysis effect (amplifier 2, 30 seconds)
+				target.addEffect(new MobEffectInstance(
+						EffectInit.hemolysis, 600, 2, false, true, true));
 
-					// Disrupt vascular system
-					HemoCapabilityAccess.getVascularSystem(target).ifPresent(vascular -> {
-						Map<EnumVeinSections, Float> sys = vascular.getVascularSystem();
-						for (EnumVeinSections section : EnumVeinSections.values()) {
-							float current = sys.getOrDefault(section, 100f);
-							sys.put(section, Math.max(0f, current - 30f));
-						}
-						vascular.setVascularSystem(sys);
-						VascularSystemEvents.syncVascular(target, vascular);
-					});
-
-					target.displayClientMessage(
-							Component.literal("A wave of silver light burns through your veins!")
-									.withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD),
-							false);
-					affected[0]++;
+				// Disrupt vascular system
+				var vascular = HemoCapabilityAccess.getVascularSystem(target);
+				Map<EnumVeinSections, Float> sys = vascular.getVascularSystem();
+				for (EnumVeinSections section : EnumVeinSections.values()) {
+					float current = sys.getOrDefault(section, 100f);
+					sys.put(section, Math.max(0f, current - 30f));
 				}
-			});
+				vascular.setVascularSystem(sys);
+				VascularSystemEvents.syncVascular(target, vascular);
+
+				target.displayClientMessage(
+						Component.literal("A wave of silver light burns through your veins!")
+								.withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD),
+						false);
+				affected[0]++;
+			}
 		}
 
 		String msg = affected[0] > 0
@@ -576,10 +571,9 @@ public class UnstainedCardinalRiteEvents {
 				EffectInit.verdigris_aura, SILVER_DAWN_AURA_DURATION, SILVER_DAWN_AURA_AMPLIFIER, false, true, true));
 
 		// Grant purity/clarity boost
-		HemoCapabilityAccess.getUnstainedProgress(caster).ifPresent(progress -> {
-			progress.addClarity(5.0f);
-			UnstainedProgressEvents.syncProgress(caster, progress);
-		});
+		var progress = HemoCapabilityAccess.getUnstainedProgress(caster);
+		progress.addClarity(5.0f);
+		UnstainedProgressEvents.syncProgress(caster, progress);
 
 		String msg = converted > 0
 				? "Silver dawn breaks. " + converted + " block(s) have been cleansed."
@@ -758,26 +752,25 @@ public class UnstainedCardinalRiteEvents {
 	 * Blood Moon, both checked by {@link #preflight}.
 	 */
 	private static void completeLetheanTide(ServerLevel sLevel, ServerPlayer caster) {
-		HemoCapabilityAccess.getUnstainedProgress(caster).ifPresent(unstained -> {
-			ServerLevel overworld = sLevel.getServer().overworld();
-			BloodMoonSavedData.get(overworld).stop();
-			for (ServerPlayer p : overworld.getPlayers(ServerPlayer::isAlive)) {
-				p.sendSystemMessage(Component.translatable("hemomancy.lethean_tide.end")
-						.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD));
-			}
-			PacketHandler.sendToAll(new PacketSyncBloodMoon(false));
+		var unstained = HemoCapabilityAccess.getUnstainedProgress(caster);
+		ServerLevel overworld = sLevel.getServer().overworld();
+		BloodMoonSavedData.get(overworld).stop();
+		for (ServerPlayer p : overworld.getPlayers(ServerPlayer::isAlive)) {
+			p.sendSystemMessage(Component.translatable("hemomancy.lethean_tide.end")
+					.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD));
+		}
+		PacketHandler.sendToAll(new PacketSyncBloodMoon(false));
 
-			unstained.addPurity(10f);
-			UnstainedProgressEvents.syncProgress(caster, unstained);
+		unstained.addPurity(10f);
+		UnstainedProgressEvents.syncProgress(caster, unstained);
 
-			sLevel.sendParticles(ParticleTypes.END_ROD,
-					caster.getX(), caster.getY() + 1.0, caster.getZ(),
-					120, 7.0, 5.0, 7.0, 0.04);
-			caster.displayClientMessage(
-					Component.literal("The Lethean Tide rises the Blood Moon is washed from the sky.")
-							.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
-					false);
-		});
+		sLevel.sendParticles(ParticleTypes.END_ROD,
+				caster.getX(), caster.getY() + 1.0, caster.getZ(),
+				120, 7.0, 5.0, 7.0, 0.04);
+		caster.displayClientMessage(
+				Component.literal("The Lethean Tide rises the Blood Moon is washed from the sky.")
+						.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+				false);
 	}
 
 	// ════════════════════════════════════════════════════════════════════════

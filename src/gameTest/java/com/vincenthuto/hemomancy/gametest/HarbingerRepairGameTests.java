@@ -120,10 +120,10 @@ public final class HarbingerRepairGameTests {
         rite.awakenSigil(id.toString());
         var saved = com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData.get(level);
         saved.startRite(rite);
-        var blood = HemoCapabilityAccess.requireBloodVolume(actor);
+        var blood = HemoCapabilityAccess.getBloodVolume(actor);
         blood.setActive(true);
         blood.setBloodVolume(2000);
-        HemoCapabilityAccess.requireInitiatoryDegree(actor).setDegreeNumber(7);
+        HemoCapabilityAccess.getInitiatoryDegree(actor).setDegreeNumber(7);
         actor.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(ItemInit.blood_projection.get()));
         var floor = center.offset(placement.getX() + (int) Math.round(node.x()), socket.y(),
                 placement.getZ() + (int) Math.round(node.z()));
@@ -269,10 +269,10 @@ public final class HarbingerRepairGameTests {
         rite.setSigilProgress(key, sigil.nodes().size());
         rite.awakenSigil(key);
         saved.startRite(rite);
-        var blood = HemoCapabilityAccess.requireBloodVolume(actor);
+        var blood = HemoCapabilityAccess.getBloodVolume(actor);
         blood.setActive(true);
         blood.setBloodVolume(2000);
-        HemoCapabilityAccess.requireInitiatoryDegree(actor).setDegreeNumber(7);
+        HemoCapabilityAccess.getInitiatoryDegree(actor).setDegreeNumber(7);
         actor.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(ItemInit.blood_projection.get()));
         try {
             level.setBlock(floor, net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), 3);
@@ -314,8 +314,8 @@ public final class HarbingerRepairGameTests {
     public static void pomeEmpoweredVicarRetainsOrdinaryEndingServices(GameTestHelper helper) {
         var actor = player(helper);
         var vicar = EntityInit.harbinger_vicar.get().create(helper.getLevel());
-        var degree = HemoCapabilityAccess.requireInitiatoryDegree(actor);
-        HemoCapabilityAccess.requireBloodVolume(actor).setActive(true);
+        var degree = HemoCapabilityAccess.getInitiatoryDegree(actor);
+        HemoCapabilityAccess.getBloodVolume(actor).setActive(true);
         try {
             for (var path : com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.values()) {
                 degree.setDegreeNumber(path == com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.APOTHEOS ? 8 : 7);
@@ -465,10 +465,10 @@ public final class HarbingerRepairGameTests {
         level.addFreshEntity(alchemist);
         level.addFreshEntity(vicar);
         level.addFreshEntity(polyp);
-        HemoCapabilityAccess.requireInitiatoryDegree(learner).setDegreeNumber(4);
-        HemoCapabilityAccess.requireBloodVolume(learner).setActive(true);
-        HemoCapabilityAccess.requireInitiatoryDegree(priorResearcher).setDegreeNumber(4);
-        HemoCapabilityAccess.requireBloodVolume(priorResearcher).setActive(true);
+        HemoCapabilityAccess.getInitiatoryDegree(learner).setDegreeNumber(4);
+        HemoCapabilityAccess.getBloodVolume(learner).setActive(true);
+        HemoCapabilityAccess.getInitiatoryDegree(priorResearcher).setDegreeNumber(4);
+        HemoCapabilityAccess.getBloodVolume(priorResearcher).setActive(true);
         try {
             helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingAssignment
                     .inspect(learner, alchemist), "No specimen proof must not complete handling");
@@ -491,10 +491,10 @@ public final class HarbingerRepairGameTests {
                     "The supported jar interaction must actually capture the Polyp");
             helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingAssignment
                     .inspect(learner, vicar), "The Vicar cannot inspect Morphling handling");
-            HemoCapabilityAccess.requireInitiatoryDegree(learner).setDegreeNumber(3);
+            HemoCapabilityAccess.getInitiatoryDegree(learner).setDegreeNumber(3);
             helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingAssignment
                     .inspect(learner, alchemist), "D3 capture must wait for the D4 Alchemist lesson");
-            HemoCapabilityAccess.requireInitiatoryDegree(learner).setDegreeNumber(4);
+            HemoCapabilityAccess.getInitiatoryDegree(learner).setDegreeNumber(4);
             var before = captured.copy();
             helper.assertTrue(com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingAssignment
                     .inspect(learner, alchemist), "The Alchemist should recognize the captured Polyp");
@@ -505,7 +505,7 @@ public final class HarbingerRepairGameTests {
             learner.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, ItemStack.EMPTY);
             helper.assertTrue(com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingAssignment
                     .progress(learner).inspected(), "Completed handling must survive jar removal");
-            HemoCapabilityAccess.requireSpecimenBestiary(priorResearcher)
+            HemoCapabilityAccess.getSpecimenBestiary(priorResearcher)
                     .recordSpecimen(Hemomancy.rloc("morphling_polyp"));
             alchemist.setPos(priorResearcher.position());
             helper.assertTrue(com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingAssignment
@@ -539,7 +539,7 @@ public final class HarbingerRepairGameTests {
         var hit = new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(origin), net.minecraft.core.Direction.UP, origin, false);
         try {
             blooms.setPendingPome(bloom, 0); blooms.markPendingPomeClaimed(bloom);
-            HemoCapabilityAccess.requireInitiatoryDegree(actor).recordPomeConsumed(bloom.bloomId(), origin.asLong());
+            HemoCapabilityAccess.getInitiatoryDegree(actor).recordPomeConsumed(bloom.bloomId(), origin.asLong());
             level.getBlockState(origin).useWithoutItem(level, stranger, hit);
             helper.assertTrue(blooms.getPendingPomeHuskIndex(bloom) == 0, "A stranger must not reconcile another tree");
             level.getBlockState(origin).useWithoutItem(level, actor, hit);
@@ -554,7 +554,7 @@ public final class HarbingerRepairGameTests {
     @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
     public static void duplicatePomeCannotAdvanceOrClearTheNextHusk(GameTestHelper helper) {
         var actor = player(helper);
-        HemoCapabilityAccess.requireInitiatoryDegree(actor).setDegreeNumber(7);
+        HemoCapabilityAccess.getInitiatoryDegree(actor).setDegreeNumber(7);
         var origin = helper.absolutePos(new net.minecraft.core.BlockPos(0, 45, 0));
         var blooms = com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData.get(helper.getLevel().getServer().overworld());
         var bloom = new com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData.BloomEntry(
@@ -566,20 +566,20 @@ public final class HarbingerRepairGameTests {
         try {
             blooms.setPendingPome(bloom, 0); blooms.markPendingPomeClaimed(bloom);
             fruit.getItem().finishUsingItem(fruit, helper.getLevel(), actor);
-            helper.assertTrue(HemoCapabilityAccess.requireInitiatoryDegree(actor).getTotalPomesConsumed() == 1, "First husk must count");
+            helper.assertTrue(HemoCapabilityAccess.getInitiatoryDegree(actor).getTotalPomesConsumed() == 1, "First husk must count");
             blooms.setPendingPome(bloom, 1); blooms.markPendingPomeClaimed(bloom);
             duplicate.getItem().finishUsingItem(duplicate, helper.getLevel(), actor);
-            helper.assertTrue(HemoCapabilityAccess.requireInitiatoryDegree(actor).getTotalPomesConsumed() == 1,
+            helper.assertTrue(HemoCapabilityAccess.getInitiatoryDegree(actor).getTotalPomesConsumed() == 1,
                     "Duplicate husk must not advance communion");
             helper.assertTrue(blooms.getPendingPomeHuskIndex(bloom) == 1 && duplicate.getCount() == 1,
                     "Rejected duplicate must preserve itself and the next pending husk");
             var next = com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeItem.createPickedPomeStack(bloom, 1);
             next.getItem().finishUsingItem(next, helper.getLevel(), actor);
-            helper.assertTrue(HemoCapabilityAccess.requireInitiatoryDegree(actor).getTotalPomesConsumed() == 2
+            helper.assertTrue(HemoCapabilityAccess.getInitiatoryDegree(actor).getTotalPomesConsumed() == 2
                     && blooms.getPendingPomeHuskIndex(bloom) == -1, "The actual next husk must still advance and clear itself");
             var later = com.vincenthuto.hemomancy.common.item.harbinger.QliphothPomeItem.createPickedPomeStack(bloom, 3);
             later.getItem().finishUsingItem(later, helper.getLevel(), actor);
-            helper.assertTrue(later.getCount() == 1 && HemoCapabilityAccess.requireInitiatoryDegree(actor).getTotalPomesConsumed() == 2,
+            helper.assertTrue(later.getCount() == 1 && HemoCapabilityAccess.getInitiatoryDegree(actor).getTotalPomesConsumed() == 2,
                     "An out-of-order husk must wait for its preceding fruit");
         } finally { blooms.removeBloomInChunk(origin, bloom.dimension()); actor.discard(); }
         helper.succeed();
@@ -590,7 +590,7 @@ public final class HarbingerRepairGameTests {
         var actor = player(helper);
         var first = java.util.List.of(Hemomancy.rloc("scar_heart"));
         var second = java.util.List.of(Hemomancy.rloc("scar_marrow"));
-        var scars = HemoCapabilityAccess.getScarState(actor).orElseThrow();
+        var scars = HemoCapabilityAccess.getScarState(actor);
         try {
             var mission = com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.D6_COUNSEL;
             com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.grant(actor, mission);
@@ -622,10 +622,10 @@ public final class HarbingerRepairGameTests {
         level.setBlockAndUpdate(pos, com.vincenthuto.hemomancy.common.init.BlockInit.mortal_display.get().defaultBlockState());
         var display = (com.vincenthuto.hemomancy.common.tile.harbinger.functional.MortalDisplayBlockEntity) level.getBlockEntity(pos);
         var hermit = java.util.UUID.randomUUID(); display.linkHermit(hermit);
-        HemoCapabilityAccess.requireInitiatoryDegree(first).setDegreeNumber(0);
-        HemoCapabilityAccess.requireInitiatoryDegree(second).setDegreeNumber(0);
-        HemoCapabilityAccess.getBloodVolume(first).orElseThrow().setActive(false);
-        HemoCapabilityAccess.getEquipment(first).orElseThrow().setStackInSlot(5, ItemStack.EMPTY);
+        HemoCapabilityAccess.getInitiatoryDegree(first).setDegreeNumber(0);
+        HemoCapabilityAccess.getInitiatoryDegree(second).setDegreeNumber(0);
+        HemoCapabilityAccess.getBloodVolume(first).setActive(false);
+        HemoCapabilityAccess.getEquipment(first).setStackInSlot(5, ItemStack.EMPTY);
         com.vincenthuto.hemomancy.common.rite.TempleOathRules.bless(first, hermit);
         com.vincenthuto.hemomancy.common.rite.TempleOathRules.bless(second, hermit);
         var hit = new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos), net.minecraft.core.Direction.UP, pos, false);
@@ -737,8 +737,8 @@ public final class HarbingerRepairGameTests {
 
     private static void initiationSupply(GameTestHelper helper, boolean fullInventory) {
         var player = player(helper);
-        HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(0);
-        HemoCapabilityAccess.getEquipment(player).orElseThrow().setStackInSlot(5, new ItemStack(ItemInit.charm_of_vascularium.get()));
+        HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(0);
+        HemoCapabilityAccess.getEquipment(player).setStackInSlot(5, new ItemStack(ItemInit.charm_of_vascularium.get()));
         com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.activate(player);
         if (fullInventory) for (int slot = 0; slot < 36; slot++) player.getInventory().setItem(slot, new ItemStack(net.minecraft.world.item.Items.BARRIER, 64));
         var pos = helper.absolutePos(new net.minecraft.core.BlockPos(0, 5, 0));
@@ -1029,7 +1029,7 @@ public final class HarbingerRepairGameTests {
         player.getInventory().setItem(0, jar);
         ItemStack equipped = original.copy();
         MorphlingItem.recordBondingBlood(equipped, 50);
-        HemoCapabilityAccess.getEquippedMorphling(player).orElseThrow().setEquippedMorphling(equipped);
+        HemoCapabilityAccess.getEquippedMorphling(player).setEquippedMorphling(equipped);
         EquippedMorphlingEvents.persistEquippedMorphling(player);
         MorphlingJarItemHandler stored = handler(jar);
         helper.assertTrue(ItemStack.isSameItemSameComponents(stored.getStackInSlot(0), equipped),
@@ -1049,7 +1049,7 @@ public final class HarbingerRepairGameTests {
         player.getInventory().setItem(0, jar);
         ItemStack equipped = original.copy();
         MorphlingItem.recordBondingBlood(equipped, 50);
-        HemoCapabilityAccess.getEquippedMorphling(player).orElseThrow().setEquippedMorphling(equipped);
+        HemoCapabilityAccess.getEquippedMorphling(player).setEquippedMorphling(equipped);
         EquippedMorphlingEvents.persistEquippedMorphling(player);
         for (int slot = 0; slot < 2; slot++) {
             helper.assertTrue(ItemStack.isSameItemSameComponents(handler(jar).getStackInSlot(slot), original),
@@ -1067,8 +1067,8 @@ public final class HarbingerRepairGameTests {
         MorphlingItem.setPrimalized(creature); // Stage fixture; this is not earned growth acceptance.
         MorphlingItem.setLastAbilityTick(creature, "Primal:WebOfRedThread", -10000);
         player.getInventory().setItem(1, jar(creature));
-        HemoCapabilityAccess.getEquippedMorphling(player).orElseThrow().setEquippedMorphling(creature.copy());
-        var blood = HemoCapabilityAccess.getBloodVolume(player).orElseThrow();
+        HemoCapabilityAccess.getEquippedMorphling(player).setEquippedMorphling(creature.copy());
+        var blood = HemoCapabilityAccess.getBloodVolume(player);
         blood.setActive(true);
         blood.setMaxBloodVolume(5000);
         blood.setBloodVolume(1000);
@@ -1100,7 +1100,7 @@ public final class HarbingerRepairGameTests {
                 "hemomancy:memory_weaving/memory_blood_shot")), "Explicit Blood Shot selection must succeed");
         for (int i = 0; i < 19; i++) loom.addItem(null, new ItemStack(ItemInit.vivacious_enzyme.get()), null);
         helper.assertTrue(loom.getResultItem().is(ItemInit.memory_blood_shot.get()), "Stocking 20 enzymes must not change the selected output");
-        var blood = HemoCapabilityAccess.getBloodVolume(player).orElseThrow();
+        var blood = HemoCapabilityAccess.getBloodVolume(player);
         blood.setActive(true); blood.setBloodVolume(1000);
         helper.assertTrue(loom.tryChargeRitualBlood(player, 50, true), "Selected weave must accept its authored blood charge");
         var animus = com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.ANIMUS;
@@ -1138,7 +1138,7 @@ public final class HarbingerRepairGameTests {
     @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
     public static void emptyHandCanCyclePastUnavailableStaffForm(GameTestHelper helper) {
         ServerPlayer player = player(helper);
-        var known = HemoCapabilityAccess.getKnownManipulations(player).orElseThrow();
+        var known = HemoCapabilityAccess.getKnownManipulations(player);
         var shot = com.vincenthuto.hemomancy.common.init.ManipulationInit.getByName("blood_shot");
         var blade = com.vincenthuto.hemomancy.common.init.ManipulationInit.getByName("conjure_blade");
         com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper.learnAndEquipIfPossible(known, shot, 10);
@@ -1231,9 +1231,9 @@ public final class HarbingerRepairGameTests {
     public static void guidedChamberStartAndReturnDoNotGrantAttunement(GameTestHelper helper) {
         ServerPlayer learner = player(helper);
         var chamber = com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager.CHAMBER_OF_WILL;
-        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireInitiatoryDegree(learner)
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getInitiatoryDegree(learner)
                 .setDegreeNumber(3);
-        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireBloodVolume(learner)
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(learner)
                 .setActive(true);
         try {
             if (helper.getLevel().getServer().getLevel(chamber) == null) {
@@ -1265,7 +1265,7 @@ public final class HarbingerRepairGameTests {
     public static void interruptedGuidedVisitRestoresInventoryAndEquipment(GameTestHelper helper) {
         ServerPlayer learner = player(helper);
         var equipment = (com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentContainer)
-                HemoCapabilityAccess.requireEquipment(learner);
+                HemoCapabilityAccess.getEquipment(learner);
         String prefix = "hemomancy:chamber_visit_";
         learner.getInventory().setItem(0, new ItemStack(net.minecraft.world.item.Items.IRON_INGOT, 7));
         equipment.setStackInSlot(6, new ItemStack(ItemInit.blood_gourd_white.get()));
@@ -1306,8 +1306,8 @@ public final class HarbingerRepairGameTests {
         var second = new ItemStack(com.vincenthuto.hemomancy.common.init.BlockInit.puffball_fungus.get());
         learner.getInventory().setItem(0, first);
         learner.getInventory().setItem(1, second);
-        HemoCapabilityAccess.requireInitiatoryDegree(learner).setDegreeNumber(2);
-        HemoCapabilityAccess.requireBloodVolume(learner).setActive(true);
+        HemoCapabilityAccess.getInitiatoryDegree(learner).setDegreeNumber(2);
+        HemoCapabilityAccess.getBloodVolume(learner).setActive(true);
         try {
             helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.alchemist.OverworldFungalSurvey
                     .progress(learner).ready(), "Holding specimens alone is not a visit");
@@ -1365,8 +1365,8 @@ public final class HarbingerRepairGameTests {
         var restored = player(helper);
         actor.setPos(helper.absoluteVec(new net.minecraft.world.phys.Vec3(2.5, 2, 2.5)));
         restored.setPos(actor.position());
-        HemoCapabilityAccess.requireInitiatoryDegree(actor).setDegreeNumber(0);
-        HemoCapabilityAccess.requireBloodVolume(actor).setActive(false);
+        HemoCapabilityAccess.getInitiatoryDegree(actor).setDegreeNumber(0);
+        HemoCapabilityAccess.getBloodVolume(actor).setActive(false);
         var firstTeacher = EntityInit.harbinger_alchemist.get().create(helper.getLevel());
         var secondTeacher = EntityInit.harbinger_alchemist.get().create(helper.getLevel());
         try {
@@ -1385,8 +1385,8 @@ public final class HarbingerRepairGameTests {
                     "Ordinary early discovery must remain useful before the report");
             restored.getPersistentData().put(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG,
                     actor.getPersistentData().getCompound(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG).copy());
-            HemoCapabilityAccess.requireInitiatoryDegree(restored).setDegreeNumber(2);
-            HemoCapabilityAccess.requireBloodVolume(restored).setActive(true);
+            HemoCapabilityAccess.getInitiatoryDegree(restored).setDegreeNumber(2);
+            HemoCapabilityAccess.getBloodVolume(restored).setActive(true);
             var first = new ItemStack(com.vincenthuto.hemomancy.common.init.BlockInit.infected_fungus.get());
             var second = new ItemStack(com.vincenthuto.hemomancy.common.init.BlockInit.puffball_fungus.get());
             first.set(DataComponents.CUSTOM_NAME, net.minecraft.network.chat.Component.literal("Retained fungus"));
@@ -1427,8 +1427,8 @@ public final class HarbingerRepairGameTests {
         vicar.setPos(learner.position());
         level.addFreshEntity(voyager);
         level.addFreshEntity(vicar);
-        HemoCapabilityAccess.requireInitiatoryDegree(learner).setDegreeNumber(2);
-        HemoCapabilityAccess.requireBloodVolume(learner).setActive(true);
+        HemoCapabilityAccess.getInitiatoryDegree(learner).setDegreeNumber(2);
+        HemoCapabilityAccess.getBloodVolume(learner).setActive(true);
         try {
             helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.canRequestBearing(
                     learner, vicar), "The vessel bearing begins at Degree 3, not Degree 2");
@@ -1449,18 +1449,18 @@ public final class HarbingerRepairGameTests {
                     "An active vessel is valid even at a reef edge");
             helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.observe(
                     learner, voyager), "A spawned Voyager outside a reef or vessel cannot grant proof");
-            HemoCapabilityAccess.requireInitiatoryDegree(learner).setDegreeNumber(3);
+            HemoCapabilityAccess.getInitiatoryDegree(learner).setDegreeNumber(3);
             helper.assertTrue(com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.canRequestBearing(
                     learner, vicar), "An eligible unobserved Overworld learner can request the lead");
             vicar.setPos(learner.getX() + 20, learner.getY(), learner.getZ());
             helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.canRequestBearing(
                     learner, vicar), "The bearing cannot be requested from a distant teacher");
             vicar.setPos(learner.position());
-            HemoCapabilityAccess.requireBloodVolume(learner).setActive(false);
+            HemoCapabilityAccess.getBloodVolume(learner).setActive(false);
             helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.canRequestBearing(
                     learner, vicar), "The bearing respects active-blood eligibility");
-            HemoCapabilityAccess.requireBloodVolume(learner).setActive(true);
-            HemoCapabilityAccess.requireInitiatoryDegree(learner).setDegreeNumber(2);
+            HemoCapabilityAccess.getBloodVolume(learner).setActive(true);
+            HemoCapabilityAccess.getInitiatoryDegree(learner).setDegreeNumber(2);
             var persisted = learner.getPersistentData().getCompound(
                     net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG);
             var evidence = new net.minecraft.nbt.CompoundTag();
@@ -1469,7 +1469,7 @@ public final class HarbingerRepairGameTests {
             learner.getPersistentData().put(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG, persisted);
             helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.report(
                     learner, vicar), "A prior observation is saved but the formal report begins at Degree 3");
-            HemoCapabilityAccess.requireInitiatoryDegree(learner).setDegreeNumber(3);
+            HemoCapabilityAccess.getInitiatoryDegree(learner).setDegreeNumber(3);
             helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.canRequestBearing(
                     learner, vicar), "An earlier observation needs a report, not another journey");
             helper.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.report(
@@ -1579,8 +1579,8 @@ public final class HarbingerRepairGameTests {
         var block = com.vincenthuto.hemomancy.common.init.BlockInit.scar_station.get();
         level.setBlockAndUpdate(pos, block.defaultBlockState());
         student.setPos(pos.getX() + 1, pos.getY(), pos.getZ());
-        HemoCapabilityAccess.requireInitiatoryDegree(student).setDegreeNumber(4);
-        HemoCapabilityAccess.requireBloodVolume(student).setActive(true);
+        HemoCapabilityAccess.getInitiatoryDegree(student).setDegreeNumber(4);
+        HemoCapabilityAccess.getBloodVolume(student).setActive(true);
         com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.grantIfNotDone(student,
                 com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_LESSON);
         helper.assertTrue(!com.vincenthuto.hemomancy.common.event.MachineAccessEvents.canUseStation(student, level, pos),
@@ -1623,7 +1623,7 @@ public final class HarbingerRepairGameTests {
         var npc = com.vincenthuto.hemomancy.common.init.EntityInit.harbinger_vicar.get().create(helper.getLevel());
         var line = new com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline(
                 "supplied-line", player.getUUID(), UUID.randomUUID(), new java.util.ArrayList<>(java.util.List.of(player.getUUID())));
-        HemoCapabilityAccess.requireBloodVolume(player).setBloodLine(line);
+        HemoCapabilityAccess.getBloodVolume(player).setBloodLine(line);
         player.getInventory().setItem(0, new ItemStack(ItemInit.blood_projection.get()));
         helper.assertTrue(!com.vincenthuto.hemomancy.common.event.BloodProjectionInteractionEvents.prefersProjectionOverConversation(player, npc),
                 "An unrelated NPC retains ordinary interaction");
@@ -1684,8 +1684,8 @@ public final class HarbingerRepairGameTests {
         learner.setPos(helper.absoluteVec(new net.minecraft.world.phys.Vec3(2.5, 2, 2.5)));
         vicar.setPos(learner.position());
         helper.getLevel().addFreshEntity(vicar);
-        HemoCapabilityAccess.requireInitiatoryDegree(learner).setDegreeNumber(3);
-        HemoCapabilityAccess.requireBloodVolume(learner).setActive(true);
+        HemoCapabilityAccess.getInitiatoryDegree(learner).setDegreeNumber(3);
+        HemoCapabilityAccess.getBloodVolume(learner).setActive(true);
         try {
             helper.assertTrue(com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.tellBearing(
                     learner, vicar), "An eligible player must be able to request chart work");
@@ -1716,8 +1716,8 @@ public final class HarbingerRepairGameTests {
                 });
                 learners.add(learner);
                 learner.setPos(vicar.position());
-                HemoCapabilityAccess.requireInitiatoryDegree(learner).setDegreeNumber(3);
-                HemoCapabilityAccess.requireBloodVolume(learner).setActive(true);
+                HemoCapabilityAccess.getInitiatoryDegree(learner).setDegreeNumber(3);
+                HemoCapabilityAccess.getBloodVolume(learner).setActive(true);
                 boolean accepted = com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroduction.tellBearing(learner, vicar);
                 helper.assertTrue(accepted == (index < 8), "The chart queue admits eight distinct requests, not nine");
                 if (index == 0) helper.assertTrue(

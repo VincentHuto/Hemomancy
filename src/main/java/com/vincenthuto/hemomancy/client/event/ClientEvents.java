@@ -354,8 +354,7 @@ public class ClientEvents {
 		handleManipulationInput();
         if (useStillArt.consumeClick()) {
             Minecraft mc = Minecraft.getInstance();
-            if (mc.player != null && HemoCapabilityAccess.getUnstainedProgress(mc.player)
-                    .map(progress -> progress.hasClarityUnlocked()).orElse(false)) {
+            if (mc.player != null && HemoCapabilityAccess.getUnstainedProgress(mc.player).hasClarityUnlocked()) {
                 PacketHandler.sendToServer(new UseStillArtKeyPacket());
             }
         }
@@ -375,68 +374,67 @@ public class ClientEvents {
             interruptManipulationCharge();
             return;
         }
-		HemoCapabilityAccess.getKnownManipulations(mc.player).ifPresent(known -> {
-			var memory = known.getSelectedMemoryRef();
-			boolean thelemic = memory.kind() == MemoryEntryKind.MUSCLE_MEMORY;
-			var selected = thelemic ? null : ManipulationInit.getByName(memory.id());
-			if (selected == null && !thelemic) {
-                stopCastingChargePresentation();
-				if (lastManipulationType == EnumManipulationType.CONTINUOUS && manipulationChargeTicks > 0) {
-					PacketHandler.sendToServer(UseManipKeyPacket.stopContinuous());
-				}
-				manipulationChargeTicks = 0;
-				lastManipulationName = "";
-				lastManipulationType = null;
-				return;
-			}
-			boolean down = useManip.isDown();
-			boolean clicked = useManip.consumeClick();
-			var type = thelemic ? EnumManipulationType.PASSIVE : selected.getType();
-			if (!memory.storageKey().equals(lastManipulationName)) {
-                stopCastingChargePresentation();
-				if (lastManipulationType == EnumManipulationType.CONTINUOUS && manipulationChargeTicks > 0) {
-					PacketHandler.sendToServer(UseManipKeyPacket.stopContinuous());
-				}
-				manipulationChargeTicks = 0;
-				lastManipulationName = memory.storageKey();
-				lastManipulationType = type;
-				suppressManipulationUntilRelease = down && !clicked;
-			}
-			if (suppressManipulationUntilRelease) {
-				if (down) return;
-				suppressManipulationUntilRelease = false;
-			}
-			if (type == EnumManipulationType.CHARGED && down
-					&& mc.player.hurtTime > 0 && mc.player.hurtTime == mc.player.hurtDuration
-					&& manipulationChargeTicks > 0) {
-				manipulationChargeTicks = com.vincenthuto.hemomancy.common.capability.player.shared.skill.BodyRefinementSkillRules
-						.retainedChargeTicks(manipulationChargeTicks,
-								SkillPointHelper.getNervesOfSteelLevel(mc.player));
-			}
-			var input = ManipulationInputRules.tick(type, down, clicked,
-					manipulationChargeTicks, thelemic ? 0 : selected.getRequiredChargeTicks());
-			manipulationChargeTicks = input.nextHeldTicks();
-            if (type == EnumManipulationType.CHARGED
-                    && down && input.action() != ManipulationInputRules.Action.CAST
-                    && (manipulationChargeTicks == 1 || manipulationChargeTicks % 4 == 0)) {
-                PacketHandler.sendToServer(new com.vincenthuto.hemomancy.common.network.CastingChargePacket(
-                        selected.getName(), manipulationChargeTicks));
-            }
-            if (type == EnumManipulationType.CHARGED
-                    && (down || input.action() == ManipulationInputRules.Action.CAST)
-                    && com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.chargeForm(selected.getName()) != null
-                    && (manipulationChargeTicks % 4 == 0 || input.action() == ManipulationInputRules.Action.CAST)) {
-                PacketHandler.sendToServer(new com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.ManipulationChargeVisualPacket(
-                        input.action() == ManipulationInputRules.Action.CAST ? 0 : manipulationChargeTicks));
-            }
-			switch (input.action()) {
-				case NONE -> {
-				}
-				case START_CONTINUOUS -> PacketHandler.sendToServer(UseManipKeyPacket.startContinuous());
-				case STOP_CONTINUOUS -> PacketHandler.sendToServer(UseManipKeyPacket.stopContinuous());
-				case CAST -> PacketHandler.sendToServer(new UseManipKeyPacket(input.castTicks()));
-			}
-		});
+		var known = HemoCapabilityAccess.getKnownManipulations(mc.player);
+					var memory = known.getSelectedMemoryRef();
+					boolean thelemic = memory.kind() == MemoryEntryKind.MUSCLE_MEMORY;
+					var selected = thelemic ? null : ManipulationInit.getByName(memory.id());
+					if (selected == null && !thelemic) {
+		                stopCastingChargePresentation();
+						if (lastManipulationType == EnumManipulationType.CONTINUOUS && manipulationChargeTicks > 0) {
+							PacketHandler.sendToServer(UseManipKeyPacket.stopContinuous());
+						}
+						manipulationChargeTicks = 0;
+						lastManipulationName = "";
+						lastManipulationType = null;
+						return;
+					}
+					boolean down = useManip.isDown();
+					boolean clicked = useManip.consumeClick();
+					var type = thelemic ? EnumManipulationType.PASSIVE : selected.getType();
+					if (!memory.storageKey().equals(lastManipulationName)) {
+		                stopCastingChargePresentation();
+						if (lastManipulationType == EnumManipulationType.CONTINUOUS && manipulationChargeTicks > 0) {
+							PacketHandler.sendToServer(UseManipKeyPacket.stopContinuous());
+						}
+						manipulationChargeTicks = 0;
+						lastManipulationName = memory.storageKey();
+						lastManipulationType = type;
+						suppressManipulationUntilRelease = down && !clicked;
+					}
+					if (suppressManipulationUntilRelease) {
+						if (down) return;
+						suppressManipulationUntilRelease = false;
+					}
+					if (type == EnumManipulationType.CHARGED && down
+							&& mc.player.hurtTime > 0 && mc.player.hurtTime == mc.player.hurtDuration
+							&& manipulationChargeTicks > 0) {
+						manipulationChargeTicks = com.vincenthuto.hemomancy.common.capability.player.shared.skill.BodyRefinementSkillRules
+								.retainedChargeTicks(manipulationChargeTicks,
+										SkillPointHelper.getNervesOfSteelLevel(mc.player));
+					}
+					var input = ManipulationInputRules.tick(type, down, clicked,
+							manipulationChargeTicks, thelemic ? 0 : selected.getRequiredChargeTicks());
+					manipulationChargeTicks = input.nextHeldTicks();
+		            if (type == EnumManipulationType.CHARGED
+		                    && down && input.action() != ManipulationInputRules.Action.CAST
+		                    && (manipulationChargeTicks == 1 || manipulationChargeTicks % 4 == 0)) {
+		                PacketHandler.sendToServer(new com.vincenthuto.hemomancy.common.network.CastingChargePacket(
+		                        selected.getName(), manipulationChargeTicks));
+		            }
+		            if (type == EnumManipulationType.CHARGED
+		                    && (down || input.action() == ManipulationInputRules.Action.CAST)
+		                    && com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.chargeForm(selected.getName()) != null
+		                    && (manipulationChargeTicks % 4 == 0 || input.action() == ManipulationInputRules.Action.CAST)) {
+		                PacketHandler.sendToServer(new com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.ManipulationChargeVisualPacket(
+		                        input.action() == ManipulationInputRules.Action.CAST ? 0 : manipulationChargeTicks));
+		            }
+					switch (input.action()) {
+						case NONE -> {
+						}
+						case START_CONTINUOUS -> PacketHandler.sendToServer(UseManipKeyPacket.startContinuous());
+						case STOP_CONTINUOUS -> PacketHandler.sendToServer(UseManipKeyPacket.stopContinuous());
+						case CAST -> PacketHandler.sendToServer(new UseManipKeyPacket(input.castTicks()));
+					}
 	}
 
     public static void interruptManipulationCharge() {
@@ -510,8 +508,7 @@ public class ClientEvents {
         Minecraft mc = Minecraft.getInstance();
 		handleCrossbarRadialTick(mc);
         if (mc.screen == null && selectStillArt.consumeClick() && mc.player != null
-                && HemoCapabilityAccess.getUnstainedProgress(mc.player)
-                .map(progress -> progress.hasClarityUnlocked()).orElse(false)) {
+                && HemoCapabilityAccess.getUnstainedProgress(mc.player).hasClarityUnlocked()) {
             mc.setScreen(new RadialChooseStillArtScreen());
         }
         if (mc.screen == null) {
@@ -521,11 +518,10 @@ public class ClientEvents {
 
                 while (openVascCharmMenu.consumeClick()) {
                     if (mc.screen == null && mc.player != null) {
-                        HemoCapabilityAccess.getEquipment(mc.player).ifPresent(inv -> {
-                            if (inv.getStackInSlot(5).getItem() instanceof VasculariumCharmItem charm) {
-                                mc.setScreen(new RadialChooseManipScreen(inv));
-                            }
-                        });
+                        var inv = HemoCapabilityAccess.getEquipment(mc.player);
+                        if (inv.getStackInSlot(5).getItem() instanceof VasculariumCharmItem charm) {
+                            mc.setScreen(new RadialChooseManipScreen(inv));
+                        }
                     }
                 }
             }

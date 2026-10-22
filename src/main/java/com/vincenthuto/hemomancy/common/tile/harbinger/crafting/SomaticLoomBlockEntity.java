@@ -554,7 +554,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 			}
 		}
 
-		IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player);
 		if (playerVolume == null || !playerVolume.isActive() || playerVolume.getBloodVolume() <= 0) {
 			msg(player, "No blood answers the loom.", ChatFormatting.DARK_RED, true);
 			return false;
@@ -791,12 +791,12 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 				EngramWeaveRules.committed(board, tend.ordinal()));
 		storedEnzymes.put(tend, stock - burnt);
 		int unpaid = spans - burnt;
-		if (unpaid > 0 && player instanceof ServerPlayer serverPlayer)
-			HemoCapabilityAccess.getBloodVolume(serverPlayer).ifPresent(volume -> {
-				if (volume.isActive() && volume.drain(Math.min(volume.getBloodVolume(), unpaid * EngramWeaveRules.BURN_BLOOD_PER_SPAN)))
-					PacketHandler.sendToPlayer(serverPlayer,
-							new com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket(volume));
-			});
+		if (unpaid > 0 && player instanceof ServerPlayer serverPlayer) {
+			var volume = HemoCapabilityAccess.getBloodVolume(serverPlayer);
+			if (volume.isActive() && volume.drain(Math.min(volume.getBloodVolume(), unpaid * EngramWeaveRules.BURN_BLOOD_PER_SPAN)))
+				PacketHandler.sendToPlayer(serverPlayer,
+						new com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket(volume));
+		}
 		msg(player, "The false memory burns " + spans + " spans of " + tend.name().toLowerCase(java.util.Locale.ROOT)
 				+ " thread" + (unpaid > 0 ? ", and takes the rest from your blood." : "."), ChatFormatting.RED, true);
 	}

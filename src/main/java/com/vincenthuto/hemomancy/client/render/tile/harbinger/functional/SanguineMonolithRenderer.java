@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.functional.SanguineMonolithModel;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineMonolithBlockEntity;
 import com.vincenthuto.hutoslib.math.Vector3;
@@ -303,8 +302,7 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 			return 0;
 		}
 		return HemoCapabilityAccess.getInitiatoryDegree(mc.player)
-				.map(IInitiatoryDegree::getDegreeNumber)
-				.orElse(0);
+				.getDegreeNumber();
 	}
 
 	private record TendrilVisualState(float lengthScale, float zoneHeight, float colorMix, int targetR, int targetG,

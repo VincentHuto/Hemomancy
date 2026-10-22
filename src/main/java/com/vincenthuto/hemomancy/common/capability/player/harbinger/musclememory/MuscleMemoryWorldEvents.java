@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.*;
 import net.minecraft.core.registries.Registries;
@@ -65,7 +64,7 @@ public final class MuscleMemoryWorldEvents {
     @SubscribeEvent
     public static void irontoothBreakSpeed(PlayerEvent.BreakSpeed event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        MuscleMemoryState state = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+        MuscleMemoryState state = HemoCapabilityAccess.muscleMemory(player);
         if (state.isActive(MuscleMemory.LABORING_ARMS, player.level().getGameTime())
                 && event.getState().is(LABORING_RESISTANT)
                 && MuscleMemoryActivationService.hasSignatureMorphling(player, IrontoothMorphlingItem.class)) {
@@ -77,7 +76,7 @@ public final class MuscleMemoryWorldEvents {
     public static void tick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         long now = player.level().getGameTime();
-        MuscleMemoryState memoryState = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+        MuscleMemoryState memoryState = HemoCapabilityAccess.muscleMemory(player);
         memoryState.migrateLegacyPriming(now);
         boolean reserveChanged = memoryState.tickActiveReserves();
         if (reserveChanged && (player.tickCount % 20 == 0 || !memoryState.hasEnabledMemories())) {
@@ -122,7 +121,7 @@ public final class MuscleMemoryWorldEvents {
     private static void handleHushed(ServerPlayer player, double horizontal, long now) {
         boolean eligible = MuscleMemoryPowerRules.hushedEligible(
                 player.level().getMaxLocalRawBrightness(player.blockPosition()), player.isSprinting(), horizontal > .001D);
-        MuscleMemoryState state = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+        MuscleMemoryState state = HemoCapabilityAccess.muscleMemory(player);
         if (eligible && state.isEnabled(MuscleMemory.HUSHED_GAIT)
                 && !state.isActive(MuscleMemory.HUSHED_GAIT, now)) {
             MuscleMemoryActivationService.tryTriggerDetailed(player, MuscleMemory.HUSHED_GAIT, 40, 120);
@@ -132,7 +131,7 @@ public final class MuscleMemoryWorldEvents {
     private static void handlePredatoryEyes(ServerPlayer player) {
         if (player.level().getMaxLocalRawBrightness(player.blockPosition()) > 4) return;
         boolean witch = MuscleMemoryActivationService.hasSignatureMorphling(player, WitchsEarMorphlingItem.class);
-        MuscleMemoryState state = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+        MuscleMemoryState state = HemoCapabilityAccess.muscleMemory(player);
         boolean armed = state.isOverexertionArmed(MuscleMemory.PREDATORY_EYES, player.level().getGameTime());
         double radius = armed ? 24D : (witch ? 12D : 16D);
         List<Monster> targets = player.level().getEntitiesOfClass(Monster.class,
@@ -162,7 +161,7 @@ public final class MuscleMemoryWorldEvents {
 
     private static void handleWinterShroud(ServerPlayer player, TickSnapshot previous, FoodData food,
             double horizontal, long now) {
-        MuscleMemoryState state = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+        MuscleMemoryState state = HemoCapabilityAccess.muscleMemory(player);
         boolean signature = MuscleMemoryActivationService.hasSignatureMorphling(player, WinterShroudMorphlingItem.class);
         boolean empowered = state.isEmpowered(MuscleMemory.ENDURING_VISCERA, now);
         if (!signature && !empowered) return;
@@ -177,11 +176,11 @@ public final class MuscleMemoryWorldEvents {
     public static void quietGameEvents(VanillaGameEvent event) {
         if (!(event.getCause() instanceof ServerPlayer player)) return;
         long now = player.level().getGameTime();
-        if (!player.getData(HemoAttachmentTypes.MUSCLE_MEMORY).isActive(MuscleMemory.HUSHED_GAIT, now)) return;
+        if (!HemoCapabilityAccess.muscleMemory(player).isActive(MuscleMemory.HUSHED_GAIT, now)) return;
         boolean quiet = event.getVanillaEvent().equals(GameEvent.STEP)
                 || event.getVanillaEvent().equals(GameEvent.SWIM)
                 || event.getVanillaEvent().equals(GameEvent.SPLASH);
-        boolean deepHush = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY)
+        boolean deepHush = HemoCapabilityAccess.muscleMemory(player)
                 .isEmpowered(MuscleMemory.HUSHED_GAIT, now);
         boolean bootlaceLanding = event.getVanillaEvent().equals(GameEvent.HIT_GROUND)
                 && (deepHush || (player.fallDistance <= 6F
@@ -208,14 +207,13 @@ public final class MuscleMemoryWorldEvents {
         food.setFoodLevel(Math.min(20, food.getFoodLevel() + (trigger.overexerted() ? 4 : 2)));
         food.setSaturation(Math.min(food.getFoodLevel(), food.getSaturationLevel() + (trigger.overexerted() ? 2F : 1F)));
         if (trigger.overexerted()) player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 200, 0));
-        HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
-            ItemStack equipped = cap.getEquippedMorphling();
-            if (equipped.getItem() instanceof GravecapMorphlingItem) MorphlingItem.markFedNow(equipped, player.level().getGameTime());
-        });
+        var cap = HemoCapabilityAccess.getEquippedMorphling(player);
+        ItemStack equipped = cap.getEquippedMorphling();
+        if (equipped.getItem() instanceof GravecapMorphlingItem) MorphlingItem.markFedNow(equipped, player.level().getGameTime());
     }
 
     private static void updateModifiers(ServerPlayer player) {
-        MuscleMemoryState state = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+        MuscleMemoryState state = HemoCapabilityAccess.muscleMemory(player);
         long now = player.level().getGameTime();
         updateModifier(player.getAttribute(Attributes.BLOCK_BREAK_SPEED), LABORING_ID,
                 state.isActive(MuscleMemory.LABORING_ARMS, now),

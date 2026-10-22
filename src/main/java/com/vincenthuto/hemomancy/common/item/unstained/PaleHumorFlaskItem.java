@@ -90,29 +90,25 @@ public class PaleHumorFlaskItem extends Item {
             }
 
             // Drink — fill white humor reservoir
-            var whOpt = HemoCapabilityAccess.getWhiteHumorVolume(player);
-            if (whOpt.isPresent()) {
-                var vol = whOpt.get();
-                // Activate the reservoir the first time if the player has begun purification
-                if (!vol.isActive()) {
-                    HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
-                        if (progress.hasBegunPurification()) vol.setActive(true);
-                    });
-                }
-                if (vol.isActive()) {
-                    if (vol.isFull()) {
-                        player.displayClientMessage(
-                                Component.literal("Your humors are already in balance."), true);
-                    } else {
-                        vol.fill(amount);
-                        level.playSound(null, player.blockPosition(),
-                                SoundEvents.HONEY_DRINK, SoundSource.PLAYERS, 0.8f, 1.2f);
-                        stack.shrink(1);
-                    }
-                } else {
+            var vol = HemoCapabilityAccess.getWhiteHumorVolume(player);
+            // Activate the reservoir the first time if the player has begun purification
+            if (!vol.isActive()) {
+                var progress = HemoCapabilityAccess.getUnstainedProgress(player);
+                if (progress.hasBegunPurification()) vol.setActive(true);
+            }
+            if (vol.isActive()) {
+                if (vol.isFull()) {
                     player.displayClientMessage(
-                            Component.literal("You have no use for this yet."), true);
+                            Component.literal("Your humors are already in balance."), true);
+                } else {
+                    vol.fill(amount);
+                    level.playSound(null, player.blockPosition(),
+                            SoundEvents.HONEY_DRINK, SoundSource.PLAYERS, 0.8f, 1.2f);
+                    stack.shrink(1);
                 }
+            } else {
+                player.displayClientMessage(
+                        Component.literal("You have no use for this yet."), true);
             }
         }
 

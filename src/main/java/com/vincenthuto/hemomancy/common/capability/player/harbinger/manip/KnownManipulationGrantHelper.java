@@ -52,15 +52,14 @@ public final class KnownManipulationGrantHelper {
 		if (player == null || manipulation == null || manipulation == BloodManipulation.BLANK) {
 			return new MemoryGrantResult(MemoryGrantStatus.INVALID, manipulation, 0);
 		}
-		if (HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(UnstainedAccessRules::blocksHarbingerProgress).orElse(false)) {
+		if (UnstainedAccessRules.blocksHarbingerProgress(HemoCapabilityAccess.getUnstainedProgress(player))) {
 			return new MemoryGrantResult(MemoryGrantStatus.NO_ACTIVE_BLOOD, manipulation, 0);
 		}
 		if (ManipulationRetirementRules.isRetiredManipulation(manipulation)
 				|| (memoryItem != null && ManipulationRetirementRules.isRetiredMemoryItem(memoryItem, manipulation))) {
 			return new MemoryGrantResult(MemoryGrantStatus.RETIRED, manipulation, 0);
 		}
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null || !volume.isActive()) {
 			return new MemoryGrantResult(MemoryGrantStatus.NO_ACTIVE_BLOOD, manipulation, 0);
 		}
@@ -69,7 +68,7 @@ public final class KnownManipulationGrantHelper {
 				manipulation.getRank())) {
 			return new MemoryGrantResult(MemoryGrantStatus.RANK_TOO_LOW, manipulation, requiredDegree);
 		}
-		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 		if (known == null) {
 			return new MemoryGrantResult(MemoryGrantStatus.INVALID, manipulation, requiredDegree);
 		}
@@ -113,7 +112,7 @@ public final class KnownManipulationGrantHelper {
 				|| (memoryItem != null && ManipulationRetirementRules.isRetiredMemoryItem(memoryItem, manipulation))) {
 			return new MemoryGrantResult(MemoryGrantStatus.RETIRED, manipulation, 0);
 		}
-		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 		if (known == null) {
 			return new MemoryGrantResult(MemoryGrantStatus.INVALID, manipulation, 0);
 		}
@@ -125,7 +124,7 @@ public final class KnownManipulationGrantHelper {
 
 	private static MemoryGrantResult addMemory(ServerPlayer player, BloodManipulation manipulation,
 			int requiredDegree) {
-		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player);
 		if (known == null) {
 			return new MemoryGrantResult(MemoryGrantStatus.INVALID, manipulation, requiredDegree);
 		}
@@ -168,17 +167,13 @@ public final class KnownManipulationGrantHelper {
 
 	public static boolean grantDegreeOneUtilities(ServerPlayer player) {
 		if (player == null || HemoCapabilityAccess.getPlayerDegreeNumber(player) < 1) return false;
-		if (HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(UnstainedAccessRules::blocksHarbingerProgress).orElse(false)) return false;
-		return HemoCapabilityAccess.getKnownManipulations(player)
-				.map(known -> {
-					int maxSlots = ManipSlotHelper.getMaxSlots(player);
-					boolean changed = false;
-					changed |= grant(known, ManipulationInit.blood_absorption, maxSlots);
-					changed |= grant(known, ManipulationInit.blood_projection, maxSlots);
-					return changed;
-				})
-				.orElse(false);
+		if (UnstainedAccessRules.blocksHarbingerProgress(HemoCapabilityAccess.getUnstainedProgress(player))) return false;
+		var known = HemoCapabilityAccess.getKnownManipulations(player);
+		int maxSlots = ManipSlotHelper.getMaxSlots(player);
+		boolean changed = false;
+		changed |= grant(known, ManipulationInit.blood_absorption, maxSlots);
+		changed |= grant(known, ManipulationInit.blood_projection, maxSlots);
+		return changed;
 	}
 
 	private static boolean grant(IKnownManipulations known,

@@ -38,8 +38,8 @@ public class ManipulationAcquisitionGameTests {
         var p = player(h);
         try {
             p.setGameMode(GameType.CREATIVE);
-            HemoCapabilityAccess.requireBloodVolume(p).setActive(false);
-            HemoCapabilityAccess.getInitiatoryDegree(p).orElseThrow().setDegreeNumber(0);
+            HemoCapabilityAccess.getBloodVolume(p).setActive(false);
+            HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(0);
             var memory = ItemInit.memory_guided_blood_shot.get();
             var manipulation = ManipulationInit.guided_blood_shot.get();
             var stack = new ItemStack(memory);
@@ -47,7 +47,7 @@ public class ManipulationAcquisitionGameTests {
 
             memory.use(h.getLevel(), p, InteractionHand.MAIN_HAND);
 
-            h.assertTrue(HemoCapabilityAccess.requireKnownManipulations(p).getManipLevel(manipulation) != null,
+            h.assertTrue(HemoCapabilityAccess.getKnownManipulations(p).getManipLevel(manipulation) != null,
                     "Creative right-click did not learn the memory");
             h.assertTrue(stack.getCount() == 1, "Creative learning consumed the memory item");
             h.succeed();
@@ -94,7 +94,7 @@ public class ManipulationAcquisitionGameTests {
                 staff.set(DataComponents.CUSTOM_NAME, Component.literal(form));
                 p.setItemInHand(InteractionHand.MAIN_HAND, staff);
                 p.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.DIAMOND));
-                var blood = HemoCapabilityAccess.requireBloodVolume(p);
+                var blood = HemoCapabilityAccess.getBloodVolume(p);
                 blood.setBloodVolume(249);
                 var manip = ManipulationInit.getByName("conjure_" + form);
                 h.assertTrue(!LivingStaffWeaponFormHelper.applySelection(p, manip), form + " switched below cost");
@@ -114,8 +114,8 @@ public class ManipulationAcquisitionGameTests {
     public static void allFamiliesGateLearningAndShareProgressAfterReload(GameTestHelper h) {
         var p = player(h);
         try {
-            HemoCapabilityAccess.getInitiatoryDegree(p).orElseThrow().setDegreeNumber(7);
-            var known = HemoCapabilityAccess.requireKnownManipulations(p);
+            HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(7);
+            var known = HemoCapabilityAccess.getKnownManipulations(p);
             int[] thresholds = {0, 10, 35, 85, 185};
             for (var family : ManipulationFamilyRegistry.families()) {
                 known.getKnownManips().clear();
@@ -150,12 +150,12 @@ public class ManipulationAcquisitionGameTests {
         try {
             var memory = ItemInit.memory_thread_ripper.get();
             var manip = ManipulationInit.thread_ripper.get();
-            var known = HemoCapabilityAccess.requireKnownManipulations(p);
+            var known = HemoCapabilityAccess.getKnownManipulations(p);
             com.vincenthuto.hemomancy.common.entity.npc.circus.CircusRingmasterEntity.grantLiberationMemory(p);
             h.assertTrue(p.getInventory().countItem(memory) == 1, "Rejected reward vanished");
             h.assertTrue(!known.doesListContainName(known.getKnownManips(), manip), "Reward bypassed rank gate");
             p.getInventory().clearContent();
-            HemoCapabilityAccess.getInitiatoryDegree(p).orElseThrow().setDegreeNumber(7);
+            HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(7);
             com.vincenthuto.hemomancy.common.entity.npc.circus.CircusRingmasterEntity.grantLiberationMemory(p);
             h.assertTrue(known.doesListContainName(known.getKnownManips(), manip), "Eligible reward not learned");
             com.vincenthuto.hemomancy.common.entity.npc.circus.CircusRingmasterEntity.grantLiberationMemory(p);
@@ -171,18 +171,18 @@ public class ManipulationAcquisitionGameTests {
             for (String name : java.util.List.of("blood_shot", "blood_rush", "deadly_gaze", "sanguine_mending", "hemorrhage", "glacial_grasp", "sanguine_ignition", "void_shroud")) {
                 var item = (com.vincenthuto.hemomancy.common.item.harbinger.memories.CrudeMemoryShardItem)
                         net.minecraft.core.registries.BuiltInRegistries.ITEM.get(Hemomancy.rloc("crude_memory_" + name));
-                HemoCapabilityAccess.getInitiatoryDegree(p).orElseThrow().setDegreeNumber(
+                HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(
                         com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates.minDegreeForRank(item.getManip().getRank()));
-                HemoCapabilityAccess.requireBloodVolume(p).setBloodVolume(1500);
+                HemoCapabilityAccess.getBloodVolume(p).setBloodVolume(1500);
                 var stack = new ItemStack(item);
                 p.setItemInHand(InteractionHand.MAIN_HAND, stack);
                 item.use(h.getLevel(), p, InteractionHand.MAIN_HAND);
                 h.assertTrue(stack.isEmpty(), name + " learning did not consume memory");
-                h.assertTrue(HemoCapabilityAccess.requireKnownManipulations(p).getManipLevel(item.getManip()) != null, name + " not learned");
-                h.assertTrue(HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume() == 1000, name + " wrong learning cost");
+                h.assertTrue(HemoCapabilityAccess.getKnownManipulations(p).getManipLevel(item.getManip()) != null, name + " not learned");
+                h.assertTrue(HemoCapabilityAccess.getBloodVolume(p).getBloodVolume() == 1000, name + " wrong learning cost");
                 var duplicate = new ItemStack(item); p.setItemInHand(InteractionHand.MAIN_HAND, duplicate);
                 item.use(h.getLevel(), p, InteractionHand.MAIN_HAND);
-                h.assertTrue(!duplicate.isEmpty() && HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume() == 1000, name + " duplicate consumed resources");
+                h.assertTrue(!duplicate.isEmpty() && HemoCapabilityAccess.getBloodVolume(p).getBloodVolume() == 1000, name + " duplicate consumed resources");
             }
             h.succeed();
         } finally { p.discard(); }
@@ -192,7 +192,7 @@ public class ManipulationAcquisitionGameTests {
     public static void sustainedChannelCreditsFiveSecondsRatherThanEveryPulse(GameTestHelper h) {
         var p = player(h);
         var m = ManipulationInit.sanguine_mending.get();
-        var known = HemoCapabilityAccess.requireKnownManipulations(p);
+        var known = HemoCapabilityAccess.getKnownManipulations(p);
         known.getKnownManips().put(m, new ManipLevel(0, 0));
         known.setEquippedManipNames(java.util.List.of(m.getName())); known.setSelectedManip(m);
         var sword = new ItemStack(Items.DIAMOND_SWORD); sword.setDamageValue(1000);
@@ -227,8 +227,8 @@ public class ManipulationAcquisitionGameTests {
             @Override public void send(net.minecraft.network.protocol.Packet<?> packet) { }
         };
         p.setPos(h.absoluteVec(new net.minecraft.world.phys.Vec3(2, 4, 2)));
-        HemoCapabilityAccess.requireBloodVolume(p).setActive(true);
-        HemoCapabilityAccess.requireBloodVolume(p).setBloodVolume(5000);
+        HemoCapabilityAccess.getBloodVolume(p).setActive(true);
+        HemoCapabilityAccess.getBloodVolume(p).setBloodVolume(5000);
         return p;
     }
 }

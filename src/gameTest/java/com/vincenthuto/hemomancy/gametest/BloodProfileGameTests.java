@@ -117,7 +117,7 @@ public final class BloodProfileGameTests {
             @Override public void send(net.minecraft.network.protocol.Packet<?> packet) { received.accept(packet); }
         };
         player.setGameMode(GameType.SURVIVAL);
-        HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(1);
+        HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(1);
         return player;
     }
 
@@ -248,7 +248,7 @@ public final class BloodProfileGameTests {
     @GameTest(template = "empty")
     public static void syringeCollectsRestrictedBloodAndStillRejectsInvalidCondition(GameTestHelper h) {
         var player = player(h);
-        HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(2);
+        HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(2);
         var syringe = syringe(h, player);
         var target = EntityType.IRON_GOLEM.create(h.getLevel());
         player.setItemInHand(InteractionHand.MAIN_HAND, syringe);

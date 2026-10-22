@@ -47,7 +47,7 @@ public final class HemorathGoalGameTests {
 			player.setPos(helper.absolutePos(net.minecraft.core.BlockPos.ZERO).getCenter());
 			boss.setPos(player.position());
 			boss.setTarget(player);
-			var blood = HemoCapabilityAccess.requireBloodVolume(player);
+			var blood = HemoCapabilityAccess.getBloodVolume(player);
 			blood.addDamage(20.0D);
 
 			HematicCollapseGoal goal = new HematicCollapseGoal(boss);
@@ -121,7 +121,7 @@ public final class HemorathGoalGameTests {
 	@GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 40)
 	public static void failedHemorathSpawnPreservesBloodDebt(GameTestHelper helper) {
 		ServerPlayer player = player(helper);
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.addDamage(20.0D);
 		Consumer<EntityJoinLevelEvent> cancelHemorath = event -> {
 			if (event.getEntity() instanceof HemorathEntity) event.setCanceled(true);

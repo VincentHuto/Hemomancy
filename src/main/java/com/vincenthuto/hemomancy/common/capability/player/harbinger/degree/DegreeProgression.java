@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component;
 public final class DegreeProgression {
  private DegreeProgression() {}
  public static boolean advance(ServerPlayer player, int target) {
-  var degree=HemoCapabilityAccess.getInitiatoryDegree(player).orElse(null);
+  var degree=HemoCapabilityAccess.getInitiatoryDegree(player);
   if (degree == null || degree.getDegreeNumber() >= target) return false;
   degree.setDegreeNumber(target);
   if (target == 8) degree.setArchonPath(EnumArchonPath.APOTHEOS);

@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.gametest.journey;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryProgress;
@@ -276,47 +275,47 @@ public final class HemoJourneySnapshot {
 		}
 
 		CompoundTag snapshot = new CompoundTag();
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		snapshot.putBoolean(BLOOD_ACTIVE, blood.isActive());
 		snapshot.putDouble(BLOOD_CURRENT, blood.getBloodVolume());
 		snapshot.putDouble(BLOOD_MAX, blood.getMaxBloodVolume());
-		snapshot.putInt(DEGREE, HemoCapabilityAccess.requireInitiatoryDegree(player).getDegreeNumber());
-		snapshot.put(DEGREE_STATE, player.getData(HemoAttachmentTypes.INITIATORY_DEGREE)
+		snapshot.putInt(DEGREE, HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber());
+		snapshot.put(DEGREE_STATE, HemoCapabilityAccess.getInitiatoryDegree(player)
 				.serializeNBT(player.registryAccess()));
-		snapshot.put(BLOOD_TENDENCY, player.getData(HemoAttachmentTypes.BLOOD_TENDENCY)
+		snapshot.put(BLOOD_TENDENCY, HemoCapabilityAccess.getBloodTendency(player)
 				.serializeNBT(player.registryAccess()));
 		snapshot.put(SKILL_PROGRESS,
-				HemoCapabilityAccess.requireSkillProgress(player).serializeNBT(player.registryAccess()));
-		if (!(HemoCapabilityAccess.requireLiberKnowledge(player) instanceof LiberKnowledge liberKnowledge)) {
+				HemoCapabilityAccess.getSkillProgress(player).serializeNBT(player.registryAccess()));
+		if (!(HemoCapabilityAccess.getLiberKnowledge(player) instanceof LiberKnowledge liberKnowledge)) {
 			return HemoJourneyResult.fail(currentStage(data), "Liber knowledge snapshot failed: unsupported implementation.");
 		}
 		snapshot.put(LIBER_KNOWLEDGE, liberKnowledge.serializeNBT(player.registryAccess()));
-		if (!(HemoCapabilityAccess.requireKnownManipulations(player) instanceof KnownManipulations knownManipulations)) {
+		if (!(HemoCapabilityAccess.getKnownManipulations(player) instanceof KnownManipulations knownManipulations)) {
 			return HemoJourneyResult.fail(currentStage(data), "Known manipulation snapshot failed: unsupported implementation.");
 		}
 		snapshot.put(KNOWN_MANIPULATIONS, HemoJourneyManipulationState.capture(knownManipulations, player.registryAccess()));
-		snapshot.put(KNOWN_SUMMONS, player.getData(HemoAttachmentTypes.KNOWN_SUMMONS)
+		snapshot.put(KNOWN_SUMMONS, HemoCapabilityAccess.getKnownSummons(player)
 				.serializeNBT(player.registryAccess()));
-		if (!(HemoCapabilityAccess.requireScarState(player) instanceof ScarsContainer scars)) {
+		if (!(HemoCapabilityAccess.getScarState(player) instanceof ScarsContainer scars)) {
 			return HemoJourneyResult.fail(currentStage(data), "Scar state snapshot failed: unsupported implementation.");
 		}
 		snapshot.put(SCAR_STATE, scars.serializeNBT(player.registryAccess()));
-		if (!(HemoCapabilityAccess.requireUnstainedProgress(player) instanceof UnstainedProgress unstained)) {
+		if (!(HemoCapabilityAccess.getUnstainedProgress(player) instanceof UnstainedProgress unstained)) {
 			return HemoJourneyResult.fail(currentStage(data), "Unstained progress snapshot failed: unsupported implementation.");
 		}
 		snapshot.put(UNSTAINED_PROGRESS, unstained.serializeNBT(player.registryAccess()));
-		if (!(HemoCapabilityAccess.requireKnownStillArts(player) instanceof KnownStillArts knownStillArts)) {
+		if (!(HemoCapabilityAccess.getKnownStillArts(player) instanceof KnownStillArts knownStillArts)) {
 			return HemoJourneyResult.fail(currentStage(data), "Known Still Arts snapshot failed: unsupported implementation.");
 		}
 		snapshot.put(KNOWN_STILL_ARTS, knownStillArts.serializeNBT(player.registryAccess()));
-		snapshot.put(MUSCLE_MEMORY, player.getData(HemoAttachmentTypes.MUSCLE_MEMORY)
+		snapshot.put(MUSCLE_MEMORY, HemoCapabilityAccess.muscleMemory(player)
 				.serializeNBT(player.registryAccess()));
-		snapshot.put(LIVING_STAFF_PROGRESS, player.getData(HemoAttachmentTypes.LIVING_STAFF_PROGRESS)
+		snapshot.put(LIVING_STAFF_PROGRESS, HemoCapabilityAccess.getLivingStaffProgress(player)
 				.serializeNBT(player.registryAccess()));
-		snapshot.put(VASCULAR_SYSTEM, player.getData(HemoAttachmentTypes.VASCULAR_SYSTEM)
+		snapshot.put(VASCULAR_SYSTEM, HemoCapabilityAccess.getVascularSystem(player)
 				.serializeNBT(player.registryAccess()));
 		snapshot.put(RECIPE_BOOK, player.getRecipeBook().toNbt());
-		snapshot.put(SPECIMEN_BESTIARY, HemoCapabilityAccess.requireSpecimenBestiary(player)
+		snapshot.put(SPECIMEN_BESTIARY, HemoCapabilityAccess.getSpecimenBestiary(player)
 				.serializeNBT(player.registryAccess()));
 		snapshot.put(ADVANCED_BREWING, HemoCapabilityAccess.stationUpgrades(player)
 				.serializeNBT(player.registryAccess()));
@@ -324,7 +323,7 @@ public final class HemoJourneySnapshot {
 		snapshot.putInt(SCAR_STATION_CRAFTS, player.getStats().getValue(
 				Stats.ITEM_CRAFTED.get(BlockInit.scar_station.get().asItem())));
 		HemoJourneyWorldState.capture(player, snapshot);
-		snapshot.put(VASC_EQUIPMENT, HemoCapabilityAccess.requireEquipment(player).getStackInSlot(VASC_SLOT)
+		snapshot.put(VASC_EQUIPMENT, HemoCapabilityAccess.getEquipment(player).getStackInSlot(VASC_SLOT)
 				.saveOptional(player.registryAccess()));
 
 		ListTag inventory = new ListTag();
@@ -544,13 +543,13 @@ public final class HemoJourneySnapshot {
 	}
 
 	private static ParsedState captureLiveState(ServerPlayer player) {
-		if (!(HemoCapabilityAccess.requireLiberKnowledge(player) instanceof LiberKnowledge knowledge)) throw new IllegalStateException("unsupported Liber knowledge implementation");
-		if (!(HemoCapabilityAccess.requireKnownManipulations(player) instanceof KnownManipulations manipulations)) throw new IllegalStateException("unsupported known manipulation implementation");
-		KnownSummons summons = player.getData(HemoAttachmentTypes.KNOWN_SUMMONS);
-		if (!(HemoCapabilityAccess.requireScarState(player) instanceof ScarsContainer scars)) throw new IllegalStateException("unsupported scar state implementation");
-		if (!(HemoCapabilityAccess.requireUnstainedProgress(player) instanceof UnstainedProgress unstained)) throw new IllegalStateException("unsupported Unstained progress implementation");
-		if (!(HemoCapabilityAccess.requireKnownStillArts(player) instanceof KnownStillArts stillArts)) throw new IllegalStateException("unsupported Known Still Arts implementation");
-		MuscleMemoryState muscleMemory = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+		if (!(HemoCapabilityAccess.getLiberKnowledge(player) instanceof LiberKnowledge knowledge)) throw new IllegalStateException("unsupported Liber knowledge implementation");
+		if (!(HemoCapabilityAccess.getKnownManipulations(player) instanceof KnownManipulations manipulations)) throw new IllegalStateException("unsupported known manipulation implementation");
+		KnownSummons summons = HemoCapabilityAccess.getKnownSummons(player);
+		if (!(HemoCapabilityAccess.getScarState(player) instanceof ScarsContainer scars)) throw new IllegalStateException("unsupported scar state implementation");
+		if (!(HemoCapabilityAccess.getUnstainedProgress(player) instanceof UnstainedProgress unstained)) throw new IllegalStateException("unsupported Unstained progress implementation");
+		if (!(HemoCapabilityAccess.getKnownStillArts(player) instanceof KnownStillArts stillArts)) throw new IllegalStateException("unsupported Known Still Arts implementation");
+		MuscleMemoryState muscleMemory = HemoCapabilityAccess.muscleMemory(player);
 		List<ItemStack> inventory = new ArrayList<>();
 		for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) inventory.add(player.getInventory().getItem(slot).copy());
 		Map<ResourceLocation, Boolean> advancements = new LinkedHashMap<>();
@@ -558,30 +557,30 @@ public final class HemoJourneySnapshot {
 			if (player.server.getAdvancements().get(id) == null) throw new IllegalStateException("missing advancement " + id);
 			advancements.put(id, HarbingerAdvancementGranter.hasAdvancement(player, id));
 		}
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		Target target = new Target((ServerLevel) player.level(), player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());
 		return new ParsedState(blood.isActive(), blood.getBloodVolume(), blood.getMaxBloodVolume(),
-				HemoCapabilityAccess.requireInitiatoryDegree(player).getDegreeNumber(),
-				player.getData(HemoAttachmentTypes.INITIATORY_DEGREE).serializeNBT(player.registryAccess()),
-				player.getData(HemoAttachmentTypes.BLOOD_TENDENCY).serializeNBT(player.registryAccess()), inventory, advancements,
-				HemoCapabilityAccess.requireSkillProgress(player).serializeNBT(player.registryAccess()),
+				HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber(),
+				HemoCapabilityAccess.getInitiatoryDegree(player).serializeNBT(player.registryAccess()),
+				HemoCapabilityAccess.getBloodTendency(player).serializeNBT(player.registryAccess()), inventory, advancements,
+				HemoCapabilityAccess.getSkillProgress(player).serializeNBT(player.registryAccess()),
 				knowledge.serializeNBT(player.registryAccess()), HemoJourneyManipulationState.capture(manipulations, player.registryAccess()),
 				summons.serializeNBT(player.registryAccess()),
 				scars.serializeNBT(player.registryAccess()), unstained.serializeNBT(player.registryAccess()),
 				stillArts.serializeNBT(player.registryAccess()),
 				muscleMemory.serializeNBT(player.registryAccess()),
-				player.getData(HemoAttachmentTypes.LIVING_STAFF_PROGRESS).serializeNBT(player.registryAccess()),
-				player.getData(HemoAttachmentTypes.VASCULAR_SYSTEM).serializeNBT(player.registryAccess()),
+				HemoCapabilityAccess.getLivingStaffProgress(player).serializeNBT(player.registryAccess()),
+				HemoCapabilityAccess.getVascularSystem(player).serializeNBT(player.registryAccess()),
 				player.getRecipeBook().toNbt(),
-				HemoCapabilityAccess.requireSpecimenBestiary(player).serializeNBT(player.registryAccess()),
+				HemoCapabilityAccess.getSpecimenBestiary(player).serializeNBT(player.registryAccess()),
 				HemoCapabilityAccess.stationUpgrades(player).serializeNBT(player.registryAccess()),
 				capturePersistentData(player),
-				HemoCapabilityAccess.requireEquipment(player).getStackInSlot(VASC_SLOT).copy(),
+				HemoCapabilityAccess.getEquipment(player).getStackInSlot(VASC_SLOT).copy(),
 				target, currentStage(player.getPersistentData()));
 	}
 
 	private static ApplyResult applyState(ServerPlayer player, ParsedState target) {
-		var equipment = HemoCapabilityAccess.requireEquipment(player);
+		var equipment = HemoCapabilityAccess.getEquipment(player);
 		boolean wasEventBlocked = equipment.isEventBlocked();
 		equipment.setEventBlock(true);
 		try {
@@ -589,39 +588,39 @@ public final class HemoJourneySnapshot {
 		} finally {
 			equipment.setEventBlock(wasEventBlocked);
 		}
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setMaxBloodVolume(target.bloodMax());
 		blood.setBloodVolume(target.bloodCurrent());
 		blood.setActive(target.bloodActive());
-		player.getData(HemoAttachmentTypes.INITIATORY_DEGREE).deserializeNBT(
+		HemoCapabilityAccess.getInitiatoryDegree(player).deserializeNBT(
 				player.registryAccess(), target.degreeStateTag().copy());
-		player.getData(HemoAttachmentTypes.BLOOD_TENDENCY).deserializeNBT(
+		HemoCapabilityAccess.getBloodTendency(player).deserializeNBT(
 				player.registryAccess(), target.bloodTendencyTag().copy());
 		for (int slot = 0; slot < target.inventory().size(); slot++) player.getInventory().setItem(slot, target.inventory().get(slot).copy());
 		for (Map.Entry<ResourceLocation, Boolean> entry : target.advancements().entrySet()) {
 			String failure = setAdvancementState(player, entry.getKey(), entry.getValue());
 			if (failure != null) return ApplyResult.fail(failure);
 		}
-		if (!(HemoCapabilityAccess.requireLiberKnowledge(player) instanceof LiberKnowledge knowledge)) return ApplyResult.fail("unsupported Liber knowledge implementation");
-		if (!(HemoCapabilityAccess.requireKnownManipulations(player) instanceof KnownManipulations manipulations)) return ApplyResult.fail("unsupported known manipulation implementation");
-		if (!(HemoCapabilityAccess.requireScarState(player) instanceof ScarsContainer scars)) return ApplyResult.fail("unsupported scar state implementation");
-		if (!(HemoCapabilityAccess.requireUnstainedProgress(player) instanceof UnstainedProgress unstained)) return ApplyResult.fail("unsupported Unstained progress implementation");
-		if (!(HemoCapabilityAccess.requireKnownStillArts(player) instanceof KnownStillArts stillArts)) return ApplyResult.fail("unsupported Known Still Arts implementation");
-		HemoCapabilityAccess.requireSkillProgress(player).deserializeNBT(player.registryAccess(), target.skillTag().copy());
+		if (!(HemoCapabilityAccess.getLiberKnowledge(player) instanceof LiberKnowledge knowledge)) return ApplyResult.fail("unsupported Liber knowledge implementation");
+		if (!(HemoCapabilityAccess.getKnownManipulations(player) instanceof KnownManipulations manipulations)) return ApplyResult.fail("unsupported known manipulation implementation");
+		if (!(HemoCapabilityAccess.getScarState(player) instanceof ScarsContainer scars)) return ApplyResult.fail("unsupported scar state implementation");
+		if (!(HemoCapabilityAccess.getUnstainedProgress(player) instanceof UnstainedProgress unstained)) return ApplyResult.fail("unsupported Unstained progress implementation");
+		if (!(HemoCapabilityAccess.getKnownStillArts(player) instanceof KnownStillArts stillArts)) return ApplyResult.fail("unsupported Known Still Arts implementation");
+		HemoCapabilityAccess.getSkillProgress(player).deserializeNBT(player.registryAccess(), target.skillTag().copy());
 		knowledge.deserializeNBT(player.registryAccess(), target.knowledgeTag().copy());
 		HemoJourneyManipulationState.apply(manipulations, target.manipulationTag(), player.registryAccess());
-		KnownSummons summons = player.getData(HemoAttachmentTypes.KNOWN_SUMMONS);
+		KnownSummons summons = HemoCapabilityAccess.getKnownSummons(player);
 		summons.deserializeNBT(player.registryAccess(), target.summonsTag().copy());
 		scars.deserializeNBT(player.registryAccess(), target.scarTag().copy());
 		unstained.deserializeNBT(player.registryAccess(), target.unstainedTag().copy());
 		stillArts.deserializeNBT(player.registryAccess(), target.stillArtsTag().copy());
-		player.getData(HemoAttachmentTypes.MUSCLE_MEMORY).deserializeNBT(
+		HemoCapabilityAccess.muscleMemory(player).deserializeNBT(
 				player.registryAccess(), target.muscleMemoryTag().copy());
-		player.getData(HemoAttachmentTypes.LIVING_STAFF_PROGRESS).deserializeNBT(
+		HemoCapabilityAccess.getLivingStaffProgress(player).deserializeNBT(
 				player.registryAccess(), target.livingStaffProgressTag().copy());
-		player.getData(HemoAttachmentTypes.VASCULAR_SYSTEM).deserializeNBT(
+		HemoCapabilityAccess.getVascularSystem(player).deserializeNBT(
 				player.registryAccess(), target.vascularSystemTag().copy());
-		var bestiary = HemoCapabilityAccess.requireSpecimenBestiary(player);
+		var bestiary = HemoCapabilityAccess.getSpecimenBestiary(player);
 		bestiary.deserializeNBT(player.registryAccess(), target.bestiaryTag().copy());
 		HemoCapabilityAccess.stationUpgrades(player).deserializeNBT(player.registryAccess(), target.brewingTag().copy());
 		CompoundTag persistentData = player.getPersistentData();
@@ -643,9 +642,9 @@ public final class HemoJourneySnapshot {
 		KnownStillArtEvents.sync(player, stillArts);
 		MuscleMemoryEvents.sync(player);
 		LivingStaffBondHelper.syncProgress(player);
-		VascularSystemEvents.syncVascular(player, HemoCapabilityAccess.requireVascularSystem(player));
-		InitiatoryDegreeEvents.syncDegree(player, HemoCapabilityAccess.requireInitiatoryDegree(player));
-		BloodTendencyEvents.syncTendency(player, HemoCapabilityAccess.requireBloodTendency(player));
+		VascularSystemEvents.syncVascular(player, HemoCapabilityAccess.getVascularSystem(player));
+		InitiatoryDegreeEvents.syncDegree(player, HemoCapabilityAccess.getInitiatoryDegree(player));
+		BloodTendencyEvents.syncTendency(player, HemoCapabilityAccess.getBloodTendency(player));
 		SpecimenBestiaryEvents.sync(player, bestiary);
 		ServerRecipeBook recipeBook = new ServerRecipeBook();
 		recipeBook.fromNbt(target.recipeBookTag().copy(), player.server.getRecipeManager());
@@ -667,38 +666,38 @@ public final class HemoJourneySnapshot {
 	}
 
 	private static ApplyResult verifyAppliedState(ServerPlayer player, ParsedState target) {
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		if (blood.isActive() != target.bloodActive() || Double.compare(blood.getBloodVolume(), target.bloodCurrent()) != 0
 				|| Double.compare(blood.getMaxBloodVolume(), target.bloodMax()) != 0
-				|| HemoCapabilityAccess.requireInitiatoryDegree(player).getDegreeNumber() != target.degree()) return ApplyResult.fail("blood or degree postcondition mismatch");
-		if (!player.getData(HemoAttachmentTypes.INITIATORY_DEGREE).serializeNBT(player.registryAccess())
+				|| HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber() != target.degree()) return ApplyResult.fail("blood or degree postcondition mismatch");
+		if (!HemoCapabilityAccess.getInitiatoryDegree(player).serializeNBT(player.registryAccess())
 				.equals(target.degreeStateTag())) return ApplyResult.fail("Initiatory Degree postcondition mismatch");
-		if (!player.getData(HemoAttachmentTypes.BLOOD_TENDENCY).serializeNBT(player.registryAccess())
+		if (!HemoCapabilityAccess.getBloodTendency(player).serializeNBT(player.registryAccess())
 				.equals(target.bloodTendencyTag())) return ApplyResult.fail("Blood Tendency postcondition mismatch");
 		for (int slot = 0; slot < target.inventory().size(); slot++) if (!sameStack(player.getInventory().getItem(slot), target.inventory().get(slot))) return ApplyResult.fail("inventory postcondition mismatch at slot " + slot);
-		if (!sameStack(HemoCapabilityAccess.requireEquipment(player).getStackInSlot(VASC_SLOT), target.vasc())) return ApplyResult.fail("VASC equipment postcondition mismatch");
+		if (!sameStack(HemoCapabilityAccess.getEquipment(player).getStackInSlot(VASC_SLOT), target.vasc())) return ApplyResult.fail("VASC equipment postcondition mismatch");
 		for (Map.Entry<ResourceLocation, Boolean> entry : target.advancements().entrySet()) if (HarbingerAdvancementGranter.hasAdvancement(player, entry.getKey()) != entry.getValue()) return ApplyResult.fail("advancement postcondition mismatch for " + entry.getKey());
-		if (!HemoCapabilityAccess.requireSkillProgress(player).serializeNBT(player.registryAccess()).equals(target.skillTag())) return ApplyResult.fail("skill progress postcondition mismatch");
-		if (!(HemoCapabilityAccess.requireLiberKnowledge(player) instanceof LiberKnowledge knowledge)
+		if (!HemoCapabilityAccess.getSkillProgress(player).serializeNBT(player.registryAccess()).equals(target.skillTag())) return ApplyResult.fail("skill progress postcondition mismatch");
+		if (!(HemoCapabilityAccess.getLiberKnowledge(player) instanceof LiberKnowledge knowledge)
 				|| !knowledge.serializeNBT(player.registryAccess()).equals(target.knowledgeTag())) return ApplyResult.fail("Liber knowledge postcondition mismatch");
-		if (!(HemoCapabilityAccess.requireKnownManipulations(player) instanceof KnownManipulations manipulations)
+		if (!(HemoCapabilityAccess.getKnownManipulations(player) instanceof KnownManipulations manipulations)
 				|| !HemoJourneyManipulationState.matches(manipulations, target.manipulationTag(), player.registryAccess())) return ApplyResult.fail("Known manipulation postcondition mismatch");
-		if (!player.getData(HemoAttachmentTypes.KNOWN_SUMMONS).serializeNBT(player.registryAccess())
+		if (!HemoCapabilityAccess.getKnownSummons(player).serializeNBT(player.registryAccess())
 				.equals(target.summonsTag())) return ApplyResult.fail("Known summons postcondition mismatch");
-		if (!(HemoCapabilityAccess.requireScarState(player) instanceof ScarsContainer scars)
+		if (!(HemoCapabilityAccess.getScarState(player) instanceof ScarsContainer scars)
 				|| !scars.serializeNBT(player.registryAccess()).equals(target.scarTag())) return ApplyResult.fail("Scar state postcondition mismatch");
-		if (!(HemoCapabilityAccess.requireUnstainedProgress(player) instanceof UnstainedProgress unstained)
+		if (!(HemoCapabilityAccess.getUnstainedProgress(player) instanceof UnstainedProgress unstained)
 				|| !unstained.serializeNBT(player.registryAccess()).equals(target.unstainedTag())) return ApplyResult.fail("Unstained progress postcondition mismatch");
-		if (!(HemoCapabilityAccess.requireKnownStillArts(player) instanceof KnownStillArts stillArts)
+		if (!(HemoCapabilityAccess.getKnownStillArts(player) instanceof KnownStillArts stillArts)
 				|| !stillArts.serializeNBT(player.registryAccess()).equals(target.stillArtsTag())) return ApplyResult.fail("Known Still Arts postcondition mismatch");
-		if (!player.getData(HemoAttachmentTypes.MUSCLE_MEMORY).serializeNBT(player.registryAccess())
+		if (!HemoCapabilityAccess.muscleMemory(player).serializeNBT(player.registryAccess())
 				.equals(target.muscleMemoryTag())) return ApplyResult.fail("Muscle Memory postcondition mismatch");
-		if (!player.getData(HemoAttachmentTypes.LIVING_STAFF_PROGRESS).serializeNBT(player.registryAccess())
+		if (!HemoCapabilityAccess.getLivingStaffProgress(player).serializeNBT(player.registryAccess())
 				.equals(target.livingStaffProgressTag())) return ApplyResult.fail("Living Staff progress postcondition mismatch");
-		if (!player.getData(HemoAttachmentTypes.VASCULAR_SYSTEM).serializeNBT(player.registryAccess())
+		if (!HemoCapabilityAccess.getVascularSystem(player).serializeNBT(player.registryAccess())
 				.equals(target.vascularSystemTag())) return ApplyResult.fail("Vascular system postcondition mismatch");
 		if (!player.getRecipeBook().toNbt().equals(target.recipeBookTag())) return ApplyResult.fail("Recipe book postcondition mismatch");
-		if (!HemoCapabilityAccess.requireSpecimenBestiary(player).serializeNBT(player.registryAccess())
+		if (!HemoCapabilityAccess.getSpecimenBestiary(player).serializeNBT(player.registryAccess())
 				.equals(target.bestiaryTag())) return ApplyResult.fail("Specimen Bestiary postcondition mismatch");
 		if (!HemoCapabilityAccess.stationUpgrades(player).serializeNBT(player.registryAccess())
 				.equals(target.brewingTag())) return ApplyResult.fail("Station upgrade postcondition mismatch");

@@ -85,8 +85,7 @@ public class MasonsEffigyBlock extends Block implements EntityBlock, SimpleWater
 		BlockEntity be = level.getBlockEntity(pos);
 		if (be instanceof MasonsEffigyBlockEntity effigy && player instanceof ServerPlayer serverPlayer) {
 			effigy.updateStateFor(player);
-			HemoCapabilityAccess.getScarState(player)
-					.ifPresent(scars -> PacketHandler.sendToPlayer(serverPlayer, new PacketSyncScarsState(serverPlayer, scars)));
+			PacketHandler.sendToPlayer(serverPlayer, new PacketSyncScarsState(serverPlayer, HemoCapabilityAccess.getScarState(player)));
 			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(level, pos);
 			serverPlayer.openMenu(effigy, pos);
 		}
@@ -116,7 +115,7 @@ public class MasonsEffigyBlock extends Block implements EntityBlock, SimpleWater
 			message(player, "That pattern exceeds your current scar capacity.", ChatFormatting.RED);
 			return InteractionResult.CONSUME;
 		}
-		IScars scars = HemoCapabilityAccess.getScarState(player).orElse(null);
+		IScars scars = HemoCapabilityAccess.getScarState(player);
 		if (scars == null) {
 			message(player, "Your scar memory is silent.", ChatFormatting.RED);
 			return InteractionResult.CONSUME;
@@ -177,7 +176,7 @@ public class MasonsEffigyBlock extends Block implements EntityBlock, SimpleWater
 	public double projectBloodIntoBlock(ServerLevel level, BlockPos pos, BlockState state, ServerPlayer player,
 			double maxAmount) {
 		BlockEntity be = level.getBlockEntity(pos);
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (!(be instanceof MasonsEffigyBlockEntity effigy) || volume == null) {
 			return 0.0D;
 		}

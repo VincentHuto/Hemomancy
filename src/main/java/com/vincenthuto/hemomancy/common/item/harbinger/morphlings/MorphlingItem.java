@@ -261,18 +261,14 @@ public class MorphlingItem extends Item implements IMorphling {
 			return;
 		}
 		double rate = starvingDrainRate();
-		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-			if (!volume.isActive()) {
-				return;
+		var volume = HemoCapabilityAccess.getBloodVolume(player);
+		if (volume.isActive() && rate > 0.0D && volume.getBloodVolume() > 0.0D) {
+			double drained = Math.min(rate, volume.getBloodVolume());
+			if (player instanceof ServerPlayer serverPlayer) {
+				BloodFlowLedger.applyDrain(serverPlayer, volume, "morphling_starvation",
+						"Morphling Starvation", Category.MORPHLING, drained, interval, false);
 			}
-			if (rate > 0.0D && volume.getBloodVolume() > 0.0D) {
-				double drained = Math.min(rate, volume.getBloodVolume());
-				if (player instanceof ServerPlayer serverPlayer) {
-					BloodFlowLedger.applyDrain(serverPlayer, volume, "morphling_starvation",
-							"Morphling Starvation", Category.MORPHLING, drained, interval, false);
-				}
-			}
-		});
+		}
 		applyMorphicStrain(player, 80, 0);
 	}
 
@@ -405,7 +401,7 @@ public class MorphlingItem extends Item implements IMorphling {
 					.withStyle(ChatFormatting.DARK_PURPLE), true);
 			return false;
 		}
-		var volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		var volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null || !volume.isActive() || volume.getBloodVolume() < bloodCost) {
 			player.displayClientMessage(Component.literal("The primal morphling hungers for more blood.")
 					.withStyle(ChatFormatting.DARK_RED), true);

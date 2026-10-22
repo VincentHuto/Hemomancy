@@ -29,8 +29,7 @@ public class UseStillArtKeyPacket implements CustomPacketPayload {
 			if (!(ctx.player() instanceof ServerPlayer player)) {
 				return;
 			}
-			HemoCapabilityAccess.getKnownStillArts(player).ifPresent(known ->
-					known.getSelectedArt().performAction(player, player.level(), player.getMainHandItem(), player.blockPosition()));
+			HemoCapabilityAccess.getKnownStillArts(player).getSelectedArt().performAction(player, player.level(), player.getMainHandItem(), player.blockPosition());
 		});
 	}
 

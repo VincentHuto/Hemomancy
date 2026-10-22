@@ -63,7 +63,7 @@ public class DSDItem extends Item {
 	 */
 	private void dissolve(Player player, DrudgeEntity drudge) {
 		// Return blood
-		IBloodVolume vol = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume vol = HemoCapabilityAccess.getBloodVolume(player);
 		if (vol != null && vol.isActive()) {
 			vol.fill(DISSOLUTION_REFUND);
 			if (player instanceof ServerPlayer sp) {

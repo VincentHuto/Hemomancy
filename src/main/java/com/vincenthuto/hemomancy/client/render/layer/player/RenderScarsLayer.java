@@ -33,21 +33,18 @@ public class RenderScarsLayer<T extends Player, M extends PlayerModel<T>> extend
 		if (!isFungalScarLayerVisible(player)) {
 			return;
 		}
-		HemoCapabilityAccess.getScarState(player).ifPresent(scars -> {
-			ItemStack stack = scars.getFungalScar();
-			if (!stack.isEmpty()) {
-				if (stack.getItem() instanceof IRenderHarbingerEquipment renderer) {
-					matrix.pushPose();
-					renderer.onPlayerScarRender(matrix, stack, packedLightIn, iRenderTypeBuffer, player, partialTicks);
-					matrix.popPose();
-				}
+		var scars = HemoCapabilityAccess.getScarState(player);
+		ItemStack stack = scars.getFungalScar();
+		if (!stack.isEmpty()) {
+			if (stack.getItem() instanceof IRenderHarbingerEquipment renderer) {
+				matrix.pushPose();
+				renderer.onPlayerScarRender(matrix, stack, packedLightIn, iRenderTypeBuffer, player, partialTicks);
+				matrix.popPose();
 			}
-		});
+		}
 	}
 
 	private boolean isFungalScarLayerVisible(Player player) {
-		return HemoCapabilityAccess.getEquipment(player)
-				.map(equipment -> equipment.isRenderLayerVisible(IScars.FUNGAL_SLOT))
-				.orElse(true);
+		return HemoCapabilityAccess.getEquipment(player).isRenderLayerVisible(IScars.FUNGAL_SLOT);
 	}
 }

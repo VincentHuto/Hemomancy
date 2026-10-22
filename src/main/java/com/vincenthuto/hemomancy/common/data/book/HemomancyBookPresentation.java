@@ -10,18 +10,18 @@ public final class HemomancyBookPresentation {
     private HemomancyBookPresentation() {}
 
     public static void configure(BookCodeModel book) {
-        book.setRedactionPredicate((player, level) -> player != null && HemoCapabilityAccess.getUnstainedProgress(player)
-                .map(progress -> canReveal(progress.hasClarityUnlocked(), progress.getClarity(), level)).orElse(false));
+        book.setRedactionPredicate((player, level) -> player != null && canReveal(HemoCapabilityAccess.getUnstainedProgress(player).hasClarityUnlocked(), HemoCapabilityAccess.getUnstainedProgress(player).getClarity(), level));
         book.setRevealRequirementLabel(level -> Component.translatable("hemomancy.book.clarity_requirement", roman(level)));
         boolean liber = book.getResourceLocation().getPath().equals("liberimmaculatus");
         book.setShowWashedSearchCount(liber);
         book.setOwnerLine(player -> liber ? Component.translatable("hemomancy.book.owner", player.getName())
                 : Component.translatable("hemomancy.book.owner_degree", player.getName(), HemoCapabilityAccess.getPlayerDegreeNumber(player)));
         if (liber) {
-            book.setStatusLine(player -> HemoCapabilityAccess.getUnstainedProgress(player)
-                    .map(progress -> Component.translatable("hemomancy.book.purity_clarity", Math.round(progress.getPurity()),
-                            progress.hasClarityUnlocked() ? roman(EnumClarityStage.byClarity(progress.getClarity()).getLevel() + 1) : "—"))
-                    .orElse(Component.translatable("hemomancy.book.purity_clarity", 0, "—")));
+            book.setStatusLine(player -> {
+                var progress = HemoCapabilityAccess.getUnstainedProgress(player);
+                return Component.translatable("hemomancy.book.purity_clarity", Math.round(progress.getPurity()),
+                        progress.hasClarityUnlocked() ? roman(EnumClarityStage.byClarity(progress.getClarity()).getLevel() + 1) : "—");
+            });
         }
     }
 

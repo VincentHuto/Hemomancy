@@ -154,7 +154,7 @@ public class RitesAndCraftsTabController implements IProgressTab {
 	}
 
 	private void appendSigilEntries(Minecraft mc, List<RecipeMapEntry> entries, Collection<CardinalRiteRecipe> rites) {
-		var knowledge = mc.player == null ? null : HemoCapabilityAccess.getIchorianKnowledge(mc.player).orElse(null);
+		var knowledge = mc.player == null ? null : HemoCapabilityAccess.getIchorianKnowledge(mc.player);
 		List<IchorianSigilDefinition> sigils = IchorianSigilRegistry.all().stream()
 				.sorted(Comparator.comparingInt(IchorianSigilDefinition::tier)
 						.thenComparing(definition -> definition.id().toString())).toList();

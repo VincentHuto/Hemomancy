@@ -70,20 +70,14 @@ public class SporiticThuribleEvents {
 
 	private static boolean hasValidHarbingerState(Player player) {
 		boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player)
-				.map(IBloodVolume::isActive)
-				.orElse(false);
+				.isActive();
 		return bloodActive && HemoCapabilityAccess.getPlayerDegreeNumber(player) >= SporiticThuribleRules.REQUIRED_DEGREE;
 	}
 
 	private static boolean drainUpkeep(ServerPlayer player, ItemStack stack, double intensity) {
 		double drain = SporiticThuribleRules.bloodDrainPerSecond(intensity,
 				SkillPointHelper.getSporiticAttunementLevel(player));
-		Optional<IBloodVolume> volumeOpt = HemoCapabilityAccess.getBloodVolume(player);
-		if (volumeOpt.isEmpty()) {
-			SporiticThuribleItem.extinguish(stack);
-			return false;
-		}
-		IBloodVolume volume = volumeOpt.orElseThrow();
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		BloodFlowLedger.DrainResult result = BloodFlowLedger.applyDrain(player, volume, "sporitic_thurible",
 				"Sporitic Thurible", Category.TOOL, drain, SporiticThuribleRules.UPKEEP_INTERVAL_TICKS, false);
 		if (result.satisfied()) {
@@ -118,8 +112,7 @@ public class SporiticThuribleEvents {
 
 		for (Player nearby : level.getEntitiesOfClass(Player.class, area, Player::isAlive)) {
 			boolean bloodActive = HemoCapabilityAccess.getBloodVolume(nearby)
-					.map(IBloodVolume::isActive)
-					.orElse(false);
+					.isActive();
 			if (!bloodActive || HemoCapabilityAccess.getPlayerDegreeNumber(nearby) <= 0) {
 				continue;
 			}

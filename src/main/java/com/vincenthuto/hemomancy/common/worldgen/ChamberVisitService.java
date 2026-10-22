@@ -123,12 +123,11 @@ public final class ChamberVisitService {
 
 	public static boolean beginGuidedVisit(ServerPlayer player) {
 		if (hasCompletedGuidedVisit(player) || HemoCapabilityAccess.getPlayerDegreeNumber(player) < 3
-				|| !HemoCapabilityAccess.getBloodVolume(player).map(volume -> volume.isActive()).orElse(false)
-				|| HemoCapabilityAccess.getUnstainedProgress(player)
-						.map(progress -> progress.hasBegunPurification() || progress.hasClarityUnlocked()).orElse(false)
+				|| !HemoCapabilityAccess.getBloodVolume(player).isActive()
+				|| (HemoCapabilityAccess.getUnstainedProgress(player).hasBegunPurification() || HemoCapabilityAccess.getUnstainedProgress(player).hasClarityUnlocked())
 				|| FungalGardenTravelHelper.isProjectionActive(player)
 				|| !player.containerMenu.getCarried().isEmpty()
-				|| !(HemoCapabilityAccess.requireEquipment(player) instanceof HarbingerEquipmentContainer)) return false;
+				|| !(HemoCapabilityAccess.getEquipment(player) instanceof HarbingerEquipmentContainer)) return false;
 		return startVisit(player, ChamberVisitMode.GUIDED);
 	}
 
@@ -205,7 +204,7 @@ public final class ChamberVisitService {
 			data.put(DREAM_CARRIED, player.inventoryMenu.getCarried().saveOptional(player.registryAccess()));
 		}
 		if (visitMode == ChamberVisitMode.GUIDED
-				&& HemoCapabilityAccess.requireEquipment(player) instanceof HarbingerEquipmentContainer equipment)
+				&& HemoCapabilityAccess.getEquipment(player) instanceof HarbingerEquipmentContainer equipment)
 			data.put(GUIDED_EQUIPMENT, equipment.serializeNBT(player.registryAccess()));
 		ChamberOfWillManager.get(player.getServer()).enterChamber(player);
 		if (!player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)) {
@@ -310,7 +309,7 @@ public final class ChamberVisitService {
 			player.inventoryMenu.broadcastFullState();
 		}
 		if (mode(player) == ChamberVisitMode.GUIDED && data.contains(GUIDED_EQUIPMENT)
-				&& HemoCapabilityAccess.requireEquipment(player) instanceof HarbingerEquipmentContainer equipment) {
+				&& HemoCapabilityAccess.getEquipment(player) instanceof HarbingerEquipmentContainer equipment) {
 			boolean blocked = equipment.isEventBlocked();
 			equipment.setEventBlock(true);
 			try {

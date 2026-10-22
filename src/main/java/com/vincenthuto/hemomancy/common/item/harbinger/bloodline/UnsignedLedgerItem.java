@@ -74,8 +74,7 @@ public class UnsignedLedgerItem extends Item {
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
-		if (!worldIn.isClientSide && HemoCapabilityAccess.getUnstainedProgress(playerIn)
-				.map(UnstainedAccessRules::blocksHarbingerProgress).orElse(false)) {
+		if (!worldIn.isClientSide && UnstainedAccessRules.blocksHarbingerProgress(HemoCapabilityAccess.getUnstainedProgress(playerIn))) {
 			playerIn.displayClientMessage(Component.literal("Purification bars new bloodline bonds.")
 					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), true);
 			return InteractionResultHolder.fail(stack);
@@ -83,7 +82,7 @@ public class UnsignedLedgerItem extends Item {
 		if (stack.getItem() instanceof UnsignedLedgerItem) {
 			CompoundTag compound = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 			IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(playerIn)
-					.orElseThrow(NullPointerException::new);
+					;
 
 			if (!compound.getBoolean(TAG_STATE)) {
 				if (!worldIn.isClientSide) {

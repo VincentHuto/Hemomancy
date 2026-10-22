@@ -38,8 +38,8 @@ public class SporeImplantMenu extends AbstractContainerMenu {
 		super(ContainerInit.fungal_implantation.get(), windowId);
 		this.player = playerInventory.player;
 
-		this.scars = HemoCapabilityAccess.requireScarState(this.player);
-		this.equipment = HemoCapabilityAccess.requireEquipment(this.player);
+		this.scars = HemoCapabilityAccess.getScarState(this.player);
+		this.equipment = HemoCapabilityAccess.getEquipment(this.player);
 
 		this.addSlot(new SelectiveEquipmentTypeSlot(player, ItemFungalScar.class, scars, IScars.FUNGAL_SLOT, 80, 35));
 

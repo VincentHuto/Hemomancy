@@ -109,22 +109,20 @@ public class VeinMinerHelper {
 					world.removeBlock(currentPos, false);
 					numMined = harvestVein(world, player, stack, currentPos, target, currentDrops, numMined);
 					if (numMined >= 250) {
-						HemoCapabilityAccess.getKnownManipulations(player).ifPresent(manips -> {
-							if(manips.getLastVeinMineStart() != BlockPos.ZERO) {
-								manips.setLastVeinMineStart(BlockPos.ZERO);
-							}
-						});
+						var manips = HemoCapabilityAccess.getKnownManipulations(player);
+						if(manips.getLastVeinMineStart() != BlockPos.ZERO) {
+							manips.setLastVeinMineStart(BlockPos.ZERO);
+						}
 
 						break;
 					}
 				}
 			}
 		}
-		HemoCapabilityAccess.getKnownManipulations(player).ifPresent(manips -> {
-			if(manips.getLastVeinMineStart() != BlockPos.ZERO) {
-				manips.setLastVeinMineStart(BlockPos.ZERO);
-			}
-		});
+		var manips = HemoCapabilityAccess.getKnownManipulations(player);
+		if(manips.getLastVeinMineStart() != BlockPos.ZERO) {
+			manips.setLastVeinMineStart(BlockPos.ZERO);
+		}
 		return numMined;
 	}
 
@@ -182,11 +180,10 @@ public class VeinMinerHelper {
 		boolean hasAction = false;
 		List<ItemStack> drops = new ArrayList<>();
 		
-		HemoCapabilityAccess.getKnownManipulations(player).ifPresent(manips -> {
-			if(manips.getLastVeinMineStart() == BlockPos.ZERO) {
-				manips.setLastVeinMineStart(pos);
-			}
-		});
+		var manips = HemoCapabilityAccess.getKnownManipulations(player);
+		if(manips.getLastVeinMineStart() == BlockPos.ZERO) {
+			manips.setLastVeinMineStart(pos);
+		}
 
 		
 		

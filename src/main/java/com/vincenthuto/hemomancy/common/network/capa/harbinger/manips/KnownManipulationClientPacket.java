@@ -30,9 +30,9 @@ public class KnownManipulationClientPacket implements CustomPacketPayload {
 			Player player = ctx.player();
 			if (player instanceof ServerPlayer sender) {
 				IKnownManipulations manips = HemoCapabilityAccess.getKnownManipulations(sender)
-						.orElseThrow(IllegalStateException::new);
+						;
 				PacketHandler.sendToPlayer(sender,
-						new PacketSyncSkills(HemoCapabilityAccess.requireSkillProgress(sender).toSyncTag()));
+						new PacketSyncSkills(HemoCapabilityAccess.getSkillProgress(sender).toSyncTag()));
 				PacketHandler.sendToPlayer(sender, new KnownManipulationServerPacket(manips));
 			}
 		});

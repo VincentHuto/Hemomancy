@@ -55,7 +55,7 @@ public final class ScarletVanityLayerToggleSourceTest {
 		assertContains("charm layer checks slot visibility", charmLayer,
 				"inv.isRenderLayerVisible(HarbingerEquipmentMenu.CHARM_SLOT_INDEX)");
 		assertContains("tendril layer checks charm slot visibility", tendrilLayer,
-				"inv.isRenderLayerVisible(HarbingerEquipmentMenu.CHARM_SLOT_INDEX)");
+				"getEquipment(player).isRenderLayerVisible(HarbingerEquipmentMenu.CHARM_SLOT_INDEX)");
 	}
 
 	private static void assertPayload(String label, String source, String className) {

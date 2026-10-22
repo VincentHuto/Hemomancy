@@ -59,7 +59,7 @@ public final class BloodInfusionManager {
 			ACTIVE.put(key, progress);
 		}
 
-		IBloodVolume blood = HemoCapabilityAccess.requireBloodVolume(player);
+		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player);
 		double amount = BloodStructureFeedRules.feedAmount(progress.bloodFed, recipe.bloodCost(),
 				blood.getBloodVolume(), Math.max(0.0D, feedRate));
 		if (amount <= 0.0D) {

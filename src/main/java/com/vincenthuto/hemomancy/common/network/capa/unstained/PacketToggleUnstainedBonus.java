@@ -39,14 +39,13 @@ public class PacketToggleUnstainedBonus implements CustomPacketPayload {
             Player packetPlayer = ctx.player();
             if (!(packetPlayer instanceof ServerPlayer player)) return;
 
-            HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
-                switch (msg.bonusId) {
-                    case 0 -> progress.setVerdigrisAuraEnabled(!progress.isVerdigrisAuraEnabled());
-                    case 1 -> progress.setSilverWardEnabled(!progress.isSilverWardEnabled());
-                    default -> { return; }
-                }
-                UnstainedProgressEvents.syncProgress(player, progress);
-            });
+            var progress = HemoCapabilityAccess.getUnstainedProgress(player);
+            switch (msg.bonusId) {
+                case 0 -> progress.setVerdigrisAuraEnabled(!progress.isVerdigrisAuraEnabled());
+                case 1 -> progress.setSilverWardEnabled(!progress.isSilverWardEnabled());
+                default -> { return; }
+            }
+            UnstainedProgressEvents.syncProgress(player, progress);
         });
     }
 

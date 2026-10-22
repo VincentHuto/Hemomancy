@@ -143,11 +143,8 @@ public class PaleIntercessionEntity extends PathfinderMob implements OwnableEnti
 	private boolean ownerIsValid(@Nullable ServerPlayer owner) {
 		if (owner == null || !owner.isAlive() || owner.level() != level()) return false;
 		if (owner.connection != null && owner.server.getPlayerList().getPlayer(owner.getUUID()) != owner) return false;
-		if (!HemoCapabilityAccess.getUnstainedProgress(owner)
-				.map(progress -> progress.hasClarityUnlocked() && progress.getClarity() >= 75.0f).orElse(false)) return false;
-		if (!HemoCapabilityAccess.getKnownStillArts(owner)
-				.map(known -> known.isKnown(com.vincenthuto.hemomancy.common.init.StillArtInit.pale_intercession.get()))
-				.orElse(false)) return false;
+		if (!(HemoCapabilityAccess.getUnstainedProgress(owner).hasClarityUnlocked() && HemoCapabilityAccess.getUnstainedProgress(owner).getClarity() >= 75.0f)) return false;
+		if (!HemoCapabilityAccess.getKnownStillArts(owner).isKnown(com.vincenthuto.hemomancy.common.init.StillArtInit.pale_intercession.get())) return false;
 		CompoundTag data = owner.getPersistentData();
 		return data.hasUUID(ACTIVE_MARKER) && getUUID().equals(data.getUUID(ACTIVE_MARKER));
 	}

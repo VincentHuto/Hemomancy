@@ -81,8 +81,12 @@ public final class SuccessionResidents {
         line.addSuccessorMember(r.id, r.reserve, r.bloodspentUntil); data.setDirty(); sync(level, line);
     }
     public static void sync(ServerLevel level, Bloodline line) {
-        for (var player : level.getServer().getPlayerList().getPlayers()) if (line.hasMember(player.getUUID()))
-            HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> { volume.setBloodLine(line); BloodVolumeEvents.syncVolume(player, volume); });
+        for (var player : level.getServer().getPlayerList().getPlayers()) {
+            if (!line.hasMember(player.getUUID())) continue;
+            var volume = HemoCapabilityAccess.getBloodVolume(player);
+            volume.setBloodLine(line);
+            BloodVolumeEvents.syncVolume(player, volume);
+        }
     }
     private static void returnOriginalHome(ServerLevel level, ProfessionalHarbingerEntity npc) {
         var tag = npc.getPersistentData();

@@ -243,8 +243,8 @@ public final class PhlegethonticGameTests {
         var owner=spawn(h,EntityInit.excoriated.get(),new BlockPos(5,3,5));owner.setNoAi(true);owner.setNoGravity(true);
         var active=player(h,"barb_active",new BlockPos(11,3,5));
         var inactive=player(h,"barb_inactive",new BlockPos(16,3,5));
-        var activeBlood=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(active).orElseThrow();
-        var inactiveBlood=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(inactive).orElseThrow();
+        var activeBlood=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(active);
+        var inactiveBlood=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(inactive);
         activeBlood.setMaxBloodVolume(5000);activeBlood.setBloodVolume(4000);activeBlood.setActive(true);
         inactiveBlood.setActive(false);
         var first=new TestBarb(h.getLevel(),owner);var second=new TestBarb(h.getLevel(),owner);

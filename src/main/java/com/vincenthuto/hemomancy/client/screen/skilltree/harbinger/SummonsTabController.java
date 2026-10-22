@@ -38,8 +38,7 @@ public class SummonsTabController implements IProgressTab {
 	private void refreshKnownSummons(Minecraft mc) {
 		state.knownSummonNames.clear();
 		if (mc.player != null) {
-			HemoCapabilityAccess.getKnownSummons(mc.player)
-					.ifPresent(known -> state.knownSummonNames.addAll(known.getKnownSummonNames()));
+			state.knownSummonNames.addAll(HemoCapabilityAccess.getKnownSummons(mc.player).getKnownSummonNames());
 		}
 	}
 

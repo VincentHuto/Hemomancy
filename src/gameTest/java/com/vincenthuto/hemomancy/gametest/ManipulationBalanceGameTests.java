@@ -156,7 +156,7 @@ public class ManipulationBalanceGameTests {
     @GameTest(templateNamespace="minecraft", template="bastion/mobs/empty", batch="manipulation_balance")
     public static void titheProvidesLiquidityAndSettlesOnlyOnce(GameTestHelper h) {
         var p=player(h);var m=ManipulationInit.crimson_tithe.get();ready(p,m);
-        var blood=HemoCapabilityAccess.requireBloodVolume(p);blood.setBloodVolume(500);
+        var blood=HemoCapabilityAccess.getBloodVolume(p);blood.setBloodVolume(500);
         try {
             double cost=com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostLedger.collect(p,m,1).effectiveCost();
             h.assertTrue(m.tryPerformAction(p,h.getLevel(),ItemStack.EMPTY,p.blockPosition(),0),"Tithe rejected");
@@ -183,11 +183,11 @@ public class ManipulationBalanceGameTests {
         try {
             ManipulationChannelManager.start(p);
             h.assertTrue(ManipulationChannelManager.isChanneling(p.getUUID()),"Lignum did not start");
-            double paid=HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume();
+            double paid=HemoCapabilityAccess.getBloodVolume(p).getBloodVolume();
             for(int i=0;i<25;i++) ManipulationChannelManager.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(p));
             h.assertTrue(!ManipulationChannelManager.isChanneling(p.getUUID()),"Completed selection kept charging");
             h.assertTrue(h.getLevel().getBlockState(log).isAir(),"Completed selection did not harvest");
-            near(h,paid,HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(),"Completed selection paid more upkeep");h.succeed();
+            near(h,paid,HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(),"Completed selection paid more upkeep");h.succeed();
         } finally {ManipulationChannelManager.stop(p,false);p.discard();}
     }
 
@@ -316,9 +316,9 @@ public class ManipulationBalanceGameTests {
     }
 
     private static void ready(ServerPlayer p,BloodManipulation m){
-        var known=HemoCapabilityAccess.requireKnownManipulations(p);known.getKnownManips().put(m,new ManipLevel(0,0));
+        var known=HemoCapabilityAccess.getKnownManipulations(p);known.getKnownManips().put(m,new ManipLevel(0,0));
         known.setSelectedManip(m);known.setEquippedManipNames(List.of(m.getName()));
-        HemoCapabilityAccess.getBloodTendency(p).orElseThrow().setTendencyAlignment(m.getTend(),(float)m.getAlignLevel());
+        HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(m.getTend(),(float)m.getAlignLevel());
     }
 
     private static void near(GameTestHelper h,double expected,double actual,String message){h.assertTrue(Math.abs(expected-actual)<.002,message+": "+actual+" expected "+expected);}
@@ -328,6 +328,6 @@ public class ManipulationBalanceGameTests {
         var connection=new Connection(PacketFlow.SERVERBOUND);new EmbeddedChannel(connection);
         new ServerGamePacketListenerImpl(h.getLevel().getServer(),connection,p,cookie){@Override public void send(net.minecraft.network.protocol.Packet<?> packet){}};
         p.setPos(h.absoluteVec(new net.minecraft.world.phys.Vec3(2,8,2)));
-        HemoCapabilityAccess.requireBloodVolume(p).setActive(true);HemoCapabilityAccess.requireBloodVolume(p).setBloodVolume(5000);return p;
+        HemoCapabilityAccess.getBloodVolume(p).setActive(true);HemoCapabilityAccess.getBloodVolume(p).setBloodVolume(5000);return p;
     }
 }

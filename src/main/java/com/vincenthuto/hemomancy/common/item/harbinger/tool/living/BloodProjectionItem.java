@@ -228,11 +228,11 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(playerIn)
-				.orElseThrow(NullPointerException::new);
+				;
 		IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(playerIn)
-				.orElseThrow(NullPointerException::new);
+				;
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(playerIn)
-				.orElseThrow(NullPointerException::new);
+				;
 		if (volume.isActive()) {
 			if (volume.getBloodVolume() > 0) {
 				playerIn.startUsingItem(handIn);

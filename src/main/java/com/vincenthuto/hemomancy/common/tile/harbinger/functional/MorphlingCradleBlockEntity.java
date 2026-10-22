@@ -323,14 +323,13 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 		if (bloodBuffer <= 0) return;
 		ServerPlayer owner = getOwnerPlayer();
 		if (owner != null) {
-			HemoCapabilityAccess.getBloodVolume(owner).ifPresent(vol -> {
-				if (vol.isActive() && !vol.isFull() && bloodBuffer > 0) {
-					double moved = BloodFlowLedger.applyCirculationIncome(owner, vol, "morphling_cradle",
-							"Morphling Cradle", Category.MORPHLING, bloodBuffer, 20,
-							CirculationIncomeHelper.IncomeChannel.CRADLE);
-					bloodBuffer -= moved;
-				}
-			});
+			var vol = HemoCapabilityAccess.getBloodVolume(owner);
+			if (vol.isActive() && !vol.isFull() && bloodBuffer > 0) {
+				double moved = BloodFlowLedger.applyCirculationIncome(owner, vol, "morphling_cradle",
+						"Morphling Cradle", Category.MORPHLING, bloodBuffer, 20,
+						CirculationIncomeHelper.IncomeChannel.CRADLE);
+				bloodBuffer -= moved;
+			}
 		}
 		bloodBuffer = Mth.clamp(bloodBuffer, 0, STAGE_BUFFER_MAX[stageIdx]);
 		setChanged();
@@ -348,7 +347,7 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 		if (owner != null && owner.level() == level && owner.isAlive()
 				&& owner.distanceToSqr(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5)
 				<= OWNER_DRAIN_RANGE * OWNER_DRAIN_RANGE) {
-			var vol = HemoCapabilityAccess.getBloodVolume(owner).orElse(null);
+			var vol = HemoCapabilityAccess.getBloodVolume(owner);
 			if (vol != null && vol.isActive() && vol.getBloodVolume() >= remaining) {
 				return vol.drain(remaining);
 			}

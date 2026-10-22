@@ -36,9 +36,8 @@ public class PacketUpdateLivingStaffMorph implements CustomPacketPayload {
 
 				// ── Unequip: selected == -1 means clear the equipped morphling ──────────
 				if (msg.selected == -1) {
-					HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
-						cap.clearMorphling();
-					});
+					var cap = HemoCapabilityAccess.getEquippedMorphling(player);
+					cap.clearMorphling();
 					LastRiteHelper.clearMorphlingRites(player);
 					EquippedMorphlingEvents.syncToClient(player);
 					return;
@@ -68,9 +67,8 @@ public class PacketUpdateLivingStaffMorph implements CustomPacketPayload {
 				jarHandler.setDirty();
 				jarHandler.save();
 				ItemStack equippedMorphling = fromJar.copy();
-				HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
-					cap.setEquippedMorphling(equippedMorphling);
-				});
+				var cap = HemoCapabilityAccess.getEquippedMorphling(player);
+				cap.setEquippedMorphling(equippedMorphling);
 				MorphlingItem.markEquipped(player, equippedMorphling);
 				LastRiteHelper.armForMorphling(player, equippedMorphling);
 
@@ -89,8 +87,8 @@ public class PacketUpdateLivingStaffMorph implements CustomPacketPayload {
 			if (!jar.isEmpty())
 				return jar;
 			// Scar equip slot 7
-			return HemoCapabilityAccess.getEquipment(player).map(r -> r.getStackInSlot(7))
-					.filter(s -> s.getItem() instanceof ItemMorphlingJar).orElse(ItemStack.EMPTY);
+			ItemStack equipped = HemoCapabilityAccess.getEquipment(player).getStackInSlot(7);
+			return equipped.getItem() instanceof ItemMorphlingJar ? equipped : ItemStack.EMPTY;
 		}
 	}
 

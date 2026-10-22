@@ -52,11 +52,10 @@ public class StillwaterCondenserBlock extends BaseEntityBlock {
 	}
 
 	private InteractionResult open(Level level, BlockPos pos, Player player) {
-		boolean eligible = HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(progress -> progress.hasBegunPurification() && progress.getPurity() >= 50f
-						|| (progress.getClaimedObservances()
-								& UnstainedObservances.Observance.NOVITIATE_GENTLE_SEPARATION.mask()) != 0)
-				.orElse(false);
+		var progress = HemoCapabilityAccess.getUnstainedProgress(player);
+		boolean eligible = progress.hasBegunPurification() && progress.getPurity() >= 50f
+				|| (progress.getClaimedObservances()
+						& UnstainedObservances.Observance.NOVITIATE_GENTLE_SEPARATION.mask()) != 0;
 		if (!eligible) {
 			player.displayClientMessage(Component.literal("The condenser remains still until Purity reaches 50.")
 					.withStyle(ChatFormatting.GRAY), true);

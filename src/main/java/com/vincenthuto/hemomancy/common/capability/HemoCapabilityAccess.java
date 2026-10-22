@@ -1,25 +1,37 @@
 package com.vincenthuto.hemomancy.common.capability;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bestiary.SpecimenBestiaryProgress;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegree;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffProgress;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulations;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphling;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.VisceralOrgans;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummons;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystem;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledge;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgress;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArts;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.white_humor.WhiteHumorVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.PowerGuardrailState;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentContainer;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipment;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.ILivingStaffProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.IEquippedMorphling;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryState;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.IVisceralOrgans;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.rite.IchorianKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScarItem;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScars;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarsContainer;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.IKnownSummons;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.will.WillAmbushState;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.DialogueKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.IKnownStillArts;
@@ -33,9 +45,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
-import java.util.Map;
 import java.util.Optional;
 
+/**
+ * The only door to Hemomancy attachments. Every player carries every player attachment, so the {@code Player}
+ * overloads return the attachment itself, typed as its own class. The {@code Entity}, {@code BlockEntity} and {@code ItemStack} overloads
+ * stay {@code Optional}: most of those holders carry nothing.
+ */
 public final class HemoCapabilityAccess {
 public static com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch antecedent(Player player) { return player.getData(HemoAttachmentTypes.ANTECEDENT); }
 public static com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress clinicalBlood(Player player) {
@@ -43,6 +59,14 @@ public static com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodPr
 }
 public static com.vincenthuto.hemomancy.common.station.StationUpgradeProgress stationUpgrades(Player player) {
     return player.getData(HemoAttachmentTypes.STATION_UPGRADES);
+}
+
+public static MuscleMemoryState muscleMemory(Player player) {
+    return player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+}
+
+public static DialogueKnowledge dialogueKnowledge(Player player) {
+    return player.getData(HemoAttachmentTypes.DIALOGUE_KNOWLEDGE);
 }
 
 
@@ -54,8 +78,8 @@ public static com.vincenthuto.hemomancy.common.damage.SchoolCombatState getSchoo
 
 // ── Blood Volume ──────────────────────────────────────────────────────────
 
-public static Optional<IBloodVolume> getBloodVolume(Player player) {
-    return Optional.ofNullable(player.getCapability(HemoCapabilityKeys.BLOOD_VOLUME));
+public static BloodVolume getBloodVolume(Player player) {
+    return player.getData(HemoAttachmentTypes.BLOOD_VOLUME);
 }
 
 public static Optional<IBloodVolume> getBloodVolume(Entity entity) {
@@ -73,14 +97,6 @@ public static Optional<IBloodVolume> getBloodVolume(ItemStack stack) {
     return Optional.ofNullable(stack.getCapability(HemoCapabilityKeys.ITEM_BLOOD_VOLUME));
 }
 
-public static IBloodVolume requireBloodVolume(Player player) {
-    return getBloodVolume(player).orElseThrow(IllegalStateException::new);
-}
-
-public static IBloodVolume requireBloodVolume(Entity entity) {
-    return getBloodVolume(entity).orElseThrow(IllegalStateException::new);
-}
-
 public static PowerGuardrailState getPowerGuardrails(Player player) {
     return player.getData(HemoAttachmentTypes.POWER_GUARDRAILS);
 }
@@ -91,8 +107,8 @@ public static WillAmbushState getWillAmbushState(Player player) {
 
 // ── Blood Tendency ────────────────────────────────────────────────────────
 
-public static Optional<IBloodTendency> getBloodTendency(Player player) {
-    return Optional.ofNullable(player.getCapability(HemoCapabilityKeys.BLOOD_TENDENCY));
+public static BloodTendency getBloodTendency(Player player) {
+    return player.getData(HemoAttachmentTypes.BLOOD_TENDENCY);
 }
 
 public static Optional<IBloodTendency> getBloodTendency(Entity entity) {
@@ -103,184 +119,95 @@ public static Optional<IBloodTendency> getBloodTendency(BlockEntity be) {
     return Optional.of(be.getData(HemoAttachmentTypes.BLOCK_BLOOD_TENDENCY));
 }
 
-public static IBloodTendency requireBloodTendency(Player player) {
-    return getBloodTendency(player).orElseThrow(IllegalStateException::new);
-}
-
-public static IBloodTendency requireBloodTendency(Entity entity) {
-    return getBloodTendency(entity).orElseThrow(IllegalStateException::new);
-}
-
 // ── Vascular System ───────────────────────────────────────────────────────
 
-public static Optional<IVascularSystem> getVascularSystem(Player player) {
-    return Optional.ofNullable(player.getCapability(HemoCapabilityKeys.VASCULAR_SYSTEM));
+public static VascularSystem getVascularSystem(Player player) {
+    return player.getData(HemoAttachmentTypes.VASCULAR_SYSTEM);
 }
 
 public static Optional<IVascularSystem> getVascularSystem(Entity entity) {
     return Optional.ofNullable(entity.getCapability(HemoCapabilityKeys.VASCULAR_SYSTEM));
 }
 
-public static IVascularSystem requireVascularSystem(Player player) {
-    return getVascularSystem(player).orElseThrow(IllegalStateException::new);
-}
-
-public static IVascularSystem requireVascularSystem(Entity entity) {
-    return getVascularSystem(entity).orElseThrow(IllegalStateException::new);
-}
-
-/** Convenience helper replacing VascularSystemProvider.getPlayerVascularSystem. */
-public static Map<EnumVeinSections, Float> getPlayerVascularSystem(Player player) {
-    return requireVascularSystem(player).getVascularSystem();
-}
-
 // ── Known Manipulations ───────────────────────────────────────────────────
 
-public static Optional<IKnownManipulations> getKnownManipulations(Player player) {
-    return Optional.ofNullable(player.getCapability(HemoCapabilityKeys.KNOWN_MANIPULATIONS));
+public static KnownManipulations getKnownManipulations(Player player) {
+    return player.getData(HemoAttachmentTypes.KNOWN_MANIPULATIONS);
 }
 
 public static Optional<IKnownManipulations> getKnownManipulations(Entity entity) {
     return Optional.ofNullable(entity.getCapability(HemoCapabilityKeys.KNOWN_MANIPULATIONS));
 }
 
-public static IKnownManipulations requireKnownManipulations(Player player) {
-    return getKnownManipulations(player).orElseThrow(IllegalStateException::new);
-}
-
-public static IKnownManipulations requireKnownManipulations(Entity entity) {
-    return getKnownManipulations(entity).orElseThrow(IllegalStateException::new);
-}
-
-public static Optional<ILivingStaffProgress> getLivingStaffProgress(Player player) {
-    return Optional.ofNullable(player.getCapability(HemoCapabilityKeys.LIVING_STAFF_PROGRESS));
+public static LivingStaffProgress getLivingStaffProgress(Player player) {
+    return player.getData(HemoAttachmentTypes.LIVING_STAFF_PROGRESS);
 }
 
 public static Optional<ILivingStaffProgress> getLivingStaffProgress(Entity entity) {
     return Optional.ofNullable(entity.getCapability(HemoCapabilityKeys.LIVING_STAFF_PROGRESS));
 }
 
-public static ILivingStaffProgress requireLivingStaffProgress(Player player) {
-    return getLivingStaffProgress(player).orElseThrow(IllegalStateException::new);
-}
-
-public static ILivingStaffProgress requireLivingStaffProgress(Entity entity) {
-    return getLivingStaffProgress(entity).orElseThrow(IllegalStateException::new);
-}
-
-public static Optional<SpecimenBestiaryProgress> getSpecimenBestiary(Player player) {
-    return Optional.ofNullable(player.getCapability(HemoCapabilityKeys.SPECIMEN_BESTIARY));
+public static SpecimenBestiaryProgress getSpecimenBestiary(Player player) {
+    return player.getData(HemoAttachmentTypes.SPECIMEN_BESTIARY);
 }
 
 public static Optional<SpecimenBestiaryProgress> getSpecimenBestiary(Entity entity) {
     return Optional.ofNullable(entity.getCapability(HemoCapabilityKeys.SPECIMEN_BESTIARY));
 }
 
-public static SpecimenBestiaryProgress requireSpecimenBestiary(Player player) {
-    return getSpecimenBestiary(player).orElseThrow(IllegalStateException::new);
-}
-
-public static SpecimenBestiaryProgress requireSpecimenBestiary(Entity entity) {
-    return getSpecimenBestiary(entity).orElseThrow(IllegalStateException::new);
-}
-
-public static Optional<IKnownStillArts> getKnownStillArts(Player player) {
-    return Optional.ofNullable(player.getCapability(HemoCapabilityKeys.KNOWN_STILL_ARTS));
+public static KnownStillArts getKnownStillArts(Player player) {
+    return player.getData(HemoAttachmentTypes.KNOWN_STILL_ARTS);
 }
 
 public static Optional<IKnownStillArts> getKnownStillArts(Entity entity) {
     return Optional.ofNullable(entity.getCapability(HemoCapabilityKeys.KNOWN_STILL_ARTS));
 }
 
-public static IKnownStillArts requireKnownStillArts(Player player) {
-    return getKnownStillArts(player).orElseThrow(IllegalStateException::new);
-}
-
-public static IKnownStillArts requireKnownStillArts(Entity entity) {
-    return getKnownStillArts(entity).orElseThrow(IllegalStateException::new);
-}
-
-public static Optional<IKnownSummons> getKnownSummons(Player player) {
-    return Optional.ofNullable(player.getCapability(HemoCapabilityKeys.KNOWN_SUMMONS));
+public static KnownSummons getKnownSummons(Player player) {
+    return player.getData(HemoAttachmentTypes.KNOWN_SUMMONS);
 }
 
 public static Optional<IKnownSummons> getKnownSummons(Entity entity) {
     return Optional.ofNullable(entity.getCapability(HemoCapabilityKeys.KNOWN_SUMMONS));
 }
 
-public static IKnownSummons requireKnownSummons(Player player) {
-    return getKnownSummons(player).orElseThrow(IllegalStateException::new);
-}
-
-public static IKnownSummons requireKnownSummons(Entity entity) {
-    return getKnownSummons(entity).orElseThrow(IllegalStateException::new);
-}
-
-public static Optional<IBookKnowledge> getLiberKnowledge(Player player) {
-    return Optional.ofNullable(player.getCapability(HemoCapabilityKeys.LIBER_KNOWLEDGE));
+public static LiberKnowledge getLiberKnowledge(Player player) {
+    return player.getData(HemoAttachmentTypes.LIBER_KNOWLEDGE);
 }
 
 public static Optional<IBookKnowledge> getLiberKnowledge(Entity entity) {
     return Optional.ofNullable(entity.getCapability(HemoCapabilityKeys.LIBER_KNOWLEDGE));
 }
 
-public static IBookKnowledge requireLiberKnowledge(Player player) {
-    return getLiberKnowledge(player).orElseThrow(IllegalStateException::new);
-}
-
-public static IBookKnowledge requireLiberKnowledge(Entity entity) {
-    return getLiberKnowledge(entity).orElseThrow(IllegalStateException::new);
-}
-
-public static Optional<IchorianKnowledge> getIchorianKnowledge(Player player) {
-    return Optional.ofNullable(player.getCapability(HemoCapabilityKeys.ICHORIAN_KNOWLEDGE));
+public static IchorianKnowledge getIchorianKnowledge(Player player) {
+    return player.getData(HemoAttachmentTypes.ICHORIAN_KNOWLEDGE);
 }
 
 public static Optional<IchorianKnowledge> getIchorianKnowledge(Entity entity) {
     return Optional.ofNullable(entity.getCapability(HemoCapabilityKeys.ICHORIAN_KNOWLEDGE));
 }
 
-public static IchorianKnowledge requireIchorianKnowledge(Player player) {
-    return getIchorianKnowledge(player).orElseThrow(IllegalStateException::new);
-}
-
-public static Optional<SkillProgress> getSkillProgress(Player player) {
-    return Optional.ofNullable(player.getCapability(HemoCapabilityKeys.SKILL_PROGRESS));
+public static SkillProgress getSkillProgress(Player player) {
+    return player.getData(HemoAttachmentTypes.SKILL_PROGRESS);
 }
 
 public static Optional<SkillProgress> getSkillProgress(Entity entity) {
     return Optional.ofNullable(entity.getCapability(HemoCapabilityKeys.SKILL_PROGRESS));
 }
 
-public static SkillProgress requireSkillProgress(Player player) {
-    return getSkillProgress(player).orElseThrow(IllegalStateException::new);
-}
-
-public static SkillProgress requireSkillProgress(Entity entity) {
-    return getSkillProgress(entity).orElseThrow(IllegalStateException::new);
-}
-
 // ── Initiatory Degree ─────────────────────────────────────────────────────
 
-public static Optional<IInitiatoryDegree> getInitiatoryDegree(Player player) {
-    return Optional.ofNullable(player.getCapability(HemoCapabilityKeys.INITIATORY_DEGREE));
+public static InitiatoryDegree getInitiatoryDegree(Player player) {
+    return player.getData(HemoAttachmentTypes.INITIATORY_DEGREE);
 }
 
 public static Optional<IInitiatoryDegree> getInitiatoryDegree(Entity entity) {
     return Optional.ofNullable(entity.getCapability(HemoCapabilityKeys.INITIATORY_DEGREE));
 }
 
-public static IInitiatoryDegree requireInitiatoryDegree(Player player) {
-    return getInitiatoryDegree(player).orElseThrow(IllegalStateException::new);
-}
-
-public static IInitiatoryDegree requireInitiatoryDegree(Entity entity) {
-    return getInitiatoryDegree(entity).orElseThrow(IllegalStateException::new);
-}
-
 /** Convenience helper replacing InitiatoryDegreeProvider.getPlayerDegreeNumber. */
 public static int getPlayerDegreeNumber(Player player) {
-    return getInitiatoryDegree(player).map(IInitiatoryDegree::getDegreeNumber).orElse(0);
+    return getInitiatoryDegree(player).getDegreeNumber();
 }
 
 /**
@@ -300,60 +227,43 @@ public static int getPlayerDegreeNumber(Player player) {
  * </pre>
  */
 public static int getPlayerUnstainedLevel(Player player) {
-    return getUnstainedProgress(player).map(up -> {
-		if (up.hasClarityUnlocked()) {
-			float clarity = up.getClarity();
-			if (clarity >= 100f) return 8;
-			if (clarity >= 50f) return 7;
-			if (clarity >= 25f) return 6;
-			return 5;
-		}
-		if (!up.hasBegunPurification()) return 0;
-        if (!up.isPurified()) {
-            float purity = up.getPurity();
-            if (purity < 25f) return 1;
-            if (purity < 50f) return 2;
-            if (purity < 75f) return 3;
-            return 4;  // Absolved: >= 75 but < 100
-        }
-		return 5;
-    }).orElse(0);
+    UnstainedProgress up = getUnstainedProgress(player);
+    if (up.hasClarityUnlocked()) {
+        float clarity = up.getClarity();
+        if (clarity >= 100f) return 8;
+        if (clarity >= 50f) return 7;
+        if (clarity >= 25f) return 6;
+        return 5;
+    }
+    if (!up.hasBegunPurification()) return 0;
+    if (!up.isPurified()) {
+        float purity = up.getPurity();
+        if (purity < 25f) return 1;
+        if (purity < 50f) return 2;
+        if (purity < 75f) return 3;
+        return 4;  // Absolved: >= 75 but < 100
+    }
+    return 5;
 }
 
 // ── Equipped Morphling ────────────────────────────────────────────────────
 
-public static Optional<IEquippedMorphling> getEquippedMorphling(Player player) {
-    return Optional.ofNullable(player.getCapability(HemoCapabilityKeys.EQUIPPED_MORPHLING));
+public static EquippedMorphling getEquippedMorphling(Player player) {
+    return player.getData(HemoAttachmentTypes.EQUIPPED_MORPHLING);
 }
 
 public static Optional<IEquippedMorphling> getEquippedMorphling(Entity entity) {
     return Optional.ofNullable(entity.getCapability(HemoCapabilityKeys.EQUIPPED_MORPHLING));
 }
 
-public static IEquippedMorphling requireEquippedMorphling(Player player) {
-    return getEquippedMorphling(player).orElseThrow(IllegalStateException::new);
-}
-
-public static IEquippedMorphling requireEquippedMorphling(Entity entity) {
-    return getEquippedMorphling(entity).orElseThrow(IllegalStateException::new);
-}
-
 // ── Unstained Progress ────────────────────────────────────────────────────
 
-public static Optional<IUnstainedProgress> getUnstainedProgress(Player player) {
-    return Optional.ofNullable(player.getCapability(HemoCapabilityKeys.UNSTAINED_PROGRESS));
+public static UnstainedProgress getUnstainedProgress(Player player) {
+    return player.getData(HemoAttachmentTypes.UNSTAINED_PROGRESS);
 }
 
 public static Optional<IUnstainedProgress> getUnstainedProgress(Entity entity) {
     return Optional.ofNullable(entity.getCapability(HemoCapabilityKeys.UNSTAINED_PROGRESS));
-}
-
-public static IUnstainedProgress requireUnstainedProgress(Player player) {
-    return getUnstainedProgress(player).orElseThrow(IllegalStateException::new);
-}
-
-public static IUnstainedProgress requireUnstainedProgress(Entity entity) {
-    return getUnstainedProgress(entity).orElseThrow(IllegalStateException::new);
 }
 
 // ── White Humor Volume ────────────────────────────────────────────────────
@@ -365,64 +275,40 @@ public static Optional<IWhiteHumorVolume> getWhiteHumorVolume(BlockEntity be) {
     return Optional.empty();
 }
 
-public static Optional<IWhiteHumorVolume> getWhiteHumorVolume(Player player) {
-    return Optional.ofNullable(player.getCapability(HemoCapabilityKeys.WHITE_HUMOR_VOLUME));
+public static WhiteHumorVolume getWhiteHumorVolume(Player player) {
+    return player.getData(HemoAttachmentTypes.WHITE_HUMOR_VOLUME);
 }
 
 public static Optional<IWhiteHumorVolume> getWhiteHumorVolume(Entity entity) {
     return Optional.ofNullable(entity.getCapability(HemoCapabilityKeys.WHITE_HUMOR_VOLUME));
 }
 
-public static IWhiteHumorVolume requireWhiteHumorVolume(BlockEntity be) {
-    return getWhiteHumorVolume(be).orElseThrow(IllegalStateException::new);
-}
-
-public static IWhiteHumorVolume requireWhiteHumorVolume(Player player) {
-    return getWhiteHumorVolume(player).orElseThrow(IllegalStateException::new);
-}
-
 // ── Visceral Organs ───────────────────────────────────────────────────────
 
-public static Optional<IVisceralOrgans> getVisceralOrgans(Player player) {
-    return Optional.ofNullable(player.getCapability(HemoCapabilityKeys.VISCERAL_ORGANS));
+public static VisceralOrgans getVisceralOrgans(Player player) {
+    return player.getData(HemoAttachmentTypes.VISCERAL_ORGANS);
 }
 
 public static Optional<IVisceralOrgans> getVisceralOrgans(Entity entity) {
     return Optional.ofNullable(entity.getCapability(HemoCapabilityKeys.VISCERAL_ORGANS));
 }
 
-public static IVisceralOrgans requireVisceralOrgans(Player player) {
-    return getVisceralOrgans(player).orElseThrow(IllegalStateException::new);
-}
-
 // ── Scars ─────────────────────────────────────────────────────────────────
 
-public static Optional<IHarbingerEquipmentItemHandler> getEquipment(Player player) {
-    IHarbingerEquipmentItemHandler equipment = player.getCapability(HemoCapabilityKeys.HARBINGER_EQUIPMENT);
-    if (equipment instanceof HarbingerEquipmentContainer container) {
-        container.bindHolder(player);
-    }
-    return Optional.ofNullable(equipment);
-}
-
-public static IHarbingerEquipmentItemHandler requireEquipment(Player player) {
-    return getEquipment(player).orElseThrow(IllegalStateException::new);
+public static HarbingerEquipmentContainer getEquipment(Player player) {
+    HarbingerEquipmentContainer equipment = player.getData(HemoAttachmentTypes.HARBINGER_EQUIPMENT);
+    equipment.bindHolder(player);
+    return equipment;
 }
 
 public static Optional<IHarbingerEquipment> getScar(ItemStack stack) {
     return Optional.ofNullable(stack.getCapability(HemoCapabilityKeys.ITEM_HARBINGER_EQUIPMENT));
 }
 
-public static Optional<IScars> getScarState(Player player) {
-    IScars scars = player.getCapability(HemoCapabilityKeys.SCARS);
-    if (scars instanceof ScarsContainer container) {
-        container.bindHolder(player);
-    }
-    return Optional.ofNullable(scars);
-}
-
-public static IScars requireScarState(Player player) {
-    return getScarState(player).orElseThrow(IllegalStateException::new);
+public static ScarsContainer getScarState(Player player) {
+    ScarsContainer scars = player.getData(HemoAttachmentTypes.SCARS);
+    scars.bindHolder(player);
+    return scars;
 }
 
 public static Optional<IScarItem> getScarItem(ItemStack stack) {

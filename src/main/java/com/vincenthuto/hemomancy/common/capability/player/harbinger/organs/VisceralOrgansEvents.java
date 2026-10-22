@@ -52,72 +52,70 @@ public class VisceralOrgansEvents {
 
 		boolean bloodMoonActive = BloodMoonEvents.isBloodMoonActive(player.level());
 
-		HemoCapabilityAccess.getVisceralOrgans(player).ifPresent(organs -> {
-			// Spleen max blood is resolved by MaxBloodLedger.
-			// Liver — poison/toxin resistance
-			if (organs.isExtracted(EnumOrgan.LIVER)) {
-				int level = organs.getOrganLevel(EnumOrgan.LIVER);
-				// Remove poison effect at level 2+
-				if (player.hasEffect(MobEffects.POISON)) {
-					if (level >= 2) {
-						player.removeEffect(MobEffects.POISON);
-					}
-				}
-				// At level 3, also suppress wither
-				if (level >= 3 && player.hasEffect(MobEffects.WITHER)) {
-					player.removeEffect(MobEffects.WITHER);
+		var organs = HemoCapabilityAccess.getVisceralOrgans(player);
+		// Spleen max blood is resolved by MaxBloodLedger.
+		// Liver — poison/toxin resistance
+		if (organs.isExtracted(EnumOrgan.LIVER)) {
+			int level = organs.getOrganLevel(EnumOrgan.LIVER);
+			// Remove poison effect at level 2+
+			if (player.hasEffect(MobEffects.POISON)) {
+				if (level >= 2) {
+					player.removeEffect(MobEffects.POISON);
 				}
 			}
+			// At level 3, also suppress wither
+			if (level >= 3 && player.hasEffect(MobEffects.WITHER)) {
+				player.removeEffect(MobEffects.WITHER);
+			}
+		}
 
-			// Lungs — enhanced underwater breathing
-			if (organs.isExtracted(EnumOrgan.LUNGS)) {
-				int level = organs.getOrganLevel(EnumOrgan.LUNGS);
-				if (player.isUnderWater()) {
-					player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING,
-							100 * level, 0, true, false));
-				}
+		// Lungs — enhanced underwater breathing
+		if (organs.isExtracted(EnumOrgan.LUNGS)) {
+			int level = organs.getOrganLevel(EnumOrgan.LUNGS);
+			if (player.isUnderWater()) {
+				player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING,
+						100 * level, 0, true, false));
+			}
+		}
+
+		// Kidneys — enhanced regeneration
+		// During a Blood Moon the body is under more pressure; the kidney's
+		// filtration overclocks — grant a higher amplifier when the moon is active.
+		if (organs.isExtracted(EnumOrgan.KIDNEYS)) {
+			int level = organs.getOrganLevel(EnumOrgan.KIDNEYS);
+			if (!player.hasEffect(MobEffects.REGENERATION)) {
+				int amplifier = bloodMoonActive ? level : (level - 1);
+				player.addEffect(new MobEffectInstance(MobEffects.REGENERATION,
+						60, amplifier, true, false));
+			}
+		}
+
+		// Heart — Cardiac Autonomy
+		// The player has removed their heart and sustains circulation through
+		// sheer force of will, rhythmically commanding their muscles to
+		// contract. This grants damage resistance but at the cost of occasional
+		// blood drain from the effort.
+		// At level 3 the autonomic rhythm is fully mastered: the player becomes
+		// immune to Wither — the final reminder that they no longer have a
+		// heart to stop.
+		if (organs.isHeartless()) {
+			int level = organs.getOrganLevel(EnumOrgan.HEART);
+			// Grants damage resistance (the body's compensatory mechanism)
+			player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,
+					60, Math.min(level - 1, 1), true, false));
+
+			// Level 3: full Cardiac Autonomy — suppress Wither
+			if (level >= 3 && player.hasEffect(MobEffects.WITHER)) {
+				player.removeEffect(MobEffects.WITHER);
 			}
 
-			// Kidneys — enhanced regeneration
-			// During a Blood Moon the body is under more pressure; the kidney's
-			// filtration overclocks — grant a higher amplifier when the moon is active.
-			if (organs.isExtracted(EnumOrgan.KIDNEYS)) {
-				int level = organs.getOrganLevel(EnumOrgan.KIDNEYS);
-				if (!player.hasEffect(MobEffects.REGENERATION)) {
-					int amplifier = bloodMoonActive ? level : (level - 1);
-					player.addEffect(new MobEffectInstance(MobEffects.REGENERATION,
-							60, amplifier, true, false));
-				}
+			// Blood cost: sustaining circulation without a heart is taxing
+			var vol = HemoCapabilityAccess.getBloodVolume(player);
+			double cost = 10.0 / level; // Higher level = less cost
+			if (player instanceof ServerPlayer sp) {
+				BloodFlowLedger.applyDrain(sp, vol, "heartless_circulation",
+						"Heartless Circulation", Category.ORGAN, cost, 40, false);
 			}
-
-			// Heart — Cardiac Autonomy
-			// The player has removed their heart and sustains circulation through
-			// sheer force of will, rhythmically commanding their muscles to
-			// contract. This grants damage resistance but at the cost of occasional
-			// blood drain from the effort.
-			// At level 3 the autonomic rhythm is fully mastered: the player becomes
-			// immune to Wither — the final reminder that they no longer have a
-			// heart to stop.
-			if (organs.isHeartless()) {
-				int level = organs.getOrganLevel(EnumOrgan.HEART);
-				// Grants damage resistance (the body's compensatory mechanism)
-				player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,
-						60, Math.min(level - 1, 1), true, false));
-
-				// Level 3: full Cardiac Autonomy — suppress Wither
-				if (level >= 3 && player.hasEffect(MobEffects.WITHER)) {
-					player.removeEffect(MobEffects.WITHER);
-				}
-
-				// Blood cost: sustaining circulation without a heart is taxing
-				HemoCapabilityAccess.getBloodVolume(player).ifPresent(vol -> {
-					double cost = 10.0 / level; // Higher level = less cost
-					if (player instanceof ServerPlayer sp) {
-						BloodFlowLedger.applyDrain(sp, vol, "heartless_circulation",
-								"Heartless Circulation", Category.ORGAN, cost, 40, false);
-					}
-				});
-			}
-		});
+		}
 	}
 }

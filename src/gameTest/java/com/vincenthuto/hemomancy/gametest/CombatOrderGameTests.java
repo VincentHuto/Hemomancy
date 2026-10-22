@@ -158,7 +158,7 @@ public final class CombatOrderGameTests {
     public static void canceledPlayerDeathKeepsCurrentRewardDispatch(GameTestHelper h) {
         var attacker = DuctilisGameTests.player(h);
         var victim = DuctilisGameTests.player(h);
-        var blood = HemoCapabilityAccess.requireBloodVolume(attacker);
+        var blood = HemoCapabilityAccess.getBloodVolume(attacker);
         blood.setActive(true);
         blood.setBloodVolume(500);
         double before = blood.getBloodVolume();

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.dialogue;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
-import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -34,7 +34,7 @@ public record DialogueTopicOpenedPacket(ResourceLocation topicId, int entityId) 
 		context.enqueueWork(() -> {
 			if (!(context.player() instanceof ServerPlayer player) || !isValidTopicId(packet.topicId)) return;
 			if (packet.entityId != 0 && ServerboundGuards.nearEntity(player, packet.entityId, 8.0D) == null) return;
-			player.getData(HemoAttachmentTypes.DIALOGUE_KNOWLEDGE).markRead(packet.topicId);
+			HemoCapabilityAccess.dialogueKnowledge(player).markRead(packet.topicId);
 		});
 	}
 

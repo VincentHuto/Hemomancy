@@ -279,7 +279,7 @@ public final class CastingClientAcceptance {
             int stage=scene-avatars;
             if(frame==0) { var m=(com.vincenthuto.hemomancy.common.manipulation.animus.SummonAvatarManip)ManipulationInit.getByName(AVATARS[stage]);
                 ready(caster,m);
-                var known=HemoCapabilityAccess.requireKnownManipulations(caster);
+                var known=HemoCapabilityAccess.getKnownManipulations(caster);
                 var forms=new java.util.LinkedHashSet<>(known.getGrandfatheredFamilyForms());forms.add(m.getName());
                 known.setGrandfatheredFamilyForms(forms);
                 com.vincenthuto.hemomancy.common.manipulation.animus.AvatarManifestationManager.toggle(caster,m); }
@@ -350,10 +350,10 @@ public final class CastingClientAcceptance {
         if(frame==25)shot(server,name+"-release",caster);
     }
     private static void ready(ServerPlayer p,BloodManipulation m) {
-        var volume=HemoCapabilityAccess.requireBloodVolume(p);volume.setActive(true);volume.fill(5000);
-        var known=HemoCapabilityAccess.requireKnownManipulations(p);known.getKnownManips().put(m,new ManipLevel(0,0));
+        var volume=HemoCapabilityAccess.getBloodVolume(p);volume.setActive(true);volume.fill(5000);
+        var known=HemoCapabilityAccess.getKnownManipulations(p);known.getKnownManips().put(m,new ManipLevel(0,0));
         known.setSelectedManip(m);known.setEquippedManipNames(java.util.List.of(m.getName()));
-        HemoCapabilityAccess.getBloodTendency(p).orElseThrow().setTendencyAlignment(m.getTend(),100);
+        HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(m.getTend(),100);
         // Items such as the cell hands check the client's copy of the volume before they start being used.
         com.vincenthuto.hemomancy.common.network.PacketHandler.sendToPlayer(p,
                 new com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket(volume));

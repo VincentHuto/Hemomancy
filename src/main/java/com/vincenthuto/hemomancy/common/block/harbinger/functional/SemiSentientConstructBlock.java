@@ -202,7 +202,7 @@ public class SemiSentientConstructBlock extends Block implements EntityBlock, Si
 
 		// ── Blood cost ───────────────────────────────────────────────────────
 		double birthCost = HemoServerConfig.DRUDGE_BIRTH_COST.get();
-		IBloodVolume playerVol = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume playerVol = HemoCapabilityAccess.getBloodVolume(player);
 		if (playerVol == null || !playerVol.isActive() || playerVol.getBloodVolume() < birthCost) {
 			player.displayClientMessage(Component.literal(
 					"§4Insufficient blood. §7(" + (int) birthCost + " mL required)"),

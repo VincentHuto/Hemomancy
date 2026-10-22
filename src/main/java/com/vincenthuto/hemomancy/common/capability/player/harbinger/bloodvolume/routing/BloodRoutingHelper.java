@@ -104,7 +104,7 @@ public final class BloodRoutingHelper {
         if (degree < 3) {
             return false;
         }
-        IBloodVolume ownerVolume = HemoCapabilityAccess.getBloodVolume(owner).orElse(null);
+        IBloodVolume ownerVolume = HemoCapabilityAccess.getBloodVolume(owner);
         if (ownerVolume == null || !ownerVolume.isActive()) {
             return false;
         }
@@ -134,7 +134,7 @@ public final class BloodRoutingHelper {
             return 0;
         }
 
-        IBloodVolume ownerVolume = HemoCapabilityAccess.getBloodVolume(owner).orElse(null);
+        IBloodVolume ownerVolume = HemoCapabilityAccess.getBloodVolume(owner);
         if (ownerVolume == null || !ownerVolume.isActive()) {
             return 0;
         }
@@ -269,7 +269,7 @@ public final class BloodRoutingHelper {
 
     @Nullable
     private static GourdHandle findOpenScarGourd(ServerPlayer owner) {
-        IHarbingerEquipmentItemHandler scars = HemoCapabilityAccess.getEquipment(owner).orElse(null);
+        IHarbingerEquipmentItemHandler scars = HemoCapabilityAccess.getEquipment(owner);
         if (scars == null) {
             return null;
         }

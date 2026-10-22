@@ -31,24 +31,22 @@ public class VascCharmLayer<T extends LivingEntity, M extends HumanoidModel<T>> 
 			return;
 		}
 		if (ent instanceof Player player) {
-			HemoCapabilityAccess.getEquipment(player).ifPresent(inv -> {
-				if (!inv.isRenderLayerVisible(HarbingerEquipmentMenu.CHARM_SLOT_INDEX)) {
-					return;
-				}
-				ItemStack charmStack = inv.getStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX);
-				if (charmStack.getItem() instanceof VasculariumCharmItem charm) {
-					matrixStack.pushPose();
-					matrixStack.mulPose(Vector3.XN.rotationDegrees(180f).toMoj());
-					matrixStack.scale(0.25f, 0.25f, 0.25f);
-					matrixStack.translate(0, -.45, 0.55);
-					matrixStack.mulPose(Vector3.XN.rotationDegrees(7f).toMoj());
-					this.getParentModel().body.translateAndRotate(matrixStack);
-					Minecraft.getInstance().getItemRenderer().renderStatic(charmStack, ItemDisplayContext.FIXED,
-							lightness, OverlayTexture.NO_OVERLAY, matrixStack, buffer, ent.level(), lightness);
-					matrixStack.popPose();
-				}
-
-			});
+			var inv = HemoCapabilityAccess.getEquipment(player);
+			if (!inv.isRenderLayerVisible(HarbingerEquipmentMenu.CHARM_SLOT_INDEX)) {
+				return;
+			}
+			ItemStack charmStack = inv.getStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX);
+			if (charmStack.getItem() instanceof VasculariumCharmItem charm) {
+				matrixStack.pushPose();
+				matrixStack.mulPose(Vector3.XN.rotationDegrees(180f).toMoj());
+				matrixStack.scale(0.25f, 0.25f, 0.25f);
+				matrixStack.translate(0, -.45, 0.55);
+				matrixStack.mulPose(Vector3.XN.rotationDegrees(7f).toMoj());
+				this.getParentModel().body.translateAndRotate(matrixStack);
+				Minecraft.getInstance().getItemRenderer().renderStatic(charmStack, ItemDisplayContext.FIXED,
+						lightness, OverlayTexture.NO_OVERLAY, matrixStack, buffer, ent.level(), lightness);
+				matrixStack.popPose();
+			}
 		}
 	}
 

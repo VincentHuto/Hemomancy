@@ -428,11 +428,11 @@ public final class ManipulationBalancePass2SchoolAGameTests {
             @Override public void send(net.minecraft.network.protocol.Packet<?> packet) { }
         };
         p.setPos(h.absoluteVec(new Vec3(2.5, 2, 2.5)));
-        var blood = HemoCapabilityAccess.requireBloodVolume(p);
+        var blood = HemoCapabilityAccess.getBloodVolume(p);
         blood.setActive(true);
         blood.setBloodVolume(2000);
         for (var tendency : EnumBloodTendency.values())
-            HemoCapabilityAccess.getBloodTendency(p).orElseThrow().setTendencyAlignment(tendency, 100);
+            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(tendency, 100);
         return p;
     }
 }

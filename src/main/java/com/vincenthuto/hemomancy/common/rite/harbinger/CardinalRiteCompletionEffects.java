@@ -284,15 +284,12 @@ public final class CardinalRiteCompletionEffects {
 			return Component.literal(
 					"The Eighth Degree remains sealed. Consume all nine Qliphoth husks from a single bloom.");
 		}
-		if (apotheos && HemoCapabilityAccess.getInitiatoryDegree(caster)
-				.map(degree -> degree.getArchonPath() != EnumArchonPath.APOTHEOS_PENDING)
-				.orElse(true)) {
+		if (apotheos && (HemoCapabilityAccess.getInitiatoryDegree(caster).getArchonPath() != EnumArchonPath.APOTHEOS_PENDING)) {
 			return Component.literal("Apotheosis has not been chosen. "
 					+ "Witness the first projection and answer the truth it leaves behind.");
 		}
-		boolean pathPermitsRite = HemoCapabilityAccess.getInitiatoryDegree(caster)
-				.map(d -> HarbingerPathPermissions.canPerformRite(d.getTotalPomesConsumed(),
-						d.getArchonPath(), apotheos)).orElse(false);
+		boolean pathPermitsRite = HarbingerPathPermissions.canPerformRite(HemoCapabilityAccess.getInitiatoryDegree(caster).getTotalPomesConsumed(),
+						HemoCapabilityAccess.getInitiatoryDegree(caster).getArchonPath(), apotheos);
 		if (!pathPermitsRite) {
 			return Component.literal("The void has claimed your will — only one path remains, and one way back.");
 		}
@@ -304,9 +301,7 @@ public final class CardinalRiteCompletionEffects {
 	}
 
 	static boolean hasQliphothCommunion(ServerPlayer player) {
-		return HemoCapabilityAccess.getInitiatoryDegree(player)
-				.map(degree -> degree.isQliphothCommunionDone())
-				.orElse(false);
+		return HemoCapabilityAccess.getInitiatoryDegree(player).isQliphothCommunionDone();
 	}
 
 	private static Component leaderRefusal(Context ctx, String riteName) {
@@ -384,9 +379,7 @@ public final class CardinalRiteCompletionEffects {
 				&& !heartState.canBeReplaced()) {
 			return Component.literal("The rite's heart was obstructed before the Consecrated Bloodwell could be manifested.");
 		}
-		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(caster)
-				.map(volume -> volume.getBloodLine())
-				.orElse(Bloodline.NOBLOODLINE);
+		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(caster).getBloodLine();
 		if (bloodline == null || !bloodline.isValid()) {
 			return Component.literal("The Founding Fane requires an established bloodline.");
 		}
@@ -422,12 +415,11 @@ public final class CardinalRiteCompletionEffects {
 	 * Resets all blood tendency alignment axes to zero.
 	 */
 	private static void completeSanguineAttunement(ServerPlayer caster) {
-		HemoCapabilityAccess.getBloodTendency(caster).ifPresent(tendency -> {
-			for (EnumBloodTendency bt : EnumBloodTendency.values()) {
-				tendency.setTendencyAlignment(bt, 0f);
-			}
-			BloodTendencyEvents.syncTendency(caster, tendency);
-		});
+		var tendency = HemoCapabilityAccess.getBloodTendency(caster);
+		for (EnumBloodTendency bt : EnumBloodTendency.values()) {
+			tendency.setTendencyAlignment(bt, 0f);
+		}
+		BloodTendencyEvents.syncTendency(caster, tendency);
 		caster.displayClientMessage(
 				Component.literal("Your blood tendencies have been purged. You are a blank slate once more.")
 						.withStyle(ChatFormatting.DARK_AQUA, ChatFormatting.ITALIC),
@@ -458,14 +450,13 @@ public final class CardinalRiteCompletionEffects {
 	 * Fully restores all vein sections to maximum health (100).
 	 */
 	private static void completeVascularMending(ServerPlayer caster) {
-		HemoCapabilityAccess.getVascularSystem(caster).ifPresent(vascular -> {
-			for (EnumVeinSections section : EnumVeinSections.values()) {
-				java.util.Map<EnumVeinSections, Float> sys = vascular.getVascularSystem();
-				sys.put(section, 100f);
-				vascular.setVascularSystem(sys);
-			}
-			VascularSystemEvents.syncVascular(caster, vascular);
-		});
+		var vascular = HemoCapabilityAccess.getVascularSystem(caster);
+		for (EnumVeinSections section : EnumVeinSections.values()) {
+			java.util.Map<EnumVeinSections, Float> sys = vascular.getVascularSystem();
+			sys.put(section, 100f);
+			vascular.setVascularSystem(sys);
+		}
+		VascularSystemEvents.syncVascular(caster, vascular);
 		caster.displayClientMessage(
 				Component.literal("Purified blood surges through your veins. All vascular damage has been mended.")
 						.withStyle(ChatFormatting.RED, ChatFormatting.ITALIC),
@@ -661,7 +652,7 @@ public final class CardinalRiteCompletionEffects {
 		}
 
 		persistentData.putBoolean(MaxBloodLedger.ETERNAL_COVENANT_TAG, true);
-		HemoCapabilityAccess.getBloodVolume(caster).ifPresent(volume -> MaxBloodLedger.apply(caster, volume));
+		MaxBloodLedger.apply(caster, HemoCapabilityAccess.getBloodVolume(caster));
 
 		caster.displayClientMessage(
 				Component.literal("The Eternal Covenant is sealed! Your maximum blood volume has been permanently increased by "
@@ -677,15 +668,10 @@ public final class CardinalRiteCompletionEffects {
 	 * Each invocation uses a different dialogue variant from a pool.
 	 */
 	private static void completeAncestralCommunion(ServerLevel sLevel, ServerPlayer caster) {
-		int variant = HemoCapabilityAccess.getInitiatoryDegree(caster)
-				.map(degree -> {
-					int next = Math.floorMod(degree.getAncestralCommunions(),
-							AncestralCommunionDialogueTrees.VARIANT_COUNT);
-					degree.setAncestralCommunions(degree.getAncestralCommunions() + 1);
-					InitiatoryDegreeEvents.syncDegree(caster, degree);
-					return next;
-				})
-				.orElse(0);
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(caster);
+		int variant = Math.floorMod(degree.getAncestralCommunions(), AncestralCommunionDialogueTrees.VARIANT_COUNT);
+		degree.setAncestralCommunions(degree.getAncestralCommunions() + 1);
+		InitiatoryDegreeEvents.syncDegree(caster, degree);
 		DialogueTree tree = AncestralCommunionDialogueTrees.forVariant(variant);
 
 		PacketHandler.sendToPlayer(caster, new OpenDialoguePacket(tree));
@@ -759,16 +745,14 @@ public final class CardinalRiteCompletionEffects {
 			if (member != null) {
 				// Return their share of the pool blood
 				if (bloodPerMember > 0) {
-					HemoCapabilityAccess.getBloodVolume(member).ifPresent(volume -> {
-						volume.fill(bloodPerMember);
-						volume.setBloodLine(Bloodline.NOBLOODLINE);
-						BloodVolumeEvents.syncVolume(member, volume);
-					});
+					var volume = HemoCapabilityAccess.getBloodVolume(member);
+					volume.fill(bloodPerMember);
+					volume.setBloodLine(Bloodline.NOBLOODLINE);
+					BloodVolumeEvents.syncVolume(member, volume);
 				} else {
-					HemoCapabilityAccess.getBloodVolume(member).ifPresent(volume -> {
-						volume.setBloodLine(Bloodline.NOBLOODLINE);
-						BloodVolumeEvents.syncVolume(member, volume);
-					});
+					var volume = HemoCapabilityAccess.getBloodVolume(member);
+					volume.setBloodLine(Bloodline.NOBLOODLINE);
+					BloodVolumeEvents.syncVolume(member, volume);
 				}
 
 				member.displayClientMessage(
@@ -805,9 +789,7 @@ public final class CardinalRiteCompletionEffects {
 								sLevel.getServer().isPvpAllowed(),
 								target.isCreative(), target.isSpectator(),
 								caster.isAlliedTo(target),
-								HemoCapabilityAccess.getUnstainedProgress(target)
-										.map(progress -> progress.hasBegunPurification())
-										.orElse(false)));
+								HemoCapabilityAccess.getUnstainedProgress(target).hasBegunPurification()));
 
 		if (nearbyPlayers.isEmpty()) {
 			caster.displayClientMessage(
@@ -829,27 +811,26 @@ public final class CardinalRiteCompletionEffects {
 		}
 
 		final ServerPlayer victim = target;
-		HemoCapabilityAccess.getUnstainedProgress(victim).ifPresent(unstained -> {
-			boolean hadProgress = PathMutualExclusionHelper.resetUnstainedProgress(victim, unstained);
+		var unstained = HemoCapabilityAccess.getUnstainedProgress(victim);
+		boolean hadProgress = PathMutualExclusionHelper.resetUnstainedProgress(victim, unstained);
 
-			if (hadProgress) {
-				victim.displayClientMessage(
-						Component.literal("A shadow of crimson corruption washes over you... Your purification has been destroyed!")
-								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
-						false);
-				caster.displayClientMessage(
-						Component.literal("The Pallid Shadow consumes " + victim.getName().getString()
-								+ "'s purity. Their purification is undone.")
-								.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
-						false);
-			} else {
-				caster.displayClientMessage(
-						Component.literal(victim.getName().getString()
-								+ " had no purification to destroy. The shadow finds nothing.")
-								.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
-						false);
-			}
-		});
+		if (hadProgress) {
+			victim.displayClientMessage(
+					Component.literal("A shadow of crimson corruption washes over you... Your purification has been destroyed!")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+					false);
+			caster.displayClientMessage(
+					Component.literal("The Pallid Shadow consumes " + victim.getName().getString()
+							+ "'s purity. Their purification is undone.")
+							.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
+					false);
+		} else {
+			caster.displayClientMessage(
+					Component.literal(victim.getName().getString()
+							+ " had no purification to destroy. The shadow finds nothing.")
+							.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
+					false);
+		}
 
 		// Visual/sound feedback
 		sLevel.playSound(null, center, SoundEvents.WITHER_SPAWN, SoundSource.BLOCKS, 0.7f, 1.5f);
@@ -894,11 +875,10 @@ public final class CardinalRiteCompletionEffects {
 	}
 
 	private static void completeHematicFortification(ServerPlayer caster) {
-		HemoCapabilityAccess.getInitiatoryDegree(caster).ifPresent(degree -> {
-			degree.setHematicFortification(true);
-			com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.onFortification(caster);
-			InitiatoryDegreeEvents.syncDegree(caster, degree);
-		});
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(caster);
+		degree.setHematicFortification(true);
+		com.vincenthuto.hemomancy.common.mission.cicatrix_anchorite.VeinMasonAssignments.onFortification(caster);
+		InitiatoryDegreeEvents.syncDegree(caster, degree);
 		caster.displayClientMessage(
 				Component.literal("Your vascular lattice hardens. Future strain is reduced by fifteen percent.")
 						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
@@ -992,14 +972,12 @@ public final class CardinalRiteCompletionEffects {
 		savedData.registerBloodline(playerLine);
 
 		// Set the caster's bloodline capability
-		HemoCapabilityAccess.getBloodVolume(caster).ifPresent(volume -> {
-			volume.setBloodLine(playerLine);
-			BloodVolumeEvents.syncVolume(caster, volume);
-		});
-		HemoCapabilityAccess.getInitiatoryDegree(caster).ifPresent(degree -> {
-			degree.setHasFoundedBloodline(true);
-			InitiatoryDegreeEvents.syncDegree(caster, degree);
-		});
+		var volume = HemoCapabilityAccess.getBloodVolume(caster);
+		volume.setBloodLine(playerLine);
+		BloodVolumeEvents.syncVolume(caster, volume);
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(caster);
+		degree.setHasFoundedBloodline(true);
+		InitiatoryDegreeEvents.syncDegree(caster, degree);
 
 		// Write signed state and bloodline data onto the ledger
 		CompoundTag compound = ledgerStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
@@ -1078,7 +1056,7 @@ public final class CardinalRiteCompletionEffects {
 			caster.displayClientMessage(refusal.copy().withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
 			return false;
 		}
-		Bloodline bloodline = HemoCapabilityAccess.requireBloodVolume(caster).getBloodLine();
+		Bloodline bloodline = HemoCapabilityAccess.getBloodVolume(caster).getBloodLine();
 		UUID faneOwner = bloodline.getLeaderUUID();
 		FoundingFaneSavedData faneData = FoundingFaneSavedData.get(sLevel);
 		if (!sLevel.getBlockState(heartPos).is(BlockInit.consecrated_bloodwell.get())

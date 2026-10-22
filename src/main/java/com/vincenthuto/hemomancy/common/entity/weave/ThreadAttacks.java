@@ -86,11 +86,11 @@ public final class ThreadAttacks {
 		target.hurt(thread.damageSources().mobAttack(thread), 2.0F * power);
 		switch (tendency) {
 			case ANIMUS -> {
-				if (target instanceof ServerPlayer player)
-					HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-						if (volume.isActive() && volume.drain(Math.min(volume.getBloodVolume(), 10.0D * power)))
-							PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(volume));
-					});
+				if (target instanceof ServerPlayer player) {
+					var volume = HemoCapabilityAccess.getBloodVolume(player);
+					if (volume.isActive() && volume.drain(Math.min(volume.getBloodVolume(), 10.0D * power)))
+						PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(volume));
+				}
 			}
 			case FLAMMEUS -> target.igniteForSeconds(2.0F);
 			case CONGEATIO -> {

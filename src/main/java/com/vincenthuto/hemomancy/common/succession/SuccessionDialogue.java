@@ -19,7 +19,7 @@ public final class SuccessionDialogue {
     public static boolean eligible(ServerPlayer player) {
         var line = SuccessionResidents.line(player);
         return line != null && HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 5
-                && HemoCapabilityAccess.getBloodVolume(player).map(v -> v.isActive()).orElse(false)
+                && HemoCapabilityAccess.getBloodVolume(player).isActive()
                 && java.util.stream.StreamSupport.stream(player.server.getAllLevels().spliterator(), false)
                 .anyMatch(level -> FoundingFaneSavedData.get(level).hasFane(line.getLeaderUUID()));
     }

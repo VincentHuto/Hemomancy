@@ -31,9 +31,7 @@ public final class MorphlingHandlingAssignment {
 
     public static MorphlingHandlingProgress progress(ServerPlayer player) {
         boolean inspected = data(player).getBoolean(INSPECTED);
-        boolean priorRecord = HemoCapabilityAccess.getSpecimenBestiary(player)
-                .map(bestiary -> bestiary.hasRecordedSpecimen(POLYP))
-                .orElse(false);
+        boolean priorRecord = HemoCapabilityAccess.getSpecimenBestiary(player).hasRecordedSpecimen(POLYP);
         return new MorphlingHandlingProgress(inspected || priorRecord || isPolypJar(player.getMainHandItem()),
                 inspected);
     }

@@ -47,8 +47,7 @@ public class KnownSummonsServerPacket implements CustomPacketPayload {
 		ctx.enqueueWork(() -> {
 			Player player = ctx.player();
 			if (player != null) {
-				HemoCapabilityAccess.getKnownSummons(player)
-						.ifPresent(known -> known.setKnownSummonNames(msg.knownSummonNames));
+				HemoCapabilityAccess.getKnownSummons(player).setKnownSummonNames(msg.knownSummonNames);
 			}
 		});
 	}

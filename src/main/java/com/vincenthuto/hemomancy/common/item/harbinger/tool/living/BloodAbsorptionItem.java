@@ -347,11 +347,11 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(playerIn)
-				.orElseThrow(NullPointerException::new);
+				;
 		IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(playerIn)
-				.orElseThrow(NullPointerException::new);
+				;
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(playerIn)
-				.orElseThrow(NullPointerException::new);
+				;
 		if (BloodAbsorptionChannelRules.canStartChannel(volume.isActive())) {
 			playerIn.startUsingItem(handIn);
 			return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);

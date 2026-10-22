@@ -467,7 +467,7 @@ public final class ResonantForgeGameTests {
     @GameTest(template = "empty", timeoutTicks = 100, batch = "resonant_forge")
     public static void forgeFullCycleIsTaughtAtD4WhileD3AccessRemains(GameTestHelper helper) {
         ServerPlayer player = player(helper);
-        var degree = HemoCapabilityAccess.requireInitiatoryDegree(player);
+        var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
         var artificer = com.vincenthuto.hemomancy.common.init.EntityInit.harbinger_artificer.get()
                 .create(helper.getLevel());
         artificer.setPos(player.position());

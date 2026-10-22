@@ -88,13 +88,8 @@ public class MasonsEffigyMenu extends AbstractContainerMenu {
 		if (hasOpeningSnapshot) {
 			return openingKnownScarIds;
 		}
-		List<ResourceLocation> ids = HemoCapabilityAccess.getScarState(player)
-				.map(scars -> {
-					List<ResourceLocation> current = new ArrayList<>(scars.getKnownCerebralScars());
-					current.sort(Comparator.comparing(ResourceLocation::toString));
-					return current;
-				})
-				.orElseGet(List::of);
+		List<ResourceLocation> ids = new ArrayList<>(HemoCapabilityAccess.getScarState(player).getKnownCerebralScars());
+		ids.sort(Comparator.comparing(ResourceLocation::toString));
 		return ids;
 	}
 
@@ -102,13 +97,8 @@ public class MasonsEffigyMenu extends AbstractContainerMenu {
 		if (hasOpeningSnapshot) {
 			return openingActiveScarIds;
 		}
-		List<ResourceLocation> ids = HemoCapabilityAccess.getScarState(player)
-				.map(scars -> {
-					List<ResourceLocation> current = new ArrayList<>(scars.getActiveCerebralScars());
-					current.sort(Comparator.comparing(ResourceLocation::toString));
-					return current;
-				})
-				.orElseGet(List::of);
+		List<ResourceLocation> ids = new ArrayList<>(HemoCapabilityAccess.getScarState(player).getActiveCerebralScars());
+		ids.sort(Comparator.comparing(ResourceLocation::toString));
 		return ids;
 	}
 

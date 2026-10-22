@@ -95,7 +95,7 @@ public class DarkArrowEntity extends AbstractArrow implements CombatWeaponCarrie
 		if (shooter instanceof Player) {
 			Player player = (Player) shooter;
 			IBloodTendency tend = HemoCapabilityAccess.getBloodTendency(player)
-					.orElseThrow(NullPointerException::new);
+					;
 			ParticleColor color = ParticleColor.BLACK;
 			ServerLevel sLevel = (ServerLevel) level();
 

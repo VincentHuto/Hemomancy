@@ -36,11 +36,9 @@ public final class MemoBookFilter implements IBookPageFilter {
 		}
 		final String entryPrefix = bookPath + "/";
 
-		Set<ResourceLocation> unlockedEntries = HemoCapabilityAccess.getLiberKnowledge(player)
-				.map(knowledge -> knowledge.getUnlockedEntries().stream()
+		Set<ResourceLocation> unlockedEntries = HemoCapabilityAccess.getLiberKnowledge(player).getUnlockedEntries().stream()
 						.filter(entry -> entry.getNamespace().equals("hemomancy") && entry.getPath().startsWith(entryPrefix))
-						.collect(java.util.stream.Collectors.toSet()))
-				.orElse(Set.of());
+						.collect(java.util.stream.Collectors.toSet());
 		Set<ResourceLocation> gatedEntries = new HashSet<>();
 		for (LiberEntryDefinition definition : LiberEntryDefinitions.all()) {
 			if (definition.entryId().getNamespace().equals("hemomancy") && definition.entryId().getPath().startsWith(entryPrefix)) {

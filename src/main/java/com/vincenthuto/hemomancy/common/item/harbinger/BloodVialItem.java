@@ -117,7 +117,7 @@ public class BloodVialItem extends Item {
         var stack = player.getItemInHand(hand);
         if (!BloodSampleData.isFilled(stack)) {
             if (player.isShiftKeyDown() && player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
-                var volume = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+                var volume = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(player);
                 if (volume == null || !volume.isActive() || volume.getBloodVolume() < 100) {
                     player.displayClientMessage(Component.translatable("hemomancy.succession.self_blood_cost"), true);
                     return InteractionResultHolder.fail(stack);

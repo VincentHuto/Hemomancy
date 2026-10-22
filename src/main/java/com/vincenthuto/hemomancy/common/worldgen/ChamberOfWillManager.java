@@ -314,15 +314,11 @@ public class ChamberOfWillManager extends SavedData {
 
     private static ChamberProgressionRules.Facts progressionFacts(ServerPlayer player) {
         int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
-        boolean qliphothDone = HemoCapabilityAccess.getInitiatoryDegree(player)
-                .map(deg -> deg.isQliphothCommunionDone() || deg.getTotalPomesConsumed() >= 9)
-                .orElse(false);
+        boolean qliphothDone = HemoCapabilityAccess.getInitiatoryDegree(player).isQliphothCommunionDone() || HemoCapabilityAccess.getInitiatoryDegree(player).getTotalPomesConsumed() >= 9;
         boolean qliphothStarted = qliphothDone
                 || qliphothPomeCount(player) > 0
                 || hasActiveQliphothBloom(player);
-        EnumArchonPath archonPath = HemoCapabilityAccess.getInitiatoryDegree(player)
-                .map(deg -> deg.getArchonPath())
-                .orElse(EnumArchonPath.NONE);
+        EnumArchonPath archonPath = HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath();
 
 		return new ChamberProgressionRules.Facts(degree,
 				HarbingerAdvancementGranter.isVeinMasonFirstScarLearned(player), qliphothStarted,
@@ -355,9 +351,7 @@ public class ChamberOfWillManager extends SavedData {
     }
 
     private static int qliphothPomeCount(ServerPlayer player) {
-        return HemoCapabilityAccess.getInitiatoryDegree(player)
-                .map(deg -> deg.isQliphothCommunionDone() ? 9 : deg.getTotalPomesConsumed())
-                .orElse(0);
+        return HemoCapabilityAccess.getInitiatoryDegree(player).isQliphothCommunionDone() ? 9 : HemoCapabilityAccess.getInitiatoryDegree(player).getTotalPomesConsumed();
     }
 
     private static boolean hasActiveQliphothBloom(ServerPlayer player) {

@@ -47,9 +47,8 @@ public final class BloodStructureCraftingHelper {
 
 			int requiredDegree = RecipeDegreeGates.getRequiredDegree(recipe);
 			if (!RecipeDegreeGates.playerMeets(player, recipe)
-					&& !HemoCapabilityAccess.getUnstainedProgress(player)
-							.map(progress -> UnstainedAccessRules.bypassesUnstainedLevelGate(
-									recipe.getId().getPath(), progress)).orElse(false)) {
+					&& !UnstainedAccessRules.bypassesUnstainedLevelGate(
+									recipe.getId().getPath(), HemoCapabilityAccess.getUnstainedProgress(player))) {
 				return Optional.of(ProjectionCraftMatch.invalid(recipe, match, missingDegreeMessage(recipe, requiredDegree)));
 			}
 
@@ -194,8 +193,7 @@ public final class BloodStructureCraftingHelper {
 
 
 	public static Component checkPathAlignment(Player player, BloodStructureRecipe recipe) {
-		boolean harbingerProgressBlocked = HemoCapabilityAccess.getUnstainedProgress(player)
-				.map(UnstainedAccessRules::blocksHarbingerProgress).orElse(false);
+		boolean harbingerProgressBlocked = UnstainedAccessRules.blocksHarbingerProgress(HemoCapabilityAccess.getUnstainedProgress(player));
 		if (!recipe.isUnstained() && harbingerProgressBlocked) {
 			return Component.literal("Purification bars access to the Hematic Order formations.")
 					.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC);

@@ -165,7 +165,7 @@ public final class ManipulationBalancePass2SchoolBGameTests {
             var target = husk(h, p.position().add(3, 0, 0));
             var bloom = ManipulationInit.bloom_of_rot.get();
             try {
-                HemoCapabilityAccess.requireSkillProgress(p).setSkill(SkillPointInit.skill_crimson_mastery,
+                HemoCapabilityAccess.getSkillProgress(p).setSkill(SkillPointInit.skill_crimson_mastery,
                         EnumSkillStates.UNLOCKED, 3);
                 near(h, 1.45, SkillPointHelper.getCrimsonMasteryMultiplier(p), "Crimson Mastery 3 multiplier");
                 bloom.getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
@@ -470,11 +470,11 @@ public final class ManipulationBalancePass2SchoolBGameTests {
             @Override public void send(net.minecraft.network.protocol.Packet<?> packet) { }
         };
         p.setPos(h.absoluteVec(new Vec3(2.5, 2, 2.5)));
-        var blood = HemoCapabilityAccess.requireBloodVolume(p);
+        var blood = HemoCapabilityAccess.getBloodVolume(p);
         blood.setActive(true);
         blood.setBloodVolume(2000);
         for (var tendency : EnumBloodTendency.values())
-            HemoCapabilityAccess.getBloodTendency(p).orElseThrow().setTendencyAlignment(tendency, 100);
+            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(tendency, 100);
         return p;
     }
 }

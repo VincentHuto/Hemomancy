@@ -178,9 +178,7 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 	public boolean stillValid(Player playerIn) {
 		// Equipped in scar slot
 		if (slotID == -200) {
-			return HemoCapabilityAccess.getEquipment(playerIn)
-					.map(r -> r.getStackInSlot(7).getItem() instanceof ItemMorphlingJar)
-					.orElse(false);
+			return HemoCapabilityAccess.getEquipment(playerIn).getStackInSlot(7).getItem() instanceof ItemMorphlingJar;
 		}
 		if (slotID == -106)
 			return playerIn.getOffhandItem().getItem() instanceof ItemMorphlingJar;
@@ -211,17 +209,16 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 		if (handler == null || player.level().isClientSide || !(player instanceof ServerPlayer serverPlayer))
 			return;
 
-		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
-			ItemStack equipped = cap.getEquippedMorphling();
-			if (equipped.isEmpty())
-				return;
+		var cap = HemoCapabilityAccess.getEquippedMorphling(player);
+		ItemStack equipped = cap.getEquippedMorphling();
+		if (equipped.isEmpty())
+			return;
 
-			if (EquippedMorphlingEvents.isStoredInCarriedJar(player, equipped)) return;
+		if (EquippedMorphlingEvents.isStoredInCarriedJar(player, equipped)) return;
 
-			cap.clearMorphling();
-			LastRiteHelper.clearMorphlingRites(player);
-			EquippedMorphlingEvents.syncToClient(serverPlayer);
-		});
+		cap.clearMorphling();
+		LastRiteHelper.clearMorphlingRites(player);
+		EquippedMorphlingEvents.syncToClient(serverPlayer);
 	}
 
 	private ItemStack findMorphlingJar(Player playerEntity) {
@@ -241,8 +238,7 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 			return playerEntity.getOffhandItem();
 		}
 		// 3. scar-equip slot (slot 7 in the SCARS capability)
-		ItemStack EquipmentSlotJar = HemoCapabilityAccess.getEquipment(playerEntity)
-				.map(r -> r.getStackInSlot(7)).orElse(ItemStack.EMPTY);
+		ItemStack EquipmentSlotJar = HemoCapabilityAccess.getEquipment(playerEntity).getStackInSlot(7);
 		if (EquipmentSlotJar.getItem() instanceof ItemMorphlingJar) {
 			slotID = -200;
 			return EquipmentSlotJar;

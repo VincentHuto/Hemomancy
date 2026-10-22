@@ -48,7 +48,7 @@ public final class WillBloodUtilityInteractions {
 		if (target.isEmpty()) {
 			return 0.0D;
 		}
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		double cost = Math.max(1.0D, bloodCost);
 		if (volume == null || !volume.isActive() || volume.isEmpty() || !volume.drain(cost)) {
 			return 0.0D;

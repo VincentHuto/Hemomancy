@@ -212,18 +212,17 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 			return InteractionResult.SUCCESS;
 		}
 
-		HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree -> {
-			int degreeNumber = degree.getDegreeNumber();
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
+		int degreeNumber = degree.getDegreeNumber();
 
-			DialogueTree tree = degreeNumber < MIN_DEGREE
-					? SanguineMonolithDialogueTrees.unworthy()
-					: (heldItem.isEmpty()
-					? SanguineMonolithDialogueTrees.forPlayer(serverPlayer, degreeNumber)
-					: SanguineMonolithDialogueTrees.itemInquiry(heldItem, degreeNumber));
+		DialogueTree tree = degreeNumber < MIN_DEGREE
+				? SanguineMonolithDialogueTrees.unworthy()
+				: (heldItem.isEmpty()
+				? SanguineMonolithDialogueTrees.forPlayer(serverPlayer, degreeNumber)
+				: SanguineMonolithDialogueTrees.itemInquiry(heldItem, degreeNumber));
 
-			MonolithDialogueContext.open(serverPlayer, pos, tree);
-			PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
-		});
+		MonolithDialogueContext.open(serverPlayer, pos, tree);
+		PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
 
 		return InteractionResult.SUCCESS;
 	}

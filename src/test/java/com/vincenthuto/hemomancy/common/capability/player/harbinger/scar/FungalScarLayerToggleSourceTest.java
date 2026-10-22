@@ -44,7 +44,7 @@ public final class FungalScarLayerToggleSourceTest {
 		assertContains("render layer imports scar slot constant", renderLayer,
 				"import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScars;");
 		assertContains("render layer checks fungal visibility", renderLayer,
-				"equipment.isRenderLayerVisible(IScars.FUNGAL_SLOT)");
+				"getEquipment(player).isRenderLayerVisible(IScars.FUNGAL_SLOT)");
 		assertContains("render layer skips hidden fungal scar", renderLayer,
 				"if (!isFungalScarLayerVisible(player))");
 		assertContains("render layer exits before rendering hidden fungal scar", renderLayer, "return;");

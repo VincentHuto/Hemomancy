@@ -125,12 +125,12 @@ public final class LivingWeaponGraftRite implements BrazierRite<LivingWeaponGraf
 	}
 
 	private static boolean checkVesperMemory(ServerLevel level, ServerPlayer player) {
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null || !volume.isActive()) {
 			messageEverySecond(level, player, "The graft dries before it can speak.");
 			return false;
 		}
-		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
+		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player);
 		if (progress == null || !progress.hasLivingStaffBond()) {
 			messageEverySecond(level, player, "The memory refuses a hand without a Living Staff bond.");
 			return false;
@@ -139,10 +139,8 @@ public final class LivingWeaponGraftRite implements BrazierRite<LivingWeaponGraf
 			messageEverySecond(level, player, "Vesper's refusal is already disciplined within your staff-bond.");
 			return false;
 		}
-		boolean earnedRefusal = HemoCapabilityAccess.getInitiatoryDegree(player)
-				.map(degree -> degree.getDegreeNumber() == 7
-						&& degree.getArchonPath() == EnumArchonPath.SILENT_ARCHON)
-				.orElse(false)
+		boolean earnedRefusal = (HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber() == 7
+						&& HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath() == EnumArchonPath.SILENT_ARCHON)
 				&& HarbingerAdvancementGranter.hasAdvancement(player,
 						HarbingerAdvancementGranter.ADV_VESPER_DEFEATED);
 		if (!earnedRefusal) {
@@ -153,7 +151,7 @@ public final class LivingWeaponGraftRite implements BrazierRite<LivingWeaponGraf
 	}
 
 	private static boolean awakenVesperMemory(ServerLevel level, ServerPlayer player) {
-		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player).orElse(null);
+		ILivingStaffProgress progress = HemoCapabilityAccess.getLivingStaffProgress(player);
 		if (progress == null || !progress.hasLivingStaffBond()) {
 			messageEverySecond(level, player, "The memory refuses a hand without a Living Staff bond.");
 			return false;

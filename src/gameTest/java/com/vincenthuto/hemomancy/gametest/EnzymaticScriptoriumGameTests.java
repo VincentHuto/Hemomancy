@@ -49,7 +49,7 @@ public final class EnzymaticScriptoriumGameTests {
     @GameTest(template = "empty", timeoutTicks = 100, batch = "scriptorium")
     public static void lowInscriptionRowsOfferSelectedLooting(GameTestHelper helper) {
         ServerPlayer player = player(helper);
-        HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(3);
+        HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(3);
         player.giveExperienceLevels(40);
         BlockPos pos = helper.absolutePos(new BlockPos(5, 3, 5));
         helper.getLevel().setBlockAndUpdate(pos, BlockInit.enzymatic_scriptorium.get().defaultBlockState());
@@ -88,8 +88,8 @@ public final class EnzymaticScriptoriumGameTests {
     @GameTest(template = "empty", timeoutTicks = 100, batch = "scriptorium")
     public static void loadedEnzymeDeterminesPickaxeEnchantment(GameTestHelper helper) {
         ServerPlayer player = player(helper);
-        HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(3);
-        var blood = HemoCapabilityAccess.requireBloodVolume(player);
+        HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(3);
+        var blood = HemoCapabilityAccess.getBloodVolume(player);
         blood.setActive(true);
         blood.setBloodVolume(1000);
         player.giveExperienceLevels(40);
@@ -152,8 +152,8 @@ public final class EnzymaticScriptoriumGameTests {
     @GameTest(template = "empty", timeoutTicks = 100, batch = "scriptorium")
     public static void menuCommitmentAndDenaturationSpendExactResources(GameTestHelper helper) {
         ServerPlayer player = player(helper);
-        HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(3);
-        var blood = HemoCapabilityAccess.requireBloodVolume(player);
+        HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(3);
+        var blood = HemoCapabilityAccess.getBloodVolume(player);
         blood.setActive(true);
         blood.setBloodVolume(1000);
         player.giveExperienceLevels(40);
@@ -270,7 +270,7 @@ public final class EnzymaticScriptoriumGameTests {
         tool.set(DataComponentInit.SCRIPTORIUM_PROVENANCE.get(),
                 new ScriptoriumProvenance("sanguine_appetite", 1, 0));
         player.setItemInHand(InteractionHand.MAIN_HAND, tool);
-        var blood = HemoCapabilityAccess.getBloodVolume(player).orElseThrow();
+        var blood = HemoCapabilityAccess.getBloodVolume(player);
         blood.setBloodVolume(100);
         var event = new BlockEvent.BreakEvent(helper.getLevel(), player.blockPosition(),
                 Blocks.STONE.defaultBlockState(), player);

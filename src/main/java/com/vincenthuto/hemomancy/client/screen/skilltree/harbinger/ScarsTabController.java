@@ -70,8 +70,8 @@ public final class ScarsTabController implements IProgressTab {
 
 	static void refreshKnowledge(ScarsTabState state, Minecraft mc) {
 		if (mc.player == null) return;
-		HemoCapabilityAccess.getScarState(mc.player).ifPresent(scars ->
-				state.updateKnowledge(scars.getKnownCerebralScars(), scars.getActiveCerebralScars()));
+		var scars = HemoCapabilityAccess.getScarState(mc.player);
+		state.updateKnowledge(scars.getKnownCerebralScars(), scars.getActiveCerebralScars());
 	}
 
 	private void tickKnowledgeCache() {

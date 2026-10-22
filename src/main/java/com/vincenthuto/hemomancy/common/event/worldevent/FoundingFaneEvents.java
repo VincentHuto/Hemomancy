@@ -129,9 +129,7 @@ public class FoundingFaneEvents {
 	}
 
 	private static boolean hasBegunUnstainedPath(ServerPlayer viewer) {
-		return HemoCapabilityAccess.getUnstainedProgress(viewer)
-				.map(progress -> progress.hasBegunPurification() || progress.hasClarityUnlocked())
-				.orElse(false);
+		return HemoCapabilityAccess.getUnstainedProgress(viewer).hasBegunPurification() || HemoCapabilityAccess.getUnstainedProgress(viewer).hasClarityUnlocked();
 	}
 
 	private static boolean isViewerInOwnerBloodline(UUID viewerUuid, UUID ownerUuid, BloodlineSavedData bloodlineData) {

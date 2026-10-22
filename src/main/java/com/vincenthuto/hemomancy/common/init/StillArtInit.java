@@ -94,7 +94,7 @@ public class StillArtInit {
 				for (LivingEntity target : targets) {
 					if (target == player || !target.isAlive()) continue;
 					boolean bloodActive = target instanceof Player other
-							&& HemoCapabilityAccess.getBloodVolume(other).map(v -> v.isActive()).orElse(false);
+							&& HemoCapabilityAccess.getBloodVolume(other).isActive();
 					if (bloodActive || target instanceof Monster
 							|| target.hasEffect(MobEffects.POISON)
 							|| target.hasEffect(MobEffects.WITHER)) {

@@ -34,11 +34,11 @@ public final class BloodInjectionGameTests {
         var recruit = animationPlayer(h).player();
         var founder = animationPlayer(h).player();
         founder.setPos(recruit.position().add(1, 0, 0));
-        HemoCapabilityAccess.requireInitiatoryDegree(recruit).setDegreeNumber(0);
-        HemoCapabilityAccess.getEquipment(recruit).orElseThrow().setStackInSlot(5,
+        HemoCapabilityAccess.getInitiatoryDegree(recruit).setDegreeNumber(0);
+        HemoCapabilityAccess.getEquipment(recruit).setStackInSlot(5,
                 new ItemStack(ItemInit.charm_of_vascularium.get()));
         EarlyInitiation.activate(recruit);
-        var founderDegree = HemoCapabilityAccess.requireInitiatoryDegree(founder);
+        var founderDegree = HemoCapabilityAccess.getInitiatoryDegree(founder);
         founderDegree.setDegreeNumber(5);
         founderDegree.setHasFoundedBloodline(true);
         var data = BloodlineSavedData.get(h.getLevel().getServer().overworld());
@@ -46,10 +46,10 @@ public final class BloodInjectionGameTests {
         var foreign = new Bloodline("Late conflict", java.util.UUID.randomUUID(), java.util.UUID.randomUUID(), new java.util.ArrayList<>());
         data.registerBloodline(line);
         data.registerBloodline(foreign);
-        var founderVolume = HemoCapabilityAccess.getBloodVolume(founder).orElseThrow();
+        var founderVolume = HemoCapabilityAccess.getBloodVolume(founder);
         founderVolume.setBloodLine(line);
         founderVolume.setActive(true);
-        var recruitVolume = HemoCapabilityAccess.getBloodVolume(recruit).orElseThrow();
+        var recruitVolume = HemoCapabilityAccess.getBloodVolume(recruit);
         Runnable cleanup = () -> {
             EarlyInitiation.cancel(recruit);
             EarlyInitiation.cancel(founder);
@@ -108,17 +108,17 @@ public final class BloodInjectionGameTests {
         var recruit = animationPlayer(h).player();
         var founder = animationPlayer(h).player();
         founder.setPos(recruit.position().add(1, 0, 0));
-        HemoCapabilityAccess.requireInitiatoryDegree(recruit).setDegreeNumber(0);
-        HemoCapabilityAccess.getEquipment(recruit).orElseThrow().setStackInSlot(5,
+        HemoCapabilityAccess.getInitiatoryDegree(recruit).setDegreeNumber(0);
+        HemoCapabilityAccess.getEquipment(recruit).setStackInSlot(5,
                 new ItemStack(ItemInit.charm_of_vascularium.get()));
         EarlyInitiation.activate(recruit);
-        var degree = HemoCapabilityAccess.requireInitiatoryDegree(founder);
+        var degree = HemoCapabilityAccess.getInitiatoryDegree(founder);
         degree.setDegreeNumber(4);
         degree.setHasFoundedBloodline(true);
         var data = BloodlineSavedData.get(h.getLevel().getServer().overworld());
         var line = new Bloodline("Interrupted initiation", founder.getUUID(), java.util.UUID.randomUUID(), new java.util.ArrayList<>());
         data.registerBloodline(line);
-        var volume = HemoCapabilityAccess.getBloodVolume(founder).orElseThrow();
+        var volume = HemoCapabilityAccess.getBloodVolume(founder);
         volume.setBloodLine(line); volume.setActive(true);
         h.assertTrue(!EarlyInitiation.begin(recruit, founder), "Degree 4 initiated");
         degree.setDegreeNumber(5); degree.setHasFoundedBloodline(false);
@@ -160,18 +160,18 @@ public final class BloodInjectionGameTests {
         var recruit = animationPlayer(h).player();
         var founder = animationPlayer(h).player();
         founder.setPos(recruit.position().add(3, 0, 0));
-        HemoCapabilityAccess.requireInitiatoryDegree(recruit).setDegreeNumber(0);
-        HemoCapabilityAccess.getEquipment(recruit).orElseThrow().setStackInSlot(5,
+        HemoCapabilityAccess.getInitiatoryDegree(recruit).setDegreeNumber(0);
+        HemoCapabilityAccess.getEquipment(recruit).setStackInSlot(5,
                 new ItemStack(ItemInit.charm_of_vascularium.get()));
         EarlyInitiation.activate(recruit);
-        var degree = HemoCapabilityAccess.requireInitiatoryDegree(founder);
+        var degree = HemoCapabilityAccess.getInitiatoryDegree(founder);
         degree.setDegreeNumber(5);
         degree.setHasFoundedBloodline(true);
         var data = BloodlineSavedData.get(h.getLevel().getServer().overworld());
         var line = new Bloodline("Initiation test", founder.getUUID(), java.util.UUID.randomUUID(), new java.util.ArrayList<>());
         data.registerBloodline(line);
-        HemoCapabilityAccess.getBloodVolume(founder).orElseThrow().setBloodLine(line);
-        HemoCapabilityAccess.getBloodVolume(founder).orElseThrow().setActive(true);
+        HemoCapabilityAccess.getBloodVolume(founder).setBloodLine(line);
+        HemoCapabilityAccess.getBloodVolume(founder).setActive(true);
         // Clear the fixture along the eye-height ray before testing the explicit obstruction.
         for (int x = 0; x <= 3; x++)
             h.getLevel().setBlockAndUpdate(net.minecraft.core.BlockPos.containing(recruit.getEyePosition()).offset(x, 0, 0),
@@ -197,7 +197,7 @@ public final class BloodInjectionGameTests {
             EarlyInitiation.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(recruit));
             h.assertTrue(HemoCapabilityAccess.getPlayerDegreeNumber(recruit) == 1, "Degree missing");
             h.assertTrue(line.hasMember(recruit.getUUID()), "Canonical membership missing");
-            h.assertTrue(HemoCapabilityAccess.getBloodVolume(recruit).orElseThrow().getBloodLine().getBloodlineUUID()
+            h.assertTrue(HemoCapabilityAccess.getBloodVolume(recruit).getBloodLine().getBloodlineUUID()
                     .equals(line.getBloodlineUUID()), "Player bloodline missing");
             h.assertTrue(recruit.getInventory().countItem(ItemInit.sanguine_conduit.get()) == 1, "Conduit missing");
             h.assertTrue(!EarlyInitiation.begin(recruit, founder), "Completed initiation repeated");
@@ -210,10 +210,10 @@ public final class BloodInjectionGameTests {
     public static void concentratedBloodRequiresOwnRewardAndCompletedSleep(GameTestHelper h) {
         var capture = animationPlayer(h);
         var player = capture.player();
-        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getEquipment(player).orElseThrow()
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getEquipment(player)
                 .setStackInSlot(5, new ItemStack(ItemInit.charm_of_vascularium.get()));
         com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.activate(player);
-        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(2);
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(2);
         var sample = com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.create();
         player.setItemInHand(InteractionHand.MAIN_HAND, sample);
         h.assertTrue(!sample.use(h.getLevel(), player, InteractionHand.MAIN_HAND).getResult().consumesAction(), "Unclaimed mission permitted injection");
@@ -270,8 +270,8 @@ public final class BloodInjectionGameTests {
     @GameTest(template = "empty")
     public static void vicarRemovalClearsOathAndCeremonyCancellationRestoresNpc(GameTestHelper h) {
         var player = animationPlayer(h).player();
-        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(0);
-        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getEquipment(player).orElseThrow()
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(0);
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getEquipment(player)
                 .setStackInSlot(5, new ItemStack(ItemInit.charm_of_vascularium.get()));
         com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.activate(player);
         var hermit = java.util.UUID.randomUUID();
@@ -290,15 +290,15 @@ public final class BloodInjectionGameTests {
         h.assertTrue(com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.release(player, vicar), "Removal rejected");
         h.assertTrue(!com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.attached(player), "Removal kept charm");
         h.assertTrue(com.vincenthuto.hemomancy.common.rite.TempleOathRules.claimedHeartHermit(player) == null, "Removal kept temple claim");
-        h.assertTrue(!com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(player).orElseThrow().isActive(), "Removal kept active blood");
+        h.assertTrue(!com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(player).isActive(), "Removal kept active blood");
         vicar.discard(); player.discard(); h.succeed();
     }
 
     @GameTest(template = "empty", timeoutTicks = 240)
     public static void vicarCompletesAfterTenSecondsAndGrantsConduitOnce(GameTestHelper h) {
         var player = animationPlayer(h).player();
-        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(0);
-        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getEquipment(player).orElseThrow()
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(0);
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getEquipment(player)
                 .setStackInSlot(5, new ItemStack(ItemInit.charm_of_vascularium.get()));
         com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.activate(player);
         var vicar = new com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity(EntityInit.harbinger_vicar.get(), h.getLevel());
@@ -321,7 +321,7 @@ public final class BloodInjectionGameTests {
     @GameTest(template = "empty")
     public static void templePermissionAttachmentAndRewardsAreAtomic(GameTestHelper h) {
         var player = animationPlayer(h).player();
-        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(0);
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(0);
         var pos = h.absolutePos(new net.minecraft.core.BlockPos(2, 2, 2));
         h.getLevel().setBlockAndUpdate(pos, BlockInit.mortal_display.get().defaultBlockState());
         var display = (com.vincenthuto.hemomancy.common.tile.harbinger.functional.MortalDisplayBlockEntity) h.getLevel().getBlockEntity(pos);
@@ -334,7 +334,7 @@ public final class BloodInjectionGameTests {
         state.useWithoutItem(h.getLevel(), player, hit);
         h.assertTrue(!display.isClaimed(), "Wrong temple blessing claimed heart");
         com.vincenthuto.hemomancy.common.rite.TempleOathRules.bless(player, hermit);
-        var equipment = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getEquipment(player).orElseThrow();
+        var equipment = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getEquipment(player);
         equipment.setStackInSlot(5, new ItemStack(ItemInit.curved_horn.get()));
         state.useWithoutItem(h.getLevel(), player, hit);
         h.assertTrue(!display.isClaimed(), "Occupied scar consumed heart");
@@ -352,7 +352,7 @@ public final class BloodInjectionGameTests {
 
     private static net.minecraft.world.entity.player.Player educatedPlayer(GameTestHelper h) {
         var player = h.makeMockPlayer(GameType.SURVIVAL);
-        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(2);
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(2);
         com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.clinicalBlood(player)
                 .learn(com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress.Lesson.INJECTION);
         return player;
@@ -431,7 +431,7 @@ public final class BloodInjectionGameTests {
                 profile, false);
         var player = new net.minecraft.server.level.ServerPlayer(h.getLevel().getServer(), h.getLevel(),
                 cookie.gameProfile(), cookie.clientInformation());
-        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(2);
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(2);
         com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.clinicalBlood(player)
                 .learn(com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress.Lesson.INJECTION);
         var connection = new net.minecraft.network.Connection(net.minecraft.network.protocol.PacketFlow.SERVERBOUND);

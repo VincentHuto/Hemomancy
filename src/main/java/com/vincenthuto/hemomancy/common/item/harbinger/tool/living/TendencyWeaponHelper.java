@@ -63,9 +63,7 @@ public final class TendencyWeaponHelper {
 	}
 
 	public static float getAlignmentValue(Player player, EnumBloodTendency weaponTendency) {
-		return HemoCapabilityAccess.getBloodTendency(player)
-				.map(tendency -> Math.max(0.0f, tendency.getAlignmentByTendency(weaponTendency)))
-				.orElse(0.0f);
+		return Math.max(0.0f, HemoCapabilityAccess.getBloodTendency(player).getAlignmentByTendency(weaponTendency));
 	}
 
 	public static float getAlignmentProgress(Player player, EnumBloodTendency weaponTendency) {

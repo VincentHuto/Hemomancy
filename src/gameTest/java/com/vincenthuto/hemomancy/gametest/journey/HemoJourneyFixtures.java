@@ -151,7 +151,7 @@ public final class HemoJourneyFixtures {
 			if (stage == HemoJourneyStage.APOTHEOS_CHOICE) {
 				prepareApotheosChoice(player);
 			} else {
-				if (HemoCapabilityAccess.requireInitiatoryDegree(player).getArchonPath()
+				if (HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath()
 						!= EnumArchonPath.SILENT_PENDING) {
 					throw new IllegalStateException("The Silent refusal was not chosen");
 				}
@@ -211,7 +211,7 @@ public final class HemoJourneyFixtures {
 				case LIVING_BESTIARY_SURRENDER -> spawnAlchemist(level, origin);
 				case HYPHAE_DISCOVERED -> spawnDiscoveryItem(level, origin, ItemInit.fungal_spine.get());
 				case ARTIFICER_WORN_VOW_BRIEFING -> {
-					HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
+					HemoCapabilityAccess.getBloodVolume(player).setActive(true);
 					spawnArtificer(level, origin);
 					player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(BlockInit.hematic_armature.get()));
 				}
@@ -233,7 +233,7 @@ public final class HemoJourneyFixtures {
 				case FIRST_MEMORY_WOVEN -> prepareFirstMemoryWeave(player, origin);
 				case NOETIC_MARK_RECOGNIZED -> spawnMnemonist(level, origin);
 				case ARTIFICER_THREE_ANSWERS_BRIEFING -> {
-					HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
+					HemoCapabilityAccess.getBloodVolume(player).setActive(true);
 					spawnArtificer(level, origin);
 				}
 				case ARTIFICER_FORK_UPGRADE -> prepareForkUpgrade(player, origin);
@@ -253,7 +253,7 @@ public final class HemoJourneyFixtures {
 				case VEIN_MASON_D5_DIAGNOSIS, VEIN_MASON_D5_REWARD -> prepareVeinMason(player, level, origin);
 				case VEIN_MASON_D5_TREATMENT -> {
 					player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.vascular_poultice.get()));
-					HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
+					HemoCapabilityAccess.getBloodVolume(player).setActive(true);
 				}
 				case VEIN_MASON_D5_FORTIFICATION -> prepareHematicFortification(player, origin);
 				case ARTIFICER_ASSUMED_LIMB_BRIEFING, ARTIFICER_ASSUMED_LIMB_REWARD,
@@ -291,7 +291,7 @@ public final class HemoJourneyFixtures {
 				case VEIN_MASON_D6_SCAR_CARVED -> prepareContinuationScarCarve(player, origin);
 				case VEIN_MASON_D6_SCAR_LEARNED -> prepareContinuationScarBrazier(player, origin, false);
 				case VEIN_MASON_D6_LOADOUT -> prepareContinuationScarBrazier(player, origin, true);
-				case CHAMBER_RETURNED -> HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(6);
+				case CHAMBER_RETURNED -> HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(6);
 				case COVENANT_THRONE_BOUND -> set(player, origin.above(), BlockInit.covenant_throne.get());
 				case COVENANT_VIGIL -> prepareCovenantVigil(player, level, origin);
 				case ADEPT_RITE, ILLUMINATUS_RITE, SANCTIFIED_RITE ->
@@ -302,7 +302,7 @@ public final class HemoJourneyFixtures {
 							level, Hemomancy.rloc("cardinal_rite/archon_rite")));
 				}
 				case ARTIFICER_WEIGHT_OF_FRAME_BRIEFING -> {
-					HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
+					HemoCapabilityAccess.getBloodVolume(player).setActive(true);
 					spawnArtificer(level, origin);
 				}
 				case ARTIFICER_WEIGHT_OF_FRAME_INSPECTION, ARTIFICER_D7_FITTING -> spawnArtificer(level, origin);
@@ -513,7 +513,7 @@ public final class HemoJourneyFixtures {
 			entities.add(entry);
 		}
 		baseline.put(BASELINE_ENTITIES, entities);
-		baseline.putDouble(BASELINE_BLOOD, HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume());
+		baseline.putDouble(BASELINE_BLOOD, HemoCapabilityAccess.getBloodVolume(player).getBloodVolume());
 		baseline.putString("stage", stage.id());
 		baseline.putBoolean(BASELINE_ADVANCEMENT, switch (stage) {
 			case LIBER_CRAFTED -> HarbingerAdvancementGranter.isLiberSanguinumCrafted(player);
@@ -757,7 +757,7 @@ public final class HemoJourneyFixtures {
 
     private static void prepareSanguineInitiation(ServerPlayer player, BlockPos origin) {
         spawnVicar(fixtureLevel(player), origin);
-        HemoCapabilityAccess.getEquipment(player).orElseThrow().setStackInSlot(5, new ItemStack(ItemInit.charm_of_vascularium.get()));
+        HemoCapabilityAccess.getEquipment(player).setStackInSlot(5, new ItemStack(ItemInit.charm_of_vascularium.get()));
         com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.activate(player);
     }
 
@@ -1012,7 +1012,7 @@ public final class HemoJourneyFixtures {
 		player.setItemSlot(EquipmentSlot.CHEST, new ItemStack(ItemInit.edacious_blood_lust_chest.get()));
 		player.setItemSlot(EquipmentSlot.LEGS, new ItemStack(ItemInit.edacious_blood_lust_legs.get()));
 		player.setItemSlot(EquipmentSlot.FEET, new ItemStack(ItemInit.edacious_blood_lust_boots.get()));
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setActive(true);
 		blood.setBloodVolume(Math.max(blood.getBloodVolume(), 250.0D));
 	}
@@ -1041,7 +1041,7 @@ public final class HemoJourneyFixtures {
 	}
 
 	private static void prepareSilentRefusal(ServerPlayer player) {
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setActive(true);
 		blood.setBloodVolume(Math.max(blood.getBloodVolume(), 500.0D));
 		boolean hasWeapon = false;
@@ -1056,7 +1056,7 @@ public final class HemoJourneyFixtures {
 		if (!hasWeapon && !player.getInventory().add(new ItemStack(ItemInit.living_staff.get()))) {
 			throw new IllegalStateException("Make room for the Living Staff needed to sever the Bloom");
 		}
-		var known = HemoCapabilityAccess.requireKnownManipulations(player);
+		var known = HemoCapabilityAccess.getKnownManipulations(player);
 		BloodManipulation blade = ManipulationInit.conjure_blade.get();
 		known.getKnownManips().putIfAbsent(blade, new ManipLevel(0, 0));
 		if (!known.getEquippedManipNames().contains(blade.getName())) {
@@ -1068,7 +1068,7 @@ public final class HemoJourneyFixtures {
 	}
 
 	private static void prepareApotheosChoice(ServerPlayer player) {
-		if (!HemoCapabilityAccess.requireInitiatoryDegree(player).hasFungalSpineGranted()) {
+		if (!HemoCapabilityAccess.getInitiatoryDegree(player).hasFungalSpineGranted()) {
 			throw new IllegalStateException("Communion has not granted the Fungal Spine");
 		}
 		int spineSlot = -1;
@@ -1086,7 +1086,7 @@ public final class HemoJourneyFixtures {
 			spineSlot = 0;
 		}
 		player.getInventory().selected = spineSlot;
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setActive(true);
 		if (blood.getBloodVolume() < 500.0D) {
 			blood.setBloodVolume(500.0D);
@@ -1225,7 +1225,7 @@ public final class HemoJourneyFixtures {
 		if (!loom.hasValidRecipe()) throw new IllegalStateException("Blood Shot memory weave could not be prepared");
 		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.blood_projection.get()));
 		player.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(ItemInit.living_staff.get()));
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setBloodVolume(Math.max(blood.getBloodVolume(), 50.0D));
 	}
 
@@ -1264,7 +1264,7 @@ public final class HemoJourneyFixtures {
 	private static void prepareScarBrazier(ServerPlayer player, BlockPos origin, boolean preparedLoadout) {
 		prepareVeinMasonRank(player);
 		VeinMasonScarLesson.Lesson lesson = VeinMasonScarLesson.forPlayer(player);
-		if (preparedLoadout) HemoCapabilityAccess.requireScarState(player).addKnownCerebralScar(lesson.patternScarId());
+		if (preparedLoadout) HemoCapabilityAccess.getScarState(player).addKnownCerebralScar(lesson.patternScarId());
 		BlockPos brazierPos = origin.above();
 		set(player, brazierPos, BlockInit.iron_brazier.get());
 		fixtureLevel(player).setBlock(brazierPos,
@@ -1277,7 +1277,7 @@ public final class HemoJourneyFixtures {
 				: new ItemStack(lesson.scar().get());
 		if (!brazier.insertOffering(null, offering)) throw new IllegalStateException("Scar offering could not be prepared");
 		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.blood_absorption.get()));
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setActive(true);
 		blood.setBloodVolume(Math.max(blood.getBloodVolume(), preparedLoadout
 				? ScarBrazierRite.LOADOUT_BLOOD_COST : ScarBrazierRite.LEARN_BLOOD_COST));
@@ -1286,7 +1286,7 @@ public final class HemoJourneyFixtures {
 	private static void prepareFirstEffigyPattern(ServerPlayer player, BlockPos origin) {
 		prepareVeinMasonRank(player);
 		ResourceLocation scarId = VeinMasonScarLesson.forPlayer(player).patternScarId();
-		HemoCapabilityAccess.requireScarState(player).addKnownCerebralScar(scarId);
+		HemoCapabilityAccess.getScarState(player).addKnownCerebralScar(scarId);
 		BlockPos effigyPos = origin.above();
 		set(player, effigyPos, BlockInit.mason_effigy.get());
 		if (!(fixtureLevel(player).getBlockEntity(effigyPos) instanceof MasonsEffigyBlockEntity effigy)) {
@@ -1295,24 +1295,24 @@ public final class HemoJourneyFixtures {
 		effigy.setSelectedScarIds(List.of(scarId));
 		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.runic_motif_paper.get()));
 		player.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(ItemInit.blood_projection.get()));
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setActive(true);
 		blood.setBloodVolume(Math.max(blood.getBloodVolume(), MasonsEffigyBlockEntity.BLOOD_PER_SCAR));
 	}
 
 	private static void prepareVeinMasonRank(ServerPlayer player) {
-		HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(4);
+		HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(4);
 	}
 
 	private static void prepareVeinMasonD5Strain(ServerPlayer player, ServerLevel level, BlockPos origin) {
-		HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(5);
+		HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(5);
 		HarbingerAdvancementGranter.grantIfNotDone(player,
 				HarbingerAdvancementGranter.ADV_VEIN_MASON_REWARD_CLAIMED);
-		HemoCapabilityAccess.requireVascularSystem(player).getVascularSystem().put(EnumVeinSections.ARMS, 50.1F);
-		var memory = player.getData(com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes.MUSCLE_MEMORY);
+		HemoCapabilityAccess.getVascularSystem(player).getVascularSystem().put(EnumVeinSections.ARMS, 50.1F);
+		var memory = HemoCapabilityAccess.muscleMemory(player);
 		memory.learnAndAddReserve(MuscleMemory.SANGUINE_FISTS, 1_200);
 		memory.activate(MuscleMemory.SANGUINE_FISTS);
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setActive(true);
 		blood.setBloodVolume(Math.max(blood.getBloodVolume(), 500.0D));
 		Entity target = EntityType.ZOMBIE.create(level);
@@ -1351,13 +1351,13 @@ public final class HemoJourneyFixtures {
 	}
 
 	private static void prepareVeinMasonD6(ServerPlayer player) {
-		HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(6);
+		HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(6);
 		VeinMasonAssignments.grant(player, VeinMasonAssignments.D5_REWARD);
 	}
 
 	private static void prepareMatchingNoeticCast(ServerPlayer player, ServerLevel level, BlockPos origin) {
 		prepareVeinMasonD6(player);
-		var scars = HemoCapabilityAccess.requireScarState(player);
+		var scars = HemoCapabilityAccess.getScarState(player);
 		if (scars.getActiveCerebralScars().isEmpty()) {
 			ResourceLocation fallback = VeinMasonScarLesson.forPlayer(player).patternScarId();
 			scars.addKnownCerebralScar(fallback);
@@ -1367,12 +1367,12 @@ public final class HemoJourneyFixtures {
 		var definition = ScarInit.getByName(active.toString());
 		if (definition == null) throw new IllegalStateException("Active cerebral scar is unavailable: " + active);
 		BloodManipulation manipulation = matchingManipulation(definition.getAssignedTendency());
-		var known = HemoCapabilityAccess.requireKnownManipulations(player);
+		var known = HemoCapabilityAccess.getKnownManipulations(player);
 		known.getKnownManips().putIfAbsent(manipulation, new ManipLevel(0, 0));
 		known.setEquippedManipNames(List.of(manipulation.getName()));
 		known.setSelectedManip(manipulation);
 		KnownManipulationEvents.syncPlayerEvent(player);
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setActive(true);
 		blood.setBloodVolume(Math.max(blood.getBloodVolume(), manipulation.getCost() + 500.0D));
 		player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
@@ -1417,7 +1417,7 @@ public final class HemoJourneyFixtures {
 	private static void prepareContinuationScarBrazier(ServerPlayer player, BlockPos origin, boolean loadout) {
 		prepareVeinMasonD6(player);
 		VeinMasonScarLesson.Lesson lesson = VeinMasonScarLesson.strongestForPlayer(player, 2);
-		if (loadout) HemoCapabilityAccess.requireScarState(player).addKnownCerebralScar(lesson.patternScarId());
+		if (loadout) HemoCapabilityAccess.getScarState(player).addKnownCerebralScar(lesson.patternScarId());
 		BlockPos brazierPos = origin.above();
 		set(player, brazierPos, BlockInit.iron_brazier.get());
 		fixtureLevel(player).setBlock(brazierPos,
@@ -1428,7 +1428,7 @@ public final class HemoJourneyFixtures {
 		ItemStack offering = loadout ? lesson.patternStack() : new ItemStack(lesson.scar().get());
 		if (!brazier.insertOffering(null, offering)) throw new IllegalStateException("Continuation scar offering could not be prepared");
 		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.blood_absorption.get()));
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setActive(true);
 		blood.setBloodVolume(Math.max(blood.getBloodVolume(), loadout
 				? ScarBrazierRite.LOADOUT_BLOOD_COST : ScarBrazierRite.LEARN_BLOOD_COST));
@@ -1441,7 +1441,7 @@ public final class HemoJourneyFixtures {
 			if (key != ' ') set(player, origin.offset(x - 2, 1, z - 2), key == 'O' ? Blocks.OBSIDIAN
 					: key == 'E' ? BlockInit.engram_block.get() : BlockInit.hematic_iron_block.get());
 		}
-		var blood = HemoCapabilityAccess.requireBloodVolume(player); blood.setBloodVolume(Math.max(blood.getBloodVolume(), 250.0D));
+		var blood = HemoCapabilityAccess.getBloodVolume(player); blood.setBloodVolume(Math.max(blood.getBloodVolume(), 250.0D));
 	}
 
 	private static void buildRankupRite(ServerPlayer player, BlockPos origin, String recipePath) {
@@ -1465,7 +1465,7 @@ public final class HemoJourneyFixtures {
 			set(player, origin.offset(relative.getX() - halfWidth, relative.getY() + 1,
 					relative.getZ() - halfDepth), block);
 		}
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setBloodVolume(Math.max(blood.getBloodVolume(), recipe.getBloodCost()));
 	}
 
@@ -1522,7 +1522,7 @@ public final class HemoJourneyFixtures {
 				}
 			}
 		}
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setBloodVolume(Math.max(blood.getBloodVolume(), recipe.getBloodCost()));
 		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.living_staff.get()));
 	}
@@ -1556,8 +1556,8 @@ public final class HemoJourneyFixtures {
 			throw new IllegalStateException("Could not load the Founding Fane offering");
 		}
 		HemoJourneyWorldState.prepareFoundingFane(player);
-		HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(5);
-		HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
+		HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(5);
+		HemoCapabilityAccess.getBloodVolume(player).setActive(true);
 		player.getInventory().add(new ItemStack(ItemInit.living_staff.get()));
 		player.getInventory().add(new ItemStack(ItemInit.blood_projection.get()));
 	}
@@ -1588,13 +1588,13 @@ public final class HemoJourneyFixtures {
 			}
 		}
 		spawnSwornRiteHelper(player, level, origin, recipe);
-		HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(6);
+		HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(6);
 		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.living_staff.get()));
 	}
 
 	private static void spawnSwornRiteHelper(ServerPlayer player, ServerLevel level, BlockPos origin,
 			CardinalRiteRecipe recipe) {
-		var line = HemoCapabilityAccess.requireBloodVolume(player).getBloodLine();
+		var line = HemoCapabilityAccess.getBloodVolume(player).getBloodLine();
 		if (!line.isValid()) throw new IllegalStateException("Rite helper requires the journey bloodline");
 		HarbingerVicarEntity helper = EntityInit.harbinger_vicar.get().create(level);
 		if (helper == null) throw new IllegalStateException("Rite helper creation returned null");
@@ -1660,7 +1660,7 @@ public final class HemoJourneyFixtures {
 
 	private static void prepareFirstBloodcraftProofs(ServerPlayer player, BlockPos origin) {
 		set(player, origin.above(), Blocks.STONE);
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setActive(true);
 		blood.setBloodVolume(Math.min(blood.getMaxBloodVolume() - 500.0D,
 				Math.max(1000.0D, blood.getBloodVolume())));
@@ -1701,7 +1701,7 @@ public final class HemoJourneyFixtures {
 		placePattern(player, recipe.getPattern(), hit, 1, 1, 1);
 		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.blood_projection.get()));
 		player.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(ItemInit.ferric_binder.get()));
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setBloodVolume(Math.max(blood.getBloodVolume(), recipe.getBloodCost()));
 	}
 
@@ -1712,17 +1712,17 @@ public final class HemoJourneyFixtures {
 		placePattern(player, recipe.getPattern(), origin.above(2), 0, 1, 0);
 		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.blood_projection.get()));
 		player.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(ItemInit.sanguine_formation.get()));
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setActive(true);
 		blood.setBloodVolume(Math.max(blood.getBloodVolume(), recipe.getBloodCost()));
 	}
 
 	private static void prepareLivingWeaponGrafts(ServerPlayer player, BlockPos origin, List<LivingWeaponForm> forms) {
 		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.living_staff.get()));
-		var known = HemoCapabilityAccess.requireKnownManipulations(player);
+		var known = HemoCapabilityAccess.getKnownManipulations(player);
 		known.getKnownManips().putIfAbsent(ManipulationInit.blood_absorption.get(), new ManipLevel(0, 0));
 		known.setSelectedManip(ManipulationInit.blood_absorption.get());
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setActive(true);
 		blood.setBloodVolume(Math.max(blood.getBloodVolume(), 1000.0D));
 		for (int index = 0; index < forms.size(); index++) {

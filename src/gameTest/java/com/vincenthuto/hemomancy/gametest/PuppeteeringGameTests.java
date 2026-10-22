@@ -86,9 +86,9 @@ public final class PuppeteeringGameTests {
 	public static void sanguineSpinningConvertsBloodIntoHeldCrossbarCharge(GameTestHelper helper) {
 		ServerPlayer owner = testPlayer(helper);
 		try {
-			HemoCapabilityAccess.requireSkillProgress(owner).setSkill(
+			HemoCapabilityAccess.getSkillProgress(owner).setSkill(
 					SkillPointInit.skill_sanguine_spinning, EnumSkillStates.UNLOCKED, 1);
-			var blood = HemoCapabilityAccess.requireBloodVolume(owner);
+			var blood = HemoCapabilityAccess.getBloodVolume(owner);
 			blood.setActive(true);
 			blood.setBloodVolume(100.0D);
 			ItemStack crossbar = attunedCrossbar(owner, 0);
@@ -134,9 +134,9 @@ public final class PuppeteeringGameTests {
 		ServerPlayer owner = testPlayer(helper);
 		ServerPlayer stranger = testPlayer(helper);
 		try {
-			var progress = HemoCapabilityAccess.requireSkillProgress(owner);
+			var progress = HemoCapabilityAccess.getSkillProgress(owner);
 			progress.setSkill(SkillPointInit.skill_sanguine_spinning, EnumSkillStates.UNLOCKED, 1);
-			var blood = HemoCapabilityAccess.requireBloodVolume(owner);
+			var blood = HemoCapabilityAccess.getBloodVolume(owner);
 			blood.setActive(true);
 			blood.setBloodVolume(100.0D);
 			ItemStack crossbar = attunedCrossbar(owner, 0);
@@ -173,9 +173,9 @@ public final class PuppeteeringGameTests {
 	public static void sanguineSpinningRespectsBloodAvailabilityAndSanguineReserve(GameTestHelper helper) {
 		ServerPlayer owner = testPlayer(helper);
 		try {
-			var progress = HemoCapabilityAccess.requireSkillProgress(owner);
+			var progress = HemoCapabilityAccess.getSkillProgress(owner);
 			progress.setSkill(SkillPointInit.skill_sanguine_spinning, EnumSkillStates.UNLOCKED, 1);
-			var blood = HemoCapabilityAccess.requireBloodVolume(owner);
+			var blood = HemoCapabilityAccess.getBloodVolume(owner);
 			blood.setActive(true);
 			ItemStack crossbar = attunedCrossbar(owner, 0);
 			owner.setItemInHand(InteractionHand.MAIN_HAND, crossbar);
@@ -207,7 +207,7 @@ public final class PuppeteeringGameTests {
 		try {
 			learnVulture(owner);
 			learnVulture(stranger);
-			HemoCapabilityAccess.requireSkillProgress(owner).setSkill(
+			HemoCapabilityAccess.getSkillProgress(owner).setSkill(
 					SkillPointInit.skill_bound_command, EnumSkillStates.UNLOCKED, 3);
 			ItemStack crossbar = new ItemStack(ItemInit.marionette_crossbar.get());
 
@@ -257,7 +257,7 @@ public final class PuppeteeringGameTests {
 		Mob claimedWill = null;
 		try {
 			PuppeteerSummonDefinition definition = learnVulture(owner);
-			var degree = HemoCapabilityAccess.requireInitiatoryDegree(owner);
+			var degree = HemoCapabilityAccess.getInitiatoryDegree(owner);
 			degree.setDegreeNumber(7);
 			degree.setArchonPath(EnumArchonPath.SILENT_ARCHON);
 			ItemStack crossbar = attunedCrossbar(owner, 100);
@@ -316,7 +316,7 @@ public final class PuppeteeringGameTests {
 		ServerPlayer caster = testPlayer(helper);
 		try {
 			ItemStack crossbar = attunedCrossbar(caster, 0);
-			var degree = HemoCapabilityAccess.requireInitiatoryDegree(caster);
+			var degree = HemoCapabilityAccess.getInitiatoryDegree(caster);
 			degree.setDegreeNumber(4);
             com.vincenthuto.hemomancy.common.circus.CircusApprenticeshipProgress.state(caster).putBoolean("taught.scarlet_mummer", true);
 			degree.syncTotalPomesConsumed(8);
@@ -342,7 +342,7 @@ public final class PuppeteeringGameTests {
 			PuppeteerSummonDefinition definition = learnVulture(owner);
 			ItemStack crossbar = attunedCrossbar(owner, 100);
 			owner.setItemInHand(InteractionHand.MAIN_HAND, crossbar);
-			HemoCapabilityAccess.requireSkillProgress(owner).setSkill(
+			HemoCapabilityAccess.getSkillProgress(owner).setSkill(
 					SkillPointInit.skill_autonomous_retaliation, EnumSkillStates.UNLOCKED, 1);
 			summon = PuppeteerSummonFactory.create(definition, helper.getLevel(), owner,
 					MarionetteCrossbarItem.ensureCrossbarId(crossbar), 0).orElseThrow();
@@ -880,10 +880,10 @@ public final class PuppeteeringGameTests {
 			PuppeteerSummonDefinition vulture = learnVulture(owner);
 			PuppeteerSummonDefinition spitter = PuppeteerSummonDefinitions
 					.byName(PuppeteerSummonDefinitions.MARROW_SPITTER).orElseThrow();
-			HemoCapabilityAccess.requireKnownSummons(owner).learn(spitter);
-			HemoCapabilityAccess.requireSkillProgress(owner).setSkill(
+			HemoCapabilityAccess.getKnownSummons(owner).learn(spitter);
+			HemoCapabilityAccess.getSkillProgress(owner).setSkill(
 					SkillPointInit.skill_skein_transposition, EnumSkillStates.UNLOCKED, 1);
-			HemoCapabilityAccess.requireSkillProgress(owner).setSkill(
+			HemoCapabilityAccess.getSkillProgress(owner).setSkill(
 					SkillPointInit.skill_puppet_skein, EnumSkillStates.UNLOCKED, 3);
 			ItemStack crossbar = attunedCrossbar(owner, 100);
 			owner.setItemInHand(InteractionHand.MAIN_HAND, crossbar);
@@ -920,8 +920,8 @@ public final class PuppeteeringGameTests {
 			PuppeteerSummonDefinition vulture = learnVulture(owner);
 			PuppeteerSummonDefinition spitter = PuppeteerSummonDefinitions
 					.byName(PuppeteerSummonDefinitions.MARROW_SPITTER).orElseThrow();
-			HemoCapabilityAccess.requireKnownSummons(owner).learn(spitter);
-			HemoCapabilityAccess.requireSkillProgress(owner).setSkill(
+			HemoCapabilityAccess.getKnownSummons(owner).learn(spitter);
+			HemoCapabilityAccess.getSkillProgress(owner).setSkill(
 					SkillPointInit.skill_skein_transposition, EnumSkillStates.UNLOCKED, 1);
 			ItemStack crossbar = attunedCrossbar(owner, 0);
 			owner.setItemInHand(InteractionHand.MAIN_HAND, crossbar);
@@ -946,7 +946,7 @@ public final class PuppeteeringGameTests {
 	private static PuppeteerSummonDefinition learnVulture(ServerPlayer player) {
 		PuppeteerSummonDefinition definition = PuppeteerSummonDefinitions
 				.byName(PuppeteerSummonDefinitions.VEINWING_VULTURE).orElseThrow();
-		HemoCapabilityAccess.requireKnownSummons(player).learn(definition);
+		HemoCapabilityAccess.getKnownSummons(player).learn(definition);
 		return definition;
 	}
 
@@ -955,7 +955,7 @@ public final class PuppeteeringGameTests {
 		if (!MarionetteCrossbarItem.bindCrossbar(stack, owner)) {
 			throw new IllegalStateException("Test Crossbar failed to attune");
 		}
-		HemoCapabilityAccess.getKnownSummons(owner).map(known -> known.getKnownSummonNames()).orElse(java.util.List.of())
+		HemoCapabilityAccess.getKnownSummons(owner).getKnownSummonNames()
 				.stream().findFirst().ifPresent(name ->
 						MarionetteCrossbarItem.prepareSelectedSummon(stack, owner, name));
 		MarionetteCrossbarItem.addThread(stack, charge);

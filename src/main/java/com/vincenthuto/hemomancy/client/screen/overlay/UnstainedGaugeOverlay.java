@@ -86,10 +86,9 @@ public class UnstainedGaugeOverlay {
 		if (player == null) return;
 		float animationTime = getAnimationTime(partialTicks);
 
-		HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(cap -> {
-			if (UnstainedAccessRules.phase(cap) == UnstainedPhase.OUTSIDER) return;
-			renderGauge(gfx, screenWidth, screenHeight, player, cap, animationTime);
-		});
+		var cap = HemoCapabilityAccess.getUnstainedProgress(player);
+		if (UnstainedAccessRules.phase(cap) == UnstainedPhase.OUTSIDER) return;
+		renderGauge(gfx, screenWidth, screenHeight, player, cap, animationTime);
 	}
 
 	private void renderGauge(GuiGraphics gfx, int screenWidth, int screenHeight, LocalPlayer player, IUnstainedProgress cap,
@@ -165,10 +164,10 @@ public class UnstainedGaugeOverlay {
 	}
 
 	private float getBloodFillRatio(LocalPlayer player, float fallbackRatio) {
-		return HemoCapabilityAccess.getBloodVolume(player)
-				.filter(blood -> blood.isActive() && blood.getMaxBloodVolume() > 0)
-				.map(blood -> (float) Mth.clamp(blood.getBloodVolume() / blood.getMaxBloodVolume(), 0.0, 1.0))
-				.orElse(Mth.clamp(fallbackRatio, 0f, 1f));
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
+		return blood.isActive() && blood.getMaxBloodVolume() > 0
+				? (float) Mth.clamp(blood.getBloodVolume() / blood.getMaxBloodVolume(), 0.0, 1.0)
+				: Mth.clamp(fallbackRatio, 0f, 1f);
 	}
 
 	private static ResourceLocation texture(String name) {

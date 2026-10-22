@@ -40,7 +40,7 @@ public final class QuickCasterGameTests {
             BloodManipulation shot = ManipulationInit.blood_shot.get();
             BloodManipulation cloud = ManipulationInit.blood_cloud.get();
             equip(p, shot, cloud);
-            var skills = HemoCapabilityAccess.requireSkillProgress(p);
+            var skills = HemoCapabilityAccess.getSkillProgress(p);
             skills.setSkill(SkillPointInit.skill_quick_caster, EnumSkillStates.UNLOCKED, 1);
 
             radial(p, shot);
@@ -65,8 +65,8 @@ public final class QuickCasterGameTests {
             BloodManipulation shot = ManipulationInit.blood_shot.get();
             BloodManipulation cloud = ManipulationInit.blood_cloud.get();
             equip(p, shot, cloud);
-            HemoCapabilityAccess.requireKnownManipulations(p).setSelectedManip(shot);
-            HemoCapabilityAccess.requireSkillProgress(p).setSkill(SkillPointInit.skill_quick_caster, EnumSkillStates.UNLOCKED, 1);
+            HemoCapabilityAccess.getKnownManipulations(p).setSelectedManip(shot);
+            HemoCapabilityAccess.getSkillProgress(p).setSkill(SkillPointInit.skill_quick_caster, EnumSkillStates.UNLOCKED, 1);
 
             ChangeSelectedManipPacket.handle(new ChangeSelectedManipPacket(),
                     new ServerPayloadContext(p.connection, ChangeSelectedManipPacket.TYPE.id()));
@@ -82,7 +82,7 @@ public final class QuickCasterGameTests {
         try {
             BloodManipulation shot = ManipulationInit.blood_shot.get();
             equip(p, shot);
-            HemoCapabilityAccess.requireSkillProgress(p).setSkill(SkillPointInit.skill_quick_caster, EnumSkillStates.UNLOCKED, 1);
+            HemoCapabilityAccess.getSkillProgress(p).setSkill(SkillPointInit.skill_quick_caster, EnumSkillStates.UNLOCKED, 1);
             radial(p, shot);
             double afterFirst = blood(p);
             long cooldown = shot.getRemainingCooldownTicks(p);
@@ -101,7 +101,7 @@ public final class QuickCasterGameTests {
         try {
             BloodManipulation storm = ManipulationInit.synaptic_storm.get();
             equip(p, storm);
-            HemoCapabilityAccess.requireSkillProgress(p).setSkill(SkillPointInit.skill_quick_caster, EnumSkillStates.UNLOCKED, 1);
+            HemoCapabilityAccess.getSkillProgress(p).setSkill(SkillPointInit.skill_quick_caster, EnumSkillStates.UNLOCKED, 1);
             radial(p, storm);
             h.assertTrue(selected(p) == storm, "Radial selection did not select Synaptic Storm");
             h.assertTrue(storm.getRemainingCooldownTicks(p) == 0L && blood(p) == 2000,
@@ -111,21 +111,21 @@ public final class QuickCasterGameTests {
     }
 
     private static void radial(ServerPlayer p, BloodManipulation m) {
-        int index = HemoCapabilityAccess.requireKnownManipulations(p).getManipList().indexOf(m);
+        int index = HemoCapabilityAccess.getKnownManipulations(p).getManipList().indexOf(m);
         UpdateCurrentManipPacket.Handler.handle(new UpdateCurrentManipPacket(index),
                 new ServerPayloadContext(p.connection, UpdateCurrentManipPacket.TYPE.id()));
     }
 
     private static BloodManipulation selected(ServerPlayer p) {
-        return HemoCapabilityAccess.requireKnownManipulations(p).getSelectedManip();
+        return HemoCapabilityAccess.getKnownManipulations(p).getSelectedManip();
     }
 
     private static double blood(ServerPlayer p) {
-        return HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume();
+        return HemoCapabilityAccess.getBloodVolume(p).getBloodVolume();
     }
 
     private static void equip(ServerPlayer p, BloodManipulation... manips) {
-        var known = HemoCapabilityAccess.requireKnownManipulations(p);
+        var known = HemoCapabilityAccess.getKnownManipulations(p);
         for (BloodManipulation m : manips) known.getKnownManips().put(m, new ManipLevel(4, 185));
         known.setEquippedManipNames(java.util.Arrays.stream(manips).map(BloodManipulation::getName).toList());
     }
@@ -139,11 +139,11 @@ public final class QuickCasterGameTests {
             @Override public void send(net.minecraft.network.protocol.Packet<?> packet) { }
         };
         p.setPos(h.absoluteVec(new Vec3(2.5, 2, 2.5)));
-        var blood = HemoCapabilityAccess.requireBloodVolume(p);
+        var blood = HemoCapabilityAccess.getBloodVolume(p);
         blood.setActive(true);
         blood.setBloodVolume(2000);
         for (var tendency : EnumBloodTendency.values())
-            HemoCapabilityAccess.getBloodTendency(p).orElseThrow().setTendencyAlignment(tendency, 100);
+            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(tendency, 100);
         return p;
     }
 }

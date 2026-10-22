@@ -87,17 +87,15 @@ public class DeadmansPurseMorphlingItem extends MorphlingItem {
 				long lastTransfusion = getLastAbilityTick(stack, "BloodTransfusion");
 				long now = player.level().getGameTime();
 				if (now - lastTransfusion >= TRANSFUSION_COOLDOWN) {
-					HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-						if (!volume.isActive()) return;
-						double bloodCost = 200.0; // Spend blood to heal
-						if (volume.getBloodVolume() > bloodCost) {
-							volume.drain(bloodCost);
-							float transfusionHealing = 6.0f + (maturity - 3) * 3.0f;
-							player.heal(transfusionHealing);
-							BloodVolumeEvents.syncVolume((ServerPlayer) player, volume);
-							setLastAbilityTick(stack, "BloodTransfusion", now);
-						}
-					});
+					var volume = HemoCapabilityAccess.getBloodVolume(player);
+					double bloodCost = 200.0; // Spend blood to heal
+					if (volume.isActive() && volume.getBloodVolume() > bloodCost) {
+						volume.drain(bloodCost);
+						float transfusionHealing = 6.0f + (maturity - 3) * 3.0f;
+						player.heal(transfusionHealing);
+						BloodVolumeEvents.syncVolume((ServerPlayer) player, volume);
+						setLastAbilityTick(stack, "BloodTransfusion", now);
+					}
 				}
 			}
 		}
@@ -130,13 +128,13 @@ public class DeadmansPurseMorphlingItem extends MorphlingItem {
 					}
 				}
 				BorrowedBloodReserve.deposit(player, Math.min(35.0D, amount * 8.0D));
-				HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-					if (!volume.isActive()) return;
+				var volume = HemoCapabilityAccess.getBloodVolume(player);
+				if (volume.isActive()) {
 					volume.fill(Math.min(35.0, amount * 8.0));
 					if (player instanceof ServerPlayer serverPlayer) {
 						BloodVolumeEvents.syncVolume(serverPlayer, volume);
 					}
-				});
+				}
 			}
 		}
 

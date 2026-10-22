@@ -63,58 +63,57 @@ public class MorphlingMutationLayer<T extends LivingEntity, M extends HumanoidMo
         if (!(entity instanceof Player player))
             return;
 
-        HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
-            ItemStack morphlingStack = cap.getEquippedMorphling();
-            if (morphlingStack.isEmpty())
-                return;
+        var cap = HemoCapabilityAccess.getEquippedMorphling(player);
+        ItemStack morphlingStack = cap.getEquippedMorphling();
+        if (morphlingStack.isEmpty())
+            return;
 
-            MorphlingVisualMutation mutation = MorphlingMutationRegistry.get(morphlingStack);
-            if (mutation == null)
-                return;
+        MorphlingVisualMutation mutation = MorphlingMutationRegistry.get(morphlingStack);
+        if (mutation == null)
+            return;
 
-            int maturity = MorphlingItem.getMaturityLevel(morphlingStack);
-            // Primal maturity can be level 5 while the visual scale table is 0..4.
-            int maturityIndex = Mth.clamp(maturity, 0, MATURITY_ALPHA_SCALE.length - 1);
-            float maturityScale = MATURITY_ALPHA_SCALE[maturityIndex];
+        int maturity = MorphlingItem.getMaturityLevel(morphlingStack);
+        // Primal maturity can be level 5 while the visual scale table is 0..4.
+        int maturityIndex = Mth.clamp(maturity, 0, MATURITY_ALPHA_SCALE.length - 1);
+        float maturityScale = MATURITY_ALPHA_SCALE[maturityIndex];
 
-            // Sine-wave pulse — amplitude is ±30 % of the alpha
-            float pulse = 1.0f;
-            if (mutation.pulseSpeed > 0f) {
-                pulse = 0.70f + 0.30f * (float) Math.sin(ageInTicks * mutation.pulseSpeed);
-            }
+        // Sine-wave pulse — amplitude is ±30 % of the alpha
+        float pulse = 1.0f;
+        if (mutation.pulseSpeed > 0f) {
+            pulse = 0.70f + 0.30f * (float) Math.sin(ageInTicks * mutation.pulseSpeed);
+        }
 
-            float finalAlpha = mutation.alpha * maturityScale * pulse;
+        float finalAlpha = mutation.alpha * maturityScale * pulse;
 
-            M model = this.getParentModel();
-            poseStack.pushPose();
+        M model = this.getParentModel();
+        poseStack.pushPose();
 
-            VertexConsumer consumer;
-            if (mutation.swirlTexture != null) {
-                float scrollU = (ageInTicks * mutation.swirlSpeed) % 1.0f;
-                float scrollV = (ageInTicks * mutation.swirlSpeed * 0.5f) % 1.0f;
-                consumer = buffer.getBuffer(RenderTypeInit.energySwirl(mutation.swirlTexture, scrollU, scrollV));
-            } else if (mutation.emissive) {
-                consumer = buffer.getBuffer(RenderType.entityTranslucentEmissive(getSkinTexture(player)));
-            } else {
-                consumer = buffer.getBuffer(RenderType.entityTranslucent(getSkinTexture(player)));
-            }
+        VertexConsumer consumer;
+        if (mutation.swirlTexture != null) {
+            float scrollU = (ageInTicks * mutation.swirlSpeed) % 1.0f;
+            float scrollV = (ageInTicks * mutation.swirlSpeed * 0.5f) % 1.0f;
+            consumer = buffer.getBuffer(RenderTypeInit.energySwirl(mutation.swirlTexture, scrollU, scrollV));
+        } else if (mutation.emissive) {
+            consumer = buffer.getBuffer(RenderType.entityTranslucentEmissive(getSkinTexture(player)));
+        } else {
+            consumer = buffer.getBuffer(RenderType.entityTranslucent(getSkinTexture(player)));
+        }
 
-            model.renderToBuffer(poseStack, consumer, packedLight, OverlayTexture.NO_OVERLAY,
-                    packColor(mutation.r, mutation.g, mutation.b, finalAlpha));
+        model.renderToBuffer(poseStack, consumer, packedLight, OverlayTexture.NO_OVERLAY,
+                packColor(mutation.r, mutation.g, mutation.b, finalAlpha));
 
-            poseStack.popPose();
+        poseStack.popPose();
 
-            // Render any additional 3-D model attachment (wings, plating, tendrils, etc.)
-            // SimpleBodyAttachment already does its own pushPose/popPose internally.
-            MorphlingModelAttachment attachment = mutation.modelAttachment;
-            if (attachment != null) {
-                attachment.render(poseStack, buffer, packedLight, entity,
-                        (HumanoidModel<?>) model,
-                        limbSwing, limbSwingAmount, partialTicks,
-                        ageInTicks, netHeadYaw, headPitch,
-                        finalAlpha, maturity);
-            }
-        });
+        // Render any additional 3-D model attachment (wings, plating, tendrils, etc.)
+        // SimpleBodyAttachment already does its own pushPose/popPose internally.
+        MorphlingModelAttachment attachment = mutation.modelAttachment;
+        if (attachment != null) {
+            attachment.render(poseStack, buffer, packedLight, entity,
+                    (HumanoidModel<?>) model,
+                    limbSwing, limbSwingAmount, partialTicks,
+                    ageInTicks, netHeadYaw, headPitch,
+                    finalAlpha, maturity);
+        }
     }
 
     private static ResourceLocation getSkinTexture(Player player) {

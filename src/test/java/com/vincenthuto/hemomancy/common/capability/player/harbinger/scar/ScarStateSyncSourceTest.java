@@ -14,7 +14,7 @@ public final class ScarStateSyncSourceTest {
 		String events = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/scar/ScarStateSyncEvents.java");
 
 		assertContains("scar sync event subscriber", events, "@EventBusSubscriber(modid = Hemomancy.MOD_ID)");
-		assertContains("sync packet used", events, "new PacketSyncScarsState(source, scars)");
+		assertContains("sync packet used", events, "new PacketSyncScarsState(source, HemoCapabilityAccess.getScarState(source))");
 		assertContains("self and tracking sync used", events, "PacketHandler.sendTracking(source");
 		assertContains("tracking player sync used", events, "PacketHandler.sendToPlayer(receiver");
 		assertContains("login hook", events, "PlayerEvent.PlayerLoggedInEvent");

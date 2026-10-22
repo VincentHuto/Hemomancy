@@ -38,7 +38,7 @@ public final class MorphlingBodyIdiomGameTests {
 		ServerPlayer player = player(helper, "hotheaded-test");
 		try {
 			ItemStack emberfang = maturity(ItemInit.morphling_emberfang.get().getDefaultInstance(), 30.0F);
-			HemoCapabilityAccess.requireEquippedMorphling(player).setEquippedMorphling(emberfang);
+			HemoCapabilityAccess.getEquippedMorphling(player).setEquippedMorphling(emberfang);
 			player.setRemainingFireTicks(100);
 
 			EmberfangMorphlingItem.applyHotheadedTick(player, emberfang);
@@ -65,7 +65,7 @@ public final class MorphlingBodyIdiomGameTests {
 		ServerPlayer player = player(helper, "cold-blooded-test");
 		try {
 			ItemStack shroud = maturity(ItemInit.morphling_winter_shroud.get().getDefaultInstance(), 100.0F);
-			HemoCapabilityAccess.requireEquippedMorphling(player).setEquippedMorphling(shroud);
+			HemoCapabilityAccess.getEquippedMorphling(player).setEquippedMorphling(shroud);
 			player.isInPowderSnow = true;
 			player.setTicksFrozen(120);
 

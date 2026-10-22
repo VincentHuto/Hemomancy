@@ -350,51 +350,48 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
 
         LocalPlayer player = this.minecraft.player;
         List<Component> hoveredTooltip = new ArrayList<>();
-        HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascularSystem -> {
-            ItemStack stack = player.getMainHandItem();
-            Item item = stack.getItem();
-            Item renderItem = ItemInit.dried_leech.get();
-            double angleBetweenEach = 360.0 / EnumVeinSections.values().length;
-            Point point = new Point(centerX - 80, centerY - 60), center = new Point(centerX, centerY);
-            for (EnumVeinSections selectedSection : EnumVeinSections.values()) {
-                graphics.drawCenteredString(font,
-                        HLTextUtils.toProperCase(selectedSection.toString()), point.x + guiWidth / 2, point.y -20 + guiHeight / 2,
-                        0xFFE2B5AD);
-                graphics.drawCenteredString(font,
-                        vascularSystem.getBloodFlowBySection(selectedSection) + " "
-                                + String.format("%.1f/100", vascularSystem.getHealthBySection(selectedSection)),
-                        point.x + guiWidth / 2, point.y -30  + guiHeight / 2,
-                        0xFFE2B5AD);
-                int iconX = point.x - 8 + guiWidth / 2;
-                int iconY = point.y - 10 + guiHeight / 2;
-                graphics.renderItem(new ItemStack(renderItem), iconX, iconY);
+        var vascularSystem = HemoCapabilityAccess.getVascularSystem(player);
+        ItemStack stack = player.getMainHandItem();
+        Item item = stack.getItem();
+        Item renderItem = ItemInit.dried_leech.get();
+        double angleBetweenEach = 360.0 / EnumVeinSections.values().length;
+        Point point = new Point(centerX - 80, centerY - 60), center = new Point(centerX, centerY);
+        for (EnumVeinSections selectedSection : EnumVeinSections.values()) {
+            graphics.drawCenteredString(font,
+                    HLTextUtils.toProperCase(selectedSection.toString()), point.x + guiWidth / 2, point.y -20 + guiHeight / 2,
+                    0xFFE2B5AD);
+            graphics.drawCenteredString(font,
+                    vascularSystem.getBloodFlowBySection(selectedSection) + " "
+                            + String.format("%.1f/100", vascularSystem.getHealthBySection(selectedSection)),
+                    point.x + guiWidth / 2, point.y -30  + guiHeight / 2,
+                    0xFFE2B5AD);
+            int iconX = point.x - 8 + guiWidth / 2;
+            int iconY = point.y - 10 + guiHeight / 2;
+            graphics.renderItem(new ItemStack(renderItem), iconX, iconY);
 
-                if (mouseX >= iconX && mouseX < iconX + 16 && mouseY >= iconY && mouseY < iconY + 16) {
-                    hoveredTooltip.add(Component.literal(HLTextUtils.toProperCase(selectedSection.name())));
-                    List<ScarDefinition> active = new ArrayList<>();
-                    HemoCapabilityAccess.getScarState(player).ifPresent(scars -> scars.forEachActiveCerebralScar(active::add));
-                    HemoCapabilityAccess.getKnownManipulations(player).ifPresent(known -> {
-                        known.getEquippedMemoryRefs().forEach(ref -> {
-                            if (ref.expression() == HematicMemoryExpression.THELEMIC) {
-                                ref.muscleMemory().filter(memory -> memory.section() == selectedSection).ifPresent(memory ->
-                                        hoveredTooltip.add(Component.literal("Thelemic: " + HLTextUtils.toProperCase(memory.id()))));
-                            } else {
-                                known.getKnownManips().keySet().stream()
-                                        .filter(manip -> manip.getName().equals(ref.id()) && manip.getSection() == selectedSection)
-                                        .findFirst().ifPresent(manip -> {
-                                            int tier = ScarNoeticRoutingRules.bestMatchingTier(manip.getTend(), active);
-                                            String reduction = tier > 0 ? " (Scar T" + tier + ": -" + tier * 5 + "% strain)" : "";
-                                            hoveredTooltip.add(Component.literal("Noetic: ").append(manip.getDisplayName()).append(reduction));
-                                        });
-                            }
-                        });
-                    });
-                }
-
-                point = rotatePointAbout(point, center, angleBetweenEach);
+            if (mouseX >= iconX && mouseX < iconX + 16 && mouseY >= iconY && mouseY < iconY + 16) {
+                hoveredTooltip.add(Component.literal(HLTextUtils.toProperCase(selectedSection.name())));
+                List<ScarDefinition> active = new ArrayList<>();
+                HemoCapabilityAccess.getScarState(player).forEachActiveCerebralScar(active::add);
+                var known = HemoCapabilityAccess.getKnownManipulations(player);
+                known.getEquippedMemoryRefs().forEach(ref -> {
+                    if (ref.expression() == HematicMemoryExpression.THELEMIC) {
+                        ref.muscleMemory().filter(memory -> memory.section() == selectedSection).ifPresent(memory ->
+                                hoveredTooltip.add(Component.literal("Thelemic: " + HLTextUtils.toProperCase(memory.id()))));
+                    } else {
+                        known.getKnownManips().keySet().stream()
+                                .filter(manip -> manip.getName().equals(ref.id()) && manip.getSection() == selectedSection)
+                                .findFirst().ifPresent(manip -> {
+                                    int tier = ScarNoeticRoutingRules.bestMatchingTier(manip.getTend(), active);
+                                    String reduction = tier > 0 ? " (Scar T" + tier + ": -" + tier * 5 + "% strain)" : "";
+                                    hoveredTooltip.add(Component.literal("Noetic: ").append(manip.getDisplayName()).append(reduction));
+                                });
+                    }
+                });
             }
 
-        });
+            point = rotatePointAbout(point, center, angleBetweenEach);
+        }
 
             int entityCenterX = centerX + guiWidth / 2;
             int entityCenterY = centerY - 4 + guiHeight / 2;

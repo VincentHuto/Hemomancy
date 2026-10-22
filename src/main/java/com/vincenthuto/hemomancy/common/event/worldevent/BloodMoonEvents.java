@@ -300,10 +300,9 @@ public class BloodMoonEvents {
 		} else {
 			player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, EFFECT_DURATION, 0, true, false, true));
 			// Passive blood drain for active (initiated-blood) players caught in the moon
-			HemoCapabilityAccess.getBloodVolume(player).ifPresent(vol -> {
-				BloodFlowLedger.applyDrain(player, vol, "blood_moon",
-						"Blood Moon", Category.WORLD, BLOOD_MOON_DRAIN_AMOUNT, EFFECT_INTERVAL_TICKS, false);
-			});
+			var vol = HemoCapabilityAccess.getBloodVolume(player);
+			BloodFlowLedger.applyDrain(player, vol, "blood_moon",
+					"Blood Moon", Category.WORLD, BLOOD_MOON_DRAIN_AMOUNT, EFFECT_INTERVAL_TICKS, false);
 		}
 	}
 

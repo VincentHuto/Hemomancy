@@ -47,17 +47,14 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 		if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
 			var completedChapters = HarbingerChapterProgression.completedChapters(serverPlayer);
 			var degreeData = HemoCapabilityAccess.getInitiatoryDegree(serverPlayer);
-			int pomesConsumed = degreeData.map(degree -> degree.getTotalPomesConsumed()).orElse(0);
-			boolean qliphothCommunionComplete = degreeData
-					.map(degree -> degree.isQliphothCommunionDone()).orElse(false);
-			EnumArchonPath archonPath = degreeData.map(degree -> degree.getArchonPath())
-					.orElse(EnumArchonPath.NONE);
+			int pomesConsumed = degreeData.getTotalPomesConsumed();
+			boolean qliphothCommunionComplete = degreeData.isQliphothCommunionDone();
+			EnumArchonPath archonPath = degreeData.getArchonPath();
 			QliphothBloomSavedData blooms = QliphothBloomSavedData.get(serverPlayer.getServer().overworld());
 			boolean severedPortalOpen = blooms.getBlooms().stream()
 					.filter(bloom -> bloom.ownerUUID().equals(serverPlayer.getUUID()))
 					.anyMatch(bloom -> blooms.getState(bloom).isPortalOpen());
-			Bloodline playerBloodline = HemoCapabilityAccess.getBloodVolume(serverPlayer)
-					.map(volume -> volume.getBloodLine()).orElse(Bloodline.NOBLOODLINE);
+			Bloodline playerBloodline = HemoCapabilityAccess.getBloodVolume(serverPlayer).getBloodLine();
 			boolean foundedBloodline = playerBloodline.isValid()
 					&& serverPlayer.getUUID().equals(playerBloodline.getLeaderUUID());
 			boolean artificerArmaturePlaced = HarbingerAdvancementGranter.isArtificerArmaturePlaced(serverPlayer);
@@ -111,7 +108,7 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 							BodyAnswersAssignment.ADV_BRIEFED),
 					HarbingerAdvancementGranter.hasAdvancement(serverPlayer,
 							BodyAnswersAssignment.ADV_COMPLETE),
-					serverPlayer.getData(com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes.MUSCLE_MEMORY).knownCount(),
+					HemoCapabilityAccess.muscleMemory(serverPlayer).knownCount(),
 					HarbingerAdvancementGranter.getRedTaxonomySpecimenCount(serverPlayer),
 					HarbingerAdvancementGranter.isRedTaxonomyComplete(serverPlayer),
 					HarbingerAdvancementGranter.getEnzymeMasteryCount(serverPlayer),
@@ -122,11 +119,9 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 					com.vincenthuto.hemomancy.common.mission.alchemist.DeepDarkCommission.progress(serverPlayer),
 					com.vincenthuto.hemomancy.common.mission.alchemist.PhlegethonticCommission.progress(serverPlayer),
 					com.vincenthuto.hemomancy.common.mission.shared.VagrantMindInquiry.progress(serverPlayer),
-					HemoCapabilityAccess.getSpecimenBestiary(serverPlayer)
-							.map(progress -> progress.recordedSpecimenCount()).orElse(0),
+					HemoCapabilityAccess.getSpecimenBestiary(serverPlayer).recordedSpecimenCount(),
 					SpecimenBestiaryDefinitions.totalResearchSpecimens(),
-					HemoCapabilityAccess.getSpecimenBestiary(serverPlayer)
-							.map(progress -> progress.recordedMorphlingLayerCount()).orElse(0),
+					HemoCapabilityAccess.getSpecimenBestiary(serverPlayer).recordedMorphlingLayerCount(),
 					hasBlankHematicMemory(serverPlayer),
 					HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(serverPlayer),
 					HarbingerAdvancementGranter.isMnemonistFirstWeaveComplete(serverPlayer),
@@ -162,7 +157,7 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 		int progress = VeinMasonAssignments.has(player, VeinMasonAssignments.D5_VARICOSE) ? 1 : 0;
 		if (VeinMasonAssignments.has(player, VeinMasonAssignments.D5_DIAGNOSED)) progress++;
 		if (VeinMasonAssignments.has(player, VeinMasonAssignments.D5_TREATED)) progress++;
-		if (HemoCapabilityAccess.getInitiatoryDegree(player).map(degree -> degree.hasHematicFortification()).orElse(false)) progress++;
+		if (HemoCapabilityAccess.getInitiatoryDegree(player).hasHematicFortification()) progress++;
 		return progress;
 	}
 

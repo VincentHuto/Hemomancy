@@ -84,10 +84,9 @@ public final class SomaticLoomWeavingGameTests {
         helper.assertTrue(te.selectRecipe(null, Hemomancy.rloc(recipe)), recipe + " should be selectable at stage " + stage);
         var weaver = new FakePlayer(level, new GameProfile(weaverId(weaverName), weaverName));
         weaver.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() - 2.5);
-        HemoCapabilityAccess.getBloodVolume(weaver).ifPresent(volume -> {
-            volume.setActive(true);
-            volume.setBloodVolume(volume.getMaxBloodVolume());
-        });
+        var volume = HemoCapabilityAccess.getBloodVolume(weaver);
+        volume.setActive(true);
+        volume.setBloodVolume(volume.getMaxBloodVolume());
         return new Setup(pos, te, weaver, recipe);
     }
 
@@ -145,10 +144,10 @@ public final class SomaticLoomWeavingGameTests {
         Setup s = axonal(helper, 60);
         int reference = s.loom.engramPreview(s.weaver).reference()[EnumBloodTendency.DUCTILIS.ordinal()];
         Setup tight = axonal(helper, reference - 1);
-        double before = HemoCapabilityAccess.getBloodVolume(tight.weaver).orElseThrow().getBloodVolume();
+        double before = HemoCapabilityAccess.getBloodVolume(tight.weaver).getBloodVolume();
         helper.assertTrue(!tight.loom.tryChargeRitualBlood(tight.weaver, 10_000, false) && !tight.loom.isWeaving(),
                 "one span short of the reference, the loom takes no blood");
-        helper.assertTrue(HemoCapabilityAccess.getBloodVolume(tight.weaver).orElseThrow().getBloodVolume() == before, "no blood was taken");
+        helper.assertTrue(HemoCapabilityAccess.getBloodVolume(tight.weaver).getBloodVolume() == before, "no blood was taken");
         Setup exact = axonal(helper, reference);
         pay(helper, exact);
         helper.succeed();
@@ -560,13 +559,12 @@ public final class SomaticLoomWeavingGameTests {
         te.addItem(null, new ItemStack(ItemInit.vivacious_enzyme.get()), null);
         helper.assertTrue(te.selectRecipe(null, Hemomancy.rloc("memory_weaving/memory_blood_shot")), "Blood Shot should be selectable");
         weaver.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() - 2.5);
-        HemoCapabilityAccess.getBloodVolume(weaver).ifPresent(volume -> {
-            volume.setActive(true);
-            volume.setBloodVolume(volume.getMaxBloodVolume());
-        });
+        var volume = HemoCapabilityAccess.getBloodVolume(weaver);
+        volume.setActive(true);
+        volume.setBloodVolume(volume.getMaxBloodVolume());
         helper.assertTrue(te.tryChargeRitualBlood(weaver, 50, false) && te.isWeaving(), "Blood Shot weave should begin");
         // Active blood makes the damage hooks treat the mock as a ServerPlayer; the weave no longer needs it.
-        HemoCapabilityAccess.getBloodVolume(weaver).ifPresent(volume -> volume.setActive(false));
+        HemoCapabilityAccess.getBloodVolume(weaver).setActive(false);
         return FrayedThreadEntity.spawnIntrusion(level, te, EnumBloodTendency.ANIMUS, te.nodeWorld(0), rank);
     }
 
@@ -770,10 +768,9 @@ public final class SomaticLoomWeavingGameTests {
                     "Blood Shot's engram costs one enzyme for every weaver");
         }
         var fake = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "base_weaver"));
-        HemoCapabilityAccess.getBloodVolume(fake).ifPresent(volume -> {
-            volume.setActive(true);
-            volume.setBloodVolume(volume.getMaxBloodVolume());
-        });
+        var volume = HemoCapabilityAccess.getBloodVolume(fake);
+        volume.setActive(true);
+        volume.setBloodVolume(volume.getMaxBloodVolume());
         fake.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() - 2.5);
         helper.assertTrue(te.tryChargeRitualBlood(fake, 50, false), "Blood Shot weave begins");
         helper.assertTrue(LoomWeaveTestSupport.weaveAll(level, pos, te, fake), "The weave completes");

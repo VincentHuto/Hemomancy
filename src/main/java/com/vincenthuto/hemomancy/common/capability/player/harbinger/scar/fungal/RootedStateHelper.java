@@ -57,22 +57,20 @@ public final class RootedStateHelper {
 		if (!isRooted(serverPlayer)) {
 			return;
 		}
-		HemoCapabilityAccess.getBloodVolume(serverPlayer).ifPresent(volume -> {
-			BloodFlowLedger.applyCirculationIncome(serverPlayer, volume, "rhizovitta_rooted",
-					"Rhizovitta Rooted", Category.SCAR, regenPerSecond(true), 20,
-					CirculationIncomeHelper.IncomeChannel.SCAR);
-		});
+		var volume = HemoCapabilityAccess.getBloodVolume(serverPlayer);
+		BloodFlowLedger.applyCirculationIncome(serverPlayer, volume, "rhizovitta_rooted",
+				"Rhizovitta Rooted", Category.SCAR, regenPerSecond(true), 20,
+				CirculationIncomeHelper.IncomeChannel.SCAR);
 	}
 
 	public static void refundManipulationCost(Player player, double effectiveCost) {
 		if (!(player instanceof ServerPlayer serverPlayer) || !hasRhizovitta(serverPlayer) || !isRooted(serverPlayer)) {
 			return;
 		}
-		HemoCapabilityAccess.getBloodVolume(serverPlayer).ifPresent(volume -> {
-			double granted = CirculationIncomeHelper.grant(serverPlayer, volume, refundAmount(effectiveCost, true),
-					CirculationIncomeHelper.IncomeChannel.SCAR);
-			syncBlood(serverPlayer, volume, granted);
-		});
+		var volume = HemoCapabilityAccess.getBloodVolume(serverPlayer);
+		double granted = CirculationIncomeHelper.grant(serverPlayer, volume, refundAmount(effectiveCost, true),
+				CirculationIncomeHelper.IncomeChannel.SCAR);
+		syncBlood(serverPlayer, volume, granted);
 	}
 
 	public static boolean isRooted(ServerPlayer player) {
@@ -87,9 +85,7 @@ public final class RootedStateHelper {
 	}
 
 	private static boolean hasRhizovitta(Player player) {
-		return HemoCapabilityAccess.getScarState(player)
-				.map(scars -> scars.getFungalScar().is(ItemInit.rhizovitta_communis.get()))
-				.orElse(false);
+		return HemoCapabilityAccess.getScarState(player).getFungalScar().is(ItemInit.rhizovitta_communis.get());
 	}
 
 	private static boolean computeRooted(ServerPlayer player) {

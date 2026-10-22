@@ -127,33 +127,32 @@ public class PacketSyncLiberKnowledge implements CustomPacketPayload {
 			if (player == null) {
 				return;
 			}
-			HemoCapabilityAccess.getLiberKnowledge(player).ifPresent(knowledge -> {
-				Set<ResourceLocation> before = Set.copyOf(knowledge.getUnlockedEntries());
-				LiberKnowledge synced = new LiberKnowledge();
-				msg.entrySources.forEach((entry, sources) -> {
-					if (sources.isEmpty()) {
-						synced.unlockEntry(entry, CommonDiscoverySource.OTHER);
-					} else {
-						for (IDiscoverySource source : sources) {
-							synced.unlockEntry(entry, source);
-						}
+			var knowledge = HemoCapabilityAccess.getLiberKnowledge(player);
+			Set<ResourceLocation> before = Set.copyOf(knowledge.getUnlockedEntries());
+			LiberKnowledge synced = new LiberKnowledge();
+			msg.entrySources.forEach((entry, sources) -> {
+				if (sources.isEmpty()) {
+					synced.unlockEntry(entry, CommonDiscoverySource.OTHER);
+				} else {
+					for (IDiscoverySource source : sources) {
+						synced.unlockEntry(entry, source);
 					}
-				});
-				for (ResourceLocation memo : msg.memos) {
-					synced.recordMemo(memo);
-				}
-				for (ResourceLocation memo : msg.pendingMemos) {
-					synced.recordPendingMemo(memo);
-				}
-				knowledge.setFrom(synced);
-				// If the player currently has a Liber/guide screen open, rebuild
-				// its visible chapter list against the freshly-synced knowledge
-				// instead of waiting for them to close+reopen.
-				if (FMLEnvironment.dist == Dist.CLIENT) {
-					com.vincenthuto.hemomancy.client.ClientLiberScreenHooks.knowledgeSynced(
-							player, knowledge, before, Set.copyOf(knowledge.getUnlockedEntries()), msg.markUnreadEntries);
 				}
 			});
+			for (ResourceLocation memo : msg.memos) {
+				synced.recordMemo(memo);
+			}
+			for (ResourceLocation memo : msg.pendingMemos) {
+				synced.recordPendingMemo(memo);
+			}
+			knowledge.setFrom(synced);
+			// If the player currently has a Liber/guide screen open, rebuild
+			// its visible chapter list against the freshly-synced knowledge
+			// instead of waiting for them to close+reopen.
+			if (FMLEnvironment.dist == Dist.CLIENT) {
+				com.vincenthuto.hemomancy.client.ClientLiberScreenHooks.knowledgeSynced(
+						player, knowledge, before, Set.copyOf(knowledge.getUnlockedEntries()), msg.markUnreadEntries);
+			}
 		});
 	}
 

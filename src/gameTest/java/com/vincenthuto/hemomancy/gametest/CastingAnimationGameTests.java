@@ -30,7 +30,7 @@ public final class CastingAnimationGameTests {
         var capture=player(h); var p=capture.player(); var m=ManipulationInit.blood_shot.get();
         try {
             prepare(p,m);
-            var volume=HemoCapabilityAccess.requireBloodVolume(p);
+            var volume=HemoCapabilityAccess.getBloodVolume(p);
             double before=volume.getBloodVolume(); long now=h.getLevel().getGameTime();
             h.assertTrue(m.tryPerformAction(p,h.getLevel(),ItemStack.EMPTY,p.blockPosition(),0),"Valid quick cast rejected");
             h.assertTrue(volume.getBloodVolume()<before && m.isOnCooldown(p),"Cast payment or cooldown was delayed");
@@ -44,7 +44,7 @@ public final class CastingAnimationGameTests {
     @GameTest(template="empty") public static void chargeCancellationCannotCancelAnotherManipulation(GameTestHelper h) {
         var capture=player(h);var p=capture.player();var m=ManipulationInit.blood_needle.get();
         try {
-            prepare(p,m); double before=HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume();
+            prepare(p,m); double before=HemoCapabilityAccess.getBloodVolume(p).getBloodVolume();
             CastingAnimationManager.charge(p,m.getName(),1);
             var first=CastingAnimationManager.current(p);
             h.assertTrue(first!=null && first.phase()==CastPhase.OPENING,"Charge never opened");
@@ -52,7 +52,7 @@ public final class CastingAnimationGameTests {
             h.assertTrue(CastingAnimationManager.current(p).phase()==CastPhase.OPENING,"Stale cancellation killed another cast");
             CastingAnimationManager.charge(p,m.getName(),0);
             h.assertTrue(CastingAnimationManager.current(p).phase()==CastPhase.CANCEL,"Release did not cancel preview");
-            h.assertTrue(HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume()==before && !m.isOnCooldown(p),
+            h.assertTrue(HemoCapabilityAccess.getBloodVolume(p).getBloodVolume()==before && !m.isOnCooldown(p),
                     "Presentation request spent blood or started cooldown");
         } finally { cleanup(p); }
         h.succeed();
@@ -102,7 +102,7 @@ public final class CastingAnimationGameTests {
                 var updated=CastingAnimationManager.current(p);
                 h.assertTrue(updated.sequence()==first.sequence() && updated.started()==first.started() && updated.held()==2,
                         "Charge damage restarted opening or retained old intensity");
-                HemoCapabilityAccess.requireKnownManipulations(p).setSelectedManip(ManipulationInit.blood_shot.get());
+                HemoCapabilityAccess.getKnownManipulations(p).setSelectedManip(ManipulationInit.blood_shot.get());
                 CastingAnimationManager.tick(new PlayerTickEvent.Post(p));
                 h.assertTrue(CastingAnimationManager.current(p).phase()==CastPhase.CANCEL,"Selection change left a charging pose");
                 h.succeed();
@@ -140,9 +140,9 @@ public final class CastingAnimationGameTests {
         h.succeed();
     }
     private static void prepare(ServerPlayer p,BloodManipulation m) {
-        var volume=HemoCapabilityAccess.requireBloodVolume(p);volume.setActive(true);volume.fill(100000);
-        HemoCapabilityAccess.getBloodTendency(p).orElseThrow().setTendencyAlignment(m.getTend(),100);
-        var known=HemoCapabilityAccess.requireKnownManipulations(p);
+        var volume=HemoCapabilityAccess.getBloodVolume(p);volume.setActive(true);volume.fill(100000);
+        HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(m.getTend(),100);
+        var known=HemoCapabilityAccess.getKnownManipulations(p);
         known.getKnownManips().put(m,new ManipLevel(0,0));known.setSelectedManip(m);known.setEquippedManipNames(List.of(m.getName()));
     }
     private static void cleanup(ServerPlayer p) {

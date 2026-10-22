@@ -64,11 +64,10 @@ public final class ConserveStateHelper {
 			return;
 		}
 		double request = CONSERVE_REGEN_PER_SECOND * multiplierForStillTicks(state.stillTicks);
-		HemoCapabilityAccess.getBloodVolume(serverPlayer).ifPresent(volume -> {
-			BloodFlowLedger.applyCirculationIncome(serverPlayer, volume, "cryostroma_conserve",
-					"Cryostroma Stillness", Category.SCAR, request, 20,
-					CirculationIncomeHelper.IncomeChannel.SCAR);
-		});
+		var volume = HemoCapabilityAccess.getBloodVolume(serverPlayer);
+		BloodFlowLedger.applyCirculationIncome(serverPlayer, volume, "cryostroma_conserve",
+				"Cryostroma Stillness", Category.SCAR, request, 20,
+				CirculationIncomeHelper.IncomeChannel.SCAR);
 	}
 
 	public static void markManipulationCast(Player player) {
@@ -88,9 +87,7 @@ public final class ConserveStateHelper {
 	}
 
 	private static boolean hasCryostroma(Player player) {
-		return HemoCapabilityAccess.getScarState(player)
-				.map(scars -> scars.getFungalScar().is(ItemInit.cryostroma_perdurans.get()))
-				.orElse(false);
+		return HemoCapabilityAccess.getScarState(player).getFungalScar().is(ItemInit.cryostroma_perdurans.get());
 	}
 
 	private static void syncBlood(ServerPlayer player, IBloodVolume volume, double granted) {

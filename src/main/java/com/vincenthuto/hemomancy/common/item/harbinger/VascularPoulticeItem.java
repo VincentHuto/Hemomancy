@@ -53,9 +53,7 @@ public class VascularPoulticeItem extends Item {
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
-		boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player)
-				.map(volume -> volume.isActive())
-				.orElse(false);
+		boolean bloodActive = HemoCapabilityAccess.getBloodVolume(player).isActive();
 		if (!bloodActive || player.getCooldowns().isOnCooldown(this) || !hasDamagedSection(player)) {
 			return InteractionResultHolder.fail(stack);
 		}
@@ -68,29 +66,26 @@ public class VascularPoulticeItem extends Item {
 		if (!(entity instanceof ServerPlayer player)) {
 			return stack;
 		}
-		HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
-			var results = VascularPoulticeRules.healTwoMostDamaged(vascular.getVascularSystem(), healAmount);
-			if (!results.isEmpty()) {
-				vascular.setVascularSystem(vascular.getVascularSystem());
-				VascularSystemEvents.syncVascular(player, vascular);
-				VeinMasonAssignments.onTreatment(player);
-				player.displayClientMessage(Component.literal("Poultice sealed " + results.size() + " strained sections")
-						.withStyle(ChatFormatting.DARK_RED), true);
-				level.playSound(null, player.getX(), player.getY(), player.getZ(),
-						SoundEvents.HONEY_DRINK, SoundSource.PLAYERS, 0.7F, 0.85F);
-				if (!player.getAbilities().instabuild) {
-					stack.shrink(1);
-				}
-				player.getCooldowns().addCooldown(this, VascularPoulticeRules.COOLDOWN_TICKS);
+		var vascular = HemoCapabilityAccess.getVascularSystem(player);
+		var results = VascularPoulticeRules.healTwoMostDamaged(vascular.getVascularSystem(), healAmount);
+		if (!results.isEmpty()) {
+			vascular.setVascularSystem(vascular.getVascularSystem());
+			VascularSystemEvents.syncVascular(player, vascular);
+			VeinMasonAssignments.onTreatment(player);
+			player.displayClientMessage(Component.literal("Poultice sealed " + results.size() + " strained sections")
+					.withStyle(ChatFormatting.DARK_RED), true);
+			level.playSound(null, player.getX(), player.getY(), player.getZ(),
+					SoundEvents.HONEY_DRINK, SoundSource.PLAYERS, 0.7F, 0.85F);
+			if (!player.getAbilities().instabuild) {
+				stack.shrink(1);
 			}
-		});
+			player.getCooldowns().addCooldown(this, VascularPoulticeRules.COOLDOWN_TICKS);
+		}
 		return stack;
 	}
 
 	private boolean hasDamagedSection(Player player) {
-		return HemoCapabilityAccess.getVascularSystem(player)
-				.map(IVascularSystem::getVascularSystem)
-				.flatMap(VascularPoulticeRules::mostDamagedSection)
+		return VascularPoulticeRules.mostDamagedSection(HemoCapabilityAccess.getVascularSystem(player).getVascularSystem())
 				.isPresent();
 	}
 }

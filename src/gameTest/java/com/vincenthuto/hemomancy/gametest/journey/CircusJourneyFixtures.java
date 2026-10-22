@@ -48,8 +48,8 @@ final class CircusJourneyFixtures {
 				new Placement(EntityInit.circus_knife_thrower.get(), 4, 4))) {
 			spawn(level, placement.type(), origin.offset(placement.x(), 1, placement.z()), origin);
 		}
-		HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-		HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(4);
+		HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+		HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(4);
 		player.teleportTo(level, origin.getX() + 0.5D, origin.getY() + 1.0D, origin.getZ() - 7.5D, 0.0F, 0.0F);
 	}
 

@@ -172,29 +172,28 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock, IMultiB
 			return InteractionResult.SUCCESS;
 		}
 
-		HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(unstained -> {
-			if (!unstained.hasBegunPurification()) {
-				player.displayClientMessage(
-						Component.translatable("hemomancy.altar.not_on_path"), false);
-				return;
-			}
+		var unstained = HemoCapabilityAccess.getUnstainedProgress(player);
+		if (!unstained.hasBegunPurification()) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.altar.not_on_path"), false);
+			return InteractionResult.SUCCESS;
+		}
 
-			if (stack.getItem() == ItemInit.tears_of_silthmere.get()) {
-				handleTearsOfSilthmere(worldIn, pos, player, stack, unstained);
-			} else if (stack.getItem() == ItemInit.lethean_poppy_wreath.get()) {
-				handlePoppyWreath(worldIn, pos, player, stack, unstained);
-			} else if (stack.getItem() == ItemInit.silver_chalice.get()) {
-				handleSilverChalice(worldIn, pos, player, stack, unstained);
-			} else if (stack.getItem() == ItemInit.pallid_icon.get()) {
-				handlePallidIcon(worldIn, pos, player, stack, unstained);
-			} else if (stack.getItem() == ItemInit.lethean_brew.get()) {
-				handleLetheanBrew(worldIn, pos, player, stack, unstained);
-			} else {
-				// Empty-hand interaction — show lore
-				player.displayClientMessage(
-						Component.translatable("hemomancy.altar.lore"), false);
-			}
-		});
+		if (stack.getItem() == ItemInit.tears_of_silthmere.get()) {
+			handleTearsOfSilthmere(worldIn, pos, player, stack, unstained);
+		} else if (stack.getItem() == ItemInit.lethean_poppy_wreath.get()) {
+			handlePoppyWreath(worldIn, pos, player, stack, unstained);
+		} else if (stack.getItem() == ItemInit.silver_chalice.get()) {
+			handleSilverChalice(worldIn, pos, player, stack, unstained);
+		} else if (stack.getItem() == ItemInit.pallid_icon.get()) {
+			handlePallidIcon(worldIn, pos, player, stack, unstained);
+		} else if (stack.getItem() == ItemInit.lethean_brew.get()) {
+			handleLetheanBrew(worldIn, pos, player, stack, unstained);
+		} else {
+			// Empty-hand interaction — show lore
+			player.displayClientMessage(
+					Component.translatable("hemomancy.altar.lore"), false);
+		}
 
 		return InteractionResult.SUCCESS;
 	}

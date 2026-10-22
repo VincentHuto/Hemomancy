@@ -70,24 +70,23 @@ public final class MycophantEncounterManager {
 
 	public static void tickGardensPlayer(ServerPlayer player) {
 		if (isActive(player) || !player.level().dimension().equals(FungalGardenTravelHelper.FUNGAL_GARDENS)) return;
-		HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree -> {
-			if (degree.getMycophantRetryCooldownTicks() > 0 && player.isAlive()
-					&& !player.isCreative() && !player.isSpectator())
-				degree.setMycophantRetryCooldownTicks(degree.getMycophantRetryCooldownTicks() - 1);
-			if (degree.getMycophantRetryCooldownTicks() > 0) return;
-			if (!MycophantEncounterRules.shouldAccumulate(degree.getDegreeNumber(), degree.getArchonPath(),
-					degree.isMycophantDefeated(), true, player.isAlive(), player.isCreative(), player.isSpectator(), false)) return;
-			int duration = huntDuration();
-			int old = degree.getMycophantExposureTicks();
-			int next = Math.min(duration, old + 1);
-			degree.setMycophantExposureTicks(next);
-			var oldStage = MycophantEncounterRules.huntStage(old, duration);
-			var stage = MycophantEncounterRules.huntStage(next, duration);
-			if (stage != oldStage) announce(player, stage);
-			cue(player, stage);
-			if (stage == MycophantEncounterRules.HuntStage.CLAIM) beginClaim(player, false);
-			if (player.tickCount % 20 == 0) InitiatoryDegreeEvents.syncDegree(player, degree);
-		});
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
+		if (degree.getMycophantRetryCooldownTicks() > 0 && player.isAlive()
+				&& !player.isCreative() && !player.isSpectator())
+			degree.setMycophantRetryCooldownTicks(degree.getMycophantRetryCooldownTicks() - 1);
+		if (degree.getMycophantRetryCooldownTicks() > 0) return;
+		if (!MycophantEncounterRules.shouldAccumulate(degree.getDegreeNumber(), degree.getArchonPath(),
+				degree.isMycophantDefeated(), true, player.isAlive(), player.isCreative(), player.isSpectator(), false)) return;
+		int duration = huntDuration();
+		int old = degree.getMycophantExposureTicks();
+		int next = Math.min(duration, old + 1);
+		degree.setMycophantExposureTicks(next);
+		var oldStage = MycophantEncounterRules.huntStage(old, duration);
+		var stage = MycophantEncounterRules.huntStage(next, duration);
+		if (stage != oldStage) announce(player, stage);
+		cue(player, stage);
+		if (stage == MycophantEncounterRules.HuntStage.CLAIM) beginClaim(player, false);
+		if (player.tickCount % 20 == 0) InitiatoryDegreeEvents.syncDegree(player, degree);
 	}
 
 	public static void beginClaim(ServerPlayer player, boolean rematch) {
@@ -188,11 +187,10 @@ public final class MycophantEncounterManager {
 		boolean rematch = player.getPersistentData().getBoolean(REMATCH_KEY);
 		ServerLevel arena = player.getServer().getLevel(ChamberOfWillManager.CHAMBER_OF_WILL);
 		if (arena != null) clearOwnedBoss(arena, player.getUUID(), arenaCenter(player));
-		HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree -> {
-			degree.setMycophantRetryCooldownTicks(retryCooldown());
-			if (!rematch && !degree.isMycophantDefeated()) degree.setMycophantExposureTicks(huntDuration());
-			InitiatoryDegreeEvents.syncDegree(player, degree);
-		});
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
+		degree.setMycophantRetryCooldownTicks(retryCooldown());
+		if (!rematch && !degree.isMycophantDefeated()) degree.setMycophantExposureTicks(huntDuration());
+		InitiatoryDegreeEvents.syncDegree(player, degree);
 		clear(player);
 		player.setHealth(Math.max(1.0F, player.getMaxHealth() * 0.35F));
 		player.removeAllEffects();
@@ -205,13 +203,12 @@ public final class MycophantEncounterManager {
 		if (!(boss.level() instanceof ServerLevel level) || boss.getEncounterOwner() == null) return;
 		ServerPlayer owner = level.getServer().getPlayerList().getPlayer(boss.getEncounterOwner());
 		if (owner == null || !isActive(owner)) return;
-		boolean first = HemoCapabilityAccess.getInitiatoryDegree(owner).map(d -> !d.isMycophantDefeated()).orElse(false);
-		HemoCapabilityAccess.getInitiatoryDegree(owner).ifPresent(degree -> {
-			degree.setMycophantDefeated(true);
-			degree.setMycophantExposureTicks(huntDuration());
-			degree.setMycophantRetryCooldownTicks(0);
-			InitiatoryDegreeEvents.syncDegree(owner, degree);
-		});
+		boolean first = !HemoCapabilityAccess.getInitiatoryDegree(owner).isMycophantDefeated();
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(owner);
+		degree.setMycophantDefeated(true);
+		degree.setMycophantExposureTicks(huntDuration());
+		degree.setMycophantRetryCooldownTicks(0);
+		InitiatoryDegreeEvents.syncDegree(owner, degree);
 		clear(owner);
 		ChamberOfWillManager.get(level.getServer()).exitChamber(owner);
 		if (first) {
@@ -259,13 +256,12 @@ public final class MycophantEncounterManager {
 	}
 
 	public static boolean tryStartRematch(ServerPlayer player) {
-		return HemoCapabilityAccess.getInitiatoryDegree(player).map(degree -> {
-			boolean ok = MycophantEncounterRules.canUseLure(degree.getDegreeNumber(), degree.getArchonPath(),
-					degree.isMycophantDefeated(), degree.getMycophantRetryCooldownTicks(), isActive(player),
-					player.level().dimension().equals(FungalGardenTravelHelper.FUNGAL_GARDENS), player.isAlive());
-			if (ok) beginClaim(player, true);
-			return ok;
-		}).orElse(false);
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
+		boolean ok = MycophantEncounterRules.canUseLure(degree.getDegreeNumber(), degree.getArchonPath(),
+				degree.isMycophantDefeated(), degree.getMycophantRetryCooldownTicks(), isActive(player),
+				player.level().dimension().equals(FungalGardenTravelHelper.FUNGAL_GARDENS), player.isAlive());
+		if (ok) beginClaim(player, true);
+		return ok;
 	}
 
 	/**

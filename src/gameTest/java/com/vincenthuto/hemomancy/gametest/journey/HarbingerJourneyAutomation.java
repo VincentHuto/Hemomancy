@@ -522,7 +522,7 @@ public final class HarbingerJourneyAutomation {
 
 	private static void barbedResearch(ServerPlayer player, BlockPos origin) {
 		for (var type : List.of(EntityInit.barbed_urchin.get(), EntityInit.desiccant.get(), EntityInit.venom_rib_centipede.get())) {
-			if (HemoCapabilityAccess.requireSpecimenBestiary(player).hasRecordedSpecimen(
+			if (HemoCapabilityAccess.getSpecimenBestiary(player).hasRecordedSpecimen(
 					BuiltInRegistries.ENTITY_TYPE.getKey(type))) continue;
 			selectEmptyJar(player);
 			Mob specimen = player.serverLevel().getEntitiesOfClass(Mob.class, HemoJourneyFixtures.bounds(origin),
@@ -576,7 +576,7 @@ public final class HarbingerJourneyAutomation {
 
 	private static void castSelectedManipulation(ServerPlayer player) {
 		BloodManipulation.clearSessionState();
-		HemoCapabilityAccess.requireKnownManipulations(player).getSelectedManip()
+		HemoCapabilityAccess.getKnownManipulations(player).getSelectedManip()
 				.performAction(player, player.serverLevel(), ItemStack.EMPTY, player.blockPosition());
 	}
 
@@ -587,7 +587,7 @@ public final class HarbingerJourneyAutomation {
 		if (bloom == null || !bloom.center().equals(origin.above())) {
 			throw new IllegalStateException("Journey Bloom is missing");
 		}
-		var degree = HemoCapabilityAccess.requireInitiatoryDegree(player);
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
 		var hit = new BlockHitResult(Vec3.atCenterOf(bloom.center()), Direction.UP, bloom.center(), false);
 		int consumed = degree.getPomesConsumedFromBloom(bloom.bloomId(), bloom.center().asLong(),
 				bloom.migratesLegacyProgress());

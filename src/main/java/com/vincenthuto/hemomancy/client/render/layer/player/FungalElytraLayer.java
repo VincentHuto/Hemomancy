@@ -35,20 +35,19 @@ public class FungalElytraLayer<T extends LivingEntity, M extends EntityModel<T>>
 			float headPitch) {
 
 		if (entity instanceof Player player) {
-			HemoCapabilityAccess.getScarState(player).ifPresent(scars -> {
-				if (scars.getFungalScar().getItem() == ItemInit.noctifly_agaric.get()) {
-					matrixStackIn.pushPose();
-					matrixStackIn.translate(0.0D, 0.0D, 0.125D);
-					this.getParentModel().copyPropertiesTo(this.modelElytra);
-					this.modelElytra.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-					VertexConsumer ivertexbuilder = ItemRenderer.getFoilBuffer(bufferIn,
-							this.modelElytra.renderType(Hemomancy.rloc("textures/models/armor/pontiff_elytra.png")),
-							false, false);
-					this.modelElytra.renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn,
-							OverlayTexture.NO_OVERLAY, -1);
-					matrixStackIn.popPose();
-				}
-			});
+			var scars = HemoCapabilityAccess.getScarState(player);
+			if (scars.getFungalScar().getItem() == ItemInit.noctifly_agaric.get()) {
+				matrixStackIn.pushPose();
+				matrixStackIn.translate(0.0D, 0.0D, 0.125D);
+				this.getParentModel().copyPropertiesTo(this.modelElytra);
+				this.modelElytra.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+				VertexConsumer ivertexbuilder = ItemRenderer.getFoilBuffer(bufferIn,
+						this.modelElytra.renderType(Hemomancy.rloc("textures/models/armor/pontiff_elytra.png")),
+						false, false);
+				this.modelElytra.renderToBuffer(matrixStackIn, ivertexbuilder, packedLightIn,
+						OverlayTexture.NO_OVERLAY, -1);
+				matrixStackIn.popPose();
+			}
 		}
 	}
 }

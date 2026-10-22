@@ -140,8 +140,8 @@ public final class JourneyAutomationGameTests {
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 3, 14));
 		try {
 			setServerPlayerLookup(player, true);
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(2);
-			HemoCapabilityAccess.requireEquipment(player).setStackInSlot(5,
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(2);
+			HemoCapabilityAccess.getEquipment(player).setStackInSlot(5,
 					new ItemStack(ItemInit.charm_of_vascularium.get()));
 			com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.activate(player);
 			FirstSeparationAssignment.markClaimed(player);
@@ -182,13 +182,13 @@ public final class JourneyAutomationGameTests {
 			batch = "journeyAutomationCircus")
 	public static void circusRunnerStartsAndRestoresKnownSummons(GameTestHelper helper) {
 		ServerPlayer player = connectedPlayer(helper);
-		List<String> originalSummons = List.copyOf(HemoCapabilityAccess.requireKnownSummons(player).getKnownSummonNames());
+		List<String> originalSummons = List.copyOf(HemoCapabilityAccess.getKnownSummons(player).getKnownSummonNames());
 		try {
 			helper.assertTrue(JourneyAutoRunner.runCircus(player), "Circus automation must start");
 			JourneyAutoRunner.cancel(player);
 			helper.assertTrue(CircusJourneyController.clear(player).passed(), "Circus clear must restore the snapshot");
 			helper.assertTrue(!player.getPersistentData().contains(HemoJourneySnapshot.SNAPSHOT_KEY)
-					&& originalSummons.equals(HemoCapabilityAccess.requireKnownSummons(player).getKnownSummonNames()),
+					&& originalSummons.equals(HemoCapabilityAccess.getKnownSummons(player).getKnownSummonNames()),
 					"Circus automation must restore the snapshot and known summons");
 			helper.succeed();
 		} finally {
@@ -375,7 +375,7 @@ public final class JourneyAutomationGameTests {
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 3, 14));
 		try {
 			setServerPlayerLookup(player, true);
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(2);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(2);
 			FirstSeparationAssignment.markBriefed(player);
 			FirstSeparationAssignment.giveBriefingSupplies(player);
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.SEPARATION_STARTED, origin);
@@ -445,8 +445,8 @@ public final class JourneyAutomationGameTests {
 			setServerPlayerLookup(player, true);
 			player.getPersistentData().putString(HemoJourneyFixtures.DIMENSION_KEY,
 					helper.getLevel().dimension().location().toString());
-			HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(1);
+			HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(1);
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.LIVING_STAFF_CRAFTED, origin);
 			HarbingerJourneyAutomation.perform(player, HemoJourneyStage.LIVING_STAFF_CRAFTED.id(), origin);
 			helper.assertTrue(hasItem(player, ItemInit.living_staff.get()),
@@ -470,8 +470,8 @@ public final class JourneyAutomationGameTests {
 			setServerPlayerLookup(player, true);
 			player.getPersistentData().putString(HemoJourneyFixtures.DIMENSION_KEY,
 					helper.getLevel().dimension().location().toString());
-			HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(2);
+			HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(2);
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.CENTRIFUGE_PREPARED, origin);
 			HarbingerJourneyAutomation.perform(player, HemoJourneyStage.CENTRIFUGE_PREPARED.id(), origin);
 			HemoJourneyResult result = HemoJourneyChecks.verify(player, HemoJourneyStage.CENTRIFUGE_PREPARED, origin);
@@ -491,8 +491,8 @@ public final class JourneyAutomationGameTests {
 		ServerPlayer player = connectedPlayer(helper);
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 3, 14));
 		try {
-			HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(3);
+			HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(3);
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.FIRST_MEMORY_WOVEN, origin);
 			HarbingerJourneyAutomation.perform(player, HemoJourneyStage.FIRST_MEMORY_WOVEN.id(), origin);
 			helper.assertTrue(HemoJourneyFixtures.expectedOutputsPresent(player,
@@ -511,8 +511,8 @@ public final class JourneyAutomationGameTests {
 		ServerPlayer player = connectedPlayer(helper);
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 3, 14));
 		try {
-			HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(3);
+			HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(3);
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.FIRST_MEMORY_WOVEN, origin);
 			var loom = (com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticLoomBlockEntity)
 					player.serverLevel().getBlockEntity(origin.above());
@@ -662,7 +662,7 @@ public final class JourneyAutomationGameTests {
 		ServerPlayer player = connectedPlayer(helper);
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 3, 14));
 		setServerPlayerLookup(player, true);
-		HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(3);
+		HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(3);
 		player.setItemSlot(net.minecraft.world.entity.EquipmentSlot.HEAD,
 				new ItemStack(ItemInit.hematic_iron_helm.get()));
 		player.setItemSlot(net.minecraft.world.entity.EquipmentSlot.CHEST,
@@ -704,7 +704,7 @@ public final class JourneyAutomationGameTests {
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 3, 14));
 		try {
 			setServerPlayerLookup(player, true);
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(5);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(5);
 			player.setItemSlot(net.minecraft.world.entity.EquipmentSlot.HEAD,
 					new ItemStack(ItemInit.barbed_helm.get()));
 			player.setItemSlot(net.minecraft.world.entity.EquipmentSlot.CHEST,
@@ -747,9 +747,9 @@ public final class JourneyAutomationGameTests {
 		try {
 			Bloodline line = new Bloodline("Recruited Vigil Helper", player.getUUID(), lineId, new ArrayList<>());
 			BloodlineSavedData.get(helper.getLevel().getServer().overworld()).registerBloodline(line);
-			HemoCapabilityAccess.requireBloodVolume(player).setBloodLine(line);
-			HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(6);
+			HemoCapabilityAccess.getBloodVolume(player).setBloodLine(line);
+			HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(6);
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.COVENANT_VIGIL, origin);
 			helper.assertTrue(BloodCraftingKeyPressPacket.tryStartCardinalRite(player, origin.above(),
 					CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE)
@@ -784,9 +784,9 @@ public final class JourneyAutomationGameTests {
 		try {
 			Bloodline line = new Bloodline("Vigil Helper", player.getUUID(), lineId, new ArrayList<>());
 			BloodlineSavedData.get(helper.getLevel().getServer().overworld()).registerBloodline(line);
-			HemoCapabilityAccess.requireBloodVolume(player).setBloodLine(line);
-			HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(6);
+			HemoCapabilityAccess.getBloodVolume(player).setBloodLine(line);
+			HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(6);
 			FoundingFaneSavedData.get(helper.getLevel()).consecrateHeart(player.getUUID(), origin.above());
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.COVENANT_VIGIL, origin);
 			HarbingerVicarEntity successor = helper.getLevel().getEntitiesOfClass(HarbingerVicarEntity.class,
@@ -829,9 +829,9 @@ public final class JourneyAutomationGameTests {
 		try {
 			Bloodline line = new Bloodline("Archon Retry", player.getUUID(), lineId, new ArrayList<>());
 			BloodlineSavedData.get(helper.getLevel().getServer().overworld()).registerBloodline(line);
-			HemoCapabilityAccess.requireBloodVolume(player).setBloodLine(line);
-			HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(6);
+			HemoCapabilityAccess.getBloodVolume(player).setBloodLine(line);
+			HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(6);
 			HarbingerAdvancementGranter.grantIfNotDone(player,
 					HarbingerAdvancementGranter.ADV_LIVING_COVENANT_COMPLETE);
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.ARCHON_RITE, origin);
@@ -886,7 +886,7 @@ public final class JourneyAutomationGameTests {
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 3, 14));
 		try {
 			setServerPlayerLookup(player, true);
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(7);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(7);
 			player.setItemSlot(net.minecraft.world.entity.EquipmentSlot.HEAD,
 					new ItemStack(ItemInit.blood_lust_helm.get()));
 			player.setItemSlot(net.minecraft.world.entity.EquipmentSlot.CHEST,
@@ -926,15 +926,15 @@ public final class JourneyAutomationGameTests {
 		BlockPos origin = helper.absolutePos(new BlockPos(14, 3, 14));
 		try {
 			setServerPlayerLookup(player, true);
-			HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(3);
+			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(3);
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.ARTIFICER_BARBED_RESEARCH, origin);
-			HemoCapabilityAccess.requireSpecimenBestiary(player).recordSpecimen(Hemomancy.rloc("barbed_urchin"));
+			HemoCapabilityAccess.getSpecimenBestiary(player).recordSpecimen(Hemomancy.rloc("barbed_urchin"));
 			player.serverLevel().getEntitiesOfClass(net.minecraft.world.entity.Mob.class,
 					HemoJourneyFixtures.bounds(origin), mob -> mob.getType()
 							== com.vincenthuto.hemomancy.common.init.EntityInit.barbed_urchin.get())
 							.forEach(net.minecraft.world.entity.Entity::discard);
 			HarbingerJourneyAutomation.perform(player, HemoJourneyStage.ARTIFICER_BARBED_RESEARCH.id(), origin);
-			var bestiary = HemoCapabilityAccess.requireSpecimenBestiary(player);
+			var bestiary = HemoCapabilityAccess.getSpecimenBestiary(player);
 			helper.assertTrue(HemoJourneyChecks.verify(player, HemoJourneyStage.ARTIFICER_BARBED_RESEARCH,
 					origin).passed(), "Resumed Barbed research must record the two remaining real specimens: "
 						+ bestiary.serializeNBT(player.registryAccess()));

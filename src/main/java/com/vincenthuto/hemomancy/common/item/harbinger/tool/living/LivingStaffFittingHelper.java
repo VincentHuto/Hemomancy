@@ -21,14 +21,11 @@ public final class LivingStaffFittingHelper {
 		if (player == null) {
 			return 0;
 		}
-		return HemoCapabilityAccess.getEquipment(player)
-				.map(equipment -> {
-					ItemStack stack = equipment.getStackInSlot(HarbingerEquipmentMenu.FITTING_SLOT_INDEX);
-					if (stack.getItem() instanceof LivingStaffFittingItem fitting) {
-						return fitting.getStaffVisualId();
-					}
-					return 0;
-				})
-				.orElse(0);
+		var equipment = HemoCapabilityAccess.getEquipment(player);
+		ItemStack stack = equipment.getStackInSlot(HarbingerEquipmentMenu.FITTING_SLOT_INDEX);
+		if (stack.getItem() instanceof LivingStaffFittingItem fitting) {
+			return fitting.getStaffVisualId();
+		}
+		return 0;
 	}
 }

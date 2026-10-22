@@ -81,13 +81,10 @@ public class ConsecrationHandler {
 		if (targetBlock == null) return;
 
 		// Check purity requirement
-		boolean allowed = HemoCapabilityAccess.getUnstainedProgress(serverPlayer).map(progress -> {
-			boolean novitiate = (progress.getAcceptedObservances()
-					& UnstainedObservances.Observance.NOVITIATE_CLEAN_LABOR.mask()) != 0;
-			if (!progress.hasBegunPurification()) return novitiate;
-			EnumPurityStage stage = EnumPurityStage.byPurity(progress.getPurity());
-			return stage.getLevel() >= EnumPurityStage.CLEANSING.getLevel();
-		}).orElse(false);
+		var progress = HemoCapabilityAccess.getUnstainedProgress(serverPlayer);
+		boolean allowed = progress.hasBegunPurification()
+				? EnumPurityStage.byPurity(progress.getPurity()).getLevel() >= EnumPurityStage.CLEANSING.getLevel()
+				: (progress.getAcceptedObservances() & UnstainedObservances.Observance.NOVITIATE_CLEAN_LABOR.mask()) != 0;
 
 		if (!allowed) {
 			serverPlayer.displayClientMessage(
@@ -104,11 +101,9 @@ public class ConsecrationHandler {
 		}
 
 		// Grant purity
-		HemoCapabilityAccess.getUnstainedProgress(serverPlayer).ifPresent(progress -> {
-			if (progress.hasBegunPurification()) progress.addPurity(PURITY_PER_CONSECRATION);
-			else UnstainedObservances.recordConsecratedBlock(serverPlayer);
-			com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents.syncProgress(serverPlayer, progress);
-		});
+		if (progress.hasBegunPurification()) progress.addPurity(PURITY_PER_CONSECRATION);
+		else UnstainedObservances.recordConsecratedBlock(serverPlayer);
+		com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents.syncProgress(serverPlayer, progress);
 
 		// Visual & audio feedback
 		if (level instanceof ServerLevel serverLevel) {

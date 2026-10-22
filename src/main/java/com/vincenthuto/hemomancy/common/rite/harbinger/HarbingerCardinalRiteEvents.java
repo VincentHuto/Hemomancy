@@ -343,10 +343,9 @@ public class HarbingerCardinalRiteEvents {
 							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), true);
 				} else {
 					caster.hurt(caster.damageSources().generic(), CASTER_BOUNDARY_DAMAGE_PER_TICK);
-					HemoCapabilityAccess.getBloodVolume(caster).ifPresent(volume -> {
-						volume.drain(CASTER_BOUNDARY_BLOOD_DRAIN_PER_TICK);
-						BloodVolumeEvents.syncVolume(caster, volume);
-					});
+					var volume = HemoCapabilityAccess.getBloodVolume(caster);
+					volume.drain(CASTER_BOUNDARY_BLOOD_DRAIN_PER_TICK);
+					BloodVolumeEvents.syncVolume(caster, volume);
 					caster.displayClientMessage(
 							Component.literal("The rite binds you! Return to the circle!")
 									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
@@ -1038,11 +1037,8 @@ public class HarbingerCardinalRiteEvents {
 		int sharedBlood = -1;
 		ServerPlayer caster = level.getServer().getPlayerList().getPlayer(rite.getPlayerUUID());
 		if (caster != null && revealPool) {
-			sharedBlood = HemoCapabilityAccess.getBloodVolume(caster)
-					.map(volume -> volume.getBloodLine())
-					.filter(Bloodline::isValid)
-					.map(line -> (int) line.getBloodVolume())
-					.orElse(-1);
+			Bloodline line = HemoCapabilityAccess.getBloodVolume(caster).getBloodLine();
+			sharedBlood = line.isValid() ? (int) line.getBloodVolume() : -1;
 		}
 		String cue = "";
 		if (rite.getPhase() == CardinalRitePhase.ORDEAL
@@ -1427,14 +1423,13 @@ public class HarbingerCardinalRiteEvents {
 		float sectionDamage = failureProfile == null
 				? (legacyForm >= 3 ? 15.0F : 10.0F)
 				: ("collapse".equals(failureProfile) ? 15.0F : 10.0F);
-		HemoCapabilityAccess.getVascularSystem(caster).ifPresent(vascular -> {
-			EnumVeinSections[] sections = EnumVeinSections.values();
-			for (int i = 0; i < sectionHits; i++) {
-				vascular.setVascularSectionHealth(
-						sections[caster.getRandom().nextInt(sections.length)], -sectionDamage);
-			}
-			VascularSystemEvents.syncVascular(caster, vascular);
-		});
+		var vascular = HemoCapabilityAccess.getVascularSystem(caster);
+		EnumVeinSections[] sections = EnumVeinSections.values();
+		for (int i = 0; i < sectionHits; i++) {
+			vascular.setVascularSectionHealth(
+					sections[caster.getRandom().nextInt(sections.length)], -sectionDamage);
+		}
+		VascularSystemEvents.syncVascular(caster, vascular);
 		CardinalRiteBeats.sound(level, rite.getCenterPos(), SoundInit.RITE_COLLAPSE, 1.5F, 1.0F);
 		CardinalRiteBeats.sound(level, rite.getCenterPos(), SoundInit.RITE_BACKLASH, 1.0F, 1.1F);
 		spawnBrokenAnchorDispersal(level, rite, recipe);
@@ -1493,10 +1488,9 @@ public class HarbingerCardinalRiteEvents {
 		// Interactive Harbinger ceremonies already paid their base cost node by
 		// node. Only legacy/Unstained countdown rites retain the completion drain.
 		if (rite.getPhase() == CardinalRitePhase.LEGACY) {
-			HemoCapabilityAccess.getBloodVolume(caster).ifPresent(volume -> {
-				volume.drain(recipe.getBloodCost());
-				BloodVolumeEvents.syncVolume(caster, volume);
-			});
+			var volume = HemoCapabilityAccess.getBloodVolume(caster);
+			volume.drain(recipe.getBloodCost());
+			BloodVolumeEvents.syncVolume(caster, volume);
 		}
 
 		// Floors are reusable. A recipe may explicitly consume only its matched upper structure.
@@ -1569,10 +1563,9 @@ public class HarbingerCardinalRiteEvents {
 				|| !rite.isSigilAwakened(Hemomancy.rloc("reservoir").toString())) return;
 		int refund = Math.round(rite.fullRequirementMl() * CardinalRiteCeremonyRules.CLEAN_RITE_REFUND);
 		if (refund <= 0) return;
-		HemoCapabilityAccess.getBloodVolume(caster).ifPresent(volume -> {
-			volume.fill(refund);
-			BloodVolumeEvents.syncVolume(caster, volume);
-		});
+		var volume = HemoCapabilityAccess.getBloodVolume(caster);
+		volume.fill(refund);
+		BloodVolumeEvents.syncVolume(caster, volume);
 		caster.displayClientMessage(Component.literal("The rite closes cleanly. The Reservoir returns "
 				+ refund + " mL of anchor blood to you.")
 				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);

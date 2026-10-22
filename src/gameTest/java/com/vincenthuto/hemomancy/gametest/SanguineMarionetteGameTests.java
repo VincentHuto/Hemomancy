@@ -26,12 +26,12 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 public final class SanguineMarionetteGameTests {
     private static ServerPlayer caster(GameTestHelper h) {
         ServerPlayer player = DuctilisGameTests.player(h);
-        var known = HemoCapabilityAccess.requireKnownManipulations(player);
+        var known = HemoCapabilityAccess.getKnownManipulations(player);
         known.getKnownManips().put(ManipulationInit.hematic_rebuke.get(), new ManipLevel(3, 0));
         known.getKnownManips().put(ManipulationInit.sanguine_marionette.get(), new ManipLevel(3, 0));
         known.setEquippedManipNames(java.util.List.of("sanguine_marionette"));
         known.setSelectedManip(ManipulationInit.sanguine_marionette.get());
-        var volume = HemoCapabilityAccess.requireBloodVolume(player);
+        var volume = HemoCapabilityAccess.getBloodVolume(player);
         volume.setActive(true);
         volume.setBloodVolume(1000);
         player.setYRot(0);
@@ -69,7 +69,7 @@ public final class SanguineMarionetteGameTests {
                 if (scheduled % 20 == 0 || wasChanneling && !ManipulationChannelManager.isChanneling(player.getUUID())) {
                     timeline.append(" [scheduled=").append(scheduled)
                             .append(", elapsed=").append(h.getLevel().getGameTime() - started)
-                            .append(", blood=").append(HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume())
+                            .append(", blood=").append(HemoCapabilityAccess.getBloodVolume(player).getBloodVolume())
                             .append(", channel=").append(ManipulationChannelManager.isChanneling(player.getUUID()))
                             .append(", body=").append(HematicCommandManager.marionette(player) == puppet)
                             .append(", distance=").append(player.distanceTo(puppet))
@@ -81,8 +81,8 @@ public final class SanguineMarionetteGameTests {
             try {
                 h.assertTrue(!ManipulationChannelManager.isChanneling(player.getUUID()) && HematicCommandManager.marionette(player) == null,
                         "Marionette exceeded its eight-second maximum");
-                h.assertTrue(Math.abs(HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume() - (1000 - 8 * cost)) < .001,
-                        "Pulse ledger: actual=" + HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume() + ", expected=" + (1000 - 8 * cost) + ", cost=" + cost + timeline);
+                h.assertTrue(Math.abs(HemoCapabilityAccess.getBloodVolume(player).getBloodVolume() - (1000 - 8 * cost)) < .001,
+                        "Pulse ledger: actual=" + HemoCapabilityAccess.getBloodVolume(player).getBloodVolume() + ", expected=" + (1000 - 8 * cost) + ", cost=" + cost + timeline);
                 h.assertTrue(!((com.vincenthuto.hemomancy.mixin.core.GoalSelectorAccessor)puppet.targetSelector)
                         .hemomancy$disabledFlags().contains(Goal.Flag.TARGET), "Timed expiry left AI disabled");
                 h.succeed();
@@ -98,12 +98,12 @@ public final class SanguineMarionetteGameTests {
             ManipulationChannelManager.start(player);
             h.assertTrue(ManipulationChannelManager.isChanneling(player.getUUID())
                     && HematicCommandManager.marionette(player) == puppet, "Range fixture failed to acquire its body");
-            double paidVolume = HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume();
+            double paidVolume = HemoCapabilityAccess.getBloodVolume(player).getBloodVolume();
             puppet.setPos(player.position().add(17, 0, 0));
             ManipulationChannelManager.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(player));
             h.assertTrue(!ManipulationChannelManager.isChanneling(player.getUUID())
                     && HematicCommandManager.marionette(player) == null, "Out-of-range tether retained control");
-            h.assertTrue(HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume() == paidVolume,
+            h.assertTrue(HemoCapabilityAccess.getBloodVolume(player).getBloodVolume() == paidVolume,
                     "Range break charged an extra pulse");
             h.assertTrue(!((com.vincenthuto.hemomancy.mixin.core.GoalSelectorAccessor)puppet.targetSelector)
                     .hemomancy$disabledFlags().contains(Goal.Flag.TARGET), "Range break left targeting disabled");
@@ -116,7 +116,7 @@ public final class SanguineMarionetteGameTests {
         ServerPlayer player = caster(h);
         Mob puppet = body(h, 2, 6);
         ManipulationChannelManager.start(player);
-        HemoCapabilityAccess.requireBloodVolume(player).setBloodVolume(0);
+        HemoCapabilityAccess.getBloodVolume(player).setBloodVolume(0);
         h.runAfterDelay(20, () -> ManipulationChannelManager.onPlayerTick(
                 new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(player)));
         h.runAfterDelay(25, () -> {
@@ -248,12 +248,12 @@ public final class SanguineMarionetteGameTests {
         ManipulationChannelManager.start(player);
         h.assertTrue(ManipulationChannelManager.isChanneling(player.getUUID()), "Eligible tether did not start");
         h.assertTrue(HematicCommandManager.marionette(player) == puppet, "Tether selected the wrong body");
-        h.assertTrue(Math.abs(HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume() - (1000 - cost)) < .001, "First pulse did not charge the existing cost ledger exactly once");
+        h.assertTrue(Math.abs(HemoCapabilityAccess.getBloodVolume(player).getBloodVolume() - (1000 - cost)) < .001, "First pulse did not charge the existing cost ledger exactly once");
         h.assertTrue(!puppet.hasEffect(EffectInit.blood_binding) && !puppet.isNoAi(), "Mobile tether froze or disabled the puppet");
         ManipulationChannelManager.stop(player);
         h.assertTrue(HematicCommandManager.marionette(player) == null, "Release retained control");
         h.assertTrue(ManipulationInit.sanguine_marionette.get().getCooldownTicks() == 120, "Base cooldown is not six seconds");
-        long cooldown = (long)(120 * HemoCapabilityAccess.requireKnownManipulations(player)
+        long cooldown = (long)(120 * HemoCapabilityAccess.getKnownManipulations(player)
                 .getManipLevel(ManipulationInit.sanguine_marionette.get()).getCooldownMultiplier());
         h.assertTrue(ManipulationInit.sanguine_marionette.get().getRemainingCooldownTicks(player) == cooldown,
                 "Release did not preserve mastery scaling on the six-second cooldown");

@@ -151,10 +151,9 @@ public class EmberfangMorphlingItem extends MorphlingItem {
 	}
 
 	private static java.util.Optional<ItemStack> equippedStack(Player player) {
-		return HemoCapabilityAccess.getEquippedMorphling(player)
-				.filter(cap -> cap.hasMorphling()
-						&& cap.getEquippedMorphling().getItem() instanceof EmberfangMorphlingItem)
-				.map(cap -> cap.getEquippedMorphling());
+		var cap = HemoCapabilityAccess.getEquippedMorphling(player);
+		return cap.hasMorphling() && cap.getEquippedMorphling().getItem() instanceof EmberfangMorphlingItem
+				? java.util.Optional.of(cap.getEquippedMorphling()) : java.util.Optional.empty();
 	}
 
 	private static void updateModifier(AttributeInstance attribute, ResourceLocation id, double amount) {

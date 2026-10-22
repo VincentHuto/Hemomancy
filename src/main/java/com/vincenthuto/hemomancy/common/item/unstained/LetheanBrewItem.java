@@ -42,7 +42,7 @@ public class LetheanBrewItem extends Item {
 		}
 
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
-				.orElseThrow(NullPointerException::new);
+				;
 
 		known.setSelectedManip(BloodManipulation.BLANK);
 		known.getKnownManips().clear();

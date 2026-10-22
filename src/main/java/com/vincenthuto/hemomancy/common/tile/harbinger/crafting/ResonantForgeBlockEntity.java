@@ -99,7 +99,7 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
     }
 
     @Override public com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume getBloodCapability() {
-        var volume = getData(com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes.BLOCK_BLOOD_VOLUME);
+        var volume = IBloodReservoir.super.getBloodCapability();
         volume.setActive(true);
         volume.setMaxBloodVolume(ResonantForgeRules.BLOOD_CAPACITY);
         return volume;

@@ -4,7 +4,6 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumBloodFlow;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
@@ -185,12 +184,11 @@ public class VascularStatusScreen extends Screen {
 		int scaledModelSize = (int) (BASE_MODEL_SCALE * guiScale);
 
 		// Render 3D player model with vascular overlays
-		HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
-			// Scissor clip to keep the model inside the GUI panel
-			graphics.enableScissor(guiLeft + 4, guiTop + 28, guiLeft + guiWidth - 4, guiTop + guiHeight - 18);
-			render3DPlayerWithOverlays(graphics, vascular, player, centerX, centerY + (int)(20 * guiScale), mouseX, mouseY, scaledModelSize);
-			graphics.disableScissor();
-		});
+		var vascular = HemoCapabilityAccess.getVascularSystem(player);
+		// Scissor clip to keep the model inside the GUI panel
+		graphics.enableScissor(guiLeft + 4, guiTop + 28, guiLeft + guiWidth - 4, guiTop + guiHeight - 18);
+		render3DPlayerWithOverlays(graphics, vascular, player, centerX, centerY + (int)(20 * guiScale), mouseX, mouseY, scaledModelSize);
+		graphics.disableScissor();
 
 		// Footer
 		graphics.drawCenteredString(this.font, "§4§l— §c§oVenous Network §4§l—",
@@ -420,7 +418,7 @@ public class VascularStatusScreen extends Screen {
 			LocalPlayer player = Minecraft.getInstance().player;
 			if (player != null) {
 				EnumVeinSections selectedSection = hoveredSection;
-				var memoryState = player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+				var memoryState = HemoCapabilityAccess.muscleMemory(player);
 				memoryState.getPrimed(selectedSection, player.level().getGameTime()).ifPresent(memory -> {
 					long seconds = (memoryState.remainingTicks(selectedSection,
 							player.level().getGameTime()) + 19L) / 20L;

@@ -35,7 +35,7 @@ public final class DuctilisGameTests {
     @GameTest(templateNamespace="hemomancy",template=EMPTY,batch="ductilis")
     public static void paralysisBlocksAlternateUsePacketsButAllowsStop(GameTestHelper h) {
         var player=player(h);
-        var known=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireKnownManipulations(player);
+        var known=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getKnownManipulations(player);
         var passive=ManipulationInit.blackhearted.get();
         known.getKnownManips().put(passive,new com.vincenthuto.hemomancy.common.manipulation.ManipLevel(4,185));
         known.setEquippedManipNames(java.util.List.of(passive.getName())); known.setSelectedManip(passive);
@@ -52,10 +52,10 @@ public final class DuctilisGameTests {
                     new com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.UseManipKeyPacket(),context);
             h.assertTrue(known.isPassiveActive(passive.getName())!=active,"Unparalyzed alternate packet fixture did not toggle");
             var ward=ManipulationInit.sanguine_ward.get();
-            var blood=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireBloodVolume(player);
+            var blood=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(player);
             blood.setActive(true);blood.setBloodVolume(2000);
             for (var tendency:com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.values())
-                com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodTendency(player).orElseThrow().setTendencyAlignment(tendency,100);
+                com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(tendency,100);
             known.getKnownManips().put(ward,new com.vincenthuto.hemomancy.common.manipulation.ManipLevel(4,185));
             known.setEquippedManipNames(java.util.List.of(ward.getName()));known.setSelectedManip(ward);
             com.vincenthuto.hemomancy.common.manipulation.ManipulationChannelManager.start(player);
@@ -271,11 +271,11 @@ public final class DuctilisGameTests {
     public static void joltInterruptsItemUseAndAnActiveChannel(GameTestHelper h) {
         ServerPlayer player=player(h);
         var ward=ManipulationInit.sanguine_ward.get();
-        var blood=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireBloodVolume(player);
+        var blood=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(player);
         blood.setActive(true); blood.setBloodVolume(2000);
         for (var tendency:com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.values())
-            com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodTendency(player).orElseThrow().setTendencyAlignment(tendency,100);
-        var known=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.requireKnownManipulations(player);
+            com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(tendency,100);
+        var known=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getKnownManipulations(player);
         known.getKnownManips().put(ward,new com.vincenthuto.hemomancy.common.manipulation.ManipLevel(4,185));
         known.setEquippedManipNames(java.util.List.of(ward.getName())); known.setSelectedManip(ward);
         try {

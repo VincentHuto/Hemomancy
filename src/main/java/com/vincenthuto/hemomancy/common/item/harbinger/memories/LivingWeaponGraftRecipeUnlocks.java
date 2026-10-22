@@ -32,15 +32,10 @@ public final class LivingWeaponGraftRecipeUnlocks {
 		if (player == null) {
 			return false;
 		}
-		if (HemoCapabilityAccess.getKnownManipulations(player).map(known -> {
-			for (BloodManipulation manipulation : known.getKnownManips().keySet()) {
-				if (manipulation != null && "conjure_staff".equals(manipulation.getName())) {
-					return true;
-				}
+		for (BloodManipulation manipulation : HemoCapabilityAccess.getKnownManipulations(player).getKnownManips().keySet()) {
+			if (manipulation != null && "conjure_staff".equals(manipulation.getName())) {
+				return true;
 			}
-			return false;
-		}).orElse(false)) {
-			return true;
 		}
 		Inventory inventory = player.getInventory();
 		for (int slot = 0; slot < inventory.getContainerSize(); slot++) {

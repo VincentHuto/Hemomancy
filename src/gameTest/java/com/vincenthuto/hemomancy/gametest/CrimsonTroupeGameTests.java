@@ -48,11 +48,11 @@ public final class CrimsonTroupeGameTests {
         try {
             DialogueOptionPacket.dispatch(player, "circus_school_teach", fire.getId());
             helper.assertTrue(!CircusApprenticeshipProgress.instructionSatisfied(player, "cinder_bellows"), "D3 learned Bellows");
-            HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(4);
-            HemoCapabilityAccess.getBloodVolume(player).orElseThrow().setActive(false);
+            HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(4);
+            HemoCapabilityAccess.getBloodVolume(player).setActive(false);
             DialogueOptionPacket.dispatch(player, "circus_school_teach", fire.getId());
             helper.assertTrue(!CircusApprenticeshipProgress.instructionSatisfied(player, "cinder_bellows"), "inactive blood learned Bellows");
-            HemoCapabilityAccess.getBloodVolume(player).orElseThrow().setActive(true);
+            HemoCapabilityAccess.getBloodVolume(player).setActive(true);
             player.setPos(player.position().add(20, 0, 0));
             helper.assertTrue(DialogueOptionPacket.dispatch(player, "circus_school_teach", fire.getId()) == null, "remote lesson packet accepted");
             player.setPos(fire.position());
@@ -72,7 +72,7 @@ public final class CrimsonTroupeGameTests {
             DialogueOptionPacket.dispatch(player, "circus_school_teach", fire.getId());
             helper.assertTrue(PuppeteerTrialRiteController.canBegin(player, crossbar, "cinder_bellows", 0, false), "taught ordeal refused");
             var hulk = PuppeteerSummonDefinitions.byName("gorebound_hulk").orElseThrow();
-            HemoCapabilityAccess.requireKnownSummons(player).learn(hulk);
+            HemoCapabilityAccess.getKnownSummons(player).learn(hulk);
             helper.assertTrue(CircusApprenticeshipProgress.instructionSatisfied(player, hulk.name())
                     && !CircusApprenticeshipProgress.practicalComplete(player, hulk.name()), "legacy shape lost or fake mastery awarded");
             helper.succeed();
@@ -122,7 +122,7 @@ public final class CrimsonTroupeGameTests {
         ServerPlayer player = pupil(helper, 4); Mob body = null;
         try {
             var definition = PuppeteerSummonDefinitions.byName("veinwing_vulture").orElseThrow();
-            HemoCapabilityAccess.requireKnownSummons(player).learn(definition);
+            HemoCapabilityAccess.getKnownSummons(player).learn(definition);
             var crossbar = crossbar(player); MarionetteCrossbarItem.prepareSelectedSummon(crossbar, player, definition.name());
             helper.assertTrue(CircusSchoolQuests.inspect(player), "charged Crossbar rejected");
             UUID id = MarionetteCrossbarItem.ensureCrossbarId(crossbar);

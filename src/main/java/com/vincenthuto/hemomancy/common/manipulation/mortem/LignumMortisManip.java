@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.manipulation.mortem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.VeinMinerHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
@@ -165,13 +166,10 @@ public class LignumMortisManip extends BloodManipulation {
 	}
 
 	private int maxRadius(Player player) {
-		int mastery = HemoCapabilityAccess.getKnownManipulations(player)
-				.map(known -> known.getManipLevel(this))
-				.map(level -> level.getCurrentLevel()).orElse(0);
-		double mortem = HemoCapabilityAccess.getBloodTendency(player)
-				.map(tendency -> (double) tendency.getAlignmentByTendency(EnumBloodTendency.MORTEM)).orElse(0.0D);
-		double animus = HemoCapabilityAccess.getBloodTendency(player)
-				.map(tendency -> (double) tendency.getAlignmentByTendency(EnumBloodTendency.ANIMUS)).orElse(0.0D);
+		ManipLevel level = HemoCapabilityAccess.getKnownManipulations(player).getManipLevel(this);
+		int mastery = level != null ? level.getCurrentLevel() : 0;
+		double mortem = (double) HemoCapabilityAccess.getBloodTendency(player).getAlignmentByTendency(EnumBloodTendency.MORTEM);
+		double animus = (double) HemoCapabilityAccess.getBloodTendency(player).getAlignmentByTendency(EnumBloodTendency.ANIMUS);
 		return LignumMortisRules.maxRadius(mastery, mortem, animus,
 				SkillPointHelper.getSanguineReachMultiplier(player));
 	}

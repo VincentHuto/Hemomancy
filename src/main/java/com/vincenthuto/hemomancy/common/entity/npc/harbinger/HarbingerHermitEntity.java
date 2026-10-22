@@ -385,7 +385,7 @@ public class HarbingerHermitEntity extends PathfinderMob implements ProgressionD
 
     @Override
     public DialogueTree progressionDialogue(ServerPlayer player) {
-        IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+        IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
         return HarbingerHermitDialogueTrees.forDegree(HemoCapabilityAccess.getPlayerDegreeNumber(player),
                 volume != null && volume.isActive(), TempleOathRules.hasClaimedHeartFrom(player, this.getUUID()),
                 this.getId());

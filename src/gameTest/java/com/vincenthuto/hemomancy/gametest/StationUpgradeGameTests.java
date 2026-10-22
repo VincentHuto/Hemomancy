@@ -389,10 +389,10 @@ public final class StationUpgradeGameTests {
         progress.sync(player, true);
         helper.assertTrue(!LiberKnowledgeHelper.hasEntry(player, entry), "Gifted kit bypassed earlier personal practice");
         progress.recordUse(UpgradeStation.ALEMBIC, StationUpgradeCatalog.DISTILL);
-        HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> volume.setActive(false));
+        HemoCapabilityAccess.getBloodVolume(player).setActive(false);
         progress.sync(player, true);
         helper.assertTrue(!LiberKnowledgeHelper.hasEntry(player, entry), "Inactive blood revealed the lesson");
-        HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> volume.setActive(true));
+        HemoCapabilityAccess.getBloodVolume(player).setActive(true);
         com.vincenthuto.hemomancy.common.station.StationUpgradeEvents.onLogin(
                 new net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent(player));
         helper.assertTrue(LiberKnowledgeHelper.hasEntry(player, entry), "Login did not backfill earned teaching");
@@ -420,8 +420,8 @@ public final class StationUpgradeGameTests {
 
     static ServerPlayer claimant(GameTestHelper helper, int degree) {
         ServerPlayer player = player(helper);
-        HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(degree);
-        HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> volume.setActive(true));
+        HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(degree);
+        HemoCapabilityAccess.getBloodVolume(player).setActive(true);
         return player;
     }
 
@@ -444,7 +444,7 @@ public final class StationUpgradeGameTests {
             player.discard();
         }
         ServerPlayer inactive = claimant(helper, 7);
-        HemoCapabilityAccess.getBloodVolume(inactive).ifPresent(volume -> volume.setActive(false));
+        HemoCapabilityAccess.getBloodVolume(inactive).setActive(false);
         StationUpgradeTier condenser = StationUpgradeCatalog.get(UpgradeStation.ALEMBIC, 1);
         HemoCapabilityAccess.stationUpgrades(inactive).recordUse(UpgradeStation.ALEMBIC, StationUpgradeCatalog.DISTILL);
         helper.assertTrue(!HemoCapabilityAccess.stationUpgrades(inactive).claim(inactive, condenser), "inactive blood claimed");

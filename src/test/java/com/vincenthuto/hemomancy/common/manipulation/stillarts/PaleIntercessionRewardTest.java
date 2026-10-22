@@ -31,7 +31,7 @@ class PaleIntercessionRewardTest {
 	void loginBackfillAndAdminClarityBothGrantEligibleArts() throws Exception {
 		String events = Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/common/capability/player/unstained/stillart/KnownStillArtEvents.java"));
 		String command = Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/common/command/HemoCommand.java"));
-		assertTrue(events.contains("playerLoggedIn") && events.contains("grantEligibleArts(player, progress)"));
+		assertTrue(events.contains("playerLoggedIn") && events.contains("grantEligibleArts(player, HemoCapabilityAccess.getUnstainedProgress(player))"));
 		assertTrue(command.contains("KnownStillArtEvents.grantEligibleArts(player, cap)"));
 	}
 }

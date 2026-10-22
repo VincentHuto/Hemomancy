@@ -72,7 +72,7 @@ public final class BloodStructureFeedManager {
 		double currentProgress = progress == null ? 0.0 : progress.bloodFed;
 
 		IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(player)
-				.orElseThrow(NullPointerException::new);
+				;
 		double feedAmount = BloodStructureFeedRules.feedAmount(currentProgress, recipe.getBloodCost(),
 				bloodVolume.getBloodVolume(), Math.max(0.0D, feedRate));
 		if (feedAmount <= 0.0) {

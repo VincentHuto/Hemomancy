@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery;
 
-import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hutoslib.common.book.FieldNotes;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
 import net.minecraft.ChatFormatting;
@@ -19,10 +19,10 @@ public final class HemomancyFieldNotes implements FieldNotes.Provider {
                 || books.getBookByTitle(ResourceLocation.parse("hemomancy:liberimmaculatus")) != null;
     }
     @Override public int pending(Player player) {
-        return player.getData(HemoAttachmentTypes.LIBER_KNOWLEDGE).getPendingMemos().size();
+        return HemoCapabilityAccess.getLiberKnowledge(player).getPendingMemos().size();
     }
     @Override public List<Component> tooltip(Player player) {
-        var knowledge = player.getData(HemoAttachmentTypes.LIBER_KNOWLEDGE);
+        var knowledge = HemoCapabilityAccess.getLiberKnowledge(player);
         return List.of(
                 Component.translatable("screen.hemomancy.virtual_field_notes.harbinger", knowledge.countPendingMemosByPath(MemoDefinition.MemoPath.HARBINGER)).withStyle(ChatFormatting.RED),
                 Component.translatable("screen.hemomancy.virtual_field_notes.unstained", knowledge.countPendingMemosByPath(MemoDefinition.MemoPath.UNSTAINED)).withStyle(ChatFormatting.AQUA),

@@ -64,17 +64,16 @@ public class SilthmereGlaiveEvents {
 		ItemStack mainhand = killer.getItemBySlot(EquipmentSlot.MAINHAND);
 		if (!(mainhand.getItem() instanceof SilthmereGlaiveItem)) return;
 
-		HemoCapabilityAccess.getUnstainedProgress(killer).ifPresent(progress -> {
-			if (!progress.hasBegunPurification() || progress.isPurified()) return;
-			if (EnumPurityStage.byPurity(progress.getPurity()).getLevel()
-					< EnumPurityStage.ABSOLVED.getLevel()) return;
+		var progress = HemoCapabilityAccess.getUnstainedProgress(killer);
+		if (!progress.hasBegunPurification() || progress.isPurified()) return;
+		if (EnumPurityStage.byPurity(progress.getPurity()).getLevel()
+				< EnumPurityStage.ABSOLVED.getLevel()) return;
 
-			progress.addPurity(KILL_PURITY_REWARD);
-			UnstainedProgressEvents.syncProgress(killer, progress);
-			killer.displayClientMessage(
-					Component.literal("The title Silthmere answers purity grows.")
-							.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
-					true);
-		});
+		progress.addPurity(KILL_PURITY_REWARD);
+		UnstainedProgressEvents.syncProgress(killer, progress);
+		killer.displayClientMessage(
+				Component.literal("The title Silthmere answers purity grows.")
+						.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+				true);
 	}
 }

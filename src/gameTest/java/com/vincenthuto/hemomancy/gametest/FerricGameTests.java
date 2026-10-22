@@ -28,7 +28,7 @@ import java.util.*;
 public final class FerricGameTests {
     @GameTest(templateNamespace="hemomancy",template="ductilis_arena",batch="ferric")
     public static void rememberedFormsUnlockFromSharedMagnetismMastery(GameTestHelper h) {
-        var owner=player(h);var known=HemoCapabilityAccess.requireKnownManipulations(owner);
+        var owner=player(h);var known=HemoCapabilityAccess.getKnownManipulations(owner);
         var base=ManipulationInit.sanguine_magnetism.get();var rampart=ManipulationInit.ferric_rampart.get();var spikes=ManipulationInit.ferric_spikes.get();
         var mastery=new ManipLevel(0,0);known.getKnownManips().put(base,mastery);
         known.getKnownManips().put(rampart,new ManipLevel(0,0));known.getKnownManips().put(spikes,new ManipLevel(0,0));
@@ -85,10 +85,10 @@ public final class FerricGameTests {
     @GameTest(templateNamespace="hemomancy",template="ductilis_arena",batch="ferric")
     public static void unsupportedPlacementRejectsBeforeBloodAndCooldown(GameTestHelper h) {
         var player=player(h);var spell=ManipulationInit.ferric_rampart.get();
-        var blood=HemoCapabilityAccess.requireBloodVolume(player);blood.setActive(true);blood.setBloodVolume(4000);
+        var blood=HemoCapabilityAccess.getBloodVolume(player);blood.setActive(true);blood.setBloodVolume(4000);
         for(var tendency:com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.values())
-            HemoCapabilityAccess.getBloodTendency(player).orElseThrow().setTendencyAlignment(tendency,100);
-        var known=HemoCapabilityAccess.requireKnownManipulations(player);
+            HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(tendency,100);
+        var known=HemoCapabilityAccess.getKnownManipulations(player);
         known.getKnownManips().put(ManipulationInit.sanguine_magnetism.get(),new ManipLevel(4,185));
         known.getKnownManips().put(spell,new ManipLevel(0,0));
         known.setSelectedManip(spell);known.setEquippedManipNames(List.of(spell.getName()));

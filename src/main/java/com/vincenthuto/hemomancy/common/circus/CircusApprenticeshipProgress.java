@@ -18,8 +18,7 @@ public final class CircusApprenticeshipProgress {
     }
 
     public static boolean knows(Player player, String summon) {
-        return HemoCapabilityAccess.getKnownSummons(player)
-                .map(known -> known.getKnownSummonNames().contains(summon)).orElse(false);
+        return HemoCapabilityAccess.getKnownSummons(player).getKnownSummonNames().contains(summon);
     }
 
     public static boolean instructionSatisfied(Player player, String summon) {
@@ -30,7 +29,7 @@ public final class CircusApprenticeshipProgress {
         var lesson = CircusCurriculum.lesson(summon).orElse(null);
         if (lesson == null || !player.isAlive() || player.isSpectator()
                 || HemoCapabilityAccess.getPlayerDegreeNumber(player) < lesson.degree()
-                || !HemoCapabilityAccess.getBloodVolume(player).map(volume -> volume.isActive()).orElse(false)) return false;
+                || !HemoCapabilityAccess.getBloodVolume(player).isActive()) return false;
         state(player).putBoolean("taught." + summon, true);
         CircusSchoolKnowledge.discover(player, summon);
         PuppeteerSummonTrialEvents.awardOrdealRecipes(player, HemoCapabilityAccess.getPlayerDegreeNumber(player));

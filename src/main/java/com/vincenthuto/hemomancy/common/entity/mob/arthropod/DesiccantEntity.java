@@ -95,14 +95,13 @@ public class DesiccantEntity extends Monster {
 		if (this.level().isClientSide || !(player instanceof ServerPlayer serverPlayer)) {
 			return;
 		}
-		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-			if (!volume.isActive()) {
-				return;
-			}
-			if (volume.drain(STING_BLOOD_DRAIN)) {
-				BloodVolumeEvents.syncVolume(serverPlayer, volume);
-			}
-		});
+		var volume = HemoCapabilityAccess.getBloodVolume(player);
+		if (!volume.isActive()) {
+			return;
+		}
+		if (volume.drain(STING_BLOOD_DRAIN)) {
+			BloodVolumeEvents.syncVolume(serverPlayer, volume);
+		}
 	}
 
 	private void setStingTicks(int stingTicks) {

@@ -146,9 +146,9 @@ public final class FerricDuctilisReview {
                     var target=EntityType.HUSK.create(level);target.setPos(x+(i%3-1)*2,index==17?99.3:100,4+i*1.6);target.setNoAi(true);
                     target.getAttribute(Attributes.MAX_HEALTH).setBaseValue(200);target.setHealth(200);level.addFreshEntity(target);TARGETS.add(target.getId());
                 }
-                var blood=HemoCapabilityAccess.requireBloodVolume(player);blood.setActive(true);blood.setBloodVolume(10000);
-                for(var tend:EnumBloodTendency.values())HemoCapabilityAccess.getBloodTendency(player).orElseThrow().setTendencyAlignment(tend,100);
-                var spell=ManipulationInit.getByName(name);var known=HemoCapabilityAccess.requireKnownManipulations(player);
+                var blood=HemoCapabilityAccess.getBloodVolume(player);blood.setActive(true);blood.setBloodVolume(10000);
+                for(var tend:EnumBloodTendency.values())HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(tend,100);
+                var spell=ManipulationInit.getByName(name);var known=HemoCapabilityAccess.getKnownManipulations(player);
                 var baseline=ManipulationInit.getByName(com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry.baselineId(name));
                 known.getKnownManips().put(baseline,new ManipLevel(4,185));
                 known.getKnownManips().put(spell,new ManipLevel(4,185));known.setSelectedManip(spell);known.setEquippedManipNames(List.of(name));
@@ -195,11 +195,11 @@ public final class FerricDuctilisReview {
         if(phase==24)mc.getSingleplayerServer().execute(()->{
             try {
                 ServerPlayer player=mc.getSingleplayerServer().getPlayerList().getPlayer(mc.player.getUUID());if(player==null)return;
-                var spell=ManipulationInit.getByName(name);double before=HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume();
+                var spell=ManipulationInit.getByName(name);double before=HemoCapabilityAccess.getBloodVolume(player).getBloodVolume();
                 boolean cast;
                 if(index==31) {
                     var choir=ManipulationInit.iron_choir.get();
-                    var known=HemoCapabilityAccess.requireKnownManipulations(player);
+                    var known=HemoCapabilityAccess.getKnownManipulations(player);
                     known.getKnownManips().put(choir,new ManipLevel(4,185));known.setEquippedManipNames(List.of("iron_choir"));known.setSelectedManip(choir);
                     ManipulationChannelManager.start(player);
                     if(!ManipulationChannelManager.isChanneling(player.getUUID()))throw new IllegalStateException("Paralysis fixture did not start its channel");
@@ -223,7 +223,7 @@ public final class FerricDuctilisReview {
                 else cast=spell.tryPerformAction(player,level(player),player.getMainHandItem(),player.blockPosition(),spell.getRequiredChargeTicks());
                 if(index>=26&&index<31&&!name.equals(com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormHelper.currentFormName(player.getMainHandItem())))
                     throw new IllegalStateException("Staff did not transform into "+name);
-                org.slf4j.LoggerFactory.getLogger(FerricDuctilisReview.class).info("FERRIC CAST {} accepted={} blood {} -> {}",name,cast,before,HemoCapabilityAccess.requireBloodVolume(player).getBloodVolume());
+                org.slf4j.LoggerFactory.getLogger(FerricDuctilisReview.class).info("FERRIC CAST {} accepted={} blood {} -> {}",name,cast,before,HemoCapabilityAccess.getBloodVolume(player).getBloodVolume());
                 if(!cast)failed=true;
             } catch(Throwable failure){failed=true;org.slf4j.LoggerFactory.getLogger(FerricDuctilisReview.class).error("Ferric cast review",failure);}
         });

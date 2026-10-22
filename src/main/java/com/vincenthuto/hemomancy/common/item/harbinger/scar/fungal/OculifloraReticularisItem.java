@@ -21,9 +21,7 @@ public class OculifloraReticularisItem extends ItemFungalScar {
 	}
 
 	public static boolean networkSightActive(Player player) {
-		return player != null && HemoCapabilityAccess.getScarState(player)
-				.map(scars -> scars.getFungalScar().is(ItemInit.oculiflora_reticularis.get()))
-				.orElse(false);
+		return player != null && HemoCapabilityAccess.getScarState(player).getFungalScar().is(ItemInit.oculiflora_reticularis.get());
 	}
 
 	@Override

@@ -41,10 +41,9 @@ public class PacketOpenScryingDiagnostics implements CustomPacketPayload {
 				if (!canOpenScryingDiagnostics(player, msg.pos)) {
 					return;
 				}
-				HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-					MaxBloodLedger.apply(player, volume);
-					BloodVolumeEvents.syncVolume(player, volume);
-				});
+				var volume = HemoCapabilityAccess.getBloodVolume(player);
+				MaxBloodLedger.apply(player, volume);
+				BloodVolumeEvents.syncVolume(player, volume);
 				player.closeContainer();
 				player.openMenu(new ScryingDiagnosticsMenuProvider());
 			}

@@ -134,7 +134,7 @@ public final class ArmorSetAbilityRegistry {
 			message(player, Component.literal("Armor ability recharging.").withStyle(ChatFormatting.RED));
 			return false;
 		}
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (ability.bloodCost() > 0.0D) {
 			if (volume == null || !volume.isActive() || volume.getBloodVolume() < ability.bloodCost()) {
 				message(player, Component.literal("Not enough blood.").withStyle(ChatFormatting.RED));

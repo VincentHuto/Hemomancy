@@ -60,8 +60,8 @@ public final class UnstainedJourneyFixtures {
 				rite(player, origin, "still_waters");
 			}
 			case PODIUM_SUPPRESSION -> {
-				HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-				HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(1);
+				HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+				HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(1);
 				HemoJourneyFixtures.set(player, origin.above(), BlockInit.unstained_podium.get());
 				player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.hemolytic_solution.get()));
 			}
@@ -158,12 +158,12 @@ public final class UnstainedJourneyFixtures {
 	}
 
 	private static void purityAtLeast(ServerPlayer player, float value) {
-		var progress = HemoCapabilityAccess.requireUnstainedProgress(player);
+		var progress = HemoCapabilityAccess.getUnstainedProgress(player);
 		if (progress.getPurity() < value) progress.setPurity(value);
 	}
 
 	private static void clarityAtLeast(ServerPlayer player, float value) {
-		var progress = HemoCapabilityAccess.requireUnstainedProgress(player);
+		var progress = HemoCapabilityAccess.getUnstainedProgress(player);
 		if (progress.getClarity() < value) progress.setClarity(value);
 	}
 

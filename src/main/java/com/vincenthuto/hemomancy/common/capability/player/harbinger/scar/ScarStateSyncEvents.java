@@ -52,12 +52,10 @@ public final class ScarStateSyncEvents {
 	}
 
 	public static void syncToClient(ServerPlayer source) {
-		HemoCapabilityAccess.getScarState(source).ifPresent(scars ->
-				PacketHandler.sendTracking(source, new PacketSyncScarsState(source, scars)));
+		PacketHandler.sendTracking(source, new PacketSyncScarsState(source, HemoCapabilityAccess.getScarState(source)));
 	}
 
 	public static void syncToPlayer(ServerPlayer source, ServerPlayer receiver) {
-		HemoCapabilityAccess.getScarState(source).ifPresent(scars ->
-				PacketHandler.sendToPlayer(receiver, new PacketSyncScarsState(source, scars)));
+		PacketHandler.sendToPlayer(receiver, new PacketSyncScarsState(source, HemoCapabilityAccess.getScarState(source)));
 	}
 }

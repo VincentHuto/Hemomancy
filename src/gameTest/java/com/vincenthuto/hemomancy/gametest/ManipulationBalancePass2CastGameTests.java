@@ -178,7 +178,7 @@ public final class ManipulationBalancePass2CastGameTests {
             float base = untrained.getMaxHealth() - untrained.getHealth();
             untrained.discard();
             h.assertTrue(base > 0, "The untrained Storm missed its victim");
-            HemoCapabilityAccess.requireSkillProgress(p).setSkill(SkillPointInit.skill_crimson_mastery, EnumSkillStates.UNLOCKED, 3);
+            HemoCapabilityAccess.getSkillProgress(p).setSkill(SkillPointInit.skill_crimson_mastery, EnumSkillStates.UNLOCKED, 3);
             near(h, 1.45, SkillPointHelper.getCrimsonMasteryMultiplier(p), "Crimson Mastery 3 multiplier");
             LivingEntity trained = husk(h, new Vec3(4.5, 2, 2.5));
             storm.getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), 60);
@@ -213,9 +213,9 @@ public final class ManipulationBalancePass2CastGameTests {
 
     private static Reward cast(GameTestHelper h, ServerPlayer p, BloodManipulation m, float ticks) {
         select(p, m);
-        var tendency = HemoCapabilityAccess.getBloodTendency(p).orElseThrow();
-        var known = HemoCapabilityAccess.requireKnownManipulations(p);
-        var skills = HemoCapabilityAccess.requireSkillProgress(p);
+        var tendency = HemoCapabilityAccess.getBloodTendency(p);
+        var known = HemoCapabilityAccess.getKnownManipulations(p);
+        var skills = HemoCapabilityAccess.getSkillProgress(p);
         float alignment = tendency.getAlignmentByTendency(m.getTend());
         double xp = known.getManipLevel(m).getXp();
         int points = skills.getSkillPoints();
@@ -240,7 +240,7 @@ public final class ManipulationBalancePass2CastGameTests {
     }
 
     private static double blood(ServerPlayer p) {
-        return HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume();
+        return HemoCapabilityAccess.getBloodVolume(p).getBloodVolume();
     }
 
     private static void near(GameTestHelper h, double expected, double actual, String message) {
@@ -248,7 +248,7 @@ public final class ManipulationBalancePass2CastGameTests {
     }
 
     private static void select(ServerPlayer p, BloodManipulation m) {
-        var known = HemoCapabilityAccess.requireKnownManipulations(p);
+        var known = HemoCapabilityAccess.getKnownManipulations(p);
         known.getKnownManips().put(m, new ManipLevel(4, 185));
         // Family forms are only available once their baseline is mastered far enough.
         known.getKnownManips().put(ManipulationInit.getByName(ManipulationFamilyRegistry.baselineId(m.getName())), new ManipLevel(4, 185));
@@ -272,11 +272,11 @@ public final class ManipulationBalancePass2CastGameTests {
             @Override public void send(net.minecraft.network.protocol.Packet<?> packet) { }
         };
         p.setPos(h.absoluteVec(new Vec3(2.5, 2, 2.5)));
-        var blood = HemoCapabilityAccess.requireBloodVolume(p);
+        var blood = HemoCapabilityAccess.getBloodVolume(p);
         blood.setActive(true);
         blood.setBloodVolume(2000);
         for (var tendency : EnumBloodTendency.values())
-            HemoCapabilityAccess.getBloodTendency(p).orElseThrow().setTendencyAlignment(tendency, 100);
+            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(tendency, 100);
         return p;
     }
 }

@@ -28,20 +28,19 @@ public final class CrawlingChoirHandler {
 			return;
 		}
 
-		HemoCapabilityAccess.getScarState(player).ifPresent(scars -> {
-			ItemStack slot0 = scars.getFungalScar();
-			if (!(slot0.getItem() instanceof AntiphonomycesResonansItem)) {
-				return;
-			}
+		var scars = HemoCapabilityAccess.getScarState(player);
+		ItemStack slot0 = scars.getFungalScar();
+		if (!(slot0.getItem() instanceof AntiphonomycesResonansItem)) {
+			return;
+		}
 
-			if (world.random.nextFloat() < AntiphonomycesResonansItem.ECHO_CHANCE) {
-				AntiphonomycesResonansItem.IS_ECHO_CAST = true;
-				try {
-					manip.getAction(player, world, heldItem, position, chargeTicks);
-				} finally {
-					AntiphonomycesResonansItem.IS_ECHO_CAST = false;
-				}
+		if (world.random.nextFloat() < AntiphonomycesResonansItem.ECHO_CHANCE) {
+			AntiphonomycesResonansItem.IS_ECHO_CAST = true;
+			try {
+				manip.getAction(player, world, heldItem, position, chargeTicks);
+			} finally {
+				AntiphonomycesResonansItem.IS_ECHO_CAST = false;
 			}
-		});
+		}
 	}
 }

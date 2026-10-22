@@ -111,23 +111,17 @@ public final class MorphlingPlayerPartVisibility {
             return Set.of(AttachmentPoint.HEAD);
         }
 
-        return HemoCapabilityAccess.getEquippedMorphling(player)
-                .map(cap -> cap.getEquippedMorphling())
-                .map(stack -> {
-                    MorphlingVisualMutation mutation = MorphlingMutationRegistry.get(stack);
-                    if (mutation == null || mutation.modelAttachment == null) {
-                        return Set.<AttachmentPoint>of();
-                    }
-                    int maturity = MorphlingItem.getMaturityLevel(stack);
-                    return mutation.modelAttachment.hiddenPlayerParts(maturity);
-                })
-                .orElse(Set.of());
+        var stack = HemoCapabilityAccess.getEquippedMorphling(player).getEquippedMorphling();
+        MorphlingVisualMutation mutation = MorphlingMutationRegistry.get(stack);
+        if (mutation == null || mutation.modelAttachment == null) {
+            return Set.of();
+        }
+        int maturity = MorphlingItem.getMaturityLevel(stack);
+        return mutation.modelAttachment.hiddenPlayerParts(maturity);
     }
 
     private static boolean hasMycophantTendril(Player player) {
-        return HemoCapabilityAccess.getEquipment(player)
-                .map(inv -> inv.getStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX).is(ItemInit.mycophant_tendril.get()))
-                .orElse(false);
+        return HemoCapabilityAccess.getEquipment(player).getStackInSlot(HarbingerEquipmentMenu.CHARM_SLOT_INDEX).is(ItemInit.mycophant_tendril.get());
     }
 
     private static void setVisible(PlayerModel<?> model, AttachmentPoint part, boolean visible) {

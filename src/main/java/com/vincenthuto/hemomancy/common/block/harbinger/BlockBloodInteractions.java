@@ -36,7 +36,7 @@ public final class BlockBloodInteractions {
 		if (!(level instanceof ServerLevel serverLevel) || !(user instanceof ServerPlayer player) || maxAmount <= 0.0D) {
 			return 0.0D;
 		}
-		IBloodVolume playerBlood = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume playerBlood = HemoCapabilityAccess.getBloodVolume(player);
 		double before = playerBlood == null ? 0.0D : playerBlood.getBloodVolume();
 		BlockTarget target = findLookedAtEndpoint(serverLevel, player, reach);
 		double handled;
@@ -124,7 +124,7 @@ public final class BlockBloodInteractions {
 			return 0.0D;
 		}
 		IBloodVolume reservoirVolume = HemoCapabilityAccess.getBloodVolume(be).orElse(null);
-		IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(player);
 		if (reservoirVolume == null || playerVolume == null || !playerVolume.isActive()) {
 			return 0.0D;
 		}

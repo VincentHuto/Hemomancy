@@ -52,9 +52,9 @@ public final class StillArtAnimationGameTests {
         h.succeed();
     }
     private static void prepare(ServerPlayer p,StillArt art,float clarity) {
-        var progress=HemoCapabilityAccess.requireUnstainedProgress(p);
+        var progress=HemoCapabilityAccess.getUnstainedProgress(p);
         progress.setClarityUnlocked(true);progress.setClarity(clarity);
-        if(art!=null)HemoCapabilityAccess.requireKnownStillArts(p).learnArt(art);
+        if(art!=null)HemoCapabilityAccess.getKnownStillArts(p).learnArt(art);
     }
     private static void cleanup(ServerPlayer p) {
         CastingAnimationManager.logout(new PlayerEvent.PlayerLoggedOutEvent(p));

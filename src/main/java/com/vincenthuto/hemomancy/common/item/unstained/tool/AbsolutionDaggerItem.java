@@ -88,30 +88,29 @@ public class AbsolutionDaggerItem extends SwordItem implements HemoClientItemExt
 			}
 
 			// At CLEANSING+ purity: every 10th hit strips a random positive effect
-			HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
-				if (EnumPurityStage.byPurity(progress.getPurity()).getLevel()
-						>= EnumPurityStage.CLEANSING.getLevel()) {
-					CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-					int hits = tag.getInt(TAG_HIT_COUNT) + 1;
-					if (hits >= CLEANSE_HIT_THRESHOLD) {
-						hits = 0;
-						List<MobEffectInstance> beneficial = target.getActiveEffects().stream()
-								.filter(e -> e.getEffect().value().isBeneficial())
-								.collect(Collectors.toList());
-						if (!beneficial.isEmpty()) {
-							MobEffectInstance toRemove = beneficial.get(
-									player.getRandom().nextInt(beneficial.size()));
-							target.removeEffect(toRemove.getEffect());
-							player.displayClientMessage(
-									Component.literal("The coagulant purges a corruption from your foe.")
-											.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
-									true);
-						}
+			var progress = HemoCapabilityAccess.getUnstainedProgress(player);
+			if (EnumPurityStage.byPurity(progress.getPurity()).getLevel()
+					>= EnumPurityStage.CLEANSING.getLevel()) {
+				CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+				int hits = tag.getInt(TAG_HIT_COUNT) + 1;
+				if (hits >= CLEANSE_HIT_THRESHOLD) {
+					hits = 0;
+					List<MobEffectInstance> beneficial = target.getActiveEffects().stream()
+							.filter(e -> e.getEffect().value().isBeneficial())
+							.collect(Collectors.toList());
+					if (!beneficial.isEmpty()) {
+						MobEffectInstance toRemove = beneficial.get(
+								player.getRandom().nextInt(beneficial.size()));
+						target.removeEffect(toRemove.getEffect());
+						player.displayClientMessage(
+								Component.literal("The coagulant purges a corruption from your foe.")
+										.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+								true);
 					}
-					tag.putInt(TAG_HIT_COUNT, hits);
-					stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 				}
-			});
+				tag.putInt(TAG_HIT_COUNT, hits);
+				stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+			}
 		}
 		return true;
 	}

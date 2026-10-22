@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.unstained;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -97,32 +98,34 @@ public class UnstainedAcolyteEntity extends PathfinderMob implements Progression
      */
     @Override
     public DialogueTree progressionDialogue(ServerPlayer player) {
-        DialogueTree tree = HemoCapabilityAccess.getUnstainedProgress(player).map(progress -> {
-            if (!progress.hasBegunPurification()) {
-                return AcolyteDialogueTrees.notOnPath(this.getId());
-            }
+        return UnstainedObservanceDialogueDecorator.decorate(stageTree(HemoCapabilityAccess.getUnstainedProgress(player)),
+                player, UnstainedObservances.Issuer.ACOLYTE);
+    }
 
-            // Enlightened — full path completed
-            if (progress.isEnlightened()) {
-                return AcolyteDialogueTrees.enlightenedStage(this.getId());
-            }
+    private DialogueTree stageTree(IUnstainedProgress progress) {
+        if (!progress.hasBegunPurification()) {
+            return AcolyteDialogueTrees.notOnPath(this.getId());
+        }
 
-            // Clarity phase — purified and clarity unlocked
-            if (progress.hasClarityUnlocked()) {
-                return AcolyteDialogueTrees.clarityPhase(this.getId());
-            }
+        // Enlightened — full path completed
+        if (progress.isEnlightened()) {
+            return AcolyteDialogueTrees.enlightenedStage(this.getId());
+        }
 
-            // Purity stage progression
-            EnumPurityStage stage = EnumPurityStage.byPurity(progress.getPurity());
-            return switch (stage) {
-                case PURIFIED -> AcolyteDialogueTrees.purifiedStage(this.getId());
-                case ABSOLVED -> AcolyteDialogueTrees.absolvedStage(this.getId());
-                case CLEANSING -> AcolyteDialogueTrees.cleansingStage(this.getId());
-                case TAINTED -> AcolyteDialogueTrees.taintedStage(this.getId());
-                default -> AcolyteDialogueTrees.corruptedStage(this.getId());
-            };
-        }).orElse(AcolyteDialogueTrees.notOnPath(this.getId()));
-        return UnstainedObservanceDialogueDecorator.decorate(tree, player, UnstainedObservances.Issuer.ACOLYTE);
+        // Clarity phase — purified and clarity unlocked
+        if (progress.hasClarityUnlocked()) {
+            return AcolyteDialogueTrees.clarityPhase(this.getId());
+        }
+
+        // Purity stage progression
+        EnumPurityStage stage = EnumPurityStage.byPurity(progress.getPurity());
+        return switch (stage) {
+            case PURIFIED -> AcolyteDialogueTrees.purifiedStage(this.getId());
+            case ABSOLVED -> AcolyteDialogueTrees.absolvedStage(this.getId());
+            case CLEANSING -> AcolyteDialogueTrees.cleansingStage(this.getId());
+            case TAINTED -> AcolyteDialogueTrees.taintedStage(this.getId());
+            default -> AcolyteDialogueTrees.corruptedStage(this.getId());
+        };
     }
 
     @Override

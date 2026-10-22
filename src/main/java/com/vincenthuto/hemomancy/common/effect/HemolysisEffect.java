@@ -25,31 +25,29 @@ public class HemolysisEffect extends MobEffect {
 			if (player.level().isClientSide) {
 				return true;
 			}
-			HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(unstained -> {
-				if (unstained.hasBegunPurification() && !unstained.isPurified()) {
-					// Passive purity gain for those on the Unstained path
-					float purityGain = 0.01f * (amplifier + 1);
-					unstained.addPurity(purityGain);
-				} else if (!unstained.hasBegunPurification()) {
-					// Hemomancer (blood active, not on Unstained path) — apply blood drain damage
-					// ── Skill: Coagulation — chance to block blood-drain tick ──
-					double coagChance = SkillPointHelper.getCoagulationChance(player);
-					float drainAmount = 5.0f * (amplifier + 1);
-					if (coagChance > 0 && player.level().random.nextDouble() < coagChance) {
-						BloodFlowLedger.recordApplied((ServerPlayer) player, "hemolysis",
-								"Hemolysis", Category.EFFECT, -drainAmount, 0.0D, 1, false,
-								"Blocked by Coagulation");
-						return; // Blocked by Coagulation skill
-					}
-					HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-						if (volume.isActive()) {
-							BloodFlowLedger.applyDrain((ServerPlayer) player, volume, "hemolysis",
-									"Hemolysis", Category.EFFECT, drainAmount, 1, false);
-							player.hurt(player.damageSources().magic(), 0.5f * (amplifier + 1));
-						}
-					});
+			var unstained = HemoCapabilityAccess.getUnstainedProgress(player);
+			if (unstained.hasBegunPurification() && !unstained.isPurified()) {
+				// Passive purity gain for those on the Unstained path
+				float purityGain = 0.01f * (amplifier + 1);
+				unstained.addPurity(purityGain);
+			} else if (!unstained.hasBegunPurification()) {
+				// Hemomancer (blood active, not on Unstained path) — apply blood drain damage
+				// ── Skill: Coagulation — chance to block blood-drain tick ──
+				double coagChance = SkillPointHelper.getCoagulationChance(player);
+				float drainAmount = 5.0f * (amplifier + 1);
+				if (coagChance > 0 && player.level().random.nextDouble() < coagChance) {
+					BloodFlowLedger.recordApplied((ServerPlayer) player, "hemolysis",
+							"Hemolysis", Category.EFFECT, -drainAmount, 0.0D, 1, false,
+							"Blocked by Coagulation");
+					return true; // Blocked by Coagulation skill
 				}
-			});
+				var volume = HemoCapabilityAccess.getBloodVolume(player);
+				if (volume.isActive()) {
+					BloodFlowLedger.applyDrain((ServerPlayer) player, volume, "hemolysis",
+							"Hemolysis", Category.EFFECT, drainAmount, 1, false);
+					player.hurt(player.damageSources().magic(), 0.5f * (amplifier + 1));
+				}
+			}
 		}
 		return true;
 	}

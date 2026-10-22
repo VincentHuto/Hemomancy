@@ -75,11 +75,10 @@ public final class AfflictionDigestHelper {
 		}
 
 		serverPlayer.heal(healForEffectSeconds(targets.size()));
-		HemoCapabilityAccess.getBloodVolume(serverPlayer).ifPresent(volume -> {
-			BloodFlowLedger.applyCirculationIncome(serverPlayer, volume, "putrivora_digest",
-					"Putrivora Digest", Category.SCAR, bloodFeedForEffectSeconds(targets.size()), 20,
-					CirculationIncomeHelper.IncomeChannel.SCAR);
-		});
+		var volume = HemoCapabilityAccess.getBloodVolume(serverPlayer);
+		BloodFlowLedger.applyCirculationIncome(serverPlayer, volume, "putrivora_digest",
+				"Putrivora Digest", Category.SCAR, bloodFeedForEffectSeconds(targets.size()), 20,
+				CirculationIncomeHelper.IncomeChannel.SCAR);
 	}
 
 	private static void syncBlood(ServerPlayer player, IBloodVolume volume, double granted) {

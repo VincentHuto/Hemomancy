@@ -58,7 +58,7 @@ public final class WillAmbushDirector {
 
 		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 		if (degree < HemoConfigValues.get(HemoServerConfig.WILL_MIN_DEGREE, 4)) return;
-		if (!HemoCapabilityAccess.getBloodVolume(player).map(volume -> volume.isActive()).orElse(false)) return;
+		if (!HemoCapabilityAccess.getBloodVolume(player).isActive()) return;
 		if (isSanctuary(server, player.blockPosition())) return;
 
 		WillAmbushState state = HemoCapabilityAccess.getWillAmbushState(player);
@@ -138,18 +138,16 @@ public final class WillAmbushDirector {
 	}
 
 	private static EnumBloodTendency schoolFor(ServerPlayer target) {
-		return HemoCapabilityAccess.getBloodTendency(target)
-				.flatMap(tendency -> tendency.getTendency().entrySet().stream()
-						.max(Map.Entry.comparingByValue())
-						.map(Map.Entry::getKey)
-						.map(WillCombatRules::counterSchool))
+		return HemoCapabilityAccess.getBloodTendency(target).getTendency().entrySet().stream()
+				.max(Map.Entry.comparingByValue())
+				.map(Map.Entry::getKey)
+				.map(WillCombatRules::counterSchool)
 				.orElse(EnumBloodTendency.ANIMUS);
 	}
 
 	private static boolean qliphothDone(ServerPlayer player) {
 		return HemoCapabilityAccess.getInitiatoryDegree(player)
-				.map(IInitiatoryDegree::isQliphothCommunionDone)
-				.orElse(false);
+				.isQliphothCommunionDone();
 	}
 
 	private static boolean isSanctuary(ServerLevel server, BlockPos pos) {

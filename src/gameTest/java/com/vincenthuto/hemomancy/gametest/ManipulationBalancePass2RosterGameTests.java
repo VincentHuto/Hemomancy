@@ -84,10 +84,10 @@ public final class ManipulationBalancePass2RosterGameTests {
     public static void mortarOpensAtDegreeOneAndTempestWaitsForMagister(GameTestHelper h) {
         ServerPlayer p = player(h);
         try {
-            var known = HemoCapabilityAccess.requireKnownManipulations(p);
+            var known = HemoCapabilityAccess.getKnownManipulations(p);
             known.getKnownManips().put(ManipulationInit.blood_shot.get(), new ManipLevel(3, 50));
             known.getKnownManips().put(ManipulationInit.blood_cloud.get(), new ManipLevel(4, 185));
-            var degree = HemoCapabilityAccess.requireInitiatoryDegree(p);
+            var degree = HemoCapabilityAccess.getInitiatoryDegree(p);
 
             degree.setDegreeNumber(1);
             var mortar = KnownManipulationGrantHelper.checkMemoryGrant(p, ManipulationInit.hematic_mortar.get());
@@ -162,7 +162,7 @@ public final class ManipulationBalancePass2RosterGameTests {
     public static void avatarDoesNotTurnVoidOrHunger(GameTestHelper h) {
         ServerPlayer p = player(h);
         try {
-            HemoCapabilityAccess.requireKnownManipulations(p).setActiveAvatarForm("summon_avatar");
+            HemoCapabilityAccess.getKnownManipulations(p).setActiveAvatarForm("summon_avatar");
             var sources = h.getLevel().damageSources();
             near(h, 3, avatarDamage(p, sources.generic(), 4), "The avatar no longer turns an ordinary blow");
             near(h, 4, avatarDamage(p, sources.fellOutOfWorld(), 4), "The avatar reduced void damage");
@@ -252,7 +252,7 @@ public final class ManipulationBalancePass2RosterGameTests {
             @Override public void send(net.minecraft.network.protocol.Packet<?> packet) { }
         };
         p.setPos(h.absoluteVec(new Vec3(2.5, 2, 2.5)));
-        var blood = HemoCapabilityAccess.requireBloodVolume(p);
+        var blood = HemoCapabilityAccess.getBloodVolume(p);
         blood.setActive(true);
         blood.setBloodVolume(2000);
         return p;

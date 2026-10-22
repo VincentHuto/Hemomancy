@@ -58,13 +58,12 @@ public class KnownManipulationEvents {
 	@SubscribeEvent
 	public static void syncChangedOwnerState(PlayerTickEvent.Post event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
-			HemoCapabilityAccess.getKnownManipulations(player).ifPresent(known -> {
-				// Level progress and vein lists can change through mutable getters, bypassing setters.
-				ListTag current = ((KnownManipulations) known).serializeNBT(player.registryAccess());
-				if (!current.equals(LAST_OWNER_SNAPSHOT.get(player.getUUID()))) {
-					syncPlayerEvent(player);
-				}
-			});
+			var known = HemoCapabilityAccess.getKnownManipulations(player);
+			// Level progress and vein lists can change through mutable getters, bypassing setters.
+			ListTag current = ((KnownManipulations) known).serializeNBT(player.registryAccess());
+			if (!current.equals(LAST_OWNER_SNAPSHOT.get(player.getUUID()))) {
+				syncPlayerEvent(player);
+			}
 		}
 	}
 
@@ -74,7 +73,7 @@ public class KnownManipulationEvents {
 		// Radiant Protection. The void, /kill and hunger are not blows the avatar can turn.
 		if (e.getEntity() instanceof Player player && !bypassesAvatar(e.getSource())) {
 			IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
-					.orElseThrow(NullPointerException::new);
+					;
 			AvatarManifestationRules.stats(known.getActiveAvatarForm()).ifPresent(stats -> {
 				double dist = e.getEntity().distanceToSqr(player);
 				HitResult trace = e.getEntity().pick(dist, 0, false);
@@ -106,10 +105,9 @@ public class KnownManipulationEvents {
 
 	public static void syncPlayerEvent(Player playerEntity) {
 		if (playerEntity instanceof ServerPlayer s) {
-			HemoCapabilityAccess.getKnownManipulations(s).ifPresent(capa -> {
-				PacketHandler.sendToPlayer(s, new KnownManipulationServerPacket(capa));
-				LAST_OWNER_SNAPSHOT.put(s.getUUID(), ((KnownManipulations) capa).serializeNBT(s.registryAccess()));
-			});
+			var capa = HemoCapabilityAccess.getKnownManipulations(s);
+			PacketHandler.sendToPlayer(s, new KnownManipulationServerPacket(capa));
+			LAST_OWNER_SNAPSHOT.put(s.getUUID(), ((KnownManipulations) capa).serializeNBT(s.registryAccess()));
 		}
 	}
 
@@ -157,9 +155,8 @@ public class KnownManipulationEvents {
 	}
 
 	private static void syncAvatars(Player player, Collection<? extends Player> receivers) {
-		HemoCapabilityAccess.getKnownManipulations(player).ifPresent(manips -> {
-			syncAvatar(player, receivers, manips.getActiveAvatarForm());
-		});
+		var manips = HemoCapabilityAccess.getKnownManipulations(player);
+		syncAvatar(player, receivers, manips.getActiveAvatarForm());
 	}
 
 	/**
@@ -197,22 +194,21 @@ public class KnownManipulationEvents {
 		}
 
 		// 4. Grant XP to the manipulation's level and check for rank-up
-		HemoCapabilityAccess.getKnownManipulations(player).ifPresent(known -> {
-			ManipLevel level = known.getManipLevel(manip);
-			if (level != null && ManipulationCastingRules.earnsMasteryUse(rewardScale)) {
-				level.setXp(level.getXp() + 1.0);
-				if (level.tryLevelUp()) {
-					player.displayClientMessage(
-							net.minecraft.network.chat.Component.translatable(
-									"hemomancy.manipulation.levelup",
-									manip.getDisplayName(),
-									level.getCurrentLevel()),
-							false);
-				}
-				ManipulationFamilyRegistry.normalizeKnown(known.getKnownManips());
+		var known = HemoCapabilityAccess.getKnownManipulations(player);
+		ManipLevel level = known.getManipLevel(manip);
+		if (level != null && ManipulationCastingRules.earnsMasteryUse(rewardScale)) {
+			level.setXp(level.getXp() + 1.0);
+			if (level.tryLevelUp()) {
+				player.displayClientMessage(
+						net.minecraft.network.chat.Component.translatable(
+								"hemomancy.manipulation.levelup",
+								manip.getDisplayName(),
+								level.getCurrentLevel()),
+						false);
 			}
-			PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
-		});
+			ManipulationFamilyRegistry.normalizeKnown(known.getKnownManips());
+		}
+		PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
 
 		// 5. Grant skill-point currency based on manipulation rank
 		int spGain = switch (manip.getRank()) {
@@ -222,7 +218,7 @@ public class KnownManipulationEvents {
 			case MAGISTER      -> 4;
 			case PERFECTUS     -> 5;
 		};
-		SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(player);
+		SkillProgress progress = HemoCapabilityAccess.getSkillProgress(player);
 		progress.addSkillPoints(ManipulationCastingRules.scaledSkillPoints(spGain, rewardScale));
 
 		// 6. Check manipulation-use milestones (first use, tiered totals); like mastery, a cast below half

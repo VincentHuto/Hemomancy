@@ -298,8 +298,8 @@ public final class LivingWeaponCombatGameTests {
             @Override public void send(net.minecraft.network.protocol.Packet<?> packet) {}
         };
         player.setPos(h.absoluteVec(new Vec3(2, 4, 0)));
-        HemoCapabilityAccess.requireBloodVolume(player).setActive(true);
-        HemoCapabilityAccess.requireBloodVolume(player).setBloodVolume(5000);
+        HemoCapabilityAccess.getBloodVolume(player).setActive(true);
+        HemoCapabilityAccess.getBloodVolume(player).setBloodVolume(5000);
         return player;
     }
 

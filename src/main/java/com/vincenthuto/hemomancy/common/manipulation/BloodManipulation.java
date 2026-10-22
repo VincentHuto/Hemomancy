@@ -319,10 +319,8 @@ public class BloodManipulation implements EntityCastableManipulation {
 					* SkillPointHelper.getBloodFlowMultiplier(player));
 
 			// ── ManipLevel — per-use mastery further reduces cooldown ──
-			double levelCooldownMultiplier = HemoCapabilityAccess.getKnownManipulations(player)
-					.map(k -> k.getManipLevel(this))
-					.map(ManipLevel::getCooldownMultiplier)
-					.orElse(1.0);
+			ManipLevel manipLevel = HemoCapabilityAccess.getKnownManipulations(player).getManipLevel(this);
+			double levelCooldownMultiplier = manipLevel != null ? manipLevel.getCooldownMultiplier() : 1.0;
 			effectiveCooldown = (long) (effectiveCooldown * levelCooldownMultiplier);
 			effectiveCooldown = (long) (effectiveCooldown
 					* CheapBloodInfusionHelper.getManipulationCooldownMultiplier(player));
@@ -346,11 +344,7 @@ public class BloodManipulation implements EntityCastableManipulation {
 	 * Sends the appropriate chat feedback to the player.
 	 */
 	private double getPurityCostMultiplier(Player player) {
-		var optUnstained = HemoCapabilityAccess.getUnstainedProgress(player);
-		if (!optUnstained.isPresent()) {
-			return 1.0;
-		}
-		var unstained = optUnstained.orElseThrow(IllegalStateException::new);
+		var unstained = HemoCapabilityAccess.getUnstainedProgress(player);
 		if (!unstained.hasBegunPurification()) {
 			return 1.0;
 		}
@@ -403,19 +397,17 @@ public class BloodManipulation implements EntityCastableManipulation {
 	 */
 	public boolean isEquippedCastReady(ServerPlayer player, IKnownManipulations known) {
 		return known.isManipEquipped(this) && known.isManipulationAvailable(this)
-				&& HemoCapabilityAccess.requireBloodVolume(player).isActive()
-				&& !HemoCapabilityAccess.getUnstainedProgress(player)
-						.map(com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false)
-				&& HemoCapabilityAccess.getBloodTendency(player).map(tendency -> tendency.getAlignmentByTendency(tend) >= alignLevel).orElse(false);
+				&& HemoCapabilityAccess.getBloodVolume(player).isActive()
+				&& !com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules.blocksKnownBloodPowerUse(HemoCapabilityAccess.getUnstainedProgress(player))
+				&& (HemoCapabilityAccess.getBloodTendency(player).getAlignmentByTendency(tend) >= alignLevel);
 	}
 
 	public boolean isPassiveReady(ServerPlayer player) {
 		return type == EnumManipulationType.PASSIVE && player.isAlive()
-				&& HemoCapabilityAccess.requireBloodVolume(player).isActive()
-				&& HemoCapabilityAccess.getKnownManipulations(player).map(known -> known.isPassiveActive(name)).orElse(false)
-				&& HemoCapabilityAccess.getBloodTendency(player).map(tendency -> tendency.getAlignmentByTendency(tend) >= alignLevel).orElse(false)
-				&& !HemoCapabilityAccess.getUnstainedProgress(player)
-						.map(com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false);
+				&& HemoCapabilityAccess.getBloodVolume(player).isActive()
+				&& HemoCapabilityAccess.getKnownManipulations(player).isPassiveActive(name)
+				&& (HemoCapabilityAccess.getBloodTendency(player).getAlignmentByTendency(tend) >= alignLevel)
+				&& !com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules.blocksKnownBloodPowerUse(HemoCapabilityAccess.getUnstainedProgress(player));
 	}
 
 	public boolean tryPerformPassiveTrigger(ServerPlayer player) {
@@ -461,15 +453,14 @@ public class BloodManipulation implements EntityCastableManipulation {
 			float chargeTicks, boolean applyCooldown, boolean enforceCooldown, boolean creditUse) {
 		if (type != EnumManipulationType.PASSIVE && com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.blocksActions(player)) return false;
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
-				.orElseThrow(NullPointerException::new);
+				;
 		IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(player)
-				.orElseThrow(NullPointerException::new);
+				;
 
 		if (!player.level().isClientSide) {
 			if (!canPerformAction(player, heldItemMainhand, chargeTicks)) return false;
 			if (ManipulationFamilyRegistry.form(getName()).isPresent()
-					&& HemoCapabilityAccess.getKnownManipulations(player)
-							.map(known -> !known.isManipulationAvailable(this)).orElse(true)) {
+					&& (!HemoCapabilityAccess.getKnownManipulations(player).isManipulationAvailable(this))) {
 				player.displayClientMessage(Component.literal("You have not absorbed this form's memory.")
 						.withStyle(ChatFormatting.DARK_RED), true);
 				return false;
@@ -505,12 +496,9 @@ public class BloodManipulation implements EntityCastableManipulation {
 			// Unresolved ninth-pome choices restrict powers, but retain Staff recovery.
 			// for 1–8 pomes the variable is reused below inside volume.isActive() to scale cost.
 			var degreeData = HemoCapabilityAccess.getInitiatoryDegree(player);
-			int pomesConsumed = degreeData
-					.map(d -> d.getTotalPomesConsumed())
-					.orElse(0);
-			boolean permitted = degreeData.map(d -> HarbingerPathPermissions.canUsePower(
-					d.getTotalPomesConsumed(), d.getArchonPath(), "conjure_staff".equals(getName())))
-					.orElse(true);
+			int pomesConsumed = degreeData.getTotalPomesConsumed();
+			boolean permitted = HarbingerPathPermissions.canUsePower(
+					degreeData.getTotalPomesConsumed(), degreeData.getArchonPath(), "conjure_staff".equals(getName()));
 			if (!permitted) {
 				player.displayClientMessage(
 						Component.literal("Your blood no longer answers to you. It belongs to the void now.")

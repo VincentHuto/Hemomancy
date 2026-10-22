@@ -42,7 +42,7 @@ final class HemoJourneyWorldState {
 	private HemoJourneyWorldState() { }
 
 	static void capture(ServerPlayer player, CompoundTag snapshot) {
-		snapshot.put(BLOODLINE, HemoCapabilityAccess.requireBloodVolume(player).getBloodLine().serialize());
+		snapshot.put(BLOODLINE, HemoCapabilityAccess.getBloodVolume(player).getBloodLine().serialize());
 		ListTag fanes = new ListTag();
 		for (ServerLevel level : player.server.getAllLevels()) {
 			FoundingFaneSavedData data = FoundingFaneSavedData.get(level);
@@ -78,7 +78,7 @@ final class HemoJourneyWorldState {
 	static void reset(ServerPlayer player, CompoundTag snapshot) {
 		cleanupTemporary(player);
 		removePlayerFanes(player);
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setBloodLine(Bloodline.NOBLOODLINE);
 		BloodVolumeEvents.syncVolume(player, blood);
 		player.getPersistentData().remove(CHAIR_BOUND);
@@ -91,7 +91,7 @@ final class HemoJourneyWorldState {
 		Bloodline line = new Bloodline("Journey Test Bloodline", player.getUUID(), id, new ArrayList<>());
 		BloodlineSavedData.get(player.server.overworld()).registerBloodline(line);
 		player.getPersistentData().putUUID(TEMP_BLOODLINE, id);
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setBloodLine(line);
 		BloodVolumeEvents.syncVolume(player, blood);
 	}
@@ -171,7 +171,7 @@ final class HemoJourneyWorldState {
 				data.setRecallPoint(player.getUUID(), BlockPos.of(saved.getLong("recall")));
 			}
 		}
-		var blood = HemoCapabilityAccess.requireBloodVolume(player);
+		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		Bloodline savedLine = Bloodline.deserialize(snapshot.getCompound(BLOODLINE));
 		Bloodline globalLine = savedLine.isValid()
 				? BloodlineSavedData.get(player.server.overworld()).getBloodline(savedLine.getBloodlineUUID()) : null;

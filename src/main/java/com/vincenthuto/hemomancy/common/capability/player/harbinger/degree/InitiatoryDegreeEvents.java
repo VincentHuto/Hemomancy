@@ -31,12 +31,10 @@ public class InitiatoryDegreeEvents {
 	@SubscribeEvent
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
-		HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree ->
-				{
-					migrateLegacyState(player, degree);
-					syncDegree(player, degree);
-					LiberKnowledgeHelper.unlockForDegree(player, degree.getDegreeNumber());
-				});
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
+		migrateLegacyState(player, degree);
+		syncDegree(player, degree);
+		LiberKnowledgeHelper.unlockForDegree(player, degree.getDegreeNumber());
 	}
 
 	private static void migrateLegacyState(ServerPlayer player, IInitiatoryDegree degree) {
@@ -62,16 +60,14 @@ public class InitiatoryDegreeEvents {
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
-		HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree ->
-				syncDegree(player, degree));
+		syncDegree(player, HemoCapabilityAccess.getInitiatoryDegree(player));
 	}
 
 	@SubscribeEvent
 	public static void playerRespawn(PlayerRespawnEvent event) {
 		Player player = event.getEntity();
 		if (!player.level().isClientSide) {
-			HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree ->
-					syncDegree((ServerPlayer) player, degree));
+			syncDegree((ServerPlayer) player, HemoCapabilityAccess.getInitiatoryDegree(player));
 		}
 	}
 }

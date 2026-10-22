@@ -94,8 +94,7 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 		knownSummons.clear();
 		Player player = Minecraft.getInstance().player;
 		if (player != null) {
-			HemoCapabilityAccess.getKnownSummons(player)
-					.ifPresent(known -> knownSummons.addAll(known.getKnownSummonNames()));
+			knownSummons.addAll(HemoCapabilityAccess.getKnownSummons(player).getKnownSummonNames());
 		}
 		String selected = menu.getSelectedSummonName();
 		selectedIndex = 0;

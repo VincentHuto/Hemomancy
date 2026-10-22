@@ -596,7 +596,7 @@ public class SynapticLoadoutScreen extends Screen {
 
 	private IKnownManipulations known() {
 		return Minecraft.getInstance().player != null
-				? HemoCapabilityAccess.getKnownManipulations(Minecraft.getInstance().player).orElse(null)
+				? HemoCapabilityAccess.getKnownManipulations(Minecraft.getInstance().player)
 				: null;
 	}
 

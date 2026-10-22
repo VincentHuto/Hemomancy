@@ -8,7 +8,6 @@ import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitMode;
 import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemorySlotRef;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemory;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -130,7 +129,7 @@ public final class ClinicalBloodProgressionGameTests {
         p.setPos(level == h.getLevel() ? h.absolutePos(new BlockPos(0, 3, 0)).getCenter()
                 : new Vec3(0.5, 80, 0.5));
         p.setNoGravity(true);
-        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(degree);
+        HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(degree);
         return p;
     }
 
@@ -147,8 +146,8 @@ public final class ClinicalBloodProgressionGameTests {
         var pos = h.absolutePos(new BlockPos(1, 2, 1));
         h.getLevel().setBlockAndUpdate(pos, BlockInit.dendritic_distributor.get().defaultBlockState());
         p.setPos(pos.getCenter());
-        var known = HemoCapabilityAccess.getKnownManipulations(p).orElseThrow();
-        var volume = HemoCapabilityAccess.requireBloodVolume(p);
+        var known = HemoCapabilityAccess.getKnownManipulations(p);
+        var volume = HemoCapabilityAccess.getBloodVolume(p);
         volume.setActive(true);
         volume.setBloodVolume(1000);
         p.giveExperiencePoints(100);
@@ -162,14 +161,14 @@ public final class ClinicalBloodProgressionGameTests {
             h.assertTrue(known.getLoadout(0).isEmpty() && volume.getBloodVolume() == 1000
                             && p.totalExperience == 100,
                     "An unlearned equipped Thelemic key must not save or spend blood/XP");
-            p.getData(HemoAttachmentTypes.MUSCLE_MEMORY).learnAndAddReserve(memory, 200);
+            HemoCapabilityAccess.muscleMemory(p).learnAndAddReserve(memory, 200);
             distributorAction(p, pos, 0,
                     com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SynapticLoadoutActionPacket.Action.SAVE_OR_OVERWRITE);
             h.assertTrue(known.getLoadout(0).manipNames().equals(List.of(key))
                             && known.getLoadout(0).selectedManipName().equals(key)
                             && volume.getBloodVolume() == 900 && p.totalExperience == 75,
                     "Learning the same Thelemic memory must allow normal paid Save");
-            h.assertTrue(p.getData(HemoAttachmentTypes.MUSCLE_MEMORY).reserveTicks(memory) == 200,
+            h.assertTrue(HemoCapabilityAccess.muscleMemory(p).reserveTicks(memory) == 200,
                     "Saving a pattern must not consume its Thelemic reserve");
             h.succeed();
         } finally { p.discard(); }
@@ -180,18 +179,18 @@ public final class ClinicalBloodProgressionGameTests {
         var pos = h.absolutePos(new BlockPos(1, 2, 1));
         h.getLevel().setBlockAndUpdate(pos, BlockInit.dendritic_distributor.get().defaultBlockState());
         p.setPos(pos.getCenter().add(9, 0, 0));
-        var known = HemoCapabilityAccess.getKnownManipulations(p).orElseThrow();
-        var volume = HemoCapabilityAccess.requireBloodVolume(p);
+        var known = HemoCapabilityAccess.getKnownManipulations(p);
+        var volume = HemoCapabilityAccess.getBloodVolume(p);
         volume.setActive(true);
         volume.setBloodVolume(1000);
         p.giveExperiencePoints(100);
         var memory = MuscleMemory.SANGUINE_FISTS;
-        p.getData(HemoAttachmentTypes.MUSCLE_MEMORY).learnAndAddReserve(memory, 200);
+        HemoCapabilityAccess.muscleMemory(p).learnAndAddReserve(memory, 200);
         String key = MemorySlotRef.muscleMemory(memory).storageKey();
         var saved = com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout.of(
                 "Retained pattern", key, List.of(key), 0);
         known.setLoadout(0, saved);
-        p.getData(HemoAttachmentTypes.MUSCLE_MEMORY).learnAndAddReserve(MuscleMemory.LABORING_ARMS, 200);
+        HemoCapabilityAccess.muscleMemory(p).learnAndAddReserve(MuscleMemory.LABORING_ARMS, 200);
         known.setEquippedMemoryRefs(List.of(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS)));
         known.setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS));
         var equipped = List.copyOf(known.getEquippedManipNames());
@@ -214,12 +213,12 @@ public final class ClinicalBloodProgressionGameTests {
         var pos = h.absolutePos(new BlockPos(1, 2, 1));
         h.getLevel().setBlockAndUpdate(pos, BlockInit.dendritic_distributor.get().defaultBlockState());
         p.setPos(pos.getCenter());
-        var known = HemoCapabilityAccess.getKnownManipulations(p).orElseThrow();
-        var volume = HemoCapabilityAccess.requireBloodVolume(p);
+        var known = HemoCapabilityAccess.getKnownManipulations(p);
+        var volume = HemoCapabilityAccess.getBloodVolume(p);
         volume.setActive(true);
         volume.setBloodVolume(1000);
         p.giveExperiencePoints(100);
-        var muscle = p.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+        var muscle = HemoCapabilityAccess.muscleMemory(p);
         muscle.learnAndAddReserve(MuscleMemory.LABORING_ARMS, 200);
         muscle.activate(MuscleMemory.LABORING_ARMS);
         known.setEquippedMemoryRefs(List.of(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS)));
@@ -258,12 +257,12 @@ public final class ClinicalBloodProgressionGameTests {
         var pos = h.absolutePos(new BlockPos(1, 2, 1));
         h.getLevel().setBlockAndUpdate(pos, BlockInit.dendritic_distributor.get().defaultBlockState());
         p.setPos(pos.getCenter());
-        var known = HemoCapabilityAccess.getKnownManipulations(p).orElseThrow();
-        var volume = HemoCapabilityAccess.requireBloodVolume(p);
+        var known = HemoCapabilityAccess.getKnownManipulations(p);
+        var volume = HemoCapabilityAccess.getBloodVolume(p);
         volume.setActive(true);
         volume.setBloodVolume(1000);
         p.giveExperiencePoints(100);
-        p.getData(HemoAttachmentTypes.MUSCLE_MEMORY).learnAndAddReserve(MuscleMemory.SANGUINE_FISTS, 200);
+        HemoCapabilityAccess.muscleMemory(p).learnAndAddReserve(MuscleMemory.SANGUINE_FISTS, 200);
         String key = MemorySlotRef.muscleMemory(MuscleMemory.SANGUINE_FISTS).storageKey();
         known.setLoadout(1, com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout.of(
                 "Fists", key, List.of(key), 1));
@@ -321,11 +320,11 @@ public final class ClinicalBloodProgressionGameTests {
         var pos = h.absolutePos(new BlockPos(1, 2, 1));
         h.getLevel().setBlockAndUpdate(pos, BlockInit.dendritic_distributor.get().defaultBlockState());
         p.setPos(pos.getCenter());
-        var known = HemoCapabilityAccess.getKnownManipulations(p).orElseThrow();
-        var volume = HemoCapabilityAccess.requireBloodVolume(p);
+        var known = HemoCapabilityAccess.getKnownManipulations(p);
+        var volume = HemoCapabilityAccess.getBloodVolume(p);
         volume.setActive(true);
         volume.setBloodVolume(1000);
-        var muscle = p.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+        var muscle = HemoCapabilityAccess.muscleMemory(p);
         muscle.learnAndAddReserve(MuscleMemory.LABORING_ARMS, 200);
         muscle.learnAndAddReserve(MuscleMemory.SANGUINE_FISTS, 300);
         muscle.activate(MuscleMemory.LABORING_ARMS);
@@ -372,13 +371,13 @@ public final class ClinicalBloodProgressionGameTests {
         var pos = h.absolutePos(new BlockPos(1, 2, 1));
         h.getLevel().setBlockAndUpdate(pos, BlockInit.dendritic_distributor.get().defaultBlockState());
         p.setPos(pos.getCenter());
-        var known = HemoCapabilityAccess.getKnownManipulations(p).orElseThrow();
-        var volume = HemoCapabilityAccess.requireBloodVolume(p);
+        var known = HemoCapabilityAccess.getKnownManipulations(p);
+        var volume = HemoCapabilityAccess.getBloodVolume(p);
         volume.setActive(true);
         volume.setBloodVolume(1000);
         com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper.learnAndEquipIfPossible(
                 known, ManipulationInit.getByName("blood_shot"), 5);
-        var muscle = p.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+        var muscle = HemoCapabilityAccess.muscleMemory(p);
         muscle.learnAndAddReserve(MuscleMemory.SANGUINE_FISTS, 300);
         String key = MemorySlotRef.muscleMemory(MuscleMemory.SANGUINE_FISTS).storageKey();
         var legacy = com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationLoadout.of(
@@ -389,7 +388,7 @@ public final class ClinicalBloodProgressionGameTests {
         known.setLoadout(2, mixed);
         known.setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.SANGUINE_FISTS));
         try {
-            var source = p.getData(HemoAttachmentTypes.KNOWN_MANIPULATIONS);
+            var source = HemoCapabilityAccess.getKnownManipulations(p);
             var restored = new com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulations();
             restored.deserializeNBT(h.getLevel().registryAccess(), source.serializeNBT(h.getLevel().registryAccess()).copy());
             h.assertTrue(restored.getLoadouts().size() == 3 && restored.getLoadout(0).equals(legacy)
@@ -437,9 +436,9 @@ public final class ClinicalBloodProgressionGameTests {
     @GameTest(template = "empty") public static void existingScarMainProofSurvivesWithoutTheIntermediateEffigyMilestone(GameTestHelper h) {
         var p = player(h, 4);
         var id = Hemomancy.rloc("scar_heart");
-        var scars = HemoCapabilityAccess.requireScarState(p);
+        var scars = HemoCapabilityAccess.getScarState(p);
         scars.addKnownCerebralScar(id);
-        var volume = HemoCapabilityAccess.requireBloodVolume(p);
+        var volume = HemoCapabilityAccess.getBloodVolume(p);
         volume.setActive(true);
         volume.setBloodVolume(1000);
         HarbingerAdvancementGranter.grantIfNotDone(p, HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_EFFIGY_LOADOUT);
@@ -461,9 +460,9 @@ public final class ClinicalBloodProgressionGameTests {
     private static void scarCommitWithoutPractice(GameTestHelper h, boolean template) {
         var p = player(h, 4);
         var id = Hemomancy.rloc("scar_heart");
-        var scars = HemoCapabilityAccess.requireScarState(p);
+        var scars = HemoCapabilityAccess.getScarState(p);
         scars.addKnownCerebralScar(id);
-        var volume = HemoCapabilityAccess.requireBloodVolume(p);
+        var volume = HemoCapabilityAccess.getBloodVolume(p);
         volume.setActive(true);
         volume.setBloodVolume(1000);
         var pattern = template
@@ -493,8 +492,8 @@ public final class ClinicalBloodProgressionGameTests {
                 h.getLevel().getBlockEntity(pos);
         try {
             for (var p : List.of(actor, guest)) {
-                HemoCapabilityAccess.requireScarState(p).addKnownCerebralScar(id);
-                var volume = HemoCapabilityAccess.requireBloodVolume(p);
+                HemoCapabilityAccess.getScarState(p).addKnownCerebralScar(id);
+                var volume = HemoCapabilityAccess.getBloodVolume(p);
                 volume.setActive(true);
                 volume.setBloodVolume(1000);
             }
@@ -547,7 +546,7 @@ public final class ClinicalBloodProgressionGameTests {
         var entry = Hemomancy.rloc("libersanguinium/the_hematic_order/pages/scar_practice");
         try {
             HarbingerAdvancementGranter.grantIfNotDone(actor, HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_LESSON);
-            var knowledge = actor.getData(HemoAttachmentTypes.LIBER_KNOWLEDGE);
+            var knowledge = HemoCapabilityAccess.getLiberKnowledge(actor);
             var legacy = new com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledge();
             var other = Hemomancy.rloc("libersanguinium/intro/pages/hemomancy");
             legacy.unlockEntry(other, com.vincenthuto.hutoslib.common.book.knowledge.CommonDiscoverySource.OTHER);
@@ -591,12 +590,12 @@ public final class ClinicalBloodProgressionGameTests {
         var effigy = (com.vincenthuto.hemomancy.common.tile.harbinger.functional.MasonsEffigyBlockEntity)
                 h.getLevel().getBlockEntity(pos);
         try {
-            selected.forEach(HemoCapabilityAccess.requireScarState(actor)::addKnownCerebralScar);
+            selected.forEach(HemoCapabilityAccess.getScarState(actor)::addKnownCerebralScar);
             if (insufficientCapacity) {
-                selected.forEach(HemoCapabilityAccess.requireScarState(guest)::addKnownCerebralScar);
+                selected.forEach(HemoCapabilityAccess.getScarState(guest)::addKnownCerebralScar);
             }
             for (var p : List.of(actor, guest)) {
-                var volume = HemoCapabilityAccess.requireBloodVolume(p);
+                var volume = HemoCapabilityAccess.getBloodVolume(p);
                 volume.setActive(true);
                 volume.setBloodVolume(1000);
             }
@@ -611,20 +610,20 @@ public final class ClinicalBloodProgressionGameTests {
                             : "Charging must require the contributor to know each selected scar");
             h.assertTrue(effigy.hasPendingMotif() && effigy.getPendingBlood() == 200
                     && effigy.getSelectedScarIds().equals(selected)
-                    && HemoCapabilityAccess.requireBloodVolume(guest).getBloodVolume() == 1000
+                    && HemoCapabilityAccess.getBloodVolume(guest).getBloodVolume() == 1000
                     && !HarbingerAdvancementGranter.isVeinMasonFirstEffigyPattern(guest)
                     && h.getLevel().getEntitiesOfClass(ItemEntity.class, bounds,
                             item -> item.getItem().is(ItemInit.scar_pattern.get())).isEmpty(),
                     "Rejected projection must retain escrow, guest blood and unearned proof");
             if (insufficientCapacity) {
-                HemoCapabilityAccess.requireInitiatoryDegree(guest).setDegreeNumber(5);
+                HemoCapabilityAccess.getInitiatoryDegree(guest).setDegreeNumber(5);
             } else {
-                selected.forEach(HemoCapabilityAccess.requireScarState(guest)::addKnownCerebralScar);
+                selected.forEach(HemoCapabilityAccess.getScarState(guest)::addKnownCerebralScar);
             }
             double remaining = selected.size() * 500 - 200;
             h.assertTrue(effigy.receiveProjectedBlood(guest, 1000, false) == remaining
-                    && HemoCapabilityAccess.requireBloodVolume(guest).getBloodVolume() == 1000 - remaining
-                    && HemoCapabilityAccess.requireBloodVolume(actor).getBloodVolume() == 800,
+                    && HemoCapabilityAccess.getBloodVolume(guest).getBloodVolume() == 1000 - remaining
+                    && HemoCapabilityAccess.getBloodVolume(actor).getBloodVolume() == 800,
                     "Eligible second practitioner may resume shared work without an ownership lock");
             var outputs = h.getLevel().getEntitiesOfClass(ItemEntity.class, bounds,
                     item -> item.getItem().is(ItemInit.scar_pattern.get()));
@@ -655,8 +654,8 @@ public final class ClinicalBloodProgressionGameTests {
                 h.getLevel().getBlockEntity(pos);
         try {
             var heart = Hemomancy.rloc("scar_heart");
-            HemoCapabilityAccess.requireScarState(actor).addKnownCerebralScar(heart);
-            var volume = HemoCapabilityAccess.requireBloodVolume(actor);
+            HemoCapabilityAccess.getScarState(actor).addKnownCerebralScar(heart);
+            var volume = HemoCapabilityAccess.getBloodVolume(actor);
             volume.setActive(true);
             volume.setBloodVolume(1000);
             effigy.setSelectedScarIds(List.of(heart));
@@ -712,10 +711,10 @@ public final class ClinicalBloodProgressionGameTests {
                 h.getLevel().getBlockEntity(pos);
         var bounds = new AABB(pos).inflate(2);
         try {
-            var scars = HemoCapabilityAccess.requireScarState(actor);
+            var scars = HemoCapabilityAccess.getScarState(actor);
             scars.addKnownCerebralScar(heart);
             scars.addKnownCerebralScar(marrow);
-            var volume = HemoCapabilityAccess.requireBloodVolume(actor);
+            var volume = HemoCapabilityAccess.getBloodVolume(actor);
             volume.setActive(true);
             volume.setBloodVolume(1000);
             effigy.setSelectedScarIds(List.of(heart));
@@ -782,12 +781,12 @@ public final class ClinicalBloodProgressionGameTests {
                 h.getLevel().dimension().location().toString());
         try {
             HemoJourneyFixtures.prepareCardinalRite(actor, origin, "illuminatus_rite");
-            var blood = HemoCapabilityAccess.requireBloodVolume(actor);
+            var blood = HemoCapabilityAccess.getBloodVolume(actor);
             blood.setActive(true);
             blood.setBloodVolume(2000);
             var staff = actor.getMainHandItem();
             var id = Hemomancy.rloc("scar_heart");
-            HemoCapabilityAccess.requireScarState(actor).addKnownCerebralScar(id);
+            HemoCapabilityAccess.getScarState(actor).addKnownCerebralScar(id);
             var gift = com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern.createPreparedPattern(List.of(id));
             com.vincenthuto.hemomancy.common.rite.ScarBrazierRite.burn(h.getLevel(), effigyPos, actor, gift,
                     com.vincenthuto.hemomancy.common.rite.ScarBrazierInteractionRules.Burn.COMMIT);
@@ -836,7 +835,7 @@ public final class ClinicalBloodProgressionGameTests {
                 h.getLevel().dimension().location().toString());
         try {
             HemoJourneyFixtures.prepareCardinalRite(actor, origin, "chamber_of_will");
-            HemoCapabilityAccess.requireBloodVolume(actor).setActive(true);
+            HemoCapabilityAccess.getBloodVolume(actor).setActive(true);
             var recipe = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getRiteByLocation(
                     h.getLevel(), Hemomancy.rloc("cardinal_rite/chamber_of_will"));
             h.assertTrue(recipe.getCeremony().requiredHelpers() == 0,
@@ -853,7 +852,7 @@ public final class ClinicalBloodProgressionGameTests {
                     && saved.getRite(actor.getUUID()) == null && actor.getMainHandItem() == staff
                     && !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isAttuned(actor),
                     "D5 must not start the independent D6 rite, lose its Staff, or gain attunement");
-            HemoCapabilityAccess.requireInitiatoryDegree(actor).setDegreeNumber(6);
+            HemoCapabilityAccess.getInitiatoryDegree(actor).setDegreeNumber(6);
             var started = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
                     .tryStartCardinalRite(actor, origin.above(),
                             com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
@@ -887,17 +886,17 @@ public final class ClinicalBloodProgressionGameTests {
     }
 
     private static void prepareSharedSelection(ServerPlayer player, BloodManipulation noetic) {
-        var known = HemoCapabilityAccess.requireKnownManipulations(player);
+        var known = HemoCapabilityAccess.getKnownManipulations(player);
         known.getKnownManips().put(ManipulationInit.blood_shot.get(), new ManipLevel(4, 185));
         known.getKnownManips().put(noetic, new ManipLevel(4, 185));
         known.setEquippedManipNames(List.of(noetic.getName(),
                 MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS).storageKey()));
         known.setSelectedManip(noetic);
-        player.getData(HemoAttachmentTypes.MUSCLE_MEMORY).learnAndAddReserve(MuscleMemory.LABORING_ARMS, 6000);
-        var blood = HemoCapabilityAccess.requireBloodVolume(player);
+        HemoCapabilityAccess.muscleMemory(player).learnAndAddReserve(MuscleMemory.LABORING_ARMS, 6000);
+        var blood = HemoCapabilityAccess.getBloodVolume(player);
         blood.setActive(true);
         blood.setBloodVolume(2000);
-        HemoCapabilityAccess.requireBloodTendency(player).setTendencyAlignment(noetic.getTend(), 100);
+        HemoCapabilityAccess.getBloodTendency(player).setTendencyAlignment(noetic.getTend(), 100);
     }
 
     private static void cleanupSharedSelection(ServerPlayer player) {
@@ -925,7 +924,7 @@ public final class ClinicalBloodProgressionGameTests {
             HemoJourneyFixtures.prepareCardinalRite(actor, origin, "rooted_vein");
             actor.setPos(focusPos.getCenter().add(0, 1, 2));
             var staff = actor.getMainHandItem();
-            var blood = HemoCapabilityAccess.requireBloodVolume(actor);
+            var blood = HemoCapabilityAccess.getBloodVolume(actor);
             blood.setBloodVolume(1000);
             blood.setActive(false);
             var result = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
@@ -937,14 +936,14 @@ public final class ClinicalBloodProgressionGameTests {
             h.assertTrue(actor.getMainHandItem() == staff && blood.getBloodVolume() == 1000,
                     "Rejected inactive start escrowed the Staff or spent blood");
             blood.setActive(true);
-            HemoCapabilityAccess.requireInitiatoryDegree(actor).setDegreeNumber(1);
+            HemoCapabilityAccess.getInitiatoryDegree(actor).setDegreeNumber(1);
             var tooEarly = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
                     .tryStartCardinalRite(actor, focusPos,
                             com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
             h.assertTrue(tooEarly != com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
                             && saved.getRite(actor.getUUID()) == null && actor.getMainHandItem() == staff,
                     "D1 Staff ownership bypassed Rooted Vein's D2 gate");
-            HemoCapabilityAccess.requireInitiatoryDegree(actor).setDegreeNumber(2);
+            HemoCapabilityAccess.getInitiatoryDegree(actor).setDegreeNumber(2);
             var retry = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
                     .tryStartCardinalRite(actor, focusPos,
                             com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
@@ -1082,7 +1081,7 @@ public final class ClinicalBloodProgressionGameTests {
                 crafting.add(actor.inventoryMenu.getSlot(slot).getItem().saveOptional(actor.registryAccess()));
             var origin = actor.position();
             var equipment = (com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentContainer)
-                    HemoCapabilityAccess.requireEquipment(actor);
+                    HemoCapabilityAccess.getEquipment(actor);
             var gourd = mode == ChamberVisitMode.GUIDED ? new ItemStack(ItemInit.blood_gourd_red.get()) : ItemStack.EMPTY;
             if (mode == ChamberVisitMode.GUIDED) {
                 gourd.set(DataComponents.CUSTOM_NAME, Component.literal("Guided entry reserve"));
@@ -1093,7 +1092,7 @@ public final class ClinicalBloodProgressionGameTests {
             boolean equipmentEventsBlocked = equipment.isEventBlocked();
 
             if (mode == ChamberVisitMode.GUIDED) {
-                HemoCapabilityAccess.requireBloodVolume(actor).setActive(true);
+                HemoCapabilityAccess.getBloodVolume(actor).setActive(true);
                 h.assertTrue(com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.beginGuidedVisit(actor),
                         "Eligible guided fixture did not begin its visit");
             } else {
@@ -1214,7 +1213,7 @@ public final class ClinicalBloodProgressionGameTests {
     }
 
     private static void prepareLoadedPendingGifts(GameTestHelper h, ServerPlayer actor, ChamberVisitMode mode) {
-        HemoCapabilityAccess.requireBloodVolume(actor).setActive(true);
+        HemoCapabilityAccess.getBloodVolume(actor).setActive(true);
         var alchemist = EntityInit.harbinger_alchemist.get().create(h.getLevel());
         alchemist.setPos(actor.position());
         try {
@@ -1225,7 +1224,7 @@ public final class ClinicalBloodProgressionGameTests {
             HarbingerAdvancementGranter.grantIfNotDone(actor, HarbingerAdvancementGranter.ADV_FIRST_SEPARATION_STARTED);
             HarbingerAdvancementGranter.grantIfNotDone(actor, HarbingerAdvancementGranter.ADV_FIRST_SEPARATION_COMPLETE);
             h.assertTrue(FirstSeparationAssignment.claimRewards(actor), "Loaded fixture must record its supplied tool claim");
-            HemoCapabilityAccess.requireInitiatoryDegree(actor).setQliphothCommunionDone(true);
+            HemoCapabilityAccess.getInitiatoryDegree(actor).setQliphothCommunionDone(true);
             actor.getPersistentData().putBoolean("hemomancy:vesper_memory_pending", true);
             var persisted = actor.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
             persisted.putBoolean("hemomancy:mycophant_tendril_pending", true);
@@ -1390,7 +1389,7 @@ public final class ClinicalBloodProgressionGameTests {
         var actor = player(h, 3);
         try {
             fillObservationalDropInventory(actor, new ItemStack(Items.IRON_SWORD), "GUIDED");
-            var blood = HemoCapabilityAccess.requireBloodVolume(actor);
+            var blood = HemoCapabilityAccess.getBloodVolume(actor);
             blood.setActive(true);
             blood.setBloodVolume(1000);
             var before = actor.getInventory().save(new net.minecraft.nbt.ListTag());
@@ -1514,8 +1513,8 @@ public final class ClinicalBloodProgressionGameTests {
         var actor = player(h, 3);
         try {
             fillObservationalDropInventory(actor, new ItemStack(ItemInit.living_staff.get()), "GUIDED");
-            HemoCapabilityAccess.requireBloodVolume(actor).setActive(true);
-            HemoCapabilityAccess.requireBloodVolume(actor).setBloodVolume(1000);
+            HemoCapabilityAccess.getBloodVolume(actor).setActive(true);
+            HemoCapabilityAccess.getBloodVolume(actor).setBloodVolume(1000);
             h.assertTrue(LivingStaffWeaponFormHelper.applySelection(actor, ManipulationInit.conjure_claws.get())
                             && actor.getOffhandItem().is(ItemInit.living_baghnakh.get()),
                     "Fixture did not form paired claws from its Staff");
@@ -1565,7 +1564,7 @@ public final class ClinicalBloodProgressionGameTests {
         try {
             HemoJourneyFixtures.prepareCardinalRite(actor, origin, recipePath);
             actor.setPos(center.getCenter().add(0, 0.5, 2));
-            var blood = HemoCapabilityAccess.requireBloodVolume(actor);
+            var blood = HemoCapabilityAccess.getBloodVolume(actor);
             blood.setActive(true);
             blood.setBloodVolume(1000);
             var staff = actor.getMainHandItem();
@@ -1576,7 +1575,7 @@ public final class ClinicalBloodProgressionGameTests {
                             && saved.getRite(actor.getUUID()) == null && actor.getMainHandItem() == staff
                             && blood.getBloodVolume() == 1000,
                     "An earlier-degree Staff owner started " + recipePath + " or lost blood/escrow");
-            HemoCapabilityAccess.requireInitiatoryDegree(actor).setDegreeNumber(requiredDegree);
+            HemoCapabilityAccess.getInitiatoryDegree(actor).setDegreeNumber(requiredDegree);
             attempt = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
                     .tryStartCardinalRite(actor, center, trigger);
             h.assertTrue(attempt == com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
@@ -1598,8 +1597,8 @@ public final class ClinicalBloodProgressionGameTests {
         var pos = h.absolutePos(new BlockPos(4, 3, 4));
         h.getLevel().setBlockAndUpdate(pos, BlockInit.ghastly_alembic.get().defaultBlockState());
         var alembic = (com.vincenthuto.hemomancy.common.tile.harbinger.crafting.GhastlyAlembicBlockEntity) h.getLevel().getBlockEntity(pos);
-        var playerBlood = HemoCapabilityAccess.requireBloodVolume(actor);
-        var equipment = HemoCapabilityAccess.requireEquipment(actor);
+        var playerBlood = HemoCapabilityAccess.getBloodVolume(actor);
+        var equipment = HemoCapabilityAccess.getEquipment(actor);
         try {
             for (Item item : List.of(ItemInit.blood_gourd_white.get(), ItemInit.blood_gourd_red.get(),
                     ItemInit.blood_gourd_black.get(), ItemInit.curved_horn.get())) {
@@ -1647,7 +1646,7 @@ public final class ClinicalBloodProgressionGameTests {
                 gourdItem.onWornTick(actor);
                 h.assertTrue(playerBlood.getBloodVolume() == 1000 + rate, "Equipped toggle did not open the gourd");
                 var restored = new com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.HarbingerEquipmentContainer();
-                restored.deserializeNBT(actor.registryAccess(), actor.getData(HemoAttachmentTypes.HARBINGER_EQUIPMENT)
+                restored.deserializeNBT(actor.registryAccess(), HemoCapabilityAccess.getEquipment(actor)
                         .serializeNBT(actor.registryAccess()));
                 h.assertTrue(ItemStack.isSameItemSameComponents(restored.getStackInSlot(6), equipment.getStackInSlot(6)),
                         "Equipment serialization changed gourd reserve, cork state, or name");
@@ -1725,7 +1724,7 @@ public final class ClinicalBloodProgressionGameTests {
         try {
             HemoJourneyFixtures.prepareCardinalRite(actor, origin, "rooted_vein");
             actor.setPos(center.getCenter().add(0, 1, 2));
-            HemoCapabilityAccess.requireBloodVolume(actor).setActive(true);
+            HemoCapabilityAccess.getBloodVolume(actor).setActive(true);
             var staff = actor.getMainHandItem();
             h.getLevel().setBlock(center.above(), Blocks.CHEST.defaultBlockState(), 3);
             var chest = (net.minecraft.world.level.block.entity.ChestBlockEntity) h.getLevel().getBlockEntity(center.above());
@@ -1802,7 +1801,7 @@ public final class ClinicalBloodProgressionGameTests {
         actor.getMainHandItem().set(DataComponents.CUSTOM_NAME,
                 net.minecraft.network.chat.Component.literal("Illuminatus ceremony Staff"));
         var staff = actor.getMainHandItem().copy();
-        var blood = HemoCapabilityAccess.requireBloodVolume(actor);
+        var blood = HemoCapabilityAccess.getBloodVolume(actor);
         blood.setActive(true);
         blood.setBloodVolume(2000);
         var recipe = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getRiteByLocation(
@@ -2013,7 +2012,7 @@ public final class ClinicalBloodProgressionGameTests {
                                 "Rooted Vein anchor did not receive exactly 50 mL");
                     }
                     h.assertTrue(fixture.rite().getPhase() == CardinalRitePhase.INSCRIPTION
-                                    && HemoCapabilityAccess.requireBloodVolume(fixture.actor()).getBloodVolume() == 800,
+                                    && HemoCapabilityAccess.getBloodVolume(fixture.actor()).getBloodVolume() == 800,
                             "Four Rooted Vein anchors did not spend exactly 200 mL before inscription");
                 })
                 .thenWaitUntil(() -> h.assertTrue(HumanitySpriteEntity.findBoundToRite(h.getLevel(),
@@ -2034,7 +2033,7 @@ public final class ClinicalBloodProgressionGameTests {
                         && fixture.actor().getInventory().items.stream().anyMatch(stack ->
                                 ItemStack.isSameItemSameComponents(stack, fixture.staff())),
                 "Rooted Vein did not return exactly one original Staff with its components");
-        h.assertTrue(HemoCapabilityAccess.requireBloodVolume(fixture.actor()).getBloodVolume() == 800,
+        h.assertTrue(HemoCapabilityAccess.getBloodVolume(fixture.actor()).getBloodVolume() == 800,
                 "Rooted Vein refunded anchor blood or charged an extra completion cost");
     }
 
@@ -2047,7 +2046,7 @@ public final class ClinicalBloodProgressionGameTests {
         actor.setPos(center.getCenter().add(0, 0.5, 2));
         actor.getMainHandItem().set(DataComponents.CUSTOM_NAME, net.minecraft.network.chat.Component.literal("Rooted Vein test Staff"));
         var staff = actor.getMainHandItem().copy();
-        var blood = HemoCapabilityAccess.requireBloodVolume(actor);
+        var blood = HemoCapabilityAccess.getBloodVolume(actor);
         blood.setActive(true);
         blood.setBloodVolume(1000);
         setServerPlayerLookup(actor, true);
@@ -2095,7 +2094,7 @@ public final class ClinicalBloodProgressionGameTests {
     private static void verifyStaffUtilitySelection(GameTestHelper h, BloodManipulation utility) {
         var p = player(h, 2);
         try {
-            var known = HemoCapabilityAccess.requireKnownManipulations(p);
+            var known = HemoCapabilityAccess.getKnownManipulations(p);
             known.getKnownManips().put(utility, new ManipLevel(0, 0));
             known.setSelectedManip(utility);
             var staff = new ItemStack(ItemInit.living_staff.get());
@@ -2124,12 +2123,12 @@ public final class ClinicalBloodProgressionGameTests {
         var p = player(h, 5);
         try {
             prepareSharedSelection(p, ManipulationInit.sanguine_ward.get());
-            var known = HemoCapabilityAccess.requireKnownManipulations(p);
+            var known = HemoCapabilityAccess.getKnownManipulations(p);
             known.setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS));
             ManipulationChannelManager.start(p);
             h.assertTrue(!ManipulationChannelManager.isChanneling(p.getUUID()),
                     "Thelemic selection started the previously selected Noetic channel");
-            h.assertTrue(HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume() == 2000,
+            h.assertTrue(HemoCapabilityAccess.getBloodVolume(p).getBloodVolume() == 2000,
                     "Rejected stale channel spent blood");
             h.succeed();
         } finally { cleanupSharedSelection(p); }
@@ -2141,13 +2140,13 @@ public final class ClinicalBloodProgressionGameTests {
             prepareSharedSelection(p, ManipulationInit.sanguine_ward.get());
             ManipulationChannelManager.start(p);
             h.assertTrue(ManipulationChannelManager.isChanneling(p.getUUID()), "Noetic channel fixture did not start");
-            double blood = HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume();
-            HemoCapabilityAccess.requireKnownManipulations(p)
+            double blood = HemoCapabilityAccess.getBloodVolume(p).getBloodVolume();
+            HemoCapabilityAccess.getKnownManipulations(p)
                     .setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS));
             ManipulationChannelManager.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(p));
             h.assertTrue(!ManipulationChannelManager.isChanneling(p.getUUID()),
                     "Switching to a Thelemic memory retained the hidden Noetic channel");
-            h.assertTrue(HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume() == blood,
+            h.assertTrue(HemoCapabilityAccess.getBloodVolume(p).getBloodVolume() == blood,
                     "Selection interruption spent another channel pulse");
             h.succeed();
         } finally { cleanupSharedSelection(p); }
@@ -2161,7 +2160,7 @@ public final class ClinicalBloodProgressionGameTests {
             CastingAnimationManager.charge(p, mortar.getName(), 4);
             h.assertTrue(CastingAnimationManager.current(p) != null, "Charged presentation fixture did not start");
             CastingAnimationManager.charge(p, mortar.getName(), 0);
-            HemoCapabilityAccess.requireKnownManipulations(p)
+            HemoCapabilityAccess.getKnownManipulations(p)
                     .setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS));
             CastingAnimationManager.charge(p, mortar.getName(), 4);
             h.assertTrue(!CastingAnimationManager.current(p).phase().sustained(),
@@ -2177,7 +2176,7 @@ public final class ClinicalBloodProgressionGameTests {
             prepareSharedSelection(p, mortar);
             CastingAnimationManager.charge(p, mortar.getName(), 4);
             h.assertTrue(CastingAnimationManager.current(p) != null, "Active charge fixture did not start");
-            HemoCapabilityAccess.requireKnownManipulations(p)
+            HemoCapabilityAccess.getKnownManipulations(p)
                     .setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS));
             CastingAnimationManager.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(p));
             h.assertTrue(!CastingAnimationManager.current(p).phase().sustained(),
@@ -2196,18 +2195,18 @@ public final class ClinicalBloodProgressionGameTests {
             var p = player(h, 5);
             try {
                 prepareSharedSelection(p, noetic);
-                HemoCapabilityAccess.requireKnownManipulations(p)
+                HemoCapabilityAccess.getKnownManipulations(p)
                         .setSelectedMemoryRef(MemorySlotRef.muscleMemory(MuscleMemory.LABORING_ARMS));
                 var context = new net.neoforged.neoforge.network.handling.ServerPayloadContext(
                         p.connection, UseManipKeyPacket.TYPE.id());
-                var state = p.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
+                var state = HemoCapabilityAccess.muscleMemory(p);
                 UseManipKeyPacket.handle(new UseManipKeyPacket(), context);
                 h.assertTrue(state.isEnabled(MuscleMemory.LABORING_ARMS), "Use did not activate the selected Thelemic memory");
                 UseManipKeyPacket.handle(new UseManipKeyPacket(), context);
                 h.assertTrue(!state.isEnabled(MuscleMemory.LABORING_ARMS), "Second use did not deactivate the memory");
                 h.assertTrue(state.reserveTicks(MuscleMemory.LABORING_ARMS) == 6000,
                         "Selection toggle spent reserve without a running tick");
-                h.assertTrue(HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume() == 2000,
+                h.assertTrue(HemoCapabilityAccess.getBloodVolume(p).getBloodVolume() == 2000,
                         "Thelemic use cast the previous Noetic");
             } finally { cleanupSharedSelection(p); }
         }
@@ -2280,7 +2279,7 @@ public final class ClinicalBloodProgressionGameTests {
                     "The journey skips Blood Absorption and Venous Stone before the Vicar return");
             FirstBloodcraftAssignment.recordFormation(actor);
             FirstBloodcraftAssignment.recordStructure(actor, new ItemStack(ItemInit.liber_sanguinum.get()));
-            var blood = HemoCapabilityAccess.requireBloodVolume(actor);
+            var blood = HemoCapabilityAccess.getBloodVolume(actor);
             blood.setActive(true);
             blood.setBloodVolume(4600.0D);
             HemoJourneyFixtures.prepare(actor, proofStage.orElseThrow(), origin);
@@ -2293,10 +2292,10 @@ public final class ClinicalBloodProgressionGameTests {
             HemoJourneyFixtures.prepare(actor, HemoJourneyStage.VICAR_REWARD, origin);
             actor.setPos(origin.getX() + 1.5D, origin.getY() + 1.0D, origin.getZ() + 0.5D);
             HarbingerJourneyAutomation.perform(actor, HemoJourneyStage.VICAR_REWARD.id(), origin);
-            h.assertTrue(HemoCapabilityAccess.requireInitiatoryDegree(actor).getDegreeNumber() == 2
+            h.assertTrue(HemoCapabilityAccess.getInitiatoryDegree(actor).getDegreeNumber() == 2
                             && FirstBloodcraftAssignment.isClaimed(actor),
                     "The Vicar still refused a player with all four independent proofs: degree="
-                            + HemoCapabilityAccess.requireInitiatoryDegree(actor).getDegreeNumber()
+                            + HemoCapabilityAccess.getInitiatoryDegree(actor).getDegreeNumber()
                             + ", claimed=" + FirstBloodcraftAssignment.isClaimed(actor)
                             + ", check=" + HemoJourneyChecks.verify(actor, HemoJourneyStage.VICAR_REWARD, origin));
             h.assertTrue(HemoJourneyFixtures.captureExpectedOutputs(actor, HemoJourneyStage.VICAR_REWARD, origin),
@@ -2316,7 +2315,7 @@ public final class ClinicalBloodProgressionGameTests {
     @GameTest(template = "empty")
     public static void unboundPomesAreFoodButNotCommunionProof(GameTestHelper h) {
         var actor = player(h, 7);
-        var degree = HemoCapabilityAccess.requireInitiatoryDegree(actor);
+        var degree = HemoCapabilityAccess.getInitiatoryDegree(actor);
         try {
             for (int i = 0; i < 9; i++) {
                 ItemStack pome = new ItemStack(ItemInit.qliphoth_pome.get());
@@ -2337,7 +2336,7 @@ public final class ClinicalBloodProgressionGameTests {
     @GameTest(template = "empty")
     public static void ownedBoundPomesStillCompleteCommunion(GameTestHelper h) {
         var actor = player(h, 7);
-        var degree = HemoCapabilityAccess.requireInitiatoryDegree(actor);
+        var degree = HemoCapabilityAccess.getInitiatoryDegree(actor);
         var blooms = QliphothBloomSavedData.get(h.getLevel().getServer().overworld());
         var bloom = new QliphothBloomSavedData.BloomEntry(actor.getUUID(),
                 h.absolutePos(new BlockPos(2, 2, 2)), h.getLevel().dimension().location().toString(), 3,
@@ -2361,7 +2360,7 @@ public final class ClinicalBloodProgressionGameTests {
     @GameTest(template = "empty")
     public static void fullInventoryKeepsFungalSpineClaimPending(GameTestHelper h) {
         var actor = player(h, 7);
-        var degree = HemoCapabilityAccess.requireInitiatoryDegree(actor);
+        var degree = HemoCapabilityAccess.getInitiatoryDegree(actor);
         var blooms = QliphothBloomSavedData.get(h.getLevel().getServer().overworld());
         var bloom = new QliphothBloomSavedData.BloomEntry(actor.getUUID(),
                 h.absolutePos(new BlockPos(2, 2, 2)), h.getLevel().dimension().location().toString(), 3,
@@ -2384,8 +2383,7 @@ public final class ClinicalBloodProgressionGameTests {
                                     item -> item.getItem().is(ItemInit.fungal_spine.get())).isEmpty(),
                     "A full inventory must keep the Fungal Spine claim pending instead of dropping its only copy");
             var persisted = new com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegree();
-            persisted.deserializeNBT(actor.registryAccess(), actor.getData(
-                    com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes.INITIATORY_DEGREE)
+            persisted.deserializeNBT(actor.registryAccess(), HemoCapabilityAccess.getInitiatoryDegree(actor)
                     .serializeNBT(actor.registryAccess()));
             h.assertTrue(persisted.isQliphothCommunionDone() && !persisted.hasFungalSpineGranted(),
                     "The pending Spine claim did not survive degree serialization");
@@ -2413,7 +2411,7 @@ public final class ClinicalBloodProgressionGameTests {
     @GameTest(template = "empty")
     public static void qliphothAtlasTeachingFollowsArchonRevelation(GameTestHelper h) {
         var actor = player(h, 5);
-        var degree = HemoCapabilityAccess.requireInitiatoryDegree(actor);
+        var degree = HemoCapabilityAccess.getInitiatoryDegree(actor);
         var entries = com.vincenthuto.hemomancy.client.screen.skilltree.shared.MaterialsData.getBloodEntries();
         try {
             for (String id : new String[] {"qliphoth_seed", "qliphoth_bloom", "qliphoth_pome", "fungal_spine", "memory_of_vesper"}) {
@@ -2462,7 +2460,7 @@ public final class ClinicalBloodProgressionGameTests {
     @GameTest(template = "empty")
     public static void creativeFullInventoryKeepsFungalSpineClaimPending(GameTestHelper h) {
         var actor = player(h, 7);
-        var degree = HemoCapabilityAccess.requireInitiatoryDegree(actor);
+        var degree = HemoCapabilityAccess.getInitiatoryDegree(actor);
         try {
             degree.setQliphothCommunionDone(true);
             for (int slot = 0; slot < actor.getInventory().getContainerSize(); slot++)
@@ -2491,22 +2489,22 @@ public final class ClinicalBloodProgressionGameTests {
         var restored = player(h, 7, h.getLevel(), packet -> {}, actor.getGameProfile());
         var respawned = player(h, 7, h.getLevel(), packet -> {}, actor.getGameProfile());
         try {
-            HemoCapabilityAccess.requireInitiatoryDegree(actor).setQliphothCommunionDone(true);
+            HemoCapabilityAccess.getInitiatoryDegree(actor).setQliphothCommunionDone(true);
             restored.load(actor.saveWithoutId(new CompoundTag()));
             restored.setHealth(0);
             restored.tickCount = 20;
             QliphothBloomEvents.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(restored));
-            h.assertTrue(!HemoCapabilityAccess.requireInitiatoryDegree(restored).hasFungalSpineGranted()
+            h.assertTrue(!HemoCapabilityAccess.getInitiatoryDegree(restored).hasFungalSpineGranted()
                             && restored.getInventory().countItem(ItemInit.fungal_spine.get()) == 0,
                     "Dead-player retries must not consume the pending first Spine before respawn");
             respawned.restoreFrom(restored, false);
-            h.assertTrue(HemoCapabilityAccess.requireInitiatoryDegree(respawned).isQliphothCommunionDone()
-                            && !HemoCapabilityAccess.requireInitiatoryDegree(respawned).hasFungalSpineGranted(),
+            h.assertTrue(HemoCapabilityAccess.getInitiatoryDegree(respawned).isQliphothCommunionDone()
+                            && !HemoCapabilityAccess.getInitiatoryDegree(respawned).hasFungalSpineGranted(),
                     "Serialization and death cloning must preserve the pending Communion Spine");
             InitiatoryDegreeEvents.playerLoggedIn(new PlayerEvent.PlayerLoggedInEvent(respawned));
             respawned.tickCount = 20;
             QliphothBloomEvents.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(respawned));
-            h.assertTrue(HemoCapabilityAccess.requireInitiatoryDegree(respawned).hasFungalSpineGranted()
+            h.assertTrue(HemoCapabilityAccess.getInitiatoryDegree(respawned).hasFungalSpineGranted()
                             && respawned.getInventory().countItem(ItemInit.fungal_spine.get()) == 1,
                     "Respawn must receive the earned first Spine exactly once");
         } finally { respawned.discard(); restored.discard(); actor.discard(); }
@@ -2516,7 +2514,7 @@ public final class ClinicalBloodProgressionGameTests {
     @GameTest(template = "empty")
     public static void existingFungalSpineFulfillsLegacyClaimWithoutDuplicate(GameTestHelper h) {
         var actor = player(h, 7);
-        var degree = HemoCapabilityAccess.requireInitiatoryDegree(actor);
+        var degree = HemoCapabilityAccess.getInitiatoryDegree(actor);
         try {
             degree.setQliphothCommunionDone(true);
             actor.getInventory().setItem(0, new ItemStack(ItemInit.fungal_spine.get()));
@@ -2559,7 +2557,7 @@ public final class ClinicalBloodProgressionGameTests {
                             && QliphothPomeItem.isBoundPomeFromBloom(actor.getInventory().getItem(0), bloom),
                     "The interrupted journey must begin with its first pome already picked");
             HarbingerJourneyAutomation.perform(actor, HemoJourneyStage.QLIPHOTH_COMMUNION.id(), center);
-            var degree = HemoCapabilityAccess.requireInitiatoryDegree(actor);
+            var degree = HemoCapabilityAccess.getInitiatoryDegree(actor);
             h.assertTrue(degree.isQliphothCommunionDone()
                             && degree.getPomesConsumedFromBloom(bloom.bloomId(), bloom.center().asLong()) == 9
                             && blooms.getPomesDropped(bloom) == 9 && !blooms.hasPendingPome(bloom),
@@ -2607,11 +2605,11 @@ public final class ClinicalBloodProgressionGameTests {
                         "A claimed husk could be picked twice");
                 pome.getItem().finishUsingItem(pome, h.getLevel(), owner);
                 h.assertTrue(!blooms.hasPendingPome(bloom)
-                                && HemoCapabilityAccess.requireInitiatoryDegree(owner)
+                                && HemoCapabilityAccess.getInitiatoryDegree(owner)
                                         .getPomesConsumedFromBloom(bloom.bloomId(), root.asLong()) == husk + 1,
                         "Eating the picked husk did not release the tree for the next fruit");
             }
-            var degree = HemoCapabilityAccess.requireInitiatoryDegree(owner);
+            var degree = HemoCapabilityAccess.getInitiatoryDegree(owner);
             h.assertTrue(degree.isQliphothCommunionDone() && degree.hasFungalSpineGranted()
                             && owner.getInventory().countItem(ItemInit.fungal_spine.get()) == 1,
                     "Nine picked and eaten pomes did not complete Communion");
@@ -2636,7 +2634,7 @@ public final class ClinicalBloodProgressionGameTests {
             var root = origin.above();
             var bloom = blooms.getBloomAt(root, h.getLevel().dimension().location().toString());
             HarbingerJourneyAutomation.perform(owner, HemoJourneyStage.QLIPHOTH_COMMUNION.id(), origin);
-            var degree = HemoCapabilityAccess.requireInitiatoryDegree(owner);
+            var degree = HemoCapabilityAccess.getInitiatoryDegree(owner);
             h.assertTrue(bloom != null && degree.isQliphothCommunionDone()
                             && degree.hasFungalSpineGranted()
                             && owner.getInventory().countItem(ItemInit.fungal_spine.get()) == 1,
@@ -2770,7 +2768,7 @@ public final class ClinicalBloodProgressionGameTests {
                             && blooms.getBloomById(bloom.bloomId()) != null
                             && h.getLevel().getBlockState(bloom.center()).is(BlockInit.qliphoth_bloom.get()),
                     "The Silent branch must retain its owned Bloom for the refusal ordeal: " + next.message());
-            var known = HemoCapabilityAccess.requireKnownManipulations(actor);
+            var known = HemoCapabilityAccess.getKnownManipulations(actor);
             h.assertTrue(known.isManipulationAvailable(ManipulationInit.conjure_blade.get())
                             && known.getEquippedManipNames().contains(ManipulationInit.conjure_blade.get().getName()),
                     "The refusal fixture must leave a selectable Living Arsenal weapon form");
@@ -2778,7 +2776,7 @@ public final class ClinicalBloodProgressionGameTests {
                     "The open refusal stage must not pass before Vesper victory");
             blooms.severBloom(bloom);
             blooms.sealBloom(bloom);
-            HemoCapabilityAccess.requireInitiatoryDegree(actor).setArchonPath(
+            HemoCapabilityAccess.getInitiatoryDegree(actor).setArchonPath(
                     com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.SILENT_ARCHON);
             HarbingerAdvancementGranter.grantIfNotDone(actor, HarbingerAdvancementGranter.ADV_VESPER_DEFEATED);
             actor.getPersistentData().putBoolean("hemomancy:vesper_memory_pending", true);
@@ -2790,7 +2788,7 @@ public final class ClinicalBloodProgressionGameTests {
                             && !HarbingerAdvancementGranter.hasAdvancement(actor,
                                     HarbingerAdvancementGranter.ADV_VESPER_DEFEATED)
                             && !actor.getPersistentData().contains("hemomancy:vesper_memory_pending")
-                            && HemoCapabilityAccess.requireInitiatoryDegree(actor).getArchonPath()
+                            && HemoCapabilityAccess.getInitiatoryDegree(actor).getArchonPath()
                                     == com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.NONE
                             && blooms.getBloomById(bloom.bloomId()) == null,
                     "Journey restore kept a temporary Silent victory or its fixture Bloom");
@@ -2804,7 +2802,7 @@ public final class ClinicalBloodProgressionGameTests {
     @GameTest(template = "empty")
     public static void oldSickleCannotSeverReplacementBloom(GameTestHelper h) {
         var actor = player(h, 7);
-        var degree = HemoCapabilityAccess.requireInitiatoryDegree(actor);
+        var degree = HemoCapabilityAccess.getInitiatoryDegree(actor);
         degree.setArchonPath(com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.SILENT_PENDING);
         degree.setQliphothCommunionDone(true);
         degree.syncTotalPomesConsumed(9);
@@ -2847,7 +2845,7 @@ public final class ClinicalBloodProgressionGameTests {
     @GameTest(template = "empty")
     public static void legacySickleCanSeverMigratedBloom(GameTestHelper h) {
         var actor = player(h, 7);
-        var degree = HemoCapabilityAccess.requireInitiatoryDegree(actor);
+        var degree = HemoCapabilityAccess.getInitiatoryDegree(actor);
         degree.setArchonPath(com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.SILENT_PENDING);
         degree.setQliphothCommunionDone(true);
         degree.syncTotalPomesConsumed(9);
@@ -2882,7 +2880,7 @@ public final class ClinicalBloodProgressionGameTests {
     public static void refusalPortalRemainsRetryableWithoutChamber(GameTestHelper h) {
         var owner = player(h, 7);
         var stranger = player(h, 7);
-        var degree = HemoCapabilityAccess.requireInitiatoryDegree(owner);
+        var degree = HemoCapabilityAccess.getInitiatoryDegree(owner);
         degree.setArchonPath(com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.SILENT_PENDING);
         degree.setQliphothCommunionDone(true);
         degree.syncTotalPomesConsumed(9);
@@ -2994,7 +2992,7 @@ public final class ClinicalBloodProgressionGameTests {
     @GameTest(template = "empty")
     public static void replacementBloomDoesNotInheritPickedPomeProgress(GameTestHelper h) {
         var actor = player(h, 7);
-        var degree = HemoCapabilityAccess.requireInitiatoryDegree(actor);
+        var degree = HemoCapabilityAccess.getInitiatoryDegree(actor);
         var blooms = QliphothBloomSavedData.get(h.getLevel().getServer().overworld());
         var original = new QliphothBloomSavedData.BloomEntry(actor.getUUID(),
                 h.absolutePos(new BlockPos(2, 2, 2)), h.getLevel().dimension().location().toString(), 3,
@@ -3165,7 +3163,7 @@ public final class ClinicalBloodProgressionGameTests {
             h.assertTrue(level.structureManager().getStructureWithPieceAt(actor.blockPosition(),
                     holder -> holder.is(com.vincenthuto.hemomancy.Hemomancy.rloc("circus_pavilion"))).isValid(),
                     "Supplied Circus structure reference must be visible to real observation");
-            HemoCapabilityAccess.getBloodVolume(actor).orElseThrow().setActive(false);
+            HemoCapabilityAccess.getBloodVolume(actor).setActive(false);
             actor.tickCount = com.vincenthuto.hemomancy.common.circus.CircusProgressRules.PASSIVE_POINT_TICKS;
             actor.setGameMode(GameType.SPECTATOR);
             com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.onPlayerTick(
@@ -3188,7 +3186,7 @@ public final class ClinicalBloodProgressionGameTests {
             }
             h.assertTrue(com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.hasDiscovered(actor)
                             && com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress.acclimation(actor) == 1
-                            && HemoCapabilityAccess.requireInitiatoryDegree(actor).getDegreeNumber() == 0,
+                            && HemoCapabilityAccess.getInitiatoryDegree(actor).getDegreeNumber() == 0,
                     "Living D0 inactive-blood discovery must remain valid without rank credit");
             actor.setGameMode(GameType.SPECTATOR);
             com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress.onPlayerTick(
@@ -3219,14 +3217,14 @@ public final class ClinicalBloodProgressionGameTests {
         setServerPlayerLookup(owner, true);
         manager.rememberReturnPoint(owner);
         try {
-            HemoCapabilityAccess.requireInitiatoryDegree(owner).setArchonPath(
+            HemoCapabilityAccess.getInitiatoryDegree(owner).setArchonPath(
                     com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.APOTHEOS);
             for (int slot = 0; slot < owner.getInventory().getContainerSize(); slot++)
                 owner.getInventory().setItem(slot, new ItemStack(Items.COBBLESTONE));
             owner.getPersistentData().putBoolean("hemomancy:mycophant_active", true);
             boss.setEncounterOwner(owner.getUUID());
             com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.completeVictory(boss);
-            h.assertTrue(HemoCapabilityAccess.requireInitiatoryDegree(owner).isMycophantDefeated()
+            h.assertTrue(HemoCapabilityAccess.getInitiatoryDegree(owner).isMycophantDefeated()
                             && !com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.isActive(owner),
                     "The first victory must finish even while its unique reward cannot fit");
             h.assertTrue(owner.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(pending)
@@ -3268,7 +3266,7 @@ public final class ClinicalBloodProgressionGameTests {
                     "A dead player's empty inventory must not consume the pending Tendril before respawn");
             respawned.restoreFrom(restored, false);
             h.assertTrue(respawned.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(pending)
-                            && HemoCapabilityAccess.requireInitiatoryDegree(respawned).isMycophantDefeated(),
+                            && HemoCapabilityAccess.getInitiatoryDegree(respawned).isMycophantDefeated(),
                     "Saved-data reload and death cloning lost the earned Tendril claim");
             com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onLogin(
                     new PlayerEvent.PlayerLoggedInEvent(respawned));
@@ -3306,7 +3304,7 @@ public final class ClinicalBloodProgressionGameTests {
     @GameTest(template = "empty")
     public static void staleVesperAttemptReleasesReplacedBloom(GameTestHelper h) {
         var owner = player(h, 7);
-        var degree = HemoCapabilityAccess.requireInitiatoryDegree(owner);
+        var degree = HemoCapabilityAccess.getInitiatoryDegree(owner);
         degree.setArchonPath(com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.SILENT_PENDING);
         var origin = HemoJourneyFixtures.findClearOrigin(owner);
         var dimension = h.getLevel().dimension().location().toString();
@@ -3393,7 +3391,7 @@ public final class ClinicalBloodProgressionGameTests {
         var line = new com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline(
                 "Bloom helper", actor.getUUID(), UUID.randomUUID(), new java.util.ArrayList<>());
         bloodlines.registerBloodline(line);
-        HemoCapabilityAccess.requireBloodVolume(actor).setBloodLine(line);
+        HemoCapabilityAccess.getBloodVolume(actor).setBloodLine(line);
         var rite = com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite.interactive(
                 actor.getUUID(), center, recipeId, 1200, 7, 7, false, 0);
         var role = com.vincenthuto.hemomancy.common.rite.CardinalRiteAllyRole.ANCHOR;
@@ -3465,7 +3463,7 @@ public final class ClinicalBloodProgressionGameTests {
     @GameTest(template = "empty")
     public static void blockedBloomSiteCannotStartItsCeremony(GameTestHelper h) {
         var actor = player(h, 7);
-        HemoCapabilityAccess.requireBloodVolume(actor).setActive(true);
+        HemoCapabilityAccess.getBloodVolume(actor).setActive(true);
         var level = h.getLevel();
         var origin = h.absolutePos(new BlockPos(14, 3, 14));
         var focusPos = origin.above();
@@ -3568,7 +3566,7 @@ public final class ClinicalBloodProgressionGameTests {
 
     @GameTest(template = "empty") public static void chickenVialsProvideD3BlankMemoryEnzymeRoute(GameTestHelper h) {
         var p = player(h, 2);
-        HemoCapabilityAccess.requireBloodVolume(p).setActive(true);
+        HemoCapabilityAccess.getBloodVolume(p).setActive(true);
         var chicken = net.minecraft.world.entity.EntityType.CHICKEN.create(h.getLevel());
         var vial = new ItemStack(ItemInit.bloody_vial.get());
         ItemInit.bloody_vial.get().onLeftClickEntity(vial, p, chicken);
@@ -3654,7 +3652,7 @@ public final class ClinicalBloodProgressionGameTests {
         h.assertTrue(loom.selectRecipe(p, Hemomancy.rloc("memory_weaving/memory_blood_shot"))
                         && loom.getResultItem().is(ItemInit.memory_blood_shot.get()),
                 "The supplied D3 materials cannot select the authored Blood Shot weave");
-        var blood = HemoCapabilityAccess.requireBloodVolume(p);
+        var blood = HemoCapabilityAccess.getBloodVolume(p);
         blood.setActive(true);
         blood.setBloodVolume(100);
         h.assertTrue(loom.startRitual(p) && loom.tryChargeRitualBlood(p, 50, true)
@@ -3681,7 +3679,7 @@ public final class ClinicalBloodProgressionGameTests {
                 feedback.add(message);
             }
         };
-        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(3);
+        HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(3);
         try {
             var pos = h.absolutePos(new BlockPos(4, 2, 4));
             h.getLevel().setBlockAndUpdate(pos, BlockInit.somatic_loom.get().defaultBlockState());
@@ -3691,7 +3689,7 @@ public final class ClinicalBloodProgressionGameTests {
             loom.addItem(p, new ItemStack(ItemInit.vivacious_enzyme.get()), null);
             h.assertTrue(loom.selectRecipe(p, Hemomancy.rloc("memory_weaving/memory_blood_shot")),
                     "Fixture must select Blood Shot before payment");
-            var blood = HemoCapabilityAccess.requireBloodVolume(p);
+            var blood = HemoCapabilityAccess.getBloodVolume(p);
             blood.setActive(true);
             blood.setBloodVolume(100);
             h.assertTrue(loom.tryChargeRitualBlood(p, 50, false) && loom.isWeaving(),
@@ -3757,7 +3755,7 @@ public final class ClinicalBloodProgressionGameTests {
         String lesson = HarbingerMnemonistDialogueTrees.EVENT_SCRIPTORIUM_LESSON;
         DialogueOptionPacket.dispatch(p, lesson, mnemonist.getId());
         h.assertTrue(!LiberKnowledgeHelper.hasEntry(p, entry), "D2 forged a D3 operation lesson");
-        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(3);
+        HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(3);
         h.assertTrue(DialogueOptionPacket.dispatch(p, lesson, alchemist.getId()) == null
                         && DialogueOptionPacket.dispatch(p, lesson, 0) == null,
                 "Wrong or absent teacher accepted the Mnemonist lesson");
@@ -3779,16 +3777,16 @@ public final class ClinicalBloodProgressionGameTests {
         h.assertTrue(d3.getNode("scriptorium") != null && d3.getNode("memory_practice") == null
                         && d3.getNode("distributor") == null,
                 "D3 station lessons are missing or later practice arrived early");
-        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(4);
+        HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(4);
         var d4 = mnemonist.progressionDialogue(p);
         h.assertTrue(d4.getNode("memory_practice") != null && d4.getNode("distributor") == null,
                 "D4 did not deepen memory selection or exposed the D5 Distributor");
-        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(5);
+        HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(5);
         var d5 = mnemonist.progressionDialogue(p);
         h.assertTrue(d5.getNode("distributor") != null
                         && d5.getNode("scriptorium").lines().contains("hemomancy.mnemonist.scriptorium.eightfold"),
                 "D5 did not teach named loadouts and the Eightfold Script");
-        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(7);
+        HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(7);
         h.assertTrue(mnemonist.progressionDialogue(p).getNode("scriptorium").lines()
                         .contains("hemomancy.mnemonist.scriptorium.palimpsest_lesson"),
                 "D7 did not name the Rite of the Palimpsest");
@@ -3814,14 +3812,14 @@ public final class ClinicalBloodProgressionGameTests {
         h.assertTrue(alchemist.progressionDialogue(p).getNode("thelemic_preparations").lines()
                         .contains("hemomancy.alchemist.preparations.complete"),
                 "An earlier tincture drink was not recognized at D3");
-        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(4);
+        HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(4);
         h.assertTrue(alchemist.progressionDialogue(p).getNode("station_upgrade_alembic_1") != null
                         && alchemist.progressionDialogue(p).getNode("station_upgrade_centrifuge_1") != null,
                 "D4 Alchemist station projects were not taught");
-        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(5);
+        HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(5);
         h.assertTrue(alchemist.progressionDialogue(p).getNode("station_upgrade_alembic_2") == null,
                 "D5 exposed the D6 Athanor early");
-        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(6);
+        HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(6);
         h.assertTrue(alchemist.progressionDialogue(p).getNode("station_upgrade_alembic_2") != null,
                 "D6 Athanor eligibility disappeared from the existing station progression");
         h.succeed();
@@ -3853,7 +3851,7 @@ public final class ClinicalBloodProgressionGameTests {
         var experienced = player(h, 2);
         var otherAlchemist = EntityInit.harbinger_alchemist.get().create(h.getLevel());
         otherAlchemist.setPos(experienced.position());
-        HemoCapabilityAccess.requireSpecimenBestiary(experienced).recordSpecimen(Hemomancy.rloc("chitinite"));
+        HemoCapabilityAccess.getSpecimenBestiary(experienced).recordSpecimen(Hemomancy.rloc("chitinite"));
         h.assertTrue(SpecimenJarLesson.teach(experienced, otherAlchemist), "Experienced player could not hear the lesson");
         h.assertTrue(jarCount(experienced) == 0, "Existing specimen researcher received duplicate starter jars");
         h.succeed();
@@ -3867,8 +3865,8 @@ public final class ClinicalBloodProgressionGameTests {
 
 	@GameTest(template = "empty") public static void firstDrawsCountsCollectedAnimalsAndCarriesSampleToD2(GameTestHelper h) {
 		var p = player(h, 1);
-		HemoCapabilityAccess.requireBloodVolume(p).setActive(true);
-		HemoCapabilityAccess.requireEquipment(p).setStackInSlot(5,
+		HemoCapabilityAccess.getBloodVolume(p).setActive(true);
+		HemoCapabilityAccess.getEquipment(p).setStackInSlot(5,
 				new ItemStack(ItemInit.charm_of_vascularium.get()));
 		var alchemist = EntityInit.harbinger_alchemist.get().create(h.getLevel());
 		alchemist.setPos(p.position());
@@ -3904,7 +3902,7 @@ public final class ClinicalBloodProgressionGameTests {
 		restored.getPersistentData().put(Player.PERSISTED_NBT_TAG,
 				p.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).copy());
 		h.assertTrue(FirstDrawsAssignment.progress(restored).complete(), "First Draws was lost after player data restore");
-		HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(2);
+		HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(2);
 		FirstSeparationAssignment.markBriefed(p);
 		h.assertTrue(FirstSeparationAssignment.hasSampleAcquired(p),
 				"The D1 sample in inventory was not recognized at D2 briefing");
@@ -3937,7 +3935,7 @@ public final class ClinicalBloodProgressionGameTests {
         var alchemist = EntityInit.harbinger_alchemist.get().create(h.getLevel());
         alchemist.setPos(actor.position());
         try {
-            HemoCapabilityAccess.requireBloodVolume(actor).setActive(true);
+            HemoCapabilityAccess.getBloodVolume(actor).setActive(true);
             for (int slot = 0; slot < actor.getInventory().getContainerSize(); slot++)
                 actor.getInventory().setItem(slot, new ItemStack(Items.COBBLESTONE, 64));
             List<ItemStack> expected = switch (gift) {
@@ -3959,7 +3957,7 @@ public final class ClinicalBloodProgressionGameTests {
                     yield FirstSeparationAssignment.rewardStacks();
                 }
                 case SPINE -> {
-                    HemoCapabilityAccess.requireInitiatoryDegree(actor).setQliphothCommunionDone(true);
+                    HemoCapabilityAccess.getInitiatoryDegree(actor).setQliphothCommunionDone(true);
                     yield List.of(new ItemStack(ItemInit.fungal_spine.get()));
                 }
                 case MEMORY, TENDRIL -> {
@@ -4032,7 +4030,7 @@ public final class ClinicalBloodProgressionGameTests {
             var alchemist = EntityInit.harbinger_alchemist.get().create(h.getLevel());
             alchemist.setPos(actor.position());
             h.getLevel().addFreshEntity(alchemist);
-            var unstained = HemoCapabilityAccess.getUnstainedProgress(actor).orElseThrow();
+            var unstained = HemoCapabilityAccess.getUnstainedProgress(actor);
             try {
                 if (clarity) unstained.setClarityUnlocked(true);
                 else unstained.setBegunPurification(true);
@@ -4209,7 +4207,7 @@ public final class ClinicalBloodProgressionGameTests {
         alchemist.setPos(actor.position());
         var area = actor.getBoundingBox().inflate(4);
         try {
-            HemoCapabilityAccess.requireBloodVolume(actor).setActive(true);
+            HemoCapabilityAccess.getBloodVolume(actor).setActive(true);
             for (int slot = 0; slot < actor.getInventory().getContainerSize(); slot++)
                 actor.getInventory().setItem(slot, new ItemStack(Items.COBBLESTONE, 64));
             if (creative) actor.setGameMode(GameType.CREATIVE);
@@ -4227,7 +4225,7 @@ public final class ClinicalBloodProgressionGameTests {
                     "Dead-player retries must not deliver supplies before death cloning");
             respawned.restoreFrom(restored, false);
             respawned.setHealth(20);
-            HemoCapabilityAccess.requireBloodVolume(respawned).setActive(true);
+            HemoCapabilityAccess.getBloodVolume(respawned).setActive(true);
             ClinicalBloodKnowledge.login(new PlayerEvent.PlayerLoggedInEvent(respawned));
             respawned.tickCount = 20;
             ClinicalBloodKnowledge.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(respawned));
@@ -4248,7 +4246,7 @@ public final class ClinicalBloodProgressionGameTests {
         alchemist.setPos(actor.position());
         var area = actor.getBoundingBox().inflate(4);
         try {
-            HemoCapabilityAccess.requireBloodVolume(actor).setActive(true);
+            HemoCapabilityAccess.getBloodVolume(actor).setActive(true);
             for (int slot = 0; slot < actor.getInventory().getContainerSize(); slot++)
                 actor.getInventory().setItem(slot, new ItemStack(Items.COBBLESTONE, 64));
             actor.getInventory().setItem(0, new ItemStack(ItemInit.bloody_vial.get(), 63));
@@ -4372,15 +4370,15 @@ public final class ClinicalBloodProgressionGameTests {
 
     @GameTest(template = "empty") public static void phlegethonticCommissionChecksBothSourcesAndFiveItems(GameTestHelper h) {
         var p = player(h, 5);
-        HemoCapabilityAccess.requireBloodVolume(p).setActive(true);
+        HemoCapabilityAccess.getBloodVolume(p).setActive(true);
         var alchemist = EntityInit.harbinger_alchemist.get().create(h.getLevel());
         alchemist.setNoAi(true); alchemist.setPos(p.position()); h.getLevel().addFreshEntity(alchemist);
         var vicar = EntityInit.harbinger_vicar.get().create(h.getLevel());
         vicar.setNoAi(true); vicar.setPos(p.position()); h.getLevel().addFreshEntity(vicar);
-        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(4);
+        HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(4);
         h.assertTrue(alchemist.progressionDialogue(p).getNode("phlegethontic_commission") == null,
                 "Degree 4 saw the formal Nether commission");
-        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(5);
+        HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(5);
         h.assertTrue(alchemist.progressionDialogue(p).getNode("phlegethontic_commission") != null,
                 "Degree 5 could not reach the Nether commission");
         var scyphus = BlockInit.escharian_scyphus.get().asItem();
@@ -4397,10 +4395,10 @@ public final class ClinicalBloodProgressionGameTests {
         p.setItemInHand(InteractionHand.MAIN_HAND, excoriated);
         h.assertTrue(PhlegethonticCommission.validSample(excoriated),
                 "A valid source-bearing Excoriated vial required unrelated microscope identification");
-        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(4);
+        HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(4);
         h.assertTrue(!PhlegethonticCommission.report(p, alchemist),
                 "Degree 4 completed a Degree 5 commission with otherwise valid proof");
-        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(5);
+        HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(5);
         p.getInventory().setItem(9, new ItemStack(scyphus, 4));
         h.setBlock(new BlockPos(3, 1, 3), Blocks.BLACKSTONE);
         h.setBlock(new BlockPos(3, 2, 3), BlockInit.escharian_scyphus.get().defaultBlockState()
@@ -4435,7 +4433,7 @@ public final class ClinicalBloodProgressionGameTests {
                 "Saved commission did not retain its completed ledger steps");
 
         var bombardier = player(h, 5);
-        HemoCapabilityAccess.requireBloodVolume(bombardier).setActive(true);
+        HemoCapabilityAccess.getBloodVolume(bombardier).setActive(true);
         var bombardierSample = vial("hemomancy:phlegethontic_bombardier");
         bombardier.setItemInHand(InteractionHand.MAIN_HAND, bombardierSample);
         bombardier.getInventory().add(new ItemStack(scyphus, 5));
@@ -4449,7 +4447,7 @@ public final class ClinicalBloodProgressionGameTests {
         h.assertTrue(end != null, "End is unavailable for the Vagrant Mind inquiry test");
         var p = player(h, 6, end);
         end.getChunkAt(p.blockPosition());
-        HemoCapabilityAccess.requireBloodVolume(p).setActive(true);
+        HemoCapabilityAccess.getBloodVolume(p).setActive(true);
         var mnemonist = EntityInit.harbinger_mnemonist.get().create(end);
         var alchemist = EntityInit.harbinger_alchemist.get().create(end);
         mnemonist.setPos(p.position()); alchemist.setPos(p.position());
@@ -4457,11 +4455,11 @@ public final class ClinicalBloodProgressionGameTests {
         com.vincenthuto.hemomancy.common.mission.shared.VagrantMindInquiry.observeMind(p);
         h.assertTrue(!com.vincenthuto.hemomancy.common.mission.shared.VagrantMindInquiry.progress(p)
                 .mindVisited(), "Being anywhere in the End counted as entering the Mind");
-        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(5);
+        HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(5);
         h.assertTrue(mnemonist.progressionDialogue(p).getNode("vagrant_memory_inquiry") == null
                         && alchemist.progressionDialogue(p).getNode("vagrant_biology_inquiry") == null,
                 "Degree 5 saw the Degree 6 Mind inquiries");
-        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(6);
+        HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(6);
         h.assertTrue(mnemonist.progressionDialogue(p).getNode("vagrant_memory_inquiry") != null,
                 "Mnemonist does not offer the D6 Mind inquiry");
         h.assertTrue(alchemist.progressionDialogue(p).getNode("vagrant_biology_inquiry") != null,
@@ -4512,7 +4510,7 @@ public final class ClinicalBloodProgressionGameTests {
 
     @GameTest(template = "empty") public static void silentArchonBonusWaitsForProvenVictory(GameTestHelper h) {
         var p = player(h, 7);
-        var degree = HemoCapabilityAccess.requireInitiatoryDegree(p);
+        var degree = HemoCapabilityAccess.getInitiatoryDegree(p);
         degree.setArchonPath(com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath.SILENT_PENDING);
         h.assertTrue(com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior.claimedWillBonusCap(p) == 0,
                 "Pending refusal received the Silent Archon summon cap");
@@ -4590,7 +4588,7 @@ public final class ClinicalBloodProgressionGameTests {
         var line = new com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline(
                 "Vigil helper", p.getUUID(), UUID.randomUUID(), new java.util.ArrayList<>());
         data.registerBloodline(line);
-        HemoCapabilityAccess.requireBloodVolume(p).setBloodLine(line);
+        HemoCapabilityAccess.getBloodVolume(p).setBloodLine(line);
         var recipeId = Hemomancy.rloc("cardinal_rite/covenant_vigil");
         var recipe = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe
                 .getRiteByLocation(h.getLevel(), recipeId);
@@ -4616,7 +4614,7 @@ public final class ClinicalBloodProgressionGameTests {
         var updated = data.addNpcMember(line.getBloodlineUUID(), npc.getUUID(),
                 net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(npc.getType()));
         h.assertTrue(updated != null, "Recruitment fixture failed");
-        HemoCapabilityAccess.requireBloodVolume(p).setBloodLine(updated);
+        HemoCapabilityAccess.getBloodVolume(p).setBloodLine(updated);
         h.assertTrue(h.getLevel().hasChunkAt(station), "Vigil station chunk was not loaded");
         h.assertTrue(h.getLevel().getBlockState(station.below()).isFaceSturdy(
                 h.getLevel(), station.below(), net.minecraft.core.Direction.UP),
@@ -4692,7 +4690,7 @@ public final class ClinicalBloodProgressionGameTests {
         var line = new com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline(
                 "Ledger summon", p.getUUID(), UUID.randomUUID(), new java.util.ArrayList<>());
         data.registerBloodline(line);
-        var volume = HemoCapabilityAccess.requireBloodVolume(p);
+        var volume = HemoCapabilityAccess.getBloodVolume(p);
         volume.setBloodLine(line);
         com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData.get(h.getLevel())
                 .consecrateHeart(p.getUUID(), p.blockPosition());
@@ -4857,7 +4855,7 @@ public final class ClinicalBloodProgressionGameTests {
         for (String source : new String[]{"minecraft:pig", "minecraft:cow", "minecraft:sheep"}) state.recordExamination(source);
         h.assertTrue(ClinicalBloodKnowledge.teach(p, alchemist, ECHO_REFERRAL), "D2 echo referral denied");
         h.assertTrue(!ClinicalBloodKnowledge.teach(p, mnemonist, CLAIRAUDIOGRAPH), "Formal study unlocked before D3");
-        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(3);
+        HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(3);
         h.assertTrue(!ClinicalBloodKnowledge.teach(p, alchemist, CLAIRAUDIOGRAPH), "Alchemist usurped mnemonic teaching");
         h.assertTrue(ClinicalBloodKnowledge.teach(p, mnemonist, CLAIRAUDIOGRAPH), "Qualified mnemonic lesson denied");
         h.assertTrue(p.getRecipeBook().contains(Hemomancy.rloc("wax_cylinder")), "Ordinary cylinder recipe missing");

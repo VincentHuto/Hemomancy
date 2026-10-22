@@ -47,8 +47,7 @@ public final class VeinMasonScarLesson {
 	}
 
 	public static boolean needsReplacement(Player player, Lesson lesson) {
-		boolean known = HemoCapabilityAccess.getScarState(player)
-				.map(scars -> scars.knowsCerebralScar(lesson.patternScarId())).orElse(false);
+		boolean known = HemoCapabilityAccess.getScarState(player).knowsCerebralScar(lesson.patternScarId());
 		if (known) return false;
 		for (ItemStack stack : player.getInventory().items) {
 			if (ItemScarPattern.getScarIds(stack).contains(lesson.patternScarId())) return false;
@@ -66,9 +65,7 @@ public final class VeinMasonScarLesson {
 		float bestValue = Float.NEGATIVE_INFINITY;
 		float secondValue = Float.NEGATIVE_INFINITY;
 		for (EnumBloodTendency candidate : EnumBloodTendency.values()) {
-			float value = HemoCapabilityAccess.getBloodTendency(player)
-					.map(tendency -> tendency.getAlignmentByTendency(candidate))
-					.orElse(0f);
+			float value = HemoCapabilityAccess.getBloodTendency(player).getAlignmentByTendency(candidate);
 			if (value > bestValue) {
 				second = best;
 				secondValue = bestValue;

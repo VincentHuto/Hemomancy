@@ -100,7 +100,7 @@ public final class ScriptoriumUseEvents {
                 ? ScriptoriumCurseRules.bloodCost(provenance.curse(), provenance.severity()) : 0;
         int bloodCost = curseCost + ScriptoriumBalance.useBloodCost(load);
         if (bloodCost <= 0 && load <= 0) return;
-        var blood = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+        var blood = HemoCapabilityAccess.getBloodVolume(player);
         boolean paid = bloodCost == 0 || blood != null && blood.getBloodVolume() >= bloodCost;
         if (paid && bloodCost > 0) {
             blood.drain(bloodCost);

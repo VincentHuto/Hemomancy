@@ -143,8 +143,8 @@ public final class ManipulationTargetingGameTests {
             for (var m : List.of(ManipulationInit.hematic_flare.get(), ManipulationInit.pyretic_forge.get(), ManipulationInit.hematic_rebuke.get(), ManipulationInit.hematic_impressment.get(), ManipulationInit.exsanguinate.get())) {
                 select(p, m);
                 h.assertTrue(!m.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), 0), "Invalid cast accepted: " + m.getName());
-                near(h, 2000, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Invalid cast spent blood");
-                near(h, 185, HemoCapabilityAccess.requireKnownManipulations(p).getKnownManips().get(m).getXp(), "Invalid cast earned mastery");
+                near(h, 2000, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Invalid cast spent blood");
+                near(h, 185, HemoCapabilityAccess.getKnownManipulations(p).getKnownManips().get(m).getXp(), "Invalid cast earned mastery");
 				h.assertTrue(m.getRemainingCooldownTicks(p) == 0L, "Invalid cast started cooldown");
             }
             h.succeed();
@@ -158,10 +158,10 @@ public final class ManipulationTargetingGameTests {
             try {
                 var m = ManipulationInit.blood_shot.get(); select(p, m);
                 double cost = ManipulationCostLedger.collect(p, m, 1).effectiveCost();
-                HemoCapabilityAccess.requireBloodVolume(p).setBloodVolume(cost + delta);
+                HemoCapabilityAccess.getBloodVolume(p).setBloodVolume(cost + delta);
                 boolean cast = m.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), m.getRequiredChargeTicks());
                 h.assertTrue(cast == (delta >= 0), "Incorrect exact-cost eligibility, delta=" + delta);
-                near(h, delta >= 0 ? delta : cost - 1, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Incorrect payment");
+                near(h, delta >= 0 ? delta : cost - 1, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Incorrect payment");
             } finally { p.discard(); }
         }
         h.succeed();
@@ -172,13 +172,13 @@ public final class ManipulationTargetingGameTests {
         ServerPlayer p = player(h);
         try {
             select(p, ManipulationInit.blackhearted.get());
-            HemoCapabilityAccess.requireKnownManipulations(p).togglePassive("blackhearted");
-            HemoCapabilityAccess.getBloodTendency(p).orElseThrow().setTendencyAlignment(EnumBloodTendency.MORTEM, 0);
+            HemoCapabilityAccess.getKnownManipulations(p).togglePassive("blackhearted");
+            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(EnumBloodTendency.MORTEM, 0);
             var damage = new LivingIncomingDamageEvent(p, new DamageContainer(p.damageSources().wither(), 4));
             BodyIdiomEvents.onIncomingDamage(damage);
             near(h, 4, damage.getAmount(), "Blackhearted ignored alignment");
-            HemoCapabilityAccess.getBloodTendency(p).orElseThrow().setTendencyAlignment(EnumBloodTendency.MORTEM, 100);
-            HemoCapabilityAccess.requireBloodVolume(p).setActive(false);
+            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(EnumBloodTendency.MORTEM, 100);
+            HemoCapabilityAccess.getBloodVolume(p).setActive(false);
             damage = new LivingIncomingDamageEvent(p, new DamageContainer(p.damageSources().wither(), 4));
             BodyIdiomEvents.onIncomingDamage(damage);
             near(h, 4, damage.getAmount(), "Blackhearted worked with inactive blood");
@@ -191,24 +191,24 @@ public final class ManipulationTargetingGameTests {
         ServerPlayer p = player(h);
         try {
             var phoenix = ManipulationInit.phoenix_debt.get(); select(p, phoenix);
-            HemoCapabilityAccess.requireKnownManipulations(p).togglePassive("phoenix_debt");
-            HemoCapabilityAccess.getBloodTendency(p).orElseThrow().setTendencyAlignment(EnumBloodTendency.FLAMMEUS, 0);
+            HemoCapabilityAccess.getKnownManipulations(p).togglePassive("phoenix_debt");
+            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(EnumBloodTendency.FLAMMEUS, 0);
             ManipulationReactiveEvents.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(p));
             h.assertTrue(!com.vincenthuto.hemomancy.common.event.LastRiteHelper.hasArmedSource(p), "Under-aligned Phoenix armed");
-            HemoCapabilityAccess.getBloodTendency(p).orElseThrow().setTendencyAlignment(EnumBloodTendency.FLAMMEUS, 100);
+            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(EnumBloodTendency.FLAMMEUS, 100);
             ManipulationReactiveEvents.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(p));
             double cost = ManipulationCostLedger.collect(p, phoenix, 1).effectiveCost();
-            HemoCapabilityAccess.requireBloodVolume(p).setBloodVolume(cost);
+            HemoCapabilityAccess.getBloodVolume(p).setBloodVolume(cost);
             p.setHealth(5);
             var damage = new LivingDamageEvent.Pre(p, new DamageContainer(p.damageSources().generic(), 30));
             ManipulationReactiveEvents.onFinalDamage(damage);
             near(h, 0, damage.getNewDamage(), "Phoenix failed valid lethal trigger");
-            near(h, 0, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Phoenix payment");
-            HemoCapabilityAccess.requireBloodVolume(p).setBloodVolume(cost);
+            near(h, 0, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Phoenix payment");
+            HemoCapabilityAccess.getBloodVolume(p).setBloodVolume(cost);
             damage = new LivingDamageEvent.Pre(p, new DamageContainer(p.damageSources().generic(), 30));
             ManipulationReactiveEvents.onFinalDamage(damage);
             near(h, 30, damage.getNewDamage(), "Phoenix fired twice");
-            near(h, cost, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Blocked Phoenix paid again");
+            near(h, cost, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Blocked Phoenix paid again");
             h.succeed();
         } finally { p.discard(); }
     }
@@ -220,7 +220,7 @@ public final class ManipulationTargetingGameTests {
         var mobs = new java.util.ArrayList<net.minecraft.world.entity.monster.Zombie>();
         try {
             select(p, ManipulationInit.sovereign_instinct.get());
-            HemoCapabilityAccess.requireKnownManipulations(p).togglePassive("sovereign_instinct");
+            HemoCapabilityAccess.getKnownManipulations(p).togglePassive("sovereign_instinct");
             for (int i=0; i<4; i++) {
                 var mob = EntityType.ZOMBIE.create(h.getLevel());
                 mob.setPos(p.position().add(i-2, 0, 2)); mob.setTarget(p);
@@ -270,9 +270,9 @@ public final class ManipulationTargetingGameTests {
             for (String name : List.of("umbral_step", "umbral_reversal")) {
                 var m = ManipulationInit.getByName(name); select(p, m);
                 h.assertTrue(!m.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), 0), "Unsafe teleport accepted: " + name);
-                near(h, 2000, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Failed teleport payment");
+                near(h, 2000, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Failed teleport payment");
 				h.assertTrue(m.getRemainingCooldownTicks(p) == 0L, "Failed teleport cooldown");
-                near(h, 185, HemoCapabilityAccess.requireKnownManipulations(p).getKnownManips().get(m).getXp(), "Failed teleport mastery");
+                near(h, 185, HemoCapabilityAccess.getKnownManipulations(p).getKnownManips().get(m).getXp(), "Failed teleport mastery");
             }
             var pos = p.blockPosition().offset(0, 0, 4);
             h.getLevel().setBlockAndUpdate(pos.below(), net.minecraft.world.level.block.Blocks.STONE.defaultBlockState());
@@ -292,7 +292,7 @@ public final class ManipulationTargetingGameTests {
     public static void blackheartedRuptureCooldownAndRecoveryRemainBounded(GameTestHelper h) {
         ServerPlayer p = player(h);
         try {
-            select(p, ManipulationInit.blackhearted.get()); HemoCapabilityAccess.requireKnownManipulations(p).togglePassive("blackhearted");
+            select(p, ManipulationInit.blackhearted.get()); HemoCapabilityAccess.getKnownManipulations(p).togglePassive("blackhearted");
             var damage = new LivingIncomingDamageEvent(p, new DamageContainer(p.damageSources().wither(), 100));
             BodyIdiomEvents.onIncomingDamage(damage);
             var state = HemoCapabilityAccess.getPowerGuardrails(p);
@@ -321,11 +321,11 @@ public final class ManipulationTargetingGameTests {
         try {
             h.assertTrue(!com.vincenthuto.hemomancy.common.manipulation.tenebris.BlackVeilCovenantManager.isDarkEnough(h.getLevel(), fallback, 7), "Fixture fallback must be bright");
             h.assertTrue(!m.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), 0), "Bright fallback borrowed darkness from original candidate");
-            near(h, 2000, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Invalid fallback spent blood");
+            near(h, 2000, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Invalid fallback spent blood");
             h.getLevel().setBlockAndUpdate(top, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
             double cost = ManipulationCostLedger.collect(p, m, 1).effectiveCost();
             h.assertTrue(m.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), 0), "Safe dark step rejected");
-            near(h, 2000-cost, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Valid step charged incorrectly");
+            near(h, 2000-cost, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Valid step charged incorrectly");
             h.assertTrue(p.blockPosition().equals(top), "Step used a different landing");
             h.succeed();
         } finally {
@@ -368,7 +368,7 @@ public final class ManipulationTargetingGameTests {
             p.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, input);
             double cost = ManipulationCostLedger.collect(p, forge, 1).effectiveCost();
             h.assertTrue(forge.tryPerformAction(p, h.getLevel(), input, p.blockPosition(), 0), "Valid Forge input rejected");
-            near(h, 2000-cost, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Forge payment");
+            near(h, 2000-cost, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Forge payment");
             h.assertTrue(p.getMainHandItem().is(net.minecraft.world.item.Items.IRON_INGOT) && p.getMainHandItem().getCount() == 8, "Forge did not smelt the inputs");
             h.succeed();
         } finally { ManipulationChannelManager.stop(p, false); p.discard(); }
@@ -379,7 +379,7 @@ public final class ManipulationTargetingGameTests {
     }
 
     private static void select(ServerPlayer p, BloodManipulation m) {
-        var known=HemoCapabilityAccess.requireKnownManipulations(p);
+        var known=HemoCapabilityAccess.getKnownManipulations(p);
         known.getKnownManips().put(m,new ManipLevel(4,185));
         String baseline=com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry.baselineId(m.getName());
         known.getKnownManips().put(ManipulationInit.getByName(baseline),new ManipLevel(4,185));
@@ -396,11 +396,11 @@ public final class ManipulationTargetingGameTests {
             @Override public void send(net.minecraft.network.protocol.Packet<?> packet) { }
         };
         p.setPos(h.absoluteVec(new Vec3(2.5,2,2.5)));
-        var blood=HemoCapabilityAccess.requireBloodVolume(p);
+        var blood=HemoCapabilityAccess.getBloodVolume(p);
         blood.setActive(true);
         blood.setBloodVolume(2000);
         for (var tendency:EnumBloodTendency.values())
-            HemoCapabilityAccess.getBloodTendency(p).orElseThrow().setTendencyAlignment(tendency,100);
+            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(tendency,100);
         return p;
     }
 }

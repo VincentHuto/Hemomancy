@@ -26,7 +26,7 @@ public final class SpecimenJarLesson {
 	public static boolean teach(ServerPlayer player, Entity npc) {
 		if (!(npc instanceof HarbingerAlchemistEntity) || !EarlyInitiation.near(player, npc)
 				|| !canTeach(player)) return false;
-		boolean alreadyStudying = HemoCapabilityAccess.requireSpecimenBestiary(player).recordedSpecimenCount() > 0
+		boolean alreadyStudying = HemoCapabilityAccess.getSpecimenBestiary(player).recordedSpecimenCount() > 0
 				|| HarbingerAdvancementGranter.isRedTaxonomyComplete(player);
 		CompoundTag persisted = persisted(player);
 		persisted.putBoolean(TAUGHT, true);

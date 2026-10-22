@@ -588,7 +588,8 @@ public final class CardinalRiteOrdealEngine {
 					}
 				}
 			}
-			case "fargone_dive" -> HemoCapabilityAccess.getBloodVolume(caster).ifPresent(volume -> {
+			case "fargone_dive" -> {
+				var volume = HemoCapabilityAccess.getBloodVolume(caster);
 				int touching = (int) rite.getRiteThreats().stream()
 						.map(level::getEntity).filter(java.util.Objects::nonNull)
 						.filter(entity -> CardinalRiteThreatRules.canDrainCaster(entity.distanceToSqr(caster)))
@@ -598,7 +599,7 @@ public final class CardinalRiteOrdealEngine {
 					volume.drain(drain);
 					BloodVolumeEvents.syncVolume(caster, volume);
 				}
-			});
+			}
 			case "rogue_will" -> rite.addInstability(active);
 			case "false_omens" -> {
 				if (rite.getPhaseTicks() % 60 == 0) rite.addInstability(active * 2);

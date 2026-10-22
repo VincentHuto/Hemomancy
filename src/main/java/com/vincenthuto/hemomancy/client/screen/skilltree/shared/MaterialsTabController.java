@@ -270,10 +270,9 @@ public class MaterialsTabController implements IProgressTab {
 		}
 		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 		float[] unstained = {0.0F, 0.0F};
-		HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
-			unstained[0] = progress.getPurity();
-			unstained[1] = progress.getClarity();
-		});
+		var progress = HemoCapabilityAccess.getUnstainedProgress(player);
+		unstained[0] = progress.getPurity();
+		unstained[1] = progress.getClarity();
 		return new PlayerProgress(degree, unstained[0], unstained[1]);
 	}
 

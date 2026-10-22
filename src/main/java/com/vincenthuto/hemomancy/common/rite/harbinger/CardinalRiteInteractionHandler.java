@@ -334,7 +334,7 @@ public final class CardinalRiteInteractionHandler {
 			rite.setSigilProgress(progressKey, newCompleted);
 			rite.storeReservoirBlood(CardinalRiteSigilRules.nodeCompletionStorageMl(
 					sigil.capacityMl(), sigil.nodes().size()), sigil.capacityMl());
-			boolean learned = HemoCapabilityAccess.requireIchorianKnowledge(player)
+			boolean learned = HemoCapabilityAccess.getIchorianKnowledge(player)
 					.recordNode(placement.id(), completed, sigil.nodes().size());
 			com.vincenthuto.hemomancy.common.capability.player.harbinger.rite.IchorianKnowledgeEvents.sync(player);
 			if (newCompleted >= sigil.nodes().size()) {
@@ -448,7 +448,7 @@ public final class CardinalRiteInteractionHandler {
 	private static int spendBlood(ServerPlayer player, ActiveCardinalRite rite, int requested) {
 		int ichor = rite.consumeCarriedIchor(requested);
 		int personalRequest = requested - ichor;
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player).orElse(null);
+		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		int personal = volume == null ? 0
 				: Math.min(personalRequest, (int) Math.floor(volume.getBloodVolume()));
 		if (personal > 0) {

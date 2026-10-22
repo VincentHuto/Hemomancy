@@ -67,17 +67,16 @@ public class PacketSyncDegree implements CustomPacketPayload {
 		ctx.enqueueWork(() -> {
 			Player player = ctx.player();
 			if (player != null) {
-				HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree -> {
-					degree.setDegreeNumber(msg.degreeNumber);
-					degree.setHasFoundedBloodline(msg.hasFoundedBloodline);
-					degree.setFounderIntegrationSevered(msg.founderIntegrationSevered);
-					degree.setFungalRevelationWitnessed(msg.fungalRevelationWitnessed);
-					degree.setFungalSpineGranted(msg.fungalSpineGranted);
-					degree.setArchonPath(msg.archonPath);
-					degree.setMycophantExposureTicks(msg.mycophantExposureTicks);
-					degree.setMycophantRetryCooldownTicks(msg.mycophantRetryCooldownTicks);
-					degree.setMycophantDefeated(msg.mycophantDefeated);
-				});
+				var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
+				degree.setDegreeNumber(msg.degreeNumber);
+				degree.setHasFoundedBloodline(msg.hasFoundedBloodline);
+				degree.setFounderIntegrationSevered(msg.founderIntegrationSevered);
+				degree.setFungalRevelationWitnessed(msg.fungalRevelationWitnessed);
+				degree.setFungalSpineGranted(msg.fungalSpineGranted);
+				degree.setArchonPath(msg.archonPath);
+				degree.setMycophantExposureTicks(msg.mycophantExposureTicks);
+				degree.setMycophantRetryCooldownTicks(msg.mycophantRetryCooldownTicks);
+				degree.setMycophantDefeated(msg.mycophantDefeated);
 			}
 		});
 	}

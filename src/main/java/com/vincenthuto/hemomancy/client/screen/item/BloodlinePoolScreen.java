@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.client.data.FaneBoundaryClientData;
 import com.vincenthuto.hemomancy.client.screen.widget.BloodVolumeBarWidget;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.*;
 import net.minecraft.client.Minecraft;
@@ -101,12 +102,11 @@ public class BloodlinePoolScreen extends Screen {
 		// Read current settings from capability
 		LocalPlayer player = Minecraft.getInstance().player;
 		if (player != null) {
-			HemoCapabilityAccess.getBloodVolume(player).ifPresent(vol -> {
-				trickleEnabled = vol.isTrickleEnabled();
-				trickleRate = vol.getTrickleRate();
-				autoDrawEnabled = vol.isAutoDrawEnabled();
-				autoDrawThreshold = vol.getAutoDrawThreshold();
-			});
+			var vol = HemoCapabilityAccess.getBloodVolume(player);
+			trickleEnabled = vol.isTrickleEnabled();
+			trickleRate = vol.getTrickleRate();
+			autoDrawEnabled = vol.isAutoDrawEnabled();
+			autoDrawThreshold = vol.getAutoDrawThreshold();
 		}
 
 		int widgetX = guiLeft + scaled(16);
@@ -216,40 +216,39 @@ public class BloodlinePoolScreen extends Screen {
 			final int kickPrevX = widgetX;
 			final int kickButtonX = widgetX + widgetW - scaled(66);
 			final int kickButtonW = scaled(66);
-			HemoCapabilityAccess.getBloodVolume(player).ifPresent(vol -> {
-				Bloodline line = vol.getBloodLine();
-				if (line.isValid() && localPlayer.getUUID().equals(line.getLeaderUUID())) {
-					kickPrevButton = new RitualButton(kickPrevX, kickRowY, widgetHeight(18), widgetHeight(18),
-							Component.literal("<"), btn -> {
-						int size = getKickableMembers(localPlayer).size();
-						if (size > 0) {
-							kickTargetIndex = (kickTargetIndex - 1 + size) % size;
-						}
-					});
-					addRenderableWidget(kickPrevButton);
+			var vol = HemoCapabilityAccess.getBloodVolume(player);
+			Bloodline line = vol.getBloodLine();
+			if (line.isValid() && localPlayer.getUUID().equals(line.getLeaderUUID())) {
+				kickPrevButton = new RitualButton(kickPrevX, kickRowY, widgetHeight(18), widgetHeight(18),
+						Component.literal("<"), btn -> {
+					int size = getKickableMembers(localPlayer).size();
+					if (size > 0) {
+						kickTargetIndex = (kickTargetIndex - 1 + size) % size;
+					}
+				});
+				addRenderableWidget(kickPrevButton);
 
-					kickNextButton = new RitualButton(widgetX + scaled(34), kickRowY, widgetHeight(18), widgetHeight(18),
-							Component.literal(">"), btn -> {
-						int size = getKickableMembers(localPlayer).size();
-						if (size > 0) {
-							kickTargetIndex = (kickTargetIndex + 1) % size;
-						}
-					});
-					addRenderableWidget(kickNextButton);
+				kickNextButton = new RitualButton(widgetX + scaled(34), kickRowY, widgetHeight(18), widgetHeight(18),
+						Component.literal(">"), btn -> {
+					int size = getKickableMembers(localPlayer).size();
+					if (size > 0) {
+						kickTargetIndex = (kickTargetIndex + 1) % size;
+					}
+				});
+				addRenderableWidget(kickNextButton);
 
-					kickMemberButton = new RitualButton(kickButtonX, kickRowY, kickButtonW, widgetHeight(18),
-							Component.literal("Banish"), btn -> {
-						List<UUID> kickable = getKickableMembers(localPlayer);
-						if (!kickable.isEmpty()) {
-							int idx = Mth.clamp(kickTargetIndex, 0, kickable.size() - 1);
-							PacketHandler.sendToServer(new PacketKickBloodlinePlayer(kickable.get(idx)));
-							PacketHandler.sendToServer(new PacketRequestPoolData());
-							kickTargetIndex = 0;
-						}
-					});
-					addRenderableWidget(kickMemberButton);
-				}
-			});
+				kickMemberButton = new RitualButton(kickButtonX, kickRowY, kickButtonW, widgetHeight(18),
+						Component.literal("Banish"), btn -> {
+					List<UUID> kickable = getKickableMembers(localPlayer);
+					if (!kickable.isEmpty()) {
+						int idx = Mth.clamp(kickTargetIndex, 0, kickable.size() - 1);
+						PacketHandler.sendToServer(new PacketKickBloodlinePlayer(kickable.get(idx)));
+						PacketHandler.sendToServer(new PacketRequestPoolData());
+						kickTargetIndex = 0;
+					}
+				});
+				addRenderableWidget(kickMemberButton);
+			}
 		}
 	}
 
@@ -332,83 +331,7 @@ public class BloodlinePoolScreen extends Screen {
 		LocalPlayer player = Minecraft.getInstance().player;
 		if (player == null) return;
 
-		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
-			Bloodline bloodline = volume.getBloodLine();
-
-			if (!bloodline.isValid()) {
-				graphics.drawCenteredString(this.font,
-						Component.literal("You are not in a bloodline."),
-						centerX, guiTop + scaled(40), 0xFFAA4444);
-				return;
-			}
-
-			int y = guiTop + scaled(22);
-
-			// Bloodline name
-			graphics.drawCenteredString(this.font,
-					Component.literal(bloodline.getName()).withStyle(s -> s.withColor(0xFFDD6666).withBold(true)),
-					centerX, y, 0xFFFFFFFF);
-			y += scaled(14);
-
-			// Member count
-			graphics.drawCenteredString(this.font,
-					Component.literal("Members: " + BloodlinePoolClientData.getMemberCount()),
-					centerX, y, 0xFFAAAAAA);
-			y += scaled(14);
-
-			// Pool volume reservoir
-			float poolVol = BloodlinePoolClientData.getPoolVolume();
-			float poolMax = BloodlinePoolClientData.getPoolMax();
-			float ratio = poolMax > 0 ? Mth.clamp(poolVol / poolMax, 0f, 1f) : 0f;
-
-			String poolText = String.format("%s / %.0f ml", formatPoolVolume(poolVol), poolMax);
-			int reservoirCenterX = centerX + scaled(18);
-			int reservoirCenterY = guiTop + scaled(92);
-			renderBloodSphere(graphics, reservoirCenterX, reservoirCenterY, scaled(44), ratio, poolText, partialTick);
-
-			renderVesselBloodBar(graphics, reservoirCenterX - scaled(86), reservoirCenterY - scaled(26),
-					volume.getBloodVolume(), volume.getMaxBloodVolume());
-
-			// Label for donate field
-			graphics.drawString(this.font, "Offer (ml):", donateAmountField.getX(), donateAmountField.getY() - scaled(14),
-					0xFFFF8A8A,
-					true);
-
-			// Trickle rate label
-			graphics.drawString(this.font, "Rate:", trickleRateField.getX() - scaled(42),
-					trickleRateField.getY() + scaled(5), 0xFFFF8A8A, true);
-
-			// Auto-draw threshold label
-			graphics.drawString(this.font, "Threshold %:", autoDrawThresholdField.getX() - scaled(86),
-					autoDrawThresholdField.getY() + scaled(5), 0xFFFF8A8A, true);
-
-			// Bloodline message label
-			graphics.drawString(this.font, "Bloodline Message:", messageField.getX(),
-					messageField.getY() - scaled(14), 0xFFFF8A8A, true);
-
-			if (kickMemberButton != null) {
-				List<UUID> kickable = getKickableMembers(player);
-				int targetX = kickNextButton.getX() + kickNextButton.getWidth() + scaled(6);
-				int targetW = Math.max(48, kickMemberButton.getX() - targetX - scaled(6));
-				renderRitualPanel(graphics, targetX, kickMemberButton.getY(), targetW, kickMemberButton.getHeight(),
-						0xFF050101, 0xFF6A1218);
-				if (kickable.isEmpty()) {
-					drawCenteredFittingString(graphics, this.font, "No player members", targetX + targetW / 2,
-							kickMemberButton.getY() + scaled(5), targetW - scaled(6), 0xFFAA6666, false);
-					kickMemberButton.active = false;
-					kickPrevButton.active = false;
-					kickNextButton.active = false;
-				} else {
-					kickMemberButton.active = true;
-					kickPrevButton.active = true;
-					kickNextButton.active = true;
-					kickTargetIndex = Mth.clamp(kickTargetIndex, 0, kickable.size() - 1);
-					String shortTarget = resolvePlayerName(kickable.get(kickTargetIndex));
-					drawCenteredFittingString(graphics, this.font, shortTarget, targetX + targetW / 2,
-							kickMemberButton.getY() + scaled(5), targetW - scaled(6), 0xFFFFC8C8, false);
-				}
-			}
-		});
+		renderBloodlineDetails(graphics, player, HemoCapabilityAccess.getBloodVolume(player), centerX, partialTick);
 
 		// Render widgets on top
 		renderEditBoxFrame(graphics, donateAmountField);
@@ -421,6 +344,84 @@ public class BloodlinePoolScreen extends Screen {
 		renderCenteredEditBoxText(graphics, autoDrawThresholdField, "0");
 		renderCenteredEditBoxText(graphics, messageField, "Send to bloodline...");
 		renderVesselTooltip(graphics, mouseX, mouseY);
+	}
+
+	private void renderBloodlineDetails(GuiGraphics graphics, LocalPlayer player, IBloodVolume volume, int centerX, float partialTick) {
+		Bloodline bloodline = volume.getBloodLine();
+
+		if (!bloodline.isValid()) {
+			graphics.drawCenteredString(this.font,
+					Component.literal("You are not in a bloodline."),
+					centerX, guiTop + scaled(40), 0xFFAA4444);
+			return;
+		}
+
+		int y = guiTop + scaled(22);
+
+		// Bloodline name
+		graphics.drawCenteredString(this.font,
+				Component.literal(bloodline.getName()).withStyle(s -> s.withColor(0xFFDD6666).withBold(true)),
+				centerX, y, 0xFFFFFFFF);
+		y += scaled(14);
+
+		// Member count
+		graphics.drawCenteredString(this.font,
+				Component.literal("Members: " + BloodlinePoolClientData.getMemberCount()),
+				centerX, y, 0xFFAAAAAA);
+		y += scaled(14);
+
+		// Pool volume reservoir
+		float poolVol = BloodlinePoolClientData.getPoolVolume();
+		float poolMax = BloodlinePoolClientData.getPoolMax();
+		float ratio = poolMax > 0 ? Mth.clamp(poolVol / poolMax, 0f, 1f) : 0f;
+
+		String poolText = String.format("%s / %.0f ml", formatPoolVolume(poolVol), poolMax);
+		int reservoirCenterX = centerX + scaled(18);
+		int reservoirCenterY = guiTop + scaled(92);
+		renderBloodSphere(graphics, reservoirCenterX, reservoirCenterY, scaled(44), ratio, poolText, partialTick);
+
+		renderVesselBloodBar(graphics, reservoirCenterX - scaled(86), reservoirCenterY - scaled(26),
+				volume.getBloodVolume(), volume.getMaxBloodVolume());
+
+		// Label for donate field
+		graphics.drawString(this.font, "Offer (ml):", donateAmountField.getX(), donateAmountField.getY() - scaled(14),
+				0xFFFF8A8A,
+				true);
+
+		// Trickle rate label
+		graphics.drawString(this.font, "Rate:", trickleRateField.getX() - scaled(42),
+				trickleRateField.getY() + scaled(5), 0xFFFF8A8A, true);
+
+		// Auto-draw threshold label
+		graphics.drawString(this.font, "Threshold %:", autoDrawThresholdField.getX() - scaled(86),
+				autoDrawThresholdField.getY() + scaled(5), 0xFFFF8A8A, true);
+
+		// Bloodline message label
+		graphics.drawString(this.font, "Bloodline Message:", messageField.getX(),
+				messageField.getY() - scaled(14), 0xFFFF8A8A, true);
+
+		if (kickMemberButton != null) {
+			List<UUID> kickable = getKickableMembers(player);
+			int targetX = kickNextButton.getX() + kickNextButton.getWidth() + scaled(6);
+			int targetW = Math.max(48, kickMemberButton.getX() - targetX - scaled(6));
+			renderRitualPanel(graphics, targetX, kickMemberButton.getY(), targetW, kickMemberButton.getHeight(),
+					0xFF050101, 0xFF6A1218);
+			if (kickable.isEmpty()) {
+				drawCenteredFittingString(graphics, this.font, "No player members", targetX + targetW / 2,
+						kickMemberButton.getY() + scaled(5), targetW - scaled(6), 0xFFAA6666, false);
+				kickMemberButton.active = false;
+				kickPrevButton.active = false;
+				kickNextButton.active = false;
+			} else {
+				kickMemberButton.active = true;
+				kickPrevButton.active = true;
+				kickNextButton.active = true;
+				kickTargetIndex = Mth.clamp(kickTargetIndex, 0, kickable.size() - 1);
+				String shortTarget = resolvePlayerName(kickable.get(kickTargetIndex));
+				drawCenteredFittingString(graphics, this.font, shortTarget, targetX + targetW / 2,
+						kickMemberButton.getY() + scaled(5), targetW - scaled(6), 0xFFFFC8C8, false);
+			}
+		}
 	}
 
 	// ───── Color Lerp for Pool Bar ─────
@@ -497,9 +498,9 @@ public class BloodlinePoolScreen extends Screen {
 		if (player == null) {
 			return;
 		}
-		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume ->
-				BloodVolumeBarWidget.renderTooltip(graphics, this.font, vesselBarBounds,
-						volume.getBloodVolume(), volume.getMaxBloodVolume(), mouseX, mouseY));
+		var volume = HemoCapabilityAccess.getBloodVolume(player);
+		BloodVolumeBarWidget.renderTooltip(graphics, this.font, vesselBarBounds,
+						volume.getBloodVolume(), volume.getMaxBloodVolume(), mouseX, mouseY);
 	}
 
 	private void renderEditBoxFrame(GuiGraphics graphics, EditBox editBox) {
@@ -694,14 +695,13 @@ public class BloodlinePoolScreen extends Screen {
 
 	private static List<UUID> getKickableMembers(LocalPlayer player) {
 		List<UUID> kickable = new ArrayList<>();
-		HemoCapabilityAccess.getBloodVolume(player).ifPresent(vol -> {
-			Bloodline bloodline = vol.getBloodLine();
-			for (UUID member : bloodline.getPlayerUUIDS()) {
-				if (!member.equals(player.getUUID())) {
-					kickable.add(member);
-				}
+		var vol = HemoCapabilityAccess.getBloodVolume(player);
+		Bloodline bloodline = vol.getBloodLine();
+		for (UUID member : bloodline.getPlayerUUIDS()) {
+			if (!member.equals(player.getUUID())) {
+				kickable.add(member);
 			}
-		});
+		}
 		return kickable;
 	}
 

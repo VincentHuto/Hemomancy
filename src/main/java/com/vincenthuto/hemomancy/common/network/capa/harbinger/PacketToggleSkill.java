@@ -23,7 +23,7 @@ public record PacketToggleSkill(int skillId) implements CustomPacketPayload {
 		ctx.enqueueWork(() -> {
 			if (!(ctx.player() instanceof ServerPlayer player)) return;
 			SkillPoint skill = SkillPointInit.getById(msg.skillId);
-			SkillProgress progress = HemoCapabilityAccess.requireSkillProgress(player);
+			SkillProgress progress = HemoCapabilityAccess.getSkillProgress(player);
 			if (skill == null || !progress.toggleEnabled(skill)) return;
 			boolean enabled = progress.isEnabled(skill);
 			player.displayClientMessage(Component.literal(skill.getName().replace("skill_", "").replace('_', ' ')

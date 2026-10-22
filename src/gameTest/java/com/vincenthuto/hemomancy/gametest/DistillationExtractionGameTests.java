@@ -73,7 +73,7 @@ public final class DistillationExtractionGameTests {
 	public static void retortPickupAndShiftClickAwardSolution(GameTestHelper helper) {
 		var level = helper.getLevel();
 		var player = player(helper);
-		var progress = HemoCapabilityAccess.requireUnstainedProgress(player);
+		var progress = HemoCapabilityAccess.getUnstainedProgress(player);
 		progress.setAcceptedObservances(progress.getAcceptedObservances()
 				| UnstainedObservances.Observance.NOVITIATE_GENTLE_SEPARATION.mask());
 		BlockPos pos = helper.absolutePos(new BlockPos(4, 3, 4));
@@ -87,7 +87,7 @@ public final class DistillationExtractionGameTests {
 		menu.getSlot(PallidRetortMenu.RESULT_SLOT).onTake(player, pickedUp);
 		helper.assertTrue(pickedUp.getCount() == 2 && retort.saveWithoutMetadata(level.registryAccess())
 				.getCompound("RecipesUsed").isEmpty(), "Pickup did not award and clear the recipe ledger");
-		helper.assertTrue(HemoCapabilityAccess.requireUnstainedProgress(player).isNovitiateRetortComplete(),
+		helper.assertTrue(HemoCapabilityAccess.getUnstainedProgress(player).isNovitiateRetortComplete(),
 				"Pickup did not record the Retort observance");
 		retort.setItem(PallidRetortBlockEntity.SLOT_RESULT, new ItemStack(ItemInit.hemolytic_solution.get(), 2));
 		retort.setRecipeUsed(recipe);
@@ -224,7 +224,7 @@ public final class DistillationExtractionGameTests {
 	public static void firstOrdinaryDistillationAndSeparationUnlockDegreeThreeChapterGate(GameTestHelper helper) {
 		var level = helper.getLevel();
 		var player = player(helper);
-		HemoCapabilityAccess.requireInitiatoryDegree(player).setDegreeNumber(2);
+		HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(2);
 		helper.assertTrue(HarbingerChapterProgression.unmetChapterForTargetDegree(player, 3)
 				== HarbingerChapterMilestone.FIRST_DISTILLATION,
 				"Degree 3 was not sealed by The First Distillation");

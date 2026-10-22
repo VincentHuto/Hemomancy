@@ -195,7 +195,7 @@ public final class SuccessionGameTests {
 
     @GameTest(template = "empty")
     public static void manufactureConsumesPatternAndTwoHundredFiftyBlood(GameTestHelper h) {
-        var f=fixture(h); var center=f.center; var volume=HemoCapabilityAccess.requireBloodVolume(f.player);volume.setBloodVolume(1000);
+        var f=fixture(h); var center=f.center; var volume=HemoCapabilityAccess.getBloodVolume(f.player);volume.setBloodVolume(1000);
         for(int x=-1;x<=1;x++)for(int z=-1;z<=1;z++) {
             var block=x==0&&z==0?BlockInit.venous_stone.get():x!=0&&z!=0?BlockInit.conscious_mass.get():BlockInit.hematic_iron_block.get();
             h.getLevel().setBlock(center.offset(x,0,z),block.defaultBlockState(),3);
@@ -225,10 +225,10 @@ public final class SuccessionGameTests {
         var f = fixture(h); var npc = EntityInit.harbinger_alchemist.get().create(h.getLevel());
         npc.setPos(f.player.position()); h.getLevel().addFreshEntity(npc);
         var data = SuccessionSavedData.get(h.getLevel());
-        HemoCapabilityAccess.requireInitiatoryDegree(f.player).setDegreeNumber(4);
+        HemoCapabilityAccess.getInitiatoryDegree(f.player).setDegreeNumber(4);
         SuccessionDialogue.handle(f.player, npc, SuccessionDialogue.BEQUEST);
         h.assertTrue(!data.hasBequest(npc.getUUID(), f.line.getBloodlineUUID(), "alchemist"), "D4 forged consent accepted");
-        HemoCapabilityAccess.requireInitiatoryDegree(f.player).setDegreeNumber(5);
+        HemoCapabilityAccess.getInitiatoryDegree(f.player).setDegreeNumber(5);
         SuccessionDialogue.handle(f.player, npc, SuccessionDialogue.BEQUEST);
         f.line.addNpcMember(npc.getUUID()); f.line.removeNpcMember(npc.getUUID());
         h.assertTrue(data.hasBequest(npc.getUUID(), f.line.getBloodlineUUID(), "alchemist"), "Pool expulsion revoked independent consent");
@@ -252,7 +252,7 @@ public final class SuccessionGameTests {
 
     @GameTest(template = "empty")
     public static void selfSampleChargesExactlyOneHundredAndPreservesForeignData(GameTestHelper h) {
-        var f = fixture(h); var volume = HemoCapabilityAccess.requireBloodVolume(f.player);
+        var f = fixture(h); var volume = HemoCapabilityAccess.getBloodVolume(f.player);
         volume.setBloodVolume(500); var stack = new ItemStack(ItemInit.bloody_vial.get(), 64);
         var tag = new CompoundTag(); tag.putString("foreign", "keep");
         stack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(tag));
@@ -461,8 +461,8 @@ public final class SuccessionGameTests {
         new ServerGamePacketListenerImpl(h.getLevel().getServer(), connection, p, cookie) { @Override public void send(Packet<?> packet) {} };
         var line = new Bloodline("Test", p.getUUID(), UUID.randomUUID(), new ArrayList<>(List.of(p.getUUID())));
         BloodlineSavedData.get(h.getLevel().getServer().overworld()).registerBloodline(line);
-        HemoCapabilityAccess.requireBloodVolume(p).setBloodLine(line); HemoCapabilityAccess.requireBloodVolume(p).setActive(true);
-        HemoCapabilityAccess.requireInitiatoryDegree(p).setDegreeNumber(5);
+        HemoCapabilityAccess.getBloodVolume(p).setBloodLine(line); HemoCapabilityAccess.getBloodVolume(p).setActive(true);
+        HemoCapabilityAccess.getInitiatoryDegree(p).setDegreeNumber(5);
         BlockPos center = h.absolutePos(new BlockPos(10,4,10)), heart = center.offset(0,0,10), work = center.offset(9,0,0);
         p.setPos(center.getX()+.5, center.getY()+1, center.getZ()+.5);
         h.getLevel().setBlock(heart, BlockInit.consecrated_bloodwell.get().defaultBlockState(), 3);

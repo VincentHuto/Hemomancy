@@ -71,20 +71,19 @@ public class HarbingerEquipmentEntityEventHandler {
 
         if (event.getEntity() instanceof Player player && !event.getEntity().level().isClientSide) {
 
-            HemoCapabilityAccess.getEquipment(player).ifPresent(equipment -> {
-                // slot 5 is the special curved-horn slot, not a regular scar slot
-                ItemStack itemstack = equipment.getStackInSlot(5);
-                if (itemstack.getItem() == ItemInit.curved_horn.get()) {
-                    itemstack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
-                    player.addEffect(new MobEffectInstance(EffectInit.blood_rush, 200, 1));
-                    player.setHealth(1.0f);
-                    ServerLevel world = (ServerLevel) player.level();
-                    world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.TOTEM_USE, SoundSource.AMBIENT, 0.5f, 0.5f);
-                    PacketHandler.sendToPlayer((ServerPlayer) player, new PacketCurvedHornAnimation());
+            var equipment = HemoCapabilityAccess.getEquipment(player);
+            // slot 5 is the special curved-horn slot, not a regular scar slot
+            ItemStack itemstack = equipment.getStackInSlot(5);
+            if (itemstack.getItem() == ItemInit.curved_horn.get()) {
+                itemstack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+                player.addEffect(new MobEffectInstance(EffectInit.blood_rush, 200, 1));
+                player.setHealth(1.0f);
+                ServerLevel world = (ServerLevel) player.level();
+                world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.TOTEM_USE, SoundSource.AMBIENT, 0.5f, 0.5f);
+                PacketHandler.sendToPlayer((ServerPlayer) player, new PacketCurvedHornAnimation());
 
-                    event.setCanceled(true);
-                }
-            });
+                event.setCanceled(true);
+            }
         }
 
     }
@@ -148,40 +147,37 @@ public class HarbingerEquipmentEntityEventHandler {
     }
 
     public static void syncSlots(Player player, Collection<? extends Player> receivers) {
-        HemoCapabilityAccess.getEquipment(player).ifPresent(equipment -> {
-            for (byte i = 0; i < equipment.getSlots(); i++) {
-                syncSlot(player, i, equipment.getStackInSlot(i), receivers);
-            }
-        });
+        var equipment = HemoCapabilityAccess.getEquipment(player);
+        for (byte i = 0; i < equipment.getSlots(); i++) {
+            syncSlot(player, i, equipment.getStackInSlot(i), receivers);
+        }
     }
 
     public static void syncLayerVisibilityToClient(ServerPlayer player) {
-        HemoCapabilityAccess.getEquipment(player).ifPresent(equipment -> {
-            PacketHandler.sendTracking(player,
-                    new SyncEquipmentLayerVisibilityPacket(player.getId(),
-                            equipment.isRenderLayerVisible(IScars.FUNGAL_SLOT),
-                            equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.JAR_SLOT_INDEX),
-                            equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.CHARM_SLOT_INDEX),
-                            equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.GOURD_SLOT_INDEX)));
-        });
+        var equipment = HemoCapabilityAccess.getEquipment(player);
+        PacketHandler.sendTracking(player,
+                new SyncEquipmentLayerVisibilityPacket(player.getId(),
+                        equipment.isRenderLayerVisible(IScars.FUNGAL_SLOT),
+                        equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.JAR_SLOT_INDEX),
+                        equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.CHARM_SLOT_INDEX),
+                        equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.GOURD_SLOT_INDEX)));
     }
 
     public static void syncLayerVisibilityToPlayer(ServerPlayer source, ServerPlayer receiver) {
-        HemoCapabilityAccess.getEquipment(source).ifPresent(equipment -> {
-            PacketHandler.sendToPlayer(receiver,
-                    new SyncEquipmentLayerVisibilityPacket(source.getId(),
-                            equipment.isRenderLayerVisible(IScars.FUNGAL_SLOT),
-                            equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.JAR_SLOT_INDEX),
-                            equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.CHARM_SLOT_INDEX),
-                            equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.GOURD_SLOT_INDEX)));
-        });
+        var equipment = HemoCapabilityAccess.getEquipment(source);
+        PacketHandler.sendToPlayer(receiver,
+                new SyncEquipmentLayerVisibilityPacket(source.getId(),
+                        equipment.isRenderLayerVisible(IScars.FUNGAL_SLOT),
+                        equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.JAR_SLOT_INDEX),
+                        equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.CHARM_SLOT_INDEX),
+                        equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.GOURD_SLOT_INDEX)));
     }
 
     @SubscribeEvent
     public static void playerTick(PlayerTickEvent.Post event) {
         Player player = event.getEntity();
         // tick equipment item handler (non-scar equipment)
-        HemoCapabilityAccess.getEquipment(player).ifPresent(IHarbingerEquipmentItemHandler::tick);
+        HemoCapabilityAccess.getEquipment(player).tick();
         AttributeInstance attributeInstance = player.getAttribute(AttributeInit.getFlightAttribute());
         if (attributeInstance != null) {
             AttributeModifier elytraModifier = AttributeInit.getElytraModifier();

@@ -538,8 +538,7 @@ public class WillEntity extends Monster implements SyncedBoundSummon {
 		if (!canBloodUtilityBend()) {
 			return false;
 		}
-		HemoCapabilityAccess.getBloodTendency(player)
-				.ifPresent(tendency -> tendency.addTendencyAlignment(getSchool(), -3.0F));
+		HemoCapabilityAccess.getBloodTendency(player).addTendencyAlignment(getSchool(), -3.0F);
 		spawnProjectedBanishmentBurst();
 		startDissolving(false);
 		return true;
@@ -555,8 +554,7 @@ public class WillEntity extends Monster implements SyncedBoundSummon {
 	}
 
 	private void completeAbsorption(ServerPlayer player) {
-		HemoCapabilityAccess.getBloodTendency(player)
-				.ifPresent(tendency -> tendency.addTendencyAlignment(getSchool(), 3.0F));
+		HemoCapabilityAccess.getBloodTendency(player).addTendencyAlignment(getSchool(), 3.0F);
 		clearFalterBurst();
 		clearAbsorptionStruggle();
 		dropAbsorptionCompletionLoot();
@@ -631,10 +629,8 @@ public class WillEntity extends Monster implements SyncedBoundSummon {
 		WillBendRules.HeldItemKind held = stack.getItem() instanceof MarionetteCrossbarItem
 				? WillBendRules.HeldItemKind.MARIONETTE_CROSSBAR
 				: WillBendRules.HeldItemKind.EMPTY_OR_STAFF;
-		boolean silent = HemoCapabilityAccess.getInitiatoryDegree(player)
-				.map(degree -> HarbingerPathPermissions.isProvenSilentArchon(
-						degree.getDegreeNumber(), degree.getArchonPath()))
-				.orElse(false);
+		boolean silent = HarbingerPathPermissions.isProvenSilentArchon(
+						HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber(), HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath());
 		int cap = BoundSummonBehavior.totalActiveCap(serverPlayer);
 		boolean capAvailable = MarionetteCrossbarItem.activeSummonsForOwner(player).size() < cap;
 		WillBendRules.BendOutcome outcome = WillBendRules.resolve(getOrigin(), getPhase(),
@@ -646,9 +642,7 @@ public class WillEntity extends Monster implements SyncedBoundSummon {
 			return InteractionResult.CONSUME;
 		}
 		if (outcome.verb() == WillBendRules.BendVerb.REDIRECT) {
-			boolean paid = HemoCapabilityAccess.getBloodVolume(serverPlayer)
-					.map(volume -> volume.isActive() && volume.drain(outcome.bloodCost()))
-					.orElse(false);
+			boolean paid = HemoCapabilityAccess.getBloodVolume(serverPlayer).isActive() && HemoCapabilityAccess.getBloodVolume(serverPlayer).drain(outcome.bloodCost());
 			if (!paid) return InteractionResult.CONSUME;
 			redirectedOwner = serverPlayer.getUUID();
 			redirectUntilGameTime = level().getGameTime() + 1800L;

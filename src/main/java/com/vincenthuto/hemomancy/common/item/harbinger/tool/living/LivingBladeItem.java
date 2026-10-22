@@ -69,7 +69,7 @@ public class LivingBladeItem extends LivingToolItem implements HemoClientItemExt
 			target.hurt(TendencyWeaponHelper.createWeaponDamageSource(target, attacker), 20);
 			if (!attacker.level().isClientSide && attacker instanceof Player playerIn) {
 				IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(playerIn)
-						.orElseThrow(NullPointerException::new);
+						;
 				float damageMod = this.getLivingAttackDamage() * 75f;
 				if (playerVolume.getBloodVolume() > damageMod) {
 					playerVolume.drain(damageMod);

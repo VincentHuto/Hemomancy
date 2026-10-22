@@ -51,7 +51,7 @@ public final class ManipulationBalancePass2EconomyGameTests {
             var hemorrhage = ManipulationInit.hemorrhage.get();
             var rush = ManipulationInit.blood_rush.get();
             var avatar = ManipulationInit.summon_avatar.get();
-            var known = HemoCapabilityAccess.requireKnownManipulations(p);
+            var known = HemoCapabilityAccess.getKnownManipulations(p);
             for (BloodManipulation m : List.of(shot, hemorrhage, rush, avatar)) know(p, m, 0);
             known.setEquippedManipNames(List.of(shot.getName()));
             known.setSelectedManip(shot);
@@ -210,22 +210,22 @@ public final class ManipulationBalancePass2EconomyGameTests {
     }
 
     private static Map<EnumBloodTendency, Float> alignments(ServerPlayer p) {
-        var tendency = HemoCapabilityAccess.getBloodTendency(p).orElseThrow();
+        var tendency = HemoCapabilityAccess.getBloodTendency(p);
         Map<EnumBloodTendency, Float> values = new EnumMap<>(EnumBloodTendency.class);
         for (var t : EnumBloodTendency.values()) values.put(t, tendency.getAlignmentByTendency(t));
         return values;
     }
 
     private static void setSection(ServerPlayer p, EnumVeinSections section, float health) {
-        HemoCapabilityAccess.requireVascularSystem(p).getVascularSystem().put(section, health);
+        HemoCapabilityAccess.getVascularSystem(p).getVascularSystem().put(section, health);
     }
 
     private static float head(ServerPlayer p) {
-        return HemoCapabilityAccess.requireVascularSystem(p).getHealthBySection(EnumVeinSections.HEAD);
+        return HemoCapabilityAccess.getVascularSystem(p).getHealthBySection(EnumVeinSections.HEAD);
     }
 
     private static void know(ServerPlayer p, BloodManipulation m, int level) {
-        var known = HemoCapabilityAccess.requireKnownManipulations(p).getKnownManips();
+        var known = HemoCapabilityAccess.getKnownManipulations(p).getKnownManips();
         known.put(m, new ManipLevel(level, 0));
         // Family forms are only available once their baseline is mastered far enough.
         var baseline = ManipulationInit.getByName(ManipulationFamilyRegistry.baselineId(m.getName()));
@@ -233,7 +233,7 @@ public final class ManipulationBalancePass2EconomyGameTests {
     }
 
     private static double blood(ServerPlayer p) {
-        return HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume();
+        return HemoCapabilityAccess.getBloodVolume(p).getBloodVolume();
     }
 
     private static void near(GameTestHelper h, double expected, double actual, String message) {
@@ -249,11 +249,11 @@ public final class ManipulationBalancePass2EconomyGameTests {
             @Override public void send(net.minecraft.network.protocol.Packet<?> packet) { }
         };
         p.setPos(h.absoluteVec(new Vec3(2.5, 2, 2.5)));
-        var blood = HemoCapabilityAccess.requireBloodVolume(p);
+        var blood = HemoCapabilityAccess.getBloodVolume(p);
         blood.setActive(true);
         blood.setBloodVolume(2000);
         for (var tendency : EnumBloodTendency.values())
-            HemoCapabilityAccess.getBloodTendency(p).orElseThrow().setTendencyAlignment(tendency, 100);
+            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(tendency, 100);
         return p;
     }
 }

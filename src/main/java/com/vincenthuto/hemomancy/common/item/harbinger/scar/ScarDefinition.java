@@ -135,20 +135,19 @@ public class ScarDefinition {
 		if (!(player instanceof Player p)) {
 			return false;
 		}
-		return HemoCapabilityAccess.getScarState(p).map(scars -> {
-			final boolean[] found = { false };
-			scars.forEachActiveCerebralScar(otherScar -> {
-				if (otherScar != this && otherScar.hasEffect(effect)) {
-					found[0] = true;
-				}
-			});
-			ItemStack fungal = scars.getFungalScar();
-			if (!found[0] && fungal.getItem() instanceof ItemScar scar && scar.getScarDefinition() != this
-					&& scar.getScarDefinition().hasEffect(effect)) {
+		var scars = HemoCapabilityAccess.getScarState(p);
+		final boolean[] found = { false };
+		scars.forEachActiveCerebralScar(otherScar -> {
+			if (otherScar != this && otherScar.hasEffect(effect)) {
 				found[0] = true;
 			}
-			return found[0];
-		}).orElse(false);
+		});
+		ItemStack fungal = scars.getFungalScar();
+		if (!found[0] && fungal.getItem() instanceof ItemScar scar && scar.getScarDefinition() != this
+				&& scar.getScarDefinition().hasEffect(effect)) {
+			found[0] = true;
+		}
+		return found[0];
 	}
 
 	private boolean hasEffect(Holder<MobEffect> effect) {

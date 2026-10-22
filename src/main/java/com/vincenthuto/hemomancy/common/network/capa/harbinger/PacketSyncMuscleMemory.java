@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryState;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -34,7 +34,7 @@ public record PacketSyncMuscleMemory(int playerId, CompoundTag state) implements
         context.enqueueWork(() -> {
             var entity = context.player().level().getEntity(packet.playerId);
             if (entity instanceof net.minecraft.world.entity.player.Player player) {
-                player.getData(HemoAttachmentTypes.MUSCLE_MEMORY).deserializeNBT(null, packet.state);
+                HemoCapabilityAccess.muscleMemory(player).deserializeNBT(null, packet.state);
             }
         });
     }

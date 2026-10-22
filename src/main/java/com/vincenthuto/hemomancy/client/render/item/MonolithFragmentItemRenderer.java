@@ -93,12 +93,9 @@ public class MonolithFragmentItemRenderer extends BlockEntityWithoutLevelRendere
 		if (mc.player == null) {
 			return new CarrierVisualState(0.0f, 0.0f);
 		}
-		return HemoCapabilityAccess.getInitiatoryDegree(mc.player)
-				.map(degree -> {
-					boolean burden = MonolithFragmentBurdenRules.shouldBurdenCarrier(degree.getDegreeNumber());
-					return new CarrierVisualState(burden ? 1.0f : 0.0f, 0.0f);
-				})
-				.orElse(new CarrierVisualState(0.0f, 0.0f));
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(mc.player);
+		boolean burden = MonolithFragmentBurdenRules.shouldBurdenCarrier(degree.getDegreeNumber());
+		return new CarrierVisualState(burden ? 1.0f : 0.0f, 0.0f);
 	}
 
 	private static void drawGuiBoundTriangle(VertexConsumer vc, Matrix4f mat, float time, int combinedLight) {

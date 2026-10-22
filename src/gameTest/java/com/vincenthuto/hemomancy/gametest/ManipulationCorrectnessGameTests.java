@@ -50,7 +50,7 @@ public final class ManipulationCorrectnessGameTests {
                 h.getLevel().addFreshEntity(target);
                 try {
                     ManipulationInit.exsanguinate.get().getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
-                    near(h, 2000, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Rejected/non-blood victim refunded blood");
+                    near(h, 2000, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Rejected/non-blood victim refunded blood");
                 } finally { target.discard(); }
             }
             LivingEntity victim = EntityType.ZOMBIE.create(h.getLevel());
@@ -60,9 +60,9 @@ public final class ManipulationCorrectnessGameTests {
             try {
                 ManipulationInit.exsanguinate.get().getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
                 h.assertTrue(!victim.isAlive(), "Valid execution failed");
-                near(h, 2275, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Execution refund (250) plus the separately attributed 25 mL kill reward");
+                near(h, 2275, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Execution refund (250) plus the separately attributed 25 mL kill reward");
                 ManipulationInit.exsanguinate.get().getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
-                near(h, 2275, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Dead victim refunded twice");
+                near(h, 2275, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Dead victim refunded twice");
             } finally { victim.discard(); }
             h.succeed();
         } finally { p.discard(); }
@@ -78,7 +78,7 @@ public final class ManipulationCorrectnessGameTests {
                 for (float ticks : new float[]{0, 1, m.getRequiredChargeTicks() / 2F, m.getRequiredChargeTicks() - 1}) {
                     boolean cast = m.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), ticks);
                     h.assertTrue(!cast, m.getName() + " accepted incomplete charge " + ticks);
-                    near(h, 2000, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Incomplete charge spent blood");
+                    near(h, 2000, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Incomplete charge spent blood");
 					h.assertTrue(m.getRemainingCooldownTicks(p) == 0L, "Incomplete charge started cooldown");
                 }
             }
@@ -116,13 +116,13 @@ public final class ManipulationCorrectnessGameTests {
             select(p, ward);
             ManipulationChannelManager.start(p);
             h.assertTrue(ManipulationChannelManager.isChanneling(p.getUUID()), "Ward did not start");
-            double paid = HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume();
+            double paid = HemoCapabilityAccess.getBloodVolume(p).getBloodVolume();
             ManipulationChannelManager.start(p);
-            near(h, paid, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Duplicate START paid again");
+            near(h, paid, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Duplicate START paid again");
             ManipulationChannelManager.stop(p);
             ManipulationChannelManager.start(p);
             h.assertTrue(!ManipulationChannelManager.isChanneling(p.getUUID()), "Channel restarted during cooldown");
-            near(h, paid, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Blocked restart spent blood");
+            near(h, paid, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Blocked restart spent blood");
             var damage = new LivingIncomingDamageEvent(p, new DamageContainer(p.damageSources().generic(), 10));
             ManipulationReactiveEvents.onIncomingDamage(damage);
             near(h, 4, damage.getAmount(), "Initial Ward pool changed");
@@ -179,7 +179,7 @@ public final class ManipulationCorrectnessGameTests {
         try {
             for (boolean trained : List.of(false, true)) {
                 if (trained) {
-                    HemoCapabilityAccess.requireSkillProgress(p).setSkill(
+                    HemoCapabilityAccess.getSkillProgress(p).setSkill(
                             com.vincenthuto.hemomancy.common.init.SkillPointInit.skill_crimson_mastery,
                             com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumSkillStates.UNLOCKED, 3);
                     h.assertTrue(com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper.getCrimsonMasteryMultiplier(p) > 1, "Mastery fixture did not increase damage");
@@ -215,7 +215,7 @@ public final class ManipulationCorrectnessGameTests {
         ServerPlayer p = player(h);
         try {
             for (int amplifier=0; amplifier<3; amplifier++) {
-                var blood=HemoCapabilityAccess.requireBloodVolume(p);
+                var blood=HemoCapabilityAccess.getBloodVolume(p);
                 blood.setBloodVolume(2000);
                 for (int i=0;i<20;i++) EffectInit.blood_loss.get().applyEffectTick(p, amplifier);
                 near(h, 2000-10*(amplifier+1), blood.getBloodVolume(), "Blood Loss tier " + amplifier);
@@ -260,7 +260,7 @@ public final class ManipulationCorrectnessGameTests {
                     select(p, bell);
                     double cost = ManipulationCostLedger.collect(p, bell, 1).effectiveCost();
                     h.assertTrue(bell.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), ticks), "Bell release rejected");
-                    near(h, 2000 - cost * ticks / 80, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Bell charge payment");
+                    near(h, 2000 - cost * ticks / 80, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Bell charge payment");
                     float raw = 7F * ticks / 80;
                     near(h, TendencyAffinityRules.adjustManipulationDamage(p, target, bell, raw) + count * ticks / 80F, 100 - target.getHealth(), "Bell damage at " + ticks + " ticks, statuses=" + count);
                     // A partial toll cashes in only its share; the rest of the bank stays owed until expiry.
@@ -286,7 +286,7 @@ public final class ManipulationCorrectnessGameTests {
                 select(p, m);
                 double cost = ManipulationCostLedger.collect(p, m, 1).effectiveCost();
                 h.assertTrue(m.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), m.getRequiredChargeTicks()), "Full cast rejected: " + m.getName());
-                near(h, 2000 - cost, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Full cast payment");
+                near(h, 2000 - cost, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Full cast payment");
                 var projectiles = h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.projectile.Projectile.class,
                         p.getBoundingBox().inflate(5), projectile -> projectile.getOwner() == p);
                 near(h, m == ManipulationInit.hematic_mortar.get() ? 1 : 3, projectiles.size(),
@@ -307,7 +307,7 @@ public final class ManipulationCorrectnessGameTests {
                 select(p, ManipulationInit.penumbral_drift.get());
                 ManipulationChannelManager.start(p);
                 h.assertTrue(ManipulationChannelManager.isChanneling(p.getUUID()), "Drift failed to start");
-                if (reason == 0) HemoCapabilityAccess.requireKnownManipulations(p).setSelectedManip(ManipulationInit.blood_shot.get());
+                if (reason == 0) HemoCapabilityAccess.getKnownManipulations(p).setSelectedManip(ManipulationInit.blood_shot.get());
                 if (reason == 1) p.setHealth(0);
                 if (reason == 2) NeoForge.EVENT_BUS.post(new net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent(p, net.minecraft.world.level.Level.OVERWORLD, net.minecraft.world.level.Level.NETHER));
                 ManipulationChannelManager.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(p));
@@ -331,9 +331,9 @@ public final class ManipulationCorrectnessGameTests {
             NeoForge.EVENT_BUS.post(damage);
             near(h, 6, damage.getNewDamage(), "Absorption was deferred instead of consumed normally");
             near(h, 4, p.getPersistentData().getFloat("hemomancy:endless_hour_deferred"), "Absorption changed owed health");
-            double bloodBeforeRecast = HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume();
+            double bloodBeforeRecast = HemoCapabilityAccess.getBloodVolume(p).getBloodVolume();
             h.assertTrue(!hour.tryPerformAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition(), 0), "Recast accepted");
-            near(h, bloodBeforeRecast, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Blocked recast charged blood");
+            near(h, bloodBeforeRecast, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Blocked recast charged blood");
             hour.getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
             near(h, 4, p.getPersistentData().getFloat("hemomancy:endless_hour_deferred"), "Direct action erased debt");
             NeoForge.EVENT_BUS.post(new net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent(p, net.minecraft.world.level.Level.OVERWORLD, net.minecraft.world.level.Level.NETHER));
@@ -401,7 +401,7 @@ public final class ManipulationCorrectnessGameTests {
         ServerPlayer p = player(h);
         try {
             for (int i = 0; i < 60; i++) p.tick(); // Let the normal spawn protection expire.
-            HemoCapabilityAccess.requireBloodVolume(p).setActive(false);
+            HemoCapabilityAccess.getBloodVolume(p).setActive(false);
             ManipulationInit.endless_hour.get().getAction(p, h.getLevel(), ItemStack.EMPTY, p.blockPosition());
             p.removeEffect(MobEffects.ABSORPTION);
             p.removeEffect(MobEffects.DAMAGE_RESISTANCE);
@@ -428,19 +428,19 @@ public final class ManipulationCorrectnessGameTests {
         ServerPlayer p = player(h);
         select(p, ManipulationInit.sanguine_ward.get());
         ManipulationChannelManager.start(p);
-        double afterStart = HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume();
+        double afterStart = HemoCapabilityAccess.getBloodVolume(p).getBloodVolume();
         double pulseCost = 2000 - afterStart;
         h.assertTrue(pulseCost > 0, "Initial pulse was unpaid");
         h.runAfterDelay(19, () -> {
             ManipulationChannelManager.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(p));
-            near(h, afterStart, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Early upkeep charge");
+            near(h, afterStart, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Early upkeep charge");
         });
         h.runAfterDelay(21, () -> {
             try {
                 ManipulationChannelManager.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(p));
-                near(h, afterStart - pulseCost, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Upkeep did not pay one pulse");
+                near(h, afterStart - pulseCost, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Upkeep did not pay one pulse");
                 ManipulationChannelManager.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(p));
-                near(h, afterStart - pulseCost, HemoCapabilityAccess.requireBloodVolume(p).getBloodVolume(), "Same-tick upkeep paid twice");
+                near(h, afterStart - pulseCost, HemoCapabilityAccess.getBloodVolume(p).getBloodVolume(), "Same-tick upkeep paid twice");
                 h.succeed();
             } finally { ManipulationChannelManager.stop(p, false); p.discard(); }
         });
@@ -469,7 +469,7 @@ public final class ManipulationCorrectnessGameTests {
     }
 
     private static void select(ServerPlayer p, BloodManipulation m) {
-        var known=HemoCapabilityAccess.requireKnownManipulations(p);
+        var known=HemoCapabilityAccess.getKnownManipulations(p);
         known.getKnownManips().put(m,new ManipLevel(4,185));
         String baseline=com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry.baselineId(m.getName());
         known.getKnownManips().put(ManipulationInit.getByName(baseline),new ManipLevel(4,185));
@@ -486,11 +486,11 @@ public final class ManipulationCorrectnessGameTests {
             @Override public void send(net.minecraft.network.protocol.Packet<?> packet) { }
         };
         p.setPos(h.absoluteVec(new Vec3(2.5,2,2.5)));
-        var blood=HemoCapabilityAccess.requireBloodVolume(p);
+        var blood=HemoCapabilityAccess.getBloodVolume(p);
         blood.setActive(true);
         blood.setBloodVolume(2000);
         for (var tendency:EnumBloodTendency.values())
-            HemoCapabilityAccess.getBloodTendency(p).orElseThrow().setTendencyAlignment(tendency,100);
+            HemoCapabilityAccess.getBloodTendency(p).setTendencyAlignment(tendency,100);
         return p;
     }
 }

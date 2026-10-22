@@ -58,34 +58,32 @@ public final class MaxBloodLedger {
 			contributions.add(MaxBloodContribution.bonus("capacity", "Capacity", Category.SKILL, capacityBonus));
 		}
 
-		HemoCapabilityAccess.getVisceralOrgans(player).ifPresent(organs -> {
-			if (organs.isExtracted(EnumOrgan.SPLEEN)) {
-				double spleenBonus = Math.max(0, organs.getOrganLevel(EnumOrgan.SPLEEN)) * 1000.0D;
-				if (spleenBonus > 0.0D) {
-					contributions.add(MaxBloodContribution.bonus("spleen", "Spleen", Category.ORGAN, spleenBonus));
-				}
+		var organs = HemoCapabilityAccess.getVisceralOrgans(player);
+		if (organs.isExtracted(EnumOrgan.SPLEEN)) {
+			double spleenBonus = Math.max(0, organs.getOrganLevel(EnumOrgan.SPLEEN)) * 1000.0D;
+			if (spleenBonus > 0.0D) {
+				contributions.add(MaxBloodContribution.bonus("spleen", "Spleen", Category.ORGAN, spleenBonus));
 			}
-		});
+		}
 
 		if (player.getPersistentData().getBoolean(ETERNAL_COVENANT_TAG)) {
 			contributions.add(MaxBloodContribution.bonus("eternal_covenant", "Eternal Covenant",
 					Category.RITE, ETERNAL_COVENANT_BONUS));
 		}
 
-		HemoCapabilityAccess.getScarState(player).ifPresent(scars -> {
-			for (ResourceLocation scarId : scars.getActiveCerebralScars()) {
-				ScarDefinition definition = ScarInit.getByName(scarId.toString());
-				if (definition != null) {
-					addScarContribution(contributions, scarId.toString(), titleCase(scarId.getPath()), definition);
-				}
+		var scars = HemoCapabilityAccess.getScarState(player);
+		for (ResourceLocation scarId : scars.getActiveCerebralScars()) {
+			ScarDefinition definition = ScarInit.getByName(scarId.toString());
+			if (definition != null) {
+				addScarContribution(contributions, scarId.toString(), titleCase(scarId.getPath()), definition);
 			}
-			ItemStack fungalScar = scars.getFungalScar();
-			if (fungalScar.getItem() instanceof ItemScar scar) {
-				ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(fungalScar.getItem());
-				addScarContribution(contributions, itemId.toString(), titleCase(itemId.getPath()),
-						scar.getScarDefinition());
-			}
-		});
+		}
+		ItemStack fungalScar = scars.getFungalScar();
+		if (fungalScar.getItem() instanceof ItemScar scar) {
+			ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(fungalScar.getItem());
+			addScarContribution(contributions, itemId.toString(), titleCase(itemId.getPath()),
+					scar.getScarDefinition());
+		}
 
 		contributions.sort(Comparator
 				.comparing((MaxBloodContribution contribution) -> contribution.category().ordinal())

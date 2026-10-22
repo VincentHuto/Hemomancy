@@ -44,23 +44,20 @@ public class UnstainedProgressEvents {
     @SubscribeEvent
     public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         ServerPlayer player = (ServerPlayer) event.getEntity();
-        HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress ->
-                syncProgress(player, progress));
+        syncProgress(player, HemoCapabilityAccess.getUnstainedProgress(player));
     }
 
     @SubscribeEvent
     public static void onDimensionChange(PlayerChangedDimensionEvent event) {
         ServerPlayer player = (ServerPlayer) event.getEntity();
-        HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress ->
-                syncProgress(player, progress));
+        syncProgress(player, HemoCapabilityAccess.getUnstainedProgress(player));
     }
 
     @SubscribeEvent
     public static void playerRespawn(PlayerRespawnEvent event) {
         Player player = event.getEntity();
         if (!player.level().isClientSide) {
-            HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress ->
-                    syncProgress((ServerPlayer) player, progress));
+            syncProgress((ServerPlayer) player, HemoCapabilityAccess.getUnstainedProgress(player));
         }
     }
 }

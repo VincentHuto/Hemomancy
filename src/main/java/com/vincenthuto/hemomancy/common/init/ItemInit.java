@@ -60,6 +60,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class ItemInit {
@@ -104,7 +105,7 @@ public class ItemInit {
                     .withNotices(new com.vincenthuto.hutoslib.common.book.BookNoticeStyle("hemomancy.book.fane_discovery", "hutoslib.book.forgotten", "hutoslib.book.revealed", 0xFFB3121A))
                     .withReaderConfiguration(HemomancyBookPresentation::configure)
                     .withPageFilter(new MemoBookFilter())
-                    .withKnowledgeProvider(player -> HemoCapabilityAccess.getLiberKnowledge(player)));
+                    .withKnowledgeProvider(player -> Optional.of(HemoCapabilityAccess.getLiberKnowledge(player))));
 
     // Book
     public static final DeferredHolder<Item, Item> unsigned_ancestral_ledger = BASEITEMS.register("unsigned_ancestral_ledger",
@@ -116,7 +117,7 @@ public class ItemInit {
                     .withNotices(new com.vincenthuto.hutoslib.common.book.BookNoticeStyle("hemomancy.book.liber_discovery", "hemomancy.book.forgotten", "hemomancy.book.remembers", 0xFF8EA6CF))
                     .withReaderConfiguration(HemomancyBookPresentation::configure)
                     .withPageFilter(new MemoBookFilter())
-                    .withKnowledgeProvider(player -> HemoCapabilityAccess.getLiberKnowledge(player)));
+                    .withKnowledgeProvider(player -> Optional.of(HemoCapabilityAccess.getLiberKnowledge(player))));
 
     public static final DeferredHolder<Item, Item> harbinger_assignment_ledger = SPECIALITEMS.register("harbinger_assignment_ledger",
             () -> new HarbingerAssignmentLedgerItem(new Item.Properties().stacksTo(1),
