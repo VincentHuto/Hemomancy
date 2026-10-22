@@ -28,6 +28,11 @@ public final class LanternTickLightManager {
 	private LanternTickLightManager() {
 	}
 
+	/** Called by {@code TransientServerStateEvents} when a server starts and stops; a new world must not clear the old one's lights. */
+	public static void clearSessionState() {
+		trackedLights.clear();
+	}
+
 	@SubscribeEvent
 	public static void onServerTick(ServerTickEvent.Post event) {
 		MinecraftServer server = event.getServer();

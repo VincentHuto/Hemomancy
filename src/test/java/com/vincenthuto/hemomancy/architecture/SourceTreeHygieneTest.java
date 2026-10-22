@@ -50,6 +50,19 @@ class SourceTreeHygieneTest {
 		assertEquals(List.of(), empty);
 	}
 
+	/** NeoForge refuses to load a mod whose {@code @EventBusSubscriber} class has no {@code @SubscribeEvent} method. */
+	@Test
+	void everyEventBusSubscriberSubscribesSomething() throws Exception {
+		List<String> idle = new ArrayList<>();
+		for (Path file : mainJavaFiles()) {
+			String text = SourceAssertions.read(file);
+			if (text.contains("EventBusSubscriber(") && !text.contains("SubscribeEvent")) {
+				idle.add(RepoPaths.display(file));
+			}
+		}
+		assertEquals(List.of(), idle);
+	}
+
 	@Test
 	void mixinConfigListsExactlyTheMixinClasses() throws Exception {
 		JsonObject config = ResourceReader.jsonObject("hemomancy.mixins.json");

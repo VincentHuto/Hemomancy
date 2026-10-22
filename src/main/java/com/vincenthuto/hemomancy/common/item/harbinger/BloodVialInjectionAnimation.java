@@ -11,9 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -71,8 +69,10 @@ public final class BloodVialInjectionAnimation {
                 || player.level().getGameTime() - session.startedAt > BloodInjectionRules.USE_TICKS + 2) cancel(player);
     }
 
-    @SubscribeEvent public static void logout(PlayerEvent.PlayerLoggedOutEvent event) { cancel(event.getEntity()); }
-    @SubscribeEvent public static void stopped(ServerStoppedEvent event) { ACTIVE.clear(); }
+    /** Called by {@code TransientServerStateEvents} when the player logs out. */
+    public static void logout(Player player) { cancel(player); }
+    /** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+    public static void clearSessionState() { ACTIVE.clear(); }
 
     private record Session(Level level, long startedAt, InteractionHand hand, boolean right,
                            ItemStack vial, EnumBloodTendency tendency, int selectedSlot, long finishedAt) { }

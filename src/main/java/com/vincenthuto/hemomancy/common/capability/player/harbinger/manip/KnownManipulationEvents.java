@@ -11,7 +11,6 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCastingRules;
 import com.vincenthuto.hemomancy.common.manipulation.animus.AvatarManifestationRules;
-import com.vincenthuto.hemomancy.common.manipulation.animus.SummonThrallManip;
 import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.KnownManipulationServerPacket;
@@ -135,12 +134,14 @@ public class KnownManipulationEvents {
 
 	}
 
-	@SubscribeEvent
-	public static void playerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
-		LAST_OWNER_SNAPSHOT.remove(event.getEntity().getUUID());
-		// Clean up any pending thrall awaiting target selection
-		SummonThrallManip.clearPendingThrall(event.getEntity().getUUID());
-		SynapticLoadoutLockout.clear(event.getEntity().getUUID());
+	/** Called by {@code TransientServerStateEvents} when the player logs out. */
+	public static void logout(Player player) {
+		LAST_OWNER_SNAPSHOT.remove(player.getUUID());
+	}
+
+	/** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+	public static void clearSessionState() {
+		LAST_OWNER_SNAPSHOT.clear();
 	}
 
 	public static void syncAvatar(Player player, Collection<? extends Player> receivers, String avatarForm) {

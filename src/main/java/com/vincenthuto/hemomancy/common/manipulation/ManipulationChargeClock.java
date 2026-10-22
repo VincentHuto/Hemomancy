@@ -4,19 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import com.vincenthuto.hemomancy.Hemomancy;
-
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 /**
  * Server-side record of when each player started charging their selected manipulation. The client reports its
  * own charge ticks on release; the server never credits more than it watched (see
  * {@link ManipulationCastingRules#clampReportedCharge}).
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class ManipulationChargeClock {
 	private static final Map<UUID, Start> STARTS = new HashMap<>();
 
@@ -61,11 +55,6 @@ public final class ManipulationChargeClock {
 	/** A charged cast resolved; the next one needs a fresh key-down. */
 	public static void release(Player player) {
 		STARTS.remove(player.getUUID());
-	}
-
-	@SubscribeEvent
-	public static void logout(PlayerEvent.PlayerLoggedOutEvent event) {
-		release(event.getEntity());
 	}
 
 	/** Called by {@code TransientServerStateEvents} when a server starts and stops. */

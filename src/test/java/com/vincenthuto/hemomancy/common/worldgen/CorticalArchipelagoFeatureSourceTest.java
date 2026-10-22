@@ -50,8 +50,10 @@ class CorticalArchipelagoFeatureSourceTest {
 		String source = read(FEATURE);
 		assertTrue(source.contains("REGION_CACHE.computeIfAbsent(orbitSeed"),
 				"plans are cached by their central Mind's orbit seed");
-		assertTrue(source.contains("ServerStoppedEvent") && source.contains("REGION_CACHE.clear()"),
-				"the cache must be dropped when the server stops");
+		assertTrue(source.contains("REGION_CACHE.clear()"), "the cache must be droppable");
+		assertTrue(read("src/main/java/com/vincenthuto/hemomancy/common/event/TransientServerStateEvents.java")
+				.contains("CorticalArchipelagoFeature.clearSessionState()"),
+				"the cache must be dropped when the server starts and stops");
 	}
 
 	@Test

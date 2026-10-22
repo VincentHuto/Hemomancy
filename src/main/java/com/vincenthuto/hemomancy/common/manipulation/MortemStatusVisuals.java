@@ -11,7 +11,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,5 +46,6 @@ public final class MortemStatusVisuals {
     private static void send(ServerPlayer observer,LivingEntity target,Form form,int ticks) {
         if(ticks>0)PacketHandler.sendToPlayer(observer,new ManipulationVisualPacket(form,target.getId(),target.position(),target.position(),1,ticks,1));
     }
-    @SubscribeEvent public static void stopped(ServerStoppedEvent event){INFECTIONS.clear();}
+    /** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+    public static void clearSessionState(){INFECTIONS.clear();}
 }

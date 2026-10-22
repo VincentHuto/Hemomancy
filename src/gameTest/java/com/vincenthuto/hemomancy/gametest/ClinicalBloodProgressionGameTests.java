@@ -901,7 +901,7 @@ public final class ClinicalBloodProgressionGameTests {
 
     private static void cleanupSharedSelection(ServerPlayer player) {
         ManipulationChannelManager.stop(player, false);
-        CastingAnimationManager.logout(new PlayerEvent.PlayerLoggedOutEvent(player));
+        CastingAnimationManager.logout(player);
         player.discard();
     }
 

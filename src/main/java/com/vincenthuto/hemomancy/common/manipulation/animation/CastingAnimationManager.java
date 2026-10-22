@@ -16,7 +16,6 @@ import net.minecraft.world.InteractionHand;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import java.util.HashMap;
 import java.util.Map;
@@ -138,14 +137,16 @@ public final class CastingAnimationManager {
         }
     }
     private static void clear(PlayerEvent event) {
-        if(event.getEntity() instanceof ServerPlayer player) {
-            var packet=current(player);
-            if(packet!=null)finish(player,packet,CastPhase.CANCEL);
-            ACTIVE.remove(player.getUUID());
-        }
+        if(event.getEntity() instanceof ServerPlayer player) logout(player);
     }
-    @SubscribeEvent public static void logout(PlayerEvent.PlayerLoggedOutEvent e) { clear(e); }
+    /** Called by {@code TransientServerStateEvents} when the player logs out. */
+    public static void logout(ServerPlayer player) {
+        var packet=current(player);
+        if(packet!=null)finish(player,packet,CastPhase.CANCEL);
+        ACTIVE.remove(player.getUUID());
+    }
     @SubscribeEvent public static void respawn(PlayerEvent.PlayerRespawnEvent e) { clear(e); }
     @SubscribeEvent public static void dimension(PlayerEvent.PlayerChangedDimensionEvent e) { clear(e); }
-    @SubscribeEvent public static void stopped(ServerStoppedEvent e) { ACTIVE.clear(); sequence=0; }
+    /** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+    public static void clearSessionState() { ACTIVE.clear(); sequence=0; }
 }

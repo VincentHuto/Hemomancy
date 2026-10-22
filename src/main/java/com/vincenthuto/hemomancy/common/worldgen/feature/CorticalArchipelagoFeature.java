@@ -40,9 +40,6 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 
 /**
  * Builds every Cortical Drift island, hub and nerve cable from {@link CorticalArchipelagoPlan}.
@@ -52,7 +49,6 @@ import net.neoforged.neoforge.event.server.ServerStoppedEvent;
  * write only their own blocks. A Cortical Drift therefore cannot produce the old free-floating
  * scatter with its Mind somewhere unrelated in the biome.
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class CorticalArchipelagoFeature extends Feature<NoneFeatureConfiguration> {
 	private static final int FOOTPRINT_PAD = 6;
 	private static final int ORBIT_REACH = 320;
@@ -79,8 +75,8 @@ public class CorticalArchipelagoFeature extends Feature<NoneFeatureConfiguration
 		super(codec);
 	}
 
-	@SubscribeEvent
-	public static void clearRegionCache(ServerStoppedEvent event) {
+	/** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+	public static void clearSessionState() {
 		REGION_CACHE.clear();
 	}
 

@@ -18,8 +18,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.HashMap;
@@ -79,13 +77,13 @@ public final class TerrestrialSpeculumPlantingManager {
 		ACTIVE.put(player.getUUID(), planting.withManifested());
 	}
 
-	@SubscribeEvent
-	public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player) cancel(player);
+	/** Called by {@code TransientServerStateEvents} when the player logs out. */
+	public static void logout(ServerPlayer player) {
+		cancel(player);
 	}
 
-	@SubscribeEvent
-	public static void onServerStopped(ServerStoppedEvent event) {
+	/** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+	public static void clearSessionState() {
 		ACTIVE.clear();
 	}
 

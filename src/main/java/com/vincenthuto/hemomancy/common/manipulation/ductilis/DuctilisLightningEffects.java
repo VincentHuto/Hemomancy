@@ -191,7 +191,8 @@ public final class DuctilisLightningEffects {
 				spawn(strike.level,strike.source,strike.start,strike.end,strike.seed,72,3,3,6,.055f,.009f);
 		}
 	}
-	@net.neoforged.bus.api.SubscribeEvent public static void clearRestrikes(net.neoforged.neoforge.event.server.ServerStoppedEvent event) {RESTRIKES.clear();}
+	/** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+	public static void clearSessionState() {RESTRIKES.clear();}
 
 	private static Vec3 castOrigin(LivingEntity source,double down) {
 		// Keep a player's luminous core in front of the first-person near plane.

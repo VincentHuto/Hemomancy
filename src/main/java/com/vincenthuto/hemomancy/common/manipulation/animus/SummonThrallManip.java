@@ -63,6 +63,11 @@ public class SummonThrallManip extends BloodManipulation {
 		PENDING_THRALLS.remove(playerUUID);
 	}
 
+	/** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+	public static void clearSessionState() {
+		PENDING_THRALLS.clear();
+	}
+
 	@Override
 	public void performAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		if (!world.isClientSide) {

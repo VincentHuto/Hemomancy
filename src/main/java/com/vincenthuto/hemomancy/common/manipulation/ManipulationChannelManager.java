@@ -97,9 +97,9 @@ public final class ManipulationChannelManager {
 		CHANNELS.put(player.getUUID(), new ChannelState(state.manipulationName(), now, lastMasteryTick));
 	}
 
-	@SubscribeEvent
-	public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player) stop(player, false);
+	/** Called by {@code TransientServerStateEvents} when the player logs out. */
+	public static void logout(ServerPlayer player) {
+		stop(player, false);
 	}
 
 	@SubscribeEvent

@@ -147,7 +147,7 @@ public final class CastingAnimationGameTests {
     }
     private static void cleanup(ServerPlayer p) {
         ManipulationChannelManager.stop(p,false);
-        CastingAnimationManager.logout(new PlayerEvent.PlayerLoggedOutEvent(p));
+        CastingAnimationManager.logout(p);
         p.discard();
     }
     private static Capture player(GameTestHelper h) {

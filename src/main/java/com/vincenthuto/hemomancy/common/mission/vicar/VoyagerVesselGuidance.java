@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.mission.vicar;
 
+import net.minecraft.world.entity.player.Player;
 import com.vincenthuto.hemomancy.Hemomancy;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -14,8 +15,6 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 import java.util.ArrayDeque;
@@ -106,15 +105,15 @@ public final class VoyagerVesselGuidance {
                 "hemomancy.vicar.voyager_introduction." + key, arguments).withStyle(ChatFormatting.DARK_RED), false);
     }
 
-    @SubscribeEvent
-    public static void logout(PlayerEvent.PlayerLoggedOutEvent event) {
-        UUID player = event.getEntity().getUUID();
+    /** Called by {@code TransientServerStateEvents} when the player logs out. */
+    public static void logout(Player leaving) {
+        UUID player = leaving.getUUID();
         PENDING.remove(player);
         SEARCHES.removeIf(search -> search.player.equals(player));
     }
 
-    @SubscribeEvent
-    public static void stopped(ServerStoppedEvent event) {
+    /** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+    public static void clearSessionState() {
         SEARCHES.clear();
         PENDING.clear();
     }

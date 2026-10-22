@@ -11,7 +11,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,5 +61,6 @@ public final class ThermalStatusVisuals {
                     state.entity.position(),state.entity.position(),(float)state.radius,ticks,state.count));
         }
     }
-    @SubscribeEvent public static void stopped(ServerStoppedEvent event) {ACTIVE.clear();}
+    /** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+    public static void clearSessionState() {ACTIVE.clear();}
 }

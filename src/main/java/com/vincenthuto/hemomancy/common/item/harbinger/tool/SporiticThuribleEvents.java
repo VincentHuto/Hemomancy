@@ -31,6 +31,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SporiticThuribleEvents {
 	private static final Map<UUID, Float> LAST_YAW = new ConcurrentHashMap<>();
 
+	/** Called by {@code TransientServerStateEvents} when the player logs out. */
+	public static void logout(Player player) {
+		LAST_YAW.remove(player.getUUID());
+	}
+
+	/** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+	public static void clearSessionState() {
+		LAST_YAW.clear();
+	}
+
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent.Post event) {
 		Player player = event.getEntity();

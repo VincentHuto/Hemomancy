@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume;
 
+import net.minecraft.world.entity.player.Player;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
@@ -19,6 +20,16 @@ public final class BloodFlowLedger {
 			new ConcurrentHashMap<>();
 
 	private BloodFlowLedger() {
+	}
+
+	/** Called by {@code TransientServerStateEvents} when the player logs out. */
+	public static void logout(Player player) {
+		RECENT.remove(player.getUUID());
+	}
+
+	/** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+	public static void clearSessionState() {
+		RECENT.clear();
 	}
 
 	public record DrainResult(double requested, double actual, boolean satisfied) {

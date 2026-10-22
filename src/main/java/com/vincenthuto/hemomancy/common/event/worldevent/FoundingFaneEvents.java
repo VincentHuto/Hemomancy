@@ -148,6 +148,11 @@ public class FoundingFaneEvents {
 		FANE_BOUNDARY_PREVIEWS.remove(viewer.getUUID());
 	}
 
+	/** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+	public static void clearSessionState() {
+		FANE_BOUNDARY_PREVIEWS.clear();
+	}
+
 	public static Optional<FaneBoundaryRelation> previewRelation(ServerPlayer viewer) {
 		return Optional.ofNullable(FANE_BOUNDARY_PREVIEWS.get(viewer.getUUID()));
 	}

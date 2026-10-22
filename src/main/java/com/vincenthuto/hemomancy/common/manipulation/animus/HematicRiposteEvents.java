@@ -222,9 +222,9 @@ public final class HematicRiposteEvents {
 		RIPOSTES.remove(entity.getUUID());
 	}
 
-	@SubscribeEvent
-	public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-		clear(event.getEntity());
+	/** Called by {@code TransientServerStateEvents} when the player logs out. */
+	public static void logout(Player player) {
+		clear(player);
 	}
 
 	@SubscribeEvent

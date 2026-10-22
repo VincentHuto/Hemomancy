@@ -17,7 +17,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
@@ -146,9 +145,11 @@ public final class MicroscopeExamination {
             SESSIONS.remove(player);
         }
     }
-    @SubscribeEvent public static void logout(PlayerEvent.PlayerLoggedOutEvent event) { clear(event.getEntity()); }
+    /** Called by {@code TransientServerStateEvents} when the player logs out. */
+    public static void logout(Player player) { clear(player); }
     @SubscribeEvent public static void death(LivingDeathEvent event) {
         if (event.getEntity() instanceof Player player && !player.level().isClientSide) clear(player);
     }
-    @SubscribeEvent public static void stopped(ServerStoppedEvent event) { SESSIONS.clear(); }
+    /** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+    public static void clearSessionState() { SESSIONS.clear(); }
 }

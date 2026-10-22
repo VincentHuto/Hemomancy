@@ -27,7 +27,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
-import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import java.util.*;
 
@@ -215,13 +214,15 @@ public final class EarlyInitiation {
             restore(c); return true;
         });
     }
-    @SubscribeEvent public static void logout(PlayerEvent.PlayerLoggedOutEvent event) { cancel(event.getEntity()); }
+    /** Called by {@code TransientServerStateEvents} when the player logs out. */
+    public static void logout(Player player) { cancel(player); }
     @SubscribeEvent public static void dimension(PlayerEvent.PlayerChangedDimensionEvent event) { cancel(event.getEntity()); }
     @SubscribeEvent public static void login(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player && HemoCapabilityAccess.getPlayerDegreeNumber(player) == 0
                 && attached(player) && TempleOathRules.claimedHeartHermit(player) != null) activate(player);
     }
-    @SubscribeEvent public static void stopped(ServerStoppedEvent event) {
+    /** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+    public static void clearSessionState() {
         ACTIVE.values().forEach(EarlyInitiation::restore); ACTIVE.clear();
     }
 }

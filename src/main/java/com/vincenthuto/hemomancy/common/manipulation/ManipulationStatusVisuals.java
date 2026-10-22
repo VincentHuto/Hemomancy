@@ -10,7 +10,6 @@ import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
-import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import java.util.HashSet;
 import java.util.Set;
@@ -50,5 +49,6 @@ public final class ManipulationStatusVisuals {
         PENDING.clear();
     }
 
-    @SubscribeEvent public static void stopped(ServerStoppedEvent event) {PENDING.clear();}
+    /** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+    public static void clearSessionState() {PENDING.clear();}
 }

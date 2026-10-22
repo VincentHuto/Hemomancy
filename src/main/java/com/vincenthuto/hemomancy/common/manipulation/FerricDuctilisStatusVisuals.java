@@ -15,7 +15,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import java.util.*;
 
@@ -103,5 +102,6 @@ public final class FerricDuctilisStatusVisuals {
                     || link.level.getGameTime()>=link.until) { links.remove(); sendLink(link,0); }
         }
     }
-    @SubscribeEvent public static void stopped(ServerStoppedEvent event) {STATES.clear();LINKS.clear();}
+    /** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+    public static void clearSessionState() {STATES.clear();LINKS.clear();}
 }

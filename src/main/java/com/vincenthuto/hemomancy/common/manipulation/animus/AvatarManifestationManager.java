@@ -18,7 +18,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.HashMap;
@@ -121,13 +120,16 @@ public final class AvatarManifestationManager {
 		if (event.getEntity() instanceof ServerPlayer player) dismiss(player);
 	}
 
-	@SubscribeEvent
-	public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player) {
-			STATES.remove(player.getUUID());
-			removeAttributes(player);
-			HemoCapabilityAccess.getKnownManipulations(player).setActiveAvatarForm("");
-		}
+	/** Called by {@code TransientServerStateEvents} when the player logs out. */
+	public static void logout(ServerPlayer player) {
+		STATES.remove(player.getUUID());
+		removeAttributes(player);
+		HemoCapabilityAccess.getKnownManipulations(player).setActiveAvatarForm("");
+	}
+
+	/** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+	public static void clearSessionState() {
+		STATES.clear();
 	}
 
 	private static boolean isKnownAndEquipped(IKnownManipulations known, String id) {

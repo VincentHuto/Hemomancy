@@ -13,6 +13,11 @@ public final class Discharge {
         if (hit != null) ROOTS.putIfAbsent(hit.rootAttack(), this);
     }
 
+    /** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+    public static void clearSessionState() {
+        ROOTS.clear();
+    }
+
     public static Discharge current() {
         var hit = com.vincenthuto.hemomancy.common.damage.SchoolDamage.current();
         return hit == null ? null : ROOTS.get(hit.rootAttack());

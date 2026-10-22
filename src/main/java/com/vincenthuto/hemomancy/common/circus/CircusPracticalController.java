@@ -151,13 +151,13 @@ public final class CircusPracticalController {
         else CircusApprenticeshipProgress.completePractical(player, session.summon);
         cancel(player); CircusPlayerProgress.sync(player, true); message(player, "passed");
     }
-    @SubscribeEvent public static void logout(net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) cancel(player);
-    }
+    /** Called by {@code TransientServerStateEvents} when the player logs out. */
+    public static void logout(ServerPlayer player) { cancel(player); }
     @SubscribeEvent public static void changeDimension(net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) cancel(player);
     }
-    @SubscribeEvent public static void stopped(net.neoforged.neoforge.event.server.ServerStoppedEvent event) { SESSIONS.clear(); }
+    /** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+    public static void clearSessionState() { SESSIONS.clear(); }
     @SubscribeEvent public static void drops(net.neoforged.neoforge.event.entity.living.LivingDropsEvent event) {
         if (event.getEntity().getPersistentData().hasUUID(EXAM) || event.getEntity() instanceof Mob mob && CircusDemonstrations.isStage(mob)) event.setCanceled(true);
     }

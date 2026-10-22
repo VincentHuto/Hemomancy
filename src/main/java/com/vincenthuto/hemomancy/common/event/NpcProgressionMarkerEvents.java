@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import net.minecraft.world.entity.player.Player;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueAttention;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ProgressionDialogueNpc;
@@ -44,9 +45,14 @@ public final class NpcProgressionMarkerEvents {
 		}
 	}
 
-	@SubscribeEvent
-	public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
-		LAST_SENT.remove(event.getEntity().getUUID());
+	/** Called by {@code TransientServerStateEvents} when the player logs out. */
+	public static void logout(Player player) {
+		LAST_SENT.remove(player.getUUID());
+	}
+
+	/** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+	public static void clearSessionState() {
+		LAST_SENT.clear();
 	}
 
 	@SubscribeEvent

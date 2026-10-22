@@ -390,10 +390,10 @@ public final class ManipulationReactiveEvents {
 		}
 	}
 
-	@SubscribeEvent
-	public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-		EndlessHourManip.settleDebt(event.getEntity());
-		clear(event.getEntity());
+	/** Called by {@code TransientServerStateEvents} when the player logs out. */
+	public static void logout(Player player) {
+		EndlessHourManip.settleDebt(player);
+		clear(player);
 	}
 
 	@SubscribeEvent

@@ -22,7 +22,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
-import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 import java.util.ArrayList;
@@ -121,8 +120,8 @@ public final class LivingAxeLodestoneFields {
 		CRITICALS.clear();
 	}
 
-	@SubscribeEvent
-	public static void stopped(ServerStoppedEvent event) {
+	/** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+	public static void clearSessionState() {
 		CRITICALS.clear();
 		FIELDS.clear();
 	}

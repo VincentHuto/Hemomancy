@@ -32,7 +32,6 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import java.util.HashMap;
 import java.util.Map;
@@ -283,8 +282,10 @@ public final class AxonalTransductionManager {
             if (p.getPersistentData().contains(RETURN)) end(p, true);
         }
     }
-    @SubscribeEvent public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-        if (event.getEntity() instanceof ServerPlayer p) { if (isTraveling(p)) end(p, true); EXIT_CONTACTS.remove(p.getUUID()); }
+    /** Called by {@code TransientServerStateEvents} when the player logs out. */
+    public static void logout(ServerPlayer p) {
+        if (isTraveling(p)) end(p, true);
+        EXIT_CONTACTS.remove(p.getUUID());
     }
     @SubscribeEvent public static void onDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
         if (event.getEntity() instanceof ServerPlayer p) {
@@ -305,7 +306,8 @@ public final class AxonalTransductionManager {
                     traveler.level().dimension().location(), traveler.getId(), session.token, true, traveler.position()));
         }
     }
-    @SubscribeEvent public static void onStopped(ServerStoppedEvent event) { SESSIONS.clear(); EXIT_CONTACTS.clear(); }
+    /** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+    public static void clearSessionState() { SESSIONS.clear(); EXIT_CONTACTS.clear(); }
     private static final class Session {
         final ServerLevel level;
         final AxonalTravelPath path;

@@ -597,8 +597,8 @@ public class HarbingerCardinalRiteEvents {
 				recipe.isRankup(), recipe.getPurpose(), !recipe.getResult().isEmpty(), floorStyle).id();
 	}
 
-	@SubscribeEvent
-	public static void onServerStopped(net.neoforged.neoforge.event.server.ServerStoppedEvent event) {
+	/** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+	public static void clearSessionState() {
 		ANCHOR_BEAT_STATE.clear();
 		STATION_VALIDITY.clear();
 	}

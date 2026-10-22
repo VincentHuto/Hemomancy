@@ -57,7 +57,7 @@ public final class StillArtAnimationGameTests {
         if(art!=null)HemoCapabilityAccess.getKnownStillArts(p).learnArt(art);
     }
     private static void cleanup(ServerPlayer p) {
-        CastingAnimationManager.logout(new PlayerEvent.PlayerLoggedOutEvent(p));
+        CastingAnimationManager.logout(p);
         p.discard();
     }
     private static Capture player(GameTestHelper h) {

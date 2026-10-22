@@ -130,12 +130,12 @@ public final class MuscleMemoryEvents {
         }
     }
 
-    @SubscribeEvent
-    public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-        UUID playerId = event.getEntity().getUUID();
+    /** Called by {@code TransientServerStateEvents} when the player logs out. */
+    public static void logout(Player player) {
+        UUID playerId = player.getUUID();
         PRIMARY_ATTACKS.remove(playerId);
         LAST_TARGET_TRIGGER.remove(playerId);
-        if (event.getEntity() instanceof ServerPlayer player) MuscleMemoryWorldEvents.clearRuntime(player);
+        if (player instanceof ServerPlayer serverPlayer) MuscleMemoryWorldEvents.clearRuntime(serverPlayer);
     }
 
     @SubscribeEvent

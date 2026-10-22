@@ -39,8 +39,6 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import javax.annotation.Nullable;
@@ -304,13 +302,13 @@ public final class EarthenVeinTravelManager {
 		}
 	}
 
-	@SubscribeEvent
-	public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player) cancel(player.getUUID(), player.server, false);
+	/** Called by {@code TransientServerStateEvents} when the player logs out. */
+	public static void logout(ServerPlayer player) {
+		cancel(player.getUUID(), player.server, false);
 	}
 
-	@SubscribeEvent
-	public static void onServerStopped(ServerStoppedEvent event) {
+	/** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+	public static void clearSessionState() {
 		BY_PLAYER.clear();
 		SOURCE_OWNERS.clear();
 		CINEMATIC_STARTS.clear();

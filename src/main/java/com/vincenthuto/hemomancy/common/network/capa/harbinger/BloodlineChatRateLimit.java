@@ -1,9 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
-import com.vincenthuto.hemomancy.Hemomancy;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,7 +12,6 @@ import java.util.UUID;
  * {@link #MESSAGES} messages per {@link #WINDOW_TICKS} server ticks for each sender. Messages over the limit are
  * dropped.
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class BloodlineChatRateLimit {
 	public static final int MESSAGES = 3;
 	public static final long WINDOW_TICKS = 100L;
@@ -53,8 +49,8 @@ public final class BloodlineChatRateLimit {
 		RECENT.clear();
 	}
 
-	@SubscribeEvent
-	public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-		RECENT.remove(event.getEntity().getUUID());
+	/** Called by {@code TransientServerStateEvents} when the player logs out. */
+	public static void logout(Player player) {
+		RECENT.remove(player.getUUID());
 	}
 }

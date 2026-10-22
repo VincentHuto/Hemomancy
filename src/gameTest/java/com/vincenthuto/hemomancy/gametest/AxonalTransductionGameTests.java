@@ -113,7 +113,7 @@ public final class AxonalTransductionGameTests {
             f.enter(); f.forward();
             h.assertTrue(Paralysis.blocksActions(f.player),"Signal could still perform ordinary actions");
             if(reason==0) { HemoCapabilityAccess.getKnownManipulations(f.player).togglePassive("axonal_transduction"); AxonalTransductionManager.tick(f.player); }
-            if(reason==1) AxonalTransductionManager.onLogout(new PlayerEvent.PlayerLoggedOutEvent(f.player));
+            if(reason==1) AxonalTransductionManager.logout(f.player);
             if(reason==2) AxonalTransductionManager.onLogin(new PlayerEvent.PlayerLoggedInEvent(f.player));
             h.assertTrue(!AxonalTransductionManager.isTraveling(f.player)&&!f.player.noPhysics&&!f.player.isNoGravity(),"Recovery leaked travel state: "+reason);
             h.assertTrue(f.player.position().distanceToSqr(Vec3.atBottomCenterOf(f.source.above()))<.01,"Recovery did not return to a safe entry landing");
@@ -225,13 +225,13 @@ public final class AxonalTransductionGameTests {
     public static void recoveredLogoutAndColdLoginCannotRecaptureAtTheSource(GameTestHelper h) {
         try(Fixture f=new Fixture(h)) {
             f.enter();f.forward();double paid=HemoCapabilityAccess.getBloodVolume(f.player).getBloodVolume();
-            AxonalTransductionManager.onLogout(new PlayerEvent.PlayerLoggedOutEvent(f.player));
+            AxonalTransductionManager.logout(f.player);
             AxonalTransductionManager.onLogin(new PlayerEvent.PlayerLoggedInEvent(f.player));
             AxonalTransductionManager.tick(f.player);
             h.assertTrue(!AxonalTransductionManager.isTraveling(f.player),"Reconnected player was recaptured before leaving contact");
             h.assertTrue(HemoCapabilityAccess.getBloodVolume(f.player).getBloodVolume()==paid,"Reconnect charged a second entry");
             var saved=f.player.getPersistentData().copy();
-            AxonalTransductionManager.onLogout(new PlayerEvent.PlayerLoggedOutEvent(f.player));
+            AxonalTransductionManager.logout(f.player);
             f.player.getPersistentData().merge(saved);
             AxonalTransductionManager.onLogin(new PlayerEvent.PlayerLoggedInEvent(f.player));
             AxonalTransductionManager.tick(f.player);

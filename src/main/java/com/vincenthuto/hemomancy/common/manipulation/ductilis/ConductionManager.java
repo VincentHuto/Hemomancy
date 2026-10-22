@@ -30,7 +30,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
-import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import java.util.*;
 
@@ -325,7 +324,8 @@ public final class ConductionManager {
         });
         OWNER_PULSES.keySet().removeIf(e->e.getUUID().equals(owner));
     }
-    @SubscribeEvent public static void onLogout(PlayerEvent.PlayerLoggedOutEvent e) { clearOwner(e.getEntity().getUUID()); }
+    /** Called by {@code TransientServerStateEvents} when the player logs out. */
+    public static void logout(Player player) { clearOwner(player.getUUID()); }
     @SubscribeEvent public static void onDimension(PlayerEvent.PlayerChangedDimensionEvent e) { clearOwner(e.getEntity().getUUID()); }
     @SubscribeEvent public static void onRespawn(PlayerEvent.PlayerRespawnEvent e) { clearOwner(e.getEntity().getUUID()); }
     @SubscribeEvent public static void onDeath(LivingDeathEvent e) {
@@ -335,7 +335,8 @@ public final class ConductionManager {
         NETWORKS.remove(e.getLevel()); OWNER_PULSES.keySet().removeIf(owner->owner.level()==e.getLevel());
         RELAYS.keySet().removeIf(relay->relay.level()==e.getLevel());
     }
-    @SubscribeEvent public static void onStop(ServerStoppedEvent e) { NETWORKS.clear(); RELAYS.clear(); OWNER_PULSES.clear(); }
+    /** Called by {@code TransientServerStateEvents} when a server starts and stops. */
+    public static void clearSessionState() { NETWORKS.clear(); RELAYS.clear(); OWNER_PULSES.clear(); }
 
     private static LivingEntity resolveOwner(ServerLevel level,UUID id) {
         return level.getEntity(id) instanceof LivingEntity living ? living : null;

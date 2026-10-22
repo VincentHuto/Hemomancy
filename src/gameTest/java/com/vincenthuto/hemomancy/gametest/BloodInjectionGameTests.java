@@ -132,7 +132,7 @@ public final class BloodInjectionGameTests {
         h.assertTrue(!EarlyInitiation.begin(recruit, founder), "Ordinary member initiated");
         volume.setBloodLine(line);
         h.assertTrue(EarlyInitiation.begin(recruit, founder), "Valid founder rejected");
-        EarlyInitiation.logout(new net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent(founder));
+        EarlyInitiation.logout(founder);
         h.assertTrue(EarlyInitiation.begin(recruit, founder), "Founder logout did not cancel");
         degree.setDegreeNumber(4);
         EarlyInitiation.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(recruit));
