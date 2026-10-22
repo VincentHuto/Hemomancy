@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.*;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
+import com.vincenthuto.hemomancy.common.util.PatternOrigins;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.*;
@@ -148,11 +149,8 @@ public final class SuccessionRites {
         // Match the saved floor directly: structure matching normally also demands the now-consumed medium.
         var floor = com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry.get(rite.getMatchedFloorId()).orElse(null);
         if (floor == null) return false;
-        var forwards = rite.getFloorForwards(); var up = rite.getFloorUp(); var right = forwards.getNormal().cross(up.getNormal());
-        var f = floor.focus();
-        var origin = rite.getCenterPos().offset(up.getStepX()*f.getY()-right.getX()*f.getX()-forwards.getStepX()*f.getZ(),
-                up.getStepY()*f.getY()-right.getY()*f.getX()-forwards.getStepY()*f.getZ(),
-                up.getStepZ()*f.getY()-right.getZ()*f.getX()-forwards.getStepZ()*f.getZ());
+        var forwards = rite.getFloorForwards(); var up = rite.getFloorUp(); var f = floor.focus();
+        var origin = PatternOrigins.originForCell(rite.getCenterPos(), forwards, up, f.getX(), f.getY(), f.getZ());
         if (floor.pattern().getBlockPattern().matches(level, origin, forwards, up) == null) return false;
         return level.getBlockState(BlockPos.of(c.getLong("Body")).below()).is(BlockInit.venous_stone.get());
     }

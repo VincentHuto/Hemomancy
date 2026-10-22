@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.rite.harbinger;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;
+import com.vincenthuto.hemomancy.common.util.PatternOrigins;
 import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
 import com.vincenthuto.hemomancy.common.init.ParticleInit;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -64,7 +65,6 @@ import com.vincenthuto.hutoslib.common.lightning.LightningTesterSpawner;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -841,33 +841,13 @@ public class HarbingerCardinalRiteEvents {
 	}
 
 	/**
-	 * Searches for a block pattern match near a center position.
-	 * <p>
-	 * Vanilla {@link BlockPattern#find} scans a cube of only
-	 * {@code maxDim Ã— maxDim Ã— maxDim} starting positions, which is too
-	 * small when the stored center sits in the middle of the structure.
-	 * Depending on which rotation matches, the pattern's
-	 * {@code frontTopLeft} anchor can be up to {@code (maxDim - 1)} blocks
-	 * from center in <b>any</b> direction. We therefore scan a larger cube
-	 * of radius {@code (maxDim - 1)} around center to guarantee coverage.
+	 * Any placement of the pattern whose origin lies within reach of the stored center. The stored center sits
+	 * inside the structure, so the origin can be up to {@code maxDim - 1} blocks away in any direction; the match
+	 * is not required to cover the center itself.
 	 */
 	private static BlockPattern.BlockPatternMatch findPatternNearCenter(
 			BlockPattern blockPattern, ServerLevel sLevel, BlockPos center) {
-		int maxDim = Math.max(Math.max(
-				blockPattern.getWidth(), blockPattern.getHeight()), blockPattern.getDepth());
-		int radius = maxDim - 1;
-		for (BlockPos candidate : BlockPos.betweenClosed(
-				center.offset(-radius, -radius, -radius),
-				center.offset(radius, radius, radius))) {
-			for (Direction finger : Direction.values()) {
-				for (Direction thumb : Direction.values()) {
-					if (thumb == finger || thumb == finger.getOpposite()) continue;
-					BlockPattern.BlockPatternMatch match = blockPattern.matches(sLevel, candidate, finger, thumb);
-					if (match != null) return match;
-				}
-			}
-		}
-		return null;
+		return PatternOrigins.scanAround(blockPattern, sLevel, center, match -> true);
 	}
 
 	/**

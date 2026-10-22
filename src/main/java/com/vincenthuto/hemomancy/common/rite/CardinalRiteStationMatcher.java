@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hemomancy.common.rite.harbinger.WorkingCraftSubjectMatcher;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
+import com.vincenthuto.hemomancy.common.util.PatternOrigins;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -127,7 +128,7 @@ public final class CardinalRiteStationMatcher {
 		if (!mediumMatches(level, focusPos, recipe)) return Optional.empty();
 		CardinalRiteFloorDefinition floor = CardinalRiteFloorRegistry.get(floorId).orElse(null);
 		if (floor == null || forwards == null || up == null) return Optional.empty();
-		BlockPos origin = originForCell(focusPos, forwards, up,
+		BlockPos origin = PatternOrigins.originForCell(focusPos, forwards, up,
 				floor.focus().getX(), floor.focus().getY(), floor.focus().getZ());
 		BlockPattern.BlockPatternMatch floorMatch =
 				floor.pattern().getBlockPattern().matches(level, origin, forwards, up);
@@ -150,7 +151,7 @@ public final class CardinalRiteStationMatcher {
         List<BlockPattern.BlockPatternMatch> matches = new ArrayList<>();
         for (Direction forwards : DIRECTIONS) {
             if (forwards.getAxis().isVertical()) continue;
-            BlockPos origin = originForCell(focusPos, forwards, Direction.UP,
+            BlockPos origin = PatternOrigins.originForCell(focusPos, forwards, Direction.UP,
                     floor.focus().getX(), floor.focus().getY(), floor.focus().getZ());
             var match = pattern.matches(level, origin, forwards, Direction.UP);
             if (match != null) matches.add(match);
@@ -165,9 +166,9 @@ public final class CardinalRiteStationMatcher {
 		int centerX = pattern.getWidth() / 2;
 		int centerZ = pattern.getDepth() / 2;
 		int bottomY = pattern.getHeight() - 1;
-		BlockPos bottomCenter = offset(focusPos, floorMatch.getForwards(), floorMatch.getUp(),
+		BlockPos bottomCenter = PatternOrigins.offset(focusPos, floorMatch.getForwards(), floorMatch.getUp(),
 				new BlockPos(0, 1, 0));
-		BlockPos origin = originForCell(bottomCenter, floorMatch.getForwards(), floorMatch.getUp(),
+		BlockPos origin = PatternOrigins.originForCell(bottomCenter, floorMatch.getForwards(), floorMatch.getUp(),
 				centerX, bottomY, centerZ);
 		return pattern.matches(level, origin, floorMatch.getForwards(), floorMatch.getUp());
 	}
@@ -177,7 +178,7 @@ public final class CardinalRiteStationMatcher {
 		List<BrazierMatch> offered = new ArrayList<>();
 		// Braziers count anywhere in the cube above the floor, standing, wall-mounted or hanging.
 		for (BlockPos socket : floor.brazierSpace()) {
-			BlockPos worldPos = offset(focusPos, floorMatch.getForwards(), floorMatch.getUp(), socket);
+			BlockPos worldPos = PatternOrigins.offset(focusPos, floorMatch.getForwards(), floorMatch.getUp(), socket);
 			var state = level.getBlockState(worldPos);
 			if (!state.is(BlockInit.iron_brazier.get())
 					|| !state.hasProperty(BrazierBlock.RITUAL_PHASE)
@@ -227,22 +228,6 @@ public final class CardinalRiteStationMatcher {
 		return requirement.ingredient().test(stack)
 				&& (!stack.is(com.vincenthuto.hemomancy.common.init.ItemInit.wax_cylinder.get())
 						|| com.vincenthuto.hemomancy.common.item.harbinger.CylinderMedia.blank(stack));
-	}
-
-	private static BlockPos originForCell(BlockPos cell, Direction forwards, Direction up, int x, int y, int z) {
-		var right = forwards.getNormal().cross(up.getNormal());
-		return cell.offset(
-				up.getStepX() * y - right.getX() * x - forwards.getStepX() * z,
-				up.getStepY() * y - right.getY() * x - forwards.getStepY() * z,
-				up.getStepZ() * y - right.getZ() * x - forwards.getStepZ() * z);
-	}
-
-	private static BlockPos offset(BlockPos origin, Direction forwards, Direction up, BlockPos relative) {
-		var right = forwards.getNormal().cross(up.getNormal());
-		return origin.offset(
-				right.getX() * relative.getX() + up.getStepX() * relative.getY() + forwards.getStepX() * relative.getZ(),
-				right.getY() * relative.getX() + up.getStepY() * relative.getY() + forwards.getStepY() * relative.getZ(),
-				right.getZ() * relative.getX() + up.getStepZ() * relative.getY() + forwards.getStepZ() * relative.getZ());
 	}
 
 	/** A Working craft's built subject in its bed; null for other rites. */

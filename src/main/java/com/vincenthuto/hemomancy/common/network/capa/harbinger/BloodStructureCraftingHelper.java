@@ -6,9 +6,9 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAcc
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
+import com.vincenthuto.hemomancy.common.util.PatternOrigins;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,7 +19,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
-import net.minecraft.world.phys.AABB;
 
 import java.util.*;
 
@@ -101,41 +100,11 @@ public final class BloodStructureCraftingHelper {
 		return findPatternAtHit(recipe.getPattern().getBlockPattern(), level, hitPos);
 	}
 
+	/** A placement covering {@code hitPos}, scanning origins from the low corner (see {@link PatternOrigins}). */
 	public static BlockPattern.BlockPatternMatch findPatternAtHit(
 			BlockPattern blockPattern, ServerLevel level, BlockPos hitPos) {
-		int maxDim = Math.max(Math.max(
-				blockPattern.getWidth(), blockPattern.getHeight()), blockPattern.getDepth());
-		int radius = maxDim - 1;
-		for (BlockPos candidate : BlockPos.betweenClosed(
-				hitPos.offset(-radius, -radius, -radius),
-				hitPos.offset(radius, radius, radius))) {
-			for (Direction finger : Direction.values()) {
-				for (Direction thumb : Direction.values()) {
-					if (thumb == finger || thumb == finger.getOpposite()) {
-						continue;
-					}
-					BlockPattern.BlockPatternMatch match = blockPattern.matches(level, candidate, finger, thumb);
-					if (match != null && matchContainsPos(match, blockPattern, hitPos)) {
-						return match;
-					}
-				}
-			}
-		}
-		return null;
-	}
-
-	public static boolean matchContainsPos(
-			BlockPattern.BlockPatternMatch match, BlockPattern blockPattern, BlockPos pos) {
-		for (int i = 0; i < blockPattern.getWidth(); ++i) {
-			for (int j = 0; j < blockPattern.getHeight(); ++j) {
-				for (int k = 0; k < blockPattern.getDepth(); ++k) {
-					if (match.getBlock(i, j, k).getPos().equals(pos)) {
-						return true;
-					}
-				}
-			}
-		}
-		return false;
+		return PatternOrigins.scanAround(blockPattern, level, hitPos,
+				match -> PatternOrigins.contains(match, blockPattern, hitPos));
 	}
 
 	public static List<BlockPos> getMatchPositions(
@@ -167,30 +136,6 @@ public final class BloodStructureCraftingHelper {
 		positions.sort(Comparator.comparingLong(BlockPos::asLong));
 		return List.copyOf(positions);
 	}
-
-	public static AABB getMatchBounds(BlockPattern.BlockPatternMatch match, BlockPattern blockPattern) {
-		int width = blockPattern.getWidth();
-		int height = blockPattern.getHeight();
-		int depth = blockPattern.getDepth();
-		int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
-		int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
-		int minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE;
-		for (int i = 0; i < width; ++i) {
-			for (int j = 0; j < height; ++j) {
-				for (int k = 0; k < depth; ++k) {
-					BlockPos matchPos = match.getBlock(i, j, k).getPos();
-					if (matchPos.getX() < minX) minX = matchPos.getX();
-					if (matchPos.getX() > maxX) maxX = matchPos.getX();
-					if (matchPos.getY() < minY) minY = matchPos.getY();
-					if (matchPos.getY() > maxY) maxY = matchPos.getY();
-					if (matchPos.getZ() < minZ) minZ = matchPos.getZ();
-					if (matchPos.getZ() > maxZ) maxZ = matchPos.getZ();
-				}
-			}
-		}
-		return new AABB(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1);
-	}
-
 
 	public static Component checkPathAlignment(Player player, BloodStructureRecipe recipe) {
 		boolean harbingerProgressBlocked = UnstainedAccessRules.blocksHarbingerProgress(HemoCapabilityAccess.getUnstainedProgress(player));

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite.floor;
 
+import com.vincenthuto.hemomancy.common.util.PatternOrigins;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 
@@ -60,8 +61,6 @@ public final class CardinalRiteFloorGeometry {
 	}
 
 	private static BlockPos toWorld(BlockPos focus, Direction forwards, int right, int up, int ahead) {
-		var r = forwards.getNormal().cross(Direction.UP.getNormal());
-		return focus.offset(r.getX() * right + forwards.getStepX() * ahead, up,
-				r.getZ() * right + forwards.getStepZ() * ahead);
+		return PatternOrigins.offset(focus, forwards, Direction.UP, new BlockPos(right, up, ahead));
 	}
 }

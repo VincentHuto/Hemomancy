@@ -2,10 +2,10 @@ package com.vincenthuto.hemomancy.common.rite.harbinger;
 
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
 import com.vincenthuto.hemomancy.common.rite.WorkingCraftBed;
+import com.vincenthuto.hemomancy.common.util.PatternOrigins;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
@@ -44,7 +44,8 @@ public final class WorkingCraftSubjectMatcher {
 					for (int up = 1; up <= WorkingCraftBed.MAX_HEIGHT; up++) {
 						BlockPos bedCell = focusPos.relative(side, outward).relative(across, lateral).above(up);
 						for (Direction forwards : Direction.Plane.HORIZONTAL) {
-							BlockPos origin = bedCell.subtract(cellOffset(first, forwards));
+							BlockPos origin = PatternOrigins.originForCell(bedCell, forwards, Direction.UP,
+									first[0], first[1], first[2]);
 							BlockPattern.BlockPatternMatch match = pattern.matches(level, origin, forwards, Direction.UP);
 							if (match == null) continue;
 							List<BlockPos> positions = new ArrayList<>(solid.size());
@@ -74,18 +75,6 @@ public final class WorkingCraftSubjectMatcher {
 			lowest = Math.min(lowest, up);
 		}
 		return lowest == 1;
-	}
-
-	/**
-	 * Where pattern cell (x, y, z) sits relative to the match origin, following
-	 * vanilla {@link BlockPattern}: x runs along forwards × up, y runs down from
-	 * the top row, z runs along forwards.
-	 */
-	private static Vec3i cellOffset(int[] cell, Direction forwards) {
-		Vec3i right = forwards.getNormal().cross(Direction.UP.getNormal());
-		return new Vec3i(right.getX() * cell[0] + forwards.getStepX() * cell[2],
-				-cell[1],
-				right.getZ() * cell[0] + forwards.getStepZ() * cell[2]);
 	}
 
 	/** The {x, y, z} index of every non-space cell, in pattern order. */

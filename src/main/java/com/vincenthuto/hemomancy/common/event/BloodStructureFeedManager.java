@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.*;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
+import com.vincenthuto.hemomancy.common.util.PatternOrigins;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -135,7 +136,7 @@ public final class BloodStructureFeedManager {
 			offhandCatalyst.shrink(1);
 		}
 
-		AABB bounds = BloodStructureCraftingHelper.getMatchBounds(match, blockPattern);
+		AABB bounds = PatternOrigins.bounds(match, blockPattern);
 		BlockPos ringCenter = BlockPos.containing(bounds.getCenter().x, bounds.minY, bounds.getCenter().z);
 		float centerY = (float) bounds.getCenter().y;
 		float startRadius = (float) Math.max(bounds.getXsize(), bounds.getZsize()) / 2.0f + 2.0f;
@@ -162,24 +163,9 @@ public final class BloodStructureFeedManager {
 		if (positions.isEmpty()) {
 			return;
 		}
-		AABB bounds = boundsFor(positions);
+		AABB bounds = PatternOrigins.bounds(positions);
 		PacketHandler.sendNear(level, bounds.getCenter().x, bounds.getCenter().y, bounds.getCenter().z,
 				FEED_SYNC_RANGE, new PacketBloodStructureFeed(positions, progress, visibleTicks, clear));
-	}
-
-	private static AABB boundsFor(List<BlockPos> positions) {
-		int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
-		int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
-		int minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE;
-		for (BlockPos pos : positions) {
-			if (pos.getX() < minX) minX = pos.getX();
-			if (pos.getX() > maxX) maxX = pos.getX();
-			if (pos.getY() < minY) minY = pos.getY();
-			if (pos.getY() > maxY) maxY = pos.getY();
-			if (pos.getZ() < minZ) minZ = pos.getZ();
-			if (pos.getZ() > maxZ) maxZ = pos.getZ();
-		}
-		return new AABB(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1);
 	}
 
 	private static void sendHint(ServerPlayer player, Component message) {

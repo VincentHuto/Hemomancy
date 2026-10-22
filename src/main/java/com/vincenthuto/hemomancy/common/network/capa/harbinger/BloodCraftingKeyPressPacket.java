@@ -22,10 +22,10 @@ import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEven
 import com.vincenthuto.hemomancy.common.rite.harbinger.PuppeteerTrialRiteController;
 import com.vincenthuto.hemomancy.common.rite.unstained.UnstainedCardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
+import com.vincenthuto.hemomancy.common.util.PatternOrigins;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Vec3i;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -53,7 +53,6 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 	public static final StreamCodec<FriendlyByteBuf, BloodCraftingKeyPressPacket> STREAM_CODEC = StreamCodec.of(BloodCraftingKeyPressPacket::encode, BloodCraftingKeyPressPacket::decode);
 	private static final ResourceLocation FOUNDING_FANE_RITE_ID = Hemomancy.rloc("cardinal_rite/founding_fane");
 	private static final ResourceLocation APOTHEOS_RITE_ID = Hemomancy.rloc("cardinal_rite/apotheos_rite");
-	private static final Direction[] SEARCH_DIRECTIONS = Direction.values();
 	public static BloodCraftingKeyPressPacket decode(final FriendlyByteBuf buffer) {
 		buffer.readByte();
 		return new BloodCraftingKeyPressPacket(ItemStack.OPTIONAL_STREAM_CODEC.decode((RegistryFriendlyByteBuf) buffer));
@@ -118,7 +117,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 						break;
 					}
 					// ── Path alignment gate ──
-					net.minecraft.network.chat.Component alignError = checkPathAlignment(player, targetPattern);
+					net.minecraft.network.chat.Component alignError = BloodStructureCraftingHelper.checkPathAlignment(player, targetPattern);
 					if (alignError != null) {
 						player.displayClientMessage(alignError, false);
 						handled = true;
@@ -129,22 +128,10 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 						int patW = blockPat.getWidth();
 						int patH = blockPat.getHeight();
 						int patD = blockPat.getDepth();
-						int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
-						int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
-						int minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE;
-						for (int i = 0; i < patW; ++i) {
-							for (int j = 0; j < patH; ++j) {
-								for (int k = 0; k < patD; ++k) {
-									BlockPos matchPos = patternHelper.getBlock(i, j, k).getPos();
-									if (matchPos.getX() < minX) minX = matchPos.getX();
-									if (matchPos.getX() > maxX) maxX = matchPos.getX();
-									if (matchPos.getY() < minY) minY = matchPos.getY();
-									if (matchPos.getY() > maxY) maxY = matchPos.getY();
-									if (matchPos.getZ() < minZ) minZ = matchPos.getZ();
-									if (matchPos.getZ() > maxZ) maxZ = matchPos.getZ();
-								}
-							}
-						}
+						AABB bounds = PatternOrigins.bounds(patternHelper, blockPat);
+						int minX = (int) bounds.minX, maxX = (int) bounds.maxX - 1;
+						int minY = (int) bounds.minY, maxY = (int) bounds.maxY - 1;
+						int minZ = (int) bounds.minZ, maxZ = (int) bounds.maxZ - 1;
 
 						// ── Send blood craft ring animation immediately ──
 						BlockPos ringCenter = new BlockPos(
@@ -218,7 +205,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 										false);
 							} else {
 								// Path alignment check
-								net.minecraft.network.chat.Component alignError = checkPathAlignment(player, recipe);
+								net.minecraft.network.chat.Component alignError = BloodStructureCraftingHelper.checkPathAlignment(player, recipe);
 								if (alignError != null) {
 									player.displayClientMessage(alignError, false);
 								} else {
@@ -304,7 +291,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 					: recipe.getPattern().getBlockPattern();
 			BlockPattern.BlockPatternMatch match = recipe.hasLayeredStation()
 					? stationMatch.floorMatch()
-					: findPatternAtHit(bp, sLevel, hitPos);
+					: PatternOrigins.findContaining(bp, sLevel, hitPos);
 			if (match != null) {
 				if (!recipe.hasLayeredStation()
 						&& trigger != CardinalRiteActivationRules.Trigger.BLOOD_CRAFTING_KEY) {
@@ -686,70 +673,12 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 	private static BlockPattern.BlockPatternMatch findStructurePatternAtHit(
 			BloodStructureRecipe recipe, ServerLevel level, BlockPos hitPos) {
 		if (!level.getBlockState(hitPos).is(recipe.getHitBlock())) return null;
-		return findPatternContainingHit(recipe.getPattern().getBlockPattern(), level, hitPos);
-	}
-
-	private static BlockPattern.BlockPatternMatch findPatternAtHit(
-			BlockPattern blockPattern, ServerLevel level, BlockPos hitPos) {
-		return findPatternContainingHit(blockPattern, level, hitPos);
-	}
-
-	private static BlockPattern.BlockPatternMatch findPatternContainingHit(
-			BlockPattern blockPattern, ServerLevel level, BlockPos hitPos) {
-		int width = blockPattern.getWidth();
-		int height = blockPattern.getHeight();
-		int depth = blockPattern.getDepth();
-		for (Direction finger : SEARCH_DIRECTIONS) {
-			for (Direction thumb : SEARCH_DIRECTIONS) {
-				if (thumb == finger || thumb == finger.getOpposite()) {
-					continue;
-				}
-				for (int i = 0; i < width; ++i) {
-					for (int j = 0; j < height; ++j) {
-						for (int k = 0; k < depth; ++k) {
-							BlockPos origin = patternOriginForHit(hitPos, finger, thumb, i, j, k);
-							BlockPattern.BlockPatternMatch match = blockPattern.matches(level, origin, finger, thumb);
-							if (match != null && match.getBlock(i, j, k).getPos().equals(hitPos)) {
-								return match;
-							}
-						}
-					}
-				}
-			}
-		}
-		return null;
-	}
-
-	private static BlockPos patternOriginForHit(BlockPos hitPos, Direction finger, Direction thumb,
-			int widthOffset, int heightOffset, int depthOffset) {
-		Vec3i fingerNormal = finger.getNormal();
-		Vec3i thumbNormal = thumb.getNormal();
-		int palmX = fingerNormal.getY() * thumbNormal.getZ() - fingerNormal.getZ() * thumbNormal.getY();
-		int palmY = fingerNormal.getZ() * thumbNormal.getX() - fingerNormal.getX() * thumbNormal.getZ();
-		int palmZ = fingerNormal.getX() * thumbNormal.getY() - fingerNormal.getY() * thumbNormal.getX();
-		return hitPos.offset(
-				thumbNormal.getX() * heightOffset - palmX * widthOffset - fingerNormal.getX() * depthOffset,
-				thumbNormal.getY() * heightOffset - palmY * widthOffset - fingerNormal.getY() * depthOffset,
-				thumbNormal.getZ() * heightOffset - palmZ * widthOffset - fingerNormal.getZ() * depthOffset);
+		return PatternOrigins.findContaining(recipe.getPattern().getBlockPattern(), level, hitPos);
 	}
 
 	private static boolean focusMediumMatches(ServerLevel level, BlockPos centerPos, CardinalRiteRecipe recipe) {
 		if (!(level.getBlockEntity(centerPos) instanceof CardinalFocusBlockEntity focus)) return false;
 		return CardinalRiteMediumRules.matches(recipe.getMedium(), focus.getMediumForMatching());
-	}
-
-	/**
-	 * Checks Harbinger / Unstained path alignment for a blood structure recipe.
-	 * Returns an error {@link Component} if the player is on the wrong path, or
-	 * {@code null} if the recipe is accessible.
-	 */
-	private static net.minecraft.network.chat.Component checkPathAlignment(Player player, BloodStructureRecipe recipe) {
-		boolean harbingerProgressBlocked = UnstainedAccessRules.blocksHarbingerProgress(HemoCapabilityAccess.getUnstainedProgress(player));
-		if (!recipe.isUnstained() && harbingerProgressBlocked) {
-			return Component.literal("Purification bars access to the Hematic Order formations.")
-					.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC);
-		}
-		return null;
 	}
 
 	private static boolean bypassesUnstainedLevelGate(Player player, String recipePath) {

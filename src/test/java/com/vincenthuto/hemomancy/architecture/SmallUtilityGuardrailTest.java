@@ -99,6 +99,20 @@ class SmallUtilityGuardrailTest {
 				"use ProgressionGates.hasDegree / isDegree instead of comparing a degree number with a literal");
 	}
 
+	/** L-4: pattern origins, orientation loops and match bounds come from {@code PatternOrigins}. */
+	private static final Map<String, String> PATTERN_FRAMES = Map.of(
+			"src/main/java/com/vincenthuto/hemomancy/common/succession/SuccessionRites.java",
+			"Places the effigy body two blocks to the floor's right; not a pattern origin");
+	private static final Pattern PATTERN_FRAME = Pattern.compile(
+			"getNormal\\(\\)\\.cross\\(|== finger\\.getOpposite\\(\\)|getBlock\\(i, j, k\\)\\.getPos\\(\\);\\s*if \\(\\w+\\.getX\\(\\) <");
+
+	@Test
+	void patternOriginsAreSolvedOnlyByPatternOrigins() throws IOException {
+		assertEquals(new TreeSet<>(PATTERN_FRAMES.keySet()),
+				filesMatching(text -> PATTERN_FRAME.matcher(text).find(), UTIL + "PatternOrigins.java"),
+				"use PatternOrigins (originForCell, offset, findContaining, scanAround, bounds) or list the file with a reason");
+	}
+
 	@Test
 	void attributeModifiersAreWrittenOnlyThroughTheSharedHelper() throws IOException {
 		assertEquals(new TreeSet<>(MODIFIER_WRITERS.keySet()),
