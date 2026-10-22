@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -11,7 +12,6 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWe
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.common.manipulation.animus.SummonAvatarManip;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.DendriticDistributorBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -303,7 +303,7 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 	}
 
 	private static void syncKnown(ServerPlayer player, IKnownManipulations known) {
-		PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
+		KnownManipulationEvents.syncPlayerEvent(player);
 		ManipulationDiagnosticsSync.sync(player);
 	}
 

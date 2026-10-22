@@ -247,11 +247,4 @@ public class VascularSystemEvents {	/**
 		PacketHandler.sendToPlayer(player, new VascularSystemServerPacket(vascular.getVascularSystem()));
 	}
 
-	public static void syncOwnerSnapshot(ServerPlayer player, boolean respawn) {
-		IVascularSystem vascular = respawn
-				? HemoCapabilityAccess.getVascularSystem(player)
-				: HemoCapabilityAccess.getVascularSystem(player);
-		syncVascular(player, vascular);
-	}
-
 }

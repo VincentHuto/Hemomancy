@@ -21,7 +21,7 @@ public final class LivingWeaponMemoryGrantSourceTest {
 		assertContains("helper validates rank gate", helper, "RANK_TOO_LOW");
 		assertContains("helper validates already known", helper, "ALREADY_KNOWN");
 		assertContains("helper grants and syncs player memory", helper, "grantMemory(ServerPlayer player");
-		assertContains("helper syncs known manipulations", helper, "new KnownManipulationServerPacket(known)");
+		assertContains("helper syncs known manipulations", helper, "KnownManipulationEvents.syncPlayerEvent(player)");
 		assertContains("helper preserves guarded open-slot auto equip", helper, "known.equipManip");
 
 		assertContains("memory item directs learning through brazier absorption", memoryItem, "lit Iron Brazier");

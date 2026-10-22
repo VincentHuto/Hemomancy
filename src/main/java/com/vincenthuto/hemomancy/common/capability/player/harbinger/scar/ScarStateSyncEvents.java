@@ -7,41 +7,12 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.scars.PacketSyncS
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class ScarStateSyncEvents {
 
 	private ScarStateSyncEvents() {
-	}
-
-	@SubscribeEvent
-	public static void playerJoin(EntityJoinLevelEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player) {
-			syncToClient(player);
-		}
-	}
-
-	@SubscribeEvent
-	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player) {
-			syncToClient(player);
-		}
-	}
-
-	@SubscribeEvent
-	public static void playerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player) {
-			syncToClient(player);
-		}
-	}
-
-	@SubscribeEvent
-	public static void playerRespawn(PlayerEvent.PlayerRespawnEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player) {
-			syncToClient(player);
-		}
 	}
 
 	@SubscribeEvent
@@ -52,7 +23,7 @@ public final class ScarStateSyncEvents {
 	}
 
 	public static void syncToClient(ServerPlayer source) {
-		PacketHandler.sendTracking(source, new PacketSyncScarsState(source, HemoCapabilityAccess.getScarState(source)));
+		PacketHandler.sendToPlayerAndTrackers(source, new PacketSyncScarsState(source, HemoCapabilityAccess.getScarState(source)));
 	}
 
 	public static void syncToPlayer(ServerPlayer source, ServerPlayer receiver) {

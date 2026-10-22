@@ -31,6 +31,23 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 	private static final int FAMILY_MEMORY_VERSION = 2;
 	/** Forms moved to another family in family-memory version 2 (Sanguine Marionette: Blood Binding to Hematic Rebuke). */
 	private static final Set<String> FORMS_REHOMED_IN_V2 = Set.of("sanguine_marionette");
+	/** Owner-visible state changed since the last send. Never saved. */
+	private transient boolean syncDirty;
+
+	@Override
+	public void markSyncDirty() {
+		syncDirty = true;
+	}
+
+	@Override
+	public boolean isSyncDirty() {
+		return syncDirty;
+	}
+
+	@Override
+	public void clearSyncDirty() {
+		syncDirty = false;
+	}
 
 	@Override
 	public BlockPos getLastVeinMineStart() {
@@ -39,6 +56,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 
 	@Override
 	public void setLastVeinMineStart(BlockPos newPos) {
+		if (!java.util.Objects.equals(lastVeinMineStart, newPos)) markSyncDirty();
 		this.lastVeinMineStart = newPos;
 	}
 
@@ -70,7 +88,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 	@Override
 	public ManipLevel getManipLevel(BloodManipulation manip) {
 		if (manip == null) return null;
-		ManipulationFamilyRegistry.normalizeKnown(knownManips);
+		if (ManipulationFamilyRegistry.normalizeKnown(knownManips)) markSyncDirty();
 		ManipLevel direct = knownManips.get(manip);
 		if (direct != null) return direct;
 		String baseline = ManipulationFamilyRegistry.baselineId(manip.getName());
@@ -94,6 +112,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 	public BloodManipulation getSelectedManip() {
 		if (selectedManip == null) {
 			selectedManip = getManipList().get(0);
+			markSyncDirty();
 		}
 		return selectedManip;
 
@@ -108,6 +127,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 	public VeinLocation getSelectedVein() {
 		if (selectedVein == null) {
 			selectedVein = getVeinList().get(0);
+			markSyncDirty();
 		}
 		return selectedVein;
 	}
@@ -142,6 +162,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 		int currLevel = sel.getCurrentLevel();
 		sel.setCurrentLevel(currLevel + incr);
 		ManipulationFamilyRegistry.normalizeKnown(knownManips);
+		if (incr != 0) markSyncDirty();
 
 	}
 
@@ -152,13 +173,16 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 
 	@Override
 	public void setActiveAvatarForm(String manipulationId) {
-		this.activeAvatarForm = manipulationId != null ? manipulationId : "";
+		String form = manipulationId != null ? manipulationId : "";
+		if (!form.equals(activeAvatarForm)) markSyncDirty();
+		this.activeAvatarForm = form;
 	}
 
 	@Override
 	public void setKnownManips(LinkedHashMap<BloodManipulation, ManipLevel> knownManips) {
 		this.knownManips = knownManips != null ? knownManips : new LinkedHashMap<>();
 		ManipulationFamilyRegistry.normalizeKnown(this.knownManips);
+		markSyncDirty();
 	}
 
 	@Override
@@ -168,21 +192,29 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 
 	@Override
 	public void setGrandfatheredFamilyForms(Set<String> forms) {
-		grandfatheredFamilyForms = forms != null ? new LinkedHashSet<>(forms) : new LinkedHashSet<>();
+		Set<String> next = forms != null ? new LinkedHashSet<>(forms) : new LinkedHashSet<>();
+		if (!next.equals(grandfatheredFamilyForms)) markSyncDirty();
+		grandfatheredFamilyForms = next;
 	}
 
 	@Override
 	public void setSelectedManip(BloodManipulation selectedManip) {
-		this.selectedManip = selectedManip;
+		String memoryKey = this.selectedMemoryKey;
 		if (selectedManip != null && selectedManip != BloodManipulation.BLANK) {
-			this.selectedMemoryKey = MemorySlotRef.manipulation(selectedManip.getName()).storageKey();
+			memoryKey = MemorySlotRef.manipulation(selectedManip.getName()).storageKey();
 		}
+		if (selectedManip != this.selectedManip || !java.util.Objects.equals(memoryKey, this.selectedMemoryKey)) {
+			markSyncDirty();
+		}
+		this.selectedManip = selectedManip;
+		this.selectedMemoryKey = memoryKey;
 	}
 
 	@Override
 	public void setSelectedManipLevel(int level) {
 		ManipLevel selectedLevel = getManipLevel(selectedManip);
 		if (selectedLevel != null) {
+			if (selectedLevel.getCurrentLevel() != level) markSyncDirty();
 			selectedLevel.setCurrentLevel(level);
 			ManipulationFamilyRegistry.normalizeKnown(knownManips);
 		}
@@ -190,6 +222,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 
 	@Override
 	public void setSelectedVein(VeinLocation selectedVein) {
+		if (selectedVein != this.selectedVein) markSyncDirty();
 		this.selectedVein = selectedVein;
 
 	}
@@ -197,6 +230,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 	@Override
 	public void setVeinList(List<VeinLocation> dimPos) {
 		this.veinList = dimPos;
+		markSyncDirty();
 	}
 
 	@Override
@@ -211,21 +245,25 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 		this.loadouts = new ArrayList<>(old.getLoadouts());
 		this.selectedMemoryKey = old.getSelectedMemoryRef().storageKey();
 		this.grandfatheredFamilyForms = new LinkedHashSet<>(old.getGrandfatheredFamilyForms());
+		markSyncDirty();
 	}
 
 	// ── Equipped manipulation slots ──
 
 	@Override
 	public List<String> getEquippedManipNames() {
-		ManipulationEquipHelper.normalizeEquippedNames(equippedManipNames);
+		if (ManipulationEquipHelper.normalizeEquippedNames(equippedManipNames)) markSyncDirty();
 		return equippedManipNames;
 	}
 
 	@Override
 	public void setEquippedManipNames(List<String> names) {
+		List<String> before = equippedManipNames;
+		List<String> passivesBefore = new ArrayList<>(activePassiveNames);
 		this.equippedManipNames = names != null ? new ArrayList<>(names) : new ArrayList<>();
 		ManipulationEquipHelper.normalizeEquippedNames(this.equippedManipNames);
 		activePassiveNames.retainAll(this.equippedManipNames);
+		if (!equippedManipNames.equals(before) || !activePassiveNames.equals(passivesBefore)) markSyncDirty();
 	}
 
 	@Override
@@ -250,10 +288,13 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 
 	@Override
 	public void setSelectedMemoryRef(MemorySlotRef ref) {
-		selectedMemoryKey = ref == null ? "" : ref.storageKey();
+		String key = ref == null ? "" : ref.storageKey();
+		if (!key.equals(selectedMemoryKey)) markSyncDirty();
+		selectedMemoryKey = key;
 		if (ref != null && ref.kind() == MemoryEntryKind.MANIPULATION) {
 			for (BloodManipulation manipulation : getManipList()) {
 				if (manipulation != null && ref.id().equals(manipulation.getName())) {
+					if (selectedManip != manipulation) markSyncDirty();
 					selectedManip = manipulation;
 					break;
 				}
@@ -272,27 +313,34 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 		if (ref.muscleMemory().isPresent()) {
 			MemoryEquipRules.AutoEquipResult result = MemoryEquipRules.autoEquipMuscleMemory(
 					equippedManipNames, ref.muscleMemory().orElseThrow(), maxSlots);
-			return result == MemoryEquipRules.AutoEquipResult.ADDED
+			boolean equipped = result == MemoryEquipRules.AutoEquipResult.ADDED
 					|| result == MemoryEquipRules.AutoEquipResult.REPLACED_SECTION;
+			if (equipped) markSyncDirty();
+			return equipped;
 		}
 		BloodManipulation manipulation = getManipList().stream()
 				.filter(known -> known != null && ref.id().equals(known.getName())).findFirst().orElse(null);
-		return manipulation != null && isManipulationAvailable(manipulation)
+		boolean equipped = manipulation != null && isManipulationAvailable(manipulation)
 				&& ManipulationEquipHelper.equipNameIfPossible(equippedManipNames, ref.storageKey(), maxSlots);
+		if (equipped) markSyncDirty();
+		return equipped;
 	}
 
 	@Override
 	public boolean unequipMemory(MemorySlotRef ref) {
 		if (ref == null) return false;
 		boolean removed = ManipulationEquipHelper.unequipNameIfAllowed(equippedManipNames, ref.storageKey());
-		if (removed) activePassiveNames.remove(ref.storageKey());
+		if (removed) {
+			activePassiveNames.remove(ref.storageKey());
+			markSyncDirty();
+		}
 		return removed;
 	}
 
 	@Override
 	public boolean isManipEquipped(BloodManipulation manip) {
 		if (manip == null || manip == BloodManipulation.BLANK) return false;
-		ManipulationEquipHelper.normalizeEquippedNames(equippedManipNames);
+		if (ManipulationEquipHelper.normalizeEquippedNames(equippedManipNames)) markSyncDirty();
 		return equippedManipNames.contains(manip.getName());
 	}
 
@@ -300,14 +348,19 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 	public boolean equipManip(String manipName, int maxSlots) {
 		BloodManipulation manipulation = getManipList().stream()
 				.filter(known -> known != null && manipName.equals(known.getName())).findFirst().orElse(null);
-		return manipulation != null && isManipulationAvailable(manipulation)
+		boolean equipped = manipulation != null && isManipulationAvailable(manipulation)
 				&& ManipulationEquipHelper.equipNameIfPossible(equippedManipNames, manipName, maxSlots);
+		if (equipped) markSyncDirty();
+		return equipped;
 	}
 
 	@Override
 	public boolean unequipManip(String manipName) {
 		boolean removed = ManipulationEquipHelper.unequipNameIfAllowed(equippedManipNames, manipName);
-		if (removed) activePassiveNames.remove(manipName);
+		if (removed) {
+			activePassiveNames.remove(manipName);
+			markSyncDirty();
+		}
 		return removed;
 	}
 
@@ -319,6 +372,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 	@Override
 	public boolean togglePassive(String manipName) {
 		if (manipName == null || !equippedManipNames.contains(manipName)) return false;
+		markSyncDirty();
 		if (activePassiveNames.remove(manipName)) return false;
 		activePassiveNames.add(manipName);
 		return true;
@@ -332,6 +386,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 	@Override
 	public void setLoadouts(List<ManipulationLoadout> loadouts) {
 		this.loadouts = loadouts != null ? new ArrayList<>(loadouts) : new ArrayList<>();
+		markSyncDirty();
 	}
 
 	@Override
@@ -351,6 +406,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 			loadouts.add(ManipulationLoadout.empty(loadouts.size()));
 		}
 		loadouts.set(slotIndex, loadout != null ? loadout : ManipulationLoadout.empty(slotIndex));
+		markSyncDirty();
 	}
 
 	@Override
@@ -421,6 +477,7 @@ public class KnownManipulations implements IKnownManipulations, INBTSerializable
 
 	@Override
 	public void deserializeNBT(HolderLookup.Provider provider, ListTag listNbt) {
+		markSyncDirty();
 		LinkedHashMap<BloodManipulation, ManipLevel> map = new LinkedHashMap<>();
 		List<VeinLocation> veinList = new ArrayList<>();
 		int veinCount = 0;

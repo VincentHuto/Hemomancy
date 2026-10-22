@@ -1,8 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendencyEvents;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.ItemStackBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipment;
@@ -18,6 +16,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.bus.api.IEventBus;
@@ -30,27 +29,22 @@ import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 public final class HemoCapabilityRegistrar {
     private HemoCapabilityRegistrar() {}
 
-    @SubscribeEvent
+    // LOWEST: every system's own login, respawn and dimension work has run, so each entry goes out once, final.
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        sendOwnerSnapshots((ServerPlayer) event.getEntity(), false);
+        PlayerStateSync.sendAll((ServerPlayer) event.getEntity(), PlayerStateSync.Lifecycle.LOGIN);
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event) {
-        sendOwnerSnapshots((ServerPlayer) event.getEntity(), false);
+        PlayerStateSync.sendAll((ServerPlayer) event.getEntity(), PlayerStateSync.Lifecycle.DIMENSION);
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (!event.getEntity().getCommandSenderWorld().isClientSide) {
-            sendOwnerSnapshots((ServerPlayer) event.getEntity(), true);
+            PlayerStateSync.sendAll((ServerPlayer) event.getEntity(), PlayerStateSync.Lifecycle.RESPAWN);
         }
-    }
-
-    // Fixed order: tendency's effective values, then vascular's stored values.
-    private static void sendOwnerSnapshots(ServerPlayer player, boolean respawn) {
-        BloodTendencyEvents.syncOwnerSnapshot(player, respawn);
-        VascularSystemEvents.syncOwnerSnapshot(player, respawn);
     }
 
     public static void register(IEventBus modBus) {

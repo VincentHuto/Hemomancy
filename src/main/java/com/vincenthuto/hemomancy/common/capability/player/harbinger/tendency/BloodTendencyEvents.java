@@ -148,15 +148,4 @@ public class BloodTendencyEvents {
 		PacketHandler.sendToPlayer(player, new BloodTendencyServerPacket(tendency.getTendency()));
 	}
 
-	public static void syncOwnerSnapshot(ServerPlayer player, boolean respawn) {
-		if (respawn) {
-			syncTendency(player, HemoCapabilityAccess.getBloodTendency(player)
-					);
-		} else {
-			Map<EnumBloodTendency, Float> tendency = HemoCapabilityAccess.getBloodTendency(player)
-					.getTendency();
-			PacketHandler.sendToPlayer(player, new BloodTendencyServerPacket(tendency));
-		}
-	}
-
 }

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
@@ -8,7 +9,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.Manipu
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.CellHandFormHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormHelper;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
@@ -43,7 +43,7 @@ public class UpdateCurrentManipPacket implements CustomPacketPayload {
 								Component.literal("That manipulation has gone dormant.")
 										.withStyle(net.minecraft.ChatFormatting.DARK_GRAY), true);
 						ManipulationRetirementRules.sanitizeKnownManipulations(known);
-						PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
+						KnownManipulationEvents.syncPlayerEvent(player);
 						return;
 					}
 					// Only allow selecting equipped manipulations
@@ -57,7 +57,7 @@ public class UpdateCurrentManipPacket implements CustomPacketPayload {
 					boolean applied = LivingStaffWeaponFormHelper.applySelection(player, target)
 							&& CellHandFormHelper.applySelection(player, target);
 					if (applied) player.displayClientMessage(Component.literal("Selected: ").append(target.getDisplayName()), true);
-					PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
+					KnownManipulationEvents.syncPlayerEvent(player);
 					ManipulationDiagnosticsSync.sync((ServerPlayer) player);
 					if (applied) UseManipKeyPacket.castOnSelect((ServerPlayer) player, target);
 				}

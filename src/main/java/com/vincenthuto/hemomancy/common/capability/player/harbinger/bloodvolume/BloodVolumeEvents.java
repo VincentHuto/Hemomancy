@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationDiagnosticsSync;
-import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.ToggleableSkillRules;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
@@ -40,7 +39,6 @@ import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
@@ -442,7 +440,6 @@ public class BloodVolumeEvents {
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
-		syncVolume(player, volume);
 		player.displayClientMessage(
 				Component.literal(
 						"Welcome! Current Blood Volume: " + ChatFormatting.GOLD
@@ -471,19 +468,6 @@ public class BloodVolumeEvents {
 			volume.setBloodLine(Bloodline.NOBLOODLINE);
 		}
 
-		syncVolume(player, volume);
-
-		// Sync skill tree to client
-		SkillPointGainEvents.syncSkills(player);
-	}
-
-	@SubscribeEvent
-	public static void playerRespawn(PlayerRespawnEvent event) {
-		Player playernew = event.getEntity();
-		if (!playernew.level().isClientSide) {
-			IBloodVolume bloodVolumeNew = HemoCapabilityAccess.getBloodVolume(playernew);
-			syncVolume((ServerPlayer) playernew, bloodVolumeNew);
-		}
 	}
 
 }

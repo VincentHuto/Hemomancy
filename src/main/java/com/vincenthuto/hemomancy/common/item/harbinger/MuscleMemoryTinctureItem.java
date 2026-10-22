@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEquipRules;
@@ -11,8 +12,6 @@ import com.vincenthuto.hemomancy.common.item.component.TinctureDoseData;
 import com.vincenthuto.hemomancy.common.mission.alchemist.BodyAnswersAssignment;
 import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
 import com.vincenthuto.hemomancy.common.mission.shared.MnemonicRecipeKnowledge;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.KnownManipulationServerPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.network.chat.Component;
@@ -71,7 +70,7 @@ public class MuscleMemoryTinctureItem extends Item {
                             MemoryEquipRules.autoEquipMuscleMemory(known.getEquippedManipNames(), memory,
                                     ManipSlotHelper.getMaxSlots(player));
             				MnemonicReliquaryProgression.onCapacityChanged(player, known);
-                            PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
+                            KnownManipulationEvents.syncPlayerEvent(player);
             MuscleMemoryEvents.sync(player);
             if (memory == MuscleMemory.SANGUINE_FISTS) {
                 BodyAnswersAssignment.markComplete(player);

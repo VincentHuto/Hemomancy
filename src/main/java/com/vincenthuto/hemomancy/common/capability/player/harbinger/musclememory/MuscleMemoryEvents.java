@@ -102,7 +102,7 @@ public final class MuscleMemoryEvents {
         PacketSyncMuscleMemory packet = new PacketSyncMuscleMemory(player.getId(),
                 HemoCapabilityAccess.muscleMemory(player));
         if (player.connection != null) {
-            PacketHandler.sendTracking(player, packet);
+            PacketHandler.sendToPlayerAndTrackers(player, packet);
         }
     }
 
@@ -110,16 +110,8 @@ public final class MuscleMemoryEvents {
 	public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
 			HemoCapabilityAccess.muscleMemory(player).migrateLegacyPriming(player.level().getGameTime());
-			sync(player);
 		}
 	}
-
-    @SubscribeEvent
-    public static void onDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) {
-            sync(player);
-        }
-    }
 
     @SubscribeEvent
     public static void onStartTracking(PlayerEvent.StartTracking event) {
@@ -145,7 +137,6 @@ public final class MuscleMemoryEvents {
             PRIMARY_ATTACKS.remove(player.getUUID());
             LAST_TARGET_TRIGGER.remove(player.getUUID());
             MuscleMemoryWorldEvents.clearRuntime(player);
-            sync(player);
         }
     }
 

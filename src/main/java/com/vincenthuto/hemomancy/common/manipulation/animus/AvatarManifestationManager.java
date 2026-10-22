@@ -7,8 +7,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnown
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.KnownManipulationServerPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -184,7 +182,7 @@ public final class AvatarManifestationManager {
 	}
 
 	private static void sync(ServerPlayer player, IKnownManipulations known) {
-		PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
+		KnownManipulationEvents.syncPlayerEvent(player);
 		KnownManipulationEvents.syncAvatar(player, ((ServerLevel) player.level()).players(),
 				known.getActiveAvatarForm());
 	}

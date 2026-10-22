@@ -27,12 +27,13 @@ public final class StationUpgradeProgress implements INBTSerializable<CompoundTa
     private final EnumMap<UpgradeStation, Integer> claimed = new EnumMap<>(UpgradeStation.class);
     private final EnumMap<UpgradeStation, Integer> pending = new EnumMap<>(UpgradeStation.class);
     private boolean legacyMigrated;
-    private CompoundTag lastSynced;
+    /** Changed since the owner last received it. Never saved. */
+    private transient boolean syncDirty;
 
     private static int bit(int tier) { return 1 << (tier - 1); }
 
     public void recordUse(UpgradeStation station, String usage) {
-        used.computeIfAbsent(station, ignored -> new HashSet<>()).add(usage);
+        if (used.computeIfAbsent(station, ignored -> new HashSet<>()).add(usage)) syncDirty = true;
     }
 
     public boolean hasUsed(UpgradeStation station, String usage) {
@@ -48,9 +49,13 @@ public final class StationUpgradeProgress implements INBTSerializable<CompoundTa
     }
 
     public boolean legacyMigrated() { return legacyMigrated; }
-    void setLegacyMigrated() { legacyMigrated = true; }
+    void setLegacyMigrated() {
+        if (!legacyMigrated) syncDirty = true;
+        legacyMigrated = true;
+    }
 
     void markClaimed(UpgradeStation station, int tier, boolean deliverItem) {
+        if (!hasClaimed(station, tier) || deliverItem && !hasPending(station, tier)) syncDirty = true;
         claimed.merge(station, bit(tier), (a, b) -> a | b);
         if (deliverItem) pending.merge(station, bit(tier), (a, b) -> a | b);
     }
@@ -78,17 +83,26 @@ public final class StationUpgradeProgress implements INBTSerializable<CompoundTa
                 && (tier.tier() == 1 || eligible(player, StationUpgradeCatalog.get(tier.station(), tier.tier() - 1)));
     }
 
-    public void sync(ServerPlayer player, boolean force) {
+    /** Unlocks the Liber lessons of every tier the player is eligible for. */
+    public void unlockEligibleLessons(ServerPlayer player) {
         Set<net.minecraft.resources.ResourceLocation> lessons = new java.util.LinkedHashSet<>();
         for (StationUpgradeTier tier : StationUpgradeCatalog.all()) {
             if (eligible(player, tier)) lessons.addAll(LiberEntryDefinitions.forRite(tier.ritePath()));
         }
         LiberKnowledgeHelper.unlockEntries(player, lessons, HemomancyDiscoverySource.PRACTICE);
-        CompoundTag state = serializeNBT(player.registryAccess());
-        if (!force && state.equals(lastSynced)) return;
-        PacketHandler.sendToPlayer(player,
-                new com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncStationUpgrades(state));
-        lastSynced = state;
+    }
+
+    public boolean isSyncDirty() {
+        return syncDirty;
+    }
+
+    /** Unlocks earned lessons, then sends the state if it changed since the last send, or always when forced. */
+    public void sync(ServerPlayer player, boolean force) {
+        unlockEligibleLessons(player);
+        if (!force && !syncDirty) return;
+        PacketHandler.sendToPlayer(player, new com.vincenthuto.hemomancy.common.network.capa.harbinger
+                .PacketSyncStationUpgrades(serializeNBT(player.registryAccess())));
+        syncDirty = false;
     }
 
     /** Gives the upgrade item once, unlocks its repeat-craft recipe, and retries delivery if the inventory is full. */
@@ -106,7 +120,10 @@ public final class StationUpgradeProgress implements INBTSerializable<CompoundTa
             if (!hasPending(tier.station(), tier.tier())) continue;
             ItemStack stack = new ItemStack(BuiltInRegistries.ITEM.get(tier.upgradeItem()));
             player.getInventory().add(stack);
-            if (stack.isEmpty()) pending.merge(tier.station(), bit(tier.tier()), (a, b) -> a & ~b);
+            if (stack.isEmpty()) {
+                pending.merge(tier.station(), bit(tier.tier()), (a, b) -> a & ~b);
+                syncDirty = true;
+            }
         }
     }
 
@@ -143,5 +160,6 @@ public final class StationUpgradeProgress implements INBTSerializable<CompoundTa
             for (int i = 0; i < usage.size(); i++) recordUse(station, usage.getString(i));
         }
         legacyMigrated = tag.getBoolean("LegacyMigrated");
+        syncDirty = true;
     }
 }

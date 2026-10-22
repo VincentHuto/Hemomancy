@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.*;
 import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -70,7 +70,7 @@ public class EquipManipulationPacket implements CustomPacketPayload {
 							Component.literal("That manipulation has gone dormant.")
 									.withStyle(ChatFormatting.DARK_GRAY), true);
 					ManipulationRetirementRules.sanitizeKnownManipulations(known);
-					PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
+					KnownManipulationEvents.syncPlayerEvent(player);
 					return;
 				}
 				boolean knownExact = known.getManipList().stream().anyMatch(manipulation -> manipulation != null
@@ -102,7 +102,7 @@ public class EquipManipulationPacket implements CustomPacketPayload {
 			MnemonicReliquaryProgression.onCapacityChanged(serverPlayer, known);
 
 			// Sync updated state back to client
-			PacketHandler.sendToPlayer(serverPlayer, new KnownManipulationServerPacket(known));
+			KnownManipulationEvents.syncPlayerEvent(serverPlayer);
 			ManipulationDiagnosticsSync.sync(serverPlayer);
 		});
 	}

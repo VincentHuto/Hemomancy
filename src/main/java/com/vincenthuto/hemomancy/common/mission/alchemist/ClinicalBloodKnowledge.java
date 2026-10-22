@@ -162,13 +162,6 @@ public final class ClinicalBloodKnowledge {
                     if (HemoCapabilityAccess.clinicalBlood(player).knows(lesson)) player.awardRecipes(List.of(recipe));
                     else if (!player.isCreative()) player.resetRecipes(List.of(recipe));
                 });
-            sync(player);
         }
-    }
-    @SubscribeEvent public static void respawn(PlayerEvent.PlayerRespawnEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) sync(player);
-    }
-    @SubscribeEvent public static void dimension(PlayerEvent.PlayerChangedDimensionEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) sync(player);
     }
 }

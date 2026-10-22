@@ -16,8 +16,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.AdvancementEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class KnownStillArtEvents {
@@ -72,19 +70,5 @@ public class KnownStillArtEvents {
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
 		grantEligibleArts(player, HemoCapabilityAccess.getUnstainedProgress(player));
-		sync(player, HemoCapabilityAccess.getKnownStillArts(player));
-	}
-
-	@SubscribeEvent
-	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
-		ServerPlayer player = (ServerPlayer) event.getEntity();
-		sync(player, HemoCapabilityAccess.getKnownStillArts(player));
-	}
-
-	@SubscribeEvent
-	public static void playerRespawn(PlayerRespawnEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player) {
-			sync(player, HemoCapabilityAccess.getKnownStillArts(player));
-		}
 	}
 }

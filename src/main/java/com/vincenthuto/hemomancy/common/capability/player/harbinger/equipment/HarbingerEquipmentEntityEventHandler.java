@@ -27,7 +27,6 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -98,35 +97,6 @@ public class HarbingerEquipmentEntityEventHandler {
             syncLayerVisibilityToPlayer(trackedPlayer, tracker);
         }
     }
-    @SubscribeEvent
-    public static void playerJoin(EntityJoinLevelEvent event) {
-        Entity entity = event.getEntity();
-        if (entity instanceof ServerPlayer player) {
-            syncSlots(player, Collections.singletonList(player));
-            syncLayerVisibilityToClient(player);
-        }
-    }
-
-    @SubscribeEvent
-    public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayer) {
-            syncLayerVisibilityToClient((ServerPlayer) event.getEntity());
-        }
-    }
-
-    @SubscribeEvent
-    public static void playerRespawn(PlayerEvent.PlayerRespawnEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) {
-            syncLayerVisibilityToClient(player);
-        }
-    }
-
-    @SubscribeEvent
-    public static void playerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) {
-            syncLayerVisibilityToClient(player);
-        }
-    }
     // --- Network sync ---
 
     public static void syncSlot(Player player, byte slot, ItemStack stack, Collection<? extends Player> receivers) {
@@ -155,7 +125,7 @@ public class HarbingerEquipmentEntityEventHandler {
 
     public static void syncLayerVisibilityToClient(ServerPlayer player) {
         var equipment = HemoCapabilityAccess.getEquipment(player);
-        PacketHandler.sendTracking(player,
+        PacketHandler.sendToPlayerAndTrackers(player,
                 new SyncEquipmentLayerVisibilityPacket(player.getId(),
                         equipment.isRenderLayerVisible(IScars.FUNGAL_SLOT),
                         equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.JAR_SLOT_INDEX),

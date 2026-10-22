@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemorySlotRef;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -29,7 +29,7 @@ public record UpdateCurrentMemoryPacket(String storageKey) implements CustomPack
                 return;
             }
             known.setSelectedMemoryRef(ref);
-            PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
+            KnownManipulationEvents.syncPlayerEvent(player);
         });
     }
 

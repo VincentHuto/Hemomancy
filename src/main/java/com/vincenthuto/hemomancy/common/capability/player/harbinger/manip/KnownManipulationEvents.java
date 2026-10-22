@@ -17,7 +17,6 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.KnownManip
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.SyncTrackingAvatarPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
@@ -31,39 +30,16 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class KnownManipulationEvents {
-	private static final Map<UUID, ListTag> LAST_OWNER_SNAPSHOT = new HashMap<>();
-
-	@SubscribeEvent
-	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
-		syncPlayerEvent(event.getEntity());
-	}
-
 	@SubscribeEvent
 	public static void refreshPlayerDimensions(PlayerTickEvent.Post event) {
 		event.getEntity().refreshDimensions();
-	}
-
-	@SubscribeEvent
-	public static void syncChangedOwnerState(PlayerTickEvent.Post event) {
-		if (event.getEntity() instanceof ServerPlayer player) {
-			var known = HemoCapabilityAccess.getKnownManipulations(player);
-			// Level progress and vein lists can change through mutable getters, bypassing setters.
-			ListTag current = ((KnownManipulations) known).serializeNBT(player.registryAccess());
-			if (!current.equals(LAST_OWNER_SNAPSHOT.get(player.getUUID()))) {
-				syncPlayerEvent(player);
-			}
-		}
 	}
 
 	@SubscribeEvent
@@ -97,29 +73,18 @@ public class KnownManipulationEvents {
 		}
 	}
 
-	@SubscribeEvent
-	public static void playerRespawn(PlayerEvent.PlayerRespawnEvent e) {
-		syncPlayerEvent(e.getEntity());
-	}
-
+	/** Sends the owner their known manipulations now; the end-of-tick flush then has nothing left to send. */
 	public static void syncPlayerEvent(Player playerEntity) {
 		if (playerEntity instanceof ServerPlayer s) {
-			var capa = HemoCapabilityAccess.getKnownManipulations(s);
-			PacketHandler.sendToPlayer(s, new KnownManipulationServerPacket(capa));
-			LAST_OWNER_SNAPSHOT.put(s.getUUID(), ((KnownManipulations) capa).serializeNBT(s.registryAccess()));
+			var known = HemoCapabilityAccess.getKnownManipulations(s);
+			PacketHandler.sendToPlayer(s, new KnownManipulationServerPacket(known));
+			known.clearSyncDirty();
 		}
 	}
 
 	@SubscribeEvent
 	public static void playerJoin(EntityJoinLevelEvent event) {
-		Entity entity = event.getEntity();
-		if (entity instanceof ServerPlayer) {
-			ServerPlayer player = (ServerPlayer) entity;
-			syncAvatars(player, Collections.singletonList(player));
-
-		}
-		
-		HemoCapabilityAccess.getKnownManipulations(entity).ifPresent(manips -> {
+		HemoCapabilityAccess.getKnownManipulations(event.getEntity()).ifPresent(manips -> {
 			if(manips.getLastVeinMineStart() != BlockPos.ZERO) {
 				manips.setLastVeinMineStart(BlockPos.ZERO);
 			}
@@ -128,20 +93,7 @@ public class KnownManipulationEvents {
 
 	@SubscribeEvent
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-		ServerPlayer player = (ServerPlayer) event.getEntity();
-		KnownManipulationGrantHelper.grantDegreeOneUtilities(player);
-		syncPlayerEvent(player);
-
-	}
-
-	/** Called by {@code TransientServerStateEvents} when the player logs out. */
-	public static void logout(Player player) {
-		LAST_OWNER_SNAPSHOT.remove(player.getUUID());
-	}
-
-	/** Called by {@code TransientServerStateEvents} when a server starts and stops. */
-	public static void clearSessionState() {
-		LAST_OWNER_SNAPSHOT.clear();
+		KnownManipulationGrantHelper.grantDegreeOneUtilities((ServerPlayer) event.getEntity());
 	}
 
 	public static void syncAvatar(Player player, Collection<? extends Player> receivers, String avatarForm) {
@@ -158,6 +110,11 @@ public class KnownManipulationEvents {
 	private static void syncAvatars(Player player, Collection<? extends Player> receivers) {
 		var manips = HemoCapabilityAccess.getKnownManipulations(player);
 		syncAvatar(player, receivers, manips.getActiveAvatarForm());
+	}
+
+	/** Tells the owner which avatar form they wear, for their own render. */
+	public static void syncOwnAvatar(ServerPlayer player) {
+		syncAvatars(player, Collections.singletonList(player));
 	}
 
 	/**
@@ -209,7 +166,7 @@ public class KnownManipulationEvents {
 			}
 			ManipulationFamilyRegistry.normalizeKnown(known.getKnownManips());
 		}
-		PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
+		syncPlayerEvent(player);
 
 		// 5. Grant skill-point currency based on manipulation rank
 		int spGain = switch (manip.getRank()) {

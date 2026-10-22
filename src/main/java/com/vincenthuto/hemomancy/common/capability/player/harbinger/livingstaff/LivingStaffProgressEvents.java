@@ -16,7 +16,6 @@ public final class LivingStaffProgressEvents {
 		if (event.getEntity() instanceof ServerPlayer player) {
 			LivingStaffBondHelper.ensureConjureStaffKnown(player);
 			LivingStaffBondHelper.ensureVesperSickleKnown(player);
-			LivingStaffBondHelper.syncProgress(player);
 		}
 	}
 
@@ -25,7 +24,6 @@ public final class LivingStaffProgressEvents {
 		if (event.getEntity() instanceof ServerPlayer player) {
 			LivingStaffBondHelper.ensureConjureStaffKnown(player);
 			LivingStaffBondHelper.ensureVesperSickleKnown(player);
-			LivingStaffBondHelper.syncProgress(player);
 		}
 	}
 
@@ -34,7 +32,6 @@ public final class LivingStaffProgressEvents {
 		if (event.getEntity() instanceof ServerPlayer player) {
 			LivingStaffBondHelper.ensureConjureStaffKnown(player);
 			LivingStaffBondHelper.ensureVesperSickleKnown(player);
-			LivingStaffBondHelper.syncProgress(player);
 		}
 	}
 }

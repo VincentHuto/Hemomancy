@@ -13,13 +13,13 @@ public final class ScarStateSyncSourceTest {
 	public static void main(String[] args) throws IOException {
 		String events = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/scar/ScarStateSyncEvents.java");
 
+		String table = read("src/main/java/com/vincenthuto/hemomancy/common/capability/PlayerStateSync.java");
+
 		assertContains("scar sync event subscriber", events, "@EventBusSubscriber(modid = Hemomancy.MOD_ID)");
 		assertContains("sync packet used", events, "new PacketSyncScarsState(source, HemoCapabilityAccess.getScarState(source))");
-		assertContains("self and tracking sync used", events, "PacketHandler.sendTracking(source");
+		assertContains("self and tracking sync used", events, "PacketHandler.sendToPlayerAndTrackers(source");
 		assertContains("tracking player sync used", events, "PacketHandler.sendToPlayer(receiver");
-		assertContains("login hook", events, "PlayerEvent.PlayerLoggedInEvent");
-		assertContains("dimension hook", events, "PlayerEvent.PlayerChangedDimensionEvent");
-		assertContains("respawn hook", events, "PlayerEvent.PlayerRespawnEvent");
+		assertContains("login, respawn and dimension resend", table, "SCARS(HemoAttachmentTypes.SCARS, PacketSyncScarsState.class, ALWAYS");
 		assertContains("start tracking hook", events, "PlayerEvent.StartTracking");
 	}
 

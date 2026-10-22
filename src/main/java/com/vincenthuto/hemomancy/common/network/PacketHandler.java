@@ -486,6 +486,15 @@ public class PacketHandler {
         PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, payload);
     }
 
+    /**
+     * Server to a player and everyone tracking them. Unlike {@link #sendTracking}, the player's own copy does not depend
+     * on the player being tracked, so it also reaches a player who is not (yet) in a level.
+     */
+    public static <P extends CustomPacketPayload> void sendToPlayerAndTrackers(ServerPlayer player, P payload) {
+        sendToPlayer(player, payload);
+        PacketDistributor.sendToPlayersTrackingEntity(player, payload);
+    }
+
     /** Server to every player in {@code level}. */
     public static <P extends CustomPacketPayload> void sendToDimension(ServerLevel level, P payload) {
         PacketDistributor.sendToPlayersInDimension(level, payload);

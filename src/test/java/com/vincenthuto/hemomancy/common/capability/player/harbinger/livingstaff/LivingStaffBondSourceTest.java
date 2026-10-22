@@ -29,7 +29,7 @@ public final class LivingStaffBondSourceTest {
 		assertContains("bond repair requires the living staff bond", helper,
 				"!progress.hasLivingStaffBond()");
 		assertContains("bond repair syncs repaired known manipulations", helper,
-				"PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known))");
+				"KnownManipulationEvents.syncPlayerEvent(player)");
 		assertContains("living staff progress login repair grants missing conjure staff", events,
 				"LivingStaffBondHelper.ensureConjureStaffKnown(player)");
 		assertContains("mnemonic reliquary opening repairs missing conjure staff", reliquaryMenu,

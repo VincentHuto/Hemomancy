@@ -11,12 +11,9 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPomePro
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonTrialEvents;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class InitiatoryDegreeEvents {
@@ -33,7 +30,6 @@ public class InitiatoryDegreeEvents {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
 		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
 		migrateLegacyState(player, degree);
-		syncDegree(player, degree);
 		LiberKnowledgeHelper.unlockForDegree(player, degree.getDegreeNumber());
 	}
 
@@ -54,20 +50,6 @@ public class InitiatoryDegreeEvents {
 			if (line != null && line.isValid() && player.getUUID().equals(line.getLeaderUUID())) {
 				degree.setHasFoundedBloodline(true);
 			}
-		}
-	}
-
-	@SubscribeEvent
-	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
-		ServerPlayer player = (ServerPlayer) event.getEntity();
-		syncDegree(player, HemoCapabilityAccess.getInitiatoryDegree(player));
-	}
-
-	@SubscribeEvent
-	public static void playerRespawn(PlayerRespawnEvent event) {
-		Player player = event.getEntity();
-		if (!player.level().isClientSide) {
-			syncDegree((ServerPlayer) player, HemoCapabilityAccess.getInitiatoryDegree(player));
 		}
 	}
 }

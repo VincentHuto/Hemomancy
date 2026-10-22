@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
@@ -8,7 +9,6 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.LivingStaffProgressServerPacket;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.KnownManipulationServerPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,7 +36,7 @@ public final class LivingStaffBondHelper {
 			if (known != null && KnownManipulationGrantHelper.learnAndEquipIfPossible(known,
 					ManipulationInit.conjure_staff.get(), ManipSlotHelper.getMaxSlots(player))) {
 				changed = true;
-				PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
+				KnownManipulationEvents.syncPlayerEvent(player);
 			}
 		}
 		return changed;
@@ -58,7 +58,7 @@ public final class LivingStaffBondHelper {
 				ManipulationInit.conjure_staff.get(), ManipSlotHelper.getMaxSlots(player))) {
 			return false;
 		}
-		PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
+		KnownManipulationEvents.syncPlayerEvent(player);
 		return true;
 	}
 
@@ -72,7 +72,7 @@ public final class LivingStaffBondHelper {
 		boolean changed = KnownManipulationGrantHelper.learnAndEquipIfPossible(known,
 				ManipulationInit.conjure_sickle.get(), ManipSlotHelper.getMaxSlots(player));
 		boolean learned = known.doesListContainName(known.getKnownManips(), ManipulationInit.conjure_sickle.get());
-		if (changed) PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
+		if (changed) KnownManipulationEvents.syncPlayerEvent(player);
 		return learned;
 	}
 

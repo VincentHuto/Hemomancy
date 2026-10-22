@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.gametest;
 import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityRegistrar;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
+import com.vincenthuto.hemomancy.common.capability.PlayerStateSync;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegree;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPomeProgress;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendencyEvents;
@@ -53,14 +53,14 @@ public final class OwnerSnapshotGameTests {
             var saved = degree.serializeNBT(player.registryAccess());
             degree.resetPomeCommunion();
             degree.deserializeNBT(player.registryAccess(), saved);
-            InitiatoryDegreeEvents.playerLoggedIn(new PlayerEvent.PlayerLoggedInEvent(player));
+            HemoCapabilityRegistrar.onLogin(new PlayerEvent.PlayerLoggedInEvent(player));
             assertPomeProgress(helper, packets, 1, "login");
             packets.clear();
-            InitiatoryDegreeEvents.onDimensionChange(new PlayerEvent.PlayerChangedDimensionEvent(player, Level.OVERWORLD, Level.NETHER));
+            HemoCapabilityRegistrar.onDimensionChange(new PlayerEvent.PlayerChangedDimensionEvent(player, Level.OVERWORLD, Level.NETHER));
             assertPomeProgress(helper, packets, 1, "dimension change");
             packets.clear();
             degree.setQliphothCommunionDone(true);
-            InitiatoryDegreeEvents.playerRespawn(new PlayerEvent.PlayerRespawnEvent(player, false));
+            HemoCapabilityRegistrar.onRespawn(new PlayerEvent.PlayerRespawnEvent(player, false));
             assertPomeProgress(helper, packets, 9, "completed Communion respawn");
             helper.succeed();
         } finally {
@@ -98,13 +98,13 @@ public final class OwnerSnapshotGameTests {
             var tendency = HemoCapabilityAccess.getBloodTendency(player);
             var vascular = HemoCapabilityAccess.getVascularSystem(player);
             HemoCapabilityRegistrar.onLogin(new PlayerEvent.PlayerLoggedInEvent(player));
-            assertPair(helper, packets, "login");
+            assertOrderedPair(helper, packets, "login");
             packets.clear();
             HemoCapabilityRegistrar.onDimensionChange(new PlayerEvent.PlayerChangedDimensionEvent(player, Level.OVERWORLD, Level.NETHER));
-            assertPair(helper, packets, "dimension change");
+            assertOrderedPair(helper, packets, "dimension change");
             packets.clear();
             HemoCapabilityRegistrar.onRespawn(new PlayerEvent.PlayerRespawnEvent(player, false));
-            assertPair(helper, packets, "respawn");
+            assertOrderedPair(helper, packets, "respawn");
             packets.clear();
             tendency.addTendencyAlignment(EnumBloodTendency.ANIMUS, 2f);
             vascular.setVascularSectionHealth(EnumVeinSections.ARMS, -3f);
@@ -116,6 +116,45 @@ public final class OwnerSnapshotGameTests {
             player.discard();
             channel.finishAndReleaseAll();
         }
+    }
+
+    /** The lifecycle sends the whole sync table; tendency and vascular each go once, tendency first. */
+    private static void assertOrderedPair(GameTestHelper helper, List<CustomPacketPayload> packets, String phase) {
+        var owner = packets.stream()
+                .filter(p -> p instanceof BloodTendencyServerPacket || p instanceof VascularSystemServerPacket).toList();
+        assertPair(helper, owner, phase);
+    }
+
+    /**
+     * S-2: after login, respawn and dimension change, every table entry reaches the owner exactly once (equipment
+     * slots once per slot), and only on the lifecycle events it lists.
+     */
+    @GameTest(template = "empty", batch = "owner_snapshots")
+    public static void everySyncedAttachmentReachesTheOwnerOnEachLifecycle(GameTestHelper helper) {
+        try (var captured = CapturedPlayer.create(helper)) {
+            var player = captured.player;
+            int slots = HemoCapabilityAccess.getEquipment(player).getSlots();
+            HemoCapabilityRegistrar.onLogin(new PlayerEvent.PlayerLoggedInEvent(player));
+            assertTable(helper, captured, PlayerStateSync.Lifecycle.LOGIN, slots);
+            HemoCapabilityRegistrar.onRespawn(new PlayerEvent.PlayerRespawnEvent(player, false));
+            assertTable(helper, captured, PlayerStateSync.Lifecycle.RESPAWN, slots);
+            HemoCapabilityRegistrar.onDimensionChange(new PlayerEvent.PlayerChangedDimensionEvent(player, Level.OVERWORLD, Level.NETHER));
+            assertTable(helper, captured, PlayerStateSync.Lifecycle.DIMENSION, slots);
+            helper.assertTrue(!PlayerStateSync.Entry.ICHORIAN_KNOWLEDGE.resendsOn(PlayerStateSync.Lifecycle.DIMENSION),
+                    "Ichorian knowledge gains a dimension resend only through F-20");
+            helper.succeed();
+        }
+    }
+
+    private static void assertTable(GameTestHelper helper, CapturedPlayer captured, PlayerStateSync.Lifecycle lifecycle,
+            int slots) {
+        for (var entry : PlayerStateSync.Entry.values()) {
+            int sent = captured.sent(entry.payload()).size();
+            int expected = !entry.resendsOn(lifecycle) ? 0 : entry == PlayerStateSync.Entry.EQUIPMENT_SLOTS ? slots : 1;
+            helper.assertTrue(sent == expected,
+                    lifecycle + " sent " + entry + " (" + entry.payload().getSimpleName() + ") " + sent + " times, not " + expected);
+        }
+        captured.payloads.clear();
     }
 
     private static void assertPair(GameTestHelper helper, List<CustomPacketPayload> packets, String phase) {

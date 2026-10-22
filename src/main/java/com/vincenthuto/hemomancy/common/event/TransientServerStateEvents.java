@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.common.event;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.plant.BloodwoodGrowthHandler;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.SynapticLoadoutLockout;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory.MuscleMemoryEvents;
@@ -108,7 +107,6 @@ public final class TransientServerStateEvents {
 		SynapticLoadoutLockout.clearSessionState();
 		ManipulationChargeClock.clearSessionState();
 		BloodlineChatRateLimit.clearSessionState();
-		KnownManipulationEvents.clearSessionState();
 		SummonThrallManip.clearSessionState();
 		CastingAnimationManager.clearSessionState();
 		AvatarManifestationManager.clearSessionState();
@@ -161,7 +159,6 @@ public final class TransientServerStateEvents {
 		MicroscopeExamination.logout(player);
 		EngramTracing.end(player);
 
-		KnownManipulationEvents.logout(player);
 		SummonThrallManip.clearPendingThrall(player.getUUID());
 		SynapticLoadoutLockout.clear(player.getUUID());
 		MuscleMemoryEvents.logout(player);

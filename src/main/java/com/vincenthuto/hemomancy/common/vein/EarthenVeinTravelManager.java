@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.vein;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.EarthenVeinBlock;
@@ -12,7 +13,6 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.TerrestrialSpeculumItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.KnownManipulationServerPacket;
 import com.vincenthuto.hemomancy.common.network.vein.EarthenVeinTravelVisualPacket;
 import com.vincenthuto.hemomancy.common.network.vein.OpenEarthenVeinDisplayPacket;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.EarthenVeinBlockEntity;
@@ -350,7 +350,7 @@ public final class EarthenVeinTravelManager {
 		if (EarthenVeinDestinationValidation.shouldPrune(target != null,
 				target != null && target.isTemporary(), stented, matchingId)) {
 			known.getVeinList().remove(claimed);
-			PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
+			KnownManipulationEvents.syncPlayerEvent(player);
 			if (reportFailure) player.displayClientMessage(Component.literal("That vein has ruptured.")
 					.withStyle(ChatFormatting.DARK_RED), true);
 			return null;
@@ -362,7 +362,7 @@ public final class EarthenVeinTravelManager {
 		}
 		if (!claimed.getName().equals(target.getLoc().getName())) {
 			claimed.setName(target.getLoc().getName());
-			PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
+			KnownManipulationEvents.syncPlayerEvent(player);
 		}
 		return new EarthenVeinDestination(claimed.getUUID(), claimed.getName(), claimed.getDimension(),
 				claimed.getPosition(), 0);

@@ -33,8 +33,6 @@ import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -367,27 +365,10 @@ public class EquippedMorphlingEvents {
 	}
 
 	@SubscribeEvent
-	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-		syncToClient((ServerPlayer) event.getEntity());
-	}
-
-	@SubscribeEvent
 	public static void onStartTracking(PlayerEvent.StartTracking event) {
 		if (!(event.getEntity() instanceof ServerPlayer tracker)) return;
 		if (!(event.getTarget() instanceof ServerPlayer trackedPlayer)) return;
 		syncToPlayer(trackedPlayer, tracker);
-	}
-
-	@SubscribeEvent
-	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
-		syncToClient((ServerPlayer) event.getEntity());
-	}
-
-	@SubscribeEvent
-	public static void playerRespawn(PlayerRespawnEvent event) {
-		if (!event.getEntity().level().isClientSide) {
-			syncToClient((ServerPlayer) event.getEntity());
-		}
 	}
 
 	@SubscribeEvent
@@ -437,7 +418,7 @@ public class EquippedMorphlingEvents {
 	public static void syncToClient(ServerPlayer player) {
 		persistEquippedMorphling(player);
 		var cap = HemoCapabilityAccess.getEquippedMorphling(player);
-		PacketHandler.sendTracking(player,
+		PacketHandler.sendToPlayerAndTrackers(player,
 				new SyncEquippedMorphlingPacket(player.getUUID(), cap.getEquippedMorphling().copy()));
 	}
 

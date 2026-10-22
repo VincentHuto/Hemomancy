@@ -1,10 +1,9 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.KnownManipulationServerPacket;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.EarthenVeinBlockEntity;
 import com.vincenthuto.hemomancy.common.vein.EarthenVeinTravelManager;
 import net.minecraft.core.BlockPos;
@@ -182,7 +181,7 @@ public class EarthenVeinBlock extends Block implements EntityBlock, SimpleWaterl
 				}
 			}
 			if (!worldIn.isClientSide) {
-				PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
+				KnownManipulationEvents.syncPlayerEvent(player);
 				if (!usedClaimItem && !usedNameTag && state.getValue(STENTED)) {
 					EarthenVeinTravelManager.begin((ServerPlayer) player, pos);
 				}

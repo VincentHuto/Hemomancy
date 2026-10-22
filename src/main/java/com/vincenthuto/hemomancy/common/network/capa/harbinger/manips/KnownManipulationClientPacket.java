@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
@@ -33,7 +34,7 @@ public class KnownManipulationClientPacket implements CustomPacketPayload {
 						;
 				PacketHandler.sendToPlayer(sender,
 						new PacketSyncSkills(HemoCapabilityAccess.getSkillProgress(sender).toSyncTag()));
-				PacketHandler.sendToPlayer(sender, new KnownManipulationServerPacket(manips));
+				KnownManipulationEvents.syncPlayerEvent(sender);
 			}
 		});
 	}

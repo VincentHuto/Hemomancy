@@ -82,6 +82,7 @@ public final class ManipulationRetirementRules {
 		changed |= sanitizeEquippedManipulations(known);
 		changed |= sanitizeLoadouts(known);
 		changed |= sanitizeSelectedManipulation(known);
+		if (changed) known.markSyncDirty();
 		return changed;
 	}
 

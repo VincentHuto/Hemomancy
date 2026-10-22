@@ -12,6 +12,17 @@ import java.util.Set;
 
 public interface IKnownManipulations {
 
+	/** Flags owner-visible state as changed outside the setters; PlayerStateSync sends it at the end of the tick. */
+	default void markSyncDirty() {
+	}
+
+	default boolean isSyncDirty() {
+		return false;
+	}
+
+	default void clearSyncDirty() {
+	}
+
 	public BlockPos getLastVeinMineStart();
 
 	public void setLastVeinMineStart(BlockPos newPos);

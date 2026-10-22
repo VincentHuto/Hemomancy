@@ -42,9 +42,9 @@ public final class ScarletVanityLayerToggleSourceTest {
 		assertContains("packet handler registers sync packet", packetHandler,
 				"net.playToClient(SyncEquipmentLayerVisibilityPacket.TYPE");
 		assertContains("server fans visibility to tracking clients", equipmentEvents,
-				"PacketHandler.sendTracking(player");
-		assertContains("server syncs visibility on login", equipmentEvents,
-				"syncLayerVisibilityToClient((ServerPlayer) event.getEntity())");
+				"PacketHandler.sendToPlayerAndTrackers(player");
+		assertContains("server syncs visibility on login", read("com/vincenthuto/hemomancy/common/capability/PlayerStateSync.java"),
+				"HarbingerEquipmentEntityEventHandler::syncLayerVisibilityToClient");
 		assertContains("server syncs visibility to new trackers", equipmentEvents,
 				"syncLayerVisibilityToPlayer(trackedPlayer, tracker)");
 

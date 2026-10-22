@@ -94,23 +94,12 @@ public final class BodyIdiomEvents {
 	}
 
 	@SubscribeEvent
-	public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player) sync(player);
-	}
-
-	@SubscribeEvent
-	public static void onDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player) sync(player);
-	}
-
-	@SubscribeEvent
 	public static void onRespawn(PlayerEvent.PlayerRespawnEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
 		PowerGuardrailState state = HemoCapabilityAccess.getPowerGuardrails(player);
 		state.clearIronHearts();
 		state.setNecroticSaturation(0.0F);
 		state.setBlackheartedCooldownUntil(0L);
-		sync(player);
 	}
 
 	public static void sync(ServerPlayer player) {

@@ -6,11 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.disco
 import com.vincenthuto.hemomancy.common.network.PacketAntecedentResearch;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
-@EventBusSubscriber(modid=Hemomancy.MOD_ID)
 public final class AntecedentKnowledge {
     private AntecedentKnowledge() {}
     public static boolean record(ServerPlayer player, AntecedentResearch.Evidence evidence) {
@@ -22,7 +18,4 @@ public final class AntecedentKnowledge {
     public static void sync(ServerPlayer player) {
         PacketHandler.sendToPlayer(player,new PacketAntecedentResearch(HemoCapabilityAccess.antecedent(player).serializeNBT(player.registryAccess())));
     }
-    @SubscribeEvent public static void login(PlayerEvent.PlayerLoggedInEvent event) { if(event.getEntity() instanceof ServerPlayer p) sync(p); }
-    @SubscribeEvent public static void respawn(PlayerEvent.PlayerRespawnEvent event) { if(event.getEntity() instanceof ServerPlayer p) sync(p); }
-    @SubscribeEvent public static void dimension(PlayerEvent.PlayerChangedDimensionEvent event) { if(event.getEntity() instanceof ServerPlayer p) sync(p); }
 }

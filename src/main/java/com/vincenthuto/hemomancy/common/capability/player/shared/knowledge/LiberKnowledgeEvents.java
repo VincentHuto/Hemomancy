@@ -13,7 +13,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 import java.util.Set;
@@ -26,38 +25,30 @@ public final class LiberKnowledgeEvents {
 	@SubscribeEvent
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
-			migrateLegacyNotesAndSync(player);
+			migrateLegacyNotes(player);
 		}
 	}
 
 	@SubscribeEvent
 	public static void playerRespawn(PlayerEvent.PlayerRespawnEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
-			migrateLegacyNotesAndSync(player);
+			migrateLegacyNotes(player);
 		}
 	}
 
 	@SubscribeEvent
 	public static void playerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
-			migrateLegacyNotesAndSync(player);
+			migrateLegacyNotes(player);
 		}
 	}
 
-	@SubscribeEvent
-	public static void playerJoin(EntityJoinLevelEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player) {
-			migrateLegacyNotesAndSync(player);
-		}
-	}
-
-	private static void migrateLegacyNotesAndSync(ServerPlayer player) {
+	private static void migrateLegacyNotes(ServerPlayer player) {
 		MemoHelper.migrateLegacyFieldNotes(player);
 		if (HarbingerAdvancementGranter.isVeinMasonFirstLesson(player)) {
 			LiberKnowledgeHelper.unlockEntry(player, LiberEntryDefinitions.SCAR_PRACTICE,
 					CommonDiscoverySource.ADVANCEMENT);
 		}
-		sync(player);
 	}
 
 	public static void sync(ServerPlayer player) {

@@ -24,7 +24,7 @@ class PayloadDirectionTest {
 	private static final Set<String> BIDIRECTIONAL = Set.of("AntecedentEffectPacket");
 	/** A send call whose payload is constructed inline: {@code sendToPlayer(player, new SomePacket(...))}. */
 	private static final Pattern INLINE_SEND = Pattern.compile(
-			"\\b(sendToServer|sendToPlayer|sendNear|sendTracking|sendToAll|sendToDimension|sendToPlayersNear"
+			"\\b(sendToServer|sendToPlayer|sendToPlayerAndTrackers|sendNear|sendTracking|sendToAll|sendToDimension|sendToPlayersNear"
 					+ "|sendToPlayersTrackingEntityAndSelf|sendToPlayersTrackingEntity|sendToAllPlayers|sendToPlayersInDimension|sendToPlayersInChunk)\\s*\\(([^;]*?)\\bnew\\s+(?:[\\w.]+\\.)?(\\w+)\\s*\\(",
 			Pattern.DOTALL);
 
