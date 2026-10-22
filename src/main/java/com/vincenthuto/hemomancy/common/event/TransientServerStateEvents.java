@@ -150,6 +150,7 @@ public final class TransientServerStateEvents {
 			CircusPracticalController.logout(serverPlayer);
 			TerrestrialSpeculumPlantingManager.logout(serverPlayer);
 			FoundingFaneEvents.clearPreviewRelation(serverPlayer);
+			LanternTickLightManager.logout(serverPlayer);
 		}
 		ManipulationReactiveEvents.logout(player);
 		ConductionManager.logout(player);

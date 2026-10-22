@@ -28,6 +28,11 @@ public final class LanternTickLightManager {
 	private LanternTickLightManager() {
 	}
 
+	/** Called by {@code TransientServerStateEvents} when the player logs out, while their light's level is still loaded. */
+	public static void logout(ServerPlayer player) {
+		clear(player.serverLevel(), player.getUUID());
+	}
+
 	/** Called by {@code TransientServerStateEvents} when a server starts and stops; a new world must not clear the old one's lights. */
 	public static void clearSessionState() {
 		trackedLights.clear();

@@ -71,6 +71,14 @@ class SessionStateRegistryTest {
 		assertEquals(new TreeSet<>(EXEMPT.keySet()), exemptSeen, "Remove exemptions whose fields are gone");
 	}
 
+	/** Clearing a map that tracks placed blocks would orphan them; such maps release their blocks on logout first. */
+	@Test
+	void trackedHelmetLightsAreRemovedBeforeTheirMapIsCleared() {
+		String hub = SourceAssertions.read(RepoPaths.MAIN_JAVA.resolve(HUB));
+		SourceAssertions.assertContains("logout removes the light while its level is loaded", hub,
+				"LanternTickLightManager.logout(serverPlayer);");
+	}
+
 	@Test
 	void onlyTheHubListensForServerStartAndStop() throws Exception {
 		List<String> offending = new ArrayList<>();
