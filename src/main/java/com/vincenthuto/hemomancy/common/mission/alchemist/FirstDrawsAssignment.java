@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.mission.alchemist;
 
+import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryContext;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerAlchemistEntity;
@@ -27,6 +28,18 @@ public final class FirstDrawsAssignment {
 	private static final String SAMPLES = "Samples";
 	private static final String SPECIES = "Species";
 	private static final String VIALS_PENDING = "VialsPending";
+	/** The five empty vials of the briefing, retried until they really land. */
+	public static final PendingDelivery.Claim VIALS = new PendingDelivery.Claim("first_draws_vials",
+			player -> {
+				int owed = data(player).getInt(VIALS_PENDING);
+				return owed > 0 ? List.of(new ItemStack(ItemInit.bloody_vial.get(), owed)) : List.of();
+			},
+			FirstDrawsAssignment::eligible,
+			(player, left) -> {
+				CompoundTag data = data(player);
+				data.putInt(VIALS_PENDING, left.stream().mapToInt(ItemStack::getCount).sum());
+				save(player, data);
+			});
 
 	private FirstDrawsAssignment() {}
 
@@ -58,16 +71,7 @@ public final class FirstDrawsAssignment {
 	}
 
 	static void deliverPendingVials(ServerPlayer player) {
-		if (!player.isAlive() || ChamberVisitService.isObservational(player) || !eligible(player)) return;
-		CompoundTag data = data(player);
-		int pending = data.getInt(VIALS_PENDING);
-		if (pending <= 0) return;
-		int before = player.getInventory().countItem(ItemInit.bloody_vial.get());
-		player.getInventory().add(new ItemStack(ItemInit.bloody_vial.get(), pending));
-		int inserted = player.getInventory().countItem(ItemInit.bloody_vial.get()) - before;
-		if (inserted <= 0) return;
-		data.putInt(VIALS_PENDING, Math.max(0, pending - inserted));
-		save(player, data);
+		PendingDelivery.deliver(player, VIALS);
 	}
 
 	public static FirstDrawsProgress progress(ServerPlayer player) {

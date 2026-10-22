@@ -52,6 +52,7 @@ Use this prompt for Codex, Copilot, Claude, or any similar coding harness that n
 - `config/` registers NeoForge config specs.
 - `mixin/` backs `hemomancy.mixins.json`.
 - Player state uses `HemoAttachmentTypes`, `HemoCapabilityKeys`, `HemoCapabilityRegistrar`, and `HemoCapabilityAccess`. `IBloodVolume` exists on every player, but `volume.isActive()` is the opt-in gate for blood magic.
+- Owner attachments reach the client through the `PlayerStateSync` table (sent by `HemoCapabilityRegistrar` on login, respawn and dimension change). Earned items that may not fit go through `PendingDelivery`; static session maps register with `TransientServerStateEvents`.
 - Networking is NeoForge 1.21 payload-based. Add packets through `common/network/PacketHandler.java` using `CustomPacketPayload`, static `TYPE`, `STREAM_CODEC`, and `playToClient` or `playToServer` registration.
 
 ## Documentation Contract

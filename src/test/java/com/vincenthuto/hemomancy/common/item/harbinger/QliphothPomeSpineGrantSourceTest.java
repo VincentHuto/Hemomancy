@@ -17,10 +17,10 @@ public final class QliphothPomeSpineGrantSourceTest {
 		assertContains(bloom, "Spine: visit the Gardens. Lost it? Sneak-use empty-handed.");
 		assertContains(source, "QliphothPomeRules.shouldGrantFungalSpine(count, degree.hasFungalSpineGranted())");
 		assertContains(source, "QliphothBloomEvents.deliverPendingFungalSpine(player)");
-		assertContains(delivery, "degree.isQliphothCommunionDone() || degree.hasFungalSpineGranted()");
-		assertContains(delivery, "player.getInventory().add(new ItemStack(ItemInit.fungal_spine.get()))");
+		assertContains(delivery, "degree.isQliphothCommunionDone() && !degree.hasFungalSpineGranted()");
+		assertContains(delivery, "player -> player.getInventory().countItem(ItemInit.fungal_spine.get()) > 0");
 		assertContains(delivery, "degree.setFungalSpineGranted(true)");
-		assertContains(delivery, "deliverPendingFungalSpine(player);");
+		assertContains(delivery, "PendingDelivery.deliver(player, FUNGAL_SPINE);");
 		if (source.contains("player.drop(spine")) throw new AssertionError("unique Spine must not become a world drop");
 	}
 

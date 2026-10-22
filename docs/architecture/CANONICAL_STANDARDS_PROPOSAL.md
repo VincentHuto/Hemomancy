@@ -322,6 +322,9 @@ Supporting rules:
 - `StationUpgradeProgress.LegacyMigrated` and `StationUpgradeMigration` for one-shot
   migration.
 - `RiteZoneSync` for send-on-change.
+- Since step 5: `HemoCapabilityAccess` returns player attachments directly; `PlayerStateSync`
+  holds the sync table and the end-of-tick dirty flush; `PendingDelivery` delivers the
+  earned claims; `TransientServerStateEvents` owns the session maps.
 
 **Migration targets**
 - S-1 through S-9.
@@ -356,8 +359,8 @@ Supporting rules:
   (G-1).
 
 **Existing example**
-- `TransientServerStateEvents` (central reset).
-- `HemoCapabilityRegistrar` (sync trio).
+- `TransientServerStateEvents` (central reset and logout fan-out).
+- `HemoCapabilityRegistrar` (sync trio, driving `PlayerStateSync` at `LOWEST` priority).
 
 **Migration targets**
 - R-1 (subscription style).

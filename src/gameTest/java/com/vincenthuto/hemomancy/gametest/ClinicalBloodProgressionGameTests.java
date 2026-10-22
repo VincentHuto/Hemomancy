@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.gametest;
 
+import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 
 import net.minecraft.network.chat.Component;
@@ -2392,11 +2393,11 @@ public final class ClinicalBloodProgressionGameTests {
                             && actor.getInventory().countItem(ItemInit.fungal_spine.get()) == 0,
                     "Login must not mark a full-inventory Spine claim as delivered");
             actor.getInventory().setItem(0, ItemStack.EMPTY);
-            QliphothBloomEvents.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
+            PendingDelivery.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
             h.assertTrue(degree.hasFungalSpineGranted()
                             && actor.getInventory().countItem(ItemInit.fungal_spine.get()) == 1,
                     "Making room did not deliver the pending Fungal Spine");
-            QliphothBloomEvents.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
+            PendingDelivery.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
             h.assertTrue(actor.getInventory().countItem(ItemInit.fungal_spine.get()) == 1,
                     "Spine delivery retried after its one-time claim was recorded");
         } finally {
@@ -2468,14 +2469,14 @@ public final class ClinicalBloodProgressionGameTests {
             actor.setGameMode(GameType.CREATIVE);
             InitiatoryDegreeEvents.playerLoggedIn(new PlayerEvent.PlayerLoggedInEvent(actor));
             actor.tickCount = 20;
-            QliphothBloomEvents.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
+            PendingDelivery.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
             h.assertTrue(!degree.hasFungalSpineGranted()
                             && actor.getInventory().countItem(ItemInit.fungal_spine.get()) == 0,
                     "Creative full-inventory discard must not mark the first Spine delivered");
             actor.getInventory().setItem(0, ItemStack.EMPTY);
             actor.tickCount = 20;
-            QliphothBloomEvents.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
-            QliphothBloomEvents.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
+            PendingDelivery.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
+            PendingDelivery.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
             h.assertTrue(degree.hasFungalSpineGranted()
                             && actor.getInventory().countItem(ItemInit.fungal_spine.get()) == 1,
                     "Actual Creative inventory space must deliver the pending Spine exactly once");
@@ -2493,7 +2494,7 @@ public final class ClinicalBloodProgressionGameTests {
             restored.load(actor.saveWithoutId(new CompoundTag()));
             restored.setHealth(0);
             restored.tickCount = 20;
-            QliphothBloomEvents.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(restored));
+            PendingDelivery.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(restored));
             h.assertTrue(!HemoCapabilityAccess.getInitiatoryDegree(restored).hasFungalSpineGranted()
                             && restored.getInventory().countItem(ItemInit.fungal_spine.get()) == 0,
                     "Dead-player retries must not consume the pending first Spine before respawn");
@@ -2503,7 +2504,7 @@ public final class ClinicalBloodProgressionGameTests {
                     "Serialization and death cloning must preserve the pending Communion Spine");
             InitiatoryDegreeEvents.playerLoggedIn(new PlayerEvent.PlayerLoggedInEvent(respawned));
             respawned.tickCount = 20;
-            QliphothBloomEvents.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(respawned));
+            PendingDelivery.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(respawned));
             h.assertTrue(HemoCapabilityAccess.getInitiatoryDegree(respawned).hasFungalSpineGranted()
                             && respawned.getInventory().countItem(ItemInit.fungal_spine.get()) == 1,
                     "Respawn must receive the earned first Spine exactly once");
@@ -3054,7 +3055,7 @@ public final class ClinicalBloodProgressionGameTests {
                 owner.getInventory().setItem(slot, new ItemStack(Items.COBBLESTONE));
             }
             owner.getPersistentData().putBoolean("hemomancy:vesper_memory_pending", true);
-            VesperOrdealManager.onLogin(new PlayerEvent.PlayerLoggedInEvent(owner));
+            vesperLoginWithDeliveries(new PlayerEvent.PlayerLoggedInEvent(owner));
             h.assertTrue(owner.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(pending)
                             && !owner.getPersistentData().contains(pending)
                             && h.getLevel().getEntitiesOfClass(ItemEntity.class,
@@ -3065,22 +3066,22 @@ public final class ClinicalBloodProgressionGameTests {
             restored.load(owner.saveWithoutId(new CompoundTag()));
             owner.getInventory().setItem(0, ItemStack.EMPTY);
             owner.tickCount = 20;
-            VesperOrdealManager.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(owner));
+            PendingDelivery.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(owner));
             h.assertTrue(!owner.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).contains(pending)
                             && owner.getInventory().countItem(ItemInit.memory_of_vesper.get()) == 1,
                     "The pending memory was not delivered after inventory space opened");
-            VesperOrdealManager.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(owner));
+            PendingDelivery.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(owner));
             h.assertTrue(owner.getInventory().countItem(ItemInit.memory_of_vesper.get()) == 1,
                     "Retrying delivery duplicated the unique Vesper memory");
             restored.getInventory().clearContent();
             restored.setHealth(0);
             restored.tickCount = 20;
-            VesperOrdealManager.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(restored));
+            PendingDelivery.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(restored));
             respawned.restoreFrom(restored, false);
             h.assertTrue(respawned.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(pending),
                     "Save/load and death cloning lost the pending Vesper Memory");
-            VesperOrdealManager.onLogin(new PlayerEvent.PlayerLoggedInEvent(respawned));
-            VesperOrdealManager.onLogin(new PlayerEvent.PlayerLoggedInEvent(respawned));
+            vesperLoginWithDeliveries(new PlayerEvent.PlayerLoggedInEvent(respawned));
+            vesperLoginWithDeliveries(new PlayerEvent.PlayerLoggedInEvent(respawned));
             h.assertTrue(!respawned.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).contains(pending)
                             && respawned.getInventory().countItem(ItemInit.memory_of_vesper.get()) == 1,
                     "Respawn login must deliver exactly one pending Memory");
@@ -3101,14 +3102,14 @@ public final class ClinicalBloodProgressionGameTests {
                 owner.getInventory().setItem(slot, new ItemStack(Items.COBBLESTONE));
             owner.getPersistentData().putBoolean(pending, true);
             owner.setGameMode(GameType.CREATIVE);
-            VesperOrdealManager.onLogin(new PlayerEvent.PlayerLoggedInEvent(owner));
+            vesperLoginWithDeliveries(new PlayerEvent.PlayerLoggedInEvent(owner));
             h.assertTrue((owner.getPersistentData().getBoolean(pending)
                             || owner.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(pending))
                             && owner.getInventory().countItem(ItemInit.memory_of_vesper.get()) == 0,
                     "Creative full-inventory discard erased the earned Vesper Memory claim");
             owner.getInventory().setItem(0, ItemStack.EMPTY);
             owner.tickCount = 20;
-            VesperOrdealManager.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(owner));
+            PendingDelivery.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(owner));
             h.assertTrue(owner.getInventory().countItem(ItemInit.memory_of_vesper.get()) == 1
                             && !owner.getPersistentData().contains(pending)
                             && !owner.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).contains(pending),
@@ -3128,12 +3129,12 @@ public final class ClinicalBloodProgressionGameTests {
             VesperOrdealManager.onPlayerDeath(new net.neoforged.neoforge.event.entity.living.LivingDeathEvent(
                     owner, owner.damageSources().generic()));
             owner.tickCount = 20;
-            VesperOrdealManager.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(owner));
+            PendingDelivery.onPlayerTick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(owner));
             h.assertTrue(owner.getInventory().countItem(ItemInit.memory_of_vesper.get()) == 0
                             && owner.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(pending),
                     "Death before the first retry must preserve the legacy claim without dead-player delivery");
             respawned.restoreFrom(owner, false);
-            VesperOrdealManager.onLogin(new PlayerEvent.PlayerLoggedInEvent(respawned));
+            vesperLoginWithDeliveries(new PlayerEvent.PlayerLoggedInEvent(respawned));
             h.assertTrue(respawned.getInventory().countItem(ItemInit.memory_of_vesper.get()) == 1
                             && !respawned.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).contains(pending),
                     "The migrated pre-retry death claim must deliver once after respawn");
@@ -3234,16 +3235,16 @@ public final class ClinicalBloodProgressionGameTests {
                                             && !oldDrops.contains(item.getUUID())).isEmpty(),
                     "A full inventory must retain the Tendril claim, not drop its only copy");
 
-            com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onLogin(
+            mycophantLoginWithDeliveries(
                     new PlayerEvent.PlayerLoggedInEvent(owner));
             owner.tickCount = 20;
-            com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onPlayerTick(
+            mycophantTickWithDeliveries(
                     new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(owner));
             h.assertTrue(owner.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(pending)
                             && owner.getInventory().countItem(ItemInit.mycophant_tendril.get()) == 0,
                     "Blocked login/tick retries must retain the claim without awarding a copy");
             owner.setGameMode(GameType.CREATIVE);
-            com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onLogin(
+            mycophantLoginWithDeliveries(
                     new PlayerEvent.PlayerLoggedInEvent(owner));
             h.assertTrue(owner.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(pending)
                             && owner.getInventory().countItem(ItemInit.mycophant_tendril.get()) == 0,
@@ -3251,7 +3252,7 @@ public final class ClinicalBloodProgressionGameTests {
             owner.setGameMode(GameType.SURVIVAL);
             restored.load(owner.saveWithoutId(new CompoundTag()));
             owner.getInventory().setItem(0, ItemStack.EMPTY);
-            com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onPlayerTick(
+            mycophantTickWithDeliveries(
                     new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(owner));
             h.assertTrue(!owner.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(pending)
                             && owner.getInventory().countItem(ItemInit.mycophant_tendril.get()) == 1,
@@ -3259,7 +3260,7 @@ public final class ClinicalBloodProgressionGameTests {
             restored.getInventory().clearContent();
             restored.setHealth(0);
             restored.tickCount = 20;
-            com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onPlayerTick(
+            mycophantTickWithDeliveries(
                     new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(restored));
             h.assertTrue(restored.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(pending)
                             && restored.getInventory().countItem(ItemInit.mycophant_tendril.get()) == 0,
@@ -3268,15 +3269,15 @@ public final class ClinicalBloodProgressionGameTests {
             h.assertTrue(respawned.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(pending)
                             && HemoCapabilityAccess.getInitiatoryDegree(respawned).isMycophantDefeated(),
                     "Saved-data reload and death cloning lost the earned Tendril claim");
-            com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onLogin(
+            mycophantLoginWithDeliveries(
                     new PlayerEvent.PlayerLoggedInEvent(respawned));
             h.assertTrue(!respawned.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(pending)
                             && respawned.getInventory().countItem(ItemInit.mycophant_tendril.get()) == 1,
                     "Respawn inventory space must deliver the earned Tendril on login");
             respawned.tickCount = 20;
-            com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onPlayerTick(
+            mycophantTickWithDeliveries(
                     new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(respawned));
-            com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onLogin(
+            mycophantLoginWithDeliveries(
                     new PlayerEvent.PlayerLoggedInEvent(respawned));
             h.assertTrue(respawned.getInventory().countItem(ItemInit.mycophant_tendril.get()) == 1,
                     "Repeated tick/login delivery duplicated the unique Tendril");
@@ -4006,10 +4007,10 @@ public final class ClinicalBloodProgressionGameTests {
     private static void retryPendingChamberGifts(ServerPlayer actor) {
         actor.tickCount = 20;
         var tick = new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor);
-        ClinicalBloodKnowledge.tick(tick);
-        QliphothBloomEvents.onPlayerTick(tick);
-        VesperOrdealManager.onPlayerTick(tick);
-        com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onPlayerTick(tick);
+        tickWithDeliveries(tick);
+        PendingDelivery.onPlayerTick(tick);
+        PendingDelivery.onPlayerTick(tick);
+        mycophantTickWithDeliveries(tick);
     }
 
     @GameTest(template = "empty") public static void firstDrawsFullInventoryKeepsSuppliesAcrossDeath(GameTestHelper h) {
@@ -4083,23 +4084,23 @@ public final class ClinicalBloodProgressionGameTests {
             restored.getInventory().clearContent();
             restored.setHealth(0);
             restored.tickCount = 20;
-            ClinicalBloodKnowledge.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(restored));
+            tickWithDeliveries(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(restored));
             h.assertTrue(restored.getInventory().countItem(ItemInit.bloody_vial.get()) == 0,
                     "Dead player must retain pending briefing supplies despite free inventory space");
             if (partial) {
                 actor.getInventory().setItem(1, ItemStack.EMPTY);
-                ClinicalBloodKnowledge.login(new PlayerEvent.PlayerLoggedInEvent(actor));
+                loginWithDeliveries(new PlayerEvent.PlayerLoggedInEvent(actor));
                 actor.tickCount = 20;
-                ClinicalBloodKnowledge.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
+                tickWithDeliveries(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
                 h.assertTrue(actor.getInventory().countItem(ItemInit.bloody_vial.get()) == 65,
                         "Partial retry must deliver only one remaining vial, not another two-vial gift");
             } else {
                 respawned.restoreFrom(restored, false);
                 respawned.setHealth(20);
                 respawned.getInventory().clearContent();
-                ClinicalBloodKnowledge.login(new PlayerEvent.PlayerLoggedInEvent(respawned));
+                loginWithDeliveries(new PlayerEvent.PlayerLoggedInEvent(respawned));
                 respawned.tickCount = 20;
-                ClinicalBloodKnowledge.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(respawned));
+                tickWithDeliveries(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(respawned));
                 h.assertTrue(respawned.getInventory().countItem(ItemInit.bloody_vial.get()) == 2,
                         "Saved/death-cloned briefing must deliver exactly two vials once");
             }
@@ -4156,23 +4157,23 @@ public final class ClinicalBloodProgressionGameTests {
             restored.getInventory().clearContent();
             restored.setHealth(0);
             restored.tickCount = 20;
-            ClinicalBloodKnowledge.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(restored));
+            tickWithDeliveries(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(restored));
             h.assertTrue(restored.getInventory().countItem(ItemInit.vial_rack.get()) == 0,
                     "Dead-player retries must not deliver the pending rack");
             if (oneSlot) {
                 actor.getInventory().setItem(1, ItemStack.EMPTY);
-                ClinicalBloodKnowledge.login(new PlayerEvent.PlayerLoggedInEvent(actor));
+                loginWithDeliveries(new PlayerEvent.PlayerLoggedInEvent(actor));
                 actor.tickCount = 20;
-                ClinicalBloodKnowledge.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
+                tickWithDeliveries(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
                 h.assertTrue(actor.getInventory().countItem(ItemInit.living_syringe.get()) == 1,
                         "Partial retry duplicated the already delivered syringe");
             } else {
                 respawned.restoreFrom(restored, false);
                 respawned.setHealth(20);
                 respawned.getInventory().clearContent();
-                ClinicalBloodKnowledge.login(new PlayerEvent.PlayerLoggedInEvent(respawned));
+                loginWithDeliveries(new PlayerEvent.PlayerLoggedInEvent(respawned));
                 respawned.tickCount = 20;
-                ClinicalBloodKnowledge.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(respawned));
+                tickWithDeliveries(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(respawned));
                 h.assertTrue(respawned.getInventory().countItem(ItemInit.living_syringe.get()) == 1,
                         "Death-cloned pending claim did not deliver exactly one syringe");
             }
@@ -4220,15 +4221,15 @@ public final class ClinicalBloodProgressionGameTests {
             restored.getInventory().clearContent();
             restored.setHealth(0);
             restored.tickCount = 20;
-            ClinicalBloodKnowledge.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(restored));
+            tickWithDeliveries(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(restored));
             h.assertTrue(restored.getInventory().countItem(ItemInit.bloody_vial.get()) == 0,
                     "Dead-player retries must not deliver supplies before death cloning");
             respawned.restoreFrom(restored, false);
             respawned.setHealth(20);
             HemoCapabilityAccess.getBloodVolume(respawned).setActive(true);
-            ClinicalBloodKnowledge.login(new PlayerEvent.PlayerLoggedInEvent(respawned));
+            loginWithDeliveries(new PlayerEvent.PlayerLoggedInEvent(respawned));
             respawned.tickCount = 20;
-            ClinicalBloodKnowledge.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(respawned));
+            tickWithDeliveries(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(respawned));
             h.assertTrue(FirstDrawsAssignment.isBriefed(respawned)
                             && respawned.getInventory().countItem(ItemInit.bloody_vial.get()) == 5,
                     "Saved pending supplies must survive death cloning and deliver exactly five vials at D1");
@@ -4254,9 +4255,9 @@ public final class ClinicalBloodProgressionGameTests {
             h.assertTrue(actor.getInventory().countItem(ItemInit.bloody_vial.get()) == 64,
                     "Briefing must fill the one available vial position");
             actor.getInventory().setItem(1, ItemStack.EMPTY);
-            ClinicalBloodKnowledge.login(new PlayerEvent.PlayerLoggedInEvent(actor));
+            loginWithDeliveries(new PlayerEvent.PlayerLoggedInEvent(actor));
             actor.tickCount = 20;
-            ClinicalBloodKnowledge.tick(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
+            tickWithDeliveries(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(actor));
             h.assertTrue(actor.getInventory().countItem(ItemInit.bloody_vial.get()) == 68,
                     "Retry must insert only four remaining vials and refuse duplicate delivery");
             h.assertTrue(FirstDrawsAssignment.progress(actor).samples() == 0,
@@ -4879,5 +4880,32 @@ public final class ClinicalBloodProgressionGameTests {
         h.assertTrue(HemoCapabilityAccess.clinicalBlood(p).sourceCount() == 0, "Interrupted examination granted proof");
         h.assertTrue(!BloodSampleData.identified(sample), "Interrupted examination identified blood");
         h.succeed();
+    }
+
+    /** One server tick of the Clinical handler, with the shared delivery driver ahead of it as before. */
+    private static void tickWithDeliveries(net.neoforged.neoforge.event.tick.PlayerTickEvent.Post tick) {
+        PendingDelivery.onPlayerTick(tick);
+        ClinicalBloodKnowledge.tick(tick);
+    }
+
+    private static void loginWithDeliveries(PlayerEvent.PlayerLoggedInEvent login) {
+        PendingDelivery.onLogin(login);
+        ClinicalBloodKnowledge.login(login);
+    }
+
+    /** Vesper's reconnect handling, then the delivery it used to finish with. */
+    private static void vesperLoginWithDeliveries(PlayerEvent.PlayerLoggedInEvent login) {
+        VesperOrdealManager.onLogin(login);
+        PendingDelivery.onLogin(login);
+    }
+
+    private static void mycophantTickWithDeliveries(net.neoforged.neoforge.event.tick.PlayerTickEvent.Post tick) {
+        PendingDelivery.onPlayerTick(tick);
+        com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onPlayerTick(tick);
+    }
+
+    private static void mycophantLoginWithDeliveries(PlayerEvent.PlayerLoggedInEvent login) {
+        PendingDelivery.onLogin(login);
+        com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onLogin(login);
     }
 }

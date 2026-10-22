@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
+import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
@@ -48,24 +49,27 @@ public class QliphothBloomEvents {
 	private static final double BLOOD_REGEN_PER_TICK = 5.0;
 	private static final int POME_RIPEN_CHANCE = 80;
 
-	public static void deliverPendingFungalSpine(ServerPlayer player) {
-		if (!player.isAlive() || com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isObservational(player)) return;
-		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
-		if (!degree.isQliphothCommunionDone() || degree.hasFungalSpineGranted()) return;
-		if (player.getInventory().countItem(ItemInit.fungal_spine.get()) == 0) {
-			player.getInventory().add(new ItemStack(ItemInit.fungal_spine.get()));
-		}
-		if (player.getInventory().countItem(ItemInit.fungal_spine.get()) > 0) {
-			degree.setFungalSpineGranted(true);
-			InitiatoryDegreeEvents.syncDegree(player, degree);
-		}
-	}
+	/**
+	 * The Spine owed once Communion completes. A Spine the player already carries, such as a legacy one, settles
+	 * the claim without a duplicate; the grant is recorded only once a Spine is really held.
+	 */
+	public static final PendingDelivery.Claim FUNGAL_SPINE = new PendingDelivery.Claim("communion_spine",
+			player -> {
+				var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
+				return degree.isQliphothCommunionDone() && !degree.hasFungalSpineGranted()
+						? List.of(new ItemStack(ItemInit.fungal_spine.get())) : List.of();
+			},
+			player -> true,
+			player -> player.getInventory().countItem(ItemInit.fungal_spine.get()) > 0,
+			(player, left) -> {
+				if (!left.isEmpty()) return;
+				var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
+				degree.setFungalSpineGranted(true);
+				InitiatoryDegreeEvents.syncDegree(player, degree);
+			});
 
-	@SubscribeEvent
-	public static void onPlayerTick(PlayerTickEvent.Post event) {
-		if (event.getEntity() instanceof ServerPlayer player && player.tickCount % 20 == 0) {
-			deliverPendingFungalSpine(player);
-		}
+	public static void deliverPendingFungalSpine(ServerPlayer player) {
+		PendingDelivery.deliver(player, FUNGAL_SPINE);
 	}
 
 	@SubscribeEvent

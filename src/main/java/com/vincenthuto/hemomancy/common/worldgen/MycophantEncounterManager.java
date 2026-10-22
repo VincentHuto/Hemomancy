@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.worldgen;
 
+import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.particle.data.SporiticSporeParticleData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -40,6 +41,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -50,6 +52,17 @@ public final class MycophantEncounterManager {
 	private static final String REMATCH_KEY = Hemomancy.MOD_ID + ":mycophant_rematch";
 	private static final String CLAIM_KEY = Hemomancy.MOD_ID + ":mycophant_claim_ticks";
 	private static final String TENDRIL_PENDING_KEY = Hemomancy.MOD_ID + ":mycophant_tendril_pending";
+	/** The first defeat's unique Tendril, retried until it really lands. Repeat rewards drop as before. */
+	public static final PendingDelivery.Claim TENDRIL = new PendingDelivery.Claim("mycophant_tendril",
+			player -> player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(TENDRIL_PENDING_KEY)
+					? List.of(new ItemStack(ItemInit.mycophant_tendril.get())) : List.of(),
+			player -> true,
+			(player, left) -> {
+				if (!left.isEmpty()) return;
+				var persisted = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
+				persisted.remove(TENDRIL_PENDING_KEY);
+				player.getPersistentData().put(Player.PERSISTED_NBT_TAG, persisted);
+			});
 	/** Persisted once the hive has yielded to this player: the succession is theirs. */
 	public static final String HEIR_KEY = Hemomancy.MOD_ID + ":mycophant_heir";
 	private static final int CEILING_Y = MycophantNurseryLayout.CEILING_Y;
@@ -63,7 +76,6 @@ public final class MycophantEncounterManager {
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent.Post event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
-		if (player.tickCount % 20 == 0) givePendingTendril(player);
 		if (player.getPersistentData().contains(CLAIM_KEY)) tickClaim(player);
 		else tickGardensPlayer(player);
 	}
@@ -372,16 +384,7 @@ public final class MycophantEncounterManager {
 	}
 
 	private static void givePendingTendril(ServerPlayer player) {
-		if (!player.isAlive() || ChamberVisitService.isObservational(player)) return;
-		var persisted = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
-		if (!persisted.getBoolean(TENDRIL_PENDING_KEY)) return;
-		var tendril = ItemInit.mycophant_tendril.get();
-		int before = player.getInventory().countItem(tendril);
-		player.getInventory().add(new ItemStack(tendril));
-		if (player.getInventory().countItem(tendril) > before) {
-			persisted.remove(TENDRIL_PENDING_KEY);
-			player.getPersistentData().put(Player.PERSISTED_NBT_TAG, persisted);
-		}
+		PendingDelivery.deliver(player, TENDRIL);
 	}
 
 	private static void clear(ServerPlayer player) {
@@ -416,7 +419,6 @@ public final class MycophantEncounterManager {
 	@SubscribeEvent
 	public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
-		givePendingTendril(player);
 		if (!isActive(player)) return;
 		if (!player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)) { clear(player); return; }
 		PacketHandler.sendToPlayer(player, PacketSyncMycophantFightScene.activate(arenaCenter(player)));

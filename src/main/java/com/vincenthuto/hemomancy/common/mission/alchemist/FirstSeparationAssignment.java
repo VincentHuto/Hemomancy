@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.mission.alchemist;
 
+import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
@@ -33,6 +34,42 @@ public final class FirstSeparationAssignment {
 			Hemomancy.rloc("hemomancy/first_separation_briefed");
 	public static final ResourceLocation ADV_REWARD_CLAIMED =
 			Hemomancy.rloc("hemomancy/first_separation_reward_claimed");
+	/** The two loose vials of the briefing, retried until they really land. */
+	public static final PendingDelivery.Claim BRIEFING_VIALS = new PendingDelivery.Claim("first_separation_vials",
+			player -> {
+				int owed = durable(player).getInt(DATA_PENDING_BRIEFING_VIALS);
+				return owed > 0 ? List.of(new ItemStack(ItemInit.bloody_vial.get(), owed)) : List.of();
+			},
+			player -> ClinicalBloodKnowledge.eligible(player) && isBriefed(player),
+			(player, left) -> {
+				CompoundTag durable = durable(player);
+				durable.putInt(DATA_PENDING_BRIEFING_VIALS, left.stream().mapToInt(ItemStack::getCount).sum());
+				player.getPersistentData().put(Player.PERSISTED_NBT_TAG, durable);
+			});
+	/** The earned syringe and initialized rack. Entries that no longer parse stay stored, untouched. */
+	public static final PendingDelivery.Claim TOOLS = new PendingDelivery.Claim("first_separation_tools",
+			player -> {
+				ListTag pending = durable(player).getList(DATA_PENDING_REWARDS, 10);
+				List<ItemStack> owed = new java.util.ArrayList<>();
+				for (int i = 0; i < pending.size(); i++) {
+					ItemStack stack = ItemStack.parseOptional(player.registryAccess(), pending.getCompound(i));
+					if (!stack.isEmpty()) owed.add(stack);
+				}
+				return owed;
+			},
+			player -> ClinicalBloodKnowledge.eligible(player) && isClaimed(player),
+			(player, left) -> {
+				CompoundTag durable = durable(player);
+				ListTag pending = durable.getList(DATA_PENDING_REWARDS, 10);
+				ListTag remaining = new ListTag();
+				for (ItemStack stack : left) remaining.add(stack.saveOptional(player.registryAccess()));
+				for (int i = 0; i < pending.size(); i++) {
+					CompoundTag encoded = pending.getCompound(i);
+					if (ItemStack.parseOptional(player.registryAccess(), encoded).isEmpty()) remaining.add(encoded.copy());
+				}
+				durable.put(DATA_PENDING_REWARDS, remaining);
+				player.getPersistentData().put(Player.PERSISTED_NBT_TAG, durable);
+			});
 
 	private FirstSeparationAssignment() {
 	}
@@ -78,18 +115,11 @@ public final class FirstSeparationAssignment {
 	}
 
 	static void deliverPendingBriefingVials(ServerPlayer player) {
-		if (!player.isAlive() || ChamberVisitService.isObservational(player)
-				|| !ClinicalBloodKnowledge.eligible(player) || !isBriefed(player)) return;
-		CompoundTag root = player.getPersistentData();
-		CompoundTag durable = root.getCompound(Player.PERSISTED_NBT_TAG);
-		int pending = durable.getInt(DATA_PENDING_BRIEFING_VIALS);
-		if (pending <= 0) return;
-		int before = player.getInventory().countItem(ItemInit.bloody_vial.get());
-		player.getInventory().add(new ItemStack(ItemInit.bloody_vial.get(), pending));
-		int inserted = player.getInventory().countItem(ItemInit.bloody_vial.get()) - before;
-		if (inserted <= 0) return;
-		durable.putInt(DATA_PENDING_BRIEFING_VIALS, Math.max(0, pending - inserted));
-		root.put(Player.PERSISTED_NBT_TAG, durable);
+		PendingDelivery.deliver(player, BRIEFING_VIALS);
+	}
+
+	private static CompoundTag durable(ServerPlayer player) {
+		return player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
 	}
 
 	public static void markCentrifugeAcquired(ServerPlayer player) {
@@ -207,28 +237,7 @@ public final class FirstSeparationAssignment {
 	}
 
 	static void deliverPendingRewards(ServerPlayer player) {
-		if (!player.isAlive() || ChamberVisitService.isObservational(player)
-				|| !ClinicalBloodKnowledge.eligible(player) || !isClaimed(player)) return;
-		CompoundTag root = player.getPersistentData();
-		CompoundTag durable = root.getCompound(Player.PERSISTED_NBT_TAG);
-		ListTag pending = durable.getList(DATA_PENDING_REWARDS, 10);
-		if (pending.isEmpty()) return;
-		ListTag remaining = new ListTag();
-		for (int i = 0; i < pending.size(); i++) {
-			CompoundTag encoded = pending.getCompound(i);
-			ItemStack stack = ItemStack.parseOptional(player.registryAccess(), encoded);
-			if (stack.isEmpty()) {
-				remaining.add(encoded.copy());
-				continue;
-			}
-			int before = player.getInventory().countItem(stack.getItem());
-			player.getInventory().add(stack.copy());
-			int inserted = player.getInventory().countItem(stack.getItem()) - before;
-			stack.shrink(Math.max(0, inserted));
-			if (!stack.isEmpty()) remaining.add(stack.saveOptional(player.registryAccess()));
-		}
-		durable.put(DATA_PENDING_REWARDS, remaining);
-		root.put(Player.PERSISTED_NBT_TAG, durable);
+		PendingDelivery.deliver(player, TOOLS);
 	}
 
 	private static void savePendingRewards(ServerPlayer player, List<ItemStack> stacks) {

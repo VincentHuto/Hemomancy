@@ -1,5 +1,4 @@
 package com.vincenthuto.hemomancy.common.mission.alchemist;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.DegreeProgression;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -14,11 +13,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
-@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class ConcentratedBlood {
     public static final String CONTENT = "hemomancy:concentrated_blood";
     private static final String PENDING = "hemomancy:concentrated_blood_pending";
@@ -76,5 +71,4 @@ public final class ConcentratedBlood {
         player.displayClientMessage(Component.translatable("hemomancy.initiation.blood_rest"), false);
         return true;
     }
-    @SubscribeEvent public static void clone(PlayerEvent.Clone event) { pending(event.getEntity(), pending(event.getOriginal())); }
 }

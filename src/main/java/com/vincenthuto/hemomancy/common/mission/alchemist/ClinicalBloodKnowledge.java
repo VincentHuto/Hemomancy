@@ -136,9 +136,6 @@ public final class ClinicalBloodKnowledge {
     }
     @SubscribeEvent public static void tick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer player) || player.tickCount % 20 != 0) return;
-        FirstDrawsAssignment.deliverPendingVials(player);
-        FirstSeparationAssignment.deliverPendingRewards(player);
-        FirstSeparationAssignment.deliverPendingBriefingVials(player);
         if (!eligible(player)) return;
         var progress = HemoCapabilityAccess.clinicalBlood(player);
         boolean changed = false;
@@ -154,9 +151,6 @@ public final class ClinicalBloodKnowledge {
     }
     @SubscribeEvent public static void login(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            FirstDrawsAssignment.deliverPendingVials(player);
-            FirstSeparationAssignment.deliverPendingRewards(player);
-            FirstSeparationAssignment.deliverPendingBriefingVials(player);
             for (Lesson lesson : Lesson.values()) for (String path : recipes(lesson))
                 player.server.getRecipeManager().byKey(Hemomancy.rloc(path)).ifPresent(recipe -> {
                     if (HemoCapabilityAccess.clinicalBlood(player).knows(lesson)) player.awardRecipes(List.of(recipe));

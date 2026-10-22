@@ -287,7 +287,7 @@ The Artificer issues four Hematic Iron Scrap and one Blank Hematic Memory at the
 | Mod metadata, Minecraft/NeoForge/Java versions | `gradle.properties`, `build.gradle`, `src/main/resources/META-INF/neoforge.mods.toml` |
 | Entrypoint and event-bus wiring | `src/main/java/com/vincenthuto/hemomancy/Hemomancy.java` |
 | Registries | `src/main/java/com/vincenthuto/hemomancy/common/init/*Init.java` |
-| Player/block/item state | `HemoAttachmentTypes`, `HemoCapabilityKeys`, `HemoCapabilityRegistrar`, `HemoCapabilityAccess` |
+| Player/block/item state | `HemoAttachmentTypes`, `HemoCapabilityKeys`, `HemoCapabilityRegistrar`, `HemoCapabilityAccess`; owner sync through `PlayerStateSync`, earned item claims through `PendingDelivery`, session maps through `TransientServerStateEvents` |
 | Networking | `common/network/PacketHandler.java` and packet classes implementing `CustomPacketPayload` |
 | Generated client assets | `common/data/gen/DataGeneration.java` plus `src/generated/resources` |
 | Runtime datapack content | `src/main/resources/data/hemomancy/**` |

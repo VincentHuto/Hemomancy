@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.worldgen;
 
+import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
@@ -35,6 +36,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -44,6 +46,20 @@ public final class VesperOrdealManager {
 	private static final String ACTIVE_BLOOM_KEY = Hemomancy.MOD_ID + ":vesper_ordeal_bloom";
 	private static final String ACTIVE_BLOOM_ID_KEY = Hemomancy.MOD_ID + ":vesper_ordeal_bloom_id";
 	private static final String PENDING_MEMORY_KEY = Hemomancy.MOD_ID + ":vesper_memory_pending";
+	/**
+	 * The first victory's Memory, retried until it really lands. Reading the claim first moves an older root-level
+	 * claim into the data vanilla copies on death.
+	 */
+	public static final PendingDelivery.Claim MEMORY = new PendingDelivery.Claim("vesper_memory",
+			owner -> memoryClaims(owner).getBoolean(PENDING_MEMORY_KEY)
+					? List.of(new ItemStack(ItemInit.memory_of_vesper.get())) : List.of(),
+			owner -> true,
+			(owner, left) -> {
+				if (!left.isEmpty()) return;
+				var persisted = memoryClaims(owner);
+				persisted.remove(PENDING_MEMORY_KEY);
+				owner.getPersistentData().put(Player.PERSISTED_NBT_TAG, persisted);
+			});
 	private static final int ARENA_X = 4096;
 	private static final int ARENA_SPACING = 128;
 	private static final int ARENA_HALF = 25;
@@ -235,15 +251,7 @@ public final class VesperOrdealManager {
 	}
 
 	private static void givePendingMemory(ServerPlayer owner) {
-		var persisted = memoryClaims(owner);
-		if (!owner.isAlive() || ChamberVisitService.isObservational(owner) || !persisted.getBoolean(PENDING_MEMORY_KEY)) return;
-		var memory = ItemInit.memory_of_vesper.get();
-		int before = owner.getInventory().countItem(memory);
-		owner.getInventory().add(new ItemStack(memory));
-		if (owner.getInventory().countItem(memory) > before) {
-			persisted.remove(PENDING_MEMORY_KEY);
-			owner.getPersistentData().put(Player.PERSISTED_NBT_TAG, persisted);
-		}
+		PendingDelivery.deliver(owner, MEMORY);
 	}
 
 	private static CompoundTag memoryClaims(ServerPlayer owner) {
@@ -256,13 +264,6 @@ public final class VesperOrdealManager {
 		}
 		data.remove(PENDING_MEMORY_KEY);
 		return persisted;
-	}
-
-	@SubscribeEvent
-	public static void onPlayerTick(PlayerTickEvent.Post event) {
-		if (event.getEntity() instanceof ServerPlayer player && player.tickCount % 20 == 0) {
-			givePendingMemory(player);
-		}
 	}
 
 	private static void spawnCrownedRefusal(ServerLevel level, ServerPlayer owner, long bloomOrigin,
@@ -390,7 +391,6 @@ public final class VesperOrdealManager {
 		boolean inChamber = player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL);
 		if (isActive(player) && inChamber && !hasValidActiveBloom(player)) {
 			PacketHandler.sendToPlayer(player, PacketSyncVesperFightScene.clearScene());
-			givePendingMemory(player);
 			return;
 		}
 		VesperOrdealRecoveryRules.Action action = VesperOrdealRecoveryRules.reconnectAction(
@@ -404,7 +404,6 @@ public final class VesperOrdealManager {
 			PacketHandler.sendToPlayer(player, PacketSyncVesperFightScene.activate(center));
 			reconcileArenaBoss(arena, player, center);
 		}
-		givePendingMemory(player);
 	}
 
 	@SubscribeEvent
