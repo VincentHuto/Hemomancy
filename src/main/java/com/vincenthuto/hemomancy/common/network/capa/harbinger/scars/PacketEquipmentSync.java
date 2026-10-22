@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger.scars;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -44,11 +43,11 @@ public class PacketEquipmentSync implements CustomPacketPayload {
 
 	public static void handle(final PacketEquipmentSync msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			Minecraft mc = Minecraft.getInstance();
-			if (mc.level == null) {
+			var level = ctx.player().level();
+			if (level == null) {
 				return;
 			}
-			Entity p = mc.level.getEntity(msg.playerId);
+			Entity p = level.getEntity(msg.playerId);
 			if (p instanceof Player player) {
 				HemoCapabilityAccess.getEquipment(player).ifPresent(b -> {
 					b.setStackInSlot(msg.slot, msg.mindscar);

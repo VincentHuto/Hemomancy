@@ -33,35 +33,33 @@ public class UpdateCurrentManipPacket implements CustomPacketPayload {
 				Player player = ctx.player();
 				if (player == null)
 					return;
-				if (!player.level().isClientSide) {
-					IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
-							.orElseThrow(NullPointerException::new);
-					List<BloodManipulation> manips = known.getManipList();
-					if (msg.selected >= 0 && msg.selected < manips.size() && manips.get(msg.selected) != null) {
-						BloodManipulation target = manips.get(msg.selected);
-						if (ManipulationRetirementRules.isRetiredManipulation(target)) {
-							player.displayClientMessage(
-									Component.literal("That manipulation has gone dormant.")
-											.withStyle(net.minecraft.ChatFormatting.DARK_GRAY), true);
-							ManipulationRetirementRules.sanitizeKnownManipulations(known);
-							PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
-							return;
-						}
-						// Only allow selecting equipped manipulations
-						if (!known.isManipEquipped(target)) {
-							player.displayClientMessage(
-									Component.literal("That manipulation is unequipped!")
-											.withStyle(net.minecraft.ChatFormatting.RED), true);
-							return;
-						}
-						known.setSelectedManip(target);
-						boolean applied = LivingStaffWeaponFormHelper.applySelection(player, target)
-								&& CellHandFormHelper.applySelection(player, target);
-						if (applied) player.displayClientMessage(Component.literal("Selected: ").append(target.getDisplayName()), true);
+				IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
+						.orElseThrow(NullPointerException::new);
+				List<BloodManipulation> manips = known.getManipList();
+				if (msg.selected >= 0 && msg.selected < manips.size() && manips.get(msg.selected) != null) {
+					BloodManipulation target = manips.get(msg.selected);
+					if (ManipulationRetirementRules.isRetiredManipulation(target)) {
+						player.displayClientMessage(
+								Component.literal("That manipulation has gone dormant.")
+										.withStyle(net.minecraft.ChatFormatting.DARK_GRAY), true);
+						ManipulationRetirementRules.sanitizeKnownManipulations(known);
 						PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
-						ManipulationDiagnosticsSync.sync((ServerPlayer) player);
-						if (applied) UseManipKeyPacket.castOnSelect((ServerPlayer) player, target);
+						return;
 					}
+					// Only allow selecting equipped manipulations
+					if (!known.isManipEquipped(target)) {
+						player.displayClientMessage(
+								Component.literal("That manipulation is unequipped!")
+										.withStyle(net.minecraft.ChatFormatting.RED), true);
+						return;
+					}
+					known.setSelectedManip(target);
+					boolean applied = LivingStaffWeaponFormHelper.applySelection(player, target)
+							&& CellHandFormHelper.applySelection(player, target);
+					if (applied) player.displayClientMessage(Component.literal("Selected: ").append(target.getDisplayName()), true);
+					PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
+					ManipulationDiagnosticsSync.sync((ServerPlayer) player);
+					if (applied) UseManipKeyPacket.castOnSelect((ServerPlayer) player, target);
 				}
 			});
 		}

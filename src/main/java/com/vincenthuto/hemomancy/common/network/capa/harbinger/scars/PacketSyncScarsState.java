@@ -4,7 +4,6 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScars;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarsContainer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -57,11 +56,11 @@ public class PacketSyncScarsState implements CustomPacketPayload {
 
 	public static void handle(PacketSyncScarsState msg, IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			Minecraft mc = Minecraft.getInstance();
-			if (mc.level == null) {
+			var level = ctx.player().level();
+			if (level == null) {
 				return;
 			}
-			Entity entity = mc.level.getEntity(msg.playerId);
+			Entity entity = level.getEntity(msg.playerId);
 			if (entity instanceof Player player) {
 				HemoCapabilityAccess.getScarState(player).ifPresent(scars -> {
 					if (scars instanceof ScarsContainer container) {

@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.damage.SchoolStates;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -18,7 +17,7 @@ public record SyncSchoolCombatS2CPacket(int entityId, CompoundTag data) implemen
 
     public static void handle(SyncSchoolCombatS2CPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> {
-            var level = Minecraft.getInstance().level;
+            var level = context.player().level();
             if (level != null && packet.data != null && level.getEntity(packet.entityId) instanceof LivingEntity target)
                 SchoolStates.data(target).deserializeNBT(level.registryAccess(), packet.data);
         });

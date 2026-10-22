@@ -58,146 +58,144 @@ public class UseManipKeyPacket implements CustomPacketPayload {
 			Player player = ctx.player();
 			if (player == null)
 				return;
-			if (!player.level().isClientSide) {
-                try {
-				boolean bloodPowersBlocked = HemoCapabilityAccess.getUnstainedProgress(player)
-						.map(UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false);
-				if (message.action == Action.STOP_CONTINUOUS) {
-					ManipulationChannelManager.stop((net.minecraft.server.level.ServerPlayer) player, true);
-					return;
+            try {
+			boolean bloodPowersBlocked = HemoCapabilityAccess.getUnstainedProgress(player)
+					.map(UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false);
+			if (message.action == Action.STOP_CONTINUOUS) {
+				ManipulationChannelManager.stop((net.minecraft.server.level.ServerPlayer) player, true);
+				return;
+			}
+			if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.isParalyzed(player)) return;
+			if (message.action == Action.START_CONTINUOUS) {
+				if (!bloodPowersBlocked) {
+					ManipulationChannelManager.start((net.minecraft.server.level.ServerPlayer) player);
 				}
-				if (com.vincenthuto.hemomancy.common.manipulation.ductilis.Paralysis.isParalyzed(player)) return;
-				if (message.action == Action.START_CONTINUOUS) {
-					if (!bloodPowersBlocked) {
-						ManipulationChannelManager.start((net.minecraft.server.level.ServerPlayer) player);
-					}
-					return;
-				}
-				float pTic = message.parTick;
+				return;
+			}
+			float pTic = message.parTick;
 
-				IKnownManipulations knownCheck = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
-				if (knownCheck != null && knownCheck.getSelectedMemoryRef().kind() == MemoryEntryKind.MUSCLE_MEMORY) {
-					if (bloodPowersBlocked) return;
-					handleMuscleMemoryUse(player, knownCheck);
-					return;
-				}
-				if (knownCheck != null && knownCheck.getSelectedManip() != null) {
-					BloodManipulation passive = ManipulationInit.getByName(knownCheck.getSelectedManip().getName());
-					if (passive != null && passive.getType() == EnumManipulationType.PASSIVE) {
-						if (ManipulationRetirementRules.isRetiredManipulation(passive)
-								|| !knownCheck.isManipEquipped(passive)) return;
-						if (passive instanceof SummonAvatarManip avatar) {
-							if (bloodPowersBlocked && !passive.getName().equals(knownCheck.getActiveAvatarForm())) return;
-							boolean wasSelected = passive.getName().equals(knownCheck.getActiveAvatarForm());
-							boolean active = AvatarManifestationManager.toggle(
-									(net.minecraft.server.level.ServerPlayer) player, avatar);
-							if (active || wasSelected) {
-                                com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager.passive(
-                                        (net.minecraft.server.level.ServerPlayer) player, passive, active);
-								player.displayClientMessage(Component.literal(passive.getName().replace('_', ' ')
-										+ (active ? " manifested" : " dismissed"))
-										.withStyle(active ? ChatFormatting.GREEN : ChatFormatting.GRAY), true);
-							}
-							return;
+			IKnownManipulations knownCheck = HemoCapabilityAccess.getKnownManipulations(player).orElse(null);
+			if (knownCheck != null && knownCheck.getSelectedMemoryRef().kind() == MemoryEntryKind.MUSCLE_MEMORY) {
+				if (bloodPowersBlocked) return;
+				handleMuscleMemoryUse(player, knownCheck);
+				return;
+			}
+			if (knownCheck != null && knownCheck.getSelectedManip() != null) {
+				BloodManipulation passive = ManipulationInit.getByName(knownCheck.getSelectedManip().getName());
+				if (passive != null && passive.getType() == EnumManipulationType.PASSIVE) {
+					if (ManipulationRetirementRules.isRetiredManipulation(passive)
+							|| !knownCheck.isManipEquipped(passive)) return;
+					if (passive instanceof SummonAvatarManip avatar) {
+						if (bloodPowersBlocked && !passive.getName().equals(knownCheck.getActiveAvatarForm())) return;
+						boolean wasSelected = passive.getName().equals(knownCheck.getActiveAvatarForm());
+						boolean active = AvatarManifestationManager.toggle(
+								(net.minecraft.server.level.ServerPlayer) player, avatar);
+						if (active || wasSelected) {
+                            com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager.passive(
+                                    (net.minecraft.server.level.ServerPlayer) player, passive, active);
+							player.displayClientMessage(Component.literal(passive.getName().replace('_', ' ')
+									+ (active ? " manifested" : " dismissed"))
+									.withStyle(active ? ChatFormatting.GREEN : ChatFormatting.GRAY), true);
 						}
-						if (bloodPowersBlocked && !knownCheck.isPassiveActive(passive.getName())) return;
-						boolean active = knownCheck.togglePassive(passive.getName());
-                        com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager.passive(
-                                (net.minecraft.server.level.ServerPlayer) player, passive, active);
-						player.displayClientMessage(Component.literal(passive.getName().replace('_', ' ')
-								+ (active ? " enabled" : " disabled"))
-								.withStyle(active ? ChatFormatting.GREEN : ChatFormatting.GRAY), true);
 						return;
 					}
+					if (bloodPowersBlocked && !knownCheck.isPassiveActive(passive.getName())) return;
+					boolean active = knownCheck.togglePassive(passive.getName());
+                    com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager.passive(
+                            (net.minecraft.server.level.ServerPlayer) player, passive, active);
+					player.displayClientMessage(Component.literal(passive.getName().replace('_', ' ')
+							+ (active ? " enabled" : " disabled"))
+							.withStyle(active ? ChatFormatting.GREEN : ChatFormatting.GRAY), true);
+					return;
 				}
-				if (bloodPowersBlocked) return;
-				IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
-						.orElseThrow(NullPointerException::new);
-				IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
-						.orElseThrow(NullPointerException::new);
-				if (volume.isActive()) {
-					if (known.getSelectedManip() != null) {
-						ItemStack mainStack = player.getMainHandItem();
-						BloodManipulation selectedManip = ManipulationInit
-								.getByName(known.getSelectedManip().getName());
-						if (selectedManip != null) {
-							if (ManipulationRetirementRules.isRetiredManipulation(selectedManip)) {
-								player.displayClientMessage(
-										Component.literal("That manipulation has gone dormant.")
-												.withStyle(ChatFormatting.DARK_GRAY), true);
-								ManipulationRetirementRules.sanitizeKnownManipulations(known);
-								return;
-							}
-							// Check manipulation is equipped
-							if (!known.isManipEquipped(selectedManip)) {
-								player.displayClientMessage(
-										Component.literal("That manipulation is unequipped!")
-												.withStyle(ChatFormatting.RED), true);
-								return;
-							}
-							if (selectedManip.getType() == EnumManipulationType.CONTINUOUS) return;
-							// The client's charge is only a claim; credit no more than the hold the server watched.
-							if (selectedManip.getType() == EnumManipulationType.CHARGED) {
-								// No observed key-down: typically a repeat CAST sent after a full-charge release but
-								// before the cooldown packet resets the client. Refuse quietly rather than flash a
-								// "requires a full charge" message.
-								if (!ManipulationChargeClock.hasStart(player, selectedManip)) return;
-								pTic = ManipulationChargeClock.clamp(player, selectedManip, pTic);
-							}
-							if (LivingStaffWeaponFormRules.isStaffWeaponFormManip(selectedManip.getName())) {
-                                if (LivingStaffWeaponFormHelper.toggleSelectedForm(player, selectedManip)) {
-                                    com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager.release(
-                                            (net.minecraft.server.level.ServerPlayer) player, selectedManip);
-                                }
-								return;
-							}
-							// Handle conjuration dispel logic
-							if (selectedManip instanceof ConjurationManip conjure) {
-								ItemStack beforeMain = mainStack.copy();
-								ItemStack beforeOff = player.getOffhandItem().copy();
-								if (!mainStack.isEmpty()) {
-									if (mainStack.getItem() instanceof IDispellable dispel) {
-										ConjurationManip.dispelled(player, mainStack);
-										mainStack.shrink(1);
-										double bloodCost = dispel.getBaseCost();
-										double bloodRefund = Math
-												.abs(mainStack.getMaxDamage() - 1000 - mainStack.getDamageValue());
-										if (bloodRefund > bloodCost * 0.9) {
-											bloodRefund = bloodCost * 0.9;
-										}
-										volume.fill(bloodRefund);
-										mainStack.shrink(1);
-										player.displayClientMessage(Component.literal("Dispelled Conjured Item")
-												.withStyle(ChatFormatting.RED), true);
-									} else {
-										player.displayClientMessage(
-												Component.literal("Conjuration Requires an Empty Hand!")
-														.withStyle(ChatFormatting.RED),
-												true);
+			}
+			if (bloodPowersBlocked) return;
+			IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
+					.orElseThrow(NullPointerException::new);
+			IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
+					.orElseThrow(NullPointerException::new);
+			if (volume.isActive()) {
+				if (known.getSelectedManip() != null) {
+					ItemStack mainStack = player.getMainHandItem();
+					BloodManipulation selectedManip = ManipulationInit
+							.getByName(known.getSelectedManip().getName());
+					if (selectedManip != null) {
+						if (ManipulationRetirementRules.isRetiredManipulation(selectedManip)) {
+							player.displayClientMessage(
+									Component.literal("That manipulation has gone dormant.")
+											.withStyle(ChatFormatting.DARK_GRAY), true);
+							ManipulationRetirementRules.sanitizeKnownManipulations(known);
+							return;
+						}
+						// Check manipulation is equipped
+						if (!known.isManipEquipped(selectedManip)) {
+							player.displayClientMessage(
+									Component.literal("That manipulation is unequipped!")
+											.withStyle(ChatFormatting.RED), true);
+							return;
+						}
+						if (selectedManip.getType() == EnumManipulationType.CONTINUOUS) return;
+						// The client's charge is only a claim; credit no more than the hold the server watched.
+						if (selectedManip.getType() == EnumManipulationType.CHARGED) {
+							// No observed key-down: typically a repeat CAST sent after a full-charge release but
+							// before the cooldown packet resets the client. Refuse quietly rather than flash a
+							// "requires a full charge" message.
+							if (!ManipulationChargeClock.hasStart(player, selectedManip)) return;
+							pTic = ManipulationChargeClock.clamp(player, selectedManip, pTic);
+						}
+						if (LivingStaffWeaponFormRules.isStaffWeaponFormManip(selectedManip.getName())) {
+                            if (LivingStaffWeaponFormHelper.toggleSelectedForm(player, selectedManip)) {
+                                com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager.release(
+                                        (net.minecraft.server.level.ServerPlayer) player, selectedManip);
+                            }
+							return;
+						}
+						// Handle conjuration dispel logic
+						if (selectedManip instanceof ConjurationManip conjure) {
+							ItemStack beforeMain = mainStack.copy();
+							ItemStack beforeOff = player.getOffhandItem().copy();
+							if (!mainStack.isEmpty()) {
+								if (mainStack.getItem() instanceof IDispellable dispel) {
+									ConjurationManip.dispelled(player, mainStack);
+									mainStack.shrink(1);
+									double bloodCost = dispel.getBaseCost();
+									double bloodRefund = Math
+											.abs(mainStack.getMaxDamage() - 1000 - mainStack.getDamageValue());
+									if (bloodRefund > bloodCost * 0.9) {
+										bloodRefund = bloodCost * 0.9;
 									}
+									volume.fill(bloodRefund);
+									mainStack.shrink(1);
+									player.displayClientMessage(Component.literal("Dispelled Conjured Item")
+											.withStyle(ChatFormatting.RED), true);
 								} else {
-									selectedManip.performAction(player, player.level(), mainStack,
-									player.blockPosition(), pTic);
+									player.displayClientMessage(
+											Component.literal("Conjuration Requires an Empty Hand!")
+													.withStyle(ChatFormatting.RED),
+											true);
 								}
-								LivingStaffWeaponFormHelper.syncMorph(player, beforeMain, beforeOff);
 							} else {
-								// All other manipulation types — just perform
 								selectedManip.performAction(player, player.level(), mainStack,
-										player.blockPosition(), pTic);
+								player.blockPosition(), pTic);
 							}
+							LivingStaffWeaponFormHelper.syncMorph(player, beforeMain, beforeOff);
+						} else {
+							// All other manipulation types — just perform
+							selectedManip.performAction(player, player.level(), mainStack,
+									player.blockPosition(), pTic);
 						}
 					}
-				} else {
-					player.displayClientMessage(Component.literal("You lack the skill to manifest this power!")
-							.withStyle(ChatFormatting.RED), true);
 				}
-                } finally {
-                    if(message.action==Action.CAST) {
-                        com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager.finishChargeAttempt(
-                                (net.minecraft.server.level.ServerPlayer)player);
-                    }
-                }
+			} else {
+				player.displayClientMessage(Component.literal("You lack the skill to manifest this power!")
+						.withStyle(ChatFormatting.RED), true);
 			}
+            } finally {
+                if(message.action==Action.CAST) {
+                    com.vincenthuto.hemomancy.common.manipulation.animation.CastingAnimationManager.finishChargeAttempt(
+                            (net.minecraft.server.level.ServerPlayer)player);
+                }
+            }
 		});
 	}
 

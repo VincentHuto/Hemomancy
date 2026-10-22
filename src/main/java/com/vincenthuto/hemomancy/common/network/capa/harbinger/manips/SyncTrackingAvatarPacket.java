@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -42,7 +41,7 @@ public class SyncTrackingAvatarPacket implements CustomPacketPayload {
 
 	public static void handle(final SyncTrackingAvatarPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			Entity p = Minecraft.getInstance().level.getEntity(msg.playerId);
+			Entity p = ctx.player().level().getEntity(msg.playerId);
 			if (p instanceof Player) {
 				HemoCapabilityAccess.getKnownManipulations(p).ifPresent(b -> {
 					b.setActiveAvatarForm(msg.avatarForm);

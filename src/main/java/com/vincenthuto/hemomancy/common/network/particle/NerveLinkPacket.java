@@ -5,6 +5,7 @@ import com.vincenthuto.hutoslib.common.tendril.TendrilAnchor;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /** Moving cosmetic endpoints use HutosLib's existing anchor contract. */
 public record NerveLinkPacket(TendrilAnchor start,TendrilAnchor end,int ticks) implements CustomPacketPayload {
@@ -14,4 +15,7 @@ public record NerveLinkPacket(TendrilAnchor start,TendrilAnchor end,int ticks) i
     },buf->new NerveLinkPacket(TendrilAnchor.fromBuffer(buf),TendrilAnchor.fromBuffer(buf),buf.readVarInt()));
     public NerveLinkPacket { ticks=Math.clamp(ticks,0,100); }
     @Override public Type<? extends CustomPacketPayload> type(){return TYPE;}
+    public static void handle(NerveLinkPacket packet, IPayloadContext context) {
+        context.enqueueWork(() -> com.vincenthuto.hemomancy.client.render.world.FerricDuctilisEffects.accept(packet));
+    }
 }

@@ -4,7 +4,6 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -52,11 +51,11 @@ public class PacketGourdScarSync implements CustomPacketPayload {
 			if (msg.mindscar.getItem() instanceof BloodGourdItem gourd) {
 				IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(msg.mindscar)
 						.orElseThrow(NullPointerException::new);
-				Minecraft mc = Minecraft.getInstance();
-				if (mc.level == null) {
+				var level = ctx.player().level();
+				if (level == null) {
 					return;
 				}
-				Entity p = mc.level.getEntity(msg.playerId);
+				Entity p = level.getEntity(msg.playerId);
 				if (p instanceof Player player) {
 					HemoCapabilityAccess.getEquipment(player).ifPresent(b -> {
 						bloodVolume.setBloodVolume(msg.amount);

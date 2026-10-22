@@ -39,43 +39,41 @@ public class ChangeSelectedManipPacket implements CustomPacketPayload {
 			Player player = ctx.player();
 			if (player == null)
 				return;
-			if (!player.level().isClientSide) {
-				IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
-						.orElseThrow(NullPointerException::new);
-				// Build a list of only equipped manipulations
-				List<String> equippedNames = known.getEquippedManipNames();
-				List<BloodManipulation> allManips = known.getManipList();
-				List<BloodManipulation> equipped = new ArrayList<>();
-				for (BloodManipulation m : allManips) {
-					if (equippedNames.contains(m.getName())) {
-						equipped.add(m);
-					}
+			IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
+					.orElseThrow(NullPointerException::new);
+			// Build a list of only equipped manipulations
+			List<String> equippedNames = known.getEquippedManipNames();
+			List<BloodManipulation> allManips = known.getManipList();
+			List<BloodManipulation> equipped = new ArrayList<>();
+			for (BloodManipulation m : allManips) {
+				if (equippedNames.contains(m.getName())) {
+					equipped.add(m);
 				}
-
-				if (equipped.isEmpty()) {
-					player.displayClientMessage(Component.literal("No equipped manipulations to select"), true);
-					return;
-				}
-
-				BloodManipulation target;
-				if (!equipped.contains(known.getSelectedManip())) {
-					target = equipped.get(0);
-				} else {
-					int foundIndex = equipped.indexOf(known.getSelectedManip());
-					if (foundIndex < equipped.size() - 1) {
-						target = equipped.get(foundIndex + 1);
-					} else {
-						target = equipped.get(0);
-					}
-				}
-				known.setSelectedManip(target);
-				boolean applied = LivingStaffWeaponFormHelper.applySelection(player, target)
-						&& CellHandFormHelper.applySelection(player, target);
-				if (applied) player.displayClientMessage(Component.literal("Selected: ").append(target.getDisplayName()), true);
-				PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
-				ManipulationDiagnosticsSync.sync((ServerPlayer) player);
-				if (applied) UseManipKeyPacket.castOnSelect((ServerPlayer) player, target);
 			}
+
+			if (equipped.isEmpty()) {
+				player.displayClientMessage(Component.literal("No equipped manipulations to select"), true);
+				return;
+			}
+
+			BloodManipulation target;
+			if (!equipped.contains(known.getSelectedManip())) {
+				target = equipped.get(0);
+			} else {
+				int foundIndex = equipped.indexOf(known.getSelectedManip());
+				if (foundIndex < equipped.size() - 1) {
+					target = equipped.get(foundIndex + 1);
+				} else {
+					target = equipped.get(0);
+				}
+			}
+			known.setSelectedManip(target);
+			boolean applied = LivingStaffWeaponFormHelper.applySelection(player, target)
+					&& CellHandFormHelper.applySelection(player, target);
+			if (applied) player.displayClientMessage(Component.literal("Selected: ").append(target.getDisplayName()), true);
+			PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
+			ManipulationDiagnosticsSync.sync((ServerPlayer) player);
+			if (applied) UseManipKeyPacket.castOnSelect((ServerPlayer) player, target);
 
 		});
 	}
