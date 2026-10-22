@@ -1,14 +1,12 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.data.ActiveBloodStructureFeedClientData;
 import com.vincenthuto.hemomancy.common.event.BloodFeedStyle;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,17 +67,6 @@ public record PacketBloodStructureFeed(List<BlockPos> positions, float progress,
 		BloodFeedStyle style = BloodFeedStyle.byId(buf.readByte());
 		Vec3 origin = buf.readVec3();
 		return new PacketBloodStructureFeed(positions, progress, visibleTicks, clear, channelId, style, origin);
-	}
-
-	public static void handle(final PacketBloodStructureFeed msg, final IPayloadContext ctx) {
-		ctx.enqueueWork(() -> {
-			if (msg.clear) {
-				ActiveBloodStructureFeedClientData.clear(msg.channelId, msg.positions);
-			} else {
-				ActiveBloodStructureFeedClientData.upsert(msg.channelId, msg.positions, msg.progress, msg.visibleTicks,
-						msg.style, msg.origin);
-			}
-		});
 	}
 
 	@Override

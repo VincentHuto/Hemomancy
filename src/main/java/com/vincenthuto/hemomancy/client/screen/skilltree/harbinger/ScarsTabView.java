@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumNodeShape;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.RecipeMapInspectorLayout;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;

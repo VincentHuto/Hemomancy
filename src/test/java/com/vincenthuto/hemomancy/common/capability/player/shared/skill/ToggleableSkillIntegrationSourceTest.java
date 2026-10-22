@@ -30,7 +30,7 @@ final class ToggleableSkillIntegrationSourceTest {
 		String packet = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/PacketToggleSkill.java");
 		String handler = read("src/main/java/com/vincenthuto/hemomancy/common/network/PacketHandler.java");
 		String screen = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/SkillsTabController.java");
-		String shapes = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/util/EnumNodeShape.java");
+		String shapes = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/shared/skill/EnumNodeShape.java");
 		String lang = read("src/main/resources/assets/hemomancy/lang/en_us.json");
 		for (String name : SKILLS) {
 			assertTrue(init.contains("skill_" + name), name + " field");

@@ -53,6 +53,10 @@ Three principles run through all of it:
 **Existing example**
 - `ScarInit.getByName`
 - `DataComponentInit` for registry shape, but not its builder chains
+- Since step 8: `RegistryLookup.byName` (custom-registry lookup that never falls back to a default entry),
+  `DataComponentInit` on `DeferredRegister.DataComponents`, and `CreativeTabInit`, whose one ordered WIP list
+  fills the WIP tab and keeps those entries out of the main tab. `FrozenIdentifierGameTests` freezes every
+  Hemomancy registry id and the creative-tab order.
 
 **Migration targets**
 - The 85 hand-built resource locations (D-2).
@@ -122,6 +126,9 @@ public record ExamplePayload(int entityId, float amount) implements CustomPacket
   send facade with `DialogueSender`, `ServerboundGuards` (coverage pinned by `ServerboundGuardsCoverageTest`), and
   `ParticleBurstPacket` / `EntityVisualPacket` for one-shot visuals.
 - `RiteZoneSync` and `RiteSpaces` for send-only-on-change.
+- Since step 8: a client-bound payload whose handling needs client classes is registered as
+  `ClientPayloadHandlers::dispatch`; its body lives in `client/network/Clientbound*Handlers`, registered at
+  client setup.
 
 **Migration targets**
 - The 32 payloads mis-registered as bidirectional (N-1).
@@ -170,6 +177,10 @@ public record ExamplePayload(int entityId, float amount) implements CustomPacket
 - `OutpouringBrushes` (public bridge)
 - `VeinBackgroundRenderer` (batched shared chrome)
 - HutosLib `BoltRenderer`
+- Since step 8: client registration lives in `client/registry/*` through the event APIs, the world-space
+  effects draw from `client/render/world/WorldEffectDispatcher`, and `common/` names no client class outside
+  an item client extension (`CommonClientIsolationTest`). Other client calls from common code go through
+  `common/util/ClientBridge`.
 
 **Migration targets**
 - V-1 (screen chrome)
@@ -377,6 +388,9 @@ Supporting rules:
 **Existing example**
 - `TransientServerStateEvents` (central reset and logout fan-out).
 - `HemoCapabilityRegistrar` (sync trio, driving `PlayerStateSync` at `LOWEST` priority).
+- Since step 8: one subscriber style everywhere and constructor listeners for mod lifecycle only
+  (`RegistrationStyleGuardrailTest`); entity-id client caches are cleared on logout in
+  `ClientSessionEvents` (`ClientSessionCacheTest`).
 
 **Migration targets**
 - R-1 (subscription style).
@@ -515,6 +529,9 @@ Further rules:
 - The `*DataTest` family, such as `CardinalRitePurposeDataTest`.
 - `VesperAnimClock`'s unit test.
 - The journey fixtures.
+- Since step 8: `client/registry/` (client registration) and `client/network/` (client halves of
+  client-bound payloads); shared data that used to sit in `client/` (particle types and data, rite and bloom
+  sync records, skill node shapes, the manipulation tree entry) moved to `common/`.
 
 **Migration targets**
 - T-1 through T-6.

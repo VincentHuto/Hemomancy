@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.common.util.PatternOrigins;
 import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
 import com.vincenthuto.hemomancy.common.init.ParticleInit;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.common.particle.data.BloodCellData;
 import com.vincenthuto.hemomancy.common.particle.data.SerpentParticleData;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.QliphothBloomBlock;
@@ -131,7 +130,7 @@ public class HarbingerCardinalRiteEvents {
 	private static final Map<UUID, Boolean> STATION_VALIDITY = new java.util.HashMap<>();
 
 	private static PacketSyncActiveRites activeRiteSnapshot(ServerLevel level, ServerPlayer viewer) {
-		List<ActiveRiteClientData.RiteEntry> entries = new ArrayList<>();
+		List<ActiveRiteData.RiteEntry> entries = new ArrayList<>();
 		for (ActiveCardinalRite rite : CardinalRiteSavedData.get(level).getActiveRites().values()) {
 			entries.add(toClientEntry(level, rite, mayReadPool(rite, viewer)));
 		}
@@ -144,12 +143,12 @@ public class HarbingerCardinalRiteEvents {
 	 */
 	private static void syncActiveRites(ServerLevel level) {
 		List<ActiveCardinalRite> rites = new ArrayList<>(CardinalRiteSavedData.get(level).getActiveRites().values());
-		List<ActiveRiteClientData.RiteEntry> shared = new ArrayList<>(rites.size());
+		List<ActiveRiteData.RiteEntry> shared = new ArrayList<>(rites.size());
 		for (ActiveCardinalRite rite : rites) shared.add(toClientEntry(level, rite, false));
-		ActiveRiteClientData.RiteEntry[] revealed = new ActiveRiteClientData.RiteEntry[rites.size()];
+		ActiveRiteData.RiteEntry[] revealed = new ActiveRiteData.RiteEntry[rites.size()];
 		PacketSyncActiveRites sharedPacket = new PacketSyncActiveRites(shared);
 		for (ServerPlayer viewer : level.players()) {
-			List<ActiveRiteClientData.RiteEntry> entries = null;
+			List<ActiveRiteData.RiteEntry> entries = null;
 			for (int i = 0; i < rites.size(); i++) {
 				if (!mayReadPool(rites.get(i), viewer)) continue;
 				if (revealed[i] == null) revealed[i] = toClientEntry(level, rites.get(i), true);
@@ -1006,7 +1005,7 @@ public class HarbingerCardinalRiteEvents {
 		}
 	}
 
-	private static ActiveRiteClientData.RiteEntry toClientEntry(ServerLevel level, ActiveCardinalRite rite,
+	private static ActiveRiteData.RiteEntry toClientEntry(ServerLevel level, ActiveCardinalRite rite,
 			boolean revealPool) {
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
 		boolean unstained = recipe != null && recipe.isUnstained();
@@ -1049,7 +1048,7 @@ public class HarbingerCardinalRiteEvents {
             checklist = java.util.List.of(Component.translatable(cue).getString());
             upfront = 0;
         }
-		return new ActiveRiteClientData.RiteEntry(
+		return new ActiveRiteData.RiteEntry(
 				rite.getCenterPos(), rite.getRiteSize(), succession ? successionTicks / 1200.0 : rite.getProgress(stillIntervalTicks),
 				rite.getRecipeId(), unstained,
 				succession ? "SUCCESSION" : rite.getPhase().name(), rite.getInstability(), rite.getCurrentWave(), rite.getTotalWaves(),
@@ -1083,7 +1082,7 @@ public class HarbingerCardinalRiteEvents {
 		int[] required = rite.anchorRequirements();
 		for (int i = 0; i < blood.length; i++) {
 			states[i] = Math.clamp(blood[i], 0, required[i])
-					+ (rite.isInstabilityDamagedAnchor(i) ? ActiveRiteClientData.RiteEntry.ANCHOR_DAMAGED : 0);
+					+ (rite.isInstabilityDamagedAnchor(i) ? ActiveRiteData.RiteEntry.ANCHOR_DAMAGED : 0);
 		}
 		return states;
 	}
@@ -1245,9 +1244,9 @@ public class HarbingerCardinalRiteEvents {
 		return java.util.List.of();
 	}
 
-	private static java.util.List<ActiveRiteClientData.SanguineBlob> visibleSanguineBlobs(
+	private static java.util.List<ActiveRiteData.SanguineBlob> visibleSanguineBlobs(
 			ServerLevel level, ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
-		java.util.List<ActiveRiteClientData.SanguineBlob> result = new java.util.ArrayList<>();
+		java.util.List<ActiveRiteData.SanguineBlob> result = new java.util.ArrayList<>();
 		if (recipe != null && recipe.getCeremony() != null) {
 			int[] blood = rite.getAnchorBloodMl();
 			for (int i = 0; i < recipe.getCeremony().anchors().size() && i < blood.length; i++) {
@@ -1265,10 +1264,10 @@ public class HarbingerCardinalRiteEvents {
 				float radius = instabilityDamaged ? 0.19F
 						: CardinalRiteAnchorVisualRules.formingBoundaryRadius(
 								blood[i], rite.anchorRequirementMl(i));
-				result.add(new ActiveRiteClientData.SanguineBlob(
+				result.add(new ActiveRiteData.SanguineBlob(
 						x, y, z, radius, color,
 						blobSeed(x, y, z, i), integrity,
-						ActiveRiteClientData.NodeKind.BOUNDARY_ANCHOR,
+						ActiveRiteData.NodeKind.BOUNDARY_ANCHOR,
 						IchorianSigilAnatomy.Role.JOINT));
 			}
 		}
@@ -1288,10 +1287,10 @@ public class HarbingerCardinalRiteEvents {
 				double x = rite.getCenterPos().getX() + 0.5D + placement.x() + node.x();
 				double y = surface.getY() + 0.17D;
 				double z = rite.getCenterPos().getZ() + 0.5D + placement.z() + node.z();
-				result.add(new ActiveRiteClientData.SanguineBlob(
+				result.add(new ActiveRiteData.SanguineBlob(
 						x, y, z, 0.16F, CardinalRiteAnchorVisualRules.sigilColor(sigil.color()),
 						blobSeed(x, y, z, i), 1.0F,
-						ActiveRiteClientData.NodeKind.SIGIL_NODE,
+						ActiveRiteData.NodeKind.SIGIL_NODE,
 						IchorianSigilRoleResolver.forSource(sigil, i)));
 			}
 			int nodeBlood = rite.getSigilProgress().getOrDefault(
@@ -1304,11 +1303,11 @@ public class HarbingerCardinalRiteEvents {
 				double x = rite.getCenterPos().getX() + 0.5D + placement.x() + forming.x();
 				double y = surface.getY() + 0.17D;
 				double z = rite.getCenterPos().getZ() + 0.5D + placement.z() + forming.z();
-				result.add(new ActiveRiteClientData.SanguineBlob(
+				result.add(new ActiveRiteData.SanguineBlob(
 						x, y, z, CardinalRiteSigilRules.formingNodeRadius(nodeBlood),
 						CardinalRiteAnchorVisualRules.sigilColor(sigil.color()),
 						blobSeed(x, y, z, completed), 1.0F,
-						ActiveRiteClientData.NodeKind.SIGIL_NODE,
+						ActiveRiteData.NodeKind.SIGIL_NODE,
 						IchorianSigilRoleResolver.forSource(sigil, completed)));
 			}
 		}
@@ -1330,9 +1329,9 @@ public class HarbingerCardinalRiteEvents {
 		return seed * 31L + index;
 	}
 
-	private static java.util.List<ActiveRiteClientData.SigilSegment> visibleSigilSegments(
+	private static java.util.List<ActiveRiteData.SigilSegment> visibleSigilSegments(
 			ServerLevel level, ActiveCardinalRite rite) {
-		java.util.List<ActiveRiteClientData.SigilSegment> result = new java.util.ArrayList<>();
+		java.util.List<ActiveRiteData.SigilSegment> result = new java.util.ArrayList<>();
 		for (CardinalRiteInteractionHandler.SigilPlacement placement
 				: CardinalRiteInteractionHandler.activeSigils(level, rite)) {
 			IchorianSigilDefinition sigil = IchorianSigilRegistry.get(placement.id());
@@ -1346,7 +1345,7 @@ public class HarbingerCardinalRiteEvents {
 		return java.util.List.copyOf(result);
 	}
 
-	private static ActiveRiteClientData.SigilSegment toClientSigilSegment(
+	private static ActiveRiteData.SigilSegment toClientSigilSegment(
 			ServerLevel level, ActiveCardinalRite rite,
 			CardinalRiteInteractionHandler.SigilPlacement placement,
 			CardinalRiteSigilProgress.Connection connection, int color) {
@@ -1359,7 +1358,7 @@ public class HarbingerCardinalRiteEvents {
 		BlockPos endSurface = CardinalRiteSigilRules.surfaceAirPosition(level, base,
 				placement.x() + (int) Math.round(end.x()),
 				placement.z() + (int) Math.round(end.z()));
-		return new ActiveRiteClientData.SigilSegment(
+		return new ActiveRiteData.SigilSegment(
 				rite.getCenterPos().getX() + 0.5D + placement.x() + start.x(),
 				startSurface.getY() + 0.10D,
 				rite.getCenterPos().getZ() + 0.5D + placement.z() + start.z(),
@@ -1651,11 +1650,11 @@ public class HarbingerCardinalRiteEvents {
 		QliphothBloomSavedData data = QliphothBloomSavedData.get(server.overworld());
 		for (ServerPlayer player : server.getPlayerList().getPlayers()) {
 			String dimension = player.level().dimension().location().toString();
-			java.util.List<com.vincenthuto.hemomancy.client.data.QliphothBloomClientData.BloomEntry> clientEntries = new ArrayList<>();
+			java.util.List<QliphothBloomData.BloomEntry> clientEntries = new ArrayList<>();
 			for (QliphothBloomSavedData.BloomEntry bloom : data.getBlooms()) {
 				if (bloom.dimension().equals(dimension)) {
 					int pomesDropped = data.getPomesDropped(bloom);
-					clientEntries.add(new com.vincenthuto.hemomancy.client.data.QliphothBloomClientData.BloomEntry(
+					clientEntries.add(new QliphothBloomData.BloomEntry(
 							bloom.center(), bloom.chunkRadius(), pomesDropped,
 							data.getState(bloom).ordinal()));
 				}

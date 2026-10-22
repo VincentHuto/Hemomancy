@@ -5,7 +5,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /** Server interruption clears held charge and requires a fresh key press. */
 public record ManipulationInterruptedPacket() implements CustomPacketPayload {
@@ -14,7 +13,4 @@ public record ManipulationInterruptedPacket() implements CustomPacketPayload {
     public static final StreamCodec<FriendlyByteBuf,ManipulationInterruptedPacket> STREAM_CODEC=StreamCodec.unit(INSTANCE);
     @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
 
-    public static void handle(ManipulationInterruptedPacket packet, IPayloadContext context) {
-        context.enqueueWork(com.vincenthuto.hemomancy.client.event.ManipulationChargeInput::interruptManipulationCharge);
-    }
 }

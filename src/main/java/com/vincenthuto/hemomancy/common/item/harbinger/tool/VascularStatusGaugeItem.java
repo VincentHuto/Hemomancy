@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
-import com.vincenthuto.hemomancy.client.screen.item.VascularStatusScreen;
+import com.vincenthuto.hemomancy.common.util.ClientBridge;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -23,7 +23,7 @@ public class VascularStatusGaugeItem extends Item {
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 		if (level.isClientSide) {
-			VascularStatusScreen.openScreen();
+			ClientBridge.get().openVascularStatus();
 		}
 		return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
 	}

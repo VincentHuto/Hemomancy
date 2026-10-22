@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.util.ClientBridge;
 import com.mojang.serialization.MapCodec;
-import com.vincenthuto.hemomancy.client.screen.tile.functional.SynapticLoadoutScreen;
 import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
@@ -109,7 +109,7 @@ public class DendriticDistributorBlock extends BaseEntityBlock implements Simple
 
 	private InteractionResult handleUse(Level worldIn, BlockPos pos) {
 		if (worldIn.isClientSide) {
-			SynapticLoadoutScreen.openScreen(pos);
+			ClientBridge.get().openSynapticLoadout(pos);
 		}
 		return InteractionResult.SUCCESS;
 	}

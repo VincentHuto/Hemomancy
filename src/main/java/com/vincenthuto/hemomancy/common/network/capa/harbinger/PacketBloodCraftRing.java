@@ -1,12 +1,10 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.data.ActiveBloodCraftClientData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Server → Client: Tells the client to spawn a collapsing bloody ring
@@ -44,15 +42,24 @@ public class PacketBloodCraftRing implements CustomPacketPayload {
 		return new PacketBloodCraftRing(center, startRadius, centerY, durationTicks);
 	}
 
-	public static void handle(final PacketBloodCraftRing msg, final IPayloadContext ctx) {
-		ctx.enqueueWork(() -> {
-			ActiveBloodCraftClientData.addRing(new ActiveBloodCraftClientData.CraftRingEntry(
-					msg.center, msg.startRadius, msg.centerY, msg.durationTicks));
-		});
-	}
-
 	@Override
 	public Type<? extends CustomPacketPayload> type() {
 		return TYPE;
+	}
+
+	public BlockPos center() {
+		return center;
+	}
+
+	public float centerY() {
+		return centerY;
+	}
+
+	public int durationTicks() {
+		return durationTicks;
+	}
+
+	public float startRadius() {
+		return startRadius;
 	}
 }

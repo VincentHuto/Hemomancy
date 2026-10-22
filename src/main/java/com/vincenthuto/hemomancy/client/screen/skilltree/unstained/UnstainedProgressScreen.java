@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.unstained;
 
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumNodeShape;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.*;
 import com.vincenthuto.hemomancy.client.screen.skilltree.unstained.UnstainedProgressLayout.Kind;

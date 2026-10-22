@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world.rite;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState.RiteEvent;
@@ -69,7 +70,7 @@ public final class CardinalRiteOfferingMemory {
 	}
 
 	private static boolean isLive(BlockPos center) {
-		for (ActiveRiteClientData.RiteEntry rite : ActiveRiteClientData.getActiveRites()) {
+		for (ActiveRiteData.RiteEntry rite : ActiveRiteClientData.getActiveRites()) {
 			if (rite.getCenter().equals(center)) return true;
 		}
 		return false;

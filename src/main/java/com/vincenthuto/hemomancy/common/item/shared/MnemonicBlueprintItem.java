@@ -1,8 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.shared;
 
-import com.vincenthuto.hemomancy.client.render.world.MnemonicBlueprintRenderer;
-import com.vincenthuto.hemomancy.client.screen.item.BloodStructureHintScreen;
-import com.vincenthuto.hemomancy.client.screen.item.RiteHintScreen;
+import com.vincenthuto.hemomancy.common.util.ClientBridge;
 import com.vincenthuto.hemomancy.common.init.DataComponentInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
@@ -135,19 +133,19 @@ public class MnemonicBlueprintItem extends Item {
 
 	@OnlyIn(Dist.CLIENT)
 	private static void openDetails(MnemonicBlueprintTarget target) {
-		if (target.type() == MnemonicBlueprintTarget.Type.CARDINAL_RITE) RiteHintScreen.open(target.recipeId());
-		else BloodStructureHintScreen.open(target.recipeId());
+		if (target.type() == MnemonicBlueprintTarget.Type.CARDINAL_RITE) ClientBridge.get().openRiteHint(target.recipeId());
+		else ClientBridge.get().openBloodStructureHint(target.recipeId());
 	}
 
 	@OnlyIn(Dist.CLIENT)
 	private static void anchorProjection(MnemonicBlueprintTarget target, net.minecraft.core.BlockPos center,
 			Direction facing) {
-		MnemonicBlueprintRenderer.anchor(target, center, facing);
+		ClientBridge.get().anchorBlueprint(target, center, facing);
 	}
 
 	@OnlyIn(Dist.CLIENT)
 	private static void clearProjection(Player player) {
-		boolean cleared = MnemonicBlueprintRenderer.clear();
+		boolean cleared = ClientBridge.get().clearBlueprint();
 		if (cleared) player.displayClientMessage(
 				Component.translatable("item.hemomancy.mnemonic_blueprint.cleared").withStyle(ChatFormatting.GRAY), true);
 	}

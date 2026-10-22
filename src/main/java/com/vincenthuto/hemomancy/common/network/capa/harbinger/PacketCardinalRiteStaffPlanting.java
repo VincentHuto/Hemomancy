@@ -1,14 +1,12 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.rite.CardinalRiteStaffPlantingClientState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /** Starts the synchronized first/third-person ritual-implement planting animation. */
 public record PacketCardinalRiteStaffPlanting(int casterEntityId, BlockPos focus, ItemStack staff, boolean active)
@@ -43,16 +41,6 @@ public record PacketCardinalRiteStaffPlanting(int casterEntityId, BlockPos focus
 				buffer.readBlockPos(),
 				ItemStack.OPTIONAL_STREAM_CODEC.decode((RegistryFriendlyByteBuf) buffer),
 				buffer.readBoolean());
-	}
-
-	public static void handle(PacketCardinalRiteStaffPlanting packet, IPayloadContext context) {
-		context.enqueueWork(() -> {
-			if (packet.active) {
-				CardinalRiteStaffPlantingClientState.start(packet.casterEntityId, packet.focus, packet.staff);
-			} else {
-				CardinalRiteStaffPlantingClientState.stop(packet.casterEntityId);
-			}
-		});
 	}
 
 	@Override

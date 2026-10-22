@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import net.minecraft.client.Minecraft;
@@ -22,7 +23,7 @@ public final class CardinalRiteOverlay {
 		if (HemoClientConfig.cardinalRiteHud() != HemoClientConfig.CardinalRiteHudMode.FULL) return;
 		Minecraft minecraft = Minecraft.getInstance();
 		if (minecraft.player == null || minecraft.options.hideGui) return;
-		ActiveRiteClientData.RiteEntry rite = ActiveRiteClientData.getActiveRites().stream()
+		ActiveRiteData.RiteEntry rite = ActiveRiteClientData.getActiveRites().stream()
 				.filter(entry -> !entry.isUnstained() && !entry.isLegacy())
 				.filter(entry -> entry.getCenter().distToCenterSqr(minecraft.player.position()) <= 128.0D * 128.0D)
 				.min(Comparator.comparingDouble(

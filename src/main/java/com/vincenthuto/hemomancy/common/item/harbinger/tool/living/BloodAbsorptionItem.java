@@ -2,8 +2,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.CellHandRules;
-import com.vincenthuto.hemomancy.client.registry.ModelRegistrar;
-import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.CellHandItemRenderer;
 import com.vincenthuto.hemomancy.common.block.harbinger.BlockBloodInteractions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -22,7 +21,6 @@ import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCancellationHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -71,11 +69,6 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 			((Player) entityLiving).releaseUsingItem();
 		}
 		return stack;
-	}
-
-	@Override
-	public BakedModel getBakedModel() {
-		return ModelRegistrar.bloodAbsorptionModel;
 	}
 
 	@Override

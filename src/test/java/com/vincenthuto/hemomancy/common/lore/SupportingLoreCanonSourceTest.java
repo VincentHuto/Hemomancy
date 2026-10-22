@@ -16,7 +16,7 @@ public final class SupportingLoreCanonSourceTest {
 		String consecration = read("src/main/java/com/vincenthuto/hemomancy/common/event/ConsecrationHandler.java");
 		String whispers = read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/FungalWhisperDialogueTrees.java");
 		String zealot = read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/ZealotDialogueTrees.java");
-		String unstainedPacket = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/unstained/PacketSyncUnstainedProgress.java");
+		String unstainedSyncHandler = read("src/main/java/com/vincenthuto/hemomancy/client/network/ClientboundStateHandlers.java");
 		String degreePacket = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/PacketSyncDegree.java");
 		assertContains(saints, "EnumBloodTendency.FERRIC, EnumBloodTendency.MORTEM");
 		assertContains(saints, "EnumBloodTendency.ANIMUS, EnumBloodTendency.LUX");
@@ -33,9 +33,9 @@ public final class SupportingLoreCanonSourceTest {
 		assertContains(zealot, "if (clarityUnlocked)");
 		assertContains(zealot, "option.about_silver_ward\", \"silver_ward_info");
 		assertContains(zealot, "option.about_verdigris\", \"verdigris_info");
-		assertContains(unstainedPacket, "progress.setInfectionSuppressed(msg.infectionSuppressed)");
-		assertContains(unstainedPacket, "progress.setClarityPrepared(msg.clarityPrepared)");
-		assertContains(unstainedPacket, "progress.setAnnettaSeveranceUnlocked(msg.annettaSeveranceUnlocked)");
+		assertContains(unstainedSyncHandler, "progress.setInfectionSuppressed(msg.infectionSuppressed())");
+		assertContains(unstainedSyncHandler, "progress.setClarityPrepared(msg.clarityPrepared())");
+		assertContains(unstainedSyncHandler, "progress.setAnnettaSeveranceUnlocked(msg.annettaSeveranceUnlocked())");
 		assertContains(degreePacket, "degree.setHasFoundedBloodline(msg.hasFoundedBloodline)");
 		assertContains(degreePacket, "degree.setArchonPath(msg.archonPath)");
 	}

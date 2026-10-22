@@ -20,8 +20,9 @@ public final class DendriticDistributorSynapticLoadoutSourceTest {
 		String coreBranch = read("src/main/java/com/vincenthuto/hemomancy/common/init/skills/CoreSkillBranch.java");
 		String lang = read("src/main/resources/assets/hemomancy/lang/en_us.json");
 
-		assertContains("Distributor imports synaptic screen", block, "SynapticLoadoutScreen");
-		assertContains("Distributor opens synaptic loadout screen", block, "SynapticLoadoutScreen.openScreen(pos)");
+		assertContains("Distributor asks the client bridge for the synaptic screen", block, "ClientBridge.get().openSynapticLoadout(pos)");
+		assertContains("Distributor opens synaptic loadout screen",
+				read("src/main/java/com/vincenthuto/hemomancy/client/ClientBridgeImpl.java"), "SynapticLoadoutScreen.openScreen(pos)");
 		assertDoesNotContain("Distributor no longer opens old progress screen", block, "HarbingerProgressScreen.openScreen()");
 		assertContains("Distributor recipe is Degree 5", recipe, "\"required_degree\": 5");
 		assertContains("skill init declares synaptic memory", skillInit, "skill_synaptic_memory");

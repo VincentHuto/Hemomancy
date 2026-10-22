@@ -1,12 +1,10 @@
 package com.vincenthuto.hemomancy.common.network.discovery;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.screen.discovery.DiscoveryInscriptionScreen;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -56,11 +54,6 @@ public record OpenInscriptionPacket(
 		ResourceLocation riteId = buf.readBoolean() ? buf.readResourceLocation() : null;
 		boolean requiresAbocipherLiteracy = buf.readBoolean();
 		return new OpenInscriptionPacket(title, lines, revealed, riteId, requiresAbocipherLiteracy);
-	}
-
-	public static void handle(final OpenInscriptionPacket msg, final IPayloadContext ctx) {
-		ctx.enqueueWork(() -> DiscoveryInscriptionScreen.open(msg.title, msg.lines, msg.revealed, msg.riteId,
-				msg.requiresAbocipherLiteracy));
 	}
 
 	@Override

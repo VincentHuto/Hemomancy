@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
@@ -215,7 +216,7 @@ public final class CardinalFloorConsecrationRenderer {
 	 * after its impact, and lets go as the staff melts away.
 	 */
 	private static float staffGrip(BlockPos origin, float partialTick) {
-		for (ActiveRiteClientData.RiteEntry rite : ActiveRiteClientData.getActiveRites()) {
+		for (ActiveRiteData.RiteEntry rite : ActiveRiteClientData.getActiveRites()) {
 			if (rite.isUnstained() || !rite.hasPlantedStaff() || !rite.getCenter().equals(origin)) continue;
 			return CardinalRiteStaffTendrilGeometry.visibilityProgress(rite.staffPlantingRenderTicks(partialTick),
 					rite.cancellationRenderTicks(partialTick));

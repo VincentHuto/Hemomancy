@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
-import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.MemoryOfVesperItemRenderer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;

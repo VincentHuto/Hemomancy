@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.item.harbinger;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.registry.ModelRegistrar;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.ICellHand;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.math.Vector3;
@@ -141,8 +142,7 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 			MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
 		VertexConsumer buffers = buffer.getBuffer(Sheets.cutoutBlockSheet());
 		if (stack.getItem() instanceof ICellHand) {
-			ICellHand cell = (ICellHand) stack.getItem();
-			location = cell.getBakedModel();
+			location = ModelRegistrar.cellHandModel(stack.getItem());
 			int color = Minecraft.getInstance().getItemColors().getColor(stack, 1);
 			if (this.location == null) {
 				float r = (color >> 16 & 0xFF) / 255F;

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
-import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import net.minecraft.core.BlockPos;
 
 import java.util.*;
@@ -11,9 +11,9 @@ public final class CardinalRiteFogLightningSchedule {
 
 	private final Map<BlockPos, Long> nextStrikeTicks = new HashMap<>();
 
-	public List<Strike> update(List<ActiveRiteClientData.RiteEntry> activeRites, long gameTick) {
+	public List<Strike> update(List<ActiveRiteData.RiteEntry> activeRites, long gameTick) {
 		Set<BlockPos> activeCenters = new HashSet<>();
-		for (ActiveRiteClientData.RiteEntry rite : activeRites) {
+		for (ActiveRiteData.RiteEntry rite : activeRites) {
 			if (!rite.isUnstained() && rite.hasFogLightning()) {
 				activeCenters.add(rite.getCenter());
 			}
@@ -21,7 +21,7 @@ public final class CardinalRiteFogLightningSchedule {
 		nextStrikeTicks.keySet().removeIf(center -> !activeCenters.contains(center));
 
 		List<Strike> strikes = new ArrayList<>();
-		for (ActiveRiteClientData.RiteEntry rite : activeRites) {
+		for (ActiveRiteData.RiteEntry rite : activeRites) {
 			if (rite.isUnstained() || !rite.hasFogLightning()) {
 				continue;
 			}
@@ -58,6 +58,6 @@ public final class CardinalRiteFogLightningSchedule {
 		return value ^ (value >>> 31);
 	}
 
-	public record Strike(ActiveRiteClientData.RiteEntry rite, long seed) {
+	public record Strike(ActiveRiteData.RiteEntry rite, long seed) {
 	}
 }

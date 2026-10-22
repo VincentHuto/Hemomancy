@@ -1,11 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.data.BloodlinePoolClientData;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Server → Client: Syncs the current state of the shared bloodline pool
@@ -36,14 +34,20 @@ public class PacketSyncBloodlinePool implements CustomPacketPayload {
 		return new PacketSyncBloodlinePool(buf.readFloat(), buf.readFloat(), buf.readInt());
 	}
 
-	public static void handle(final PacketSyncBloodlinePool msg, final IPayloadContext ctx) {
-		ctx.enqueueWork(() -> {
-			BloodlinePoolClientData.set(msg.poolVolume, msg.poolMax, msg.memberCount);
-		});
-	}
-
 	@Override
 	public Type<? extends CustomPacketPayload> type() {
 		return TYPE;
+	}
+
+	public int memberCount() {
+		return memberCount;
+	}
+
+	public float poolMax() {
+		return poolMax;
+	}
+
+	public float poolVolume() {
+		return poolVolume;
 	}
 }

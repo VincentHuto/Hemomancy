@@ -13,11 +13,16 @@ public record AntecedentEffectPacket(int kind,BlockPos position) implements Cust
     public static final StreamCodec<FriendlyByteBuf,AntecedentEffectPacket> STREAM_CODEC=StreamCodec.of(
             (b,p)->{b.writeVarInt(p.kind);b.writeBlockPos(p.position);},b->new AntecedentEffectPacket(b.readVarInt(),b.readBlockPos()));
     @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
-    public static void handle(AntecedentEffectPacket packet,IPayloadContext context) { context.enqueueWork(()->{
-        if(context.player() instanceof net.minecraft.server.level.ServerPlayer player) {
+    /** On the server it records the epilogue; on the client it plays the effect (ClientPayloadHandlers). */
+    public static void handle(AntecedentEffectPacket packet,IPayloadContext context) {
+        if(!(context.player() instanceof net.minecraft.server.level.ServerPlayer player)) {
+            ClientPayloadHandlers.dispatch(packet,context);
+            return;
+        }
+        context.enqueueWork(()->{
             var research=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.antecedent(player);
             if(packet.kind==4 && research.complete() && ProgressionGates.hasDegree(player, 7))
                 com.vincenthuto.hemomancy.common.antecedent.AntecedentKnowledge.record(player,com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch.Evidence.EPILOGUE);
-        } else com.vincenthuto.hemomancy.client.sound.AntecedentClientEffects.accept(packet);
-    }); }
+        });
+    }
 }

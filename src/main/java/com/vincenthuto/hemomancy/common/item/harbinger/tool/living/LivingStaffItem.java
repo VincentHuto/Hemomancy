@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
-import com.vincenthuto.hemomancy.client.render.item.harbinger.CellHandParticleEffects;
+import com.vincenthuto.hemomancy.common.util.ClientBridge;
 import com.vincenthuto.hemomancy.common.block.harbinger.BlockBloodInteractions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
@@ -63,7 +63,7 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		Level world = context.level();
 		if (world != null && world.isClientSide) {
-			net.minecraft.client.player.LocalPlayer player = net.minecraft.client.Minecraft.getInstance().player;
+			Player player = ClientBridge.get().localPlayer();
 			if (player != null) {
 				var progress = HemoCapabilityAccess.getLivingStaffProgress(player);
 				if (progress.isVesperMemoryAwakened()) {
@@ -235,7 +235,7 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 		if (context.getLevel().isClientSide && context.getPlayer() != null
 				&& context.getLevel().getBlockState(context.getClickedPos())
 						.is(com.vincenthuto.hemomancy.common.init.BlockInit.cardinal_focus.get())
-				&& com.vincenthuto.hemomancy.client.data.ActiveRiteClientData.getActiveRites().stream()
+				&& ClientBridge.get().activeRites().stream()
 						.noneMatch(rite -> context.getPlayer().getUUID().equals(rite.getOwner()))) {
 			return InteractionResult.SUCCESS;
 		}
@@ -396,7 +396,7 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 
 	@OnlyIn(Dist.CLIENT)
 	private static boolean isClientPlayerVesperAwakened() {
-		net.minecraft.client.player.LocalPlayer player = net.minecraft.client.Minecraft.getInstance().player;
+		Player player = ClientBridge.get().localPlayer();
 		return player != null && HemoCapabilityAccess.getLivingStaffProgress(player)
 				.isVesperMemoryAwakened();
 	}
@@ -406,7 +406,7 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 		HumanoidArm activeArm = player.getUsedItemHand() == InteractionHand.MAIN_HAND
 				? player.getMainArm()
 				: player.getMainArm().getOpposite();
-		CellHandParticleEffects.spawnFirstPersonParticlesForStack(stack, activeArm);
+		ClientBridge.get().spawnFirstPersonCellHandParticles(stack, activeArm);
 	}
 
 }

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.shared.armor;
 
-import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
 
 
 import com.vincenthuto.hemomancy.client.model.armor.HemolymphopodaHeadArmorModel;

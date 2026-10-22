@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
-import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.vincenthuto.hutoslib.common.lightning.LightningTestConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -16,7 +16,7 @@ final class CardinalRiteFogLightningTest {
 	@Test
 	void activeHarbingerRiteSchedulesOneStrikeWithoutRepeatingDuringTheSameTick() {
 		CardinalRiteFogLightningSchedule schedule = new CardinalRiteFogLightningSchedule();
-		ActiveRiteClientData.RiteEntry rite = rite(false);
+		ActiveRiteData.RiteEntry rite = rite(false);
 
 		for (long tick = 0; tick < 6; tick++) {
 			assertTrue(schedule.update(List.of(rite), tick).isEmpty());
@@ -37,7 +37,7 @@ final class CardinalRiteFogLightningTest {
 	@Test
 	void atmosphereWithoutLightningNeverSchedulesAStrike() {
 		CardinalRiteFogLightningSchedule schedule = new CardinalRiteFogLightningSchedule();
-		ActiveRiteClientData.RiteEntry denseButStill = rite(false, "dense", false);
+		ActiveRiteData.RiteEntry denseButStill = rite(false, "dense", false);
 
 		for (long tick = 0; tick < 80; tick++) {
 			assertTrue(schedule.update(List.of(denseButStill), tick).isEmpty());
@@ -81,13 +81,13 @@ final class CardinalRiteFogLightningTest {
 				"strike point escaped fog band: " + horizontalRadius);
 	}
 
-	private static ActiveRiteClientData.RiteEntry rite(boolean unstained) {
+	private static ActiveRiteData.RiteEntry rite(boolean unstained) {
 		return rite(unstained, unstained ? "none" : "storm", !unstained);
 	}
 
-	private static ActiveRiteClientData.RiteEntry rite(boolean unstained,
+	private static ActiveRiteData.RiteEntry rite(boolean unstained,
 			String fogProfile, boolean lightning) {
-		return new ActiveRiteClientData.RiteEntry(
+		return new ActiveRiteData.RiteEntry(
 				BlockPos.ZERO, 9, 0.0D,
 				ResourceLocation.fromNamespaceAndPath("hemomancy", "fog_lightning_test"),
 				unstained, "ORDEAL", 0, 0, 3, 3, 3,

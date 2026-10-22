@@ -1,14 +1,12 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.data.BloodFlowDiagnosticsClientData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowSnapshot;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,12 +64,12 @@ public class PacketSyncBloodFlowDiagnostics implements CustomPacketPayload {
 				bandwidth, used, remaining, windowTicks, enabled));
 	}
 
-	public static void handle(PacketSyncBloodFlowDiagnostics msg, IPayloadContext ctx) {
-		ctx.enqueueWork(() -> BloodFlowDiagnosticsClientData.set(msg.snapshot));
-	}
-
 	@Override
 	public Type<? extends CustomPacketPayload> type() {
 		return TYPE;
+	}
+
+	public BloodFlowSnapshot snapshot() {
+		return snapshot;
 	}
 }

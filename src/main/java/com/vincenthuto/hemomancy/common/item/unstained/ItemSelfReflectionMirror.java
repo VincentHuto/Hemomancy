@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.unstained;
 
-import com.vincenthuto.hemomancy.client.screen.skilltree.unstained.UnstainedProgressScreen;
+import com.vincenthuto.hemomancy.common.util.ClientBridge;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -17,7 +17,7 @@ public class ItemSelfReflectionMirror extends Item {
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		if (worldIn.isClientSide) {
-			UnstainedProgressScreen.openScreen();
+			ClientBridge.get().openUnstainedProgress();
 		}
 		return InteractionResultHolder.sidedSuccess(playerIn.getItemInHand(handIn), worldIn.isClientSide);
 	}

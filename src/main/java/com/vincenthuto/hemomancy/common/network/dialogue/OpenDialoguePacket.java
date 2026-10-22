@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Server → Client packet that carries a complete {@link DialogueTree} and
@@ -30,14 +29,6 @@ public class OpenDialoguePacket implements CustomPacketPayload {
 
 	public static OpenDialoguePacket decode(FriendlyByteBuf buf) {
 		return new OpenDialoguePacket(DialogueTree.fromNetwork(buf));
-	}
-
-	public static void handle(final OpenDialoguePacket msg, final IPayloadContext ctx) {
-		ctx.enqueueWork(() -> {
-			if (ctx.player() != null) {
-				com.vincenthuto.hemomancy.client.screen.dialogue.DialogueScreen.open(msg.tree);
-			}
-		});
 	}
 
 	@Override

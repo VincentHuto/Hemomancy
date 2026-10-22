@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.client.player.LivingWeaponPlayerPose;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.client.player.LocalPlayer;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingSpearItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.projectile.DirectedBloodOrbEntity;

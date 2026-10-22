@@ -104,7 +104,7 @@ public final class BloodProjectionStructureCraftingResourceTest {
 				"x >= row.length()");
 		assertContains("feed sync packet registered", packetHandler,
 				"PacketBloodStructureFeed.TYPE");
-		assertContains("feed packet targets client cache", feedPacket,
+		assertContains("feed packet targets client cache", read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/network/ClientboundEffectHandlers.java")),
 				"ActiveBloodStructureFeedClientData");
 		assertContains("client feed cache tracks positions", clientData,
 				"List<BlockPos>");

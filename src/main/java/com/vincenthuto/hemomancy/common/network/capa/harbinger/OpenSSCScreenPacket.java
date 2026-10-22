@@ -1,12 +1,10 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.screen.tile.functional.SSCScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,10 +95,6 @@ public class OpenSSCScreenPacket implements CustomPacketPayload {
 
     // ── Handler ──────────────────────────────────────────────────────────────
 
-    public static void handle(final OpenSSCScreenPacket msg, final IPayloadContext ctx) {
-        ctx.enqueueWork(() -> SSCScreen.open(msg.pos, msg.sscBlood, msg.sscMaxBlood, msg.drudges));
-    }
-
     // ── Accessors ────────────────────────────────────────────────────────────
 
     public BlockPos getPos()          { return pos; }
@@ -111,5 +105,21 @@ public class OpenSSCScreenPacket implements CustomPacketPayload {
     @Override
     public Type<? extends CustomPacketPayload> type() {
         return TYPE;
+    }
+
+    public List<DrudgeEntry> drudges() {
+        return drudges;
+    }
+
+    public BlockPos pos() {
+        return pos;
+    }
+
+    public double sscBlood() {
+        return sscBlood;
+    }
+
+    public double sscMaxBlood() {
+        return sscMaxBlood;
     }
 }

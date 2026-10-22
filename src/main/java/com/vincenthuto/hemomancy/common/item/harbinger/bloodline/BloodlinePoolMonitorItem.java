@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.bloodline;
 
-import com.vincenthuto.hemomancy.client.screen.item.BloodlinePoolScreen;
+import com.vincenthuto.hemomancy.common.util.ClientBridge;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -27,7 +27,7 @@ public class BloodlinePoolMonitorItem extends Item {
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 		if (level.isClientSide) {
-			BloodlinePoolScreen.openScreen();
+			ClientBridge.get().openBloodlinePool();
 		}
 		return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
 	}

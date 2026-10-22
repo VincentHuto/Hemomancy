@@ -1,14 +1,12 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.render.item.harbinger.CellHandParticleEffects;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /** Draws an offering out of a brazier into the channelling player's hand, for every player near the brazier. */
 public record SpawnBrazierItemAbsorptionParticlesPacket(int casterId, Vec3 source, ItemStack stack)
@@ -36,11 +34,6 @@ public record SpawnBrazierItemAbsorptionParticlesPacket(int casterId, Vec3 sourc
 		Vec3 source = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
 		ItemStack stack = ItemStack.OPTIONAL_STREAM_CODEC.decode((RegistryFriendlyByteBuf) buf);
 		return new SpawnBrazierItemAbsorptionParticlesPacket(casterId, source, stack);
-	}
-
-	public static void handle(SpawnBrazierItemAbsorptionParticlesPacket packet, IPayloadContext ctx) {
-		ctx.enqueueWork(() -> CellHandParticleEffects.spawnBrazierItemAbsorptionParticles(
-				packet.casterId, packet.stack, packet.source));
 	}
 
 	@Override

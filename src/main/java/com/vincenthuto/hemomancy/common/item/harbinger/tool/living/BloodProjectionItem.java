@@ -2,8 +2,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.CellHandRules;
-import com.vincenthuto.hemomancy.client.registry.ModelRegistrar;
-import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.CellHandItemRenderer;
 import com.vincenthuto.hemomancy.common.block.harbinger.BlockBloodInteractions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -20,7 +19,6 @@ import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteProjectionRes
 import com.vincenthuto.hemomancy.common.tile.ProjectedBloodSink;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -43,11 +41,6 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 
 	public BloodProjectionItem(Properties prop) {
 		super(prop.stacksTo(1));
-	}
-
-	@Override
-	public BakedModel getBakedModel() {
-		return ModelRegistrar.bloodProjectionModel;
 	}
 
 	@Override

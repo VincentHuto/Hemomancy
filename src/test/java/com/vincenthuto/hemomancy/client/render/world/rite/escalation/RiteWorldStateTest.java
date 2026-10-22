@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world.rite.escalation;
 
-import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteEventKind;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteInstability;
@@ -26,19 +26,19 @@ final class RiteWorldStateTest {
 		RiteWorldState.clear();
 	}
 
-	static ActiveRiteClientData.RiteEntry entry(BlockPos center, String phase, int stage, int total,
+	static ActiveRiteData.RiteEntry entry(BlockPos center, String phase, int stage, int total,
 			boolean unstained, int instability) {
-		return new ActiveRiteClientData.RiteEntry(center, 5, 0.0D,
+		return new ActiveRiteData.RiteEntry(center, 5, 0.0D,
 				ResourceLocation.parse("hemomancy:cardinal_rite/world_test"), unstained, phase, instability, 0, 0, 1, 1,
 				0, 0, 0, 0, 0, "", 8.0F, List.of(), List.of(), List.of(), List.of(), true, UUID.randomUUID(), 0, -1,
 				"storm", true, true, 0).withEscalation(stage, total);
 	}
 
-	static ActiveRiteClientData.RiteEntry entry(BlockPos center, String phase, int stage, int total) {
+	static ActiveRiteData.RiteEntry entry(BlockPos center, String phase, int stage, int total) {
 		return entry(center, phase, stage, total, false, 0);
 	}
 
-	private static void tick(List<ActiveRiteClientData.RiteEntry> active,
+	private static void tick(List<ActiveRiteData.RiteEntry> active,
 			List<CardinalRiteEventClientState.Ghost> ghosts) {
 		RiteWorldState.tick(active, ghosts, center -> WORKING);
 	}
@@ -68,7 +68,7 @@ final class RiteWorldStateTest {
 
 	@Test
 	void ghostsDecideHowTheWorldLetsGo() {
-		ActiveRiteClientData.RiteEntry live = entry(FOCUS, "CULMINATION", 4, 4);
+		ActiveRiteData.RiteEntry live = entry(FOCUS, "CULMINATION", 4, 4);
 		tick(List.of(live), List.of());
 		var ghost = new CardinalRiteEventClientState.Ghost(live, CardinalRiteEventKind.COMPLETED, "ascension", 0L);
 		tick(List.of(), List.of(ghost));
@@ -84,7 +84,7 @@ final class RiteWorldStateTest {
 
 	@Test
 	void aLateEndingBeatStillNamesTheEnding() {
-		ActiveRiteClientData.RiteEntry live = entry(FOCUS, "ORDEAL", 2, 5);
+		ActiveRiteData.RiteEntry live = entry(FOCUS, "ORDEAL", 2, 5);
 		tick(List.of(live), List.of());
 		tick(List.of(), List.of());
 		assertEquals(RiteWorldMath.Ending.VANISHED, RiteWorldState.at(FOCUS).ending());

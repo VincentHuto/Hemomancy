@@ -25,7 +25,7 @@ public final class LivingStaffUtilitySourceTest {
 		assertContains("staff utility selection uses the shared name rule",
 				staff, "LivingStaffUtilitySelectionRules.isSelectedUtility");
 		assertContains("staff emits the shared cell-hand first-person particles while held",
-				staff, "CellHandParticleEffects.spawnFirstPersonParticlesForStack");
+				staff, "ClientBridge.get().spawnFirstPersonCellHandParticles(stack, activeArm)");
 		assertContains("third-person blood hand layer recognizes active living staff utility use",
 				layer, "CellHandParticleEffects.isStaffChannel(living, stack)");
 		assertContains("staff utility use sends the shared cell-hand cast cue",

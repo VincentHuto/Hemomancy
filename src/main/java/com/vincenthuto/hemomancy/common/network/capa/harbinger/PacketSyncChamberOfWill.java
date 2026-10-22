@@ -1,13 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.data.ChamberOfWillClientData;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class PacketSyncChamberOfWill implements CustomPacketPayload {
 	public static final Type<PacketSyncChamberOfWill> TYPE =
@@ -36,10 +34,6 @@ public class PacketSyncChamberOfWill implements CustomPacketPayload {
 
 	public static PacketSyncChamberOfWill decode(FriendlyByteBuf buf) {
 		return new PacketSyncChamberOfWill(buf.readResourceLocation(), buf.readInt(), buf.readInt(), buf.readInt());
-	}
-
-	public static void handle(PacketSyncChamberOfWill msg, IPayloadContext ctx) {
-		ctx.enqueueWork(() -> ChamberOfWillClientData.set(msg.skyTheme, msg.tier, msg.radius, msg.qliphothPomesConsumed));
 	}
 
 	public ResourceLocation skyTheme() {

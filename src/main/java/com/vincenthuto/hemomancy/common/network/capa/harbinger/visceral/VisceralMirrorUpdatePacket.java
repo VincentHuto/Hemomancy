@@ -1,14 +1,12 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.visceral;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.screen.tile.functional.VisceralMirrorScreen;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.EnumOrgan;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.VisceralMirrorBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Server → Client packet that carries ritual progress updates so the
@@ -61,14 +59,6 @@ public class VisceralMirrorUpdatePacket implements CustomPacketPayload {
 				? EnumOrgan.values()[organOrd] : null;
 
 		return new VisceralMirrorUpdatePacket(pos, phase, ritualTicks, totalRitualTicks, organ, statusMsg);
-	}
-
-	public static void handle(final VisceralMirrorUpdatePacket msg, final IPayloadContext ctx) {
-		ctx.enqueueWork(() -> {
-			if (ctx.player() != null) {
-				VisceralMirrorScreen.applyServerUpdate(msg);
-			}
-		});
 	}
 
 	public BlockPos getPos() { return pos; }

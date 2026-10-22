@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.unstained.tile;
 
-import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
 
 
 import com.vincenthuto.hemomancy.client.render.item.tile.unstained.SuspendedCleansedBloodCrystalItemRenderer;

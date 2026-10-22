@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world.rite.escalation;
 
-import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteInstability;
@@ -54,7 +54,7 @@ public final class RiteWorldState {
 	}
 
 	private static final class Tracked {
-		private ActiveRiteClientData.RiteEntry entry;
+		private ActiveRiteData.RiteEntry entry;
 		private float target;
 		private float level;
 		private float previous;
@@ -73,10 +73,10 @@ public final class RiteWorldState {
 	}
 
 	/** Advances one client tick from the synced rites, the ghosts of ended ones, and the floors under them. */
-	public static void tick(List<ActiveRiteClientData.RiteEntry> active,
+	public static void tick(List<ActiveRiteData.RiteEntry> active,
 			List<CardinalRiteEventClientState.Ghost> ghosts, Function<BlockPos, RiteFloor> floors) {
 		for (Tracked tracked : TRACKED.values()) tracked.seen = false;
-		for (ActiveRiteClientData.RiteEntry entry : active) {
+		for (ActiveRiteData.RiteEntry entry : active) {
 			if (entry.isUnstained() || entry.isLegacy() || entry.getEscalationTotal() <= 0) continue;
 			float target = RiteWorldMath.level(entry.getEscalation(), entry.getEscalationTotal());
 			Tracked tracked = TRACKED.get(entry.getCenter());
@@ -193,7 +193,7 @@ public final class RiteWorldState {
 	}
 
 	private static World world(BlockPos center, Tracked tracked) {
-		ActiveRiteClientData.RiteEntry entry = tracked.entry;
+		ActiveRiteData.RiteEntry entry = tracked.entry;
 		return new World(center, entry.getOwner(), tracked.level, tracked.previous, tracked.surge, tracked.stage,
 				entry.getEscalationTotal(), CardinalRiteCeremonyRules.instabilityBand(entry.getInstability()),
 				entry.getFootprintRadius(), entry.getFogProfile(), entry.hasFogLightning(), entry.ritePhase(),

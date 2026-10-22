@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.armor;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.item.SpecialBloodLustClientExtensions;
 import com.vincenthuto.hemomancy.common.item.shared.armor.PlayerLayerHidingArmor;
 import net.minecraft.ChatFormatting;

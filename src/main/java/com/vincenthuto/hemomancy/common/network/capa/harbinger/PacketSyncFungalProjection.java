@@ -1,11 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.screen.overlay.FungalWhisperVignetteOverlay;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record PacketSyncFungalProjection(boolean active, int remainingTicks, int totalTicks)
 		implements CustomPacketPayload {
@@ -22,11 +20,6 @@ public record PacketSyncFungalProjection(boolean active, int remainingTicks, int
 
 	private static PacketSyncFungalProjection decode(FriendlyByteBuf buffer) {
 		return new PacketSyncFungalProjection(buffer.readBoolean(), buffer.readVarInt(), buffer.readVarInt());
-	}
-
-	public static void handle(PacketSyncFungalProjection packet, IPayloadContext context) {
-		context.enqueueWork(() -> FungalWhisperVignetteOverlay.setProjectionState(
-				packet.active, packet.remainingTicks, packet.totalTicks));
 	}
 
 	@Override

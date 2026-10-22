@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
+import com.vincenthuto.hemomancy.common.util.ClientBridge;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -159,7 +159,7 @@ public final class TendencyWeaponHelper {
 		tooltip.add(Component.literal(String.format(Locale.ROOT, "Opposing damage: x%.2f - x%.2f",
 				BASE_DAMAGE_MULTIPLIER, MAX_DAMAGE_MULTIPLIER)).withStyle(ChatFormatting.GRAY));
 
-		Player player = Minecraft.getInstance().player;
+		Player player = ClientBridge.get().localPlayer();
 		if (player != null) {
 			float alignment = getAlignmentValue(player, weaponTendency);
 			float multiplier = getDamageMultiplier(player, weaponTendency);

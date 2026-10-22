@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
@@ -48,7 +49,7 @@ public class UnstainedRiteBoundaryRenderer {
 	private static final float GROUND_Y = 0.065f;
 
 	public static void render(PoseStack poseStack, float partialTick) {
-		List<ActiveRiteClientData.RiteEntry> rites = ActiveRiteClientData.getActiveRites();
+		List<ActiveRiteData.RiteEntry> rites = ActiveRiteClientData.getActiveRites();
 		if (rites.isEmpty()) return;
 
 		Minecraft mc = Minecraft.getInstance();
@@ -60,14 +61,14 @@ public class UnstainedRiteBoundaryRenderer {
 
 		// Two passes: glow first, then core — prevents buffer-flush issues in NeoForge
 		VertexConsumer glowVC = buffer.getBuffer(RenderTypeInit.UNSTAINED_RITE_BOUNDARY_GLOW);
-		for (ActiveRiteClientData.RiteEntry rite : rites) {
+		for (ActiveRiteData.RiteEntry rite : rites) {
 			if (!rite.isUnstained()) continue;
 			drawRhombusLayers(poseStack, glowVC, null, rite, currentTime, cam);
 		}
 		buffer.endBatch(RenderTypeInit.UNSTAINED_RITE_BOUNDARY_GLOW);
 
 		VertexConsumer coreVC = buffer.getBuffer(RenderTypeInit.UNSTAINED_RITE_BOUNDARY_CORE);
-		for (ActiveRiteClientData.RiteEntry rite : rites) {
+		for (ActiveRiteData.RiteEntry rite : rites) {
 			if (!rite.isUnstained()) continue;
 			drawRhombusLayers(poseStack, null, coreVC, rite, currentTime, cam);
 		}
@@ -79,7 +80,7 @@ public class UnstainedRiteBoundaryRenderer {
 	// ════════════════════════════════════════════════════════════════════════
 
 	private static void drawRhombusLayers(PoseStack stack, VertexConsumer glowVC, VertexConsumer coreVC,
-			ActiveRiteClientData.RiteEntry rite, float currentTime, Vec3 cam) {
+			ActiveRiteData.RiteEntry rite, float currentTime, Vec3 cam) {
 
 		BlockPos center = rite.getCenter();
 		float baseRadius = (float) (rite.getRiteSize() / 2.0 + 1.0);

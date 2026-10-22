@@ -83,7 +83,7 @@ public final class SilentSeveranceDislocationSourceTest {
 				"buffer.writeVarInt(packet.entityId())");
 		assertContains("visual packet writes duration", visualPacket,
 				"buffer.writeVarInt(packet.durationTicks())");
-		assertContains("visual packet updates client state", visualPacket,
+		assertContains("visual packet updates client state", read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/network/ClientboundEffectHandlers.java")),
 				"MonolithicDislocationClientState.markActive(packet.entityId(), packet.durationTicks())");
 
 		assertContains("docs mention dislocation", docs, "Monolithic Dislocation");

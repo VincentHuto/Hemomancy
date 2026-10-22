@@ -10,7 +10,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.InteractionHand;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 import java.util.UUID;
 
 /** Harbinger packets carry school/rank/purpose; Unstained (Still Art) packets carry stage/ending and leave those null. */
@@ -58,9 +57,6 @@ public record CastingAnimationPacket(int entityId, UUID playerId, String manipul
         return new CastingAnimationPacket(entityId,playerId,manipulation,sequence,school,secondary,rank,purpose,
                 b.readEnum(CastStyle.class),b.readEnum(CastPhase.class),b.readLong(),b.readLong(),b.readVarInt(),b.readVarInt(),
                 b.readEnum(InteractionHand.class),lane,stage,ending);
-    }
-    public static void handle(CastingAnimationPacket packet,IPayloadContext context) {
-        context.enqueueWork(() -> com.vincenthuto.hemomancy.client.player.CastingAnimationClientState.accept(packet));
     }
     public CastingAnimationPacket at(CastPhase next,long start,long now,int ticks) {
         return new CastingAnimationPacket(entityId,playerId,manipulation,sequence,school,secondary,rank,purpose,style,

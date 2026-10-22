@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.scar;
 
+import com.vincenthuto.hemomancy.common.util.ClientBridge;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.ScarPatternItemRenderer;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
@@ -168,13 +169,12 @@ public class ItemScarPattern extends Item implements HemoClientItemExtensionsPro
 		return null;
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	private static ScarRecipe getRecipeFromClientLevel(String recipePath) {
-		net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
-		if (mc.level == null) {
+		Level level = ClientBridge.get().clientLevel();
+		if (level == null) {
 			return null;
 		}
-		return getRecipeFromLevel(mc.level, recipePath);
+		return getRecipeFromLevel(level, recipePath);
 	}
 
 	@Override

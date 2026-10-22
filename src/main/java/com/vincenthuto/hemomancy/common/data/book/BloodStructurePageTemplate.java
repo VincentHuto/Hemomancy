@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.data.book;
 
+import com.vincenthuto.hemomancy.common.util.ClientBridge;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.vincenthuto.hemomancy.client.screen.item.guide.HemoBloodStructureGuidePage;
 import com.vincenthuto.hutoslib.client.HLLocHelper;
 import com.vincenthuto.hutoslib.common.data.book.BookCodeModel;
 import com.vincenthuto.hutoslib.common.data.book.BookDataTemplate;
@@ -49,7 +49,7 @@ public class BloodStructurePageTemplate extends PageTemplate {
 	@Override
 	public com.vincenthuto.hutoslib.client.screen.guide.BookBodyRenderer getBodyRenderer() {
 		return super.getBodyRenderer() != null ? super.getBodyRenderer()
-				: com.vincenthuto.hemomancy.client.screen.item.guide.BloodStructureBookRenderer.INSTANCE;
+				: ClientBridge.get().bloodStructureBookRenderer();
 	}
 	@Override
 	public PSerializer<? extends BookDataTemplate> getSerializer() {
@@ -59,6 +59,6 @@ public class BloodStructurePageTemplate extends PageTemplate {
 
 	@Override
 	public void getPageScreen(int pageNum, BookCodeModel book, ChapterTemplate chapter) {
-		HemoBloodStructureGuidePage.openScreenViaItem(pageNum, book, chapter);
+		ClientBridge.get().openBloodStructureGuidePage(pageNum, book, chapter);
 	}
 }

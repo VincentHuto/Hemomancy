@@ -11,7 +11,7 @@ import net.minecraft.world.phys.AABB;
 /**
  * Minimal block entity for the {@link SanguineConduitBlock}.
  * Holds no persistent data; its sole purpose is to be the anchor for the BER
- * ({@link com.vincenthuto.hemomancy.client.render.tile.harbinger.functional.SanguineConduitBlockRenderer})
+ * ({@code SanguineConduitBlockRenderer})
  * that draws the pulsing blood-oath rings around the placed conduit.
  */
 public class SanguineConduitBlockEntity extends BlockEntity {

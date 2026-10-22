@@ -1,14 +1,12 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.data.ManipulationCostDiagnosticsClientData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostContribution;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostSnapshot;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,12 +57,12 @@ public class PacketSyncManipulationCostDiagnostics implements CustomPacketPayloa
 				discount, surcharge, total, effective));
 	}
 
-	public static void handle(PacketSyncManipulationCostDiagnostics msg, IPayloadContext ctx) {
-		ctx.enqueueWork(() -> ManipulationCostDiagnosticsClientData.set(msg.snapshot));
-	}
-
 	@Override
 	public Type<? extends CustomPacketPayload> type() {
 		return TYPE;
+	}
+
+	public ManipulationCostSnapshot snapshot() {
+		return snapshot;
 	}
 }

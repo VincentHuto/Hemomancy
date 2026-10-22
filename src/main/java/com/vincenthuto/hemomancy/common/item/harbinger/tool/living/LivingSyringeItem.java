@@ -1,14 +1,14 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
+import com.vincenthuto.hemomancy.common.util.ClientBridge;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData;
-import com.vincenthuto.hemomancy.client.particle.util.EntityParticleUtils;
+import com.vincenthuto.hemomancy.common.particle.EntityParticleUtils;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodSamplingResult;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodSamplingRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
@@ -53,7 +53,7 @@ public class LivingSyringeItem extends LivingItem {
 			ItemStack rack = getLoadedRack(stack);
 			tooltip.add(Component.translatable("item.hemomancy.living_syringe.loaded",
 					VialRackItem.countEmptyVials(rack), VialRackItem.MAX_VIALS));
-			if (Screen.hasShiftDown()) {
+			if (ClientBridge.get().hasShiftDown()) {
 				VialRackItem.appendContentsTooltip(rack, tooltip);
 			} else if (VialRackItem.countEmptyVials(rack) < VialRackItem.MAX_VIALS) {
 				tooltip.add(Component.translatable("item.hemomancy.vial_rack.shift_hint")

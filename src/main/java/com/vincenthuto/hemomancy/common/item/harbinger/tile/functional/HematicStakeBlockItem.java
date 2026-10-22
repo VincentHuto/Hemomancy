@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tile.functional;
 
-import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.tile.harbinger.functional.HematicStakeItemRenderer;
 
 import net.minecraft.client.Minecraft;

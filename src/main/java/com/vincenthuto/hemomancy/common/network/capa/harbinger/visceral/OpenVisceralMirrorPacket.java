@@ -1,13 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.visceral;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.screen.tile.functional.VisceralMirrorScreen;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.EnumOrgan;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Server → Client packet that tells the client to open the Visceral Mirror
@@ -63,18 +61,32 @@ public class OpenVisceralMirrorPacket implements CustomPacketPayload {
 		return new OpenVisceralMirrorPacket(pos, organLevels, hasEcho, bloodVolume, maxBloodVolume, degree);
 	}
 
-	public static void handle(final OpenVisceralMirrorPacket msg, final IPayloadContext ctx) {
-		ctx.enqueueWork(() -> {
-			if (ctx.player() != null) {
-				VisceralMirrorScreen.open(
-						msg.pos, msg.organLevels, msg.hasEcho,
-						msg.bloodVolume, msg.maxBloodVolume, msg.degree);
-			}
-		});
-	}
-
 	@Override
 	public Type<? extends CustomPacketPayload> type() {
 		return TYPE;
+	}
+
+	public double bloodVolume() {
+		return bloodVolume;
+	}
+
+	public int degree() {
+		return degree;
+	}
+
+	public boolean[] hasEcho() {
+		return hasEcho;
+	}
+
+	public double maxBloodVolume() {
+		return maxBloodVolume;
+	}
+
+	public int[] organLevels() {
+		return organLevels;
+	}
+
+	public BlockPos pos() {
+		return pos;
 	}
 }

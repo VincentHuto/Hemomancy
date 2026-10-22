@@ -1,14 +1,12 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.data.ManipulationSlotDiagnosticsClientData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationSlotContribution;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationSlotContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationSlotSnapshot;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,12 +55,12 @@ public class PacketSyncManipulationSlotDiagnostics implements CustomPacketPayloa
 				requested, max, applied, capped));
 	}
 
-	public static void handle(PacketSyncManipulationSlotDiagnostics msg, IPayloadContext ctx) {
-		ctx.enqueueWork(() -> ManipulationSlotDiagnosticsClientData.set(msg.snapshot));
-	}
-
 	@Override
 	public Type<? extends CustomPacketPayload> type() {
 		return TYPE;
+	}
+
+	public ManipulationSlotSnapshot snapshot() {
+		return snapshot;
 	}
 }

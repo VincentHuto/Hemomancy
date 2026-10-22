@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tile.rite;
 
-import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
 
 
 import com.vincenthuto.hemomancy.client.render.item.tile.harbinger.rite.SuspendedVivianiteItemRenderer;

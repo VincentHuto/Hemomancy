@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite.zone;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.render.world.zone.RiteSpaceClientData;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePurpose;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorVisualRules;
 import io.netty.buffer.ByteBuf;
@@ -9,7 +8,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.List;
 
@@ -45,10 +43,6 @@ public record RiteSpaceSyncPacket(List<Space> spaces) implements CustomPacketPay
 	public static final StreamCodec<ByteBuf, RiteSpaceSyncPacket> STREAM_CODEC = Space.STREAM_CODEC
 			.apply(ByteBufCodecs.list(MAX_SPACES))
 			.map(RiteSpaceSyncPacket::new, RiteSpaceSyncPacket::spaces);
-
-	public static void handle(RiteSpaceSyncPacket packet, IPayloadContext context) {
-		context.enqueueWork(() -> RiteSpaceClientData.set(packet.spaces()));
-	}
 
 	@Override
 	public Type<? extends CustomPacketPayload> type() {

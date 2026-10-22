@@ -1,13 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.player.LivingStaffMorphClientState;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record PacketLivingStaffMorph(int casterEntityId, ItemStack beforeMain, ItemStack afterMain,
 		ItemStack beforeOff, ItemStack afterOff) implements CustomPacketPayload {
@@ -43,10 +41,6 @@ public record PacketLivingStaffMorph(int casterEntityId, ItemStack beforeMain, I
 				ItemStack.OPTIONAL_STREAM_CODEC.decode(registryBuffer),
 				ItemStack.OPTIONAL_STREAM_CODEC.decode(registryBuffer),
 				ItemStack.OPTIONAL_STREAM_CODEC.decode(registryBuffer));
-	}
-
-	public static void handle(PacketLivingStaffMorph packet, IPayloadContext context) {
-		context.enqueueWork(() -> LivingStaffMorphClientState.start(packet));
 	}
 
 	@Override

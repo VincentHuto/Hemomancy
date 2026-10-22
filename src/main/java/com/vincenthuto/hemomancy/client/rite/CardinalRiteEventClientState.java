@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.rite;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.client.render.world.rite.escalation.RiteWorldState;
 import com.vincenthuto.hemomancy.client.render.world.rite.escalation.RingTear;
@@ -37,7 +38,7 @@ public final class CardinalRiteEventClientState {
 		}
 	}
 
-	public record Ghost(ActiveRiteClientData.RiteEntry entry, CardinalRiteEventKind kind, String style,
+	public record Ghost(ActiveRiteData.RiteEntry entry, CardinalRiteEventKind kind, String style,
 			long startTick) {
 		public float age(float partialTick) {
 			return clientTicks - startTick + partialTick;
@@ -61,8 +62,8 @@ public final class CardinalRiteEventClientState {
 					RingOpeningMath.depth(packet.index(), RingTear.ringsOf(packet.style()))));
 		}
 		if (packet.kind().terminal()) {
-			ActiveRiteClientData.RiteEntry ended = null;
-			for (ActiveRiteClientData.RiteEntry entry : ActiveRiteClientData.getActiveRites()) {
+			ActiveRiteData.RiteEntry ended = null;
+			for (ActiveRiteData.RiteEntry entry : ActiveRiteClientData.getActiveRites()) {
 				if (entry.getCenter().equals(packet.center())) {
 					ended = entry;
 					break;

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.util;
 
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumNodeShape;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;

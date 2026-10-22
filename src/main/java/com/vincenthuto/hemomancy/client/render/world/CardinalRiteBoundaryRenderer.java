@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -165,7 +166,7 @@ public class CardinalRiteBoundaryRenderer {
 	public static void render(PoseStack poseStack, float partialTick) {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.level == null) return;
-		List<ActiveRiteClientData.RiteEntry> rites = ActiveRiteClientData.getActiveRites();
+		List<ActiveRiteData.RiteEntry> rites = ActiveRiteClientData.getActiveRites();
 		MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
 		float currentTime = mc.level.getGameTime() + partialTick;
 		Camera camera = mc.gameRenderer.getMainCamera();
@@ -238,10 +239,10 @@ public class CardinalRiteBoundaryRenderer {
 	// ════════════════════════════════════════════════════════════════════════
 
 	private static List<RiteFrame> prepareFrames(Minecraft mc, PoseStack stack,
-			List<ActiveRiteClientData.RiteEntry> rites, float time, float partialTick, Vec3 cam) {
+			List<ActiveRiteData.RiteEntry> rites, float time, float partialTick, Vec3 cam) {
 		List<RiteFrame> frames = new ArrayList<>(rites.size() + 1);
 		int renderDistance = mc.options.renderDistance().get();
-		for (ActiveRiteClientData.RiteEntry rite : rites) {
+		for (ActiveRiteData.RiteEntry rite : rites) {
 			if (rite.isUnstained()) continue;
 			CardinalRiteEventClientState.Ghost ghost = CardinalRiteEventClientState.ghostAt(rite.getCenter());
 			if (ghost != null && supersedes(ghost, rite, partialTick)) continue;
@@ -264,14 +265,14 @@ public class CardinalRiteBoundaryRenderer {
 	 * be sending the last snapshots of the same rite.
 	 */
 	private static boolean supersedes(CardinalRiteEventClientState.Ghost ghost,
-			ActiveRiteClientData.RiteEntry live, float partialTick) {
+			ActiveRiteData.RiteEntry live, float partialTick) {
 		if (ghost.entry() == live) return true;
 		if (!Objects.equals(ghost.entry().getRecipeId(), live.getRecipeId())) return false;
 		return live.isPhase(CardinalRitePhase.COMPLETE) || live.isPhase(CardinalRitePhase.COLLAPSED)
 				|| ghost.age(partialTick) < CardinalRiteEndingRules.duration(ghost.kind());
 	}
 
-	private static RiteFrame buildFrame(Minecraft mc, PoseStack stack, ActiveRiteClientData.RiteEntry rite,
+	private static RiteFrame buildFrame(Minecraft mc, PoseStack stack, ActiveRiteData.RiteEntry rite,
 			CardinalRiteEventKind ending, float endingAge, float time, float partialTick, Vec3 cam,
 			int renderDistance) {
 		BlockPos center = rite.getCenter();
@@ -345,7 +346,7 @@ public class CardinalRiteBoundaryRenderer {
 		return frame;
 	}
 
-	private static List<CardinalRiteBoundaryProgress.Segment> visibleArcs(ActiveRiteClientData.RiteEntry rite,
+	private static List<CardinalRiteBoundaryProgress.Segment> visibleArcs(ActiveRiteData.RiteEntry rite,
 			CardinalRiteCeremonyLayout layout, boolean legacy, int ring, float partialTick) {
 		if (legacy) return List.of(new CardinalRiteBoundaryProgress.Segment(ring, 0.0D, Math.PI * 2.0D));
 		List<CardinalRiteBoundaryProgress.Segment> arcs = new ArrayList<>(4);
@@ -1017,7 +1018,7 @@ public class CardinalRiteBoundaryRenderer {
 
 	private static void drawSigilSegments(PoseStack stack, VertexConsumer consumer, RiteFrame frame,
 			float currentTime, Vec3 cam, boolean glow) {
-		ActiveRiteClientData.RiteEntry rite = frame.entry;
+		ActiveRiteData.RiteEntry rite = frame.entry;
 		if (rite.getSigilSegments().isEmpty() || frame.fade <= 0.001F) return;
 		float beat = frame.heartbeat;
 		float halfWidth = glow ? 0.18F : 0.055F;
@@ -1025,7 +1026,7 @@ public class CardinalRiteBoundaryRenderer {
 		Matrix4f matrix = stack.last().pose();
 		IchorianSigilRenderPalette.Color vesselColor = IchorianSigilRenderPalette.vessel(glow);
 		List<IchorianSigilOrganicGeometry.Sample> samples = new ArrayList<>(SIGIL_VESSEL_SEGMENTS + 1);
-		for (ActiveRiteClientData.SigilSegment segment : rite.getSigilSegments()) {
+		for (ActiveRiteData.SigilSegment segment : rite.getSigilSegments()) {
 			long seed = Double.doubleToLongBits(segment.startX())
 					^ Long.rotateLeft(Double.doubleToLongBits(segment.startZ()), 17)
 					^ Long.rotateLeft(Double.doubleToLongBits(segment.endX()), 31)
@@ -1071,8 +1072,8 @@ public class CardinalRiteBoundaryRenderer {
 		float partialTick = currentTime - (float) Math.floor(currentTime);
 		// On a consecrated floor the anchors are sores in it; an orb there would sit on the pit and clip the floor.
 		boolean sored = AnchorSores.opened(frame.entry.getCenter(), (long) Math.floor(currentTime));
-		for (ActiveRiteClientData.SanguineBlob blob : frame.entry.getSanguineBlobs()) {
-			boolean boundaryAnchor = blob.kind() == ActiveRiteClientData.NodeKind.BOUNDARY_ANCHOR;
+		for (ActiveRiteData.SanguineBlob blob : frame.entry.getSanguineBlobs()) {
+			boolean boundaryAnchor = blob.kind() == ActiveRiteData.NodeKind.BOUNDARY_ANCHOR;
 			if (boundaryAnchor && sored) continue;
 			float radius = CardinalRiteBoundaryGeometry.landmarkRenderRadius(
 					blob.renderRadius(partialTick), boundaryAnchor, glow) * frame.fade;
@@ -1091,7 +1092,7 @@ public class CardinalRiteBoundaryRenderer {
 
 	private static void drawStaffTendrils(PoseStack poseStack, VertexConsumer consumer, RiteFrame frame,
 			float currentTime, float partialTick, Vec3 camera, boolean glowPass) {
-		ActiveRiteClientData.RiteEntry rite = frame.entry;
+		ActiveRiteData.RiteEntry rite = frame.entry;
 		if (!rite.hasPlantedStaff()) return;
 		float visibilityProgress = CardinalRiteStaffTendrilGeometry.visibilityProgress(
 				rite.staffPlantingRenderTicks(partialTick), staffMeltTicks(frame, partialTick));
@@ -1109,7 +1110,7 @@ public class CardinalRiteBoundaryRenderer {
 	private static void drawPlantedStaff(PoseStack poseStack, MultiBufferSource.BufferSource buffer,
 			RiteFrame frame, Vec3 camera, float partialTick) {
 		Minecraft mc = Minecraft.getInstance();
-		ActiveRiteClientData.RiteEntry rite = frame.entry;
+		ActiveRiteData.RiteEntry rite = frame.entry;
 		CardinalRitePlantedStaffGeometry.AbsorptionPose plantedPose =
 				CardinalRitePlantedStaffGeometry.absorptionPose(rite.getCenter(), staffMeltTicks(frame, partialTick));
 		if (plantedPose.scale() <= 0.001F || plantedPose.opacity() <= 0.001F) return;
@@ -1176,7 +1177,7 @@ public class CardinalRiteBoundaryRenderer {
 
 	private static void drawExteriorField(PoseStack poseStack, MultiBufferSource.BufferSource buffer,
 			RiteFrame frame, float currentTime, Vec3 cam) {
-		ActiveRiteClientData.RiteEntry rite = frame.entry;
+		ActiveRiteData.RiteEntry rite = frame.entry;
 		if (!rite.hasBoundaryDome()) return;
 		if (!CardinalRiteBoundaryGeometry.shouldRenderExterior(rite.getTotalRings())) return;
 		float fogPerimeterRadius = CardinalRiteFogGeometry.perimeterRadius(
@@ -1203,7 +1204,7 @@ public class CardinalRiteBoundaryRenderer {
 		if (mc.level == null) return;
 		for (RiteFrame frame : frames) {
 			if (frame.legacy || frame.ending != null) continue;
-			ActiveRiteClientData.RiteEntry rite = frame.entry;
+			ActiveRiteData.RiteEntry rite = frame.entry;
 			for (CardinalRiteBoundaryProgress.Segment segment : rite.getBoundarySegments()) {
 				if (!rite.consumeBoundaryCompletion(segment)) continue;
 				float ringRadius = segment.ring() >= 0 && segment.ring() < frame.rings.length
@@ -1265,7 +1266,7 @@ public class CardinalRiteBoundaryRenderer {
 	// ════════════════════════════════════════════════════════════════════════
 
 	private static final class RiteFrame {
-		private final ActiveRiteClientData.RiteEntry entry;
+		private final ActiveRiteData.RiteEntry entry;
 		/** How the rite ended, or {@code null} while it is live. */
 		private final CardinalRiteEventKind ending;
 		private final float endingAge;
@@ -1284,7 +1285,7 @@ public class CardinalRiteBoundaryRenderer {
 		private float dim = 1.0F;
 		private float impactAge = -1.0F;
 
-		private RiteFrame(ActiveRiteClientData.RiteEntry entry, CardinalRiteEventKind ending, float endingAge,
+		private RiteFrame(ActiveRiteData.RiteEntry entry, CardinalRiteEventKind ending, float endingAge,
 				boolean legacy, int ringCount, CardinalRiteCeremonyLayout layout) {
 			this.entry = entry;
 			this.ending = ending;

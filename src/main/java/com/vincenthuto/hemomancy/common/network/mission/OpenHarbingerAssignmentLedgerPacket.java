@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.network.mission;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
-import com.vincenthuto.hemomancy.client.screen.item.HarbingerAssignmentLedgerScreen;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationLedgerProgress;
 import com.vincenthuto.hemomancy.common.mission.alchemist.MorphlingHandlingProgress;
 import com.vincenthuto.hemomancy.common.mission.alchemist.DeepDarkCommissionProgress;
@@ -14,7 +13,6 @@ import com.vincenthuto.hemomancy.common.mission.vicar.VoyagerIntroductionProgres
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record OpenHarbingerAssignmentLedgerPacket(
 		int degree,
@@ -229,43 +227,6 @@ public record OpenHarbingerAssignmentLedgerPacket(
 				buf.readBoolean(),
 				buf.readEnum(EnumArchonPath.class),
 				buf.readBoolean());
-	}
-
-	public static void handle(final OpenHarbingerAssignmentLedgerPacket msg, final IPayloadContext ctx) {
-		ctx.enqueueWork(() -> HarbingerAssignmentLedgerScreen.open(
-				msg.degree, msg.firstAwakening, msg.degreeOne,
-				msg.firstBloodcraft,
-				msg.firstRemnant, msg.ledgerGranted,
-				msg.firstDrawsBriefed, msg.firstDrawsSamples, msg.firstDrawsSpecies,
-				msg.fungalSurvey,
-				msg.voyagerIntroduction,
-				msg.circusDiscovered,
-				msg.firstSeparation,
-				msg.bodyAnswersBriefed, msg.bodyAnswersComplete, msg.muscleMemoryCount,
-				msg.redTaxonomyCount, msg.redTaxonomyComplete,
-				msg.enzymeMasteryCount, msg.enzymeMasteryComplete,
-				msg.firstCultureComplete,
-				msg.morphlingHandling,
-				msg.deepDarkCommission,
-				msg.phlegethonticCommission,
-				msg.vagrantMindInquiry,
-				msg.livingBestiaryCount, msg.livingBestiaryTotal, msg.morphlingLayerCount,
-				msg.hasBlankHematicMemory,
-				msg.mnemonistWovenVesselComplete, msg.mnemonistFirstWeaveComplete, msg.vicarMasonsRespiteDirective,
-				msg.veinMasonFirstLesson, msg.veinMasonFirstScarCarved,
-				msg.veinMasonFirstScarLearned, msg.veinMasonFirstEffigyPattern,
-				msg.veinMasonFirstEffigyLoadout,
-				msg.anchoriteD5Progress, msg.anchoriteD6Progress,
-				msg.artificerArmaturePlaced, msg.artificerFirstHematicUpgrade,
-				msg.artificerHematicIronFitting, msg.artificerFirstForkUpgrade, msg.artificerForkFitting,
-				msg.artificerFrameConsecrated, msg.artificerFirstBloodLustUpgrade,
-				msg.artificerBloodLustFitting, msg.artificerMonolithicFrame,
-				msg.artificerFirstD7Upgrade, msg.artificerD7Fitting, msg.artificerFirstLivingGraft,
-				msg.artificerLivingWeaponFormCount, msg.artificerLivingArsenalFitting,
-				msg.artificerProgressSteps,
-				msg.foundedBloodline, msg.foundingFaneEstablished, msg.chamberReturned,
-				msg.covenantThroneBound, msg.covenantVigilCompleted, msg.livingCovenantComplete,
-				msg.pomesConsumed, msg.qliphothCommunionComplete, msg.archonPath, msg.severedPortalOpen));
 	}
 
 	private static void writeFirstSeparation(FriendlyByteBuf buf, FirstSeparationLedgerProgress progress) {

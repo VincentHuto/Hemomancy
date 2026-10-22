@@ -1,8 +1,10 @@
 package com.vincenthuto.hemomancy.client.registry;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.ClientBridgeImpl;
 import com.vincenthuto.hemomancy.client.screen.overlay.*;
 import com.vincenthuto.hemomancy.common.init.*;
+import com.vincenthuto.hemomancy.common.util.ClientBridge;
 import net.minecraft.client.renderer.*;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -10,7 +12,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 
 /**
- * Client setup: morphling mutation visuals, translucent block and fluid layers, and the HUD
+ * Client setup: the client bridge, morphling mutation visuals, translucent block and fluid layers, and the HUD
  * overlay instances.
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
@@ -21,6 +23,7 @@ public final class ClientSetupRegistrar {
 
     @SubscribeEvent
     public static void clientSetup(FMLClientSetupEvent event) {
+        ClientBridge.install(new ClientBridgeImpl());
         com.vincenthuto.hemomancy.client.morphling.MorphlingMutationRegistry.init();
         event.enqueueWork(() -> {
             ItemBlockRenderTypes.setRenderLayer(BlockInit.frozen_cruor.get(), RenderType.translucent());

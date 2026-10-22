@@ -1,12 +1,10 @@
 package com.vincenthuto.hemomancy.common.network.capa.unstained;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.screen.overlay.StillArtCooldownOverlay;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Server-to-client packet that starts the pale focus-recovery vignette after a
@@ -32,12 +30,12 @@ public class StillArtCooldownPacket implements CustomPacketPayload {
 		return new StillArtCooldownPacket(buffer.readInt());
 	}
 
-	public static void handle(final StillArtCooldownPacket message, final IPayloadContext ctx) {
-		ctx.enqueueWork(() -> StillArtCooldownOverlay.startCooldown(message.cooldownTicks));
-	}
-
 	@Override
 	public Type<? extends CustomPacketPayload> type() {
 		return TYPE;
+	}
+
+	public int cooldownTicks() {
+		return cooldownTicks;
 	}
 }

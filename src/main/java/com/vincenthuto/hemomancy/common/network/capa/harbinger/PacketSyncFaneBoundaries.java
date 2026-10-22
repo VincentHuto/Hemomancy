@@ -1,13 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.data.FaneBoundaryClientData;
 import com.vincenthuto.hemomancy.common.event.worldevent.FaneBoundaryRelation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,10 +53,6 @@ public class PacketSyncFaneBoundaries implements CustomPacketPayload {
 			entries.add(new Entry(heart, stakes, radius, ownerUuid, relation));
 		}
 		return new PacketSyncFaneBoundaries(entries);
-	}
-
-	public static void handle(final PacketSyncFaneBoundaries msg, final IPayloadContext ctx) {
-		ctx.enqueueWork(() -> FaneBoundaryClientData.setEntries(msg.entries));
 	}
 
 	public List<Entry> entries() {

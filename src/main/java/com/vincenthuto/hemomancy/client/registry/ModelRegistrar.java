@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.client.registry;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem;
 import com.vincenthuto.hemomancy.client.render.item.*;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.*;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.functional.*;
@@ -27,6 +29,13 @@ public final class ModelRegistrar {
     }
 
     public static BakedModel bloodAbsorptionModel, bloodProjectionModel;
+
+    /** The baked hand model of a cell-hand item, or null before baking. */
+    public static BakedModel cellHandModel(Item item) {
+        if (item instanceof BloodAbsorptionItem) return bloodAbsorptionModel;
+        if (item instanceof BloodProjectionItem) return bloodProjectionModel;
+        return null;
+    }
 
     @SubscribeEvent
     public static void modelRegisterEvent(ModelEvent.RegisterAdditional event) {

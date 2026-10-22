@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.data;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteBoundaryProgress;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -31,7 +32,7 @@ public final class ActiveRiteClientDataGrowthTest {
 	@Test
 	void newlyVisibleNodesGrowTowardTheirSyncedRadiusInsteadOfSnappingIntoPlace() {
 		ActiveRiteClientData.set(List.of(riteWithBlob(0.16F)));
-		ActiveRiteClientData.SanguineBlob blob =
+		ActiveRiteData.SanguineBlob blob =
 				ActiveRiteClientData.getActiveRites().get(0).getSanguineBlobs().get(0);
 
 		assertFloatEquals(0.0F, blob.renderRadius(0.0F), "initial radius");
@@ -51,7 +52,7 @@ public final class ActiveRiteClientDataGrowthTest {
 		float beforeRefresh = currentBlob().renderRadius(1.0F);
 
 		ActiveRiteClientData.set(List.of(riteWithBlob(0.16F)));
-		ActiveRiteClientData.SanguineBlob refreshed = currentBlob();
+		ActiveRiteData.SanguineBlob refreshed = currentBlob();
 
 		assertFloatEquals(beforeRefresh, refreshed.renderRadius(0.0F), "radius preserved across sync");
 		ActiveRiteClientData.tick();
@@ -65,7 +66,7 @@ public final class ActiveRiteClientDataGrowthTest {
 				new CardinalRiteBoundaryProgress.Segment(0, 0.0D, Math.PI / 2.0D, 0, 1.0F);
 		ActiveRiteClientData.set(List.of(riteWithSegments(List.of())));
 		ActiveRiteClientData.set(List.of(riteWithSegments(List.of(segment))));
-		ActiveRiteClientData.RiteEntry rite = currentRite();
+		ActiveRiteData.RiteEntry rite = currentRite();
 
 		assertFloatEquals(0.0F, rite.boundaryGrowth(segment, 0.0F), "initial segment growth");
 		ActiveRiteClientData.tick();
@@ -78,7 +79,7 @@ public final class ActiveRiteClientDataGrowthTest {
 	@Test
 	void newlyVisibleRiteStainFadesInAndSurvivesSyncRefreshes() {
 		ActiveRiteClientData.set(List.of(riteWithSegments(List.of())));
-		ActiveRiteClientData.RiteEntry rite = currentRite();
+		ActiveRiteData.RiteEntry rite = currentRite();
 
 		assertFloatEquals(0.0F, rite.stainFadeProgress(0.0F), "initial stain fade");
 		for (int tick = 0; tick < 10; tick++) ActiveRiteClientData.tick();
@@ -130,7 +131,7 @@ public final class ActiveRiteClientDataGrowthTest {
 				new CardinalRiteBoundaryProgress.Segment(0, 0.0D, Math.PI / 2.0D, 0, 1.0F);
 		ActiveRiteClientData.set(List.of(riteWithSegments(List.of())));
 		ActiveRiteClientData.set(List.of(riteWithSegments(List.of(segment))));
-		ActiveRiteClientData.RiteEntry rite = currentRite();
+		ActiveRiteData.RiteEntry rite = currentRite();
 
 		assertFloatEquals(-1.0F, rite.boundaryEffectAge(segment, 1.0F), "pre-completion effect age");
 		for (int tick = 0; tick < 20; tick++) ActiveRiteClientData.tick();
@@ -151,7 +152,7 @@ public final class ActiveRiteClientDataGrowthTest {
 		CardinalRiteBoundaryProgress.Segment second =
 				new CardinalRiteBoundaryProgress.Segment(0, Math.PI / 2.0D, Math.PI / 2.0D, 1, 1.0F);
 		ActiveRiteClientData.set(List.of(riteWithSegments(List.of(first))));
-		ActiveRiteClientData.RiteEntry joined = currentRite();
+		ActiveRiteData.RiteEntry joined = currentRite();
 
 		assertFloatEquals(1.0F, joined.boundaryGrowth(first, 0.0F), "existing seal shown complete");
 		assertFloatEquals(-1.0F, joined.boundaryEffectAge(first, 1.0F), "no seal effect replayed");
@@ -201,7 +202,7 @@ public final class ActiveRiteClientDataGrowthTest {
 	@Test
 	void riteThatLeftTheSyncListCanStillBeFoundBriefly() {
 		ActiveRiteClientData.set(List.of(riteWithSegments(List.of())));
-		ActiveRiteClientData.RiteEntry ended = currentRite();
+		ActiveRiteData.RiteEntry ended = currentRite();
 		ActiveRiteClientData.set(List.of());
 
 		assertTrue(ActiveRiteClientData.recentlyEnded(BlockPos.ZERO) == ended, "ended rite is remembered");
@@ -240,28 +241,28 @@ public final class ActiveRiteClientDataGrowthTest {
 				"a repeated server snapshot does not reset visible growth");
 	}
 
-	private static ActiveRiteClientData.SanguineBlob currentBlob() {
+	private static ActiveRiteData.SanguineBlob currentBlob() {
 		return currentRite().getSanguineBlobs().get(0);
 	}
 
-	private static ActiveRiteClientData.RiteEntry currentRite() {
+	private static ActiveRiteData.RiteEntry currentRite() {
 		return ActiveRiteClientData.getActiveRites().get(0);
 	}
 
-	private static ActiveRiteClientData.RiteEntry riteWithBlob(float radius) {
-		return new ActiveRiteClientData.RiteEntry(
+	private static ActiveRiteData.RiteEntry riteWithBlob(float radius) {
+		return new ActiveRiteData.RiteEntry(
 				BlockPos.ZERO, 3, 0.0D,
 				ResourceLocation.fromNamespaceAndPath("hemomancy", "growth_test"),
 				false, "CONSECRATION", 0, 0, 1, 0, 1,
 				0, 200, 0, 0, 0, "",
 				0.0F, List.of(), List.<CardinalRiteBoundaryProgress.Segment>of(), List.of(),
-				List.of(new ActiveRiteClientData.SanguineBlob(
+				List.of(new ActiveRiteData.SanguineBlob(
 						0.5D, 0.2D, 0.5D, radius, 0xFF3746, 42L)));
 	}
 
-	private static ActiveRiteClientData.RiteEntry riteWithSegments(
+	private static ActiveRiteData.RiteEntry riteWithSegments(
 			List<CardinalRiteBoundaryProgress.Segment> segments) {
-		return new ActiveRiteClientData.RiteEntry(
+		return new ActiveRiteData.RiteEntry(
 				BlockPos.ZERO, 3, 0.0D,
 				ResourceLocation.fromNamespaceAndPath("hemomancy", "growth_test"),
 				false, "CONSECRATION", 0, 0, 1, 0, 1,
@@ -269,8 +270,8 @@ public final class ActiveRiteClientDataGrowthTest {
 				0.0F, List.of(), segments, List.of(), List.of());
 	}
 
-	private static ActiveRiteClientData.RiteEntry riteInPhase(String phase, int phaseTicks) {
-		return new ActiveRiteClientData.RiteEntry(
+	private static ActiveRiteData.RiteEntry riteInPhase(String phase, int phaseTicks) {
+		return new ActiveRiteData.RiteEntry(
 				BlockPos.ZERO, 3, 0.0D,
 				ResourceLocation.fromNamespaceAndPath("hemomancy", "growth_test"),
 				false, phase, 0, 0, 1, 0, 1,
@@ -279,8 +280,8 @@ public final class ActiveRiteClientDataGrowthTest {
 				false, null, 0, -1, "storm", true, true, phaseTicks);
 	}
 
-	private static ActiveRiteClientData.RiteEntry riteWithCancellationTicks(int cancellationTicks) {
-		return new ActiveRiteClientData.RiteEntry(
+	private static ActiveRiteData.RiteEntry riteWithCancellationTicks(int cancellationTicks) {
+		return new ActiveRiteData.RiteEntry(
 				BlockPos.ZERO, 3, 0.0D,
 				ResourceLocation.fromNamespaceAndPath("hemomancy", "growth_test"),
 				false, "CONSECRATION", 0, 0, 1, 0, 1,
@@ -290,8 +291,8 @@ public final class ActiveRiteClientDataGrowthTest {
 				cancellationTicks, -1);
 	}
 
-	private static ActiveRiteClientData.RiteEntry riteWithStaffPlantingTicks(int staffPlantingTicks) {
-		return new ActiveRiteClientData.RiteEntry(
+	private static ActiveRiteData.RiteEntry riteWithStaffPlantingTicks(int staffPlantingTicks) {
+		return new ActiveRiteData.RiteEntry(
 				BlockPos.ZERO, 3, 0.0D,
 				ResourceLocation.fromNamespaceAndPath("hemomancy", "growth_test"),
 				false, "CONSECRATION", 0, 0, 1, 0, 1,

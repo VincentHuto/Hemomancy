@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.itemhandler;
 
+import com.vincenthuto.hemomancy.common.util.ClientBridge;
 import com.vincenthuto.hemomancy.common.item.shared.MnemonicBlueprintItem;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
@@ -55,9 +56,7 @@ public final class MnemonicFolioItemHandler extends ItemStackHandler {
 		return RegistryAccess.EMPTY;
 	}
 
-	@net.neoforged.api.distmarker.OnlyIn(net.neoforged.api.distmarker.Dist.CLIENT)
 	private HolderLookup.Provider clientProvider() {
-		net.minecraft.client.Minecraft minecraft = net.minecraft.client.Minecraft.getInstance();
-		return minecraft != null && minecraft.level != null ? minecraft.level.registryAccess() : RegistryAccess.EMPTY;
+		return ClientBridge.get().clientRegistries();
 	}
 }

@@ -14,6 +14,7 @@ final class ChamberProgressionIntegrationSourceTest {
 		String manager = read("src/main/java/com/vincenthuto/hemomancy/common/worldgen/ChamberOfWillManager.java");
 		String events = read("src/main/java/com/vincenthuto/hemomancy/common/event/worldevent/ChamberOfWillEvents.java");
 		String packet = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/PacketSyncChamberOfWill.java");
+		String clientHandler = read("src/main/java/com/vincenthuto/hemomancy/client/network/ClientboundStateHandlers.java");
 		assertTrue(manager.contains("ProgressionRefresh refreshProgressionState"));
 		assertTrue(manager.contains("refresh.radiusIncreased()"));
 		assertTrue(events.contains("refreshProgressionNow(serverPlayer)"));
@@ -24,7 +25,7 @@ final class ChamberProgressionIntegrationSourceTest {
 		assertTrue(manager.contains("tag.put(\"unrestrictedSkyThemeOverrides\""));
 		assertTrue(packet.contains("buf.writeInt(msg.radius)"));
 		assertTrue(packet.contains("buf.readResourceLocation(), buf.readInt(), buf.readInt(), buf.readInt()"));
-		assertTrue(packet.contains("ChamberOfWillClientData.set(msg.skyTheme, msg.tier, msg.radius"));
+		assertTrue(clientHandler.contains("ChamberOfWillClientData.set(msg.skyTheme(), msg.tier(), msg.radius()"));
 		assertTrue(manager.contains("ChamberExpansionRules.floorBand"));
 		assertTrue(manager.contains("state.is(BlockInit.sporite_crystal.get())"));
 	}

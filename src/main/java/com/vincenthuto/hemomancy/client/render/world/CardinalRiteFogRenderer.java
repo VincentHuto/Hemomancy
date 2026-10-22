@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
 import com.vincenthuto.hemomancy.client.render.shader.ShaderInit;
@@ -46,7 +46,7 @@ public final class CardinalRiteFogRenderer {
 	}
 
 	public static void render(PoseStack poseStack, MultiBufferSource.BufferSource buffer,
-			List<ActiveRiteClientData.RiteEntry> activeRites, float time, Camera camera) {
+			List<ActiveRiteData.RiteEntry> activeRites, float time, Camera camera) {
 		// Lightning (ambient strikes and wave telegraphs) does not depend on the fog billboards.
 		long gameTick = (long) Math.floor(time);
 		CardinalRiteFogLightning.tick(activeRites, gameTick, time - gameTick);
@@ -72,7 +72,7 @@ public final class CardinalRiteFogRenderer {
 		CAMERA_RIGHT.set(camera.getLeftVector()).negate();
 		CAMERA_UP.set(camera.getUpVector());
 		for (CardinalRiteFogState.Sample sample : samples) {
-			ActiveRiteClientData.RiteEntry rite = sample.rite();
+			ActiveRiteData.RiteEntry rite = sample.rite();
 			float radius = CardinalRiteFogGeometry.perimeterRadius(
 					rite.getFootprintRadius(), rite.getRiteSize(), rite.getCompletedRings(),
 					rite.getTotalRings(), rite.isLegacy());

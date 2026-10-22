@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.util.ClientBridge;
 import com.mojang.serialization.MapCodec;
-import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.ItemSanguineConduit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineConduitBlockEntity;
@@ -117,7 +117,7 @@ public class SanguineConduitBlock extends BaseEntityBlock implements SimpleWater
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
                                                BlockHitResult result) {
         if (level.isClientSide) {
-            HarbingerProgressScreen.openScreen();
+            ClientBridge.get().openHarbingerProgress();
         }
         return InteractionResult.SUCCESS;
     }
@@ -130,7 +130,7 @@ public class SanguineConduitBlock extends BaseEntityBlock implements SimpleWater
     protected net.minecraft.world.ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level,
                                                                   BlockPos pos, Player player, net.minecraft.world.InteractionHand hand, BlockHitResult result) {
         if (level.isClientSide) {
-            HarbingerProgressScreen.openScreen();
+            ClientBridge.get().openHarbingerProgress();
         }
         return net.minecraft.world.ItemInteractionResult.SUCCESS;
     }

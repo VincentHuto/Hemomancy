@@ -34,7 +34,7 @@ public final class VirtualFieldNotesSourceTest {
 		assertContains("packet stores pending memos", source, "private final Set<ResourceLocation> pendingMemos");
 		assertContains("packet encodes pending memos", source, "writeIds(buf, msg.pendingMemos)");
 		assertContains("packet decodes pending memos", source, "Set<ResourceLocation> pendingMemos = readIds(buf)");
-		assertContains("packet hydrates pending memos", source, "synced.recordPendingMemo(memo)");
+		assertContains("packet hydrates pending memos", read("com/vincenthuto/hemomancy/client/network/ClientboundStateHandlers.java"), "synced.recordPendingMemo(memo)");
 	}
 
 	private static void memoHelperCapturesIntoPlayerKnowledge() throws IOException {

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
+import com.vincenthuto.hemomancy.common.init.ManipulationTreeEntry;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,7 +12,7 @@ public final class ManipulationSoftParentConnectionSourceTest {
 	}
 
 	public static void main(String[] args) throws IOException {
-		String entry = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/ManipulationTreeEntry.java");
+		String entry = read("src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationTreeEntry.java");
 		String controller = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/ManipulationTraceLayerCache.java");
 
 		assertContains("entry keeps soft parents as a separate dependency list",

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
@@ -69,7 +70,7 @@ public class GourdVineRenderer {
 	// ──────────────────────────────────────────────────────────────────────────
 
 	public static void render(PoseStack poseStack, float partialTick) {
-		List<ActiveRiteClientData.RiteEntry> rites = ActiveRiteClientData.getActiveRites();
+		List<ActiveRiteData.RiteEntry> rites = ActiveRiteClientData.getActiveRites();
 		if (rites.isEmpty()) return;
 
 		Minecraft mc = Minecraft.getInstance();
@@ -91,14 +92,14 @@ public class GourdVineRenderer {
 	// ════════════════════════════════════════════════════════════════════════
 
     private static void renderPass(PoseStack stack, VertexConsumer consumer,
-            List<ActiveRiteClientData.RiteEntry> rites, float time, Vec3 cam, boolean glowPass) {
-        for (ActiveRiteClientData.RiteEntry rite : rites) {
+            List<ActiveRiteData.RiteEntry> rites, float time, Vec3 cam, boolean glowPass) {
+        for (ActiveRiteData.RiteEntry rite : rites) {
             if (isVesselRite(rite.getRecipeId())) drawVines(stack, consumer, rite, time, cam, glowPass);
         }
     }
 
 	private static void drawVines(PoseStack stack, VertexConsumer consumer,
-			ActiveRiteClientData.RiteEntry rite, float time, Vec3 cam, boolean glowPass) {
+			ActiveRiteData.RiteEntry rite, float time, Vec3 cam, boolean glowPass) {
 
 		Minecraft mc = Minecraft.getInstance();
 		ClientLevel level = mc.level;

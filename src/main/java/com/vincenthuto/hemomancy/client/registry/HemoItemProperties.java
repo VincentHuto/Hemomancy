@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.item.shared;
+package com.vincenthuto.hemomancy.client.registry;
 
 import net.minecraft.client.renderer.item.ItemPropertyFunction;
 import net.minecraft.core.component.DataComponents;

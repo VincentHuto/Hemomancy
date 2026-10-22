@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.data;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomData;
 import net.minecraft.core.BlockPos;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +14,7 @@ class QliphothBloomClientDataTest {
 	@Test
 	void clearDropsBloomPositionsFromThePreviousWorld() {
 		BlockPos center = new BlockPos(12, 64, -8);
-		QliphothBloomClientData.set(java.util.List.of(new QliphothBloomClientData.BloomEntry(center, 3)));
+		QliphothBloomClientData.set(java.util.List.of(new QliphothBloomData.BloomEntry(center, 3)));
 
 		QliphothBloomClientData.clear();
 

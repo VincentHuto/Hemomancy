@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.unstained.armor;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.model.armor.VestmentOfTheFinalMoltArmorModel;
 import com.vincenthuto.hemomancy.client.render.item.ModelBackedArmorItemRenderer;
 import com.vincenthuto.hemomancy.common.init.ItemInit;

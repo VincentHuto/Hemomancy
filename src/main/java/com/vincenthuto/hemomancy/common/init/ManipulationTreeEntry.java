@@ -1,7 +1,6 @@
-package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
+package com.vincenthuto.hemomancy.common.init;
 
-import com.vincenthuto.hemomancy.client.screen.skilltree.util.EnumNodeShape;
-import com.vincenthuto.hemomancy.common.init.ManipulationInit;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumNodeShape;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 
 import javax.annotation.Nullable;

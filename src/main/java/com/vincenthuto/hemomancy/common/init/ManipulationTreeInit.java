@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.init;
 
-import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.ManipulationTreeEntry;
 
 import java.util.ArrayList;
 import java.util.HashMap;

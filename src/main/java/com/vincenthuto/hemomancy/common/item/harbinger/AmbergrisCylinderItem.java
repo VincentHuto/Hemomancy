@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 import com.vincenthuto.hemomancy.common.init.DataComponentInit;
-import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
 import net.minecraft.world.item.*;
 import net.minecraft.network.chat.Component;
 import java.util.List;

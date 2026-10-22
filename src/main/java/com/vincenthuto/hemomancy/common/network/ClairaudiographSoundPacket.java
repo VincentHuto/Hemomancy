@@ -5,7 +5,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 public record ClairaudiographSoundPacket(ResourceLocation dimension,BlockPos pos,long token,boolean stop,boolean preview,String sound,float pitch,String program,int elapsed) implements CustomPacketPayload {
     public ClairaudiographSoundPacket(ResourceLocation dimension,BlockPos pos,long token,boolean stop,boolean preview,String sound,float pitch) { this(dimension,pos,token,stop,preview,sound,pitch,"",0); }
     public static final Type<ClairaudiographSoundPacket> TYPE=new Type<>(Hemomancy.rloc("clairaudiograph_sound"));
@@ -13,5 +12,4 @@ public record ClairaudiographSoundPacket(ResourceLocation dimension,BlockPos pos
         (b,p)->{b.writeResourceLocation(p.dimension);b.writeBlockPos(p.pos);b.writeLong(p.token);b.writeBoolean(p.stop);b.writeBoolean(p.preview);b.writeUtf(p.sound);b.writeFloat(p.pitch);b.writeUtf(p.program);b.writeVarInt(p.elapsed);},
         b->new ClairaudiographSoundPacket(b.readResourceLocation(),b.readBlockPos(),b.readLong(),b.readBoolean(),b.readBoolean(),b.readUtf(),b.readFloat(),b.readUtf(),b.readVarInt()));
     @Override public Type<? extends CustomPacketPayload> type(){return TYPE;}
-    public static void handle(ClairaudiographSoundPacket p,IPayloadContext c){c.enqueueWork(()->com.vincenthuto.hemomancy.client.sound.ClairaudiographSounds.accept(p));}
 }

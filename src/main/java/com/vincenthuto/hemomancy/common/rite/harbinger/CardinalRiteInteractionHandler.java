@@ -558,20 +558,20 @@ public final class CardinalRiteInteractionHandler {
 	}
 
 	/** World positions of required support sockets whose sigil still sleeps, for the client's markers. */
-	public static List<com.vincenthuto.hemomancy.client.data.ActiveRiteClientData.SocketMarker> sleepingRequiredSockets(
+	public static List<ActiveRiteData.SocketMarker> sleepingRequiredSockets(
 			ServerLevel level, ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
 		if (rite.getPhase() != CardinalRitePhase.INSCRIPTION || recipe == null || recipe.getCeremony() == null) {
 			return List.of();
 		}
 		List<CardinalRiteCeremonyDefinition.SupportSocket> sockets = recipe.getCeremony().supportSockets();
 		List<SigilPlacement> placements = supportSigils(recipe);
-		List<com.vincenthuto.hemomancy.client.data.ActiveRiteClientData.SocketMarker> markers = new ArrayList<>();
+		List<ActiveRiteData.SocketMarker> markers = new ArrayList<>();
 		for (int i = 0; i < sockets.size() && i < placements.size(); i++) {
 			SigilPlacement placement = placements.get(i);
 			if (!sockets.get(i).required() || rite.isSigilAwakened(placement.progressKey())) continue;
 			BlockPos surface = CardinalRiteSigilRules.surfaceAirPosition(level,
 					rite.getCenterPos().offset(0, placement.y(), 0), placement.x(), placement.z());
-			markers.add(new com.vincenthuto.hemomancy.client.data.ActiveRiteClientData.SocketMarker(surface,
+			markers.add(new ActiveRiteData.SocketMarker(surface,
 					sockets.get(i).suggestedSigil()));
 		}
 		return markers;

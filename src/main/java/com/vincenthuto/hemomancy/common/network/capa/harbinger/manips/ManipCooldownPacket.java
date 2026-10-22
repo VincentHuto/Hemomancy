@@ -1,12 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.event.ManipulationChargeInput;
-import com.vincenthuto.hemomancy.client.screen.manips.ClientManipulationCooldowns;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Server-to-client packet that synchronizes one manipulation's cooldown for
@@ -34,16 +31,16 @@ public class ManipCooldownPacket implements CustomPacketPayload {
 		return new ManipCooldownPacket(buffer.readUtf(), buffer.readInt());
 	}
 
-	public static void handle(final ManipCooldownPacket message, final IPayloadContext ctx) {
-		ctx.enqueueWork(() -> {
-			if (message.cooldownTicks > 0) ManipulationChargeInput.manipulationCastAccepted();
-			long now = ctx.player().level().getGameTime();
-			ClientManipulationCooldowns.start(message.manipulationId, message.cooldownTicks, now);
-		});
-	}
-
 	@Override
 	public Type<? extends CustomPacketPayload> type() {
 		return TYPE;
+	}
+
+	public int cooldownTicks() {
+		return cooldownTicks;
+	}
+
+	public String manipulationId() {
+		return manipulationId;
 	}
 }

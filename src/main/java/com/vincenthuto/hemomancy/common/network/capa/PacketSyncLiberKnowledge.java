@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.HemomancyDiscoverySource;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledge;
 import com.vincenthuto.hutoslib.common.book.knowledge.CommonDiscoverySource;
@@ -11,10 +10,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -121,41 +116,6 @@ public class PacketSyncLiberKnowledge implements CustomPacketPayload {
 		return null;
 	}
 
-	public static void handle(PacketSyncLiberKnowledge msg, IPayloadContext ctx) {
-		ctx.enqueueWork(() -> {
-			Player player = ctx.player();
-			if (player == null) {
-				return;
-			}
-			var knowledge = HemoCapabilityAccess.getLiberKnowledge(player);
-			Set<ResourceLocation> before = Set.copyOf(knowledge.getUnlockedEntries());
-			LiberKnowledge synced = new LiberKnowledge();
-			msg.entrySources.forEach((entry, sources) -> {
-				if (sources.isEmpty()) {
-					synced.unlockEntry(entry, CommonDiscoverySource.OTHER);
-				} else {
-					for (IDiscoverySource source : sources) {
-						synced.unlockEntry(entry, source);
-					}
-				}
-			});
-			for (ResourceLocation memo : msg.memos) {
-				synced.recordMemo(memo);
-			}
-			for (ResourceLocation memo : msg.pendingMemos) {
-				synced.recordPendingMemo(memo);
-			}
-			knowledge.setFrom(synced);
-			// If the player currently has a Liber/guide screen open, rebuild
-			// its visible chapter list against the freshly-synced knowledge
-			// instead of waiting for them to close+reopen.
-			if (FMLEnvironment.dist == Dist.CLIENT) {
-				com.vincenthuto.hemomancy.client.ClientLiberScreenHooks.knowledgeSynced(
-						player, knowledge, before, Set.copyOf(knowledge.getUnlockedEntries()), msg.markUnreadEntries);
-			}
-		});
-	}
-
 	private static void writeIds(FriendlyByteBuf buf, Set<ResourceLocation> ids) {
 		buf.writeVarInt(ids.size());
 		for (ResourceLocation id : ids) {
@@ -175,6 +135,22 @@ public class PacketSyncLiberKnowledge implements CustomPacketPayload {
 	@Override
 	public Type<? extends CustomPacketPayload> type() {
 		return TYPE;
+	}
+
+	public Map<ResourceLocation, Set<IDiscoverySource>> entrySources() {
+		return entrySources;
+	}
+
+	public Set<ResourceLocation> markUnreadEntries() {
+		return markUnreadEntries;
+	}
+
+	public Set<ResourceLocation> memos() {
+		return memos;
+	}
+
+	public Set<ResourceLocation> pendingMemos() {
+		return pendingMemos;
 	}
 }
 

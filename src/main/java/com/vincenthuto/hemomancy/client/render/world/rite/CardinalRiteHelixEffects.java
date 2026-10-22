@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world.rite;
 
-import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.rite.CardinalRitePhase;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;
@@ -37,7 +37,7 @@ public final class CardinalRiteHelixEffects {
 	private CardinalRiteHelixEffects() {
 	}
 
-	public static void tick(Minecraft mc, List<ActiveRiteClientData.RiteEntry> rites, float time, Vec3 camera) {
+	public static void tick(Minecraft mc, List<ActiveRiteData.RiteEntry> rites, float time, Vec3 camera) {
 		if (mc.level == null || rites.isEmpty() || mc.isPaused()) return;
 		long gameTick = (long) Math.floor(time);
 		if (lastSpawnTick != Long.MIN_VALUE && gameTick >= lastSpawnTick
@@ -48,12 +48,12 @@ public final class CardinalRiteHelixEffects {
 		ParticleStatus status = mc.options.particles().get();
 		if (status == ParticleStatus.MINIMAL) return;
 		boolean decreased = status == ParticleStatus.DECREASED;
-		for (ActiveRiteClientData.RiteEntry rite : rites) {
+		for (ActiveRiteData.RiteEntry rite : rites) {
 			spawnHelix(mc, rite, gameTick, camera, decreased);
 		}
 	}
 
-	private static void spawnHelix(Minecraft mc, ActiveRiteClientData.RiteEntry rite, long gameTick,
+	private static void spawnHelix(Minecraft mc, ActiveRiteData.RiteEntry rite, long gameTick,
 			Vec3 camera, boolean decreased) {
 		BlockPos center = rite.getCenter();
 		double cx = center.getX() + 0.5D;

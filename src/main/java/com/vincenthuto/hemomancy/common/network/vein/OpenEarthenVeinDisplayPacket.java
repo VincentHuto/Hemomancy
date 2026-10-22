@@ -1,14 +1,12 @@
 package com.vincenthuto.hemomancy.common.network.vein;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.vein.EarthenVeinTravelClientState;
 import com.vincenthuto.hemomancy.common.vein.EarthenVeinDestination;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,10 +40,6 @@ public record OpenEarthenVeinDisplayPacket(UUID nonce, ResourceLocation sourceDi
 		List<EarthenVeinDestination> destinations = new ArrayList<>(count);
 		for (int index = 0; index < count; index++) destinations.add(EarthenVeinDestination.read(buffer));
 		return new OpenEarthenVeinDisplayPacket(nonce, dimension, source, destinations);
-	}
-
-	public static void handle(OpenEarthenVeinDisplayPacket packet, IPayloadContext context) {
-		context.enqueueWork(() -> EarthenVeinTravelClientState.open(packet));
 	}
 
 	@Override

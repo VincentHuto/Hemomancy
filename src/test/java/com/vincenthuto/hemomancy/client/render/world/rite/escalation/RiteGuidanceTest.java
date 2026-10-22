@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world.rite.escalation;
 
-import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteProblems;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteProblems.RiteProblem;
 import net.minecraft.core.BlockPos;
@@ -85,7 +85,7 @@ final class RiteGuidanceTest {
 	@Test
 	void onlyTheRitesOwnerHearsIt() {
 		UUID owner = UUID.randomUUID();
-		ActiveRiteClientData.RiteEntry entry = new ActiveRiteClientData.RiteEntry(BlockPos.ZERO, 5, 0.0D,
+		ActiveRiteData.RiteEntry entry = new ActiveRiteData.RiteEntry(BlockPos.ZERO, 5, 0.0D,
 				ResourceLocation.parse("hemomancy:cardinal_rite/guidance_test"), false, "INSCRIPTION", 0, 0, 0, 1, 1,
 				0, 0, 0, 0, 0, "", 6.0F, List.of(), List.of(), List.of(), List.of(), true, owner, 0, -1,
 				"storm", true, true, 0);

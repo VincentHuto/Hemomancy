@@ -1,13 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.render.world.ClawSlashRenderer;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class SpawnClawSlashPacket implements CustomPacketPayload {
 	public static final Type<SpawnClawSlashPacket> TYPE = new Type<>(Hemomancy.rloc("spawn_claw_slash_packet"));
@@ -59,12 +57,32 @@ public class SpawnClawSlashPacket implements CustomPacketPayload {
 		buf.writeInt(msg.seed);
 	}
 
-	public static void handle(SpawnClawSlashPacket msg, IPayloadContext ctx) {
-		ctx.enqueueWork(() -> ClawSlashRenderer.spawn(msg.pos, msg.forward, msg.color, msg.ambush, msg.scale, msg.seed));
-	}
-
 	@Override
 	public Type<? extends CustomPacketPayload> type() {
 		return TYPE;
+	}
+
+	public boolean ambush() {
+		return ambush;
+	}
+
+	public ParticleColor color() {
+		return color;
+	}
+
+	public Vec3 forward() {
+		return forward;
+	}
+
+	public Vec3 pos() {
+		return pos;
+	}
+
+	public float scale() {
+		return scale;
+	}
+
+	public int seed() {
+		return seed;
 	}
 }

@@ -1,13 +1,10 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.render.world.SanguineMonolithShatterRenderer;
-import com.vincenthuto.hemomancy.client.screen.overlay.SanguineOmenOverlay;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class SpawnSanguineOmenEffectPacket implements CustomPacketPayload {
 
@@ -38,19 +35,6 @@ public class SpawnSanguineOmenEffectPacket implements CustomPacketPayload {
 		buf.writeFloat(msg.getPeakAlpha());
 		buf.writeInt(msg.getSeed());
 		buf.writeBoolean(msg.isScreenOverlay());
-	}
-
-	public static void handle(final SpawnSanguineOmenEffectPacket msg, final IPayloadContext ctxSupplier) {
-		if (ctxSupplier.player() == null) return;
-		ctxSupplier.enqueueWork(() -> {
-			SanguineMonolithShatterRenderer.spawnOmenBurst(msg.getPos());
-			if (SanguineOmenOverlay.instance != null) {
-				SanguineOmenOverlay.Mode mode = msg.isScreenOverlay()
-						? SanguineOmenOverlay.Mode.SCREEN_OVERLAY
-						: SanguineOmenOverlay.Mode.WORLD_GRADE;
-				SanguineOmenOverlay.instance.start(msg.getDurationTicks(), msg.getPeakAlpha(), msg.getSeed(), mode);
-			}
-		});
 	}
 
 	private Vec3 pos;

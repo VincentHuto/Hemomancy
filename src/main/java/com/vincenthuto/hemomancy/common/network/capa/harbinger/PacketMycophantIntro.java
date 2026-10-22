@@ -1,12 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
-import com.vincenthuto.hemomancy.client.boss.MycophantGlimpse;
-import com.vincenthuto.hemomancy.client.boss.MycophantIntroClientState;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Drives the player's side of being taken: the Gardens capture, the waking (or rematch), the hunt's watching pulse and
@@ -24,17 +21,6 @@ public record PacketMycophantIntro(int kind, int seed) implements CustomPacketPa
 	public static final StreamCodec<FriendlyByteBuf, PacketMycophantIntro> STREAM_CODEC = StreamCodec.of(
 			(buffer, packet) -> { buffer.writeVarInt(packet.kind); buffer.writeVarInt(packet.seed); },
 			buffer -> new PacketMycophantIntro(buffer.readVarInt(), buffer.readVarInt()));
-
-	public static void handle(PacketMycophantIntro packet, IPayloadContext context) {
-		context.enqueueWork(() -> {
-			if (packet.kind == GLIMPSE) {
-				MycophantGlimpse.start(packet.seed);
-				return;
-			}
-			if (packet.kind == CLEAR) MycophantGlimpse.clear();
-			MycophantIntroClientState.INSTANCE.start(packet.kind, packet.seed);
-		});
-	}
 
 	@Override
 	public Type<? extends CustomPacketPayload> type() {

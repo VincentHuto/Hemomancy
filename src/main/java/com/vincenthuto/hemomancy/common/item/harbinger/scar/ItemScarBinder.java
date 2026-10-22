@@ -1,9 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.scar;
 
-import com.vincenthuto.hemomancy.client.screen.tile.crafting.scar.ScreenScarBinderViewer;
+import com.vincenthuto.hemomancy.common.util.ClientBridge;
 import com.vincenthuto.hemomancy.common.menu.ScarBinderInventoryMenu;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -51,7 +49,7 @@ public class ItemScarBinder extends Item {
 		if (worldIn.isClientSide) {
 			if (!playerIn.isShiftKeyDown()) {
 			//	Hemomancy.proxy.openBinderGui();
-				ScreenScarBinderViewer.openScreenViaItem(heldStack);
+				ClientBridge.get().openScarBinderViewer(heldStack);
 				playerIn.playSound(SoundEvents.BOOK_PAGE_TURN, 0.40f, 1F);
 			}
 		}
@@ -87,11 +85,11 @@ public class ItemScarBinder extends Item {
 
 
 	private boolean hasTranslation(String key) {
-		return !I18n.get(key).equals(key);
+		return ClientBridge.get().hasTranslation(key);
 	}
 
 	private String fallbackString(String key, String fallback) {
-		String tmp = I18n.get(key);
+		String tmp = ClientBridge.get().translate(key);
 		return tmp.equals(key) ? fallback : tmp;
 	}
 
@@ -102,12 +100,12 @@ public class ItemScarBinder extends Item {
 		String translationKey = getDescriptionId();
 
 
-		if (Screen.hasShiftDown()) {
-			tooltip.add(Component.translatable(I18n.get(translationKey + ".info")));
+		if (ClientBridge.get().hasShiftDown()) {
+			tooltip.add(Component.translatable(ClientBridge.get().translate(translationKey + ".info")));
 			if (hasTranslation(translationKey + ".info2"))
-				tooltip.add(Component.translatable(I18n.get(translationKey + ".info2")));
+				tooltip.add(Component.translatable(ClientBridge.get().translate(translationKey + ".info2")));
 			if (hasTranslation(translationKey + ".info3"))
-				tooltip.add(Component.translatable(I18n.get(translationKey + ".info3")));
+				tooltip.add(Component.translatable(ClientBridge.get().translate(translationKey + ".info3")));
 		} else {
 			tooltip.add(
 					Component.translatable(fallbackString("Hemomancy.shift", "Press <Shift> for info.")));

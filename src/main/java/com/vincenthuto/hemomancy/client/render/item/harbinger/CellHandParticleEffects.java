@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.client.particle.*;
 import com.vincenthuto.hemomancy.client.particle.factory.AbsorbedBloodCellParticleFactory;
 import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.client.particle.factory.WillAbsorptionGlowParticleFactory;
-import com.vincenthuto.hemomancy.client.particle.util.EntityParticleUtils;
+import com.vincenthuto.hemomancy.common.particle.EntityParticleUtils;
 import com.vincenthuto.hemomancy.client.render.world.CellHandStreams;
 import com.vincenthuto.hemomancy.client.render.world.ManipulationVisualRenderer;
 import com.vincenthuto.hemomancy.common.block.harbinger.BlockBloodInteractions;

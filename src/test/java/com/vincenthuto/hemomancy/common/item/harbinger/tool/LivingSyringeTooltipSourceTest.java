@@ -16,7 +16,7 @@ final class LivingSyringeTooltipSourceTest {
 
 		assertTrue(rack.contains("appendContentsTooltip"),
 				"The rack needs a reusable detailed-contents tooltip for loaded tools.");
-		assertTrue(syringe.contains("Screen.hasShiftDown()"),
+		assertTrue(syringe.contains("ClientBridge.get().hasShiftDown()"),
 				"The syringe should expose its samples only while Shift is held.");
 		assertTrue(syringe.contains("VialRackItem.appendContentsTooltip(rack, tooltip)"),
 				"The syringe should show the loaded rack's actual samples, not only its empty count.");

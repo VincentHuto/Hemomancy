@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.entity.misc;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -66,7 +67,7 @@ public final class HumanitySpriteRenderer extends EntityRenderer<HumanitySpriteE
 		double yaw = Math.toRadians(bodyDegrees);
 		double headYaw = yaw + Math.toRadians(Mth.wrapDegrees(entity.renderHeadYaw(partialTick) - bodyDegrees));
 
-		ActiveRiteClientData.RiteEntry rite = riteFor(entity.getRiteOwner());
+		ActiveRiteData.RiteEntry rite = riteFor(entity.getRiteOwner());
 		double firmness = 1.0D;
 		float cancellation = 0.0F;
 		float flare = 0.0F;
@@ -173,9 +174,9 @@ public final class HumanitySpriteRenderer extends EntityRenderer<HumanitySpriteE
 		};
 	}
 
-	private static ActiveRiteClientData.RiteEntry riteFor(UUID owner) {
+	private static ActiveRiteData.RiteEntry riteFor(UUID owner) {
 		if (owner == null) return null;
-		for (ActiveRiteClientData.RiteEntry rite : ActiveRiteClientData.getActiveRites()) {
+		for (ActiveRiteData.RiteEntry rite : ActiveRiteClientData.getActiveRites()) {
 			if (owner.equals(rite.getOwner())) return rite;
 		}
 		CardinalRiteEventClientState.Ghost latest = null;

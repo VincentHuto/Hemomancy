@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.player.LivingWeaponPlayerPose;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.client.player.LocalPlayer;

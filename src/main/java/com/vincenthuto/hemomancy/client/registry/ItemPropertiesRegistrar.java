@@ -7,7 +7,6 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.DrudgeElectrodeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingCrossbowItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffFittingHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.VialRackItem;
-import com.vincenthuto.hemomancy.common.item.shared.HemoItemProperties;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.item.ItemProperties;

@@ -1,14 +1,12 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.data.MaxBloodDiagnosticsClientData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.MaxBloodContribution;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.MaxBloodContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.MaxBloodSnapshot;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,12 +56,12 @@ public class PacketSyncMaxBloodDiagnostics implements CustomPacketPayload {
 				net, total));
 	}
 
-	public static void handle(PacketSyncMaxBloodDiagnostics msg, IPayloadContext ctx) {
-		ctx.enqueueWork(() -> MaxBloodDiagnosticsClientData.set(msg.snapshot));
-	}
-
 	@Override
 	public Type<? extends CustomPacketPayload> type() {
 		return TYPE;
+	}
+
+	public MaxBloodSnapshot snapshot() {
+		return snapshot;
 	}
 }

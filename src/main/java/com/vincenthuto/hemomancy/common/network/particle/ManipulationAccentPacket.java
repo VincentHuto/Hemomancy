@@ -1,13 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.render.world.ManipulationAmbientParticles;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /** Cosmetic activation or confirmed-hit accents; carries no gameplay state. */
 public record ManipulationAccentPacket(EnumBloodTendency primary, EnumBloodTendency secondary,
@@ -22,10 +20,6 @@ public record ManipulationAccentPacket(EnumBloodTendency primary, EnumBloodTende
             },buf->new ManipulationAccentPacket(buf.readEnum(EnumBloodTendency.class),
                     buf.readBoolean()?buf.readEnum(EnumBloodTendency.class):null,buf.readVec3(),buf.readVec3(),
                     buf.readVarInt(),buf.readBoolean()));
-
-    public static void handle(ManipulationAccentPacket packet,IPayloadContext context) {
-        context.enqueueWork(()->ManipulationAmbientParticles.accept(packet));
-    }
 
     @Override public Type<? extends CustomPacketPayload> type() {return TYPE;}
 }

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world.rite;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import static com.vincenthuto.hemomancy.client.render.world.rite.RiteSurface.*;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -51,13 +52,13 @@ public final class CardinalRiteAnchorJetRenderer {
 	public static void render(PoseStack poseStack, float partialTick) {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.level == null) return;
-		List<ActiveRiteClientData.RiteEntry> rites = ActiveRiteClientData.getActiveRites();
+		List<ActiveRiteData.RiteEntry> rites = ActiveRiteClientData.getActiveRites();
 		if (rites.isEmpty()) return;
 		Vec3 camera = mc.gameRenderer.getMainCamera().getPosition();
 		double time = mc.level.getGameTime() + partialTick;
 		MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
 		VertexConsumer blood = null;
-		for (ActiveRiteClientData.RiteEntry rite : rites) {
+		for (ActiveRiteData.RiteEntry rite : rites) {
 			int[] states = rite.getAnchorStates();
 			if (rite.isUnstained() || states.length == 0) continue;
 			BlockPos center = rite.getCenter();
@@ -68,8 +69,8 @@ public final class CardinalRiteAnchorJetRenderer {
 			int[] ranks = CardinalRiteRingRules.ranksOf(anchors);
 			for (int i = 0; i < anchors.size() && i < states.length; i++) {
 				int state = states[i];
-				boolean full = !rite.anchorDormant(i) && !ActiveRiteClientData.RiteEntry.anchorDamaged(state)
-						&& ActiveRiteClientData.RiteEntry.anchorBlood(state) >= rite.anchorRequirement(i);
+				boolean full = !rite.anchorDormant(i) && !ActiveRiteData.RiteEntry.anchorDamaged(state)
+						&& ActiveRiteData.RiteEntry.anchorBlood(state) >= rite.anchorRequirement(i);
 				// A waking ring's sores flare once as they tear open, before any blood reaches them.
 				CardinalRiteEventClientState.RiteEvent waking = full || rite.anchorDormant(i) ? null
 						: RingTear.waking(center, ranks[i], partialTick);

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.rite.zone;
 
+import com.vincenthuto.hemomancy.common.util.ClientBridge;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.client.render.world.zone.RiteSpaceClientData;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
@@ -69,7 +69,7 @@ public final class RiteSpaces {
 	/** The purpose of the rite space covering a position, on either side: the client answers from the last sync. */
 	public static Optional<CardinalRitePurpose> purposeAt(Level level, BlockPos pos) {
 		if (level instanceof ServerLevel server) return spaceAt(server, pos).map(RiteSpace::purpose);
-		return level.isClientSide() ? RiteSpaceClientData.purposeAt(pos) : Optional.empty();
+		return level.isClientSide() ? ClientBridge.get().riteSpacePurposeAt(pos) : Optional.empty();
 	}
 
 	static void markChanged() {

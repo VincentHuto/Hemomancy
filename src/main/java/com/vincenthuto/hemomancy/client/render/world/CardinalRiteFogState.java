@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
-import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import net.minecraft.core.BlockPos;
 
 import java.util.*;
@@ -12,7 +12,7 @@ public final class CardinalRiteFogState {
 
 	private final Map<BlockPos, TrackedRite> trackedRites = new HashMap<>();
 
-	public List<Sample> update(List<ActiveRiteClientData.RiteEntry> activeRites, float time) {
+	public List<Sample> update(List<ActiveRiteData.RiteEntry> activeRites, float time) {
 		return update(activeRites, time, center -> FADE_OUT_TICKS);
 	}
 
@@ -21,11 +21,11 @@ public final class CardinalRiteFogState {
 	 *                read once when the rite leaves the sync list so endings can
 	 *                keep the fog for as long as their own choreography runs
 	 */
-	public List<Sample> update(List<ActiveRiteClientData.RiteEntry> activeRites, float time, FadeOut fadeOut) {
+	public List<Sample> update(List<ActiveRiteData.RiteEntry> activeRites, float time, FadeOut fadeOut) {
 		for (TrackedRite tracked : trackedRites.values()) {
 			tracked.active = false;
 		}
-		for (ActiveRiteClientData.RiteEntry rite : activeRites) {
+		for (ActiveRiteData.RiteEntry rite : activeRites) {
 			if (rite.isUnstained() || !rite.hasFog()) {
 				trackedRites.remove(rite.getCenter());
 				continue;
@@ -80,17 +80,17 @@ public final class CardinalRiteFogState {
 		float ticks(BlockPos center);
 	}
 
-	public record Sample(ActiveRiteClientData.RiteEntry rite, float opacity, boolean active) {
+	public record Sample(ActiveRiteData.RiteEntry rite, float opacity, boolean active) {
 	}
 
 	private static final class TrackedRite {
-		private ActiveRiteClientData.RiteEntry rite;
+		private ActiveRiteData.RiteEntry rite;
 		private float opacity;
 		private float lastTime;
 		private boolean active;
 		private float fadeOutTicks = -1.0F;
 
-		private TrackedRite(ActiveRiteClientData.RiteEntry rite, float time) {
+		private TrackedRite(ActiveRiteData.RiteEntry rite, float time) {
 			this.rite = rite;
 			this.lastTime = time;
 		}

@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteEventKind;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -11,7 +10,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,10 +80,6 @@ public record CardinalRiteEventPacket(BlockPos center, CardinalRiteEventKind kin
 		}
 		ItemStack item = ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer);
 		return new CardinalRiteEventPacket(center, kind, index, style, points, item);
-	}
-
-	public static void handle(CardinalRiteEventPacket packet, IPayloadContext context) {
-		context.enqueueWork(() -> CardinalRiteEventClientState.accept(packet));
 	}
 
 	@Override

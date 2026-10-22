@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.bloodline;
 
-import com.vincenthuto.hemomancy.client.screen.item.LedgerScreen;
+import com.vincenthuto.hemomancy.common.util.ClientBridge;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
@@ -99,7 +99,7 @@ public class UnsignedLedgerItem extends Item {
 					if (savedLine.isValid() && currentLine.isValid()
 							&& currentLine.getBloodlineUUID().equals(savedLine.getBloodlineUUID())
 							&& currentLine.hasMember(playerIn.getUUID())) {
-						LedgerScreen.openScreen();
+						ClientBridge.get().openLedger();
 					}
 					// If not a member yet, the server side handles joining below
 				} else {

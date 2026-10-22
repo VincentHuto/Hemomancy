@@ -1,13 +1,10 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.data.CrimsonFireClientState;
-import com.vincenthuto.hemomancy.client.data.MonolithicDislocationClientState;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /** Marks an entity as showing a timed visual on clients that track it. */
 public record EntityVisualPacket(Kind kind, int entityId, int durationTicks) implements CustomPacketPayload {
@@ -32,16 +29,6 @@ public record EntityVisualPacket(Kind kind, int entityId, int durationTicks) imp
 
 	private static EntityVisualPacket decode(FriendlyByteBuf buffer) {
 		return new EntityVisualPacket(buffer.readEnum(Kind.class), buffer.readVarInt(), buffer.readVarInt());
-	}
-
-	public static void handle(EntityVisualPacket packet, IPayloadContext context) {
-		context.enqueueWork(() -> {
-			switch (packet.kind()) {
-				case MONOLITHIC_DISLOCATION ->
-						MonolithicDislocationClientState.markActive(packet.entityId(), packet.durationTicks());
-				case CRIMSON_FIRE -> CrimsonFireClientState.markActive(packet.entityId(), packet.durationTicks());
-			}
-		});
 	}
 
 	@Override

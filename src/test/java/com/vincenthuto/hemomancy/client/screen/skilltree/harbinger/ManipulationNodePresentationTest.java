@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
-import com.vincenthuto.hemomancy.client.screen.skilltree.util.EnumNodeShape;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumNodeShape;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import org.junit.jupiter.api.Test;
 

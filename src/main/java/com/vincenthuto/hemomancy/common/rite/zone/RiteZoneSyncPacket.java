@@ -1,13 +1,11 @@
 package com.vincenthuto.hemomancy.common.rite.zone;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.render.world.zone.RiteZoneClientData;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.List;
 
@@ -36,10 +34,6 @@ public record RiteZoneSyncPacket(List<Zone> zones) implements CustomPacketPayloa
 	public static final StreamCodec<ByteBuf, RiteZoneSyncPacket> STREAM_CODEC = Zone.STREAM_CODEC
 			.apply(ByteBufCodecs.list(MAX_ZONES))
 			.map(RiteZoneSyncPacket::new, RiteZoneSyncPacket::zones);
-
-	public static void handle(RiteZoneSyncPacket packet, IPayloadContext context) {
-		context.enqueueWork(() -> RiteZoneClientData.set(packet.zones()));
-	}
 
 	@Override
 	public Type<? extends CustomPacketPayload> type() {

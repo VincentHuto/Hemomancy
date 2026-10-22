@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world.floor;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.client.render.world.rite.escalation.RingTear;
@@ -44,7 +45,7 @@ public final class AnchorSores {
 
 	/** Emits one sore per anchor of the live rite whose Focus is at {@code origin}; nothing when there is none. */
 	public static void emit(VertexConsumer consumer, Matrix4f matrix, Level level, BlockPos origin) {
-		ActiveRiteClientData.RiteEntry rite = riteAt(origin);
+		ActiveRiteData.RiteEntry rite = riteAt(origin);
 		if (rite == null) return;
 		int[] states = rite.getAnchorStates();
 		if (states.length == 0) return;
@@ -61,7 +62,7 @@ public final class AnchorSores {
 			if (ground == null) continue;
 			int state = states[i];
 			// A sleeping anchor is a closed scar; a woken one tears open and fills toward its own requirement.
-			float target = rite.anchorDormant(i) ? 0.0F : ActiveRiteClientData.RiteEntry.anchorBlood(state)
+			float target = rite.anchorDormant(i) ? 0.0F : ActiveRiteData.RiteEntry.anchorBlood(state)
 					/ (float) Math.max(1, rite.anchorRequirement(i));
 			float size = RingTear.size(rite.anchorDormant(i), origin, ranks[i], 0.0F);
 			long key = origin.asLong() * 31L + i;
@@ -70,7 +71,7 @@ public final class AnchorSores {
 			if (Math.abs(target - shown) < 0.002F) shown = target;
 			SHOWN_FILL.put(key, shown);
 			emitSore(consumer, matrix, anchor.x(), ground + FloorMesh.SURFACE_Y + LIFT, anchor.z(), size,
-					encode(shown, ActiveRiteClientData.RiteEntry.anchorDamaged(state)));
+					encode(shown, ActiveRiteData.RiteEntry.anchorDamaged(state)));
 		}
 	}
 
@@ -89,8 +90,8 @@ public final class AnchorSores {
 		return broken ? 128 + level : level;
 	}
 
-	private static ActiveRiteClientData.RiteEntry riteAt(BlockPos origin) {
-		for (ActiveRiteClientData.RiteEntry rite : ActiveRiteClientData.getActiveRites()) {
+	private static ActiveRiteData.RiteEntry riteAt(BlockPos origin) {
+		for (ActiveRiteData.RiteEntry rite : ActiveRiteClientData.getActiveRites()) {
 			if (!rite.isUnstained() && rite.getCenter().equals(origin)) return rite;
 		}
 		return null;

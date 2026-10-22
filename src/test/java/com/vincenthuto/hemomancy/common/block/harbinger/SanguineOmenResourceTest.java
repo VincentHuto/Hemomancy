@@ -55,9 +55,10 @@ public final class SanguineOmenResourceTest {
 				SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/network/particle/SpawnSanguineOmenEffectPacket.java"));
 		assertContains("packet encodes overlay mode", omenPacket,
 				"buf.writeBoolean(msg.isScreenOverlay());");
-		assertContains("packet starts screen mode", omenPacket,
+		String omenHandler = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/network/ClientboundEffectHandlers.java"));
+		assertContains("packet starts screen mode", omenHandler,
 				"SanguineOmenOverlay.Mode.SCREEN_OVERLAY");
-		assertContains("packet starts world mode", omenPacket,
+		assertContains("packet starts world mode", omenHandler,
 				"SanguineOmenOverlay.Mode.WORLD_GRADE");
 		assertContains("shader holder registered", shaderInit,
 				"SANGUINE_OMEN_WORLD = new ShaderHolder(Hemomancy.rloc(\"screen/sanguine_omen_overlay\")");

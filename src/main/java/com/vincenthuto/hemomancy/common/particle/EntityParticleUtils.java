@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.client.particle.util;
+package com.vincenthuto.hemomancy.common.particle;
 
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;

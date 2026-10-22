@@ -69,7 +69,7 @@ public final class HarbingerHermitRoadMissionSourceTest {
 				"com/vincenthuto/hemomancy/common/network/PacketHandler.java")),
 				"OpenHarbingerAssignmentLedgerPacket.TYPE");
 		assertContains("assignment ledger packet opens screen", read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/network/mission/OpenHarbingerAssignmentLedgerPacket.java")),
+				"com/vincenthuto/hemomancy/client/network/ClientboundScreenHandlers.java")),
 				"HarbingerAssignmentLedgerScreen.open");
 		assertContains("assignment ledger screen exists", ledgerScreen, "renderAssignmentCard");
 		assertContains("assignment ledger uses progress-screen tendril background", ledgerScreen,

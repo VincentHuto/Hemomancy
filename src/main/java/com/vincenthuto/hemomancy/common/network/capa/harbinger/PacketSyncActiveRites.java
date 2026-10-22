@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
-import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteBoundaryProgress;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilAnatomy;
 import net.minecraft.core.BlockPos;
@@ -8,7 +8,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,19 +22,19 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 			ResourceLocation.fromNamespaceAndPath("hemomancy", "packet_sync_active_rites"));
 	public static final StreamCodec<FriendlyByteBuf, PacketSyncActiveRites> STREAM_CODEC = StreamCodec.of(PacketSyncActiveRites::encode, PacketSyncActiveRites::decode);
 
-	private final List<ActiveRiteClientData.RiteEntry> entries;
+	private final List<ActiveRiteData.RiteEntry> entries;
 
-	public PacketSyncActiveRites(List<ActiveRiteClientData.RiteEntry> entries) {
+	public PacketSyncActiveRites(List<ActiveRiteData.RiteEntry> entries) {
 		this.entries = List.copyOf(entries);
 	}
 
-	List<ActiveRiteClientData.RiteEntry> entries() {
+	public List<ActiveRiteData.RiteEntry> entries() {
 		return entries;
 	}
 
 	public static void encode(FriendlyByteBuf buf, PacketSyncActiveRites msg) {
 		buf.writeInt(msg.entries.size());
-		for (ActiveRiteClientData.RiteEntry entry : msg.entries) {
+		for (ActiveRiteData.RiteEntry entry : msg.entries) {
 			buf.writeBlockPos(entry.getCenter());
 			buf.writeInt(entry.getRiteSize());
 			buf.writeDouble(entry.getProgress());
@@ -73,7 +72,7 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 				buf.writeFloat(segment.integrity());
 			}
 			buf.writeVarInt(entry.getSigilSegments().size());
-			for (ActiveRiteClientData.SigilSegment segment : entry.getSigilSegments()) {
+			for (ActiveRiteData.SigilSegment segment : entry.getSigilSegments()) {
 				buf.writeDouble(segment.startX());
 				buf.writeDouble(segment.startY());
 				buf.writeDouble(segment.startZ());
@@ -83,7 +82,7 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 				buf.writeInt(segment.color());
 			}
 			buf.writeVarInt(entry.getSanguineBlobs().size());
-			for (ActiveRiteClientData.SanguineBlob blob : entry.getSanguineBlobs()) {
+			for (ActiveRiteData.SanguineBlob blob : entry.getSanguineBlobs()) {
 				buf.writeDouble(blob.x());
 				buf.writeDouble(blob.y());
 				buf.writeDouble(blob.z());
@@ -104,7 +103,7 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 				for (String arg : problem.args()) buf.writeUtf(arg);
 			}
 			buf.writeVarInt(entry.getSocketMarkers().size());
-			for (ActiveRiteClientData.SocketMarker marker : entry.getSocketMarkers()) {
+			for (ActiveRiteData.SocketMarker marker : entry.getSocketMarkers()) {
 				buf.writeBlockPos(marker.pos());
 				buf.writeUtf(marker.sigil());
 			}
@@ -126,7 +125,7 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 
 	public static PacketSyncActiveRites decode(FriendlyByteBuf buf) {
 		int count = buf.readInt();
-		List<ActiveRiteClientData.RiteEntry> entries = new ArrayList<>(count);
+		List<ActiveRiteData.RiteEntry> entries = new ArrayList<>(count);
 		for (int i = 0; i < count; i++) {
 			BlockPos center = buf.readBlockPos();
 			int riteSize = buf.readInt();
@@ -165,23 +164,23 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 						buf.readInt(), buf.readFloat()));
 			}
 			int sigilSegmentCount = buf.readVarInt();
-			List<ActiveRiteClientData.SigilSegment> sigilSegments = new ArrayList<>(sigilSegmentCount);
+			List<ActiveRiteData.SigilSegment> sigilSegments = new ArrayList<>(sigilSegmentCount);
 			for (int segmentIndex = 0; segmentIndex < sigilSegmentCount; segmentIndex++) {
-				sigilSegments.add(new ActiveRiteClientData.SigilSegment(
+				sigilSegments.add(new ActiveRiteData.SigilSegment(
 						buf.readDouble(), buf.readDouble(), buf.readDouble(),
 						buf.readDouble(), buf.readDouble(), buf.readDouble(),
 						buf.readInt()));
 			}
 			int blobCount = buf.readVarInt();
-			List<ActiveRiteClientData.SanguineBlob> sanguineBlobs = new ArrayList<>(blobCount);
+			List<ActiveRiteData.SanguineBlob> sanguineBlobs = new ArrayList<>(blobCount);
 			for (int blobIndex = 0; blobIndex < blobCount; blobIndex++) {
-				sanguineBlobs.add(new ActiveRiteClientData.SanguineBlob(
+				sanguineBlobs.add(new ActiveRiteData.SanguineBlob(
 						buf.readDouble(), buf.readDouble(), buf.readDouble(),
 						buf.readFloat(), buf.readInt(), buf.readLong(), buf.readFloat(),
-						buf.readEnum(ActiveRiteClientData.NodeKind.class),
+						buf.readEnum(ActiveRiteData.NodeKind.class),
 						buf.readEnum(IchorianSigilAnatomy.Role.class)));
 			}
-			entries.add(new ActiveRiteClientData.RiteEntry(center, riteSize, progress, recipeId, unstained,
+			entries.add(new ActiveRiteData.RiteEntry(center, riteSize, progress, recipeId, unstained,
 					phase, instability, currentWave, totalWaves, completedRings, totalRings,
 					committedBlood, upfrontBlood, carriedIchor, allyCount, sharedBlood, cue,
 					footprintRadius, checklist,
@@ -215,21 +214,15 @@ public class PacketSyncActiveRites implements CustomPacketPayload {
 		return problems;
 	}
 
-	private static List<ActiveRiteClientData.SocketMarker> readSocketMarkers(FriendlyByteBuf buf) {
+	private static List<ActiveRiteData.SocketMarker> readSocketMarkers(FriendlyByteBuf buf) {
 		int count = buf.readVarInt();
-		List<ActiveRiteClientData.SocketMarker> markers = new ArrayList<>();
+		List<ActiveRiteData.SocketMarker> markers = new ArrayList<>();
 		for (int i = 0; i < count; i++) {
 			BlockPos pos = buf.readBlockPos();
 			String sigil = buf.readUtf();
-			if (i < MAX_SYNCED_MARKERS) markers.add(new ActiveRiteClientData.SocketMarker(pos, sigil));
+			if (i < MAX_SYNCED_MARKERS) markers.add(new ActiveRiteData.SocketMarker(pos, sigil));
 		}
 		return markers;
-	}
-
-	public static void handle(final PacketSyncActiveRites msg, final IPayloadContext ctx) {
-		ctx.enqueueWork(() -> {
-			ActiveRiteClientData.set(msg.entries);
-		});
 	}
 
 	@Override

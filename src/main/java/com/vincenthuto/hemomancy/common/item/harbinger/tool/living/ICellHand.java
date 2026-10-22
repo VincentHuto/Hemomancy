@@ -1,8 +1,5 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
-import net.minecraft.client.resources.model.BakedModel;
-
+/** Marks the cell-hand items, which the client draws as a hand of blood cells. */
 public interface ICellHand {
-	public BakedModel getBakedModel();
-
 }

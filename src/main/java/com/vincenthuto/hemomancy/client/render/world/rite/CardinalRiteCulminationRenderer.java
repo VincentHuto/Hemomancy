@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world.rite;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import static com.vincenthuto.hemomancy.client.render.world.rite.CardinalRiteVisualRules.*;
 import static com.vincenthuto.hemomancy.client.render.world.rite.RiteSurface.*;
 
@@ -324,7 +325,7 @@ public final class CardinalRiteCulminationRenderer {
 	}
 
 	private static double floorRadius(BlockPos center) {
-		ActiveRiteClientData.RiteEntry entry = entryAt(center);
+		ActiveRiteData.RiteEntry entry = entryAt(center);
 		if (entry == null) return 4.0;
 		return entry.getFootprintRadius() > 0 ? entry.getFootprintRadius() : entry.getRiteSize() * 2.0 + 3.0;
 	}
@@ -611,8 +612,8 @@ public final class CardinalRiteCulminationRenderer {
 
 	// ── Rite lookup ──
 
-	private static ActiveRiteClientData.RiteEntry entryAt(BlockPos center) {
-		for (ActiveRiteClientData.RiteEntry rite : ActiveRiteClientData.getActiveRites()) {
+	private static ActiveRiteData.RiteEntry entryAt(BlockPos center) {
+		for (ActiveRiteData.RiteEntry rite : ActiveRiteClientData.getActiveRites()) {
 			if (rite.getCenter().equals(center)) return rite;
 		}
 		CardinalRiteEventClientState.Ghost ghost = CardinalRiteEventClientState.ghostAt(center);
@@ -620,7 +621,7 @@ public final class CardinalRiteCulminationRenderer {
 	}
 
 	private static Player caster(ClientLevel level, BlockPos center) {
-		ActiveRiteClientData.RiteEntry entry = entryAt(center);
+		ActiveRiteData.RiteEntry entry = entryAt(center);
 		UUID owner = entry == null ? null : entry.getOwner();
 		return owner == null ? null : level.getPlayerByUUID(owner);
 	}

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.unstained;
 
-import com.vincenthuto.hemomancy.client.screen.skilltree.util.EnumNodeShape;
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumNodeShape;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 

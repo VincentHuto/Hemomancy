@@ -1,13 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.routing;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.data.SutureLinkClientData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.BloodRoutingMode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,12 +35,6 @@ public record PacketSyncSutureLinks(List<Entry> entries) implements CustomPacket
 			entries.add(new Entry(buf.readBlockPos(), buf.readEnum(BloodRoutingMode.class), buf.readBoolean()));
 		}
 		return new PacketSyncSutureLinks(entries);
-	}
-
-	public static void handle(final PacketSyncSutureLinks msg, final IPayloadContext ctx) {
-		ctx.enqueueWork(() -> SutureLinkClientData.setEntries(msg.entries.stream()
-				.map(entry -> new SutureLinkClientData.Entry(entry.pos, entry.mode, entry.bloodlineEnabled))
-				.toList()));
 	}
 
 	@Override

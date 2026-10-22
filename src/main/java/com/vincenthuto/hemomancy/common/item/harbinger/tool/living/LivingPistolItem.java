@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
-import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
+import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingPistolItemRenderer;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodBulletEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;

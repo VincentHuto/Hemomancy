@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world.floor;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.client.render.world.rite.escalation.RingTear;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
@@ -159,7 +160,7 @@ public final class FloorRiteResponse {
 		lastTime = now;
 		double cx = origin.getX() + 0.5D;
 		double cz = origin.getZ() + 0.5D;
-		ActiveRiteClientData.RiteEntry entry = liveRite(origin);
+		ActiveRiteData.RiteEntry entry = liveRite(origin);
 		java.util.Arrays.fill(rings, 0.0F);
 		java.util.Arrays.fill(surge, 0.0F);
 		java.util.Arrays.fill(draw, 0.0F);
@@ -272,12 +273,12 @@ public final class FloorRiteResponse {
 				0, blood, 0, 4);
 	}
 
-	private void updateWounds(BlockPos origin, ActiveRiteClientData.RiteEntry entry, float partialTick, float dt,
+	private void updateWounds(BlockPos origin, ActiveRiteData.RiteEntry entry, float partialTick, float dt,
 			double cx, double cz) {
 		List<float[]> targets = new ArrayList<>();
 		if (entry != null) {
-			for (ActiveRiteClientData.SanguineBlob blob : entry.getSanguineBlobs()) {
-				if (blob.kind() != ActiveRiteClientData.NodeKind.BOUNDARY_ANCHOR) continue;
+			for (ActiveRiteData.SanguineBlob blob : entry.getSanguineBlobs()) {
+				if (blob.kind() != ActiveRiteData.NodeKind.BOUNDARY_ANCHOR) continue;
 				float level = CardinalRiteFloorVisualRules.anchorWound(blob.integrity());
 				if (level > 0.02F) addWound(targets, (float) Math.atan2(blob.z() - cz, blob.x() - cx), level);
 			}
@@ -338,8 +339,8 @@ public final class FloorRiteResponse {
 		return newest;
 	}
 
-	private static ActiveRiteClientData.RiteEntry liveRite(BlockPos origin) {
-		for (ActiveRiteClientData.RiteEntry entry : ActiveRiteClientData.getActiveRites()) {
+	private static ActiveRiteData.RiteEntry liveRite(BlockPos origin) {
+		for (ActiveRiteData.RiteEntry entry : ActiveRiteClientData.getActiveRites()) {
 			if (!entry.isUnstained() && origin.equals(entry.getCenter())) return entry;
 		}
 		return null;

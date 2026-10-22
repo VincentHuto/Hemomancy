@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
-import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteEventKind;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteLightningPalette;
@@ -27,11 +27,11 @@ public final class CardinalRiteFogLightning {
 	private CardinalRiteFogLightning() {
 	}
 
-	public static void tick(List<ActiveRiteClientData.RiteEntry> activeRites,
+	public static void tick(List<ActiveRiteData.RiteEntry> activeRites,
 			long gameTick, float partialTick) {
 		for (CardinalRiteFogLightningSchedule.Strike scheduled
 				: SCHEDULE.update(activeRites, gameTick)) {
-			ActiveRiteClientData.RiteEntry rite = scheduled.rite();
+			ActiveRiteData.RiteEntry rite = scheduled.rite();
 			float radius = CardinalRiteFogGeometry.perimeterRadius(
 					rite.getFootprintRadius(), rite.getRiteSize(), rite.getCompletedRings(),
 					rite.getTotalRings(), rite.isLegacy());
@@ -60,12 +60,12 @@ public final class CardinalRiteFogLightning {
 	 * Wave telegraph: as a wave begins, the fog bank strikes down at each spawn
 	 * point, and again just before the threats arrive.
 	 */
-	private static void telegraphWaves(List<ActiveRiteClientData.RiteEntry> activeRites, float partialTick) {
+	private static void telegraphWaves(List<ActiveRiteData.RiteEntry> activeRites, float partialTick) {
 		List<CardinalRiteEventClientState.RiteEvent> events = CardinalRiteEventClientState.all();
 		STRUCK.removeIf(key -> !events.contains(key.event()));
 		for (CardinalRiteEventClientState.RiteEvent event : events) {
 			if (event.kind() != CardinalRiteEventKind.WAVE_START || event.points().isEmpty()) continue;
-			ActiveRiteClientData.RiteEntry rite = riteAt(activeRites, event.center());
+			ActiveRiteData.RiteEntry rite = riteAt(activeRites, event.center());
 			if (rite == null || rite.isUnstained()) continue;
 			float age = event.age(partialTick);
 			for (int beat = 0; beat < WAVE_STRIKE_TICKS.length; beat++) {
@@ -81,9 +81,9 @@ public final class CardinalRiteFogLightning {
 		}
 	}
 
-	private static ActiveRiteClientData.RiteEntry riteAt(List<ActiveRiteClientData.RiteEntry> rites,
+	private static ActiveRiteData.RiteEntry riteAt(List<ActiveRiteData.RiteEntry> rites,
 			BlockPos center) {
-		for (ActiveRiteClientData.RiteEntry rite : rites) {
+		for (ActiveRiteData.RiteEntry rite : rites) {
 			if (rite.getCenter().equals(center)) return rite;
 		}
 		return null;

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomData;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -107,7 +108,7 @@ public class QliphothBloomRenderer {
 	private static final double RING_PULSE_SPEED = 0.005;
 
 	public static void render(PoseStack poseStack, float partialTick, Frustum frustum) {
-		List<QliphothBloomClientData.BloomEntry> blooms = QliphothBloomClientData.getActiveBlooms();
+		List<QliphothBloomData.BloomEntry> blooms = QliphothBloomClientData.getActiveBlooms();
 		if (blooms.isEmpty()) return;
 
 		Minecraft mc = Minecraft.getInstance();
@@ -118,7 +119,7 @@ public class QliphothBloomRenderer {
 		Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
 
 		boolean sceneCopied = false;
-		for (QliphothBloomClientData.BloomEntry bloom : blooms) {
+		for (QliphothBloomData.BloomEntry bloom : blooms) {
 			BlockPos center = bloom.getCenter();
 			double cx = center.getX() + 0.5;
 			double cy = center.getY() + 4.0;
@@ -313,7 +314,7 @@ public class QliphothBloomRenderer {
 	// ════════════════════════════════════════════════════════════════════════
 
 	private static boolean drawQliphothTree(PoseStack stack, MultiBufferSource buffer,
-			QliphothBloomClientData.BloomEntry bloom, float time, Vec3 cam, boolean dynamicEffects,
+			QliphothBloomData.BloomEntry bloom, float time, Vec3 cam, boolean dynamicEffects,
 			boolean copyScene) {
 
 		BlockPos center = bloom.getCenter();
@@ -1712,7 +1713,7 @@ public class QliphothBloomRenderer {
 	// ════════════════════════════════════════════════════════════════════════
 
 	private static void drawPulsingRings(PoseStack stack, MultiBufferSource buffer,
-			QliphothBloomClientData.BloomEntry bloom, float time, Vec3 cam) {
+			QliphothBloomData.BloomEntry bloom, float time, Vec3 cam) {
 
 		BlockPos center = bloom.getCenter();
 		double cx = center.getX() + 0.5;

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
+import com.vincenthuto.hemomancy.common.util.ClientBridge;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -29,7 +30,7 @@ public class ItemSanguineConduit extends BlockItem {
 	public InteractionResultHolder<ItemStack> use(Level lvl, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 		if (lvl.isClientSide) {
-			openClientProgressScreen();
+			ClientBridge.get().openHarbingerProgress();
 		}
 		return InteractionResultHolder.sidedSuccess(stack, lvl.isClientSide());
 	}
@@ -65,7 +66,7 @@ public class ItemSanguineConduit extends BlockItem {
 			TooltipFlag flag) {
 		super.appendHoverText(stack, context, tooltip, flag);
 
-		Player viewer = getClientPlayer();
+		Player viewer = ClientBridge.get().localPlayer();
 		int degree = (viewer != null) ? HemoCapabilityAccess.getPlayerDegreeNumber(viewer) : 0;
 
 		if (degree >= 5) {
@@ -79,24 +80,5 @@ public class ItemSanguineConduit extends BlockItem {
 		}
 	}
 
-	private static void openClientProgressScreen() {
-		try {
-			Class<?> screen = Class.forName(
-					"com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen");
-			screen.getMethod("openScreen").invoke(null);
-		} catch (ReflectiveOperationException | RuntimeException ignored) {
-		}
-	}
-
-	private static Player getClientPlayer() {
-		try {
-			Class<?> minecraftClass = Class.forName("net.minecraft.client.Minecraft");
-			Object minecraft = minecraftClass.getMethod("getInstance").invoke(null);
-			Object player = minecraftClass.getField("player").get(minecraft);
-			return player instanceof Player clientPlayer ? clientPlayer : null;
-		} catch (ReflectiveOperationException | RuntimeException ignored) {
-			return null;
-		}
-	}
 }
 

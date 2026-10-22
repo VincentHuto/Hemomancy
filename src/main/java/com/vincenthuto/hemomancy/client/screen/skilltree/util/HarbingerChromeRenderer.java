@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.util;
 
+import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumNodeShape;
 import net.minecraft.client.gui.GuiGraphics;
 
 /** Accent-aware Harbinger frame renderer inspired by the NPC dialogue nine-slice artwork. */

@@ -57,7 +57,7 @@ public final class ClawSlashRendererSourceTest {
 		assertContains("client tick ticks slash renderer", clientTick, "ClawSlashRenderer.tick()");
 		assertContains("world effects render slash renderer", dispatcher, "ClawSlashRenderer.render(event.getPoseStack(), partialTick)");
 		assertContains("packet type exists", packet, "TYPE = new Type<>(Hemomancy.rloc(\"spawn_claw_slash_packet\"))");
-		assertContains("packet queues renderer spawn", packet, "ClawSlashRenderer.spawn(");
+		assertContains("packet queues renderer spawn", read("src/main/java/com/vincenthuto/hemomancy/client/network/ClientboundEffectHandlers.java"), "ClawSlashRenderer.spawn(");
 		assertContains("packet registered", packetHandler, "net.playToClient(SpawnClawSlashPacket.TYPE");
 		assertContains("send helper exists", packetHandler, "sendClawSlash(");
 		assertContains("send helper uses nearby clients", packetHandler, "new SpawnClawSlashPacket(pos, forward, color, ambush, scale, level.random.nextInt())");

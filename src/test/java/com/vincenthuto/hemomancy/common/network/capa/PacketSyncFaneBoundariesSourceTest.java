@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.support.SourceAssertions;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,7 +23,8 @@ public final class PacketSyncFaneBoundariesSourceTest {
 		assertContains("writes radius", source, "buf.writeFloat(entry.radius())");
 		assertContains("writes owner", source, "buf.writeUUID(entry.ownerUuid())");
 		assertContains("writes relation", source, "buf.writeEnum(entry.relation())");
-		assertContains("updates client cache", source, "FaneBoundaryClientData.setEntries(msg.entries)");
+		assertContains("updates client cache",
+				SourceAssertions.read("src/main/java/com/vincenthuto/hemomancy/client/network/ClientboundStateHandlers.java"), "FaneBoundaryClientData.setEntries(msg.entries())");
 	}
 
 	private static void assertContains(String label, String text, String expected) {

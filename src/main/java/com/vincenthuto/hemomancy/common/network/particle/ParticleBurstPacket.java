@@ -7,7 +7,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * A one-shot particle burst at a point. Each {@link Kind} names one effect the client spawns; kinds that are not
@@ -61,10 +60,6 @@ public record ParticleBurstPacket(Kind kind, Vec3 pos, ParticleColor color) impl
 		Kind kind = buf.readEnum(Kind.class);
 		Vec3 pos = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
 		return new ParticleBurstPacket(kind, pos, new ParticleColor(buf.readFloat(), buf.readFloat(), buf.readFloat()));
-	}
-
-	public static void handle(ParticleBurstPacket packet, IPayloadContext context) {
-		context.enqueueWork(() -> com.vincenthuto.hemomancy.client.particle.ParticleBurstEffects.spawn(packet, context.player()));
 	}
 
 	@Override

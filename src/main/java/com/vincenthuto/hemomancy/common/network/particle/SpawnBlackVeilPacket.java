@@ -1,12 +1,10 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.render.world.BlackVeilRenderer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class SpawnBlackVeilPacket implements CustomPacketPayload {
 	public static final Type<SpawnBlackVeilPacket> TYPE = new Type<>(Hemomancy.rloc("spawn_black_veil_packet"));
@@ -43,12 +41,24 @@ public class SpawnBlackVeilPacket implements CustomPacketPayload {
 		buf.writeInt(msg.seed);
 	}
 
-	public static void handle(SpawnBlackVeilPacket msg, IPayloadContext ctx) {
-		ctx.enqueueWork(() -> BlackVeilRenderer.addVeil(msg.pos, msg.radius, msg.durationTicks, msg.seed));
-	}
-
 	@Override
 	public Type<? extends CustomPacketPayload> type() {
 		return TYPE;
+	}
+
+	public int durationTicks() {
+		return durationTicks;
+	}
+
+	public Vec3 pos() {
+		return pos;
+	}
+
+	public float radius() {
+		return radius;
+	}
+
+	public int seed() {
+		return seed;
 	}
 }

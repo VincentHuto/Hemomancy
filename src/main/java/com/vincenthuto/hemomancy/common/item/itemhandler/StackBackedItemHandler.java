@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.itemhandler;
 
-import com.vincenthuto.hemomancy.client.util.ItemInventoryClientAccess;
+import com.vincenthuto.hemomancy.common.util.ClientBridge;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
@@ -86,7 +86,7 @@ public abstract class StackBackedItemHandler extends ItemStackHandler {
     private HolderLookup.Provider provider() {
         var server = ServerLifecycleHooks.getCurrentServer();
         if (server != null) return server.registryAccess();
-        if (FMLEnvironment.dist.isClient()) return ItemInventoryClientAccess.registryAccess();
+        if (FMLEnvironment.dist.isClient()) return ClientBridge.get().clientRegistries();
         return RegistryAccess.EMPTY;
     }
 }

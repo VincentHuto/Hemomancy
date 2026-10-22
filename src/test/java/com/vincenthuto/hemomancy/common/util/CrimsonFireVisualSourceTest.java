@@ -53,7 +53,7 @@ public final class CrimsonFireVisualSourceTest {
 				"sendTracking(target");
 		assertContains("packet writes entity id", packet, "buffer.writeVarInt(packet.entityId())");
 		assertContains("packet writes duration", packet, "buffer.writeVarInt(packet.durationTicks())");
-		assertContains("packet updates client state", packet,
+		assertContains("packet updates client state", read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/network/ClientboundEffectHandlers.java")),
 				"CrimsonFireClientState.markActive(packet.entityId(), packet.durationTicks())");
 
 		assertContains("client state stores ids", clientState, "ACTIVE_UNTIL_BY_ENTITY_ID");

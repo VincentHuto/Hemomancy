@@ -1,13 +1,10 @@
 package com.vincenthuto.hemomancy.common.network.capa.unstained;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Server → Client packet: synchronises the player's current Unstained progress.
@@ -140,51 +137,132 @@ public class PacketSyncUnstainedProgress implements CustomPacketPayload {
         return new PacketSyncUnstainedProgress(buf);
     }
 
-    public static void handle(final PacketSyncUnstainedProgress msg, final IPayloadContext ctx) {
-        ctx.enqueueWork(() -> {
-            Player player = ctx.player();
-            if (player != null) {
-                var progress = HemoCapabilityAccess.getUnstainedProgress(player);
-                                            progress.setBegunPurification(msg.begunPurification);
-                                            progress.setPurity(msg.purity);
-                                            progress.setClarityUnlocked(msg.clarityUnlocked);
-                                            progress.setClarity(msg.clarity);
-                                            // Replay milestones from server counts
-                                            for (int i = progress.getHemoMobKills(); i < msg.hemoMobKills; i++) progress.addHemoMobKill();
-                                            for (int i = progress.getUndeadKills(); i < msg.undeadKills; i++) progress.addUndeadKill();
-                                            for (int i = progress.getHostileKills(); i < msg.hostileKills; i++) progress.addHostileKill();
-                                            for (int i = progress.getFlawlessKills(); i < msg.flawlessKills; i++) progress.addFlawlessKill();
-                                            for (int i = progress.getAnimalsBreed(); i < msg.animalsBreed; i++) progress.addAnimalBreed();
-                                            for (int i = progress.getCropsPlanted(); i < msg.cropsPlanted; i++) progress.addCropPlanted();
-                                            for (int i = progress.getAdvancementsEarned(); i < msg.advancementsEarned; i++) progress.addAdvancementEarned();
-                                            for (int i = progress.getNightsSlept(); i < msg.nightsSlept; i++) progress.addNightSlept();
-                                            for (int i = progress.getPetsHealed(); i < msg.petsHealed; i++) progress.addPetHealed();
-                                            progress.setSleptWithHemolysis(msg.sleptWithHemolysis);
-                                            progress.setKilledFirstHemoMob(msg.killedFirstHemoMob);
-                                            progress.setReachedAbstinence(msg.reachedAbstinence);
-                                            progress.setEmptiedBlood(msg.emptiedBlood);
-                                            progress.setEarnedAdvancement(msg.earnedAdvancement);
-                                            progress.setSilverWardEnabled(msg.silverWardEnabled);
-                                            progress.setVerdigrisAuraEnabled(msg.verdigrisAuraEnabled);
-                                            progress.setUsedAltarOfCleansing(msg.usedAltarOfCleansing);
-                							progress.setInfectionSuppressed(msg.infectionSuppressed);
-                							progress.setClarityPrepared(msg.clarityPrepared);
-                							progress.setAnnettaSeveranceUnlocked(msg.annettaSeveranceUnlocked);
-                							progress.setAcceptedObservances(msg.acceptedObservances);
-                							progress.setClaimedObservances(msg.claimedObservances);
-                							progress.setBaselineRestored(msg.baselineRestored);
-                							progress.setNovitiateRetortComplete(msg.novitiateRetortComplete);
-                							progress.setNovitiateDewProduced(msg.novitiateDewProduced);
-                							progress.setNovitiateBlocksConsecrated(msg.novitiateBlocksConsecrated);
-                							progress.setNovitiateProtectionComplete(msg.novitiateProtectionComplete);
-                							if (net.neoforged.fml.loading.FMLEnvironment.dist == net.neoforged.api.distmarker.Dist.CLIENT)
-                								com.vincenthuto.hemomancy.client.ClientLiberScreenHooks.progressChanged(player);
-            }
-        });
-    }
-
 	@Override
 	public Type<? extends CustomPacketPayload> type() {
 		return TYPE;
+	}
+
+	public int acceptedObservances() {
+		return acceptedObservances;
+	}
+
+	public int advancementsEarned() {
+		return advancementsEarned;
+	}
+
+	public int animalsBreed() {
+		return animalsBreed;
+	}
+
+	public boolean annettaSeveranceUnlocked() {
+		return annettaSeveranceUnlocked;
+	}
+
+	public boolean baselineRestored() {
+		return baselineRestored;
+	}
+
+	public boolean begunPurification() {
+		return begunPurification;
+	}
+
+	public int claimedObservances() {
+		return claimedObservances;
+	}
+
+	public float clarity() {
+		return clarity;
+	}
+
+	public boolean clarityPrepared() {
+		return clarityPrepared;
+	}
+
+	public boolean clarityUnlocked() {
+		return clarityUnlocked;
+	}
+
+	public int cropsPlanted() {
+		return cropsPlanted;
+	}
+
+	public boolean earnedAdvancement() {
+		return earnedAdvancement;
+	}
+
+	public boolean emptiedBlood() {
+		return emptiedBlood;
+	}
+
+	public int flawlessKills() {
+		return flawlessKills;
+	}
+
+	public int hemoMobKills() {
+		return hemoMobKills;
+	}
+
+	public int hostileKills() {
+		return hostileKills;
+	}
+
+	public boolean infectionSuppressed() {
+		return infectionSuppressed;
+	}
+
+	public boolean killedFirstHemoMob() {
+		return killedFirstHemoMob;
+	}
+
+	public int nightsSlept() {
+		return nightsSlept;
+	}
+
+	public int novitiateBlocksConsecrated() {
+		return novitiateBlocksConsecrated;
+	}
+
+	public int novitiateDewProduced() {
+		return novitiateDewProduced;
+	}
+
+	public boolean novitiateProtectionComplete() {
+		return novitiateProtectionComplete;
+	}
+
+	public boolean novitiateRetortComplete() {
+		return novitiateRetortComplete;
+	}
+
+	public int petsHealed() {
+		return petsHealed;
+	}
+
+	public float purity() {
+		return purity;
+	}
+
+	public boolean reachedAbstinence() {
+		return reachedAbstinence;
+	}
+
+	public boolean silverWardEnabled() {
+		return silverWardEnabled;
+	}
+
+	public boolean sleptWithHemolysis() {
+		return sleptWithHemolysis;
+	}
+
+	public int undeadKills() {
+		return undeadKills;
+	}
+
+	public boolean usedAltarOfCleansing() {
+		return usedAltarOfCleansing;
+	}
+
+	public boolean verdigrisAuraEnabled() {
+		return verdigrisAuraEnabled;
 	}
 }

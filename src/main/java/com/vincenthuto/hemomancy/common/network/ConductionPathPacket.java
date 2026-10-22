@@ -7,7 +7,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -23,10 +22,6 @@ public record ConductionPathPacket(UUID networkId, List<BlockPos> nodes, long ex
     public ConductionPathPacket {
         if (nodes.size() > ConductorGraph.MAX_NODES) throw new IllegalArgumentException("Conduction node limit");
         nodes = nodes.stream().map(BlockPos::immutable).toList();
-    }
-
-    public static void handle(ConductionPathPacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> com.vincenthuto.hemomancy.client.render.world.FerricDuctilisEffects.accept(packet));
     }
 
     private static void encode(FriendlyByteBuf buf, ConductionPathPacket packet) {

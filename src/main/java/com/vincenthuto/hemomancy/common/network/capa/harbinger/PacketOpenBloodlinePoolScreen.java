@@ -1,11 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.screen.item.BloodlinePoolScreen;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class PacketOpenBloodlinePoolScreen implements CustomPacketPayload {
 	public static final Type<PacketOpenBloodlinePoolScreen> TYPE =
@@ -23,14 +21,6 @@ public class PacketOpenBloodlinePoolScreen implements CustomPacketPayload {
 	public static PacketOpenBloodlinePoolScreen decode(FriendlyByteBuf buf) {
 		buf.readByte();
 		return new PacketOpenBloodlinePoolScreen();
-	}
-
-	public static void handle(final PacketOpenBloodlinePoolScreen msg, final IPayloadContext ctx) {
-		ctx.enqueueWork(() -> {
-			if (ctx.player() != null) {
-				BloodlinePoolScreen.openScreen();
-			}
-		});
 	}
 
 	@Override

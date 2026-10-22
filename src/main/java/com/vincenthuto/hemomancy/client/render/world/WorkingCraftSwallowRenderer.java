@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
@@ -51,7 +52,7 @@ public final class WorkingCraftSwallowRenderer {
 			int maxZ, int bottomY, int height, float fill, double sink, float alpha, float sealPulse, float possession) {
 	}
 
-	private record CulminationClock(ActiveRiteClientData.RiteEntry entry, int phaseTicks, long clientTick) {
+	private record CulminationClock(ActiveRiteData.RiteEntry entry, int phaseTicks, long clientTick) {
 		float ticks(long now, float partialTick) {
 			return phaseTicks + (now - clientTick) + partialTick;
 		}
@@ -70,7 +71,7 @@ public final class WorkingCraftSwallowRenderer {
 		if (current == null) return;
 		long now = current.getGameTime();
 		Set<BlockPos> live = new HashSet<>();
-		for (ActiveRiteClientData.RiteEntry entry : ActiveRiteClientData.getActiveRites()) {
+		for (ActiveRiteData.RiteEntry entry : ActiveRiteClientData.getActiveRites()) {
 			if (!entry.hasSubject()) continue;
 			live.add(entry.getCenter());
 			float[] fill = DISPLAYED_FILL.computeIfAbsent(entry.getCenter(), center -> new float[2]);
@@ -112,7 +113,7 @@ public final class WorkingCraftSwallowRenderer {
 			new com.vincenthuto.hutoslib.client.particle.util.ParticleColor(150, 6, 16);
 
 	/** The possessed structure sweats dark blood and smoulders. */
-	private static void bleed(ClientLevel level, ActiveRiteClientData.RiteEntry entry, float possession) {
+	private static void bleed(ClientLevel level, ActiveRiteData.RiteEntry entry, float possession) {
 		List<BlockPos> positions = entry.getSubjectPositions();
 		if (positions.isEmpty() || RANDOM.nextFloat() > 0.35F + 0.5F * possession) return;
 		BlockPos pos = positions.get(RANDOM.nextInt(positions.size()));
@@ -127,7 +128,7 @@ public final class WorkingCraftSwallowRenderer {
 	}
 
 	/** The structure hits the bottom of the floor: a heavy thud, a splash of blood and a shudder underfoot. */
-	private static void thud(ClientLevel level, ActiveRiteClientData.RiteEntry entry) {
+	private static void thud(ClientLevel level, ActiveRiteData.RiteEntry entry) {
 		View view = view(entry, 1.0F, 0.0D, 1.0F, 0.0F, 1.0F);
 		if (view == null) return;
 		double cx = (view.minX() + view.maxX() + 1) / 2.0D;
@@ -155,7 +156,7 @@ public final class WorkingCraftSwallowRenderer {
 	 * strikes a feeding craft's structure, otherwise where it was aimed.
 	 */
 	public static Vec3 projectionLanding(Vec3 source, net.minecraft.world.phys.BlockHitResult hit) {
-		for (ActiveRiteClientData.RiteEntry entry : ActiveRiteClientData.getActiveRites()) {
+		for (ActiveRiteData.RiteEntry entry : ActiveRiteClientData.getActiveRites()) {
 			if (!entry.hasSubject() || entry.getSubjectFill() >= 1.0F
 					|| !entry.getSubjectPositions().contains(hit.getBlockPos())) continue;
 			float[] fill = DISPLAYED_FILL.get(entry.getCenter());
@@ -171,7 +172,7 @@ public final class WorkingCraftSwallowRenderer {
 	static List<View> views(float partialTick) {
 		List<View> views = new ArrayList<>();
 		if (Minecraft.getInstance().level == null) return views;
-		for (ActiveRiteClientData.RiteEntry entry : ActiveRiteClientData.getActiveRites()) {
+		for (ActiveRiteData.RiteEntry entry : ActiveRiteClientData.getActiveRites()) {
 			if (!entry.hasSubject()) continue;
 			float[] fill = DISPLAYED_FILL.get(entry.getCenter());
 			float shown = fill == null ? entry.getSubjectFill() : fill[0] + (fill[1] - fill[0]) * partialTick;
@@ -184,7 +185,7 @@ public final class WorkingCraftSwallowRenderer {
 			if (view != null) views.add(view);
 		}
 		for (CardinalRiteEventClientState.Ghost ghost : CardinalRiteEventClientState.ghosts()) {
-			ActiveRiteClientData.RiteEntry entry = ghost.entry();
+			ActiveRiteData.RiteEntry entry = ghost.entry();
 			if (!entry.hasSubject()) continue;
 			float age = ghost.age(partialTick);
 			View view;
@@ -203,7 +204,7 @@ public final class WorkingCraftSwallowRenderer {
 		return views;
 	}
 
-	private static View view(ActiveRiteClientData.RiteEntry entry, float fill, double sink, float alpha, float pulse,
+	private static View view(ActiveRiteData.RiteEntry entry, float fill, double sink, float alpha, float pulse,
 			float possession) {
 		List<BlockPos> positions = entry.getSubjectPositions();
 		int[] ids = entry.getSubjectStateIds();

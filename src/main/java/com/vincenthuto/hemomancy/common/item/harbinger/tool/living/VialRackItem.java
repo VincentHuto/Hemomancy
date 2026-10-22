@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
+import com.vincenthuto.hemomancy.common.util.ClientBridge;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
@@ -64,7 +64,7 @@ public class VialRackItem extends Item {
 		tooltip.add(Component.translatable("item.hemomancy.vial_rack.empty_count", emptyCount, MAX_VIALS));
 		tooltip.add(Component.literal("Use with empty vials in the other hand to refill vacant slots.")
 				.withStyle(ChatFormatting.GRAY));
-		if (Screen.hasShiftDown()) {
+		if (ClientBridge.get().hasShiftDown()) {
 			appendContentsTooltip(stack, tooltip);
 		} else {
 			if (emptyCount < MAX_VIALS) {
@@ -87,7 +87,7 @@ public class VialRackItem extends Item {
 			} else {
 				EntityType<?> entityType = BloodVialItem.getEntityType(vial);
 				String entityName = entityType != null
-						? net.minecraft.client.resources.language.I18n.get(entityType.getDescriptionId()) + " Sample"
+						? ClientBridge.get().translate(entityType.getDescriptionId()) + " Sample"
 						: vial.getHoverName().getString();
 				tooltip.add(slotLabel.copy().append(Component.literal(entityName).withStyle(ChatFormatting.RED)));
 			}

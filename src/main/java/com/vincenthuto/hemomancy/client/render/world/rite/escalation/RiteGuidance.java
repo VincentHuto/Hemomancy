@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world.rite.escalation;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteProblems;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteProblems.RiteProblem;
@@ -54,7 +55,7 @@ public final class RiteGuidance {
 		}
 		UUID player = minecraft.player.getUUID();
 		List<BlockPos> live = new ArrayList<>();
-		for (ActiveRiteClientData.RiteEntry entry : ActiveRiteClientData.getActiveRites()) {
+		for (ActiveRiteData.RiteEntry entry : ActiveRiteClientData.getActiveRites()) {
 			if (!listensTo(entry, player)) continue;
 			live.add(entry.getCenter());
 			Decision decision = decide(SEEN.getOrDefault(entry.getCenter(), Seen.NONE), entry.getPhase(),
@@ -72,7 +73,7 @@ public final class RiteGuidance {
 		SEEN.clear();
 	}
 
-	static boolean listensTo(ActiveRiteClientData.RiteEntry entry, UUID player) {
+	static boolean listensTo(ActiveRiteData.RiteEntry entry, UUID player) {
 		return player != null && player.equals(entry.getOwner()) && !entry.isUnstained() && !entry.isLegacy();
 	}
 

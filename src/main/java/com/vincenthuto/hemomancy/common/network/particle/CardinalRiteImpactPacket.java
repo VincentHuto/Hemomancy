@@ -1,12 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
-import com.vincenthuto.hemomancy.client.event.CardinalRiteImpactClientEvents;
-import com.vincenthuto.hemomancy.client.screen.overlay.SanguineOmenOverlay;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /** Server-authored cue for the daemon's brief player impact feedback. */
 public record CardinalRiteImpactPacket(int durationTicks, float peakAlpha, int seed)
@@ -30,16 +27,6 @@ public record CardinalRiteImpactPacket(int durationTicks, float peakAlpha, int s
 	public static CardinalRiteImpactPacket decode(FriendlyByteBuf buffer) {
 		return new CardinalRiteImpactPacket(
 				buffer.readVarInt(), buffer.readFloat(), buffer.readInt());
-	}
-
-	public static void handle(CardinalRiteImpactPacket packet, IPayloadContext context) {
-		context.enqueueWork(() -> {
-			CardinalRiteImpactClientEvents.start(packet.durationTicks, packet.seed);
-			if (SanguineOmenOverlay.instance != null) {
-				SanguineOmenOverlay.instance.start(packet.durationTicks, packet.peakAlpha,
-						packet.seed, SanguineOmenOverlay.Mode.SCREEN_OVERLAY);
-			}
-		});
 	}
 
 	@Override
