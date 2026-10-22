@@ -45,7 +45,6 @@ class ServerboundGuardsCoverageTest {
 			Map.entry("PacketBloodlineMessage", "Length-capped text to the sender's own bloodline."),
 			Map.entry("PacketCrossbarRadialAction", "Acts on the sender's equipped crossbar; the action text is length-capped."),
 			Map.entry("PacketKickBloodlinePlayer", "Checks bloodline leadership."),
-			Map.entry("PacketLedgerAction", "Checks bloodline leadership."),
 			Map.entry("PacketLumpDonate", "BloodVolumeTransferRules.donationAmount accepts only finite, positive amounts."),
 			Map.entry("PacketOpenTendencyView", "Opens a read-only view of the sender's own tendency."),
 			Map.entry("PacketRequestPoolData", "Requests a resync of the sender's own bloodline pool."),

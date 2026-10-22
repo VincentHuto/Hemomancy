@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
+import com.vincenthuto.hemomancy.common.item.harbinger.bloodline.UnsignedLedgerItem;
+import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
@@ -83,6 +85,8 @@ public class PacketLedgerAction implements CustomPacketPayload {
 		ctx.enqueueWork(() -> {
 			Player packetPlayer = ctx.player();
 			if (!(packetPlayer instanceof ServerPlayer player)) return;
+			// The ledger screen only opens from the item, so every action needs it in hand (F-6).
+			if (ServerboundGuards.heldItem(player, UnsignedLedgerItem.class).isEmpty()) return;
 
 			HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 				switch (msg.action) {

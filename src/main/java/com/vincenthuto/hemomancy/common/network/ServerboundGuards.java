@@ -1,9 +1,12 @@
 package com.vincenthuto.hemomancy.common.network;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
@@ -53,6 +56,17 @@ public final class ServerboundGuards {
 	public static Entity nearEntity(Player player, int entityId, double maxDistance) {
 		Entity entity = player.level().getEntity(entityId);
 		return entity != null && player.distanceTo(entity) <= maxDistance ? entity : null;
+	}
+
+	/** The stack in the player's main hand, else off hand, whose item is a {@code type}, otherwise empty. */
+	public static ItemStack heldItem(Player player, Class<? extends Item> type) {
+		for (InteractionHand hand : InteractionHand.values()) {
+			ItemStack stack = player.getItemInHand(hand);
+			if (type.isInstance(stack.getItem())) {
+				return stack;
+			}
+		}
+		return ItemStack.EMPTY;
 	}
 
 	/** Every value is a finite number: no NaN and no infinity. */
