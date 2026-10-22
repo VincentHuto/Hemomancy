@@ -8,8 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,42 +16,46 @@ final class CardinalRitePlantedStaffModelTest {
 	private static final Path MODEL_ROOT = Path.of(
 			"src/main/resources/assets/hemomancy/models/item");
 
+	private static final int FIST_ELEMENTS = 27;
+	private static final List<String> STAFF_MODELS = List.of("living_staff", "living_staff_serpent",
+			"living_staff_leech", "living_staff_fungal", "living_staff_pests", "living_staff_chitinite",
+			"living_staff_worn_vow", "living_staff_barbed_fitting", "living_staff_chitinite_fitting",
+			"living_staff_prismatic_fitting", "living_staff_crimson_vestment", "living_staff_monolithic_frame",
+			"living_staff_assumed_limb");
+
+	/**
+	 * Each planted model is its held model with one contiguous run of fist elements cut out. Hand-built staffs keep
+	 * the fist mid-list and generated fittings append it last, so the run is located rather than hard-coded.
+	 */
 	@Test
 	void everyPlantedStaffAppearanceOmitsItsFistElements() throws IOException {
-		Map<String, Integer> fistStarts = new LinkedHashMap<>();
-		fistStarts.put("living_staff", 9);
-		fistStarts.put("living_staff_serpent", 19);
-		fistStarts.put("living_staff_leech", 4);
-		fistStarts.put("living_staff_fungal", 16);
-		fistStarts.put("living_staff_pests", 11);
-		fistStarts.put("living_staff_chitinite", 19);
-		fistStarts.put("living_staff_worn_vow", 8);
-		fistStarts.put("living_staff_barbed_fitting", 19);
-		fistStarts.put("living_staff_chitinite_fitting", 19);
-		fistStarts.put("living_staff_prismatic_fitting", 13);
-		fistStarts.put("living_staff_crimson_vestment", 11);
-		fistStarts.put("living_staff_monolithic_frame", 16);
-		fistStarts.put("living_staff_assumed_limb", 11);
+		for (String model : STAFF_MODELS) {
+			assertTrue(Files.exists(MODEL_ROOT.resolve(model + "_planted.json")), model + " has a planted-only model");
+			JsonArray heldElements = read(model + ".json").getAsJsonArray("elements");
+			JsonArray plantedElements = read(model + "_planted.json").getAsJsonArray("elements");
 
-		for (Map.Entry<String, Integer> entry : fistStarts.entrySet()) {
-			JsonObject held = read(entry.getKey() + ".json");
-			assertTrue(Files.exists(MODEL_ROOT.resolve(entry.getKey() + "_planted.json")),
-					entry.getKey() + " has a planted-only model");
-			JsonObject planted = read(entry.getKey() + "_planted.json");
-			JsonArray heldElements = held.getAsJsonArray("elements");
-			JsonArray plantedElements = planted.getAsJsonArray("elements");
-			JsonArray fistElements = new JsonArray();
-			for (int i = entry.getValue(); i < entry.getValue() + 27; i++) {
-				fistElements.add(heldElements.get(i));
-			}
-
-			assertEquals(heldElements.size() - 27, plantedElements.size(),
-					entry.getKey() + " removes the complete fist");
-			for (var plantedElement : plantedElements) {
-				assertFalse(fistElements.contains(plantedElement),
-						entry.getKey() + " does not retain a fist element");
+			assertEquals(heldElements.size() - FIST_ELEMENTS, plantedElements.size(),
+					model + " removes the complete fist");
+			int fistStart = fistStart(heldElements, plantedElements);
+			assertTrue(fistStart >= 0, model + " planted model is its held model minus one contiguous fist");
+			for (int i = fistStart; i < fistStart + FIST_ELEMENTS; i++) {
+				assertFalse(plantedElements.contains(heldElements.get(i)), model + " does not retain a fist element");
 			}
 		}
+	}
+
+	private static int fistStart(JsonArray held, JsonArray planted) {
+		for (int start = 0; start + FIST_ELEMENTS <= held.size(); start++) {
+			boolean matches = true;
+			for (int i = 0; i < planted.size() && matches; i++) {
+				int heldIndex = i < start ? i : i + FIST_ELEMENTS;
+				matches = held.get(heldIndex).equals(planted.get(i));
+			}
+			if (matches) {
+				return start;
+			}
+		}
+		return -1;
 	}
 
 	@Test

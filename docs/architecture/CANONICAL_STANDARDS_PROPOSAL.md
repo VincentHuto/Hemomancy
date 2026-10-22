@@ -488,6 +488,8 @@ Further rules:
   affordable to adopt.
 
 **Existing example**
+- `support/RepoPaths`, `support/SourceAssertions` and `support/ResourceReader` (added in consolidation step 2),
+  and the guardrails under `src/test/.../architecture/` that use them.
 - The `*DataTest` family, such as `CardinalRitePurposeDataTest`.
 - `VesperAnimClock`'s unit test.
 - The journey fixtures.

@@ -1,32 +1,30 @@
 package com.vincenthuto.hemomancy.common.item.unstained;
 
+import com.vincenthuto.hemomancy.support.ResourceReader;
+
 import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.readMainJava;
+
 public final class VestmentOfTheFinalMoltResourceTest {
-	private static final Path SOURCE_ROOT = Path.of("src/main/java");
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
 
 	private VestmentOfTheFinalMoltResourceTest() {
 	}
 
 	public static void main(String[] args) throws IOException {
-		String itemInit = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/init/ItemInit.java"));
-		String item = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/item/unstained/armor/VestmentOfTheFinalMoltArmorItem.java"));
-		String model = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/model/armor/VestmentOfTheFinalMoltArmorModel.java"));
-		String layerEvents = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/event/LayerEvents.java"));
-		String helper = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/render/armor/ModelBackedArmorItemRenderHelper.java"));
-		String renderer = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/render/item/ModelBackedArmorItemRenderer.java"));
-		String granter = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/event/UnstainedAdvancementGranter.java"));
-		String lang = read(RESOURCE_ROOT.resolve("assets/hemomancy/lang/en_us.json"));
+		String itemInit = readMainJava("common/init/ItemInit.java");
+		String item = readMainJava("common/item/unstained/armor/VestmentOfTheFinalMoltArmorItem.java");
+		String model = readMainJava("client/model/armor/VestmentOfTheFinalMoltArmorModel.java");
+		String layerEvents = readMainJava("client/event/LayerEvents.java");
+		String helper = readMainJava("client/render/armor/ModelBackedArmorItemRenderHelper.java");
+		String renderer = readMainJava("client/render/item/ModelBackedArmorItemRenderer.java");
+		String granter = readMainJava("common/event/UnstainedAdvancementGranter.java");
+		String lang = ResourceReader.text("assets/hemomancy/lang/en_us.json");
 
 		assertContains("item registration", itemInit, "vestment_of_the_final_molt");
 		assertContains("item registration", itemInit, "new VestmentOfTheFinalMoltArmorItem(");
@@ -44,12 +42,13 @@ public final class VestmentOfTheFinalMoltResourceTest {
 		assertContains("armor model supplier", model, "chest = Lazy");
 		assertContains("hood up part", model, "hoodUp");
 		assertContains("hood down part", model, "hoodDown");
-		assertContains("helmet hides hood", model, "entity.getItemBySlot(EquipmentSlot.HEAD).isEmpty()");
+		assertContains("helmet hides hood", item,
+				"model.setHoodRaised(entityLiving.getItemBySlot(EquipmentSlot.HEAD).isEmpty())");
 		assertContains("helmet hides hood", model, "hoodUp.visible = hoodRaised");
 		assertContains("helmet shows lowered hood", model, "hoodDown.visible = !hoodRaised");
 		assertContains("flowing robe animation", model, "Mth.sin");
-		assertContains("moth wing panel naming", model, "leftWingPanel");
-		assertContains("moth wing panel naming", model, "rightWingPanel");
+		assertContains("moth wing panel naming", model, "leftForewing");
+		assertContains("moth wing panel naming", model, "rightForewing");
 
 		assertContains("layer registration", layerEvents,
 				"VestmentOfTheFinalMoltArmorModel.VESTMENT_OF_THE_FINAL_MOLT_CHEST_LAYER");
@@ -59,7 +58,7 @@ public final class VestmentOfTheFinalMoltResourceTest {
 		assertContains("item render helper route", helper, "VestmentOfTheFinalMoltArmorModel.chest::get");
 		assertContains("vestment compact gui transform", renderer, "applyManualGuiTransforms");
 		assertContains("vestment compact gui transform", renderer, "stack.is(ItemInit.vestment_of_the_final_molt.get())");
-		assertContains("vestment compact gui transform", renderer, "poseStack.scale(0.6F, 0.6F, 0.6F);");
+		assertContains("vestment compact gui transform", renderer, "poseStack.scale(0.52F, 0.52F, 0.52F);");
 
 		assertContains("advancement reward", granter, "awardVestmentOfTheFinalMolt");
 		assertContains("advancement reward", granter, "ADV_ENLIGHTENED_SEEKER.equals(id)");
@@ -74,11 +73,11 @@ public final class VestmentOfTheFinalMoltResourceTest {
 		assertImageSize("vestment item texture",
 				"assets/hemomancy/textures/item/vestment_of_the_final_molt.png", 16, 16);
 		assertImageSize("vestment worn texture",
-				"assets/hemomancy/textures/models/armor/vestment_of_the_final_molt_layer_1.png", 256, 128);
+				"assets/hemomancy/textures/models/armor/vestment_of_the_final_molt_layer_1.png", 128, 256);
 	}
 
 	private static void assertItemModelParent(String item, String parent) throws IOException {
-		String model = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/item/" + item + ".json"));
+		String model = ResourceReader.text("assets/hemomancy/models/item/" + item + ".json");
 		assertContains("model parent for " + item, model, "\"parent\": \"" + parent + "\"");
 	}
 
@@ -95,20 +94,9 @@ public final class VestmentOfTheFinalMoltResourceTest {
 		}
 	}
 
-	private static String read(Path path) throws IOException {
-		assertExists("source", path);
-		return Files.readString(path).replace("\r\n", "\n");
-	}
-
 	private static void assertExists(String label, Path path) {
 		if (!Files.exists(path)) {
 			throw new AssertionError(label + ": missing " + path);
-		}
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
 		}
 	}
 }

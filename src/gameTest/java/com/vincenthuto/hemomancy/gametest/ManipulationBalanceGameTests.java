@@ -213,9 +213,14 @@ public class ManipulationBalanceGameTests {
     }
 
     private static void whenCombatAreaIsLoaded(GameTestHelper h,Runnable action) {
+        // Every chunk in the rectangle spanned by the fixture's corners: when the test straddles chunk lines on both
+        // axes the corners sit in diagonal chunks, and mobs placed between them land in a third.
+        var first=new net.minecraft.world.level.ChunkPos(h.absolutePos(new net.minecraft.core.BlockPos(2,8,2)));
+        var last=new net.minecraft.world.level.ChunkPos(h.absolutePos(new net.minecraft.core.BlockPos(3,9,6)));
         var requiredChunks=new HashSet<net.minecraft.world.level.ChunkPos>();
-        for(var pos:List.of(new net.minecraft.core.BlockPos(2,8,2),new net.minecraft.core.BlockPos(3,9,6)))
-            requiredChunks.add(new net.minecraft.world.level.ChunkPos(h.absolutePos(pos)));
+        for(int x=Math.min(first.x,last.x);x<=Math.max(first.x,last.x);x++)
+            for(int z=Math.min(first.z,last.z);z<=Math.max(first.z,last.z);z++)
+                requiredChunks.add(new net.minecraft.world.level.ChunkPos(x,z));
         UUID owner=UUID.randomUUID();
         var chunks=h.getLevel().getChunkSource();
         requiredChunks.forEach(chunk->chunks.addRegionTicket(PROJECTILE_FIXTURE_TICKET,chunk,2,owner,true));

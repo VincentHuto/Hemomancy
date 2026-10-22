@@ -39,17 +39,15 @@ class VialCentrifugeModelSourceTest {
         for (String part : parts) {
             Path model = MODELS.resolve("vial_centrifuge_" + part + ".json");
             assertTrue(Files.isRegularFile(model), model + " should be exported");
-            assertTrue(read(model).contains("tools/model_export/vial_centrifuge.py"), model + " should come from its generator");
             assertTrue(generator.contains("'" + part + "'"), part + " should be authored by the generator");
         }
         assertTrue(read(Path.of("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java"))
                 .contains("for (String part : VialCentrifugeRenderer.PART_MODELS)"));
     }
 
-    @Test void stageBodiesAndBlockstateComeFromTheGenerator() throws IOException {
+    @Test void stageBodiesAndBlockstateKeepTheirParts() throws IOException {
         for (String body : List.of("vial_centrifuge", "vial_centrifuge_calibrated", "vial_centrifuge_fractionating")) {
             String json = read(MODELS.resolve(body + ".json"));
-            assertTrue(json.contains("tools/model_export/vial_centrifuge.py"), body);
             assertTrue(json.contains("\"name\": \"bowl_wall\""), body + " should keep the splash bowl");
             assertTrue(json.contains("\"name\": \"jar_glass\""), body + " should keep the reservoir jar");
         }

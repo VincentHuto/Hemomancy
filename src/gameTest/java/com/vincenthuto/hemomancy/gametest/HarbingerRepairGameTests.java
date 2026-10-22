@@ -1103,15 +1103,21 @@ public final class HarbingerRepairGameTests {
         var blood = HemoCapabilityAccess.getBloodVolume(player).orElseThrow();
         blood.setActive(true); blood.setBloodVolume(1000);
         helper.assertTrue(loom.tryChargeRitualBlood(player, 50, true), "Selected weave must accept its authored blood charge");
+        var animus = com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.ANIMUS;
+        // Each enzyme dissolves into thread spans, and paying blood spends none of them: spans are only
+        // committed by weaving the engram, and only spent when it completes.
+        int stockedBefore = loom.getStoredEnzyme(animus);
+        int spunBefore = loom.getSpun(animus);
+        helper.assertTrue(stockedBefore == 20 * com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramWeaveRules.SPANS_PER_ENZYME,
+                "Twenty stocked enzymes must hold their thread spans, got " + stockedBefore);
         var saved = loom.saveWithoutMetadata(helper.getLevel().registryAccess());
         loom.loadWithComponents(saved, helper.getLevel().registryAccess());
         loom.refreshRecipe();
         helper.assertTrue(loom.isWeaving() && loom.getCurRecipe() != null && loom.getRitualBloodCharged() == 50,
                 "Charged reload must restore the recipe without resetting or charging again");
-        // Payment spins exactly the recipe's one Animus enzyme onto its pirn; the other nineteen stay stocked.
-        helper.assertTrue(loom.getStoredEnzyme(com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.ANIMUS) == 19
-                        && loom.getSpun(com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency.ANIMUS) == 1,
-                "Reload must preserve the stocked and the spun enzymes");
+        helper.assertTrue(loom.getStoredEnzyme(animus) == stockedBefore && loom.getSpun(animus) == spunBefore,
+                "Reload must preserve the stocked and the spun thread: stocked " + stockedBefore + " -> "
+                        + loom.getStoredEnzyme(animus) + ", spun " + spunBefore + " -> " + loom.getSpun(animus));
         var missing = saved.copy();
         missing.putString("selectedRecipeId", "hemomancy:memory_weaving/removed_fixture");
         loom.loadWithComponents(missing, helper.getLevel().registryAccess());

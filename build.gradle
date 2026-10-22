@@ -27,7 +27,7 @@ sourceSets.main.resources {
     // Preserve authoring archives in source without exposing them to resource-pack scanners.
     exclude('assets/hemomancy/**/* - Copy.*')
     exclude('assets/hemomancy/models/entity/bbmodel/imports/**')
-    exclude('assets/hemomancy/textures/item/sanguine formation/**')
+    exclude('assets/hemomancy/textures/item/old/sanguine formation/**')
     exclude('assets/hemomancy/sounds/**/*.mp3')
     exclude('assets/hemomancy/sounds/entity/colin/OLD*.ogg')
     exclude('assets/hemomancy/shaders/program/ShaderBasicMethods.txt')

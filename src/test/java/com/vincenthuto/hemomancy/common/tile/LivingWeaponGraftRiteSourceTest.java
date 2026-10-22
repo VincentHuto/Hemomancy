@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.common.tile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
 
 public final class LivingWeaponGraftRiteSourceTest {
-	private static final Path ROOT = Path.of("").toAbsolutePath();
-
 	private LivingWeaponGraftRiteSourceTest() {
 	}
 
@@ -45,7 +45,7 @@ public final class LivingWeaponGraftRiteSourceTest {
 		assertNotContains("absorbed offerings no longer break into vanilla item particles", cellHandParticles,
 				"ParticleTypes.ITEM");
 		assertContains("absorbed offerings stream in as tinted absorbed cells", cellHandParticles,
-				"spawnAbsorbedBloodParticle(mc, origin, source, absorptionItemColor, rand, firstPersonTargetAnchor)");
+				"spawnAbsorbedBloodParticle(mc, casterId, false, origin, source, absorptionItemColor, rand, firstPersonTargetAnchor)");
 		assertContains("absorbed offering cells use a sparse per-tick count", cellHandParticles,
 				"ABSORBED_ITEM_PARTICLES_PER_TICK = 2");
 		assertContains("the offering stream follows whichever player channels it", cellHandParticles,
@@ -76,26 +76,6 @@ public final class LivingWeaponGraftRiteSourceTest {
 				"progress.awakenVesperMemory()");
 		assertNotContains("vesper memory item no longer consumes itself directly", memoryOfVesper,
 				"stack.shrink(1)");
-	}
-
-	private static String read(String path) throws IOException {
-		Path absolute = ROOT.resolve(path);
-		if (!Files.exists(absolute)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(absolute).replace("\r\n", "\n");
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + " (missing '" + expected + "')");
-		}
-	}
-
-	private static void assertNotContains(String label, String text, String unexpected) {
-		if (text.contains(unexpected)) {
-			throw new AssertionError(label + " (found '" + unexpected + "')");
-		}
 	}
 
 	private static void assertBefore(String label, String text, String first, String second) {

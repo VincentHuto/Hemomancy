@@ -1,9 +1,8 @@
 package com.vincenthuto.hemomancy.architecture;
 
+import com.vincenthuto.hemomancy.support.SourceAssertions;
 import org.junit.jupiter.api.Test;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,14 +12,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * fully-qualified name. Its particle data comes from the common-side {@code HemoParticleData}.
  */
 class WillEntityClientIsolationTest {
-	private static final Path WILL_ENTITY =
-			Path.of("src/main/java/com/vincenthuto/hemomancy/common/entity/mob/monster/will/WillEntity.java");
 	private static final List<String> CLIENT_PACKAGES =
 			List.of("net.minecraft.client.", "com.vincenthuto.hemomancy.client.");
 
 	@Test
-	void willEntityReferencesNoClientClass() throws Exception {
-		List<String> offending = Files.readAllLines(WILL_ENTITY).stream()
+	void willEntityReferencesNoClientClass() {
+		List<String> offending = SourceAssertions.readMainJava("common/entity/mob/monster/will/WillEntity.java")
+				.lines()
 				.map(String::strip)
 				.filter(line -> CLIENT_PACKAGES.stream().anyMatch(line::contains))
 				.toList();

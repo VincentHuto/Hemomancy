@@ -17,8 +17,6 @@ public final class ModelFirstTileRendererResourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String loomModel = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/somatic_loom.json"));
-		assertContains("somatic loom model should come from its generator", loomModel,
-				"tools/model_export/somatic_loom.py");
 		assertContains("somatic loom body should bake into the cutout layer under its ritual effects", loomModel,
 				"\"render_type\": \"minecraft:cutout\"");
 		assertElementBounds("somatic_loom", loomModel);
@@ -46,7 +44,7 @@ public final class ModelFirstTileRendererResourceTest {
 					"\"model\":\"hemomancy:block/" + staged[1] + "},\"when\":{\"facing\":\"north\",\"stage\":\"" + staged[0] + "\"}");
 			assertContains("somatic loom stage body exists: " + staged[1],
 					read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/" + staged[1].replace("\"", "") + ".json")),
-					"Authored by tools/model_export/somatic_loom.py");
+					"\"elements\"");
 		}
 		assertContains("ganglionic looms grow feelers toward the echo",
 				read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/somatic_loom_ganglionic.json")), "\"name\": \"feeler\"");
@@ -80,8 +78,6 @@ public final class ModelFirstTileRendererResourceTest {
 						"com/vincenthuto/hemomancy/common/tile/harbinger/crafting/SomaticLoomBlockEntity.java")),
 				"ParticleTypes.");
 		String lanternModel = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/mycelial_lantern.json"));
-		assertContains("mycelial lantern model should come from its generator", lanternModel,
-				"tools/model_export/mycelial_lantern.py");
 		assertContains("mycelial lantern body should bake into the cutout layer", lanternModel,
 				"\"render_type\": \"minecraft:cutout\"");
 		assertElementBounds("mycelial_lantern", lanternModel);
@@ -113,8 +109,6 @@ public final class ModelFirstTileRendererResourceTest {
 		assertBlockAndBlockbenchDisplayTransforms("altar_of_cleansing");
 		assertBlockAndBlockbenchDisplayTransforms("morphling_incubator");
 		String scarModel = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/scar_station.json"));
-		assertContains("scar station model should come from its generator", scarModel,
-				"tools/model_export/scar_station.py");
 		assertElementBounds("scar_station", scarModel);
 		assertContains("scar station body should bake into the cutout layer", scarModel,
 				"\"render_type\": \"minecraft:cutout\"");
@@ -160,8 +154,6 @@ public final class ModelFirstTileRendererResourceTest {
 		assertModelFirstBlock("specimen_jar",
 				"com/vincenthuto/hemomancy/common/block/harbinger/functional/SpecimenJarBlock.java");
 		String alembicModel = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/ghastly_alembic.json"));
-		assertContains("ghastly alembic model should come from its generator", alembicModel,
-				"tools/model_export/ghastly_alembic.py");
 		assertContains("ghastly alembic should keep a glass cucurbit the fluid shows through", alembicModel,
 				"\"name\": \"cucurbit_glass\"");
 		assertElementBounds("ghastly_alembic", alembicModel);
@@ -169,8 +161,6 @@ public final class ModelFirstTileRendererResourceTest {
 				"pipe_rod_3");
 		assertFaceHasVisibleAlpha("pallid_retort", "flask_0", "up");
 		String incubatorModel = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/morphling_incubator.json"));
-		assertContains("morphling incubator model should come from its generator", incubatorModel,
-				"tools/model_export/morphling_incubator.py");
 		// Body and glass bake into separate layers: the cutout body draws before the renderer's blood,
 		// so the tank's floor and cord are tinted by it instead of painted over it.
 		assertContains("morphling incubator body should bake into the cutout layer", incubatorModel,
@@ -192,8 +182,6 @@ public final class ModelFirstTileRendererResourceTest {
 				"model_morphling_incubator");
 		assertElementBounds("morphling_incubator", incubatorModel);
 		String sarcophagusModel = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/saint_sarcophagus.json"));
-		assertContains("saint sarcophagus model should come from its generator", sarcophagusModel,
-				"tools/model_export/saint_sarcophagus.py");
 		assertElementBounds("saint_sarcophagus", sarcophagusModel);
 		for (String part : new String[]{"lid", "blood", "coals", "veins"})
 			assertDoesExist("saint sarcophagus " + part + " part should exist",
@@ -209,8 +197,6 @@ public final class ModelFirstTileRendererResourceTest {
 						"com/vincenthuto/hemomancy/client/render/tile/harbinger/puzzle/SaintSarcophagusRenderer.java")),
 				"HarbingerSaintSarcophagusModel");
 		String crucibleModel = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/mycelial_crucible.json"));
-		assertContains("mycelial crucible model should come from its generator", crucibleModel,
-				"tools/model_export/mycelial_crucible.py");
 		assertElementBounds("mycelial_crucible", crucibleModel);
 		assertContains("mycelial crucible body should bake into the cutout layer so the pool is not painted over",
 				crucibleModel, "\"render_type\": \"minecraft:cutout\"");
@@ -222,8 +208,6 @@ public final class ModelFirstTileRendererResourceTest {
 		assertDoesNotExist("mycelial crucible should not keep the stale entity-format Blockbench source",
 				RESOURCE_ROOT.resolve("assets/hemomancy/models/block/bbmodel/MycelialCrucibleModel.bbmodel"));
 		String brazierModel = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/iron_brazier.json"));
-		assertContains("iron brazier model should come from its generator", brazierModel,
-				"tools/model_export/iron_brazier.py");
 		assertElementBounds("iron_brazier", brazierModel);
 		assertContains("iron brazier should cradle the offering in talons", brazierModel, "\"name\": \"talon_tip\"");
 		String brazierState = read(RESOURCE_ROOT.resolve("assets/hemomancy/blockstates/iron_brazier.json"));
@@ -262,8 +246,6 @@ public final class ModelFirstTileRendererResourceTest {
 		assertDoesNotExist("iron brazier should not keep its stale duplicate Blockbench source",
 				RESOURCE_ROOT.resolve("assets/hemomancy/models/block/bbmodel/brazier.bbmodel"));
 		String bloodwellModel = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/consecrated_bloodwell.json"));
-		assertContains("consecrated bloodwell model should come from its generator", bloodwellModel,
-				"tools/model_export/consecrated_bloodwell.py");
 		assertElementBounds("consecrated_bloodwell", bloodwellModel);
 		assertContains("consecrated bloodwell body should bake into the cutout layer under the fountain",
 				bloodwellModel, "\"render_type\": \"minecraft:cutout\"");
@@ -387,7 +369,7 @@ public final class ModelFirstTileRendererResourceTest {
 				"com/vincenthuto/hemomancy/client/render/tile/harbinger/crafting/SomaticLoomRenderer.java"));
 		assertContains("somatic loom keeps floating item rendering", loomRenderer, "renderItems(te, partialTicks");
 		for (String hook : new String[]{"renderCops(te, stack", "drawVeins(vc, px, te", "drawGanglion(vc, px, te",
-				"drawWarp(vc, px, te", "drawWovenBands(vc, px, te", "renderVials(te, stack", "echo.render(te, partialTicks, stack, buffer)"})
+				"drawWarp(vc, px, te", "drawWovenBands(vc, px, te", "renderVials(te, stack", "echo.render(te, partialTicks, stack, buffer, dissolve)"})
 			assertContains("somatic loom draws its state on the loom: " + hook, loomRenderer, hook);
 		assertContains("ganglionic feelers glow while the weaver listens", loomRenderer, "drawFeelers(vc, px, te");
 		String loomEcho = read(SOURCE_ROOT.resolve(
@@ -418,7 +400,7 @@ public final class ModelFirstTileRendererResourceTest {
 		int always = dome.lastIndexOf("RenderSystem.depthFunc(GL11.GL_ALWAYS)", sky);
 		if (sky < 0 || lequal < always)
 			throw new AssertionError("Chamber themes draw with their own LEQUAL depth so 3D theme geometry self-occludes");
-		assertContains("the loom's renderer offers its weave to the dome", loomRenderer, "SomaticLoomDomeRenderer.track(te)");
+		assertContains("the loom's renderer offers its weave to the dome", loomRenderer, "SomaticLoomDomeRenderer.track(te, dissolving)");
 		assertContains("the dome renders before entities",
 				read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/event/ClientEvents.java")), "SomaticLoomDomeRenderer.render(event)");
 		for (String retired : new String[]{"drawFractalStar", "drawEnzymeRings", "drawBloodVolumeRing",

@@ -224,19 +224,33 @@ public final class RegistrationGameTests {
 
     @GameTest(template = "empty")
     public static void blockItemExceptionsKeepTheirOwners(GameTestHelper helper) {
-        int custom = 0, manual = 0, itemless = 0;
+        var custom = new java.util.TreeSet<String>();
+        var manual = new java.util.TreeSet<String>();
+        var itemless = new java.util.TreeSet<String>();
         for (var entry : BlockInit.getAllBlockEntriesAsStream().toList()) {
             var decision = BlockInit.itemDecision(entry.getId());
-            if (decision.itemRoute() == BlockInit.ItemRoute.CUSTOM) custom++;
-            if (decision.itemRoute() == BlockInit.ItemRoute.MANUAL) manual++;
-            if (decision.itemRoute() == BlockInit.ItemRoute.NONE) itemless++;
+            String path = entry.getId().getPath();
+            if (decision.itemRoute() == BlockInit.ItemRoute.CUSTOM) custom.add(path);
+            if (decision.itemRoute() == BlockInit.ItemRoute.MANUAL) manual.add(path);
+            if (decision.itemRoute() == BlockInit.ItemRoute.NONE) itemless.add(path);
             if (decision.itemId() != null) {
                 helper.assertTrue(BuiltInRegistries.ITEM.containsKey(decision.itemId()),
                         "Block item owner is missing for " + entry.getId());
             }
         }
-        helper.assertTrue(custom == 19 && manual == 6 && itemless == 7,
-                "Block item exception counts changed without an explicit decision");
+        var expectedCustom = new java.util.TreeSet<>(java.util.Set.of("mortal_display", "suspended_blood_crystal",
+                "suspended_cleansed_blood_crystal", "suspended_vivianite", "visceral_mirror", "fungal_implantation_pylon",
+                "phlebotomists_field_case", "earthen_vein", "vial_centrifuge", "hematic_armature", "mycelial_crucible",
+                "specimen_jar", "sanguine_monolith", "hematic_stake", "puppeteers_spindle", "mason_effigy",
+                "covenant_throne"));
+        var expectedManual = new java.util.TreeSet<>(java.util.Set.of("gourd_stem", "active_befouling_ash_trail",
+                "active_smouldering_ash_trail", "placed_blood_stained_stone", "lethean_poppy_wreath", "sanguine_conduit"));
+        var expectedItemless = new java.util.TreeSet<>(java.util.Set.of("attached_gourd_stem", "filler_block",
+                "warp_chair_filler", "abocipher_emitter", "qliphoth_bloom", "escharian_overgrowth",
+                "escharian_overgrowth_rim"));
+        helper.assertTrue(custom.equals(expectedCustom) && manual.equals(expectedManual) && itemless.equals(expectedItemless),
+                "Block item exceptions changed without an explicit decision: custom=" + custom + " manual=" + manual
+                        + " itemless=" + itemless);
         BlockInit.POTTEDBLOCKS.getEntries().forEach(entry -> helper.assertTrue(
                 BlockInit.itemDecision(entry.getId()).itemRoute() == BlockInit.ItemRoute.NONE,
                 "Potted block unexpectedly gained an item: " + entry.getId()));

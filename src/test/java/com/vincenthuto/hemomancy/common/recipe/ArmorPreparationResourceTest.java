@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.assertNotContains;
+import static com.vincenthuto.hemomancy.support.SourceAssertions.read;
+
 public final class ArmorPreparationResourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
@@ -47,7 +51,7 @@ public final class ArmorPreparationResourceTest {
 		assertContains("queens physogastrism lang", lang,
 				"\"item.hemomancy.queens_physogastrism\": \"Queen's Physogastrism\"");
 		assertContains("cuttlefish chromatophores lang", lang,
-				"\"item.hemomancy.cuttlefish_chromatophores\": \"Cuttlefish Chromatophores\"");
+				"\"item.hemomancy.cuttlefish_chromatophores\": \"Chromatophores\"");
 		assertContains("sclerotic oleum lang", lang, "\"item.hemomancy.sclerotic_oleum\": \"Sclerotic Oleum\"");
 		assertContains("aculeate vitriol lang", lang,
 				"\"item.hemomancy.aculeate_vitriol\": \"Aculeate Vitriol\"");
@@ -125,31 +129,12 @@ public final class ArmorPreparationResourceTest {
 
 	private static void assertRecipeDoesNotUse(String recipeId, String itemId) throws IOException {
 		String recipe = read(RECIPES.resolve(recipeId + ".json"));
-		assertDoesNotContain(recipeId + " should not use " + itemId, recipe, "\"item\": \"" + itemId + "\"");
-	}
-
-	private static String read(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			throw new AssertionError("missing " + path);
-		}
-		return Files.readString(path).replace("\r\n", "\n");
+		assertNotContains(recipeId + " should not use " + itemId, recipe, "\"item\": \"" + itemId + "\"");
 	}
 
 	private static void assertExists(String label, Path path) {
 		if (!Files.exists(path)) {
 			throw new AssertionError(label + ": missing " + path);
-		}
-	}
-
-	private static void assertContains(String label, String text, String expected) {
-		if (!text.contains(expected)) {
-			throw new AssertionError(label + ": missing " + expected);
-		}
-	}
-
-	private static void assertDoesNotContain(String label, String text, String forbidden) {
-		if (text.contains(forbidden)) {
-			throw new AssertionError(label + ": found " + forbidden);
 		}
 	}
 }

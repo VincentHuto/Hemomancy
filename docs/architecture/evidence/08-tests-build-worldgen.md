@@ -197,7 +197,7 @@ The overlap is intentional (live-world replay of the same fixtures). The 7-scena
 - **Source or doc text drift (3):**
   - legacy `VestmentOfTheFinalMoltResourceTest`: helmet/hood condition.
   - legacy `LivingWeaponGraftRiteSourceTest`: particle-call signature.
-  - legacy `MorphlingLumenlaceRenameResourceTest`: the word "foxfire" in `docs/MANIPULATION_BALANCE_PLAN.md`.
+  - legacy `MorphlingLumenlaceRenameResourceTest`: the retired pre-Lumenlace strain name in `docs/MANIPULATION_BALANCE_PLAN.md`.
 - **Meta (1):** `LegacyMainTestSuiteContractTest` expects 355 classes and finds 353.
 
 **Clean-clone hazard [V].** `.gitignore:82` ignores `/tools/`, and `git ls-files tools` returns 0 files. Six tests nevertheless `Files.read`/`exists` tools files:

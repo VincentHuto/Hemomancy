@@ -44,14 +44,15 @@ public final class MobDropConsolidationGameTests {
         h.startSequence().thenWaitUntil(() -> h.assertTrue(h.getLevel().areEntitiesLoaded(
                 net.minecraft.world.level.ChunkPos.asLong(pos)), "Pool must be entity loaded"))
                 .thenExecute(() -> {
-                    var jelly = EntityInit.hemojelly.get().create(h.getLevel());
+                    // The pool is far from the grid: a player in a concurrent test would otherwise far-despawn these on their first tick.
+                    var jelly = EntityInit.hemojelly.get().create(h.getLevel()); jelly.setPersistenceRequired();
                     jelly.moveTo(pos.getX()+.5,pos.getY()-.625,pos.getZ()+.5); h.getLevel().addFreshEntity(jelly);
-                    var fish = EntityType.COD.create(h.getLevel()); fish.setNoAi(true); fish.setNoGravity(true);
+                    var fish = EntityType.COD.create(h.getLevel()); fish.setNoAi(true); fish.setNoGravity(true); fish.setPersistenceRequired();
                     fish.moveTo(pos.getX()+.5,pos.getY()-1.5,pos.getZ()+.5); h.getLevel().addFreshEntity(fish);
                     h.startSequence().thenWaitUntil(() -> h.assertTrue(jelly.captureTicks() > 0, "Capture never began"))
                             .thenExecute(() -> {
                                 var saved = new net.minecraft.nbt.CompoundTag(); jelly.saveWithoutId(saved); jelly.discard();
-                                var restored = EntityInit.hemojelly.get().create(h.getLevel()); restored.load(saved);
+                                var restored = EntityInit.hemojelly.get().create(h.getLevel()); restored.load(saved); restored.setPersistenceRequired();
                                 h.getLevel().addFreshEntity(restored);
                                 h.assertTrue(restored.captureTicks() == 0, "Capture target survived reload");
                                 h.runAfterDelay(55, () -> {
@@ -68,15 +69,17 @@ public final class MobDropConsolidationGameTests {
         h.startSequence().thenWaitUntil(() -> h.assertTrue(h.getLevel().areEntitiesLoaded(
                 net.minecraft.world.level.ChunkPos.asLong(pos)), "Pool must be entity loaded"))
                 .thenExecute(() -> {
-        var jelly = EntityInit.hemojelly.get().create(h.getLevel());
+        // The pool is far from the grid: a player in a concurrent test would otherwise far-despawn these on their first tick.
+        var jelly = EntityInit.hemojelly.get().create(h.getLevel()); jelly.setPersistenceRequired();
         h.assertTrue(((Entity) jelly) instanceof WaterAnimal, "Hemojelly must use aquatic movement");
         jelly.moveTo(pos.getX()+.5, pos.getY()-.625, pos.getZ()+.5);
         h.getLevel().addFreshEntity(jelly);
-        var fish = EntityType.COD.create(h.getLevel()); fish.setNoAi(true); fish.setNoGravity(true);
+        var fish = EntityType.COD.create(h.getLevel()); fish.setNoAi(true); fish.setNoGravity(true); fish.setPersistenceRequired();
         fish.moveTo(pos.getX()+.5, pos.getY()-1.5, pos.getZ()+.5);
         h.getLevel().addFreshEntity(fish);
         h.runAfterDelay(65, () -> {
-            h.assertTrue(fish.getHealth() < fish.getMaxHealth(), "Submerged prey was never captured and bitten: jellyTicks="+jelly.tickCount+" fishTicks="+fish.tickCount+" capture="+jelly.captureTicks()+" jelly="+jelly.position()+" fish="+fish.position()+" water="+jelly.isInWater()+" LOS="+jelly.hasLineOfSight(fish));
+            h.assertTrue(fish.getHealth() < fish.getMaxHealth(), "Submerged prey was never captured and bitten: jellyTicks="+jelly.tickCount+" fishTicks="+fish.tickCount+" capture="+jelly.captureTicks()+" jelly="+jelly.position()+" fish="+fish.position()+" water="+jelly.isInWater()+" LOS="+jelly.hasLineOfSight(fish)
+                    +" removed="+jelly.getRemovalReason()+"/"+fish.getRemovalReason());
             h.assertTrue(Math.abs(jelly.getY()-(pos.getY()-.625)) < .35, "Bell left the water surface");
             fish.discard(); jelly.discard(); h.succeed();
         });
@@ -116,9 +119,10 @@ public final class MobDropConsolidationGameTests {
         h.startSequence().thenWaitUntil(() -> h.assertTrue(h.getLevel().areEntitiesLoaded(
                 net.minecraft.world.level.ChunkPos.asLong(pos)), "Pool must be entity loaded"))
                 .thenExecute(() -> {
-        var colony = EntityInit.siphonophore.get().create(h.getLevel());
+        // The pool is far from the grid: a player in a concurrent test would otherwise far-despawn these on their first tick.
+        var colony = EntityInit.siphonophore.get().create(h.getLevel()); colony.setPersistenceRequired();
         colony.moveTo(Vec3.atCenterOf(pos.below(2))); h.getLevel().addFreshEntity(colony);
-        var fish = EntityType.COD.create(h.getLevel()); fish.setNoAi(true); fish.setNoGravity(true);
+        var fish = EntityType.COD.create(h.getLevel()); fish.setNoAi(true); fish.setNoGravity(true); fish.setPersistenceRequired();
         fish.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH).setBaseValue(20); fish.setHealth(20);
         fish.moveTo(Vec3.atCenterOf(pos.below(3))); h.getLevel().addFreshEntity(fish);
         h.runAfterDelay(55, () -> {

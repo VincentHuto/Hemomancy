@@ -16,8 +16,10 @@
 - Datagen lives in `common/data/gen/DataGeneration.java`; `runData` currently generates blockstates, item models, and language only. Server recipe/tag/loot providers are intentionally commented out.
 
 ## Workflows that matter
-- Windows/PowerShell commands from project root: `./gradlew.bat build`, `./gradlew.bat test`, `./gradlew.bat runClient`, `./gradlew.bat runServer`, `./gradlew.bat runData`, `./gradlew.bat gameTestServer`.
+- Windows/PowerShell commands from project root: `./gradlew.bat build`, `./gradlew.bat test`, `./gradlew.bat runClient`, `./gradlew.bat runServer`, `./gradlew.bat runData`, `./gradlew.bat runGameTestServer`.
 - Run `./gradlew.bat alphaCheck` for JVM contracts, dedicated GameTests, runtime resource errors and packaged asset-path/PNG-header/font-license checks; see `docs/TESTING.md` for the in-game `/hemo test` fixture workflow.
+- Tests read repository files through the shared helpers in `src/test/java/com/vincenthuto/hemomancy/support/` (`RepoPaths`, `SourceAssertions`, `ResourceReader`); do not add private `read`/`assertContains` copies. New source-text assertions are for architecture guardrails under `.../architecture/` only. `docs/architecture/evidence/source-text-impact-map.csv` lists which tests read which files; regenerate it with `python gradle/source-text-impact-map.py`.
+- `tools/model_export/` (the model generators that tests read) is version-controlled; the rest of `tools/` stays local.
 - CI dependency preflight is `pwsh -NoProfile -File gradle/verify-dependency-bundle.ps1`. See `docs/DEPENDENCY_PROVISIONING.md` for the pinned JARs/HutosLib source snapshot and clean packaged acceptance.
 - `settings.gradle` pulls `../HutosLib` as a composite build when present; otherwise Hemomancy resolves `com.vincenthuto.hutoslib:hutoslib` normally.
 - `build.gradle` relies on local jars in `libs/` for TerraBlender, JEI, Create, Building Gadgets 2, WorldEdit, and other dev/runtime integrations; do not assume Maven coordinates exist for every dependency.

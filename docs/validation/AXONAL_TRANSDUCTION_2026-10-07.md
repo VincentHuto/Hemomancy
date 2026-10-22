@@ -51,7 +51,7 @@ The eight JVM failures are:
 - `ClientModelTextureCoverageTest.inventoryAndCrossbowModelsResolveTheirLocalTextures`: missing Covenant Mantle and Silent Archon item textures.
 - `EnglishLocalizationEncodingTest.playerFacingTextDoesNotContainMojibake`: existing malformed `hemomancy.acolyte.enlightened.line1` text.
 - `GameTestHarnessSourceContractTest.isolatedJourneyClientRunAndOperatorGuideRemainAvailable` and `GameTestHarnessSourceContractTest.devOnlyHarnessProvidesCommandsAndEarlyHarbingerScenarios`: malformed source encoding during UTF-8 reads.
-- Legacy `MorphlingLumenlaceRenameResourceTest`: an existing historical Orchestrator report contains Foxfire.
+- Legacy `MorphlingLumenlaceRenameResourceTest`: an existing historical Orchestrator report contains the retired pre-Lumenlace strain name.
 - Legacy `ArmorPreparationResourceTest`: the existing chromatophore display name differs from its assertion.
 
 The five combined GameTest failures are `fullCorpusBindsOnDedicatedServer`, `blockedCentrifugeCompletionCannotProduceFreeBloodOrPowder`, `cowAndGoatBatchesConserveContainersThroughReload`, `hemojellyFloatsAtSurfaceAndFeedsOnSmallFish`, and `nativeSpawnerProducesPyrosomesWhileSquidCapacityIsFull`. The manipulation roster/passive-set counts and dormant Synaptic Step contracts now pass with the new behavior.

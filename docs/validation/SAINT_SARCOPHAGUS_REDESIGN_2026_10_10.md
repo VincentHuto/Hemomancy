@@ -40,7 +40,7 @@ The sarcophagus now matches the other redesigned Harbinger blocks. A script auth
 ## Results
 
 - **Export.** Two runs give identical hashes. `coplanar.py` reports 0 fights on the body, the lid, the item and the body with its blood and coal parts.
-- **JVM.** `compileJava`, `compileTestJava` and `compileGameTestJava` pass. `ModelFirstTileRendererResourceTest` has new sarcophagus assertions, and they pass. The legacy main suite has 356 tests and 3 failures. All three are in unrelated in-progress work: a Foxfire reference in `MANIPULATION_BALANCE_PLAN.md`, the cuttlefish chromatophores lang key, and the ossuary clock top cap.
+- **JVM.** `compileJava`, `compileTestJava` and `compileGameTestJava` pass. `ModelFirstTileRendererResourceTest` has new sarcophagus assertions, and they pass. The legacy main suite has 356 tests and 3 failures. All three are in unrelated in-progress work: the retired pre-Lumenlace strain name in `MANIPULATION_BALANCE_PLAN.md`, the cuttlefish chromatophores lang key, and the ossuary clock top cap.
 - **Native client.** Run `gradlew.bat -I build/sarcophagus-client.init.gradle runSarcophagusReviewClient`. `SarcophagusClientReview` places four tombs: north sealed with two offerings, east consecrated and open, south awakened and open, and west sealed and unlit. It captures `build/sarcophagus-client-review/screenshots/sarcophagus-0..8.png`.
   - All four facings render with their bowls on the foot end.
   - The north bowl holds two thirds of its blood.

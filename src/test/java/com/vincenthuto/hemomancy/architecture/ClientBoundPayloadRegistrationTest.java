@@ -1,9 +1,8 @@
 package com.vincenthuto.hemomancy.architecture;
 
+import com.vincenthuto.hemomancy.support.SourceAssertions;
 import org.junit.jupiter.api.Test;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -16,16 +15,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * them to a dedicated server.
  */
 class ClientBoundPayloadRegistrationTest {
-	private static final Path PACKET_HANDLER =
-			Path.of("src/main/java/com/vincenthuto/hemomancy/common/network/PacketHandler.java");
 	private static final Pattern REGISTRATION =
 			Pattern.compile("\\bnet\\.(play\\w+)\\(\\s*(?:[\\w.]+\\.)?(\\w+)\\.TYPE\\b");
 	private static final List<String> CLIENT_BOUND = List.of("PacketEquipmentSync", "PacketGourdScarSync",
 			"SyncTrackingAvatarPacket", "PacketCurvedHornAnimation");
 
 	@Test
-	void clientHandledPayloadsAreRegisteredPlayToClientOnly() throws Exception {
-		String source = Files.readString(PACKET_HANDLER);
+	void clientHandledPayloadsAreRegisteredPlayToClientOnly() {
+		String source = SourceAssertions.readMainJava("common/network/PacketHandler.java");
 		for (String payload : CLIENT_BOUND) {
 			List<String> directions = new ArrayList<>();
 			Matcher matcher = REGISTRATION.matcher(source);

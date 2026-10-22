@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.resource;
 
+import com.google.gson.JsonParser;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,13 +50,13 @@ public final class UtilityPolishResourceTest {
 		assertContains("barometer uses model-facing opposite clicked wall face", block, "clickedFace.getOpposite()");
 		assertContains("barometer checks backing wall", block, "canSurvive");
 		assertContains("north-facing barometer shape hugs north wall", block,
-				"NORTH_SHAPE = Block.box(2.0D, 1.0D, 0.0D, 14.0D, 15.0D, 3.0D)");
+				"NORTH_SHAPE = Block.box(3.0D, 0.0D, 0.0D, 13.0D, 16.0D, 2.5D)");
 		assertContains("south-facing barometer shape hugs south wall", block,
-				"SOUTH_SHAPE = Block.box(2.0D, 1.0D, 13.0D, 14.0D, 15.0D, 16.0D)");
+				"SOUTH_SHAPE = Block.box(3.0D, 0.0D, 13.5D, 13.0D, 16.0D, 16.0D)");
 		assertContains("west-facing barometer shape hugs west wall", block,
-				"WEST_SHAPE = Block.box(0.0D, 1.0D, 2.0D, 3.0D, 15.0D, 14.0D)");
+				"WEST_SHAPE = Block.box(0.0D, 0.0D, 3.0D, 2.5D, 16.0D, 13.0D)");
 		assertContains("east-facing barometer shape hugs east wall", block,
-				"EAST_SHAPE = Block.box(13.0D, 1.0D, 2.0D, 16.0D, 15.0D, 14.0D)");
+				"EAST_SHAPE = Block.box(13.5D, 0.0D, 3.0D, 16.0D, 16.0D, 13.0D)");
 		assertContains("barometer blockstate has north variant", blockstate, "facing=north");
 		assertContains("barometer blockstate has rotation", blockstate, "\"y\": 180");
 	}
@@ -86,8 +88,8 @@ public final class UtilityPolishResourceTest {
 
 	private static void assertMycelialCrucibleHasRotatingSpoutParticles() throws IOException {
 		String block = read(SRC.resolve("common/block/harbinger/crafting/MycelialCrucibleBlock.java"));
-		assertContains("mycelial crucible documents the left model spout", block, "chain_l");
-		assertContains("mycelial crucible documents the right model spout", block, "chain_r");
+		assertContains("mycelial crucible documents the left model spout", block, "CHAIN_L_SPOUT");
+		assertContains("mycelial crucible documents the right model spout", block, "CHAIN_R_SPOUT");
 		assertContains("mycelial crucible emits green hutoslib embers", block,
 				"HemoParticleData.ember(ParticleColor.GREEN");
 		assertContains("mycelial crucible emits hemomancy absorbed blood cells", block,
@@ -114,13 +116,13 @@ public final class UtilityPolishResourceTest {
 		assertContains("mycelial crucible renderer uses basin render type", renderer, "HemoRenderTypes.mycelialCrucibleBasin");
 		assertContains("mycelial crucible renderer emits basin uv quad", renderer, "emitBasinVertex");
 		assertContains("mycelial crucible basin shader uses subdivided geometry for wave motion", renderer,
-				"BASIN_SUBDIVISIONS = 8");
+				"BASIN_RINGS = 4");
 		assertContains("mycelial crucible basin shader waves the quad surface", renderer, "basinWaveY");
 		assertContains("mycelial crucible basin shader damps waves at the clipped edges", renderer, "edgeDamping");
-		assertContains("mycelial crucible basin shader fills basin opening without corner clipping", renderer,
-				"BASIN_MIN = 2.375F / 16.0F");
-		assertContains("mycelial crucible basin shader fills basin opening without corner clipping", renderer,
-				"BASIN_MAX = 13.625F / 16.0F");
+		assertContains("mycelial crucible basin shader fills the octagonal basin opening", renderer,
+				"BASIN_APOTHEM = 5.8F / 16.0F");
+		assertContains("mycelial crucible basin shader steps its octagon edge", renderer,
+				"BASIN_EDGE_STEPS = 2");
 		assertContains("mycelial crucible shader json references vertex shader", shaderJson,
 				"\"vertex\": \"hemomancy:world/mycelial_crucible_basin\"");
 		assertContains("mycelial crucible shader json references fragment shader", shaderJson,
@@ -206,17 +208,38 @@ public final class UtilityPolishResourceTest {
 		assertNotContains("ossuary clock lower model must not render through upper filler space", lowerModel, "32");
 		assertNotContains("ossuary clock lower model must stay inside lower block light volume", lowerModel, "29");
 		assertContains("ossuary clock upper half renders its own geometry", upperModel, "\"from\"");
-		assertContains("ossuary clock upper model has normalized top cap", upperModel, "        16,\n        16,\n        16");
+		assertModelInsideBlockReachingItsTop("ossuary clock upper model has normalized top cap", upperModel);
 		assertContains("ossuary clock lower model disables cross-half AO", lowerModel, "\"ambientocclusion\": false");
 		assertContains("ossuary clock upper model disables cross-half AO", upperModel, "\"ambientocclusion\": false");
 		assertJsonExists(ASSETS.resolve("models/block/ossuary_clock_upper.json"));
+	}
+
+	private static void assertModelInsideBlockReachingItsTop(String label, String modelJson) {
+		double maxY = 0.0D;
+		for (var element : JsonParser.parseString(modelJson).getAsJsonObject().getAsJsonArray("elements")) {
+			for (String corner : new String[] { "from", "to" }) {
+				var point = element.getAsJsonObject().getAsJsonArray(corner);
+				for (int axis = 0; axis < 3; axis++) {
+					double value = point.get(axis).getAsDouble();
+					if (value < 0.0D || value > 16.0D) {
+						throw new AssertionError(label + ": coordinate " + value + " leaves the block");
+					}
+				}
+				maxY = Math.max(maxY, point.get(1).getAsDouble());
+			}
+		}
+		if (maxY != 16.0D) {
+			throw new AssertionError(label + ": top cap ends at y=" + maxY + ", not 16");
+		}
 	}
 
 	private static void assertMnemonicCandleHasWickParticles() throws IOException {
 		String block = read(SRC.resolve("common/block/shared/MnemonicCandleBlock.java"));
 		assertContains("mnemonic candle emits client wick particles", block, "animateTick");
 		assertContains("mnemonic candle smoke particle", block, "ParticleTypes.SMOKE");
-		assertContains("mnemonic candle flame particle", block, "ParticleTypes.SMALL_FLAME");
+		// The flame is modelled geometry on the lit candle, not a particle.
+		String litModel = read(ASSETS.resolve("models/block/mnemonic_candle_lit.json"));
+		assertContains("mnemonic candle lit model carries the flame", litModel, "\"flame\"");
 	}
 
 	private static void assertBloodChumIsThrownWaterAreaUtility() throws IOException {

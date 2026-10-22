@@ -39,7 +39,9 @@
     "tendencies": [
       "animus"
     ],
-    "properties": []
+    "properties": [
+      "hemomancy:blood_properties/aquatic"
+    ]
   },
   "hemomancy:phlegethontic_bombardier": {
     "tendencies": [

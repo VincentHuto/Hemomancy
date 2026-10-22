@@ -122,7 +122,7 @@ Brined Court factions, Morphling changes, progression chains, dynamic whale corp
 - `assemble` and `verifyPackagedClientResources` passed.
 - Native client fixtures were inspected for swimming, the corrected arm cloak and both open/cloaked specimen-jar fits, with both lit and unlit views. Screenshots and fixture metadata are in `build/pelagic-client/screenshots/ecology-30-vampire_squid-*.png`, `ecology-31-vampire_squid_cloaked-*.png`, `ecology-32-jar_vampire_squid-*.png`, `ecology-33-jar_vampire_squid_cloaked-*.png`, and `build/pelagic-client/pelagic-ecology-visuals.json`.
 
-The full unit-suite attempt ran 2,457 tests and hit three unrelated existing failures: two UTF-8 reads of `docs/TESTING.md` and an old Foxfire reference in an Orchestrator report. The testing guide's invalid encoding is also present in HEAD. Those files were left intact. Fresh-world natural population frequency and multiplayer acceptance were not rerun for this addition.
+The full unit-suite attempt ran 2,457 tests and hit three unrelated existing failures: two UTF-8 reads of `docs/TESTING.md` and the retired pre-Lumenlace strain name in an Orchestrator report. The testing guide's invalid encoding is also present in HEAD. Those files were left intact. Fresh-world natural population frequency and multiplayer acceptance were not rerun for this addition.
 
 Repeat the focused checks with `.\gradlew.bat test --tests '*Pelagic*Test' --tests '*VampireSquid*Test'`, then `.\gradlew.bat runPelagicEcologyGameTestServer assemble verifyPackagedClientResources`. Repeat from the first squid visual scene with `.\gradlew.bat runPelagicReviewClient -PpelagicEcologyReview=true -PpelagicReviewStartScene=30 '-PpelagicReviewWorld=Pelagic Ecology Review'`.
 

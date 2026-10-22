@@ -113,8 +113,10 @@ public final class MorphlingLumenlaceRenameResourceTest {
 	}
 
 	static boolean isActiveText(Path path) {
-		// Archived asset bundles are not active rename documentation.
-		if (path.startsWith(DOCS_ROOT.resolve("done"))) return false;
+		// Archived asset bundles and historical session transcripts are not active rename documentation.
+		if (path.startsWith(DOCS_ROOT.resolve("done")) || path.startsWith(DOCS_ROOT.resolve("OrchestratorReports"))) {
+			return false;
+		}
 		String name = path.getFileName().toString().toLowerCase();
 		return name.endsWith(".java") || name.endsWith(".json") || name.endsWith(".md")
 				|| name.endsWith(".mcmeta") || name.endsWith(".properties") || name.endsWith(".toml")

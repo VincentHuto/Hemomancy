@@ -34,22 +34,20 @@ class HematicArmatureModelSourceTest {
         return parts;
     }
 
-    @Test void everyRenderedSectionAndPartIsGeneratedAndRegistered() throws IOException {
+    @Test void everyRenderedSectionAndPartIsExportedAndRegistered() throws IOException {
         var parts = partModels();
         assertEquals(14, parts.size());
         for (String part : parts) {
             Path model = MODELS.resolve("hematic_armature_" + part + ".json");
             assertTrue(Files.isRegularFile(model), model + " should be exported");
-            assertTrue(read(model).contains("tools/model_export/hematic_armature.py"), model + " should come from its generator");
         }
         assertTrue(read(Path.of("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java"))
                 .contains("for (String part : HematicArmatureRenderer.PART_MODELS)"));
     }
 
-    @Test void stageBodiesAndBlockstateComeFromTheGenerator() throws IOException {
+    @Test void stageBodiesAndBlockstateKeepTheirParts() throws IOException {
         for (String body : STAGES) {
             String json = read(MODELS.resolve(body + ".json"));
-            assertTrue(json.contains("tools/model_export/hematic_armature.py"), body);
             assertTrue(json.contains("\"name\": \"dais\""), body + " should keep the subject's dais");
             assertTrue(json.contains("\"name\": \"vial_glass\""), body + " should keep the side vials");
         }

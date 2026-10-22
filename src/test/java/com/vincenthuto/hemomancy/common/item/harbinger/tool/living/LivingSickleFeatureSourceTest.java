@@ -109,7 +109,10 @@ final class LivingSickleFeatureSourceTest {
 		assertTrue(renderer.contains("Axis.YP.rotationDegrees(-90F)"));
 		assertTrue(renderer.contains("Axis.ZP.rotationDegrees( 0F)"));
 		assertTrue(renderer.contains("THIRD_PERSON_MODEL_LIFT = 0.52D"));
-		assertFalse(vesperLayer.contains("applySickleGrip"));
+		// Vesper's layer may adapt his arm frame (applySickleGrip), but the sickle itself must still render through the
+		// item's own third-person hand transform.
+		assertTrue(vesperLayer.contains(
+				"leftHand ? ItemDisplayContext.THIRD_PERSON_LEFT_HAND : ItemDisplayContext.THIRD_PERSON_RIGHT_HAND"));
 	}
 
 	@Test

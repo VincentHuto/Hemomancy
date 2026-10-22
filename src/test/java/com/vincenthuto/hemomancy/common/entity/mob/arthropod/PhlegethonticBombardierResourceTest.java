@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.mob.arthropod;
 import com.google.gson.JsonParser;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.item.harbinger.EntityBloodProfile;
+import com.vincenthuto.hemomancy.support.ResourceReader;
 import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
@@ -14,9 +15,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class PhlegethonticBombardierResourceTest {
     private static final Path ROOT = Path.of("src/main/resources");
 
-    @Test void naturalSpawnIsBasinOnlyAndLootIsExplicitlyEmpty() throws Exception {
-        var spawn = JsonParser.parseString(Files.readString(ROOT.resolve(
-                "data/hemomancy/neoforge/biome_modifier/add_phlegethontic_bombardier.json"))).getAsJsonObject();
+    @Test void naturalSpawnIsBasinOnlyAndLootIsChitinousHusk() {
+        var spawn = ResourceReader.data("neoforge/biome_modifier/add_phlegethontic_bombardier.json");
         assertEquals("neoforge:add_spawns", spawn.get("type").getAsString());
         assertEquals("hemomancy:phlegethontic_basin", spawn.get("biomes").getAsString());
         var entry = spawn.getAsJsonObject("spawners");
@@ -25,9 +25,9 @@ class PhlegethonticBombardierResourceTest {
         assertEquals(1, entry.get("minCount").getAsInt());
         assertEquals(3, entry.get("maxCount").getAsInt());
 
-        var loot = JsonParser.parseString(Files.readString(ROOT.resolve(
-                "data/hemomancy/loot_table/entities/phlegethontic_bombardier.json"))).getAsJsonObject();
-        assertEquals(0, loot.getAsJsonArray("pools").size());
+        var pools = ResourceReader.data("loot_table/entities/phlegethontic_bombardier.json").getAsJsonArray("pools");
+        assertEquals(1, pools.size());
+        assertTrue(pools.get(0).toString().contains("\"hemomancy:chitinous_husk\""));
     }
 
     @Test void entityHasAuthoredClientResourcesAndFlammeusBloodProfile() throws Exception {

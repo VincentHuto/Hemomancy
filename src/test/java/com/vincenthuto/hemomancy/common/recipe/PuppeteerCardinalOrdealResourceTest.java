@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 final class PuppeteerCardinalOrdealResourceTest {
 	private static final Path RECIPES = Path.of("src/main/resources/data/hemomancy/recipe");
@@ -57,14 +58,21 @@ final class PuppeteerCardinalOrdealResourceTest {
 		assertTrue(!Files.exists(legacy) || Files.list(legacy).findAny().isEmpty());
 		assertFalse(Files.exists(Path.of("src/main/java/com/vincenthuto/hemomancy/common/recipe/PuppeteerTrialRecipe.java")));
 		assertFalse(Files.exists(Path.of("src/main/java/com/vincenthuto/hemomancy/common/recipe/serializer/PuppeteerTrialRecipeSerializer.java")));
-		String parser = Files.readString(Path.of("tools/skill_tree_editor/src/server/recipeMapParser.ts"));
-		assertFalse(parser.contains("registerPuppetry"));
-		assertFalse(parser.contains("puppeteer_trial/"));
 		String language = Files.readString(Path.of("src/main/resources/assets/hemomancy/lang/en_us.json"));
 		assertFalse(language.contains("hemomancy.summon.trial.degree_locked"));
 		assertFalse(language.contains("hemomancy.summon.trial.needs_catalyst"));
 		String reference = Files.readString(Path.of("docs/HEMOMANCY_REFERENCE.md"));
 		assertFalse(reference.contains("puppeteer trial Blood Crafting recipes"));
+	}
+
+	@Test
+	void skillTreeEditorNoLongerParsesPuppeteerTrials() throws Exception {
+		Path parserPath = Path.of("tools/skill_tree_editor/src/server/recipeMapParser.ts");
+		assumeTrue(Files.isRegularFile(parserPath),
+				"tools/skill_tree_editor is not version-controlled; this check runs only where the editor is checked out");
+		String parser = Files.readString(parserPath);
+		assertFalse(parser.contains("registerPuppetry"));
+		assertFalse(parser.contains("puppeteer_trial/"));
 	}
 
 	private static JsonObject json(Path path) throws Exception {

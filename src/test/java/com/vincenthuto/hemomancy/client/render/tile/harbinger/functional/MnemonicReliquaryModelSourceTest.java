@@ -33,9 +33,8 @@ class MnemonicReliquaryModelSourceTest {
         return parts;
     }
 
-    @Test void bodyLidAndRelicComeFromTheGenerator() throws IOException {
+    @Test void bodyLidAndRelicAreAuthoredModels() throws IOException {
         String body = read(MODELS.resolve("mnemonic_reliquary.json"));
-        assertTrue(body.contains("tools/model_export/mnemonic_reliquary.py"));
         assertFalse(body.contains("cube_all"), "the body should be the authored casket, not a placeholder cube");
         for (String part : List.of("window_grille", "cushion", "hinge_knuckle"))
             assertTrue(body.contains("\"name\": \"" + part + "\""), part);
@@ -47,7 +46,6 @@ class MnemonicReliquaryModelSourceTest {
         for (String part : parts) {
             Path model = MODELS.resolve("mnemonic_reliquary_" + part + ".json");
             assertTrue(Files.isRegularFile(model), model + " should be exported");
-            assertTrue(read(model).contains("tools/model_export/mnemonic_reliquary.py"), model + " should come from its generator");
             assertTrue(generator.contains("'" + part + "'"), part + " should be authored by the generator");
         }
         assertTrue(read(Path.of("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java"))
