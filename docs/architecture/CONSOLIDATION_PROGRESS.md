@@ -13,7 +13,7 @@ Every consolidation session reads this file first and updates it last, following
 | 4 | Phase 2: network hygiene | DONE | `d10e5e7f2` … `018394712` (10 commits) | 2026-10-21 |
 | 5 | Phase 3: player-state plumbing | DONE | `dceced30a` … `7911eaa1f` (5 commits) | 2026-10-22 |
 | 6 | Phase 4: shared small utilities | DONE | `48127a923` … `07d4a4183` (6 commits) | 2026-10-22 |
-| 7 | Phase 5: blood accounting | NOT STARTED | | |
+| 7 | Phase 5: blood accounting | DONE | `8338c98da` | 2026-10-22 |
 | 8 | Phase 7: registration and client registration | NOT STARTED | | |
 | 9 | Phase 6: combat targeting and damage attribution | NOT STARTED | | |
 | 10 | Phases 8 + 9: rendering plumbing and animation conventions | NOT STARTED | | |
@@ -85,10 +85,10 @@ under *Pending approvals*. IDs refer to [ARCHITECTURE_AUDIT](ARCHITECTURE_AUDIT.
 | F-20 | Resync Ichorian knowledge on dimension change | 5 | PENDING | One line once approved: add `DIMENSION` to the `ICHORIAN_KNOWLEDGE` row of `PlayerStateSync` |
 | S-2b | Resend skill progress on respawn and dimension change, like every other synced attachment | 5 | PENDING | `PlayerStateSync.SKILLS` is login-only, as before step 5 |
 | S-5b | Concentrated Blood replacement vial: count confirmed insertion and drop what does not fit (no more Creative discard) | 5 | PENDING | `ConcentratedBlood.replace` still uses add-or-drop; the same applies to the Qliphoth Bloom Spine reclaim and `CardinalRiteSavedData.deliverRecovery` |
-| F-12 | Projected blood honours the rite lock | 7 | PENDING | |
-| F-13 | Scar upkeep becomes reserve-protected and synced | 7 | PENDING | Balance |
+| F-12 | Projected blood honours the rite lock | 7 | PENDING | Once approved, one line: `IBloodReservoir.takeProjectedBlood` returns 0 unless `canReceiveBlood()`. Flip `BloodAccountingGameTests#riteLockedStationStillTakesProjectedBloodUntilF12` with it |
+| F-13 | Scar upkeep becomes reserve-protected and synced | 7 | PENDING | Balance. The sync half arrived in step 7, because every payment ends in `syncVolume`. What remains is one flag: `ScarDefinition.UPKEEP` `reserveProtected = true` |
 | F-14 | Passive scar effects survive milk | 7 | PENDING | Design |
-| F-15 | Living weapons check `isActive()` and stop wiping the reserve | 7 | PENDING | Balance |
+| F-15 | Living weapons check `isActive()` and stop wiping the reserve | 7 | PENDING | Balance. The sites are the `BLOOD_PRICE` payments in the Living Axe, Blade, Crossbow and Tool |
 | F-22 | Hide the legacy Dictation Table from the main creative tab | 8 | PENDING | |
 | G-1 / F-18 | Explicit damage stages and one death-save stage | 9 | PENDING | Balance: blood lost per hit changes |
 | F-16 | Attribute AoE damage from armour, Still Arts, Sheolic and Saprovitta; respect allies and PvP | 9 | PENDING | Balance |
@@ -149,6 +149,9 @@ them green.
 | `common/util/ProgressionGatesTest` | 6 | `hasDegree` / `isDegree` at every degree boundary, the rewritten comparison forms, and every Unstained stage threshold |
 | gameTest `AttributeSyncGameTests` (batch `attribute_sync`) | 6 | P-1: an unchanged held modifier, including a worn elytra or Fungal Elytra, leaves its attribute clean (no update packet) |
 | gameTest `PatternOriginGameTests` (batch `pattern_origins`) | 6 | L-4: each origin solver keeps its pre-merge winner on overlapping matches |
+| `common/capability/player/harbinger/bloodvolume/BloodPaymentRulesTest` | 7 | Every flag combination of a blood payment: covered, overstrain (one-off and upkeep), full-amount refusal, Sanguine Reserve on/off and protected/unprotected, dormant volumes, spend counting |
+| `architecture/BloodAccountingGuardrailTest` | 7 | G-3 / L-2: a player volume is drained, subtracted or spend-counted only in `BloodAccounting`; every other `drain(` / `subtractBloodVolume(` / `addBloodSpend(` is allow-listed by file and count with its reason (stale entries fail); `BloodVolumeServerPacket` is built only in `syncVolume` and its own decoder; payments record and sync |
+| gameTest `BloodAccountingGameTests` (batch `blood_accounting`) | 7 | Exact volume before and after for an item (Living Axe), machine (projection into a Vial Centrifuge), rite (brazier lighting, with spend) and armour (Bloodburst) payment, each ending in `syncVolume`; the pending F-12 rite-lock behaviour is pinned |
 
 ## Step entries
 
@@ -563,3 +566,89 @@ them green.
   - Blood-active checks have `ProgressionGates.isBloodActive(player)`.
   - Generated models: when a shared helper replaces code in a generated class, edit its `tools/model_export/*_anim.java` template and imports too, then re-run the generator and confirm it reproduces the class. `EasingCopyGuardrailTest` now scans those templates.
   - Line endings in the working copy are mixed (LF, CRLF and the loom's CR CR LF). Edit with tools that keep each file's own endings, and check `git diff` for whole-file rewrites.
+
+### Step 7: Phase 5, blood accounting
+- **Status / date / commits:** DONE, 2026-10-22. Implementation `8338c98da`. A further `consolidation(step-7):` commit records this entry.
+- **Test counts before → after:**
+  - `test`: 3,979 → 3,993, 0 failures.
+  - `alphaCheck`: green, with all 1,016 required GameTests passing (1,011 before; 5 new).
+  - Opt-in suites run because this step touches their code:
+    - scriptorium 22/22, advanced brewing 7/7, living weapons 10/10.
+    - Clinical 131 and succession 22 each fail the same 2 known tests as in steps 5 and 6.
+    - The succession failure `manufactureconsumespatternandtwohundredfiftyblood` feeds blood through `BloodStructureFeedManager`. Its payment is clamped to the player's blood, so `pay` behaves exactly as the old `drain` did, and the assertion fails as it did at `86d2d8157`.
+- **What changed:**
+  - **`BloodAccounting` (G-3).** It lives in `capability/player/harbinger/bloodvolume`, beside `BloodFlowLedger`.
+    - `pay(player, amount, Source)` is a one-off payment with `drain()`'s semantics. It has no active gate, and asking for more than the player holds empties the volume and is not satisfied. An amount of 0 or less owes nothing and is satisfied, as `drain(0)` was.
+    - `payUpkeep(player, amount, Source, intervalTicks, requireFullAmount)` is the old `BloodFlowLedger.applyDrain`, moved verbatim. A dormant volume pays nothing, and `requireFullAmount` refuses a short payment.
+    - The pure `BloodPaymentRules` holds the arithmetic.
+    - `Source{id, label, category, countsAsSpend, reserveProtected}`:
+      - `countsAsSpend` adds a satisfied payment to the Hemorath blood debt.
+      - `reserveProtected` applies Sanguine Reserve's 15% floor while the technique is enabled.
+      - `Source.of` labels a source from its id.
+    - Every payment records a diagnostics row through `BloodFlowLedger.recordApplied`. When blood actually left the volume, it ends in `BloodVolumeEvents.syncVolume`.
+  - **Migration.** 74 `pay` and 12 `payUpkeep` call sites, each holding a named `Source` constant (80 in all). Families covered:
+    - armour abilities, the Silent Archon refusal and Covenant Mantle
+    - blocks: Bloodwell, Covenant Throne, Vigil, construct birth, Bloodwood, Saint Sarcophagus, brazier lighting
+    - items: brew dose, Scriptorium inscription, memory shard, Vein Spider, memory tools, thrall, Torch, Living Staff hot swap, succession self-sample
+    - the Living Axe, Blade, Crossbow, Tool and Grasp
+    - morphlings: primal ability, Dead Man's Purse, Lumenlace, upkeep, starvation
+    - scar upkeep and the scar weapon bleed
+    - High-Strung threads, Will redirect and banishment
+    - manipulations: the cast and Crimson Tithe debt
+    - block entities: loom burnt spans and ritual charge, Effigy motif, Morphling Cradle draw, Visceral Mirror, Blood Pylon, Blood Routing owner draw
+    - packets: structure craft, formation, synaptic loadout, donation, skill unlock, ash trail
+    - rites: Cardinal node cost, ordeal threat, boundary, legacy completion, Puppeteer trial, Scar Brazier rite, infusion, structure feed
+    - Condenser, Earthen Vein and Fungal Gardens travel, dictation
+    - hostile drains: wound (the damage drain), Mycophant claim and siphon, Desiccant, Lantern Tick, frayed thread, Stained Priestess, Velorum
+    - the 12 former ledger drains, each keeping the reserve flag its category used to imply
+  - **Flags reproduce each site's previous behaviour.**
+    - Only the wound drain and the old ledger categories (morphling, armour, organ, tool, bloodline, muscle memory) are reserve-protected.
+    - The 13 sites that called `addBloodSpend` count as spend.
+    - `HemorathEntity.onPlayerBloodSpend` stays at its 2 call sites.
+    - Guards before each payment, including the missing `isActive` checks, are unchanged.
+  - **One sync form (L-2).**
+    - The 52 bare `BloodVolumeServerPacket` sends are gone. Payment sites now sync through `pay`, and income and bloodline sites call `syncVolume`. That includes `BloodVolumeClientPacket`'s refresh reply.
+    - `AfflictionDigestHelper` and `ConserveStateHelper` had dead `syncBlood` helpers, now removed. `RootedStateHelper`'s duplicated the sync `CirculationIncomeHelper.grant` already sends and is removed too.
+  - **`ProjectedBloodSink` (L-3).**
+    - `BloodProjectionItem`'s filler / Forge / Loom / Effigy / generic `instanceof` chain is now one `instanceof ProjectedBloodSink` dispatch.
+    - `IBloodReservoir` extends the sink. Its default fills the reservoir's raw `BLOCK_BLOOD_VOLUME` attachment with `BloodVolumeTransferRules.transferableAmount`, exactly as the old generic path did.
+    - The Resonant Forge (hammer repair), Somatic Loom (ritual charge only), Masons Effigy and `FillerBlockEntity` (forward to the main block) override it.
+    - `IBloodVolume.fillFromSource` and its rule had no callers left and are deleted; `BloodVolumeTransferRulesTest` now covers `transferableAmount`.
+  - `BloodFlowContribution.Category` gained `CAST`, `RITE`, `STATION` and `HAZARD` at the end. It is written with `writeEnum`, so the payload layout is unchanged.
+- **Metrics:**
+  - `src/main`: +422 / −489 in 98 tracked files, plus 3 new classes (`BloodAccounting`, `BloodPaymentRules`, `ProjectedBloodSink`; 168 lines). `BloodFlowLedger.applyDrain`, `DrainResult`, `reserveProtectedCategory`, `fillFromSource` (interface, 2 implementations, rule) and 3 `syncBlood` helpers are deleted.
+  - Call sites migrated: 69 direct player drains, 2 indirect drains, 6 subtract/set bypasses, 12 ledger drains, 52 bare packet sends.
+  - Remaining legacy instances: 0 player drains outside `BloodAccounting`. The guardrail's allow-list holds only station, reservoir, gourd and white-humor tanks. `compat/mna` is not compiled and keeps 4 raw drains.
+  - Tests: 2 new unit and guardrail files, 1 new GameTest file; 7 source tests updated.
+- **Guardrails added:** `BloodPaymentRulesTest`, `BloodAccountingGuardrailTest`, `BloodAccountingGameTests` (see the table).
+- **Approved items implemented:** none. F-12, F-13, F-14 and F-15 are all PENDING, so none was built, and `HEMOMANCY_REFERENCE.md` / the wiki needed no balance updates for them.
+- **Pending approvals:** F-12, F-13, F-14, F-15. Each is now a one- or two-line change; the *Decisions* notes say where.
+- **Deviations from the roadmap:**
+  - **`Source` has a label.** It is a fifth component beside the four the roadmap names. The diagnostics already showed a label per source (muscle memory uses the memory's display name); `Source.of` derives it from the id otherwise.
+  - **Two entry points.** `pay` keeps `drain()`'s semantics; `payUpkeep` keeps `applyDrain`'s (dormant gate, interval, full-amount refusal). One method could not reproduce both without a behaviour change at about 20 sites that never checked `isActive`.
+  - **`ProjectedBloodSink`'s default does not ask `canReceiveBlood()`.** The roadmap's "defaulting to `receiveBlood`" would have implemented F-12, which is pending. It uses `receiveBlood`'s transfer arithmetic on the raw attachment instead.
+  - **The sync half of F-13 arrived.** Scar upkeep now ends in `syncVolume` like every payment. It already did each tick for the Living Torch and the ledger drains. Its reserve protection, the balance half, is untouched.
+  - **Network and diagnostics differences:**
+    - Payments sync the owner (blood, flow, max-blood and manipulation diagnostics) wherever blood moved. That includes about 15 sites that sent nothing before, such as scar upkeep, the Visceral Mirror, Lantern Tick bites, dictation and the boss drains.
+    - Syncs that carried no change are gone: projection at air, a zero wound drain, and no-op block-entity resends when no blood moved.
+    - One-off payments now show for their tick in Scrying Diagnostics. `HEMOMANCY_REFERENCE.md` §2.3a and `wiki/Blood-Systems.md` say so.
+  - **Spend counting** adds the requested amount on a satisfied payment. Sanguine Spinning used to add `actual`, which differs only at the ulp level.
+  - **`LinkedPlayerSource`** in `BloodRoutingRules` drains a player volume but has no callers. It stays, allow-listed with that reason, as a dead-code candidate for M-3.
+- **Final review:** one reviewer compared every migrated site against `HEAD`.
+  - It found no gameplay change, no frozen-identifier change, no client reach and no line-ending damage.
+  - Fixed after the review:
+    - The Living Axe GameTest missed the 50% Living Tool price `LivingAxeItem` inherits through `super.hurtEnemy`, so it now accepts 75 or 100 mL.
+    - Three dead locals and two dead imports.
+    - Muscle memory was missing from the reference's reserve list.
+- **Not verified (needs in-game check):**
+  - Scrying Diagnostics with the new one-off rows and categories.
+  - Network cost of per-tick payment syncs (scar upkeep, Visceral Mirror, Living Torch) in multiplayer.
+  - Projection into each station by hand: Forge hammer, Loom, Effigy, a filler-backed multiblock.
+- **Known issues (pre-existing, not fixed here):**
+  - Combined `alphaCheck` runs failed one flaky test each in two of the four runs: `loadedduplicatevespersleaveoneownedboss` (already listed in step 4) and `runnerlatchesfailureandretainsinspectionstate` (a journey fixture start). Both passed in the other runs; the third and fourth runs were fully green.
+  - Clinical and succession opt-in failures as in step 5.
+- **Handoff notes for step 8 (Phase 7, registration and client registration):**
+  - The baseline is fully green: 3,993 JUnit tests and 1,016 required GameTests.
+  - A new blood cost is `BloodAccounting.pay(player, amount, SOURCE)` with a `private static final BloodAccounting.Source` constant. `BloodAccountingGuardrailTest` fails on a raw player drain, `subtractBloodVolume`, `addBloodSpend` or bare `BloodVolumeServerPacket`.
+  - A block entity that takes projected blood implements `ProjectedBloodSink`; an `IBloodReservoir` gets the default.
+  - Approving F-12, F-13 or F-15 is now a flag or one-line change at the sites named in *Decisions*. F-14 (passive scar effects and milk) is untouched by this step.
