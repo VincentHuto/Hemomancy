@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.event.ClientEvents;
+import com.vincenthuto.hemomancy.client.registry.KeyMappings;
+import com.vincenthuto.hemomancy.client.event.ManipulationChargeInput;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
@@ -48,7 +49,7 @@ public final class ManipulationChargeVisualReview {
         int tick = ticks++, scene = tick / 140, phase = tick % 140;
         String label = System.getProperty("hemomancy.chargeVisualReviewLabel", "after");
         if (scene >= 6) {
-            ClientEvents.useManip.setDown(false);
+            KeyMappings.useManip.setDown(false);
             LOGGER.info("CHARGE_REVIEW COMPLETE label={} frames={}", label, frame);
             mc.stop();
             return;
@@ -56,10 +57,10 @@ public final class ManipulationChargeVisualReview {
         var manipulation = ManipulationInit.getByName(SPELLS[scene % 3]);
         int duration = manipulation.getRequiredChargeTicks();
         int held = scene < 3 ? duration : duration * 2 / 3;
-        ClientEvents.useManip.setDown(phase >= 16 && phase < 16 + held);
+        KeyMappings.useManip.setDown(phase >= 16 && phase < 16 + held);
         if (phase == 40) LOGGER.info("CHARGE_REVIEW INPUT scene={} selected={} charging={} held={} down={}", scene,
                 HemoCapabilityAccess.getKnownManipulations(mc.player).getSelectedManip().getName(),
-                ClientEvents.getChargingManipulationName(), ClientEvents.getManipulationChargeTicks(), ClientEvents.useManip.isDown());
+                ManipulationChargeInput.getChargingManipulationName(), ManipulationChargeInput.getManipulationChargeTicks(), KeyMappings.useManip.isDown());
         var id = mc.player.getUUID();
         double x = 5000.5 + scene * 32;
         if (phase == 0) {

@@ -102,7 +102,7 @@ public final class MycophantIntroClientEvents {
 				event.getPartialTick().getGameTimeDeltaPartialTick(true));
 	}
 
-	/** Drawn above the HUD from ClientEvents' GUI layer registration. */
+	/** Drawn above the HUD from GuiLayerRegistrar. */
 	public static void renderOverlay(GuiGraphics graphics, int width, int height, float partial) {
 		if (!STATE.isActive()) return;
 		Minecraft minecraft = Minecraft.getInstance();

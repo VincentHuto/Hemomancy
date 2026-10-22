@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.manips;
 import com.google.common.collect.Lists;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
-import com.vincenthuto.hemomancy.client.event.ClientEvents;
+import com.vincenthuto.hemomancy.client.registry.KeyMappings;
 import com.vincenthuto.hemomancy.client.screen.radial.*;
 import com.vincenthuto.hemomancy.common.armor.ability.ArmorSetAbility;
 import com.vincenthuto.hemomancy.common.armor.ability.ArmorSetAbilityRegistry;
@@ -43,7 +43,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-@EventBusSubscriber(Dist.CLIENT)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public class RadialChooseManipScreen extends Screen {
 	private static final int RECHARGING_ABILITY_SLICE_TINT = 0xBFA00000;
 	private static final int UNAVAILABLE_ABILITY_SLICE_TINT = 0x7F3F1010;
@@ -197,7 +197,7 @@ public class RadialChooseManipScreen extends Screen {
 		if (!(vascCharmEquipped.getItem() instanceof VasculariumCharmItem)) {
 			Minecraft.getInstance().setScreen(null);
 		}
-		if (!ClientEvents.isKeyDown(ClientEvents.openVascCharmMenu)) {
+		if (!KeyMappings.isKeyDown(KeyMappings.openVascCharmMenu)) {
 			this.processClick(false);
 		}
 	}

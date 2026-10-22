@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.effect;
 
-import com.vincenthuto.hemomancy.client.particle.data.SerpentParticleData;
+import com.vincenthuto.hemomancy.common.particle.data.SerpentParticleData;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ParticleInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;

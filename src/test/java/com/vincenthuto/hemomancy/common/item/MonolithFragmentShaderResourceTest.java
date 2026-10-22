@@ -12,7 +12,7 @@ public final class MonolithFragmentShaderResourceTest {
 	}
 
 	public static void main(String[] args) throws IOException {
-		String shaderInit = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/init/ShaderInit.java"));
+		String shaderInit = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/render/shader/ShaderInit.java"));
 		String renderTypes = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/render/HemoRenderTypes.java"));
 		String renderer = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/render/item/MonolithFragmentItemRenderer.java"));
 		String fragmentItem = read(SOURCE_ROOT.resolve(

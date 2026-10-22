@@ -1,24 +1,17 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.particle.LetheanDripParticle;
-import com.vincenthuto.hemomancy.client.particle.data.*;
-import com.vincenthuto.hemomancy.client.particle.factory.*;
-import com.vincenthuto.hemomancy.client.particle.type.*;
+import com.vincenthuto.hemomancy.common.particle.data.*;
+import com.vincenthuto.hemomancy.common.particle.type.*;
 import com.vincenthuto.hemomancy.common.particle.data.HitColorParticleData;
 import com.vincenthuto.hemomancy.common.particle.type.HitGlowParticleType;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.Registries;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
+/** Particle types. Their client providers are registered by {@code client.registry.ParticleProviderRegistrar}. */
 public class ParticleInit {
 
 	
@@ -58,21 +51,4 @@ public class ParticleInit {
 			() -> new SimpleParticleType(false));
 	public static final DeferredHolder<ParticleType<?>, SimpleParticleType> lethean_drip = PARTICLE_TYPES.register(
 			"lethean_drip", () -> new SimpleParticleType(false));
-
-	@SubscribeEvent
-	public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
-		Minecraft.getInstance().particleEngine.register(abocipher.get(), AbocipherParticleFactory::new);
-		Minecraft.getInstance().particleEngine.register(lethean_drip.get(), LetheanDripParticle.Provider::new);
-		Minecraft.getInstance().particleEngine.register(blood_avatar_hit.get(), BloodAvatarHitParticleFactory::new);
-		Minecraft.getInstance().particleEngine.register(hit_glow.get(), HitGlowParticleFactory::new);
-		Minecraft.getInstance().particleEngine.register(will_absorption_glow.get(), WillAbsorptionGlowParticleFactory::new);
-		Minecraft.getInstance().particleEngine.register(daemon_diffuse_glow.get(), DaemonDiffuseGlowParticleFactory::new);
-		Minecraft.getInstance().particleEngine.register(hermit_edge_glow.get(), HermitEdgeGlowParticleFactory::new);
-		Minecraft.getInstance().particleEngine.register(sporitic_spore.get(), SporiticSporeParticleFactory::new);
-		Minecraft.getInstance().particleEngine.register(serpent.get(), SerpentParticleFactory::new);
-		Minecraft.getInstance().particleEngine.register(blood_cell.get(), BloodCellParticleFactory::new);
-		Minecraft.getInstance().particleEngine.register(blood_claw.get(), BloodClawParticleFactory::new);
-		Minecraft.getInstance().particleEngine.register(absorbed_blood_cell.get(), AbsorbedBloodCellParticleFactory::new);
-
-	}
 }

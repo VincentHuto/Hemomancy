@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.worldgen;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.particle.data.BloodCellData;
-import com.vincenthuto.hemomancy.client.particle.data.SerpentParticleData;
+import com.vincenthuto.hemomancy.common.particle.data.BloodCellData;
+import com.vincenthuto.hemomancy.common.particle.data.SerpentParticleData;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.WarpChairBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.WarpChairStructureRules;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -31,6 +31,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.portal.DimensionTransition;
@@ -45,6 +49,7 @@ import java.util.*;
  * per-player cells. Each chamber keeps saved owner state so size and sky theme
  * can grow with Harbinger progression without changing the dimension layout.
  */
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class ChamberOfWillManager extends SavedData {
     public static final ResourceKey<Level> CHAMBER_OF_WILL = ResourceKey.create(
             Registries.DIMENSION, Hemomancy.rloc("chamber_of_will"));
@@ -475,6 +480,13 @@ public class ChamberOfWillManager extends SavedData {
         if (state.isAir() || state.is(BlockInit.blood_wood_planks.get())) {
             level.setBlockAndUpdate(pos, light);
         }
+    }
+
+    // HIGH keeps the Chamber ahead of the other level tick handlers, as when the mod constructor
+    // registered it.
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void onLevelTick(LevelTickEvent.Post event) {
+        tick(event.getLevel());
     }
 
     public static void tick(Level level) {

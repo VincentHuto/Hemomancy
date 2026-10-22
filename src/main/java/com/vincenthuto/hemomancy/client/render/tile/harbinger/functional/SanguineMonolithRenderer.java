@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.functional.SanguineMonolithModel;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineMonolithBlockEntity;
 import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.client.Minecraft;

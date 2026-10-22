@@ -9,7 +9,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.shader.ExtendedShaderInstance;
-import com.vincenthuto.hemomancy.common.init.ShaderInit;
+import com.vincenthuto.hemomancy.client.render.shader.ShaderInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;

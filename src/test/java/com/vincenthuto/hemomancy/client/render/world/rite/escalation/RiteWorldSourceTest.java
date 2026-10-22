@@ -33,7 +33,7 @@ final class RiteWorldSourceTest {
 
 	@Test
 	void theFloorShaderReceivesTheRitesBlood() throws IOException {
-		String shaders = read("src/main/java/com/vincenthuto/hemomancy/common/init/ShaderInit.java");
+		String shaders = read("src/main/java/com/vincenthuto/hemomancy/client/render/shader/ShaderInit.java");
 		String json = read("src/main/resources/assets/hemomancy/shaders/core/world/cardinal_floor_membrane.json");
 		String fragment = read("src/main/resources/assets/hemomancy/shaders/core/world/cardinal_floor_membrane.fsh");
 		String types = read("src/main/java/com/vincenthuto/hemomancy/client/render/world/floor/CardinalFloorRenderTypes.java");
@@ -60,8 +60,10 @@ final class RiteWorldSourceTest {
 
 	@Test
 	void theSkyWoundIsRegisteredAndDrawn() throws IOException {
-		String shaders = read("src/main/java/com/vincenthuto/hemomancy/common/init/ShaderInit.java");
-		String events = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+		String shaders = read("src/main/java/com/vincenthuto/hemomancy/client/render/shader/ShaderInit.java");
+		String events = read("src/main/java/com/vincenthuto/hemomancy/client/render/world/WorldEffectDispatcher.java");
+		String tick = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientTickEvents.java");
+		String session = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientSessionEvents.java");
 
 		assertTrue(shaders.contains("registerShader(event, CARDINAL_RITE_SKY_WOUND.createInstance(provider));"));
 		int weather = events.indexOf("RenderLevelStageEvent.Stage.AFTER_WEATHER) {");
@@ -77,8 +79,8 @@ final class RiteWorldSourceTest {
 				"it writes depth, so Fabulous graphics composite it in front of the clouds behind it");
 		String woundShader = read("src/main/resources/assets/hemomancy/shaders/core/world/cardinal_rite_sky_wound.fsh");
 		assertTrue(woundShader.contains("if (alpha <= 0.004) {\n        discard;"), "empty sky around it writes no depth");
-		assertTrue(events.contains("RiteSkyWound.tick(Minecraft.getInstance());"));
-		assertTrue(events.contains("RiteSkyWound.clear();"));
+		assertTrue(tick.contains("RiteSkyWound.tick(Minecraft.getInstance());"));
+		assertTrue(session.contains("RiteSkyWound.clear();"));
 	}
 
 	@Test
@@ -93,7 +95,7 @@ final class RiteWorldSourceTest {
 	@Test
 	void bloodRainUsesHemomancyParticlesOnly() throws IOException {
 		String rain = read("src/main/java/com/vincenthuto/hemomancy/client/render/world/rite/escalation/RiteBloodRain.java");
-		String events = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+		String events = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientTickEvents.java");
 
 		assertTrue(rain.contains("HemoParticleData.bloodCell("));
 		assertFalse(rain.contains("ParticleTypes."), "no vanilla particles");
@@ -102,7 +104,7 @@ final class RiteWorldSourceTest {
 
 	@Test
 	void sleepingSocketsAreMarkedInTheWorld() throws IOException {
-		String events = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+		String events = read("src/main/java/com/vincenthuto/hemomancy/client/render/world/WorldEffectDispatcher.java");
 		String marker = read("src/main/java/com/vincenthuto/hemomancy/client/render/world/rite/escalation/RiteSocketMarkerRenderer.java");
 
 		assertTrue(events.contains("RiteSocketMarkerRenderer.render(event.getPoseStack(), partialTick);"));

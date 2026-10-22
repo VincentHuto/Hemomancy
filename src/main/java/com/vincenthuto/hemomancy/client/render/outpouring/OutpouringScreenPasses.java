@@ -11,7 +11,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.shader.ExtendedShaderInstance;
 import com.vincenthuto.hemomancy.client.render.shader.ShaderHolder;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.init.ShaderInit;
+import com.vincenthuto.hemomancy.client.render.shader.ShaderInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;

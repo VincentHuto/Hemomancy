@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.util.RegistryLookup;
 import com.vincenthuto.hemomancy.common.damage.SchoolStates;
 import com.vincenthuto.hemomancy.common.damage.SchoolState;
 import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
@@ -1286,11 +1287,6 @@ public class ManipulationInit {
 	}
 
 	public static BloodManipulation getByName(String name) {
-		for (BloodManipulation manip : getAllEntries()) {
-			if (name.equals(manip.getName())) {
-				return manip;
-			}
-		}
-		return null;
+		return RegistryLookup.byName(MANIPS_TYPE_REGISTRY, name).orElse(null);
 	}
 }

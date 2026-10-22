@@ -41,7 +41,7 @@ class VialCentrifugeModelSourceTest {
             assertTrue(Files.isRegularFile(model), model + " should be exported");
             assertTrue(generator.contains("'" + part + "'"), part + " should be authored by the generator");
         }
-        assertTrue(read(Path.of("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java"))
+        assertTrue(read(Path.of("src/main/java/com/vincenthuto/hemomancy/client/registry/ModelRegistrar.java"))
                 .contains("for (String part : VialCentrifugeRenderer.PART_MODELS)"));
     }
 

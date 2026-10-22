@@ -22,6 +22,12 @@ public final class QliphothSeedTendrilEffects {
 	private static final Map<Integer, Long> NEXT_ENTITY_PULSE = new HashMap<>();
 	private static final Map<Long, Long> NEXT_POSITION_PULSE = new HashMap<>();
 
+	/** Forgets everything, so nothing outlives the world it was seen in. */
+	public static void clear() {
+		NEXT_ENTITY_PULSE.clear();
+		NEXT_POSITION_PULSE.clear();
+	}
+
 	private QliphothSeedTendrilEffects() {
 	}
 

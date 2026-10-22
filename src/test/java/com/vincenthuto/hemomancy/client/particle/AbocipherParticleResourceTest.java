@@ -18,6 +18,8 @@ public final class AbocipherParticleResourceTest {
 	public static void main(String[] args) throws IOException {
 		String particleInit = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/init/ParticleInit.java"));
+		String particleProviders = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/client/registry/ParticleProviderRegistrar.java"));
 		String factory = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/particle/factory/AbocipherParticleFactory.java"));
 		String particle = read(SOURCE_ROOT.resolve(
@@ -29,7 +31,7 @@ public final class AbocipherParticleResourceTest {
 		assertContains("particle type should use vanilla simple particle options",
 				particleInit, "new SimpleParticleType(false)");
 		assertContains("particle provider should be registered client-side",
-				particleInit, "AbocipherParticleFactory::new");
+				particleProviders, "AbocipherParticleFactory::new");
 		assertContains("particle should randomly choose from the registered sprite set",
 				particle, "pickSprite(spriteSet)");
 		assertContains("abocipher particles should have per-particle writhe timing",

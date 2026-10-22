@@ -6,7 +6,7 @@ import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.armor.BloodAvatarModel;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.manipulation.animus.AvatarManifestationRules;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;

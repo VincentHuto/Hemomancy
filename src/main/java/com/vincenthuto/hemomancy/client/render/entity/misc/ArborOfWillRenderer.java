@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgress;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgressClientCache;
 import com.vincenthuto.hemomancy.common.entity.utility.ArborOfWillEntity;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.worldgen.arbor.*;
 import net.minecraft.client.Minecraft;

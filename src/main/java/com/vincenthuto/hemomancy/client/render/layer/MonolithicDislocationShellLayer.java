@@ -26,6 +26,11 @@ public class MonolithicDislocationShellLayer<T extends LivingEntity, M extends E
 	private static final int SHELL_COLOR = 0x55FFFFFF;
 	private static final Set<Integer> LAYER_RENDERED_ENTITIES = new HashSet<>();
 
+	/** Forgets everything, so nothing outlives the world it was seen in. */
+	public static void clear() {
+		LAYER_RENDERED_ENTITIES.clear();
+	}
+
 	public MonolithicDislocationShellLayer(LivingEntityRenderer<T, M> renderer) {
 		super(renderer);
 	}

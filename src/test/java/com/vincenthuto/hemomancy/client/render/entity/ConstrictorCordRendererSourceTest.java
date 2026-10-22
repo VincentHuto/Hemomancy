@@ -10,7 +10,7 @@ public final class ConstrictorCordRendererSourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String clientEvents = Files.readString(Path.of(
-				"src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java"));
+				"src/main/java/com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java"));
 		assertContains("constrictor cord projectile renderer",
 				clientEvents,
 				"event.registerEntityRenderer(EntityInit.constrictor_cord_projectile.get(), ThrownItemRenderer::new)");

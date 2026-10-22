@@ -18,6 +18,12 @@ public final class CardinalRiteStaffPlantingClientState {
 	private static final Map<Integer, Animation> ACTIVE = new HashMap<>();
 	private static ClientLevel activeLevel;
 
+	/** Forgets everything, so nothing outlives the world it was seen in. */
+	public static void clear() {
+		ACTIVE.clear();
+		activeLevel = null;
+	}
+
 	private CardinalRiteStaffPlantingClientState() {
 	}
 

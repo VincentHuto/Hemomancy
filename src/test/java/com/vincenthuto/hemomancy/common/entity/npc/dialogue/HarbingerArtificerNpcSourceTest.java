@@ -38,7 +38,7 @@ public final class HarbingerArtificerNpcSourceTest {
 		String dialogue = read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerArtificerDialogueTrees.java");
 		String entityInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/EntityInit.java");
 		String itemInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java");
-		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java");
 		String layerEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/LayerEvents.java");
 		String renderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/entity/npc/HarbingerArtificerRenderer.java");
 		String model = read("src/main/java/com/vincenthuto/hemomancy/client/model/entity/npc/HarbingerArtificerModel.java");

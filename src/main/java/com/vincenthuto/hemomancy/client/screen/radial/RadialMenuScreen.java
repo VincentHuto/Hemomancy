@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.client.screen.radial;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.google.common.collect.Lists;
-import com.vincenthuto.hemomancy.client.event.ClientEvents;
+import com.vincenthuto.hemomancy.client.registry.KeyMappings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -19,7 +20,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 import java.util.ArrayList;
 import java.util.List;
 
-@EventBusSubscriber(Dist.CLIENT)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public class RadialMenuScreen extends Screen {
 	@SubscribeEvent
 	public static void overlayEvent(RenderGuiLayerEvent.Pre event) {
@@ -135,7 +136,7 @@ public class RadialMenuScreen extends Screen {
 
 		if (inventory == null) {
 			Minecraft.getInstance().setScreen(null);
-		} else if (!ClientEvents.isKeyDown(ClientEvents.OPEN_CHARM_SLOT_KEYBIND)) {
+		} else if (!KeyMappings.isKeyDown(KeyMappings.OPEN_CHARM_SLOT_KEYBIND)) {
 			menu.close();
 		}
 	}

@@ -12,7 +12,7 @@ public final class HematicArmatureInteractionSourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String clientEvents = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/event/ClientEvents.java"));
+				"com/vincenthuto/hemomancy/client/event/ArmatureCameraEvents.java"));
 		String restraint = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/entity/utility/ArmatureRestraintEntity.java"));
 		String blockEntity = read(SOURCE_ROOT.resolve(

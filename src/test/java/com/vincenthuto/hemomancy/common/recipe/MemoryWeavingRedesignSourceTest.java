@@ -17,7 +17,7 @@ public final class MemoryWeavingRedesignSourceTest {
 		String block = read("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/crafting/SomaticLoomBlock.java");
 		String renderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/tile/harbinger/crafting/SomaticLoomRenderer.java");
 		String hemoRenderTypes = read("src/main/java/com/vincenthuto/hemomancy/client/render/HemoRenderTypes.java");
-		String shaderInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ShaderInit.java");
+		String shaderInit = read("src/main/java/com/vincenthuto/hemomancy/client/render/shader/ShaderInit.java");
 		String loomOrbShaderJson = read("src/main/resources/assets/hemomancy/shaders/core/world/loom_orb.json");
 		String loomOrbVertexShader = read("src/main/resources/assets/hemomancy/shaders/core/world/loom_orb.vsh");
 		String loomOrbFragmentShader = read("src/main/resources/assets/hemomancy/shaders/core/world/loom_orb.fsh");

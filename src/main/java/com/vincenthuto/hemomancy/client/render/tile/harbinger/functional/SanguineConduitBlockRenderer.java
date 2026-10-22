@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.functional;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.render.geometry.SanguineConduitCoreGeometry;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineConduitBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;

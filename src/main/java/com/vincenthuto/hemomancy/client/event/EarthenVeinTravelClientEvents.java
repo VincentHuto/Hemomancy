@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.client.render.world.EarthenVeinDestinationTarge
 import com.vincenthuto.hemomancy.client.render.world.SanguineTendrilRibbonRenderer;
 import com.vincenthuto.hemomancy.client.vein.EarthenVeinTravelClientState;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.vein.SelectEarthenVeinDestinationPacket;
 import net.minecraft.ChatFormatting;

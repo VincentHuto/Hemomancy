@@ -91,7 +91,7 @@ public final class MorphlingStrainReframeResourceTest {
 				"ItemInit.morphling_gravecap.get()");
 		assertFileContains("mycelial skill uses gravecap", "common/init/skills/MycelialSkillBranch.java",
 				"ItemInit.morphling_gravecap.get()");
-		assertFileContains("client staff uses lumenlace", "client/event/ClientEvents.java",
+		assertFileContains("client staff uses lumenlace", "client/registry/ItemPropertiesRegistrar.java",
 				"selectedStack.getItem() == ItemInit.morphling_lumenlace.get()");
 		assertFileContains("mutation registry maps winter shroud", "client/morphling/MorphlingMutationRegistry.java",
 				"register(ItemInit.morphling_winter_shroud.get()");
@@ -131,7 +131,7 @@ public final class MorphlingStrainReframeResourceTest {
 
 	private static void livingStaffPredicatesHaveModelOverrides() throws IOException {
 		String clientEvents = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/event/ClientEvents.java"));
+				"com/vincenthuto/hemomancy/client/registry/ItemPropertiesRegistrar.java"));
 		String livingStaff = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/item/living_staff.json"));
 
 		Set<Integer> predicateReturns = extractInts(STAFF_PREDICATE_RETURN, clientEvents);

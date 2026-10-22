@@ -15,7 +15,7 @@ final class BodyIdiomWiringSourceTest {
 	void bodyIdiomsAreWiredThroughCastingDamageHudAndMemoryWeaving() throws IOException {
 		String manipulations = java("common/init/ManipulationInit.java");
 		String items = java("common/init/ItemInit.java");
-		String client = java("client/event/ClientEvents.java");
+		String client = java("client/event/ManipulationChargeInput.java");
 		String packet = java("common/network/capa/harbinger/manips/UseManipKeyPacket.java");
 
 		assertTrue(manipulations.contains("MANIPS.register(\"ironhearted\""));

@@ -1104,7 +1104,7 @@ public final class FloorMesh {
 		generation++;
 	}
 
-	@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+	@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 	public static final class ReloadHook {
 		private ReloadHook() {
 		}

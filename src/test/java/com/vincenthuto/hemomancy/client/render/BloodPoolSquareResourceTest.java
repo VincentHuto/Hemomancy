@@ -23,7 +23,7 @@ class BloodPoolSquareResourceTest {
 
     @Test
     void theCondenserDrawsASquarePoolOverItsWholeMouth() throws IOException {
-        assertTrue(Files.readString(JAVA.resolve("common/init/ShaderInit.java")).contains("\"Ragged\", \"Square\""));
+        assertTrue(Files.readString(JAVA.resolve("client/render/shader/ShaderInit.java")).contains("\"Ragged\", \"Square\""));
         String renderer = Files.readString(JAVA.resolve(
                 "client/render/tile/harbinger/functional/SanguineCondenserRenderer.java"));
         assertTrue(renderer.contains("HemoRenderTypes.squareBloodPool("), "the Condenser still draws a round pool");

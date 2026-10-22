@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.render.entity.misc;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.render.world.IchorianSigilLandmarkRenderer;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.rite.sigil.AwakenedIchorianSigilPose;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilLandmarkGeometry;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilOrganicGeometry;

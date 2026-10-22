@@ -34,7 +34,7 @@ import java.util.Locale;
  * options in any order; the section places the outpouring.
  * Unstained: {@code still <stage> <ending> <phase>}.
  */
-@EventBusSubscriber(modid=Hemomancy.MOD_ID,value=Dist.CLIENT)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class CastingPreviewCommands {
     /** Full charge in preview ticks; held = round(charge * REQUIRED). */
     private static final int REQUIRED=40;

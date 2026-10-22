@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.event.worldevent;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.particle.data.BloodCellData;
+import com.vincenthuto.hemomancy.common.particle.data.BloodCellData;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager;

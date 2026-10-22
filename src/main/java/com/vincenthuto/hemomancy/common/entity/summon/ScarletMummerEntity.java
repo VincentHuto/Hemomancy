@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
-import com.vincenthuto.hemomancy.client.particle.data.SerpentParticleData;
+import com.vincenthuto.hemomancy.common.particle.data.SerpentParticleData;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
 import net.minecraft.core.BlockPos;

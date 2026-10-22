@@ -6,7 +6,7 @@ import java.nio.file.Path;
 
 public final class TendonLineRendererSourceTest {
 	private static final Path CLIENT_EVENTS = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/render/world/WorldEffectDispatcher.java");
 	private static final Path RENDERER = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/world/TendonLineRenderer.java");
 

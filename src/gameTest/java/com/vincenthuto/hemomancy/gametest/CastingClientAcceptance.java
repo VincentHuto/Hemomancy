@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.gametest;
 
+import net.neoforged.api.distmarker.Dist;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -22,7 +23,7 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /** Only enabled by tools/casting-animation-review.init.gradle, in a disposable build directory. */
-@EventBusSubscriber(modid=Hemomancy.MOD_ID)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class CastingClientAcceptance {
     private static int ticks,waiting;
     private static net.minecraft.world.entity.Entity drained;
@@ -368,7 +369,7 @@ public final class CastingClientAcceptance {
         for(var p:server.getPlayerList().getPlayers())p.sendSystemMessage(Component.literal("CAST_REVIEW_SHOT "+name+" "+caster.getId()));
     }
 
-    @EventBusSubscriber(modid=Hemomancy.MOD_ID,value=net.neoforged.api.distmarker.Dist.CLIENT)
+    @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
     public static final class Client {
         private static long previousFrame;
         private static double sum,max;

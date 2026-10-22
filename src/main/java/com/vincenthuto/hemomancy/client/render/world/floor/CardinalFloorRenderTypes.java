@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.world.floor;
 
 import com.mojang.blaze3d.shaders.Uniform;
-import com.vincenthuto.hemomancy.common.init.ShaderInit;
+import com.vincenthuto.hemomancy.client.render.shader.ShaderInit;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 

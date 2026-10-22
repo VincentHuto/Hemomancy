@@ -43,7 +43,7 @@ final class RiteZoneBoundaryRulesTest {
 	@Test
 	void rendererAndSyncPacketAreWiredIn() throws IOException {
 		String client = Files.readString(Path.of(
-				"src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java"));
+				"src/main/java/com/vincenthuto/hemomancy/client/render/world/WorldEffectDispatcher.java"));
 		String packets = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/network/PacketHandler.java"));
 		assertTrue(client.contains("RiteZoneBoundaryRenderer.render(event.getPoseStack(), partialTick)"));

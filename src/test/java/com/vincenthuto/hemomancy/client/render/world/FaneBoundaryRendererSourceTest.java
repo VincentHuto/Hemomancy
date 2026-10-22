@@ -8,7 +8,7 @@ public final class FaneBoundaryRendererSourceTest {
 	private static final Path RENDERER = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/world/FaneBoundaryRenderer.java");
 	private static final Path SHADER_INIT = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/init/ShaderInit.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/render/shader/ShaderInit.java");
 	private static final Path CLIENT_CONFIG = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/config/HemoClientConfig.java");
 	private static final Path CLIENT_DATA = Path.of(

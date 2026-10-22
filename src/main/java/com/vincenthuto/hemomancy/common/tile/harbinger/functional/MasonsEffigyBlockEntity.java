@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
-import com.vincenthuto.hemomancy.client.particle.data.BloodCellData;
+import com.vincenthuto.hemomancy.common.particle.data.BloodCellData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;

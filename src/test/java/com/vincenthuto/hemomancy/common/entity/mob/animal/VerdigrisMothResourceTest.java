@@ -15,7 +15,7 @@ public final class VerdigrisMothResourceTest {
 		String entityInit = readSource("com/vincenthuto/hemomancy/common/init/EntityInit.java");
 		String entity = readSource("com/vincenthuto/hemomancy/common/entity/mob/animal/VerdigrisMothEntity.java");
 		String itemInit = readSource("com/vincenthuto/hemomancy/common/init/ItemInit.java");
-		String clientEvents = readSource("com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+		String clientEvents = readSource("com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java");
 		String layerEvents = readSource("com/vincenthuto/hemomancy/client/event/LayerEvents.java");
 		String spawnModifier = readResource("data/hemomancy/neoforge/biome_modifier/add_verdigris_moth.json");
 		String spawnTag = readResource("data/hemomancy/tags/worldgen/biome/verdigris_moth_spawnlist.json");

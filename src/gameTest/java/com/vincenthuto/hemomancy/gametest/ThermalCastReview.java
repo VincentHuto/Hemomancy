@@ -28,7 +28,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import java.util.List;
 
 /** Exercises paid casts and channel cancellation in an opt-in disposable world. */
-@EventBusSubscriber(modid=Hemomancy.MOD_ID,value=Dist.CLIENT)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class ThermalCastReview {
     private static final String[] SPELLS={"sanguine_ignition","furnace_veins","vitric_combustion","scalding_updraft",
             "soaring_updraft","suspended_updraft","expulsive_updraft","pyretic_forge","cauterizing_rebuke",

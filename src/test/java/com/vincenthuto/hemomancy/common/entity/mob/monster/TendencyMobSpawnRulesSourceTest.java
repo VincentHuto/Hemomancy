@@ -58,7 +58,7 @@ public final class TendencyMobSpawnRulesSourceTest {
 				"event.put(EntityInit.myelin_borer.get(), MyelinBorerEntity.setAttributes().build())");
 		assertContains("Borer spawn egg", read("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java"),
 				"spawn_egg_myelin_borer = SPAWNEGGS.register(\"spawn_egg_myelin_borer\"");
-		assertContains("Borer renderer", read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java"),
+		assertContains("Borer renderer", read("src/main/java/com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java"),
 				"EntityInit.myelin_borer.get(), MyelinBorerRenderer::new");
 		assertContains("active Nerve Bundle block", read("src/main/java/com/vincenthuto/hemomancy/common/init/BlockInit.java"),
 				"nerve_bundle = BASEBLOCKS.register(\"nerve_bundle\"");
@@ -79,7 +79,7 @@ public final class TendencyMobSpawnRulesSourceTest {
 	private static void assertDesiccantActive() throws IOException {
 		String entityInit = stripLineComments(read("src/main/java/com/vincenthuto/hemomancy/common/init/EntityInit.java"));
 		String itemInit = stripLineComments(read("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java"));
-		String clientEvents = stripLineComments(read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java"));
+		String clientEvents = stripLineComments(read("src/main/java/com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java"));
 		String layerEvents = stripLineComments(read("src/main/java/com/vincenthuto/hemomancy/client/event/LayerEvents.java"));
 		for (String snippet : ACTIVE_DESICCANT_SNIPPETS) {
 			assertContains("active desiccant source " + snippet, entityInit, snippet);

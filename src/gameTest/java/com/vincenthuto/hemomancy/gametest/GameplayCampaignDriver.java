@@ -322,7 +322,7 @@ public final class GameplayCampaignDriver {
         state.addProperty("tick", ticks);
         state.addProperty("screen", mc.screen == null ? "world" : mc.screen.getClass().getSimpleName());
         state.addProperty("guiWidth", mc.getWindow().getGuiScaledWidth()); state.addProperty("guiHeight", mc.getWindow().getGuiScaledHeight());
-        state.addProperty("manipulationChargeTicks", com.vincenthuto.hemomancy.client.event.ClientEvents.getManipulationChargeTicks());
+        state.addProperty("manipulationChargeTicks", com.vincenthuto.hemomancy.client.event.ManipulationChargeInput.getManipulationChargeTicks());
         JsonArray widgets = new JsonArray();
         if (mc.screen != null) for (var child : mc.screen.children()) if (child instanceof AbstractWidget widget) {
             JsonObject w = new JsonObject(); w.addProperty("label", widget.getMessage().getString());

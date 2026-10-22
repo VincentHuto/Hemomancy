@@ -24,7 +24,7 @@ class QliphothBloomClientDataTest {
 	@Test
 	void loginAndLogoutClearWorldSpecificBloomData() throws IOException {
 		String source = Files.readString(Path.of(
-				"src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java"));
+				"src/main/java/com/vincenthuto/hemomancy/client/event/ClientSessionEvents.java"));
 
 		assertTrue(methodBody(source, "onClientPlayerLogin").contains("QliphothBloomClientData.clear()"));
 		assertTrue(methodBody(source, "onClientPlayerLogout").contains("QliphothBloomClientData.clear()"));

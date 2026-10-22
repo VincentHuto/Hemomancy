@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.QliphothBloomClientData;
 import com.vincenthuto.hemomancy.client.render.CachedMeshModelView;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.culling.Frustum;

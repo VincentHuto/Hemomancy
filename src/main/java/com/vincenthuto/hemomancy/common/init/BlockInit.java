@@ -963,11 +963,6 @@ public class BlockInit {
 	private static final Set<String> ITEMLESS_BLOCKS = Set.of("attached_gourd_stem", "filler_block",
 			"warp_chair_filler", "abocipher_emitter", "qliphoth_bloom",
 			"escharian_overgrowth", "escharian_overgrowth_rim");
-	private static final Set<String> WIP_BLOCKS = Set.of("semi_sentient_construct", "humane_idol",
-			"serpentine_idol", "morphling_cradle", "witness_organ", "saint_sarcophagus",
-			"gourdvine_tap", "sanguine_vigil", "sanguine_omen", "visceral_mirror",
-			"non_euclidean_hallway", "blood_basin", "blood_pylon", "blood_trial_altar",
-			"offering_gate", "crucible_of_nether_ichor", "voidtouched_vessel");
 	private static final Set<String> HIDDEN_BLOCK_ITEMS = Set.of("active_befouling_ash_trail",
 			"active_smouldering_ash_trail", "engram_block");
 
@@ -978,7 +973,7 @@ public class BlockInit {
 				|| ITEMLESS_BLOCKS.contains(path)) {
 			return new BlockItemDecision(ItemRoute.NONE, null, CreativeRoute.HIDDEN);
 		}
-		CreativeRoute tab = WIP_BLOCKS.contains(path) ? CreativeRoute.WIP
+		CreativeRoute tab = CreativeTabInit.isWipBlock(blockId) ? CreativeRoute.WIP
 				: HIDDEN_BLOCK_ITEMS.contains(path) ? CreativeRoute.HIDDEN : CreativeRoute.MAIN;
 		String manualId = MANUAL_BLOCK_ITEMS.get(path);
 		if (manualId != null) {

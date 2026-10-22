@@ -14,7 +14,7 @@ public final class CrimsonDoeVenousStriderResourceTest {
 	public static void main(String[] args) throws IOException {
 		String entityInit = readSource("com/vincenthuto/hemomancy/common/init/EntityInit.java");
 		String itemInit = readSource("com/vincenthuto/hemomancy/common/init/ItemInit.java");
-		String clientEvents = readSource("com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+		String clientEvents = readSource("com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java");
 		String layerEvents = readSource("com/vincenthuto/hemomancy/client/event/LayerEvents.java");
 
 		assertContains("crimson doe registry", entityInit, "crimson_doe = ENTITY_TYPES.register(");

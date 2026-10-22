@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.functional.CovenantThroneModel;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.CovenantThroneBlock;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CovenantThroneBlockEntity;
 import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.client.Minecraft;

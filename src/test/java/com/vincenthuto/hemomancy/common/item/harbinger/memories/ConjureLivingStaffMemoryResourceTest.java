@@ -12,7 +12,7 @@ public final class ConjureLivingStaffMemoryResourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String itemInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java");
-		String hemomancy = read("src/main/java/com/vincenthuto/hemomancy/Hemomancy.java");
+		String hemomancy = read("src/main/java/com/vincenthuto/hemomancy/common/init/CreativeTabInit.java");
 		String lang = read("src/main/resources/assets/hemomancy/lang/en_us.json");
 		Path model = ROOT.resolve("src/main/resources/assets/hemomancy/models/item/memory_conjure_living_staff.json");
 		Path overlay = ROOT.resolve("src/main/resources/assets/hemomancy/textures/item/memories/memory_living_staff_overlay.png");

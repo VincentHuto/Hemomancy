@@ -10,7 +10,7 @@ import com.vincenthuto.hemomancy.client.render.CachedMeshModelView;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.event.worldevent.FaneBoundaryRelation;
 import com.vincenthuto.hemomancy.common.event.worldevent.FaneBoundaryVisibilityRules;
-import com.vincenthuto.hemomancy.common.init.ShaderInit;
+import com.vincenthuto.hemomancy.client.render.shader.ShaderInit;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;

@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /** Ephemeral cosmetic state. No damage, effects, persistence or authority is derived from it. */
-@EventBusSubscriber(modid=Hemomancy.MOD_ID)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class ThermalStatusVisuals {
     private record Key(UUID id,Form form) {}
     private record Status(Entity entity,Form form,double radius,int count,long until,

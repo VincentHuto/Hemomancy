@@ -18,7 +18,7 @@ public final class IronBrazierOfferingSourceTest {
 		String renderer = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/tile/harbinger/rite/IronBrazierRenderer.java"));
 		String clientEvents = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/event/ClientEvents.java"));
+				"com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java"));
 
 		assertContains("brazier stores one offering item", blockEntity, "private ItemStack offering");
 		assertContains("brazier exposes offering copy", blockEntity, "getOfferingDisplayStack()");

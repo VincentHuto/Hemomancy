@@ -11,8 +11,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class SharedMemoryInputSourceTest {
     @Test
     void useKeyRoutesAndResetsFromTheSharedMemorySelection() throws IOException {
-        String source = Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java"));
-        String input = source.substring(source.indexOf("private static void handleManipulationInput()"),
+        String source = Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/client/event/ManipulationChargeInput.java"));
+        String input = source.substring(source.indexOf("static void tick()"),
                 source.indexOf("public static void interruptManipulationCharge()"));
 
         assertTrue(input.contains("known.getSelectedMemoryRef()"),
@@ -28,7 +28,7 @@ class SharedMemoryInputSourceTest {
 
     @Test
     void chargeInterruptionRetiresTheWorldPreviewBeforeClearingHeldTicks() throws IOException {
-        String source = Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java"));
+        String source = Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/client/event/ManipulationChargeInput.java"));
         String cleanup = source.substring(source.indexOf("private static void stopCastingChargePresentation()"),
                 source.indexOf("public static void manipulationCastAccepted()"));
         assertTrue(cleanup.contains("ManipulationChargeVisualPacket(0)"),

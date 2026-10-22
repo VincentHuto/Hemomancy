@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.util.RegistryLookup;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.entity.summon.PaleIntercessionRules;
@@ -169,15 +170,7 @@ public class StillArtInit {
 					(player, level, heldItem, pos, art) -> PaleIntercessionSummonService.summonOrRecall(player)));
 
 	public static StillArt getByName(String name) {
-		if (name == null || name.isEmpty()) {
-			return StillArt.BLANK;
-		}
-		for (StillArt art : STILL_ARTS_TYPE_REGISTRY) {
-			if (art != null && name.equals(art.getName())) {
-				return art;
-			}
-		}
-		return StillArt.BLANK;
+		return RegistryLookup.byName(STILL_ARTS_TYPE_REGISTRY, name).orElse(StillArt.BLANK);
 	}
 
 	private static boolean isInFront(Player player, Vec3 look, LivingEntity target, double threshold) {

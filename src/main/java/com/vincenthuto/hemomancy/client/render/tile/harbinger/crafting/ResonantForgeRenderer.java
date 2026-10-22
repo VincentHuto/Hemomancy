@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.block.harbinger.crafting.ResonantForgeBl
 import com.vincenthuto.hemomancy.common.enchanting.ResonantForgeRules;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.station.StationTierProperty;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ResonantForgeBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ResonantForgeBlockEntity.Operation;

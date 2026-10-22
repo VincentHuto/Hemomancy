@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.gametest;
 
+import net.neoforged.api.distmarker.Dist;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.damage.*;
@@ -158,7 +159,7 @@ public final class SchoolCombatClientAcceptance {
     }
     private static void message(ServerPlayer player, String message) { player.sendSystemMessage(Component.literal(message)); }
 
-    @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = net.neoforged.api.distmarker.Dist.CLIENT)
+    @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
     public static final class Client {
         @SubscribeEvent public static void message(net.neoforged.neoforge.client.event.ClientChatReceivedEvent event) {
             if (!Boolean.getBoolean("hemomancy.schoolAcceptanceClient")) return;

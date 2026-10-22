@@ -23,7 +23,7 @@ public final class SilentArchonInputAndCombatSourceTest {
 		String packetHandler = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/network/PacketHandler.java"));
 		String clientEvents = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/event/ClientEvents.java"));
+				"com/vincenthuto/hemomancy/client/event/ClientInputEvents.java"));
 		String docs = read(DOCS_ROOT.resolve("HEMOMANCY_REFERENCE.md"));
 
 		assertContains("registry exposes silent severance id", registry, "SILENT_ARCHON_SEVERANCE");

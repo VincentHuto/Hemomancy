@@ -20,7 +20,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import java.nio.file.*;
 
 /** Opt-in fixture for a disposable review world, excluded from release sources. */
-@EventBusSubscriber(modid=Hemomancy.MOD_ID,value=Dist.CLIENT)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class AntecedentClientReview {
     private static final VigilModules.Layout LAYOUT=VigilModules.ALL.getFirst();
     private static final BlockPos ORIGIN=new BlockPos(50,84,0),MACHINE=ORIGIN.offset(LAYOUT.plan().vessel()).offset(0,0,-2);

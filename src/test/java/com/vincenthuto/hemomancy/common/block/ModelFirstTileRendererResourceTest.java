@@ -402,13 +402,13 @@ public final class ModelFirstTileRendererResourceTest {
 			throw new AssertionError("Chamber themes draw with their own LEQUAL depth so 3D theme geometry self-occludes");
 		assertContains("the loom's renderer offers its weave to the dome", loomRenderer, "SomaticLoomDomeRenderer.track(te, dissolving)");
 		assertContains("the dome renders before entities",
-				read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/event/ClientEvents.java")), "SomaticLoomDomeRenderer.render(event)");
+				read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/render/world/WorldEffectDispatcher.java")), "SomaticLoomDomeRenderer.render(event)");
 		for (String retired : new String[]{"drawFractalStar", "drawEnzymeRings", "drawBloodVolumeRing",
 				"drawCraftingProgressRing", "drawAwaitingBloodGlow"})
 			assertDoesNotContain("somatic loom should not float its old ring and star effects: " + retired, loomRenderer,
 					retired);
 		assertContains("somatic loom cop parts should be registered for baking",
-				read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/event/ClientEvents.java")),
+				read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/registry/ModelRegistrar.java")),
 				"SomaticLoomRenderer.PART_MODELS");
 		assertDoesNotContain("somatic loom renderer should not render the static model body", loomRenderer,
 				"SomaticLoomModel");

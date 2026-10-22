@@ -45,7 +45,7 @@ class CircusPresentationRegressionTest {
 	@Test
 	void perceptionOverlayUsesSmoothEdgesWithoutScanBands() throws IOException {
 		String overlay = source("client/screen/overlay/CircusPerceptionOverlay.java");
-		String events = source("client/event/ClientEvents.java");
+		String events = source("client/render/world/WorldEffectDispatcher.java");
 		String performer = source("client/render/entity/npc/CircusPerformerRenderer.java");
 		assertTrue(overlay.contains("graphics.fillGradient"));
 		assertTrue(overlay.contains("public static void renderWorld"));

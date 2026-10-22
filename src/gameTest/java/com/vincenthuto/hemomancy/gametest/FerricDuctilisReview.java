@@ -24,7 +24,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import java.util.*;
 
 /** Real paid casts in a disposable world, with repeatable views for before/after review. */
-@EventBusSubscriber(modid=Hemomancy.MOD_ID, value=Dist.CLIENT)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class FerricDuctilisReview {
     private static final String[] SPELLS={"ferric_rampart","ferric_spikes","sanguine_magnetism","ironhearted","iron_choir","iron_retort",
             "sanguine_mending","vascular_dowsing","conjure_staff","synaptic_jolt","activation_potential","synaptic_storm",

@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /** Transient presentation sessions. This class never spends blood, executes powers, or changes movement. */
-@EventBusSubscriber(modid=Hemomancy.MOD_ID)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class CastingAnimationManager {
     private static final Map<UUID,CastingAnimationPacket> ACTIVE = new HashMap<>();
     private static long sequence;

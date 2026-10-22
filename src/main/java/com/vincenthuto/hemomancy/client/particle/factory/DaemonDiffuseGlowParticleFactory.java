@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.particle.factory;
 
 import com.vincenthuto.hemomancy.client.particle.DaemonDiffuseGlowParticle;
-import com.vincenthuto.hemomancy.client.particle.data.DaemonDiffuseGlowParticleData;
+import com.vincenthuto.hemomancy.common.particle.data.DaemonDiffuseGlowParticleData;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;

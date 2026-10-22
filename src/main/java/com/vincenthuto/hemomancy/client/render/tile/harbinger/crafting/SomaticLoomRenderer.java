@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.client.render.world.ThreadKnotGeometry;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomBlock;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticWeaveRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticLoomBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;

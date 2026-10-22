@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.render.world;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.vein.EarthenVeinTravelVisuals;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.vein.EarthenVeinFeedingVortexProfile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;

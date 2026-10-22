@@ -122,7 +122,7 @@ public final class HarbingerArtificerFittingSourceTest {
 
 	private static void staffVisualsUseUnifiedPredicate() throws IOException {
 		String clientEvents = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/event/ClientEvents.java"));
+				"com/vincenthuto/hemomancy/client/registry/ItemPropertiesRegistrar.java"));
 		String livingStaff = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/item/living_staff.json"));
 
 		assertContains("living staff registers unified visual predicate", clientEvents,

@@ -28,7 +28,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import java.util.List;
 
 /** Actual casts in a separate, disposable copy of the review world. */
-@EventBusSubscriber(modid=Hemomancy.MOD_ID,value=Dist.CLIENT)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class AnimusMortemVisualReview {
     private static final String[] SPELLS={"blood_shot","guided_blood_shot","hematic_mortar","sanguine_halo",
             "blood_needle","blood_needle_fan","blood_needle_lance","blood_binding","lingering_blood_binding",

@@ -15,6 +15,6 @@ public record ManipulationInterruptedPacket() implements CustomPacketPayload {
     @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
 
     public static void handle(ManipulationInterruptedPacket packet, IPayloadContext context) {
-        context.enqueueWork(com.vincenthuto.hemomancy.client.event.ClientEvents::interruptManipulationCharge);
+        context.enqueueWork(com.vincenthuto.hemomancy.client.event.ManipulationChargeInput::interruptManipulationCharge);
     }
 }

@@ -12,6 +12,12 @@ public final class CinderBreathFlames {
     static { LAST_TICK.defaultReturnValue(Long.MIN_VALUE); }
     private static ClientLevel world;
 
+    /** Forgets everything, so nothing outlives the world it was seen in. */
+    public static void clear() {
+        LAST_TICK.clear();
+        world = null;
+    }
+
     private CinderBreathFlames() {}
 
     /** Emits at most once per game tick per Bellows; safe to call from every render frame. */

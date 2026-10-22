@@ -21,6 +21,7 @@ public final class CellHandRenderingResourceTest {
 		String willAbsorptionGlowFactory = read("src/main/java/com/vincenthuto/hemomancy/client/particle/factory/WillAbsorptionGlowParticleFactory.java");
 		String hemoParticleData = read("src/main/java/com/vincenthuto/hemomancy/common/particle/HemoParticleData.java");
 		String particleInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ParticleInit.java");
+		String particleProviders = read("src/main/java/com/vincenthuto/hemomancy/client/registry/ParticleProviderRegistrar.java");
 		String projectionItem = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodProjectionItem.java");
 		String absorptionItem = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodAbsorptionItem.java");
 		String blockBloodInteractions = read("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/BlockBloodInteractions.java");
@@ -111,7 +112,7 @@ public final class CellHandRenderingResourceTest {
 				"WillEntity::canBloodAbsorptionDrawParticles");
 		assertContains("Will absorption glow is registered as its own particle type", particleInit,
 				"will_absorption_glow");
-		assertContains("Will absorption glow uses its own factory", particleInit,
+		assertContains("Will absorption glow uses its own factory", particleProviders,
 				"WillAbsorptionGlowParticleFactory::new");
 		assertContains("Will absorption glow factory creates its registered data", willAbsorptionGlowFactory,
 				"ParticleInit.will_absorption_glow.get()");

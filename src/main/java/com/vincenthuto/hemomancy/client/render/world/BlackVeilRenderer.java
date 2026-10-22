@@ -76,7 +76,7 @@ public final class BlackVeilRenderer {
         var mc = Minecraft.getInstance();
         Vec3 at = mc.gameRenderer.getMainCamera().getPosition();
         var buffers = mc.renderBuffers().bufferSource();
-        var boundaryType = com.vincenthuto.hemomancy.common.init.RenderTypeInit.RITE_BOUNDARY_CORE;
+        var boundaryType = com.vincenthuto.hemomancy.client.render.RenderTypeInit.RITE_BOUNDARY_CORE;
         var boundary = buffers.getBuffer(boundaryType);
         for (var veil : VEILS) {
             if (veil.center.distanceToSqr(at) > 128 * 128) continue;

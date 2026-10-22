@@ -10,7 +10,7 @@ public final class SilentArchonMonolithDepthSourceTest {
 	private static final Path VESPER_FLOOR_RENDERER = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/VesperFightFloorRenderer.java");
 	private static final Path SHADER_INIT = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/init/ShaderInit.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/render/shader/ShaderInit.java");
 	private static final Path RENDER_TYPES = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/HemoRenderTypes.java");
 	private static final Path NORMAL_MONOLITH_FRAGMENT = Path.of(

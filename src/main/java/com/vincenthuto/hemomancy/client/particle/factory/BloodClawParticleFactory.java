@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.particle.factory;
 
 import com.vincenthuto.hemomancy.client.particle.BloodClawParticle;
-import com.vincenthuto.hemomancy.client.particle.data.BloodClawData;
+import com.vincenthuto.hemomancy.common.particle.data.BloodClawData;
 import com.vincenthuto.hemomancy.common.init.ParticleInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 

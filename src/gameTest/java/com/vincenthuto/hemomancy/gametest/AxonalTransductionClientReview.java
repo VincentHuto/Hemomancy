@@ -23,7 +23,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 
 /** Opt-in native rendering and input check, restricted to the disposable axonal-client world. */
-@EventBusSubscriber(modid=Hemomancy.MOD_ID,value=Dist.CLIENT)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class AxonalTransductionClientReview {
     private static int ticks;
     private static boolean setupQueued;

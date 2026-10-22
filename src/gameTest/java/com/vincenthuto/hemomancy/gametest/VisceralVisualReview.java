@@ -16,7 +16,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /** Opt-in packet/material study in the disposable VisceralReview save, not a combat test. */
-@EventBusSubscriber(modid=Hemomancy.MOD_ID,value=Dist.CLIENT)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class VisceralVisualReview {
     private static final Form[] FORMS={Form.CROWN,Form.BELL,Form.THREAD,Form.CHOIR,Form.GLASS,Form.STILLNESS,Form.VERDICT,Form.WELL};
     private static final EnumBloodTendency[] SCHOOLS={EnumBloodTendency.ANIMUS,EnumBloodTendency.MORTEM,

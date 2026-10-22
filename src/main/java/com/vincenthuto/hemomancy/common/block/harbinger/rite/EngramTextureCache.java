@@ -1,6 +1,10 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.rite;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -15,6 +19,7 @@ import java.util.Map;
  * int[16][16] ARGB color grid for particle tinting. Textures are loaded
  * directly from the mod's classpath resources.
  */
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class EngramTextureCache {
 
 	private static final Map<Integer, boolean[][]> PIXEL_CACHE = new HashMap<>();
@@ -27,6 +32,12 @@ public class EngramTextureCache {
 	 * color data. Safe to call from either side. Should be called once on server
 	 * start.
 	 */
+	// HIGH keeps it ahead of the other start handlers, as when the mod constructor registered it.
+	@SubscribeEvent(priority = EventPriority.HIGH)
+	public static void onServerAboutToStart(ServerAboutToStartEvent event) {
+		loadAll();
+	}
+
 	public static void loadAll() {
 		if (isLoaded()) {
 			return;

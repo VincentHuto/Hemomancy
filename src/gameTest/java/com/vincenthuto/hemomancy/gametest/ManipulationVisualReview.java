@@ -21,7 +21,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 
 /** Opt-in, gameTest-source-only renderer inspection; world mode requires a disposable save. */
-@EventBusSubscriber(modid=Hemomancy.MOD_ID,value=Dist.CLIENT)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class ManipulationVisualReview {
     private static boolean opened;
     private static int worldTicks;

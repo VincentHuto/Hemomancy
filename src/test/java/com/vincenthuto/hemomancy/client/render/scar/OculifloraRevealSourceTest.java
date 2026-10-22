@@ -23,7 +23,7 @@ public final class OculifloraRevealSourceTest {
 
 	private static void rendererIsClientOnlyRevealAndDoesNotAddPacketsOrTapBehavior() throws IOException {
 		String renderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/scar/OculifloraRevealRenderer.java");
-		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/render/world/WorldEffectDispatcher.java");
 		String config = read("src/main/java/com/vincenthuto/hemomancy/config/HemoClientConfig.java");
 
 		assertContains("renderer hooked from client events", clientEvents, "OculifloraRevealRenderer.render");

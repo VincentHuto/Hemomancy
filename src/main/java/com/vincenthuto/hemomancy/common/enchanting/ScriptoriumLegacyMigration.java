@@ -9,7 +9,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.ModifyRegistriesEvent;
 
 /** Compatibility for saves made before Scriptorium stages shared one block. */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class ScriptoriumLegacyMigration {
     private ScriptoriumLegacyMigration() {}
 

@@ -82,7 +82,7 @@ public final class ManipulationRetirementSourceTest {
 				read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/DrudgeEntity.java"),
 				"ManipulationRetirementRules.isRetiredManipulation");
 		assertContains("creative tab hides retired memories",
-				read("src/main/java/com/vincenthuto/hemomancy/Hemomancy.java"),
+				read("src/main/java/com/vincenthuto/hemomancy/common/init/CreativeTabInit.java"),
 				"ManipulationRetirementRules.isRetiredMemoryItem(item)");
 	}
 

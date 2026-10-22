@@ -12,7 +12,7 @@ public final class BloodAbsorptionItemSourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String source = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodAbsorptionItem.java");
-		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientInputEvents.java");
 		String livingStaff = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingStaffItem.java");
 		String onUseTick = source.substring(source.indexOf("public void onUseTick"),
 				source.indexOf("public static Optional<LivingEntity> findBareAbsorptionTarget"));

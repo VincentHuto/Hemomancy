@@ -80,7 +80,7 @@ final class LivingSickleFeatureSourceTest {
 		String hook = read("src/main/java/com/vincenthuto/hemomancy/common/entity/projectile/LivingSickleHookEntity.java");
 		String renderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/entity/projectile/LivingSickleHookRenderer.java");
 		String entities = read("src/main/java/com/vincenthuto/hemomancy/common/init/EntityInit.java");
-		String client = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+		String client = read("src/main/java/com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java");
 
 		assertTrue(item.contains("player.isShiftKeyDown()"));
 		assertTrue(item.contains("LivingSickleMode.BLOOD_HOOK"));

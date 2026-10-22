@@ -217,7 +217,7 @@ public final class ManipulationVisualRenderer {
                     float progress=cue.chargeProgress.sample(time);
                     if(entity==mc.player) {
                         var selected=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getKnownManipulations(mc.player).getSelectedManip();
-                        int held=com.vincenthuto.hemomancy.client.event.ClientEvents.getManipulationChargeTicks();
+                        int held=com.vincenthuto.hemomancy.client.event.ManipulationChargeInput.getManipulationChargeTicks();
                         if(selected!=null && held>0 && ManipulationVisuals.chargeForm(selected.getName())==packet.form())
                             progress=com.vincenthuto.hemomancy.common.manipulation.ManipulationCastingRules.chargeFraction(
                                     held-1+partial,selected.getRequiredChargeTicks());
@@ -593,8 +593,8 @@ public final class ManipulationVisualRenderer {
 
     private static void renderBoundaries(PoseStack poses,MultiBufferSource.BufferSource buffers,
             Vec3 camera,double time,boolean glow) {
-        var type=glow?com.vincenthuto.hemomancy.common.init.RenderTypeInit.RITE_BOUNDARY_GLOW:
-                com.vincenthuto.hemomancy.common.init.RenderTypeInit.RITE_BOUNDARY_CORE;
+        var type=glow?com.vincenthuto.hemomancy.client.render.RenderTypeInit.RITE_BOUNDARY_GLOW:
+                com.vincenthuto.hemomancy.client.render.RenderTypeInit.RITE_BOUNDARY_CORE;
         VertexConsumer vertices=buffers.getBuffer(type);
         for(Cue cue:CUES) {
             if(cue.life.retiring() || cue.lastFrom.distanceToSqr(camera)>128*128)continue;

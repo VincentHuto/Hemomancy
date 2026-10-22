@@ -12,7 +12,7 @@ final class CreativeTabTechnicalBlockGuardTest {
 	}
 
 	private static void hiddenBlocksWithNoItemFormAreSkipped() throws IOException {
-		String hemomancy = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/Hemomancy.java"));
+		String hemomancy = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/init/CreativeTabInit.java"));
 
 		assertContains("creative tab population should skip blocks whose item form is air",
 				hemomancy, "asItem() != Items.AIR");
@@ -22,7 +22,7 @@ final class CreativeTabTechnicalBlockGuardTest {
 				hemomancy, "decision.creativeRoute() == BlockInit.CreativeRoute.MAIN");
 		String blocks = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/init/BlockInit.java"));
 		int start = blocks.indexOf("ITEMLESS_BLOCKS = Set.of(");
-		int end = blocks.indexOf("WIP_BLOCKS = Set.of(", start);
+		int end = blocks.indexOf("HIDDEN_BLOCK_ITEMS = Set.of(", start);
 		if (start < 0 || end < start) throw new AssertionError("Missing itemless block catalog");
 		assertContains("shared itemless catalog should retain the abocipher emitter",
 				blocks.substring(start, end), "\"abocipher_emitter\"");

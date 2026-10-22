@@ -23,7 +23,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import java.nio.file.Files;
 
 /** Disposable-client review operator. Not packaged in release jars. */
-@EventBusSubscriber(modid=Hemomancy.MOD_ID,value=Dist.CLIENT)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class BookKitClientReview {
     @SubscribeEvent public static void tick(ClientTickEvent.Post event) {
         if(!Boolean.getBoolean("hemomancy.bookKitReview"))return;

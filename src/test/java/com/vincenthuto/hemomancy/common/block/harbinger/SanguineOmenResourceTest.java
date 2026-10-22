@@ -18,8 +18,10 @@ public final class SanguineOmenResourceTest {
 				"com/vincenthuto/hemomancy/common/block/harbinger/decoration/SanguineOmenBlock.java"));
 		String omenPacket = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/network/particle/SpawnSanguineOmenEffectPacket.java"));
-		String shaderInit = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/init/ShaderInit.java"));
-		String clientEvents = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/event/ClientEvents.java"));
+		String shaderInit = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/render/shader/ShaderInit.java"));
+		String clientEvents = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/event/ClientTickEvents.java"))
+				+ read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/registry/GuiLayerRegistrar.java"))
+				+ read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/event/ScreenOverlayEvents.java"));
 		String omenOverlay = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/screen/overlay/SanguineOmenOverlay.java"));
 		String shatterRenderer = read(SOURCE_ROOT.resolve(

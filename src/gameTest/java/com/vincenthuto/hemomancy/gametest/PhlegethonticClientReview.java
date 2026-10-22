@@ -18,7 +18,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import java.nio.file.*;
 
 /** Isolated client-review driver. This entire source set is excluded from release jars. */
-@EventBusSubscriber(modid=Hemomancy.MOD_ID,value=Dist.CLIENT)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class PhlegethonticClientReview {
     private static int tick,lastSequence=-1,captureTether=-1;
     @SubscribeEvent public static void tick(ClientTickEvent.Post event) {

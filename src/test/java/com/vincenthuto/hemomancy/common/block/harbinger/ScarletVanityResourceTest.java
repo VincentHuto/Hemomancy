@@ -14,7 +14,7 @@ public final class ScarletVanityResourceTest {
 	public static void main(String[] args) throws IOException {
 		String blockInit = readSource("com/vincenthuto/hemomancy/common/init/BlockInit.java");
 		String tileInit = readSource("com/vincenthuto/hemomancy/common/init/BlockEntityInit.java");
-		String clientEvents = readSource("com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+		String clientEvents = readSource("com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java");
 		String vanityBlock = readSource(
 				"com/vincenthuto/hemomancy/common/block/harbinger/functional/ScarletVanityBlock.java");
 		String vanityTile = readSource(
@@ -39,7 +39,7 @@ public final class ScarletVanityResourceTest {
 		assertContains("scarlet vanity block entity should bind to the vanity block", tileInit,
 				".of(ScarletVanityBlockEntity::new, BlockInit.scarlet_vanity.get()).build(null)");
 		assertContains("client should register scarlet vanity renderer", clientEvents,
-				"BlockEntityRenderers.register(BlockEntityInit.scarlet_vanity.get(), ScarletVanityRenderer::new);");
+				"event.registerBlockEntityRenderer(BlockEntityInit.scarlet_vanity.get(), ScarletVanityRenderer::new);");
 
 		assertContains("scarlet vanity opens the existing equipment menu packet", vanityBlock,
 				"PacketHandler.sendToServer(new PacketOpenScarsInv(pos));");

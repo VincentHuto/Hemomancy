@@ -6,7 +6,7 @@ import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.LivingFlailModel;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingFlailDeployment;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingFlailRules;
 import net.minecraft.client.Minecraft;

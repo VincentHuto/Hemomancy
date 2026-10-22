@@ -22,7 +22,7 @@ final class LivingFlailReworkSourceTest {
 		String entity = read("src/main/java/com/vincenthuto/hemomancy/common/entity/projectile/LivingFlailHeadProjectileEntity.java");
 		String persistence = entity + read("src/main/java/com/vincenthuto/hemomancy/common/entity/projectile/LivingFlailProjectileState.java");
 		String registry = read("src/main/java/com/vincenthuto/hemomancy/common/init/EntityInit.java");
-		String client = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+		String client = read("src/main/java/com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java");
 		contains("entity stores deployment UUID", persistence, "DeploymentId");
 		contains("entity stores charge", persistence, "FlailCharge");
 		contains("entity stores original hand", persistence, "OriginalHand");

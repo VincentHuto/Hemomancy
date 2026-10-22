@@ -123,7 +123,7 @@ final class WorkingCraftSwallowRulesTest {
 	@Test
 	void rendererHooksAreInPlaceAndUseNoVanillaParticles() throws IOException {
 		Path client = Path.of("src/main/java/com/vincenthuto/hemomancy/client");
-		assertTrue(Files.readString(client.resolve("event/ClientEvents.java"))
+		assertTrue(Files.readString(client.resolve("render/world/WorldEffectDispatcher.java"))
 				.contains("WorkingCraftSwallowRenderer.render("));
 		assertTrue(Files.readString(client.resolve("render/world/ManipulationVisualRenderer.java"))
 				.contains("WorkingCraftSwallowGeometry.collect("));

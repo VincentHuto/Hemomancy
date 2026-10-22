@@ -23,7 +23,7 @@ public final class LuminalCicadaResourceTest {
 	public static void main(String[] args) throws IOException {
 		String entityInit = source("com/vincenthuto/hemomancy/common/init/EntityInit.java");
 		String itemInit = source("com/vincenthuto/hemomancy/common/init/ItemInit.java");
-		String clientEvents = source("com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+		String clientEvents = source("com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java");
 		String layers = source("com/vincenthuto/hemomancy/client/event/LayerEvents.java");
 		String capturable = resource("data/hemomancy/tags/entity_type/specimen_jar_capturable.json");
 		String spawn = resource("data/hemomancy/neoforge/biome_modifier/add_luminal_cicada.json");

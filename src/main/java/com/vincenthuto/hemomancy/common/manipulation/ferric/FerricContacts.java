@@ -10,7 +10,7 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import java.util.*;
 
 /** Five adjacent blades share one ten-tick contact interval without writing victim save data. */
-@EventBusSubscriber(modid=Hemomancy.MOD_ID)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class FerricContacts {
     private record Hit(UUID owner,UUID victim) {}
     private static final Map<ServerLevel,Map<Hit,Long>> HITS=new WeakHashMap<>();

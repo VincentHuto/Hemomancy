@@ -22,8 +22,8 @@ public final class CrimsonFireVisualSourceTest {
 				"com/vincenthuto/hemomancy/client/data/CrimsonFireClientState.java"));
 		String renderer = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/CrimsonFireRenderer.java"));
-		String clientEvents = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/event/ClientEvents.java"));
+		String clientEvents = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/event/ClientTickEvents.java"))
+				+ read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/event/ScreenOverlayEvents.java"));
 		String mixin = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/mixin/core/MixinEntityRenderDispatcher.java"));
 		String mixinConfig = read(RESOURCE_ROOT.resolve("hemomancy.mixins.json"));

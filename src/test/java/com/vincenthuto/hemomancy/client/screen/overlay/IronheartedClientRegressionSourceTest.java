@@ -58,7 +58,8 @@ class IronheartedClientRegressionSourceTest {
 
 	@Test
 	void chargedManipulationUsesTheSharedReleaseInputRules() throws IOException {
-		String source = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+		String source = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientTickEvents.java")
+				+ read("src/main/java/com/vincenthuto/hemomancy/client/event/ManipulationChargeInput.java");
 
 		assertEquals(1, occurrences(source, "handleCommonClientTickInput();"));
 		assertTrue(source.contains("mc.player.hurtTime > 0 && mc.player.hurtTime == mc.player.hurtDuration"));

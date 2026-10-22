@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
-import com.vincenthuto.hemomancy.common.init.ShaderInit;
+import com.vincenthuto.hemomancy.client.render.shader.ShaderInit;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteEventKind;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;

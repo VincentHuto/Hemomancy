@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.init.BiomeInit;
-import com.vincenthuto.hemomancy.common.worldgen.feature.FungalSkyBoxRenderer;
+import com.vincenthuto.hemomancy.client.render.world.FungalSkyBoxRenderer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;

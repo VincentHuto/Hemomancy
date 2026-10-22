@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.client.render.BloodPoolSurface;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.client.render.world.SanguineSphereRenderer;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineCondenserBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineCondenserRules;
 import net.minecraft.client.renderer.MultiBufferSource;

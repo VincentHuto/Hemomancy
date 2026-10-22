@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomBloc
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomFrame;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomGeometry;
 import com.vincenthuto.hemomancy.common.entity.weave.FrayedThreadEntity;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticWeaveRules;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;

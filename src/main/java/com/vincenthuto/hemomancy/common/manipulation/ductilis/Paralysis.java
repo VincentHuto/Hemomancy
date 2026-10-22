@@ -19,7 +19,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-@EventBusSubscriber(modid=Hemomancy.MOD_ID)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class Paralysis {
     private static final Map<LivingEntity,Long> RECOVERY = new WeakHashMap<>();
     private Paralysis() { }

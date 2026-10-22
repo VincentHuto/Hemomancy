@@ -1,49 +1,37 @@
 package com.vincenthuto.hemomancy;
 
-import com.vincenthuto.hemomancy.common.block.harbinger.rite.EngramTextureCache;
 import com.vincenthuto.hemomancy.common.block.inscription.DiscoveryInscriptionLoader;
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityRegistrar;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
+import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.HemomancyFieldNotes;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberDiscoveryEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.data.book.BloodStructurePageTemplate;
+import com.vincenthuto.hemomancy.common.enchanting.ScriptoriumAffinities;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry.ItemInquiryLoader;
 import com.vincenthuto.hemomancy.common.init.*;
-import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponGraftItem;
-import com.vincenthuto.hemomancy.common.item.harbinger.ConsecratedSyringeItem;
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodInjectionData;
+import com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorLoader;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilLoader;
 import com.vincenthuto.hemomancy.common.testing.DevTestHooks;
-import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
+import com.vincenthuto.hemomancy.common.tile.harbinger.functional.ClairaudiographCatalogue;
 import com.vincenthuto.hemomancy.config.HemoConfig;
+import com.vincenthuto.hutoslib.common.book.FieldNotes;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
 import com.vincenthuto.hutoslib.common.effectsource.EffectSourceInference;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
-import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
-import net.neoforged.neoforge.event.tick.LevelTickEvent;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -52,28 +40,14 @@ public class Hemomancy {
 
     public static final Logger LOGGER = LogManager.getLogger();
     public static final String MOD_ID = "hemomancy";
-    public static final DeferredRegister<CreativeModeTab> CREATIVETABS = DeferredRegister
-            .create(Registries.CREATIVE_MODE_TAB, Hemomancy.MOD_ID);
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> hemomancytab = CREATIVETABS.register(
-            "hemomancytab",
-            () -> CreativeModeTab.builder()
-                    .title(Component.translatable("item_group." + MOD_ID + ".hemomancytab"))
-                    .icon(() -> new ItemStack(ItemInit.charm_of_vascularium.get()))
-                    .build());
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> hemomancywiptab = CREATIVETABS.register(
-            "hemomancywip",
-            () -> CreativeModeTab.builder()
-                    .title(Component.translatable("item_group." + MOD_ID + ".hemomancywip"))
-                    .withTabsBefore(hemomancytab.getKey())
-                    .icon(() -> new ItemStack(ItemInit.sanguine_blob.get()))
-                    .build());
 
     /**
      * NeoForge 1.21: the mod-event bus is injected into the constructor automatically.
+     * Only mod-lifecycle listeners are added here; every other handler lives in an
+     * {@code @EventBusSubscriber} class.
      */
     public Hemomancy(IEventBus modEventBus) {
         EffectSourceInference.registerPackageOwner("com.vincenthuto.hemomancy.", MOD_ID);
-        IEventBus forgeBus = NeoForge.EVENT_BUS;
         HemoConfig.register();
         VillagerInit.POINTS_OF_INTEREST.register(modEventBus);
         VillagerInit.PROFESSIONS.register(modEventBus);
@@ -103,7 +77,7 @@ public class Hemomancy {
         FluidInit.FLUID_TYPES.register(modEventBus);
         FluidInit.FLUIDS.register(modEventBus);
         BlockInit.LIQUIDBLOCKS.register(modEventBus);
-        CREATIVETABS.register(modEventBus);
+        CreativeTabInit.CREATIVETABS.register(modEventBus);
         RecipeInit.SERIALIZERS.register(modEventBus);
         RecipeInit.RECIPE_TYPES.register(modEventBus);
         SoundInit.SOUNDS.register(modEventBus);
@@ -118,23 +92,12 @@ public class Hemomancy {
         HemoAttachmentTypes.ATTACHMENT_TYPES.register(modEventBus);
         HemoCapabilityRegistrar.register(modEventBus);
 
-        modEventBus.addListener(this::clientSetup);
         modEventBus.addListener(this::commonSetup);
-        modEventBus.addListener((FMLCommonSetupEvent event) -> LiberDiscoveryEvents.commonSetup(event));
-        modEventBus.addListener((FMLCommonSetupEvent event) -> UnstainedProgressEvents.commonSetup(event));
-        modEventBus.addListener(this::buildContents);
         modEventBus.addListener(DevTestHooks::registerGameTests);
-        forgeBus.register(this);
-        forgeBus.addListener(this::onAddReloadListeners);
-        forgeBus.addListener(this::onLevelTick);
+        NeoForge.EVENT_BUS.addListener(this::onAddReloadListeners);
 
-
-        // RegisterPayloadsEvent fires on the mod bus  register here, not in commonSetup.
+        // RegisterPayloadsEvent fires on the mod bus, so register here, not in commonSetup.
         PacketHandler.registerChannels(modEventBus);
-
-    }
-    private void onLevelTick(final LevelTickEvent.Post event) {
-        ChamberOfWillManager.tick(event.getLevel());
     }
 
     public static ItemStack findItemInPlayerInv(Player player, Class<? extends Item> item) {
@@ -152,210 +115,35 @@ public class Hemomancy {
     }
 
     /**
-     * NeoForge 1.21: use ResourceLocation.fromNamespaceAndPath()  the two-arg
+     * NeoForge 1.21: use ResourceLocation.fromNamespaceAndPath(); the two-arg
      * constructor ResourceLocation.parse(ns, path) is deprecated in 1.21.
      */
     public static ResourceLocation rloc(String path) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 
-    public void buildContents(BuildCreativeModeTabContentsEvent populator) {
-        if (populator.getTabKey() == hemomancytab.getKey()) {
-            var i = ItemInit.getAllItemEntriesAsStream();
-            i.forEach(item -> {
-                if (shouldShowItemInCreativeTab(item.get()) && item.get() != ItemInit.fervent_husk.get()
-                        && item.get() != ItemInit.cleansing_hemolymph.get()
-                        && item.get() != ItemInit.consecrated_syringe.get()) {
-                    if (item.get() instanceof ConsecratedSyringeItem syringe) populator.accept(syringe.randomSaintStack());
-                    else populator.accept(item.get());
-                    if (item.get() == ItemInit.bloody_vial.get()) {
-                        populator.accept(ItemInit.cleansing_hemolymph.get());
-                    }
-                    if (item.get() == ItemInit.chitinous_husk.get()) {
-                        populator.accept(ItemInit.fervent_husk.get());
-                    }
-                }
-            });
-            LivingWeaponGraftItem.creativeStacks().forEach(populator::accept);
-            var b = BlockInit.getAllBlockEntriesAsStream();
-            b.forEach(block -> {
-                if (shouldShowBlockInCreativeTab(block.get())) {
-                    populator.accept(block.get());
-                }
-            });
-        } else if (populator.getTabKey() == hemomancywiptab.getKey()) {
-            acceptWipCreativeTabContents(populator);
-        }
-    }
-
-    private static void acceptWipCreativeTabContents(BuildCreativeModeTabContentsEvent populator) {
-        populator.accept(ItemInit.CHAMBER_OF_WILL_TELEPORTER.get());
-        populator.accept(ItemInit.structure_spawner.get());
-        populator.accept(ItemInit.structure_scanner.get());
-        populator.accept(ItemInit.debug_showcase.get());
-        populator.accept(ItemInit.drudge_electrode.get());
-        populator.accept(ItemInit.drudge_submission_device.get());
-        populator.accept(ItemInit.hematic_suture_needle.get());
-        populator.accept(ItemInit.unsigned_ancestral_ledger.get());
-        populator.accept(ItemInit.sanguine_blob.get());
-        populator.accept(ItemInit.vascular_poultice.get());
-        populator.accept(ItemInit.memory_thread.get());
-        populator.accept(ItemInit.void_eye_organ.get());
-        populator.accept(ItemInit.zombie_husk_effigy.get());
-        populator.accept(ItemInit.desert_husk_effigy.get());
-        populator.accept(ItemInit.spider_husk_effigy.get());
-        populator.accept(ItemInit.vitality_chalice.get());
-        populator.accept(ItemInit.vein_spider.get());
-        populator.accept(ItemInit.blood_thrall_effigy.get());
-        populator.accept(ItemInit.blood_bolt.get());
-        populator.accept(ItemInit.vascular_status_gauge.get());
-        populator.accept(((ConsecratedSyringeItem) ItemInit.consecrated_syringe.get()).randomSaintStack());
-        populator.accept(ItemInit.hallowed_residuum_hemorath.get());
-        populator.accept(ItemInit.hallowed_residuum_seraphae.get());
-        populator.accept(ItemInit.hallowed_residuum_putriciel.get());
-        populator.accept(ItemInit.hallowed_residuum_velorum.get());
-        populator.accept(ItemInit.saint_relic_hemorath.get());
-        populator.accept(ItemInit.saint_relic_seraphae.get());
-        populator.accept(ItemInit.saint_relic_putriciel.get());
-        populator.accept(ItemInit.saint_relic_velorum.get());
-        populator.accept(ItemInit.memory_crimson_tithe.get());
-        populator.accept(ItemInit.memory_unclosing_eye.get());
-        populator.accept(ItemInit.memory_bloom_of_rot.get());
-        populator.accept(ItemInit.memory_endless_hour.get());
-        populator.accept(ItemInit.hemorath_rib.get());
-        populator.accept(ItemInit.echo_of_spleen.get());
-        populator.accept(ItemInit.echo_of_liver.get());
-        populator.accept(ItemInit.echo_of_heart.get());
-        populator.accept(ItemInit.echo_of_lungs.get());
-        populator.accept(ItemInit.echo_of_kidneys.get());
-        populator.accept(ItemInit.draught_of_still_mercy.get());
-        populator.accept(ItemInit.lethean_brew.get());
-        populator.accept(ItemInit.spawn_egg_peacock_spider.get());
-        populator.accept(BlockInit.semi_sentient_construct.get());
-        populator.accept(BlockInit.humane_idol.get());
-        populator.accept(BlockInit.serpentine_idol.get());
-        populator.accept(BlockInit.morphling_cradle.get());
-        populator.accept(BlockInit.witness_organ.get());
-        populator.accept(BlockInit.saint_sarcophagus.get());
-        populator.accept(BlockInit.gourdvine_tap.get());
-        populator.accept(BlockInit.sanguine_vigil.get());
-        populator.accept(BlockInit.sanguine_omen.get());
-        populator.accept(BlockInit.visceral_mirror.get());
-        populator.accept(BlockInit.non_euclidean_hallway.get());
-        populator.accept(BlockInit.blood_basin.get());
-        populator.accept(BlockInit.blood_pylon.get());
-        populator.accept(BlockInit.blood_trial_altar.get());
-        populator.accept(BlockInit.offering_gate.get());
-        populator.accept(BlockInit.crucible_of_nether_ichor.get());
-        populator.accept(BlockInit.voidtouched_vessel.get());
-    }
-
-    private static boolean shouldShowItemInCreativeTab(Item item) {
-        return item != BlockInit.dictation_table.get().asItem()
-                && item != ItemInit.tome_of_the_unstained.get()
-                && item != ItemInit.active_befouling_ash.get()
-                && item != ItemInit.active_smouldering_ash.get()
-                && item != ItemInit.living_weapon_graft.get()
-                && item != ItemInit.living_sickle.get()
-                && item != ItemInit.synaptic_step.get()
-                && item != ItemInit.memory_conjure_living_staff.get()
-                && !isLegacyLivingWeaponMemory(item)
-                && !ManipulationRetirementRules.isRetiredMemoryItem(item)
-                && !isWipItem(item);
-    }
-
-    private static boolean isLegacyLivingWeaponMemory(Item item) {
-        return item == ItemInit.memory_living_blade.get()
-                || item == ItemInit.memory_living_axe.get()
-                || item == ItemInit.memory_living_spear.get()
-                || item == ItemInit.memory_living_claws.get()
-                || item == ItemInit.memory_living_crossbow.get()
-                || item == ItemInit.memory_living_torch.get()
-                || item == ItemInit.memory_living_flail.get();
-    }
-
-    private static boolean isWipItem(Item item) {
-        return item == ItemInit.CHAMBER_OF_WILL_TELEPORTER.get()
-                || item == ItemInit.structure_spawner.get()
-                || item == ItemInit.structure_scanner.get()
-                || item == ItemInit.debug_showcase.get()
-                || item == ItemInit.drudge_electrode.get()
-                || item == ItemInit.drudge_submission_device.get()
-                || item == ItemInit.hematic_suture_needle.get()
-                || item == ItemInit.unsigned_ancestral_ledger.get()
-                || item == ItemInit.sanguine_blob.get()
-                || item == ItemInit.vascular_poultice.get()
-                || item == ItemInit.memory_thread.get()
-                || item == ItemInit.void_eye_organ.get()
-                || item == ItemInit.zombie_husk_effigy.get()
-                || item == ItemInit.desert_husk_effigy.get()
-                || item == ItemInit.spider_husk_effigy.get()
-                || item == ItemInit.vitality_chalice.get()
-                || item == ItemInit.vein_spider.get()
-                || item == ItemInit.blood_thrall_effigy.get()
-                || item == ItemInit.blood_bolt.get()
-                || item == ItemInit.vascular_status_gauge.get()
-                || item == ItemInit.consecrated_syringe.get()
-                || item == ItemInit.hallowed_residuum_hemorath.get()
-                || item == ItemInit.hallowed_residuum_seraphae.get()
-                || item == ItemInit.hallowed_residuum_putriciel.get()
-                || item == ItemInit.hallowed_residuum_velorum.get()
-                || item == ItemInit.saint_relic_hemorath.get()
-                || item == ItemInit.saint_relic_seraphae.get()
-                || item == ItemInit.saint_relic_putriciel.get()
-                || item == ItemInit.saint_relic_velorum.get()
-                || item == ItemInit.memory_crimson_tithe.get()
-                || item == ItemInit.memory_unclosing_eye.get()
-                || item == ItemInit.memory_bloom_of_rot.get()
-                || item == ItemInit.memory_endless_hour.get()
-                || item == ItemInit.hemorath_rib.get()
-                || item == ItemInit.echo_of_spleen.get()
-                || item == ItemInit.echo_of_liver.get()
-                || item == ItemInit.echo_of_heart.get()
-                || item == ItemInit.echo_of_lungs.get()
-                || item == ItemInit.echo_of_kidneys.get()
-                || item == ItemInit.draught_of_still_mercy.get()
-                || item == ItemInit.lethean_brew.get()
-                || item == ItemInit.spawn_egg_peacock_spider.get();
-    }
-
-    private static boolean shouldShowBlockInCreativeTab(Block block) {
-        var decision = BlockInit.itemDecision(BuiltInRegistries.BLOCK.getKey(block));
-        return block.asItem() != Items.AIR
-                && decision.creativeRoute() == BlockInit.CreativeRoute.MAIN
-                && (decision.itemRoute() == BlockInit.ItemRoute.AUTO
-                        || decision.itemRoute() == BlockInit.ItemRoute.CUSTOM);
-    }
-
-    @SubscribeEvent
-    public void onServerAboutToStart(ServerAboutToStartEvent event) {
-        EngramTextureCache.loadAll();
-    }
-
     private void onAddReloadListeners(AddReloadListenerEvent event) {
-		event.addListener(new com.vincenthuto.hemomancy.common.enchanting.ScriptoriumAffinities());
-        event.addListener(new com.vincenthuto.hemomancy.common.item.harbinger.BloodInjectionData());
-        event.addListener(new com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData());
-        event.addListener(new com.vincenthuto.hemomancy.common.tile.harbinger.functional.ClairaudiographCatalogue());
+        event.addListener(new ScriptoriumAffinities());
+        event.addListener(new BloodInjectionData());
+        event.addListener(new BloodProfileData());
+        event.addListener(new ClairaudiographCatalogue());
         event.addListener(new ItemInquiryLoader());
         event.addListener(new DiscoveryInscriptionLoader());
         event.addListener(new IchorianSigilLoader());
         event.addListener(new CardinalRiteFloorLoader());
     }
 
-    private void clientSetup(final FMLClientSetupEvent event) {
-        com.vincenthuto.hemomancy.client.morphling.MorphlingMutationRegistry.init();
-    }
-
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
-            com.vincenthuto.hutoslib.common.book.FieldNotes.register(Hemomancy.rloc("libers"),
-                    new com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.HemomancyFieldNotes());
+            FieldNotes.register(Hemomancy.rloc("libers"), new HemomancyFieldNotes());
             BookPlaceboReloadListener.INSTANCE.registerSerializer(Hemomancy.rloc("blood_structure_page"),
                     BloodStructurePageTemplate.SERIALIZER);
         });
         HemoEntityPredicates.init();
         SkillPointInit.init();
         ManipulationTreeInit.init();
+        // These two used to be separate listeners added right after this one; calling them last keeps that order.
+        LiberDiscoveryEvents.commonSetup(event);
+        UnstainedProgressEvents.commonSetup(event);
     }
 }

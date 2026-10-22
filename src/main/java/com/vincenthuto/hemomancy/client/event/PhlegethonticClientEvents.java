@@ -15,7 +15,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 
-@EventBusSubscriber(modid=Hemomancy.MOD_ID,value=Dist.CLIENT,bus=EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class PhlegethonticClientEvents {
     private PhlegethonticClientEvents() {}
     @SubscribeEvent public static void layers(EntityRenderersEvent.RegisterLayerDefinitions event) {

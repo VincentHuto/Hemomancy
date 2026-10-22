@@ -17,6 +17,12 @@ public final class BloodBindingTendrilClientState {
 	private static final Map<Long, Entry> ENTRIES = new HashMap<>();
 	private static ClientLevel activeLevel;
 
+	/** Forgets everything, so nothing outlives the world it was seen in. */
+	public static void clear() {
+		ENTRIES.clear();
+		activeLevel = null;
+	}
+
 	private BloodBindingTendrilClientState() {
 	}
 

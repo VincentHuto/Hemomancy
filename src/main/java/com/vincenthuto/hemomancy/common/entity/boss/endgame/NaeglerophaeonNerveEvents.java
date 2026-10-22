@@ -12,7 +12,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.BlockEvent;
 
 /** A player's cut provokes the resident; a Borer's chewed gap is only queued for repair. */
-@EventBusSubscriber(modid=Hemomancy.MOD_ID)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class NaeglerophaeonNerveEvents {
     private static final double NOTICE_RADIUS=96;
 

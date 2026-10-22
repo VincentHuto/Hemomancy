@@ -16,8 +16,9 @@ final class DaemonDiffuseGlowParticleResourceTest {
 	void diffuseDaemonParticleIsRegisteredRenderedAndUsedByTheVoidCore() throws IOException {
 		String particle = read("src/main/java/com/vincenthuto/hemomancy/client/particle/DaemonDiffuseGlowParticle.java");
 		String factory = read("src/main/java/com/vincenthuto/hemomancy/client/particle/factory/DaemonDiffuseGlowParticleFactory.java");
-		String data = read("src/main/java/com/vincenthuto/hemomancy/client/particle/data/DaemonDiffuseGlowParticleData.java");
+		String data = read("src/main/java/com/vincenthuto/hemomancy/common/particle/data/DaemonDiffuseGlowParticleData.java");
 		String particleInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ParticleInit.java");
+		String particleProviders = read("src/main/java/com/vincenthuto/hemomancy/client/registry/ParticleProviderRegistrar.java");
 		String daemon = read("src/main/java/com/vincenthuto/hemomancy/common/entity/utility/HumanitySpriteEntity.java");
 
 		assertTrue(particle.contains("HLRenderTypeInit.DARK_GLOW_RENDER"));
@@ -25,7 +26,7 @@ final class DaemonDiffuseGlowParticleResourceTest {
 				"the daemon haze should gently diffuse outward");
 		assertTrue(data.contains("ParticleInit.daemon_diffuse_glow.get()"));
 		assertTrue(particleInit.contains("register(\"daemon_diffuse_glow\""));
-		assertTrue(particleInit.contains("DaemonDiffuseGlowParticleFactory::new"));
+		assertTrue(particleProviders.contains("DaemonDiffuseGlowParticleFactory::new"));
 		// The daemon is drawn as geometry; its old billboard haze read as blocky squares against the sky.
 		assertFalse(daemon.contains("HemoParticleData.daemonDiffuseGlow("));
 		assertFalse(daemon.contains("case SMOKE -> ParticleTypes.SMOKE"));

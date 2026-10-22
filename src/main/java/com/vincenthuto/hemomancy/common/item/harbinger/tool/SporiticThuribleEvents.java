@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.particle.data.SporiticSporeParticleData;
+import com.vincenthuto.hemomancy.common.particle.data.SporiticSporeParticleData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;

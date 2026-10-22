@@ -46,15 +46,16 @@ public final class ClawSlashRendererSourceTest {
 	}
 
 	private static void packetAndClientEventsWireRenderer() throws IOException {
-		String renderTypes = read("src/main/java/com/vincenthuto/hemomancy/common/init/RenderTypeInit.java");
-		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+		String renderTypes = read("src/main/java/com/vincenthuto/hemomancy/client/render/RenderTypeInit.java");
+		String clientTick = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientTickEvents.java");
+		String dispatcher = read("src/main/java/com/vincenthuto/hemomancy/client/render/world/WorldEffectDispatcher.java");
 		String packet = read("src/main/java/com/vincenthuto/hemomancy/common/network/particle/SpawnClawSlashPacket.java");
 		String packetHandler = read("src/main/java/com/vincenthuto/hemomancy/common/network/PacketHandler.java");
 
 		assertContains("glow render type registered", renderTypes, "CLAW_SLASH_GLOW");
 		assertContains("core render type registered", renderTypes, "CLAW_SLASH_CORE");
-		assertContains("client events tick slash renderer", clientEvents, "ClawSlashRenderer.tick()");
-		assertContains("client events render slash renderer", clientEvents, "ClawSlashRenderer.render(event.getPoseStack(), partialTick)");
+		assertContains("client tick ticks slash renderer", clientTick, "ClawSlashRenderer.tick()");
+		assertContains("world effects render slash renderer", dispatcher, "ClawSlashRenderer.render(event.getPoseStack(), partialTick)");
 		assertContains("packet type exists", packet, "TYPE = new Type<>(Hemomancy.rloc(\"spawn_claw_slash_packet\"))");
 		assertContains("packet queues renderer spawn", packet, "ClawSlashRenderer.spawn(");
 		assertContains("packet registered", packetHandler, "net.playToClient(SpawnClawSlashPacket.TYPE");
@@ -90,7 +91,7 @@ public final class ClawSlashRendererSourceTest {
 	}
 
 	private static void livingBaghnakhAutoClicksWhenAttackCooldownIsReady() throws IOException {
-		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientInputEvents.java");
 		assertContains("client post tick checks Baghnakh auto attack", clientEvents, "handleLivingBaghnakhAutoAttack()");
 		assertContains("auto attack is scoped to living Baghnakh", clientEvents, "player.getMainHandItem().is(ItemInit.living_baghnakh.get())");
 		assertContains("auto attack requires held attack key", clientEvents, "minecraft.options.keyAttack.isDown()");

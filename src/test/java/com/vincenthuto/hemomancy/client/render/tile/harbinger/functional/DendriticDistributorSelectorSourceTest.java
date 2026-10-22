@@ -15,7 +15,7 @@ class DendriticDistributorSelectorSourceTest {
 		String entity = read("src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/functional/DendriticDistributorBlockEntity.java");
 		String packet = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/SynapticLoadoutActionPacket.java");
 		String renderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/tile/harbinger/functional/DendriticDistributorRenderer.java");
-		String events = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+		String events = read("src/main/java/com/vincenthuto/hemomancy/client/registry/ModelRegistrar.java");
 		String screen = read("src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/SynapticLoadoutScreen.java");
 		String block = read("src/main/resources/assets/hemomancy/models/block/dendritic_distributor.json");
 

@@ -20,7 +20,7 @@ public final class PhantasmalMasqueradeSourceTest {
 		String renderer = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/entity/summon/PhantasmalEchoRenderer.java"));
 		String clientEvents = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/event/ClientEvents.java"));
+				"com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java"));
 		String damageType = read(RESOURCE_ROOT.resolve("data/hemomancy/damage_type/phantasmal_echo.json"));
 		String lang = read(RESOURCE_ROOT.resolve("assets/hemomancy/lang/en_us.json"));
 

@@ -40,11 +40,11 @@ public final class RegistryCreativeOrderSourceTest {
 				"vial_rack = SPECIALITEMS.register",
 				"chitinite_arm_banner = SPECIALITEMS.register");
 
-		String mod = read("src/main/java/com/vincenthuto/hemomancy/Hemomancy.java");
+		String mod = read("src/main/java/com/vincenthuto/hemomancy/common/init/CreativeTabInit.java");
 		assertInOrder("debug tools should use the explicit WIP display order", mod,
-				"populator.accept(ItemInit.structure_spawner.get())",
-				"populator.accept(ItemInit.structure_scanner.get())",
-				"populator.accept(ItemInit.debug_showcase.get())");
+				"ItemInit.structure_spawner,",
+				"ItemInit.structure_scanner,",
+				"ItemInit.debug_showcase,");
 
 		assertInOrder("item stream should expose special utilities before handheld weapons",
 				itemInit,

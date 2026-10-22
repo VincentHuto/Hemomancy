@@ -10,6 +10,11 @@ import java.util.Map;
 public final class CrimsonFireClientState {
 	private static final Map<Integer, Long> ACTIVE_UNTIL_BY_ENTITY_ID = new HashMap<>();
 
+	/** Forgets everything, so nothing outlives the world it was seen in. */
+	public static void clear() {
+		ACTIVE_UNTIL_BY_ENTITY_ID.clear();
+	}
+
 	private CrimsonFireClientState() {
 	}
 

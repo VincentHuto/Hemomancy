@@ -43,10 +43,10 @@ public final class BloodProjectionStructureCraftingResourceTest {
 				"com/vincenthuto/hemomancy/client/particle/factory/AbocipherParticleFactory.java"));
 		String bloodCellFactory = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/particle/factory/BloodCellParticleFactory.java"));
-		String clientEvents = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/event/ClientEvents.java"));
+		String clientEvents = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/event/ClientTickEvents.java"))
+				+ read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/render/world/WorldEffectDispatcher.java"));
 		String shaderInit = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/init/ShaderInit.java"));
+				"com/vincenthuto/hemomancy/client/render/shader/ShaderInit.java"));
 		String renderTypes = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/HemoRenderTypes.java"));
 		String shaderJson = read(RESOURCE_ROOT.resolve(

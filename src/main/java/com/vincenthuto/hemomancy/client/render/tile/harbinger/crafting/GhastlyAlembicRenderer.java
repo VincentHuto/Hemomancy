@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.common.brewing.AlembicTier;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.AlembicGeometry;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.GhastlyAlembicBlockEntity;
 
 import net.minecraft.client.renderer.MultiBufferSource;

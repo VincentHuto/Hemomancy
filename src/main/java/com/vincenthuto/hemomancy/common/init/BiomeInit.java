@@ -22,14 +22,13 @@ import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.EventBusSubscriber.Bus;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import terrablender.api.EndBiomeRegistry;
 import terrablender.api.Regions;
 import terrablender.api.SurfaceRuleManager;
 
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class BiomeInit {
 	public static final DeferredRegister<Biome> BIOME_REGISTER = DeferredRegister.create(Registries.BIOME,
 			Hemomancy.MOD_ID);

@@ -14,7 +14,7 @@ import java.nio.ByteOrder;
 import java.util.*;
 import java.util.concurrent.*;
 
-@EventBusSubscriber(modid=Hemomancy.MOD_ID, value=Dist.CLIENT, bus=EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class ClairaudiographAnalysis {
     private static final Map<ResourceLocation,CompletableFuture<SpectrogramAnalysis>> CACHE = new LinkedHashMap<>(32,.75F,true);
     private static final ExecutorService DECODER = Executors.newSingleThreadExecutor(r -> {var t=new Thread(r,"Hemomancy audio analysis"); t.setDaemon(true); return t;});

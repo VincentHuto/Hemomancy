@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.MorphlingIncubatorBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.factory.EmberParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;

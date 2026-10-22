@@ -18,7 +18,7 @@ final class DaemonHazeSourceTest {
 
 	@Test
 	void theVolumeShaderIsRegisteredWithItsUniforms() throws IOException {
-		String init = read(ROOT + "common/init/ShaderInit.java");
+		String init = read(ROOT + "client/render/shader/ShaderInit.java");
 		String json = read(SHADERS + "cardinal_daemon_haze.json");
 		String fragment = read(SHADERS + "cardinal_daemon_haze.fsh");
 		assertTrue(init.contains("registerShader(event, CARDINAL_DAEMON_HAZE.createInstance(provider));"));
@@ -84,7 +84,7 @@ final class DaemonHazeSourceTest {
 	@Test
 	void theRendererQueuesTheBoxAfterEveryOtherRiteVisual() throws IOException {
 		String renderer = read(ROOT + "client/render/entity/misc/HumanitySpriteRenderer.java");
-		String events = read(ROOT + "client/event/ClientEvents.java");
+		String events = read(ROOT + "client/render/world/WorldEffectDispatcher.java");
 		String queue = read(ROOT + "client/render/world/rite/DaemonHazeQueue.java");
 		assertTrue(renderer.contains("DaemonHazeQueue.add("));
 		assertTrue(renderer.contains("DaemonHaze.box(scale, tilt[3], stream)"));
@@ -123,7 +123,7 @@ final class DaemonHazeSourceTest {
 		String json = read(SHADERS + "cardinal_daemon_haze.json");
 		String renderer = read(ROOT + "client/render/entity/misc/HumanitySpriteRenderer.java");
 		String types = read(ROOT + "client/render/HemoRenderTypes.java");
-		String init = read(ROOT + "common/init/ShaderInit.java");
+		String init = read(ROOT + "client/render/shader/ShaderInit.java");
 		assertTrue(fragment.contains("uniform vec4 HazeTilt;"));
 		assertTrue(json.contains("{ \"name\": \"HazeTilt\", \"type\": \"float\", \"count\": 4"));
 		assertTrue(fragment.contains("vec3 upright = unyaw(turnAbout(v / HazeShape.x, HazeTilt.xyz, -HazeTilt.w), HazeShape.y);"),
@@ -202,7 +202,7 @@ final class DaemonHazeSourceTest {
 
 	@Test
 	void theStaffSmokesWhileTheDaemonIsAbroad() throws IOException {
-		String init = read(ROOT + "common/init/ShaderInit.java");
+		String init = read(ROOT + "client/render/shader/ShaderInit.java");
 		String json = read(SHADERS + "cardinal_staff_haze.json");
 		String fragment = read(SHADERS + "cardinal_staff_haze.fsh");
 		String renderer = read(ROOT + "client/render/entity/misc/HumanitySpriteRenderer.java");

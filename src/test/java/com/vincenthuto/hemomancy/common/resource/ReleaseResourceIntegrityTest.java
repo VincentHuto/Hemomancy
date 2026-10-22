@@ -172,7 +172,7 @@ public final class ReleaseResourceIntegrityTest {
 	}
 
 	private static void assertIronWallIsDormantAndSinglyRendered() throws IOException {
-		String clientEvents = Files.readString(JAVA.resolve("client/event/ClientEvents.java"));
+		String clientEvents = Files.readString(JAVA.resolve("client/registry/EntityRendererRegistrar.java"));
 		assertOccurrenceCount(clientEvents,
 				"event.registerEntityRenderer(EntityInit.iron_wall.get(), IronWallRenderer::new);", 1,
 				"Iron Wall renderer should be registered exactly once");

@@ -53,7 +53,7 @@ final class OfferingDissolveRulesTest {
 				"src/main/java/com/vincenthuto/hemomancy/client/render/world/rite/CardinalRiteOfferingDissolveRenderer.java"));
 		assertTrue(renderer.contains("new ItemParticleOption(ParticleTypes.ITEM"), "vanilla item-break crumbs");
 		assertTrue(renderer.contains("SoundEvents.ITEM_BREAK"), "the vanilla item-break sound");
-		assertTrue(Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java"))
+		assertTrue(Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/client/render/world/WorldEffectDispatcher.java"))
 				.contains("CardinalRiteOfferingDissolveRenderer.render("));
 		String engine = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteOrdealEngine.java"));

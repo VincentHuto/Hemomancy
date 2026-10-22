@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.render.geometry;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import net.minecraft.client.renderer.MultiBufferSource;
 import org.joml.Matrix4f;
 

@@ -31,6 +31,11 @@ import java.util.Map;
 public final class LivingTorchClientEvents {
 	private static final Map<Integer, LivingTorchBreathSound> BREATH_LOOPS = new HashMap<>();
 
+	/** Forgets everything, so nothing outlives the world it was seen in. */
+	public static void clear() {
+		stopAllBreathLoops();
+	}
+
 	private LivingTorchClientEvents() { }
 
 	@SubscribeEvent

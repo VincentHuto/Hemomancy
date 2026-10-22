@@ -33,7 +33,7 @@ import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import java.util.*;
 
-@EventBusSubscriber(modid=Hemomancy.MOD_ID)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class ConductionManager {
     public static final TagKey<Block> CONDUCTORS = TagKey.create(Registries.BLOCK,Hemomancy.rloc("ductilis_conductors"));
     public static final int ENERGIZED_TICKS=40;

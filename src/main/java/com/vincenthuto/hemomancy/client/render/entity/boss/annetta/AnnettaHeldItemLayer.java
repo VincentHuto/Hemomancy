@@ -6,7 +6,7 @@ import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.client.model.entity.boss.annetta.AnnettaKnowlesModel;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.AnnettaKnowlesEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import java.util.ArrayDeque;
 import java.util.Iterator;
 import java.util.Map;

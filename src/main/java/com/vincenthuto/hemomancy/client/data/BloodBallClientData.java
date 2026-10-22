@@ -12,7 +12,7 @@ import net.minecraft.world.phys.Vec3;
  * Client-side state for the Sanguine Blob cosmetic.
  * Tracks the position, velocity, jiggle phase, drop state, squish animation, and swing
  * stretch of the floating blood orb.
- * Ticked every client tick from {@link com.vincenthuto.hemomancy.client.event.ClientEvents}.
+ * Ticked every client tick from {@link com.vincenthuto.hemomancy.client.event.ClientTickEvents}.
  */
 public class BloodBallClientData {
 
@@ -117,7 +117,7 @@ public class BloodBallClientData {
 	}
 
 	/**
-	 * Called once per client tick (END phase) from ClientEvents.
+	 * Called once per client tick (END phase) from ClientTickEvents.
 	 * Drives the follow-lerp and drop-gravity physics.
 	 */
 	public static void tick() {

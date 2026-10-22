@@ -14,7 +14,7 @@ public final class LowtideRuinObjAssetResourceTest {
 	private static final Path MODEL_CACHE = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/LowtideRuinObjModels.java");
 	private static final Path CLIENT_EVENTS = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/registry/ModelRegistrar.java");
 	private static final Path CLIENT_CONFIG = Path.of("src/main/java/com/vincenthuto/hemomancy/config/HemoClientConfig.java");
 	private static final Path REFERENCE = Path.of("docs/HEMOMANCY_REFERENCE.md");
 	private static final String[] PIECES = {

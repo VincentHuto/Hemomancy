@@ -1,14 +1,14 @@
 package com.vincenthuto.hemomancy.common.particle;
 
-import com.vincenthuto.hemomancy.client.particle.data.AbsorbedBloodCellData;
-import com.vincenthuto.hemomancy.client.particle.data.BloodAvatarHitParticleData;
-import com.vincenthuto.hemomancy.client.particle.data.BloodCellData;
-import com.vincenthuto.hemomancy.client.particle.data.BloodClawData;
-import com.vincenthuto.hemomancy.client.particle.data.DaemonDiffuseGlowParticleData;
-import com.vincenthuto.hemomancy.client.particle.data.HermitEdgeGlowParticleData;
-import com.vincenthuto.hemomancy.client.particle.data.SerpentParticleData;
-import com.vincenthuto.hemomancy.client.particle.data.SporiticSporeParticleData;
-import com.vincenthuto.hemomancy.client.particle.data.WillAbsorptionGlowParticleData;
+import com.vincenthuto.hemomancy.common.particle.data.AbsorbedBloodCellData;
+import com.vincenthuto.hemomancy.common.particle.data.BloodAvatarHitParticleData;
+import com.vincenthuto.hemomancy.common.particle.data.BloodCellData;
+import com.vincenthuto.hemomancy.common.particle.data.BloodClawData;
+import com.vincenthuto.hemomancy.common.particle.data.DaemonDiffuseGlowParticleData;
+import com.vincenthuto.hemomancy.common.particle.data.HermitEdgeGlowParticleData;
+import com.vincenthuto.hemomancy.common.particle.data.SerpentParticleData;
+import com.vincenthuto.hemomancy.common.particle.data.SporiticSporeParticleData;
+import com.vincenthuto.hemomancy.common.particle.data.WillAbsorptionGlowParticleData;
 import com.vincenthuto.hemomancy.common.init.ParticleInit;
 import com.vincenthuto.hemomancy.common.particle.data.HitColorParticleData;
 import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;

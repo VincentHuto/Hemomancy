@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.worldgen;
 
 import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.particle.data.SporiticSporeParticleData;
+import com.vincenthuto.hemomancy.common.particle.data.SporiticSporeParticleData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantEntity;

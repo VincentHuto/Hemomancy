@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.unstained;
 
 import com.google.common.collect.Lists;
-import com.vincenthuto.hemomancy.client.event.ClientEvents;
+import com.vincenthuto.hemomancy.client.registry.KeyMappings;
 import com.vincenthuto.hemomancy.client.screen.radial.GenericRadialMenu;
 import com.vincenthuto.hemomancy.client.screen.radial.IRadialMenuHost;
 import com.vincenthuto.hemomancy.client.screen.radial.RadialMenuItem;
@@ -162,7 +162,7 @@ public class RadialChooseStillArtScreen extends Screen {
 		if (!menu.isReady()) {
 			return;
 		}
-		if (!ClientEvents.isKeyDown(ClientEvents.selectStillArt)) {
+		if (!KeyMappings.isKeyDown(KeyMappings.selectStillArt)) {
 			processClick();
 		}
 	}

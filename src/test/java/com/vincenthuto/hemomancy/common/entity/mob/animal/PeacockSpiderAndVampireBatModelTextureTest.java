@@ -17,7 +17,7 @@ class PeacockSpiderAndVampireBatModelTextureTest {
 
 	@Test
 	void creaturesUseDedicatedModelsAndTextures() throws Exception {
-		String clientEvents = Files.readString(JAVA.resolve("client/event/ClientEvents.java"));
+		String clientEvents = Files.readString(JAVA.resolve("client/registry/EntityRendererRegistrar.java"));
 		String layerEvents = Files.readString(JAVA.resolve("client/event/LayerEvents.java"));
 		assertTrue(clientEvents.contains("PeacockSpiderRenderer::new"));
 		assertTrue(clientEvents.contains("VampireBatRenderer::new"));

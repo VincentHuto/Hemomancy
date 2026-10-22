@@ -23,7 +23,7 @@ public final class PuppeteerSummonVisualResourceTest {
 		assertContains("gorebound layer registration", layerEvents, "GoreboundHulkModel.LAYER_LOCATION");
 		assertContains("scarlet mummer layer registration", layerEvents, "ScarletMummerModel.LAYER_LOCATION");
 
-		String clientEvents = readSource("com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+		String clientEvents = readSource("com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java");
 		assertContains("veinwing renderer registration", clientEvents, "VeinwingVultureRenderer::new");
 		assertContains("marrow renderer registration", clientEvents, "MarrowSpitterRenderer::new");
 		assertContains("gorebound renderer registration", clientEvents, "GoreboundHulkRenderer::new");

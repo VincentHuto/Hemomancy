@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.render.world.zone;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.rite.zone.RiteZoneKind;
 import com.vincenthuto.hemomancy.common.rite.zone.RiteZoneSyncPacket;

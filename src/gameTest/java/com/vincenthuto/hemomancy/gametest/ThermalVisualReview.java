@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Paired material studies in the existing disposable save; actual casts have a separate review. */
-@EventBusSubscriber(modid=Hemomancy.MOD_ID, value=Dist.CLIENT)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class ThermalVisualReview {
     private static final Form[] FORMS = {Form.FURNACE, Form.GLASS_CHARGE, Form.GLASS, Form.UPDRAFT,
             Form.FORGE, Form.CAUTERIZE, Form.PHOENIX, Form.PHOENIX_READY, Form.ICE, Form.ICE_CHARGE,

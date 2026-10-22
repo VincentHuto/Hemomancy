@@ -13,7 +13,7 @@ import com.vincenthuto.hemomancy.client.render.world.rite.CardinalRiteHelixEffec
 import com.vincenthuto.hemomancy.client.render.world.rite.RiteQuads;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffFittingHelper;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;

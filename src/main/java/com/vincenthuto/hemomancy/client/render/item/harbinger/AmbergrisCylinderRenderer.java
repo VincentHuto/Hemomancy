@@ -1,4 +1,5 @@
 package com.vincenthuto.hemomancy.client.render.item.harbinger;
+import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.*;

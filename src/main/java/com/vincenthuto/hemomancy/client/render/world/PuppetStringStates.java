@@ -35,7 +35,7 @@ public final class PuppetStringStates {
 		STARTS.put(packet.entityId(), new Start(packet.form(), now));
 	}
 
-	static void clear() {
+	public static void clear() {
 		STARTS.clear();
 	}
 

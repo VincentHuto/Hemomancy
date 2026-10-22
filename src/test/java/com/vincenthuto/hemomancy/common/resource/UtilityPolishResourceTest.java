@@ -100,7 +100,7 @@ public final class UtilityPolishResourceTest {
 	}
 
 	private static void assertMycelialCrucibleHasBasinShader() throws IOException {
-		String shaderInit = read(SRC.resolve("common/init/ShaderInit.java"));
+		String shaderInit = read(SRC.resolve("client/render/shader/ShaderInit.java"));
 		String renderTypes = read(SRC.resolve("client/render/HemoRenderTypes.java"));
 		String renderer = read(SRC.resolve("client/render/tile/harbinger/crafting/MycelialCrucibleRenderer.java"));
 		String shaderJson = read(ASSETS.resolve("shaders/core/world/mycelial_crucible_basin.json"));
@@ -137,12 +137,13 @@ public final class UtilityPolishResourceTest {
 		String block = read(SRC.resolve("common/block/unstained/decoration/LetheanPoppyWreathBlock.java"));
 		String blockInit = read(SRC.resolve("common/init/BlockInit.java"));
 		String itemInit = read(SRC.resolve("common/init/ItemInit.java"));
-		String hemomancy = read(SRC.resolve("Hemomancy.java"));
+		String hemomancy = read(SRC.resolve("common/init/CreativeTabInit.java"));
 		String blockstate = read(ASSETS.resolve("blockstates/lethean_poppy_wreath.json"));
 		String itemModel = read(ASSETS.resolve("models/item/lethean_poppy_wreath.json"));
 		String lang = read(ASSETS.resolve("lang/en_us.json"));
 		String loot = read(DATA.resolve("loot_table/blocks/lethean_poppy_wreath.json"));
 		String particleInit = read(SRC.resolve("common/init/ParticleInit.java"));
+		String particleProviders = read(SRC.resolve("client/registry/ParticleProviderRegistrar.java"));
 		String dripParticle = read(SRC.resolve("client/particle/LetheanDripParticle.java"));
 		String dripParticleJson = read(ASSETS.resolve("particles/lethean_drip.json"));
 		assertContains("wreath has horizontal facing", block, "HorizontalDirectionalBlock.FACING");
@@ -158,7 +159,7 @@ public final class UtilityPolishResourceTest {
 		assertContains("wreath drips spawn on the mounted face", block, "z += facing.getStepZ() * frontOffset");
 		assertContains("wreath drips spawn on the mounted face", block, "x += facing.getStepX() * frontOffset");
 		assertContains("lethean drip particle is registered", particleInit, "lethean_drip");
-		assertContains("lethean drip particle factory is registered", particleInit, "LetheanDripParticle.Provider::new");
+		assertContains("lethean drip particle factory is registered", particleProviders, "LetheanDripParticle.Provider::new");
 		assertContains("lethean drip particle is white", dripParticle, "this.setColor(0.96F, 0.96F, 1.0F)");
 		assertContains("lethean drip particle ignores inherited horizontal launch", dripParticle,
 				"super(level, x, y, z, 0.0D, 0.0D, 0.0D)");
@@ -246,7 +247,7 @@ public final class UtilityPolishResourceTest {
 		String item = read(SRC.resolve("common/item/shared/BloodChumItem.java"));
 		String entityInit = read(SRC.resolve("common/init/EntityInit.java"));
 		String mixin = read(SRC.resolve("mixin/core/MixinFishingHook.java"));
-		String clientEvents = read(SRC.resolve("client/event/ClientEvents.java"));
+		String clientEvents = read(SRC.resolve("client/registry/EntityRendererRegistrar.java"));
 		String areaManager = read(SRC.resolve("common/effect/ChummedWatersAreaManager.java"));
 		assertNotContains("blood chum should not add player mob effects", item, "addEffect");
 		assertContains("blood chum throws projectile", item, "BloodChumEntity");

@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.compat.mna.block;
 
 import com.mojang.datafixers.util.Pair;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.init.CreativeTabInit;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.registries.Registries;
@@ -49,7 +50,7 @@ public class MnAPluginBlockInit {
 	}
 
 	public static void buildMnaCompatBlockContents(BuildCreativeModeTabContentsEvent populator) {
-		if (populator.getTabKey() == Hemomancy.hemomancytab.getKey()) {
+		if (populator.getTabKey() == CreativeTabInit.hemomancytab.getKey()) {
 			// Items
 			MNABLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
 			var b = getAllBlockEntriesAsStream();

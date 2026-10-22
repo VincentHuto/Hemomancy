@@ -23,7 +23,7 @@ public final class LanternTickResourceTest {
 	private static void assertRegistries() throws IOException {
 		String itemInit = read(SRC.resolve("common/init/ItemInit.java"));
 		String entityInit = read(SRC.resolve("common/init/EntityInit.java"));
-		String clientEvents = read(SRC.resolve("client/event/ClientEvents.java"));
+		String clientEvents = read(SRC.resolve("client/registry/EntityRendererRegistrar.java"));
 		String layerEvents = read(SRC.resolve("client/event/LayerEvents.java"));
 		assertContains("helmet item registered", itemInit, "lantern_tick_helmet");
 		assertContains("spawn egg registered", itemInit, "spawn_egg_lantern_tick");

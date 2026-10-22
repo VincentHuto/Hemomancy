@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.particle.factory;
 
 import com.vincenthuto.hemomancy.client.particle.WillAbsorptionGlowParticle;
-import com.vincenthuto.hemomancy.client.particle.data.WillAbsorptionGlowParticleData;
+import com.vincenthuto.hemomancy.common.particle.data.WillAbsorptionGlowParticleData;
 import com.vincenthuto.hemomancy.common.init.ParticleInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.client.multiplayer.ClientLevel;

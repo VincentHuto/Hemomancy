@@ -81,8 +81,8 @@ public class PacketHandler {
      * </ul>
      *
      */
-    public static void registerChannels(IEventBus forgeBus) {
-        forgeBus.addListener(PacketHandler::onRegisterPayloads);
+    public static void registerChannels(IEventBus modBus) {
+        modBus.addListener(PacketHandler::onRegisterPayloads);
     }
 
     private static void onRegisterPayloads(RegisterPayloadHandlersEvent event) {

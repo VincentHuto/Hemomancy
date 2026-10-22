@@ -29,7 +29,7 @@ import java.nio.file.*;
 import java.util.*;
 
 /** Disposable live review fixture; never loaded by normal clients. All assists are explicit. */
-@EventBusSubscriber(modid=Hemomancy.MOD_ID,value=Dist.CLIENT)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class SuccessionClientReview {
     private static final Set<String> VIGIL_ORDEAL_WORLDS = Set.of(
             "PriorityVigilOrdeal_20261003", "PriorityVigilOrdealR2_20261003", "PriorityVigilOrdealR3_20261003");

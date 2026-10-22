@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.compat.mna.item;
 import com.mna.items.ItemInit;
 import com.mna.items.artifice.ItemFactionHorn;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.init.CreativeTabInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.compat.mna.MnAPluginArmorTiers;
 import com.vincenthuto.hemomancy.compat.mna.faction.HarbingerEventHandler;
@@ -72,7 +73,7 @@ public class MnAPluginItemInit {
 					(new Item.Properties()).fireResistant(), 0.25f, 0.01f));
 
 	public static void buildMnaCompatItemContents(BuildCreativeModeTabContentsEvent populator) {
-		if (populator.getTabKey() == Hemomancy.hemomancytab.getKey()) {
+		if (populator.getTabKey() == CreativeTabInit.hemomancytab.getKey()) {
 			MNAITEMS.getEntries().forEach(i -> populator.accept(i.get()));
 			populator.accept(ItemInit.GREATER_MOTE_BLOOD.get());
 

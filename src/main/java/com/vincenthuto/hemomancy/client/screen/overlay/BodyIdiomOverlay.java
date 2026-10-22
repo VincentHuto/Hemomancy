@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.event.ClientEvents;
+import com.vincenthuto.hemomancy.client.event.ManipulationChargeInput;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.manipulation.BodyIdiomRules;
 import net.minecraft.client.Minecraft;
@@ -37,8 +37,8 @@ public final class BodyIdiomOverlay {
 		if (minecraft.player == null || minecraft.options.hideGui) return;
 		var state = HemoCapabilityAccess.getPowerGuardrails(minecraft.player);
 		float maxIronHeartHealth = BodyIdiomRules.maxIronHeartHealth(minecraft.player);
-		String chargingManipulation = ClientEvents.getChargingManipulationName();
-		float chargeProgress = ClientEvents.getManipulationChargeProgress();
+		String chargingManipulation = ManipulationChargeInput.getChargingManipulationName();
+		float chargeProgress = ManipulationChargeInput.getManipulationChargeProgress();
 		float charge = chargingManipulation.equals("ironhearted") ? chargeProgress : 0.0F;
 		float storedIron = state.getIronHeartHealth();
 		long now = minecraft.level == null ? 0L : minecraft.level.getGameTime();

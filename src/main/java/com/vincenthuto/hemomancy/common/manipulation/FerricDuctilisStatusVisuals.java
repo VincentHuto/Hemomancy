@@ -19,7 +19,7 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import java.util.*;
 
 /** Remaining lifetimes, counts and moving endpoints for observers entering an ongoing cast. */
-@EventBusSubscriber(modid=Hemomancy.MOD_ID)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class FerricDuctilisStatusVisuals {
     private record Key(UUID target, ManipulationVisuals.Form form) {}
     private record Status(Entity entity, ServerLevel level, ManipulationVisuals.Form form, double radius, int count, long until) {}

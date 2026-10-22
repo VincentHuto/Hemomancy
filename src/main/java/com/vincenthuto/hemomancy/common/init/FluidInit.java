@@ -1,18 +1,15 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
-import java.util.function.Consumer;
 
+/** Fluids. Their textures and tints are client extensions in {@code client.registry.FluidClientExtensions}. */
 public class FluidInit {
 
 	public static final DeferredRegister<Fluid> FLUIDS =
@@ -23,19 +20,7 @@ public class FluidInit {
 
 	public static final DeferredHolder<FluidType, FluidType> PHLEGETHONTIC_ICHOR_TYPE = FLUID_TYPES.register(
 			"phlegethontic_ichor", () -> new FluidType(FluidType.Properties.create()
-					.density(1500).viscosity(5000).temperature(1300).lightLevel(7).canConvertToSource(false)) {
-		@Override public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
-			consumer.accept(new IClientFluidTypeExtensions() {
-				@Override public ResourceLocation getStillTexture() { return Hemomancy.rloc("block/phlegethontic_ichor_still"); }
-				@Override public ResourceLocation getFlowingTexture() { return Hemomancy.rloc("block/phlegethontic_ichor_flow"); }
-				@Override public ResourceLocation getOverlayTexture() { return Hemomancy.rloc("block/phlegethontic_ichor_overlay"); }
-				@Override public ResourceLocation getRenderOverlayTexture(Minecraft minecraft) {
-					return Hemomancy.rloc("textures/block/phlegethontic_ichor_overlay.png");
-				}
-				@Override public int getTintColor() { return 0xE0FFFFFF; }
-			});
-		}
-	});
+					.density(1500).viscosity(5000).temperature(1300).lightLevel(7).canConvertToSource(false)));
 	public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> PHLEGETHONTIC_ICHOR = FLUIDS.register(
 			"phlegethontic_ichor", () -> new BaseFlowingFluid.Source(FluidInit.PHLEGETHONTIC_ICHOR_PROPS));
 	public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> PHLEGETHONTIC_ICHOR_FLOWING = FLUIDS.register(
@@ -51,37 +36,7 @@ public class FluidInit {
 			() -> new FluidType(FluidType.Properties.create()
 					.density(1200)
 					.viscosity(3000)
-					.lightLevel(3)) {
-				@Override
-				public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
-					consumer.accept(new IClientFluidTypeExtensions() {
-						private static final ResourceLocation STILL =
-								Hemomancy.rloc("block/morphic_nectar_still");
-						private static final ResourceLocation FLOW =
-								Hemomancy.rloc("block/morphic_nectar_flow");
-						private static final ResourceLocation OVERLAY =
-								Hemomancy.rloc("block/morphic_nectar_overlay");
-						private static final ResourceLocation CAMERA_OVERLAY =
-								Hemomancy.rloc("textures/block/morphic_nectar_overlay.png");
-
-						@Override
-						public ResourceLocation getStillTexture() { return STILL; }
-
-						@Override
-						public ResourceLocation getFlowingTexture() { return FLOW; }
-
-						@Override
-						public ResourceLocation getOverlayTexture() { return OVERLAY; }
-
-						@Override
-						public ResourceLocation getRenderOverlayTexture(Minecraft mc) { return CAMERA_OVERLAY; }
-
-						// Amber-green tint (ARGB): slightly translucent, yellow-green
-						@Override
-						public int getTintColor() { return 0xCFB4E832; }
-					});
-				}
-			});
+					.lightLevel(3)));
 
 	public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> MORPHIC_NECTAR =
 			FLUIDS.register("morphic_nectar",
@@ -109,36 +64,7 @@ public class FluidInit {
 			() -> new FluidType(FluidType.Properties.create()
 					.density(1100)
 					.viscosity(3500)
-					.lightLevel(1)) {
-				@Override
-				public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
-					consumer.accept(new IClientFluidTypeExtensions() {
-						private static final ResourceLocation STILL =
-								Hemomancy.rloc("block/white_humor_still");
-						private static final ResourceLocation FLOW =
-								Hemomancy.rloc("block/white_humor_flow");
-						private static final ResourceLocation OVERLAY =
-								Hemomancy.rloc("block/white_humor_overlay");
-						private static final ResourceLocation CAMERA_OVERLAY =
-								Hemomancy.rloc("textures/block/white_humor_overlay.png");
-
-						@Override
-						public ResourceLocation getStillTexture() { return STILL; }
-
-						@Override
-						public ResourceLocation getFlowingTexture() { return FLOW; }
-
-						@Override
-						public ResourceLocation getOverlayTexture() { return OVERLAY; }
-
-						@Override
-						public ResourceLocation getRenderOverlayTexture(Minecraft mc) { return CAMERA_OVERLAY; }
-
-						@Override
-						public int getTintColor() { return 0xDDEAF7FF; }
-					});
-				}
-			});
+					.lightLevel(1)));
 
 	public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> WHITE_HUMOR =
 			FLUIDS.register("white_humor",

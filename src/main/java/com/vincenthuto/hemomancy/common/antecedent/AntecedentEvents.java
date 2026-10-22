@@ -16,7 +16,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import java.util.*;
 import static com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch.Evidence.*;
 
-@EventBusSubscriber(modid=Hemomancy.MOD_ID)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class AntecedentEvents {
     private static final Map<net.minecraft.server.level.ServerPlayer,Boolean> reading=new WeakHashMap<>();
     private AntecedentEvents() {}

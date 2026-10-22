@@ -19,7 +19,7 @@ public final class MonolithicDislocationShellRenderSourceTest {
 		String clientState = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/data/MonolithicDislocationClientState.java"));
 		String clientEvents = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/client/event/ClientEvents.java"));
+				"com/vincenthuto/hemomancy/client/event/ClientTickEvents.java"));
 		String layerEvents = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/event/LayerEvents.java"));
 		String mixin = read(SOURCE_ROOT.resolve(

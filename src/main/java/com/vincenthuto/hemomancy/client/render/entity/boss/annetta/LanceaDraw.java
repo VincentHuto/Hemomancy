@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.client.model.item.unstained.AnnettasSanguisLanceaModel;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.AnnettasSanguisLanceaItemRenderer;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hutoslib.client.HLRenderTypeInit;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.util.FastColor;

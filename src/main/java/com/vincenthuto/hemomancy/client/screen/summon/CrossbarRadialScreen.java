@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.summon;
 
-import com.vincenthuto.hemomancy.client.event.ClientEvents;
+import com.vincenthuto.hemomancy.client.registry.KeyMappings;
 import com.vincenthuto.hemomancy.client.screen.radial.GenericRadialMenu;
 import com.vincenthuto.hemomancy.client.screen.radial.IRadialMenuHost;
 import com.vincenthuto.hemomancy.client.screen.radial.TextRadialMenuItem;
@@ -166,7 +166,7 @@ public final class CrossbarRadialScreen extends Screen {
 		super.tick();
 		menu.tick();
 		if (menu.isClosed()) Minecraft.getInstance().setScreen(null);
-		else if (!ClientEvents.isKeyDown(Minecraft.getInstance().options.keyUse)) finishSelectionOnce();
+		else if (!KeyMappings.isKeyDown(Minecraft.getInstance().options.keyUse)) finishSelectionOnce();
 	}
 
 	@Override public boolean mouseReleased(double x, double y, int button) {

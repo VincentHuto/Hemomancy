@@ -40,7 +40,7 @@ public final class HarbingerHermitRoadMissionSourceTest {
 		String itemInit = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/init/ItemInit.java"));
 		String ledgerItem = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/item/harbinger/HarbingerAssignmentLedgerItem.java"));
-		String clientEvents = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/event/ClientEvents.java"));
+		String clientEvents = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/registry/ClientExtensionsRegistrar.java"));
 		String language = read(RESOURCE_ROOT.resolve("assets/hemomancy/lang/en_us.json"));
 		String model = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/item/harbinger_assignment_ledger.json"));
 		String progressScreen = read(SOURCE_ROOT.resolve(

@@ -15,15 +15,16 @@ public final class HarbingerHermitFarewellDeathSourceTest {
 		String handler = read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java");
 		String renderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/entity/npc/HarbingerHermitRenderer.java");
 		String renderTypes = read("src/main/java/com/vincenthuto/hemomancy/client/render/HemoRenderTypes.java");
-		String shaders = read("src/main/java/com/vincenthuto/hemomancy/common/init/ShaderInit.java");
+		String shaders = read("src/main/java/com/vincenthuto/hemomancy/client/render/shader/ShaderInit.java");
 		String shaderJson = read("src/main/resources/assets/hemomancy/shaders/core/entity/hermit_farewell_dissolve.json");
 		String shaderVertex = read("src/main/resources/assets/hemomancy/shaders/core/entity/hermit_farewell_dissolve.vsh");
 		String shaderFragment = read("src/main/resources/assets/hemomancy/shaders/core/entity/hermit_farewell_dissolve.fsh");
 		String particleInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ParticleInit.java");
+		String particleProviders = read("src/main/java/com/vincenthuto/hemomancy/client/registry/ParticleProviderRegistrar.java");
 		String edgeGlowParticle = read("src/main/java/com/vincenthuto/hemomancy/client/particle/HermitEdgeGlowParticle.java");
 		String edgeGlowFactory = read("src/main/java/com/vincenthuto/hemomancy/client/particle/factory/HermitEdgeGlowParticleFactory.java");
-		String edgeGlowData = read("src/main/java/com/vincenthuto/hemomancy/client/particle/data/HermitEdgeGlowParticleData.java");
-		String edgeGlowType = read("src/main/java/com/vincenthuto/hemomancy/client/particle/type/HermitEdgeGlowParticleType.java");
+		String edgeGlowData = read("src/main/java/com/vincenthuto/hemomancy/common/particle/data/HermitEdgeGlowParticleData.java");
+		String edgeGlowType = read("src/main/java/com/vincenthuto/hemomancy/common/particle/type/HermitEdgeGlowParticleType.java");
 		String edgeGlowJson = read("src/main/resources/assets/hemomancy/particles/hermit_edge_glow.json");
 		String docs = read("docs/HEMOMANCY_REFERENCE.md");
 
@@ -56,7 +57,7 @@ public final class HarbingerHermitFarewellDeathSourceTest {
 		assertNotContains("hermit no longer uses bulky dust particles for the dissolve edge", hermit, "DustParticleOptions");
 		assertNotContains("hermit no longer mixes vanilla ash into the edge glow pass", hermit, "ParticleTypes.ASH");
 		assertContains("particle init registers hermit edge glow type", particleInit, "hermit_edge_glow");
-		assertContains("particle init registers hermit edge glow provider", particleInit, "HermitEdgeGlowParticleFactory::new");
+		assertContains("particle init registers hermit edge glow provider", particleProviders, "HermitEdgeGlowParticleFactory::new");
 		assertContains("hermit edge glow uses glow render type", edgeGlowParticle, "HLRenderTypeInit.GLOW_RENDER");
 		assertContains("hermit edge glow has short lifetime", edgeGlowParticle, "this.lifetime = 12 + this.random.nextInt(7)");
 		assertContains("hermit edge glow is small", edgeGlowFactory, "0.016f");

@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.render.tile.unstained.crafting;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.unstained.crafting.PallidRetortBlockEntity;
 
 import net.minecraft.client.renderer.MultiBufferSource;

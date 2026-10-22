@@ -38,7 +38,7 @@ public final class FaneHeartAndStakeSourceTest {
 	private static final Path STAKE_ITEM_RENDERER = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/item/tile/harbinger/functional/HematicStakeItemRenderer.java");
 	private static final Path CLIENT_EVENTS = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java");
 	private static final Path STAKE_AUTHORITY_EVENTS = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/event/worldevent/HematicStakeAuthorityEvents.java");
 	private static final Path FANE_DATA = Path.of(
@@ -194,9 +194,9 @@ public final class FaneHeartAndStakeSourceTest {
 				Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/client/render/world/AnimusMortemRenderTypes.java")),
 				"depth?RenderType.COLOR_DEPTH_WRITE:RenderType.COLOR_WRITE");
 		assertContains("stake renderer registered", clientEvents,
-				"BlockEntityRenderers.register(BlockEntityInit.hematic_stake.get(), HematicStakeRenderer::new)");
+				"event.registerBlockEntityRenderer(BlockEntityInit.hematic_stake.get(), HematicStakeRenderer::new)");
 		assertContains("bloodwell renderer registered", clientEvents,
-				"BlockEntityRenderers.register(BlockEntityInit.consecrated_bloodwell.get(), ConsecratedBloodwellRenderer::new)");
+				"event.registerBlockEntityRenderer(BlockEntityInit.consecrated_bloodwell.get(), ConsecratedBloodwellRenderer::new)");
 		assertContains("stake item implements custom renderer provider", stakeItem,
 				"implements HemoClientItemExtensionsProvider");
 		assertContains("stake item renderer uses monolith material", stakeItemRenderer,

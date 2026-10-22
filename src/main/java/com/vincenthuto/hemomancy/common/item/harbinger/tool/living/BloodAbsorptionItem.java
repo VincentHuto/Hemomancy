@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.CellHandRules;
-import com.vincenthuto.hemomancy.client.event.ClientEvents.ClientModBusEvents;
+import com.vincenthuto.hemomancy.client.registry.ModelRegistrar;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.CellHandItemRenderer;
 import com.vincenthuto.hemomancy.common.block.harbinger.BlockBloodInteractions;
@@ -75,7 +75,7 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 
 	@Override
 	public BakedModel getBakedModel() {
-		return ClientModBusEvents.bloodAbsorptionModel;
+		return ModelRegistrar.bloodAbsorptionModel;
 	}
 
 	@Override

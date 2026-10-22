@@ -121,8 +121,8 @@ public final class RegistrationGameTests {
 
     @GameTest(template = "empty")
     public static void builtCreativeTabsPreservePlayerToolOrderAndSeparateDebugTools(GameTestHelper helper) {
-        var main = com.vincenthuto.hemomancy.Hemomancy.hemomancytab.get();
-        var wip = com.vincenthuto.hemomancy.Hemomancy.hemomancywiptab.get();
+        var main = com.vincenthuto.hemomancy.common.init.CreativeTabInit.hemomancytab.get();
+        var wip = com.vincenthuto.hemomancy.common.init.CreativeTabInit.hemomancywiptab.get();
         var parameters = new net.minecraft.world.item.CreativeModeTab.ItemDisplayParameters(
                 helper.getLevel().enabledFeatures(), true, helper.getLevel().registryAccess());
         main.buildContents(parameters);
@@ -154,8 +154,8 @@ public final class RegistrationGameTests {
 
     @GameTest(template = "empty")
     public static void builtCreativeTabsKeepTechnicalBlocksItemless(GameTestHelper helper) {
-        var main = com.vincenthuto.hemomancy.Hemomancy.hemomancytab.get();
-        var wip = com.vincenthuto.hemomancy.Hemomancy.hemomancywiptab.get();
+        var main = com.vincenthuto.hemomancy.common.init.CreativeTabInit.hemomancytab.get();
+        var wip = com.vincenthuto.hemomancy.common.init.CreativeTabInit.hemomancywiptab.get();
         var parameters = new net.minecraft.world.item.CreativeModeTab.ItemDisplayParameters(
                 helper.getLevel().enabledFeatures(), true, helper.getLevel().registryAccess());
         try {

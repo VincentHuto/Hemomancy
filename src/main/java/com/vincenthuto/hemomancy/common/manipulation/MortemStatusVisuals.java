@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /** Bloom provenance lasts for this server session; ordinary wounds reconstruct from real effects. */
-@EventBusSubscriber(modid=Hemomancy.MOD_ID)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class MortemStatusVisuals {
     private record Infection(LivingEntity target,long until,net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> dimension) {}
     private static final Map<java.util.UUID,Infection> INFECTIONS=new HashMap<>();

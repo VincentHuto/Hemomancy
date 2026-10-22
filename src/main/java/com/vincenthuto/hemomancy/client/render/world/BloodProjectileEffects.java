@@ -15,9 +15,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 /** Trails retain the actual travelled path, including guided turns and orbiting halos. */
-final class BloodProjectileEffects {
+public final class BloodProjectileEffects {
     private static final LinkedHashMap<Integer,Trail> TRAILS=new LinkedHashMap<>();
     private static ClientLevel world;
+
+    /** Forgets everything, so nothing outlives the world it was seen in. */
+    public static void clear() {
+        TRAILS.clear();
+        world = null;
+    }
     private BloodProjectileEffects() {}
     private static void reset(){if(world!=Minecraft.getInstance().level){TRAILS.clear();world=Minecraft.getInstance().level;}}
     static void tick() {

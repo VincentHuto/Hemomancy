@@ -29,7 +29,7 @@ final class VesperMountArsenalResourceTest {
 	@Test
 	void projectileRendererSoundsAndServerStateAreWired() throws Exception {
 		String entities = Files.readString(ROOT.resolve("java/com/vincenthuto/hemomancy/common/init/EntityInit.java"));
-		String clients = Files.readString(ROOT.resolve("java/com/vincenthuto/hemomancy/client/event/ClientEvents.java"));
+		String clients = Files.readString(ROOT.resolve("java/com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java"));
 		String sounds = Files.readString(ROOT.resolve("resources/assets/hemomancy/sounds.json"));
 		String crowned = Files.readString(ROOT.resolve("java/com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperTheCrownedRefusalEntity.java"));
 		String actions = Files.readString(ROOT.resolve("java/com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperMountMoves.java"));

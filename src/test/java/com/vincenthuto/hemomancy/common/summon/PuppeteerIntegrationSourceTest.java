@@ -20,7 +20,7 @@ public final class PuppeteerIntegrationSourceTest {
 		String crossbarCommands = read("src/main/java/com/vincenthuto/hemomancy/common/summon/PuppeteerCrossbarCommands.java");
 		String screen = read("src/main/java/com/vincenthuto/hemomancy/client/screen/item/PuppeteersSpindleScreen.java");
 		String radialScreen = read("src/main/java/com/vincenthuto/hemomancy/client/screen/summon/CrossbarRadialScreen.java");
-		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientInputEvents.java");
 		String summonsTab = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/SummonsTabView.java");
 		String craftingController = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/CraftingTabController.java");
 		String craftingView = read("src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/shared/CraftingTabView.java");
@@ -78,8 +78,8 @@ public final class PuppeteerIntegrationSourceTest {
 		assertContains(radialScreen, "selectionHandled");
 		assertContains(radialScreen, "finishSelectionOnce");
 		assertNotContains(radialScreen, "else if (!Minecraft.getInstance().options.keyUse.isDown()) menu.clickItem()");
-		assertContains(clientEvents, "if (!isKeyDown(mc.options.keyUse))");
-		assertContains(radialScreen, "ClientEvents.isKeyDown(Minecraft.getInstance().options.keyUse)");
+		assertContains(clientEvents, "if (!KeyMappings.isKeyDown(mc.options.keyUse))");
+		assertContains(radialScreen, "KeyMappings.isKeyDown(Minecraft.getInstance().options.keyUse)");
 		assertContains(radialScreen, "menu.setRadii(34, 70, 78, 108)");
 		assertContains(radialScreen, "item.setTextLayout(0.8f, 48)");
 		assertContains(radialScreen, "item.setTextLayout(0.72f, 54)");

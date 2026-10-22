@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /** Observers receive explicit cue removal; their local entities do not carry full effect maps. */
-@EventBusSubscriber(modid=Hemomancy.MOD_ID)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class ManipulationStatusVisuals {
     private record Pending(LivingEntity entity,Holder<MobEffect> effect,ManipulationVisuals.Form form) {}
     private static final Set<Pending> PENDING=new HashSet<>();

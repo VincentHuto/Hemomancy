@@ -27,7 +27,7 @@ class MyelinBorerRegistrationSourceTest {
 
 	@Test
 	void clientBindingsExist() throws IOException {
-		assertTrue(read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java")
+		assertTrue(read("src/main/java/com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java")
 				.contains("EntityInit.myelin_borer.get(), MyelinBorerRenderer::new"),
 				"an unregistered renderer makes the mob invisible");
 		assertTrue(read("src/main/java/com/vincenthuto/hemomancy/client/event/LayerEvents.java")

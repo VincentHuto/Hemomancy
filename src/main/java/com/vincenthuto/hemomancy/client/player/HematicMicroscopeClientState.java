@@ -23,6 +23,12 @@ public final class HematicMicroscopeClientState {
         ACTIVE.values().forEach(Animation::stopSound);
         ACTIVE.clear();
     }
+
+    /** Logout: also lets go of the level. */
+    public static void clearSession() {
+        clear();
+        world = null;
+    }
     private static void checkWorld() {
         var current = Minecraft.getInstance().level;
         if (world != current) { clear(); world = current; }

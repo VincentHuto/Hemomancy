@@ -16,8 +16,8 @@ public final class LivingWeaponGraftSourceTest {
 		String form = read("src/main/java/com/vincenthuto/hemomancy/common/item/component/LivingWeaponForm.java");
 		String data = read("src/main/java/com/vincenthuto/hemomancy/common/item/component/LivingWeaponGraftData.java");
 		String item = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponGraftItem.java");
-		String hemomancy = read("src/main/java/com/vincenthuto/hemomancy/Hemomancy.java");
-		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+		String hemomancy = read("src/main/java/com/vincenthuto/hemomancy/common/init/CreativeTabInit.java");
+		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/registry/ItemPropertiesRegistrar.java");
 		String graftModel = read("src/main/resources/assets/hemomancy/models/item/living_weapon_graft.json");
 
 		assertContains("component registry declares graft data component", dataComponentInit, "LIVING_WEAPON_GRAFT_DATA");

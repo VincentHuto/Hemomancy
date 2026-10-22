@@ -70,7 +70,7 @@ public final class HemomancyCreativeTabsSourceTest {
 	}
 
 	public static void main(String[] args) throws IOException {
-		String hemomancy = read("src/main/java/com/vincenthuto/hemomancy/Hemomancy.java");
+		String hemomancy = read("src/main/java/com/vincenthuto/hemomancy/common/init/CreativeTabInit.java");
 		String blockInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/BlockInit.java");
 		String structureSpawner = read(
 				"src/main/java/com/vincenthuto/hemomancy/common/item/shared/StructureSpawnerItem.java");
@@ -93,16 +93,19 @@ public final class HemomancyCreativeTabsSourceTest {
 		assertContains("Vascular Poultice should be localized",
 				lang, "\"item.hemomancy.vascular_poultice\": \"Vascular Poultice\"");
 
+		// The WIP tab and the main tab's exclusion read one list; its order is frozen by
+		// FrozenIdentifierGameTests#creativeTabOrderMatchesTheFrozenSnapshot.
 		for (String item : WIP_ITEMS) {
-			assertAppearsAtLeastTwice("WIP item should be accepted and excluded from main tab: " + item,
-					hemomancy, "ItemInit." + item + ".get()");
+			assertAppearsOnce("WIP item should be listed once, in the one WIP list: " + item,
+					hemomancy, "ItemInit." + item);
 		}
 		for (String block : WIP_BLOCKS) {
-			assertContains("WIP block should be accepted: " + block,
-					hemomancy, "populator.accept(BlockInit." + block + ".get())");
-			assertContains("WIP block should be excluded from the main tab: " + block,
-					blockInit, "\"" + block + "\"");
+			assertAppearsOnce("WIP block should be listed once, in the one WIP list: " + block,
+					hemomancy, "BlockInit." + block);
 		}
+		assertNotContains("BlockInit should not keep a second WIP block list", blockInit, "WIP_BLOCKS");
+		assertContains("BlockInit should route WIP blocks through the one list", blockInit,
+				"CreativeTabInit.isWipBlock(blockId)");
 		assertContains("main tab should consult the block item decision", hemomancy,
 				"BlockInit.itemDecision(");
 		assertContains("main tab should place Fervent Husk after the regular Chitinite Husk", hemomancy,
@@ -157,11 +160,11 @@ public final class HemomancyCreativeTabsSourceTest {
 		}
 	}
 
-	private static void assertAppearsAtLeastTwice(String label, String text, String expected) {
-		int first = text.indexOf(expected);
-		int second = first < 0 ? -1 : text.indexOf(expected, first + expected.length());
-		if (second < 0) {
-			throw new AssertionError(label + " (expected at least two occurrences of '" + expected + "')");
+	private static void assertAppearsOnce(String message, String text, String expected) {
+		long count = java.util.regex.Pattern.compile(java.util.regex.Pattern.quote(expected) + "(?=[,)])")
+				.matcher(text).results().count();
+		if (count != 1) {
+			throw new AssertionError(message + " (expected exactly one '" + expected + "')");
 		}
 	}
 

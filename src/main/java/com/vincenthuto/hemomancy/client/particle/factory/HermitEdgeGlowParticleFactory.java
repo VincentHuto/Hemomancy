@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.particle.factory;
 
 import com.vincenthuto.hemomancy.client.particle.HermitEdgeGlowParticle;
-import com.vincenthuto.hemomancy.client.particle.data.HermitEdgeGlowParticleData;
+import com.vincenthuto.hemomancy.common.particle.data.HermitEdgeGlowParticleData;
 import com.vincenthuto.hemomancy.common.init.ParticleInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.client.multiplayer.ClientLevel;

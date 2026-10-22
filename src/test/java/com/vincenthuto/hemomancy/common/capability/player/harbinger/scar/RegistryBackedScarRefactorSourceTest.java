@@ -85,7 +85,7 @@ public final class RegistryBackedScarRefactorSourceTest {
 		String blockInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/BlockInit.java");
 		String blockEntityInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/BlockEntityInit.java");
 		String containerInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ContainerInit.java");
-		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/registry/MenuScreenRegistrar.java");
 		String pattern = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/scar/ItemScarPattern.java");
 		String brazier = read("src/main/java/com/vincenthuto/hemomancy/common/rite/ScarBrazierRite.java");
 		String brazierBlock = read("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/rite/BrazierBlock.java");
@@ -162,7 +162,7 @@ public final class RegistryBackedScarRefactorSourceTest {
 		String packet = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/scars/PacketPrepareScarPattern.java");
 		String renderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/ScarPatternItemRenderer.java");
 		String effigyRenderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/tile/harbinger/functional/MasonsEffigyRenderer.java");
-		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java");
 		String projection = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodProjectionItem.java");
 
 		assertContains("effigy stores selected scar ids", blockEntity, "selectedScarIds");
@@ -194,7 +194,7 @@ public final class RegistryBackedScarRefactorSourceTest {
 		assertContains("effigy renderer displays pending motif", effigyRenderer, "getPendingMotifDisplayStack");
 		assertContains("effigy renderer floats item above block", effigyRenderer, "renderStatic");
 		assertContains("effigy renderer registered", clientEvents,
-				"BlockEntityRenderers.register(BlockEntityInit.mason_effigy.get(), MasonsEffigyRenderer::new)");
+				"event.registerBlockEntityRenderer(BlockEntityInit.mason_effigy.get(), MasonsEffigyRenderer::new)");
 		assertContains("prepare packet writes selected scars to effigy", packet, "effigy.setSelectedScarIds(selected)");
 		assertDoesNotContain("prepare packet no longer gives free scar pattern", packet, "player.getInventory().add(pattern)");
 		assertDoesNotContain("right click no longer directly creates scar pattern", block, "ItemScarPattern.createPreparedPattern");

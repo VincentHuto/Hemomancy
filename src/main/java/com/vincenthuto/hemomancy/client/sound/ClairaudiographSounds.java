@@ -19,7 +19,7 @@ import net.neoforged.neoforge.client.event.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-@EventBusSubscriber(modid=Hemomancy.MOD_ID,value=Dist.CLIENT)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class ClairaudiographSounds {
     private record Key(ResourceLocation dimension,BlockPos pos) {}
     private static final Map<Key,OwnedSound> sounds=new HashMap<>();

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.NaeglerophaeonEntity;
-import com.vincenthuto.hemomancy.common.init.ShaderInit;
+import com.vincenthuto.hemomancy.client.render.shader.ShaderInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;

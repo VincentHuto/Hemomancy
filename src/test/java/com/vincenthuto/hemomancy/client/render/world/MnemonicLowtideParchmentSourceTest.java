@@ -9,7 +9,7 @@ public final class MnemonicLowtideParchmentSourceTest {
 			"src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/MnemonicLowtideChamberEffects.java");
 	private static final Path RENDER_TYPES = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/HemoRenderTypes.java");
-	private static final Path SHADER_INIT = Path.of("src/main/java/com/vincenthuto/hemomancy/common/init/ShaderInit.java");
+	private static final Path SHADER_INIT = Path.of("src/main/java/com/vincenthuto/hemomancy/client/render/shader/ShaderInit.java");
 	private static final Path REFERENCE = Path.of("docs/HEMOMANCY_REFERENCE.md");
 	private static final Path PARCHMENT_ATLAS = Path.of(
 			"src/main/resources/assets/hemomancy/textures/world/lowtide_parchment/parchment_atlas.png");

@@ -39,7 +39,7 @@ public final class BloodBindingManipulationSourceTest {
 		String packets = read("src/main/java/com/vincenthuto/hemomancy/common/network/PacketHandler.java");
 		assertContains(packets, "SyncBloodBindingTendrilS2CPacket.TYPE");
 		assertContains(packets, "sendBloodBindingTendril");
-		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/ClientTickEvents.java");
 		assertContains(clientEvents, "BloodBindingTendrilClientState.tick()");
 		assertContains(read("src/main/java/com/vincenthuto/hemomancy/client/render/world/ManipulationVisualRenderer.java"),
                 "BloodBindingTendrilRenderer.collect(poses,FLOWS,camera,partial)");

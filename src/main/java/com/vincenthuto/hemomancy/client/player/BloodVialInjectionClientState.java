@@ -24,6 +24,12 @@ import java.util.Map;
 public final class BloodVialInjectionClientState {
     private static final Map<Integer, Animation> ACTIVE = new HashMap<>();
     private static ClientLevel world;
+
+    /** Forgets everything, so nothing outlives the world it was seen in. */
+    public static void clear() {
+        ACTIVE.clear();
+        world = null;
+    }
     private BloodVialInjectionClientState() { }
 
     private static void checkWorld() {

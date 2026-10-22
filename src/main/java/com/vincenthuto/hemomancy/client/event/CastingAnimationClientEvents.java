@@ -20,7 +20,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
 
-@EventBusSubscriber(modid=Hemomancy.MOD_ID,value=Dist.CLIENT)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class CastingAnimationClientEvents {
     private CastingAnimationClientEvents() {}
     @SubscribeEvent public static void tick(ClientTickEvent.Post event) { CastingAnimationClientState.tick(); OutpouringClientState.tick(); }

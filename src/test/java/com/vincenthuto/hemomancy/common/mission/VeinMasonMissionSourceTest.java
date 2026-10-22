@@ -24,7 +24,7 @@ public final class VeinMasonMissionSourceTest {
 
 	private static void anchoriteEntityAndClientWiringExists() throws IOException {
 		String entityInit = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/init/EntityInit.java"));
-		String clientEvents = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/event/ClientEvents.java"));
+		String clientEvents = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java"));
 		String layerEvents = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/event/LayerEvents.java"));
 		String renderer = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/entity/npc/HarbingerCicatrixAnchoriteRenderer.java"));

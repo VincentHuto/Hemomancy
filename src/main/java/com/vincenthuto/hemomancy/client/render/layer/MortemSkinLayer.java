@@ -20,7 +20,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import java.util.LinkedHashMap;
 
-@EventBusSubscriber(modid=Hemomancy.MOD_ID,value=Dist.CLIENT)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class MortemSkinLayer<T extends LivingEntity,M extends EntityModel<T>> extends RenderLayer<T,M> {
     private record Key(int entity,Form form) {}
     private static final class Skin {final long born;long until;Skin(long now,int ticks){born=now;until=now+ticks;}}

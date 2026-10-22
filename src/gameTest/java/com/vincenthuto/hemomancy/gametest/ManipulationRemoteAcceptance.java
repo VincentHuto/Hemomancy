@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.gametest;
 
+import net.neoforged.api.distmarker.Dist;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.*;
@@ -23,7 +24,7 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import java.util.List;
 
 /** Destructive only inside the explicitly opt-in disposable acceptance server. */
-@EventBusSubscriber(modid=Hemomancy.MOD_ID)
+@EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class ManipulationRemoteAcceptance {
     private static final String[] POWERS={"learn", "blood_shot", "hematic_flare", "hematic_flare",
             "white_verdict", "white_verdict", "crimson_coronation", "vitric_combustion",
@@ -133,7 +134,7 @@ public final class ManipulationRemoteAcceptance {
         Hemomancy.LOGGER.info("AREA6 START scene={} power={}",scene,POWERS[scene]);
     }
 
-    @EventBusSubscriber(modid=Hemomancy.MOD_ID,value=net.neoforged.api.distmarker.Dist.CLIENT)
+    @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
     public static final class Client {
         private static int scene=-1, ticks;
         @SubscribeEvent public static void message(net.neoforged.neoforge.client.event.ClientChatReceivedEvent event) {

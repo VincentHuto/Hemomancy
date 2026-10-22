@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.client.morphling.MorphlingModelAttachment;
 import com.vincenthuto.hemomancy.client.morphling.MorphlingMutationRegistry;
 import com.vincenthuto.hemomancy.client.morphling.MorphlingVisualMutation;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import net.minecraft.client.model.HumanoidModel;

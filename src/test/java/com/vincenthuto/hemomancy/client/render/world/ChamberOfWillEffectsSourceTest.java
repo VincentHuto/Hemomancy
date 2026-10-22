@@ -20,7 +20,7 @@ public final class ChamberOfWillEffectsSourceTest {
 	private static final Path SILENT_ARCHON_EFFECTS = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/SilentArchonChamberEffects.java");
 	private static final Path CLIENT_EVENTS = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/render/world/WorldEffectDispatcher.java");
     private static final Path THEME = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/ChamberSkyTheme.java");
     private static final Path REGISTRY = Path.of(
@@ -28,7 +28,7 @@ public final class ChamberOfWillEffectsSourceTest {
     private static final Path RENDER_TYPES = Path.of(
             "src/main/java/com/vincenthuto/hemomancy/client/render/HemoRenderTypes.java");
     private static final Path SHADER_INIT = Path.of(
-            "src/main/java/com/vincenthuto/hemomancy/common/init/ShaderInit.java");
+            "src/main/java/com/vincenthuto/hemomancy/client/render/shader/ShaderInit.java");
     private static final Path SILENT_ARCHON_FOG_SHADER = Path.of(
             "src/main/resources/assets/hemomancy/shaders/core/world/silent_archon_fog.json");
     private static final Path SILENT_ARCHON_FOG_FRAGMENT = Path.of(

@@ -14,7 +14,7 @@ class CardinalRiteVisualsSourceTest {
 
 	@Test
 	void riteRenderersAreHookedBesideTheBoundary() throws IOException {
-		String events = read(SRC + "client/event/ClientEvents.java");
+		String events = read(SRC + "client/render/world/WorldEffectDispatcher.java");
 		int boundary = events.indexOf("CardinalRiteBoundaryRenderer.render(event.getPoseStack(), partialTick);");
 		int offerings = events.indexOf("CardinalRiteOfferingRenderer.render(event.getPoseStack(), partialTick);");
 		int culmination = events.indexOf("CardinalRiteCulminationRenderer.render(event.getPoseStack(), partialTick);");
