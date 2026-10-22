@@ -10,7 +10,7 @@ Every consolidation session reads this file first and updates it last, following
 | 1 | Urgent defect fixes (F-1, F-2, F-3) | DONE | `025f2b18f` | 2026-10-21 |
 | 2 | Phase 0: green baseline and test infrastructure | DONE | `c435034d4`, `ddb358304` | 2026-10-21 |
 | 3 | Phase 1: verified dead-code removal and packaging | DONE | `ccc75e9a0` | 2026-10-21 |
-| 4 | Phase 2: network hygiene | IN PROGRESS | | 2026-10-21 |
+| 4 | Phase 2: network hygiene | DONE | `d10e5e7f2` … `018394712` (10 commits) | 2026-10-21 |
 | 5 | Phase 3: player-state plumbing | NOT STARTED | | |
 | 6 | Phase 4: shared small utilities | NOT STARTED | | |
 | 7 | Phase 5: blood accounting | NOT STARTED | | |
@@ -73,7 +73,7 @@ under *Pending approvals*. IDs refer to [ARCHITECTURE_AUDIT](ARCHITECTURE_AUDIT.
 | F-3 | Remove the client-class call from `WillEntity` | 1 | APPROVED | Approved in the step 1 prompt; done in `025f2b18f` |
 | M-1 | Hand-edited models vs their generators (Armature, Centrifuge, Reliquary, loom) | 2 | APPROVED | Owner chose "drop the marker checks" (2026-10-21). The models match their generators byte for byte; the failing tests only looked for a provenance string no generator writes. Done in `ddb358304` |
 | M-2 | Five unregistered mobs (Abyssal Siphon, Cruor Fiend, Frozen Clot, Synapse Hound, Void Drinker) | 3 | PENDING | Delete / archive branch / keep |
-| M-3 | Other "REQUIRES VERIFICATION" dead code (audit section E) | 3 | PENDING | Per item. Step 3 added three: `IBloodRoutingTarget`, `FeatureLogic` and five textures orphaned by the removals |
+| M-3 | Other "REQUIRES VERIFICATION" dead code (audit section E) | 3 | PENDING | Per item. Step 3 added three: `IBloodRoutingTarget`, `FeatureLogic` and five textures orphaned by the removals. Step 4 added two more orphaned textures: `textures/gui/vein_selection.png` and `vein_teleport.png` |
 | N-6 / N-7 payload set | Fold the single-purpose VFX payloads (N-6) and delete the never-sent payloads (audit section E) under a new `PROTOCOL_VERSION` | 4 | APPROVED | Owner approved 2026-10-21. Payload byte layouts are frozen by the session rules, so this needed approval |
 | F-6 | Ledger actions require the ledger item | 4 | APPROVED | Owner approved 2026-10-21 (step 4 prompt) |
 | F-7 | Bloodline chat rate limit | 4 | APPROVED | Owner approved 2026-10-21: a simple per-player rate limit, with excess messages dropped. Vanilla chat integration (signing, mute, logging) stays out of scope |
@@ -124,6 +124,15 @@ them green.
 | `testing/LegacyMainTestSuiteContractTest` | 2 | The adapter runs exactly the legacy `main()` tests found in source (set comparison, no hard-coded count) |
 | `architecture/SourceTreeHygieneTest` | 3 | No empty `.java` files, no empty `@SubscribeEvent` handlers, and `hemomancy.mixins.json` lists exactly the `@Mixin` classes in `mixin/core` |
 | `verifyPackagedClientResources` (part of `alphaCheck`) | 3 | The jar holds no `.cache/`, `/old/`, `.bbmodel` or `bbmodel/reference/` entries |
+| `architecture/PayloadDirectionTest` | 4 | Every inline send matches its payload's registered direction, and only `AntecedentEffectPacket` is bidirectional |
+| `architecture/PayloadProtocolVersionTest` | 4 | The registered payload set (with directions) matches `src/test/resources/network/payload-registry.txt` for the current `PROTOCOL_VERSION` |
+| `architecture/NetworkClientIsolationTest` | 4 | `common/network` has no `net.minecraft.client` reference and no `Minecraft.getInstance()` |
+| `architecture/SendFacadeTest` | 4 | Only `PacketHandler` and `DialogueSender` call `PacketDistributor` |
+| `architecture/ServerboundGuardsCoverageTest` | 4 | Every serverbound payload uses `ServerboundGuards` or is listed with a reason; stale exemptions fail |
+| `common/network/ServerboundGuardsTest`, gameTest `ServerboundGuardsGameTests` | 4 | `finite`, `partialTick`, `menu`, `withinReach` / `nearBlock` / `nearBlockEntity`, `nearEntity` |
+| `common/network/particle/VisualPayloadCodecTest` | 4 | Every `ParticleBurstPacket` and `EntityVisualPacket` kind round-trips |
+| gameTest `NetworkDefectGameTests` (batch `network_defects`) | 4 | F-6 ledger in hand, F-8 non-finite pool settings, F-9 structure-paste operator and spawner |
+| `common/network/capa/harbinger/BloodlineChatRateLimitTest` | 4 | F-7 sliding window and per-sender separation |
 
 ## Step entries
 
@@ -286,3 +295,72 @@ them green.
   - `PacketHandler.java` is pinned by about 23 tests. Check `docs/architecture/evidence/source-text-impact-map.csv` before moving registrations.
   - The step 1 guardrail `ClientBoundPayloadRegistrationTest` expects exactly one `playToClient` registration for each of the 4 F-2 payloads. Moving their handlers into `client/**` (Phase 2 item 3) is compatible with it.
   - Use the scratch init-script pattern from step 2 for the server and client starts, so `run/world` stays untouched.
+
+### Step 4: Phase 2, network hygiene
+- **Status / date / commits:** DONE, 2026-10-21. Ten commits on `neo-1.21.1`:
+  - `d10e5e7f2`: `PROTOCOL_VERSION`, and the 18 never-sent payloads deleted
+  - `3f86520b8`: registrations in their real direction
+  - `b8062c743`: the send facade
+  - `95cb2e1ef`: `ServerboundGuards`
+  - `599762d61`: the VFX fold
+  - `36c4558a1`: F-6
+  - `e62941c32`: F-8
+  - `3c3241f9a`: F-9
+  - `060bf8423`: F-7
+  - `018394712`: review fixes and docs
+
+  A further `consolidation(step-4):` commit records this entry.
+- **Test counts before → after:**
+  - `test`: 3,928 → 3,939, 0 failures.
+  - GameTests: 999 → 1,005 required, all passing in the final `alphaCheck`. See *Known issues* for flakiness that predates this step.
+  - Dedicated server start: `Done (5.4s)`, 0 ERROR lines. Client start: title screen reached, 0 ERROR lines.
+- **What changed:**
+  - **Protocol version:** `PacketHandler.PROTOCOL_VERSION` is now `"3"`. Before this step it was effectively the mod ID. Mismatched client and server builds are refused at the handshake.
+  - **Payload set:** 181 → 157.
+    - 18 never-sent payloads deleted, plus `TeleportToVeinPacket` and the unreachable `RadialChooseVeinScreen`.
+    - 8 single-purpose VFX payloads folded into `ParticleBurstPacket` and `EntityVisualPacket`.
+    - Owner-approved; see *Decisions*.
+  - **Directions:** 15 client-only bidirectional payloads are now `playToServer`. `AntecedentEffectPacket` is the one documented bidirectional payload. The `isClientSide` wrappers that existed only because of the bidirectional registration are gone.
+  - **Client code in `common/network`:**
+    - The 3 `PacketHandler` lambdas became `handle` methods.
+    - 6 handlers read the level from `ctx.player()` instead of `Minecraft.getInstance()`.
+    - `common/network` no longer references vanilla client classes.
+  - **Sending:**
+    - All 68 direct `PacketDistributor` calls in 45 files go through the `PacketHandler` facade (`sendToPlayer`, `sendNear`, `sendTracking`, `sendToAll`, `sendToDimension`, `sendToServer`).
+    - Dialogue routing moved to `DialogueSender`.
+    - The per-effect helpers are thin wrappers over the facade.
+  - **Validation:** `ServerboundGuards` holds `menu`, `withinReach` / `nearBlock` / `nearBlockEntity`, `nearEntity`, `heldItem`, `finite` and `partialTick`.
+    - 13 payloads use it; every other serverbound payload has a stated reason in `ServerboundGuardsCoverageTest`.
+    - The identical cast-eligibility core became `BloodManipulation.isEquippedCastReady`, used by the charge visual and the casting animation. The other cast checks differ on purpose (paralysis flavour, availability, retirement) and were left alone.
+- **Metrics:**
+  - `src/main`: +971 / −2,452 lines, 28 files deleted and 6 added.
+  - `src/test`: +637 / −105. `src/gameTest`: +362 / −2.
+  - Remaining legacy instances:
+    - direct `PacketDistributor` use outside the facade: 0
+    - client references in `common/network`: 0
+    - undocumented bidirectional registrations: 0
+- **Approved items implemented:** the payload-set changes (N-6 / N-7), F-6, F-7, F-8 and F-9.
+  - **F-9 behaviour note:** the Structure Spawner now needs operator permission. In a single-player world created without cheats, the owner is not an operator, so the spawner does nothing there.
+  - **F-7 limit:** 3 messages per sender per 100 server ticks; the excess is dropped with an action-bar note.
+- **Pending approvals:** none new. Two more orphaned textures were added to M-3.
+- **Deviations from the roadmap:**
+  - Roadmap item 3 asks to move the client handling of the 8 inline files into `client/**`. The 6 live ones only looked an entity up on the client level, so they now use `ctx.player().level()` (an existing side-agnostic handler style) instead of a new client class. The other 2 files were dead and are deleted.
+  - Roadmap item 4 says to replace the per-effect helpers with generic `sendNear` / `sendTracking`. Tests and many call sites use the helper names, so the helpers stay as one-line wrappers.
+- **Visual check (VFX fold):**
+  - `PayloadFoldVisualReview` (opt-in review harness in `src/gameTest`) captured all nine effects through their unchanged `PacketHandler` helpers, before and after the fold.
+  - Screenshots: `build/payload-fold-review/before/`, `after/`, and the side-by-side sheets `compare-0.png`, `compare-1.png` and `compare-2.png`.
+  - Match confirmed: Monolith shatter, shard pulse, pome pulse and the Dislocation darkening look the same.
+  - Not visible in either capture: the avatar-hit, flask, claw and tool-break particles (too small at that range) and Crimson Fire (it needs a burning entity). For those, the evidence is the verbatim client code and `VisualPayloadCodecTest`.
+  - The run configuration came from a scratch init script (`payloadFoldReviewClient`, game directory `build/payload-fold-review`, username `FoldReview`).
+- **Not verified (needs in-game check):**
+  - Multiplayer: an old client against a new server, to see the handshake refusal.
+  - F-7's feel in real chat.
+  - The small VFX listed above.
+- **Known issues (pre-existing, not fixed here):**
+  - **Flaky GameTests.** The pre-step-4 commit `2d96be3a5`, run three times, failed `circussuccessionrunnercompletesatdegreefour`, `ferricrampartletsfriendlyshotsthrough`, `magnetismcrusheswhatitpulledwhenthepillarexpires` and `bloodcloudkeepsitscastmastery` in run 1, passed all tests in run 2, and failed `loadedduplicatevespersleaveoneownedboss` in run 3. During this step `completeexitcleansownedfixtureandoutput` and `mandatoryjigsawwingsassemble` also failed intermittently, then passed on rerun. A later step should stabilise them; they need their own investigation.
+  - **Two payloads now arrive separately.** `BloodInjectionEvents` used to send its two sync payloads as one bundle; they now go as two packets in the same order.
+- **Handoff notes for step 5 (Phase 3, player-state plumbing):**
+  - Add every new payload through `PacketHandler`. Bump `PROTOCOL_VERSION` and rewrite `payload-registry.txt` whenever the set, a direction or a byte layout changes.
+  - Use `ServerboundGuards` for serverbound checks, or add an exemption with a reason.
+  - Send only through the facade.
+  - For world-dependent fixtures, `NetworkDefectGameTests.connectedPlayer` shows how to capture every outgoing packet without adding the player to the level. A live fixture player makes parallel GameTests flaky.
