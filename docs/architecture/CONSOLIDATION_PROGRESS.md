@@ -12,7 +12,7 @@ Every consolidation session reads this file first and updates it last, following
 | 3 | Phase 1: verified dead-code removal and packaging | DONE | `ccc75e9a0` | 2026-10-21 |
 | 4 | Phase 2: network hygiene | DONE | `d10e5e7f2` … `018394712` (10 commits) | 2026-10-21 |
 | 5 | Phase 3: player-state plumbing | DONE | `dceced30a` … `7911eaa1f` (5 commits) | 2026-10-22 |
-| 6 | Phase 4: shared small utilities | NOT STARTED | | |
+| 6 | Phase 4: shared small utilities | DONE | `48127a923` … `07d4a4183` (6 commits) | 2026-10-22 |
 | 7 | Phase 5: blood accounting | NOT STARTED | | |
 | 8 | Phase 7: registration and client registration | NOT STARTED | | |
 | 9 | Phase 6: combat targeting and damage attribution | NOT STARTED | | |
@@ -73,7 +73,7 @@ under *Pending approvals*. IDs refer to [ARCHITECTURE_AUDIT](ARCHITECTURE_AUDIT.
 | F-3 | Remove the client-class call from `WillEntity` | 1 | APPROVED | Approved in the step 1 prompt; done in `025f2b18f` |
 | M-1 | Hand-edited models vs their generators (Armature, Centrifuge, Reliquary, loom) | 2 | APPROVED | Owner chose "drop the marker checks" (2026-10-21). The models match their generators byte for byte; the failing tests only looked for a provenance string no generator writes. Done in `ddb358304` |
 | M-2 | Five unregistered mobs (Abyssal Siphon, Cruor Fiend, Frozen Clot, Synapse Hound, Void Drinker) | 3 | PENDING | Delete / archive branch / keep |
-| M-3 | Other "REQUIRES VERIFICATION" dead code (audit section E) | 3 | PENDING | Per item. Step 3 added three: `IBloodRoutingTarget`, `FeatureLogic` and five textures orphaned by the removals. Step 4 added two more orphaned textures: `textures/gui/vein_selection.png` and `vein_teleport.png` |
+| M-3 | Other "REQUIRES VERIFICATION" dead code (audit section E) | 3 | PENDING | Per item. Step 3 added three: `IBloodRoutingTarget`, `FeatureLogic` and five textures orphaned by the removals. `FeatureLogic` is in use again since step 6 (W-2), so it no longer needs a decision. Step 4 added two more orphaned textures: `textures/gui/vein_selection.png` and `vein_teleport.png` |
 | N-6 / N-7 payload set | Fold the single-purpose VFX payloads (N-6) and delete the never-sent payloads (audit section E) under a new `PROTOCOL_VERSION` | 4 | APPROVED | Owner approved 2026-10-21. Payload byte layouts are frozen by the session rules, so this needed approval |
 | F-6 | Ledger actions require the ledger item | 4 | APPROVED | Owner approved 2026-10-21 (step 4 prompt) |
 | F-7 | Bloodline chat rate limit | 4 | APPROVED | Owner approved 2026-10-21: a simple per-player rate limit, with excess messages dropped. Vanilla chat integration (signing, mute, logging) stays out of scope |
@@ -143,6 +143,12 @@ them green.
 | gameTest `OwnerSnapshotGameTests#everySyncedAttachmentReachesTheOwnerOnEachLifecycle` | 5 | Every table entry reaches the owner exactly once per lifecycle event it lists (one per equipment slot), and only then |
 | `common/capability/PendingDeliveryTest` | 5 | The delivery rule: closed gates, carried items, full, partial and failed insertion, per-entry retry, Creative discard counted as nothing |
 | `architecture/PendingDeliveryRegistryTest` | 5 | Only `PendingDelivery` counts insertions; each of the six claims is driven and keeps its saved NBT key |
+| `architecture/EasingCopyGuardrailTest` | 6 | A-2: no private scalar `smoothstep` / `smooth` / `lerp` / `clamp01` / one-argument `clamp` or `ease` outside `HemoEasing` and a reasoned allow-list; also scans the `tools/model_export` templates |
+| `common/util/HemoEasingTest` | 6 | Golden values for every `HemoEasing` function, including that `smoothstep` is the cubic, not the quintic |
+| `architecture/SmallUtilityGuardrailTest` | 6 | No private copies of the attribute-modifier, armour-set, ticker, block-entity sync, pattern-origin or worldgen-setter helpers; no literal degree comparison outside `ProgressionGates`; immediate block-entity sends only before a menu opens |
+| `common/util/ProgressionGatesTest` | 6 | `hasDegree` / `isDegree` at every degree boundary, the rewritten comparison forms, and every Unstained stage threshold |
+| gameTest `AttributeSyncGameTests` (batch `attribute_sync`) | 6 | P-1: an unchanged held modifier, including a worn elytra or Fungal Elytra, leaves its attribute clean (no update packet) |
+| gameTest `PatternOriginGameTests` (batch `pattern_origins`) | 6 | L-4: each origin solver keeps its pre-merge winner on overlapping matches |
 
 ## Step entries
 
@@ -470,3 +476,90 @@ them green.
   - **Player state:** read through `HemoCapabilityAccess` (no `Optional` for players). Add a new synced attachment as a `PlayerStateSync` entry, not a lifecycle handler. Register new session maps with `TransientServerStateEvents` (clear plus, if appropriate, logout). Deliver earned items with a `PendingDelivery.Claim`.
   - **Fixture:** `gametest/CapturedPlayer` is a shared connected player that captures payloads and stays out of the level. 58 older GameTest files still carry private copies of that fixture; folding them in is test cleanup for a later step.
   - **Rewriting tools:** the javac-driven rewriter used for 5a (`jchain.py`, `rewrite.py`) lived in the session scratchpad and was not committed; re-derive it if another mass `Optional` change is needed.
+
+### Step 6: Phase 4, shared small utilities
+- **Status / date / commits:** DONE, 2026-10-22. Six commits on `neo-1.21.1`, across two sessions:
+  - `48127a923`: A-2 `HemoEasing`
+  - `f200d6e1b`: P-1 / G-5 `AttributeModifiers`, G-6 `ArmorSets`, O-3 `HemoTickers`, L-7 `BlockEntitySync`
+  - `a288c3fba`: S-6 / D-3 `ProgressionGates`
+  - `73dda530e`: L-4 `PatternOrigins`
+  - `576aab6c3`: W-2 `FeatureLogic` setters
+  - `07d4a4183`: review fixes
+
+  A further `consolidation(step-6):` commit records this entry.
+- **Test counts before → after:**
+  - `test`: 3,959 → 3,979, 0 failures.
+  - `alphaCheck`: green, with all 1,011 required GameTests passing (1,007 before; 4 new).
+  - Opt-in suites run because this step touches their code:
+    - antecedent 14/14, advanced brewing 7/7, scriptorium 22/22, living weapons 10/10, Excoriated spawn 1/1.
+    - Clinical 131 and succession 22 each fail the same 2 known tests as at `86d2d8157` (see step 5).
+  - No dedicated-server or client start was run separately. The dedicated server loads in every GameTest run, and no resources, shaders or registrations changed.
+- **What changed:**
+  - **Easing (A-2):** `HemoEasing` holds the cubic smoothstep, `lerp(a, b, t)`, `clamp01`, `pulse`, crossfade and the cubic eases, in float and double forms.
+    - Copies that genuinely differ are named variants: `smoothstepUnclamped` and the quintic `smootherstep`.
+    - About 100 private copies in 81 classes are gone. `lerp(t, a, b)` callers had their arguments reordered.
+    - The only value differences are negative zero against positive zero, as listed in `48127a923`.
+  - **Attribute modifiers (P-1 / G-5):** `AttributeModifiers.sync` / `syncPermanent` do nothing while a modifier is unchanged.
+    - It replaced ten remove-then-add copies: muscle memory, High-Strung, body refinement, Emberfang heat, avatar form, chitinite toughness, pelagic motion, Marrow Crown, brew poise and scar synergy (permanent), plus Excoriated clotting.
+    - The Elytra flight modifier no longer comes off and goes back on every tick on both sides. It is held while the chestplate can glide or Fungal Elytra is active, which was its end-of-tick state before. This ends a flight-attribute update packet every tick for every player wearing an elytra.
+    - Chitinite toughness also stops re-adding its modifier on every equipment change when the toughness cap clamps the bonus.
+  - **Armour sets (G-6):** `ArmorSets.isFullSet` handles exact pieces, a list of helms, a slot map and a whole material. `ArmorSetHelper`, the material count in `ArmorSetBonusHandler`, `SimpleArmorSetAbility` and both Silent Archon copies use it. The public method names stay; the source tests pin them.
+  - **Tickers (O-3):** `HemoTickers.create` replaced the 8 private `createTickerHelper` copies and the 10 raw ticker casts. The three suspended-crystal blocks had empty tickers and now have none.
+  - **Block-entity sync (L-7):**
+    - `BlockEntitySync.markAndSync` is the one save-and-resend body. 27 per-class `sendUpdates` / `sync` / `markDirtyAndSync` / `setChangedAndSync` bodies (seven variants) are gone, and about 180 call sites were rewritten.
+    - The bodies differed only by `setBlocksDirty`, which does nothing on the server and duplicates `sendBlockUpdated` on the client.
+    - `IBloodReservoir` and `IWhiteHumorTile` keep `sendUpdates` as a default that delegates, and `FillerBlockEntity` still forwards to its main reservoir.
+    - Immediate `VanillaPacketDispatcher` sends stacked on a sync were dropped: Scar Station use and craft, the Somatic Loom and Effigy scar selection. The update now goes out with the chunk's block changes at the end of the same tick. The immediate sends right before a menu opens stay.
+  - **Progression gates (S-6 / D-3):**
+    - `ProgressionGates.hasDegree` / `isDegree` (for a player or a degree state), `isBloodActive` and `unstainedStage`.
+    - The 64 literal degree comparisons in 39 files read through it. Degrees are integers, so every rewrite gives the same answer.
+    - The Unstained stage ladder moved out of `HemoCapabilityAccess`, and `RecipeDegreeGates` reads it from `ProgressionGates`. Annetta's two blood-active helpers use `isBloodActive`.
+  - **Pattern origins (L-4):** `PatternOrigins` holds `originForCell`, `offset`, `contains`, `bounds` and the two searches the solvers already used.
+    - `findContaining` is the key press's search: orientation first, then pattern cell.
+    - `scanAround` is the cube scan: origin first, from the low corner, with a predicate. Projection crafts and Working-craft subjects require the match to cover the hit; rite re-verification and consumption take any nearby match.
+    - The two orders pick different placements when matches overlap, so both stay. `PatternOriginGameTests` recorded every solver's winner against the old code before the move, and still pass.
+    - Migrated: the key-press packet (solver, origin arithmetic, inline bounds, duplicate alignment check), `BloodStructureCraftingHelper`, rite re-verification, `CardinalRiteStationMatcher`, Succession's floor re-match, `WorkingCraftSubjectMatcher`, the feed manager and `CardinalRiteFloorGeometry`.
+  - **Worldgen (W-2):** `FeatureLogic` gained `placeIfReplaceable`, `placeIfSubmerged` and `isWaterSource`, shared by the Spore Nexus tower, termite mound, deep-ocean vent and Erythrocoral reef. The noise helpers are untouched.
+- **Metrics:**
+  - `src/main`: about +1,740 / −2,320 across about 265 files. 7 classes were added in `common/util`; no class was deleted.
+  - `src/test`: +410 / −23 (2 guardrail and 2 unit test files). `src/gameTest`: +213 (2 files).
+  - Remaining legacy instances:
+    - private scalar easing copies: 0 outside the reasoned allow-list (2)
+    - hand-written modifier writers: 2, allow-listed (Veinwing penalty, Scar equip)
+    - private ticker helpers and raw ticker casts: 0
+    - per-class sync helper bodies: 0
+    - literal degree comparisons: 0
+    - private origin solvers: 0
+- **Guardrails added:** see the table (`EasingCopyGuardrailTest`, `HemoEasingTest`, `SmallUtilityGuardrailTest`, `ProgressionGatesTest`, `AttributeSyncGameTests`, `PatternOriginGameTests`).
+- **Approved items implemented:** none needed; nothing in this step was marked APPROVAL.
+- **Pending approvals:** none new. M-3's `FeatureLogic` entry is resolved: the W-2 merge put it back into use, so it is no longer dead code.
+- **Deviations from the roadmap:**
+  - **`PatternOrigins` keeps two search orders.** The roadmap expected one origin solver. The key press and the cube scans disagree on overlapping matches, so merging them would change which structure is crafted or consumed. Both are now one utility with named orders, and the winners are locked.
+  - **Unstained "ladder copies":** only `getPlayerUnstainedLevel` was a stage ladder.
+    - The other four sites check raw purity or clarity thresholds: the Stillwater Condenser, Zealot dialogue, Pale Intercession (clarity 75, which is not a stage boundary) and observance readiness.
+    - Nothing enforces purity before clarity, so mapping them to stages would change their answer when clarity is unlocked below full purity. They stay.
+  - **`isBloodActive`** replaced the private helper copies only. Inline `getBloodVolume(player).isActive()` reads, which usually hold the volume for other use, stay.
+  - **`RecipeDegreeGates`** stays the recipe layer. It reads player levels through `ProgressionGates`, rather than `ProgressionGates` wrapping it.
+  - **Named gate constants:** degree comparisons against constants or variables (`StationUpgradeProgress`, `UnlockPredicate`, `ScarBrazierRite` and others) were out of the literal scope. The guardrail only forbids literals.
+  - **Saint Sarcophagus** keeps its server-guarded `sendBlockUpdated` calls. Two of them do not mark the block entity changed, so routing them through `markAndSync` would add a save.
+  - **Unclamped ease variants** (`ClawSlashRenderer` and `SanguineMonolithShatterRenderer` `easeOutCubic`, `WorkingCraftDaemonPath` `easeInOut`, `PuppetStringsRules` `easeOut`) differ from `HemoEasing` and stay local.
+- **Final review:** one reviewer read the whole range.
+  - It found no bugs and no unintended behaviour change.
+  - Fixed in `07d4a4183`:
+    - The Mycophant and Vesper mount animation templates still used the removed helpers, so regenerating would have broken the build. Both generators now reproduce the committed models.
+    - A duplicate import broke the Somatic Loom file's CR CR LF endings.
+    - Three inline save-and-resend bodies and two inline setters were left over.
+  - Accepted: a Scar Station opened while two players already use it no longer sends an update. Nothing changes on that path.
+- **Not verified (needs in-game check):**
+  - Elytra and Fungal Elytra gliding feel, in multiplayer. The attribute end state is unchanged and `AttributeSyncGameTests` covers the sync.
+  - Station screens that lost a stacked immediate send: Scar Station craft and Effigy scar selection.
+- **Known issues (pre-existing, not fixed here):**
+  - `mandatoryjigsawwingsassemble` failed once in a combined run again, and passed alone (9/9 in `runRegistrationGameTestServer`).
+  - `crossingdimensionsdeliberatelyunravelssummon` (40-tick haul timeout) failed once in a combined run and passed on the rerun and in four other runs.
+  - Clinical and succession opt-in failures as in step 5.
+- **Handoff notes for step 7 (Phase 5, blood accounting):**
+  - The baseline is fully green: 3,979 JUnit tests and 1,011 required GameTests.
+  - Use the `common/util` helpers (AGENTS.md lists them). `SmallUtilityGuardrailTest` fails on a new private copy or a literal degree comparison.
+  - Blood-active checks have `ProgressionGates.isBloodActive(player)`.
+  - Generated models: when a shared helper replaces code in a generated class, edit its `tools/model_export/*_anim.java` template and imports too, then re-run the generator and confirm it reproduces the class. `EasingCopyGuardrailTest` now scans those templates.
+  - Line endings in the working copy are mixed (LF, CRLF and the loom's CR CR LF). Edit with tools that keep each file's own endings, and check `git diff` for whole-file rewrites.

@@ -219,6 +219,9 @@ public record ExamplePayload(int entityId, float amount) implements CustomPacket
   one `MixinHumanoidModel` hook.
 - `VesperAnimClock`.
 - Eruptus for simple mobs.
+- Since step 6: `common/util/HemoEasing` holds the easing and interpolation, with the
+  quintic `smootherstep` and `smoothstepUnclamped` as named variants. `HemoEasingTest`
+  pins golden values and `EasingCopyGuardrailTest` rejects private copies.
 
 **Migration targets**
 - A-1 (boss clocks)
@@ -266,6 +269,11 @@ Unstained mechanics, hazards, Still Arts and summons.
 - Manipulations: the cast gate `BloodManipulation.tryPerformAction`, plus
   `ManipulationCombatHelper` and `SchoolDamage`.
 - Morphlings follow most of this already.
+- Since step 6, in `common/util`: `AttributeModifiers.sync` / `syncPermanent`, `ArmorSets.isFullSet`,
+  `ProgressionGates`, `PatternOrigins` for multiblock placement (two named search orders),
+  `HemoTickers.create` for block tickers and `BlockEntitySync.markAndSync` for block-entity
+  resends. `FeatureLogic` holds the worldgen replaceable-block setters.
+  `SmallUtilityGuardrailTest` rejects new private copies of each.
 
 **Migration targets**
 - Armour abilities, scars, Still Arts, living weapons, primal morphlings, puppet
@@ -424,7 +432,7 @@ they are already being moved for another reason. **No mass renames.**
 Other naming rules:
 - **Registry paths** are snake_case. They are frozen once shipped.
 - **Magic numbers.** Degrees are compared through `ProgressionGates` or
-  `EnumInitiatoryDegree`, never a literal. Tick constants are named
+  `EnumInitiatoryDegree`, never a literal (enforced since step 6). Tick constants are named
   (`TICKS_PER_SECOND * n`) when they encode game time.
 - **Logging.** Use `Hemomancy.LOGGER`, or a per-class `LogUtils.getLogger()`. Never
   `System.out`. A warning includes the player or position and the resource id involved.
