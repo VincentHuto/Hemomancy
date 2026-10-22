@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.scars;
 
+import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarType;
@@ -68,7 +69,8 @@ public class PacketPrepareScarPattern implements CustomPacketPayload {
 			if (!(ctx.player() instanceof ServerPlayer player)) {
 				return;
 			}
-			if (!(player.containerMenu instanceof MasonsEffigyMenu menu) || !menu.stillValid(player) || !menu.getPos().equals(msg.pos)) {
+			MasonsEffigyMenu menu = ServerboundGuards.menu(player, MasonsEffigyMenu.class);
+			if (menu == null || !menu.getPos().equals(msg.pos)) {
 				fail(player, "The Effigy is no longer listening.");
 				return;
 			}

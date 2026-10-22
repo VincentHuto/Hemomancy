@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
+import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -237,8 +238,7 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 	}
 
 	private static boolean isValidDistributor(ServerPlayer player, BlockPos pos) {
-		if (pos == null || player.distanceToSqr(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D)
-				> MAX_DISTRIBUTOR_DISTANCE_SQR) {
+		if (!ServerboundGuards.withinReach(player, pos, MAX_DISTRIBUTOR_DISTANCE_SQR)) {
 			return false;
 		}
 		BlockEntity be = player.level().getBlockEntity(pos);

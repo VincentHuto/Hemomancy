@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.scars;
 
+import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.ScarStationMenu;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ScarStationBlockEntity;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class PacketUpdateScarPattern implements CustomPacketPayload {
@@ -50,9 +50,9 @@ public class PacketUpdateScarPattern implements CustomPacketPayload {
 
 		public static void handle(final PacketUpdateScarPattern msg, final IPayloadContext ctx) {
 			ctx.enqueueWork(() -> {
-				AbstractContainerMenu container = ctx.player().containerMenu;
-				if (container instanceof ScarStationMenu && container.stillValid(ctx.player())) {
-					ScarStationBlockEntity station = ((ScarStationMenu) container).getTe();
+				ScarStationMenu menu = ServerboundGuards.menu(ctx.player(), ScarStationMenu.class);
+				if (menu != null) {
+					ScarStationBlockEntity station = menu.getTe();
 					station.setScarList(msg.getPattern());
 				}
 			});

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.succession;
 
+import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
@@ -27,8 +28,8 @@ public record ResidentsRequestPacket(UUID identity, boolean dismiss) implements 
         var line = SuccessionResidents.line(player); if (line == null) return false;
         var data = SuccessionSavedData.get(player.serverLevel()); boolean changed = false;
         var heart = FoundingFaneSavedData.get(player.serverLevel()).getHeart(line.getLeaderUUID());
-        boolean atFane = heart != null && player.distanceToSqr(heart.getX()+.5, heart.getY()+.5, heart.getZ()+.5) <= 64
-                && player.serverLevel().getBlockState(heart).is(BlockInit.consecrated_bloodwell.get());
+        boolean atFane = ServerboundGuards.nearBlock(player, heart, BlockInit.consecrated_bloodwell.get(),
+                ServerboundGuards.BLOCK_REACH_SQR);
         var resident = data.residents.get(identity);
         if (!LIST.equals(identity) && resident != null && resident.bloodline.equals(line.getBloodlineUUID())
                 && !resident.dismissed && !data.ledger.locked(identity)) {

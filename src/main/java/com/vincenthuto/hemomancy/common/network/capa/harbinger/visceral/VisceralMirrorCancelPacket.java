@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.visceral;
 
+import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.VisceralMirrorBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -8,7 +9,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
@@ -39,11 +39,9 @@ public class VisceralMirrorCancelPacket implements CustomPacketPayload {
 			Player player = ctx.player();
 			if (!(player instanceof ServerPlayer sender)) return;
 
-			if (sender.distanceToSqr(msg.pos.getX() + 0.5, msg.pos.getY() + 0.5,
-					msg.pos.getZ() + 0.5) > 64.0) return;
-
-			BlockEntity be = sender.level().getBlockEntity(msg.pos);
-			if (!(be instanceof VisceralMirrorBlockEntity mirror)) return;
+			VisceralMirrorBlockEntity mirror = ServerboundGuards.nearBlockEntity(sender, msg.pos,
+					VisceralMirrorBlockEntity.class, ServerboundGuards.BLOCK_REACH_SQR);
+			if (mirror == null) return;
 
 			mirror.cancelRitual(sender);
 		});

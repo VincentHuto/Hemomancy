@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.summon;
 
+import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.common.menu.PuppeteersSpindleMenu;
@@ -40,7 +41,8 @@ public record PacketPuppeteersSpindleAction(Action action, String summonName) im
 	}
 
 	private static void handleServer(PacketPuppeteersSpindleAction msg, ServerPlayer player) {
-		if (!(player.containerMenu instanceof PuppeteersSpindleMenu menu) || !menu.stillValid(player)) {
+		PuppeteersSpindleMenu menu = ServerboundGuards.menu(player, PuppeteersSpindleMenu.class);
+		if (menu == null) {
 			return;
 		}
 		ItemStack crossbar = menu.getCrossbarStack();

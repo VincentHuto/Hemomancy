@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.dialogue;
 
+import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.MemoHelper;
@@ -70,7 +71,7 @@ public class DialogueOptionPacket implements CustomPacketPayload {
 			if (entityId != SanguineMonolithDialogueTrees.BLOCK_ENTITY_ID
 					|| !MonolithDialogueContext.permits(sender, eventId)) return null;
 		} else {
-			if (entityId != 0 && (entity == null || sender.distanceTo(entity) > 8.0)) return null;
+			if (entityId != 0 && ServerboundGuards.nearEntity(sender, entityId, 8.0D) == null) return null;
 			var stationClaim = StationUpgradeDialogue.parseClaim(eventId);
 			if (stationClaim.isPresent() && !StationUpgradeDialogue.allowedSpeaker(stationClaim.get().station(), entity))
 				return null;

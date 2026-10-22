@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.init.StillArtInit;
 import com.vincenthuto.hemomancy.common.manipulation.*;
@@ -82,11 +81,7 @@ public final class CastingAnimationManager {
                 && known!=null && known.getSelectedMemoryRef().kind()==MemoryEntryKind.MANIPULATION
                 && known.getSelectedManip()!=null
                 && known.getSelectedManip().getName().equals(manipulation.getName())
-                && known.isManipEquipped(manipulation) && known.isManipulationAvailable(manipulation)
-                && HemoCapabilityAccess.requireBloodVolume(player).isActive()
-                && !HemoCapabilityAccess.getUnstainedProgress(player).map(UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false)
-                && HemoCapabilityAccess.getBloodTendency(player)
-                    .map(t -> t.getAlignmentByTendency(manipulation.getTend())>=manipulation.getAlignLevel()).orElse(false);
+                && manipulation.isEquippedCastReady(player, known);
     }
     private static boolean canPresentStillArt(ServerPlayer player,StillArt art) {
         return art!=null && player.isAlive()

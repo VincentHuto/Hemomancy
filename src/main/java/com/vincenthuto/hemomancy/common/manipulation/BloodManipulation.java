@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.Harbi
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationCostSnapshot;
@@ -393,6 +394,19 @@ public class BloodManipulation implements EntityCastableManipulation {
 		return type == EnumManipulationType.PASSIVE
 				&& tryPerformAction(player, player.level(), ItemStack.EMPTY, player.blockPosition(), 0.0F,
 						false, false, false);
+	}
+
+	/**
+	 * The equipped-cast gate shared by the charge visual and the casting animation: this manipulation is equipped and
+	 * absorbed, the player's blood is active, Unstained progress does not lock blood powers, and the player is aligned
+	 * enough with its tendency. Callers add their own selection, paralysis, cooldown and life checks.
+	 */
+	public boolean isEquippedCastReady(ServerPlayer player, IKnownManipulations known) {
+		return known.isManipEquipped(this) && known.isManipulationAvailable(this)
+				&& HemoCapabilityAccess.requireBloodVolume(player).isActive()
+				&& !HemoCapabilityAccess.getUnstainedProgress(player)
+						.map(com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false)
+				&& HemoCapabilityAccess.getBloodTendency(player).map(tendency -> tendency.getAlignmentByTendency(tend) >= alignLevel).orElse(false);
 	}
 
 	public boolean isPassiveReady(ServerPlayer player) {

@@ -30,12 +30,8 @@ public record ManipulationChargeVisualPacket(int heldTicks) implements CustomPac
             if(selected==null || selected.getType()!=EnumManipulationType.CHARGED) return;
             var form=ManipulationVisuals.chargeForm(selected.getName());
             if(form==null || packet.heldTicks<0 || packet.heldTicks>selected.getRequiredChargeTicks())return;
-            if(packet.heldTicks>0 && (!known.isManipEquipped(selected)
-                    || !known.isManipulationAvailable(selected) || !HemoCapabilityAccess.requireBloodVolume(player).isActive()
+            if(packet.heldTicks>0 && (!selected.isEquippedCastReady(player, known)
                     || selected.isOnCooldown(player) || !player.isAlive())) return;
-            if(packet.heldTicks>0 && (HemoCapabilityAccess.getUnstainedProgress(player).map(
-                    com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules::blocksKnownBloodPowerUse).orElse(false)
-                    || HemoCapabilityAccess.getBloodTendency(player).map(t -> t.getAlignmentByTendency(selected.getTend()) < selected.getAlignLevel()).orElse(true))) return;
             long now=player.level().getGameTime();
             String key="hemomancy:charge_visual_tick";
             if(packet.heldTicks>0 && player.getPersistentData().contains(key)

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.scars;
 
+import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.ScarMenuProvider;
@@ -46,10 +47,7 @@ public class PacketOpenScarsInv implements CustomPacketPayload {
 	}
 
 	private static boolean canOpenScarletVanity(ServerPlayer player, BlockPos pos) {
-		return player.level().hasChunkAt(pos)
-				&& player.level().getBlockState(pos).is(BlockInit.scarlet_vanity.get())
-				&& player.distanceToSqr(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D)
-						<= MAX_USE_DISTANCE_SQR;
+		return ServerboundGuards.nearBlock(player, pos, BlockInit.scarlet_vanity.get(), MAX_USE_DISTANCE_SQR);
 	}
 
 	@Override

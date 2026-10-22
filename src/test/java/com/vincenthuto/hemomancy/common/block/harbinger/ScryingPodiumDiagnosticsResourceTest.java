@@ -35,7 +35,7 @@ public final class ScryingPodiumDiagnosticsResourceTest {
 				"PacketOpenScarsInv");
 
 		assertContains("diagnostic packet should validate the scrying podium block", openPacket,
-				"player.level().getBlockState(pos).is(BlockInit.scrying_podium.get())");
+				"ServerboundGuards.nearBlock(player, pos, BlockInit.scrying_podium.get(), MAX_USE_DISTANCE_SQR)");
 		assertContains("diagnostic packet should open the diagnostics menu", openPacket,
 				"player.openMenu(new ScryingDiagnosticsMenuProvider())");
 		assertContains("packet handler should register scrying diagnostics", packetHandler,

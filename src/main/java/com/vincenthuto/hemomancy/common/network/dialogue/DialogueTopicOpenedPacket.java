@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.dialogue;
 
+import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -32,10 +33,7 @@ public record DialogueTopicOpenedPacket(ResourceLocation topicId, int entityId) 
 	public static void handle(DialogueTopicOpenedPacket packet, IPayloadContext context) {
 		context.enqueueWork(() -> {
 			if (!(context.player() instanceof ServerPlayer player) || !isValidTopicId(packet.topicId)) return;
-			if (packet.entityId != 0) {
-				var entity = player.level().getEntity(packet.entityId);
-				if (entity == null || player.distanceTo(entity) > 8.0F) return;
-			}
+			if (packet.entityId != 0 && ServerboundGuards.nearEntity(player, packet.entityId, 8.0D) == null) return;
 			player.getData(HemoAttachmentTypes.DIALOGUE_KNOWLEDGE).markRead(packet.topicId);
 		});
 	}

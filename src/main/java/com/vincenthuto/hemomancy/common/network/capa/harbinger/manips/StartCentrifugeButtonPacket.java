@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
+import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
@@ -27,10 +28,11 @@ public class StartCentrifugeButtonPacket implements CustomPacketPayload {
 
 	public static void handle(final StartCentrifugeButtonPacket msg, final IPayloadContext ctx) {
 		ctx.enqueueWork(() -> {
-			if (ctx.player() instanceof ServerPlayer serverPlayer
-					&& serverPlayer.containerMenu instanceof VialCentrifugeMenu menu
-					&& menu.stillValid(serverPlayer)) {
-				start(serverPlayer, menu.getTe());
+			if (ctx.player() instanceof ServerPlayer serverPlayer) {
+				VialCentrifugeMenu menu = ServerboundGuards.menu(serverPlayer, VialCentrifugeMenu.class);
+				if (menu != null) {
+					start(serverPlayer, menu.getTe());
+				}
 			}
 		});
 	}
