@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Mycophant: Spawn Mother v8</title>
+<style>
+  :root { --bg:#100b0a; --panel:#1b1412; --ink:#efe0d6; --dim:#a8958b; --accent:#f08a2a; --line:#3a2a24; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 system-ui, sans-serif; }
+  header { padding:16px 24px 4px; }
+  h1 { margin:0; font-size:20px; }
+  .sub { color:var(--dim); margin:4px 0 0; max-width:1100px; }
+  .wrap { display:grid; grid-template-columns:minmax(0,1fr) 360px; gap:16px; padding:12px 24px 16px; }
+  #view { position:relative; height:72vh; min-height:440px; background:#0a0706; border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+  #view canvas { display:block; }
+  .controls { position:absolute; left:10px; top:10px; right:10px; display:flex; gap:6px; flex-wrap:wrap; z-index:5; }
+  .controls button { background:#2a1d19; color:var(--ink); border:1px solid var(--line); border-radius:6px; padding:5px 10px; cursor:pointer; font-size:13px; }
+  .controls button.on { border-color:var(--accent); color:#fff; }
+  .controls .sep { width:8px; }
+  #dim { position:absolute; inset:0; background:#000; opacity:0; pointer-events:none; z-index:2; }
+  #vignette { position:absolute; inset:0; pointer-events:none; z-index:3; opacity:0;
+    background:radial-gradient(ellipse at center, rgba(0,0,0,0) 35%, rgba(60,8,4,.85) 100%); }
+  #fibers { position:absolute; inset:0; pointer-events:none; z-index:4; }
+  #caption { position:absolute; left:0; right:0; bottom:18px; text-align:center; z-index:6; font-size:16px; color:#fff; text-shadow:0 1px 4px #000; pointer-events:none; }
+  #ctrlTag { position:absolute; right:12px; bottom:14px; z-index:6; font-size:12px; padding:3px 8px; border-radius:5px; background:#2a1d19; color:var(--dim); border:1px solid var(--line); }
+  #ctrlTag.live { color:#bff59a; border-color:#5d8a3a; }
+  aside { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px 16px; overflow:auto; max-height:72vh; }
+  aside h3 { margin:0 0 6px; font-size:15px; color:var(--accent); }
+  aside ul { margin:0 0 12px; padding-left:18px; }
+  aside li { margin:3px 0; }
+  .note { color:var(--dim); font-size:13px; }
+  @media (max-width: 960px) { .wrap { grid-template-columns:1fr; } aside { max-height:none; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>The Spawn Mother, blockout v8</h1>
+  <p class="sub">Built from your specification, anatomy first: a walking chassis on six jointed legs, a raised thorax with two great claw arms, a tall frilled head, and the swollen reproductive abdomen behind. Plain boxes at world scale (16 px to a block). <b>Walk</b> runs a slow alternating gait. <b>Spawning</b> opens the petal vents.</p>
+</header>
+<div class="wrap">
+  <div id="view">
+    <div class="controls">
+      <button id="bPlay">&#9654; Play opening</button>
+      <span class="sep"></span>
+      <button data-pose="tending">Tending</button>
+      <button data-pose="stalk" class="on">Stalking</button>
+      <button data-pose="roar">Rear &amp; roar</button>
+      <button data-pose="embrace">Rushing embrace</button>
+      <button data-pose="spawn">Spawning</button>
+      <button id="bPhase">Phase 2: split &amp; wings</button>
+      <button data-pose="guard">Wing guard</button>
+      <button data-pose="sweep">Wing sweep</button>
+      <span class="sep"></span>
+      <button id="bWalk">Drag</button>
+      <button id="bFront">Front</button>
+      <button id="bSide">Side</button>
+      <button id="bRear">Rear</button>
+      <button id="bHead">Head</button>
+      <button id="bSpin" class="on">Turntable</button>
+    </div>
+    <div id="dim"></div>
+    <div id="vignette"></div>
+    <svg id="fibers" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+    <div id="caption"></div>
+    <div id="ctrlTag" style="display:none">player bound</div>
+  </div>
+  <aside>
+    <h3>Against the spec</h3>
+    <ul>
+      <li><b>Size:</b> about 7 blocks to the crest and 7 long. Legs span about 6 blocks wide, and the open claws about 8.</li>
+      <li><b>Chassis:</b> a low sternum with six legs in three pairs, each with a basal segment, a thick upper leg, a raised knee and a long lower leg ending in a spike. The front pair is thick, the middle pair widest, the rear pair angled back. There's open space under the body.</li>
+      <li><b>Thorax:</b> raised high on a narrower waist, with armored shoulders and overlapping side plates. The front of the chest is an open cavity holding the great glowing sac cluster. A dorsal ridge runs from the shoulders down to the abdomen.</li>
+      <li><b>Claws:</b> shoulder, ridged upper arm, angular elbow, long forearm, oversized claw housing, then a fixed and a moving pincer with ivory gripping edges that curve inward. The right claw is bulkier.</li>
+      <li><b>Head:</b> a long, narrow skull pointing down, with a pale bone carapace and a beaked upper face. It's asymmetric, with amber sensory pits in dark recesses. The vertical mouth opens sideways and a thick tongue hangs out. Eight facial tentacles: two very long lateral whips, three short ones under the mouth, three reaching forward. The frill has a central crest and two lateral fans of red membrane between bone-yellow ridges.</li>
+      <li><b>Abdomen:</b> plated on top and softer and banded underneath. It's widest in the middle and narrows to the rear. Sac clusters sit in recessed cavities on the flanks. There are petal vents on both lower flanks and under the tip, and trailing tendrils at the end.</li>
+      <li><b>Fungal growth:</b> trumpet vents on the shoulders and back, and shelf fungi only along seams and cavity edges.</li>
+    </ul>
+    <p class="note">The pool and stalks are separate arena dressing, as the spec asks. Angles and the gait are rough.</p>
+  </aside>
+</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const view = document.getElementById('view');
+const renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true });
+renderer.setPixelRatio(window.devicePixelRatio);
+view.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0a0706);
+scene.fog = new THREE.Fog(0x120a07, 300, 680);
+const camera = new THREE.PerspectiveCamera(42, 1, 1, 4000);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+
+scene.add(new THREE.HemisphereLight(0xffe2c8, 0x2a120c, 1.8));
+const sun = new THREE.DirectionalLight(0xfff0dc, 1.6); sun.position.set(-140, 260, -180); scene.add(sun);
+const rimL = new THREE.DirectionalLight(0xff7a2a, 1.1); rimL.position.set(160, 120, 220); scene.add(rimL);
+
+const C = {
+  crimson: 0x6e1416, crimson2: 0x8a1e1a, rust: 0xa8461e, maroon: 0x3a0c0e, dark: 0x1c0606,
+  olive: 0x7a7428, chartreuse: 0xa8a832, ochre: 0xc08a2a, amber: 0xffb030, ivory: 0xe6d8b0, bone: 0xd8c08a,
+  pink: 0xb04a5a, pink2: 0x8a3046, membrane: 0x9a1a22, chitin: 0x521212,
+  nectar: 0xc9952f, fung: 0xd0602a, fungCap: 0xc62a1e
+};
+const matCache = new Map();
+function mat(color, opts = {}) {
+  const key = color + JSON.stringify(opts);
+  if (!matCache.has(key)) matCache.set(key, new THREE.MeshLambertMaterial(Object.assign({ color, side: THREE.DoubleSide }, opts)));
+  return matCache.get(key);
+}
+const sacMat = new THREE.MeshLambertMaterial({ color: 0xffa828, emissive: 0xff7a10, emissiveIntensity: 0.8, transparent: true, opacity: 0.92 });
+const glowMat = new THREE.MeshLambertMaterial({ color: 0xffc848, emissive: 0xffa020, emissiveIntensity: 0.8 });
+const pitMat = new THREE.MeshLambertMaterial({ color: 0xffc040, emissive: 0xff9a10, emissiveIntensity: 1.2 });
+function box(parent, w, h, d, color, x, y, z, rx = 0, ry = 0, rz = 0, opts) {
+  const material = color instanceof THREE.Material ? color : mat(color, opts);
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
+  m.position.set(x, y, z); m.rotation.set(rx, ry, rz); parent.add(m); return m;
+}
+function grp(parent, x = 0, y = 0, z = 0, rx = 0, ry = 0, rz = 0) {
+  const g = new THREE.Group(); g.position.set(x, y, z); g.rotation.set(rx, ry, rz); parent.add(g); return g;
+}
+let seed = 31;
+function rnd() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
+function shelf(parent, x, y, z, ry, n = 3, s = 1) { // shelf fungi along a seam
+  for (let i = 0; i < n; i++) {
+    const w = (5 - i) * s;
+    box(parent, w, 1, w * 0.6, i % 2 ? C.ochre : C.rust, x, y - i * 2.2 * s, z, 0, ry, 0);
+    box(parent, w * 0.8, 0.4, w * 0.45, C.chartreuse, x, y - i * 2.2 * s - 0.7, z, 0, ry, 0);
+  }
+}
+function trumpet(parent, x, y, z, rx, rz, s = 1) {
+  const g = grp(parent, x, y, z, rx, 0, rz);
+  box(g, 5 * s, 3 * s, 5 * s, C.maroon, 0, 1.5 * s, 0);
+  box(g, 6 * s, 1.2 * s, 6 * s, C.olive, 0, 0.4 * s, 0);
+  box(g, 5.5 * s, 4 * s, 5.5 * s, C.rust, 0, 5 * s, 0);
+  box(g, 8.5 * s, 1.6 * s, 8.5 * s, C.ochre, 0, 7.6 * s, 0);
+  const inner = box(g, 5 * s, 1 * s, 5 * s, glowMat, 0, 8 * s, 0);
+  return { g, inner };
+}
+
+// ---------- arena dressing (separate from the creature) ----------
+const pool = new THREE.Mesh(new THREE.CylinderGeometry(270, 270, 1, 64),
+  new THREE.MeshLambertMaterial({ color: C.nectar, transparent: true, opacity: 0.45, emissive: 0x2a1806 }));
+pool.position.y = 0.3; scene.add(pool);
+const floor = new THREE.Mesh(new THREE.CylinderGeometry(420, 420, 1, 48), mat(0x24100c)); floor.position.y = -0.6; scene.add(floor);
+for (let i = 0; i < 26; i++) {
+  const a = rnd() * Math.PI * 2, r = 300 + rnd() * 100, h = 30 + rnd() * 80;
+  box(scene, 6, h, 6, rnd() > .5 ? C.maroon : C.crimson, Math.cos(a) * r, h / 2, Math.sin(a) * r + 40, (rnd() - .5) * .3, 0, (rnd() - .5) * .3);
+}
+for (let i = 0; i < 9; i++) { // half-sunk pods
+  const a = rnd() * Math.PI * 2, r = 120 + rnd() * 110;
+  box(scene, 7, 6, 7, sacMat, Math.cos(a) * r, 2, Math.sin(a) * r + 30);
+}
+
+// ---------- the Spawn Mother ----------
+const root = grp(scene);
+const body = grp(root);                  // body_root: bobs with the gait
+const rig = { legs: [], vents: [], trumpets: [] };
+
+// Form pass: big masses only. Surface detail (seams, plating, fungus, veins) belongs in the texture.
+
+// the belly she rests on and is hauled along on
+const chassis = grp(body, 0, 0, 0);
+box(chassis, 44, 16, 48, C.crimson2, 0, 26, 2);
+box(chassis, 34, 14, 10, C.crimson, 0, 28, -24, -0.3, 0, 0);
+
+// four crab claws that do the dragging
+rig.drag = [];
+function dragClaw(name, sx, sy, sz, side, L1, L2, k) {
+  const sh = grp(chassis, side * sx, sy, sz);
+  box(sh, 10 * k, 10 * k, 10 * k, C.chitin, 0, 0, 0);
+  box(sh, 7.5 * k, L1, 7.5 * k, C.crimson2, 0, -L1 / 2, 0);
+  const el = grp(sh, 0, -L1, 0);
+  box(el, 9 * k, 6, 9 * k, C.chitin, 0, 0, 0);
+  box(el, 6.5 * k, L2, 6.5 * k, C.crimson, 0, -L2 / 2, 0);
+  const end = grp(el, 0, -L2, 0);
+  box(end, 9 * k, 10 * k, 7 * k, C.crimson2, 0, -5 * k, 0);
+  const fixedF = grp(end, -2 * k, -10 * k, 0); box(fixedF, 3.6 * k, 13 * k, 4.6 * k, C.chitin, 0, -6.5 * k, 0); box(fixedF, 2.4 * k, 4 * k, 3 * k, C.ivory, 0, -13.5 * k, 0);
+  const dactyl = grp(end, 2.2 * k, -10 * k, 0); box(dactyl, 3.2 * k, 11 * k, 4.2 * k, C.crimson, 0, -5.5 * k, 0); box(dactyl, 2.2 * k, 3.4 * k, 2.8 * k, C.ivory, 0, -11.5 * k, 0);
+  const l = { name, sh, el, end, fixedF, dactyl, side, L1, L2: L2 + 24 * k };
+  rig.drag.push(l); return l;
+}
+dragClaw('front', 18, 34, -18, -1, 26, 28, 1.0); dragClaw('front', 18, 34, -18, 1, 26, 28, 1.05);
+dragClaw('second', 23, 32, 0, -1, 24, 26, 0.85); dragClaw('second', 23, 32, 0, 1, 24, 26, 0.85);
+
+// abdomen: five swelling-then-tapering masses, two sac cavities a side, petal vents, trailing tendrils
+const abdomen = grp(body, 0, 31, 18); rig.abdomen = abdomen;
+[[38, 24, 20, 0, 4, 10], [48, 30, 22, 0, 6, 30], [44, 28, 18, 0, 4, 49], [32, 20, 14, 0, 0, 64], [18, 12, 10, 0, -4, 75]]
+  .forEach(([w, h, d, x, y, z], i) => box(abdomen, w, h, d, i % 2 ? C.crimson : C.crimson2, x, y, z));
+function cavity(parent, x, y, z, side, n) {
+  box(parent, 2, 13, 15, C.dark, x, y, z);
+  [6, 5, 4.5].slice(0, n).forEach((sz, i) => box(parent, sz, sz, sz, sacMat, x + side * (1 + sz * 0.2), y + (i - 1) * 3, z + (i - (n - 1) / 2) * 4.5));
+}
+cavity(abdomen, -24.4, 6, 28, -1, 3); cavity(abdomen, 24.4, 6, 28, 1, 3);
+cavity(abdomen, -22.4, 4, 48, -1, 2); cavity(abdomen, 22.4, 4, 48, 1, 2);
+function petalVent(parent, x, y, z, rx, rz, r) {
+  const g = grp(parent, x, y, z, rx, 0, rz);
+  box(g, r * 1.6, 2, r * 1.6, C.dark, 0, -0.8, 0);
+  const inner = box(g, r * 1.1, 1, r * 1.1, glowMat, 0, -1.4, 0);
+  const petals = [];
+  for (let i = 0; i < 5; i++) {
+    const a = (i / 5) * Math.PI * 2;
+    const hinge = grp(grp(g, Math.cos(a) * r, 0, Math.sin(a) * r, 0, -a, 0));
+    box(hinge, r * 1.1, 1.4, r * 0.9, i % 2 ? C.rust : C.crimson, -r * 0.5, 0.2, 0);
+    petals.push(hinge);
+  }
+  const v = { g, petals, inner }; rig.vents.push(v); return v;
+}
+petalVent(abdomen, -22, -6, 60, 0, Math.PI / 2 + 0.5, 5);
+petalVent(abdomen, 22, -6, 60, 0, -Math.PI / 2 - 0.5, 5);
+petalVent(abdomen, 0, -8, 74, 2.3, 0, 4.5);
+rig.tailTendrils = [];
+[-3, 0, 3].forEach((x, i) => {
+  let p = grp(abdomen, x, -2, 79, 1.2 + i * 0.1, 0, x * 0.08); const segs = [];
+  for (let k = 0; k < 9; k++) { const t = 1.8 - k * 0.15; box(p, t, 4, t, k % 2 ? C.pink2 : C.crimson, 0, 2, 0); p = grp(p, 0, 4, 0); segs.push(p); }
+  rig.tailTendrils.push({ segs, i });
+});
+
+// thorax: core, shoulder hump, two shoulders, one plate across the chest, one small egg pocket
+const thorax = grp(body, 0, 38, -8); rig.thorax = thorax;
+box(thorax, 32, 30, 24, C.crimson, 0, 16, -2);
+box(thorax, 26, 14, 20, C.crimson2, 0, 40, -4);
+box(thorax, 26, 12, 4, C.chitin, 0, 27, -15.2, 0.1, 0, 0);
+box(thorax, 9, 9, 2, C.dark, 0, 12, -14.6);
+[[0, 1.5, 4], [-2, -2, 3], [2.2, -1.5, 2.6]].forEach(([dx, dy, z]) => box(thorax, z, z, z * 0.8, sacMat, dx, 12 + dy, -16));
+for (const sd of [-1, 1]) {
+  box(thorax, 16, 26, 18, C.chitin, sd * 20, 38, -6, 0, 0, sd * -0.12);
+  box(thorax, 14, 14, 16, C.crimson2, sd * 13, 46, -7, 0, 0, sd * -0.35);
+}
+
+// the great gestation sac, slung low between the claws
+const sacCluster = grp(body, 0, 35, -25); rig.sacCluster = sacCluster; sacCluster.scale.setScalar(0.66);
+const shellMat = new THREE.MeshLambertMaterial({ color: 0xffb040, emissive: 0xff7010, emissiveIntensity: 0.6, transparent: true, opacity: 0.38, depthWrite: false });
+const eggMat = [sacMat, glowMat, new THREE.MeshLambertMaterial({ color: 0xff7a20, emissive: 0xd04008, emissiveIntensity: 0.9 })];
+const embryoMat = new THREE.MeshLambertMaterial({ color: 0xc85a18, emissive: 0x6a2004, emissiveIntensity: 0.8 });
+[[30, 46, 22], [36, 38, 24], [24, 54, 18], [40, 26, 22], [20, 40, 28]].forEach(([w, h, d]) => box(sacCluster, w, h, d, shellMat, 0, 4, 0));
+for (let i = 0; i < 18; i++) { const sz = 5 + rnd() * 5; box(sacCluster, sz, sz, sz * 0.9, eggMat[i % 3], (rnd() - .5) * 22, 4 + (rnd() - .5) * 34, (rnd() - .5) * 10); }
+[[-6, 12, -5], [7, -2, -4], [-4, -12, -5]].forEach(([x, y, z], i) => {
+  const e = grp(sacCluster, x, y, z, 0, i * 0.8, i * 0.7);
+  box(e, 7, 5, 5, embryoMat, 0, 2, 0); box(e, 5, 6, 5, embryoMat, 3, -2, 0); box(e, 4, 4, 4, embryoMat, -1, -4, 0);
+});
+box(sacCluster, 20, 8, 14, C.crimson2, 0, 30, 6);
+const coreLight = new THREE.PointLight(0xff8a20, 2.6, 190, 1.4); coreLight.position.set(0, 0, -20); sacCluster.add(coreLight);
+
+// the back: a solid core under nine plates following an S-curve from the hump into the abdomen
+box(body, 34, 30, 38, C.maroon, 0, 46, 12);
+box(body, 30, 22, 22, C.maroon, 0, 68, 2, 0.4, 0, 0);
+rig.backPlates = [];
+const N = 9;
+for (let i = 0; i < N; i++) {
+  const t = i / (N - 1), sm = t * t * (3 - 2 * t);
+  const slope = Math.atan(6 * t * (1 - t));
+  const W = 46 - Math.sin(Math.PI * t) * 14;
+  const g = grp(body, 0, 90 - 40 * sm, -6 + 40 * t, slope, 0, 0);
+  box(g, W, 6, 11, i % 2 ? C.crimson2 : C.crimson, 0, 0, 0);
+  if (i === 2 || i === 5) rig.trumpets.push(trumpet(g, (i === 2 ? -1 : 1) * 11, 3, 0, -0.4, 0, 0.9));
+  for (const sd of [-1, 1]) {
+    const skirt = grp(g, sd * (W / 2 - 1.2), -2, 0, -slope, 0, sd * 0.2 * Math.sin(Math.PI * t));
+    box(skirt, 3, 20 + Math.sin(Math.PI * t) * 6, 10.5, i % 2 ? C.chitin : C.crimson2, 0, -11, 0);
+  }
+  rig.backPlates.push(g);
+}
+
+// upper arms for handling the young: a grasping hand (left) and a feeding siphon (right)
+function upperArm(side, kind) {
+  const sh = grp(thorax, side * 24, 46, -10);
+  box(sh, 11, 11, 11, C.chitin, 0, 0, 0);
+  const L1 = 22, L2 = 20;
+  box(sh, 7, L1, 7, C.crimson2, 0, -L1 / 2, 0);
+  const el = grp(sh, 0, -L1, 0);
+  box(el, 8, 5, 8, C.chitin, 0, 0, 0);
+  box(el, 6, L2, 6, C.crimson, 0, -L2 / 2, 0);
+  const wrist = grp(el, 0, -L2, 0);
+  const a = { sh, el, wrist, side, kind, L1, L2 };
+  if (kind === 'hand') {
+    box(wrist, 8, 7, 6, C.chitin, 0, -3.5, 0);
+    a.fingers = [-2.6, 0, 2.6].map((x) => {
+      const f1 = grp(wrist, x, -7, -1); box(f1, 2.2, 9, 2.2, C.crimson2, 0, -4.5, 0);
+      const f2 = grp(f1, 0, -9, 0); box(f2, 2, 7, 2, C.crimson, 0, -3.5, 0);
+      const f3 = grp(f2, 0, -7, 0); box(f3, 1.5, 6, 1.5, C.ivory, 0, -3, 0);
+      return [f1, f2, f3];
+    });
+    const t1 = grp(wrist, -side * 4.5, -4, -2); box(t1, 3, 8, 3, C.chitin, 0, -4, 0);
+    const t2 = grp(t1, 0, -8, 0); box(t2, 2.4, 9, 2.4, C.ivory, 0, -4.5, 0);
+    a.thumb = [t1, t2]; a.reach = 22;
+  } else {
+    box(wrist, 6.4, 4, 6.4, C.chitin, 0, -2, 0);
+    a.siphon = []; let p = grp(wrist, 0, -4, 0);
+    for (let k = 0; k < 12; k++) { const t = 4 - k * 0.15; box(p, t, 4, t, k % 2 ? C.pink : C.crimson, 0, -2, 0); p = grp(p, 0, -4, 0); a.siphon.push(p); }
+    box(p, 6, 1.6, 6, C.ochre, 0, -0.8, 0);
+    a.mouth = box(p, 3.4, 1, 3.4, new THREE.MeshLambertMaterial({ color: 0xffc848, emissive: 0xffa020, emissiveIntensity: 1 }), 0, -1.4, 0);
+    a.reach = 4;
+  }
+  return a;
+}
+rig.hand = upperArm(-1, 'hand'); rig.siphonArm = upperArm(1, 'siphon');
+
+// phase-2 wings: a dripping lattice of hyphae, used to strike and to shield, never to fly
+function wing(side) {
+  const pivot = grp(thorax, side * 18, 40, 8);
+  const g = grp(pivot); if (side < 0) g.scale.x = -1;
+  const spars = [];
+  [1.25, 0.98, 0.72, 0.48, 0.24, 0.0, -0.24].forEach((a0, sIdx) => {
+    let x = 0, y = 0, a = a0; const pts = [[0, 0]];
+    const segs = 9 - Math.abs(sIdx - 3) * 0.6 | 0;
+    for (let k = 0; k < segs; k++) {
+      const L = 10, nx = x + Math.cos(a) * L, ny = y + Math.sin(a) * L, thick = Math.max(0.9, 2.6 - k * 0.2);
+      box(g, L + 0.8, thick, thick, k > segs - 3 ? C.ochre : (k % 2 ? C.crimson : C.membrane), (x + nx) / 2, (y + ny) / 2, sIdx * 0.8, 0, 0, a);
+      if (k > 3 && k % 2) box(g, 1.2, 4, 1.2, C.ivory, nx, ny + 2, sIdx * 0.8, 0, 0, a - 1.2);   // hooked barbs
+      x = nx; y = ny; a -= 0.085; pts.push([x, y]);
+    }
+    spars.push(pts);
+  });
+  for (let sIdx = 0; sIdx < spars.length - 1; sIdx++) {
+    const A = spars[sIdx], B = spars[sIdx + 1];
+    for (let k = 2; k < Math.min(A.length, B.length); k++) {
+      const [ax, ay] = A[k], [bx, by] = B[k], dx = bx - ax, dy = by - ay;
+      box(g, Math.hypot(dx, dy), 0.7, 0.7, k % 2 ? C.membrane : C.olive, (ax + bx) / 2, (ay + by) / 2, (sIdx + 0.5) * 0.8, 0, 0, Math.atan2(dy, dx));
+      if (sIdx > 3 && rnd() > 0.45) { const dl = 4 + rnd() * 12; box(g, 0.6, dl, 0.6, rnd() > .5 ? C.ochre : C.chartreuse, (ax + bx) / 2, (ay + by) / 2 - dl / 2, (sIdx + 0.5) * 0.8); }
+    }
+  }
+  pivot.scale.setScalar(0.01);
+  return pivot;
+}
+rig.wingL = wing(-1); rig.wingR = wing(1);
+
+// neck and head
+// the neck: a tall armored column carrying the head high above the front body
+const neck = grp(thorax, 0, 50, -10); rig.neck = neck;
+box(neck, 15, 12, 13, C.crimson, 0, 4, -1, -0.15, 0, 0);
+box(neck, 13, 14, 11, C.crimson2, 0, 14, -4, -0.25, 0, 0);
+box(neck, 11, 10, 10, C.crimson, 0, 23, -7, -0.35, 0, 0);
+const head = grp(neck, 0, 28, -12); rig.head = head;
+// skull: long, narrow, goat-like, beaked, pale bone carapace — built as two halves that crack apart in phase 2
+const SKULL = [
+  [12, 22, 13, C.crimson2, 0, -2, -4, 0.35, 0, 0], [13.5, 6, 12, C.bone, 0.8, 8, -3, 0.25, 0, 0.05], [11, 5, 11, C.ivory, -0.5, 4, -8, 0.45, 0, -0.04],
+  [8, 12, 7, C.bone, 0, -6, -12, 0.5, 0, 0], [5, 7, 5, C.ivory, 0, -13, -15, 0.6, 0, 0]];
+rig.skullHalves = [-1, 1].map(sd => {
+  const piv = new THREE.Vector3(sd * 6.5, 2, 3);
+  const half = grp(head, piv.x, piv.y, piv.z);
+  const inner = grp(half, -piv.x, -piv.y, -piv.z);
+  SKULL.forEach(([w, h, d, c, x, y, z, rx, ry, rz], i) => box(inner, w / 2 - i * 0.07, h - i * 0.11, d - i * 0.09, c, x + sd * w / 4, y, z, rx, ry, rz));
+  box(inner, 0.5, 20.6, 11.3, C.dark, -sd * 0.12, -2, -4.3, 0.35, 0, 0);       // the cracked inner face of the half
+  if (sd > 0) box(inner, 3, 6, 3, C.bone, 5.5, 9, 0, -0.3, 0, -0.5); else box(inner, 2.4, 4.5, 2.4, C.bone, -6, 6, 2, -0.2, 0, 0.7);
+  const pits = sd < 0 ? [[-6.6, 2, -8, [[0, 0, 2.2], [0.8, 2.4, 1.2], [-0.4, -2.2, 1.4]]], [-5.6, -6, -12, [[0, 0, 1.2]]]]
+                      : [[6.6, 0, -9, [[0, 0, 1.6], [0.5, 2.2, 1.0], [0.2, -1.8, 0.9], [0.9, 3.8, 0.8]]], [5, -8, -13, [[0, 0, 1.4], [0.4, -1.8, 0.8]]]];
+  pits.forEach(([x, y, z, ps]) => { box(inner, 2.2, 6.7, 5.7, C.dark, x + sd * 0.45, y, z, 0.35, 0, 0); ps.forEach(([dz, dy, sz]) => box(inner, 1.2, sz, sz, pitMat, x + sd * 1.15, y + dy, z + dz - 1, 0.35, 0, 0)); });
+  return { half, sd };
+});
+// the pulp inside: an Ebrietas flower-face of eyes, hollow tubes and tentacles
+const pulp = grp(head, 0, -2, -5, 0.35, 0, 0); rig.pulp = pulp;
+box(pulp, 11, 22, 3, C.membrane, 0, 0, 0, 0, 0, 0, { emissive: 0x2a0404 });
+box(pulp, 7, 14, 2, 0xd04040, 0, 1, -1.2, 0, 0, 0, { emissive: 0x401010 });
+const pulpEye = new THREE.MeshLambertMaterial({ color: 0xffb030, emissive: 0xff8010, emissiveIntensity: 1.1 });
+for (let i = 0; i < 34; i++) {
+  const sz = 0.8 + rnd() * 1.4, mt = i % 4 === 0 ? pulpEye : (i % 4 === 1 ? 0x2a0808 : (i % 4 === 2 ? 0x8a1010 : 0xc8e048));
+  box(pulp, sz, sz, 1, mt, (rnd() - .5) * 9, (rnd() - .5) * 19, -1.6 - rnd() * 0.6, 0, 0, 0, mt === 0xc8e048 ? { emissive: 0x6a8a10 } : undefined);
+}
+for (let i = 0; i < 26; i++) {               // hollow tubes ringing the pulp
+  const a = (i / 26) * Math.PI * 2, rx = Math.sin(a) * 6.5, ry = Math.cos(a) * 12;
+  const t = grp(pulp, rx, ry, -1, -Math.cos(a) * 0.5 - 0.2, Math.sin(a) * 0.5, 0);
+  const L = 4 + rnd() * 4;
+  box(t, 2.2, 2.2, L, i % 2 ? C.ochre : C.rust, 0, 0, -L / 2);
+  box(t, 2.5, 2.5, 0.8, C.ivory, 0, 0, -L);
+  box(t, 1, 1, 0.8, C.dark, 0, 0, -L - 0.3);
+}
+rig.pulpTents = [];
+[[-2, 3], [2, 4], [0, -2], [-3, -6], [3, -5], [0, 8]].forEach(([x, y], i) => {
+  let p = grp(pulp, x, y, -1.5, -1.3, 0, (rnd() - .5) * 0.8); const segs = [];
+  for (let k = 0; k < 7; k++) { box(p, 1.4 - k * 0.12, 3, 1.4 - k * 0.12, k % 2 ? C.pink : C.pink2, 0, 1.5, 0); p = grp(p, 0, 3, 0); segs.push(p); }
+  rig.pulpTents.push({ segs, i });
+});
+pulp.scale.setScalar(0.01);
+
+// vertical mouth under the cranium: two mandibles that part sideways, dark interior
+const maw = grp(head, 0, -14, -9); rig.maw = maw;
+box(maw, 4, 12, 5, C.dark, 0, -3, 0, 0.3, 0, 0);
+rig.mandibles = [-1, 1].map(s => {
+  const m = grp(maw, s * 2.6, 1, 0);
+  box(m, 3, 13, 5, C.crimson2, s * 1.2, -5, 0, 0.3, 0, 0);
+  box(m, 1, 12, 1, C.ivory, -s * 0.2, -5, -2.4, 0.3, 0, 0);
+  for (let i = 0; i < 4; i++) box(m, 1.6, 0.8, 0.8, C.ivory, -s * 0.8, -1 - i * 3, -2.6, 0.3, 0, 0);
+  box(m, 1.2, 5, 1.2, C.bone, s * 2.4, -10, -1, 0.4, 0, s * 0.4);  // small mandible hook
+  return { m, s };
+});
+rig.tongue = []; {
+  let p = grp(maw, 0, -6, -2, 0.6, 0, 0);
+  for (let k = 0; k < 10; k++) {
+    const t = 4.6 - k * 0.32;
+    box(p, t, 4.4, t * 0.75, k % 2 ? C.pink : C.pink2, 0, -2.2, 0);
+    box(p, t + 0.3, 0.6, t * 0.8, C.pink2, 0, -0.3, 0);
+    p = grp(p, 0, -4.4, 0); rig.tongue.push(p);
+  }
+}
+// cranial frill: a frilled-lizard collar ringing the face, folded back at rest, flared outward on display
+const collar = grp(head, 0, -3, -7, 0.35, 0, 0); rig.collar = collar;
+rig.collarPlates = [];
+for (let row = 0; row < 2; row++) {
+  const n = row ? 15 : 19;
+  for (let i = 0; i < n; i++) {
+    const a = -2.55 + (5.1 * i) / (n - 1) + (row ? 0.17 : 0);
+    const spoke = grp(collar, 0, 0, row * 2.5, 0, 0, -a);
+    const hinge = grp(spoke, 0, 10 + row, 0);
+    const top = Math.cos(a);                       // longer at the crown, shorter toward the jaw
+    const len = (row ? 15 : 20) + top * 7 + rnd() * 4;
+    box(hinge, 7.5, len, 1, row ? C.rust : C.membrane, 0, len / 2, 0);
+    box(hinge, 5, len * 0.45, 1.1, C.crimson2, 0, len * 0.22, -0.1);
+    box(hinge, 1.6, len + 5, 1.8, C.bone, 3.4, (len + 5) / 2, -0.3);           // supporting spine, runs past the edge
+    box(hinge, 1.2, len * 0.75, 1.4, C.ochre, -2.2, len * 0.38, -0.3);
+    box(hinge, 7.8, 2, 1.3, i % 2 ? C.amber : C.ochre, 0, len - 1, -0.1, 0, 0, 0, { emissive: 0x301600 });
+    if (i % 3 === 0) box(hinge, 0.8, 5, 0.8, C.chartreuse, -3.6, len + 2, 0);
+    rig.collarPlates.push({ hinge, row, phase: rnd() * 6 });
+  }
+}
+box(collar, 16, 16, 3, C.crimson, 0, 0, 2);   // the collar's root membrane behind the face
+
+// facial tentacles: irregular — two long lateral whips, three short under the mouth, three reaching forward
+rig.faceTents = [];
+function faceTent(x, y, z, n, t0, kind, side) {
+  const base = grp(head, x, y, z); let p = base; const segs = [];
+  for (let k = 0; k < n; k++) {
+    const t = Math.max(0.7, t0 - k * (t0 - 0.8) / n), L = kind === 'whip' ? 5.5 : 3.6;
+    box(p, t, L, t, k % 2 ? C.crimson : C.pink2, 0, -L / 2, 0);
+    if (kind === 'whip' && k % 2 === 0 && k > 1) box(p, 0.7, 1.8, 0.7, C.bone, 0, -L / 2, -t / 2 - 0.6, 0.6, 0, 0);
+    p = grp(p, 0, -L, 0); segs.push(p);
+  }
+  box(p, 0.7, 3, 0.7, C.amber, 0, -1.5, 0);
+  rig.faceTents.push({ base, segs, kind, side, phase: rnd() * 6 });
+}
+faceTent(-6.5, -2, -7, 18, 3.4, 'whip', -1); faceTent(6.8, -4, -6, 16, 3.2, 'whip', 1);
+faceTent(-2.5, -17, -14, 6, 1.8, 'short', -1); faceTent(1, -18, -15, 5, 1.6, 'short', 0.2); faceTent(3.5, -16, -13, 6, 1.7, 'short', 1);
+faceTent(-4.5, -10, -12, 9, 2.0, 'fwd', -1); faceTent(4.5, -11, -12, 8, 2.0, 'fwd', 1); faceTent(-1, -8, -14, 8, 1.8, 'fwd', -0.3);
+
+// the fungling it cradles
+const fungling = grp(root, -2, 34, -60);
+box(fungling, 8, 7, 7, C.fung, 0, 0, 0); box(fungling, 13, 4, 12, C.fungCap, 0, 5, 0);
+box(fungling, 1.5, 1.5, 1, 0x1a0806, -2, 1, -3.6); box(fungling, 1.5, 1.5, 1, 0x1a0806, 2, 1, -3.6);
+fungling.visible = false;
+const fungDrop = { active: false, t: 0, pos: new THREE.Vector3() };
+const dropMesh = grp(scene); dropMesh.visible = false;
+box(dropMesh, 8, 7, 7, C.fung, 0, 0, 0); box(dropMesh, 13, 4, 12, C.fungCap, 0, 5, 0);
+
+const motes = [];
+for (let i = 0; i < 40; i++) {
+  const m = box(scene, 1.3, 1.3, 1.3, C.chartreuse, 0, -100, 0, 0, 0, 0, { emissive: 0x3a4a08, transparent: true, opacity: 0.85 });
+  m.userData = { v: i % 6, t: rnd() }; motes.push(m);
+}
+
+const player = grp(scene, 0, 0, -200);
+box(player, 9.6, 28.8, 4.8, 0x8a8f96, 0, 14.4, 0);
+box(player, 8, 8, 8, 0xa8adb4, 0, 33, 0);
+
+// ---------- poses ----------
+// claw targets are root-local for the right side; left mirrors x
+const POSES = {
+  stalk:   { thorax: 0.0,   neck: 0.0,  head: 0.0,  frill: 0.55, maw: 0.15, tongue: 0.3, tentFwd: 0.4, height: 0, vents: 0, glow: 0.8,
+             hand: { target: [-26, 40, -50], pole: [-1, -0.3, 0.3], grip: 0.3 }, siphon: { target: [24, 44, -38], pole: [1, -0.4, 0.3], curl: 0.25 },
+             drag: { front: [46, 0, -60], second: [60, 0, -26] } },
+  tending: { thorax: -0.25, neck: -0.2, head: -0.35, frill: 0.0,  maw: 0.05, tongue: 0.5, tentFwd: 0.8, height: -2, vents: 0, glow: 0.7,
+             hand: { target: [-6, 38, -58], pole: [-1, -0.6, 0.1], grip: 0.75 }, siphon: { target: [14, 52, -56], pole: [1, -0.3, 0.2], curl: 0.55 },
+             drag: { front: [42, 0, -54], second: [58, 0, -22] } },
+  notice:  { thorax: -0.05, neck: 0.15, head: 0.25, frill: 0.5,  maw: 0.2,  tongue: 0.3, tentFwd: 0.3, height: -1, vents: 0, glow: 0.9,
+             hand: { target: [-8, 40, -66], pole: [-1, -0.6, 0.1], grip: 0.7 }, siphon: { target: [18, 54, -60], pole: [1, -0.3, 0.2], curl: 0.2 },
+             drag: { front: [44, 0, -56], second: [58, 0, -22] } },
+  roar:    { thorax: 0.4,   neck: 0.25, head: 0.45, frill: 1.0,  maw: 1.0,  tongue: 0.0, tentFwd: -0.4, height: 2, vents: 0.4, glow: 1.3,
+             hand: { target: [-52, 92, -24], pole: [-1, -0.5, 0.5], grip: 0.0 }, siphon: { target: [52, 90, -20], pole: [1, -0.5, 0.5], curl: -0.3 },
+             drag: { front: [54, 58, -50], second: [64, 18, -32] } },
+  embrace: { thorax: -0.08, neck: -0.05, head: 0.1, frill: 0.75, maw: 0.8,  tongue: 0.1, tentFwd: 1.0, height: 1, vents: 0, glow: 1.1,
+             hand: { target: [-30, 50, -96], pole: [-1, 0.2, 0.2], grip: 0.0 }, siphon: { target: [30, 52, -92], pole: [1, 0.2, 0.2], curl: 0.0 },
+             drag: { front: [46, 14, -98], second: [62, 4, -62] } },
+  spawn:   { thorax: -0.12, neck: -0.1, head: -0.1, frill: 0.4,  maw: 0.3,  tongue: 0.4, tentFwd: 0.5, height: -3, vents: 1.0, glow: 1.6,
+             hand: { target: [-30, 34, -40], pole: [-1, -0.3, 0.3], grip: 0.4 }, siphon: { target: [30, 36, -34], pole: [1, -0.3, 0.3], curl: 0.4 },
+             drag: { front: [50, 0, -56], second: [64, 0, -20] } },
+  guard:   { thorax: -0.15, neck: -0.2, head: -0.2, frill: 0.3,  maw: 0.1,  tongue: 0.4, tentFwd: 0.6, height: -2, vents: 0, glow: 0.9, wing: [0.15, 1.3, -0.25],
+             hand: { target: [-14, 40, -40], pole: [-1, -0.3, 0.3], grip: 0.6 }, siphon: { target: [14, 42, -38], pole: [1, -0.3, 0.3], curl: 0.5 },
+             drag: { front: [44, 0, -52], second: [58, 0, -20] } },
+  sweep:   { thorax: 0.15, neck: 0.1, head: 0.2,  frill: 1.0,  maw: 0.9,  tongue: 0.1, tentFwd: 0.2, height: 1, vents: 0.2, glow: 1.3, wing: [0.25, 0.45, 0.65],
+             hand: { target: [-44, 60, -40], pole: [-1, -0.3, 0.3], grip: 0.0 }, siphon: { target: [44, 60, -36], pole: [1, -0.3, 0.3], curl: -0.2 },
+             drag: { front: [48, 0, -60], second: [60, 0, -24] } },
+};
+for (const k in POSES) if (!POSES[k].wing) POSES[k].wing = [0, -0.5, 0.08];
+let current = JSON.parse(JSON.stringify(POSES.stalk));
+const phase = { split: 0, target: 0 };
+let target = POSES.stalk;
+function lerpObj(c, t, k) {
+  for (const key in t) {
+    if (typeof t[key] === 'number') c[key] += (t[key] - c[key]) * k;
+    else if (Array.isArray(t[key])) t[key].forEach((v, i) => c[key][i] += (v - c[key][i]) * k);
+    else lerpObj(c[key], t[key], k);
+  }
+}
+const DOWN = new THREE.Vector3(0, -1, 0);
+function ik(l, tgtRoot, poleRoot) {
+  const tgt = root.localToWorld(tgtRoot.clone());
+  l.sh.parent.worldToLocal(tgt);
+  const parentQ = new THREE.Quaternion(); l.sh.parent.getWorldQuaternion(parentQ);
+  const rootQ = new THREE.Quaternion(); root.getWorldQuaternion(rootQ);
+  const P = poleRoot.clone().applyQuaternion(rootQ).applyQuaternion(parentQ.clone().invert()).normalize();
+  const S = l.sh.position.clone(), L1 = l.L1, L2 = l.L2;
+  const d = tgt.clone().sub(S), dist = Math.min(Math.max(d.length(), 6), L1 + L2 - 0.5), n = d.normalize();
+  const cosA = (L1 * L1 + dist * dist - L2 * L2) / (2 * L1 * dist), sinA = Math.sqrt(Math.max(0, 1 - cosA * cosA));
+  const b = P.clone().sub(n.clone().multiplyScalar(n.dot(P))).normalize();
+  const E = S.clone().add(n.clone().multiplyScalar(L1 * cosA)).add(b.multiplyScalar(L1 * sinA));
+  const H = S.clone().add(n.clone().multiplyScalar(dist));
+  const qU = new THREE.Quaternion().setFromUnitVectors(DOWN, E.clone().sub(S).normalize());
+  const qF = new THREE.Quaternion().setFromUnitVectors(DOWN, H.clone().sub(E).normalize());
+  l.sh.quaternion.copy(qU);
+  l.el.quaternion.copy(qU.clone().invert().multiply(qF));
+}
+// the drag: claws alternate reaching forward, biting into the ground and hauling the belly after them
+let walking = false, gaitT = 0;
+const PAIR = { 'front-1': 0, 'second1': 0, 'front1': 0.5, 'second-1': 0.5 };
+function dragTarget(l, p) {
+  const base = p.drag[l.name];
+  const v = new THREE.Vector3(base[0] * l.side, base[1], base[2]);
+  if (walking) {
+    const ph = (gaitT + PAIR[l.name + l.side]) % 1, stride = 22;
+    if (ph < 0.6) v.z += stride * (ph / 0.6 - 0.5);
+    else { const u = (ph - 0.6) / 0.4; v.z += stride * (0.5 - u); v.y += Math.sin(u * Math.PI) * 16; }
+  }
+  return v;
+}
+function applyPose(p, time) {
+  const breathe = Math.sin(time * 1.3);
+  const sp = phase.split;
+  rig.skullHalves.forEach(({ half, sd }) => half.rotation.set(sp * 0.35, -sd * sp * 1.25, -sd * sp * 0.55));
+  rig.pulp.scale.setScalar(Math.max(0.01, Math.min(1, sp * 1.3)));
+  rig.pulpTents.forEach(({ segs, i }) => segs.forEach((sg, k) => { sg.rotation.x = Math.sin(time * 3 + i + k * 0.8) * 0.25; sg.rotation.z = Math.cos(time * 2.4 + i * 2 + k * 0.6) * 0.25; }));
+  const wg = Math.max(0.01, Math.min(1, (sp - 0.2) / 0.8));
+  rig.wingL.scale.setScalar(wg); rig.wingR.scale.setScalar(wg);
+  rig.wingL.rotation.set(p.wing[0], -p.wing[1], -p.wing[2] + Math.sin(time * 1.1) * 0.03);
+  rig.wingR.rotation.set(p.wing[0], p.wing[1], p.wing[2] - Math.sin(time * 1.1) * 0.03);
+  const haul = walking ? Math.sin(gaitT * Math.PI * 4) : 0;
+  body.position.y = -18 + p.height + breathe * 0.6 + Math.max(0, haul) * 1.2;
+  body.position.z = -haul * 2.5;
+  body.rotation.z = walking ? Math.sin(gaitT * Math.PI * 2) * 0.03 : 0;
+  body.rotation.y = walking ? Math.sin(gaitT * Math.PI * 2) * 0.03 : 0;
+  rig.thorax.rotation.set(p.thorax + breathe * 0.015, 0, 0);
+  rig.neck.rotation.x = p.neck;
+  rig.head.rotation.set(p.head, Math.sin(time * 0.6) * 0.06, Math.sin(time * 0.8) * 0.04);
+  rig.abdomen.rotation.set(0.03 + breathe * 0.01 + p.vents * Math.sin(time * 6) * 0.01, walking ? Math.sin(gaitT * Math.PI * 2) * 0.03 : 0, 0);
+  const pulse = 1 + p.vents * 0.03 * Math.sin(time * 5);
+  rig.abdomen.scale.set(pulse, pulse, 1);
+  rig.collarPlates.forEach(({ hinge, row, phase }) => {
+    hinge.rotation.x = (1.45 - p.frill * 1.25) + row * 0.12 + Math.sin(time * 2 + phase) * 0.03;   // folded back -> facing out
+  });
+  rig.collar.scale.setScalar(0.85 + p.frill * 0.25);
+  rig.mandibles.forEach(({ m, s }) => { m.rotation.z = s * p.maw * 0.5; m.rotation.y = -s * p.maw * 0.25; });
+  rig.tongue.forEach((t, k) => t.rotation.x = (k === 0 ? -p.tongue * 0.6 : 0.05 + p.tongue * 0.05) + Math.sin(time * 2.2 - k * 0.6) * 0.07);
+  rig.faceTents.forEach(t => {
+    const wv = (k, a) => Math.sin(time * (t.kind === 'whip' ? 1.6 : 2.4) - k * 0.5 + t.phase) * a;
+    if (t.kind === 'whip') t.base.rotation.set(-0.3 - p.tentFwd * 0.4, 0, t.side * (0.9 - p.tentFwd * 0.4));
+    else if (t.kind === 'fwd') t.base.rotation.set(-0.9 - p.tentFwd * 0.5, 0, t.side * 0.25);
+    else t.base.rotation.set(-0.2, 0, t.side * 0.1);
+    t.segs.forEach((s, k) => { s.rotation.x = (t.kind === 'whip' ? -0.06 : -0.08) + wv(k, 0.07 + k * 0.006); s.rotation.z = t.side * (t.kind === 'whip' ? 0.05 : 0.02) + wv(k + 2, 0.05); });
+  });
+  rig.tailTendrils.forEach(({ segs, i }) => segs.forEach((s, k) => { s.rotation.x = 0.12 + Math.sin(time * 1.8 - k * 0.5 + i) * 0.1; s.rotation.z = Math.cos(time * 1.4 - k * 0.4 + i * 2) * 0.08; }));
+  rig.vents.forEach(v => { v.petals.forEach((h, i) => h.rotation.z = -p.vents * (1.0 + Math.sin(time * 4 + i) * 0.12)); });
+  sacMat.emissiveIntensity = p.glow * (0.8 + Math.sin(time * 3.1) * 0.3);
+  glowMat.emissiveIntensity = p.glow * (0.7 + Math.sin(time * 4.3) * 0.3);
+  coreLight.intensity = 1.2 + p.glow * 1.6;
+  root.updateMatrixWorld(true);
+  for (const l of rig.drag) {
+    ik(l, dragTarget(l, p), new THREE.Vector3(l.side * 0.7, 1, -0.2));
+    l.end.rotation.x = 0.35; l.dactyl.rotation.z = (walking ? 0.25 : 0.1) + (p.drag.front[1] > 20 ? 0.6 : 0);
+  }
+  for (const a of [rig.hand, rig.siphonArm]) {
+    const q = a.kind === 'hand' ? p.hand : p.siphon;
+    const t = new THREE.Vector3(q.target[0], q.target[1] + 10 + Math.sin(time * 1.2 + a.side) * 1.5, q.target[2]);
+    const save = a.L2; a.L2 = a.L2 + a.reach;
+    ik(a, t, new THREE.Vector3(...q.pole)); a.L2 = save;
+    if (a.kind === 'hand') {
+      a.wrist.rotation.x = 0.3;
+      a.fingers.forEach(([f1, f2, f3], i) => { f1.rotation.set(-q.grip * 0.9, 0, (i - 1) * 0.2 * (1 - q.grip)); f2.rotation.x = -q.grip * 1.0; f3.rotation.x = -q.grip * 0.8; });
+      a.thumb[0].rotation.set(-0.3 - q.grip * 0.5, 0, a.side * (0.6 - q.grip * 0.7)); a.thumb[1].rotation.x = -q.grip * 0.9;
+    } else {
+      a.siphon.forEach((sg, k) => { sg.rotation.x = -q.curl * 0.22 + Math.sin(time * 2.2 - k * 0.55) * 0.1; sg.rotation.z = Math.cos(time * 1.6 - k * 0.5) * 0.08; });
+      a.mouth.material.emissiveIntensity = 0.8 + Math.sin(time * 5) * 0.4;
+    }
+  }
+}
+
+function orbitView() {
+  camera.up.set(0, 1, 0); controls.enabled = true;
+  controls.target.set(0, 50, -6);
+  camera.position.set(-210, 110, -230);
+}
+orbitView();
+window.__dbg = { camera, controls, rig, POSES };
+
+let spin = true, rootYaw = 0, rootZ = 0;
+const dim = document.getElementById('dim'), vig = document.getElementById('vignette');
+const fibers = document.getElementById('fibers'), cap = document.getElementById('caption'), tag = document.getElementById('ctrlTag');
+const btn = id => document.getElementById(id);
+function setSpin(v) { spin = v; btn('bSpin').classList.toggle('on', v); }
+document.querySelectorAll('[data-pose]').forEach(b => b.onclick = () => {
+  stopIntro(); target = POSES[b.dataset.pose];
+  document.querySelectorAll('[data-pose]').forEach(x => x.classList.toggle('on', x === b));
+  fungling.visible = b.dataset.pose === 'tending';
+  rootYaw = 0; rootZ = 0;
+});
+btn('bSpin').onclick = () => setSpin(!spin);
+btn('bWalk').onclick = () => { walking = !walking; btn('bWalk').classList.toggle('on', walking); };
+function camAt(t, p) { stopIntro(); setSpin(false); controls.target.set(...t); camera.position.set(...p); }
+btn('bFront').onclick = () => camAt([0, 52, -10], [0, 62, -300]);
+btn('bSide').onclick = () => camAt([0, 50, 6], [-330, 60, 6]);
+btn('bRear').onclick = () => camAt([0, 46, 20], [40, 120, 300]);
+btn('bPhase').onclick = () => { phase.target = phase.target ? 0 : 1; btn('bPhase').classList.toggle('on', !!phase.target); if (phase.target) { target = POSES.roar; } };
+btn('bHead').onclick = () => camAt([0, 104, -36], [-50, 110, -130]);
+
+function makeFibers() {
+  fibers.innerHTML = '';
+  for (let i = 0; i < 14; i++) {
+    const y1 = rnd() * 100, y2 = rnd() * 100, l = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    l.setAttribute('d', i % 2 ? `M -5 ${y1} Q 30 ${(y1 + y2) / 2 + (rnd() - .5) * 30} 105 ${y2}` : `M ${y1} -5 Q ${(y1 + y2) / 2 + (rnd() - .5) * 30} 40 ${y2} 105`);
+    l.setAttribute('stroke', i % 3 ? '#a82a1e' : '#c9a032'); l.setAttribute('stroke-width', 2 + rnd() * 3);
+    l.setAttribute('fill', 'none'); l.setAttribute('vector-effect', 'non-scaling-stroke');
+    l.style.transition = 'transform 0.5s ease-in, opacity 0.5s'; l.style.transformOrigin = '50% 50%';
+    fibers.appendChild(l);
+  }
+}
+function snapFibers() {
+  fibers.querySelectorAll('path').forEach(p => { p.style.transform = `translate(${(rnd() - .5) * 60}px, ${(rnd() - .5) * 60}px) scale(${1.3 + rnd()})`; p.style.opacity = 0; });
+}
+let intro = null;
+function stopIntro() {
+  if (!intro) return; intro = null;
+  dim.style.opacity = 0; vig.style.opacity = 0; fibers.innerHTML = ''; cap.textContent = ''; tag.style.display = 'none';
+  camera.fov = 42; camera.updateProjectionMatrix(); player.visible = true; walking = false; btn('bWalk').classList.remove('on');
+  orbitView();
+}
+btn('bPlay').onclick = () => {
+  intro = { t0: performance.now() / 1000, flags: {} };
+  document.querySelectorAll('[data-pose]').forEach(x => x.classList.remove('on'));
+  current = JSON.parse(JSON.stringify(POSES.tending)); target = POSES.tending;
+  rootYaw = Math.PI; rootZ = 0; fungling.visible = true; fungDrop.active = false; walking = false;
+  makeFibers(); controls.enabled = false; tag.style.display = 'block'; tag.className = ''; tag.textContent = 'player bound';
+};
+const BEATS = [[0.0, 'You come to, bound in the nursery...'], [3.2, 'It tends its brood, back turned.'], [5.0, 'It senses you.'],
+  [6.6, 'It turns. The fungling slips away into the nectar.'], [8.1, 'It rears and roars.'], [9.7, 'The rushing embrace.']];
+function ease(x) { return x < 0 ? 0 : x > 1 ? 1 : x * x * (3 - 2 * x); }
+function tickIntro(now) {
+  const t = now - intro.t0, f = intro.flags;
+  const rise = ease((t - 0.6) / 3.2);
+  const shake = (t < 4.2 ? 1.2 * (1 - rise * 0.6) : 0) + (t > 8.1 && t < 9.4 ? 2.2 : 0) + (t > 9.9 && t < 10.6 ? 3 : 0);
+  const roll = (1 - rise) * 0.55;
+  camera.position.set((Math.random() - .5) * shake, 6 + rise * 24 + (Math.random() - .5) * shake, -200);
+  if (camera.fov !== 70) { camera.fov = 70; camera.updateProjectionMatrix(); }
+  player.visible = false;
+  camera.up.set(Math.sin(roll), Math.cos(roll), 0);
+  camera.lookAt(new THREE.Vector3(0, 56 + (1 - rise) * -32, 0));
+  dim.style.opacity = t < 0.6 ? 1 : Math.max(0.22, 1 - ease((t - 0.6) / 3.0) * 0.78) * (t > 6.2 ? Math.max(0, 1 - (t - 6.2) / 1.5) : 1);
+  vig.style.opacity = t < 4.5 ? 0.9 : t > 9.6 ? 0.8 : 0.35;
+  if (t > 3.6 && !f.snap) { f.snap = true; snapFibers(); }
+  if (t > 5.4 && !f.ctrl) { f.ctrl = true; tag.className = 'live'; tag.textContent = 'control regained'; }
+  if (t > 5.0 && !f.notice) { f.notice = true; target = POSES.notice; }
+  if (t > 5.6) rootYaw = Math.PI * (1 - ease((t - 5.6) / 1.3));
+  walking = t > 5.6 && t < 6.9;
+  if (t > 6.6 && !f.drop) {
+    f.drop = true; fungling.visible = false; fungDrop.active = true; fungDrop.t = 0;
+    fungling.getWorldPosition(fungDrop.pos); dropMesh.position.copy(fungDrop.pos); dropMesh.visible = true; dropMesh.scale.setScalar(1);
+  }
+  if (t > 8.1 && !f.roar) { f.roar = true; target = POSES.roar; }
+  if (t > 9.7 && !f.rush) { f.rush = true; target = POSES.embrace; }
+  if (t > 9.7) { rootZ = -140 * ease((t - 9.7) / 1.0); walking = t < 10.7; }
+  let c = ''; for (const [bt, txt] of BEATS) if (t >= bt) c = txt; cap.textContent = c;
+  if (t > 12.5) { stopIntro(); target = POSES.stalk; rootYaw = 0; rootZ = 0; document.querySelector('[data-pose=stalk]').classList.add('on'); }
+}
+
+function resize() { const w = view.clientWidth, h = view.clientHeight; renderer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+window.addEventListener('resize', resize); resize();
+const ventWorld = new THREE.Vector3();
+let last = performance.now() / 1000;
+renderer.setAnimationLoop(() => {
+  const now = performance.now() / 1000, dt = Math.min(0.05, now - last); last = now;
+  if (intro) tickIntro(now);
+  if (walking) gaitT = (gaitT + dt * (intro ? 1.6 : 0.45)) % 1;
+  lerpObj(current, target, 1 - Math.pow(0.004, dt));
+  phase.split += Math.sign(phase.target - phase.split) * Math.min(Math.abs(phase.target - phase.split), dt * 0.7);
+  root.rotation.y += (rootYaw - root.rotation.y) * (intro ? 1 : 1 - Math.pow(0.02, dt));
+  root.position.z = rootZ;
+  applyPose(current, now);
+  if (fungDrop.active) {
+    fungDrop.t += dt;
+    dropMesh.position.y = Math.max(-4, fungDrop.pos.y - 120 * fungDrop.t * fungDrop.t);
+    if (dropMesh.position.y <= 2) dropMesh.scale.setScalar(Math.max(0.01, dropMesh.scale.x - dt * 1.2));
+    if (dropMesh.scale.x <= 0.02) { fungDrop.active = false; dropMesh.visible = false; }
+  }
+  motes.forEach(m => {
+    const d = m.userData; d.t += dt * (0.3 + current.vents * 0.4); if (d.t > 1) d.t -= 1;
+    const src = rig.trumpets[d.v % rig.trumpets.length].inner; src.getWorldPosition(ventWorld);
+    m.position.set(ventWorld.x + Math.sin(d.t * 9 + d.v) * 4, ventWorld.y + d.t * 40, ventWorld.z + d.t * 6);
+    m.material.opacity = 0.85 * (1 - d.t);
+  });
+  if (!intro) { controls.autoRotate = spin; controls.autoRotateSpeed = 0.9; controls.update(); }
+  renderer.render(scene, camera);
+});
+</script>
+</body>
+</html>

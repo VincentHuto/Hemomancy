@@ -1,0 +1,61 @@
+{
+  "description": "Native 16x16 kit sprites, authored from the generated dial and split receiver concepts. Palette shared with the centrifuge machines; separate silhouettes.",
+  "palette": {
+    "O": "#21151F",
+    "D": "#37343E",
+    "M": "#615C66",
+    "H": "#979BA4",
+    "B": "#BCAB92",
+    "L": "#E6DAC3",
+    "W": "#FFF1D1",
+    "R": "#660C27",
+    "C": "#AF143D",
+    "P": "#E95469",
+    "G": "#7B9BAB",
+    "I": "#C6E3E4"
+  },
+  "sprites": {
+    "centrifugal_governor_kit": {
+      "title": "Centrifugal Governor Kit",
+      "grid": [
+        "................",
+        "......OOOO......",
+        "....OOMLLLOO....",
+        "...OMLLRRRBLO...",
+        "..OMLRCCCCRBLO..",
+        ".OHDLCPCCRRRBLO.",
+        ".OHDLCCCRWRRRBO.",
+        ".OMDLCCCRWBRRBO.",
+        ".OMDBRCRWBRRCBO.",
+        "..ODMBRRBRRCBO..",
+        "...ODMBRRRCBO...",
+        "....ODMBBBBO....",
+        "......OHMO......",
+        "....OOHLBMMO....",
+        ".....OOOOOO.....",
+        "................"
+      ]
+    },
+    "fractionating_rotor_kit": {
+      "title": "Fractionating Rotor Kit",
+      "grid": [
+        "................",
+        "..OOO......OOO..",
+        ".OHMO.OOOO.OMDO.",
+        ".OMDDOBPCBODMDO.",
+        ".OLBMMBCRBMMBLO.",
+        "..OMLLLBDBLLLO..",
+        "...ODMMBMBMDO...",
+        "...OHMO..OHMO...",
+        "...OBLO..OBLO...",
+        "...OIGO..OIGO...",
+        "...OGPO..OIGO...",
+        "...OCRO..OGPO...",
+        "...OCRO..OCRO...",
+        "..OHBMDOOHBMDO..",
+        "...ODMO..ODMO...",
+        "................"
+      ]
+    }
+  }
+}

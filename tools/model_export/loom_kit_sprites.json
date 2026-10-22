@@ -1,0 +1,62 @@
+{
+  "description": "Native 16x16 Somatic Loom upgrade kit sprites. Hematic iron, bone, nerve and pale cortex only: no copper, brass or silver accents on blood-side gear.",
+  "palette": {
+    "O": "#21151F",
+    "D": "#3A2A30",
+    "M": "#5E434B",
+    "B": "#BCAB92",
+    "L": "#E6DAC3",
+    "N": "#D2A066",
+    "Y": "#F0D79C",
+    "K": "#8E5A3C",
+    "C": "#AF143D",
+    "P": "#E95469",
+    "F": "#E9CFC8",
+    "W": "#F7E9E2",
+    "S": "#B88E92"
+  },
+  "sprites": {
+    "ganglionic_harness": {
+      "title": "Ganglionic Harness",
+      "grid": [
+        "................",
+        "....OOOOOOOO....",
+        "...OLLLLLLLLO...",
+        "..OBBOOOOOOBBO..",
+        "..OBOOYYNNOOBO..",
+        "..OBOYYNNNKOBO..",
+        "..OLOYNPCNKOLO..",
+        "..OBONCCCKKOBO..",
+        "..OBOONNKKOOBO..",
+        "..OMDDMDDMDDMO..",
+        "...OOONOONOOO...",
+        ".....ONOONO.....",
+        "....ONO..ONO....",
+        "....OKO..OKO....",
+        "...OKO....OKO...",
+        "...OO......OO..."
+      ]
+    },
+    "cortical_crown": {
+      "title": "Cortical Crown",
+      "grid": [
+        "................",
+        ".......OO.......",
+        "..O...OLLO...O..",
+        ".OBO..OBBO..OBO.",
+        ".OMO.OOMMOO.OMO.",
+        ".OMMOOMOOMOOMMO.",
+        ".OMMMMODDOMMMMO.",
+        ".OWFSWOPCOWSFWO.",
+        ".OFSFFOCCOFFSFO.",
+        ".OSFWSFOOFSWFSO.",
+        ".OFCSFFSSFFSCFO.",
+        ".OSFFCSFFSCFFSO.",
+        ".OMMMMMMMMMMMMO.",
+        ".ODMDDMDDMDDMDO.",
+        "..OOOOOOOOOOOO..",
+        "................"
+      ]
+    }
+  }
+}

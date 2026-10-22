@@ -1,0 +1,58 @@
+{
+  "description": "Native 16x16 Sanguine Condenser kit sprites: a hematic-iron clotting lattice with crimson clot beads, and a split druse geode lined in blood crystal. No copper; iron, bone and blood only.",
+  "palette": {
+    "O": "#1E1418",
+    "D": "#3A3439",
+    "M": "#625A60",
+    "H": "#9A949A",
+    "B": "#CDBFA6",
+    "R": "#5E0A1C",
+    "C": "#A8132F",
+    "P": "#E24A5E",
+    "W": "#FFD9DE"
+  },
+  "sprites": {
+    "clotting_lattice": {
+      "title": "Clotting Lattice",
+      "grid": [
+        "................",
+        ".....OOOOOO.....",
+        "...OOMHHHHMOO...",
+        "..OMHO.OO.OHMO..",
+        "..OHOCCOOCCOHO..",
+        ".OMO.CPOOPC.OMO.",
+        ".OHOOOOMMOOOOHO.",
+        ".OM..OMBBMO..MO.",
+        ".OM..OMBBMO..MO.",
+        ".OHOOOOMMOOOOHO.",
+        ".OMO.CPOOPC.OMO.",
+        "..OHOCCOOCCOHO..",
+        "..OMHO.OO.OHMO..",
+        "...OOMHHHHMOO...",
+        ".....OOOOOO.....",
+        "................"
+      ]
+    },
+    "druse_heart": {
+      "title": "Druse Heart",
+      "grid": [
+        "................",
+        "......OOOO......",
+        "....OODMMDOO....",
+        "...ODMOOOOMDO...",
+        "..ODMOWPPCOMDO..",
+        "..OMOPWPCCROMO..",
+        ".ODOPPWCCRRCODO.",
+        ".OMOCPCWRRCPOMO.",
+        ".OMOCCRWRCPPOMO.",
+        ".ODORCCRWPPCODO.",
+        "..OMORCCPWPOMO..",
+        "..ODMOCRPPOMDO..",
+        "...ODMOOOOMDO...",
+        "....OODMMDOO....",
+        "......OOOO......",
+        "................"
+      ]
+    }
+  }
+}
