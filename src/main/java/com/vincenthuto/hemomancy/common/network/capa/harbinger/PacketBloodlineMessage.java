@@ -46,6 +46,11 @@ public class PacketBloodlineMessage implements CustomPacketPayload {
 
 			String trimmed = msg.message.trim();
 			if (trimmed.isEmpty() || trimmed.length() > MAX_LENGTH) return;
+			if (!BloodlineChatRateLimit.tryAcquire(sender.getUUID(), sender.server.getTickCount())) {
+				sender.displayClientMessage(Component.literal("The blood will not carry words so quickly.")
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
+				return;
+			}
 
 			HemoCapabilityAccess.getBloodVolume(sender).ifPresent(volume -> {
 				Bloodline bloodline = volume.getBloodLine();

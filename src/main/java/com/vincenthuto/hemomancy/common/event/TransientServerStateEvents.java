@@ -57,5 +57,6 @@ public final class TransientServerStateEvents {
 		MuscleMemoryWorldEvents.clearSessionState();
 		SynapticLoadoutLockout.clearSessionState();
 		ManipulationChargeClock.clearSessionState();
+		com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodlineChatRateLimit.clearSessionState();
 	}
 }

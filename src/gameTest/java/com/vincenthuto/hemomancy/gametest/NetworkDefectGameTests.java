@@ -64,13 +64,13 @@ public final class NetworkDefectGameTests {
             @Override public void send(Packet<?> packet) { sent.add(packet); }
             @Override public void send(Packet<?> packet, @Nullable PacketSendListener listener) { sent.add(packet); }
         };
+        // Not added to the level: a live player would change nearby-player logic in tests running alongside.
         player.setPos(helper.absoluteVec(new Vec3(2, 2, 2)));
-        helper.getLevel().addNewPlayer(player);
         return player;
     }
 
     /** F-8: non-finite bloodline pool settings are rejected instead of slipping past the min/max clamps. */
-    @GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 20)
+    @GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 20, batch = "network_defects")
     public static void poolSettingsRejectNonFiniteValues(GameTestHelper helper) {
         var player = connectedPlayer(helper, new ArrayList<>());
         try {
@@ -94,7 +94,7 @@ public final class NetworkDefectGameTests {
     }
 
     /** F-9: pasting a structure needs creative mode, operator permission and the Structure Spawner in hand. */
-    @GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 20)
+    @GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 20, batch = "network_defects")
     public static void structurePasteRequiresOperatorAndHeldSpawner(GameTestHelper helper) {
         List<Packet<?>> sent = new ArrayList<>();
         boolean[] operator = {false};
@@ -132,7 +132,7 @@ public final class NetworkDefectGameTests {
     }
 
     /** F-6: ledger actions run only while the sender holds the ledger. */
-    @GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 20)
+    @GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 20, batch = "network_defects")
     public static void ledgerActionsRequireTheLedgerInHand(GameTestHelper helper) {
         List<Packet<?>> sent = new ArrayList<>();
         var player = connectedPlayer(helper, sent);

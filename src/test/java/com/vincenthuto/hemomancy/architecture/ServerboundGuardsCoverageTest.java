@@ -41,7 +41,7 @@ class ServerboundGuardsCoverageTest {
 			Map.entry("KnownSummonsRequestPacket", "Requests a resync of the sender's own data."),
 			Map.entry("ManipulationChargeVisualPacket", "Cast eligibility comes from BloodManipulation.isEquippedCastReady; held ticks are bounded."),
 			Map.entry("OpenMorphlingJarPacket", "Opens a jar the sender carries."),
-			Map.entry("PacketBloodlineMessage", "Length-capped text to the sender's own bloodline."),
+			Map.entry("PacketBloodlineMessage", "Length-capped text to the sender's own bloodline, rate-limited by BloodlineChatRateLimit."),
 			Map.entry("PacketCrossbarRadialAction", "Acts on the sender's equipped crossbar; the action text is length-capped."),
 			Map.entry("PacketKickBloodlinePlayer", "Checks bloodline leadership."),
 			Map.entry("PacketLumpDonate", "BloodVolumeTransferRules.donationAmount accepts only finite, positive amounts."),
