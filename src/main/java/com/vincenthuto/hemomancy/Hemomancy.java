@@ -34,7 +34,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -68,16 +67,12 @@ public class Hemomancy {
                     .withTabsBefore(hemomancytab.getKey())
                     .icon(() -> new ItemStack(ItemInit.sanguine_blob.get()))
                     .build());
-    public static Hemomancy instance;
-    public static boolean forcesLoaded = false;
 
     /**
      * NeoForge 1.21: the mod-event bus is injected into the constructor automatically.
      */
     public Hemomancy(IEventBus modEventBus) {
         EffectSourceInference.registerPackageOwner("com.vincenthuto.hemomancy.", MOD_ID);
-        forcesLoaded = ModList.get().isLoaded("forcesofreality");
-        instance = this;
         IEventBus forgeBus = NeoForge.EVENT_BUS;
         HemoConfig.register();
         VillagerInit.POINTS_OF_INTEREST.register(modEventBus);

@@ -43,16 +43,6 @@ class AvatarFirstPersonRendererTest {
 	}
 
 	@Test
-	void avatarShellDoesNotWriteDepthOverHeldItems() throws IOException {
-		String source = Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/common/init/RenderTypeInit.java"));
-		int start = source.indexOf("firstPersonEnergySwirl");
-		int end = source.indexOf("public static RenderType", start + 1);
-		String method = source.substring(start, end);
-		assertTrue(method.contains("setWriteMaskState(COLOR_WRITE)"), method);
-		assertFalse(method.contains("COLOR_DEPTH_WRITE"), method);
-	}
-
-	@Test
 	void avatarLegStageRendersItsAuthoredFeet() throws IOException {
 		String source = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/client/model/armor/BloodAvatarModel.java"));

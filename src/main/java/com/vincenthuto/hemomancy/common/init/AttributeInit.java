@@ -79,9 +79,5 @@ public class AttributeInit {
 		return TriState.DEFAULT;
 	}
 
-	public boolean canFly(LivingEntity livingEntity) {
-		return canFallFly(livingEntity) == TriState.ALLOW;
-	}
-
 }
 

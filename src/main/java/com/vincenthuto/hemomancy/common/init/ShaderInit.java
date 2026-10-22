@@ -18,18 +18,11 @@ import java.io.IOException;
 
 public class ShaderInit {
 
-	public static ShaderHolder DISTORTED_TEXTURE = new ShaderHolder(Hemomancy.rloc("screen/distorted_texture"),
-			DefaultVertexFormat.POSITION_TEX_COLOR, "Speed", "TimeOffset", "Intensity", "XFrequency", "YFrequency",
-			"UVCoordinates");
-
 	public static ShaderHolder SANGUINE_OMEN_WORLD = new ShaderHolder(Hemomancy.rloc("screen/sanguine_omen_overlay"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "Progress", "Intensity", "Seed", "EyeMarker");
 
 	public static ShaderHolder SANGUINE_OMEN_SCREEN_OVERLAY = new ShaderHolder(Hemomancy.rloc("screen/sanguine_omen_screen_overlay"),
 			DefaultVertexFormat.POSITION_TEX_COLOR, "HemoTime", "Progress", "Intensity", "Seed");
-
-	public static ShaderHolder SCAR_GLOW = new ShaderHolder(Hemomancy.rloc("screen/scar_glow"),
-			DefaultVertexFormat.POSITION_TEX_COLOR, "Speed", "Intensity", "BorderWidth");
 
 	public static ShaderHolder MONOLITH_FRAGMENT = new ShaderHolder(Hemomancy.rloc("item/monolith_fragment"),
 			DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, "HemoTime", "ShardSeed", "Burden", "Attuned",
@@ -207,15 +200,9 @@ public class ShaderInit {
 				DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP), (instance) -> {
 					RadiantPortalRendertype.WATER_SHADER = instance;
 				});
-		event.registerShader(new ShaderInstance(event.getResourceProvider(), Hemomancy.rloc("ray"),
-				DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP), (instance) -> {
-					RadiantPortalRendertype.RAY_SHADER = instance;
-				});
-        registerShader(event, DISTORTED_TEXTURE.createInstance(provider));
         registerShader(event, SANGUINE_OMEN_WORLD.createInstance(provider));
         registerShader(event, AXONAL_TRAVEL_VIEW.createInstance(provider));
         registerShader(event, SANGUINE_OMEN_SCREEN_OVERLAY.createInstance(provider));
-        registerShader(event, SCAR_GLOW.createInstance(provider));
         registerShader(event, MONOLITH_FRAGMENT.createInstance(provider));
         registerShader(event, MONOLITH_FRAGMENT_ENTITY.createInstance(provider));
         registerShader(event, WILL_STATE_MONOLITH.createInstance(provider));

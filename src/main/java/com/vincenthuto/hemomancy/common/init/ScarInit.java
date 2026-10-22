@@ -23,8 +23,6 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Supplier;
 
 public class ScarInit {
@@ -173,10 +171,6 @@ public class ScarInit {
 			reg("cryostroma_perdurans", () -> fungal(EnumBloodTendency.CONGEATIO));
 	public static final DeferredHolder<ScarDefinition, ScarDefinition> saprovitta_vestigium =
 			reg("saprovitta_vestigium", () -> fungal(EnumBloodTendency.FLAMMEUS));
-
-	public static List<ScarDefinition> getAllEntries() {
-		return new ArrayList<>(SCARS_TYPE_REGISTRY.stream().toList());
-	}
 
 	public static ScarDefinition getByName(String name) {
 		ResourceLocation id = name.contains(":") ? ResourceLocation.tryParse(name) : Hemomancy.rloc(name);

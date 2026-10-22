@@ -40,7 +40,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -742,30 +741,6 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 	private static boolean focusMediumMatches(ServerLevel level, BlockPos centerPos, CardinalRiteRecipe recipe) {
 		if (!(level.getBlockEntity(centerPos) instanceof CardinalFocusBlockEntity focus)) return false;
 		return CardinalRiteMediumRules.matches(recipe.getMedium(), focus.getMediumForMatching());
-	}
-
-
-	private static AABB getMatchBounds(BlockPattern.BlockPatternMatch match, BlockPattern blockPattern) {
-		int width = blockPattern.getWidth();
-		int height = blockPattern.getHeight();
-		int depth = blockPattern.getDepth();
-		int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
-		int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
-		int minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE;
-		for (int i = 0; i < width; ++i) {
-			for (int j = 0; j < height; ++j) {
-				for (int k = 0; k < depth; ++k) {
-					BlockPos matchPos = match.getBlock(i, j, k).getPos();
-					if (matchPos.getX() < minX) minX = matchPos.getX();
-					if (matchPos.getX() > maxX) maxX = matchPos.getX();
-					if (matchPos.getY() < minY) minY = matchPos.getY();
-					if (matchPos.getY() > maxY) maxY = matchPos.getY();
-					if (matchPos.getZ() < minZ) minZ = matchPos.getZ();
-					if (matchPos.getZ() > maxZ) maxZ = matchPos.getZ();
-				}
-			}
-		}
-		return new AABB(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1);
 	}
 
 	/**

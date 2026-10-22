@@ -171,9 +171,4 @@ public final class HemoAttachmentTypes {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<WhiteHumorVolume>> BLOCK_WHITE_HUMOR_VOLUME =
             ATTACHMENT_TYPES.register("block_white_humor_volume",
                     () -> AttachmentType.serializable(WhiteHumorVolume::new).build());
-
-    // ── ItemStack attachment (no copyOnDeath) ──
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<BloodVolume>> ITEM_BLOOD_VOLUME =
-            ATTACHMENT_TYPES.register("item_blood_volume",
-                    () -> AttachmentType.serializable(BloodVolume::new).build());
 }

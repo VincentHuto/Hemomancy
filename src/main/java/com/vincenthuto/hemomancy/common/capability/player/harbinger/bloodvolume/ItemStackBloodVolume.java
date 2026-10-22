@@ -57,15 +57,6 @@ public class ItemStackBloodVolume implements IBloodVolume {
 	}
 
 	@Override
-	public boolean drainFromSource(IBloodVolume src, double points) {
-		if (src.fill(points)) {
-			drain(points);
-			return true;
-		}
-		return false;
-	}
-
-	@Override
 	public boolean fill(double points) {
 		if (!wouldOverflow(points)) {
 			setBloodVolume(getBloodVolume() + points);

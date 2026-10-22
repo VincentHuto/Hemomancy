@@ -27,7 +27,6 @@ public final class RegistryBackedScarRefactorSourceTest {
 
 		assertContains("scar registry key", source, "ResourceKey<Registry<ScarDefinition>>");
 		assertContains("scar deferred register", source, "DeferredRegister<ScarDefinition>");
-		assertContains("registry helper entries", source, "getAllEntries()");
 		assertContains("registry helper lookup", source, "getByName(String name)");
 		assertContains("cerebral scar definition", source, "scar_heart");
 		assertContains("blood-honed definition", source, "scar_blood_honed");

@@ -5,6 +5,8 @@ src/test/java/com/vincenthuto/hemomancy/architecture/RepositoryTextEncodingTest.
 src/test/java/com/vincenthuto/hemomancy/architecture/RepositoryTextEncodingTest.java,junit,src/main,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/RepositoryTextEncodingTest.java,junit,src/test,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/RepositoryTextEncodingTest.java,junit,tools/model_export,tool,exact-dir
+src/test/java/com/vincenthuto/hemomancy/architecture/SourceTreeHygieneTest.java,junit,src/main/java,other,exact-dir
+src/test/java/com/vincenthuto/hemomancy/architecture/SourceTreeHygieneTest.java,junit,src/main/resources/hemomancy.mixins.json,resource,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/WillEntityClientIsolationTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/entity/mob/monster/will/WillEntity.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/client/data/QliphothBloomClientDataTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/client/event/SharedMemoryInputSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java,java,exact
@@ -169,7 +171,6 @@ src/test/java/com/vincenthuto/hemomancy/client/render/layer/mob/endgame/VesperEv
 src/test/java/com/vincenthuto/hemomancy/client/render/layer/mob/endgame/VesperEveningStarPresentationRenderSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/layer/mob/endgame/VesperEveningStarLinesLayer.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/client/render/layer/mob/endgame/VesperEveningStarPresentationRenderSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/layer/mob/endgame/VesperShamedDissolutionLayer.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/client/render/layer/player/AvatarFirstPersonRendererTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/model/armor/BloodAvatarModel.java,java,exact
-src/test/java/com/vincenthuto/hemomancy/client/render/layer/player/AvatarFirstPersonRendererTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/init/RenderTypeInit.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/client/render/layer/player/CellHandRenderingResourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/model/item/BloodArmModel.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/client/render/layer/player/CellHandRenderingResourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/particle/AbsorbedBloodCellParticle.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/client/render/layer/player/CellHandRenderingResourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/particle/BloodCellParticle.java,java,exact
@@ -2514,7 +2515,6 @@ src/test/java/com/vincenthuto/hemomancy/common/recipe/MemoryWeavingRedesignSourc
 src/test/java/com/vincenthuto/hemomancy/common/recipe/MemoryWeavingRedesignSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/entity/weave,java,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/recipe/MemoryWeavingRedesignSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/event/BloodProjectionInteractionEvents.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/recipe/MemoryWeavingRedesignSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/event/SomaticLoomInteractionEvents.java,java,exact
-src/test/java/com/vincenthuto/hemomancy/common/recipe/MemoryWeavingRedesignSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/init/RenderTypeInit.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/recipe/MemoryWeavingRedesignSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/init/ShaderInit.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/recipe/MemoryWeavingRedesignSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/EnzymeItem.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/recipe/MemoryWeavingRedesignSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodProjectionItem.java,java,exact

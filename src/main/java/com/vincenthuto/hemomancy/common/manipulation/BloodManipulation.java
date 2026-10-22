@@ -684,33 +684,5 @@ public class BloodManipulation implements EntityCastableManipulation {
 		return HLTextUtils.convertInitToLang(name);
 	}
 
-	/**
-	 * Executes this manipulation on behalf of a Drudge entity rather than a
-	 * player. Bypasses all player-specific checks (purity, degree, MnA combos)
-	 * and draws from the drudge's internal blood charge instead.
-	 *
-	 * <p>Cost is multiplied by {@code HemoServerConfig.DRUDGE_ACTION_COST_MULTIPLIER}.
-	 * Returns {@code true} if the action was executed, {@code false} if the drudge
-	 * had insufficient blood charge or no {@link DrudgeAction} is registered.
-	 *
-	 * @deprecated Prefer letting {@code DrudgeExecuteMemoryGoal} handle dispatch.
-	 *             This helper is provided for external callers that need a one-shot
-	 *             invocation without going through the goal scheduler.
-	 */
-	@Deprecated
-	public boolean performDrudgeAction(com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity drudge, Level world, BlockPos position) {
-		if (world.isClientSide) return false;
-		if (ManipulationRetirementRules.isRetiredManipulation(this)) return false;
-		DrudgeAction action = getDrudgeAction().orElse(null);
-		if (action == null || action == DrudgeAction.DRUDGE_UNSUPPORTED) return false;
-		double costMult = com.vincenthuto.hemomancy.config.HemoServerConfig.DRUDGE_ACTION_COST_MULTIPLIER.get();
-		double effectiveCost = cost * costMult;
-		if (drudge.getBloodCharge() < effectiveCost) return false;
-		boolean fired = action.execute(drudge, world, position, com.vincenthuto.hemomancy.config.HemoServerConfig.DRUDGE_WORK_RADIUS.get());
-		if (fired) {
-			drudge.drainBloodCharge((float) effectiveCost);
-		}
-		return fired;
-	}
 
 }

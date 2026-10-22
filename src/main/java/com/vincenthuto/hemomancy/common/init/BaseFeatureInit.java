@@ -89,6 +89,4 @@ public class BaseFeatureInit {
 			new PhlegethonticWorldgenFeature(false));
 	public static final Feature<EscharianOvergrowthConfiguration> ESCHARIAN_OVERGROWTH=register(
 			"escharian_overgrowth", new EscharianOvergrowthFeature());
-	public static void setup() {
-	}
 }

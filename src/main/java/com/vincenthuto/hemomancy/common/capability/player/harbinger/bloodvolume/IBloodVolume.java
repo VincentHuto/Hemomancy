@@ -8,8 +8,6 @@ public interface IBloodVolume {
 
 	public boolean drain(double points);
 
-	public boolean drainFromSource(IBloodVolume src, double points);
-
 	public boolean fill(double points);
 
 	public boolean fillFromSource(IBloodVolume src, double points);

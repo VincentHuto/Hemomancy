@@ -4,12 +4,10 @@ import com.google.common.collect.ImmutableSet;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.worldgen.village.HemopothecaryProcessor;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -27,10 +25,6 @@ public class VillagerInit {
 
 	public static final DeferredRegister<StructureProcessorType<?>> STRUCTURE_PROCESSORS = DeferredRegister
 			.create(Registries.STRUCTURE_PROCESSOR, Hemomancy.MOD_ID);
-	
-    private static final ResourceKey<StructureProcessorList> HEMOPOTHECARY_PROCESSOR_LIST_KEY =
-            ResourceKey.create(Registries.PROCESSOR_LIST, Hemomancy.rloc("hemopothecary_processors"));
-
 
 	public static final DeferredHolder<StructureProcessorType<?>, StructureProcessorType<HemopothecaryProcessor>> HEMOPOTHECARY_PROCESSOR = STRUCTURE_PROCESSORS
 			.register("hemopothecary_processor", () -> HemopothecaryProcessor::codec);

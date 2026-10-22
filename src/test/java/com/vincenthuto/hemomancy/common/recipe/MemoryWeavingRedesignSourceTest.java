@@ -16,7 +16,6 @@ public final class MemoryWeavingRedesignSourceTest {
 		String loom = read("src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/crafting/SomaticLoomBlockEntity.java");
 		String block = read("src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/crafting/SomaticLoomBlock.java");
 		String renderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/tile/harbinger/crafting/SomaticLoomRenderer.java");
-		String renderTypes = read("src/main/java/com/vincenthuto/hemomancy/common/init/RenderTypeInit.java");
 		String hemoRenderTypes = read("src/main/java/com/vincenthuto/hemomancy/client/render/HemoRenderTypes.java");
 		String shaderInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ShaderInit.java");
 		String loomOrbShaderJson = read("src/main/resources/assets/hemomancy/shaders/core/world/loom_orb.json");
@@ -118,9 +117,6 @@ public final class MemoryWeavingRedesignSourceTest {
 		assertDoesNotContain("loom strands never run the loom dry mid-weave", loom, "The loom lacks");
 		assertDoesNotContain("loom final strands never fray for want of enzyme", loom, "frays without enough enzyme");
 		assertDoesNotContain("loom strands carry no drift surcharge the player cannot top up", loom, "driftPenalty");
-		assertContains("loom effect has a depth-writing core layer", renderTypes, "LOOM_EFFECT_CORE");
-		assertContains("loom effect core writes depth for translucent-world ordering", renderTypes,
-				"COLOR_DEPTH_WRITE");
 		assertContains("loom orb shader core writes depth for translucent-world ordering", hemoRenderTypes,
 				"glowLayer ? RenderType.COLOR_WRITE : RenderType.COLOR_DEPTH_WRITE");
 		assertContains("loom orb shader is registered", shaderInit, "LOOM_ORB");

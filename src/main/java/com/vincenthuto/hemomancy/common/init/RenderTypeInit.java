@@ -11,47 +11,11 @@ import net.minecraft.resources.ResourceLocation;
 
 public class RenderTypeInit extends RenderType {
 
-	private final static ResourceLocation laserBeam = Hemomancy.rloc("textures/misc/laser.png");
-	private final static ResourceLocation vine = Hemomancy.rloc("textures/misc/vine.png");
-	private final static ResourceLocation laserBeam2 = Hemomancy.rloc("textures/misc/laser2.png");
-	private final static ResourceLocation laserBeamGlow = Hemomancy.rloc("textures/misc/laser_glow.png");
-	private final static ResourceLocation mycelialLantern = Hemomancy.rloc("textures/entity/model_mycelial_lantern.png");
-
-	static RenderType.CompositeState lightningState = RenderType.CompositeState.builder()
-			.setShaderState(POSITION_COLOR_SHADER).setTransparencyState(LIGHTNING_TRANSPARENCY)
-			.createCompositeState(false);
-
-	public static final RenderType LIGHTNING = create("lightning", DefaultVertexFormat.POSITION_COLOR,
-			VertexFormat.Mode.QUADS, 256, false, true, lightningState);
 	public static final RenderType RADIANT_RENDER_TYPE = create("radiant", DefaultVertexFormat.POSITION_COLOR,
 			VertexFormat.Mode.QUADS, 256, false, true,
 			RenderType.CompositeState.builder().setShaderState(RENDERTYPE_LIGHTNING_SHADER)
 					.setWriteMaskState(COLOR_WRITE).setTransparencyState(TRANSLUCENT_TRANSPARENCY)
 					.setOutputState(PARTICLES_TARGET).setCullState(NO_CULL).setDepthTestState(LEQUAL_DEPTH_TEST)
-					.createCompositeState(false));
-
-	public static final RenderType LASER_MAIN_BEAM = create("MiningLaserMainBeam",
-			DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 256, false, false,
-			RenderType.CompositeState.builder().setTextureState(new TextureStateShard(laserBeam2, false, false))
-					.setShaderState(ShaderStateShard.RENDERTYPE_ENTITY_CUTOUT_NO_CULL_SHADER).setLayeringState(VIEW_OFFSET_Z_LAYERING)
-					.setTransparencyState(TRANSLUCENT_TRANSPARENCY).setDepthTestState(NO_DEPTH_TEST)
-					.setCullState(NO_CULL).setLightmapState(NO_LIGHTMAP).setWriteMaskState(COLOR_WRITE)
-					.createCompositeState(false));
-
-	public static final RenderType LASER_MAIN_ADDITIVE = create("MiningLaserAdditiveBeam",
-			DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 256, false, false,
-			RenderType.CompositeState.builder().setTextureState(new TextureStateShard(laserBeamGlow, false, false))
-					.setShaderState(ShaderStateShard.RENDERTYPE_ENTITY_CUTOUT_NO_CULL_SHADER).setLayeringState(VIEW_OFFSET_Z_LAYERING)
-					.setTransparencyState(TRANSLUCENT_TRANSPARENCY).setDepthTestState(NO_DEPTH_TEST)
-					.setCullState(NO_CULL).setLightmapState(NO_LIGHTMAP).setWriteMaskState(COLOR_WRITE)
-					.createCompositeState(false));
-
-	public static final RenderType LASER_MAIN_CORE = create("MiningLaserCoreBeam",
-			DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 256, false, false,
-			RenderType.CompositeState.builder().setTextureState(new TextureStateShard(laserBeam, false, false))
-					.setShaderState(ShaderStateShard.RENDERTYPE_ENTITY_CUTOUT_NO_CULL_SHADER).setLayeringState(VIEW_OFFSET_Z_LAYERING)
-					.setTransparencyState(TRANSLUCENT_TRANSPARENCY).setDepthTestState(NO_DEPTH_TEST)
-					.setCullState(NO_CULL).setLightmapState(NO_LIGHTMAP).setWriteMaskState(COLOR_WRITE)
 					.createCompositeState(false));
 
 	// Cardinal Rite boundary circle — renders inside the world, occluded by blocks
@@ -130,35 +94,6 @@ public class RenderTypeInit extends RenderType {
 					.setLightmapState(NO_LIGHTMAP)
 					.createCompositeState(false));
 
-	// Somatic Loom beam render types — always render on top of world geometry (legacy, used by MorphlingIncubator)
-	public static final RenderType LOOM_BEAM_CORE = create("LoomBeamCore",
-			DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 256, false, true,
-			RenderType.CompositeState.builder().setTextureState(new TextureStateShard(laserBeam, false, false))
-					.setShaderState(ShaderStateShard.RENDERTYPE_ENTITY_CUTOUT_NO_CULL_SHADER)
-					.setTransparencyState(TRANSLUCENT_TRANSPARENCY).setDepthTestState(NO_DEPTH_TEST)
-					.setCullState(NO_CULL).setLightmapState(NO_LIGHTMAP).setWriteMaskState(COLOR_WRITE)
-					.createCompositeState(false));
-
-	public static final RenderType LOOM_BEAM_GLOW = create("LoomBeamGlow",
-			DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 256, false, true,
-			RenderType.CompositeState.builder().setTextureState(new TextureStateShard(laserBeamGlow, false, false))
-					.setShaderState(ShaderStateShard.RENDERTYPE_ENTITY_CUTOUT_NO_CULL_SHADER)
-					.setTransparencyState(TRANSLUCENT_TRANSPARENCY).setDepthTestState(NO_DEPTH_TEST)
-					.setCullState(NO_CULL).setLightmapState(NO_LIGHTMAP).setWriteMaskState(COLOR_WRITE)
-					.createCompositeState(false));
-
-	// Somatic Loom flat-color effect — uses rite-style POSITION_COLOR with proper depth testing
-	public static final RenderType LOOM_EFFECT_CORE = create("LoomEffectCore",
-			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, true,
-			RenderType.CompositeState.builder()
-					.setShaderState(RENDERTYPE_LIGHTNING_SHADER)
-					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-					.setDepthTestState(LEQUAL_DEPTH_TEST)
-					.setWriteMaskState(COLOR_DEPTH_WRITE)
-					.setCullState(NO_CULL)
-					.setLightmapState(NO_LIGHTMAP)
-					.createCompositeState(false));
-
 	public static final RenderType LOOM_EFFECT = create("LoomEffect",
 			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, true,
 			RenderType.CompositeState.builder()
@@ -192,25 +127,6 @@ public class RenderTypeInit extends RenderType {
 					.setCullState(NO_CULL)
 					.setLightmapState(NO_LIGHTMAP)
 					.createCompositeState(false));
-
-	public static final RenderType MYCELIAL_LANTERN_GLASS = create("MycelialLanternGlass",
-			DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, true,
-			RenderType.CompositeState.builder()
-					.setTextureState(new TextureStateShard(mycelialLantern, false, false))
-					.setShaderState(ShaderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_SHADER)
-					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-					.setDepthTestState(LEQUAL_DEPTH_TEST)
-					.setCullState(CULL)
-					.setLightmapState(LIGHTMAP)
-					.setOverlayState(OVERLAY)
-					.setWriteMaskState(COLOR_WRITE)
-					.createCompositeState(false));
-
-	public static final RenderType ENTITY_BEAM_RENDER_TYPE = create("beam",
-			DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, false, true,
-			RenderType.CompositeState.builder().setShaderState(ShaderStateShard.RENDERTYPE_ENTITY_CUTOUT_NO_CULL_SHADER)
-					.setLightmapState(LIGHTMAP).setTextureState(new TextureStateShard(vine, false, false))
-					.setWriteMaskState(COLOR_WRITE).setCullState(NO_CULL).createCompositeState(false));
 
     public static final RenderType SCRIPTORIUM_ARMOR_ENTITY_GLINT = create(
         "hemomancy_scriptorium_armor_entity_glint",
@@ -326,31 +242,12 @@ public class RenderTypeInit extends RenderType {
 						.setOverlayState(OVERLAY).createCompositeState(false));
 	}
 
-	public static RenderType firstPersonEnergySwirl(ResourceLocation location, float u, float v) {
-		return create("first_person_energy_swirl", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256,
-				false, true,
-				RenderType.CompositeState.builder().setShaderState(RENDERTYPE_ENERGY_SWIRL_SHADER)
-						.setTextureState(new RenderStateShard.TextureStateShard(location, false, false))
-						.setTexturingState(new RenderStateShard.OffsetTexturingStateShard(u, v))
-						.setTransparencyState(ADDITIVE_TRANSPARENCY).setCullState(NO_CULL).setLightmapState(LIGHTMAP)
-						.setOverlayState(OVERLAY).setWriteMaskState(COLOR_WRITE).createCompositeState(false));
-	}
-
 	public static RenderType getCrimsonGlint() {
 		return CRIMSON_GLINT;
 	}
 
 	public static RenderType getLuxGlint() {
 		return LUX_GLINT;
-	}
-
-	public static RenderType itemEnergySwirl(ResourceLocation pLocation, float pU, float pV) {
-		return create("energy_swirl", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, true,
-				RenderType.CompositeState.builder().setShaderState(RENDERTYPE_ENERGY_SWIRL_SHADER)
-						.setTextureState(new RenderStateShard.TextureStateShard(pLocation, false, false))
-						.setTexturingState(new RenderStateShard.OffsetTexturingStateShard(pU, pV))
-						.setTransparencyState(TRANSLUCENT_TRANSPARENCY).setCullState(CULL).setLightmapState(LIGHTMAP)
-						.setOverlayState(OVERLAY).createCompositeState(false));
 	}
 
 	public RenderTypeInit(String nameIn, VertexFormat formatIn, Mode drawModeIn, int bufferSizeIn,

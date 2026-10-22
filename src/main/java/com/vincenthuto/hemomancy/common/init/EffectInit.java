@@ -17,7 +17,6 @@ import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.event.brewing.RegisterBrewingRecipesEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -350,10 +349,6 @@ public class EffectInit {
             "potion_of_monolithic_dislocation",
             () -> new Potion("potion_of_monolithic_dislocation",
                     new MobEffectInstance(monolithic_dislocation, MnemonicPotionRules.WHISPERS_DURATION_TICKS, 0)));
-
-    @SubscribeEvent
-    public static void setupPotionRecipes(final FMLCommonSetupEvent event) {
-    }
 
     @SubscribeEvent
     public static void registerEnzymeBrewingRecipes(RegisterBrewingRecipesEvent event) {

@@ -45,7 +45,6 @@ import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -1130,10 +1129,5 @@ public class EntityInit {
         event.put(EntityInit.venous_strider.get(), VenousStriderEntity.setAttributes().build());
         event.put(EntityInit.tooth_pecks.get(), ToothPecksEntity.setAttributes().build());
         event.put(EntityInit.venom_rib_centipede.get(), VenomRibCentipedeEntity.setAttributes().build());
-    }
-
-    @SubscribeEvent
-    public static void commonSetup(final FMLCommonSetupEvent event) {
-        // Spawn placements are now registered via RegisterSpawnPlacementsEvent above.
     }
 }

@@ -106,11 +106,6 @@ public final class BloodRoutingRulesTest {
         }
 
         @Override
-        public boolean drainFromSource(IBloodVolume src, double points) {
-            return false;
-        }
-
-        @Override
         public boolean fill(double points) {
             if (wouldOverflow(points)) {
                 blood = max;

@@ -23,20 +23,19 @@ sourceSets.main.resources {
 
     // Exclude common development only resources from finalized outputs
     exclude("**/*.bbmodel") // BlockBench project files
-    exclude("src/generated/**/.cache") // datagen cache files
+    exclude(".cache/**") // datagen cache files; patterns are relative to each resource root
     // Preserve authoring archives in source without exposing them to resource-pack scanners.
     exclude('assets/hemomancy/**/* - Copy.*')
+    exclude('assets/hemomancy/**/old/**') // retired texture archives, referenced by nothing
     exclude('assets/hemomancy/models/entity/bbmodel/imports/**')
-    exclude('assets/hemomancy/textures/item/old/sanguine formation/**')
+    exclude('assets/hemomancy/models/entity/bbmodel/reference/**') // Blockbench reference sheets
     exclude('assets/hemomancy/sounds/**/*.mp3')
     exclude('assets/hemomancy/sounds/entity/colin/OLD*.ogg')
     exclude('assets/hemomancy/shaders/program/ShaderBasicMethods.txt')
     exclude('assets/hemomancy/shaders/program/HowToShaderTileEntities')
     exclude('assets/hemomancy/font/OFL-Jacquard24.txt')
-    exclude('assets/hemomancy/textures/block/old/infected_cap.png') // Unreferenced archive has a non-PNG header.
     exclude('assets/hemomancy/textures/entity/drudge/model_drudge_grey_old (*).png')
     exclude('assets/hemomancy/textures/gui/microscope/README.md')
-    exclude('assets/hemomancy/textures/gui/old/BORDER.png')
 }
 
 var replaceProperties = [
@@ -552,6 +551,11 @@ tasks.register('verifyPackagedClientResources') {
         def archive = tasks.named('jar').get().archiveFile.get().asFile
         new java.util.zip.ZipFile(archive).withCloseable { zip ->
             zip.entries().each { entry ->
+                // Authoring-only files must stay out of the jar (see the resource excludes at the top).
+                if (entry.name.startsWith('.cache/') || entry.name.contains('/old/') || entry.name.endsWith('.bbmodel')
+                        || entry.name.contains('/bbmodel/reference/')) {
+                    problems.add("Authoring-only file packaged: ${entry.name}")
+                }
                 if (!entry.directory && entry.name.startsWith('assets/')) {
                     if (!(entry.name ==~ /[a-z0-9\/._-]+/)) problems.add("Invalid resource path: ${entry.name}")
                     if (entry.name.endsWith('.png')) {
