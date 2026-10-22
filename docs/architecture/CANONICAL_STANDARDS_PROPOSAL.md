@@ -118,6 +118,9 @@ public record ExamplePayload(int entityId, float amount) implements CustomPacket
 - `CastingAnimationPacket` for payload shape.
 - `ClairaudiographActionPacket` for menu actions: container ID, version, enum and index.
 - `ManipulationVisualPacket` for VFX.
+- In place since consolidation step 4: `PacketHandler.PROTOCOL_VERSION` (pinned by `PayloadProtocolVersionTest`), the
+  send facade with `DialogueSender`, `ServerboundGuards` (coverage pinned by `ServerboundGuardsCoverageTest`), and
+  `ParticleBurstPacket` / `EntityVisualPacket` for one-shot visuals.
 - `RiteZoneSync` and `RiteSpaces` for send-only-on-change.
 
 **Migration targets**

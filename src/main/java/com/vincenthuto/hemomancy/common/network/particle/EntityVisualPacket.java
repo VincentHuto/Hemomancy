@@ -18,6 +18,8 @@ public record EntityVisualPacket(Kind kind, int entityId, int durationTicks) imp
 		CRIMSON_FIRE
 	}
 
+	// MOD_ID is a compile-time constant, so building the id this way keeps the codec usable without loading
+	// Hemomancy (VisualPayloadCodecTest).
 	public static final Type<EntityVisualPacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID, "entity_visual"));
 	public static final StreamCodec<FriendlyByteBuf, EntityVisualPacket> STREAM_CODEC =
 			StreamCodec.of(EntityVisualPacket::encode, EntityVisualPacket::decode);

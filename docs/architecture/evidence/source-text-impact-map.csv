@@ -1,10 +1,14 @@
 test_file,test_style,pinned_file,pinned_kind,resolution
 src/test/java/com/vincenthuto/hemomancy/architecture/ClientBoundPayloadRegistrationTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/network/PacketHandler.java,java,helper
+src/test/java/com/vincenthuto/hemomancy/architecture/NetworkClientIsolationTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/network,java,helper
+src/test/java/com/vincenthuto/hemomancy/architecture/PayloadProtocolVersionTest.java,junit,src/test/resources/network/payload-registry.txt,other,exact
 src/test/java/com/vincenthuto/hemomancy/architecture/PrivateTestHelperRatchetTest.java,junit,src/test/java,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/RepositoryTextEncodingTest.java,junit,src/gameTest,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/RepositoryTextEncodingTest.java,junit,src/main,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/RepositoryTextEncodingTest.java,junit,src/test,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/RepositoryTextEncodingTest.java,junit,tools/model_export,tool,exact-dir
+src/test/java/com/vincenthuto/hemomancy/architecture/SendFacadeTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/network/PacketHandler.java,java,exact
+src/test/java/com/vincenthuto/hemomancy/architecture/SendFacadeTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/network/dialogue/DialogueSender.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/architecture/SourceTreeHygieneTest.java,junit,src/main/java,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/SourceTreeHygieneTest.java,junit,src/main/resources/hemomancy.mixins.json,resource,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/WillEntityClientIsolationTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/entity/mob/monster/will/WillEntity.java,java,helper
@@ -309,7 +313,6 @@ src/test/java/com/vincenthuto/hemomancy/client/render/world/CastBasicsVisualSour
 src/test/java/com/vincenthuto/hemomancy/client/render/world/CastBasicsVisualSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/manipulation/ferric/ConjurationManip.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/client/render/world/CastBasicsVisualSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/manipulation/ferric/StaffWeaponFormManip.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/client/render/world/CastBasicsVisualSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/UseManipKeyPacket.java,java,base-dir
-src/test/java/com/vincenthuto/hemomancy/client/render/world/CastBasicsVisualSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/UseQuickManipKeyPacket.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/client/render/world/ChamberOfWillEffectsSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/client/render/world/ChamberOfWillEffectsSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/render/HemoRenderTypes.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/client/render/world/ChamberOfWillEffectsSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/AbstractChamberThemeEffects.java,java,exact
@@ -905,6 +908,8 @@ src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/rite/BrazierMount
 src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/rite/BrazierMountCallSitesSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteOrdealEngine.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/rite/BrazierMountCallSitesSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/PuppeteerTrialRiteController.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/block/shared/HematicIronBarsResourceTest.java,junit,src/main/resources/assets/hemomancy/blockstates/hematic_iron_bars.json,resource,exact
+src/test/java/com/vincenthuto/hemomancy/common/capability/block/vein/VeinIdentitySourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/capability/block/vein/VeinLocation.java,java,helper
+src/test/java/com/vincenthuto/hemomancy/common/capability/block/vein/VeinIdentitySourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/functional/EarthenVeinBlockEntity.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/bestiary/SpecimenBestiaryDefinitionsSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/bestiary/SpecimenBestiaryDefinitions.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/bestiary/SpecimenBestiaryDefinitionsSourceTest.java,main,src/main/resources/assets/hemomancy/lang/en_us.json,resource,exact
 src/test/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/bestiary/SpecimenBestiaryDefinitionsSourceTest.java,main,src/main/resources/data/hemomancy/tags/entity_type/specimen_jar_capturable.json,resource,exact
@@ -1791,15 +1796,15 @@ src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/SilentSeveranceDis
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/SilentSeveranceDislocationSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/armor/ability/SilentArchonArmorAbilityHandler.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/SilentSeveranceDislocationSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/init/EffectInit.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/SilentSeveranceDislocationSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/network/PacketHandler.java,java,base-dir
-src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/SilentSeveranceDislocationSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/SyncMonolithicDislocationVisualS2CPacket.java,java,base-dir
+src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/SilentSeveranceDislocationSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/network/particle/EntityVisualPacket.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/SilentSeveranceDislocationSourceTest.java,main,src/main/resources,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/SilentSeveranceDislocationSourceTest.java,main,src/main/resources/assets/hemomancy/lang/en_us.json,resource,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/SilentSlippingNoClipSourceTest.java,main,docs/HEMOMANCY_REFERENCE.md,doc,by-name
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/SilentSlippingNoClipSourceTest.java,main,src/main/java,other,exact-dir
+src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/SilentSlippingNoClipSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/particle/ParticleBurstEffects.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/SilentSlippingNoClipSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/render/world/SanguineMonolithShatterRenderer.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/SilentSlippingNoClipSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/armor/ability/SilentArchonArmorAbilityHandler.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/SilentSlippingNoClipSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/network/PacketHandler.java,java,base-dir
-src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/SilentSlippingNoClipSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/network/particle/SpawnMonolithShatterBurstPacket.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/SilentSlippingNoClipSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/mixin/core/MixinEntity.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/SilentSlippingNoClipSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/mixin/core/MixinLocalPlayer.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/SilentSlippingNoClipSourceTest.java,main,src/main/resources,other,exact-dir
@@ -2131,7 +2136,6 @@ src/test/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationDisplayN
 src/test/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationDisplayNameSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/CrudeMemoryShardItem.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationDisplayNameSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/manipulation/BloodManipulation.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationDisplayNameSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/ChangeSelectedManipPacket.java,java,base-dir
-src/test/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationDisplayNameSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/DisplayKnownManipsPacket.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationDisplayNameSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/UpdateCurrentManipPacket.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationDisplayNameSourceTest.java,junit,src/main/resources/assets/hemomancy/lang/en_us.json,resource,exact
 src/test/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationGapCombatStyleSourceTest.java,main,docs/HEMOMANCY_REFERENCE.md,doc,exact
@@ -2202,7 +2206,6 @@ src/test/java/com/vincenthuto/hemomancy/common/manipulation/ferric/LivingStaffWe
 src/test/java/com/vincenthuto/hemomancy/common/manipulation/ferric/LivingStaffWeaponFormSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/ChangeSelectedManipPacket.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/manipulation/ferric/LivingStaffWeaponFormSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/UpdateCurrentManipPacket.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/manipulation/ferric/LivingStaffWeaponFormSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/UseManipKeyPacket.java,java,exact
-src/test/java/com/vincenthuto/hemomancy/common/manipulation/ferric/LivingStaffWeaponFormSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/UseQuickManipKeyPacket.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/manipulation/impact/CastImpactSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy,java,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/manipulation/impact/CastImpactSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/world/CastImpactGeometry.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/manipulation/impact/CastImpactSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/world/ManipulationMotes.java,java,base-dir
@@ -2413,10 +2416,6 @@ src/test/java/com/vincenthuto/hemomancy/common/mission/VeinMasonTeachingResource
 src/test/java/com/vincenthuto/hemomancy/common/mission/VeinMasonTeachingResourceTest.java,junit,src/main/resources/assets/hemomancy/lang/en_us.json,resource,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/mission/VeinMasonTeachingResourceTest.java,junit,src/main/resources/data/hemomancy/books/libersanguinium/the_hematic_order/pages/scar_practice.json,resource,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/network/capa/PacketSyncFaneBoundariesSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/PacketSyncFaneBoundaries.java,java,exact
-src/test/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/TeleportToVeinPacketSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/screen/manips/RadialChooseVeinScreen.java,java,exact
-src/test/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/TeleportToVeinPacketSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/capability/block/vein/VeinLocation.java,java,exact
-src/test/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/TeleportToVeinPacketSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/TeleportToVeinPacket.java,java,exact
-src/test/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/TeleportToVeinPacketSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/functional/EarthenVeinBlockEntity.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/network/keybind/BloodProjectionStructureCraftingResourceTest.java,main,src/main/java,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/network/keybind/BloodProjectionStructureCraftingResourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/data/ActiveBloodStructureFeedClientData.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/network/keybind/BloodProjectionStructureCraftingResourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/event/ClientEvents.java,java,base-dir
@@ -2796,7 +2795,7 @@ src/test/java/com/vincenthuto/hemomancy/common/util/CrimsonFireVisualSourceTest.
 src/test/java/com/vincenthuto/hemomancy/common/util/CrimsonFireVisualSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/manipulation/flammeus/SanguineIgnitionManip.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/util/CrimsonFireVisualSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/manipulation/flammeus/VitricCombustionManip.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/util/CrimsonFireVisualSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/network/PacketHandler.java,java,base-dir
-src/test/java/com/vincenthuto/hemomancy/common/util/CrimsonFireVisualSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/SyncCrimsonFireVisualS2CPacket.java,java,base-dir
+src/test/java/com/vincenthuto/hemomancy/common/util/CrimsonFireVisualSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/network/particle/EntityVisualPacket.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/util/CrimsonFireVisualSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/mixin/core/MixinEntityRenderDispatcher.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/util/CrimsonFireVisualSourceTest.java,main,src/main/resources,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/util/CrimsonFireVisualSourceTest.java,main,src/main/resources/hemomancy.mixins.json,resource,base-dir

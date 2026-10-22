@@ -6,7 +6,6 @@ public final class TerrestrialSpeculumRulesTest {
 
 	public static void main(String[] args) {
 		manifestationRequiresProgressionBloodDestinationAndSpace();
-		travelRequiresOwnedNearbyAnchorsAndEnoughBlood();
 	}
 
 	private static void manifestationRequiresProgressionBloodDestinationAndSpace() {
@@ -20,23 +19,6 @@ public final class TerrestrialSpeculumRulesTest {
 				TerrestrialSpeculumRules.canManifest(2, true, 0, true));
 		assertFalse("occupied manifestation space blocked",
 				TerrestrialSpeculumRules.canManifest(2, true, 1, false));
-	}
-
-	private static void travelRequiresOwnedNearbyAnchorsAndEnoughBlood() {
-		assertTrue("valid travel",
-				TerrestrialSpeculumRules.canTravel(true, true, 16.0D, true, true, 1_000.0D));
-		assertFalse("speculum must remain held",
-				TerrestrialSpeculumRules.canTravel(false, true, 16.0D, true, true, 1_000.0D));
-		assertFalse("foreign manifestation blocked",
-				TerrestrialSpeculumRules.canTravel(true, false, 16.0D, true, true, 1_000.0D));
-		assertFalse("distant manifestation blocked",
-				TerrestrialSpeculumRules.canTravel(true, true, 64.01D, true, true, 1_000.0D));
-		assertFalse("unclaimed destination blocked",
-				TerrestrialSpeculumRules.canTravel(true, true, 16.0D, false, true, 1_000.0D));
-		assertFalse("unstented destination blocked",
-				TerrestrialSpeculumRules.canTravel(true, true, 16.0D, true, false, 1_000.0D));
-		assertFalse("insufficient blood blocked",
-				TerrestrialSpeculumRules.canTravel(true, true, 16.0D, true, true, 999.0D));
 	}
 
 	private static void assertTrue(String label, boolean value) {

@@ -12,7 +12,7 @@
 - Player state is attachment/capability-driven. Define/register through `HemoAttachmentTypes`, `HemoCapabilityKeys`, and `HemoCapabilityRegistrar`; read/write through `HemoCapabilityAccess` only.
 - Important state is always present on players, especially `IBloodVolume`; use `volume.isActive()` as the blood-magic opt-in gate instead of capability presence.
 - Harbinger and Unstained are mutually exclusive progression paths; changes to degree/purity logic must preserve the reset rules documented in `docs/HEMOMANCY_REFERENCE.md`.
-- Networking is NeoForge 1.21 payload-based. Follow `common/network/PacketHandler.java`: each packet uses `CustomPacketPayload`, static `TYPE`, `STREAM_CODEC`, and `playToClient` / `playToServer` registration. Do **not** add legacy `SimpleChannel` code.
+- Networking is NeoForge 1.21 payload-based. Follow `common/network/PacketHandler.java`: each packet uses `CustomPacketPayload`, static `TYPE`, `STREAM_CODEC`, and `playToClient` / `playToServer` registration in its real direction (only `AntecedentEffectPacket` is bidirectional). Adding, removing or re-laying-out a payload means bumping `PacketHandler.PROTOCOL_VERSION` and rewriting `src/test/resources/network/payload-registry.txt`. Send only through the `PacketHandler` facade (`sendToPlayer`, `sendNear`, `sendTracking`, `sendToAll`, `sendToDimension`, `sendToServer`), and validate serverbound claims with `ServerboundGuards`. Client-bound handlers must not touch `net.minecraft.client` in `common/network`. Do **not** add legacy `SimpleChannel` code.
 - Datagen lives in `common/data/gen/DataGeneration.java`; `runData` currently generates blockstates, item models, and language only. Server recipe/tag/loot providers are intentionally commented out.
 
 ## Workflows that matter

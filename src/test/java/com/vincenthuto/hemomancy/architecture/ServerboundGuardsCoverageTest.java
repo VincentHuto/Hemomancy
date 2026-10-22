@@ -75,7 +75,12 @@ class ServerboundGuardsCoverageTest {
 			if (method.equals("playToClient")) {
 				return;
 			}
-			boolean guarded = SourceAssertions.read(sources.get(payload)).contains("ServerboundGuards.");
+			Path source = sources.get(payload);
+			if (source == null) {
+				problems.add(payload + " has no source file named after it");
+				return;
+			}
+			boolean guarded = SourceAssertions.read(source).contains("ServerboundGuards.");
 			boolean exempt = EXEMPT.containsKey(payload);
 			if (!guarded && !exempt) {
 				problems.add(payload + " neither uses ServerboundGuards nor is listed as exempt");

@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.network;
 
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncLiberKnowledge;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.*;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.bestiary.PacketRequestSpecimenBestiary;
@@ -480,11 +479,6 @@ public class PacketHandler {
     public static <P extends CustomPacketPayload> void sendNear(ServerLevel level, double x, double y, double z,
             double radius, P payload) {
         PacketDistributor.sendToPlayersNear(level, null, x, y, z, radius, payload);
-    }
-
-    /** Server to every player within {@code radius} of {@code pos} in {@code level}. */
-    public static <P extends CustomPacketPayload> void sendNear(ServerLevel level, Vec3 pos, double radius, P payload) {
-        sendNear(level, pos.x, pos.y, pos.z, radius, payload);
     }
 
     /** Server to every player tracking {@code entity}, and to the entity itself when it is a player. */

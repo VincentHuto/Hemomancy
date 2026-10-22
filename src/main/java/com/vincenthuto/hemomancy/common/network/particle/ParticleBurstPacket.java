@@ -32,6 +32,8 @@ public record ParticleBurstPacket(Kind kind, Vec3 pos, ParticleColor color) impl
 	}
 
 	private static final ParticleColor UNTINTED = new ParticleColor(0.0F, 0.0F, 0.0F);
+	// MOD_ID is a compile-time constant, so building the id this way keeps the codec usable without loading
+	// Hemomancy (VisualPayloadCodecTest).
 	public static final Type<ParticleBurstPacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Hemomancy.MOD_ID, "particle_burst"));
 	public static final StreamCodec<FriendlyByteBuf, ParticleBurstPacket> STREAM_CODEC =
 			StreamCodec.of(ParticleBurstPacket::encode, ParticleBurstPacket::decode);
