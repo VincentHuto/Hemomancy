@@ -207,7 +207,7 @@ public class TrackingSerpentEntity extends ThrowableProjectile {
 				LivingEntity thrower = (LivingEntity) getOwner();
 				if (thrower != null) {
 					Player player = thrower instanceof Player ? (Player) thrower : null;
-					if (com.vincenthuto.hemomancy.common.manipulation.ductilis.ConductionManager.canHarm(thrower, target))
+					if (com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.canHarmFor(thrower, target))
                     target.hurt(com.vincenthuto.hemomancy.common.damage.SchoolDamage.projectileSource(
                             player == null ? this.damageSources().mobAttack(thrower) : this.damageSources().playerAttack(player), this, thrower),
 							evil ? 2 : 2);

@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.core.component.DataComponents;
@@ -73,7 +75,7 @@ public class PestsMorphlingItem extends MorphlingItem {
 		if (!MorphlingItem.tryBeginPrimalAbility(playerIn, itemStack, "VerminCrown",
 				300.0, 500, 180, 0)) return false;
 		AABB area = playerIn.getBoundingBox().inflate(18.0);
-		List<Monster> hostiles = worldIn.getEntitiesOfClass(Monster.class, area, Monster::isAlive);
+		List<Monster> hostiles = worldIn.getEntitiesOfClass(Monster.class, area, candidate -> ManipulationCombatHelper.canHarm(playerIn, candidate, Reach.MONSTER_FILTER));
 		int releases = Math.min(stored, MAX_PRIMAL_SWARM);
 		for (int i = 0; i < releases; i++) {
 			var pest = new com.vincenthuto.hemomancy.common.entity.projectile.TrackingPestsEntity(
@@ -112,7 +114,7 @@ public class PestsMorphlingItem extends MorphlingItem {
 
 					double radius = 8.0;
 					AABB area = player.getBoundingBox().inflate(radius);
-					List<Monster> hostiles = player.level().getEntitiesOfClass(Monster.class, area);
+					List<Monster> hostiles = player.level().getEntitiesOfClass(Monster.class, area, candidate -> ManipulationCombatHelper.canHarm(player, candidate, Reach.MONSTER_FILTER_ANY_STATE));
 					for (Monster mob : hostiles) {
                         com.vincenthuto.hemomancy.common.damage.SchoolDamage.hurt(mob, player.damageSources().magic(), 6.0F, 100, 1);
 					}
@@ -167,7 +169,7 @@ public class PestsMorphlingItem extends MorphlingItem {
 			double searchRadius = 12.0;
 			AABB area = victim.getBoundingBox().inflate(searchRadius);
 			List<Monster> nearbyHostiles = player.level().getEntitiesOfClass(Monster.class, area,
-					m -> m != victim && m.isAlive());
+					m -> m != victim && ManipulationCombatHelper.canHarm(player, m, Reach.MONSTER_FILTER));
 
 			if (!nearbyHostiles.isEmpty()) {
 				for (int i = 0; i < Math.min(pestCount, nearbyHostiles.size()); i++) {

@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -123,7 +125,7 @@ public class BootlaceMorphlingItem extends MorphlingItem {
 		}
 		AABB area = player.getBoundingBox().inflate(4.0);
 		boolean placedAny = false;
-		for (Monster target : player.level().getEntitiesOfClass(Monster.class, area, Monster::isAlive)) {
+		for (Monster target : player.level().getEntitiesOfClass(Monster.class, area, candidate -> ManipulationCombatHelper.canHarm(player, candidate, Reach.MONSTER_FILTER))) {
 			BlockPos webPos = target.blockPosition();
 			EquippedMorphlingEvents.placeTemporaryWeb(player.level(), webPos);
 			MorphlingCombat.afflict(this, player, target, 60);

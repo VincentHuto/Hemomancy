@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.ductilis;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
@@ -46,7 +47,7 @@ public class ActivationPotentialManip extends BloodManipulation {
         int index = 0;
         float damage = (float)(5.0F * strength * SkillPointHelper.getCrimsonMasteryMultiplier(player));
         for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class,player.getBoundingBox().inflate(5),
-                e -> ConductionManager.canHarm(player,e)
+                e -> ManipulationCombatHelper.canHarmFor(player,e)
                         && ConductionManager.visible(level,player.getEyePosition(),e.getEyePosition(),player)).stream()
                 .sorted(java.util.Comparator.comparing(LivingEntity::getUUID)).toList()) {
             if (!ConductionManager.claimHit(player,target,discharge)) continue;

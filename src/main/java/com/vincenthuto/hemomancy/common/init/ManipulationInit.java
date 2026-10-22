@@ -2,13 +2,8 @@ package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.util.RegistryLookup;
-import com.vincenthuto.hemomancy.common.damage.SchoolStates;
-import com.vincenthuto.hemomancy.common.damage.SchoolState;
-import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
-import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
-import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
 import com.vincenthuto.hemomancy.common.manipulation.*;
 import com.vincenthuto.hemomancy.common.manipulation.animus.*;
 import com.vincenthuto.hemomancy.common.manipulation.congeatio.*;
@@ -22,29 +17,13 @@ import com.vincenthuto.hemomancy.common.manipulation.saint.CrimsonTitheManip;
 import com.vincenthuto.hemomancy.common.manipulation.saint.EndlessHourManip;
 import com.vincenthuto.hemomancy.common.manipulation.saint.UnclosingEyeManip;
 import com.vincenthuto.hemomancy.common.manipulation.tenebris.*;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.BonemealableBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class ManipulationInit {
@@ -70,15 +49,7 @@ public class ManipulationInit {
 			() -> new BloodShotManip("blood_shot", 100, 0, 0, EnumManipulationType.QUICK, EnumManipulationRank.HUMILIS,
 					EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD)
 					.setCooldownTicks(10)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
-								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
-						if (target == null) return false;
-						target.hurt(world.damageSources().mobAttack(drudge),
-								(float) drudge.getAttributeValue(Attributes.ATTACK_DAMAGE) * 1.5f);
-						return true;
-					}, "Ranged strike vs nearest hostile"));
+					.setDrudgeAction(DrudgeActions::bloodShot, "Ranged strike vs nearest hostile"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> guided_blood_shot = MANIPS.register("guided_blood_shot",
 			() -> new BloodShotManip("guided_blood_shot", 140, 0, 0, EnumManipulationType.QUICK,
@@ -140,17 +111,7 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD)
 					.setSecondaryTend(EnumBloodTendency.TENEBRIS)
 					.setCooldownTicks(20)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
-								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
-						if (target == null) return false;
-						target.push(0, 0.8, 0);
-						com.vincenthuto.hemomancy.common.manipulation.ductilis.DeadlyGazeManip.grip(target, drudge.getEyePosition(), 1, false);
-						target.hurt(world.damageSources().mobAttack(drudge),
-								(float) drudge.getAttributeValue(Attributes.ATTACK_DAMAGE) * 2.0f);
-						return true;
-					}, "Knockback and heavy strike vs nearest hostile"));
+					.setDrudgeAction(DrudgeActions::deadlyGaze, "Knockback and heavy strike vs nearest hostile"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> hematic_rebuke = MANIPS.register("hematic_rebuke",
 			() -> new HematicCommandManip("hematic_rebuke", 225, 10, 0, EnumManipulationType.QUICK,
@@ -208,17 +169,7 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.FERRIC, EnumVeinSections.HEAD)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(10)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
-								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
-						if (target == null) return false;
-						float dmg = (float) drudge.getAttributeValue(Attributes.ATTACK_DAMAGE) * 0.4f;
-						for (int i = 0; i < 5; i++) {
-							target.hurt(world.damageSources().mobAttack(drudge), dmg);
-						}
-						return true;
-					}, "Needle volley vs nearest hostile"));
+					.setDrudgeAction(DrudgeActions::bloodNeedle, "Needle volley vs nearest hostile"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> blood_needle_fan = MANIPS.register("blood_needle_fan",
 			() -> new BloodNeedleManip("blood_needle_fan", 140, 0, 0, EnumManipulationType.CHARGED,
@@ -241,13 +192,7 @@ public class ManipulationInit {
 					EnumManipulationRank.SUMMA, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD)
 					.setSecondaryTend(EnumBloodTendency.MORTEM)
 					.setCooldownTicks(40)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius / 2.0);
-						List<Monster> mobs = world.getEntitiesOfClass(Monster.class, area);
-						if (mobs.isEmpty()) return false;
-						mobs.forEach(m -> SchoolStates.apply(drudge, m, SchoolState.PRESSURE, 60));
-						return true;
-					}, "Builds pressure in nearby hostiles"));
+					.setDrudgeAction(DrudgeActions::bloodCloud, "Builds pressure in nearby hostiles"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> expansive_blood_cloud = MANIPS.register("expansive_blood_cloud",
 			() -> new BloodCloudManip("expansive_blood_cloud", 375, 25, 0, EnumManipulationType.QUICK,
@@ -278,135 +223,61 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.FLAMMEUS)
 					.setCooldownTicks(160)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						drudge.addEffect(
-								new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 200, 1, false, false));
-						AABB area = new AABB(centre).inflate(radius);
-						world.getEntitiesOfClass(Player.class, area).forEach(p ->
-								p.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 200, 1, false, true)));
-						return true;
-					}, "Speed boost to Drudge and nearby allies"));
+					.setDrudgeAction(DrudgeActions::bloodRush, "Speed boost to Drudge and nearby allies"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> blood_aneurysm = MANIPS.register("blood_aneurysm",
 			() -> new BloodAneurysmManip("blood_aneurysm", 400, 25, 0, EnumManipulationType.CHARGED,
 					EnumManipulationRank.SUMMA, EnumBloodTendency.ANIMUS, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.MORTEM)
 					.setCooldownTicks(40)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius / 2.0);
-						List<Monster> mobs = world.getEntitiesOfClass(Monster.class, area);
-						if (mobs.isEmpty()) return false;
-						float dmg = (float) drudge.getAttributeValue(Attributes.ATTACK_DAMAGE);
-						mobs.forEach(m -> {
-							m.hurt(world.damageSources().mobAttack(drudge), dmg);
-						});
-						return true;
-					}, "Ruptures pressure in nearby hostiles"));
+					.setDrudgeAction(DrudgeActions::bloodAneurysm, "Ruptures pressure in nearby hostiles"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> vital_effusion = MANIPS.register("vital_effusion",
 			() -> new VitalEffusionManip("vital_effusion", 350, 0, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
 					.setCooldownTicks(60)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						BlockPos p = centre;
-						if (!(world instanceof net.minecraft.server.level.ServerLevel sLevel)) return false;
-						boolean grew = false;
-						for (BlockPos nearby : BlockPos.betweenClosed(p.offset(-2, -1, -2), p.offset(2, 1, 2))) {
-							net.minecraft.world.level.block.state.BlockState state = world.getBlockState(nearby);
-							if (state.getBlock() instanceof net.minecraft.world.level.block.BonemealableBlock bb
-									&& bb.isValidBonemealTarget(sLevel, nearby, state)) {
-								bb.performBonemeal(sLevel, world.random, nearby.immutable(), world.getBlockState(nearby.immutable()));
-								grew = true;
-							}
-						}
-						return grew;
-					}, "Accelerates crop growth near the Drudge's position"));
+					.setDrudgeAction(DrudgeActions::vitalEffusion, "Accelerates crop growth near the Drudge's position"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> ferric_transmutation = MANIPS.register("ferric_transmutation",
 			() -> new FerricTransmutationManip("ferric_transmutation", 1000, 50, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.SUMMA, EnumBloodTendency.FERRIC, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
 					.setCooldownTicks(20)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						if (!(world instanceof ServerLevel sLevel)) return false;
-						sLevel.addFreshEntity(new ItemEntity(sLevel,
-								centre.getX() + 0.5, centre.getY() + 0.5, centre.getZ() + 0.5,
-								new ItemStack(Items.IRON_INGOT)));
-						return true;
-					}, "Produces an iron ingot"));
+					.setDrudgeAction(DrudgeActions::ferricTransmutation, "Produces an iron ingot"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> activation_potential = MANIPS.register("activation_potential",
 			() -> new ActivationPotentialManip("activation_potential", 200, 10, 0, EnumManipulationType.CHARGED,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.DUCTILIS, EnumVeinSections.BODY)
 					.setCooldownTicks(30)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						List<Monster> mobs = world.getEntitiesOfClass(Monster.class, drudge.getBoundingBox().inflate(5.0D),
-								m -> m.isAlive() && m.distanceTo(drudge) <= 5.0D);
-						if (mobs.isEmpty()) return false;
-						mobs.forEach(m -> {
-							SchoolStates.apply(drudge, m, SchoolState.DISRUPTED, 10);
-							m.hurt(world.damageSources().indirectMagic(drudge, drudge), 3.0F);
-						});
-						return true;
-					}, "Shocks hostiles near the Drudge"));
+					.setDrudgeAction(DrudgeActions::activationPotential, "Shocks hostiles near the Drudge"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> synaptic_jolt = MANIPS.register("synaptic_jolt",
 			() -> new SynapticJoltManip("synaptic_jolt", 150, 0, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD)
 					.setCooldownTicks(25)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(Math.min(radius, 7.0D));
-						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
-								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
-						if (target == null) return false;
-						DuctilisLightningEffects.synapticJolt(drudge, target);
-						target.hurt(world.damageSources().mobAttack(drudge), 3.0F);
-						return true;
-					}, "Interrupts and staggers nearest hostile"));
+					.setDrudgeAction(DrudgeActions::synapticJolt, "Interrupts and staggers nearest hostile"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> conductive_mark = MANIPS.register("conductive_mark",
 			() -> new ConductiveMarkManip("conductive_mark", 150, 10, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD)
 					.setSecondaryTend(EnumBloodTendency.FERRIC)
 					.setCooldownTicks(50)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(Math.min(radius, 14.0D));
-						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
-								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
-						if (target == null) return false;
-						SchoolHitHelper.markConductive(target, ManipulationStatusRules.CONDUCTIVE_MARK_TICKS);
-						DuctilisLightningEffects.conductiveMark(drudge, target);
-						return true;
-					}, "Marks nearest hostile for conductive arcs"));
+					.setDrudgeAction(DrudgeActions::conductiveMark, "Marks nearest hostile for conductive arcs"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> sanguine_ward = MANIPS.register("sanguine_ward",
 			() -> new SanguineWardManip("sanguine_ward", 40, 10, 0, EnumManipulationType.CONTINUOUS,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.DUCTILIS, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.FERRIC)
 					.setCooldownTicks(20)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						List<Player> players = world.getEntitiesOfClass(Player.class, area);
-						if (players.isEmpty()) return false;
-						players.forEach(p -> p.addEffect(
-								new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 200, 0, false, true)));
-						return true;
-					}, "Grants Resistance to nearby allies"));
+					.setDrudgeAction(DrudgeActions::sanguineWard, "Grants Resistance to nearby allies"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> hemolymphal_pulse = MANIPS.register("hemolymphal_pulse",
 			() -> new HemolymphalPulseManip("hemolymphal_pulse", 175, 0, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(200)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						List<Monster> nearby = world.getEntitiesOfClass(Monster.class, area);
-						if (nearby.isEmpty()) return false;
-						nearby.forEach(e -> e.addEffect(
-								new MobEffectInstance(MobEffects.GLOWING, 300, 0, false, false)));
-						return true;
-					}, "Illuminates nearby hostiles"));
+					.setDrudgeAction(DrudgeActions::hemolymphalPulse, "Illuminates nearby hostiles"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> conjure_blade = MANIPS.register("conjure_blade",
 			() -> new StaffWeaponFormManip("conjure_blade", ItemInit.living_blade, 0, 0,
@@ -489,14 +360,7 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.ARMS)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(15)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
-								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
-						if (target == null) return false;
-						SchoolStates.apply(drudge, target, SchoolState.SEARING, 120);
-						return true;
-					}, "Sears the nearest hostile"));
+					.setDrudgeAction(DrudgeActions::crimsonFlameConjuration, "Sears the nearest hostile"));
 
 	// ── Utilitarian Manipulations ──
 
@@ -505,113 +369,41 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.FERRIC, EnumVeinSections.ARMS)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(30)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						Player owner = world.getEntitiesOfClass(Player.class, area).stream()
-								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
-						if (owner == null) return false;
-						ItemStack toRepair = ItemStack.EMPTY;
-						int maxDmg = 0;
-						for (ItemStack armor : owner.getArmorSlots()) {
-							if (armor.isDamageableItem() && armor.getDamageValue() > maxDmg) {
-								maxDmg = armor.getDamageValue();
-								toRepair = armor;
-							}
-						}
-						if (toRepair.isEmpty() || !toRepair.isDamaged()) return false;
-						toRepair.setDamageValue(toRepair.getDamageValue() - Math.min(toRepair.getDamageValue(), 100));
-						return true;
-					}, "Repairs most-damaged armor of nearest ally"));
+					.setDrudgeAction(DrudgeActions::sanguineMending, "Repairs most-damaged armor of nearest ally"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> hemosynthesis = MANIPS.register("hemosynthesis",
 			() -> new HemosynthesisManip("hemosynthesis", 200, 0, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.LUX, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(40)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						Player target = world.getEntitiesOfClass(Player.class, area).stream()
-								.filter(p -> p.getHealth() < p.getMaxHealth())
-								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
-						if (target == null) return false;
-						target.heal(4.0f);
-						return true;
-					}, "Heals the most-wounded nearby ally"));
+					.setDrudgeAction(DrudgeActions::hemosynthesis, "Heals the most-wounded nearby ally"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> blood_lamp = MANIPS.register("blood_lamp",
 			() -> new BloodLampManip("blood_lamp", 75, 0, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.LUX, EnumVeinSections.ARMS)
 					.setCooldownTicks(10)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						BlockPos darkest = null;
-						int darkestLight = 15;
-						int half = radius / 2;
-						for (BlockPos p : BlockPos.betweenClosed(
-								centre.offset(-half, -2, -half), centre.offset(half, 4, half))) {
-							if (world.getBlockState(p).isAir()
-									&& !world.getBlockState(p.below()).isAir()) {
-								int light = world.getBrightness(net.minecraft.world.level.LightLayer.BLOCK, p);
-								if (light < darkestLight) {
-									darkestLight = light;
-									darkest = p.immutable();
-								}
-							}
-						}
-						if (darkest == null || darkestLight >= 10) return false;
-						world.setBlockAndUpdate(darkest, Blocks.TORCH.defaultBlockState());
-						return true;
-					}, "Places a light source in the dark"));
+					.setDrudgeAction(DrudgeActions::bloodLamp, "Places a light source in the dark"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> hematic_flare = MANIPS.register("hematic_flare",
 			() -> new HematicFlareManip("hematic_flare", 125, 0, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.LUX, EnumVeinSections.HEAD)
 					.setSecondaryTend(EnumBloodTendency.FLAMMEUS)
 					.setCooldownTicks(30)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
-								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
-						if (target == null) return false;
-						SchoolDamage.hurt(target, world.damageSources().magic(), 3.0F, 180, 1);
-						return true;
-					}, "Illuminates and damages the nearest hostile"));
+					.setDrudgeAction(DrudgeActions::hematicFlare, "Illuminates and damages the nearest hostile"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> crimson_harvest = MANIPS.register("crimson_harvest",
 			() -> new CrimsonHarvestManip("crimson_harvest", 200, 0, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.DUCTILIS, EnumVeinSections.LEGS)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(60)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						if (!(world instanceof ServerLevel sLevel)) return false;
-						boolean grew = false;
-						int half = radius / 2;
-						for (BlockPos p : BlockPos.betweenClosed(
-								centre.offset(-half, -1, -half), centre.offset(half, 2, half))) {
-							BlockState state = world.getBlockState(p);
-							if (state.getBlock() instanceof BonemealableBlock growable
-									&& growable.isValidBonemealTarget(world, p, state)
-									&& growable.isBonemealSuccess(world, world.random, p, state)) {
-								growable.performBonemeal(sLevel, world.random, p, state);
-								grew = true;
-							}
-						}
-						return grew;
-					}, "Accelerates crop growth nearby"));
+					.setDrudgeAction(DrudgeActions::crimsonHarvest, "Accelerates crop growth nearby"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> glacial_grasp = MANIPS.register("glacial_grasp",
 			() -> new GlacialGraspManip("glacial_grasp", 125, 0, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.CONGEATIO, EnumVeinSections.ARMS)
 					.setSecondaryTend(EnumBloodTendency.TENEBRIS)
 					.setCooldownTicks(20)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
-								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
-						if (target == null) return false;
-						SchoolDamage.hurt(target, world.damageSources().freeze(),
-                                (float) drudge.getAttributeValue(Attributes.ATTACK_DAMAGE) * 1.5f, 120, 1);
-						return true;
-					}, "Builds Rime and damages the nearest hostile"));
+					.setDrudgeAction(DrudgeActions::glacialGrasp, "Builds Rime and damages the nearest hostile"));
 
 	// ── Mid-Game Utilitarian Manipulations (MEDIOCRITAS) ──
 
@@ -620,16 +412,7 @@ public class ManipulationInit {
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.ARMS)
 					.setSecondaryTend(EnumBloodTendency.MORTEM)
 					.setCooldownTicks(40)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						if (!(world instanceof ServerLevel)) return false;
-						Vec3 look = drudge.getLookAngle();
-						BlockPos target = BlockPos.containing(
-								drudge.getEyePosition().add(look.scale(2.5)));
-						BlockState state = world.getBlockState(target);
-						if (state.isAir() || state.getDestroySpeed(world, target) < 0) return false;
-						world.destroyBlock(target, true);
-						return true;
-					}, "Mines the block the Drudge faces"));
+					.setDrudgeAction(DrudgeActions::sanguineExcavation, "Mines the block the Drudge faces"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> vascular_dowsing = MANIPS.register("vascular_dowsing",
 			() -> new VascularDowsingManip("vascular_dowsing", 75, 0, 0, EnumManipulationType.CONTINUOUS,
@@ -650,11 +433,7 @@ public class ManipulationInit {
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
 					.setCooldownTicks(80)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						drudge.addEffect(new MobEffectInstance(EffectInit.iron_retort,
-								ManipulationStatusRules.IRON_RETORT_TICKS, 0, false, true));
-						return true;
-					}, "Brief retaliatory iron guard"));
+					.setDrudgeAction(DrudgeActions::ironRetort, "Brief retaliatory iron guard"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> ironhearted = MANIPS.register("ironhearted",
 			() -> new IronheartedManip("ironhearted", 300, 45, 0, EnumManipulationType.CHARGED,
@@ -668,16 +447,7 @@ public class ManipulationInit {
 					EnumManipulationRank.SUMMA, EnumBloodTendency.FERRIC, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
 					.setCooldownTicks(140)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						if (!(world instanceof ServerLevel serverLevel)) return false;
-						AABB area = new AABB(centre).inflate(radius);
-						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
-								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
-						Vec3 anchor = target != null ? target.position() : Vec3.atBottomCenterOf(centre);
-						SanguineMagnetismManip.spawnMagneticPillar(drudge, serverLevel, anchor,
-								ManipulationStatusRules.SANGUINE_MAGNETISM_TICKS);
-						return true;
-					}, "Raises a magnetic iron pillar that traps hostiles"));
+					.setDrudgeAction(DrudgeActions::sanguineMagnetism, "Raises a magnetic iron pillar that traps hostiles"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> ferric_rampart = MANIPS.register("ferric_rampart",
 			() -> new FerricBarrierManip("ferric_rampart", FerricConstructShapes.Kind.WALL)
@@ -693,116 +463,49 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.FERRIC)
 					.setCooldownTicks(30)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						List<Monster> mobs = world.getEntitiesOfClass(Monster.class, area);
-						if (mobs.isEmpty()) return false;
-						mobs.forEach(m -> {
-							SchoolDamage.hurt(m, world.damageSources().onFire(), 3.0f, 200, 1);
-						});
-						return true;
-					}, "Burns all hostiles in area"));
+					.setDrudgeAction(DrudgeActions::pyreticForge, "Burns all hostiles in area"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> umbral_step = MANIPS.register("umbral_step",
 			() -> new UmbralStepManip("umbral_step", 300, 10, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.TENEBRIS, EnumVeinSections.LEGS)
 					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
 					.setCooldownTicks(40)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						double angle = world.random.nextDouble() * 2 * Math.PI;
-						double dist = radius * 0.5 + world.random.nextDouble() * radius * 0.5;
-						double nx = centre.getX() + 0.5 + Math.cos(angle) * dist;
-						double nz = centre.getZ() + 0.5 + Math.sin(angle) * dist;
-						BlockPos dest = BlockPos.containing(nx, centre.getY(), nz);
-						// Walk up until clear
-						for (int i = 0; i < 10 && !world.getBlockState(dest).isAir(); i++) {
-							dest = dest.above();
-						}
-						if (!world.getBlockState(dest).isAir()) return false;
-						if (!BlackVeilCovenantManager.isDarkEnough(world, dest, 7)) return false;
-						drudge.teleportTo(dest.getX() + 0.5, dest.getY(), dest.getZ() + 0.5);
-						return true;
-					}, "Teleports Drudge to a dark spot within radius"));
+					.setDrudgeAction(DrudgeActions::umbralStep, "Teleports Drudge to a dark spot within radius"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> crimson_sight = MANIPS.register("crimson_sight",
 			() -> new CrimsonSightManip("crimson_sight", 250, 10, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.LUX, EnumVeinSections.HEAD)
 					.setSecondaryTend(EnumBloodTendency.TENEBRIS)
 					.setCooldownTicks(60)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						List<Monster> mobs = world.getEntitiesOfClass(Monster.class, area);
-						if (mobs.isEmpty()) return false;
-						mobs.forEach(m -> SchoolStates.apply(drudge, m, SchoolState.ILLUMINATED, 600));
-						return true;
-					}, "Illuminates nearby hostiles"));
+					.setDrudgeAction(DrudgeActions::crimsonSight, "Illuminates nearby hostiles"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> prismatic_reproof = MANIPS.register("prismatic_reproof",
 			() -> new PrismaticReproofManip("prismatic_reproof", 325, 10, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.LUX, EnumVeinSections.HEAD)
 					.setSecondaryTend(EnumBloodTendency.FERRIC)
 					.setCooldownTicks(50)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						List<Monster> mobs = world.getEntitiesOfClass(Monster.class, area);
-						mobs.forEach(m -> {
-							m.hurt(world.damageSources().magic(), 2.0F);
-						});
-						return !mobs.isEmpty();
-					}, "Consumes illumination for a prismatic strike"));
+					.setDrudgeAction(DrudgeActions::prismaticReproof, "Consumes illumination for a prismatic strike"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> hematic_beacon = MANIPS.register("hematic_beacon",
 			() -> new HematicBeaconManip("hematic_beacon", 350, 10, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.LUX, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(160)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						world.getEntitiesOfClass(Player.class, area).forEach(p -> {
-							p.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 160, 0, false, true));
-							p.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 160, 0, false, true));
-						});
-						world.getEntitiesOfClass(Monster.class, area).forEach(m ->
-								SchoolStates.apply(drudge, m, SchoolState.ILLUMINATED, 240));
-						return true;
-					}, "Marks hostiles and steadies nearby allies"));
+					.setDrudgeAction(DrudgeActions::hematicBeacon, "Marks hostiles and steadies nearby allies"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> lumen_suture = MANIPS.register("lumen_suture",
 			() -> new LumenSutureManip("lumen_suture", 250, 10, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.LUX, EnumVeinSections.ARMS)
 					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
 					.setCooldownTicks(120)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						Player ally = world.getEntitiesOfClass(Player.class, area).stream()
-								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
-						if (ally == null) return false;
-						ally.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 300, 1, false, true));
-						ally.removeEffect(MobEffects.BLINDNESS);
-                        ally.removeEffect(EffectInit.obscured);
-						return true;
-					}, "Grants absorption and clears blindness"));
+					.setDrudgeAction(DrudgeActions::lumenSuture, "Grants absorption and clears blindness"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> vital_reservoir = MANIPS.register("vital_reservoir",
 			() -> new VitalReservoirManip("vital_reservoir", 50, 10, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.MORTEM, EnumVeinSections.HEART)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(60)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						if (drudge instanceof DrudgeEntity drudgeEntity
-								&& drudgeEntity.getBloodCharge() >= DrudgeEntity.MAX_BLOOD_CHARGE * 0.9f) return false;
-						AABB area = new AABB(centre).inflate(radius);
-						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
-								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
-						if (target == null) return false;
-						target.hurt(world.damageSources().magic(), 2.0f);
-						if (drudge instanceof DrudgeEntity drudgeEntity) {
-							drudgeEntity.fillBloodCharge(200f);
-						} else {
-							drudge.heal(4.0F);
-						}
-						return true;
-					}, "Draws blood from nearby hostile"));
+					.setDrudgeAction(DrudgeActions::vitalReservoir, "Draws blood from nearby hostile"));
 
 	// ── CONGEATIO — expanded tendencies ──
 
@@ -811,13 +514,7 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.CONGEATIO, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.FLAMMEUS)
 					.setCooldownTicks(30)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						List<Monster> mobs = world.getEntitiesOfClass(Monster.class, area);
-						if (mobs.isEmpty()) return false;
-						mobs.forEach(m -> SchoolStates.apply(drudge, m, SchoolState.RIME, 100));
-						return true;
-					}, "Builds Rime on nearby hostiles"));
+					.setDrudgeAction(DrudgeActions::cryogenicPulse, "Builds Rime on nearby hostiles"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> glacial_circulation = MANIPS.register("glacial_circulation",
 			() -> new GlacialCirculationManip("glacial_circulation", 175, 0, 0, EnumManipulationType.QUICK,
@@ -830,45 +527,14 @@ public class ManipulationInit {
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.CONGEATIO, EnumVeinSections.ARMS)
 					.setSecondaryTend(EnumBloodTendency.FERRIC)
 					.setCooldownTicks(50)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						if (!(world instanceof ServerLevel sLevel)) return false;
-						BlockPos base = drudge.blockPosition();
-						int placed = 0;
-						for (int r = 0; r < 8; r++) {
-							double angle = r * Math.PI / 4.0;
-							for (int dy = 0; dy < 3; dy++) {
-								BlockPos wallPos = BlockPos.containing(
-										base.getX() + 0.5 + 2.0 * Math.cos(angle),
-										base.getY() + dy,
-										base.getZ() + 0.5 + 2.0 * Math.sin(angle));
-								if (TemporaryIceManager.place(sLevel, wallPos, BlockInit.frozen_cruor.get().defaultBlockState(), 500)) {
-									placed++;
-								}
-							}
-						}
-						return placed > 0;
-					}, "Raises temporary Frozen Cruor around the Drudge"));
+					.setDrudgeAction(DrudgeActions::glacialBastion, "Raises temporary Frozen Cruor around the Drudge"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> glacial_rampart = MANIPS.register("glacial_rampart",
 			() -> new GlacialRampartManip("glacial_rampart", 350, 10, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.CONGEATIO, EnumVeinSections.ARMS)
 					.setSecondaryTend(EnumBloodTendency.FERRIC)
 					.setCooldownTicks(50)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						if (!(world instanceof ServerLevel sLevel)) return false;
-						Vec3 look = drudge.getLookAngle();
-						BlockPos base = BlockPos.containing(drudge.getEyePosition().add(look.scale(3.0)));
-						int placed = 0;
-						for (int dx = -1; dx <= 1; dx++) {
-							for (int dy = 0; dy < 3; dy++) {
-								BlockPos wallPos = base.offset(dx, dy, 0);
-								if (TemporaryIceManager.place(sLevel, wallPos, BlockInit.frozen_cruor.get().defaultBlockState(), 500)) {
-									placed++;
-								}
-							}
-						}
-						return placed > 0;
-					}, "Raises a temporary Frozen Cruor wall"));
+					.setDrudgeAction(DrudgeActions::glacialRampart, "Raises a temporary Frozen Cruor wall"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> osseous_bloom = MANIPS.register("osseous_bloom",
 			() -> new OsseousBloomManip("osseous_bloom", 600, 25, 0, EnumManipulationType.QUICK,
@@ -883,57 +549,27 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(25)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
-								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
-						if (target == null) return false;
-						SchoolDamage.hurt(target, world.damageSources().onFire(), 2.0f, 160, 1);
-						return true;
-					}, "Sets nearest hostile on fire"));
+					.setDrudgeAction(DrudgeActions::sanguineIgnition, "Sets nearest hostile on fire"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> vitric_combustion = MANIPS.register("vitric_combustion",
 			() -> new VitricCombustionManip("vitric_combustion", 350, 25, 0, EnumManipulationType.CHARGED,
 					EnumManipulationRank.SUMMA, EnumBloodTendency.FLAMMEUS, EnumVeinSections.BODY)
 					.setCooldownTicks(60)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						List<Monster> mobs = world.getEntitiesOfClass(Monster.class, area);
-						if (mobs.isEmpty()) return false;
-						float dmg = (float) drudge.getAttributeValue(Attributes.ATTACK_DAMAGE) * 2.0f;
-						mobs.forEach(m -> {
-							SchoolDamage.hurt(m, world.damageSources().onFire(), dmg, 240, 1);
-						});
-						return true;
-					}, "Heavy fire damage to all hostiles in area"));
+					.setDrudgeAction(DrudgeActions::vitricCombustion, "Heavy fire damage to all hostiles in area"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> cauterizing_rebuke = MANIPS.register("cauterizing_rebuke",
 			() -> new CauterizingRebukeManip("cauterizing_rebuke", 150, 10, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(90)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						drudge.removeEffect(MobEffects.POISON);
-						drudge.removeEffect(MobEffects.WITHER);
-                        drudge.removeEffect(EffectInit.necrosis);
-						AABB area = new AABB(centre).inflate(radius / 2.0);
-						List<Monster> mobs = world.getEntitiesOfClass(Monster.class, area);
-						mobs.forEach(m -> {
-							SchoolDamage.hurt(m, world.damageSources().onFire(), 2.0F, 100, 1);
-						});
-						return true;
-					}, "Cleanses disease and Necrosis, then sears nearby hostiles"));
+					.setDrudgeAction(DrudgeActions::cauterizingRebuke, "Cleanses disease and Necrosis, then sears nearby hostiles"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> scalding_updraft = MANIPS.register("scalding_updraft",
 			() -> new ScaldingUpdraftManip("scalding_updraft", 225, 5, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.LEGS)
 					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
 					.setCooldownTicks(80)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						drudge.push(0, 0.9, 0);
-						drudge.fallDistance = 0;
-						return true;
-					}, "Launches the Drudge upward on hot air"));
+					.setDrudgeAction(DrudgeActions::scaldingUpdraft, "Launches the Drudge upward on hot air"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> soaring_updraft = MANIPS.register("soaring_updraft",
 			() -> new ScaldingUpdraftManip("soaring_updraft", 300, 5, 0, EnumManipulationType.QUICK,
@@ -966,43 +602,21 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.TENEBRIS, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.MORTEM)
 					.setCooldownTicks(20)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						SchoolStates.apply(drudge, drudge, SchoolState.VEILED, 600);
-						return true;
-					}, "Veils the Drudge until it attacks"));
+					.setDrudgeAction(DrudgeActions::voidShroud, "Veils the Drudge until it attacks"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> gloam_laceration = MANIPS.register("gloam_laceration",
 			() -> new GloamLacerationManip("gloam_laceration", 175, 0, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.TENEBRIS, EnumVeinSections.ARMS)
 					.setSecondaryTend(EnumBloodTendency.MORTEM)
 					.setCooldownTicks(35)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
-								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
-						if (target == null) return false;
-						boolean ambush = drudge.isInvisible()
-								|| BlackVeilCovenantManager.isDarkEnough(world, drudge.blockPosition(), 7);
-                        if (target.hurt(world.damageSources().magic(), ambush ? 6.0F : 3.5F))
-                            target.addEffect(new MobEffectInstance(EffectInit.blood_loss, 140, 0, false, true));
-						return true;
-					}, "Slashes the nearest hostile from darkness"));
+					.setDrudgeAction(DrudgeActions::gloamLaceration, "Slashes the nearest hostile from darkness"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> blood_eclipse = MANIPS.register("blood_eclipse",
 			() -> new BloodEclipseManip("blood_eclipse", 300, 10, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.TENEBRIS, EnumVeinSections.HEAD)
 					.setSecondaryTend(EnumBloodTendency.LUX)
 					.setCooldownTicks(45)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						List<Monster> mobs = world.getEntitiesOfClass(Monster.class, area);
-						if (mobs.isEmpty()) return false;
-						float dmg = (float) drudge.getAttributeValue(Attributes.ATTACK_DAMAGE) * 1.2f;
-						mobs.forEach(m -> {
-							SchoolDamage.hurt(m, world.damageSources().magic(), dmg, 100, 1);
-						});
-						return true;
-					}, "Obscures and damages nearby hostiles"));
+					.setDrudgeAction(DrudgeActions::bloodEclipse, "Obscures and damages nearby hostiles"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> black_veil_covenant = MANIPS.register("black_veil_covenant",
 			() -> new BlackVeilCovenantManip("black_veil_covenant", 425, 15, 0, EnumManipulationType.QUICK,
@@ -1023,12 +637,7 @@ public class ManipulationInit {
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.TENEBRIS, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.FLAMMEUS)
 					.setCooldownTicks(180)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						drudge.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 300, 1, false, true));
-						drudge.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 300, 0, false, true));
-						drudge.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 300, 0, false, true));
-						return true;
-					}, "Grants eclipse resistance with a weakness tradeoff"));
+					.setDrudgeAction(DrudgeActions::bloodEclipseMantle, "Grants eclipse resistance with a weakness tradeoff"));
 
 	// ── MORTEM — expanded tendencies ──
 
@@ -1037,14 +646,7 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.MORTEM, EnumVeinSections.ARMS)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(20)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
-								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
-						if (target == null) return false;
-						SchoolStates.apply(drudge, target, SchoolState.NECROSIS, 100);
-						return true;
-					}, "Afflicts the nearest hostile with Necrosis"));
+					.setDrudgeAction(DrudgeActions::hemorrhage, "Afflicts the nearest hostile with Necrosis"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> lignum_mortis = MANIPS.register("lignum_mortis",
 			() -> new LignumMortisManip("lignum_mortis", 100, 0, 0, EnumManipulationType.CONTINUOUS,
@@ -1074,46 +676,21 @@ public class ManipulationInit {
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.MORTEM, EnumVeinSections.ARMS)
 					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
 					.setCooldownTicks(50)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
-								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
-						if (target == null) return false;
-						float drain = target.getMaxHealth() * 0.2f;
-						target.hurt(world.damageSources().magic(), drain);
-						drudge.heal(drain * 0.5f);
-						return true;
-					}, "Drains and reflects HP from nearest hostile"));
+					.setDrudgeAction(DrudgeActions::exsanguinate, "Drains and reflects HP from nearest hostile"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> insatiable_hunger = MANIPS.register("insatiable_hunger",
 			() -> new InsatiableHungerManip("insatiable_hunger", 225, 10, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.MORTEM, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(70)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
-								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
-						if (target == null) return false;
-						target.addEffect(new MobEffectInstance(EffectInit.insatiable_hunger, 220, 0, false, true));
-						return true;
-					}, "Curses nearest hostile with anti-healing hunger"));
+					.setDrudgeAction(DrudgeActions::insatiableHunger, "Curses nearest hostile with anti-healing hunger"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> grave_debt = MANIPS.register("grave_debt",
 			() -> new GraveDebtManip("grave_debt", 325, 10, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.MORTEM, EnumVeinSections.HEART)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(75)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						Monster target = world.getEntitiesOfClass(Monster.class, area).stream()
-								.min(Comparator.comparingDouble(drudge::distanceToSqr)).orElse(null);
-						if (target == null) return false;
-						SchoolHitHelper.markGraveDebt(target,
-								drudge instanceof DrudgeEntity drudgeEntity ? drudgeEntity.getOwnerUUID() : null,
-								ManipulationStatusRules.GRAVE_DEBT_TICKS);
-						return true;
-					}, "Marks nearest hostile to burst at low health"));
+					.setDrudgeAction(DrudgeActions::graveDebt, "Marks nearest hostile to burst at low health"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> blackhearted = MANIPS.register("blackhearted",
 			() -> new BlackheartedManip("blackhearted", 0, 35, 0, EnumManipulationType.PASSIVE,
@@ -1245,37 +822,21 @@ public class ManipulationInit {
 					EnumManipulationRank.SUMMA, EnumBloodTendency.LUX, EnumVeinSections.HEAD)
 					.setSecondaryTend(EnumBloodTendency.MORTEM)
 					.setCooldownTicks(120)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						world.getEntitiesOfClass(LivingEntity.class, area).forEach(e ->
-								SchoolStates.apply(drudge, e, SchoolState.ILLUMINATED, 1200));
-						return true;
-					}, "Applies Glowing to all nearby entities"));
+					.setDrudgeAction(DrudgeActions::unclosingEye, "Applies Glowing to all nearby entities"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> bloom_of_rot = MANIPS.register("bloom_of_rot",
 			() -> new BloomOfRotManip("bloom_of_rot", 500, 25, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.SUMMA, EnumBloodTendency.MORTEM, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(80)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						AABB area = new AABB(centre).inflate(radius);
-						List<Monster> mobs = world.getEntitiesOfClass(Monster.class, area);
-						if (mobs.isEmpty()) return false;
-						mobs.forEach(m -> {
-							SchoolStates.apply(drudge, m, SchoolState.NECROSIS, 100);
-						});
-						return true;
-					}, "Afflicts nearby hostiles with Necrosis"));
+					.setDrudgeAction(DrudgeActions::bloomOfRot, "Afflicts nearby hostiles with Necrosis"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> endless_hour = MANIPS.register("endless_hour",
 			() -> new EndlessHourManip("endless_hour", 600, 30, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.SUMMA, EnumBloodTendency.CONGEATIO, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.LUX)
 					.setCooldownTicks(200)
-					.setDrudgeAction((drudge, world, centre, radius) -> {
-						drudge.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 200, 0, false, false));
-						return true;
-					}, "Grants the Drudge a brief absorption ward"));
+					.setDrudgeAction(DrudgeActions::endlessHour, "Grants the Drudge a brief absorption ward"));
 
 	public static List<BloodManipulation> getAllEntries() {
 		List<BloodManipulation> entries = new ArrayList<>();

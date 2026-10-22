@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
@@ -82,7 +84,7 @@ public class LumenlaceMorphlingItem extends MorphlingItem {
 			if (player.tickCount % 20 == 0) {
 				double radius = 4.0;
 				AABB area = player.getBoundingBox().inflate(radius);
-				List<Monster> hostiles = player.level().getEntitiesOfClass(Monster.class, area);
+				List<Monster> hostiles = player.level().getEntitiesOfClass(Monster.class, area, candidate -> ManipulationCombatHelper.canHarm(player, candidate, Reach.MONSTER_FILTER_ANY_STATE));
 				int exposureDuration = 30 + (maturity - 2) * 10;
 				for (Monster mob : hostiles) {
 					MorphlingCombat.afflict(this, player, mob, exposureDuration);
@@ -170,7 +172,7 @@ public class LumenlaceMorphlingItem extends MorphlingItem {
 				240, 2, true, false, true));
 		if (!allowReactions) return true;
 		AABB area = player.getBoundingBox().inflate(8.0);
-		for (Monster mob : player.level().getEntitiesOfClass(Monster.class, area, Monster::isAlive)) {
+		for (Monster mob : player.level().getEntitiesOfClass(Monster.class, area, candidate -> ManipulationCombatHelper.canHarm(player, candidate, Reach.MONSTER_FILTER))) {
 			MorphlingCombat.afflict(this, player, mob, 160);
 		}
 		return true;

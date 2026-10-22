@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.AfflictionDigestHelper;
@@ -88,7 +90,7 @@ public class ScarsEntityEventHandler {
 					AABB area = player.getBoundingBox().inflate(SaprovittaVestigiumItem.TRAIL_RADIUS
 							+ symbiosis * 0.4D);
 					float damage = SaprovittaVestigiumItem.TRAIL_DAMAGE * (1.0F + symbiosis * 0.08F);
-					List<Monster> mobs = player.level().getEntitiesOfClass(Monster.class, area);
+					List<Monster> mobs = player.level().getEntitiesOfClass(Monster.class, area, candidate -> ManipulationCombatHelper.canHarm(player, candidate, Reach.MONSTER_FILTER_ANY_STATE));
 					for (Monster mob : mobs) {
 						mob.hurt(player.damageSources().magic(), damage);
 					}

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.gametest;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -124,7 +125,7 @@ public final class DuctilisGameTests {
         var owner=player(h); owner.setPos(h.absoluteVec(new Vec3(12.5,4,12.5))); owner.setNoGravity(true);owner.setYRot(0);owner.setXRot(90);
         h.setBlock(new BlockPos(12,1,12),Blocks.IRON_BLOCK);
         h.assertTrue(h.getLevel().getEntitiesOfClass(LivingEntity.class,owner.getBoundingBox().inflate(18),
-                e->ConductionManager.canHarm(owner,e) && owner.distanceToSqr(e)<=18*18).isEmpty(),"Empty Storm fixture contains a nearby victim");
+                e->ManipulationCombatHelper.canHarmFor(owner,e) && owner.distanceToSqr(e)<=18*18).isEmpty(),"Empty Storm fixture contains a nearby victim");
         Vec3 aim=Vec3.atCenterOf(h.absolutePos(new BlockPos(12,1,12))).subtract(owner.getEyePosition());
         owner.setXRot((float)-Math.toDegrees(Math.atan2(aim.y,Math.sqrt(aim.x*aim.x+aim.z*aim.z))));
         owner.setYRot((float)Math.toDegrees(Math.atan2(-aim.x,aim.z)));
@@ -324,7 +325,7 @@ public final class DuctilisGameTests {
             h.assertTrue(enemy.getHealth()<enemy.getMaxHealth(),"Eligible activation victim missed");
             h.assertTrue(wolf.getHealth()==wolf.getMaxHealth() && !wolf.hasEffect(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN),"Owned wolf disrupted");
             h.assertTrue(other.getHealth()==other.getMaxHealth(),"PvP-disabled player hit");
-            h.assertTrue(!ConductionManager.canHarm(caster,wolf)&&!ConductionManager.canHarm(caster,other),"Conductor protections diverge from direct cast");
+            h.assertTrue(!ManipulationCombatHelper.canHarmFor(caster,wolf)&&!ManipulationCombatHelper.canHarmFor(caster,other),"Conductor protections diverge from direct cast");
             h.succeed();
         } finally { h.getLevel().getServer().setPvpAllowed(pvp); wolf.discard(); enemy.discard(); other.discard(); caster.discard(); }
     }

@@ -334,7 +334,7 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 				: 1.0D;
 		for (LivingEntity target : server.getEntitiesOfClass(LivingEntity.class, new AABB(position(), position()).inflate(4),
 				candidate -> candidate.isAlive() && candidate != owner
-						&& (owner == null || com.vincenthuto.hemomancy.common.manipulation.ductilis.ConductionManager.canHarm(owner, candidate)))) {
+						&& (owner == null || com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.canHarmFor(owner, candidate)))) {
 			// 6 at the centre falling to 3 at the 4-block edge, kept below Vitric Combustion's Summa burst.
 			double distance = Math.min(4.0D, target.position().distanceTo(position()));
 			float damage = (float) ((6.0D - distance * 0.75D) * mastery);

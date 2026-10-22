@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.network.chat.Component;
@@ -63,7 +65,7 @@ public class WitchsEarMorphlingItem extends MorphlingItem {
 					180, 1, true, false, true));
 			playerIn.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED,
 					180, 1, true, false, true));
-			for (Monster mob : worldIn.getEntitiesOfClass(Monster.class, area, Monster::isAlive)) {
+			for (Monster mob : worldIn.getEntitiesOfClass(Monster.class, area, candidate -> ManipulationCombatHelper.canHarm(playerIn, candidate, Reach.MONSTER_FILTER))) {
 				MorphlingCombat.afflict(this, playerIn, mob, 100);
 			}
 		}

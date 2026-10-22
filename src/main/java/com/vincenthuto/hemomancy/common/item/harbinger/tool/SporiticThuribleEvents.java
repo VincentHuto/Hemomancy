@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.particle.data.SporiticSporeParticleData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -129,7 +131,7 @@ public class SporiticThuribleEvents {
 			SporiticThuribleResonanceState.grant(nearby, spore.tendency(), expires);
 		}
 
-		for (Monster mob : level.getEntitiesOfClass(Monster.class, area, Monster::isAlive)) {
+		for (Monster mob : level.getEntitiesOfClass(Monster.class, area, candidate -> ManipulationCombatHelper.canHarm(owner, candidate, Reach.MONSTER_FILTER))) {
 			mob.addEffect(new MobEffectInstance(EffectInit.blood_loss,
 					SporiticThuribleRules.BLOOD_LOSS_DURATION_TICKS, 0, true, true, true));
 			mob.addEffect(new MobEffectInstance(MobEffects.WITHER,

@@ -260,7 +260,7 @@ public final class EntityManipulationEffects {
         var hitTargets=new java.util.ArrayList<LivingEntity>();
         int hits=0;
         for (LivingEntity target:targetsAroundCaster(context,5.0D)) {
-            if (!ConductionManager.canHarm(context.caster(),target)
+            if (!ManipulationCombatHelper.canHarmFor(context.caster(),target)
                     || !ConductionManager.visible((ServerLevel)context.level(),context.caster().getEyePosition(),target.getEyePosition(),context.caster())
                     || !ConductionManager.claimHit(context.caster(),target,discharge)) continue;
             DuctilisLightningEffects.synapticJolt(context.caster(),target);
@@ -280,7 +280,7 @@ public final class EntityManipulationEffects {
 
     private static boolean synapticJolt(ManipulationCastContext context) {
         LivingEntity target=preferredTarget(context,context.scaleRange(7.0D));
-        if (target==null || !ConductionManager.canHarm(context.caster(),target)
+        if (target==null || !ManipulationCombatHelper.canHarmFor(context.caster(),target)
                 || !ConductionManager.visible((ServerLevel)context.level(),context.caster().getEyePosition(),target.getEyePosition(),context.caster())) return false;
         var discharge=new Discharge();
         if (!ConductionManager.claimHit(context.caster(),target,discharge)) return false;

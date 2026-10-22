@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.*;
@@ -135,7 +137,7 @@ public final class MuscleMemoryWorldEvents {
         boolean armed = state.isOverexertionArmed(MuscleMemory.PREDATORY_EYES, player.level().getGameTime());
         double radius = armed ? 24D : (witch ? 12D : 16D);
         List<Monster> targets = player.level().getEntitiesOfClass(Monster.class,
-                new AABB(player.blockPosition()).inflate(radius), target -> target.isAlive()
+                new AABB(player.blockPosition()).inflate(radius), target -> ManipulationCombatHelper.canHarm(player, target, Reach.MONSTER_FILTER)
                         && target.getDeltaMovement().horizontalDistanceSqr() > .0004D
                         && (armed || witch || player.hasLineOfSight(target)));
         targets.sort(Comparator.comparingDouble(player::distanceToSqr));

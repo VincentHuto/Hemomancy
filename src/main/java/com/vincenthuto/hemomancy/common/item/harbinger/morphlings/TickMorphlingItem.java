@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.network.chat.Component;
@@ -64,7 +66,7 @@ public class TickMorphlingItem extends MorphlingItem {
 				420.0, 700, 260, 0)) return false;
 		AABB area = playerIn.getBoundingBox().inflate(12.0);
 		for (Monster mob : worldIn.getEntitiesOfClass(Monster.class, area,
-				mob -> mob.isAlive() && mob.getHealth() < mob.getMaxHealth())) {
+				mob -> ManipulationCombatHelper.canHarm(playerIn, mob, Reach.MONSTER_FILTER) && mob.getHealth() < mob.getMaxHealth())) {
 			MorphlingCombat.afflict(this, playerIn, mob, 180);
 		}
 		return true;
@@ -89,7 +91,7 @@ public class TickMorphlingItem extends MorphlingItem {
 			if (player.tickCount % 20 == 0) { // Check every second
 				double radius = 8.0;
 				AABB area = player.getBoundingBox().inflate(radius);
-				List<Monster> nearbyHostiles = player.level().getEntitiesOfClass(Monster.class, area);
+				List<Monster> nearbyHostiles = player.level().getEntitiesOfClass(Monster.class, area, candidate -> ManipulationCombatHelper.canHarm(player, candidate, Reach.MONSTER_FILTER_ANY_STATE));
 
 				// Count hostiles that are at less than full health (bleeding)
 				long bleedingCount = nearbyHostiles.stream()
@@ -131,7 +133,7 @@ public class TickMorphlingItem extends MorphlingItem {
 				&& (victim.hasEffect(EffectInit.necrosis) || victim.hasEffect(MobEffects.WITHER))) {
 			AABB area = victim.getBoundingBox().inflate(8.0);
 			for (Monster mob : player.level().getEntitiesOfClass(Monster.class, area,
-					mob -> mob != victim && mob.isAlive() && mob.getHealth() < mob.getMaxHealth())) {
+					mob -> mob != victim && ManipulationCombatHelper.canHarm(player, mob, Reach.MONSTER_FILTER) && mob.getHealth() < mob.getMaxHealth())) {
 				MorphlingCombat.afflict(this, player, mob, 140);
 			}
 		}
@@ -154,7 +156,7 @@ public class TickMorphlingItem extends MorphlingItem {
 
 				double radius = 8.0;
 				AABB area = player.getBoundingBox().inflate(radius);
-				List<Monster> hostiles = player.level().getEntitiesOfClass(Monster.class, area);
+				List<Monster> hostiles = player.level().getEntitiesOfClass(Monster.class, area, candidate -> ManipulationCombatHelper.canHarm(player, candidate, Reach.MONSTER_FILTER_ANY_STATE));
 				for (Monster mob : hostiles) {
 					MorphlingCombat.afflict(this, player, mob, 100);
 				}

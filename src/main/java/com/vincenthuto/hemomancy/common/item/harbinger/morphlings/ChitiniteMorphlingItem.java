@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.core.component.DataComponents;
@@ -117,7 +119,7 @@ public class ChitiniteMorphlingItem extends MorphlingItem {
 				AABB area = player.getBoundingBox().inflate(radius);
 				float burstDamage = Math.min(18.0f, 4.0f + stored * 0.65f);
 				for (net.minecraft.world.entity.monster.Monster mob :
-						player.level().getEntitiesOfClass(net.minecraft.world.entity.monster.Monster.class, area)) {
+						player.level().getEntitiesOfClass(net.minecraft.world.entity.monster.Monster.class, area, candidate -> ManipulationCombatHelper.canHarm(player, candidate, Reach.MONSTER_FILTER_ANY_STATE))) {
 					if (!mob.hurt(player.damageSources().thorns(player), burstDamage)) continue;
 					double dx = mob.getX() - player.getX();
 					double dz = mob.getZ() - player.getZ();
@@ -165,7 +167,7 @@ public class ChitiniteMorphlingItem extends MorphlingItem {
 					AABB area = player.getBoundingBox().inflate(radius);
 					List<net.minecraft.world.entity.monster.Monster> hostiles =
 							player.level().getEntitiesOfClass(
-									net.minecraft.world.entity.monster.Monster.class, area);
+									net.minecraft.world.entity.monster.Monster.class, area, candidate -> ManipulationCombatHelper.canHarm(player, candidate, Reach.MONSTER_FILTER_ANY_STATE));
 					float burstDamage = amount * 0.5f; // 50% of triggering hit
 					for (net.minecraft.world.entity.monster.Monster mob : hostiles) {
 						if (!mob.hurt(player.damageSources().thorns(player), burstDamage)) continue;

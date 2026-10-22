@@ -67,7 +67,7 @@ public final class LivingSickleHookEntity extends ThrowableProjectile {
 		if (!level().isClientSide && result.getEntity() instanceof LivingEntity target
 				&& getOwner() instanceof LivingEntity owner && target != owner
 				&& !target.isAlliedTo(owner) && owner.canAttack(target)
-                && com.vincenthuto.hemomancy.common.manipulation.ductilis.ConductionManager.canHarm(owner, target)) {
+                && com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.canHarmFor(owner, target)) {
                 target.hurt(com.vincenthuto.hemomancy.common.damage.SchoolDamage.projectileSource(
                         TendencyWeaponHelper.createWeaponDamageSource(target, owner), this, owner), entityData.get(ATTACK_DAMAGE));
 			pullTowardOwner(target, owner);

@@ -63,12 +63,12 @@ public final class WillResourceSourceTest {
 		String will = read("src/main/java/com/vincenthuto/hemomancy/common/entity/mob/monster/will/WillEntity.java");
 		String drudgeAction = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/DrudgeAction.java");
 		String caster = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/MobManipCaster.java");
-		String manipInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationInit.java");
+		String drudgeActions = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/DrudgeActions.java");
 		assertContains("will uses real manipulation caster", will, "WillManipulationCaster.cast(this, id)");
 		assertNotContains("will no longer imports drudge caster", will, "MobManipCaster");
 		assertContains("drudge action accepts generic pathfinder mob", drudgeAction, "PathfinderMob caster");
 		assertContains("mob caster bridge exists", caster, "public static boolean cast(PathfinderMob caster");
-		assertContains("drudge-only charge path is guarded", manipInit, "instanceof DrudgeEntity drudgeEntity");
+		assertContains("drudge-only charge path is guarded", drudgeActions, "instanceof DrudgeEntity drudgeEntity");
 	}
 
 	private static void oculifloraAnchorGateIsLive() throws IOException {

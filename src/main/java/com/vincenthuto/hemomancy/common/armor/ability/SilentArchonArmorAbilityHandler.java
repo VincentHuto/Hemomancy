@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.armor.ability;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.armor.ArmorSetHelper;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -131,10 +133,7 @@ public final class SilentArchonArmorAbilityHandler {
 
 		AABB bounds = player.getBoundingBox().inflate(SILENT_SEVERANCE_RADIUS);
 		for (LivingEntity target : player.level().getEntitiesOfClass(LivingEntity.class, bounds,
-				entity -> entity != player && entity.isAlive() && !entity.isSpectator())) {
-			if (target instanceof Player targetPlayer && (targetPlayer.isCreative() || targetPlayer.isSpectator())) {
-				continue;
-			}
+				entity -> ManipulationCombatHelper.canHarm(player, entity, Reach.UNGATED_SURVIVAL))) {
 			target.hurt(player.damageSources().magic(), SILENT_SEVERANCE_DAMAGE);
 			MobEffectInstance dislocationEffect = new MobEffectInstance(EffectInit.monolithic_dislocation,
 					SILENT_SEVERANCE_EFFECT_TICKS, 0, false, true, true);

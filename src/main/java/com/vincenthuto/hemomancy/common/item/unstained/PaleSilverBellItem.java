@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.unstained;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.ChatFormatting;
@@ -53,7 +55,7 @@ public class PaleSilverBellItem extends Item {
 
 			player.addEffect(new MobEffectInstance(EffectInit.silver_ward, 600, 0, false, true, true));
 			List<Monster> monsters = level.getEntitiesOfClass(Monster.class,
-					player.getBoundingBox().inflate(RADIUS), Monster::isAlive);
+					player.getBoundingBox().inflate(RADIUS), candidate -> ManipulationCombatHelper.canHarm(player, candidate, Reach.MONSTER_FILTER));
 			for (Monster monster : monsters) {
 				monster.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 160, 0, false, true, true));
 				monster.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 80, 0, false, true, true));

@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.summon.BloodConstructEntity;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.damage.*;
-import com.vincenthuto.hemomancy.common.manipulation.ductilis.ConductionManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -160,7 +160,7 @@ public class CloudEntityBlood extends BloodConstructEntity {
 			if (ent != null) {
 				if (ent != creator && ent != this && (creator == null || !creator.isAlliedTo(ent))) {
 					if (!(ent instanceof BloodConstructEntity)) {
-                        if (!level().isClientSide && (creator == null || ConductionManager.canHarm(creator, ent)))
+                        if (!level().isClientSide && (creator == null || ManipulationCombatHelper.canHarmFor(creator, ent)))
                             strike(ent, ent.damageSources().generic(), 2 * damageMultiplier);
 					}
 				}
@@ -200,7 +200,7 @@ public class CloudEntityBlood extends BloodConstructEntity {
 	private void pursueTarget() {
 		LivingEntity target = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(12),
 				candidate -> candidate != this && candidate != creator && candidate.isAlive()
-						&& (creator == null || ConductionManager.canHarm(creator, candidate))).stream()
+						&& (creator == null || ManipulationCombatHelper.canHarmFor(creator, candidate))).stream()
 				.min(Comparator.comparingDouble(this::distanceToSqr)).orElse(null);
 		if (target == null) {
 			setDeltaMovement(Vec3.ZERO);
@@ -214,7 +214,7 @@ public class CloudEntityBlood extends BloodConstructEntity {
 		if (!(level() instanceof ServerLevel server)) return;
 		LivingEntity target = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(effectRadius()),
 				candidate -> candidate != this && candidate != creator && candidate.isAlive()
-						&& (creator == null || ConductionManager.canHarm(creator, candidate))).stream()
+						&& (creator == null || ManipulationCombatHelper.canHarmFor(creator, candidate))).stream()
 				.min(Comparator.comparingDouble(this::distanceToSqr)).orElse(null);
 		if (target == null) return;
         com.vincenthuto.hutoslib.common.lightning.LightningTesterSpawner.spawn(server, position().add(0,.4,0), target.getEyePosition(),

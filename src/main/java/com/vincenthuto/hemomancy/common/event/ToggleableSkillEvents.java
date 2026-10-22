@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -49,7 +51,8 @@ public final class ToggleableSkillEvents {
 			level.sendParticles(HemoParticleData.absorbedBloodCell(new ParticleColor(150, 8, 12)),
 					player.getX(), player.getY() + 0.1D, player.getZ(), 3, 0.22D, 0.04D, 0.22D, 0.01D);
 			for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class,
-					player.getBoundingBox().inflate(1.25D), target -> target instanceof Enemy)) {
+					player.getBoundingBox().inflate(1.25D), target -> target instanceof Enemy
+						&& ManipulationCombatHelper.canHarm(player, target, Reach.MONSTER_FILTER_ANY_STATE))) {
 				target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 24, 0, false, true, true));
 				target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 24, 0, false, false, false));
 			}

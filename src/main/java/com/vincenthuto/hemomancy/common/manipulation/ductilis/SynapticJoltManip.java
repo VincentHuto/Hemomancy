@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.ductilis;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.damage.*;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -71,7 +72,7 @@ public class SynapticJoltManip extends BloodManipulation {
 		Vec3 look = player.getLookAngle().normalize();
         double unobstructedRange = eye.distanceTo(ManipulationCombatHelper.clipToGeometry(player,eye.add(look.scale(range))));
 		return world.getEntitiesOfClass(LivingEntity.class, new AABB(player.blockPosition()).inflate(range),
-						target -> ConductionManager.canHarm(player,target)
+						target -> ManipulationCombatHelper.canHarmFor(player,target)
 								&& player.hasLineOfSight(target))
 				.stream()
 				.filter(target -> {

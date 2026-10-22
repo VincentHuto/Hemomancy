@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.ductilis;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.*;
@@ -32,7 +33,7 @@ public class SynapticStormManip extends BloodManipulation {
         int limit=ManipulationScalingRules.scaledCount(1,8,heldTicks,CHARGE_TICKS);
         int paralysis=ManipulationScalingRules.scaledInt(10,60,heldTicks,CHARGE_TICKS);
         var candidates=level.getEntitiesOfClass(LivingEntity.class,player.getBoundingBox().inflate(18),
-                e -> e.distanceToSqr(player)<=18*18 && (ConductionManager.canHarm(player,e)
+                e -> e.distanceToSqr(player)<=18*18 && (ManipulationCombatHelper.canHarmFor(player,e)
                         || e instanceof com.vincenthuto.hemomancy.common.entity.summon.FerricConstructEntity f
                         && ConductionManager.usableRelay(player,f))).stream()
                 .sorted(Comparator.comparing(LivingEntity::getUUID)).limit(256).toList();

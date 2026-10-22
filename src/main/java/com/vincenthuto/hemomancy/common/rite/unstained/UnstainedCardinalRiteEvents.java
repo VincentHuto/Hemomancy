@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.rite.unstained;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.PathMutualExclusionHelper;
@@ -400,7 +402,7 @@ public class UnstainedCardinalRiteEvents {
 				});
 
 		AABB area = new AABB(center).inflate(CLOSED_VEIN_RADIUS);
-		for (Monster monster : sLevel.getEntitiesOfClass(Monster.class, area, Monster::isAlive)) {
+		for (Monster monster : sLevel.getEntitiesOfClass(Monster.class, area, candidate -> ManipulationCombatHelper.canHarm(caster, candidate, Reach.MONSTER_FILTER))) {
 			monster.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 180, 1, false, true, true));
 			monster.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 180, 0, false, true, true));
 		}

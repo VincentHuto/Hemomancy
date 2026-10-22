@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.armor.ArmorSetHelper;
 import com.vincenthuto.hemomancy.common.armor.BodyIdiomArmorRules;
@@ -258,7 +260,8 @@ public class ArmorSetBonusHandler {
 		player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, speedTicks, 0, false, true, true));
 
 		player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(PRISMATIC_FLASH_RANGE),
-				target -> target.isAlive() && target != player && (target == attacker || target instanceof Monster))
+				target -> (target == attacker || target instanceof Monster)
+						&& ManipulationCombatHelper.canHarm(player, target, Reach.MONSTER_FILTER))
 				.forEach(target -> applyPrismaticFlashEffects(target, blindnessTicks, confusionTicks));
 		if (recordForkAssignment && player instanceof ServerPlayer serverPlayer) {
 			ArtificerAssignments.onForkDemonstrated(serverPlayer, ForkFamily.PRISMATIC);

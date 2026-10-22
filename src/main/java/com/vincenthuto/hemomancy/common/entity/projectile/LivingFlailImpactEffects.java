@@ -47,7 +47,7 @@ public final class LivingFlailImpactEffects {
 			boolean valid = LivingFlailImpactRules.isValidTarget(target == owner, target.isAlliedTo(owner),
 					target.isAlive(), owner.canAttack(target));
 			if (!valid || target.distanceToSqr(center) > radius * radius
-                    || !com.vincenthuto.hemomancy.common.manipulation.ductilis.ConductionManager.canHarm(owner, target)) continue;
+                    || !com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.canHarmFor(owner, target)) continue;
 			target.hurt(HemoDamageTypes.livingFlailFreeze(level, projectile, owner),
 					LivingFlailRules.damage(charge) * impactScale);
 			Vec3 outward = target.position().subtract(center).multiply(1.0D, 0.0D, 1.0D);

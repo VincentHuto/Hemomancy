@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.FluidInit;
@@ -90,7 +92,7 @@ public class IrontoothMorphlingItem extends MorphlingItem {
 		}
 		for (net.minecraft.world.entity.monster.Monster mob :
 				worldIn.getEntitiesOfClass(net.minecraft.world.entity.monster.Monster.class,
-						playerIn.getBoundingBox().inflate(8.0), net.minecraft.world.entity.monster.Monster::isAlive)) {
+						playerIn.getBoundingBox().inflate(8.0), candidate -> ManipulationCombatHelper.canHarm(playerIn, candidate, Reach.MONSTER_FILTER))) {
 			if (!mob.hurt(playerIn.damageSources().magic(), 7.0f)) continue;
 			mob.push(0, 0.75, 0);
 		}
@@ -157,7 +159,7 @@ public class IrontoothMorphlingItem extends MorphlingItem {
 					AABB area = player.getBoundingBox().inflate(radius);
 					List<net.minecraft.world.entity.monster.Monster> hostiles =
 							player.level().getEntitiesOfClass(
-									net.minecraft.world.entity.monster.Monster.class, area);
+									net.minecraft.world.entity.monster.Monster.class, area, candidate -> ManipulationCombatHelper.canHarm(player, candidate, Reach.MONSTER_FILTER_ANY_STATE));
 					for (net.minecraft.world.entity.monster.Monster mob : hostiles) {
 						if (!mob.hurt(player.damageSources().magic(), 6.0f)) continue;
 						double dx = mob.getX() - player.getX();

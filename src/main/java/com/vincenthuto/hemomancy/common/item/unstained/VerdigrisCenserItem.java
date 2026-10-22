@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.unstained;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.ChatFormatting;
@@ -53,10 +55,9 @@ public class VerdigrisCenserItem extends Item {
 
 			player.addEffect(new MobEffectInstance(EffectInit.verdigris_aura, 600, 0, false, true, true));
 			List<LivingEntity> nearby = level.getEntitiesOfClass(LivingEntity.class,
-					player.getBoundingBox().inflate(RADIUS), LivingEntity::isAlive);
+					player.getBoundingBox().inflate(RADIUS), entity -> ManipulationCombatHelper.canHarm(player, entity, Reach.UNGATED));
 			int marked = 0;
 			for (LivingEntity entity : nearby) {
-				if (entity == player) continue;
 				boolean bloodActive = entity instanceof ServerPlayer other
 						&& HemoCapabilityAccess.getBloodVolume(other).isActive();
 				if (bloodActive || entity instanceof Monster) {

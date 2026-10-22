@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.network.chat.Component;
@@ -69,7 +71,7 @@ public class UrchinMorphlingItem extends MorphlingItem {
 		playerIn.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST,
 				220, 0, true, false, true));
 		AABB area = playerIn.getBoundingBox().inflate(7.0);
-		for (Monster mob : worldIn.getEntitiesOfClass(Monster.class, area, Monster::isAlive)) {
+		for (Monster mob : worldIn.getEntitiesOfClass(Monster.class, area, candidate -> ManipulationCombatHelper.canHarm(playerIn, candidate, Reach.MONSTER_FILTER))) {
 			if (!mob.hurt(playerIn.damageSources().thorns(playerIn), 6.0f)) continue;
 			double dx = mob.getX() - playerIn.getX();
 			double dz = mob.getZ() - playerIn.getZ();
@@ -104,7 +106,7 @@ public class UrchinMorphlingItem extends MorphlingItem {
 				AABB area = player.getBoundingBox().inflate(radius);
 				List<net.minecraft.world.entity.monster.Monster> hostiles =
 						player.level().getEntitiesOfClass(
-								net.minecraft.world.entity.monster.Monster.class, area);
+								net.minecraft.world.entity.monster.Monster.class, area, candidate -> ManipulationCombatHelper.canHarm(player, candidate, Reach.MONSTER_FILTER_ANY_STATE));
 				if (!hostiles.isEmpty()) {
 					setLastAbilityTick(stack, "TidalAnchor", now);
 					double knockbackStrength = 0.8 + (maturity - 3) * 0.4;

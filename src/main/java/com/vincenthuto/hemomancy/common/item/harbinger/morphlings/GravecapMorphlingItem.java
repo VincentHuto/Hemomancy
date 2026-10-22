@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -107,7 +109,7 @@ public class GravecapMorphlingItem extends MorphlingItem {
 				int hyphal = SkillPointHelper.getHyphalCultivationLevel(player);
 				double radius = 5.0 + (maturity - 2) * 1.0 + hyphal * 0.5; // 5 at Developing, 6 Mature, 7 Apex
 				AABB area = player.getBoundingBox().inflate(radius);
-				List<Monster> hostiles = player.level().getEntitiesOfClass(Monster.class, area);
+				List<Monster> hostiles = player.level().getEntitiesOfClass(Monster.class, area, candidate -> ManipulationCombatHelper.canHarm(player, candidate, Reach.MONSTER_FILTER_ANY_STATE));
 
 				int necrosisDuration = 40 + (maturity - 2) * 20; // 2s at Developing, 3s Mature, 4s Apex
 				for (Monster mob : hostiles) {
@@ -138,7 +140,7 @@ public class GravecapMorphlingItem extends MorphlingItem {
 			double radius = 6.0 + hyphal * 0.5;
 			AABB area = victim.getBoundingBox().inflate(radius);
 			List<Monster> hostiles = serverLevel.getEntitiesOfClass(Monster.class, area,
-					m -> m != victim && m.isAlive());
+					m -> m != victim && ManipulationCombatHelper.canHarm(player, m, Reach.MONSTER_FILTER));
 			for (Monster mob : hostiles) {
 				if (allowReactions) MorphlingCombat.afflict(this, player, mob, 100);
 			}
@@ -181,7 +183,7 @@ public class GravecapMorphlingItem extends MorphlingItem {
 					ally.addEffect(new MobEffectInstance(EffectInit.mycorrhizal_mending,
 							160, 1, true, true, true));
 				}
-				for (Monster mob : serverLevel.getEntitiesOfClass(Monster.class, area, Monster::isAlive)) {
+				for (Monster mob : serverLevel.getEntitiesOfClass(Monster.class, area, candidate -> ManipulationCombatHelper.canHarm(player, candidate, Reach.MONSTER_FILTER))) {
 					if (allowReactions) MorphlingCombat.afflict(this, player, mob, 180);
 				}
 				if (serverLevel.random.nextFloat() < 0.12f + SkillPointHelper.getHyphalCultivationLevel(player) * 0.03f) {

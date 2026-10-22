@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.init.ScarInit;
 import com.vincenthuto.hemomancy.common.init.StillArtInit;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArt;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IrontoothMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
@@ -25,6 +26,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
@@ -190,6 +193,75 @@ public final class CombatTargetingMatrixGameTests {
 		matrix(h, "Living Sickle spin", "hostile boss pvp-on", caster -> caster.setItemInHand(InteractionHand.MAIN_HAND,
 				new ItemStack(ItemInit.living_sickle.get())), (helper, caster, target) -> damaged(target,
 				() -> caster.getMainHandItem().use(helper.getLevel(), caster, InteractionHand.MAIN_HAND)));
+	}
+
+	/**
+	 * Each {@link Reach} preset gives the verdict of the pre-step-9 filter it replaced, for every kind of body and with
+	 * PvP on and off. STRICT is compared with canHarm's body as it stood before step 9.
+	 */
+	@GameTest(templateNamespace = NAMESPACE, template = ROOM, batch = "combat_matrix_reach", timeoutTicks = 100)
+	public static void reachPresetsReproduceTheirLegacyFilters(GameTestHelper h) {
+		h.runAfterDelay(2, () -> {
+			var server = h.getLevel().getServer();
+			boolean pvp = server.isPvpAllowed();
+			ServerPlayer caster = DuctilisGameTests.player(h);
+			caster.moveTo(h.absoluteVec(CASTER), -90.0F, 0.0F);
+			var board = h.getLevel().getScoreboard();
+			PlayerTeam team = board.addPlayerTeam("reach_" + caster.getId());
+			board.addPlayerToTeam(caster.getScoreboardName(), team);
+			List<LivingEntity> bodies = new ArrayList<>();
+			try {
+				for (Column column : Column.values()) bodies.add(spawn(h, column, caster, team));
+				ServerPlayer creative = DuctilisGameTests.player(h);
+				creative.setGameMode(GameType.CREATIVE);
+				ServerPlayer spectator = DuctilisGameTests.player(h);
+				spectator.setGameMode(GameType.SPECTATOR);
+				Mob dying = EntityType.HUSK.create(h.getLevel());
+				dying.setNoAi(true);
+				dying.moveTo(caster.position().add(1.0D, 0.0D, 1.0D));
+				h.getLevel().addFreshEntity(dying);
+				dying.setHealth(0.0F);
+				var stand = EntityType.ARMOR_STAND.create(h.getLevel());
+				stand.moveTo(caster.position().add(-1.0D, 0.0D, 1.0D));
+				h.getLevel().addFreshEntity(stand);
+				bodies.addAll(List.of(creative, spectator, dying, stand, caster));
+				for (boolean pvpOn : new boolean[] {true, false}) {
+					server.setPvpAllowed(pvpOn);
+					for (LivingEntity body : bodies) {
+						String what = body.getType().getDescriptionId() + " pvp=" + pvpOn;
+						boolean monster = body instanceof Monster;
+						same(h, "MONSTER_FILTER " + what, monster && body.isAlive(),
+								monster && ManipulationCombatHelper.canHarm(caster, body, Reach.MONSTER_FILTER));
+						same(h, "MONSTER_FILTER_ANY_STATE " + what, monster && !body.isSpectator(),
+								monster && ManipulationCombatHelper.canHarm(caster, body, Reach.MONSTER_FILTER_ANY_STATE));
+						same(h, "UNGATED " + what, body != caster && body.isAlive(),
+								ManipulationCombatHelper.canHarm(caster, body, Reach.UNGATED));
+						same(h, "UNGATED_SURVIVAL " + what, body != caster && body.isAlive() && !body.isSpectator()
+										&& !(body instanceof Player p && (p.isCreative() || p.isSpectator())),
+								ManipulationCombatHelper.canHarm(caster, body, Reach.UNGATED_SURVIVAL));
+						same(h, "STRICT " + what, legacyCanHarm(caster, body), ManipulationCombatHelper.canHarm(caster, body));
+					}
+				}
+				h.succeed();
+			} finally {
+				server.setPvpAllowed(pvp);
+				board.removePlayerTeam(team);
+				bodies.forEach(LivingEntity::discard);
+			}
+		});
+	}
+
+	private static boolean legacyCanHarm(Player player, LivingEntity target) {
+		if (!target.isAlive() || target.isSpectator() || ManipulationCombatHelper.allied(player, target)) return false;
+		if (target instanceof Player other) {
+			return !other.isCreative() && player.canHarmPlayer(other)
+					&& (player.getServer() == null || player.getServer().isPvpAllowed());
+		}
+		return true;
+	}
+
+	private static void same(GameTestHelper h, String what, boolean legacy, boolean routed) {
+		h.assertTrue(legacy == routed, what + ": legacy filter " + legacy + ", routed " + routed);
 	}
 
 	private static void matrix(GameTestHelper h, String row, String expected, Consumer<ServerPlayer> prepare, Strike strike) {

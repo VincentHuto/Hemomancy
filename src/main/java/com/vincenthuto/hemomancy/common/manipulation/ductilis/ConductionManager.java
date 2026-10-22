@@ -3,8 +3,8 @@ package com.vincenthuto.hemomancy.common.manipulation.ductilis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.summon.BloodConstructEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.FerricConstructEntity;
-import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.manipulation.SchoolHitHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.network.ConductionPathPacket;
@@ -42,15 +42,6 @@ public final class ConductionManager {
     private static final Map<FerricConstructEntity,Relay> RELAYS=new WeakHashMap<>();
     private static final Map<LivingEntity,Discharge> OWNER_PULSES=new WeakHashMap<>();
     private ConductionManager() { }
-
-    public static boolean canHarm(LivingEntity owner, LivingEntity target) {
-        if (target instanceof BloodConstructEntity || target==owner || !target.isAlive() || target.isSpectator()) return false;
-        LivingEntity controller=controller(owner);
-        if (controller instanceof Player player) return ManipulationCombatHelper.canHarm(player,target);
-        if (target instanceof Player player && player.isCreative()) return false;
-        if (owner.isAlliedTo(target) || target.isAlliedTo(owner)) return false;
-        return !(owner instanceof net.minecraft.world.entity.Mob mob) || mob.getTarget()==target || mob.canAttack(target);
-    }
 
     private static Discharge ownerLedger(LivingEntity owner) {
         return OWNER_PULSES.computeIfAbsent(owner,id->new Discharge());
@@ -173,7 +164,7 @@ public final class ConductionManager {
         boolean pillar=relay instanceof com.vincenthuto.hemomancy.common.entity.summon.EntityIronPillar;
         AABB contact=relay.getBoundingBox().inflate(pillar ? 5 : .08);
         for (LivingEntity victim:level.getEntitiesOfClass(LivingEntity.class,contact,
-                e -> canHarm(owner,e) && (!pillar || e.distanceToSqr(relay)<=25)
+                e -> ManipulationCombatHelper.canHarmFor(owner,e) && (!pillar || e.distanceToSqr(relay)<=25)
                         && visible(level,relay.getEyePosition(),e.getEyePosition(),owner))
                 .stream().sorted(Comparator.comparingDouble((LivingEntity e)->e.distanceToSqr(relay)).thenComparing(LivingEntity::getUUID)).toList()) {
             if (pulseHit(owner,victim,state.discharge)) {
@@ -218,7 +209,7 @@ public final class ConductionManager {
 
     private static boolean pulseHit(LivingEntity owner,LivingEntity victim,Discharge discharge) {
         ServerLevel level=(ServerLevel)owner.level();
-        if (!canHarm(owner,victim) || !claimHit(owner,victim,discharge)) return false;
+        if (!ManipulationCombatHelper.canHarmFor(owner,victim) || !claimHit(owner,victim,discharge)) return false;
         var hit = discharge.pulseContext(owner);
         try (var scope = com.vincenthuto.hemomancy.common.damage.SchoolDamage.scope(hit, owner)) {
             if (!victim.hurt(com.vincenthuto.hemomancy.common.damage.SchoolDamage.attributed(
@@ -244,7 +235,7 @@ public final class ConductionManager {
             sync(level,network);
             int hits=0;
             for (LivingEntity target:level.getEntitiesOfClass(LivingEntity.class,new AABB(network.seed).inflate(13),
-                    e -> canHarm(owner,e) && touches(e,network.nodes))
+                    e -> ManipulationCombatHelper.canHarmFor(owner,e) && touches(e,network.nodes))
                     .stream().sorted(Comparator.comparingDouble((LivingEntity e)->e.distanceToSqr(Vec3.atCenterOf(network.seed)))
                             .thenComparing(LivingEntity::getUUID)).toList()) {
                 if (pulseHit(owner,target,network.discharge)) {
@@ -340,15 +331,6 @@ public final class ConductionManager {
 
     private static LivingEntity resolveOwner(ServerLevel level,UUID id) {
         return level.getEntity(id) instanceof LivingEntity living ? living : null;
-    }
-
-    private static LivingEntity controller(LivingEntity entity) {
-        if (entity instanceof BloodConstructEntity construct && construct.getCreator()!=null) return construct.getCreator();
-        UUID id=entity instanceof net.minecraft.world.entity.OwnableEntity ownable ? ownable.getOwnerUUID()
-                : entity instanceof com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon bound
-                ? bound.hemomancy$getOwnerUUID() : null;
-        if (id!=null && entity.level() instanceof ServerLevel level && resolveOwner(level,id) instanceof Player player) return player;
-        return entity;
     }
 
     private record Relay(UUID owner,Discharge discharge) { }

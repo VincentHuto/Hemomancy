@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
@@ -431,7 +433,7 @@ public class MorphlingItem extends Item implements IMorphling {
 		Vec3 eye = player.getEyePosition();
 		AABB area = player.getBoundingBox().inflate(range);
 		return player.level().getEntitiesOfClass(LivingEntity.class, area,
-						target -> target != player && target.isAlive()
+						target -> ManipulationCombatHelper.canHarm(player, target, Reach.UNGATED)
 								&& target.distanceToSqr(player) <= range * range
 								&& target.getBoundingBox().getCenter().subtract(eye).normalize().dot(look) > 0.85D)
 				.stream()

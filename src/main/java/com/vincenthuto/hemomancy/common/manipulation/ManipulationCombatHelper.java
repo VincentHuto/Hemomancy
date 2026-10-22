@@ -6,6 +6,7 @@ import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.HitResult;
+import com.vincenthuto.hemomancy.common.entity.summon.BloodConstructEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -30,12 +31,75 @@ public final class ManipulationCombatHelper {
 	}
 
 	public static boolean canHarm(Player player, LivingEntity target) {
-		if (!target.isAlive() || target.isSpectator() || allied(player, target)) return false;
-		if (target instanceof Player other) {
-			return !other.isCreative() && player.canHarmPlayer(other)
-					&& (player.getServer() == null || player.getServer().isPvpAllowed());
+		return canHarm(player, target, Reach.STRICT);
+	}
+
+	/**
+	 * How far an effect reaches past {@link #canHarm(Player, LivingEntity)}. {@link #STRICT} is canHarm itself. The
+	 * wider presets reproduce sites written before step 9 flag for flag; the consolidation ledger's Decisions table
+	 * names the pending decision that would move each one onto STRICT (G-2b for the Monster filters, F-16 for the
+	 * ungated area effects).
+	 *
+	 * @param allies     also reach the caster's allies: itself excepted, its pets, teammates, its own and allied
+	 *                   puppets, and mobs it has impressed
+	 * @param anyPlayer  reach other players whatever PvP and team friendly fire say
+	 * @param creative   reach players in creative mode
+	 * @param spectators reach spectators
+	 * @param dying      reach bodies already at zero health
+	 */
+	public record Reach(boolean allies, boolean anyPlayer, boolean creative, boolean spectators, boolean dying) {
+		public static final Reach STRICT = new Reach(false, false, false, false, false);
+		/** A {@code Monster.class} gather filtered on {@code isAlive}: every monster, the caster's own puppets too. */
+		public static final Reach MONSTER_FILTER = new Reach(true, true, true, true, false);
+		/** A {@code Monster.class} gather with no predicate, which also returns dying bodies. */
+		public static final Reach MONSTER_FILTER_ANY_STATE = new Reach(true, true, true, true, true);
+		/** Every living body but the caster: pets, allies, puppets, and players whatever PvP says. */
+		public static final Reach UNGATED = new Reach(true, true, true, true, false);
+		/** As {@link #UNGATED}, but creative and spectating players are spared. */
+		public static final Reach UNGATED_SURVIVAL = new Reach(true, true, false, false, false);
+
+		boolean relational() {
+			return !allies || !anyPlayer;
 		}
-		return true;
+	}
+
+	/**
+	 * Whether {@code caster}'s effect may reach {@code target}. Only a player caster can be held to allies or PvP; a
+	 * Drudge or a scar's non-player wearer uses a preset that checks neither.
+	 */
+	public static boolean canHarm(LivingEntity caster, LivingEntity target, Reach reach) {
+		if (target == caster || !reach.dying() && !target.isAlive() || !reach.spectators() && target.isSpectator()) return false;
+		if (target instanceof Player other && !reach.creative() && other.isCreative()) return false;
+		if (!reach.relational()) return true;
+		if (!(caster instanceof Player player)) {
+			throw new IllegalArgumentException("only a player caster can be held to allies or PvP: " + reach);
+		}
+		if (target instanceof Player other && !reach.anyPlayer() && !(player.canHarmPlayer(other)
+				&& (player.getServer() == null || player.getServer().isPvpAllowed()))) return false;
+		return reach.allies() || !allied(player, target);
+	}
+
+	/**
+	 * Whether something acting for {@code source} (a construct, summon, projectile owner or effect holder) may harm
+	 * {@code target}. When a player controls the source, that player's {@link #canHarm(Player, LivingEntity)} decides
+	 * and Blood Constructs are spared. Otherwise the source's own team and, for a mob, its target or vanilla
+	 * {@code canAttack} decide.
+	 */
+	public static boolean canHarmFor(LivingEntity source, LivingEntity target) {
+		if (target instanceof BloodConstructEntity || target == source || !target.isAlive() || target.isSpectator()) return false;
+		LivingEntity controller = controller(source);
+		if (controller instanceof Player player) return canHarm(player, target);
+		if (target instanceof Player player && player.isCreative()) return false;
+		if (source.isAlliedTo(target) || target.isAlliedTo(source)) return false;
+		return !(source instanceof net.minecraft.world.entity.Mob mob) || mob.getTarget() == target || mob.canAttack(target);
+	}
+
+	private static LivingEntity controller(LivingEntity entity) {
+		if (entity instanceof BloodConstructEntity construct && construct.getCreator() != null) return construct.getCreator();
+		java.util.UUID id = entity instanceof OwnableEntity ownable ? ownable.getOwnerUUID()
+				: entity instanceof BoundPuppeteerSummon bound ? bound.hemomancy$getOwnerUUID() : null;
+		if (id != null && entity.level() instanceof ServerLevel level && level.getEntity(id) instanceof Player player) return player;
+		return entity;
 	}
 
 	/**

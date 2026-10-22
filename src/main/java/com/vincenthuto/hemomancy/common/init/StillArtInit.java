@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.init;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.util.RegistryLookup;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -51,7 +53,7 @@ public class StillArtInit {
 				AABB area = player.getBoundingBox().inflate(5.0);
 				Vec3 look = player.getLookAngle().normalize();
 				List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, area,
-						target -> target != player && target.isAlive() && isInFront(player, look, target, 0.25));
+						target -> ManipulationCombatHelper.canHarm(player, target, Reach.UNGATED) && isInFront(player, look, target, 0.25));
 				for (LivingEntity target : targets) {
 					Vec3 away = target.position().subtract(player.position()).normalize();
 					target.push(away.x * 0.8, 0.25, away.z * 0.8);
@@ -66,7 +68,7 @@ public class StillArtInit {
 	public static final DeferredHolder<StillArt, StillArt> lethean_mute = STILL_ARTS.register("lethean_mute",
 			() -> new StillArt("lethean_mute", EnumClarityStage.AWAKENED, 320, StillArtEnding.HUSH, (player, level, heldItem, pos, art) -> {
 				AABB area = player.getBoundingBox().inflate(6.0);
-				List<Monster> targets = level.getEntitiesOfClass(Monster.class, area, Monster::isAlive);
+				List<Monster> targets = level.getEntitiesOfClass(Monster.class, area, candidate -> ManipulationCombatHelper.canHarm(player, candidate, Reach.MONSTER_FILTER));
 				targets.forEach(target -> {
 					target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 120, 1, false, true));
 					target.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 100, 0, false, true));
@@ -79,7 +81,7 @@ public class StillArtInit {
 
 	public static final DeferredHolder<StillArt, StillArt> still_pulse = STILL_ARTS.register("still_pulse",
 			() -> new StillArt("still_pulse", EnumClarityStage.DISCERNING, 260, StillArtEnding.STILLNESS, (player, level, heldItem, pos, art) -> {
-				level.getEntitiesOfClass(Monster.class, player.getBoundingBox().inflate(7.0), Monster::isAlive)
+				level.getEntitiesOfClass(Monster.class, player.getBoundingBox().inflate(7.0), candidate -> ManipulationCombatHelper.canHarm(player, candidate, Reach.MONSTER_FILTER))
 						.forEach(target -> target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 2, false, true)));
 				player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 60, 0, false, true));
 				level.sendParticles(HemoParticleData.glow(STILL_SILVER), player.getX(), player.getY() + 0.5, player.getZ(),
@@ -110,7 +112,7 @@ public class StillArtInit {
 
 	public static final DeferredHolder<StillArt, StillArt> memory_shear = STILL_ARTS.register("memory_shear",
 			() -> new StillArt("memory_shear", EnumClarityStage.VIGILANT, 300, StillArtEnding.SHEAR, (player, level, heldItem, pos, art) -> {
-				Monster target = level.getEntitiesOfClass(Monster.class, player.getBoundingBox().inflate(10.0), Monster::isAlive)
+				Monster target = level.getEntitiesOfClass(Monster.class, player.getBoundingBox().inflate(10.0), candidate -> ManipulationCombatHelper.canHarm(player, candidate, Reach.MONSTER_FILTER))
 						.stream().min(Comparator.comparingDouble(player::distanceToSqr)).orElse(null);
 				if (target == null) {
 					player.displayClientMessage(Component.literal("There is no hostile memory near enough to shear.")
@@ -142,7 +144,7 @@ public class StillArtInit {
 			() -> new StillArt("quietus_bell", EnumClarityStage.RESOLUTE, 420, StillArtEnding.HUSH, (player, level, heldItem, pos, art) -> {
 				player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 160, 1, false, true));
 				player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 120, 0, false, true));
-				level.getEntitiesOfClass(Monster.class, player.getBoundingBox().inflate(8.0), Monster::isAlive)
+				level.getEntitiesOfClass(Monster.class, player.getBoundingBox().inflate(8.0), candidate -> ManipulationCombatHelper.canHarm(player, candidate, Reach.MONSTER_FILTER))
 						.forEach(target -> target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 160, 1, false, true)));
 				level.playSound(null, player.blockPosition(), SoundEvents.BELL_BLOCK, SoundSource.PLAYERS, 1.2f, 1.8f);
 				return true;
@@ -151,7 +153,7 @@ public class StillArtInit {
 	public static final DeferredHolder<StillArt, StillArt> autoimmune_edge = STILL_ARTS.register("autoimmune_edge",
 			() -> new StillArt("autoimmune_edge", EnumClarityStage.ENLIGHTENED, 600, StillArtEnding.REBUKE, (player, level, heldItem, pos, art) -> {
 				List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(5.0),
-						target -> target != player && target.isAlive());
+						target -> ManipulationCombatHelper.canHarm(player, target, Reach.UNGATED));
 				targets.forEach(target -> {
 					target.hurt(player.damageSources().magic(), 4.0f);
 					target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 0, false, true));

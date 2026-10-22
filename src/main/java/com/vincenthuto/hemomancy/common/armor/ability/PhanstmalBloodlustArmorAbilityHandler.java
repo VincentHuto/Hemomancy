@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.armor.ability;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.summon.PhantasmalEchoEntity;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
@@ -89,7 +91,7 @@ public final class PhanstmalBloodlustArmorAbilityHandler {
 
 	private static void spawnMasqueradeEchoes(ServerPlayer player) {
 		boolean hasNearbyHostiles = !player.level().getEntitiesOfClass(Monster.class,
-				player.getBoundingBox().inflate(18.0D), Monster::isAlive).isEmpty();
+				player.getBoundingBox().inflate(18.0D), candidate -> ManipulationCombatHelper.canHarm(player, candidate, Reach.MONSTER_FILTER)).isEmpty();
 		for (int i = 0; i < MASQUERADE_ECHO_COUNT; i++) {
 			double angle = (Math.PI * 2.0D * i) / MASQUERADE_ECHO_COUNT
 					+ player.getRandom().nextDouble() * 0.35D;

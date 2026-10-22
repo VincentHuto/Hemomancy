@@ -73,7 +73,7 @@ public final class SchoolHitHelper {
 		markedTarget.level().getEntitiesOfClass(LivingEntity.class,
 						new AABB(markedTarget.blockPosition()).inflate(ManipulationStatusRules.CONDUCTIVE_ARC_RADIUS),
 						target -> target != markedTarget && target != attacker && target.isAlive()
-								&& ConductionManager.canHarm(attacker,target)
+								&& ManipulationCombatHelper.canHarmFor(attacker,target)
 								&& ConductionManager.canClaimHit(attacker,target,discharge)
                                 && target.position().distanceTo(center) <= ManipulationStatusRules.CONDUCTIVE_ARC_RADIUS
                                 && (primary!=EnumBloodTendency.DUCTILIS && secondary!=EnumBloodTendency.DUCTILIS

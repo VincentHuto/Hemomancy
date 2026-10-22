@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.scar;
 
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
+import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -185,7 +187,7 @@ public class ScarDefinition {
 			if (tier >= 2 && entity.tickCount % 40 == 0) {
 				int dur = (int) (60 * masteryMult);
 				AABB area = entity.getBoundingBox().inflate(5.0);
-				entity.level().getEntitiesOfClass(Monster.class, area)
+				entity.level().getEntitiesOfClass(Monster.class, area, candidate -> ManipulationCombatHelper.canHarm(entity, candidate, Reach.MONSTER_FILTER_ANY_STATE))
 						.forEach(mob -> mob.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, dur, 0)));
 			}
 			if (tier >= 3 && entity.tickCount % 40 == 0) {
