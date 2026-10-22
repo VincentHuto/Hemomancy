@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -33,8 +34,7 @@ public final class WarpChairBlockEntity extends BlockEntity {
 	public void setPaired(UUID owner) {
 		this.paired = true;
 		this.owner = owner;
-		setChanged();
-		if (level != null) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+		BlockEntitySync.markAndSync(this);
 	}
 
 	@Override

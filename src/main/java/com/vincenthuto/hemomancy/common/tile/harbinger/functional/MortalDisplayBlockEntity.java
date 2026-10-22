@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -39,8 +40,7 @@ public class MortalDisplayBlockEntity extends BlockEntity {
 	public void claim(UUID player) {
 		claimed = true;
 		claimant = player;
-		setChanged();
-        if (level != null) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+		BlockEntitySync.markAndSync(this);
 	}
 
     @Override public CompoundTag getUpdateTag(HolderLookup.Provider registries) { return saveWithoutMetadata(registries); }

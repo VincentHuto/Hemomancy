@@ -34,7 +34,7 @@
 		mountScale = 1.0F;
 		mountOpacity = 1.0F;
 		if (entity.getTransitionTick() > 0) {
-			float absorbed = VesperMountMotionRules.smooth(VesperPhaseTransitionRules.absorptionProgress(
+			float absorbed = HemoEasing.smoothstep(VesperPhaseTransitionRules.absorptionProgress(
 					motion.transitionTime()));
 			mountOpacity = 1.0F - absorbed;
 			mountScale = Math.max(0.03F, 1.0F - absorbed * 0.97F);
@@ -200,8 +200,8 @@
 	private void attack(VesperPhaseOneAttack attack, float t, float age) {
 		VesperMoveTimeline timeline = VesperMountControllerRules.timeline(attack);
 		float windup = timeline.windup();
-		float wind = VesperMountMotionRules.smooth(t / Math.max(1.0F, windup));
-		float recover = VesperMountMotionRules.smooth(
+		float wind = HemoEasing.smoothstep(t / Math.max(1.0F, windup));
+		float recover = HemoEasing.smoothstep(
 				(t - windup - timeline.active()) / Math.max(1.0F, timeline.recovery()));
 		float hold = 1.0F - recover;
 		switch (attack) {
@@ -341,12 +341,12 @@
 
 	/** Smoothstep from 0 at {@code from} to 1 at {@code to}. */
 	private static float ramp(float t, float from, float to) {
-		return VesperMountMotionRules.smooth((t - from) / Math.max(0.001F, to - from));
+		return HemoEasing.smoothstep((t - from) / Math.max(0.001F, to - from));
 	}
 
 	/** Knocked off balance: the legs buckle, the head drops and the body wobbles out of it as the count runs down. */
 	private void stagger(float ticksLeft, float age) {
-		float s = VesperMountMotionRules.smooth(ticksLeft / VesperMountControllerRules.STAGGER_TICKS);
+		float s = HemoEasing.smoothstep(ticksLeft / VesperMountControllerRules.STAGGER_TICKS);
 		crouch(0.8F * s);
 		this.body.zRot += Mth.sin(age * 0.9F) * 0.07F * s;
 		this.body.xRot += -0.08F * s;
@@ -362,7 +362,7 @@
 		float x = t - at + 2.0F;
 		if (x <= 0.0F || x >= length + 2.0F) return 0.0F;
 		if (x < 2.0F) return VesperMountMotionRules.overshoot(x / 2.0F);
-		return 1.0F - VesperMountMotionRules.smooth((x - 2.0F) / length);
+		return 1.0F - HemoEasing.smoothstep((x - 2.0F) / length);
 	}
 
 	/** The burrow's body language: plunge, a claw or tail driven up through the floor, the eruption, the shake-off. */
@@ -371,7 +371,7 @@
 			case DIVE -> {
 				float p = Mth.clamp(t / VesperBurrowRules.DIVE_TICKS, 0.0F, 1.0F);
 				float rear = Mth.sin(Mth.clamp(p * 2.0F, 0.0F, 1.0F) * Mth.PI);
-				float plunge = VesperMountMotionRules.smooth((p - 0.4F) / 0.6F);
+				float plunge = HemoEasing.smoothstep((p - 0.4F) / 0.6F);
 				this.body.xRot += -0.35F * rear + 0.95F * plunge;
 				this.body.y += 10.0F * plunge;
 				this.neck.xRot += 0.6F * plunge;
@@ -386,7 +386,7 @@
 				int index = VesperBurrowRules.strikeIndexAt((int) t);
 				float local = (t - VesperBurrowRules.DIVE_TICKS) % VesperBurrowRules.STRIKE_INTERVAL
 						- (VesperBurrowRules.STRIKE_INTERVAL - VesperBurrowRules.STRIKE_TICKS - VesperBurrowRules.STRIKE_TELL_TICKS);
-				float coil = VesperMountMotionRules.smooth(local / VesperBurrowRules.STRIKE_TELL_TICKS);
+				float coil = HemoEasing.smoothstep(local / VesperBurrowRules.STRIKE_TELL_TICKS);
 				if (VesperBurrowRules.strikeAt(index) == VesperBurrowRules.Strike.CLAW) {
 					this.body.xRot += 0.25F * coil;
 					this.clawArmR.zRot += 0.4F * coil;
@@ -404,7 +404,7 @@
 				float local = (t - VesperBurrowRules.DIVE_TICKS) % VesperBurrowRules.STRIKE_INTERVAL
 						- (VesperBurrowRules.STRIKE_INTERVAL - VesperBurrowRules.STRIKE_TICKS);
 				float thrust = VesperMountMotionRules.overshoot(Mth.clamp(local / 3.0F, 0.0F, 1.0F))
-						* (1.0F - VesperMountMotionRules.smooth((local - 4.0F) / 4.0F));
+						* (1.0F - HemoEasing.smoothstep((local - 4.0F) / 4.0F));
 				if (VesperBurrowRules.strikeAt(index) == VesperBurrowRules.Strike.CLAW) {
 					this.body.xRot += -0.75F * thrust;
 					this.clawArmR.zRot += -1.1F * thrust;
@@ -473,8 +473,8 @@
 		float lag = Mth.sin(phase - 1.2F) * beat;
 		// Limbs fold once it is clear of the floor and reach for it again at the end of a landing.
 		float tuck = switch (mode) {
-			case TAKEOFF -> VesperMountMotionRules.smooth(Mth.clamp((t - 4.0F) / 10.0F, 0.0F, 1.0F));
-			case LANDING -> 1.0F - VesperMountMotionRules.smooth(Mth.clamp(
+			case TAKEOFF -> HemoEasing.smoothstep(Mth.clamp((t - 4.0F) / 10.0F, 0.0F, 1.0F));
+			case LANDING -> 1.0F - HemoEasing.smoothstep(Mth.clamp(
 					(t - VesperWingedFlightRules.LANDING_TICKS + 12.0F) / 10.0F, 0.0F, 1.0F));
 			default -> 1.0F;
 		};
@@ -482,7 +482,7 @@
 		flightClaws(mode, t, tuck, lag, bank);
 		float drop = switch (mode) {
 			case DIVING_REND -> 1.1F;
-			case TAIL_FUSILLADE -> Mth.lerp(VesperMountMotionRules.smooth(Mth.clamp(t / 8.0F, 0.0F, 1.0F)),
+			case TAIL_FUSILLADE -> Mth.lerp(HemoEasing.smoothstep(Mth.clamp(t / 8.0F, 0.0F, 1.0F)),
 					TAIL_HOOK_DROP, aimDrop);
 			default -> TAIL_HOOK_DROP;
 		};
@@ -523,7 +523,7 @@
 		float[] pose = new float[CLAW_FOLDED.length];
 		for (int i = 0; i < pose.length; i++) pose[i] = CLAW_FOLDED[i] * tuck;
 		if (mode == VesperWingedFlightRules.FlightMode.DIVE_TELEGRAPH) {
-			blendClaws(pose, CLAW_COCKED, VesperMountMotionRules.smooth(Mth.clamp(t / 10.0F, 0.0F, 1.0F)));
+			blendClaws(pose, CLAW_COCKED, HemoEasing.smoothstep(Mth.clamp(t / 10.0F, 0.0F, 1.0F)));
 		} else if (mode == VesperWingedFlightRules.FlightMode.DIVING_REND) {
 			blendClaws(pose, CLAW_COCKED, 1.0F - Mth.clamp(t / 3.0F, 0.0F, 1.0F));
 			blendClaws(pose, CLAW_REACH, VesperMountMotionRules.overshoot(Mth.clamp(t / 6.0F, 0.0F, 1.0F)));

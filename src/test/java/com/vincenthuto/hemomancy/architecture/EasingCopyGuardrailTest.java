@@ -18,8 +18,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * A-2: easing and interpolation come from {@code common/util/HemoEasing}. No other class declares its own scalar
- * {@code smoothstep}, {@code smooth}, {@code lerp} or {@code clamp01}, or a one-argument {@code clamp}, unless it is
- * listed here with the reason it differs. Stale entries fail.
+ * {@code smoothstep}, {@code smooth}, {@code lerp} or {@code clamp01}, or a one-argument {@code clamp} or {@code ease},
+ * unless it is listed here with the reason it differs. Stale entries fail. The animation templates under
+ * {@code tools/model_export} are checked too, because their generators write them into models.
  */
 class EasingCopyGuardrailTest {
 	private static final String HEMO_EASING = "src/main/java/com/vincenthuto/hemomancy/common/util/HemoEasing.java";
@@ -33,12 +34,13 @@ class EasingCopyGuardrailTest {
 	private static final Pattern EASING_DECLARATION = Pattern.compile(
 			"\\b(?:float|double)\\s+(smoothstep|smoothStep|smooth|smootherstep|lerp|clamp01)\\s*\\(");
 	private static final Pattern ONE_ARGUMENT_CLAMP = Pattern.compile(
-			"\\b(?:float|double)\\s+(clamp)\\s*\\(\\s*(?:final\\s+)?(?:float|double)\\s+\\w+\\s*\\)");
+			"\\b(?:float|double)\\s+(clamp|ease)\\s*\\(\\s*(?:final\\s+)?(?:float|double)\\s+\\w+\\s*\\)");
 
 	@Test
 	void easingIsDeclaredOnlyInHemoEasing() throws Exception {
 		List<String> found = new ArrayList<>();
-		try (Stream<Path> files = Files.walk(RepoPaths.MAIN_JAVA)) {
+		try (Stream<Path> files = Stream.concat(Files.walk(RepoPaths.MAIN_JAVA),
+				Files.walk(RepoPaths.TOOLS.resolve("model_export")))) {
 			for (Path file : files.filter(path -> path.toString().endsWith(".java")).toList()) {
 				String shown = RepoPaths.display(file);
 				if (shown.equals(HEMO_EASING)) continue;

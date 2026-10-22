@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.tile.inscription;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -45,10 +46,7 @@ public class DiscoveryInscriptionBlockEntity extends BlockEntity {
 
 	public void setInscriptionId(ResourceLocation inscriptionId) {
 		this.inscriptionId = inscriptionId;
-		setChanged();
-		if (level != null) {
-			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-		}
+		BlockEntitySync.markAndSync(this);
 	}
 
 	@Override

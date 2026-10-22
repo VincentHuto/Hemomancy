@@ -595,6 +595,7 @@ import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantSplitRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantState;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantYieldRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperMoveTimeline;
+import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;

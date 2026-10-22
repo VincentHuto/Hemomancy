@@ -596,7 +596,8 @@ EXTRA_IMPORTS = ('import com.mojang.blaze3d.vertex.VertexConsumer;\n'
                  'import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperMoveTimeline;\n'
                  'import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseOneAttack;\n'
                  'import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseTransitionRules;\n'
-                 'import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperWingedFlightRules;\n')
+                 'import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperWingedFlightRules;\n'
+                 'import com.vincenthuto.hemomancy.common.util.HemoEasing;\n')
 EXTRA_METHODS = Path(__file__).with_name('vesper_mount_anim.java').read_text(encoding='utf-8')
 
 

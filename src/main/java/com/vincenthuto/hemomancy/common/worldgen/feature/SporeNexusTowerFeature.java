@@ -203,10 +203,7 @@ public class SporeNexusTowerFeature extends Feature<NoneFeatureConfiguration> {
 					if (outOfBounds(fx, fz, cutoff, ccx, ccz)) continue;
 					mutable.set(fx, by - 1, fz);
 					for (int depth = 0; depth < 5; depth++) {
-						BlockState existing = level.getBlockState(mutable);
-						if (existing.isAir() || existing.canBeReplaced()) {
-							level.setBlock(mutable, VENOUS_STONE, 2);
-						}
+						FeatureLogic.placeIfReplaceable(level, mutable, VENOUS_STONE);
 						mutable.move(Direction.DOWN);
 					}
 				}
