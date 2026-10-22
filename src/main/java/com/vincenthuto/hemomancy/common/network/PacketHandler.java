@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.network;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.network.capa.PacketOpenNormalInv;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncLiberKnowledge;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.*;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.bestiary.PacketRequestSpecimenBestiary;
@@ -51,6 +50,17 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
 public class PacketHandler {
 
+    /**
+     * Network version shared by every Hemomancy payload. NeoForge refuses a connection whose client and server
+     * versions differ, so bump this whenever a payload is added, removed, or changes its byte layout.
+     *
+     * <ul>
+     *   <li>{@code "hemomancy"}: the mod ID, used as the version before it was tracked.</li>
+     *   <li>{@code "2"}: consolidation step 4 removed 18 never-sent payloads.</li>
+     * </ul>
+     */
+    public static final String PROTOCOL_VERSION = "2";
+
     // ─────────────────────────────────────────────────────────────────────────
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -74,7 +84,7 @@ public class PacketHandler {
     }
 
     private static void onRegisterPayloads(RegisterPayloadHandlersEvent event) {
-        var net = event.registrar(Hemomancy.MOD_ID);
+        var net = event.registrar(PROTOCOL_VERSION);
         net.playToClient(PhlegethonticCurrentPacket.TYPE, PhlegethonticCurrentPacket.STREAM_CODEC,
                 PhlegethonticCurrentPacket::handle);
         net.playToClient(PacketSyncStationUpgrades.TYPE, PacketSyncStationUpgrades.STREAM_CODEC,
@@ -143,14 +153,10 @@ public class PacketHandler {
                 LivingStaffProgressServerPacket.STREAM_CODEC, LivingStaffProgressServerPacket::handle);
 
         // ── Blood Tendency capability ─────────────────────────────────────────
-        net.playToServer(BloodTendencyClientPacket.TYPE,
-                BloodTendencyClientPacket.STREAM_CODEC, BloodTendencyClientPacket::handle);
         net.playToClient(BloodTendencyServerPacket.TYPE,
                 BloodTendencyServerPacket.STREAM_CODEC, BloodTendencyServerPacket::handle);
 
         // ── Vascular System capability ────────────────────────────────────────
-        net.playToServer(VascularSystemClientPacket.TYPE,
-                VascularSystemClientPacket.STREAM_CODEC, VascularSystemClientPacket::handle);
         net.playToClient(VascularSystemServerPacket.TYPE,
                 VascularSystemServerPacket.STREAM_CODEC, VascularSystemServerPacket::handle);
         net.playToClient(PacketSyncMuscleMemory.TYPE,
@@ -164,14 +170,9 @@ public class PacketHandler {
         net.playToServer(PacketPrepareScarPattern.TYPE, PacketPrepareScarPattern.STREAM_CODEC, PacketPrepareScarPattern::handle);
         net.playToClient(PacketGourdScarSync.TYPE, PacketGourdScarSync.STREAM_CODEC, PacketGourdScarSync::handle);
         net.playBidirectional(PacketOpenScarsInv.TYPE, PacketOpenScarsInv.STREAM_CODEC, PacketOpenScarsInv::handle);
-        net.playBidirectional(PacketOpenSporeInv.TYPE, PacketOpenSporeInv.STREAM_CODEC, PacketOpenSporeInv::handle);
-        net.playBidirectional(PacketOpenNormalInv.TYPE, PacketOpenNormalInv.STREAM_CODEC, PacketOpenNormalInv::handle);
         net.playBidirectional(CPacketFlight.TYPE, CPacketFlight.STREAM_CODEC, CPacketFlight::handle);
         net.playBidirectional(PacketUpdateScarPattern.TYPE, PacketUpdateScarPattern.STREAM_CODEC, PacketUpdateScarPattern::handle);
         net.playBidirectional(PacketScarCraftingEvent.TYPE, PacketScarCraftingEvent.STREAM_CODEC, PacketScarCraftingEvent::handle);
-        net.playBidirectional(PacketLoadScarPattern.TYPE, PacketLoadScarPattern.STREAM_CODEC, PacketLoadScarPattern::handle);
-        net.playBidirectional(PacketOpenScarBinder.TYPE, PacketOpenScarBinder.STREAM_CODEC, PacketOpenScarBinder::handle);
-        net.playBidirectional(PacketToggleBinderMessage.TYPE, PacketToggleBinderMessage.STREAM_CODEC, PacketToggleBinderMessage::handle);
         net.playToClient(PacketCurvedHornAnimation.TYPE, PacketCurvedHornAnimation.STREAM_CODEC, PacketCurvedHornAnimation::handle);
         net.playBidirectional(ToggleGourdKeyPacket.TYPE, ToggleGourdKeyPacket.STREAM_CODEC, ToggleGourdKeyPacket::handle);
         net.playToServer(ToggleEquipmentLayerVisibilityPacket.TYPE,
@@ -186,10 +187,7 @@ public class PacketHandler {
                 PacketSyncManipulationCostDiagnostics.STREAM_CODEC, PacketSyncManipulationCostDiagnostics::handle);
         net.playToClient(PacketSyncManipulationSlotDiagnostics.TYPE,
                 PacketSyncManipulationSlotDiagnostics.STREAM_CODEC, PacketSyncManipulationSlotDiagnostics::handle);
-        net.playBidirectional(DisplayKnownManipsPacket.TYPE, DisplayKnownManipsPacket.STREAM_CODEC, DisplayKnownManipsPacket::handle);
         net.playBidirectional(ChangeSelectedManipPacket.TYPE, ChangeSelectedManipPacket.STREAM_CODEC, ChangeSelectedManipPacket::handle);
-        net.playBidirectional(UseQuickManipKeyPacket.TYPE, UseQuickManipKeyPacket.STREAM_CODEC, UseQuickManipKeyPacket::handle);
-        net.playBidirectional(UseContManipKeyPacket.TYPE, UseContManipKeyPacket.STREAM_CODEC, UseContManipKeyPacket::handle);
         net.playBidirectional(UseManipKeyPacket.TYPE, UseManipKeyPacket.STREAM_CODEC, UseManipKeyPacket::handle);
         net.playToClient(ManipCooldownPacket.TYPE, ManipCooldownPacket.STREAM_CODEC, ManipCooldownPacket::handle);
         net.playBidirectional(UpdateCurrentManipPacket.TYPE, UpdateCurrentManipPacket.STREAM_CODEC, UpdateCurrentManipPacket::handle);
@@ -201,13 +199,10 @@ public class PacketHandler {
         net.playToClient(EarthenVeinTravelVisualPacket.TYPE,
                 EarthenVeinTravelVisualPacket.STREAM_CODEC, EarthenVeinTravelVisualPacket::handle);
         net.playToClient(SyncTrackingAvatarPacket.TYPE, SyncTrackingAvatarPacket.STREAM_CODEC, SyncTrackingAvatarPacket::handle);
-        net.playBidirectional(UpdateCurrentVeinPacket.TYPE, UpdateCurrentVeinPacket.STREAM_CODEC, UpdateCurrentVeinPacket::handle);
         net.playBidirectional(StartCentrifugeButtonPacket.TYPE, StartCentrifugeButtonPacket.STREAM_CODEC, StartCentrifugeButtonPacket::handle);
-        net.playToServer(ClearLoomStatePacket.TYPE, ClearLoomStatePacket.STREAM_CODEC, ClearLoomStatePacket::handle);
         net.playBidirectional(EquipManipulationPacket.TYPE, EquipManipulationPacket.STREAM_CODEC, EquipManipulationPacket::handle);
         net.playToServer(SynapticLoadoutActionPacket.TYPE, SynapticLoadoutActionPacket.STREAM_CODEC, SynapticLoadoutActionPacket::handle);
         net.playBidirectional(PacketOpenTendencyView.TYPE, PacketOpenTendencyView.STREAM_CODEC, PacketOpenTendencyView::handle);
-        net.playBidirectional(PacketOpenVascularView.TYPE, PacketOpenVascularView.STREAM_CODEC, PacketOpenVascularView::handle);
         net.playBidirectional(PacketOpenScryingDiagnostics.TYPE, PacketOpenScryingDiagnostics.STREAM_CODEC, PacketOpenScryingDiagnostics::handle);
 
         // Still Arts
@@ -257,8 +252,6 @@ public class PacketHandler {
 
         // ── Particles ─────────────────────────────────────────────────────────
         net.playToServer(GroundBloodDrawPacket.TYPE, GroundBloodDrawPacket.STREAM_CODEC, GroundBloodDrawPacket::handle);
-        net.playToClient(EntityHitParticlePacket.TYPE, EntityHitParticlePacket.STREAM_CODEC, EntityHitParticlePacket::handle);
-        net.playToClient(AirBloodDrawPacket.TYPE, AirBloodDrawPacket.STREAM_CODEC, AirBloodDrawPacket::handle);
         net.playToClient(SpawnFlaskParticlesPacket.TYPE, SpawnFlaskParticlesPacket.STREAM_CODEC, SpawnFlaskParticlesPacket::handle);
         net.playToClient(SpawnAvatarParticlesPacket.TYPE, SpawnAvatarParticlesPacket.STREAM_CODEC, SpawnAvatarParticlesPacket::handle);
         net.playToClient(SpawnBloodClawParticlesPacket.TYPE, SpawnBloodClawParticlesPacket.STREAM_CODEC, SpawnBloodClawParticlesPacket::handle);
@@ -328,11 +321,8 @@ public class PacketHandler {
         net.playToServer(PacketToggleUnstainedBonus.TYPE, PacketToggleUnstainedBonus.STREAM_CODEC, PacketToggleUnstainedBonus::handle);
 
         // ── Morphling Jar ─────────────────────────────────────────────────────
-        net.playBidirectional(JarTogglePickupPacket.TYPE, JarTogglePickupPacket.STREAM_CODEC, JarTogglePickupPacket::handle);
         net.playBidirectional(OpenMorphlingJarPacket.TYPE, OpenMorphlingJarPacket.STREAM_CODEC, OpenMorphlingJarPacket::handle);
-        net.playBidirectional(ToggleMorphlingJarMessagePacket.TYPE, ToggleMorphlingJarMessagePacket.STREAM_CODEC, ToggleMorphlingJarMessagePacket::handle);
         net.playBidirectional(PacketUpdateLivingStaffMorph.TYPE, PacketUpdateLivingStaffMorph.STREAM_CODEC, PacketUpdateLivingStaffMorph::handle);
-        net.playBidirectional(ChangeMorphKeyPacket.TYPE, ChangeMorphKeyPacket.STREAM_CODEC, ChangeMorphKeyPacket::handle);
         net.playToClient(SyncEquippedMorphlingPacket.TYPE, SyncEquippedMorphlingPacket.STREAM_CODEC, SyncEquippedMorphlingPacket::handle);
 
         // ── Debug / structure spawner ─────────────────────────────────────────

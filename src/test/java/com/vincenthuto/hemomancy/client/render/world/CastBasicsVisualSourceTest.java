@@ -41,7 +41,6 @@ class CastBasicsVisualSourceTest {
         String conjuration = read("common/manipulation/ferric/ConjurationManip.java");
         assertTrue(conjuration.contains("Form.CELL_HAND") && conjuration.contains("CellHandRules.DISPEL"));
         assertTrue(read("common/network/capa/harbinger/manips/UseManipKeyPacket.java").contains("ConjurationManip.dispelled(player, mainStack)"));
-        assertTrue(read("common/network/capa/harbinger/manips/UseQuickManipKeyPacket.java").contains("ConjurationManip.dispelled(player, mainStack)"));
         assertTrue(read("common/item/harbinger/tool/living/BloodProjectionItem.java").contains("CellHandRules.PROJECTING"));
         assertTrue(read("common/item/harbinger/tool/living/BloodAbsorptionItem.java").contains("CellHandRules.ABSORBING"));
         String avatar = read("common/manipulation/animus/AvatarManifestationManager.java");

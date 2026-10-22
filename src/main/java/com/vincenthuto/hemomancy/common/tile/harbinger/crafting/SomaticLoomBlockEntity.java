@@ -239,12 +239,6 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		return true;
 	}
 
-	public void clearTendency() {
-		clearActiveRitual(false);
-		refreshRecipe();
-		markDirtyAndSync();
-	}
-
 	public void dropContents() {
 		if (level == null || level.isClientSide) return;
 		for (ItemStack stack : contents) {

@@ -10,7 +10,7 @@ Every consolidation session reads this file first and updates it last, following
 | 1 | Urgent defect fixes (F-1, F-2, F-3) | DONE | `025f2b18f` | 2026-10-21 |
 | 2 | Phase 0: green baseline and test infrastructure | DONE | `c435034d4`, `ddb358304` | 2026-10-21 |
 | 3 | Phase 1: verified dead-code removal and packaging | DONE | `ccc75e9a0` | 2026-10-21 |
-| 4 | Phase 2: network hygiene | NOT STARTED | | |
+| 4 | Phase 2: network hygiene | IN PROGRESS | | 2026-10-21 |
 | 5 | Phase 3: player-state plumbing | NOT STARTED | | |
 | 6 | Phase 4: shared small utilities | NOT STARTED | | |
 | 7 | Phase 5: blood accounting | NOT STARTED | | |
@@ -74,10 +74,11 @@ under *Pending approvals*. IDs refer to [ARCHITECTURE_AUDIT](ARCHITECTURE_AUDIT.
 | M-1 | Hand-edited models vs their generators (Armature, Centrifuge, Reliquary, loom) | 2 | APPROVED | Owner chose "drop the marker checks" (2026-10-21). The models match their generators byte for byte; the failing tests only looked for a provenance string no generator writes. Done in `ddb358304` |
 | M-2 | Five unregistered mobs (Abyssal Siphon, Cruor Fiend, Frozen Clot, Synapse Hound, Void Drinker) | 3 | PENDING | Delete / archive branch / keep |
 | M-3 | Other "REQUIRES VERIFICATION" dead code (audit section E) | 3 | PENDING | Per item. Step 3 added three: `IBloodRoutingTarget`, `FeatureLogic` and five textures orphaned by the removals |
-| F-6 | Ledger actions require the ledger item | 4 | PENDING | |
-| F-7 | Bloodline chat rate limit | 4 | PENDING | Design |
-| F-8 | Reject NaN pool settings; clamp client partial tick | 4 | PENDING | |
-| F-9 | Structure paste requires operator permission and the held spawner | 4 | PENDING | |
+| N-6 / N-7 payload set | Fold the single-purpose VFX payloads (N-6) and delete the never-sent payloads (audit section E) under a new `PROTOCOL_VERSION` | 4 | APPROVED | Owner approved 2026-10-21. Payload byte layouts are frozen by the session rules, so this needed approval |
+| F-6 | Ledger actions require the ledger item | 4 | APPROVED | Owner approved 2026-10-21 (step 4 prompt) |
+| F-7 | Bloodline chat rate limit | 4 | APPROVED | Owner approved 2026-10-21: a simple per-player rate limit, with excess messages dropped. Vanilla chat integration (signing, mute, logging) stays out of scope |
+| F-8 | Reject NaN pool settings; clamp client partial tick | 4 | APPROVED | Owner approved 2026-10-21 |
+| F-9 | Structure paste requires operator permission and the held spawner | 4 | APPROVED | Owner approved 2026-10-21 |
 | F-4 | ScaleGrip: respect cancelled deaths; persist pending returns | 5 | PENDING | |
 | F-5 | OrganEcho clears the correct slot | 5 | PENDING | |
 | F-19 | Station kits follow the delivery contract (alive, not observational, no Creative discard) | 5 | PENDING | |

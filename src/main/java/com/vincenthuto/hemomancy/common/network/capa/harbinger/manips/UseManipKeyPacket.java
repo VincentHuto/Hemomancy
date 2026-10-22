@@ -37,7 +37,6 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Unified packet for casting any blood manipulation regardless of type.
- * Replaces the old split between UseQuickManipKeyPacket and UseContManipKeyPacket.
  */
 public class UseManipKeyPacket implements CustomPacketPayload {
 

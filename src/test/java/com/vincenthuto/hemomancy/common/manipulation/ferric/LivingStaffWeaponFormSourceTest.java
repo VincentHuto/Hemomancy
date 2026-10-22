@@ -16,7 +16,6 @@ public final class LivingStaffWeaponFormSourceTest {
 		String changePacket = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/ChangeSelectedManipPacket.java");
 		String updatePacket = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/UpdateCurrentManipPacket.java");
 		String usePacket = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/UseManipKeyPacket.java");
-		String quickPacket = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/manips/UseQuickManipKeyPacket.java");
 		String formHelper = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingStaffWeaponFormHelper.java");
 		String tool = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingToolItem.java");
 		String blade = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingBladeItem.java");
@@ -38,8 +37,6 @@ public final class LivingStaffWeaponFormSourceTest {
 		assertContains("radial selection applies staff weapon form", updatePacket,
 				"LivingStaffWeaponFormHelper.applySelection");
 		assertContains("unified use skips staff weapon forms", usePacket,
-				"LivingStaffWeaponFormHelper.toggleSelectedForm");
-		assertContains("quick use toggles staff weapon forms", quickPacket,
 				"LivingStaffWeaponFormHelper.toggleSelectedForm");
 		assertContains("form helper exposes R-key toggle", formHelper,
 				"toggleSelectedForm(Player player, BloodManipulation selectedManip)");

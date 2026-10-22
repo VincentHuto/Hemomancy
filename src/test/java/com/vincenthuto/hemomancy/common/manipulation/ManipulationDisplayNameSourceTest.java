@@ -48,7 +48,6 @@ class ManipulationDisplayNameSourceTest {
 				"common/entity/npc/DrudgeEntity.java",
 				"common/network/capa/harbinger/manips/ChangeSelectedManipPacket.java",
 				"common/network/capa/harbinger/manips/UpdateCurrentManipPacket.java",
-				"common/network/capa/harbinger/manips/DisplayKnownManipsPacket.java",
 				"common/capability/player/harbinger/manip/KnownManipulationEvents.java")) {
 			String source = read(site);
 			assertFalse(source.contains(".getProperName()"), site + " still shows the ID-derived name");

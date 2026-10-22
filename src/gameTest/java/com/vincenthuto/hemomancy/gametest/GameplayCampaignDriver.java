@@ -186,8 +186,17 @@ public final class GameplayCampaignDriver {
                 mc.screen.mouseScrolled(c.get("x").getAsDouble(), c.get("y").getAsDouble(), 0, c.get("amount").getAsDouble());
             }
             case "inventory" -> mc.setScreen(new InventoryScreen(mc.player));
-            case "vascularView" -> com.vincenthuto.hemomancy.common.network.PacketHandler.sendToServer(
-                    new com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.PacketOpenVascularView());
+            case "vascularView" -> {
+                var server = mc.getSingleplayerServer();
+                if (server == null) throw new IllegalStateException("vascularView needs a singleplayer world");
+                UUID uuid = mc.player.getUUID();
+                server.execute(() -> {
+                    var player = server.getPlayerList().getPlayer(uuid);
+                    if (player == null) return;
+                    player.closeContainer();
+                    player.openMenu(new com.vincenthuto.hemomancy.common.menu.VascularViewMenuProvider());
+                });
+            }
             case "dialogueFocused" -> {
                 if (!(mc.screen instanceof DialogueScreen)) throw new IllegalStateException("No dialogue open");
                 var field = DialogueScreen.class.getDeclaredField("tree");
