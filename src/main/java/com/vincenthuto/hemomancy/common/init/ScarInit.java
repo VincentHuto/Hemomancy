@@ -2,16 +2,15 @@ package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarType;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -26,6 +25,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.function.Supplier;
 
 public class ScarInit {
+	private static final BloodAccounting.Source WEAPON_RITE = BloodAccounting.Source.of("scar_weapon_bleed", Category.SCAR, false, false);
 	public static final ResourceKey<Registry<ScarDefinition>> SCAR_KEY =
 			ResourceKey.createRegistryKey(Hemomancy.rloc("scars"));
 	public static final DeferredRegister<ScarDefinition> SCARS =
@@ -218,12 +218,8 @@ public class ScarInit {
 			float drain = level * BLOOD_DRAIN_PER_LEVEL;
 			if (blood.getBloodVolume() < drain) return;
 
-			blood.drain(drain);
+			BloodAccounting.pay(player, drain, WEAPON_RITE);
 			target.hurt(player.damageSources().playerAttack(player), level);
-
-			if (player instanceof ServerPlayer sp) {
-				PacketHandler.sendToPlayer(sp, new BloodVolumeServerPacket(blood));
-			}
 		}
 
 		private static int getLevel(net.minecraft.core.HolderLookup.Provider registryAccess,

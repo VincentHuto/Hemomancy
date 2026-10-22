@@ -5,6 +5,8 @@ import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomBloc
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomFrame;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomGeometry;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.entity.weave.FrayedThreadEntity;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
@@ -76,6 +78,8 @@ import java.util.Map;
 import java.util.UUID;
 
 public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservoir, IMultiBlockEntity, UpgradeableStation {
+	private static final BloodAccounting.Source RITUAL_CHARGE = BloodAccounting.Source.of("somatic_loom", Category.STATION, false, false);
+	private static final BloodAccounting.Source BURNT_SPANS = BloodAccounting.Source.of("loom_burnt_spans", Category.STATION, false, false);
 
 	private static final String TAG_CONTENT_SIZE = "contentSize";
 	private static final String TAG_BLOOD_LEVEL = "bloodLevel";
@@ -525,6 +529,14 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		return true;
 	}
 
+	/** Projected blood only charges a memory awaiting blood; the loom's tank is never filled by projection. */
+	@Override
+	public double takeProjectedBlood(Player player, BlockPos hitPos, double rate, boolean livingStaff) {
+		double before = HemoCapabilityAccess.getBloodVolume(player).getBloodVolume();
+		if (!tryChargeRitualBlood(player, rate, livingStaff)) return 0.0D;
+		return Math.max(0.0D, before - HemoCapabilityAccess.getBloodVolume(player).getBloodVolume());
+	}
+
 	public boolean tryChargeRitualBlood(Player player, double maxAmount, boolean livingStaff) {
 		if (player == null || level == null || refuseWhileRiteHeld(player)) return false;
 		refreshRecipe();
@@ -571,7 +583,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 			return false;
 		}
 		if (committedRecipe.isEmpty()) committedRecipe = recipeCommitment(curRecipe);
-		playerVolume.subtractBloodVolume(amount);
+		BloodAccounting.pay(player, amount, RITUAL_CHARGE);
 		ritualBloodCharged += amount;
 
 		if (livingStaff) {
@@ -793,9 +805,9 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		int unpaid = spans - burnt;
 		if (unpaid > 0 && player instanceof ServerPlayer serverPlayer) {
 			var volume = HemoCapabilityAccess.getBloodVolume(serverPlayer);
-			if (volume.isActive() && volume.drain(Math.min(volume.getBloodVolume(), unpaid * EngramWeaveRules.BURN_BLOOD_PER_SPAN)))
-				PacketHandler.sendToPlayer(serverPlayer,
-						new com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket(volume));
+			if (volume.isActive())
+				BloodAccounting.pay(serverPlayer,
+						Math.min(volume.getBloodVolume(), unpaid * EngramWeaveRules.BURN_BLOOD_PER_SPAN), BURNT_SPANS);
 		}
 		msg(player, "The false memory burns " + spans + " spans of " + tend.name().toLowerCase(java.util.Locale.ROOT)
 				+ " thread" + (unpaid > 0 ? ", and takes the rest from your blood." : "."), ChatFormatting.RED, true);

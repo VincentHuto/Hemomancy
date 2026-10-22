@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.item.harbinger.memories;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationGrantHelper;
@@ -9,11 +11,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipS
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -35,6 +34,7 @@ import java.util.List;
  * manipulation.
  */
 public class CrudeMemoryShardItem extends Item {
+	private static final BloodAccounting.Source ABSORPTION = BloodAccounting.Source.of("crude_memory_shard", Category.TOOL, false, false);
 
 	/** Blood cost to absorb a crude memory. */
 	private static final double BLOOD_COST = 500.0;
@@ -138,9 +138,7 @@ public class CrudeMemoryShardItem extends Item {
 			return InteractionResultHolder.fail(stack);
 		}
 
-		volume.drain(BLOOD_COST);
-		PacketHandler.sendToPlayer((ServerPlayer) player,
-				new BloodVolumeServerPacket(volume));
+		BloodAccounting.pay(player, BLOOD_COST, ABSORPTION);
 		KnownManipulationGrantHelper.learnAndEquipIfPossible(known, manipulation,
 				ManipSlotHelper.getMaxSlots(player));
 		KnownManipulationEvents.syncPlayerEvent(player);

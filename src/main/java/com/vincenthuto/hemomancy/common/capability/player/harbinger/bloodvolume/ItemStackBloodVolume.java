@@ -67,11 +67,6 @@ public class ItemStackBloodVolume implements IBloodVolume {
 	}
 
 	@Override
-	public boolean fillFromSource(IBloodVolume src, double points) {
-		return BloodVolumeTransferRules.fillFromSource(this, src, points);
-	}
-
-	@Override
 	public Bloodline getBloodLine() {
 		CompoundTag data = tag();
 		return data.contains(TAG_BLOODLINE) ? Bloodline.deserialize(data.getCompound(TAG_BLOODLINE)) : Bloodline.NOBLOODLINE;

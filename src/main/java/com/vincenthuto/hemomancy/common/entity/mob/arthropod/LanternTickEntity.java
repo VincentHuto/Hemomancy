@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.mob.arthropod;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.effect.LanternTickRules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -24,6 +26,7 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 
 public class LanternTickEntity extends PathfinderMob {
+	private static final BloodAccounting.Source BITE = BloodAccounting.Source.of("lantern_tick_bite", Category.HAZARD, false, false);
 	public static final int ANIMATION_LURE = 0;
 	public static final int ANIMATION_STALKING = 1;
 	public static final int ANIMATION_LEAPING = 2;
@@ -139,7 +142,7 @@ public class LanternTickEntity extends PathfinderMob {
 		this.entityData.set(BITE_TICKS, BITE_ANIMATION_TICKS);
 		var volume = HemoCapabilityAccess.getBloodVolume(player);
 		boolean drained = volume.isActive() && volume.getBloodVolume() > 0.0D
-				&& volume.drain(LanternTickRules.BLOOD_DRAIN_PER_TICK_BITE);
+				&& BloodAccounting.pay(player, LanternTickRules.BLOOD_DRAIN_PER_TICK_BITE, BITE).satisfied();
 		if (!drained) {
 			player.hurt(this.damageSources().mobAttack(this), LanternTickRules.FALLBACK_DAMAGE_PER_BITE);
 		}

@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.EnumOrgan;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.IVisceralOrgans;
@@ -44,6 +46,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * </ol>
  */
 public class VisceralMirrorBlockEntity extends BlockEntity {
+	private static final BloodAccounting.Source EXTRACTION = BloodAccounting.Source.of("visceral_mirror_extraction", Category.STATION, false, false);
 
 	/** Minimum initiatory degree required to use the mirror. */
 	private static final int REQUIRED_DEGREE = 3;
@@ -195,8 +198,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		ritualTicks++;
 
 		double drainPerTick = (targetOrgan.getTier() * BLOOD_COST_PER_TIER) / totalRitualTicks;
-		var vol = HemoCapabilityAccess.getBloodVolume(player);
-		if (!vol.drain(drainPerTick)) {
+		if (!BloodAccounting.pay(player, drainPerTick, EXTRACTION).satisfied()) {
 			if (player instanceof ServerPlayer sp) {
 				sendProgressUpdate(sp, "Your blood runs dry. The ritual fails.");
 			}

@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationDiagnosticsSync;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
-import com.vincenthuto.hemomancy.common.capability.player.shared.skill.ToggleableSkillRules;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.effect.MnemonicCandleRules;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
@@ -44,6 +43,8 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class BloodVolumeEvents {
+	private static final BloodAccounting.Source WOUND = BloodAccounting.Source.of("wound", Category.BODY, false, true);
+	private static final BloodAccounting.Source BLOODLINE_TRICKLE = BloodAccounting.Source.of("bloodline_trickle", Category.BLOODLINE, false, true);
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void ordinaryRecruitDied(LivingDeathEvent event) {
 		if (!(event.getEntity() instanceof ProfessionalHarbingerEntity npc)
@@ -292,12 +293,8 @@ public class BloodVolumeEvents {
 					SkillPointInit.skill_reflexive_coagulation)) {
 				drainAmount *= 0.5D;
 			}
-			drainAmount = ToggleableSkillRules.allowedBloodDrain(
-					SkillPointHelper.isTechniqueEnabled(player, SkillPointInit.skill_sanguine_reserve),
-					volume.getBloodVolume(), volume.getMaxBloodVolume() * 0.15D, drainAmount);
-			volume.drain(drainAmount);
+			BloodAccounting.pay(player, drainAmount, WOUND);
 			volume.addDamage(damage);
-			syncVolume((ServerPlayer) player, volume);
 
 			// Warn the player when blood is critically low
 			if (volume.getBloodVolume() < volume.getMaxBloodVolume() * 0.1 && volume.getBloodVolume() > 0) {
@@ -404,13 +401,13 @@ public class BloodVolumeEvents {
 			return;
 		}
 
-		BloodFlowLedger.DrainResult result = BloodFlowLedger.applyDrain(player, volume, "bloodline_trickle",
-				"Bloodline Trickle", Category.BLOODLINE, actualDonation, intervalTicks, false);
-		if (result.actual() <= 0.0D) {
+		BloodAccounting.Payment result = BloodAccounting.payUpkeep(player, actualDonation, BLOODLINE_TRICKLE,
+				intervalTicks, false);
+		if (result.paid() <= 0.0D) {
 			return;
 		}
 
-		globalLine.contributeBlood((float) result.actual());
+		globalLine.contributeBlood((float) result.paid());
 		savedData.setDirty();
 		syncBloodlinePool(overworld, globalLine);
 	}

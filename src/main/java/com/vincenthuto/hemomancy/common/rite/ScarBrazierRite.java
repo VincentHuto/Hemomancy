@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.common.rite;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScars;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarType;
@@ -36,6 +37,7 @@ import java.util.List;
  * ScarBrazierInteractionRules.Burn)}; the rite branches act on that result instead of validating again.
  */
 public final class ScarBrazierRite implements BrazierRite<ScarBrazierRite.ScarPlan> {
+	private static final BloodAccounting.Source SCAR_RITE = BloodAccounting.Source.of("scar_brazier_rite", Category.RITE, true, false);
 	public static final int REQUIRED_DEGREE = 4;
 	public static final double LEARN_BLOOD_COST = 100.0D;
 	public static final double LOADOUT_BLOOD_COST = 50.0D;
@@ -279,12 +281,7 @@ public final class ScarBrazierRite implements BrazierRite<ScarBrazierRite.ScarPl
 
 	/** Spends blood a passing preflight has already confirmed through {@link #hasBlood}. */
 	private static void spendBlood(Player player, double cost) {
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
-		volume.drain(cost);
-		volume.addBloodSpend(cost);
-		if (player instanceof ServerPlayer serverPlayer) {
-			BloodVolumeEvents.syncVolume(serverPlayer, volume);
-		}
+		BloodAccounting.pay(player, cost, SCAR_RITE);
 	}
 
 	private static void syncScarState(Player player, IScars scars) {

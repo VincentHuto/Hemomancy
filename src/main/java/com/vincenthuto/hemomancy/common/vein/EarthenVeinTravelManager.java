@@ -6,13 +6,14 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.EarthenVeinBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.TerrestrialSpeculumItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.vein.EarthenVeinTravelVisualPacket;
 import com.vincenthuto.hemomancy.common.network.vein.OpenEarthenVeinDisplayPacket;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.EarthenVeinBlockEntity;
@@ -51,6 +52,7 @@ import java.util.UUID;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class EarthenVeinTravelManager {
+	private static final BloodAccounting.Source VEIN_FEED = BloodAccounting.Source.of("earthen_vein_travel", Category.WORLD, true, false);
 	private static final ParticleColor HUNGRY_VOID = new ParticleColor(7, 0, 5);
 	private static final ParticleColor SATED_BLOOD = new ParticleColor(224, 4, 20);
 	private static final Map<UUID, EarthenVeinTravelSession> BY_PLAYER = new HashMap<>();
@@ -136,11 +138,9 @@ public final class EarthenVeinTravelManager {
 		IBloodVolume blood = HemoCapabilityAccess.getBloodVolume(player);
 		if (blood == null || !blood.isActive()) return 0.0D;
 		double accepted = session.feed(player.getUUID(), offered, blood.getBloodVolume(), level.getGameTime());
-		if (accepted <= 0.0D || !blood.drain(accepted)) return 0.0D;
+		if (accepted <= 0.0D || !BloodAccounting.pay(player, accepted, VEIN_FEED).satisfied()) return 0.0D;
 		keepTemporaryAlive(player, session, level.getGameTime());
-		blood.addBloodSpend(accepted);
 		HemorathEntity.onPlayerBloodSpend(player, accepted);
-		PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(blood));
 		float progress = session.destination() == null ? 0.0F
 				: (float) (session.fedBlood() / session.destination().cost());
 		sync(player, session.sourceDimension(), pos, session.phase(), progress);

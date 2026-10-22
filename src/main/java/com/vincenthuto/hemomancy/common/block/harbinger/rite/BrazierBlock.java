@@ -3,7 +3,8 @@ package com.vincenthuto.hemomancy.common.block.harbinger.rite;
 import com.vincenthuto.hemomancy.common.block.harbinger.BlockBloodEndpoint;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
@@ -69,6 +70,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * spilling its offering, when what holds it up is gone.
  */
 public class BrazierBlock extends Block implements EntityBlock, SimpleWaterloggedBlock, BlockBloodEndpoint {
+	private static final BloodAccounting.Source LIGHTING = BloodAccounting.Source.of("brazier_lighting", Category.RITE, true, false);
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final EnumProperty<AttachFace> FACE = BlockStateProperties.ATTACH_FACE;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
@@ -328,9 +330,7 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 			return 0.0D;
 		}
 		// The lighting cost pours into the bowl over about a second; the fire takes once the bowl is full.
-		volume.subtractBloodVolume(poured);
-		volume.addBloodSpend(poured);
-		BloodVolumeEvents.syncVolume(player, volume);
+		BloodAccounting.pay(player, poured, LIGHTING);
 		brazier.setPooledBlood(brazier.getPooledBlood() + poured);
 		if (!BrazierBloodInteractionRules.isFull(brazier.getPooledBlood(), BLOOD_TO_LIGHT)) {
 			if (level.getGameTime() % 8L == 0L) {

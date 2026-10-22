@@ -6,8 +6,8 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.EngramBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.EngramTextureCache;
 import com.vincenthuto.hemomancy.common.block.inscription.DiscoveryInscriptionVisuals;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -29,6 +29,7 @@ import org.joml.Vector3d;
 import java.util.Arrays;
 
 public class GroundBloodDrawPacket implements CustomPacketPayload {
+	private static final BloodAccounting.Source ASH_TRAIL = BloodAccounting.Source.of("ash_trail_ignition", Category.SKILL, false, false);
 
 	public static final Type<GroundBloodDrawPacket> TYPE = new Type<>(Hemomancy.rloc("ground_blood_draw_packet"));
 	public static final StreamCodec<FriendlyByteBuf, GroundBloodDrawPacket> STREAM_CODEC = StreamCodec.of(GroundBloodDrawPacket::encode, GroundBloodDrawPacket::decode);
@@ -50,8 +51,6 @@ public class GroundBloodDrawPacket implements CustomPacketPayload {
 				return;
 			float pTic = ServerboundGuards.partialTick(message.parTick);
 			if (player.getMainHandItem().getItem() == ItemInit.living_staff.get()) {
-				IBloodVolume bloodVol = HemoCapabilityAccess.getBloodVolume(player)
-						;
 				ServerLevel sLevel = (ServerLevel) player.level();
 				HitResult trace = player.pick(6, pTic, false);
 
@@ -93,7 +92,7 @@ public class GroundBloodDrawPacket implements CustomPacketPayload {
 									z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.005f);
 							sLevel.setBlockAndUpdate(bHit.getBlockPos(),
 									BlockInit.active_smouldering_ash_trail.get().defaultBlockState());
-							bloodVol.drain(25);
+							BloodAccounting.pay(player, 25, ASH_TRAIL);
 
 						}
 						if (sLevel.getBlockState(bHit.getBlockPos())
@@ -134,7 +133,7 @@ public class GroundBloodDrawPacket implements CustomPacketPayload {
 									z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.005f);
 							sLevel.setBlockAndUpdate(bHit.getBlockPos(),
 									BlockInit.active_befouling_ash_trail.get().defaultBlockState());
-							bloodVol.drain(25);
+							BloodAccounting.pay(player, 25, ASH_TRAIL);
 						}
 						if (sLevel.getBlockState(bHit.getBlockPos())
 								.getBlock() == BlockInit.active_befouling_ash_trail.get()) {

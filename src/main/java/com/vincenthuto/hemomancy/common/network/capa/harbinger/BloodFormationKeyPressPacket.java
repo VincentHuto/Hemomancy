@@ -2,10 +2,11 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
 import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -23,6 +24,7 @@ import net.minecraft.world.item.SwordItem;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class BloodFormationKeyPressPacket implements CustomPacketPayload {
+	private static final BloodAccounting.Source FORMATION = BloodAccounting.Source.of("blood_formation", Category.SKILL, false, false);
 
 	public static final Type<BloodFormationKeyPressPacket> TYPE = new Type<>(Hemomancy.rloc("blood_formation_key_press_packet"));
 	public static final StreamCodec<FriendlyByteBuf, BloodFormationKeyPressPacket> STREAM_CODEC = StreamCodec.of(BloodFormationKeyPressPacket::encode, BloodFormationKeyPressPacket::decode);
@@ -49,8 +51,7 @@ public class BloodFormationKeyPressPacket implements CustomPacketPayload {
 			if (player.getMainHandItem().getItem() instanceof SwordItem) {
 				if (bloodVolume.getBloodVolume() > 100) {
 					player.displayClientMessage(Component.literal("Blood has been drawn for a greater cause"), true);
-					bloodVolume.drain(100);
-					PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(bloodVolume));
+					BloodAccounting.pay(player, 100, FORMATION);
 					BlockPos pos = player.blockPosition();
 					RandomSource random = player.level().random;
 					for (int i = 0; i < 30; i++) {

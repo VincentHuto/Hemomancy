@@ -2,10 +2,9 @@ package com.vincenthuto.hemomancy.common.block.harbinger;
 
 import com.vincenthuto.hemomancy.common.block.harbinger.plant.BloodwoodGrowthHandler;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.event.SanguineProjectionTargeting;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity;
 import com.vincenthuto.hemomancy.common.vein.EarthenVeinTravelManager;
@@ -140,7 +139,7 @@ public final class BlockBloodInteractions {
 		if (be instanceof IBloodReservoir reservoir) {
 			reservoir.sendUpdates();
 		}
-		PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(playerVolume));
+		BloodVolumeEvents.syncVolume(player, playerVolume);
 		return transfer;
 	}
 

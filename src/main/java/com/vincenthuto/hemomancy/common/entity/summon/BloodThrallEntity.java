@@ -1,12 +1,11 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.*;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -299,7 +298,7 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
                     double bloodBack = ABSORB_BLOOD_RETURN + getCarriedBlood();
                     playerVol.fill(bloodBack);
                     if (player instanceof ServerPlayer serverPlayer) {
-                        PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(playerVol));
+                        BloodVolumeEvents.syncVolume(serverPlayer, playerVol);
                     }
                     player.displayClientMessage(
                             net.minecraft.network.chat.Component.literal(
@@ -317,7 +316,7 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
                     double bloodBack = ABSORB_BLOOD_RETURN + getCarriedBlood();
                     playerVol.fill(bloodBack);
                     if (player instanceof ServerPlayer serverPlayer) {
-                        PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(playerVol));
+                        BloodVolumeEvents.syncVolume(serverPlayer, playerVol);
                     }
                 }
 

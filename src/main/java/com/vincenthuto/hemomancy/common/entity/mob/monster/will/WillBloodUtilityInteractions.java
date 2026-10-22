@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster.will;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 public final class WillBloodUtilityInteractions {
+	private static final BloodAccounting.Source BANISHMENT = BloodAccounting.Source.of("will_banishment", Category.SKILL, false, false);
 	private static final double PROJECTION_RANGE = 5.5D;
 
 	private WillBloodUtilityInteractions() {
@@ -50,13 +51,13 @@ public final class WillBloodUtilityInteractions {
 		}
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		double cost = Math.max(1.0D, bloodCost);
-		if (volume == null || !volume.isActive() || volume.isEmpty() || !volume.drain(cost)) {
+		if (volume == null || !volume.isActive() || volume.isEmpty()
+				|| !BloodAccounting.pay(player, cost, BANISHMENT).satisfied()) {
 			return 0.0D;
 		}
 		if (!target.get().projectBanishWithBlood(player)) {
 			return 0.0D;
 		}
-		PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(volume));
 		return cost;
 	}
 

@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
@@ -9,7 +11,6 @@ import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.DrudgeElectrodeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.DrudgeSubmissionDeviceItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.OpenSSCScreenPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.OpenSSCScreenPacket.DrudgeEntry;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.SemiSentientConstructBlockEntity;
@@ -56,6 +57,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class SemiSentientConstructBlock extends Block implements EntityBlock, SimpleWaterloggedBlock {
+	private static final BloodAccounting.Source DRUDGE_BIRTH = BloodAccounting.Source.of("drudge_birth", Category.STATION, false, false);
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	private static final VoxelShape SHAPE_N = Stream
@@ -210,10 +212,7 @@ public class SemiSentientConstructBlock extends Block implements EntityBlock, Si
 			return ItemInteractionResult.FAIL;
 		}
 
-		playerVol.drain(birthCost);
-		if (player instanceof ServerPlayer sp) {
-			PacketHandler.sendToPlayer(sp, new BloodVolumeServerPacket(playerVol));
-		}
+		BloodAccounting.pay(player, birthCost, DRUDGE_BIRTH);
 
 		// ── Spawn the Drudge ─────────────────────────────────────────────────
 		DrudgeEntity drudge = EntityInit.drudge.get().create(worldIn);

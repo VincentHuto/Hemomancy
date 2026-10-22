@@ -2,17 +2,17 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.google.common.collect.Sets;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -32,6 +32,8 @@ import java.util.HashSet;
 import java.util.List;
 
 public class LivingToolItem extends DiggerItem implements IDispellable, ITendencyAlignedWeapon {
+	/** Pays whatever is asked, emptying the volume when short; F-15 (pending) would gate and stop that. */
+	private static final BloodAccounting.Source BLOOD_PRICE = BloodAccounting.Source.of("living_tool", Category.TOOL, false, false);
 	private static final HashSet<Block> EFFECTIVE_ON = Sets.newHashSet(Blocks.COBWEB);
 	private final float attackDamage;
 	protected final float speed;
@@ -111,11 +113,9 @@ public class LivingToolItem extends DiggerItem implements IDispellable, ITendenc
 							;
 					float damageMod = this.getLivingAttackDamage() * 25f;
 					if (playerVolume.getBloodVolume() > damageMod) {
-						playerVolume.drain(damageMod);
-						PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(playerVolume));
+						BloodAccounting.pay(playerIn, damageMod, BLOOD_PRICE);
 					} else {
-						playerVolume.drain(damageMod);
-						PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(playerVolume));
+						BloodAccounting.pay(playerIn, damageMod, BLOOD_PRICE);
 						boolean restoredStaffForm = LivingStaffWeaponFormHelper.restoreStaffAfterBloodFailure(stack, attacker);
 						if (!restoredStaffForm) {
 							stack.hurtAndBreak(getMaxDamage(stack) + 10, attacker, EquipmentSlot.MAINHAND);

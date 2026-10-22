@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster.will;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonSync;
@@ -55,6 +57,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class WillEntity extends Monster implements SyncedBoundSummon {
+	private static final BloodAccounting.Source REDIRECT = BloodAccounting.Source.of("will_redirect", Category.SKILL, false, false);
 	private static final int NORMAL_DISSOLVE_TICKS = 40;
 	private static final EntityDataAccessor<Byte> DATA_ORIGIN =
 			SynchedEntityData.defineId(WillEntity.class, EntityDataSerializers.BYTE);
@@ -642,7 +645,8 @@ public class WillEntity extends Monster implements SyncedBoundSummon {
 			return InteractionResult.CONSUME;
 		}
 		if (outcome.verb() == WillBendRules.BendVerb.REDIRECT) {
-			boolean paid = HemoCapabilityAccess.getBloodVolume(serverPlayer).isActive() && HemoCapabilityAccess.getBloodVolume(serverPlayer).drain(outcome.bloodCost());
+			boolean paid = HemoCapabilityAccess.getBloodVolume(serverPlayer).isActive()
+					&& BloodAccounting.pay(serverPlayer, outcome.bloodCost(), REDIRECT).satisfied();
 			if (!paid) return InteractionResult.CONSUME;
 			redirectedOwner = serverPlayer.getUUID();
 			redirectUntilGameTime = level().getGameTime() + 1800L;

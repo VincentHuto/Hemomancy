@@ -4,7 +4,8 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownM
 import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.*;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SynapticLoadoutActionPacket implements CustomPacketPayload {
+	private static final BloodAccounting.Source SAVE_LOADOUT = BloodAccounting.Source.of("synaptic_loadout", Category.CAST, true, false);
 	public enum Action {
 		SAVE_OR_OVERWRITE,
 		RENAME,
@@ -135,11 +137,9 @@ public class SynapticLoadoutActionPacket implements CustomPacketPayload {
 
 		String selected = selectedNameForLoadout(known, memorizedNames);
 		ManipulationLoadout loadout = ManipulationLoadout.of(requestedName, selected, memorizedNames, slotIndex);
-		volume.drain(SAVE_BLOOD_COST);
-		volume.addBloodSpend(SAVE_BLOOD_COST);
+		BloodAccounting.pay(player, SAVE_BLOOD_COST, SAVE_LOADOUT);
 		player.giveExperiencePoints(-SAVE_RAW_XP_COST);
 		known.setLoadout(slotIndex, loadout);
-		BloodVolumeEvents.syncVolume(player, volume);
 		syncKnown(player, known);
 		player.displayClientMessage(Component.literal("Synaptic pattern saved: " + loadout.name())
 				.withStyle(ChatFormatting.DARK_RED), true);

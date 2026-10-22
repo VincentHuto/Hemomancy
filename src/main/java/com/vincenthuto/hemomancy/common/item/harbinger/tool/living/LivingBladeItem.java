@@ -7,17 +7,16 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingBladeItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -35,6 +34,8 @@ import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import java.util.List;
 
 public class LivingBladeItem extends LivingToolItem implements HemoClientItemExtensionsProvider {
+	/** Pays whatever is asked, emptying the volume when short; F-15 (pending) would gate and stop that. */
+	private static final BloodAccounting.Source BLOOD_PRICE = BloodAccounting.Source.of("living_blade", Category.TOOL, false, false);
 
 	public static String TAG_STATE = "state";
 
@@ -72,11 +73,9 @@ public class LivingBladeItem extends LivingToolItem implements HemoClientItemExt
 						;
 				float damageMod = this.getLivingAttackDamage() * 75f;
 				if (playerVolume.getBloodVolume() > damageMod) {
-					playerVolume.drain(damageMod);
-					PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(playerVolume));
+					BloodAccounting.pay(playerIn, damageMod, BLOOD_PRICE);
 				} else {
-					playerVolume.drain(damageMod);
-					PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(playerVolume));
+					BloodAccounting.pay(playerIn, damageMod, BLOOD_PRICE);
 					if (!LivingStaffWeaponFormHelper.restoreStaffAfterBloodFailure(stack, attacker)) {
 						stack.hurtAndBreak(stack.getMaxDamage() + 10, attacker, EquipmentSlot.MAINHAND);
 					}

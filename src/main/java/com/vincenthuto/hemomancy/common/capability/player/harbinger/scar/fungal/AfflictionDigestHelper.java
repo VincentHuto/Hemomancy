@@ -4,11 +4,8 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.CirculationIncomeHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
@@ -79,11 +76,5 @@ public final class AfflictionDigestHelper {
 		BloodFlowLedger.applyCirculationIncome(serverPlayer, volume, "putrivora_digest",
 				"Putrivora Digest", Category.SCAR, bloodFeedForEffectSeconds(targets.size()), 20,
 				CirculationIncomeHelper.IncomeChannel.SCAR);
-	}
-
-	private static void syncBlood(ServerPlayer player, IBloodVolume volume, double granted) {
-		if (granted > 0.0D) {
-			PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(volume));
-		}
 	}
 }

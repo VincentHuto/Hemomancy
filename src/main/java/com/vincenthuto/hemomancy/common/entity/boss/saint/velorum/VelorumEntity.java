@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.boss.saint.velorum;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
@@ -58,6 +60,7 @@ import net.minecraft.world.phys.Vec3;
  * </ul>
  */
 public class VelorumEntity extends Monster {
+    private static final BloodAccounting.Source SILENCE = BloodAccounting.Source.of("velorum_silence", Category.HAZARD, false, false);
 
     // ── synched data ──────────────────────────────────────────────────────
     private static final EntityDataAccessor<Boolean> DATA_MARTYRDOM =
@@ -292,7 +295,7 @@ public class VelorumEntity extends Monster {
             var vol = HemoCapabilityAccess.getBloodVolume(player);
             if (vol.isActive() && vol.getBloodVolume() >= SILENCE_BLOOD_DRAIN) {
                 sendParticleLine(server, player.position().add(0.0D, 1.0D, 0.0D), this.position().add(0.0D, 1.2D, 0.0D), ParticleTypes.SOUL_FIRE_FLAME, 8);
-                vol.setBloodVolume(vol.getBloodVolume() - SILENCE_BLOOD_DRAIN);
+                BloodAccounting.pay(player, SILENCE_BLOOD_DRAIN, SILENCE);
             }
         }
     }

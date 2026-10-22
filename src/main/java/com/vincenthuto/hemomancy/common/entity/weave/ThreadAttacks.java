@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.entity.weave;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.summon.EntityIronSpike;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticWeaveRules;
 import net.minecraft.core.BlockPos;
@@ -20,6 +20,7 @@ import net.minecraft.world.phys.Vec3;
 
 /** Each tendency's way of moving and striking. */
 public final class ThreadAttacks {
+	private static final BloodAccounting.Source ANIMUS_THREAD = BloodAccounting.Source.of("frayed_thread", Category.HAZARD, false, false);
 	/** Preferred distance and height from the weaver, orbit speed (radians/tick) and steering speed. */
 	public record Profile(double distance, double height, double orbit, double speed) {}
 
@@ -88,8 +89,8 @@ public final class ThreadAttacks {
 			case ANIMUS -> {
 				if (target instanceof ServerPlayer player) {
 					var volume = HemoCapabilityAccess.getBloodVolume(player);
-					if (volume.isActive() && volume.drain(Math.min(volume.getBloodVolume(), 10.0D * power)))
-						PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(volume));
+					if (volume.isActive())
+						BloodAccounting.pay(player, Math.min(volume.getBloodVolume(), 10.0D * power), ANIMUS_THREAD);
 				}
 			}
 			case FLAMMEUS -> target.igniteForSeconds(2.0F);

@@ -2,14 +2,13 @@ package com.vincenthuto.hemomancy.common.item.harbinger.bloodline;
 
 import com.vincenthuto.hemomancy.client.screen.item.LedgerScreen;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineDisbandHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -129,7 +128,7 @@ public class UnsignedLedgerItem extends Item {
 							stack.set(DataComponents.CUSTOM_DATA, CustomData.of(compound));
 
 							playerIn.playSound(SoundEvents.BOOK_PUT, 0.40f, 1F);
-							PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(volume));
+							BloodVolumeEvents.syncVolume((ServerPlayer) playerIn, volume);
 							playerIn.displayClientMessage(
 									Component.literal("You have joined: " + globalLine.getName())
 											.withStyle(ChatFormatting.DARK_RED),

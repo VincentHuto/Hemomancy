@@ -5,60 +5,34 @@ public final class BloodVolumeTransferRulesTest {
 	}
 
 	public static void main(String[] args) {
-		requestCanDrainTheSourceToZeroWhenThatBloodActuallyMoves();
-		requestClampsToRemainingTargetCapacityBeforeDrainingSource();
-		emptyOrFullVolumesDoNotMoveBlood();
+		requestCanTakeAllTheSourceHolds();
+		requestClampsToRemainingTargetCapacity();
+		emptyOrFullVolumesMoveNothing();
 	}
 
-	private static void requestCanDrainTheSourceToZeroWhenThatBloodActuallyMoves() {
-		TestBloodVolume source = volume(150, 500);
-		TestBloodVolume target = volume(0, 500);
-
-		boolean moved = BloodVolumeTransferRules.fillFromSource(target, source, 150);
-
-		assertTrue("exact available amount should move", moved);
-		assertEquals("source may be drained to zero", 0.0, source.getBloodVolume());
-		assertEquals("target receives the requested amount", 150.0, target.getBloodVolume());
+	private static void requestCanTakeAllTheSourceHolds() {
+		assertEquals("exact available amount can move", 150.0,
+				BloodVolumeTransferRules.transferableAmount(volume(0, 500), volume(150, 500), 150));
+		assertEquals("never more than the source holds", 100.0,
+				BloodVolumeTransferRules.transferableAmount(volume(0, 500), volume(100, 500), 150));
 	}
 
-	private static void requestClampsToRemainingTargetCapacityBeforeDrainingSource() {
-		TestBloodVolume source = volume(500, 500);
-		TestBloodVolume target = volume(450, 500);
-
-		boolean moved = BloodVolumeTransferRules.fillFromSource(target, source, 150);
-
-		assertTrue("partial target capacity should still move blood", moved);
-		assertEquals("source only loses what can fit", 450.0, source.getBloodVolume());
-		assertEquals("target fills exactly to capacity", 500.0, target.getBloodVolume());
+	private static void requestClampsToRemainingTargetCapacity() {
+		assertEquals("only what fits", 50.0,
+				BloodVolumeTransferRules.transferableAmount(volume(450, 500), volume(500, 500), 150));
 	}
 
-	private static void emptyOrFullVolumesDoNotMoveBlood() {
-		TestBloodVolume emptySource = volume(0, 500);
-		TestBloodVolume target = volume(0, 500);
-		assertFalse("empty source cannot transfer",
-				BloodVolumeTransferRules.fillFromSource(target, emptySource, 150));
-
-		TestBloodVolume source = volume(500, 500);
-		TestBloodVolume fullTarget = volume(500, 500);
-		assertFalse("full target cannot receive",
-				BloodVolumeTransferRules.fillFromSource(fullTarget, source, 150));
-		assertEquals("failed full-target transfer does not drain source", 500.0, source.getBloodVolume());
+	private static void emptyOrFullVolumesMoveNothing() {
+		assertEquals("empty source", 0.0,
+				BloodVolumeTransferRules.transferableAmount(volume(0, 500), volume(0, 500), 150));
+		assertEquals("full target", 0.0,
+				BloodVolumeTransferRules.transferableAmount(volume(500, 500), volume(500, 500), 150));
+		assertEquals("no request", 0.0,
+				BloodVolumeTransferRules.transferableAmount(volume(0, 500), volume(500, 500), 0));
 	}
 
 	private static TestBloodVolume volume(double current, double max) {
 		return new TestBloodVolume(current, max);
-	}
-
-	private static void assertTrue(String label, boolean value) {
-		if (!value) {
-			throw new AssertionError(label);
-		}
-	}
-
-	private static void assertFalse(String label, boolean value) {
-		if (value) {
-			throw new AssertionError(label);
-		}
 	}
 
 	private static void assertEquals(String label, double expected, double actual) {
@@ -104,11 +78,6 @@ public final class BloodVolumeTransferRulesTest {
 			}
 			blood += points;
 			return true;
-		}
-
-		@Override
-		public boolean fillFromSource(IBloodVolume src, double points) {
-			return BloodVolumeTransferRules.fillFromSource(this, src, points);
 		}
 
 		@Override

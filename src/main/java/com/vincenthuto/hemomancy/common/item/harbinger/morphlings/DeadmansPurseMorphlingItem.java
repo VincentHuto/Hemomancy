@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -26,6 +28,7 @@ import java.util.List;
  * emergency transfusion, and its primal covenant shares the feed bank with allies.
  */
 public class DeadmansPurseMorphlingItem extends MorphlingItem {
+	private static final BloodAccounting.Source TRANSFUSION = BloodAccounting.Source.of("deadmans_purse_transfusion", Category.MORPHLING, false, false);
 
 	/** Cooldown in ticks between Blood Transfusion triggers (10 seconds). */
 	private static final int TRANSFUSION_COOLDOWN = 200;
@@ -90,10 +93,9 @@ public class DeadmansPurseMorphlingItem extends MorphlingItem {
 					var volume = HemoCapabilityAccess.getBloodVolume(player);
 					double bloodCost = 200.0; // Spend blood to heal
 					if (volume.isActive() && volume.getBloodVolume() > bloodCost) {
-						volume.drain(bloodCost);
+						BloodAccounting.pay(player, bloodCost, TRANSFUSION);
 						float transfusionHealing = 6.0f + (maturity - 3) * 3.0f;
 						player.heal(transfusionHealing);
-						BloodVolumeEvents.syncVolume((ServerPlayer) player, volume);
 						setLastAbilityTick(stack, "BloodTransfusion", now);
 					}
 				}

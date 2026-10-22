@@ -2,7 +2,8 @@ package com.vincenthuto.hemomancy.common.worldgen;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -25,6 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 
 public final class FungalGardenTravelHelper {
+	private static final BloodAccounting.Source TRAVEL = BloodAccounting.Source.of("fungal_gardens_travel", Category.WORLD, false, false);
 	public static final double TRAVEL_BLOOD_COST = 500.0;
 	public static final int MIN_DEGREE = 7;
 	private static final int GROUND_CEILING_Y = 160;
@@ -164,8 +166,7 @@ public final class FungalGardenTravelHelper {
 	public static boolean drainTravelBlood(ServerPlayer player) {
 		var volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (!volume.isActive() || volume.getBloodVolume() < TRAVEL_BLOOD_COST) return false;
-		volume.drain(TRAVEL_BLOOD_COST);
-		BloodVolumeEvents.syncVolume(player, volume);
+		BloodAccounting.pay(player, TRAVEL_BLOOD_COST, TRAVEL);
 		return true;
 	}
 

@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -52,7 +52,7 @@ public class BloodyFlaskItem extends Item {
 					PacketHandler.sendBloodFlaskParticles(playerIn.position(), ParticleColor.BLOOD, 64f,
 							(ServerLevel) worldIn);
 				}
-				PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(volume));
+				BloodVolumeEvents.syncVolume((ServerPlayer) playerIn, volume);
 				CheapBloodInfusionHelper.applySuccessfulInfusion(playerIn, stack.getItem());
 				stack.shrink(1);
 			}

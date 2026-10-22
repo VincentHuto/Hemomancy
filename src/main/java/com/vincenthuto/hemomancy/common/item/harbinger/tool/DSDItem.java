@@ -1,10 +1,9 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.npc.DrudgeEntity;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -67,7 +66,7 @@ public class DSDItem extends Item {
 		if (vol != null && vol.isActive()) {
 			vol.fill(DISSOLUTION_REFUND);
 			if (player instanceof ServerPlayer sp) {
-				PacketHandler.sendToPlayer(sp, new BloodVolumeServerPacket(vol));
+				BloodVolumeEvents.syncVolume(sp, vol);
 			}
 		}
 

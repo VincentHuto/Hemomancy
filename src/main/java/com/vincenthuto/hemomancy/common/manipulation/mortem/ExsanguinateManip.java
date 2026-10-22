@@ -2,13 +2,12 @@ package com.vincenthuto.hemomancy.common.manipulation.mortem;
 
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.manipulation.*;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -107,7 +106,7 @@ public class ExsanguinateManip extends BloodManipulation {
 			double toRestore = Math.min(BLOOD_RESTORE, volume.getMaxBloodVolume() - volume.getBloodVolume());
 			volume.addBloodVolume(toRestore);
 			if (player instanceof ServerPlayer serverPlayer) {
-				PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(volume));
+				BloodVolumeEvents.syncVolume(serverPlayer, volume);
 			}
 		}
 

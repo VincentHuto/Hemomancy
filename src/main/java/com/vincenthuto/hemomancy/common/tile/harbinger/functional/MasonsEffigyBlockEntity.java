@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
 import com.vincenthuto.hemomancy.client.particle.data.BloodCellData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarType;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
@@ -11,6 +13,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.MasonsEffigyMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.rite.ScarBrazierRite;
+import com.vincenthuto.hemomancy.common.tile.ProjectedBloodSink;
 import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -47,7 +50,8 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
-public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider {
+public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider, ProjectedBloodSink {
+	private static final BloodAccounting.Source MOTIF_CHARGE = BloodAccounting.Source.of("masons_effigy_motif", Category.SCAR, true, false);
 	private static final String TAG_STATE = "EffigyState";
 	private static final String TAG_SELECTED_SCARS = "SelectedScars";
 	private static final String TAG_PENDING_MOTIF = "PendingMotif";
@@ -132,6 +136,13 @@ public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider
 		return true;
 	}
 
+	@Override
+	public double takeProjectedBlood(Player player, BlockPos hitPos, double rate, boolean livingStaff) {
+		double before = HemoCapabilityAccess.getBloodVolume(player).getBloodVolume();
+		if (receiveProjectedBlood(player, rate, livingStaff) <= 0.0D) return 0.0D;
+		return Math.max(0.0D, before - HemoCapabilityAccess.getBloodVolume(player).getBloodVolume());
+	}
+
 	public boolean tryReceiveProjectedBlood(Player player, double maxAmount, boolean livingStaff) {
 		return receiveProjectedBlood(player, maxAmount, livingStaff) > 0.0D;
 	}
@@ -181,8 +192,7 @@ public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider
 		if (amount <= 0.0D) {
 			return 0.0D;
 		}
-		playerVolume.subtractBloodVolume(amount);
-		playerVolume.addBloodSpend(amount);
+		BloodAccounting.pay(player, amount, MOTIF_CHARGE);
 		pendingBlood += amount;
 		if (livingStaff && level.getGameTime() % 8L == 0L) {
 			level.playSound(null, worldPosition, SoundEvents.BEACON_POWER_SELECT, SoundSource.BLOCKS, 0.25F, 0.75F);

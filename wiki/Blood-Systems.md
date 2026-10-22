@@ -56,7 +56,7 @@ Player maximum blood is resolved server-side by the max-blood ledger. Capacity, 
 
 ### Blood Flow Diagnostics
 
-The **Scrying Podium** shows server-truth blood flow in `mL/t` rather than estimating regeneration from circulation bandwidth. Its **Blood** tab displays Blood Volume, Vascular Health, positive flow, negative flow, net flow, circulation bandwidth used/cap/available, and source rows with applied/requested rates. Hovering the Blood Flow modifier area opens the full active source breakdown.
+The **Scrying Podium** shows server-truth blood flow in `mL/t` rather than estimating regeneration from circulation bandwidth. Its **Blood** tab displays Blood Volume, Vascular Health, positive flow, negative flow, net flow, circulation bandwidth used/cap/available, and source rows with applied/requested rates. Hovering the Blood Flow modifier area opens the full active source breakdown. Every blood payment is listed too: one-off costs such as a cast, a Living Weapon strike or a rite offering appear briefly as a negative row, and upkeep costs stay listed while they recur.
 
 Player/body sources such as base regeneration, **Sanguine Surge**, **Last Wind**, and **Mnemonic Candle Aura** stack directly. External passive income such as armor set regeneration, Sanguine Siphon, fungal scar income, Qliphoth Bloom, Morphling Cradle feed, and Open Blood Gourd transfer shares the circulation bandwidth cap where applicable. Active costs, kill rewards, weapon hits, manual draws, and structure feeding are not treated as passive `mL/t` flow.
 

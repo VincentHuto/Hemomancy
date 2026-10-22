@@ -15,7 +15,12 @@ public record BloodFlowContribution(String sourceId, String label, Category cate
 		TOOL,
 		MUSCLE_MEMORY,
 		VESSEL,
-		OTHER
+		OTHER,
+		/** Payments through BloodAccounting that none of the older categories describe. */
+		CAST,
+		RITE,
+		STATION,
+		HAZARD
 	}
 
 	public BloodFlowContribution {

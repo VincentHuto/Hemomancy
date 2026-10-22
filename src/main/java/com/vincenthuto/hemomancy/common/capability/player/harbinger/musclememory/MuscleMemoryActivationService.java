@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.BloodTendencyEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumBloodFlow;
@@ -59,8 +59,9 @@ public final class MuscleMemoryActivationService {
         double borrowed = purse ? BorrowedBloodReserve.drainToCover(player,
                 Math.min(payment.bloodCost() * .5D, borrowedAvailable)) : 0D;
         double bloodCost = payment.bloodCost() - borrowed;
-        boolean paid = bloodCost <= .000001D || BloodFlowLedger.applyDrain(player, HemoCapabilityAccess.getBloodVolume(player), "muscle_memory_" + memory.id(),
-                        displayName(memory), Category.MUSCLE_MEMORY, bloodCost, 1, true).satisfied();
+        boolean paid = bloodCost <= .000001D || BloodAccounting.payUpkeep(player, bloodCost,
+                new BloodAccounting.Source("muscle_memory_" + memory.id(), displayName(memory), Category.MUSCLE_MEMORY,
+                        false, true), 1, true).satisfied();
         if (!paid) {
             if (borrowed > 0D) BorrowedBloodReserve.deposit(player, borrowed);
             return TriggerResult.REJECTED;

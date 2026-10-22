@@ -3,7 +3,8 @@ package com.vincenthuto.hemomancy.common.armor.ability;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.armor.ArmorSetHelper;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.projectile.CombatWeaponCarrierProjectile;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -44,6 +45,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class SilentArchonArmorAbilityHandler {
+	private static final BloodAccounting.Source SILENT_SLIPPING = BloodAccounting.Source.of("silent_slipping", Category.ARMOR, false, false);
 	private static final String SILENT_SLIPPING_UNTIL_KEY = "hemomancy:silent_slipping_until";
 	private static final String SILENT_SLIPPING_MARKER_KEY = "hemomancy:silent_slipping_active";
 	private static final String CLIENT_SILENT_SLIPPING_UNTIL_KEY = "hemomancy:client_silent_slipping_until";
@@ -88,12 +90,11 @@ public final class SilentArchonArmorAbilityHandler {
 		}
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null || !volume.isActive() || volume.getBloodVolume() < SILENT_SLIPPING_BLOOD_COST
-				|| !volume.drain(SILENT_SLIPPING_BLOOD_COST)) {
+				|| !BloodAccounting.pay(player, SILENT_SLIPPING_BLOOD_COST, SILENT_SLIPPING).satisfied()) {
 			player.displayClientMessage(Component.literal("Not enough blood.")
 					.withStyle(ChatFormatting.RED), true);
 			return false;
 		}
-		BloodVolumeEvents.syncVolume(player, volume);
 		player.getPersistentData().putLong(SILENT_SLIPPING_COOLDOWN_UNTIL_KEY,
 				now + SILENT_SLIPPING_COOLDOWN_TICKS);
 		activateSilentSlipping(player);

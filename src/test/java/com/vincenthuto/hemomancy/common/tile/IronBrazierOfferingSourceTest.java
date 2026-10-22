@@ -41,8 +41,10 @@ public final class IronBrazierOfferingSourceTest {
 				"BrazierBloodInteractionRules.shouldDrawAbsorptionParticles(state.getValue(RITUAL_PHASE) > 0)");
 		assertContains("brazier lights from projected blood", block, "projectBloodIntoBlock");
 		assertContains("brazier lighting costs 50 blood", block, "BLOOD_TO_LIGHT = 50.0D");
-		assertContains("brazier projection spends player blood as it pours", block, "volume.subtractBloodVolume(poured)");
-		assertContains("brazier projection records blood spend", block, "volume.addBloodSpend(poured)");
+		assertContains("brazier projection spends player blood as it pours", block,
+				"BloodAccounting.pay(player, poured, LIGHTING)");
+		assertContains("brazier projection records blood spend", block,
+				"Source.of(\"brazier_lighting\", Category.RITE, true, false)");
 		assertContains("brazier lights only once its bowl is full", block,
 				"BrazierBloodInteractionRules.isFull(brazier.getPooledBlood(), BLOOD_TO_LIGHT)");
 		assertContains("absorption drains the bowl before the fire goes out", block,

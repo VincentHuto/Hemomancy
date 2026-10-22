@@ -2,7 +2,8 @@ package com.vincenthuto.hemomancy.common.armor.ability;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
@@ -20,6 +21,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 public final class ArmorSetAbilityRegistry {
+	private static final BloodAccounting.Source ABILITY_COST = BloodAccounting.Source.of("armor_ability", Category.ARMOR, false, false);
 	public static final ResourceLocation EDACIOUS_BLOODBURST = Hemomancy.rloc("edacious_bloodburst");
 	public static final ResourceLocation SHEOLIC_BASTION_STANCE = Hemomancy.rloc("sheolic_bastion_stance");
 	public static final ResourceLocation MASQUERADE_OF_THE_FORGOTTEN = Hemomancy.rloc("masquerade_of_the_forgotten");
@@ -140,11 +142,10 @@ public final class ArmorSetAbilityRegistry {
 				message(player, Component.literal("Not enough blood.").withStyle(ChatFormatting.RED));
 				return false;
 			}
-			if (!volume.drain(ability.bloodCost())) {
+			if (!BloodAccounting.pay(player, ability.bloodCost(), ABILITY_COST).satisfied()) {
 				message(player, Component.literal("Not enough blood.").withStyle(ChatFormatting.RED));
 				return false;
 			}
-			BloodVolumeEvents.syncVolume(player, volume);
 		}
 		if (ability.cooldownTicks() > 0) {
 			setCooldownUntil(player, ability, now + ability.cooldownTicks());

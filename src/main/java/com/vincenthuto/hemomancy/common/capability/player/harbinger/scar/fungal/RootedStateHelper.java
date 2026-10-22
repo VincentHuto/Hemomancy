@@ -4,10 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.CirculationIncomeHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomEvents;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import net.minecraft.core.BlockPos;
@@ -68,9 +65,8 @@ public final class RootedStateHelper {
 			return;
 		}
 		var volume = HemoCapabilityAccess.getBloodVolume(serverPlayer);
-		double granted = CirculationIncomeHelper.grant(serverPlayer, volume, refundAmount(effectiveCost, true),
+		CirculationIncomeHelper.grant(serverPlayer, volume, refundAmount(effectiveCost, true),
 				CirculationIncomeHelper.IncomeChannel.SCAR);
-		syncBlood(serverPlayer, volume, granted);
 	}
 
 	public static boolean isRooted(ServerPlayer player) {
@@ -105,12 +101,6 @@ public final class RootedStateHelper {
 			}
 		}
 		return false;
-	}
-
-	private static void syncBlood(ServerPlayer player, IBloodVolume volume, double granted) {
-		if (granted > 0.0D) {
-			PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(volume));
-		}
 	}
 
 	private record RootedCache(long checkedAt, boolean rooted) {

@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.boss.annetta;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.PriestessCombatRules.Mode;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -52,6 +54,7 @@ import javax.annotation.Nullable;
  * spear combos, wings wrapped round her as a shield and flung open as a sickly wind.
  */
 public class StainedPriestessEntity extends Monster {
+    private static final BloodAccounting.Source TENDRIL_DRAIN = BloodAccounting.Source.of("stained_priestess_drain", Category.HAZARD, false, false);
     private static final EntityDataAccessor<Integer> DATA_MODE =
             SynchedEntityData.defineId(StainedPriestessEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_MODE_TICK =
@@ -751,7 +754,7 @@ public class StainedPriestessEntity extends Monster {
         if (target instanceof Player player) {
             var volume = HemoCapabilityAccess.getBloodVolume(player);
             if (volume.isActive() && volume.getBloodVolume() >= BLOOD_DRAIN) {
-                volume.setBloodVolume(volume.getBloodVolume() - BLOOD_DRAIN);
+                BloodAccounting.pay(player, BLOOD_DRAIN, TENDRIL_DRAIN);
                 this.heal(3.0F);
             }
         }

@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.summon.BloodThrallEntity;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
@@ -35,6 +37,7 @@ import java.util.List;
  * </ol>
  */
 public class BloodThrallItem extends Item {
+    private static final BloodAccounting.Source THRALL_SPAWN = BloodAccounting.Source.of("blood_thrall", Category.TOOL, false, false);
 
     private static final String TAG_SOURCE = "ThrallSource";
     private static final String TAG_DEST = "ThrallDest";
@@ -111,7 +114,7 @@ public class BloodThrallItem extends Item {
                             Component.literal("§cNot enough blood! Need " + (int) SPAWN_BLOOD_COST + " mL."), true);
                     return InteractionResult.FAIL;
                 }
-                playerVol.drain(SPAWN_BLOOD_COST);
+                BloodAccounting.pay(player, SPAWN_BLOOD_COST, THRALL_SPAWN);
 
                 BlockPos src = NbtUtils.readBlockPos(tag, TAG_SOURCE).orElse(BlockPos.ZERO);
                 BlockPos dest = NbtUtils.readBlockPos(tag, TAG_DEST).orElse(BlockPos.ZERO);

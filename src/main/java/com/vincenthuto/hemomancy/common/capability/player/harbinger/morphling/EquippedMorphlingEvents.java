@@ -3,8 +3,8 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
@@ -46,6 +46,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class EquippedMorphlingEvents {
+	private static final BloodAccounting.Source UPKEEP = BloodAccounting.Source.of("morphling_upkeep", Category.MORPHLING, false, true);
 
 	private static final Map<String, Long> TEMPORARY_WEBS = new ConcurrentHashMap<>();
 	public static final int TEMP_WEB_DURATION = 40;
@@ -110,11 +111,11 @@ public class EquippedMorphlingEvents {
 
 		var volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (effectiveUpkeep > 0.0D && volume.isActive()) {
-			BloodFlowLedger.DrainResult drain = BloodFlowLedger.applyDrain((ServerPlayer) player, volume,
-					"morphling_upkeep", "Morphling Upkeep", Category.MORPHLING, effectiveUpkeep, drainInterval, true);
+			BloodAccounting.Payment drain = BloodAccounting.payUpkeep(player, effectiveUpkeep, UPKEEP, drainInterval,
+					true);
 			if (drain.satisfied()) {
 				MorphlingItem.recordBondingBlood(equippedStack,
-						MorphlingUpkeepRules.bondingCredit(drain.actual(), ordinaryBloodUpkeep));
+						MorphlingUpkeepRules.bondingCredit(drain.paid(), ordinaryBloodUpkeep));
 				syncToClient((ServerPlayer) player);
 			} else {
 				// Not enough blood: unequip the morphling.

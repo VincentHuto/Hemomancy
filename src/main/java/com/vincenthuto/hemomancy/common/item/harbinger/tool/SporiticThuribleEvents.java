@@ -3,9 +3,8 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.particle.data.SporiticSporeParticleData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
@@ -30,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class SporiticThuribleEvents {
+	private static final BloodAccounting.Source UPKEEP = BloodAccounting.Source.of("sporitic_thurible", Category.TOOL, true, true);
 	private static final Map<UUID, Float> LAST_YAW = new ConcurrentHashMap<>();
 
 	/** Called by {@code TransientServerStateEvents} when the player logs out. */
@@ -88,12 +88,9 @@ public class SporiticThuribleEvents {
 	private static boolean drainUpkeep(ServerPlayer player, ItemStack stack, double intensity) {
 		double drain = SporiticThuribleRules.bloodDrainPerSecond(intensity,
 				SkillPointHelper.getSporiticAttunementLevel(player));
-		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
-		BloodFlowLedger.DrainResult result = BloodFlowLedger.applyDrain(player, volume, "sporitic_thurible",
-				"Sporitic Thurible", Category.TOOL, drain, SporiticThuribleRules.UPKEEP_INTERVAL_TICKS, false);
-		if (result.satisfied()) {
-			volume.addBloodSpend(drain);
-		} else {
+		BloodAccounting.Payment result = BloodAccounting.payUpkeep(player, drain, UPKEEP,
+				SporiticThuribleRules.UPKEEP_INTERVAL_TICKS, false);
+		if (!result.satisfied()) {
 			SporiticThuribleItem.extinguish(stack);
 		}
 		return result.satisfied();

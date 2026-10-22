@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.mob.arthropod;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.core.BlockPos;
@@ -34,6 +35,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * Extracts moisture/blood from prey. Fast, low profile, venomous.
  */
 public class DesiccantEntity extends Monster {
+	private static final BloodAccounting.Source STING = BloodAccounting.Source.of("desiccant_sting", Category.HAZARD, false, false);
 	private static final EntityDataAccessor<Integer> DATA_STING_TICKS = SynchedEntityData.defineId(
 			DesiccantEntity.class, EntityDataSerializers.INT);
 	public static final int STING_ANIMATION_TICKS = 16;
@@ -99,9 +101,7 @@ public class DesiccantEntity extends Monster {
 		if (!volume.isActive()) {
 			return;
 		}
-		if (volume.drain(STING_BLOOD_DRAIN)) {
-			BloodVolumeEvents.syncVolume(serverPlayer, volume);
-		}
+		BloodAccounting.pay(serverPlayer, STING_BLOOD_DRAIN, STING);
 	}
 
 	private void setStingTicks(int stingTicks) {

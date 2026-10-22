@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.common.item.harbinger.scar;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarType;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
@@ -33,6 +35,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScarDefinition {
+	/** Not reserve-protected, as before; F-13 (pending) would protect it. */
+	private static final BloodAccounting.Source UPKEEP = BloodAccounting.Source.of("scar_upkeep", Category.SCAR, false, false);
 	private final ScarType scarType;
 	private EnumBloodTendency assignedTendency;
 	private float deepenAmount;
@@ -167,11 +171,9 @@ public class ScarDefinition {
 			double effectiveUpkeep = bloodUpkeep * (entity instanceof Player player
 					&& SkillPointHelper.isTechniqueEnabled(player, SkillPointInit.skill_deep_scar_resonance)
 					? 1.5D : 1.0D);
-			HemoCapabilityAccess.getBloodVolume(entity).ifPresent(v -> {
-				if (v.isActive()) {
-					v.drain(effectiveUpkeep);
-				}
-			});
+			if (entity instanceof Player player && HemoCapabilityAccess.getBloodVolume(player).isActive()) {
+				BloodAccounting.pay(player, effectiveUpkeep, UPKEEP);
+			}
 		}
 		applyTierThreeTickEffect(entity);
 	}

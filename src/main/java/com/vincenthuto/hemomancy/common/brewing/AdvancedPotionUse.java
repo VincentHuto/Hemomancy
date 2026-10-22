@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.common.brewing;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.init.DataComponentInit;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
@@ -10,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionContents;
 
 public final class AdvancedPotionUse {
+    private static final BloodAccounting.Source DOSE = BloodAccounting.Source.of("bound_brew_dose", Category.TOOL, false, false);
     private AdvancedPotionUse() {}
 
     public static boolean isVessel(ItemStack stack) {
@@ -36,8 +38,7 @@ public final class AdvancedPotionUse {
             var volume = HemoCapabilityAccess.getBloodVolume(player);
             if (volume != null && volume.isActive() && !volume.wouldOverstrain(1000)
                     && BoundBrewRules.substitutesDose(volume.getBloodVolume(), player.getRandom().nextDouble())) {
-                paidBlood = volume.drain(1000);
-                if (paidBlood) BloodVolumeEvents.syncVolume(player, volume);
+                paidBlood = BloodAccounting.pay(player, 1000, DOSE).satisfied();
             }
             if (!paidBlood) stack.set(DataComponentInit.ADVANCED_BREW.get(), data.withDoses(data.doses() - 1));
         }

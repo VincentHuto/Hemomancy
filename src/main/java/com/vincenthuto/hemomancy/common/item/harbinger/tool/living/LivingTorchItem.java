@@ -8,7 +8,8 @@ import com.vincenthuto.hemomancy.client.item.HemoClientItemExtensionsProvider;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingTorchItemRenderer;
 import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.damage.HemoDamageTypes;
@@ -39,6 +40,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class LivingTorchItem extends LivingToolItem implements HemoClientItemExtensionsProvider {
+	private static final BloodAccounting.Source BREATH = BloodAccounting.Source.of("living_torch_breath", Category.TOOL, true, false);
 	public LivingTorchItem(float speedIn, float attackDamageIn, Tier tier, Properties builderIn) {
 		super(speedIn, attackDamageIn, -2.1f, EnumBloodTendency.FLAMMEUS, tier, builderIn);
 	}
@@ -107,9 +109,7 @@ public class LivingTorchItem extends LivingToolItem implements HemoClientItemExt
 			stopChannel(player, hand);
 			return;
 		}
-		blood.drain(LivingTorchBreathRules.BLOOD_COST_PER_TICK);
-		blood.addBloodSpend(LivingTorchBreathRules.BLOOD_COST_PER_TICK);
-		BloodVolumeEvents.syncVolume(player, blood);
+		BloodAccounting.pay(player, LivingTorchBreathRules.BLOOD_COST_PER_TICK, BREATH);
 		if (LivingTorchBreathRules.isDamagePulse(elapsed)) damageCone(player);
 	}
 

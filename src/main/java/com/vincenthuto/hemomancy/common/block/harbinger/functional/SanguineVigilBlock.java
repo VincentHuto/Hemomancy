@@ -3,10 +3,10 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineVigilBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -52,6 +52,7 @@ import javax.annotation.Nullable;
  * <p>The Vigil is a 1×2×1 multi-block (filler one block above the base).</p>
  */
 public class SanguineVigilBlock extends BaseEntityBlock implements IMultiBlock {
+    private static final BloodAccounting.Source DEPOSIT = BloodAccounting.Source.of("sanguine_vigil", Category.STATION, false, false);
 
     public static final MapCodec<SanguineVigilBlock> CODEC = simpleCodec(SanguineVigilBlock::new);
 
@@ -209,10 +210,9 @@ public class SanguineVigilBlock extends BaseEntityBlock implements IMultiBlock {
                     Math.min(playerBlood.getBloodVolume(),
                             storage.getMaxBloodVolume() - storage.getBloodVolume()));
             if (toDeposit > 0) {
-                playerBlood.drain(toDeposit);
+                BloodAccounting.pay(serverPlayer, toDeposit, DEPOSIT);
                 storage.addBloodVolume(toDeposit);
                 vigil.sendUpdates();
-                PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(playerBlood));
                 player.sendSystemMessage(Component.translatable(
                         "block.hemomancy.sanguine_vigil.fuelled",
                         (int) toDeposit,

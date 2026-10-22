@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.entity.projectile;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.ExcoriatedEntity;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.worldgen.*;
@@ -18,6 +20,7 @@ import net.minecraft.world.level.*;
 import net.minecraft.world.phys.*;
 
 public class RecallBarbEntity extends AbstractArrow {
+    private static final BloodAccounting.Source SEVER = BloodAccounting.Source.of("recall_barb", Category.EFFECT, false, false);
     private static final EntityDataAccessor<Integer> VICTIM=SynchedEntityData.defineId(RecallBarbEntity.class,EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> ARCHER=SynchedEntityData.defineId(RecallBarbEntity.class,EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> AGE=SynchedEntityData.defineId(RecallBarbEntity.class,EntityDataSerializers.INT);
@@ -112,8 +115,7 @@ public class RecallBarbEntity extends AbstractArrow {
             if(volume!=null && volume.isActive()) {
                 double cost=PhlegethonticRules.severCost(volume.getMaxBloodVolume());
                 if(cost>0 && volume.getBloodVolume()>=cost) {
-                    BloodFlowLedger.applyDrain(player,volume,"recall_barb","Recall Barb",BloodFlowContribution.Category.EFFECT,
-                            cost,1,false);return;
+                    BloodAccounting.payUpkeep(player,cost,SEVER,1,false);return;
                 }
             }
         }

@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
@@ -8,8 +10,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IH
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.core.BlockPos;
@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 import java.util.UUID;
 
 public final class BloodRoutingHelper {
+    private static final BloodAccounting.Source OWNER_DRAW = BloodAccounting.Source.of("blood_routing", Category.STATION, false, false);
     public static final double NEARBY_RANGE = 16.0;
     public static final int ROUTE_INTERVAL_TICKS = 10;
     public static final double DEFAULT_MAX_RATE_PER_TICK = 10.0;
@@ -156,8 +157,12 @@ public final class BloodRoutingHelper {
             double safeAvailable = BloodRoutingRules.availableAboveFloor(ownerVolume, playerFloor);
             double playerDraw = Math.min(remaining, DEFAULT_PLAYER_RATE_PER_TICK * ROUTE_INTERVAL_TICKS
                     * BloodRoutingRules.routingRateMultiplier(SkillPointHelper.getFaneSutureLevel(owner)));
-            playerDraw = Math.min(playerDraw, safeAvailable);
-            playerDraw = drawFromVolume(ownerVolume, playerDraw, playerDraw);
+            playerDraw = Math.min(Math.min(playerDraw, safeAvailable), ownerVolume.getBloodVolume());
+            if (playerDraw > 0) {
+                BloodAccounting.pay(owner, playerDraw, OWNER_DRAW);
+            } else {
+                playerDraw = 0;
+            }
             remaining -= playerDraw;
             drawn += playerDraw;
         }
@@ -171,9 +176,6 @@ public final class BloodRoutingHelper {
             drawn += fromPool;
         }
 
-        if (drawn > 0) {
-            PacketHandler.sendToPlayer(owner, new BloodVolumeServerPacket(ownerVolume));
-        }
         return drawn;
     }
 

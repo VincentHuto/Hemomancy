@@ -4,9 +4,7 @@ import net.minecraft.world.entity.player.Player;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
-import com.vincenthuto.hemomancy.common.capability.player.shared.skill.ToggleableSkillRules;
 import com.vincenthuto.hemomancy.common.event.CirculationIncomeRules;
-import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -30,9 +28,6 @@ public final class BloodFlowLedger {
 	/** Called by {@code TransientServerStateEvents} when a server starts and stops. */
 	public static void clearSessionState() {
 		RECENT.clear();
-	}
-
-	public record DrainResult(double requested, double actual, boolean satisfied) {
 	}
 
 	public static double applyDirectIncome(ServerPlayer player, IBloodVolume volume, String sourceId, String label,
@@ -105,52 +100,6 @@ public final class BloodFlowLedger {
 			BloodVolumeEvents.syncVolume(player, volume);
 		}
 		return actual;
-	}
-
-	public static DrainResult applyDrain(ServerPlayer player, IBloodVolume volume, String sourceId, String label,
-			Category category, double amount, int intervalTicks, boolean requireFullAmount) {
-		if (player == null || volume == null || amount <= 0.0D) {
-			return new DrainResult(0.0D, 0.0D, false);
-		}
-		int interval = normalizedInterval(intervalTicks);
-		double allowedAmount = reserveProtectedCategory(category)
-				? ToggleableSkillRules.allowedBloodDrain(
-						SkillPointHelper.isTechniqueEnabled(player, SkillPointInit.skill_sanguine_reserve),
-						volume.getBloodVolume(), volume.getMaxBloodVolume() * 0.15D, amount)
-				: amount;
-		double actual = 0.0D;
-		boolean satisfied = false;
-		String condition = "";
-		if (!volume.isActive()) {
-			condition = "Dormant";
-		} else if (allowedAmount <= 0.0D) {
-			condition = "Sanguine reserve protected";
-		} else if (requireFullAmount && allowedAmount + 0.000001D < amount) {
-			condition = "Sanguine reserve protected";
-		} else if (requireFullAmount && volume.getBloodVolume() < amount) {
-			condition = "Insufficient blood";
-		} else {
-			double before = volume.getBloodVolume();
-			boolean drained = volume.drain(allowedAmount);
-			actual = Math.max(0.0D, before - volume.getBloodVolume());
-			satisfied = drained && actual + 0.000001D >= amount;
-			if (!satisfied && actual + 0.000001D < amount) {
-				condition = allowedAmount + 0.000001D < amount
-						? "Sanguine reserve protected" : "Blood exhausted";
-			}
-		}
-		record(player, BloodFlowContribution.direct(sourceId, label, category, -amount / interval,
-				-actual / interval, condition), interval);
-		if (actual > 0.0D) {
-			BloodVolumeEvents.syncVolume(player, volume);
-		}
-		return new DrainResult(amount, actual, satisfied);
-	}
-
-	private static boolean reserveProtectedCategory(Category category) {
-		return category == Category.ARMOR || category == Category.MORPHLING || category == Category.SCAR
-				|| category == Category.BLOODLINE || category == Category.ORGAN || category == Category.TOOL
-				|| category == Category.MUSCLE_MEMORY;
 	}
 
 	public static double transferFromVessel(ServerPlayer player, IBloodVolume playerVolume, IBloodVolume vesselVolume,

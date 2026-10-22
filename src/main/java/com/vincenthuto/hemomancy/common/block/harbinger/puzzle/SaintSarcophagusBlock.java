@@ -6,6 +6,8 @@ import com.vincenthuto.hemomancy.common.block.shared.HorizontalFacingRotationHel
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
@@ -15,8 +17,6 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.ConsecratedSyringeItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.SaintRelicItem;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.EnumCorpusState;
 import com.vincenthuto.hemomancy.common.tile.harbinger.puzzle.SaintSarcophagusBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -27,7 +27,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -70,6 +69,7 @@ import javax.annotation.Nullable;
  * - AWAKENED: player has offended it, combat triggered
  */
 public class SaintSarcophagusBlock extends Block implements EntityBlock, IMultiBlock, SimpleWaterloggedBlock {
+	private static final BloodAccounting.Source OFFERING = BloodAccounting.Source.of("saint_sarcophagus_offering", Category.RITE, false, false);
 
 public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
@@ -425,10 +425,7 @@ if (heldStack.is(ItemInit.foul_paste.get())) {
 		}
 
 		// Drain blood and record offering
-		volume.drain(BLOOD_COST_PER_OFFERING);
-		if (player instanceof ServerPlayer serverPlayer) {
-			PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(volume));
-		}
+		BloodAccounting.pay(player, BLOOD_COST_PER_OFFERING, OFFERING);
 		sarcophagus.addOffering();
 
 		int vol = sarcophagus.getOfferingBloodVolume();

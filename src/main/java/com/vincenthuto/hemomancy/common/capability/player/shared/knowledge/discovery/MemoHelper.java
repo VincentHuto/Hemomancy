@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledgeEvents;
@@ -20,6 +22,7 @@ import net.minecraft.world.item.component.CustomData;
 import java.util.*;
 
 public final class MemoHelper {
+	private static final BloodAccounting.Source DICTATION = BloodAccounting.Source.of("memo_dictation", Category.OTHER, false, false);
 	public static final String EVENT_PREFIX = "memo_capture:";
 	public static final int MAX_FIELD_NOTES_MEMOS = 15;
 	public static final int DICTATION_BASE_BLOOD_COST = 100;
@@ -145,7 +148,7 @@ public final class MemoHelper {
 			return DictationResult.NOT_ENOUGH_BLOOD;
 		}
 
-		volume.drain(cost);
+		BloodAccounting.pay(player, cost, DICTATION);
 		unlockDictatedMemos(knowledge, dictatedMemos);
 		knowledge.removePendingMemos(dictatedMemos);
 		LiberKnowledgeEvents.sync(player);

@@ -2,9 +2,9 @@ package com.vincenthuto.hemomancy.common.event;
 
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.SanguineCondenserBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineCondenserBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineCondenserEffects;
 import net.minecraft.ChatFormatting;
@@ -23,6 +23,7 @@ import java.util.OptionalDouble;
  * so these are the only projection targets that make them.
  */
 public final class SanguineCondenserProjection {
+    private static final BloodAccounting.Source CONDENSER = BloodAccounting.Source.of("sanguine_condenser", Category.STATION, true, false);
     private SanguineCondenserProjection() {
     }
 
@@ -47,14 +48,12 @@ public final class SanguineCondenserProjection {
 
         double accepted = condenser.receiveProjectedBlood(player,
                 Math.min(tileTransferRate, blood.getBloodVolume()));
-        if (accepted <= 0.0D || !blood.drain(accepted)) {
+        if (accepted <= 0.0D || !BloodAccounting.pay(player, accepted, CONDENSER).satisfied()) {
             if (!condenser.isRiteLocked() && condenser.getBloodVolume() >= condenser.getMaxBloodVolume())
                 player.displayClientMessage(Component.translatable("hemomancy.sanguine_condenser.full")
                         .withStyle(ChatFormatting.DARK_RED), true);
             return OptionalDouble.of(0.0D);
         }
-        blood.addBloodSpend(accepted);
-        PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(blood));
         return OptionalDouble.of(accepted);
     }
 }

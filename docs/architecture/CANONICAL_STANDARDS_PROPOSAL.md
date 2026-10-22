@@ -274,10 +274,18 @@ Unstained mechanics, hazards, Still Arts and summons.
   `HemoTickers.create` for block tickers and `BlockEntitySync.markAndSync` for block-entity
   resends. `FeatureLogic` holds the worldgen replaceable-block setters.
   `SmallUtilityGuardrailTest` rejects new private copies of each.
+- Since step 7, every player blood payment goes through `BloodAccounting`: `pay` for a one-off
+  cost (`drain()`'s semantics: no active gate, and overstrain empties the volume) and `payUpkeep`
+  for a recurring one (dormant volumes pay nothing; optional full-amount refusal). Its arithmetic
+  is the pure `BloodPaymentRules`. Each call site holds a named `Source` constant whose flags
+  reproduce what it did before. Projected blood reaches block entities through
+  `ProjectedBloodSink`; `IBloodReservoir` supplies the default. `BloodAccountingGuardrailTest`
+  rejects a raw player `drain(`, `subtractBloodVolume(`, `addBloodSpend(` or a
+  `BloodVolumeServerPacket` built outside `syncVolume`.
 
 **Migration targets**
-- Armour abilities, scars, Still Arts, living weapons, primal morphlings, puppet
-  threads, and machine and block blood payments (G-2, G-3, L-2).
+- Targeting in armour abilities, scars, Still Arts, living weapons, primal morphlings and
+  puppet threads (G-2). Their blood payments (G-3, L-2) moved to `BloodAccounting` in step 7.
 - The 25 `Monster.class` filters.
 - The 7 duplicated cast-eligibility checks (N-5).
 

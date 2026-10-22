@@ -1,8 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.damage.HemoDamageTypes;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
@@ -447,7 +446,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 		var volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume.isActive()) {
 			volume.fill(progress * 2.0D);
-			PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(volume));
+			BloodVolumeEvents.syncVolume(player, volume);
 		}
 		VesperWound.drainStream(this, player);
 		updateWound(VesperWoundRules.drain(wound, progress));

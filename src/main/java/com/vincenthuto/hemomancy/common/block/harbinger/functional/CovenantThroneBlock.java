@@ -6,6 +6,8 @@ import com.vincenthuto.hemomancy.common.block.shared.HorizontalFacingRotationHel
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.utility.CovenantThroneSeatEntity;
@@ -13,8 +15,6 @@ import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.mission.shared.HarbingerChapterProgression;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CovenantThroneBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity;
 import net.minecraft.ChatFormatting;
@@ -61,6 +61,7 @@ import javax.annotation.Nullable;
  * Trance.  Sneak is left to normal dismount behavior.
  */
 public class CovenantThroneBlock extends BaseEntityBlock implements IMultiBlock, SimpleWaterloggedBlock {
+	private static final BloodAccounting.Source TRANCE = BloodAccounting.Source.of("covenant_throne_trance", Category.STATION, false, false);
 
     public static final MapCodec<CovenantThroneBlock> CODEC = simpleCodec(CovenantThroneBlock::new);
 
@@ -388,10 +389,9 @@ public class CovenantThroneBlock extends BaseEntityBlock implements IMultiBlock,
             return;
         }
 
-        blood.drain(TRANCE_BLOOD_COST);
+        BloodAccounting.pay(player, TRANCE_BLOOD_COST, TRANCE);
         throne.setLastTranceTime(now);
         throne.startTranceVisual(now);
-        PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(blood));
 
         player.addEffect(new MobEffectInstance(EffectInit.blood_rush,
                 TRANCE_DURATION_TICKS, 1, false, true, true));

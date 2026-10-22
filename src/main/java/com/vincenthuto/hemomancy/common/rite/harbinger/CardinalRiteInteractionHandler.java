@@ -2,7 +2,8 @@ package com.vincenthuto.hemomancy.common.rite.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.utility.AwakenedIchorianSigilEntity;
 import com.vincenthuto.hemomancy.common.entity.utility.HumanitySpriteEntity;
@@ -45,6 +46,7 @@ import java.util.function.IntUnaryOperator;
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class CardinalRiteInteractionHandler {
+	private static final BloodAccounting.Source NODE_COST = BloodAccounting.Source.of("cardinal_rite", Category.RITE, false, false);
 	private static final int FALSE_STROKE_OUTER_BLACK = CardinalRiteLightningPalette.OUTER_BLACK;
 	private static final int FALSE_STROKE_INNER_PURPLE = CardinalRiteLightningPalette.INNER_PURPLE;
 
@@ -452,8 +454,7 @@ public final class CardinalRiteInteractionHandler {
 		int personal = volume == null ? 0
 				: Math.min(personalRequest, (int) Math.floor(volume.getBloodVolume()));
 		if (personal > 0) {
-			volume.drain(personal);
-			BloodVolumeEvents.syncVolume(player, volume);
+			BloodAccounting.pay(player, personal, NODE_COST);
 		}
 		int shared = CardinalRiteAllyService.spend(player.serverLevel(), rite, player.getUUID(),
 				personalRequest - personal);

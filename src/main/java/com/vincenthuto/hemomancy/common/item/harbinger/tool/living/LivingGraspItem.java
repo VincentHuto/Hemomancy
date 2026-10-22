@@ -1,15 +1,14 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.projectile.DirectedBloodOrbEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.TrackingBloodOrbEntity;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -26,6 +25,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import org.joml.Vector3d;
 
 public class LivingGraspItem extends Item {
+	private static final BloodAccounting.Source GRASP = BloodAccounting.Source.of("living_grasp", Category.TOOL, false, false);
 
 	public LivingGraspItem(Properties properties) {
 		super(properties);
@@ -63,9 +63,7 @@ public class LivingGraspItem extends Item {
 					;
 			if (playerVolume.getBloodVolume() > 50f) {
 				if (!worldIn.isClientSide) {
-					playerVolume.drain(50f);
-
-					PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(playerVolume));
+					BloodAccounting.pay(player, 50f, GRASP);
 					if (worldIn.random.nextInt(10) == 6) {
 
 						player.displayClientMessage(Component.literal(

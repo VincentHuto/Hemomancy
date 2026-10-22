@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.organs;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonEvents;
 import com.vincenthuto.hemomancy.common.item.harbinger.OrganEchoItem;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,6 +20,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class VisceralOrgansEvents {
+	private static final BloodAccounting.Source HEARTLESS_CIRCULATION = BloodAccounting.Source.of("heartless_circulation", Category.ORGAN, false, true);
 
 	@SubscribeEvent
 	public static void onContainerClose(PlayerContainerEvent.Close event) {
@@ -110,11 +111,9 @@ public class VisceralOrgansEvents {
 			}
 
 			// Blood cost: sustaining circulation without a heart is taxing
-			var vol = HemoCapabilityAccess.getBloodVolume(player);
 			double cost = 10.0 / level; // Higher level = less cost
 			if (player instanceof ServerPlayer sp) {
-				BloodFlowLedger.applyDrain(sp, vol, "heartless_circulation",
-						"Heartless Circulation", Category.ORGAN, cost, 40, false);
+				BloodAccounting.payUpkeep(sp, cost, HEARTLESS_CIRCULATION, 40, false);
 			}
 		}
 	}

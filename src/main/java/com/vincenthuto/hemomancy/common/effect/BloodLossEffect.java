@@ -1,9 +1,8 @@
 package com.vincenthuto.hemomancy.common.effect;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -18,6 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 public class BloodLossEffect extends MobEffect {
+	private static final BloodAccounting.Source SOURCE = BloodAccounting.Source.of("blood_loss", Category.EFFECT, false, false);
 
 	public BloodLossEffect(MobEffectCategory typeIn, int liquidColorIn) {
 		super(typeIn, liquidColorIn);
@@ -41,10 +41,7 @@ public class BloodLossEffect extends MobEffect {
 						return true; // Blocked by Coagulation skill
 					}
 
-					IBloodVolume playerVolume = HemoCapabilityAccess.getBloodVolume(playerIn)
-							;
-					BloodFlowLedger.applyDrain((ServerPlayer) playerIn, playerVolume, "blood_loss",
-							"Blood Loss", Category.EFFECT, 0.5f * (amplifier + 1), 1, false);
+					BloodAccounting.payUpkeep((ServerPlayer) playerIn, 0.5f * (amplifier + 1), SOURCE, 1, false);
 
 				}
 			} else if (!HemoEntityPredicates.NOBLOOD.test(entity)) {

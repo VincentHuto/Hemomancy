@@ -4,6 +4,8 @@ import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.harbinger.BlockBloodEndpoint;
 import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
@@ -58,6 +60,7 @@ import java.util.UUID;
  * opens the bloodline pool monitor screen.
  */
 public class ConsecratedBloodwellBlock extends BaseEntityBlock implements BlockBloodEndpoint {
+	private static final BloodAccounting.Source WELL_OFFERING = BloodAccounting.Source.of("consecrated_bloodwell", Category.BLOODLINE, false, false);
 
 	public static final MapCodec<ConsecratedBloodwellBlock> CODEC = simpleCodec(ConsecratedBloodwellBlock::new);
 	/** Heart font: plinth, stepped dais, ribbed heart column and the wide rimmed basin. */
@@ -250,7 +253,7 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock implements BlockB
 
 		double poolRoom = Math.max(0.0D, globalLine.getMaxBloodVolume() - globalLine.getBloodVolume());
 		double toDeposit = Math.min(maxAmount, Math.min(playerBlood.getBloodVolume(), poolRoom));
-		if (toDeposit <= 0.0D || !playerBlood.drain(toDeposit)) {
+		if (toDeposit <= 0.0D || !BloodAccounting.pay(player, toDeposit, WELL_OFFERING).satisfied()) {
 			return 0.0D;
 		}
 
@@ -263,7 +266,6 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock implements BlockB
 			com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.grantIfNotDone(player,
 					com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.ADV_COVENANT_WRITTEN_IN_PLACE);
 		}
-		BloodVolumeEvents.syncVolume(player, playerBlood);
 		syncBloodlinePool(player, globalLine);
 		syncWellFromPool(level, pos, globalLine);
 		return toDeposit;

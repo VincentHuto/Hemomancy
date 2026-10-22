@@ -2,7 +2,8 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeTransferRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
@@ -21,6 +22,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
  * Client → Server: Player requests a one-time lump donation to the shared bloodline pool.
  */
 public class PacketLumpDonate implements CustomPacketPayload {
+	private static final BloodAccounting.Source DONATION = BloodAccounting.Source.of("bloodline_donation", Category.BLOODLINE, false, false);
 
 	public static final Type<PacketLumpDonate> TYPE = new Type<>(Hemomancy.rloc("packet_lump_donate"));
 	public static final StreamCodec<FriendlyByteBuf, PacketLumpDonate> STREAM_CODEC = StreamCodec.of(PacketLumpDonate::encode, PacketLumpDonate::decode);
@@ -64,10 +66,9 @@ public class PacketLumpDonate implements CustomPacketPayload {
 			ServerLevel overworld = player.server.overworld();
 			BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
 			Bloodline globalLine = savedData.getBloodline(bloodline.getBloodlineUUID());
-			if (globalLine != null && volume.drain(donateAmount)) {
+			if (globalLine != null && BloodAccounting.pay(player, donateAmount, DONATION).satisfied()) {
 					globalLine.contributeBlood((float) donateAmount);
 					savedData.setDirty();
-					BloodVolumeEvents.syncVolume(player, volume);
 
 					// Sync pool data to the donor
 					PacketHandler.sendToPlayer(player, new PacketSyncBloodlinePool(globalLine.getBloodVolume(),

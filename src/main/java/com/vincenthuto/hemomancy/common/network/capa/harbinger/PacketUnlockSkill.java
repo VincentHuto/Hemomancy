@@ -2,7 +2,8 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.EnumSkillStates;
@@ -24,6 +25,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
  * The server validates prerequisites against that player's SkillProgress.
  */
 public class PacketUnlockSkill implements CustomPacketPayload {
+	private static final BloodAccounting.Source UNLOCK = BloodAccounting.Source.of("skill_unlock", Category.SKILL, false, false);
 
 	public static final Type<PacketUnlockSkill> TYPE = new Type<>(Hemomancy.rloc("packet_unlock_skill"));
 	public static final StreamCodec<FriendlyByteBuf, PacketUnlockSkill> STREAM_CODEC = StreamCodec.of(PacketUnlockSkill::encode, PacketUnlockSkill::decode);
@@ -140,8 +142,7 @@ public class PacketUnlockSkill implements CustomPacketPayload {
 					.withStyle(ChatFormatting.RED), true);
 			return false;
 		}
-		volume.drain(cost);
-		BloodVolumeEvents.syncVolume(player, volume);
+		BloodAccounting.pay(player, cost, UNLOCK);
 		return true;
 	}
 

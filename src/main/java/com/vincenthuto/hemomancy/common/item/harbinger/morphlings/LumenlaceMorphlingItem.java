@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.morphlings;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -28,6 +29,7 @@ import java.util.List;
  * preserving sprinting Sepia Wake and the shared Last Rite mantles.
  */
 public class LumenlaceMorphlingItem extends MorphlingItem {
+	private static final BloodAccounting.Source INK_MANTLE = BloodAccounting.Source.of("ink_mantle_reprieve", Category.MORPHLING, false, false);
 
 	private static final String CAMOUFLAGE_STILL_SINCE_KEY = "CamouflageStillSince";
 	private static final int INK_MANTLE_REPRIEVE_COOLDOWN = 12000;
@@ -142,12 +144,9 @@ public class LumenlaceMorphlingItem extends MorphlingItem {
 				var volume = HemoCapabilityAccess.getBloodVolume(player);
 				double bloodCost = 500.0;
 				if (volume.isActive() && volume.getBloodVolume() > bloodCost) {
-					volume.drain(bloodCost);
+					BloodAccounting.pay(player, bloodCost, INK_MANTLE);
 					player.setHealth(8.0f);
 					player.invulnerableTime = 40;
-					if (player instanceof ServerPlayer serverPlayer) {
-						BloodVolumeEvents.syncVolume(serverPlayer, volume);
-					}
 					setLastAbilityTick(stack, "InkMantleReprieve", now);
 					LastRiteHelper.consume(player, LastRiteHelper.INK_MANTLE_ID);
 				}

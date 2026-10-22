@@ -3,7 +3,8 @@ package com.vincenthuto.hemomancy.common.rite.harbinger;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierMount;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
@@ -26,6 +27,7 @@ import java.util.UUID;
 
 /** Owns manifestation and combat tracking for Cardinal Rite puppeteer ordeals. */
 public final class PuppeteerTrialRiteController {
+	private static final BloodAccounting.Source TRIAL = BloodAccounting.Source.of("puppeteer_trial", Category.RITE, false, false);
 	private PuppeteerTrialRiteController() {
 	}
 
@@ -145,9 +147,7 @@ public final class PuppeteerTrialRiteController {
 					new com.vincenthuto.hutoslib.client.particle.util.ParticleColor(170, 8, 20)),
 					bowl.x, bowl.y, bowl.z, 12, 0.08, 0.2, 0.08, 0.02);
 		}
-		var volume = HemoCapabilityAccess.getBloodVolume(caster);
-		volume.drain(recipe.getBloodCost());
-		BloodVolumeEvents.syncVolume(caster, volume);
+		BloodAccounting.pay(caster, recipe.getBloodCost(), TRIAL);
 		Mob puppet = created.get();
 		rite.beginPuppeteerTrial(summonName, puppet.getUUID(), crossbarId);
 		rite.addRiteThreat(puppet.getUUID());

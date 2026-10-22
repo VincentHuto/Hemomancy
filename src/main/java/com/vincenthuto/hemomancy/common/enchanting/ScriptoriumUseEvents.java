@@ -2,7 +2,8 @@ package com.vincenthuto.hemomancy.common.enchanting;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.init.DataComponentInit;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
@@ -20,6 +21,7 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class ScriptoriumUseEvents {
+    private static final BloodAccounting.Source INSCRIPTION = BloodAccounting.Source.of("scriptorium_inscription", Category.TOOL, false, false);
     private ScriptoriumUseEvents() {}
 
     @SubscribeEvent public static void breakBlock(BlockEvent.BreakEvent event) {
@@ -103,8 +105,7 @@ public final class ScriptoriumUseEvents {
         var blood = HemoCapabilityAccess.getBloodVolume(player);
         boolean paid = bloodCost == 0 || blood != null && blood.getBloodVolume() >= bloodCost;
         if (paid && bloodCost > 0) {
-            blood.drain(bloodCost);
-            BloodVolumeEvents.syncVolume(player, blood);
+            BloodAccounting.pay(player, bloodCost, INSCRIPTION);
         }
         if (stack.isDamageableItem()) {
             double extra = Math.max(0, ScriptoriumBalance.wearMultiplier(load) - 1);

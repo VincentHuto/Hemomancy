@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.armor.BodyIdiomArmorRules;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -52,6 +53,8 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class ArmorSetBonusHandler {
+	private static final BloodAccounting.Source SILENT_REFUSAL = BloodAccounting.Source.of("silent_archon_refusal", Category.ARMOR, false, false);
+	private static final BloodAccounting.Source COVENANT_MANTLE = BloodAccounting.Source.of("covenant_mantle", Category.ARMOR, false, true);
 
 	private static final net.minecraft.resources.ResourceLocation CHITINITE_TOUGHNESS_ID = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "chitinite_toughness");
 	private static final net.minecraft.resources.ResourceLocation MARROW_CROWN_DAMAGE_ID = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "marrow_crown_damage");
@@ -315,10 +318,7 @@ public class ArmorSetBonusHandler {
 			return false;
 		}
 
-		volume.drain(SilentArchonArmorRules.DEATH_REFUSAL_BLOOD_COST);
-		if (player instanceof ServerPlayer serverPlayer) {
-			syncVolume(serverPlayer, volume);
-		}
+		BloodAccounting.pay(player, SilentArchonArmorRules.DEATH_REFUSAL_BLOOD_COST, SILENT_REFUSAL);
 		player.getPersistentData().putLong(SILENT_ARCHON_COOLDOWN_TAG,
 				SilentArchonArmorRules.nextCooldownUntil(now));
 		LastRiteHelper.consume(player, LastRiteHelper.SILENT_REFUSAL_ID);
@@ -379,8 +379,7 @@ public class ArmorSetBonusHandler {
 			granted = true;
 		}
 		if (granted && player instanceof ServerPlayer serverPlayer) {
-			BloodFlowLedger.applyDrain(serverPlayer, volume, "covenant_mantle",
-					"Covenant Mantle", Category.ARMOR, COVENANT_MANTLE_BLOOD_COST, 40, true);
+			BloodAccounting.payUpkeep(serverPlayer, COVENANT_MANTLE_BLOOD_COST, COVENANT_MANTLE, 40, true);
 		}
 	}
 

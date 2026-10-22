@@ -2,14 +2,13 @@ package com.vincenthuto.hemomancy.common.manipulation.mortem;
 
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -70,7 +69,7 @@ public class VitalReservoirManip extends BloodManipulation {
 		volume.addBloodVolume(toRestore);
 
 		if (player instanceof ServerPlayer serverPlayer) {
-			PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(volume));
+			BloodVolumeEvents.syncVolume(serverPlayer, volume);
 		}
 
 		world.playSound(null, player.blockPosition(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.6f, 0.6f);

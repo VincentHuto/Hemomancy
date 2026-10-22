@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 import com.vincenthuto.hemomancy.common.block.harbinger.BlockBloodEndpoint;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScars;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.ScarType;
@@ -185,7 +184,6 @@ public class MasonsEffigyBlock extends Block implements EntityBlock, SimpleWater
 				|| player.getOffhandItem().getItem() instanceof LivingStaffItem;
 		double accepted = effigy.receiveProjectedBlood(player, maxAmount, livingStaff);
 		if (accepted > 0.0D) {
-			BloodVolumeEvents.syncVolume(player, volume);
 			return Math.max(accepted, beforeBlood - volume.getBloodVolume());
 		}
 		return 0.0D;

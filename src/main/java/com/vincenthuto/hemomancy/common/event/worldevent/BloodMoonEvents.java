@@ -1,9 +1,8 @@
 package com.vincenthuto.hemomancy.common.event.worldevent;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodMoon;
@@ -46,6 +45,7 @@ import java.util.List;
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class BloodMoonEvents {
+	private static final BloodAccounting.Source BLOOD_MOON = BloodAccounting.Source.of("blood_moon", Category.WORLD, false, false);
 
 	/** Ticks per in-game day. */
 	private static final long DAY_LENGTH = 24000L;
@@ -301,9 +301,7 @@ public class BloodMoonEvents {
 		} else {
 			player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, EFFECT_DURATION, 0, true, false, true));
 			// Passive blood drain for active (initiated-blood) players caught in the moon
-			var vol = HemoCapabilityAccess.getBloodVolume(player);
-			BloodFlowLedger.applyDrain(player, vol, "blood_moon",
-					"Blood Moon", Category.WORLD, BLOOD_MOON_DRAIN_AMOUNT, EFFECT_INTERVAL_TICKS, false);
+			BloodAccounting.payUpkeep(player, BLOOD_MOON_DRAIN_AMOUNT, BLOOD_MOON, EFFECT_INTERVAL_TICKS, false);
 		}
 	}
 

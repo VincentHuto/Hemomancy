@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.manipulation.saint;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -8,8 +10,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Enu
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import com.vincenthuto.hutoslib.client.particle.data.ColorParticleData;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -34,6 +34,7 @@ import net.minecraft.world.level.Level;
  * Imprinted, not learned. The player uses it uncomfortably.
  */
 public class CrimsonTitheManip extends BloodManipulation {
+	private static final BloodAccounting.Source TITHE_DEBT = BloodAccounting.Source.of("crimson_tithe_debt", Category.CAST, false, false);
 
 	private static final String TITHE_EXPIRY_KEY = "hemomancy:crimson_tithe_expiry";
 	private static final String TITHE_STORED_KEY = "hemomancy:crimson_tithe_stored";
@@ -99,8 +100,7 @@ public class CrimsonTitheManip extends BloodManipulation {
 		double due = spent * 2.0D;
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume != null && due > 0.0D) {
-			volume.drain(Math.min(due, Math.max(0.0D, volume.getBloodVolume())));
-			PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(volume));
+			BloodAccounting.pay(player, Math.min(due, Math.max(0.0D, volume.getBloodVolume())), TITHE_DEBT);
 		}
 
 		com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.attached(player,

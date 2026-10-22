@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.event;
 
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.HematicStakeBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.*;
@@ -23,6 +25,7 @@ import net.minecraft.world.phys.AABB;
 import java.util.*;
 
 public final class BloodStructureFeedManager {
+	private static final BloodAccounting.Source STRUCTURE_FEED = BloodAccounting.Source.of("blood_structure_feed", Category.RITE, false, false);
 	private static final Map<FeedKey, FeedProgress> ACTIVE_FEEDS = new HashMap<>();
 	private static final Map<FeedKey, Long> COMPLETING_FEEDS = new HashMap<>();
 	private static final Map<UUID, Long> LAST_HINT_TICK = new HashMap<>();
@@ -89,10 +92,9 @@ public final class BloodStructureFeedManager {
 			progress = new FeedProgress();
 			ACTIVE_FEEDS.put(key, progress);
 		}
-		bloodVolume.drain(feedAmount);
+		BloodAccounting.pay(player, feedAmount, STRUCTURE_FEED);
 		progress.bloodFed += feedAmount;
 		progress.lastFedGameTime = gameTime;
-		PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(bloodVolume));
 
 		float normalizedProgress = (float) Math.min(1.0, progress.bloodFed / recipe.getBloodCost());
 		sendFeedSync(level, positions, normalizedProgress, false);

@@ -2,12 +2,12 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.google.common.collect.Lists;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.entity.projectile.GoreWoundHarpoonEntity;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -52,6 +52,8 @@ import java.util.Random;
 import java.util.function.Predicate;
 
 public class LivingCrossbowItem extends CrossbowItem implements IDispellable, ITendencyAlignedWeapon {
+	/** Pays whatever is asked, emptying the volume when short; F-15 (pending) would gate and stop that. */
+	private static final BloodAccounting.Source BLOOD_PRICE = BloodAccounting.Source.of("living_crossbow", Category.TOOL, false, false);
 	private static final EnumBloodTendency WEAPON_TENDENCY = EnumBloodTendency.DUCTILIS;
 
 	private static void addChargedProjectile(ItemStack crossbow, ItemStack projectile, HolderLookup.Provider registryAccess) {
@@ -131,11 +133,9 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable, IT
 								;
 						float damageMod = 50f;
 						if (playerVolume.getBloodVolume() > damageMod) {
-							playerVolume.drain(damageMod);
-							PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(playerVolume));
+							BloodAccounting.pay(playerIn, damageMod, BLOOD_PRICE);
 						} else {
-							playerVolume.drain(damageMod);
-							PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(playerVolume));
+							BloodAccounting.pay(playerIn, damageMod, BLOOD_PRICE);
 							restoredStaffForm = LivingStaffWeaponFormHelper.restoreStaffAfterBloodFailure(crossbow, shooter, handIn);
 							if (!restoredStaffForm) {
 								crossbow.hurtAndBreak(2050, shooter,

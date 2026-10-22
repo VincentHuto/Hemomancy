@@ -14,6 +14,8 @@ import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.PathMutualExclusionHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.summon.KnownSummonEvents;
@@ -106,6 +108,8 @@ import java.util.UUID;
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class HarbingerCardinalRiteEvents {
+	private static final BloodAccounting.Source BOUNDARY = BloodAccounting.Source.of("rite_boundary", Category.RITE, false, false);
+	private static final BloodAccounting.Source LEGACY_COMPLETION = BloodAccounting.Source.of("legacy_rite_completion", Category.RITE, false, false);
 
 	private static final float CASTER_BOUNDARY_DAMAGE_PER_TICK = 1.0f;
 	private static final double CASTER_BOUNDARY_BLOOD_DRAIN_PER_TICK = 25.0;
@@ -344,9 +348,7 @@ public class HarbingerCardinalRiteEvents {
 							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), true);
 				} else {
 					caster.hurt(caster.damageSources().generic(), CASTER_BOUNDARY_DAMAGE_PER_TICK);
-					var volume = HemoCapabilityAccess.getBloodVolume(caster);
-					volume.drain(CASTER_BOUNDARY_BLOOD_DRAIN_PER_TICK);
-					BloodVolumeEvents.syncVolume(caster, volume);
+					BloodAccounting.pay(caster, CASTER_BOUNDARY_BLOOD_DRAIN_PER_TICK, BOUNDARY);
 					caster.displayClientMessage(
 							Component.literal("The rite binds you! Return to the circle!")
 									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
@@ -1465,9 +1467,7 @@ public class HarbingerCardinalRiteEvents {
 		// Interactive Harbinger ceremonies already paid their base cost node by
 		// node. Only legacy/Unstained countdown rites retain the completion drain.
 		if (rite.getPhase() == CardinalRitePhase.LEGACY) {
-			var volume = HemoCapabilityAccess.getBloodVolume(caster);
-			volume.drain(recipe.getBloodCost());
-			BloodVolumeEvents.syncVolume(caster, volume);
+			BloodAccounting.pay(caster, recipe.getBloodCost(), LEGACY_COMPLETION);
 		}
 
 		// Floors are reusable. A recipe may explicitly consume only its matched upper structure.

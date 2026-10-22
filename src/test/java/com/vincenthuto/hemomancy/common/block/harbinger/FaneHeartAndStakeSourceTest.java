@@ -120,7 +120,7 @@ public final class FaneHeartAndStakeSourceTest {
 		assertContains("dynamic block interaction helper updates reservoirs", blockBloodInteractions,
 				"reservoir.sendUpdates()");
 		assertContains("dynamic block interaction helper syncs player after tile absorption", blockBloodInteractions,
-				"new BloodVolumeServerPacket(playerVolume)");
+				"BloodVolumeEvents.syncVolume(player, playerVolume)");
 		assertContains("blood absorption tries block endpoints before entity absorption", bloodAbsorption,
 				"BlockBloodInteractions.tryAbsorbFromLookedAtBlock");
 		assertContains("blood projection tries block endpoints before reservoir handling", bloodProjection,

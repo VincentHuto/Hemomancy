@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.puzzle;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -15,6 +17,7 @@ import net.minecraft.world.phys.AABB;
 import java.util.List;
 
 public class BloodPylonBlockEntity extends BlockEntity {
+    private static final BloodAccounting.Source PYLON_DRAIN = BloodAccounting.Source.of("blood_pylon", Category.HAZARD, false, false);
 
     private static final double DRAIN_RADIUS = 4.0;
     private static final double DRAIN_AMOUNT = 50.0;
@@ -38,7 +41,7 @@ public class BloodPylonBlockEntity extends BlockEntity {
         List<Player> players = level.getEntitiesOfClass(Player.class, range);
         for (Player player : players) {
             var volume = HemoCapabilityAccess.getBloodVolume(player);
-            if (!volume.isEmpty() && volume.drain(DRAIN_AMOUNT)) {
+            if (!volume.isEmpty() && BloodAccounting.pay(player, DRAIN_AMOUNT, PYLON_DRAIN).satisfied()) {
                 if (player instanceof ServerPlayer sp) {
                     sp.displayClientMessage(
                         Component.translatable("message.hemomancy.blood_pylon.draining")

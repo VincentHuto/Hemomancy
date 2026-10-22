@@ -3,7 +3,8 @@ package com.vincenthuto.hemomancy.common.item.harbinger.memory;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncLastDeathMemory;
 import com.vincenthuto.hemomancy.common.network.routing.PacketSpawnVeinSpiderCourier;
@@ -32,6 +33,7 @@ import java.util.UUID;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class HematicMemoryToolEvents {
+    private static final BloodAccounting.Source VEIN_SPIDER = BloodAccounting.Source.of("vein_spider", Category.TOOL, false, false);
     public static final String TAG_EFFIGY = "HemomancyHuskEffigy";
     public static final String TAG_OWNER = "HemomancyEffigyOwner";
     public static final String TAG_EXPIRES = "HemomancyEffigyExpires";
@@ -101,9 +103,7 @@ public final class HematicMemoryToolEvents {
                     continue;
                 }
                 if (tryTransfer(level, link.get())) {
-                    var volume = HemoCapabilityAccess.getBloodVolume(player);
-                    volume.drain(VeinSpiderRules.BLOOD_COST_PER_TRANSFER);
-                    BloodVolumeEvents.syncVolume(player, volume);
+                    BloodAccounting.pay(player, VeinSpiderRules.BLOOD_COST_PER_TRANSFER, VEIN_SPIDER);
                 }
             }
         }

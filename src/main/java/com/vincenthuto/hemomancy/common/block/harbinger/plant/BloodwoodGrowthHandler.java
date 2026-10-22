@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.plant;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import net.minecraft.ChatFormatting;
@@ -21,6 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class BloodwoodGrowthHandler {
+	private static final BloodAccounting.Source GROWTH = BloodAccounting.Source.of("bloodwood_growth", Category.WORLD, true, false);
 	private static final long PROGRESS_EXPIRY_TICKS = 20L * 60L * 10L;
 	private static final Map<GrowthKey, GrowthProgress> PROGRESS = new ConcurrentHashMap<>();
 
@@ -57,11 +59,9 @@ public final class BloodwoodGrowthHandler {
 				: progress.amount();
 		double remaining = Math.max(0.0D, BloodwoodGrowthRules.PROJECTION_BLOOD_COST - current);
 		double transfer = Math.min(maxAmount, Math.min(remaining, volume.getBloodVolume()));
-		if (transfer <= 0.0D || !volume.drain(transfer)) {
+		if (transfer <= 0.0D || !BloodAccounting.pay(player, transfer, GROWTH).satisfied()) {
 			return 0.0D;
 		}
-		volume.addBloodSpend(transfer);
-		BloodVolumeEvents.syncVolume(player, volume);
 
 		double updated = current + transfer;
 		if (updated + 0.001D < BloodwoodGrowthRules.PROJECTION_BLOOD_COST) {

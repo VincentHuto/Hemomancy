@@ -187,8 +187,10 @@ public final class RegistryBackedScarRefactorSourceTest {
 		assertContains("effigy completion ejects scar pattern", blockEntity, "level.addFreshEntity(patternEntity)");
 		assertContains("effigy completion bursts red particles", blockEntity, "PacketHandler.sendSanguineOmenEffect");
 		assertContains("effigy consumes motif paper", blockEntity, "stack.shrink(1)");
-		assertContains("blood projection charges effigy", projection, "MasonsEffigyBlockEntity");
-		assertContains("blood projection calls effigy ritual charging", projection, "receiveProjectedBlood");
+		assertContains("blood projection charges sinks such as the effigy", projection, "ProjectedBloodSink");
+		assertContains("effigy is a projected-blood sink", blockEntity, "implements MenuProvider, ProjectedBloodSink");
+		assertContains("effigy sink charges its motif ritual", blockEntity,
+				"receiveProjectedBlood(player, rate, livingStaff)");
 		assertContains("effigy renderer displays pending motif", effigyRenderer, "getPendingMotifDisplayStack");
 		assertContains("effigy renderer floats item above block", effigyRenderer, "renderStatic");
 		assertContains("effigy renderer registered", clientEvents,

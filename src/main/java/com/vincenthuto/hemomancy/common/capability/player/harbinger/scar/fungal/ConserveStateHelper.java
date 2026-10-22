@@ -4,10 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.CirculationIncomeHelper;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -88,12 +85,6 @@ public final class ConserveStateHelper {
 
 	private static boolean hasCryostroma(Player player) {
 		return HemoCapabilityAccess.getScarState(player).getFungalScar().is(ItemInit.cryostroma_perdurans.get());
-	}
-
-	private static void syncBlood(ServerPlayer player, IBloodVolume volume, double granted) {
-		if (granted > 0.0D) {
-			PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(volume));
-		}
 	}
 
 	private static final class ConserveState {

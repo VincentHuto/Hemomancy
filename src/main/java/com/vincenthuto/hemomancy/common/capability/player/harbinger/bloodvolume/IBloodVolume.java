@@ -10,8 +10,6 @@ public interface IBloodVolume {
 
 	public boolean fill(double points);
 
-	public boolean fillFromSource(IBloodVolume src, double points);
-
 	public Bloodline getBloodLine();
 
 	public double getBloodVolume();

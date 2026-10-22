@@ -358,7 +358,7 @@ final class VesperCombatImplementationSourceTest {
 		String drain = crowned.substring(crowned.indexOf("public float drainWound("),
 				crowned.indexOf("private void updateWound("));
 		assertTrue(drain.contains("volume.isActive()"));
-		assertTrue(drain.contains("new BloodVolumeServerPacket(volume)"));
+		assertTrue(drain.contains("BloodVolumeEvents.syncVolume(player, volume)"));
 	}
 
 	@Test

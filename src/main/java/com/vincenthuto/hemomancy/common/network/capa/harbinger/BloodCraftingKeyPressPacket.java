@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
@@ -48,6 +50,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
+	private static final BloodAccounting.Source STRUCTURE_CRAFT = BloodAccounting.Source.of("blood_structure_craft", Category.RITE, false, false);
 
 	public static final Type<BloodCraftingKeyPressPacket> TYPE = new Type<>(Hemomancy.rloc("blood_crafting_key_press_packet"));
 	public static final StreamCodec<FriendlyByteBuf, BloodCraftingKeyPressPacket> STREAM_CODEC = StreamCodec.of(BloodCraftingKeyPressPacket::encode, BloodCraftingKeyPressPacket::decode);
@@ -148,8 +151,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 						ItemStack oldStack = player.getMainHandItem().copy();
 						player.setItemInHand(InteractionHand.MAIN_HAND,
 								new ItemStack(oldStack.getItem(), oldStack.getCount() - 1));
-						bloodVolume.drain(targetPattern.getBloodCost());
-						PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(bloodVolume));
+						BloodAccounting.pay(player, targetPattern.getBloodCost(), STRUCTURE_CRAFT);
 
 						// ── Schedule block breaking + result drop after ring collapses ──
 						PendingBloodCraftManager.schedule(

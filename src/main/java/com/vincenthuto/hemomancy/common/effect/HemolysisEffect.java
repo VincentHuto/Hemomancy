@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.effect;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
@@ -13,6 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
 public class HemolysisEffect extends MobEffect {
+	private static final BloodAccounting.Source SOURCE = BloodAccounting.Source.of("hemolysis", Category.EFFECT, false, false);
 
 	public HemolysisEffect(MobEffectCategory typeIn, int liquidColorIn) {
 		super(typeIn, liquidColorIn);
@@ -43,8 +45,7 @@ public class HemolysisEffect extends MobEffect {
 				}
 				var volume = HemoCapabilityAccess.getBloodVolume(player);
 				if (volume.isActive()) {
-					BloodFlowLedger.applyDrain((ServerPlayer) player, volume, "hemolysis",
-							"Hemolysis", Category.EFFECT, drainAmount, 1, false);
+					BloodAccounting.payUpkeep((ServerPlayer) player, drainAmount, SOURCE, 1, false);
 					player.hurt(player.damageSources().magic(), 0.5f * (amplifier + 1));
 				}
 			}

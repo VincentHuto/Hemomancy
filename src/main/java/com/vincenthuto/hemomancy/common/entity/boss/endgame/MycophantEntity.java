@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.damage.HemoDamageTypes;
 import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
 import com.vincenthuto.hemomancy.common.damage.SchoolDamageSource;
@@ -53,6 +54,8 @@ import java.util.UUID;
  * Mycophant*Rules classes. State is synced for the generated model's animation.
  */
 public class MycophantEntity extends Monster implements BroodMother {
+	private static final BloodAccounting.Source CLAIM = BloodAccounting.Source.of("mycophant_claim", Category.HAZARD, false, false);
+	private static final BloodAccounting.Source SIPHON = BloodAccounting.Source.of("mycophant_siphon", Category.HAZARD, false, false);
 	private static final EntityDataAccessor<Integer> DATA_STATE = SynchedEntityData.defineId(MycophantEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> DATA_STATE_TICK = SynchedEntityData.defineId(MycophantEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> DATA_ATTACK = SynchedEntityData.defineId(MycophantEntity.class, EntityDataSerializers.INT);
@@ -347,8 +350,7 @@ public class MycophantEntity extends Monster implements BroodMother {
 		if (!held.isAlive() || held.level() != this.level()) return;
 		var volume = HemoCapabilityAccess.getBloodVolume(held);
 		if (volume.isActive()) {
-			volume.drain(volume.getMaxBloodVolume() * MycophantClaimRules.bloodDrainFraction(phase));
-			BloodVolumeEvents.syncVolume(held, volume);
+			BloodAccounting.pay(held, volume.getMaxBloodVolume() * MycophantClaimRules.bloodDrainFraction(phase), CLAIM);
 		}
 		pushAway(held, 0.9D, 0.35D);
 	}
@@ -459,8 +461,7 @@ public class MycophantEntity extends Monster implements BroodMother {
 			var volume = HemoCapabilityAccess.getBloodVolume(target);
 			boolean drained = volume.isActive() && !volume.isEmpty();
 			if (drained) {
-				volume.drain(volume.getMaxBloodVolume() * (phase >= 2 ? 0.025D : 0.015D));
-				BloodVolumeEvents.syncVolume(target, volume);
+				BloodAccounting.pay(target, volume.getMaxBloodVolume() * (phase >= 2 ? 0.025D : 0.015D), SIPHON);
 			} else {
 				float damage = MycophantClaimRules.clampNonlethal(target.getHealth(), MycophantClaimRules.siphonDrainPerSecond(phase));
 				if (damage > 0.0F) target.hurt(HemoDamageTypes.mycophantClaim(this.level(), this), damage);

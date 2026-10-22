@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.manipulation;
 
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
@@ -27,7 +29,6 @@ import com.vincenthuto.hemomancy.common.item.harbinger.CheapBloodInfusionHelper;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.SporiticThuribleResonanceState;
 import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.ManipCooldownPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.ChatFormatting;
@@ -46,6 +47,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class BloodManipulation implements EntityCastableManipulation {
+	private static final BloodAccounting.Source CAST = BloodAccounting.Source.of("manipulation_cast", Category.CAST, true, false);
     public com.vincenthuto.hemomancy.common.manipulation.animation.CastPresentation getCastPresentation() {
         return com.vincenthuto.hemomancy.common.manipulation.animation.CastPresentation.forId(getName());
     }
@@ -538,13 +540,11 @@ public class BloodManipulation implements EntityCastableManipulation {
 					volume.fill(BorrowedBloodReserve.drainToCover(player, deficit));
 				}
 				if (volume.getBloodVolume() >= effectiveCost) {
-					volume.drain(effectiveCost);
-					volume.addBloodSpend(effectiveCost);
+					BloodAccounting.pay(player, effectiveCost, CAST);
 					HemorathEntity
 							.onPlayerBloodSpend(player, effectiveCost);
 					RootedStateHelper.refundManipulationCost(player, effectiveCost);
 					ConserveStateHelper.markManipulationCast(player);
-					PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(volume));
 					try (var schoolCast = com.vincenthuto.hemomancy.common.damage.SchoolDamage.cast(this, player,
                             getRequiredChargeTicks() <= 0 ? 1 : chargeTicks / getRequiredChargeTicks())) {
 					    getAction(player, world, heldItemMainhand, position, chargeTicks);

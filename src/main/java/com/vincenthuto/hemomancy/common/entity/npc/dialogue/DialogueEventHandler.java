@@ -46,7 +46,6 @@ import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedDaggerReplace
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnSanguineOmenEffectPacket;
 import com.vincenthuto.hemomancy.common.rite.TempleOathRules;
 import com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog;
@@ -1341,7 +1340,7 @@ public class DialogueEventHandler {
 			volume.setBloodLine(updatedLine);
 
 			// Sync updated bloodline state to client
-			PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(volume));
+			BloodVolumeEvents.syncVolume(player, volume);
 
 			// Success feedback
 			String npcName = entity.getName().getString();

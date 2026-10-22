@@ -6,6 +6,8 @@ import com.vincenthuto.hemomancy.common.station.StationTierProperty;
 import com.vincenthuto.hemomancy.common.station.UpgradeStation;
 import com.vincenthuto.hemomancy.common.station.UpgradeableStation;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.ResonantForgeBlock;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import net.minecraft.server.level.ServerLevel;
 import com.vincenthuto.hemomancy.common.enchanting.ResonantForgeTransfer;
 import com.vincenthuto.hemomancy.common.enchanting.ResonantPattern;
@@ -40,6 +42,7 @@ import java.util.UUID;
 
 public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implements IBloodReservoir, WorldlyContainer,
         UpgradeableStation {
+    private static final BloodAccounting.Source HAMMER_REPAIR = BloodAccounting.Source.of("resonant_forge_hammer", Category.STATION, false, false);
     private static final int[] NO_AUTOMATION_SLOTS = new int[0];
     public static final int APPLICATION_ITEM = 0;
     public static final int APPLICATION_CYLINDER = 1;
@@ -315,6 +318,20 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
     public boolean depositHammerAsh(ItemStack held) {
         if (!hammerWorn() || hammerAsh || !held.is(com.vincenthuto.hemomancy.common.init.BlockInit.smouldering_ash_trail.get().asItem())) return false;
         held.shrink(1); hammerAsh = true; BlockEntitySync.markAndSync(this); return true;
+    }
+
+    /** Blood aimed at a worn hammer with its iron and ash in place repairs it; the rest of the forge fills as usual. */
+    @Override
+    public double takeProjectedBlood(Player player, BlockPos hitPos, double rate, boolean livingStaff) {
+        BlockState state = level == null ? null : level.getBlockState(worldPosition);
+        if (state != null && state.getBlock() instanceof ResonantForgeBlock block
+                && block.part(state, worldPosition, hitPos) == ResonantForgeBlock.Part.HAMMER
+                && hammerWorn() && hammerIronDeposited() && hammerAshDeposited()) {
+            double accepted = receiveHammerRepairBlood(Math.min(rate,
+                    com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(player).getBloodVolume()));
+            return accepted > 0 && BloodAccounting.pay(player, accepted, HAMMER_REPAIR).satisfied() ? accepted : 0.0D;
+        }
+        return IBloodReservoir.super.takeProjectedBlood(player, hitPos, rate, livingStaff);
     }
 
     public double receiveHammerRepairBlood(double amount) {

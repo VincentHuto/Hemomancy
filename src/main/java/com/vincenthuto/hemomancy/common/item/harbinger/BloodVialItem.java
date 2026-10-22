@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.entity.mob.arthropod.HemolymphopodaEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -33,6 +35,7 @@ import net.minecraft.world.item.component.CustomData;
 import java.util.List;
 
 public class BloodVialItem extends Item {
+	private static final BloodAccounting.Source SELF_SAMPLE = BloodAccounting.Source.of("succession_self_sample", Category.TOOL, false, false);
     @Override public Component getName(ItemStack stack) {
         return com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood.is(stack) ? Component.translatable("item.hemomancy.concentrated_blood") : super.getName(stack);
     }
@@ -122,7 +125,7 @@ public class BloodVialItem extends Item {
                     player.displayClientMessage(Component.translatable("hemomancy.succession.self_blood_cost"), true);
                     return InteractionResultHolder.fail(stack);
                 }
-                volume.subtractBloodVolume(100);
+                BloodAccounting.pay(player, 100, SELF_SAMPLE);
                 ItemStack sample = stack.getCount() == 1 ? stack : stack.copyWithCount(1);
                 com.vincenthuto.hemomancy.common.succession.SuccessionSamples.fill(sample, player, null, "");
                 if (sample != stack) {
@@ -130,7 +133,6 @@ public class BloodVialItem extends Item {
                     player.setItemInHand(hand, sample);
                     if (!player.getInventory().add(stack)) player.drop(stack, false);
                 }
-                com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents.syncVolume(serverPlayer, volume);
                 return InteractionResultHolder.success(sample);
             }
             return InteractionResultHolder.pass(stack);

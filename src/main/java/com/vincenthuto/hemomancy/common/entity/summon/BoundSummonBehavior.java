@@ -2,7 +2,8 @@ package com.vincenthuto.hemomancy.common.entity.summon;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.HarbingerPathPermissions;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.EquippedMorphlingEvents;
@@ -38,6 +39,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.*;
 
 public final class BoundSummonBehavior {
+	private static final BloodAccounting.Source HIGH_STRUNG = BloodAccounting.Source.of("high_strung_threads", Category.SKILL, false, false);
 	private static final String TAG_OWNER = "HemomancyOwner";
 	private static final String TAG_CROSSBAR = "HemomancyCrossbar";
 	private static final String TAG_SUMMON = "HemomancySummon";
@@ -518,8 +520,7 @@ public final class BoundSummonBehavior {
 			return false;
 		}
 		if (bloodUpkeep > 0.0D) {
-			volume.drain(bloodUpkeep);
-			BloodVolumeEvents.syncVolume(owner, volume);
+			BloodAccounting.pay(owner, bloodUpkeep, HIGH_STRUNG);
 		}
 		if (morphlingInterference) {
 			var cap = HemoCapabilityAccess.getEquippedMorphling(owner);

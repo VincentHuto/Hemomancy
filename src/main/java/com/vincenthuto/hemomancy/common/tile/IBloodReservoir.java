@@ -1,13 +1,18 @@
 package com.vincenthuto.hemomancy.common.tile;
 
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeTransferRules;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nullable;
 
-public interface IBloodReservoir {
+public interface IBloodReservoir extends ProjectedBloodSink {
 	@Nullable
 	default IBloodVolume getBloodCapability() {
 		return this instanceof BlockEntity blockEntity
@@ -46,6 +51,24 @@ public interface IBloodReservoir {
 		if (accepted <= 0.0D || !volume.fill(accepted)) {
 			return 0.0D;
 		}
+		sendUpdates();
+		return accepted;
+	}
+
+	/**
+	 * Projection fills the reservoir's own attachment, as the old generic projection did, and charges the player.
+	 * F-12 (pending approval): unlike {@link #receiveBlood}, it does not ask {@link #canReceiveBlood()}, so a
+	 * rite-locked station still takes projected blood.
+	 */
+	@Override
+	default double takeProjectedBlood(Player player, BlockPos hitPos, double rate, boolean livingStaff) {
+		if (!(this instanceof BlockEntity blockEntity)) return 0.0D;
+		IBloodVolume volume = blockEntity.getData(HemoAttachmentTypes.BLOCK_BLOOD_VOLUME);
+		double accepted = BloodVolumeTransferRules.transferableAmount(volume,
+				HemoCapabilityAccess.getBloodVolume(player), rate);
+		if (accepted <= 0.0D) return 0.0D;
+		BloodAccounting.pay(player, accepted, PROJECTION);
+		volume.fill(accepted);
 		sendUpdates();
 		return accepted;
 	}

@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
@@ -39,6 +40,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public class MorphlingCradleBlockEntity extends BlockEntity {
+	private static final BloodAccounting.Source OWNER_DRAW = BloodAccounting.Source.of("morphling_cradle_draw", Category.STATION, false, false);
 
 	public enum State {
 		ACTIVE, DORMANT
@@ -350,7 +352,7 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 				<= OWNER_DRAIN_RANGE * OWNER_DRAIN_RANGE) {
 			var vol = HemoCapabilityAccess.getBloodVolume(owner);
 			if (vol != null && vol.isActive() && vol.getBloodVolume() >= remaining) {
-				return vol.drain(remaining);
+				return BloodAccounting.pay(owner, remaining, OWNER_DRAW).satisfied();
 			}
 		}
 

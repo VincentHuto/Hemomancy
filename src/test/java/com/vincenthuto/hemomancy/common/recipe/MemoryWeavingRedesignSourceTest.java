@@ -167,7 +167,9 @@ public final class MemoryWeavingRedesignSourceTest {
 				"HemoCapabilityAccess.getBloodVolume");
 		assertContains("projection tool event recognizes filler-linked blood reservoirs", projectionEvents,
 				"FillerBlockEntity");
-		assertContains("bare projection detects loom ritual charging", bareProjection, "tryChargeRitualBlood");
+		assertContains("bare projection hands blood to projected-blood sinks", bareProjection, "ProjectedBloodSink");
+		assertContains("projection into the loom charges its ritual", loom,
+				"if (!tryChargeRitualBlood(player, rate, livingStaff)) return 0.0D;");
 	}
 
 	private static String read(String path) throws IOException {

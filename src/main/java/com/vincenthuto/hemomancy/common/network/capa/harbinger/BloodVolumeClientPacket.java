@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import net.minecraft.network.FriendlyByteBuf;
@@ -30,7 +31,7 @@ public class BloodVolumeClientPacket implements CustomPacketPayload {
 			if (player instanceof ServerPlayer sender) {
 				IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(sender)
 						;
-				PacketHandler.sendToPlayer(sender, new BloodVolumeServerPacket(volume));
+				BloodVolumeEvents.syncVolume(sender, volume);
 				PacketHandler.sendToPlayer(sender, new PacketSyncPomeProgress(computePomeProgress(sender)));
 			}
 		});

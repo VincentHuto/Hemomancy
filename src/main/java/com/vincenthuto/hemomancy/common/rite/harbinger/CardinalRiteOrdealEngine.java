@@ -3,7 +3,8 @@ package com.vincenthuto.hemomancy.common.rite.harbinger;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierMount;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.BloodlickerEntity;
 import com.vincenthuto.hemomancy.common.entity.utility.HumanitySpriteEntity;
 import com.vincenthuto.hemomancy.common.entity.utility.UnsettledIchorEntity;
@@ -49,6 +50,7 @@ import java.util.UUID;
  * Tick controller for interactive ceremony phases and reshuffled ordeal waves.
  */
 public final class CardinalRiteOrdealEngine {
+	private static final BloodAccounting.Source THREAT_DRAIN = BloodAccounting.Source.of("fargone_dive_threat", Category.HAZARD, false, false);
 	private static final int WAVE_TIMEOUT_TICKS = CardinalRiteWaveRules.DEADLINE_TICKS;
 	/** Counterfeit anchors raised by a false-omens wave, relative to the rite centre. */
 	static final BlockPos[] FALSE_OMEN_OFFSETS = {
@@ -589,8 +591,7 @@ public final class CardinalRiteOrdealEngine {
 						.count();
 				int drain = Math.min(touching * 5, (int) volume.getBloodVolume());
 				if (drain > 0) {
-					volume.drain(drain);
-					BloodVolumeEvents.syncVolume(caster, volume);
+					BloodAccounting.pay(caster, drain, THREAT_DRAIN);
 				}
 			}
 			case "rogue_will" -> rite.addInstability(active);

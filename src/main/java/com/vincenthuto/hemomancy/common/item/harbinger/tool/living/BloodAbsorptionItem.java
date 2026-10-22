@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.client.render.item.harbinger.CellHandItemRender
 import com.vincenthuto.hemomancy.common.block.harbinger.BlockBloodInteractions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
@@ -18,8 +19,6 @@ import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillAbsorptionRu
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillBloodUtilityInteractions;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCancellationHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -308,7 +307,7 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 		}
 		if (globalLine != null) globalLine.contributeBlood((float) sharedBlood);
 		if (user instanceof ServerPlayer serverPlayer) {
-			PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(volume));
+			BloodVolumeEvents.syncVolume(serverPlayer, volume);
 		}
 		return absorbed;
 	}

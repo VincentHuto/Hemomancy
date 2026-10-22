@@ -116,11 +116,6 @@ public final class BloodRoutingRulesTest {
         }
 
         @Override
-        public boolean fillFromSource(IBloodVolume src, double points) {
-            return false;
-        }
-
-        @Override
         public Bloodline getBloodLine() {
             return Bloodline.NOBLOODLINE;
         }

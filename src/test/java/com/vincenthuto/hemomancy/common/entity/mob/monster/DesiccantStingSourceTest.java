@@ -25,8 +25,8 @@ public final class DesiccantStingSourceTest {
 		assertContains("blood loss effect", entity, "EffectInit.blood_loss");
 		assertContains("active blood gate", entity, "volume.isActive()");
 		assertContains("player blood volume access", entity, "HemoCapabilityAccess.getBloodVolume(player)");
-		assertContains("sting drain", entity, "volume.drain(STING_BLOOD_DRAIN)");
-		assertContains("blood volume sync", entity, "BloodVolumeEvents.syncVolume(serverPlayer, volume)");
+		assertContains("sting drain is paid and synced through BloodAccounting", entity,
+				"BloodAccounting.pay(serverPlayer, STING_BLOOD_DRAIN, STING)");
 		assertContains("sting attack start", entity, "startStingAttack()");
 		assertContains("sting timer tick", entity, "setStingTicks(stingTicks - 1)");
 

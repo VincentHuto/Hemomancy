@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
@@ -10,7 +12,6 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.WeaponConjureRules;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketLivingStaffMorph;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow;
 import net.minecraft.ChatFormatting;
@@ -30,6 +31,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 
 public final class LivingStaffWeaponFormHelper {
+	private static final BloodAccounting.Source HOT_SWAP = BloodAccounting.Source.of("living_staff_hot_swap", Category.TOOL, true, false);
 	public static final String STORED_STAFF_KEY = "HemomancyStoredLivingStaff";
 	public static final String FORM_KEY = "HemomancyStaffWeaponForm";
 	public static final String SECONDARY_TENDENCY_KEY = "HemomancyStaffWeaponSecondaryTendency";
@@ -218,11 +220,7 @@ public final class LivingStaffWeaponFormHelper {
 					.withStyle(ChatFormatting.RED), true);
 			return false;
 		}
-		volume.drain(cost);
-		volume.addBloodSpend(cost);
-		if (player instanceof ServerPlayer serverPlayer) {
-			PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(volume));
-		}
+		BloodAccounting.pay(player, cost, HOT_SWAP);
 		return true;
 	}
 
