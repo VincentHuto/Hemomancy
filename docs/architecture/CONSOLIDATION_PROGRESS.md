@@ -11,7 +11,7 @@ Every consolidation session reads this file first and updates it last, following
 | 2 | Phase 0: green baseline and test infrastructure | DONE | `c435034d4`, `ddb358304` | 2026-10-21 |
 | 3 | Phase 1: verified dead-code removal and packaging | DONE | `ccc75e9a0` | 2026-10-21 |
 | 4 | Phase 2: network hygiene | DONE | `d10e5e7f2` … `018394712` (10 commits) | 2026-10-21 |
-| 5 | Phase 3: player-state plumbing | NOT STARTED | | |
+| 5 | Phase 3: player-state plumbing | DONE | `dceced30a` … `7911eaa1f` (5 commits) | 2026-10-22 |
 | 6 | Phase 4: shared small utilities | NOT STARTED | | |
 | 7 | Phase 5: blood accounting | NOT STARTED | | |
 | 8 | Phase 7: registration and client registration | NOT STARTED | | |
@@ -79,10 +79,12 @@ under *Pending approvals*. IDs refer to [ARCHITECTURE_AUDIT](ARCHITECTURE_AUDIT.
 | F-7 | Bloodline chat rate limit | 4 | APPROVED | Owner approved 2026-10-21: a simple per-player rate limit, with excess messages dropped. Vanilla chat integration (signing, mute, logging) stays out of scope |
 | F-8 | Reject NaN pool settings; clamp client partial tick | 4 | APPROVED | Owner approved 2026-10-21 |
 | F-9 | Structure paste requires operator permission and the held spawner | 4 | APPROVED | Owner approved 2026-10-21 |
-| F-4 | ScaleGrip: respect cancelled deaths; persist pending returns | 5 | PENDING | |
+| F-4 | ScaleGrip: respect cancelled deaths; persist pending returns | 5 | PENDING | Its map stays outside `TransientServerStateEvents` until then: clearing it would lose the parked items |
 | F-5 | OrganEcho clears the correct slot | 5 | PENDING | |
-| F-19 | Station kits follow the delivery contract (alive, not observational, no Creative discard) | 5 | PENDING | |
-| F-20 | Resync Ichorian knowledge on dimension change | 5 | PENDING | |
+| F-19 | Station kits follow the delivery contract (alive, not observational, no Creative discard) | 5 | PENDING | Once approved, `StationUpgradeProgress.deliver` becomes a `PendingDelivery` claim |
+| F-20 | Resync Ichorian knowledge on dimension change | 5 | PENDING | One line once approved: add `DIMENSION` to the `ICHORIAN_KNOWLEDGE` row of `PlayerStateSync` |
+| S-2b | Resend skill progress on respawn and dimension change, like every other synced attachment | 5 | PENDING | `PlayerStateSync.SKILLS` is login-only, as before step 5 |
+| S-5b | Concentrated Blood replacement vial: count confirmed insertion and drop what does not fit (no more Creative discard) | 5 | PENDING | `ConcentratedBlood.replace` still uses add-or-drop; the same applies to the Qliphoth Bloom Spine reclaim and `CardinalRiteSavedData.deliverRecovery` |
 | F-12 | Projected blood honours the rite lock | 7 | PENDING | |
 | F-13 | Scar upkeep becomes reserve-protected and synced | 7 | PENDING | Balance |
 | F-14 | Passive scar effects survive milk | 7 | PENDING | Design |
@@ -133,6 +135,14 @@ them green.
 | `common/network/particle/VisualPayloadCodecTest` | 4 | Every `ParticleBurstPacket` and `EntityVisualPacket` kind round-trips |
 | gameTest `NetworkDefectGameTests` (batch `network_defects`) | 4 | F-6 ledger in hand, F-8 non-finite pool settings, F-9 structure-paste operator and spawner |
 | `common/network/capa/harbinger/BloodlineChatRateLimitTest` | 4 | F-7 sliding window and per-sender separation |
+| `architecture/AttachmentAccessTest` | 5 | Attachments are read only through `HemoCapabilityAccess` and a reasoned allow-list (stale entries fail); no `Player` accessor returns `Optional` |
+| `architecture/SessionStateRegistryTest` | 5 | Every static UUID-keyed collection in `common/` is registered with `TransientServerStateEvents` or exempt with a reason; server stop handlers live only in the hub; logout handlers are the hub or a listed gameplay handler; Lantern Tick lights are released on logout |
+| `architecture/SourceTreeHygieneTest#everyEventBusSubscriberSubscribesSomething` | 5 | No `@EventBusSubscriber` class without a `@SubscribeEvent` method (NeoForge refuses to load the mod) |
+| gameTest `SessionStateGameTests` (batch `session_state`) | 5 | A real logout drops the chat window, fane preview and apply lockout |
+| `architecture/PlayerStateSyncTest` | 5 | Only `HemoCapabilityRegistrar` resends `PlayerStateSync` entries on login, respawn and dimension change; no whole-attachment polling per tick |
+| gameTest `OwnerSnapshotGameTests#everySyncedAttachmentReachesTheOwnerOnEachLifecycle` | 5 | Every table entry reaches the owner exactly once per lifecycle event it lists (one per equipment slot), and only then |
+| `common/capability/PendingDeliveryTest` | 5 | The delivery rule: closed gates, carried items, full, partial and failed insertion, per-entry retry, Creative discard counted as nothing |
+| `architecture/PendingDeliveryRegistryTest` | 5 | Only `PendingDelivery` counts insertions; each of the six claims is driven and keeps its saved NBT key |
 
 ## Step entries
 
@@ -364,3 +374,83 @@ them green.
   - Use `ServerboundGuards` for serverbound checks, or add an exemption with a reason.
   - Send only through the facade.
   - For world-dependent fixtures, `NetworkDefectGameTests.connectedPlayer` shows how to capture every outgoing packet without adding the player to the level. A live fixture player makes parallel GameTests flaky.
+
+### Step 5: Phase 3, player-state plumbing
+- **Status / date / commits:** DONE, 2026-10-22. Five commits on `neo-1.21.1`:
+  - `dceced30a`: S-4 accessors
+  - `0e2d0678c`: S-8 session hub
+  - `379401b57`: S-2 / S-3 sync table and dirty flags
+  - `369780d0a`: S-5 `PendingDelivery`
+  - `7911eaa1f`: review fix (Lantern Tick lights)
+
+  A further `consolidation(step-5):` commit records this entry.
+- **Test counts before → after:**
+  - `test`: 3,939 → 3,959, 0 failures.
+  - `alphaCheck`: green, all 1,007 required GameTests (1,005 before; 2 new). See *Known issues* for the intermittent failures seen along the way.
+  - Opt-in suites run because this step touches their code: clinical (131: 129 pass, the same 2 fail at `86d2d8157`), succession (the same 2 fail at `86d2d8157`), casting animation 9/9, Antecedent 14/14, advanced brewing 7/7.
+  - Dedicated server (`runConsolidationServer`, throwaway game directory): `Done (5.093s)`, 0 ERROR lines, no client-class loading. Client (`runConsolidationClient`): title screen, 0 ERROR lines, no shader failures. The runs came from a scratch init script with game directories under `build/`.
+- **What changed:**
+  - **Accessors (S-4):**
+    - `HemoCapabilityAccess` player overloads return the attachment's own class straight from `getData`, so callers no longer bypass them to reach `serializeNBT` or other class-only methods.
+    - `Entity`, `BlockEntity` and `ItemStack` overloads keep `Optional`. The 18 `require*` methods are gone (831 calls renamed).
+    - About 1,000 `Optional` chains in main and gameTest were collapsed. A javac-driven rewriter handled the mechanical ones; 75 were rewritten by hand (guards inverted, returns kept, method extraction where a lambda returned early mid-method).
+    - New `muscleMemory()` and `dialogueKnowledge()`. Direct `getData` reads: 106 → 16, all on the allow-list (block reservoir owner, retired-attachment migration, chunk attachments, one migration fixture).
+    - `HarbingerEquipmentContainer` uses `getScar(stack)`. Block reservoirs reach their attachment through `IBloodReservoir.super.getBloodCapability()`.
+  - **Session hub (S-8):**
+    - `TransientServerStateEvents` clears every session map on server start and stop.
+    - `endPlayerSession(Player)` runs on logout in a fixed order: teardowns that cancel, restore or move something, then plain removals. Handlers that ran for any `Player` still do; `ServerPlayer`-only ones keep their guard.
+    - `ServerStoppedEvent` files in `common/`: 22 → 1 (the hub). `PlayerLoggedOutEvent` files: 27 → 8 (the hub plus 7 gameplay handlers).
+    - 62 UUID-keyed static collections in 43 classes are covered; 3 are exempt with reasons.
+    - Newly cleared on start and stop: the flow ledger, Lantern Tick lights, fane previews, thurible yaw, discharge roots, pending blood crafts, avatar states, thrall picks and NPC markers.
+  - **Sync table (S-2 / S-3):**
+    - `PlayerStateSync` lists 22 entries over 20 attachments, each with its payload and the lifecycle events that resend it.
+    - `HemoCapabilityRegistrar` sends the table at `LOWEST` priority, so each system's own lifecycle work (migrations, grants, clears) runs first and every entry goes out once, with its final state.
+    - The sync halves of the 17 trios and the four `EntityJoinLevel` resyncs are gone. `EntityJoinLevelEvent` files: 7 → 4.
+    - `KnownManipulations` and `StationUpgradeProgress` raise a dirty flag on real change, which the end-of-tick flush sends. This replaces the per-tick serialise-and-diff and the 20-tick station resync. The `KnownManipulations` mutation paths outside its setters (normalisation inside reads, retirement sanitising, the learn helper) now mark the flag too.
+    - Direct `KnownManipulationServerPacket` sends: 25 → 2 (`syncPlayerEvent` and the decoder), so a change is no longer sent twice.
+  - **Pending delivery (S-5):**
+    - `PendingDelivery` owns the shared rule: living player, not observational, count what actually landed, keep the remainder. One driver retries on the 20-tick tick, login and respawn.
+    - Six claims were migrated: First Draws vials, First Separation briefing vials and tools, Mycophant Tendril, Vesper Memory and Communion Spine. Each keeps its NBT through its own read and settle functions.
+    - Special rules stay with the caller: the Spine's carried-Spine rule is its `held` predicate; Vesper's root-key migration stays in its read, still before the alive check; the tools keep unparseable entries.
+    - The five hand-copied count-delta insertions and four per-system drivers are gone.
+- **Metrics:**
+  - `src/main`: +4,622 / −5,195 across 387 files. Classes added: `PlayerStateSync`, `PendingDelivery`. Deleted: `EngramEvents`.
+  - `src/test`: +456 / −31. `src/gameTest`: +1,202 / −1,047 (mostly the accessor rewrite), plus the shared `CapturedPlayer` fixture.
+  - Remaining legacy instances:
+    - `Optional` player accessors: 0
+    - `require*` calls: 0
+    - unregistered UUID maps: 0
+    - private server-stop handlers in `common/`: 0
+    - lifecycle resends outside the registrar: 0
+    - count-delta insertions outside `PendingDelivery`: 0
+- **Guardrails added:** see the table (`AttachmentAccessTest`, `SessionStateRegistryTest`, the subscriber hygiene check, `SessionStateGameTests`, `PlayerStateSyncTest`, the owner-snapshot table GameTest, `PendingDeliveryTest`, `PendingDeliveryRegistryTest`).
+- **Approved items implemented:** none. F-4, F-5, F-19 and F-20 are still `PENDING` and were left alone.
+- **Pending approvals:** F-4, F-5, F-19, F-20, plus two new candidates found here, S-2b and S-5b (see *Decisions*).
+- **Deviations from the roadmap:**
+  - **Concentrated Blood has no item claim.**
+    - Its `PENDING` flag is a rest state between injection and sleep, and its only hand-out (`replace`) is add-or-drop with nothing stored.
+    - Making it a claim would add an NBT key and change the Creative-discard outcome, so it is S-5b instead.
+    - Its `PlayerEvent.Clone` handler was removed: `ServerPlayer.restoreFrom` copies `PlayerPersisted` (the same tag) before Clone fires, so it was a no-op.
+  - **Logout removal is not added everywhere.** It covers maps that were already dropped on logout, plus presentation and diagnostics state (fane preview, flow ledger, thurible yaw, Lantern Tick light). Cooldowns and timers that must outlast a relog, such as Still Art cooldowns and thurible resonance, stay until the server stops; adding logout removal would let a relog reset them.
+  - **Station lessons keep a slow cadence.** Lesson eligibility moves with degree, blood activation and an advancement that change elsewhere, so the lessons keep their login and 20-tick backfill. Only the state packet moved to the dirty flag.
+  - **A new facade route.** `PacketHandler.sendToPlayerAndTrackers` (owner plus trackers) replaces `sendTracking` in the four owner-and-tracker syncs. In game it reaches the same players; it also reaches an owner who is not yet tracked, which is what makes the table GameTest possible. `PayloadDirectionTest` knows the new name.
+  - **Timing:** dirty state goes out at the end of the same tick, where the station resync took up to 20 ticks, and the known-manipulation duplicate send is gone. Pending claims also retry on respawn and login; the Spine and most claims used to wait for the next 20-tick tick. Vesper's login delivery no longer runs after its arena reconcile in the same handler; if it misses there, the 20-tick retry delivers it.
+  - **The step was split into four reviewed sub-commits plus a review fix,** each green.
+- **Final review:** one reviewer for the whole range plus a dedicated 5c pass.
+  - **Confirmed (fixed in `7911eaa1f`):** clearing the Lantern Tick map on server stop could orphan a helmet light placed as a single-player world closed. Logout now removes it while the level is loaded. A guardrail locks this in.
+  - **Low-risk, accepted:** a few setters mark `KnownManipulations` dirty by reference or unconditionally, which means at most one extra end-of-tick resend. First Separation tools now store unparseable entries after the remaining ones instead of in their old positions.
+  - Everything else was checked clean: inlined returns, `orElse` defaults, `isEmpty` semantics, shadowing, precedence, frozen identifiers and client isolation.
+- **Not verified (needs in-game check):**
+  - Multiplayer tracking: a second player seeing scars, morphling, muscle memory and equipment layers after the first player logs in, respawns or changes dimension.
+  - A real relog with pending claims in an observational Chamber visit.
+  - The client screens whose `Optional` code was rewritten (bloodline pool, diagnostics, radial menus, still-art radial) were only compile- and start-checked, not opened.
+- **Known issues (pre-existing, not fixed here):**
+  - **Intermittent GameTests in the combined run.** `mandatoryjigsawwingsassemble` failed in 4 of about 10 runs this session. It passes alone (`runRegistrationGameTestServer`) and failed at `0e2d0678c` without the later changes. Also seen once each: `harbingerrunneradvancesthroughhermitroadwithoutopeningscreens`, `obscuredmeleemobcanpursueandhitanearbyenemy` (at `86d2d8157`), and the step-4 cluster `circus*runnercompletesatdegreefour`, `ferricrampartletsfriendlyshotsthrough`, `magnetismcrusheswhatitpulledwhenthepillarexpires` and `bloodcloudkeepsitscastmastery`. Missing entities and wrong combat values suggest batch-mates sharing chunks; a later step should isolate them.
+  - **Opt-in suites:** clinical fails `journeyacceptssilentchoiceafterrealprojection` and `journeyrestoresnumericfungalprojectionstate`; succession fails `legacyvialsarerejectedbeforeconsumption` and `manufactureconsumespatternandtwohundredfiftyblood`. All four fail identically at `86d2d8157`.
+  - **`runGameTestServer` can report `BUILD SUCCESSFUL` when the server crashes during mod loading.** Seen once with an idle `@EventBusSubscriber`. Always read the `GAME TESTS COMPLETE` line.
+  - **Line endings:** the working copy is LF while `core.autocrlf=true`. Checking out another commit rewrites changed files as CRLF, which breaks the raw multi-line source pins in several legacy `main()` tests. Avoid checkout round-trips, or convert the touched files back to LF.
+- **Handoff notes for step 6 (Phase 4, shared small utilities):**
+  - The baseline is fully green: 3,959 JUnit tests and 1,007 required GameTests.
+  - **Player state:** read through `HemoCapabilityAccess` (no `Optional` for players). Add a new synced attachment as a `PlayerStateSync` entry, not a lifecycle handler. Register new session maps with `TransientServerStateEvents` (clear plus, if appropriate, logout). Deliver earned items with a `PendingDelivery.Claim`.
+  - **Fixture:** `gametest/CapturedPlayer` is a shared connected player that captures payloads and stays out of the level. 58 older GameTest files still carry private copies of that fixture; folding them in is test cleanup for a later step.
+  - **Rewriting tools:** the javac-driven rewriter used for 5a (`jchain.py`, `rewrite.py`) lived in the session scratchpad and was not committed; re-derive it if another mass `Optional` change is needed.
