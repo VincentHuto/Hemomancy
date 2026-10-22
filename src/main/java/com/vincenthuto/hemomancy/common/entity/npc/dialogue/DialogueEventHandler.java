@@ -52,6 +52,7 @@ import com.vincenthuto.hemomancy.common.rite.TempleOathRules;
 import com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog;
 import com.vincenthuto.hemomancy.common.station.StationUpgradeRules;
 import com.vincenthuto.hemomancy.common.station.UpgradeStation;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
@@ -260,7 +261,7 @@ public class DialogueEventHandler {
 				Entity entity = player.level().getEntity(event.getEntityId());
                 if (entity instanceof HarbingerHermitEntity hermit
                         && com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.near(player, hermit)
-                        && !hermit.isFarewellDying() && HemoCapabilityAccess.getPlayerDegreeNumber(player) == 0
+                        && !hermit.isFarewellDying() && ProgressionGates.isDegree(player, 0)
                         && !HemoCapabilityAccess.getBloodVolume(player).isActive()) {
                     TempleOathRules.bless(player, hermit.getUUID());
                     player.displayClientMessage(Component.translatable("hemomancy.dialogue.event.hermit_heart_offered"), false);
@@ -496,7 +497,7 @@ public class DialogueEventHandler {
 				Entity teacher = player.level().getEntity(event.getEntityId());
 				if (teacher instanceof HarbingerMnemonistEntity
 						&& player.distanceToSqr(teacher) <= 64
-						&& HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 3
+						&& ProgressionGates.hasDegree(player, 3)
 						&& (!HemoCapabilityAccess.getUnstainedProgress(player).hasBegunPurification() && !HemoCapabilityAccess.getUnstainedProgress(player).hasClarityUnlocked())) {
 					event.setRewardDelivered(MnemonicRecipeKnowledge.awardBlankMemory(player) > 0);
 				}
@@ -505,7 +506,7 @@ public class DialogueEventHandler {
 				Entity teacher = player.level().getEntity(event.getEntityId());
 				if (teacher instanceof HarbingerMnemonistEntity && teacher.isAlive()
 						&& player.distanceToSqr(teacher) <= 64
-						&& HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 3
+						&& ProgressionGates.hasDegree(player, 3)
 						&& (!HemoCapabilityAccess.getUnstainedProgress(player).hasBegunPurification() && !HemoCapabilityAccess.getUnstainedProgress(player).hasClarityUnlocked())) {
 					event.setRewardDelivered(LiberKnowledgeHelper.unlockEntry(player,
 							LiberEntryDefinitions.SCRIPTORIUM, HemomancyDiscoverySource.DIALOGUE));
@@ -601,7 +602,7 @@ public class DialogueEventHandler {
 	}
 
 	private static void handleVicarBloodcraftBlueprint(ServerPlayer player, int entityId, String recipe) {
-		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) != 1
+		if (!ProgressionGates.isDegree(player, 1)
 				|| !(player.level().getEntity(entityId) instanceof com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerVicarEntity vicar)
 				|| !com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.near(player, vicar)) return;
 		var target = new MnemonicBlueprintTarget(MnemonicBlueprintTarget.Type.BLOOD_STRUCTURE,
@@ -625,7 +626,7 @@ public class DialogueEventHandler {
 	}
 
 	private static void handleVicarMasonsRespiteDirective(ServerPlayer player, int entityId) {
-		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < 4) {
+		if (!ProgressionGates.hasDegree(player, 4)) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.dialogue.event.vicar_masons_respite_unready")
 							.withStyle(ChatFormatting.GRAY),
@@ -890,7 +891,7 @@ public class DialogueEventHandler {
 
 	private static void handleAlchemistRedTaxonomy(ServerPlayer player,
 			HarbingerAlchemistDialogueTrees.RedTaxonomySample sample) {
-		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < 2) {
+		if (!ProgressionGates.hasDegree(player, 2)) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.dialogue.event.alchemist_red_taxonomy_unready")
 							.withStyle(ChatFormatting.GRAY),
@@ -957,7 +958,7 @@ public class DialogueEventHandler {
 	}
 
 	private static void handleAlchemistBestiary(ServerPlayer player, int entityId, String eventId) {
-		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < 2) {
+		if (!ProgressionGates.hasDegree(player, 2)) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.dialogue.event.alchemist_bestiary_unready")
 							.withStyle(ChatFormatting.GRAY),

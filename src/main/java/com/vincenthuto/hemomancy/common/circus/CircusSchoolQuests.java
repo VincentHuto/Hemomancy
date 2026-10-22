@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.circus;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -19,7 +20,7 @@ public final class CircusSchoolQuests {
         return CircusApprenticeshipProgress.practicalComplete(player, lesson.summon()) ? "mastered" : "practical";
     }
     public static boolean inspect(ServerPlayer player) {
-        if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < 3) return false;
+        if (!ProgressionGates.hasDegree(player, 3)) return false;
         for (ItemStack stack : new ItemStack[]{player.getMainHandItem(), player.getOffhandItem()}) {
             if (stack.getItem() instanceof MarionetteCrossbarItem && MarionetteCrossbarItem.validateControl(stack, player, false)
                     && MarionetteCrossbarItem.getThread(stack) > 0) {
@@ -58,7 +59,7 @@ public final class CircusSchoolQuests {
         boolean delivered = false;
         if (state.getBoolean("primer.call") && state.getBoolean("primer.command") && state.getBoolean("primer.recall"))
             delivered |= finish(player, "empty_ring", 100);
-        if (HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 4 && state.getBoolean("testimony.circus_stilt_walker")
+        if (ProgressionGates.hasDegree(player, 4) && state.getBoolean("testimony.circus_stilt_walker")
                 && state.getBoolean("testimony.circus_knife_thrower")
                 && CircusApprenticeshipProgress.practicalComplete(player, "scarlet_mummer")
                 && CircusApprenticeshipProgress.practicalComplete(player, "marrow_spitter")) delivered |= finish(player, "wrong_audience", 150);

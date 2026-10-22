@@ -16,6 +16,7 @@ import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances.Observance;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.unstained.PacketToggleUnstainedBonus;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -255,7 +256,7 @@ public class UnstainedProgressScreen extends Screen {
 
 	private ProgressScreenContext makeContext() {
 		int unstainedLevel = minecraft != null && minecraft.player != null
-				? HemoCapabilityAccess.getPlayerUnstainedLevel(minecraft.player)
+				? ProgressionGates.unstainedStage(minecraft.player)
 				: 0;
 		return new ProgressScreenContext(font, guiLeft, guiTop, guiWidth, guiHeight, unstainedLevel);
 	}

@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates;
 import com.vincenthuto.hemomancy.common.manipulation.family.ManipulationFamilyRegistry;
 import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -167,7 +168,7 @@ public final class KnownManipulationGrantHelper {
 	}
 
 	public static boolean grantDegreeOneUtilities(ServerPlayer player) {
-		if (player == null || HemoCapabilityAccess.getPlayerDegreeNumber(player) < 1) return false;
+		if (player == null || !ProgressionGates.hasDegree(player, 1)) return false;
 		if (UnstainedAccessRules.blocksHarbingerProgress(HemoCapabilityAccess.getUnstainedProgress(player))) return false;
 		var known = HemoCapabilityAccess.getKnownManipulations(player);
 		int maxSlots = ManipSlotHelper.getMaxSlots(player);

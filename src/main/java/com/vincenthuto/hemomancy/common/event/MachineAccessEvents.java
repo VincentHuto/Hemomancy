@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
 import com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -53,7 +54,7 @@ public final class MachineAccessEvents {
 			return;
 		}
 		if (block == BlockInit.mnemonic_reliquary.get() && player instanceof ServerPlayer serverPlayer
-				&& HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 3) {
+				&& ProgressionGates.hasDegree(player, 3)) {
 			MnemonicReliquaryProgression.teach(serverPlayer);
 		}
 		if (canUseStation(player, level, event.getPos())) {
@@ -121,7 +122,7 @@ public final class MachineAccessEvents {
 	public static boolean isSupervisedScarLesson(Player player, Level level, BlockPos pos) {
 		if (!(player instanceof ServerPlayer student) || player.level() != level
 				|| !level.getBlockState(pos).is(BlockInit.scar_station.get())
-				|| HemoCapabilityAccess.getPlayerDegreeNumber(player) < 4
+				|| !ProgressionGates.hasDegree(player, 4)
 				|| !HemoCapabilityAccess.getBloodVolume(player).isActive()
 				|| !HarbingerAdvancementGranter.isVeinMasonFirstLesson(student)
 				|| HarbingerAdvancementGranter.isVeinMasonFirstScarLearned(student)) return false;

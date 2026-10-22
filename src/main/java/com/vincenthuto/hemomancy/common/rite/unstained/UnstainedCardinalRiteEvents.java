@@ -25,6 +25,7 @@ import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodMoon;
 import com.vincenthuto.hemomancy.common.rite.zone.RiteZone;
 import com.vincenthuto.hemomancy.common.rite.zone.RiteZoneSavedData;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -183,7 +184,7 @@ public class UnstainedCardinalRiteEvents {
 		var progress = HemoCapabilityAccess.getUnstainedProgress(caster);
 		boolean founder = degree != null && degree.hasFoundedBloodline();
 		boolean severedFounder = founder && degree.isFounderIntegrationSevered();
-		boolean maySeekCure = degree == null || severedFounder || degree.getDegreeNumber() <= 5
+		boolean maySeekCure = degree == null || severedFounder || !ProgressionGates.hasDegree(degree, 6)
 				&& UnstainedEntryRules.canBeginCure(founder, false);
 		var blood = HemoCapabilityAccess.getBloodVolume(caster);
 		boolean cleanBlood = blood == null || !blood.isActive() && blood.getBloodVolume() <= 0

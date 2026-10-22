@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.SpecimenJ
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleOptions;
@@ -733,7 +734,7 @@ public class AnnettaKnowlesEntity extends Monster {
         server.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.BEACON_POWER_SELECT, SoundSource.HOSTILE, 1.2F, 1.6F);
         for (LivingEntity victim : server.getEntitiesOfClass(LivingEntity.class, new AABB(this.blockPosition()).inflate(SILVER_AURA_RADIUS),
                 e -> e != this && e.isAlive())) {
-            boolean awakeBlood = !(victim instanceof Player player) || bloodActive(player);
+            boolean awakeBlood = !(victim instanceof Player player) || ProgressionGates.isBloodActive(player);
             if (awakeBlood) {
                 victim.hurt(this.damageSources().magic(), 3.0F);
                 victim.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 60, 0, false, true));
@@ -1133,13 +1134,7 @@ public class AnnettaKnowlesEntity extends Monster {
     }
 
     private boolean isHarbinger(Player player) {
-        boolean activeBlood = HemoCapabilityAccess.getBloodVolume(player)
-                .isActive();
-        return activeBlood && HemoCapabilityAccess.getPlayerDegreeNumber(player) > 0;
-    }
-
-    private static boolean bloodActive(Player player) {
-        return HemoCapabilityAccess.getBloodVolume(player).isActive();
+        return ProgressionGates.isBloodActive(player) && ProgressionGates.hasDegree(player, 1);
     }
 
     private boolean canPurify(Player player) {

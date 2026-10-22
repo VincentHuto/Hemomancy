@@ -27,7 +27,7 @@ public final class FirstBloodcraftAssignmentSourceTest {
 		String advancement = read(CLAIM_ADVANCEMENT);
 
 		assertContains("eligibility uses the four live proofs", helper, "progress(player).readyForVicar()");
-		assertContains("eligibility is Degree 1 only", helper, "getPlayerDegreeNumber(player) == 1");
+		assertContains("eligibility is Degree 1 only", helper, "ProgressionGates.isDegree(player, 1)");
 		assertContains("promotion grants Degree 2", helper, "DegreeProgression.advance(player, 2)");
 		assertContains("claim advancement has the required id", helper,
 				"Hemomancy.rloc(\"hemomancy/first_bloodcraft_reward_claimed\")");

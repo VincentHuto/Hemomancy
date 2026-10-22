@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -123,7 +124,7 @@ public class SporiticThuribleEvents {
 		for (Player nearby : level.getEntitiesOfClass(Player.class, area, Player::isAlive)) {
 			boolean bloodActive = HemoCapabilityAccess.getBloodVolume(nearby)
 					.isActive();
-			if (!bloodActive || HemoCapabilityAccess.getPlayerDegreeNumber(nearby) <= 0) {
+			if (!bloodActive || !ProgressionGates.hasDegree(nearby, 1)) {
 				continue;
 			}
 			nearby.addEffect(new MobEffectInstance(EffectInit.sporitic_resonance,

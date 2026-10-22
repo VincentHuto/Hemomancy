@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.mission.alchemist;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -17,7 +18,7 @@ public final class BodyAnswersAssignment {
     }
 
     public static boolean canBrief(ServerPlayer player) {
-        return com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 2
+        return ProgressionGates.hasDegree(player, 2)
                 && FirstSeparationAssignment.isClaimed(player)
                 && !HarbingerAdvancementGranter.hasAdvancement(player, ADV_BRIEFED);
     }

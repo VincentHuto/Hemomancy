@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.rite.TempleOathRules;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.MortalDisplayBlockEntity;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
 import net.minecraft.ChatFormatting;
@@ -99,7 +100,7 @@ public class MortalDisplayBlock extends Block implements EntityBlock, SimpleWate
         if (!(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)) return InteractionResult.SUCCESS;
         var equipment = HemoCapabilityAccess.getEquipment(player);
         if (equipment == null || !equipment.getStackInSlot(5).isEmpty()
-                || HemoCapabilityAccess.getPlayerDegreeNumber(player) != 0
+                || !ProgressionGates.isDegree(player, 0)
                 || HemoCapabilityAccess.getBloodVolume(player).isActive()) {
             player.displayClientMessage(Component.translatable("hemomancy.initiation.cannot_attach"), false);
             return InteractionResult.SUCCESS;

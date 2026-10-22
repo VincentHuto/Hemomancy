@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.Ha
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncChamberVisit;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.ListTag;
@@ -112,7 +113,7 @@ public final class ChamberVisitService {
 	}
 
 	public static boolean beginChairVisit(ServerPlayer player) {
-		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < 3) {
+		if (!ProgressionGates.hasDegree(player, 3)) {
 			player.displayClientMessage(Component.translatable("message.hemomancy.warp_chair.degree"), true);
 			return false;
 		}
@@ -122,7 +123,7 @@ public final class ChamberVisitService {
 	}
 
 	public static boolean beginGuidedVisit(ServerPlayer player) {
-		if (hasCompletedGuidedVisit(player) || HemoCapabilityAccess.getPlayerDegreeNumber(player) < 3
+		if (hasCompletedGuidedVisit(player) || !ProgressionGates.hasDegree(player, 3)
 				|| !HemoCapabilityAccess.getBloodVolume(player).isActive()
 				|| (HemoCapabilityAccess.getUnstainedProgress(player).hasBegunPurification() || HemoCapabilityAccess.getUnstainedProgress(player).hasClarityUnlocked())
 				|| FungalGardenTravelHelper.isProjectionActive(player)
@@ -132,7 +133,7 @@ public final class ChamberVisitService {
 	}
 
 	public static boolean beginRiteVisit(ServerPlayer player) {
-		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < 6) {
+		if (!ProgressionGates.hasDegree(player, 6)) {
 			player.displayClientMessage(Component.translatable("message.hemomancy.chamber_visit.rite_degree"), true);
 			return false;
 		}

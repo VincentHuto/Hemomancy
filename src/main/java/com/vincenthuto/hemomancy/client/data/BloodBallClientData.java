@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.client.data;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.ItemSanguineConduit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.SanguineBlobItem;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
@@ -68,8 +68,7 @@ public class BloodBallClientData {
 				|| player.getOffhandItem().getItem() instanceof ItemSanguineConduit;
 		if (!holdsBlob && !(holdsConduit && bloodOrbConduitRendererEnabled())) return false;
 
-		return HemoCapabilityAccess.getInitiatoryDegree(player)
-				.getDegreeNumber() >= 3;
+		return ProgressionGates.hasDegree(player, 3);
 	}
 
 	private static boolean bloodOrbConduitRendererEnabled() {

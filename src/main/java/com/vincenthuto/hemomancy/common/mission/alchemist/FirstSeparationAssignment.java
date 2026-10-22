@@ -2,11 +2,11 @@ package com.vincenthuto.hemomancy.common.mission.alchemist;
 
 import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.VialRackItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodSampleData;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -212,7 +212,7 @@ public final class FirstSeparationAssignment {
 	}
 
 	public static boolean canClaim(ServerPlayer player) {
-		return HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 2
+		return ProgressionGates.hasDegree(player, 2)
 				&& isBriefed(player)
 				&& HarbingerAdvancementGranter.isFirstSeparationStarted(player)
 				&& HarbingerAdvancementGranter.isFirstSeparationComplete(player)

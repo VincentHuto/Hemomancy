@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
 import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,7 +22,7 @@ public final class HarbingerChapterProgression {
 	public static EnumSet<HarbingerChapterMilestone> completedChapters(ServerPlayer player) {
 		migrateExistingProgress(player);
 		EnumSet<HarbingerChapterMilestone> completed = EnumSet.noneOf(HarbingerChapterMilestone.class);
-		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 2 || FirstBloodcraftAssignment.progress(player).readyForVicar())
+		if (ProgressionGates.hasDegree(player, 2) || FirstBloodcraftAssignment.progress(player).readyForVicar())
 			completed.add(HarbingerChapterMilestone.FIRST_BLOODCRAFT);
 		if (FirstSeparationAssignment.isClaimed(player)) completed.add(HarbingerChapterMilestone.FIRST_SEPARATION);
 		if (FirstSeparationAssignment.isClaimed(player) && HemoCapabilityAccess.stationUpgrades(player).hasUsed(

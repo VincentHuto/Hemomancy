@@ -89,6 +89,16 @@ class SmallUtilityGuardrailTest {
 				"return HemoTickers.create(type, BlockEntityInit.x.get(), X::tick) from getTicker");
 	}
 
+	/** S-6 / D-3: a degree is compared through {@code ProgressionGates}, never against a literal. */
+	private static final Pattern LITERAL_DEGREE = Pattern.compile(
+			"(?:getDegreeNumber|getPlayerDegreeNumber)\\([^()]*(?:\\([^()]*\\)[^()]*)*\\)\\s*(?:>=|<=|==|!=|<|>)\\s*\\(?\\s*\\d");
+
+	@Test
+	void degreesAreComparedOnlyThroughProgressionGates() throws IOException {
+		assertEquals(Set.of(), filesMatching(text -> LITERAL_DEGREE.matcher(text).find(), UTIL + "ProgressionGates.java"),
+				"use ProgressionGates.hasDegree / isDegree instead of comparing a degree number with a literal");
+	}
+
 	@Test
 	void attributeModifiersAreWrittenOnlyThroughTheSharedHelper() throws IOException {
 		assertEquals(new TreeSet<>(MODIFIER_WRITERS.keySet()),

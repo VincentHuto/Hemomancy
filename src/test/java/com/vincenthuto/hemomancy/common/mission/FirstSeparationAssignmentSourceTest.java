@@ -32,7 +32,7 @@ class FirstSeparationAssignmentSourceTest {
 
 		assertContains(helper, "Hemomancy.rloc(\"hemomancy/first_separation_briefed\")");
 		assertContains(helper, "Hemomancy.rloc(\"hemomancy/first_separation_reward_claimed\")");
-		assertContains(helper, "HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 2");
+		assertContains(helper, "ProgressionGates.hasDegree(player, 2)");
 		assertContains(helper, "HarbingerAdvancementGranter.isFirstSeparationStarted(player)");
 		assertContains(helper, "HarbingerAdvancementGranter.isFirstSeparationComplete(player)");
 		assertContains(helper, "VialRackItem.ensureInitialized(rack)");

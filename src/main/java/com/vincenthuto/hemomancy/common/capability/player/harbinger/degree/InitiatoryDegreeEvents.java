@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncDegree;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPomeProgress;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonTrialEvents;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -40,7 +41,7 @@ public class InitiatoryDegreeEvents {
 			if (FungalGardenTravelHelper.ARCHON_CHOICE_SILENCE.equals(legacyChoice)) {
 				degree.setArchonPath(EnumArchonPath.SILENT_ARCHON);
 			} else if (FungalGardenTravelHelper.ARCHON_CHOICE_APOTHEOS.equals(legacyChoice)) {
-				degree.setArchonPath(degree.getDegreeNumber() >= 8
+				degree.setArchonPath(ProgressionGates.hasDegree(degree, 8)
 						? EnumArchonPath.APOTHEOS : EnumArchonPath.APOTHEOS_PENDING);
 			}
 		}

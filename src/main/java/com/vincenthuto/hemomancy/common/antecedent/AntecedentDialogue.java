@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.antecedent;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.*;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -51,12 +52,12 @@ public final class AntecedentDialogue {
     public static boolean handle(DialogueEvent event) {
         var player=event.getPlayer();
         var npc=player.level().getEntity(event.getEntityId());
-        if(npc==null || !npc.isAlive() || npc.distanceToSqr(player)>64 || HemoCapabilityAccess.getPlayerDegreeNumber(player)<3) return false;
+        if(npc==null || !npc.isAlive() || npc.distanceToSqr(player)>64 || !ProgressionGates.hasDegree(player, 3)) return false;
         var research=HemoCapabilityAccess.antecedent(player);
         return switch(event.getEventId()) {
             case "antecedent_replay" -> npc instanceof HarbingerAlchemistEntity && research.has(SEVERED_RECORD_HEARD)
                     && AntecedentKnowledge.record(player,REPLAY_REQUESTED);
-            case "antecedent_recognition" -> npc instanceof HarbingerVicarEntity && HemoCapabilityAccess.getPlayerDegreeNumber(player)>=4
+            case "antecedent_recognition" -> npc instanceof HarbingerVicarEntity && ProgressionGates.hasDegree(player, 4)
                     && research.has(CONTROLLED_REPLAY) && AntecedentKnowledge.record(player,VICAR_RECOGNITION);
             case "antecedent_housing" -> npc instanceof HarbingerVicarEntity && research.complete() && ListeningScarItem.reconstruct(player);
             default -> false;

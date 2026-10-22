@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomEvents;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import com.vincenthuto.hemomancy.common.rite.harbinger.SeveredQliphothState;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.QliphothBloomBlockEntity;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hemomancy.common.worldgen.VesperOrdealManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -176,7 +177,7 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 		}
 		if (bloomState.isPortalOpen()) {
 			if (!(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)
-					|| !(HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber() == 7
+					|| !(ProgressionGates.isDegree(player, 7)
 									&& HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath() == EnumArchonPath.SILENT_PENDING)) {
 				player.displayClientMessage(Component.literal("The wound rejects the path you carry.")
 						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);

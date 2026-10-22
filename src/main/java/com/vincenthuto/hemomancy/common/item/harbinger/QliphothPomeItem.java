@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPomePro
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomEvents;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -266,7 +267,7 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 		return tag.getBoolean(BOUND_KEY)
 				&& tag.hasUUID(OWNER_KEY) && tag.getUUID(OWNER_KEY).equals(player.getUUID())
 				&& tag.contains(BLOOM_ORIGIN_KEY) && tag.contains(HUSK_INDEX_KEY)
-				&& HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 7;
+				&& ProgressionGates.hasDegree(player, 7);
 	}
 
 	private static UUID bloomIdForPome(Level level, CompoundTag tag, ServerPlayer player) {

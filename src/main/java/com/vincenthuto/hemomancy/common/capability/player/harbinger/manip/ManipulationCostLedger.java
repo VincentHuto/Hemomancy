@@ -17,6 +17,7 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomEvents;
 import com.vincenthuto.hemomancy.common.rite.harbinger.SanguineDominionEvents;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hemomancy.config.HemoMnAConfig;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -92,7 +93,7 @@ public final class ManipulationCostLedger {
 
 		var degreeData = HemoCapabilityAccess.getInitiatoryDegree(player);
 		int pomesConsumed = degreeData.getTotalPomesConsumed();
-		boolean blockedByPomes = pomesConsumed >= 9 && degreeData.getDegreeNumber() < 8;
+		boolean blockedByPomes = pomesConsumed >= 9 && !ProgressionGates.hasDegree(degreeData, 8);
 		if (blockedByPomes) {
 			addIfNotNeutral(contributions, "pome_corruption_block", "Pome Corruption", Category.RITE,
 					1.0D, "Manipulation blocked until Apotheos");

@@ -2,10 +2,10 @@ package com.vincenthuto.hemomancy.common.mission.vicar;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.DegreeProgression;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -26,20 +26,20 @@ public final class FirstBloodcraftAssignment {
 	}
 
 	public static boolean canClaim(ServerPlayer player) {
-		return HemoCapabilityAccess.getPlayerDegreeNumber(player) == 1 && progress(player).readyForVicar();
+		return ProgressionGates.isDegree(player, 1) && progress(player).readyForVicar();
 	}
 
 	public static FirstBloodcraftLedgerProgress progress(ServerPlayer player) {
-		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 2)
+		if (ProgressionGates.hasDegree(player, 2))
 			return new FirstBloodcraftLedgerProgress(500, true, true, true, true);
 		CompoundTag data = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
 		return new FirstBloodcraftLedgerProgress(data.getDouble(ABSORBED), data.getBoolean(FORMATION),
 				data.getBoolean(VENOUS_STONE), data.getBoolean(STRUCTURE),
-				HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 2);
+				ProgressionGates.hasDegree(player, 2));
 	}
 
 	public static void recordAbsorption(ServerPlayer player, double gained) {
-		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) != 1 || gained <= 0) return;
+		if (!ProgressionGates.isDegree(player, 1) || gained <= 0) return;
 		CompoundTag data = durableData(player);
 		data.putDouble(ABSORBED, Math.min(500, data.getDouble(ABSORBED) + gained));
 	}
@@ -52,7 +52,7 @@ public final class FirstBloodcraftAssignment {
 	}
 
 	private static void mark(ServerPlayer player, String key) {
-		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) == 1) durableData(player).putBoolean(key, true);
+		if (ProgressionGates.isDegree(player, 1)) durableData(player).putBoolean(key, true);
 	}
 
 	private static CompoundTag durableData(ServerPlayer player) {

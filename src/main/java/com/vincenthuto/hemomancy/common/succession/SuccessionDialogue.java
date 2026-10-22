@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.item.harbinger.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -18,7 +19,7 @@ public final class SuccessionDialogue {
     private SuccessionDialogue() {}
     public static boolean eligible(ServerPlayer player) {
         var line = SuccessionResidents.line(player);
-        return line != null && HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 5
+        return line != null && ProgressionGates.hasDegree(player, 5)
                 && HemoCapabilityAccess.getBloodVolume(player).isActive()
                 && java.util.stream.StreamSupport.stream(player.server.getAllLevels().spliterator(), false)
                 .anyMatch(level -> FoundingFaneSavedData.get(level).hasFane(line.getLeaderUUID()));

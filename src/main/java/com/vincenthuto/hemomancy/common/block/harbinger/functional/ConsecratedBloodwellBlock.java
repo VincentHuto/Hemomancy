@@ -18,6 +18,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketOpenBloodlinePoolScreen;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodlinePool;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.ConsecratedBloodwellBlockEntity;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -255,7 +256,7 @@ public class ConsecratedBloodwellBlock extends BaseEntityBlock implements BlockB
 
 		savedData.contributeBlood(bloodline.getBloodlineUUID(), (float) toDeposit);
 		if (player.isAlive() && !player.isSpectator()
-				&& HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 5
+				&& ProgressionGates.hasDegree(player, 5)
 				&& globalLine.hasMember(player.getUUID())
 				&& globalLine.getLeaderUUID().equals(bloodline.getLeaderUUID())
 				&& FoundingFaneSavedData.get(level).isWithinFane(globalLine.getLeaderUUID(), player.blockPosition())) {

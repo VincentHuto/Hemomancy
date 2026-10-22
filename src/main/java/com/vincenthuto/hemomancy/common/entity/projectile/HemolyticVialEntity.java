@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.entity.summon.IBloodConstruct;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.particles.ParticleOptions;
@@ -89,7 +90,7 @@ public class HemolyticVialEntity extends ThrowableItemProjectile {
 
     private boolean isHarbingerPlayer(LivingEntity entity) {
         if (!(entity instanceof Player player)) return false;
-        return HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber() > 0;
+        return ProgressionGates.hasDegree(player, 1);
     }
 
     private boolean hasActiveBloodVolume(LivingEntity entity) {

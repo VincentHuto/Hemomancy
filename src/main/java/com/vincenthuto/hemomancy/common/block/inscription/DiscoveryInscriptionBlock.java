@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.discovery.OpenInscriptionPacket;
 import com.vincenthuto.hemomancy.common.tile.inscription.DiscoveryInscriptionBlockEntity;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -205,7 +206,7 @@ public class DiscoveryInscriptionBlock extends Block implements EntityBlock, Sim
 
 	private static int levelFor(Player player, DiscoveryInscriptionDefinition.Path path) {
 		return path == DiscoveryInscriptionDefinition.Path.UNSTAINED
-				? HemoCapabilityAccess.getPlayerUnstainedLevel(player)
+				? ProgressionGates.unstainedStage(player)
 				: HemoCapabilityAccess.getPlayerDegreeNumber(player);
 	}
 

@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.network;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -15,7 +16,7 @@ public record AntecedentEffectPacket(int kind,BlockPos position) implements Cust
     public static void handle(AntecedentEffectPacket packet,IPayloadContext context) { context.enqueueWork(()->{
         if(context.player() instanceof net.minecraft.server.level.ServerPlayer player) {
             var research=com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.antecedent(player);
-            if(packet.kind==4 && research.complete() && com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getPlayerDegreeNumber(player)>=7)
+            if(packet.kind==4 && research.complete() && ProgressionGates.hasDegree(player, 7))
                 com.vincenthuto.hemomancy.common.antecedent.AntecedentKnowledge.record(player,com.vincenthuto.hemomancy.common.antecedent.AntecedentResearch.Evidence.EPILOGUE);
         } else com.vincenthuto.hemomancy.client.sound.AntecedentClientEffects.accept(packet);
     }); }

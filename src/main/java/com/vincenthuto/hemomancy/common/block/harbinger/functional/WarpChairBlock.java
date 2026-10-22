@@ -2,10 +2,10 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.mojang.serialization.MapCodec;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.WarpChairBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService;
 import net.minecraft.core.BlockPos;
@@ -117,7 +117,7 @@ public final class WarpChairBlock extends BaseEntityBlock implements IMultiBlock
 			player.displayClientMessage(Component.translatable("message.hemomancy.warp_chair.only_paired_exits"), true);
 			return InteractionResult.FAIL;
 		}
-		if (HemoCapabilityAccess.getPlayerDegreeNumber(serverPlayer) < 3) {
+		if (!ProgressionGates.hasDegree(serverPlayer, 3)) {
 			player.displayClientMessage(Component.translatable("message.hemomancy.warp_chair.degree"), true);
 			return InteractionResult.FAIL;
 		}

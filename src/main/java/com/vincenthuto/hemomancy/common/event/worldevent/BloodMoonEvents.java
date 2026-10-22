@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodMoon;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -293,7 +294,7 @@ public class BloodMoonEvents {
 	 * the uninitiated — their blood answers the moon whether they will it or not).
 	 */
 	private static void applyBloodMoonEffects(ServerPlayer player) {
-		boolean isHarbinger = HemoCapabilityAccess.getPlayerDegreeNumber(player) > 0;
+		boolean isHarbinger = ProgressionGates.hasDegree(player, 1);
 		if (isHarbinger) {
 			player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, EFFECT_DURATION, 1, true, false, true));
 			player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 300, 0, true, false, true));

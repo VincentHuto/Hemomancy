@@ -22,6 +22,7 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodFl
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodlinePool;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncMaxBloodDiagnostics;
 import com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -84,13 +85,13 @@ public class BloodVolumeEvents {
 		}
 		if (!volume.isActive()) return;
 		if (player instanceof ServerPlayer serverPlayer
-				&& HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 1
+				&& ProgressionGates.hasDegree(player, 1)
 				&& volume.getBloodVolume() >= 5000.0) {
 			HarbingerAdvancementGranter.grantIfNotDone(serverPlayer,
 					HarbingerAdvancementGranter.ADV_VESSEL_FILLED);
 		}
 		if (player instanceof ServerPlayer serverPlayer
-				&& HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 2) {
+				&& ProgressionGates.hasDegree(player, 2)) {
 			recordEnzymeMastery(serverPlayer);
 		}
 		if (player instanceof ServerPlayer serverPlayer && player.tickCount % 20 == 0) {

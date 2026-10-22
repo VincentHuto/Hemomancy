@@ -17,6 +17,7 @@ import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.rite.BrazierItemAbsorptionRite;
 import com.vincenthuto.hemomancy.common.rite.brazier.BrazierRite;
 import com.vincenthuto.hemomancy.common.rite.brazier.BrazierRites;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -139,7 +140,7 @@ public final class LivingWeaponGraftRite implements BrazierRite<LivingWeaponGraf
 			messageEverySecond(level, player, "Vesper's refusal is already disciplined within your staff-bond.");
 			return false;
 		}
-		boolean earnedRefusal = (HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber() == 7
+		boolean earnedRefusal = (ProgressionGates.isDegree(player, 7)
 						&& HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath() == EnumArchonPath.SILENT_ARCHON)
 				&& HarbingerAdvancementGranter.hasAdvancement(player,
 						HarbingerAdvancementGranter.ADV_VESPER_DEFEATED);

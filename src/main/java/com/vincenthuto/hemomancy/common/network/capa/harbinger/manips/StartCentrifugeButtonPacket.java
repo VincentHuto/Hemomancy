@@ -2,11 +2,11 @@ package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
 import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.VialCentrifugeMenu;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.VialCentrifugeBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.VialCentrifugeStartupResult;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
@@ -41,7 +41,7 @@ public class StartCentrifugeButtonPacket implements CustomPacketPayload {
 		VialCentrifugeStartupResult result = station.attemptStartup(player);
 		player.displayClientMessage(Component.translatable(result.translationKey()), true);
 		if (result == VialCentrifugeStartupResult.SUCCESS
-				&& HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 1) {
+				&& ProgressionGates.hasDegree(player, 1)) {
 			HarbingerAdvancementGranter.grantIfNotDone(player,
 					HarbingerAdvancementGranter.ADV_FIRST_SEPARATION_STARTED);
 		}

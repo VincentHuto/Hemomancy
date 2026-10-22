@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import com.vincenthuto.hemomancy.common.rite.harbinger.SeveredQliphothState;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -118,7 +119,7 @@ public final class LivingSicklePruning {
 	}
 
 	private static boolean isSilentPendingCommunicant(IInitiatoryDegree degree) {
-		return degree.getDegreeNumber() == 7
+		return ProgressionGates.isDegree(degree, 7)
 				&& degree.getArchonPath() == EnumArchonPath.SILENT_PENDING
 				&& degree.isQliphothCommunionDone()
 				&& degree.getTotalPomesConsumed() >= 9;

@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodVialItem;
 import com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerAlchemistEntity;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -39,7 +40,7 @@ public final class ConcentratedBlood {
         player.getPersistentData().put(Player.PERSISTED_NBT_TAG, data);
     }
     public static boolean canInject(ServerPlayer player) {
-        return HemoCapabilityAccess.getPlayerDegreeNumber(player) == 2 && EarlyInitiation.attached(player)
+        return ProgressionGates.isDegree(player, 2) && EarlyInitiation.attached(player)
                 && FirstSeparationAssignment.isClaimed(player) && !pending(player)
                 && HemoCapabilityAccess.stationUpgrades(player).hasUsed(
                 com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC,
@@ -54,7 +55,7 @@ public final class ConcentratedBlood {
     }
     public static boolean completeSleep(ServerPlayer player, boolean completed) {
         if (!completed || !pending(player) || !EarlyInitiation.attached(player)
-                || HemoCapabilityAccess.getPlayerDegreeNumber(player) != 2 || !ClinicalBloodKnowledge.eligible(player)
+                || !ProgressionGates.isDegree(player, 2) || !ClinicalBloodKnowledge.eligible(player)
                 || !FirstSeparationAssignment.isClaimed(player)
                 || !HemoCapabilityAccess.stationUpgrades(player).hasUsed(
                 com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC,

@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.EnzymeItem;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.EnzymaticScriptoriumBlockEntity;
 import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
@@ -150,7 +151,7 @@ public final class EnzymaticScriptoriumMenu extends AbstractContainerMenu {
             data.set(12 + tier, -1);
             data.set(16 + tier, -1);
             data.set(19 + tier, 0);
-            if (input.isEmpty() || station.isRiteLocked() || HemoCapabilityAccess.getPlayerDegreeNumber(player) < 3) continue;
+            if (input.isEmpty() || station.isRiteLocked() || !ProgressionGates.hasDegree(player, 3)) continue;
             int minimumCost = minimumSelectedEnchantmentCost(input, tablePool, tier + 1);
             int selectedCostFloor = minimumCost > 0 && costs[2] >= minimumCost ? minimumCost : 0;
             int cost = net.neoforged.neoforge.event.EventHooks.onEnchantmentLevelSet(
@@ -163,7 +164,7 @@ public final class EnzymaticScriptoriumMenu extends AbstractContainerMenu {
             if (result.isEmpty()) continue;
             int targetId = -1;
             if (mode > 0) {
-                if (stationTier() < (mode == 2 ? 7 : 5) || HemoCapabilityAccess.getPlayerDegreeNumber(player) < (mode == 2 ? 7 : 5)) continue;
+                if (stationTier() < (mode == 2 ? 7 : 5) || !ProgressionGates.hasDegree(player, mode == 2 ? 7 : 5)) continue;
                 int target = supportedTarget(result);
                 if (target < 0) continue;
                 EnchantmentInstance original = result.get(target);
@@ -295,8 +296,8 @@ public final class EnzymaticScriptoriumMenu extends AbstractContainerMenu {
         }
         if (button >= 20 && button <= 22) {
             int wanted = button - 20;
-            if (wanted == 2 && (stationTier() < 7 || HemoCapabilityAccess.getPlayerDegreeNumber(actor) < 7)) return false;
-            if (wanted == 1 && (stationTier() < 5 || HemoCapabilityAccess.getPlayerDegreeNumber(actor) < 5)) return false;
+            if (wanted == 2 && (stationTier() < 7 || !ProgressionGates.hasDegree(actor, 7))) return false;
+            if (wanted == 1 && (stationTier() < 5 || !ProgressionGates.hasDegree(actor, 5))) return false;
             mode = wanted;
             refresh();
             return true;
@@ -308,7 +309,7 @@ public final class EnzymaticScriptoriumMenu extends AbstractContainerMenu {
             var blood = station.getBloodCapability();
             if (provenance == null || provenance.curse().isBlank() || shard.isEmpty()
                     || blood == null || blood.getBloodVolume() < 300
-                    || HemoCapabilityAccess.getPlayerDegreeNumber(actor) < 3) return false;
+                    || !ProgressionGates.hasDegree(actor, 3)) return false;
             EnchantmentHelper.updateEnchantments(input, mutable ->
                     mutable.removeIf(enchantment -> !enchantment.is(EnchantmentTags.CURSE)));
             input.set(DataComponentInit.SCRIPTORIUM_PROVENANCE.get(), ScriptoriumProvenance.CLEAN);

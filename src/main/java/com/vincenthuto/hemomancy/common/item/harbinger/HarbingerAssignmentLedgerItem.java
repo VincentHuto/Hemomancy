@@ -21,6 +21,7 @@ import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.mission.OpenHarbingerAssignmentLedgerPacket;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hutoslib.common.item.ItemGuideBook;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -196,7 +197,7 @@ public class HarbingerAssignmentLedgerItem extends ItemGuideBook {
 						com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC,
 						com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.DISTILL),
 				ConcentratedBlood.pending(player),
-				HemoCapabilityAccess.getPlayerDegreeNumber(player) >= 3);
+				ProgressionGates.hasDegree(player, 3));
 	}
 
 	@Override

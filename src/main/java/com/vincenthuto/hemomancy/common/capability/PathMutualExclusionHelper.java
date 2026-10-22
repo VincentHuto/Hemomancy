@@ -19,6 +19,7 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncPomeProgress;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public final class PathMutualExclusionHelper {
 	}
 
 	public static boolean resetHarbingerProgress(ServerPlayer player, IInitiatoryDegree degree) {
-		boolean hadProgress = degree.getDegreeNumber() > 0
+		boolean hadProgress = ProgressionGates.hasDegree(degree, 1)
 				|| degree.isQliphothCommunionDone()
 				|| degree.getTotalPomesConsumed() > 0
 				|| degree.getPomeEmpowermentExpiry() > 0L;

@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -115,7 +116,7 @@ public final class BloodRoutingHelper {
     }
 
     public static boolean canUseFaneMode(ServerLevel level, ServerPlayer owner, BlockPos sourcePos) {
-        return HemoCapabilityAccess.getPlayerDegreeNumber(owner) >= 5
+        return ProgressionGates.hasDegree(owner, 5)
                 && isInOwnerFane(level, owner.getUUID(), sourcePos);
     }
 

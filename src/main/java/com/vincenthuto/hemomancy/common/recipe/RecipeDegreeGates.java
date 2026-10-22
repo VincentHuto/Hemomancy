@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -43,7 +44,7 @@ public final class RecipeDegreeGates {
 
 	public static int getPlayerLevel(Player player, boolean unstained) {
 		if (unstained) {
-			return clampLevel(HemoCapabilityAccess.getPlayerUnstainedLevel(player));
+			return clampLevel(ProgressionGates.unstainedStage(player));
 		}
 		return clampLevel(HemoCapabilityAccess.getPlayerDegreeNumber(player));
 	}

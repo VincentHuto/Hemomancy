@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.entity.boss.annetta;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -130,7 +130,7 @@ public class AnnettaPoolEntity extends Entity {
                 e -> e.isAlive() && e.distanceToSqr(this) <= r * r + 0.6D && !isEncounterBody(e))) {
             if (kind == Kind.INFECTED) {
                 victim.addEffect(new MobEffectInstance(EffectInit.blood_loss, 60, 0, false, true));
-            } else if (victim instanceof Player player && bloodActive(player)) {
+            } else if (victim instanceof Player player && ProgressionGates.isBloodActive(player)) {
                 // Still humor weighs on blood that is awake.
                 victim.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 0, false, true));
                 victim.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40, 0, false, true));
@@ -142,10 +142,6 @@ public class AnnettaPoolEntity extends Entity {
     private static boolean isEncounterBody(LivingEntity entity) {
         return entity instanceof AnnettaKnowlesEntity || entity instanceof StainedPriestessEntity
                 || entity instanceof LatentAnnettaInfectionEntity;
-    }
-
-    private static boolean bloodActive(Player player) {
-        return HemoCapabilityAccess.getBloodVolume(player).isActive();
     }
 
     @Override

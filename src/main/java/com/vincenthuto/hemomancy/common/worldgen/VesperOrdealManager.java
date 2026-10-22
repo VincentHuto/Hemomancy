@@ -16,6 +16,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncVesperFightScene;
 import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -135,7 +136,7 @@ public final class VesperOrdealManager {
 		return bloom != null && bloom.center().equals(center)
 				&& bloom.ownerUUID().equals(player.getUUID())
 				&& blooms.getState(bloom).isPortalOpen()
-				&& (HemoCapabilityAccess.getInitiatoryDegree(player).getDegreeNumber() == 7
+				&& (ProgressionGates.isDegree(player, 7)
 								&& HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath() == EnumArchonPath.SILENT_PENDING);
 	}
 
@@ -164,14 +165,14 @@ public final class VesperOrdealManager {
 		if (bloom == null || !bloom.center().equals(bloomPos)
 				|| !bloom.ownerUUID().equals(owner.getUUID())
 				|| !blooms.getState(bloom).isPortalOpen()) return;
-		boolean eligibleRefusal = HemoCapabilityAccess.getInitiatoryDegree(owner).getDegreeNumber() == 7
+		boolean eligibleRefusal = ProgressionGates.isDegree(owner, 7)
 						&& HemoCapabilityAccess.getInitiatoryDegree(owner).getArchonPath() == EnumArchonPath.SILENT_PENDING;
 		if (!eligibleRefusal) return;
 
 		boolean firstVictory = !HarbingerAdvancementGranter.hasAdvancement(owner,
 				HarbingerAdvancementGranter.ADV_VESPER_DEFEATED);
 		var degree = HemoCapabilityAccess.getInitiatoryDegree(owner);
-		if (degree.getDegreeNumber() == 7 && degree.getArchonPath() == EnumArchonPath.SILENT_PENDING) {
+		if (ProgressionGates.isDegree(degree, 7) && degree.getArchonPath() == EnumArchonPath.SILENT_PENDING) {
 			degree.setArchonPath(EnumArchonPath.SILENT_ARCHON);
 			InitiatoryDegreeEvents.syncDegree(owner, degree);
 		}

@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineMonolithBlockEntity;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -228,7 +229,7 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 	}
 
 	public static boolean pressFurther(ServerPlayer player) {
-		if (HemoCapabilityAccess.getPlayerDegreeNumber(player) < 7) return false;
+		if (!ProgressionGates.hasDegree(player, 7)) return false;
 		SanguineMonolithBlockEntity monolith = MonolithDialogueContext.takeBlock(player,
 				SanguineMonolithDialogueTrees.EVENT_SHATTER);
 		if (monolith == null) return false;

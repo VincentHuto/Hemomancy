@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.network.*;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.GameEventTags;
@@ -57,7 +58,7 @@ public final class AntecedentEvents {
     @SubscribeEvent public static void epilogue(PlayerTickEvent.Post event) {
         if(!(event.getEntity() instanceof net.minecraft.server.level.ServerPlayer player) || player.tickCount%200!=0 || player.containerMenu!=player.inventoryMenu) return;
         var research=HemoCapabilityAccess.antecedent(player);
-        if(!research.complete() || research.has(EPILOGUE) || HemoCapabilityAccess.getPlayerDegreeNumber(player)<7
+        if(!research.complete() || research.has(EPILOGUE) || !ProgressionGates.hasDegree(player, 7)
                 || !HemoCapabilityAccess.getBloodVolume(player).isActive()) return;
         if(player.getLastHurtByMob()!=null && player.tickCount-player.getLastHurtByMobTimestamp()<200) return;
         PacketHandler.sendToPlayer(player,new AntecedentEffectPacket(4,BlockPos.ZERO));

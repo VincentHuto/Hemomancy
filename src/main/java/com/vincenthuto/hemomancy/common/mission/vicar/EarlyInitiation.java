@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncBloodlinePool;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.rite.TempleOathRules;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import com.vincenthuto.hutoslib.common.tendril.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -41,7 +42,7 @@ public final class EarlyInitiation {
         return HemoCapabilityAccess.getEquipment(player).getStackInSlot(5).is(ItemInit.charm_of_vascularium.get());
     }
     public static boolean eligible(Player player) {
-        return player.isAlive() && !player.isSpectator() && HemoCapabilityAccess.getPlayerDegreeNumber(player) == 0
+        return player.isAlive() && !player.isSpectator() && ProgressionGates.isDegree(player, 0)
                 && attached(player) && HemoCapabilityAccess.getBloodVolume(player).isActive();
     }
     public static boolean near(Player player, Entity npc) {
@@ -75,7 +76,7 @@ public final class EarlyInitiation {
         var degree = HemoCapabilityAccess.getInitiatoryDegree(founder);
         var volume = HemoCapabilityAccess.getBloodVolume(founder);
         if (!founder.isAlive() || founder.isRemoved() || founder.isSpectator() || founder.isSleeping()
-                || degree.getDegreeNumber() < 5 || !degree.hasFoundedBloodline()
+                || !ProgressionGates.hasDegree(degree, 5) || !degree.hasFoundedBloodline()
                 || degree.isFounderIntegrationSevered() || !volume.isActive()) return null;
         var line = BloodlineSavedData.get(founder.serverLevel().getServer().overworld())
                 .getBloodline(volume.getBloodLine().getBloodlineUUID());
@@ -218,7 +219,7 @@ public final class EarlyInitiation {
     public static void logout(Player player) { cancel(player); }
     @SubscribeEvent public static void dimension(PlayerEvent.PlayerChangedDimensionEvent event) { cancel(event.getEntity()); }
     @SubscribeEvent public static void login(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player && HemoCapabilityAccess.getPlayerDegreeNumber(player) == 0
+        if (event.getEntity() instanceof ServerPlayer player && ProgressionGates.isDegree(player, 0)
                 && attached(player) && TempleOathRules.claimedHeartHermit(player) != null) activate(player);
     }
     /** Called by {@code TransientServerStateEvents} when a server starts and stops. */

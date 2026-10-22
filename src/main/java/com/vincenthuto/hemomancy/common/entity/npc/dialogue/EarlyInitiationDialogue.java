@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 import com.vincenthuto.hemomancy.common.mission.alchemist.*;
 import com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.server.level.ServerPlayer;
 import java.util.*;
 public final class EarlyInitiationDialogue {
@@ -13,7 +14,7 @@ public final class EarlyInitiationDialogue {
    new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)));
  }
  public static DialogueTree alchemist(DialogueTree tree, ServerPlayer player) {
-  if (!ClinicalBloodKnowledge.eligible(player) || com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getPlayerDegreeNumber(player) != 2
+  if (!ClinicalBloodKnowledge.eligible(player) || !ProgressionGates.isDegree(player, 2)
     || !FirstSeparationAssignment.isClaimed(player)
     || !com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.stationUpgrades(player).hasUsed(
             com.vincenthuto.hemomancy.common.station.UpgradeStation.ALEMBIC,
