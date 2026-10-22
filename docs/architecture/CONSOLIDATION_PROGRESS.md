@@ -9,7 +9,7 @@ Every consolidation session reads this file first and updates it last, following
 |---|---|---|---|---|
 | 1 | Urgent defect fixes (F-1, F-2, F-3) | DONE | `025f2b18f` | 2026-10-21 |
 | 2 | Phase 0: green baseline and test infrastructure | DONE | `c435034d4`, `ddb358304` | 2026-10-21 |
-| 3 | Phase 1: verified dead-code removal and packaging | NOT STARTED | | |
+| 3 | Phase 1: verified dead-code removal and packaging | DONE | `ccc75e9a0` | 2026-10-21 |
 | 4 | Phase 2: network hygiene | NOT STARTED | | |
 | 5 | Phase 3: player-state plumbing | NOT STARTED | | |
 | 6 | Phase 4: shared small utilities | NOT STARTED | | |
@@ -73,7 +73,7 @@ under *Pending approvals*. IDs refer to [ARCHITECTURE_AUDIT](ARCHITECTURE_AUDIT.
 | F-3 | Remove the client-class call from `WillEntity` | 1 | APPROVED | Approved in the step 1 prompt; done in `025f2b18f` |
 | M-1 | Hand-edited models vs their generators (Armature, Centrifuge, Reliquary, loom) | 2 | APPROVED | Owner chose "drop the marker checks" (2026-10-21). The models match their generators byte for byte; the failing tests only looked for a provenance string no generator writes. Done in `ddb358304` |
 | M-2 | Five unregistered mobs (Abyssal Siphon, Cruor Fiend, Frozen Clot, Synapse Hound, Void Drinker) | 3 | PENDING | Delete / archive branch / keep |
-| M-3 | Other "REQUIRES VERIFICATION" dead code (audit section E) | 3 | PENDING | Per item |
+| M-3 | Other "REQUIRES VERIFICATION" dead code (audit section E) | 3 | PENDING | Per item. Step 3 added three: `IBloodRoutingTarget`, `FeatureLogic` and five textures orphaned by the removals |
 | F-6 | Ledger actions require the ledger item | 4 | PENDING | |
 | F-7 | Bloodline chat rate limit | 4 | PENDING | Design |
 | F-8 | Reject NaN pool settings; clamp client partial tick | 4 | PENDING | |
@@ -121,6 +121,8 @@ them green.
 | `architecture/PrivateTestHelperRatchetTest` | 2 | Private `read`/`assert*` helper copies in tests may only fall (ceiling 593). Lower the ceiling when you remove copies |
 | `support/SourceAssertionsTest` | 2 | The shared helpers' `methodBody`, `section`, failures and line-ending handling |
 | `testing/LegacyMainTestSuiteContractTest` | 2 | The adapter runs exactly the legacy `main()` tests found in source (set comparison, no hard-coded count) |
+| `architecture/SourceTreeHygieneTest` | 3 | No empty `.java` files, no empty `@SubscribeEvent` handlers, and `hemomancy.mixins.json` lists exactly the `@Mixin` classes in `mixin/core` |
+| `verifyPackagedClientResources` (part of `alphaCheck`) | 3 | The jar holds no `.cache/`, `/old/`, `.bbmodel` or `bbmodel/reference/` entries |
 
 ## Step entries
 
@@ -230,3 +232,56 @@ them green.
   - Use the impact map before moving or deleting code, and use the `support/` helpers in every test you touch. Lower `PrivateTestHelperRatchetTest.CEILING` whenever copies are removed.
   - Never write the retired pre-Lumenlace strain name in any doc, including this ledger: the rename scan reads all of `docs/`.
   - The dedicated-server start used the same pattern as the review clients. A scratch init script added `consolidationServer` and `consolidationClient` runs with game directories under `build/`.
+
+### Step 3: Phase 1, verified dead-code removal and packaging
+- **Status / date / commits:** DONE, 2026-10-21. The code is in `ccc75e9a0`; a second `consolidation(step-3):` commit records this entry and the audit-table moves.
+- **Test counts before → after:**
+  - `test`: 3,926 → 3,928, 0 failures. One test was deleted with the dead code it pinned; three hygiene tests were added.
+  - `alphaCheck`: green, with all 999 required GameTests passing.
+  - Client start (shader reload): reached the title screen with 0 ERROR lines and no shader failures.
+  - Dedicated server start: reached `Done (5.149s)` with 0 ERROR lines.
+- **Removed (all SAFE items in audit section E, each re-verified with `git grep` and an impact-map pass):**
+  - 54 unused Vesper clips (2,741 lines).
+  - `RenderBloodLaser` and `RenderBloodLaserEvent`. This removes the per-frame `RenderLevelStageEvent` loop over all players.
+  - The 4 empty classes, plus 9 unreferenced classes from the list.
+  - `HemoBookReloadListener`, `MixinScreenRenderState` (an empty file), `AbstractFungusFeature`, `BigMushgloomFeature`, `FungusFeatureConfig`, and `TestRegion1` and `TestRegion2`.
+  - These members: `Hemomancy.instance` and `forcesLoaded`, `AttributeInit.canFly`, `ScarInit.getAllEntries`, `VillagerInit.HEMOPOTHECARY_PROCESSOR_LIST_KEY`, `BaseFeatureInit.setup`, the empty `EffectInit.setupPotionRecipes` and `EntityInit.commonSetup` handlers, `BloodManipulation.performDrudgeAction`, `IBloodVolume.drainFromSource` (and its 2 implementations), and `BloodCraftingKeyPressPacket.getMatchBounds`.
+  - 11 unused `RenderTypeInit` entries. `LASER_MAIN_ADDITIVE` became dead once the laser was removed.
+  - `RadiantPortalRendertype.END_PORTAL`, `textWithRayShader` and their ray shard and transparency state.
+  - The `ray`, `distorted_texture` and `scar_glow` shaders and their 6 program files. `screen_generic.vsh` is kept because 3 other shaders use it.
+  - The `item_blood_volume` attachment registration. Item stacks cannot hold attachments in 1.21.1, and the only write was removed in `b363f22d7`. The item capability key with the same id is unchanged.
+- **Packaging:**
+  - The `.cache` exclude now matches; it is relative to each resource root.
+  - `assets/hemomancy/**/old/**` and `models/entity/bbmodel/reference/**` are excluded. This replaces three narrower `old/` excludes.
+  - The jar went from 95,622,844 to 91,543,031 bytes (−4.08 MB). Entries went from 12,348 to 12,131, and classes from 4,920 to 4,899. The jar now holds 0 `/old/`, 0 `.cache` and 0 reference entries.
+- **Local cleanup:**
+  - Deleted the 4 untracked `*.java~` backups. Each matched a committed revision of its file.
+  - Deleted the tracked `bash.exe.stackdump`.
+- **Metrics:**
+  - `src/main`: +0 / −3,951 lines across 22 deleted classes, 6 deleted shader files, and edits to 20 other files.
+  - `src/test`: +82 / −25 (the new hygiene test, plus 5 tests updated or trimmed).
+  - Remaining legacy instances in scope: 0.
+- **Tests updated with the removals:**
+  - `RegistryBackedScarRefactorSourceTest`: dropped the `getAllEntries()` pin.
+  - `BloodVolumeTransferRulesTest` and `BloodRoutingRulesTest`: dropped the `drainFromSource` stub overrides.
+  - `MemoryWeavingRedesignSourceTest`: dropped the `LOOM_EFFECT_CORE` pins, which gave false coverage.
+  - `AvatarFirstPersonRendererTest`: deleted `avatarShellDoesNotWriteDepthOverHeldItems`, which pinned the never-called `firstPersonEnergySwirl`.
+- **Guardrails added:** `SourceTreeHygieneTest`, plus the authoring-file check in `verifyPackagedClientResources` (see the table).
+- **Approved items implemented:** none needed. Everything removed was SAFE.
+- **Pending approvals (moved from SAFE to REQUIRES VERIFICATION, recorded under M-3 and in the audit):**
+  - `IBloodRoutingTarget`: `HEMOMANCY_REFERENCE.md` documents it as the routing hook.
+  - `FeatureLogic`: the target of the W-2 setter merge.
+  - The orphaned textures `textures/misc/laser.png`, `laser2.png`, `laser_glow.png`, `vine.png` and `textures/entity/chitinite/model_chitinite_warn.png`.
+- **Deviations from the roadmap:**
+  - The roadmap says to move the `/old/` archives and the reference sheet out of `src/main/resources`. The audit evidence and the existing `build.gradle` convention ("Preserve authoring archives in source") instead keep them in source and exclude them from packaging, which is what this step does. Deleting or relocating them is left to the owner.
+- **Not verified (needs an in-game check):** none beyond the client and server starts. Every removal was unreferenced, so it has no visible effect.
+- **Known issues (pre-existing, not fixed):**
+  - `BloodCraftingKeyPressPacket` imports `HarbingerCardinalRiteEvents` without using it.
+  - `IWhiteHumorVolume.drainFromSource` has no callers. It is not on the SAFE list.
+  - `docs/done/consolidation/capability-storage-index.md:40` calls `item_blood_volume` "serialized".
+  - `SourceTreeHygieneTest` reads only `hemomancy.mixins.json`. If the dormant MnA mixins are re-enabled, extend it to `hemomancy.mna.mixins.json`.
+- **Handoff notes for step 4 (Phase 2, network hygiene):**
+  - The baseline is fully green: 3,928 JUnit tests and 999 GameTests.
+  - `PacketHandler.java` is pinned by about 23 tests. Check `docs/architecture/evidence/source-text-impact-map.csv` before moving registrations.
+  - The step 1 guardrail `ClientBoundPayloadRegistrationTest` expects exactly one `playToClient` registration for each of the 4 F-2 payloads. Moving their handlers into `client/**` (Phase 2 item 3) is compatible with it.
+  - Use the scratch init-script pattern from step 2 for the server and client starts, so `run/world` stays untouched.

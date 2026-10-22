@@ -418,7 +418,7 @@ report lists the exact searches.
 | 54 unused clips in `VesperTheEveningStarAnimations` (~2,750 lines) | Only IDLE, DEFEAT, HIT and REMOVE_HOOD are referenced. `VesperCombatImplementationSourceTest:137-146` checks HIT only. **V** | Keep the 4 used clips. |
 | `RenderBloodLaser` + `RenderBloodLaserEvent` | `renderLaser` has an empty body and the draw helpers have no callers. The handler is still subscribed. **V** | Removes a per-frame loop. |
 | `TerraBiomeInit`, `WhiteHumorVolumeEvents`, `RecipeSacrificialBloodCrafting`, `TendencyWeaponCombatEvents` | Empty classes. **V** | |
-| `HitGlowParticle`, `RenderChitiniteLayer`, `BloodArmorLayer`, `CellHandBakedModel`, `IRadialMenuItem`, `RadialTextLines`, `compat/jei/ScreenArea`, `GuideBookTooltipHelper`, `EnumRejectionEvent`, `IBloodRoutingTarget` (0 implementers) | Unreferenced. **V** | |
+| `HitGlowParticle`, `RenderChitiniteLayer`, `BloodArmorLayer`, `CellHandBakedModel`, `IRadialMenuItem`, `RadialTextLines`, `compat/jei/ScreenArea`, `GuideBookTooltipHelper`, `EnumRejectionEvent` | Unreferenced. **V** | Removed in consolidation step 3. |
 | `Hemomancy.instance`, `Hemomancy.forcesLoaded` | Written, never read. **V** | The `forcesofreality` check is only a write. |
 | `AttributeInit.canFly`, `ScarInit.getAllEntries`, `VillagerInit.HEMOPOTHECARY_PROCESSOR_LIST_KEY`, `BaseFeatureInit.setup()`, `EffectInit.setupPotionRecipes`, `EntityInit.commonSetup` (empty subscribed handlers) | No callers, or empty bodies. **V** | |
 | `BloodManipulation.performDrudgeAction`, `IBloodVolume.drainFromSource` (inverted semantics, 0 external callers), `BloodCraftingKeyPressPacket.getMatchBounds` | 0 callers. **V** | |
@@ -427,7 +427,7 @@ report lists the exact searches.
 | `ITEM_BLOOD_VOLUME` **attachment** (`HemoAttachmentTypes:176`) | Only the `ItemCapability` key is referenced. `ItemStackBloodVolume` stores data in `CUSTOM_DATA`. **V** | Keep the capability key. |
 | `mixin/core/MixinScreenRenderState.java` (empty, tracked) | **V** | |
 | Four `*.java~` editor backups (`CardinalFocusBlock`, `LivingSickleItem`, `StillwaterCondenserMenu`, `PlaceStructurePacket`) and the root `bash.exe.stackdump` | **SC**: the backups are untracked (gitignored), so this is local cleanup only. | One evidence report calls the backups tracked; `git ls-files` shows they are not. |
-| Old fungus features, `TestRegion1/2`, `FeatureLogic` (its one useful constant is reused by W-2) | Unreferenced. **V** | |
+| Old fungus features, `TestRegion1/2` | Unreferenced. **V** | Removed in consolidation step 3. |
 
 ### REQUIRES VERIFICATION
 
@@ -439,6 +439,9 @@ report lists the exact searches.
 | 9 rule classes called only from tests (e.g. `CardinalRiteBrazierSignatureRules`, `VialCentrifugeStartupRules`, `EndgameBossCombatRules`, `MnemonicBlueprintRules`, `CardinalRiteStructureConsumptionRules`) | Either a call site was lost or the tests give false coverage. | Trace each against the feature it names. Wire it up or delete it with its test. |
 | 18 registered payloads that are never sent (e.g. `UseQuickManipKeyPacket`, `UseContManipKeyPacket`, `PacketOpenSporeInv`, `AirBloodDrawPacket` with an empty handler) | Unregistering changes the payload set, which is harmless only when every client and server is upgraded together. | Remove them together with the N-7 protocol version bump. |
 | `TeleportToVeinPacket` (unregistered, still sent from an unreachable `RadialChooseVeinScreen`) | The screen is never opened. | Delete both, with `TeleportToVeinPacketSourceTest`. |
+| `IBloodRoutingTarget` (0 implementers) | `BloodRoutingHelper` checks for it, and `HEMOMANCY_REFERENCE.md` documents it as the routing hook for new blood consumers. Moved here from SAFE in step 3. | Owner decision: keep the hook, or remove it with its three `BloodRoutingHelper` branches and the reference text. |
+| `FeatureLogic` | Unreferenced, but the W-2 plan merges the duplicate replaceable-block setters into it. Moved here from SAFE in step 3. | Resolve together with W-2 (step 13). |
+| Textures left without a code reference by step 3: `textures/misc/laser.png`, `laser2.png`, `laser_glow.png`, `vine.png`, `textures/entity/chitinite/model_chitinite_warn.png` | Only the deleted render types and `RenderChitiniteLayer` used them. They may be wanted as art. | Owner decision: delete, or archive with the other `old/` textures. |
 | `MobManipCaster` | `WillCombatRedesignSourceTest:42` asserts that it *exists*. | Update that test. |
 | The worldgen bootstrap chain (`BiomeInit.bootstrapBiomes` with ~380 lines of builders, `PelagicBiomes.bootstrap`, `Configured/PlacedFeatureInit.bootstrap`, `HemoFeatureUtils`, `HemoPlacementUtils`), the empty `BIOME_REGISTER`, the unregistered `BIOME_MODIFIER_SERIALIZERS` | The JSON is authoritative and two tests already call it dead. `EscharianOvergrowthResourceTest:81` pins a line inside it. **Keep the `ResourceKey` constants.** | Update that test. |
 | 8 unregistered datagen provider classes | They may be intended for a future datagen revival. | Owner decision (D-5). |
