@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnown
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedAccessRules;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
+import com.vincenthuto.hemomancy.common.util.AttributeModifiers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -172,9 +173,7 @@ public final class AvatarManifestationManager {
 
 	private static void update(AttributeInstance attribute, ResourceLocation id, double amount,
 			AttributeModifier.Operation operation) {
-		if (attribute == null) return;
-		attribute.removeModifier(id);
-		if (amount != 0) attribute.addTransientModifier(new AttributeModifier(id, amount, operation));
+		AttributeModifiers.sync(attribute, id, amount, operation, amount != 0);
 	}
 
 	private static void remove(AttributeInstance attribute, ResourceLocation id) {

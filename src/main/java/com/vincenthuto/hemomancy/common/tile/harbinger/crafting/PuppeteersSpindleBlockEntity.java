@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.common.menu.PuppeteersSpindleMenu;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
+import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -65,7 +66,7 @@ public class PuppeteersSpindleBlockEntity extends BaseContainerBlockEntity {
 		changed |= spindle.consumeThreadInput();
 		changed |= spindle.refillSlottedCrossbar();
 		if (changed) {
-			spindle.sendUpdates();
+			BlockEntitySync.markAndSync(spindle);
 			setChanged(level, pos, state);
 		}
 	}
@@ -141,13 +142,6 @@ public class PuppeteersSpindleBlockEntity extends BaseContainerBlockEntity {
 
 	public boolean hasSlottedCrossbar() {
 		return getCrossbar().getItem() instanceof MarionetteCrossbarItem;
-	}
-
-	public void sendUpdates() {
-		setChanged();
-		if (level != null) {
-			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-		}
 	}
 
 	@Override

@@ -3,13 +3,13 @@ package com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememor
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.*;
+import com.vincenthuto.hemomancy.common.util.AttributeModifiers;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
@@ -215,14 +215,14 @@ public final class MuscleMemoryWorldEvents {
     private static void updateModifiers(ServerPlayer player) {
         MuscleMemoryState state = HemoCapabilityAccess.muscleMemory(player);
         long now = player.level().getGameTime();
-        updateModifier(player.getAttribute(Attributes.BLOCK_BREAK_SPEED), LABORING_ID,
-                state.isActive(MuscleMemory.LABORING_ARMS, now),
-                state.isEmpowered(MuscleMemory.LABORING_ARMS, now) ? .40D : .20D);
-        updateModifier(player.getAttribute(Attributes.MOVEMENT_SPEED), COURSING_ID,
-                state.isActive(MuscleMemory.COURSING_LEGS, now),
-                state.isEmpowered(MuscleMemory.COURSING_LEGS, now) ? .30D : .15D);
-		updateModifier(player.getAttribute(Attributes.STEP_HEIGHT), COURSING_STEP_ID,
-				state.isEmpowered(MuscleMemory.COURSING_LEGS, now), .5D, AttributeModifier.Operation.ADD_VALUE);
+        AttributeModifiers.sync(player.getAttribute(Attributes.BLOCK_BREAK_SPEED), LABORING_ID,
+                state.isEmpowered(MuscleMemory.LABORING_ARMS, now) ? .40D : .20D,
+                AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL, state.isActive(MuscleMemory.LABORING_ARMS, now));
+        AttributeModifiers.sync(player.getAttribute(Attributes.MOVEMENT_SPEED), COURSING_ID,
+                state.isEmpowered(MuscleMemory.COURSING_LEGS, now) ? .30D : .15D,
+                AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL, state.isActive(MuscleMemory.COURSING_LEGS, now));
+		AttributeModifiers.sync(player.getAttribute(Attributes.STEP_HEIGHT), COURSING_STEP_ID, .5D,
+				AttributeModifier.Operation.ADD_VALUE, state.isEmpowered(MuscleMemory.COURSING_LEGS, now));
     }
 
     static boolean consumeEmberfangMomentum(ServerPlayer player) {
@@ -236,23 +236,6 @@ public final class MuscleMemoryWorldEvents {
         SPRINT_DISTANCE.remove(id);
         CARRION.remove(id);
         EMBERFANG_MOMENTUM.remove(id);
-    }
-
-    private static void updateModifier(AttributeInstance attribute, ResourceLocation id, boolean active, double amount) {
-		updateModifier(attribute, id, active, amount, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-	}
-
-	private static void updateModifier(AttributeInstance attribute, ResourceLocation id, boolean active, double amount,
-			AttributeModifier.Operation operation) {
-        if (attribute == null) return;
-        AttributeModifier existing = attribute.getModifier(id);
-		if (active && existing != null
-				&& (Math.abs(existing.amount() - amount) > .000001D || existing.operation() != operation)) {
-            attribute.removeModifier(id);
-            existing = null;
-        }
-		if (active && existing == null) attribute.addTransientModifier(new AttributeModifier(id, amount, operation));
-        else if (!active && existing != null) attribute.removeModifier(id);
     }
 
     private record TickSnapshot(Vec3 position, int food, float saturation, float exhaustion) {}

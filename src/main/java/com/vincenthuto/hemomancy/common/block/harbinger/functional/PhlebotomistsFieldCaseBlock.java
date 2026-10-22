@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.PhlebotomistsFieldCaseBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoTickers;
 import net.minecraft.core.*;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.*;
@@ -34,8 +35,7 @@ public class PhlebotomistsFieldCaseBlock extends Block implements EntityBlock {
     @Override protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) { return SHAPE; }
     @Override public BlockEntity newBlockEntity(BlockPos pos, BlockState state) { return new PhlebotomistsFieldCaseBlockEntity(pos, state); }
     @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return type == BlockEntityInit.phlebotomists_field_case.get()
-                ? (world, pos, current, be) -> PhlebotomistsFieldCaseBlockEntity.tick(world, pos, current, (PhlebotomistsFieldCaseBlockEntity) be) : null;
+        return HemoTickers.create(type, BlockEntityInit.phlebotomists_field_case.get(), PhlebotomistsFieldCaseBlockEntity::tick);
     }
     private void interact(Level level, BlockPos pos, Player player, boolean emptyHand) {
         if (level.isClientSide || player.isSpectator() || !(level.getBlockEntity(pos) instanceof PhlebotomistsFieldCaseBlockEntity be)) return;

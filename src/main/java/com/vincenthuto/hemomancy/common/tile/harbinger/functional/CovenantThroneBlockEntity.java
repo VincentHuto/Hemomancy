@@ -105,14 +105,6 @@ public class CovenantThroneBlockEntity extends BlockEntity implements IBloodRese
 
     // ── IBloodReservoir ─────────────────────────────────────────────────────────────
 
-    @Override
-    public void sendUpdates() {
-        if (level == null) return;
-        level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
-        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-        setChanged();
-    }
-
     // ── Serialisation ─────────────────────────────────────────────────────────
 
     @Override

@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffIt
 import com.vincenthuto.hemomancy.common.station.CreativeStationUpgrades;
 import com.vincenthuto.hemomancy.common.station.StationTierProperty;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticLoomBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoTickers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -63,13 +64,6 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 			new double[] {-1.4, 9.4, 7.5, 17.4, 19.4, 20.8}, new double[] {-1.5, 7.6, 20.8, 17.5, 14.4, 27.7},
 			new double[] {-1.5, 1.2, -6.4, 17.5, 2.8, 20.5},
 			new double[] {-8.1, 4.2, -2.2, -4.5, 12.4, 12.2}, new double[] {20.5, 4.2, -2.2, 24.1, 12.4, 12.2});
-
-	@Nullable
-	@SuppressWarnings("unchecked")
-	public static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(
-			BlockEntityType<A> candidate, BlockEntityType<E> desired, BlockEntityTicker<? super E> ticker) {
-		return desired == candidate ? (BlockEntityTicker<A>) ticker : null;
-	}
 
 	public SomaticLoomBlock(Properties properties) {
 		super(properties);
@@ -204,9 +198,9 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock,
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
 			BlockEntityType<T> type) {
 		if (level.isClientSide) {
-			return createTickerHelper(type, BlockEntityInit.somatic_loom.get(), SomaticLoomBlockEntity::clientTick);
+			return HemoTickers.create(type, BlockEntityInit.somatic_loom.get(), SomaticLoomBlockEntity::clientTick);
 		}
-		return createTickerHelper(type, BlockEntityInit.somatic_loom.get(), SomaticLoomBlockEntity::serverTick);
+		return HemoTickers.create(type, BlockEntityInit.somatic_loom.get(), SomaticLoomBlockEntity::serverTick);
 	}
 
 	@Override

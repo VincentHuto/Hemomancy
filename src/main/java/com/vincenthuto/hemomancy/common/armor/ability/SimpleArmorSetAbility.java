@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.armor.ability;
 
+import com.vincenthuto.hemomancy.common.util.ArmorSets;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -74,12 +75,7 @@ public class SimpleArmorSetAbility implements ArmorSetAbility {
 
 	@Override
 	public boolean isAvailable(Player player) {
-		for (Map.Entry<EquipmentSlot, Supplier<? extends Item>> entry : requiredPieces.entrySet()) {
-			if (!player.getItemBySlot(entry.getKey()).is(entry.getValue().get())) {
-				return false;
-			}
-		}
-		return true;
+		return ArmorSets.isFullSet(player, requiredPieces);
 	}
 
 	@Override

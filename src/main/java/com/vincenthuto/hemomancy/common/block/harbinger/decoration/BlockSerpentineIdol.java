@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.decoration.SerpentineIdolBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoTickers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -67,7 +68,7 @@ public class BlockSerpentineIdol extends Block implements EntityBlock, SimpleWat
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
 			BlockEntityType<T> type) {
-		return type == BlockEntityInit.serpentine_idol.get() ? SerpentineIdolBlockEntity::tick : null;
+		return HemoTickers.create(type, BlockEntityInit.serpentine_idol.get(), SerpentineIdolBlockEntity::tick);
 	}
 
 	@Override

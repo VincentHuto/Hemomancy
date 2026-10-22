@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
-import com.vincenthuto.hemomancy.common.block.harbinger.crafting.MorphlingIncubatorBlock;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.CardinalFocusBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoTickers;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -42,10 +42,10 @@ public class CardinalFocusBlock extends Block implements EntityBlock {
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
 			BlockEntityType<T> type) {
 		if (level.isClientSide) {
-			return MorphlingIncubatorBlock.createTickerHelper(type, BlockEntityInit.cardinal_focus.get(),
+			return HemoTickers.create(type, BlockEntityInit.cardinal_focus.get(),
 					CardinalFocusBlockEntity::clientTick);
 		}
-		return MorphlingIncubatorBlock.createTickerHelper(type, BlockEntityInit.cardinal_focus.get(),
+		return HemoTickers.create(type, BlockEntityInit.cardinal_focus.get(),
 				CardinalFocusBlockEntity::serverTick);
 	}
 

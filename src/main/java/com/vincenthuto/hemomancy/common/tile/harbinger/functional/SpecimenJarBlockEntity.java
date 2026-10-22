@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.SpecimenJarData;
+import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -30,12 +31,12 @@ public class SpecimenJarBlockEntity extends BlockEntity {
 
 	public void setSpecimen(CompoundTag specimen) {
 		this.specimen = specimen == null ? new CompoundTag() : specimen.copy();
-		setChangedAndSync();
+		BlockEntitySync.markAndSync(this);
 	}
 
 	public void clearSpecimen() {
 		this.specimen = new CompoundTag();
-		setChangedAndSync();
+		BlockEntitySync.markAndSync(this);
 	}
 
 	public void suppressNextRelease() {
@@ -46,13 +47,6 @@ public class SpecimenJarBlockEntity extends BlockEntity {
 		boolean suppressed = suppressNextRelease;
 		suppressNextRelease = false;
 		return suppressed;
-	}
-
-	private void setChangedAndSync() {
-		setChanged();
-		if (level != null) {
-			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-		}
 	}
 
 	@Override

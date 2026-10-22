@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.PhlebotomistsCabinetBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoTickers;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -45,8 +46,7 @@ public class PhlebotomistsCabinetBlock extends Block implements EntityBlock {
     @Override protected BlockState mirror(BlockState state, Mirror mirror) { return state.rotate(mirror.getRotation(state.getValue(FACING))); }
     @Override public BlockEntity newBlockEntity(BlockPos pos, BlockState state) { return new PhlebotomistsCabinetBlockEntity(pos, state); }
     @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return type == BlockEntityInit.phlebotomists_cabinet.get()
-                ? (world, pos, current, be) -> PhlebotomistsCabinetBlockEntity.tick(world, pos, current, (PhlebotomistsCabinetBlockEntity) be) : null;
+        return HemoTickers.create(type, BlockEntityInit.phlebotomists_cabinet.get(), PhlebotomistsCabinetBlockEntity::tick);
     }
     private void open(Level level, BlockPos pos, Player player) {
         if (player instanceof ServerPlayer serverPlayer && !player.isSpectator()

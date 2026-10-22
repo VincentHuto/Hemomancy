@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.init.DataComponentInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.EnzymeItem;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.EnzymaticScriptoriumBlockEntity;
+import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
@@ -313,7 +314,7 @@ public final class EnzymaticScriptoriumMenu extends AbstractContainerMenu {
             input.set(DataComponentInit.SCRIPTORIUM_PROVENANCE.get(), ScriptoriumProvenance.CLEAN);
             blood.drain(300);
             shard.shrink(1);
-            station.sync();
+            BlockEntitySync.markAndSync(station);
             cachedKey = "";
             refresh();
             return true;
@@ -362,7 +363,7 @@ public final class EnzymaticScriptoriumMenu extends AbstractContainerMenu {
             if (targets[tier] >= 0) stationProgress.recordUse(com.vincenthuto.hemomancy.common.station.UpgradeStation.SCRIPTORIUM,
                     com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.ENCHANT_TARGETED);
         }
-        station.sync();
+        BlockEntitySync.markAndSync(station);
         cachedKey = "";
         refresh();
         return true;

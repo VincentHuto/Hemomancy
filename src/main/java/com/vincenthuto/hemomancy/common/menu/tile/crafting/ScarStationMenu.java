@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.menu.slot.ScarPatternSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.ScarStationSlot;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ScarStationBlockEntity;
+import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -67,13 +68,13 @@ public class ScarStationMenu extends AbstractContainerMenu {
 
 	@Override
 	public void broadcastChanges() {
-		te.sendUpdates();
+		BlockEntitySync.markAndSync(te);
 		super.broadcastChanges();
 	}
 
 	@Override
 	public void setItem(int p_182407_, int p_182408_, ItemStack p_182409_) {
-		te.sendUpdates();
+		BlockEntitySync.markAndSync(te);
 		super.setItem(p_182407_, p_182408_, p_182409_);
 	}
 
@@ -83,7 +84,7 @@ public class ScarStationMenu extends AbstractContainerMenu {
 	public void clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
 		super.clicked(slotId, dragType, clickTypeIn, player);
 		checkPatternSlotCleared();
-		te.sendUpdates();
+		BlockEntitySync.markAndSync(te);
 	}
 
 	/**
@@ -163,7 +164,7 @@ public class ScarStationMenu extends AbstractContainerMenu {
 			slot.setChanged();
 		}
 		checkPatternSlotCleared();
-		te.sendUpdates();
+		BlockEntitySync.markAndSync(te);
 		return returnStack;
 	}
 

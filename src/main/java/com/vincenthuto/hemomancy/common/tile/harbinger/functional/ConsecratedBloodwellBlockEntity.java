@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -76,16 +77,7 @@ public class ConsecratedBloodwellBlockEntity extends BlockEntity {
 		}
 		syncedPoolBlood = blood;
 		syncedPoolMax = max;
-		sendUpdates();
-	}
-
-	private void sendUpdates() {
-		if (level == null) {
-			return;
-		}
-		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
-		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-		setChanged();
+		BlockEntitySync.markAndSync(this);
 	}
 
 	@Override

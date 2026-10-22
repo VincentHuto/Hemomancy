@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.unstained;
 
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
-import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.unstained.SuspendedCleansedBloodCrystalBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,8 +18,6 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -30,7 +27,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import javax.annotation.Nullable;
 
 public class SuspendedCleansedBloodCrystalBlock extends Block implements EntityBlock, SimpleWaterloggedBlock {
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
@@ -64,13 +60,6 @@ public class SuspendedCleansedBloodCrystalBlock extends Block implements EntityB
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
 		return Block.box(4, 4, 4, 12, 18, 12);
-	}
-
-	@Nullable
-	@Override
-	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
-			BlockEntityType<T> type) {
-		return type == BlockEntityInit.suspended_cleansed_blood_crystal.get() ? SuspendedCleansedBloodCrystalBlockEntity::tick : null;
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.OrganEchoItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.visceral.OpenVisceralMirrorPacket;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.VisceralMirrorBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoTickers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -65,13 +66,6 @@ public class VisceralMirrorBlock extends Block implements EntityBlock, IMultiBlo
 			Block.box(3, 2, 3, 13, 16, 13)     // Mirror frame
 	);
 
-	@Nullable
-	@SuppressWarnings("unchecked")
-	public static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(
-			BlockEntityType<A> candidate, BlockEntityType<E> desired, BlockEntityTicker<? super E> ticker) {
-		return desired == candidate ? (BlockEntityTicker<A>) ticker : null;
-	}
-
 	public VisceralMirrorBlock(Properties properties) {
 		super(properties);
 		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH).setValue(WATERLOGGED, false));
@@ -126,10 +120,10 @@ public class VisceralMirrorBlock extends Block implements EntityBlock, IMultiBlo
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
 			BlockEntityType<T> type) {
 		if (level.isClientSide) {
-			return createTickerHelper(type, BlockEntityInit.visceral_mirror.get(),
+			return HemoTickers.create(type, BlockEntityInit.visceral_mirror.get(),
 					VisceralMirrorBlockEntity::clientTick);
 		} else {
-			return createTickerHelper(type, BlockEntityInit.visceral_mirror.get(),
+			return HemoTickers.create(type, BlockEntityInit.visceral_mirror.get(),
 					VisceralMirrorBlockEntity::serverTick);
 		}
 	}

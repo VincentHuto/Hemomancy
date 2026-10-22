@@ -590,11 +590,4 @@ public class MycelialCrucibleBlockEntity extends BaseContainerBlockEntity implem
         return vol != null ? vol.getMaxBloodVolume() : 0;
     }
 
-    @Override
-    public void sendUpdates() {
-        if (level == null) return;
-        level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
-        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-        setChanged();
-    }
 }

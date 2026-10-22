@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.brewing;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.damage.SchoolDamage;
 import com.vincenthuto.hemomancy.common.init.DataComponentInit;
+import com.vincenthuto.hemomancy.common.util.AttributeModifiers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -107,11 +108,7 @@ public final class AdvancedBrewEffects {
     }
 
     private static void updatePoise(ServerPlayer player, boolean active) {
-        var resistance = player.getAttribute(Attributes.KNOCKBACK_RESISTANCE);
-        if (resistance == null) return;
-        if (!active) resistance.removeModifier(POISE_MODIFIER);
-        else if (resistance.getModifier(POISE_MODIFIER) == null)
-            resistance.addTransientModifier(new AttributeModifier(POISE_MODIFIER, 0.20,
-                    AttributeModifier.Operation.ADD_VALUE));
+        AttributeModifiers.sync(player.getAttribute(Attributes.KNOCKBACK_RESISTANCE), POISE_MODIFIER, 0.20,
+                AttributeModifier.Operation.ADD_VALUE, active);
     }
 }

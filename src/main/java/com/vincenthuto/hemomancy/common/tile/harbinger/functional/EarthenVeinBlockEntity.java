@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 import com.vincenthuto.hemomancy.common.capability.block.vein.EarthenVeinLoc;
 import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -39,7 +40,7 @@ public class EarthenVeinBlockEntity extends BlockEntity {
 	public float tRot;
 	private static final RandomSource RANDOM = RandomSource.create();
 
-	public static <T> void tick(Level level, BlockPos pos, BlockState state, T blockEntity) {
+	public static void tick(Level level, BlockPos pos, BlockState state, EarthenVeinBlockEntity blockEntity) {
 
 		if (level.getBlockEntity(pos) instanceof EarthenVeinBlockEntity te) {
 			if (!level.isClientSide && te.isTemporary() && level.getGameTime() >= te.temporaryExpiry) {
@@ -54,7 +55,7 @@ public class EarthenVeinBlockEntity extends BlockEntity {
 					}
 				}
 				te.setHasTicked(true);
-				te.sendUpdates();
+				BlockEntitySync.markAndSync(te);
 			}
 			if (level.isClientSide) {
 				te.oOpen = te.open;
@@ -197,12 +198,6 @@ public class EarthenVeinBlockEntity extends BlockEntity {
 		compound.putLong(TAG_TEMPORARY_EXPIRY, temporaryExpiry);
 	}
 
-	public void sendUpdates() {
-		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
-		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-		setChanged();
-	}
-
 	public void setHasTicked(boolean hasTicked) {
 		this.hasTicked = hasTicked;
 	}
@@ -221,7 +216,7 @@ public class EarthenVeinBlockEntity extends BlockEntity {
 		name = "Temporary Earthen Vein";
 		setLoc(new VeinLocation(name, level.dimension().location(), worldPosition));
 		hasTicked = true;
-		sendUpdates();
+		BlockEntitySync.markAndSync(this);
 	}
 
 	public boolean isTemporary() {

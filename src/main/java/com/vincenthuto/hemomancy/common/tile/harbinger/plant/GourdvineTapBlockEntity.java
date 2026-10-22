@@ -150,14 +150,6 @@ public class GourdvineTapBlockEntity extends BlockEntity implements IBloodReserv
 
     // ── IBloodReservoir ────────────────────────────────────────────────────────────
 
-    @Override
-    public void sendUpdates() {
-        if (level == null) return;
-        level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
-        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-        setChanged();
-    }
-
     // ── Container ─────────────────────────────────────────────────────────────
 
     @Override

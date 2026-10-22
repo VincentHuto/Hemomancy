@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.MnemonicReliquaryMenu;
 import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.MnemonicReliquaryBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoTickers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -101,21 +102,14 @@ public class MnemonicReliquaryBlock extends Block implements EntityBlock, Simple
 	}
 
 	@Nullable
-	@SuppressWarnings("unchecked")
-	private static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(
-			BlockEntityType<A> candidate, BlockEntityType<E> desired, BlockEntityTicker<? super E> ticker) {
-		return desired == candidate ? (BlockEntityTicker<A>) ticker : null;
-	}
-
-	@Nullable
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
 			BlockEntityType<T> type) {
 		if (level.isClientSide) {
-			return createTickerHelper(type, BlockEntityInit.mnemonic_reliquary.get(),
+			return HemoTickers.create(type, BlockEntityInit.mnemonic_reliquary.get(),
 					MnemonicReliquaryBlockEntity::clientTick);
 		} else {
-			return createTickerHelper(type, BlockEntityInit.mnemonic_reliquary.get(),
+			return HemoTickers.create(type, BlockEntityInit.mnemonic_reliquary.get(),
 					MnemonicReliquaryBlockEntity::serverTick);
 		}
 	}

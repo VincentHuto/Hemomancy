@@ -9,7 +9,6 @@ import com.vincenthuto.hemomancy.common.init.ScarInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ScarDefinition;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.MasonsEffigyMenu;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.MasonsEffigyBlockEntity;
-import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -102,7 +101,6 @@ public class PacketPrepareScarPattern implements CustomPacketPayload {
 				}
 			}
 			effigy.setSelectedScarIds(selected);
-			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(player.level(), msg.pos);
 			if (!msg.announce) {
 				return;
 			}

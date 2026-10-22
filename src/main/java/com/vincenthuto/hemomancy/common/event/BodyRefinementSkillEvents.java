@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.event;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.BodyRefinementSkillRules;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
+import com.vincenthuto.hemomancy.common.util.AttributeModifiers;
 import com.vincenthuto.hemomancy.mixin.core.MobEffectInstanceAccessor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -72,14 +73,6 @@ public final class BodyRefinementSkillEvents {
 
 	private static void updateModifier(AttributeInstance attribute, ResourceLocation id, double amount,
 			AttributeModifier.Operation operation) {
-		if (attribute == null) return;
-		AttributeModifier current = attribute.getModifier(id);
-		if (current != null && (amount == 0.0D || current.amount() != amount)) {
-			attribute.removeModifier(id);
-			current = null;
-		}
-		if (amount != 0.0D && current == null) {
-			attribute.addTransientModifier(new AttributeModifier(id, amount, operation));
-		}
+		AttributeModifiers.sync(attribute, id, amount, operation, amount != 0.0D);
 	}
 }

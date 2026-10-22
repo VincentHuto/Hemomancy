@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.MorphlingIncubatorBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoTickers;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -130,21 +131,14 @@ public class MorphlingIncubatorBlock extends Block implements EntityBlock, IMult
 	}
 
 	@Nullable
-	@SuppressWarnings("unchecked")
-	public static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(
-			BlockEntityType<A> candidate, BlockEntityType<E> desired, BlockEntityTicker<? super E> ticker) {
-		return desired == candidate ? (BlockEntityTicker<A>) ticker : null;
-	}
-
-	@Nullable
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
 			BlockEntityType<T> type) {
 		if (level.isClientSide) {
-			return createTickerHelper(type, BlockEntityInit.morphling_incubator.get(),
+			return HemoTickers.create(type, BlockEntityInit.morphling_incubator.get(),
 					MorphlingIncubatorBlockEntity::clientTick);
 		} else {
-			return createTickerHelper(type, BlockEntityInit.morphling_incubator.get(),
+			return HemoTickers.create(type, BlockEntityInit.morphling_incubator.get(),
 					MorphlingIncubatorBlockEntity::serverTick);
 		}
 	}

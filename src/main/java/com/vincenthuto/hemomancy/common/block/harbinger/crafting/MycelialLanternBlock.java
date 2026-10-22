@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.MycelialLanternBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoTickers;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -177,18 +178,11 @@ public class MycelialLanternBlock extends Block implements EntityBlock, IMultiBl
     }
 
     @Nullable
-    @SuppressWarnings("unchecked")
-    public static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(
-            BlockEntityType<A> candidate, BlockEntityType<E> desired, BlockEntityTicker<? super E> ticker) {
-        return desired == candidate ? (BlockEntityTicker<A>) ticker : null;
-    }
-
-    @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide) {
-            return createTickerHelper(type, BlockEntityInit.mycelial_lantern.get(), MycelialLanternBlockEntity::clientTick);
+            return HemoTickers.create(type, BlockEntityInit.mycelial_lantern.get(), MycelialLanternBlockEntity::clientTick);
         }
-        return createTickerHelper(type, BlockEntityInit.mycelial_lantern.get(), MycelialLanternBlockEntity::serverTick);
+        return HemoTickers.create(type, BlockEntityInit.mycelial_lantern.get(), MycelialLanternBlockEntity::serverTick);
     }
 }

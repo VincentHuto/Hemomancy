@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.ClairaudiographBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoTickers;
 import net.minecraft.core.*;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.*;
@@ -36,7 +37,7 @@ public class ClairaudiographBlock extends Block implements EntityBlock {
     @Override protected VoxelShape getShape(BlockState s, BlockGetter l, BlockPos p, CollisionContext c) { return SHAPES.get(s.getValue(FACING)); }
     @Override public BlockEntity newBlockEntity(BlockPos p, BlockState s) { return new ClairaudiographBlockEntity(p,s); }
     @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level l, BlockState s, BlockEntityType<T> t) {
-        return t == BlockEntityInit.clairaudiograph.get() ? (world,pos,state,be) -> ClairaudiographBlockEntity.tick(world,pos,state,(ClairaudiographBlockEntity)be) : null;
+        return HemoTickers.create(t, BlockEntityInit.clairaudiograph.get(), ClairaudiographBlockEntity::tick);
     }
     private void open(Level l, BlockPos p, Player player) { if(player instanceof ServerPlayer sp && !player.isSpectator() && l.getBlockEntity(p) instanceof ClairaudiographBlockEntity be) sp.openMenu(be,p); }
     @Override protected InteractionResult useWithoutItem(BlockState s,Level l,BlockPos p,Player player,BlockHitResult hit) { open(l,p,player); return InteractionResult.sidedSuccess(l.isClientSide); }

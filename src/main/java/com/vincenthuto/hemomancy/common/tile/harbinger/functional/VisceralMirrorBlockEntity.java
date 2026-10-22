@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.OrganEchoItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.visceral.VisceralMirrorUpdatePacket;
+import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -167,7 +168,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		this.ritualTicks = 0;
 		this.phase = RitualPhase.CHANNELING;
 		this.selectedOrganIndex = -1;
-		markDirtyAndSync();
+		BlockEntitySync.markAndSync(this);
 
 		if (player instanceof ServerPlayer sp) {
 			sendProgressUpdate(sp, "The echo stirs within your reflection...");
@@ -186,7 +187,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 			if (player instanceof ServerPlayer sp) {
 				sendProgressUpdate(sp, "The ritual collapses.");
 			}
-			markDirtyAndSync();
+			BlockEntitySync.markAndSync(this);
 		}
 	}
 
@@ -207,7 +208,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		if (ritualTicks >= totalRitualTicks) {
 			phase = RitualPhase.EXTRACTING;
 			ritualTicks = 0;
-			markDirtyAndSync();
+			BlockEntitySync.markAndSync(this);
 			if (player instanceof ServerPlayer sp) {
 				sendProgressUpdate(sp, "The echo takes shape...");
 			}
@@ -251,7 +252,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 			targetOrgan = null;
 			ritualTicks = 0;
 			totalRitualTicks = 0;
-			markDirtyAndSync();
+			BlockEntitySync.markAndSync(this);
 			return;
 		}
 
@@ -271,7 +272,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 				+ " coalesced. Offer it to sanguine flames.";
 
 		phase = RitualPhase.COMPLETE;
-		markDirtyAndSync();
+		BlockEntitySync.markAndSync(this);
 
 		if (player instanceof ServerPlayer sp) {
 			sendProgressUpdate(sp, completionMsg);
@@ -324,13 +325,6 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		if (player instanceof ServerPlayer sp) {
 			PacketHandler.sendToPlayer(sp, new VisceralMirrorUpdatePacket(worldPosition, RitualPhase.IDLE,
 							0, 0, null, message));
-		}
-	}
-
-	private void markDirtyAndSync() {
-		setChanged();
-		if (level != null) {
-			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
 		}
 	}
 

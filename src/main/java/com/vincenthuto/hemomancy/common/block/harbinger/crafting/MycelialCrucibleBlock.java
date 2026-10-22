@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.MycelialCrucibleBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;
+import com.vincenthuto.hemomancy.common.util.HemoTickers;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 import net.minecraft.core.BlockPos;
@@ -214,21 +215,14 @@ public class MycelialCrucibleBlock extends Block implements EntityBlock, IMultiB
         return be != null && be.triggerEvent(id, param);
     }
 
-    @Nullable
-    @SuppressWarnings("unchecked")
-    public static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(
-            BlockEntityType<A> candidate, BlockEntityType<E> desired, BlockEntityTicker<? super E> ticker) {
-        return desired == candidate ? (BlockEntityTicker<A>) ticker : null;
-    }
-
     @Nullable @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
             BlockEntityType<T> type) {
         if (level.isClientSide) {
-            return createTickerHelper(type, BlockEntityInit.mycelial_crucible.get(),
+            return HemoTickers.create(type, BlockEntityInit.mycelial_crucible.get(),
                     MycelialCrucibleBlockEntity::clientTick);
         } else {
-            return createTickerHelper(type, BlockEntityInit.mycelial_crucible.get(),
+            return HemoTickers.create(type, BlockEntityInit.mycelial_crucible.get(),
                     MycelialCrucibleBlockEntity::serverTick);
         }
     }

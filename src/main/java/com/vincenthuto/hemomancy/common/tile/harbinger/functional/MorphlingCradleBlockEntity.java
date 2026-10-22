@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
+import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -123,7 +124,7 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 		ownerUUID = null;
 		state = State.DORMANT;
 		activationCooldown = 0;
-		setChangedAndSync();
+		BlockEntitySync.markAndSync(this);
 		return copy;
 	}
 
@@ -158,7 +159,7 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 		if (!player.getAbilities().instabuild) {
 			held.shrink(1);
 		}
-		setChangedAndSync();
+		BlockEntitySync.markAndSync(this);
 		return InteractionResult.CONSUME;
 	}
 
@@ -172,7 +173,7 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 		if (!player.addItem(removed)) {
 			player.drop(removed, false);
 		}
-		setChangedAndSync();
+		BlockEntitySync.markAndSync(this);
 		return InteractionResult.CONSUME;
 	}
 
@@ -195,7 +196,7 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 		if (!player.addItem(outgoing)) {
 			player.drop(outgoing, false);
 		}
-		setChangedAndSync();
+		BlockEntitySync.markAndSync(this);
 		return InteractionResult.CONSUME;
 	}
 
@@ -389,14 +390,7 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 	private void setState(State next) {
 		if (state != next) {
 			state = next;
-			setChangedAndSync();
-		}
-	}
-
-	private void setChangedAndSync() {
-		setChanged();
-		if (level != null) {
-			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+			BlockEntitySync.markAndSync(this);
 		}
 	}
 

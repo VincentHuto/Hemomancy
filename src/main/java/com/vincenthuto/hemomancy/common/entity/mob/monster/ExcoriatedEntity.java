@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.mob.monster;
 
 import com.vincenthuto.hemomancy.common.entity.projectile.RecallBarbEntity;
 import com.vincenthuto.hemomancy.common.init.*;
+import com.vincenthuto.hemomancy.common.util.AttributeModifiers;
 import com.vincenthuto.hemomancy.common.worldgen.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -71,11 +72,7 @@ public class ExcoriatedEntity extends Monster {
         boolean clot=dryTicks>=100;
         if(clot!=clotted()) {
             entityData.set(CLOTTED,clot);
-            var speed=getAttribute(Attributes.MOVEMENT_SPEED);
-            if(speed!=null) {
-                speed.removeModifier(CLOT_SPEED);
-                if(clot)speed.addTransientModifier(new AttributeModifier(CLOT_SPEED,-.5,AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-            }
+            AttributeModifiers.sync(getAttribute(Attributes.MOVEMENT_SPEED),CLOT_SPEED,-.5,AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL,clot);
         }
         if(dryTicks>=200 && tickCount%20==0)hurt(damageSources().dryOut(),1);
         if(getFluidTypeHeight(FluidInit.PHLEGETHONTIC_ICHOR_TYPE.get())>1.15)

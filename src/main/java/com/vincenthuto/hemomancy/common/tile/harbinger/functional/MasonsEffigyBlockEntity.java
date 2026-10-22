@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.menu.tile.functional.MasonsEffigyMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.rite.ScarBrazierRite;
+import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
@@ -88,7 +89,7 @@ public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider
 				selectedScarIds.add(id);
 			}
 		}
-		markDirtyAndSync();
+		BlockEntitySync.markAndSync(this);
 	}
 
 	public boolean hasPendingMotif() {
@@ -127,7 +128,7 @@ public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider
 		if (!player.getAbilities().instabuild) {
 			stack.shrink(1);
 		}
-		markDirtyAndSync();
+		BlockEntitySync.markAndSync(this);
 		return true;
 	}
 
@@ -195,7 +196,7 @@ public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider
 				player.displayClientMessage(Component.literal("Effigy blood charge: " + (int) pendingBlood + "/"
 						+ (int) getRequiredBlood()).withStyle(ChatFormatting.DARK_RED), true);
 			}
-			markDirtyAndSync();
+			BlockEntitySync.markAndSync(this);
 		}
 		return amount;
 	}
@@ -221,7 +222,7 @@ public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider
 						HarbingerAdvancementGranter.ADV_VEIN_MASON_FIRST_EFFIGY_PATTERN);
 			}
 		}
-		markDirtyAndSync();
+		BlockEntitySync.markAndSync(this);
 	}
 
 	public void updateStateFor(Player player) {
@@ -239,7 +240,7 @@ public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider
 		}
 		if (next != effigyState) {
 			effigyState = next;
-			markDirtyAndSync();
+			BlockEntitySync.markAndSync(this);
 		}
 	}
 
@@ -317,13 +318,6 @@ public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider
 				? ItemStack.parseOptional(registries, tag.getCompound(TAG_PENDING_MOTIF))
 				: ItemStack.EMPTY;
 		pendingBlood = tag.getDouble(TAG_PENDING_BLOOD);
-	}
-
-	private void markDirtyAndSync() {
-		setChanged();
-		if (level != null) {
-			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
-		}
 	}
 
 	@Override

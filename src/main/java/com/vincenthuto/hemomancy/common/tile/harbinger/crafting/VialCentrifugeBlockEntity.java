@@ -709,13 +709,6 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		}
 	}
 
-	public void sendUpdates() {
-		if (level == null) { setChanged(); return; }
-		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
-		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-		setChanged();
-	}
-
 	@Override
 	public void setItem(int pSlot, ItemStack pStack) {
 		if (riteLocked || isProcessing() && pSlot >= 2 && pSlot <= 9) return;

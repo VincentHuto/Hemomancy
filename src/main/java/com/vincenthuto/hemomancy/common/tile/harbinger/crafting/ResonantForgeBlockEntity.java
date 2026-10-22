@@ -17,6 +17,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.CylinderMedia;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.ResonantForgeMenu;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
+import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -126,7 +127,7 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
         if (forge.operation == Operation.NONE || forge.riteLocked) return;
         forge.progress++;
         if (forge.progress >= forge.totalTicks) forge.completeOperation();
-        else if ((forge.progress & 7) == 0) forge.sync();
+        else if ((forge.progress & 7) == 0) BlockEntitySync.markAndSync(forge);
     }
 
     public boolean startApply() {
@@ -190,7 +191,7 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
         totalTicks = ticks;
         reservedBlood = blood;
         status = Status.WORKING;
-        sync();
+        BlockEntitySync.markAndSync(this);
         return true;
     }
 
@@ -211,7 +212,7 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
             operation = Operation.NONE;
             progress = totalTicks = reservedBlood = 0;
             status = Status.IDLE;
-            sync();
+            BlockEntitySync.markAndSync(this);
         }
     }
 
@@ -289,31 +290,31 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
         operation = Operation.NONE;
         progress = totalTicks = reservedBlood = 0;
         status = nextStatus;
-        sync();
+        BlockEntitySync.markAndSync(this);
     }
 
     public boolean toggleMasterMode() {
         if (!idle() || !ResonantForgeRules.canUseMaster(tier())) return false;
         masterMode = !masterMode;
-        sync();
+        BlockEntitySync.markAndSync(this);
         return true;
     }
 
     public boolean setSelection(String value) {
         if (!idle() || (!value.isBlank() && !ResonantForgeRules.canSelectIndividual(tier()))) return false;
         selection = value == null ? "" : value;
-        sync();
+        BlockEntitySync.markAndSync(this);
         return true;
     }
 
     public boolean depositHammerIron(ItemStack held) {
         if (!hammerWorn() || hammerIron || !held.is(com.vincenthuto.hemomancy.common.init.BlockInit.hematic_iron_block.get().asItem())) return false;
-        held.shrink(1); hammerIron = true; sync(); return true;
+        held.shrink(1); hammerIron = true; BlockEntitySync.markAndSync(this); return true;
     }
 
     public boolean depositHammerAsh(ItemStack held) {
         if (!hammerWorn() || hammerAsh || !held.is(com.vincenthuto.hemomancy.common.init.BlockInit.smouldering_ash_trail.get().asItem())) return false;
-        held.shrink(1); hammerAsh = true; sync(); return true;
+        held.shrink(1); hammerAsh = true; BlockEntitySync.markAndSync(this); return true;
     }
 
     public double receiveHammerRepairBlood(double amount) {
@@ -325,13 +326,13 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
             hammerRepairBlood = 0;
             hammerUses = 0;
         }
-        sync();
+        BlockEntitySync.markAndSync(this);
         return accepted;
     }
 
     public boolean depositWheelAsh(ItemStack held) {
         if (!wheelWorn() || wheelAsh || !held.is(com.vincenthuto.hemomancy.common.init.BlockInit.befouling_ash_trail.get().asItem())) return false;
-        held.shrink(1); wheelAsh = true; sync(); return true;
+        held.shrink(1); wheelAsh = true; BlockEntitySync.markAndSync(this); return true;
     }
 
     public boolean redressWheel(Player player, net.minecraft.world.InteractionHand hand, ItemStack scalpel) {
@@ -340,7 +341,7 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
                 net.minecraft.world.entity.LivingEntity.getSlotForHand(hand));
         wheelAsh = false;
         wheelUses = 0;
-        sync();
+        BlockEntitySync.markAndSync(this);
         return true;
     }
 
@@ -374,14 +375,14 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
         return tag;
     }
 
-    public void setRiteLocked(boolean value) { riteLocked = value; sync(); }
+    public void setRiteLocked(boolean value) { riteLocked = value; BlockEntitySync.markAndSync(this); }
 
     @Override public UpgradeStation upgradeStation() { return UpgradeStation.RESONANT_FORGE; }
     @Override public boolean readyForUpgradeRite(ServerLevel level, Direction riteForward) {
         return idle() && getBlockState().getValue(ResonantForgeBlock.FACING) == riteForward
                 && ResonantForgeBlock.hasCompleteStructure(level, worldPosition, getBlockState());
     }
-    @Override public void markUpgradedBy(UUID riteId) { lastUpgradeRite = riteId; sync(); }
+    @Override public void markUpgradedBy(UUID riteId) { lastUpgradeRite = riteId; BlockEntitySync.markAndSync(this); }
     @Override public boolean completeUpgrade(int targetTier, UUID riteId) {
         return operation == Operation.NONE && UpgradeableStation.super.completeUpgrade(targetTier, riteId);
     }
@@ -389,7 +390,7 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
         return target != null && completeUpgrade(target.ordinal(), riteId);
     }
 
-    private boolean fail(Status failure) { status = failure; sync(); return false; }
+    private boolean fail(Status failure) { status = failure; BlockEntitySync.markAndSync(this); return false; }
     private static Status map(ResonantForgeTransfer.Failure failure) {
         return switch (failure) {
             case UNSUPPORTED_ITEM -> Status.UNSUPPORTED_ENCHANTMENT;
@@ -402,23 +403,18 @@ public class ResonantForgeBlockEntity extends BaseContainerBlockEntity implement
         };
     }
 
-    public void sync() {
-        setChanged();
-        if (level != null) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-    }
-
     @Override public void setItem(int slot, ItemStack stack) {
         if (!idle()) return;
         items.set(slot, stack);
-        sync();
+        BlockEntitySync.markAndSync(this);
     }
     @Override public ItemStack removeItem(int slot, int amount) {
         if (!idle()) return ItemStack.EMPTY;
-        ItemStack result = ContainerHelper.removeItem(items, slot, amount); sync(); return result;
+        ItemStack result = ContainerHelper.removeItem(items, slot, amount); BlockEntitySync.markAndSync(this); return result;
     }
     @Override public ItemStack removeItemNoUpdate(int slot) {
         if (!idle()) return ItemStack.EMPTY;
-        ItemStack result = ContainerHelper.takeItem(items, slot); sync(); return result;
+        ItemStack result = ContainerHelper.takeItem(items, slot); BlockEntitySync.markAndSync(this); return result;
     }
     @Override public int getContainerSize() { return SLOT_COUNT; }
     @Override public int[] getSlotsForFace(Direction side) { return NO_AUTOMATION_SLOTS; }

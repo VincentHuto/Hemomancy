@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog;
 import com.vincenthuto.hemomancy.common.station.UpgradeStation;
 import com.vincenthuto.hemomancy.common.station.UpgradeableStation;
 import com.vincenthuto.hemomancy.common.tile.IBloodReservoir;
+import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -85,7 +86,7 @@ public class SanguineCondenserBlockEntity extends BlockEntity implements IBloodR
     public void claimOwner(ServerPlayer player) {
         owner = player.getUUID();
         ownerCrystallization = SkillPointHelper.getSanguineCrystallizationLevel(player);
-        sync();
+        BlockEntitySync.markAndSync(this);
     }
 
     @Nullable
@@ -121,7 +122,7 @@ public class SanguineCondenserBlockEntity extends BlockEntity implements IBloodR
             contributors.add(player.getUUID());
         if (player.getUUID().equals(owner))
             ownerCrystallization = SkillPointHelper.getSanguineCrystallizationLevel(player);
-        sync();
+        BlockEntitySync.markAndSync(this);
         return accepted;
     }
 
@@ -141,7 +142,7 @@ public class SanguineCondenserBlockEntity extends BlockEntity implements IBloodR
         practice.recordUse(UpgradeStation.CONDENSER, StationUpgradeCatalog.CONDENSE);
         if (stage() >= 1) practice.recordUse(UpgradeStation.CONDENSER, StationUpgradeCatalog.CONDENSE_LATTICED);
         if (isContributor(player.getUUID())) FirstBloodcraftAssignment.recordFormation(player);
-        sync();
+        BlockEntitySync.markAndSync(this);
         revertIfSpent();
         return moved;
     }
@@ -216,18 +217,8 @@ public class SanguineCondenserBlockEntity extends BlockEntity implements IBloodR
             level.playSound(null, pos, SoundEvents.AMETHYST_CLUSTER_BREAK, SoundSource.BLOCKS, 0.7F, 0.8F);
             SanguineCondenserEffects.condensed((ServerLevel) level, condenser);
         }
-        condenser.sync();
+        BlockEntitySync.markAndSync(condenser);
         condenser.revertIfSpent();
-    }
-
-    public void sync() {
-        setChanged();
-        if (level != null) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
-    }
-
-    @Override
-    public void sendUpdates() {
-        sync();
     }
 
     // ── UpgradeableStation ─────────────────────────────────────────────────────
@@ -238,10 +229,10 @@ public class SanguineCondenserBlockEntity extends BlockEntity implements IBloodR
     @Override public UpgradeStation upgradeStation() { return UpgradeStation.CONDENSER; }
     @Override public UUID machineIdentity() { return machineIdentity; }
     @Override public boolean isRiteLocked() { return riteLocked; }
-    @Override public void setRiteLocked(boolean locked) { riteLocked = locked; sync(); }
+    @Override public void setRiteLocked(boolean locked) { riteLocked = locked; BlockEntitySync.markAndSync(this); }
     @Override public boolean readyForUpgradeRite(ServerLevel level, Direction riteForward) { return !riteLocked; }
     @Override public boolean wasUpgradedBy(UUID riteId) { return riteId != null && riteId.equals(lastUpgradeRite); }
-    @Override public void markUpgradedBy(UUID riteId) { lastUpgradeRite = riteId; sync(); }
+    @Override public void markUpgradedBy(UUID riteId) { lastUpgradeRite = riteId; BlockEntitySync.markAndSync(this); }
 
     @Override
     public CompoundTag upgradeSnapshot(HolderLookup.Provider registries) {
@@ -322,7 +313,7 @@ public class SanguineCondenserBlockEntity extends BlockEntity implements IBloodR
             if (taken <= 0) return ItemStack.EMPTY;
             if (!simulate) {
                 formations -= taken;
-                sync();
+                BlockEntitySync.markAndSync(SanguineCondenserBlockEntity.this);
                 revertIfSpent();
             }
             return new ItemStack(ItemInit.sanguine_formation.get(), taken);

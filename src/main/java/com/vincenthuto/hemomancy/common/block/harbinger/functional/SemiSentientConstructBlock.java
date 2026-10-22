@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServer
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.OpenSSCScreenPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.OpenSSCScreenPacket.DrudgeEntry;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.SemiSentientConstructBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoTickers;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -100,9 +101,8 @@ public class SemiSentientConstructBlock extends Block implements EntityBlock, Si
 
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-		return type == BlockEntityInit.semi_sentient_construct.get()
-				? (lvl, pos, blockState, be) -> ((SemiSentientConstructBlockEntity) be).tick()
-				: null;
+		return HemoTickers.create(type, BlockEntityInit.semi_sentient_construct.get(),
+				(lvl, pos, blockState, be) -> be.tick());
 	}
 
 	@Override

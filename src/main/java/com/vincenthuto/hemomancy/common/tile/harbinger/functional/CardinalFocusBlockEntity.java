@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorGeometry;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorVisualRules;
+import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -25,7 +26,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -88,7 +88,7 @@ public class CardinalFocusBlockEntity extends BlockEntity {
 		if (stack.isEmpty() || !medium.isEmpty()) return false;
 		medium = stack.copyWithCount(1);
 		if (player == null || !player.getAbilities().instabuild) stack.shrink(1);
-		markDirtyAndSync();
+		BlockEntitySync.markAndSync(this);
 		return true;
 	}
 
@@ -96,7 +96,7 @@ public class CardinalFocusBlockEntity extends BlockEntity {
 		if (medium.isEmpty()) return ItemStack.EMPTY;
 		ItemStack extracted = medium.copy();
 		medium = ItemStack.EMPTY;
-		markDirtyAndSync();
+		BlockEntitySync.markAndSync(this);
 		return extracted;
 	}
 
@@ -165,7 +165,7 @@ public class CardinalFocusBlockEntity extends BlockEntity {
 				level.playSound(null, pos, SoundInit.RITE_ANCHOR_BREAK.get(), SoundSource.BLOCKS, 0.45F, 0.7F);
 			}
 		}
-		focus.markDirtyAndSync();
+		BlockEntitySync.markAndSync(focus);
 	}
 
 	/** Accent particles for a formed floor; the renderer's membrane carries the effect. */
@@ -218,13 +218,6 @@ public class CardinalFocusBlockEntity extends BlockEntity {
 
 	private static ParticleColor color(int argb) {
 		return new ParticleColor((argb >> 16) & 0xFF, (argb >> 8) & 0xFF, argb & 0xFF);
-	}
-
-	public void markDirtyAndSync() {
-		setChanged();
-		if (level != null) {
-			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
-		}
 	}
 
 	/**

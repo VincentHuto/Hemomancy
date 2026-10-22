@@ -3,9 +3,9 @@ package com.vincenthuto.hemomancy.common.armor;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.BloodLustArmorItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.armor.BloodLustLineageRules;
+import com.vincenthuto.hemomancy.common.util.ArmorSets;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
@@ -15,11 +15,8 @@ public final class ArmorSetHelper {
 	}
 
 	public static boolean hasFullHematicIronSet(Player player) {
-		return player != null
-				&& wears(player, EquipmentSlot.HEAD, ItemInit.hematic_iron_helm.get())
-				&& wears(player, EquipmentSlot.CHEST, ItemInit.hematic_iron_chestplate.get())
-				&& wears(player, EquipmentSlot.LEGS, ItemInit.hematic_iron_leggings.get())
-				&& wears(player, EquipmentSlot.FEET, ItemInit.hematic_iron_boots.get());
+		return ArmorSets.isFullSet(player, ItemInit.hematic_iron_helm.get(), ItemInit.hematic_iron_chestplate.get(),
+				ItemInit.hematic_iron_leggings.get(), ItemInit.hematic_iron_boots.get());
 	}
 
 	public static boolean hasFullForkSet(Player player) {
@@ -27,40 +24,28 @@ public final class ArmorSetHelper {
 	}
 
 	public static boolean hasFullBarbedSet(Player player) {
-		return player != null
-				&& wears(player, EquipmentSlot.HEAD, ItemInit.barbed_helm.get())
-				&& wears(player, EquipmentSlot.CHEST, ItemInit.barbed_chestplate.get())
-				&& wears(player, EquipmentSlot.LEGS, ItemInit.barbed_leggings.get())
-				&& wears(player, EquipmentSlot.FEET, ItemInit.barbed_boots.get());
+		return ArmorSets.isFullSet(player, ItemInit.barbed_helm.get(), ItemInit.barbed_chestplate.get(),
+				ItemInit.barbed_leggings.get(), ItemInit.barbed_boots.get());
 	}
 
 	public static boolean hasFullChitiniteSet(Player player) {
-		return player != null
-				&& wears(player, EquipmentSlot.HEAD, ItemInit.chitinite_helm.get())
-				&& wears(player, EquipmentSlot.CHEST, ItemInit.chitinite_chestplate.get())
-				&& wears(player, EquipmentSlot.LEGS, ItemInit.chitinite_leggings.get())
-				&& wears(player, EquipmentSlot.FEET, ItemInit.chitinite_boots.get());
+		return ArmorSets.isFullSet(player, ItemInit.chitinite_helm.get(), ItemInit.chitinite_chestplate.get(),
+				ItemInit.chitinite_leggings.get(), ItemInit.chitinite_boots.get());
 	}
 
 	public static boolean hasFullPrismaticSet(Player player) {
-		return player != null
-				&& wears(player, EquipmentSlot.HEAD, ItemInit.prismatic_helm.get())
-				&& wears(player, EquipmentSlot.CHEST, ItemInit.prismatic_chestplate.get())
-				&& wears(player, EquipmentSlot.LEGS, ItemInit.prismatic_leggings.get())
-				&& wears(player, EquipmentSlot.FEET, ItemInit.prismatic_boots.get());
+		return ArmorSets.isFullSet(player, ItemInit.prismatic_helm.get(), ItemInit.prismatic_chestplate.get(),
+				ItemInit.prismatic_leggings.get(), ItemInit.prismatic_boots.get());
 	}
 
 	public static boolean hasFullBloodLustSet(Player player) {
-		return player != null
-				&& wearsAny(player, EquipmentSlot.HEAD,
+		return ArmorSets.isFullSet(player, List.of(
 						ItemInit.blood_lust_helm.get(),
 						ItemInit.blood_lust_helm_tengu.get(),
 						ItemInit.blood_lust_helm_grinning.get(),
 						ItemInit.blood_lust_helm_lodestone.get(),
-						ItemInit.blood_lust_helm_velorum.get())
-				&& wears(player, EquipmentSlot.CHEST, ItemInit.blood_lust_chest.get())
-				&& wears(player, EquipmentSlot.LEGS, ItemInit.blood_lust_legs.get())
-				&& wears(player, EquipmentSlot.FEET, ItemInit.blood_lust_boots.get());
+						ItemInit.blood_lust_helm_velorum.get()),
+				ItemInit.blood_lust_chest.get(), ItemInit.blood_lust_legs.get(), ItemInit.blood_lust_boots.get());
 	}
 
 	public static String bloodLustLineage(Player player) {
@@ -80,35 +65,23 @@ public final class ArmorSetHelper {
 	}
 
 	public static boolean hasFullSilentArchonSet(Player player) {
-		return player != null
-				&& wears(player, EquipmentSlot.HEAD, ItemInit.silent_archon_helm.get())
-				&& wears(player, EquipmentSlot.CHEST, ItemInit.silent_archon_chestplate.get())
-				&& wears(player, EquipmentSlot.LEGS, ItemInit.silent_archon_leggings.get())
-				&& wears(player, EquipmentSlot.FEET, ItemInit.silent_archon_boots.get());
+		return ArmorSets.isFullSet(player, ItemInit.silent_archon_helm.get(), ItemInit.silent_archon_chestplate.get(),
+				ItemInit.silent_archon_leggings.get(), ItemInit.silent_archon_boots.get());
 	}
 
 	public static boolean hasFullEdaciousBloodlust(Player player) {
-		return player != null
-				&& wears(player, EquipmentSlot.HEAD, ItemInit.edacious_blood_lust_helm.get())
-				&& wears(player, EquipmentSlot.CHEST, ItemInit.edacious_blood_lust_chest.get())
-				&& wears(player, EquipmentSlot.LEGS, ItemInit.edacious_blood_lust_legs.get())
-				&& wears(player, EquipmentSlot.FEET, ItemInit.edacious_blood_lust_boots.get());
+		return ArmorSets.isFullSet(player, ItemInit.edacious_blood_lust_helm.get(), ItemInit.edacious_blood_lust_chest.get(),
+				ItemInit.edacious_blood_lust_legs.get(), ItemInit.edacious_blood_lust_boots.get());
 	}
 
 	public static boolean hasFullSheolicBloodlust(Player player) {
-		return player != null
-				&& wears(player, EquipmentSlot.HEAD, ItemInit.sheolic_blood_lust_helm.get())
-				&& wears(player, EquipmentSlot.CHEST, ItemInit.sheolic_blood_lust_chest.get())
-				&& wears(player, EquipmentSlot.LEGS, ItemInit.sheolic_blood_lust_legs.get())
-				&& wears(player, EquipmentSlot.FEET, ItemInit.sheolic_blood_lust_boots.get());
+		return ArmorSets.isFullSet(player, ItemInit.sheolic_blood_lust_helm.get(), ItemInit.sheolic_blood_lust_chest.get(),
+				ItemInit.sheolic_blood_lust_legs.get(), ItemInit.sheolic_blood_lust_boots.get());
 	}
 
 	public static boolean hasFullPhantasmalBloodlust(Player player) {
-		return player != null
-				&& player.getItemBySlot(EquipmentSlot.HEAD).is(ItemInit.phantasmal_blood_lust_helm.get())
-				&& player.getItemBySlot(EquipmentSlot.CHEST).is(ItemInit.phantasmal_blood_lust_chest.get())
-				&& player.getItemBySlot(EquipmentSlot.LEGS).is(ItemInit.phantasmal_blood_lust_legs.get())
-				&& player.getItemBySlot(EquipmentSlot.FEET).is(ItemInit.phantasmal_blood_lust_boots.get());
+		return ArmorSets.isFullSet(player, ItemInit.phantasmal_blood_lust_helm.get(), ItemInit.phantasmal_blood_lust_chest.get(),
+				ItemInit.phantasmal_blood_lust_legs.get(), ItemInit.phantasmal_blood_lust_boots.get());
 	}
 
 	public static boolean isHematicIronArmorPiece(ItemStack stack) {
@@ -161,19 +134,5 @@ public final class ArmorSetHelper {
 				|| stack.is(ItemInit.phantasmal_blood_lust_chest.get())
 				|| stack.is(ItemInit.phantasmal_blood_lust_legs.get())
 				|| stack.is(ItemInit.phantasmal_blood_lust_boots.get());
-	}
-
-	private static boolean wears(Player player, EquipmentSlot slot, Item item) {
-		return player.getItemBySlot(slot).is(item);
-	}
-
-	private static boolean wearsAny(Player player, EquipmentSlot slot, Item... items) {
-		ItemStack worn = player.getItemBySlot(slot);
-		for (Item item : items) {
-			if (worn.is(item)) {
-				return true;
-			}
-		}
-		return false;
 	}
 }

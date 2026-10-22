@@ -5,12 +5,14 @@ import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodAbsorptionItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.BloodProjectionItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffItem;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.rite.brazier.BrazierRites;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.IronBrazierBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoTickers;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
@@ -191,16 +193,11 @@ public class BrazierBlock extends Block implements EntityBlock, SimpleWaterlogge
 		return new IronBrazierBlockEntity(arg0, arg1);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
 			BlockEntityType<T> type) {
-		if (level.isClientSide) return null;
-		return (BlockEntityTicker<T>) (lvl, pos, st, te) -> {
-			if (te instanceof IronBrazierBlockEntity brazierTE) {
-				IronBrazierBlockEntity.serverTick(lvl, pos, st, brazierTE);
-			}
-		};
+		return level.isClientSide ? null
+				: HemoTickers.create(type, BlockEntityInit.iron_brazier.get(), IronBrazierBlockEntity::serverTick);
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
+import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomFrame;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomGeometry;
@@ -31,9 +32,9 @@ import com.vincenthuto.hemomancy.common.tile.shared.IMultiBlockEntity;
 import com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog;
 import com.vincenthuto.hemomancy.common.station.UpgradeStation;
 import com.vincenthuto.hemomancy.common.station.UpgradeableStation;
+import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -235,7 +236,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		}
 		clearActiveRitual(false);
 		refreshRecipe();
-		markDirtyAndSync();
+		BlockEntitySync.markAndSync(this);
 		return true;
 	}
 
@@ -265,7 +266,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		msg(player, tend.name() + " thread: " + storedEnzymes.get(tend) + "/" + ENZYME_CAPACITY + " spans",
 				ChatFormatting.DARK_PURPLE, true);
 		refreshRecipe();
-		markDirtyAndSync();
+		BlockEntitySync.markAndSync(this);
 	}
 
 	private void placeMemory(@Nullable Player player, ItemStack stack, @Nullable InteractionHand hand) {
@@ -276,7 +277,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		resetEditableRitualProgress();
 		refreshRecipe();
 		provideMissingEnzymeFeedback(player);
-		markDirtyAndSync();
+		BlockEntitySync.markAndSync(this);
 	}
 
 	private void placeCatalyst(@Nullable Player player, ItemStack stack, @Nullable InteractionHand hand) {
@@ -287,7 +288,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		resetEditableRitualProgress();
 		refreshRecipe();
 		provideMissingEnzymeFeedback(player);
-		markDirtyAndSync();
+		BlockEntitySync.markAndSync(this);
 	}
 
 	private void consumeItem(@Nullable Player player, ItemStack stack, @Nullable InteractionHand hand) {
@@ -363,7 +364,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 			committedRecipe = new CompoundTag();
 			refreshRecipe();
 			msg(player, tierRequired(next.value()), ChatFormatting.YELLOW, true);
-			markDirtyAndSync();
+			BlockEntitySync.markAndSync(this);
 			return;
 		}
 		selectRecipe(player, next.id());
@@ -381,7 +382,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		committedRecipe = new CompoundTag();
 		refreshRecipe();
 		provideTendencyFeedback(player);
-		markDirtyAndSync();
+		BlockEntitySync.markAndSync(this);
 		return true;
 	}
 
@@ -521,7 +522,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		}
 		craftingPhase = PHASE_AWAITING_BLOOD;
 		msg(player, "The loom darkens, waiting for blood.", ChatFormatting.DARK_RED, true);
-		markDirtyAndSync();
+		BlockEntitySync.markAndSync(this);
 		return true;
 	}
 
@@ -583,7 +584,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 			msg(player, "Blood charge: " + (int) ritualBloodCharged + "/" + (int) curRecipe.getBloodCost(),
 					ChatFormatting.DARK_RED, true);
 		}
-		markDirtyAndSync();
+		BlockEntitySync.markAndSync(this);
 		return true;
 	}
 
@@ -594,7 +595,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		}
 		playSound(SoundEvents.BEACON_DEACTIVATE, 0.7f, 0.8f);
 		clearActiveRitual(true);
-		markDirtyAndSync();
+		BlockEntitySync.markAndSync(this);
 	}
 
 	private void beginWeave(Player player) {
@@ -615,7 +616,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		playSound(SoundEvents.END_PORTAL_FRAME_FILL, 0.8f, 0.55f);
 		if (level instanceof ServerLevel serverLevel)
 			PacketHandler.sendMonolithShatterBurst(Vec3.atCenterOf(worldPosition), 48.0D, serverLevel);
-		markDirtyAndSync();
+		BlockEntitySync.markAndSync(this);
 	}
 
 	private void tickWeave(ServerLevel server) {
@@ -632,7 +633,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		if (shouldPause != paused) {
 			paused = shouldPause;
 			if (paused) engram.release();
-			markDirtyAndSync();
+			BlockEntitySync.markAndSync(this);
 		}
 		if (paused) return;
 		if (!engram.live()) recallMigratedEngram(player);
@@ -648,7 +649,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 			storedEnzymes.put(tend, Math.min(ENZYME_CAPACITY, Math.max(storedEnzymes.getOrDefault(tend, 0), reference[tend.ordinal()])));
 		dressIntrusions(board, player.getUUID());
 		engram.start(board);
-		markDirtyAndSync();
+		BlockEntitySync.markAndSync(this);
 	}
 
 	/** A weave carried over from an older save, or whose weaver is unknown, is taken up by the nearest player. */
@@ -660,7 +661,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 			weaver = nearest.getUUID();
 			weaverRef = nearest;
 			weaverTheme = chamberThemeOf(weaver);
-			markDirtyAndSync();
+			BlockEntitySync.markAndSync(this);
 		}
 	}
 
@@ -736,7 +737,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 					.append(EnumBloodTendency.getRepEnzyme(EnumBloodTendency.values()[Math.max(0, colour)]).getDescription())
 					.append(" to the loom, or find a shorter way."), ChatFormatting.YELLOW, true);
 		}
-		if (result.changed() || engram.serial() != serial || press) markDirtyAndSync();
+		if (result.changed() || engram.serial() != serial || press) BlockEntitySync.markAndSync(this);
 		return result.step();
 	}
 
@@ -744,7 +745,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 	public void releaseEngram(Player player) {
 		if (weaver != null && weaver.equals(player.getUUID()) && engram.active() >= 0) {
 			engram.release();
-			markDirtyAndSync();
+			BlockEntitySync.markAndSync(this);
 		}
 	}
 
@@ -1007,7 +1008,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		if (completedRecipe == null || !catalystsMatch(completedRecipe)) {
 			msg(player, "The ritual unravels. Configuration changed.", ChatFormatting.RED, true);
 			clearActiveRitual(true);
-			markDirtyAndSync();
+			BlockEntitySync.markAndSync(this);
 			return;
 		}
 
@@ -1043,7 +1044,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 
 		clearActiveRitual(false);
 		refreshRecipe();
-		markDirtyAndSync();
+		BlockEntitySync.markAndSync(this);
 	}
 
 	private void spawnMemoryResult(ItemStack result) {
@@ -1187,12 +1188,6 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		}
 	}
 
-	private void markDirtyAndSync() {
-		if (level == null) return;
-		sendUpdates();
-		VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
-	}
-
 	/** A loom with its engram unfurled is where a Living Staff looks for one. */
 	private void trackEngram() {
 		if (level == null) return;
@@ -1220,7 +1215,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 	@Override public UpgradeStation upgradeStation() { return UpgradeStation.LOOM; }
 	@Override public UUID machineIdentity() { return machineIdentity; }
 	@Override public boolean isRiteLocked() { return riteLocked; }
-	@Override public void setRiteLocked(boolean locked) { riteLocked = locked; markDirtyAndSync(); }
+	@Override public void setRiteLocked(boolean locked) { riteLocked = locked; BlockEntitySync.markAndSync(this); }
 	@Override public boolean canReceiveBlood() { return !riteLocked; }
 	@Override public boolean canProvideBlood() { return !riteLocked; }
 
@@ -1248,7 +1243,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 	@Override
 	public boolean completeUpgrade(int targetTier, UUID riteId) {
 		boolean upgraded = !isWeaving() && UpgradeableStation.super.completeUpgrade(targetTier, riteId);
-		if (upgraded) markDirtyAndSync();
+		if (upgraded) BlockEntitySync.markAndSync(this);
 		return upgraded;
 	}
 
@@ -1256,14 +1251,6 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 		if (!riteLocked) return false;
 		msg(player, "A rite holds the loom still until it ends.", ChatFormatting.GRAY, true);
 		return true;
-	}
-
-	@Override
-	public void sendUpdates() {
-		if (level == null) return;
-		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
-		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-		setChanged();
 	}
 
 	@Override

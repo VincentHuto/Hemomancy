@@ -38,14 +38,6 @@ public class SemiSentientConstructBlockEntity extends BlockEntity implements IBl
         super(BlockEntityInit.semi_sentient_construct.get(), pos, state);
     }
 
-    @Override
-    public void sendUpdates() {
-        if (level == null) return;
-        level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
-        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-        setChanged();
-    }
-
     public void tick() {
         if (level == null || level.isClientSide) return;
 

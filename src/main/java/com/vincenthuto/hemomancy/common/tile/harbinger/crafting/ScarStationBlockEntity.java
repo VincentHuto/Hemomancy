@@ -5,8 +5,8 @@ import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.ScarStationMenu;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import com.vincenthuto.hemomancy.common.tile.shared.IMultiBlockEntity;
+import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
-import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -54,12 +54,12 @@ public class ScarStationBlockEntity extends BaseContainerBlockEntity implements 
 
 	public void clearScarList() {
 		scarsList = ScarRecipe.blank();
-		this.sendUpdates();
+		BlockEntitySync.markAndSync(this);
 	}
 
 	public void setScarList(byte[][] bs) {
 		scarsList = bs;
-		this.sendUpdates();
+		BlockEntitySync.markAndSync(this);
 
 	}
 
@@ -203,12 +203,6 @@ public class ScarStationBlockEntity extends BaseContainerBlockEntity implements 
 		if (pkt.getTag() != null) readScarList(pkt.getTag());
 	}
 
-	public void sendUpdates() {
-		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
-		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-		setChanged();
-	}
-
 	@Override
 	public ClientboundBlockEntityDataPacket getUpdatePacket() {
 		return ClientboundBlockEntityDataPacket.create(this);
@@ -278,8 +272,7 @@ public class ScarStationBlockEntity extends BaseContainerBlockEntity implements 
 		}
 		currentRecipe = null;
 		scarsList = ScarRecipe.blank();
-		sendUpdates();
-		VanillaPacketDispatcher.dispatchTEToNearbyPlayers(level, worldPosition);
+		BlockEntitySync.markAndSync(this);
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBloodInteractionRules;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierSpecialOfferingEffects;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -77,7 +78,7 @@ public class IronBrazierBlockEntity extends BlockEntity {
 		settledPhase = lit ? 1 : 0;
 		if (settled != pooledBlood) {
 			pooledBlood = settled;
-			markDirtyAndSync();
+			BlockEntitySync.markAndSync(this);
 		}
 	}
 
@@ -87,7 +88,7 @@ public class IronBrazierBlockEntity extends BlockEntity {
 
 	public void setPooledBlood(double pooledBlood) {
 		this.pooledBlood = Math.max(0.0D, Math.min(BrazierBlock.BLOOD_TO_LIGHT, pooledBlood));
-		markDirtyAndSync();
+		BlockEntitySync.markAndSync(this);
 	}
 
 	/**
@@ -116,14 +117,14 @@ public class IronBrazierBlockEntity extends BlockEntity {
 	public void showEscrowed(ItemStack stack, UUID riteId) {
 		escrowShown = stack.copyWithCount(1);
 		escrowRite = riteId;
-		markDirtyAndSync();
+		BlockEntitySync.markAndSync(this);
 	}
 
 	public void clearEscrowed() {
 		if (escrowShown.isEmpty()) return;
 		escrowShown = ItemStack.EMPTY;
 		escrowRite = null;
-		markDirtyAndSync();
+		BlockEntitySync.markAndSync(this);
 	}
 
 	public UUID escrowRite() {
@@ -147,7 +148,7 @@ public class IronBrazierBlockEntity extends BlockEntity {
 		if (player == null || !player.getAbilities().instabuild) {
 			stack.shrink(1);
 		}
-		markDirtyAndSync();
+		BlockEntitySync.markAndSync(this);
 		return true;
 	}
 
@@ -158,7 +159,7 @@ public class IronBrazierBlockEntity extends BlockEntity {
 		ItemStack extracted = offering.copy();
 		resetItemAbsorptionProgress();
 		offering = ItemStack.EMPTY;
-		markDirtyAndSync();
+		BlockEntitySync.markAndSync(this);
 		return extracted;
 	}
 
@@ -225,13 +226,6 @@ public class IronBrazierBlockEntity extends BlockEntity {
 		itemAbsorptionProgressTicks = 0;
 		itemAbsorptionLastTick = 0L;
 		setChanged();
-	}
-
-	public void markDirtyAndSync() {
-		setChanged();
-		if (level != null) {
-			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
-		}
 	}
 
 	@Override

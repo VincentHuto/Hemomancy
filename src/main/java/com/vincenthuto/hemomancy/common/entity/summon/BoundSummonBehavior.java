@@ -18,6 +18,7 @@ import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinition;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
 import com.vincenthuto.hemomancy.common.summon.RingmasterConductorRules;
+import com.vincenthuto.hemomancy.common.util.AttributeModifiers;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -26,7 +27,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -533,21 +533,10 @@ public final class BoundSummonBehavior {
 
 	private static void updateHighStrungSpeed(Mob mob, int level) {
 		double amount = PuppeteerSummonRules.highStrungSpeedMultiplier(level) - 1.0D;
-		updateModifier(mob.getAttribute(Attributes.MOVEMENT_SPEED), HIGH_STRUNG_SPEED, amount);
-		updateModifier(mob.getAttribute(Attributes.FLYING_SPEED), HIGH_STRUNG_FLIGHT, amount);
-	}
-
-	private static void updateModifier(AttributeInstance attribute, ResourceLocation id, double amount) {
-		if (attribute == null) return;
-		AttributeModifier current = attribute.getModifier(id);
-		if (current != null && (amount == 0.0D || current.amount() != amount)) {
-			attribute.removeModifier(id);
-			current = null;
-		}
-		if (amount > 0.0D && current == null) {
-			attribute.addTransientModifier(new AttributeModifier(id, amount,
-					AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-		}
+		AttributeModifiers.sync(mob.getAttribute(Attributes.MOVEMENT_SPEED), HIGH_STRUNG_SPEED, amount,
+				AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL, amount > 0.0D);
+		AttributeModifiers.sync(mob.getAttribute(Attributes.FLYING_SPEED), HIGH_STRUNG_FLIGHT, amount,
+				AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL, amount > 0.0D);
 	}
 
 	private static void unravel(Mob mob, ServerPlayer owner, String messageKey) {

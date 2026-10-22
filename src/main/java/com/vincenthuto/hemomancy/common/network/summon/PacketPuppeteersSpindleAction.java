@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.network.ServerboundGuards;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import com.vincenthuto.hemomancy.common.menu.PuppeteersSpindleMenu;
+import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -53,7 +54,7 @@ public record PacketPuppeteersSpindleAction(Action action, String summonName) im
 		}
 
 		menu.prepareSelection(player, msg.summonName);
-		menu.getSpindle().sendUpdates();
+		BlockEntitySync.markAndSync(menu.getSpindle());
 	}
 
 	@Override

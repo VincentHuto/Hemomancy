@@ -948,13 +948,6 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		}
 	}
 
-	@Override
-	public void sendUpdates() {
-		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
-		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-		setChanged();
-	}
-
 	// ---- Alembic Leak ----
 
 	/**

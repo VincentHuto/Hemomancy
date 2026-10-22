@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.block.harbinger.crafting;
 import com.vincenthuto.hemomancy.common.block.shared.WaterloggedBlockSupport;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.PuppeteersSpindleBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoTickers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -39,13 +40,6 @@ public class PuppeteersSpindleBlock extends Block implements EntityBlock, Simple
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	private static final VoxelShape SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 15.0D, 15.0D);
-
-	@Nullable
-	@SuppressWarnings("unchecked")
-	private static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(
-			BlockEntityType<A> candidate, BlockEntityType<E> desired, BlockEntityTicker<? super E> ticker) {
-		return desired == candidate ? (BlockEntityTicker<A>) ticker : null;
-	}
 
 	public PuppeteersSpindleBlock(Properties properties) {
 		super(properties);
@@ -122,7 +116,7 @@ public class PuppeteersSpindleBlock extends Block implements EntityBlock, Simple
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
 			BlockEntityType<T> type) {
 		return level.isClientSide ? null
-				: createTickerHelper(type, BlockEntityInit.puppeteers_spindle.get(),
+				: HemoTickers.create(type, BlockEntityInit.puppeteers_spindle.get(),
 						PuppeteersSpindleBlockEntity::serverTick);
 	}
 

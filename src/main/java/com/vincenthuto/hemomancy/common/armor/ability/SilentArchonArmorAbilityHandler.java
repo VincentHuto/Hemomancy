@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.common.armor.ability;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.armor.ArmorSetHelper;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.projectile.CombatWeaponCarrierProjectile;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.IDispellable;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.ITendencyAlignedWeapon;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingItem;
@@ -331,10 +331,7 @@ public final class SilentArchonArmorAbilityHandler {
 	}
 
 	public static boolean hasFullSilentArchonSet(Player player) {
-		return player.getItemBySlot(EquipmentSlot.HEAD).is(ItemInit.silent_archon_helm.get())
-				&& player.getItemBySlot(EquipmentSlot.CHEST).is(ItemInit.silent_archon_chestplate.get())
-				&& player.getItemBySlot(EquipmentSlot.LEGS).is(ItemInit.silent_archon_leggings.get())
-				&& player.getItemBySlot(EquipmentSlot.FEET).is(ItemInit.silent_archon_boots.get());
+		return ArmorSetHelper.hasFullSilentArchonSet(player);
 	}
 
 	private static boolean isAllowedSilentArchonOffense(ServerPlayer attacker, DamageSource source) {

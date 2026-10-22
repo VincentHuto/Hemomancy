@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
+import com.vincenthuto.hemomancy.common.util.AttributeModifiers;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -157,18 +158,7 @@ public class EmberfangMorphlingItem extends MorphlingItem {
 	}
 
 	private static void updateModifier(AttributeInstance attribute, ResourceLocation id, double amount) {
-		if (attribute == null) return;
-		AttributeModifier existing = attribute.getModifier(id);
-		if (existing != null && Math.abs(existing.amount() - amount) > 0.000001D) {
-			attribute.removeModifier(id);
-			existing = null;
-		}
-		if (amount > 0.0D && existing == null) {
-			attribute.addTransientModifier(new AttributeModifier(id, amount,
-					AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-		} else if (amount <= 0.0D && existing != null) {
-			attribute.removeModifier(id);
-		}
+		AttributeModifiers.sync(attribute, id, amount, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL, amount > 0.0D);
 	}
 
 	@Override

@@ -19,7 +19,7 @@ import java.util.List;
 
 public class SerpentineIdolBlockEntity extends BlockEntity {
 
-	public static <T> void tick(Level level, BlockPos pos, BlockState state, T blockEntity) {
+	public static void tick(Level level, BlockPos pos, BlockState state, SerpentineIdolBlockEntity blockEntity) {
 		if (level.getBlockEntity(pos)instanceof SerpentineIdolBlockEntity te) {
 
 			if (state.getValue(BlockSerpentineIdol.ACTIVE)) {

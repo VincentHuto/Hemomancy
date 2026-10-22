@@ -20,8 +20,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import com.vincenthuto.hemomancy.common.util.AttributeModifiers;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.EventPriority;
@@ -41,11 +40,6 @@ public class HarbingerEquipmentEntityEventHandler {
     public static void onGlideTick(PlayerTickEvent.Post event) {
         Player player = event.getEntity();
         if (!player.hasEffect(EffectInit.fungal_elytra)) return;
-
-        // Ensure FALL_FLYING attribute modifier is present so canFallFly() returns ALLOW
-        AttributeInstance attributeInstance = player.getAttribute(AttributeInit.getFlightAttribute());
-        if (attributeInstance != null && !attributeInstance.hasModifier(AttributeInit.getElytraModifier().id()))
-            attributeInstance.addTransientModifier(AttributeInit.getElytraModifier());
 
         // This runs AFTER vanilla updateFallFlying (which cancels fall-flying when no
         // elytra is equipped). Re-enable elytra gliding every tick while the player is
@@ -148,15 +142,8 @@ public class HarbingerEquipmentEntityEventHandler {
         Player player = event.getEntity();
         // tick equipment item handler (non-scar equipment)
         HemoCapabilityAccess.getEquipment(player).tick();
-        AttributeInstance attributeInstance = player.getAttribute(AttributeInit.getFlightAttribute());
-        if (attributeInstance != null) {
-            AttributeModifier elytraModifier = AttributeInit.getElytraModifier();
-            attributeInstance.removeModifier(elytraModifier.id());
-            ItemStack stack = player.getItemBySlot(EquipmentSlot.CHEST);
-
-            if (stack.canElytraFly(player) && !attributeInstance.hasModifier(elytraModifier.id())) {
-                attributeInstance.addTransientModifier(elytraModifier);
-            }
-        }
+        // Fungal Elytra needs the modifier too so canFallFly() returns ALLOW (onGlideTick does the gliding)
+        AttributeModifiers.sync(player.getAttribute(AttributeInit.getFlightAttribute()), AttributeInit.getElytraModifier(),
+                player.getItemBySlot(EquipmentSlot.CHEST).canElytraFly(player) || player.hasEffect(EffectInit.fungal_elytra));
     }
 }

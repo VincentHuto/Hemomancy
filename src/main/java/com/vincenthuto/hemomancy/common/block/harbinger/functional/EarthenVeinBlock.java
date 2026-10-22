@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.EarthenVeinBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoTickers;
 import com.vincenthuto.hemomancy.common.vein.EarthenVeinTravelManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -83,7 +84,7 @@ public class EarthenVeinBlock extends Block implements EntityBlock, SimpleWaterl
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
 			BlockEntityType<T> type) {
-		return type == BlockEntityInit.earthen_vein.get() ? EarthenVeinBlockEntity::tick : null;
+		return HemoTickers.create(type, BlockEntityInit.earthen_vein.get(), EarthenVeinBlockEntity::tick);
 	}
 
 	@Override

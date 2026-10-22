@@ -63,8 +63,6 @@ public class ScarStationBlock extends Block implements EntityBlock, IMultiBlock,
 			BlockEntity tile = worldIn.getBlockEntity(pos);
 
 			if (tile instanceof ScarStationBlockEntity te) {
-				te.sendUpdates();
-				VanillaPacketDispatcher.dispatchTEToNearbyPlayers(worldIn, pos);
 				if (te.numPlayersUsing < 2) {
 					VanillaPacketDispatcher.dispatchTEToNearbyPlayers(worldIn, pos);
 					((ServerPlayer) player).openMenu(te, pos);

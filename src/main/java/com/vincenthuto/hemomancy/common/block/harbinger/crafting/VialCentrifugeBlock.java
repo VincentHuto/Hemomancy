@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.VialRackItem;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.VialCentrifugeBlockEntity;
+import com.vincenthuto.hemomancy.common.util.HemoTickers;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -51,13 +52,6 @@ public class VialCentrifugeBlock extends Block implements EntityBlock, SimpleWat
 			Block.box(1, 2.25, 1, 15, 11, 15), Block.box(2.5, 11, 2.5, 13.5, 16, 13.5));
 
 
-	@Nullable
-	@SuppressWarnings("unchecked")
-	public static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(
-			BlockEntityType<A> candidate, BlockEntityType<E> desired, BlockEntityTicker<? super E> ticker) {
-		return desired == candidate ? (BlockEntityTicker<A>) ticker : null;
-	}
-
 	public VialCentrifugeBlock(Properties properties) {
 		super(properties);
 		this.registerDefaultState(this.stateDefinition.any().setValue(StationTierProperty.STAGE, 0).setValue(FACING, Direction.SOUTH).setValue(LIT, false).setValue(WATERLOGGED, false));
@@ -98,10 +92,10 @@ public class VialCentrifugeBlock extends Block implements EntityBlock, SimpleWat
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
 			BlockEntityType<T> type) {
 		if (level.isClientSide) {
-			return createTickerHelper(type, BlockEntityInit.vial_centrifuge.get(),
+			return HemoTickers.create(type, BlockEntityInit.vial_centrifuge.get(),
 					VialCentrifugeBlockEntity::clientTick);
 		} else {
-			return createTickerHelper(type, BlockEntityInit.vial_centrifuge.get(),
+			return HemoTickers.create(type, BlockEntityInit.vial_centrifuge.get(),
 					VialCentrifugeBlockEntity::serverTick);
 		}
 	}

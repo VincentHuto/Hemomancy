@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.EnzymeItem;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.EnzymaticScriptoriumMenu;
 import com.vincenthuto.hemomancy.common.station.UpgradeStation;
 import com.vincenthuto.hemomancy.common.station.UpgradeableStation;
+import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -63,7 +64,7 @@ public class EnzymaticScriptoriumBlockEntity extends BaseContainerBlockEntity
         if (riteLocked || index < 0 || index >= 8) return false;
         int stored = items.get(index).getCount();
         selected[index] = selected[index] >= stored || selectedCount() >= 3 ? 0 : selected[index] + 1;
-        sync();
+        BlockEntitySync.markAndSync(this);
         return true;
     }
 
@@ -72,7 +73,7 @@ public class EnzymaticScriptoriumBlockEntity extends BaseContainerBlockEntity
             items.get(i).shrink(selected[i]);
             selected[i] = 0;
         }
-        sync();
+        BlockEntitySync.markAndSync(this);
     }
 
     public void consumeEnzymes(int[] costs) {
@@ -80,14 +81,14 @@ public class EnzymaticScriptoriumBlockEntity extends BaseContainerBlockEntity
             items.get(i).shrink(costs[i]);
             selected[i] = 0;
         }
-        sync();
+        BlockEntitySync.markAndSync(this);
     }
 
     @Override public boolean isRiteLocked() { return riteLocked; }
     // A held Scriptorium's blood is part of its upgrade snapshot, so it must not move mid-rite.
     @Override public boolean canReceiveBlood() { return !riteLocked; }
     @Override public boolean canProvideBlood() { return !riteLocked; }
-    @Override public void setRiteLocked(boolean value) { riteLocked = value; sync(); }
+    @Override public void setRiteLocked(boolean value) { riteLocked = value; BlockEntitySync.markAndSync(this); }
 
     @Override public UpgradeStation upgradeStation() { return UpgradeStation.SCRIPTORIUM; }
     @Override public UUID machineIdentity() { return machineIdentity; }
@@ -103,12 +104,7 @@ public class EnzymaticScriptoriumBlockEntity extends BaseContainerBlockEntity
     }
 
     @Override public boolean wasUpgradedBy(UUID riteId) { return riteId != null && riteId.equals(lastUpgradeRite); }
-    @Override public void markUpgradedBy(UUID riteId) { lastUpgradeRite = riteId; sync(); }
-
-    public void sync() {
-        setChanged();
-        if (level != null) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-    }
+    @Override public void markUpgradedBy(UUID riteId) { lastUpgradeRite = riteId; BlockEntitySync.markAndSync(this); }
 
     @Override public void setItem(int slot, ItemStack stack) {
         if (riteLocked) return;
@@ -119,14 +115,14 @@ public class EnzymaticScriptoriumBlockEntity extends BaseContainerBlockEntity
             selected[slot] = Math.min(selected[slot], stack.getCount());
         }
         items.set(slot, stack);
-        sync();
+        BlockEntitySync.markAndSync(this);
     }
 
     @Override public ItemStack removeItem(int slot, int amount) {
         if (riteLocked) return ItemStack.EMPTY;
         ItemStack result = ContainerHelper.removeItem(items, slot, amount);
         if (slot < 8) selected[slot] = Math.min(selected[slot], items.get(slot).getCount());
-        sync();
+        BlockEntitySync.markAndSync(this);
         return result;
     }
 
@@ -134,7 +130,7 @@ public class EnzymaticScriptoriumBlockEntity extends BaseContainerBlockEntity
         if (riteLocked) return ItemStack.EMPTY;
         ItemStack result = ContainerHelper.takeItem(items, slot);
         if (slot < 8) selected[slot] = 0;
-        sync();
+        BlockEntitySync.markAndSync(this);
         return result;
     }
 

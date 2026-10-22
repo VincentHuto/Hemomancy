@@ -585,10 +585,4 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 		return vol != null ? vol.getMaxBloodVolume() : 0;
 	}
 
-	public void sendUpdates() {
-		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
-		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-		setChanged();
-	}
-
 }

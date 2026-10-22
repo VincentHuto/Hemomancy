@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.block.harbinger.crafting.ScarStationBloc
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ScarStationBlockEntity;
+import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
 import net.minecraft.core.BlockPos;
@@ -73,7 +74,7 @@ public final class ScarStationClientReview {
                     te.setItem(2, new ItemStack(ItemInit.scar_heart.get()));
                     te.setItem(3, new ItemStack(ItemInit.hematic_iron_knapper.get()));
                     te.setItem(4, new ItemStack(ItemInit.scar_pattern.get()));
-                    te.sendUpdates();
+                    BlockEntitySync.markAndSync(te);
                 }
                 Hemomancy.LOGGER.info("SCAR_STATION_REVIEW placed {} stations at {}", placements.length, row);
             });

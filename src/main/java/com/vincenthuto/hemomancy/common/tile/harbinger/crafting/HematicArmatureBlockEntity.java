@@ -723,11 +723,4 @@ public class HematicArmatureBlockEntity extends BaseContainerBlockEntity impleme
 		}
 	}
 
-	@Override
-	public void sendUpdates() {
-		if (level == null) return;
-		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
-		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-		setChanged();
-	}
 }

@@ -16,6 +16,8 @@ import com.vincenthuto.hemomancy.common.item.harbinger.armor.MarrowCrownArmorIte
 import com.vincenthuto.hemomancy.common.item.shared.armor.EnumModArmorTiers;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules.ForkFamily;
+import com.vincenthuto.hemomancy.common.util.ArmorSets;
+import com.vincenthuto.hemomancy.common.util.AttributeModifiers;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -23,12 +25,10 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -79,26 +79,6 @@ public class ArmorSetBonusHandler {
 	private static final float VENOUS_STRIDER_SABATONS_DAMAGE_REDUCTION = 0.15F;
 	private static final double COVENANT_MANTLE_BLOOD_COST = 10.0D;
 
-	/**
-	 * Count how many armor pieces of a given material the player is wearing.
-	 */
-	private static int countArmorPieces(Player player, EnumModArmorTiers tier) {
-		int count = 0;
-		for (ItemStack stack : player.getArmorSlots()) {
-			if (stack.getItem() instanceof ArmorItem armor && armor.getMaterial().value() == tier.holder().value()) {
-				count++;
-			}
-		}
-		return count;
-	}
-
-	/**
-	 * Check if the player is wearing a full set (4 pieces) of a given material.
-	 */
-	private static boolean hasFullSet(Player player, EnumModArmorTiers tier) {
-		return countArmorPieces(player, tier) >= 4;
-	}
-
 	//  Equipment Change: Attribute Modifiers 
 
 	/**
@@ -130,7 +110,7 @@ public class ArmorSetBonusHandler {
 		if (player.level().isClientSide()) return;
 
 		// Hematic Iron set bonus: passive blood regen (every HEMATIC_IRON_REGEN_INTERVAL ticks)
-		if (player.tickCount % HEMATIC_IRON_REGEN_INTERVAL == 0 && hasFullSet(player, EnumModArmorTiers.HEMATIC_IRON)) {
+		if (player.tickCount % HEMATIC_IRON_REGEN_INTERVAL == 0 && ArmorSets.isFullSet(player, EnumModArmorTiers.HEMATIC_IRON.holder())) {
 			var volume = HemoCapabilityAccess.getBloodVolume(player);
 			if (player instanceof ServerPlayer serverPlayer) {
 				BloodFlowLedger.applyCirculationIncome(serverPlayer, volume, "hematic_iron_set",
@@ -150,7 +130,7 @@ public class ArmorSetBonusHandler {
 		}
 
 		// Unstained set bonus: remove blood-related debuffs (check every UNSTAINED_CHECK_INTERVAL ticks)
-		if (player.tickCount % UNSTAINED_CHECK_INTERVAL == 0 && hasFullSet(player, EnumModArmorTiers.UNSTAINED)) {
+		if (player.tickCount % UNSTAINED_CHECK_INTERVAL == 0 && ArmorSets.isFullSet(player, EnumModArmorTiers.UNSTAINED.holder())) {
 			if (player.hasEffect(EffectInit.blood_loss)) {
 				player.removeEffect(EffectInit.blood_loss);
 			}
@@ -179,7 +159,7 @@ public class ArmorSetBonusHandler {
 		if (player.level().isClientSide()) return;
 		if (!event.getSource().isDirect()) return;
 
-		if (hasFullSet(player, EnumModArmorTiers.BLOODLUST)) {
+		if (ArmorSets.isFullSet(player, EnumModArmorTiers.BLOODLUST.holder())) {
 			float healAmount = event.getNewDamage() * BLOOD_LUST_LIFESTEAL_FRACTION;
 			if (healAmount > 0) {
 				float healthBefore = player.getHealth();
@@ -219,12 +199,12 @@ public class ArmorSetBonusHandler {
 		String bloodLustLineage = ArmorSetHelper.bloodLustLineage(player);
 		BloodLustLineageRules.InheritedTrait inherited = BloodLustLineageRules.inheritedTrait(bloodLustLineage);
 
-		float projectileReduction = hasFullSet(player, EnumModArmorTiers.CHITINITE)
+		float projectileReduction = ArmorSets.isFullSet(player, EnumModArmorTiers.CHITINITE.holder())
 				? CHITINITE_PROJECTILE_REDUCTION : inherited.projectileReduction();
 		if (projectileReduction > 0) {
 			if (!event.getSource().isDirect() || event.getSource().is(DamageTypeTags.IS_PROJECTILE)) {
 				event.setNewDamage(event.getNewDamage() * (1.0f - projectileReduction));
-				if (hasFullSet(player, EnumModArmorTiers.CHITINITE) && player instanceof ServerPlayer serverPlayer) {
+				if (ArmorSets.isFullSet(player, EnumModArmorTiers.CHITINITE.holder()) && player instanceof ServerPlayer serverPlayer) {
 					ArtificerAssignments.onForkDemonstrated(serverPlayer, ForkFamily.CHITINITE);
 				}
 			}
@@ -236,7 +216,7 @@ public class ArmorSetBonusHandler {
 		}
 		if (attacker == null) return;
 
-		boolean fullBarbed = hasFullSet(player, EnumModArmorTiers.BARBED);
+		boolean fullBarbed = ArmorSets.isFullSet(player, EnumModArmorTiers.BARBED.holder());
 		float thornsDamage = fullBarbed ? BARBED_THORNS_DAMAGE : inherited.thornsDamage();
 		if (thornsDamage > 0) {
 			// Thorns damage
@@ -254,7 +234,7 @@ public class ArmorSetBonusHandler {
 			}
 		}
 
-		boolean fullPrismatic = hasFullSet(player, EnumModArmorTiers.PRISMATIC);
+		boolean fullPrismatic = ArmorSets.isFullSet(player, EnumModArmorTiers.PRISMATIC.holder());
 		if (fullPrismatic || inherited.speedTicks() > 0) {
 			triggerPrismaticFlash(player, attacker,
 					fullPrismatic ? PRISMATIC_FLASH_SPEED_TICKS : inherited.speedTicks(),
@@ -283,7 +263,7 @@ public class ArmorSetBonusHandler {
 	}
 
 	private static void syncSilentArchonLastRite(Player player) {
-		if (hasFullSet(player, EnumModArmorTiers.SILENT_ARCHON)) {
+		if (ArmorSets.isFullSet(player, EnumModArmorTiers.SILENT_ARCHON.holder())) {
 			LastRiteHelper.arm(player, LastRiteHelper.SILENT_REFUSAL_ID);
 		} else {
 			LastRiteHelper.clearIfArmed(player, LastRiteHelper.SILENT_REFUSAL_ID);
@@ -295,7 +275,7 @@ public class ArmorSetBonusHandler {
 		if (morphCap.hasMorphling()) {
 			LastRiteHelper.armForMorphling(player, morphCap.getEquippedMorphling());
 		}
-		if (!LastRiteHelper.hasArmedSource(player) && hasFullSet(player, EnumModArmorTiers.SILENT_ARCHON)) {
+		if (!LastRiteHelper.hasArmedSource(player) && ArmorSets.isFullSet(player, EnumModArmorTiers.SILENT_ARCHON.holder())) {
 			LastRiteHelper.arm(player, LastRiteHelper.SILENT_REFUSAL_ID);
 		}
 	}
@@ -321,7 +301,7 @@ public class ArmorSetBonusHandler {
 		IInitiatoryDegree degree = HemoCapabilityAccess.getInitiatoryDegree(player);
 		if (degree == null) return false;
 		boolean canRefuse = SilentArchonArmorRules.canRefuseDeath(
-				hasFullSet(player, EnumModArmorTiers.SILENT_ARCHON),
+				ArmorSets.isFullSet(player, EnumModArmorTiers.SILENT_ARCHON.holder()),
 				degree.getDegreeNumber(),
 				degree.getArchonPath(),
 				volume.getBloodVolume(),
@@ -407,50 +387,25 @@ public class ArmorSetBonusHandler {
 	//  Chitinite: Armor Toughness Modifier 
 
 	private static void updateChitiniteToughness(Player player) {
-		AttributeInstance toughness = player.getAttribute(Attributes.ARMOR_TOUGHNESS);
-		if (toughness == null) return;
-
-		double bonus = hasFullSet(player, EnumModArmorTiers.CHITINITE)
+		double bonus = ArmorSets.isFullSet(player, EnumModArmorTiers.CHITINITE.holder())
 				? CHITINITE_TOUGHNESS_BONUS
 				: BloodLustLineageRules.inheritedTrait(ArmorSetHelper.bloodLustLineage(player)).toughness();
-		AttributeModifier existing = toughness.getModifier(CHITINITE_TOUGHNESS_ID);
-
-		if (existing != null && (bonus <= 0 || existing.amount() != bonus)) {
-			toughness.removeModifier(CHITINITE_TOUGHNESS_ID);
-			existing = null;
-		}
-		if (bonus > 0 && existing == null) {
-			// Pre-clamped against the triad toughness budget; morphling and
-			// scar layers join this accounting on the dev-machine pass.
-			toughness.addTransientModifier(new AttributeModifier(
-					CHITINITE_TOUGHNESS_ID,
-					TriadAttributeCaps.clampToughness(0.0D, bonus),
-					AttributeModifier.Operation.ADD_VALUE));
-		}
+		// Pre-clamped against the triad toughness budget; morphling and
+		// scar layers join this accounting on the dev-machine pass.
+		AttributeModifiers.sync(player.getAttribute(Attributes.ARMOR_TOUGHNESS), CHITINITE_TOUGHNESS_ID,
+				TriadAttributeCaps.clampToughness(0.0D, bonus), AttributeModifier.Operation.ADD_VALUE, bonus > 0);
 	}
 
 	private static void updatePelagicMotion(Player player) {
-		AttributeInstance swimSpeed = player.getAttribute(NeoForgeMod.SWIM_SPEED);
-		if (swimSpeed == null) return;
 		double amount = BodyIdiomArmorRules.pelagicSwimMultiplier(
 				ArmorSetHelper.hasFullPrismaticSet(player), ArmorSetHelper.hasFullPhantasmalBloodlust(player)) - 1.0D;
-		AttributeModifier current = swimSpeed.getModifier(PELAGIC_MOTION_ID);
-		if (current != null && (amount == 0.0D || current.amount() != amount)) {
-			swimSpeed.removeModifier(PELAGIC_MOTION_ID);
-			current = null;
-		}
-		if (amount > 0.0D && current == null) {
-			swimSpeed.addTransientModifier(new AttributeModifier(PELAGIC_MOTION_ID, amount,
-					AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-		}
+		AttributeModifiers.sync(player.getAttribute(NeoForgeMod.SWIM_SPEED), PELAGIC_MOTION_ID, amount,
+				AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL, amount > 0.0D);
 	}
 
 	//  Marrow Crown: Damage Bonus 
 
 	private static void updateMarrowCrownDamage(Player player) {
-		AttributeInstance damage = player.getAttribute(Attributes.ATTACK_DAMAGE);
-		if (damage == null) return;
-
 		ItemStack helmet = player.getItemBySlot(EquipmentSlot.HEAD);
 		boolean hasCrown = helmet.getItem() instanceof MarrowCrownArmorItem;
 
@@ -460,17 +415,8 @@ public class ArmorSetBonusHandler {
 			hasBlood = vol.isActive() && vol.getBloodVolume() > vol.getMaxBloodVolume() * MARROW_CROWN_BLOOD_THRESHOLD;
 		}
 
-		boolean shouldHaveBonus = hasCrown && hasBlood;
-		AttributeModifier existing = damage.getModifier(MARROW_CROWN_DAMAGE_ID);
-
-		if (shouldHaveBonus && existing == null) {
-			damage.addTransientModifier(new AttributeModifier(
-					MARROW_CROWN_DAMAGE_ID,
-					MARROW_CROWN_DAMAGE_BONUS,
-					AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-		} else if (!shouldHaveBonus && existing != null) {
-			damage.removeModifier(MARROW_CROWN_DAMAGE_ID);
-		}
+		AttributeModifiers.sync(player.getAttribute(Attributes.ATTACK_DAMAGE), MARROW_CROWN_DAMAGE_ID,
+				MARROW_CROWN_DAMAGE_BONUS, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL, hasCrown && hasBlood);
 	}
 
 	//  Utility 

@@ -10,13 +10,13 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.Enu
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.SaprovittaVestigiumItem;
+import com.vincenthuto.hemomancy.common.util.AttributeModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
@@ -130,24 +130,10 @@ public class ScarsEntityEventHandler {
 				continue;
 			}
 
-			AttributeInstance attr = player.getAttribute(bonus.attribute());
-			if (attr == null) {
-				continue;
-			}
-
 			boolean hasSynergy = counts.getOrDefault(tendency, 0) >= 2;
-			boolean hasModifier = attr.getModifier(bonus.modifierId()) != null;
 			double scaledAmount = bonus.amount() * SkillPointHelper.getScarAffinityMultiplier(player);
-
-			if (hasSynergy) {
-				if (hasModifier) {
-					attr.removeModifier(bonus.modifierId());
-				}
-				attr.addPermanentModifier(new AttributeModifier(
-						bonus.modifierId(), scaledAmount, bonus.operation()));
-			} else if (hasModifier) {
-				attr.removeModifier(bonus.modifierId());
-			}
+			AttributeModifiers.syncPermanent(player.getAttribute(bonus.attribute()), bonus.modifierId(), scaledAmount,
+					bonus.operation(), hasSynergy);
 		}
 	}
 
