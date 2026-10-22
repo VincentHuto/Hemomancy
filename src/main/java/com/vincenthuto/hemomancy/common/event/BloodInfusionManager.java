@@ -19,7 +19,6 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.*;
 
@@ -139,7 +138,7 @@ public final class BloodInfusionManager {
 
 	private static void sync(ServerLevel level, BlockPos pos, Vec3 origin, float progress, boolean clear,
 			int visibleTicks) {
-		PacketDistributor.sendToPlayersNear(level, null, pos.getX() + 0.5D, pos.getY() + 0.5D,
+		PacketHandler.sendNear(level, pos.getX() + 0.5D, pos.getY() + 0.5D,
 				pos.getZ() + 0.5D, SYNC_RANGE,
 				PacketBloodStructureFeed.infusion(pos, origin, progress, visibleTicks, clear));
 	}

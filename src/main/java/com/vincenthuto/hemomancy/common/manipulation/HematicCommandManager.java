@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.damage.SchoolState;
 import com.vincenthuto.hemomancy.common.damage.SchoolStates;
@@ -419,12 +420,12 @@ public final class HematicCommandManager {
             var tether = new com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket(
                     ManipulationVisuals.Form.MARIONETTE_TETHER, mob.getId(), mob.position(), caster.getEyePosition(),
                     mob.getBbHeight(), ticks, caster.getId());
-            net.neoforged.neoforge.network.PacketDistributor.sendToPlayersTrackingEntityAndSelf(mob, tether);
+            PacketHandler.sendTracking(mob, tether);
             Order order = ORDERS.get(mob.getUUID());
             if (order != null) {
                 Entity enemy = order.enemy == null ? null : mob.level() instanceof ServerLevel level ? level.getEntity(order.enemy) : null;
                 Vec3 destination = enemy == null ? order.ground : enemy.position();
-                if (destination != null) net.neoforged.neoforge.network.PacketDistributor.sendToPlayersTrackingEntityAndSelf(mob,
+                if (destination != null) PacketHandler.sendTracking(mob,
                         new com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket(
                                 ManipulationVisuals.Form.MARIONETTE_ORDER, mob.getId(), mob.position(), destination,
                                 1, ticks, enemy == null ? -1 : enemy.getId()));
@@ -433,7 +434,7 @@ public final class HematicCommandManager {
         }
         // Rebuke and Impressment are Ductilis nerve commands; Sovereign Instinct's redirection keeps the Animus crown.
         boolean nerve = state.mode == Mode.REBUKED || state.mode == Mode.IMPRESSED;
-        net.neoforged.neoforge.network.PacketDistributor.sendToPlayersNear(caster.serverLevel(),null,
+        PacketHandler.sendNear(caster.serverLevel(),
                 mob.getX(),mob.getY(),mob.getZ(),64,
                 new com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket(
                         nerve ? ManipulationVisuals.Form.NERVE_COMMAND : ManipulationVisuals.Form.COMMAND,mob.getId(),mob.position(),

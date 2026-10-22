@@ -18,7 +18,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.*;
 
@@ -142,7 +141,7 @@ public final class BloodStructureFeedManager {
 		float startRadius = (float) Math.max(bounds.getXsize(), bounds.getZsize()) / 2.0f + 2.0f;
 
 		sendFeedSync(level, positions, 1.0f, false, COMPLETION_VISIBLE_TICKS);
-		PacketDistributor.sendToAllPlayers(new PacketBloodCraftRing(ringCenter, startRadius,
+		PacketHandler.sendToAll(new PacketBloodCraftRing(ringCenter, startRadius,
 				centerY, CRAFT_ANIMATION_TICKS));
 
 		PendingBloodCraftManager.schedule(new PendingBloodCraftManager.PendingCraft(
@@ -164,7 +163,7 @@ public final class BloodStructureFeedManager {
 			return;
 		}
 		AABB bounds = boundsFor(positions);
-		PacketDistributor.sendToPlayersNear(level, null, bounds.getCenter().x, bounds.getCenter().y, bounds.getCenter().z,
+		PacketHandler.sendNear(level, bounds.getCenter().x, bounds.getCenter().y, bounds.getCenter().z,
 				FEED_SYNC_RANGE, new PacketBloodStructureFeed(positions, progress, visibleTicks, clear));
 	}
 

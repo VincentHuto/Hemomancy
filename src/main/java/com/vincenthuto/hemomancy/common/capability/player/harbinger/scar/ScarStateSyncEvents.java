@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.scars.PacketSyncScarsState;
@@ -8,7 +9,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class ScarStateSyncEvents {
@@ -53,11 +53,11 @@ public final class ScarStateSyncEvents {
 
 	public static void syncToClient(ServerPlayer source) {
 		HemoCapabilityAccess.getScarState(source).ifPresent(scars ->
-				PacketDistributor.sendToPlayersTrackingEntityAndSelf(source, new PacketSyncScarsState(source, scars)));
+				PacketHandler.sendTracking(source, new PacketSyncScarsState(source, scars)));
 	}
 
 	public static void syncToPlayer(ServerPlayer source, ServerPlayer receiver) {
 		HemoCapabilityAccess.getScarState(source).ifPresent(scars ->
-				PacketDistributor.sendToPlayer(receiver, new PacketSyncScarsState(source, scars)));
+				PacketHandler.sendToPlayer(receiver, new PacketSyncScarsState(source, scars)));
 	}
 }

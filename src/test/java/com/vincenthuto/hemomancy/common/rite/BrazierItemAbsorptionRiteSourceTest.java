@@ -25,7 +25,7 @@ final class BrazierItemAbsorptionRiteSourceTest {
 		assertContains(shared, "SpawnBrazierItemAbsorptionParticlesPacket");
 		assertContains(shared, "particleStack.setCount(1)");
 		assertContains(shared, "if (shouldEmitItemStream(progress))");
-		assertContains(shared, "PacketDistributor.sendToPlayersNear");
+		assertContains(shared, "PacketHandler.sendNear");
 		// Grafts, scars and memories are brazier rites driven through one shared lifecycle.
 		assertContains(graft, "implements BrazierRite<");
 		assertContains(scar, "implements BrazierRite<");

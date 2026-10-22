@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.network.PacketBloodVialInjection;
@@ -13,7 +14,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -50,7 +50,7 @@ public final class BloodVialInjectionAnimation {
     }
 
     private static void send(Player player, Session session, PacketBloodVialInjection.Phase phase, ItemStack vial) {
-        PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new PacketBloodVialInjection(player.getId(),
+        PacketHandler.sendTracking(player, new PacketBloodVialInjection(player.getId(),
                 session.startedAt, phase, session.hand, session.right, vial, session.tendency));
     }
 

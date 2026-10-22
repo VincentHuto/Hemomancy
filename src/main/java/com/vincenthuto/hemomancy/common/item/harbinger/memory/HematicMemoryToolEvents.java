@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.memory;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
@@ -24,7 +25,6 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -72,7 +72,7 @@ public final class HematicMemoryToolEvents {
     }
 
     public static void syncLastDeathMemory(ServerPlayer player) {
-        PacketDistributor.sendToPlayer(player,
+        PacketHandler.sendToPlayer(player,
                 new PacketSyncLastDeathMemory(LastDeathMemorySnapshot.from(HemoCapabilityAccess.getLastDeathMemory(player))));
     }
 
@@ -198,7 +198,7 @@ public final class HematicMemoryToolEvents {
         double y = (from.getY() + to.getY()) * 0.5D + 0.5D;
         double z = (from.getZ() + to.getZ()) * 0.5D + 0.5D;
         double radius = Math.min(VeinSpiderRules.MAX_RANGE_BLOCKS + 32.0D, Math.sqrt(from.distSqr(to)) * 0.5D + 48.0D);
-        PacketDistributor.sendToPlayersNear(level, null, x, y, z, radius,
+        PacketHandler.sendNear(level, x, y, z, radius,
                 new PacketSpawnVeinSpiderCourier(from, to, moved.copyWithCount(1), level.random.nextInt()));
     }
 

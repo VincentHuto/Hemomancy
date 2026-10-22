@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationAccentPacket;
 import net.minecraft.server.level.ServerLevel;
@@ -7,7 +8,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 public final class ManipulationParticles {
     private ManipulationParticles() {}
@@ -56,6 +56,6 @@ public final class ManipulationParticles {
 
     private static void send(ServerLevel level,ManipulationAccentPacket packet) {
         Vec3 at=packet.position();
-        PacketDistributor.sendToPlayersNear(level,null,at.x,at.y,at.z,48,packet);
+        PacketHandler.sendNear(level,at.x,at.y,at.z,48,packet);
     }
 }

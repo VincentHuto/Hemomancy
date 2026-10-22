@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketCardinalRiteStaffPlanting;
@@ -20,7 +21,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +41,7 @@ public final class TerrestrialSpeculumPlantingManager {
 				player.level().dimension(), origin.immutable(), facing, hand, startedAt, false));
 		player.getCooldowns().addCooldown(ItemInit.terrestrial_speculum.get(),
 				CardinalRitePlantingSequence.DURATION_TICKS);
-		PacketDistributor.sendToPlayersTrackingEntityAndSelf(player,
+		PacketHandler.sendTracking(player,
 				new PacketCardinalRiteStaffPlanting(player.getId(), origin, player.getItemInHand(hand)));
 		return true;
 	}
@@ -91,7 +91,7 @@ public final class TerrestrialSpeculumPlantingManager {
 
 	private static void cancel(ServerPlayer player) {
 		ACTIVE.remove(player.getUUID());
-		PacketDistributor.sendToPlayersTrackingEntityAndSelf(player,
+		PacketHandler.sendTracking(player,
 				PacketCardinalRiteStaffPlanting.stop(player.getId()));
 	}
 

@@ -72,7 +72,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -1853,7 +1852,7 @@ public class HemoCommand {
 			p.sendSystemMessage(Component.translatable("hemomancy.blood_moon.start")
 					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
 		}
-		PacketDistributor.sendToAllPlayers(new PacketSyncBloodMoon(true));
+		PacketHandler.sendToAll(new PacketSyncBloodMoon(true));
 		source.sendSuccess(() -> Component.literal("Blood Moon summoned.")
 				.withStyle(ChatFormatting.DARK_RED), true);
 		return 1;
@@ -1871,7 +1870,7 @@ public class HemoCommand {
 			p.sendSystemMessage(Component.translatable("hemomancy.blood_moon.end")
 					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 		}
-		PacketDistributor.sendToAllPlayers(new PacketSyncBloodMoon(false));
+		PacketHandler.sendToAll(new PacketSyncBloodMoon(false));
 		source.sendSuccess(() -> Component.literal("Blood Moon cancelled.")
 				.withStyle(ChatFormatting.GRAY), true);
 		return 1;

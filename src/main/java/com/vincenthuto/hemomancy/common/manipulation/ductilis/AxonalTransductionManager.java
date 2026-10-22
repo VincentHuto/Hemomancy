@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.ductilis;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -33,7 +34,6 @@ import net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -264,7 +264,7 @@ public final class AxonalTransductionManager {
         player.getPersistentData().remove(EXIT);
     }
     private static void sync(ServerPlayer player, long token, boolean active) {
-        PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new AxonalStatePacket(
+        PacketHandler.sendTracking(player, new AxonalStatePacket(
                 player.level().dimension().location(), player.getId(), token, active, player.position()));
     }
     @SubscribeEvent public static void incomingDamage(LivingIncomingDamageEvent event) {
@@ -301,7 +301,7 @@ public final class AxonalTransductionManager {
     @SubscribeEvent public static void onTracking(PlayerEvent.StartTracking event) {
         if (event.getEntity() instanceof ServerPlayer observer && event.getTarget() instanceof ServerPlayer traveler) {
             Session session = SESSIONS.get(traveler.getUUID());
-            if (session != null) PacketDistributor.sendToPlayer(observer, new AxonalStatePacket(
+            if (session != null) PacketHandler.sendToPlayer(observer, new AxonalStatePacket(
                     traveler.level().dimension().location(), traveler.getId(), session.token, true, traveler.position()));
         }
     }

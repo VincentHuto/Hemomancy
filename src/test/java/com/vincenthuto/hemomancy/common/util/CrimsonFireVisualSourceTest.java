@@ -49,7 +49,7 @@ public final class CrimsonFireVisualSourceTest {
 		assertContains("packet helper exists", packetHandler,
 				"sendCrimsonFireVisual(LivingEntity target, int durationTicks)");
 		assertContains("packet tracks entity and self", packetHandler,
-				"PacketDistributor.sendToPlayersTrackingEntityAndSelf(target");
+				"sendTracking(target");
 		assertContains("packet writes entity id", packet, "buffer.writeVarInt(packet.entityId())");
 		assertContains("packet writes duration", packet, "buffer.writeVarInt(packet.durationTicks())");
 		assertContains("packet updates client state", packet,

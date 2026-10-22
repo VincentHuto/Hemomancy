@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite.zone;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.client.render.world.zone.RiteSpaceClientData;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
@@ -16,7 +17,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,6 +94,6 @@ public final class RiteSpaces {
 			if (spaces.size() >= RiteSpaceSyncPacket.MAX_SPACES) break;
 			spaces.add(RiteSpaceSyncPacket.Space.of(space));
 		}
-		PacketDistributor.sendToPlayer(player, new RiteSpaceSyncPacket(spaces));
+		PacketHandler.sendToPlayer(player, new RiteSpaceSyncPacket(spaces));
 	}
 }

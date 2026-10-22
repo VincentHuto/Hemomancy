@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.projectile;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.damage.HemoDamageTypes;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingFlailRules;
@@ -27,7 +28,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.util.BlockSnapshot;
 import net.neoforged.neoforge.event.EventHooks;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 public final class LivingFlailImpactEffects {
 	private static final ParticleColor ICE_BLUE = new ParticleColor(95, 205, 255);
@@ -58,7 +58,7 @@ public final class LivingFlailImpactEffects {
 		}
 		mutateTerrain(level, owner, center, charge, impactScale);
 		emitImpact(level, center, charge, impactScale, projectile.getUUID().getLeastSignificantBits());
-		PacketDistributor.sendToPlayersNear(level, null, center.x, center.y, center.z, 24.0D,
+		PacketHandler.sendNear(level, center.x, center.y, center.z, 24.0D,
 				new LivingFlailImpactPacket(charge * impactScale, projectile.getId()));
 		level.playSound(null, BlockPos.containing(center), SoundEvents.GLASS_BREAK, SoundSource.PLAYERS,
 				0.8F + charge * 1.4F, 0.95F - charge * 0.35F);

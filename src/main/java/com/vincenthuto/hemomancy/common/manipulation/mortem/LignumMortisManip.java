@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.mortem;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.VeinMinerHelper;
@@ -30,7 +31,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -215,13 +215,13 @@ public class LignumMortisManip extends BloodManipulation {
 				? new PacketBloodStructureFeed(List.of(), BAND_PROGRESS[band], 1, true, channelId)
 				: new PacketBloodStructureFeed(positions, BAND_PROGRESS[band], FEED_VISIBLE_TICKS, false, channelId,
 						BloodFeedStyle.PLAIN, Vec3.ZERO);
-		PacketDistributor.sendToPlayersNear(level, null, session.origin.getX() + 0.5D,
+		PacketHandler.sendNear(level, session.origin.getX() + 0.5D,
 				session.origin.getY() + 0.5D, session.origin.getZ() + 0.5D, FEED_SYNC_RANGE, packet);
 	}
 
 	private static void clearFeed(ServerLevel level, Player player, BlockPos origin) {
 		for (int band = 0; band < BAND_PROGRESS.length; band++) {
-			PacketDistributor.sendToPlayersNear(level, null, origin.getX() + 0.5D, origin.getY() + 0.5D,
+			PacketHandler.sendNear(level, origin.getX() + 0.5D, origin.getY() + 0.5D,
 					origin.getZ() + 0.5D,
 					FEED_SYNC_RANGE, new PacketBloodStructureFeed(List.of(), 0.0F, 1, true,
 							channelId(player, band)));

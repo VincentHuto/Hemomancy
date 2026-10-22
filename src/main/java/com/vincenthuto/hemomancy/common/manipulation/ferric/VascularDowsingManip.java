@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.ferric;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -67,7 +68,7 @@ public class VascularDowsingManip extends BloodManipulation {
 		}
 
 		for (BlockPos ore : found.stream().sorted(java.util.Comparator.comparingDouble(origin::distSqr)).limit(24).toList()) {
-            net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(sPlayer, new com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket(
+            PacketHandler.sendToPlayer(sPlayer, new com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket(
                     com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form.ORE, -1,
                     net.minecraft.world.phys.Vec3.atCenterOf(ore), net.minecraft.world.phys.Vec3.atCenterOf(ore), .5F, 25, 1));
 			DustParticleOptions colour = oreColour(world.getBlockState(ore));

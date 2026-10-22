@@ -31,7 +31,6 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -158,7 +157,7 @@ public class HarbingerEquipmentEntityEventHandler {
 
     public static void syncLayerVisibilityToClient(ServerPlayer player) {
         HemoCapabilityAccess.getEquipment(player).ifPresent(equipment -> {
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player,
+            PacketHandler.sendTracking(player,
                     new SyncEquipmentLayerVisibilityPacket(player.getId(),
                             equipment.isRenderLayerVisible(IScars.FUNGAL_SLOT),
                             equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.JAR_SLOT_INDEX),
@@ -169,7 +168,7 @@ public class HarbingerEquipmentEntityEventHandler {
 
     public static void syncLayerVisibilityToPlayer(ServerPlayer source, ServerPlayer receiver) {
         HemoCapabilityAccess.getEquipment(source).ifPresent(equipment -> {
-            PacketDistributor.sendToPlayer(receiver,
+            PacketHandler.sendToPlayer(receiver,
                     new SyncEquipmentLayerVisibilityPacket(source.getId(),
                             equipment.isRenderLayerVisible(IScars.FUNGAL_SLOT),
                             equipment.isRenderLayerVisible(com.vincenthuto.hemomancy.common.menu.HarbingerEquipmentMenu.JAR_SLOT_INDEX),

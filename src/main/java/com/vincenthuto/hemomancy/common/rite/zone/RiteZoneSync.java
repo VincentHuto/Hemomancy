@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite.zone;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.rite.harbinger.SanguineDominionSavedData;
 import com.vincenthuto.hemomancy.common.rite.harbinger.SanguineFervorSavedData;
 import net.minecraft.resources.ResourceKey;
@@ -7,7 +8,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,7 @@ public final class RiteZoneSync {
 	}
 
 	public static void sendTo(ServerPlayer player, ResourceKey<Level> dimension) {
-		PacketDistributor.sendToPlayer(player, new RiteZoneSyncPacket(visibleZones(player.server, dimension)));
+		PacketHandler.sendToPlayer(player, new RiteZoneSyncPacket(visibleZones(player.server, dimension)));
 	}
 
 	static List<RiteZoneSyncPacket.Zone> visibleZones(MinecraftServer server, ResourceKey<Level> dimension) {

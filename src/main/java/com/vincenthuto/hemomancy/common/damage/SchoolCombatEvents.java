@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.damage;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -23,7 +24,6 @@ import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.UUID;
@@ -282,13 +282,13 @@ public final class SchoolCombatEvents {
             }
         }
         if (SchoolStates.has(target, SchoolState.DISRUPTED)) SchoolStates.interrupt(target);
-        if (data.takeDirty()) PacketDistributor.sendToPlayersTrackingEntityAndSelf(target,
+        if (data.takeDirty()) PacketHandler.sendTracking(target,
                 new SyncSchoolCombatS2CPacket(target.getId(), data.serializeNBT(target.registryAccess())));
     }
 
     @SubscribeEvent public static void tracking(PlayerEvent.StartTracking event) {
         if (event.getEntity() instanceof ServerPlayer player && event.getTarget() instanceof LivingEntity target)
-            PacketDistributor.sendToPlayer(player, new SyncSchoolCombatS2CPacket(target.getId(),
+            PacketHandler.sendToPlayer(player, new SyncSchoolCombatS2CPacket(target.getId(),
                     SchoolStates.data(target).serializeNBT(target.registryAccess())));
     }
 

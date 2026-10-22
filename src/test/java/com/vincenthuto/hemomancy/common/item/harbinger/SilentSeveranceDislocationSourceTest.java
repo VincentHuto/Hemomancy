@@ -76,7 +76,7 @@ public final class SilentSeveranceDislocationSourceTest {
 		assertContains("visual sync helper exists", packetHandler,
 				"sendMonolithicDislocationVisual(LivingEntity target, int durationTicks)");
 		assertContains("visual sync tracks entity and self", packetHandler,
-				"PacketDistributor.sendToPlayersTrackingEntityAndSelf(target");
+				"sendTracking(target");
 		assertContains("visual packet type", visualPacket,
 				"SyncMonolithicDislocationVisualS2CPacket");
 		assertContains("visual packet writes entity id", visualPacket,

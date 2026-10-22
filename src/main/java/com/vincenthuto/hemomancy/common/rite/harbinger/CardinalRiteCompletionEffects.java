@@ -92,7 +92,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 import java.util.HashMap;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -1065,7 +1064,7 @@ public final class CardinalRiteCompletionEffects {
 			p.sendSystemMessage(Component.translatable("hemomancy.blood_moon.start")
 					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
 		}
-		PacketDistributor.sendToAllPlayers(new PacketSyncBloodMoon(true));
+		PacketHandler.sendToAll(new PacketSyncBloodMoon(true));
 		caster.displayClientMessage(
 				Component.literal("The ritual tears the veil the Blood Moon rises!")
 						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),

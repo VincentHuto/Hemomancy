@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
@@ -38,7 +39,6 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -450,14 +450,14 @@ public class EquippedMorphlingEvents {
 	public static void syncToClient(ServerPlayer player) {
 		persistEquippedMorphling(player);
 		HemoCapabilityAccess.getEquippedMorphling(player).ifPresent(cap -> {
-			PacketDistributor.sendToPlayersTrackingEntityAndSelf(player,
+			PacketHandler.sendTracking(player,
 					new SyncEquippedMorphlingPacket(player.getUUID(), cap.getEquippedMorphling().copy()));
 		});
 	}
 
 	public static void syncToPlayer(ServerPlayer source, ServerPlayer receiver) {
 		HemoCapabilityAccess.getEquippedMorphling(source).ifPresent(cap -> {
-			PacketDistributor.sendToPlayer(receiver,
+			PacketHandler.sendToPlayer(receiver,
 					new SyncEquippedMorphlingPacket(source.getUUID(), cap.getEquippedMorphling().copy()));
 		});
 	}

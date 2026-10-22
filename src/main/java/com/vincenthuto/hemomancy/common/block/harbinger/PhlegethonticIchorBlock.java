@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.harbinger;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.worldgen.*;
@@ -8,7 +9,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import com.vincenthuto.hemomancy.common.network.PhlegethonticCurrentPacket;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -53,7 +53,7 @@ public class PhlegethonticIchorBlock extends LiquidBlock {
         if(addition.lengthSqr()==0)return;
         // Player physics run on the client; a full velocity update also overwrites jumping and flight.
         if(entity instanceof ServerPlayer player) {
-            PacketDistributor.sendToPlayer(player,new PhlegethonticCurrentPacket(addition.x,addition.z));
+            PacketHandler.sendToPlayer(player,new PhlegethonticCurrentPacket(addition.x,addition.z));
             return;
         }
         if(velocity.horizontalDistanceSqr()<.09) {

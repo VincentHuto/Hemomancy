@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation.animation;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
@@ -18,7 +19,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -106,7 +106,7 @@ public final class CastingAnimationManager {
     }
     private static void publish(ServerPlayer player,CastingAnimationPacket packet) {
         ACTIVE.put(player.getUUID(),packet);
-        PacketDistributor.sendToPlayersTrackingEntityAndSelf(player,packet);
+        PacketHandler.sendTracking(player,packet);
     }
     private static void finish(ServerPlayer player,CastingAnimationPacket old,CastPhase phase) {
         long now=player.level().getGameTime();
@@ -139,7 +139,7 @@ public final class CastingAnimationManager {
         if(event.getEntity() instanceof ServerPlayer observer && event.getTarget() instanceof ServerPlayer caster) {
             var packet=current(caster);
             // Late observers enter the loop at its age, never replay an already released cast.
-            if(packet!=null && packet.phase().sustained())PacketDistributor.sendToPlayer(observer,packet);
+            if(packet!=null && packet.phase().sustained())PacketHandler.sendToPlayer(observer,packet);
         }
     }
     private static void clear(PlayerEvent event) {

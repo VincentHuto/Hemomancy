@@ -35,7 +35,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 
@@ -188,7 +187,7 @@ public class DiscoveryInscriptionBlock extends Block implements EntityBlock, Sim
 		int pathLevel = levelFor(player, definition.path());
 		boolean requiresAbocipherLiteracy = requiresAbocipherLiteracy(definition);
 		if (!definition.isReadable(pathLevel)) {
-			PacketDistributor.sendToPlayer(player, new OpenInscriptionPacket(
+			PacketHandler.sendToPlayer(player, new OpenInscriptionPacket(
 					obscuredTitle(definition), definition.obscuredText(), false, null, requiresAbocipherLiteracy));
 			return;
 		}

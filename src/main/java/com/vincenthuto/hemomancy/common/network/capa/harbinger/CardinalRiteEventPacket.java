@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteEventKind;
 import net.minecraft.core.BlockPos;
@@ -10,7 +11,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public record CardinalRiteEventPacket(BlockPos center, CardinalRiteEventKind kin
 		Vec3 origin = Vec3.atCenterOf(center);
 		double radiusSqr = BROADCAST_RADIUS * BROADCAST_RADIUS;
 		for (var player : level.players()) {
-			if (player.distanceToSqr(origin) <= radiusSqr) PacketDistributor.sendToPlayer(player, this);
+			if (player.distanceToSqr(origin) <= radiusSqr) PacketHandler.sendToPlayer(player, this);
 		}
 	}
 

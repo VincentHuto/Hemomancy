@@ -22,7 +22,7 @@ import com.vincenthuto.hemomancy.common.network.dialogue.DialogueTopicOpenedPack
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenPendingWhisperPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.ClosePendingWhisperPacket;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers;
+import com.vincenthuto.hemomancy.common.network.dialogue.DialogueSender;
 import com.vincenthuto.hemomancy.common.network.dialogue.PacketSyncNpcProgressionMarkers;
 import com.vincenthuto.hemomancy.common.network.discovery.OpenInscriptionPacket;
 import com.vincenthuto.hemomancy.common.network.mission.OpenBookOfObservancesPacket;
@@ -39,6 +39,7 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.IEventBus;
@@ -366,49 +367,46 @@ public class PacketHandler {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    //  Convenience send helpers
-    //  NeoForge 1.21: PacketDistributor now has static send methods.
-    //  New:  PacketDistributor.sendToPlayer(player, msg)
+    //  Per-effect helpers: domain shortcuts over the facade below.
     // ─────────────────────────────────────────────────────────────────────────
 
     public static void sendAvatarHitParticles(Vec3 pos, ParticleColor color, double radius,
             ServerLevel level) {
-        // NeoForge 1.21: sendToPlayersNear replaces PacketDistributor.NEAR.with(TargetPoint)
-        PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius,
+        sendNear(level, pos.x, pos.y, pos.z, radius,
                 new SpawnAvatarParticlesPacket(pos, color));
     }
 
     public static void sendBloodFlaskParticles(Vec3 pos, ParticleColor color, double radius,
             ServerLevel level) {
-        PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius,
+        sendNear(level, pos.x, pos.y, pos.z, radius,
                 new SpawnFlaskParticlesPacket(pos, color));
     }
 
     public static void sendClawParticles(Vec3 pos, ParticleColor color, double radius,
             ServerLevel level) {
-        PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius,
+        sendNear(level, pos.x, pos.y, pos.z, radius,
                 new SpawnBloodClawParticlesPacket(pos, color));
     }
 
     public static void sendClawSlash(Vec3 pos, Vec3 forward, ParticleColor color, boolean ambush, float scale,
             double radius, ServerLevel level) {
-        PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius,
+        sendNear(level, pos.x, pos.y, pos.z, radius,
                 new SpawnClawSlashPacket(pos, forward, color, ambush, scale, level.random.nextInt()));
     }
 
     public static void sendLivingToolBreakParticles(Vec3 pos, ParticleColor color, double radius,
             ServerLevel level) {
-        PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius,
+        sendNear(level, pos.x, pos.y, pos.z, radius,
                 new SpawnLivingToolParticlesPacket(pos, color));
     }
 
     public static void sendMonolithShatterBurst(Vec3 pos, double radius, ServerLevel level) {
-        PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius,
+        sendNear(level, pos.x, pos.y, pos.z, radius,
                 new SpawnMonolithShatterBurstPacket(pos));
     }
 
     public static void sendMonolithShardPulse(Vec3 pos, double radius, ServerLevel level) {
-        PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius,
+        sendNear(level, pos.x, pos.y, pos.z, radius,
                 new SpawnMonolithShatterBurstPacket(pos, true));
     }
 
@@ -417,48 +415,53 @@ public class PacketHandler {
     }
 
     public static void sendSanguineOmenEffect(Vec3 pos, double radius, ServerLevel level, int durationTicks, float peakAlpha, boolean screenOverlay) {
-        PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius,
+        sendNear(level, pos.x, pos.y, pos.z, radius,
                 new SpawnSanguineOmenEffectPacket(pos, durationTicks, peakAlpha, level.random.nextInt(), screenOverlay));
     }
 
     public static void sendPomePulse(Vec3 pos, double radius, ServerLevel level) {
-        PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius,
+        sendNear(level, pos.x, pos.y, pos.z, radius,
                 new SpawnPomePulsePacket(pos));
     }
 
     public static void sendBlackVeil(Vec3 pos, double radius, ServerLevel level, int durationTicks) {
-        PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, radius + 48.0,
+        sendNear(level, pos.x, pos.y, pos.z, radius + 48.0,
                 new SpawnBlackVeilPacket(pos, (float) radius, durationTicks, level.random.nextInt()));
     }
 
     public static void sendMonolithicDislocationVisual(LivingEntity target, int durationTicks) {
-        PacketDistributor.sendToPlayersTrackingEntityAndSelf(target,
+        sendTracking(target,
                 new SyncMonolithicDislocationVisualS2CPacket(target.getId(), durationTicks));
     }
 
     public static void sendCrimsonFireVisual(LivingEntity target, int durationTicks) {
-        PacketDistributor.sendToPlayersTrackingEntityAndSelf(target,
+        sendTracking(target,
                 new SyncCrimsonFireVisualS2CPacket(target.getId(), durationTicks));
     }
 
     public static void sendBloodBindingTendril(LivingEntity caster, LivingEntity target,
             int durationTicks, long seed) {
         if (!(caster.level() instanceof ServerLevel level)) return;
-        PacketDistributor.sendToPlayersNear(level, null, caster.getX(), caster.getY(), caster.getZ(), 64.0D,
+        sendNear(level, caster.getX(), caster.getY(), caster.getZ(), 64.0D,
                 new SyncBloodBindingTendrilS2CPacket(caster.getId(), target.getId(), durationTicks, seed));
     }
 
     public static void syncPlayerAnimation(LivingEntity target, PlayerAnimationKind kind,
             boolean active, net.minecraft.world.InteractionHand hand) {
-        PacketDistributor.sendToPlayersTrackingEntityAndSelf(target,
+        sendTracking(target,
                 new PacketSyncPlayerAnimation(target.getId(), kind, active, hand));
     }
 
     public static void sendClientElytraPacket() {
-        PacketDistributor.sendToServer(new CPacketFlight());
+        sendToServer(new CPacketFlight());
     }
 
-    /** Helper – send a payload to a specific player (server → client). */
+    // ─────────────────────────────────────────────────────────────────────────
+    //  The send facade. Every payload leaves through these methods; nothing else
+    //  in the mod calls PacketDistributor (DialogueSender aside).
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /** Server to one player. Dialogue is routed through {@link DialogueSender}. */
     public static <P extends CustomPacketPayload> void sendToPlayer(
             ServerPlayer player, P payload) {
         // Semantic GameTests use detached server players so progression can be
@@ -467,23 +470,48 @@ public class PacketHandler {
         if (player.connection == null) {
             return;
         }
-        if (payload instanceof OpenDialoguePacket open && PendingWhispers.isWhisper(open.tree())) {
-            PendingWhispers.enqueue(player, open.tree());
-            return;
-        }
-        if (payload instanceof OpenDialoguePacket open && open.tree().entityId() != -1) {
-            com.vincenthuto.hemomancy.common.entity.npc.dialogue.MonolithDialogueContext.clear(player);
-        }
         if (payload instanceof OpenDialoguePacket open) {
-            var entity = player.level().getEntity(open.tree().entityId());
-            PacketDistributor.sendToPlayer(player, new OpenDialoguePacket(
-                    com.vincenthuto.hemomancy.common.succession.SuccessionDialogue.decorate(player, entity, open.tree())));
+            DialogueSender.open(player, open);
             return;
         }
         PacketDistributor.sendToPlayer(player, payload);
     }
 
-    /** Helper – send a payload to the server (client → server). */
+    /** Server to one player, several payloads in order. */
+    public static void sendToPlayer(ServerPlayer player, CustomPacketPayload payload, CustomPacketPayload... more) {
+        sendToPlayer(player, payload);
+        for (CustomPacketPayload next : more) {
+            sendToPlayer(player, next);
+        }
+    }
+
+    /** Server to every player within {@code radius} of a point in {@code level}. */
+    public static <P extends CustomPacketPayload> void sendNear(ServerLevel level, double x, double y, double z,
+            double radius, P payload) {
+        PacketDistributor.sendToPlayersNear(level, null, x, y, z, radius, payload);
+    }
+
+    /** Server to every player within {@code radius} of {@code pos} in {@code level}. */
+    public static <P extends CustomPacketPayload> void sendNear(ServerLevel level, Vec3 pos, double radius, P payload) {
+        sendNear(level, pos.x, pos.y, pos.z, radius, payload);
+    }
+
+    /** Server to every player tracking {@code entity}, and to the entity itself when it is a player. */
+    public static <P extends CustomPacketPayload> void sendTracking(Entity entity, P payload) {
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, payload);
+    }
+
+    /** Server to every player in {@code level}. */
+    public static <P extends CustomPacketPayload> void sendToDimension(ServerLevel level, P payload) {
+        PacketDistributor.sendToPlayersInDimension(level, payload);
+    }
+
+    /** Server to every connected player. */
+    public static <P extends CustomPacketPayload> void sendToAll(P payload) {
+        PacketDistributor.sendToAllPlayers(payload);
+    }
+
+    /** Client to server. */
     public static <P extends CustomPacketPayload> void sendToServer(P payload) {
         PacketDistributor.sendToServer(payload);
     }

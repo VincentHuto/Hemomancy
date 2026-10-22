@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.station;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.HemomancyDiscoverySource;
@@ -85,7 +86,7 @@ public final class StationUpgradeProgress implements INBTSerializable<CompoundTa
         LiberKnowledgeHelper.unlockEntries(player, lessons, HemomancyDiscoverySource.PRACTICE);
         CompoundTag state = serializeNBT(player.registryAccess());
         if (!force && state.equals(lastSynced)) return;
-        net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(player,
+        PacketHandler.sendToPlayer(player,
                 new com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncStationUpgrades(state));
         lastSynced = state;
     }

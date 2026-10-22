@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 /** Server-authored geometry and lifetime; these cues never apply gameplay. */
 public final class ManipulationVisuals {
@@ -67,7 +67,7 @@ public final class ManipulationVisuals {
     private static void send(ServerLevel level, ManipulationVisualPacket packet) {
         // Include observers at the far end of long beams, not only near the caster.
         Vec3 center = packet.from().lerp(packet.to(), .5);
-        PacketDistributor.sendToPlayersNear(level, null, center.x, center.y, center.z,
+        PacketHandler.sendNear(level, center.x, center.y, center.z,
                 64 + packet.from().distanceTo(packet.to()) / 2, packet);
     }
 

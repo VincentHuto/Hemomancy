@@ -17,7 +17,6 @@ import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 import java.util.*;
 
 /** Remaining lifetimes, counts and moving endpoints for observers entering an ongoing cast. */
@@ -52,7 +51,7 @@ public final class FerricDuctilisStatusVisuals {
     }
     private static void sendLink(Link link,int ticks) {
         var center=link.source.position().lerp(link.target.position(),.5);
-        PacketDistributor.sendToPlayersNear(link.level,null,center.x,center.y,center.z,
+        PacketHandler.sendNear(link.level,center.x,center.y,center.z,
                 64+link.source.distanceTo(link.target)*.5,packet(link,ticks));
     }
     private static ManipulationVisualPacket packet(Status state,int ticks) {
@@ -94,7 +93,7 @@ public final class FerricDuctilisStatusVisuals {
             if(!state.entity.isAlive() || state.entity.level()!=state.level || state.level.getGameTime()>=state.until) {
                 states.remove();
                 var at=state.entity.position();
-                PacketDistributor.sendToPlayersNear(state.level,null,at.x,at.y,at.z,80,packet(state,0));
+                PacketHandler.sendNear(state.level,at.x,at.y,at.z,80,packet(state,0));
             }
         }
         var links=LINKS.values().iterator();

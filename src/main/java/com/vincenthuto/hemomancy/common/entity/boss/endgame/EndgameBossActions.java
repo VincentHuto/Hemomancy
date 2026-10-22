@@ -39,7 +39,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.entity.PartEntity;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 
@@ -211,7 +210,7 @@ final class EndgameBossActions {
 						boss.getId() * 433L + index);
 			}
 		}
-		PacketDistributor.sendToPlayersNear(server, null, center.x, center.y, center.z, 40.0D,
+		PacketHandler.sendNear(server, center.x, center.y, center.z, 40.0D,
 				new CardinalRiteImpactPacket(10, 0.10F, boss.getId() * 31 + boss.tickCount));
 		server.playSound(null, BlockPos.containing(center), SoundEvents.GENERIC_EXPLODE.value(),
 				SoundSource.HOSTILE, 1.7F, 0.48F);

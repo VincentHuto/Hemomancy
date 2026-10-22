@@ -42,7 +42,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.List;
@@ -155,7 +154,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 						float halfD = (maxZ - minZ) / 2.0f + 0.5f;
 						float startRadius = Math.max(halfW, halfD) + 2.0f;
 						int animDuration = 30; // ticks (~1.5 seconds)
-						PacketDistributor.sendToAllPlayers(new PacketBloodCraftRing(ringCenter, startRadius,
+						PacketHandler.sendToAll(new PacketBloodCraftRing(ringCenter, startRadius,
 										centerY, animDuration));
 
 						// ── Drain blood and consume held item now ──
@@ -589,7 +588,7 @@ public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
 
 				if (!plantingStaff.isEmpty()) {
 					CardinalRiteStaffEscrow.armProjectionHand(serverPlayer);
-					PacketDistributor.sendToPlayersTrackingEntityAndSelf(serverPlayer,
+					PacketHandler.sendTracking(serverPlayer,
 							new PacketCardinalRiteStaffPlanting(
 									serverPlayer.getId(), centerPos, plantingStaff));
 				} else {

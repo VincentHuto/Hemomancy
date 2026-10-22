@@ -92,7 +92,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -152,7 +151,7 @@ public class HarbingerCardinalRiteEvents {
 				if (entries == null) entries = new ArrayList<>(shared);
 				entries.set(i, revealed[i]);
 			}
-			PacketDistributor.sendToPlayer(viewer, entries == null ? sharedPacket : new PacketSyncActiveRites(entries));
+			PacketHandler.sendToPlayer(viewer, entries == null ? sharedPacket : new PacketSyncActiveRites(entries));
 		}
 	}
 
@@ -164,14 +163,14 @@ public class HarbingerCardinalRiteEvents {
 	@SubscribeEvent
 	public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
-			PacketDistributor.sendToPlayer(player, activeRiteSnapshot(player.serverLevel(), player));
+			PacketHandler.sendToPlayer(player, activeRiteSnapshot(player.serverLevel(), player));
 		}
 	}
 
 	@SubscribeEvent
 	public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
-			PacketDistributor.sendToPlayer(player, activeRiteSnapshot(player.serverLevel(), player));
+			PacketHandler.sendToPlayer(player, activeRiteSnapshot(player.serverLevel(), player));
 		}
 	}
 

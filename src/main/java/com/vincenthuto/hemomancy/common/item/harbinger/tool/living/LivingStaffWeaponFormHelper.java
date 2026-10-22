@@ -28,7 +28,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 public final class LivingStaffWeaponFormHelper {
 	public static final String STORED_STAFF_KEY = "HemomancyStoredLivingStaff";
@@ -277,7 +276,7 @@ public final class LivingStaffWeaponFormHelper {
 		boolean offIsLiving = isLivingArsenalStack(beforeOff) || isLivingArsenalStack(afterOff);
 		if (!LivingStaffMorphSequence.hasChangedStack(mainChanged, mainIsLiving, offChanged, offIsLiving)) return;
 
-		PacketDistributor.sendToPlayersTrackingEntityAndSelf(serverPlayer,
+		PacketHandler.sendTracking(serverPlayer,
 				new PacketLivingStaffMorph(serverPlayer.getId(), beforeMain, afterMain, beforeOff, afterOff));
 		// Blood hardens into whichever form the arsenal took, timed with the morph's dissolve and form.
 		if (mainChanged && isLivingArsenalStack(afterMain)) {

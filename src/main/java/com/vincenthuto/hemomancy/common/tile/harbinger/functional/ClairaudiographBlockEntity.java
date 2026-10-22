@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodSampleData;
 import com.vincenthuto.hemomancy.common.item.harbinger.CylinderMedia;
@@ -20,7 +21,6 @@ import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 public class ClairaudiographBlockEntity extends BlockEntity implements MenuProvider {
     private static long nextToken;
@@ -96,8 +96,8 @@ public class ClairaudiographBlockEntity extends BlockEntity implements MenuProvi
         var packet = new ClairaudiographSoundPacket(server.dimension().location(), worldPosition, token, stop, false,
             program()!=null ? program().sound() : recording == null ? "" : recording.sound(), recording == null ? 1 : recording.pitch(), program()==null ? "" : program().id(), Math.max(0,elapsed()));
         // Stops reach former listeners too; clients independently discard unloaded/out-of-range owners.
-        if(stop) PacketDistributor.sendToPlayersInDimension(server, packet);
-        else PacketDistributor.sendToPlayersNear(server, null, worldPosition.getX()+.5, worldPosition.getY()+.5, worldPosition.getZ()+.5, 32, packet);
+        if(stop) PacketHandler.sendToDimension(server, packet);
+        else PacketHandler.sendNear(server, worldPosition.getX()+.5, worldPosition.getY()+.5, worldPosition.getZ()+.5, 32, packet);
     }
     public static void tick(Level level, BlockPos pos, BlockState state, ClairaudiographBlockEntity be) {
         if(level.isClientSide) { if(be.progress > 0) be.progress = Math.min(80, be.progress + 1); return; }

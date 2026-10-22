@@ -15,8 +15,8 @@ public final class ScarStateSyncSourceTest {
 
 		assertContains("scar sync event subscriber", events, "@EventBusSubscriber(modid = Hemomancy.MOD_ID)");
 		assertContains("sync packet used", events, "new PacketSyncScarsState(source, scars)");
-		assertContains("self and tracking sync used", events, "PacketDistributor.sendToPlayersTrackingEntityAndSelf");
-		assertContains("tracking player sync used", events, "PacketDistributor.sendToPlayer(receiver");
+		assertContains("self and tracking sync used", events, "PacketHandler.sendTracking(source");
+		assertContains("tracking player sync used", events, "PacketHandler.sendToPlayer(receiver");
 		assertContains("login hook", events, "PlayerEvent.PlayerLoggedInEvent");
 		assertContains("dimension hook", events, "PlayerEvent.PlayerChangedDimensionEvent");
 		assertContains("respawn hook", events, "PlayerEvent.PlayerRespawnEvent");

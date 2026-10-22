@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.BloodProfileSyncPacket;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -15,7 +16,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class BloodInjectionEvents {
@@ -24,8 +24,8 @@ public final class BloodInjectionEvents {
     @SubscribeEvent public static void sync(OnDatapackSyncEvent event) {
         var packet = new BloodInjectionSyncPacket(BloodInjectionData.snapshot(false).json());
         var profiles = new BloodProfileSyncPacket(BloodProfileData.snapshot(false).json());
-        if (event.getPlayer() != null) PacketDistributor.sendToPlayer(event.getPlayer(), profiles, packet);
-        else for (var player : event.getPlayerList().getPlayers()) PacketDistributor.sendToPlayer(player, profiles, packet);
+        if (event.getPlayer() != null) PacketHandler.sendToPlayer(event.getPlayer(), profiles, packet);
+        else for (var player : event.getPlayerList().getPlayers()) PacketHandler.sendToPlayer(player, profiles, packet);
     }
     @SubscribeEvent public static void damage(LivingIncomingDamageEvent event) {
         var entity = event.getEntity();

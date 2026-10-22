@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierMount;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnBrazierItemAbsorptionParticlesPacket;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
@@ -10,7 +11,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 public final class BrazierItemAbsorptionRite {
 	public static final int REQUIRED_CHANNEL_TICKS = 60;
@@ -65,7 +65,7 @@ public final class BrazierItemAbsorptionRite {
 		particleStack.setCount(1);
 		Vec3 source = BrazierMount.bowl(level.getBlockState(pos), pos, 0.65D);
 		// Everyone near the brazier sees the offering stream into the channelling hand, not only the channeller.
-		PacketDistributor.sendToPlayersNear(level, null, source.x, source.y, source.z, ITEM_STREAM_VIEW_RADIUS,
+		PacketHandler.sendNear(level, source.x, source.y, source.z, ITEM_STREAM_VIEW_RADIUS,
 				new SpawnBrazierItemAbsorptionParticlesPacket(player.getId(), source, particleStack));
 	}
 }

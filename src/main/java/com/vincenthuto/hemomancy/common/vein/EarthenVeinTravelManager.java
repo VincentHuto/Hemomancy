@@ -42,7 +42,6 @@ import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -419,7 +418,7 @@ public final class EarthenVeinTravelManager {
 		if (level == null) return;
 		var packet = new EarthenVeinTravelVisualPacket(dimension, pos, traveler.getId(), phase,
 				Mth.clamp(progress, 0.0F, 1.0F));
-		PacketDistributor.sendToPlayersNear(level, null, pos.getX() + 0.5D, pos.getY() + 0.5D,
+		PacketHandler.sendNear(level, pos.getX() + 0.5D, pos.getY() + 0.5D,
 				pos.getZ() + 0.5D, 64.0D, packet);
 	}
 

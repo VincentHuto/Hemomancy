@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.network.capa.harbinger.manips;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.MemoryEntryKind;
@@ -10,7 +11,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /** Preview only. The server chooses the selected power and clips its aim. */
@@ -44,7 +44,7 @@ public record ManipulationChargeVisualPacket(int heldTicks) implements CustomPac
             float progress=ManipulationCastingRules.chargeFraction(packet.heldTicks,selected.getRequiredChargeTicks());
             var from=player.getEyePosition();
             var to=ManipulationCombatHelper.clipToGeometry(player,from.add(player.getLookAngle().scale(8+16*progress)));
-            PacketDistributor.sendToPlayersNear(player.serverLevel(),null,from.x,from.y,from.z,80,
+            PacketHandler.sendNear(player.serverLevel(),from.x,from.y,from.z,80,
                     new ManipulationVisualPacket(form,player.getId(),from,to,progress,packet.heldTicks==0?0:10,1));
         });
     }

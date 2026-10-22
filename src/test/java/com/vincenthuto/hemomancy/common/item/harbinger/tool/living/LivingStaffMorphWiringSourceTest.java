@@ -17,7 +17,7 @@ final class LivingStaffMorphWiringSourceTest {
 		String helper = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/"
 				+ "LivingStaffWeaponFormHelper.java");
 
-		assertTrue(helper.contains("PacketDistributor.sendToPlayersTrackingEntityAndSelf"),
+		assertTrue(helper.contains("PacketHandler.sendTracking("),
 				"shared weapon-form mutations must broadcast their before/after stacks");
 		assertTrue(helper.contains("syncMorph(player, beforeMain, beforeOff)"),
 				"selection-driven swaps must route through the shared morph broadcaster");

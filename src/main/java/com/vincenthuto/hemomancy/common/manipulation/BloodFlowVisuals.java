@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.particle.BloodFlowPacket;
 import com.vincenthuto.hemomancy.common.network.particle.BloodFlowPacket.Style;
 import com.vincenthuto.hutoslib.common.tendril.TendrilAnchor;
@@ -7,7 +8,6 @@ import com.vincenthuto.hutoslib.common.tendril.TendrilEffectConfig;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 public final class BloodFlowVisuals {
     private BloodFlowVisuals() {}
@@ -35,7 +35,7 @@ public final class BloodFlowVisuals {
                 .withLifecycle(2,ticks,8).withShape(12,1,style==Style.COMMUNION?.12f:.085f,.2f)
                 .withBranching(0,0,0,0).withWrithe(.08f,.05f,.4f,.04f).withFixedSeed(true,key).clamped();
         Vec3 center=from.get().lerp(to.get(),.5);
-        PacketDistributor.sendToPlayersNear(level,null,center.x,center.y,center.z,64+from.get().distanceTo(to.get())*.5,
+        PacketHandler.sendNear(level,center.x,center.y,center.z,64+from.get().distanceTo(to.get())*.5,
                 new BloodFlowPacket(key,owner,style,start,end,config,stop));
     }
 }

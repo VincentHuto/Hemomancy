@@ -292,7 +292,7 @@ final class VesperCombatImplementationSourceTest {
 		assertTrue(actions.contains("VesperVisualEffects.voidTendril"));
 		assertTrue(actions.contains("VesperVisualEffects.lightning"));
 		assertTrue(actions.contains("CardinalRiteImpactPacket"));
-		assertTrue(actions.contains("PacketDistributor.sendToPlayersNear"));
+		assertTrue(actions.contains("PacketHandler.sendNear"));
 		assertTrue(actions.contains("blastVesperCocoon"));
 		assertTrue(crowned.contains("finishVesperCocoonReveal"));
 	}

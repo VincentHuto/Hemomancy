@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite.unstained;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.PathMutualExclusionHelper;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.Bloodline;
@@ -38,7 +39,6 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 import java.util.Map;
@@ -765,7 +765,7 @@ public class UnstainedCardinalRiteEvents {
 				p.sendSystemMessage(Component.translatable("hemomancy.lethean_tide.end")
 						.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD));
 			}
-			PacketDistributor.sendToAllPlayers(new PacketSyncBloodMoon(false));
+			PacketHandler.sendToAll(new PacketSyncBloodMoon(false));
 
 			unstained.addPurity(10f);
 			UnstainedProgressEvents.syncProgress(caster, unstained);

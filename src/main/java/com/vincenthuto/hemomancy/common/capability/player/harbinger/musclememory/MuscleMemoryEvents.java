@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.musclememory;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoAttachmentTypes;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.EmberfangMorphlingItem;
@@ -13,7 +14,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -102,7 +102,7 @@ public final class MuscleMemoryEvents {
         PacketSyncMuscleMemory packet = new PacketSyncMuscleMemory(player.getId(),
                 player.getData(HemoAttachmentTypes.MUSCLE_MEMORY));
         if (player.connection != null) {
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, packet);
+            PacketHandler.sendTracking(player, packet);
         }
     }
 
@@ -125,7 +125,7 @@ public final class MuscleMemoryEvents {
     public static void onStartTracking(PlayerEvent.StartTracking event) {
         if (event.getEntity() instanceof ServerPlayer observer
                 && event.getTarget() instanceof ServerPlayer target) {
-            PacketDistributor.sendToPlayer(observer, new PacketSyncMuscleMemory(target.getId(),
+            PacketHandler.sendToPlayer(observer, new PacketSyncMuscleMemory(target.getId(),
                     target.getData(HemoAttachmentTypes.MUSCLE_MEMORY)));
         }
     }

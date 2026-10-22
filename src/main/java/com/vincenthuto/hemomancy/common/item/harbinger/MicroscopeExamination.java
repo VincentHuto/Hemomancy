@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.sounds.SoundSource;
@@ -8,7 +9,6 @@ import com.vincenthuto.hemomancy.common.network.PacketHematicMicroscopeViewing.P
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -89,13 +89,13 @@ public final class MicroscopeExamination {
         send(player, session, Phase.RELEASE);
     }
     private static void send(Player player, Session session, Phase phase) {
-        PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, session.packet(player, phase));
+        PacketHandler.sendTracking(player, session.packet(player, phase));
     }
     @SubscribeEvent public static void tracking(PlayerEvent.StartTracking event) {
         if (!(event.getTarget() instanceof Player target) || !(event.getEntity() instanceof ServerPlayer observer)) return;
         var session = SESSIONS.get(target);
         if (session != null && session.releasedAt < 0 && session.valid(target))
-            PacketDistributor.sendToPlayer(observer, session.packet(target, Phase.START));
+            PacketHandler.sendToPlayer(observer, session.packet(target, Phase.START));
     }
 
     static void tick(Player player, int remaining) {

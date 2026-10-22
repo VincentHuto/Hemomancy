@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
@@ -12,7 +13,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -48,7 +48,7 @@ public final class ThermalStatusVisuals {
                 iterator.remove();
                 if(!entity.level().isClientSide) {
                     var at=entity.position();
-                    PacketDistributor.sendToPlayersNear((net.minecraft.server.level.ServerLevel)entity.level(),null,
+                    PacketHandler.sendNear((net.minecraft.server.level.ServerLevel)entity.level(),
                             at.x,at.y,at.z,80,new ManipulationVisualPacket(state.form,entity.getId(),at,at,0,0,0));
                 }
             }
@@ -58,7 +58,7 @@ public final class ThermalStatusVisuals {
         if(!(event.getEntity() instanceof ServerPlayer observer))return;
         for(Status state:ACTIVE.values())if(state.entity==event.getTarget()) {
             int ticks=(int)Math.max(0,state.until-state.entity.level().getGameTime());
-            if(ticks>0)PacketDistributor.sendToPlayer(observer,new ManipulationVisualPacket(state.form,state.entity.getId(),
+            if(ticks>0)PacketHandler.sendToPlayer(observer,new ManipulationVisualPacket(state.form,state.entity.getId(),
                     state.entity.position(),state.entity.position(),(float)state.radius,ticks,state.count));
         }
     }

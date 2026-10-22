@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenPendingWhisperPacket;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
@@ -18,7 +19,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
@@ -90,7 +90,7 @@ public final class PendingWhispers {
         UUID id = entry.getUUID("id");
         OPEN.put(player, id);
         MonolithDialogueContext.clear(player);
-        PacketDistributor.sendToPlayer(player, new OpenPendingWhisperPacket(id, tree));
+        PacketHandler.sendToPlayer(player, new OpenPendingWhisperPacket(id, tree));
         return true;
     }
 
