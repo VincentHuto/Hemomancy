@@ -2,8 +2,10 @@ package com.vincenthuto.hemomancy.common.worldgen.feature;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelSimulatedReader;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -73,5 +75,27 @@ public final class FeatureLogic {
 
     public static boolean isBlockNotOk(BlockState state) {
         return state.liquid() || state.is(Blocks.BEDROCK);
+    }
+
+    /** Sets {@code state} where the world holds air or a replaceable block. */
+    public static void placeIfReplaceable(WorldGenLevel level, BlockPos pos, BlockState state) {
+        BlockState existing = level.getBlockState(pos);
+        if (existing.isAir() || existing.canBeReplaced()) {
+            level.setBlock(pos, state, 2);
+        }
+    }
+
+    /** As {@link #placeIfReplaceable}, and also into water; true when it placed the block. */
+    public static boolean placeIfSubmerged(WorldGenLevel level, BlockPos pos, BlockState state) {
+        BlockState existing = level.getBlockState(pos);
+        if (existing.isAir() || existing.canBeReplaced() || existing.getFluidState().is(FluidTags.WATER)) {
+            level.setBlock(pos, state, 2);
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isWaterSource(BlockState state) {
+        return state.getFluidState().is(FluidTags.WATER) && state.getFluidState().isSource();
     }
 }

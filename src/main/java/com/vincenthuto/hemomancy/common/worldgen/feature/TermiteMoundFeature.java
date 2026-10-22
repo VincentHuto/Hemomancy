@@ -159,7 +159,7 @@ public class TermiteMoundFeature extends Feature<NoneFeatureConfiguration> {
 						if (outOfBounds(px, pz, cutoff, ccx, ccz)) continue;
 						mutable.set(px, by + y, pz);
 						BlockState block = chooseMoundBlock(y, height, dist, radius, random);
-						placeIfReplaceable(level, mutable, block);
+						FeatureLogic.placeIfReplaceable(level, mutable, block);
 					}
 				}
 			}
@@ -174,7 +174,7 @@ public class TermiteMoundFeature extends Feature<NoneFeatureConfiguration> {
 						int px = bx + x, pz = bz + z;
 						if (outOfBounds(px, pz, cutoff, ccx, ccz)) continue;
 						mutable.set(px, by + height + y, pz);
-						placeIfReplaceable(level, mutable, TERRACOTTA);
+						FeatureLogic.placeIfReplaceable(level, mutable, TERRACOTTA);
 					}
 				}
 			}
@@ -197,7 +197,7 @@ public class TermiteMoundFeature extends Feature<NoneFeatureConfiguration> {
 							int px = bx + bmpx + dx, pz = bz + bmpz + dz;
 							if (outOfBounds(px, pz, cutoff, ccx, ccz)) continue;
 							mutable.set(px, by + y, pz);
-							placeIfReplaceable(level, mutable, chooseMoundBlock(y, bumpHeight, 0, r, random));
+							FeatureLogic.placeIfReplaceable(level, mutable, chooseMoundBlock(y, bumpHeight, 0, r, random));
 						}
 					}
 				}
@@ -326,16 +326,6 @@ public class TermiteMoundFeature extends Feature<NoneFeatureConfiguration> {
 		if (state.is(Blocks.MUD) || state.is(Blocks.DIRT) || state.is(Blocks.TERRACOTTA)
 				|| state.is(Blocks.PACKED_MUD)) {
 			level.setBlock(pos, AIR_STATE, 2);
-		}
-	}
-
-	/**
-	 * Only places a block if the position is air or otherwise replaceable.
-	 */
-	private static void placeIfReplaceable(WorldGenLevel level, BlockPos.MutableBlockPos pos, BlockState state) {
-		BlockState existing = level.getBlockState(pos);
-		if (existing.isAir() || existing.canBeReplaced()) {
-			level.setBlock(pos, state, 2);
 		}
 	}
 

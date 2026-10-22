@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.worldgen.ErythrocoralReefTuning;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
@@ -61,7 +60,7 @@ public class ErythrocoralReefFeature extends Feature<NoneFeatureConfiguration> {
 			mutable.move(Direction.DOWN);
 			BlockState below = level.getBlockState(mutable);
 			boolean sturdyFloor = below.isFaceSturdy(level, mutable, Direction.UP);
-			boolean valid = ErythrocoralReefRules.canUseFloor(isWaterSource(originState), isWaterSource(aboveState),
+			boolean valid = ErythrocoralReefRules.canUseFloor(FeatureLogic.isWaterSource(originState), FeatureLogic.isWaterSource(aboveState),
 					sturdyFloor, below.liquid(), waterDepthAbove(level, mutable.above()), mutable.getY() + 1, level.getSeaLevel());
 			mutable.move(Direction.UP);
 			if (valid) {
@@ -75,7 +74,7 @@ public class ErythrocoralReefFeature extends Feature<NoneFeatureConfiguration> {
 		int depth = 0;
 		BlockPos.MutableBlockPos probe = pos.mutable();
 		int top = Math.min(level.getSeaLevel() + 2, level.getMaxBuildHeight() - 1);
-		while (probe.getY() <= top && isWaterSource(level.getBlockState(probe))) {
+		while (probe.getY() <= top && FeatureLogic.isWaterSource(level.getBlockState(probe))) {
 			depth++;
 			probe.move(Direction.UP);
 		}
@@ -112,7 +111,7 @@ public class ErythrocoralReefFeature extends Feature<NoneFeatureConfiguration> {
 				}
 
 				mutable.set(floor);
-				if (placeIfSubmerged(level, mutable, chooseBaseBlock(random, dist, radius))) {
+				if (FeatureLogic.placeIfSubmerged(level, mutable, chooseBaseBlock(random, dist, radius))) {
 					if (random.nextFloat() < growthChance(dist, radius)) {
 						mutable.move(Direction.UP);
 						placeGrowth(level, mutable, random);
@@ -144,25 +143,12 @@ public class ErythrocoralReefFeature extends Feature<NoneFeatureConfiguration> {
 	}
 
 	private void placeGrowth(WorldGenLevel level, BlockPos.MutableBlockPos pos, RandomSource random) {
-		if (!isWaterSource(level.getBlockState(pos)) || !level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP)) {
+		if (!FeatureLogic.isWaterSource(level.getBlockState(pos)) || !level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP)) {
 			return;
 		}
 		BlockState state = (random.nextInt(3) == 0 ? BlockInit.erythrocoral_tendril.get().defaultBlockState()
 				: BlockInit.erythrocoral_fan.get().defaultBlockState())
 				.setValue(ErythrocoralGrowthBlock.WATERLOGGED, Boolean.TRUE);
 		level.setBlock(pos, state, 2);
-	}
-
-	private static boolean isWaterSource(BlockState state) {
-		return state.getFluidState().is(FluidTags.WATER) && state.getFluidState().isSource();
-	}
-
-	private static boolean placeIfSubmerged(WorldGenLevel level, BlockPos.MutableBlockPos pos, BlockState state) {
-		BlockState existing = level.getBlockState(pos);
-		if (existing.isAir() || existing.canBeReplaced() || existing.getFluidState().is(FluidTags.WATER)) {
-			level.setBlock(pos, state, 2);
-			return true;
-		}
-		return false;
 	}
 }

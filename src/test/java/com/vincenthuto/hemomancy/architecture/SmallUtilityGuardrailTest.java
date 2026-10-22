@@ -113,6 +113,17 @@ class SmallUtilityGuardrailTest {
 				"use PatternOrigins (originForCell, offset, findContaining, scanAround, bounds) or list the file with a reason");
 	}
 
+	/** W-2: worldgen features share FeatureLogic's replaceable-block setters. */
+	private static final Pattern FEATURE_SETTER = Pattern.compile(
+			"static \\w+ (?:placeIfReplaceable|placeIfSubmerged|isWaterSource)\\(");
+
+	@Test
+	void featureSettersLiveInFeatureLogic() throws IOException {
+		assertEquals(Set.of(), filesMatching(text -> FEATURE_SETTER.matcher(text).find(),
+						"src/main/java/com/vincenthuto/hemomancy/common/worldgen/feature/FeatureLogic.java"),
+				"call FeatureLogic.placeIfReplaceable / placeIfSubmerged / isWaterSource");
+	}
+
 	@Test
 	void attributeModifiersAreWrittenOnlyThroughTheSharedHelper() throws IOException {
 		assertEquals(new TreeSet<>(MODIFIER_WRITERS.keySet()),

@@ -188,7 +188,7 @@ public class SporeNexusTowerFeature extends Feature<NoneFeatureConfiguration> {
 
 						mutable.set(px, by + y, pz);
 						BlockState block = chooseTrunkBlock(y, height, dist, radius, random);
-						placeIfReplaceable(level, mutable, block);
+						FeatureLogic.placeIfReplaceable(level, mutable, block);
 					}
 				}
 			}
@@ -268,15 +268,15 @@ public class SporeNexusTowerFeature extends Feature<NoneFeatureConfiguration> {
 						mutable.set(px, by + capBase + y, pz);
 
 						if (dist > radius - 2) {
-							placeIfReplaceable(level, mutable, CAP);
+							FeatureLogic.placeIfReplaceable(level, mutable, CAP);
 						} else if (y == 0) {
 							if (random.nextInt(4) == 0) {
-								placeIfReplaceable(level, mutable, SHROOMLIGHT_STATE);
+								FeatureLogic.placeIfReplaceable(level, mutable, SHROOMLIGHT_STATE);
 							} else {
-								placeIfReplaceable(level, mutable, CONSCIOUS_MASS);
+								FeatureLogic.placeIfReplaceable(level, mutable, CONSCIOUS_MASS);
 							}
 						} else {
-							placeIfReplaceable(level, mutable, CAP);
+							FeatureLogic.placeIfReplaceable(level, mutable, CAP);
 						}
 					}
 				}
@@ -311,7 +311,7 @@ public class SporeNexusTowerFeature extends Feature<NoneFeatureConfiguration> {
 								int px = bx + rx + dx, pz = bz + rz + dz;
 								if (outOfBounds(px, pz, cutoff, ccx, ccz)) continue;
 								mutable.set(px, by + dy, pz);
-								placeIfReplaceable(level, mutable,
+								FeatureLogic.placeIfReplaceable(level, mutable,
 										random.nextInt(3) == 0 ? CALCIFIED : STEM);
 							}
 						}
@@ -425,13 +425,6 @@ public class SporeNexusTowerFeature extends Feature<NoneFeatureConfiguration> {
 				mutable.set(px, by + chamberY + 4, pz);
 				level.setBlock(mutable, SHROOMLIGHT_STATE, 2);
 			}
-		}
-	}
-
-	private static void placeIfReplaceable(WorldGenLevel level, BlockPos.MutableBlockPos pos, BlockState state) {
-		BlockState existing = level.getBlockState(pos);
-		if (existing.isAir() || existing.canBeReplaced()) {
-			level.setBlock(pos, state, 2);
 		}
 	}
 }

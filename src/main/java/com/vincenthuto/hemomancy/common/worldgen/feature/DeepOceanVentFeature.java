@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -70,7 +69,7 @@ public class DeepOceanVentFeature extends Feature<NoneFeatureConfiguration> {
 		int yStart = Math.min(startY, level.getMaxBuildHeight() - 2);
 		for (int y = yStart; y > level.getMinBuildHeight() + 1; y--) {
 			mutable.set(x, y, z);
-			if (!isWaterSource(level.getBlockState(mutable))) {
+			if (!FeatureLogic.isWaterSource(level.getBlockState(mutable))) {
 				continue;
 			}
 			mutable.move(Direction.DOWN);
@@ -88,7 +87,7 @@ public class DeepOceanVentFeature extends Feature<NoneFeatureConfiguration> {
 		int depth = 0;
 		BlockPos.MutableBlockPos probe = pos.mutable();
 		int top = Math.min(level.getSeaLevel() + 4, level.getMaxBuildHeight() - 1);
-		while (probe.getY() <= top && isWaterSource(level.getBlockState(probe))) {
+		while (probe.getY() <= top && FeatureLogic.isWaterSource(level.getBlockState(probe))) {
 			depth++;
 			probe.move(Direction.UP);
 		}
@@ -124,7 +123,7 @@ public class DeepOceanVentFeature extends Feature<NoneFeatureConfiguration> {
 				int thickness = 1 + (int)(2.5F * Math.max(0, 1 - dist / radius));
 				for (int y = 0; y < thickness; y++) {
 					mutable.set(floor).move(Direction.UP, y);
-					placeIfSubmerged(level, mutable, chooseApronBlock(random, dist, radius));
+					FeatureLogic.placeIfSubmerged(level, mutable, chooseApronBlock(random, dist, radius));
 				}
 			}
 		}
@@ -146,7 +145,7 @@ public class DeepOceanVentFeature extends Feature<NoneFeatureConfiguration> {
 					if (dist <= radius + roughness) {
 						mutable.set(base.getX() + dx, base.getY() + y, base.getZ() + dz);
 						BlockState block = y == height - 1 && dist < 0.85F ? MAGMA : chooseMineralBlock(random);
-						placeIfSubmerged(level, mutable, block);
+						FeatureLogic.placeIfSubmerged(level, mutable, block);
 					}
 				}
 			}
@@ -157,7 +156,7 @@ public class DeepOceanVentFeature extends Feature<NoneFeatureConfiguration> {
 			Direction direction = Direction.Plane.HORIZONTAL.getRandomDirection(random);
 			int y = 1 + random.nextInt(Math.max(1, height - 1));
 			mutable.set(base.getX() + direction.getStepX() * 2, base.getY() + y, base.getZ() + direction.getStepZ() * 2);
-			placeIfSubmerged(level, mutable, random.nextBoolean() ? MAGMA : SMOOTH_BASALT);
+			FeatureLogic.placeIfSubmerged(level, mutable, random.nextBoolean() ? MAGMA : SMOOTH_BASALT);
 		}
 	}
 
@@ -182,17 +181,6 @@ public class DeepOceanVentFeature extends Feature<NoneFeatureConfiguration> {
 		return DEEPSLATE;
 	}
 
-	private static boolean isWaterSource(BlockState state) {
-		return state.getFluidState().is(FluidTags.WATER) && state.getFluidState().isSource();
-	}
-
-	private static void placeIfSubmerged(WorldGenLevel level, BlockPos.MutableBlockPos pos, BlockState state) {
-		BlockState existing = level.getBlockState(pos);
-		if (existing.isAir() || existing.canBeReplaced() || existing.getFluidState().is(FluidTags.WATER)) {
-			level.setBlock(pos, state, 2);
-		}
-	}
-
 	private void spawnInhabitants(WorldGenLevel level, BlockPos center, int radius, RandomSource random,
 								  BlockPos.MutableBlockPos mutable) {
 		int count = 2 + random.nextInt(4);
@@ -207,7 +195,7 @@ public class DeepOceanVentFeature extends Feature<NoneFeatureConfiguration> {
 				continue;
 			}
 			mutable.set(floor).move(Direction.UP);
-			if (isWaterSource(level.getBlockState(floor)) && isWaterSource(level.getBlockState(mutable))) {
+			if (FeatureLogic.isWaterSource(level.getBlockState(floor)) && FeatureLogic.isWaterSource(level.getBlockState(mutable))) {
 				spawnMob(level, EntityInit.chalybeate_snail.get(), floor);
 				spawned++;
 			}
