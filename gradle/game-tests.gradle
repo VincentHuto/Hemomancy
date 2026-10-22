@@ -17,6 +17,7 @@ ext.gameTestSuites = [
     'gore_wound_harpoon_validation': [alpha: true, run: 'goreWoundHarpoonGameTestServer', directory: 'build/gore-wound-harpoon-gametest'],
     'item_inventory_validation': [alpha: true, run: 'itemInventoryGameTestServer', directory: 'build/item-inventory-gametest'],
     'combat_order_validation': [alpha: true, run: 'combatOrderGameTestServer', directory: 'build/combat-order-gametest'],
+    'combat_targeting_validation': [alpha: true, run: 'combatTargetingGameTestServer', directory: 'build/combat-targeting-gametest'],
     'owner_snapshot_validation': [alpha: true, run: 'ownerSnapshotGameTestServer', directory: 'build/owner-snapshot-gametest'],
     'distillation_validation': [alpha: true, run: 'distillationGameTestServer', directory: 'build/distillation-gametest'],
     'registration_validation': [alpha: true, run: 'registrationGameTestServer', directory: 'build/registration-gametest'],
