@@ -52,7 +52,6 @@ class ServerboundGuardsCoverageTest {
 			Map.entry("PacketToggleUnstainedBonus", "Toggles one of the sender's own Unstained bonuses by a fixed id."),
 			Map.entry("PacketUnlockSkill", "Checks the sender's own skill tree and skill points."),
 			Map.entry("PacketUpdateLivingStaffMorph", "Acts on a jar and staff the sender carries."),
-			Map.entry("PlaceStructurePacket", "Creative-only debug tool."),
 			Map.entry("SelectEarthenVeinDestinationPacket", "EarthenVeinTravelManager checks the session nonce, phase and distance to the source vein."),
 			Map.entry("ToggleEquipmentLayerVisibilityPacket", "Toggles one of the sender's own equipment layers; the slot id is checked."),
 			Map.entry("ToggleGourdKeyPacket", "Toggles the gourd in the sender's own scar slot."),

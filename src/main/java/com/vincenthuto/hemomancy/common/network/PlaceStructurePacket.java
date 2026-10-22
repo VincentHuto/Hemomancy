@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.network;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.item.shared.StructureSpawnerItem;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteFoundationRules;
@@ -86,6 +87,14 @@ public class PlaceStructurePacket implements CustomPacketPayload {
 				// Creative-only check
 				if (!player.isCreative()) {
 					player.sendSystemMessage(Component.literal("§cStructure Spawner requires creative mode!"));
+					return;
+				}
+				// Pasting rites, floors and offerings is an operator tool, used from the held spawner (F-9).
+				if (!player.hasPermissions(2)) {
+					player.sendSystemMessage(Component.literal("§cStructure Spawner requires operator permission!"));
+					return;
+				}
+				if (ServerboundGuards.heldItem(player, StructureSpawnerItem.class).isEmpty()) {
 					return;
 				}
 

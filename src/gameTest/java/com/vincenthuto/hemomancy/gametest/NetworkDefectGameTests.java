@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.gametest;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
+import com.vincenthuto.hemomancy.common.network.PlaceStructurePacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketLedgerAction;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketUpdatePoolSettings;
 import net.minecraft.gametest.framework.GameTest;
@@ -21,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameType;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.neoforged.neoforge.network.handling.ServerPayloadContext;
@@ -28,6 +30,7 @@ import net.neoforged.neoforge.network.handling.ServerPayloadContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.BooleanSupplier;
 
 /** Serverbound payloads refuse what a modified client could otherwise make them do (audit section F). */
 @GameTestHolder(Hemomancy.MOD_ID)
@@ -39,10 +42,22 @@ public final class NetworkDefectGameTests {
 
     /** A server player whose every outgoing packet, with or without a send listener, lands in {@code sent}. */
     private static ServerPlayer connectedPlayer(GameTestHelper helper, List<Packet<?>> sent) {
+        return connectedPlayer(helper, sent, () -> false);
+    }
+
+    /**
+     * As above, with operator status read from {@code operator}. The GameTest server grants operators permission
+     * level 0, so tests cannot op a fixture player through the player list.
+     */
+    private static ServerPlayer connectedPlayer(GameTestHelper helper, List<Packet<?>> sent, BooleanSupplier operator) {
         var cookie = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(),
                 "net_" + UUID.randomUUID().toString().substring(0, 8)), false);
         var player = new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(), cookie.gameProfile(),
-                cookie.clientInformation());
+                cookie.clientInformation()) {
+            @Override public boolean hasPermissions(int level) {
+                return operator.getAsBoolean() || super.hasPermissions(level);
+            }
+        };
         var connection = new Connection(PacketFlow.SERVERBOUND);
         new EmbeddedChannel(connection);
         new ServerGamePacketListenerImpl(helper.getLevel().getServer(), connection, player, cookie) {
@@ -76,6 +91,44 @@ public final class NetworkDefectGameTests {
         } finally {
             player.discard();
         }
+    }
+
+    /** F-9: pasting a structure needs creative mode, operator permission and the Structure Spawner in hand. */
+    @GameTest(templateNamespace = "minecraft", template = EMPTY_TEMPLATE, timeoutTicks = 20)
+    public static void structurePasteRequiresOperatorAndHeldSpawner(GameTestHelper helper) {
+        List<Packet<?>> sent = new ArrayList<>();
+        boolean[] operator = {false};
+        var player = connectedPlayer(helper, sent, () -> operator[0]);
+        try {
+            player.setGameMode(GameType.CREATIVE);
+            var context = new ServerPayloadContext(player.connection, PlaceStructurePacket.TYPE.id());
+            // An unknown floor only answers "could not find", so a run is visible without placing anything.
+            var packet = new PlaceStructurePacket(Hemomancy.rloc("not_a_floor"), PlaceStructurePacket.StructureType.RITE_FLOOR, false);
+
+            PlaceStructurePacket.handle(packet, context);
+            helper.assertTrue(chatCount(sent) == 1 && !player.hasPermissions(2),
+                    "A creative player without operator permission is refused with a message");
+
+            operator[0] = true;
+            PlaceStructurePacket.handle(packet, context);
+            helper.assertTrue(chatCount(sent) == 1, "An operator without the spawner in hand gets nothing: " + chats(sent));
+
+            player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ItemInit.structure_spawner.get()));
+            PlaceStructurePacket.handle(packet, context);
+            helper.assertTrue(chatCount(sent) == 2, "An operator holding the spawner reaches the paste");
+            helper.succeed();
+        } finally {
+            player.discard();
+        }
+    }
+
+    private static List<String> chats(List<Packet<?>> sent) {
+        return sent.stream().filter(ClientboundSystemChatPacket.class::isInstance)
+                .map(packet -> ((ClientboundSystemChatPacket) packet).content().getString()).toList();
+    }
+
+    private static long chatCount(List<Packet<?>> sent) {
+        return sent.stream().filter(ClientboundSystemChatPacket.class::isInstance).count();
     }
 
     /** F-6: ledger actions run only while the sender holds the ledger. */
