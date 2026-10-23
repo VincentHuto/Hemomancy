@@ -9,12 +9,9 @@ in float vertexDistance;
 in vec4 vertexColor;
 in vec2 bodyUv;
 out vec4 fragColor;
-float hash(vec2 p) { return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }
-float noise(vec2 p) {
-    vec2 i=floor(p),f=fract(p); f=f*f*(3.0-2.0*f);
-    return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+1.0),f.x),f.y);
-}
-float fbm(vec2 p) { return noise(p)*.57+noise(p*2.03+7.1)*.28+noise(p*4.09-3.2)*.15; }
+#moj_import <hemomancy:noise/value_hash.glsl>
+#moj_import <hemomancy:noise/material_noise.glsl>
+#moj_import <hemomancy:noise/material_fbm.glsl>
 float edge(vec2 p) { return smoothstep(0.0,.08,min(min(p.x,1.0-p.x),min(p.y,1.0-p.y))); }
 float fissure(vec2 p) {
     vec2 cell=floor(p),f=fract(p); float a=10.0,b=10.0;

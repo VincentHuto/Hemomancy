@@ -12,8 +12,8 @@ flat in float flowShape;
 flat in float flowSeed;
 out vec4 fragColor;
 
-float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
-float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);}
+#moj_import <hemomancy:noise/value_hash.glsl>
+#moj_import <hemomancy:noise/flow_noise.glsl>
 float rot(vec2 p){return noise(p)*.58+noise(p*2.07+3.1)*.28+noise(p*4.17)*.14;}
 void main(){
     vec2 uv=flowUv,p=uv*2.0-1.0;

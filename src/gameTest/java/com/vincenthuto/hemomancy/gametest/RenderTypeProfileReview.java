@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import jdk.jfr.Configuration;
 import jdk.jfr.Recording;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.Screenshot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
@@ -27,8 +28,9 @@ import java.util.function.Supplier;
  * With hemomancy.renderTypeProfile, builds a fixed scene of renderers that ask for shader render types every frame
  * (a field of Hematic Stakes and a hotbar of monolith items), holds the camera still, and measures a window of frames:
  * mean and 95th-percentile frame time, a Spark CPU profile ({@code sparkc}, when Spark is in the run's mods folder) and a
- * JFR allocation recording. Results land in the game directory's {@code render-type-profile} folder, labelled by
- * hemomancy.renderTypeProfileLabel. Only runs in the disposable RenderTypeProfile save. Excluded from release jars.
+ * JFR allocation recording, after a screenshot of the scene. Results land in the game directory's
+ * {@code render-type-profile} folder, labelled by hemomancy.renderTypeProfileLabel. Only runs in the disposable
+ * RenderTypeProfile save. Excluded from release jars.
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class RenderTypeProfileReview {
@@ -92,6 +94,11 @@ public final class RenderTypeProfileReview {
                 player.onUpdateAbilities();
                 player.teleportTo(level, base.getX() + .5, base.getY() + 1.5, base.getZ() + .5, 0, 20);
             });
+        }
+        if (tick == WARM_UP_TICKS - 20) {
+            // The held monolith fragment, the hotbar and the stake field, for before and after comparisons.
+            String label = System.getProperty("hemomancy.renderTypeProfileLabel", "after");
+            Screenshot.grab(mc.gameDirectory, "profile-scene-" + label + ".png", mc.getMainRenderTarget(), message -> {});
         }
         if (tick == WARM_UP_TICKS) {
             measuring = true;

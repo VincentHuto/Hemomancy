@@ -28,14 +28,8 @@ in vec3 surfacePos;
 
 out vec4 fragColor;
 
-vec3 hash3(vec3 p) {
-    p = vec3(dot(p, vec3(127.1, 311.7, 74.7)), dot(p, vec3(269.5, 183.3, 246.1)), dot(p, vec3(113.5, 271.9, 124.6)));
-    return fract(sin(p) * 43758.5453);
-}
-
-float hash1(vec3 p) {
-    return fract(sin(dot(p, vec3(12.9898, 78.233, 37.719))) * 43758.5453);
-}
+#moj_import <hemomancy:noise/vein_hash3.glsl>
+#moj_import <hemomancy:noise/vein_hash1.glsl>
 
 float smoothNoise(vec3 p) {
     vec3 i = floor(p);

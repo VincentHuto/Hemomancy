@@ -198,7 +198,8 @@ public record ExamplePayload(int entityId, float amount) implements CustomPacket
 - V-2 (render-type caching, done in step 10)
 - V-3 (quad encoder, done in step 10: `MaterialQuads` writes the Lux, Thermal, Ferric and rite-surface vertices;
   Ferric's 128 seed tiles wait on V-3b)
-- V-5 (byte-identical shader noise into an include)
+- V-5 (byte-identical shader noise into an include, done in step 10: nine `include/noise/*.glsl` files; seeded
+  variants stay local)
 - V-6 (colour particle data, done in step 10: `ColorParticleOptions`, `HemoParticleType`, data built through
   `HemoParticleData`)
 - V-7 (HUD and world dispatch, done in step 10)
