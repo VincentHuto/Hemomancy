@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.effect;
 
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -71,16 +70,6 @@ public class VerdigrisAuraEffect extends MobEffect {
 			// Weakness I — blood magic disrupted
 			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, DEBUFF_DURATION, 0, false, true, false));
 		}
-		return true;
-	}
-
-	@Override
-	public Component getDisplayName() {
-		return Component.translatable("effect.hemomancy.verdigris_aura");
-	}
-
-	@Override
-	public boolean isBeneficial() {
 		return true;
 	}
 

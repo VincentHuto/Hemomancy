@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc.unstained;
 
+import com.vincenthuto.hemomancy.common.entity.npc.ProtectedNpc;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueAttention;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ProgressionDialogueNpc;
@@ -10,7 +11,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -32,7 +32,7 @@ import net.minecraft.world.level.Level;
  * geode cannot kill her before the player arrives. She only dies after handing
  * over her notes via the {@code scout_give_notes} dialogue event.</p>
  */
-public class UnstainedScoutEntity extends PathfinderMob implements ProgressionDialogueNpc {
+public class UnstainedScoutEntity extends PathfinderMob implements ProgressionDialogueNpc, ProtectedNpc {
 
     public final AnimationState idleAnimationState = new AnimationState();
 
@@ -56,17 +56,8 @@ public class UnstainedScoutEntity extends PathfinderMob implements ProgressionDi
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        if (source.is(DamageTypes.GENERIC_KILL)) {
-            return super.hurt(source, amount);
-        }
-        // Allow scripted death once dialogue clears invulnerability before calling kill().
-        if (!this.isInvulnerable()) {
-            return super.hurt(source, amount);
-        }
-        if (source.getEntity() instanceof Player player && player.isCreative()) {
-            return super.hurt(source, amount);
-        }
-        return false;
+        // Scripted death: dialogue clears invulnerability before calling kill().
+        return (admitsDamage(source) || !this.isInvulnerable()) && super.hurt(source, amount);
     }
 
     @Override

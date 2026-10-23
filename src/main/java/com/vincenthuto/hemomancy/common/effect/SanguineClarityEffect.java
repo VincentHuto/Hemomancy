@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.effect;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,20 +23,5 @@ public class SanguineClarityEffect extends MobEffect {
 		// Marker effect — no tick behavior. Cost reduction is checked at spell cast time.
 	
 		return true;
-	}
-
-	@Override
-	public Component getDisplayName() {
-		return Component.translatable("effect.hemomancy.sanguine_clarity");
-	}
-
-	@Override
-	public boolean isBeneficial() {
-		return true;
-	}
-
-	@Override
-	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
-		return false;
 	}
 }

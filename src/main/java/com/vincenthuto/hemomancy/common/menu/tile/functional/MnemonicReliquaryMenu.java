@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.menu.tile.functional;
 
+import com.vincenthuto.hemomancy.common.menu.ViewOnlyMenu;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.livingstaff.LivingStaffBondHelper;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.MnemonicReliquaryBlockEntity;
@@ -8,7 +9,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nullable;
 
-public class MnemonicReliquaryMenu extends AbstractContainerMenu {
+public class MnemonicReliquaryMenu extends ViewOnlyMenu {
 
 	private final Level level;
 	private final BlockPos blockPos;
@@ -47,11 +47,6 @@ public class MnemonicReliquaryMenu extends AbstractContainerMenu {
 	}
 
 	@Override
-	public boolean stillValid(Player playerIn) {
-		return true;
-	}
-
-	@Override
 	public void removed(Player player) {
 		super.removed(player);
 		if (!level.isClientSide) {
@@ -60,10 +55,5 @@ public class MnemonicReliquaryMenu extends AbstractContainerMenu {
 				reliquary.stopOpen();
 			}
 		}
-	}
-
-	@Override
-	public ItemStack quickMoveStack(Player pPlayer, int pIndex) {
-		return ItemStack.EMPTY;
 	}
 }

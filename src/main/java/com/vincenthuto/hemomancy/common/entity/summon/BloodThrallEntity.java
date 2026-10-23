@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
+import com.vincenthuto.hemomancy.common.entity.SyncedOwner;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
@@ -48,8 +49,7 @@ import java.util.UUID;
 public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
 
     // ── Synched data ──
-    private static final EntityDataAccessor<Optional<UUID>> DATA_OWNER_UUID =
-            SynchedEntityData.defineId(BloodThrallEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+    private static final SyncedOwner OWNER = SyncedOwner.define(BloodThrallEntity.class);
     private static final EntityDataAccessor<Optional<BlockPos>> DATA_SOURCE_POS =
             SynchedEntityData.defineId(BloodThrallEntity.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
     private static final EntityDataAccessor<Optional<BlockPos>> DATA_DEST_POS =
@@ -114,7 +114,7 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_OWNER_UUID, Optional.empty());
+        OWNER.defineDefault(builder);
         builder.define(DATA_SOURCE_POS, Optional.empty());
         builder.define(DATA_DEST_POS, Optional.empty());
         builder.define(DATA_CARRIED_BLOOD, 0f);
@@ -126,11 +126,11 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
     @Nullable
     @Override
     public UUID getOwnerUUID() {
-        return this.entityData.get(DATA_OWNER_UUID).orElse(null);
+        return OWNER.get(this);
     }
 
     public void setOwnerUUID(@Nullable UUID uuid) {
-        this.entityData.set(DATA_OWNER_UUID, Optional.ofNullable(uuid));
+        OWNER.set(this, uuid);
     }
 
     @Nullable
@@ -220,7 +220,7 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        if (getOwnerUUID() != null) tag.putUUID("Owner", getOwnerUUID());
+        OWNER.save(this, tag);
         if (getSourcePos() != null) tag.put("SourcePos", NbtUtils.writeBlockPos(getSourcePos()));
         if (getDestPos() != null) tag.put("DestPos", NbtUtils.writeBlockPos(getDestPos()));
         tag.putFloat("CarriedBlood", getCarriedBlood());
@@ -231,7 +231,7 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        if (tag.hasUUID("Owner")) setOwnerUUID(tag.getUUID("Owner"));
+        OWNER.load(this, tag);
         setSourcePos(NbtUtils.readBlockPos(tag, "SourcePos").orElse(null));
         setDestPos(NbtUtils.readBlockPos(tag, "DestPos").orElse(null));
         setCarriedBlood(tag.getFloat("CarriedBlood"));

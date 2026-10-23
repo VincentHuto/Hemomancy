@@ -55,14 +55,8 @@ public class EchoicPerceptionEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isBeneficial() {
-		return true;
-	}
-
-	@Override
 	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		return duration % 40 == 0;
 	}
-
 }
 

@@ -30,7 +30,7 @@ public final class PhantasmalMasqueradeSourceTest {
 		assertContains("handler assigns modes", handler, "PhantasmalEchoEntity.BehaviorMode");
 		assertContains("handler copies owner armor", handler, "configureFromOwner");
 
-		assertContains("echo owner sync", echo, "DATA_OWNER_UUID");
+		assertContains("echo owner sync", echo, "SyncedOwner.define(PhantasmalEchoEntity.class)");
 		assertContains("echo behavior enum", echo, "enum BehaviorMode");
 		assertContains("echo aggressive mode", echo, "AGGRESSIVE");
 		assertContains("echo fleeing mode", echo, "FLEEING");

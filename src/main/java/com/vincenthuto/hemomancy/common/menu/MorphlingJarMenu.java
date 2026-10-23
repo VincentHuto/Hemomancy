@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.morphling.Eq
 import com.vincenthuto.hemomancy.common.event.LastRiteHelper;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.ItemMorphlingJar;
-import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingIdentity;
 import com.vincenthuto.hemomancy.common.item.itemhandler.MorphlingJarItemHandler;
 import com.vincenthuto.hemomancy.common.menu.slot.MorphlingJarSlot;
 
@@ -14,14 +13,13 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
 
-public class MorphlingJarMenu extends AbstractContainerMenu {
+public class MorphlingJarMenu extends HemoContainerMenu {
 
 	public static final int SCREEN_WIDTH = 232;
 	public static final int SCREEN_HEIGHT = 214;
@@ -113,15 +111,7 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 		final int originY = PLAYER_INV_Y;
 
 		// Main inventory (3 rows × 9 cols)
-		for (int row = 0; row < 3; row++) {
-			for (int col = 0; col < 9; col++) {
-				this.addSlot(new Slot(playerInventory, col + row * 9 + 9, originX + col * 18, originY + row * 18));
-			}
-		}
-		// Hotbar
-		for (int col = 0; col < 9; col++) {
-			this.addSlot(new Slot(playerInventory, col, originX + col * 18, originY + 58));
-		}
+		addPlayerInventory(playerInventory, originX, originY);
 	}
 
 	// ─── Menu behaviour ──────────────────────────────────────────────────────────

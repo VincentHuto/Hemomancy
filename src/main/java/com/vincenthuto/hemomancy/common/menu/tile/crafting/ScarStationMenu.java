@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.menu.tile.crafting;
 
+import com.vincenthuto.hemomancy.common.menu.HemoContainerMenu;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.menu.slot.OutputSlot;
@@ -11,7 +12,6 @@ import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.Objects;
 
-public class ScarStationMenu extends AbstractContainerMenu {
+public class ScarStationMenu extends HemoContainerMenu {
 	private static final int TOP_CONTENT_Y_OFFSET = -4;
 
 	private final ScarStationBlockEntity te;
@@ -39,15 +39,7 @@ public class ScarStationMenu extends AbstractContainerMenu {
 		addSlot(new ScarPatternSlot(te, 4, 8, 26 + 3 * 18 + TOP_CONTENT_Y_OFFSET));
 		addSlot(new OutputSlot(te, 2, 145, 44 + TOP_CONTENT_Y_OFFSET));
 		// INVENTORY
-		for (int y = 0; y < 3; y++) {
-			for (int x = 0; x < 9; x++) {
-				this.addSlot(new Slot(playerInv, x + y * 9 + 9, 8 + x * 18, 104 + y * 18));
-			}
-		}
-		// HOTBAR
-		for (int x = 0; x < 9; x++) {
-			this.addSlot(new Slot(playerInv, x, 8 + x * 18, 162));
-		}
+		addPlayerInventory(playerInv, 8, 104);
 
 	}
 

@@ -41,11 +41,6 @@ public class MarkedByCanonEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isBeneficial() {
-		return false;
-	}
-
-	@Override
 	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		return amplifier >= 2;
 	}

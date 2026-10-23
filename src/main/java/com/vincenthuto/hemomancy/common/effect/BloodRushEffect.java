@@ -9,7 +9,6 @@ public class BloodRushEffect extends MobEffect {
 
 	public BloodRushEffect(MobEffectCategory typeIn, int liquidColorIn) {
 		super(typeIn, liquidColorIn);
-
 	}
 
 	@Override
@@ -27,13 +26,7 @@ public class BloodRushEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isBeneficial() {
-		return true;
-	}
-
-	@Override
 	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		return duration % 20 == 0;
 	}
-
 }

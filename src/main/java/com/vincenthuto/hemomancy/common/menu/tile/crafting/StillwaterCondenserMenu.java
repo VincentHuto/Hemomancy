@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.menu.tile.crafting;
 
+import com.vincenthuto.hemomancy.common.menu.HemoContainerMenu;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.tile.unstained.crafting.StillwaterCondenserBlockEntity;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.FurnaceResultSlot;
 import net.minecraft.world.inventory.SimpleContainerData;
@@ -18,7 +18,7 @@ import com.vincenthuto.hemomancy.common.mission.unstained.UnstainedObservances;
 
 import java.util.Objects;
 
-public class StillwaterCondenserMenu extends AbstractContainerMenu {
+public class StillwaterCondenserMenu extends HemoContainerMenu {
 	public static final int SLOT_COUNT = 2;
 	private static final int INV_START = SLOT_COUNT;
 	private static final int INV_END = INV_START + 27;
@@ -58,9 +58,7 @@ public class StillwaterCondenserMenu extends AbstractContainerMenu {
 				super.onTake(player, stack);
 			}
 		});
-		for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++)
-			addSlot(new Slot(inventory, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
-		for (int col = 0; col < 9; col++) addSlot(new Slot(inventory, col, 8 + col * 18, 142));
+		addPlayerInventory(inventory, 8, 84);
 		addDataSlots(data);
 	}
 

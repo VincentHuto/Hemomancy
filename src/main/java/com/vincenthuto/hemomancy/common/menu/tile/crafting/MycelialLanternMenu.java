@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.menu.tile.crafting;
 
+import com.vincenthuto.hemomancy.common.menu.HemoContainerMenu;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
@@ -17,7 +18,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.Objects;
 
-public class MycelialLanternMenu extends AbstractContainerMenu {
+public class MycelialLanternMenu extends HemoContainerMenu {
 
     public static final int CULTURE_SLOT = MycelialLanternBlockEntity.SLOT_CULTURE;
     public static final int BLOOD_SLOT = MycelialLanternBlockEntity.SLOT_BLOOD;
@@ -82,15 +83,7 @@ public class MycelialLanternMenu extends AbstractContainerMenu {
             }
         });
 
-        for (int i = 0; i < 3; ++i) {
-            for (int j = 0; j < 9; ++j) {
-                this.addSlot(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 116 + i * 18));
-            }
-        }
-
-        for (int k = 0; k < 9; ++k) {
-            this.addSlot(new Slot(playerInv, k, 8 + k * 18, 174));
-        }
+        addPlayerInventory(playerInv, 8, 116);
 
         this.addDataSlots(data);
     }

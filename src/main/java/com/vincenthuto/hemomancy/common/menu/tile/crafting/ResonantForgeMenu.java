@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.menu.tile.crafting;
 
+import com.vincenthuto.hemomancy.common.menu.HemoContainerMenu;
 import com.vincenthuto.hemomancy.common.enchanting.ResonantForgeRules;
 import com.vincenthuto.hemomancy.common.enchanting.ResonantForgeTransfer;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.DataComponentInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.CylinderMedia;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.ResonantForgeBlockEntity;
@@ -11,7 +11,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
@@ -20,7 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResonantForgeMenu extends AbstractContainerMenu {
+public class ResonantForgeMenu extends HemoContainerMenu {
     private final ResonantForgeBlockEntity forge;
     private final ContainerData data;
 
@@ -40,9 +39,7 @@ public class ResonantForgeMenu extends AbstractContainerMenu {
         addSlot(input(forge, ResonantForgeBlockEntity.GRINDING_CYLINDER, 166, 40, true));
         addSlot(output(forge, ResonantForgeBlockEntity.GRINDING_EQUIPMENT_OUTPUT, 137, 66));
         addSlot(output(forge, ResonantForgeBlockEntity.GRINDING_CYLINDER_OUTPUT, 166, 66));
-        for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++)
-            addSlot(new Slot(inventory, col + row * 9 + 9, 29 + col * 18, 144 + row * 18));
-        for (int col = 0; col < 9; col++) addSlot(new Slot(inventory, col, 29 + col * 18, 202));
+        addPlayerInventory(inventory, 29, 144);
         addDataSlots(data);
     }
 

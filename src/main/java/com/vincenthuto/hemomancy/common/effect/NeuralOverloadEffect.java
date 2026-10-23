@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.effect;
 
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -56,20 +55,9 @@ public class NeuralOverloadEffect extends MobEffect {
 	}
 
 	@Override
-	public Component getDisplayName() {
-		return Component.translatable("effect.hemomancy.neural_overload");
-	}
-
-	@Override
-	public boolean isBeneficial() {
-		return false;
-	}
-
-	@Override
 	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		// Tick every 20 ticks (1 second)
 		return duration % 20 == 0;
 	}
-
 }
 

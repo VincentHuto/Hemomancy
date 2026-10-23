@@ -17,13 +17,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-public class HarbingerEquipmentMenu extends AbstractContainerMenu {
+public class HarbingerEquipmentMenu extends HemoContainerMenu {
 
     public static final ResourceLocation[] ARMOR_SLOT_TEXTURES = new ResourceLocation[]{
             InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS, InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS,
@@ -77,15 +76,7 @@ public class HarbingerEquipmentMenu extends AbstractContainerMenu {
         this.addSlot(new SelectiveEquipmentTypeSlot(player, LivingStaffFittingItem.class, equipment,
                 FITTING_SLOT_INDEX, 176, 86));
 
-        for (int l = 0; l < 3; ++l) {
-            for (int j1 = 0; j1 < 9; ++j1) {
-                this.addSlot(new Slot(playerInventory, j1 + (l + 1) * 9, 26 + j1 * 18, 116 + l * 18));
-            }
-        }
-
-        for (int i1 = 0; i1 < 9; ++i1) {
-            this.addSlot(new Slot(playerInventory, i1, 26 + i1 * 18, 174));
-        }
+        addPlayerInventory(playerInventory, 26, 116);
 
         this.addSlot(new ScarOffHandSlot(playerInventory, 40, 52, 78));
         this.addSlot(new net.neoforged.neoforge.items.SlotItemHandler(new com.vincenthuto.hemomancy.common.antecedent.TalismanSocket(player),0,198,38) {

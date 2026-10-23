@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc;
 
+import com.vincenthuto.hemomancy.common.entity.SyncedOwner;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.DrudgeTenderSource;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.manip.ManipulationRetirementRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.memories.BloodMemoryItem;
@@ -54,8 +55,7 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
 
     // ── Synched data keys ─────────────────────────────────────────────────────
 
-    private static final EntityDataAccessor<Optional<UUID>> DATA_OWNER_UUID =
-            SynchedEntityData.defineId(DrudgeEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+    private static final SyncedOwner OWNER = SyncedOwner.define(DrudgeEntity.class);
     private static final EntityDataAccessor<Optional<BlockPos>> DATA_HOME_POS =
             SynchedEntityData.defineId(DrudgeEntity.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
     private static final EntityDataAccessor<Float> DATA_BLOOD_CHARGE =
@@ -164,7 +164,7 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_OWNER_UUID, Optional.empty());
+        OWNER.defineDefault(builder);
         builder.define(DATA_HOME_POS, Optional.empty());
         builder.define(DATA_BLOOD_CHARGE, MAX_BLOOD_CHARGE);
         builder.define(DATA_IS_ROGUE, false);
@@ -177,11 +177,11 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
     @Nullable
     @Override
     public UUID getOwnerUUID() {
-        return this.entityData.get(DATA_OWNER_UUID).orElse(null);
+        return OWNER.get(this);
     }
 
     public void setOwnerUUID(@Nullable UUID uuid) {
-        this.entityData.set(DATA_OWNER_UUID, Optional.ofNullable(uuid));
+        OWNER.set(this, uuid);
     }
 
     @Nullable
@@ -504,7 +504,7 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        if (getOwnerUUID() != null) tag.putUUID("Owner", getOwnerUUID());
+        OWNER.save(this, tag);
         if (getHomePos() != null) tag.put("HomePos", NbtUtils.writeBlockPos(getHomePos()));
         if (equippedMemory != null) tag.put("EquippedMemory", equippedMemory.serialize());
         tag.putFloat("BloodCharge", getBloodCharge());
@@ -517,7 +517,7 @@ public class DrudgeEntity extends PathfinderMob implements OwnableEntity {
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        if (tag.hasUUID("Owner")) setOwnerUUID(tag.getUUID("Owner"));
+        OWNER.load(this, tag);
         setHomePos(NbtUtils.readBlockPos(tag, "HomePos").orElse(null));
         if (tag.contains("EquippedMemory")) {
             CompoundTag memTag = tag.getCompound("EquippedMemory");

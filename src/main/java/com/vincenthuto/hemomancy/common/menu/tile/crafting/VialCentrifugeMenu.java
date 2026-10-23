@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.menu.tile.crafting;
 
+import com.vincenthuto.hemomancy.common.menu.HemoContainerMenu;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.menu.slot.CentrifugeOutputSlot;
@@ -16,7 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.Objects;
 
-public class VialCentrifugeMenu extends AbstractContainerMenu {
+public class VialCentrifugeMenu extends HemoContainerMenu {
 
 	// Slot indices
 	public static final int BLOOD_SLOT = 0;
@@ -98,15 +99,7 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 		addSlot(new CentrifugeOutputSlot(te, VialCentrifugeBlockEntity.SLOT_FLASK_OUTPUT, 26, 90));
 
 		// INVENTORY
-		for (int y = 0; y < 3; y++) {
-			for (int x = 0; x < 9; x++) {
-				this.addSlot(new Slot(playerInv, x + y * 9 + 9, 8 + x * 18, 122 + y * 18));
-			}
-		}
-		// HOTBAR
-		for (int x = 0; x < 9; x++) {
-			this.addSlot(new Slot(playerInv, x, 8 + x * 18, 180));
-		}
+		addPlayerInventory(playerInv, 8, 122);
 
 		this.addDataSlots(containerData);
 	}

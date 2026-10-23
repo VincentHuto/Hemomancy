@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.effect;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,18 +24,7 @@ public class ChitinousBulwarkEffect extends MobEffect {
 	}
 
 	@Override
-	public Component getDisplayName() {
-		return Component.translatable("effect.hemomancy.chitinous_bulwark");
-	}
-
-	@Override
-	public boolean isBeneficial() {
-		return true;
-	}
-
-	@Override
 	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		return true;
 	}
-
 }

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.menu.tile.functional;
 
+import com.vincenthuto.hemomancy.common.menu.HemoContainerMenu;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.SpecimenContainer;
 import net.minecraft.network.FriendlyByteBuf;
@@ -9,7 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 
-public class PhlebotomistsCabinetMenu extends AbstractContainerMenu {
+public class PhlebotomistsCabinetMenu extends HemoContainerMenu {
     private final SpecimenContainer cabinet;
     private final SimpleContainer icons = new SimpleContainer(9);
     private final int[] counts = new int[9];
@@ -41,9 +42,7 @@ public class PhlebotomistsCabinetMenu extends AbstractContainerMenu {
                 @Override public void set(int value) { counts[cell] = value; }
             });
         }
-        for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++)
-            addSlot(new Slot(inventory, col + row * 9 + 9, 8 + col * 18, 144 + row * 18));
-        for (int col = 0; col < 9; col++) addSlot(new Slot(inventory, col, 8 + col * 18, 202));
+        addPlayerInventory(inventory, 8, 144);
         refresh();
         if (cabinet != null) cabinet.startOpen(inventory.player);
     }

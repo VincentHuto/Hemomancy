@@ -4,7 +4,6 @@ import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.Vector3;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -57,18 +56,7 @@ public class BloodBindingEffect extends MobEffect {
 	}
 
 	@Override
-	public Component getDisplayName() {
-		return Component.translatable("effect.hemomancy.blood_binding");
-	}
-
-	@Override
-	public boolean isBeneficial() {
-		return false;
-	}
-
-	@Override
 	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		return true;
 	}
-
 }

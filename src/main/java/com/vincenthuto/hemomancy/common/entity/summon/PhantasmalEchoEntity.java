@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
+import com.vincenthuto.hemomancy.common.entity.SyncedOwner;
 import com.vincenthuto.hemomancy.common.damage.HemoDamageTypes;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -31,8 +32,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class PhantasmalEchoEntity extends PathfinderMob implements OwnableEntity {
-	private static final EntityDataAccessor<Optional<UUID>> DATA_OWNER_UUID =
-			SynchedEntityData.defineId(PhantasmalEchoEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+	private static final SyncedOwner OWNER = SyncedOwner.define(PhantasmalEchoEntity.class);
 	private static final EntityDataAccessor<Integer> DATA_BEHAVIOR_MODE =
 			SynchedEntityData.defineId(PhantasmalEchoEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> DATA_LIFETIME_TICKS =
@@ -90,7 +90,7 @@ public class PhantasmalEchoEntity extends PathfinderMob implements OwnableEntity
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		super.defineSynchedData(builder);
-		builder.define(DATA_OWNER_UUID, Optional.empty());
+		OWNER.defineDefault(builder);
 		builder.define(DATA_BEHAVIOR_MODE, BehaviorMode.AGGRESSIVE.ordinal());
 		builder.define(DATA_LIFETIME_TICKS, 200);
 	}
@@ -303,10 +303,7 @@ public class PhantasmalEchoEntity extends PathfinderMob implements OwnableEntity
 	@Override
 	public void addAdditionalSaveData(CompoundTag tag) {
 		super.addAdditionalSaveData(tag);
-		UUID owner = getOwnerUUID();
-		if (owner != null) {
-			tag.putUUID("Owner", owner);
-		}
+		OWNER.save(this, tag);
 		tag.putInt("BehaviorMode", getBehaviorMode().ordinal());
 		tag.putInt("LifetimeTicks", entityData.get(DATA_LIFETIME_TICKS));
 	}
@@ -314,9 +311,7 @@ public class PhantasmalEchoEntity extends PathfinderMob implements OwnableEntity
 	@Override
 	public void readAdditionalSaveData(CompoundTag tag) {
 		super.readAdditionalSaveData(tag);
-		if (tag.hasUUID("Owner")) {
-			setOwnerUUID(tag.getUUID("Owner"));
-		}
+		OWNER.load(this, tag);
 		if (tag.contains("BehaviorMode")) {
 			setBehaviorMode(behaviorById(tag.getInt("BehaviorMode")));
 		}
@@ -339,7 +334,7 @@ public class PhantasmalEchoEntity extends PathfinderMob implements OwnableEntity
 	}
 
 	private void setOwnerUUID(@Nullable UUID ownerUuid) {
-		entityData.set(DATA_OWNER_UUID, Optional.ofNullable(ownerUuid));
+		OWNER.set(this, ownerUuid);
 	}
 
 	@Nullable
@@ -354,6 +349,6 @@ public class PhantasmalEchoEntity extends PathfinderMob implements OwnableEntity
 	@Nullable
 	@Override
 	public UUID getOwnerUUID() {
-		return entityData.get(DATA_OWNER_UUID).orElse(null);
+		return OWNER.get(this);
 	}
 }

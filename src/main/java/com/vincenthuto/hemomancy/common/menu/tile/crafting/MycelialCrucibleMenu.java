@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.menu.tile.crafting;
 
+import com.vincenthuto.hemomancy.common.menu.HemoContainerMenu;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
@@ -19,7 +20,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.Objects;
 
-public class MycelialCrucibleMenu extends AbstractContainerMenu {
+public class MycelialCrucibleMenu extends HemoContainerMenu {
 
     // ── Slot indices ──────────────────────────────────────────────────────────
     public static final int CENTER_SLOT      = MycelialCrucibleBlockEntity.SLOT_CENTER;
@@ -91,13 +92,7 @@ public class MycelialCrucibleMenu extends AbstractContainerMenu {
         });
 
         // Player inventory
-        for (int i = 0; i < 3; ++i)
-            for (int j = 0; j < 9; ++j)
-                this.addSlot(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 124 + i * 18));
-
-        // Player hotbar
-        for (int k = 0; k < 9; ++k)
-            this.addSlot(new Slot(playerInv, k, 8 + k * 18, 182));
+        addPlayerInventory(playerInv, 8, 124);
 
         this.addDataSlots(data);
     }

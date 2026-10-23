@@ -1,10 +1,9 @@
 package com.vincenthuto.hemomancy.common.entity.npc.harbinger;
 
+import com.vincenthuto.hemomancy.common.entity.npc.ProtectedNpc;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberEntryDefinitions;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.discovery.LiberKnowledgeHelper;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -18,7 +17,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -44,7 +42,7 @@ import net.minecraft.world.level.Level;
  *       is offered to an enemy of the Covenant.</li>
  * </ul>
  */
-public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity implements ProgressionDialogueNpc {
+public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity implements ProgressionDialogueNpc, ProtectedNpc {
 
     private static final net.minecraft.network.syncher.EntityDataAccessor<Boolean> INITIATING =
             net.minecraft.network.syncher.SynchedEntityData.defineId(HarbingerVicarEntity.class, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
@@ -107,8 +105,6 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.succe
         return false;
     }
 
-
-
     /** Returns true if the given player has an established (valid) bloodline.
      * Recruit and expel dialogue options are only offered when this is true.
      */
@@ -154,18 +150,8 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.succe
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (isSuccessor() || isMisbegotten()) return super.hurt(source, amount);
-        if (source.is(DamageTypes.GENERIC_KILL)) {
-            return super.hurt(source, amount);
-        }
-        // Allow full damage while the Vicar is actively fighting a clarity-bearing player
-        if (this.getTarget() != null) {
-            return super.hurt(source, amount);
-        }
-        // Creative players can always remove it
-        if (source.getEntity() instanceof Player player && player.isCreative()) {
-            return super.hurt(source, amount);
-        }
-        return false;
+        // Full damage while the Vicar is actively fighting a clarity-bearing player
+        return (admitsDamage(source) || this.getTarget() != null) && super.hurt(source, amount);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.utility;
 
+import com.vincenthuto.hemomancy.common.entity.SyncedOwner;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.OpenArborSkillsPacket;
@@ -20,8 +21,7 @@ import java.util.UUID;
 
 /** Owner-bound, non-authoritative presentation anchor for the Chamber's Arbor of Will. */
 public final class ArborOfWillEntity extends Entity {
-    private static final EntityDataAccessor<Optional<UUID>> OWNER =
-            SynchedEntityData.defineId(ArborOfWillEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+    private static final SyncedOwner OWNER = SyncedOwner.define(ArborOfWillEntity.class);
     private static final EntityDataAccessor<Integer> DEGREE =
             SynchedEntityData.defineId(ArborOfWillEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> POMES =
@@ -36,20 +36,20 @@ public final class ArborOfWillEntity extends Entity {
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        builder.define(OWNER, Optional.empty());
+        OWNER.defineDefault(builder);
         builder.define(DEGREE, 0);
         builder.define(POMES, 0);
         builder.define(CHAMBER_RADIUS, 4);
     }
 
     public void configure(ServerPlayer owner, int chamberRadius, int pomes) {
-        entityData.set(OWNER, Optional.of(owner.getUUID()));
+        OWNER.set(this, owner.getUUID());
         entityData.set(DEGREE, HemoCapabilityAccess.getPlayerDegreeNumber(owner));
         entityData.set(POMES, Math.max(0, Math.min(9, pomes)));
         entityData.set(CHAMBER_RADIUS, Math.max(3, chamberRadius));
     }
 
-    public Optional<UUID> ownerId() { return entityData.get(OWNER); }
+    public Optional<UUID> ownerId() { return Optional.ofNullable(OWNER.get(this)); }
     public boolean isOwnedBy(Player player) { return ownerId().filter(player.getUUID()::equals).isPresent(); }
     public int degree() { return entityData.get(DEGREE); }
     public int pomesConsumed() { return entityData.get(POMES); }
@@ -73,7 +73,7 @@ public final class ArborOfWillEntity extends Entity {
 
     @Override
     protected void readAdditionalSaveData(CompoundTag tag) {
-        if (tag.hasUUID("Owner")) entityData.set(OWNER, Optional.of(tag.getUUID("Owner")));
+        OWNER.load(this, tag);
         entityData.set(DEGREE, tag.getInt("Degree"));
         entityData.set(POMES, tag.getInt("Pomes"));
         entityData.set(CHAMBER_RADIUS, Math.max(3, tag.getInt("ChamberRadius")));
@@ -81,7 +81,7 @@ public final class ArborOfWillEntity extends Entity {
 
     @Override
     protected void addAdditionalSaveData(CompoundTag tag) {
-        ownerId().ifPresent(id -> tag.putUUID("Owner", id));
+        OWNER.save(this, tag);
         tag.putInt("Degree", degree());
         tag.putInt("Pomes", pomesConsumed());
         tag.putInt("ChamberRadius", chamberRadius());

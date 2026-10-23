@@ -1,4 +1,5 @@
 package com.vincenthuto.hemomancy.common.menu.tile.functional;
+import com.vincenthuto.hemomancy.common.menu.HemoContainerMenu;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.component.ClairaudiographRecording;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.*;
@@ -10,7 +11,7 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import java.util.*;
-public class ClairaudiographMenu extends AbstractContainerMenu {
+public class ClairaudiographMenu extends HemoContainerMenu {
     public final ClairaudiographBlockEntity machine;
     private final Player owner;
     public List<ClairaudiographRecording> choices = List.of();
@@ -26,8 +27,7 @@ public class ClairaudiographMenu extends AbstractContainerMenu {
             @Override public boolean mayPickup(Player player) { return machine.progress == 0; }
             @Override public int getMaxStackSize() { return 1; }
         });
-        for(int row=0;row<3;row++) for(int col=0;col<9;col++) addSlot(new Slot(inv,9+row*9+col,8+col*18,150+row*18));
-        for(int col=0;col<9;col++) addSlot(new Slot(inv,col,8+col*18,208));
+        addPlayerInventory(inv, 8, 150);
         addDataSlots(new ContainerData() {
             public int get(int i) { return switch(i) { case 0 -> be.progress; case 1 -> be.playing()?1:0; default -> be.loop?1:0; }; }
             public void set(int i,int value) { if(i==0) progress=value; else if(i==1) playing=value; else looping=value; }

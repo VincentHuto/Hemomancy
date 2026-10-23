@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
+import com.vincenthuto.hemomancy.common.entity.SyncedOwner;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.damage.HemoDamageTypes;
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedAcolyteEntity;
@@ -33,13 +34,11 @@ import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
-import java.util.Optional;
 import java.util.UUID;
 
 public class PaleIntercessionEntity extends PathfinderMob implements OwnableEntity {
 	public static final String ACTIVE_MARKER = "HemomancyPaleIntercession";
-	private static final EntityDataAccessor<Optional<UUID>> OWNER = SynchedEntityData.defineId(
-			PaleIntercessionEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+	private static final SyncedOwner OWNER = SyncedOwner.define(PaleIntercessionEntity.class);
 	private static final EntityDataAccessor<Integer> REMAINING = SynchedEntityData.defineId(
 			PaleIntercessionEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> PRESENTATION = SynchedEntityData.defineId(
@@ -70,7 +69,7 @@ public class PaleIntercessionEntity extends PathfinderMob implements OwnableEnti
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		super.defineSynchedData(builder);
-		builder.define(OWNER, Optional.empty());
+		OWNER.defineDefault(builder);
 		builder.define(REMAINING, PaleIntercessionRules.DURATION_TICKS);
 		builder.define(PRESENTATION, Presentation.MANIFEST.ordinal());
 	}
@@ -83,7 +82,7 @@ public class PaleIntercessionEntity extends PathfinderMob implements OwnableEnti
 
 	public void bindTo(ServerPlayer owner) {
 		cachedOwner = owner;
-		entityData.set(OWNER, Optional.of(owner.getUUID()));
+		OWNER.set(this, owner.getUUID());
 		refreshDuration();
 		setPresentation(Presentation.MANIFEST, 20);
 	}
@@ -280,7 +279,7 @@ public class PaleIntercessionEntity extends PathfinderMob implements OwnableEnti
 	@Override
 	public void addAdditionalSaveData(CompoundTag tag) {
 		super.addAdditionalSaveData(tag);
-		getOwnerUUIDOptional().ifPresent(uuid -> tag.putUUID("Owner", uuid));
+		OWNER.save(this, tag);
 		tag.putInt("RemainingTicks", getRemainingTicks());
 		tag.putInt("Presentation", entityData.get(PRESENTATION));
 	}
@@ -288,13 +287,12 @@ public class PaleIntercessionEntity extends PathfinderMob implements OwnableEnti
 	@Override
 	public void readAdditionalSaveData(CompoundTag tag) {
 		super.readAdditionalSaveData(tag);
-		if (tag.hasUUID("Owner")) entityData.set(OWNER, Optional.of(tag.getUUID("Owner")));
+		OWNER.load(this, tag);
 		if (tag.contains("RemainingTicks")) entityData.set(REMAINING, Math.max(0, tag.getInt("RemainingTicks")));
 		if (tag.contains("Presentation")) entityData.set(PRESENTATION, tag.getInt("Presentation"));
 	}
 
-	private Optional<UUID> getOwnerUUIDOptional() { return entityData.get(OWNER); }
-	@Override @Nullable public UUID getOwnerUUID() { return getOwnerUUIDOptional().orElse(null); }
+	@Override @Nullable public UUID getOwnerUUID() { return OWNER.get(this); }
 	@Nullable public ServerPlayer owner() {
 		UUID uuid = getOwnerUUID();
 		if (uuid == null) return null;

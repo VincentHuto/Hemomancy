@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.menu.tile.functional;
 
+import com.vincenthuto.hemomancy.common.menu.HemoContainerMenu;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.equipment.IHarbingerEquipmentItemHandler;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.IScars;
@@ -11,12 +12,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-public class SporeImplantMenu extends AbstractContainerMenu {
+public class SporeImplantMenu extends HemoContainerMenu {
 	public static final int FUNGAL_SLOT_UI = 0;
 	public static final int SLOT_COUNT = 1;
 
@@ -43,15 +43,7 @@ public class SporeImplantMenu extends AbstractContainerMenu {
 
 		this.addSlot(new SelectiveEquipmentTypeSlot(player, ItemFungalScar.class, scars, IScars.FUNGAL_SLOT, 80, 35));
 
-		for (int l = 0; l < 3; ++l) {
-			for (int j1 = 0; j1 < 9; ++j1) {
-				this.addSlot(new Slot(playerInventory, j1 + (l + 1) * 9, 8 + j1 * 18, 84 + l * 18));
-			}
-		}
-
-		for (int i1 = 0; i1 < 9; ++i1) {
-			this.addSlot(new Slot(playerInventory, i1, 8 + i1 * 18, 142));
-		}
+		addPlayerInventory(playerInventory, 8, 84);
 	}
 
 	@Override

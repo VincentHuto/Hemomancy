@@ -22,9 +22,4 @@ public class ManipulationStatusEffect extends MobEffect {
 	public Component getDisplayName() {
 		return Component.translatable("effect.hemomancy." + id);
 	}
-
-	@Override
-	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
-		return false;
-	}
 }

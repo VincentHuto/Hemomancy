@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.effect;
 
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
@@ -75,16 +74,6 @@ public class SanguineFertilityEffect extends MobEffect {
 				}
 			}
 		}
-		return true;
-	}
-
-	@Override
-	public Component getDisplayName() {
-		return Component.translatable("effect.hemomancy.sanguine_fertility");
-	}
-
-	@Override
-	public boolean isBeneficial() {
 		return true;
 	}
 

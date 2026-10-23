@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.monster;
 
+import com.vincenthuto.hemomancy.common.entity.SyncedOwner;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
@@ -28,7 +29,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
-import java.util.Optional;
 import java.util.UUID;
 
 public class EnthralledDollEntity extends Monster implements OwnableEntity {
@@ -36,8 +36,7 @@ public class EnthralledDollEntity extends Monster implements OwnableEntity {
 
 	protected static final EntityDataAccessor<Byte> DATA_FLAGS_ID = SynchedEntityData.defineId(EnthralledDollEntity.class,
 			EntityDataSerializers.BYTE);
-	protected static final EntityDataAccessor<Optional<UUID>> DATA_OWNERUUID_ID = SynchedEntityData
-			.defineId(EnthralledDollEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+	protected static final SyncedOwner OWNER = SyncedOwner.define(EnthralledDollEntity.class);
 	protected static final EntityDataAccessor<Boolean> DATA_SUMMONED_BY_PUPPETEER =
 			SynchedEntityData.defineId(EnthralledDollEntity.class, EntityDataSerializers.BOOLEAN);
 
@@ -85,9 +84,7 @@ public class EnthralledDollEntity extends Monster implements OwnableEntity {
 	@Override
 	public void addAdditionalSaveData(CompoundTag pCompound) {
 		super.addAdditionalSaveData(pCompound);
-		if (this.getOwnerUUID() != null) {
-			pCompound.putUUID("Owner", this.getOwnerUUID());
-		}
+		OWNER.save(this, pCompound);
 		pCompound.putBoolean("SummonedByPuppeteer", isSummonedByPuppeteer());
 
 	}
@@ -96,7 +93,7 @@ public class EnthralledDollEntity extends Monster implements OwnableEntity {
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		super.defineSynchedData(builder);
 		builder.define(DATA_FLAGS_ID, (byte) 0);
-		builder.define(DATA_OWNERUUID_ID, Optional.empty());
+		OWNER.defineDefault(builder);
 		builder.define(DATA_SUMMONED_BY_PUPPETEER, false);
 
 	}
@@ -200,11 +197,11 @@ public class EnthralledDollEntity extends Monster implements OwnableEntity {
 	@Override
 	@Nullable
 	public UUID getOwnerUUID() {
-		return this.entityData.get(DATA_OWNERUUID_ID).orElse((UUID) null);
+		return OWNER.get(this);
 	}
 
 	public void setOwnerUUID(@Nullable UUID pUuid) {
-		this.entityData.set(DATA_OWNERUUID_ID, Optional.ofNullable(pUuid));
+		OWNER.set(this, pUuid);
 	}
 
 	public boolean isOwnedBy(LivingEntity pEntity) {

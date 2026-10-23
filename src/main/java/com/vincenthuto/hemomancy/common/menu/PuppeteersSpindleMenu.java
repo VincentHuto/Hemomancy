@@ -9,7 +9,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -18,7 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.Objects;
 
-public class PuppeteersSpindleMenu extends AbstractContainerMenu {
+public class PuppeteersSpindleMenu extends HemoContainerMenu {
 	public static final int CROSSBAR_SLOT = PuppeteersSpindleBlockEntity.SLOT_CROSSBAR;
 	public static final int THREAD_SLOT = PuppeteersSpindleBlockEntity.SLOT_THREAD;
 	public static final int SLOT_COUNT = PuppeteersSpindleBlockEntity.INVENTORY_SIZE;
@@ -65,16 +64,7 @@ public class PuppeteersSpindleMenu extends AbstractContainerMenu {
 			}
 		});
 
-		for (int row = 0; row < 3; ++row) {
-			for (int col = 0; col < 9; ++col) {
-				this.addSlot(new Slot(playerInventory, col + row * 9 + 9,
-						78 + col * 18, 154 + row * 18));
-			}
-		}
-
-		for (int col = 0; col < 9; ++col) {
-			this.addSlot(new Slot(playerInventory, col, 78 + col * 18, 212));
-		}
+		addPlayerInventory(playerInventory, 78, 154);
 
 		this.addDataSlots(data);
 		if (!level.isClientSide) ensureCrossbarAttuned(playerInventory.player);

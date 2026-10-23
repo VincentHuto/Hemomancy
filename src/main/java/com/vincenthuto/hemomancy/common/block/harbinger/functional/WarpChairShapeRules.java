@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.harbinger.functional;
 
+import com.vincenthuto.hemomancy.common.block.shared.ModelShapes;
+
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -22,9 +24,9 @@ public final class WarpChairShapeRules {
 
 	private static final Map<Direction, VoxelShape> ROTATED_SHAPES = Map.of(
 			Direction.NORTH, SHAPE,
-			Direction.SOUTH, rotate(SHAPE, Direction.SOUTH),
-			Direction.EAST, rotate(SHAPE, Direction.EAST),
-			Direction.WEST, rotate(SHAPE, Direction.WEST));
+			Direction.SOUTH, ModelShapes.rotate(SHAPE, Direction.SOUTH),
+			Direction.EAST, ModelShapes.rotate(SHAPE, Direction.EAST),
+			Direction.WEST, ModelShapes.rotate(SHAPE, Direction.WEST));
 	private static final Map<Direction, VoxelShape> UPPER_SHAPES = Map.of(
 			Direction.NORTH, upperSlice(Direction.NORTH),
 			Direction.SOUTH, upperSlice(Direction.SOUTH),
@@ -44,23 +46,6 @@ public final class WarpChairShapeRules {
 
 	private static VoxelShape upperSlice(Direction facing) {
 		return Shapes.join(shape(facing).move(0.0D, -1.0D, 0.0D), Shapes.block(), BooleanOp.AND);
-	}
-
-	private static VoxelShape rotate(VoxelShape source, Direction facing) {
-		VoxelShape[] result = { Shapes.empty() };
-		source.forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> {
-			VoxelShape box = switch (facing) {
-				case SOUTH -> Shapes.box(1.0D - maxX, minY, 1.0D - maxZ,
-						1.0D - minX, maxY, 1.0D - minZ);
-				case EAST -> Shapes.box(1.0D - maxZ, minY, minX,
-						1.0D - minZ, maxY, maxX);
-				case WEST -> Shapes.box(minZ, minY, 1.0D - maxX,
-						maxZ, maxY, 1.0D - minX);
-				default -> Shapes.box(minX, minY, minZ, maxX, maxY, maxZ);
-			};
-			result[0] = Shapes.or(result[0], box);
-		});
-		return result[0].optimize();
 	}
 
 	private static VoxelShape box(double minX, double minY, double minZ,

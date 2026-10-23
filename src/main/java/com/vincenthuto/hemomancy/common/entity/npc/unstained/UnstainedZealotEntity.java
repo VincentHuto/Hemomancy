@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc.unstained;
 
+import com.vincenthuto.hemomancy.common.entity.npc.ProtectedNpc;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumInitiatoryDegree;
@@ -11,7 +12,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -25,7 +25,7 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public class UnstainedZealotEntity extends PathfinderMob implements ProgressionDialogueNpc {
+public class UnstainedZealotEntity extends PathfinderMob implements ProgressionDialogueNpc, ProtectedNpc {
 
     public final AnimationState idleAnimationState = new AnimationState();
 
@@ -50,13 +50,7 @@ public class UnstainedZealotEntity extends PathfinderMob implements ProgressionD
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        if (source.is(DamageTypes.GENERIC_KILL)) {
-            return super.hurt(source, amount);
-        }
-        if (source.getEntity() instanceof Player player && player.isCreative()) {
-            return super.hurt(source, amount);
-        }
-        return false;
+        return admitsDamage(source) && super.hurt(source, amount);
     }
 
     @Override

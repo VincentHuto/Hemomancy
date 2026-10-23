@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.effect;
 
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -51,16 +50,6 @@ public class SilverWardEffect extends MobEffect {
 	 */
 	public static float getBloodDamageReduction(int amplifier) {
 		return Math.min(0.60f, 0.15f * (amplifier + 1));
-	}
-
-	@Override
-	public Component getDisplayName() {
-		return Component.translatable("effect.hemomancy.silver_ward");
-	}
-
-	@Override
-	public boolean isBeneficial() {
-		return true;
 	}
 
 	@Override

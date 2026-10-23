@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.npc.harbinger;
 
+import com.vincenthuto.hemomancy.common.entity.npc.ProtectedNpc;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
@@ -9,7 +9,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -22,7 +21,7 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public class HarbingerVotaryWayfarerEntity extends PathfinderMob implements ProgressionDialogueNpc {
+public class HarbingerVotaryWayfarerEntity extends PathfinderMob implements ProgressionDialogueNpc, ProtectedNpc {
 	public final AnimationState idleAnimationState = new AnimationState();
 
 	public HarbingerVotaryWayfarerEntity(EntityType<? extends HarbingerVotaryWayfarerEntity> type, Level level) {
@@ -46,13 +45,7 @@ public class HarbingerVotaryWayfarerEntity extends PathfinderMob implements Prog
 
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
-		if (source.is(DamageTypes.GENERIC_KILL)) {
-			return super.hurt(source, amount);
-		}
-		if (source.getEntity() instanceof Player player && player.isCreative()) {
-			return super.hurt(source, amount);
-		}
-		return false;
+		return admitsDamage(source) && super.hurt(source, amount);
 	}
 
 	@Override

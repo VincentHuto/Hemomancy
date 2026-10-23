@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.menu.tile.crafting;
 
+import com.vincenthuto.hemomancy.common.menu.HemoContainerMenu;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.EnzymaticScriptoriumBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -19,7 +20,6 @@ import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public final class EnzymaticScriptoriumMenu extends AbstractContainerMenu {
+public final class EnzymaticScriptoriumMenu extends HemoContainerMenu {
     private final EnzymaticScriptoriumBlockEntity station;
     private final Player player;
     private final ContainerData data;
@@ -77,9 +77,7 @@ public final class EnzymaticScriptoriumMenu extends AbstractContainerMenu {
             @Override public boolean mayPlace(ItemStack stack) { return !station.isRiteLocked() && stack.is(ItemInit.blood_crystal_shard.get()); }
             @Override public boolean mayPickup(Player player) { return !station.isRiteLocked(); }
         });
-        for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++)
-            addSlot(new Slot(inventory, col + row * 9 + 9, 27 + col * 18, 132 + row * 18));
-        for (int col = 0; col < 9; col++) addSlot(new Slot(inventory, col, 27 + col * 18, 190));
+        addPlayerInventory(inventory, 27, 132);
         addDataSlots(data);
         if (!player.level().isClientSide) refresh();
     }

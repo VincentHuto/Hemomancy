@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.menu.tile.functional;
 
+import com.vincenthuto.hemomancy.common.menu.HemoContainerMenu;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
@@ -9,7 +10,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
@@ -18,7 +18,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-public class MasonsEffigyMenu extends AbstractContainerMenu {
+public class MasonsEffigyMenu extends HemoContainerMenu {
 	public static final int MAX_SELECTED_SCARS = com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern.MAX_SCAR_IDS;
 	public static final int PLAYER_INV_START = 0;
 	public static final int PLAYER_INV_SLOTS = 36;
@@ -58,14 +58,7 @@ public class MasonsEffigyMenu extends AbstractContainerMenu {
 		this.openingActiveScarIds = List.copyOf(openingActiveScarIds);
 		this.hasOpeningSnapshot = hasOpeningSnapshot;
 
-		for (int row = 0; row < 3; ++row) {
-			for (int col = 0; col < 9; ++col) {
-				addSlot(new Slot(playerInventory, col + row * 9 + 9, PLAYER_INV_X + col * 18, PLAYER_INV_Y + row * 18));
-			}
-		}
-		for (int col = 0; col < 9; ++col) {
-			addSlot(new Slot(playerInventory, col, PLAYER_INV_X + col * 18, PLAYER_INV_Y + 58));
-		}
+		addPlayerInventory(playerInventory, PLAYER_INV_X, PLAYER_INV_Y);
 	}
 
 	public BlockPos getPos() {

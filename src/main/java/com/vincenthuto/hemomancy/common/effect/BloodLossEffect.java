@@ -21,7 +21,6 @@ public class BloodLossEffect extends MobEffect {
 
 	public BloodLossEffect(MobEffectCategory typeIn, int liquidColorIn) {
 		super(typeIn, liquidColorIn);
-
 	}
 
 	@Override
@@ -42,7 +41,6 @@ public class BloodLossEffect extends MobEffect {
 					}
 
 					BloodAccounting.payUpkeep((ServerPlayer) playerIn, 0.5f * (amplifier + 1), SOURCE, 1, false);
-
 				}
 			} else if (!HemoEntityPredicates.NOBLOOD.test(entity)) {
 				entity.hurt(entity.damageSources().generic(), 0.5F);
@@ -65,14 +63,8 @@ public class BloodLossEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isBeneficial() {
-		return false;
-	}
-
-	@Override
 	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		return true;
 	}
-
 }
 

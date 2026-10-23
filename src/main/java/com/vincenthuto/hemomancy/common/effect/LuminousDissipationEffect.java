@@ -36,13 +36,7 @@ public class LuminousDissipationEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isBeneficial() {
-		return true;
-	}
-
-	@Override
 	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		return true;
 	}
-
 }

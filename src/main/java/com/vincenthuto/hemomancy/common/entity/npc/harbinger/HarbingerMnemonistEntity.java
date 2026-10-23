@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.npc.harbinger;
 
+import com.vincenthuto.hemomancy.common.entity.npc.ProtectedNpc;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.*;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
 import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
@@ -14,7 +14,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -30,7 +29,7 @@ import net.minecraft.world.level.Level;
  * The Mnemonist teaches crude memories, active manipulation slots, and the later
  * tools used to order and weave refined memories.
  */
-public class HarbingerMnemonistEntity extends com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity implements ProgressionDialogueNpc {
+public class HarbingerMnemonistEntity extends com.vincenthuto.hemomancy.common.succession.ProfessionalHarbingerEntity implements ProgressionDialogueNpc, ProtectedNpc {
 	public final AnimationState idleAnimationState = new AnimationState();
 
 	public HarbingerMnemonistEntity(EntityType<? extends HarbingerMnemonistEntity> type, Level level) {
@@ -54,13 +53,7 @@ public class HarbingerMnemonistEntity extends com.vincenthuto.hemomancy.common.s
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
         if (isSuccessor() || isMisbegotten()) return super.hurt(source, amount);
-		if (source.is(DamageTypes.GENERIC_KILL)) {
-			return super.hurt(source, amount);
-		}
-		if (source.getEntity() instanceof Player player && player.isCreative()) {
-			return super.hurt(source, amount);
-		}
-		return false;
+		return admitsDamage(source) && super.hurt(source, amount);
 	}
 
 	@Override

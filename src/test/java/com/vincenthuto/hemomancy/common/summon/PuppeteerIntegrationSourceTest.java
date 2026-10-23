@@ -1,13 +1,13 @@
 package com.vincenthuto.hemomancy.common.summon;
 
+import org.junit.jupiter.api.Test;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public final class PuppeteerIntegrationSourceTest {
-	private PuppeteerIntegrationSourceTest() {
-	}
-
-	public static void main(String[] args) throws Exception {
+class PuppeteerIntegrationSourceTest {
+	@Test
+	void puppeteerIntegrationIsWired() throws Exception {
 		String crossbar = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/MarionetteCrossbarItem.java");
 		String spindle = read("src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/crafting/PuppeteersSpindleBlockEntity.java");
 		String packet = read("src/main/java/com/vincenthuto/hemomancy/common/network/summon/PacketPuppeteersSpindleAction.java");
@@ -235,7 +235,7 @@ public final class PuppeteerIntegrationSourceTest {
 		assertContains(screen, "public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY)");
 		assertNotContains(screen, "private void drawMeter(");
 		assertContains(screen, "puppeteers_spindle.thread_slot_short");
-		assertContains(menu, "78 + col * 18");
+		assertContains(menu, "addPlayerInventory(playerInventory, 78, 154)");
 		assertContains(summonsTab, "PuppeteerSummonRules.adjustedThreadCost");
 		assertContains(summonsTab, "PuppeteerSummonRules.effectiveCommandRange");
 		assertContains(radialScreen, "crossbar.interference.gnawed");

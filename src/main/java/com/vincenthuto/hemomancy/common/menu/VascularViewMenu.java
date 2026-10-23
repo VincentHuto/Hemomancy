@@ -5,14 +5,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 
-public class VascularViewMenu extends AbstractContainerMenu {
+public class VascularViewMenu extends ViewOnlyMenu {
 
     private VascularViewMenu(@Nullable MenuType<?> type, int id, Inventory playerInv, ItemStack heldItem) {
         super(type, id);
@@ -28,14 +27,4 @@ public class VascularViewMenu extends AbstractContainerMenu {
         this(windowId, playerInventory);
     }
 
-
-    @Override
-    public boolean stillValid(Player playerIn) {
-        return true;
-    }
-
-    @Override
-    public ItemStack quickMoveStack(Player pPlayer, int pIndex) {
-        return ItemStack.EMPTY;
-    }
 }

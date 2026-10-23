@@ -9,14 +9,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
 
-public class LivingSyringeMenu extends AbstractContainerMenu {
+public class LivingSyringeMenu extends HemoContainerMenu {
 	public int slotcount = 0;
 
 	private int slotID;
@@ -91,22 +90,7 @@ public class LivingSyringeMenu extends AbstractContainerMenu {
 			originY = 193;
 		}
 
-		// Player Inventory
-		for (int row = 0; row < 3; row++) {
-			for (int col = 0; col < 9; col++) {
-				int x = originX + col * 18;
-				int y = originY + row * 18;
-				int index = (col + row * 9) + 9;
-				this.addSlot(new Slot(playerInventory, index, x + 1, y + 1));
-			}
-		}
-
-		// Hotbar
-		for (int col = 0; col < 9; col++) {
-			int x = originX + col * 18;
-			int y = originY + 58;
-			this.addSlot(new Slot(playerInventory, col, x + 1, y + 1));
-		}
+		addPlayerInventory(playerInventory, originX + 1, originY + 1);
 	}
 
 	@Override

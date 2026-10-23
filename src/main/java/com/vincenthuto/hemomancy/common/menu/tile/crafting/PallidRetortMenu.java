@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.menu.tile.crafting;
 
+import com.vincenthuto.hemomancy.common.menu.HemoContainerMenu;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.menu.slot.PallidRetortFlaskSlot;
@@ -26,7 +27,7 @@ import java.util.Objects;
  * </ul>
  * Container data: [0] = heated (0/1), [1] = cookingProgress, [2] = cookingTotalTime
  */
-public class PallidRetortMenu extends AbstractContainerMenu {
+public class PallidRetortMenu extends HemoContainerMenu {
 
 	public static final int INGREDIENT_SLOT = 0;
 	public static final int FLASK_SLOT      = 1;
@@ -102,16 +103,7 @@ public class PallidRetortMenu extends AbstractContainerMenu {
 
 		// Player inventory (3 rows) — pushed down below crafting area
 		int invY = CRAFT_AREA_HEIGHT + 14;
-		for (int row = 0; row < 3; ++row) {
-			for (int col = 0; col < 9; ++col) {
-				this.addSlot(new Slot(playerInventory, col + row * 9 + 9, 8 + col * 18, invY + row * 18));
-			}
-		}
-		// Hotbar
-		int hotbarY = invY + 58;
-		for (int k = 0; k < 9; ++k) {
-			this.addSlot(new Slot(playerInventory, k, 8 + k * 18, hotbarY));
-		}
+		addPlayerInventory(playerInventory, 8, invY);
 
 		this.addDataSlots(containerData);
 	}

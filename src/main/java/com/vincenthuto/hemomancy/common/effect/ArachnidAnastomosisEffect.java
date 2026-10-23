@@ -62,15 +62,9 @@ public class ArachnidAnastomosisEffect extends MobEffect {
 	}
 
 	@Override
-	public boolean isBeneficial() {
-		return true;
-	}
-
-	@Override
 	public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
 		// Tick every 2 seconds (40 ticks) to match the vascular system check cadence
 		return duration % 40 == 0;
 	}
-
 }
 
