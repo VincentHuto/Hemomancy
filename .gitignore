@@ -81,7 +81,8 @@ __pycache__/
 !/docs/harbinger_progression_redesign/
 !/docs/harbinger_progression_redesign/**
 
-# tools/ holds local editors and art pipelines. Only the model generators that tests read are tracked.
+# tools/ holds local editors and art pipelines. Only the model generators that tests read and the review launchers are tracked.
 /tools/*
 !/tools/model_export/
+!/tools/review/
 .ignore

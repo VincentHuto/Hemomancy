@@ -1,0 +1,22 @@
+allprojects {
+    afterEvaluate {
+        // Runtime readers must keep the prepared dependency jar stable across concurrent clients.
+        if (project.name == 'HutosLib') tasks.named('jar').configure { enabled = false }
+        if (project.name == 'Hemomancy' && extensions.findByName('neoForge') != null) {
+            neoForge.runs.server {
+                gameDirectory = project.file('build/area6-server')
+                systemProperty 'hemomancy.remoteAcceptance', 'true'
+            }
+            ['Caster', 'Observer'].each { role ->
+                neoForge.runs.create("area6${role}") {
+                    client()
+                    additionalRuntimeClasspathConfiguration.extendsFrom(project.configurations.clientLocalRuntime)
+                    gameDirectory = project.file("build/area6-${role}")
+                    jvmArguments.set(['-Xms1G', '-Xmx4G'])
+                    systemProperty 'hemomancy.remoteAcceptanceClient', 'true'
+                    programArguments.addAll('--username', "Area6${role}", '--width', '1280', '--height', '800', '--quickPlayMultiplayer', '127.0.0.1:25576')
+                }
+            }
+        }
+    }
+}

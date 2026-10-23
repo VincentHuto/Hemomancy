@@ -1,0 +1,18 @@
+allprojects {
+    afterEvaluate {
+        if (project.name == 'Hemomancy' && extensions.findByName('neoForge') != null) {
+            tasks.named('runClient').configure {
+                doFirst {
+                    if (!project.file('build/visual-review-client/saves/Area5Review/level.dat').isFile()) {
+                        throw new GradleException('Create the disposable Area5Review save described in docs/manipulation_work_plan/05-visuals-results.md first.')
+                    }
+                }
+            }
+            neoForge.runs.client {
+                systemProperty 'hemomancy.visualWorldReview', 'true'
+                gameDirectory = project.file('build/visual-review-client')
+                programArguments.addAll('--width', '1600', '--height', '1000', '--quickPlaySingleplayer', 'Area5Review')
+            }
+        }
+    }
+}

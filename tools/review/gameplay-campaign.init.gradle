@@ -1,0 +1,29 @@
+allprojects {
+    afterEvaluate {
+        if (project.name == 'HutosLib' && gradle.startParameter.projectProperties.containsKey('gameplayReuseArtifacts')) {
+            // A second client must not rewrite the jar already open in the first JVM.
+            tasks.matching { it.name == 'jar' }.configureEach { enabled = false }
+        }
+        if (project.name == 'Hemomancy' && extensions.findByName('neoForge') != null) {
+            neoForge.runs.alphaJourneyClient {
+                def role = project.findProperty('gameplayRole') ?: 'solo'
+                gameDirectory = project.file('build/gameplay-campaign/' + role)
+                jvmArguments.set(['-Xms1G', '-Xmx6G'])
+                systemProperty 'hemomancy.gameplayDriver', 'true'
+                systemProperty 'hemomancy.gameplaySeed', project.findProperty('gameplaySeed') ?: '20260910'
+                programArguments.addAll('--width', '1280', '--height', '800', '--username', 'Journey' + role)
+                if (project.hasProperty('gameplayConnect')) {
+                    programArguments.addAll('--quickPlayMultiplayer', project.property('gameplayConnect'))
+                }
+                if (project.hasProperty('gameplayWorld')) {
+                    programArguments.addAll('--quickPlaySingleplayer', project.property('gameplayWorld'))
+                }
+                def options = project.file('build/gameplay-campaign/' + role + '/options.txt')
+                if (!options.exists()) {
+                    options.parentFile.mkdirs()
+                    options.text = 'onboardAccessibility:false\npauseOnLostFocus:false\nrenderDistance:8\nsimulationDistance:8\nguiScale:2\nmaxFps:40\n'
+                }
+            }
+        }
+    }
+}

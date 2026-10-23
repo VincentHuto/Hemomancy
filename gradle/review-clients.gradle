@@ -1,0 +1,92 @@
+// Review, observer and profile clients (T-6): one table, one factory. Each entry is a run named by its key.
+//   dir     game directory
+//   user    --username
+//   memory  [Xms, Xmx]
+//   driver  false leaves out hemomancy.gameplayDriver (default true)
+//   props   system properties; a value may come from a -P property through gradleOr
+//   args    extra program arguments, after --username
+//   size    [width, height], or null for the default window
+// The base runs (client, server, alphaJourneyClient, data) stay in build.gradle; GameTest servers come from
+// gradle/game-tests.gradle. Launchers that drive several of these runs at once live in tools/review/.
+
+def gradleOr = { String name, String fallback -> providers.gradleProperty(name).getOrElse(fallback) }
+def review = [1280, 720]
+
+def reviewClients = [
+    bookKitReviewClient: [dir: 'build/book-kit-client', user: 'BookKitReview', size: [1280, 900],
+                          props: ['hemomancy.bookKitReview': 'true']],
+    bookKitPeerClient: [dir: 'build/book-kit-peer/book-kit-client', user: 'BookKitPeer', size: [1000, 800],
+                        props: ['hemomancy.bookKitReview': 'true']],
+    scriptoriumReviewClient: [dir: 'build/scriptorium-client', user: 'ScriptoriumReview', driver: false, size: review],
+    phlegethonticReviewClient: [dir: 'build/phlegethontic-client', user: 'IchorReview', driver: false,
+                                props: ['hemomancy.phlegethontic.clientReview': 'true'],
+                                args: ['--quickPlaySingleplayer', 'Phlegethontic Final Review']],
+    pelagicReviewClient: [dir: 'build/pelagic-client', user: 'PelagicReview', size: [1280, 800],
+                          props: ['hemomancy.pelagic.clientReview': providers.gradleProperty('pelagicEcologyReview').isPresent() ? 'false' : 'true',
+                                  'hemomancy.pelagic.ecologyClientReview': gradleOr('pelagicEcologyReview', 'false'),
+                                  'hemomancy.osteophage.clientReview': gradleOr('osteophageReview', 'false'),
+                                  'hemomancy.pelagic.reviewStartScene': gradleOr('pelagicReviewStartScene', '0')],
+                          args: ['--quickPlaySingleplayer', gradleOr('pelagicReviewWorld', 'Pelagic Review')]],
+    phlegethonticObserverClient: [dir: 'build/phlegethontic-observer', user: 'IchorObserver', driver: false,
+                                  props: ['hemomancy.phlegethontic.clientReview': 'true'],
+                                  args: ['--quickPlayMultiplayer', 'localhost:25566']],
+    antecedentReviewClient: [dir: 'build/antecedent-client', user: 'AntecedentReview', memory: ['2G', '5G'],
+                             props: ['hemomancy.antecedentReview': 'true']],
+    axonalReviewClient: [dir: 'build/axonal-client', user: 'AxonalReview', memory: ['2G', '5G'],
+                         props: ['hemomancy.axonalReview': 'true']],
+    naeglerophaeonReviewClient: [dir: 'build/naeglerophaeon-client', user: 'MembraneReview',
+                                 props: ['hemomancy.naeglerophaeonReview': 'true']],
+    annettaReviewClient: [dir: 'build/annetta-client-review', user: 'AnnettaReview', size: review,
+                          props: ['hemomancy.annettaReview': 'true',
+                                  'hemomancy.annettaReview.only': gradleOr('annettaReviewOnly', '')]],
+    mycophantReviewClient: [dir: 'build/mycophant-client-review', user: 'MycophantReview', size: review,
+                            props: ['hemomancy.mycophantReview': 'true',
+                                    'hemomancy.mycophantReview.only': gradleOr('mycophantReviewOnly', '')]],
+    vesperReviewClient: [dir: 'build/vesper-client-review', user: 'VesperReview', size: review,
+                         props: ['hemomancy.vesperReview': 'true',
+                                 'hemomancy.vesperReview.only': gradleOr('vesperReviewOnly', '')]],
+    outpouringReviewClient: [dir: 'build/outpouring-client-review', user: 'OutpouringReview', size: review,
+                             props: ['hemomancy.outpouringReview': 'true',
+                                     'hemomancy.outpouringReview.only': gradleOr('outpouringReviewOnly', '')]],
+    brazierReviewClient: [dir: 'build/brazier-client-review', user: 'BrazierReview', size: review,
+                          props: ['hemomancy.brazierReview': 'true']],
+    condenserReviewClient: [dir: 'build/condenser-client-review', user: 'CondenserReview', size: review,
+                            props: ['hemomancy.condenserReview': 'true']],
+    infusionReviewClient: [dir: 'build/infusion-client-review', user: 'InfusionReview', size: review,
+                           props: ['hemomancy.infusionReview': 'true']],
+    jeiReviewClient: [dir: 'build/jei-client-review', user: 'JeiReview', size: review,
+                      props: ['hemomancy.jeiReview': 'true']],
+    loomReviewClient: [dir: 'build/loom-client-review', user: 'LoomReview', size: review,
+                       props: ['hemomancy.loomReview': 'true']],
+    riteFloorReviewClient: [dir: 'build/rite-floor-client-review', user: 'RiteFloorReview', size: review,
+                            props: ['hemomancy.riteFloorReview': 'true',
+                                    'hemomancy.riteFloorReviewSpecial': gradleOr('riteFloorReviewSpecial', 'true')]],
+    screenChromeReviewClient: [dir: 'build/screen-chrome-review', user: 'ChromeReview', size: review,
+                               props: ['hemomancy.screenChromeReview': 'true',
+                                       'hemomancy.screenChromeReviewLabel': gradleOr('chromeLabel', 'after')]],
+    hudLayerReviewClient: [dir: 'build/hud-layer-review', user: 'HudReview', size: review,
+                           props: ['hemomancy.hudLayerReview': 'true',
+                                   'hemomancy.hudLayerReviewLabel': gradleOr('hudLabel', 'after')]],
+    // Drop a Spark jar into build/render-type-profile/mods for the CPU profile; JFR and frame times need nothing.
+    renderTypeProfileClient: [dir: 'build/render-type-profile', user: 'ProfileReview', memory: ['4G', '6G'], size: review,
+                              props: ['hemomancy.renderTypeProfile': 'true',
+                                      'hemomancy.renderTypeProfileLabel': gradleOr('profileLabel', 'after')]],
+    successionReviewClient: [dir: 'build/succession-client', user: 'SuccessionReview',
+                             props: ['hemomancy.successionReview': 'true']],
+    successionObserverClient: [dir: 'build/succession-observer', user: 'SucObserver', memory: ['2G', '4G'],
+                               args: ['--quickPlayMultiplayer', 'localhost:25568']],
+]
+
+reviewClients.each { name, spec ->
+    def run = neoForge.runs.maybeCreate(name)
+    run.client()
+    run.gameDirectory = file(spec.dir)
+    run.additionalRuntimeClasspathConfiguration.extendsFrom(configurations.clientLocalRuntime)
+    def memory = spec.memory ?: ['2G', '6G']
+    run.jvmArguments.addAll("-Xms${memory[0]}".toString(), "-Xmx${memory[1]}".toString())
+    if (spec.driver != false) run.systemProperty 'hemomancy.gameplayDriver', 'true'
+    spec.props?.each { key, value -> run.systemProperty key, value }
+    run.programArguments.addAll '--username', spec.user
+    spec.args?.each { run.programArguments.add it }
+    if (spec.size) run.programArguments.addAll '--width', spec.size[0].toString(), '--height', spec.size[1].toString()
+}

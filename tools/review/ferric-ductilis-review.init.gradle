@@ -1,0 +1,24 @@
+allprojects {
+    afterEvaluate {
+        if (project.name == 'Hemomancy' && extensions.findByName('neoForge') != null) {
+            neoForge.runs.gameTestServer { gameDirectory = project.file('build/ferric-ductilis-gametest') }
+            neoForge.runs.client {
+                gameDirectory = project.file(project.hasProperty('ferricObserver') ? 'build/ferric-observer-client' : 'build/visceral-review-client')
+                jvmArguments.set(['-Xms1G', '-Xmx5G'])
+                systemProperty 'hemomancy.ferricReview', project.hasProperty('ferricObserver') ? 'false' : 'true'
+                systemProperty 'hemomancy.ferricReviewModes', project.findProperty('ferricReviewModes') ?: '1'
+                systemProperty 'hemomancy.ferricReviewStart', project.findProperty('ferricReviewStart') ?: '0'
+                systemProperty 'hemomancy.ferricReviewEnd', project.findProperty('ferricReviewEnd') ?: Integer.MAX_VALUE.toString()
+                systemProperty 'hemomancy.ferricReviewLabel', project.findProperty('ferricReviewLabel') ?: 'after'
+                systemProperty 'hemomancy.ferricMultiplayer', project.hasProperty('ferricMultiplayer') ? 'true' : 'false'
+                if (project.hasProperty('ferricObserver')) {
+                    systemProperty 'hemomancy.thermalObserver', 'true'
+                    systemProperty 'hemomancy.thermalObserverLabel', 'ferric-' + (project.findProperty('ferricReviewLabel') ?: 'after')
+                    def options = project.file('build/ferric-observer-client/options.txt')
+                    if (!options.exists()) { options.parentFile.mkdirs(); options.text = 'onboardAccessibility:false\n' }
+                    programArguments.addAll('--width','1280','--height','800','--username','FerricObserver','--quickPlayMultiplayer','127.0.0.1:25579')
+                } else programArguments.addAll('--width','1280','--height','800','--quickPlaySingleplayer','VisceralReview')
+            }
+        }
+    }
+}

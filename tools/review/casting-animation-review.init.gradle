@@ -1,0 +1,28 @@
+allprojects {
+    afterEvaluate {
+        if (project.name == 'HutosLib') tasks.named('jar').configure { enabled = false }
+        if (project.name == 'Hemomancy' && extensions.findByName('neoForge') != null) {
+            def review = providers.gradleProperty('castingRun').getOrElse('casting-review')
+            neoForge.runs.server {
+                gameDirectory = project.file("build/${review}-server")
+                jvmArguments.set(['-Xms1G', '-Xmx3G'])
+                systemProperty 'hemomancy.castingReview', 'true'
+                systemProperty 'hemomancy.castingReviewIntegrationOnly', providers.gradleProperty('castingIntegrationOnly').getOrElse('false')
+                systemProperty 'hemomancy.castingReviewNight', providers.gradleProperty('castingNight').getOrElse('false')
+                systemProperty 'hemomancy.castingReviewImpactsOnly', providers.gradleProperty('castingImpactsOnly').getOrElse('false')
+                systemProperty 'hemomancy.castingReviewBasicsOnly', providers.gradleProperty('castingBasicsOnly').getOrElse('false')
+            }
+            ['Caster', 'Observer'].each { role ->
+                neoForge.runs.create("casting${role}") {
+                    client()
+                    additionalRuntimeClasspathConfiguration.extendsFrom(project.configurations.clientLocalRuntime)
+                    gameDirectory = project.file("build/${review}-${role}")
+                    jvmArguments.set(['-Xms1G', '-Xmx3G'])
+                    systemProperty 'hemomancy.castingReviewClient', 'true'
+                    def username = role == 'Caster' ? providers.gradleProperty('castingCasterName').getOrElse('CastCaster') : 'CastObserver'
+                    programArguments.addAll('--username', username, '--width', '1280', '--height', '800', '--quickPlayMultiplayer', '127.0.0.1:25579')
+                }
+            }
+        }
+    }
+}

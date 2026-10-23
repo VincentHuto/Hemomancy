@@ -1,0 +1,28 @@
+allprojects {
+    afterEvaluate {
+        if (project.name == 'Hemomancy' && extensions.findByName('neoForge') != null) {
+            if (project.hasProperty('bloodBaseline')) {
+                sourceSets.main.java.setSrcDirs(['build/animus-mortem-baseline/src/main/java'])
+                sourceSets.main.resources.setSrcDirs(['build/animus-mortem-baseline/src/main/resources', 'src/generated/resources'])
+            }
+            neoForge.runs.gameTestServer { gameDirectory = project.file('build/animus-mortem-gametest') }
+            neoForge.runs.client {
+                systemProperty 'hemomancy.animusMortemReview', project.hasProperty('bloodObserver') ? 'false' : 'true'
+                systemProperty 'hemomancy.animusMortemMultiplayer', project.hasProperty('bloodMultiplayer') ? 'true' : 'false'
+                systemProperty 'hemomancy.animusMortemReviewLabel', project.findProperty('bloodReviewLabel') ?: 'after'
+                systemProperty 'hemomancy.animusMortemStart', project.findProperty('bloodReviewStart') ?: '0'
+                systemProperty 'hemomancy.animusMortemEnd', project.findProperty('bloodReviewEnd') ?: Integer.MAX_VALUE.toString()
+                systemProperty 'hemomancy.animusMortemReviewModes', project.findProperty('bloodReviewModes') ?: '3'
+                systemProperty 'hemomancy.animusMortemNpc', project.hasProperty('bloodNpc') ? 'true' : 'false'
+                systemProperty 'hemomancy.animusMortemBenchmark', project.hasProperty('bloodBenchmark') ? 'true' : 'false'
+                gameDirectory = project.file(project.hasProperty('bloodObserver') ? 'build/blood-observer-client' : 'build/animus-mortem-client')
+                jvmArguments.set(['-Xms1G', '-Xmx5G'])
+                if(project.hasProperty('bloodObserver')) {
+                    systemProperty 'hemomancy.thermalObserver', 'true'
+                    systemProperty 'hemomancy.thermalObserverLabel', 'blood-' + (project.findProperty('bloodReviewLabel') ?: 'final')
+                    programArguments.addAll('--width','1280','--height','800','--username','BloodObserver','--quickPlayMultiplayer','127.0.0.1:25579')
+                } else programArguments.addAll('--width', '1280', '--height', '800', '--quickPlaySingleplayer', 'VisceralReview')
+            }
+        }
+    }
+}

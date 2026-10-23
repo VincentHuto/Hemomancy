@@ -1,0 +1,53 @@
+allprojects {
+    afterEvaluate {
+        if (project.name == 'Hemomancy' && extensions.findByName('neoForge') != null) {
+            if (project.hasProperty('luxUmbraReview')) neoForge.runs.gameTestServer {
+                gameDirectory = project.file('build/lux-umbra-gametest')
+            }
+            if (project.hasProperty('thermalReview')) neoForge.runs.gameTestServer {
+                gameDirectory = project.file('build/thermal-gametest')
+            }
+            neoForge.runs.client {
+                systemProperty 'hemomancy.visceralReview', project.hasProperty('thermalReview') || project.hasProperty('luxUmbraReview') || project.hasProperty('luxUmbraRibbonReview') || project.hasProperty('chargeVisualReview') ? 'false' : 'true'
+                if (project.hasProperty('thermalReview')) {
+                    systemProperty 'hemomancy.thermalReview', project.hasProperty('thermalCastReview') ? 'false' : 'true'
+                    systemProperty 'hemomancy.thermalCastReview', project.hasProperty('thermalCastReview') ? 'true' : 'false'
+                    systemProperty 'hemomancy.thermalNpcReview', project.hasProperty('thermalNpcReview') ? 'true' : 'false'
+                    systemProperty 'hemomancy.thermalMultiplayerReview', project.hasProperty('thermalMultiplayerReview') ? 'true' : 'false'
+                    systemProperty 'hemomancy.thermalReviewLabel', project.findProperty('thermalReviewLabel') ?: 'after'
+                    systemProperty 'hemomancy.thermalReviewModes', project.findProperty('thermalReviewModes') ?: '3'
+                    systemProperty 'hemomancy.thermalReviewStartMode', project.findProperty('thermalReviewStartMode') ?: '0'
+                    systemProperty 'hemomancy.thermalBenchmark', project.hasProperty('thermalBenchmark') ? 'true' : 'false'
+                }
+                if (project.hasProperty('chargeVisualReview')) {
+                    systemProperty 'hemomancy.chargeVisualReview', 'true'
+                    systemProperty 'hemomancy.chargeVisualReviewLabel', project.findProperty('chargeVisualReviewLabel') ?: 'after'
+                }
+                if (project.hasProperty('luxUmbraReview')) systemProperty 'hemomancy.luxUmbraReview', 'true'
+                if (project.hasProperty('luxUmbraRibbonReview')) {
+                    systemProperty 'hemomancy.luxUmbraRibbonReview', 'true'
+                    systemProperty 'hemomancy.luxUmbraReviewLabel', project.findProperty('luxUmbraReviewLabel') ?: 'after'
+                    if (project.hasProperty('luxUmbraStepReview')) systemProperty 'hemomancy.luxUmbraStepReview', 'true'
+                    if (project.hasProperty('luxUmbraVerdictTrailReview')) systemProperty 'hemomancy.luxUmbraVerdictTrailReview', 'true'
+                }
+                if (project.hasProperty('visceralRoster')) systemProperty 'hemomancy.visceralRoster', 'true'
+                if (project.hasProperty('visceralBoundaries')) systemProperty 'hemomancy.visceralBoundaries', 'true'
+                gameDirectory = project.file(project.hasProperty('thermalObserver') ? 'build/thermal-observer-client' : 'build/visceral-review-client')
+                jvmArguments.set(['-Xms1G', '-Xmx5G'])
+                if(project.hasProperty('thermalObserver')) {
+                    def observerOptions = project.file('build/thermal-observer-client/options.txt')
+                    if(!observerOptions.exists()) {
+                        observerOptions.parentFile.mkdirs()
+                        observerOptions.text = 'onboardAccessibility:false\n'
+                    }
+                    systemProperty 'hemomancy.thermalReview', 'false'
+                    systemProperty 'hemomancy.thermalCastReview', 'false'
+                    systemProperty 'hemomancy.thermalObserver', 'true'
+                    systemProperty 'hemomancy.thermalObserverLabel', project.findProperty('thermalObserverLabel') ?: 'casts'
+                    programArguments.addAll('--width', '1280', '--height', '800', '--username', 'ThermalObserver',
+                            '--quickPlayMultiplayer', '127.0.0.1:25579')
+                } else programArguments.addAll('--width', '1280', '--height', '800', '--quickPlaySingleplayer', 'VisceralReview')
+            }
+        }
+    }
+}

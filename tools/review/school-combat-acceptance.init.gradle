@@ -1,0 +1,24 @@
+allprojects {
+    afterEvaluate {
+        if (project.name == 'HutosLib') tasks.named('jar').configure { enabled = false }
+        if (project.name == 'Hemomancy' && extensions.findByName('neoForge') != null) {
+            def acceptanceRun = providers.gradleProperty('schoolRun').getOrElse('school-acceptance')
+            neoForge.runs.server {
+                gameDirectory = project.file("build/${acceptanceRun}-server")
+                jvmArguments.set(['-Xms1G', '-Xmx3G'])
+                systemProperty 'hemomancy.schoolAcceptance', 'true'
+                systemProperty 'hemomancy.schoolAcceptanceStartScene', providers.gradleProperty('schoolScene').getOrElse('0')
+            }
+            ['Caster', 'Observer', 'Late'].each { role ->
+                neoForge.runs.create("school${role}") {
+                    client()
+                    additionalRuntimeClasspathConfiguration.extendsFrom(project.configurations.clientLocalRuntime)
+                    gameDirectory = project.file("build/${acceptanceRun}-${role}")
+                    jvmArguments.set(['-Xms1G', '-Xmx4G'])
+                    systemProperty 'hemomancy.schoolAcceptanceClient', 'true'
+                    programArguments.addAll('--username', "School${role}", '--width', '1280', '--height', '800', '--quickPlayMultiplayer', '127.0.0.1:25577')
+                }
+            }
+        }
+    }
+}
