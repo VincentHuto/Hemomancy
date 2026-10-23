@@ -63,18 +63,12 @@ public final class ScryingPodiumDiagnosticsResourceTest {
 				"case TENDENCY");
 		assertContains("diagnostics screen should use shared progress-screen tab rendering", diagnosticsScreen,
 				"ScreenDrawUtils.drawTabs");
-		assertContains("diagnostics screen should use the shared procedural vein background pattern", diagnosticsScreen,
-				"renderVeinBackground(graphics, x, y, PANEL_WIDTH, PANEL_HEIGHT);");
-		assertContains("diagnostics screen should keep the procedural background under a tight vein budget",
-				diagnosticsScreen, "private static final int VEIN_COUNT = 10;");
-		assertContains("diagnostics screen should draw vein tendrils with a segment stride", diagnosticsScreen,
-				"private static final int VEIN_STEP_STRIDE = 4;");
-		assertContains("diagnostics screen should precompute static speckles instead of allocating each frame",
-				diagnosticsScreen, "private int[][] speckleParams;");
-		assertDoesNotContain("diagnostics screen should not rebuild speckle randoms every frame", diagnosticsScreen,
-				"Random speckRand = new Random(12345L);");
-		assertContains("diagnostics screen should draw animated vein tendrils", diagnosticsScreen,
-				"drawVeinTendril(graphics, i, time, gx, gy, gw, gh);");
+		assertContains("diagnostics screen should use the shared procedural vein background", diagnosticsScreen,
+				"veins.draw(graphics, x, y, PANEL_WIDTH, PANEL_HEIGHT, advanceVeinClock());");
+		assertContains("diagnostics screen should keep a tight vein budget drawn with a segment stride of 4",
+				diagnosticsScreen, "new VeinBackgroundRenderer.Field(10, 42L, 0.3f, 0.7f, 7f, 15f, 56, 72, 3, 4, 1, false)");
+		assertContains("diagnostics screen should roll its speckles once instead of each frame", diagnosticsScreen,
+				"new VeinBackgroundRenderer.Speckles.Fixed(12345L, 48, PANEL_WIDTH, PANEL_HEIGHT");
 
 		assertContains("diagnostics menu should be localized", lang,
 				"\"container.hemomancy.scrying_diagnostics\": \"Sanguine Diagnosis\"");

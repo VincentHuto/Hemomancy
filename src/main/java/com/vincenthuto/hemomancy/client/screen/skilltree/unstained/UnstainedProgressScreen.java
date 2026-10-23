@@ -500,7 +500,7 @@ public class UnstainedProgressScreen extends Screen {
 		backgroundRenderer.render(gfx, guiLeft, guiTop, guiWidth, guiHeight);
 
 		// 2. Border
-		drawBorder(gfx, guiLeft, guiTop, guiWidth, guiHeight);
+		ScreenDrawUtils.drawBorder(gfx, guiLeft, guiTop, guiWidth, guiHeight, COL_BORDER_OUTER, COL_BORDER_INNER);
 
 		// 3. Scissored content area
 		gfx.enableScissor(guiLeft + 2, guiTop + 2,
@@ -1478,10 +1478,6 @@ public class UnstainedProgressScreen extends Screen {
 	// ────────────────────────────────────────────────────────────
 	//  Border (dark blue variant)
 	// ────────────────────────────────────────────────────────────
-
-	private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-		ScreenDrawUtils.drawBorder(gfx, x, y, w, h, COL_BORDER_OUTER, COL_BORDER_INNER);
-	}
 
 	// ────────────────────────────────────────────────────────────
 	//  Tab buttons (top-right) — delegate to ScreenDrawUtils

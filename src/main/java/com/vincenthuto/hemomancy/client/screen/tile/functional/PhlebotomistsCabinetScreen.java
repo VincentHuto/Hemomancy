@@ -12,6 +12,7 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 
 public class PhlebotomistsCabinetScreen extends AbstractContainerScreen<PhlebotomistsCabinetMenu> {
     private final VeinBackgroundRenderer veinBackground = new VeinBackgroundRenderer();
@@ -37,10 +38,7 @@ public class PhlebotomistsCabinetScreen extends AbstractContainerScreen<Phleboto
             g.renderOutline(x, y, 52, 34, 0xFF440E0E);
             var slot = menu.slots.get(i);
             int sx = leftPos + slot.x, sy = topPos + slot.y;
-            g.fill(sx - 1, sy - 1, sx + 17, sy + 17, 0xFF0D0303);
-            g.fill(sx, sy, sx + 16, sy + 16, 0xFF1A0808);
-            g.fill(sx + 16, sy, sx + 17, sy + 17, 0xFF3A1212);
-            g.fill(sx, sy + 16, sx + 17, sy + 17, 0xFF3A1212);
+            ScreenDrawUtils.drawSlotWell(g, sx, sy, 0xFF0D0303, 0xFF1A0808, 0xFF3A1212);
         }
     }
     private Component source(ItemStack stack) {

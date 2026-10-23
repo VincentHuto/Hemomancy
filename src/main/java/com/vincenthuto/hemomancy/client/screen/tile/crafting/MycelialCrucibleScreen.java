@@ -14,6 +14,7 @@ import net.minecraft.world.inventory.Slot;
 
 import java.util.List;
 import java.util.Random;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 
 /**
  * GUI for the Mycelial Crucible. Visual palette shifts from the Incubator's
@@ -102,7 +103,7 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
         int gx = leftPos, gy = topPos, gw = imageWidth, gh = imageHeight;
 
         renderFungalBackground(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
-        drawBorder(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
+        ScreenDrawUtils.drawBevelBorder(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT, BORDER_RED, BORDER_YELLOW, BORDER_INNER);
 
         // Lower inventory area
         Slot firstInventorySlot = this.menu.slots.get(MycelialCrucibleMenu.SLOT_COUNT);
@@ -224,10 +225,7 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
     // ── Slot decorations ──────────────────────────────────────────────────────
 
     private void drawSlotBg(GuiGraphics gfx, int sx, int sy, int slotIndex) {
-        gfx.fill(sx - 1, sy - 1, sx + 17, sy + 17, SLOT_BORDER_DARK);
-        gfx.fill(sx, sy, sx + 16, sy + 16, SLOT_BG);
-        gfx.fill(sx + 16, sy, sx + 17, sy + 17, SLOT_BORDER_LITE);
-        gfx.fill(sx, sy + 16, sx + 17, sy + 17, SLOT_BORDER_LITE);
+        ScreenDrawUtils.drawSlotWell(gfx, sx, sy, SLOT_BORDER_DARK, SLOT_BG, SLOT_BORDER_LITE);
 
         if (slotIndex == MycelialCrucibleMenu.CENTER_SLOT)
             gfx.fill(sx, sy, sx + 16, sy + 16, 0x208B5500);
@@ -379,15 +377,4 @@ public class MycelialCrucibleScreen extends AbstractContainerScreen<MycelialCruc
     }
 
     // ── Border ────────────────────────────────────────────────────────────────
-
-    private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-        gfx.fill(x, y, x + w, y + 1, BORDER_RED);
-        gfx.fill(x, y + h - 1, x + w, y + h, BORDER_YELLOW);
-        gfx.fill(x, y, x + 1, y + h, BORDER_RED);
-        gfx.fill(x + w - 1, y, x + w, y + h, BORDER_YELLOW);
-        gfx.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
-        gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, BORDER_INNER);
-        gfx.fill(x + 1, y + 1, x + 2, y + h - 1, BORDER_INNER);
-        gfx.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, BORDER_INNER);
-    }
 }

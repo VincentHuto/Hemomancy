@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.client.screen.item;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.client.data.BloodFlowDiagnosticsClientData;
 import com.vincenthuto.hemomancy.client.data.ManipulationCostDiagnosticsClientData;
 import com.vincenthuto.hemomancy.client.data.ManipulationSlotDiagnosticsClientData;
@@ -31,6 +30,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 
 import java.util.*;
+import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.VeinBackgroundRenderer;
 
 public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDiagnosticsMenu> {
 	private static final int PANEL_WIDTH = 322;
@@ -41,10 +41,6 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 	private static final int CONTENT_TOP = 56;
 	private static final int FLOW_VISIBLE_ROWS = 5;
 	private static final int PANEL = 0xF00A0204;
-	private static final int VEIN_COUNT = 10;
-	private static final int VEIN_STEP_STRIDE = 4;
-	private static final int GLOW_RING_STEP = 12;
-	private static final int SPECKLE_COUNT = 48;
 	private static final float VEIN_ANIMATION_SPEED = 0.35F;
 	private static final int BORDER = 0xFF5C1010;
 	private static final int BORDER_DARK = 0xFF1A0404;
@@ -56,8 +52,12 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 	private static final int WARN = 0xFFE6C65C;
 	private static final int BAD = 0xFFE06C6C;
 
-	private float[][] veinParams;
-	private int[][] speckleParams;
+	/** Ten short tendrils drawn every fourth step, and 48 motes rolled once: a cheap panel. */
+	private static final VeinBackgroundRenderer.Style VEINS = new VeinBackgroundRenderer.Style(
+			new VeinBackgroundRenderer.Field(10, 42L, 0.3f, 0.7f, 7f, 15f, 56, 72, 3, 4, 1, false),
+			VeinBackgroundRenderer.Palette.CRIMSON.background(PANEL).ringStep(12),
+			new VeinBackgroundRenderer.Speckles.Fixed(12345L, 48, PANEL_WIDTH, PANEL_HEIGHT, 10, 20, 6, 0, 15, 25));
+	private final VeinBackgroundRenderer veins = new VeinBackgroundRenderer(VEINS);
 	private float animTime = 0.0F;
 	private long lastAnimMillis = -1L;
 	private int flowScrollOffset = 0;
@@ -76,28 +76,6 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 	@Override
 	protected void init() {
 		super.init();
-		Random rand = new Random(42L);
-		veinParams = new float[VEIN_COUNT][9];
-		for (int i = 0; i < VEIN_COUNT; i++) {
-			veinParams[i][0] = rand.nextFloat();
-			veinParams[i][1] = rand.nextFloat();
-			veinParams[i][2] = (float) (rand.nextFloat() * Math.PI * 2);
-			veinParams[i][3] = 0.3F + rand.nextFloat() * 0.7F;
-			veinParams[i][4] = 7.0F + rand.nextFloat() * 15.0F;
-			veinParams[i][5] = 0.04F + rand.nextFloat() * 0.08F;
-			veinParams[i][6] = 56 + rand.nextInt(72);
-			veinParams[i][7] = 1 + rand.nextInt(3);
-			veinParams[i][8] = rand.nextFloat();
-		}
-		Random speckleRandom = new Random(12345L);
-		speckleParams = new int[SPECKLE_COUNT][5];
-		for (int i = 0; i < SPECKLE_COUNT; i++) {
-			speckleParams[i][0] = speckleRandom.nextInt(PANEL_WIDTH);
-			speckleParams[i][1] = speckleRandom.nextInt(PANEL_HEIGHT);
-			speckleParams[i][2] = 10 + speckleRandom.nextInt(20);
-			speckleParams[i][3] = speckleRandom.nextInt(6);
-			speckleParams[i][4] = 15 + speckleRandom.nextInt(25);
-		}
 	}
 
 	@Override
@@ -109,7 +87,7 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 	protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
 		int x = this.leftPos;
 		int y = this.topPos;
-		renderVeinBackground(graphics, x, y, PANEL_WIDTH, PANEL_HEIGHT);
+		veins.draw(graphics, x, y, PANEL_WIDTH, PANEL_HEIGHT, advanceVeinClock());
 		drawFrame(graphics, x, y, PANEL_WIDTH, PANEL_HEIGHT);
 	}
 
@@ -397,109 +375,20 @@ public class ScryingDiagnosticsScreen extends AbstractContainerScreen<ScryingDia
 		return this.font.plainSubstrByWidth(text, Math.max(0, maxWidth - this.font.width("..."))) + "...";
 	}
 
-	private void drawFrame(GuiGraphics graphics, int x, int y, int width, int height) {
-		graphics.fill(x, y, x + width, y + 1, BORDER);
-		graphics.fill(x, y + height - 1, x + width, y + height, BORDER_DARK);
-		graphics.fill(x, y, x + 1, y + height, BORDER);
-		graphics.fill(x + width - 1, y, x + width, y + height, BORDER_DARK);
-		graphics.fill(x + 6, y + 33, x + width - 6, y + 34, 0xFF2B0707);
-	}
-
-	private void renderVeinBackground(GuiGraphics graphics, int gx, int gy, int gw, int gh) {
-		graphics.enableScissor(gx, gy, gx + gw, gy + gh);
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-
-		graphics.fill(gx, gy, gx + gw, gy + gh, PANEL);
-
-		int cx = gx + gw / 2;
-		int cy = gy + gh / 2;
-		int glowRadius = Math.max(gw, gh) / 2;
-		for (int ring = glowRadius; ring > 0; ring -= GLOW_RING_STEP) {
-			float t = (float) ring / glowRadius;
-			int alpha = (int) (35 * (1.0F - t));
-			int red = (int) (40 * (1.0F - t));
-			int color = (alpha << 24) | (red << 16);
-			graphics.fill(cx - ring, cy - ring, cx + ring, cy + ring, color);
-		}
-
+	/** Wall time, capped per frame and slowed by VEIN_ANIMATION_SPEED. */
+	private float advanceVeinClock() {
 		long now = Util.getMillis();
 		if (lastAnimMillis >= 0L) {
 			float deltaSeconds = Math.min((now - lastAnimMillis) / 1000.0F, 0.05F);
 			animTime += deltaSeconds * VEIN_ANIMATION_SPEED;
 		}
 		lastAnimMillis = now;
-
-		float time = animTime;
-		if (veinParams != null) {
-			for (int i = 0; i < VEIN_COUNT; i++) {
-				drawVeinTendril(graphics, i, time, gx, gy, gw, gh);
-			}
-		}
-
-		if (speckleParams != null) {
-			for (int[] speckle : speckleParams) {
-				int sx = gx + speckle[0];
-				int sy = gy + speckle[1];
-				int color = (speckle[4] << 24) | (speckle[2] << 16) | (speckle[3] << 8);
-				graphics.fill(sx, sy, sx + 1, sy + 1, color);
-			}
-		}
-
-		RenderSystem.disableBlend();
-		graphics.disableScissor();
+		return animTime;
 	}
 
-	private void drawVeinTendril(GuiGraphics graphics, int index, float time, int gx, int gy, int gw, int gh) {
-		float[] p = veinParams[index];
-		float startX = gx + p[0] * gw;
-		float startY = gy + p[1] * gh;
-		float baseAngle = p[2];
-		float speed = p[3];
-		float amplitude = p[4];
-		float frequency = p[5];
-		int length = (int) p[6];
-		int thickness = (int) p[7];
-		float brightness = p[8];
-
-		float angleDrift = baseAngle + 0.15F * Mth.sin(time * speed * 0.3F + index);
-		float cosA = Mth.cos(angleDrift);
-		float sinA = Mth.sin(angleDrift);
-		float timeOffset = time * speed * 2.0F;
-
-		int baseRed = (int) (40 + 50 * brightness);
-		int baseGreen = (int) (2 + 8 * brightness);
-		int baseBlue = (int) (5 + 5 * brightness);
-
-		for (int step = 0; step < length; step += VEIN_STEP_STRIDE) {
-			float squiggle = amplitude * Mth.sin(frequency * step + timeOffset);
-			float microSquiggle = (amplitude * 0.3F) * Mth.sin(frequency * 2.7F * step + timeOffset * 1.4F + index);
-			float displacement = squiggle + microSquiggle;
-
-			float px = startX + step * cosA * 1.5F - displacement * sinA;
-			float py = startY + step * sinA * 1.5F + displacement * cosA;
-			int ix = (int) px;
-			int iy = (int) py;
-
-			if (ix + thickness < gx || ix >= gx + gw || iy + thickness < gy || iy >= gy + gh) {
-				continue;
-			}
-
-			float tipFade = 1.0F;
-			if (step < 10) {
-				tipFade = step / 10.0F;
-			} else if (step > length - 10) {
-				tipFade = (length - step) / 10.0F;
-			}
-
-			float pulse = 0.7F + 0.3F * Mth.sin(time * 1.5F + index * 0.5F + step * 0.02F);
-			int alpha = (int) Mth.clamp(tipFade * pulse * 180, 20, 200);
-			int r = (int) Mth.clamp(baseRed * pulse, 0, 255);
-			int g = (int) Mth.clamp(baseGreen * pulse * 0.5F, 0, 255);
-			int b = (int) Mth.clamp(baseBlue * pulse * 0.3F, 0, 255);
-			int color = (alpha << 24) | (r << 16) | (g << 8) | b;
-			graphics.fill(ix, iy, ix + thickness + 1, iy + thickness + 1, color);
-		}
+	private void drawFrame(GuiGraphics graphics, int x, int y, int width, int height) {
+		ScreenDrawUtils.drawBevelBorder(graphics, x, y, width, height, BORDER, BORDER_DARK);
+		graphics.fill(x + 6, y + 33, x + width - 6, y + 34, 0xFF2B0707);
 	}
 
 	private static int colorForBlood(IBloodVolume volume, double maxBlood) {

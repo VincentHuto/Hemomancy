@@ -27,6 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 
 public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu> {
 
@@ -147,7 +148,7 @@ public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu
 		float time = getAnimationTime(partialTicks);
 
 		renderVeinBackground(graphics, gx, gy, this.imageWidth, TOP_AREA_HEIGHT, time);
-		drawBorder(graphics, gx, gy, this.imageWidth, TOP_AREA_HEIGHT);
+		ScreenDrawUtils.drawBorder(graphics, gx, gy, this.imageWidth, TOP_AREA_HEIGHT, BORDER_OUTER, BORDER_INNER);
 		Slot firstInventorySlot = this.menu.slots.get(this.menu.slotcount);
 		InventoryPanelTextures.blit(graphics, InventoryPanelTextures.MORPHIC,
 				gx + firstInventorySlot.x - 5, gy + firstInventorySlot.y - 6);
@@ -288,24 +289,10 @@ public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu
 	}
 
 	private void drawSlotBackground(GuiGraphics graphics, int sx, int sy, boolean jarSlot, boolean activeSlot) {
-		graphics.fill(sx - 1, sy - 1, sx + 17, sy + 17, activeSlot ? SLOT_BORDER_ACTIVE : SLOT_BORDER_DARK);
-		graphics.fill(sx, sy, sx + 16, sy + 16, jarSlot ? SLOT_BG_JAR : SLOT_BG);
-		graphics.fill(sx + 16, sy, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
-		graphics.fill(sx, sy + 16, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
+		ScreenDrawUtils.drawSlotWell(graphics, sx, sy, activeSlot ? SLOT_BORDER_ACTIVE : SLOT_BORDER_DARK, jarSlot ? SLOT_BG_JAR : SLOT_BG, SLOT_BORDER_LIGHT);
 		if (jarSlot) {
 			graphics.fill(sx, sy, sx + 16, sy + 16, activeSlot ? 0x33FFD76A : 0x220BAA42);
 		}
-	}
-
-	private void drawBorder(GuiGraphics graphics, int x, int y, int w, int h) {
-		graphics.fill(x, y, x + w, y + 1, BORDER_OUTER);
-		graphics.fill(x, y + h - 1, x + w, y + h, BORDER_OUTER);
-		graphics.fill(x, y, x + 1, y + h, BORDER_OUTER);
-		graphics.fill(x + w - 1, y, x + w, y + h, BORDER_OUTER);
-		graphics.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
-		graphics.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, BORDER_INNER);
-		graphics.fill(x + 1, y + 1, x + 2, y + h - 1, BORDER_INNER);
-		graphics.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, BORDER_INNER);
 	}
 
 	private void renderVeinBackground(GuiGraphics graphics, int gx, int gy, int gw, int gh, float time) {

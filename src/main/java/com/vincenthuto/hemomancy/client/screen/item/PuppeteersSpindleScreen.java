@@ -26,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 
 public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersSpindleMenu> {
 	private static final int GUI_WIDTH = 280;
@@ -144,7 +145,7 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 		renderVeinBackground(graphics, gx, gy, imageWidth, CRAFT_AREA_HEIGHT);
 		drawPanel(graphics, gx + INPUT_X, gy + PANEL_Y, INPUT_W, PANEL_H);
 		drawPanel(graphics, gx + PATTERN_X, gy + PANEL_Y, PATTERN_W, PANEL_H);
-		drawBorder(graphics, gx, gy, imageWidth, CRAFT_AREA_HEIGHT);
+		ScreenDrawUtils.drawBorder(graphics, gx, gy, imageWidth, CRAFT_AREA_HEIGHT, BORDER_OUTER, BORDER_INNER);
 		Slot firstInventorySlot = this.menu.slots.get(PuppeteersSpindleMenu.SLOT_COUNT);
 		InventoryPanelTextures.blit(graphics, InventoryPanelTextures.BLOODY,
 				gx + firstInventorySlot.x - 5, gy + firstInventorySlot.y - 6);
@@ -390,10 +391,7 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 	}
 
 	private void drawSlotBackground(GuiGraphics graphics, int sx, int sy, int slotIndex) {
-		graphics.fill(sx - 1, sy - 1, sx + 17, sy + 17, SLOT_BORDER_DARK);
-		graphics.fill(sx, sy, sx + 16, sy + 16, SLOT_BG);
-		graphics.fill(sx + 16, sy, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
-		graphics.fill(sx, sy + 16, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
+		ScreenDrawUtils.drawSlotWell(graphics, sx, sy, SLOT_BORDER_DARK, SLOT_BG, SLOT_BORDER_LIGHT);
 		if (slotIndex == PuppeteersSpindleMenu.CROSSBAR_SLOT) {
 			graphics.fill(sx, sy, sx + 16, sy + 16, 0x22FF4444);
 		}
@@ -425,17 +423,6 @@ public class PuppeteersSpindleScreen extends AbstractContainerScreen<PuppeteersS
 
 	private void drawTrimmedString(GuiGraphics graphics, String text, int x, int y, int maxWidth, int color) {
 		graphics.drawString(font, trimToWidth(text, maxWidth), x, y, color, false);
-	}
-
-	private void drawBorder(GuiGraphics graphics, int x, int y, int w, int h) {
-		graphics.fill(x, y, x + w, y + 1, BORDER_OUTER);
-		graphics.fill(x, y + h - 1, x + w, y + h, BORDER_OUTER);
-		graphics.fill(x, y, x + 1, y + h, BORDER_OUTER);
-		graphics.fill(x + w - 1, y, x + w, y + h, BORDER_OUTER);
-		graphics.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
-		graphics.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, BORDER_INNER);
-		graphics.fill(x + 1, y + 1, x + 2, y + h - 1, BORDER_INNER);
-		graphics.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, BORDER_INNER);
 	}
 
 	private void renderVeinBackground(GuiGraphics graphics, int gx, int gy, int gw, int gh) {

@@ -16,7 +16,7 @@ Every consolidation session reads this file first and updates it last, following
 | 7 | Phase 5: blood accounting | DONE | `8338c98da` | 2026-10-22 |
 | 8 | Phase 7: registration and client registration | DONE | `3e8b213d4`, `291731d6f` | 2026-10-22 |
 | 9 | Phase 6: combat targeting and damage attribution | DONE | `3b841ba03`, `7f0c1968d`, `5fa01de44`, `c9af6c6c3` | 2026-10-22 |
-| 10 | Phases 8 + 9: rendering plumbing and animation conventions | NOT STARTED | | |
+| 10 | Phases 8 + 9: rendering plumbing and animation conventions | IN PROGRESS | item 1: see the step entry | 2026-10-22 |
 | 11 | Phase 10: god-class decomposition | NOT STARTED | | |
 | 12 | Phase 11: persistence authority migrations | NOT STARTED | | |
 | 13 | Phases 12 + 13: content, worldgen, data, tooling, standards | NOT STARTED | | |
@@ -163,6 +163,8 @@ them green.
 | gameTest `FlightSourceGameTests` | 9 | Each flight source's grant and revoke, including the pending G-7b Elytra/Edacious conflict |
 | `architecture/CombatTargetingGuardrailTest` | 9 | G-2: every `Monster.class` gather passes `canHarm` in its arguments or is allow-listed (mob AI, ownerless zones; stale entries fail); `ManipulationCombatHelper` holds the only harm predicates; the area and look sites ask `canHarm`; Drudge work lives in `DrudgeActions` |
 | `architecture/HealAndFlightGuardrailTest` | 9 | G-4: one heal-modifier stage and one HIGH reader; G-7: only `FlightArbiter` writes `mayfly` / `flying` |
+| `architecture/ScreenChromeGuardrailTest` | 10 | V-1: no private border, slot-well or vein-background helper under `client/`; no copied two-pixel border or slot-well fill sequence outside `ScreenDrawUtils`; a seeded vein field outside `VeinBackgroundRenderer` only in the listed other-art files (stale entries fail) |
+| `client/screen/skilltree/harbinger/VeinBackgroundStyleTest` | 10 | V-1: the named vein styles (progress with its deep palette, crimson, machine, station) keep the values of the copies they replaced, including each style's vertex order |
 
 ## Step entries
 
@@ -849,3 +851,75 @@ them green.
   - The baseline is fully green: 4,010 JUnit tests and 1,036 required GameTests.
   - **Targeting:** a new effect that picks targets calls `ManipulationCombatHelper.canHarm(caster, target)` (or a `Reach` preset if it must keep an older verdict), never a bare `Monster.class` filter. A mob-AI gather goes in `CombatTargetingGuardrailTest`'s allow-list with a reason. New heal reductions are `HealModifier` entries; new flight sources are `FlightArbiter.Source` entries.
   - **GameTests:** use a detached `CapturedPlayer` unless the test needs the player in the level. Area tests that need one get their own batch.
+
+### Step 10: Phases 8 + 9, rendering plumbing and animation conventions
+- **Status / date / commits:** IN PROGRESS, 2026-10-22. Items are committed one by one with the prefix
+  `consolidation(step-10):`.
+
+  | Item | Status | Commit |
+  |---|---|---|
+  | 1. Screen chrome (V-1) | DONE | this entry's first commit |
+  | 2. Render-type caching (V-2), Spark profile | NOT STARTED | |
+  | 3. Colour particle data (V-6) | NOT STARTED | |
+  | 4. HUD layers and world dispatch (V-7) | NOT STARTED | |
+  | 5. Shared material quad encoder (V-3) | NOT STARTED | |
+  | 6. Shader noise include (V-5) | NOT STARTED | |
+  | 7. `BossReplayClock` / `BossMoveTimeline` (A-1) | NOT STARTED | |
+  | 8. Player-animation registry (A-3) | NOT STARTED | |
+  | 9. `AnimationTime` (A-4) | NOT STARTED | |
+  | V-4 tube frames (optional, last) | NOT STARTED | |
+- **Test counts before → after (so far):** `test` 4,010 → 4,017, 0 failures. `alphaCheck` not yet run in this step.
+- **Impact map:** one read-only reviewer listed every chrome, render-type, particle, dispatch, encoder, shader-noise,
+  boss-clock, player-animation and time-source site with the tests that pin them. It is not committed (it is a
+  working list); the items below cite what they used from it.
+- **Item 1, screen chrome (V-1):**
+  - `ScreenDrawUtils` gained `drawRingBorder` (concentric single borders), `drawBevelBorder` (single and two-pixel),
+    `drawCornerAccents` and `drawSlotWell`. Each draws the same fills in the same order as the copies it replaced.
+  - `VeinBackgroundRenderer` takes a `Style`: a seeded `Field` (count, seed, speed/amplitude/length/thickness ranges,
+    step stride, dot growth, angle phase), a `Palette` (base, glow-ring spacing and strength, tendril channels and
+    scales) with an optional deep palette for the progress screen's fade, and `Speckles` (`Scattered`, re-rolled each
+    frame; `Fixed`, rolled once; `Deepening`, the progress screen's). `render` keeps its own 0.016-per-call clock;
+    `draw` takes a screen's clock. Named styles: `PROGRESS` (the default, unchanged), `CRIMSON`, `MACHINE`.
+  - **Migrated (14 vein copies):** Bloodline Pool, Ledger, Tendency View, Vascular Status, Vascular View, Scrying
+    Diagnostics, Visceral Mirror (its fog stays local, drawn after the veins), Mnemonic Reliquary, Harbinger Equipment,
+    Mason's Effigy, Vial Centrifuge, Scar Station, Ghastly Alembic, Morphling Incubator. Each keeps its own clock
+    (frame count, partial-tick, game time or wall time) and passes it in.
+  - **Borders and slot wells:** 21 private two-pixel borders, 3 fungal bevels, 2 gauge ring borders, Scrying's frame,
+    the Structure Spawner's two helpers, the Visceral Mirror's double and thin borders, the Harbinger Equipment
+    inventory border, the Synaptic Loadout neural border body, the Scar action button and 11 slot wells now call
+    `ScreenDrawUtils`. The Mason's Effigy frame (two-pixel lines, bright right edge) is its own art and is now named
+    `drawEffigyFrame`.
+  - **Left local as other art (listed in the guardrail):** the Puppeteer's Spindle thread veins, the Morphling Jar's
+    green veins, the fungal hyphae (Spore Implant, Lantern, Crucible), the SSC's bare tendril field, the Synaptic
+    Loadout's jagged neural arcs, the Pallid Retort's diamonds, and the monolith's world-space veins.
+  - **Vertex order.** `ColoredRectBatch` can now emit each quad in `GuiGraphics.fill`'s vertex order. A quad split
+    along the other diagonal can round a pixel one colour level differently on some GPUs, so each `Style` records the
+    order its screens used: the 14 migrated screens filled each rect (`fillOrder = true`), the 7 screens already on the
+    shared renderer were batched (`PROGRESS`, `false`).
+  - **Review harness:** `src/gameTest/.../ScreenChromeReview` (run `screenChromeReviewClient`, `-PchromeLabel=<label>`,
+    save `ScreenChromeReview`). It opens 30 screens (every migrated one plus the existing shared-renderer users) and
+    draws each one's first frame by hand into a black target as the screen opens, with the client game time pinned to
+    48,000, so the frame-counted veins and the blurred world behind them are identical from run to run. Before shots come
+    from a worktree of `29a5576ae` with the same harness.
+  - **Screenshots:** `build/screen-chrome-review/screenshots/chrome-beforeP{1,2}-<screen>.png` (baseline) and
+    `chrome-afterP{1,2,3}-<screen>.png` (this item), 30 screens each, 1280×720 at GUI scale 2.
+    - 25 of 30 are byte-identical before and after.
+    - The other five differ only where the same code also differs between two runs: the progress screen's centre node,
+      the Tendency wheel, the Vascular Status and Mason's Effigy player models (wall-clock animation), and Scrying's
+      veins, which it draws twice per frame (its own `renderBackground` plus the container's) on a wall-clock delta.
+      The unmigrated Scrying screen differed from its own baseline by 144 pixels (up to 20 levels); the migrated one by
+      32 pixels (1 level).
+- **Item 1 metrics:** `src/main` +447 / −2,105 in 29 files; no class added or removed. Call sites migrated: 14 vein
+  backgrounds; 36 border calls (22 `drawBorder`, 6 `drawSimpleBorder`, 4 `drawBevelBorder`, 2 `drawRingBorder` with
+  2 `drawCornerAccents`); 12 slot wells.
+- **Item 1 tests:** 5 source tests repointed (Scrying budget and stride, Lantern border, Effigy veins, the progress
+  palette strings, Synaptic border); the deep-palette pins became data assertions in `VeinBackgroundStyleTest`.
+- **Pending approvals:** A-4 and V-3b stay PENDING (items 9 and 5).
+- **Handoff notes (next: item 2):**
+  - **Baseline worktree:** `../Hemomancy-step10-before` holds `29a5576ae` with a `libs` junction. Remove the junction
+    with `rmdir` before `git worktree remove --force`.
+  - **Item 2 plan.** Do not merge the five school clocks into one: each holder's `begin` is called with its own ticks by
+    different renderers, so one shared clock would let the last caller win. Share the factory and keep one clock object
+    per holder. Converting a per-call factory to a per-seed holder changes batching: the same instance continues the
+    open batch, so a caller that asks twice with different uniforms in one batch must end it in between. Check every
+    caller before converting. Spark is not in `libs/`; it must be added to a run (not committed) for the profile.

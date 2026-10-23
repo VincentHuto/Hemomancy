@@ -45,7 +45,7 @@ public final class DendriticDistributorSynapticLoadoutSourceTest {
 		assertContains("Synaptic left preview is bounded after controls", screen, "leftSidePanelX(centerX, sidePanel, gap)");
 		assertContains("Synaptic frame is wide enough for side cards", screen, "760");
 		assertContains("Synaptic carousel is raised inside the frame", screen, "carouselCenterY");
-		assertContains("Synaptic control rail has visible bottom border", screen, "y + h - 2");
+		assertContains("Synaptic control rail has a visible two-pixel border", screen, "ScreenDrawUtils.drawBorder(gfx, x, y, w, h, outer, inner)");
 		assertContains("Synaptic footer wraps long cost text", screen, "font.split");
 		assertContains("Synaptic side preview radius stays inside side cards", screen, "sidePreviewRadius");
 		assertContains("Synaptic focused preview radius stays inside main card", screen, "focusedPreviewRadius");

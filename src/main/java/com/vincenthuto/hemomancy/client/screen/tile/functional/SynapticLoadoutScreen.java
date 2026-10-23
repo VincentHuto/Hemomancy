@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 
 public class SynapticLoadoutScreen extends Screen {
 	private static final int PANEL = 128;
@@ -502,14 +503,7 @@ public class SynapticLoadoutScreen extends Screen {
 	private void drawNeuralBorder(GuiGraphics gfx, int x, int y, int w, int h, boolean bright) {
 		int outer = bright ? NEURAL_BORDER_OUTER : NEURAL_BORDER_DIM;
 		int inner = bright ? NEURAL_BORDER_INNER : NEURAL_BORDER_OUTER;
-		gfx.fill(x, y, x + w, y + 1, outer);
-		gfx.fill(x, y + h - 1, x + w, y + h, outer);
-		gfx.fill(x, y, x + 1, y + h, outer);
-		gfx.fill(x + w - 1, y, x + w, y + h, outer);
-		gfx.fill(x + 1, y + 1, x + w - 1, y + 2, inner);
-		gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, inner);
-		gfx.fill(x + 1, y + 1, x + 2, y + h - 1, inner);
-		gfx.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, inner);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, h, outer, inner);
 	}
 
 	private ResourceLocation memoryOverlayTexture(String manipName) {

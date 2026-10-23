@@ -12,6 +12,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 
 import java.util.Random;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 
 public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLanternMenu> {
 
@@ -98,7 +99,7 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
         int gh = imageHeight;
 
         renderFungalBackground(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
-        drawBorder(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
+        ScreenDrawUtils.drawBevelBorder(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT, BORDER_RED, BORDER_YELLOW, BORDER_INNER);
 
         Slot firstInventorySlot = this.menu.slots.get(MycelialLanternMenu.SLOT_COUNT);
         InventoryPanelTextures.blit(gfx, InventoryPanelTextures.FUNGAL,
@@ -158,10 +159,7 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
     }
 
     private void drawSlotBackground(GuiGraphics gfx, int sx, int sy, int slotIndex) {
-        gfx.fill(sx - 1, sy - 1, sx + 17, sy + 17, SLOT_BORDER_DARK);
-        gfx.fill(sx, sy, sx + 16, sy + 16, SLOT_BG);
-        gfx.fill(sx + 16, sy, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
-        gfx.fill(sx, sy + 16, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
+        ScreenDrawUtils.drawSlotWell(gfx, sx, sy, SLOT_BORDER_DARK, SLOT_BG, SLOT_BORDER_LIGHT);
 
         if (slotIndex == MycelialLanternMenu.CULTURE_SLOT) {
             gfx.fill(sx, sy, sx + 16, sy + 16, 0x28CC7700);
@@ -273,16 +271,5 @@ public class MycelialLanternScreen extends AbstractContainerScreen<MycelialLante
             int b = (int) (5 + 10 * p[4]);
             gfx.fill(sx, sy, sx + 1, sy + 1, (alpha << 24) | (r << 16) | (g << 8) | b);
         }
-    }
-
-    private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-        gfx.fill(x, y, x + w, y + 1, BORDER_RED);
-        gfx.fill(x, y + h - 1, x + w, y + h, BORDER_YELLOW);
-        gfx.fill(x, y, x + 1, y + h, BORDER_RED);
-        gfx.fill(x + w - 1, y, x + w, y + h, BORDER_YELLOW);
-        gfx.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
-        gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, BORDER_INNER);
-        gfx.fill(x + 1, y + 1, x + 2, y + h - 1, BORDER_INNER);
-        gfx.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, BORDER_INNER);
     }
 }

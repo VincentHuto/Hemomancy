@@ -27,7 +27,7 @@ public final class MycelialLanternScreenPerformanceResourceTest {
         assertContains("mycelial lantern should scissor its animated background", screen,
                 "gfx.enableScissor(gx, gy, gx + gw, gy + gh);");
         assertContains("mycelial lantern should use simple constant-cost borders", screen,
-                "private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h)");
+                "ScreenDrawUtils.drawBevelBorder(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT, BORDER_RED, BORDER_YELLOW, BORDER_INNER);");
         assertDoesNotContain("mycelial lantern should not draw per-pixel gradient borders every frame", screen,
                 "drawGradientBorder");
         assertDoesNotContain("mycelial lantern should not flash a square glow around the culture slot", screen,

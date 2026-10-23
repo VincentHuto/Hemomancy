@@ -138,9 +138,9 @@ public final class RegistryBackedScarRefactorSourceTest {
 				"selected.addAll(menu.getOpeningActiveScarIds())");
 		assertContains("effigy screen uses fungal inventory panel texture", screen, "InventoryPanelTextures.FUNGAL");
 		assertContains("effigy screen renders player head display", screen, "InventoryScreen.renderEntityInInventoryFollowsMouse");
-		assertContains("effigy screen renders venous background", screen, "renderVenousBackground");
-		assertContains("effigy screen uses seeded vein params like centrifuge", screen, "veinParams = new float[VEIN_COUNT][9]");
-		assertContains("effigy screen draws centrifuge-style tendrils", screen, "drawVeinTendril");
+		assertContains("effigy screen renders the centrifuge-style venous background", screen,
+				"VeinBackgroundRenderer.Field.MACHINE.count(12), VeinBackgroundRenderer.Palette.MACHINE.background(BG)");
+		assertContains("effigy screen draws its veins under the top panel", screen, "veins.draw(gfx, x, y, TOP_W, TOP_H, animTime);");
 		assertContains("effigy screen resolves scar item stacks", screen, "scarStackFor");
 		assertContains("effigy screen renders item stacks", screen, "gfx.renderItem(scarStack");
 		assertContains("effigy screen uses thematic icon button", screen, "PrepareIconButton");

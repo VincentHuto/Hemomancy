@@ -72,6 +72,13 @@ src/test/java/com/vincenthuto/hemomancy/architecture/RepositoryTextEncodingTest.
 src/test/java/com/vincenthuto/hemomancy/architecture/RepositoryTextEncodingTest.java,junit,src/main,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/RepositoryTextEncodingTest.java,junit,src/test,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/RepositoryTextEncodingTest.java,junit,tools/model_export,tool,exact-dir
+src/test/java/com/vincenthuto/hemomancy/architecture/ScreenChromeGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/tile/harbinger/functional/SanguineMonolithRenderer.java,java,exact
+src/test/java/com/vincenthuto/hemomancy/architecture/ScreenChromeGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/screen/item/PuppeteersSpindleScreen.java,java,exact
+src/test/java/com/vincenthuto/hemomancy/architecture/ScreenChromeGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/screen/item/living/MorphlingJarScreen.java,java,exact
+src/test/java/com/vincenthuto/hemomancy/architecture/ScreenChromeGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/harbinger/VeinBackgroundRenderer.java,java,exact
+src/test/java/com/vincenthuto/hemomancy/architecture/ScreenChromeGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/screen/skilltree/util/ScreenDrawUtils.java,java,exact
+src/test/java/com/vincenthuto/hemomancy/architecture/ScreenChromeGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/screen/tile/crafting/MycelialCrucibleScreen.java,java,exact
+src/test/java/com/vincenthuto/hemomancy/architecture/ScreenChromeGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/screen/tile/functional/SSCScreen.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/architecture/SendFacadeTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/network/PacketHandler.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/architecture/SendFacadeTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/network/dialogue/DialogueSender.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/architecture/SmallUtilityGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/crafting/GhastlyAlembicBlock.java,java,exact

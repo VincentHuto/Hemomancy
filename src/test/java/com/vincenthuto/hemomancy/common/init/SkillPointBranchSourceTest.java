@@ -88,8 +88,7 @@ public final class SkillPointBranchSourceTest {
 		assertContains("layer rules requires zoom and center focus", layerRules, "diveProgress(int playerDegree, float zoom, float centerFocus)");
 		assertContains("harbinger screen passes fresh deep fade to the vein background", harbingerScreen, "skills.updateAndGetDeepFade(ctx)");
 		assertContains("vein background accepts deep tint fade", veinBackground, "render(GuiGraphics gfx, int gx, int gy, int gw, int gh, float deepFade)");
-		assertContains("vein background lerps to bruised purple deep colors", veinBackground, "lerpArgb(0xFF0A0204, 0xFF0E020D, fade)");
-		assertContains("vein background keeps deep tendrils purple-blood instead of hot red", veinBackground, "34 + 24 * brightness");
+		assertContains("vein background lerps the base towards the deep palette", veinBackground, "lerpArgb(from.background, to.background, fade)");
 		assertContains("vein background gives deep specks a muted purple channel", veinBackground, "int sb = (int)(fade * (6 + speckRand.nextInt(7)))");
 		assertContains("trace cache colors traces from saved branch color", traceCache, "sp.getBranchColor()");
 		assertContains("trace cache can anchor missing deep parents to the heart", traceCache, "anchorMissingParents");

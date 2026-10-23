@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 
 import java.util.Random;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 
 /**
  * Pallid Retort screen — fully programmatic, no texture files.
@@ -85,7 +86,7 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 
 		// ── Diamond/blue crystalline background for upper crafting area ──
 		renderDiamondBackground(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
-		drawBorder(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
+		ScreenDrawUtils.drawBorder(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT, BORDER_OUTER, BORDER_INNER);
 
 		// ── Blue/silver gradient panel behind inventory section ──
 		Slot firstInventorySlot = this.menu.slots.get(PallidRetortMenu.SLOT_COUNT);
@@ -129,13 +130,7 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 	// ───── Slot backgrounds ─────
 
 	private void drawSlotBackground(GuiGraphics gfx, int sx, int sy, int slotIndex) {
-		// Outer border (dark edge)
-		gfx.fill(sx - 1, sy - 1, sx + 17, sy + 17, SLOT_BORDER_DARK);
-		// Inner fill
-		gfx.fill(sx, sy, sx + 16, sy + 16, SLOT_BG);
-		// Bottom/right highlight
-		gfx.fill(sx + 16, sy, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
-		gfx.fill(sx, sy + 16, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
+		ScreenDrawUtils.drawSlotWell(gfx, sx, sy, SLOT_BORDER_DARK, SLOT_BG, SLOT_BORDER_LIGHT);
 
 		// Special tint for result slot (reddish)
 		if (slotIndex == PallidRetortMenu.RESULT_SLOT) {
@@ -281,18 +276,6 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 	}
 
 	// ───── Programmatic border ─────
-
-	private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-		gfx.fill(x, y, x + w, y + 1, BORDER_OUTER);
-		gfx.fill(x, y + h - 1, x + w, y + h, BORDER_OUTER);
-		gfx.fill(x, y, x + 1, y + h, BORDER_OUTER);
-		gfx.fill(x + w - 1, y, x + w, y + h, BORDER_OUTER);
-
-		gfx.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
-		gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, BORDER_INNER);
-		gfx.fill(x + 1, y + 1, x + 2, y + h - 1, BORDER_INNER);
-		gfx.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, BORDER_INNER);
-	}
 
 	// ───── Diamond / blue background (matches UnstainedProgressScreen) ─────
 

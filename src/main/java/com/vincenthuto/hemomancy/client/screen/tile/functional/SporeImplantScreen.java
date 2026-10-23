@@ -18,6 +18,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.Random;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 
 @OnlyIn(Dist.CLIENT)
 public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu> {
@@ -123,7 +124,7 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 
 		// ───── Fungal background for the upper scar area ─────
 		renderFungalBackground(gfx, gx, gy, gw, FUNGAL_AREA_HEIGHT);
-		drawBorder(gfx, gx, gy, gw, FUNGAL_AREA_HEIGHT);
+		ScreenDrawUtils.drawBevelBorder(gfx, gx, gy, gw, FUNGAL_AREA_HEIGHT, BORDER_RED, BORDER_YELLOW, BORDER_INNER);
 
 		// ───── Dark amber gradient panel behind the inventory section ─────
 		Slot firstInventorySlot = this.menu.slots.get(SporeImplantMenu.SLOT_COUNT);
@@ -322,29 +323,12 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 
 	// ───── Red-to-yellow gradient border ─────
 
-	private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-		gfx.fill(x, y, x + w, y + 1, BORDER_RED);
-		gfx.fill(x, y + h - 1, x + w, y + h, BORDER_YELLOW);
-		gfx.fill(x, y, x + 1, y + h, BORDER_RED);
-		gfx.fill(x + w - 1, y, x + w, y + h, BORDER_YELLOW);
-		gfx.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
-		gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, BORDER_INNER);
-		gfx.fill(x + 1, y + 1, x + 2, y + h - 1, BORDER_INNER);
-		gfx.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, BORDER_INNER);
-	}
-
 	// ───── Dark amber inventory background ─────
 
 	// ───── Slot background rendering ─────
 
 	private void drawSlotBackground(GuiGraphics gfx, int sx, int sy, Slot slot) {
-		// Outer border (dark edge)
-		gfx.fill(sx - 1, sy - 1, sx + 17, sy + 17, SLOT_BORDER_DARK);
-		// Inner fill
-		gfx.fill(sx, sy, sx + 16, sy + 16, SLOT_BG);
-		// Bottom/right highlight
-		gfx.fill(sx + 16, sy, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
-		gfx.fill(sx, sy + 16, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
+		ScreenDrawUtils.drawSlotWell(gfx, sx, sy, SLOT_BORDER_DARK, SLOT_BG, SLOT_BORDER_LIGHT);
 
 		// Special amber tint for the central fungal scar slot
 		if (slot instanceof SelectiveEquipmentTypeSlot) {

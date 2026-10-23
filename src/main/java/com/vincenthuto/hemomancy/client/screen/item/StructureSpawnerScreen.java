@@ -21,6 +21,7 @@ import net.minecraft.world.entity.player.Inventory;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 
 public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpawnerMenu> {
 
@@ -382,12 +383,12 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 	}
 
 	private void renderBorders(GuiGraphics graphics, int mouseX, int mouseY) {
-		drawBorder(graphics, leftPos, topPos, GUI_WIDTH, GUI_HEIGHT, borderOuter(), borderInner());
-		drawSingleBorder(graphics, leftPos + TAB_X, topPos + TAB_Y, TAB_WIDTH, TAB_HEIGHT,
+		ScreenDrawUtils.drawBorder(graphics, leftPos, topPos, GUI_WIDTH, GUI_HEIGHT, borderOuter(), borderInner());
+		ScreenDrawUtils.drawSimpleBorder(graphics, leftPos + TAB_X, topPos + TAB_Y, TAB_WIDTH, TAB_HEIGHT,
 				tabBorder(PathTab.HARBINGER));
-		drawSingleBorder(graphics, leftPos + TAB_X + TAB_WIDTH + TAB_GAP, topPos + TAB_Y, TAB_WIDTH, TAB_HEIGHT,
+		ScreenDrawUtils.drawSimpleBorder(graphics, leftPos + TAB_X + TAB_WIDTH + TAB_GAP, topPos + TAB_Y, TAB_WIDTH, TAB_HEIGHT,
 				tabBorder(PathTab.UNSTAINED));
-		drawBorder(graphics, leftPos + LIST_X - 2, topPos + LIST_Y - 2,
+		ScreenDrawUtils.drawBorder(graphics, leftPos + LIST_X - 2, topPos + LIST_Y - 2,
 				LIST_WIDTH + 4, LIST_HEIGHT + 4, borderOuter(), borderInner());
 
 		int startY = topPos + LIST_Y;
@@ -406,22 +407,10 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 			int rowHeight = ENTRY_HEIGHT - 2;
 			boolean hovered = mouseX >= rowX && mouseX < rowX + LIST_WIDTH
 					&& mouseY >= rowY && mouseY < rowY + rowHeight;
-			drawSingleBorder(graphics, rowX, rowY, LIST_WIDTH, rowHeight,
+			ScreenDrawUtils.drawSimpleBorder(graphics, rowX, rowY, LIST_WIDTH, rowHeight,
 					hovered ? optionHoverBorder() : optionBorder());
 			currentY += ENTRY_HEIGHT;
 		}
-	}
-
-	private static void drawBorder(GuiGraphics graphics, int x, int y, int width, int height, int outer, int inner) {
-		drawSingleBorder(graphics, x, y, width, height, outer);
-		drawSingleBorder(graphics, x + 1, y + 1, width - 2, height - 2, inner);
-	}
-
-	private static void drawSingleBorder(GuiGraphics graphics, int x, int y, int width, int height, int color) {
-		graphics.fill(x, y, x + width, y + 1, color);
-		graphics.fill(x, y + height - 1, x + width, y + height, color);
-		graphics.fill(x, y, x + 1, y + height, color);
-		graphics.fill(x + width - 1, y, x + width, y + height, color);
 	}
 
 	private void renderTabBackground(GuiGraphics graphics, PathTab tab, int x, int y) {

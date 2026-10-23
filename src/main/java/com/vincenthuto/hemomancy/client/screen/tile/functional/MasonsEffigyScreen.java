@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.client.screen.tile.functional;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -25,7 +24,7 @@ import net.minecraft.world.item.Items;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.VeinBackgroundRenderer;
 
 public class MasonsEffigyScreen extends AbstractContainerScreen<MasonsEffigyMenu> {
 	private static final int TOP_W = 226;
@@ -52,14 +51,15 @@ public class MasonsEffigyScreen extends AbstractContainerScreen<MasonsEffigyMenu
 	private static final int SOCKET_X = 101;
 	private static final int SOCKET_Y = 120;
 	private static final int SLOT_SIZE = 18;
-	private static final int VEIN_COUNT = 12;
 
 	private final List<ResourceLocation> selected = new ArrayList<>();
 	private int scroll;
 	private float oldMouseX;
 	private float oldMouseY;
 	private float animTime;
-	private float[][] veinParams;
+	private final VeinBackgroundRenderer veins = new VeinBackgroundRenderer(new VeinBackgroundRenderer.Style(
+			VeinBackgroundRenderer.Field.MACHINE.count(12), VeinBackgroundRenderer.Palette.MACHINE.background(BG),
+			VeinBackgroundRenderer.Speckles.Scattered.MACHINE));
 	private Button prepareButton;
 
 	public MasonsEffigyScreen(MasonsEffigyMenu menu, Inventory inventory, Component title) {
@@ -75,19 +75,6 @@ public class MasonsEffigyScreen extends AbstractContainerScreen<MasonsEffigyMenu
 		titleLabelX = 14;
 		selected.clear();
 		selected.addAll(menu.getOpeningActiveScarIds());
-		Random rand = new Random(27182L);
-		veinParams = new float[VEIN_COUNT][9];
-		for (int i = 0; i < VEIN_COUNT; i++) {
-			veinParams[i][0] = rand.nextFloat();
-			veinParams[i][1] = rand.nextFloat();
-			veinParams[i][2] = (float) (rand.nextFloat() * Math.PI * 2);
-			veinParams[i][3] = 0.3f + rand.nextFloat() * 0.7f;
-			veinParams[i][4] = 8f + rand.nextFloat() * 16f;
-			veinParams[i][5] = 0.04f + rand.nextFloat() * 0.08f;
-			veinParams[i][6] = 50 + rand.nextInt(110);
-			veinParams[i][7] = 1 + rand.nextInt(2);
-			veinParams[i][8] = rand.nextFloat();
-		}
 		prepareButton = addRenderableWidget(new PrepareIconButton(leftPos + 204, topPos + 120, button -> preparePattern()));
 		syncSelection(false);
 	}
@@ -140,8 +127,8 @@ public class MasonsEffigyScreen extends AbstractContainerScreen<MasonsEffigyMenu
 	private void renderTopPanel(GuiGraphics gfx, int mouseX, int mouseY) {
 		int x = leftPos;
 		int y = topPos;
-		renderVenousBackground(gfx, x, y, TOP_W, TOP_H);
-		drawBorder(gfx, x, y, TOP_W, TOP_H);
+		veins.draw(gfx, x, y, TOP_W, TOP_H, animTime);
+		drawEffigyFrame(gfx, x, y, TOP_W, TOP_H);
 		gfx.fill(x + 8, y + 23, x + TOP_W - 8, y + TOP_H - 9, PANEL_DARK);
 		gfx.fill(x + 10, y + 25, x + TOP_W - 10, y + TOP_H - 11, PANEL);
 		renderPlayerHeadDisplay(gfx, mouseX, mouseY);
@@ -158,7 +145,7 @@ public class MasonsEffigyScreen extends AbstractContainerScreen<MasonsEffigyMenu
 	private void renderPlayerHeadDisplay(GuiGraphics gfx, int mouseX, int mouseY) {
 		int x = leftPos + PORTRAIT_X;
 		int y = topPos + PORTRAIT_Y;
-		drawBorder(gfx, x, y, PORTRAIT_W, PORTRAIT_H);
+		drawEffigyFrame(gfx, x, y, PORTRAIT_W, PORTRAIT_H);
 		gfx.fill(x + 2, y + 2, x + PORTRAIT_W - 2, y + PORTRAIT_H - 2, 0xAA110604);
 		if (minecraft != null && minecraft.player != null) {
 			gfx.enableScissor(x + 4, y + 4, x + PORTRAIT_W - 4, y + PORTRAIT_H - 4);
@@ -303,43 +290,6 @@ public class MasonsEffigyScreen extends AbstractContainerScreen<MasonsEffigyMenu
 		return new ItemStack(item);
 	}
 
-	private void renderVenousBackground(GuiGraphics gfx, int x, int y, int w, int h) {
-		gfx.enableScissor(x, y, x + w, y + h);
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-		gfx.fill(x, y, x + w, y + h, BG);
-
-		int cx = x + w / 2;
-		int cy = y + h / 2;
-		int glowRadius = Math.max(w, h) / 2;
-		for (int ring = glowRadius; ring > 0; ring -= 4) {
-			float t = (float) ring / glowRadius;
-			int alpha = (int) (30 * (1f - t));
-			int red = (int) (35 * (1f - t));
-			int color = (alpha << 24) | (red << 16);
-			gfx.fill(cx - ring, cy - ring, cx + ring, cy + ring, color);
-		}
-
-		if (veinParams != null) {
-			for (int i = 0; i < VEIN_COUNT; i++) {
-				drawVeinTendril(gfx, i, animTime, x, y, w, h);
-			}
-		}
-
-		Random speckRand = new Random(13579L);
-		for (int s = 0; s < 70; s++) {
-			int sx = x + speckRand.nextInt(w);
-			int sy = y + speckRand.nextInt(h);
-			int sr = 10 + speckRand.nextInt(20);
-			int sg = speckRand.nextInt(6);
-			int sa = 15 + speckRand.nextInt(20);
-			gfx.fill(sx, sy, sx + 1, sy + 1, (sa << 24) | (sr << 16) | (sg << 8));
-		}
-
-		RenderSystem.disableBlend();
-		gfx.disableScissor();
-	}
-
 	private void drawItemSlot(GuiGraphics gfx, int x, int y, boolean highlighted) {
 		int border = highlighted ? LINE_BRIGHT : 0xFF2B1407;
 		gfx.fill(x - 1, y - 1, x + SLOT_SIZE + 1, y + SLOT_SIZE + 1, 0xFF070202);
@@ -351,7 +301,7 @@ public class MasonsEffigyScreen extends AbstractContainerScreen<MasonsEffigyMenu
 		gfx.fill(x + 2, y + 2, x + SLOT_SIZE - 2, y + SLOT_SIZE - 2, 0xFF3A1A0B);
 	}
 
-	private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
+	private void drawEffigyFrame(GuiGraphics gfx, int x, int y, int w, int h) {
 		gfx.fill(x, y, x + w, y + 2, LINE);
 		gfx.fill(x, y + h - 2, x + w, y + h, LINE);
 		gfx.fill(x, y, x + 2, y + h, LINE);
@@ -369,56 +319,6 @@ public class MasonsEffigyScreen extends AbstractContainerScreen<MasonsEffigyMenu
 			int x = Mth.floor(Mth.lerp(t, x1, x2));
 			int y = Mth.floor(Mth.lerp(t, y1, y2));
 			gfx.fill(x, y, x + 1, y + 1, color);
-		}
-	}
-
-	private void drawVeinTendril(GuiGraphics gfx, int index, float time, int gx, int gy, int gw, int gh) {
-		float[] p = veinParams[index];
-		float startX = gx + p[0] * gw;
-		float startY = gy + p[1] * gh;
-		float baseAngle = p[2];
-		float speed = p[3];
-		float amplitude = p[4];
-		float frequency = p[5];
-		int length = (int) p[6];
-		int thickness = (int) p[7];
-		float brightness = p[8];
-
-		float angleDrift = baseAngle + 0.15f * Mth.sin(time * speed * 0.3f + index);
-		float cosA = Mth.cos(angleDrift);
-		float sinA = Mth.sin(angleDrift);
-		float timeOffset = time * speed * 2.0f;
-
-		int baseRed = (int) (40 + 50 * brightness);
-		int baseGreen = (int) (2 + 8 * brightness);
-		int baseBlue = (int) (5 + 5 * brightness);
-
-		for (int step = 0; step < length; step++) {
-			float squiggle = amplitude * Mth.sin(frequency * step + timeOffset);
-			float microSquiggle = (amplitude * 0.3f) * Mth.sin(frequency * 2.7f * step + timeOffset * 1.4f + index);
-			float displacement = squiggle + microSquiggle;
-
-			float px = startX + step * cosA * 1.5f - displacement * sinA;
-			float py = startY + step * sinA * 1.5f + displacement * cosA;
-			int ix = (int) px;
-			int iy = (int) py;
-			if (ix + thickness < gx || ix >= gx + gw || iy + thickness < gy || iy >= gy + gh) {
-				continue;
-			}
-
-			float tipFade = 1f;
-			if (step < 10) {
-				tipFade = step / 10f;
-			} else if (step > length - 10) {
-				tipFade = (length - step) / 10f;
-			}
-
-			float pulse = 0.7f + 0.3f * Mth.sin(time * 1.5f + index * 0.5f + step * 0.02f);
-			int a = (int) (Mth.clamp(tipFade * pulse * 180, 20, 200));
-			int r = (int) Mth.clamp(baseRed * pulse, 0, 255);
-			int g = (int) Mth.clamp(baseGreen * pulse * 0.5f, 0, 255);
-			int b = (int) Mth.clamp(baseBlue * pulse * 0.3f, 0, 255);
-			gfx.fill(ix, iy, ix + thickness, iy + thickness, (a << 24) | (r << 16) | (g << 8) | b);
 		}
 	}
 

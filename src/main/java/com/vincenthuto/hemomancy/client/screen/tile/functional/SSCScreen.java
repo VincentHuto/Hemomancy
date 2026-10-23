@@ -14,6 +14,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.List;
 import java.util.Random;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 
 /**
  * Client-side GUI for the Semi-Sentient Construct.
@@ -141,7 +142,7 @@ public class SSCScreen extends Screen {
 
         gfx.fill(px, py, px + PANEL_W, py + panelH, BG);
         drawVeins(gfx);
-        drawBorder(gfx, px, py, PANEL_W, panelH);
+        ScreenDrawUtils.drawBorder(gfx, px, py, PANEL_W, panelH, BORDER_OUT, BORDER_IN);
 
         RenderSystem.disableBlend();
 
@@ -353,20 +354,6 @@ public class SSCScreen extends Screen {
         }
     }
 
-    // ── Border ───────────────────────────────────────────────────────────────
-
-    private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-        // Outer 1px
-        gfx.fill(x,     y,     x + w, y + 1, BORDER_OUT);
-        gfx.fill(x,     y + h - 1, x + w, y + h, BORDER_OUT);
-        gfx.fill(x,     y,     x + 1, y + h, BORDER_OUT);
-        gfx.fill(x + w - 1, y, x + w, y + h, BORDER_OUT);
-        // Inner 1px
-        gfx.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_IN);
-        gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, BORDER_IN);
-        gfx.fill(x + 1, y + 1, x + 2, y + h - 1, BORDER_IN);
-        gfx.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, BORDER_IN);
-    }
 
     // ── Key handling ─────────────────────────────────────────────────────────
 

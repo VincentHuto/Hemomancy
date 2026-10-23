@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.tile.crafting.scar;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 
 /**
  * Programmatically rendered action button for the Scar Station GUI.
@@ -46,18 +47,8 @@ public class ScarActionButton extends Button {
 		int bg = hovered ? BG_HOVERED : BG_NORMAL;
 		gfx.fill(x, y, x + w, y + h, bg);
 
-		// Outer border
 		int border = hovered ? BORDER_HOVERED : BORDER_NORMAL;
-		gfx.fill(x, y, x + w, y + 1, border);
-		gfx.fill(x, y + h - 1, x + w, y + h, border);
-		gfx.fill(x, y, x + 1, y + h, border);
-		gfx.fill(x + w - 1, y, x + w, y + h, border);
-
-		// Inner border
-		gfx.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
-		gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, BORDER_INNER);
-		gfx.fill(x + 1, y + 1, x + 2, y + h - 1, BORDER_INNER);
-		gfx.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, BORDER_INNER);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, h, border, BORDER_INNER);
 
 		// Pulsing accent on hover
 		if (hovered) {

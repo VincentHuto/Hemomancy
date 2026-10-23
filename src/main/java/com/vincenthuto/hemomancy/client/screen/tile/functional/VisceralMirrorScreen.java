@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.client.screen.tile.functional;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.organs.EnumOrgan;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.visceral.VisceralMirrorCancelPacket;
@@ -16,7 +15,8 @@ import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-import java.util.Random;
+import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.VeinBackgroundRenderer;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 
 /**
  * GUI screen for the Visceral Mirror — a blood-themed organ extraction
@@ -34,7 +34,6 @@ public class VisceralMirrorScreen extends Screen {
 	private static final int PANEL_H = 200;
 	private static final int ORGAN_LIST_W = 100;
 	private static final int ORGAN_ROW_H = 28;
-	private static final int VEIN_COUNT = 18;
 	private static final int PROGRESS_BAR_H = 14;
 
 	// ── Colors ──
@@ -68,7 +67,11 @@ public class VisceralMirrorScreen extends Screen {
 	private int degree;
 
 	private int selectedOrgan = -1;
-	private float[][] veinParams;
+	private static final VeinBackgroundRenderer.Style VEINS = new VeinBackgroundRenderer.Style(
+			VeinBackgroundRenderer.Field.MACHINE.count(18).seed(66613L),
+			VeinBackgroundRenderer.Palette.CRIMSON.rings(35, 45, 5, 0).tendrils(50, 60, 2, 10, 5, 6),
+			new VeinBackgroundRenderer.Speckles.Scattered(66614L, 80, 12, 25, 6, 15, 20));
+	private final VeinBackgroundRenderer veins = new VeinBackgroundRenderer(VEINS);
 
 	// Ritual state (updated by server packets)
 	private VisceralMirrorBlockEntity.RitualPhase phase = VisceralMirrorBlockEntity.RitualPhase.IDLE;
@@ -134,20 +137,6 @@ public class VisceralMirrorScreen extends Screen {
 		panelX = (this.width - PANEL_W) / 2;
 		panelY = (this.height - PANEL_H) / 2;
 
-		// Seed vein parameters for the animated background
-		Random rand = new Random(66613L);
-		veinParams = new float[VEIN_COUNT][9];
-		for (int i = 0; i < VEIN_COUNT; i++) {
-			veinParams[i][0] = rand.nextFloat();
-			veinParams[i][1] = rand.nextFloat();
-			veinParams[i][2] = (float) (rand.nextFloat() * Math.PI * 2);
-			veinParams[i][3] = 0.3f + rand.nextFloat() * 0.7f;
-			veinParams[i][4] = 8f + rand.nextFloat() * 16f;
-			veinParams[i][5] = 0.04f + rand.nextFloat() * 0.08f;
-			veinParams[i][6] = 50 + rand.nextInt(110);
-			veinParams[i][7] = 1 + rand.nextInt(2);
-			veinParams[i][8] = rand.nextFloat();
-		}
 	}
 
 	@Override
@@ -188,8 +177,10 @@ public class VisceralMirrorScreen extends Screen {
 		int py = panelY;
 
 		// ── Animated blood background ──
-		renderVeinBackground(gfx, px, py, PANEL_W, PANEL_H);
-		drawDoubleBorder(gfx, px, py, PANEL_W, PANEL_H);
+		animTime += 0.016f; // ~60 FPS approximation
+		veins.draw(gfx, px, py, PANEL_W, PANEL_H, animTime);
+		drawVeinFog(gfx, px, py, PANEL_W, PANEL_H, animTime);
+		ScreenDrawUtils.drawBorder(gfx, px, py, PANEL_W, PANEL_H, BORDER_OUTER, BORDER_INNER);
 
 		// ── Title ──
 		String title = "\u2666 Visceral Mirror \u2666";
@@ -201,7 +192,7 @@ public class VisceralMirrorScreen extends Screen {
 		int listY = py + 22;
 		int listH = ORGAN_ROW_H * EnumOrgan.values().length + 2;
 		gfx.fill(listX, listY, listX + ORGAN_LIST_W, listY + listH, 0x80060102);
-		drawThinBorder(gfx, listX, listY, ORGAN_LIST_W, listH);
+		ScreenDrawUtils.drawSimpleBorder(gfx, listX, listY, ORGAN_LIST_W, listH, ORGAN_BORDER);
 
 		renderOrganList(gfx, listX, listY, mouseX, mouseY);
 
@@ -211,7 +202,7 @@ public class VisceralMirrorScreen extends Screen {
 		int detailW = PANEL_W - ORGAN_LIST_W - 24;
 		int detailH = 120;
 		gfx.fill(detailX, detailY, detailX + detailW, detailY + detailH, 0x80060102);
-		drawThinBorder(gfx, detailX, detailY, detailW, detailH);
+		ScreenDrawUtils.drawSimpleBorder(gfx, detailX, detailY, detailW, detailH, ORGAN_BORDER);
 
 		renderOrganDetails(gfx, detailX, detailY, detailW, detailH, mouseX, mouseY);
 
@@ -514,127 +505,14 @@ public class VisceralMirrorScreen extends Screen {
 				|| phase == VisceralMirrorBlockEntity.RitualPhase.EXTRACTING;
 	}
 
-	// ───── Animated vein background (matching VialCentrifugeScreen) ─────
 	private float animTime = 0f;
 
-	private void renderVeinBackground(GuiGraphics graphics, int gx, int gy, int gw, int gh) {
-		graphics.enableScissor(gx, gy, gx + gw, gy + gh);
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-
-		// Layer 1: solid near-black base
-		graphics.fill(gx, gy, gx + gw, gy + gh, 0xFF0A0204);
-
-		// Layer 2: dark-red radial glow in the center
-		int cx = gx + gw / 2;
-		int cy = gy + gh / 2;
-		int glowRadius = Math.max(gw, gh) / 2;
-		for (int ring = glowRadius; ring > 0; ring -= 4) {
-			float t = (float) ring / glowRadius;
-			int alpha = (int) (35 * (1f - t));
-			int red = (int) (45 * (1f - t));
-			int green = (int) (5 * (1f - t));
-			int color = (alpha << 24) | (red << 16) | (green << 8);
-			graphics.fill(cx - ring, cy - ring, cx + ring, cy + ring, color);
-		}
-
-		// Layer 3: animated vein tendrils
-		animTime += 0.016f; // ~60 FPS approximation
-
-		float time = animTime;
-				if (veinParams != null) {
-			for (int i = 0; i < VEIN_COUNT; i++) {
-				drawVeinTendril(graphics, i, time, gx, gy, gw, gh);
-			}
-		}
-
-		// Layer 4: noise speckles
-		Random speckRand = new Random(66614L);
-		for (int s = 0; s < 80; s++) {
-			int sx = gx + speckRand.nextInt(gw);
-			int sy = gy + speckRand.nextInt(gh);
-			int sr = 12 + speckRand.nextInt(25);
-			int sg = speckRand.nextInt(6);
-			int sa = 15 + speckRand.nextInt(20);
-			graphics.fill(sx, sy, sx + 1, sy + 1, (sa << 24) | (sr << 16) | (sg << 8));
-		}
-
-		// Layer 5: pulsating blood fog overlay
+	/** A pulsing blood fog over the veins. */
+	private void drawVeinFog(GuiGraphics graphics, int gx, int gy, int gw, int gh, float time) {
 		float fogPulse = 0.3f + 0.15f * Mth.sin(time * 0.8f);
 		int fogAlpha = (int) (fogPulse * 255);
 		int fogColor = (fogAlpha << 24) | (0x18 << 16) | (0x02 << 8) | 0x02;
 		graphics.fill(gx, gy, gx + gw, gy + gh, fogColor);
-
-		RenderSystem.disableBlend();
-		graphics.disableScissor();
 	}
 
-	private void drawVeinTendril(GuiGraphics graphics, int index, float time,
-			int gx, int gy, int gw, int gh) {
-		float[] p = veinParams[index];
-		float startX = gx + p[0] * gw;
-		float startY = gy + p[1] * gh;
-		float baseAngle = p[2];
-		float speed = p[3];
-		float amplitude = p[4];
-		float frequency = p[5];
-		int length = (int) p[6];
-		int thickness = (int) p[7];
-		float brightness = p[8];
-
-		float angleDrift = baseAngle + 0.15f * Mth.sin(time * speed * 0.3f + index);
-		float cosA = Mth.cos(angleDrift);
-		float sinA = Mth.sin(angleDrift);
-		float timeOffset = time * speed * 2.0f;
-
-		int baseRed = (int) (50 + 60 * brightness);
-		int baseGreen = (int) (2 + 10 * brightness);
-		int baseBlue = (int) (5 + 6 * brightness);
-
-		for (int step = 0; step < length; step++) {
-			float squiggle = amplitude * Mth.sin(frequency * step + timeOffset);
-			float micro = (amplitude * 0.3f) * Mth.sin(frequency * 2.7f * step + timeOffset * 1.4f + index);
-			float displacement = squiggle + micro;
-
-			float px = startX + step * cosA * 1.5f - displacement * sinA;
-			float py = startY + step * sinA * 1.5f + displacement * cosA;
-			int ix = (int) px;
-			int iy = (int) py;
-
-			if (ix + thickness < gx || ix >= gx + gw || iy + thickness < gy || iy >= gy + gh) continue;
-
-			float tipFade = 1f;
-			if (step < 10) tipFade = step / 10f;
-			else if (step > length - 10) tipFade = (length - step) / 10f;
-
-			float pulse = 0.7f + 0.3f * Mth.sin(time * 1.5f + index * 0.5f + step * 0.02f);
-			int a = (int) (Mth.clamp(tipFade * pulse * 180, 20, 200));
-			int r = (int) Mth.clamp(baseRed * pulse, 0, 255);
-			int g = (int) Mth.clamp(baseGreen * pulse * 0.5f, 0, 255);
-			int b = (int) Mth.clamp(baseBlue * pulse * 0.3f, 0, 255);
-
-			graphics.fill(ix, iy, ix + thickness, iy + thickness,
-					(a << 24) | (r << 16) | (g << 8) | b);
-		}
-	}
-
-	// ───── Border helpers ─────
-
-	private void drawDoubleBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-		gfx.fill(x, y, x + w, y + 1, BORDER_OUTER);
-		gfx.fill(x, y + h - 1, x + w, y + h, BORDER_OUTER);
-		gfx.fill(x, y, x + 1, y + h, BORDER_OUTER);
-		gfx.fill(x + w - 1, y, x + w, y + h, BORDER_OUTER);
-		gfx.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
-		gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, BORDER_INNER);
-		gfx.fill(x + 1, y + 1, x + 2, y + h - 1, BORDER_INNER);
-		gfx.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, BORDER_INNER);
-	}
-
-	private void drawThinBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-		gfx.fill(x, y, x + w, y + 1, ORGAN_BORDER);
-		gfx.fill(x, y + h - 1, x + w, y + h, ORGAN_BORDER);
-		gfx.fill(x, y, x + 1, y + h, ORGAN_BORDER);
-		gfx.fill(x + w - 1, y, x + w, y + h, ORGAN_BORDER);
-	}
 }

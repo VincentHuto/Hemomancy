@@ -347,6 +347,17 @@ neoForge {
             programArguments.addAll '--username', 'RiteFloorReview', '--width', '1280', '--height', '720'
         }
 
+        screenChromeReviewClient {
+            client()
+            gameDirectory = project.file('build/screen-chrome-review')
+            additionalRuntimeClasspathConfiguration.extendsFrom(clientLocalRuntime)
+            jvmArguments.addAll('-Xms2G', '-Xmx6G')
+            systemProperty 'hemomancy.gameplayDriver', 'true'
+            systemProperty 'hemomancy.screenChromeReview', 'true'
+            systemProperty 'hemomancy.screenChromeReviewLabel', providers.gradleProperty('chromeLabel').getOrElse('after')
+            programArguments.addAll '--username', 'ChromeReview', '--width', '1280', '--height', '720'
+        }
+
         successionReviewClient {
             client()
             gameDirectory = project.file('build/succession-client')

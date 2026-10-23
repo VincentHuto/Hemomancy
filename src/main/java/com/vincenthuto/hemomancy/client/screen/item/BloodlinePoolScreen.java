@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.client.screen.item;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.client.data.BloodlinePoolClientData;
 import com.vincenthuto.hemomancy.client.data.FaneBoundaryClientData;
 import com.vincenthuto.hemomancy.client.screen.widget.BloodVolumeBarWidget;
@@ -22,9 +21,10 @@ import net.minecraft.util.Mth;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 import java.util.function.Consumer;
+import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.VeinBackgroundRenderer;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 
 /**
  * A standalone screen that lets the player view their bloodline's shared blood pool,
@@ -35,9 +35,8 @@ public class BloodlinePoolScreen extends Screen {
 	private static final int GUI_WIDTH = 340;
 	private static final int GUI_HEIGHT = 336;
 	private static final int SCREEN_PADDING = 8;
-	private static final int VEIN_COUNT = 28;
 
-	private float[][] veinParams;
+	private final VeinBackgroundRenderer veins = new VeinBackgroundRenderer(VeinBackgroundRenderer.Style.CRIMSON);
 	private float currentLayoutScale = 1.0F;
 	private int currentGuiWidth = GUI_WIDTH;
 	private int currentGuiHeight = GUI_HEIGHT;
@@ -83,21 +82,6 @@ public class BloodlinePoolScreen extends Screen {
 
 		addRenderableWidget(Button.builder(Component.translatable("hemomancy.succession.residents"),
                 button -> SuccessionResidentsScreen.open(this)).bounds(guiLeft + currentGuiWidth - scaled(90), guiTop + scaled(8), scaled(80), widgetHeight(18)).build());
-
-        // Seed vein parameters
-		Random rand = new Random(42L);
-		veinParams = new float[VEIN_COUNT][9];
-		for (int i = 0; i < VEIN_COUNT; i++) {
-			veinParams[i][0] = rand.nextFloat();
-			veinParams[i][1] = rand.nextFloat();
-			veinParams[i][2] = (float) (rand.nextFloat() * Math.PI * 2);
-			veinParams[i][3] = 0.3f + rand.nextFloat() * 0.7f;
-			veinParams[i][4] = 8f + rand.nextFloat() * 18f;
-			veinParams[i][5] = 0.04f + rand.nextFloat() * 0.08f;
-			veinParams[i][6] = 60 + rand.nextInt(120);
-			veinParams[i][7] = 1 + rand.nextInt(3);
-			veinParams[i][8] = rand.nextFloat();
-		}
 
 		// Read current settings from capability
 		LocalPlayer player = Minecraft.getInstance().player;
@@ -319,10 +303,11 @@ public class BloodlinePoolScreen extends Screen {
 		int centerX = guiLeft + currentGuiWidth / 2;
 
 		// Animated vein background
-		renderVeinBackground(graphics, guiLeft, guiTop, currentGuiWidth, currentGuiHeight);
+		animTime += 0.016f; // ~60 FPS approximation
+		veins.draw(graphics, guiLeft, guiTop, currentGuiWidth, currentGuiHeight, animTime);
 
 		// Border
-		drawBorder(graphics, guiLeft, guiTop, currentGuiWidth, currentGuiHeight);
+		ScreenDrawUtils.drawBorder(graphics, guiLeft, guiTop, currentGuiWidth, currentGuiHeight, 0xFF330808, 0xFF220606);
 		drawCornerSigils(graphics, guiLeft, guiTop, currentGuiWidth, currentGuiHeight);
 
 		// Title
@@ -575,115 +560,8 @@ public class BloodlinePoolScreen extends Screen {
 		graphics.fill(x + 2, y + size - 3, x + size - 2, y + size - 2, color);
 	}
 
-	// ───── Border (same style as VascularStatusScreen / TendencyViewScreen) ─────
-
-	private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-		int outer = 0xFF330808;
-		gfx.fill(x, y, x + w, y + 1, outer);
-		gfx.fill(x, y + h - 1, x + w, y + h, outer);
-		gfx.fill(x, y, x + 1, y + h, outer);
-		gfx.fill(x + w - 1, y, x + w, y + h, outer);
-
-		int inner = 0xFF220606;
-		gfx.fill(x + 1, y + 1, x + w - 1, y + 2, inner);
-		gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, inner);
-		gfx.fill(x + 1, y + 1, x + 2, y + h - 1, inner);
-		gfx.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, inner);
-	}
-
-	// ───── Procedural Animated Vein Background (matches VascularStatusScreen) ─────
+	// Animation clock: the veins, the pool fill and the caret blink read it.
 	private float animTime = 0f;
-
-	private void renderVeinBackground(GuiGraphics graphics, int gx, int gy, int gw, int gh) {
-		graphics.enableScissor(gx, gy, gx + gw, gy + gh);
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-
-		graphics.fill(gx, gy, gx + gw, gy + gh, 0xFF0A0204);
-
-		int cx = gx + gw / 2;
-		int cy = gy + gh / 2;
-		int glowRadius = Math.max(gw, gh) / 2;
-		for (int ring = glowRadius; ring > 0; ring -= 4) {
-			float t = (float) ring / glowRadius;
-			int alpha = (int) (35 * (1f - t));
-			int red = (int) (40 * (1f - t));
-			int color = (alpha << 24) | (red << 16);
-			graphics.fill(cx - ring, cy - ring, cx + ring, cy + ring, color);
-		}
-		animTime += 0.016f; // ~60 FPS approximation
-
-		float time = animTime;
-		if (veinParams != null) {
-			for (int i = 0; i < VEIN_COUNT; i++) {
-				drawVeinTendril(graphics, i, time, gx, gy, gw, gh);
-			}
-		}
-
-		Random speckRand = new Random(12345L);
-		for (int s = 0; s < 120; s++) {
-			int sx = gx + speckRand.nextInt(gw);
-			int sy = gy + speckRand.nextInt(gh);
-			int sr = 10 + speckRand.nextInt(20);
-			int sg = speckRand.nextInt(6);
-			int sa = 15 + speckRand.nextInt(25);
-			graphics.fill(sx, sy, sx + 1, sy + 1, (sa << 24) | (sr << 16) | (sg << 8));
-		}
-
-		RenderSystem.disableBlend();
-		graphics.disableScissor();
-	}
-
-	private void drawVeinTendril(GuiGraphics graphics, int index, float time,
-								 int gx, int gy, int gw, int gh) {
-		float[] p = veinParams[index];
-		float startX = gx + p[0] * gw;
-		float startY = gy + p[1] * gh;
-		float baseAngle = p[2];
-		float speed = p[3];
-		float amplitude = p[4];
-		float frequency = p[5];
-		int length = (int) p[6];
-		int thickness = (int) p[7];
-		float brightness = p[8];
-
-		float angleDrift = baseAngle + 0.15f * Mth.sin(time * speed * 0.3f + index);
-		float cosA = Mth.cos(angleDrift);
-		float sinA = Mth.sin(angleDrift);
-		float timeOffset = time * speed * 2.0f;
-
-		int baseRed = (int) (40 + 50 * brightness);
-		int baseGreen = (int) (2 + 8 * brightness);
-		int baseBlue = (int) (5 + 5 * brightness);
-
-		for (int step = 0; step < length; step++) {
-			float t = step;
-			float squiggle = amplitude * Mth.sin(frequency * t + timeOffset);
-			float microSquiggle = (amplitude * 0.3f) * Mth.sin(frequency * 2.7f * t + timeOffset * 1.4f + index);
-			float displacement = squiggle + microSquiggle;
-
-			float px = startX + t * cosA * 1.5f - displacement * sinA;
-			float py = startY + t * sinA * 1.5f + displacement * cosA;
-
-			int ix = (int) px;
-			int iy = (int) py;
-
-			if (ix + thickness < gx || ix >= gx + gw || iy + thickness < gy || iy >= gy + gh) continue;
-
-			float tipFade = 1f;
-			if (step < 10) tipFade = step / 10f;
-			else if (step > length - 10) tipFade = (length - step) / 10f;
-
-			float pulse = 0.7f + 0.3f * Mth.sin(time * 1.5f + index * 0.5f + step * 0.02f);
-			int alpha = (int) (Mth.clamp(tipFade * pulse * 180, 20, 200));
-			int r = (int) Mth.clamp(baseRed * pulse, 0, 255);
-			int g = (int) Mth.clamp(baseGreen * pulse * 0.5f, 0, 255);
-			int b = (int) Mth.clamp(baseBlue * pulse * 0.3f, 0, 255);
-
-			int color = (alpha << 24) | (r << 16) | (g << 8) | b;
-			graphics.fill(ix, iy, ix + thickness, iy + thickness, color);
-		}
-	}
 
 	/** Resolves a UUID to a display name using the client's player info list, falling back to the UUID string. */
 	private static String resolvePlayerName(UUID uuid) {

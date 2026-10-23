@@ -57,6 +57,55 @@ public final class ScreenDrawUtils {
 		gfx.fill(x + w - 1, y,         x + w,     y + h,  color);
 	}
 
+	/**
+	 * Draws concentric single-pixel borders, outermost first: {@code colors[i]} is inset by {@code i}.
+	 */
+	public static void drawRingBorder(GuiGraphics gfx, int x, int y, int w, int h, int... colors) {
+		for (int i = 0; i < colors.length; i++) {
+			drawSimpleBorder(gfx, x + i, y + i, w - i * 2, h - i * 2, colors[i]);
+		}
+	}
+
+	/**
+	 * Draws a single-pixel bevel: top and left edges in {@code topLeft}, bottom and right in {@code bottomRight}.
+	 */
+	public static void drawBevelBorder(GuiGraphics gfx, int x, int y, int w, int h, int topLeft, int bottomRight) {
+		gfx.fill(x,         y,         x + w,     y + 1,  topLeft);
+		gfx.fill(x,         y + h - 1, x + w,     y + h,  bottomRight);
+		gfx.fill(x,         y,         x + 1,     y + h,  topLeft);
+		gfx.fill(x + w - 1, y,         x + w,     y + h,  bottomRight);
+	}
+
+	/**
+	 * Draws a two-pixel bevel: a {@link #drawBevelBorder} with a single-colour {@code inner} line inside it.
+	 */
+	public static void drawBevelBorder(GuiGraphics gfx, int x, int y, int w, int h,
+									   int topLeft, int bottomRight, int inner) {
+		drawBevelBorder(gfx, x, y, w, h, topLeft, bottomRight);
+		drawSimpleBorder(gfx, x + 1, y + 1, w - 2, h - 2, inner);
+	}
+
+	/**
+	 * Fills a {@code size} × {@code size} square in each corner: top-left, top-right, bottom-left, bottom-right.
+	 */
+	public static void drawCornerAccents(GuiGraphics gfx, int x, int y, int w, int h, int size, int color) {
+		gfx.fill(x,            y,            x + size, y + size, color);
+		gfx.fill(x + w - size, y,            x + w,    y + size, color);
+		gfx.fill(x,            y + h - size, x + size, y + h,    color);
+		gfx.fill(x + w - size, y + h - size, x + w,    y + h,    color);
+	}
+
+	/**
+	 * Draws an inventory slot well behind the 16×16 slot at ({@code sx}, {@code sy}): a {@code dark} frame one pixel
+	 * out, the {@code background}, then a {@code light} lip on the right and bottom edges.
+	 */
+	public static void drawSlotWell(GuiGraphics gfx, int sx, int sy, int dark, int background, int light) {
+		gfx.fill(sx - 1,  sy - 1,  sx + 17, sy + 17, dark);
+		gfx.fill(sx,      sy,      sx + 16, sy + 16, background);
+		gfx.fill(sx + 16, sy,      sx + 17, sy + 17, light);
+		gfx.fill(sx,      sy + 16, sx + 17, sy + 17, light);
+	}
+
 	// ── Home button ──────────────────────────────────────────────
 
 	/**

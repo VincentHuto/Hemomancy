@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.client.screen.tile.crafting.scar;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.ItemScarPattern;
@@ -27,7 +26,8 @@ import net.minecraft.world.item.Items;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.VeinBackgroundRenderer;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 
 public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> {
 	/** Texture still used for scar grid button sprites. */
@@ -42,7 +42,6 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 
 	private static final int CRAFT_AREA_HEIGHT = 96;
 	private static final int TOP_CONTENT_Y_OFFSET = -4;
-	private static final int VEIN_COUNT = 14;
 
 	private final Inventory playerInv;
 	private final ScarStationBlockEntity te;
@@ -59,10 +58,10 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 	private boolean firstPatternSync = true;
 	private boolean outputWasEmpty;
 
-	/** Seeded vein parameters for animated background. */
-	private float[][] veinParams;
-	/** Pre-generated speckle positions and colors for the vein background. */
-	private int[][] speckleData;
+	private static final VeinBackgroundRenderer.Style VEINS = new VeinBackgroundRenderer.Style(
+			VeinBackgroundRenderer.Field.STATION.count(14).seed(42L), VeinBackgroundRenderer.Palette.MACHINE,
+			new VeinBackgroundRenderer.Speckles.Fixed(54321L, 50, 176, CRAFT_AREA_HEIGHT, 10, 20, 0, 4, 15, 20));
+	private final VeinBackgroundRenderer veins = new VeinBackgroundRenderer(VEINS);
 
 	// --- Click-and-drag scar painting state ---
 	/** Whether the player is currently dragging across the scar grid. */
@@ -291,8 +290,8 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 		int gh = this.imageHeight;
 
 		// ── Upper crafting area: animated vein background ──
-		renderVeinBackground(graphics, gx, gy, gw, CRAFT_AREA_HEIGHT);
-		drawBorder(graphics, gx, gy, gw, CRAFT_AREA_HEIGHT);
+		veins.render(graphics, gx, gy, gw, CRAFT_AREA_HEIGHT);
+		ScreenDrawUtils.drawBorder(graphics, gx, gy, gw, CRAFT_AREA_HEIGHT, BORDER_OUTER, BORDER_INNER);
 
 		// ── Lower inventory area: red gradient background ──
 		Slot firstInventorySlot = this.menu.slots.get(5);
@@ -321,13 +320,7 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 	// ───── Slot background rendering ─────
 
 	private void drawSlotBackground(GuiGraphics gfx, int sx, int sy, Slot slot) {
-		// Outer border
-		gfx.fill(sx - 1, sy - 1, sx + 17, sy + 17, SLOT_BORDER_DARK);
-		// Inner fill
-		gfx.fill(sx, sy, sx + 16, sy + 16, SLOT_BG);
-		// Bottom/right highlight
-		gfx.fill(sx + 16, sy, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
-		gfx.fill(sx, sy + 16, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
+		ScreenDrawUtils.drawSlotWell(gfx, sx, sy, SLOT_BORDER_DARK, SLOT_BG, SLOT_BORDER_LIGHT);
 
 		// Themed tints per slot type
 		if (slot instanceof com.vincenthuto.hemomancy.common.menu.slot.ScarSlot) {
@@ -342,122 +335,9 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 		}
 	}
 
-	// ───── Programmatic border ─────
-
-	private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-		gfx.fill(x, y, x + w, y + 1, BORDER_OUTER);
-		gfx.fill(x, y + h - 1, x + w, y + h, BORDER_OUTER);
-		gfx.fill(x, y, x + 1, y + h, BORDER_OUTER);
-		gfx.fill(x + w - 1, y, x + w, y + h, BORDER_OUTER);
-
-		gfx.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
-		gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, BORDER_INNER);
-		gfx.fill(x + 1, y + 1, x + 2, y + h - 1, BORDER_INNER);
-		gfx.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, BORDER_INNER);
-	}
 
 	// ───── Red gradient inventory background ─────
 
-	// ───── Procedural animated vein background ─────
-	private float animTime = 0f;
-
-	private void renderVeinBackground(GuiGraphics graphics, int gx, int gy, int gw, int gh) {
-		graphics.enableScissor(gx, gy, gx + gw, gy + gh);
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-
-		// Layer 1: solid near-black base
-		graphics.fill(gx, gy, gx + gw, gy + gh, 0xFF0A0204);
-
-		// Layer 2: subtle dark-red radial glow in the center
-		int cx = gx + gw / 2;
-		int cy = gy + gh / 2;
-		int glowRadius = Math.max(gw, gh) / 2;
-		for (int ring = glowRadius; ring > 0; ring -= 4) {
-			float t = (float) ring / glowRadius;
-			int alpha = (int) (30 * (1f - t));
-			int red = (int) (35 * (1f - t));
-			int color = (alpha << 24) | (red << 16);
-			graphics.fill(cx - ring, cy - ring, cx + ring, cy + ring, color);
-		}
-
-		// Layer 3: animated vein tendrils
-		animTime += 0.016f; // ~60 FPS approximation
-
-		float time = animTime;
-				if (veinParams != null) {
-			for (int i = 0; i < VEIN_COUNT; i++) {
-				drawVeinTendril(graphics, i, time, gx, gy, gw, gh);
-			}
-		}
-
-		// Layer 4: pre-generated noise speckles
-		if (speckleData != null) {
-			for (int[] speck : speckleData) {
-				int sx = gx + speck[0] % gw;
-				int sy = gy + speck[1] % gh;
-				int sr = speck[2];
-				int sg = sr / 4;
-				int sa = speck[3];
-				graphics.fill(sx, sy, sx + 1, sy + 1, (sa << 24) | (sr << 16) | (sg << 8));
-			}
-		}
-
-		RenderSystem.disableBlend();
-		graphics.disableScissor();
-	}
-
-	private void drawVeinTendril(GuiGraphics graphics, int index, float time,
-			int gx, int gy, int gw, int gh) {
-		float[] p = veinParams[index];
-		float startX = gx + p[0] * gw;
-		float startY = gy + p[1] * gh;
-		float baseAngle = p[2];
-		float speed = p[3];
-		float amplitude = p[4];
-		float frequency = p[5];
-		int length = (int) p[6];
-		int thickness = (int) p[7];
-		float brightness = p[8];
-
-		float angleDrift = baseAngle + 0.15f * Mth.sin(time * speed * 0.3f + index);
-		float cosA = Mth.cos(angleDrift);
-		float sinA = Mth.sin(angleDrift);
-
-		float timeOffset = time * speed * 2.0f;
-
-		int baseRed = (int) (40 + 50 * brightness);
-		int baseGreen = (int) (2 + 8 * brightness);
-		int baseBlue = (int) (5 + 5 * brightness);
-
-		for (int step = 0; step < length; step++) {
-			float squiggle = amplitude * Mth.sin(frequency * step + timeOffset);
-			float microSquiggle = (amplitude * 0.3f) * Mth.sin(frequency * 2.7f * step + timeOffset * 1.4f + index);
-			float displacement = squiggle + microSquiggle;
-
-			float px = startX + step * cosA * 1.5f - displacement * sinA;
-			float py = startY + step * sinA * 1.5f + displacement * cosA;
-
-			int ix = (int) px;
-			int iy = (int) py;
-
-			if (ix + thickness < gx || ix >= gx + gw || iy + thickness < gy || iy >= gy + gh) continue;
-
-			float tipFade = 1f;
-			if (step < 10) tipFade = step / 10f;
-			else if (step > length - 10) tipFade = (length - step) / 10f;
-
-			float pulse = 0.7f + 0.3f * Mth.sin(time * 1.5f + index * 0.5f + step * 0.02f);
-
-			int a = (int) (Mth.clamp(tipFade * pulse * 180, 20, 200));
-			int r = (int) Mth.clamp(baseRed * pulse, 0, 255);
-			int g = (int) Mth.clamp(baseGreen * pulse * 0.5f, 0, 255);
-			int b = (int) Mth.clamp(baseBlue * pulse * 0.3f, 0, 255);
-
-			graphics.fill(ix, iy, ix + thickness, iy + thickness,
-					(a << 24) | (r << 16) | (g << 8) | b);
-		}
-	}
 
 	/**
 	 * Loads a pattern as a preview overlay (purple glow).
@@ -701,31 +581,6 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 		left = width / 2 - guiWidth / 2;
 		top = height / 2 - guiHeight / 2;
 		renderables.clear();
-
-		// Seed vein parameters for the animated background
-		Random rand = new Random(42L);
-		veinParams = new float[VEIN_COUNT][9];
-		for (int i = 0; i < VEIN_COUNT; i++) {
-			veinParams[i][0] = rand.nextFloat();
-			veinParams[i][1] = rand.nextFloat();
-			veinParams[i][2] = (float) (rand.nextFloat() * Math.PI * 2);
-			veinParams[i][3] = 0.3f + rand.nextFloat() * 0.7f;
-			veinParams[i][4] = 8f + rand.nextFloat() * 14f;
-			veinParams[i][5] = 0.04f + rand.nextFloat() * 0.08f;
-			veinParams[i][6] = 50 + rand.nextInt(100);
-			veinParams[i][7] = 1 + rand.nextInt(2);
-			veinParams[i][8] = rand.nextFloat();
-		}
-
-		// Pre-generate speckle positions and colors for the vein background
-		Random speckRand = new Random(54321L);
-		speckleData = new int[50][4]; // [index][x_offset, y_offset, red, alpha]
-		for (int s = 0; s < 50; s++) {
-			speckleData[s][0] = speckRand.nextInt(176); // max gui width
-			speckleData[s][1] = speckRand.nextInt(CRAFT_AREA_HEIGHT);
-			speckleData[s][2] = 10 + speckRand.nextInt(20); // red component
-			speckleData[s][3] = 15 + speckRand.nextInt(20); // alpha
-		}
 
 		// scar grid buttons (8x8)
 		int inc = 0;

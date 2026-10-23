@@ -181,9 +181,13 @@ public record ExamplePayload(int entityId, float amount) implements CustomPacket
   effects draw from `client/render/world/WorldEffectDispatcher`, and `common/` names no client class outside
   an item client extension (`CommonClientIsolationTest`). Other client calls from common code go through
   `common/util/ClientBridge`.
+- Since step 10: every screen draws its borders, bevels, ring borders and slot wells with `ScreenDrawUtils`, and its
+  vein background with `VeinBackgroundRenderer` and a `Style` (seeded `Field`, `Palette` with an optional deep
+  palette, `Speckles`). `ScreenChromeGuardrailTest` holds the line; vein fields that are other art (the Puppeteer's
+  Spindle threads, the Morphling Jar's green veins, the fungal hyphae) stay local and are listed there.
 
 **Migration targets**
-- V-1 (screen chrome)
+- V-1 (screen chrome, done in step 10)
 - V-2 (render-type caching)
 - V-3 (quad encoder)
 - V-5 (byte-identical shader noise into an include)

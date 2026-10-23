@@ -28,7 +28,8 @@ import org.joml.Quaternionf;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.VeinBackgroundRenderer;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
 
 /**
  * A standalone screen that displays the player's Vascular System status.
@@ -48,7 +49,6 @@ public class VascularStatusScreen extends Screen {
 	private float guiScale = 1.0f;
 
 	/** Number of animated vein tendrils swimming across the background. */
-	private static final int VEIN_COUNT = 28;
 
 	/**
 	 * Stores per-vein parameters seeded once at init:
@@ -57,7 +57,9 @@ public class VascularStatusScreen extends Screen {
 	 * [i][4] = amplitude, [i][5] = frequency, [i][6] = length (steps),
 	 * [i][7] = thickness (1-3), [i][8] = red tint (0-1 extra brightness)
 	 */
-	private float[][] veinParams;
+	private final VeinBackgroundRenderer veins = new VeinBackgroundRenderer(VeinBackgroundRenderer.Style.CRIMSON);
+	private static final int[] GAUGE_RINGS = {0xFF6B1010, 0xFF4A0C0C, 0xFF300808, 0xFF1A0404};
+	private static final int GAUGE_CORNER = 0xFF8A1818;
 
 	/** Current Y-axis rotation of the player model (in degrees), controlled by mouse drag. */
 	private float rotationY = 200.0f;
@@ -90,20 +92,6 @@ public class VascularStatusScreen extends Screen {
 		guiHeight = Math.min(PREFERRED_GUI_HEIGHT, this.height - padding * 2);
 		guiScale = Math.min((float) guiWidth / PREFERRED_GUI_WIDTH, (float) guiHeight / PREFERRED_GUI_HEIGHT);
 
-		// Seed vein parameters deterministically so they stay stable while the screen is open
-		Random rand = new Random(42L);
-		veinParams = new float[VEIN_COUNT][9];
-		for (int i = 0; i < VEIN_COUNT; i++) {
-			veinParams[i][0] = rand.nextFloat();                          // startX ratio
-			veinParams[i][1] = rand.nextFloat();                          // startY ratio
-			veinParams[i][2] = (float) (rand.nextFloat() * Math.PI * 2); // base angle
-			veinParams[i][3] = 0.3f + rand.nextFloat() * 0.7f;           // speed mult
-			veinParams[i][4] = 8f + rand.nextFloat() * 18f;              // amplitude
-			veinParams[i][5] = 0.04f + rand.nextFloat() * 0.08f;         // frequency
-			veinParams[i][6] = 60 + rand.nextInt(120);                    // length (steps)
-			veinParams[i][7] = 1 + rand.nextInt(3);                       // thickness
-			veinParams[i][8] = rand.nextFloat();                           // red tint brightness
-		}
 	}
 
 	@Override
@@ -169,10 +157,12 @@ public class VascularStatusScreen extends Screen {
 		int guiTop = centerY - guiHeight / 2;
 
 		// Animated vein background clipped to the GUI bounds
-		renderVeinBackground(graphics, guiLeft, guiTop, guiWidth, guiHeight);
+		animTime += 0.016f; // ~60 FPS approximation
+		veins.draw(graphics, guiLeft, guiTop, guiWidth, guiHeight, animTime);
 
 		// Programmatic dark-red border frame on top of the vein background
-		drawBorder(graphics, guiLeft, guiTop, guiWidth, guiHeight);
+		ScreenDrawUtils.drawRingBorder(graphics, guiLeft, guiTop, guiWidth, guiHeight, GAUGE_RINGS);
+		ScreenDrawUtils.drawCornerAccents(graphics, guiLeft, guiTop, guiWidth, guiHeight, 2, GAUGE_CORNER);
 
 		// Title
 		graphics.drawCenteredString(this.font, this.title, centerX, guiTop + 6, 0xFFCC3344);
@@ -437,146 +427,7 @@ public class VascularStatusScreen extends Screen {
 	private record BodySectionDef(EnumVeinSections section, float modelX, float modelY, float modelZ,
 								  int hitW, int hitH) {}
 
-	// ───── Gradient Dark-Red Border ─────
 
-	private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-		int[] colors = {
-			0xFF6B1010,  // outermost — bright crimson
-			0xFF4A0C0C,  // mid-outer
-			0xFF300808,  // mid-inner
-			0xFF1A0404,  // innermost — near-black maroon
-		};
-		for (int i = 0; i < colors.length; i++) {
-			int c = colors[i];
-			int xi = x + i;
-			int yi = y + i;
-			int wi = w - i * 2;
-			int hi = h - i * 2;
-			gfx.fill(xi, yi, xi + wi, yi + 1, c);
-			gfx.fill(xi, yi + hi - 1, xi + wi, yi + hi, c);
-			gfx.fill(xi, yi, xi + 1, yi + hi, c);
-			gfx.fill(xi + wi - 1, yi, xi + wi, yi + hi, c);
-		}
-		int hl = 0xFF8A1818;
-		gfx.fill(x, y, x + 2, y + 2, hl);
-		gfx.fill(x + w - 2, y, x + w, y + 2, hl);
-		gfx.fill(x, y + h - 2, x + 2, y + h, hl);
-		gfx.fill(x + w - 2, y + h - 2, x + w, y + h, hl);
-	}
-
-	// ───── Procedural Animated Vein Background ─────
-
-	/**
-	 * Renders a dark red/black background covered in swimming, squiggling vein tendrils.
-	 * Each vein is a sine-wave curve that drifts over time, giving an organic pulsing feel.
-	 * All rendering is clipped to the given GUI bounds.
-	 */
-	private void renderVeinBackground(GuiGraphics graphics, int gx, int gy, int gw, int gh) {
-		// Scissor clip so nothing bleeds outside the GUI panel
-		graphics.enableScissor(gx, gy, gx + gw, gy + gh);
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-
-		// Layer 1: solid near-black base filling GUI area
-		graphics.fill(gx, gy, gx + gw, gy + gh, 0xFF0A0204);
-
-		// Layer 2: subtle dark-red radial glow in the center of the GUI
-		int cx = gx + gw / 2;
-		int cy = gy + gh / 2;
-		int glowRadius = Math.max(gw, gh) / 2;
-		for (int ring = glowRadius; ring > 0; ring -= 4) {
-			float t = (float) ring / glowRadius; // 1.0 at edge, 0.0 at center
-			int alpha = (int) (35 * (1f - t));     // brighter toward center
-			int red = (int) (40 * (1f - t));
-			int color = (alpha << 24) | (red << 16);
-			graphics.fill(cx - ring, cy - ring, cx + ring, cy + ring, color);
-		}
-
-		animTime += 0.016f; // ~60 FPS approximation
-
-		float time = animTime;
-
-
-		if (veinParams != null) {
-			for (int i = 0; i < VEIN_COUNT; i++) {
-				drawVeinTendril(graphics, i, time, gx, gy, gw, gh);
-			}
-		}
-
-		// Layer 4: very subtle noise-like speckles for texture (static, cheap)
-		Random speckRand = new Random(12345L);
-		for (int s = 0; s < 120; s++) {
-			int sx = gx + speckRand.nextInt(gw);
-			int sy = gy + speckRand.nextInt(gh);
-			int sr = 10 + speckRand.nextInt(20);
-			int sg = speckRand.nextInt(6);
-			int sa = 15 + speckRand.nextInt(25);
-			graphics.fill(sx, sy, sx + 1, sy + 1, (sa << 24) | (sr << 16) | (sg << 8));
-		}
-
-		RenderSystem.disableBlend();
-		graphics.disableScissor();
-	}
-
-	/**
-	 * Draws a single animated vein tendril as a squiggling curve within the GUI bounds.
-	 * The curve is built from small filled rectangles placed along a parametric path.
-	 */
-	private void drawVeinTendril(GuiGraphics graphics, int index, float time,
-								 int gx, int gy, int gw, int gh) {
-		float[] p = veinParams[index];
-		float startX = gx + p[0] * gw;
-		float startY = gy + p[1] * gh;
-		float baseAngle = p[2];
-		float speed = p[3];
-		float amplitude = p[4];
-		float frequency = p[5];
-		int length = (int) p[6];
-		int thickness = (int) p[7];
-		float brightness = p[8];
-
-		float angleDrift = baseAngle + 0.15f * Mth.sin(time * speed * 0.3f + index);
-		float cosA = Mth.cos(angleDrift);
-		float sinA = Mth.sin(angleDrift);
-
-		float timeOffset = time * speed * 2.0f;
-
-		int baseRed = (int) (40 + 50 * brightness);
-		int baseGreen = (int) (2 + 8 * brightness);
-		int baseBlue = (int) (5 + 5 * brightness);
-
-		for (int step = 0; step < length; step++) {
-			float t = step;
-
-			float squiggle = amplitude * Mth.sin(frequency * t + timeOffset);
-			float microSquiggle = (amplitude * 0.3f) * Mth.sin(frequency * 2.7f * t + timeOffset * 1.4f + index);
-			float displacement = squiggle + microSquiggle;
-
-			float px = startX + t * cosA * 1.5f - displacement * sinA;
-			float py = startY + t * sinA * 1.5f + displacement * cosA;
-
-			int ix = (int) px;
-			int iy = (int) py;
-
-			if (ix + thickness < gx || ix >= gx + gw || iy + thickness < gy || iy >= gy + gh) {
-				continue;
-			}
-
-			float tipFade = 1f;
-			if (step < 10) tipFade = step / 10f;
-			else if (step > length - 10) tipFade = (length - step) / 10f;
-
-			float pulse = 0.7f + 0.3f * Mth.sin(time * 1.5f + index * 0.5f + step * 0.02f);
-
-			int alpha = (int) (Mth.clamp(tipFade * pulse * 180, 20, 200));
-			int r = (int) Mth.clamp(baseRed * pulse, 0, 255);
-			int g = (int) Mth.clamp(baseGreen * pulse * 0.5f, 0, 255);
-			int b = (int) Mth.clamp(baseBlue * pulse * 0.3f, 0, 255);
-
-			int color = (alpha << 24) | (r << 16) | (g << 8) | b;
-			graphics.fill(ix, iy, ix + thickness, iy + thickness, color);
-		}
-	}
 
 	// ───── Color Utilities ─────
 
