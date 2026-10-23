@@ -1,8 +1,6 @@
 package com.vincenthuto.hemomancy.common.worldgen;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.particle.data.BloodCellData;
-import com.vincenthuto.hemomancy.common.particle.data.SerpentParticleData;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.WarpChairBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.WarpChairStructureRules;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -43,6 +41,8 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.*;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 /**
  * Manages The Chamber of Will as one shared void dimension sliced into far-apart
@@ -586,9 +586,9 @@ public class ChamberOfWillManager extends SavedData {
         for (int step = -radius; step <= radius; step += 2) {
             double x = center.getX() + step + 0.5D;
             double z = center.getZ() + radius + 0.5D;
-            level.sendParticles(new BloodCellData(131, 0, 0),
+            level.sendParticles(HemoParticleData.bloodCell(new ParticleColor(131, 0, 0)),
                     x, center.getY() + 0.25D, z, 1, 0.08D, 0.06D, 0.08D, 0.01D);
-            level.sendParticles(new SerpentParticleData(70, 0, 12),
+            level.sendParticles(HemoParticleData.serpent(new ParticleColor(70, 0, 12)),
                     center.getX() + radius + 0.5D, center.getY() + 0.2D, center.getZ() + step + 0.5D,
                     1, 0.05D, 0.03D, 0.05D, 0.005D);
         }

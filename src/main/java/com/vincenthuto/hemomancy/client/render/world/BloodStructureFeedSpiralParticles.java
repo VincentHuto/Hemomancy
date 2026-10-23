@@ -7,6 +7,7 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.util.Mth;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 
 public final class BloodStructureFeedSpiralParticles {
 	private static final int ABOCIPHER_INTERVAL_TICKS = 2;
@@ -49,14 +50,14 @@ public final class BloodStructureFeedSpiralParticles {
 	private static void spawnAbocipher(ClientLevel level, BloodStructureFeedBounds bounds, float progress,
 			long gameTime) {
 		SpiralPoint point = spiralPoint(bounds, progress, gameTime, 0.0D);
-		level.addParticle(AbocipherParticleFactory.createFeedData(), point.x(), point.y(), point.z(),
+		level.addParticle(HemoParticleData.abocipher(), point.x(), point.y(), point.z(),
 				point.xSpeed(), AbocipherParticleFactory.FEED_SPIRAL_MARKER, point.zSpeed());
 	}
 
 	private static void spawnBloodCell(ClientLevel level, BloodStructureFeedBounds bounds, float progress,
 			long gameTime) {
 		SpiralPoint point = spiralPoint(bounds, progress, gameTime, Mth.PI * 0.72D);
-		level.addParticle(BloodCellParticleFactory.createFeedData(ParticleColor.BLOOD), point.x(), point.y(),
+		level.addParticle(HemoParticleData.bloodCell(ParticleColor.BLOOD), point.x(), point.y(),
 				point.z(), point.xSpeed() * 0.55D, BloodCellParticleFactory.FEED_SPIRAL_MARKER,
 				point.zSpeed() * 0.55D);
 	}

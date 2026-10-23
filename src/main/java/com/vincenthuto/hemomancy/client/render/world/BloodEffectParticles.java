@@ -2,8 +2,6 @@ package com.vincenthuto.hemomancy.client.render.world;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.particle.BloodCellParticle;
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
-import com.vincenthuto.hemomancy.client.particle.factory.SporiticSporeParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.ParticleGlow;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.client.Minecraft;
@@ -12,6 +10,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.phys.Vec3;
 import java.util.ArrayList;
 import java.util.List;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 
 final class BloodEffectParticles {
     private record Mist(Vec3 at,Vec3 velocity,boolean mortem,int seed,long born,int life,float size) {}
@@ -29,7 +28,7 @@ final class BloodEffectParticles {
                 MISTS.add(new Mist(at.add(offset),velocity.scale(.3),mortem,world.random.nextInt(113),world.getGameTime(),24,soft?.18f:.34f));
             }else {
                 var color=mortem?new ParticleColor(fungal?146:103,fungal?126:39,fungal?72:30):new ParticleColor(198,27,54);
-                var options=mortem&&fungal?SporiticSporeParticleFactory.createData(color):BloodCellParticleFactory.createData(color);
+                var options=mortem&&fungal?HemoParticleData.sporiticSpore(color):HemoParticleData.bloodCell(color);
                 var particle=mc.particleEngine.createParticle(options,at.x+offset.x,at.y+offset.y,at.z+offset.z,velocity.x*.5,velocity.y*.5,velocity.z*.5);
                 if(particle instanceof BloodCellParticle cell){cell.initScale=soft?.035f:.065f;cell.initAlpha=.65f;}
                 if(particle instanceof ParticleGlow spore){spore.initScale=.035f;spore.initAlpha=.42f;}

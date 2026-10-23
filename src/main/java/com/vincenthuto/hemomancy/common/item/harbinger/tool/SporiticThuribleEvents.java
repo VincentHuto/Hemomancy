@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.particle.data.SporiticSporeParticleData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
@@ -28,6 +27,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import net.minecraft.core.particles.ParticleOptions;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public class SporiticThuribleEvents {
@@ -107,7 +109,7 @@ public class SporiticThuribleEvents {
 		double x = owner.getX();
 		double y = owner.getY() + 0.95;
 		double z = owner.getZ();
-		SporiticSporeParticleData particle = new SporiticSporeParticleData(spore.red(), spore.green(), spore.blue());
+		ParticleOptions particle = HemoParticleData.sporiticSpore(new ParticleColor(spore.red(), spore.green(), spore.blue()));
 
 		level.sendParticles(particle, x, y, z, closeCount, spread, 0.35, spread, 0.015);
 		level.sendParticles(particle, x, y + 0.25, z, driftCount, spread * 0.95, 0.45, spread * 0.95, 0.004);
@@ -140,7 +142,7 @@ public class SporiticThuribleEvents {
 		}
 
 		int particles = 12 + (int) (24 * Mth.clamp(intensity, 0.0, 1.0));
-		level.sendParticles(new SporiticSporeParticleData(spore.red(), spore.green(), spore.blue()),
+		level.sendParticles(HemoParticleData.sporiticSpore(new ParticleColor(spore.red(), spore.green(), spore.blue())),
 				owner.getX(), owner.getY() + 0.9, owner.getZ(), particles,
 				radius * 0.35, 0.35, radius * 0.35, 0.025);
 	}

@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
 import com.vincenthuto.hemomancy.client.particle.BloodCellParticle;
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationAccentPacket;
@@ -12,6 +11,7 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.phys.Vec3;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 
 /** Small authored sprite accents around the material meshes, emitted on game ticks. */
 public final class ManipulationAmbientParticles {
@@ -117,7 +117,7 @@ public final class ManipulationAmbientParticles {
             EnumBloodTendency tint=primary != EnumBloodTendency.LUX && secondary!=null && i%4==3?secondary:primary;
             int rgb=cell?(primary==EnumBloodTendency.MORTEM?0x782039:0xBF2540):glowColor(tint);
             var color=new ParticleColor((rgb>>16)&255,(rgb>>8)&255,rgb&255);
-            var options=cell?BloodCellParticleFactory.createData(color):GlowParticleFactory.createData(color);
+            var options=cell?HemoParticleData.bloodCell(color):GlowParticleFactory.createData(color);
             // Both authored particle classes double constructor velocity.
             var particle=mc.particleEngine.createParticle(options,point.x,point.y,point.z,
                     velocity.x*.5,velocity.y*.5,velocity.z*.5);

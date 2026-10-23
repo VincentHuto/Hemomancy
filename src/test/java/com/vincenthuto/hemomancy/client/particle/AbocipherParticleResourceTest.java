@@ -24,6 +24,8 @@ public final class AbocipherParticleResourceTest {
 				"com/vincenthuto/hemomancy/client/particle/factory/AbocipherParticleFactory.java"));
 		String particle = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/particle/AbocipherParticle.java"));
+		String particleData = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/common/particle/HemoParticleData.java"));
 		String particleDefinition = read(RESOURCE_ROOT.resolve("assets/hemomancy/particles/abocipher.json"));
 
 		assertContains("particle type should be a simple reusable glyph particle",
@@ -46,8 +48,8 @@ public final class AbocipherParticleResourceTest {
 				particle, "wriggleX");
 		assertContains("abocipher particles should scale down inherited upward drift",
 				particle, "UPWARD_DRIFT_SCALE");
-		assertContains("factory should expose reusable particle options",
-				factory, "return ParticleInit.abocipher.get();");
+		assertContains("the particle facade should expose reusable particle options",
+				particleData, "return ParticleInit.abocipher.get();");
 
 		int textureCount = 0;
 		for (String letter : LETTERS) {

@@ -193,7 +193,8 @@ public record ExamplePayload(int entityId, float amount) implements CustomPacket
 - V-2 (render-type caching, done in step 10)
 - V-3 (quad encoder)
 - V-5 (byte-identical shader noise into an include)
-- V-6 (colour particle data)
+- V-6 (colour particle data, done in step 10: `ColorParticleOptions`, `HemoParticleType`, data built through
+  `HemoParticleData`)
 - V-7 (HUD and world dispatch)
 - V-8 (client code out of `common/`)
 

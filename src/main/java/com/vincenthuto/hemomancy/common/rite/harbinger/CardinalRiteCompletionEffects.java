@@ -1,8 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.particle.data.BloodCellData;
-import com.vincenthuto.hemomancy.common.particle.data.SerpentParticleData;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.QliphothBloomBlock;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;

@@ -167,7 +167,7 @@ public final class FaneHeartAndStakeSourceTest {
 		assertContains("bloodwell renderer spawns real particles", bloodwellRenderer, "spawnBloodwellParticles");
 		assertContains("bloodwell renderer uses actual level particles", bloodwellRenderer, "level.addParticle");
 		assertContains("bloodwell renderer uses absorbed blood cell particles", bloodwellRenderer,
-				"AbsorbedBloodCellParticleFactory");
+				"HemoParticleData.absorbedBloodCell(");
 		assertContains("bloodwell renderer uses glow particles", bloodwellRenderer, "GlowParticleFactory");
 		assertContains("bloodwell renderer uses blood particle color", bloodwellRenderer, "ParticleColor.BLOOD");
 		assertNotContains("bloodwell renderer removes fake tip mist geometry", bloodwellRenderer, "renderJetMist");

@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.client.player;
 
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.client.render.world.LivingTorchFlames;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
@@ -8,6 +7,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 
 /** Authored client-local flame stream emitted from the rendered torch tip. */
 public final class LivingTorchBreathEffects {
@@ -35,7 +35,7 @@ public final class LivingTorchBreathEffects {
 			LivingTorchFlames.emit(level, caster, tip, velocity, tongue);
 			if (tongue % 2 == 0) {
 				Vec3 bloodVelocity = LivingTorchBreathParticleMotion.bloodCellFactoryInput(velocity);
-				level.addParticle(BloodCellParticleFactory.createData(CRIMSON),
+				level.addParticle(HemoParticleData.bloodCell(CRIMSON),
 						tip.x, tip.y, tip.z, bloodVelocity.x, bloodVelocity.y, bloodVelocity.z);
 			}
 		}

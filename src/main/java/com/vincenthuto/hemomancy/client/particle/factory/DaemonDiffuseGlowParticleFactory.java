@@ -6,7 +6,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.core.particles.ParticleOptions;
 
 public final class DaemonDiffuseGlowParticleFactory
 		implements ParticleProvider<DaemonDiffuseGlowParticleData> {
@@ -16,10 +15,6 @@ public final class DaemonDiffuseGlowParticleFactory
 		this.sprites = sprites;
 	}
 
-	public static ParticleOptions createData(float scale) {
-		return new DaemonDiffuseGlowParticleData(
-				Math.max(0.02F, Math.min(1.0F, scale)));
-	}
 
 	@Override
 	public Particle createParticle(DaemonDiffuseGlowParticleData data,

@@ -1,13 +1,6 @@
 package com.vincenthuto.hemomancy.common.particle;
 
-import com.vincenthuto.hemomancy.common.particle.data.AbsorbedBloodCellData;
-import com.vincenthuto.hemomancy.common.particle.data.BloodAvatarHitParticleData;
-import com.vincenthuto.hemomancy.common.particle.data.BloodCellData;
-import com.vincenthuto.hemomancy.common.particle.data.BloodClawData;
 import com.vincenthuto.hemomancy.common.particle.data.DaemonDiffuseGlowParticleData;
-import com.vincenthuto.hemomancy.common.particle.data.HermitEdgeGlowParticleData;
-import com.vincenthuto.hemomancy.common.particle.data.SerpentParticleData;
-import com.vincenthuto.hemomancy.common.particle.data.SporiticSporeParticleData;
 import com.vincenthuto.hemomancy.common.particle.data.WillAbsorptionGlowParticleData;
 import com.vincenthuto.hemomancy.common.init.ParticleInit;
 import com.vincenthuto.hemomancy.common.particle.data.HitColorParticleData;
@@ -17,17 +10,23 @@ import com.vincenthuto.hutoslib.client.particle.data.EmberParticleData;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
 import net.minecraft.core.particles.ParticleOptions;
+import com.vincenthuto.hemomancy.common.particle.data.ColorParticleOptions;
 
 /** Particle payloads usable on either side without loading a client ParticleProvider. */
 public final class HemoParticleData {
     private HemoParticleData() {}
+
+    /** The Abocipher rune, which also marks a blood structure's feed spiral. */
+    public static ParticleOptions abocipher() {
+        return ParticleInit.abocipher.get();
+    }
 
     public static ParticleOptions glow(ParticleColor color) {
         return new ColorParticleData(HLParticleInit.glow.get(), color);
     }
 
     public static ParticleOptions bloodCell(ParticleColor color) {
-        return new BloodCellData(ParticleInit.blood_cell.get(), color);
+        return new ColorParticleOptions(ParticleInit.blood_cell.get(), color);
     }
 
     public static ParticleOptions darkGlow(ParticleColor color) {
@@ -35,11 +34,11 @@ public final class HemoParticleData {
     }
 
     public static ParticleOptions serpent(ParticleColor color) {
-        return new SerpentParticleData(ParticleInit.serpent.get(), color);
+        return new ColorParticleOptions(ParticleInit.serpent.get(), color);
     }
 
     public static ParticleOptions absorbedBloodCell(ParticleColor color) {
-        return new AbsorbedBloodCellData(ParticleInit.absorbed_blood_cell.get(), color);
+        return new ColorParticleOptions(ParticleInit.absorbed_blood_cell.get(), color);
     }
 
     public static ParticleOptions ember(ParticleColor color, float s, float a, int l) {
@@ -59,11 +58,11 @@ public final class HemoParticleData {
     }
 
     public static ParticleOptions sporiticSpore(ParticleColor color) {
-        return new SporiticSporeParticleData(ParticleInit.sporitic_spore.get(), color);
+        return new ColorParticleOptions(ParticleInit.sporitic_spore.get(), color);
     }
 
     public static ParticleOptions hermitEdgeGlow(ParticleColor color) {
-        return new HermitEdgeGlowParticleData(ParticleInit.hermit_edge_glow.get(), color);
+        return new ColorParticleOptions(ParticleInit.hermit_edge_glow.get(), color);
     }
 
     public static ParticleOptions daemonDiffuseGlow(float scale) {
@@ -72,11 +71,15 @@ public final class HemoParticleData {
     }
 
     public static ParticleOptions bloodAvatarHit(ParticleColor color) {
-        return new BloodAvatarHitParticleData(ParticleInit.blood_avatar_hit.get(), color);
+        return new ColorParticleOptions(ParticleInit.blood_avatar_hit.get(), color);
     }
 
     public static ParticleOptions bloodClaw(ParticleColor color) {
-        return new BloodClawData(ParticleInit.blood_claw.get(), color);
+        return new ColorParticleOptions(ParticleInit.blood_claw.get(), color);
+    }
+
+    public static ParticleOptions willAbsorptionGlow(ParticleColor color) {
+        return new WillAbsorptionGlowParticleData(ParticleInit.will_absorption_glow.get(), color, false);
     }
 
     public static ParticleOptions willAbsorptionGlowPulse(ParticleColor color) {

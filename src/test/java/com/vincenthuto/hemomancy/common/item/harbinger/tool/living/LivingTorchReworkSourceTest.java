@@ -67,8 +67,8 @@ final class LivingTorchReworkSourceTest {
 		String layerEvents = read("client/event/LayerEvents.java");
 		String item = read("common/item/harbinger/tool/living/LivingTorchItem.java");
 		String sounds = Files.readString(Path.of("src/main/resources/assets/hemomancy/sounds.json"));
-		assertContains(effects, "BloodCellParticleFactory");
-		assertFalse(effects.contains("AbsorbedBloodCellParticleFactory"),
+		assertContains(effects, "HemoParticleData.bloodCell(");
+		assertFalse(effects.contains("HemoParticleData.absorbedBloodCell("),
 				"torch blood cells must travel outward instead of interpolating back toward their emitter");
 		assertContains(effects, "LivingTorchFlames.emit(");
 		assertFalse(effects.contains("GlowParticleFactory"),

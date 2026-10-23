@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.functional;
 
-import com.vincenthuto.hemomancy.common.particle.data.BloodCellData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
@@ -49,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 
 public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider, ProjectedBloodSink {
 	private static final BloodAccounting.Source MOTIF_CHARGE = BloodAccounting.Source.of("masons_effigy_motif", Category.SCAR, true, false);
@@ -223,7 +223,7 @@ public class MasonsEffigyBlockEntity extends BlockEntity implements MenuProvider
 			patternEntity.setDefaultPickUpDelay();
 			level.addFreshEntity(patternEntity);
 			HLParticleUtils.spawnPoof(serverLevel, worldPosition.above(),
-					new BloodCellData(com.vincenthuto.hemomancy.common.init.ParticleInit.blood_cell.get(), ParticleColor.BLOOD));
+					HemoParticleData.bloodCell(ParticleColor.BLOOD));
 			PacketHandler.sendSanguineOmenEffect(Vec3.atCenterOf(worldPosition).add(0.0D, 0.25D, 0.0D), 18.0D,
 					serverLevel, 24, 0.35F);
 			level.playSound(null, worldPosition, SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.BLOCKS, 0.8F, 0.65F);

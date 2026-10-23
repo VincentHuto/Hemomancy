@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.client.player;
 
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.client.render.world.ManipulationAmbientParticles;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteStaffPlantingClientState;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
@@ -20,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import java.util.HashMap;
 import java.util.Map;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 
 public final class BloodVialInjectionClientState {
     private static final Map<Integer, Animation> ACTIVE = new HashMap<>();
@@ -113,7 +113,7 @@ public final class BloodVialInjectionClientState {
             Vec3 velocity = outward.scale(.035 + world.random.nextDouble() * .025).add(
                     (world.random.nextDouble() - .5) * .025, world.random.nextDouble() * .025,
                     (world.random.nextDouble() - .5) * .025);
-            world.addParticle(BloodCellParticleFactory.createData(new ParticleColor(190, 10, 35)),
+            world.addParticle(HemoParticleData.bloodCell(new ParticleColor(190, 10, 35)),
                     at.x, at.y, at.z, velocity.x, velocity.y, velocity.z);
         }
         ManipulationAmbientParticles.accept(new ManipulationAccentPacket(animation.packet.tendency(), null,

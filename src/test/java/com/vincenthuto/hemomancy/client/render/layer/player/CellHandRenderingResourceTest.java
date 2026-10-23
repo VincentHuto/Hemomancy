@@ -73,7 +73,7 @@ public final class CellHandRenderingResourceTest {
 		assertContains("first-person particles are anchored while alive", particleEffects,
 				"particle.setFirstPersonAnchor(localOffset);");
 		assertContains("absorbed first-person particles are created directly for hand targeting", particleEffects,
-				"AbsorbedBloodCellParticleFactory.createData(targetColor)");
+				"HemoParticleData.absorbedBloodCell(targetColor)");
 		assertContains("absorbed first-person particles follow the active hand target", particleEffects,
 				"particle.setFirstPersonTargetAnchor(anchor);");
 		assertContains("projection particles use an explicit source-to-surface path", particleEffects,
@@ -87,13 +87,13 @@ public final class CellHandRenderingResourceTest {
 		assertContains("block absorption particles respect endpoint visibility", blockBloodInteractions,
 				"endpoint.canDrawAbsorptionParticles(level, pos, state)");
 		assertContains("block absorption particles use blood color", particleEffects,
-				"AbsorbedBloodCellParticleFactory.createData(ParticleColor.BLOOD)");
+				"HemoParticleData.absorbedBloodCell(ParticleColor.BLOOD)");
 		assertContains("block absorption particles share the hand-targeted absorbed particle path", particleEffects,
 				"spawnAbsorbedBloodParticle");
 		assertBefore("block absorption visual takes priority before entity absorption targets", particleEffects,
 				"findLookedAtBloodBlockSource", "getAbsorptionParticleTargets");
 		assertContains("faltering Will absorption particles use the dedicated dark glow mote", particleEffects,
-				"WillAbsorptionGlowParticleFactory.createData(WILL_ABSORPTION_GLOW)");
+				"HemoParticleData.willAbsorptionGlow(WILL_ABSORPTION_GLOW)");
 		assertContains("faltering Will absorption uses black glow color", particleEffects,
 				"WILL_ABSORPTION_GLOW = ParticleColor.BLACK");
 		assertContains("Will absorption adds a school-colored spiral layer", particleEffects,
@@ -101,7 +101,7 @@ public final class CellHandRenderingResourceTest {
 		assertContains("Will absorption spiral uses the aligned tendency color", particleEffects,
 				"will.getSchool().getColor()");
 		assertContains("Will absorption spiral reuses the Will glow particle path", particleEffects,
-				"WillAbsorptionGlowParticleFactory.createData(will.getSchool().getColor())");
+				"HemoParticleData.willAbsorptionGlow(will.getSchool().getColor())");
 		assertContains("Will absorption spiral rotates around the Will source", particleEffects,
 				"double spiralAngle");
 		assertContains("Will absorption spiral targets the active hand or staff anchor", particleEffects,
@@ -114,8 +114,8 @@ public final class CellHandRenderingResourceTest {
 				"will_absorption_glow");
 		assertContains("Will absorption glow uses its own factory", particleProviders,
 				"WillAbsorptionGlowParticleFactory::new");
-		assertContains("Will absorption glow factory creates its registered data", willAbsorptionGlowFactory,
-				"ParticleInit.will_absorption_glow.get()");
+		assertContains("Will absorption glow data is built with its registered type", hemoParticleData,
+				"new WillAbsorptionGlowParticleData(ParticleInit.will_absorption_glow.get(), color, false)");
 		assertContains("Will absorption pulse data is built common-side with the same particle type", hemoParticleData,
 				"new WillAbsorptionGlowParticleData(ParticleInit.will_absorption_glow.get(), color, true)");
 		assertContains("Will absorption glow factory passes pulse mode into particle", willAbsorptionGlowFactory,

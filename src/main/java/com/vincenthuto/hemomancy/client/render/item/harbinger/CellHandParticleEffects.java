@@ -2,9 +2,6 @@ package com.vincenthuto.hemomancy.client.render.item.harbinger;
 
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.client.particle.*;
-import com.vincenthuto.hemomancy.client.particle.factory.AbsorbedBloodCellParticleFactory;
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
-import com.vincenthuto.hemomancy.client.particle.factory.WillAbsorptionGlowParticleFactory;
 import com.vincenthuto.hemomancy.common.particle.EntityParticleUtils;
 import com.vincenthuto.hemomancy.client.render.world.CellHandStreams;
 import com.vincenthuto.hemomancy.client.render.world.ManipulationVisualRenderer;
@@ -41,6 +38,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.function.Predicate;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 
 public final class CellHandParticleEffects {
 	private static final int GLOBAL_PARTICLE_COUNT = 20;
@@ -100,7 +98,7 @@ public final class CellHandParticleEffects {
 		Vec3[] inversedSphere = HLParticleUtils.inversedSphere(GLOBAL_PARTICLE_COUNT,
 				-world.getGameTime() * 0.01, 0.15, false);
 		for (int i = 0; i < GLOBAL_PARTICLE_COUNT; i++) {
-			world.addParticle(BloodCellParticleFactory.createData(new ParticleColor(255, 0, 0)),
+			world.addParticle(HemoParticleData.bloodCell(new ParticleColor(255, 0, 0)),
 					origin.x() + inversedSphere[i].x,
 					origin.y() + inversedSphere[i].y,
 					origin.z() + inversedSphere[i].z,
@@ -172,7 +170,7 @@ public final class CellHandParticleEffects {
 			Vec3 localOffset = anchor.add(inversedSphere[i]);
 			Vec3 particleOrigin = firstPersonAnchorToWorld(localOffset);
 			Particle created = mc.particleEngine.createParticle(
-					BloodCellParticleFactory.createData(new ParticleColor(255, 0, 0)),
+					HemoParticleData.bloodCell(new ParticleColor(255, 0, 0)),
 					particleOrigin.x(), particleOrigin.y(), particleOrigin.z(), 0, 0.00, 0);
 			if (created instanceof BloodCellParticle particle) {
 				particle.setFirstPersonAnchor(localOffset);
@@ -318,7 +316,7 @@ public final class CellHandParticleEffects {
 				Math.sin(spiralAngle) * radius);
 		Vec3 finalPos = source.subtract(origin);
 		Particle created = mc.particleEngine.createParticle(
-				WillAbsorptionGlowParticleFactory.createData(will.getSchool().getColor()),
+				HemoParticleData.willAbsorptionGlow(will.getSchool().getColor()),
 				origin.x, origin.y, origin.z,
 				finalPos.x + rand.nextDouble() * 0.08D - 0.04D,
 				finalPos.y + rand.nextDouble() * 0.08D - 0.04D,
@@ -337,7 +335,7 @@ public final class CellHandParticleEffects {
 			Optional<Vec3> firstPersonTargetAnchor) {
 		Vec3 finalPos = source.subtract(origin);
 		Particle created = mc.particleEngine.createParticle(
-				WillAbsorptionGlowParticleFactory.createData(WILL_ABSORPTION_GLOW),
+				HemoParticleData.willAbsorptionGlow(WILL_ABSORPTION_GLOW),
 				origin.x, origin.y, origin.z,
 				finalPos.x + rand.nextDouble() * 0.22D - 0.11D,
 				finalPos.y + rand.nextDouble() * 0.32D - 0.16D,
@@ -360,7 +358,7 @@ public final class CellHandParticleEffects {
 			ParticleColor targetColor, Random rand, Optional<Vec3> firstPersonTargetAnchor) {
 		Vec3 finalPos = source.subtract(origin);
 		Particle created = mc.particleEngine.createParticle(
-				AbsorbedBloodCellParticleFactory.createData(targetColor),
+				HemoParticleData.absorbedBloodCell(targetColor),
 				origin.x, origin.y, origin.z,
 				(float) finalPos.x + rand.nextFloat() - 0.5D,
 				(float) finalPos.y - rand.nextFloat(),
@@ -378,7 +376,7 @@ public final class CellHandParticleEffects {
 
 	private static void spawnProjectionParticle(Minecraft mc, Vec3 origin, HitResult trace, Random rand) {
 		Particle created = mc.particleEngine.createParticle(
-				AbsorbedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
+				HemoParticleData.absorbedBloodCell(ParticleColor.BLOOD),
 				origin.x, origin.y, origin.z, 0.0D, 0.0D, 0.0D);
 		if (created instanceof AbsorbedBloodCellParticle particle) {
 			// Into a feeding Working craft, the blood lands on the fill line climbing its structure.

@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.functional;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.client.particle.factory.AbsorbedBloodCellParticleFactory;
 import com.vincenthuto.hemomancy.client.render.BloodPoolSurface;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.client.render.world.BloodStreams;
@@ -23,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 
 public class ConsecratedBloodwellRenderer implements BlockEntityRenderer<ConsecratedBloodwellBlockEntity> {
 	private static final float TAU = (float) (Math.PI * 2.0);
@@ -211,7 +211,7 @@ public class ConsecratedBloodwellRenderer implements BlockEntityRenderer<Consecr
 			double y = cy + 0.03D + level.random.nextDouble() * (0.28D + pressure * 0.24D);
 			double speed = 0.006D + pressure * 0.010D;
 			level.addParticle(
-					AbsorbedBloodCellParticleFactory.createData(new ParticleColor(245, 30, 14)),
+					HemoParticleData.absorbedBloodCell(new ParticleColor(245, 30, 14)),
 					x, y, z,
 					Math.cos(angle) * speed, 0.015D + pressure * 0.015D, Math.sin(angle) * speed);
 		}
@@ -237,7 +237,7 @@ public class ConsecratedBloodwellRenderer implements BlockEntityRenderer<Consecr
 			double x = cx + Math.cos(angle) * SPOUT_LIP_RADIUS;
 			double z = cz + Math.sin(angle) * SPOUT_LIP_RADIUS;
 			level.addParticle(
-					AbsorbedBloodCellParticleFactory.createData(new ParticleColor(200, 12, 8)),
+					HemoParticleData.absorbedBloodCell(new ParticleColor(200, 12, 8)),
 					x, pos.getY() + CATCH_CUP_Y + 0.03D, z,
 					(level.random.nextDouble() - 0.5D) * 0.02D, 0.02D,
 					(level.random.nextDouble() - 0.5D) * 0.02D);

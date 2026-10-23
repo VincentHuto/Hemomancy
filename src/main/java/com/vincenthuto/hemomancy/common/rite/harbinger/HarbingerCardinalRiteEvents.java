@@ -4,10 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.Harbi
 import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import com.vincenthuto.hemomancy.common.util.PatternOrigins;
 import com.vincenthuto.hutoslib.common.registry.HLParticleInit;
-import com.vincenthuto.hemomancy.common.init.ParticleInit;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.particle.data.BloodCellData;
-import com.vincenthuto.hemomancy.common.particle.data.SerpentParticleData;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.QliphothBloomBlock;
 import com.vincenthuto.hemomancy.common.block.shared.IMultiBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -688,11 +685,11 @@ public class HarbingerCardinalRiteEvents {
 
 			// Draw blood particles from sacrifice toward the rite center
 			sLevel.sendParticles(
-					new BloodCellData(ParticleInit.blood_cell.get(), new ParticleColor(255, 0, 0)),
+					HemoParticleData.bloodCell(new ParticleColor(255, 0, 0)),
 					entity.getX(), entity.getY() + entity.getBbHeight() / 2.0, entity.getZ(),
 					3, 0.1, 0.1, 0.1, 0.02);
 			sLevel.sendParticles(
-					new SerpentParticleData(ParticleInit.serpent.get(), new ParticleColor(200, 0, 0)),
+					HemoParticleData.serpent(new ParticleColor(200, 0, 0)),
 					center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
 					1, 0.1, 0.2, 0.1, 0);
 		}
@@ -837,7 +834,7 @@ public class HarbingerCardinalRiteEvents {
 				new EmberParticleData(new ParticleColor(235, 230, 225), 0.62F, 0.035F, 38),
 				x, y, z, 20, 0.32D, 0.45D, 0.32D, 0.26D);
 		level.sendParticles(
-				new BloodCellData(ParticleInit.blood_cell.get(), new ParticleColor(190, 0, 12)),
+				HemoParticleData.bloodCell(new ParticleColor(190, 0, 12)),
 				x, y, z, 24, 0.30D, 0.42D, 0.30D, 0.20D);
 	}
 

@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.event.worldevent;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.particle.data.BloodCellData;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager;
@@ -26,6 +25,8 @@ import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.UUID;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 /**
  * Keeps players, placed blocks, and tossed items inside their owner's Chamber of
@@ -203,7 +204,7 @@ public final class ChamberOfWillEvents {
     }
 
     private static void playThemeChangeEffect(ServerLevel level, ServerPlayer owner) {
-        level.sendParticles(new BloodCellData(131, 0, 0),
+        level.sendParticles(HemoParticleData.bloodCell(new ParticleColor(131, 0, 0)),
                 owner.getX(), owner.getY() + 1.0D, owner.getZ(), 12, 0.45D, 0.65D, 0.45D, 0.02D);
         level.sendParticles(ParticleTypes.REVERSE_PORTAL,
                 owner.getX(), owner.getY() + 1.0D, owner.getZ(), 8, 0.35D, 0.5D, 0.35D, 0.03D);

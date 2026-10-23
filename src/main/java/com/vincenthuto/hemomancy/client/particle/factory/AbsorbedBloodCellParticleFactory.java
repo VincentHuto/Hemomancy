@@ -1,21 +1,15 @@
 package com.vincenthuto.hemomancy.client.particle.factory;
 
 import com.vincenthuto.hemomancy.client.particle.AbsorbedBloodCellParticle;
-import com.vincenthuto.hemomancy.common.particle.data.AbsorbedBloodCellData;
-import com.vincenthuto.hemomancy.common.init.ParticleInit;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hemomancy.common.particle.data.ColorParticleOptions;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.core.particles.ParticleOptions;
 
-public class AbsorbedBloodCellParticleFactory implements ParticleProvider<AbsorbedBloodCellData> {
+public class AbsorbedBloodCellParticleFactory implements ParticleProvider<ColorParticleOptions> {
 	public static final String NAME = "absorbed_blood_cell";
-	public static ParticleOptions createData(ParticleColor color) {
-		return new AbsorbedBloodCellData(ParticleInit.absorbed_blood_cell.get(), color);
-	}
 
 	private final SpriteSet spriteSet;
 
@@ -24,7 +18,7 @@ public class AbsorbedBloodCellParticleFactory implements ParticleProvider<Absorb
 	}
 
 	@Override
-	public Particle createParticle(AbsorbedBloodCellData data, ClientLevel worldIn, double x, double y, double z,
+	public Particle createParticle(ColorParticleOptions data, ClientLevel worldIn, double x, double y, double z,
 			double xSpeed, double ySpeed, double zSpeed) {
 		return new AbsorbedBloodCellParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, data.color.getRed(),
 				data.color.getGreen(), data.color.getBlue(), 2.0f, .025f, 20, this.spriteSet);

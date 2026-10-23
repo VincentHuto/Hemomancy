@@ -2,18 +2,13 @@ package com.vincenthuto.hemomancy.client.particle.factory;
 
 import com.vincenthuto.hemomancy.common.particle.data.HitColorParticleData;
 import com.vincenthuto.hutoslib.client.particle.ParticleGlow;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.core.particles.ParticleOptions;
 
 public class HitGlowParticleFactory implements ParticleProvider<HitColorParticleData> {
 	public static final String NAME = "hit_glow";
-	public static ParticleOptions createData(ParticleColor color) {
-		return new HitColorParticleData(color.getRed(), color.getGreen(), color.getBlue());
-	}
 
 	private final SpriteSet spriteSet;
 

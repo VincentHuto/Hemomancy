@@ -153,6 +153,7 @@ src/test/java/com/vincenthuto/hemomancy/client/particle/AbocipherParticleResourc
 src/test/java/com/vincenthuto/hemomancy/client/particle/AbocipherParticleResourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/particle/factory/AbocipherParticleFactory.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/client/particle/AbocipherParticleResourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/registry/ParticleProviderRegistrar.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/client/particle/AbocipherParticleResourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/init/ParticleInit.java,java,base-dir
+src/test/java/com/vincenthuto/hemomancy/client/particle/AbocipherParticleResourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/particle/HemoParticleData.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/client/particle/AbocipherParticleResourceTest.java,main,src/main/resources,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/client/particle/AbocipherParticleResourceTest.java,main,src/main/resources/assets/hemomancy/particles/abocipher.json,resource,base-dir
 src/test/java/com/vincenthuto/hemomancy/client/particle/DaemonDiffuseGlowParticleResourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/particle/DaemonDiffuseGlowParticle.java,java,exact
@@ -1641,8 +1642,7 @@ src/test/java/com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerHer
 src/test/java/com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerHermitFarewellDeathSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerHermitFarewellDeathSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerHermitEntity.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerHermitFarewellDeathSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/init/ParticleInit.java,java,exact
-src/test/java/com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerHermitFarewellDeathSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/particle/data/HermitEdgeGlowParticleData.java,java,exact
-src/test/java/com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerHermitFarewellDeathSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/particle/type/HermitEdgeGlowParticleType.java,java,exact
+src/test/java/com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerHermitFarewellDeathSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/particle/HemoParticleData.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerHermitFarewellDeathSourceTest.java,main,src/main/resources/assets/hemomancy/particles/hermit_edge_glow.json,resource,exact
 src/test/java/com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerHermitFarewellDeathSourceTest.java,main,src/main/resources/assets/hemomancy/shaders/core/entity/hermit_farewell_dissolve.fsh,resource,exact
 src/test/java/com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerHermitFarewellDeathSourceTest.java,main,src/main/resources/assets/hemomancy/shaders/core/entity/hermit_farewell_dissolve.json,resource,exact

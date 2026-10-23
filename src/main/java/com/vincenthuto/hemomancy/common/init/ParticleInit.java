@@ -2,9 +2,8 @@ package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.particle.data.*;
-import com.vincenthuto.hemomancy.common.particle.type.*;
+import com.vincenthuto.hemomancy.common.particle.type.HemoParticleType;
 import com.vincenthuto.hemomancy.common.particle.data.HitColorParticleData;
-import com.vincenthuto.hemomancy.common.particle.type.HitGlowParticleType;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.Registries;
@@ -18,34 +17,38 @@ public class ParticleInit {
 	public static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister
 			.create(Registries.PARTICLE_TYPE, Hemomancy.MOD_ID);
 
-	public static final DeferredHolder<ParticleType<?>, ParticleType<SerpentParticleData>> serpent = PARTICLE_TYPES.register("serpent",
-            SerpentParticleType::new);
+	public static final DeferredHolder<ParticleType<?>, ParticleType<ColorParticleOptions>> serpent = PARTICLE_TYPES.register("serpent",
+			() -> new HemoParticleType<>(ColorParticleOptions::codec, ColorParticleOptions::streamCodec));
 
 	public static final DeferredHolder<ParticleType<?>, ParticleType<HitColorParticleData>> hit_glow = PARTICLE_TYPES
-			.register("hit_glow", HitGlowParticleType::new);
+			.register("hit_glow", () -> new HemoParticleType<>(HitColorParticleData.MAP_CODEC, HitColorParticleData.STREAM_CODEC));
 
 	public static final DeferredHolder<ParticleType<?>, ParticleType<WillAbsorptionGlowParticleData>> will_absorption_glow =
-			PARTICLE_TYPES.register("will_absorption_glow", WillAbsorptionGlowParticleType::new);
+			PARTICLE_TYPES.register("will_absorption_glow", () -> new HemoParticleType<>(WillAbsorptionGlowParticleData.MAP_CODEC, WillAbsorptionGlowParticleData.STREAM_CODEC));
 
 	public static final DeferredHolder<ParticleType<?>, ParticleType<DaemonDiffuseGlowParticleData>> daemon_diffuse_glow =
-			PARTICLE_TYPES.register("daemon_diffuse_glow", DaemonDiffuseGlowParticleType::new);
+			PARTICLE_TYPES.register("daemon_diffuse_glow", () -> new HemoParticleType<>(DaemonDiffuseGlowParticleData.MAP_CODEC, DaemonDiffuseGlowParticleData.STREAM_CODEC));
 
-	public static final DeferredHolder<ParticleType<?>, ParticleType<HermitEdgeGlowParticleData>> hermit_edge_glow =
-			PARTICLE_TYPES.register("hermit_edge_glow", HermitEdgeGlowParticleType::new);
+	public static final DeferredHolder<ParticleType<?>, ParticleType<ColorParticleOptions>> hermit_edge_glow =
+			PARTICLE_TYPES.register("hermit_edge_glow",
+			() -> new HemoParticleType<>(ColorParticleOptions::codec, ColorParticleOptions::streamCodec));
 
-	public static final DeferredHolder<ParticleType<?>, ParticleType<SporiticSporeParticleData>> sporitic_spore =
-			PARTICLE_TYPES.register("sporitic_spore", SporiticSporeParticleType::new);
+	public static final DeferredHolder<ParticleType<?>, ParticleType<ColorParticleOptions>> sporitic_spore =
+			PARTICLE_TYPES.register("sporitic_spore",
+			() -> new HemoParticleType<>(ColorParticleOptions::codec, ColorParticleOptions::streamCodec));
 	
-	public static final DeferredHolder<ParticleType<?>, ParticleType<BloodAvatarHitParticleData>> blood_avatar_hit = PARTICLE_TYPES
-			.register("blood_avatar_hit", BloodAvatarHitParticleType::new);
+	public static final DeferredHolder<ParticleType<?>, ParticleType<ColorParticleOptions>> blood_avatar_hit = PARTICLE_TYPES
+			.register("blood_avatar_hit",
+			() -> new HemoParticleType<>(ColorParticleOptions::codec, ColorParticleOptions::streamCodec));
 
-	public static final DeferredHolder<ParticleType<?>, ParticleType<BloodCellData>> blood_cell = PARTICLE_TYPES.register("blood_cell",
-			() -> new BloodCellParticleType());
-	public static final DeferredHolder<ParticleType<?>, ParticleType<BloodClawData>> blood_claw = PARTICLE_TYPES.register("blood_claw",
-			() -> new BloodClawParticleType());
+	public static final DeferredHolder<ParticleType<?>, ParticleType<ColorParticleOptions>> blood_cell = PARTICLE_TYPES.register("blood_cell",
+			() -> new HemoParticleType<>(ColorParticleOptions::codec, ColorParticleOptions::streamCodec));
+	public static final DeferredHolder<ParticleType<?>, ParticleType<ColorParticleOptions>> blood_claw = PARTICLE_TYPES.register("blood_claw",
+			() -> new HemoParticleType<>(ColorParticleOptions::codec, ColorParticleOptions::streamCodec));
 
-	public static final DeferredHolder<ParticleType<?>, ParticleType<AbsorbedBloodCellData>> absorbed_blood_cell = PARTICLE_TYPES
-			.register("absorbed_blood_cell", AbsorbedBloodCellParticleType::new);
+	public static final DeferredHolder<ParticleType<?>, ParticleType<ColorParticleOptions>> absorbed_blood_cell = PARTICLE_TYPES
+			.register("absorbed_blood_cell",
+			() -> new HemoParticleType<>(ColorParticleOptions::codec, ColorParticleOptions::streamCodec));
 
 	public static final DeferredHolder<ParticleType<?>, SimpleParticleType> abocipher = PARTICLE_TYPES.register("abocipher",
 			() -> new SimpleParticleType(false));

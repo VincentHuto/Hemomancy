@@ -1,21 +1,15 @@
 package com.vincenthuto.hemomancy.client.particle.factory;
 
 import com.vincenthuto.hemomancy.client.particle.BloodClawParticle;
-import com.vincenthuto.hemomancy.common.particle.data.BloodClawData;
-import com.vincenthuto.hemomancy.common.init.ParticleInit;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hemomancy.common.particle.data.ColorParticleOptions;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.core.particles.ParticleOptions;
 
-public class BloodClawParticleFactory implements ParticleProvider<BloodClawData> {
+public class BloodClawParticleFactory implements ParticleProvider<ColorParticleOptions> {
 	public static final String NAME = "blood_claw";
-	public static ParticleOptions createData(ParticleColor color) {
-		return new BloodClawData(ParticleInit.blood_claw.get(), color);
-	}
 
 	private final SpriteSet spriteSet;
 
@@ -24,7 +18,7 @@ public class BloodClawParticleFactory implements ParticleProvider<BloodClawData>
 	}
 
 	@Override
-	public Particle createParticle(BloodClawData data, ClientLevel worldIn, double x, double y, double z, double xSpeed,
+	public Particle createParticle(ColorParticleOptions data, ClientLevel worldIn, double x, double y, double z, double xSpeed,
 			double ySpeed, double zSpeed) {
 		return new BloodClawParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, data.color.getRed(),
 				data.color.getGreen(), data.color.getBlue(), 2.0f, 0.2f, 50, this.spriteSet);

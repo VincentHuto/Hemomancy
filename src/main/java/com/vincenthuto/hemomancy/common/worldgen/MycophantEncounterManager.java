@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.worldgen;
 
 import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.particle.data.SporiticSporeParticleData;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantEntity;
@@ -44,6 +43,8 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 /** Owns the Apotheos hunt, local claim, and solo Morphic Nursery ordeal. */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
@@ -131,10 +132,10 @@ public final class MycophantEncounterManager {
 			for (int i = 0; i < roots; i++) {
 				double angle = Math.PI * 2.0D * i / roots + closing * 4.0D;
 				double height = 0.1D + closing * 1.6D;
-				level.sendParticles(new SporiticSporeParticleData(0.48F, 0.72F, 0.34F),
+				level.sendParticles(HemoParticleData.sporiticSpore(new ParticleColor(0.48F, 0.72F, 0.34F)),
 						player.getX() + Math.cos(angle) * radius, player.getY() + height,
 						player.getZ() + Math.sin(angle) * radius, 1, 0.03D, 0.06D, 0.03D, 0.0D);
-				level.sendParticles(new SporiticSporeParticleData(0.92F, 0.66F, 0.24F),
+				level.sendParticles(HemoParticleData.sporiticSpore(new ParticleColor(0.92F, 0.66F, 0.24F)),
 						player.getX() + Math.cos(angle + 0.3D) * radius * 0.9D, player.getY() + height * 0.6D,
 						player.getZ() + Math.sin(angle + 0.3D) * radius * 0.9D, 1, 0.02D, 0.03D, 0.02D, 0.0D);
 			}

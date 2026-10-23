@@ -2,20 +2,14 @@ package com.vincenthuto.hemomancy.client.particle.factory;
 
 import com.vincenthuto.hemomancy.client.particle.WillAbsorptionGlowParticle;
 import com.vincenthuto.hemomancy.common.particle.data.WillAbsorptionGlowParticleData;
-import com.vincenthuto.hemomancy.common.init.ParticleInit;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.core.particles.ParticleOptions;
 
 public class WillAbsorptionGlowParticleFactory implements ParticleProvider<WillAbsorptionGlowParticleData> {
 	public static final String NAME = "will_absorption_glow";
 
-	public static ParticleOptions createData(ParticleColor color) {
-		return new WillAbsorptionGlowParticleData(ParticleInit.will_absorption_glow.get(), color, false);
-	}
 
 	private final SpriteSet spriteSet;
 

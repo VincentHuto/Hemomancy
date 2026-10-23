@@ -1,8 +1,6 @@
 package com.vincenthuto.hemomancy.common.effect;
 
-import com.vincenthuto.hemomancy.common.particle.data.SerpentParticleData;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
-import com.vincenthuto.hemomancy.common.init.ParticleInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.Vector3;
 
@@ -12,6 +10,8 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import net.minecraft.core.particles.ParticleOptions;
 
 public class BloodBindingEffect extends MobEffect {
 
@@ -52,8 +52,8 @@ public class BloodBindingEffect extends MobEffect {
 		return true;
 	}
 
-	private static SerpentParticleData serpent(ParticleColor color) {
-		return new SerpentParticleData(ParticleInit.serpent.get(), color);
+	private static ParticleOptions serpent(ParticleColor color) {
+		return HemoParticleData.serpent(color);
 	}
 
 	@Override

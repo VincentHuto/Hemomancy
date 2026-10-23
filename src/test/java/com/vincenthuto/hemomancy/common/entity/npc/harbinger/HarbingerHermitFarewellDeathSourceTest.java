@@ -23,8 +23,7 @@ public final class HarbingerHermitFarewellDeathSourceTest {
 		String particleProviders = read("src/main/java/com/vincenthuto/hemomancy/client/registry/ParticleProviderRegistrar.java");
 		String edgeGlowParticle = read("src/main/java/com/vincenthuto/hemomancy/client/particle/HermitEdgeGlowParticle.java");
 		String edgeGlowFactory = read("src/main/java/com/vincenthuto/hemomancy/client/particle/factory/HermitEdgeGlowParticleFactory.java");
-		String edgeGlowData = read("src/main/java/com/vincenthuto/hemomancy/common/particle/data/HermitEdgeGlowParticleData.java");
-		String edgeGlowType = read("src/main/java/com/vincenthuto/hemomancy/common/particle/type/HermitEdgeGlowParticleType.java");
+		String particleData = read("src/main/java/com/vincenthuto/hemomancy/common/particle/HemoParticleData.java");
 		String edgeGlowJson = read("src/main/resources/assets/hemomancy/particles/hermit_edge_glow.json");
 		String docs = read("docs/HEMOMANCY_REFERENCE.md");
 
@@ -64,9 +63,9 @@ public final class HarbingerHermitFarewellDeathSourceTest {
 		assertContains("hermit edge glow damps horizontal drift", edgeGlowParticle, "this.xd *= 0.42D");
 		assertContains("hermit edge glow damps vertical drift", edgeGlowParticle, "this.yd *= 0.22D");
 		assertContains("hermit edge glow is non-physical", edgeGlowParticle, "this.hasPhysics = false");
-		assertContains("hermit edge glow factory creates hermit data", edgeGlowFactory, "new HermitEdgeGlowParticleData(ParticleInit.hermit_edge_glow.get(), color)");
-		assertContains("hermit edge glow data defaults to hermit particle type", edgeGlowData, "ParticleInit.hermit_edge_glow.get()");
-		assertContains("hermit edge glow type wires its codec", edgeGlowType, "HermitEdgeGlowParticleData.MAP_CODEC");
+		assertContains("hermit edge glow factory takes colour data", edgeGlowFactory, "ParticleProvider<ColorParticleOptions>");
+		assertContains("hermit edge glow data uses the hermit particle type", particleData, "new ColorParticleOptions(ParticleInit.hermit_edge_glow.get(), color)");
+		assertContains("hermit edge glow type wires the colour codec", particleInit, "ColorParticleOptions::codec, ColorParticleOptions::streamCodec");
 		assertContains("hermit edge glow particle json uses glow sprite", edgeGlowJson, "hemomancy:hit_particle_glow");
 		assertContains("dialogue starts ritual death instead of normal kill", handler, "hermit.beginFarewellDeath()");
 		assertNotContains("dialogue no longer kills hermit immediately", handler, "hermit.kill()");

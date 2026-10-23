@@ -1,8 +1,6 @@
 package com.vincenthuto.hemomancy.client.player;
 
 import com.vincenthuto.hemomancy.client.particle.AbsorbedBloodCellParticle;
-import com.vincenthuto.hemomancy.client.particle.factory.AbsorbedBloodCellParticleFactory;
-import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffMorphSequence;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.client.Minecraft;
@@ -14,6 +12,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
 import java.util.Map;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 
 public final class LivingStaffMorphEffects {
 	private static final Map<Key, Long> LAST_EMISSION = new HashMap<>();
@@ -37,14 +36,14 @@ public final class LivingStaffMorphEffects {
 
 		if (phase == LivingStaffMorphSequence.Phase.DISSOLVE) {
 			Particle particle = minecraft.particleEngine.createParticle(
-					AbsorbedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
+					HemoParticleData.absorbedBloodCell(ParticleColor.BLOOD),
 					origin.x, origin.y, origin.z,
 					(level.random.nextDouble() - 0.5D) * 0.34D,
 					(level.random.nextDouble() - 0.35D) * 0.28D,
 					(level.random.nextDouble() - 0.5D) * 0.34D);
 			if (particle instanceof AbsorbedBloodCellParticle absorbed) absorbed.setTargetYOffset(0.0D);
 		} else if (phase == LivingStaffMorphSequence.Phase.FORM) {
-			level.addParticle(BloodCellParticleFactory.createData(ParticleColor.BLOOD),
+			level.addParticle(HemoParticleData.bloodCell(ParticleColor.BLOOD),
 					origin.x, origin.y, origin.z,
 					(level.random.nextDouble() - 0.5D) * 0.045D,
 					0.01D + level.random.nextDouble() * 0.025D,

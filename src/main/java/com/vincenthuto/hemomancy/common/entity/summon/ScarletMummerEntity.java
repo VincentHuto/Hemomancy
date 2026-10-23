@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.summon;
 
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonDefinitions;
-import com.vincenthuto.hemomancy.common.particle.data.SerpentParticleData;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.summon.PuppeteerSummonRules;
 import net.minecraft.core.BlockPos;
@@ -29,6 +28,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.*;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 public class ScarletMummerEntity extends GroundPuppetEntity implements SyncedBoundSummon {
 	private static final BoundSummonSync SYNC = BoundSummonSync.define(ScarletMummerEntity.class);
@@ -130,7 +131,7 @@ public class ScarletMummerEntity extends GroundPuppetEntity implements SyncedBou
 		entityData.set(DATA_PERFORMANCE_TICKS, ScarletMummerRules.PERFORMANCE_DURATION_TICKS);
 		entityData.set(DATA_EVADE_AVAILABLE, true);
 		if (level() instanceof ServerLevel serverLevel) {
-			serverLevel.sendParticles(new SerpentParticleData(176, 8, 28), getX(), getY() + 1.4D, getZ(),
+			serverLevel.sendParticles(HemoParticleData.serpent(new ParticleColor(176, 8, 28)), getX(), getY() + 1.4D, getZ(),
 					18, 0.45D, 0.7D, 0.45D, 0.01D);
 			serverLevel.playSound(null, blockPosition(), SoundEvents.ILLUSIONER_CAST_SPELL,
 					SoundSource.HOSTILE, 0.7F, 1.25F);
@@ -170,7 +171,7 @@ public class ScarletMummerEntity extends GroundPuppetEntity implements SyncedBou
 			getNavigation().stop();
 			entityData.set(DATA_EVADE_AVAILABLE, false);
 			if (level() instanceof ServerLevel serverLevel) {
-				serverLevel.sendParticles(new SerpentParticleData(242, 190, 20), old.x, old.y + 1.0D, old.z,
+				serverLevel.sendParticles(HemoParticleData.serpent(new ParticleColor(242, 190, 20)), old.x, old.y + 1.0D, old.z,
 						10, 0.2D, 0.5D, 0.2D, 0.02D);
 			}
 			return false;

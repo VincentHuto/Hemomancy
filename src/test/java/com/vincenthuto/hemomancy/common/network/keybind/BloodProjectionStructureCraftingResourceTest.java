@@ -157,7 +157,7 @@ public final class BloodProjectionStructureCraftingResourceTest {
 		assertContains("feed spiral marks Abocipher particles as feed particles", spiralParticles,
 				"AbocipherParticleFactory.FEED_SPIRAL_MARKER");
 		assertContains("feed spiral uses visible feed blood cells", spiralParticles,
-				"BloodCellParticleFactory.createFeedData(ParticleColor.BLOOD)");
+				"HemoParticleData.bloodCell(ParticleColor.BLOOD)");
 		assertContains("feed spiral expands around structure bounds", spiralParticles,
 				"bounds.radius()");
 		assertContains("feed spiral computes a large spiral angle", spiralParticles,
@@ -170,8 +170,8 @@ public final class BloodProjectionStructureCraftingResourceTest {
 				"LIFETIME_TICKS = 14");
 		assertContains("feed Abocipher particle damps travel", feedAbocipherParticle,
 				"this.xd *= DRIFT_DAMPING");
-		assertContains("blood cell factory exposes feed data helper", bloodCellFactory,
-				"createFeedData");
+		assertContains("blood cell factory recognises feed cells by their marker", bloodCellFactory,
+				"FEED_SPIRAL_MARKER");
 		assertContains("blood cell factory scales feed cells visibly", bloodCellFactory,
 				"FEED_SCALE");
 		assertContains("shader holder registered", shaderInit,

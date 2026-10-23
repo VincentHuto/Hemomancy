@@ -16,7 +16,7 @@ Every consolidation session reads this file first and updates it last, following
 | 7 | Phase 5: blood accounting | DONE | `8338c98da` | 2026-10-22 |
 | 8 | Phase 7: registration and client registration | DONE | `3e8b213d4`, `291731d6f` | 2026-10-22 |
 | 9 | Phase 6: combat targeting and damage attribution | DONE | `3b841ba03`, `7f0c1968d`, `5fa01de44`, `c9af6c6c3` | 2026-10-22 |
-| 10 | Phases 8 + 9: rendering plumbing and animation conventions | IN PROGRESS | items 1-2: `a53982248`, see the step entry | 2026-10-22 |
+| 10 | Phases 8 + 9: rendering plumbing and animation conventions | IN PROGRESS | items 1-3: `a53982248`, `1f642dccf`, see the step entry | 2026-10-23 |
 | 11 | Phase 10: god-class decomposition | NOT STARTED | | |
 | 12 | Phase 11: persistence authority migrations | NOT STARTED | | |
 | 13 | Phases 12 + 13: content, worldgen, data, tooling, standards | NOT STARTED | | |
@@ -98,6 +98,7 @@ under *Pending approvals*. IDs refer to [ARCHITECTURE_AUDIT](ARCHITECTURE_AUDIT.
 | G-2c | One boss definition | 9 | PENDING | Found in step 9. `ManipulationReactiveEvents.isBoss` (with Warden, Elder Guardian and the bosses tag), `ConstrictorCordEntity.isBossTarget` (without them) and `ThreadRipperManip.protectedBody` (a package-name check) disagree |
 | A-4 | Animations that would freeze under `/tick freeze` | 10 | PENDING | Per animation |
 | V-3b | Ferric quad-encoder constant (128 vs 127) | 10 | PENDING | Visual check |
+| V-6b | Mycophant spore colours given on the wrong scale | 10 | PENDING | Found in step 10. The Mycophant encounter's two spore bursts pass 0–1 floats (`0.48F, 0.72F, 0.34F`), which `ParticleColor` truncates to black. Once approved, give them 0–255 values (they turn green and amber). (The hit glow takes either scale: `ParticleGlow` divides by 255 only above 1.) |
 | F-11 | Blood-structure crafts tick once per server tick | 11 | PENDING | Crafts take their intended time |
 | S-9 | Per-player `dataVersion` and gated one-shot migrations | 12 | PENDING | Save-critical |
 | F-21 | Archon choice: attachment is the only authority | 12 | PENDING | Save-critical |
@@ -166,6 +167,8 @@ them green.
 | `architecture/ScreenChromeGuardrailTest` | 10 | V-1: no private border, slot-well or vein-background helper under `client/`; no copied two-pixel border or slot-well fill sequence outside `ScreenDrawUtils`; a seeded vein field outside `VeinBackgroundRenderer` only in the listed other-art files (stale entries fail) |
 | `architecture/RenderTypeCachingGuardrailTest` | 10 | V-2 / P-9: no method builds a `RenderType` per call (a `RenderType`-returning method that builds one must take the holder's uniforms `Supplier`, or be a listed lazy singleton); no other method builds one; no static shader-clock field outside `SchoolRenderTypes` |
 | `client/render/SeededRenderTypesTest` | 10 | V-2: the same seed and uniforms return the same type; changed uniforms move to the seed's spare and leave the queued type's uniforms alone; a seed never builds more than two types; seeds are kept apart; LRU eviction |
+| `architecture/ParticleDataGuardrailTest` | 10 | V-6: the particle data classes are `ColorParticleOptions` plus three listed ones with their payloads; every particle type is a `HemoParticleType`; no `createData` helper outside `HemoParticleData` |
+| `common/particle/data/ColorParticleOptionsTest` | 10 | V-6: the colour particle's network form is the old serialized-colour UTF-8 string byte for byte, its command form is float fields `r`, `g`, `b`, and a decoded particle belongs to the type that decoded it |
 | `client/screen/skilltree/harbinger/VeinBackgroundStyleTest` | 10 | V-1: the named vein styles (progress with its deep palette, crimson, machine, station) keep the values of the copies they replaced, including each style's vertex order |
 
 ## Step entries
@@ -861,8 +864,8 @@ them green.
   | Item | Status | Commit |
   |---|---|---|
   | 1. Screen chrome (V-1) | DONE | `a53982248` |
-  | 2. Render-type caching (V-2), Spark profile | DONE | the commit after `a53982248` |
-  | 3. Colour particle data (V-6) | NOT STARTED | |
+  | 2. Render-type caching (V-2), Spark profile | DONE | `1f642dccf` |
+  | 3. Colour particle data (V-6) | DONE | the commit after `1f642dccf` |
   | 4. HUD layers and world dispatch (V-7) | NOT STARTED | |
   | 5. Shared material quad encoder (V-3) | NOT STARTED | |
   | 6. Shader noise include (V-5) | NOT STARTED | |
@@ -870,7 +873,7 @@ them green.
   | 8. Player-animation registry (A-3) | NOT STARTED | |
   | 9. `AnimationTime` (A-4) | NOT STARTED | |
   | V-4 tube frames (optional, last) | NOT STARTED | |
-- **Test counts before → after (so far):** `test` 4,010 → 4,017 (item 1) → 4,026 (item 2), 0 failures. `alphaCheck`
+- **Test counts before → after (so far):** `test` 4,010 → 4,017 (item 1) → 4,026 (item 2) → 4,031 (item 3), 0 failures. `alphaCheck`
   not yet run in this step.
 - **Impact map:** one read-only reviewer listed every chrome, render-type, particle, dispatch, encoder, shader-noise,
   boss-clock, player-animation and time-source site with the tests that pin them. It is not committed (it is a
@@ -962,8 +965,29 @@ them green.
   allows three lazy singletons and `SchoolRenderTypes.create`).
 - **Item 2 tests:** `DaemonHazeSourceTest` (the haze key) and the Fane-heart legacy test (the depth flag now lives in
   `SchoolRenderTypes`) repointed.
-- **Pending approvals:** A-4 and V-3b stay PENDING (items 9 and 5).
-- **Handoff notes (next: item 3):**
+- **Item 3, colour particle data (V-6):**
+  - **`ColorParticleOptions`** (`common/particle/data`) replaces the seven colour-only data classes (blood cell,
+    absorbed blood cell, blood avatar hit, blood claw, serpent, hermit edge glow, Sporitic spore). The registered type
+    tells them apart. Its codecs are built per type: the network form is still `ParticleColor.serialize()` as one UTF-8
+    string, and the command form is still float fields `r`, `g`, `b`.
+  - **`HemoParticleType`** (`common/particle/type`) replaces the ten type classes. Its codecs come either from the
+    type itself (colour particles) or from the data class's static codecs (hit glow, Will absorption glow, daemon
+    diffuse glow, which keep their own data classes). Registry ids are unchanged.
+  - **One way to build particle data:** the factories' eleven `createData` / `createFeedData` helpers are gone. Their
+    19 callers and 13 direct constructions call `HemoParticleData`, which gained `willAbsorptionGlow` (the non-pulsing
+    glow) and `abocipher`. Each facade method builds exactly what the helper did. Literal colours keep their values
+    (`ParticleColor`'s float constructor truncates to the same ints).
+  - **Found, not changed (V-6b, PENDING):** the Mycophant encounter's spore bursts pass 0–1 floats, which truncate to
+    black. See *Decisions*.
+  - **Visual check:** brazier and rite-floor review pairs (worktree `29a5576ae` against this item), which spawn blood
+    cells, serpents and spores, match by eye. Shots: `build/step10-review/item3/<Task>/{before3,after3}/`, sheets
+    `build/step10-review/item3/sheet3-*.png`.
+- **Item 3 metrics:** `src/main` +213 / −754 in 50 files; 17 classes deleted (7 data, 10 type), 2 added. Remaining
+  colour-only data classes: 0.
+- **Item 3 tests:** 6 source tests repointed from factory helpers and deleted classes to `HemoParticleData` (Living
+  Torch, Abocipher, cell hand, Fane heart, hermit farewell, blood projection feed spiral).
+- **Pending approvals:** A-4 and V-3b stay PENDING (items 9 and 5); V-6b was added by item 3.
+- **Handoff notes (next: item 4):**
   - **Baseline worktree:** `../Hemomancy-step10-before` holds `29a5576ae` with a `libs` junction. Remove the junction
     with `rmdir` before `git worktree remove --force`.
   - **Review clients:** a fresh game directory without `options.txt` stops at the first-launch screen and the driver
