@@ -6,7 +6,7 @@ import java.nio.file.Path;
 
 public final class QliphothPomeCommandSourceTest {
 	private static final Path COMMAND = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/command/HemoCommand.java");
+			"src/main/java/com/vincenthuto/hemomancy/common/command/QliphothSubcommand.java");
 	private static final Path DEGREE = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/degree/IInitiatoryDegree.java");
 	private static final Path CHAMBER_CLIENT_DATA = Path.of(

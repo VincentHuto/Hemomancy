@@ -343,6 +343,9 @@ Unstained mechanics, hazards, Still Arts and summons.
   (station claims, antecedent, clinical lessons, Annetta, circus school, Ringmaster) and one `<Npc>DialogueEvents`
   class per NPC. `DialogueRoutingGuardrailTest` keeps it the only `DialogueEvent` subscriber, and the
   `dialogue_route_validation` GameTest fingerprints every route's outcome.
+- Since step 11, `/hemo` is one root in `HemoCommand` wiring one `<Name>Subcommand` class per branch.
+  `HemoCommandTreeTest` pins the syntax node by node and `hemo_command_validation` fingerprints every
+  executable path; `HemoCommandStructureGuardrailTest` keeps the structure.
 
 **Migration targets**
 - Living-weapon sweeps (`LivingSickleItem`, `LivingTorchItem`) still use vanilla melee eligibility, and

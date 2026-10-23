@@ -6,7 +6,7 @@ import java.nio.file.Path;
 
 public final class WillAmbushCommandSourceTest {
 	private static final Path COMMAND = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/command/HemoCommand.java");
+			"src/main/java/com/vincenthuto/hemomancy/common/command/WillSubcommand.java");
 	private static final Path REFERENCE = Path.of("docs/HEMOMANCY_REFERENCE.md");
 
 	private WillAmbushCommandSourceTest() {

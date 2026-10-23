@@ -11,7 +11,7 @@ final class PuppeteerSummonCommandSourceTest {
 	@Test
 	void commandCanListAddRemoveAndClearIndividualOrAllShapes() throws Exception {
 		String command = Files.readString(Path.of(
-				"src/main/java/com/vincenthuto/hemomancy/common/command/HemoCommand.java"));
+				"src/main/java/com/vincenthuto/hemomancy/common/command/SummonsSubcommand.java"));
 
 		assertContains(command, "Commands.literal(\"summons\")");
 		assertContains(command, "Commands.literal(\"list\")");

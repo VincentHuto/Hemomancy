@@ -6,7 +6,7 @@ import java.nio.file.Path;
 
 public final class FanePreviewCommandSourceTest {
 	private static final Path COMMAND = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/command/HemoCommand.java");
+			"src/main/java/com/vincenthuto/hemomancy/common/command/FaneSubcommand.java");
 	private static final Path EVENTS = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/event/worldevent/FoundingFaneEvents.java");
 
@@ -26,8 +26,8 @@ public final class FanePreviewCommandSourceTest {
 		assertContains("command exposes clear preview", command, "Commands.literal(\"clear\")");
 		assertContains("command sets member override", command,
 				"setFanePreview(ctx.getSource(), FaneBoundaryRelation.MEMBER)");
-		assertContains("command sets mundane override", command,
-				"setFanePreview(ctx.getSource(),\n\t\t\t\t\t\t\t\t\t\t\t\tFaneBoundaryRelation.MUNDANE_OUTSIDER)");
+		assertContains("command sets mundane override", command.replaceAll("\\s+", " "),
+				"setFanePreview(ctx.getSource(), FaneBoundaryRelation.MUNDANE_OUTSIDER)");
 		assertContains("command clears override", command, "clearFanePreview(ctx.getSource())");
 		assertContains("events store per-viewer preview relation", events,
 				"FANE_BOUNDARY_PREVIEWS");

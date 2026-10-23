@@ -17,7 +17,7 @@ Every consolidation session reads this file first and updates it last, following
 | 8 | Phase 7: registration and client registration | DONE | `3e8b213d4`, `291731d6f` | 2026-10-22 |
 | 9 | Phase 6: combat targeting and damage attribution | DONE | `3b841ba03`, `7f0c1968d`, `5fa01de44`, `c9af6c6c3` | 2026-10-22 |
 | 10 | Phases 8 + 9: rendering plumbing and animation conventions | DONE | `a53982248`..`e2597dc41` (items 1-9), review fixes and ledger in the commit after `e2597dc41` | 2026-10-23 |
-| 11 | Phase 10: god-class decomposition | IN PROGRESS (items 1-2 of 5 done) | `91bb77eba`, `b6c7bd846`, `866c0b990`, item 2 in the commit after it | 2026-10-23 |
+| 11 | Phase 10: god-class decomposition | IN PROGRESS (items 1-3 of 5 done) | `91bb77eba`, `b6c7bd846`, `866c0b990`, `3385bc323`, `ced99f334`, `0871dc5e6`, item 3 in the commit after it | 2026-10-23 |
 | 12 | Phase 11: persistence authority migrations | NOT STARTED | | |
 | 13 | Phases 12 + 13: content, worldgen, data, tooling, standards | NOT STARTED | | |
 
@@ -187,6 +187,9 @@ them green.
 | `architecture/NetworkPackageGuardrailTest` | 11 | N-8: `common/network` holds payloads, `PacketHandler`, `ServerboundGuards` and three listed helpers (stale entries fail) |
 | gameTest `DialogueRouteCharacterisationGameTests` (suite `dialogue_route_validation`) | 11 | O-4: every dialogue-event route (about 170 ids, prefix routes and their fall-throughs included) posted by a D0 player and a supplied D7 player to its speaker and with no speaker; the reward flag, chat, saved-data diff, drops and Hemomancy advancements must equal `src/gameTest/resources/dialogue/route-fingerprints.txt` (510 lines, recorded from the old handler) |
 | `architecture/DialogueRoutingGuardrailTest` | 11 | O-4: `DialogueEventRouter` is the only `DialogueEvent` subscriber; every `<Npc>DialogueEvents` class has a `handle` and is in the router's table; no route class over 400 lines |
+| `common/command/HemoCommandTreeTest` | 11 | `/hemo` syntax node by node (literals, argument names, types and bounds, executes, suggests, redirects, permission per node) against `src/test/resources/command/hemo-tree.txt` |
+| gameTest `HemoCommandCharacterisationGameTests` (suite `hemo_command_validation`) | 11 | every executable `/hemo` path (133; `qliphoth tree` excluded as a world edit) run on a fresh player with arguments taken from the tree: return code, feedback, saved-data change and spawned entities against `src/gameTest/resources/command/hemo-command-fingerprints.txt` |
+| `architecture/HemoCommandStructureGuardrailTest` | 11 | `HemoCommand` is one root that only wires `<Name>Subcommand.build()`, each exactly once; subcommands register nothing themselves and stay under 300 lines; no other main class registers `/hemo` |
 
 ## Step entries
 
@@ -1220,13 +1223,15 @@ them green.
   | 1. `RiteKind` strategy, per-kind state, `CardinalRiteActivation`, Blood Structure crafting out of the packet | DONE | `b6c7bd846` |
   | F-11 (crafts tick once per server tick) | NOT DONE: PENDING in *Decisions* | |
   | Characterisation suite for item 2 | DONE | `866c0b990` |
-  | 2. Per-NPC dialogue-event routing | DONE | the commit after `866c0b990` |
-  | 3. `HemoCommand` split | NOT STARTED | |
+  | 2. Per-NPC dialogue-event routing | DONE | `3385bc323` |
+  | Characterisation suite for item 3 | DONE | `ced99f334`, `0871dc5e6` (a boolean argument read as an object hash in the snapshot) |
+  | 3. `HemoCommand` split | DONE | the commit after `0871dc5e6` |
   | 4. Registration-time `setEntityCast` | NOT STARTED | |
   | 5. Scriptorium operations into its block entity | NOT STARTED | |
 - **Test counts before → after:** `test` 4,055 → 4,064 (characterisation commit) → 4,067 (item 1) → 4,070 (item 2),
-  0 failures. `alphaCheck` after item 1: BUILD SUCCESSFUL, all 1,068 required GameTests passed (1,036 before; 32 are
-  the new `rite_kind_validation` suite). After item 2: all 1,069 (plus `dialogue_route_validation`).
+  0 failures; 4,073 after item 3. `alphaCheck` after item 1: BUILD SUCCESSFUL, all 1,068 required GameTests passed
+  (1,036 before; 32 are the new `rite_kind_validation` suite). After item 2: all 1,069 (plus
+  `dialogue_route_validation`). After item 3: all 1,070 (plus `hemo_command_validation`).
 - **Impact map:** one read-only reviewer listed the tick's branches, `ActiveCardinalRite`'s fields and keys, the
   packet's parts and every test pinning them (not committed; a working list).
 - **Characterisation (before the extraction):**
@@ -1314,7 +1319,34 @@ them green.
   - Final review: no behaviour change, no identifier change; fixed its findings: five cases that were space-indented
     in the old file had landed in the Mnemonist class and now sit with the Vicar and the Alchemist; the seal scan
     covers every route class again; a comment, an unused import.
-- **Handoff notes for item 3 (`HemoCommand`):**
+- **Item 3, `/hemo` per subcommand:**
+  - Characterisation first: `HemoCommandTreeTest` (JVM, the syntax snapshot) and the `hemo_command_validation`
+    GameTest (every executable path, fingerprinted; three identical recordings). No branch had a behaviour test before.
+  - `HemoCommand` (1,979 lines) is now the root alone (one `requires(hasPermission(2))`) wiring 16 classes in
+    `common/command`: `BloodSubcommand`, `BloodlineSubcommand`, `DegreeSubcommand`, `MorphlingSubcommand`,
+    `QliphothSubcommand`, `SkillsSubcommand`, `UnstainedSubcommand`, `OrgansSubcommand`, `TendencySubcommand`,
+    `BloodMoonSubcommand`, `FaneSubcommand`, `ChamberSubcommand`, `WillSubcommand`, `SummonsSubcommand`,
+    `ManipulationsSubcommand`, `SlotsSubcommand` (2,382 lines with headers; the largest 263). Each `build()` returns its
+    branch verbatim; each class holds the handlers its branch reaches. The Will branch calls the tendency parsers in
+    `TendencySubcommand`. The root's stale command index became a pointer to the classes.
+  - Eight source-text tests now read their subcommand's file; `FanePreviewCommandSourceTest`'s exact-indentation
+    check compares without whitespace.
+  - Final review: the tree and all 89 members verified identical by machine; fixed its finding (`resetUnstained`
+    had been placed with the degree branch because a local variable shares its name) and its guardrail suggestion
+    (each subcommand wired exactly once). Noted, not changed: the subcommands keep the old wildcard imports.
+- **Handoff notes for item 4 (`setEntityCast`, L-1):**
+  - An impact map was taken (not committed). `EntityManipulationEffects` (731 lines) switches over 34 names;
+    `SUPPORTED_CASTS` lists 32, leaving out the two retired ones (`glacial_bastion`, `blood_eclipse_mantle`), which are
+    unreachable in production. So `isSupported` can be "has an entity cast and is not retired", exactly.
+  - Callers: `BloodManipulation.castFromEntity` (Wills, through `WillManipulationCaster`, gated by `isSupported`) and
+    `VesperPhaseTwoCombat.cast` (calls `EntityManipulationEffects.cast` directly, with literals and
+    `VesperManipulationCoverage` CASTABLE entries). The case `hematic_beacon` calls a helper named `crimsonSight`.
+  - Precedent: `setDrudgeAction` (a transient field wrapped with the Paralysis and `SchoolDamage.cast` preamble) and
+    `DrudgeActions`. `VesperManipulationCoverageTest` parses the `SUPPORTED_CASTS` literal (exactly 32 ids) and must
+    become a behaviour check.
+  - Characterise every case with a caster mob and a target before moving them; blood_needle and the ice casts are
+    random, several move the caster or spawn entities, and three reach 24 to 32 blocks.
+- **Handoff notes kept from item 2 for later items:**
   - An impact map was taken (not committed). `HemoCommand` is 1,979 lines: one root `requires(hasPermission(2))`, 16
     branches (blood, bloodline, degree, morphling, qliphoth, skills, unstained, organs, tendency, bloodmoon, fane,
     chamber, will, summons, manipulations, slots), no redirects, no static state. `/hemo test` is merged in by

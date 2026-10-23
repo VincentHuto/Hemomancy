@@ -10,7 +10,7 @@ public final class BloodlineDisbandFaneSourceTest {
 	private static final Path LEDGER_PACKET = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/PacketLedgerAction.java");
 	private static final Path COMMAND = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/command/HemoCommand.java");
+			"src/main/java/com/vincenthuto/hemomancy/common/command/BloodlineSubcommand.java");
 	private static final Path RITE_EVENTS = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java");
 

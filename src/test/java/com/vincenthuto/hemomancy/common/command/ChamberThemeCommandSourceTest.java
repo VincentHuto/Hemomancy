@@ -8,7 +8,7 @@ import java.nio.file.Path;
 
 public final class ChamberThemeCommandSourceTest {
 	private static final Path COMMAND = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/command/HemoCommand.java");
+			"src/main/java/com/vincenthuto/hemomancy/common/command/ChamberSubcommand.java");
 	private static final Path MANAGER = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/worldgen/ChamberOfWillManager.java");
 	private static final Path THEME_REGISTRY = Path.of(

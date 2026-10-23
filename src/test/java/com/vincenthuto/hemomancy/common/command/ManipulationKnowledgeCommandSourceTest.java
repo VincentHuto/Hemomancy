@@ -11,7 +11,7 @@ final class ManipulationKnowledgeCommandSourceTest {
 	@Test
 	void commandCanListAddRemoveAndClearIndividualOrAllManipulations() throws Exception {
 		String command = Files.readString(Path.of(
-				"src/main/java/com/vincenthuto/hemomancy/common/command/HemoCommand.java"));
+				"src/main/java/com/vincenthuto/hemomancy/common/command/ManipulationsSubcommand.java"));
 
 		assertContains(command, "Commands.literal(\"manipulations\")");
 		assertContains(command, "Commands.literal(\"list\")");
