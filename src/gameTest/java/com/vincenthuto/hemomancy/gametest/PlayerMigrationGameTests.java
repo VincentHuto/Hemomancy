@@ -9,11 +9,16 @@ import com.vincenthuto.hemomancy.common.circus.CircusRouteRules;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog;
 import com.vincenthuto.hemomancy.common.station.UpgradeStation;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers;
+import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
+import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService;
 import com.vincenthuto.hemomancy.common.worldgen.CircusDiscoveryProgress;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -139,6 +144,64 @@ public final class PlayerMigrationGameTests {
 			}
 			helper.assertTrue(data.getInt("hemomancy.circus_active_challenge") == 2,
 					"The live act timer is session state and must stay where it was");
+			assertSettled(helper, player);
+			helper.succeed();
+		}
+	}
+
+	/**
+	 * S-1c: the five earned Chamber access keys move into the ChamberAccess attachment and are removed; visit session
+	 * keys stay root keys.
+	 */
+	@GameTest(template = "empty", batch = "player_migrations")
+	public static void chamberAccessRootKeysMoveIntoTheAttachment(GameTestHelper helper) {
+		try (CapturedPlayer captured = CapturedPlayer.create(helper)) {
+			ServerPlayer player = load(helper, captured, "chamber_root_keys");
+			login(player);
+			var access = ChamberVisitService.access(player);
+			helper.assertTrue(access.chairBound() && access.attuned() && !access.dreamSeen()
+					&& access.dreamAttempts() == 3 && access.guidedComplete(),
+					"Chamber access was not migrated: " + access.serializeNBT(player.registryAccess()));
+			var data = player.getPersistentData();
+			for (String key : new String[] { "chair_bound", "attuned", "dream_seen", "dream_attempts", "guided_complete" }) {
+				helper.assertTrue(!data.contains("hemomancy:chamber_visit_" + key), "Root key left behind: " + key);
+			}
+			helper.assertTrue(data.getInt("hemomancy:chamber_visit_exit_sleep_ticks") == 40,
+					"Visit session keys must stay where they were");
+			assertSettled(helper, player);
+			helper.succeed();
+		}
+	}
+
+	/** S-1c: a save that lost its chair binding but holds the advancement gets it back once, through the migration. */
+	@GameTest(template = "empty", batch = "player_migrations")
+	public static void chamberAdvancementRestoresLostBindingOnce(GameTestHelper helper) {
+		try (CapturedPlayer captured = CapturedPlayer.create(helper)) {
+			ServerPlayer player = load(helper, captured, "pre_data_version");
+			HarbingerAdvancementGranter.grantIfNotDone(player, HarbingerAdvancementGranter.ADV_WARP_CHAIR_BOUND);
+			ChamberVisitService.access(player).setChairBound(false);
+			login(player);
+			helper.assertTrue(ChamberVisitService.isChairBound(player) && !ChamberVisitService.isAttuned(player),
+					"The chair advancement did not restore a lost binding");
+			ChamberVisitService.access(player).setChairBound(false);
+			login(player);
+			helper.assertTrue(!ChamberVisitService.isChairBound(player),
+					"The advancement backfill ran again on a later login");
+			helper.succeed();
+		}
+	}
+
+	/** S-1c: the root-key whisper inbox moves into the PendingWhisperInbox attachment, entries unchanged and in order. */
+	@GameTest(template = "empty", batch = "player_migrations")
+	public static void pendingWhisperRootListMovesIntoTheAttachment(GameTestHelper helper) {
+		try (CapturedPlayer captured = CapturedPlayer.create(helper)) {
+			ServerPlayer player = load(helper, captured, "pending_whispers_root");
+			ListTag legacy = player.getPersistentData().getList("hemomancy:pending_whispers", Tag.TAG_COMPOUND).copy();
+			login(player);
+			helper.assertTrue(legacy.size() == 2 && PendingWhispers.entries(player).equals(legacy),
+					"The whisper inbox was not moved intact: " + PendingWhispers.entries(player));
+			helper.assertTrue(!player.getPersistentData().contains("hemomancy:pending_whispers"),
+					"The root-key inbox was left behind");
 			assertSettled(helper, player);
 			helper.succeed();
 		}

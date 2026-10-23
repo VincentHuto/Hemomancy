@@ -1,0 +1,11 @@
+{
+	NeoForgeData: {
+		"hemomancy:chamber_visit_chair_bound": 1b,
+		"hemomancy:chamber_visit_attuned": 1b,
+		"hemomancy:chamber_visit_dream_seen": 0b,
+		"hemomancy:chamber_visit_dream_attempts": 3,
+		"hemomancy:chamber_visit_guided_complete": 1b,
+		"hemomancy:chamber_visit_exit_sleep_ticks": 40
+	},
+	"neoforge:attachments": {"hemomancy:data_version": {Version: 6}}
+}

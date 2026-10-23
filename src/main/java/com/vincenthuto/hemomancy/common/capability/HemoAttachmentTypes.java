@@ -168,6 +168,14 @@ public final class HemoAttachmentTypes {
             ATTACHMENT_TYPES.register("circus_progress", () -> AttachmentType.serializable(
                     com.vincenthuto.hemomancy.common.circus.CircusProgress::new).copyOnDeath().build());
 
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.worldgen.ChamberAccess>> CHAMBER_ACCESS =
+            ATTACHMENT_TYPES.register("chamber_access", () -> AttachmentType.serializable(
+                    com.vincenthuto.hemomancy.common.worldgen.ChamberAccess::new).copyOnDeath().build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhisperInbox>> PENDING_WHISPERS =
+            ATTACHMENT_TYPES.register("pending_whispers", () -> AttachmentType.serializable(
+                    com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhisperInbox::new).copyOnDeath().build());
+
     // ── Block-entity attachments (no copyOnDeath) ──
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<BloodVolume>> BLOCK_BLOOD_VOLUME =
             ATTACHMENT_TYPES.register("block_blood_volume",

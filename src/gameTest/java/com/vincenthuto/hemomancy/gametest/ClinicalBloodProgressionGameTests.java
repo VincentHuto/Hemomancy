@@ -1091,7 +1091,7 @@ public final class ClinicalBloodProgressionGameTests {
                 h.assertTrue(com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.beginGuidedVisit(actor),
                         "Eligible guided fixture did not begin its visit");
             } else {
-                actor.getPersistentData().putInt("hemomancy:chamber_visit_dream_attempts", 2);
+                com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.access(actor).setDreamAttempts(2);
                 com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.onCompletedSleep(actor, true);
             }
             h.assertTrue(actor.serverLevel().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)
@@ -1166,7 +1166,7 @@ public final class ClinicalBloodProgressionGameTests {
                     "Observational recovery leaked item entities for " + mode);
             h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isActive(actor)
                             && !actor.getPersistentData().contains("hemomancy:chamber_visit_dream_crafting")
-                            && actor.getPersistentData().getBoolean("hemomancy:chamber_visit_guided_complete")
+                            && com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.hasCompletedGuidedVisit(actor)
                                     == (mode == ChamberVisitMode.GUIDED && !outsideRecovery)
                             && !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isAttuned(actor),
                     "Observational recovery retained visit state or miscredited guided completion/attunement");
@@ -1417,7 +1417,7 @@ public final class ClinicalBloodProgressionGameTests {
                                 && before.equals(actor.getInventory().save(new net.minecraft.nbt.ListTag())),
                         "Observational " + mode + " recovery duplicated its restored helmet on the cursor");
                 h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isActive(actor)
-                                && !actor.getPersistentData().getBoolean("hemomancy:chamber_visit_guided_complete"),
+                                && !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.hasCompletedGuidedVisit(actor),
                         "Outside recovery completed an invalid guided return");
             } finally {
                 actor.inventoryMenu.setCarried(ItemStack.EMPTY);

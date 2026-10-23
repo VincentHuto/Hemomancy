@@ -36,8 +36,6 @@ final class HemoJourneyWorldState {
 	private static final String TEMP_BLOODLINE = "hemomancy.dev_test.journey.temp_bloodline";
 	private static final String CHAMBER = "chamber";
 	private static final String RESPAWN = "respawn";
-	private static final String CHAIR_BOUND = "hemomancy:chamber_visit_chair_bound";
-	private static final String ATTUNED = "hemomancy:chamber_visit_attuned";
 
 	private HemoJourneyWorldState() { }
 
@@ -59,8 +57,8 @@ final class HemoJourneyWorldState {
 		}
 		snapshot.put(FANES, fanes);
 		CompoundTag chamber = new CompoundTag();
-		captureBoolean(player.getPersistentData(), chamber, CHAIR_BOUND, "chair");
-		captureBoolean(player.getPersistentData(), chamber, ATTUNED, "attuned");
+		chamber.putBoolean("chair", ChamberVisitService.isChairBound(player));
+		chamber.putBoolean("attuned", ChamberVisitService.isAttuned(player));
 		snapshot.put(CHAMBER, chamber);
 		CompoundTag respawn = new CompoundTag();
 		respawn.putString("dimension", player.getRespawnDimension().location().toString());
@@ -81,8 +79,8 @@ final class HemoJourneyWorldState {
 		var blood = HemoCapabilityAccess.getBloodVolume(player);
 		blood.setBloodLine(Bloodline.NOBLOODLINE);
 		BloodVolumeEvents.syncVolume(player, blood);
-		player.getPersistentData().remove(CHAIR_BOUND);
-		player.getPersistentData().remove(ATTUNED);
+		ChamberVisitService.access(player).setChairBound(false);
+		ChamberVisitService.access(player).setAttuned(false);
 	}
 
 	static void prepareFoundingFane(ServerPlayer player) {
@@ -178,8 +176,9 @@ final class HemoJourneyWorldState {
 		blood.setBloodLine(globalLine != null ? globalLine : savedLine);
 		BloodVolumeEvents.syncVolume(player, blood);
 		CompoundTag chamber = snapshot.getCompound(CHAMBER);
-		restoreBoolean(player.getPersistentData(), chamber, CHAIR_BOUND, "chair");
-		restoreBoolean(player.getPersistentData(), chamber, ATTUNED, "attuned");
+		// Older snapshots also hold "chair_present" / "attuned_present"; an absent flag read false, as it does here.
+		ChamberVisitService.access(player).setChairBound(chamber.getBoolean("chair"));
+		ChamberVisitService.access(player).setAttuned(chamber.getBoolean("attuned"));
 		CompoundTag respawn = snapshot.getCompound(RESPAWN);
 		ResourceLocation respawnId = ResourceLocation.tryParse(respawn.getString("dimension"));
 		ResourceKey<Level> respawnDimension = respawnId == null ? Level.OVERWORLD
@@ -228,13 +227,4 @@ final class HemoJourneyWorldState {
 		}
 	}
 
-	private static void captureBoolean(CompoundTag source, CompoundTag target, String key, String name) {
-		target.putBoolean(name + "_present", source.contains(key, Tag.TAG_BYTE));
-		target.putBoolean(name, source.getBoolean(key));
-	}
-
-	private static void restoreBoolean(CompoundTag target, CompoundTag source, String key, String name) {
-		if (source.getBoolean(name + "_present")) target.putBoolean(key, source.getBoolean(name));
-		else target.remove(key);
-	}
 }

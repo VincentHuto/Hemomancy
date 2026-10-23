@@ -47,7 +47,6 @@ import java.util.stream.Collectors;
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class MultiplayerVerification {
-	private static final String GUIDED_COMPLETE = "hemomancy:chamber_visit_guided_complete";
 	private static final int[] LAYER_SLOTS = { IScars.FUNGAL_SLOT, HarbingerEquipmentMenu.CHARM_SLOT_INDEX,
 			HarbingerEquipmentMenu.GOURD_SLOT_INDEX, HarbingerEquipmentMenu.JAR_SLOT_INDEX };
 
@@ -169,7 +168,7 @@ public final class MultiplayerVerification {
 	}
 
 	private static int visit(CommandSourceStack source, ServerPlayer player) {
-		player.getPersistentData().remove(GUIDED_COMPLETE);
+		ChamberVisitService.access(player).setGuidedComplete(false);
 		boolean started = ChamberVisitService.beginGuidedVisit(player);
 		say(source, "VISIT " + player.getName().getString() + " started=" + started);
 		return report(source, player);

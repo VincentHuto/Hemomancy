@@ -1168,25 +1168,29 @@ public final class HarbingerRepairGameTests {
     public static void pendingWhisperDeduplicatesAndRetainsUnansweredDecision(GameTestHelper helper) {
         ServerPlayer player = player(helper);
         player.tickCount = 200;
-        String key = "hemomancy:pending_whispers";
         String pending = com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper.REVELATION_CHOICE_PENDING;
         player.getPersistentData().putBoolean(pending, true);
         var tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees.coreWitnessDialogue();
         com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers.enqueue(player, tree);
         com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers.enqueue(player, tree);
-        var entries = player.getPersistentData().getList(key, net.minecraft.nbt.Tag.TAG_COMPOUND);
+        var entries = com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers.entries(player);
         helper.assertTrue(entries.size() == 1, "Repeated offers must retain one decision");
         UUID id = entries.getCompound(0).getUUID("id");
         helper.assertTrue(com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers.open(player), "Quiet fixture can listen");
         com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers.close(player, id);
-        helper.assertTrue(player.getPersistentData().getList(key, 10).size() == 1, "Closing does not answer the choice");
+        helper.assertTrue(com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers.entries(player).size() == 1,
+                "Closing does not answer the choice");
         var restored = player(helper);
         restored.tickCount = 200;
         restored.getPersistentData().merge(player.getPersistentData().copy());
+        var inbox = com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.pendingWhispers(player);
+        com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.pendingWhispers(restored)
+                .deserializeNBT(restored.registryAccess(), inbox.serializeNBT(player.registryAccess()));
         helper.assertTrue(com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers.open(restored), "Persisted inbox reopens on a new actor");
         restored.getPersistentData().remove(pending); // Supplied acceptance state; not a path-choice gameplay test.
         com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers.close(restored, id);
-        helper.assertTrue(restored.getPersistentData().getList(key, 10).isEmpty(), "Answered decision is consumed once");
+        helper.assertTrue(com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers.entries(restored).isEmpty(),
+                "Answered decision is consumed once");
         player.discard(); restored.discard(); helper.succeed();
     }
 
@@ -1209,14 +1213,15 @@ public final class HarbingerRepairGameTests {
     public static void chamberCloneRetainsOnlyEarnedVisitProgress(GameTestHelper helper) {
         ServerPlayer original = player(helper), replacement = player(helper);
         String prefix = "hemomancy:chamber_visit_";
-        original.getPersistentData().putBoolean(prefix + "attuned", true);
-        original.getPersistentData().putBoolean(prefix + "chair_bound", true);
-        original.getPersistentData().putBoolean(prefix + "guided_complete", true);
+        var access = com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.access(original);
+        access.setAttuned(true);
+        access.setChairBound(true);
+        access.setGuidedComplete(true);
         original.getPersistentData().putBoolean(prefix + "active", true);
         original.getPersistentData().putString(prefix + "mode", "DREAM");
         original.getPersistentData().putInt(prefix + "remaining", 1200);
         original.getPersistentData().put(prefix + "dream_inventory", new net.minecraft.nbt.ListTag());
-        com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.copyEarnedProgress(original, replacement);
+        replacement.restoreFrom(original, false);
         helper.assertTrue(com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isAttuned(replacement)
                 && com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isChairBound(replacement)
                 && com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.hasCompletedGuidedVisit(replacement),

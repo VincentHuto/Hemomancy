@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenPendingWhisperPacket;
@@ -26,7 +27,8 @@ import java.util.WeakHashMap;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class PendingWhispers {
-    private static final String KEY = "hemomancy:pending_whispers";
+    /** Where the inbox lived before the PendingWhisperInbox attachment (S-1c, sunset 2027-04-23). */
+    private static final String LEGACY_KEY = "hemomancy:pending_whispers";
     private static final Map<ServerPlayer, UUID> OPEN = new WeakHashMap<>();
     private PendingWhispers() {}
 
@@ -35,7 +37,12 @@ public final class PendingWhispers {
     }
 
     private static ListTag inbox(ServerPlayer player) {
-        return player.getPersistentData().getList(KEY, Tag.TAG_COMPOUND);
+        return HemoCapabilityAccess.pendingWhispers(player).entries();
+    }
+
+    /** A copy of the pending entries, oldest first. */
+    public static ListTag entries(ServerPlayer player) {
+        return inbox(player).copy();
     }
 
     public static void enqueue(ServerPlayer player, DialogueTree tree) {
@@ -57,7 +64,6 @@ public final class PendingWhispers {
                 .anyMatch(o -> "archon_choice_silence".equals(o.eventId())
                         || "archon_choice_eighth_degree".equals(o.eventId())));
         list.add(entry);
-        player.getPersistentData().put(KEY, list);
         notifyPending(player);
     }
 
@@ -110,7 +116,6 @@ public final class PendingWhispers {
                     .getBoolean(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING)) list.remove(i);
             break;
         }
-        player.getPersistentData().put(KEY, list);
         notifyPending(player);
     }
 
@@ -125,9 +130,19 @@ public final class PendingWhispers {
         if (event.getEntity() instanceof ServerPlayer player) notifyPending(player);
     }
 
-    @SubscribeEvent
-    public static void clonePlayer(PlayerEvent.Clone event) {
-        if (event.getOriginal().getPersistentData().contains(KEY)) event.getEntity().getPersistentData()
-                .put(KEY, event.getOriginal().getPersistentData().getList(KEY, Tag.TAG_COMPOUND).copy());
+    /**
+     * A {@code PlayerDataMigrations} entry: moves the root-key inbox into the attachment, after anything already
+     * there, skipping a tree the attachment already holds, and removes the root key.
+     */
+    public static void migrateLegacyInbox(ServerPlayer player) {
+        CompoundTag data = player.getPersistentData();
+        ListTag legacy = data.getList(LEGACY_KEY, Tag.TAG_COMPOUND);
+        ListTag list = inbox(player);
+        for (Tag tag : legacy) {
+            byte[] tree = ((CompoundTag) tag).getByteArray("tree");
+            if (list.stream().noneMatch(held -> Arrays.equals(((CompoundTag) held).getByteArray("tree"), tree)))
+                list.add(tag.copy());
+        }
+        data.remove(LEGACY_KEY);
     }
 }

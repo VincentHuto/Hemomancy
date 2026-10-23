@@ -23,6 +23,10 @@ class PlayerDataMigrationGuardrailTest {
 
 	/** Each migration entry point and the file that defines it. */
 	private static final Map<String, String> ENTRY_POINTS = Map.of(
+			"ChamberVisitService::migrateLegacyAccess",
+			"src/main/java/com/vincenthuto/hemomancy/common/worldgen/ChamberVisitService.java",
+			"PendingWhispers::migrateLegacyInbox",
+			"src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/PendingWhispers.java",
 			"CircusPlayerProgress::migrateLegacyRootKeys",
 			"src/main/java/com/vincenthuto/hemomancy/common/circus/CircusPlayerProgress.java",
 			"FungalScarMigrationRules::migrateCarried",

@@ -6,7 +6,9 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.Initi
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.FungalScarMigrationRules;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledgeEvents;
 import com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers;
 import com.vincenthuto.hemomancy.common.station.StationUpgradeMigration;
+import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -46,7 +48,11 @@ public final class PlayerDataMigrations {
 			// The Archon choice once kept only as a root key.
 			new Migration(5, "archon_choice", "2027-04-23", InitiatoryDegreeEvents::migrateLegacyArchonChoice),
 			// Circus discovery, acclimation, route, challenges, milestones and apprenticeship root keys (S-6c).
-			new Migration(6, "circus_progress", "2027-04-23", CircusPlayerProgress::migrateLegacyRootKeys));
+			new Migration(6, "circus_progress", "2027-04-23", CircusPlayerProgress::migrateLegacyRootKeys),
+			// Chamber of Will earned-access root keys, then the advancement backfill once (S-1c).
+			new Migration(7, "chamber_access", "2027-04-23", ChamberVisitService::migrateLegacyAccess),
+			// The pending whisper inbox root list (S-1c).
+			new Migration(8, "pending_whispers", "2027-04-23", PendingWhispers::migrateLegacyInbox));
 
 	public static final int LATEST = MIGRATIONS.getLast().version();
 

@@ -73,6 +73,14 @@ public static com.vincenthuto.hemomancy.common.circus.CircusProgress circusProgr
     return player.getData(HemoAttachmentTypes.CIRCUS_PROGRESS);
 }
 
+public static com.vincenthuto.hemomancy.common.worldgen.ChamberAccess chamberAccess(Player player) {
+    return player.getData(HemoAttachmentTypes.CHAMBER_ACCESS);
+}
+
+public static com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhisperInbox pendingWhispers(Player player) {
+    return player.getData(HemoAttachmentTypes.PENDING_WHISPERS);
+}
+
 public static DialogueKnowledge dialogueKnowledge(Player player) {
     return player.getData(HemoAttachmentTypes.DIALOGUE_KNOWLEDGE);
 }

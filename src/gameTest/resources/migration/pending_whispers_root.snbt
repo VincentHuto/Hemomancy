@@ -1,0 +1,9 @@
+{
+	NeoForgeData: {
+		"hemomancy:pending_whispers": [
+			{id: [I; 1, 2, 3, 4], tree: [B; 1B, 2B, 3B], decision: 1b},
+			{id: [I; 5, 6, 7, 8], tree: [B; 9B, 8B], decision: 0b}
+		]
+	},
+	"neoforge:attachments": {"hemomancy:data_version": {Version: 7}}
+}

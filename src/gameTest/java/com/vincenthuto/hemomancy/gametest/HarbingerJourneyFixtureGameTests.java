@@ -1740,7 +1740,8 @@ public final class HarbingerJourneyFixtureGameTests {
 						"Covenant fixture requires empty supplied platform space: " + floor);
 			}
 			player.setRespawnPosition(helper.getLevel().dimension(), originalSpawn, 37.0F, false, false);
-			player.getPersistentData().putBoolean("hemomancy:chamber_visit_chair_bound", false);
+			ChamberVisitService.access(player).setChairBound(false);
+			ChamberVisitService.access(player).setAttuned(false);
 			HemoJourneyResult captured = HemoJourneySnapshot.capture(player);
 			helper.assertTrue(captured.passed(), "Living Covenant snapshot capture must succeed: " + captured.message());
 			HemoJourneyResult reset = HemoJourneySnapshot.resetForJourney(player);
@@ -1814,10 +1815,8 @@ public final class HarbingerJourneyFixtureGameTests {
 					&& helper.getLevel().dimension().equals(player.getRespawnDimension())
 					&& Float.compare(37.0F, player.getRespawnAngle()) == 0,
 					"Original respawn binding must be restored exactly");
-			helper.assertTrue(player.getPersistentData().contains("hemomancy:chamber_visit_chair_bound")
-					&& !player.getPersistentData().getBoolean("hemomancy:chamber_visit_chair_bound")
-					&& !player.getPersistentData().contains("hemomancy:chamber_visit_attuned"),
-					"Original Chamber flag presence and values must be restored exactly");
+			helper.assertTrue(!ChamberVisitService.isChairBound(player) && !ChamberVisitService.isAttuned(player),
+					"Original Chamber access must be restored exactly");
 			helper.succeed();
 		} catch (Throwable error) {
 			throw new AssertionError("Living Covenant fixture failed while " + step, error);

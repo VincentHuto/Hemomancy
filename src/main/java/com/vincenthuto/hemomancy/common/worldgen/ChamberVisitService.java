@@ -20,20 +20,21 @@ public final class ChamberVisitService {
 	private static final String MODE = PREFIX + "mode";
 	private static final String REMAINING = PREFIX + "remaining";
 	private static final String TOTAL = PREFIX + "total";
-	private static final String DREAM_ATTEMPTS = PREFIX + "dream_attempts";
-	private static final String DREAM_SEEN = PREFIX + "dream_seen";
 	private static final String DREAM_INVENTORY = PREFIX + "dream_inventory";
 	private static final String DREAM_CRAFTING = PREFIX + "dream_crafting";
 	private static final String DREAM_CARRIED = PREFIX + "dream_carried";
 	private static final String GUIDED_EQUIPMENT = PREFIX + "guided_equipment";
-	private static final String GUIDED_COMPLETE = PREFIX + "guided_complete";
-	private static final String CHAIR_BOUND = PREFIX + "chair_bound";
-	private static final String ATTUNED = PREFIX + "attuned";
 	private static final String PENDING_CHAIR_SLEEP = PREFIX + "pending_chair_sleep";
 	private static final String EXIT_SLEEP_TICKS = PREFIX + "exit_sleep_ticks";
 	private static final String FOOD = PREFIX + "food";
 	private static final String SATURATION = PREFIX + "saturation";
 	private static final String EXHAUSTION = PREFIX + "exhaustion";
+	// The earned-access root keys before the ChamberAccess attachment (S-1c, sunset 2027-04-23).
+	private static final String LEGACY_DREAM_ATTEMPTS = PREFIX + "dream_attempts";
+	private static final String LEGACY_DREAM_SEEN = PREFIX + "dream_seen";
+	private static final String LEGACY_GUIDED_COMPLETE = PREFIX + "guided_complete";
+	private static final String LEGACY_CHAIR_BOUND = PREFIX + "chair_bound";
+	private static final String LEGACY_ATTUNED = PREFIX + "attuned";
 
 	private ChamberVisitService() {
 	}
@@ -60,11 +61,15 @@ public final class ChamberVisitService {
 	}
 
 	public static boolean hasCompletedGuidedVisit(ServerPlayer player) {
-		return player.getPersistentData().getBoolean(GUIDED_COMPLETE);
+		return access(player).guidedComplete();
 	}
 
 	public static boolean hasSeenDream(ServerPlayer player) {
-		return player.getPersistentData().getBoolean(DREAM_SEEN);
+		return access(player).dreamSeen();
+	}
+
+	public static ChamberAccess access(ServerPlayer player) {
+		return HemoCapabilityAccess.chamberAccess(player);
 	}
 
 	public static boolean isProtected(ServerPlayer player) {
@@ -72,16 +77,16 @@ public final class ChamberVisitService {
 	}
 
 	public static boolean isChairBound(ServerPlayer player) {
-		return player.getPersistentData().getBoolean(CHAIR_BOUND);
+		return access(player).chairBound();
 	}
 
 	public static boolean isAttuned(ServerPlayer player) {
-		return player.getPersistentData().getBoolean(ATTUNED);
+		return access(player).attuned();
 	}
 
 	public static void bindChair(ServerPlayer player) {
 		if (!isChairBound(player)) {
-			player.getPersistentData().putBoolean(CHAIR_BOUND, true);
+			access(player).setChairBound(true);
 			HarbingerAdvancementGranter.grantIfNotDone(player, HarbingerAdvancementGranter.ADV_WARP_CHAIR_BOUND);
 			player.displayClientMessage(Component.translatable("message.hemomancy.warp_chair.bound")
 					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), false);
@@ -90,19 +95,28 @@ public final class ChamberVisitService {
 
 	public static void attune(ServerPlayer player) {
 		bindChair(player);
-		player.getPersistentData().putBoolean(ATTUNED, true);
+		access(player).setAttuned(true);
 		HarbingerAdvancementGranter.grantIfNotDone(player, HarbingerAdvancementGranter.ADV_CHAMBER_RITE_ATTUNED);
 	}
 
-	public static void copyEarnedProgress(ServerPlayer original, ServerPlayer replacement) {
-		var oldData = original.getPersistentData();
-		var newData = replacement.getPersistentData();
-		for (String key : new String[] { CHAIR_BOUND, ATTUNED, DREAM_SEEN, DREAM_ATTEMPTS, GUIDED_COMPLETE }) {
-			if (oldData.contains(key)) newData.put(key, oldData.get(key).copy());
-		}
+	/**
+	 * A {@code PlayerDataMigrations} entry: moves the earned-access root keys into the attachment and removes them,
+	 * then restores access a save lost but whose advancement it holds. Present root keys win.
+	 */
+	public static void migrateLegacyAccess(ServerPlayer player) {
+		var data = player.getPersistentData();
+		ChamberAccess access = access(player);
+		if (data.contains(LEGACY_CHAIR_BOUND)) access.setChairBound(data.getBoolean(LEGACY_CHAIR_BOUND));
+		if (data.contains(LEGACY_ATTUNED)) access.setAttuned(data.getBoolean(LEGACY_ATTUNED));
+		if (data.contains(LEGACY_DREAM_SEEN)) access.setDreamSeen(data.getBoolean(LEGACY_DREAM_SEEN));
+		if (data.contains(LEGACY_DREAM_ATTEMPTS)) access.setDreamAttempts(data.getInt(LEGACY_DREAM_ATTEMPTS));
+		if (data.contains(LEGACY_GUIDED_COMPLETE)) access.setGuidedComplete(data.getBoolean(LEGACY_GUIDED_COMPLETE));
+		for (String key : new String[] { LEGACY_CHAIR_BOUND, LEGACY_ATTUNED, LEGACY_DREAM_SEEN, LEGACY_DREAM_ATTEMPTS,
+				LEGACY_GUIDED_COMPLETE }) data.remove(key);
+		restoreEarnedAccess(player);
 	}
 
-	public static void restoreEarnedAccess(ServerPlayer player) {
+	private static void restoreEarnedAccess(ServerPlayer player) {
 		if (!isAttuned(player) && HarbingerAdvancementGranter.hasAdvancement(player,
 				HarbingerAdvancementGranter.ADV_CHAMBER_RITE_ATTUNED)) {
 			attune(player);
@@ -165,14 +179,15 @@ public final class ChamberVisitService {
 		int degree = HemoCapabilityAccess.getPlayerDegreeNumber(player);
 		if (!ChamberVisitRules.ordinaryBedDreamEligible(degree, isActive(player),
 				FungalGardenTravelHelper.isProjectionActive(player))) return;
-		boolean seen = data.getBoolean(DREAM_SEEN);
-		int attempts = data.getInt(DREAM_ATTEMPTS);
+		ChamberAccess access = access(player);
+		boolean seen = access.dreamSeen();
+		int attempts = access.dreamAttempts();
 		if (player.getRandom().nextDouble() < ChamberVisitRules.dreamChance(attempts, seen)) {
-			data.putBoolean(DREAM_SEEN, true);
-			data.putInt(DREAM_ATTEMPTS, 0);
+			access.setDreamSeen(true);
+			access.setDreamAttempts(0);
 			startVisit(player, ChamberVisitMode.DREAM);
 		} else if (!seen) {
-			data.putInt(DREAM_ATTEMPTS, attempts + 1);
+			access.setDreamAttempts(attempts + 1);
 		}
 	}
 
@@ -284,7 +299,7 @@ public final class ChamberVisitService {
 		restoreFood(player);
 		clearSession(data);
 		if (guidedReturn && !player.level().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL))
-			data.putBoolean(GUIDED_COMPLETE, true);
+			access(player).setGuidedComplete(true);
 		PacketHandler.sendToPlayer(player, PacketSyncChamberVisit.inactive());
 	}
 

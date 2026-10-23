@@ -41,7 +41,6 @@ public final class ChamberVisitEvents {
 	public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
 		ChamberVisitService.clearInterruptedChairSleep(player);
-		ChamberVisitService.restoreEarnedAccess(player);
 		if (ChamberVisitService.isActive(player)
 				&& !player.level().dimension().equals(com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager.CHAMBER_OF_WILL)) {
 			ChamberVisitService.recoverOutsideChamber(player);
@@ -51,17 +50,8 @@ public final class ChamberVisitEvents {
 	}
 
 	@SubscribeEvent
-	public static void onClone(PlayerEvent.Clone event) {
-		if (event.getOriginal() instanceof ServerPlayer original
-				&& event.getEntity() instanceof ServerPlayer replacement) {
-			ChamberVisitService.copyEarnedProgress(original, replacement);
-		}
-	}
-
-	@SubscribeEvent
 	public static void onRespawn(PlayerEvent.PlayerRespawnEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
-			ChamberVisitService.restoreEarnedAccess(player);
 			ChamberVisitService.sync(player);
 		}
 	}
