@@ -16,7 +16,7 @@ Every consolidation session reads this file first and updates it last, following
 | 7 | Phase 5: blood accounting | DONE | `8338c98da` | 2026-10-22 |
 | 8 | Phase 7: registration and client registration | DONE | `3e8b213d4`, `291731d6f` | 2026-10-22 |
 | 9 | Phase 6: combat targeting and damage attribution | DONE | `3b841ba03`, `7f0c1968d`, `5fa01de44`, `c9af6c6c3` | 2026-10-22 |
-| 10 | Phases 8 + 9: rendering plumbing and animation conventions | IN PROGRESS | item 1: see the step entry | 2026-10-22 |
+| 10 | Phases 8 + 9: rendering plumbing and animation conventions | IN PROGRESS | items 1-2: `a53982248`, see the step entry | 2026-10-22 |
 | 11 | Phase 10: god-class decomposition | NOT STARTED | | |
 | 12 | Phase 11: persistence authority migrations | NOT STARTED | | |
 | 13 | Phases 12 + 13: content, worldgen, data, tooling, standards | NOT STARTED | | |
@@ -164,6 +164,8 @@ them green.
 | `architecture/CombatTargetingGuardrailTest` | 9 | G-2: every `Monster.class` gather passes `canHarm` in its arguments or is allow-listed (mob AI, ownerless zones; stale entries fail); `ManipulationCombatHelper` holds the only harm predicates; the area and look sites ask `canHarm`; Drudge work lives in `DrudgeActions` |
 | `architecture/HealAndFlightGuardrailTest` | 9 | G-4: one heal-modifier stage and one HIGH reader; G-7: only `FlightArbiter` writes `mayfly` / `flying` |
 | `architecture/ScreenChromeGuardrailTest` | 10 | V-1: no private border, slot-well or vein-background helper under `client/`; no copied two-pixel border or slot-well fill sequence outside `ScreenDrawUtils`; a seeded vein field outside `VeinBackgroundRenderer` only in the listed other-art files (stale entries fail) |
+| `architecture/RenderTypeCachingGuardrailTest` | 10 | V-2 / P-9: no method builds a `RenderType` per call (a `RenderType`-returning method that builds one must take the holder's uniforms `Supplier`, or be a listed lazy singleton); no other method builds one; no static shader-clock field outside `SchoolRenderTypes` |
+| `client/render/SeededRenderTypesTest` | 10 | V-2: the same seed and uniforms return the same type; changed uniforms move to the seed's spare and leave the queued type's uniforms alone; a seed never builds more than two types; seeds are kept apart; LRU eviction |
 | `client/screen/skilltree/harbinger/VeinBackgroundStyleTest` | 10 | V-1: the named vein styles (progress with its deep palette, crimson, machine, station) keep the values of the copies they replaced, including each style's vertex order |
 
 ## Step entries
@@ -858,8 +860,8 @@ them green.
 
   | Item | Status | Commit |
   |---|---|---|
-  | 1. Screen chrome (V-1) | DONE | this entry's first commit |
-  | 2. Render-type caching (V-2), Spark profile | NOT STARTED | |
+  | 1. Screen chrome (V-1) | DONE | `a53982248` |
+  | 2. Render-type caching (V-2), Spark profile | DONE | the commit after `a53982248` |
   | 3. Colour particle data (V-6) | NOT STARTED | |
   | 4. HUD layers and world dispatch (V-7) | NOT STARTED | |
   | 5. Shared material quad encoder (V-3) | NOT STARTED | |
@@ -868,7 +870,8 @@ them green.
   | 8. Player-animation registry (A-3) | NOT STARTED | |
   | 9. `AnimationTime` (A-4) | NOT STARTED | |
   | V-4 tube frames (optional, last) | NOT STARTED | |
-- **Test counts before → after (so far):** `test` 4,010 → 4,017, 0 failures. `alphaCheck` not yet run in this step.
+- **Test counts before → after (so far):** `test` 4,010 → 4,017 (item 1) → 4,026 (item 2), 0 failures. `alphaCheck`
+  not yet run in this step.
 - **Impact map:** one read-only reviewer listed every chrome, render-type, particle, dispatch, encoder, shader-noise,
   boss-clock, player-animation and time-source site with the tests that pin them. It is not committed (it is a
   working list); the items below cite what they used from it.
@@ -914,12 +917,54 @@ them green.
   2 `drawCornerAccents`); 12 slot wells.
 - **Item 1 tests:** 5 source tests repointed (Scrying budget and stride, Lantern border, Effigy veins, the progress
   palette strings, Synaptic border); the deep-palette pins became data assertions in `VeinBackgroundStyleTest`.
+- **Item 2, render-type caching (V-2, P-9):**
+  - **`SeededRenderTypes<K, U, T>`** (`client/render`) is the one caching pattern. A seed's types are built once by a
+    factory that takes the seed and a `Supplier` of the uniforms. Asking with the same uniforms returns the same type, so
+    its draws batch. Asking with new uniforms moves to the seed's second type and sets them there, so geometry already
+    queued on the first keeps the uniforms it was written with. A buffer source ends a type's batch as soon as another
+    type is requested, so a type is never handed back with new uniforms before its earlier geometry is drawn. Seeds are
+    kept LRU (256 per family, 32 for the rite families, as before).
+  - **Converted (37 factories):** the 28 per-call factories in `HemoRenderTypes` (monolith fragment and surfaces, Will
+    shell, hermit dissolve, Vesper wound, structure warp and infusion veins, crucible basin, latent skin, infected and
+    blood pools, the Lowtide parchment, lake and skyboxes, the seven Apotheos types, the Qliphoth black hole, the Silent
+    Archon storm and fog, the loom orb shell); the three caches keyed on every uniform including game time (engram
+    sigil, Cardinal floor membrane and mound, staff blood melt); the four existing mutable per-seed holders (rite fog,
+    sky wound, daemon haze, staff haze); `RenderTypeInit.energySwirl`, `RadiantPortalRendertype.textWithWaterShader`,
+    `CardinalFloorRenderTypes.withRite`, and the three Suspended crystal renderers' translucent wrappers (now one
+    `TranslucentModelTypes`).
+  - **How each kept its output:** every factory keeps its signature, render-type name, shards and buffer flags. Its old
+    body moved to a `create*` method that binds the key's fields and, inside the uniforms lambda, the uniform record's
+    fields to the original parameter names, so every `setUniform` line is unchanged. The key is the seed plus anything
+    structural (a texture, the glow/core or depth flag, the floor name and write mask, the black hole's apex flags).
+  - **Caller audit:** a caller that asked for one seed with three different uniform sets before drawing would lose the
+    first set. Every factory called twice in one place differs by key (Vesper's mount and rider textures, the floor's
+    membrane and mound, the Fane's core and glow) or ends its batch itself (the Qliphoth black holes).
+  - **One school helper:** `SchoolRenderTypes` builds the school materials (Lux and Umbra, Thermal, Animus and Mortem,
+    Ferric and Ductilis, the cast outpouring) and sets `HemoTime` and `ColorModulator` from a `Clock`. Each family keeps
+    its own clock: callers `begin` them with different times (a needle's partial tick, the manipulation renderer's
+    frame time), so one shared clock would let the last caller win.
+  - **Spark profile:** see [evidence/12-step10-render-type-profile.md](evidence/12-step10-render-type-profile.md).
+    Harness `RenderTypeProfileReview` (run `renderTypeProfileClient`), 81 Hematic Stakes and a hotbar of monolith items,
+    30 s windows, two runs each side. Render-thread allocation under `RenderType.create` fell from about 27 MB per 30 s
+    to none sampled, and under `HemoRenderTypes` from about 94 MB to 12–21 MB (the uniform records and boxed seeds).
+    Spark CPU and frame times are unchanged within noise (mean frame 8.79–8.80 ms before, 8.81–8.87 ms after).
+  - **Visual check:** before (worktree `29a5576ae`) and after runs of the review clients that draw the converted types:
+    brazier (blood pool, steady flame), condenser (square pool), infusion (structure warp, infusion veins), rite floor
+    (floor membrane and mound, rite fog, sky wound, daemon haze), loom (engram sigil, floor), outpouring (all school
+    materials, cast veins, blood pools) and Vesper (`-PvesperReviewOnly=wound_carapace,wound_neck,live_wound_drain`).
+    Every shot matches by eye; the scenes animate, so pixels differ only by animation phase, particles and dropped
+    items. Shots: `build/step10-review/item2/<Task>/{before,after}/`, side-by-side sheets `build/step10-review/item2/
+    sheet-*.png`. Loom (12 lines, stale `thaumaturge:*` attachments in its save) and the Vesper baseline (a connection
+    reset at shutdown) log the same unrelated ERROR lines.
+- **Item 2 metrics:** `src/main` +944 / −343 in 15 files (most of the added lines are the per-family uniform records
+  and binds); 3 classes added (`SeededRenderTypes`, `SchoolRenderTypes`, `TranslucentModelTypes`); the
+  `riteTypeCache` and the four hand-written holder classes are gone. Remaining per-call render types: 0 (the guardrail
+  allows three lazy singletons and `SchoolRenderTypes.create`).
+- **Item 2 tests:** `DaemonHazeSourceTest` (the haze key) and the Fane-heart legacy test (the depth flag now lives in
+  `SchoolRenderTypes`) repointed.
 - **Pending approvals:** A-4 and V-3b stay PENDING (items 9 and 5).
-- **Handoff notes (next: item 2):**
+- **Handoff notes (next: item 3):**
   - **Baseline worktree:** `../Hemomancy-step10-before` holds `29a5576ae` with a `libs` junction. Remove the junction
     with `rmdir` before `git worktree remove --force`.
-  - **Item 2 plan.** Do not merge the five school clocks into one: each holder's `begin` is called with its own ticks by
-    different renderers, so one shared clock would let the last caller win. Share the factory and keep one clock object
-    per holder. Converting a per-call factory to a per-seed holder changes batching: the same instance continues the
-    open batch, so a caller that asks twice with different uniforms in one batch must end it in between. Check every
-    caller before converting. Spark is not in `libs/`; it must be added to a run (not committed) for the profile.
+  - **Review clients:** a fresh game directory without `options.txt` stops at the first-launch screen and the driver
+    never logs `startup`; copy one in. The condenser review directory had none.

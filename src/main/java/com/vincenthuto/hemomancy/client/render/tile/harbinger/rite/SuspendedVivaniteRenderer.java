@@ -1,14 +1,13 @@
 package com.vincenthuto.hemomancy.client.render.tile.harbinger.rite;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.TranslucentModelTypes;
 import com.vincenthuto.hemomancy.client.model.tile.SuspendedVivianiteModel;
 import com.vincenthuto.hemomancy.common.tile.harbinger.rite.SuspendedVivianiteBlockEntity;
 import com.vincenthuto.hutoslib.client.HlClientTickHandler;
 import com.vincenthuto.hutoslib.math.Vector3;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -51,15 +50,7 @@ public class SuspendedVivaniteRenderer implements BlockEntityRenderer<SuspendedV
         float currentTime = te.getLevel().getGameTime() ;
 
         RenderType renderType=heart.renderType(texture);
-        RenderType wrappedType = new RenderType(renderType.toString() + "_translucent", renderType.format(), renderType.mode(),
-                renderType.bufferSize(), renderType.affectsCrumbling(), true,
-                () -> {
-                    renderType.setupRenderState();
-                    RenderSystem.setShader(GameRenderer::getRendertypeEntityTranslucentShader);
-                }
-                , () -> renderType.clearRenderState()) {
-
-        };
+        RenderType wrappedType = TranslucentModelTypes.translucent(renderType);
         VertexConsumer ivertexbuilder = bufferIn.getBuffer(wrappedType);
         heart.renderToBuffer(matrixStackIn, ivertexbuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, -1);
         matrixStackIn.popPose();

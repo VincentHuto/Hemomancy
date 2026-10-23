@@ -358,6 +358,18 @@ neoForge {
             programArguments.addAll '--username', 'ChromeReview', '--width', '1280', '--height', '720'
         }
 
+        // Drop a Spark jar into build/render-type-profile/mods for the CPU profile; JFR and frame times need nothing.
+        renderTypeProfileClient {
+            client()
+            gameDirectory = project.file('build/render-type-profile')
+            additionalRuntimeClasspathConfiguration.extendsFrom(clientLocalRuntime)
+            jvmArguments.addAll('-Xms4G', '-Xmx6G')
+            systemProperty 'hemomancy.gameplayDriver', 'true'
+            systemProperty 'hemomancy.renderTypeProfile', 'true'
+            systemProperty 'hemomancy.renderTypeProfileLabel', providers.gradleProperty('profileLabel').getOrElse('after')
+            programArguments.addAll '--username', 'ProfileReview', '--width', '1280', '--height', '720'
+        }
+
         successionReviewClient {
             client()
             gameDirectory = project.file('build/succession-client')

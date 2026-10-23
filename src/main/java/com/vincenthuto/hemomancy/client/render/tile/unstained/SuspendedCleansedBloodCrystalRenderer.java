@@ -1,15 +1,14 @@
 package com.vincenthuto.hemomancy.client.render.tile.unstained;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.TranslucentModelTypes;
 import com.vincenthuto.hemomancy.client.model.tile.SuspendedCleansedBloodCrystalModel;
 import com.vincenthuto.hemomancy.common.tile.unstained.SuspendedCleansedBloodCrystalBlockEntity;
 import com.vincenthuto.hutoslib.client.HlClientTickHandler;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -43,15 +42,7 @@ public class SuspendedCleansedBloodCrystalRenderer implements BlockEntityRendere
         float scale = (float) Math.abs(Math.cos(currentTime * 0.045f) * 0.25f) + 0.4f;
         matrixStackIn.translate(0, (-scale * 0.7f - 0.2f + .5) * te.timeOffset, 0);
         RenderType renderType = heart.renderType(texture);
-        RenderType wrappedType = new RenderType(renderType.toString() + "_translucent", renderType.format(), renderType.mode(),
-                renderType.bufferSize(), renderType.affectsCrumbling(), true,
-                () -> {
-                    renderType.setupRenderState();
-                    RenderSystem.setShader(GameRenderer::getRendertypeEntityTranslucentShader);
-                }
-                , () -> renderType.clearRenderState()) {
-
-        };
+        RenderType wrappedType = TranslucentModelTypes.translucent(renderType);
         VertexConsumer ivertexbuilder = bufferIn.getBuffer(wrappedType);
         heart.renderToBuffer(matrixStackIn, ivertexbuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, -1);
         matrixStackIn.popPose();

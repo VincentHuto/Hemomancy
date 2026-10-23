@@ -150,7 +150,9 @@ public record ExamplePayload(int entityId, float amount) implements CustomPacket
 **Preferred pattern**
 - **Render types** live in `HemoRenderTypes` or one per-school holder. They use a
   single caching pattern: a per-seed holder that is built once. Never build a
-  `RenderType` per call or per frame.
+  `RenderType` per call or per frame. Since step 10 that holder is `SeededRenderTypes`: one entry
+  per seed (and texture or depth flag), two types per entry, uniforms in a record the factory reads at
+  draw time. School materials come from `SchoolRenderTypes` with one `Clock` per family.
 - **Geometry** that encodes material UVs for school shaders goes through one shared
   quad encoder.
 - **Screen chrome** goes through `ScreenDrawUtils` and `VeinBackgroundRenderer`, each
@@ -188,7 +190,7 @@ public record ExamplePayload(int entityId, float amount) implements CustomPacket
 
 **Migration targets**
 - V-1 (screen chrome, done in step 10)
-- V-2 (render-type caching)
+- V-2 (render-type caching, done in step 10)
 - V-3 (quad encoder)
 - V-5 (byte-identical shader noise into an include)
 - V-6 (colour particle data)

@@ -892,6 +892,7 @@ src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/DendriticDistribu
 src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/EngramBlockResourceTest.java,main,src/main/resources/assets/hemomancy/blockstates/engram_block.json,resource,exact
 src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/FaneHeartAndStakeSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/FaneHeartAndStakeSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/render/HemoRenderTypes.java,java,exact
+src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/FaneHeartAndStakeSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/render/SchoolRenderTypes.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/FaneHeartAndStakeSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/render/item/tile/harbinger/functional/HematicStakeItemRenderer.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/FaneHeartAndStakeSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/render/tile/harbinger/functional/ConsecratedBloodwellRenderer.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/block/harbinger/FaneHeartAndStakeSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/render/tile/harbinger/functional/HematicStakeRenderer.java,java,exact

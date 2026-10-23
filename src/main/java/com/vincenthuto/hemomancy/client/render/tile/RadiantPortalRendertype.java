@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
+import com.vincenthuto.hemomancy.client.render.SeededRenderTypes;
 
 public class RadiantPortalRendertype extends RenderType {
 
@@ -19,10 +20,16 @@ public class RadiantPortalRendertype extends RenderType {
 	}
 
 	public static RenderType textWithWaterShader(ResourceLocation loc) {
-		RenderType.CompositeState state = RenderType.CompositeState.builder().setShaderState(RENDERTYPE_WATER_SHADER)
-				.setTextureState(new TextureStateShard(loc, false, false))
-				.setTransparencyState(TRANSLUCENT_TRANSPARENCY).setLightmapState(LIGHTMAP).createCompositeState(false);
-		return create("textWithWaterShader", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS,
-				256, false, true, state);
+		return WATER_TEXT_TYPES.get(loc, Boolean.TRUE);
 	}
+
+	/** One type per texture; it has no uniforms of its own. */
+	private static final SeededRenderTypes<ResourceLocation, Boolean, RenderType> WATER_TEXT_TYPES =
+			new SeededRenderTypes<>(64, (loc, none) -> {
+				RenderType.CompositeState state = RenderType.CompositeState.builder().setShaderState(RENDERTYPE_WATER_SHADER)
+						.setTextureState(new TextureStateShard(loc, false, false))
+						.setTransparencyState(TRANSLUCENT_TRANSPARENCY).setLightmapState(LIGHTMAP).createCompositeState(false);
+				return create("textWithWaterShader", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS,
+						256, false, true, state);
+			});
 }

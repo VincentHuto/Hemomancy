@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.render.shader.ExtendedShaderInstance;
+import com.vincenthuto.hemomancy.client.render.SchoolRenderTypes;
 import com.vincenthuto.hemomancy.client.render.shader.ShaderHolder;
 import com.vincenthuto.hemomancy.client.render.shader.ShaderInit;
 import net.minecraft.client.Minecraft;
@@ -17,13 +17,13 @@ import net.minecraft.resources.ResourceLocation;
 public final class OutpouringRenderTypes {
     private static final ResourceLocation ATLAS_WIDE = Hemomancy.rloc("dynamic/cast_body_atlas_wide");
     private static final ResourceLocation ATLAS_SLIM = Hemomancy.rloc("dynamic/cast_body_atlas_slim");
-    private static float time;
+    private static final SchoolRenderTypes.Clock CLOCK = new SchoolRenderTypes.Clock();
     private static boolean atlases;
     private static RenderType veinsWide, veinsSlim;
 
     private OutpouringRenderTypes() {}
 
-    public static void begin(double ticks) { time = (float) (ticks % 24000); }
+    public static void begin(double ticks) { CLOCK.begin(ticks); }
 
     /** The vein overlay for a skin layout; the body atlas textures upload on first use, on the render thread. */
     static RenderType veins(boolean slim) {
@@ -46,25 +46,12 @@ public final class OutpouringRenderTypes {
         Minecraft.getInstance().getTextureManager().register(location, new DynamicTexture(image));
     }
 
-    static RenderStateShard.TexturingStateShard clock(String name, ShaderHolder holder, Runnable extra) {
-        return new RenderStateShard.TexturingStateShard(name + "_uniforms", () -> {
-            var shader = holder.getInstance().get();
-            if (shader != null) {
-                shader.safeGetUniform("HemoTime").set(time);
-                shader.safeGetUniform("ColorModulator").set(1f, 1f, 1f, 1f);
-            }
-            extra.run();
-        }, () -> {
-            if (holder.getInstance().get() instanceof ExtendedShaderInstance shader) shader.setUniformDefaults();
-        });
-    }
-
     private static RenderType entity(String name, ShaderHolder holder, ResourceLocation atlas) {
         return RenderType.create(name, DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 65536, false, true,
                 RenderType.CompositeState.builder()
                         .setShaderState(holder.getShard())
                         .setTextureState(new RenderStateShard.TextureStateShard(atlas, false, false))
-                        .setTexturingState(clock(name, holder, () -> {}))
+                        .setTexturingState(SchoolRenderTypes.uniforms(CLOCK, name, holder, 1f, () -> {}))
                         .setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
                         .setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
                         .setWriteMaskState(RenderType.COLOR_WRITE)

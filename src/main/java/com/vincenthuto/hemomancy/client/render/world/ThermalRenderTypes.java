@@ -1,15 +1,13 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import com.vincenthuto.hemomancy.client.render.shader.ExtendedShaderInstance;
+import com.vincenthuto.hemomancy.client.render.SchoolRenderTypes;
 import com.vincenthuto.hemomancy.client.render.shader.ShaderHolder;
 import com.vincenthuto.hemomancy.client.render.shader.ShaderInit;
-import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 
 public final class ThermalRenderTypes {
-    private static float time;
+    private static final SchoolRenderTypes.Clock CLOCK = new SchoolRenderTypes.Clock();
     static final RenderType FLAME=create("thermal_flame",ShaderInit.MANIPULATION_FLAME,false,false);
     /** The same fire burning at a steadier pace, for standing flames such as the Iron Brazier's. */
     static final RenderType STEADY_FLAME=create("thermal_flame_steady",ShaderInit.MANIPULATION_FLAME,false,false,.45f);
@@ -20,7 +18,7 @@ public final class ThermalRenderTypes {
     public static final RenderType SKIN=create("thermal_skin",ShaderInit.MANIPULATION_SKIN,false,true);
     private ThermalRenderTypes() {}
 
-    public static void begin(double ticks) { time=(float)(ticks%24000); }
+    public static void begin(double ticks) { CLOCK.begin(ticks); }
     static RenderType material(LuxUmbraBatch.Material material) {
         return switch(material) {
             case LUX -> LuxUmbraRenderTypes.LUX;
@@ -38,22 +36,7 @@ public final class ThermalRenderTypes {
         return create(name,holder,solid,entity,1f);
     }
     private static RenderType create(String name,ShaderHolder holder,boolean solid,boolean entity,float pace) {
-        var uniforms=new RenderStateShard.TexturingStateShard(name+"_uniforms",()->{
-            var shader=holder.getInstance().get();
-            if(shader!=null) {
-                shader.safeGetUniform("HemoTime").set(time*pace);
-                shader.safeGetUniform("ColorModulator").set(1f,1f,1f,1f);
-            }
-        },()->{
-            if(holder.getInstance().get() instanceof ExtendedShaderInstance shader)shader.setUniformDefaults();
-        });
-        return RenderType.create(name,entity?DefaultVertexFormat.NEW_ENTITY:DefaultVertexFormat.POSITION_TEX_COLOR,
-                VertexFormat.Mode.QUADS,16384,false,!solid,RenderType.CompositeState.builder()
-                .setShaderState(holder.getShard()).setTexturingState(uniforms)
-                .setTransparencyState(solid?RenderType.NO_TRANSPARENCY:RenderType.TRANSLUCENT_TRANSPARENCY)
-                .setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
-                .setWriteMaskState(solid?RenderType.COLOR_DEPTH_WRITE:RenderType.COLOR_WRITE)
-                .setCullState(RenderType.NO_CULL).setLightmapState(RenderType.NO_LIGHTMAP)
-                .createCompositeState(false));
+        return SchoolRenderTypes.create(CLOCK,name,holder,entity?DefaultVertexFormat.NEW_ENTITY:DefaultVertexFormat.POSITION_TEX_COLOR,
+                solid,false,pace);
     }
 }

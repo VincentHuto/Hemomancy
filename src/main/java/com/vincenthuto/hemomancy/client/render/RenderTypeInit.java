@@ -9,6 +9,8 @@ import com.vincenthuto.hemomancy.client.render.shader.ShaderInit;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import com.mojang.blaze3d.systems.RenderSystem;
+import org.joml.Matrix4f;
 
 public class RenderTypeInit extends RenderType {
 
@@ -235,13 +237,24 @@ public class RenderTypeInit extends RenderType {
 					.createCompositeState(false));
 
 	public static RenderType energySwirl(ResourceLocation pLocation, float pU, float pV) {
-		return create("energy_swirl", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, true,
-				RenderType.CompositeState.builder().setShaderState(RENDERTYPE_ENERGY_SWIRL_SHADER)
-						.setTextureState(new RenderStateShard.TextureStateShard(pLocation, false, false))
-						.setTexturingState(new RenderStateShard.OffsetTexturingStateShard(pU, pV))
-						.setTransparencyState(ADDITIVE_TRANSPARENCY).setCullState(NO_CULL).setLightmapState(LIGHTMAP)
-						.setOverlayState(OVERLAY).createCompositeState(false));
+		return ENERGY_SWIRL_TYPES.get(pLocation, new SwirlOffset(pU, pV));
 	}
+
+	private record SwirlOffset(float u, float v) {
+	}
+
+	/** One swirl type per texture; its scroll offset is set the way {@code OffsetTexturingStateShard} sets it. */
+	private static final SeededRenderTypes<ResourceLocation, SwirlOffset, RenderType> ENERGY_SWIRL_TYPES =
+			new SeededRenderTypes<>(64, (pLocation, offset) -> create("energy_swirl", DefaultVertexFormat.NEW_ENTITY,
+					VertexFormat.Mode.QUADS, 256, false, true,
+					RenderType.CompositeState.builder().setShaderState(RENDERTYPE_ENERGY_SWIRL_SHADER)
+							.setTextureState(new RenderStateShard.TextureStateShard(pLocation, false, false))
+							.setTexturingState(new RenderStateShard.TexturingStateShard("offset_texturing",
+									() -> RenderSystem.setTextureMatrix(
+											new Matrix4f().translation(offset.get().u(), offset.get().v(), 0.0F)),
+									RenderSystem::resetTextureMatrix))
+							.setTransparencyState(ADDITIVE_TRANSPARENCY).setCullState(NO_CULL).setLightmapState(LIGHTMAP)
+							.setOverlayState(OVERLAY).createCompositeState(false)));
 
 	public static RenderType getCrimsonGlint() {
 		return CRIMSON_GLINT;

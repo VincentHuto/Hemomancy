@@ -192,7 +192,10 @@ public final class FaneHeartAndStakeSourceTest {
 				"AnimusMortemRenderTypes.ANIMUS_DEPTH");
 		assertContains("living blood streams write depth for water sorting",
 				Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/client/render/world/AnimusMortemRenderTypes.java")),
-				"depth?RenderType.COLOR_DEPTH_WRITE:RenderType.COLOR_WRITE");
+				"create(\"living_blood_depth\",ShaderInit.MANIPULATION_ANIMUS,false,true)");
+		assertContains("school render types write depth when asked",
+				Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/client/render/SchoolRenderTypes.java")),
+				"solid || depthWrite ? RenderType.COLOR_DEPTH_WRITE : RenderType.COLOR_WRITE");
 		assertContains("stake renderer registered", clientEvents,
 				"event.registerBlockEntityRenderer(BlockEntityInit.hematic_stake.get(), HematicStakeRenderer::new)");
 		assertContains("bloodwell renderer registered", clientEvents,

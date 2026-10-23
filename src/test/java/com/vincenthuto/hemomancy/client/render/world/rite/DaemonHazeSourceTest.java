@@ -60,7 +60,7 @@ final class DaemonHazeSourceTest {
 	void eachDaemonHasItsOwnCachedTypeWithNoCulling() throws IOException {
 		String types = read(ROOT + "client/render/HemoRenderTypes.java");
 		assertTrue(types.contains("public static RenderType cardinalDaemonHaze(DaemonHazeQueue.Draw draw,"));
-		assertTrue(types.contains("CARDINAL_DAEMON_HAZE_TYPES.get(draw.seed())"), "one type per daemon seed");
+		assertTrue(types.contains("CARDINAL_DAEMON_HAZE_TYPES.get(new HazeKey(draw.seed(), inside),"), "one type per daemon seed");
 		int start = types.indexOf("private static RenderType createCardinalDaemonHaze(");
 		int end = types.indexOf(".createCompositeState(false));", start);
 		assertTrue(start > 0 && end > start);
