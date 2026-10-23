@@ -220,7 +220,7 @@ public final class StationUpgradeActivationGameTests {
     @GameTest(templateNamespace = "station_upgrade_validation", template = "empty", timeoutTicks = 100, batch = "station_condenser_activation")
     public static void condenserActivationAndFinale(GameTestHelper helper) { upgradeBoth(helper, UpgradeStation.CONDENSER); }
 
-    private static BlockPos prepare(GameTestHelper helper, StationUpgradeTier tier) {
+    static BlockPos prepare(GameTestHelper helper, StationUpgradeTier tier) {
         var level = helper.getLevel();
         BlockPos center = helper.absolutePos(new BlockPos(5, 3, 5));
         // Lesser and greater floors have different socket positions; don't carry prior offerings forward.
@@ -251,7 +251,7 @@ public final class StationUpgradeActivationGameTests {
         return center;
     }
 
-    private static void practice(ServerPlayer player, StationUpgradeTier tier) {
+    static void practice(ServerPlayer player, StationUpgradeTier tier) {
         var progress = HemoCapabilityAccess.stationUpgrades(player);
         for (int number = 1; number <= tier.tier(); number++)
             StationUpgradeCatalog.get(tier.station(), number).requiredUsage().forEach(use -> progress.recordUse(tier.station(), use));

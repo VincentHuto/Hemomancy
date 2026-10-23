@@ -453,12 +453,16 @@ public final class SuccessionGameTests {
         cleanup(f); h.succeed();
     }
 
-    private record Fixture(ServerPlayer player, Bloodline line, BlockPos center, BlockPos heart, BlockPos work) {}
+    record Fixture(ServerPlayer player, Bloodline line, BlockPos center, BlockPos heart, BlockPos work) {}
     private static Fixture fixture(GameTestHelper h) {
         var cookie = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(), "succession-test"), false);
         var p = new ServerPlayer(h.getLevel().getServer(), h.getLevel(), cookie.gameProfile(), cookie.clientInformation());
         var connection = new Connection(PacketFlow.SERVERBOUND); new io.netty.channel.embedded.EmbeddedChannel(connection);
         new ServerGamePacketListenerImpl(h.getLevel().getServer(), connection, p, cookie) { @Override public void send(Packet<?> packet) {} };
+        return fixture(h, p);
+    }
+    /** The fixture around a given player: a bloodline they lead, a consecrated Fane heart and a workplace. */
+    static Fixture fixture(GameTestHelper h, ServerPlayer p) {
         var line = new Bloodline("Test", p.getUUID(), UUID.randomUUID(), new ArrayList<>(List.of(p.getUUID())));
         BloodlineSavedData.get(h.getLevel().getServer().overworld()).registerBloodline(line);
         HemoCapabilityAccess.getBloodVolume(p).setBloodLine(line); HemoCapabilityAccess.getBloodVolume(p).setActive(true);
@@ -470,13 +474,13 @@ public final class SuccessionGameTests {
         h.getLevel().setBlock(work, BlockInit.vial_centrifuge.get().defaultBlockState(), 3);
         return new Fixture(p,line,center,heart,work);
     }
-    private static CardinalRiteRecipe recipe(GameTestHelper h, boolean restore) {
+    static CardinalRiteRecipe recipe(GameTestHelper h, boolean restore) {
         return CardinalRiteRecipe.getRiteByLocation(h.getLevel(), Hemomancy.rloc("cardinal_rite/"+(restore ? "mnemonic_restoration" : "hematic_succession")));
     }
     private static ActiveCardinalRite active(Fixture f, boolean restore) {
         return ActiveCardinalRite.interactive(f.player.getUUID(),f.center,Hemomancy.rloc("cardinal_rite/"+(restore ? "mnemonic_restoration" : "hematic_succession")),1200,7,5,false,0,4);
     }
-    private static ActiveCardinalRite setup(GameTestHelper h, Fixture f, boolean restore, ItemStack remnant, boolean wrong) {
+    static ActiveCardinalRite setup(GameTestHelper h, Fixture f, boolean restore, ItemStack remnant, boolean wrong) {
         var floor = CardinalRiteFloorRegistry.get(Hemomancy.rloc("dominion_greater")).orElseThrow();
         var pattern = floor.pattern().getPatternArray();
         for (int z=0;z<7;z++) for (int x=0;x<7;x++) h.getLevel().setBlock(f.center.offset(x-3,0,3-z),floor.pattern().getSymbolList().get(String.valueOf(pattern[z][0].charAt(x))).defaultBlockState(),3);
