@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
+import com.vincenthuto.hemomancy.common.entity.boss.BossMoveTimeline;
 import com.vincenthuto.hemomancy.common.entity.boss.BossTelegraphs;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.FunglingEntity;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
@@ -33,7 +34,7 @@ final class MycophantMoves {
 	}
 
 	static void tick(MycophantEntity boss, MycophantController controller, MycophantAttack attack, int tick,
-			VesperMoveTimeline.Stage stage, boolean commit, @Nullable Vec3 lockedAim, @Nullable LivingEntity quarry) {
+			BossMoveTimeline.Stage stage, boolean commit, @Nullable Vec3 lockedAim, @Nullable LivingEntity quarry) {
 		if (!(boss.level() instanceof ServerLevel level)) return;
 		switch (attack) {
 			case RUSHING_EMBRACE, FUSION_EMBRACE -> embrace(level, boss, controller, attack, tick, stage, commit, quarry);
@@ -52,9 +53,9 @@ final class MycophantMoves {
 	// ------------------------------------------------------------------ the embrace (claim and fusion)
 
 	private static void embrace(ServerLevel level, MycophantEntity boss, MycophantController controller, MycophantAttack attack,
-			int tick, VesperMoveTimeline.Stage stage, boolean commit, @Nullable LivingEntity quarry) {
+			int tick, BossMoveTimeline.Stage stage, boolean commit, @Nullable LivingEntity quarry) {
 		boolean fusion = attack == MycophantAttack.FUSION_EMBRACE;
-		if (stage == VesperMoveTimeline.Stage.WINDUP) {
+		if (stage == BossMoveTimeline.Stage.WINDUP) {
 			boss.setGlow(0.7F + 0.5F * tick / 20.0F);
 			if (quarry != null && tick % 4 == 0) {
 				double reach = Math.min(14.0D, Math.max(4.0D, boss.position().distanceTo(quarry.position())));
@@ -64,7 +65,7 @@ final class MycophantMoves {
 					SoundSource.HOSTILE, 1.6F, fusion ? 0.7F : 0.55F);
 			return;
 		}
-		if (stage != VesperMoveTimeline.Stage.ACTIVE) return;
+		if (stage != BossMoveTimeline.Stage.ACTIVE) return;
 		if (commit) level.playSound(null, boss.blockPosition(), SoundEvents.ROOTED_DIRT_BREAK, SoundSource.HOSTILE, 1.8F, 0.5F);
 		if (!MycophantControllerRules.mayLunge(boss.isHolding(), controller.caughtThisMove())) return;
 		controller.lunge();
@@ -115,15 +116,15 @@ final class MycophantMoves {
 	// ------------------------------------------------------------------ the siphon
 
 	private static void siphon(ServerLevel level, MycophantEntity boss, MycophantController controller, int tick,
-			VesperMoveTimeline.Stage stage, boolean commit, @Nullable LivingEntity quarry) {
+			BossMoveTimeline.Stage stage, boolean commit, @Nullable LivingEntity quarry) {
 		double[] at = MycophantVisualRules.siphonMouth();
 		Vec3 mouth = boss.bodyPoint(at[0], at[1], at[2]);
-		if (stage == VesperMoveTimeline.Stage.WINDUP) {
+		if (stage == BossMoveTimeline.Stage.WINDUP) {
 			if (tick % 3 == 0 && quarry != null) BossTelegraphs.line(level, mouth, quarry.position(), AMBER);
 			BossTelegraphs.glow(level, mouth, YOLK, 2, 0.15D);
 			return;
 		}
-		if (stage != VesperMoveTimeline.Stage.ACTIVE) return;
+		if (stage != BossMoveTimeline.Stage.ACTIVE) return;
 		if (commit) {
 			if (quarry instanceof ServerPlayer player && player.distanceTo(boss) <= MycophantClaimRules.siphonRange()
 					&& boss.hasLineOfSight(player) && !player.isSpectator()) {
@@ -143,10 +144,10 @@ final class MycophantMoves {
 
 	// ------------------------------------------------------------------ hand, claws, vents, wings, pulp
 
-	private static void pluck(ServerLevel level, MycophantEntity boss, VesperMoveTimeline.Stage stage, boolean commit,
+	private static void pluck(ServerLevel level, MycophantEntity boss, BossMoveTimeline.Stage stage, boolean commit,
 			@Nullable LivingEntity quarry) {
 		Vec3 hand = boss.bodyPoint(-1.8D, 2.4D, 2.2D);
-		if (stage == VesperMoveTimeline.Stage.WINDUP) {
+		if (stage == BossMoveTimeline.Stage.WINDUP) {
 			BossTelegraphs.glow(level, hand, AMBER, 1, 0.2D);
 			return;
 		}
@@ -159,9 +160,9 @@ final class MycophantMoves {
 		BossTelegraphs.bloodCells(level, quarry.position().add(0.0D, 1.0D, 0.0D), CRIMSON, 10, 0.4D, 0.1D);
 	}
 
-	private static void rake(ServerLevel level, MycophantEntity boss, VesperMoveTimeline.Stage stage, int tick,
+	private static void rake(ServerLevel level, MycophantEntity boss, BossMoveTimeline.Stage stage, int tick,
 			boolean commit, @Nullable LivingEntity quarry) {
-		if (stage == VesperMoveTimeline.Stage.WINDUP) {
+		if (stage == BossMoveTimeline.Stage.WINDUP) {
 			if (tick % 4 == 0) BossTelegraphs.cone(level, boss.position(), boss.forward(), 6.0D, 80.0D, CRIMSON);
 			return;
 		}
@@ -178,11 +179,11 @@ final class MycophantMoves {
 		}
 	}
 
-	private static void brood(ServerLevel level, MycophantEntity boss, VesperMoveTimeline.Stage stage, int tick,
+	private static void brood(ServerLevel level, MycophantEntity boss, BossMoveTimeline.Stage stage, int tick,
 			boolean commit, @Nullable LivingEntity quarry) {
 		Vec3 left = boss.bodyPoint(-2.3D, 0.8D, -3.0D);
 		Vec3 right = boss.bodyPoint(2.3D, 0.8D, -3.0D);
-		if (stage == VesperMoveTimeline.Stage.WINDUP) {
+		if (stage == BossMoveTimeline.Stage.WINDUP) {
 			boss.setGlow(0.7F + tick / 30.0F);
 			if (tick % 3 == 0) {
 				BossTelegraphs.spores(level, left, SPORE, 4, 0.3D, 0.03D);
@@ -209,8 +210,8 @@ final class MycophantMoves {
 		level.playSound(null, boss.blockPosition(), SoundInit.ENTITY_MYCOPHANT_AMBIENT.get(), SoundSource.HOSTILE, 1.4F, 1.3F);
 	}
 
-	private static void surge(ServerLevel level, MycophantEntity boss, VesperMoveTimeline.Stage stage, int tick, boolean commit) {
-		if (stage == VesperMoveTimeline.Stage.WINDUP) {
+	private static void surge(ServerLevel level, MycophantEntity boss, BossMoveTimeline.Stage stage, int tick, boolean commit) {
+		if (stage == BossMoveTimeline.Stage.WINDUP) {
 			if (tick % 5 == 0) BossTelegraphs.ring(level, boss.position(), 2.0D + tick * 0.2D, AMBER, 24);
 			return;
 		}
@@ -225,19 +226,19 @@ final class MycophantMoves {
 	}
 
 	private static void guard(ServerLevel level, MycophantEntity boss, MycophantController controller,
-			VesperMoveTimeline.Stage stage, int tick, boolean commit) {
+			BossMoveTimeline.Stage stage, int tick, boolean commit) {
 		if (commit) {
 			controller.setGuarding(true);
 			level.playSound(null, boss.blockPosition(), SoundEvents.ROOTED_DIRT_BREAK, SoundSource.HOSTILE, 1.2F, 1.4F);
 		}
-		if (stage == VesperMoveTimeline.Stage.RECOVERY) controller.setGuarding(false);
-		if (stage == VesperMoveTimeline.Stage.ACTIVE && tick % 6 == 0)
+		if (stage == BossMoveTimeline.Stage.RECOVERY) controller.setGuarding(false);
+		if (stage == BossMoveTimeline.Stage.ACTIVE && tick % 6 == 0)
 			BossTelegraphs.glow(level, boss.bodyPoint(0.0D, 2.4D, 2.4D), CRIMSON, 4, 1.2D);
 	}
 
-	private static void sweep(ServerLevel level, MycophantEntity boss, VesperMoveTimeline.Stage stage, int tick,
+	private static void sweep(ServerLevel level, MycophantEntity boss, BossMoveTimeline.Stage stage, int tick,
 			boolean commit, @Nullable LivingEntity quarry) {
-		if (stage == VesperMoveTimeline.Stage.WINDUP) {
+		if (stage == BossMoveTimeline.Stage.WINDUP) {
 			if (tick % 4 == 0) BossTelegraphs.cone(level, boss.position(), boss.forward(), 7.0D, 140.0D, CRIMSON);
 			return;
 		}
@@ -252,10 +253,10 @@ final class MycophantMoves {
 		}
 	}
 
-	private static void bloom(ServerLevel level, MycophantEntity boss, VesperMoveTimeline.Stage stage, int tick,
+	private static void bloom(ServerLevel level, MycophantEntity boss, BossMoveTimeline.Stage stage, int tick,
 			boolean commit, @Nullable LivingEntity quarry) {
 		Vec3 pulp = boss.bodyPoint(0.0D, 5.2D, 2.6D);
-		if (stage == VesperMoveTimeline.Stage.WINDUP) {
+		if (stage == BossMoveTimeline.Stage.WINDUP) {
 			boss.setGlow(0.8F + tick / 26.0F);
 			if (tick % 2 == 0) BossTelegraphs.glow(level, pulp, YOLK, 1 + tick / 6, 0.4D);
 			return;

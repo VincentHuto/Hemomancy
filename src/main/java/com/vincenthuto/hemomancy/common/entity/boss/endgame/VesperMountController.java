@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
+import com.vincenthuto.hemomancy.common.entity.boss.BossMoveTimeline;
 import com.vincenthuto.hemomancy.common.worldgen.VesperOrdealManager;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -76,9 +77,9 @@ public final class VesperMountController {
 			locomote(target, arena);
 			return false;
 		}
-		VesperMoveTimeline timeline = VesperMountControllerRules.timeline(attack);
+		BossMoveTimeline timeline = VesperMountControllerRules.timeline(attack);
 		int tick = boss.getAttackTick() + 1;
-		VesperMoveTimeline.Stage stage = timeline.stageAt(tick);
+		BossMoveTimeline.Stage stage = timeline.stageAt(tick);
 		if (pending != null) {
 			VesperMountControllerRules.Interrupt interrupt = VesperMountControllerRules.interrupt(stage, pending);
 			if (interrupt != VesperMountControllerRules.Interrupt.QUEUE) {
@@ -93,15 +94,15 @@ public final class VesperMountController {
 		switch (VesperMountControllerRules.nextState(stage, target != null)) {
 			case SKIP_TO_RECOVERY -> {
 				tick = timeline.windup() + timeline.active();
-				stage = VesperMoveTimeline.Stage.RECOVERY;
+				stage = BossMoveTimeline.Stage.RECOVERY;
 			}
 			default -> { }
 		}
 		if (VesperMountControllerRules.tracksTarget(stage) && target != null) lockedAim = target.position();
-		if (stage != VesperMoveTimeline.Stage.RECOVERY) face(lockedAim, VesperMountMoveControl.GROUND_TURN_DEGREES);
+		if (stage != BossMoveTimeline.Stage.RECOVERY) face(lockedAim, VesperMountMoveControl.GROUND_TURN_DEGREES);
 		boss.setAttackTick(tick);
 		VesperMountMoves.tick(boss, attack, tick, stage, lockedAim, target);
-		if (timeline.stageAt(tick) == VesperMoveTimeline.Stage.COMPLETE) boss.endGroundAttack();
+		if (timeline.stageAt(tick) == BossMoveTimeline.Stage.COMPLETE) boss.endGroundAttack();
 		return true;
 	}
 

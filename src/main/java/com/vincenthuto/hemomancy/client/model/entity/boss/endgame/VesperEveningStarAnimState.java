@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.model.entity.boss.endgame;
 
+import com.vincenthuto.hemomancy.common.entity.boss.BossReplayClock;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperWeaponAction;
 import net.minecraft.client.model.geom.ModelPart;
@@ -33,8 +34,8 @@ public final class VesperEveningStarAnimState {
 	private static final float TRANSITION_POSE_TAU = 1.7F;
 	private static final float TRANSITION_TICKS = 6.0F;
 
-	private final VesperAnimClock actionClock = new VesperAnimClock();
-	private final VesperAnimClock stanceClock = new VesperAnimClock();
+	private final BossReplayClock actionClock = new BossReplayClock();
+	private final BossReplayClock stanceClock = new BossReplayClock();
 
 	private boolean started;
 	private float lastAge;

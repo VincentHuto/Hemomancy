@@ -18,7 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperBurrowRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperMountControllerRules;
-import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperMoveTimeline;
+import com.vincenthuto.hemomancy.common.entity.boss.BossMoveTimeline;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseOneAttack;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseTransitionRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperWingedFlightRules;
@@ -771,7 +771,7 @@ public class VesperMountModel extends HierarchicalModel<VesperTheCrownedRefusalE
 	// ---------------------------------------------------------------- attacks
 
 	private void attack(VesperPhaseOneAttack attack, float t, float age) {
-		VesperMoveTimeline timeline = VesperMountControllerRules.timeline(attack);
+		BossMoveTimeline timeline = VesperMountControllerRules.timeline(attack);
 		float windup = timeline.windup();
 		float wind = HemoEasing.smoothstep(t / Math.max(1.0F, windup));
 		float recover = HemoEasing.smoothstep(

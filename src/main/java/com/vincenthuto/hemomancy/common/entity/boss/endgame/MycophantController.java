@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
+import com.vincenthuto.hemomancy.common.entity.boss.BossMoveTimeline;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -126,14 +127,14 @@ final class MycophantController {
 	private void tickAttack() {
 		MycophantAttack attack = boss.getAttack();
 		int phase = boss.getPhase();
-		VesperMoveTimeline timeline = MycophantControllerRules.timeline(attack, phase);
+		BossMoveTimeline timeline = MycophantControllerRules.timeline(attack, phase);
 		int tick = boss.getAttackTick();
-		VesperMoveTimeline.Stage stage = timeline.stageAt(tick);
+		BossMoveTimeline.Stage stage = timeline.stageAt(tick);
 		LivingEntity quarry = boss.quarry();
 		if ((pendingSplit || pendingStagger > 0) && !boss.isHolding()) {
 			MycophantControllerRules.Interrupt policy = MycophantControllerRules.interrupt(stage);
-			if (policy == MycophantControllerRules.Interrupt.STAGGER || stage == VesperMoveTimeline.Stage.RECOVERY
-					|| stage == VesperMoveTimeline.Stage.COMPLETE) {
+			if (policy == MycophantControllerRules.Interrupt.STAGGER || stage == BossMoveTimeline.Stage.RECOVERY
+					|| stage == BossMoveTimeline.Stage.COMPLETE) {
 				int ticks = pendingStagger > 0 ? pendingStagger : MycophantControllerRules.staggerTicks();
 				Vec3 face = pendingStaggerFace;
 				pendingStagger = 0;
@@ -146,7 +147,7 @@ final class MycophantController {
 				return;
 			}
 		}
-		if (stage == VesperMoveTimeline.Stage.WINDUP && quarry != null)
+		if (stage == BossMoveTimeline.Stage.WINDUP && quarry != null)
 			face(quarry.position(), MycophantControllerRules.turnRateDegrees(phase, true));
 		boolean committedNow = MycophantControllerRules.shouldCommit(tick, timeline.commitTick(), lockedAim != null);
 		if (committedNow) {
@@ -158,7 +159,7 @@ final class MycophantController {
 		}
 		MycophantMoves.tick(boss, this, attack, tick, stage, committedNow, lockedAim, quarry);
 		if (boss.isHolding()) return; // the embrace holds its pose until the player breaks free or the meter fills
-		if (stage == VesperMoveTimeline.Stage.COMPLETE || boss.getState() != MycophantState.ATTACK) {
+		if (stage == BossMoveTimeline.Stage.COMPLETE || boss.getState() != MycophantState.ATTACK) {
 			if (boss.getState() == MycophantState.ATTACK) {
 				endAttack();
 				enter(MycophantState.IDLE);
@@ -183,7 +184,7 @@ final class MycophantController {
 
 	void skipToRecovery() {
 		if (boss.getState() != MycophantState.ATTACK) return;
-		VesperMoveTimeline timeline = MycophantControllerRules.timeline(boss.getAttack(), boss.getPhase());
+		BossMoveTimeline timeline = MycophantControllerRules.timeline(boss.getAttack(), boss.getPhase());
 		boss.setAttackTick(Math.max(boss.getAttackTick(), timeline.windup() + timeline.active()));
 		guarding = false;
 	}

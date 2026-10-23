@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
+import com.vincenthuto.hemomancy.common.entity.boss.BossMoveTimeline;
 import com.vincenthuto.hemomancy.common.summon.PuppetStringsRules;
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 final class VesperRecallRulesTest {
 	@Test
 	void haulLandsOnTheRecallCommitTick() {
-		VesperMoveTimeline timeline = VesperMountControllerRules.timeline(VesperPhaseOneAttack.RECALL);
+		BossMoveTimeline timeline = VesperMountControllerRules.timeline(VesperPhaseOneAttack.RECALL);
 		assertEquals(timeline.windup(), VesperRecallRules.HAUL_TICK);
 		assertTrue(VesperRecallRules.CUE_TICKS >= VesperRecallRules.HAUL_TICK + PuppetStringsRules.UNSPOOL_TICKS);
 	}

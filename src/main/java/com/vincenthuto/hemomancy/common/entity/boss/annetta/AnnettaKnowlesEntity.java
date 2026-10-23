@@ -51,6 +51,7 @@ import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
+import com.vincenthuto.hemomancy.common.entity.boss.BossReplayClock;
 
 /**
  * Annetta Knowles. Found cowering in the broken church; a Harbinger who unseals a jar of Tooth Pecks drives her into
@@ -121,10 +122,8 @@ public class AnnettaKnowlesEntity extends Monster {
 
     // Client clocks: the synced action and scene ticks arrive on the network's schedule, not every client tick, so
     // the model reads these instead. They advance with the client's own ticks and resync when the server disagrees.
-    private int clientAction = ACTION_NONE;
-    private int clientActionStart;
-    @Nullable private EncounterState clientState;
-    private int clientSceneStart;
+    private final BossReplayClock actionClock = new BossReplayClock(ACTION_NONE);
+    private final BossReplayClock sceneClock = new BossReplayClock();
     /** Review fixtures pin a pose: the model then reads the synced ticks exactly. */
     public static boolean reviewHoldClock;
 
@@ -185,28 +184,18 @@ public class AnnettaKnowlesEntity extends Monster {
     /** Ticks into the current action, smooth across frames on the client. */
     public float actionTime(float partialTick) {
         if (!this.level().isClientSide || reviewHoldClock) return getActionTick();
-        return this.tickCount - clientActionStart + partialTick;
+        return actionClock.at(this.tickCount, partialTick);
     }
 
     /** Ticks into the current staged scene (the break or the purge), smooth across frames on the client. */
     public float sceneTime(float partialTick) {
         if (!this.level().isClientSide || reviewHoldClock) return getSceneTick();
-        return this.tickCount - clientSceneStart + partialTick;
+        return sceneClock.at(this.tickCount, partialTick);
     }
 
     private void tickClientClocks() {
-        int action = getAction();
-        int serverTick = getActionTick();
-        if (action != clientAction || Math.abs(this.tickCount - clientActionStart - serverTick) > 2) {
-            clientAction = action;
-            clientActionStart = this.tickCount - serverTick;
-        }
-        EncounterState state = getEncounterState();
-        int scene = getSceneTick();
-        if (state != clientState || Math.abs(this.tickCount - clientSceneStart - scene) > 2) {
-            clientState = state;
-            clientSceneStart = this.tickCount - scene;
-        }
+        actionClock.sync(getAction(), getActionTick(), this.tickCount, 1);
+        sceneClock.sync(getEncounterState().ordinal(), getSceneTick(), this.tickCount, 1);
     }
 
     public EncounterState getEncounterState() {

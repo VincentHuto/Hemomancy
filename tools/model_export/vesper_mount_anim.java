@@ -198,7 +198,7 @@
 	// ---------------------------------------------------------------- attacks
 
 	private void attack(VesperPhaseOneAttack attack, float t, float age) {
-		VesperMoveTimeline timeline = VesperMountControllerRules.timeline(attack);
+		BossMoveTimeline timeline = VesperMountControllerRules.timeline(attack);
 		float windup = timeline.windup();
 		float wind = HemoEasing.smoothstep(t / Math.max(1.0F, windup));
 		float recover = HemoEasing.smoothstep(

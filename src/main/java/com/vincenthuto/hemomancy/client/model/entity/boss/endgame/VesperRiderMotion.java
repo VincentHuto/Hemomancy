@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.model.entity.boss.endgame;
 
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperMountControllerRules;
-import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperMoveTimeline;
+import com.vincenthuto.hemomancy.common.entity.boss.BossMoveTimeline;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseOneAttack;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperWingedFlightRules;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;
@@ -33,7 +33,7 @@ public final class VesperRiderMotion {
 		if (state.attack() != VesperPhaseOneAttack.PUPPET_MUSTER && state.attack() != VesperPhaseOneAttack.RECALL) {
 			return 0.0F;
 		}
-		VesperMoveTimeline timeline = VesperMountControllerRules.timeline(state.attack());
+		BossMoveTimeline timeline = VesperMountControllerRules.timeline(state.attack());
 		float rise = HemoEasing.smoothstep(state.attackTick() / 10.0F);
 		float fall = 1.0F - HemoEasing.smoothstep(
 				(state.attackTick() - timeline.windup() - timeline.active()) / Math.max(1.0F, timeline.recovery()));

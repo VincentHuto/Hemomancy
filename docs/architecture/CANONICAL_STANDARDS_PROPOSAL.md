@@ -244,12 +244,16 @@ public record ExamplePayload(int entityId, float amount) implements CustomPacket
   one `MixinHumanoidModel` hook.
 - `VesperAnimClock`.
 - Eruptus for simple mobs.
+- Since step 10: `common/entity/boss/BossReplayClock` (the promoted `VesperAnimClock`, with `sync` / `at` for an
+  entity that syncs per tick) drives Vesper's anim states and Annetta's action and scene clocks; moves are
+  `common/entity/boss/BossMoveTimeline`. `BossReplayClockTest` checks it against both clocks it replaced, and
+  `BossAnimationClockGuardrailTest` lists the renderers still reading a raw synced tick (decision A-1b).
 - Since step 6: `common/util/HemoEasing` holds the easing and interpolation, with the
   quintic `smootherstep` and `smoothstepUnclamped` as named variants. `HemoEasingTest`
   pins golden values and `EasingCopyGuardrailTest` rejects private copies.
 
 **Migration targets**
-- A-1 (boss clocks)
+- A-1 (boss clocks; Vesper and Annetta done in step 10, the raw-tick readers wait on A-1b)
 - A-2 (easing copies, each replacement byte-equivalent)
 - A-3 (bespoke player animations)
 - A-4 (time sources)

@@ -16,7 +16,7 @@ Every consolidation session reads this file first and updates it last, following
 | 7 | Phase 5: blood accounting | DONE | `8338c98da` | 2026-10-22 |
 | 8 | Phase 7: registration and client registration | DONE | `3e8b213d4`, `291731d6f` | 2026-10-22 |
 | 9 | Phase 6: combat targeting and damage attribution | DONE | `3b841ba03`, `7f0c1968d`, `5fa01de44`, `c9af6c6c3` | 2026-10-22 |
-| 10 | Phases 8 + 9: rendering plumbing and animation conventions | IN PROGRESS | items 1-6: `a53982248`, `1f642dccf`, `af24ecea6`, `9690741ce`, `e1245b2de`, see the step entry | 2026-10-23 |
+| 10 | Phases 8 + 9: rendering plumbing and animation conventions | IN PROGRESS | items 1-7: `a53982248`, `1f642dccf`, `af24ecea6`, `9690741ce`, `e1245b2de`, `da80a7f2a`, see the step entry | 2026-10-23 |
 | 11 | Phase 10: god-class decomposition | NOT STARTED | | |
 | 12 | Phase 11: persistence authority migrations | NOT STARTED | | |
 | 13 | Phases 12 + 13: content, worldgen, data, tooling, standards | NOT STARTED | | |
@@ -98,6 +98,7 @@ under *Pending approvals*. IDs refer to [ARCHITECTURE_AUDIT](ARCHITECTURE_AUDIT.
 | G-2c | One boss definition | 9 | PENDING | Found in step 9. `ManipulationReactiveEvents.isBoss` (with Warden, Elder Guardian and the bosses tag), `ConstrictorCordEntity.isBossTarget` (without them) and `ThreadRipperManip.protectedBody` (a package-name check) disagree |
 | A-4 | Animations that would freeze under `/tick freeze` | 10 | PENDING | Per animation |
 | V-3b | Ferric quad-encoder constant (128 vs 127) | 10 | PENDING | Visual check |
+| A-1b | Replay clock for the bosses that read a raw synced tick | 10 | PENDING | Found in step 10. The Stained Priestess, Latent Annetta (model, renderer, infection layer), the Mycophant, Vesper's hood removal and the mount's absorption layer read a synced counter plus the partial tick. `BossReplayClock` would smooth packet bursts, but it can run up to 2 ticks ahead of a counter that pauses before it re-bases, so displayed timing changes. Once approved, give each a clock keyed on its action or state. The four Saints animate on `ageInTicks` only and need nothing. |
 | V-3c | Outpouring surface marks round their alpha | 10 | PENDING | Found in step 10. The marks write the material encoding by hand, camera-relative with no pose, and round alpha × 255 where `MaterialQuads` truncates it. Once approved, write them through `MaterialQuads` (some vertices lose one alpha level). |
 | V-6b | Mycophant spore colours given on the wrong scale | 10 | PENDING | Found in step 10. The Mycophant encounter's two spore bursts pass 0–1 floats (`0.48F, 0.72F, 0.34F`), which `ParticleColor` truncates to black. Once approved, give them 0–255 values (they turn green and amber). (The hit glow takes either scale: `ParticleGlow` divides by 255 only above 1.) |
 | F-11 | Blood-structure crafts tick once per server tick | 11 | PENDING | Crafts take their intended time |
@@ -172,6 +173,8 @@ them green.
 | `architecture/MaterialQuadGuardrailTest` | 10 | V-3: no `floorMod(…, 127/128)` outside `MaterialQuads`; the Lux, Thermal, Ferric and rite-surface geometries set no UVs of their own; Ferric's 128 stays the named `FERRIC_SEED_TILES` (V-3b); a class that both wraps a seed and sets UVs by hand is listed (the Outpouring marks, V-3c) |
 | `client/render/world/MaterialQuadsEncodingTest` | 10 | V-3: a SHA-256 digest of every vertex's position, colour and UV bits from the Lux, Thermal, Ferric and rite-surface entry points over wrapping seeds, pinned from the pre-merge code (6,468 vertices) |
 | `architecture/ShaderNoiseIncludeGuardrailTest` | 10 | V-5: no noise function (`hash`, `noise`, `fbm` names) whose text and callees match another shader's, whitespace aside, unless it reads its own shader's uniforms; every `include/noise` file is imported, reads no uniform and imports nothing |
+| `architecture/BossAnimationClockGuardrailTest` | 10 | A-1: no `VesperAnimClock` / `VesperMoveTimeline` in main code or the model generators; no hand-written `tickCount - client…Start` replay clock; boss renderers that read a raw synced tick plus partial are listed (A-1b) |
+| `common/entity/boss/BossReplayClockTest` | 10 | A-1: the three `VesperAnimClock` cases, tolerance and re-keying, the reset rule of `sample`, the keyed constructor, and a 200-run fuzz against the old Vesper clock and Annetta's start-tick clock |
 | `architecture/ParticleDataGuardrailTest` | 10 | V-6: the particle data classes are `ColorParticleOptions` plus three listed ones with their payloads; every particle type is a `HemoParticleType`; no `createData` helper outside `HemoParticleData` |
 | `common/particle/data/ColorParticleOptionsTest` | 10 | V-6: the colour particle's network form is the old serialized-colour UTF-8 string byte for byte, its command form is float fields `r`, `g`, `b`, and a decoded particle belongs to the type that decoded it |
 | `client/screen/skilltree/harbinger/VeinBackgroundStyleTest` | 10 | V-1: the named vein styles (progress with its deep palette, crimson, machine, station) keep the values of the copies they replaced, including each style's vertex order |
@@ -873,12 +876,12 @@ them green.
   | 3. Colour particle data (V-6) | DONE | `af24ecea6` |
   | 4. HUD layers and world dispatch (V-7) | DONE | `9690741ce` |
   | 5. Shared material quad encoder (V-3) | DONE | `e1245b2de` |
-  | 6. Shader noise include (V-5) | DONE | the commit after `e1245b2de` |
-  | 7. `BossReplayClock` / `BossMoveTimeline` (A-1) | NOT STARTED | |
+  | 6. Shader noise include (V-5) | DONE | `da80a7f2a` |
+  | 7. `BossReplayClock` / `BossMoveTimeline` (A-1) | DONE (A-1b PENDING) | the commit after `da80a7f2a` |
   | 8. Player-animation registry (A-3) | NOT STARTED | |
   | 9. `AnimationTime` (A-4) | NOT STARTED | |
   | V-4 tube frames (optional, last) | NOT STARTED | |
-- **Test counts before → after (so far):** `test` 4,010 → 4,017 (item 1) → 4,026 (item 2) → 4,031 (item 3) → 4,034 (item 4) → 4,038 (item 5) → 4,040 (item 6), 0 failures. `alphaCheck`
+- **Test counts before → after (so far):** `test` 4,010 → 4,017 (item 1) → 4,026 (item 2) → 4,031 (item 3) → 4,034 (item 4) → 4,038 (item 5) → 4,040 (item 6) → 4,048 (item 7), 0 failures. `alphaCheck`
   not yet run in this step.
 - **Impact map:** one read-only reviewer listed every chrome, render-type, particle, dispatch, encoder, shader-noise,
   boss-clock, player-animation and time-source site with the tests that pin them. It is not committed (it is a
@@ -1077,8 +1080,31 @@ them green.
 - **Item 6 metrics:** shader sources +40 / −230 in 19 files, plus 9 include files (94 lines); duplicated unseeded
   noise closures: 0. `RenderTypeProfileReview` now takes a labelled scene screenshot before measuring.
 - **Item 6 tests:** none repointed; no test pinned the moved noise text.
-- **Pending approvals:** A-4 and V-3b stay PENDING (items 9 and 5); V-6b was added by item 3 and V-3c by item 5.
-- **Handoff notes (next: item 7):**
+- **Item 7, boss replay clock and move timeline (A-1):**
+  - **`BossReplayClock`** (`common/entity/boss`, so an entity can own one) is `VesperAnimClock` made public. `sample`
+    keeps its exact behaviour; `sync` (re-base on a new key or drift beyond 2 ticks) and `at` (the replayed value) split
+    it for an entity that syncs once per client tick and reads each frame. `new BossReplayClock(key)` starts already
+    running from local tick 0 under that key.
+  - **`BossMoveTimeline`** (`common/entity/boss`) is `VesperMoveTimeline` renamed; the Vesper mount and Mycophant
+    controllers, rules, moves and models use it, and so do the `tools/model_export` generators that write those models.
+  - **Migrated:** Vesper's Evening Star and mount anim states (now on the shared class). Annetta's hand-written action
+    and scene clocks (`clientActionStart`, `clientSceneStart`) became two `BossReplayClock`s synced in `aiStep`: the
+    action clock starts keyed on `ACTION_NONE` and the scene clock unstarted, matching her old first-tick behaviour.
+  - **Not migrated (A-1b, PENDING):** the Priestess, Latent Annetta, the Mycophant, Vesper's hood removal and the
+    mount's absorption layer read a raw synced tick plus the partial tick. Moving them onto the clock changes displayed
+    timing when packets bunch or a counter pauses. See *Decisions*. The Saints have no synced-tick animation.
+  - **Proof of identical timing:** `BossReplayClockTest` fuzzes 200 runs of jittery, resetting and re-keyed counters
+    against copies of the old Vesper clock and of Annetta's start-tick clock, value for value.
+  - **Visual check:** Annetta (`-PannettaReviewOnly=combo_motion,live_break`) and Vesper
+    (`wound_carapace,wound_neck,live_wound_drain`) review pairs, `before7` / `after7`: poses and the combo frames match;
+    the live scenes differ by AI and particles as between any two runs. The `after7` runs also carried item 8's
+    uncommitted player-pose edits; no player is posed in those scenes. Shots: `build/step10-review/item7/`.
+- **Item 7 metrics:** `src/main` 1 class added (`BossReplayClock`), 1 removed (`VesperAnimClock`), 1 renamed; replay
+  clock implementations 2 → 1.
+- **Item 7 tests:** `VesperAnimClockTest` became `BossReplayClockTest` (3 → 8 tests); three rules tests repointed to
+  `BossMoveTimeline`.
+- **Pending approvals:** A-4 and V-3b stay PENDING (items 9 and 5); V-6b was added by item 3, V-3c by item 5 and A-1b by item 7.
+- **Handoff notes (next: item 8):**
   - **Baseline worktree:** `../Hemomancy-step10-before` holds `29a5576ae` with a `libs` junction. Remove the junction
     with `rmdir` before `git worktree remove --force`.
   - **Review clients:** a fresh game directory without `options.txt` stops at the first-launch screen and the driver

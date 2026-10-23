@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
+import com.vincenthuto.hemomancy.common.entity.boss.BossMoveTimeline;
 import org.junit.jupiter.api.Test;
 
 import java.util.EnumSet;
@@ -12,8 +13,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class MycophantControllerRulesTest {
 	private static void assertTimeline(MycophantAttack attack, int phase, int windup, int active, int recovery) {
-		VesperMoveTimeline timeline = MycophantControllerRules.timeline(attack, phase);
-		assertEquals(new VesperMoveTimeline(windup, active, recovery), timeline, attack + " phase " + phase);
+		BossMoveTimeline timeline = MycophantControllerRules.timeline(attack, phase);
+		assertEquals(new BossMoveTimeline(windup, active, recovery), timeline, attack + " phase " + phase);
 	}
 
 	@Test
@@ -80,9 +81,9 @@ final class MycophantControllerRulesTest {
 
 	@Test
 	void splitQueuesUntilRecovery() {
-		assertEquals(MycophantControllerRules.Interrupt.STAGGER, MycophantControllerRules.interrupt(VesperMoveTimeline.Stage.WINDUP));
-		assertEquals(MycophantControllerRules.Interrupt.QUEUE, MycophantControllerRules.interrupt(VesperMoveTimeline.Stage.ACTIVE));
-		assertEquals(MycophantControllerRules.Interrupt.QUEUE, MycophantControllerRules.interrupt(VesperMoveTimeline.Stage.RECOVERY));
+		assertEquals(MycophantControllerRules.Interrupt.STAGGER, MycophantControllerRules.interrupt(BossMoveTimeline.Stage.WINDUP));
+		assertEquals(MycophantControllerRules.Interrupt.QUEUE, MycophantControllerRules.interrupt(BossMoveTimeline.Stage.ACTIVE));
+		assertEquals(MycophantControllerRules.Interrupt.QUEUE, MycophantControllerRules.interrupt(BossMoveTimeline.Stage.RECOVERY));
 	}
 
 	@Test

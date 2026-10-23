@@ -322,7 +322,7 @@
 
 	private void attackPose(MycophantEntity entity, float partial) {
 		MycophantAttack attack = entity.getAttack();
-		VesperMoveTimeline timeline = MycophantControllerRules.timeline(attack, entity.getPhase());
+		BossMoveTimeline timeline = MycophantControllerRules.timeline(attack, entity.getPhase());
 		float t = entity.getAttackTick() + partial;
 		float w = Math.max(1, timeline.windup());
 		float a = Math.max(1, timeline.active());

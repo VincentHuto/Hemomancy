@@ -234,7 +234,7 @@ Entities cast through a parallel path:
   - About 105 models animate with hand-written `setupAnim` code.
   - Six mobs use vanilla keyframe animations.
   - Bosses run scripted controllers that sync a move or clock to the client.
-    `VesperAnimClock` is the best existing replay clock.
+    `BossReplayClock` (step 10, promoted from `VesperAnimClock`) is the shared replay clock.
 - **Player animation.** This is the casting system from section 5, plus six smaller
   player animations that each have their own packet.
 - **World effects.** These are drawn through an ordered dispatcher in `ClientEvents`

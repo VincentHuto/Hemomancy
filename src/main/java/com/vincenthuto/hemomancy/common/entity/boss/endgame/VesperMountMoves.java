@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
+import com.vincenthuto.hemomancy.common.entity.boss.BossMoveTimeline;
 import com.vincenthuto.hemomancy.common.entity.projectile.VesperScuteProjectileEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.entity.summon.EntityIronSpike;
@@ -44,11 +45,11 @@ final class VesperMountMoves {
 	}
 
 	static void tick(VesperTheCrownedRefusalEntity boss, VesperPhaseOneAttack attack, int tick,
-			VesperMoveTimeline.Stage stage, Vec3 aim, @Nullable LivingEntity target) {
+			BossMoveTimeline.Stage stage, Vec3 aim, @Nullable LivingEntity target) {
 		if (tick == 1) playWindupCue(boss, attack);
 		switch (attack) {
 			case ROYAL_SCUTTLE -> {
-				if (stage == VesperMoveTimeline.Stage.WINDUP) telegraphLine(boss, aim, 0.85F, 0.02F, 0.02F);
+				if (stage == BossMoveTimeline.Stage.WINDUP) telegraphLine(boss, aim, 0.85F, 0.02F, 0.02F);
 				if (tick == 25) {
 					Vec3 rush = aim.subtract(boss.position()).multiply(1.0D, 0.0D, 1.0D);
 					if (rush.lengthSqr() > 0.01D) boss.setDeltaMovement(rush.normalize().scale(1.65D).add(0.0D, 0.08D, 0.0D));
@@ -57,7 +58,7 @@ final class VesperMountMoves {
 				if (tick >= 25 && tick <= 42) hurtNearby(boss, 3.7D, 10.0F, 0.8D);
 			}
 			case PINCER_VICE -> {
-				if ((stage == VesperMoveTimeline.Stage.WINDUP || tick < 38) && boss.tickCount % 2 == 0
+				if ((stage == BossMoveTimeline.Stage.WINDUP || tick < 38) && boss.tickCount % 2 == 0
 						&& boss.level() instanceof ServerLevel server) {
 					VesperVisualEffects.telegraphCone(server, boss.position(), aim.subtract(boss.position()),
 							5.2D, 110.0D, new ParticleColor(204, 5, 5));
@@ -79,7 +80,7 @@ final class VesperMountMoves {
 				}
 			}
 			case BROOD_TRAMPLE -> {
-				if (stage == VesperMoveTimeline.Stage.WINDUP) telegraphRing(boss, 5.5D, 0.65F, 0.0F, 0.0F);
+				if (stage == BossMoveTimeline.Stage.WINDUP) telegraphRing(boss, 5.5D, 0.65F, 0.0F, 0.0F);
 				if (tick == 22) boss.setDeltaMovement(boss.getDeltaMovement().add(0.0D, 0.75D, 0.0D));
 				if (tick == 38) {
 					hurtNearby(boss, 6.0D, 13.0F, 1.15D);
@@ -95,13 +96,13 @@ final class VesperMountMoves {
 			}
 			case RECALL -> {
 				if (tick == 1) hookRecall(boss);
-				if (stage == VesperMoveTimeline.Stage.WINDUP && tick % 2 == 0) holdRecall(boss, tick);
+				if (stage == BossMoveTimeline.Stage.WINDUP && tick % 2 == 0) holdRecall(boss, tick);
 				if (tick == VesperRecallRules.HAUL_TICK) recallPuppets(boss);
 				if (tick == RECALL_ARRIVAL_TICK) recallArrival(boss);
 			}
 			case PUPPET_MUSTER -> {
 				if (tick == 1) planMusterPoints(boss);
-				if (stage == VesperMoveTimeline.Stage.WINDUP && boss.tickCount % 2 == 0
+				if (stage == BossMoveTimeline.Stage.WINDUP && boss.tickCount % 2 == 0
 						&& boss.level() instanceof ServerLevel server) {
 					for (Vec3 point : boss.plannedPoints()) {
 						VesperVisualEffects.descendingStrings(server, point, VesperVisualEffects.BLOOD, tick / 32.0F);

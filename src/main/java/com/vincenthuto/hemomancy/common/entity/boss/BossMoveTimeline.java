@@ -1,7 +1,7 @@
-package com.vincenthuto.hemomancy.common.entity.boss.endgame;
+package com.vincenthuto.hemomancy.common.entity.boss;
 
-/** One mount move as wind-up, active and recovery spans, counted in ticks from the move's start. */
-public record VesperMoveTimeline(int windup, int active, int recovery) {
+/** One boss move as wind-up, active and recovery spans, counted in ticks from the move's start. */
+public record BossMoveTimeline(int windup, int active, int recovery) {
 	public enum Stage { WINDUP, ACTIVE, RECOVERY, COMPLETE }
 
 	public int total() {

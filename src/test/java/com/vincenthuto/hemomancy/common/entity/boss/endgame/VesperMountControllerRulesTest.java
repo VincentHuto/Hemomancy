@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
+import com.vincenthuto.hemomancy.common.entity.boss.BossMoveTimeline;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,10 +10,10 @@ final class VesperMountControllerRulesTest {
 	void timelinesCoverEveryGroundAttackAndEndAfterRecovery() {
 		for (VesperPhaseOneAttack attack : VesperPhaseOneAttack.values()) {
 			if (attack == VesperPhaseOneAttack.IDLE) continue;
-			VesperMoveTimeline timeline = VesperMountControllerRules.timeline(attack);
+			BossMoveTimeline timeline = VesperMountControllerRules.timeline(attack);
 			assertTrue(timeline.windup() >= 10, attack + " needs a readable wind-up");
-			assertEquals(VesperMoveTimeline.Stage.COMPLETE, timeline.stageAt(timeline.total()));
-			assertEquals(VesperMoveTimeline.Stage.WINDUP, timeline.stageAt(0));
+			assertEquals(BossMoveTimeline.Stage.COMPLETE, timeline.stageAt(timeline.total()));
+			assertEquals(BossMoveTimeline.Stage.WINDUP, timeline.stageAt(0));
 		}
 	}
 
@@ -31,14 +32,14 @@ final class VesperMountControllerRulesTest {
 	void interruptsNeverCutAnActiveSwing() {
 		for (VesperMountControllerRules.Priority priority : VesperMountControllerRules.Priority.values()) {
 			assertEquals(VesperMountControllerRules.Interrupt.QUEUE,
-					VesperMountControllerRules.interrupt(VesperMoveTimeline.Stage.ACTIVE, priority));
+					VesperMountControllerRules.interrupt(BossMoveTimeline.Stage.ACTIVE, priority));
 		}
 		assertEquals(VesperMountControllerRules.Interrupt.STAGGER, VesperMountControllerRules.interrupt(
-				VesperMoveTimeline.Stage.WINDUP, VesperMountControllerRules.Priority.WOUND));
+				BossMoveTimeline.Stage.WINDUP, VesperMountControllerRules.Priority.WOUND));
 		assertEquals(VesperMountControllerRules.Interrupt.TAKE_NOW, VesperMountControllerRules.interrupt(
-				VesperMoveTimeline.Stage.RECOVERY, VesperMountControllerRules.Priority.WOUND));
+				BossMoveTimeline.Stage.RECOVERY, VesperMountControllerRules.Priority.WOUND));
 		assertEquals(VesperMountControllerRules.Interrupt.TAKE_NOW, VesperMountControllerRules.interrupt(
-				VesperMoveTimeline.Stage.COMPLETE, VesperMountControllerRules.Priority.WING_GROWTH));
+				BossMoveTimeline.Stage.COMPLETE, VesperMountControllerRules.Priority.WING_GROWTH));
 	}
 
 	@Test
@@ -60,15 +61,15 @@ final class VesperMountControllerRulesTest {
 	@Test
 	void targetLossFinishesMoveThenPatrols() {
 		assertEquals(VesperMountControllerRules.Next.CONTINUE,
-				VesperMountControllerRules.nextState(VesperMoveTimeline.Stage.ACTIVE, true));
+				VesperMountControllerRules.nextState(BossMoveTimeline.Stage.ACTIVE, true));
 		assertEquals(VesperMountControllerRules.Next.SKIP_TO_RECOVERY,
-				VesperMountControllerRules.nextState(VesperMoveTimeline.Stage.WINDUP, false));
+				VesperMountControllerRules.nextState(BossMoveTimeline.Stage.WINDUP, false));
 		assertEquals(VesperMountControllerRules.Next.FINISH,
-				VesperMountControllerRules.nextState(VesperMoveTimeline.Stage.ACTIVE, false));
+				VesperMountControllerRules.nextState(BossMoveTimeline.Stage.ACTIVE, false));
 		assertEquals(VesperMountControllerRules.Next.FINISH,
-				VesperMountControllerRules.nextState(VesperMoveTimeline.Stage.RECOVERY, false));
+				VesperMountControllerRules.nextState(BossMoveTimeline.Stage.RECOVERY, false));
 		assertEquals(VesperMountControllerRules.Next.PATROL,
-				VesperMountControllerRules.nextState(VesperMoveTimeline.Stage.COMPLETE, false));
+				VesperMountControllerRules.nextState(BossMoveTimeline.Stage.COMPLETE, false));
 	}
 
 	@Test
@@ -88,8 +89,8 @@ final class VesperMountControllerRulesTest {
 
 	@Test
 	void aimTracksOnlyDuringWindup() {
-		assertTrue(VesperMountControllerRules.tracksTarget(VesperMoveTimeline.Stage.WINDUP));
-		assertFalse(VesperMountControllerRules.tracksTarget(VesperMoveTimeline.Stage.ACTIVE));
-		assertFalse(VesperMountControllerRules.tracksTarget(VesperMoveTimeline.Stage.RECOVERY));
+		assertTrue(VesperMountControllerRules.tracksTarget(BossMoveTimeline.Stage.WINDUP));
+		assertFalse(VesperMountControllerRules.tracksTarget(BossMoveTimeline.Stage.ACTIVE));
+		assertFalse(VesperMountControllerRules.tracksTarget(BossMoveTimeline.Stage.RECOVERY));
 	}
 }

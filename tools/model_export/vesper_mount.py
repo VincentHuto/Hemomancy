@@ -593,7 +593,7 @@ def paint(cube, t):
 EXTRA_IMPORTS = ('import com.mojang.blaze3d.vertex.VertexConsumer;\n'
                  'import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperBurrowRules;\n'
                  'import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperMountControllerRules;\n'
-                 'import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperMoveTimeline;\n'
+                 'import com.vincenthuto.hemomancy.common.entity.boss.BossMoveTimeline;\n'
                  'import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseOneAttack;\n'
                  'import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperPhaseTransitionRules;\n'
                  'import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperWingedFlightRules;\n'

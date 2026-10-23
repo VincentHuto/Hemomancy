@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.model.entity.boss.endgame;
 
+import com.vincenthuto.hemomancy.common.entity.boss.BossReplayClock;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperBurrowRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefusalEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperWingedFlightRules;
@@ -38,11 +39,11 @@ public final class VesperMountAnimState {
 	private static final float MAX_LEG_REACH = 1.25F;
 	private static final float MAX_TILT = 0.38F;
 
-	private final VesperAnimClock attackClock = new VesperAnimClock();
-	private final VesperAnimClock staggerClock = new VesperAnimClock();
-	private final VesperAnimClock flightClock = new VesperAnimClock();
-	private final VesperAnimClock burrowClock = new VesperAnimClock();
-	private final VesperAnimClock transitionClock = new VesperAnimClock();
+	private final BossReplayClock attackClock = new BossReplayClock();
+	private final BossReplayClock staggerClock = new BossReplayClock();
+	private final BossReplayClock flightClock = new BossReplayClock();
+	private final BossReplayClock burrowClock = new BossReplayClock();
+	private final BossReplayClock transitionClock = new BossReplayClock();
 
 	private boolean started;
 	private float lastAge;

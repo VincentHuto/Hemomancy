@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
+import com.vincenthuto.hemomancy.common.entity.boss.BossMoveTimeline;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntUnaryOperator;
@@ -12,20 +13,20 @@ public final class MycophantControllerRules {
 	private MycophantControllerRules() {
 	}
 
-	public static VesperMoveTimeline timeline(MycophantAttack attack, int phase) {
+	public static BossMoveTimeline timeline(MycophantAttack attack, int phase) {
 		boolean two = phase >= 2;
 		return switch (attack) {
-			case RUSHING_EMBRACE -> two ? new VesperMoveTimeline(18, 10, 22) : new VesperMoveTimeline(24, 10, 26);
-			case SIPHON_FEED -> new VesperMoveTimeline(20, 60, 16);
-			case PLUCK -> new VesperMoveTimeline(14, 6, 16);
-			case CLAW_RAKE -> new VesperMoveTimeline(16, 6, 18);
-			case BROOD_CALL -> new VesperMoveTimeline(30, 10, 30);
-			case NECTAR_SURGE -> new VesperMoveTimeline(30, 4, 20);
-			case FUSION_EMBRACE -> new VesperMoveTimeline(22, 12, 26);
-			case WING_GUARD -> new VesperMoveTimeline(8, 60, 10);
-			case WING_SWEEP -> new VesperMoveTimeline(18, 6, 20);
-			case PULP_BLOOM -> new VesperMoveTimeline(26, 8, 24);
-			case NONE -> new VesperMoveTimeline(0, 0, 0);
+			case RUSHING_EMBRACE -> two ? new BossMoveTimeline(18, 10, 22) : new BossMoveTimeline(24, 10, 26);
+			case SIPHON_FEED -> new BossMoveTimeline(20, 60, 16);
+			case PLUCK -> new BossMoveTimeline(14, 6, 16);
+			case CLAW_RAKE -> new BossMoveTimeline(16, 6, 18);
+			case BROOD_CALL -> new BossMoveTimeline(30, 10, 30);
+			case NECTAR_SURGE -> new BossMoveTimeline(30, 4, 20);
+			case FUSION_EMBRACE -> new BossMoveTimeline(22, 12, 26);
+			case WING_GUARD -> new BossMoveTimeline(8, 60, 10);
+			case WING_SWEEP -> new BossMoveTimeline(18, 6, 20);
+			case PULP_BLOOM -> new BossMoveTimeline(26, 8, 24);
+			case NONE -> new BossMoveTimeline(0, 0, 0);
 		};
 	}
 
@@ -97,8 +98,8 @@ public final class MycophantControllerRules {
 	}
 
 	/** Events that must not cut an active move: a wind-up can still be staggered out of, anything later queues. */
-	public static Interrupt interrupt(VesperMoveTimeline.Stage stage) {
-		return stage == VesperMoveTimeline.Stage.WINDUP ? Interrupt.STAGGER : Interrupt.QUEUE;
+	public static Interrupt interrupt(BossMoveTimeline.Stage stage) {
+		return stage == BossMoveTimeline.Stage.WINDUP ? Interrupt.STAGGER : Interrupt.QUEUE;
 	}
 
 	/** She drives along the locked line only until she has someone: never while holding, never after a catch. */
