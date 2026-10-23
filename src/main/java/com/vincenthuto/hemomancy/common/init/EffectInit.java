@@ -96,7 +96,7 @@ public class EffectInit {
             () -> new Potion("potion_of_blood_rush", new MobEffectInstance(blood_rush, 1000, 3)));
 
     public static final DeferredHolder<MobEffect, MobEffect> hemolysis = EFFECTS.register("hemolysis",
-            () -> new HemolysisEffect(MobEffectCategory.NEUTRAL, 15186121));
+            () -> new HemolysisEffect(MobEffectCategory.BENEFICIAL, 15186121));
 
     public static final DeferredHolder<Potion, Potion> potion_of_hemolysis = POTION_TYPES.register("potion_of_hemolysis",
             () -> new Potion("potion_of_hemolysis", new MobEffectInstance(hemolysis, 1000, 3)));
