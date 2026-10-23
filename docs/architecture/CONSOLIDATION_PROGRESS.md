@@ -17,7 +17,7 @@ Every consolidation session reads this file first and updates it last, following
 | 8 | Phase 7: registration and client registration | DONE | `3e8b213d4`, `291731d6f` | 2026-10-22 |
 | 9 | Phase 6: combat targeting and damage attribution | DONE | `3b841ba03`, `7f0c1968d`, `5fa01de44`, `c9af6c6c3` | 2026-10-22 |
 | 10 | Phases 8 + 9: rendering plumbing and animation conventions | DONE | `a53982248`..`e2597dc41` (items 1-9), review fixes and ledger in the commit after `e2597dc41` | 2026-10-23 |
-| 11 | Phase 10: god-class decomposition | IN PROGRESS (item 1 of 5 done) | `91bb77eba`, item 1 in the commit after it | 2026-10-23 |
+| 11 | Phase 10: god-class decomposition | IN PROGRESS (items 1-2 of 5 done) | `91bb77eba`, `b6c7bd846`, `866c0b990`, item 2 in the commit after it | 2026-10-23 |
 | 12 | Phase 11: persistence authority migrations | NOT STARTED | | |
 | 13 | Phases 12 + 13: content, worldgen, data, tooling, standards | NOT STARTED | | |
 
@@ -185,6 +185,8 @@ them green.
 | `common/rite/ActiveCardinalRiteNbtLayoutTest` | 11 | L-6: each kind's saved rite NBT pinned key for key (`src/test/resources/rite/nbt-layout/`), the pre-StateVersion countdown and the legacy `AlembicUpgrade` key |
 | `architecture/RiteKindGuardrailTest` | 11 | L-6 / N-8: the shared tick, `CardinalRiteTermination`, `CardinalRiteCompletion` and `CardinalRiteStructure` test no kind (`isRite`, `isWorkingCraft`, `isPuppeteerTrial`, `SuccessionRites.is`); only `CardinalRiteActivation` builds an `ActiveCardinalRite`; the blood crafting key packet only delegates; no GameTest reflects on rite completion |
 | `architecture/NetworkPackageGuardrailTest` | 11 | N-8: `common/network` holds payloads, `PacketHandler`, `ServerboundGuards` and three listed helpers (stale entries fail) |
+| gameTest `DialogueRouteCharacterisationGameTests` (suite `dialogue_route_validation`) | 11 | O-4: every dialogue-event route (about 170 ids, prefix routes and their fall-throughs included) posted by a D0 player and a supplied D7 player to its speaker and with no speaker; the reward flag, chat, saved-data diff, drops and Hemomancy advancements must equal `src/gameTest/resources/dialogue/route-fingerprints.txt` (510 lines, recorded from the old handler) |
+| `architecture/DialogueRoutingGuardrailTest` | 11 | O-4: `DialogueEventRouter` is the only `DialogueEvent` subscriber; every `<Npc>DialogueEvents` class has a `handle` and is in the router's table; no route class over 400 lines |
 
 ## Step entries
 
@@ -1215,15 +1217,16 @@ them green.
   | Item | Status | Commit |
   |---|---|---|
   | Characterisation suite for item 1 (written and green before the extraction) | DONE | `91bb77eba` |
-  | 1. `RiteKind` strategy, per-kind state, `CardinalRiteActivation`, Blood Structure crafting out of the packet | DONE | the commit after `91bb77eba` |
+  | 1. `RiteKind` strategy, per-kind state, `CardinalRiteActivation`, Blood Structure crafting out of the packet | DONE | `b6c7bd846` |
   | F-11 (crafts tick once per server tick) | NOT DONE: PENDING in *Decisions* | |
-  | 2. Per-NPC dialogue-event routing | NOT STARTED | |
+  | Characterisation suite for item 2 | DONE | `866c0b990` |
+  | 2. Per-NPC dialogue-event routing | DONE | the commit after `866c0b990` |
   | 3. `HemoCommand` split | NOT STARTED | |
   | 4. Registration-time `setEntityCast` | NOT STARTED | |
   | 5. Scriptorium operations into its block entity | NOT STARTED | |
-- **Test counts before → after:** `test` 4,055 → 4,064 (characterisation commit) → 4,067 (item 1), 0 failures.
-  `alphaCheck` after item 1: BUILD SUCCESSFUL, all 1,068 required GameTests passed (1,036 before; 32 are the new
-  `rite_kind_validation` suite).
+- **Test counts before → after:** `test` 4,055 → 4,064 (characterisation commit) → 4,067 (item 1) → 4,070 (item 2),
+  0 failures. `alphaCheck` after item 1: BUILD SUCCESSFUL, all 1,068 required GameTests passed (1,036 before; 32 are
+  the new `rite_kind_validation` suite). After item 2: all 1,069 (plus `dialogue_route_validation`).
 - **Impact map:** one read-only reviewer listed the tick's branches, `ActiveCardinalRite`'s fields and keys, the
   packet's parts and every test pinning them (not committed; a working list).
 - **Characterisation (before the extraction):**
@@ -1288,11 +1291,38 @@ them green.
   source text); several former `test` checks now run only in `alphaCheck`.
 - **Not verified:** no in-game client run (the change is server-side and behaviour-preserving; the characterisation
   suite drives every kind through the real tick).
-- **Handoff notes for item 2 (`DialogueEventHandler`, O-4):**
-  - Write the dialogue characterisation GameTests first: every route of `DialogueEventHandler.onDialogueOption`
-    (1,531 lines: about 13 prefix or lookup routes before a 36-case switch, then about 50 handlers). Post a
-    `DialogueEvent` on the event bus with a `CapturedPlayer` (chat capture) and the right NPC, and assert the reward
-    flag and effect.
-  - The focused launcher pattern from item 1 works: a new suite namespace in `gradle/game-tests.gradle`, an `empty.nbt`
-    template under `src/gameTest/resources/data/<namespace>/structure/`, then `runXGameTestServer`.
+- **Item 2, per-NPC dialogue routing (O-4):**
+  - Characterisation first (`866c0b990`): a golden-master GameTest posts every id the handler routed, three ways
+    (D0 to its speaker, supplied D7 to its speaker, D7 with no speaker), and fingerprints the reward flag, chat, the
+    diff of the player's saved NBT (inventory, persistent data, attachments), drops and new Hemomancy advancements.
+    UUIDs and bearing distances are normalised; three recordings were identical. 233 of the 510 fingerprints carry
+    chat and 210 a saved-data change; the silent ones are mostly the no-speaker passes.
+  - `DialogueEventHandler` (1,531 lines) is gone. `dialogue/route/DialogueEventRouter` is the only subscriber and
+    tries an ordered table: the shared routes in their old order (station claims, `antecedent_`, `clinical_lesson_`,
+    Annetta, `circus_school_`, Ringmaster), then one class per NPC: Mnemonist, Alchemist, Artificer, Vicar, Voyager,
+    Vein Mason, Acolyte, Zealot, Guardian, Hermit, Sanguine Monolith, fungal whisper, Scout, plus recruitment (spoken
+    by three NPCs) and `DialogueRewards` (shared give, drop, count and take). 2,031 lines in 19 classes, the largest
+    301. Methods and cases moved verbatim (generated, then checked label by label by the reviewer); two `return;` in
+    the Archon choices became `return true;` (the old handler stopped there).
+  - The old `consumeInventory` folded into `DialogueRewards.consumeItemCount`; the only difference is an
+    `Inventory.setChanged()` on the Woven Vessel turn-in (a dirty counter, not saved, no gameplay effect).
+  - `hasClaimedConsecrationKit` moved to `ArtificerDialogueEvents`, `hasClaimedMonolithCornerstone` to
+    `SanguineMonolithDialogueEvents` (4 callers). `CircusIntroductionRules` became public for the Mnemonist route.
+  - 14 source-text tests read the handler; they now read `SourceAssertions.readDialogueRoutes()` (every route class,
+    joined), so the same text is pinned wherever it now lives. `gradle/source-text-impact-map.py` maps that helper to
+    each route class.
+  - Final review: no behaviour change, no identifier change; fixed its findings: five cases that were space-indented
+    in the old file had landed in the Mnemonist class and now sit with the Vicar and the Alchemist; the seal scan
+    covers every route class again; a comment, an unused import.
+- **Handoff notes for item 3 (`HemoCommand`):**
+  - An impact map was taken (not committed). `HemoCommand` is 1,979 lines: one root `requires(hasPermission(2))`, 16
+    branches (blood, bloodline, degree, morphling, qliphoth, skills, unstained, organs, tendency, bloodmoon, fane,
+    chamber, will, summons, manipulations, slots), no redirects, no static state. `/hemo test` is merged in by
+    `HemoTestCommands` (gameTest source set) through `DevTestHooks`.
+  - No branch has an asserting behaviour test. Characterise with (a) a snapshot of the Brigadier tree (every node,
+    argument type with bounds, executes, suggestions, `getAllUsage`) and (b) executed leaves with captured feedback
+    for the safe branches. Unsafe in a shared GameTest server: `qliphoth tree` (places a Bloom, global saved data),
+    `bloodline disband` (removes Fanes in all levels), `bloodmoon summon/cancel` (global), `will ambush` (spawns
+    hostiles), `chamber size` in the Chamber dimension.
+  - Eight source-text tests pin `HemoCommand`, one with exact tab indentation (`FanePreviewCommandSourceTest`).
   - Inline Python heredocs passed through the shell tool lose their backslashes; write edit scripts to a file first.

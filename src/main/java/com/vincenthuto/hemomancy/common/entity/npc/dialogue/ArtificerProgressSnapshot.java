@@ -91,7 +91,7 @@ public record ArtificerProgressSnapshot(int degree, boolean activeBlood, boolean
 				crimsonFitting && !ArtificerAssignments.hasFitting(player, ItemInit.crimson_vestment_fitting.get()),
 				assumedFitting && !ArtificerAssignments.hasFitting(player, ItemInit.assumed_limb_fitting.get()),
 				d7Fitting && !ArtificerAssignments.hasFitting(player, ItemInit.monolithic_frame_fitting.get()),
-				DialogueEventHandler.hasClaimedConsecrationKit(player));
+				com.vincenthuto.hemomancy.common.entity.npc.dialogue.route.ArtificerDialogueEvents.hasClaimedConsecrationKit(player));
 	}
 
 	private static boolean hasForkFitting(ServerPlayer player, ForkFamily family) {

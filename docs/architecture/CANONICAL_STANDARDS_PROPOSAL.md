@@ -339,6 +339,10 @@ Unstained mechanics, hazards, Still Arts and summons.
   same NBT keys as before (`ActiveCardinalRiteNbtLayoutTest`). Rites are built only by
   `CardinalRiteActivation`. `RiteKindGuardrailTest` enforces these, and the `rite_kind_validation`
   GameTests characterise each kind's start, completion, endings and a mid-rite save and load.
+- Since step 11, dialogue option events route through `DialogueEventRouter`: an ordered table of shared routes
+  (station claims, antecedent, clinical lessons, Annetta, circus school, Ringmaster) and one `<Npc>DialogueEvents`
+  class per NPC. `DialogueRoutingGuardrailTest` keeps it the only `DialogueEvent` subscriber, and the
+  `dialogue_route_validation` GameTest fingerprints every route's outcome.
 
 **Migration targets**
 - Living-weapon sweeps (`LivingSickleItem`, `LivingTorchItem`) still use vanilla melee eligibility, and

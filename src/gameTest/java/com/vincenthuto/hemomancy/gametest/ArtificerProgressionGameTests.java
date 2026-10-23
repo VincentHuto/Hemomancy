@@ -136,13 +136,13 @@ public final class ArtificerProgressionGameTests {
 					&& DialogueOptionPacket.dispatch(player, newEvent, vicar.getId()) == null,
 				"A Vicar could grant either old or new kit event");
 		var forged = new DialogueEvent(player, newEvent, vicar.getId());
-		DialogueEventHandler.onDialogueOption(forged);
+		com.vincenthuto.hemomancy.common.entity.npc.dialogue.route.DialogueEventRouter.onDialogueOption(forged);
 		helper.assertTrue(!forged.wasRewardDelivered(), "A forged Artificer event accepted the Vicar");
 		player.setPos(origin.add(12, 0, 0));
 		helper.assertTrue(DialogueOptionPacket.dispatch(player, newEvent, artificer.getId()) == null,
 				"Distant Artificer granted the kit");
 		forged = new DialogueEvent(player, newEvent, artificer.getId());
-		DialogueEventHandler.onDialogueOption(forged);
+		com.vincenthuto.hemomancy.common.entity.npc.dialogue.route.DialogueEventRouter.onDialogueOption(forged);
 		helper.assertTrue(!forged.wasRewardDelivered(), "A direct distant event granted the kit");
 		player.setPos(origin);
 		ServerPlayer early = player(helper, "early-kit");
@@ -153,7 +153,7 @@ public final class ArtificerProgressionGameTests {
 				"Degree 4 claimed the consecration kit");
 		var awarded = DialogueOptionPacket.dispatch(player, newEvent, artificer.getId());
 		helper.assertTrue(awarded != null && awarded.wasRewardDelivered()
-					&& DialogueEventHandler.hasClaimedConsecrationKit(player)
+					&& com.vincenthuto.hemomancy.common.entity.npc.dialogue.route.ArtificerDialogueEvents.hasClaimedConsecrationKit(player)
 					&& player.getRecipeBook().contains(Hemomancy.rloc("vicars_consecration_kit")),
 				"Valid Artificer did not grant the one-time kit");
 		helper.assertTrue(player.getInventory().contains(new net.minecraft.world.item.ItemStack(ItemInit.vicars_consecration_kit.get())),

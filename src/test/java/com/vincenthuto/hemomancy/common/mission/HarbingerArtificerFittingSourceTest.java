@@ -100,8 +100,7 @@ public final class HarbingerArtificerFittingSourceTest {
 	private static void artificerRewardsGrantPhysicalFittings() throws IOException {
 		String helper = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/mission/artificer/ArtificerAssignments.java"));
-		String eventHandler = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java"));
+		String eventHandler = com.vincenthuto.hemomancy.support.SourceAssertions.readDialogueRoutes();
 
 		assertContains("Hematic Iron set grants Worn Vow fitting", helper, "tryGrantHematicIronFitting");
 		assertContains("fork set grants branch fitting", helper, "tryGrantForkFitting");
@@ -174,7 +173,7 @@ public final class HarbingerArtificerFittingSourceTest {
 		Pattern artificerSealPattern = Pattern.compile("artificer[_A-Za-z0-9.]*seal", Pattern.CASE_INSENSITIVE);
 		for (Path path : List.of(
 				SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/event/HarbingerAdvancementGranter.java"),
-				SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java"),
+				SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/entity/npc/dialogue/route/ArtificerDialogueEvents.java"),
 				SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerArtificerDialogueTrees.java"),
 				SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/mission/artificer/ArtificerAssignments.java"),
 				SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/item/harbinger/HarbingerAssignmentLedgerItem.java"),
@@ -185,6 +184,8 @@ public final class HarbingerArtificerFittingSourceTest {
 				Path.of("docs/LORE_REFERENCE.md"))) {
 			assertNoRegex("Artificer seal identifier removed from " + path, read(path), artificerSealPattern);
 		}
+		assertNoRegex("Artificer seal identifier removed from the dialogue routes",
+				com.vincenthuto.hemomancy.support.SourceAssertions.readDialogueRoutes(), artificerSealPattern);
 
 		Path advancementDir = RESOURCE_ROOT.resolve("data/hemomancy/advancement/hemomancy");
 		try (Stream<Path> paths = Files.walk(advancementDir)) {

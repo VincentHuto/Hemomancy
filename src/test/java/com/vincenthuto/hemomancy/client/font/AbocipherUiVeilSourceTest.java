@@ -34,8 +34,7 @@ public final class AbocipherUiVeilSourceTest {
 				section(vicar, "public static DialogueTree initiate", "public static DialogueTree adept"),
 				"blood_script_ritual");
 
-		String handler = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java"));
+		String handler = com.vincenthuto.hemomancy.support.SourceAssertions.readDialogueRoutes();
 		assertContains("dialogue handler unlocks literacy", handler, "ABOCIPHER_LITERACY");
 		assertContains("dialogue handler ritual duration", handler, "1200");
 		assertContains("dialogue handler uses screen overlay packet", handler, "SpawnSanguineOmenEffectPacket");

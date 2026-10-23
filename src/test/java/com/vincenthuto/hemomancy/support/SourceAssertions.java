@@ -25,6 +25,16 @@ public final class SourceAssertions {
 		return read(RepoPaths.mainJava(packageRelative));
 	}
 
+	/** The dialogue-event routes, one class per NPC since step 11, joined in file-name order. */
+	public static String readDialogueRoutes() {
+		try (var files = Files.list(RepoPaths.mainJava("common/entity/npc/dialogue/route"))) {
+			return String.join("\n", files.filter(path -> path.toString().endsWith(".java")).sorted()
+					.map(SourceAssertions::read).toList());
+		} catch (IOException e) {
+			throw new UncheckedIOException("could not list the dialogue routes", e);
+		}
+	}
+
 	public static String read(Path path) {
 		if (!Files.isRegularFile(path)) {
 			throw new AssertionError("missing " + RepoPaths.display(path));

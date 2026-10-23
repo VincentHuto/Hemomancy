@@ -36,7 +36,7 @@ public final class UnstainedProgressionRepairSourceTest {
 		String artGrants = read("src/main/java/com/vincenthuto/hemomancy/common/capability/player/unstained/stillart/KnownStillArtEvents.java");
 		assertContains(artGrants, "if (!art.isUnlockedFor(player))");
 
-		String eventHandler = read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java");
+		String eventHandler = com.vincenthuto.hemomancy.support.SourceAssertions.readDialogueRoutes();
 		for (String event : new String[] {
 				"acolyte_task_gather_ghost_pipe", "acolyte_task_wreath", "acolyte_task_hemolytic",
 				"acolyte_task_consecrate", "acolyte_task_chalice" }) {

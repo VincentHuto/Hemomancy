@@ -24,7 +24,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.ClinicalBloodDialogu
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueCategory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueHubFactory;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEvent;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEventHandler;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.route.DialogueEventRouter;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.MnemonistStarterMemoryChoice;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.PhlegethonticCommissionDialogue;
@@ -2740,7 +2740,7 @@ public final class ClinicalBloodProgressionGameTests {
             actor.getPersistentData().putString(HemoJourneySnapshot.STAGE_KEY, HemoJourneyStage.APOTHEOS_CHOICE.id());
             actor.getMainHandItem().use(h.getLevel(), actor, InteractionHand.MAIN_HAND);
             com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper.performForcedProjectionReturn(actor);
-            DialogueEventHandler.onDialogueOption(new DialogueEvent(actor, "archon_choice_silence", 0));
+            DialogueEventRouter.onDialogueOption(new DialogueEvent(actor, "archon_choice_silence", 0));
             h.assertTrue(HemoJourneyChecks.verify(actor, HemoJourneyStage.APOTHEOS_CHOICE, origin).passed()
                             && blooms.getBloomById(bloom.bloomId()) != null,
                     "A real Spine return and Silent choice must pass without losing the Communion Bloom");
@@ -3517,7 +3517,7 @@ public final class ClinicalBloodProgressionGameTests {
         h.assertTrue(mnemonist.progressionDialogue(d2).getStartNode().options().stream()
                 .anyMatch(option -> "starter_choice".equals(option.nextNodeId())),
                 "D2 Mnemonist did not offer the starter choice");
-        DialogueEventHandler.onDialogueOption(new DialogueEvent(d2,
+        DialogueEventRouter.onDialogueOption(new DialogueEvent(d2,
                 "mnemonist_blank_memory_recipe", mnemonist.getId()));
         h.assertTrue(!d2.getRecipeBook().contains(Hemomancy.rloc("hematic_memory")),
                 "Forged D2 lesson awarded the D3 blank recipe");
@@ -3534,7 +3534,7 @@ public final class ClinicalBloodProgressionGameTests {
                 "Woven Vessel did not teach the blank-memory recipe");
         h.assertTrue(!d3.getRecipeBook().contains(Hemomancy.rloc("hematic_memory")),
                 "Blank recipe was awarded before the D3 lesson");
-        DialogueEventHandler.onDialogueOption(new DialogueEvent(d3,
+        DialogueEventRouter.onDialogueOption(new DialogueEvent(d3,
                 "mnemonist_blank_memory_recipe", mnemonist.getId()));
         h.assertTrue(d3.getRecipeBook().contains(Hemomancy.rloc("hematic_memory")),
                 "Mnemonist did not award the blank-memory recipe");
@@ -3576,7 +3576,7 @@ public final class ClinicalBloodProgressionGameTests {
         var mnemonist = EntityInit.harbinger_mnemonist.get().create(h.getLevel());
         mnemonist.setPos(p.position());
         h.getLevel().addFreshEntity(mnemonist);
-        DialogueEventHandler.onDialogueOption(new DialogueEvent(p,
+        DialogueEventRouter.onDialogueOption(new DialogueEvent(p,
                 "mnemonist_blank_memory_recipe", mnemonist.getId()));
         h.assertTrue(p.getRecipeBook().contains(Hemomancy.rloc("hematic_memory")),
                 "D3 player did not learn the blank recipe before crafting it");
@@ -3607,7 +3607,7 @@ public final class ClinicalBloodProgressionGameTests {
         p.getInventory().add(new ItemStack(Items.BOOK));
         p.getInventory().add(new ItemStack(Items.INK_SAC));
         p.getInventory().add(new ItemStack(Items.PAPER, 3));
-        DialogueEventHandler.onDialogueOption(new DialogueEvent(p,
+        DialogueEventRouter.onDialogueOption(new DialogueEvent(p,
                 "mnemonist_woven_vessel_turn_in", mnemonist.getId()));
         h.assertTrue(HarbingerAdvancementGranter.isMnemonistWovenVesselComplete(p)
                         && !HarbingerAdvancementGranter.isMnemonistFirstWeaveComplete(p),
@@ -4017,14 +4017,14 @@ public final class ClinicalBloodProgressionGameTests {
             try {
                 if (clarity) unstained.setClarityUnlocked(true);
                 else unstained.setBegunPurification(true);
-                DialogueEventHandler.onDialogueOption(new DialogueEvent(actor,
+                DialogueEventRouter.onDialogueOption(new DialogueEvent(actor,
                         "alchemist_first_separation_brief", alchemist.getId()));
                 h.assertTrue(!FirstSeparationAssignment.isBriefed(actor)
                                 && actor.getInventory().countItem(ItemInit.bloody_vial.get()) == 0,
                         "Stale ineligible callback must not record a briefing without its supply claim");
                 unstained.setClarityUnlocked(false);
                 unstained.setBegunPurification(false);
-                DialogueEventHandler.onDialogueOption(new DialogueEvent(actor,
+                DialogueEventRouter.onDialogueOption(new DialogueEvent(actor,
                         "alchemist_first_separation_brief", alchemist.getId()));
                 h.assertTrue(FirstSeparationAssignment.isBriefed(actor)
                                 && actor.getInventory().countItem(ItemInit.bloody_vial.get()) == 2,
@@ -4055,7 +4055,7 @@ public final class ClinicalBloodProgressionGameTests {
                 actor.getInventory().setItem(slot, new ItemStack(Items.COBBLESTONE, 64));
             if (partial) actor.getInventory().setItem(0, new ItemStack(ItemInit.bloody_vial.get(), 63));
             if (creative) actor.setGameMode(GameType.CREATIVE);
-            DialogueEventHandler.onDialogueOption(new DialogueEvent(actor,
+            DialogueEventRouter.onDialogueOption(new DialogueEvent(actor,
                     "alchemist_first_separation_brief", alchemist.getId()));
             h.assertTrue(FirstSeparationAssignment.isBriefed(actor), "Full inventory must not block briefing");
             FirstSeparationAssignment.giveBriefingSupplies(actor);
@@ -4129,7 +4129,7 @@ public final class ClinicalBloodProgressionGameTests {
             if (oneSlot) actor.getInventory().setItem(0, ItemStack.EMPTY);
             if (creative) actor.setGameMode(GameType.CREATIVE);
             var claim = new DialogueEvent(actor, "alchemist_first_separation_claim", alchemist.getId());
-            DialogueEventHandler.onDialogueOption(claim);
+            DialogueEventRouter.onDialogueOption(claim);
             h.assertTrue(FirstSeparationAssignment.isClaimed(actor), "Valid Separation claim was not recorded");
             h.assertTrue(h.getLevel().getEntitiesOfClass(ItemEntity.class, area,
                             item -> item.getItem().is(ItemInit.living_syringe.get())

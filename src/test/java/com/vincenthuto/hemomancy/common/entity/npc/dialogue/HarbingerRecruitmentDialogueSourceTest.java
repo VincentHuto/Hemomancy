@@ -40,10 +40,8 @@ public final class HarbingerRecruitmentDialogueSourceTest {
 				"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/bloodvolume/BloodlineSavedData.java"));
 		assertBloodlineSavedDataPropagatesNpcOutposts(read(
 				"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/bloodvolume/BloodlineSavedData.java"));
-		assertRecruitmentHandlerEnforcesNpcType(read(
-				"src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java"));
-		assertRecruitmentHandlerEnforcesOutpost(read(
-				"src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java"));
+		assertRecruitmentHandlerEnforcesNpcType(com.vincenthuto.hemomancy.support.SourceAssertions.readDialogueRoutes());
+		assertRecruitmentHandlerEnforcesOutpost(com.vincenthuto.hemomancy.support.SourceAssertions.readDialogueRoutes());
 		assertOutpostSpawnerMarksNpcOrigins(read(
 				"src/main/java/com/vincenthuto/hemomancy/common/worldgen/structure/HarbingerOutpostStructure.java"));
 		assertRecruitmentRulesLocateNpcOutposts(read(

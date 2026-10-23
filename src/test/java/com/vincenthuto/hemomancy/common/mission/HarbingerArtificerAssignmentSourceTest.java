@@ -143,8 +143,7 @@ public final class HarbingerArtificerAssignmentSourceTest {
 	private static void artificerDialogueClaimsRewardsAndFittings() throws IOException {
 		String dialogue = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerArtificerDialogueTrees.java"));
-		String eventHandler = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java"));
+		String eventHandler = com.vincenthuto.hemomancy.support.SourceAssertions.readDialogueRoutes();
 
 		for (String event : new String[] {
 				"EVENT_CLAIM_WORN_VOW_REWARD",

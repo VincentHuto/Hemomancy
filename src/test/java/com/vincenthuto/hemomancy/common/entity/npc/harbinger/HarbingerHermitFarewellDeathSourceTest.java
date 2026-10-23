@@ -12,7 +12,7 @@ public final class HarbingerHermitFarewellDeathSourceTest {
 
 	public static void main(String[] args) throws IOException {
 		String hermit = read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerHermitEntity.java");
-		String handler = read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java");
+		String handler = com.vincenthuto.hemomancy.support.SourceAssertions.readDialogueRoutes();
 		String renderer = read("src/main/java/com/vincenthuto/hemomancy/client/render/entity/npc/HarbingerHermitRenderer.java");
 		String renderTypes = read("src/main/java/com/vincenthuto/hemomancy/client/render/HemoRenderTypes.java");
 		String shaders = read("src/main/java/com/vincenthuto/hemomancy/client/render/shader/ShaderInit.java");

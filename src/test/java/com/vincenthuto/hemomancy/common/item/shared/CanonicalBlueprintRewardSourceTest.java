@@ -27,8 +27,7 @@ final class CanonicalBlueprintRewardSourceTest {
 
 	@Test
 	void dialogueRewardsConstructTheCanonicalMnemonicBlueprint() throws Exception {
-		String dialogue = Files.readString(Path.of(
-				"src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java"));
+		String dialogue = com.vincenthuto.hemomancy.support.SourceAssertions.readDialogueRoutes();
 		assertTrue(dialogue.contains("MnemonicBlueprintItem.create(ItemInit.mnemonic_blueprint.get()"));
 		assertFalse(dialogue.contains("RiteHintItem.createForRite"));
 		assertFalse(dialogue.contains("BloodStructureHintItem.createForStructure"));

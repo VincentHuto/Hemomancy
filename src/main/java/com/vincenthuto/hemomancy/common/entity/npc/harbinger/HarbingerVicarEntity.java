@@ -220,7 +220,7 @@ public class HarbingerVicarEntity extends com.vincenthuto.hemomancy.common.succe
         }
         tree = EarlyInitiationDialogue.vicar(tree, serverPlayer);
         tree = HarbingerVicarDialogueTrees.withContinuingConsecration(tree, degree,
-                com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEventHandler.hasClaimedConsecrationKit(serverPlayer));
+                com.vincenthuto.hemomancy.common.entity.npc.dialogue.route.ArtificerDialogueEvents.hasClaimedConsecrationKit(serverPlayer));
         if (degree == 5 || degree == 6) {
             var bloodline = HemoCapabilityAccess.getBloodVolume(serverPlayer).getBloodLine();
             boolean foundedBloodline = bloodline.isValid()

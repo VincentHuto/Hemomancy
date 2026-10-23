@@ -8,7 +8,7 @@ public final class ArchonPathRiteSourceTest {
 	private ArchonPathRiteSourceTest() {}
 
 	public static void main(String[] args) throws IOException {
-		String dialogue = read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java");
+		String dialogue = com.vincenthuto.hemomancy.support.SourceAssertions.readDialogueRoutes();
 		String rites = read("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java")
 				+ read("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletionEffects.java");
 		String ordeal = read("src/main/java/com/vincenthuto/hemomancy/common/worldgen/VesperOrdealManager.java");

@@ -50,8 +50,7 @@ public final class VeinMasonMissionSourceTest {
 				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/VeinMasonScarLesson.java"));
 		String trees = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerCicatrixAnchoriteDialogueTrees.java"));
-		String eventHandler = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java"));
+		String eventHandler = com.vincenthuto.hemomancy.support.SourceAssertions.readDialogueRoutes();
 		String advancementGranter = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/event/HarbingerAdvancementGranter.java"));
 		String lang = read(RESOURCE_ROOT.resolve("assets/hemomancy/lang/en_us.json"));
@@ -99,8 +98,7 @@ public final class VeinMasonMissionSourceTest {
 		String itemInit = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/init/ItemInit.java"));
 		String vicarTrees = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerVicarDialogueTrees.java"));
-		String eventHandler = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java"));
+		String eventHandler = com.vincenthuto.hemomancy.support.SourceAssertions.readDialogueRoutes();
 		String advancementGranter = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/event/HarbingerAdvancementGranter.java"));
 		String mapItem = read(SOURCE_ROOT.resolve(

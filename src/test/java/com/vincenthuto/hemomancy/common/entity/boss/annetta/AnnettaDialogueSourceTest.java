@@ -39,7 +39,7 @@ class AnnettaDialogueSourceTest {
 
     @Test
     void bothRoutesBeginFromADialogueChoice() throws IOException {
-        String handler = read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java");
+        String handler = com.vincenthuto.hemomancy.support.SourceAssertions.readDialogueRoutes();
         assertTrue(handler.contains("startsWith(\"annetta_\")") && handler.contains("annetta.handleDialogueChoice(player, event.getEventId())"));
         String trees = read("src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/AnnettaDialogueTrees.java");
         assertTrue(trees.contains("EVENT_UNSEAL_JAR") && trees.contains("EVENT_OFFER_DRAUGHT"));

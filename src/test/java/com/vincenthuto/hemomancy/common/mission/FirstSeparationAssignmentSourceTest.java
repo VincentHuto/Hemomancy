@@ -15,8 +15,6 @@ class FirstSeparationAssignmentSourceTest {
 			"src/main/resources/data/hemomancy/advancement/hemomancy/first_separation_reward_claimed.json");
 	private static final Path ALCHEMIST = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerAlchemistDialogueTrees.java");
-	private static final Path HANDLER = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java");
 	private static final Path BLOOD_EVENTS = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/bloodvolume/BloodVolumeEvents.java");
 	private static final Path OUTPUT_SLOT = Path.of(
@@ -45,7 +43,7 @@ class FirstSeparationAssignmentSourceTest {
 		assertContains(briefing, "\"trigger\": \"minecraft:impossible\"");
 		assertContains(claim, "\"trigger\": \"minecraft:impossible\"");
 		String alchemist = read(ALCHEMIST);
-		String handler = read(HANDLER);
+		String handler = com.vincenthuto.hemomancy.support.SourceAssertions.readDialogueRoutes();
 		assertContains(alchemist, "EVENT_FIRST_SEPARATION_BRIEF");
 		assertContains(alchemist, "EVENT_FIRST_SEPARATION_CLAIM");
 		assertContains(alchemist, "canBriefFirstSeparation");

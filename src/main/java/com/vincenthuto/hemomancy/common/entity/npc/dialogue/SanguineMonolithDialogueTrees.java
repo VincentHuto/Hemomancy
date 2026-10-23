@@ -27,7 +27,7 @@ public final class SanguineMonolithDialogueTrees {
 
 	public static DialogueTree forPlayer(net.minecraft.server.level.ServerPlayer player, int degree) {
 		DialogueTree tree = forDegree(degree);
-		if (degree >= 7 && DialogueEventHandler.hasClaimedMonolithCornerstone(player)) {
+		if (degree >= 7 && com.vincenthuto.hemomancy.common.entity.npc.dialogue.route.SanguineMonolithDialogueEvents.hasClaimedMonolithCornerstone(player)) {
 			var nodes = new java.util.LinkedHashMap<>(tree.nodes());
 			nodes.put("armature_cornerstone", new DialogueNode("armature_cornerstone", List.of(
 					"hemomancy.dialogue.event.monolith_cornerstone_known",

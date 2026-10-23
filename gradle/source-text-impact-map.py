@@ -78,6 +78,12 @@ def helper_pins(text):
             path = norm(os.path.join(base, match.group(1))) if base else match.group(1)
             if os.path.exists(path):
                 found.setdefault(path.rstrip("/"), "helper")
+    # SourceAssertions.readDialogueRoutes() reads every dialogue route class.
+    if "readDialogueRoutes()" in text:
+        routes = "src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/route"
+        for name in sorted(os.listdir(routes)):
+            if name.endswith(".java"):
+                found.setdefault(routes + "/" + name, "helper")
     return found
 
 

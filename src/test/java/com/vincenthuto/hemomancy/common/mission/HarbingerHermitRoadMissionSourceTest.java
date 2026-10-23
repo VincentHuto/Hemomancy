@@ -141,8 +141,7 @@ public final class HarbingerHermitRoadMissionSourceTest {
 				"com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerVicarEntity.java"));
 		String vicarTrees = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerVicarDialogueTrees.java"));
-		String eventHandler = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java"));
+		String eventHandler = com.vincenthuto.hemomancy.support.SourceAssertions.readDialogueRoutes();
 		String advancementGranter = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/event/HarbingerAdvancementGranter.java"));
 
@@ -186,8 +185,7 @@ public final class HarbingerHermitRoadMissionSourceTest {
 				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerAlchemistDialogueTrees.java"));
 		String alchemistEntity = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerAlchemistEntity.java"));
-		String eventHandler = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java"));
+		String eventHandler = com.vincenthuto.hemomancy.support.SourceAssertions.readDialogueRoutes();
 		String advancementGranter = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/event/HarbingerAdvancementGranter.java"));
 		String ledgerItem = read(SOURCE_ROOT.resolve(
@@ -256,8 +254,7 @@ public final class HarbingerHermitRoadMissionSourceTest {
 				"com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerMnemonistEntity.java"));
 		String somaticLoom = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/tile/harbinger/crafting/SomaticLoomBlockEntity.java"));
-		String eventHandler = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java"));
+		String eventHandler = com.vincenthuto.hemomancy.support.SourceAssertions.readDialogueRoutes();
 		String advancementGranter = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/event/HarbingerAdvancementGranter.java"));
 		String ledgerItem = read(SOURCE_ROOT.resolve(

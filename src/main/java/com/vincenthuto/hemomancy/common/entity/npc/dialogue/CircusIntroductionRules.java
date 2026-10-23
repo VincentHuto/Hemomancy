@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
-final class CircusIntroductionRules {
-	static final int MINIMUM_DEGREE = 4;
+public final class CircusIntroductionRules {
+	public static final int MINIMUM_DEGREE = 4;
 
 	private CircusIntroductionRules() {
 	}

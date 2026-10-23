@@ -15,8 +15,6 @@ public final class FirstBloodcraftAssignmentSourceTest {
 			"src/main/java/com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerVicarEntity.java");
 	private static final Path VICAR_DIALOGUE = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerVicarDialogueTrees.java");
-	private static final Path DIALOGUE_HANDLER = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/DialogueEventHandler.java");
 
 	private FirstBloodcraftAssignmentSourceTest() {
 	}
@@ -54,7 +52,7 @@ public final class FirstBloodcraftAssignmentSourceTest {
 	void vicarExposesAndSecurelyHandlesFirstBloodcraftRewardClaim() throws IOException {
 		String entity = read(VICAR_ENTITY);
 		String dialogue = read(VICAR_DIALOGUE);
-		String handler = read(DIALOGUE_HANDLER);
+		String handler = com.vincenthuto.hemomancy.support.SourceAssertions.readDialogueRoutes();
 
 		assertContains("dialogue publishes the claim event id", dialogue,
 				"EVENT_CLAIM_FIRST_BLOODCRAFT_REWARD = \"vicar_claim_first_bloodcraft_reward\"");
