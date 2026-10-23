@@ -16,7 +16,7 @@ Every consolidation session reads this file first and updates it last, following
 | 7 | Phase 5: blood accounting | DONE | `8338c98da` | 2026-10-22 |
 | 8 | Phase 7: registration and client registration | DONE | `3e8b213d4`, `291731d6f` | 2026-10-22 |
 | 9 | Phase 6: combat targeting and damage attribution | DONE | `3b841ba03`, `7f0c1968d`, `5fa01de44`, `c9af6c6c3` | 2026-10-22 |
-| 10 | Phases 8 + 9: rendering plumbing and animation conventions | IN PROGRESS | items 1-7: `a53982248`, `1f642dccf`, `af24ecea6`, `9690741ce`, `e1245b2de`, `da80a7f2a`, see the step entry | 2026-10-23 |
+| 10 | Phases 8 + 9: rendering plumbing and animation conventions | IN PROGRESS | items 1-8: `a53982248`, `1f642dccf`, `af24ecea6`, `9690741ce`, `e1245b2de`, `da80a7f2a`, `9136d673d`, see the step entry | 2026-10-23 |
 | 11 | Phase 10: god-class decomposition | NOT STARTED | | |
 | 12 | Phase 11: persistence authority migrations | NOT STARTED | | |
 | 13 | Phases 12 + 13: content, worldgen, data, tooling, standards | NOT STARTED | | |
@@ -175,6 +175,8 @@ them green.
 | `architecture/ShaderNoiseIncludeGuardrailTest` | 10 | V-5: no noise function (`hash`, `noise`, `fbm` names) whose text and callees match another shader's, whitespace aside, unless it reads its own shader's uniforms; every `include/noise` file is imported, reads no uniform and imports nothing |
 | `architecture/BossAnimationClockGuardrailTest` | 10 | A-1: no `VesperAnimClock` / `VesperMoveTimeline` in main code or the model generators; no hand-written `tickCount - client…Start` replay clock; boss renderers that read a raw synced tick plus partial are listed (A-1b) |
 | `common/entity/boss/BossReplayClockTest` | 10 | A-1: the three `VesperAnimClock` cases, tolerance and re-keying, the reset rule of `sample`, the keyed constructor, and a 200-run fuzz against the old Vesper clock and Annetta's start-tick clock |
+| `architecture/PlayerAnimationGuardrailTest` | 10 | A-3: the staff-planting, warp-chair and casting third-person poses are called only from `PlayerAnimationRegistry`, and the registry only from `MixinHumanoidModel`; the ten first-person `RenderHandEvent` handlers keep their priorities (HIGHEST planting and staff morph, HIGH injection and microscope, NORMAL torch, fungal projection and axonal, LOW morphling hand, LOWEST casting and held weapon) |
+| `client/player/PlayerAnimationRegistryTest` | 10 | A-3: the third-person pose order and which poses claim the frame |
 | `architecture/ParticleDataGuardrailTest` | 10 | V-6: the particle data classes are `ColorParticleOptions` plus three listed ones with their payloads; every particle type is a `HemoParticleType`; no `createData` helper outside `HemoParticleData` |
 | `common/particle/data/ColorParticleOptionsTest` | 10 | V-6: the colour particle's network form is the old serialized-colour UTF-8 string byte for byte, its command form is float fields `r`, `g`, `b`, and a decoded particle belongs to the type that decoded it |
 | `client/screen/skilltree/harbinger/VeinBackgroundStyleTest` | 10 | V-1: the named vein styles (progress with its deep palette, crimson, machine, station) keep the values of the copies they replaced, including each style's vertex order |
@@ -877,11 +879,11 @@ them green.
   | 4. HUD layers and world dispatch (V-7) | DONE | `9690741ce` |
   | 5. Shared material quad encoder (V-3) | DONE | `e1245b2de` |
   | 6. Shader noise include (V-5) | DONE | `da80a7f2a` |
-  | 7. `BossReplayClock` / `BossMoveTimeline` (A-1) | DONE (A-1b PENDING) | the commit after `da80a7f2a` |
-  | 8. Player-animation registry (A-3) | NOT STARTED | |
+  | 7. `BossReplayClock` / `BossMoveTimeline` (A-1) | DONE (A-1b PENDING) | `9136d673d` |
+  | 8. Player-animation registry (A-3) | DONE | the commit after `9136d673d` |
   | 9. `AnimationTime` (A-4) | NOT STARTED | |
   | V-4 tube frames (optional, last) | NOT STARTED | |
-- **Test counts before → after (so far):** `test` 4,010 → 4,017 (item 1) → 4,026 (item 2) → 4,031 (item 3) → 4,034 (item 4) → 4,038 (item 5) → 4,040 (item 6) → 4,048 (item 7), 0 failures. `alphaCheck`
+- **Test counts before → after (so far):** `test` 4,010 → 4,017 (item 1) → 4,026 (item 2) → 4,031 (item 3) → 4,034 (item 4) → 4,038 (item 5) → 4,040 (item 6) → 4,048 (item 7) → 4,052 (item 8), 0 failures. `alphaCheck`
   not yet run in this step.
 - **Impact map:** one read-only reviewer listed every chrome, render-type, particle, dispatch, encoder, shader-noise,
   boss-clock, player-animation and time-source site with the tests that pin them. It is not committed (it is a
@@ -1103,8 +1105,28 @@ them green.
   clock implementations 2 → 1.
 - **Item 7 tests:** `VesperAnimClockTest` became `BossReplayClockTest` (3 → 8 tests); three rules tests repointed to
   `BossMoveTimeline`.
+- **Item 8, player-animation registry (A-3):**
+  - **`PlayerAnimationRegistry`** (`client/player`) holds `THIRD_PERSON`, every third-person player pose in priority
+    order. Staff planting, the part-offset reset, the casting pose and the warp chair always apply. Of the microscope,
+    vial injection, torch breath, Unstained swing and living-weapon stroke, the first to pose the model claims the frame
+    and the rest are skipped. That is the old chain: `MixinHumanoidModel`'s three TAIL calls (planting, then
+    `PlayerAnimationClientState.applyThirdPersonPose`, then the warp chair) with the early returns inside the middle
+    call. The mixin now makes one call. An Unstained weapon in the swinging hand still claims the frame between swings,
+    as its early return did. The non-player checks are kept per pose.
+  - **`PlayerAnimationClientState`** keeps the Living Torch breath state (`set`, `isActive`, `hand`, `elapsed`, `tick`,
+    `isBreathing`); its pose code moved into the registry unchanged.
+  - **Left with each animation:** packets (frozen layouts), client states, ticks (several run inside handlers that do
+    other work in the same tick), first-person hand renderers and session clears (`ClientSessionCacheTest` wants each
+    cache cleared by name in `ClientSessionEvents`). The first-person priorities, which also order these renderers
+    against other mods, are pinned by the guardrail.
+  - **Visual check:** Outpouring review pair (`before8` / `after8`), where the player is seen in third person casting,
+    armoured and holding weapons: poses match; vein animation phase differs as between runs. Shots:
+    `build/step10-review/item8/`.
+- **Item 8 metrics:** `src/main` 1 class added; pose entry points called from the mixin 3 → 1.
+- **Item 8 tests:** `WaistPivotRulesTest` (the reset now precedes the casting entry in the registry list) and
+  `LivingTorchReworkSourceTest` (the mixin calls the registry) repointed.
 - **Pending approvals:** A-4 and V-3b stay PENDING (items 9 and 5); V-6b was added by item 3, V-3c by item 5 and A-1b by item 7.
-- **Handoff notes (next: item 8):**
+- **Handoff notes (next: item 9):**
   - **Baseline worktree:** `../Hemomancy-step10-before` holds `29a5576ae` with a `libs` junction. Remove the junction
     with `rmdir` before `git worktree remove --force`.
   - **Review clients:** a fresh game directory without `options.txt` stops at the first-launch screen and the driver

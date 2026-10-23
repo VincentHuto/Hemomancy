@@ -255,7 +255,8 @@ public record ExamplePayload(int entityId, float amount) implements CustomPacket
 **Migration targets**
 - A-1 (boss clocks; Vesper and Annetta done in step 10, the raw-tick readers wait on A-1b)
 - A-2 (easing copies, each replacement byte-equivalent)
-- A-3 (bespoke player animations)
+- A-3 (bespoke player animations; step 10 put the third-person pose order in `PlayerAnimationRegistry` and pinned
+  the first-person hand priorities, while each animation keeps its own packet, state and tick)
 - A-4 (time sources)
 
 **Exceptions**

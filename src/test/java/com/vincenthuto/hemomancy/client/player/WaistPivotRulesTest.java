@@ -59,13 +59,14 @@ class WaistPivotRulesTest {
     @Test void pivotAssignsPartZInsteadOfAccumulating() throws IOException {
         // Vanilla setupAnim resets y every frame but never body.z or head.z, so an accumulated z slides the torso away.
         String pose=read("src/main/java/com/vincenthuto/hemomancy/client/player/CastingPlayerPose.java");
-        String state=read("src/main/java/com/vincenthuto/hemomancy/client/player/PlayerAnimationClientState.java");
+        String state=read("src/main/java/com/vincenthuto/hemomancy/client/player/PlayerAnimationRegistry.java");
         assertTrue(pose.contains("model.body.z="),"pivot assigns body.z");
         assertTrue(pose.contains("model.head.z="),"pivot assigns head.z");
         assertFalse(pose.contains(".z+="),"no part z accumulates");
         assertTrue(state.contains("model.body.z=0"),"body.z reset each frame");
         assertTrue(state.contains("model.head.z=0"),"head.z reset each frame");
-        int reset=state.indexOf("model.body.z=0"),apply=state.indexOf("CastingPlayerPose.apply(");
+        // The registry applies its poses in list order: the reset entry comes before the casting pose and every claim.
+        int reset=state.indexOf("always(\"offset_reset\""),apply=state.indexOf("always(\"casting\"");
         assertTrue(reset>=0 && reset<apply,"reset precedes every pose and early return");
     }
     private static String read(String path) throws IOException {

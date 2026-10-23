@@ -1,27 +1,20 @@
 package com.vincenthuto.hemomancy.client.player;
 
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteStaffPlantingClientState;
-import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingTorchBreathRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingTorchItem;
-import com.vincenthuto.hemomancy.common.item.unstained.tool.AbsolutionDaggerItem;
-import com.vincenthuto.hemomancy.common.item.unstained.tool.SilthmereGlaiveItem;
-import com.vincenthuto.hemomancy.common.item.unstained.tool.UnstainedWarhammerItem;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PlayerAnimationKind;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/** Client animation instances keyed by player id and animation kind. */
+/**
+ * Client animation instances keyed by player id and animation kind (the Living Torch breath). The poses that read them
+ * apply in {@link PlayerAnimationRegistry}'s order.
+ */
 public final class PlayerAnimationClientState {
 	private static final Map<Key, Animation> ACTIVE = new HashMap<>();
 	private static ClientLevel activeLevel;
@@ -72,76 +65,6 @@ public final class PlayerAnimationClientState {
 		});
 	}
 
-	public static void applyThirdPersonPose(LivingEntity entity, HumanoidModel<?> model, float partialTick) {
-		if (!(entity instanceof Player player)) return;
-		// Vanilla never resets these; the casting waist pivot assigns them, so clear last frame's offset first.
-		model.body.z = 0;
-		model.head.z = 0;
-		model.hat.z = 0;
-		if (model instanceof PlayerModel<?> playerModel) playerModel.jacket.z = 0;
-        CastingPlayerPose.apply(player, model, partialTick);
-        var microscope = HematicMicroscopeClientState.animation(player);
-        if (microscope != null) {
-            HematicMicroscopePose.apply(model, microscope.poseTick(partialTick), microscope.packet.right());
-            return;
-        }
-        var injection = BloodVialInjectionClientState.animation(player);
-        if (injection != null) {
-            BloodVialInjectionPose.apply(model, injection.elapsed(partialTick), injection.packet.right());
-            return;
-        }
-		if (isBreathing(entity)) {
-			InteractionHand hand = hand(entity, PlayerAnimationKind.LIVING_TORCH_BREATH);
-			boolean right = armFor(player, hand) == HumanoidArm.RIGHT;
-			float windup = Mth.clamp(elapsed(entity, PlayerAnimationKind.LIVING_TORCH_BREATH, partialTick)
-					/ LivingTorchBreathRules.WINDUP_TICKS, 0.0F, 1.0F);
-			LivingTorchPlayerPose.BreathPose pose = LivingTorchPlayerPose.breath(windup, right);
-			model.body.xRot += pose.bodyLean();
-			model.head.xRot -= pose.bodyLean() * 0.35F;
-			var arm = right ? model.rightArm : model.leftArm;
-			var clearArm = right ? model.leftArm : model.rightArm;
-			arm.xRot = pose.armXRot();
-			arm.yRot = pose.armYRot();
-			arm.zRot = pose.armZRot();
-			clearArm.yRot *= 0.25F;
-			clearArm.zRot *= 0.25F;
-			copySleeves(model);
-			return;
-		}
-		InteractionHand swingingHand = player.swingingArm == null ? InteractionHand.MAIN_HAND : player.swingingArm;
-		var swingingItem = player.getItemInHand(swingingHand).getItem();
-		if ((swingingItem instanceof AbsolutionDaggerItem || swingingItem instanceof SilthmereGlaiveItem
-				|| swingingItem instanceof UnstainedWarhammerItem)
-				&& !CardinalRiteStaffPlantingClientState.isAnimating(player)) {
-			float swing = player.getAttackAnim(partialTick);
-			if (swing <= 0.0F) return;
-			boolean right = armFor(player, swingingHand) == HumanoidArm.RIGHT;
-			var pose = swingingItem instanceof AbsolutionDaggerItem
-					? UnstainedWeaponPlayerPose.dagger(swing, right)
-					: swingingItem instanceof SilthmereGlaiveItem
-							? UnstainedWeaponPlayerPose.glaive(swing, right)
-							: UnstainedWeaponPlayerPose.hammer(swing, right);
-			InteractionHand otherHand = swingingHand == InteractionHand.MAIN_HAND
-					? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
-			UnstainedWeaponPlayerPose.applyThirdPerson(model, pose, right, player.getItemInHand(otherHand).isEmpty());
-			copySleeves(model);
-			return;
-		}
-		if (!CardinalRiteStaffPlantingClientState.isAnimating(player)) {
-			float swing = player.getAttackAnim(partialTick);
-			HumanoidArm swingingArm = armFor(player, swingingHand);
-			var stroke = LivingWeaponPlayerPose.stroke(swingingItem,
-					SwingComboTracker.strike(player, swingingArm, swing));
-			if (stroke == null || swing <= 0.0F) return;
-			boolean right = swingingArm == HumanoidArm.RIGHT;
-			InteractionHand otherHand = swingingHand == InteractionHand.MAIN_HAND
-					? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
-			UnstainedWeaponPlayerPose.applyThirdPerson(model, LivingWeaponPlayerPose.thirdPerson(stroke, swing, right),
-					right, player.getItemInHand(otherHand).isEmpty());
-			copySleeves(model);
-		}
-	}
-
 	public static boolean isBreathing(LivingEntity entity) {
 		return shouldApplyTorchPresentation(
 				CardinalRiteStaffPlantingClientState.isAnimating(entity),
@@ -150,17 +73,6 @@ public final class PlayerAnimationClientState {
 
 	public static boolean shouldApplyTorchPresentation(boolean cardinalPlanting, boolean torchActive) {
 		return torchActive && !cardinalPlanting;
-	}
-
-	private static HumanoidArm armFor(Player player, InteractionHand hand) {
-		return hand == InteractionHand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
-	}
-
-	private static void copySleeves(HumanoidModel<?> model) {
-		if (model instanceof PlayerModel<?> playerModel) {
-			playerModel.rightSleeve.copyFrom(model.rightArm);
-			playerModel.leftSleeve.copyFrom(model.leftArm);
-		}
 	}
 
 	private record Key(int entityId, PlayerAnimationKind kind) { }

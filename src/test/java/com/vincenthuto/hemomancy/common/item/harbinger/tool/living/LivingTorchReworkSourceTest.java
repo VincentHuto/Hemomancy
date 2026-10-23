@@ -54,7 +54,7 @@ final class LivingTorchReworkSourceTest {
 		String localPlayer = read("mixin/core/MixinLocalPlayer.java");
 		assertContains(packet, "PlayerAnimationKind");
 		assertContains(handler, "PacketSyncPlayerAnimation.TYPE");
-		assertContains(humanoid, "PlayerAnimationClientState.applyThirdPersonPose");
+		assertContains(humanoid, "PlayerAnimationRegistry.applyThirdPersonPose");
 		assertContains(handLayer, "PlayerAnimationClientState");
 		assertContains(localPlayer, "LivingTorchBreathRules.MOVEMENT_MULTIPLIER");
 	}

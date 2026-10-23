@@ -1,8 +1,7 @@
 package com.vincenthuto.hemomancy.mixin.core;
 
-import com.vincenthuto.hemomancy.client.player.PlayerAnimationClientState;
+import com.vincenthuto.hemomancy.client.player.PlayerAnimationRegistry;
 import com.vincenthuto.hemomancy.client.player.WarpChairPlayerPose;
-import com.vincenthuto.hemomancy.client.rite.CardinalRiteStaffPlantingClientState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,15 +20,10 @@ public abstract class MixinHumanoidModel {
 	}
 
 	@Inject(method = "setupAnim", at = @At("TAIL"), remap = false)
-	private void hemomancy$applyCardinalRiteStaffPlantingPose(
+	private void hemomancy$applyPlayerAnimationPoses(
 			LivingEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks,
 			float netHeadYaw, float headPitch, CallbackInfo callback) {
-		CardinalRiteStaffPlantingClientState.applyThirdPersonPose(
-				entity, (HumanoidModel<?>) (Object) this,
+		PlayerAnimationRegistry.applyThirdPersonPose(entity, (HumanoidModel<?>) (Object) this,
 				Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false));
-		PlayerAnimationClientState.applyThirdPersonPose(
-				entity, (HumanoidModel<?>) (Object) this,
-				Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false));
-		WarpChairPlayerPose.applyModelPose(entity, (HumanoidModel<?>) (Object) this);
 	}
 }

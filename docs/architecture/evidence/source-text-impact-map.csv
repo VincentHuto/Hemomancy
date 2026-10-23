@@ -33,6 +33,7 @@ src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTes
 src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/tile/unstained/crafting/PallidRetortBlockEntity.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/compat/curios,java,exact-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/compat/mna,java,exact-dir
+src/test/java/com/vincenthuto/hemomancy/architecture/BossAnimationClockGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/entity/boss/annetta/AnnettaKnowlesEntity.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/ClientBoundPayloadRegistrationTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/network/PacketHandler.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/ClientSessionCacheTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/event/ClientSessionEvents.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/CombatTargetingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common,java,exact-dir
@@ -170,7 +171,7 @@ src/test/java/com/vincenthuto/hemomancy/client/player/CastingDocsSourceTest.java
 src/test/java/com/vincenthuto/hemomancy/client/player/CastingDocsSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/event/CastingPreviewCommands.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/client/player/CastingDocsSourceTest.java,junit,wiki/Casting-Animations.md,doc,exact
 src/test/java/com/vincenthuto/hemomancy/client/player/WaistPivotRulesTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/player/CastingPlayerPose.java,java,exact
-src/test/java/com/vincenthuto/hemomancy/client/player/WaistPivotRulesTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/player/PlayerAnimationClientState.java,java,exact
+src/test/java/com/vincenthuto/hemomancy/client/player/WaistPivotRulesTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/player/PlayerAnimationRegistry.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/client/render/BloodPoolSquareResourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy,java,exact-dir
 src/test/java/com/vincenthuto/hemomancy/client/render/BloodPoolSquareResourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/shader/ShaderInit.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/client/render/BloodPoolSquareResourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/render/tile/harbinger/functional/SanguineCondenserRenderer.java,java,base-dir
