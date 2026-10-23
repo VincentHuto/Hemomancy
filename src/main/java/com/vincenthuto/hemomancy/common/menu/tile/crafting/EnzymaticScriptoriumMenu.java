@@ -5,14 +5,11 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.enchanting.ScriptoriumAffinities;
 import com.vincenthuto.hemomancy.common.enchanting.ScriptoriumBalance;
-import com.vincenthuto.hemomancy.common.enchanting.ScriptoriumCurseRules;
-import com.vincenthuto.hemomancy.common.enchanting.ScriptoriumProvenance;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.init.DataComponentInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.EnzymeItem;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.EnzymaticScriptoriumBlockEntity;
-import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
@@ -31,14 +28,12 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
-import net.minecraft.world.level.block.EnchantingTableBlock;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 public final class EnzymaticScriptoriumMenu extends AbstractContainerMenu {
-    private static final int[] BLOOD_COST = {100, 200, 300};
     private final EnzymaticScriptoriumBlockEntity station;
     private final Player player;
     private final ContainerData data;
@@ -302,20 +297,9 @@ public final class EnzymaticScriptoriumMenu extends AbstractContainerMenu {
             refresh();
             return true;
         }
+        // Denaturing and inscribing are the station's operations; the menu only rolls this player's offers.
         if (button == 11) {
-            ItemStack input = station.getItem(EnzymaticScriptoriumBlockEntity.ITEM);
-            ScriptoriumProvenance provenance = input.get(DataComponentInit.SCRIPTORIUM_PROVENANCE.get());
-            ItemStack shard = station.getItem(EnzymaticScriptoriumBlockEntity.SHARD);
-            var blood = station.getBloodCapability();
-            if (provenance == null || provenance.curse().isBlank() || shard.isEmpty()
-                    || blood == null || blood.getBloodVolume() < 300
-                    || !ProgressionGates.hasDegree(actor, 3)) return false;
-            EnchantmentHelper.updateEnchantments(input, mutable ->
-                    mutable.removeIf(enchantment -> !enchantment.is(EnchantmentTags.CURSE)));
-            input.set(DataComponentInit.SCRIPTORIUM_PROVENANCE.get(), ScriptoriumProvenance.CLEAN);
-            blood.drain(300);
-            shard.shrink(1);
-            BlockEntitySync.markAndSync(station);
+            if (!station.denature(actor)) return false;
             cachedKey = "";
             refresh();
             return true;
@@ -323,48 +307,9 @@ public final class EnzymaticScriptoriumMenu extends AbstractContainerMenu {
         if (button < 8 || button > 10) return false;
         int tier = button - 8;
         refresh();
-        int cost = data.get(tier);
-        ItemStack input = station.getItem(8);
-        ItemStack lapis = station.getItem(9);
-        var blood = station.getBloodCapability();
-        if (cost <= 0 || packages[tier] == null || packages[tier].isEmpty() || !hasOfferEnzymes(tier)
-                || input.isEmpty() || !input.isEnchantable() || lapis.getCount() < tier + 1
-                || (!actor.getAbilities().instabuild && actor.experienceLevel < cost)
-                || blood == null || blood.getBloodVolume() < BLOOD_COST[tier]) return false;
-        List<EnchantmentInstance> result = packages[tier];
-        int atCap = 0;
-        int excess = 0;
-        for (EnchantmentInstance entry : result) {
-            input.enchant(entry.enchantment, entry.level);
-            int natural = entry.enchantment.value().getMaxLevel();
-            if (entry.level >= natural) atCap++;
-            excess += Math.max(0, entry.level - natural);
-        }
-        int usedEnzymes = 0;
-        for (int i = 0; i < 8; i++) usedEnzymes += enzymeCost(tier, i);
-        int strain = ScriptoriumBalance.totalStrain(usedEnzymes, result.size(), atCap, excess);
-        String curse = "";
-        int severity = 0;
-        if (actor.getRandom().nextInt(100) < strain) {
-            curse = ScriptoriumCurseRules.applicableCurse(input);
-            severity = curse.isBlank() ? 0 : ScriptoriumCurseRules.severity(excess);
-        }
-        input.set(DataComponentInit.SCRIPTORIUM_PROVENANCE.get(), new ScriptoriumProvenance(curse, severity, excess));
-        blood.drain(BLOOD_COST[tier]);
-        lapis.shrink(tier + 1);
         int[] enzymeCosts = new int[8];
         for (int i = 0; i < 8; i++) enzymeCosts[i] = enzymeCost(tier, i);
-        station.consumeEnzymes(enzymeCosts);
-        actor.onEnchantmentPerformed(input, tier + 1);
-        if (actor instanceof net.minecraft.server.level.ServerPlayer serverActor) {
-            var stationProgress = HemoCapabilityAccess.stationUpgrades(serverActor);
-            stationProgress.recordUse(com.vincenthuto.hemomancy.common.station.UpgradeStation.SCRIPTORIUM,
-                    com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.ENCHANT);
-            // A package with a target raised one enchantment above its roll (mode 1 or 2).
-            if (targets[tier] >= 0) stationProgress.recordUse(com.vincenthuto.hemomancy.common.station.UpgradeStation.SCRIPTORIUM,
-                    com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog.ENCHANT_TARGETED);
-        }
-        BlockEntitySync.markAndSync(station);
+        if (!station.inscribe(actor, tier, data.get(tier), packages[tier], enzymeCosts, targets[tier] >= 0)) return false;
         cachedKey = "";
         refresh();
         return true;

@@ -1,15 +1,24 @@
 package com.vincenthuto.hemomancy.common.tile.harbinger.crafting;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.enchanting.ScriptoriumBalance;
+import com.vincenthuto.hemomancy.common.enchanting.ScriptoriumCurseRules;
+import com.vincenthuto.hemomancy.common.enchanting.ScriptoriumProvenance;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.init.DataComponentInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.EnzymeItem;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.EnzymaticScriptoriumMenu;
+import com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog;
 import com.vincenthuto.hemomancy.common.station.UpgradeStation;
 import com.vincenthuto.hemomancy.common.station.UpgradeableStation;
 import com.vincenthuto.hemomancy.common.util.BlockEntitySync;
+import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.EnchantmentTags;
 import java.util.UUID;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -22,8 +31,12 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+
+import java.util.List;
 
 public class EnzymaticScriptoriumBlockEntity extends BaseContainerBlockEntity
         implements com.vincenthuto.hemomancy.common.tile.IBloodReservoir, UpgradeableStation {
@@ -31,6 +44,10 @@ public class EnzymaticScriptoriumBlockEntity extends BaseContainerBlockEntity
     public static final int ITEM = 8;
     public static final int LAPIS = 9;
     public static final int SHARD = 10;
+    /** Blood an inscription draws from the tank, by row. */
+    private static final int[] INSCRIPTION_BLOOD = {100, 200, 300};
+    /** Blood denaturing draws from the tank. */
+    public static final int DENATURE_BLOOD = 300;
     private NonNullList<ItemStack> items = NonNullList.withSize(11, ItemStack.EMPTY);
     private final int[] selected = new int[8];
     private boolean riteLocked;
@@ -68,20 +85,92 @@ public class EnzymaticScriptoriumBlockEntity extends BaseContainerBlockEntity
         return true;
     }
 
-    public void consumeSelection() {
-        for (int i = 0; i < 8; i++) {
-            items.get(i).shrink(selected[i]);
-            selected[i] = 0;
-        }
-        BlockEntitySync.markAndSync(this);
-    }
-
     public void consumeEnzymes(int[] costs) {
         for (int i = 0; i < 8; i++) {
             items.get(i).shrink(costs[i]);
             selected[i] = 0;
         }
         BlockEntitySync.markAndSync(this);
+    }
+
+    public static int inscriptionBlood(int row) {
+        return INSCRIPTION_BLOOD[row];
+    }
+
+    /**
+     * Inscribes the offer the actor's menu rolled for this row: the item takes the offer's enchantments, a strained
+     * inscription may curse it, and the station spends its blood, lapis and the offer's enzymes while the actor pays
+     * the row in levels. The actor's practice records the enchant, and a targeted one.
+     *
+     * @return whether it took; a refused inscription spends nothing
+     */
+    public boolean inscribe(Player actor, int row, int cost, List<EnchantmentInstance> offer, int[] enzymeCosts,
+            boolean targeted) {
+        ItemStack input = getItem(ITEM);
+        ItemStack lapis = getItem(LAPIS);
+        var blood = getBloodCapability();
+        if (cost <= 0 || offer == null || offer.isEmpty() || !hasEnzymes(enzymeCosts)
+                || input.isEmpty() || !input.isEnchantable() || lapis.getCount() < row + 1
+                || (!actor.getAbilities().instabuild && actor.experienceLevel < cost)
+                || blood == null || blood.getBloodVolume() < INSCRIPTION_BLOOD[row]) return false;
+        int atCap = 0;
+        int excess = 0;
+        for (EnchantmentInstance entry : offer) {
+            input.enchant(entry.enchantment, entry.level);
+            int natural = entry.enchantment.value().getMaxLevel();
+            if (entry.level >= natural) atCap++;
+            excess += Math.max(0, entry.level - natural);
+        }
+        int usedEnzymes = 0;
+        for (int i = 0; i < 8; i++) usedEnzymes += enzymeCosts[i];
+        int strain = ScriptoriumBalance.totalStrain(usedEnzymes, offer.size(), atCap, excess);
+        String curse = "";
+        int severity = 0;
+        if (actor.getRandom().nextInt(100) < strain) {
+            curse = ScriptoriumCurseRules.applicableCurse(input);
+            severity = curse.isBlank() ? 0 : ScriptoriumCurseRules.severity(excess);
+        }
+        input.set(DataComponentInit.SCRIPTORIUM_PROVENANCE.get(), new ScriptoriumProvenance(curse, severity, excess));
+        blood.drain(INSCRIPTION_BLOOD[row]);
+        lapis.shrink(row + 1);
+        consumeEnzymes(enzymeCosts);
+        actor.onEnchantmentPerformed(input, row + 1);
+        if (actor instanceof ServerPlayer serverActor) {
+            var stationProgress = HemoCapabilityAccess.stationUpgrades(serverActor);
+            stationProgress.recordUse(UpgradeStation.SCRIPTORIUM, StationUpgradeCatalog.ENCHANT);
+            // A package with a target raised one enchantment above its roll (mode 1 or 2).
+            if (targeted) stationProgress.recordUse(UpgradeStation.SCRIPTORIUM, StationUpgradeCatalog.ENCHANT_TARGETED);
+        }
+        BlockEntitySync.markAndSync(this);
+        return true;
+    }
+
+    /**
+     * Denatures a cursed red item: every enchantment but its curses goes, and its provenance comes clean. Needs
+     * Degree 3, a blood crystal shard and {@value #DENATURE_BLOOD} mL in the tank.
+     *
+     * @return whether it took; a refused denaturing spends nothing
+     */
+    public boolean denature(Player actor) {
+        ItemStack input = getItem(ITEM);
+        ScriptoriumProvenance provenance = input.get(DataComponentInit.SCRIPTORIUM_PROVENANCE.get());
+        ItemStack shard = getItem(SHARD);
+        var blood = getBloodCapability();
+        if (provenance == null || provenance.curse().isBlank() || shard.isEmpty()
+                || blood == null || blood.getBloodVolume() < DENATURE_BLOOD
+                || !ProgressionGates.hasDegree(actor, 3)) return false;
+        EnchantmentHelper.updateEnchantments(input, mutable ->
+                mutable.removeIf(enchantment -> !enchantment.is(EnchantmentTags.CURSE)));
+        input.set(DataComponentInit.SCRIPTORIUM_PROVENANCE.get(), ScriptoriumProvenance.CLEAN);
+        blood.drain(DENATURE_BLOOD);
+        shard.shrink(1);
+        BlockEntitySync.markAndSync(this);
+        return true;
+    }
+
+    private boolean hasEnzymes(int[] costs) {
+        for (int i = 0; i < 8; i++) if (items.get(i).getCount() < costs[i]) return false;
+        return true;
     }
 
     @Override public boolean isRiteLocked() { return riteLocked; }

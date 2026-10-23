@@ -17,10 +17,10 @@ src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTes
 src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/bloodvolume/routing/BloodRoutingRules.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/capability/player/unstained/white_humor/WhiteHumorVolume.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/entity/summon/BloodThrallEntity.java,java,base-dir
-src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/menu/tile/crafting/EnzymaticScriptoriumMenu.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/BloodVolumeServerPacket.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/tile/BloodContainerTransfer.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/tile/IBloodReservoir.java,java,base-dir
+src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/crafting/EnzymaticScriptoriumBlockEntity.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/crafting/GhastlyAlembicBlockEntity.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/crafting/HematicArmatureBlockEntity.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/BloodAccountingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/tile/harbinger/crafting/MorphlingIncubatorBlockEntity.java,java,base-dir
@@ -118,6 +118,8 @@ src/test/java/com/vincenthuto/hemomancy/architecture/SmallUtilityGuardrailTest.j
 src/test/java/com/vincenthuto/hemomancy/architecture/SmallUtilityGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/worldgen/feature/FeatureLogic.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/architecture/SourceTreeHygieneTest.java,junit,src/main/java,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/SourceTreeHygieneTest.java,junit,src/main/resources/hemomancy.mixins.json,resource,helper
+src/test/java/com/vincenthuto/hemomancy/architecture/StationMenuGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/menu,java,helper
+src/test/java/com/vincenthuto/hemomancy/architecture/StationMenuGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/menu/tile/crafting/EnzymaticScriptoriumMenu.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/WillEntityClientIsolationTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/entity/mob/monster/will/WillEntity.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/client/data/QliphothBloomClientDataTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/event/ClientSessionEvents.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/client/event/SharedMemoryInputSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/event/ManipulationChargeInput.java,java,exact

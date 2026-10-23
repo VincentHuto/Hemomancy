@@ -49,7 +49,7 @@ class BloodAccountingGuardrailTest {
 			entry(COMMON + "capability/player/unstained/white_humor/WhiteHumorVolume.java",
 					new Allowed(1, "White humor, not blood")),
 			entry(COMMON + "entity/summon/BloodThrallEntity.java", new Allowed(1, "Drains the source reservoir it hauls from")),
-			entry(COMMON + "menu/tile/crafting/EnzymaticScriptoriumMenu.java", new Allowed(2, "The Scriptorium's tank")),
+			entry(COMMON + "tile/harbinger/crafting/EnzymaticScriptoriumBlockEntity.java", new Allowed(2, "The Scriptorium's tank: an inscription and a denaturing")),
 			entry(COMMON + "tile/BloodContainerTransfer.java", new Allowed(1, "A reservoir's tank")),
 			entry(COMMON + "tile/IBloodReservoir.java", new Allowed(1, "drainBlood: the reservoir's tank")),
 			entry(COMMON + "tile/harbinger/crafting/GhastlyAlembicBlockEntity.java", new Allowed(6, "The Alembic's tank")),

@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.Enu
 import com.vincenthuto.hemomancy.common.init.DataComponentInit;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.EnzymaticScriptoriumMenu;
+import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.EnzymaticScriptoriumBlockEntity;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.registries.Registries;
@@ -27,7 +28,6 @@ public final class EnzymaticScriptoriumScreen extends AbstractContainerScreen<En
     private static final int RECESS = 0xFF1A0808;
     private static final int PALE = 0xFFE7B8B8;
     private static final int MUTED = 0xFF9B6969;
-    private static final int[] BLOOD_COSTS = {100, 200, 300};
     private static final ResourceLocation[] TENDENCY_ICONS = {
             iconTexture("animus"), iconTexture("flammeus"), iconTexture("ductilis"), iconTexture("lux"),
             iconTexture("mortem"), iconTexture("congeatio"), iconTexture("ferric"), iconTexture("tenebris")
@@ -133,7 +133,7 @@ public final class EnzymaticScriptoriumScreen extends AbstractContainerScreen<En
             int cost = menu.offerCost(i);
             smallText(g, Component.translatable("screen.hemomancy.scriptorium.offer", i + 1),
                     25, rowY, cost > 0 ? PALE : MUTED, 0.65F);
-            String price = cost <= 0 ? "--" : cost + " XP  /  " + BLOOD_COSTS[i] + " mL";
+            String price = cost <= 0 ? "--" : cost + " XP  /  " + EnzymaticScriptoriumBlockEntity.inscriptionBlood(i) + " mL";
             smallText(g, Component.literal(price), 183 - font.width(price) * 0.65F,
                     rowY, cost > 0 ? 0xFFE9A3A3 : MUTED, 0.65F);
         }
@@ -247,7 +247,7 @@ public final class EnzymaticScriptoriumScreen extends AbstractContainerScreen<En
             tooltip.add(Component.translatable("screen.hemomancy.scriptorium.offer", i + 1));
             if (menu.offerCost(i) > 0)
                 tooltip.add(Component.translatable("screen.hemomancy.scriptorium.cost",
-                        menu.offerCost(i), i + 1, BLOOD_COSTS[i]));
+                        menu.offerCost(i), i + 1, EnzymaticScriptoriumBlockEntity.inscriptionBlood(i)));
             if (menu.offerCost(i) > 0) {
                 tooltip.add(Component.translatable("screen.hemomancy.scriptorium.enzymes"));
                 for (int tendency = 0; tendency < 8; tendency++) {

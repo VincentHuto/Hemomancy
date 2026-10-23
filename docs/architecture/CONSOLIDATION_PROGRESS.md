@@ -17,7 +17,7 @@ Every consolidation session reads this file first and updates it last, following
 | 8 | Phase 7: registration and client registration | DONE | `3e8b213d4`, `291731d6f` | 2026-10-22 |
 | 9 | Phase 6: combat targeting and damage attribution | DONE | `3b841ba03`, `7f0c1968d`, `5fa01de44`, `c9af6c6c3` | 2026-10-22 |
 | 10 | Phases 8 + 9: rendering plumbing and animation conventions | DONE | `a53982248`..`e2597dc41` (items 1-9), review fixes and ledger in the commit after `e2597dc41` | 2026-10-23 |
-| 11 | Phase 10: god-class decomposition | IN PROGRESS (items 1-4 of 5 done) | `91bb77eba`, `b6c7bd846`, `866c0b990`, `3385bc323`, `ced99f334`, `0871dc5e6`, `8ba776eca`, `017d6f7dc`, item 4 in the commit after it | 2026-10-23 |
+| 11 | Phase 10: god-class decomposition | DONE | `91bb77eba`, `b6c7bd846`, `866c0b990`, `3385bc323`, `ced99f334`, `0871dc5e6`, `8ba776eca`, `017d6f7dc`, `7028ada7d`, `44719064f`, item 5 in the commit after it | 2026-10-23 |
 | 12 | Phase 11: persistence authority migrations | NOT STARTED | | |
 | 13 | Phases 12 + 13: content, worldgen, data, tooling, standards | NOT STARTED | | |
 
@@ -191,6 +191,8 @@ them green.
 | gameTest `HemoCommandCharacterisationGameTests` (suite `hemo_command_validation`) | 11 | every executable `/hemo` path (133; `qliphoth tree` excluded as a world edit) run on a fresh player with arguments taken from the tree: return code, feedback, saved-data change and spawned entities against `src/gameTest/resources/command/hemo-command-fingerprints.txt` |
 | gameTest `EntityCastCharacterisationGameTests` (suite `entity_cast_validation`) | 11 | L-1: each of the 34 entity casts (and one manipulation without) cast by a Husk at a Cow: went off, Will-castable, both mobs' health, effects, data keys and movement, spawned types, changed blocks, against `src/gameTest/resources/entitycast/entity-cast-fingerprints.txt`; over the live registry, exactly the 34 casts are attached, Wills may cast exactly the old 32, every Vesper CASTABLE entry has one |
 | `architecture/EntityCastGuardrailTest` | 11 | L-1: `EntityManipulationEffects` has no name switch and names no manipulation; each `EntityCasts` method is attached once, to the manipulation it is named for; only the entry point reads `getEntityCast()` |
+| gameTest `ScriptoriumOperationCharacterisationGameTests` (suite `scriptorium_operation_validation`) | 11 | L-9: every Scriptorium button driven through the real menu with fixed seeds (enzyme selection, the three modes and their gates, inscription in each row, targeted inscriptions across all eight tendencies with their curse rolls, refusals, denaturing and its gates, the rite lock, a stranger's click): accepted, item components, tank, lapis, enzymes, xp, practice and saved-data change against `src/gameTest/resources/scriptorium/operation-fingerprints.txt` |
+| `architecture/StationMenuGuardrailTest` | 11 | L-9: no menu under `common/menu` drains blood, records station practice or enchants an item; the Scriptorium menu's button handler calls `station.inscribe` and `station.denature` |
 | `architecture/HemoCommandStructureGuardrailTest` | 11 | `HemoCommand` is one root that only wires `<Name>Subcommand.build()`, each exactly once; subcommands register nothing themselves and stay under 300 lines; no other main class registers `/hemo` |
 
 ## Step entries
@@ -1217,7 +1219,7 @@ them green.
     never logs `startup`; copy one in. The condenser review directory had none.
 
 ### Step 11: Phase 10, god-class decomposition
-- **Status / date / commits:** IN PROGRESS, 2026-10-23. One commit per item, prefix `consolidation(step-11):`.
+- **Status / date / commits:** DONE, 2026-10-23. One commit per item, prefix `consolidation(step-11):`.
 
   | Item | Status | Commit |
   |---|---|---|
@@ -1229,14 +1231,16 @@ them green.
   | Characterisation suite for item 3 | DONE | `ced99f334`, `0871dc5e6` (a boolean argument read as an object hash in the snapshot) |
   | 3. `HemoCommand` split | DONE | `8ba776eca` |
   | Characterisation suite for item 4 | DONE | `017d6f7dc` |
-  | 4. Registration-time `setEntityCast` | DONE | the commit after `017d6f7dc` |
-  | 5. Scriptorium operations into its block entity | NOT STARTED | |
+  | 4. Registration-time `setEntityCast` | DONE | `7028ada7d` |
+  | Characterisation suite for item 5 | DONE | `44719064f` |
+  | 5. Scriptorium operations into its block entity | DONE | the commit after `44719064f` |
 - **Test counts before → after:** `test` 4,055 → 4,064 (characterisation commit) → 4,067 (item 1) → 4,070 (item 2),
-  0 failures; 4,073 after item 3; 4,075 after item 4. `alphaCheck` after item 1: BUILD SUCCESSFUL, all 1,068 required GameTests passed
+  0 failures; 4,073 after item 3; 4,075 after item 4; 4,077 after item 5. `alphaCheck` after item 1: BUILD SUCCESSFUL, all 1,068 required GameTests passed
   (1,036 before; 32 are the new `rite_kind_validation` suite). After item 2: all 1,069 (plus
   `dialogue_route_validation`). After item 3: all 1,070 (plus `hemo_command_validation`). After item 4: all 1,072
   (plus the two `entity_cast_validation` tests); one run before that failed the known flaky fish-AI timing test
-  `strongerpreyneedsmultiplebitesbeforereward` (step 10 recorded it), and the rerun passed.
+  `strongerpreyneedsmultiplebitesbeforereward` (step 10 recorded it), and the rerun passed. After item 5: all
+  1,073 (plus `scriptorium_operation_validation`); the opt-in `scriptorium_validation` suite (22) also passed.
 - **Impact map:** one read-only reviewer listed the tick's branches, `ActiveCardinalRite`'s fields and keys, the
   packet's parts and every test pinning them (not committed; a working list).
 - **Characterisation (before the extraction):**
@@ -1354,39 +1358,42 @@ them green.
     `MANIPULATION_BALANCE_PLAN.md` and `wiki/School-Combat.md`.
   - Final review: no defects; added its guardrail suggestions (cast named for its manipulation; only the entry point
     runs a cast).
-- **Handoff notes for item 5 (Scriptorium, L-9):**
-  - An impact map was taken (not committed). `EnzymaticScriptoriumMenu.clickMenuButton` (397-line menu): buttons 0-7
-    select enzymes (already a block-entity call), 20-22 set the menu-local mode (tier and degree gated), 8-10 enchant
-    (refresh, validate cost, lapis, xp, tank blood; apply the package; random curse from `actor.getRandom()`; drain,
-    shrink, `consumeEnzymes`, `onEnchantmentPerformed`, `recordUse(ENCHANT / ENCHANT_TARGETED)` on the actor), 11
-    denatures (provenance curse, shard, 300 mL, degree 3). The offer preview (`refresh`) is per player (enchantment
-    seed, degree) and stays in the menu. Precedent: the Resonant Forge menu only dispatches to `startApply()` and the
-    like; the Centrifuge's `attemptStartup(player)`.
-  - `BloodAccountingGuardrailTest` allows 2 `.drain(` in the menu; the entry moves with the drains.
-  - `EnzymaticScriptoriumGameTests` is in the opt-in `scriptorium_validation` suite (not in `alphaCheck`); characterise
-    the buttons in an alpha suite with fixed seeds (`player.getRandom().setSeed`, then `onEnchantmentPerformed` to set
-    the enchantment seed; reseed before the curse roll).
-- **Handoff notes kept from item 3 for item 4 (done):**
-  - An impact map was taken (not committed). `EntityManipulationEffects` (731 lines) switches over 34 names;
-    `SUPPORTED_CASTS` lists 32, leaving out the two retired ones (`glacial_bastion`, `blood_eclipse_mantle`), which are
-    unreachable in production. So `isSupported` can be "has an entity cast and is not retired", exactly.
-  - Callers: `BloodManipulation.castFromEntity` (Wills, through `WillManipulationCaster`, gated by `isSupported`) and
-    `VesperPhaseTwoCombat.cast` (calls `EntityManipulationEffects.cast` directly, with literals and
-    `VesperManipulationCoverage` CASTABLE entries). The case `hematic_beacon` calls a helper named `crimsonSight`.
-  - Precedent: `setDrudgeAction` (a transient field wrapped with the Paralysis and `SchoolDamage.cast` preamble) and
-    `DrudgeActions`. `VesperManipulationCoverageTest` parses the `SUPPORTED_CASTS` literal (exactly 32 ids) and must
-    become a behaviour check.
-  - Characterise every case with a caster mob and a target before moving them; blood_needle and the ice casts are
-    random, several move the caster or spawn entities, and three reach 24 to 32 blocks.
-- **Handoff notes kept from item 2 for later items:**
-  - An impact map was taken (not committed). `HemoCommand` is 1,979 lines: one root `requires(hasPermission(2))`, 16
-    branches (blood, bloodline, degree, morphling, qliphoth, skills, unstained, organs, tendency, bloodmoon, fane,
-    chamber, will, summons, manipulations, slots), no redirects, no static state. `/hemo test` is merged in by
-    `HemoTestCommands` (gameTest source set) through `DevTestHooks`.
-  - No branch has an asserting behaviour test. Characterise with (a) a snapshot of the Brigadier tree (every node,
-    argument type with bounds, executes, suggestions, `getAllUsage`) and (b) executed leaves with captured feedback
-    for the safe branches. Unsafe in a shared GameTest server: `qliphoth tree` (places a Bloom, global saved data),
-    `bloodline disband` (removes Fanes in all levels), `bloodmoon summon/cancel` (global), `will ambush` (spawns
-    hostiles), `chamber size` in the Chamber dimension.
-  - Eight source-text tests pin `HemoCommand`, one with exact tab indentation (`FanePreviewCommandSourceTest`).
-  - Inline Python heredocs passed through the shell tool lose their backslashes; write edit scripts to a file first.
+- **Item 5, Scriptorium operations in its block entity (L-9):**
+  - Characterisation first (`44719064f`): `scriptorium_operation_validation` drives every button through the real
+    menu with a player beside the station and fixed seeds (the enchantment seed through `onEnchantmentPerformed`, the
+    player's random reseeded before the curse roll); three identical recordings.
+  - `EnzymaticScriptoriumBlockEntity` gained `inscribe(actor, row, cost, offer, enzymeCosts, targeted)` and
+    `denature(actor)`: the old button bodies, moved verbatim (the enzyme check reads the costs the menu passes, built
+    from the same data slots `hasOfferEnzymes` read, right after the same `refresh`). The blood costs are one constant
+    there (`inscriptionBlood(row)`, `DENATURE_BLOOD`), which the screen now reads instead of its own copy. The
+    per-player offer preview (`refresh`) stays in the menu, which checks the actor, the rite lock and reach, rolls the
+    offer and dispatches. The unused `consumeSelection` was deleted. `BloodAccountingGuardrailTest`'s allow-list entry
+    moved with the two drains.
+  - No source-text test pinned the moved code; the opt-in `EnzymaticScriptoriumGameTests` pass unchanged.
+  - Final review: no defects (guard expression, effect order, `markAndSync` count, denature, menu guard, client
+    reach and identifiers all checked). Applied its nits: the guardrail also rejects `drainBlood(` and
+    `setEnchantments(`; import order. Left as noted: the golden never hits lapis short, xp short, enzymes short with a
+    positive cost, an unenchantable input or Creative `instabuild` (that guard moved verbatim; scenarios added now
+    would be recorded from the new code); `inscribe` trusts its caller's row (the menu passes 0-2).
+- **Step summary:**
+  - Metrics: five god classes decomposed: `HarbingerCardinalRiteEvents` 1,690 → 912 lines (`ActiveCardinalRite`
+    1,413 → 1,368), `BloodCraftingKeyPressPacket` 700 → 63, `DialogueEventHandler` 1,531 → deleted (19 route classes),
+    `HemoCommand` 1,979 → root plus 16 subcommands, `EntityManipulationEffects` 731 → 29, the Scriptorium menu's two
+    operations into its block entity. Five characterisation suites, each recorded from the old code before its move.
+  - Guardrails added: `RiteKindGuardrailTest`, `NetworkPackageGuardrailTest`, `ActiveCardinalRiteNbtLayoutTest`,
+    `DialogueRoutingGuardrailTest`, `HemoCommandTreeTest`, `HemoCommandStructureGuardrailTest`,
+    `EntityCastGuardrailTest`, `StationMenuGuardrailTest`, and the GameTest suites `rite_kind_validation`,
+    `dialogue_route_validation`, `hemo_command_validation`, `entity_cast_validation`,
+    `scriptorium_operation_validation` (all in `alphaCheck`).
+  - Frozen identifiers: unchanged (the payload registry snapshot, the rite NBT layout test and the `/hemo` tree
+    snapshot are green).
+  - Approved items implemented: none. Pending approvals: F-11.
+  - Not verified: no in-game client run for any item (all server-side or menu dispatch; each is characterised by
+    GameTests through the real entry point).
+- **Handoff notes for step 12 (persistence authority migrations):**
+  - Every step-12 item (S-9, F-21, S-6c, S-1c, S-7, O-5) is PENDING in *Decisions*. The step implements only APPROVED
+    items, so it needs the user's approvals before it can do anything but the guardrail.
+  - Pitfalls kept from this step: inline Python heredocs passed through the shell tool lose their backslashes (write
+    edit scripts to a file first); a JVM snapshot must not print object hashes (they differ between JVMs); check the
+    test results before committing; golden-master GameTests need UUIDs and bearing words normalised, and a captured
+    player needs its spawn invulnerability cleared.

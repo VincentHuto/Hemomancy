@@ -350,6 +350,9 @@ Unstained mechanics, hazards, Still Arts and summons.
   in `ManipulationInit`, beside `setDrudgeAction` (L-1). `EntityManipulationEffects.cast` applies paralysis and
   school damage and runs the hook; a Will may pick any cast that is not retired. `EntityCastGuardrailTest` and
   `entity_cast_validation` keep it.
+- Since step 11, every station's operations live in its block entity (L-9): the Enzymatic Scriptorium's menu rolls
+  the player's offers and calls `inscribe` / `denature` on the station. `StationMenuGuardrailTest` keeps blood,
+  practice and enchanting out of menus; `scriptorium_operation_validation` fingerprints every operation.
 
 **Migration targets**
 - Living-weapon sweeps (`LivingSickleItem`, `LivingTorchItem`) still use vanilla melee eligibility, and
