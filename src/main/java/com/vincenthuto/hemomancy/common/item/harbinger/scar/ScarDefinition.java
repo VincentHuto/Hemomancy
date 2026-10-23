@@ -281,7 +281,7 @@ public class ScarDefinition {
 	public void appendHoverText(List<Component> tooltip) {
 		if (tier > 0) {
 			String tierStr = tier == 1 ? "I" : tier == 2 ? "II" : "III";
-			tooltip.add(Component.literal("Tier " + tierStr).withStyle(ChatFormatting.DARK_PURPLE));
+			tooltip.add(Component.translatable("tooltip.hemomancy.scar_definition.tier_s", tierStr).withStyle(ChatFormatting.DARK_PURPLE));
 		}
 
 		tooltip.add(Component.translatable(ChatFormatting.GOLD + "Tendency: "
@@ -293,7 +293,7 @@ public class ScarDefinition {
 			String valueStr = mod.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
 					? "+" + String.format("%.0f%%", mod.amount() * 100)
 					: "+" + String.format("%.0f", mod.amount());
-			tooltip.add(Component.literal("* " + valueStr + " ")
+			tooltip.add(Component.translatable("tooltip.hemomancy.scar_definition.s", valueStr)
 					.append(Component.translatable(mod.attribute().value().getDescriptionId()))
 					.withStyle(ChatFormatting.DARK_GREEN));
 		}
@@ -310,7 +310,7 @@ public class ScarDefinition {
 			String valueStr = mod.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
 					? String.format("%.0f%%", mod.amount() * 100)
 					: String.format("%.0f", mod.amount());
-			tooltip.add(Component.literal("* " + valueStr + " ")
+			tooltip.add(Component.translatable("tooltip.hemomancy.scar_definition.s", valueStr)
 					.append(Component.translatable(mod.attribute().value().getDescriptionId()))
 					.withStyle(ChatFormatting.RED));
 		}
@@ -328,7 +328,7 @@ public class ScarDefinition {
 		}
 
 		if (assignedTendency == EnumBloodTendency.MORTEM && tier == 1) {
-			tooltip.add(Component.literal("* Poison backtracks on kill").withStyle(ChatFormatting.RED));
+			tooltip.add(Component.translatable("tooltip.hemomancy.scar_definition.poison_backtracks_on_kill").withStyle(ChatFormatting.RED));
 		}
 	}
 

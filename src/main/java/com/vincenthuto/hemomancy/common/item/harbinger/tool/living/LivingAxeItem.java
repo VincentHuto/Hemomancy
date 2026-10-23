@@ -56,9 +56,9 @@ public class LivingAxeItem extends LivingToolItem {
 		super.appendHoverText(stack, context, tooltip, flagIn);
 		if (stack.has(DataComponents.CUSTOM_DATA)) {
 			if (stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getBoolean(TAG_STATE)) {
-				tooltip.add(Component.literal("State: Unleashed").withStyle(ChatFormatting.RED));
+				tooltip.add(Component.translatable("tooltip.hemomancy.living_axe.state_unleashed").withStyle(ChatFormatting.RED));
 			} else {
-				tooltip.add(Component.literal("State: Tame").withStyle(ChatFormatting.GRAY));
+				tooltip.add(Component.translatable("tooltip.hemomancy.living_axe.state_tame").withStyle(ChatFormatting.GRAY));
 			}
 		}
 	}

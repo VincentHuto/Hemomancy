@@ -36,9 +36,9 @@ public class SanguisLanceaItem extends LivingToolItem {
 		super.appendHoverText(stack, context, tooltip, flagIn);
 		if (stack.has(DataComponents.CUSTOM_DATA)) {
 			if (stack.get(DataComponents.CUSTOM_DATA).copyTag().getBoolean(TAG_STATE)) {
-				tooltip.add(Component.literal("State: Unleashed").withStyle(ChatFormatting.RED));
+				tooltip.add(Component.translatable("tooltip.hemomancy.sanguis_lancea.state_unleashed").withStyle(ChatFormatting.RED));
 			} else {
-				tooltip.add(Component.literal("State: Tame").withStyle(ChatFormatting.GRAY));
+				tooltip.add(Component.translatable("tooltip.hemomancy.sanguis_lancea.state_tame").withStyle(ChatFormatting.GRAY));
 			}
 		}
 	}

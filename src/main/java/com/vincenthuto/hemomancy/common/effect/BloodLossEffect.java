@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
@@ -55,11 +54,6 @@ public class BloodLossEffect extends MobEffect {
 		}
 
 		return true;
-	}
-
-	@Override
-	public Component getDisplayName() {
-		return Component.literal("Blood Loss");
 	}
 
 	@Override

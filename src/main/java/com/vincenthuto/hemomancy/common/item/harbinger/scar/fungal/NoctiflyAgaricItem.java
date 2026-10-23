@@ -36,7 +36,7 @@ public class NoctiflyAgaricItem extends ItemFungalScar {
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
-		tooltip.add(Component.literal("Wings of pale mycelium. Less like flying — more like being carried.").withStyle(ChatFormatting.ITALIC));
+		tooltip.add(Component.translatable("tooltip.hemomancy.noctifly_agaric.wings_of_pale_mycelium_less_like").withStyle(ChatFormatting.ITALIC));
 	}
 
 }

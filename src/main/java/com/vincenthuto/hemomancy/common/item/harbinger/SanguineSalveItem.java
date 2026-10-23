@@ -53,7 +53,7 @@ public class SanguineSalveItem extends Item {
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		super.appendHoverText(stack, context, tooltip, flag);
-		tooltip.add(Component.literal("Repairs the most damaged vein section")
+		tooltip.add(Component.translatable("tooltip.hemomancy.sanguine_salve.repairs_the_most_damaged_vein_section")
 				.withStyle(ChatFormatting.GRAY));
 		tooltip.add(Component.literal("Restores +" + (int) healAmount + " vascular health")
 				.withStyle(ChatFormatting.DARK_RED));

@@ -36,9 +36,9 @@ public class VerdigrisCenserItem extends Item {
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		super.appendHoverText(stack, context, tooltip, flag);
-		tooltip.add(Component.literal("Oxidized copper smoke, carried in a pale silver cage.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.verdigris_censer.oxidized_copper_smoke_carried_in_a")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
-		tooltip.add(Component.literal("Use: grants Verdigris Aura and reveals blood-active bodies nearby.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.verdigris_censer.use_grants_verdigris_aura_and_reveals")
 				.withStyle(ChatFormatting.WHITE));
 	}
 

@@ -31,9 +31,9 @@ public class LetheanChaliceItem extends Item {
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		super.appendHoverText(stack, context, tooltip, flag);
-		tooltip.add(Component.literal("A chalice for still water, meant to rinse away what the blood remembers.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.lethean_chalice.a_chalice_for_still_water_meant")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
-		tooltip.add(Component.literal("Use: clears one harmful effect and steadies the bearer.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.lethean_chalice.use_clears_one_harmful_effect_and")
 				.withStyle(ChatFormatting.WHITE));
 	}
 

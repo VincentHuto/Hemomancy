@@ -27,7 +27,7 @@ public class OculifloraReticularisItem extends ItemFungalScar {
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
-		tooltip.add(Component.literal("Opens a local sightline into blooms, blood-marked forms, and morphic nectar.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.oculiflora_reticularis.opens_a_local_sightline_into_blooms")
 				.withStyle(ChatFormatting.ITALIC));
 	}
 }

@@ -62,7 +62,7 @@ public class CrudeMemoryShardItem extends Item {
 			tooltip.add(getManip().getDisplayName()
 					.withStyle(ChatFormatting.DARK_RED));
 			if (ManipulationRetirementRules.isRetiredMemoryItem(this, getManip())) {
-				tooltip.add(Component.literal("This echo has gone dormant.")
+				tooltip.add(Component.translatable("tooltip.hemomancy.crude_memory_shard.this_echo_has_gone_dormant")
 						.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
 				return;
 			}

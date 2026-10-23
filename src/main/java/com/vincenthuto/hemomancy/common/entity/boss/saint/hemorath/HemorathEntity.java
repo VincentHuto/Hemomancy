@@ -143,7 +143,7 @@ public class HemorathEntity extends SaintTrialEntity {
 			triggerOverload(source);
 		} else if (source instanceof ServerPlayer serverPlayer && absorbed >= OVERLOAD_THRESHOLD * 0.75F) {
 			serverPlayer.displayClientMessage(
-					Component.literal("Hemorath's hollow frame strains with stolen blood.")
+					Component.translatable("message.hemomancy.hemorath.hemorath_s_hollow_frame_strains_with")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					true);
 		}
@@ -239,11 +239,11 @@ public class HemorathEntity extends SaintTrialEntity {
 		}
 		// Boss bar signals the phase shift turns purple and renames
 		bossBar.setColor(BossEvent.BossBarColor.PURPLE);
-		bossBar.setName(Component.literal("Saint Hemorath - The Vessel Empties")
+		bossBar.setName(Component.translatable("message.hemomancy.hemorath.saint_hemorath_the_vessel_empties")
 				.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD));
 		if (this.getTarget() instanceof Player player) {
 			player.displayClientMessage(
-					Component.literal("The Hollow Vessel empties further...")
+					Component.translatable("message.hemomancy.hemorath.the_hollow_vessel_empties_further")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 					false);
 		}
@@ -271,7 +271,7 @@ public class HemorathEntity extends SaintTrialEntity {
 		super.startSeenByPlayer(player);
 		// Announce the encounter to the player who enters sight range
 		player.displayClientMessage(
-				Component.literal("The Hollow Vessel stirs. Blood will be spent.")
+				Component.translatable("message.hemomancy.hemorath.the_hollow_vessel_stirs_blood_will")
 						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 				false);
 	}
@@ -341,7 +341,7 @@ public class HemorathEntity extends SaintTrialEntity {
 		}
 		if (source != null) {
 			source.displayClientMessage(
-					Component.literal("Hemorath bursts, exsanguinated by the blood he refused to release.")
+					Component.translatable("message.hemomancy.hemorath.hemorath_bursts_exsanguinated_by_the_blood")
 							.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
 					false);
 			awardResiduum(source);
@@ -354,7 +354,7 @@ public class HemorathEntity extends SaintTrialEntity {
 			player.drop(drop, false);
 		}
 		player.displayClientMessage(
-				Component.literal("The Vessel quiets. You carry the enzyme of Saint Hemorath.")
+				Component.translatable("message.hemomancy.hemorath.the_vessel_quiets_you_carry_the")
 						.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
 				false);
 		HemoCapabilityAccess.getBloodVolume(player).resetBloodDebt();

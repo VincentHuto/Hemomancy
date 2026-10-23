@@ -30,7 +30,7 @@ public class BloodyFlaskItem extends Item {
 
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-		tooltip.add(Component.literal("Used to quickly gain " + amount + " mL of blood."));
+		tooltip.add(Component.translatable("tooltip.hemomancy.bloody_flask.used_to_quickly_gain_s_ml", amount));
 	}
 
 	public double getAmount() {

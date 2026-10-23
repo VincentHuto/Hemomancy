@@ -6,7 +6,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowLedger;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPointHelper;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -51,11 +50,6 @@ public class HemolysisEffect extends MobEffect {
 			}
 		}
 		return true;
-	}
-
-	@Override
-	public Component getDisplayName() {
-		return Component.literal("Hemolysis");
 	}
 
 	@Override

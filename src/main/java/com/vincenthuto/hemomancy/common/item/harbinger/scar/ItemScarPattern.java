@@ -179,7 +179,7 @@ public class ItemScarPattern extends Item {
 			tooltip.add(Component.translatable("tooltip.hemomancy.scar_pattern.loadout", ids.size())
 					.withStyle(ChatFormatting.DARK_RED));
 			for (ResourceLocation id : ids) {
-				tooltip.add(Component.literal(" - " + id.getPath()).withStyle(ChatFormatting.GRAY));
+				tooltip.add(Component.translatable("tooltip.hemomancy.item_scar_pattern.s", id.getPath()).withStyle(ChatFormatting.GRAY));
 			}
 		} else {
 			tooltip.add(Component.translatable("tooltip.hemomancy.scar_pattern.blank").withStyle(ChatFormatting.GRAY));

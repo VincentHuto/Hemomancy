@@ -31,7 +31,7 @@ public class VascularStatusGaugeItem extends Item {
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		super.appendHoverText(stack, context, tooltip, flag);
-		tooltip.add(Component.literal("Right-click to view your Vascular Status").withStyle(ChatFormatting.DARK_RED));
-		tooltip.add(Component.literal("Shows the health of each vein section").withStyle(ChatFormatting.GRAY));
+		tooltip.add(Component.translatable("tooltip.hemomancy.vascular_status_gauge.right_click_to_view_your_vascular").withStyle(ChatFormatting.DARK_RED));
+		tooltip.add(Component.translatable("tooltip.hemomancy.vascular_status_gauge.shows_the_health_of_each_vein").withStyle(ChatFormatting.GRAY));
 	}
 }

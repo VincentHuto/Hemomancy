@@ -26,8 +26,8 @@ public class EnzymeItem extends Item {
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
-		tooltip.add(Component.literal("Tendency: " + tend).withStyle(ChatFormatting.DARK_GREEN));
-		tooltip.add(Component.literal("Amount: " + amount).withStyle(ChatFormatting.GOLD));
+		tooltip.add(Component.translatable("tooltip.hemomancy.enzyme.tendency_s", tend).withStyle(ChatFormatting.DARK_GREEN));
+		tooltip.add(Component.translatable("tooltip.hemomancy.enzyme.amount_s", amount).withStyle(ChatFormatting.GOLD));
 
 	}
 

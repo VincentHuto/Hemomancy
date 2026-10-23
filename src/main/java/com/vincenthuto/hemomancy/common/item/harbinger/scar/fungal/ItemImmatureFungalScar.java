@@ -121,17 +121,17 @@ public class ItemImmatureFungalScar extends Item {
         int threshold = getMatureThreshold(stack);
         EnumBloodTendency tendency = getTendency(stack);
         if (tendency != null) {
-            tooltip.add(Component.literal("Tendency: " + tendency.name())
+            tooltip.add(Component.translatable("tooltip.hemomancy.item_immature_fungal_scar.tendency_s", tendency.name())
                     .withStyle(ChatFormatting.DARK_PURPLE));
         }
         if (threshold > 0) {
             tooltip.add(Component.literal("Maturation: " + progress + " / " + threshold)
                     .withStyle(progress >= threshold ? ChatFormatting.GREEN : ChatFormatting.GOLD));
             if (progress < threshold) {
-                tooltip.add(Component.literal("Feed aligned enzymes in the Mycelial Crucible to mature.")
+                tooltip.add(Component.translatable("tooltip.hemomancy.item_immature_fungal_scar.feed_aligned_enzymes_in_the_mycelial")
                         .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
             } else {
-                tooltip.add(Component.literal("Ready to harvest — return to the Crucible.")
+                tooltip.add(Component.translatable("tooltip.hemomancy.item_immature_fungal_scar.ready_to_harvest_return_to_the")
                         .withStyle(ChatFormatting.GREEN, ChatFormatting.ITALIC));
             }
         }

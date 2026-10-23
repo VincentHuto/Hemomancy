@@ -30,7 +30,7 @@ public class HallowedResiduumItem extends Item {
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
-		tooltip.add(Component.literal("Saint: " + saintType.getDisplayName())
+		tooltip.add(Component.translatable("tooltip.hemomancy.hallowed_residuum.saint_s", saintType.getDisplayName())
 				.withStyle(ChatFormatting.GOLD));
 		tooltip.add(Component.literal("Primary: " + saintType.getPrimaryTendency().name())
 				.withStyle(ChatFormatting.DARK_RED));
@@ -39,7 +39,7 @@ public class HallowedResiduumItem extends Item {
 		tooltip.add(Component.literal("Doctrine: " + saintType.getPrimaryDoctrine().getDisplayName()
 				+ " / " + saintType.getSecondaryDoctrine().getDisplayName())
 				.withStyle(ChatFormatting.LIGHT_PURPLE));
-		tooltip.add(Component.literal("Potency: " + amount)
+		tooltip.add(Component.translatable("tooltip.hemomancy.hallowed_residuum.potency_s", amount)
 				.withStyle(ChatFormatting.AQUA));
 	}
 

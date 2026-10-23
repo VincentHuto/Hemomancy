@@ -34,14 +34,13 @@ public class UnstainedWarhammerItem extends DiggerItem {
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
-		tooltip.add(Component.literal(
-				"A bell-headed pale silver hammer for breaking blood-borne corruption without drawing blood.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.unstained_warhammer.a_bell_headed_pale_silver_hammer")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
-		tooltip.add(Component.literal("On hit: cripples enemies with Slowness and Weakness.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.unstained_warhammer.on_hit_cripples_enemies_with_slowness")
 				.withStyle(ChatFormatting.WHITE));
-		tooltip.add(Component.literal("Heavy impact: knocks enemies back, scaling with purity.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.unstained_warhammer.heavy_impact_knocks_enemies_back_scaling")
 				.withStyle(ChatFormatting.WHITE));
-		tooltip.add(Component.literal("When coated with White Humor: applies Hemolysis on hit.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.unstained_warhammer.when_coated_with_white_humor_applies")
 				.withStyle(ChatFormatting.AQUA));
 	}
 

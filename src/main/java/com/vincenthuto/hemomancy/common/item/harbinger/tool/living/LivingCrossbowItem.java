@@ -381,7 +381,7 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable, IT
 		List<ItemStack> list = getChargedProjectiles(stack, context.registries());
 		if (isCharged(stack) && !list.isEmpty()) {
 			ItemStack itemstack = list.get(0);
-			tooltip.add((Component.literal("item.minecraft.crossbow.projectile")).append(" ")
+			tooltip.add((Component.translatable("tooltip.hemomancy.living_crossbow.item_minecraft_crossbow_projectile")).append(" ")
 					.append(itemstack.getDisplayName()));
 			if (flagIn.isAdvanced() && itemstack.getItem() == Items.FIREWORK_ROCKET) {
 				List<Component> list1 = Lists.newArrayList();

@@ -529,10 +529,10 @@ public class DebugShowcaseItem extends Item {
 
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-		tooltip.add(Component.literal("§7Right-click to spawn a showcase of"));
-		tooltip.add(Component.literal("§7every Hemomancy feature in organized groups."));
-		tooltip.add(Component.literal("§cCreative mode only!"));
-		tooltip.add(Component.literal("§8Items in chests | Blocks on platforms | Mobs in pens"));
+		tooltip.add(Component.translatable("tooltip.hemomancy.debug_showcase.7right_click_to_spawn_a_showcase"));
+		tooltip.add(Component.translatable("tooltip.hemomancy.debug_showcase.7every_hemomancy_feature_in_organized_groups"));
+		tooltip.add(Component.translatable("tooltip.hemomancy.debug_showcase.ccreative_mode_only"));
+		tooltip.add(Component.translatable("tooltip.hemomancy.debug_showcase.8items_in_chests_blocks_on_platforms"));
 	}
 }
 

@@ -37,19 +37,19 @@ public class BloodMemoryItem extends Item {
 		if (getManip() != null) {
 			tooltip.add(getManip().getDisplayName());
 			if (isRetiredMemoryItem()) {
-				tooltip.add(Component.literal("This memory has gone dormant.")
+				tooltip.add(Component.translatable("tooltip.hemomancy.blood_memory.this_memory_has_gone_dormant")
 						.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
 				return;
 			}
 			getManip().getDrudgeAction().ifPresentOrElse(da -> {
 				if (da == com.vincenthuto.hemomancy.common.manipulation.DrudgeAction.DRUDGE_UNSUPPORTED) {
-					tooltip.add(Component.literal("§cNot usable by Drudges"));
+					tooltip.add(Component.translatable("tooltip.hemomancy.blood_memory.cnot_usable_by_drudges"));
 				} else {
 					getManip().getDrudgeDescription().ifPresent(desc ->
-							tooltip.add(Component.literal("§7Drudge: " + desc)));
+							tooltip.add(Component.translatable("tooltip.hemomancy.blood_memory.7drudge_s", desc)));
 				}
 			}, () -> { /* no DrudgeAction registered yet — show nothing */ });
-			tooltip.add(Component.literal("Burn in a lit Iron Brazier and absorb with Blood Absorption.")
+			tooltip.add(Component.translatable("tooltip.hemomancy.blood_memory.burn_in_a_lit_iron_brazier")
 					.withStyle(ChatFormatting.DARK_GRAY));
 			tooltip.add(Component.literal("Learn at Degree "
 					+ com.vincenthuto.hemomancy.common.manipulation.ManipulationRankGates.minDegreeForRank(getManip().getRank())

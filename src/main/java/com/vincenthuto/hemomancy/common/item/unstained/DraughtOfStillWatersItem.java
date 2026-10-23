@@ -33,10 +33,10 @@ public class DraughtOfStillWatersItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.literal("Cold-distilled in memory of still water.")
+        tooltip.add(Component.translatable("tooltip.hemomancy.draught_of_still_waters.cold_distilled_in_memory_of_still")
                 .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
-        tooltip.add(Component.literal("Clears: Blood Loss").withStyle(ChatFormatting.AQUA));
-        tooltip.add(Component.literal("Grants: Silver Ward I (3 min)").withStyle(ChatFormatting.WHITE));
+        tooltip.add(Component.translatable("tooltip.hemomancy.draught_of_still_waters.clears_blood_loss").withStyle(ChatFormatting.AQUA));
+        tooltip.add(Component.translatable("tooltip.hemomancy.draught_of_still_waters.grants_silver_ward_i_3_min").withStyle(ChatFormatting.WHITE));
     }
 
     @Override

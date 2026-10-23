@@ -42,7 +42,7 @@ class UnstainedWeaponRendererResourceTest {
 		assertContains("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java",
 				"new UnstainedWarhammerItem(8f, -3.4f",
 				"Unstained warhammer should have a slower heavy-weapon attack cooldown");
-		assertContains("src/main/java/com/vincenthuto/hemomancy/common/item/unstained/tool/UnstainedWarhammerItem.java",
+		assertContains("src/main/resources/assets/hemomancy/lang/en_us.json",
 				"On hit: cripples enemies with Slowness and Weakness.",
 				"Unstained warhammer should display weapon info like the glaive and dagger");
 		assertContains("src/main/java/com/vincenthuto/hemomancy/client/item/ItemClientExtensions.java",

@@ -36,7 +36,7 @@ public class VascularPoulticeItem extends Item {
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		super.appendHoverText(stack, context, tooltip, flag);
-		tooltip.add(Component.literal("Repairs the two most strained vein sections").withStyle(ChatFormatting.GRAY));
+		tooltip.add(Component.translatable("tooltip.hemomancy.vascular_poultice.repairs_the_two_most_strained_vein").withStyle(ChatFormatting.GRAY));
 		tooltip.add(Component.literal("Restores +" + (int) healAmount + " health to each").withStyle(ChatFormatting.DARK_RED));
 	}
 

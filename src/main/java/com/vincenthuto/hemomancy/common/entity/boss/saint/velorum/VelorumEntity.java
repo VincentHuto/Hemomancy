@@ -221,7 +221,7 @@ public class VelorumEntity extends SaintTrialEntity {
             }
         }
 
-        broadcastMessage("Darkness closes in — silence answers.", ChatFormatting.DARK_BLUE);
+        broadcastMessage("message.hemomancy.velorum.darkness_closes_in_silence_answers", ChatFormatting.DARK_BLUE);
     }
 
     private void fireSilenceDrain(ServerLevel server) {

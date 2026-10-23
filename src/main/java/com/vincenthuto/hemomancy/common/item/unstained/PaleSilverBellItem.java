@@ -34,9 +34,9 @@ public class PaleSilverBellItem extends Item {
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		super.appendHoverText(stack, context, tooltip, flag);
-		tooltip.add(Component.literal("A handbell of pale silver, tuned to make blood-magic hesitate.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.pale_silver_bell.a_handbell_of_pale_silver_tuned")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
-		tooltip.add(Component.literal("Use: Silver Ward and a weakening chime against nearby hostiles.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.pale_silver_bell.use_silver_ward_and_a_weakening")
 				.withStyle(ChatFormatting.WHITE));
 	}
 

@@ -43,14 +43,13 @@ public class SilthmereGlaiveItem extends SwordItem {
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
-		tooltip.add(Component.literal(
-				"A pale silver glaive consecrated under Silthmere, Our Lady's title. Its reach keeps corruption at arm's length.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.silthmere_glaive.a_pale_silver_glaive_consecrated_under")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
-		tooltip.add(Component.literal("+1.5 Attack Range").withStyle(ChatFormatting.WHITE));
-		tooltip.add(Component.literal("On hit: cleaves up to 2 additional enemies in front (3 total).")
+		tooltip.add(Component.translatable("tooltip.hemomancy.silthmere_glaive.1_5_attack_range").withStyle(ChatFormatting.WHITE));
+		tooltip.add(Component.translatable("tooltip.hemomancy.silthmere_glaive.on_hit_cleaves_up_to_2")
 				.withStyle(ChatFormatting.WHITE));
-		tooltip.add(Component.literal("Passive: removes Glowing from the wielder.").withStyle(ChatFormatting.WHITE));
-		tooltip.add(Component.literal("ABSOLVED+: killing a mob grants +0.5 purity.").withStyle(ChatFormatting.AQUA));
+		tooltip.add(Component.translatable("tooltip.hemomancy.silthmere_glaive.passive_removes_glowing_from_the_wielder").withStyle(ChatFormatting.WHITE));
+		tooltip.add(Component.translatable("tooltip.hemomancy.silthmere_glaive.absolved_killing_a_mob_grants_0").withStyle(ChatFormatting.AQUA));
 	}
 
 	@Override

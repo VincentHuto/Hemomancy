@@ -32,15 +32,15 @@ public class DrudgeElectrodeItem extends Item {
 
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-		tooltip.add(Component.literal("Used to issue and reflect commands to Drudges."));
+		tooltip.add(Component.translatable("tooltip.hemomancy.drudge_electrode.used_to_issue_and_reflect_commands"));
 		if (stack.has(DataComponents.CUSTOM_DATA)) {
 			if (stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getBoolean(TAG_MODE)) {
-				tooltip.add(Component.literal("State: On").withStyle(ChatFormatting.RED));
+				tooltip.add(Component.translatable("tooltip.hemomancy.drudge_electrode.state_on").withStyle(ChatFormatting.RED));
 			} else {
-				tooltip.add(Component.literal("State: Off").withStyle(ChatFormatting.GRAY));
+				tooltip.add(Component.translatable("tooltip.hemomancy.drudge_electrode.state_off").withStyle(ChatFormatting.GRAY));
 			}
 		}
-		tooltip.add(Component.literal("§8Right-click: toggle mode  §8| Sneak+right-click a Drudge: dissolve").withStyle(ChatFormatting.DARK_GRAY));
+		tooltip.add(Component.translatable("tooltip.hemomancy.drudge_electrode.8right_click_toggle_mode_8_sneak").withStyle(ChatFormatting.DARK_GRAY));
 		super.appendHoverText(stack, context, tooltip, flagIn);
 	}
 

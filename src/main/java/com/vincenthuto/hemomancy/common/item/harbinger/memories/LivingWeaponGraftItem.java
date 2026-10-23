@@ -25,12 +25,11 @@ public class LivingWeaponGraftItem extends Item {
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip,
 			TooltipFlag flag) {
 		LivingWeaponForm form = form(stack);
-		tooltip.add(Component.literal("A prepared " + form.patternName() + ".")
+		tooltip.add(Component.translatable("tooltip.hemomancy.living_weapon_graft.a_prepared_s", form.patternName())
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
-		tooltip.add(Component.literal("Burn it in an Iron Brazier and draw it in with Blood Absorption to remember "
-						+ form.manipulationDisplayName() + ".")
+		tooltip.add(Component.translatable("tooltip.hemomancy.living_weapon_graft.burn_it_in_an_iron_brazier", form.manipulationDisplayName())
 				.withStyle(ChatFormatting.DARK_RED));
-		tooltip.add(Component.literal("Hold the Living Staff and channel into the lit brazier. Earn the graft's activity first.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.living_weapon_graft.hold_the_living_staff_and_channel")
 				.withStyle(ChatFormatting.GRAY));
 		tooltip.add(Component.literal("Base switch: "
 				+ (int) com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingStaffWeaponFormRules.BASE_HOT_SWAP_COST_ML

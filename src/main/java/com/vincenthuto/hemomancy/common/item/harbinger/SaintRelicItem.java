@@ -25,8 +25,8 @@ public class SaintRelicItem extends Item {
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
-		tooltip.add(Component.literal("Saint: " + saintType.getDisplayName()).withStyle(ChatFormatting.GOLD));
-		tooltip.add(Component.literal("Use on a Saint Sarcophagus to wake this Saint.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.saint_relic.saint_s", saintType.getDisplayName()).withStyle(ChatFormatting.GOLD));
+		tooltip.add(Component.translatable("tooltip.hemomancy.saint_relic.use_on_a_saint_sarcophagus_to")
 				.withStyle(ChatFormatting.DARK_RED));
 	}
 

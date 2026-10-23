@@ -31,8 +31,8 @@ public class SaprovittaVestigiumItem extends ItemFungalScar {
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
-		tooltip.add(Component.literal("Feeding Wake").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
-		tooltip.add(Component.literal("Every step leaves something behind. The ground remembers where you've been.").withStyle(ChatFormatting.ITALIC));
-		tooltip.add(Component.literal("✦ Movement leaves a brief damaging blood-fungal trail").withStyle(ChatFormatting.DARK_GREEN));
+		tooltip.add(Component.translatable("tooltip.hemomancy.saprovitta_vestigium.feeding_wake").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
+		tooltip.add(Component.translatable("tooltip.hemomancy.saprovitta_vestigium.every_step_leaves_something_behind_the").withStyle(ChatFormatting.ITALIC));
+		tooltip.add(Component.translatable("tooltip.hemomancy.saprovitta_vestigium.movement_leaves_a_brief_damaging_blood").withStyle(ChatFormatting.DARK_GREEN));
 	}
 }

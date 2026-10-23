@@ -36,7 +36,7 @@ public class LivingPistolItem extends Item implements IDispellable {
 			CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 			if (tag.contains(TAG_MODE)) {
 				int mode = tag.getInt(TAG_MODE);
-				tooltip.add(Component.literal("State: " + mode).withStyle(ChatFormatting.RED));
+				tooltip.add(Component.translatable("tooltip.hemomancy.living_pistol.state_s", mode).withStyle(ChatFormatting.RED));
 
 			}
 		}

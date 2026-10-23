@@ -288,7 +288,7 @@ public class SeraphaeEntity extends Monster {
 			server.sendParticles(ParticleTypes.FLASH,
 					this.getX(), this.getY() + 1.5, this.getZ(),
 					3, 0.0, 0.0, 0.0, 0.0);
-			broadcastMessage("Condensing complete — containment strengthened!",
+			broadcastMessage("message.hemomancy.seraphae.condensing_complete_containment_strengthened",
 					ChatFormatting.GREEN);
 		}
 
@@ -298,7 +298,7 @@ public class SeraphaeEntity extends Monster {
 
 		server.playSound(null, this.getX(), this.getY(), this.getZ(),
 				SoundEvents.BEACON_ACTIVATE, SoundSource.HOSTILE, 2.0F, 1.2F);
-		broadcastMessage("Seraphae stabilizes... briefly.", ChatFormatting.GOLD);
+		broadcastMessage("message.hemomancy.seraphae.seraphae_stabilizes_briefly", ChatFormatting.GOLD);
 	}
 
 	private void enterFracturing(ServerLevel server) {
@@ -318,7 +318,7 @@ public class SeraphaeEntity extends Monster {
 				this.getX(), this.getY() + 1.0, this.getZ(),
 				40, 1.0, 1.2, 1.0, 0.15);
 
-		broadcastMessage("Seraphae, the Chain Saint, fractures! Bind the fragments!", ChatFormatting.RED);
+		broadcastMessage("message.hemomancy.seraphae.seraphae_the_chain_saint_fractures_bind", ChatFormatting.RED);
 	}
 
 	private void enterDispersed(ServerLevel server) {
@@ -330,7 +330,7 @@ public class SeraphaeEntity extends Monster {
 				this.getX(), this.getY() + 1.0, this.getZ(),
 				3, 0.0, 0.0, 0.0, 0.0);
 
-		broadcastMessage("Seraphae disperses into radiant wisps...", ChatFormatting.YELLOW);
+		broadcastMessage("message.hemomancy.seraphae.seraphae_disperses_into_radiant_wisps", ChatFormatting.YELLOW);
 	}
 
 	private void enterCondensing(ServerLevel server) {
@@ -341,7 +341,7 @@ public class SeraphaeEntity extends Monster {
 		server.playSound(null, this.getX(), this.getY(), this.getZ(),
 				SoundEvents.BEACON_DEACTIVATE, SoundSource.HOSTILE, 2.0F, 0.8F);
 
-		broadcastMessage("The chains draw Seraphae inward - strike now for containment!", ChatFormatting.GREEN);
+		broadcastMessage("message.hemomancy.seraphae.the_chains_draw_seraphae_inward_strike", ChatFormatting.GREEN);
 	}
 
 	// ── per-state tick behaviour ──────────────────────────────────────
@@ -523,7 +523,7 @@ public class SeraphaeEntity extends Monster {
 				this.getX(), this.getY() + 1.0, this.getZ(),
 				80, 2.0, 2.0, 2.0, 0.2);
 
-		broadcastMessage("Seraphae is chained once more. The radiance is contained.",
+		broadcastMessage("message.hemomancy.seraphae.seraphae_is_chained_once_more_the",
 				ChatFormatting.GOLD);
 
 		// Drop reward to nearest player
@@ -555,7 +555,7 @@ public class SeraphaeEntity extends Monster {
 
 	private void onArenaOverrun(ServerLevel server) {
 		// Soft fail — massive pressure, but not instant death
-		broadcastMessage("Containment failing! Radiance overflows!",
+		broadcastMessage("message.hemomancy.seraphae.containment_failing_radiance_overflows",
 				ChatFormatting.DARK_RED);
 
 		// Deal area damage
@@ -609,7 +609,7 @@ public class SeraphaeEntity extends Monster {
 		super.startSeenByPlayer(player);
 		bossBar.show(player);
 		player.displayClientMessage(
-				Component.literal("Seraphae, the Chain Saint, stirs. Maintain containment.")
+				Component.translatable("message.hemomancy.seraphae.seraphae_the_chain_saint_stirs_maintain")
 						.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
 				false);
 	}
@@ -672,12 +672,12 @@ public class SeraphaeEntity extends Monster {
 
 	// ── utility ───────────────────────────────────────────────────────
 
-	private void broadcastMessage(String text, ChatFormatting color) {
+	private void broadcastMessage(String key, ChatFormatting color) {
 		if (!(this.level() instanceof ServerLevel server)) return;
 		for (Player player : server.getEntitiesOfClass(Player.class,
 				this.getBoundingBox().inflate(ARENA_RADIUS))) {
 			player.displayClientMessage(
-					Component.literal(text).withStyle(color, ChatFormatting.BOLD),
+					Component.translatable(key).withStyle(color, ChatFormatting.BOLD),
 					false);
 		}
 	}

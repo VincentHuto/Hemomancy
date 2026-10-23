@@ -60,13 +60,13 @@ public class ConsecratedSyringeItem extends Item {
 		super.appendHoverText(stack, context, tooltip, flagIn);
 		EnumSaintType saint = getSaintType(stack);
 		if (saint != null) {
-			tooltip.add(Component.literal("Consecrated by Saint " + saint.getDisplayName() + ".")
+			tooltip.add(Component.translatable("tooltip.hemomancy.consecrated_syringe.consecrated_by_saint_s", saint.getDisplayName())
 					.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC));
 		} else {
-			tooltip.add(Component.literal("A syringe blessed by forgotten rites.")
+			tooltip.add(Component.translatable("tooltip.hemomancy.consecrated_syringe.a_syringe_blessed_by_forgotten_rites")
 					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 		}
-		tooltip.add(Component.literal("Process in a Vial Centrifuge to extract Hallowed Residuum.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.consecrated_syringe.process_in_a_vial_centrifuge_to")
 				.withStyle(ChatFormatting.DARK_PURPLE));
 	}
 }

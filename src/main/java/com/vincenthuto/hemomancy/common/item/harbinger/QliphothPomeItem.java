@@ -170,9 +170,9 @@ public class QliphothPomeItem extends Item {
 		boolean isTainted = tag.getBoolean(TAINTED_KEY);
 
 		if (isTainted) {
-			tooltip.add(Component.literal("A severed husk — cut before it was ready to fall.")
+			tooltip.add(Component.translatable("tooltip.hemomancy.qliphoth_pome.a_severed_husk_cut_before_it")
 					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
-			tooltip.add(Component.literal("The void inside is dying, not opening.")
+			tooltip.add(Component.translatable("tooltip.hemomancy.qliphoth_pome.the_void_inside_is_dying_not")
 					.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
 		} else {
 			// Show husk name and index if the pome was assigned one at drop time
@@ -185,20 +185,20 @@ public class QliphothPomeItem extends Item {
 					tooltip.add(Component.literal("[" + HUSK_NAMES[huskIdx] + "]")
 							.withStyle(ChatFormatting.DARK_PURPLE));
 				} else {
-					tooltip.add(Component.literal("One of nine. Sweet in the way that TV static and silence are sweet.")
+					tooltip.add(Component.translatable("tooltip.hemomancy.qliphoth_pome.one_of_nine_sweet_in_the")
 							.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
 				}
 			} else {
-				tooltip.add(Component.literal("One of nine. Sweet in the way that TV static and silence are sweet.")
+				tooltip.add(Component.translatable("tooltip.hemomancy.qliphoth_pome.one_of_nine_sweet_in_the")
 						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
 			}
-			tooltip.add(Component.literal("+300 Blood Volume")
+			tooltip.add(Component.translatable("tooltip.hemomancy.qliphoth_pome.300_blood_volume")
 					.withStyle(ChatFormatting.DARK_RED));
-			tooltip.add(Component.literal("Regeneration II (12s)")
+			tooltip.add(Component.translatable("tooltip.hemomancy.qliphoth_pome.regeneration_ii_12s")
 					.withStyle(ChatFormatting.RED));
 			tooltip.add(Component.literal("Manipulation Cost -25% (3 min)")
 					.withStyle(ChatFormatting.GOLD));
-			tooltip.add(Component.literal("Darkness (7s)")
+			tooltip.add(Component.translatable("tooltip.hemomancy.qliphoth_pome.darkness_7s")
 					.withStyle(ChatFormatting.DARK_GRAY));
 		}
 	}

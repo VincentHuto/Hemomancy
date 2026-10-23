@@ -33,9 +33,9 @@ public class DSDItem extends Item {
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
-		tooltip.add(Component.literal("Also known as a D.S.D., this device lets you"));
-		tooltip.add(Component.literal("commandeer Drudges to your will."));
-		tooltip.add(Component.literal("§8Shift+right-click to dissolve the nearest bound Drudge."));
+		tooltip.add(Component.translatable("tooltip.hemomancy.d_s_d.also_known_as_a_d_s"));
+		tooltip.add(Component.translatable("tooltip.hemomancy.d_s_d.commandeer_drudges_to_your_will"));
+		tooltip.add(Component.translatable("tooltip.hemomancy.d_s_d.8shift_right_click_to_dissolve_the"));
 	}
 
 	@Override

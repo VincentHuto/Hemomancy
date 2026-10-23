@@ -34,10 +34,10 @@ public class PallidInfusionItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.literal("Ghost Pipe and white humor, coldly distilled.")
+        tooltip.add(Component.translatable("tooltip.hemomancy.pallid_infusion.ghost_pipe_and_white_humor_coldly")
                 .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
-        tooltip.add(Component.literal("Clears: Blood Loss").withStyle(ChatFormatting.AQUA));
-        tooltip.add(Component.literal("Grants: Regeneration I (10s)").withStyle(ChatFormatting.WHITE));
+        tooltip.add(Component.translatable("tooltip.hemomancy.pallid_infusion.clears_blood_loss").withStyle(ChatFormatting.AQUA));
+        tooltip.add(Component.translatable("tooltip.hemomancy.pallid_infusion.grants_regeneration_i_10s").withStyle(ChatFormatting.WHITE));
     }
 
     @Override

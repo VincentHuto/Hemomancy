@@ -50,25 +50,25 @@ public class BloodGourdItem extends Item implements IHarbingerEquipment {
 		HemoCapabilityAccess.getBloodVolume(stack).ifPresent(bloodVolume -> {
 			CompoundTag data = getCustomData(stack);
 			tooltip.add(Component.literal(tier.getRoleName()).withStyle(ChatFormatting.DARK_RED));
-			tooltip.add(Component.literal("Capacity: " + tier.getMaxVolume() + " mL")
+			tooltip.add(Component.translatable("tooltip.hemomancy.blood_gourd.capacity_s_ml", tier.getMaxVolume())
 					.withStyle(ChatFormatting.GOLD));
-			tooltip.add(Component.literal("Flow rate: " + tier.getTransferRate() + " mL/tick")
+			tooltip.add(Component.translatable("tooltip.hemomancy.blood_gourd.flow_rate_s_ml_tick", tier.getTransferRate())
 					.withStyle(ChatFormatting.RED));
 			tooltip.add(Component.literal("Kill Siphon: " + Math.round(tier.getKillSiphonMultiplier() * 100) + "%")
 					.withStyle(ChatFormatting.RED));
 			if (tier.getPassiveGenerationRate() > 0) {
-				tooltip.add(Component.literal("Marrow growth: " + tier.getPassiveGenerationRate() + " mL/tick")
+				tooltip.add(Component.translatable("tooltip.hemomancy.blood_gourd.marrow_growth_s_ml_tick", tier.getPassiveGenerationRate())
 						.withStyle(ChatFormatting.DARK_RED));
 			}
-			tooltip.add(Component.literal("Proper vessel: no Blood Drunkenness")
+			tooltip.add(Component.translatable("tooltip.hemomancy.blood_gourd.proper_vessel_no_blood_drunkenness")
 					.withStyle(ChatFormatting.GRAY));
 			if (!data.isEmpty()) {
 				tooltip.add(Component.literal("Blood volume: " + formatBloodAmount(bloodVolume.getBloodVolume()) + " mL")
 						.withStyle(ChatFormatting.RED));
 				if (data.getBoolean(TAG_STATE)) {
-					tooltip.add(Component.literal("State: Open").withStyle(ChatFormatting.RED));
+					tooltip.add(Component.translatable("tooltip.hemomancy.blood_gourd.state_open").withStyle(ChatFormatting.RED));
 				} else {
-					tooltip.add(Component.literal("State: Corked").withStyle(ChatFormatting.GRAY));
+					tooltip.add(Component.translatable("tooltip.hemomancy.blood_gourd.state_corked").withStyle(ChatFormatting.GRAY));
 				}
 			}
 		});

@@ -25,10 +25,9 @@ public class PaleSilverPickaxeItem extends PickaxeItem {
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
-		tooltip.add(Component.literal(
-				"Pale silver, refined of all hematic taint. The cleansed do not disturb the blood.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.pale_silver_pickaxe.pale_silver_refined_of_all_hematic")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
-		tooltip.add(Component.literal("Passive: suppresses mob spawns within 4 blocks while held.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.pale_silver_pickaxe.passive_suppresses_mob_spawns_within_4")
 				.withStyle(ChatFormatting.WHITE));
 	}
 

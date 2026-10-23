@@ -213,7 +213,7 @@ public class PutricielEntity extends SaintTrialEntity {
         server.playSound(null, this.getX(), this.getY(), this.getZ(),
                 SoundEvents.BEACON_ACTIVATE, SoundSource.HOSTILE, 1.2F, 0.7F);
 
-        broadcastMessage("The rot stills — absolve him now!", ChatFormatting.GREEN);
+        broadcastMessage("message.hemomancy.putriciel.the_rot_stills_absolve_him_now", ChatFormatting.GREEN);
     }
 
     private void endAbsolutionWindow(ServerLevel server) {
@@ -223,7 +223,7 @@ public class PutricielEntity extends SaintTrialEntity {
 
         server.playSound(null, this.getX(), this.getY(), this.getZ(),
                 SoundEvents.BEACON_DEACTIVATE, SoundSource.HOSTILE, 1.0F, 0.9F);
-        broadcastMessage("The window closes.", ChatFormatting.DARK_GREEN);
+        broadcastMessage("message.hemomancy.putriciel.the_window_closes", ChatFormatting.DARK_GREEN);
     }
 
     // ── victory condition via damage during absolution window ─────────────
@@ -256,7 +256,7 @@ public class PutricielEntity extends SaintTrialEntity {
 
     private void onTrialComplete(ServerLevel server) {
         defeated = true;
-        broadcastMessage("The Saint finds rest.", ChatFormatting.GOLD);
+        broadcastMessage("message.hemomancy.putriciel.the_saint_finds_rest", ChatFormatting.GOLD);
         // Spawn Hallowed Residuum of Putriciel
         this.spawnAtLocation(new ItemStack(ItemInit.hallowed_residuum_putriciel.get(), 1));
         this.discard();

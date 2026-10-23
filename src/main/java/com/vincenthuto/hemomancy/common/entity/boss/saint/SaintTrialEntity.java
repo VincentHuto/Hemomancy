@@ -114,8 +114,8 @@ public abstract class SaintTrialEntity extends Monster {
 		}
 	}
 
-	/** Sends a chat line to everyone in the fight. */
-	protected void broadcastMessage(String text, ChatFormatting color) {
-		bossBar.broadcast(Component.literal(text).withStyle(color));
+	/** Sends a translated chat line to everyone in the fight. */
+	protected void broadcastMessage(String key, ChatFormatting color) {
+		bossBar.broadcast(Component.translatable(key).withStyle(color));
 	}
 }

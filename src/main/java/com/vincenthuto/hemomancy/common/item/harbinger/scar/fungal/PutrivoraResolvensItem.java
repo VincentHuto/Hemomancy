@@ -19,7 +19,7 @@ public class PutrivoraResolvensItem extends ItemFungalScar {
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
-		tooltip.add(Component.literal("Digests poison, wither, hunger, and blood loss into limited recovery.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.putrivora_resolvens.digests_poison_wither_hunger_and_blood")
 				.withStyle(ChatFormatting.ITALIC));
 	}
 }

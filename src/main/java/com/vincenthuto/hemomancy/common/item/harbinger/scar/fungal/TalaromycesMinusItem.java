@@ -20,7 +20,7 @@ public class TalaromycesMinusItem extends ItemFungalScar {
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip,
 			TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
-		tooltip.add(Component.literal("A quiet decomposer. Shift-mining ore lets its hyphae follow the vein.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.talaromyces_minus.a_quiet_decomposer_shift_mining_ore")
 				.withStyle(ChatFormatting.ITALIC));
 	}
 }

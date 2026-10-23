@@ -52,7 +52,7 @@ public class MuscleMemoryTinctureItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("tooltip.hemomancy.tincture_" + memory.id()));
-        tooltip.add(Component.literal("Thelemic Memory • " + sectionName() + " • 5:00 reserve per dose"));
+        tooltip.add(Component.translatable("tooltip.hemomancy.muscle_memory_tincture.thelemic_memory_s_5_00_reserve", sectionName()));
         tooltip.add(Component.literal(trimCost(memory.bloodCost()) + " blood • "
                 + trimCost(memory.vascularStrain()) + " vascular strain per trigger"));
         tooltip.add(Component.translatable("tooltip.hemomancy.tincture_doses",

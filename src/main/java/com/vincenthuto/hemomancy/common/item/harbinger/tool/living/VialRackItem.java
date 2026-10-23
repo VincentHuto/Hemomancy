@@ -62,7 +62,7 @@ public class VialRackItem extends Item {
 		super.appendHoverText(stack, context, tooltip, flagIn);
 		int emptyCount = countEmptyVials(stack);
 		tooltip.add(Component.translatable("item.hemomancy.vial_rack.empty_count", emptyCount, MAX_VIALS));
-		tooltip.add(Component.literal("Use with empty vials in the other hand to refill vacant slots.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.vial_rack.use_with_empty_vials_in_the")
 				.withStyle(ChatFormatting.GRAY));
 		if (ClientBridge.get().hasShiftDown()) {
 			appendContentsTooltip(stack, tooltip);

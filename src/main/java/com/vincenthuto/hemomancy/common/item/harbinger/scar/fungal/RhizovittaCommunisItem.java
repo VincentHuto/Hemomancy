@@ -19,7 +19,7 @@ public class RhizovittaCommunisItem extends ItemFungalScar {
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
-		tooltip.add(Component.literal("Roots into fungal ground and returns a little spent blood to the circle.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.rhizovitta_communis.roots_into_fungal_ground_and_returns")
 				.withStyle(ChatFormatting.ITALIC));
 	}
 }

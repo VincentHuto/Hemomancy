@@ -40,13 +40,13 @@ public class RecycledEnzymeItem extends Item {
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		var tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		if (!tag.contains("RecycledEnzymeSeed")) {
-			tooltip.add(Component.literal("Unsettled enzyme; resolves when carried").withStyle(ChatFormatting.GRAY));
+			tooltip.add(Component.translatable("tooltip.hemomancy.recycled_enzyme.unsettled_enzyme_resolves_when_carried").withStyle(ChatFormatting.GRAY));
 			return;
 		}
 		RecycledEnzymeIdentity identity = RecycledEnzymeIdentity.fromSeed(tag.getLong("RecycledEnzymeSeed"));
 		String tendency = EnumBloodTendency.values()[identity.tendencyIndex()].name().toLowerCase();
-		tooltip.add(Component.literal("Recovered tendency: " + tendency).withStyle(ChatFormatting.GRAY));
-		tooltip.add(Component.literal("Low-grade potency: " + identity.potency()).withStyle(ChatFormatting.DARK_RED));
+		tooltip.add(Component.translatable("tooltip.hemomancy.recycled_enzyme.recovered_tendency_s", tendency).withStyle(ChatFormatting.GRAY));
+		tooltip.add(Component.translatable("tooltip.hemomancy.recycled_enzyme.low_grade_potency_s", identity.potency()).withStyle(ChatFormatting.DARK_RED));
 	}
 
 	private static RecycledEnzymeIdentity identity(ItemStack stack) {

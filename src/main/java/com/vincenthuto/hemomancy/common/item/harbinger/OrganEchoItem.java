@@ -50,9 +50,9 @@ public class OrganEchoItem extends Item {
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
 		tooltip.add(Component.literal(organ.getDescription()).withStyle(ChatFormatting.DARK_RED));
-		tooltip.add(Component.literal("Tier " + organ.getTier() + " Visceral Echo")
+		tooltip.add(Component.translatable("tooltip.hemomancy.organ_echo.tier_s_visceral_echo", organ.getTier())
 				.withStyle(ChatFormatting.DARK_PURPLE));
-		tooltip.add(Component.literal("Dissolves if removed from your person.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.organ_echo.dissolves_if_removed_from_your_person")
 				.withStyle(ChatFormatting.GRAY));
 	}
 

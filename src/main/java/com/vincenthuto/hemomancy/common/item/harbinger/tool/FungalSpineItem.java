@@ -39,7 +39,7 @@ public class FungalSpineItem extends Item {
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
-		tooltip.add(Component.literal("A calcified tendril from somewhere deep inside. It hums faintly, as if listening.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+		tooltip.add(Component.translatable("tooltip.hemomancy.fungal_spine.a_calcified_tendril_from_somewhere_deep").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 	}
 }
 

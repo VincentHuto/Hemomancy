@@ -39,12 +39,12 @@ public class LivingBladeItem extends LivingToolItem {
 		super.appendHoverText(stack, context, tooltip, flagIn);
 		if (stack.has(DataComponents.CUSTOM_DATA)) {
 			if (stack.get(DataComponents.CUSTOM_DATA).copyTag().getBoolean(TAG_STATE)) {
-				tooltip.add(Component.literal("State: Unleashed").withStyle(ChatFormatting.RED));
-				tooltip.add(Component.literal("+20 Blood Damage").withStyle(ChatFormatting.RED));
+				tooltip.add(Component.translatable("tooltip.hemomancy.living_blade.state_unleashed").withStyle(ChatFormatting.RED));
+				tooltip.add(Component.translatable("tooltip.hemomancy.living_blade.20_blood_damage").withStyle(ChatFormatting.RED));
 
 			} else {
-				tooltip.add(Component.literal("State: Tame").withStyle(ChatFormatting.GRAY));
-				tooltip.add(Component.literal("+5 Blood Damage").withStyle(ChatFormatting.RED));
+				tooltip.add(Component.translatable("tooltip.hemomancy.living_blade.state_tame").withStyle(ChatFormatting.GRAY));
+				tooltip.add(Component.translatable("tooltip.hemomancy.living_blade.5_blood_damage").withStyle(ChatFormatting.RED));
 
 			}
 		}

@@ -46,14 +46,13 @@ public class AbsolutionDaggerItem extends SwordItem {
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
-		tooltip.add(Component.literal(
-				"Coated in a hyper coagulant that seems to halt any blood from being spilled.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.absolution_dagger.coated_in_a_hyper_coagulant_that")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
-		tooltip.add(Component.literal("Inherent hemolytic edge: Hemolysis and Weakness on hit.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.absolution_dagger.inherent_hemolytic_edge_hemolysis_and_weakness")
 				.withStyle(ChatFormatting.WHITE));
-		tooltip.add(Component.literal("Deals increased damage to low-health enemies.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.absolution_dagger.deals_increased_damage_to_low_health")
 				.withStyle(ChatFormatting.WHITE));
-		tooltip.add(Component.literal("CLEANSING+: Every 10th hit strips a random beneficial effect.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.absolution_dagger.cleansing_every_10th_hit_strips_a")
 				.withStyle(ChatFormatting.AQUA));
 	}
 

@@ -19,7 +19,7 @@ public class CryostromaPerduransItem extends ItemFungalScar {
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, context, tooltip, flagIn);
-		tooltip.add(Component.literal("Conserves blood and vein repair while you remain still between casts.")
+		tooltip.add(Component.translatable("tooltip.hemomancy.cryostroma_perdurans.conserves_blood_and_vein_repair_while")
 				.withStyle(ChatFormatting.ITALIC));
 	}
 }

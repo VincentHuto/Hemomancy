@@ -142,13 +142,13 @@ public class BloodThrallItem extends Item {
         super.appendHoverText(stack, context, tips, flag);
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 
-        tips.add(Component.literal("A living clot, animated by blood magic.")
+        tips.add(Component.translatable("tooltip.hemomancy.blood_thrall.a_living_clot_animated_by_blood")
                 .withStyle(ChatFormatting.DARK_RED));
-        tips.add(Component.literal("Shift+click: bind source → destination")
+        tips.add(Component.translatable("tooltip.hemomancy.blood_thrall.shift_click_bind_source_destination")
                 .withStyle(ChatFormatting.GRAY));
-        tips.add(Component.literal("Right-click ground: deploy thrall")
+        tips.add(Component.translatable("tooltip.hemomancy.blood_thrall.right_click_ground_deploy_thrall")
                 .withStyle(ChatFormatting.GRAY));
-        tips.add(Component.literal("Shift+click thrall: pick up")
+        tips.add(Component.translatable("tooltip.hemomancy.blood_thrall.shift_click_thrall_pick_up")
                 .withStyle(ChatFormatting.GRAY));
         tips.add(Component.literal("Cost: " + (int) SPAWN_BLOOD_COST + " mL")
                 .withStyle(ChatFormatting.DARK_GRAY));
@@ -156,12 +156,12 @@ public class BloodThrallItem extends Item {
         if (tag != null) {
             if (tag.contains(TAG_SOURCE)) {
                 BlockPos src = NbtUtils.readBlockPos(tag, TAG_SOURCE).orElse(BlockPos.ZERO);
-                tips.add(Component.literal("Source: " + src.toShortString())
+                tips.add(Component.translatable("tooltip.hemomancy.blood_thrall.source_s", src.toShortString())
                         .withStyle(ChatFormatting.RED));
             }
             if (tag.contains(TAG_DEST)) {
                 BlockPos dest = NbtUtils.readBlockPos(tag, TAG_DEST).orElse(BlockPos.ZERO);
-                tips.add(Component.literal("Destination: " + dest.toShortString())
+                tips.add(Component.translatable("tooltip.hemomancy.blood_thrall.destination_s", dest.toShortString())
                         .withStyle(ChatFormatting.BLUE));
             }
         }

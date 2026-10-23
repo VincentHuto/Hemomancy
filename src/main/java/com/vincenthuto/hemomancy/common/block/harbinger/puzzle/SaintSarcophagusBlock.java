@@ -397,7 +397,7 @@ if (heldStack.is(ItemInit.foul_paste.get())) {
 		heldStack.shrink(1);
 	}
 	player.displayClientMessage(
-		Component.literal("The paste blackens on the stone. The Saint remembers insult before mercy.")
+		Component.translatable("message.hemomancy.saint_sarcophagus.the_paste_blackens_on_the_stone")
 			.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 		false);
 	triggerSaintEncounter(worldIn, pos, player, sarcophagus);
@@ -417,7 +417,7 @@ if (heldStack.is(ItemInit.foul_paste.get())) {
 		IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player);
 		if (volume == null || volume.getBloodVolume() < BLOOD_COST_PER_OFFERING) {
 			player.displayClientMessage(
-				Component.literal("You lack sufficient blood to offer.")
+				Component.translatable("message.hemomancy.saint_sarcophagus.you_lack_sufficient_blood_to_offer")
 					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 				true);
 			worldIn.playSound(null, pos, SoundEvents.STONE_PRESSURE_PLATE_CLICK_OFF, SoundSource.BLOCKS, 0.5f, 0.6f);
@@ -438,15 +438,16 @@ if (heldStack.is(ItemInit.foul_paste.get())) {
 			worldIn.playSound(null, pos, SoundEvents.CHEST_LOCKED, SoundSource.BLOCKS, 1.0f, 1.4f);
 			spawnConsecrationParticles(worldIn, pos, facing);
 			player.displayClientMessage(
-				Component.literal("The bowl drinks deep. A heavy click echoes from within the stone.")
+				Component.translatable("message.hemomancy.saint_sarcophagus.the_bowl_drinks_deep_a_heavy")
 					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 				false);
 		} else {
 			int remaining = threshold - vol;
 			worldIn.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 0.6f, 0.8f);
 			player.displayClientMessage(
-				Component.literal("The bowl accepts your blood. " + remaining + " more offering"
-					+ (remaining == 1 ? "" : "s") + " required.")
+				Component.translatable(remaining == 1
+						? "message.hemomancy.saint_sarcophagus.bowl_accepts_one_more"
+						: "message.hemomancy.saint_sarcophagus.bowl_accepts_more", remaining)
 					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
 				false);
 		}
@@ -455,7 +456,7 @@ if (heldStack.is(ItemInit.foul_paste.get())) {
 
 	// Non-north face — the lid refuses
 	player.displayClientMessage(
-		Component.literal("The lid refuses to budge without proper reverence.")
+		Component.translatable("message.hemomancy.saint_sarcophagus.the_lid_refuses_to_budge_without")
 			.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
 		true);
 	worldIn.playSound(null, pos, SoundEvents.STONE_PRESSURE_PLATE_CLICK_OFF, SoundSource.BLOCKS, 0.6f, 0.5f);
@@ -467,7 +468,7 @@ if (heldStack.is(ItemInit.foul_paste.get())) {
 if (sarcophagus.isOpen() && player.isShiftKeyDown()) {
 sarcophagus.setOpen(false);
 player.displayClientMessage(
-Component.literal("You heave the lid back into place.")
+Component.translatable("message.hemomancy.saint_sarcophagus.you_heave_the_lid_back_into")
 .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
 false);
 worldIn.playSound(null, pos, SoundEvents.STONE_PLACE, SoundSource.BLOCKS, 1.0f, 0.5f);
@@ -478,7 +479,7 @@ return InteractionResult.CONSUME;
 if (!sarcophagus.isOpen()) {
 sarcophagus.setOpen(true);
 player.displayClientMessage(
-Component.literal("You slide the lid off to the side with a loud thud and marvel the corpse infront of you.")
+Component.translatable("message.hemomancy.saint_sarcophagus.you_slide_the_lid_off_to")
 .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
 false);
 worldIn.playSound(null, pos, SoundEvents.STONE_PLACE, SoundSource.BLOCKS, 1.0f, 0.4f);
@@ -494,7 +495,7 @@ if (sarcophagus.getCorpusState() == EnumCorpusState.AWAKENED) {
 // Check for cooldown
 if (sarcophagus.isOnCooldown()) {
 player.displayClientMessage(
-Component.literal("The corpus is still... recovering. Wait.")
+Component.translatable("message.hemomancy.saint_sarcophagus.the_corpus_is_still_recovering_wait")
 .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
 true);
 return InteractionResult.CONSUME;
@@ -526,7 +527,7 @@ if (stack.getItem() instanceof BloodVialItem
 	}
 	if (sarcophagus.hasSampleYielded()) {
 		player.displayClientMessage(
-			Component.literal("The corpus has already yielded what it will give peacefully.")
+			Component.translatable("message.hemomancy.saint_sarcophagus.the_corpus_has_already_yielded_what")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
 			false);
 		return InteractionResult.CONSUME;
@@ -535,7 +536,7 @@ if (stack.getItem() instanceof BloodVialItem
 		sarcophagus.incrementExtractionAttempts();
 		sarcophagus.setCorpusState(EnumCorpusState.AWAKENED);
 		player.displayClientMessage(
-			Component.literal("The corpus recoils from your blood. The Saint wakes in rejection.")
+			Component.translatable("message.hemomancy.saint_sarcophagus.the_corpus_recoils_from_your_blood")
 				.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 			false);
 		triggerSaintEncounter(worldIn, pos, player, sarcophagus);
@@ -566,16 +567,16 @@ private void showSarcophagusInfo(Player player, SaintSarcophagusBlockEntity sarc
 EnumSaintType saint = sarcophagus.getSaintType();
 EnumCorpusState state = sarcophagus.getCorpusState();
 player.displayClientMessage(
-Component.literal("A sarcophagus of Saint " + saint.getDisplayName() + ".")
+Component.translatable("message.hemomancy.saint_sarcophagus.a_sarcophagus_of_saint_s", saint.getDisplayName())
 .withStyle(ChatFormatting.GOLD),
 false);
 player.displayClientMessage(
-Component.literal("State: " + state.getDisplayName())
+Component.translatable("message.hemomancy.saint_sarcophagus.state_s", state.getDisplayName())
 .withStyle(ChatFormatting.GRAY),
 false);
 player.displayClientMessage(
-Component.literal("Aligned tendencies: " + saint.getPrimaryTendency().name()
-+ " + " + saint.getSecondaryTendency().name())
+Component.translatable("message.hemomancy.saint_sarcophagus.aligned_tendencies",
+saint.getPrimaryTendency().name(), saint.getSecondaryTendency().name())
 .withStyle(ChatFormatting.DARK_PURPLE),
 false);
 
@@ -629,7 +630,7 @@ player.drop(syringe, false);
 sarcophagus.setCooldownTicks(100);
 
 player.displayClientMessage(
-Component.literal("The corpus yields its blood. Process the Consecrated Syringe in a Vial Centrifuge.")
+Component.translatable("message.hemomancy.saint_sarcophagus.the_corpus_yields_its_blood_process")
 .withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
 false);
 worldIn.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.0f, 1.2f);
@@ -674,8 +675,8 @@ private static boolean isPlayerAlignedWithSaint(Player player, EnumSaintType sai
 private static void triggerSaintEncounter(Level worldIn, BlockPos pos, Player player,
 		SaintSarcophagusBlockEntity sarcophagus) {
 	triggerSaintEncounter(worldIn, pos, player, sarcophagus,
-		Component.literal("The corpus seethes with hostility. Saint " + sarcophagus.getSaintType().getDisplayName()
-			+ " will not receive you.")
+		Component.translatable("message.hemomancy.saint_sarcophagus.corpus_seethes",
+			sarcophagus.getSaintType().getDisplayName())
 			.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC));
 }
 

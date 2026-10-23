@@ -43,11 +43,11 @@ public class UnsignedLedgerItem extends Item {
 		if (stack.has(DataComponents.CUSTOM_DATA)) {
 			CompoundTag tag = stack.get(DataComponents.CUSTOM_DATA).copyTag();
 			if (!tag.getBoolean(TAG_STATE)) {
-				tooltip.add(Component.literal("Unsigned").withStyle(ChatFormatting.GRAY));
+				tooltip.add(Component.translatable("tooltip.hemomancy.unsigned_ledger.unsigned").withStyle(ChatFormatting.GRAY));
 			} else {
 				if (tag.contains(TAG_BLOODLINE)) {
 					Bloodline line = Bloodline.deserialize(tag.getCompound(TAG_BLOODLINE));
-					tooltip.add(Component.literal("Signed with: " + line.getName())
+					tooltip.add(Component.translatable("tooltip.hemomancy.unsigned_ledger.signed_with_s", line.getName())
 							.withStyle(ChatFormatting.RED));
 					tooltip.add(Component.literal("Members: " + line.getPlayerUUIDS().size())
 							.withStyle(ChatFormatting.DARK_RED));

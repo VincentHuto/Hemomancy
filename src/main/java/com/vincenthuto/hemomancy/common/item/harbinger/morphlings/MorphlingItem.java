@@ -306,9 +306,9 @@ public class MorphlingItem extends Item implements IMorphling {
 		// Show preferred enzyme info
 		EnumBloodTendency preferred = this.getPreferredTendency();
 		EnumBloodTendency secondary = this.getSecondaryTendency();
-		tooltip.add(Component.literal("Preferred: " + formatTendencyName(preferred))
+		tooltip.add(Component.translatable("tooltip.hemomancy.morphling.preferred_s", formatTendencyName(preferred))
 				.withStyle(ChatFormatting.AQUA));
-		tooltip.add(Component.literal("Secondary: " + formatTendencyName(secondary))
+		tooltip.add(Component.translatable("tooltip.hemomancy.morphling.secondary_s", formatTendencyName(secondary))
 				.withStyle(ChatFormatting.DARK_AQUA));
 
 		{
@@ -316,16 +316,16 @@ public class MorphlingItem extends Item implements IMorphling {
 			float power = morphTag.getFloat("EnzymePower");
 			int feedings = morphTag.getInt("EnzymeFeedings");
 			int maturity = getMaturityLevel(stack);
-			tooltip.add(Component.literal("Maturity: " + getMaturityName(maturity))
+			tooltip.add(Component.translatable("tooltip.hemomancy.morphling.maturity_s", getMaturityName(maturity))
 					.withStyle(MATURITY_COLORS[maturity]));
 			if (feedings > 0) {
 				tooltip.add(Component.literal("Enzyme Power: " + String.format("%.1f", power))
 						.withStyle(ChatFormatting.DARK_GREEN));
-				tooltip.add(Component.literal("Feedings: " + feedings)
+				tooltip.add(Component.translatable("tooltip.hemomancy.morphling.feedings_s", feedings)
 						.withStyle(ChatFormatting.GOLD));
 			}
 			if (morphTag.getBoolean(WILD_BOUND_KEY)) {
-				tooltip.add(Component.literal("Wild-bound: Bond, then incubate to unlock further maturity")
+				tooltip.add(Component.translatable("tooltip.hemomancy.morphling.wild_bound_bond_then_incubate_to")
 						.withStyle(ChatFormatting.DARK_AQUA));
 			}
 			if (isHungerEnabled() && maturity >= 3 && !morphTag.getBoolean(WILD_BOUND_KEY)) {
@@ -348,7 +348,7 @@ public class MorphlingItem extends Item implements IMorphling {
 				tooltip.add(Component.literal("Next incubation at: " + String.format("%.0f", nextThreshold) + " power")
 						.withStyle(ChatFormatting.DARK_GRAY));
 			} else if (maturity == PrimalMorphlingRules.APEX_LEVEL) {
-				tooltip.add(Component.literal("Primalization: Morphic Nectar after Apotheos")
+				tooltip.add(Component.translatable("tooltip.hemomancy.morphling.primalization_morphic_nectar_after_apotheos")
 						.withStyle(ChatFormatting.DARK_PURPLE));
 			}
 
@@ -356,7 +356,7 @@ public class MorphlingItem extends Item implements IMorphling {
 			List<Component> bonuses = this.getMaturityBonusDescriptions(maturity);
 			if (!bonuses.isEmpty()) {
 				tooltip.add(Component.empty());
-				tooltip.add(Component.literal("Maturity Bonuses:")
+				tooltip.add(Component.translatable("tooltip.hemomancy.morphling.maturity_bonuses")
 						.withStyle(ChatFormatting.YELLOW, ChatFormatting.UNDERLINE));
 				tooltip.addAll(bonuses);
 			}

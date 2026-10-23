@@ -38,9 +38,9 @@ public class DrudgeSubmissionDeviceItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context,
                                 List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.literal("Right-click a Semi-Sentient Construct to recall all bound drudges.")
+        tooltip.add(Component.translatable("tooltip.hemomancy.drudge_submission_device.right_click_a_semi_sentient_construct")
                 .withStyle(ChatFormatting.DARK_RED));
-        tooltip.add(Component.literal("Even rogue constructs answer the call.")
+        tooltip.add(Component.translatable("tooltip.hemomancy.drudge_submission_device.even_rogue_constructs_answer_the_call")
                 .withStyle(ChatFormatting.DARK_GRAY));
         super.appendHoverText(stack, context, tooltip, flag);
     }

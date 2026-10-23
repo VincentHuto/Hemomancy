@@ -25,11 +25,11 @@ public class HemolyticVialItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.literal("Concentrated hemolytic solution, sealed in brittle glass.")
+        tooltip.add(Component.translatable("tooltip.hemomancy.hemolytic_vial.concentrated_hemolytic_solution_sealed_in_brittl")
                 .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
-        tooltip.add(Component.literal("Throw to shatter. Purges blood-taint on impact.")
+        tooltip.add(Component.translatable("tooltip.hemomancy.hemolytic_vial.throw_to_shatter_purges_blood_taint")
                 .withStyle(ChatFormatting.WHITE));
-        tooltip.add(Component.literal("Harbingers and blood-kin will find little mercy in it.")
+        tooltip.add(Component.translatable("tooltip.hemomancy.hemolytic_vial.harbingers_and_blood_kin_will_find")
                 .withStyle(ChatFormatting.AQUA));
     }
 

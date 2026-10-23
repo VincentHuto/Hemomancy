@@ -32,7 +32,7 @@ public class BloodTendencyGaugeItem extends Item {
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		super.appendHoverText(stack, context, tooltip, flag);
-		tooltip.add(Component.literal("Right-click to view your Blood Tendency").withStyle(ChatFormatting.DARK_RED));
+		tooltip.add(Component.translatable("tooltip.hemomancy.blood_tendency_gauge.right_click_to_view_your_blood").withStyle(ChatFormatting.DARK_RED));
 	}
 }
 

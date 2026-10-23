@@ -27,7 +27,7 @@ public final class HarbingerSaintEncounterHooks {
 				level.random.nextFloat() * 360.0F, 0.0F);
 		boss.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.TRIGGERED, null);
 		boss.setPersistenceRequired();
-		boss.setCustomName(Component.literal("Saint " + saintType.getDisplayName()));
+		boss.setCustomName(Component.translatable("message.hemomancy.saint.saint_s", saintType.getDisplayName()));
 		boss.setCustomNameVisible(true);
 		if (sourcePlayer instanceof ServerPlayer serverPlayer) {
 			boss.setTarget(serverPlayer);
