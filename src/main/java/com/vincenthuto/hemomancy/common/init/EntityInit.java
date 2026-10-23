@@ -673,7 +673,7 @@ public class EntityInit {
     public static final DeferredHolder<EntityType<?>, EntityType<ChthonianQueenEntity>> chthonian_queen = ENTITY_TYPES.register(
             "chthonian_queen",
             () -> EntityType.Builder.of(ChthonianQueenEntity::new, MobCategory.MONSTER)
-                    .sized(1F, 1F).build(Hemomancy.rloc("chthonian").toString()));
+                    .sized(1F, 1F).build(Hemomancy.rloc("chthonian_queen").toString()));
 
     public static final DeferredHolder<EntityType<?>, EntityType<CrimsonDoeEntity>> crimson_doe = ENTITY_TYPES.register(
             "crimson_doe",
