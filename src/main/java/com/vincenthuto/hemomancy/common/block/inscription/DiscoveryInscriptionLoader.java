@@ -1,53 +1,20 @@
 package com.vincenthuto.hemomancy.common.block.inscription;
 
 import com.google.gson.*;
+import com.vincenthuto.hemomancy.common.data.JsonResourceReloadListener;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
-import net.minecraft.util.profiling.ProfilerFiller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public class DiscoveryInscriptionLoader
-		extends SimplePreparableReloadListener<Map<ResourceLocation, DiscoveryInscriptionDefinition>> {
+/** Discovery inscription definitions from {@code discovery_inscription/**.json}, keyed by file id. */
+public class DiscoveryInscriptionLoader extends JsonResourceReloadListener<DiscoveryInscriptionDefinition> {
 	private static final Logger LOGGER = LogManager.getLogger();
-	private static final Gson GSON = new GsonBuilder().create();
-	private static final String FOLDER = "discovery_inscription";
 
-	@Override
-	protected Map<ResourceLocation, DiscoveryInscriptionDefinition> prepare(ResourceManager manager,
-			ProfilerFiller profiler) {
-		Map<ResourceLocation, DiscoveryInscriptionDefinition> result = new HashMap<>();
-		Map<ResourceLocation, Resource> resources = manager.listResources(FOLDER,
-				loc -> loc.getPath().endsWith(".json"));
-		for (Map.Entry<ResourceLocation, Resource> entry : resources.entrySet()) {
-			ResourceLocation file = entry.getKey();
-			String path = file.getPath();
-			String idPath = path.substring(FOLDER.length() + 1, path.length() - ".json".length());
-			ResourceLocation id = ResourceLocation.fromNamespaceAndPath(file.getNamespace(), idPath);
-			try (InputStream stream = entry.getValue().open();
-				 InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
-				JsonObject root = GSON.fromJson(reader, JsonObject.class);
-				DiscoveryInscriptionDefinition definition = parse(id, root);
-				result.put(id, definition);
-			} catch (Exception ex) {
-				LOGGER.error("[DiscoveryInscriptionLoader] Failed to parse {}: {}", file, ex.getMessage());
-			}
-		}
-		LOGGER.info("[DiscoveryInscriptionLoader] Loaded {} discovery inscriptions", result.size());
-		return result;
-	}
-
-	@Override
-	protected void apply(Map<ResourceLocation, DiscoveryInscriptionDefinition> prepared,
-			ResourceManager manager, ProfilerFiller profiler) {
-		DiscoveryInscriptionRegistry.reload(prepared);
+	public DiscoveryInscriptionLoader() {
+		super("discovery_inscription", "discovery inscription", LOGGER, DiscoveryInscriptionLoader::parse,
+				DiscoveryInscriptionRegistry::reload);
 	}
 
 	private static DiscoveryInscriptionDefinition parse(ResourceLocation id, JsonObject root) {

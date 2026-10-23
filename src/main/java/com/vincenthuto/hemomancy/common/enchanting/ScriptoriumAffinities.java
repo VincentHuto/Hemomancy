@@ -1,53 +1,54 @@
 package com.vincenthuto.hemomancy.common.enchanting;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.vincenthuto.hemomancy.Hemomancy;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.data.JsonResourceReloadListener;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
-import net.minecraft.util.profiling.ProfilerFiller;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
-public final class ScriptoriumAffinities extends SimplePreparableReloadListener<Map<ResourceLocation, ScriptoriumAffinities.Affinity>> {
-    private static final String DIRECTORY = "enchantment_affinity";
+/** Each enchantment's tendencies for the Enzymatic Scriptorium, from {@code enchantment_affinity/<ns>/<path>.json}. */
+public final class ScriptoriumAffinities extends JsonResourceReloadListener<ScriptoriumAffinities.AffinityFile> {
+    private static final Codec<AffinityFile> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            ResourceLocation.CODEC.fieldOf("enchantment").forGetter(AffinityFile::enchantment),
+            Codec.STRING.fieldOf("primary").forGetter(AffinityFile::primary),
+            Codec.STRING.optionalFieldOf("secondary").forGetter(AffinityFile::secondary)).apply(instance, AffinityFile::new));
     private static volatile Map<ResourceLocation, Affinity> current = Map.of();
 
     public record Affinity(EnumBloodTendency primary, EnumBloodTendency secondary) {}
 
-    public static Affinity get(ResourceLocation enchantment) { return current.get(enchantment); }
+    record AffinityFile(ResourceLocation enchantment, String primary, Optional<String> secondary) {}
 
-    @Override protected Map<ResourceLocation, Affinity> prepare(ResourceManager manager, ProfilerFiller profiler) {
-        Map<ResourceLocation, Affinity> result = new HashMap<>();
-        for (Map.Entry<ResourceLocation, Resource> entry : manager.listResources(DIRECTORY,
-                id -> id.getPath().endsWith(".json")).entrySet()) {
-            ResourceLocation file = entry.getKey();
-            try (var reader = entry.getValue().openAsReader()) {
-                JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
-                ResourceLocation enchantment = ResourceLocation.parse(json.get("enchantment").getAsString());
-                String path = file.getPath().substring(DIRECTORY.length() + 1, file.getPath().length() - 5);
-                if (!path.equals(enchantment.getNamespace() + "/" + enchantment.getPath()))
-                    throw new IllegalArgumentException("Affinity path does not match enchantment id");
-                EnumBloodTendency primary = tendency(json.get("primary").getAsString());
-                EnumBloodTendency secondary = json.has("secondary")
-                        ? tendency(json.get("secondary").getAsString()) : null;
-                result.put(enchantment, new Affinity(primary, secondary));
-            } catch (Exception exception) {
-                Hemomancy.LOGGER.error("Invalid Scriptorium affinity {}: {}", file, exception.getMessage());
-            }
-        }
-        return Map.copyOf(result);
+    public ScriptoriumAffinities() {
+        super("enchantment_affinity", "Scriptorium affinity", LogManager.getLogger(), ScriptoriumAffinities::parse,
+                ScriptoriumAffinities::publish);
     }
 
-    @Override protected void apply(Map<ResourceLocation, Affinity> prepared, ResourceManager manager, ProfilerFiller profiler) {
-        current = prepared;
+    public static Affinity get(ResourceLocation enchantment) { return current.get(enchantment); }
+
+    private static AffinityFile parse(ResourceLocation id, JsonObject root) {
+        AffinityFile file = decoding(CODEC).apply(id, root);
+        if (!id.getPath().equals(file.enchantment().getNamespace() + "/" + file.enchantment().getPath()))
+            throw new IllegalArgumentException("Affinity path does not match enchantment id");
+        tendency(file.primary());
+        file.secondary().ifPresent(ScriptoriumAffinities::tendency);
+        return file;
+    }
+
+    private static void publish(Map<ResourceLocation, AffinityFile> loaded) {
+        Map<ResourceLocation, Affinity> byEnchantment = new HashMap<>();
+        loaded.values().forEach(file -> byEnchantment.put(file.enchantment(), new Affinity(tendency(file.primary()),
+                file.secondary().map(ScriptoriumAffinities::tendency).orElse(null))));
+        current = Map.copyOf(byEnchantment);
     }
 
     private static EnumBloodTendency tendency(String id) {
-        return EnumBloodTendency.valueOf(ResourceLocation.parse(id).getPath().toUpperCase(java.util.Locale.ROOT));
+        return EnumBloodTendency.valueOf(ResourceLocation.parse(id).getPath().toUpperCase(Locale.ROOT));
     }
 }

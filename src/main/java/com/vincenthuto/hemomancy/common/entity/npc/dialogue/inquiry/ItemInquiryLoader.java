@@ -1,18 +1,11 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue.inquiry;
 
 import com.google.gson.*;
+import com.vincenthuto.hemomancy.common.data.JsonResourceReloadListener;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
-import net.minecraft.util.profiling.ProfilerFiller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -49,79 +42,41 @@ import java.util.*;
  * Supported condition keys: {@code min_degree}, {@code max_degree},
  * {@code min_purity}, {@code max_purity}.
  */
-public class ItemInquiryLoader
-		extends SimplePreparableReloadListener<Map<String, Map<ResourceLocation, ItemInquiryEntry>>> {
+public class ItemInquiryLoader extends JsonResourceReloadListener<ItemInquiryLoader.Inquiry> {
 
 	private static final Logger LOGGER = LogManager.getLogger();
-	private static final Gson GSON = new GsonBuilder().create();
 	private static final String FOLDER = "dialogue_inquiry";
 
-	@Override
-	protected Map<String, Map<ResourceLocation, ItemInquiryEntry>> prepare(
-			ResourceManager manager, ProfilerFiller profiler) {
-
-		Map<String, Map<ResourceLocation, ItemInquiryEntry>> result = new HashMap<>();
-
-		// Scan all resources whose path begins with "dialogue_inquiry/"
-		Map<ResourceLocation, Resource> resources = manager.listResources(
-				FOLDER, loc -> loc.getPath().endsWith(".json"));
-
-		for (Map.Entry<ResourceLocation, Resource> e : resources.entrySet()) {
-			ResourceLocation fileLocation = e.getKey();
-
-			// Expected path: dialogue_inquiry/<npc_id>/<item_ns>/<item_path>.json
-			// item_path may itself contain slashes for nested registry paths.
-			String path = fileLocation.getPath(); // e.g. dialogue_inquiry/vicar/hemomancy/bloody_vial.json
-			String afterFolder = path.substring(FOLDER.length() + 1); // vicar/hemomancy/bloody_vial.json
-			String[] segments = afterFolder.split("/");
-			if (segments.length < 3) {
-				LOGGER.warn("[ItemInquiryLoader] Skipping malformed path (need npc_id/item_ns/item_path): {}", fileLocation);
-				continue;
-			}
-			String npcId = segments[0];   // vicar
-			String itemNs = segments[1];  // hemomancy
-			// Rejoin any remaining segments as the item path (supports nested paths)
-			String rawItemPath = String.join("/", Arrays.copyOfRange(segments, 2, segments.length));
-			String itemPath = rawItemPath.endsWith(".json")
-					? rawItemPath.substring(0, rawItemPath.length() - ".json".length())
-					: rawItemPath;
-
-			ResourceLocation itemId;
-			try {
-				itemId = ResourceLocation.fromNamespaceAndPath(itemNs, itemPath);
-			} catch (Exception ex) {
-				LOGGER.warn("[ItemInquiryLoader] Skipping invalid item ID '{}/{}' in: {} — {}",
-						itemNs, itemPath, fileLocation, ex.getMessage());
-				continue;
-			}
-
-			try (InputStream stream = e.getValue().open();
-				 InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
-
-				JsonObject root = GSON.fromJson(reader, JsonObject.class);
-				ItemInquiryEntry entry = parseEntry(root, fileLocation);
-				if (entry != null) {
-					result.computeIfAbsent(npcId, k -> new HashMap<>()).put(itemId, entry);
-				}
-
-			} catch (IOException ex) {
-				LOGGER.error("[ItemInquiryLoader] Failed to read {}: {}", fileLocation, ex.getMessage());
-			} catch (Exception ex) {
-				LOGGER.error("[ItemInquiryLoader] Failed to parse {}: {}", fileLocation, ex.getMessage());
-			}
-		}
-
-		LOGGER.info("[ItemInquiryLoader] Loaded {} NPC inquiry tables", result.size());
-		return result;
+	/** One file: what an NPC says about an item. */
+	record Inquiry(String npcId, ResourceLocation itemId, ItemInquiryEntry entry) {
 	}
 
-	@Override
-	protected void apply(Map<String, Map<ResourceLocation, ItemInquiryEntry>> prepared,
-			ResourceManager manager, ProfilerFiller profiler) {
-		ItemInquiryRegistry.INSTANCE.reload(prepared);
-		int total = prepared.values().stream().mapToInt(Map::size).sum();
-		LOGGER.info("[ItemInquiryLoader] Applied {} item-inquiry entries across {} NPC types",
-				total, prepared.size());
+	public ItemInquiryLoader() {
+		super(FOLDER, "item inquiry", LOGGER, ItemInquiryLoader::parse, ItemInquiryLoader::publish);
+	}
+
+	// Expected path: dialogue_inquiry/<npc_id>/<item_ns>/<item_path>.json; item_path may hold slashes.
+	private static Inquiry parse(ResourceLocation id, JsonObject root) {
+		String[] segments = id.getPath().split("/");
+		if (segments.length < 3) {
+			throw new IllegalArgumentException("Malformed path (need npc_id/item_ns/item_path)");
+		}
+		ResourceLocation itemId = ResourceLocation.fromNamespaceAndPath(segments[1],
+				String.join("/", Arrays.copyOfRange(segments, 2, segments.length)));
+		ResourceLocation source = ResourceLocation.fromNamespaceAndPath(id.getNamespace(),
+				FOLDER + "/" + id.getPath() + ".json");
+		ItemInquiryEntry entry = parseEntry(root, source);
+		if (entry == null) {
+			throw new IllegalArgumentException("No inquiry lines");
+		}
+		return new Inquiry(segments[0], itemId, entry);
+	}
+
+	private static void publish(Map<ResourceLocation, Inquiry> loaded) {
+		Map<String, Map<ResourceLocation, ItemInquiryEntry>> tables = new HashMap<>();
+		loaded.values().forEach(inquiry -> tables.computeIfAbsent(inquiry.npcId(), npc -> new HashMap<>())
+				.put(inquiry.itemId(), inquiry.entry()));
+		ItemInquiryRegistry.INSTANCE.reload(tables);
 	}
 
 	// ── JSON parsing helpers ──────────────────────────────────────────────────

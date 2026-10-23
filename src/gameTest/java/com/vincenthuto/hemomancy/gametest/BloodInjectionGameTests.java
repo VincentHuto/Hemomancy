@@ -590,8 +590,8 @@ public final class BloodInjectionGameTests {
         h.assertTrue(ItemStack.isSameItemSameComponents(sample,loaded), "Specimen data did not persist");
         var snapshot=BloodInjectionData.snapshot(false);
         var buf=new net.minecraft.network.RegistryFriendlyByteBuf(io.netty.buffer.Unpooled.buffer(),h.getLevel().registryAccess());
-        var codec=com.vincenthuto.hemomancy.common.network.BloodInjectionSyncPacket.STREAM_CODEC;
-        codec.encode(buf,new com.vincenthuto.hemomancy.common.network.BloodInjectionSyncPacket(snapshot.json()));
+        var codec=com.vincenthuto.hemomancy.common.network.DatapackSyncPacket.STREAM_CODEC;
+        codec.encode(buf,new com.vincenthuto.hemomancy.common.network.DatapackSyncPacket(com.vincenthuto.hemomancy.Hemomancy.rloc("blood_injection"),snapshot.json()));
         var packet=codec.decode(buf);buf.release();
         BloodInjectionData.receive(packet.definitions());
         var client=BloodInjectionData.snapshot(true);

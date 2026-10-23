@@ -61,7 +61,7 @@ public class PacketHandler {
      *   <li>{@code "3"}: eight single-purpose VFX payloads folded into ParticleBurstPacket and EntityVisualPacket.</li>
      * </ul>
      */
-    public static final String PROTOCOL_VERSION = "3";
+    public static final String PROTOCOL_VERSION = "4";
 
     // ─────────────────────────────────────────────────────────────────────────
     // ─────────────────────────────────────────────────────────────────────────
@@ -102,9 +102,7 @@ public class PacketHandler {
         net.playToServer(ClairaudiographActionPacket.TYPE, ClairaudiographActionPacket.STREAM_CODEC, ClairaudiographActionPacket::handle);
         net.playToClient(ClairaudiographChoicesPacket.TYPE, ClairaudiographChoicesPacket.STREAM_CODEC, ClairaudiographChoicesPacket::handle);
         net.playToClient(ClairaudiographSoundPacket.TYPE, ClairaudiographSoundPacket.STREAM_CODEC, ClientPayloadHandlers::dispatch);
-        net.playToClient(BloodInjectionSyncPacket.TYPE, BloodInjectionSyncPacket.STREAM_CODEC, BloodInjectionSyncPacket::handle);
-        net.playToClient(BloodProfileSyncPacket.TYPE, BloodProfileSyncPacket.STREAM_CODEC, BloodProfileSyncPacket::handle);
-        net.playToClient(CardinalRiteFloorSyncPacket.TYPE, CardinalRiteFloorSyncPacket.STREAM_CODEC, CardinalRiteFloorSyncPacket::handle);
+        net.playToClient(DatapackSyncPacket.TYPE, DatapackSyncPacket.STREAM_CODEC, DatapackSyncPacket::handle);
         net.playToClient(PacketHematicMicroscopeViewing.TYPE, PacketHematicMicroscopeViewing.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToClient(PacketBloodVialInjection.TYPE, PacketBloodVialInjection.STREAM_CODEC, ClientPayloadHandlers::dispatch);
         net.playToServer(ManipulationChargeVisualPacket.TYPE, ManipulationChargeVisualPacket.STREAM_CODEC,

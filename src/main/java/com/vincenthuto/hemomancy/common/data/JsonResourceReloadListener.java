@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.common.data;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -16,7 +18,11 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
-/** Loads independent JSON definitions, publishing only after preparation completes. */
+/**
+ * R-6: the base of Hemomancy's server data loaders. It reads every {@code <namespace>:<folder>/**.json} file, decodes
+ * it with a {@link Codec} (or a parser when the definition needs its own id), logs and skips a bad file, and publishes
+ * the whole map only after preparation completes. Register a loader in {@code Hemomancy.onAddReloadListeners}.
+ */
 public class JsonResourceReloadListener<T> extends SimplePreparableReloadListener<Map<ResourceLocation, T>> {
     private static final Gson GSON = new Gson();
     private final FileToIdConverter files;
@@ -32,6 +38,16 @@ public class JsonResourceReloadListener<T> extends SimplePreparableReloadListene
         this.logger = logger;
         this.parser = parser;
         this.publisher = publisher;
+    }
+
+    public JsonResourceReloadListener(String folder, String label, Logger logger, Codec<T> codec,
+            Consumer<Map<ResourceLocation, T>> publisher) {
+        this(folder, label, logger, decoding(codec), publisher);
+    }
+
+    /** A parser that decodes the file with a codec; for loaders that check the decoded value against its id. */
+    public static <T> BiFunction<ResourceLocation, JsonObject, T> decoding(Codec<T> codec) {
+        return (id, root) -> codec.parse(JsonOps.INSTANCE, root).getOrThrow(JsonSyntaxException::new);
     }
 
     @Override

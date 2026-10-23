@@ -115,6 +115,7 @@ under *Pending approvals*. IDs refer to [ARCHITECTURE_AUDIT](ARCHITECTURE_AUDIT.
 | F-27 | `HemolysisEffect` category consistency | 13 | APPROVED | Owner approved 2026-10-23 (proposed: both NEUTRAL). Done as both BENEFICIAL instead: the Lethean Chalice strips non-beneficial effects, and Unstained purity needs Hemolysis, so NEUTRAL would have changed play |
 | T-6b | Prune unreferenced `libs/` jars; move dev-only dependencies to `localRuntime` | 13 | APPROVED (move only) | Owner chose 2026-10-23: move import-free `implementation` jars to `localRuntime`; keep every jar on disk |
 | D-5 | Datagen: revive or delete per provider | 13 | APPROVED (delete dead) | Owner chose 2026-10-23: keep the running providers, delete never-registered provider classes and generated files that `src/main` shadows |
+| R-6b | One generic datapack sync payload replaces the three raw-JSON sync payloads (`PROTOCOL_VERSION` 3 → 4) | 13 | APPROVED | Owner approved 2026-10-23 (step 13 session): payload set and byte layout change, client data identical |
 
 ## Guardrail tests
 

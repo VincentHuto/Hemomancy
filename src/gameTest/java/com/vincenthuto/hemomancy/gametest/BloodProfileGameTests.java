@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.*;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.*;
-import com.vincenthuto.hemomancy.common.network.BloodProfileSyncPacket;
+import com.vincenthuto.hemomancy.common.network.DatapackSyncPacket;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.core.component.DataComponents;
@@ -121,9 +121,10 @@ public final class BloodProfileGameTests {
         return player;
     }
 
-    private static void captureProfile(net.minecraft.network.protocol.Packet<?> packet, List<BloodProfileSyncPacket> received) {
+    private static void captureProfile(net.minecraft.network.protocol.Packet<?> packet, List<DatapackSyncPacket> received) {
         if (packet instanceof net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket custom
-                && custom.payload() instanceof BloodProfileSyncPacket profiles) received.add(profiles);
+                && custom.payload() instanceof DatapackSyncPacket profiles
+                && profiles.channel().equals(Hemomancy.rloc("blood_profiles"))) received.add(profiles);
         if (packet instanceof net.minecraft.network.protocol.game.ClientboundBundlePacket bundle)
             bundle.subPackets().forEach(child -> captureProfile(child, received));
     }
@@ -161,8 +162,8 @@ public final class BloodProfileGameTests {
     @SuppressWarnings("unchecked")
     @GameTest(template = "empty")
     public static void datapackSyncTargetsJoiningPlayerAndBroadcastsReload(GameTestHelper h) throws Exception {
-        var firstPackets = new ArrayList<BloodProfileSyncPacket>();
-        var secondPackets = new ArrayList<BloodProfileSyncPacket>();
+        var firstPackets = new ArrayList<DatapackSyncPacket>();
+        var secondPackets = new ArrayList<DatapackSyncPacket>();
         var first = player(h, packet -> captureProfile(packet, firstPackets));
         var second = player(h, packet -> captureProfile(packet, secondPackets));
         var players = h.getLevel().getServer().getPlayerList();
@@ -358,8 +359,8 @@ public final class BloodProfileGameTests {
             BloodSampleData.identify(vial);
             var buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), h.getLevel().registryAccess());
             try {
-                BloodProfileSyncPacket.STREAM_CODEC.encode(buf, new BloodProfileSyncPacket(replacement.json()));
-                var decoded = BloodProfileSyncPacket.STREAM_CODEC.decode(buf);
+                DatapackSyncPacket.STREAM_CODEC.encode(buf, new DatapackSyncPacket(Hemomancy.rloc("blood_profiles"), replacement.json()));
+                var decoded = DatapackSyncPacket.STREAM_CODEC.decode(buf);
                 BloodProfileData.receive(decoded.definitions());
                 h.assertTrue(BloodSampleData.profile(vial, true).equals(BloodSampleData.profile(vial, false)), "Client/server sample profiles differ");
             } finally { buf.release(); }
