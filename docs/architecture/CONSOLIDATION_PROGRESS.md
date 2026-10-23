@@ -1518,3 +1518,29 @@ them green.
   - Pitfalls: an `@EventBusSubscriber` class left with no `@SubscribeEvent` method fails at startup; quick play
     (`--quickPlaySingleplayer`) plus `Process.CloseMainWindow()` is a clean way to load and save a dev world; launch as
     the save's username or per-login reconciles act on a different UUID.
+
+### Step 13: Phases 12 + 13, content, worldgen, data, tooling, standards
+- **Status / date / commits:** IN PROGRESS, 2026-10-23. Prefix `consolidation(step-13):`, one commit per item.
+
+  | Item | Status | Commit |
+  |---|---|---|
+  | Approvals: F-23, F-26, F-27 APPROVED; F-24 keep and document; T-6b move only; D-5 delete dead providers; F-25 stays PENDING | DONE | recorded in `fb819fe6a` |
+  | F-23 three live tag files moved to `tags/item` | DONE | `fb819fe6a` |
+  | F-26 Chthonian Queen build name | DONE | `fc41ab3ab` |
+  | F-27 Hemolysis registered BENEFICIAL (deviation: the proposal said NEUTRAL) | DONE | `e3b5d8fe0` |
+  | F-24 template-less structures documented | DONE | `a94a17225` |
+  | D-5 datagen: three providers kept, dead and shadowed output deleted | DONE | `c22e6dbea` |
+  | T-4 one GameTest registration path | DONE | `22997ff84` |
+  | T-6 review-client table, launchers in `tools/review/` | DONE | `dd61286b6` |
+  | T-6b import-free dev mods on `localRuntime` | DONE | `d50843c4a` |
+  | O-1 `BossBarBinding`, `SaintTrialEntity` | DONE | `9ea28faef` |
+  | O-3 `SyncedOwner`, `ProtectedNpc`, `HemoContainerMenu` / `ViewOnlyMenu`, effect overrides | DONE | `9bfa666ad` |
+  | O-2 mob families, tracking orbs, combat-weapon carrier helpers | DONE | `526308466` |
+  | W-3, W-1, R-6, L-7, L-8, O-6, O-7 | NOT STARTED | |
+  | Standards doc, AGENTS pointers, D-8, final checks, closing section | NOT STARTED | |
+- **Test counts so far:** `test` 4,086 → 4,103, 0 failures. `alphaCheck` green after T-6b (1,083 GameTests) and after
+  O-3 (1,083).
+- **Handoff notes (interim):** the impact map for every remaining item is in the session scratchpad only; regenerate it
+  with one read-only agent if a new session continues. Pelagic generator probe (`runPelagicValidationServer
+  -PpelagicExpectDisabled=true`) proved the T-4 holder discovery; its one test fails on its own precondition (it needs
+  the expansion disabled in config).
