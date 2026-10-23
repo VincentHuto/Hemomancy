@@ -11,7 +11,7 @@ final class VesperWingedFlightPersistenceSourceTest {
 	private static final Path ENTITY = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperTheCrownedRefusalEntity.java");
 	private static final Path ORDEAL = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/worldgen/VesperOrdealManager.java");
+			"src/main/java/com/vincenthuto/hemomancy/common/encounter/VesperOrdealManager.java");
 
 	@Test
 	void entitySynchronizesAndPersistsEveryRecoverableFlightField() throws Exception {

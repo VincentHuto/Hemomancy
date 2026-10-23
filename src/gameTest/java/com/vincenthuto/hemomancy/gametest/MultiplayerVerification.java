@@ -22,7 +22,7 @@ import com.vincenthuto.hemomancy.common.menu.TendencyViewMenuProvider;
 import com.vincenthuto.hemomancy.common.menu.VascularViewMenuProvider;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstDrawsAssignment;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
-import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService;
+import com.vincenthuto.hemomancy.common.encounter.ChamberVisitService;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;

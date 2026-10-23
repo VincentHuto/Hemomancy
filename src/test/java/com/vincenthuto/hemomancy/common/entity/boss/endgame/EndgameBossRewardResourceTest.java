@@ -22,13 +22,13 @@ public final class EndgameBossRewardResourceTest {
 		String vesper = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperTheEveningStarEntity.java"));
 		String vesperOrdeal = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/worldgen/VesperOrdealManager.java"));
+				"com/vincenthuto/hemomancy/common/encounter/VesperOrdealManager.java"));
 		String crownedRefusal = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperTheCrownedRefusalEntity.java"));
 		String mycophant = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/entity/boss/endgame/MycophantEntity.java"));
 		String mycophantEncounter = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/worldgen/MycophantEncounterManager.java"));
+				"com/vincenthuto/hemomancy/common/encounter/MycophantEncounterManager.java"));
 		String tendrilLayer = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/layer/player/MycophantTendrilFungalizationLayer.java"));
 		String vesperLinesLayer = read(SOURCE_ROOT.resolve(

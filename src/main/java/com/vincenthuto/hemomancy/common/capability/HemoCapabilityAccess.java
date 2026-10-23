@@ -73,7 +73,7 @@ public static com.vincenthuto.hemomancy.common.circus.CircusProgress circusProgr
     return player.getData(HemoAttachmentTypes.CIRCUS_PROGRESS);
 }
 
-public static com.vincenthuto.hemomancy.common.worldgen.ChamberAccess chamberAccess(Player player) {
+public static com.vincenthuto.hemomancy.common.encounter.ChamberAccess chamberAccess(Player player) {
     return player.getData(HemoAttachmentTypes.CHAMBER_ACCESS);
 }
 

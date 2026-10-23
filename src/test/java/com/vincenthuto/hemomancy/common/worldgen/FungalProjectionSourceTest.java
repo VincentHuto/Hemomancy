@@ -8,7 +8,7 @@ public final class FungalProjectionSourceTest {
 	private FungalProjectionSourceTest() {}
 
 	public static void main(String[] args) throws IOException {
-		String helper = read("src/main/java/com/vincenthuto/hemomancy/common/worldgen/FungalGardenTravelHelper.java");
+		String helper = read("src/main/java/com/vincenthuto/hemomancy/common/encounter/FungalGardenTravelHelper.java");
 		String events = read("src/main/java/com/vincenthuto/hemomancy/common/event/FungalProjectionEvents.java");
 		String overlay = read("src/main/java/com/vincenthuto/hemomancy/client/screen/overlay/FungalWhisperVignetteOverlay.java");
 		String clientEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/FungalProjectionClientEvents.java");

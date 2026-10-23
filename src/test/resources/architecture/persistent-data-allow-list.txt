@@ -94,7 +94,7 @@
 1	src/main/java/com/vincenthuto/hemomancy/common/succession/ProfessionalHarbingerEntity.java	entity, item-entity or NPC marker data, not player state
 1	src/main/java/com/vincenthuto/hemomancy/common/succession/SuccessionResidents.java	entity, item-entity or NPC marker data, not player state
 4	src/main/java/com/vincenthuto/hemomancy/common/summon/PuppetStrings.java	entity, item-entity or NPC marker data, not player state
-16	src/main/java/com/vincenthuto/hemomancy/common/worldgen/ChamberVisitService.java	Chamber visit session keys (timers, inventory snapshots) and legacy access keys read once by the chamber_access migration (sunset 2027-04-23)
-10	src/main/java/com/vincenthuto/hemomancy/common/worldgen/FungalGardenTravelHelper.java	player root keys not yet moved into an attachment (S-1)
-22	src/main/java/com/vincenthuto/hemomancy/common/worldgen/MycophantEncounterManager.java	player encounter state (root keys and PlayerPersisted)
-19	src/main/java/com/vincenthuto/hemomancy/common/worldgen/VesperOrdealManager.java	player encounter state (root keys and PlayerPersisted)
+16	src/main/java/com/vincenthuto/hemomancy/common/encounter/ChamberVisitService.java	Chamber visit session keys (timers, inventory snapshots) and legacy access keys read once by the chamber_access migration (sunset 2027-04-23)
+10	src/main/java/com/vincenthuto/hemomancy/common/encounter/FungalGardenTravelHelper.java	player root keys not yet moved into an attachment (S-1)
+22	src/main/java/com/vincenthuto/hemomancy/common/encounter/MycophantEncounterManager.java	player encounter state (root keys and PlayerPersisted)
+19	src/main/java/com/vincenthuto/hemomancy/common/encounter/VesperOrdealManager.java	player encounter state (root keys and PlayerPersisted)

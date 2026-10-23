@@ -31,9 +31,9 @@ class PendingDeliveryRegistryTest {
 			"FirstSeparationAssignment.TOOLS",
 			new String[] {"common/mission/alchemist/FirstSeparationAssignment.java", "\"hemomancy:first_separation_pending_rewards\""},
 			"MycophantEncounterManager.TENDRIL",
-			new String[] {"common/worldgen/MycophantEncounterManager.java", "\":mycophant_tendril_pending\""},
+			new String[] {"common/encounter/MycophantEncounterManager.java", "\":mycophant_tendril_pending\""},
 			"VesperOrdealManager.MEMORY",
-			new String[] {"common/worldgen/VesperOrdealManager.java", "\":vesper_memory_pending\""},
+			new String[] {"common/encounter/VesperOrdealManager.java", "\":vesper_memory_pending\""},
 			"QliphothBloomEvents.FUNGAL_SPINE",
 			new String[] {"common/rite/harbinger/QliphothBloomEvents.java", "setFungalSpineGranted(true)"});
 

@@ -1168,7 +1168,7 @@ public final class HarbingerRepairGameTests {
     public static void pendingWhisperDeduplicatesAndRetainsUnansweredDecision(GameTestHelper helper) {
         ServerPlayer player = player(helper);
         player.tickCount = 200;
-        String pending = com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper.REVELATION_CHOICE_PENDING;
+        String pending = com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper.REVELATION_CHOICE_PENDING;
         player.getPersistentData().putBoolean(pending, true);
         var tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees.coreWitnessDialogue();
         com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers.enqueue(player, tree);
@@ -1213,7 +1213,7 @@ public final class HarbingerRepairGameTests {
     public static void chamberCloneRetainsOnlyEarnedVisitProgress(GameTestHelper helper) {
         ServerPlayer original = player(helper), replacement = player(helper);
         String prefix = "hemomancy:chamber_visit_";
-        var access = com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.access(original);
+        var access = com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.access(original);
         access.setAttuned(true);
         access.setChairBound(true);
         access.setGuidedComplete(true);
@@ -1222,9 +1222,9 @@ public final class HarbingerRepairGameTests {
         original.getPersistentData().putInt(prefix + "remaining", 1200);
         original.getPersistentData().put(prefix + "dream_inventory", new net.minecraft.nbt.ListTag());
         replacement.restoreFrom(original, false);
-        helper.assertTrue(com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isAttuned(replacement)
-                && com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isChairBound(replacement)
-                && com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.hasCompletedGuidedVisit(replacement),
+        helper.assertTrue(com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isAttuned(replacement)
+                && com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isChairBound(replacement)
+                && com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.hasCompletedGuidedVisit(replacement),
                 "Earned access and guided lesson survive");
         helper.assertTrue(!replacement.getPersistentData().contains(prefix + "active")
                 && !replacement.getPersistentData().contains(prefix + "remaining")
@@ -1235,32 +1235,32 @@ public final class HarbingerRepairGameTests {
     @GameTest(templateNamespace = "minecraft", template = "bastion/mobs/empty", batch = "harbinger_repair")
     public static void guidedChamberStartAndReturnDoNotGrantAttunement(GameTestHelper helper) {
         ServerPlayer learner = player(helper);
-        var chamber = com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager.CHAMBER_OF_WILL;
+        var chamber = com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.CHAMBER_OF_WILL;
         com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getInitiatoryDegree(learner)
                 .setDegreeNumber(3);
         com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess.getBloodVolume(learner)
                 .setActive(true);
         try {
             if (helper.getLevel().getServer().getLevel(chamber) == null) {
-                helper.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.beginGuidedVisit(learner),
+                helper.assertTrue(!com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.beginGuidedVisit(learner),
                         "A missing destination must leave the lesson retryable");
-                helper.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isActive(learner)
-                        && !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.hasCompletedGuidedVisit(learner),
+                helper.assertTrue(!com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isActive(learner)
+                        && !com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.hasCompletedGuidedVisit(learner),
                         "A failed start grants neither a visit nor the lesson");
             } else {
-                helper.assertTrue(com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.beginGuidedVisit(learner),
+                helper.assertTrue(com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.beginGuidedVisit(learner),
                         "Degree 3 should enter a guided Chamber visit");
-                helper.assertTrue(com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isActive(learner)
-                        && !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.hasCompletedGuidedVisit(learner),
+                helper.assertTrue(com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isActive(learner)
+                        && !com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.hasCompletedGuidedVisit(learner),
                         "Entry alone must not complete the lesson");
-                com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.returnFromVisit(learner);
-                helper.assertTrue(com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.hasCompletedGuidedVisit(learner)
-                        && !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isAttuned(learner),
+                com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.returnFromVisit(learner);
+                helper.assertTrue(com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.hasCompletedGuidedVisit(learner)
+                        && !com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isAttuned(learner),
                         "Only a valid return completes the lesson; it does not grant rite attunement");
             }
         } finally {
-            if (com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isActive(learner))
-                com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.returnFromVisit(learner);
+            if (com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isActive(learner))
+                com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.returnFromVisit(learner);
             learner.discard();
         }
         helper.succeed();
@@ -1283,14 +1283,14 @@ public final class HarbingerRepairGameTests {
             var interruptedAt = learner.position();
             learner.getInventory().setItem(0, new ItemStack(net.minecraft.world.item.Items.DIRT));
             equipment.setStackInSlot(6, ItemStack.EMPTY);
-            com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.returnFromVisit(learner);
+            com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.returnFromVisit(learner);
             helper.assertTrue(learner.getInventory().getItem(0).is(net.minecraft.world.item.Items.IRON_INGOT)
                     && learner.getInventory().getItem(0).getCount() == 7,
                     "A recovery outside the Chamber restores the exact inventory stack");
             helper.assertTrue(equipment.getStackInSlot(6).is(ItemInit.blood_gourd_white.get()),
                     "The equipped vessel must be restored as well");
-            helper.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isActive(learner)
-                    && !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.hasCompletedGuidedVisit(learner),
+            helper.assertTrue(!com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isActive(learner)
+                    && !com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.hasCompletedGuidedVisit(learner),
                     "Recovery clears the session but cannot award a completed lesson");
             helper.assertTrue(learner.position().equals(interruptedAt),
                     "Recovery outside the Chamber must not teleport the player a second time");

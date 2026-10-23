@@ -2,9 +2,9 @@ package com.vincenthuto.hemomancy.common.event.worldevent;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
-import com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager;
-import com.vincenthuto.hemomancy.common.worldgen.VesperOrdealManager;
+import com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager;
+import com.vincenthuto.hemomancy.common.encounter.MycophantEncounterManager;
+import com.vincenthuto.hemomancy.common.encounter.VesperOrdealManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;

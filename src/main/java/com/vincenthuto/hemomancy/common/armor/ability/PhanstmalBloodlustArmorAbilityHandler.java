@@ -6,8 +6,8 @@ import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Re
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.summon.PhantasmalEchoEntity;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
-import com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager;
-import com.vincenthuto.hemomancy.common.worldgen.VesperOrdealManager;
+import com.vincenthuto.hemomancy.common.encounter.MycophantEncounterManager;
+import com.vincenthuto.hemomancy.common.encounter.VesperOrdealManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;

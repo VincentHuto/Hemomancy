@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.worldgen;
+package com.vincenthuto.hemomancy.common.encounter;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.NaeglerophaeonEntity;

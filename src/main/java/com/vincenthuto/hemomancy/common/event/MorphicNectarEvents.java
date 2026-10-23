@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.common.item.MorphicNectarMutationRules;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.PrimalMorphlingRules;
 import com.vincenthuto.hemomancy.common.recipe.MorphicNectarRecipe;
-import com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager;
+import com.vincenthuto.hemomancy.common.encounter.MycophantEncounterManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;

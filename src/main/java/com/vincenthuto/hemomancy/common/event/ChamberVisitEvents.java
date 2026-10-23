@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.event;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.WarpChairBlock;
 import com.vincenthuto.hemomancy.common.entity.utility.ArborOfWillEntity;
-import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService;
+import com.vincenthuto.hemomancy.common.encounter.ChamberVisitService;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -42,7 +42,7 @@ public final class ChamberVisitEvents {
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
 		ChamberVisitService.clearInterruptedChairSleep(player);
 		if (ChamberVisitService.isActive(player)
-				&& !player.level().dimension().equals(com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager.CHAMBER_OF_WILL)) {
+				&& !player.level().dimension().equals(com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.CHAMBER_OF_WILL)) {
 			ChamberVisitService.recoverOutsideChamber(player);
 		} else {
 			ChamberVisitService.sync(player);

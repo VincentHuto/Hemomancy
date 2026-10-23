@@ -7,7 +7,6 @@ import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerAlchemistE
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData;
 import com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation;
-import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;

@@ -41,7 +41,7 @@ final class MycophantImplementationSourceTest {
 
 	@Test
 	void encounterCleansUpTheBroodAndKeepsTheRewardOrder() throws Exception {
-		String manager = read("common/worldgen/MycophantEncounterManager.java");
+		String manager = read("common/encounter/MycophantEncounterManager.java");
 		int clear = manager.indexOf("private static void clear(ServerPlayer player) {");
 		assertTrue(clear > 0);
 		assertTrue(manager.indexOf("discardBrood(player);", clear) > clear);

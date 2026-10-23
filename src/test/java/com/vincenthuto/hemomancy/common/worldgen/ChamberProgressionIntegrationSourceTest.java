@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 final class ChamberProgressionIntegrationSourceTest {
 	@Test
 	void sameTickPersistencePacketAndRecoveryContracts() throws IOException {
-		String manager = read("src/main/java/com/vincenthuto/hemomancy/common/worldgen/ChamberOfWillManager.java");
+		String manager = read("src/main/java/com/vincenthuto/hemomancy/common/encounter/ChamberOfWillManager.java");
 		String events = read("src/main/java/com/vincenthuto/hemomancy/common/event/worldevent/ChamberOfWillEvents.java");
 		String packet = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/PacketSyncChamberOfWill.java");
 		String clientHandler = read("src/main/java/com/vincenthuto/hemomancy/client/network/ClientboundStateHandlers.java");

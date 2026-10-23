@@ -1,5 +1,7 @@
-package com.vincenthuto.hemomancy.common.worldgen;
+package com.vincenthuto.hemomancy.common.encounter;
 
+import com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterRules;
+import com.vincenthuto.hemomancy.common.worldgen.MycophantNurseryLayout;
 import com.vincenthuto.hemomancy.common.capability.PendingDelivery;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;

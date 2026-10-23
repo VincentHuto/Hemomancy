@@ -168,9 +168,9 @@ public final class HemoAttachmentTypes {
             ATTACHMENT_TYPES.register("circus_progress", () -> AttachmentType.serializable(
                     com.vincenthuto.hemomancy.common.circus.CircusProgress::new).copyOnDeath().build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.worldgen.ChamberAccess>> CHAMBER_ACCESS =
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.encounter.ChamberAccess>> CHAMBER_ACCESS =
             ATTACHMENT_TYPES.register("chamber_access", () -> AttachmentType.serializable(
-                    com.vincenthuto.hemomancy.common.worldgen.ChamberAccess::new).copyOnDeath().build());
+                    com.vincenthuto.hemomancy.common.encounter.ChamberAccess::new).copyOnDeath().build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhisperInbox>> PENDING_WHISPERS =
             ATTACHMENT_TYPES.register("pending_whispers", () -> AttachmentType.serializable(

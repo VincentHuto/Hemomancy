@@ -14,7 +14,7 @@ public final class QliphothPomeCommandSourceTest {
 	private static final Path CHAMBER_PACKET = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/PacketSyncChamberOfWill.java");
 	private static final Path CHAMBER_MANAGER = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/worldgen/ChamberOfWillManager.java");
+			"src/main/java/com/vincenthuto/hemomancy/common/encounter/ChamberOfWillManager.java");
 	private static final Path REFERENCE = Path.of("docs/HEMOMANCY_REFERENCE.md");
 
 	private QliphothPomeCommandSourceTest() {

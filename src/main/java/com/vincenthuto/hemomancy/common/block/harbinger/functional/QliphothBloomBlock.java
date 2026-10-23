@@ -14,7 +14,7 @@ import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import com.vincenthuto.hemomancy.common.rite.harbinger.SeveredQliphothState;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.QliphothBloomBlockEntity;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
-import com.vincenthuto.hemomancy.common.worldgen.VesperOrdealManager;
+import com.vincenthuto.hemomancy.common.encounter.VesperOrdealManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

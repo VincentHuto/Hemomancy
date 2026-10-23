@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.client.data;
 
-import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
+import com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager;
 import net.minecraft.resources.ResourceLocation;
 
 public final class ChamberOfWillClientData {

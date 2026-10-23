@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.Liber
 import com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers;
 import com.vincenthuto.hemomancy.common.station.StationUpgradeMigration;
-import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService;
+import com.vincenthuto.hemomancy.common.encounter.ChamberVisitService;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;

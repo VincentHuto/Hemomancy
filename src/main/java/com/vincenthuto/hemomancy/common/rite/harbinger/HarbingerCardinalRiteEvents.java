@@ -23,7 +23,7 @@ import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.*;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hemomancy.common.rite.sigil.*;
-import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService;
+import com.vincenthuto.hemomancy.common.encounter.ChamberVisitService;
 import com.vincenthuto.hutoslib.client.particle.data.EmberParticleData;
 import com.vincenthuto.hutoslib.client.particle.data.DarkColorParticleData;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;

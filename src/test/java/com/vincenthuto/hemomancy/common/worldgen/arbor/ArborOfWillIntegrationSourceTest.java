@@ -14,7 +14,7 @@ class ArborOfWillIntegrationSourceTest {
 
     @Test
     void chamberOwnsAndReconcilesOneArborAnchor() throws Exception {
-        String manager = source("com/vincenthuto/hemomancy/common/worldgen/ChamberOfWillManager.java");
+        String manager = source("com/vincenthuto/hemomancy/common/encounter/ChamberOfWillManager.java");
         assertTrue(manager.contains("ensureArborOfWill"));
         assertTrue(manager.contains("ArborOfWillEntity"));
     }

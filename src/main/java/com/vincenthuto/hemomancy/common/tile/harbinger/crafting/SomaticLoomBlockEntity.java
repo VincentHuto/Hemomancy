@@ -979,8 +979,8 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodReservo
 
 	private ResourceLocation chamberThemeOf(UUID player) {
 		return level instanceof ServerLevel server
-				? com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager.get(server.getServer()).skyThemeOf(player)
-				: com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager.THEME_WILL_DEFAULT;
+				? com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.get(server.getServer()).skyThemeOf(player)
+				: com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.THEME_WILL_DEFAULT;
 	}
 	public long getWeaveTicks() { return weaveTicks; }
 	public int getClimaxTicks() { return climaxTicks; }

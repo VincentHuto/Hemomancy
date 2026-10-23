@@ -51,8 +51,8 @@ import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCancellationH
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteInteractionHandler;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteTargetGeometry;
 import com.vincenthuto.hemomancy.common.entity.utility.HumanitySpriteEntity;
-import com.vincenthuto.hemomancy.common.worldgen.VesperOrdealManager;
-import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
+import com.vincenthuto.hemomancy.common.encounter.VesperOrdealManager;
+import com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.gametest.journey.HemoJourneyFixtures;
 import com.vincenthuto.hemomancy.gametest.journey.HemoJourneyStage;
 import com.vincenthuto.hemomancy.gametest.journey.HemoJourneySnapshot;
@@ -841,9 +841,9 @@ public final class ClinicalBloodProgressionGameTests {
                     h.getLevel(), Hemomancy.rloc("cardinal_rite/chamber_of_will"));
             h.assertTrue(recipe.getCeremony().requiredHelpers() == 0,
                     "Independent Chamber attunement must not require recruited helpers");
-            h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isAttuned(actor)
-                    && !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isChairBound(actor)
-                    && !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.hasCompletedGuidedVisit(actor),
+            h.assertTrue(!com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isAttuned(actor)
+                    && !com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isChairBound(actor)
+                    && !com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.hasCompletedGuidedVisit(actor),
                     "Independent fixture must begin without earlier Chamber access");
             var staff = actor.getMainHandItem();
             var tooEarly = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation
@@ -851,7 +851,7 @@ public final class ClinicalBloodProgressionGameTests {
                             com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
             h.assertTrue(tooEarly != com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
                     && saved.getRite(actor.getUUID()) == null && actor.getMainHandItem() == staff
-                    && !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isAttuned(actor),
+                    && !com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isAttuned(actor),
                     "D5 must not start the independent D6 rite, lose its Staff, or gain attunement");
             HemoCapabilityAccess.getInitiatoryDegree(actor).setDegreeNumber(6);
             var started = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation
@@ -863,10 +863,10 @@ public final class ClinicalBloodProgressionGameTests {
             // Supply the completed ceremony boundary; this server has no Chamber destination.
             h.assertTrue(com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletion.complete(h.getLevel(), actor, rite),
                     "Independent Chamber rite completion must succeed without a recruited Mnemonist");
-            h.assertTrue(com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isAttuned(actor)
+            h.assertTrue(com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isAttuned(actor)
                     && HarbingerAdvancementGranter.hasAdvancement(actor, HarbingerAdvancementGranter.ADV_CHAMBER_RITE_ATTUNED),
                     "Earned rite completion must grant permanent attunement even when transport is unavailable");
-            h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.hasCompletedGuidedVisit(actor)
+            h.assertTrue(!com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.hasCompletedGuidedVisit(actor)
                     && !HarbingerAdvancementGranter.hasAdvancement(actor, HarbingerAdvancementGranter.ADV_CHAMBER_RETURNED)
                     && HemoCapabilityAccess.getPlayerDegreeNumber(actor) == 6,
                     "Attunement must not fabricate a guided lesson, return, or higher degree");
@@ -991,7 +991,7 @@ public final class ClinicalBloodProgressionGameTests {
                     var actor = player(h, 3, chamber);
                     try {
                         var before = actor.getPersistentData().copy();
-                        h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.beginChairVisit(actor),
+                        h.assertTrue(!com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.beginChairVisit(actor),
                                 "Chair entry accepted a player already inside the Chamber");
                         h.assertTrue(before.equals(actor.getPersistentData()),
                                 "Rejected in-Chamber entry changed binding or visit state");
@@ -1088,14 +1088,14 @@ public final class ClinicalBloodProgressionGameTests {
 
             if (mode == ChamberVisitMode.GUIDED) {
                 HemoCapabilityAccess.getBloodVolume(actor).setActive(true);
-                h.assertTrue(com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.beginGuidedVisit(actor),
+                h.assertTrue(com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.beginGuidedVisit(actor),
                         "Eligible guided fixture did not begin its visit");
             } else {
-                com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.access(actor).setDreamAttempts(2);
-                com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.onCompletedSleep(actor, true);
+                com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.access(actor).setDreamAttempts(2);
+                com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.onCompletedSleep(actor, true);
             }
             h.assertTrue(actor.serverLevel().dimension().equals(ChamberOfWillManager.CHAMBER_OF_WILL)
-                            && com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isActive(actor),
+                            && com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isActive(actor),
                     "Observational fixture did not enter the actual Chamber for " + mode);
             h.assertTrue(inventory.equals(actor.getPersistentData().getList("hemomancy:chamber_visit_dream_inventory", 10))
                             && crafting.equals(actor.getPersistentData().getList("hemomancy:chamber_visit_dream_crafting", 10))
@@ -1140,11 +1140,11 @@ public final class ClinicalBloodProgressionGameTests {
                         Component.literal("Recovery fixture chest")));
                 h.assertTrue(actor.containerMenu != actor.inventoryMenu, "Recovery fixture did not open another menu");
                 actor.containerMenu.setCarried(new ItemStack(Items.DIAMOND_HELMET));
-                com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.recoverOutsideChamber(actor);
+                com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.recoverOutsideChamber(actor);
             } else {
                 actor.inventoryMenu.setCarried(new ItemStack(Items.DIAMOND_HELMET));
                 actor.getPersistentData().putInt("hemomancy:chamber_visit_remaining", 1);
-                com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.tick(actor);
+                com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.tick(actor);
             }
             h.assertTrue(actor.serverLevel() == h.getLevel(),
                     "Observational recovery remained in " + actor.serverLevel().dimension());
@@ -1164,11 +1164,11 @@ public final class ClinicalBloodProgressionGameTests {
             h.assertTrue(originDrops.equals(itemEntityIds(h.getLevel(), originArea))
                             && chamberDrops.equals(itemEntityIds(chamber, chamberArea)),
                     "Observational recovery leaked item entities for " + mode);
-            h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isActive(actor)
+            h.assertTrue(!com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isActive(actor)
                             && !actor.getPersistentData().contains("hemomancy:chamber_visit_dream_crafting")
-                            && com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.hasCompletedGuidedVisit(actor)
+                            && com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.hasCompletedGuidedVisit(actor)
                                     == (mode == ChamberVisitMode.GUIDED && !outsideRecovery)
-                            && !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isAttuned(actor),
+                            && !com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isAttuned(actor),
                     "Observational recovery retained visit state or miscredited guided completion/attunement");
             if (pendingGifts) {
                 actor.getInventory().clearContent();
@@ -1257,7 +1257,7 @@ public final class ClinicalBloodProgressionGameTests {
             actor.getPersistentData().putString("hemomancy:chamber_visit_mode", "GUIDED");
             actor.getPersistentData().putInt("hemomancy:chamber_visit_remaining", 1200);
             var before = actor.getPersistentData().copy();
-            h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.beginChairVisit(actor),
+            h.assertTrue(!com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.beginChairVisit(actor),
                     "Chair entry overlapped an active guided visit");
             h.assertTrue(before.equals(actor.getPersistentData()),
                     "Rejected overlapping chair entry granted binding or changed the original visit");
@@ -1273,7 +1273,7 @@ public final class ClinicalBloodProgressionGameTests {
             actor.getPersistentData().putBoolean("hemomancy:fungal_projection_active", true);
             actor.getPersistentData().putInt("hemomancy:fungal_projection_remaining", 1200);
             var before = actor.getPersistentData().copy();
-            h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.beginChairVisit(actor),
+            h.assertTrue(!com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.beginChairVisit(actor),
                     "Chair entry overlapped a Fungal projection");
             h.assertTrue(before.equals(actor.getPersistentData()),
                     "Rejected projecting chair entry granted binding or changed the projection");
@@ -1289,7 +1289,7 @@ public final class ClinicalBloodProgressionGameTests {
             h.assertTrue(actor.server.getLevel(ChamberOfWillManager.CHAMBER_OF_WILL) == null,
                     "This failed-start fixture requires an unloaded Chamber destination");
             var before = actor.getPersistentData().copy();
-            h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.beginChairVisit(actor),
+            h.assertTrue(!com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.beginChairVisit(actor),
                     "Chair entry succeeded without its destination");
             h.assertTrue(before.equals(actor.getPersistentData()),
                     "Missing Chamber destination still granted chair binding");
@@ -1412,12 +1412,12 @@ public final class ClinicalBloodProgressionGameTests {
                 actor.getPersistentData().put("hemomancy:chamber_visit_dream_inventory", before.copy());
                 actor.inventoryMenu.clicked(5, 0, ClickType.PICKUP, actor);
                 h.assertTrue(actor.inventoryMenu.getCarried().is(Items.DIAMOND_HELMET), "Recovery fixture did not hold its helmet");
-                com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.recoverOutsideChamber(actor);
+                com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.recoverOutsideChamber(actor);
                 h.assertTrue(actor.inventoryMenu.getCarried().isEmpty()
                                 && before.equals(actor.getInventory().save(new net.minecraft.nbt.ListTag())),
                         "Observational " + mode + " recovery duplicated its restored helmet on the cursor");
-                h.assertTrue(!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isActive(actor)
-                                && !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.hasCompletedGuidedVisit(actor),
+                h.assertTrue(!com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isActive(actor)
+                                && !com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.hasCompletedGuidedVisit(actor),
                         "Outside recovery completed an invalid guided return");
             } finally {
                 actor.inventoryMenu.setCarried(ItemStack.EMPTY);
@@ -1445,7 +1445,7 @@ public final class ClinicalBloodProgressionGameTests {
                 actor.inventoryMenu.clicked(36, 0, ClickType.PICKUP, actor);
                 actor.inventoryMenu.clicked(2, 0, ClickType.PICKUP, actor);
                 h.assertTrue(actor.inventoryMenu.getSlot(2).getItem().is(Items.STONE), "Crafting fixture did not move its stack");
-                com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.recoverOutsideChamber(actor);
+                com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.recoverOutsideChamber(actor);
                 h.assertTrue(before.equals(actor.getInventory().save(new net.minecraft.nbt.ListTag()))
                                 && actor.inventoryMenu.getSlot(1).getItem().is(Items.DIAMOND)
                                 && actor.inventoryMenu.getSlot(1).getItem().getCount() == 1
@@ -2675,23 +2675,23 @@ public final class ClinicalBloodProgressionGameTests {
     public static void journeyRestoresNumericFungalProjectionState(GameTestHelper h) {
         var actor = player(h, 7);
         var persistent = actor.getPersistentData();
-        persistent.putBoolean(com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper.PROJECTION_ACTIVE, true);
-        persistent.putInt(com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper.PROJECTION_REMAINING, 77);
-        persistent.putDouble(com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper.RETURN_X, 123.5D);
-        persistent.putFloat(com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper.RETURN_YROT, 91.0F);
+        persistent.putBoolean(com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper.PROJECTION_ACTIVE, true);
+        persistent.putInt(com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper.PROJECTION_REMAINING, 77);
+        persistent.putDouble(com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper.RETURN_X, 123.5D);
+        persistent.putFloat(com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper.RETURN_YROT, 91.0F);
         try {
             h.assertTrue(HemoJourneySnapshot.capture(actor).passed(), "Fungal projection snapshot capture failed");
             h.assertTrue(HemoJourneySnapshot.resetForJourney(actor).passed(),
                     "Journey reset rejected numeric Fungal projection fields");
-            h.assertTrue(!persistent.contains(com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper.PROJECTION_ACTIVE)
-                            && !persistent.contains(com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper.RETURN_X),
+            h.assertTrue(!persistent.contains(com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper.PROJECTION_ACTIVE)
+                            && !persistent.contains(com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper.RETURN_X),
                     "Journey reset left the prior Fungal projection active");
             var restored = HemoJourneySnapshot.restore(actor);
             h.assertTrue(restored.passed(), "Fungal projection snapshot restore failed: " + restored.message());
-            h.assertTrue(persistent.getBoolean(com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper.PROJECTION_ACTIVE)
-                            && persistent.getInt(com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper.PROJECTION_REMAINING) == 77
-                            && persistent.getDouble(com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper.RETURN_X) == 123.5D
-                            && persistent.getFloat(com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper.RETURN_YROT) == 91.0F,
+            h.assertTrue(persistent.getBoolean(com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper.PROJECTION_ACTIVE)
+                            && persistent.getInt(com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper.PROJECTION_REMAINING) == 77
+                            && persistent.getDouble(com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper.RETURN_X) == 123.5D
+                            && persistent.getFloat(com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper.RETURN_YROT) == 91.0F,
                     "Journey restore changed the preexisting Fungal projection");
         } finally {
             actor.discard();
@@ -2710,7 +2710,7 @@ public final class ClinicalBloodProgressionGameTests {
             HarbingerJourneyAutomation.perform(actor, HemoJourneyStage.QLIPHOTH_COMMUNION.id(), origin);
             HemoJourneyFixtures.prepare(actor, HemoJourneyStage.APOTHEOS_CHOICE, origin);
             h.assertTrue(!actor.getPersistentData().getBoolean(
-                            com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper.REVELATION_CHOICE_PENDING),
+                            com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper.REVELATION_CHOICE_PENDING),
                     "Automation fixture offered the ending before projection");
             HarbingerJourneyAutomation.perform(actor, HemoJourneyStage.APOTHEOS_CHOICE.id(), origin);
             h.assertTrue(HemoJourneyChecks.verify(actor, HemoJourneyStage.APOTHEOS_CHOICE, origin).passed(),
@@ -2739,7 +2739,7 @@ public final class ClinicalBloodProgressionGameTests {
             HemoJourneyFixtures.prepare(actor, HemoJourneyStage.APOTHEOS_CHOICE, origin);
             actor.getPersistentData().putString(HemoJourneySnapshot.STAGE_KEY, HemoJourneyStage.APOTHEOS_CHOICE.id());
             actor.getMainHandItem().use(h.getLevel(), actor, InteractionHand.MAIN_HAND);
-            com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper.performForcedProjectionReturn(actor);
+            com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper.performForcedProjectionReturn(actor);
             DialogueEventRouter.onDialogueOption(new DialogueEvent(actor, "archon_choice_silence", 0));
             h.assertTrue(HemoJourneyChecks.verify(actor, HemoJourneyStage.APOTHEOS_CHOICE, origin).passed()
                             && blooms.getBloomById(bloom.bloomId()) != null,
@@ -2906,7 +2906,7 @@ public final class ClinicalBloodProgressionGameTests {
             h.getLevel().getBlockState(root).useItemOn(owner.getMainHandItem(), h.getLevel(),
                     owner, InteractionHand.MAIN_HAND, hit);
             h.assertTrue(h.getLevel().getServer().getLevel(
-                            com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager.CHAMBER_OF_WILL) == null,
+                            com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.CHAMBER_OF_WILL) == null,
                     "This focused test expects the GameTest server's absent Chamber dimension");
             owner.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
             stranger.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
@@ -3212,9 +3212,9 @@ public final class ClinicalBloodProgressionGameTests {
                 owner.getInventory().setItem(slot, new ItemStack(Items.COBBLESTONE));
             owner.getPersistentData().putBoolean("hemomancy:mycophant_active", true);
             boss.setEncounterOwner(owner.getUUID());
-            com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.completeVictory(boss);
+            com.vincenthuto.hemomancy.common.encounter.MycophantEncounterManager.completeVictory(boss);
             h.assertTrue(HemoCapabilityAccess.getInitiatoryDegree(owner).isMycophantDefeated()
-                            && !com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.isActive(owner),
+                            && !com.vincenthuto.hemomancy.common.encounter.MycophantEncounterManager.isActive(owner),
                     "The first victory must finish even while its unique reward cannot fit");
             h.assertTrue(owner.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getBoolean(pending)
                             && owner.getInventory().countItem(ItemInit.mycophant_tendril.get()) == 0
@@ -3957,15 +3957,15 @@ public final class ClinicalBloodProgressionGameTests {
             var data = actor.getPersistentData();
             data.putBoolean("hemomancy:chamber_visit_active", true);
             data.putString("hemomancy:chamber_visit_mode", mode.name());
-            boolean observational = com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isObservational(actor);
+            boolean observational = com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isObservational(actor);
             if (observational) data.put("hemomancy:chamber_visit_dream_inventory", snapshot.copy());
             actor.getInventory().clearContent();
             retryPendingChamberGifts(actor);
             boolean temporaryInventoryEmpty = actor.getInventory().isEmpty();
             if (observational) {
-                com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.recoverOutsideChamber(actor);
+                com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.recoverOutsideChamber(actor);
                 h.assertTrue(snapshot.equals(actor.getInventory().save(new net.minecraft.nbt.ListTag()))
-                                && !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isActive(actor),
+                                && !com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isActive(actor),
                         "Recovery must restore the exact entry inventory and close the supplied session");
                 actor.getInventory().clearContent();
                 retryPendingChamberGifts(actor);
@@ -4883,11 +4883,11 @@ public final class ClinicalBloodProgressionGameTests {
 
     private static void mycophantTickWithDeliveries(net.neoforged.neoforge.event.tick.PlayerTickEvent.Post tick) {
         PendingDelivery.onPlayerTick(tick);
-        com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onPlayerTick(tick);
+        com.vincenthuto.hemomancy.common.encounter.MycophantEncounterManager.onPlayerTick(tick);
     }
 
     private static void mycophantLoginWithDeliveries(PlayerEvent.PlayerLoggedInEvent login) {
         PendingDelivery.onLogin(login);
-        com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onLogin(login);
+        com.vincenthuto.hemomancy.common.encounter.MycophantEncounterManager.onLogin(login);
     }
 }

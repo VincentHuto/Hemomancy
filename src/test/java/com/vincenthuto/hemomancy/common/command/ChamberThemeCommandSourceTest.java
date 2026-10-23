@@ -10,7 +10,7 @@ public final class ChamberThemeCommandSourceTest {
 	private static final Path COMMAND = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/command/ChamberSubcommand.java");
 	private static final Path MANAGER = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/worldgen/ChamberOfWillManager.java");
+			"src/main/java/com/vincenthuto/hemomancy/common/encounter/ChamberOfWillManager.java");
 	private static final Path THEME_REGISTRY = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/world/chamberofwill/ChamberSkyThemeRegistry.java");
 	private static final Path VESPER_EFFECTS = Path.of(

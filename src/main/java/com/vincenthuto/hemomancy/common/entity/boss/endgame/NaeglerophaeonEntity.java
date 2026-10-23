@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.entity.mob.arthropod.FiberRepair;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.AxonalTransductionManager;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.AxonalTravelPath;
-import com.vincenthuto.hemomancy.common.worldgen.VagrantMindEncounterData;
+import com.vincenthuto.hemomancy.common.encounter.VagrantMindEncounterData;
 import com.vincenthuto.hemomancy.common.worldgen.structure.VagrantMindFiberWeb;
 import com.vincenthuto.hemomancy.common.worldgen.structure.VagrantMindGeometry;
 import java.util.ArrayDeque;

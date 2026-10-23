@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
-import com.vincenthuto.hemomancy.common.worldgen.VesperOrdealManager;
+import com.vincenthuto.hemomancy.common.encounter.VesperOrdealManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;

@@ -45,7 +45,7 @@ final class MnemonistDialogueEvents {
 		case HarbingerMnemonistDialogueTrees.EVENT_GUIDED_CHAMBER -> {
 			Entity teacher = player.level().getEntity(event.getEntityId());
 			if (teacher instanceof HarbingerMnemonistEntity && player.distanceToSqr(teacher) <= 64) {
-				boolean started = com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.beginGuidedVisit(player);
+				boolean started = com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.beginGuidedVisit(player);
 				event.setRewardDelivered(started);
 				player.displayClientMessage(Component.translatable(started
 						? "hemomancy.mnemonist.chamber.guided.started"

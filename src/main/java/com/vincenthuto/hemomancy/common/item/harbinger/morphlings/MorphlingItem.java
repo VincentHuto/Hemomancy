@@ -416,7 +416,7 @@ public class MorphlingItem extends Item implements IMorphling {
 				strainAmplifier);
 		setLastAbilityTick(stack, PRIMAL_ABILITY_PREFIX + abilityKey, now);
 		if (player instanceof ServerPlayer serverPlayer) {
-			com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager.onCast(serverPlayer);
+			com.vincenthuto.hemomancy.common.encounter.MycophantEncounterManager.onCast(serverPlayer);
 		}
 		return true;
 	}

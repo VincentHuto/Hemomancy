@@ -11,7 +11,7 @@ public final class ArchonPathRiteSourceTest {
 		String dialogue = com.vincenthuto.hemomancy.support.SourceAssertions.readDialogueRoutes();
 		String rites = read("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java")
 				+ read("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletionEffects.java");
-		String ordeal = read("src/main/java/com/vincenthuto/hemomancy/common/worldgen/VesperOrdealManager.java");
+		String ordeal = read("src/main/java/com/vincenthuto/hemomancy/common/encounter/VesperOrdealManager.java");
 		assertContains(dialogue, "EnumArchonPath.SILENT_PENDING");
 		assertContains(dialogue, "EnumArchonPath.APOTHEOS_PENDING");
 		String pruning = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingSicklePruning.java");

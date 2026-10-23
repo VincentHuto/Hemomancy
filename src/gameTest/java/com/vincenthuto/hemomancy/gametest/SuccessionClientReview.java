@@ -106,8 +106,8 @@ public final class SuccessionClientReview {
                 if(op.startsWith("priority_ledger_")) setupPriorityLedger(player, root, op.substring("priority_ledger_".length()));
                 if(op.equals("priority_chamber_checkpoint")) {
                     if (!player.server.getWorldData().getLevelName().equals("PriorityChamberCrash_20261002")
-                            || !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isActive(player)
-                            || !player.level().dimension().equals(com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager.CHAMBER_OF_WILL))
+                            || !com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isActive(player)
+                            || !player.level().dimension().equals(com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.CHAMBER_OF_WILL))
                         throw new IllegalStateException("Checkpoint requires the active disposable Chamber visit");
                     player.server.saveEverything(false, true, true);
                     try { Files.writeString(root.resolve("priority-chamber-checkpoint.json"),
@@ -142,7 +142,7 @@ public final class SuccessionClientReview {
         if (guest == null) throw new IllegalStateException("Co-op baseline requires the connected guest");
         var players = new com.google.gson.JsonArray();
         for (var participant : List.of(host, guest)) {
-            if (com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isActive(participant)
+            if (com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isActive(participant)
                     || participant.serverLevel() != host.server.overworld())
                 throw new IllegalStateException("Co-op baseline must precede both visits");
             var state = new com.google.gson.JsonObject();
@@ -164,11 +164,11 @@ public final class SuccessionClientReview {
         var record = new com.google.gson.JsonObject();
         var players = new com.google.gson.JsonArray();
         for (var participant : List.of(host, guest)) {
-            if (!com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isActive(participant)
-                    || com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.mode(participant)
+            if (!com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isActive(participant)
+                    || com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.mode(participant)
                     != com.vincenthuto.hemomancy.common.worldgen.ChamberVisitMode.GUIDED
                     || !participant.level().dimension().equals(
-                            com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager.CHAMBER_OF_WILL))
+                            com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.CHAMBER_OF_WILL))
                 throw new IllegalStateException("Co-op checkpoint requires both active guided visits inside the Chamber");
             var state = new com.google.gson.JsonObject();
             state.addProperty("uuid", participant.getUUID().toString());
@@ -195,7 +195,7 @@ public final class SuccessionClientReview {
                     || com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.isFirstSeparationStarted(participant)
                     || com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.isFirstSeparationComplete(participant)
                     || com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment.isClaimed(participant)
-                    || com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isActive(participant)
+                    || com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isActive(participant)
                     || !participant.level().dimension().equals(net.minecraft.world.level.Level.OVERWORLD))
                 throw new IllegalStateException("NPC reward preparation requires two fresh eligible D3 players outside visits");
         }
@@ -223,8 +223,8 @@ public final class SuccessionClientReview {
 
     private static void claimPriorityDreamRewards(ServerPlayer player, Path root) {
         if (!player.server.getWorldData().getLevelName().equals("PriorityDreamRewards_20261002")
-                || !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isObservational(player)
-                || !player.level().dimension().equals(com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager.CHAMBER_OF_WILL))
+                || !com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isObservational(player)
+                || !player.level().dimension().equals(com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.CHAMBER_OF_WILL))
             throw new IllegalStateException("Reward fixture requires its disposable observational visit");
         com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment.markBriefed(player);
         com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter.grantIfNotDone(player,

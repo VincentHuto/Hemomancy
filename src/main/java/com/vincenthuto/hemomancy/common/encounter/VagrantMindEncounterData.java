@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.worldgen;
+package com.vincenthuto.hemomancy.common.encounter;
 
 import java.util.HashMap;
 import java.util.Map;

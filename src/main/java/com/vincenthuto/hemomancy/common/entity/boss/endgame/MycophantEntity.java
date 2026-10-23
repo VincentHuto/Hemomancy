@@ -11,7 +11,7 @@ import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.BroodMother;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.FunglingEntity;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
-import com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager;
+import com.vincenthuto.hemomancy.common.encounter.MycophantEncounterManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;

@@ -150,7 +150,7 @@ final class VesperCombatImplementationSourceTest {
 	@Test
 	void encounterPuppetsHaveBacklashNoRewardsAndAttemptCleanup() throws Exception {
 		String events = read("common/entity/boss/endgame/VesperEncounterPuppetEvents.java");
-		String ordeal = read("common/worldgen/VesperOrdealManager.java");
+		String ordeal = read("common/encounter/VesperOrdealManager.java");
 		String actions = read("common/entity/boss/endgame/VesperMountMoves.java");
 		String threads = read("client/render/world/PuppeteerThreadRenderer.java");
 		assertTrue(events.contains("applyPuppetBacklash"));

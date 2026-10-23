@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.worldgen;
+package com.vincenthuto.hemomancy.common.encounter;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;

@@ -109,9 +109,9 @@ public class HarbingerMnemonistEntity extends com.vincenthuto.hemomancy.common.s
 				CircusDiscoveryProgress.hasDiscovered(serverPlayer),
 				serverPlayer.getInventory().contains(new ItemStack(ItemInit.circus_waybill.get())));
 		tree = HarbingerMnemonistDialogueTrees.withGuidedChamber(tree, degree,
-				com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.hasCompletedGuidedVisit(serverPlayer),
-				com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.hasSeenDream(serverPlayer)
-						|| com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isChairBound(serverPlayer));
+				com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.hasCompletedGuidedVisit(serverPlayer),
+				com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.hasSeenDream(serverPlayer)
+						|| com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isChairBound(serverPlayer));
 		if (com.vincenthuto.hemomancy.common.mission.shared.VagrantMindInquiry.eligible(serverPlayer))
 			tree = com.vincenthuto.hemomancy.common.entity.npc.dialogue.VagrantMindInquiryDialogue.memory(
 					tree, com.vincenthuto.hemomancy.common.mission.shared.VagrantMindInquiry.progress(serverPlayer));

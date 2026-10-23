@@ -92,7 +92,7 @@ public final class JourneyAutomationGameTests {
 					&& player.getPersistentData().contains(HemoJourneySnapshot.SNAPSHOT_KEY)
 					&& player.getInventory().getItem(0).is(ItemInit.fungal_spine.get())
 					&& !player.getPersistentData().getBoolean(
-							com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper.REVELATION_CHOICE_PENDING)
+							com.vincenthuto.hemomancy.common.encounter.FungalGardenTravelHelper.REVELATION_CHOICE_PENDING)
 					&& HemoJourneyStage.APOTHEOS_CHOICE.id().equals(
 							player.getPersistentData().getString(HemoJourneySnapshot.STAGE_KEY)),
 					"To-choice run must stop before choosing an ending and retain the snapshot");

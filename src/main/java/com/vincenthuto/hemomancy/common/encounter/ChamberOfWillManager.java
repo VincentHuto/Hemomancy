@@ -1,5 +1,8 @@
-package com.vincenthuto.hemomancy.common.worldgen;
+package com.vincenthuto.hemomancy.common.encounter;
 
+import com.vincenthuto.hemomancy.common.worldgen.ChamberExpansionRules;
+import com.vincenthuto.hemomancy.common.worldgen.ChamberProgressionRules;
+import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitRules;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.WarpChairBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.WarpChairStructureRules;

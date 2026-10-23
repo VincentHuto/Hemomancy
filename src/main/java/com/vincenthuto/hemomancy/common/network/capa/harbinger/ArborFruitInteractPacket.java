@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.entity.utility.ArborOfWillEntity;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
+import com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborOfWillInteractionRules;
 import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborOfWillLayout;
 import com.vincenthuto.hemomancy.common.worldgen.arbor.ArborOfWillVisualRules;

@@ -6,7 +6,7 @@ import com.mojang.blaze3d.vertex.*;
 import com.vincenthuto.hemomancy.client.data.VesperFightClientData;
 import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
-import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
+import com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;

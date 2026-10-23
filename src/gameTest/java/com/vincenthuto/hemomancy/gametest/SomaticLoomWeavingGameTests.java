@@ -832,20 +832,20 @@ public final class SomaticLoomWeavingGameTests {
 
     @GameTest(template = "empty")
     public static void aCorticalWeaveCarriesTheWeaversChamberTheme(GameTestHelper helper) {
-        var chambers = com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager.get(helper.getLevel().getServer());
+        var chambers = com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.get(helper.getLevel().getServer());
         Setup s = axonal(helper, 60);
         pay(helper, s);
-        helper.assertTrue(com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager.THEME_WILL_DEFAULT.equals(s.loom.getWeaverTheme()),
+        helper.assertTrue(com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.THEME_WILL_DEFAULT.equals(s.loom.getWeaverTheme()),
                 "A weaver without a Chamber weaves under the default sky");
         s.loom.cancelRitual(null);
-        chambers.setSkyThemeOverride(s.weaver, com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager.THEME_QLIPHOTH_COMMUNION);
+        chambers.setSkyThemeOverride(s.weaver, com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.THEME_QLIPHOTH_COMMUNION);
         helper.assertTrue(s.loom.selectRecipe(null, Hemomancy.rloc(AXONAL)), "Axonal reselected");
         pay(helper, s);
-        helper.assertTrue(com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager.THEME_QLIPHOTH_COMMUNION.equals(s.loom.getWeaverTheme()),
+        helper.assertTrue(com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.THEME_QLIPHOTH_COMMUNION.equals(s.loom.getWeaverTheme()),
                 "The dome takes the weaver's own Chamber sky");
         var registries = helper.getLevel().registryAccess();
         s.loom.loadWithComponents(s.loom.saveWithoutMetadata(registries), registries);
-        helper.assertTrue(com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager.THEME_QLIPHOTH_COMMUNION.equals(s.loom.getWeaverTheme()),
+        helper.assertTrue(com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager.THEME_QLIPHOTH_COMMUNION.equals(s.loom.getWeaverTheme()),
                 "The theme survives a reload");
         chambers.clearSkyThemeOverride(s.weaver);
         helper.succeed();

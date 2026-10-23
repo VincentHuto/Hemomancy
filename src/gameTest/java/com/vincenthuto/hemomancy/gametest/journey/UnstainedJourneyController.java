@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.gametest.journey;
 
-import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
-import com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService;
+import com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager;
+import com.vincenthuto.hemomancy.common.encounter.ChamberVisitService;
 
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;

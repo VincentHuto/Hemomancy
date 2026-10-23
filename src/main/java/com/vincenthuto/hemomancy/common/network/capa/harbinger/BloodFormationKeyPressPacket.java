@@ -43,7 +43,7 @@ public class BloodFormationKeyPressPacket implements CustomPacketPayload {
 			if (player == null)
 				return;
 			if (player instanceof ServerPlayer serverPlayer
-					&& com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isObservational(serverPlayer)) return;
+					&& com.vincenthuto.hemomancy.common.encounter.ChamberVisitService.isObservational(serverPlayer)) return;
 			if (UnstainedAccessRules.blocksHarbingerProgress(HemoCapabilityAccess.getUnstainedProgress(player))) return;
 			IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(player)
 					;

@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ChamberOfWillClientData;
 import com.vincenthuto.hemomancy.client.data.MycophantFightClientData;
 import com.vincenthuto.hemomancy.client.data.VesperFightClientData;
-import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
+import com.vincenthuto.hemomancy.common.encounter.ChamberOfWillManager;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.LinkedHashMap;

@@ -12,7 +12,7 @@ import com.vincenthuto.hemomancy.common.entity.boss.endgame.MycophantState;
 import com.vincenthuto.hemomancy.common.damage.HemoDamageTypes;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.FluidInit;
-import com.vincenthuto.hemomancy.common.worldgen.MycophantEncounterManager;
+import com.vincenthuto.hemomancy.common.encounter.MycophantEncounterManager;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.util.ArrayList;
