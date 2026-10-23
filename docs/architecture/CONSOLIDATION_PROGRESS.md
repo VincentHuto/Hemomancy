@@ -15,7 +15,7 @@ Every consolidation session reads this file first and updates it last, following
 | 6 | Phase 4: shared small utilities | DONE | `48127a923` … `07d4a4183` (6 commits) | 2026-10-22 |
 | 7 | Phase 5: blood accounting | DONE | `8338c98da` | 2026-10-22 |
 | 8 | Phase 7: registration and client registration | DONE | `3e8b213d4`, `291731d6f` | 2026-10-22 |
-| 9 | Phase 6: combat targeting and damage attribution | NOT STARTED | | |
+| 9 | Phase 6: combat targeting and damage attribution | DONE | `3b841ba03`, `7f0c1968d`, `5fa01de44`, `c9af6c6c3` | 2026-10-22 |
 | 10 | Phases 8 + 9: rendering plumbing and animation conventions | NOT STARTED | | |
 | 11 | Phase 10: god-class decomposition | NOT STARTED | | |
 | 12 | Phase 11: persistence authority migrations | NOT STARTED | | |
@@ -90,10 +90,12 @@ under *Pending approvals*. IDs refer to [ARCHITECTURE_AUDIT](ARCHITECTURE_AUDIT.
 | F-14 | Passive scar effects survive milk | 7 | PENDING | Design |
 | F-15 | Living weapons check `isActive()` and stop wiping the reserve | 7 | PENDING | Balance. The sites are the `BLOOD_PRICE` payments in the Living Axe, Blade, Crossbow and Tool |
 | F-22 | Hide the legacy Dictation Table from the main creative tab | 8 | PENDING | Still a no-op check in `CreativeTabInit.shouldShowItemInCreativeTab`, with a comment. Once approved, the fix is a block-side exclusion; the frozen creative-tab snapshot (`dictation_table` at line 633) must be updated in the same change |
-| G-1 / F-18 | Explicit damage stages and one death-save stage | 9 | PENDING | Balance: blood lost per hit changes |
-| F-16 | Attribute AoE damage from armour, Still Arts, Sheolic and Saprovitta; respect allies and PvP | 9 | PENDING | Balance |
+| G-1 / F-18 | Explicit damage stages and one death-save stage | 9 | PENDING | Balance: blood lost per hit changes. Needs a damage-stage ordering test with it (final damage and blood drained per hit). The heal stages (standards §7) show the pattern |
+| F-16 | Attribute AoE damage from armour, Still Arts, Sheolic and Saprovitta; respect allies and PvP | 9 | PENDING | Balance. Since step 9 the sites name their reach: Silent Severance `Reach.UNGATED_SURVIVAL`, Autoimmune Edge and Silver Rebuke `UNGATED`, the Saprovitta trail `MONSTER_FILTER_ANY_STATE`; Sheolic retribution acts on its attacker. Approving it moves them to `STRICT` and attributes the damage, and flips their `CombatTargetingMatrixGameTests` rows |
 | F-17 | Curved Horn uses `LastRiteHelper` | 9 | PENDING | |
-| G-2b | The caster's own puppets stop matching `Monster.class` filters | 9 | PENDING | |
+| G-2b | The caster's own puppets stop matching `Monster.class` filters | 9 | PENDING | One flag since step 9: `allies = false` in `Reach.MONSTER_FILTER` / `MONSTER_FILTER_ANY_STATE`, which also spares teammates' and impressed monsters. Drudges would then need their owner resolved (`DrudgeActions.monsters`). Flip the drudge, Prismatic, Lethean Mute and Glacier matrix rows |
+| G-7b | A flight revoke checks the other flight sources | 9 | PENDING | Found in step 9. Today the Elytra effect landing drops Edacious flight until Edacious's next tick, and in water it keeps doing so. Once approved, `FlightArbiter.revoke` asks the other `Source`s; flip `FlightSourceGameTests#elytraLandingDropsEdaciousFlightUntilItsNextTick` |
+| G-2c | One boss definition | 9 | PENDING | Found in step 9. `ManipulationReactiveEvents.isBoss` (with Warden, Elder Guardian and the bosses tag), `ConstrictorCordEntity.isBossTarget` (without them) and `ThreadRipperManip.protectedBody` (a package-name check) disagree |
 | A-4 | Animations that would freeze under `/tick freeze` | 10 | PENDING | Per animation |
 | V-3b | Ferric quad-encoder constant (128 vs 127) | 10 | PENDING | Visual check |
 | F-11 | Blood-structure crafts tick once per server tick | 11 | PENDING | Crafts take their intended time |
@@ -156,6 +158,11 @@ them green.
 | `architecture/RegistrationStyleGuardrailTest` | 8 | R-1 / R-2 / R-3 / R-4 / R-5 / R-7: the two subscriber forms only, no `bus=`; the mod constructor adds only lifecycle listeners; no `BlockEntityRenderers.register`, `particleEngine.register` or `initializeClient`; `ClientEvents` and the client inits stay out of `common/init`; one ordered world-effect dispatcher; registry lookups; typed data components; one WIP list and one tab builder |
 | `architecture/ClientSessionCacheTest` | 8 | P-10: every static entity-id-keyed collection in `client/**` is cleared in `ClientSessionEvents.onClientPlayerLogout`, or exempt with a reason (stale entries fail) |
 | `architecture/CommonClientIsolationTest` | 8 | V-8: nothing under `common/` names a `net.minecraft.client` or `hemomancy.client` class except inside an item's `hemomancy$getClientItemExtensions()` / `IClientItemExtensions` body; no wildcard client imports; every `ClientPayloadHandlers::dispatch` payload has exactly one client registration |
+| gameTest `CombatTargetingMatrixGameTests` (suite `combat_targeting_validation`) | 9 | Who 11 representative effects reach (manipulation, Drudge, 2 armour, 2 Still Art, 2 morphling, 2 scar, living weapon) across hostile, pet, ally, own puppet, boss, PvP on/off; and that each `Reach` preset equals the filter it replaced over every body kind |
+| gameTest `HealModifierGameTests` | 9 | Each heal modifier's scale, their stacking, and restraint purity reading the requested heal |
+| gameTest `FlightSourceGameTests` | 9 | Each flight source's grant and revoke, including the pending G-7b Elytra/Edacious conflict |
+| `architecture/CombatTargetingGuardrailTest` | 9 | G-2: every `Monster.class` gather passes `canHarm` in its arguments or is allow-listed (mob AI, ownerless zones; stale entries fail); `ManipulationCombatHelper` holds the only harm predicates; the area and look sites ask `canHarm`; Drudge work lives in `DrudgeActions` |
+| `architecture/HealAndFlightGuardrailTest` | 9 | G-4: one heal-modifier stage and one HIGH reader; G-7: only `FlightArbiter` writes `mayfly` / `flying` |
 
 ## Step entries
 
@@ -735,3 +742,110 @@ them green.
   - **Registration:** new client registration goes in the matching `client/registry/*` class, and new world-space effects go in `WorldEffectDispatcher`, in order. New creative-tab WIP entries go in `CreativeTabInit.WIP`.
   - **Frozen snapshot:** a registry id or creative-order change now fails `FrozenIdentifierGameTests`. Regenerate the lists only for an approved migration, with `HEMOMANCY_FROZEN_SNAPSHOT_OUT` set during a `runRegistrationGameTestServer` run.
   - **Baseline comparisons:** a temporary `git worktree` beside the repository works for this. Junction `libs/` into it, run one suite, then remove the junction with `rmdir` before `git worktree remove --force`. Removing the worktree first would follow the junction into the real `libs/`.
+
+### Step 9: Phase 6, combat targeting and damage attribution
+- **Status / date / commits:** DONE, 2026-10-22. Four commits on `neo-1.21.1`:
+  - `3b841ba03`: 9a, the GameTest matrix, written and green before any targeting code moved
+  - `7f0c1968d`: 9b, targeting through `ManipulationCombatHelper.canHarm`, plus `DrudgeActions`
+  - `5fa01de44`: 9c, the heal-modifier table and the flight arbiter
+  - `c9af6c6c3`: test isolation, review fixes and docs
+
+  A further `consolidation(step-9):` commit records this entry.
+- **Test counts before → after:**
+  - `test`: 4,004 → 4,010, 0 failures.
+  - `alphaCheck`: green, with all 1,036 required GameTests passing (1,018 before; 18 new in the new alpha suite `combat_targeting_validation`), `verifyGameTestResourceLog` and `verifyPackagedClientResources`.
+  - `runCombatTargetingGameTestServer` (the focused launcher for the new suite): 18/18.
+  - Opt-in suites were not re-run. The only opt-in code paths touched are the Still Art casts, which `casting_animation_validation` drives; their bodies change only in the target predicate, and the matrix covers both Still Art rows.
+- **The matrix (`CombatTargetingMatrixGameTests`).** Each row's effect is struck at one target at a time, and the row records which targets it touched. The columns are: a hostile Husk, the caster's tamed wolf, a Husk on the caster's scoreboard team, the caster's own Gorebound Hulk, a Warden, and a survival player with PvP on and with PvP off. Rows and today's results:
+
+  | Row | Reaches |
+  |---|---|
+  | `ManipulationCombatHelper.hurt` (manipulations) | hostile, boss, PvP-on player |
+  | Drudge `blood_shot` (owned by the caster) | hostile, ally, own puppet, boss |
+  | Silent Severance (armour) | all seven |
+  | Prismatic flash (armour; the attacker is a separate cow) | hostile, ally, own puppet, boss |
+  | Autoimmune Edge (Still Art) | all seven |
+  | Lethean Mute (Still Art) | hostile, ally, own puppet, boss |
+  | Irontooth primal damage (morphling) | hostile, boss |
+  | `MorphlingItem.findLookTarget` (Bootlace, Emberfang) | all seven |
+  | Glacier slow (scar) | hostile, ally, own puppet, boss |
+  | Thorn retaliation (scar) | everything but the PvP-off player |
+  | Living Sickle spin (living weapon) | hostile, boss, PvP-on player |
+
+  - The Sickle's filter admits the caster's puppet. Its hit is a weapon-school hit, though, so `SchoolCombatEvents.prepare` cancels it.
+  - `reachPresetsReproduceTheirLegacyFilters` checks each `Reach` preset against the exact pre-step-9 filter it replaced. It covers every body above plus a creative player, a spectator, a dying Husk, an armour stand and the caster, with PvP on and off. `STRICT` is compared with canHarm's old body.
+- **What changed (9b, targeting):**
+  - **`ManipulationCombatHelper` is the one harm predicate.**
+    - `canHarm(Player, target)` is unchanged in meaning; it now delegates to `canHarm(caster, target, Reach.STRICT)`.
+    - **`Reach`** is a record of five widenings: allies, any player, creative, spectators and dying bodies. Each preset reproduces a family of older filters flag for flag:
+      - `MONSTER_FILTER`: a `Monster.class` gather with `isAlive`.
+      - `MONSTER_FILTER_ANY_STATE`: a gather with no predicate, which also returns dying bodies.
+      - `UNGATED`: everything living but the caster, whatever PvP says.
+      - `UNGATED_SURVIVAL`: as `UNGATED`, sparing creative and spectating players.
+    - A non-player caster (a Drudge, an effect holder) may only use a preset that checks neither allies nor PvP.
+    - **`canHarmFor(source, target)`** is `ConductionManager.canHarm` and its `controller` lifted verbatim, for constructs, summons, projectiles and effect holders. It has its own name, so callers passing a `Player` keep the Blood Construct exclusion. 19 callers were repointed and `ConductionManager.canHarm` is gone.
+  - **Migrated sites.** These now ask `canHarm` with the preset that keeps their verdicts:
+    - 31 `Monster.class` gathers: 20 morphling, 4 Still Art, the Glacier scar, the Saprovitta trail, Phantasmal Masquerade's hostile check, Predatory Eyes, the Sporitic Thurible, the Pale Silver Bell and the Rite of the Closed Vein. (The 9b commit message says 38; 31 is the count.)
+    - The Hemorrhagic Venom and Verminous Aura effects. Their `canHarmFor` check moved from the loop into the gather.
+    - Silent Severance, Silver Rebuke, Autoimmune Edge, `findLookTarget`, the Prismatic flash, the Verdigris Censer mark and Crimson Wake.
+  - **`DrudgeActions` (L-1).** The 48 Drudge lambdas moved verbatim out of `ManipulationInit`, one static method per manipulation, registered as `DrudgeActions::bloodShot` and so on. Their 29 Monster lookups are now two helpers, `monsters` and `nearestMonster`, routed through `canHarm(drudge, monster, MONSTER_FILTER_ANY_STATE)`. `activation_potential` keeps its distance filter. `ManipulationInit` lost 466 lines and 21 imports.
+- **What changed (9c):**
+  - **Heal-modifier table (G-4).** `HealModifier` lists necrosis (×0.75 unless Insatiable Hunger or Hemophagy applies), Insatiable Hunger (×0.25), Hemophagy (×0.25 unless Insatiable Hunger applies) and Impaired Recovery (×0.5).
+    - `ManipulationStatusEvents.onLivingHeal` applies the table at `NORMAL`, including the Hunger Collapse burst. The listeners in `HemorathEntity`, which also lost its now-empty `@EventBusSubscriber`, and in `BloodInjectionEvents` are gone.
+    - Unstained restraint purity read the *requested* heal before every reducer. That was only class-scan order; a probe GameTest showed it before any code moved. `PurityGainEvents.onLivingHeal` now runs at `HIGH`, so the same result is explicit. The heal stage table is in standards §7.
+  - **Flight arbiter (G-7).** `common/util/FlightArbiter` is the only writer of `mayfly` / `flying`. Its `Source` enum (Edacious set, Silent Slipping, Elytra effect) holds each source's flying speed, whether it lifts the player into flight, and how it resets speed on revoke. Sheolic Bastion grounds through `ground`. Every grant, revoke, speed and sync is as before.
+- **What changed (test fix and review):**
+  - The heal and flight GameTests first used in-level fixture players inside multi-test batches. That made the combined run fail `mandatoryjigsawwingsassemble` in 5 of 6 runs; it is a test-placement interaction, since the code changes alone passed 2 of 2.
+    - They now use detached `CapturedPlayer`s, one test per batch, on a 5×4×5 `small_room` template.
+    - Measured in a clean worktree: 4 of 4 combined runs green, against 2 of 2 on `2f3502a38`.
+  - Javadoc and standards wording followed the reviewer's notes.
+- **Metrics:**
+  - `src/main`: +970 / −644 in 49 files. 3 new classes: `DrudgeActions` (601 lines, 466 of them moved), `HealModifier` and `FlightArbiter`. Deleted: `ConductionManager.canHarm`/`controller`, 3 heal listeners, `HEMOPHAGY_HEAL_MULTIPLIER`, `SILENT_SLIPPING_FLIGHT_SPEED` (now in `FlightArbiter.Source`) and Hemorath's subscriber annotation.
+  - Call sites migrated: 31 `Monster.class` gathers, 2 effect gathers, 7 area and look predicates, 19 `canHarmFor` callers, 48 Drudge lambdas (29 lookups), 4 heal listeners, 7 flight writers.
+  - Tests: 2 JUnit guardrails and 3 GameTest classes added (18 GameTests); 2 source tests repointed (`WillResourceSourceTest` now reads `DrudgeActions`; `SilentArchonIncorporealitySourceTest` reads the arbiter call). The impact map was regenerated.
+  - Remaining legacy instances:
+    - 6 ungated `Monster.class` gathers, all allow-listed with reasons: Will AI, Pale Intercession AI, Phantasmal Echo AI and smoke ×3, Husk Effigy retargeting, the ownerless Pale Consecration zone.
+    - Living-weapon sweeps (`LivingSickleItem`, `LivingTorchItem`) keep vanilla melee eligibility.
+    - `EntityManipulationEffects.canAffect` serves only mob casters (Will, Vesper).
+    - Hand-written `LivingEntity` reveal filters: Irontooth tremor and burrow sense, Witch's Ear, Pale Diagnosis, Bloodhound.
+- **Guardrails added:** `CombatTargetingMatrixGameTests`, `HealModifierGameTests`, `FlightSourceGameTests`, `CombatTargetingGuardrailTest`, `HealAndFlightGuardrailTest` (see the table).
+- **Approved items implemented:** none. G-1/F-18, F-16, F-17 and G-2b all read PENDING, so the matrix expectations, `HEMOMANCY_REFERENCE.md` and the wiki are unchanged.
+- **Pending approvals:** G-1/F-18, F-16, F-17, G-2b, plus two found in this step:
+  - G-7b: a flight revoke checks the other sources.
+  - G-2c: one boss definition.
+
+  The *Decisions* notes say where each change would go.
+- **Deviations from the roadmap:**
+  - **Presets instead of a bare `canHarm`.** Routing a `Monster.class` filter through plain `canHarm` would have stopped it hitting the caster's own puppets, teammates and impressed mobs (G-2b), and PvP-off players for the ungated area effects (F-16). Each site therefore names the `Reach` preset that keeps its verdicts, and approving the item moves it to `STRICT`.
+  - **Kept local, with reasons:**
+    - Puppet and summon AI (`BoundSummonBehavior`, the crossbar, hounds, echoes, Pale Intercession): standards §5 exception.
+    - The Will/Vesper entity-cast rule `canAffect`.
+    - Domain rules (Pallid Shadow, Husk Effigy, flail impact rules, absorption).
+    - World hazards with no caster (Founding Fane, Viridis Salis trail, Morphling Cradle, Vigil, Pale Consecration).
+    - The living-weapon sweeps: their vanilla `canAttack`/`isAlliedTo` rule has no exact `Reach` equivalent.
+  - **No damage-stage ordering test.** G-1 is not approved. The heal stage table is documented and tested instead.
+  - **A new alpha suite** with its own launcher, so the matrix can be run in seconds.
+- **Final review:** one reviewer read the whole diff from `2f3502a38`.
+  - It confirmed, among other things:
+    - no behaviour change, frozen-identifier change or client reach
+    - all 48 Drudge methods identical to the old lambdas, apart from the lookup helper
+    - every site's preset correct, checked by hand
+    - the heal and flight semantics, Hemorath left with no empty subscriber, and the docs accurate
+  - Fixed after the review:
+    - a stale `HemophagyEffect` javadoc
+    - the `Reach` javadoc's decision mapping
+    - an overstated standards sentence (the reveal filters are now listed as migration targets)
+    - the heal GameTest name
+    - the heal-listener regex now accepts `final`
+  - Accepted: the guardrail checks that `canHarm` appears, not which preset. A swapped preset would pass, so presets are pinned by the matrix rows and the preset-equivalence test, not per site.
+- **Not verified (needs in-game check):**
+  - Drudge work on a live server.
+  - Edacious, Silent Slipping and Elytra flight by hand, including the client-side Elytra speed reset.
+  - A Hunger Collapse burst seen in a world.
+- **Known issues (pre-existing, not fixed here):**
+  - `mandatoryjigsawwingsassemble` builds its outpost from (48, 3, 48), outside its own template, and fails when parallel tests add live players nearby. `completeexitcleansownedfixtureandoutput` is the step 4 flake. Both passed in the final runs.
+  - The step-9 matrix still uses in-level players, which it needs for area queries, so it keeps one test per batch.
+- **Handoff notes for step 10 (Phases 8 + 9, rendering plumbing and animation conventions):**
+  - The baseline is fully green: 4,010 JUnit tests and 1,036 required GameTests.
+  - **Targeting:** a new effect that picks targets calls `ManipulationCombatHelper.canHarm(caster, target)` (or a `Reach` preset if it must keep an older verdict), never a bare `Monster.class` filter. A mob-AI gather goes in `CombatTargetingGuardrailTest`'s allow-list with a reason. New heal reductions are `HealModifier` entries; new flight sources are `FlightArbiter.Source` entries.
+  - **GameTests:** use a detached `CapturedPlayer` unless the test needs the player in the level. Area tests that need one get their own batch.
