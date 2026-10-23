@@ -1,10 +1,12 @@
 package com.vincenthuto.hemomancy.common.block.harbinger;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public final class FaneHeartAndStakeSourceTest {
+class FaneHeartAndStakeSourceTest {
 	private static final Path BLOODWELL = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/block/harbinger/functional/ConsecratedBloodwellBlock.java");
 	private static final Path STAKE = Path.of(
@@ -34,7 +36,7 @@ public final class FaneHeartAndStakeSourceTest {
 	private static final Path HEMO_RENDER_TYPES = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/HemoRenderTypes.java");
 	private static final Path STAKE_ITEM = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tile/functional/HematicStakeBlockItem.java");
+			"src/main/java/com/vincenthuto/hemomancy/client/item/ItemClientExtensions.java");
 	private static final Path STAKE_ITEM_RENDERER = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/item/tile/harbinger/functional/HematicStakeItemRenderer.java");
 	private static final Path CLIENT_EVENTS = Path.of(
@@ -51,10 +53,8 @@ public final class FaneHeartAndStakeSourceTest {
 			"src/main/resources/assets/hemomancy/models/block/hematic_stake.json");
 	private static final Path LANG = Path.of("src/main/resources/assets/hemomancy/lang/en_us.json");
 
-	private FaneHeartAndStakeSourceTest() {
-	}
-
-	public static void main(String[] args) throws IOException {
+	@Test
+	void faneHeartAndStakeAreWired() throws IOException {
 		String bloodwell = Files.readString(BLOODWELL).replace("\r\n", "\n");
 		String stake = Files.readString(STAKE).replace("\r\n", "\n");
 		String blockInit = Files.readString(BLOCK_INIT).replace("\r\n", "\n");
@@ -142,7 +142,7 @@ public final class FaneHeartAndStakeSourceTest {
 		assertContains("stake has no collision", blockInit, ".noCollission()");
 		assertContains("stake is instant to mine", blockInit, ".instabreak()");
 		assertContains("registers hematic stake block entity", blockEntityInit, "HematicStakeBlockEntity");
-		assertContains("stake block item uses custom renderer", blockInit, "new HematicStakeBlockItem");
+		assertContains("stake block item uses custom renderer", blockInit, "Map.entry(\"hematic_stake\", b -> new BlockItem(b,");
 		assertNotContains("stake authority no longer handles empty-hand placement", stakeAuthorityEvents,
 				"PlayerInteractEvent.RightClickBlock");
 		assertContains("stake authority event handles break protection", stakeAuthorityEvents,
@@ -201,7 +201,7 @@ public final class FaneHeartAndStakeSourceTest {
 		assertContains("bloodwell renderer registered", clientEvents,
 				"event.registerBlockEntityRenderer(BlockEntityInit.consecrated_bloodwell.get(), ConsecratedBloodwellRenderer::new)");
 		assertContains("stake item implements custom renderer provider", stakeItem,
-				"implements HemoClientItemExtensionsProvider");
+				"Map.entry(\"hematic_stake\", ItemClientExtensions::hematicStakeBlockItem)");
 		assertContains("stake item renderer uses monolith material", stakeItemRenderer,
 				"HemoRenderTypes.monolithFragment");
 		assertContains("stake item model routes to custom renderer", stakeItemModel, "\"parent\": \"builtin/entity\"");

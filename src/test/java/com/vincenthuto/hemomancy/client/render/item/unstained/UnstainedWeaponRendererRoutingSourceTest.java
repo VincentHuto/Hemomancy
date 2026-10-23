@@ -1,23 +1,24 @@
 package com.vincenthuto.hemomancy.client.render.item.unstained;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public final class UnstainedWeaponRendererRoutingSourceTest {
+class UnstainedWeaponRendererRoutingSourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
 	private static final Path ITEM_ROOT = ROOT.resolve(
 			"src/main/java/com/vincenthuto/hemomancy/common/item/unstained/tool");
 	private static final Path RENDERER_ROOT = ROOT.resolve(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/item/unstained");
 
-	private UnstainedWeaponRendererRoutingSourceTest() {
-	}
-
-	public static void main(String[] args) throws IOException {
-		String warhammerItem = read(ITEM_ROOT.resolve("UnstainedWarhammerItem.java"));
-		String glaiveItem = read(ITEM_ROOT.resolve("SilthmereGlaiveItem.java"));
-		String daggerItem = read(ITEM_ROOT.resolve("AbsolutionDaggerItem.java"));
+	@Test
+	void unstainedWeaponsRouteTheirRenderers() throws IOException {
+		// Each weapon's renderer is registered from the client catalogue, keyed by the item class.
+		String warhammerItem = read(ROOT.resolve("src/main/java/com/vincenthuto/hemomancy/client/item/ItemClientExtensions.java"));
+		String glaiveItem = warhammerItem;
+		String daggerItem = warhammerItem;
 
 		assertContains("warhammer item uses its renderer",
 				warhammerItem, "new UnstainedWarhammerItemRenderer(");

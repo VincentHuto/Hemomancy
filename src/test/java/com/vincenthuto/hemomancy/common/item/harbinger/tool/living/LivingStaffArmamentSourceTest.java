@@ -1,16 +1,16 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public final class LivingStaffArmamentSourceTest {
+class LivingStaffArmamentSourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
 
-	private LivingStaffArmamentSourceTest() {
-	}
-
-	public static void main(String[] args) throws IOException {
+	@Test
+	void livingStaffArmamentIsWired() throws IOException {
 		String itemInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java");
 		String manipInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationInit.java");
 		String treeInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationTreeInit.java");
@@ -78,7 +78,7 @@ public final class LivingStaffArmamentSourceTest {
 		String flailHelper = read("src/main/java/com/vincenthuto/hemomancy/client/render/item/harbinger/LivingFlailRenderHelper.java");
 		String flailModelClass = read("src/main/java/com/vincenthuto/hemomancy/client/model/item/LivingFlailModel.java");
 		String layerEvents = read("src/main/java/com/vincenthuto/hemomancy/client/event/LayerEvents.java");
-		assertContains("flail item routes custom renderer", flailItem, "RenderPropLivingFlail");
+		assertContains("flail item routes custom renderer", read("src/main/java/com/vincenthuto/hemomancy/client/item/ItemClientExtensions.java"), "Map.entry(LivingFlailItem.class, ItemClientExtensions::livingFlailItem)");
 		assertContains("flail renderer uses physics helper", flailRenderer, "LivingFlailRenderHelper.renderHeld");
 		assertContains("flail helper has damped physics", flailHelper, "private static final class PhysicsState");
 		assertContains("flail model has chain link", flailModelClass, "renderChainLink");

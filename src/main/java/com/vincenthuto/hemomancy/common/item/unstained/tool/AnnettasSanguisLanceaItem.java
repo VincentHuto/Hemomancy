@@ -1,19 +1,11 @@
 package com.vincenthuto.hemomancy.common.item.unstained.tool;
 
-import com.vincenthuto.hemomancy.client.player.LivingWeaponPlayerPose;
-import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.client.player.LocalPlayer;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.render.item.harbinger.AnnettasSanguisLanceaItemRenderer;
 import com.vincenthuto.hemomancy.common.entity.projectile.SanguisLanceaEntity;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingToolItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.SanguisLanceaItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -33,11 +25,10 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 
-public class AnnettasSanguisLanceaItem extends LivingToolItem implements HemoClientItemExtensionsProvider {
+public class AnnettasSanguisLanceaItem extends LivingToolItem {
 
 	public static String TAG_STATE = "state";
 
@@ -71,11 +62,6 @@ public class AnnettasSanguisLanceaItem extends LivingToolItem implements HemoCli
 	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		super.hurtEnemy(stack, target, attacker);
 		return super.hurtEnemy(stack, target, attacker);
-	}
-
-	@Override
-	public IClientItemExtensions hemomancy$getClientItemExtensions() {
-		return RenderPropAnnettasSanguisLancea.INSTANCE;
 	}
 
 	@Override
@@ -121,19 +107,3 @@ public class AnnettasSanguisLanceaItem extends LivingToolItem implements HemoCli
 	}
 }
 
-class RenderPropAnnettasSanguisLancea implements IClientItemExtensions {
-	@Override
-	public boolean applyForgeHandTransform(PoseStack poses, LocalPlayer player, HumanoidArm arm,
-			ItemStack stack, float partialTick, float equipProgress, float swingProgress) {
-		return LivingWeaponPlayerPose.applyFirstPerson(poses, player, arm, stack, equipProgress, swingProgress);
-	}
-
-
-	public static RenderPropAnnettasSanguisLancea INSTANCE = new RenderPropAnnettasSanguisLancea();
-
-	@Override
-	public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-		return new AnnettasSanguisLanceaItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(),
-				Minecraft.getInstance().getEntityModels());
-	}
-}

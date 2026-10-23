@@ -2,8 +2,6 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.CellHandRules;
-import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.render.item.harbinger.CellHandItemRenderer;
 import com.vincenthuto.hemomancy.common.block.harbinger.BlockBloodInteractions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.*;
@@ -20,7 +18,6 @@ import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillEntity;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCancellationHandler;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -41,12 +38,11 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 import java.util.Optional;
 
-public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand, HemoClientItemExtensionsProvider {
+public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand {
 	private static final String ABSORPTION_STRAIN_TICKS_KEY = "HemomancyBloodAbsorptionStrainTicks";
 	private static final int STRAIN_EFFECT_DURATION = 80;
 
@@ -84,18 +80,6 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 	@Override
 	public int getUseDuration(ItemStack stack, LivingEntity entity) {
 		return 72000 / 2;
-	}
-
-	@Override
-	public IClientItemExtensions hemomancy$getClientItemExtensions() {
-		return new IClientItemExtensions() {
-			final BlockEntityWithoutLevelRenderer myRenderer = new CellHandItemRenderer(null, null);
-
-			@Override
-			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-				return myRenderer;
-			}
-		};
 	}
 
 	@Override

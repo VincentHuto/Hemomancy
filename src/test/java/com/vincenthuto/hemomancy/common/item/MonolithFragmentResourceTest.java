@@ -1,22 +1,22 @@
 package com.vincenthuto.hemomancy.common.item;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public final class MonolithFragmentResourceTest {
+class MonolithFragmentResourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
 
-	private MonolithFragmentResourceTest() {
-	}
-
-	public static void main(String[] args) throws IOException {
+	@Test
+	void monolithFragmentIsWired() throws IOException {
 		String itemInit = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/init/ItemInit.java"));
 		String monolithBlock = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/block/harbinger/functional/SanguineMonolithBlock.java"));
 		String fragmentItem = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/item/harbinger/MonolithFragmentItem.java"));
+				"com/vincenthuto/hemomancy/common/item/harbinger/MonolithFragmentItem.java")) + read(Path.of("src/main/java/com/vincenthuto/hemomancy/client/item/ItemClientExtensions.java"));
 		String renderer = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/item/MonolithFragmentItemRenderer.java"));
 		String model = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/item/monolith_fragment.json"));
@@ -34,7 +34,7 @@ public final class MonolithFragmentResourceTest {
 		assertContains("fragment drop happens alongside qliphoth seed", monolithBlock,
 				"popResource(level, pos.above(), new ItemStack(ItemInit.qliphoth_seed.get()));");
 		assertContains("fragment item is stackable through default item properties", fragmentItem,
-				"extends Item implements HemoClientItemExtensionsProvider");
+				"extends Item {");
 		assertContains("fragment item supplies custom renderer", fragmentItem,
 				"return new MonolithFragmentItemRenderer(");
 		assertContains("fragment model delegates to custom renderer", model,

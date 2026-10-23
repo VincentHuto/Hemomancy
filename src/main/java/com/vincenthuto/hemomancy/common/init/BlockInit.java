@@ -28,14 +28,8 @@ import com.vincenthuto.hemomancy.common.block.unstained.functional.AltarOfCleans
 import com.vincenthuto.hemomancy.common.block.unstained.functional.PaleSilverBellsBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.plant.GhostPipeBlock;
 import com.vincenthuto.hemomancy.common.block.unstained.plant.LetheanPoppyBlock;
-import com.vincenthuto.hemomancy.common.item.harbinger.tile.crafting.HematicArmatureBlockItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tile.crafting.MycelialCrucibleBlockItem;
-import com.vincenthuto.hemomancy.common.item.harbinger.tile.crafting.PuppeteersSpindleBlockItem;
-import com.vincenthuto.hemomancy.common.item.harbinger.tile.crafting.VialCentrifugeBlockItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tile.functional.*;
-import com.vincenthuto.hemomancy.common.item.harbinger.tile.rite.SuspendedBloodCrystalBlockItem;
-import com.vincenthuto.hemomancy.common.item.harbinger.tile.rite.SuspendedVivianiteBlockItem;
-import com.vincenthuto.hemomancy.common.item.unstained.tile.SuspendedCleansedBloodCrystalBlockItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -936,23 +930,23 @@ public class BlockInit {
 	// Every block in the eight ordinary registers defaults to a same-ID BlockItem in the main tab.
 	// These are the exceptions; potted and liquid registers have no item or tab entry.
 	private static final Map<String, Function<Block, BlockItem>> CUSTOM_BLOCK_ITEMS = Map.ofEntries(
-			Map.entry("mortal_display", b -> new MortalDisplayBlockItem(b, new Item.Properties())),
-			Map.entry("suspended_blood_crystal", b -> new SuspendedBloodCrystalBlockItem(b, new Item.Properties())),
-			Map.entry("suspended_cleansed_blood_crystal", b -> new SuspendedCleansedBloodCrystalBlockItem(b, new Item.Properties())),
-			Map.entry("suspended_vivianite", b -> new SuspendedVivianiteBlockItem(b, new Item.Properties())),
-			Map.entry("visceral_mirror", b -> new VisceralMirrorBlockItem(b, new Item.Properties())),
-			Map.entry("fungal_implantation_pylon", b -> new FungalImplantationPylonBlockItem(b, new Item.Properties())),
+			Map.entry("mortal_display", b -> new BlockItem(b, new Item.Properties())),
+			Map.entry("suspended_blood_crystal", b -> new BlockItem(b, new Item.Properties())),
+			Map.entry("suspended_cleansed_blood_crystal", b -> new BlockItem(b, new Item.Properties())),
+			Map.entry("suspended_vivianite", b -> new BlockItem(b, new Item.Properties())),
+			Map.entry("visceral_mirror", b -> new BlockItem(b, new Item.Properties())),
+			Map.entry("fungal_implantation_pylon", b -> new BlockItem(b, new Item.Properties())),
 			Map.entry("phlebotomists_field_case", b -> new PhlebotomistsFieldCaseBlockItem(b, new Item.Properties())),
-			Map.entry("earthen_vein", b -> new EarthenVeinBlockItem(b, new Item.Properties())),
-			Map.entry("vial_centrifuge", b -> new VialCentrifugeBlockItem(b, new Item.Properties())),
-			Map.entry("hematic_armature", b -> new HematicArmatureBlockItem(b, new Item.Properties())),
+			Map.entry("earthen_vein", b -> new BlockItem(b, new Item.Properties())),
+			Map.entry("vial_centrifuge", b -> new BlockItem(b, new Item.Properties())),
+			Map.entry("hematic_armature", b -> new BlockItem(b, new Item.Properties())),
 			Map.entry("mycelial_crucible", b -> new MycelialCrucibleBlockItem(b, new Item.Properties())),
 			Map.entry("specimen_jar", b -> new SpecimenJarBlockItem(b, new Item.Properties())),
-			Map.entry("sanguine_monolith", b -> new SanguineMonolithBlockItem(b, new Item.Properties())),
-			Map.entry("hematic_stake", b -> new HematicStakeBlockItem(b, new Item.Properties())),
-			Map.entry("puppeteers_spindle", b -> new PuppeteersSpindleBlockItem(b, new Item.Properties())),
-			Map.entry("mason_effigy", b -> new MasonsEffigyBlockItem(b, new Item.Properties())),
-			Map.entry("covenant_throne", b -> new CovenantThroneBlockItem(b, new Item.Properties())));
+			Map.entry("sanguine_monolith", b -> new BlockItem(b, new Item.Properties())),
+			Map.entry("hematic_stake", b -> new BlockItem(b, new Item.Properties())),
+			Map.entry("puppeteers_spindle", b -> new BlockItem(b, new Item.Properties())),
+			Map.entry("mason_effigy", b -> new BlockItem(b, new Item.Properties())),
+			Map.entry("covenant_throne", b -> new BlockItem(b, new Item.Properties())));
 	private static final Map<String, String> MANUAL_BLOCK_ITEMS = Map.of(
 			"gourd_stem", "gourd_seeds",
 			"active_befouling_ash_trail", "active_befouling_ash",

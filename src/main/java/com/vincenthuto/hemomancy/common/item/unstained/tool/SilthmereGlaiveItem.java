@@ -1,15 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.unstained.tool;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.client.player.UnstainedWeaponPlayerPose;
-import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.render.item.unstained.SilthmereGlaiveItemRenderer;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.item.unstained.PaleHumorFlaskItem;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -18,7 +11,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,7 +27,7 @@ import java.util.stream.Collectors;
  * At ABSOLVED+ purity: killing a mob grants +0.5 purity.
  * This is handled by {@link SilthmereGlaiveEvents}.
  */
-public class SilthmereGlaiveItem extends SwordItem implements HemoClientItemExtensionsProvider {
+public class SilthmereGlaiveItem extends SwordItem {
 
 	/** Extra entity reach granted by this weapon (in blocks). */
 	public static final double REACH_BONUS = 1.5;
@@ -111,22 +103,4 @@ public class SilthmereGlaiveItem extends SwordItem implements HemoClientItemExte
 		return Component.translatable(this.getDescriptionId(stack)).withStyle(ChatFormatting.WHITE);
 	}
 
-	@Override
-	public IClientItemExtensions hemomancy$getClientItemExtensions() {
-		return new IClientItemExtensions() {
-			private final BlockEntityWithoutLevelRenderer renderer = new SilthmereGlaiveItemRenderer(null, null);
-
-			@Override
-			public boolean applyForgeHandTransform(PoseStack poses, LocalPlayer player, HumanoidArm arm,
-					ItemStack stack, float partialTick, float equipProgress, float swingProgress) {
-				UnstainedWeaponPlayerPose.firstPersonGlaive(poses, swingProgress, equipProgress, arm == HumanoidArm.RIGHT);
-				return true;
-			}
-
-			@Override
-			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-				return renderer;
-			}
-		};
-	}
 }

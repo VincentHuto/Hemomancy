@@ -107,8 +107,9 @@ final class MarionetteCrossbarModelResourceTest {
 	@Test
 	void crossbarRendererIsRegisteredAndFeedsThreadKnots() throws Exception {
 		String item = Files.readString(SOURCE.resolve("common/item/harbinger/tool/MarionetteCrossbarItem.java"));
-		assertTrue(item.contains("implements HemoClientItemExtensionsProvider"));
-		assertTrue(item.contains("MarionetteCrossbarItemRenderer.EXTENSIONS"));
+		String extensions = Files.readString(SOURCE.resolve("client/item/ItemClientExtensions.java"));
+		assertTrue(extensions.contains("Map.entry(MarionetteCrossbarItem.class"));
+		assertTrue(extensions.contains("MarionetteCrossbarItemRenderer.EXTENSIONS"));
 		String layers = Files.readString(SOURCE.resolve("client/event/LayerEvents.java"));
 		assertTrue(layers.contains("MarionetteCrossbarModel.LAYER_LOCATION, MarionetteCrossbarModel::createBodyLayer"));
 		String threads = Files.readString(SOURCE.resolve("client/render/world/PuppeteerThreadRenderer.java"));

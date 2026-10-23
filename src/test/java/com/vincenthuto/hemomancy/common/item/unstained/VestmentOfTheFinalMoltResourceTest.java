@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.unstained;
 
+import org.junit.jupiter.api.Test;
+
 import com.vincenthuto.hemomancy.support.ResourceReader;
 
 import javax.imageio.ImageIO;
@@ -10,15 +12,14 @@ import java.nio.file.Path;
 import static com.vincenthuto.hemomancy.support.SourceAssertions.assertContains;
 import static com.vincenthuto.hemomancy.support.SourceAssertions.readMainJava;
 
-public final class VestmentOfTheFinalMoltResourceTest {
+class VestmentOfTheFinalMoltResourceTest {
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
 
-	private VestmentOfTheFinalMoltResourceTest() {
-	}
-
-	public static void main(String[] args) throws IOException {
+	@Test
+	void vestmentOfTheFinalMoltIsWired() throws IOException {
 		String itemInit = readMainJava("common/init/ItemInit.java");
-		String item = readMainJava("common/item/unstained/armor/VestmentOfTheFinalMoltArmorItem.java");
+		String item = readMainJava("common/item/unstained/armor/VestmentOfTheFinalMoltArmorItem.java")
+				+ readMainJava("client/item/ItemClientExtensions.java");
 		String model = readMainJava("client/model/armor/VestmentOfTheFinalMoltArmorModel.java");
 		String layerEvents = readMainJava("client/event/LayerEvents.java");
 		String helper = readMainJava("client/render/armor/ModelBackedArmorItemRenderHelper.java");
@@ -31,7 +32,7 @@ public final class VestmentOfTheFinalMoltResourceTest {
 		assertContains("item should count as unstained", itemInit, "EnumModArmorTiers.UNSTAINED.holder()");
 		assertContains("item registration", itemInit, "ArmorItem.Type.CHESTPLATE");
 
-		assertContains("custom item class", item, "implements HemoClientItemExtensionsProvider");
+		assertContains("custom item class", item, "Map.entry(VestmentOfTheFinalMoltArmorItem.class");
 		assertContains("custom item class", item, "VestmentOfTheFinalMoltArmorModel.chest.get()");
 		assertContains("custom item class", item, "new ModelBackedArmorItemRenderer(");
 		assertContains("custom item class", item, "vestment_of_the_final_molt_layer_1");

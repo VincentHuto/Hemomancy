@@ -1,11 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.memory;
 
-import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.render.item.HeartyCompassItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -14,11 +10,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 
-public class HeartyCompassItem extends HematicMemoryToolItem implements HemoClientItemExtensionsProvider {
+public class HeartyCompassItem extends HematicMemoryToolItem {
     public HeartyCompassItem(Properties properties) {
         super(properties, 2);
     }
@@ -57,22 +52,8 @@ public class HeartyCompassItem extends HematicMemoryToolItem implements HemoClie
     }
 
     @Override
-    public IClientItemExtensions hemomancy$getClientItemExtensions() {
-        return RenderPropHeartyCompass.INSTANCE;
-    }
-
-    @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("item.hemomancy.hearty_compass.tooltip").withStyle(ChatFormatting.DARK_RED));
     }
 }
 
-class RenderPropHeartyCompass implements IClientItemExtensions {
-    static final RenderPropHeartyCompass INSTANCE = new RenderPropHeartyCompass();
-
-    @Override
-    public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-        return new HeartyCompassItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(),
-                Minecraft.getInstance().getEntityModels());
-    }
-}

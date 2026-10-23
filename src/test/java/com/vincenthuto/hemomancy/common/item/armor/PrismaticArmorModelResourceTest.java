@@ -1,22 +1,22 @@
 package com.vincenthuto.hemomancy.common.item.armor;
 
+import org.junit.jupiter.api.Test;
+
 import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public final class PrismaticArmorModelResourceTest {
+class PrismaticArmorModelResourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
 
-	private PrismaticArmorModelResourceTest() {
-	}
-
-	public static void main(String[] args) throws IOException {
+	@Test
+	void prismaticArmorModelIsWired() throws IOException {
 		String model = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/model/armor/PrismaticArmorModel.java"));
 		String item = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/item/shared/armor/PrismaticArmorItem.java"));
+				"com/vincenthuto/hemomancy/common/item/shared/armor/PrismaticArmorItem.java")) + read(Path.of("src/main/java/com/vincenthuto/hemomancy/client/item/ItemClientExtensions.java"));
 		String layers = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/event/LayerEvents.java"));
 		String helper = read(SOURCE_ROOT.resolve(
@@ -35,7 +35,7 @@ public final class PrismaticArmorModelResourceTest {
 		assertContains("model should use puppeteer lower leg geometry", model, "left_leg2");
 		assertContains("model should use puppeteer 128px texture atlas", model, "LayerDefinition.create(mesh, 128, 128)");
 
-		assertContains("item should provide client extensions", item, "implements HemoClientItemExtensionsProvider");
+		assertContains("item should provide client extensions", item, "Map.entry(PrismaticArmorItem.class");
 		assertContains("item should provide model-backed stack renderer", item, "new ModelBackedArmorItemRenderer");
 		assertContains("item should route helmet worn model", item, "PrismaticArmorModel.helmet.get()");
 		assertContains("item should route chest worn model", item, "PrismaticArmorModel.chest.get()");

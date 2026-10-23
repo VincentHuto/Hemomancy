@@ -1,27 +1,17 @@
 package com.vincenthuto.hemomancy.common.item.unstained.armor;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.model.armor.VestmentOfTheFinalMoltArmorModel;
-import com.vincenthuto.hemomancy.client.render.item.ModelBackedArmorItemRenderer;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.Model;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.*;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 
-public class VestmentOfTheFinalMoltArmorItem extends ArmorItem implements HemoClientItemExtensionsProvider {
+public class VestmentOfTheFinalMoltArmorItem extends ArmorItem {
 	public VestmentOfTheFinalMoltArmorItem(Holder<ArmorMaterial> material, Type slot) {
 		super(material, slot, new Item.Properties().fireResistant().stacksTo(1));
 	}
@@ -36,39 +26,6 @@ public class VestmentOfTheFinalMoltArmorItem extends ArmorItem implements HemoCl
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(Component.translatable("tooltip.hemomancy.vestment_of_the_final_molt")
 				.withStyle(ChatFormatting.AQUA));
-	}
-
-	@Override
-	public IClientItemExtensions hemomancy$getClientItemExtensions() {
-		return new IClientItemExtensions() {
-			private final BlockEntityWithoutLevelRenderer renderer = new ModelBackedArmorItemRenderer(
-					Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
-
-			@Override
-			public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entityLiving, ItemStack itemStack,
-					EquipmentSlot armorSlot, HumanoidModel<?> _default) {
-				if (itemStack.getItem() == ItemInit.vestment_of_the_final_molt.get()) {
-					VestmentOfTheFinalMoltArmorModel<LivingEntity> model = VestmentOfTheFinalMoltArmorModel.chest.get();
-					model.setHoodRaised(entityLiving.getItemBySlot(EquipmentSlot.HEAD).isEmpty());
-					return model;
-				}
-				return IClientItemExtensions.super.getHumanoidArmorModel(entityLiving, itemStack, armorSlot, _default);
-			}
-
-			@Override
-			public void setupModelAnimations(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot,
-					Model model, float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks,
-					float netHeadYaw, float headPitch) {
-				if (model instanceof VestmentOfTheFinalMoltArmorModel<?> vestment) {
-					vestment.animateCloak(limbSwing, limbSwingAmount, ageInTicks);
-				}
-			}
-
-			@Override
-			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-				return renderer;
-			}
-		};
 	}
 
 	private static ResourceLocation armorTexture(String name) {

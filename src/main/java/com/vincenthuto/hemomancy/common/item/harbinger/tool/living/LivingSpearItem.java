@@ -1,19 +1,11 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
-import com.vincenthuto.hemomancy.client.player.LivingWeaponPlayerPose;
-import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.client.player.LocalPlayer;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingSpearItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.projectile.DirectedBloodOrbEntity;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -31,11 +23,10 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 
-public class LivingSpearItem extends LivingToolItem implements HemoClientItemExtensionsProvider {
+public class LivingSpearItem extends LivingToolItem {
 
 	public static String TAG_STATE = "state";
 	public static final String TAG_LUX_CHARGE = "LuxChargeDamage";
@@ -43,7 +34,6 @@ public class LivingSpearItem extends LivingToolItem implements HemoClientItemExt
 	public LivingSpearItem(float speedIn, float attackDamageIn, Tier tier, Properties builderIn) {
 		super(speedIn, attackDamageIn, -2.3f, EnumBloodTendency.LUX, tier, builderIn);
 	}
-
 
 	@Override
 	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
@@ -83,11 +73,6 @@ public class LivingSpearItem extends LivingToolItem implements HemoClientItemExt
 		CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 		tag.putFloat(TAG_LUX_CHARGE, Mth.clamp(charge, 0.0F, LivingSpearLuxRules.DAMAGE_THRESHOLD));
 		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-	}
-
-	@Override
-	public IClientItemExtensions hemomancy$getClientItemExtensions() {
-		return RenderPropLivingSpear.INSTANCE;
 	}
 
 	@Override
@@ -153,20 +138,3 @@ public class LivingSpearItem extends LivingToolItem implements HemoClientItemExt
 	}
 }
 
-class RenderPropLivingSpear implements IClientItemExtensions {
-	@Override
-	public boolean applyForgeHandTransform(PoseStack poses, LocalPlayer player, HumanoidArm arm,
-			ItemStack stack, float partialTick, float equipProgress, float swingProgress) {
-		return LivingWeaponPlayerPose.applyFirstPerson(poses, player, arm, stack, equipProgress, swingProgress);
-	}
-
-
-	public static RenderPropLivingSpear INSTANCE = new RenderPropLivingSpear();
-
-
-	@Override
-	public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-		return new LivingSpearItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(),
-				Minecraft.getInstance().getEntityModels());
-	}
-}

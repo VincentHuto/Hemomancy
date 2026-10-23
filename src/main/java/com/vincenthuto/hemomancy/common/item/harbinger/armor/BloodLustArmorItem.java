@@ -1,31 +1,21 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.armor;
 
-import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel;
-import com.vincenthuto.hemomancy.client.render.item.ModelBackedArmorItemRenderer;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.shared.armor.PlayerLayerHidingArmor;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 
-public class BloodLustArmorItem extends ArmorItem implements HemoClientItemExtensionsProvider, PlayerLayerHidingArmor {
+public class BloodLustArmorItem extends ArmorItem implements PlayerLayerHidingArmor {
 	public static final String TAG_LINEAGE = "hemomancy:lineage";
 
 	public enum MaskType {
@@ -61,46 +51,6 @@ public class BloodLustArmorItem extends ArmorItem implements HemoClientItemExten
 			tooltip.add(Component.translatable("tooltip.hemomancy.bloodlust_lineage." + lineage)
 					.withStyle(ChatFormatting.GRAY));
 		}
-	}
-
-	@Override
-	public IClientItemExtensions hemomancy$getClientItemExtensions() {
-		return new IClientItemExtensions() {
-			private final BlockEntityWithoutLevelRenderer renderer = new ModelBackedArmorItemRenderer(
-					Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
-
-			@Override
-			public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entityLiving, ItemStack itemStack,
-					EquipmentSlot armorSlot, HumanoidModel<?> _default) {
-				BloodLustArmorModel<?> model;
-				if (itemStack.getItem() == ItemInit.blood_lust_helm.get()) {
-					model = BloodLustArmorModel.helmet.get();
-				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_grinning.get()) {
-					model = BloodLustArmorModel.grinning.get();
-				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_tengu.get()) {
-					model = BloodLustArmorModel.tengu.get();
-				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_lodestone.get()) {
-					model = BloodLustArmorModel.helmet.get();
-				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_velorum.get()) {
-					model = BloodLustArmorModel.tengu.get();
-				} else if (itemStack.getItem() == ItemInit.blood_lust_chest.get()) {
-					model = BloodLustArmorModel.chest.get();
-				} else if (itemStack.getItem() == ItemInit.blood_lust_legs.get()) {
-					model = BloodLustArmorModel.legs.get();
-				} else if (itemStack.getItem() == ItemInit.blood_lust_boots.get()) {
-					model = BloodLustArmorModel.boots.get();
-				} else {
-					return IClientItemExtensions.super.getHumanoidArmorModel(entityLiving, itemStack, armorSlot, _default);
-				}
-				model.setLineage(getLineage(itemStack));
-				return model;
-			}
-
-			@Override
-			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-				return renderer;
-			}
-		};
 	}
 
 	@Override

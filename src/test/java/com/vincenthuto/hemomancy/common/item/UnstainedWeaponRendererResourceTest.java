@@ -1,14 +1,17 @@
 package com.vincenthuto.hemomancy.common.item;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class UnstainedWeaponRendererResourceTest {
+class UnstainedWeaponRendererResourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
 	private static final String WEAPON_TEXTURES = "textures/entity/unstained_weapons/";
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void unstainedWeaponRenderersAreWired() throws IOException {
 		assertCustomRenderedItemModel("unstained_warhammer");
 		assertCustomRenderedItemModel("silthmere_glaive");
 		assertCustomRenderedItemModel("absolution_dagger");
@@ -30,8 +33,8 @@ public class UnstainedWeaponRendererResourceTest {
 		assertContains("src/main/resources/assets/hemomancy/models/item/unstained_shield.json", "verdigris boss ring",
 				"Unstained shield should carry its patinated copper boss ring");
 
-		assertContains("src/main/java/com/vincenthuto/hemomancy/common/item/unstained/tool/UnstainedWarhammerItem.java",
-				"implements HemoClientItemExtensionsProvider",
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/item/ItemClientExtensions.java",
+				"Map.entry(UnstainedWarhammerItem.class",
 				"UnstainedWarhammerItem must expose client item extensions for its 3D renderer");
 		assertContains("src/main/java/com/vincenthuto/hemomancy/common/item/unstained/tool/UnstainedWarhammerItem.java",
 				"DiggerItem.createAttributes(tier, attackDamage, attackSpeed)",
@@ -42,11 +45,11 @@ public class UnstainedWeaponRendererResourceTest {
 		assertContains("src/main/java/com/vincenthuto/hemomancy/common/item/unstained/tool/UnstainedWarhammerItem.java",
 				"On hit: cripples enemies with Slowness and Weakness.",
 				"Unstained warhammer should display weapon info like the glaive and dagger");
-		assertContains("src/main/java/com/vincenthuto/hemomancy/common/item/unstained/tool/SilthmereGlaiveItem.java",
-				"implements HemoClientItemExtensionsProvider",
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/item/ItemClientExtensions.java",
+				"Map.entry(SilthmereGlaiveItem.class",
 				"SilthmereGlaiveItem must expose client item extensions for its 3D renderer");
-		assertContains("src/main/java/com/vincenthuto/hemomancy/common/item/unstained/tool/AbsolutionDaggerItem.java",
-				"implements HemoClientItemExtensionsProvider",
+		assertContains("src/main/java/com/vincenthuto/hemomancy/client/item/ItemClientExtensions.java",
+				"Map.entry(AbsolutionDaggerItem.class",
 				"AbsolutionDaggerItem must expose client item extensions for its 3D renderer");
 
 		assertContains("src/main/java/com/vincenthuto/hemomancy/client/event/LayerEvents.java",

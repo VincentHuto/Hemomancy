@@ -1,14 +1,10 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
-import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingPistolItemRenderer;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodBulletEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -23,11 +19,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 
-public class LivingPistolItem extends Item implements IDispellable, HemoClientItemExtensionsProvider {
+public class LivingPistolItem extends Item implements IDispellable {
 	public static String TAG_MODE = "mode";
 
 	public LivingPistolItem(Item.Properties propertiesIn) {
@@ -125,11 +120,6 @@ public class LivingPistolItem extends Item implements IDispellable, HemoClientIt
 	}
 
 	@Override
-	public IClientItemExtensions hemomancy$getClientItemExtensions() {
-		return RenderPropPistol.INSTANCE;
-	}
-
-	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
 		CompoundTag compound = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
@@ -153,13 +143,3 @@ public class LivingPistolItem extends Item implements IDispellable, HemoClientIt
 	}
 }
 
-class RenderPropPistol implements IClientItemExtensions {
-
-	public static RenderPropPistol INSTANCE = new RenderPropPistol();
-
-	@Override
-	public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-		return new LivingPistolItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(),
-				Minecraft.getInstance().getEntityModels());
-	}
-}

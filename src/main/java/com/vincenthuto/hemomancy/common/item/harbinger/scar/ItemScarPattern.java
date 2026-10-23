@@ -1,14 +1,10 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.scar;
 
 import com.vincenthuto.hemomancy.common.util.ClientBridge;
-import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.render.item.ScarPatternItemRenderer;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -27,17 +23,14 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class ItemScarPattern extends Item implements HemoClientItemExtensionsProvider {
+public class ItemScarPattern extends Item {
 	public static final String TAG_SCAR_IDS = "ScarIds";
 	public static final int MAX_SCAR_IDS = 7;
 
@@ -191,18 +184,6 @@ public class ItemScarPattern extends Item implements HemoClientItemExtensionsPro
 		} else {
 			tooltip.add(Component.translatable("tooltip.hemomancy.scar_pattern.blank").withStyle(ChatFormatting.GRAY));
 		}
-	}
-
-	@Override
-	public IClientItemExtensions hemomancy$getClientItemExtensions() {
-		return new IClientItemExtensions() {
-			final BlockEntityWithoutLevelRenderer renderer = new ScarPatternItemRenderer(null, null);
-
-			@Override
-			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-				return renderer;
-			}
-		};
 	}
 
 	public record TemplateEntry(ResourceLocation scarId, ItemStack resultIcon, String displayName, byte[][] pattern,

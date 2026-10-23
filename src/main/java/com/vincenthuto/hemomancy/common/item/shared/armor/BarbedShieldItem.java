@@ -1,10 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.shared.armor;
 
-import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.render.item.harbinger.BarbedShieldItemRenderer;
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -23,7 +19,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -31,7 +26,7 @@ import java.util.List;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class BarbedShieldItem extends Item implements HemoClientItemExtensionsProvider {
+public class BarbedShieldItem extends Item {
 	@Nullable
 	private static CompoundTag getBlockEntityTag(ItemStack stack) {
 		CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
@@ -74,11 +69,6 @@ public class BarbedShieldItem extends Item implements HemoClientItemExtensionsPr
 	}
 
 	@Override
-	public IClientItemExtensions hemomancy$getClientItemExtensions() {
-		return RenderPropBarbedShield.INSTANCE;
-	}
-
-	@Override
 	public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
 		if (entityIn instanceof Player player) {
@@ -116,15 +106,3 @@ public class BarbedShieldItem extends Item implements HemoClientItemExtensionsPr
 	}
 }
 
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
-class RenderPropBarbedShield implements IClientItemExtensions {
-
-	public static RenderPropBarbedShield INSTANCE = new RenderPropBarbedShield();
-
-	@Override
-	public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-		return new BarbedShieldItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(),
-				Minecraft.getInstance().getEntityModels());
-	}
-}

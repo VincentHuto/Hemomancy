@@ -1,7 +1,5 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
-import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.render.item.QliphothPomeItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
@@ -16,8 +14,6 @@ import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomEvents;
 import com.vincenthuto.hemomancy.common.util.ProgressionGates;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -33,7 +29,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 import java.util.UUID;
@@ -65,7 +60,7 @@ import java.util.UUID;
  * {@code IInitiatoryDegree} capability, unlocking the Rite of Apotheos
  * (the Eighth Degree gate).
  */
-public class QliphothPomeItem extends Item implements HemoClientItemExtensionsProvider {
+public class QliphothPomeItem extends Item {
 
 	// ── ItemStack NBT keys (written when the pome drops from the tree) ──
 
@@ -451,15 +446,4 @@ public class QliphothPomeItem extends Item implements HemoClientItemExtensionsPr
 
 	// ── Renderer ──
 
-	@Override
-	public IClientItemExtensions hemomancy$getClientItemExtensions() {
-		return new IClientItemExtensions() {
-			@Override
-			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-				return new QliphothPomeItemRenderer(
-						Minecraft.getInstance().getBlockEntityRenderDispatcher(),
-						Minecraft.getInstance().getEntityModels());
-			}
-		};
-	}
 }

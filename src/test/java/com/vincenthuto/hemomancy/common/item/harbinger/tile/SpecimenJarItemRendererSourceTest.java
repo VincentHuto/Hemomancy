@@ -1,10 +1,12 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tile;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public final class SpecimenJarItemRendererSourceTest {
+class SpecimenJarItemRendererSourceTest {
 	private static final Path ITEM_SOURCE = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tile/functional/SpecimenJarBlockItem.java");
 	private static final Path ITEM_MODEL = Path.of(
@@ -14,13 +16,11 @@ public final class SpecimenJarItemRendererSourceTest {
 	private static final Path TILE_RENDERER = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/tile/harbinger/functional/SpecimenJarRenderer.java");
 
-	private SpecimenJarItemRendererSourceTest() {
-	}
-
-	public static void main(String[] args) throws IOException {
-		String item = Files.readString(ITEM_SOURCE).replace("\r\n", "\n");
+	@Test
+	void specimenJarItemRendererIsWired() throws IOException {
+		String item = (Files.readString(ITEM_SOURCE) + Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/client/item/ItemClientExtensions.java"))).replace("\r\n", "\n");
 		assertContains("specimen jar item exposes client renderer extensions", item,
-				"implements HemoClientItemExtensionsProvider");
+				"Map.entry(SpecimenJarBlockItem.class");
 		assertContains("specimen jar item registers the item renderer", item,
 				"new SpecimenJarItemRenderer");
 

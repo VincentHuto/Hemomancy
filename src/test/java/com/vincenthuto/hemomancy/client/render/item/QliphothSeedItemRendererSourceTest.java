@@ -31,6 +31,7 @@ class QliphothSeedItemRendererSourceTest {
 		String itemSource = Files.readString(ITEM_SOURCE);
 		String itemModel = Files.readString(ITEM_MODEL);
 		String lang = Files.readString(LANG);
+		String extensions = Files.readString(Path.of("src/main/java/com/vincenthuto/hemomancy/client/item/ItemClientExtensions.java"));
 		assertContains("dropped seed renderer should be explicitly named as an entity renderer",
 				entityRenderer, "class QliphothSeedItemEntityRenderer");
 		assertContains("seed item renderer should keep the requested renderer name",
@@ -48,9 +49,9 @@ class QliphothSeedItemRendererSourceTest {
 		assertContains("seed body should use pome-style Qliphoth core rendering",
 				itemRenderer, "HemoRenderTypes.QLIPHOTH_CORE");
 		assertContains("seed item should provide a custom renderer",
-				itemSource, "implements HemoClientItemExtensionsProvider");
+				extensions, "Map.entry(QliphothSeedItem.class");
 		assertContains("seed item should return QliphothSeedItemRenderer",
-				itemSource, "new QliphothSeedItemRenderer");
+				extensions, "new QliphothSeedItemRenderer");
 		assertContains("seed item should append a usage tooltip",
 				itemSource, "appendHoverText");
 		assertContains("seed item should use a translatable tooltip key",

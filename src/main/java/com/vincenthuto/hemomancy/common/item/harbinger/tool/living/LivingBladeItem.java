@@ -1,19 +1,11 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
-import com.vincenthuto.hemomancy.client.player.LivingWeaponPlayerPose;
-import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.client.player.LocalPlayer;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingBladeItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -29,11 +21,10 @@ import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 
-public class LivingBladeItem extends LivingToolItem implements HemoClientItemExtensionsProvider {
+public class LivingBladeItem extends LivingToolItem {
 	/** Pays whatever is asked, emptying the volume when short; F-15 (pending) would gate and stop that. */
 	private static final BloodAccounting.Source BLOOD_PRICE = BloodAccounting.Source.of("living_blade", Category.TOOL, false, false);
 
@@ -90,11 +81,6 @@ public class LivingBladeItem extends LivingToolItem implements HemoClientItemExt
 	}
 
 	@Override
-	public IClientItemExtensions hemomancy$getClientItemExtensions() {
-		return RenderPropLivingBlade.INSTANCE;
-	}
-
-	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getMainHandItem();
 		if (stack.getItem() instanceof LivingBladeItem) {
@@ -112,19 +98,3 @@ public class LivingBladeItem extends LivingToolItem implements HemoClientItemExt
 	}
 }
 
-class RenderPropLivingBlade implements IClientItemExtensions {
-	@Override
-	public boolean applyForgeHandTransform(PoseStack poses, LocalPlayer player, HumanoidArm arm,
-			ItemStack stack, float partialTick, float equipProgress, float swingProgress) {
-		return LivingWeaponPlayerPose.applyFirstPerson(poses, player, arm, stack, equipProgress, swingProgress);
-	}
-
-
-	public static RenderPropLivingBlade INSTANCE = new RenderPropLivingBlade();
-
-	@Override
-	public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-		return new LivingBladeItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(),
-				Minecraft.getInstance().getEntityModels());
-	}
-}

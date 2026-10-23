@@ -1,11 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
-import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.render.item.MonolithFragmentItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -13,9 +9,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
-public class MonolithFragmentItem extends Item implements HemoClientItemExtensionsProvider {
+public class MonolithFragmentItem extends Item {
 
 	public MonolithFragmentItem(Properties properties) {
 		super(properties);
@@ -42,15 +37,4 @@ public class MonolithFragmentItem extends Item implements HemoClientItemExtensio
 				MonolithFragmentBurdenRules.BURDEN_EFFECT_TICKS, 0, false, true, true));
 	}
 
-	@Override
-	public IClientItemExtensions hemomancy$getClientItemExtensions() {
-		return new IClientItemExtensions() {
-			@Override
-			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-				return new MonolithFragmentItemRenderer(
-						Minecraft.getInstance().getBlockEntityRenderDispatcher(),
-						Minecraft.getInstance().getEntityModels());
-			}
-		};
-	}
 }

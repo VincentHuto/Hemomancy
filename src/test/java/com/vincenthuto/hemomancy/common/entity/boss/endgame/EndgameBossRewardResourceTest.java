@@ -1,17 +1,17 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public final class EndgameBossRewardResourceTest {
+class EndgameBossRewardResourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
 
-	private EndgameBossRewardResourceTest() {
-	}
-
-	public static void main(String[] args) throws IOException {
+	@Test
+	void endgameBossRewardsAreWired() throws IOException {
 		String itemInit = read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/init/ItemInit.java"));
 		String memoryOfVesper = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/item/harbinger/MemoryOfVesperItem.java"));
@@ -55,7 +55,7 @@ public final class EndgameBossRewardResourceTest {
 				"mycophant_tendril = BASEITEMS.register(\"mycophant_tendril\"");
 		assertContains("Mycophant Tendril is charm-slot compatible", mycophantTendril,
 				"extends VasculariumCharmItem");
-		assertContains("Memory of Vesper supplies a custom renderer", memoryOfVesper,
+		assertContains("Memory of Vesper supplies a custom renderer", read(Path.of("src/main/java/com/vincenthuto/hemomancy/client/item/ItemClientExtensions.java")),
 				"return new MemoryOfVesperItemRenderer(");
 		assertContains("Memory renderer uses the monolith fragment shader path", memoryRenderer,
 				"HemoRenderTypes.monolithFragment");

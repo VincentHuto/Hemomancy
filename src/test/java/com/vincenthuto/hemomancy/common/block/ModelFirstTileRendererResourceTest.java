@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.block;
 
+import org.junit.jupiter.api.Test;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -8,14 +10,12 @@ import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class ModelFirstTileRendererResourceTest {
+class ModelFirstTileRendererResourceTest {
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
 
-	private ModelFirstTileRendererResourceTest() {
-	}
-
-	public static void main(String[] args) throws IOException {
+	@Test
+	void modelFirstTileRenderersAreWired() throws IOException {
 		String loomModel = read(RESOURCE_ROOT.resolve("assets/hemomancy/models/block/somatic_loom.json"));
 		assertContains("somatic loom body should bake into the cutout layer under its ritual effects", loomModel,
 				"\"render_type\": \"minecraft:cutout\"");
@@ -353,10 +353,12 @@ public final class ModelFirstTileRendererResourceTest {
 				"interactLivingEntity");
 		assertContains("specimen jar item keeps specimen tooltip behavior", specimenJarBlockItem,
 				"SpecimenJarData.getSpecimenName");
+		String itemExtensions = read(SOURCE_ROOT.resolve(
+				"com/vincenthuto/hemomancy/client/item/ItemClientExtensions.java"));
 		assertContains("specimen jar item should request the dynamic specimen item renderer",
-				specimenJarBlockItem, "SpecimenJarItemRenderer");
+				itemExtensions, "SpecimenJarItemRenderer");
 		assertContains("specimen jar item should expose a custom item renderer",
-				specimenJarBlockItem, "getCustomRenderer");
+				itemExtensions, "getCustomRenderer");
 
 		String lanternRenderer = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/render/tile/harbinger/crafting/MycelialLanternRenderer.java"));

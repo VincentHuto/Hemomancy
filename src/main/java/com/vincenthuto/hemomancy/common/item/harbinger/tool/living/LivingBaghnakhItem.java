@@ -1,11 +1,5 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.player.LivingWeaponPlayerPose;
-import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.client.player.LocalPlayer;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import net.minecraft.server.level.ServerLevel;
@@ -14,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.phys.Vec3;
 
-public class LivingBaghnakhItem extends LivingToolItem implements HemoClientItemExtensionsProvider {
+public class LivingBaghnakhItem extends LivingToolItem {
 
 	public LivingBaghnakhItem(float speedIn, float attackDamageIn, Tier tier, Properties builderIn) {
 		super(speedIn, attackDamageIn, -1.8f, EnumBloodTendency.TENEBRIS, tier, builderIn);
@@ -35,19 +29,4 @@ public class LivingBaghnakhItem extends LivingToolItem implements HemoClientItem
 		return hit;
 	}
 
-	@Override
-	public IClientItemExtensions hemomancy$getClientItemExtensions() {
-		return ClientExtensions.INSTANCE;
-	}
-
-	/** The claws keep their baked model; only the rake motion replaces vanilla's swing. */
-	private static final class ClientExtensions implements IClientItemExtensions {
-		private static final ClientExtensions INSTANCE = new ClientExtensions();
-
-		@Override
-		public boolean applyForgeHandTransform(PoseStack poses, LocalPlayer player, HumanoidArm arm,
-				ItemStack stack, float partialTick, float equipProgress, float swingProgress) {
-			return LivingWeaponPlayerPose.applyFirstPerson(poses, player, arm, stack, equipProgress, swingProgress);
-		}
-	}
 }

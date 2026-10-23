@@ -1,12 +1,5 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
-import com.vincenthuto.hemomancy.client.player.LivingWeaponPlayerPose;
-import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.client.player.LocalPlayer;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingTorchItemRenderer;
-import com.vincenthuto.hemomancy.common.block.harbinger.CrimsonFireHelper;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
@@ -17,8 +10,6 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PlayerAnimationKind;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -34,12 +25,11 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class LivingTorchItem extends LivingToolItem implements HemoClientItemExtensionsProvider {
+public class LivingTorchItem extends LivingToolItem {
 	private static final BloodAccounting.Source BREATH = BloodAccounting.Source.of("living_torch_breath", Category.TOOL, true, false);
 	public LivingTorchItem(float speedIn, float attackDamageIn, Tier tier, Properties builderIn) {
 		super(speedIn, attackDamageIn, -2.1f, EnumBloodTendency.FLAMMEUS, tier, builderIn);
@@ -155,24 +145,5 @@ public class LivingTorchItem extends LivingToolItem implements HemoClientItemExt
 		return rite != null && rite.isStaffPlanting();
 	}
 
-	@Override
-	public IClientItemExtensions hemomancy$getClientItemExtensions() {
-		return RenderPropLivingTorch.INSTANCE;
-	}
 }
 
-class RenderPropLivingTorch implements IClientItemExtensions {
-	@Override
-	public boolean applyForgeHandTransform(PoseStack poses, LocalPlayer player, HumanoidArm arm,
-			ItemStack stack, float partialTick, float equipProgress, float swingProgress) {
-		return LivingWeaponPlayerPose.applyFirstPerson(poses, player, arm, stack, equipProgress, swingProgress);
-	}
-
-	public static final RenderPropLivingTorch INSTANCE = new RenderPropLivingTorch();
-
-	@Override
-	public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-		return new LivingTorchItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(),
-				Minecraft.getInstance().getEntityModels());
-	}
-}

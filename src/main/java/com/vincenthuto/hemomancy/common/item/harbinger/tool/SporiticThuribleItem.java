@@ -1,13 +1,8 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool;
 
 import com.vincenthuto.hemomancy.common.util.ClientBridge;
-import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.render.item.SporiticThuribleItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -21,12 +16,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 import java.util.Optional;
 
-public class SporiticThuribleItem extends Item implements HemoClientItemExtensionsProvider {
+public class SporiticThuribleItem extends Item {
 	public static final String TAG_LIT = "Lit";
 	public static final String TAG_SPORE_ID = "SporeId";
 	public static final String TAG_BURN_TICKS = "BurnTicks";
@@ -108,11 +102,6 @@ public class SporiticThuribleItem extends Item implements HemoClientItemExtensio
 						Component.translatable("item.hemomancy." + catalyst.orElseThrow().itemPath()))
 				.withStyle(ChatFormatting.DARK_RED), true);
 		return InteractionResultHolder.success(stack);
-	}
-
-	@Override
-	public IClientItemExtensions hemomancy$getClientItemExtensions() {
-		return RenderPropSporiticThurible.INSTANCE;
 	}
 
 	@Override
@@ -228,12 +217,3 @@ public class SporiticThuribleItem extends Item implements HemoClientItemExtensio
 	}
 }
 
-class RenderPropSporiticThurible implements IClientItemExtensions {
-	public static final RenderPropSporiticThurible INSTANCE = new RenderPropSporiticThurible();
-
-	@Override
-	public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-		return new SporiticThuribleItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(),
-				Minecraft.getInstance().getEntityModels());
-	}
-}

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.registry;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
+import com.vincenthuto.hemomancy.client.item.ItemClientExtensions;
 import com.vincenthuto.hutoslib.client.render.item.RenderItemArmBanner;
 import com.vincenthuto.hutoslib.client.render.item.RenderItemGuideBook;
 import com.vincenthuto.hutoslib.common.item.ItemArmBanner;
@@ -54,8 +54,9 @@ public final class ClientExtensionsRegistrar {
                 event.registerItem(guideBookRenderer, item);
                 continue;
             }
-            if (item instanceof HemoClientItemExtensionsProvider provider) {
-                event.registerItem(provider.hemomancy$getClientItemExtensions(), item);
+            IClientItemExtensions extensions = ItemClientExtensions.create(item);
+            if (extensions != null) {
+                event.registerItem(extensions, item);
             }
         }
     }

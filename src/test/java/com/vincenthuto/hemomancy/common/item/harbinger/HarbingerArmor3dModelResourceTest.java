@@ -1,22 +1,22 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
+import org.junit.jupiter.api.Test;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public final class HarbingerArmor3dModelResourceTest {
+class HarbingerArmor3dModelResourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
 
-	private HarbingerArmor3dModelResourceTest() {
-	}
-
-	public static void main(String[] args) throws IOException {
+	@Test
+	void harbingerArmorModelsAreWired() throws IOException {
 		assertModelWiring("silent archon item",
 				"com/vincenthuto/hemomancy/common/item/harbinger/armor/SilentArchonArmorItem.java",
-				"implements HemoClientItemExtensionsProvider",
+				"Map.entry(SilentArchonArmorItem.class",
 				"SilentArchonArmorModel.helmet.get()",
 				"SilentArchonArmorModel.chest.get()",
 				"SilentArchonArmorModel.legs.get()",
@@ -24,12 +24,12 @@ public final class HarbingerArmor3dModelResourceTest {
 				"new SilentArchonArmorItemRenderer(");
 		assertModelWiring("venous strider sabatons item",
 				"com/vincenthuto/hemomancy/common/item/shared/armor/VenousStriderSabatonsItem.java",
-				"implements HemoClientItemExtensionsProvider",
+				"Map.entry(VenousStriderSabatonsItem.class",
 				"ChalybeateFortressArmorModel.boots.get()",
 				"new ModelBackedArmorItemRenderer(");
 		assertModelWiring("covenant mantle item",
 				"com/vincenthuto/hemomancy/common/item/shared/armor/CovenantMantleArmorItem.java",
-				"implements HemoClientItemExtensionsProvider",
+				"Map.entry(CovenantMantleArmorItem.class",
 				"CovenantLeaderArmorModel.chest.get()",
 				"new ModelBackedArmorItemRenderer(");
 		assertModelWiring("blood lust armor item",
@@ -202,7 +202,9 @@ public final class HarbingerArmor3dModelResourceTest {
 	}
 
 	private static void assertModelWiring(String label, String relativePath, String... expected) throws IOException {
-		String source = read(SOURCE_ROOT.resolve(relativePath));
+		// The item class plus the client catalogue that builds its renderer and worn models.
+		String source = read(SOURCE_ROOT.resolve(relativePath))
+				+ read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/client/item/ItemClientExtensions.java"));
 		for (String needle : expected) {
 			assertContains(label, source, needle);
 		}

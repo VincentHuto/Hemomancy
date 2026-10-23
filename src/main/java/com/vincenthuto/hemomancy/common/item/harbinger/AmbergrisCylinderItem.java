@@ -1,12 +1,10 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 import com.vincenthuto.hemomancy.common.init.DataComponentInit;
-import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
 import net.minecraft.world.item.*;
 import net.minecraft.network.chat.Component;
 import java.util.List;
-public class AmbergrisCylinderItem extends Item implements HemoClientItemExtensionsProvider {
+public class AmbergrisCylinderItem extends Item {
     public AmbergrisCylinderItem(){super(new Properties().stacksTo(16));}
-    @Override public net.neoforged.neoforge.client.extensions.common.IClientItemExtensions hemomancy$getClientItemExtensions(){return com.vincenthuto.hemomancy.client.render.item.harbinger.AmbergrisCylinderRenderer.EXTENSIONS;}
     @Override public Component getName(ItemStack stack) {
         var pattern=stack.get(DataComponentInit.RESONANT_PATTERN.get());
         if(pattern!=null) return Component.translatable(pattern.master()

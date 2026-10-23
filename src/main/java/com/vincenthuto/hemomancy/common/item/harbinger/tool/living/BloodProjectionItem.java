@@ -2,8 +2,6 @@ package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.CellHandRules;
-import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.render.item.harbinger.CellHandItemRenderer;
 import com.vincenthuto.hemomancy.common.block.harbinger.BlockBloodInteractions;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.IBloodVolume;
@@ -18,7 +16,6 @@ import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteInteractionHa
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteProjectionResult;
 import com.vincenthuto.hemomancy.common.tile.ProjectedBloodSink;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -35,9 +32,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.HitResult.Type;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
-public class BloodProjectionItem extends Item implements IDispellable, ICellHand, HemoClientItemExtensionsProvider {
+public class BloodProjectionItem extends Item implements IDispellable, ICellHand {
 
 	public BloodProjectionItem(Properties prop) {
 		super(prop.stacksTo(1));
@@ -56,18 +52,6 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 	@Override
 	public int getUseDuration(ItemStack stack, LivingEntity entity) {
 		return 72000 / 2;
-	}
-
-	@Override
-	public IClientItemExtensions hemomancy$getClientItemExtensions() {
-		return new IClientItemExtensions() {
-			final BlockEntityWithoutLevelRenderer myRenderer = new CellHandItemRenderer(null, null);
-
-			@Override
-			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-				return myRenderer;
-			}
-		};
 	}
 
 	@Override
@@ -107,7 +91,6 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
                 && com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation.tryProject(founder)) {
             return 0.0D;
         }
-
 
 		double willHandled = WillBloodUtilityInteractions.tryProjectBanishFalteringWill(worldIn, player,
 				tileTransferRate);

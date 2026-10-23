@@ -1,9 +1,5 @@
 package com.vincenthuto.hemomancy.common.item.harbinger.tool.living;
 
-import com.vincenthuto.hemomancy.common.item.HemoClientItemExtensionsProvider;
-import com.vincenthuto.hemomancy.client.player.LivingWeaponPlayerPose;
-import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingAxeItemRenderer;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodFlowContribution.Category;
@@ -12,9 +8,6 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.Enu
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -26,7 +19,6 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -36,11 +28,10 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
 
-public class LivingAxeItem extends LivingToolItem implements HemoClientItemExtensionsProvider {
+public class LivingAxeItem extends LivingToolItem {
 	/** Pays whatever is asked, emptying the volume when short; F-15 (pending) would gate and stop that. */
 	private static final BloodAccounting.Source BLOOD_PRICE = BloodAccounting.Source.of("living_axe", Category.TOOL, false, false);
 
@@ -96,11 +87,6 @@ public class LivingAxeItem extends LivingToolItem implements HemoClientItemExten
 			}
 		}
 		return true;
-	}
-
-	@Override
-	public IClientItemExtensions hemomancy$getClientItemExtensions() {
-		return RenderPropLivingAxe.INSTANCE;
 	}
 
 	@Override
@@ -160,21 +146,3 @@ public class LivingAxeItem extends LivingToolItem implements HemoClientItemExten
 	}
 }
 
-class RenderPropLivingAxe implements IClientItemExtensions {
-
-	public static RenderPropLivingAxe INSTANCE = new RenderPropLivingAxe();
-
-	@Override
-	public boolean applyForgeHandTransform(PoseStack poses, LocalPlayer player, HumanoidArm arm,
-			ItemStack stack, float partialTick, float equipProgress, float swingProgress) {
-		return LivingWeaponPlayerPose.applyFirstPerson(poses, player, arm, stack, equipProgress, swingProgress);
-	}
-
-
-
-	@Override
-	public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-		return new LivingAxeItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(),
-				Minecraft.getInstance().getEntityModels());
-	}
-}
