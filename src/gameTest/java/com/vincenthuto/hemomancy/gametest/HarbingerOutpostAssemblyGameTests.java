@@ -61,7 +61,9 @@ public final class HarbingerOutpostAssemblyGameTests {
 		helper.succeed();
 	}
 
-	@GameTest(templateNamespace = "registration_validation", template = "empty", timeoutTicks = 1200)
+	// Its own batch: spawning skips a resident when another test's NPC of the same kind stands within seven blocks.
+	@GameTest(templateNamespace = "registration_validation", template = "empty", timeoutTicks = 1200,
+			batch = "outpost_assembly")
 	public static void mandatoryJigsawWingsAssemble(GameTestHelper helper) {
 		var level = helper.getLevel();
 		var key = ResourceKey.create(Registries.TEMPLATE_POOL,
@@ -282,6 +284,15 @@ public final class HarbingerOutpostAssemblyGameTests {
 					&& mob.isPersistenceRequired(), "Outpost resident can despawn: " + type);
 			helper.assertTrue(HarbingerRecruitmentRules.findOutpostKey(residents.getFirst()) != null,
 					"Outpost resident lost recruitment identity");
+		}
+		// The outpost reaches far past the test's own area; clear it so later batches find empty ground.
+		level.getEntitiesOfClass(net.minecraft.world.entity.Entity.class, outpost.inflate(8),
+				entity -> !(entity instanceof net.minecraft.world.entity.player.Player)).forEach(entity -> entity.discard());
+		// From the test floor up only: below it is the level's own flat ground.
+		int floor = helper.absolutePos(BlockPos.ZERO).getY();
+		for (BlockPos pos : BlockPos.betweenClosed(bounds.minX() - 1, floor, bounds.minZ() - 1,
+				bounds.maxX() + 1, bounds.maxY() + 1, bounds.maxZ() + 1)) {
+			if (!level.getBlockState(pos).isAir()) level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2 | 16);
 		}
 		helper.succeed();
 	}
