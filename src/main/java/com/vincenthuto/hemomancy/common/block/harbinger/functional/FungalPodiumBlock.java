@@ -57,10 +57,6 @@ public class FungalPodiumBlock extends BaseEntityBlock implements SimpleWaterlog
 	public static final String RETURN_YROT = FungalGardenTravelHelper.RETURN_YROT;
 	public static final String RETURN_XROT = FungalGardenTravelHelper.RETURN_XROT;
 
-	public static final String ARCHON_CHOICE_KEY = FungalGardenTravelHelper.ARCHON_CHOICE_KEY;
-	public static final String ARCHON_CHOICE_SILENCE = FungalGardenTravelHelper.ARCHON_CHOICE_SILENCE;
-	public static final String ARCHON_CHOICE_APOTHEOS = FungalGardenTravelHelper.ARCHON_CHOICE_APOTHEOS;
-
 	public static final ResourceKey<Level> FUNGAL_GARDENS = FungalGardenTravelHelper.FUNGAL_GARDENS;
 
 	public FungalPodiumBlock(Properties properties) {

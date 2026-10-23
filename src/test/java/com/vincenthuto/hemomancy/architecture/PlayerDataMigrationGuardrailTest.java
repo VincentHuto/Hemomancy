@@ -57,6 +57,25 @@ class PlayerDataMigrationGuardrailTest {
 		assertEquals(List.of(), offending, "Run one-shot migrations through PlayerDataMigrations");
 	}
 
+	/** F-21: the degree's Archon path is the only authority; the old root key is only read once and cleared. */
+	@Test
+	void theArchonChoiceRootKeyIsNeverWritten() throws Exception {
+		List<String> users = new ArrayList<>();
+		try (Stream<Path> files = Files.walk(RepoPaths.ROOT.resolve("src/main/java"))) {
+			for (Path file : files.filter(path -> path.toString().endsWith(".java")).toList()) {
+				if (SourceAssertions.read(file).contains("ARCHON_CHOICE_KEY")) users.add(RepoPaths.display(file));
+			}
+		}
+		users.sort(null);
+		assertEquals(List.of(
+				"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/degree/InitiatoryDegreeEvents.java",
+				"src/main/java/com/vincenthuto/hemomancy/common/command/QliphothSubcommand.java",
+				"src/main/java/com/vincenthuto/hemomancy/common/worldgen/FungalGardenTravelHelper.java"), users);
+		SourceAssertions.assertContains("the migration clears the old key",
+				SourceAssertions.read(ENTRY_POINTS.get("InitiatoryDegreeEvents::migrateLegacyArchonChoice")),
+				"persistent.remove(FungalGardenTravelHelper.ARCHON_CHOICE_KEY)");
+	}
+
 	@Test
 	void theFungalScarSweepNoLongerTicks() throws Exception {
 		List<String> ticking = new ArrayList<>();

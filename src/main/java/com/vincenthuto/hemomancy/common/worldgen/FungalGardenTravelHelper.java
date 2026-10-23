@@ -46,6 +46,7 @@ public final class FungalGardenTravelHelper {
 	public static final String PROJECTION_REMAINING = "hemomancy:fungal_projection_remaining";
 	public static final String REVELATION_CHOICE_PENDING = "hemomancy:fungal_revelation_choice_pending";
 
+	/** Old saves only: nothing writes it since F-21; PlayerDataMigrations reads it once (sunset 2027-04-23). */
 	public static final String ARCHON_CHOICE_KEY = "hemomancy:archon_choice_made";
 	public static final String ARCHON_CHOICE_SILENCE = "silent";
 	public static final String ARCHON_CHOICE_APOTHEOS = "apotheos";

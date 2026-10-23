@@ -34,10 +34,15 @@ public class InitiatoryDegreeEvents {
 		LiberKnowledgeHelper.unlockForDegree(player, degree.getDegreeNumber());
 	}
 
-	/** A {@code PlayerDataMigrations} entry: the Archon choice kept as a root key before it had a path. */
+	/**
+	 * A {@code PlayerDataMigrations} entry (F-21): the Archon choice kept as a root key, read once into the degree's
+	 * path, which is the only authority, and then removed. A path already chosen wins over the old key.
+	 */
 	public static void migrateLegacyArchonChoice(ServerPlayer player) {
 		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
-		String legacyChoice = player.getPersistentData().getString(FungalGardenTravelHelper.ARCHON_CHOICE_KEY);
+		var persistent = player.getPersistentData();
+		String legacyChoice = persistent.getString(FungalGardenTravelHelper.ARCHON_CHOICE_KEY);
+		persistent.remove(FungalGardenTravelHelper.ARCHON_CHOICE_KEY);
 		if (degree.getArchonPath() == EnumArchonPath.NONE && !legacyChoice.isBlank()) {
 			degree.setFungalRevelationWitnessed(true);
 			if (FungalGardenTravelHelper.ARCHON_CHOICE_SILENCE.equals(legacyChoice)) {

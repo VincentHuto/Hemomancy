@@ -39,7 +39,7 @@
 3	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/HarbingerRecruitmentRules.java	entity, item-entity or NPC marker data, not player state
 7	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/PendingWhispers.java	player root keys not yet moved into an attachment (S-1)
 2	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/inquiry/ItemInquiryContext.java	player root keys not yet moved into an attachment (S-1)
-5	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/route/FungalWhisperDialogueEvents.java	player root keys not yet moved into an attachment (S-1)
+4	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/route/FungalWhisperDialogueEvents.java	player root keys not yet moved into an attachment (S-1)
 2	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/route/MnemonistDialogueEvents.java	player root keys not yet moved into an attachment (S-1)
 1	src/main/java/com/vincenthuto/hemomancy/common/entity/npc/harbinger/HarbingerMnemonistEntity.java	player root keys not yet moved into an attachment (S-1)
 2	src/main/java/com/vincenthuto/hemomancy/common/entity/projectile/VesperScuteProjectileEntity.java	entity, item-entity or NPC marker data, not player state

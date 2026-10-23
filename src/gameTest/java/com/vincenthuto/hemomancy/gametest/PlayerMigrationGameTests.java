@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.migration.Playe
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog;
 import com.vincenthuto.hemomancy.common.station.UpgradeStation;
+import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -43,7 +44,9 @@ public final class PlayerMigrationGameTests {
 
 			var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
 			helper.assertTrue(degree.getArchonPath() == EnumArchonPath.APOTHEOS_PENDING
-					&& degree.hasWitnessedFungalRevelation(), "The root-key Apotheos choice was not migrated");
+					&& degree.hasWitnessedFungalRevelation()
+					&& !player.getPersistentData().contains(FungalGardenTravelHelper.ARCHON_CHOICE_KEY),
+					"The root-key Apotheos choice was not migrated and cleared");
 			var stations = HemoCapabilityAccess.stationUpgrades(player);
 			helper.assertTrue(stations.legacyMigrated()
 					&& stations.hasClaimed(UpgradeStation.ARMATURE, 1) && stations.hasClaimed(UpgradeStation.ARMATURE, 2)
@@ -63,14 +66,49 @@ public final class PlayerMigrationGameTests {
 			helper.assertTrue(HemoCapabilityAccess.dataVersion(player).version() == PlayerDataMigrations.LATEST,
 					"The data version did not reach the latest migration");
 
+			CompoundTag migrated = player.saveWithoutId(new CompoundTag());
+			assertSettled(helper, player);
+			helper.assertTrue(migrated.equals(player.saveWithoutId(new CompoundTag())),
+					"Rerunning every migration over a fully migrated save changed it");
+			helper.succeed();
+		}
+	}
+
+	/** F-21: only the old root key runs (the save is at version 4); it becomes the path and is removed. */
+	@GameTest(template = "empty", batch = "player_migrations")
+	public static void archonRootKeyBecomesThePathOnce(GameTestHelper helper) {
+		try (CapturedPlayer captured = CapturedPlayer.create(helper)) {
+			ServerPlayer player = load(helper, captured, "archon_choice_silence");
+			login(player);
+			var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
+			helper.assertTrue(degree.getArchonPath() == EnumArchonPath.SILENT_ARCHON
+					&& degree.hasWitnessedFungalRevelation()
+					&& !player.getPersistentData().contains(FungalGardenTravelHelper.ARCHON_CHOICE_KEY),
+					"The Silent root key was not migrated and cleared");
+			assertSettled(helper, player);
+			helper.succeed();
+		}
+	}
+
+	/** F-21: a key left by the old dual-write never overrides the path the player now holds. */
+	@GameTest(template = "empty", batch = "player_migrations")
+	public static void archonPathOutranksALeftoverRootKey(GameTestHelper helper) {
+		try (CapturedPlayer captured = CapturedPlayer.create(helper)) {
+			ServerPlayer player = load(helper, captured, "archon_choice_dual_write");
+			login(player);
+			helper.assertTrue(HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath()
+					== EnumArchonPath.SILENT_PENDING
+					&& !player.getPersistentData().contains(FungalGardenTravelHelper.ARCHON_CHOICE_KEY),
+					"The leftover root key changed the path or was not cleared");
 			assertSettled(helper, player);
 			helper.succeed();
 		}
 	}
 
 	/**
-	 * Runs the login again, then reloads the save and clones it through a death: nothing may run or change. With the
-	 * version reset to 0, every migration runs again over its own output and must still change nothing.
+	 * Runs the login again, then reloads the save and clones it through a death: nothing may run or change. Then the
+	 * version is reset to 0 twice: the second full rerun runs every migration over its own output and must change
+	 * nothing.
 	 */
 	private static void assertSettled(GameTestHelper helper, ServerPlayer player) {
 		CompoundTag migrated = player.saveWithoutId(new CompoundTag());
@@ -87,14 +125,19 @@ public final class PlayerMigrationGameTests {
 					"A death clone lost the data version");
 		}
 
+		CompoundTag first = rerunFromZero(helper, player);
+		CompoundTag second = rerunFromZero(helper, player);
+		helper.assertTrue(first.equals(second), "A migration is not idempotent over its own output:\n"
+				+ first + "\n" + second);
+	}
+
+	private static CompoundTag rerunFromZero(GameTestHelper helper, ServerPlayer player) {
 		CompoundTag reset = new CompoundTag();
 		reset.putInt("Version", 0);
 		HemoCapabilityAccess.dataVersion(player).deserializeNBT(player.registryAccess(), reset);
 		helper.assertTrue(PlayerDataMigrations.migrate(player) == PlayerDataMigrations.migrations().size(),
 				"Resetting the version did not rerun every migration");
-		CompoundTag rerun = player.saveWithoutId(new CompoundTag());
-		helper.assertTrue(migrated.equals(rerun), "A migration is not idempotent over its own output:\n"
-				+ migrated + "\n" + rerun);
+		return player.saveWithoutId(new CompoundTag());
 	}
 
 	static ServerPlayer load(GameTestHelper helper, CapturedPlayer captured, String fixture) {

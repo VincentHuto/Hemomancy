@@ -44,9 +44,6 @@ final class FungalWhisperDialogueEvents {
 			if (!player.getPersistentData().getBoolean(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING)) return true;
 			player.getPersistentData().remove(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING);
 			// Archon chose to pursue the Eighth Degree — the Apotheos path opens.
-			player.getPersistentData().putString(
-					FungalGardenTravelHelper.ARCHON_CHOICE_KEY,
-					FungalGardenTravelHelper.ARCHON_CHOICE_APOTHEOS);
 			var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
 			degree.setArchonPath(EnumArchonPath.APOTHEOS_PENDING);
 			InitiatoryDegreeEvents.syncDegree(player, degree);

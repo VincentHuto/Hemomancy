@@ -1,0 +1,7 @@
+{
+	NeoForgeData: {"hemomancy:archon_choice_made": "silent"},
+	"neoforge:attachments": {
+		"hemomancy:data_version": {Version: 4},
+		"hemomancy:initiatory_degree": {degree: 7, archon_path: "NONE", fungal_revelation_witnessed: 0b}
+	}
+}

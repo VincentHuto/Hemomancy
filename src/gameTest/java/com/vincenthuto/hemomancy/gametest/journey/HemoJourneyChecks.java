@@ -459,11 +459,9 @@ public final class HemoJourneyChecks {
 			}
 			case APOTHEOS_CHOICE -> {
 				var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
-				String choice = player.getPersistentData().getString(FungalGardenTravelHelper.ARCHON_CHOICE_KEY);
-				boolean chosen = (degree.getArchonPath() == EnumArchonPath.APOTHEOS_PENDING
-						&& FungalGardenTravelHelper.ARCHON_CHOICE_APOTHEOS.equals(choice)
-						|| degree.getArchonPath() == EnumArchonPath.SILENT_PENDING
-						&& (choice.isBlank() || FungalGardenTravelHelper.ARCHON_CHOICE_SILENCE.equals(choice)));
+				// The degree's path is the only record of the choice (F-21).
+				boolean chosen = degree.getArchonPath() == EnumArchonPath.APOTHEOS_PENDING
+						|| degree.getArchonPath() == EnumArchonPath.SILENT_PENDING;
 				require(unmet, chosen && degree.hasWitnessedFungalRevelation()
 						&& !FungalGardenTravelHelper.isProjectionActive(player)
 						&& !player.getPersistentData().getBoolean(FungalGardenTravelHelper.REVELATION_CHOICE_PENDING),
