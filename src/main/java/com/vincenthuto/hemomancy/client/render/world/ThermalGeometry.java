@@ -349,7 +349,7 @@ final class ThermalGeometry {
         if(spine.size()<2 || alpha<=.002 || spine.getFirst().distanceToSqr(spine.getLast())<1e-6)return;
         Vec3 previousLeft=null,previousRight=null,previousSide=null;
         double previousV=0;
-        int phase=Math.floorMod(seed,127)*2;
+        int phase=MaterialQuads.seedTile(seed)*2;
         for(int i=0;i<spine.size();i++) {
             Vec3 at=spine.get(i);
             Vec3 tangent=spine.get(Math.min(i+1,spine.size()-1)).subtract(spine.get(Math.max(0,i-1)));
@@ -391,7 +391,7 @@ final class ThermalGeometry {
     }
     private static void glassFace(PoseStack p,VertexConsumer v,Vec3 a,Vec3 b,Vec3 c,double size,int seed,float alpha) {
         for(Vec3 at:new Vec3[]{a,b,c,c})vertex(p,v,at,(float)(.5+at.x/(size*2.1)),
-                (float)(Math.floorMod(seed,127)*2+.45+at.y/(size*2.3)),alpha);
+                (float)(MaterialQuads.seedTile(seed)*2+.45+at.y/(size*2.3)),alpha);
     }
     static void clot(PoseStack p,VertexConsumer core,VertexConsumer shell,Vec3 at,double size,int seed,double rotation,float alpha) {
         if(size<=.005)return;
@@ -424,13 +424,9 @@ final class ThermalGeometry {
     }
     private static double random(int seed,int slot){return ThermalMotion.random(seed,slot);}
     private static void quad(PoseStack p,VertexConsumer v,Vec3 a,Vec3 b,Vec3 c,Vec3 d,int shape,int seed,float alpha) {
-        vertex(p,v,a,shape*2,Math.floorMod(seed,127)*2,alpha);
-        vertex(p,v,b,shape*2+1,Math.floorMod(seed,127)*2,alpha);
-        vertex(p,v,c,shape*2+1,Math.floorMod(seed,127)*2+1,alpha);
-        vertex(p,v,d,shape*2,Math.floorMod(seed,127)*2+1,alpha);
+        MaterialQuads.quad(v,p.last().pose(),a.x,a.y,a.z,b.x,b.y,b.z,c.x,c.y,c.z,d.x,d.y,d.z,shape,MaterialQuads.seedTile(seed),WHITE,alpha,0,1,false);
     }
     private static void vertex(PoseStack p,VertexConsumer v,Vec3 at,float u,float texV,float alpha) {
-        v.addVertex(p.last().pose(),(float)at.x,(float)at.y,(float)at.z)
-                .setColor(255,255,255,(int)(Mth.clamp(alpha,0,1)*255)).setUv(u,texV);
+        MaterialQuads.vertex(v,p.last().pose(),at.x,at.y,at.z,WHITE,alpha,u,texV);
     }
 }

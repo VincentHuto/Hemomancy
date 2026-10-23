@@ -36,7 +36,7 @@ final class VesperRecallGeometry {
         if (alpha <= 0) return;
         double height = Math.max(0.4, packet.radius());
         width = Math.max(0.3, width);
-        int seed = Math.floorMod(packet.entityId(), 127);
+        int seed = MaterialQuads.seedTile(packet.entityId());
         double hauled = age - VesperRecallRules.HAUL_TICK;
         double lift = hauled > 0 ? PuppetStringsRules.unspoolLift(hauled) : 0;
         double scale = hauled > 0 ? PuppetStringsRules.unspoolScale(hauled) : 1;

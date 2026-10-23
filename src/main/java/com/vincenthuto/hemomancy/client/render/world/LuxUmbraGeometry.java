@@ -254,7 +254,7 @@ final class LuxUmbraGeometry {
         double facing = Math.abs(normal.dot(camera.subtract(at).normalize()));
         float rim = (float) (.025 + .16 * Math.pow(1 - facing, 2));
         vertex(poses, vertices, at, 0xFFFFFF, opacity * rim, LUX_SHELL * 2 + u,
-                Math.floorMod(seed, 127) * 2 + v);
+                MaterialQuads.seedTile(seed) * 2 + v);
     }
 
     private static void beam(PoseStack p, VertexConsumer v, Vec3 from, Vec3 to, Vec3 camera,
@@ -390,17 +390,11 @@ final class LuxUmbraGeometry {
             int shape, int seed, int color, float alpha, double u0, double u1, boolean alternateDiagonal) {
         if (alpha <= 0) return;
         // Unlike material meshes, shader cards always retain the entire normalized UV domain.
-        int phase = Math.floorMod(seed, 127);
-        if (!alternateDiagonal) vertex(p, v, a, color, alpha, shape * 2 + u0, phase * 2);
-        vertex(p, v, b, color, alpha, shape * 2 + u1, phase * 2);
-        vertex(p, v, c, color, alpha, shape * 2 + u1, phase * 2 + 1);
-        vertex(p, v, d, color, alpha, shape * 2 + u0, phase * 2 + 1);
-        if (alternateDiagonal) vertex(p, v, a, color, alpha, shape * 2 + u0, phase * 2);
+        MaterialQuads.quad(v, p.last().pose(), a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z, d.x, d.y, d.z,
+                shape, MaterialQuads.seedTile(seed), color, alpha, u0, u1, alternateDiagonal);
     }
 
     private static void vertex(PoseStack p, VertexConsumer v, Vec3 at, int color, float alpha, double u, double texV) {
-        v.addVertex(p.last().pose(), (float) at.x, (float) at.y, (float) at.z)
-                .setColor((color >> 16) & 255, (color >> 8) & 255, color & 255, (int) (Mth.clamp(alpha, 0, 1) * 255))
-                .setUv((float) u, (float) texV);
+        MaterialQuads.vertex(v, p.last().pose(), at.x, at.y, at.z, color, alpha, (float) u, (float) texV);
     }
 }

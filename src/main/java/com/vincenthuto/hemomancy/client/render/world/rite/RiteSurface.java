@@ -5,6 +5,7 @@ import net.minecraft.util.Mth;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import com.vincenthuto.hemomancy.client.render.world.MaterialQuads;
 
 /**
  * Allocation-free surfaces for the living-blood ({@code AnimusMortemRenderTypes.ANIMUS}) and decay
@@ -238,7 +239,7 @@ public final class RiteSurface {
 		double length = Math.sqrt(vx * vx + vy * vy + vz * vz);
 		double facing = length < 1e-6 ? 1.0D : Math.abs((nx * vx + ny * vy + nz * vz) / length);
 		float alpha = (float) (faceAlpha + rimAlpha * (1.0D - facing) * (1.0D - facing));
-		vertex(m, v, x, y, z, color, alpha, SHELL * 2 + u, Math.floorMod(seed, 127) * 2 + t);
+		vertex(m, v, x, y, z, color, alpha, SHELL * 2 + u, MaterialQuads.seedTile(seed) * 2 + t);
 	}
 
 	/** A quad in the encoded-UV format: {@code u} runs along a ribbon, the seed tile across it. */
@@ -246,19 +247,13 @@ public final class RiteSurface {
 			double bz, double cx, double cy, double cz, double dx, double dy, double dz, int shape, int seed,
 			int color, float alpha, double u0, double u1) {
 		if (alpha <= 0.003F) return;
-		int phase = Math.floorMod(seed, 127);
-		vertex(m, v, ax, ay, az, color, alpha, shape * 2 + u0, phase * 2);
-		vertex(m, v, bx, by, bz, color, alpha, shape * 2 + u1, phase * 2);
-		vertex(m, v, cx, cy, cz, color, alpha, shape * 2 + u1, phase * 2 + 1);
-		vertex(m, v, dx, dy, dz, color, alpha, shape * 2 + u0, phase * 2 + 1);
+		MaterialQuads.quad(v, m, ax, ay, az, bx, by, bz, cx, cy, cz, dx, dy, dz, shape, MaterialQuads.seedTile(seed),
+				color, alpha, u0, u1, false);
 	}
 
 	private static void vertex(Matrix4f m, VertexConsumer v, double x, double y, double z, int color, float alpha,
 			double u, double texV) {
-		v.addVertex(m, (float) x, (float) y, (float) z)
-				.setColor((color >> 16) & 255, (color >> 8) & 255, color & 255,
-						(int) (Mth.clamp(alpha, 0.0F, 1.0F) * 255.0F))
-				.setUv((float) u, (float) texV);
+		MaterialQuads.vertex(v, m, x, y, z, color, alpha, (float) u, (float) texV);
 	}
 
 	/**

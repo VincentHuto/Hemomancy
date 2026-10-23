@@ -24,6 +24,8 @@ final class FerricDuctilisGeometry {
         public VertexConsumer setNormal(float x,float y,float z){return this;}
     };
     static final int NERVE=0xFFE8A0, BLOOD=0x9C263B;
+    /** Ferric wraps seeds into 128 tiles where the other materials use {@link MaterialQuads#SEED_TILES} (decision V-3b, pending). */
+    private static final int FERRIC_SEED_TILES=128;
     private static int ribbons;
     private FerricDuctilisGeometry() {}
     static void begin(){ribbons=0;}
@@ -331,11 +333,12 @@ final class FerricDuctilisGeometry {
     }
 
     static void quad(PoseStack p,VertexConsumer v,Vec3 a,Vec3 b,Vec3 c,Vec3 d,int shape,int seed,int color,float alpha) {
-        vertex(p,v,a,shape,seed,0,0,color,alpha);vertex(p,v,b,shape,seed,1,0,color,alpha);
-        vertex(p,v,c,shape,seed,1,1,color,alpha);vertex(p,v,d,shape,seed,0,1,color,alpha);
+        MaterialQuads.quad(v,p.last().pose(),a.x,a.y,a.z,b.x,b.y,b.z,c.x,c.y,c.z,d.x,d.y,d.z,shape,seedTile(seed),color,alpha,0,1,false);
     }
     private static void vertex(PoseStack p,VertexConsumer v,Vec3 at,int shape,int seed,float u,float w,int color,float alpha) {
-        v.addVertex(p.last(),(float)at.x,(float)at.y,(float)at.z).setColor((color>>16)&255,(color>>8)&255,color&255,(int)(255*Mth.clamp(alpha,0,1)))
-                .setUv(shape*2+u,Math.floorMod(seed,128)*2+w);
+        MaterialQuads.vertex(v,p.last().pose(),at.x,at.y,at.z,color,alpha,shape*2+u,seedTile(seed)*2+w);
+    }
+    private static int seedTile(int seed) {
+        return Math.floorMod(seed,FERRIC_SEED_TILES);
     }
 }

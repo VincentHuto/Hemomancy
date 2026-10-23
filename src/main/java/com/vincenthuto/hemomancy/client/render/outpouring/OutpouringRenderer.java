@@ -6,6 +6,7 @@ import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.client.render.BloodPoolSurface;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringSim.Mote;
+import com.vincenthuto.hemomancy.client.render.world.MaterialQuads;
 import com.vincenthuto.hemomancy.client.render.world.OutpouringBrushes;
 import com.vincenthuto.hemomancy.client.render.world.OutpouringBrushes.Mat;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -302,7 +303,8 @@ public final class OutpouringRenderer {
             default -> { ironMark(view, m, q, alpha); return; }
         }
         var v = OutpouringBrushes.flow(material);
-        int phase = Math.floorMod(m.seed(), 127) * 2;
+        // The material encoding written by hand: these marks carry no pose and round their alpha.
+        int phase = MaterialQuads.seedTile(m.seed()) * 2;
         int a = Math.round(Math.clamp(alpha, 0, 1) * 255);
         for (int i = 0; i < 4; i++) {
             v.addVertex((float) (q[i * 5] - view.camera.x), (float) (q[i * 5 + 1] - view.camera.y), (float) (q[i * 5 + 2] - view.camera.z))

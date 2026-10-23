@@ -16,7 +16,7 @@ Every consolidation session reads this file first and updates it last, following
 | 7 | Phase 5: blood accounting | DONE | `8338c98da` | 2026-10-22 |
 | 8 | Phase 7: registration and client registration | DONE | `3e8b213d4`, `291731d6f` | 2026-10-22 |
 | 9 | Phase 6: combat targeting and damage attribution | DONE | `3b841ba03`, `7f0c1968d`, `5fa01de44`, `c9af6c6c3` | 2026-10-22 |
-| 10 | Phases 8 + 9: rendering plumbing and animation conventions | IN PROGRESS | items 1-4: `a53982248`, `1f642dccf`, `af24ecea6`, see the step entry | 2026-10-23 |
+| 10 | Phases 8 + 9: rendering plumbing and animation conventions | IN PROGRESS | items 1-5: `a53982248`, `1f642dccf`, `af24ecea6`, `9690741ce`, see the step entry | 2026-10-23 |
 | 11 | Phase 10: god-class decomposition | NOT STARTED | | |
 | 12 | Phase 11: persistence authority migrations | NOT STARTED | | |
 | 13 | Phases 12 + 13: content, worldgen, data, tooling, standards | NOT STARTED | | |
@@ -98,6 +98,7 @@ under *Pending approvals*. IDs refer to [ARCHITECTURE_AUDIT](ARCHITECTURE_AUDIT.
 | G-2c | One boss definition | 9 | PENDING | Found in step 9. `ManipulationReactiveEvents.isBoss` (with Warden, Elder Guardian and the bosses tag), `ConstrictorCordEntity.isBossTarget` (without them) and `ThreadRipperManip.protectedBody` (a package-name check) disagree |
 | A-4 | Animations that would freeze under `/tick freeze` | 10 | PENDING | Per animation |
 | V-3b | Ferric quad-encoder constant (128 vs 127) | 10 | PENDING | Visual check |
+| V-3c | Outpouring surface marks round their alpha | 10 | PENDING | Found in step 10. The marks write the material encoding by hand, camera-relative with no pose, and round alpha × 255 where `MaterialQuads` truncates it. Once approved, write them through `MaterialQuads` (some vertices lose one alpha level). |
 | V-6b | Mycophant spore colours given on the wrong scale | 10 | PENDING | Found in step 10. The Mycophant encounter's two spore bursts pass 0–1 floats (`0.48F, 0.72F, 0.34F`), which `ParticleColor` truncates to black. Once approved, give them 0–255 values (they turn green and amber). (The hit glow takes either scale: `ParticleGlow` divides by 255 only above 1.) |
 | F-11 | Blood-structure crafts tick once per server tick | 11 | PENDING | Crafts take their intended time |
 | S-9 | Per-player `dataVersion` and gated one-shot migrations | 12 | PENDING | Save-critical |
@@ -168,6 +169,8 @@ them green.
 | `architecture/RenderTypeCachingGuardrailTest` | 10 | V-2 / P-9: no method builds a `RenderType` per call (a `RenderType`-returning method that builds one must take the holder's uniforms `Supplier`, or be a listed lazy singleton); no other method builds one; no static shader-clock field outside `SchoolRenderTypes` |
 | `client/render/SeededRenderTypesTest` | 10 | V-2: the same seed and uniforms return the same type; changed uniforms move to the seed's spare and leave the queued type's uniforms alone; a seed never builds more than two types; seeds are kept apart; LRU eviction |
 | `architecture/HudAndWorldDrawingGuardrailTest` | 10 | V-7: no `RenderGuiEvent` in main code (HUD drawing is a `GuiLayerRegistrar` layer); `WorldEffectDispatcher` is the only `RenderLevelStageEvent` subscriber, calls the self-staging effects first in their old order and keeps the Outpouring screen passes at high priority; the full-screen effects and the HUD markers keep their old order, and the markers are the last layer |
+| `architecture/MaterialQuadGuardrailTest` | 10 | V-3: no `floorMod(…, 127/128)` outside `MaterialQuads`; the Lux, Thermal, Ferric and rite-surface geometries set no UVs of their own; Ferric's 128 stays the named `FERRIC_SEED_TILES` (V-3b); a class that both wraps a seed and sets UVs by hand is listed (the Outpouring marks, V-3c) |
+| `client/render/world/MaterialQuadsEncodingTest` | 10 | V-3: a SHA-256 digest of every vertex's position, colour and UV bits from the Lux, Thermal, Ferric and rite-surface entry points over wrapping seeds, pinned from the pre-merge code (6,468 vertices) |
 | `architecture/ParticleDataGuardrailTest` | 10 | V-6: the particle data classes are `ColorParticleOptions` plus three listed ones with their payloads; every particle type is a `HemoParticleType`; no `createData` helper outside `HemoParticleData` |
 | `common/particle/data/ColorParticleOptionsTest` | 10 | V-6: the colour particle's network form is the old serialized-colour UTF-8 string byte for byte, its command form is float fields `r`, `g`, `b`, and a decoded particle belongs to the type that decoded it |
 | `client/screen/skilltree/harbinger/VeinBackgroundStyleTest` | 10 | V-1: the named vein styles (progress with its deep palette, crimson, machine, station) keep the values of the copies they replaced, including each style's vertex order |
@@ -867,14 +870,14 @@ them green.
   | 1. Screen chrome (V-1) | DONE | `a53982248` |
   | 2. Render-type caching (V-2), Spark profile | DONE | `1f642dccf` |
   | 3. Colour particle data (V-6) | DONE | `af24ecea6` |
-  | 4. HUD layers and world dispatch (V-7) | DONE | the commit after `af24ecea6` |
-  | 5. Shared material quad encoder (V-3) | NOT STARTED | |
+  | 4. HUD layers and world dispatch (V-7) | DONE | `9690741ce` |
+  | 5. Shared material quad encoder (V-3) | DONE | the commit after `9690741ce` |
   | 6. Shader noise include (V-5) | NOT STARTED | |
   | 7. `BossReplayClock` / `BossMoveTimeline` (A-1) | NOT STARTED | |
   | 8. Player-animation registry (A-3) | NOT STARTED | |
   | 9. `AnimationTime` (A-4) | NOT STARTED | |
   | V-4 tube frames (optional, last) | NOT STARTED | |
-- **Test counts before → after (so far):** `test` 4,010 → 4,017 (item 1) → 4,026 (item 2) → 4,031 (item 3) → 4,034 (item 4), 0 failures. `alphaCheck`
+- **Test counts before → after (so far):** `test` 4,010 → 4,017 (item 1) → 4,026 (item 2) → 4,031 (item 3) → 4,034 (item 4) → 4,038 (item 5), 0 failures. `alphaCheck`
   not yet run in this step.
 - **Impact map:** one read-only reviewer listed every chrome, render-type, particle, dispatch, encoder, shader-noise,
   boss-clock, player-animation and time-source site with the tests that pin them. It is not committed (it is a
@@ -1022,8 +1025,32 @@ them green.
   subscribers 9 → 2 (both in `WorldEffectDispatcher`).
 - **Item 4 tests:** `SanguineOmenResourceTest` repointed to the layer; the weaker dispatcher check in
   `RegistrationStyleGuardrailTest` moved into `HudAndWorldDrawingGuardrailTest`.
-- **Pending approvals:** A-4 and V-3b stay PENDING (items 9 and 5); V-6b was added by item 3.
-- **Handoff notes (next: item 5):**
+- **Item 5, shared material quad encoder (V-3):**
+  - **`MaterialQuads`** (`client/render/world`) writes the encoded-UV vertex the school and rite shaders read: U is the
+    shape's tile plus a coordinate along the quad, V the seed's tile plus one across it, colour RGB with alpha × 255
+    truncated. `quad` emits the a, b, c, d corners (or b, c, d, a for the other diagonal); `seedTile` wraps a seed into
+    `SEED_TILES` (127).
+  - **Migrated:** `LuxUmbraGeometry`, `RiteSurface`, `ThermalGeometry` and `FerricDuctilisGeometry` keep their entry
+    points and their own early-outs (Lux at alpha ≤ 0, the rite surfaces at ≤ 0.003); their private `quad` and
+    `vertex` bodies call the encoder. Thermal passes white for its fixed colour. `VesperRecallGeometry` and the
+    Outpouring marks take their seed tile from `seedTile`.
+  - **Ferric stays at 128** (V-3b is PENDING): `FerricDuctilisGeometry.FERRIC_SEED_TILES = 128` feeds its tile into
+    the shared encoder.
+  - **Found, not changed (V-3c, PENDING):** the Outpouring surface marks write the encoding by hand with no pose and
+    round their alpha. See *Decisions*.
+  - **Proof of identical output:** `MaterialQuadsEncodingTest` drives every public and package entry point of the four
+    geometries (cards, ribbons, ribbon paths, streams, flame ribbons, glass shards, clots, block faces, plates, spikes,
+    rite cards, grounds, domes and quads) over eleven seeds, including 127, 128, negative and large ones, through a
+    rotated pose. It hashes each vertex's float bits and colour bytes. The digest was taken from the baseline worktree
+    before the merge and is unchanged after it (6,468 vertices).
+  - **Visual check:** Outpouring (`before5` / `after5`, item 5 alone) and rite floor (`before5` / `after6`, items 5
+    and 6) review pairs match by eye. One rite-floor `after5` run caught the night shot before the sky darkened; the
+    rerun matches. Shots: `build/step10-review/item5/<Task>/`, sheets `build/step10-review/item5/sheet-*.png`.
+- **Item 5 metrics:** `src/main` +69 / −34 in 7 files; 1 class added (`MaterialQuads`). Encoders: 4 → 1 (plus the
+  listed Outpouring marks).
+- **Item 5 tests:** none repointed.
+- **Pending approvals:** A-4 and V-3b stay PENDING (items 9 and 5); V-6b was added by item 3 and V-3c by item 5.
+- **Handoff notes (next: item 6):**
   - **Baseline worktree:** `../Hemomancy-step10-before` holds `29a5576ae` with a `libs` junction. Remove the junction
     with `rmdir` before `git worktree remove --force`.
   - **Review clients:** a fresh game directory without `options.txt` stops at the first-launch screen and the driver
