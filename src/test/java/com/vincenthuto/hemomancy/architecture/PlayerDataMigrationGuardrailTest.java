@@ -78,7 +78,22 @@ class PlayerDataMigrationGuardrailTest {
 		assertEquals(List.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/degree/InitiatoryDegreeEvents.java",
 				"src/main/java/com/vincenthuto/hemomancy/common/command/QliphothSubcommand.java",
+				"src/main/java/com/vincenthuto/hemomancy/common/recipe/ArmatureUpgradeRecipe.java",
 				"src/main/java/com/vincenthuto/hemomancy/common/worldgen/FungalGardenTravelHelper.java"), users);
+		// The literal key: only the constant in code, and in data only Armature gates, which resolve it by path.
+		List<String> literal = new ArrayList<>();
+		for (String root : List.of("src/main/java", "src/main/resources")) {
+			try (Stream<Path> files = Files.walk(RepoPaths.ROOT.resolve(root))) {
+				for (Path file : files.filter(Files::isRegularFile)
+						.filter(path -> path.toString().endsWith(".java") || path.toString().endsWith(".json")).toList()) {
+					String shown = RepoPaths.display(file);
+					if (SourceAssertions.read(file).contains("archon_choice_made")
+							&& !shown.endsWith("worldgen/FungalGardenTravelHelper.java")
+							&& !shown.startsWith("src/main/resources/data/hemomancy/recipe/armature_upgrade/")) literal.add(shown);
+				}
+			}
+		}
+		assertEquals(List.of(), literal, "Read the Archon choice from the degree's path");
 		SourceAssertions.assertContains("the migration clears the old key",
 				SourceAssertions.read(ENTRY_POINTS.get("InitiatoryDegreeEvents::migrateLegacyArchonChoice")),
 				"persistent.remove(FungalGardenTravelHelper.ARCHON_CHOICE_KEY)");

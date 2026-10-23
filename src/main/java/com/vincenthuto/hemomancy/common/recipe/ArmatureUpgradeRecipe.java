@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.recipe;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
+import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
@@ -20,7 +21,11 @@ import java.util.stream.Collectors;
 public class ArmatureUpgradeRecipe extends CustomRecipe {
 	public record PersistentDataGate(String key, String value) {
 		public boolean matches(Player player) {
-			return player != null && value.equals(player.getPersistentData().getString(key));
+			if (player == null) return false;
+			// F-21: saves no longer hold the Archon choice key; the degree's path answers for it.
+			if (FungalGardenTravelHelper.ARCHON_CHOICE_KEY.equals(key)) return value.equals(
+					FungalGardenTravelHelper.legacyArchonChoice(HemoCapabilityAccess.getInitiatoryDegree(player).getArchonPath()));
+			return value.equals(player.getPersistentData().getString(key));
 		}
 	}
 

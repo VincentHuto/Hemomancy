@@ -77,6 +77,7 @@ public final class PlayerDataMigrations {
 	/** Runs each migration newer than the player's data version, in order, recording each one. Returns how many ran. */
 	public static int migrate(ServerPlayer player) {
 		PlayerDataVersion data = HemoCapabilityAccess.dataVersion(player);
+		int from = data.version();
 		int ran = 0;
 		for (Migration migration : MIGRATIONS) {
 			if (migration.version() <= data.version()) continue;
@@ -84,6 +85,8 @@ public final class PlayerDataMigrations {
 			data.setVersion(migration.version());
 			ran++;
 		}
+		if (ran > 0) Hemomancy.LOGGER.info("Migrated {}'s saved data from version {} to {} ({} migrations)",
+				player.getGameProfile().getName(), from, data.version(), ran);
 		return ran;
 	}
 }

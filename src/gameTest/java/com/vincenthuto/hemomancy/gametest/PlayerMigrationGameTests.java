@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.circus.CircusApprenticeshipProgress;
 import com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress;
 import com.vincenthuto.hemomancy.common.circus.CircusRouteRules;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRecipe;
 import com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog;
 import com.vincenthuto.hemomancy.common.station.UpgradeStation;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers;
@@ -89,7 +90,10 @@ public final class PlayerMigrationGameTests {
 	public static void archonRootKeyBecomesThePathOnce(GameTestHelper helper) {
 		try (CapturedPlayer captured = CapturedPlayer.create(helper)) {
 			ServerPlayer player = load(helper, captured, "archon_choice_silence");
+			var silentGate = new ArmatureUpgradeRecipe.PersistentDataGate(FungalGardenTravelHelper.ARCHON_CHOICE_KEY,
+					FungalGardenTravelHelper.ARCHON_CHOICE_SILENCE);
 			login(player);
+			helper.assertTrue(silentGate.matches(player), "The Silent Archon armour gate, which names the old key, must pass through the path");
 			var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
 			helper.assertTrue(degree.getArchonPath() == EnumArchonPath.SILENT_ARCHON
 					&& degree.hasWitnessedFungalRevelation()
@@ -201,6 +205,23 @@ public final class PlayerMigrationGameTests {
 			login(player);
 			helper.assertTrue(legacy.size() == 2 && PendingWhispers.entries(player).equals(legacy),
 					"The whisper inbox was not moved intact: " + PendingWhispers.entries(player));
+
+			// A tree the attachment already holds is not added twice; a new one is appended after it.
+			try (CapturedPlayer both = CapturedPlayer.create(helper)) {
+				ServerPlayer holder = load(helper, both, "pending_whispers_root");
+				CompoundTag held = new CompoundTag();
+				ListTag heldEntries = new ListTag();
+				CompoundTag duplicate = legacy.getCompound(0).copy();
+				duplicate.putUUID("id", java.util.UUID.randomUUID());
+				heldEntries.add(duplicate);
+				held.put("Entries", heldEntries);
+				HemoCapabilityAccess.pendingWhispers(holder).deserializeNBT(holder.registryAccess(), held);
+				login(holder);
+				ListTag merged = PendingWhispers.entries(holder);
+				helper.assertTrue(merged.size() == 2 && merged.getCompound(0).equals(duplicate)
+						&& merged.getCompound(1).equals(legacy.getCompound(1)),
+						"The inbox merge duplicated or reordered a whisper: " + merged);
+			}
 			helper.assertTrue(!player.getPersistentData().contains("hemomancy:pending_whispers"),
 					"The root-key inbox was left behind");
 			assertSettled(helper, player);
