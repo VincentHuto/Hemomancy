@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.model.entity.npc;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.entity.npc.unstained.UnstainedScoutEntity;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import net.minecraft.client.model.EntityModel;
@@ -157,7 +158,7 @@ public class UnstainedScoutModel<T extends UnstainedScoutEntity> extends EntityM
         this.leftLeg.yRot = -0.005F;
         this.rightLeg.zRot = 0.005F;
         this.leftLeg.zRot = -0.005F;
-        float frame = entity.tickCount + HLClientUtils.getPartialTicks();
+        float frame = AnimationTime.age(entity, HLClientUtils.getPartialTicks());
         float idleWave = Mth.sin(frame * 0.067F);
         float walkWave = Mth.sin(limbSwing * 0.6662F) * limbSwingAmount;
 

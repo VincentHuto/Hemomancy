@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.NpcProgressionMarkerClientState;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueAttention;
 
 import net.minecraft.client.Minecraft;
@@ -33,7 +34,7 @@ public final class NpcProgressionMarkerClientEvents {
 		DialogueAttention attention = NpcProgressionMarkerClientState.attention(entity.getId());
 		if (attention == DialogueAttention.NONE || entity.isInvisible()) return;
 
-		float time = entity.tickCount + event.getPartialTick();
+		float time = AnimationTime.age(entity, event.getPartialTick());
 		float speed = attention == DialogueAttention.URGENT ? 0.22F : 0.10F;
 		float pulse = 0.5F + 0.5F * (float) Math.sin(time * speed);
 		float size = (attention == DialogueAttention.URGENT ? 0.34F : 0.29F) + pulse * 0.035F;

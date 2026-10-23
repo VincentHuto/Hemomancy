@@ -95,7 +95,7 @@ public final class CardinalFloorConsecrationRenderer {
 			MultiBufferSource buffers) {
 		Level level = focus.getLevel();
 		if (level == null) return;
-		double time = level.getGameTime() + (double) partialTick;
+		double time = AnimationTime.gameTime(level, (double) partialTick);
 		float now = AnimationTime.gameTime(level, partialTick);
 		var id = focus.getFormedFloor();
 		Direction forwards = focus.getFormedForwards();

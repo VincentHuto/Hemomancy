@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.event;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.boss.VesperRumbleClientState;
 import com.vincenthuto.hemomancy.client.data.VesperBurrowClientData;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperBurrowRules;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefusalEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperWingedFlightRules;
@@ -55,7 +56,7 @@ public final class VesperBurrowClientEvents {
 	public static void shakeCamera(ViewportEvent.ComputeCameraAngles event) {
 		float amplitude = VesperBurrowClientData.shakeAmplitude();
 		if (amplitude <= 0.0F || Minecraft.getInstance().level == null) return;
-		float time = Minecraft.getInstance().level.getGameTime() + (float) event.getPartialTick();
+		float time = AnimationTime.gameTime(Minecraft.getInstance().level, (float) event.getPartialTick());
 		event.setPitch(event.getPitch() + VesperRumbleClientState.pitchShake(amplitude, time));
 		event.setRoll(event.getRoll() + VesperRumbleClientState.rollShake(amplitude, time));
 	}

@@ -36,6 +36,7 @@ class ShaderNoiseIncludeGuardrailTest {
 			"(?m)^[ \\t]*(?:float|vec[234]|int|bool|mat[234])\\s+(\\w+)\\s*\\([^)]*\\)\\s*\\{");
 	private static final Pattern NOISE_NAME = Pattern.compile("(?i)hash|noise|fbm");
 	private static final Pattern UNIFORM = Pattern.compile("(?m)^\\s*uniform\\s+\\w+\\s+(\\w+)");
+	private static final Pattern SHADER_GLOBAL = Pattern.compile("(?m)^\\s*(?:uniform|const)\\s+\\w+\\s+(\\w+)");
 	private static final Pattern IMPORT = Pattern.compile("#moj_import <hemomancy:noise/([\\w/]+\\.glsl)>");
 
 	@Test
@@ -66,14 +67,25 @@ class ShaderNoiseIncludeGuardrailTest {
 		}
 		assertFalse(includes.isEmpty());
 		Set<String> imported = new TreeSet<>();
+		Map<String, Set<String>> importerGlobals = new TreeMap<>();
 		for (Path file : shaders()) {
-			Matcher matcher = IMPORT.matcher(SourceAssertions.read(file));
-			while (matcher.find()) imported.add(matcher.group(1));
+			String shader = SourceAssertions.read(file);
+			Matcher matcher = IMPORT.matcher(shader);
+			while (matcher.find()) {
+				imported.add(matcher.group(1));
+				Matcher global = SHADER_GLOBAL.matcher(shader);
+				while (global.find()) importerGlobals.computeIfAbsent(matcher.group(1), key -> new TreeSet<>()).add(global.group(1));
+			}
 		}
 		assertEquals(includes, imported, "every noise include is imported, and every import names an include");
 		for (String include : includes) {
 			String text = SourceAssertions.read(NOISE.resolve(include));
 			assertFalse(text.contains("uniform"), include + " reads no uniform; seeded noise stays in its shader");
+			Set<String> leaned = new TreeSet<>();
+			for (String global : importerGlobals.getOrDefault(include, Set.of())) {
+				if (Pattern.compile("\\b" + global + "\\b").matcher(text).find()) leaned.add(global);
+			}
+			assertEquals(Set.of(), leaned, include + " uses its importers' uniforms or constants; keep that noise local");
 			assertFalse(text.contains("#moj_import"), include + " imports nothing; shaders list each include they need");
 			assertTrue(text.startsWith("// "), include + " says what it is for");
 		}

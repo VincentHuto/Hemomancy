@@ -16,7 +16,7 @@ Every consolidation session reads this file first and updates it last, following
 | 7 | Phase 5: blood accounting | DONE | `8338c98da` | 2026-10-22 |
 | 8 | Phase 7: registration and client registration | DONE | `3e8b213d4`, `291731d6f` | 2026-10-22 |
 | 9 | Phase 6: combat targeting and damage attribution | DONE | `3b841ba03`, `7f0c1968d`, `5fa01de44`, `c9af6c6c3` | 2026-10-22 |
-| 10 | Phases 8 + 9: rendering plumbing and animation conventions | IN PROGRESS | items 1-9: `a53982248`, `1f642dccf`, `af24ecea6`, `9690741ce`, `e1245b2de`, `da80a7f2a`, `9136d673d`, `5d539f5fb`, see the step entry | 2026-10-23 |
+| 10 | Phases 8 + 9: rendering plumbing and animation conventions | DONE | `a53982248`..`e2597dc41` (items 1-9), review fixes and ledger in the commit after `e2597dc41` | 2026-10-23 |
 | 11 | Phase 10: god-class decomposition | NOT STARTED | | |
 | 12 | Phase 11: persistence authority migrations | NOT STARTED | | |
 | 13 | Phases 12 + 13: content, worldgen, data, tooling, standards | NOT STARTED | | |
@@ -869,7 +869,7 @@ them green.
   - **GameTests:** use a detached `CapturedPlayer` unless the test needs the player in the level. Area tests that need one get their own batch.
 
 ### Step 10: Phases 8 + 9, rendering plumbing and animation conventions
-- **Status / date / commits:** IN PROGRESS, 2026-10-22. Items are committed one by one with the prefix
+- **Status / date / commits:** DONE, 2026-10-22 to 2026-10-23. Items are committed one by one with the prefix
   `consolidation(step-10):`.
 
   | Item | Status | Commit |
@@ -882,10 +882,11 @@ them green.
   | 6. Shader noise include (V-5) | DONE | `da80a7f2a` |
   | 7. `BossReplayClock` / `BossMoveTimeline` (A-1) | DONE (A-1b PENDING) | `9136d673d` |
   | 8. Player-animation registry (A-3) | DONE | `5d539f5fb` |
-  | 9. `AnimationTime` (A-4) | DONE (A-4 PENDING) | the commit after `5d539f5fb` |
-  | V-4 tube frames (optional, last) | NOT STARTED | |
-- **Test counts before → after (so far):** `test` 4,010 → 4,017 (item 1) → 4,026 (item 2) → 4,031 (item 3) → 4,034 (item 4) → 4,038 (item 5) → 4,040 (item 6) → 4,048 (item 7) → 4,052 (item 8) → 4,055 (item 9), 0 failures. `alphaCheck`
-  not yet run in this step.
+  | 9. `AnimationTime` (A-4) | DONE (A-4 PENDING) | `e2597dc41` |
+  | Review fixes (items 6 and 9) | DONE | the commit after `e2597dc41` |
+  | V-4 tube frames (optional, last) | NOT DONE (optional; left for a later step) | |
+- **Test counts before → after:** `test` 4,010 → 4,017 (item 1) → 4,026 (item 2) → 4,031 (item 3) → 4,034 (item 4) → 4,038 (item 5) → 4,040 (item 6) → 4,048 (item 7) → 4,052 (item 8) → 4,055 (item 9 and the review fixes), 0 failures.
+  `alphaCheck` after item 9: BUILD SUCCESSFUL, all 1,036 required GameTests passed (first run, no flake).
 - **Impact map:** one read-only reviewer listed every chrome, render-type, particle, dispatch, encoder, shader-noise,
   boss-clock, player-animation and time-source site with the tests that pin them. It is not committed (it is a
   working list); the items below cite what they used from it.
@@ -1066,7 +1067,9 @@ them green.
     - `vein_hash1` (cast veins, cast umbra, infusion veins), `vein_hash3` (cast veins, infusion veins) and
       `vein_noise` (cast veins, cast umbra);
     - `haze_noise` (the daemon and staff hazes' hash, value noise and fractal noise);
-    - `monolith_noise` (the monolith fragment and Will monolith's hash, noise and two fractal noises).
+    - `monolith_noise` (the monolith fragment and Will monolith's hash and value noise). Item 6 first moved their two
+      fractal noises too; those read the importing shader's `ShardSeed`, `HemoTime` and `FBM_LAYER_DRIFT_RATE`, so the
+      review put them back in each shader, after the import where they stood.
   - **What moved:** a function moved only with everything it calls, and only where that whole closure matched in each
     importer, whitespace aside. Each import sits where the copies stood, so declaration order is unchanged. The two
     school `noise` variants differ in one token (`hash(i+1.0)` against `hash(i+vec2(1,1))`) and stay two includes.
@@ -1150,9 +1153,52 @@ them green.
     (`after9`) match their baselines by eye. Shots: `build/step10-review/item9/`.
 - **Item 9 metrics:** `src/main` 138 files, 190 time reads moved to 1 helper; raw client time reads left 0.
 - **Item 9 tests:** `BestiaryEntityPreviewSourceTest` repointed to `AnimationTime.partialTick()`.
+- **Step review:** a fresh reviewer read `29a5576ae..e2597dc41` (code only) and found no behaviour change in any item.
+  It checked item 9's replacements line by line, item 8's claim chain, item 7's clocks against both old ones, item 4's
+  layer depth and `hideGui` handling, the encoder arithmetic, the include resolution and the particle wire form.
+  Acted on:
+  - `monolith_noise.glsl` read its importers' uniforms and a constant, which the guardrail missed because it only looked
+    for the word `uniform`. The two seeded fractal noises went back into the shaders, and
+    `ShaderNoiseIncludeGuardrailTest` now fails an include that names any uniform or constant its importers declare. The
+    render-type-profile client relaunched with no shader error, and its scene matches the baseline.
+  - Time reads the item 9 pattern missed: `CardinalFloorConsecrationRenderer` (`+ (double) partialTick`), the Earthen
+    Vein markers, Priestess impact and Vesper burrow camera shakes and the NPC progression marker (the event's partial
+    tick), and 14 models adding HutosLib's cached partial tick to an entity's age. Each now passes the same value through
+    `AnimationTime`, and the guardrail pattern covers casts, event partial ticks and `HLClientUtils.getPartialTicks()`.
+    Item 9 totals about 200 reads in 156 files.
+  Noted, not changed:
+  - Since item 2, back-to-back requests for one seed with equal uniforms share a batch, and a `sortOnUpload` type sorts
+    that batch by distance. Before, every call made a new type and drew in submission order. No caller asks for one seed
+    repeatedly with overlapping geometry, and the seven review clients matched.
+  - Near-copies that are not token-identical stay local: the infusion veins' `smoothNoise` and `fbm` (`0.57` written
+    for `.57`) and `latent_infection_skin`'s `hash` and `noise` (parameter `value`).
+  - The new layers `screen_effects` and `hud_markers` can be cancelled through `RenderGuiLayerEvent.Pre`, as any layer
+    can.
+- **Metrics (whole step):** screen chrome copies 0 (14 vein backgrounds, 36 borders, 12 slot wells shared); per-call
+  render types 0; colour-only particle data classes 7 → 0 and particle type classes 10 → 1; `RenderGuiEvent` handlers
+  6 → 0; `RenderLevelStageEvent` subscribers 9 → 2 (both in the dispatcher); material encoders 4 → 1; shared noise
+  closures moved into 9 includes; replay clocks 2 → 1; mixin pose calls 3 → 1; raw client time reads about 200 → 0.
+- **Guardrails added:** `ScreenChromeGuardrailTest`, `RenderTypeCachingGuardrailTest`, `ParticleDataGuardrailTest`,
+  `HudAndWorldDrawingGuardrailTest`, `MaterialQuadGuardrailTest`, `ShaderNoiseIncludeGuardrailTest`,
+  `BossAnimationClockGuardrailTest`, `PlayerAnimationGuardrailTest`, `AnimationTimeGuardrailTest` (see the table).
+- **Deviations from the prompt:**
+  - Item 4: the three `RenderGuiEvent.Pre` handlers were methods of one class, so their run order was the JVM's method
+    order. The layer pins the order the review client's baseline draws (nectar and Circus, grade, white humor), not
+    the order a listener probe printed in another run.
+  - Item 7: only Vesper and Annetta moved onto `BossReplayClock`. The other bosses read raw synced ticks, and moving them
+    would change displayed timing, so they wait on A-1b. The Saints have no synced-tick animation.
+  - Item 8: ticks, packets, session clears and first-person renderers stay with each animation; the registry owns the
+    third-person order and the guardrail pins the first-person priorities.
+  - V-4 (optional) not done.
 - **Pending approvals:** A-4 and V-3b stay PENDING (items 9 and 5); V-6b was added by item 3, V-3c by item 5 and A-1b by item 7.
-- **Handoff notes (next: step close):**
-  - **Baseline worktree:** `../Hemomancy-step10-before` holds `29a5576ae` with a `libs` junction. Remove the junction
-    with `rmdir` before `git worktree remove --force`.
+- **Handoff notes for step 11:**
+  - The baseline worktree `../Hemomancy-step10-before` was removed (junction first).
+  - **Deterministic review harnesses:** `HudLayerReview` (run `hudLayerReviewClient`, save `HudLayerReview`) and
+    `ScreenChromeReview` draw by hand into a black target with game time, partial tick and vignette pinned, so before
+    and after runs compare byte for byte. `RenderTypeProfileReview` now saves `profile-scene-<label>.png`. The live
+    review clients (Outpouring, rite floor, Annetta, Vesper, axonal) vary between runs; compare them by eye or against
+    a second baseline run.
+  - A review client started while sources are being edited builds whatever is on disk at that moment; let a run finish
+    before editing the code it checks.
   - **Review clients:** a fresh game directory without `options.txt` stops at the first-launch screen and the driver
     never logs `startup`; copy one in. The condenser review directory had none.

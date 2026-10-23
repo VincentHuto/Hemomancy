@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.model.armor;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
@@ -395,7 +396,7 @@ public class SilentArchonArmorModel<T extends LivingEntity> extends HumanoidMode
 	@Override
 	public void setupAnim(@Nullable T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 		super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-		float frame = entity.tickCount + HLClientUtils.getPartialTicks();
+		float frame = AnimationTime.age(entity, HLClientUtils.getPartialTicks());
 		float idleWave = Mth.sin(frame * 0.067F);
 		float walkWave = Mth.sin(limbSwing * 0.6662F) * limbSwingAmount;
 

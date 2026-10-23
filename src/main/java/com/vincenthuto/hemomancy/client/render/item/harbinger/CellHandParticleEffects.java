@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.item.harbinger;
 
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.client.particle.*;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.particle.EntityParticleUtils;
 import com.vincenthuto.hemomancy.client.render.world.CellHandStreams;
 import com.vincenthuto.hemomancy.client.render.world.ManipulationVisualRenderer;
@@ -306,7 +307,7 @@ public final class CellHandParticleEffects {
 
 	private static void spawnWillAbsorptionTendencySpiralParticle(Minecraft mc, int casterId, Vec3 origin, WillEntity will,
 			Random rand, Optional<Vec3> firstPersonTargetAnchor) {
-		double age = will.tickCount + HLClientUtils.getPartialTicks();
+		double age = AnimationTime.age(will, HLClientUtils.getPartialTicks());
 		double spiralAngle = age * 0.42D + rand.nextDouble() * Math.PI * 0.45D;
 		double heightPhase = (age * 0.075D + rand.nextDouble()) % 1.0D;
 		double radius = 0.38D + 0.08D * Math.sin(age * 0.17D);

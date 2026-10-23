@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.boss.VesperRumbleClientState;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.PriestessEruptionEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
@@ -40,7 +41,7 @@ public final class PriestessImpactClientEvents {
     @SubscribeEvent
     public static void shakeCamera(ViewportEvent.ComputeCameraAngles event) {
         if (amplitude <= 0.0F || Minecraft.getInstance().level == null) return;
-        float time = Minecraft.getInstance().level.getGameTime() + (float) event.getPartialTick();
+        float time = AnimationTime.gameTime(Minecraft.getInstance().level, (float) event.getPartialTick());
         event.setPitch(event.getPitch() + VesperRumbleClientState.pitchShake(amplitude, time * 1.6F));
         event.setRoll(event.getRoll() + VesperRumbleClientState.rollShake(amplitude, time * 1.6F));
     }

@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.event;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.world.EarthenVeinDestinationLayout;
 import com.vincenthuto.hemomancy.client.render.world.EarthenVeinDestinationTargeting;
 import com.vincenthuto.hemomancy.client.render.world.SanguineTendrilRibbonRenderer;
@@ -98,7 +99,7 @@ public final class EarthenVeinTravelClientEvents {
 		Vec3 camera = minecraft.gameRenderer.getMainCamera().getPosition();
 		PoseStack poseStack = event.getPoseStack();
 		MultiBufferSource.BufferSource buffer = minecraft.renderBuffers().bufferSource();
-		float time = minecraft.level.getGameTime() + event.getPartialTick().getGameTimeDeltaPartialTick(true);
+		float time = AnimationTime.gameTime(minecraft.level, event.getPartialTick().getGameTimeDeltaPartialTick(true));
 
 		VertexConsumer glow = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
 		SanguineTendrilRibbonRenderer.render(poseStack, glow, strands(source, markers, hovered, time), camera, true);

@@ -32,6 +32,27 @@ const float VEIN_RIPPLE_SCALE = 0.42;
 const float VEIN_ADVECT_RATE = 0.32;
 
 #moj_import <hemomancy:noise/monolith_noise.glsl>
+float fbm(vec2 p) {
+    float v = 0.0;
+    float amp = 0.5;
+    for (int i = 0; i < 5; i++) {
+        v += noise(p) * amp;
+        p = mat2(1.62, 1.15, -1.15, 1.62) * p + vec2(ShardSeed * 0.13, HemoTime * FBM_LAYER_DRIFT_RATE);
+        amp *= 0.5;
+    }
+    return v;
+}
+
+float staticFbm(vec2 p) {
+    float v = 0.0;
+    float amp = 0.5;
+    for (int i = 0; i < 4; i++) {
+        v += noise(p) * amp;
+        p = mat2(1.62, 1.15, -1.15, 1.62) * p + vec2(ShardSeed * 0.19, 0.37);
+        amp *= 0.5;
+    }
+    return v;
+}
 
 float faultDistance(vec2 uv) {
     vec2 p = (uv - 0.5) * FractalScale;

@@ -23,9 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class AnimationTimeGuardrailTest {
 	private static final String HELPER = "client/render/AnimationTime.java";
+	/** A frame-timer read, or game time or an entity's age plus any partial tick, cast or not. */
 	private static final Pattern RAW = Pattern.compile("getTimer\\(\\)\\.getGameTimeDeltaPartialTick\\("
-			+ "|getGameTime\\(\\)\\s*\\+\\s*(?:partial\\w*|pPartialTicks|\\(double\\)\\s*AnimationTime|AnimationTime)"
-			+ "|\\btickCount\\s*\\+\\s*(?:partial\\w*|pPartialTicks)\\b");
+			+ "|(?:getGameTime\\(\\)|\\btickCount)\\s*\\+\\s*(?:\\((?:float|double)\\)\\s*)?"
+			+ "(?:partial\\w*|pPartialTicks|event\\.getPartialTick|AnimationTime|HLClientUtils\\.getPartialTicks)");
 	private static final Pattern WALL_CLOCK = Pattern.compile(
 			"System\\.currentTimeMillis\\(\\)|Util\\.getMillis\\(\\)|System\\.nanoTime\\(\\)|getFrameTimeNs\\(\\)");
 
