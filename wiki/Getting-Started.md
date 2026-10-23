@@ -256,7 +256,7 @@ Choose before you spend heavily on a path. Switching back and forth is not a sup
 - Contains supply storage and recruitable residents
 - Can be looted or joined depending on your path
 
-**Mausoleums**
+**Mausoleums** (not generating naturally yet)
 - Underground crypts with Harbinger artifacts
 - Dangerous but rewarding
 - Often contains Mortal Display and Hematic Memories
