@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerBossEvent;
+import com.vincenthuto.hemomancy.common.entity.boss.BossBarBinding;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -24,6 +24,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.SaintTrialEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -51,21 +52,16 @@ import net.minecraft.world.phys.AABB;
  *       amplifier both increase.</li>
  * </ul>
  */
-public class PutricielEntity extends Monster {
+public class PutricielEntity extends SaintTrialEntity {
 
     // ── synched data ──────────────────────────────────────────────────────
     private static final EntityDataAccessor<Boolean> DATA_ABSOLVED =
             SynchedEntityData.defineId(PutricielEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_ABSOLUTION_COUNT =
             SynchedEntityData.defineId(PutricielEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> DATA_VISUAL_STATE =
-            SynchedEntityData.defineId(PutricielEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> DATA_VISUAL_TICKS =
-            SynchedEntityData.defineId(PutricielEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_ABSOLUTION_TIMER =
             SynchedEntityData.defineId(PutricielEntity.class, EntityDataSerializers.INT);
 
-    public static final int VISUAL_NONE = 0;
     public static final int VISUAL_ROT_NOVA = 1;
     public static final int VISUAL_ABSOLUTION_HIT = 2;
 
@@ -91,17 +87,10 @@ public class PutricielEntity extends Monster {
     private int absolveWindowTimer = 0;
     private boolean defeated = false;
 
-    private final ServerBossEvent bossEvent = new ServerBossEvent(
-            Component.translatable("entity.hemomancy.putriciel"),
-            BossEvent.BossBarColor.GREEN,
-            BossEvent.BossBarOverlay.NOTCHED_10);
-
     // ── constructor ───────────────────────────────────────────────────────
 
     public PutricielEntity(EntityType<? extends PutricielEntity> type, Level level) {
-        super(type, level);
-        this.setPersistenceRequired();
-        this.xpReward = 120;
+        super(type, level, 120, new BossBarBinding("entity.hemomancy.putriciel", BossEvent.BossBarColor.GREEN, BossEvent.BossBarOverlay.NOTCHED_10));
     }
 
     // ── attributes ────────────────────────────────────────────────────────
@@ -120,13 +109,7 @@ public class PutricielEntity extends Monster {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0D, false));
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.6D));
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 24.0F));
-        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        registerTrialGoals(0.6D);
     }
 
     // ── synched data ──────────────────────────────────────────────────────
@@ -136,8 +119,6 @@ public class PutricielEntity extends Monster {
         super.defineSynchedData(builder);
         builder.define(DATA_ABSOLVED, false);
         builder.define(DATA_ABSOLUTION_COUNT, 0);
-        builder.define(DATA_VISUAL_STATE, VISUAL_NONE);
-        builder.define(DATA_VISUAL_TICKS, 0);
         builder.define(DATA_ABSOLUTION_TIMER, 0);
     }
 
@@ -153,40 +134,13 @@ public class PutricielEntity extends Monster {
         return this.entityData.get(DATA_ABSOLUTION_COUNT);
     }
 
-    public int getVisualState() {
-        return this.entityData.get(DATA_VISUAL_STATE);
-    }
-
-    public int getVisualTicks() {
-        return this.entityData.get(DATA_VISUAL_TICKS);
-    }
-
     public int getAbsolutionWindowTimer() {
         return this.entityData.get(DATA_ABSOLUTION_TIMER);
-    }
-
-    private void setVisualState(int visualState, int ticks) {
-        this.entityData.set(DATA_VISUAL_STATE, visualState);
-        this.entityData.set(DATA_VISUAL_TICKS, Math.max(0, ticks));
     }
 
     private void incrementAbsolution() {
         int next = this.entityData.get(DATA_ABSOLUTION_COUNT) + 1;
         this.entityData.set(DATA_ABSOLUTION_COUNT, next);
-    }
-
-    // ── boss bar ──────────────────────────────────────────────────────────
-
-    @Override
-    public void startSeenByPlayer(ServerPlayer player) {
-        super.startSeenByPlayer(player);
-        bossEvent.addPlayer(player);
-    }
-
-    @Override
-    public void stopSeenByPlayer(ServerPlayer player) {
-        super.stopSeenByPlayer(player);
-        bossEvent.removePlayer(player);
     }
 
     // ── main tick ─────────────────────────────────────────────────────────
@@ -205,7 +159,7 @@ public class PutricielEntity extends Monster {
         ServerLevel server = (ServerLevel) this.level();
         tickVisualState();
 
-        bossEvent.setProgress((float) getAbsolutionCount() / ABSOLUTIONS_NEEDED);
+        bossBar.setProgress((float) getAbsolutionCount() / ABSOLUTIONS_NEEDED);
 
         // Rot nova pulse
         if (this.tickCount % ROT_NOVA_INTERVAL == 0) {
@@ -226,16 +180,6 @@ public class PutricielEntity extends Monster {
             absolveCycleTimer--;
             if (absolveCycleTimer <= 0) {
                 openAbsolutionWindow(server);
-            }
-        }
-    }
-
-    private void tickVisualState() {
-        int ticks = getVisualTicks();
-        if (ticks > 0) {
-            this.entityData.set(DATA_VISUAL_TICKS, ticks - 1);
-            if (ticks == 1) {
-                this.entityData.set(DATA_VISUAL_STATE, VISUAL_NONE);
             }
         }
     }
@@ -322,29 +266,11 @@ public class PutricielEntity extends Monster {
         this.discard();
     }
 
-    private void sendFloorRing(ServerLevel server, double radius, net.minecraft.core.particles.SimpleParticleType particle, int points, double y) {
-        for (int i = 0; i < points; i++) {
-            double angle = i * Math.PI * 2.0D / points;
-            double x = this.getX() + Math.cos(angle) * radius;
-            double z = this.getZ() + Math.sin(angle) * radius;
-            server.sendParticles(particle, x, y, z, 1, 0.02D, 0.02D, 0.02D, 0.0D);
-        }
-    }
-
     // ── drops ─────────────────────────────────────────────────────────────
 
     @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
         // Normal death (outside trial) drops nothing; trial completion handled above
-    }
-
-    // ── messages ─────────────────────────────────────────────────────────
-
-    private void broadcastMessage(String text, ChatFormatting color) {
-        Component msg = Component.literal(text).withStyle(color);
-        for (ServerPlayer player : bossEvent.getPlayers()) {
-            player.sendSystemMessage(msg);
-        }
     }
 
     // ── sounds ────────────────────────────────────────────────────────────

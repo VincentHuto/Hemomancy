@@ -11,7 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerBossEvent;
+import com.vincenthuto.hemomancy.common.entity.boss.BossBarBinding;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -29,6 +29,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import com.vincenthuto.hemomancy.common.entity.boss.saint.SaintTrialEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -47,7 +48,7 @@ import net.minecraft.world.level.Level;
  * Phase 2 (50%0%): faster attacks, shorter Hematic Collapse cadence, and
  * bloodvolume spent is amplified by 1.25Ã— via {@link #onPlayerBloodSpend}.
  */
-public class HemorathEntity extends Monster {
+public class HemorathEntity extends SaintTrialEntity {
 
 	private static final EntityDataAccessor<Boolean> DATA_COLLAPSE_CHARGING =
 			SynchedEntityData.defineId(HemorathEntity.class, EntityDataSerializers.BOOLEAN);
@@ -55,12 +56,7 @@ public class HemorathEntity extends Monster {
 			SynchedEntityData.defineId(HemorathEntity.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Float> DATA_ABSORBED_BLOOD =
 			SynchedEntityData.defineId(HemorathEntity.class, EntityDataSerializers.FLOAT);
-	private static final EntityDataAccessor<Integer> DATA_VISUAL_STATE =
-			SynchedEntityData.defineId(HemorathEntity.class, EntityDataSerializers.INT);
-	private static final EntityDataAccessor<Integer> DATA_VISUAL_TICKS =
-			SynchedEntityData.defineId(HemorathEntity.class, EntityDataSerializers.INT);
 
-	public static final int VISUAL_NONE = 0;
 	public static final int VISUAL_COLLAPSE_WINDUP = 1;
 	public static final int VISUAL_COLLAPSE_IMPACT = 2;
 	public static final int VISUAL_EMPTY_PULSE = 3;
@@ -80,15 +76,9 @@ public class HemorathEntity extends Monster {
 	public final AnimationState idleAnimationState = new AnimationState();
 	public final AnimationState collapseChargeAnimationState = new AnimationState();
 
-	private final ServerBossEvent bossEvent = new ServerBossEvent(
-			Component.translatable("entity.hemomancy.hollow_vessel"),
-			BossEvent.BossBarColor.RED,
-			BossEvent.BossBarOverlay.NOTCHED_10);
-
 	public HemorathEntity(EntityType<? extends HemorathEntity> type, Level level) {
-		super(type, level);
-		this.setPersistenceRequired();
-		this.xpReward = 80;
+		super(type, level, 80, new BossBarBinding("entity.hemomancy.hollow_vessel", BossEvent.BossBarColor.RED,
+				BossEvent.BossBarOverlay.NOTCHED_10));
 	}
 
 	public static AttributeSupplier.Builder setAttributes() {
@@ -121,8 +111,6 @@ public class HemorathEntity extends Monster {
 		builder.define(DATA_COLLAPSE_CHARGING, false);
 		builder.define(DATA_PHASE, 1);
 		builder.define(DATA_ABSORBED_BLOOD, 0.0F);
-		builder.define(DATA_VISUAL_STATE, VISUAL_NONE);
-		builder.define(DATA_VISUAL_TICKS, 0);
 	}
 
 	public boolean isCollapseCharging() {
@@ -143,19 +131,6 @@ public class HemorathEntity extends Monster {
 
 	public float getAbsorbedBlood() {
 		return this.entityData.get(DATA_ABSORBED_BLOOD);
-	}
-
-	public int getVisualState() {
-		return this.entityData.get(DATA_VISUAL_STATE);
-	}
-
-	public int getVisualTicks() {
-		return this.entityData.get(DATA_VISUAL_TICKS);
-	}
-
-	public void setVisualState(int visualState, int ticks) {
-		this.entityData.set(DATA_VISUAL_STATE, visualState);
-		this.entityData.set(DATA_VISUAL_TICKS, Math.max(0, ticks));
 	}
 
 	public void addAbsorbedBlood(Player source, double amount) {
@@ -217,7 +192,7 @@ public class HemorathEntity extends Monster {
 					onPhaseTransition();
 				}
 			}
-			bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
+			bossBar.trackHealth(this);
 
 			// Ambient soul-drain particles every 10 ticks the vessel seeps residual life
 			if (this.tickCount % 10 == 0 && this.level() instanceof ServerLevel server) {
@@ -233,14 +208,9 @@ public class HemorathEntity extends Monster {
 		}
 	}
 
-	private void tickVisualState() {
-		int ticks = getVisualTicks();
-		if (ticks > 0) {
-			this.entityData.set(DATA_VISUAL_TICKS, ticks - 1);
-			if (ticks == 1 && getVisualState() != VISUAL_OVERLOAD) {
-				this.entityData.set(DATA_VISUAL_STATE, VISUAL_NONE);
-			}
-		}
+	@Override
+	protected boolean holdsVisualState(int visualState) {
+		return visualState == VISUAL_OVERLOAD;
 	}
 
 	private void tickOverloadDeath() {
@@ -269,8 +239,8 @@ public class HemorathEntity extends Monster {
 					30, 0.8, 0.8, 0.8, 0.04);
 		}
 		// Boss bar signals the phase shift turns purple and renames
-		bossEvent.setColor(BossEvent.BossBarColor.PURPLE);
-		bossEvent.setName(Component.literal("Saint Hemorath - The Vessel Empties")
+		bossBar.setColor(BossEvent.BossBarColor.PURPLE);
+		bossBar.setName(Component.literal("Saint Hemorath - The Vessel Empties")
 				.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD));
 		if (this.getTarget() instanceof Player player) {
 			player.displayClientMessage(
@@ -300,18 +270,11 @@ public class HemorathEntity extends Monster {
 	@Override
 	public void startSeenByPlayer(ServerPlayer player) {
 		super.startSeenByPlayer(player);
-		bossEvent.addPlayer(player);
 		// Announce the encounter to the player who enters sight range
 		player.displayClientMessage(
 				Component.literal("The Hollow Vessel stirs. Blood will be spent.")
 						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 				false);
-	}
-
-	@Override
-	public void stopSeenByPlayer(ServerPlayer player) {
-		super.stopSeenByPlayer(player);
-		bossEvent.removePlayer(player);
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.boss.endgame;
 
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.NaeglerophaeonCombatRules.Move;
+import com.vincenthuto.hemomancy.common.entity.boss.BossBarBinding;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
@@ -56,7 +57,7 @@ public final class NaeglerophaeonEntity extends Monster {
     private static final EntityDataAccessor<Boolean> ENRAGED = SynchedEntityData.defineId(NaeglerophaeonEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DRAINED_STATE = SynchedEntityData.defineId(NaeglerophaeonEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Vector3f> MOVE_VECTOR = SynchedEntityData.defineId(NaeglerophaeonEntity.class, EntityDataSerializers.VECTOR3);
-    private final ServerBossEvent bossEvent = new ServerBossEvent(Component.translatable("entity.hemomancy.naeglerophaeon"), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_10);
+    private final BossBarBinding bossBar = new BossBarBinding("entity.hemomancy.naeglerophaeon", BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_10);
     private final NaeglerophaeonGripPart[] parts = {new NaeglerophaeonGripPart(this)};
     private BlockPos mindOrigin;
     private long mindSeed;
@@ -224,7 +225,7 @@ public final class NaeglerophaeonEntity extends Monster {
         parts[0].setPos(gripPosition(1).add(0,-.3,0));
         if (!(level() instanceof ServerLevel server) || !isAlive()) return;
         if (server.getDifficulty()==Difficulty.PEACEFUL) { release(); discard(); return; }
-        bossEvent.setProgress(getHealth()/getMaxHealth());
+        bossBar.trackHealth(this);
         if (mindOrigin!=null && tickCount%40==0) VagrantMindEncounterData.get(server).position(mindOrigin,getUUID(),blockPosition());
         tickCooldowns();
         tickPendingSparks(server);
@@ -733,7 +734,7 @@ public final class NaeglerophaeonEntity extends Monster {
     private void beginTransition(ServerLevel server) {
         release();
         enraged=true; entityData.set(ENRAGED,true);
-        bossEvent.setColor(BossEvent.BossBarColor.PURPLE);
+        bossBar.setColor(BossEvent.BossBarColor.PURPLE);
         lungesLeft=0; sparksLeft=0; conductNode=null; endBlink();
         stopMoving();
         phase(TRANSITION);
@@ -750,7 +751,7 @@ public final class NaeglerophaeonEntity extends Monster {
         release();
         if(!enraged) { enraged=true; entityData.set(ENRAGED,true); }
         overloading=true;
-        bossEvent.setColor(BossEvent.BossBarColor.YELLOW);
+        bossBar.setColor(BossEvent.BossBarColor.YELLOW);
         lungesLeft=0; sparksLeft=0; conductNode=null; endBlink();
         overloadCenter=findCenter();
         overloadClock=0; routeTicks=0;
@@ -869,7 +870,7 @@ public final class NaeglerophaeonEntity extends Monster {
     private void becomeDrained(ServerLevel server) {
         overloading=false; drained=true; entityData.set(DRAINED_STATE,true);
         blastTarget=null; driftTarget=null; twitchTicks=20;
-        bossEvent.setColor(BossEvent.BossBarColor.WHITE);
+        bossBar.setColor(BossEvent.BossBarColor.WHITE);
         setXRot(0);
         phase(DRAINED);
         NaeglerophaeonEffects.twitch(server,core());
@@ -1088,10 +1089,10 @@ public final class NaeglerophaeonEntity extends Monster {
     @Override public void remove(RemovalReason reason) {
         if(level() instanceof ServerLevel server && mindOrigin!=null) VagrantMindEncounterData.get(server).position(mindOrigin,getUUID(),blockPosition());
         releaseBurst();
-        clearVictim(); clearTransient(); bossEvent.removeAllPlayers(); super.remove(reason);
+        clearVictim(); clearTransient(); bossBar.hideAll(); super.remove(reason);
     }
-    @Override public void startSeenByPlayer(ServerPlayer player) { super.startSeenByPlayer(player); bossEvent.addPlayer(player); }
-    @Override public void stopSeenByPlayer(ServerPlayer player) { super.stopSeenByPlayer(player); bossEvent.removePlayer(player); }
+    @Override public void startSeenByPlayer(ServerPlayer player) { super.startSeenByPlayer(player); bossBar.show(player); }
+    @Override public void stopSeenByPlayer(ServerPlayer player) { super.stopSeenByPlayer(player); bossBar.hide(player); }
     @Override public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag); if(mindOrigin!=null) tag.putLong("MindOrigin",mindOrigin.asLong());
         tag.putLong("MindSeed",mindSeed); tag.putInt("ZapCooldown",zapCooldown); tag.putInt("GrabCooldown",grabCooldown);
@@ -1112,7 +1113,7 @@ public final class NaeglerophaeonEntity extends Monster {
         repairTicks=0; repairTravelTicks=0; repairCooldown=0;
         clearVictim(); clearTransient(); endBlink(); entityData.set(HUNTING,false);
         entityData.set(ENRAGED,enraged); entityData.set(DRAINED_STATE,drained);
-        bossEvent.setColor(drained?BossEvent.BossBarColor.WHITE:overloading?BossEvent.BossBarColor.YELLOW
+        bossBar.setColor(drained?BossEvent.BossBarColor.WHITE:overloading?BossEvent.BossBarColor.YELLOW
                 :enraged?BossEvent.BossBarColor.PURPLE:BossEvent.BossBarColor.RED);
         if(drained) { twitchTicks=20; phase(DRAINED); }
         else if(overloading) { overloadCenter=findCenter(); phase(ASCEND); }

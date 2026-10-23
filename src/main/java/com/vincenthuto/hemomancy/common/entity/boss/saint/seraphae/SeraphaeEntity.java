@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerBossEvent;
+import com.vincenthuto.hemomancy.common.entity.boss.BossBarBinding;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -116,10 +116,7 @@ public class SeraphaeEntity extends Monster {
 	private boolean anchorsPlaced;
 	private boolean defeated;
 
-	private final ServerBossEvent bossEvent = new ServerBossEvent(
-			Component.translatable("entity.hemomancy.seraphae"),
-			BossEvent.BossBarColor.YELLOW,
-			BossEvent.BossBarOverlay.NOTCHED_10);
+	private final BossBarBinding bossBar = new BossBarBinding("entity.hemomancy.seraphae", BossEvent.BossBarColor.YELLOW, BossEvent.BossBarOverlay.NOTCHED_10);
 
 	// ── constructor ───────────────────────────────────────────────────
 
@@ -268,7 +265,7 @@ public class SeraphaeEntity extends Monster {
 		tickState(server);
 
 		// Boss bar shows integrity progress
-		bossEvent.setProgress(getContainmentIntegrity() / MAX_INTEGRITY);
+		bossBar.setProgress(getContainmentIntegrity() / MAX_INTEGRITY);
 		updateBossBarColor();
 	}
 
@@ -576,11 +573,11 @@ public class SeraphaeEntity extends Monster {
 	private void updateBossBarColor() {
 		float integrity = getContainmentIntegrity();
 		if (integrity >= 75.0F) {
-			bossEvent.setColor(BossEvent.BossBarColor.GREEN);
+			bossBar.setColor(BossEvent.BossBarColor.GREEN);
 		} else if (integrity >= 40.0F) {
-			bossEvent.setColor(BossEvent.BossBarColor.YELLOW);
+			bossBar.setColor(BossEvent.BossBarColor.YELLOW);
 		} else {
-			bossEvent.setColor(BossEvent.BossBarColor.RED);
+			bossBar.setColor(BossEvent.BossBarColor.RED);
 		}
 	}
 
@@ -610,7 +607,7 @@ public class SeraphaeEntity extends Monster {
 	@Override
 	public void startSeenByPlayer(ServerPlayer player) {
 		super.startSeenByPlayer(player);
-		bossEvent.addPlayer(player);
+		bossBar.show(player);
 		player.displayClientMessage(
 				Component.literal("Seraphae, the Chain Saint, stirs. Maintain containment.")
 						.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
@@ -620,7 +617,7 @@ public class SeraphaeEntity extends Monster {
 	@Override
 	public void stopSeenByPlayer(ServerPlayer player) {
 		super.stopSeenByPlayer(player);
-		bossEvent.removePlayer(player);
+		bossBar.hide(player);
 	}
 
 	// ── save / load ───────────────────────────────────────────────────

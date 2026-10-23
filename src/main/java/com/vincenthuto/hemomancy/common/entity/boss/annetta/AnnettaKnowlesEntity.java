@@ -21,7 +21,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerBossEvent;
+import com.vincenthuto.hemomancy.common.entity.boss.BossBarBinding;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -97,10 +97,7 @@ public class AnnettaKnowlesEntity extends Monster {
     private static final int FRANTIC_LINES = 8;
     private static final int ALLY_LINES = 4;
 
-    private final ServerBossEvent bossEvent = new ServerBossEvent(
-            Component.translatable("entity.hemomancy.annetta_knowles"),
-            BossEvent.BossBarColor.PURPLE,
-            BossEvent.BossBarOverlay.NOTCHED_10);
+    private final BossBarBinding bossBar = new BossBarBinding("entity.hemomancy.annetta_knowles", BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.NOTCHED_10);
 
     private int phaseOneTicks;
     private float damageTaken;
@@ -134,7 +131,7 @@ public class AnnettaKnowlesEntity extends Monster {
         super(type, level);
         this.setPersistenceRequired();
         this.xpReward = 100;
-        this.bossEvent.setVisible(false);
+        this.bossBar.setVisible(false);
         // Her dagger is held for the render; the cure route's dagger reward is its own drop.
         this.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
         this.setLeftHanded(false);
@@ -205,7 +202,7 @@ public class AnnettaKnowlesEntity extends Monster {
     private void setEncounterState(EncounterState state) {
         this.entityData.set(DATA_STATE, state.id);
         this.entityData.set(DATA_SCENE_TICK, 0);
-        this.bossEvent.setVisible(state == EncounterState.PHASE_ONE || state == EncounterState.BREAKING);
+        this.bossBar.setVisible(state == EncounterState.PHASE_ONE || state == EncounterState.BREAKING);
     }
 
     public int getAction() {
@@ -275,14 +272,14 @@ public class AnnettaKnowlesEntity extends Monster {
         super.startSeenByPlayer(player);
         EncounterState state = this.getEncounterState();
         if (state == EncounterState.PHASE_ONE || state == EncounterState.BREAKING) {
-            this.bossEvent.addPlayer(player);
+            this.bossBar.show(player);
         }
     }
 
     @Override
     public void stopSeenByPlayer(ServerPlayer player) {
         super.stopSeenByPlayer(player);
-        this.bossEvent.removePlayer(player);
+        this.bossBar.hide(player);
     }
 
     // ---------------------------------------------------------------- interaction and dialogue
@@ -469,7 +466,7 @@ public class AnnettaKnowlesEntity extends Monster {
             case PURGING -> tickPurge(server);
             case CURED_SUPPORT -> tickAlly(server);
         }
-        this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
+        this.bossBar.trackHealth(this);
     }
 
     /** Cowering, the break and the purge are staged: she must not turn to follow players' eyes while they play. */
@@ -888,7 +885,7 @@ public class AnnettaKnowlesEntity extends Monster {
         server.playSound(null, blockPosition(), SoundEvents.WARDEN_EMERGE, SoundSource.HOSTILE, 1.2F, 1.2F);
 
         clearProps(server);
-        this.bossEvent.removeAllPlayers();
+        this.bossBar.hideAll();
         this.discard();
     }
 
@@ -1107,7 +1104,7 @@ public class AnnettaKnowlesEntity extends Monster {
 
     private void addNearbyPlayersToBossBar(ServerLevel server) {
         for (ServerPlayer player : server.getPlayers(p -> p.distanceToSqr(this) <= 96.0D * 96.0D)) {
-            this.bossEvent.addPlayer(player);
+            this.bossBar.show(player);
         }
     }
 

@@ -17,7 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerBossEvent;
+import com.vincenthuto.hemomancy.common.entity.boss.BossBarBinding;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -85,10 +85,7 @@ public class StainedPriestessEntity extends Monster {
     private static final int VOLLEY_TICKS = 20;
     private static final int BLOOD_DRAIN = 300;
 
-    private final ServerBossEvent bossEvent = new ServerBossEvent(
-            Component.translatable("entity.hemomancy.stained_priestess"),
-            BossEvent.BossBarColor.RED,
-            BossEvent.BossBarOverlay.NOTCHED_12);
+    private final BossBarBinding bossBar = new BossBarBinding("entity.hemomancy.stained_priestess", BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_12);
 
     private int modeLength = PriestessCombatRules.EMERGE_LENGTH;
     private float orbitAngle;
@@ -220,13 +217,13 @@ public class StainedPriestessEntity extends Monster {
     @Override
     public void startSeenByPlayer(ServerPlayer player) {
         super.startSeenByPlayer(player);
-        this.bossEvent.addPlayer(player);
+        this.bossBar.show(player);
     }
 
     @Override
     public void stopSeenByPlayer(ServerPlayer player) {
         super.stopSeenByPlayer(player);
-        this.bossEvent.removePlayer(player);
+        this.bossBar.hide(player);
     }
 
     // ---------------------------------------------------------------- ticking
@@ -238,7 +235,7 @@ public class StainedPriestessEntity extends Monster {
             return;
         }
         ServerLevel server = (ServerLevel) this.level();
-        this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
+        this.bossBar.trackHealth(this);
         int modeTick = getModeTick() + 1;
         this.entityData.set(DATA_MODE_TICK, modeTick);
         if (getAction() != ACTION_NONE) {

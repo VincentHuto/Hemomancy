@@ -11,7 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerBossEvent;
+import com.vincenthuto.hemomancy.common.entity.boss.BossBarBinding;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -97,10 +97,7 @@ public class VesperTheEveningStarEntity extends Monster {
 	private int actionCooldown;
 	private int actionHitMask;
 
-    private final ServerBossEvent bossEvent = new ServerBossEvent(
-            Component.translatable("entity.hemomancy.vesper_evening_star"),
-            BossEvent.BossBarColor.RED,
-            BossEvent.BossBarOverlay.NOTCHED_12);
+    private final BossBarBinding bossBar = new BossBarBinding("entity.hemomancy.vesper_evening_star", BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_12);
 
     public VesperTheEveningStarEntity(EntityType<? extends VesperTheEveningStarEntity> type, Level level) {
         super(type, level);
@@ -171,7 +168,7 @@ public class VesperTheEveningStarEntity extends Monster {
 				entityData.set(DATA_DOWNED_TICKS, downedTicks);
 				EndgameBossActions.tickVesperDefeat(this, downedTicks);
 				if (downedTicks == VesperCombatRules.DEFEAT_ANIMATION_TICKS) clearWeaponAction();
-				this.bossEvent.setProgress(1.0F - getDefeatAbsorptionProgress()
+				this.bossBar.setProgress(1.0F - getDefeatAbsorptionProgress()
 						/ VesperCombatRules.DEFEAT_ABSORPTION_REQUIRED);
 				this.setDeltaMovement(0.0D, this.getDeltaMovement().y, 0.0D);
 				if (VesperCombatRules.isDefeatAbsorptionComplete(getDefeatAbsorptionProgress())) {
@@ -185,13 +182,13 @@ public class VesperTheEveningStarEntity extends Monster {
 					EndgameBossActions.tickVesperBloodAbsorption(this, getDefeatAbsorptionProgress(), 0);
 				}
 			} else if (isHoodRemovalActive()) {
-				this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
+				this.bossBar.trackHealth(this);
 				tickHoodRemoval();
 			} else if (VesperEveningStarPresentationRules.shouldBeginHoodRemoval(
 					isHoodRemoved(), getHealth(), getMaxHealth())) {
 				beginHoodRemoval();
 			} else {
-				this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
+				this.bossBar.trackHealth(this);
 				tickTendencyCombat();
 			}
         }
@@ -206,13 +203,13 @@ public class VesperTheEveningStarEntity extends Monster {
     @Override
     public void startSeenByPlayer(ServerPlayer player) {
         super.startSeenByPlayer(player);
-        this.bossEvent.addPlayer(player);
+        this.bossBar.show(player);
     }
 
     @Override
     public void stopSeenByPlayer(ServerPlayer player) {
         super.stopSeenByPlayer(player);
-        this.bossEvent.removePlayer(player);
+        this.bossBar.hide(player);
     }
 
     @Override
@@ -413,7 +410,7 @@ public class VesperTheEveningStarEntity extends Monster {
         if (this.deathTicks >= FINAL_DEATH_TICKS) {
             if (!this.level().isClientSide) {
                 EndgameBossActions.finishWithExplosion(this, 2.5F);
-                this.bossEvent.removeAllPlayers();
+                this.bossBar.hideAll();
             }
             this.deathTime = 19;
             super.tickDeath();
@@ -496,7 +493,7 @@ public class VesperTheEveningStarEntity extends Monster {
 	private void tickAwakening() {
 		int awakeningTick = getAwakeningTick() + 1;
 		entityData.set(DATA_AWAKENING_TICK, awakeningTick);
-		bossEvent.setProgress(1.0F);
+		bossBar.setProgress(1.0F);
 		navigation.stop();
 		setDeltaMovement(0.0D, getDeltaMovement().y, 0.0D);
 		refreshDimensions();
@@ -598,7 +595,7 @@ public class VesperTheEveningStarEntity extends Monster {
 		setDeltaMovement(0.0D, 0.0D, 0.0D);
 		EndgameBossActions.clearVesperPuppets(this);
 		ensureSilentArchonShame();
-		bossEvent.setName(Component.literal("Vesper, the Shamed Evening Star"));
+		bossBar.setName(Component.literal("Vesper, the Shamed Evening Star"));
 		playSound(SoundEvents.BEACON_DEACTIVATE, 1.4F, 0.45F);
 	}
 
@@ -612,7 +609,7 @@ public class VesperTheEveningStarEntity extends Monster {
 	private void completeBloodAbsorption() {
 		if (ordealResolved || level().isClientSide) return;
 		ordealResolved = true;
-		bossEvent.removeAllPlayers();
+		bossBar.hideAll();
 		EndgameBossActions.clearVesperPuppets(this);
 		VesperOrdealManager.completeVictory(this);
 		discard();
@@ -664,7 +661,7 @@ public class VesperTheEveningStarEntity extends Monster {
 		entityData.set(DATA_RAGING, true);
 		entityData.set(DATA_STANCE_TICK, 30);
 		setActionCooldown(14);
-		bossEvent.setName(Component.translatable("entity.hemomancy.vesper_evening_star"));
+		bossBar.setName(Component.translatable("entity.hemomancy.vesper_evening_star"));
 		playSound(SoundEvents.WITHER_SPAWN, 1.25F, 1.45F);
 		if (level() instanceof ServerLevel server) {
 			Vec3 center = position().add(0.0D, 1.4D, 0.0D);

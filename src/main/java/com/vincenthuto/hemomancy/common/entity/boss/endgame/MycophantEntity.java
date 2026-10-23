@@ -18,7 +18,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerBossEvent;
+import com.vincenthuto.hemomancy.common.entity.boss.BossBarBinding;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -74,8 +74,7 @@ public class MycophantEntity extends Monster implements BroodMother {
 	public static volatile String reviewHoldPose;
 
 	private final MycophantController controller = new MycophantController(this);
-	private final ServerBossEvent bossEvent = new ServerBossEvent(Component.translatable("entity.hemomancy.mycophant"),
-			BossEvent.BossBarColor.YELLOW, BossEvent.BossBarOverlay.NOTCHED_12);
+	private final BossBarBinding bossBar = new BossBarBinding("entity.hemomancy.mycophant", BossEvent.BossBarColor.YELLOW, BossEvent.BossBarOverlay.NOTCHED_12);
 
 	@Nullable private UUID encounterOwner;
 	private float nectarPressure;
@@ -244,7 +243,7 @@ public class MycophantEntity extends Monster implements BroodMother {
 	public void aiStep() {
 		super.aiStep();
 		if (this.level().isClientSide) return;
-		this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
+		this.bossBar.trackHealth(this);
 		if (!this.isAlive()) return;
 		if (reviewHoldPose != null) return;
 		applyPendingRefusal();
@@ -281,13 +280,13 @@ public class MycophantEntity extends Monster implements BroodMother {
 		if (show && !this.bossBarShown) {
 			this.bossBarShown = true;
 			for (ServerPlayer player : ((ServerLevel) level()).getPlayers(p -> p.distanceToSqr(this) < 96 * 96))
-				this.bossEvent.addPlayer(player);
+				this.bossBar.show(player);
 		}
 		Component name = Component.translatable(getPhase() >= 2 ? "entity.hemomancy.mycophant.joining" : "entity.hemomancy.mycophant");
 		if (this.encounterOwner != null)
 			name = name.copy().append(Component.literal("  " + Math.round(this.nectarPressure) + "%")
 					.withStyle(ChatFormatting.GOLD));
-		this.bossEvent.setName(name);
+		this.bossBar.setName(name);
 	}
 
 	/** True while the intro, split or yield are playing out: she cannot be harmed through them. */
@@ -590,7 +589,7 @@ public class MycophantEntity extends Monster implements BroodMother {
 			MycophantMoves.yieldTick(this, t);
 			if (t >= MycophantYieldRules.length()) {
 				if (this.encounterOwner != null) MycophantEncounterManager.completeVictory(this);
-				this.bossEvent.removeAllPlayers();
+				this.bossBar.hideAll();
 				this.remove(RemovalReason.KILLED);
 			}
 		}
@@ -598,7 +597,7 @@ public class MycophantEntity extends Monster implements BroodMother {
 
 	@Override
 	public void remove(RemovalReason reason) {
-		if (!this.level().isClientSide) this.bossEvent.removeAllPlayers();
+		if (!this.level().isClientSide) this.bossBar.hideAll();
 		super.remove(reason);
 	}
 
@@ -607,13 +606,13 @@ public class MycophantEntity extends Monster implements BroodMother {
 	@Override
 	public void startSeenByPlayer(ServerPlayer player) {
 		super.startSeenByPlayer(player);
-		if (this.bossBarShown) this.bossEvent.addPlayer(player);
+		if (this.bossBarShown) this.bossBar.show(player);
 	}
 
 	@Override
 	public void stopSeenByPlayer(ServerPlayer player) {
 		super.stopSeenByPlayer(player);
-		this.bossEvent.removePlayer(player);
+		this.bossBar.hide(player);
 	}
 
 	@Override

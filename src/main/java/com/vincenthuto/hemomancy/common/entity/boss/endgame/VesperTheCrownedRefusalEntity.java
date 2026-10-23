@@ -15,7 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerBossEvent;
+import com.vincenthuto.hemomancy.common.entity.boss.BossBarBinding;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -123,10 +123,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 	private Vec3 passDirection = new Vec3(1.0D, 0.0D, 0.0D);
 	private Vec3 diveVelocity = new Vec3(0.0D, -1.25D, 0.0D);
 
-    private final ServerBossEvent bossEvent = new ServerBossEvent(
-            Component.translatable("entity.hemomancy.vesper_crowned_refusal"),
-            BossEvent.BossBarColor.RED,
-            BossEvent.BossBarOverlay.NOTCHED_12);
+    private final BossBarBinding bossBar = new BossBarBinding("entity.hemomancy.vesper_crowned_refusal", BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_12);
 
     public VesperTheCrownedRefusalEntity(EntityType<? extends VesperTheCrownedRefusalEntity> type, Level level) {
         super(type, level);
@@ -217,7 +214,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
         super.aiStep();
 		updateAnchorPositions();
         if (!this.level().isClientSide) {
-            this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
+            this.bossBar.trackHealth(this);
             if (this.isAlive()) {
 				tickEncounter();
             }
@@ -247,13 +244,13 @@ public class VesperTheCrownedRefusalEntity extends Monster {
     @Override
     public void startSeenByPlayer(ServerPlayer player) {
         super.startSeenByPlayer(player);
-        this.bossEvent.addPlayer(player);
+        this.bossBar.show(player);
     }
 
     @Override
     public void stopSeenByPlayer(ServerPlayer player) {
         super.stopSeenByPlayer(player);
-        this.bossEvent.removePlayer(player);
+        this.bossBar.hide(player);
     }
 
     @Override
@@ -596,7 +593,7 @@ public class VesperTheCrownedRefusalEntity extends Monster {
 				spawnedEveningStar = true;
 				EndgameBossActions.finishVesperCocoonReveal(this);
 				EndgameBossActions.clearVesperPuppets(this);
-				bossEvent.removeAllPlayers();
+				bossBar.hideAll();
 				discard();
 			}
 			return;

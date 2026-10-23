@@ -12,7 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerBossEvent;
+import com.vincenthuto.hemomancy.common.entity.boss.BossBarBinding;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -58,10 +58,7 @@ public class LatentAnnettaInfectionEntity extends Monster {
     private static final ParticleOptions ICHOR = HemoParticleData.bloodCell(new ParticleColor(214, 150, 48));
     private static final ParticleOptions SPORE = HemoParticleData.sporiticSpore(new ParticleColor(200, 170, 96));
 
-    private final ServerBossEvent bossEvent = new ServerBossEvent(
-            Component.translatable("entity.hemomancy.latent_annetta_infection"),
-            BossEvent.BossBarColor.WHITE,
-            BossEvent.BossBarOverlay.NOTCHED_10);
+    private final BossBarBinding bossBar = new BossBarBinding("entity.hemomancy.latent_annetta_infection", BossEvent.BossBarColor.WHITE, BossEvent.BossBarOverlay.NOTCHED_10);
 
     @Nullable private UUID curedAnnetta;
     private int cooldown = 30;
@@ -171,13 +168,13 @@ public class LatentAnnettaInfectionEntity extends Monster {
     @Override
     public void startSeenByPlayer(ServerPlayer player) {
         super.startSeenByPlayer(player);
-        this.bossEvent.addPlayer(player);
+        this.bossBar.show(player);
     }
 
     @Override
     public void stopSeenByPlayer(ServerPlayer player) {
         super.stopSeenByPlayer(player);
-        this.bossEvent.removePlayer(player);
+        this.bossBar.hide(player);
     }
 
     // ---------------------------------------------------------------- ticking
@@ -190,8 +187,8 @@ public class LatentAnnettaInfectionEntity extends Monster {
             return;
         }
         ServerLevel server = (ServerLevel) this.level();
-        this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
-        this.bossEvent.setVisible(getEmergeTick() >= LatentCombatRules.EMERGE_HIDDEN);
+        this.bossBar.trackHealth(this);
+        this.bossBar.setVisible(getEmergeTick() >= LatentCombatRules.EMERGE_HIDDEN);
         if (isEmerging()) {
             tickEmerging(server);
             return;
