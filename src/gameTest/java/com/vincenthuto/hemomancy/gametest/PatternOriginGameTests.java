@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodStructureCraftingHelper;
+import com.vincenthuto.hemomancy.common.rite.structure.BloodStructureCraftingHelper;
 import com.vincenthuto.hemomancy.common.util.PatternOrigins;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;

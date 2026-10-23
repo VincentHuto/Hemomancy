@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.gametest;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation;
 import com.mojang.authlib.GameProfile;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -212,13 +213,13 @@ public final class SuccessionGameTests {
     public static void normalActivationEscrowsAndCancellationReturnsStaff(GameTestHelper h) {
         var f=fixture(h);var prepared=setup(h,f,false,null,false);SuccessionRites.cleanup(h.getLevel(),prepared);
         var staff=new ItemStack(ItemInit.living_staff.get());f.player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,staff);
-        var result=com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket.tryStartCardinalRite(f.player,f.center,com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
+        var result=CardinalRiteActivation.tryStart(f.player,f.center,com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
         var saved=CardinalRiteSavedData.get(h.getLevel());var rite=saved.getRite(f.player.getUUID());
         h.assertTrue(result==com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED && rite!=null && rite.hasEscrowedStaff(),"Normal activation failed to create succession or capture staff");
         SuccessionRites.tick(h.getLevel(),f.player,rite,recipe(h,false));
         rite.markCollapsed();SuccessionRites.cleanup(h.getLevel(),rite);CardinalRiteStaffEscrow.restore(f.player,rite);saved.removeRite(f.player.getUUID());
         h.assertTrue(f.player.getInventory().contains(new ItemStack(ItemInit.living_staff.get())) && !rite.hasEscrowedStaff(),"Cancellation lost or duplicated escrowed staff");
-        h.assertTrue(!h.getLevel().getBlockState(BlockPos.of(rite.succession().getLong("Body"))).is(BlockInit.vacant_effigy.get()),"Cancellation retained committed body");cleanup(f);h.succeed();
+        h.assertTrue(!h.getLevel().getBlockState(BlockPos.of(rite.succession().tag().getLong("Body"))).is(BlockInit.vacant_effigy.get()),"Cancellation retained committed body");cleanup(f);h.succeed();
     }
     @GameTest(template = "empty")
     public static void consentChecksDegreeDistanceAndSurvivesOrdinaryExpulsion(GameTestHelper h) {
@@ -272,7 +273,7 @@ public final class SuccessionGameTests {
     public static void changedBloodOfferingCancelsWithoutPartiallyConsumingPair(GameTestHelper h) {
         var f = fixture(h); var rite = setup(h, f, false, null, false);
         for (int i=0;i<200;i++) SuccessionRites.tick(h.getLevel(), f.player, rite, recipe(h,false));
-        var entries=rite.succession().getList("Offerings", net.minecraft.nbt.Tag.TAG_COMPOUND);
+        var entries=rite.succession().tag().getList("Offerings", net.minecraft.nbt.Tag.TAG_COMPOUND);
         var donor=(IronBrazierBlockEntity)h.getLevel().getBlockEntity(BlockPos.of(entries.getCompound(0).getLong("Position")));
         var will=(IronBrazierBlockEntity)h.getLevel().getBlockEntity(BlockPos.of(entries.getCompound(1).getLong("Position")));
         will.extractOffering(); will.insertOffering(null,new ItemStack(ItemInit.bloody_vial.get()));
@@ -286,7 +287,7 @@ public final class SuccessionGameTests {
     public static void activeRiteKeepsCapturedOwnershipAfterDepartureAndDissolution(GameTestHelper h) {
         var f=fixture(h);var rite=setup(h,f,false,null,false);
         BloodlineSavedData.get(h.getLevel().getServer().overworld()).disbandBloodline(f.line.getBloodlineUUID());
-        run(h,f,rite);var data=SuccessionSavedData.get(h.getLevel());var r=data.residents.get(rite.succession().getUUID("Identity"));
+        run(h,f,rite);var data=SuccessionSavedData.get(h.getLevel());var r=data.residents.get(rite.succession().tag().getUUID("Identity"));
         h.assertTrue(r != null && r.dormant && r.bloodline.equals(f.line.getBloodlineUUID()),"Dissolution lost captured ownership or deleted successor");
         h.assertTrue(!data.ledger.owns(r.id,r.place()),"Dormant successor retained workplace");cleanup(f);h.succeed();
     }
@@ -322,7 +323,7 @@ public final class SuccessionGameTests {
     public static void formingEffigyCannotBeMinedForARefund(GameTestHelper h) {
         var f = fixture(h); var rite = setup(h, f, false, null, false);
         SuccessionRites.tick(h.getLevel(), f.player, rite, recipe(h, false));
-        var body = BlockPos.of(rite.succession().getLong("Body"));
+        var body = BlockPos.of(rite.succession().tag().getLong("Body"));
         var drops = net.minecraft.world.level.block.Block.getDrops(h.getLevel().getBlockState(body), h.getLevel(), body, null);
         h.assertTrue(drops.stream().noneMatch(s -> s.is(BlockInit.vacant_effigy.get().asItem())), "Committed body refunded its effigy when broken");
         SuccessionRites.cleanup(h.getLevel(), rite); cleanup(f); h.succeed();
@@ -332,7 +333,7 @@ public final class SuccessionGameTests {
         var f = fixture(h); var data = SuccessionSavedData.get(h.getLevel());
         var first = setup(h, f, false, null, false);
         run(h, f, first);
-        UUID id = first.succession().getUUID("Identity");
+        UUID id = first.succession().tag().getUUID("Identity");
         var original = data.residents.get(id);
         h.assertTrue(original != null && data.ledger.life(id).alive(), "Creation did not commit identity");
         var entity = (ProfessionalHarbingerEntity) h.getLevel().getEntity(id);
@@ -356,7 +357,7 @@ public final class SuccessionGameTests {
     public static void wrongOfficiantCreatesHostileAndDoesNotRefundIngredients(GameTestHelper h) {
         var f = fixture(h); var rite = setup(h, f, false, null, true); run(h, f, rite);
         var data = SuccessionSavedData.get(h.getLevel());
-        h.assertTrue(!data.residents.containsKey(rite.succession().getUUID("Identity")), "Fraud created legitimate resident");
+        h.assertTrue(!data.residents.containsKey(rite.succession().tag().getUUID("Identity")), "Fraud created legitimate resident");
         h.assertTrue(h.getLevel().getEntitiesOfClass(ProfessionalHarbingerEntity.class,
                 new net.minecraft.world.phys.AABB(f.center).inflate(8), ProfessionalHarbingerEntity::isMisbegotten).size() == 1,
                 "Rejection did not create exactly one hostile");
@@ -368,7 +369,7 @@ public final class SuccessionGameTests {
     @GameTest(template = "empty", timeoutTicks = 200)
     public static void failedRestorationPreservesIdentityAndAllowsRetry(GameTestHelper h) {
         var f = fixture(h); var creation = setup(h, f, false, null, false); run(h, f, creation);
-        UUID id = creation.succession().getUUID("Identity"); var data = SuccessionSavedData.get(h.getLevel());
+        UUID id = creation.succession().tag().getUUID("Identity"); var data = SuccessionSavedData.get(h.getLevel());
         var entity = (ProfessionalHarbingerEntity) h.getLevel().getEntity(id);
         SuccessionResidents.died(h.getLevel(), entity); entity.discard();
         var relic = BoundMnemonicRemnantItem.create(data.residents.get(id), data.ledger.life(id).generation());
@@ -397,7 +398,7 @@ public final class SuccessionGameTests {
     @GameTest(template = "empty", timeoutTicks = 200)
     public static void reissueInvalidatesCopiesAndRequiresNearbyBloodwell(GameTestHelper h) {
         var f = fixture(h); var rite = setup(h, f, false, null, false); run(h, f, rite);
-        var data = SuccessionSavedData.get(h.getLevel()); UUID id = rite.succession().getUUID("Identity");
+        var data = SuccessionSavedData.get(h.getLevel()); UUID id = rite.succession().tag().getUUID("Identity");
         var entity = (ProfessionalHarbingerEntity) h.getLevel().getEntity(id);
         SuccessionResidents.died(h.getLevel(), entity); entity.discard(); int old = data.ledger.life(id).generation();
         f.player.setPos(f.center.getX()+100, f.center.getY(), f.center.getZ());
@@ -413,15 +414,15 @@ public final class SuccessionGameTests {
         var f = fixture(h); var rite = setup(h, f, false, null, false);
         for (int i = 0; i < 650; i++) h.assertTrue(SuccessionRites.tick(h.getLevel(), f.player, rite, recipe(h, false)), "Rite stopped before save");
         var loaded = ActiveCardinalRite.deserialize(rite.serialize(h.getLevel().registryAccess()), h.getLevel().registryAccess());
-        h.assertTrue(loaded.succession().getBoolean("BloodConsumed") && loaded.succession().getBoolean("MemoryConsumed"), "Restart lost consumed stages");
-        run(h, f, loaded); h.assertTrue(SuccessionSavedData.get(h.getLevel()).ledger.life(loaded.succession().getUUID("Identity")).alive(), "Resumed rite failed");
+        h.assertTrue(loaded.succession().tag().getBoolean("BloodConsumed") && loaded.succession().tag().getBoolean("MemoryConsumed"), "Restart lost consumed stages");
+        run(h, f, loaded); h.assertTrue(SuccessionSavedData.get(h.getLevel()).ledger.life(loaded.succession().tag().getUUID("Identity")).alive(), "Resumed rite failed");
         cleanup(f); h.succeed();
     }
 
     @GameTest(template = "empty", timeoutTicks = 200)
     public static void displacedSuccessorKeepsIdentityAndFindsReplacement(GameTestHelper h) {
         var f = fixture(h); var rite = setup(h, f, false, null, false); run(h, f, rite);
-        UUID id = rite.succession().getUUID("Identity"); var data = SuccessionSavedData.get(h.getLevel());
+        UUID id = rite.succession().tag().getUUID("Identity"); var data = SuccessionSavedData.get(h.getLevel());
         var entity = (ProfessionalHarbingerEntity) h.getLevel().getEntity(id);
         h.getLevel().removeBlock(f.work, false); SuccessionResidents.tick(h.getLevel(), entity);
         h.assertTrue(data.residents.get(id).displaced && !SuccessionResidents.mayServe(f.player, entity), "Destroyed workplace did not pause services");
@@ -507,8 +508,8 @@ public final class SuccessionGameTests {
         h.assertTrue(SuccessionRites.prepare(h.getLevel(),f.player,rite,match),"Eligible succession failed preparation");return rite;
     }
     private static void run(GameTestHelper h,Fixture f,ActiveCardinalRite rite) {
-        boolean active=true;for(int i=0;i<1300&&active;i++)active=SuccessionRites.tick(h.getLevel(),f.player,rite,recipe(h,rite.succession().getBoolean("Restoring")));
-        h.assertTrue(rite.succession().getBoolean("Resolved"),"Rite stopped before resolution at "+rite.succession().getInt("Ticks"));SuccessionRites.cleanup(h.getLevel(),rite);
+        boolean active=true;for(int i=0;i<1300&&active;i++)active=SuccessionRites.tick(h.getLevel(),f.player,rite,recipe(h,rite.succession().tag().getBoolean("Restoring")));
+        h.assertTrue(rite.succession().tag().getBoolean("Resolved"),"Rite stopped before resolution at "+rite.succession().ticks());SuccessionRites.cleanup(h.getLevel(),rite);
     }
     private static void cleanup(Fixture f) { f.player.discard(); }
 }

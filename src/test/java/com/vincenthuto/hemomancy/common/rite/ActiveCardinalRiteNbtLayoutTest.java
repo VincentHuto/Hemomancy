@@ -94,8 +94,8 @@ final class ActiveCardinalRiteNbtLayoutTest {
 		rite.setMatchedFloor(ResourceLocation.fromNamespaceAndPath("hemomancy", "working_lesser"), Direction.SOUTH,
 				Direction.UP);
 		rite.beginPuppeteerTrial("sanguine_hound", PUPPET, CROSSBAR);
-		rite.updatePuppeteerTrialHealth(7.0F, 28.0F);
-		rite.incrementPuppeteerTrialMissingTicks();
+		rite.puppeteerTrial().updateHealth(7.0F, 28.0F);
+		rite.puppeteerTrial().incrementMissingTicks();
 		rite.addRiteThreat(PUPPET);
 		assertLayout("puppeteer_trial", rite);
 	}
@@ -104,9 +104,9 @@ final class ActiveCardinalRiteNbtLayoutTest {
 	void workingCraft() {
 		ActiveCardinalRite rite = ActiveCardinalRite.workingCraft(CASTER, CENTER, rite("working/somatic_loom"), 5, 300);
 		rite.feedSubject(120);
-		rite.craft().putString("EscrowState", "ESCROWED");
-		rite.craft().putUUID("RiteIdentity", IDENTITY);
-		rite.craft().putString("Side", "north");
+		rite.craft().tag().putString("EscrowState", "ESCROWED");
+		rite.craft().tag().putUUID("RiteIdentity", IDENTITY);
+		rite.craft().tag().putString("Side", "north");
 		assertLayout("working_craft", rite);
 	}
 
@@ -160,8 +160,8 @@ final class ActiveCardinalRiteNbtLayoutTest {
 		rite.enterInscription();
 		rite.sealAltar(false);
 		rite.fillUpgradeCircuit(0, tier.bloodPerCircuit() / 2);
-		rite.upgrade().putString("EscrowState", "ESCROWED");
-		rite.upgrade().putUUID("RiteIdentity", IDENTITY);
+		rite.upgrade().tag().putString("EscrowState", "ESCROWED");
+		rite.upgrade().tag().putUUID("RiteIdentity", IDENTITY);
 		return rite;
 	}
 

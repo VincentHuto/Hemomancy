@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteEventKind;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow;
-import com.vincenthuto.hemomancy.common.succession.SuccessionRites;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -17,9 +16,10 @@ import java.util.UUID;
 
 /**
  * The one way an active Cardinal Rite ends. Every outcome releases the same
- * things in the same order: rite-bound threats, station and succession escrow,
+ * things in the same order: rite-bound threats, the escrow and holdings of its
+ * {@link RiteKind} (a station upgrade's, a Working craft's or a Succession's),
  * NPC allies, the daemon, and the planted Living Staff. Only a completed rite
- * keeps its station-upgrade result; everything else returns its escrow.
+ * keeps what its escrow paid for; everything else returns it.
  */
 public final class CardinalRiteTermination {
 	public enum Outcome {
@@ -66,23 +66,20 @@ public final class CardinalRiteTermination {
 			String style) {
 		// A rite ends once: lethal backlash can reach the death handler before the caller finishes.
 		if (!rite.markEnded()) return;
+		var recipe = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
+		RiteKind kind = RiteKind.of(rite, recipe);
 		CardinalRiteOrdealEngine.clearThreats(level, rite);
-		if (outcome != Outcome.COMPLETED) {
-			StationUpgradeRites.recover(level, rite);
-			WorkingCraftRites.recover(level, rite);
-		}
+		if (outcome != Outcome.COMPLETED) kind.returnEscrow(level, rite);
 		RiteOfferingEscrow.clearShown(level, rite);
-		StationUpgradeRites.cleanup(level, rite);
-		SuccessionRites.cleanup(level, rite);
+		kind.release(level, rite);
 		CardinalRiteAllyService.returnNpcAlliesToFane(level, rite);
 		discardDaemon(level, rite);
 		returnStaff(level, caster, rite);
-		// Unstained rites keep their own still-water presentation; blood-rite endings are Harbinger-only.
-		var recipe = com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
 		if (outcome == Outcome.COMPLETED) {
 			// The floor keeps the rite's space: rite-bound things work inside it until the floor is broken.
 			com.vincenthuto.hemomancy.common.rite.zone.RiteSpaces.consecrate(level, rite, recipe);
 		}
+		// Unstained rites keep their own still-water presentation; blood-rite endings are Harbinger-only.
 		if (recipe == null || !recipe.isUnstained()) {
 			CardinalRiteBeats.send(level, rite, outcome.beat(), style == null ? "" : style);
 		}

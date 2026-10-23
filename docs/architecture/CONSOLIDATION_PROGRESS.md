@@ -17,7 +17,7 @@ Every consolidation session reads this file first and updates it last, following
 | 8 | Phase 7: registration and client registration | DONE | `3e8b213d4`, `291731d6f` | 2026-10-22 |
 | 9 | Phase 6: combat targeting and damage attribution | DONE | `3b841ba03`, `7f0c1968d`, `5fa01de44`, `c9af6c6c3` | 2026-10-22 |
 | 10 | Phases 8 + 9: rendering plumbing and animation conventions | DONE | `a53982248`..`e2597dc41` (items 1-9), review fixes and ledger in the commit after `e2597dc41` | 2026-10-23 |
-| 11 | Phase 10: god-class decomposition | NOT STARTED | | |
+| 11 | Phase 10: god-class decomposition | IN PROGRESS (item 1 of 5 done) | `91bb77eba`, item 1 in the commit after it | 2026-10-23 |
 | 12 | Phase 11: persistence authority migrations | NOT STARTED | | |
 | 13 | Phases 12 + 13: content, worldgen, data, tooling, standards | NOT STARTED | | |
 
@@ -181,6 +181,10 @@ them green.
 | `architecture/ParticleDataGuardrailTest` | 10 | V-6: the particle data classes are `ColorParticleOptions` plus three listed ones with their payloads; every particle type is a `HemoParticleType`; no `createData` helper outside `HemoParticleData` |
 | `common/particle/data/ColorParticleOptionsTest` | 10 | V-6: the colour particle's network form is the old serialized-colour UTF-8 string byte for byte, its command form is float fields `r`, `g`, `b`, and a decoded particle belongs to the type that decoded it |
 | `client/screen/skilltree/harbinger/VeinBackgroundStyleTest` | 10 | V-1: the named vein styles (progress with its deep palette, crimson, machine, station) keep the values of the copies they replaced, including each style's vertex order |
+| gameTest `RiteKindCharacterisationGameTests` (suite `rite_kind_validation`) | 11 | L-6: every rite kind (ceremony, countdown, Working craft, station upgrade, Puppeteer trial, Succession) driven through the real level tick: its `RiteKind`, start, completion, every ending (broken, recalled, leash, abandoned, collapsed, died, retired, refused), waiting for an absent caster, and a mid-rite save and load that must write the same NBT and finish the same way; the login snapshot carries the rite's stage |
+| `common/rite/ActiveCardinalRiteNbtLayoutTest` | 11 | L-6: each kind's saved rite NBT pinned key for key (`src/test/resources/rite/nbt-layout/`), the pre-StateVersion countdown and the legacy `AlembicUpgrade` key |
+| `architecture/RiteKindGuardrailTest` | 11 | L-6 / N-8: the shared tick, `CardinalRiteTermination`, `CardinalRiteCompletion` and `CardinalRiteStructure` test no kind (`isRite`, `isWorkingCraft`, `isPuppeteerTrial`, `SuccessionRites.is`); only `CardinalRiteActivation` builds an `ActiveCardinalRite`; the blood crafting key packet only delegates; no GameTest reflects on rite completion |
+| `architecture/NetworkPackageGuardrailTest` | 11 | N-8: `common/network` holds payloads, `PacketHandler`, `ServerboundGuards` and three listed helpers (stale entries fail) |
 
 ## Step entries
 
@@ -1204,3 +1208,91 @@ them green.
     before editing the code it checks.
   - **Review clients:** a fresh game directory without `options.txt` stops at the first-launch screen and the driver
     never logs `startup`; copy one in. The condenser review directory had none.
+
+### Step 11: Phase 10, god-class decomposition
+- **Status / date / commits:** IN PROGRESS, 2026-10-23. One commit per item, prefix `consolidation(step-11):`.
+
+  | Item | Status | Commit |
+  |---|---|---|
+  | Characterisation suite for item 1 (written and green before the extraction) | DONE | `91bb77eba` |
+  | 1. `RiteKind` strategy, per-kind state, `CardinalRiteActivation`, Blood Structure crafting out of the packet | DONE | the commit after `91bb77eba` |
+  | F-11 (crafts tick once per server tick) | NOT DONE: PENDING in *Decisions* | |
+  | 2. Per-NPC dialogue-event routing | NOT STARTED | |
+  | 3. `HemoCommand` split | NOT STARTED | |
+  | 4. Registration-time `setEntityCast` | NOT STARTED | |
+  | 5. Scriptorium operations into its block entity | NOT STARTED | |
+- **Test counts before → after:** `test` 4,055 → 4,064 (characterisation commit) → 4,067 (item 1), 0 failures.
+  `alphaCheck` after item 1: BUILD SUCCESSFUL, all 1,068 required GameTests passed (1,036 before; 32 are the new
+  `rite_kind_validation` suite).
+- **Impact map:** one read-only reviewer listed the tick's branches, `ActiveCardinalRite`'s fields and keys, the
+  packet's parts and every test pinning them (not committed; a working list).
+- **Characterisation (before the extraction):**
+  - New GameTest suite `rite_kind_validation` (alpha gate, focused launcher `runRiteKindGameTestServer`, about a
+    minute). Rites run through the real `onLevelTick`, with a `CapturedPlayer` caster that is listed online and
+    records chat. 30 tests at first, all green on the old code; item 1 added the kind assertions, the login-snapshot
+    test and the recipe-gone retirement test (32).
+  - `ActiveCardinalRiteNbtLayoutTest` recorded each kind's saved NBT from the old code.
+  - `CapturedPlayer` gained chat capture and `online()` / `offline()`. `StationUpgradeActivationGameTests.prepare` /
+    `practice` and `SuccessionGameTests.fixture` / `setup` / `recipe` became package-visible for reuse.
+- **Item 1, `RiteKind` (L-6, N-8):**
+  - `rite/harbinger/RiteKind` is an enum strategy, resolved from the rite's state and recipe in declaration order:
+    `SUCCESSION`, `STATION_UPGRADE`, `WORKING_CRAFT`, `PUPPETEER_TRIAL`, `COUNTDOWN`, `CEREMONY`. Hooks: `admit`
+    (tick, wait or break), `isWorking` (pause instead of binding, no collapse backlash, wait at an incomplete finish),
+    `intact` (the craft's subject check), `capturesOfferingsAsItRuns`, `holdsOnlyItsStructure`, `holdsBeforeFinale`,
+    `runOwnCourse` (Succession), `advance` (countdown or verify-and-run, final, with the old countdown test first so
+    ordering is preserved by construction), `advanceCeremony` (the Puppeteer trial phase), `complete`,
+    `returnEscrow` and `release` (termination).
+  - `onLevelTick` keeps the shared course in its old order and asks the kind at each fork. `CardinalRiteTermination`
+    dispatches to the kind instead of calling every controller. `enterFinale` asks `holdsBeforeFinale`.
+  - Moved out of `HarbingerCardinalRiteEvents` (1,690 → 912 lines): completion to `CardinalRiteCompletion` (public
+    `complete`, replacing 12 GameTest sites that reflected on the private `completeRite`); structure checks to
+    `CardinalRiteStructure`; the client snapshot (entries, checklist, blobs, segments, sync) to `CardinalRiteSync`;
+    `ritualFootprintRadius` to `CardinalRiteFootprintResolver.radius(rite, recipe)` (4 callers).
+  - Per-kind state behind `ActiveCardinalRite` (1,413 → 1,368 lines): `PuppeteerTrialState` (the seven trial fields,
+    flat keys), `WorkingCraftState` (`Craft`), `StationUpgradeState` (`StationUpgrade`, still reading
+    `AlembicUpgrade`), `SuccessionState` (`Succession`). Typed accessors for the keys the rite itself reads; the
+    escrow, snapshot and Succession keys stay in each state's `tag()` for `RiteOfferingEscrow`,
+    `StationUpgradeRites`, `WorkingCraftRites` and `SuccessionRites`. NBT unchanged (`ActiveCardinalRiteNbtLayoutTest`).
+  - `BloodCraftingKeyPressPacket` (700 → 63 lines) now picks once and calls `BloodStructureCrafting.tryCraft`
+    (new, `rite/structure`) then `CardinalRiteActivation.tryStart` (new, `rite/harbinger`). Its byte layout is unchanged.
+  - Out of `common/network`: `BloodStructureCraftingHelper`, `BloodCraftingPatternSearchRules`,
+    `BloodCraftingPatternBlockRules` and `BloodStructureVisiblePositionRules` to `rite/structure`;
+    `BloodlineChatRateLimit` to `capability/player/harbinger/bloodvolume` (tests moved with them).
+  - Source-text tests: the pinned tick block, the retirement checks, the escalate-call count and the activation ring
+    check were replaced by `rite_kind_validation` GameTests (cited in each test); `CardinalRiteSigilFeedbackSourceTest`,
+    `CardinalRiteProgressionResourceTest`, `BloodStructureFloorlessSourceTest`, `BloodlineScreenRegressionSourceTest`,
+    `BloodProjectionStructureCraftingResourceTest` and `PuppeteerIntegrationSourceTest` were retargeted to where the
+    text now lives (moved verbatim; mostly negative guards).
+- **Metrics:** item 1 is about 59 files, +2,500 / -1,900 lines, most of it moved. 10 new main classes, 2 guardrails.
+  Call sites migrated: 12 reflective completions, about 30 activation callers, 4 footprint callers, about 60 tag-bag
+  readers. Remaining legacy instances: 0 kind checks in the shared course; the `StationUpgradeRites.isRite` checks
+  inside `ActiveCardinalRite` (`sealAltar`, `ringOpenerCount`, circuit arithmetic) are state logic and stay.
+- **Guardrails added:** `RiteKindGuardrailTest`, `NetworkPackageGuardrailTest`, `ActiveCardinalRiteNbtLayoutTest`,
+  the `rite_kind_validation` suite.
+- **Approved items implemented:** none. F-11 is PENDING, so `PendingBloodCraftManager.tick()` still runs once per level
+  per tick (its `clear()` has been wired since step 5, so the audit's "never cleared" is stale).
+- **Pending approvals:** F-11.
+- **Deviations from the roadmap:**
+  - The roadmap names `matches`, `tick`, `validate`, `complete` and `terminate`. The hooks are finer (`admit`,
+    `isWorking`, `advance`, `returnEscrow` / `release`) because the old tick forks at more points than five, and
+    collapsing them would have changed the order.
+  - The client snapshot moved too (`CardinalRiteSync`), so the shared course reads without view code.
+  - Working crafts complete through `passesFinalGates` then `WorkingCraftRites.complete`. That equals the old branch
+    because no Working craft is Unstained (all 20 `working/*.json` checked).
+- **Final review:** one fresh reviewer read the diff and confirmed no behaviour change, no frozen identifier change
+  and no client reach. Fixed from its minors: the manifested-puppet structure rule is the base rule for every kind
+  again (exact under a datapack reload); a recipe-gone retirement GameTest that returns an escrowed staff; the
+  reflection guardrail catches the split-line form; one copy of the Unstained level-gate bypass (both call
+  `UnstainedAccessRules` directly); `CardinalRiteClientView` renamed `CardinalRiteSync`; `ARCHITECTURE_MAP.md`
+  updated. Left as noted: Puppeteer and Unstained activation starting ungated is no longer pinned (the old check was
+  source text); several former `test` checks now run only in `alphaCheck`.
+- **Not verified:** no in-game client run (the change is server-side and behaviour-preserving; the characterisation
+  suite drives every kind through the real tick).
+- **Handoff notes for item 2 (`DialogueEventHandler`, O-4):**
+  - Write the dialogue characterisation GameTests first: every route of `DialogueEventHandler.onDialogueOption`
+    (1,531 lines: about 13 prefix or lookup routes before a 36-case switch, then about 50 handlers). Post a
+    `DialogueEvent` on the event bus with a `CapturedPlayer` (chat capture) and the right NPC, and assert the reward
+    flag and effect.
+  - The focused launcher pattern from item 1 works: a new suite namespace in `gradle/game-tests.gradle`, an `empty.nbt`
+    template under `src/gameTest/resources/data/<namespace>/structure/`, then `runXGameTestServer`.
+  - Inline Python heredocs passed through the shell tool lose their backslashes; write edit scripts to a file first.

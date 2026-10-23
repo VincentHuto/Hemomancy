@@ -14,8 +14,11 @@ public final class BloodProjectionStructureCraftingResourceTest {
 	public static void main(String[] args) throws IOException {
 		String projectionItem = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/item/harbinger/tool/living/BloodProjectionItem.java"));
+		// The key packet delegates: Blood Structure crafting and rite activation live in their own classes.
 		String keyPacket = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/network/capa/harbinger/BloodCraftingKeyPressPacket.java"));
+				"com/vincenthuto/hemomancy/common/network/capa/harbinger/BloodCraftingKeyPressPacket.java"))
+				+ read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/rite/structure/BloodStructureCrafting.java"))
+				+ read(SOURCE_ROOT.resolve("com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteActivation.java"));
 		String livingStaff = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingStaffItem.java"));
 		String packetHandler = read(SOURCE_ROOT.resolve(
@@ -25,9 +28,9 @@ public final class BloodProjectionStructureCraftingResourceTest {
 		String feedManager = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/common/event/BloodStructureFeedManager.java"));
 		String craftingHelper = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/network/capa/harbinger/BloodStructureCraftingHelper.java"));
+				"com/vincenthuto/hemomancy/common/rite/structure/BloodStructureCraftingHelper.java"));
 		String visiblePositionRules = read(SOURCE_ROOT.resolve(
-				"com/vincenthuto/hemomancy/common/network/capa/harbinger/BloodStructureVisiblePositionRules.java"));
+				"com/vincenthuto/hemomancy/common/rite/structure/BloodStructureVisiblePositionRules.java"));
 		String clientData = read(SOURCE_ROOT.resolve(
 				"com/vincenthuto/hemomancy/client/data/ActiveBloodStructureFeedClientData.java"));
 		String renderer = read(SOURCE_ROOT.resolve(

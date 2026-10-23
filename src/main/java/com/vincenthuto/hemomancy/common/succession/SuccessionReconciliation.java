@@ -17,7 +17,7 @@ public final class SuccessionReconciliation {
         if (data.ledger.reservations().isEmpty()) return;
         var active = new HashSet<UUID>();
         for (var level : server.getAllLevels()) for (var rite : CardinalRiteSavedData.get(level).getActiveRites().values())
-            if (SuccessionRites.is(rite)) active.add(rite.succession().getUUID("Transaction"));
+            if (SuccessionRites.is(rite)) active.add(rite.succession().tag().getUUID("Transaction"));
         for (UUID transaction : List.copyOf(data.ledger.reservations().keySet())) if (!active.contains(transaction)) {
             data.ledger.release(transaction); data.setDirty();
         }

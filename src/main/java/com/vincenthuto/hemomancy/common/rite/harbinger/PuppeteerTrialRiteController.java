@@ -82,21 +82,21 @@ public final class PuppeteerTrialRiteController {
 
 	public static void tick(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite,
 			CardinalRiteRecipe recipe) {
-		if (!rite.isPuppeteerTrialManifested()) {
+		if (!rite.puppeteerTrial().isManifested()) {
 			manifest(level, caster, rite, recipe);
 			return;
 		}
-		Entity tracked = rite.getPuppeteerTrialEntityId() == null
-				? null : level.getEntity(rite.getPuppeteerTrialEntityId());
+		Entity tracked = rite.puppeteerTrial().entityId() == null
+				? null : level.getEntity(rite.puppeteerTrial().entityId());
 		if (!(tracked instanceof Mob puppet) || !puppet.isAlive()) {
-			if (!rite.isPuppeteerTrialDefeated()
-					&& PuppeteerTrialRiteRules.missingEntityExpired(rite.incrementPuppeteerTrialMissingTicks())) {
+			if (!rite.puppeteerTrial().isDefeated()
+					&& PuppeteerTrialRiteRules.missingEntityExpired(rite.puppeteerTrial().incrementMissingTicks())) {
 				rite.markCollapsed();
 			}
 			return;
 		}
-		rite.resetPuppeteerTrialMissingTicks();
-		rite.updatePuppeteerTrialHealth(puppet.getHealth(), puppet.getMaxHealth());
+		rite.puppeteerTrial().resetMissingTicks();
+		rite.puppeteerTrial().updateHealth(puppet.getHealth(), puppet.getMaxHealth());
 		if (puppet.getTarget() != caster) puppet.setTarget(caster);
 		double radius = CardinalRiteBoundaryLeashRules.ritualRadius(rite.getRiteSize());
 		if (puppet.distanceToSqr(rite.getCenterPos().getX() + 0.5, puppet.getY(),

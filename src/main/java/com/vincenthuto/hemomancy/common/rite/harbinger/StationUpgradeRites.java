@@ -84,7 +84,7 @@ public final class StationUpgradeRites {
         List<ActiveCardinalRite.RiteOffering> offerings = rite.getOfferingItinerary();
         if (offerings.size() != StationUpgradeCatalog.OFFERINGS_PER_RITE) return false;
         if (!RiteOfferingEscrow.itineraryPresent(level, offerings)) return false;
-        CompoundTag state = rite.upgrade();
+        CompoundTag state = rite.upgrade().tag();
         RiteOfferingEscrow.open(state);
         state.putUUID("SubjectIdentity", station.machineIdentity());
         state.putInt("SourceTier", station.upgradeTier());
@@ -101,7 +101,7 @@ public final class StationUpgradeRites {
 
     public static boolean subjectPresent(ServerLevel level, ActiveCardinalRite rite) {
         UpgradeableStation station = station(level, rite);
-        CompoundTag state = rite.upgrade();
+        CompoundTag state = rite.upgrade().tag();
         return station != null && state.hasUUID("SubjectIdentity")
                 && station.machineIdentity().equals(state.getUUID("SubjectIdentity"))
                 && station.upgradeTier() == state.getInt("SourceTier");
@@ -114,7 +114,7 @@ public final class StationUpgradeRites {
     public static boolean complete(ServerLevel level, ActiveCardinalRite rite) {
         Optional<StationUpgradeTier> tier = tier(rite);
         if (tier.isEmpty()) return true;
-        CompoundTag state = rite.upgrade();
+        CompoundTag state = rite.upgrade().tag();
         UpgradeableStation station = station(level, rite);
         UUID riteId = state.hasUUID("RiteIdentity") ? state.getUUID("RiteIdentity") : null;
         if (RiteOfferingEscrow.isConsumed(state)) {
@@ -140,7 +140,7 @@ public final class StationUpgradeRites {
 
     public static void recover(ServerLevel level, ActiveCardinalRite rite) {
         if (!isRite(rite.getRecipeId())) return;
-        CompoundTag state = rite.upgrade();
+        CompoundTag state = rite.upgrade().tag();
         String escrowState = state.getString("EscrowState");
         if (escrowState.isEmpty()) {
             // Started before offerings were escrowed (pre-consolidation Scriptorium): only the offerings its
@@ -177,8 +177,8 @@ public final class StationUpgradeRites {
     public static void cleanup(ServerLevel level, ActiveCardinalRite rite) {
         if (!isRite(rite.getRecipeId())) return;
         UpgradeableStation station = station(level, rite);
-        if (station != null && rite.upgrade().hasUUID("SubjectIdentity")
-                && station.machineIdentity().equals(rite.upgrade().getUUID("SubjectIdentity")))
+        if (station != null && rite.upgrade().tag().hasUUID("SubjectIdentity")
+                && station.machineIdentity().equals(rite.upgrade().tag().getUUID("SubjectIdentity")))
             station.setRiteLocked(false);
     }
 

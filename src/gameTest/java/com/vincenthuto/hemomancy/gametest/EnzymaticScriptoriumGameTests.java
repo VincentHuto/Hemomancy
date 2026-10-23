@@ -12,7 +12,7 @@ import com.vincenthuto.hemomancy.common.enchanting.ScriptoriumProvenance;
 import com.vincenthuto.hemomancy.common.enchanting.ScriptoriumUseEvents;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.DataComponentInit;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodStructureCraftingHelper;
+import com.vincenthuto.hemomancy.common.rite.structure.BloodStructureCraftingHelper;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.EnzymaticScriptoriumBlockEntity;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.EnzymaticScriptoriumMenu;
 import com.vincenthuto.hemomancy.common.init.ItemInit;

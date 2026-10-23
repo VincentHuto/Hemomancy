@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.network.capa.harbinger;
+package com.vincenthuto.hemomancy.common.rite.structure;
 
 import java.util.ArrayList;
 import java.util.Comparator;

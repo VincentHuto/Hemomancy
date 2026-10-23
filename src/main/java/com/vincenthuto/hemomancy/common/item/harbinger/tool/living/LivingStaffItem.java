@@ -18,7 +18,7 @@ import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.manipulation.ferric.CellHandRules;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCancellationHandler;
@@ -241,7 +241,7 @@ public class LivingStaffItem extends LivingItem implements IDispellable {
 		}
 		if (!context.getLevel().isClientSide
 				&& context.getPlayer() instanceof ServerPlayer serverPlayer
-				&& BloodCraftingKeyPressPacket.tryStartCardinalRite(
+				&& CardinalRiteActivation.tryStart(
 						serverPlayer, context.getClickedPos(),
 						CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE).handled()) {
 			return InteractionResult.SUCCESS;

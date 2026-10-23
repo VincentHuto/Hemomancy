@@ -1,8 +1,10 @@
 package com.vincenthuto.hemomancy.common.rite.harbinger;
 
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
+import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteFootprintRules;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorDefinition;
+import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilDefinition;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilRegistry;
 import net.minecraft.core.BlockPos;
@@ -12,6 +14,16 @@ import java.util.List;
 
 public final class CardinalRiteFootprintResolver {
 	private CardinalRiteFootprintResolver() {
+	}
+
+	/** The footprint of a running rite: its recipe's reach over the floor it matched, or its size's ritual radius. */
+	public static float radius(ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
+		CardinalRiteFloorDefinition floor = null;
+		if (rite.getMatchedFloorId() != null) {
+			var matchedFloor = CardinalRiteFloorRegistry.get(rite.getMatchedFloorId());
+			if (matchedFloor.isPresent()) floor = matchedFloor.get();
+		}
+		return radius(recipe, floor, (float) CardinalRiteBoundaryLeashRules.ritualRadius(rite.getRiteSize()));
 	}
 
 	public static float radius(CardinalRiteRecipe recipe, CardinalRiteFloorDefinition floor) {

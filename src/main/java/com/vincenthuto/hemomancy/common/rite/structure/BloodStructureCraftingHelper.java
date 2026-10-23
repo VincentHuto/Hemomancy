@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.network.capa.harbinger;
+package com.vincenthuto.hemomancy.common.rite.structure;
 
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.HematicStakeBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;

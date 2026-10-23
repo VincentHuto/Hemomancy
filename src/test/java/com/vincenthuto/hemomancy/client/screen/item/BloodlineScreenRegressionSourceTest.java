@@ -12,7 +12,7 @@ public final class BloodlineScreenRegressionSourceTest {
 	private static final Path HARBINGER_RITES = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java");
 	private static final Path BLOOD_CRAFT_PACKET = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/BloodCraftingKeyPressPacket.java");
+			"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteActivation.java");
 
 	private BloodlineScreenRegressionSourceTest() {
 	}

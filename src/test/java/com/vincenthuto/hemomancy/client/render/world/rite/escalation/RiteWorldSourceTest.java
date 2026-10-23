@@ -17,11 +17,11 @@ final class RiteWorldSourceTest {
 	void everyRiteTickAnnouncesItsStep() throws IOException {
 		String events = read("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java");
 
-		int calls = events.split("phaseChanged \\|= escalate\\(sLevel, rite\\);", -1).length - 1;
-		assertEquals(2, calls, "succession cues and ceremony ticks both escalate");
+		// That ceremonies and successions raise their stage through the tick, and that the stage reaches the caster,
+		// is behaviour: rite_kind_validation's ceremonyStageReachesItsCasterOnLogin and
+		// successionRunsItsCourseThroughTheTick.
 		assertTrue(events.contains("CardinalRiteEventKind.ESCALATION, rite.getEscalationStage()"),
 				"each step is sent as a beat carrying the new stage");
-		assertTrue(events.contains(".withEscalation("), "the stage is synced");
 	}
 
 	@Test

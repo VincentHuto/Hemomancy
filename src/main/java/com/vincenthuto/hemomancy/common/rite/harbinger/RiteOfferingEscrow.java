@@ -93,8 +93,8 @@ public final class RiteOfferingEscrow {
 	}
 
 	private static UUID identity(ActiveCardinalRite rite) {
-		if (rite.craft().hasUUID("RiteIdentity")) return rite.craft().getUUID("RiteIdentity");
-		return rite.upgrade().hasUUID("RiteIdentity") ? rite.upgrade().getUUID("RiteIdentity") : null;
+		if (rite.craft().tag().hasUUID("RiteIdentity")) return rite.craft().tag().getUUID("RiteIdentity");
+		return rite.upgrade().tag().hasUUID("RiteIdentity") ? rite.upgrade().tag().getUUID("RiteIdentity") : null;
 	}
 
 	public static boolean isEscrowed(CompoundTag state) {

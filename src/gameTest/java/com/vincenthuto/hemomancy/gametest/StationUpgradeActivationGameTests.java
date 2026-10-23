@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.common.block.harbinger.rite.BrazierBlock;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.*;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorRegistry;
@@ -278,7 +278,7 @@ public final class StationUpgradeActivationGameTests {
                 practice(player, tier);
                 player.setPos(Vec3.atCenterOf(center).add(0, 1, 0));
                 player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.living_staff.get()));
-                var start = BloodCraftingKeyPressPacket.tryStartCardinalRite(player, center, CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
+                var start = CardinalRiteActivation.tryStart(player, center, CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
                 helper.assertTrue(start == CardinalRiteActivationRules.ActivationAttempt.STARTED, tier.ritePath() + " activation refused eligible unclaimed player");
                 var rite = saved.getRite(player.getUUID());
                 helper.assertTrue(rite != null && rite.getRecipeId().equals(tier.rite()), "wrong rite activated");
@@ -337,7 +337,7 @@ public final class StationUpgradeActivationGameTests {
                 player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.living_staff.get()));
                 var progress = HemoCapabilityAccess.stationUpgrades(player);
                 if (tier.tier() == 2) tier.requiredUsage().forEach(use -> progress.recordUse(tier.station(), use));
-                var start = BloodCraftingKeyPressPacket.tryStartCardinalRite(player, center, CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
+                var start = CardinalRiteActivation.tryStart(player, center, CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
                 helper.assertTrue(start != CardinalRiteActivationRules.ActivationAttempt.STARTED && !saved.hasActiveRite(player.getUUID()), "gifted kit bypassed personal/previous practice");
                 helper.assertTrue(player.getInventory().contains(new ItemStack(ItemInit.living_staff.get())), "refusal lost staff");
                 var recipe = CardinalRiteRecipe.getRiteByLocation(helper.getLevel(), tier.rite());

@@ -18,18 +18,18 @@ final class PuppeteerTrialRiteStateTest {
 				ResourceLocation.parse("hemomancy:cardinal_rite/puppeteer_trial_veinwing_vulture"), 5);
 
 		rite.beginPuppeteerTrial("veinwing_vulture", entity, crossbar);
-		rite.updatePuppeteerTrialHealth(7.0F, 28.0F);
-		rite.incrementPuppeteerTrialMissingTicks();
+		rite.puppeteerTrial().updateHealth(7.0F, 28.0F);
+		rite.puppeteerTrial().incrementMissingTicks();
 
 		ActiveCardinalRite copy = ActiveCardinalRite.deserialize(rite.serialize());
 		assertEquals(CardinalRitePhase.PUPPET_TRIAL, copy.getPhase());
-		assertTrue(copy.isPuppeteerTrialManifested());
-		assertFalse(copy.isPuppeteerTrialDefeated());
-		assertEquals("veinwing_vulture", copy.getPuppeteerTrialSummonName());
-		assertEquals(entity, copy.getPuppeteerTrialEntityId());
-		assertEquals(crossbar, copy.getPuppeteerTrialCrossbarId());
-		assertEquals(0.75F, copy.getPuppeteerTrialProgress(), 0.0001F);
-		assertEquals(1, copy.getPuppeteerTrialMissingTicks());
+		assertTrue(copy.puppeteerTrial().isManifested());
+		assertFalse(copy.puppeteerTrial().isDefeated());
+		assertEquals("veinwing_vulture", copy.puppeteerTrial().summonName());
+		assertEquals(entity, copy.puppeteerTrial().entityId());
+		assertEquals(crossbar, copy.puppeteerTrial().crossbarId());
+		assertEquals(0.75F, copy.puppeteerTrial().progress(), 0.0001F);
+		assertEquals(1, copy.puppeteerTrial().missingTicks());
 	}
 
 	@Test
@@ -41,7 +41,7 @@ final class PuppeteerTrialRiteStateTest {
 
 		assertTrue(rite.markPuppeteerTrialDefeated(entity));
 		assertEquals(CardinalRitePhase.CULMINATION, rite.getPhase());
-		assertTrue(rite.isPuppeteerTrialDefeated());
+		assertTrue(rite.puppeteerTrial().isDefeated());
 		assertFalse(rite.markPuppeteerTrialDefeated(entity));
 		assertFalse(rite.markPuppeteerTrialDefeated(UUID.randomUUID()));
 	}

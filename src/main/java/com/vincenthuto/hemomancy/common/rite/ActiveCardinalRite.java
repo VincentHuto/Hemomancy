@@ -59,19 +59,22 @@ public class ActiveCardinalRite {
 	private final List<String> waveDeck = new ArrayList<>();
 	private CompoundTag escrowedStaff = new CompoundTag();
 	private boolean completionCommitted;
-    private CompoundTag succession = new CompoundTag();
-    private CompoundTag upgrade = new CompoundTag();
-    /** Escrow, circuit progress and subject snapshot of a station-upgrade rite. */
-    public CompoundTag upgrade() { return upgrade; }
-    public CompoundTag succession() { return succession; }
-	private CompoundTag craft = new CompoundTag();
+	private final SuccessionState succession = new SuccessionState();
+	private final StationUpgradeState upgrade = new StationUpgradeState();
+	private final WorkingCraftState craft = new WorkingCraftState();
+	private final PuppeteerTrialState puppeteerTrial = new PuppeteerTrialState();
+	/** Escrow, circuit progress and subject snapshot of a station-upgrade rite. */
+	public StationUpgradeState upgrade() { return upgrade; }
+	public SuccessionState succession() { return succession; }
 	/** Subject, feed and escrow state of a Working craft rite. */
-	public CompoundTag craft() { return craft; }
-	public boolean isWorkingCraft() { return craft.contains("FeedRequired"); }
-    public void beginSuccession(CompoundTag context) {
-        succession = context.copy();
-        setPhase(CardinalRitePhase.CULMINATION);
-    }
+	public WorkingCraftState craft() { return craft; }
+	/** The summoned puppet of a Puppeteer trial. */
+	public PuppeteerTrialState puppeteerTrial() { return puppeteerTrial; }
+	public boolean isWorkingCraft() { return craft.isPresent(); }
+	public void beginSuccession(CompoundTag context) {
+		succession.begin(context);
+		setPhase(CardinalRitePhase.CULMINATION);
+	}
 	private ResourceLocation matchedFloorId;
 	private Direction floorForwards = Direction.NORTH;
 	private Direction floorUp = Direction.UP;
@@ -90,13 +93,6 @@ public class ActiveCardinalRite {
 	private Vec3 cancellationRecoveryTargetPos;
 	private float cancellationRecoveryTargetScale;
 	private int staffPlantingTicks = -1;
-	private String puppeteerTrialSummonName = "";
-	private UUID puppeteerTrialEntityId;
-	private UUID puppeteerTrialCrossbarId;
-	private boolean puppeteerTrialManifested;
-	private boolean puppeteerTrialDefeated;
-	private float puppeteerTrialProgress;
-	private int puppeteerTrialMissingTicks;
 	private int sacrificeMl;
 	private int finaleHoldTicks;
 	/** Milestones already counted toward the rite's world stage; see {@link CardinalRiteEscalation}. */
@@ -171,13 +167,13 @@ public class ActiveCardinalRite {
 		rite.degree = 1;
 		rite.anchorBloodMl = new int[0];
 		rite.instabilityRepairBloodMl = new int[0];
-		rite.craft.putInt("FeedRequired", Math.max(1, feedMl));
+		rite.craft.require(feedMl);
 		return rite;
 	}
 
 	public int subjectFeedNeeded() {
 		if (phase != CardinalRitePhase.SUBJECT_FEEDING) return 0;
-		return Math.max(0, craft.getInt("FeedRequired") - craft.getInt("Fed"));
+		return craft.feedNeeded();
 	}
 
 	/** Takes blood into the subject; a full subject seals the rite into its finale. */
@@ -185,7 +181,7 @@ public class ActiveCardinalRite {
 		int needed = subjectFeedNeeded();
 		if (paidMl <= 0 || needed <= 0) return false;
 		int accepted = Math.min(needed, paidMl);
-		craft.putInt("Fed", craft.getInt("Fed") + accepted);
+		craft.feed(accepted);
 		committedBloodMl += accepted;
 		idleTicks = 0;
 		if (subjectFeedNeeded() == 0) {
@@ -196,38 +192,20 @@ public class ActiveCardinalRite {
 	}
 
 	public float subjectFill() {
-		int required = craft.getInt("FeedRequired");
-		return required <= 0 ? 0.0F : Math.min(1.0F, craft.getInt("Fed") / (float) required);
+		return craft.fill();
 	}
 
+	/** Records the manifested puppet and enters the trial. */
 	public void beginPuppeteerTrial(String summonName, UUID entityId, UUID crossbarId) {
-		if (summonName == null || summonName.isBlank() || entityId == null || crossbarId == null) return;
-		puppeteerTrialSummonName = summonName;
-		puppeteerTrialEntityId = entityId;
-		puppeteerTrialCrossbarId = crossbarId;
-		puppeteerTrialManifested = true;
-		puppeteerTrialDefeated = false;
-		puppeteerTrialProgress = 0.0F;
-		puppeteerTrialMissingTicks = 0;
-		setPhase(CardinalRitePhase.PUPPET_TRIAL);
+		if (puppeteerTrial.begin(summonName, entityId, crossbarId)) setPhase(CardinalRitePhase.PUPPET_TRIAL);
 	}
 
-	public void updatePuppeteerTrialHealth(float health, float maxHealth) {
-		if (!puppeteerTrialManifested || puppeteerTrialDefeated || maxHealth <= 0.0F) return;
-		puppeteerTrialProgress = Math.clamp(1.0F - Math.max(0.0F, health) / maxHealth, 0.0F, 1.0F);
-	}
-
+	/** The trial's puppet died: the rite moves to its culmination, once. */
 	public boolean markPuppeteerTrialDefeated(UUID entityId) {
-		if (phase != CardinalRitePhase.PUPPET_TRIAL || puppeteerTrialDefeated
-				|| entityId == null || !entityId.equals(puppeteerTrialEntityId)) return false;
-		puppeteerTrialDefeated = true;
-		puppeteerTrialProgress = 1.0F;
+		if (phase != CardinalRitePhase.PUPPET_TRIAL || !puppeteerTrial.markDefeated(entityId)) return false;
 		setPhase(CardinalRitePhase.CULMINATION);
 		return true;
 	}
-
-	public int incrementPuppeteerTrialMissingTicks() { return ++puppeteerTrialMissingTicks; }
-	public void resetPuppeteerTrialMissingTicks() { puppeteerTrialMissingTicks = 0; }
 
 	public void tick() {
 		if (phase == CardinalRitePhase.LEGACY) {
@@ -345,21 +323,20 @@ public class ActiveCardinalRite {
 	}
 
 	public int upgradeBloodNeeded() {
-		if (phase != CardinalRitePhase.STATION_PROJECTION || upgrade.getInt("Stage")
+		if (phase != CardinalRitePhase.STATION_PROJECTION || upgrade.stage()
 				>= com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.circuits(recipeId)) return 0;
 		return com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.bloodPerCircuit(recipeId)
-				- upgrade.getInt("BloodAtStage");
+				- upgrade.bloodAtStage();
 	}
 	public boolean fillUpgradeCircuit(int circuit, int paid) {
-		if (phase != CardinalRitePhase.STATION_PROJECTION || circuit != upgrade.getInt("Stage")
+		if (phase != CardinalRitePhase.STATION_PROJECTION || circuit != upgrade.stage()
 				|| paid <= 0 || upgradeBloodNeeded() <= 0) return false;
 		int circuitCost = com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.bloodPerCircuit(recipeId);
-		int next = Math.min(circuitCost, upgrade.getInt("BloodAtStage") + paid);
-		committedBloodMl += next - upgrade.getInt("BloodAtStage");
-		upgrade.putInt("BloodAtStage", next);
+		int next = Math.min(circuitCost, upgrade.bloodAtStage() + paid);
+		committedBloodMl += next - upgrade.bloodAtStage();
+		upgrade.setBloodAtStage(next);
 		if (next == circuitCost) {
-			upgrade.putInt("Stage", circuit + 1);
-			upgrade.putInt("BloodAtStage", 0);
+			upgrade.advanceStage();
 			if (circuit + 1 == com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.circuits(recipeId))
 				tryFinishStationProjection();
 		}
@@ -614,7 +591,7 @@ public class ActiveCardinalRite {
 
 	/** Hands a station rite whose circuits are all fed to its finale, once every woken ring is fed too. */
 	public boolean tryFinishStationProjection() {
-		if (phase != CardinalRitePhase.STATION_PROJECTION || upgrade.getInt("Stage")
+		if (phase != CardinalRitePhase.STATION_PROJECTION || upgrade.stage()
 				< com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.circuits(recipeId)) return false;
 		if (ringsGated() && !areAnchorsConsecrated()) return false;
 		setPhase(finalePhase());
@@ -1075,13 +1052,6 @@ public class ActiveCardinalRite {
 	public ResourceLocation getMatchedFloorId() { return matchedFloorId; }
 	public Direction getFloorForwards() { return floorForwards; }
 	public Direction getFloorUp() { return floorUp; }
-	public String getPuppeteerTrialSummonName() { return puppeteerTrialSummonName; }
-	public UUID getPuppeteerTrialEntityId() { return puppeteerTrialEntityId; }
-	public UUID getPuppeteerTrialCrossbarId() { return puppeteerTrialCrossbarId; }
-	public boolean isPuppeteerTrialManifested() { return puppeteerTrialManifested; }
-	public boolean isPuppeteerTrialDefeated() { return puppeteerTrialDefeated; }
-	public float getPuppeteerTrialProgress() { return puppeteerTrialProgress; }
-	public int getPuppeteerTrialMissingTicks() { return puppeteerTrialMissingTicks; }
 
 	public double getProgress() {
 		return getProgress(CardinalRiteCeremonyRules.stillIntervalTicks(0));
@@ -1095,12 +1065,12 @@ public class ActiveCardinalRite {
 			case CONSECRATION -> anchorBloodMl.length == 0 ? 0.0D
 					: 0.25D * committedBloodMl / (double) Math.max(1, openRequirementMl());
 			case INSCRIPTION -> 0.25D;
-			case STATION_PROJECTION -> 0.25D + 0.55D * (upgrade.getInt("Stage")
-					+ upgrade.getInt("BloodAtStage") / (double) com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.bloodPerCircuit(recipeId))
+			case STATION_PROJECTION -> 0.25D + 0.55D * (upgrade.stage()
+					+ upgrade.bloodAtStage() / (double) com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.bloodPerCircuit(recipeId))
 					/ com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.circuits(recipeId);
 			case SUBJECT_FEEDING -> 0.10D + 0.70D * subjectFill();
 			case ORDEAL -> 0.25D + (totalWaves == 0 ? 0.0D : 0.5D * currentWave / totalWaves);
-			case PUPPET_TRIAL -> puppeteerTrialProgress;
+			case PUPPET_TRIAL -> puppeteerTrial.progress();
 			case STILL_INTERVAL -> 0.75D + 0.10D * boundedPhaseProgress(stillIntervalTicks);
 			case OFFERING_PROCESSION -> 0.85D + (offeringItinerary.isEmpty() ? 0.05D
 					: 0.10D * offeringVisitIndex / offeringItinerary.size());
@@ -1120,7 +1090,7 @@ public class ActiveCardinalRite {
 	public CompoundTag serialize(HolderLookup.Provider provider) {
 		CompoundTag tag = new CompoundTag();
 		tag.putInt(STATE_VERSION, CURRENT_STATE_VERSION);
-        tag.put("Succession", succession.copy());
+		succession.write(tag);
 		tag.putUUID("PlayerUUID", playerUUID);
 		tag.putLong("CenterPos", centerPos.asLong());
 		tag.putString("RecipeId", recipeId.toString());
@@ -1172,8 +1142,8 @@ public class ActiveCardinalRite {
 		}
 		tag.put("WaveDeck", waves);
 		if (!escrowedStaff.isEmpty()) tag.put("EscrowedStaff", escrowedStaff.copy());
-		if (!upgrade.isEmpty()) tag.put("StationUpgrade", upgrade.copy());
-		if (!craft.isEmpty()) tag.put("Craft", craft.copy());
+		upgrade.write(tag);
+		craft.write(tag);
 		tag.putBoolean("CompletionCommitted", completionCommitted);
 		if (matchedFloorId != null) tag.putString("MatchedFloor", matchedFloorId.toString());
 		tag.putString("FloorForwards", floorForwards.getName());
@@ -1183,13 +1153,7 @@ public class ActiveCardinalRite {
 		tag.putBoolean("ReturningFromOfferings", returningFromOfferings);
 		tag.putInt("OfferingDwellTicks", offeringDwellTicks);
 		tag.putInt("StaffPlantingTicks", staffPlantingTicks);
-		if (!puppeteerTrialSummonName.isBlank()) tag.putString("PuppeteerTrialSummon", puppeteerTrialSummonName);
-		if (puppeteerTrialEntityId != null) tag.putUUID("PuppeteerTrialEntity", puppeteerTrialEntityId);
-		if (puppeteerTrialCrossbarId != null) tag.putUUID("PuppeteerTrialCrossbar", puppeteerTrialCrossbarId);
-		tag.putBoolean("PuppeteerTrialManifested", puppeteerTrialManifested);
-		tag.putBoolean("PuppeteerTrialDefeated", puppeteerTrialDefeated);
-		tag.putFloat("PuppeteerTrialProgress", puppeteerTrialProgress);
-		tag.putInt("PuppeteerTrialMissingTicks", puppeteerTrialMissingTicks);
+		puppeteerTrial.write(tag);
 		tag.putInt("SacrificeMl", sacrificeMl);
 		tag.putInt("FinaleHoldTicks", finaleHoldTicks);
 		tag.putInt("EscalationRings", escalationMarks.rings());
@@ -1327,11 +1291,10 @@ public class ActiveCardinalRite {
 		for (int i = 0; i < waves.size(); i++) rite.waveDeck.add(waves.getCompound(i).getString("Id"));
 		rite.escrowedStaff = tag.contains("EscrowedStaff")
 				? tag.getCompound("EscrowedStaff").copy() : new CompoundTag();
-		rite.upgrade = (tag.contains("StationUpgrade") ? tag.getCompound("StationUpgrade")
-				: tag.getCompound("AlembicUpgrade")).copy();
+		rite.upgrade.read(tag);
 		rite.completionCommitted = tag.getBoolean("CompletionCommitted");
-        rite.succession = tag.getCompound("Succession").copy();
-		rite.craft = tag.getCompound("Craft").copy();
+		rite.succession.read(tag);
+		rite.craft.read(tag);
 		if (tag.contains("MatchedFloor")) rite.matchedFloorId =
 				ResourceLocation.parse(tag.getString("MatchedFloor"));
 		rite.floorForwards = Direction.byName(tag.getString("FloorForwards"));
@@ -1340,15 +1303,7 @@ public class ActiveCardinalRite {
 		if (rite.floorUp == null) rite.floorUp = Direction.UP;
 		rite.staffPlantingTicks = tag.contains("StaffPlantingTicks")
 				? tag.getInt("StaffPlantingTicks") : -1;
-		rite.puppeteerTrialSummonName = tag.getString("PuppeteerTrialSummon");
-		rite.puppeteerTrialEntityId = tag.hasUUID("PuppeteerTrialEntity")
-				? tag.getUUID("PuppeteerTrialEntity") : null;
-		rite.puppeteerTrialCrossbarId = tag.hasUUID("PuppeteerTrialCrossbar")
-				? tag.getUUID("PuppeteerTrialCrossbar") : null;
-		rite.puppeteerTrialManifested = tag.getBoolean("PuppeteerTrialManifested");
-		rite.puppeteerTrialDefeated = tag.getBoolean("PuppeteerTrialDefeated");
-		rite.puppeteerTrialProgress = tag.getFloat("PuppeteerTrialProgress");
-		rite.puppeteerTrialMissingTicks = tag.getInt("PuppeteerTrialMissingTicks");
+		rite.puppeteerTrial.read(tag);
 		rite.sacrificeMl = tag.getInt("SacrificeMl");
 		rite.finaleHoldTicks = tag.getInt("FinaleHoldTicks");
 		ListTag offerings = tag.getList("OfferingItinerary", Tag.TAG_COMPOUND);

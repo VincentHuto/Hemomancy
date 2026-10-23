@@ -102,7 +102,10 @@ public record ExamplePayload(int entityId, float amount) implements CustomPacket
   - `sendNear(level, pos, radius, p)`
   - `sendTracking(entity, p)`
 - **Packets stay thin.** A packet decodes, validates and delegates. Gameplay lives in
-  `rite/`, `tile/`, `entity/` or `manipulation/`, never in `network/`.
+  `rite/`, `tile/`, `entity/` or `manipulation/`, never in `network/`. Since step 11,
+  `NetworkPackageGuardrailTest` holds `common/network` to payloads, `PacketHandler`, `ServerboundGuards`
+  and three listed networking helpers; the blood crafting key calls `BloodStructureCrafting.tryCraft`
+  and `CardinalRiteActivation.tryStart`.
 - **One visual payload.** Server-to-client visuals use one data-driven payload with an
   enum kind, either `ManipulationVisualPacket` or the new `ParticleBurstPacket` and
   `EntityVisualPacket`.
@@ -327,6 +330,15 @@ Unstained mechanics, hazards, Still Arts and summons.
     flight.
   - `CombatTargetingGuardrailTest` and `HealAndFlightGuardrailTest` enforce these.
   - `CombatTargetingMatrixGameTests` pins who each family reaches.
+- Since step 11, Cardinal Rites run one shared course in `HarbingerCardinalRiteEvents.onLevelTick`. Where
+  kinds differ, the tick, `CardinalRiteTermination` and `CardinalRiteCompletion` ask the rite's `RiteKind`
+  (`SUCCESSION`, `STATION_UPGRADE`, `WORKING_CRAFT`, `PUPPETEER_TRIAL`, `COUNTDOWN`, `CEREMONY`):
+  whether it may tick, whether it pauses rather than binds its caster, how it advances and completes, and
+  what an ending returns. A kind's saved state is its own object behind `ActiveCardinalRite`
+  (`PuppeteerTrialState`, `WorkingCraftState`, `StationUpgradeState`, `SuccessionState`), writing the
+  same NBT keys as before (`ActiveCardinalRiteNbtLayoutTest`). Rites are built only by
+  `CardinalRiteActivation`. `RiteKindGuardrailTest` enforces these, and the `rite_kind_validation`
+  GameTests characterise each kind's start, completion, endings and a mid-rite save and load.
 
 **Migration targets**
 - Living-weapon sweeps (`LivingSickleItem`, `LivingTorchItem`) still use vanilla melee eligibility, and

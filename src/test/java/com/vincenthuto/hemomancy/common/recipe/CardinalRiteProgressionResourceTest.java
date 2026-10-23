@@ -67,7 +67,7 @@ final class CardinalRiteProgressionResourceTest {
 		assertUpgrade("ashen_vessel_rite", "hemomancy:blood_gourd_red", "hemomancy:blood_gourd_black");
 		assertUpgrade("horn_of_culmination_rite", "hemomancy:blood_gourd_black", "hemomancy:curved_horn");
 		String completion = Files.readString(Path.of(
-				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java"));
+				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletion.java"));
 		assertFalse(completion.contains("consumeGourdPrerequisite"),
 				"gourd upgrades must not charge a second hidden inventory copy");
 	}
@@ -81,7 +81,7 @@ final class CardinalRiteProgressionResourceTest {
 	@Test
 	void riteRewardsHaveCheckedWorldDropFallbacks() throws IOException {
 		String completion = Files.readString(Path.of(
-				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java"));
+				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletion.java"));
 		String effects = Files.readString(Path.of(
 				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteCompletionEffects.java"));
 		assertTrue(effects.contains("giveOrDropAtRite(ctx.level(), ctx.caster(), ctx.center(), new ItemStack(ItemInit.sanguine_blob.get()))"));

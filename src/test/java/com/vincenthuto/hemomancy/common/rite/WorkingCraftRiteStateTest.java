@@ -59,12 +59,12 @@ final class WorkingCraftRiteStateTest {
 	void craftStateSurvivesSaving() {
 		ActiveCardinalRite rite = loom(150);
 		rite.feedSubject(60);
-		rite.craft().putString("EscrowState", "ESCROWED");
+		rite.craft().tag().putString("EscrowState", "ESCROWED");
 		ActiveCardinalRite copy = ActiveCardinalRite.deserialize(rite.serialize());
 		assertTrue(copy.isWorkingCraft());
 		assertEquals(CardinalRitePhase.SUBJECT_FEEDING, copy.getPhase());
 		assertEquals(90, copy.subjectFeedNeeded());
-		assertEquals("ESCROWED", copy.craft().getString("EscrowState"));
+		assertEquals("ESCROWED", copy.craft().tag().getString("EscrowState"));
 	}
 
 	@Test

@@ -26,9 +26,9 @@ public final class SuccessionRites {
         return id.getNamespace().equals("hemomancy") && (id.getPath().equals("cardinal_rite/hematic_succession")
                 || id.getPath().equals("cardinal_rite/mnemonic_restoration"));
     }
-    public static boolean is(ActiveCardinalRite rite) { return !rite.succession().isEmpty(); }
+    public static boolean is(ActiveCardinalRite rite) { return rite.succession().isPresent(); }
     public static boolean chunksReady(ServerLevel level, ActiveCardinalRite rite) {
-        var c = rite.succession();
+        var c = rite.succession().tag();
         if (!level.hasChunkAt(rite.getCenterPos()) || !level.hasChunkAt(BlockPos.of(c.getLong("Body")))
                 || !level.hasChunkAt(BlockPos.of(c.getLong("Workplace")))) return false;
         for (Tag raw : c.getList("Offerings", Tag.TAG_COMPOUND))
@@ -63,7 +63,7 @@ public final class SuccessionRites {
         long pending = data.ledger.reservations().size();
         long ownPending = java.util.stream.StreamSupport.stream(level.getServer().getAllLevels().spliterator(), false)
                 .flatMap(l -> CardinalRiteSavedData.get(l).getActiveRites().values().stream())
-                .filter(r -> is(r) && r.succession().getUUID("Bloodline").equals(line.getBloodlineUUID())).count();
+                .filter(r -> is(r) && r.succession().tag().getUUID("Bloodline").equals(line.getBloodlineUUID())).count();
         if (globalCap > 0 && living + pending >= globalCap || lineCap > 0 && own + ownPending >= lineCap) return fail(player, "cap");
         var context = new CompoundTag(); UUID identity;
         String profession;
@@ -85,7 +85,7 @@ public final class SuccessionRites {
         var bodyState = level.getBlockState(body);
         if (!bodyState.is(BlockInit.vacant_effigy.get()) || bodyState.getValue(VacantEffigyBlock.FORMING)) return fail(player, "body");
         for (var active : CardinalRiteSavedData.get(level).getActiveRites().values())
-            if (is(active) && active.succession().getLong("Body") == body.asLong()) return fail(player, "reserved");
+            if (is(active) && active.succession().tag().getLong("Body") == body.asLong()) return fail(player, "reserved");
         BlockPos workplace = SuccessionWorkplaces.find(level, line.getLeaderUUID(), profession, body);
         if (workplace == null) return fail(player, "workplace");
         UUID transaction = UUID.randomUUID();
@@ -107,7 +107,7 @@ public final class SuccessionRites {
         rite.beginSuccession(context); data.setDirty(); return true;
     }
     public static boolean tick(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite, CardinalRiteRecipe recipe) {
-        var c = rite.succession();
+        var c = rite.succession().tag();
         if (c.getBoolean("Resolved")) return false;
         var body = BlockPos.of(c.getLong("Body")); var work = BlockPos.of(c.getLong("Workplace"));
         if (!chunksReady(level, rite)) return true;
@@ -155,7 +155,7 @@ public final class SuccessionRites {
         return level.getBlockState(BlockPos.of(c.getLong("Body")).below()).is(BlockInit.venous_stone.get());
     }
     private static boolean consumeBlood(ServerLevel level, ActiveCardinalRite rite) {
-        var c = rite.succession(); var data = SuccessionSavedData.get(level);
+        var c = rite.succession().tag(); var data = SuccessionSavedData.get(level);
         var will = SuccessionSamples.identity(offering(level, c, 1));
         boolean valid = data.authentic(will) && sourceMatches(offering(level, c, 1), will)
                 && will.hasUUID("Donor") && will.getUUID("Donor").equals(c.getUUID("Officiant"))
@@ -194,7 +194,7 @@ public final class SuccessionRites {
         return !((IronBrazierBlockEntity) level.getBlockEntity(BlockPos.of(e.getLong("Position")))).consumeForRite(false).isEmpty();
     }
     private static boolean resolve(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite) {
-        var c = rite.succession(); var data = SuccessionSavedData.get(level); var body = BlockPos.of(c.getLong("Body"));
+        var c = rite.succession().tag(); var data = SuccessionSavedData.get(level); var body = BlockPos.of(c.getLong("Body"));
         UUID identity = c.getUUID("Identity"), transaction = c.getUUID("Transaction");
         boolean restoring = c.getBoolean("Restoring");
         var existingLife = data.ledger.life(identity);
@@ -238,7 +238,7 @@ public final class SuccessionRites {
     }
     public static void cleanup(ServerLevel level, ActiveCardinalRite rite) {
         if (rite == null || !is(rite)) return;
-        var c = rite.succession(); if (c.getBoolean("Cleaned")) return;
+        var c = rite.succession().tag(); if (c.getBoolean("Cleaned")) return;
         var data = SuccessionSavedData.get(level);
         data.ledger.release(c.getUUID("Transaction"));
         if (c.getBoolean("Restoring") && c.getBoolean("MemoryConsumed") && (!c.getBoolean("Resolved") || !c.getBoolean("Valid"))) {

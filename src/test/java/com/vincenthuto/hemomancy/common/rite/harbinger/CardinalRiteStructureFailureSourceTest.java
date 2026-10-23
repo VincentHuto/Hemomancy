@@ -12,18 +12,13 @@ final class CardinalRiteStructureFailureSourceTest {
 	private static final Path ROOT = Path.of("").toAbsolutePath();
 
 	@Test
-	void periodicStructureFailureStopsTheRiteAndDispersesEveryAnchor() throws IOException {
+	void structureBacklashDispersesEveryAnchor() throws IOException {
 		String events = Files.readString(ROOT.resolve(
 				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java"))
 				.replace("\r\n", "\n");
 
-		assertTrue(events.contains(
-				"if (gameTime % 20 == 0 && !verifyRiteStructure(sLevel, rite)) {\n"
-						+ "\t\t\t\t\tfailRite(sLevel, caster, rite);\n"
-						+ "\t\t\t\t\ttoRemove.add(playerUUID);\n"
-						+ "\t\t\t\t\tcontinue;\n"
-						+ "\t\t\t\t}"),
-				"a broken ceremony structure must immediately enter the rite removal path");
+		// That a broken structure ends the rite through this backlash is behaviour, proven by the rite_kind_validation
+		// GameTests (ceremonyWhoseStructureBreaksLetsGo, craftWhoseSubjectBreaksFailsAndReturnsItsEscrow).
 		assertTrue(events.contains("spawnBrokenAnchorDispersal(sLevel, rite, recipe);"),
 				"structure backlash must disperse the rite's anchor points");
 		assertTrue(events.contains("for (var anchor : recipe.getCeremony().anchors())"),
@@ -40,17 +35,6 @@ final class CardinalRiteStructureFailureSourceTest {
 				"each vanished anchor must burst into purple particles");
 	}
 
-	@Test
-	void removedInteractiveRecipeIsRetiredWithoutPunishingThePlayer() throws IOException {
-		String events = Files.readString(ROOT.resolve(
-				"src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java"))
-				.replace("\r\n", "\n");
-
-		assertTrue(events.contains("recipe == null && rite.getPhase() != CardinalRitePhase.LEGACY"),
-				"datapack updates must retire active ceremonies whose recipes no longer exist");
-		assertTrue(events.contains("CardinalRiteTermination.end(sLevel, caster, rite, Outcome.RETIRED);"),
-				"retiring a removed rite must return an escrowed Living Staff");
-		assertTrue(events.contains("toRemove.add(playerUUID);"),
-				"the orphaned rite must be removed from saved and synced active state");
-	}
+	// Retiring a rite whose recipe is gone is behaviour, proven by the rite_kind_validation GameTest
+	// ceremonyWhoseRecipeIsRetiredDissolves.
 }

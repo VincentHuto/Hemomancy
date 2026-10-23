@@ -42,7 +42,7 @@ import com.vincenthuto.hemomancy.common.manipulation.stillarts.StillArt;
 import com.vincenthuto.hemomancy.common.manipulation.tenebris.BlackVeilCovenantManager;
 import com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation;
 import com.vincenthuto.hemomancy.common.mission.vicar.VoyagerVesselGuidance;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodlineChatRateLimit;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodlineChatRateLimit;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketLedgerAction;
 import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.rite.harbinger.WorkingCraftRites;

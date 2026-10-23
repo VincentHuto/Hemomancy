@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PlaceStructurePacket;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteCeremonyRules;
@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteStationMatcher;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules;
 import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents;
+import com.vincenthuto.hemomancy.common.rite.harbinger.RiteKind;
 import com.vincenthuto.hemomancy.common.rite.harbinger.RiteOfferingEscrow;
 import com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites;
 import com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog;
@@ -70,6 +71,7 @@ public final class RiteKindCharacterisationGameTests {
 	public static void ceremonyStartsByPlantingTheStaff(GameTestHelper helper) {
 		Rite rite = startCeremony(helper);
 		ActiveCardinalRite active = rite.active();
+		assertKind(helper, active, RiteKind.CEREMONY);
 		helper.assertTrue(active.getPhase() == CardinalRitePhase.CONSECRATION && active.hasEscrowedStaff()
 				&& active.isStaffPlanting() && active.ringsGated() && active.getMatchedFloorId() != null
 				&& active.hasCapturedOfferingItinerary() && active.getOfferingItinerary().size() == 1,
@@ -96,6 +98,37 @@ public final class RiteKindCharacterisationGameTests {
 					assertCompletedCeremony(helper, rite);
 					rite.close();
 				})
+				.thenSucceed();
+	}
+
+	/**
+	 * The tick raises a ceremony's world stage as its milestones land, and a caster logging in is sent their rite
+	 * with that stage and their bloodline pool.
+	 */
+	@GameTest(template = ROOM, timeoutTicks = 1200, batch = "rite_kind_ceremony_view")
+	public static void ceremonyStageReachesItsCasterOnLogin(GameTestHelper helper) {
+		Rite rite = startCeremony(helper);
+		helper.startSequence()
+				.thenWaitUntil(() -> helper.assertTrue(rite.active().isStaffImpactReached(), "planted"))
+				.thenExecute(() -> sealCeremony(helper, rite.active()))
+				.thenWaitUntil(() -> helper.assertTrue(rite.active().getEscalationStage() > 0,
+						"The tick must raise the stage of a sealed ceremony"))
+				.thenExecute(() -> {
+					rite.caster().payloads.clear();
+					HarbingerCardinalRiteEvents.onPlayerLogin(
+							new net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent(rite.caster().player));
+					var entry = rite.caster().sent(
+							com.vincenthuto.hemomancy.common.network.capa.harbinger.PacketSyncActiveRites.class).stream()
+							.flatMap(packet -> packet.entries().stream())
+							.filter(candidate -> rite.uuid().equals(candidate.getOwner()))
+							.findFirst().orElse(null);
+					helper.assertTrue(entry != null, "The login snapshot must carry the caster's rite");
+					helper.assertTrue(entry.getEscalation() == rite.active().getEscalationStage()
+							&& entry.getEscalationTotal() == rite.active().getEscalationTotal()
+							&& entry.getPhase().equals(rite.active().getPhase().name()),
+							"with its stage and phase: " + entry.getEscalation() + "/" + entry.getEscalationTotal());
+				})
+				.thenExecute(() -> rite.end(helper))
 				.thenSucceed();
 	}
 
@@ -262,6 +295,29 @@ public final class RiteKindCharacterisationGameTests {
 				.thenSucceed();
 	}
 
+	/** A rite whose recipe left the datapack (not a named retired rite) dissolves and gives its staff back. */
+	@GameTest(template = ROOM, timeoutTicks = 100, batch = "rite_kind_ceremony_retired")
+	public static void ceremonyWhoseRecipeIsGoneReturnsItsStaff(GameTestHelper helper) {
+		CapturedPlayer caster = caster(helper, 2);
+		BlockPos center = helper.absolutePos(FOCUS);
+		caster.player.setPos(Vec3.atCenterOf(center).add(0.0D, 1.0D, 0.0D));
+		ActiveCardinalRite rite = ActiveCardinalRite.interactive(caster.player.getUUID(), center,
+				Hemomancy.rloc("cardinal_rite/withdrawn_by_a_datapack"), 1200, 3, 2, false, 0, 4);
+		rite.setEscrowedStaff(new ItemStack(ItemInit.living_staff.get()), helper.getLevel().registryAccess());
+		CardinalRiteSavedData saved = CardinalRiteSavedData.get(helper.getLevel());
+		saved.startRite(rite);
+		helper.startSequence()
+				.thenWaitUntil(() -> helper.assertTrue(!saved.hasActiveRite(caster.player.getUUID()), "A recipeless rite ends"))
+				.thenExecute(() -> {
+					helper.assertTrue(caster.said().contains("The rite dissolves harmlessly because its pattern is no longer known."),
+							"Retirement is announced: " + caster.said());
+					helper.assertTrue(caster.player.getInventory().countItem(ItemInit.living_staff.get()) == 1,
+							"The retired rite's staff comes back");
+					caster.close();
+				})
+				.thenSucceed();
+	}
+
 	@GameTest(template = ROOM, timeoutTicks = 1200, batch = "rite_kind_ceremony_reload")
 	public static void ceremonySavedAndLoadedMidRiteResumesAndCompletes(GameTestHelper helper) {
 		Rite rite = startCeremony(helper);
@@ -295,6 +351,7 @@ public final class RiteKindCharacterisationGameTests {
 		CapturedPlayer caster = caster(helper, 1);
 		ActiveCardinalRite rite = countdown(helper, caster, 30);
 		CardinalRiteSavedData saved = CardinalRiteSavedData.get(helper.getLevel());
+		assertKind(helper, rite, RiteKind.COUNTDOWN);
 		helper.startSequence()
 				.thenExecuteAfter(5, () -> helper.assertTrue(rite.getPhase() == CardinalRitePhase.LEGACY
 						&& rite.getRemainingTicks() < 30 && rite.getRemainingTicks() > 0, "A countdown ticks down"))
@@ -372,8 +429,11 @@ public final class RiteKindCharacterisationGameTests {
 	public static void craftStartsFeedingAndCompletesWhenFed(GameTestHelper helper) {
 		Rite rite = startCraft(helper);
 		ActiveCardinalRite active = rite.active();
+		assertKind(helper, active, RiteKind.WORKING_CRAFT);
 		helper.assertTrue(active.isWorkingCraft() && active.getPhase() == CardinalRitePhase.SUBJECT_FEEDING
-				&& RiteOfferingEscrow.isEscrowed(active.craft()), "A craft starts feeding its subject with escrow held");
+				&& RiteOfferingEscrow.isEscrowed(active.craft().tag()), "A craft starts feeding its subject with escrow held");
+		helper.assertTrue(!active.ringsGated() && active.getAnchorBloodMl().length == 0,
+				"A craft has no anchors, so no rings to gate");
 		helper.startSequence()
 				.thenWaitUntil(() -> helper.assertTrue(active.isStaffImpactReached(), "planted"))
 				.thenExecute(() -> helper.assertTrue(active.feedSubject(active.subjectFeedNeeded())
@@ -381,7 +441,7 @@ public final class RiteKindCharacterisationGameTests {
 				.thenWaitUntil(() -> helper.assertTrue(!rite.saved().hasActiveRite(rite.uuid()),
 						"The sealed craft must end through the tick, in phase " + active.getPhase()))
 				.thenExecute(() -> {
-					helper.assertTrue(active.isComplete() && RiteOfferingEscrow.isConsumed(active.craft()),
+					helper.assertTrue(active.isComplete() && RiteOfferingEscrow.isConsumed(active.craft().tag()),
 							"The craft completes and spends its escrow");
 					helper.assertTrue(itemsNear(helper.getLevel(), rite.focus(), BlockInit.somatic_loom.get().asItem()) == 1,
 							"Exactly one Somatic Loom condenses");
@@ -451,12 +511,12 @@ public final class RiteKindCharacterisationGameTests {
 					rite.active().feedSubject(rite.active().subjectFeedNeeded() / 2);
 					resumed[0] = restart(helper, rite.active());
 					helper.assertTrue(resumed[0].isWorkingCraft() && resumed[0].subjectFill() > 0.0F
-							&& RiteOfferingEscrow.isEscrowed(resumed[0].craft()), "The reloaded craft keeps its feed and escrow");
+							&& RiteOfferingEscrow.isEscrowed(resumed[0].craft().tag()), "The reloaded craft keeps its feed and escrow");
 					resumed[0].feedSubject(resumed[0].subjectFeedNeeded());
 				})
 				.thenWaitUntil(() -> helper.assertTrue(!rite.saved().hasActiveRite(rite.uuid()), "The reloaded craft ends"))
 				.thenExecute(() -> {
-					helper.assertTrue(resumed[0].isComplete() && RiteOfferingEscrow.isConsumed(resumed[0].craft()),
+					helper.assertTrue(resumed[0].isComplete() && RiteOfferingEscrow.isConsumed(resumed[0].craft().tag()),
 							"The reloaded craft completes");
 					helper.assertTrue(itemsNear(helper.getLevel(), rite.focus(), BlockInit.somatic_loom.get().asItem()) == 1,
 							"Exactly one Somatic Loom condenses");
@@ -472,9 +532,10 @@ public final class RiteKindCharacterisationGameTests {
 		Rite rite = startStation(helper);
 		StationUpgradeTier tier = stationTier();
 		ActiveCardinalRite active = rite.active();
+		assertKind(helper, active, RiteKind.STATION_UPGRADE);
 		helper.assertTrue(active.getRecipeId().equals(tier.rite()) && active.getPhase() == CardinalRitePhase.CONSECRATION
-				&& StationUpgradeRites.station(helper.getLevel(), active).isRiteLocked(),
-				"A station upgrade starts consecrating with its station locked");
+				&& StationUpgradeRites.station(helper.getLevel(), active).isRiteLocked() && active.ringsGated(),
+				"A station upgrade starts consecrating with its station locked and its rings gated");
 		helper.startSequence()
 				.thenWaitUntil(() -> helper.assertTrue(active.isStaffImpactReached(), "planted"))
 				.thenExecute(() -> sealStation(helper, active, tier))
@@ -483,7 +544,7 @@ public final class RiteKindCharacterisationGameTests {
 				.thenExecute(() -> {
 					var station = StationUpgradeRites.station(helper.getLevel(), active);
 					helper.assertTrue(active.isComplete() && station.upgradeTier() == tier.tier() && !station.isRiteLocked()
-							&& RiteOfferingEscrow.CONSUMED.equals(active.upgrade().getString("EscrowState")),
+							&& RiteOfferingEscrow.CONSUMED.equals(active.upgrade().tag().getString("EscrowState")),
 							"The station upgrades and spends its escrow");
 					CardinalRiteSavedData.get(helper.getLevel().getServer().overworld()).deliverRecovery(rite.caster().player);
 					helper.assertTrue(rite.caster().player.getInventory().countItem(ItemInit.living_staff.get()) == 1,
@@ -501,7 +562,7 @@ public final class RiteKindCharacterisationGameTests {
 				.thenExecute(() -> helper.getLevel().removeBlock(StationUpgradeRites.seat(rite.active()), false))
 				.thenWaitUntil(() -> helper.assertTrue(!rite.saved().hasActiveRite(rite.uuid()), "A stationless upgrade ends"))
 				.thenExecute(() -> {
-					helper.assertTrue(RiteOfferingEscrow.RETURNED.equals(rite.active().upgrade().getString("EscrowState")),
+					helper.assertTrue(RiteOfferingEscrow.RETURNED.equals(rite.active().upgrade().tag().getString("EscrowState")),
 							"Its escrow goes home");
 					helper.assertTrue(rite.caster().player.getInventory().countItem(ItemInit.living_staff.get()) == 1,
 							"and the staff to a living caster");
@@ -563,11 +624,12 @@ public final class RiteKindCharacterisationGameTests {
 	@GameTest(template = ROOM, timeoutTicks = 200, batch = "rite_kind_trial_unready")
 	public static void puppeteerTrialWithoutAReadyCrossbarCollapses(GameTestHelper helper) {
 		Rite rite = trial(helper);
+		assertKind(helper, rite.active(), RiteKind.PUPPETEER_TRIAL);
 		helper.startSequence()
 				.thenWaitUntil(() -> helper.assertTrue(!rite.saved().hasActiveRite(rite.uuid()), "An unready trial ends"))
 				.thenExecute(() -> {
 					helper.assertTrue(rite.active().getPhase() == CardinalRitePhase.COLLAPSED
-							&& !rite.active().isPuppeteerTrialManifested(), "No puppet manifests; the trial collapses");
+							&& !rite.active().puppeteerTrial().isManifested(), "No puppet manifests; the trial collapses");
 					helper.assertTrue(rite.caster().said().contains("The cardinal boundary collapses into backlash."),
 							"with the ceremony's backlash: " + rite.caster().said());
 					rite.close();
@@ -580,7 +642,7 @@ public final class RiteKindCharacterisationGameTests {
 		Rite rite = trial(helper);
 		rite.active().beginPuppeteerTrial("sanguine_hound", UUID.randomUUID(), UUID.randomUUID());
 		helper.startSequence()
-				.thenExecuteAfter(3, () -> helper.assertTrue(rite.active().getPuppeteerTrialMissingTicks() > 0,
+				.thenExecuteAfter(3, () -> helper.assertTrue(rite.active().puppeteerTrial().missingTicks() > 0,
 						"A missing puppet is counted"))
 				.thenWaitUntil(() -> helper.assertTrue(!rite.saved().hasActiveRite(rite.uuid()), "A puppetless trial ends"))
 				.thenExecute(() -> {
@@ -615,12 +677,12 @@ public final class RiteKindCharacterisationGameTests {
 		UUID puppet = UUID.randomUUID();
 		UUID crossbar = UUID.randomUUID();
 		rite.active().beginPuppeteerTrial("sanguine_hound", puppet, crossbar);
-		rite.active().updatePuppeteerTrialHealth(5.0F, 20.0F);
+		rite.active().puppeteerTrial().updateHealth(5.0F, 20.0F);
 		ActiveCardinalRite resumed = restart(helper, rite.active());
-		helper.assertTrue(resumed.isPuppeteerTrialManifested() && puppet.equals(resumed.getPuppeteerTrialEntityId())
-				&& crossbar.equals(resumed.getPuppeteerTrialCrossbarId())
-				&& "sanguine_hound".equals(resumed.getPuppeteerTrialSummonName())
-				&& resumed.getPuppeteerTrialProgress() == 0.75F, "The trial's puppet survives the restart");
+		helper.assertTrue(resumed.puppeteerTrial().isManifested() && puppet.equals(resumed.puppeteerTrial().entityId())
+				&& crossbar.equals(resumed.puppeteerTrial().crossbarId())
+				&& "sanguine_hound".equals(resumed.puppeteerTrial().summonName())
+				&& resumed.puppeteerTrial().progress() == 0.75F, "The trial's puppet survives the restart");
 		rite.close();
 		helper.succeed();
 	}
@@ -630,13 +692,16 @@ public final class RiteKindCharacterisationGameTests {
 	@GameTest(template = WIDE, timeoutTicks = 1600, batch = "rite_kind_succession_complete")
 	public static void successionRunsItsCourseThroughTheTick(GameTestHelper helper) {
 		Succession succession = succession(helper);
+		assertKind(helper, succession.rite(), RiteKind.SUCCESSION);
 		helper.startSequence()
 				.thenWaitUntil(() -> helper.assertTrue(!succession.saved().hasActiveRite(succession.uuid()),
-						"The succession must end through the tick at " + succession.rite().succession().getInt("Ticks")))
+						"The succession must end through the tick at " + succession.rite().succession().ticks()))
 				.thenExecute(() -> {
-					var context = succession.rite().succession();
+					var context = succession.rite().succession().tag();
 					helper.assertTrue(context.getBoolean("Resolved") && context.getInt("Ticks") == SuccessionRites.DURATION,
 							"It runs its whole course and resolves");
+					helper.assertTrue(succession.rite().getEscalationStage() > 0,
+							"Its course raises the rite's world stage as it goes");
 					helper.assertTrue(SuccessionSavedData.get(helper.getLevel()).residents.containsKey(context.getUUID("Identity")),
 							"and creates its successor");
 					succession.caster().close();
@@ -649,14 +714,14 @@ public final class RiteKindCharacterisationGameTests {
 		Succession succession = succession(helper);
 		helper.startSequence()
 				.thenExecuteAfter(5, () -> {
-					helper.assertTrue(succession.rite().succession().getInt("Ticks") > 0, "The succession advances");
-					helper.getLevel().setBlock(BlockPos.of(succession.rite().succession().getLong("Body")),
+					helper.assertTrue(succession.rite().succession().ticks() > 0, "The succession advances");
+					helper.getLevel().setBlock(BlockPos.of(succession.rite().succession().tag().getLong("Body")),
 							Blocks.AIR.defaultBlockState(), 3);
 				})
 				.thenWaitUntil(() -> helper.assertTrue(!succession.saved().hasActiveRite(succession.uuid()),
 						"A succession without its body ends"))
 				.thenExecute(() -> {
-					helper.assertTrue(!succession.rite().succession().getBoolean("Resolved") && !succession.rite().isComplete(),
+					helper.assertTrue(!succession.rite().succession().tag().getBoolean("Resolved") && !succession.rite().isComplete(),
 							"without resolving");
 					succession.caster().close();
 				})
@@ -669,15 +734,15 @@ public final class RiteKindCharacterisationGameTests {
 		ActiveCardinalRite[] resumed = new ActiveCardinalRite[1];
 		helper.startSequence()
 				.thenExecuteAfter(250, () -> {
-					int ticks = succession.rite().succession().getInt("Ticks");
+					int ticks = succession.rite().succession().ticks();
 					resumed[0] = restart(helper, succession.rite());
-					helper.assertTrue(SuccessionRites.is(resumed[0]) && resumed[0].succession().getInt("Ticks") == ticks
-							&& resumed[0].succession().getBoolean("BloodConsumed"), "The reloaded succession keeps its stage");
+					helper.assertTrue(SuccessionRites.is(resumed[0]) && resumed[0].succession().ticks() == ticks
+							&& resumed[0].succession().tag().getBoolean("BloodConsumed"), "The reloaded succession keeps its stage");
 				})
 				.thenWaitUntil(() -> helper.assertTrue(!succession.saved().hasActiveRite(succession.uuid()),
-						"The reloaded succession ends at " + resumed[0].succession().getInt("Ticks")))
+						"The reloaded succession ends at " + resumed[0].succession().ticks()))
 				.thenExecute(() -> {
-					helper.assertTrue(resumed[0].succession().getBoolean("Resolved"), "and resolves");
+					helper.assertTrue(resumed[0].succession().tag().getBoolean("Resolved"), "and resolves");
 					succession.caster().close();
 				})
 				.thenSucceed();
@@ -712,6 +777,11 @@ public final class RiteKindCharacterisationGameTests {
 		}
 	}
 
+	private static void assertKind(GameTestHelper helper, ActiveCardinalRite rite, RiteKind expected) {
+		RiteKind kind = RiteKind.of(rite, CardinalRiteRecipe.getRiteByLocation(helper.getLevel(), rite.getRecipeId()));
+		helper.assertTrue(kind == expected, rite.getRecipeId() + " must run as " + expected + ", not " + kind);
+	}
+
 	private static CapturedPlayer caster(GameTestHelper helper, int degree) {
 		CapturedPlayer caster = CapturedPlayer.create(helper).online();
 		HemoCapabilityAccess.getInitiatoryDegree(caster.player).setDegreeNumber(degree);
@@ -720,13 +790,8 @@ public final class RiteKindCharacterisationGameTests {
 		blood.setMaxBloodVolume(5000.0D);
 		blood.setBloodVolume(5000.0D);
 		// A captured player never ticks, so its spawn invulnerability would never wear off and hide rite damage.
-		try {
-			var field = ServerPlayer.class.getDeclaredField("spawnInvulnerableTime");
-			field.setAccessible(true);
-			field.setInt(caster.player, 0);
-		} catch (ReflectiveOperationException exception) {
-			throw new IllegalStateException("Could not end the test caster's spawn invulnerability", exception);
-		}
+		((com.vincenthuto.hemomancy.mixin.core.ServerPlayerSpawnGraceAccessor) caster.player)
+				.hemomancy$setSpawnInvulnerableTime(0);
 		return caster;
 	}
 
@@ -755,7 +820,7 @@ public final class RiteKindCharacterisationGameTests {
 		player.setPos(Vec3.atCenterOf(focus).add(0.0D, 1.0D, 0.0D));
 		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.living_staff.get()));
 		caster.chat.clear();
-		var start = BloodCraftingKeyPressPacket.tryStartCardinalRite(player, focus,
+		var start = CardinalRiteActivation.tryStart(player, focus,
 				CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
 		CardinalRiteSavedData saved = CardinalRiteSavedData.get(helper.getLevel());
 		ActiveCardinalRite rite = saved.getRite(player.getUUID());
@@ -805,7 +870,7 @@ public final class RiteKindCharacterisationGameTests {
 	}
 
 	private static void assertCraftEscrowReturned(GameTestHelper helper, Rite rite) {
-		helper.assertTrue(RiteOfferingEscrow.RETURNED.equals(rite.active().craft().getString("EscrowState")),
+		helper.assertTrue(RiteOfferingEscrow.RETURNED.equals(rite.active().craft().tag().getString("EscrowState")),
 				"The craft's escrow goes home");
 		CardinalRiteSavedData.get(helper.getLevel().getServer().overworld()).deliverRecovery(rite.caster().player);
 		var inventory = rite.caster().player.getInventory();

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.harbinger;
 
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -17,7 +17,7 @@ public final class SanguineFormationItem extends Item {
 		if (!context.getLevel().isClientSide
 				&& context.getPlayer() instanceof ServerPlayer player) {
 			CardinalRiteActivationRules.ActivationAttempt attempt =
-					BloodCraftingKeyPressPacket.tryStartCardinalRite(
+					CardinalRiteActivation.tryStart(
 							player, context.getClickedPos(),
 							CardinalRiteActivationRules.Trigger.SANGUINE_FORMATION_BLOCK_USE);
 			if (attempt.shouldConsumeActivator(player.getAbilities().instabuild)) {

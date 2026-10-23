@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.mission.mnemonist.MnemonicReliquaryProgression;
 import com.vincenthuto.hemomancy.common.network.PlaceStructurePacket;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
@@ -118,7 +118,7 @@ public final class WorkingCraftGameTests {
 		Fixture craft = prepareLoom(helper);
 		ServerLevel level = helper.getLevel();
 		helper.assertTrue(craft.rite().getPhase() == CardinalRitePhase.SUBJECT_FEEDING, "A craft starts by feeding");
-		helper.assertTrue(RiteOfferingEscrow.isEscrowed(craft.rite().craft()), "Offerings must be escrowed at start");
+		helper.assertTrue(RiteOfferingEscrow.isEscrowed(craft.rite().craft().tag()), "Offerings must be escrowed at start");
 		helper.assertTrue(craft.rite().feedSubject(craft.recipe().getSubjectFeedMl()), "The subject must take its feed");
 		helper.assertTrue(craft.rite().getPhase() == CardinalRitePhase.OFFERING_PROCESSION, "A fed craft seals");
 		helper.assertTrue(WorkingCraftRites.complete(level, craft.player(), craft.rite(), craft.recipe()),
@@ -271,7 +271,7 @@ public final class WorkingCraftGameTests {
 		player.setPos(Vec3.atCenterOf(focus).add(0.0D, 1.0D, 0.0D));
 		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemInit.living_staff.get()));
 		setServerPlayerLookup(player, true);
-		var start = BloodCraftingKeyPressPacket.tryStartCardinalRite(player, focus,
+		var start = CardinalRiteActivation.tryStart(player, focus,
 				CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
 		ActiveCardinalRite rite = saved.getRite(player.getUUID());
 		helper.assertTrue(start == CardinalRiteActivationRules.ActivationAttempt.STARTED && rite != null
@@ -319,7 +319,7 @@ public final class WorkingCraftGameTests {
 						"The engine must carry the sealed craft to its end"))
 				.thenExecute(() -> {
 					try {
-						helper.assertTrue(rite.isComplete() && RiteOfferingEscrow.isConsumed(rite.craft()),
+						helper.assertTrue(rite.isComplete() && RiteOfferingEscrow.isConsumed(rite.craft().tag()),
 								"The craft must complete and consume its escrow");
 						helper.assertTrue(loomsNear(level, focus) == 1, "Exactly one Somatic Loom must condense");
 						for (BlockPos pos : subject) {
@@ -362,14 +362,14 @@ public final class WorkingCraftGameTests {
 		helper.assertTrue(WorkingCraftRites.complete(level, craft.player(), craft.rite(), craft.recipe()), "First completion");
 
 		ActiveCardinalRite stale = ActiveCardinalRite.deserialize(beforeSettling.copy(), level.registryAccess());
-		helper.assertTrue(RiteOfferingEscrow.isEscrowed(stale.craft()), "The stale copy still holds its escrow");
+		helper.assertTrue(RiteOfferingEscrow.isEscrowed(stale.craft().tag()), "The stale copy still holds its escrow");
 		helper.assertTrue(WorkingCraftRites.complete(level, craft.player(), stale, craft.recipe()),
 				"A stale copy of a settled craft reports it settled");
 		helper.assertTrue(loomsNear(level, craft.focus()) == 1, "A stale copy must not condense a second Loom");
 
 		ActiveCardinalRite broken = ActiveCardinalRite.deserialize(beforeSettling.copy(), level.registryAccess());
 		CardinalRiteTermination.end(level, null, broken, CardinalRiteTermination.Outcome.BROKEN);
-		helper.assertTrue(RiteOfferingEscrow.isConsumed(broken.craft()),
+		helper.assertTrue(RiteOfferingEscrow.isConsumed(broken.craft().tag()),
 				"A stale copy whose structure is gone must not return offerings the Loom already took");
 		CardinalRiteSavedData.get(level.getServer().overworld()).deliverRecovery(craft.player());
 		var inventory = craft.player().getInventory();
@@ -384,7 +384,7 @@ public final class WorkingCraftGameTests {
 		Fixture craft = prepareLoom(helper);
 		ServerLevel level = helper.getLevel();
 		craft.rite().feedSubject(craft.recipe().getSubjectFeedMl());
-		RiteOfferingEscrow.returnEscrow(level, craft.rite(), craft.rite().craft());
+		RiteOfferingEscrow.returnEscrow(level, craft.rite(), craft.rite().craft().tag());
 		helper.assertTrue(!WorkingCraftRites.complete(level, craft.player(), craft.rite(), craft.recipe()),
 				"A craft whose offerings were returned must not complete");
 		helper.assertTrue(loomsNear(level, craft.focus()) == 0, "No Loom without its offerings");
@@ -450,7 +450,7 @@ public final class WorkingCraftGameTests {
 			PlaceStructurePacket.placeWorkingSubject(level, focus, craft);
 			for (BlockPos pos : BlockPos.betweenClosed(focus.offset(-5, 1, -5), focus.offset(5, 4, 5))) {
 				if (level.getBlockState(pos).isAir()) continue;
-				var floorless = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodStructureCraftingHelper
+				var floorless = com.vincenthuto.hemomancy.common.rite.structure.BloodStructureCraftingHelper
 						.findProjectionCraftMatch(player, level, pos.immutable(), ItemStack.EMPTY);
 				helper.assertTrue(floorless.isEmpty(), craft.getId() + " contains the floorless "
 						+ floorless.map(match -> match.recipe().getId().toString()).orElse("") + " at " + pos);
@@ -586,7 +586,7 @@ public final class WorkingCraftGameTests {
 	}
 
 	private static void assertEscrowReturned(GameTestHelper helper, Fixture craft) {
-		helper.assertTrue(RiteOfferingEscrow.RETURNED.equals(craft.rite().craft().getString("EscrowState")),
+		helper.assertTrue(RiteOfferingEscrow.RETURNED.equals(craft.rite().craft().tag().getString("EscrowState")),
 				"The escrow must be returned");
 		CardinalRiteSavedData.get(helper.getLevel().getServer().overworld()).deliverRecovery(craft.player());
 		var inventory = craft.player().getInventory();

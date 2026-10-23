@@ -14,10 +14,10 @@ final class CardinalRiteSigilFeedbackSourceTest {
 
 	@Test
 	void correctAndFalseStrokeFeedbackAreConnectedToRuntimeState() throws IOException {
-		String events = read("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/HarbingerCardinalRiteEvents.java");
+		String view = read("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteSync.java");
 		String interactions = read("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteInteractionHandler.java");
 
-		assertTrue(events.contains("CardinalRiteSigilRules.formingNodeRadius(nodeBlood)"),
+		assertTrue(view.contains("CardinalRiteSigilRules.formingNodeRadius(nodeBlood)"),
 				"partial correct-node blood must control the synchronized blob size");
 		assertTrue(interactions.contains("spawnCorrectNodeFeedFeedback("),
 				"each accepted feed tick must visibly grow the current node between client syncs");

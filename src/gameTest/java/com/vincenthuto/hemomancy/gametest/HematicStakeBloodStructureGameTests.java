@@ -14,7 +14,7 @@ import com.vincenthuto.hemomancy.common.event.worldevent.FaneFootprint;
 import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodStructureCraftingHelper;
+import com.vincenthuto.hemomancy.common.rite.structure.BloodStructureCraftingHelper;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

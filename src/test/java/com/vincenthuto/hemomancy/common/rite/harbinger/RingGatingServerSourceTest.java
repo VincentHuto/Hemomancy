@@ -15,13 +15,8 @@ final class RingGatingServerSourceTest {
 		return Files.readString(Path.of(path)).replace("\r\n", "\n");
 	}
 
-	@Test
-	void activationConfiguresRingsForHarbingerCeremoniesOnly() throws IOException {
-		String packet = read(ROOT + "common/network/capa/harbinger/BloodCraftingKeyPressPacket.java");
-		assertTrue(packet.contains("rite.configureRings(com.vincenthuto.hemomancy.common.rite.CardinalRiteRingRules.ranksOf("));
-		// Working crafts have no anchors, so they configure no rings.
-		assertTrue(packet.contains("if (!recipe.isPuppeteerTrial() && !recipe.isUnstained() && !recipe.isWorkingCraft()) {"));
-	}
+	// Which rites start with gated rings is behaviour: rite_kind_validation starts a ceremony and a station upgrade
+	// gated, and a Working craft (no anchors) ungated, through CardinalRiteActivation.
 
 	@Test
 	void theEngineHoldsTheStationAndTheProcessionForTheRing() throws IOException {

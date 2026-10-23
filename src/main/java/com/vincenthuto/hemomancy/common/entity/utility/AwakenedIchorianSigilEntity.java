@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteFootprintRules;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
-import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteFootprintResolver;
 import com.vincenthuto.hemomancy.common.rite.sigil.AwakenedIchorianSigilFacing;
 import com.vincenthuto.hemomancy.common.rite.sigil.AwakenedIchorianSigilMotion;
 import net.minecraft.core.BlockPos;
@@ -142,7 +142,7 @@ public final class AwakenedIchorianSigilEntity extends Entity {
 		}
 		if (tickCount == 1 || tickCount % 20 == 0) {
 			CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(server, rite.getRecipeId());
-			float footprintRadius = HarbingerCardinalRiteEvents.ritualFootprintRadius(rite, recipe);
+			float footprintRadius = CardinalRiteFootprintResolver.radius(rite, recipe);
 			entityData.set(ORBIT_RADIUS,
 					CardinalRiteFootprintRules.awakenedSigilOrbitRadius(footprintRadius));
 		}

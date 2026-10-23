@@ -36,7 +36,7 @@ import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignm
 import com.vincenthuto.hemomancy.common.mission.alchemist.ConcentratedBlood;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.mission.shared.NoeticDiscoveryProgression;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.manips.StartCentrifugeButtonPacket;
 import com.vincenthuto.hemomancy.common.network.capa.harbinger.scars.PacketScarCraftingEvent;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
@@ -44,7 +44,7 @@ import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
 import com.vincenthuto.hemomancy.common.rite.ScarBrazierRite;
 import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules;
-import com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletion;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomSavedData;
 import com.vincenthuto.hemomancy.common.worldgen.FungalGardenTravelHelper;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.*;
@@ -633,26 +633,19 @@ public final class HarbingerJourneyAutomation {
 	}
 
 	private static void startRite(ServerPlayer player, BlockPos origin, CardinalRiteActivationRules.Trigger trigger) {
-		var result = BloodCraftingKeyPressPacket.tryStartCardinalRite(player, origin.above(), trigger);
+		var result = CardinalRiteActivation.tryStart(player, origin.above(), trigger);
 		if (result != CardinalRiteActivationRules.ActivationAttempt.STARTED) {
 			throw new IllegalStateException("Prepared Cardinal Rite did not start: " + result);
 		}
 	}
 
 	private static void completeActiveRite(ServerPlayer player) {
-		try {
-			ActiveCardinalRite rite = CardinalRiteSavedData.get(player.serverLevel()).getRite(player.getUUID());
-			if (rite == null) throw new IllegalStateException("No active Cardinal Rite");
-			Method complete = HarbingerCardinalRiteEvents.class.getDeclaredMethod("completeRite",
-					net.minecraft.server.level.ServerLevel.class, ServerPlayer.class, ActiveCardinalRite.class);
-			complete.setAccessible(true);
-			if (!(boolean) complete.invoke(null, player.serverLevel(), player, rite)) {
-				throw new IllegalStateException("Cardinal Rite completion was rejected");
-			}
-			CardinalRiteSavedData.get(player.serverLevel()).removeRite(player.getUUID());
-		} catch (ReflectiveOperationException exception) {
-			throw new IllegalStateException("Cardinal Rite completion hook is unavailable", exception);
+		ActiveCardinalRite rite = CardinalRiteSavedData.get(player.serverLevel()).getRite(player.getUUID());
+		if (rite == null) throw new IllegalStateException("No active Cardinal Rite");
+		if (!CardinalRiteCompletion.complete(player.serverLevel(), player, rite)) {
+			throw new IllegalStateException("Cardinal Rite completion was rejected");
 		}
+		CardinalRiteSavedData.get(player.serverLevel()).removeRite(player.getUUID());
 	}
 
 	private static void useBlock(ServerPlayer player, BlockPos pos) {

@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.network.capa.harbinger;
+package com.vincenthuto.hemomancy.common.rite.structure;
 
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import com.vincenthuto.hutoslib.math.MultiblockPatternKey;

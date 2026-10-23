@@ -68,7 +68,7 @@ public final class CardinalRiteInteractionHandler {
 				// A Working craft is fed through its own structure; a miss elsewhere on its floor takes nothing.
 				if (physicalTarget == null || !WorkingCraftRites.subjectPositions(rite).contains(physicalTarget)) {
 					if (physicalTarget != null && com.vincenthuto.hemomancy.common.rite.WorkingCraftBed.withinFloor(
-							rite.getCenterPos(), physicalTarget, HarbingerCardinalRiteEvents.ritualFootprintRadius(rite,
+							rite.getCenterPos(), physicalTarget, CardinalRiteFootprintResolver.radius(rite,
 									CardinalRiteRecipe.getRiteByLocation(serverLevel, rite.getRecipeId())))) {
 						return CardinalRiteProjectionResult.handled(0.0D);
 					}
@@ -83,7 +83,7 @@ public final class CardinalRiteInteractionHandler {
 				return CardinalRiteProjectionResult.handled(paid);
 			}
 			if (rite.getPhase() == CardinalRitePhase.STATION_PROJECTION) {
-				int stage = rite.upgrade().getInt("Stage");
+				int stage = rite.upgrade().stage();
 				int aimed = CardinalRiteVirtualTargeting.closestTarget(player.getEyePosition(), player.getLookAngle(),
 						CardinalRiteVirtualTargeting.PROJECTION_RANGE, CardinalRiteVirtualTargeting.TARGET_RADIUS,
 						java.util.stream.IntStream.range(0, StationUpgradeRites.circuits(rite.getRecipeId()))
@@ -425,7 +425,7 @@ public final class CardinalRiteInteractionHandler {
 		double originY = surface.getY() + 0.10D;
 		double originZ = rite.getCenterPos().getZ() + placement.z() + 0.5D;
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(level, rite.getRecipeId());
-		float footprintRadius = HarbingerCardinalRiteEvents.ritualFootprintRadius(rite, recipe);
+		float footprintRadius = CardinalRiteFootprintResolver.radius(rite, recipe);
 		float orbitRadius = CardinalRiteFootprintRules.awakenedSigilOrbitRadius(footprintRadius);
 		float startingAngle = (float) Math.toRadians(Math.floorMod(placement.progressKey().hashCode(), 360));
 		entity.initialize(rite.getPlayerUUID(), sigil.id(), rite.getCenterPos(),

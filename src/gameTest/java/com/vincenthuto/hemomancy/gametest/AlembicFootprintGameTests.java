@@ -118,7 +118,7 @@ public final class AlembicFootprintGameTests {
         level.setBlockAndUpdate(obstacle, Blocks.STONE.defaultBlockState());
         rite.markComplete();
         h.assertTrue(!com.vincenthuto.hemomancy.common.rite.harbinger.StationUpgradeRites.complete(level,rite)
-                && rite.upgrade().getString("EscrowState").equals("RETURNED")
+                && rite.upgrade().tag().getString("EscrowState").equals("RETURNED")
                 && station.upgradeTier()==1 && !station.isRiteLocked()
                 && level.getBlockState(obstacle).is(Blocks.STONE), "Blocked finale failed to recover safely");
         h.succeed();

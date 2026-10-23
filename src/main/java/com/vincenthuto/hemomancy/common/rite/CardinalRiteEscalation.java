@@ -56,15 +56,15 @@ public final class CardinalRiteEscalation {
 
 	public static Plan plan(ActiveCardinalRite rite) {
 		return new Plan(rite.totalAnchorRings(), StationUpgradeRites.circuits(rite.getRecipeId()),
-				!rite.getOfferingItinerary().isEmpty(), !rite.succession().isEmpty());
+				!rite.getOfferingItinerary().isEmpty(), rite.succession().isPresent());
 	}
 
 	public static Reached reached(ActiveCardinalRite rite) {
 		CardinalRitePhase phase = rite.getPhase();
-		return new Reached(rite.completedRings(), rite.upgrade().getInt("Stage"),
-				rite.isAltarSealed() || rite.isPuppeteerTrialManifested(),
+		return new Reached(rite.completedRings(), rite.upgrade().stage(),
+				rite.isAltarSealed() || rite.puppeteerTrial().isManifested(),
 				phase == CardinalRitePhase.OFFERING_PROCESSION, phase == CardinalRitePhase.CULMINATION,
-				rite.succession().getInt("Ticks"));
+				rite.succession().ticks());
 	}
 
 	/**
@@ -77,7 +77,7 @@ public final class CardinalRiteEscalation {
 		Plan plan = plan(rite);
 		Marks marks = rite.getEscalationMarks().raise(reached(rite), plan);
 		rite.setEscalationMarks(marks);
-		int stage = stage(plan, marks, rite.succession().getInt("Ticks"));
+		int stage = stage(plan, marks, rite.succession().ticks());
 		if (stage <= rite.getEscalationStage()) return false;
 		rite.setEscalationStage(stage);
 		return true;
@@ -89,6 +89,6 @@ public final class CardinalRiteEscalation {
 		Plan plan = plan(rite);
 		Marks marks = Marks.NONE.raise(reached(rite), plan);
 		rite.setEscalationMarks(marks);
-		rite.setEscalationStage(stage(plan, marks, rite.succession().getInt("Ticks")));
+		rite.setEscalationStage(stage(plan, marks, rite.succession().ticks()));
 	}
 }

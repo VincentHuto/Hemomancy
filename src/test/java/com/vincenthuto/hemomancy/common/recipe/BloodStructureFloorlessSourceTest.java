@@ -29,9 +29,10 @@ final class BloodStructureFloorlessSourceTest {
 
 	@Test
 	void craftingHasNoBrazierOrRiteExclusiveSpecialCases() throws IOException {
-		String helper = read("common/network/capa/harbinger/BloodStructureCraftingHelper.java");
+		String helper = read("common/rite/structure/BloodStructureCraftingHelper.java");
 		assertFalse(helper.contains("findOfferingMatch"));
 		assertFalse(helper.contains("isRiteExclusive"));
+		assertFalse(read("common/rite/structure/BloodStructureCrafting.java").contains("isRiteExclusive"));
 		assertFalse(read("common/network/capa/harbinger/BloodCraftingKeyPressPacket.java").contains("isRiteExclusive"));
 		assertFalse(read("common/event/BloodStructureFeedManager.java").contains("offering"));
 	}

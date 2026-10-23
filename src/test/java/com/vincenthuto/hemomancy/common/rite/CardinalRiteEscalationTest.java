@@ -124,10 +124,10 @@ final class CardinalRiteEscalationTest {
 		context.putInt("Ticks", 0);
 		rite.beginSuccession(context);
 		assertFalse(CardinalRiteEscalation.update(rite), "culmination does not count for succession");
-		rite.succession().putInt("Ticks", 450);
+		rite.succession().tag().putInt("Ticks", 450);
 		assertTrue(CardinalRiteEscalation.update(rite));
 		assertEquals(2, rite.getEscalationStage());
-		rite.succession().putInt("Ticks", 5000);
+		rite.succession().tag().putInt("Ticks", 5000);
 		assertTrue(CardinalRiteEscalation.update(rite));
 		assertEquals(5, rite.getEscalationStage());
 		assertEquals(5, rite.getEscalationTotal());

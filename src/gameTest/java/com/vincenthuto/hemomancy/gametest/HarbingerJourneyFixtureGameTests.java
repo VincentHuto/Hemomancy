@@ -34,7 +34,7 @@ import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignm
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerAssignments;
 import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
 import com.vincenthuto.hemomancy.common.mission.vicar.EarlyInitiation;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
@@ -205,16 +205,12 @@ public final class HarbingerJourneyFixtureGameTests {
 					"The real revelation choice must open the Apotheos path");
 
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.APOTHEOS_RITE, origin);
-			var activation = BloodCraftingKeyPressPacket.tryStartCardinalRite(player, origin.above(),
+			var activation = CardinalRiteActivation.tryStart(player, origin.above(),
 					CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
 			ActiveCardinalRite rite = CardinalRiteSavedData.get(helper.getLevel()).getRite(player.getUUID());
 			helper.assertTrue(activation == CardinalRiteActivationRules.ActivationAttempt.STARTED && rite != null,
 					"The prepared Rite of Apotheos must start through the real activation path");
-			Method complete = HarbingerCardinalRiteEvents.class.getDeclaredMethod(
-					"completeRite", net.minecraft.server.level.ServerLevel.class, ServerPlayer.class,
-					ActiveCardinalRite.class);
-			complete.setAccessible(true);
-			helper.assertTrue((boolean) complete.invoke(null, helper.getLevel(), player, rite),
+			helper.assertTrue(com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletion.complete(helper.getLevel(), player, rite),
 					"The real Rite of Apotheos completion path must succeed");
 			helper.assertTrue(HemoJourneyChecks.verify(player, HemoJourneyStage.APOTHEOS_RITE, origin).passed(),
 					"The real rite must award Degree 8 and finalize Apotheos");
@@ -228,8 +224,6 @@ public final class HarbingerJourneyFixtureGameTests {
 					&& !player.getPersistentData().contains(FungalGardenTravelHelper.ARCHON_CHOICE_KEY),
 					"Snapshot restore must remove journey-owned Apotheos state");
 			helper.succeed();
-		} catch (ReflectiveOperationException error) {
-			throw new AssertionError("Apotheos fixture could not invoke the real rite completion path", error);
 		} finally {
 			HemoJourneyFixtures.cleanup(player, origin);
 			CardinalRiteSavedData.get(helper.getLevel()).removeRite(player.getUUID());
@@ -1182,16 +1176,12 @@ public final class HarbingerJourneyFixtureGameTests {
 					"The production poultice treatment must satisfy the treatment checkpoint");
 
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.VEIN_MASON_D5_FORTIFICATION, origin);
-			var activation = BloodCraftingKeyPressPacket.tryStartCardinalRite(player, origin.above(),
+			var activation = CardinalRiteActivation.tryStart(player, origin.above(),
 					CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
 			ActiveCardinalRite rite = CardinalRiteSavedData.get(helper.getLevel()).getRite(player.getUUID());
 			helper.assertTrue(activation == CardinalRiteActivationRules.ActivationAttempt.STARTED && rite != null,
 					"The prepared Hematic Fortification must start through the real activation path");
-			Method complete = HarbingerCardinalRiteEvents.class.getDeclaredMethod(
-					"completeRite", net.minecraft.server.level.ServerLevel.class, ServerPlayer.class,
-					ActiveCardinalRite.class);
-			complete.setAccessible(true);
-			helper.assertTrue((boolean) complete.invoke(null, helper.getLevel(), player, rite),
+			helper.assertTrue(com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletion.complete(helper.getLevel(), player, rite),
 					"The real Hematic Fortification completion path must succeed");
 			helper.assertTrue(HemoJourneyChecks.verify(player, HemoJourneyStage.VEIN_MASON_D5_FORTIFICATION, origin).passed(),
 					"Fortification and assignment readiness must satisfy the checkpoint");
@@ -1252,17 +1242,13 @@ public final class HarbingerJourneyFixtureGameTests {
 			helper.assertTrue(helper.getLevel().getBlockEntity(origin.above()) instanceof CardinalFocusBlockEntity focus
 					&& focus.getMediumForMatching().is(ItemInit.sanguine_quintessence.get()),
 					"The Founding Fane Cardinal Focus must contain its real medium");
-			var activation = BloodCraftingKeyPressPacket.tryStartCardinalRite(player, origin.above(),
+			var activation = CardinalRiteActivation.tryStart(player, origin.above(),
 					CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
 			ActiveCardinalRite rite = CardinalRiteSavedData.get(helper.getLevel()).getRite(player.getUUID());
 			helper.assertTrue(activation == CardinalRiteActivationRules.ActivationAttempt.STARTED && rite != null,
 					"The prepared Founding Fane must start through the real activation path");
 			step = "completing the Founding Fane rite";
-			Method complete = HarbingerCardinalRiteEvents.class.getDeclaredMethod(
-					"completeRite", net.minecraft.server.level.ServerLevel.class, ServerPlayer.class,
-					ActiveCardinalRite.class);
-			complete.setAccessible(true);
-			helper.assertTrue((boolean) complete.invoke(null, helper.getLevel(), player, rite),
+			helper.assertTrue(com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletion.complete(helper.getLevel(), player, rite),
 					"The real Founding Fane completion path must succeed");
 			helper.assertTrue(HemoJourneyChecks.verify(player, HemoJourneyStage.FOUNDING_FANE, origin).passed(),
 					"The real Founding Fane outcome must satisfy its journey checkpoint");
@@ -1302,15 +1288,12 @@ public final class HarbingerJourneyFixtureGameTests {
 			player.getPersistentData().putLong(HemoJourneyFixtures.ORIGIN_KEY, origin.asLong());
 			player.getPersistentData().putString(HemoJourneySnapshot.STAGE_KEY, HemoJourneyStage.FOUNDING_FANE.id());
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.FOUNDING_FANE, origin);
-			var activation = BloodCraftingKeyPressPacket.tryStartCardinalRite(player, origin.above(),
+			var activation = CardinalRiteActivation.tryStart(player, origin.above(),
 					CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
 			ActiveCardinalRite rite = CardinalRiteSavedData.get(helper.getLevel()).getRite(player.getUUID());
 			helper.assertTrue(activation == CardinalRiteActivationRules.ActivationAttempt.STARTED && rite != null,
 					"The prepared Founding Fane must start");
-			Method complete = HarbingerCardinalRiteEvents.class.getDeclaredMethod(
-					"completeRite", ServerLevel.class, ServerPlayer.class, ActiveCardinalRite.class);
-			complete.setAccessible(true);
-			helper.assertTrue((boolean) complete.invoke(null, helper.getLevel(), player, rite),
+			helper.assertTrue(com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletion.complete(helper.getLevel(), player, rite),
 					"The Founding Fane must complete through its real rite path");
 			CardinalRiteSavedData.get(helper.getLevel()).removeRite(player.getUUID());
 			HemoJourneyResult advanced = HemoJourneyController.next(player);
@@ -1327,8 +1310,6 @@ public final class HarbingerJourneyFixtureGameTests {
 			helper.assertTrue(helper.getLevel().getBlockState(heart).isAir(),
 					"Journey cleanup must remove its temporary Bloodwell");
 			helper.succeed();
-		} catch (ReflectiveOperationException exception) {
-			throw new IllegalStateException("Could not complete the Founding Fane in GameTest", exception);
 		} finally {
 			if (player.getPersistentData().contains(HemoJourneySnapshot.SNAPSHOT_KEY))
 				HemoJourneyController.clear(player);
@@ -1345,17 +1326,13 @@ public final class HarbingerJourneyFixtureGameTests {
 		BlockPos heart = origin.above(4);
 		try {
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.FOUNDING_FANE, origin);
-			var activation = BloodCraftingKeyPressPacket.tryStartCardinalRite(player, origin.above(),
+			var activation = CardinalRiteActivation.tryStart(player, origin.above(),
 					CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
 			ActiveCardinalRite rite = CardinalRiteSavedData.get(helper.getLevel()).getRite(player.getUUID());
 			helper.assertTrue(activation == CardinalRiteActivationRules.ActivationAttempt.STARTED && rite != null,
 					"The prepared Founding Fane must start");
 			helper.getLevel().setBlock(heart, Blocks.OBSIDIAN.defaultBlockState(), Block.UPDATE_ALL);
-			Method complete = HarbingerCardinalRiteEvents.class.getDeclaredMethod(
-					"completeRite", net.minecraft.server.level.ServerLevel.class, ServerPlayer.class,
-					ActiveCardinalRite.class);
-			complete.setAccessible(true);
-			helper.assertTrue(!(boolean) complete.invoke(null, helper.getLevel(), player, rite),
+			helper.assertTrue(!com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletion.complete(helper.getLevel(), player, rite),
 					"An obstructed heart must not complete the Founding Fane rite");
 			helper.assertTrue(!FoundingFaneSavedData.get(helper.getLevel()).hasFane(player.getUUID()),
 					"An obstructed rite must not register a Fane");
@@ -1490,7 +1467,7 @@ public final class HarbingerJourneyFixtureGameTests {
 		setServerPlayerLookup(player, true);
 		try {
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.FOUNDING_FANE, origin);
-			var activation = BloodCraftingKeyPressPacket.tryStartCardinalRite(player, origin.above(),
+			var activation = CardinalRiteActivation.tryStart(player, origin.above(),
 					CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
 			CardinalRiteSavedData saved = CardinalRiteSavedData.get(helper.getLevel());
 			ActiveCardinalRite rite = saved.getRite(player.getUUID());
@@ -1542,7 +1519,7 @@ public final class HarbingerJourneyFixtureGameTests {
 			HemoCapabilityAccess.getBloodVolume(player).setActive(true);
 			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(6);
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.COVENANT_VIGIL, origin);
-			var activation = BloodCraftingKeyPressPacket.tryStartCardinalRite(player, origin.above(),
+			var activation = CardinalRiteActivation.tryStart(player, origin.above(),
 					CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
 			ActiveCardinalRite rite = CardinalRiteSavedData.get(helper.getLevel()).getRite(player.getUUID());
 			helper.assertTrue(activation == CardinalRiteActivationRules.ActivationAttempt.STARTED && rite != null,
@@ -1558,17 +1535,12 @@ public final class HarbingerJourneyFixtureGameTests {
 			ally.discard();
 			helper.assertTrue(!CardinalRiteAllyService.hasRequiredHelpers(helper.getLevel(), rite),
 					"The lost helper must no longer satisfy the Vigil requirement");
-			Method complete = HarbingerCardinalRiteEvents.class.getDeclaredMethod(
-					"completeRite", ServerLevel.class, ServerPlayer.class, ActiveCardinalRite.class);
-			complete.setAccessible(true);
-			helper.assertTrue(!(boolean) complete.invoke(null, helper.getLevel(), player, rite),
+			helper.assertTrue(!com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletion.complete(helper.getLevel(), player, rite),
 					"Vigil completion must reject a lost required helper");
 			helper.assertTrue(!HarbingerAdvancementGranter.hasAdvancement(player,
 					HarbingerAdvancementGranter.ADV_COVENANT_VIGIL_COMPLETED),
 					"Losing the helper must not award Covenant Vigil completion");
 			helper.succeed();
-		} catch (ReflectiveOperationException error) {
-			throw new AssertionError("Vigil fixture could not invoke rite completion", error);
 		} finally {
 			ActiveCardinalRite rite = CardinalRiteSavedData.get(helper.getLevel()).getRite(player.getUUID());
 			if (rite != null) {
@@ -1814,7 +1786,7 @@ public final class HarbingerJourneyFixtureGameTests {
 
 			step = "starting and completing the Covenant Vigil";
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.COVENANT_VIGIL, origin);
-			var activation = BloodCraftingKeyPressPacket.tryStartCardinalRite(player, origin.above(),
+			var activation = CardinalRiteActivation.tryStart(player, origin.above(),
 					CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
 			ActiveCardinalRite rite = CardinalRiteSavedData.get(helper.getLevel()).getRite(player.getUUID());
 			helper.assertTrue(activation == CardinalRiteActivationRules.ActivationAttempt.STARTED && rite != null,
@@ -1828,11 +1800,7 @@ public final class HarbingerJourneyFixtureGameTests {
 			helper.assertTrue(CardinalRiteAllyService.tryAssignNpc(helper.getLevel(), player, rite, ally)
 					&& CardinalRiteAllyService.isAvailable(helper.getLevel(), rite, ally.getUUID()),
 					"Journey helper must be assigned through the real ally service");
-			Method complete = HarbingerCardinalRiteEvents.class.getDeclaredMethod(
-					"completeRite", net.minecraft.server.level.ServerLevel.class, ServerPlayer.class,
-					ActiveCardinalRite.class);
-			complete.setAccessible(true);
-			helper.assertTrue((boolean) complete.invoke(null, helper.getLevel(), player, rite),
+			helper.assertTrue(com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletion.complete(helper.getLevel(), player, rite),
 					"Real Covenant Vigil completion path must succeed");
 			helper.assertTrue(HemoJourneyChecks.verify(player, HemoJourneyStage.COVENANT_VIGIL, origin).passed()
 					&& ally.hasEffect(MobEffects.DAMAGE_RESISTANCE) && ally.hasEffect(MobEffects.REGENERATION),

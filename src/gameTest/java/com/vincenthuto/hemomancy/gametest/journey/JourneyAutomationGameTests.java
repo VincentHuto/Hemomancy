@@ -12,7 +12,7 @@ import com.vincenthuto.hemomancy.common.event.worldevent.FoundingFaneSavedData;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.mission.alchemist.FirstSeparationAssignment;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket;
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.network.discovery.OpenInscriptionPacket;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
@@ -751,7 +751,7 @@ public final class JourneyAutomationGameTests {
 			HemoCapabilityAccess.getBloodVolume(player).setActive(true);
 			HemoCapabilityAccess.getInitiatoryDegree(player).setDegreeNumber(6);
 			HemoJourneyFixtures.prepare(player, HemoJourneyStage.COVENANT_VIGIL, origin);
-			helper.assertTrue(BloodCraftingKeyPressPacket.tryStartCardinalRite(player, origin.above(),
+			helper.assertTrue(CardinalRiteActivation.tryStart(player, origin.above(),
 					CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE)
 					== CardinalRiteActivationRules.ActivationAttempt.STARTED,
 					"Prepared Covenant Vigil must start");
@@ -793,7 +793,7 @@ public final class JourneyAutomationGameTests {
 					HemoJourneyFixtures.bounds(origin), entity -> entity.getTags().contains(
 							HemoJourneyFixtures.entityMarker(origin))).getFirst();
 			com.vincenthuto.hemomancy.gametest.SuccessionTestFixtures.resident(player, successor, origin.above());
-			helper.assertTrue(BloodCraftingKeyPressPacket.tryStartCardinalRite(player, origin.above(),
+			helper.assertTrue(CardinalRiteActivation.tryStart(player, origin.above(),
 					CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE)
 					== CardinalRiteActivationRules.ActivationAttempt.STARTED,
 					"Prepared Covenant Vigil must start");
@@ -838,7 +838,7 @@ public final class JourneyAutomationGameTests {
 			var recipe = CardinalRiteRecipe.getRiteByLocation(helper.getLevel(),
 					Hemomancy.rloc("cardinal_rite/archon_rite"));
 			station = origin.above().offset(CardinalRiteAllyService.markers(recipe).get(CardinalRiteAllyRole.ANCHOR));
-			helper.assertTrue(BloodCraftingKeyPressPacket.tryStartCardinalRite(player, origin.above(),
+			helper.assertTrue(CardinalRiteActivation.tryStart(player, origin.above(),
 					CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE)
 					== CardinalRiteActivationRules.ActivationAttempt.STARTED,
 					"Prepared Archon rite must start before helper assignment");

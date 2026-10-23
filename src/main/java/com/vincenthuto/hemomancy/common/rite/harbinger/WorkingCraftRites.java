@@ -6,8 +6,8 @@ import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoin
 import com.vincenthuto.hemomancy.common.event.MachineAccessEvents;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 import com.vincenthuto.hemomancy.common.mission.vicar.FirstBloodcraftAssignment;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingPatternBlockRules;
-import com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodStructureCraftingHelper;
+import com.vincenthuto.hemomancy.common.rite.structure.BloodCraftingPatternBlockRules;
+import com.vincenthuto.hemomancy.common.rite.structure.BloodStructureCraftingHelper;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecipeDegreeGates;
@@ -67,7 +67,7 @@ public final class WorkingCraftRites {
 	public static boolean prepare(ServerLevel level, ActiveCardinalRite rite,
 			WorkingCraftSubjectMatcher.SubjectMatch subject) {
 		if (subject == null || !RiteOfferingEscrow.itineraryPresent(level, rite.getOfferingItinerary())) return false;
-		CompoundTag state = rite.craft();
+		CompoundTag state = rite.craft().tag();
 		state.putString("Side", subject.side().getSerializedName());
 		ListTag cells = new ListTag();
 		for (int i = 0; i < subject.positions().size(); i++) {
@@ -86,7 +86,7 @@ public final class WorkingCraftRites {
 	}
 
 	public static List<BlockPos> subjectPositions(ActiveCardinalRite rite) {
-		ListTag cells = rite.craft().getList("Subject", Tag.TAG_COMPOUND);
+		ListTag cells = rite.craft().tag().getList("Subject", Tag.TAG_COMPOUND);
 		List<BlockPos> positions = new ArrayList<>(cells.size());
 		for (int i = 0; i < cells.size(); i++) positions.add(BlockPos.of(cells.getCompound(i).getLong("Pos")));
 		return positions;
@@ -107,7 +107,7 @@ public final class WorkingCraftRites {
 
 	/** The subject's block states as captured when the rite began. */
 	public static List<BlockState> subjectStates(Level level, ActiveCardinalRite rite) {
-		ListTag cells = rite.craft().getList("Subject", Tag.TAG_COMPOUND);
+		ListTag cells = rite.craft().tag().getList("Subject", Tag.TAG_COMPOUND);
 		List<BlockState> states = new ArrayList<>(cells.size());
 		var blocks = level.holderLookup(Registries.BLOCK);
 		for (int i = 0; i < cells.size(); i++) {
@@ -160,7 +160,7 @@ public final class WorkingCraftRites {
 	 */
 	public static boolean complete(ServerLevel level, ServerPlayer caster, ActiveCardinalRite rite,
 			CardinalRiteRecipe recipe) {
-		CompoundTag state = rite.craft();
+		CompoundTag state = rite.craft().tag();
 		if (RiteOfferingEscrow.isConsumed(state)) return true;
 		// Offerings already sent home (or never taken) cannot pay for the result.
 		if (!RiteOfferingEscrow.isEscrowed(state)) return false;
@@ -223,17 +223,17 @@ public final class WorkingCraftRites {
 	 * its offerings; only its staff comes home, through the rite's ending.
 	 */
 	public static void recover(ServerLevel level, ActiveCardinalRite rite) {
-		if (!isRite(rite) || !RiteOfferingEscrow.isEscrowed(rite.craft())) return;
+		if (!isRite(rite) || !RiteOfferingEscrow.isEscrowed(rite.craft().tag())) return;
 		if (settledByFocus(level, rite)) {
-			RiteOfferingEscrow.markConsumed(rite.craft());
+			RiteOfferingEscrow.markConsumed(rite.craft().tag());
 			CardinalRiteSavedData.get(level).setDirty();
 			return;
 		}
-		RiteOfferingEscrow.returnEscrow(level, rite, rite.craft());
+		RiteOfferingEscrow.returnEscrow(level, rite, rite.craft().tag());
 	}
 
 	private static UUID riteIdentity(ActiveCardinalRite rite) {
-		return rite.craft().hasUUID("RiteIdentity") ? rite.craft().getUUID("RiteIdentity") : null;
+		return rite.craft().tag().hasUUID("RiteIdentity") ? rite.craft().tag().getUUID("RiteIdentity") : null;
 	}
 
 	private static boolean settledByFocus(ServerLevel level, ActiveCardinalRite rite) {

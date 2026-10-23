@@ -178,16 +178,20 @@ Entities cast through a parallel path:
   `purpose`: `self`, `world`, `making` or `bond`. Working crafts live under `working/`.
 - **Floors and sigils.** These come from the `CardinalRiteFloorLoader` and
   `IchorianSigilLoader` reload listeners. Special floors declare their purpose.
-- **Activation.** Today this lives inside a packet:
-  `BloodCraftingKeyPressPacket.tryStartCardinalRite`.
-- **Running rites.** `ActiveCardinalRite` holds a rite's state.
-  `HarbingerCardinalRiteEvents.onLevelTick` ticks it and branches by kind:
-  - Succession
-  - StationUpgrade
-  - WorkingCraft
-  - Puppeteer trial
-  - Ordeal
-  - Legacy, which today covers the Unstained rites
+- **Activation.** `CardinalRiteActivation.tryStart`, reached from the Living Staff, the Sanguine Formation
+  and (for Unstained rites) the blood crafting key, whose packet only delegates (step 11).
+- **Running rites.** `ActiveCardinalRite` holds a rite's state, with each kind's own state in
+  `PuppeteerTrialState`, `WorkingCraftState`, `StationUpgradeState` and `SuccessionState`.
+  `HarbingerCardinalRiteEvents.onLevelTick` runs one shared course and asks the rite's `RiteKind`
+  where kinds differ (step 11):
+  - `SUCCESSION`
+  - `STATION_UPGRADE`
+  - `WORKING_CRAFT`
+  - `PUPPETEER_TRIAL`
+  - `COUNTDOWN`, the legacy and Unstained rites
+  - `CEREMONY`, the interactive Harbinger ordeal
+  Completion is `CardinalRiteCompletion`, endings `CardinalRiteTermination`, and the client snapshot
+  `CardinalRiteSync`.
 - **Offerings.** Working crafts and station upgrades escrow their offerings through
   `RiteOfferingEscrow`. Ordinary ordeals consume offerings directly. Blood Structures
   take none.

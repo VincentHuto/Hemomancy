@@ -180,7 +180,7 @@ public final class StationUpgradeGameTests {
         rite.markComplete();
         helper.assertTrue(StationUpgradeRites.complete(level, rite)
                 && subject.upgradeTier() == tierNumber && !subject.isRiteLocked()
-                && rite.upgrade().getString("EscrowState").equals("CONSUMED"), tier.ritePath() + " did not complete");
+                && rite.upgrade().tag().getString("EscrowState").equals("CONSUMED"), tier.ritePath() + " did not complete");
         helper.succeed();
     }
 
@@ -218,11 +218,11 @@ public final class StationUpgradeGameTests {
             UpgradeableStation subject = StationUpgradeRites.station(level, rite);
             StationUpgradeRites.recover(level, rite);
             helper.assertTrue(!subject.isRiteLocked() && subject.upgradeTier() == 0
-                    && rite.upgrade().getString("EscrowState").equals("RETURNED"), station + " recovery");
-            helper.assertTrue(rite.upgrade().getList("Offerings", Tag.TAG_COMPOUND).size()
+                    && rite.upgrade().tag().getString("EscrowState").equals("RETURNED"), station + " recovery");
+            helper.assertTrue(rite.upgrade().tag().getList("Offerings", Tag.TAG_COMPOUND).size()
                     == StationUpgradeCatalog.OFFERINGS_PER_RITE, station + " escrow size");
             StationUpgradeRites.recover(level, rite);
-            helper.assertTrue(rite.upgrade().getString("EscrowState").equals("RETURNED"), station + " recovered twice");
+            helper.assertTrue(rite.upgrade().tag().getString("EscrowState").equals("RETURNED"), station + " recovered twice");
             level.removeBlock(subject.getBlockPos(), false);
         }
         helper.succeed();
@@ -236,7 +236,7 @@ public final class StationUpgradeGameTests {
         level.removeBlock(StationUpgradeRites.seat(rite), false);
         helper.assertTrue(!StationUpgradeRites.subjectPresent(level, rite), "missing subject still counted as present");
         StationUpgradeRites.recover(level, rite);
-        helper.assertTrue(rite.upgrade().getString("EscrowState").equals("RETURNED"), "escrow not returned");
+        helper.assertTrue(rite.upgrade().tag().getString("EscrowState").equals("RETURNED"), "escrow not returned");
         helper.succeed();
     }
 
@@ -252,7 +252,7 @@ public final class StationUpgradeGameTests {
         saved.remove("StationUpgrade");
         ActiveCardinalRite resumed = ActiveCardinalRite.deserialize(saved, registries);
         helper.assertTrue(resumed.getPhase() == CardinalRitePhase.STATION_PROJECTION
-                && resumed.upgrade().getString("EscrowState").equals("ESCROWED"), "legacy projection did not resume");
+                && resumed.upgrade().tag().getString("EscrowState").equals("ESCROWED"), "legacy projection did not resume");
         StationUpgradeRites.recover(level, resumed);
         level.removeBlock(StationUpgradeRites.seat(forgeRite), false);
 
@@ -328,7 +328,7 @@ public final class StationUpgradeGameTests {
         helper.assertTrue(StationUpgradeRites.prepare(level, rite), "prepare");
         var forge = (ResonantForgeBlockEntity) StationUpgradeRites.station(level, rite);
         // Snapshots saved before consolidation carried the tier; a stray button press may change the operator.
-        rite.upgrade().getCompound("SubjectSnapshot").putInt("Tier", 0);
+        rite.upgrade().tag().getCompound("SubjectSnapshot").putInt("Tier", 0);
         forge.setOperator(UUID.randomUUID());
         for (int i = 0; i < rite.getAnchorBloodMl().length; i++) rite.fillAnchor(i, 50);
         helper.assertTrue(rite.enterInscription() && rite.sealAltar(false), "seal");

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.gametest;
 
+import com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation;
 import com.google.gson.JsonParser;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
@@ -119,7 +120,7 @@ public final class SuccessionClientReview {
                 if(op.equals("start")) {
                     player.setGameMode(GameType.SURVIVAL);
                     player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,new ItemStack(ItemInit.living_staff.get()));
-                    var result=com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket.tryStartCardinalRite(player,new BlockPos(0,100,0),CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
+                    var result=CardinalRiteActivation.tryStart(player,new BlockPos(0,100,0),CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
                     Hemomancy.LOGGER.info("SUCCESSION_REVIEW activation {}",result);
                 }
                 if(op.equals("hostiles")) for(int i=0;i<SuccessionProfessions.ROLES.size();i++) {
@@ -128,7 +129,7 @@ public final class SuccessionClientReview {
                 }
                 if(op.equals("status")) {
                     var data=SuccessionSavedData.get(player.serverLevel());var rite=CardinalRiteSavedData.get(player.serverLevel()).getRite(player.getUUID());
-                    Hemomancy.LOGGER.info("SUCCESSION_REVIEW residents={} locks={} rite={}",data.residents.size(),data.ledger.reservations().size(),rite==null?"none":rite.succession());
+                    Hemomancy.LOGGER.info("SUCCESSION_REVIEW residents={} locks={} rite={}",data.residents.size(),data.ledger.reservations().size(),rite==null?"none":rite.succession().tag());
                 }
             });
         }catch(Exception failure){Hemomancy.LOGGER.error("SUCCESSION_REVIEW",failure);}

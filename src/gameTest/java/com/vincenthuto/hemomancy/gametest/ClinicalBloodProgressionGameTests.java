@@ -792,8 +792,8 @@ public final class ClinicalBloodProgressionGameTests {
             com.vincenthuto.hemomancy.common.rite.ScarBrazierRite.burn(h.getLevel(), effigyPos, actor, gift,
                     com.vincenthuto.hemomancy.common.rite.ScarBrazierInteractionRules.Burn.COMMIT);
             var trigger = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE;
-            var rejected = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
-                    .tryStartCardinalRite(actor, origin.above(), trigger);
+            var rejected = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation
+                    .tryStart(actor, origin.above(), trigger);
             h.assertTrue(rejected != com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
                     && saved.getRite(actor.getUUID()) == null && actor.getMainHandItem() == staff,
                     "A gifted loadout must leave Illuminatus sealed and its Staff unescrowed");
@@ -809,8 +809,8 @@ public final class ClinicalBloodProgressionGameTests {
             h.assertTrue(outputs.size() == 1, "Personal practice must produce one actual pattern");
             com.vincenthuto.hemomancy.common.rite.ScarBrazierRite.burn(h.getLevel(), effigyPos, actor,
                     outputs.getFirst().getItem(), com.vincenthuto.hemomancy.common.rite.ScarBrazierInteractionRules.Burn.COMMIT);
-            var started = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
-                    .tryStartCardinalRite(actor, origin.above(), trigger);
+            var started = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation
+                    .tryStart(actor, origin.above(), trigger);
             var rite = saved.getRite(actor.getUUID());
             h.assertTrue(started == com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
                     && rite != null && rite.getRecipeId().equals(Hemomancy.rloc("cardinal_rite/illuminatus_rite")),
@@ -846,26 +846,22 @@ public final class ClinicalBloodProgressionGameTests {
                     && !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.hasCompletedGuidedVisit(actor),
                     "Independent fixture must begin without earlier Chamber access");
             var staff = actor.getMainHandItem();
-            var tooEarly = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
-                    .tryStartCardinalRite(actor, origin.above(),
+            var tooEarly = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation
+                    .tryStart(actor, origin.above(),
                             com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
             h.assertTrue(tooEarly != com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
                     && saved.getRite(actor.getUUID()) == null && actor.getMainHandItem() == staff
                     && !com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isAttuned(actor),
                     "D5 must not start the independent D6 rite, lose its Staff, or gain attunement");
             HemoCapabilityAccess.getInitiatoryDegree(actor).setDegreeNumber(6);
-            var started = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
-                    .tryStartCardinalRite(actor, origin.above(),
+            var started = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation
+                    .tryStart(actor, origin.above(),
                             com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
             var rite = saved.getRite(actor.getUUID());
             h.assertTrue(started == com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
                     && rite != null && rite.getAllyRoles().isEmpty(), "Unrecruited D6 must start its own Chamber rite");
             // Supply the completed ceremony boundary; this server has no Chamber destination.
-            var complete = com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents.class
-                    .getDeclaredMethod("completeRite", net.minecraft.server.level.ServerLevel.class,
-                            ServerPlayer.class, ActiveCardinalRite.class);
-            complete.setAccessible(true);
-            h.assertTrue((boolean) complete.invoke(null, h.getLevel(), actor, rite),
+            h.assertTrue(com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletion.complete(h.getLevel(), actor, rite),
                     "Independent Chamber rite completion must succeed without a recruited Mnemonist");
             h.assertTrue(com.vincenthuto.hemomancy.common.worldgen.ChamberVisitService.isAttuned(actor)
                     && HarbingerAdvancementGranter.hasAdvancement(actor, HarbingerAdvancementGranter.ADV_CHAMBER_RITE_ATTUNED),
@@ -875,8 +871,6 @@ public final class ClinicalBloodProgressionGameTests {
                     && HemoCapabilityAccess.getPlayerDegreeNumber(actor) == 6,
                     "Attunement must not fabricate a guided lesson, return, or higher degree");
             h.succeed();
-        } catch (ReflectiveOperationException exception) {
-            h.fail("Independent Chamber completion could not run: " + exception);
         } finally {
             var rite = saved.getRite(actor.getUUID());
             if (rite != null) com.vincenthuto.hemomancy.common.rite.CardinalRiteStaffEscrow.restore(actor, rite);
@@ -928,8 +922,8 @@ public final class ClinicalBloodProgressionGameTests {
             var blood = HemoCapabilityAccess.getBloodVolume(actor);
             blood.setBloodVolume(1000);
             blood.setActive(false);
-            var result = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
-                    .tryStartCardinalRite(actor, focusPos,
+            var result = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation
+                    .tryStart(actor, focusPos,
                             com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
             h.assertTrue(result != com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
                             && saved.getRite(actor.getUUID()) == null,
@@ -938,15 +932,15 @@ public final class ClinicalBloodProgressionGameTests {
                     "Rejected inactive start escrowed the Staff or spent blood");
             blood.setActive(true);
             HemoCapabilityAccess.getInitiatoryDegree(actor).setDegreeNumber(1);
-            var tooEarly = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
-                    .tryStartCardinalRite(actor, focusPos,
+            var tooEarly = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation
+                    .tryStart(actor, focusPos,
                             com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
             h.assertTrue(tooEarly != com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
                             && saved.getRite(actor.getUUID()) == null && actor.getMainHandItem() == staff,
                     "D1 Staff ownership bypassed Rooted Vein's D2 gate");
             HemoCapabilityAccess.getInitiatoryDegree(actor).setDegreeNumber(2);
-            var retry = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
-                    .tryStartCardinalRite(actor, focusPos,
+            var retry = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation
+                    .tryStart(actor, focusPos,
                             com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
             h.assertTrue(retry == com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
                             && saved.getRite(actor.getUUID()) != null,
@@ -1570,15 +1564,15 @@ public final class ClinicalBloodProgressionGameTests {
             blood.setBloodVolume(1000);
             var staff = actor.getMainHandItem();
             var trigger = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE;
-            var attempt = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
-                    .tryStartCardinalRite(actor, center, trigger);
+            var attempt = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation
+                    .tryStart(actor, center, trigger);
             h.assertTrue(attempt != com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
                             && saved.getRite(actor.getUUID()) == null && actor.getMainHandItem() == staff
                             && blood.getBloodVolume() == 1000,
                     "An earlier-degree Staff owner started " + recipePath + " or lost blood/escrow");
             HemoCapabilityAccess.getInitiatoryDegree(actor).setDegreeNumber(requiredDegree);
-            attempt = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
-                    .tryStartCardinalRite(actor, center, trigger);
+            attempt = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation
+                    .tryStart(actor, center, trigger);
             h.assertTrue(attempt == com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
                             && saved.getRite(actor.getUUID()) != null
                             && saved.getRite(actor.getUUID()).getRecipeId().equals(Hemomancy.rloc("cardinal_rite/" + recipePath)),
@@ -1730,8 +1724,8 @@ public final class ClinicalBloodProgressionGameTests {
             h.getLevel().setBlock(center.above(), Blocks.CHEST.defaultBlockState(), 3);
             var chest = (net.minecraft.world.level.block.entity.ChestBlockEntity) h.getLevel().getBlockEntity(center.above());
             chest.setItem(0, new ItemStack(Items.DIAMOND, 3));
-            var result = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
-                    .tryStartCardinalRite(actor, center,
+            var result = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation
+                    .tryStart(actor, center,
                             com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
             h.assertTrue(result != com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.STARTED
                             && saved.getRite(actor.getUUID()) == null,
@@ -1758,25 +1752,19 @@ public final class ClinicalBloodProgressionGameTests {
         var rite = com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite.interactive(
                 actor.getUUID(), center, Hemomancy.rloc("cardinal_rite/rooted_vein"), 400, 2, 2, false, 0, 4);
         try {
-            var complete = com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents.class
-                    .getDeclaredMethod("completeRite", net.minecraft.server.level.ServerLevel.class,
-                            ServerPlayer.class, com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite.class);
-            complete.setAccessible(true);
-            h.assertTrue(!(boolean) complete.invoke(null, h.getLevel(), actor, rite),
+            h.assertTrue(!com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletion.complete(h.getLevel(), actor, rite),
                     "Rooted Vein overwrote a site occupied after activation");
             h.assertTrue(h.getLevel().getBlockState(center).is(BlockInit.cardinal_focus.get())
                             && h.getLevel().getBlockEntity(center.above()) == chest
                             && chest.getItem(0).is(Items.DIAMOND) && chest.getItem(0).getCount() == 3,
                     "Rejected Rooted Vein completion changed the Focus or occupied inventory");
             h.getLevel().removeBlock(center.above(), false);
-            h.assertTrue((boolean) complete.invoke(null, h.getLevel(), actor, rite),
+            h.assertTrue(com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletion.complete(h.getLevel(), actor, rite),
                     "A clear-site Rooted Vein retry did not complete");
             h.assertTrue(h.getLevel().getBlockState(center).is(BlockInit.venous_stone.get())
                             && h.getLevel().getBlockState(center.above()).is(BlockInit.earthen_vein.get()),
                     "Rooted Vein retry did not create its permanent result");
             h.succeed();
-        } catch (ReflectiveOperationException exception) {
-            h.fail("Rooted Vein completion could not run: " + exception);
         } finally {
             h.getLevel().removeBlock(center.above(), false);
             h.getLevel().removeBlock(center, false);
@@ -3416,11 +3404,7 @@ public final class ClinicalBloodProgressionGameTests {
         try {
             h.assertTrue(com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteAllyService
                     .hasRequiredHelpers(level, rite), "Bloom helper setup did not satisfy the recipe");
-            var complete = com.vincenthuto.hemomancy.common.rite.harbinger.HarbingerCardinalRiteEvents.class
-                    .getDeclaredMethod("completeRite", net.minecraft.server.level.ServerLevel.class,
-                            ServerPlayer.class, com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite.class);
-            complete.setAccessible(true);
-            h.assertTrue(!(boolean) complete.invoke(null, level, actor, rite),
+            h.assertTrue(!com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletion.complete(level, actor, rite),
                     "An obstructed Bloom column must reject completion");
             h.assertTrue(focus.getMediumForMatching().is(ItemInit.qliphoth_seed.get()),
                     "A rejected Bloom must leave its Seed in the Focus");
@@ -3434,22 +3418,20 @@ public final class ClinicalBloodProgressionGameTests {
                     center.above(2).east(16), dimension, 3, level.getGameTime());
             blooms.addBloom(nearby);
             try {
-                h.assertTrue(!(boolean) complete.invoke(null, level, actor, rite),
+                h.assertTrue(!com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletion.complete(level, actor, rite),
                         "An overlapping Bloom must reject completion");
                 h.assertTrue(focus.getMediumForMatching().is(ItemInit.qliphoth_seed.get()),
                         "An overlap rejection consumed the Seed");
             } finally {
                 blooms.removeBloomInChunk(nearby.center(), dimension);
             }
-            h.assertTrue((boolean) complete.invoke(null, level, actor, rite),
+            h.assertTrue(com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteCompletion.complete(level, actor, rite),
                     "A clear-site retry did not complete the Bloom rite");
             var bloom = blooms.getBloomAt(center.above(2), dimension);
             h.assertTrue(bloom != null && bloom.ownerUUID().equals(actor.getUUID())
                             && level.getBlockState(center.above(2)).is(BlockInit.qliphoth_bloom.get()),
                     "The retry did not place and register the owner's Bloom");
             h.assertTrue(!focus.hasMedium(), "The successful retry did not consume the Seed");
-        } catch (ReflectiveOperationException exception) {
-            h.fail("Bloom completion check could not run: " + exception);
         } finally {
             level.removeBlock(obstruction, false);
             level.removeBlock(center.above(2), false);
@@ -3484,8 +3466,8 @@ public final class ClinicalBloodProgressionGameTests {
                             .canPlaceQliphothBloom(level, actor, focusPos),
                     "Bloom fixture did not provide a clear column");
             level.setBlock(obstruction, Blocks.OBSIDIAN.defaultBlockState(), 3);
-            var result = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
-                    .tryStartCardinalRite(actor, focusPos,
+            var result = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation
+                    .tryStart(actor, focusPos,
                             com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
             h.assertTrue(result == com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.HANDLED
                             && com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData.get(level)
@@ -3496,16 +3478,16 @@ public final class ClinicalBloodProgressionGameTests {
             level.removeBlock(obstruction, false);
             var root = focusPos.above(2);
             level.setBlock(root, Blocks.OBSIDIAN.defaultBlockState(), 3);
-            var blockedRoot = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
-                    .tryStartCardinalRite(actor, focusPos,
+            var blockedRoot = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation
+                    .tryStart(actor, focusPos,
                             com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
             h.assertTrue(blockedRoot == com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.ActivationAttempt.HANDLED
                             && com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData.get(level)
                                     .getRite(actor.getUUID()) == null,
                     "An occupied Bloom root started the ceremony");
             level.removeBlock(root, false);
-            var retry = com.vincenthuto.hemomancy.common.network.capa.harbinger.BloodCraftingKeyPressPacket
-                    .tryStartCardinalRite(actor, focusPos,
+            var retry = com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivation
+                    .tryStart(actor, focusPos,
                             com.vincenthuto.hemomancy.common.rite.harbinger.CardinalRiteActivationRules.Trigger.LIVING_STAFF_BLOCK_USE);
             var active = com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData.get(level)
                     .getRite(actor.getUUID());

@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.network.capa.harbinger;
+package com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume;
 
 import org.junit.jupiter.api.Test;
 

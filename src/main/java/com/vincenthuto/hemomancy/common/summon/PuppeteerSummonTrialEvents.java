@@ -75,8 +75,8 @@ public final class PuppeteerSummonTrialEvents {
 		if (rite == null) return;
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(caster.serverLevel(), rite.getRecipeId());
 		if (recipe == null || !recipe.isPuppeteerTrial()) return;
-		if (PuppeteerTrialRiteRules.matchesDeath(rite.getPlayerUUID(), rite.getPuppeteerTrialEntityId(),
-				rite.getPuppeteerTrialSummonName(), casterId, event.getEntity().getUUID(),
+		if (PuppeteerTrialRiteRules.matchesDeath(rite.getPlayerUUID(), rite.puppeteerTrial().entityId(),
+				rite.puppeteerTrial().summonName(), casterId, event.getEntity().getUUID(),
 				summon.hemomancy$getSummonName())
 				&& rite.markPuppeteerTrialDefeated(event.getEntity().getUUID())) {
 			saved.setDirty();

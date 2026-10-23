@@ -45,8 +45,10 @@ public final class PuppeteerIntegrationSourceTest {
 		String mechanicsWiki = read("wiki/Advanced-Mechanics.md");
 		String attachments = read("src/main/java/com/vincenthuto/hemomancy/common/capability/HemoAttachmentTypes.java");
 		String bloodShot = read("src/main/java/com/vincenthuto/hemomancy/common/entity/projectile/BloodShotEntity.java");
-		String craftingKey = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/BloodCraftingKeyPressPacket.java");
-		String craftingHelper = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/BloodStructureCraftingHelper.java");
+		String craftingKey = read("src/main/java/com/vincenthuto/hemomancy/common/network/capa/harbinger/BloodCraftingKeyPressPacket.java")
+				+ read("src/main/java/com/vincenthuto/hemomancy/common/rite/structure/BloodStructureCrafting.java")
+				+ read("src/main/java/com/vincenthuto/hemomancy/common/rite/harbinger/CardinalRiteActivation.java");
+		String craftingHelper = read("src/main/java/com/vincenthuto/hemomancy/common/rite/structure/BloodStructureCraftingHelper.java");
 		String feedManager = read("src/main/java/com/vincenthuto/hemomancy/common/event/BloodStructureFeedManager.java");
 		String genericRadial = read("src/main/java/com/vincenthuto/hemomancy/client/screen/radial/GenericRadialMenu.java");
 		String textRadialItem = read("src/main/java/com/vincenthuto/hemomancy/client/screen/radial/TextRadialMenuItem.java");

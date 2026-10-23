@@ -309,7 +309,7 @@ public final class CardinalRiteOrdealEngine {
 				CardinalRiteBeats.sound(level, rite.getCenterPos(), SoundInit.RITE_CULMINATION, 3.0F, 0.75F);
 				shakeNearby(level, rite.getCenterPos(), 64.0D, 10, 0.55F, seed);
 			} else {
-				float reach = Math.max(4.0F, HarbingerCardinalRiteEvents.ritualFootprintRadius(rite, recipe) + 1.5F);
+				float reach = Math.max(4.0F, CardinalRiteFootprintResolver.radius(rite, recipe) + 1.5F);
 				CardinalRiteBeats.send(level, rite, CardinalRiteEventKind.GROUND_SLAMMED, seed, Float.toString(reach),
 						List.of(ground), ItemStack.EMPTY);
 				CardinalRiteBeats.sound(level, rite.getCenterPos(), SoundInit.RITE_SUBJECT_THUD, 2.0F, 0.6F);
