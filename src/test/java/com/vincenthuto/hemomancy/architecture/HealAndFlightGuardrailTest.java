@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class HealAndFlightGuardrailTest {
 	private static final String COMMON = "src/main/java/com/vincenthuto/hemomancy/common/";
 	private static final Pattern FLIGHT_WRITE = Pattern.compile("\\.(?:mayfly|flying)\\s*=(?!=)");
-	private static final Pattern HEAL_LISTENER = Pattern.compile("\\(\\s*LivingHealEvent\\s+\\w+\\s*\\)");
+	private static final Pattern HEAL_LISTENER = Pattern.compile("\\(\\s*(?:final\\s+)?LivingHealEvent\\s+\\w+\\s*\\)");
 
 	@Test
 	void onlyTheFlightArbiterWritesFlight() throws IOException {

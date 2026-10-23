@@ -36,9 +36,10 @@ public final class ManipulationCombatHelper {
 
 	/**
 	 * How far an effect reaches past {@link #canHarm(Player, LivingEntity)}. {@link #STRICT} is canHarm itself. The
-	 * wider presets reproduce sites written before step 9 flag for flag; the consolidation ledger's Decisions table
-	 * names the pending decision that would move each one onto STRICT (G-2b for the Monster filters, F-16 for the
-	 * ungated area effects).
+	 * wider presets reproduce sites written before step 9 flag for flag. Moving a site onto STRICT is a pending
+	 * decision in the consolidation ledger: G-2b for the caster's own puppets in Monster filters, F-16 for the area
+	 * damage from armour, Still Arts, Sheolic and Saprovitta. Other wider sites (the morphling look target, the
+	 * Verdigris mark) would need their own decision.
 	 *
 	 * @param allies     also reach the caster's allies: itself excepted, its pets, teammates, its own and allied
 	 *                   puppets, and mobs it has impressed

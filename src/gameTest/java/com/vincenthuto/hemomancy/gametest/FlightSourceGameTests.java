@@ -27,10 +27,11 @@ public final class FlightSourceGameTests {
 	private FlightSourceGameTests() {
 	}
 
-	@GameTest(templateNamespace = NAMESPACE, template = "combat_targeting_room", batch = "flight_sources", timeoutTicks = 60)
+	@GameTest(templateNamespace = NAMESPACE, template = "small_room", batch = "edacious_set_grants_slow_flight_and_takes_it_back", timeoutTicks = 60)
 	public static void edaciousSetGrantsSlowFlightAndTakesItBack(GameTestHelper h) {
 		h.runAfterDelay(2, () -> {
-			ServerPlayer player = survivor(h);
+			CapturedPlayer captured = survivor(h);
+			ServerPlayer player = captured.player;
 			try {
 				wearEdacious(player, true);
 				EdaciousBloodburstArmorAbilityHandler.updateEdaciousFlight(player);
@@ -40,15 +41,16 @@ public final class FlightSourceGameTests {
 				expect(h, player, "removed", false, false, 0.05F);
 				h.succeed();
 			} finally {
-				player.discard();
+				captured.close();
 			}
 		});
 	}
 
-	@GameTest(templateNamespace = NAMESPACE, template = "combat_targeting_room", batch = "flight_sources", timeoutTicks = 60)
+	@GameTest(templateNamespace = NAMESPACE, template = "small_room", batch = "silent_slipping_lifts_into_flight_and_releases", timeoutTicks = 60)
 	public static void silentSlippingLiftsIntoFlightAndReleases(GameTestHelper h) {
 		h.runAfterDelay(2, () -> {
-			ServerPlayer player = survivor(h);
+			CapturedPlayer captured = survivor(h);
+			ServerPlayer player = captured.player;
 			try {
 				SilentArchonArmorAbilityHandler.activateSilentSlipping(player);
 				expect(h, player, "slipping", true, true, 0.035F);
@@ -57,16 +59,18 @@ public final class FlightSourceGameTests {
 				h.succeed();
 			} finally {
 				player.noPhysics = false;
-				player.discard();
+				captured.close();
 			}
 		});
 	}
 
-	@GameTest(templateNamespace = NAMESPACE, template = "combat_targeting_room", batch = "flight_sources", timeoutTicks = 60)
+	@GameTest(templateNamespace = NAMESPACE, template = "small_room", batch = "elytra_effect_hovers_airborne_and_grounds_on_landing", timeoutTicks = 60)
 	public static void elytraEffectHoversAirborneAndGroundsOnLanding(GameTestHelper h) {
 		h.runAfterDelay(2, () -> {
-			ServerPlayer player = survivor(h);
-			ServerPlayer creative = survivor(h);
+			CapturedPlayer captured = survivor(h);
+			ServerPlayer player = captured.player;
+			CapturedPlayer creativeCapture = survivor(h);
+			ServerPlayer creative = creativeCapture.player;
 			try {
 				player.getAbilities().setFlyingSpeed(0.07F);
 				elytraTick(player, false);
@@ -80,17 +84,18 @@ public final class FlightSourceGameTests {
 				expect(h, creative, "creative landed", true, false, 0.05F);
 				h.succeed();
 			} finally {
-				player.discard();
-				creative.discard();
+				captured.close();
+				creativeCapture.close();
 			}
 		});
 	}
 
 	/** Pending G-7: a landing under the Elytra effect drops Edacious flight until Edacious's next tick restores it. */
-	@GameTest(templateNamespace = NAMESPACE, template = "combat_targeting_room", batch = "flight_sources", timeoutTicks = 60)
+	@GameTest(templateNamespace = NAMESPACE, template = "small_room", batch = "elytra_landing_drops_edacious_flight_until_its_next_tick", timeoutTicks = 60)
 	public static void elytraLandingDropsEdaciousFlightUntilItsNextTick(GameTestHelper h) {
 		h.runAfterDelay(2, () -> {
-			ServerPlayer player = survivor(h);
+			CapturedPlayer captured = survivor(h);
+			ServerPlayer player = captured.player;
 			try {
 				wearEdacious(player, true);
 				EdaciousBloodburstArmorAbilityHandler.updateEdaciousFlight(player);
@@ -100,15 +105,17 @@ public final class FlightSourceGameTests {
 				expect(h, player, "Edacious tick", true, false, 0.025F);
 				h.succeed();
 			} finally {
-				player.discard();
+				captured.close();
 			}
 		});
 	}
 
-	private static ServerPlayer survivor(GameTestHelper h) {
-		ServerPlayer player = DuctilisGameTests.player(h);
-		player.setGameMode(GameType.SURVIVAL);
-		return player;
+	/** A survival player outside the level, so no parallel test sees it. */
+	private static CapturedPlayer survivor(GameTestHelper h) {
+		CapturedPlayer captured = CapturedPlayer.create(h);
+		captured.player.setPos(h.absoluteVec(new net.minecraft.world.phys.Vec3(2.5D, 1.0D, 2.5D)));
+		captured.player.setGameMode(GameType.SURVIVAL);
+		return captured;
 	}
 
 	private static void wearEdacious(ServerPlayer player, boolean worn) {

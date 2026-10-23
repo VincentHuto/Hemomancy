@@ -293,11 +293,28 @@ Unstained mechanics, hazards, Still Arts and summons.
   `ProjectedBloodSink`; `IBloodReservoir` supplies the default. `BloodAccountingGuardrailTest`
   rejects a raw player `drain(`, `subtractBloodVolume(`, `addBloodSpend(` or a
   `BloodVolumeServerPacket` built outside `syncVolume`.
+- Since step 9, `ManipulationCombatHelper` is the one harm predicate:
+  - `canHarm(player, target)` is the strict rule.
+  - `canHarm(caster, target, Reach)` takes a named preset. Each preset reproduces an older filter flag
+    for flag: `MONSTER_FILTER` and `MONSTER_FILTER_ANY_STATE` for `Monster.class` gathers, `UNGATED`
+    and `UNGATED_SURVIVAL` for the area effects that reach everyone. Moving a site to `STRICT` is the
+    approved change G-2b or F-16.
+  - `canHarmFor(source, target)` covers constructs, summons, projectiles and effect holders.
+  - Morphling, Still Art, scar, armour and Drudge harm and `Monster` targeting go through it.
+  - Drudge work lives in `DrudgeActions`, with one `monsters` / `nearestMonster` lookup.
+  - Heal reductions are the `HealModifier` table, applied in one stage.
+  - `FlightArbiter` is the only writer of `mayfly` / `flying`; its `Source` enum lists every source of
+    flight.
+  - `CombatTargetingGuardrailTest` and `HealAndFlightGuardrailTest` enforce these.
+  - `CombatTargetingMatrixGameTests` pins who each family reaches.
 
 **Migration targets**
-- Targeting in armour abilities, scars, Still Arts, living weapons, primal morphlings and
-  puppet threads (G-2). Their blood payments (G-3, L-2) moved to `BloodAccounting` in step 7.
-- The 25 `Monster.class` filters.
+- Living-weapon sweeps (`LivingSickleItem`, `LivingTorchItem`) still use vanilla melee eligibility, and
+  puppet threads use their own AI rules (G-2). Their blood payments (G-3, L-2) moved to
+  `BloodAccounting` in step 7.
+- The `Reach` presets wider than `STRICT`, once G-2b and F-16 are decided.
+- Reveal and sense effects that still filter `LivingEntity` by hand: Irontooth's tremor and burrow sense,
+  Witch's Ear, Pale Diagnosis (vanilla `TargetingConditions`) and Bloodhound sense.
 - The 7 duplicated cast-eligibility checks (N-5).
 
 **Exceptions**
@@ -391,10 +408,19 @@ Supporting rules:
 - Since step 8: one subscriber style everywhere and constructor listeners for mod lifecycle only
   (`RegistrationStyleGuardrailTest`); entity-id client caches are cleared on logout in
   `ClientSessionEvents` (`ClientSessionCacheTest`).
+- Since step 9, the heal stage table:
+
+  | Priority | Listener | Role |
+  |---|---|---|
+  | `HIGH` | `PurityGainEvents.onLivingHeal` | Reads the requested heal (Unstained restraint purity) |
+  | `NORMAL` | `ManipulationStatusEvents.onLivingHeal` | Applies every `HealModifier`, in table order |
+
+  The damage stages wait for G-1. Until it is approved, the damage listeners keep their
+  current priorities.
 
 **Migration targets**
 - R-1 (subscription style).
-- G-1 (damage stages).
+- G-1 (damage stages, pending approval).
 - S-2 and S-8 (lifecycle fan-out).
 
 **Exceptions**

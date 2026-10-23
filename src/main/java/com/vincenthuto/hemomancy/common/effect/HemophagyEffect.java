@@ -7,8 +7,8 @@ import net.minecraft.world.entity.LivingEntity;
 
 /**
  * Hemophagy — applied by the Hollow Vessel's Empty Pulse. While active, the
- * victim's healing sources are severely dampened. The actual heal reduction is
- * enforced via LivingHealEvent in HemorathEntity.
+ * victim's healing sources are severely dampened. The heal reduction is the
+ * {@link HealModifier#HEMOPHAGY} entry of the heal-modifier table.
  */
 public class HemophagyEffect extends MobEffect {
 

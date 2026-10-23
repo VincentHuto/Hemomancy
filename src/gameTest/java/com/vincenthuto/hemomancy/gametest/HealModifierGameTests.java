@@ -28,8 +28,8 @@ public final class HealModifierGameTests {
 	private HealModifierGameTests() {
 	}
 
-	@GameTest(templateNamespace = NAMESPACE, template = "combat_targeting_room", batch = "heal_modifiers", timeoutTicks = 60)
-	public static void eachHealModifierScalesAndPurityReadsTheResult(GameTestHelper h) {
+	@GameTest(templateNamespace = NAMESPACE, template = "small_room", batch = "each_heal_modifier_scales_and_purity_reads_the_requested_heal", timeoutTicks = 60)
+	public static void eachHealModifierScalesAndPurityReadsTheRequestedHeal(GameTestHelper h) {
 		h.runAfterDelay(2, () -> {
 			List<String> rows = new ArrayList<>();
 			rows.add(heal(h, null));
@@ -45,10 +45,11 @@ public final class HealModifierGameTests {
 		});
 	}
 
-	@GameTest(templateNamespace = NAMESPACE, template = "combat_targeting_room", batch = "heal_modifiers", timeoutTicks = 60)
+	@GameTest(templateNamespace = NAMESPACE, template = "small_room", batch = "stacked_heal_modifiers_multiply", timeoutTicks = 60)
 	public static void stackedHealModifiersMultiply(GameTestHelper h) {
 		h.runAfterDelay(2, () -> {
-			ServerPlayer player = DuctilisGameTests.player(h);
+			CapturedPlayer captured = CapturedPlayer.create(h);
+			ServerPlayer player = captured.player;
 			try {
 				player.setHealth(10.0F);
 				player.addEffect(new MobEffectInstance(EffectInit.necrosis, 200));
@@ -64,13 +65,14 @@ public final class HealModifierGameTests {
 						"insatiable hunger suppresses hemophagy, times impaired recovery: " + player.getHealth());
 				h.succeed();
 			} finally {
-				player.discard();
+				captured.close();
 			}
 		});
 	}
 
 	private static String heal(GameTestHelper h, Holder<MobEffect> effect) {
-		ServerPlayer player = DuctilisGameTests.player(h);
+		CapturedPlayer captured = CapturedPlayer.create(h);
+		ServerPlayer player = captured.player;
 		try {
 			HemoCapabilityAccess.getBloodVolume(player).setActive(false);
 			var progress = HemoCapabilityAccess.getUnstainedProgress(player);
@@ -82,7 +84,7 @@ public final class HealModifierGameTests {
 			String name = effect == null ? "none" : effect.unwrapKey().orElseThrow().location().getPath();
 			return name + " " + (player.getHealth() - 10.0F) + (progress.getPurity() > 0.0F ? " purity" : "");
 		} finally {
-			player.discard();
+			captured.close();
 		}
 	}
 }
