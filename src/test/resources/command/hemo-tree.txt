@@ -169,7 +169,7 @@ hemo permission2
         <school:string(SINGLE_WORD)> suggests permission0
           <tier:integer(1, 4)> permission0
             <broken_count:integer(0, 8)> permission0
-              <sent_present:com.mojang.brigadier.arguments.BoolArgumentType@5a058be5> executes permission0
+              <sent_present:bool()> executes permission0
                 <player:entity(single=true, playersOnly=true)> executes permission0
       immediate permission0
         <school:string(SINGLE_WORD)> suggests permission0

@@ -71,6 +71,7 @@ class HemoCommandTreeTest {
 
 	private static String describe(ArgumentType<?> type) {
 		if (type instanceof StringArgumentType string) return "string(" + string.getType() + ")";
+		if (type instanceof BoolArgumentType) return "bool()";
 		if (type instanceof net.minecraft.commands.arguments.EntityArgument) {
 			try {
 				var single = type.getClass().getDeclaredField("single");
