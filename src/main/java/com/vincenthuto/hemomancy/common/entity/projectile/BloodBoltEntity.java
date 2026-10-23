@@ -96,7 +96,7 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 	public BloodBoltEntity(Level worldIn, LivingEntity shooter, @Nullable ItemStack firedFromWeapon) {
 		super(EntityInit.blood_bolt.get(), shooter, worldIn, new ItemStack(ItemInit.blood_bolt.get()),
 				firedFromWeapon != null && !firedFromWeapon.isEmpty() ? firedFromWeapon : null);
-		this.combatWeaponItem = copyCombatWeapon(firedFromWeapon);
+		this.combatWeaponItem = CombatWeaponCarrierProjectile.copyOf(firedFromWeapon);
 		this.entityData.set(DUCTILIS_TRAIL, isDuctilisWeapon(firedFromWeapon));
 	}
 
@@ -104,9 +104,7 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 	public void addAdditionalSaveData(CompoundTag compound) {
 		super.addAdditionalSaveData(compound);
 
-		if (!this.combatWeaponItem.isEmpty()) {
-			compound.put("CombatWeapon", this.combatWeaponItem.save(this.registryAccess()));
-		}
+		CombatWeaponCarrierProjectile.save(compound, this.combatWeaponItem, this.registryAccess());
 		compound.putBoolean("DuctilisTrail", this.entityData.get(DUCTILIS_TRAIL));
 
 		if (this.fixedColor) {
@@ -289,9 +287,7 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 	@Override
 	public void readAdditionalSaveData(CompoundTag compound) {
 		super.readAdditionalSaveData(compound);
-		this.combatWeaponItem = compound.contains("CombatWeapon", 10)
-				? ItemStack.parseOptional(this.registryAccess(), compound.getCompound("CombatWeapon"))
-				: ItemStack.EMPTY;
+		this.combatWeaponItem = CombatWeaponCarrierProjectile.load(compound, this.registryAccess());
 		this.entityData.set(DUCTILIS_TRAIL,
 				compound.contains("DuctilisTrail") ? compound.getBoolean("DuctilisTrail")
 						: isDuctilisWeapon(this.combatWeaponItem));
@@ -314,10 +310,6 @@ public class BloodBoltEntity extends AbstractArrow implements CombatWeaponCarrie
 			this.refreshColor();
 		}
 
-	}
-
-	private static ItemStack copyCombatWeapon(@Nullable ItemStack weaponStack) {
-		return weaponStack != null && !weaponStack.isEmpty() ? weaponStack.copy() : ItemStack.EMPTY;
 	}
 
 	private void refreshColor() {

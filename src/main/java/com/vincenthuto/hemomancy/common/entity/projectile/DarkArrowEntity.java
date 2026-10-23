@@ -37,24 +37,17 @@ public class DarkArrowEntity extends AbstractArrow implements CombatWeaponCarrie
 		this(worldIn, shooter, null);
 	}
 
-
-
-
-
-
 	public DarkArrowEntity(Level worldIn, LivingEntity shooter, @Nullable ItemStack firedFromWeapon) {
 		super(EntityInit.dark_arrow.get(), shooter, worldIn, ItemStack.EMPTY,
 				firedFromWeapon != null && !firedFromWeapon.isEmpty() ? firedFromWeapon : null);
 		this.shooter = shooter;
-		this.combatWeaponItem = copyCombatWeapon(firedFromWeapon);
+		this.combatWeaponItem = CombatWeaponCarrierProjectile.copyOf(firedFromWeapon);
 	}
 
 	@Override
 	public void addAdditionalSaveData(CompoundTag compound) {
 		super.addAdditionalSaveData(compound);
-		if (!this.combatWeaponItem.isEmpty()) {
-			compound.put("CombatWeapon", this.combatWeaponItem.save(this.registryAccess()));
-		}
+		CombatWeaponCarrierProjectile.save(compound, this.combatWeaponItem, this.registryAccess());
 
 	}
 
@@ -83,9 +76,7 @@ public class DarkArrowEntity extends AbstractArrow implements CombatWeaponCarrie
 	@Override
 	public void readAdditionalSaveData(CompoundTag compound) {
 		super.readAdditionalSaveData(compound);
-		this.combatWeaponItem = compound.contains("CombatWeapon", 10)
-				? ItemStack.parseOptional(this.registryAccess(), compound.getCompound("CombatWeapon"))
-				: ItemStack.EMPTY;
+		this.combatWeaponItem = CombatWeaponCarrierProjectile.load(compound, this.registryAccess());
 
 	}
 
@@ -114,9 +105,4 @@ public class DarkArrowEntity extends AbstractArrow implements CombatWeaponCarrie
 		}
 
 	}
-
-	private static ItemStack copyCombatWeapon(@Nullable ItemStack weaponStack) {
-		return weaponStack != null && !weaponStack.isEmpty() ? weaponStack.copy() : ItemStack.EMPTY;
-	}
-
 }

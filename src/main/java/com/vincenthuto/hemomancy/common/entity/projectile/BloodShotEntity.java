@@ -5,7 +5,6 @@ import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundSummonBehavior;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
-import com.vincenthuto.hemomancy.common.manipulation.TendencyAffinityRules;
 import com.vincenthuto.hemomancy.common.manipulation.TendencyDamageCarrier;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -102,7 +101,7 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 		super(EntityInit.blood_shot.get(), shooter, worldIn, new ItemStack(Items.ARROW),
 				firedFromWeapon != null && !firedFromWeapon.isEmpty() ? firedFromWeapon : null);
 		this.pickup = Pickup.DISALLOWED;
-		this.combatWeaponItem = copyCombatWeapon(firedFromWeapon);
+		this.combatWeaponItem = CombatWeaponCarrierProjectile.copyOf(firedFromWeapon);
 	}
 
 	/**
@@ -111,7 +110,7 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 	 */
 	public static BloodShotEntity fromManipulation(Level worldIn, LivingEntity shooter, @Nullable ItemStack heldItem) {
 		BloodShotEntity shot = new BloodShotEntity(worldIn, shooter, null);
-		shot.combatWeaponItem = copyCombatWeapon(heldItem);
+		shot.combatWeaponItem = CombatWeaponCarrierProjectile.copyOf(heldItem);
 		return shot;
 	}
 
@@ -119,9 +118,7 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 	public void addAdditionalSaveData(CompoundTag compound) {
 		super.addAdditionalSaveData(compound);
         compound.putInt("VisualForm",visualForm());
-		if (!this.combatWeaponItem.isEmpty()) {
-			compound.put("CombatWeapon", this.combatWeaponItem.save(this.registryAccess()));
-		}
+		CombatWeaponCarrierProjectile.save(compound, this.combatWeaponItem, this.registryAccess());
 		if (damageTendency != null) compound.putString("DamageTendency", damageTendency.name());
 		if (secondaryDamageTendency != null) {
 			compound.putString("SecondaryDamageTendency", secondaryDamageTendency.name());
@@ -158,7 +155,6 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 	public void setSecondaryDamageTendency(@Nullable EnumBloodTendency secondaryDamageTendency) {
 		this.secondaryDamageTendency = secondaryDamageTendency;
 	}
-
 
 	@Override
 	protected void doPostHurtEffects(LivingEntity living) {
@@ -212,9 +208,7 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 	public void readAdditionalSaveData(CompoundTag compound) {
 		super.readAdditionalSaveData(compound);
         entityData.set(VISUAL_FORM,compound.getInt("VisualForm"));
-		this.combatWeaponItem = compound.contains("CombatWeapon", 10)
-				? ItemStack.parseOptional(this.registryAccess(), compound.getCompound("CombatWeapon"))
-				: ItemStack.EMPTY;
+		this.combatWeaponItem = CombatWeaponCarrierProjectile.load(compound, this.registryAccess());
 		this.damageTendency = readDamageTendency(compound);
 		this.secondaryDamageTendency = readTendency(compound, "SecondaryDamageTendency");
 		this.homingTargetId = compound.hasUUID("HomingTarget") ? compound.getUUID("HomingTarget") : null;
@@ -355,10 +349,6 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 		discard();
 	}
 
-	private static ItemStack copyCombatWeapon(@Nullable ItemStack weaponStack) {
-		return weaponStack != null && !weaponStack.isEmpty() ? weaponStack.copy() : ItemStack.EMPTY;
-	}
-
 	@Nullable
 	private static EnumBloodTendency readDamageTendency(CompoundTag compound) {
 		return readTendency(compound, "DamageTendency");
@@ -372,5 +362,4 @@ public class BloodShotEntity extends AbstractArrow implements CombatWeaponCarrie
 			return null;
 		}
 	}
-
 }

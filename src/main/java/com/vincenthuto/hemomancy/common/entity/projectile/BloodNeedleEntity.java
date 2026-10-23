@@ -111,7 +111,7 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 	 */
 	public static BloodNeedleEntity fromManipulation(Level worldIn, LivingEntity shooter, @Nullable ItemStack heldItem) {
 		BloodNeedleEntity needle = new BloodNeedleEntity(worldIn, shooter, null);
-		needle.combatWeaponItem = copyCombatWeapon(heldItem);
+		needle.combatWeaponItem = CombatWeaponCarrierProjectile.copyOf(heldItem);
 		return needle;
 	}
 
@@ -120,7 +120,7 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 		super(type, shooter, worldIn, new ItemStack(Items.ARROW),
 				firedFromWeapon != null && !firedFromWeapon.isEmpty() ? firedFromWeapon : null);
 		this.pickup = Pickup.DISALLOWED;
-		this.combatWeaponItem = copyCombatWeapon(firedFromWeapon);
+		this.combatWeaponItem = CombatWeaponCarrierProjectile.copyOf(firedFromWeapon);
 	}
 
 	@Override
@@ -128,9 +128,7 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 		super.addAdditionalSaveData(compound);
         compound.putBoolean("CoronationSword", isCoronationSword());
         compound.putBoolean("Forged", isForged());
-		if (!this.combatWeaponItem.isEmpty()) {
-			compound.put("CombatWeapon", this.combatWeaponItem.save(this.registryAccess()));
-		}
+		CombatWeaponCarrierProjectile.save(compound, this.combatWeaponItem, this.registryAccess());
 		compound.putBoolean("BloodburstNeedle", this.bloodburstNeedle);
 		compound.putByte("ConfiguredPierceLevel", configuredPierceLevel);
 		if (damageTendency != null) compound.putString("DamageTendency", damageTendency.name());
@@ -165,7 +163,6 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 		this.secondaryDamageTendency = secondaryDamageTendency;
 	}
 
-
 	@Override
 	protected void doPostHurtEffects(LivingEntity living) {
 		super.doPostHurtEffects(living);
@@ -199,9 +196,7 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 		super.readAdditionalSaveData(compound);
         setCoronationSword(compound.getBoolean("CoronationSword"));
         setForged(compound.getBoolean("Forged"));
-		this.combatWeaponItem = compound.contains("CombatWeapon", 10)
-				? ItemStack.parseOptional(this.registryAccess(), compound.getCompound("CombatWeapon"))
-				: ItemStack.EMPTY;
+		this.combatWeaponItem = CombatWeaponCarrierProjectile.load(compound, this.registryAccess());
 		this.bloodburstNeedle = compound.getBoolean("BloodburstNeedle");
 		configurePiercing(compound.getByte("ConfiguredPierceLevel"));
 		this.damageTendency = readDamageTendency(compound);
@@ -232,10 +227,6 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 
 	}
 
-	private static ItemStack copyCombatWeapon(@Nullable ItemStack weaponStack) {
-		return weaponStack != null && !weaponStack.isEmpty() ? weaponStack.copy() : ItemStack.EMPTY;
-	}
-
 	@Nullable
 	private static EnumBloodTendency readDamageTendency(CompoundTag compound) {
 		return readTendency(compound, "DamageTendency");
@@ -257,5 +248,4 @@ public class BloodNeedleEntity extends AbstractArrow implements CombatWeaponCarr
 		target.addEffect(new MobEffectInstance(net.minecraft.world.effect.MobEffects.HUNGER, 160, 1, false, true, true));
 		target.addEffect(new MobEffectInstance(net.minecraft.world.effect.MobEffects.WITHER, 100, 0, false, true, true));
 	}
-
 }

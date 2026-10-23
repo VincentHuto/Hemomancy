@@ -9,7 +9,6 @@ import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
 import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -42,15 +41,13 @@ public class BloodBulletEntity extends AbstractArrow implements CombatWeaponCarr
 	public BloodBulletEntity(Level worldIn, LivingEntity shooter, @Nullable ItemStack firedFromWeapon) {
 		super(EntityInit.blood_bullet.get(), shooter, worldIn, ItemStack.EMPTY,
 				firedFromWeapon != null && !firedFromWeapon.isEmpty() ? firedFromWeapon : null);
-		this.combatWeaponItem = copyCombatWeapon(firedFromWeapon);
+		this.combatWeaponItem = CombatWeaponCarrierProjectile.copyOf(firedFromWeapon);
 	}
 
 	@Override
 	public void addAdditionalSaveData(CompoundTag compound) {
 		super.addAdditionalSaveData(compound);
-		if (!this.combatWeaponItem.isEmpty()) {
-			compound.put("CombatWeapon", this.combatWeaponItem.save(this.registryAccess()));
-		}
+		CombatWeaponCarrierProjectile.save(compound, this.combatWeaponItem, this.registryAccess());
 
 	}
 
@@ -104,9 +101,7 @@ public class BloodBulletEntity extends AbstractArrow implements CombatWeaponCarr
 	@Override
 	public void readAdditionalSaveData(CompoundTag compound) {
 		super.readAdditionalSaveData(compound);
-		this.combatWeaponItem = compound.contains("CombatWeapon", 10)
-				? ItemStack.parseOptional(this.registryAccess(), compound.getCompound("CombatWeapon"))
-				: ItemStack.EMPTY;
+		this.combatWeaponItem = CombatWeaponCarrierProjectile.load(compound, this.registryAccess());
 	}
 
 	@Override
@@ -122,7 +117,6 @@ public class BloodBulletEntity extends AbstractArrow implements CombatWeaponCarr
 						HemoParticleData.bloodCell(new ParticleColor(255 * level().random.nextFloat(), 0, 0)),
 						getX() + HLParticleUtils.inRange(-0.1, 0.1), getY() + HLParticleUtils.inRange(-0.1, 0.1),
 						getZ() + HLParticleUtils.inRange(-0.1, 0.1), 0, 0.005, 0);
-
 
 				Random rand = new Random();
 				Vector3 endVec = Vector3.fromEntityCenter(this).add(rand.nextDouble() - rand.nextDouble(),
@@ -140,9 +134,4 @@ public class BloodBulletEntity extends AbstractArrow implements CombatWeaponCarr
 		}
 
 	}
-
-	private static ItemStack copyCombatWeapon(@Nullable ItemStack weaponStack) {
-		return weaponStack != null && !weaponStack.isEmpty() ? weaponStack.copy() : ItemStack.EMPTY;
-	}
-
 }

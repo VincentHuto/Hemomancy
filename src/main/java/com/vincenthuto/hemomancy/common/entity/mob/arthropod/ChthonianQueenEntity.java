@@ -1,190 +1,21 @@
 package com.vincenthuto.hemomancy.common.entity.mob.arthropod;
 
-import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
-import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import com.vincenthuto.hutoslib.math.MathUtils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.util.RandomPos;
-import net.minecraft.world.entity.monster.Spider;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.TieredItem;
-import net.minecraft.world.item.Tiers;
-import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 
-import javax.annotation.Nullable;
-import java.util.EnumSet;
-import java.util.List;
-
-public class ChthonianQueenEntity extends Spider {
-
-	// Roll Goal
-	private class RollupGoal extends Goal {
-		protected final PathfinderMob creature;
-		protected boolean running;
-
-		public RollupGoal(PathfinderMob creature, double speedIn) {
-			this.creature = creature;
-			this.setFlags(EnumSet.of(Goal.Flag.MOVE));
-		}
-
-		@Override
-		public boolean canContinueToUse() {
-			return !this.creature.getNavigation().isDone();
-		}
-
-		@Override
-		public boolean canUse() {
-			if (this.creature.getLastHurtByMob() == null && !this.creature.isOnFire()) {
-				return false;
-			} else {
-				if (this.creature.isOnFire()) {
-					BlockPos blockpos = this.getRandPos(this.creature.level(), this.creature, 5, 4);
-					if (blockpos != null) {
-						return true;
-					}
-				}
-
-				return this.findRandomPosition();
-			}
-		}
-
-		protected boolean findRandomPosition() {
-			BlockPos vector3d = RandomPos.generateRandomPosTowardDirection(this.creature, 16, level().random,
-					this.creature.blockPosition());
-			return vector3d == null;
-
-		}
-
-		@Nullable
-		protected BlockPos getRandPos(BlockGetter worldIn, Entity entityIn, int horizontalRange, int verticalRange) {
-			BlockPos blockpos = entityIn.blockPosition();
-			int i = blockpos.getX();
-			int j = blockpos.getY();
-			int k = blockpos.getZ();
-			float f = horizontalRange * horizontalRange * verticalRange * 2;
-			BlockPos blockpos1 = null;
-			MutableBlockPos blockpos$mutable = new MutableBlockPos();
-
-			for (int l = i - horizontalRange; l <= i + horizontalRange; ++l) {
-				for (int i1 = j - verticalRange; i1 <= j + verticalRange; ++i1) {
-					for (int j1 = k - horizontalRange; j1 <= k + horizontalRange; ++j1) {
-						blockpos$mutable.set(l, i1, j1);
-						if (worldIn.getFluidState(blockpos$mutable).is(FluidTags.WATER)) {
-							float f1 = (l - i) * (l - i) + (i1 - j) * (i1 - j) + (j1 - k) * (j1 - k);
-							if (f1 < f) {
-								f = f1;
-								blockpos1 = new BlockPos(blockpos$mutable);
-
-							}
-						}
-					}
-				}
-			}
-
-			return blockpos1;
-		}
-
-		public boolean isRunning() {
-			return this.running;
-		}
-
-		/**
-		 * Execute a one shot task or start executing a continuous task
-		 */
-		@Override
-		public void start() {
-			this.running = true;
-		}
-
-		/**
-		 * Reset the task's internal state. Called when this task is interrupted by
-		 * another one
-		 */
-		@Override
-		public void stop() {
-			this.running = false;
-		}
-
-		@Override
-		public void tick() {
-			creature.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 10, 100, false, false));
-		}
-	}
-
-	public static AttributeSupplier.Builder setAttributes() {
-		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
-				.add(Attributes.ATTACK_DAMAGE, 1.0D);
-	}
-
-	public int puffCooldown = 0;
+/** The Chthonian Queen; her bites wear wooden tools faster. */
+public class ChthonianQueenEntity extends AbstractChthonianEntity {
 
 	public ChthonianQueenEntity(EntityType<? extends ChthonianQueenEntity> type, Level worldIn) {
 		super(type, worldIn);
-
 	}
 
 	@Override
-	public void aiStep() {
-		super.aiStep();
-		if (puffCooldown > 0) {
-			--puffCooldown;
-		}
-
-	}
-
-	public void attackInBox(AABB box, int disabledShieldTime) {
-		List<LivingEntity> attackables = level().getEntitiesOfClass(LivingEntity.class, box,
-				entity -> entity != this && !hasPassenger(entity));
-		for (LivingEntity attacking : attackables) {
-			doHurtTarget(attacking);
-			if (disabledShieldTime > 0 && attacking instanceof Player) {
-				Player player = ((Player) attacking);
-				if (player.isUsingItem()) {
-					player.getCooldowns().addCooldown(Items.SHIELD, disabledShieldTime);
-					player.stopUsingItem();
-					level().broadcastEntityEvent(player, (byte) 9);
-				}
-			}
-		}
-	}
-
-	@Override
-	protected int calculateFallDamage(float distance, float damageMultiplier) {
-		return 0;
-	}
-
-	@Override
-	public boolean doHurtTarget(Entity target) {
-		boolean hit = super.doHurtTarget(target);
-		if (hit && target instanceof Player player) {
-			ItemStack mainHand = player.getMainHandItem();
-			if (!mainHand.isEmpty() && mainHand.getItem() instanceof TieredItem t && t.getTier() == Tiers.WOOD) {
-				mainHand.hurtAndBreak(8, player, EquipmentSlot.MAINHAND);
-			}
-			ItemStack offHand = player.getOffhandItem();
-			if (!offHand.isEmpty() && offHand.getItem() instanceof TieredItem t && t.getTier() == Tiers.WOOD) {
-				offHand.hurtAndBreak(8, player, EquipmentSlot.OFFHAND);
-			}
-		}
-		return hit;
+	protected int woodenToolWear() {
+		return 8;
 	}
 
 	@Override
@@ -201,59 +32,4 @@ public class ChthonianQueenEntity extends Spider {
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
 		return SoundInit.ENTITY_CHTHONIAN_QUEEN_HURT.get();
 	}
-
-	@Override
-	protected float getSoundVolume() {
-		return 0.3f;
-	}
-
-	public boolean isVulnerable() {
-		return this.getHealth() <= this.getMaxHealth() / 4.0F;
-	}
-
-	@Override
-	protected void registerGoals() {
-		this.goalSelector.addGoal(1, new ChewWoodGoal(this, 1.2d, 16));
-		this.goalSelector.addGoal(5, new net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal(this, 0.8D));
-		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
-		this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
-
-	}
-
-	public void sporePuff(Level world, AABB effectBounds, double x, double y, double z) {
-		List<Entity> list = world.getEntities(this, effectBounds);
-		for (Entity ent : list) {
-			if (!(ent instanceof ChthonianQueenEntity)) {
-				LivingEntity liv = (LivingEntity) ent;
-				liv.addEffect(new MobEffectInstance(MobEffects.POISON, 200, 200));
-				for (int countparticles = 0; countparticles <= 10; ++countparticles) {
-					world.addParticle(HemoParticleData.glow(new ParticleColor(0, 150, 0)),
-							getX() + HLParticleUtils.inRange(-0.25, 0.25),
-							getY() + HLParticleUtils.inRange(-0.25, 0.25),
-							getZ() + HLParticleUtils.inRange(-0.25, 0.25), 0, 0.000, 0);
-					world.addParticle(HemoParticleData.glow(new ParticleColor(0, 250, 0)),
-							getX() + HLParticleUtils.inRange(-0.25, 0.25), getY() + HLParticleUtils.inRange(-0.1, 0.1),
-							getZ() + HLParticleUtils.inRange(-0.25, 0.25), 0, 0.000, 0);
-				}
-			}
-		}
-	}
-
-	@Override
-	public void tick() {
-		super.tick();
-		LivingEntity target = getTarget();
-		if (target == null)
-			return;
-		double distFromTarget = distanceToSqr(target);
-
-		getLookControl().setLookAt(target, getMaxHeadYRot(), getMaxHeadXRot());
-		boolean isClose = distFromTarget < 5;
-		if (getNavigation().isDone())
-			getNavigation().moveTo(target, 1.2);
-		if (isClose) {
-			yBodyRot = (float) MathUtils.getAngle(ChthonianQueenEntity.this, target) + 90f;
-		}
-	}
-
 }
