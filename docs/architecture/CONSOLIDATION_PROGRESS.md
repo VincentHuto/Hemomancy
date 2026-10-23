@@ -886,7 +886,9 @@ them green.
   | Review fixes (items 6 and 9) | DONE | the commit after `e2597dc41` |
   | V-4 tube frames (optional, last) | NOT DONE (optional; left for a later step) | |
 - **Test counts before → after:** `test` 4,010 → 4,017 (item 1) → 4,026 (item 2) → 4,031 (item 3) → 4,034 (item 4) → 4,038 (item 5) → 4,040 (item 6) → 4,048 (item 7) → 4,052 (item 8) → 4,055 (item 9 and the review fixes), 0 failures.
-  `alphaCheck` after item 9: BUILD SUCCESSFUL, all 1,036 required GameTests passed (first run, no flake).
+  `alphaCheck` after item 9: BUILD SUCCESSFUL, all 1,036 required GameTests passed. After the review fixes, one run
+  failed two fish-AI GameTests (`schoolsusingfishnavigationandsurvivesunderice`, `strongerpreyneedsmultiplebitesbeforereward`,
+  server-side timing, untouched by this step); the rerun passed all 1,036.
 - **Impact map:** one read-only reviewer listed every chrome, render-type, particle, dispatch, encoder, shader-noise,
   boss-clock, player-animation and time-source site with the tests that pin them. It is not committed (it is a
   working list); the items below cite what they used from it.
