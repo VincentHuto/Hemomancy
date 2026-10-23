@@ -3,7 +3,13 @@ package com.vincenthuto.hemomancy.client.render.world;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.event.EarthenVeinTravelClientEvents;
+import com.vincenthuto.hemomancy.client.event.MycophantIntroClientEvents;
 import com.vincenthuto.hemomancy.client.render.entity.npc.*;
+import com.vincenthuto.hemomancy.client.render.item.harbinger.crossbar.CrossbarHolderTracker;
+import com.vincenthuto.hemomancy.client.render.layer.player.AvatarFirstPersonRenderer;
+import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringRenderer;
+import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringScreenPasses;
 import com.vincenthuto.hemomancy.client.render.scar.OculifloraRevealRenderer;
 import com.vincenthuto.hemomancy.client.render.world.chamberofwill.VesperFightFloorRenderer;
 import com.vincenthuto.hemomancy.client.screen.overlay.*;
@@ -11,13 +17,15 @@ import com.vincenthuto.hemomancy.common.event.worldevent.BloodMoonClientState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 
 /**
  * The ordered world-effect dispatcher: every world-space effect draws from this one
- * RenderLevelStageEvent handler, in the order listed for each stage.
+ * RenderLevelStageEvent handler, in the order listed for each stage. The Outpouring screen passes are the one
+ * exception to that single handler: they run at high priority, ahead of other mods' AFTER_LEVEL drawers.
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class WorldEffectDispatcher {
@@ -25,8 +33,22 @@ public final class WorldEffectDispatcher {
     private WorldEffectDispatcher() {
     }
 
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void renderScreenPasses(RenderLevelStageEvent event) {
+        OutpouringScreenPasses.render(event);
+    }
+
     @SubscribeEvent
     public static void renderLevelLastEvent(RenderLevelStageEvent event) {
+        // Effects that pick their own stages, first and in this order.
+        AxonalTravelView.renderWorld(event);
+        EarthenVeinTravelClientEvents.renderWorld(event);
+        MycophantIntroClientEvents.renderGlimpse(event);
+        CrossbarHolderTracker.onStage(event);
+        AvatarFirstPersonRenderer.render(event);
+        OutpouringRenderer.render(event);
+        ManipulationVisualRenderer.render(event);
+
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_SKY) {
             renderBloodMoonSky(event);
         }

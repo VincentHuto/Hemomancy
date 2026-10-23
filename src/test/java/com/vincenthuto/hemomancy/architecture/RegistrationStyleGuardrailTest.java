@@ -88,20 +88,6 @@ class RegistrationStyleGuardrailTest {
 				.contains("RegisterParticleProvidersEvent"));
 	}
 
-	/** The world effects keep one ordered dispatcher rather than one handler per renderer. */
-	@Test
-	void worldEffectsDrawFromOneOrderedDispatcher() throws Exception {
-		List<String> handlers = new ArrayList<>();
-		for (Path file : javaFiles(RepoPaths.MAIN_JAVA.resolve("client"))) {
-			String text = SourceAssertions.read(file);
-			if (text.contains("(RenderLevelStageEvent event)") && text.contains("@SubscribeEvent")) {
-				handlers.add(RepoPaths.display(file).replace('\\', '/'));
-			}
-		}
-		assertTrue(handlers.stream().anyMatch(path -> path.endsWith("client/render/world/WorldEffectDispatcher.java")),
-				"the ordered world-effect dispatcher is missing: " + handlers);
-	}
-
 	/** R-3: custom registries are looked up through the registry, keeping the name strings. */
 	@Test
 	void customRegistriesAreLookedUpThroughTheRegistry() {

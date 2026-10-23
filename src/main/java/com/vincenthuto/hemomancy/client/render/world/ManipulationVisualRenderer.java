@@ -155,7 +155,6 @@ public final class ManipulationVisualRenderer {
         });
     }
 
-    @SubscribeEvent
     public static void render(RenderLevelStageEvent event) {
         boolean solids=event.getStage()==RenderLevelStageEvent.Stage.AFTER_ENTITIES;
         if ((!solids && event.getStage()!=RenderLevelStageEvent.Stage.AFTER_LEVEL) || world==null) return;
@@ -671,10 +670,9 @@ public final class ManipulationVisualRenderer {
         }
     }
 
-    @SubscribeEvent
-    public static void hud(net.neoforged.neoforge.client.event.RenderGuiEvent.Post event) {
+    public static void hud(net.minecraft.client.gui.GuiGraphics graphics) {
         var mc=Minecraft.getInstance();if(mc.player==null || world!=mc.level || mc.options.hideGui)return;
-        int y=event.getGuiGraphics().guiHeight()-65;
+        int y=graphics.guiHeight()-65;
         for(Cue cue:CUES) {
             var p=cue.packet;if(p.entityId()!=mc.player.getId())continue;
             boolean tithe=p.form()==ManipulationVisuals.Form.DEBT;
@@ -683,9 +681,9 @@ public final class ManipulationVisualRenderer {
             long seconds=(cue.life.remaining(world.getGameTime())+19)/20;
             String text=tithe?"Tithe: "+p.count()+" mL reserve | "+Math.round(p.radius())+" mL due | "+seconds+"s"
                     :"Endless Hour: "+String.format(java.util.Locale.ROOT,"%.1f",p.radius())+" HP deferred | "+seconds+"s";
-            int x=(event.getGuiGraphics().guiWidth()-mc.font.width(text))/2;
-            event.getGuiGraphics().fill(x-4,y-2,x+mc.font.width(text)+4,y+11,0xBB170A16);
-            event.getGuiGraphics().drawString(mc.font,text,x,y,seconds<=5?0xFF6878:0xEAC3B6);y-=15;
+            int x=(graphics.guiWidth()-mc.font.width(text))/2;
+            graphics.fill(x-4,y-2,x+mc.font.width(text)+4,y+11,0xBB170A16);
+            graphics.drawString(mc.font,text,x,y,seconds<=5?0xFF6878:0xEAC3B6);y-=15;
         }
     }
 

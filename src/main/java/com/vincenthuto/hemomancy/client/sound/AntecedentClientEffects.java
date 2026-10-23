@@ -71,9 +71,8 @@ public final class AntecedentClientEffects {
             PacketHandler.sendToServer(new AntecedentEffectPacket(4,BlockPos.ZERO));
         }
     }
-    @SubscribeEvent public static void render(RenderGuiEvent.Post event) {
+    public static void render(net.minecraft.client.gui.GuiGraphics graphics) {
         var mc=Minecraft.getInstance();if(mc.player==null || mc.level==null || mc.options.hideGui)return;
-        var graphics=event.getGuiGraphics();
         if(mc.level.getGameTime()<scarUntil) {
             double dx=scar.getX()+.5-mc.player.getX(),dz=scar.getZ()+.5-mc.player.getZ();
             double angle=Math.atan2(-dx,dz)-Math.toRadians(mc.player.getYRot());

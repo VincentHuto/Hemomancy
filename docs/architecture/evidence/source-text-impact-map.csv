@@ -57,6 +57,8 @@ src/test/java/com/vincenthuto/hemomancy/architecture/HealAndFlightGuardrailTest.
 src/test/java/com/vincenthuto/hemomancy/architecture/HealAndFlightGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/capability/player/unstained/PurityGainEvents.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/HealAndFlightGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationStatusEvents.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/HealAndFlightGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/util/FlightArbiter.java,java,base-dir
+src/test/java/com/vincenthuto/hemomancy/architecture/HudAndWorldDrawingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/event/ScreenOverlayEvents.java,java,helper
+src/test/java/com/vincenthuto/hemomancy/architecture/HudAndWorldDrawingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/registry/GuiLayerRegistrar.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/NetworkClientIsolationTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/network,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/PayloadProtocolVersionTest.java,junit,src/test/resources/network/payload-registry.txt,other,exact
 src/test/java/com/vincenthuto/hemomancy/architecture/PlayerStateSyncTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/manip/KnownManipulationEvents.java,java,helper

@@ -95,7 +95,6 @@ public final class MycophantIntroClientEvents {
 		input.shiftKeyDown = false;
 	}
 
-	@SubscribeEvent
 	public static void renderGlimpse(RenderLevelStageEvent event) {
 		if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_ENTITIES) return;
 		MycophantGlimpse.render(event.getPoseStack(), event.getCamera().getPosition(),

@@ -358,6 +358,17 @@ neoForge {
             programArguments.addAll '--username', 'ChromeReview', '--width', '1280', '--height', '720'
         }
 
+        hudLayerReviewClient {
+            client()
+            gameDirectory = project.file('build/hud-layer-review')
+            additionalRuntimeClasspathConfiguration.extendsFrom(clientLocalRuntime)
+            jvmArguments.addAll('-Xms2G', '-Xmx6G')
+            systemProperty 'hemomancy.gameplayDriver', 'true'
+            systemProperty 'hemomancy.hudLayerReview', 'true'
+            systemProperty 'hemomancy.hudLayerReviewLabel', providers.gradleProperty('hudLabel').getOrElse('after')
+            programArguments.addAll '--username', 'HudReview', '--width', '1280', '--height', '720'
+        }
+
         // Drop a Spark jar into build/render-type-profile/mods for the CPU profile; JFR and frame times need nothing.
         renderTypeProfileClient {
             client()

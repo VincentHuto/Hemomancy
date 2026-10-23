@@ -187,6 +187,11 @@ public record ExamplePayload(int entityId, float amount) implements CustomPacket
   vein background with `VeinBackgroundRenderer` and a `Style` (seeded `Field`, `Palette` with an optional deep
   palette, `Speckles`). `ScreenChromeGuardrailTest` holds the line; vein fields that are other art (the Puppeteer's
   Spindle threads, the Morphling Jar's green veins, the fungal hyphae) stay local and are listed there.
+- Since step 10: HUD drawing is a layer registered in `GuiLayerRegistrar`. Full-screen effects that drew in
+  `RenderGuiEvent.Pre` are the bottom layer (`screen_effects`); markers that drew in `RenderGuiEvent.Post` are the
+  last layer (`hud_markers`), drawn at the base depth they had. Every `RenderLevelStageEvent` effect is called from
+  `WorldEffectDispatcher`, the self-staging ones first in their old listener order; the Outpouring screen passes
+  keep their high priority through the dispatcher's one extra handler. `HudAndWorldDrawingGuardrailTest` holds both.
 
 **Migration targets**
 - V-1 (screen chrome, done in step 10)
@@ -195,7 +200,7 @@ public record ExamplePayload(int entityId, float amount) implements CustomPacket
 - V-5 (byte-identical shader noise into an include)
 - V-6 (colour particle data, done in step 10: `ColorParticleOptions`, `HemoParticleType`, data built through
   `HemoParticleData`)
-- V-7 (HUD and world dispatch)
+- V-7 (HUD and world dispatch, done in step 10)
 - V-8 (client code out of `common/`)
 
 **Exceptions**

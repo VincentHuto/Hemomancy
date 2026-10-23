@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.client.render.outpouring;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.BloodPoolSurface;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringSim.Mote;
@@ -14,9 +13,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -29,7 +25,6 @@ import java.util.List;
  * rotation is on the model-view stack, so every point is camera-relative. The caster's own blood near a first-person
  * camera is skipped so it never walls off the view.
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class OutpouringRenderer {
     private static final double NEAR_SELF = .8;
     private static final int WHITE = 0xFFF4EE, CRIMSON = 0xF0566A;
@@ -41,7 +36,6 @@ public final class OutpouringRenderer {
         Vec3 local(double x, double y, double z) { return new Vec3(x - camera.x, y - camera.y, z - camera.z); }
     }
 
-    @SubscribeEvent
     public static void render(RenderLevelStageEvent event) {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) return;
         var mc = Minecraft.getInstance();

@@ -88,5 +88,4 @@ public final class AxonalTransductionClient {
     @SubscribeEvent public static void blockOverlay(RenderBlockScreenEffectEvent event) {
         if (active()) event.setCanceled(true);
     }
-    @SubscribeEvent public static void world(RenderLevelStageEvent event) { AxonalTravelView.renderWorld(event); }
 }

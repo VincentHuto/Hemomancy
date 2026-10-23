@@ -19,12 +19,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class AvatarFirstPersonRenderer {
 	private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(
 			Hemomancy.MOD_ID, "textures/models/armor/avatar_glow.png");
@@ -45,7 +41,6 @@ public final class AvatarFirstPersonRenderer {
 		return stage >= 1;
 	}
 
-	@SubscribeEvent
 	public static void render(RenderLevelStageEvent event) {
 		if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_ENTITIES) return;
 		Minecraft minecraft = Minecraft.getInstance();

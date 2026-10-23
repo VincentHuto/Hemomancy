@@ -2,7 +2,9 @@ package com.vincenthuto.hemomancy.client.registry;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.event.*;
+import com.vincenthuto.hemomancy.client.render.world.ManipulationVisualRenderer;
 import com.vincenthuto.hemomancy.client.screen.overlay.*;
+import com.vincenthuto.hemomancy.client.sound.AntecedentClientEffects;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -17,6 +19,9 @@ public final class GuiLayerRegistrar {
     // Overlay
     @SubscribeEvent
     public static void registerGuiOverlays(RegisterGuiLayersEvent event) {
+        // Full-screen effects under the whole HUD, vanilla's camera overlays included.
+        event.registerBelowAll(Hemomancy.rloc("screen_effects"), (graphics, deltaTracker) ->
+                ScreenOverlayEvents.renderUnderHud(graphics));
         event.registerAboveAll(Hemomancy.rloc("body_idioms"), (graphics, deltaTracker) ->
                 BodyIdiomOverlay.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight()));
         event.registerAboveAll(Hemomancy.rloc("arbor_fruit_name"), (graphics, deltaTracker) ->
@@ -83,5 +88,14 @@ public final class GuiLayerRegistrar {
         event.registerAboveAll(Hemomancy.rloc("hematic_microscope"), (graphics, deltaTracker) ->
                 com.vincenthuto.hemomancy.client.screen.overlay.HematicMicroscopeOverlay.render(
                         graphics, deltaTracker.getGameTimeDeltaPartialTick(true)));
+        // Last, but at the base depth: the layers above stack toward the camera, and these markers stay behind them.
+        event.registerAboveAll(Hemomancy.rloc("hud_markers"), (graphics, deltaTracker) -> {
+            graphics.pose().pushPose();
+            graphics.pose().translate(0.0F, 0.0F, -graphics.pose().last().pose().m32());
+            EarthenVeinTravelClientEvents.renderTooltip(graphics);
+            ManipulationVisualRenderer.hud(graphics);
+            AntecedentClientEffects.render(graphics);
+            graphics.pose().popPose();
+        });
     }
 }

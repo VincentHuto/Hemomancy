@@ -29,7 +29,6 @@ import net.neoforged.neoforge.client.event.CalculateDetachedCameraDistanceEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
-import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import com.mojang.math.Axis;
 
@@ -86,7 +85,6 @@ public final class EarthenVeinTravelClientEvents {
 		event.setSwingHand(true);
 	}
 
-	@SubscribeEvent
 	public static void renderWorld(RenderLevelStageEvent event) {
 		if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) return;
 		Minecraft minecraft = Minecraft.getInstance();
@@ -124,12 +122,10 @@ public final class EarthenVeinTravelClientEvents {
 		buffer.endBatch();
 	}
 
-	@SubscribeEvent
-	public static void renderTooltip(RenderGuiEvent.Post event) {
+	public static void renderTooltip(GuiGraphics graphics) {
 		Minecraft minecraft = Minecraft.getInstance();
 		var marker = hovered(minecraft);
 		if (marker == null) return;
-		GuiGraphics graphics = event.getGuiGraphics();
 		int x = graphics.guiWidth() / 2;
 		int y = graphics.guiHeight() / 2 + 14;
 		var destination = marker.destination();

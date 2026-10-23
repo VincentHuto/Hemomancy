@@ -40,7 +40,6 @@ public final class CrossbarHolderTracker {
 		return frame;
 	}
 
-	@SubscribeEvent
 	public static void onStage(RenderLevelStageEvent event) {
 		if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_SKY) {
 			frame++;

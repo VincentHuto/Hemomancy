@@ -73,7 +73,9 @@ public final class SanguineOmenResourceTest {
 		assertContains("gui layer renders omen overlay", clientEvents,
 				"SanguineOmenOverlay.instance.renderHUD(graphics, graphics.guiWidth(), graphics.guiHeight(), partialTicks);");
 		assertContains("omen color grade runs before hud", clientEvents,
-				"renderSanguineOmenWorldGrade(RenderGuiEvent.Pre event)");
+				"renderSanguineOmenWorldGrade(GuiGraphics graphics)");
+		assertContains("omen color grade draws in the layer under the hud", clientEvents,
+				"event.registerBelowAll(Hemomancy.rloc(\"screen_effects\")");
 		assertContains("world renderer exposes omen burst", shatterRenderer,
 				"spawnOmenBurst(Vec3 center)");
 		assertContains("overlay exposes effect modes", omenOverlay,

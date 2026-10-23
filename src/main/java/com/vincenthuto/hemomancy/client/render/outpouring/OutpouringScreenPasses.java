@@ -7,16 +7,12 @@ import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.shader.ExtendedShaderInstance;
 import com.vincenthuto.hemomancy.client.render.shader.ShaderHolder;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.client.render.shader.ShaderInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
@@ -30,7 +26,6 @@ import java.util.List;
  * without placing block light; Tenebris drains the light around the caster and rolls fog through it. Entries are
  * camera-relative; each pass takes the eight nearest.
  */
-@EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class OutpouringScreenPasses {
     public record Packed(float[] values, int count) {}
     static final int MAX = 8, MAX_CASTERS = 4;
@@ -62,8 +57,10 @@ public final class OutpouringScreenPasses {
         return values;
     }
 
-    /** Runs before other AFTER_LEVEL visuals so spell geometry drawn on top is not relit or darkened by stale depth. */
-    @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGH)
+    /**
+     * Runs before other AFTER_LEVEL visuals (the dispatcher calls it at high priority) so spell geometry drawn on top
+     * is not relit or darkened by stale depth.
+     */
     public static void render(RenderLevelStageEvent event) {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_LEVEL) return;
         var mc = Minecraft.getInstance();

@@ -16,7 +16,7 @@ Every consolidation session reads this file first and updates it last, following
 | 7 | Phase 5: blood accounting | DONE | `8338c98da` | 2026-10-22 |
 | 8 | Phase 7: registration and client registration | DONE | `3e8b213d4`, `291731d6f` | 2026-10-22 |
 | 9 | Phase 6: combat targeting and damage attribution | DONE | `3b841ba03`, `7f0c1968d`, `5fa01de44`, `c9af6c6c3` | 2026-10-22 |
-| 10 | Phases 8 + 9: rendering plumbing and animation conventions | IN PROGRESS | items 1-3: `a53982248`, `1f642dccf`, see the step entry | 2026-10-23 |
+| 10 | Phases 8 + 9: rendering plumbing and animation conventions | IN PROGRESS | items 1-4: `a53982248`, `1f642dccf`, `af24ecea6`, see the step entry | 2026-10-23 |
 | 11 | Phase 10: god-class decomposition | NOT STARTED | | |
 | 12 | Phase 11: persistence authority migrations | NOT STARTED | | |
 | 13 | Phases 12 + 13: content, worldgen, data, tooling, standards | NOT STARTED | | |
@@ -156,7 +156,7 @@ them green.
 | `architecture/BloodAccountingGuardrailTest` | 7 | G-3 / L-2: a player volume is drained, subtracted or spend-counted only in `BloodAccounting`; every other `drain(` / `subtractBloodVolume(` / `addBloodSpend(` is allow-listed by file and count with its reason (stale entries fail); `BloodVolumeServerPacket` is built only in `syncVolume` and its own decoder; payments record and sync |
 | gameTest `BloodAccountingGameTests` (batch `blood_accounting`) | 7 | Exact volume before and after for an item (Living Axe), machine (projection into a Vial Centrifuge), rite (brazier lighting, with spend) and armour (Bloodburst) payment, each ending in `syncVolume`; the pending F-12 rite-lock behaviour is pinned |
 | gameTest `FrozenIdentifierGameTests` (batch `registration_validation`) | 8 | Every Hemomancy id in every loaded registry (1,991) and the exact order of both creative tabs (693 lines) match `src/gameTest/resources/frozen/`, captured from `de8e25ba1`. Payload ids stay with `PayloadProtocolVersionTest` |
-| `architecture/RegistrationStyleGuardrailTest` | 8 | R-1 / R-2 / R-3 / R-4 / R-5 / R-7: the two subscriber forms only, no `bus=`; the mod constructor adds only lifecycle listeners; no `BlockEntityRenderers.register`, `particleEngine.register` or `initializeClient`; `ClientEvents` and the client inits stay out of `common/init`; one ordered world-effect dispatcher; registry lookups; typed data components; one WIP list and one tab builder |
+| `architecture/RegistrationStyleGuardrailTest` | 8 | R-1 / R-2 / R-3 / R-4 / R-5 / R-7: the two subscriber forms only, no `bus=`; the mod constructor adds only lifecycle listeners; no `BlockEntityRenderers.register`, `particleEngine.register` or `initializeClient`; `ClientEvents` and the client inits stay out of `common/init`; registry lookups; typed data components; one WIP list and one tab builder |
 | `architecture/ClientSessionCacheTest` | 8 | P-10: every static entity-id-keyed collection in `client/**` is cleared in `ClientSessionEvents.onClientPlayerLogout`, or exempt with a reason (stale entries fail) |
 | `architecture/CommonClientIsolationTest` | 8 | V-8: nothing under `common/` names a `net.minecraft.client` or `hemomancy.client` class except inside an item's `hemomancy$getClientItemExtensions()` / `IClientItemExtensions` body; no wildcard client imports; every `ClientPayloadHandlers::dispatch` payload has exactly one client registration |
 | gameTest `CombatTargetingMatrixGameTests` (suite `combat_targeting_validation`) | 9 | Who 11 representative effects reach (manipulation, Drudge, 2 armour, 2 Still Art, 2 morphling, 2 scar, living weapon) across hostile, pet, ally, own puppet, boss, PvP on/off; and that each `Reach` preset equals the filter it replaced over every body kind |
@@ -167,6 +167,7 @@ them green.
 | `architecture/ScreenChromeGuardrailTest` | 10 | V-1: no private border, slot-well or vein-background helper under `client/`; no copied two-pixel border or slot-well fill sequence outside `ScreenDrawUtils`; a seeded vein field outside `VeinBackgroundRenderer` only in the listed other-art files (stale entries fail) |
 | `architecture/RenderTypeCachingGuardrailTest` | 10 | V-2 / P-9: no method builds a `RenderType` per call (a `RenderType`-returning method that builds one must take the holder's uniforms `Supplier`, or be a listed lazy singleton); no other method builds one; no static shader-clock field outside `SchoolRenderTypes` |
 | `client/render/SeededRenderTypesTest` | 10 | V-2: the same seed and uniforms return the same type; changed uniforms move to the seed's spare and leave the queued type's uniforms alone; a seed never builds more than two types; seeds are kept apart; LRU eviction |
+| `architecture/HudAndWorldDrawingGuardrailTest` | 10 | V-7: no `RenderGuiEvent` in main code (HUD drawing is a `GuiLayerRegistrar` layer); `WorldEffectDispatcher` is the only `RenderLevelStageEvent` subscriber, calls the self-staging effects first in their old order and keeps the Outpouring screen passes at high priority; the full-screen effects and the HUD markers keep their old order, and the markers are the last layer |
 | `architecture/ParticleDataGuardrailTest` | 10 | V-6: the particle data classes are `ColorParticleOptions` plus three listed ones with their payloads; every particle type is a `HemoParticleType`; no `createData` helper outside `HemoParticleData` |
 | `common/particle/data/ColorParticleOptionsTest` | 10 | V-6: the colour particle's network form is the old serialized-colour UTF-8 string byte for byte, its command form is float fields `r`, `g`, `b`, and a decoded particle belongs to the type that decoded it |
 | `client/screen/skilltree/harbinger/VeinBackgroundStyleTest` | 10 | V-1: the named vein styles (progress with its deep palette, crimson, machine, station) keep the values of the copies they replaced, including each style's vertex order |
@@ -865,15 +866,15 @@ them green.
   |---|---|---|
   | 1. Screen chrome (V-1) | DONE | `a53982248` |
   | 2. Render-type caching (V-2), Spark profile | DONE | `1f642dccf` |
-  | 3. Colour particle data (V-6) | DONE | the commit after `1f642dccf` |
-  | 4. HUD layers and world dispatch (V-7) | NOT STARTED | |
+  | 3. Colour particle data (V-6) | DONE | `af24ecea6` |
+  | 4. HUD layers and world dispatch (V-7) | DONE | the commit after `af24ecea6` |
   | 5. Shared material quad encoder (V-3) | NOT STARTED | |
   | 6. Shader noise include (V-5) | NOT STARTED | |
   | 7. `BossReplayClock` / `BossMoveTimeline` (A-1) | NOT STARTED | |
   | 8. Player-animation registry (A-3) | NOT STARTED | |
   | 9. `AnimationTime` (A-4) | NOT STARTED | |
   | V-4 tube frames (optional, last) | NOT STARTED | |
-- **Test counts before → after (so far):** `test` 4,010 → 4,017 (item 1) → 4,026 (item 2) → 4,031 (item 3), 0 failures. `alphaCheck`
+- **Test counts before → after (so far):** `test` 4,010 → 4,017 (item 1) → 4,026 (item 2) → 4,031 (item 3) → 4,034 (item 4), 0 failures. `alphaCheck`
   not yet run in this step.
 - **Impact map:** one read-only reviewer listed every chrome, render-type, particle, dispatch, encoder, shader-noise,
   boss-clock, player-animation and time-source site with the tests that pin them. It is not committed (it is a
@@ -986,8 +987,43 @@ them green.
   colour-only data classes: 0.
 - **Item 3 tests:** 6 source tests repointed from factory helpers and deleted classes to `HemoParticleData` (Living
   Torch, Abocipher, cell hand, Fane heart, hermit farewell, blood projection feed spiral).
+- **Item 4, HUD layers and world dispatch (V-7):**
+  - **HUD:** the three `RenderGuiEvent.Pre` handlers (white humor, morphic nectar with the Circus edge, the Sanguine
+    Omen world grade with the Axonal and Naeglerophaeon grades and the Fane post) are one `registerBelowAll` layer,
+    `screen_effects`, under vanilla's camera overlays. The three `RenderGuiEvent.Post` handlers (the Earthen Vein
+    destination tooltip, the Tithe / Endless Hour text, the Antecedent scar marker and Clairaudiograph captions) are
+    one `registerAboveAll` layer, `hud_markers`, registered last. Layers stack 200 units toward the camera each, so
+    the markers' layer translates back to depth 0, where `Post` drew; HUD text and fills drawn by earlier layers still
+    cover them where they overlap, as before. Both events fired whether or not the HUD was hidden, and mod layers are
+    not gated by `hideGui` either; the handlers that checked it still do.
+  - **Order of the full-screen effects.** The three `Pre` handlers were methods of one class, so the bus ran them in
+    the JVM's method order, which is not fixed: a listener probe in the consolidation client saw white humor, grade,
+    nectar, while the review client's baseline shows nectar before the grade and white humor after it. The layer pins
+    what the baseline draws: nectar and Circus, then the grade, then white humor. The `Post` handlers were in three
+    classes and keep their probed class order.
+  - **World:** the seven self-staging `RenderLevelStageEvent` subscribers (Axonal travel view, Earthen Vein markers,
+    Mycophant glimpse, crossbar holder tracker, first-person Avatar, the Outpouring, the manipulation visuals) ran at
+    normal priority straight before the dispatcher, in that order. The dispatcher now calls them first, in that order,
+    and each keeps its own stage checks. The Outpouring screen passes ran at high priority, ahead of every other
+    AFTER_LEVEL drawer including other mods'; the dispatcher's second handler, `renderScreenPasses`, keeps that
+    priority. `AxonalTransductionClient.world` (a one-line forward) is gone.
+  - **Left alone:** the `RenderGuiLayerEvent.Pre` suppressors (the Fungal projection's hotbar, the two radial menus'
+    crosshair) are layer filters, not drawing.
+  - **Review harness:** `src/gameTest/.../HudLayerReview` (run `hudLayerReviewClient`, `-PhudLabel=<label>`, save
+    `HudLayerReview`). It draws the HUD over a fixed test pattern once per scene (plain, white humor, morphic nectar,
+    Circus, Omen grade, scar marker, nectar + Circus + grade + scar, white humor + grade), with the game time, the
+    frame timer's partial tick and the vignette pinned. Two baseline runs are byte-identical.
+  - **Screenshots:** `build/step10-review/item4/HudLayerReview/{before4,after3}/`: all 8 scenes byte-identical. The
+    world moves were checked with the axonal, Mycophant (`-PmycophantReviewOnly=glimpse`) and Outpouring review pairs
+    (`build/step10-review/item4/<Task>/{before4,after4}/`, sheets `build/step10-review/item4/sheet-*.png`): they match
+    by eye. The axonal shots catch the travelling camera at different points; a second baseline (`before5`) differs
+    from the first in the same way.
+- **Item 4 metrics:** `src/main` +74 / −54 in 12 files; `RenderGuiEvent` handlers 6 → 0; `RenderLevelStageEvent`
+  subscribers 9 → 2 (both in `WorldEffectDispatcher`).
+- **Item 4 tests:** `SanguineOmenResourceTest` repointed to the layer; the weaker dispatcher check in
+  `RegistrationStyleGuardrailTest` moved into `HudAndWorldDrawingGuardrailTest`.
 - **Pending approvals:** A-4 and V-3b stay PENDING (items 9 and 5); V-6b was added by item 3.
-- **Handoff notes (next: item 4):**
+- **Handoff notes (next: item 5):**
   - **Baseline worktree:** `../Hemomancy-step10-before` holds `29a5576ae` with a `libs` junction. Remove the junction
     with `rmdir` before `git worktree remove --force`.
   - **Review clients:** a fresh game directory without `options.txt` stops at the first-launch screen and the driver

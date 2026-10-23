@@ -10,9 +10,10 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
+import net.minecraft.client.gui.GuiGraphics;
 
 /**
- * Full-screen effects drawn before the HUD, and the Crimson Fire screen overlay.
+ * Full-screen effects drawn under the HUD (GuiLayerRegistrar's bottom layer), and the Crimson Fire screen overlay.
  */
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 public final class ScreenOverlayEvents {
@@ -30,30 +31,37 @@ public final class ScreenOverlayEvents {
         event.setCanceled(true);
     }
 
-    @SubscribeEvent
-    public static void renderMorphicNectarScreenOverlay(RenderGuiEvent.Pre event) {
-        MorphicNectarScreenOverlay.render(event.getGuiGraphics());
-        CircusPerceptionOverlay.render(event.getGuiGraphics());
+    /**
+     * Draws the full-screen effects at the base depth before any HUD layer. The world grade re-grades what is drawn
+     * before it: the morphic nectar tint and the Circus edge, but not the white humor tint.
+     */
+    public static void renderUnderHud(GuiGraphics graphics) {
+        renderMorphicNectarScreenOverlay(graphics);
+        renderSanguineOmenWorldGrade(graphics);
+        renderWhiteHumorScreenOverlay(graphics);
     }
 
-    @SubscribeEvent
-    public static void renderWhiteHumorScreenOverlay(RenderGuiEvent.Pre event) {
-        WhiteHumorScreenOverlay.render(event.getGuiGraphics());
+    private static void renderMorphicNectarScreenOverlay(GuiGraphics graphics) {
+        MorphicNectarScreenOverlay.render(graphics);
+        CircusPerceptionOverlay.render(graphics);
     }
 
-    @SubscribeEvent
-    public static void renderSanguineOmenWorldGrade(RenderGuiEvent.Pre event) {
+    private static void renderWhiteHumorScreenOverlay(GuiGraphics graphics) {
+        WhiteHumorScreenOverlay.render(graphics);
+    }
+
+    private static void renderSanguineOmenWorldGrade(GuiGraphics graphics) {
         Minecraft minecraft = Minecraft.getInstance();
         float partialTicks = minecraft.getTimer().getGameTimeDeltaPartialTick(true);
-        if(com.vincenthuto.hemomancy.client.screen.overlay.AxonalTravelView.renderGrade(event.getGuiGraphics(),
-                event.getGuiGraphics().guiWidth(),event.getGuiGraphics().guiHeight(),partialTicks)) return;
-        if(NaeglerophaeonCaptureOverlay.renderWorldGrade(event.getGuiGraphics(),
-                event.getGuiGraphics().guiWidth(),event.getGuiGraphics().guiHeight(),partialTicks)) return;
-        FaneBoundaryRenderer.renderPost(event.getGuiGraphics(),
-                event.getGuiGraphics().guiWidth(), event.getGuiGraphics().guiHeight(), partialTicks);
+        if(com.vincenthuto.hemomancy.client.screen.overlay.AxonalTravelView.renderGrade(graphics,
+                graphics.guiWidth(),graphics.guiHeight(),partialTicks)) return;
+        if(NaeglerophaeonCaptureOverlay.renderWorldGrade(graphics,
+                graphics.guiWidth(),graphics.guiHeight(),partialTicks)) return;
+        FaneBoundaryRenderer.renderPost(graphics,
+                graphics.guiWidth(), graphics.guiHeight(), partialTicks);
         if (SanguineOmenOverlay.instance != null) {
-            SanguineOmenOverlay.instance.renderWorldGrade(event.getGuiGraphics(),
-                    event.getGuiGraphics().guiWidth(), event.getGuiGraphics().guiHeight(), partialTicks);
+            SanguineOmenOverlay.instance.renderWorldGrade(graphics,
+                    graphics.guiWidth(), graphics.guiHeight(), partialTicks);
         }
     }
 }
