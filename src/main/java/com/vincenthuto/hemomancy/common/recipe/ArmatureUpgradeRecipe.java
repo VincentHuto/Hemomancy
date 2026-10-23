@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ArmatureUpgradeRecipe extends CustomRecipe {
+public class ArmatureUpgradeRecipe extends StationRecipe {
 	public record PersistentDataGate(String key, String value) {
 		public boolean matches(Player player) {
 			if (player == null) return false;
@@ -66,7 +66,6 @@ public class ArmatureUpgradeRecipe extends CustomRecipe {
 			double bloodCost, ItemStack result, ArmatureUpgradeRules.ArmatureTier requiredArmatureTier,
 			@Nullable CompoundTag requiredBaseData, @Nullable CompoundTag resultData,
 			@Nullable PersistentDataGate persistentDataGate) {
-		super(CraftingBookCategory.EQUIPMENT);
 		this.id = id;
 		this.requiredDegree = Math.max(0, requiredDegree);
 		this.armorSlot = armorSlot;
@@ -169,7 +168,7 @@ public class ArmatureUpgradeRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
+	public ItemStack assemble(RecipeInput input, HolderLookup.Provider registries) {
 		return createResult(registries);
 	}
 
@@ -202,7 +201,7 @@ public class ArmatureUpgradeRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public boolean matches(CraftingInput input, Level level) {
+	public boolean matches(RecipeInput input, Level level) {
 		return false;
 	}
 }

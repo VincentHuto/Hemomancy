@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.common.recipe.serializer;
 import com.google.common.collect.Maps;
 import com.google.gson.*;
 import com.mojang.serialization.*;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
@@ -35,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRiteRecipe> {
 	private static Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
@@ -362,61 +360,40 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 
 	// ---- RecipeSerializer 1.21.1 API ----
 
-	private static final MapCodec<CardinalRiteRecipe> CODEC = new MapCodec<CardinalRiteRecipe>() {
-		@Override
-		public <T> Stream<T> keys(DynamicOps<T> ops) {
-			return Stream.of("id", "bloodCost", "riteType", "riteName", "riteDescription", "pattern", "key",
-					"result", "required_degree", "required_purity", "required_clarity",
-					"breakBlocksOnCreation", "unstained", "rankup", "ceremony", "floor",
-					"required_structure", "brazier_signature", "medium", "consume_medium_on_success",
-					"puppeteer_trial", "purpose", "special", "world_finale", "subject").map(ops::createString);
-		}
+	private static final MapCodec<CardinalRiteRecipe> CODEC = RecipeCodecJson.bridge("CardinalRiteRecipe", "cardinal_rite/unknown",
+			CardinalRiteRecipeSerializer::fromJsonObject, CardinalRiteRecipeSerializer::encode,
+			"id", "bloodCost", "riteType", "riteName", "riteDescription", "pattern", "key", "result", "required_degree", "required_purity", "required_clarity", "breakBlocksOnCreation", "unstained", "rankup", "ceremony", "floor", "required_structure", "brazier_signature", "medium", "consume_medium_on_success", "puppeteer_trial", "purpose", "special", "world_finale", "subject");
 
-		@Override
-		public <T> DataResult<CardinalRiteRecipe> decode(DynamicOps<T> ops, MapLike<T> input) {
-			try {
-				JsonObject json = RecipeCodecJson.toJsonObject(ops, input);
-				ResourceLocation id = json.has("id")
-						? ResourceLocation.parse(json.get("id").getAsString())
-						: Hemomancy.rloc("cardinal_rite/unknown");
-				return DataResult.success(fromJsonObject(id, json, RecipeCodecJson.jsonOps(ops)));
-			} catch (Exception e) {
-				return DataResult.error(() -> "Failed to decode CardinalRiteRecipe: " + e.getMessage());
-			}
+	private static <T> RecordBuilder<T> encode(CardinalRiteRecipe recipe, DynamicOps<T> ops, RecordBuilder<T> prefix) {
+		prefix.add("id", ops.createString(recipe.getId().toString()));
+		prefix.add("bloodCost", ops.createDouble(recipe.getBloodCost()));
+		prefix.add("riteType", ops.createString(recipe.getRiteType().getSerializedName()));
+		prefix.add("riteName", ops.createString(recipe.getRiteName()));
+		prefix.add("riteDescription", ops.createString(recipe.getRiteDescription()));
+		// pattern / key are complex — handled via stream codec
+		if (!recipe.getResult().isEmpty()) {
+			prefix.add("result", ItemStack.CODEC.encodeStart(ops, recipe.getResult()));
 		}
-
-		@Override
-		public <T> RecordBuilder<T> encode(CardinalRiteRecipe recipe, DynamicOps<T> ops, RecordBuilder<T> prefix) {
-			prefix.add("id", ops.createString(recipe.getId().toString()));
-			prefix.add("bloodCost", ops.createDouble(recipe.getBloodCost()));
-			prefix.add("riteType", ops.createString(recipe.getRiteType().getSerializedName()));
-			prefix.add("riteName", ops.createString(recipe.getRiteName()));
-			prefix.add("riteDescription", ops.createString(recipe.getRiteDescription()));
-			// pattern / key are complex — handled via stream codec
-			if (!recipe.getResult().isEmpty()) {
-				prefix.add("result", ItemStack.CODEC.encodeStart(ops, recipe.getResult()));
-			}
-			prefix.add("required_degree", ops.createInt(recipe.getRequiredDegree()));
-			if (recipe.getRequiredPurity() >= 0.0f) prefix.add("required_purity", ops.createFloat(recipe.getRequiredPurity()));
-			if (recipe.getRequiredClarity() >= 0.0f) prefix.add("required_clarity", ops.createFloat(recipe.getRequiredClarity()));
-			prefix.add("breakBlocksOnCreation", ops.createBoolean(recipe.shouldBreakBlocksOnCreation()));
-			prefix.add("unstained", ops.createBoolean(recipe.isUnstained()));
-			prefix.add("rankup", ops.createBoolean(recipe.isRankup()));
-			if (recipe.getPurpose() != null) prefix.add("purpose", ops.createString(recipe.getPurpose().id()));
-			if (recipe.isSpecial()) prefix.add("special", ops.createBoolean(true));
-			if (recipe.getDaemonFinale() == CardinalRiteDaemonFinale.SKY) prefix.add("world_finale", ops.createString("sky"));
-			if (recipe.hasMedium()) {
-				prefix.add("medium", Ingredient.CODEC.encodeStart(ops, recipe.getMedium()));
-			}
-			prefix.add("consume_medium_on_success", ops.createBoolean(recipe.shouldConsumeMediumOnSuccess()));
-			if (recipe.isPuppeteerTrial()) {
-				JsonObject trial = new JsonObject();
-				trial.addProperty("summon", recipe.getPuppeteerTrial().summonName());
-				prefix.add("puppeteer_trial", JsonOps.INSTANCE.convertTo(ops, trial));
-			}
-			return prefix;
+		prefix.add("required_degree", ops.createInt(recipe.getRequiredDegree()));
+		if (recipe.getRequiredPurity() >= 0.0f) prefix.add("required_purity", ops.createFloat(recipe.getRequiredPurity()));
+		if (recipe.getRequiredClarity() >= 0.0f) prefix.add("required_clarity", ops.createFloat(recipe.getRequiredClarity()));
+		prefix.add("breakBlocksOnCreation", ops.createBoolean(recipe.shouldBreakBlocksOnCreation()));
+		prefix.add("unstained", ops.createBoolean(recipe.isUnstained()));
+		prefix.add("rankup", ops.createBoolean(recipe.isRankup()));
+		if (recipe.getPurpose() != null) prefix.add("purpose", ops.createString(recipe.getPurpose().id()));
+		if (recipe.isSpecial()) prefix.add("special", ops.createBoolean(true));
+		if (recipe.getDaemonFinale() == CardinalRiteDaemonFinale.SKY) prefix.add("world_finale", ops.createString("sky"));
+		if (recipe.hasMedium()) {
+			prefix.add("medium", Ingredient.CODEC.encodeStart(ops, recipe.getMedium()));
 		}
-	};
+		prefix.add("consume_medium_on_success", ops.createBoolean(recipe.shouldConsumeMediumOnSuccess()));
+		if (recipe.isPuppeteerTrial()) {
+			JsonObject trial = new JsonObject();
+			trial.addProperty("summon", recipe.getPuppeteerTrial().summonName());
+			prefix.add("puppeteer_trial", JsonOps.INSTANCE.convertTo(ops, trial));
+		}
+		return prefix;
+	}
 
 	private static final StreamCodec<RegistryFriendlyByteBuf, CardinalRiteRecipe> STREAM_CODEC = StreamCodec.of(
 			CardinalRiteRecipeSerializer::toNetwork,

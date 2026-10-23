@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  *   <li>{@code result}                 — the finished {@link ItemFungalScar}.</li>
  * </ul>
  */
-public class FungalScarCultivationRecipe extends CustomRecipe {
+public class FungalScarCultivationRecipe extends StationRecipe {
 
     private final ResourceLocation id;
     private final EnumBloodTendency tendency;
@@ -46,7 +46,6 @@ public class FungalScarCultivationRecipe extends CustomRecipe {
             ItemStack seed,
             ItemStack immatureResult,
             ItemStack result) {
-        super(CraftingBookCategory.MISC);
         this.id = id;
         this.tendency = tendency;
         this.bloodCostPhase1 = bloodCostPhase1;
@@ -79,10 +78,10 @@ public class FungalScarCultivationRecipe extends CustomRecipe {
     // ── CustomRecipe boilerplate ──────────────────────────────────────────────
 
     @Override
-    public boolean matches(CraftingInput container, Level level) { return false; }
+    public boolean matches(RecipeInput container, Level level) { return false; }
 
     @Override
-    public ItemStack assemble(CraftingInput container, HolderLookup.Provider registries) {
+    public ItemStack assemble(RecipeInput container, HolderLookup.Provider registries) {
         return result.copy();
     }
 

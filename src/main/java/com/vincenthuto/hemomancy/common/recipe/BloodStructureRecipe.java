@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.Block;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BloodStructureRecipe extends CustomRecipe {
+public class BloodStructureRecipe extends StationRecipe {
 
 	public static List<BloodStructureRecipe> getAllRecipes(Level world) {
 		return world.getRecipeManager().getAllRecipesFor(RecipeInit.blood_structure_recipe_type.get())
@@ -92,7 +92,6 @@ public class BloodStructureRecipe extends CustomRecipe {
 
 	public BloodStructureRecipe(ResourceLocation pId, double bloodCost, MultiblockPattern pattern, ItemStack heldItem,
 			Block hitBlock, ItemStack result, boolean unstained, int requiredDegree) {
-		super(CraftingBookCategory.MISC);
 		this.id = pId;
 		this.bloodCost = bloodCost;
 		this.pattern = pattern;
@@ -110,7 +109,7 @@ public class BloodStructureRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public ItemStack assemble(CraftingInput p_44001_, HolderLookup.Provider p_267165_) {
+	public ItemStack assemble(RecipeInput p_44001_, HolderLookup.Provider p_267165_) {
 		return this.getResultItem(p_267165_).copy();
 	}
 
@@ -161,7 +160,7 @@ public class BloodStructureRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public boolean matches(CraftingInput pContainer, Level pLevel) {
+	public boolean matches(RecipeInput pContainer, Level pLevel) {
 		return true;
 	}
 

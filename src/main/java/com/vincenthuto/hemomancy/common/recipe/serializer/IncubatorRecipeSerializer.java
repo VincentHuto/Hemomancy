@@ -16,8 +16,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
-import java.util.stream.Stream;
-
 public class IncubatorRecipeSerializer implements RecipeSerializer<IncubatorRecipe> {
 
 	// ---- JSON helpers ----
@@ -38,33 +36,16 @@ public class IncubatorRecipeSerializer implements RecipeSerializer<IncubatorReci
 
 	// ---- RecipeSerializer 1.21.1 API ----
 
-	private static final MapCodec<IncubatorRecipe> CODEC = new MapCodec<IncubatorRecipe>() {
-		@Override
-		public <T> Stream<T> keys(DynamicOps<T> ops) {
-			return Stream.of("id", "catalysts", "result", "count").map(ops::createString);
-		}
+	private static final MapCodec<IncubatorRecipe> CODEC = RecipeCodecJson.bridge("IncubatorRecipe", "incubator/unknown",
+			IncubatorRecipeSerializer::fromJsonObject, IncubatorRecipeSerializer::encode,
+			"id", "catalysts", "result", "count");
 
-		@Override
-		public <T> DataResult<IncubatorRecipe> decode(DynamicOps<T> ops, MapLike<T> input) {
-			try {
-				JsonObject json = RecipeCodecJson.toJsonObject(ops, input);
-				ResourceLocation id = json.has("id")
-						? ResourceLocation.parse(json.get("id").getAsString())
-						: Hemomancy.rloc("incubator/unknown");
-				return DataResult.success(fromJsonObject(id, json, RecipeCodecJson.jsonOps(ops)));
-			} catch (Exception e) {
-				return DataResult.error(() -> "Failed to decode IncubatorRecipe: " + e.getMessage());
-			}
-		}
-
-		@Override
-		public <T> RecordBuilder<T> encode(IncubatorRecipe recipe, DynamicOps<T> ops, RecordBuilder<T> prefix) {
-			prefix.add("id", ops.createString(recipe.getId().toString()));
-			prefix.add("catalysts", Ingredient.CODEC_NONEMPTY.listOf().encodeStart(ops, recipe.getCatalysts()));
-			prefix.add("result", ItemStack.CODEC.encodeStart(ops, recipe.getResultItemStack()));
-			return prefix;
-		}
-	};
+	private static <T> RecordBuilder<T> encode(IncubatorRecipe recipe, DynamicOps<T> ops, RecordBuilder<T> prefix) {
+		prefix.add("id", ops.createString(recipe.getId().toString()));
+		prefix.add("catalysts", Ingredient.CODEC_NONEMPTY.listOf().encodeStart(ops, recipe.getCatalysts()));
+		prefix.add("result", ItemStack.CODEC.encodeStart(ops, recipe.getResultItemStack()));
+		return prefix;
+	}
 
 	private static final StreamCodec<RegistryFriendlyByteBuf, IncubatorRecipe> STREAM_CODEC = StreamCodec.of(
 			IncubatorRecipeSerializer::toNetwork,

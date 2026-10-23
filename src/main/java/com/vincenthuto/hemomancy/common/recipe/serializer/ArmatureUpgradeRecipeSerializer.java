@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.serialization.*;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRecipe;
 import com.vincenthuto.hemomancy.common.recipe.ArmatureUpgradeRules;
 import net.minecraft.nbt.CompoundTag;
@@ -20,56 +19,35 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 
 import javax.annotation.Nullable;
 import java.util.Map;
-import java.util.stream.Stream;
 
 public class ArmatureUpgradeRecipeSerializer implements RecipeSerializer<ArmatureUpgradeRecipe> {
-	private static final MapCodec<ArmatureUpgradeRecipe> CODEC = new MapCodec<>() {
-		@Override
-		public <T> Stream<T> keys(DynamicOps<T> ops) {
-			return Stream.of("id", "required_degree", "armor_slot", "base", "reagent",
-					"blood_cost", "result", "required_armature_tier", "required_base_data", "result_data",
-					"persistent_data_gate")
-					.map(ops::createString);
-		}
+	private static final MapCodec<ArmatureUpgradeRecipe> CODEC = RecipeCodecJson.bridge("ArmatureUpgradeRecipe", "armature_upgrade/unknown",
+			ArmatureUpgradeRecipeSerializer::fromJsonObject, ArmatureUpgradeRecipeSerializer::encode,
+			"id", "required_degree", "armor_slot", "base", "reagent", "blood_cost", "result", "required_armature_tier", "required_base_data", "result_data", "persistent_data_gate");
 
-		@Override
-		public <T> DataResult<ArmatureUpgradeRecipe> decode(DynamicOps<T> ops, MapLike<T> input) {
-			try {
-				JsonObject json = RecipeCodecJson.toJsonObject(ops, input);
-				ResourceLocation id = json.has("id")
-						? ResourceLocation.parse(json.get("id").getAsString())
-						: Hemomancy.rloc("armature_upgrade/unknown");
-				return DataResult.success(fromJsonObject(id, json, RecipeCodecJson.jsonOps(ops)));
-			} catch (Exception e) {
-				return DataResult.error(() -> "Failed to decode ArmatureUpgradeRecipe: " + e.getMessage());
-			}
+	private static <T> RecordBuilder<T> encode(ArmatureUpgradeRecipe recipe, DynamicOps<T> ops, RecordBuilder<T> prefix) {
+		prefix.add("id", ops.createString(recipe.getId().toString()));
+		prefix.add("required_degree", ops.createInt(recipe.getRequiredDegree()));
+		prefix.add("armor_slot", ops.createString(recipe.getArmorSlot().name().toLowerCase()));
+		prefix.add("base", Ingredient.CODEC_NONEMPTY.encodeStart(ops, recipe.getValidBase()));
+		prefix.add("reagent", Ingredient.CODEC_NONEMPTY.encodeStart(ops, recipe.getReagent()));
+		prefix.add("blood_cost", ops.createDouble(recipe.getBloodCost()));
+		prefix.add("result", ItemStack.CODEC.encodeStart(ops, recipe.getResultItem(null)));
+		prefix.add("required_armature_tier", ops.createString(recipe.getRequiredArmatureTier().serializedName()));
+		if (recipe.getRequiredBaseData() != null) {
+			prefix.add("required_base_data", NbtOps.INSTANCE.convertTo(ops, recipe.getRequiredBaseData()));
 		}
-
-		@Override
-		public <T> RecordBuilder<T> encode(ArmatureUpgradeRecipe recipe, DynamicOps<T> ops, RecordBuilder<T> prefix) {
-			prefix.add("id", ops.createString(recipe.getId().toString()));
-			prefix.add("required_degree", ops.createInt(recipe.getRequiredDegree()));
-			prefix.add("armor_slot", ops.createString(recipe.getArmorSlot().name().toLowerCase()));
-			prefix.add("base", Ingredient.CODEC_NONEMPTY.encodeStart(ops, recipe.getValidBase()));
-			prefix.add("reagent", Ingredient.CODEC_NONEMPTY.encodeStart(ops, recipe.getReagent()));
-			prefix.add("blood_cost", ops.createDouble(recipe.getBloodCost()));
-			prefix.add("result", ItemStack.CODEC.encodeStart(ops, recipe.getResultItem(null)));
-			prefix.add("required_armature_tier", ops.createString(recipe.getRequiredArmatureTier().serializedName()));
-			if (recipe.getRequiredBaseData() != null) {
-				prefix.add("required_base_data", NbtOps.INSTANCE.convertTo(ops, recipe.getRequiredBaseData()));
-			}
-			if (recipe.getResultData() != null) {
-				prefix.add("result_data", NbtOps.INSTANCE.convertTo(ops, recipe.getResultData()));
-			}
-			if (recipe.getPersistentDataGate() != null) {
-				JsonObject gate = new JsonObject();
-				gate.addProperty("key", recipe.getPersistentDataGate().key());
-				gate.addProperty("value", recipe.getPersistentDataGate().value());
-				prefix.add("persistent_data_gate", JsonOps.INSTANCE.convertTo(ops, gate));
-			}
-			return prefix;
+		if (recipe.getResultData() != null) {
+			prefix.add("result_data", NbtOps.INSTANCE.convertTo(ops, recipe.getResultData()));
 		}
-	};
+		if (recipe.getPersistentDataGate() != null) {
+			JsonObject gate = new JsonObject();
+			gate.addProperty("key", recipe.getPersistentDataGate().key());
+			gate.addProperty("value", recipe.getPersistentDataGate().value());
+			prefix.add("persistent_data_gate", JsonOps.INSTANCE.convertTo(ops, gate));
+		}
+		return prefix;
+	}
 
 	private static final StreamCodec<RegistryFriendlyByteBuf, ArmatureUpgradeRecipe> STREAM_CODEC = StreamCodec.of(
 			ArmatureUpgradeRecipeSerializer::toNetwork,

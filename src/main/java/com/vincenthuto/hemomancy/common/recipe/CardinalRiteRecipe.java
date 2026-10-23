@@ -13,7 +13,7 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CardinalRiteRecipe extends CustomRecipe {
+public class CardinalRiteRecipe extends StationRecipe {
 
 	public static List<CardinalRiteRecipe> getAllRecipes(Level world) {
 		return world.getRecipeManager().getAllRecipesFor(RecipeInit.cardinal_rite_recipe_type.get())
@@ -130,7 +130,6 @@ public class CardinalRiteRecipe extends CustomRecipe {
 	public CardinalRiteRecipe(ResourceLocation pId, double bloodCost, CardinalRiteType riteType,
 			MultiblockPattern pattern, ItemStack result, String riteName, String riteDescription,
 			int requiredDegree, boolean breakBlocksOnCreation, boolean unstained, boolean rankup) {
-		super(CraftingBookCategory.MISC);
 		this.id = pId;
 		this.bloodCost = bloodCost;
 		this.riteType = riteType;
@@ -151,7 +150,7 @@ public class CardinalRiteRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public ItemStack assemble(CraftingInput p_44001_, HolderLookup.Provider p_267165_) {
+	public ItemStack assemble(RecipeInput p_44001_, HolderLookup.Provider p_267165_) {
 		return this.getResultItem(p_267165_).copy();
 	}
 
@@ -357,7 +356,7 @@ public class CardinalRiteRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public boolean matches(CraftingInput pContainer, Level pLevel) {
+	public boolean matches(RecipeInput pContainer, Level pLevel) {
 		return true;
 	}
 

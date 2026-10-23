@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.common.recipe.serializer;
 import com.google.common.collect.Maps;
 import com.google.gson.*;
 import com.mojang.serialization.*;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 import com.vincenthuto.hutoslib.math.MultiblockPatternKey;
@@ -18,7 +17,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -32,7 +30,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStructureRecipe> {
 	private static Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
@@ -173,42 +170,23 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 
 	// ---- RecipeSerializer 1.21.1 API ----
 
-	private static final MapCodec<BloodStructureRecipe> CODEC = new MapCodec<BloodStructureRecipe>() {
-		@Override
-		public <T> Stream<T> keys(DynamicOps<T> ops) {
-			return Stream.of("id", "bloodCost", "heldItem", "hitBlock", "pattern", "key", "result", "unstained",
-					"required_degree", "required_purity", "required_clarity")
-					.map(ops::createString);
-		}
+	private static final MapCodec<BloodStructureRecipe> CODEC = RecipeCodecJson.bridge("BloodStructureRecipe", "blood_structure/unknown",
+			BloodStructureRecipeSerializer::fromJsonObject, BloodStructureRecipeSerializer::encode,
+			"id", "bloodCost", "heldItem", "hitBlock", "pattern", "key", "result", "unstained", "required_degree", "required_purity", "required_clarity");
 
-		@Override
-		public <T> DataResult<BloodStructureRecipe> decode(DynamicOps<T> ops, MapLike<T> input) {
-			try {
-				JsonObject json = RecipeCodecJson.toJsonObject(ops, input);
-				ResourceLocation id = json.has("id")
-						? ResourceLocation.parse(json.get("id").getAsString())
-						: Hemomancy.rloc("blood_structure/unknown");
-				return DataResult.success(fromJsonObject(id, json, RecipeCodecJson.jsonOps(ops)));
-			} catch (Exception e) {
-				return DataResult.error(() -> "Failed to decode BloodStructureRecipe: " + e.getMessage());
-			}
-		}
-
-		@Override
-		public <T> RecordBuilder<T> encode(BloodStructureRecipe recipe, DynamicOps<T> ops, RecordBuilder<T> prefix) {
-			prefix.add("id", ops.createString(recipe.getId().toString()));
-			prefix.add("bloodCost", ops.createDouble(recipe.getBloodCost()));
-			prefix.add("heldItem", ops.createString(BuiltInRegistries.ITEM.getKey(recipe.getHeldItem().getItem()).toString()));
-			prefix.add("hitBlock", ops.createString(BuiltInRegistries.BLOCK.getKey(recipe.getHitBlock()).toString()));
-			// pattern / key are complex — skip encode for now (server-to-client via stream codec)
-			prefix.add("result", ItemStack.CODEC.encodeStart(ops, recipe.getResult()));
-			prefix.add("unstained", ops.createBoolean(recipe.isUnstained()));
-			prefix.add("required_degree", ops.createInt(recipe.getRequiredDegree()));
-			if (recipe.getRequiredPurity() >= 0.0f) prefix.add("required_purity", ops.createFloat(recipe.getRequiredPurity()));
-			if (recipe.getRequiredClarity() >= 0.0f) prefix.add("required_clarity", ops.createFloat(recipe.getRequiredClarity()));
-			return prefix;
-		}
-	};
+	private static <T> RecordBuilder<T> encode(BloodStructureRecipe recipe, DynamicOps<T> ops, RecordBuilder<T> prefix) {
+		prefix.add("id", ops.createString(recipe.getId().toString()));
+		prefix.add("bloodCost", ops.createDouble(recipe.getBloodCost()));
+		prefix.add("heldItem", ops.createString(BuiltInRegistries.ITEM.getKey(recipe.getHeldItem().getItem()).toString()));
+		prefix.add("hitBlock", ops.createString(BuiltInRegistries.BLOCK.getKey(recipe.getHitBlock()).toString()));
+		// pattern / key are complex — skip encode for now (server-to-client via stream codec)
+		prefix.add("result", ItemStack.CODEC.encodeStart(ops, recipe.getResult()));
+		prefix.add("unstained", ops.createBoolean(recipe.isUnstained()));
+		prefix.add("required_degree", ops.createInt(recipe.getRequiredDegree()));
+		if (recipe.getRequiredPurity() >= 0.0f) prefix.add("required_purity", ops.createFloat(recipe.getRequiredPurity()));
+		if (recipe.getRequiredClarity() >= 0.0f) prefix.add("required_clarity", ops.createFloat(recipe.getRequiredClarity()));
+		return prefix;
+	}
 
 	private static final StreamCodec<RegistryFriendlyByteBuf, BloodStructureRecipe> STREAM_CODEC = StreamCodec.of(
 			BloodStructureRecipeSerializer::toNetwork,

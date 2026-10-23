@@ -14,7 +14,7 @@ import java.lang.reflect.MalformedParametersException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ScarRecipe extends CustomRecipe {
+public class ScarRecipe extends StationRecipe {
 	private ResourceLocation id;
 	protected ResourceLocation[] requiredItems = new ResourceLocation[0];
 	protected int tier = 1;
@@ -29,7 +29,6 @@ public class ScarRecipe extends CustomRecipe {
 
 	public ScarRecipe(ResourceLocation resourceLocation, int tier, ScarType scarType, Ingredient ingredient1,
                       Ingredient ingredient2, byte[][] pattern, ItemStack result) {
-		super(CraftingBookCategory.MISC);
 		this.id = resourceLocation;
 		this.ingredient1 = ingredient1;
 		this.ingredient2 = ingredient2;
@@ -83,7 +82,7 @@ public class ScarRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public boolean matches(CraftingInput pContainer, Level pLevel) {
+	public boolean matches(RecipeInput pContainer, Level pLevel) {
 		return true;
 	}
 
@@ -96,7 +95,7 @@ public class ScarRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public ItemStack assemble(CraftingInput pContainer, HolderLookup.Provider pRegistryAccess) {
+	public ItemStack assemble(RecipeInput pContainer, HolderLookup.Provider pRegistryAccess) {
 		return this.getResultItem(pRegistryAccess).copy();
 	}
 

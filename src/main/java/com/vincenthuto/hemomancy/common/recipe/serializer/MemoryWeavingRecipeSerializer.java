@@ -104,43 +104,25 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 		return requiredTendencies * 50.0D;
 	}
 
-	private static final MapCodec<MemoryWeavingRecipe> CODEC = new MapCodec<>() {
-		@Override
-		public <T> Stream<T> keys(DynamicOps<T> ops) {
-			return Stream.concat(
-					Stream.of("id", "catalysts", "ingredient", "enzymes", "blood", "result", "count"),
-					Stream.of(EnumBloodTendency.values()).map(e -> e.toString().toLowerCase()))
-					.map(ops::createString);
-		}
+	private static final String[] KEYS = Stream.concat( Stream.of("id", "catalysts", "ingredient", "enzymes", "blood", "result", "count"), Stream.of(EnumBloodTendency.values()).map(e -> e.toString().toLowerCase())).toArray(String[]::new);
 
-		@Override
-		public <T> DataResult<MemoryWeavingRecipe> decode(DynamicOps<T> ops, MapLike<T> input) {
-			try {
-				JsonObject json = RecipeCodecJson.toJsonObject(ops, input);
-				ResourceLocation id = json.has("id")
-						? ResourceLocation.parse(json.get("id").getAsString())
-						: Hemomancy.rloc("memory_weaving/unknown");
-				return DataResult.success(fromJsonObject(id, json, RecipeCodecJson.jsonOps(ops)));
-			} catch (Exception e) {
-				return DataResult.error(() -> "Failed to decode MemoryWeavingRecipe: " + e.getMessage());
-			}
-		}
+	private static final MapCodec<MemoryWeavingRecipe> CODEC = RecipeCodecJson.bridge("MemoryWeavingRecipe", "memory_weaving/unknown",
+			MemoryWeavingRecipeSerializer::fromJsonObject, MemoryWeavingRecipeSerializer::encode,
+			KEYS);
 
-		@Override
-		public <T> RecordBuilder<T> encode(MemoryWeavingRecipe recipe, DynamicOps<T> ops, RecordBuilder<T> prefix) {
-			prefix.add("id", ops.createString(recipe.getId().toString()));
-			prefix.add("catalysts", Ingredient.CODEC_NONEMPTY.listOf().encodeStart(ops, recipe.getCatalysts()));
-
-			JsonObject enzymes = new JsonObject();
-			for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
-				enzymes.addProperty(tendency.toString().toLowerCase(), recipe.getEnzymeRequirement(tendency));
-			}
-			prefix.add("enzymes", JsonOps.INSTANCE.convertTo(ops, enzymes));
-			prefix.add("blood", ops.createDouble(recipe.getBloodCost()));
-			prefix.add("result", ItemStack.CODEC.encodeStart(ops, recipe.getResultItem(null)));
-			return prefix;
+	private static <T> RecordBuilder<T> encode(MemoryWeavingRecipe recipe, DynamicOps<T> ops, RecordBuilder<T> prefix) {
+		prefix.add("id", ops.createString(recipe.getId().toString()));
+		prefix.add("catalysts", Ingredient.CODEC_NONEMPTY.listOf().encodeStart(ops, recipe.getCatalysts()));
+	
+		JsonObject enzymes = new JsonObject();
+		for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
+			enzymes.addProperty(tendency.toString().toLowerCase(), recipe.getEnzymeRequirement(tendency));
 		}
-	};
+		prefix.add("enzymes", JsonOps.INSTANCE.convertTo(ops, enzymes));
+		prefix.add("blood", ops.createDouble(recipe.getBloodCost()));
+		prefix.add("result", ItemStack.CODEC.encodeStart(ops, recipe.getResultItem(null)));
+		return prefix;
+	}
 
 	private static final StreamCodec<RegistryFriendlyByteBuf, MemoryWeavingRecipe> STREAM_CODEC = StreamCodec.of(
 			MemoryWeavingRecipeSerializer::toNetwork,

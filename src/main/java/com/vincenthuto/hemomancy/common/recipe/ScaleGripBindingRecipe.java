@@ -20,26 +20,10 @@ import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class ScaleGripBindingRecipe extends net.minecraft.world.item.crafting.CustomRecipe {
 	public static class Serializer implements RecipeSerializer<ScaleGripBindingRecipe> {
-		private static final MapCodec<ScaleGripBindingRecipe> CODEC = new MapCodec<>() {
-			@Override
-			public <T> Stream<T> keys(DynamicOps<T> ops) {
-				return Stream.empty();
-			}
-
-			@Override
-			public <T> DataResult<ScaleGripBindingRecipe> decode(DynamicOps<T> ops, MapLike<T> input) {
-				return DataResult.success(new ScaleGripBindingRecipe());
-			}
-
-			@Override
-			public <T> RecordBuilder<T> encode(ScaleGripBindingRecipe recipe, DynamicOps<T> ops, RecordBuilder<T> prefix) {
-				return prefix;
-			}
-		};
+		private static final MapCodec<ScaleGripBindingRecipe> CODEC = MapCodec.unit(ScaleGripBindingRecipe::new);
 		private static final StreamCodec<RegistryFriendlyByteBuf, ScaleGripBindingRecipe> STREAM_CODEC =
 				StreamCodec.of((buffer, recipe) -> {
 				}, buffer -> new ScaleGripBindingRecipe());

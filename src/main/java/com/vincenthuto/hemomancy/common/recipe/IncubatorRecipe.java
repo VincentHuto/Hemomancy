@@ -14,14 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class IncubatorRecipe extends CustomRecipe {
+public class IncubatorRecipe extends StationRecipe {
 
 	private ResourceLocation id;
 	private final NonNullList<Ingredient> catalysts;
 	private final ItemStack result;
 
 	public IncubatorRecipe(ResourceLocation recipeId, NonNullList<Ingredient> catalysts, ItemStack result) {
-		super(CraftingBookCategory.MISC);
 		this.id = recipeId;
 		this.catalysts = catalysts;
 		this.result = result;
@@ -85,12 +84,12 @@ public class IncubatorRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public boolean matches(CraftingInput container, Level level) {
+	public boolean matches(RecipeInput container, Level level) {
 		return false;
 	}
 
 	@Override
-	public ItemStack assemble(CraftingInput container, HolderLookup.Provider registryAccess) {
+	public ItemStack assemble(RecipeInput container, HolderLookup.Provider registryAccess) {
 		return result.copy();
 	}
 

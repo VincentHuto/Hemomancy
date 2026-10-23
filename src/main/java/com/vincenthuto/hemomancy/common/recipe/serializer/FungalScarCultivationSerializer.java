@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.serialization.*;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.recipe.FungalScarCultivationRecipe;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -13,8 +12,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-
-import java.util.stream.Stream;
 
 public class FungalScarCultivationSerializer implements RecipeSerializer<FungalScarCultivationRecipe> {
 
@@ -42,41 +39,21 @@ public class FungalScarCultivationSerializer implements RecipeSerializer<FungalS
 
     // ── MapCodec ──────────────────────────────────────────────────────────────
 
-    private static final MapCodec<FungalScarCultivationRecipe> CODEC = new MapCodec<>() {
-        @Override
-        public <T> Stream<T> keys(DynamicOps<T> ops) {
-            return Stream.of("tendency", "blood_cost_phase1", "phase1_duration",
-                    "maturation_threshold", "seed", "immature_result", "result", "id")
-                    .map(ops::createString);
-        }
+    private static final MapCodec<FungalScarCultivationRecipe> CODEC = RecipeCodecJson.bridge("FungalScarCultivationRecipe", "fungal_scar/unknown",
+    		FungalScarCultivationSerializer::fromJsonObject, FungalScarCultivationSerializer::encode,
+    		"tendency", "blood_cost_phase1", "phase1_duration", "maturation_threshold", "seed", "immature_result", "result", "id");
 
-        @Override
-        public <T> DataResult<FungalScarCultivationRecipe> decode(DynamicOps<T> ops, MapLike<T> input) {
-            try {
-                JsonObject json = RecipeCodecJson.toJsonObject(ops, input);
-                ResourceLocation id = json.has("id")
-                        ? ResourceLocation.parse(json.get("id").getAsString())
-                        : Hemomancy.rloc("fungal_scar/unknown");
-                return DataResult.success(fromJsonObject(id, json, RecipeCodecJson.jsonOps(ops)));
-            } catch (Exception e) {
-                return DataResult.error(() -> "Failed to decode FungalScarCultivationRecipe: " + e.getMessage());
-            }
-        }
-
-        @Override
-        public <T> RecordBuilder<T> encode(FungalScarCultivationRecipe recipe,
-                DynamicOps<T> ops, RecordBuilder<T> prefix) {
-            prefix.add("id",                   ops.createString(recipe.getId().toString()));
-            prefix.add("tendency",             ops.createString(recipe.getTendency().name()));
-            prefix.add("blood_cost_phase1",    ops.createFloat(recipe.getBloodCostPhase1()));
-            prefix.add("phase1_duration",      ops.createInt(recipe.getPhase1Duration()));
-            prefix.add("maturation_threshold", ops.createInt(recipe.getMaturationThreshold()));
-            prefix.add("seed", ItemStack.CODEC.encodeStart(ops, recipe.getSeedItemStack()));
-            prefix.add("immature_result", ItemStack.CODEC.encodeStart(ops, recipe.getImmatureResult()));
-            prefix.add("result", ItemStack.CODEC.encodeStart(ops, recipe.getResultItemStack()));
-            return prefix;
-        }
-    };
+    private static <T> RecordBuilder<T> encode(FungalScarCultivationRecipe recipe, DynamicOps<T> ops, RecordBuilder<T> prefix) {
+        prefix.add("id",                   ops.createString(recipe.getId().toString()));
+        prefix.add("tendency",             ops.createString(recipe.getTendency().name()));
+        prefix.add("blood_cost_phase1",    ops.createFloat(recipe.getBloodCostPhase1()));
+        prefix.add("phase1_duration",      ops.createInt(recipe.getPhase1Duration()));
+        prefix.add("maturation_threshold", ops.createInt(recipe.getMaturationThreshold()));
+        prefix.add("seed", ItemStack.CODEC.encodeStart(ops, recipe.getSeedItemStack()));
+        prefix.add("immature_result", ItemStack.CODEC.encodeStart(ops, recipe.getImmatureResult()));
+        prefix.add("result", ItemStack.CODEC.encodeStart(ops, recipe.getResultItemStack()));
+        return prefix;
+    }
 
     // ── StreamCodec (network) ─────────────────────────────────────────────────
 

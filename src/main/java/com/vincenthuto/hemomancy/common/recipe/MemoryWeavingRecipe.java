@@ -13,7 +13,7 @@ import net.minecraft.world.level.Level;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class MemoryWeavingRecipe extends CustomRecipe {
+public class MemoryWeavingRecipe extends StationRecipe {
 
 	public static final int MAX_ENZYMES_PER_TENDENCY = 8;
 	private static final double LEGACY_BLOOD_COST_PER_TENDENCY = 50.0;
@@ -53,7 +53,6 @@ public class MemoryWeavingRecipe extends CustomRecipe {
 
 	public MemoryWeavingRecipe(ResourceLocation id, List<Ingredient> catalysts,
 			Map<EnumBloodTendency, Integer> enzymeRequirements, double bloodCost, ItemStack result) {
-		super(CraftingBookCategory.MISC);
 		this.id = id;
 		this.catalysts = sanitizeCatalysts(catalysts);
 		this.enzymeRequirements = sanitizeEnzymes(enzymeRequirements);
@@ -131,7 +130,7 @@ public class MemoryWeavingRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
+	public ItemStack assemble(RecipeInput input, HolderLookup.Provider registries) {
 		return getResultItem(registries).copy();
 	}
 
@@ -207,7 +206,7 @@ public class MemoryWeavingRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public boolean matches(CraftingInput container, Level level) {
+	public boolean matches(RecipeInput container, Level level) {
 		return true;
 	}
 

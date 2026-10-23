@@ -17,8 +17,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
-import java.util.stream.Stream;
-
 public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 	// ---- JSON helpers (reused by codec) ----
 
@@ -84,33 +82,14 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 
 	// ---- RecipeSerializer 1.21.1 API ----
 
-	private static final MapCodec<ScarRecipe> CODEC = new MapCodec<ScarRecipe>() {
-		@Override
-		public <T> Stream<T> keys(DynamicOps<T> ops) {
-			return Stream.of("id", "ingredient1", "ingredient2", "tier", "scartype", "pattern", "result", "count")
-					.map(ops::createString);
-		}
+	private static final MapCodec<ScarRecipe> CODEC = RecipeCodecJson.bridge("ScarRecipe", "scar/unknown",
+			ScarRecipeSerializer::fromJsonObject, ScarRecipeSerializer::encode,
+			"id", "ingredient1", "ingredient2", "tier", "scartype", "pattern", "result", "count");
 
-		@Override
-		public <T> DataResult<ScarRecipe> decode(DynamicOps<T> ops, MapLike<T> input) {
-			try {
-				JsonObject json = RecipeCodecJson.toJsonObject(ops, input);
-				ResourceLocation id = json.has("id")
-						? ResourceLocation.parse(json.get("id").getAsString())
-						: Hemomancy.rloc("scar/unknown");
-				ScarRecipe recipe = fromJsonObject(id, json, RecipeCodecJson.jsonOps(ops));
-				return DataResult.success(recipe);
-			} catch (Exception e) {
-				return DataResult.error(() -> "Failed to decode ScarRecipe: " + e.getMessage());
-			}
-		}
-
-		@Override
-		public <T> RecordBuilder<T> encode(ScarRecipe input, DynamicOps<T> ops, RecordBuilder<T> prefix) {
-			encodeToBuilder(input, ops, prefix);
-			return prefix;
-		}
-	};
+	private static <T> RecordBuilder<T> encode(ScarRecipe input, DynamicOps<T> ops, RecordBuilder<T> prefix) {
+		encodeToBuilder(input, ops, prefix);
+		return prefix;
+	}
 
 	private static final StreamCodec<RegistryFriendlyByteBuf, ScarRecipe> STREAM_CODEC = StreamCodec.of(
 			ScarRecipeSerializer::toNetwork,
