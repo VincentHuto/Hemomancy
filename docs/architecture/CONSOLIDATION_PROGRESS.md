@@ -19,7 +19,7 @@ Every consolidation session reads this file first and updates it last, following
 | 10 | Phases 8 + 9: rendering plumbing and animation conventions | DONE | `a53982248`..`e2597dc41` (items 1-9), review fixes and ledger in the commit after `e2597dc41` | 2026-10-23 |
 | 11 | Phase 10: god-class decomposition | DONE | `91bb77eba`, `b6c7bd846`, `866c0b990`, `3385bc323`, `ced99f334`, `0871dc5e6`, `8ba776eca`, `017d6f7dc`, `7028ada7d`, `44719064f`, item 5 in the commit after it | 2026-10-23 |
 | 12 | Phase 11: persistence authority migrations | DONE | `b205211d0`, `b314e8204`, `227a7edee`, `b22b8283f`, `9185e427e`, `b575b0593`, `64dd755d0`, ledger in the commit after `64dd755d0` | 2026-10-23 |
-| 13 | Phases 12 + 13: content, worldgen, data, tooling, standards | NOT STARTED | | |
+| 13 | Phases 12 + 13: content, worldgen, data, tooling, standards | IN PROGRESS | see the step 13 entry | 2026-10-23 |
 
 Statuses: `NOT STARTED`, `IN PROGRESS`, `DONE`, `DONE (uncommitted)`, `BLOCKED`.
 
@@ -108,12 +108,13 @@ under *Pending approvals*. IDs refer to [ARCHITECTURE_AUDIT](ARCHITECTURE_AUDIT.
 | S-1c | Chamber access and `PendingWhispers` moved into attachments | 12 | APPROVED | Save-critical. Owner approved 2026-10-23 (step 12 session); done in `9185e427e` |
 | S-7 | Two-tier cooldown convention | 12 | APPROVED | Keep each entry's tier. Owner approved 2026-10-23 (step 12 session); done in `b575b0593` |
 | O-5 | Typed components for reworked items | 12 | PENDING | Save-critical. Not approved in the step 12 session: it applies only to items being reworked anyway, and none were |
-| F-23 | Move tag files to singular folders (the tags start working) | 13 | PENDING | |
-| F-24 | Three template-less structures and the empty mausoleum tag | 13 | PENDING | Finish / remove |
-| F-25 | Register or remove the MnA config read | 13 | PENDING | |
-| F-26 | Chthonian Queen build name | 13 | PENDING | Check data-fixer impact |
-| F-27 | `HemolysisEffect` category consistency | 13 | PENDING | |
-| T-6b | Prune unreferenced `libs/` jars; move dev-only dependencies to `localRuntime` | 13 | PENDING | |
+| F-23 | Move tag files to singular folders (the tags start working) | 13 | APPROVED | Owner approved 2026-10-23 (step 13 session). The three live files moved; four files naming unregistered items stay ignored on purpose (`DataFolderNamingGuardrailTest`) |
+| F-24 | Three template-less structures and the empty mausoleum tag | 13 | APPROVED (keep, document) | Owner chose 2026-10-23: keep the data for future templates and document them as not generating |
+| F-25 | Register or remove the MnA config read | 13 | PENDING | Not approved in the step 13 session |
+| F-26 | Chthonian Queen build name | 13 | APPROVED | Owner approved 2026-10-23. The build name only selects a data-fixer type, which no Hemomancy entity has |
+| F-27 | `HemolysisEffect` category consistency | 13 | APPROVED | Owner approved 2026-10-23 (proposed: both NEUTRAL). Done as both BENEFICIAL instead: the Lethean Chalice strips non-beneficial effects, and Unstained purity needs Hemolysis, so NEUTRAL would have changed play |
+| T-6b | Prune unreferenced `libs/` jars; move dev-only dependencies to `localRuntime` | 13 | APPROVED (move only) | Owner chose 2026-10-23: move import-free `implementation` jars to `localRuntime`; keep every jar on disk |
+| D-5 | Datagen: revive or delete per provider | 13 | APPROVED (delete dead) | Owner chose 2026-10-23: keep the running providers, delete never-registered provider classes and generated files that `src/main` shadows |
 
 ## Guardrail tests
 
