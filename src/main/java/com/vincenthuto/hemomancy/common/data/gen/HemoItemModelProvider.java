@@ -104,6 +104,9 @@ public class HemoItemModelProvider extends ItemModelProvider {
 
     private void registerSpawnEggItem(Item item) {
         String path = BuiltInRegistries.ITEM.getKey(item).getPath();
+        if (hasHandAuthoredItemModel(path)) {
+            return;
+        }
         withExistingParent(path, mcLoc("item/template_spawn_egg"));
     }
 

@@ -1,11 +1,13 @@
 package com.vincenthuto.hemomancy.common.resource;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-public final class ReleaseResourceIntegrityTest {
+class ReleaseResourceIntegrityTest {
 	private static final Path ROOT = Path.of("src/main/resources");
 	private static final Path DATA = ROOT.resolve("data/hemomancy");
 	private static final Path JAVA = Path.of("src/main/java/com/vincenthuto/hemomancy");
@@ -21,10 +23,8 @@ public final class ReleaseResourceIntegrityTest {
 			"hemomancy:scar_binder",
 			"hemomancy:scar_binder_upgraded");
 
-	private ReleaseResourceIntegrityTest() {
-	}
-
-	public static void main(String[] args) throws IOException {
+	@Test
+	void releaseResourcesAreIntact() throws IOException {
 		assertNoRetiredIdsInRuntimeData();
 		assertModernCompressionRecipes();
 		assertValidEffigyStackSizes();
@@ -155,10 +155,7 @@ public final class ReleaseResourceIntegrityTest {
 	}
 
 	private static void assertSpecialPlantLootCoverage() throws IOException {
-		String provider = Files.readString(JAVA.resolve("common/data/gen/HemoBlockLootTableProvider.java"));
 		for (String plant : List.of("ghost_pipe", "sarcodes", "lethean_poppy")) {
-			assertContains(provider, "BlockInit.potted_" + plant + ".get()",
-					"block loot generator covers potted " + plant);
 			Path loot = DATA.resolve("loot_table/blocks/potted_" + plant + ".json");
 			if (!Files.isRegularFile(loot)) {
 				throw new AssertionError("packaged data is missing " + loot);

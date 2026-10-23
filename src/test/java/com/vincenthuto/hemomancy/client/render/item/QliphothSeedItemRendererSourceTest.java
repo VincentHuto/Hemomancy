@@ -1,10 +1,12 @@
 package com.vincenthuto.hemomancy.client.render.item;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public final class QliphothSeedItemRendererSourceTest {
+class QliphothSeedItemRendererSourceTest {
 	private static final Path ENTITY_RENDERER = Path.of(
 			"src/main/java/com/vincenthuto/hemomancy/client/render/item/QliphothSeedItemEntityRenderer.java");
 	private static final Path TENDRIL_EFFECTS = Path.of(
@@ -19,10 +21,9 @@ public final class QliphothSeedItemRendererSourceTest {
 			"src/main/resources/assets/hemomancy/models/item/qliphoth_seed.json");
 	private static final Path LANG = Path.of(
 			"src/main/resources/assets/hemomancy/lang/en_us.json");
-	private static final Path LANGUAGE_PROVIDER = Path.of(
-			"src/main/java/com/vincenthuto/hemomancy/common/data/gen/HemoLanguageProvider.java");
 
-	public static void main(String[] args) throws IOException {
+	@Test
+	void seedRendererKeepsItsShapeAndTooltip() throws IOException {
 		String entityRenderer = Files.readString(ENTITY_RENDERER);
 		String tendrilEffects = Files.readString(TENDRIL_EFFECTS);
 		String focusRenderer = Files.readString(FOCUS_RENDERER);
@@ -30,7 +31,6 @@ public final class QliphothSeedItemRendererSourceTest {
 		String itemSource = Files.readString(ITEM_SOURCE);
 		String itemModel = Files.readString(ITEM_MODEL);
 		String lang = Files.readString(LANG);
-		String languageProvider = Files.readString(LANGUAGE_PROVIDER);
 		assertContains("dropped seed renderer should be explicitly named as an entity renderer",
 				entityRenderer, "class QliphothSeedItemEntityRenderer");
 		assertContains("seed item renderer should keep the requested renderer name",
@@ -57,8 +57,6 @@ public final class QliphothSeedItemRendererSourceTest {
 				itemSource, "item.hemomancy.qliphoth_seed.tooltip.use");
 		assertContains("seed tooltip should be present in the runtime language file",
 				lang, "\"item.hemomancy.qliphoth_seed.tooltip.use\"");
-		assertContains("seed tooltip should be preserved by data generation",
-				languageProvider, "item.hemomancy.qliphoth_seed.tooltip.use");
 		assertContains("seed item model should use the builtin entity renderer path",
 				itemModel, "\"parent\": \"builtin/entity\"");
 		assertContains("dropped seed renderer should use the shared tendril effect",
@@ -123,6 +121,4 @@ public final class QliphothSeedItemRendererSourceTest {
 		}
 	}
 
-	private QliphothSeedItemRendererSourceTest() {
-	}
 }

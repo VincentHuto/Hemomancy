@@ -297,7 +297,7 @@ The Artificer issues four Hematic Iron Scrap and one Blank Hematic Memory at the
 
 `Hemomancy.java` registers the main DeferredRegisters, config specs, capability registration, payload registration, creative-tab population, item-inquiry reload listener, and HutosLib book serializer setup. Keep NeoForge 1.21 APIs in new work: `net.neoforged.*`, `DeferredHolder`, attachments/capabilities, and payload-based networking.
 
-`build.gradle` includes `../HutosLib` as a composite build through `settings.gradle`, uses local jars for TerraBlender, GeckoLib, and JEI, and excludes `compat/mna/**` and `compat/curios/**` from main compilation. `runData` currently enables blockstates, item models, and language generation; server recipes/tags/loot providers are intentionally commented out.
+`build.gradle` includes `../HutosLib` as a composite build through `settings.gradle`, uses local jars for TerraBlender and JEI (GeckoLib comes from Maven, `software.bernie.geckolib:geckolib-neoforge`), and excludes `compat/mna/**` and `compat/curios/**` from main compilation. `runData` runs the blockstate, item-model and Circus pavilion structure providers; language, recipes, tags and loot are authored by hand.
 
 ### 2.3 Player & Block State
 
@@ -348,7 +348,7 @@ The Scrying Diagnostics screen now displays synced blood-flow, max-blood, manipu
 
 ### 2.4 Data Generation & Focused Tests
 
-`runData` writes into `src/generated/resources`, with `src/main/resources` taking precedence on duplicates. The active providers are `HemoBlockStateProvider`, `HemoItemModelProvider`, and `HemoLanguageProvider`; server recipe/tag/loot providers remain commented in `DataGeneration.java`.
+`runData` writes into `src/generated/resources`, with `src/main/resources` taking precedence on duplicates. The active providers are `HemoBlockStateProvider`, `HemoItemModelProvider` (both skip anything with an authored file) and the server-side `CircusPavilionStructureProvider`. The never-registered recipe, tag, loot and language providers were deleted in consolidation step 13 (D-5); `DynastyCastlePieceProvider` is kept unregistered as a regeneration tool for the castle pieces.
 
 Focused unit-style tests now exist under `src/test/java` for newer gameplay rules and serialization seams, including direct blood routing, blood container transfer, Mycelial Lantern automation, puppeteer summon trials, morphic nectar/primal morphlings, blood gourd tier stats, crude-memory model data, manipulation rank gates, known-manipulation grants, dialogue starter memory choice, loot data, building-block resource coverage, gourd presentation resources, Unstained weapon renderer resources, and overlay rendering rules. Use `./gradlew.bat build` for docs-adjacent safety checks only if code or generated data changes.
 
