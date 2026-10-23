@@ -6,7 +6,7 @@ Use this prompt for Codex, Copilot, Claude, or any similar coding harness that n
 
 ## Startup Checklist
 
-- Read root `AGENTS.md` first when it is available.
+- Read root `AGENTS.md` first when it is available, then `docs/architecture/ARCHITECTURE_STANDARDS.md` for the shared mechanisms and the guardrail tests that enforce them.
 - Confirm current project versions from `gradle.properties` and `build.gradle` before making version-sensitive claims.
 - Treat current code and resources as authoritative when older docs disagree.
 - Qliphoth atlas teaching aligns both entry predicates and atlas metadata at D7; Memory details also require witnessed revelation. Preserve veiled next-degree previews and authored coordinates. Trace the Communion chain from Monolith/Seed/Bloom, not deferred Saint trials; do not confuse knowledge visibility with server acquisition or ending eligibility. Loaded predicates do not prove native readability.
@@ -40,17 +40,17 @@ Use this prompt for Codex, Copilot, Claude, or any similar coding harness that n
 - Target Minecraft `1.21.1`, NeoForge `21.1.x` / `21.1.251`, Java `21`, mod id `hemomancy`, package `com.vincenthuto.hemomancy`.
 - Use NeoForge imports and APIs, especially `net.neoforged.*`, `DeferredHolder`, attachment-based player state, and payload-based networking.
 - Do not add `net.minecraftforge.*` imports, legacy capability provider patterns, `SimpleChannel` networking, or Forge-era registration code.
-- Keep `build.gradle` compatibility exclusions for dormant `compat/mna/**` and `compat/curios/**` unless real NeoForge 1.21.1 dependencies are added and the user explicitly asks for that integration.
+- Keep `build.gradle` compatibility exclusions for dormant `compat/mna/**` and `compat/curios/**`. The MnA jar and the Curios dependency are already on the classpath for other mods, but the compat sources stay excluded until the user explicitly asks for that integration.
 
 ## Architecture Map
 
 - `src/main/java/com/vincenthuto/hemomancy/Hemomancy.java` wires DeferredRegisters, configs, capabilities, packets, creative tabs, reload listeners, and HutosLib book serializer setup.
-- `common/init/*Init.java` owns registries. Use snake_case IDs and `Hemomancy.rloc("path")`.
+- `common/init/*Init.java` owns registries. Use snake_case IDs and `Hemomancy.rloc("path")`; `ResourceLocationStyleRatchetTest` lets the hand-built locations left only fall.
 - `client/` is client-only rendering, screens, particles, models, shaders, and overlays.
 - `common/` holds gameplay systems: blocks, items, entities, attachments/capabilities, manipulations, rites, recipes, events, menus, networking, and worldgen.
 - `compat/` holds optional integrations. Do not import dormant MnA or Curios compat into core code while Gradle excludes those packages.
 - `config/` registers NeoForge config specs.
-- `mixin/` backs `hemomancy.mixins.json`.
+- `mixin/` backs `hemomancy.mixins.json`. The dormant `hemomancy.mna.mixins.json` is not listed in `neoforge.mods.toml` while MnA compat is excluded.
 - Player state uses `HemoAttachmentTypes`, `HemoCapabilityKeys`, `HemoCapabilityRegistrar`, and `HemoCapabilityAccess`. `IBloodVolume` exists on every player, but `volume.isActive()` is the opt-in gate for blood magic.
 - Owner attachments reach the client through the `PlayerStateSync` table (sent by `HemoCapabilityRegistrar` on login, respawn and dimension change). Earned items that may not fit go through `PendingDelivery`; static session maps register with `TransientServerStateEvents`.
 - Networking is NeoForge 1.21 payload-based. Add packets through `common/network/PacketHandler.java` using `CustomPacketPayload`, static `TYPE`, `STREAM_CODEC`, and `playToClient` or `playToServer` registration.

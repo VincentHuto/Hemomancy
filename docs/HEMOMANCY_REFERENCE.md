@@ -356,7 +356,7 @@ Focused unit-style tests now exist under `src/test/java` for newer gameplay rule
 
 ## 3. Configuration
 
-Hemomancy registers active server, client, and common config specs through `HemoConfig`. `HemoServerConfig` and `HemoClientConfig` contain the active gameplay/client options; `HemoCommonConfig` is currently an empty reserved common spec. `HemoMnAConfig` remains in source as the conditional MnA config target, but it is dormant and not registered while MnA compat is excluded from compilation.
+Hemomancy registers active server, client, and common config specs through `HemoConfig`. `HemoServerConfig` and `HemoClientConfig` contain the active gameplay/client options; `HemoCommonConfig` holds the worldgen toggles and TerraBlender weights (`enablePelagicWorldgen` / `pelagicRegionWeight`, `enableOverworldFungalGardensRegion`, `enablePhlegethonticNetherRegion` / `phlegethonticNetherRegionWeight`, `enableCorticalDriftEndRegion` / `corticalDriftEndRegionWeight`); most require a restart and affect only new chunks. `HemoMnAConfig` remains in source as the conditional MnA config target, but it is dormant and not registered while MnA compat is excluded from compilation.
 
 ### 3.1 Server Config (`HemoServerConfig`)
 

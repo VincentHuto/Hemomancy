@@ -68,11 +68,10 @@ tasks.named('processResources', ProcessResources).configure {
 }
 
 // ── Optional-dependency compat source exclusions ─────────────────────────────
-// MnA (Mana and Artifice) has no NeoForge 1.21.1 build yet.
-// Curios NeoForge 1.21.1 build is pending.
-// Exclude these compat packages from compilation so the base mod builds
-// without those optional deps. Re-enable each block once the corresponding
-// compileOnly dep is declared above and the JAR is available.
+// The MnA (Mana and Artifice) jar and Curios are on the classpath below, but
+// Hemomancy's own compat packages for them are dormant: they predate the 1.21.1
+// APIs and are kept out of compilation (with hemomancy.mna.mixins.json unlisted)
+// until that integration is deliberately re-enabled.
 sourceSets.main.java {
     exclude 'com/vincenthuto/hemomancy/compat/mna/**'
     exclude 'com/vincenthuto/hemomancy/compat/curios/**'
