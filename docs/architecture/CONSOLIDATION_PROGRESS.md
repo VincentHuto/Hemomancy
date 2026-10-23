@@ -18,7 +18,7 @@ Every consolidation session reads this file first and updates it last, following
 | 9 | Phase 6: combat targeting and damage attribution | DONE | `3b841ba03`, `7f0c1968d`, `5fa01de44`, `c9af6c6c3` | 2026-10-22 |
 | 10 | Phases 8 + 9: rendering plumbing and animation conventions | DONE | `a53982248`..`e2597dc41` (items 1-9), review fixes and ledger in the commit after `e2597dc41` | 2026-10-23 |
 | 11 | Phase 10: god-class decomposition | DONE | `91bb77eba`, `b6c7bd846`, `866c0b990`, `3385bc323`, `ced99f334`, `0871dc5e6`, `8ba776eca`, `017d6f7dc`, `7028ada7d`, `44719064f`, item 5 in the commit after it | 2026-10-23 |
-| 12 | Phase 11: persistence authority migrations | IN PROGRESS | | 2026-10-23 |
+| 12 | Phase 11: persistence authority migrations | DONE | `b205211d0`, `b314e8204`, `227a7edee`, `b22b8283f`, `9185e427e`, `b575b0593`, `64dd755d0`, ledger in the commit after `64dd755d0` | 2026-10-23 |
 | 13 | Phases 12 + 13: content, worldgen, data, tooling, standards | NOT STARTED | | |
 
 Statuses: `NOT STARTED`, `IN PROGRESS`, `DONE`, `DONE (uncommitted)`, `BLOCKED`.
@@ -102,11 +102,11 @@ under *Pending approvals*. IDs refer to [ARCHITECTURE_AUDIT](ARCHITECTURE_AUDIT.
 | V-3c | Outpouring surface marks round their alpha | 10 | PENDING | Found in step 10. The marks write the material encoding by hand, camera-relative with no pose, and round alpha × 255 where `MaterialQuads` truncates it. Once approved, write them through `MaterialQuads` (some vertices lose one alpha level). |
 | V-6b | Mycophant spore colours given on the wrong scale | 10 | PENDING | Found in step 10. The Mycophant encounter's two spore bursts pass 0–1 floats (`0.48F, 0.72F, 0.34F`), which `ParticleColor` truncates to black. Once approved, give them 0–255 values (they turn green and amber). (The hit glow takes either scale: `ParticleGlow` divides by 255 only above 1.) |
 | F-11 | Blood-structure crafts tick once per server tick | 11 | PENDING | Crafts take their intended time |
-| S-9 | Per-player `dataVersion` and gated one-shot migrations | 12 | APPROVED | Save-critical. Owner approved 2026-10-23 (step 12 session) |
-| F-21 | Archon choice: attachment is the only authority | 12 | APPROVED | Save-critical. Owner approved 2026-10-23 (step 12 session) |
-| S-6c | Circus progress moved into one attachment | 12 | APPROVED | Save-critical. Owner approved 2026-10-23 (step 12 session) |
-| S-1c | Chamber access and `PendingWhispers` moved into attachments | 12 | APPROVED | Save-critical. Owner approved 2026-10-23 (step 12 session) |
-| S-7 | Two-tier cooldown convention | 12 | APPROVED | Keep each entry's tier. Owner approved 2026-10-23 (step 12 session) |
+| S-9 | Per-player `dataVersion` and gated one-shot migrations | 12 | APPROVED | Save-critical. Owner approved 2026-10-23 (step 12 session); done in `b205211d0` (frozen id `b314e8204`) |
+| F-21 | Archon choice: attachment is the only authority | 12 | APPROVED | Save-critical. Owner approved 2026-10-23 (step 12 session); done in `227a7edee`, recipe gate fix `64dd755d0` |
+| S-6c | Circus progress moved into one attachment | 12 | APPROVED | Save-critical. Owner approved 2026-10-23 (step 12 session); done in `b22b8283f` |
+| S-1c | Chamber access and `PendingWhispers` moved into attachments | 12 | APPROVED | Save-critical. Owner approved 2026-10-23 (step 12 session); done in `9185e427e` |
+| S-7 | Two-tier cooldown convention | 12 | APPROVED | Keep each entry's tier. Owner approved 2026-10-23 (step 12 session); done in `b575b0593` |
 | O-5 | Typed components for reworked items | 12 | PENDING | Save-critical. Not approved in the step 12 session: it applies only to items being reworked anyway, and none were |
 | F-23 | Move tag files to singular folders (the tags start working) | 13 | PENDING | |
 | F-24 | Three template-less structures and the empty mausoleum tag | 13 | PENDING | Finish / remove |
@@ -193,6 +193,11 @@ them green.
 | `architecture/EntityCastGuardrailTest` | 11 | L-1: `EntityManipulationEffects` has no name switch and names no manipulation; each `EntityCasts` method is attached once, to the manipulation it is named for; only the entry point reads `getEntityCast()` |
 | gameTest `ScriptoriumOperationCharacterisationGameTests` (suite `scriptorium_operation_validation`) | 11 | L-9: every Scriptorium button driven through the real menu with fixed seeds (enzyme selection, the three modes and their gates, inscription in each row, targeted inscriptions across all eight tendencies with their curse rolls, refusals, denaturing and its gates, the rite lock, a stranger's click): accepted, item components, tank, lapis, enzymes, xp, practice and saved-data change against `src/gameTest/resources/scriptorium/operation-fingerprints.txt` |
 | `architecture/StationMenuGuardrailTest` | 11 | L-9: no menu under `common/menu` drains blood, records station practice or enchants an item; the Scriptorium menu's button handler calls `station.inscribe` and `station.denature` |
+| `architecture/PlayerDataMigrationGuardrailTest` | 12 | S-9 / F-21: each migration entry point is run only from the `PlayerDataMigrations` table; no tick handler runs the fungal scar sweep; only the migration, `/hemo qliphoth` and the constant name the Archon choice key, and only Armature gates (resolved by path) name it in data |
+| `architecture/PersistentDataAllowListTest` | 12 | S-1: exact per-file `getPersistentData()` counts in `src/main/java` against `src/test/resources/architecture/persistent-data-allow-list.txt`, each with a reason; lower a count when you remove calls |
+| `architecture/CooldownTierGuardrailTest` | 12 | S-7: no raw persistent-data long named as a cooldown; session cooldown maps keyed by player UUID |
+| `common/capability/player/shared/migration/PlayerDataMigrationsTest` | 12 | S-9: migration versions strictly increase, ids are unique, every sunset is 2027-04-23 or later; the data version defaults to 0 and round-trips |
+| gameTest `PlayerMigrationGameTests` (suite `player_migration_validation`) | 12 | One old-format NBT snapshot per migration under `src/gameTest/resources/migration/`, merged over a fresh save and loaded: the migrated state, the old keys gone, then a second login, a reload and a death clone run nothing, and two full reruns from version 0 agree. Also the Silent Archon armour gate through the path, the whisper merge, the once-only Chamber advancement backfill, and the cooldown tier across reload, death and End return |
 | `architecture/HemoCommandStructureGuardrailTest` | 11 | `HemoCommand` is one root that only wires `<Name>Subcommand.build()`, each exactly once; subcommands register nothing themselves and stay under 300 lines; no other main class registers `/hemo` |
 
 ## Step entries
@@ -1397,3 +1402,118 @@ them green.
     edit scripts to a file first); a JVM snapshot must not print object hashes (they differ between JVMs); check the
     test results before committing; golden-master GameTests need UUIDs and bearing words normalised, and a captured
     player needs its spawn invulnerability cleared.
+
+### Step 12: Phase 11, persistence authority migrations
+- **Status / date / commits:** DONE, 2026-10-23. Prefix `consolidation(step-12):`, one commit per item.
+
+  | Item | Status | Commit |
+  |---|---|---|
+  | Approvals: S-9, F-21, S-6c, S-1c, S-7 APPROVED by the owner at the start of the session; O-5 left PENDING | DONE | recorded in `b205211d0` |
+  | S-9 `PlayerDataVersion` + `PlayerDataMigrations`, existing login migrations gated, fungal scar tick sweep removed | DONE | `b205211d0`, frozen id `b314e8204` |
+  | F-21 Archon path the only authority | DONE | `227a7edee`, review fix `64dd755d0` |
+  | S-6c `CircusProgress` attachment | DONE | `b22b8283f` |
+  | S-1c `ChamberAccess` and `PendingWhisperInbox` attachments | DONE | `9185e427e` |
+  | S-7 two-tier cooldowns (`PlayerCooldowns`, UUID-keyed passive map) | DONE | `b575b0593` |
+  | O-5 typed components for reworked items | NOT DONE: PENDING (no item is being reworked) | |
+- **Test counts before → after:** `test` 4,077 → 4,083 (S-9) → 4,084 (F-21) → 4,084 (S-6c, S-1c) → 4,086 (S-7, review
+  fix), 0 failures. `alphaCheck` green after F-21 (1,076 GameTests), S-6c (1,077), S-1c (1,080), S-7 and the review fix
+  (1,081, of which 8 are `player_migration_validation`). One combined run flaked on
+  `circussuccessionrunnercompletesatdegreefour` ("Expected one CircusRingmasterEntity, found 0") and passed on rerun.
+  Opt-in suites: clinical 131/131 (the two long-standing failures `journeyacceptssilentchoiceafterrealprojection` and
+  `journeyrestoresnumericfungalprojectionstate` now pass, see S-6c), scriptorium 22/22, antecedent 14/14.
+- **The migration table** (`PlayerDataMigrations`, run once per save at `HIGHEST` login priority, before every other
+  login handler and the `LOWEST` `PlayerStateSync` send; one log line per migrated player):
+
+  | Version | Id | Reads (old location) | Writes | Sunset |
+  |---|---|---|---|---|
+  | 1 | `fungal_scar_items` | five retired fungal scar ids in the scar slot and inventory | the surviving scar | 2027-04-23 |
+  | 2 | `station_upgrade_claims` | `advanced_brewing` / `resonant_forge` attachments, two Armature root flags (still behind its own `LegacyMigrated` flag) | `station_upgrades` | 2027-04-23 |
+  | 3 | `muscle_memory_priming` | Muscle Memory's legacy `Primed` map | reserves | 2027-04-23 |
+  | 4 | `liber_legacy_notes` | field-note items (now a no-op scan); Scar Practice backfill from the Vein Mason advancement | `liber_knowledge` | 2027-04-23 |
+  | 5 | `archon_choice` | root `hemomancy:archon_choice_made` (removed) | the degree's Archon path, only if NONE | 2027-04-23 |
+  | 6 | `circus_progress` | root `hemomancy.circus_*` durable keys (removed) | `circus_progress` | 2027-04-23 |
+  | 7 | `chamber_access` | five root `hemomancy:chamber_visit_*` earned keys (removed), then the advancement backfill once | `chamber_access` | 2027-04-23 |
+  | 8 | `pending_whispers` | root `hemomancy:pending_whispers` (removed) | `pending_whispers` | 2027-04-23 |
+  | 9 | `persisted_cooldowns` | eight cooldown root longs (removed) | `cooldowns` | 2027-04-23 |
+
+  Not gated, on purpose: the Vesper Memory root-key migration inside its `PendingDelivery` claim read (AGENTS
+  contract); the bloodline founding and bloodline re-pointing reconciles (they compare against world data, which can
+  change while the player is offline); the per-login eligibility backfills (degree, manipulations, Still Arts, staff,
+  clinical recipes, station lessons); deserialize-time reads inside existing attachments (Liber book-id rename,
+  `familyMemoryVersion`, bestiary normalising), which run before login; the Scriptorium chunk mixin (world-level, not
+  per player). Muscle Memory still migrates legacy priming lazily on read; that map is empty once saved.
+- **S-9:** `PlayerDataVersion` (`data_version`, copyOnDeath, key `Version`). The per-100-tick fungal scar inventory sweep
+  and the Liber respawn/dimension re-runs are gone. `FungalScarMigrationEvents` was deleted (its sweep is
+  `FungalScarMigrationRules.migrateCarried`); its source test was updated. The five retired scar ids are unregistered
+  with no alias, so their stacks already load as empty: the migration is kept for the table but can never match.
+- **F-21:** the Eighth Degree answer no longer writes the root key; the migration reads it once, applies it to an unset
+  path only and removes it (a leftover key can no longer override or resurrect a path). `QliphothSubcommand`'s clear
+  still removes the key. The final review found the four `blood_lust_to_silent_archon_*` Armature recipes gating on
+  that key: `PersistentDataGate` now answers it from the path (`SILENT_ARCHON` → `"silent"`), so the recipe JSON and the
+  serializer's stream are unchanged. **Behaviour change:** Silent Archons who chose after `21f80dbfb` (when the key
+  stopped being written) could not pass that gate before; now they can.
+- **S-6c:** discovery, acclimation, route and repair, challenges, milestones and the apprenticeship record moved into
+  `CircusProgress` behind the unchanged facade methods. The live act timers (`circus_active_*`, `circus_challenge_*`)
+  stay session root keys, and pavilion sites stay world data (the audit's "four stores" counted those; they are not
+  durable player progress). The clone handler keeps its act cleanup and pavilion release. Reading the apprenticeship no
+  longer creates an empty root compound; that side effect broke the journey-restore postcondition in the two clinical
+  tests, which now pass. The hemo-command and dialogue-route goldens changed only where the empty compound moved.
+- **S-1c:** `ChamberAccess` (five earned flags) and `PendingWhisperInbox` (entries keep `{id, tree, decision}`); both
+  hand-written clone handlers deleted. Visit session keys stay root keys. Login and respawn no longer re-derive access
+  from the advancements; both advancements are `minecraft:impossible` and granted only by `bindChair`/`attune`, so the
+  once-only backfill differs only for an operator `/advancement grant` after migration.
+- **S-7:** `PlayerCooldowns` (`cooldowns`) holds the persisted tier. Its copy handler returns null, so it survives relog
+  and resets on death and End return exactly as the root longs did. `ManipulationReactiveEvents.PASSIVE_COOLDOWNS` is
+  keyed by player UUID (same clears). Deviation: cooldowns that are fields of a system's own copyOnDeath attachment
+  (Last Rite, Blackhearted, Mycophant retry, Muscle Memory, Will ambush) stay there; moving them would rewrite keys
+  inside existing attachments, which the step forbids. Effect windows (`silent_slipping_until`, `sheolic_bastion_*`,
+  `weave_*_until`) and the `ScriptoriumLastShot` same-tick dedup are not cooldowns and stay root keys.
+- **Manual load of an existing development world:** `run/saves/New World (28)` (5.9 GB, last played 2026-10-23),
+  copied to `build/step12-world-load/saves/New World (28)` and opened with quick play from a scratch init script
+  (`runStep12WorldLoadClient`, runClient's classpath, username `Dev`, whose offline UUID matches the saved player), then
+  closed through the window so the integrated server saved. Result: `Migrated Dev's saved data from version 0 to 9 (9
+  migrations)`, no Hemomancy ERROR line, all dimensions saved. The saved player now has `data_version` 9 and no
+  circus, chamber-access or cooldown root keys; `circus_progress` holds acclimation 622, discovered, 8 milestones and the
+  8 apprenticeship entries, `chamber_access` holds attuned and chair bound, `cooldowns` holds the Masquerade ability and
+  Phantasmal reaction cooldowns, all equal to the old values. Other attachments changed only by ticking (blood and
+  vascular regeneration, `school_combat.observedAt`). The log's other ERROR lines are chunk attachments from a
+  `thaumaturge` mod this world was once played with, plus shutdown `ClosedChannelException`s. A first attempt as
+  `WorldLoad` showed the bloodline reconcile unlinking the bloodline because the UUID differed; that was the launch,
+  not a migration. The original world was not opened.
+  Two orphan root keys in that save, `hemomancy.circus_exposure_ticks` and `hemomancy.circus_safe_floor`, have no
+  reader or writer in the code or its history; they were left alone (the old clone handler copied them).
+- **Final review** (fresh Opus reviewer over `git diff a83d742f5..HEAD`): one confirmed defect, the Silent Archon
+  recipe gate, fixed in `64dd755d0` with a GameTest and a guardrail scanning Java and JSON for the literal key. Also
+  applied: the whisper merge into a non-empty inbox is now covered; the impact map is regenerated. Checked clean:
+  remaining old-key readers, circus key coverage, value types, death and End-return semantics per store, client
+  cooldown sync, login order, frozen identifiers, dead code, client isolation. Left as noted: the cooldown guardrail
+  only catches a "cooldown" name in the same statement (the allow-list's exact counts are the stronger check); the
+  migration guardrail lists known entry points; `HarbingerRepairGameTests`'s whisper test copies the inbox by
+  deserializing; the journey snapshot can still restore the legacy Archon and Armature root keys from an old snapshot
+  (harmless: nothing reads them now).
+- **Metrics:** 60 files, +1,560 / −302 lines before the review fix (main +699 / −223, tests +852 / −72). Six classes
+  added (`PlayerDataVersion`, `PlayerDataMigrations`, `CircusProgress`, `ChamberAccess`, `PendingWhisperInbox`,
+  `PlayerCooldowns`), one deleted (`FungalScarMigrationEvents`). Three clone handlers stopped copying root keys (two
+  deleted, the circus one keeps its cleanup); `ManipulationReactiveEvents`' Endless Hour clone handler is the last
+  hand-written copy. `getPersistentData()` call sites in `src/main/java`: 468 in 100 files → 426 in 95 files, all
+  listed with reasons in the allow-list. Root keys removed from saves by migration: 7 circus families, 5 Chamber access
+  keys, the whisper list, 8 cooldown families and the Archon choice key.
+- **Guardrails added:** `PlayerDataMigrationGuardrailTest`, `PersistentDataAllowListTest`, `CooldownTierGuardrailTest`,
+  `PlayerDataMigrationsTest` and the `player_migration_validation` GameTest suite (in `alphaCheck`).
+- **Frozen identifiers:** no key inside an existing attachment renamed; no payload, command or recipe JSON change. New
+  attachment ids `data_version`, `circus_progress`, `chamber_access`, `pending_whispers` and `cooldowns` were added to
+  `src/gameTest/resources/frozen/registry-ids.txt`.
+- **Docs:** AGENTS.md (migration, allow-list and cooldown-tier conventions), standards §6. No player-facing mechanic
+  changed apart from the Silent Archon recipe gate above, so `HEMOMANCY_REFERENCE.md` and the wiki were not changed.
+- **Pending approvals:** O-5, plus every earlier PENDING item.
+- **Handoff notes for step 13:**
+  - Add a migration as the next row of `PlayerDataMigrations` with a sunset date, plus a fixture under
+    `src/gameTest/resources/migration/`; lower `persistent-data-allow-list.txt` counts when you remove calls (the
+    scratch script that does it refuses increases; a hand edit is fine).
+  - All step-12 read paths sunset on 2027-04-23: after the first release past that date, delete migrations 1-9's read
+    code (the table rows stay as unused version numbers or are deleted together).
+  - L-7 (step 13) persists block blood only through the attachment and needs a read fallback; it is block-entity data,
+    so it does not use the player table.
+  - Pitfalls: an `@EventBusSubscriber` class left with no `@SubscribeEvent` method fails at startup; quick play
+    (`--quickPlaySingleplayer`) plus `Process.CloseMainWindow()` is a clean way to load and save a dev world; launch as
+    the save's username or per-login reconciles act on a different UUID.

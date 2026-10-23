@@ -376,7 +376,8 @@ Unstained mechanics, hazards, Still Arts and summons.
 
 | Kind of state | Home |
 |---|---|
-| Durable, earned, per-player (progress, knowledge, claims, unlocks, persisted cooldowns) | An attachment in `HemoAttachmentTypes` with `.copyOnDeath()`, accessed only through `HemoCapabilityAccess`, serialised with PascalCase keys |
+| Durable, earned, per-player (progress, knowledge, claims, unlocks) | An attachment in `HemoAttachmentTypes` with `.copyOnDeath()`, accessed only through `HemoCapabilityAccess`, serialised with PascalCase keys |
+| Persisted cooldowns (survive relog) | An entry in the `PlayerCooldowns` attachment (`cooldowns`), which is saved but never copied, so it resets on death and End return. A cooldown that is part of a system's own durable state stays a field of that system's attachment. |
 | Per-world | A `SavedData` with `Factory` + `get`. Overworld-scoped data takes `MinecraftServer`, not an arbitrary level. |
 | Per block entity | Block-entity NBT. Blood goes only through the `BLOCK_BLOOD_VOLUME` attachment. |
 | Per item | A typed data component from `DataComponentInit` for new data |
@@ -415,6 +416,13 @@ Supporting rules:
 - Since step 5: `HemoCapabilityAccess` returns player attachments directly; `PlayerStateSync`
   holds the sync table and the end-of-tick dirty flush; `PendingDelivery` delivers the
   earned claims; `TransientServerStateEvents` owns the session maps.
+- Since step 12: `PlayerDataMigrations` is the one ordered table of migrations, gated by the
+  `PlayerDataVersion` attachment and run once at login (`PlayerDataMigrationGuardrailTest`,
+  `player_migration_validation` fixtures). `CircusProgress`, `ChamberAccess`,
+  `PendingWhisperInbox` and `PlayerCooldowns` replaced root keys and their clone handlers.
+  New `getPersistentData()` calls need an entry in
+  `src/test/resources/architecture/persistent-data-allow-list.txt` (`PersistentDataAllowListTest`);
+  session cooldown maps are UUID-keyed (`CooldownTierGuardrailTest`).
 
 **Migration targets**
 - S-1 through S-9.
