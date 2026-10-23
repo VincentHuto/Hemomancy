@@ -385,7 +385,7 @@ Use a new run name for every fresh-world measurement. The validation server uses
 
 `PhlegethonticCavernTest` checks domed overhead clearance, tapering before a protected boundary, and continuous overlapping vaults across negative chunk coordinates. For visual regression, compare fresh worlds at the same seed and camera position; loading an old save does not rebuild its roof.
 
-`PhlegethonticGameTests` is explicitly registered by `DevTestHooks`. It covers real codecs and modifier injection, thermal immunity and Blood Loss, multi-block contact cadence, ticking fluid containment with foreign blocks, full-size spawning, home return, clotting, bucket rejection, tether exclusion/escape/collision/lifetime, piercing projectiles, and persistence. The positive control deliberately spills uncontained ichor to prove that the containment tests advance real fluid ticks. Test entities are removed after the batch.
+`PhlegethonticGameTests` is found by the annotation scan like every other GameTest class. It covers real codecs and modifier injection, thermal immunity and Blood Loss, multi-block contact cadence, ticking fluid containment with foreign blocks, full-size spawning, home return, clotting, bucket rejection, tether exclusion/escape/collision/lifetime, piercing projectiles, and persistence. The positive control deliberately spills uncontained ichor to prove that the containment tests advance real fluid ticks. Test entities are removed after the batch.
 
 The three existing combat-targeting cases that spawn beyond their original one-block template now use `combat_targeting_room`. Keeping their complete target footprint in loaded chunks avoids generation-grid-dependent entity-query failures.
 

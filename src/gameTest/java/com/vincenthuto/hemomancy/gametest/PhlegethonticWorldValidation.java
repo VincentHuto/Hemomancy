@@ -15,7 +15,10 @@ import net.minecraft.world.phys.AABB;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import net.neoforged.neoforge.gametest.GameTestHolder;
 
+// The holder only puts the generator in the scan; NeoForge filters generated tests by their template namespace.
+@GameTestHolder("phlegethontic_validation")
 public final class PhlegethonticWorldValidation {
     private record Sample(ChunkPos chunk,long start) {}
     private static final ThreadLocal<Sample> ACTIVE=new ThreadLocal<>();

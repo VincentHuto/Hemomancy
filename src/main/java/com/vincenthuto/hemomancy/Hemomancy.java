@@ -16,7 +16,6 @@ import com.vincenthuto.hemomancy.common.item.harbinger.BloodProfileData;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorLoader;
 import com.vincenthuto.hemomancy.common.rite.sigil.IchorianSigilLoader;
-import com.vincenthuto.hemomancy.common.testing.DevTestHooks;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.ClairaudiographCatalogue;
 import com.vincenthuto.hemomancy.config.HemoConfig;
 import com.vincenthuto.hutoslib.common.book.FieldNotes;
@@ -93,7 +92,6 @@ public class Hemomancy {
         HemoCapabilityRegistrar.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
-        modEventBus.addListener(DevTestHooks::registerGameTests);
         NeoForge.EVENT_BUS.addListener(this::onAddReloadListeners);
 
         // RegisterPayloadsEvent fires on the mod bus, so register here, not in commonSetup.

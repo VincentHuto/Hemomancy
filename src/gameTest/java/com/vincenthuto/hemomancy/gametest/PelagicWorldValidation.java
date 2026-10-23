@@ -15,8 +15,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap;
 import java.nio.file.*;
 import java.util.*;
+import net.neoforged.neoforge.gametest.GameTestHolder;
 
 /** Explicit opt-in fresh-world acceptance; all coordinates come from natural climate sampling. */
+// The holder only puts the generator in the scan; NeoForge filters generated tests by their template namespace.
+@GameTestHolder("pelagic_worldgen_validation")
 public final class PelagicWorldValidation {
     public record Site(PelagicLayer layer, int x, int z, double predictedFloor) {}
     private static final Map<Site, PelagicLandmarks.Voxel> LANDMARKS = new LinkedHashMap<>();

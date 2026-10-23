@@ -2,43 +2,19 @@ package com.vincenthuto.hemomancy.common.testing;
 
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
-import net.neoforged.neoforge.event.RegisterGameTestsEvent;
 
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * Release-safe bridge to optional classes in {@code src/gameTest}. Custom
- * source-set classes are on dev run classpaths but are not part of the mod
- * annotation scan, so main supplies the discovery hook without packaging the
- * actual test harness.
+ * Release-safe bridge to the dev test commands in {@code src/gameTest}, which packaged release jars do not
+ * contain. GameTests themselves are found only by the mod annotation scan: the gameTest source set is part of
+ * the mod in dev runs, so every test class carries a {@code @GameTestHolder}.
  */
 public final class DevTestHooks {
-	private static final String GAME_TEST_CLASS =
-			"com.vincenthuto.hemomancy.gametest.HarbingerPilotGameTests";
 	private static final String COMMAND_CLASS =
 			"com.vincenthuto.hemomancy.gametest.HemoTestCommands";
 
 	private DevTestHooks() {
-	}
-
-	public static void registerGameTests(RegisterGameTestsEvent event) {
-		try {
-			event.register(Class.forName(GAME_TEST_CLASS));
-            event.register(Class.forName("com.vincenthuto.hemomancy.gametest.StationUpgradeActivationGameTests"));
-            event.register(Class.forName("com.vincenthuto.hemomancy.gametest.SuccessionGameTests"));
-            event.register(Class.forName("com.vincenthuto.hemomancy.gametest.PhlegethonticGameTests"));
-            event.register(Class.forName("com.vincenthuto.hemomancy.gametest.ExcoriatedSpawnGameTests"));
-            event.register(Class.forName("com.vincenthuto.hemomancy.gametest.UnstainedZoneLifecycleGameTests"));
-			event.register(Class.forName("com.vincenthuto.hemomancy.gametest.PhlegethonticWorldValidation"));
-            event.register(Class.forName("com.vincenthuto.hemomancy.gametest.PelagicWorldValidation"));
-            event.register(Class.forName("com.vincenthuto.hemomancy.gametest.PelagicGameTests"));
-            event.register(Class.forName("com.vincenthuto.hemomancy.gametest.PelagicEcologyGameTests"));
-            event.register(Class.forName("com.vincenthuto.hemomancy.gametest.VampireSquidGameTests"));
-            event.register(Class.forName("com.vincenthuto.hemomancy.gametest.OsteophageGameTests"));
-            event.register(Class.forName("com.vincenthuto.hemomancy.gametest.IceFishGameTests"));
-		} catch (ClassNotFoundException ignored) {
-			// Expected in packaged release jars where the gameTest source set is absent.
-		}
 	}
 
 	public static void registerCommandsIfPresent(CommandDispatcher<CommandSourceStack> dispatcher) {

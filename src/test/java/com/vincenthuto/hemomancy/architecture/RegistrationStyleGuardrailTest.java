@@ -51,7 +51,7 @@ class RegistrationStyleGuardrailTest {
 		while (matcher.find()) {
 			listeners.add(matcher.group(1));
 		}
-		assertEquals(List.of("this::commonSetup", "DevTestHooks::registerGameTests", "this::onAddReloadListeners"),
+		assertEquals(List.of("this::commonSetup", "this::onAddReloadListeners"),
 				listeners);
 		assertFalse(constructor.contains(".register(this)"), "instance subscribers belong in @EventBusSubscriber classes");
 		assertFalse(mod.contains("CreativeModeTab"), "creative tabs live in CreativeTabInit");
@@ -121,6 +121,23 @@ class RegistrationStyleGuardrailTest {
 			}
 		}
 		assertEquals(List.of("CreativeTabInit.java"), builders);
+	}
+
+	/** T-4: GameTests are found only by the annotation scan; every test or generator class is a holder. */
+	@Test
+	void gameTestsRegisterOnlyThroughTheAnnotationScan() throws Exception {
+		List<String> problems = new ArrayList<>();
+		for (Path file : javaFiles(RepoPaths.MAIN_JAVA, RepoPaths.GAMETEST_JAVA)) {
+			String source = SourceAssertions.read(file);
+			if (source.contains("RegisterGameTestsEvent") || source.contains("GameTestRegistry.register(")) {
+				problems.add(RepoPaths.display(file) + " registers GameTests by hand");
+			}
+			boolean tests = source.contains("@GameTest(") || source.contains("@GameTestGenerator");
+			if (tests && !source.contains("@GameTestHolder(")) {
+				problems.add(RepoPaths.display(file) + " has GameTests but no @GameTestHolder");
+			}
+		}
+		assertEquals(List.of(), problems);
 	}
 
 	private static int count(String text, String needle) {
