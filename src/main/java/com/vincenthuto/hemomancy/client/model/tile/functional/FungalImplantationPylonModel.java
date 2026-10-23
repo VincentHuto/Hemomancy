@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.AnimationHelper;
 import com.vincenthuto.hemomancy.client.model.IAnimatedModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.functional.FungalImplantationPylonRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.functional.FungalImplantationPylonRenderer.FungalImplantationPylonAnimContext;
 import net.minecraft.client.animation.AnimationChannel;
@@ -133,7 +134,7 @@ public class FungalImplantationPylonModel extends Model
 	public void setupAnimation(Level level, float partialTicks, FungalImplantationPylonAnimContext ctx) {
 		this.getRoot().getAllParts().forEach(ModelPart::resetPose);
 		AnimationState state = ctx.state();
-		float time = (float) level.getGameTime() + partialTicks;
+		float time = AnimationTime.gameTime(level, partialTicks);
 		AnimationHelper.animate(this, state, wiggle, time, 1F);
 		float animTime = AnimationHelper.getElapsedSeconds(wiggle, state.getAccumulatedTime());
 

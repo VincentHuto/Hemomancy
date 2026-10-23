@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.MorphlingIncubatorBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.factory.EmberParticleFactory;
@@ -120,7 +121,7 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 		ItemStack centerStack = te.getCenterStack();
 		if (centerStack.isEmpty() || te.getLevel() == null) return;
-		float time = te.getLevel().getGameTime() + partialTicks;
+		float time = AnimationTime.gameTime(te.getLevel(), partialTicks);
 		float y = ITEM_Y + (float) Math.sin(time * 0.06F) * 0.4F / 16F;
 
 		ms.pushPose();

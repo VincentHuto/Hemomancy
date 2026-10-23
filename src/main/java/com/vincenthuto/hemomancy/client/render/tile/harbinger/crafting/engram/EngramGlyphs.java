@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.engram;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.SomaticLoomEffectRules;
 import com.vincenthuto.hemomancy.client.render.world.ThreadKnotGeometry;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
@@ -74,7 +75,7 @@ public final class EngramGlyphs {
 		Level level = te.getLevel();
 		if (board == null || level == null || !dissolving && !te.isWeaving()) return;
 		EngramSigilMesh mesh = EngramSigilMesh.of(te);
-		float time = level.getGameTime() + partialTick;
+		float time = AnimationTime.gameTime(level, partialTick);
 		float unfurl = dissolving ? snapshot.unfurl() : EngramSigilRenderer.unfurl(te, partialTick);
 		float climax = dissolving ? 0F : EngramSigilRenderer.climax(te, partialTick);
 		float beat = SomaticLoomEffectRules.heartbeat(time, 1F);

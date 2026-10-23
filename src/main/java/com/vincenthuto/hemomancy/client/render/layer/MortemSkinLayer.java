@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.world.AnimusMortemRenderTypes;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
@@ -42,7 +43,7 @@ public final class MortemSkinLayer<T extends LivingEntity,M extends EntityModel<
     }
     @Override public void render(PoseStack p,MultiBufferSource buffer,int light,T entity,float limbSwing,float limbSwingAmount,float partial,float age,float yaw,float pitch) {
         if(entity.isInvisible()||world!=entity.level()||SKINS.isEmpty())return;
-        double now=world.getGameTime()+partial;AnimusMortemRenderTypes.begin(now);
+        double now=AnimationTime.gameTime(world, partial);AnimusMortemRenderTypes.begin(now);
         for(var entry:SKINS.entrySet()) {
             if(entry.getKey().entity!=entity.getId())continue;
             Skin state=entry.getValue();

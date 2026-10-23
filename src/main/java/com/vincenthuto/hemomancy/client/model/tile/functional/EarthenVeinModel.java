@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.AnimationHelper;
 import com.vincenthuto.hemomancy.client.model.IAnimatedModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.functional.EarthenVeinRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.functional.EarthenVeinRenderer.EarthenVeinAnimContext;
 import net.minecraft.client.animation.AnimationChannel;
@@ -79,7 +80,7 @@ public class EarthenVeinModel extends Model implements IAnimatedModel<EarthenVei
 	public void setupAnimation(Level level, float partialTicks, EarthenVeinAnimContext ctx) {
 		this.getRoot().getAllParts().forEach(ModelPart::resetPose);
 		AnimationState state = ctx.state();
-		float time = (float) level.getGameTime() + partialTicks;
+		float time = AnimationTime.gameTime(level, partialTicks);
 		AnimationHelper.animate(this, state, EARTHENVEINMODEL_WIGGLE, time, 1F);
 		float animTime = AnimationHelper.getElapsedSeconds(EARTHENVEINMODEL_WIGGLE, state.getAccumulatedTime());
 		float mouth = Mth.clamp(ctx.mouthProgress(), 0.0F, 1.0F);

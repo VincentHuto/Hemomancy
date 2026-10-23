@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.ArmatureGeometry;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.HematicArmatureBlock;
 import com.vincenthuto.hemomancy.common.station.StationTierProperty;
@@ -46,7 +47,7 @@ public class HematicArmatureRenderer implements BlockEntityRenderer<HematicArmat
 		Direction facing = armature.getBlockState().getValue(HematicArmatureBlock.FACING);
 		int stage = StationTierProperty.stage(armature.getBlockState());
 		Minecraft mc = Minecraft.getInstance();
-		float time = armature.getLevel().getGameTime() + partialTicks;
+		float time = AnimationTime.gameTime(armature.getLevel(), partialTicks);
 
 		pose.pushPose();
 		pose.translate(.5, 0, .5);

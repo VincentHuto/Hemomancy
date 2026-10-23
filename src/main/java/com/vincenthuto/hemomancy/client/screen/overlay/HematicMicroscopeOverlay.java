@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.overlay;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.item.harbinger.*;
@@ -61,7 +62,7 @@ public final class HematicMicroscopeOverlay {
         boolean murky = !BloodSampleData.examinable(sample);
         boolean reduced = HemoClientConfig.MICROSCOPE_REDUCED_MOTION.get();
         boolean sparse = HemoClientConfig.MICROSCOPE_LOW_DENSITY.get();
-        double time = mc.level.getGameTime() + partialTicks;
+        double time = AnimationTime.gameTime(mc.level, partialTicks);
         float scale = Math.min(1.5F, Math.min(gfx.guiWidth() / 448F, gfx.guiHeight() / 276F));
         float originX = (gfx.guiWidth() - 448 * scale) / 2;
         float originY = (gfx.guiHeight() - 276 * scale) / 2;

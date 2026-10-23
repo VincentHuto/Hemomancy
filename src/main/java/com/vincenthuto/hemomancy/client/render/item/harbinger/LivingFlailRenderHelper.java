@@ -5,11 +5,11 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.LivingFlailModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingFlailDeployment;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingFlailRules;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -74,7 +74,7 @@ public final class LivingFlailRenderHelper {
 		VertexConsumer base = buffer.getBuffer(RenderType.entityTranslucent(TEXTURE));
 		model.renderHandle(poseStack, base, packedLight, packedOverlay, -1);
 		int usedTicks = holder.getTicksUsingItem();
-		float partialTick = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
+		float partialTick = AnimationTime.partialTick();
 		double phase = LivingFlailRules.orbitAngle(usedTicks, partialTick);
 		double radius = firstPerson ? 0.72D : 0.66D;
 		Vec3 orbit = new Vec3(Math.cos(phase) * radius,
@@ -86,7 +86,7 @@ public final class LivingFlailRenderHelper {
 		poseStack.translate(orbit.x, orbit.y, orbit.z);
 		float headScale = LivingFlailRules.visualScale(LivingFlailRules.charge(usedTicks));
 		poseStack.scale(headScale, headScale, headScale);
-		poseStack.mulPose(Axis.XP.rotationDegrees((holder.tickCount + partialTick) * 34.0F));
+		poseStack.mulPose(Axis.XP.rotationDegrees(AnimationTime.age(holder, partialTick) * 34.0F));
 		model.renderHead(poseStack, base, packedLight, packedOverlay, -1);
 		VertexConsumer glint = buffer.getBuffer(RenderTypeInit.getCrimsonGlint());
 		model.renderHead(poseStack, glint, packedLight, OverlayTexture.NO_OVERLAY, -1);
@@ -106,7 +106,7 @@ public final class LivingFlailRenderHelper {
 			float progress, float seed, boolean firstPerson) {
 		renderHeldDissolving(model, holder, arm, stack, poseStack, buffer, packedLight, packedOverlay,
 				progress, seed, firstPerson,
-				Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false));
+				AnimationTime.partialTick());
 	}
 
 	public static void renderHeldDissolving(LivingFlailModel<?> model, LivingEntity holder, HumanoidArm arm,
@@ -122,7 +122,7 @@ public final class LivingFlailRenderHelper {
 		poseStack.pushPose();
 		renderWithBob(model, poseStack, buffer,
 				buffer.getBuffer(HemoRenderTypes.hermitFarewellDissolve(
-						TEXTURE, holder.tickCount + partialTick, progress, seed)),
+						TEXTURE, AnimationTime.age(holder, partialTick), progress, seed)),
 				packedLight, packedOverlay, bob, tilt, false);
 		poseStack.popPose();
 		poseStack.pushPose();

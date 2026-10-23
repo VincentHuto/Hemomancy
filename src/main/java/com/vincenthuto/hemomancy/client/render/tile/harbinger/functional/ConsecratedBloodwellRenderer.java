@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.functional;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.BloodPoolSurface;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.client.render.world.BloodStreams;
@@ -66,7 +67,7 @@ public class ConsecratedBloodwellRenderer implements BlockEntityRenderer<Consecr
 			return;
 		}
 
-		double ticks = be.getLevel().getGameTime() + partialTick;
+		double ticks = AnimationTime.gameTime(be.getLevel(), partialTick);
 		float target = Mth.clamp((float) (be.getStoredBlood() / be.getMaxBlood()), 0.0f, 1.0f);
 		// The level rises and drains smoothly between the once-a-second pool syncs, down to dry.
 		float fullness = be.shownFullness(target, ticks);

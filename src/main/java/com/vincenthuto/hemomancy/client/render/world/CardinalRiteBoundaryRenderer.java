@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -168,7 +169,7 @@ public class CardinalRiteBoundaryRenderer {
 		if (mc.level == null) return;
 		List<ActiveRiteData.RiteEntry> rites = ActiveRiteClientData.getActiveRites();
 		MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
-		float currentTime = mc.level.getGameTime() + partialTick;
+		float currentTime = AnimationTime.gameTime(mc.level, partialTick);
 		Camera camera = mc.gameRenderer.getMainCamera();
 		Vec3 cam = camera.getPosition();
 
@@ -1132,7 +1133,7 @@ public class CardinalRiteBoundaryRenderer {
 		RenderType staffRenderType;
 		if (melt.active()) {
 			staffRenderType = HemoRenderTypes.cardinalStaffBloodMelt(
-					(float) (mc.level.getGameTime() + partialTick),
+					(float) AnimationTime.gameTime(mc.level, partialTick),
 					melt.seed(), melt.wiggleAmplitude(),
 					(float) (melt.poolCenter().x - camera.x),
 					(float) (melt.poolCenter().y - camera.y),

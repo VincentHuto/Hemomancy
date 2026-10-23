@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.entity.weave;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.world.ThreadKnotGeometry;
 import com.vincenthuto.hemomancy.common.entity.weave.ThreadBoltEntity;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
@@ -28,7 +29,7 @@ public class ThreadBoltRenderer extends EntityRenderer<ThreadBoltEntity> {
 		Vec3 eye = camera.getPosition().subtract(bolt.getPosition(partialTicks));
 		Vector3f right = new Vector3f(camera.getLeftVector()).negate();
 		Vector3f up = new Vector3f(camera.getUpVector());
-		float time = bolt.tickCount + partialTicks;
+		float time = AnimationTime.age(bolt, partialTicks);
 		float seed = (bolt.getId() * 0.618f) % 1f;
 		float[] colour = ThreadKnotGeometry.hot(ThreadKnotGeometry.vivid(bolt.tendency().getColor()));
 		VertexConsumer vc = buffer.getBuffer(RenderTypeInit.LOOM_EFFECT);

@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.functional;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.HematicStakeBlock;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.HematicStakeBlockEntity;
@@ -33,7 +34,7 @@ public class HematicStakeRenderer implements BlockEntityRenderer<HematicStakeBlo
 			return;
 		}
 
-		float timeSeconds = ((mc.level.getGameTime() + partialTick) % TIME_CYCLE_MS) / 20.0f;
+		float timeSeconds = (AnimationTime.gameTime(mc.level, partialTick) % TIME_CYCLE_MS) / 20.0f;
 		float shardSeed = Math.floorMod(be.getBlockPos().asLong(), 10007L) / 10007.0f;
 		VertexConsumer vc = buffer.getBuffer(HemoRenderTypes.monolithFragment(timeSeconds, shardSeed, 0.0f, 0.72f, 0.0f));
 

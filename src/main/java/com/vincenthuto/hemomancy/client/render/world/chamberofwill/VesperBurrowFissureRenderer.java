@@ -11,6 +11,7 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.vincenthuto.hemomancy.client.data.VesperBurrowClientData;
 import com.vincenthuto.hemomancy.client.data.VesperFightClientData;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.util.Mth;
@@ -35,7 +36,7 @@ public final class VesperBurrowFissureRenderer {
 		List<VesperBurrowClientData.Point> points = VesperBurrowClientData.points();
 		if (points.size() < 2) return;
 		Vec3 camera = minecraft.gameRenderer.getMainCamera().getPosition();
-		float now = minecraft.level.getGameTime() + partialTick;
+		float now = AnimationTime.gameTime(minecraft.level, partialTick);
 		poseStack.pushPose();
 		poseStack.translate(-camera.x, -camera.y, -camera.z);
 		Matrix4f matrix = poseStack.last().pose();

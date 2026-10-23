@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.functional.CovenantThroneModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.CovenantThroneBlock;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
@@ -122,7 +123,7 @@ public class CovenantThroneRenderer implements BlockEntityRenderer<CovenantThron
 
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.level == null) return;
-		float time = mc.level.getGameTime() + partialTicks;
+		float time = AnimationTime.gameTime(mc.level, partialTicks);
 
 		Direction facing = te.getBlockState().getValue(CovenantThroneBlock.FACING);
 		float yRot = switch (facing) {

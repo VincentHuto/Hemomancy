@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.functional.EarthenVeinModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.functional.EarthenVeinRenderer.EarthenVeinAnimContext;
 
 import net.minecraft.client.Minecraft;
@@ -68,7 +69,7 @@ public class EarthenVeinItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 		// Drive the wiggle animation using the client level's game time
 		if (Minecraft.getInstance().level != null) {
-			float partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
+			float partialTicks = AnimationTime.partialTick();
 			model.setupAnimation(Minecraft.getInstance().level, partialTicks, animCtx);
 		}
 

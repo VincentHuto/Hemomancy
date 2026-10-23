@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.world;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.data.BloodBindingTendrilClientState;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.level.ClipContext;
@@ -41,7 +42,7 @@ public final class BloodBindingTendrilRenderer {
     /** Compatibility entry point for external render integrations. */
     public static void render(PoseStack poses,float partial) {
         var mc=Minecraft.getInstance();if(mc.level==null)return;
-        AnimusMortemRenderTypes.begin(mc.level.getGameTime()+partial);
+        AnimusMortemRenderTypes.begin(AnimationTime.gameTime(mc.level, partial));
         var buffers=mc.renderBuffers().bufferSource();
         draw(poses,buffers.getBuffer(AnimusMortemRenderTypes.ANIMUS),mc.gameRenderer.getMainCamera().getPosition(),partial);
         buffers.endBatch(AnimusMortemRenderTypes.ANIMUS);

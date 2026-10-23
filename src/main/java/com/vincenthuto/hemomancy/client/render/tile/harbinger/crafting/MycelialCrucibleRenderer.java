@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.MycelialCrucibleBlockEntity;
 import net.minecraft.client.Minecraft;
@@ -92,7 +93,7 @@ public class MycelialCrucibleRenderer implements BlockEntityRenderer<MycelialCru
         if (culture.isEmpty()) {
             return;
         }
-        float time = te.getLevel().getGameTime() + partialTick;
+        float time = AnimationTime.gameTime(te.getLevel(), partialTick);
         poseStack.pushPose();
         poseStack.translate(0.5F, ITEM_Y + (float) Math.sin(time * 0.07F) * 0.3F / 16.0F, 0.5F);
         poseStack.mulPose(Axis.YP.rotationDegrees(time * 0.9F));
@@ -104,7 +105,7 @@ public class MycelialCrucibleRenderer implements BlockEntityRenderer<MycelialCru
 
     private static void renderBasinShader(MycelialCrucibleBlockEntity te, float partialTick, PoseStack poseStack,
             MultiBufferSource buffers) {
-        float gameTime = te.getLevel().getGameTime() + partialTick;
+        float gameTime = AnimationTime.gameTime(te.getLevel(), partialTick);
         float basinSeed = (float) Math.floorMod(te.getBlockPos().asLong(), 10000L);
         VertexConsumer consumer = buffers.getBuffer(
                 HemoRenderTypes.mycelialCrucibleBasin(gameTime, basinSeed, SWIRL_INTENSITY));

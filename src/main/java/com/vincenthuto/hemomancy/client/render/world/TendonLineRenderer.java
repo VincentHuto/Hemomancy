@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.world;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.shared.TendonLineItem;
 import net.minecraft.client.Minecraft;
@@ -49,7 +50,7 @@ public final class TendonLineRenderer {
 		MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
 		VertexConsumer consumer = buffer.getBuffer(RenderType.lineStrip());
 		PoseStack.Pose pose = poseStack.last();
-		float time = player.tickCount + partialTick;
+		float time = AnimationTime.age(player, partialTick);
 
 		for (int i = 0; i <= SEGMENTS; i++) {
 			float t = (float) i / SEGMENTS;

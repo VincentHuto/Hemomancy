@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.entity.boss.hemorath;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.boss.hemorath.HemorathModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.layer.mob.HemorathOverloadLayer;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.hemorath.HemorathEntity;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
@@ -32,10 +33,10 @@ public class HemorathRenderer extends MobRenderer<HemorathEntity, HemorathModel<
 	protected void scale(HemorathEntity entity, PoseStack poseStack, float partialTick) {
 		float base = entity.isInPhase2() ? 2.12F : 2.06F;
 		if (entity.getVisualState() == HemorathEntity.VISUAL_OVERLOAD) {
-			float pulse = 1.0F + (float) Math.sin((entity.tickCount + partialTick) * 0.6F) * 0.08F;
+			float pulse = 1.0F + (float) Math.sin(AnimationTime.age(entity, partialTick) * 0.6F) * 0.08F;
 			base *= pulse;
 		} else if (entity.isCollapseCharging()) {
-			float pulse = 1.0F + (float) Math.sin((entity.tickCount + partialTick) * 0.35F) * 0.035F;
+			float pulse = 1.0F + (float) Math.sin(AnimationTime.age(entity, partialTick) * 0.35F) * 0.035F;
 			base *= pulse;
 		}
 		poseStack.scale(base, base, base);

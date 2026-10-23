@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.functional.FloatingHeartModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
 
@@ -57,7 +58,7 @@ public class MortalDisplayItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 		// Gentle bob animation for item form
 		if (Minecraft.getInstance().level != null) {
-			float time = Minecraft.getInstance().level.getGameTime() + Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
+			float time = AnimationTime.gameTime(Minecraft.getInstance().level);
 			float bob = (float) (Math.sin(Math.PI * time / 32.0) * 0.05);
 			poseStack.translate(0, bob, 0);
 		}

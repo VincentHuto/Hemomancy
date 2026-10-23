@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.entity.projectile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.LivingSickleItemRenderer;
 import com.vincenthuto.hemomancy.common.entity.projectile.LivingSickleHookEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -28,7 +29,7 @@ public final class LivingSickleHookRenderer extends EntityRenderer<LivingSickleH
 		poseStack.pushPose();
 		poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTick, entity.yRotO, entity.getYRot()) - 90.0F));
 		poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTick, entity.xRotO, entity.getXRot())));
-		poseStack.mulPose(Axis.XP.rotationDegrees((entity.tickCount + partialTick) * 55.0F));
+		poseStack.mulPose(Axis.XP.rotationDegrees(AnimationTime.age(entity, partialTick) * 55.0F));
 		poseStack.scale(0.9F, 0.9F, 0.9F);
 		LivingSickleItemRenderer.renderModel(SICKLE, ItemDisplayContext.FIXED, poseStack, buffers, light, entity.getId());
 		poseStack.popPose();

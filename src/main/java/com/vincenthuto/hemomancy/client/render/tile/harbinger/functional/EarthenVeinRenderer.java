@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.functional;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.functional.EarthenVeinModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.world.EarthenVeinFeedingTendrilRenderer;
 import com.vincenthuto.hemomancy.client.vein.EarthenVeinTravelClientState;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.EarthenVeinBlock;
@@ -62,7 +63,7 @@ public class EarthenVeinRenderer implements BlockEntityRenderer<EarthenVeinBlock
 				default -> { }
 			}
 			EarthenVeinFeedingTendrilRenderer.render(pPoseStack, bufferIn, te.getBlockPos(), visual,
-					te.getLevel().getGameTime() + partialTicks);
+					AnimationTime.gameTime(te.getLevel(), partialTicks));
 		}
 		pPoseStack.translate(0.5, 1.51D + (growth - 1.0F) * 1.5D, 0.5);
 		pPoseStack.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());

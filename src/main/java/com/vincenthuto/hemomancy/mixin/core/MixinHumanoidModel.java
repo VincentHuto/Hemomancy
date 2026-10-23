@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.mixin.core;
 
 import com.vincenthuto.hemomancy.client.player.PlayerAnimationRegistry;
 import com.vincenthuto.hemomancy.client.player.WarpChairPlayerPose;
-import net.minecraft.client.Minecraft;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,6 +24,6 @@ public abstract class MixinHumanoidModel {
 			LivingEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks,
 			float netHeadYaw, float headPitch, CallbackInfo callback) {
 		PlayerAnimationRegistry.applyThirdPersonPose(entity, (HumanoidModel<?>) (Object) this,
-				Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false));
+				AnimationTime.partialTick());
 	}
 }

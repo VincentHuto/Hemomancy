@@ -257,7 +257,8 @@ public record ExamplePayload(int entityId, float amount) implements CustomPacket
 - A-2 (easing copies, each replacement byte-equivalent)
 - A-3 (bespoke player animations; step 10 put the third-person pose order in `PlayerAnimationRegistry` and pinned
   the first-person hand priorities, while each animation keeps its own packet, state and tick)
-- A-4 (time sources)
+- A-4 (time sources; step 10 routed every client game-time, entity-age and frame partial-tick read through
+  `AnimationTime` with identical arithmetic; which wall-clock animations move to game time waits on decision A-4)
 
 **Exceptions**
 - Procedural chain styles stay separate (A-5).

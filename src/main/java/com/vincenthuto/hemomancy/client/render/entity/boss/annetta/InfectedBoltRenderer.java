@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.entity.boss.annetta;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.InfectedBoltEntity;
 import com.vincenthuto.hutoslib.client.HLRenderTypeInit;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -26,7 +27,7 @@ public class InfectedBoltRenderer extends EntityRenderer<InfectedBoltEntity> {
 
     @Override
     public void render(InfectedBoltEntity bolt, float yaw, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int light) {
-        float time = bolt.tickCount + partialTick;
+        float time = AnimationTime.age(bolt, partialTick);
         boolean spore = bolt.kind() == InfectedBoltEntity.Kind.SPORE;
         poseStack.pushPose();
         poseStack.translate(0.0D, 0.25D, 0.0D);

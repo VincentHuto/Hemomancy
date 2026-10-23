@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.engram;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticLoomBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.engram.EngramBoard;
@@ -11,7 +12,6 @@ import com.vincenthuto.hutoslib.client.particle.data.TendrilEffectData;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.tendril.TendrilAnchor;
 import com.vincenthuto.hutoslib.common.tendril.TendrilEffectConfig;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -62,7 +62,7 @@ public final class EngramBeatEffects {
 				long seed = te.getBlockPos().asLong() * 131L + beat.serial();
 				TendrilRenderer.INSTANCE.add(new TendrilEffectData(new TendrilAnchor.Point(heart.add(0, 0.2D, 0)),
 						new TendrilAnchor.Point(echo), landConfig(ichor, seed), seed),
-						Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false));
+						AnimationTime.partialTick());
 			}
 			case SNAP -> {
 				for (int i = 0; i < 26; i++)

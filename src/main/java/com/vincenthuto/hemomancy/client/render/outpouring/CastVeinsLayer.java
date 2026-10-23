@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.outpouring;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.layer.player.AvatarManifestationTransition;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import net.minecraft.client.Minecraft;
@@ -37,7 +38,7 @@ public final class CastVeinsLayer extends RenderLayer<AbstractClientPlayer, Play
         var veins = OutpouringClientState.veins(player, partial);
         if (!veins.active()) return;
         boolean slim = player.getSkin().model() == PlayerSkin.Model.SLIM;
-        OutpouringRenderTypes.begin(player.level().getGameTime() + partial);
+        OutpouringRenderTypes.begin(AnimationTime.gameTime(player.level(), partial));
         var consumer = buffer.getBuffer(OutpouringRenderTypes.veins(slim));
         var packed = veins.packed();
         boolean head = armoured(player, EquipmentSlot.HEAD), chest = armoured(player, EquipmentSlot.CHEST);
@@ -66,7 +67,7 @@ public final class CastVeinsLayer extends RenderLayer<AbstractClientPlayer, Play
         if (player.isInvisible() || avatar(player, partial)) return;
         var veins = OutpouringClientState.veins(player, partial);
         if (!veins.active()) return;
-        OutpouringRenderTypes.begin(player.level().getGameTime() + partial);
+        OutpouringRenderTypes.begin(AnimationTime.gameTime(player.level(), partial));
         var packed = veins.packed();
         ModelPart part = arm == HumanoidArm.RIGHT ? model.rightArm : model.leftArm;
         part.render(poses, buffer.getBuffer(OutpouringRenderTypes.veins(player.getSkin().model() == PlayerSkin.Model.SLIM)),

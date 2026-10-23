@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.world;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodStructureFeedClientData;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.event.BloodFeedStyle;
 import net.minecraft.client.Minecraft;
@@ -30,7 +31,7 @@ public final class BloodStructureFeedWarpRenderer {
 
 		MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
 		Vec3 camera = mc.gameRenderer.getMainCamera().getPosition();
-		float time = mc.level.getGameTime() + partialTick;
+		float time = AnimationTime.gameTime(mc.level, partialTick);
 
 		for (ActiveBloodStructureFeedClientData.FeedEntry feed : ActiveBloodStructureFeedClientData.getActiveFeeds()) {
 			renderConnectedShell(feed, poseStack, buffer, camera, time, partialTick);

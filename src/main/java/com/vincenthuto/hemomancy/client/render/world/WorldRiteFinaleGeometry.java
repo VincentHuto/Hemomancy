@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.world;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteEventKind;
@@ -41,7 +42,7 @@ final class WorldRiteFinaleGeometry {
 	static void collect(PoseStack poses, LuxUmbraBatch batch, Vec3 camera, float partialTick) {
 		var level = Minecraft.getInstance().level;
 		if (level == null) return;
-		double time = level.getGameTime() + partialTick;
+		double time = AnimationTime.gameTime(level, partialTick);
 		for (CardinalRiteEventClientState.RiteEvent event : CardinalRiteEventClientState.all()) {
 			if (event.points().isEmpty()) continue;
 			float age = event.age(partialTick);

@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.npc.HarbingerHermitModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.entity.npc.harbinger.HarbingerHermitEntity;
 
@@ -96,7 +97,7 @@ public class HarbingerHermitRenderer extends MobRenderer<HarbingerHermitEntity, 
         float pulse = Mth.sin(progress * Mth.PI);
         if (pulse <= 0.015F) return;
 
-        float age = entity.tickCount + partialTick;
+        float age = AnimationTime.age(entity, partialTick);
         Matrix4f matrix = poseStack.last().pose();
 
         for (int i = 0; i < FAREWELL_BEAM_COUNT; i++) {
@@ -133,7 +134,7 @@ public class HarbingerHermitRenderer extends MobRenderer<HarbingerHermitEntity, 
         float pulse = Mth.sin(progress * Mth.PI);
         if (pulse <= 0.015F) return;
 
-        float age = entity.tickCount + partialTick;
+        float age = AnimationTime.age(entity, partialTick);
         float flare = pulse * (0.74F + 0.26F * Mth.sin(age * 0.34F));
         float radius = (0.105F + 0.15F * flare) * (1.0F - progress * 0.2F);
         float depthRadius = radius * 0.58F;

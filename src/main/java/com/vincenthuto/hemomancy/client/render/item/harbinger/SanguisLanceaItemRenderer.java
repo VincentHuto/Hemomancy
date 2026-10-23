@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.SanguisLanceaModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.SanguisLanceaItem;
 import com.vincenthuto.hutoslib.math.Quaternion;
@@ -111,7 +112,7 @@ public class SanguisLanceaItemRenderer extends BlockEntityWithoutLevelRenderer {
 						ms.translate(0, 0, 1);
 					}
 
-					spearModel.setupAnimation(mc.level, mc.getTimer().getGameTimeDeltaPartialTick(false), animCtx);
+					spearModel.setupAnimation(mc.level, AnimationTime.partialTick(), animCtx);
 				}
 
 				VertexConsumer base = buffers.getBuffer(this.spearModel.renderType(texture));

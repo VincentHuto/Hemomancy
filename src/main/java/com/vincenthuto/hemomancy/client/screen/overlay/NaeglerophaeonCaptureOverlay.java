@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.NaeglerophaeonEntity;
 import com.vincenthuto.hemomancy.client.render.shader.ShaderInit;
 import net.minecraft.client.Minecraft;
@@ -56,7 +57,7 @@ public final class NaeglerophaeonCaptureOverlay {
                 .distanceTo(boss.getPosition(partialTick).add(0,.8,0));
         float proximity=Mth.clamp((float)((12-distance)/10.2),0,1);
         float target=.06F+.94F*(float)Math.pow(proximity,1.25);
-        double time=mc.level.getGameTime()+partialTick;
+        double time=AnimationTime.gameTime(mc.level, partialTick);
         double elapsed=Double.isNaN(lastRenderTime)?1:Math.clamp(time-lastRenderTime,0,5);
         intensity+=(target-intensity)*(float)(1-Math.exp(-.3F*elapsed));
         lastRenderTime=time;

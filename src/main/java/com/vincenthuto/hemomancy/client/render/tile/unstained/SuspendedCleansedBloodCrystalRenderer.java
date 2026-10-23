@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.tile.unstained;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.TranslucentModelTypes;
 import com.vincenthuto.hemomancy.client.model.tile.SuspendedCleansedBloodCrystalModel;
 import com.vincenthuto.hemomancy.common.tile.unstained.SuspendedCleansedBloodCrystalBlockEntity;
@@ -36,7 +37,7 @@ public class SuspendedCleansedBloodCrystalRenderer implements BlockEntityRendere
         matrixStackIn.pushPose();
         matrixStackIn.translate(0.5D, 1.75D, 0.5D);
         matrixStackIn.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
-        float currentTime = te.getLevel().getGameTime() + partialTicks;
+        float currentTime = AnimationTime.gameTime(te.getLevel(), partialTicks);
         matrixStackIn.translate(0D, (Math.sin(Math.PI * currentTime / 2 / 32) / 5) + 0.1D * te.timeOffset, 0D);
         matrixStackIn.mulPose(Vector3.YP.rotationDegrees((float) ticks / 2).toMoj());
         float scale = (float) Math.abs(Math.cos(currentTime * 0.045f) * 0.25f) + 0.4f;

@@ -6,6 +6,7 @@ import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.vincenthuto.hemomancy.client.data.FaneBoundaryClientData;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.CachedMeshModelView;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.event.worldevent.FaneBoundaryRelation;
@@ -73,7 +74,7 @@ public final class FaneBoundaryRenderer {
 		}
 
 		Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
-		float time = mc.level.getGameTime() + partialTick;
+		float time = AnimationTime.gameTime(mc.level, partialTick);
 		MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
 
 		renderHostileWorldDomes(poseStack, entries, buffer, time, cam);
@@ -109,7 +110,7 @@ public final class FaneBoundaryRenderer {
 			return;
 		}
 
-		float time = mc.level.getGameTime() + partialTick;
+		float time = AnimationTime.gameTime(mc.level, partialTick);
 		if (insideAlpha > 0.001F) {
 			if (insideRelation == FaneBoundaryRelation.OUTSIDER) {
 				renderFullWorldGrade(graphics, screenWidth, screenHeight, time, 0.88F * insideAlpha);

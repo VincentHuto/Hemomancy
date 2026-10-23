@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.layer.mob;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.item.harbinger.memory.HematicMemoryToolEvents;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -30,7 +31,7 @@ public class HuskEffigyControlGlowLayer<T extends LivingEntity, M extends Entity
         if (!entity.getPersistentData().getBoolean(HematicMemoryToolEvents.TAG_EFFIGY) || entity.isInvisible()) {
             return;
         }
-        float offset = (entity.tickCount + partialTicks) * 0.01F;
+        float offset = AnimationTime.age(entity, partialTicks) * 0.01F;
         VertexConsumer consumer = buffer.getBuffer(RenderType.energySwirl(TEXTURE, offset, offset * 0.45F));
         poseStack.pushPose();
         poseStack.scale(1.035F, 1.035F, 1.035F);

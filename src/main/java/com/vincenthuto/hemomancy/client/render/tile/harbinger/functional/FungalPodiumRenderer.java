@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.functional;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.tile.RadiantPortalRendertype;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.FungalPodiumBlockEntity;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
@@ -46,7 +47,7 @@ public class FungalPodiumRenderer implements BlockEntityRenderer<FungalPodiumBlo
 
 		Matrix4f mat = matrixStackIn.last().pose();
 
-		float time = (te.getLevel().getGameTime() + partialTicks) / 10;
+		float time = AnimationTime.gameTime(te.getLevel(), partialTicks) / 10;
 		VertexConsumer vertex = bufferIn.getBuffer(RadiantPortalRendertype.textWithWaterShader(GLASSTEXTURE));
 
 		float r;

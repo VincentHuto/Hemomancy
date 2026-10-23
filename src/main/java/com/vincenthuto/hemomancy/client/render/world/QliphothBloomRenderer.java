@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.rite.harbinger.QliphothBloomData;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.pipeline.TextureTarget;
@@ -115,7 +116,7 @@ public class QliphothBloomRenderer {
 		if (mc.level == null) return;
 
 		MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
-		float currentTime = mc.level.getGameTime() + partialTick;
+		float currentTime = AnimationTime.gameTime(mc.level, partialTick);
 		Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
 
 		boolean sceneCopied = false;

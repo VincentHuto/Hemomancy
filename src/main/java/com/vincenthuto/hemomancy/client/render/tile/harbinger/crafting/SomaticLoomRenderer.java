@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.world.ThreadKnotGeometry;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomBlock;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticWeaveRules;
@@ -89,7 +90,7 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 	public void render(SomaticLoomBlockEntity te, float partialTicks, PoseStack stack,
 			MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
 		if (te.getLevel() == null) return;
-		float time = te.getLevel().getGameTime() + partialTicks;
+		float time = AnimationTime.gameTime(te.getLevel(), partialTicks);
 		Direction facing = te.getBlockState().getValue(SomaticLoomBlock.FACING);
 
 		// The engram lies on the ground in world axes, so it is drawn before the pose turns to the loom's facing.
@@ -229,7 +230,7 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 
 	public void renderItems(SomaticLoomBlockEntity te, float partialTicks, PoseStack stack,
 			MultiBufferSource buffer, int light, int overlay) {
-		float time = te.getLevel().getGameTime() + partialTicks;
+		float time = AnimationTime.gameTime(te.getLevel(), partialTicks);
 		Minecraft mc = Minecraft.getInstance();
 
 		ItemStack memory = te.contents.get(0);

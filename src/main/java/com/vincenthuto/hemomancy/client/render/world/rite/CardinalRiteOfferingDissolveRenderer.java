@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.world.rite;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState;
 import com.vincenthuto.hemomancy.client.rite.CardinalRiteEventClientState.RiteEvent;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
@@ -47,7 +48,7 @@ public final class CardinalRiteOfferingDissolveRenderer {
 			return;
 		}
 		Vec3 camera = mc.gameRenderer.getMainCamera().getPosition();
-		double time = mc.level.getGameTime() + partialTick;
+		double time = AnimationTime.gameTime(mc.level, partialTick);
 		MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
 		boolean any = false;
 		for (RiteEvent event : CardinalRiteEventClientState.all()) {

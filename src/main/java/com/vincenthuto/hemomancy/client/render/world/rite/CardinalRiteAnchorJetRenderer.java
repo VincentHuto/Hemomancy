@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world.rite;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import static com.vincenthuto.hemomancy.client.render.world.rite.RiteSurface.*;
 
@@ -55,7 +56,7 @@ public final class CardinalRiteAnchorJetRenderer {
 		List<ActiveRiteData.RiteEntry> rites = ActiveRiteClientData.getActiveRites();
 		if (rites.isEmpty()) return;
 		Vec3 camera = mc.gameRenderer.getMainCamera().getPosition();
-		double time = mc.level.getGameTime() + partialTick;
+		double time = AnimationTime.gameTime(mc.level, partialTick);
 		MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
 		VertexConsumer blood = null;
 		for (ActiveRiteData.RiteEntry rite : rites) {

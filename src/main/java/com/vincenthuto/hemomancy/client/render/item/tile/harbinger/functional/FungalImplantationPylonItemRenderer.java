@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.functional.FungalImplantationPylonModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.functional.FungalImplantationPylonRenderer.FungalImplantationPylonAnimContext;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
@@ -64,7 +65,7 @@ public class FungalImplantationPylonItemRenderer extends BlockEntityWithoutLevel
 
 		// Drive the wiggle animation using the client level's game time
 		if (Minecraft.getInstance().level != null) {
-			float partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
+			float partialTicks = AnimationTime.partialTick();
 			model.setupAnimation(Minecraft.getInstance().level, partialTicks, animCtx);
 		}
 

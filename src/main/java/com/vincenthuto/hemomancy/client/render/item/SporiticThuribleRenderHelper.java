@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.SporiticThuribleModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.SporiticThuribleItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.SporiticThuribleSpore;
 import net.minecraft.client.Minecraft;
@@ -85,7 +86,7 @@ public final class SporiticThuribleRenderHelper {
 		}
 
 		Minecraft minecraft = Minecraft.getInstance();
-		float age = minecraft.level != null ? minecraft.level.getGameTime() + minecraft.getTimer().getGameTimeDeltaPartialTick(false) : 0.0f;
+		float age = minecraft.level != null ? AnimationTime.gameTime(minecraft.level) : 0.0f;
 		float pulse = 0.24f + Mth.sin(age * 0.18f) * 0.014f;
 		poseStack.pushPose();
 		poseStack.translate(0.0f, 0.1f, -0f);

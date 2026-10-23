@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.boss.seraphae.ContainmentAnchorModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae.ContainmentAnchorEntity;
 
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -41,7 +42,7 @@ public class ContainmentAnchorRenderer extends EntityRenderer<ContainmentAnchorE
 		poseStack.pushPose();
 
 		// Animate the model
-		model.setupAnim(entity, 0.0F, 0.0F, entity.tickCount + partialTicks, 0.0F, 0.0F);
+		model.setupAnim(entity, 0.0F, 0.0F, AnimationTime.age(entity, partialTicks), 0.0F, 0.0F);
 
 		VertexConsumer vertexconsumer = bufferSource.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
 		model.renderToBuffer(poseStack, vertexconsumer, packedLight,

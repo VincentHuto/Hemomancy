@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.brewing.AlembicTier;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.AlembicGeometry;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
@@ -51,7 +52,7 @@ public class GhastlyAlembicRenderer implements BlockEntityRenderer<GhastlyAlembi
 					poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
 		if (te.tier() == AlembicTier.ATHANOR && te.getBlockState().getValue(com.vincenthuto.hemomancy.common.block.harbinger.crafting.GhastlyAlembicBlock.LIT)
 				&& te.getLevel() != null) {
-			float pulse = (float) (0.5 + 0.5 * Math.sin((te.getLevel().getGameTime() + partialTicks) * 0.15));
+			float pulse = (float) (0.5 + 0.5 * Math.sin(AnimationTime.gameTime(te.getLevel(), partialTicks) * 0.15));
 			float[] mouth = AlembicGeometry.FIREBOX;
 			VertexConsumer channel = bufferIn.getBuffer(RenderTypeInit.FLASK_FLUID);
 			renderColorBox(channel, poseStack.last().pose(), mouth[0] / 16, mouth[1] / 16, mouth[4] / 16,

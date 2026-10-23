@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.entity.boss.annetta;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.entity.boss.annetta.PriestessTendrilRules.Heading;
 import com.vincenthuto.hemomancy.client.render.entity.boss.annetta.PriestessTendrilRules.Wave;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.PriestessCombatRules;
@@ -32,7 +33,7 @@ public class PriestessEruptionRenderer extends EntityRenderer<PriestessEruptionE
 
     @Override
     public void render(PriestessEruptionEntity eruption, float yaw, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int light) {
-        float age = eruption.tickCount + partialTick;
+        float age = AnimationTime.age(eruption, partialTick);
         float delay = eruption.delay();
         boolean major = eruption.isMajor();
         long seed = eruption.getUUID().getLeastSignificantBits();

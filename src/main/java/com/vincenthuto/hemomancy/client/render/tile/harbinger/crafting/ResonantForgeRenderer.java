@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.ResonantForgeBlock;
 import com.vincenthuto.hemomancy.common.enchanting.ResonantForgeRules;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
@@ -69,7 +70,7 @@ public class ResonantForgeRenderer implements BlockEntityRenderer<ResonantForgeB
         if (forge.getLevel() == null) return;
         Direction facing = forge.getBlockState().getValue(ResonantForgeBlock.FACING);
         int stage = StationTierProperty.stage(forge.getBlockState());
-        float time = forge.getLevel().getGameTime() + partial;
+        float time = AnimationTime.gameTime(forge.getLevel(), partial);
         float phase = forge.totalTicks() == 0 ? 0 : Math.min(1, (forge.progress() + partial) / forge.totalTicks());
         Minecraft mc = Minecraft.getInstance();
         Operation operation = forge.operation();

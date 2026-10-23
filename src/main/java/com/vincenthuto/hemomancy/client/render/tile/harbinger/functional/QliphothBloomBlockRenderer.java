@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.functional;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.data.QliphothBloomClientData;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.world.QliphothBloomRenderer;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.QliphothBloomBlockEntity;
 
@@ -35,7 +36,7 @@ public class QliphothBloomBlockRenderer implements BlockEntityRenderer<QliphothB
 			return;
 		}
 
-		float currentTime = mc.level.getGameTime() + partialTick;
+		float currentTime = AnimationTime.gameTime(mc.level, partialTick);
 
 		// Render the tree geometry centered on the block entity position.
 		// The PoseStack is already translated to the block entity origin by the

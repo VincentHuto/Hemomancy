@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.AnimationHelper;
 import com.vincenthuto.hemomancy.client.model.IAnimatedModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.SanguisLanceaItemRenderer.SanguisLanceaAnimContext;
 import net.minecraft.client.animation.AnimationChannel;
 import net.minecraft.client.animation.AnimationDefinition;
@@ -132,7 +133,7 @@ public class SanguisLanceaModel extends Model
 	public void setupAnimation(Level level, float partialTicks, SanguisLanceaAnimContext ctx) {
 		this.getRoot().getAllParts().forEach(ModelPart::resetPose);
 		AnimationState state = ctx.state();
-		float time = (float) level.getGameTime() + partialTicks;
+		float time = AnimationTime.gameTime(level, partialTicks);
 		AnimationHelper.animate(this, state, SANGUISLANCEAMODEL_NEW, time, 1F);
 		float animTime = AnimationHelper.getElapsedSeconds(SANGUISLANCEAMODEL_NEW, state.getAccumulatedTime());
 

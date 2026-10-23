@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.world.chamberofwill;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.SomaticLoomEffectRules;
 import com.vincenthuto.hemomancy.client.render.world.VisceralMesh;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomBlock;
@@ -53,7 +54,7 @@ final class SomaticLoomSeamRenderer {
 		float growth = SomaticLoomEffectRules.veinGrowth(ticks, loom.isInClimax(), climax);
 		float tension = SomaticLoomEffectRules.sinewTension(ticks, loom.isInClimax(), climax);
 		if (open <= 0.001F) return;
-		float time = level.getGameTime() + partial;
+		float time = AnimationTime.gameTime(level, partial);
 		double[] heights = ground(level, loom.getBlockPos(), centre, radius, level.getGameTime());
 		double front = frontAngle(loom);
 		int flesh = tint(FLESH, theme.bloodTint()), vein = tint(VEIN, theme.veinTint()),

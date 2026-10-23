@@ -5,6 +5,7 @@ import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.vincenthuto.hemomancy.client.event.AxonalTransductionClient;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.client.render.shader.ShaderInit;
 import com.vincenthuto.hemomancy.common.manipulation.ductilis.AxonalTransductionManager;
@@ -118,7 +119,7 @@ public final class AxonalTravelView {
         GL30.glBlitFramebuffer(0,0,main.width,main.height,0,0,scene.width,scene.height,GL11.GL_COLOR_BUFFER_BIT,GL11.GL_NEAREST);
         GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, 0);
         main.bindWrite(false);
-        shader.safeGetUniform("HemoTime").set(mc.level.getGameTime() + partialTick);
+        shader.safeGetUniform("HemoTime").set(AnimationTime.gameTime(mc.level, partialTick));
         RenderSystem.setShaderTexture(0, scene.getColorTextureId());
         RenderSystem.setShaderTexture(1, mask.getColorTextureId());
         RenderSystem.disableBlend(); RenderSystem.disableDepthTest();

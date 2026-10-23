@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.data;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.world.BloodBindingTendrilGeometry;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.client.Minecraft;
@@ -69,7 +70,7 @@ public final class BloodBindingTendrilClientState {
 	public static List<Snapshot> snapshots(float partialTick) {
 		ClientLevel level = Minecraft.getInstance().level;
 		if (level == null || ENTRIES.isEmpty()) return List.of();
-		float now = level.getGameTime() + partialTick;
+		float now = AnimationTime.gameTime(level, partialTick);
 		List<Snapshot> snapshots = new ArrayList<>(ENTRIES.size());
 		for (Entry entry : ENTRIES.values()) {
 			Entity caster = level.getEntity(entry.casterId);

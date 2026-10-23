@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.LivingFlailModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.entity.projectile.LivingFlailHeadProjectileEntity;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.LivingFlailRules;
@@ -35,8 +36,8 @@ public final class LivingFlailHeadProjectileRenderer extends EntityRenderer<Livi
 		poseStack.translate(interpolated.x - entity.getX(), interpolated.y - entity.getY(),
 				interpolated.z - entity.getZ());
 		poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTick, entity.yRotO, entity.getYRot())));
-		poseStack.mulPose(Axis.XP.rotationDegrees((entity.tickCount + partialTick) * (28.0F + 34.0F * entity.getCharge())));
-		poseStack.mulPose(Axis.ZP.rotationDegrees((entity.tickCount + partialTick) * 17.0F));
+		poseStack.mulPose(Axis.XP.rotationDegrees(AnimationTime.age(entity, partialTick) * (28.0F + 34.0F * entity.getCharge())));
+		poseStack.mulPose(Axis.ZP.rotationDegrees(AnimationTime.age(entity, partialTick) * 17.0F));
 		poseStack.scale(scale, scale, scale);
 		VertexConsumer base = buffers.getBuffer(RenderType.entityTranslucent(TEXTURE));
 		model.renderHead(poseStack, base, light, OverlayTexture.NO_OVERLAY, -1);

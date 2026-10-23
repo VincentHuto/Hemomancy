@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.functional.SanguineMonolithModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
@@ -103,7 +104,7 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 
 		// ── Pass 2: Animated vein overlay + eye (bottom third + top half front face) ──
 		float time = (te.getLevel() != null)
-				? te.getLevel().getGameTime() + partialTicks
+				? AnimationTime.gameTime(te.getLevel(), partialTicks)
 				: te.getTickCount() + partialTicks;
 		TendrilVisualState tendrilVisual = computeTendrilVisualState(te);
 
@@ -119,7 +120,7 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 
 	private static float timeSeconds(SanguineMonolithBlockEntity te, float partialTicks) {
 		if (te.getLevel() != null) {
-			return (te.getLevel().getGameTime() + partialTicks) / 20.0f;
+			return AnimationTime.gameTime(te.getLevel(), partialTicks) / 20.0f;
 		}
 		return (te.getTickCount() + partialTicks) / 20.0f;
 	}

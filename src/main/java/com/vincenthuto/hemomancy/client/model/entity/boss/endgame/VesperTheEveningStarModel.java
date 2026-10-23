@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.model.entity.boss.endgame;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.*;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
@@ -356,7 +357,7 @@ public class VesperTheEveningStarModel extends HierarchicalModel<VesperTheEvenin
     public void setupAnim(VesperTheEveningStarEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
                           float headPitch) {
 		float partialTick = HLClientUtils.getPartialTicks();
-		float frame = entity.tickCount + partialTick;
+		float frame = AnimationTime.age(entity, partialTick);
 		VesperEveningStarAnimState state = VesperEveningStarAnimState.of(entity);
 		state.update(entity, partialTick);
 		resetCombatPose();

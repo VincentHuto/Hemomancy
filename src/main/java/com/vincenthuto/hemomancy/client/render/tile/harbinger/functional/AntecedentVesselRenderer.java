@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.functional;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.antecedent.VigilArchiveBlockEntity;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -19,7 +20,7 @@ public final class AntecedentVesselRenderer implements BlockEntityRenderer<Vigil
     }
     public AntecedentVesselRenderer(BlockEntityRendererProvider.Context context) {}
     @Override public void render(VigilArchiveBlockEntity vessel,float partial,PoseStack pose,MultiBufferSource buffers,int light,int overlay) {
-        double time=vessel.getLevel().getGameTime()+partial;
+        double time=AnimationTime.gameTime(vessel.getLevel(), partial);
         float progress=vessel.response(partial);
         // A carried record produces a single faint inclusion; ordinary noise does nothing.
         var player=net.minecraft.client.Minecraft.getInstance().player;

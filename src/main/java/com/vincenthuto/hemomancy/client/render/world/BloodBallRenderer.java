@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.world;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.data.BloodBallClientData;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -88,7 +89,7 @@ public class BloodBallRenderer {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.level == null) return;
 
-		float currentTime = mc.level.getGameTime() + partialTick;
+		float currentTime = AnimationTime.gameTime(mc.level, partialTick);
 
 		Vec3 renderPos = prevPos != null ? prevPos.lerp(pos, partialTick) : pos;
 		Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();

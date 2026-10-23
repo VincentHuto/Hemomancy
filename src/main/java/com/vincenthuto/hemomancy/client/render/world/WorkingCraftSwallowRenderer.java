@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -239,7 +240,7 @@ public final class WorkingCraftSwallowRenderer {
 		if (views.isEmpty()) return;
 		MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
 		Vec3 camera = mc.gameRenderer.getMainCamera().getPosition();
-		float time = mc.level.getGameTime() + partialTick;
+		float time = AnimationTime.gameTime(mc.level, partialTick);
 		for (View view : views) {
 			if (view.center().distToCenterSqr(camera) > 96.0D * 96.0D) continue;
 			if (view.sink() > 0.0D) renderSinkingBlocks(mc, poseStack, buffers, camera, view);

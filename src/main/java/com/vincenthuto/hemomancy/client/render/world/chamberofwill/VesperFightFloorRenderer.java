@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.vincenthuto.hemomancy.client.data.VesperFightClientData;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.worldgen.ChamberOfWillManager;
 import com.vincenthuto.hemomancy.config.HemoClientConfig;
@@ -61,7 +62,7 @@ public final class VesperFightFloorRenderer {
 
 		Minecraft minecraft = Minecraft.getInstance();
 		translateToArena(poseStack, minecraft.gameRenderer.getMainCamera(), center);
-		float time = minecraft.level.getGameTime() + partialTick;
+		float time = AnimationTime.gameTime(minecraft.level, partialTick);
 		float idlePulse = 0.08F + 0.05F * Mth.sin(time * 0.045F);
 		float pulse = Mth.clamp(idlePulse + lightningPulse, 0.0F, 1.0F);
 		lightningPulse *= 0.88F;
@@ -409,7 +410,7 @@ public final class VesperFightFloorRenderer {
 		if (cachedLayout == null || !center.equals(cachedCenter)) return;
 		Minecraft minecraft = Minecraft.getInstance();
 		float partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(true);
-		float time = minecraft.level.getGameTime() + partialTick;
+		float time = AnimationTime.gameTime(minecraft.level, partialTick);
 		Matrix4f rockModelView = VesperFightFloorTransform.arenaModelView(
 				event.getModelViewMatrix(), event.getCamera().getPosition(), center);
 		PoseStack poseStack = new PoseStack();

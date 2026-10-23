@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.tile.harbinger.puzzle;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import static com.vincenthuto.hemomancy.common.block.harbinger.puzzle.SarcophagusGeometry.*;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -38,7 +39,7 @@ public class SaintSarcophagusRenderer implements BlockEntityRenderer<SaintSarcop
 	public void render(SaintSarcophagusBlockEntity tomb, float partialTicks, PoseStack pose, MultiBufferSource buffers,
 			int light, int overlay) {
 		Minecraft mc = Minecraft.getInstance();
-		float time = tomb.getLevel() == null ? 0 : tomb.getLevel().getGameTime() + partialTicks;
+		float time = tomb.getLevel() == null ? 0 : AnimationTime.gameTime(tomb.getLevel(), partialTicks);
 		float open = tomb.getLidAngle(partialTicks);
 
 		pose.pushPose();

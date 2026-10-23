@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.entity.projectile.VesperScuteProjectileEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -30,7 +31,7 @@ public final class VesperScuteProjectileRenderer extends EntityRenderer<VesperSc
 		poseStack.pushPose();
 		poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTick, entity.yRotO, entity.getYRot()) - 90.0F));
 		poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTick, entity.xRotO, entity.getXRot())));
-		poseStack.mulPose(Axis.XP.rotationDegrees((entity.tickCount + partialTick) * 34.0F));
+		poseStack.mulPose(Axis.XP.rotationDegrees(AnimationTime.age(entity, partialTick) * 34.0F));
 		poseStack.scale(0.075F, 0.075F, 0.075F);
 		VertexConsumer consumer = buffers.getBuffer(RenderType.entityCutout(TEXTURE));
 		PoseStack.Pose pose = poseStack.last();

@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -202,14 +203,14 @@ public class GenericRadialMenu {
 	public void close() {
 		Screen owner = host.getScreen();
 		state = State.CLOSING;
-		startAnimation = minecraft.level.getGameTime() + (double) minecraft.getTimer().getGameTimeDeltaPartialTick(false);
+		startAnimation = AnimationTime.gameTimeAsDouble(minecraft.level);
 		animProgress = 1.0f;
 		setHovered(-1);
 	}
 
 	public void tick() {
 		if (state == State.INITIALIZING) {
-			startAnimation = minecraft.level.getGameTime() + (double) minecraft.getTimer().getGameTimeDeltaPartialTick(false);
+			startAnimation = AnimationTime.gameTimeAsDouble(minecraft.level);
 			state = State.OPENING;
 			animProgress = 0;
 		}
@@ -300,7 +301,7 @@ public class GenericRadialMenu {
 		Screen owner = host.getScreen();
 		switch (state) {
 		case OPENING:
-			openAnimation = (float) ((minecraft.level.getGameTime() + partialTicks - startAnimation)
+			openAnimation = (float) ((AnimationTime.gameTime(minecraft.level, partialTicks) - startAnimation)
 					/ OPEN_ANIMATION_LENGTH);
 			if (openAnimation >= 1.0 || getTotalVisibleItemCount() == 0) {
 				openAnimation = 1;
@@ -309,7 +310,7 @@ public class GenericRadialMenu {
 			break;
 		case CLOSING:
 			openAnimation = 1
-					- (float) ((minecraft.level.getGameTime() + partialTicks - startAnimation) / OPEN_ANIMATION_LENGTH);
+					- (float) ((AnimationTime.gameTime(minecraft.level, partialTicks) - startAnimation) / OPEN_ANIMATION_LENGTH);
 			if (openAnimation <= 0 || getTotalVisibleItemCount() == 0) {
 				openAnimation = 0;
 				state = State.CLOSED;
@@ -404,7 +405,7 @@ public class GenericRadialMenu {
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 		BufferBuilder buffer=Tesselator.getInstance().begin(VertexFormat.Mode.QUADS,DefaultVertexFormat.POSITION_COLOR);
-		double time=minecraft.level.getGameTime()+partialTicks;
+		double time=AnimationTime.gameTime(minecraft.level, partialTicks);
 		int[] seed={0};
 		iterateBand(visibleInnerItems,(item,start,end)->{
 			if(item.hasVeinyBorder())drawVeinSegments(buffer,x,y,z,start,end,centerRadius,innerRadiusOut,seed[0],time);

@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.engram;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.SomaticLoomEffectRules;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticLoomBlockEntity;
@@ -78,7 +79,7 @@ public final class EngramSigilRenderer {
 		Level level = te.getLevel();
 		if (board == null || level == null || !dissolving && !te.isWeaving()) return;
 		EngramSigilMesh mesh = EngramSigilMesh.of(te);
-		float now = level.getGameTime() + partialTick;
+		float now = AnimationTime.gameTime(level, partialTick);
 		boolean climaxing = !dissolving && te.isInClimax();
 		float climax = dissolving ? 0F : climax(te, partialTick);
 		float withdraw = Mth.clamp((climax - 0.55F) / 0.45F, 0F, 1F);

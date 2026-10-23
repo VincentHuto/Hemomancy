@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.boss.annetta.LatentAnnettaInfectionModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.client.render.entity.boss.annetta.PriestessTendrilRules.Heading;
 import com.vincenthuto.hemomancy.client.render.entity.boss.annetta.PriestessTendrilRules.Wave;
@@ -77,7 +78,7 @@ final class LatentInfectionLayer extends RenderLayer<LatentAnnettaInfectionEntit
         // The infection under its skin, pumping harder as it attacks.
         float surge = Mth.clamp(Math.max(motion.bloom(), Math.max(motion.lash() * 0.6F, motion.dig() * 0.6F)) + motion.spasm() * 0.5F, 0.0F, 1.0F);
         int skinColor = FastColor.ARGB32.color(Math.round(255 * motion.alive() * motion.grow()), Math.round(255 * surge), 0, 0);
-        float shaderTime = (float) ((entity.level().getGameTime() + partialTick) % 24000.0D);
+        float shaderTime = (float) (AnimationTime.gameTime(entity.level(), partialTick) % 24000.0D);
         model.renderToBuffer(poseStack, buffer.getBuffer(HemoRenderTypes.latentInfectionSkin(SKIN, shaderTime)), light,
                 OverlayTexture.NO_OVERLAY, skinColor);
 

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.world.PerformerHandAnchors;
 import com.vincenthuto.hemomancy.client.screen.overlay.CircusPerceptionOverlay;
 import com.vincenthuto.hemomancy.common.circus.CircusProgressRules;
@@ -75,7 +76,7 @@ public final class CircusPerformerRenderer<T extends CircusPerformerEntity, M ex
 			int alpha = CircusPerceptionOverlay.isActive() ? stage.motionEchoAlpha() : 0;
 			if (alpha == 0) return;
 			float offset = stage.motionJitter() * 2.5F;
-			float time = entity.tickCount + partialTick + entity.getId();
+			float time = AnimationTime.age(entity, partialTick) + entity.getId();
 			poseStack.pushPose();
 			poseStack.translate(Math.sin(time * 0.72F) * offset, 0.0D, Math.cos(time * 0.61F) * offset);
 			VertexConsumer echo = buffer.getBuffer(RenderType.entityTranslucentEmissive(getTextureLocation(entity)));
@@ -97,7 +98,7 @@ public final class CircusPerformerRenderer<T extends CircusPerformerEntity, M ex
 		float jitter = CircusPerceptionOverlay.isActive() ? CircusPerceptionOverlay.stage().motionJitter() : 0.0F;
 		poseStack.pushPose();
 		if (jitter > 0.0F) {
-			float time = entity.tickCount + partialTick + entity.getId() * 0.71F;
+			float time = AnimationTime.age(entity, partialTick) + entity.getId() * 0.71F;
 			poseStack.translate(Math.sin(time * 0.83F) * jitter, 0.0D, Math.cos(time * 0.67F) * jitter);
 		}
 		super.render(entity, entityYaw, partialTick, poseStack, buffer, packedLight);

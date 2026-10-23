@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.VialCentrifugeBlock;
 import com.vincenthuto.hemomancy.common.item.harbinger.BloodSampleData;
 import com.vincenthuto.hemomancy.common.item.harbinger.ConsecratedSyringeItem;
@@ -67,7 +68,7 @@ public class VialCentrifugeRenderer implements BlockEntityRenderer<VialCentrifug
             case EAST -> -90; case SOUTH -> 180; case WEST -> 90; default -> 0;
         }));
         pose.translate(-.5, 0, -.5);
-        float time = te.getLevel().getGameTime() + partial;
+        float time = AnimationTime.gameTime(te.getLevel(), partial);
         renderMachine(Minecraft.getInstance(), stage, rotor, drive,
                 VialCentrifugeRotorRules.speedFraction(stage, speed), time, vials, pose, buffers, light, overlay);
 

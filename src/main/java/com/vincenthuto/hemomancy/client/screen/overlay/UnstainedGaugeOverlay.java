@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.overlay;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.*;
 import net.minecraft.Util;
@@ -158,7 +159,7 @@ public class UnstainedGaugeOverlay {
 
 	private float getAnimationTime(float partialTicks) {
 		if (mc.level != null) {
-			return (mc.level.getGameTime() + partialTicks) * 0.05f;
+			return AnimationTime.gameTime(mc.level, partialTicks) * 0.05f;
 		}
 		return Util.getMillis() * 0.001f;
 	}

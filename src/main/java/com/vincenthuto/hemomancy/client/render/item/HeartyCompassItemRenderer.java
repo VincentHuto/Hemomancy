@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.item.harbinger.memory.HeartyCompassItem;
 import com.vincenthuto.hemomancy.common.item.harbinger.memory.HeartyCompassRules;
@@ -93,7 +94,7 @@ public class HeartyCompassItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 		double targetX = LastDeathMemory.unpackX(memory.packedPosition()) + 0.5D;
 		double targetZ = LastDeathMemory.unpackZ(memory.packedPosition()) + 0.5D;
-		float partial = mc.getTimer().getGameTimeDeltaPartialTick(false);
+		float partial = AnimationTime.partialTick();
 		double playerX = Mth.lerp(partial, player.xOld, player.getX());
 		double playerZ = Mth.lerp(partial, player.zOld, player.getZ());
 		float yaw = Mth.lerp(partial, player.yRotO, player.getYRot());
@@ -101,7 +102,7 @@ public class HeartyCompassItemRenderer extends BlockEntityWithoutLevelRenderer {
 	}
 
 	private static float wobble(Minecraft mc, float offset) {
-		float time = mc.level == null ? 0.0F : mc.level.getGameTime() + mc.getTimer().getGameTimeDeltaPartialTick(false);
+		float time = mc.level == null ? 0.0F : AnimationTime.gameTime(mc.level);
 		return offset + Mth.sin(time * 0.23F) * 28.0F + Mth.sin(time * 0.071F) * 12.0F;
 	}
 

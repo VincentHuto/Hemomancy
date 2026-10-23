@@ -16,7 +16,7 @@ Every consolidation session reads this file first and updates it last, following
 | 7 | Phase 5: blood accounting | DONE | `8338c98da` | 2026-10-22 |
 | 8 | Phase 7: registration and client registration | DONE | `3e8b213d4`, `291731d6f` | 2026-10-22 |
 | 9 | Phase 6: combat targeting and damage attribution | DONE | `3b841ba03`, `7f0c1968d`, `5fa01de44`, `c9af6c6c3` | 2026-10-22 |
-| 10 | Phases 8 + 9: rendering plumbing and animation conventions | IN PROGRESS | items 1-8: `a53982248`, `1f642dccf`, `af24ecea6`, `9690741ce`, `e1245b2de`, `da80a7f2a`, `9136d673d`, see the step entry | 2026-10-23 |
+| 10 | Phases 8 + 9: rendering plumbing and animation conventions | IN PROGRESS | items 1-9: `a53982248`, `1f642dccf`, `af24ecea6`, `9690741ce`, `e1245b2de`, `da80a7f2a`, `9136d673d`, `5d539f5fb`, see the step entry | 2026-10-23 |
 | 11 | Phase 10: god-class decomposition | NOT STARTED | | |
 | 12 | Phase 11: persistence authority migrations | NOT STARTED | | |
 | 13 | Phases 12 + 13: content, worldgen, data, tooling, standards | NOT STARTED | | |
@@ -177,6 +177,7 @@ them green.
 | `common/entity/boss/BossReplayClockTest` | 10 | A-1: the three `VesperAnimClock` cases, tolerance and re-keying, the reset rule of `sample`, the keyed constructor, and a 200-run fuzz against the old Vesper clock and Annetta's start-tick clock |
 | `architecture/PlayerAnimationGuardrailTest` | 10 | A-3: the staff-planting, warp-chair and casting third-person poses are called only from `PlayerAnimationRegistry`, and the registry only from `MixinHumanoidModel`; the ten first-person `RenderHandEvent` handlers keep their priorities (HIGHEST planting and staff morph, HIGH injection and microscope, NORMAL torch, fungal projection and axonal, LOW morphling hand, LOWEST casting and held weapon) |
 | `client/player/PlayerAnimationRegistryTest` | 10 | A-3: the third-person pose order and which poses claim the frame |
+| `architecture/AnimationTimeGuardrailTest` | 10 | A-4: no `getTimer().getGameTimeDeltaPartialTick(`, `getGameTime() + partial…` or `tickCount + partial…` in client or mixin code outside `AnimationTime`; the three common-side visual helpers and the 29 wall-clock client classes are listed |
 | `architecture/ParticleDataGuardrailTest` | 10 | V-6: the particle data classes are `ColorParticleOptions` plus three listed ones with their payloads; every particle type is a `HemoParticleType`; no `createData` helper outside `HemoParticleData` |
 | `common/particle/data/ColorParticleOptionsTest` | 10 | V-6: the colour particle's network form is the old serialized-colour UTF-8 string byte for byte, its command form is float fields `r`, `g`, `b`, and a decoded particle belongs to the type that decoded it |
 | `client/screen/skilltree/harbinger/VeinBackgroundStyleTest` | 10 | V-1: the named vein styles (progress with its deep palette, crimson, machine, station) keep the values of the copies they replaced, including each style's vertex order |
@@ -880,10 +881,10 @@ them green.
   | 5. Shared material quad encoder (V-3) | DONE | `e1245b2de` |
   | 6. Shader noise include (V-5) | DONE | `da80a7f2a` |
   | 7. `BossReplayClock` / `BossMoveTimeline` (A-1) | DONE (A-1b PENDING) | `9136d673d` |
-  | 8. Player-animation registry (A-3) | DONE | the commit after `9136d673d` |
-  | 9. `AnimationTime` (A-4) | NOT STARTED | |
+  | 8. Player-animation registry (A-3) | DONE | `5d539f5fb` |
+  | 9. `AnimationTime` (A-4) | DONE (A-4 PENDING) | the commit after `5d539f5fb` |
   | V-4 tube frames (optional, last) | NOT STARTED | |
-- **Test counts before → after (so far):** `test` 4,010 → 4,017 (item 1) → 4,026 (item 2) → 4,031 (item 3) → 4,034 (item 4) → 4,038 (item 5) → 4,040 (item 6) → 4,048 (item 7) → 4,052 (item 8), 0 failures. `alphaCheck`
+- **Test counts before → after (so far):** `test` 4,010 → 4,017 (item 1) → 4,026 (item 2) → 4,031 (item 3) → 4,034 (item 4) → 4,038 (item 5) → 4,040 (item 6) → 4,048 (item 7) → 4,052 (item 8) → 4,055 (item 9), 0 failures. `alphaCheck`
   not yet run in this step.
 - **Impact map:** one read-only reviewer listed every chrome, render-type, particle, dispatch, encoder, shader-noise,
   boss-clock, player-animation and time-source site with the tests that pin them. It is not committed (it is a
@@ -1125,8 +1126,32 @@ them green.
 - **Item 8 metrics:** `src/main` 1 class added; pose entry points called from the mixin 3 → 1.
 - **Item 8 tests:** `WaistPivotRulesTest` (the reset now precedes the casting entry in the registry list) and
   `LivingTorchReworkSourceTest` (the mixin calls the registry) repointed.
+- **Item 9, `AnimationTime` (A-4):**
+  - **`AnimationTime`** (`client/render`): `partialTick()` (the frame timer with `runsNormally = false`, which reads 1
+    under `/tick freeze`), `partialTickWhileFrozen()` (`true`), `gameTime(level, partialTick)` and `age(entity,
+    partialTick)` with float and double overloads, `gameTime(level)` and `gameTimeAsDouble(level)` for game time at the
+    frame's partial tick. Each method body is the expression it replaced, so the arithmetic type and evaluation order
+    are unchanged.
+  - **Migrated (190 sites in 138 files):** every client and mixin `X.getTimer().getGameTimeDeltaPartialTick(…)`,
+    `X.getGameTime() + partial…` and `X.tickCount + partial…`. A sum was replaced only where nothing beside it binds
+    tighter or regroups it (no cast, `*`, `/`, `%`, `+` or `-` on its left; no `*`, `/` or `%` on its right). The four
+    `(float) level.getGameTime() + partialTicks` model sites take a float partial tick, so binary promotion already made
+    them the same sum. `X.getGameTime() + (double) partialTick` became `gameTimeAsDouble`.
+  - **Not changed (A-4 stays PENDING):** wall-clock animation (29 client classes: monolith and Qliphoth item
+    renderers, the Liber tab views, hint screens, the Mnemonic Reliquary hold timer and others, pinned by the
+    guardrail) and the per-frame `animTime += 0.016` counters. Moving any of them onto game time changes how they
+    behave under `/tick freeze` and pause, which is the A-4 decision. Render events and HUD layers keep the partial tick
+    they are handed. The three common-side helpers (`AwakenedIchorianSigilEntity`, `HumanitySpriteEntity`,
+    `CovenantThroneBlockEntity`) cannot name a client class and are listed.
+  - **Visual check:** the HUD layer review (`after9`) is byte-identical to the baseline in all 8 scenes, overlays whose
+    time reads moved included. The screen chrome review matches item 1's result in 24 of 30 screens. The other six are
+    the wall-clock screens, which vary between runs: the five item 1 named, plus Vascular View (4 pixels), whose vein
+    clock reads `Util.getMillis` twice in its first frame. Item 9 did not touch that screen. Rite floor and Outpouring
+    (`after9`) match their baselines by eye. Shots: `build/step10-review/item9/`.
+- **Item 9 metrics:** `src/main` 138 files, 190 time reads moved to 1 helper; raw client time reads left 0.
+- **Item 9 tests:** `BestiaryEntityPreviewSourceTest` repointed to `AnimationTime.partialTick()`.
 - **Pending approvals:** A-4 and V-3b stay PENDING (items 9 and 5); V-6b was added by item 3, V-3c by item 5 and A-1b by item 7.
-- **Handoff notes (next: item 9):**
+- **Handoff notes (next: step close):**
   - **Baseline worktree:** `../Hemomancy-step10-before` holds `29a5576ae` with a `libs` junction. Remove the junction
     with `rmdir` before `git worktree remove --force`.
   - **Review clients:** a fresh game directory without `options.txt` stops at the first-launch screen and the driver

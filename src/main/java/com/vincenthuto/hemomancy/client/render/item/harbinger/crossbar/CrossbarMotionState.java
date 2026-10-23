@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.item.harbinger.crossbar;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.world.PuppetStringStates;
 import com.vincenthuto.hemomancy.common.entity.projectile.CircusKnifeProjectileEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.BoundPuppeteerSummon;
@@ -47,7 +48,7 @@ final class CrossbarMotionState {
 		if (STATES.size() > 16) STATES.values().removeIf(state -> now - state.lastSeen > FORGET_TICKS);
 		CrossbarMotionState state = STATES.computeIfAbsent(new Key(holder.getUUID(), crossbar), key -> new CrossbarMotionState());
 		state.advance(holder, crossbar);
-		return CrossbarMotionRules.pose(holder.tickCount + partialTick,
+		return CrossbarMotionRules.pose(AnimationTime.age(holder, partialTick),
 				Mth.lerp(partialTick, state.previousEngage, state.engage),
 				CrossbarMotionRules.tug(state.tugAge + partialTick),
 				CrossbarMotionRules.lift(state.liftAge + partialTick));

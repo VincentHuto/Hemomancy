@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.client.model.entity.boss.annetta.StainedPriestessModel;
 import com.vincenthuto.hemomancy.client.model.item.unstained.AnnettasSanguisLanceaModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.PriestessCombatRules;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.StainedLanceEntity;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.AnnettasSanguisLanceaItemRenderer;
@@ -31,7 +32,7 @@ public class StainedLanceRenderer extends EntityRenderer<StainedLanceEntity> {
 
     @Override
     public void render(StainedLanceEntity lance, float yaw, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int light) {
-        float time = lance.tickCount + partialTick;
+        float time = AnimationTime.age(lance, partialTick);
         float planted = lance.plantedAge(partialTick);
         float yRot = Mth.lerp(partialTick, lance.yRotO, lance.getYRot()) * Mth.DEG_TO_RAD;
         float xRot = Mth.lerp(partialTick, lance.xRotO, lance.getXRot()) * Mth.DEG_TO_RAD;

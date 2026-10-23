@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world.rite.escalation;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -30,7 +31,7 @@ public final class RiteSocketMarkerRenderer {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.level == null) return;
 		Vec3 camera = mc.gameRenderer.getMainCamera().getPosition();
-		double time = mc.level.getGameTime() + partialTick;
+		double time = AnimationTime.gameTime(mc.level, partialTick);
 		MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
 		VertexConsumer blood = null;
 		for (ActiveRiteData.RiteEntry rite : ActiveRiteClientData.getActiveRites()) {

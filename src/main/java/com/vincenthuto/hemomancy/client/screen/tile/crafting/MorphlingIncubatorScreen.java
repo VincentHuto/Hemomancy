@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.tile.crafting;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
 import com.vincenthuto.hemomancy.client.screen.widget.BloodVolumeBarWidget;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.MorphlingIncubatorMenu;
@@ -103,7 +104,7 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 
 	private float getAnimationTime(float partialTicks) {
 		if (this.minecraft != null && this.minecraft.level != null) {
-			return (this.minecraft.level.getGameTime() + partialTicks) * 0.05f;
+			return AnimationTime.gameTime(this.minecraft.level, partialTicks) * 0.05f;
 		}
 		return Util.getMillis() * 0.001f;
 	}

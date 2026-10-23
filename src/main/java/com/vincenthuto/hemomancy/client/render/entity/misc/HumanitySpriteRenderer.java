@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.entity.misc;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -58,7 +59,7 @@ public final class HumanitySpriteRenderer extends EntityRenderer<HumanitySpriteE
 			MultiBufferSource buffer, int packedLight) {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.level == null || entity.isInvisible()) return;
-		float time = (float) (entity.level().getGameTime() + partialTick);
+		float time = (float) AnimationTime.gameTime(entity.level(), partialTick);
 		Vec3 position = entity.getPosition(partialTick);
 		double scale = entity.renderScale(partialTick);
 		float emergence = entity.emergenceProgress(partialTick);

@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.armor.BloodAvatarModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.manipulation.animus.AvatarManifestationRules;
@@ -63,7 +64,7 @@ public final class AvatarFirstPersonRenderer {
 		float pitch = Mth.lerp(partialTick, player.xRotO, player.getXRot());
 		float limbAmount = Math.min(1.0F, player.walkAnimation.speed(partialTick));
 		float limbSwing = player.walkAnimation.position(partialTick);
-		float age = player.tickCount + partialTick;
+		float age = AnimationTime.age(player, partialTick);
 		model.attackTime = player.getAttackAnim(partialTick);
 		model.riding = player.isPassenger();
 		model.young = false;
@@ -89,7 +90,7 @@ public final class AvatarFirstPersonRenderer {
 				: com.vincenthuto.hemomancy.client.render.world.AnimusMortemRenderTypes.AVATAR;
 		MultiBufferSource.BufferSource buffer = minecraft.renderBuffers().bufferSource();
 		VertexConsumer consumer = buffer.getBuffer(renderType);
-        com.vincenthuto.hemomancy.client.render.world.AnimusMortemRenderTypes.begin(player.level().getGameTime()+partialTick);
+        com.vincenthuto.hemomancy.client.render.world.AnimusMortemRenderTypes.begin(AnimationTime.gameTime(player.level(), partialTick));
         if(!transition.warping())consumer=new com.vincenthuto.hemomancy.client.render.world.BloodSurfaceVertices(consumer);
 		int packedLight = LevelRenderer.getLightColor(player.level(), player.blockPosition());
 		model.head.visible = shouldRenderHelmet(stats.stage());

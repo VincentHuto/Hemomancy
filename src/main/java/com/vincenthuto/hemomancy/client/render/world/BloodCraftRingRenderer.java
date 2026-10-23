@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.world;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodCraftClientData;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -50,7 +51,7 @@ public class BloodCraftRingRenderer {
 		if (mc.level == null) return;
 
 		MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
-		float currentTime = mc.level.getGameTime() + partialTick;
+		float currentTime = AnimationTime.gameTime(mc.level, partialTick);
 		Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
 
 		// Two separate passes so only one non-fixed render type is active at a time.

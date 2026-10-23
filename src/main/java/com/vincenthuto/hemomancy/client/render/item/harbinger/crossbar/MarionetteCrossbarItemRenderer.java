@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.MarionetteCrossbarModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.world.PerformerHandAnchors;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.MarionetteCrossbarItem;
 import net.minecraft.client.Minecraft;
@@ -70,9 +71,9 @@ public final class MarionetteCrossbarItemRenderer extends BlockEntityWithoutLeve
 		CrossbarHolderTracker.Holder tracked = thirdPerson ? CrossbarHolderTracker.current() : null;
 		LivingEntity holder = firstPerson ? mc.player : tracked != null ? tracked.entity() : null;
 		UUID crossbar = MarionetteCrossbarItem.getCrossbarId(stack);
-		float partialTick = mc.getTimer().getGameTimeDeltaPartialTick(false);
+		float partialTick = AnimationTime.partialTick();
 		CrossbarMotionRules.Pose pose = holder == null ? IDLE : CrossbarMotionState.pose(holder, crossbar, partialTick);
-		model.pose(pose, holder == null ? 0.0F : holder.tickCount + partialTick);
+		model.pose(pose, holder == null ? 0.0F : AnimationTime.age(holder, partialTick));
 
 		poseStack.pushPose();
 		poseStack.translate(0.5D, 0.5D, 0.5D);

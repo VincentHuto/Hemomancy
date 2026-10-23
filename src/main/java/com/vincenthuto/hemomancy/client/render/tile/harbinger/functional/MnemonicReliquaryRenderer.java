@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.functional;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.MnemonicReliquaryBlock;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.MnemonicReliquaryBlockEntity;
 import net.minecraft.client.Minecraft;
@@ -55,7 +56,7 @@ public class MnemonicReliquaryRenderer implements BlockEntityRenderer<MnemonicRe
 
 		pose.pushPose();
 		if (open > 0 && reliquary.getLevel() != null) {
-			float time = reliquary.getLevel().getGameTime() + partialTicks;
+			float time = AnimationTime.gameTime(reliquary.getLevel(), partialTicks);
 			pose.translate(0, (RELIC_RISE + Mth.sin(time * .1F) * RELIC_BOB) * eased / 16F, 0);
 		}
 		renderPart(mc, "relic", pose, buffers, light, overlay, 1F);

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import net.minecraft.client.model.BookModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.resources.ResourceLocation;
@@ -69,7 +70,7 @@ public final class EnzymaticScriptoriumRenderer implements BlockEntityRenderer<E
             case EAST -> -90; case SOUTH -> 180; case WEST -> 90; default -> 0;
         }));
         pose.translate(-0.5D, 0, -0.5D);
-        float time = station.getLevel().getGameTime() + partialTick;
+        float time = AnimationTime.gameTime(station.getLevel(), partialTick);
         pose.pushPose();
         pose.translate(0.5D, 0.97D + Math.sin(time * 0.045D) * 0.015D, 0.375D);
         pose.mulPose(Axis.YP.rotationDegrees(90));

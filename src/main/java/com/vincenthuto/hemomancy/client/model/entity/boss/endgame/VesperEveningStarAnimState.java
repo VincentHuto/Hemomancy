@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.model.entity.boss.endgame;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.entity.boss.BossReplayClock;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheEveningStarEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperWeaponAction;
@@ -81,7 +82,7 @@ public final class VesperEveningStarAnimState {
 
 	/** Advances everything to this frame. Safe to call more than once per frame: a zero step changes nothing. */
 	public void update(VesperTheEveningStarEntity entity, float partial) {
-		float age = entity.tickCount + partial;
+		float age = AnimationTime.age(entity, partial);
 		// The renderer and the model both update each frame; the second call must keep the frame's step, not zero it,
 		// or the pose blend never moves off its first frame.
 		if (started && age == lastAge) return;

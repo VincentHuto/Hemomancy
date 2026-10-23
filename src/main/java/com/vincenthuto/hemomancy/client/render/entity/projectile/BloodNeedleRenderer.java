@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.entity.projectile;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -25,11 +26,11 @@ public class BloodNeedleRenderer<T extends BloodNeedleEntity> extends EntityRend
 	public void render(T entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int packedLightIn) {
         if (entityIn.isCoronationSword()) {
-            com.vincenthuto.hemomancy.client.render.world.AnimusMortemRenderTypes.begin(entityIn.level().getGameTime()+partialTicks);
+            com.vincenthuto.hemomancy.client.render.world.AnimusMortemRenderTypes.begin(AnimationTime.gameTime(entityIn.level(), partialTicks));
             var direction = entityIn.getDeltaMovement();
             if (direction.lengthSqr() < .0001) direction = entityIn.getLookAngle();
             com.vincenthuto.hemomancy.client.render.world.ManipulationVisualRenderer.projectileSword(
-                    matrixStackIn, bufferIn, direction, entityIn.swordOpacity(), entityIn.tickCount + partialTicks,entityIn.getId());
+                    matrixStackIn, bufferIn, direction, entityIn.swordOpacity(), AnimationTime.age(entityIn, partialTicks),entityIn.getId());
         }
         // Ordinary needles are drawn with their wake in the shared blood pass.
 		super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);

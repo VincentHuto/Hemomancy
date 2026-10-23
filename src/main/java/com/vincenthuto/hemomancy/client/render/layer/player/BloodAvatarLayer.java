@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.armor.BloodAvatarModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.manipulation.animus.AvatarManifestationRules;
@@ -73,7 +74,7 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 		var stats = AvatarManifestationRules.stats(transition.form()).orElse(null);
 		if (stats == null) return;
 
-		float age = ent.tickCount + pPartialTicks;
+		float age = AnimationTime.age(ent, pPartialTicks);
 		modelBloodAvatar.prepareMobModel(ent, pLimbSwing, pLimbSwingAmount, pPartialTicks);
 		this.getParentModel().copyPropertiesTo(modelBloodAvatar);
 		modelBloodAvatar.setStage(stats.stage());
@@ -89,7 +90,7 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 				? bloodTransitionType(player, ms, age, transition)
 				: com.vincenthuto.hemomancy.client.render.world.AnimusMortemRenderTypes.AVATAR;
 		VertexConsumer consumer = pBuffer.getBuffer(renderType);
-        com.vincenthuto.hemomancy.client.render.world.AnimusMortemRenderTypes.begin(player.level().getGameTime()+pPartialTicks);
+        com.vincenthuto.hemomancy.client.render.world.AnimusMortemRenderTypes.begin(AnimationTime.gameTime(player.level(), pPartialTicks));
         if(!transition.warping())consumer=new com.vincenthuto.hemomancy.client.render.world.BloodSurfaceVertices(consumer);
 		modelBloodAvatar.renderToBuffer(ms, consumer, pPackedLight, OverlayTexture.NO_OVERLAY,
 				transition.warping() ? BLOOD_TRANSITION_COLOR : packColor(0.5F, 0.5F, 0.5F, 0.3F));

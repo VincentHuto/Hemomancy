@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.world.rite.escalation;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.client.render.world.CardinalRiteFogLightning;
 import com.vincenthuto.hemomancy.common.rite.CardinalRiteInstability;
@@ -53,7 +54,7 @@ public final class RiteSkyWound {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.level == null) return;
 		Vec3 camera = mc.gameRenderer.getMainCamera().getPosition();
-		float time = mc.level.getGameTime() + partialTick;
+		float time = AnimationTime.gameTime(mc.level, partialTick);
 		MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
 		for (RiteWorldState.World world : RiteWorldState.worlds()) {
 			Shape shape = shape(world, partialTick);

@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.MycelialLanternBlock;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.MycelialLanternBlockEntity;
 import com.vincenthuto.hutoslib.math.Vector3;
@@ -78,7 +79,7 @@ public class MycelialLanternRenderer implements BlockEntityRenderer<MycelialLant
 
     private void renderDisplayItem(MycelialLanternBlockEntity te, ItemStack stack, float partialTick,
             PoseStack poseStack, MultiBufferSource buffers, int itemLight, int overlay) {
-        float age = te.getLevel() != null ? te.getLevel().getGameTime() + partialTick : partialTick;
+        float age = te.getLevel() != null ? AnimationTime.gameTime(te.getLevel(), partialTick) : partialTick;
         poseStack.pushPose();
         poseStack.translate(0.5D, ITEM_Y + Math.sin(age * 0.08F) * 0.02D, 0.5D);
         poseStack.mulPose(Vector3.YP.rotationDegrees(age * 2.0F).toMoj());

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.BloodPoolSurface;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.AnnettaPoolEntity;
@@ -34,7 +35,7 @@ public class AnnettaPoolRenderer extends EntityRenderer<AnnettaPoolEntity> {
 
     @Override
     public void render(AnnettaPoolEntity pool, float yaw, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int light) {
-        float time = pool.tickCount + partialTick;
+        float time = AnimationTime.age(pool, partialTick);
         float radius = pool.radius() * (1.0F + 0.02F * Mth.sin(time * 0.08F));
         Kind kind = pool.kind();
         poseStack.pushPose();
@@ -43,7 +44,7 @@ public class AnnettaPoolRenderer extends EntityRenderer<AnnettaPoolEntity> {
         float lift = AnnettaPoolLayers.layer(pool.getId());
         if (kind == Kind.INFECTED) {
             // The same living blood as a brazier bowl or the Bloodwell basin, simmering, with the infection veined through it.
-            float shaderTime = (float) ((pool.level().getGameTime() + partialTick) % 24000.0D);
+            float shaderTime = (float) (AnimationTime.gameTime(pool.level(), partialTick) % 24000.0D);
             // The infected pool shader: the brazier/Bloodwell blood surface, ichor veined through it, a ragged splash edge.
             VertexConsumer blood = buffer.getBuffer(HemoRenderTypes.infectedPool(shaderTime, Math.floorMod(pool.getId() * 37, 1000)));
             BloodPoolSurface.draw(pose.pose(), blood, 0.0F, lift, 0.0F, radius * 1.25F, 0, 60, 0, 238);

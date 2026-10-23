@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.functional;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.geometry.SanguineConduitCoreGeometry;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.SanguineConduitBlockEntity;
@@ -60,7 +61,7 @@ public class SanguineConduitBlockRenderer implements BlockEntityRenderer<Sanguin
 			return;
 		}
 
-		double time = mc.level.getGameTime() + partialTick;
+		double time = AnimationTime.gameTime(mc.level, partialTick);
 		long seed = be.getBlockPos().asLong();
 		float phaseOffset = (float) ((seed & PHASE_SEED_MASK) / (double) PHASE_SEED_MASK);
 		float phaseRadians = (float) (phaseOffset * Math.PI * 2.0);

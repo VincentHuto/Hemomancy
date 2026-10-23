@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.world;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.model.item.MarionetteCrossbarModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.crossbar.CrossbarMotionRules;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.crossbar.CrossbarStringAnchors;
 import com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperTheCrownedRefusalEntity;
@@ -104,7 +105,7 @@ public final class PuppeteerThreadRenderer {
 				? performerAnchor(performer, partialTick)
 				: entityAnchor(controller, partialTick, WILD_PUPPETEER_ANCHOR_SCALE)).subtract(camera);
 		Vec3 end = entityAnchor(doll, partialTick, WILD_DOLL_ANCHOR_SCALE).subtract(camera);
-		renderThread(poseStack, consumer, start, end, doll.tickCount + partialTick, 1.0F, false);
+		renderThread(poseStack, consumer, start, end, AnimationTime.age(doll, partialTick), 1.0F, false);
 	}
 
 	/** Wild Blood Drunk puppeteers and Circus performers both raise Enthralled Dolls on strings. */
@@ -136,7 +137,7 @@ public final class PuppeteerThreadRenderer {
 		}
 		// The control thread lets go while the strings above haul a recalled body away.
 		float fade = (float) (PuppeteerSummonRules.dismissalAlpha(dismissalTicks, partialTick)
-				* PuppetStringStates.controlThreadFade(summon.getId(), level.getGameTime() + partialTick));
+				* PuppetStringStates.controlThreadFade(summon.getId(), AnimationTime.gameTime(level, partialTick)));
 		if (fade <= 0.01F) {
 			return;
 		}
@@ -158,7 +159,7 @@ public final class PuppeteerThreadRenderer {
 				&& bound.hemomancy$getCrossbarUUID() != null
 				&& !bound.hemomancy$isTrialSummon()
 				&& BoundSummonBehavior.hasEquippedMorphling(owner);
-		renderThread(poseStack, consumer, start, end, summon.tickCount + partialTick, fade, gnawed);
+		renderThread(poseStack, consumer, start, end, AnimationTime.age(summon, partialTick), fade, gnawed);
 	}
 
 	private static void renderThread(PoseStack poseStack, VertexConsumer consumer,

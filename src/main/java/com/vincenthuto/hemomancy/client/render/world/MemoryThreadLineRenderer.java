@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.world;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.memory.LastDeathMemory;
 import com.vincenthuto.hemomancy.common.item.harbinger.memory.MemoryThreadCurveRules;
@@ -51,7 +52,7 @@ public final class MemoryThreadLineRenderer {
 		MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
 		VertexConsumer consumer = buffer.getBuffer(RenderType.lineStrip());
 		PoseStack.Pose pose = poseStack.last();
-		float time = player.tickCount + partialTick;
+		float time = AnimationTime.age(player, partialTick);
 
 		int start = Math.max(0, points.size() - MAX_RENDERED_POINTS);
 		List<MemoryThreadCurveRules.Point> controlPoints = points.subList(start, points.size()).stream()
@@ -81,7 +82,7 @@ public final class MemoryThreadLineRenderer {
 		MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
 		VertexConsumer consumer = buffer.getBuffer(RenderType.lineStrip());
 		PoseStack.Pose pose = poseStack.last();
-		float time = player.tickCount + partialTick;
+		float time = AnimationTime.age(player, partialTick);
 
 		for (int i = 0; i <= 10; i++) {
 			float t = i / 10.0F;

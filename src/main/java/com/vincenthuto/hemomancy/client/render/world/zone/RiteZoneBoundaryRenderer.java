@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.world.zone;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
 import com.vincenthuto.hemomancy.common.rite.zone.RiteZoneKind;
@@ -51,7 +52,7 @@ public final class RiteZoneBoundaryRenderer {
 		if (level == null || mc.player == null) return;
 
 		Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
-		float time = level.getGameTime() + partialTick;
+		float time = AnimationTime.gameTime(level, partialTick);
 		boolean particleTick = level.getGameTime() != lastParticleTick
 				&& mc.options.particles().get() != ParticleStatus.MINIMAL;
 		if (particleTick) lastParticleTick = level.getGameTime();

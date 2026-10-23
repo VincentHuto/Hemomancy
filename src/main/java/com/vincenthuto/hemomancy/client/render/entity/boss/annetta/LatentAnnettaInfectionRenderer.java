@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.entity.boss.annetta;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.boss.annetta.LatentAnnettaInfectionModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.BloodPoolSurface;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.entity.boss.annetta.AnnettaEncounterRules;
@@ -49,7 +50,7 @@ public class LatentAnnettaInfectionRenderer extends MobRenderer<LatentAnnettaInf
         float spread = HemoEasing.smoothstep((entity.getEmergeTick() + partialTick - LatentCombatRules.EMERGE_HIDDEN) / 14.0F);
         float dying = entity.deathTime > 0 ? 1.0F - Math.min(1.0F, (entity.deathTime + partialTick) / 20.0F) : 1.0F;
         if (spread <= 0.0F || dying <= 0.0F) return;
-        float shaderTime = (float) ((entity.level().getGameTime() + partialTick) % 24000.0D);
+        float shaderTime = (float) (AnimationTime.gameTime(entity.level(), partialTick) % 24000.0D);
         int seed = Math.floorMod(entity.getId() * 53, 1000);
         BloodPoolSurface.draw(poseStack.last().pose(), buffer.getBuffer(HemoRenderTypes.infectedPool(shaderTime, seed)),
                 0.0F, 0.004F, 0.0F, STAIN_RADIUS * (0.4F + 0.6F * spread), 0, 40, 0, Math.round(225 * dying));

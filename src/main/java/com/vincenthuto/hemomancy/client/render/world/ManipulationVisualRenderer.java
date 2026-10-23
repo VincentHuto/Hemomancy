@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
@@ -50,7 +51,7 @@ public final class ManipulationVisualRenderer {
                 if (!cue.life.retiring() && sameSource(cue.packet, packet)) {
                     if (packet.ticks() <= 0 || emptyCount(packet)) retire(cue,current);
                     else {
-                        cue.chargeProgress.update(packet.radius(),now+Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false));
+                        cue.chargeProgress.update(packet.radius(),now+AnimationTime.partialTick());
                         cue.packet=packet;
                         cue.life.refresh(now,packet.ticks());
                     }
@@ -161,7 +162,7 @@ public final class ManipulationVisualRenderer {
         var mc = Minecraft.getInstance();
         if (world != mc.level) return;
         float partial = event.getPartialTick().getGameTimeDeltaPartialTick(false);
-        double time = world.getGameTime() + partial;
+        double time = AnimationTime.gameTime(world, partial);
         Vec3 camera = event.getCamera().getPosition();
         Vec3 right = new Vec3(new org.joml.Vector3f(1, 0, 0).rotate(event.getCamera().rotation()));
         Vec3 up = new Vec3(new org.joml.Vector3f(0, 1, 0).rotate(event.getCamera().rotation()));
@@ -703,7 +704,7 @@ public final class ManipulationVisualRenderer {
         p.pushPose();
         Vec3 d=direction.lengthSqr()<1e-8?new Vec3(0,1,0):direction.normalize();
         p.mulPose(new org.joml.Quaternionf().rotationTo(0,1,0,(float)d.x,(float)d.y,(float)d.z));
-        AnimusMortemRenderTypes.begin(Minecraft.getInstance().level.getGameTime()+Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false));
+        AnimusMortemRenderTypes.begin(AnimationTime.gameTime(Minecraft.getInstance().level));
         var vertices=new UndulatingVertexConsumer(formingProjectile(new BloodSurfaceVertices(buffers.getBuffer(AnimusMortemRenderTypes.ANIMUS)),age),
                 new ManipulationUndulation(ManipulationVisuals.Form.CROWN,age,age,seed,1,Vec3.ZERO));
         VisceralMesh.sword(p,vertices,alpha,age);

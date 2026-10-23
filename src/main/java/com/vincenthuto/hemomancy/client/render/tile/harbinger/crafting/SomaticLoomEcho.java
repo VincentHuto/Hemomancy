@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.client.player.CastingTrackRules;
 import com.vincenthuto.hemomancy.client.player.tracks.AimLayers;
 import com.vincenthuto.hemomancy.client.player.tracks.CastingTracks;
 import com.vincenthuto.hemomancy.client.player.CastingPose;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.echo.EchoCast;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.echo.EchoCasts;
 import com.vincenthuto.hemomancy.client.render.world.ThreadKnotGeometry;
@@ -81,7 +82,7 @@ final class SomaticLoomEcho {
 		if (manip == null || !dissolving && !te.isWeaving() || te.getLevel() == null) return;
 		boolean climax = !dissolving && te.isInClimax();
 		float c = climax ? Mth.clamp((te.getClimaxTicks() + partialTicks) / SomaticWeaveRules.CLIMAX_TICKS, 0, 1) : 0;
-		float time = te.getLevel().getGameTime() + partialTicks;
+		float time = AnimationTime.gameTime(te.getLevel(), partialTicks);
 		int total = 0, woven = 0;
 		var board = dissolving ? snapshot.board() : te.getEngram();
 		if (board != null)
@@ -187,7 +188,7 @@ final class SomaticLoomEcho {
 	void playBeat(SomaticLoomBlockEntity te, BloodManipulation manip, float strength) {
 		var level = Minecraft.getInstance().level;
 		if (level == null || manip == null) return;
-		float time = level.getGameTime() + Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
+		float time = AnimationTime.gameTime(level);
 		BEATS.put(te.getBlockPos().immutable(), new Beat(time, manip, strength));
 		float figure = SomaticLoomEffectRules.echoLook(te.upgradeTier()).weavingScale() * (0.55f + 0.45f * strength);
 		Vec3 front = forward(te);

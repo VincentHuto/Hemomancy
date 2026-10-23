@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.world;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.player.LivingTorchBreathParticleMotion;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.ParticleStatus;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -30,7 +31,7 @@ public final class LivingTorchFlames {
         Vec3 clipped = level.clip(new ClipContext(tip, end, ClipContext.Block.COLLIDER,
                 ClipContext.Fluid.NONE, caster)).getLocation();
         lifetime = Math.min(lifetime, tip.distanceTo(clipped) / velocity.length());
-        double now = level.getGameTime() + Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
+        double now = AnimationTime.gameTime(level);
         FLAMES.add(new Flame(tip, velocity, now, lifetime, caster.getId() * 31 + tongue * 17 + (int)level.getGameTime()));
     }
 

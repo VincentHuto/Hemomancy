@@ -55,7 +55,7 @@ public final class BestiaryEntityPreviewSourceTest {
 		assertTrue("preview uses a deeper gui depth window than vanilla inventory preview",
 				previewSource.contains("PREVIEW_GUI_DEPTH = 150.0F"));
 		assertTrue("preview renderer should animate using client partial tick time",
-				previewSource.contains("getGameTimeDeltaPartialTick"));
+				previewSource.contains("AnimationTime.partialTick()"));
 		assertTrue("preview renderer should keep vanilla's stable preview camera orientation",
 				previewSource.contains("overrideCameraOrientation"));
 	}

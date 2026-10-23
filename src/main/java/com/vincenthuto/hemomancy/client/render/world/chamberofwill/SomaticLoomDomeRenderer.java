@@ -9,6 +9,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.SomaticLoomEffectRules;
 import com.vincenthuto.hemomancy.client.render.tile.harbinger.crafting.engram.EngramDissolve;
 import com.vincenthuto.hemomancy.common.tile.harbinger.crafting.SomaticLoomBlockEntity;
@@ -180,7 +181,7 @@ public final class SomaticLoomDomeRenderer {
 				RenderSystem.defaultBlendFunc();
 				RenderSystem.disableBlend();
 			}
-			float time = (loom.getLevel().getGameTime() + partial) * theme.motionMultiplier();
+			float time = AnimationTime.gameTime(loom.getLevel(), partial) * theme.motionMultiplier();
 			drawMembrane(world, centre, cam, radius, theme, time, loom.isPaused());
 			SomaticLoomSeamRenderer.render(world, loom, centre, cam, radius, theme, partial);
 		} finally {

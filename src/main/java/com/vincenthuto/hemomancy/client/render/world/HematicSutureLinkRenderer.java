@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.world;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.data.SutureLinkClientData;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.routing.BloodRoutingMode;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import net.minecraft.client.Minecraft;
@@ -39,7 +40,7 @@ public final class HematicSutureLinkRenderer {
 
 		for (SutureLinkClientData.Entry entry : entries) {
 			Vec3 end = Vec3.atCenterOf(entry.pos()).subtract(camera);
-			drawSuture(pose, consumer, start, end, entry, level.getGameTime() + partialTick);
+			drawSuture(pose, consumer, start, end, entry, AnimationTime.gameTime(level, partialTick));
 			drawMarker(pose, consumer, end, entry);
 		}
 

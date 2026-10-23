@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.FirstPersonPalm;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.HeldWeaponPose;
 import com.vincenthuto.hemomancy.client.render.outpouring.OutpouringAnchors;
@@ -27,7 +28,7 @@ public final class CellHandStreams {
 
     /** The slot of {@code caster}'s drawn absorption stream rooted nearest {@code source}, or -1 when none is close. */
     public static int nearest(Entity caster, Vec3 source, float partial) {
-        double time = caster.level().getGameTime() + partial;
+        double time = AnimationTime.gameTime(caster.level(), partial);
         Vec3 feet = caster.getPosition(partial);
         int best = -1;
         double closest = ROOTED * ROOTED;
@@ -49,7 +50,7 @@ public final class CellHandStreams {
      * no longer drawn.
      */
     public static Vec3 along(Entity caster, int slot, double f, double lane, double laneAngle, float partial) {
-        Vec3[] stream = StreamInertia.drawn(caster.getId(), slot, caster.level().getGameTime() + partial);
+        Vec3[] stream = StreamInertia.drawn(caster.getId(), slot, AnimationTime.gameTime(caster.level(), partial));
         if (stream == null) return null;
         Vec3 feet = caster.getPosition(partial);
         int n = stream.length;

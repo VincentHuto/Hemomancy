@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.screen.tile.crafting;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.VeinBackgroundRenderer;
 import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
 import com.vincenthuto.hemomancy.client.screen.widget.BloodVolumeBarWidget;
@@ -100,7 +101,7 @@ public class ResonantForgeScreen extends AbstractContainerScreen<ResonantForgeMe
             g.fill(x + 14, y + 123, x + 14 + width, y + 126, 0xFFB22C35);
         }
 
-        float time = minecraft == null || minecraft.player == null ? 0 : (minecraft.player.tickCount + partialTick) / 20F;
+        float time = minecraft == null || minecraft.player == null ? 0 : AnimationTime.age(minecraft.player, partialTick) / 20F;
         bloodBounds = BloodVolumeBarWidget.render(g, x + 105, y + 31, 10, 90,
                 menu.blood(), menu.capacity(), time, OUTER, INNER);
     }

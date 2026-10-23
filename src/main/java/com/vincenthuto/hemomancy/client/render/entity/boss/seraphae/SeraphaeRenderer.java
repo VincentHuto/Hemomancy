@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.entity.boss.seraphae;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.boss.seraphae.SeraphaeModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.layer.mob.SeraphaeWingGlowLayer;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae.SeraphaeEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.saint.seraphae.SeraphaeState;
@@ -39,7 +40,7 @@ public class SeraphaeRenderer extends MobRenderer<SeraphaeEntity, SeraphaeModel<
 			base *= pulse;
 		} else if (entity.getSeraphaeState() == SeraphaeState.CONDENSING) {
 			float closing = Mth.clamp((80.0F - entity.getStateTimer()) / 80.0F, 0.0F, 1.0F);
-			float pulse = 1.0F + (float) Math.sin((entity.tickCount + partialTick) * 0.55F) * 0.035F;
+			float pulse = 1.0F + (float) Math.sin(AnimationTime.age(entity, partialTick) * 0.55F) * 0.035F;
 			base *= (0.98F - closing * 0.05F) * pulse;
 		}
 		poseStack.scale(base, base, base);

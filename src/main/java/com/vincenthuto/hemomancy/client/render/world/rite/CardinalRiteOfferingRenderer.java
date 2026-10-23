@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world.rite;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import static com.vincenthuto.hemomancy.client.render.world.rite.CardinalRiteVisualRules.*;
 import static com.vincenthuto.hemomancy.client.render.world.rite.RiteSurface.*;
 
@@ -59,7 +60,7 @@ public final class CardinalRiteOfferingRenderer {
 			return;
 		}
 		Vec3 camera = mc.gameRenderer.getMainCamera().getPosition();
-		double time = mc.level.getGameTime() + partialTick;
+		double time = AnimationTime.gameTime(mc.level, partialTick);
 		MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
 		AnimusMortemRenderTypes.begin(time);
 

@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.functional;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.client.model.tile.functional.FloatingHeartModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.item.QliphothSeedTendrilEffects;
 import com.vincenthuto.hemomancy.client.render.world.CardinalFloorConsecrationRenderer;
 import com.vincenthuto.hemomancy.common.rite.CardinalFocusMediumVisualRules;
@@ -57,7 +58,7 @@ public class CardinalFocusRenderer implements BlockEntityRenderer<CardinalFocusB
 		}
 		if (focus.getTempleDisplay() == null && !focus.hasMedium()) return;
 		float time = focus.getLevel() == null ? 0.0F
-				: focus.getLevel().getGameTime() + partialTick;
+				: AnimationTime.gameTime(focus.getLevel(), partialTick);
 		if (focus.getTempleDisplay() != null) {
 			float pulse = focus.hasMedium() ? 0.19F
 					: 0.15F + (float) Math.sin(time * 0.12F) * 0.015F;

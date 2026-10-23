@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.shader.ExtendedShaderInstance;
 import com.vincenthuto.hemomancy.client.render.shader.ShaderHolder;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
@@ -72,7 +73,7 @@ public final class OutpouringScreenPasses {
         if (lights.isEmpty() && shades.isEmpty()) return;
         Matrix4f invProj = new Matrix4f(event.getProjectionMatrix()).invert();
         Matrix4f invView = new Matrix4f(event.getModelViewMatrix()).invert();
-        float time = (float) ((mc.level.getGameTime() + partial) % 24000);
+        float time = (float) (AnimationTime.gameTime(mc.level, partial) % 24000);
         if (!lights.isEmpty()) pass(ShaderInit.CAST_LUMEN, pack(lights), null, casters(camera, partial, EnumBloodTendency.LUX), invProj, invView, time);
         if (!shades.isEmpty()) {
             List<double[]> spheres = new ArrayList<>(), info = new ArrayList<>();

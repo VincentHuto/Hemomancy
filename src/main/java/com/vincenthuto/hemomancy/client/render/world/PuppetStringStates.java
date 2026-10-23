@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.world;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationVisuals.Form;
 import com.vincenthuto.hemomancy.common.network.particle.ManipulationVisualPacket;
 import com.vincenthuto.hemomancy.common.summon.PuppetStringsRules;
@@ -54,7 +55,7 @@ public final class PuppetStringStates {
 
 	/** Lowers an arriving body or hauls a departing one on its strings, scaling about the head they hold. */
 	public static void applyBodyPose(Entity entity, float partialTicks, PoseStack poseStack) {
-		BodyPose pose = body(entity.getId(), entity.level().getGameTime() + partialTicks);
+		BodyPose pose = body(entity.getId(), AnimationTime.gameTime(entity.level(), partialTicks));
 		if (pose == null) return;
 		float scale = (float) pose.scale();
 		poseStack.translate(0.0D, pose.lift() + entity.getBbHeight() * (1.0F - scale), 0.0D);

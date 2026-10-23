@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.QliphothBloomClientData;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.init.FluidInit;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.OculifloraReticularisItem;
@@ -54,7 +55,7 @@ public final class OculifloraRevealRenderer {
 		VertexConsumer consumer = buffer.getBuffer(RenderType.lines());
 		PoseStack.Pose pose = poseStack.last();
 		Vec3 camera = mc.gameRenderer.getMainCamera().getPosition();
-		float time = level.getGameTime() + partialTick;
+		float time = AnimationTime.gameTime(level, partialTick);
 
 		renderEntityMarkers(pose, consumer, level, player, camera, partialTick, time);
 		renderBloomMarkers(pose, consumer, player, camera, time);

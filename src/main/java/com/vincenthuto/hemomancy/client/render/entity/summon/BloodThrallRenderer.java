@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.summon.BloodThrallModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.entity.summon.BloodThrallEntity;
 
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -109,7 +110,7 @@ public class BloodThrallRenderer extends MobRenderer<BloodThrallEntity, BloodThr
         float dz = (float) (ownerZ - thrallZ);
 
         // Time-based animation for organic pulsing
-        float time = (thrall.tickCount + partialTicks) * 0.15f;
+        float time = AnimationTime.age(thrall, partialTicks) * 0.15f;
 
         PoseStack.Pose pose = poseStack.last();
 

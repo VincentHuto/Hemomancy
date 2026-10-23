@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.LivingFlailModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.item.harbinger.tool.living.*;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
@@ -39,7 +40,7 @@ public final class LivingStaffMorphRenderer {
 		ResourceLocation texture = textureFor(stack);
 		Minecraft.getInstance().getItemRenderer().renderStatic(stack, context, packedLight,
 				OverlayTexture.NO_OVERLAY, poseStack, new MorphBufferSource(buffer,
-						HemoRenderTypes.hermitFarewellDissolve(texture, holder.tickCount + partialTick,
+						HemoRenderTypes.hermitFarewellDissolve(texture, AnimationTime.age(holder, partialTick),
 								dissolveProgress, seed(holder, arm))), holder.level(), holder.getId());
 		Minecraft.getInstance().getItemRenderer().renderStatic(stack, context, packedLight,
 				OverlayTexture.NO_OVERLAY, poseStack, new MorphBufferSource(buffer,
@@ -94,7 +95,7 @@ public final class LivingStaffMorphRenderer {
 	static RenderType bloodMelt(LivingEntity holder, HumanoidArm arm, PoseStack poseStack,
 			float dissolveProgress, float partialTick) {
 		Vector3f center = poseStack.last().pose().transformPosition(new Vector3f());
-		return HemoRenderTypes.cardinalStaffBloodMelt(holder.tickCount + partialTick,
+		return HemoRenderTypes.cardinalStaffBloodMelt(AnimationTime.age(holder, partialTick),
 				seed(holder, arm), 0.055F, center.x, center.y, center.z,
 				dissolveProgress, center.y - 0.65F, 1.3F);
 	}

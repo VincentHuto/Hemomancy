@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.*;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.CrimsonFireRenderer;
 import com.vincenthuto.hemomancy.client.render.world.*;
 import com.vincenthuto.hemomancy.client.screen.overlay.*;
@@ -52,7 +53,7 @@ public final class ScreenOverlayEvents {
 
     private static void renderSanguineOmenWorldGrade(GuiGraphics graphics) {
         Minecraft minecraft = Minecraft.getInstance();
-        float partialTicks = minecraft.getTimer().getGameTimeDeltaPartialTick(true);
+        float partialTicks = AnimationTime.partialTickWhileFrozen();
         if(com.vincenthuto.hemomancy.client.screen.overlay.AxonalTravelView.renderGrade(graphics,
                 graphics.guiWidth(),graphics.guiHeight(),partialTicks)) return;
         if(NaeglerophaeonCaptureOverlay.renderWorldGrade(graphics,

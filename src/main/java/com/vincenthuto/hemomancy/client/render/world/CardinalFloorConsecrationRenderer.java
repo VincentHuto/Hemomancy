@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -95,7 +96,7 @@ public final class CardinalFloorConsecrationRenderer {
 		Level level = focus.getLevel();
 		if (level == null) return;
 		double time = level.getGameTime() + (double) partialTick;
-		float now = level.getGameTime() + partialTick;
+		float now = AnimationTime.gameTime(level, partialTick);
 		var id = focus.getFormedFloor();
 		Direction forwards = focus.getFormedForwards();
 		float age = now - focus.getFormationStart();

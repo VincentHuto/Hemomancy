@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.entity.weave;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.world.ThreadKnotGeometry;
 import com.vincenthuto.hemomancy.common.entity.weave.ThreadHazardEntity;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
@@ -24,7 +25,7 @@ public class ThreadHazardRenderer extends EntityRenderer<ThreadHazardEntity> {
 
 	@Override
 	public void render(ThreadHazardEntity hazard, float yaw, float partialTicks, PoseStack stack, MultiBufferSource buffer, int light) {
-		float time = hazard.tickCount + partialTicks;
+		float time = AnimationTime.age(hazard, partialTicks);
 		float[] c = ThreadKnotGeometry.vivid(hazard.tendency().getColor());
 		float r = hazard.radius();
 		float pulse = 0.25f + 0.15f * Mth.sin(time * 0.2f);

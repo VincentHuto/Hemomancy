@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.entity.misc;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.entity.utility.UnsettledIchorEntity;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -23,13 +24,13 @@ public final class UnsettledIchorRenderer extends EntityRenderer<UnsettledIchorE
 	public void render(UnsettledIchorEntity entity, float yaw, float partialTick, PoseStack stack,
 			MultiBufferSource buffers, int packedLight) {
 		stack.pushPose();
-		stack.translate(0.0D, 0.2D + Math.sin((entity.tickCount + partialTick) * 0.18D) * 0.06D, 0.0D);
+		stack.translate(0.0D, 0.2D + Math.sin(AnimationTime.age(entity, partialTick) * 0.18D) * 0.06D, 0.0D);
 		float radius = 0.16F + Math.min(0.18F, entity.getBloodMl() / 300.0F);
 		Matrix4f matrix = stack.last().pose();
 		renderSphere(buffers.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE), matrix, radius,
-				entity.tickCount + partialTick, 0.85F, 0.02F, 0.035F, 0.82F);
+				AnimationTime.age(entity, partialTick), 0.85F, 0.02F, 0.035F, 0.82F);
 		renderSphere(buffers.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW), matrix, radius + 0.09F,
-				entity.tickCount + partialTick, 0.55F, 0.0F, 0.02F, 0.25F);
+				AnimationTime.age(entity, partialTick), 0.55F, 0.0F, 0.02F, 0.25F);
 		stack.popPose();
 		super.render(entity, yaw, partialTick, stack, buffers, packedLight);
 	}

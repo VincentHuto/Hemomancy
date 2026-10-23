@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.entity.mob.will;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.will.WillAnchorEntity;
 import com.vincenthuto.hemomancy.common.item.harbinger.scar.fungal.OculifloraReticularisItem;
 import net.minecraft.client.Minecraft;
@@ -35,7 +36,7 @@ public class WillAnchorRenderer extends EntityRenderer<WillAnchorEntity> {
 		}
 
 		poseStack.pushPose();
-		float pulse = 0.5F + 0.5F * (float) Math.sin((entity.tickCount + partialTicks) * 0.22F);
+		float pulse = 0.5F + 0.5F * (float) Math.sin(AnimationTime.age(entity, partialTicks) * 0.22F);
 		float radius = 0.55F + pulse * 0.18F;
 		float height = 1.4F + pulse * 0.35F;
 		int alpha = 105 + (int) (pulse * 95.0F);

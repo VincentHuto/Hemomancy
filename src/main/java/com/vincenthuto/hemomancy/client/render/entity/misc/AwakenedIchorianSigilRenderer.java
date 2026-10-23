@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.entity.misc;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.world.SanguineSphereRenderer;
 import com.vincenthuto.hemomancy.common.entity.utility.AwakenedIchorianSigilEntity;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
@@ -33,7 +34,7 @@ public final class AwakenedIchorianSigilRenderer extends EntityRenderer<Awakened
 		IchorianSigilDefinition sigil = IchorianSigilRegistry.get(sigilId);
 		if (sigil == null || sigil.nodes().isEmpty()) return;
 
-		float time = entity.tickCount + partialTick;
+		float time = AnimationTime.age(entity, partialTick);
 		float peel = entity.getPeelProgress(partialTick);
 		int color = sigil.color();
 

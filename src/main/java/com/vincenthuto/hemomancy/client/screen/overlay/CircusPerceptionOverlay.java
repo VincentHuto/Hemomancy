@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.screen.overlay;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.common.circus.CircusProgressRules;
 import com.vincenthuto.hemomancy.common.entity.npc.circus.CircusCarouselEntity;
@@ -109,7 +110,7 @@ public final class CircusPerceptionOverlay {
 
 		Vec3 camera = minecraft.gameRenderer.getMainCamera().getPosition();
 		Vec3 center = carousel.position();
-		float time = minecraft.level.getGameTime() + partialTick;
+		float time = AnimationTime.gameTime(minecraft.level, partialTick);
 		MultiBufferSource.BufferSource buffers = minecraft.renderBuffers().bufferSource();
 		VertexConsumer consumer = buffers.getBuffer(HemoRenderTypes.QLIPHOTH_GLOW);
 		Matrix4f matrix = poseStack.last().pose();

@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
 import com.mojang.blaze3d.platform.Lighting;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.HarbingerChromeRenderer;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.ScreenDrawUtils;
@@ -90,7 +91,7 @@ public final class BestiaryEntityPreview {
 		PreviewRotations rotations = capturePreviewRotations(entity);
 		boolean scissorEnabled = false;
 		try {
-			float partialTick = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
+			float partialTick = AnimationTime.partialTick();
 			float animationAge = previewAnimationTick(entity.level().getGameTime(), partialTick);
 			applyPreviewRotation(entity, yaw, pitch);
 			applyPreviewAnimationAge(entity, animationAge);

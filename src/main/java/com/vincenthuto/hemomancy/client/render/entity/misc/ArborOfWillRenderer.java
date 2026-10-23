@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.entity.misc;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.CachedMeshModelView;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillPoint;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgress;
@@ -67,7 +68,7 @@ public final class ArborOfWillRenderer extends EntityRenderer<ArborOfWillEntity>
             MultiBufferSource buffers, int light) {
         stack.pushPose();
         PoseStack.Pose pose = stack.last();
-        float time = arbor.tickCount + partial;
+        float time = AnimationTime.age(arbor, partial);
         float height = (float) ArborOfWillVisualRules.treeHeight(arbor.degree());
         float rootRadius = (float) ArborOfWillVisualRules.rootRadius(arbor.degree(), arbor.chamberRadius());
         int whorls = ArborOfWillVisualRules.visibleWhorls(arbor.degree());

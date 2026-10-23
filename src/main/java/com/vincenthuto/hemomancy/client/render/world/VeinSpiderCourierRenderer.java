@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.client.data.VeinSpiderCourierClientData;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.util.HemoEasing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -39,7 +40,7 @@ public final class VeinSpiderCourierRenderer {
         MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
         VertexConsumer lines = buffer.getBuffer(RenderType.lines());
         PoseStack.Pose pose = poseStack.last();
-        float time = level.getGameTime() + partialTick;
+        float time = AnimationTime.gameTime(level, partialTick);
         List<RenderedCourierItem> items = new ArrayList<>(entries.size());
 
         for (VeinSpiderCourierClientData.Entry entry : entries) {

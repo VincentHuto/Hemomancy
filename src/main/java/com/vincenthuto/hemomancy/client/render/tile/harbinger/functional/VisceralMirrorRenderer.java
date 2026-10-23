@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.tile.functional.VisceralMirrorModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.VisceralMirrorBlockEntity;
 import com.vincenthuto.hutoslib.math.Vector3;
@@ -190,7 +191,7 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
 
         // Animated time for ripple synchronisation
             float time = te.getLevel() != null
-                ? te.getLevel().getGameTime() + partialTicks
+                ? AnimationTime.gameTime(te.getLevel(), partialTicks)
                 : 0f;
 
         // ── Phase 1: write mirror quad into stencil ──────────────────────
@@ -343,7 +344,7 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
                 float headPitch = net.minecraft.util.Mth.lerp(partialTicks, clientPlayer.xRotO, clientPlayer.getXRot());
                 float limbSwing = clientPlayer.walkAnimation.position(partialTicks);
                 float limbSwingAmount = clientPlayer.walkAnimation.speed(partialTicks);
-                float ageInTicks = clientPlayer.tickCount + partialTicks;
+                float ageInTicks = AnimationTime.age(clientPlayer, partialTicks);
 
                 model.attackTime = clientPlayer.getAttackAnim(partialTicks);
                 model.riding = clientPlayer.isPassenger();
@@ -431,7 +432,7 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
 
         // Animated time value (ticks + partial for smooth motion)
             float time = te.getLevel() != null
-                ? te.getLevel().getGameTime() + partialTicks
+                ? AnimationTime.gameTime(te.getLevel(), partialTicks)
                 : 0f;
 
         // Increase ripple during ritual

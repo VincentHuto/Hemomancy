@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.util.Mth;
@@ -32,7 +33,7 @@ public final class BlackVeilRenderer {
     public static void render(PoseStack poses, float partialTick) {
         if (!ready()) return;
         var batch = new LuxUmbraBatch();
-        LuxUmbraRenderTypes.begin(world.getGameTime() + partialTick);
+        LuxUmbraRenderTypes.begin(AnimationTime.gameTime(world, partialTick));
         collect(poses, batch, partialTick);
         var buffers = Minecraft.getInstance().renderBuffers().bufferSource();
         batch.draw(dark -> buffers.getBuffer(LuxUmbraRenderTypes.UMBRA));

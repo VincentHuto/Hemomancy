@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.functional;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.ClairaudiographBlock;
 import com.vincenthuto.hemomancy.common.tile.harbinger.functional.ClairaudiographBlockEntity;
 import com.vincenthuto.hemomancy.client.render.item.harbinger.AmbergrisCylinderRenderer;
@@ -17,7 +18,7 @@ public class ClairaudiographRenderer implements BlockEntityRenderer<Clairaudiogr
     private static final float PX=1/16F,CARVE_TICKS=80;
     public ClairaudiographRenderer(BlockEntityRendererProvider.Context context){}
     @Override public void render(ClairaudiographBlockEntity be,float partial,PoseStack pose,MultiBufferSource buffers,int light,int overlay){
-        var mc=Minecraft.getInstance();float time=be.getLevel()==null?0:be.getLevel().getGameTime()+partial;
+        var mc=Minecraft.getInstance();float time=be.getLevel()==null?0:AnimationTime.gameTime(be.getLevel(), partial);
         pose.pushPose();pose.translate(.5,0,.5);pose.mulPose(Axis.YP.rotationDegrees(-be.getBlockState().getValue(ClairaudiographBlock.FACING).toYRot()+180));pose.translate(-.5,0,-.5);
         // Cylinder on the lathe mandrel, spinning about its own axis.
         var cylinder=be.inventory.getStackInSlot(1);

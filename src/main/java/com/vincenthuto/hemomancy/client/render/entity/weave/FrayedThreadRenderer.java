@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.entity.weave;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.world.ThreadKnotGeometry;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomFrame;
@@ -48,7 +49,7 @@ public class FrayedThreadRenderer extends EntityRenderer<FrayedThreadEntity> {
 		Vec3 eye = camera.getPosition().subtract(origin);
 		Vector3f right = new Vector3f(camera.getLeftVector()).negate();
 		Vector3f up = new Vector3f(camera.getUpVector());
-		float time = thread.tickCount + partialTicks;
+		float time = AnimationTime.age(thread, partialTicks);
 		float seed = (thread.getId() * 0.618f) % 1f;
 		float[] colour = ThreadKnotGeometry.vivid(thread.tendency().getColor());
 		float unravel = thread.unravelling() <= 0 ? 0f

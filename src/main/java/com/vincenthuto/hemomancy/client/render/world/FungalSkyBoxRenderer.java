@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
@@ -81,7 +82,7 @@ public class FungalSkyBoxRenderer {
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, rainFade);
 
 		stack.pushPose();
-		stack.mulPose(Axis.YN.rotationDegrees((level.getGameTime() + partialTicks) * 0.03F));
+		stack.mulPose(Axis.YN.rotationDegrees(AnimationTime.gameTime(level, partialTicks) * 0.03F));
 		Matrix4f matrix = stack.last().pose();
 
 		RenderSystem.setShaderTexture(0, EARTH_LOCATION);
@@ -122,7 +123,7 @@ public class FungalSkyBoxRenderer {
 			stack.pushPose();
 			stack.mulPose(Axis.XP.rotationDegrees(layerTilts[layer]));
 			stack.mulPose(Axis.ZP.rotationDegrees(layerAxisTilts[layer]));
-			stack.mulPose(Axis.YP.rotationDegrees((level.getGameTime() + partialTicks) * layerSpeeds[layer]));
+			stack.mulPose(Axis.YP.rotationDegrees(AnimationTime.gameTime(level, partialTicks) * layerSpeeds[layer]));
 
 			RenderSystem.setShaderColor(1.0F, 1.0F, 0.0F, 1.0F);
 			FogRenderer.setupNoFog();

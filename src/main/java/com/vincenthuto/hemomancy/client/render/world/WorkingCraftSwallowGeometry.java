@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.world;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.rite.floor.CardinalRiteFloorVisualRules;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.phys.Vec3;
@@ -31,7 +32,7 @@ final class WorkingCraftSwallowGeometry {
 		if (level == null) return;
 		List<WorkingCraftSwallowRenderer.View> views = WorkingCraftSwallowRenderer.views(partialTick);
 		if (views.isEmpty()) return;
-		double time = level.getGameTime() + partialTick;
+		double time = AnimationTime.gameTime(level, partialTick);
 		float heartbeat = CardinalRiteFloorVisualRules.heartbeat((float) time);
 		VertexConsumer vertices = batch.vertices(LuxUmbraBatch.Material.ANIMUS);
 		for (WorkingCraftSwallowRenderer.View view : views) {

@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.plant;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.PelagicCreatureModel;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.block.harbinger.plant.BoneWormColonyBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.plant.GiantTubeWormColonyBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.plant.PelagicColonyBlock;
@@ -28,7 +29,7 @@ public class PelagicColonyRenderer implements BlockEntityRenderer<PelagicColonyB
             case TUBE_WORM -> PelagicCreatureModel.Style.TUBE_WORM;
         };
         var model = models.get(style);
-        float age = colony.getLevel() == null ? 0 : colony.getLevel().getGameTime() + partial + colony.getBlockPos().getX() * 7;
+        float age = colony.getLevel() == null ? 0 : AnimationTime.gameTime(colony.getLevel(), partial) + colony.getBlockPos().getX() * 7;
         int worms = switch (kind) {
             case BONE_WORM -> colony.getBlockState().getValue(BoneWormColonyBlock.WORMS);
             case TUBE_WORM -> colony.getBlockState().getValue(GiantTubeWormColonyBlock.WORMS);

@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.rite.harbinger.ActiveRiteData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -77,7 +78,7 @@ public class GourdVineRenderer {
 		if (mc.level == null) return;
 
 		MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
-		float currentTime = mc.level.getGameTime() + partialTick;
+		float currentTime = AnimationTime.gameTime(mc.level, partialTick);
 		Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
 
         // Shared BufferSource finishes the previous non-fixed buffer when its type changes.

@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.screen.item.living;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.item.harbinger.morphlings.MorphlingIdentity;
@@ -504,7 +505,7 @@ public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		if (button == 0 && this.menu.handler != null) {
-			float time = getAnimationTime(Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false));
+			float time = getAnimationTime(AnimationTime.partialTick());
 			int displayX = this.leftPos + DISPLAY_X;
 			int displayY = this.topPos + DISPLAY_Y;
 			for (int i = 0; i < this.menu.slotcount; i++) {

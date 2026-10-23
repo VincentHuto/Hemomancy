@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.tile.crafting;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.screen.widget.BloodVolumeBarWidget;
 import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.VeinBackgroundRenderer;
 import com.vincenthuto.hemomancy.client.screen.util.InventoryPanelTextures;
@@ -55,7 +56,7 @@ public final class EnzymaticScriptoriumScreen extends AbstractContainerScreen<En
                 x + (imageWidth - InventoryPanelTextures.BLOODY.width()) / 2, y + 126);
         bloodBarBounds = BloodVolumeBarWidget.Bounds.EMPTY;
         if (minecraft != null && minecraft.player != null) {
-            float time = (minecraft.player.tickCount + partialTick) / 20.0F;
+            float time = AnimationTime.age(minecraft.player, partialTick) / 20.0F;
             bloodBarBounds = BloodVolumeBarWidget.render(g, x + 200, y + 27, 10, 91,
                     menu.bloodVolume(), menu.bloodCapacity(), time, OUTER, INNER);
         }

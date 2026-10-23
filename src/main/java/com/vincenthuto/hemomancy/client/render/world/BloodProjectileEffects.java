@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodCloudCarrierEntity;
 import com.vincenthuto.hemomancy.common.entity.projectile.BloodShotEntity;
@@ -143,19 +144,19 @@ public final class BloodProjectileEffects {
                 Entity owner=shot.visualForm()==3?shot.getOwner():null;
                 Vec3 tether=owner==null?null:owner.getPosition(partial).add(0,owner.getBbHeight()*.62,0);
                 BloodShotGeometry.shot(p,v,trim(path,shot.visualForm()==2?4:3),alive?shot.getDeltaMovement():Vec3.ZERO,camera,right,up,time,
-                        shot.tickCount+partial,shot.visualForm(),seed,alpha,trailAlpha,alive && !trail.splashed,tether);
+                        AnimationTime.age(shot, partial),shot.visualForm(),seed,alpha,trailAlpha,alive && !trail.splashed,tether);
                 continue;
             }
             if(entity instanceof BloodNeedleEntity needle && needle.isForged()) {
                 // Forged iron is drawn in the solid pass; here only its blood wake, glint and wound.
                 ForgedNeedleGeometry.flightFlow(p,batch.vertices(LuxUmbraBatch.Material.DUCTILIS),trim(path,needle.isLanceNeedle()?3:2),
                         heading(trail,alive && !trail.splashed?needle.getDeltaMovement():Vec3.ZERO),camera,right,up,time,
-                        needle.tickCount+partial,seed,alive?alpha*needle.swordOpacity():0,trailAlpha,needle.isLanceNeedle(),trail.splashed);
+                        AnimationTime.age(needle, partial),seed,alive?alpha*needle.swordOpacity():0,trailAlpha,needle.isLanceNeedle(),trail.splashed);
                 continue;
             }
             if(entity instanceof BloodNeedleEntity needle && !needle.isCoronationSword()) {
                 BloodNeedleGeometry.flight(p,v,trim(path,needle.isLanceNeedle()?3:2),heading(trail,alive && !trail.splashed?needle.getDeltaMovement():Vec3.ZERO),camera,right,up,time,
-                        needle.tickCount+partial,seed,alive?alpha*needle.swordOpacity():0,trailAlpha,needle.isLanceNeedle(),
+                        AnimationTime.age(needle, partial),seed,alive?alpha*needle.swordOpacity():0,trailAlpha,needle.isLanceNeedle(),
                         trail.splashed,needle.shakeTime-partial);
                 continue;
             }
@@ -184,7 +185,7 @@ public final class BloodProjectileEffects {
             var path=new ArrayList<>(trail.points);
             if(!path.isEmpty())path.set(path.size()-1,at);else path.add(at);
             ForgedNeedleGeometry.flightIron(p,iron,trim(path,needle.isLanceNeedle()?3:2),
-                    heading(trail,!trail.splashed?needle.getDeltaMovement():Vec3.ZERO),camera,needle.tickCount+partial,
+                    heading(trail,!trail.splashed?needle.getDeltaMovement():Vec3.ZERO),camera,AnimationTime.age(needle, partial),
                     Math.floorMod(needle.getId(),113),needle.swordOpacity(),needle.isLanceNeedle(),trail.splashed,needle.shakeTime-partial);
         }
         p.popPose();

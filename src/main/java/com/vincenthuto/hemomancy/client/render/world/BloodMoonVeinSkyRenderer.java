@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
@@ -80,7 +81,7 @@ public class BloodMoonVeinSkyRenderer {
 		);
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
-		float time   = (level.getGameTime() + partialTick) * 0.045F;
+		float time   = AnimationTime.gameTime(level, partialTick) * 0.045F;
 		Matrix4f mat = poseStack.last().pose();
 		BufferBuilder buf = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 

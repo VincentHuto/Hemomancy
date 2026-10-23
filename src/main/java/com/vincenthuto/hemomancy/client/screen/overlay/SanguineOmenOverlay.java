@@ -5,6 +5,7 @@ import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.shader.ShaderInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -59,7 +60,7 @@ public class SanguineOmenOverlay {
 			return;
 		}
 
-		float time = minecraft.level.getGameTime() + partialTicks;
+		float time = AnimationTime.gameTime(minecraft.level, partialTicks);
 		setUniform(shader, "HemoTime", time);
 		setUniform(shader, "Progress", state.progress(partialTicks));
 		setUniform(shader, "Intensity", alpha);
@@ -96,7 +97,7 @@ public class SanguineOmenOverlay {
 			return;
 		}
 
-		float time = minecraft.level.getGameTime() + partialTicks;
+		float time = AnimationTime.gameTime(minecraft.level, partialTicks);
 		setUniform(shader, "HemoTime", time);
 		setUniform(shader, "Progress", preserveMarkedEyes ? 0.5F : state.progress(partialTicks));
 		setUniform(shader, "Intensity", alpha);

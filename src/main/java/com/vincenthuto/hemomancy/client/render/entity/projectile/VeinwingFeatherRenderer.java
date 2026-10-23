@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.entity.projectile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.common.entity.projectile.VeinwingFeatherEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -29,7 +30,7 @@ public final class VeinwingFeatherRenderer extends EntityRenderer<VeinwingFeathe
 		poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTick, entity.yRotO, entity.getYRot()) - 90.0F));
 		poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTick, entity.xRotO, entity.getXRot())));
 		if (!entity.isEmbedded()) {
-			poseStack.mulPose(Axis.XP.rotationDegrees((entity.tickCount + partialTick) * 36.0F));
+			poseStack.mulPose(Axis.XP.rotationDegrees(AnimationTime.age(entity, partialTick) * 36.0F));
 		}
 		poseStack.scale(0.55F, 0.55F, 0.55F);
 		VertexConsumer out = buffers.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));

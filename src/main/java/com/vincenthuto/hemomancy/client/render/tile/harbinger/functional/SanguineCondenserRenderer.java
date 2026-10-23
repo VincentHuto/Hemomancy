@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.tile.harbinger.functional;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.vincenthuto.hemomancy.client.render.AnimationTime;
 import com.vincenthuto.hemomancy.client.render.BloodPoolSurface;
 import com.vincenthuto.hemomancy.client.render.HemoRenderTypes;
 import com.vincenthuto.hemomancy.client.render.world.SanguineSphereRenderer;
@@ -36,7 +37,7 @@ public class SanguineCondenserRenderer implements BlockEntityRenderer<SanguineCo
     public void render(SanguineCondenserBlockEntity condenser, float partialTick, PoseStack poses,
             MultiBufferSource buffer, int light, int overlay) {
         if (condenser.getLevel() == null) return;
-        double ticks = condenser.getLevel().getGameTime() + partialTick;
+        double ticks = AnimationTime.gameTime(condenser.getLevel(), partialTick);
         double max = condenser.getMaxBloodVolume();
         float fill = max <= 0.0D ? 0.0F : (float) Mth.clamp(condenser.getBloodVolume() / max, 0.0D, 1.0D);
         float surface = (float) SanguineCondenserRules.surfaceHeight(fill);
