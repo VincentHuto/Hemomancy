@@ -8,37 +8,24 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.mission.alchemist.ClinicalBloodProgress;
 import com.vincenthuto.hemomancy.common.mission.artificer.ArtificerProgressionRules;
 import com.vincenthuto.hemomancy.common.station.StationUpgradeCatalog;
-import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.UUIDUtil;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.IntArrayTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.function.Supplier;
 
 /**
@@ -57,11 +44,6 @@ import java.util.function.Supplier;
 @PrefixGameTestTemplate(false)
 public final class DialogueRouteCharacterisationGameTests {
 	private static final String GOLDEN = "/dialogue/route-fingerprints.txt";
-	/** Volatile entity keys that say nothing about a dialogue's outcome. */
-	private static final Set<String> IGNORED = Set.of("Pos", "Motion", "Rotation", "FallDistance", "OnGround", "Air",
-			"Fire", "PortalCooldown", "HurtTime", "HurtByTimestamp", "DeathTime", "AbsorptionAmount", "FallFlying",
-			"recipeBook", "seenCredits", "enteredNetherPosition", "warden_spawn_tracker", "current_explosion_impact_pos",
-			"ignore_fall_damage_from_current_explosion", "current_impulse_context_reset_grace_time");
 
 	private DialogueRouteCharacterisationGameTests() {
 	}
@@ -94,17 +76,8 @@ public final class DialogueRouteCharacterisationGameTests {
 			lines.add(fingerprint(helper, route, route.speaker(), true));
 			lines.add(fingerprint(helper, route, Speaker.NONE, true));
 		}
-		String actual = String.join("\n", lines) + "\n";
-		String golden = golden();
-		if (!actual.equals(golden)) {
-			try {
-				Files.writeString(Path.of("dialogue-route-fingerprints.actual.txt"), actual, StandardCharsets.UTF_8);
-			} catch (IOException exception) {
-				throw new IllegalStateException(exception);
-			}
-			helper.fail(golden == null ? "No dialogue fingerprints recorded yet; wrote dialogue-route-fingerprints.actual.txt"
-					: "Dialogue routes changed; first difference: " + firstDifference(golden, actual));
-		}
+		PlayerFingerprints.assertGolden(helper, GOLDEN, "dialogue-route-fingerprints.actual.txt",
+				String.join("\n", lines) + "\n");
 		helper.succeed();
 	}
 
@@ -241,12 +214,12 @@ public final class DialogueRouteCharacterisationGameTests {
 				case MONOLITH -> SanguineMonolithDialogueTrees.BLOCK_ENTITY_ID;
 				default -> speakerEntity.getId();
 			};
-			CompoundTag before = player.saveWithoutId(new CompoundTag());
-			Set<String> earnedBefore = earned(player);
+			CompoundTag before = PlayerFingerprints.saved(player);
+			Set<String> earnedBefore = PlayerFingerprints.earned(player);
 			DialogueEvent event = new DialogueEvent(player, route.eventId(), entityId);
 			NeoForge.EVENT_BUS.post(event);
-			CompoundTag after = player.saveWithoutId(new CompoundTag());
-			Set<String> earned = earned(player);
+			CompoundTag after = PlayerFingerprints.saved(player);
+			Set<String> earned = PlayerFingerprints.earned(player);
 			earned.removeAll(earnedBefore);
 
 			StringBuilder line = new StringBuilder();
@@ -254,11 +227,11 @@ public final class DialogueRouteCharacterisationGameTests {
 					.append(adept ? " [D7]" : " [D0]")
 					.append(" delivered=").append(event.wasRewardDelivered())
 					.append(" said=").append(captured.chat)
-					.append(" saved=").append(diff(before, after))
-					.append(" drops=").append(drops(level, stand))
+					.append(" saved=").append(PlayerFingerprints.diff(before, after))
+					.append(" drops=").append(PlayerFingerprints.drops(level, stand))
 					.append(" earned=").append(earned);
 			String text = line.toString();
-			text = normalise(text, player, speakerEntity);
+			text = PlayerFingerprints.normalise(text, player, speakerEntity);
 			if (speakerEntity != null) speakerEntity.discard();
 			return text;
 		}
@@ -287,92 +260,5 @@ public final class DialogueRouteCharacterisationGameTests {
 		return entity;
 	}
 
-	private static Set<String> earned(ServerPlayer player) {
-		Set<String> earned = new TreeSet<>();
-		for (AdvancementHolder advancement : player.server.getAdvancements().getAllAdvancements()) {
-			if (!advancement.id().getNamespace().equals("hemomancy")) continue;
-			if (player.getAdvancements().getOrStartProgress(advancement).isDone()) earned.add(advancement.id().getPath());
-		}
-		return earned;
-	}
 
-	/** What changed in the player's saved data, two levels deep, in key order. */
-	private static String diff(CompoundTag before, CompoundTag after) {
-		TreeMap<String, String> changes = new TreeMap<>();
-		Set<String> keys = new TreeSet<>(before.getAllKeys());
-		keys.addAll(after.getAllKeys());
-		for (String key : keys) {
-			if (IGNORED.contains(key)) continue;
-			Tag old = before.get(key);
-			Tag now = after.get(key);
-			if (java.util.Objects.equals(old, now)) continue;
-			if (old instanceof CompoundTag oldCompound && now instanceof CompoundTag nowCompound) {
-				Set<String> inner = new TreeSet<>(oldCompound.getAllKeys());
-				inner.addAll(nowCompound.getAllKeys());
-				for (String innerKey : inner) {
-					Tag a = oldCompound.get(innerKey);
-					Tag b = nowCompound.get(innerKey);
-					if (!java.util.Objects.equals(a, b)) changes.put(key + "." + innerKey, String.valueOf(b));
-				}
-			} else {
-				changes.put(key, String.valueOf(now));
-			}
-		}
-		return changes.toString();
-	}
-
-	private static String drops(ServerLevel level, BlockPos stand) {
-		TreeMap<String, Integer> drops = new TreeMap<>();
-		for (ItemEntity item : level.getEntitiesOfClass(ItemEntity.class, new AABB(stand).inflate(8.0D))) {
-			drops.merge(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item.getItem().getItem()).toString(),
-					item.getItem().getCount(), Integer::sum);
-			item.discard();
-		}
-		return drops.toString();
-	}
-
-	/** Takes out what differs from run to run: the generated player and speaker identities and names. */
-	private static String normalise(String text, ServerPlayer player, Entity speaker) {
-		text = replaceIdentity(text, player.getUUID(), "<player>");
-		text = text.replace(player.getGameProfile().getName(), "<player-name>");
-		if (speaker != null) {
-			text = replaceIdentity(text, speaker.getUUID(), "<speaker>");
-			text = text.replace(speaker.getName().getString(), "<speaker-name>");
-		}
-		// Fresh attachments roll random identities, and a bearing depends on where the test room was placed.
-		text = ANY_UUID_ARRAY.matcher(text).replaceAll("<uuid>");
-		text = ANY_UUID.matcher(text).replaceAll("<uuid>");
-		return BEARING.matcher(text).replaceAll("<n> blocks <direction>");
-	}
-
-	private static final java.util.regex.Pattern ANY_UUID_ARRAY = java.util.regex.Pattern.compile(
-			"\\[I;-?\\d+,-?\\d+,-?\\d+,-?\\d+]");
-	private static final java.util.regex.Pattern ANY_UUID = java.util.regex.Pattern.compile(
-			"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}");
-	private static final java.util.regex.Pattern BEARING = java.util.regex.Pattern.compile(
-			"\\d+ blocks(?: (?:northeast|northwest|southeast|southwest|north|south|east|west))?");
-
-	private static String replaceIdentity(String text, java.util.UUID uuid, String placeholder) {
-		text = text.replace(uuid.toString(), placeholder);
-		return text.replace(new IntArrayTag(UUIDUtil.uuidToIntArray(uuid)).toString(), placeholder);
-	}
-
-	private static String golden() {
-		try (InputStream stream = DialogueRouteCharacterisationGameTests.class.getResourceAsStream(GOLDEN)) {
-			return stream == null ? null : new String(stream.readAllBytes(), StandardCharsets.UTF_8).replace("\r\n", "\n");
-		} catch (IOException exception) {
-			throw new IllegalStateException(exception);
-		}
-	}
-
-	private static String firstDifference(String golden, String actual) {
-		String[] expected = golden.split("\n");
-		String[] got = actual.split("\n");
-		for (int i = 0; i < Math.max(expected.length, got.length); i++) {
-			String e = i < expected.length ? expected[i] : "<none>";
-			String g = i < got.length ? got[i] : "<none>";
-			if (!e.equals(g)) return "line " + (i + 1) + "\n expected " + e + "\n      got " + g;
-		}
-		return "none";
-	}
 }

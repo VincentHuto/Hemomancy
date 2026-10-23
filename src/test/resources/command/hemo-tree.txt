@@ -1,0 +1,179 @@
+hemo permission2
+  blood permission0
+    activate executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+    fill executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+    get executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+    set permission0
+      <amount:double(0.0)> executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+    setmax permission0
+      <amount:double(1.0)> executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+  bloodline permission0
+    disband executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+  bloodmoon permission0
+    cancel executes permission0
+    summon executes permission0
+  chamber permission0
+    size permission0
+      reset executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+      set permission0
+        <radius:integer(3, 10)> suggests executes permission0
+          <player:entity(single=true, playersOnly=true)> executes permission0
+    theme permission0
+      cycle executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+      next executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+      prev executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+      previous executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+      reset executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+      set permission0
+        <theme:string(SINGLE_WORD)> suggests executes permission0
+          <player:entity(single=true, playersOnly=true)> executes permission0
+  degree permission0
+    get executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+    set permission0
+      <degree:integer(0, 8)> executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+  fane permission0
+    preview permission0
+      clear executes permission0
+      member executes permission0
+      mundane executes permission0
+      outsider executes permission0
+      rival executes permission0
+  manipulations permission0
+    add permission0
+      <manipulation:string(SINGLE_WORD)> suggests executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+    clear executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+    level permission0
+      <level:integer(0, 4)> executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+    list executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+    remove permission0
+      <manipulation:string(SINGLE_WORD)> suggests executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+    xp permission0
+      <xp:double(0.0)> executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+  morphling permission0
+    stage permission0
+      get executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+      next executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+      prev executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+      previous executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+      set permission0
+        <stage:string(SINGLE_WORD)> suggests executes permission0
+          <player:entity(single=true, playersOnly=true)> executes permission0
+  organs permission0
+    get executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+    reset executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+    set permission0
+      <organ:string(SINGLE_WORD)> suggests permission0
+        <level:integer(0, 3)> executes permission0
+          <player:entity(single=true, playersOnly=true)> executes permission0
+  qliphoth permission0
+    archon permission0
+      clear executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+      complete executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+      pending executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+    pome permission0
+      reset executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+      set permission0
+        <count:integer(0, 9)> executes permission0
+          <player:entity(single=true, playersOnly=true)> executes permission0
+    tree permission0
+      <stage:string(SINGLE_WORD)> suggests executes permission0
+  skills permission0
+    get executes permission0
+    reset executes permission0
+    setpoints permission0
+      <amount:integer(0)> executes permission0
+  slots permission0
+    equip permission0
+      <manip:string(SINGLE_WORD)> executes permission0
+    get executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+    unequip permission0
+      <manip:string(SINGLE_WORD)> executes permission0
+  summons permission0
+    add permission0
+      <summon:string(SINGLE_WORD)> suggests executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+    clear executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+    list executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+    remove permission0
+      <summon:string(SINGLE_WORD)> suggests executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+  tendency permission0
+    get executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+    max executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+    reset executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+    <tendency:string(SINGLE_WORD)> suggests permission0
+      <value:float(0.0)> executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+  unstained permission0
+    begin executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+    clarity permission0
+      get executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+      set permission0
+        <value:float(0.0, 100.0)> executes permission0
+          <player:entity(single=true, playersOnly=true)> executes permission0
+      unlock executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+    get executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+    max executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+    purity permission0
+      get executes permission0
+        <player:entity(single=true, playersOnly=true)> executes permission0
+      set permission0
+        <value:float(0.0, 100.0)> executes permission0
+          <player:entity(single=true, playersOnly=true)> executes permission0
+    reset executes permission0
+      <player:entity(single=true, playersOnly=true)> executes permission0
+  will permission0
+    ambush permission0
+      anchor permission0
+        <school:string(SINGLE_WORD)> suggests permission0
+          <tier:integer(1, 4)> permission0
+            <broken_count:integer(0, 8)> permission0
+              <sent_present:com.mojang.brigadier.arguments.BoolArgumentType@5a058be5> executes permission0
+                <player:entity(single=true, playersOnly=true)> executes permission0
+      immediate permission0
+        <school:string(SINGLE_WORD)> suggests permission0
+          <tier:integer(1, 4)> permission0
+            <origin:string(SINGLE_WORD)> suggests executes permission0
+              <count:integer(1, 8)> executes permission0
+                <player:entity(single=true, playersOnly=true)> executes permission0
