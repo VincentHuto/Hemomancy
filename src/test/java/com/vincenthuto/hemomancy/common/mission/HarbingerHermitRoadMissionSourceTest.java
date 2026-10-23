@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.mission;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -7,14 +9,12 @@ import java.nio.file.Path;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
-public final class HarbingerHermitRoadMissionSourceTest {
+class HarbingerHermitRoadMissionSourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
 
-	private HarbingerHermitRoadMissionSourceTest() {
-	}
-
-	public static void main(String[] args) throws IOException {
+	@Test
+	void hermitRoadMissionIsWired() throws IOException {
 		mortalDisplayRequiresAndRecordsTheTempleOath();
 		ledgerIsSeparateFromFieldNotesAndUsesGuideRenderer();
 		vicarGrantsLedgerAtFormalContactAndKeepsHermitRoadOptional();
@@ -361,7 +361,7 @@ public final class HarbingerHermitRoadMissionSourceTest {
 				"data/hemomancy/structure/hermitage_remnant.nbt"));
 
 		assertContains("hermitage remnant structure type is registered", structureInit, "hermitage_remnant");
-		assertContains("hermitage remnant uses jigsaw placement", structureClass, "JigsawPlacement.addPieces");
+		assertContains("hermitage remnant uses jigsaw placement", structureClass, "extends HemoJigsawStructure");
 		assertContains("hermitage remnant structure json uses registered type", structureJson,
 				"\"type\": \"hemomancy:hermitage_remnant\"");
 		assertContains("hermitage remnant structure projects to surface", structureJson,

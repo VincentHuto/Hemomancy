@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.mission;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -7,14 +9,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.GZIPInputStream;
 
-public final class VeinMasonMissionSourceTest {
+class VeinMasonMissionSourceTest {
 	private static final Path SOURCE_ROOT = Path.of("src/main/java");
 	private static final Path RESOURCE_ROOT = Path.of("src/main/resources");
 
-	private VeinMasonMissionSourceTest() {
-	}
-
-	public static void main(String[] args) throws IOException {
+	@Test
+	void veinMasonMissionIsWired() throws IOException {
 		anchoriteEntityAndClientWiringExists();
 		anchoriteLessonUsesHighestTendencyPattern();
 		vicarDirectsAdeptPlayersToMasonsRespite();
@@ -138,7 +138,7 @@ public final class VeinMasonMissionSourceTest {
 				"data/hemomancy/structure/masons_respite.nbt"));
 
 		assertContains("masons respite structure type is registered", structureInit, "masons_respite");
-		assertContains("masons respite uses jigsaw placement", structureClass, "JigsawPlacement.addPieces");
+		assertContains("masons respite uses jigsaw placement", structureClass, "extends HemoJigsawStructure");
 		assertContains("masons respite spawns anchorite after placement", structureClass,
 				"EntityInit.harbinger_cicatrix_anchorite.get()");
 		assertContains("masons respite structure json uses registered type", structureJson,

@@ -1,8 +1,6 @@
 package com.vincenthuto.hemomancy.common.worldgen.structure;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.ResonantForgeBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.crafting.SomaticLoomBlock;
 import com.vincenthuto.hemomancy.common.block.harbinger.functional.WarpChairBlock;
@@ -16,9 +14,7 @@ import com.vincenthuto.hemomancy.common.init.StructureInit;
 import com.vincenthuto.hemomancy.common.tile.shared.FillerBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -30,68 +26,39 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LightBlock;
 import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.WorldGenerationContext;
-import net.minecraft.world.level.levelgen.heightproviders.HeightProvider;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.pieces.PiecesContainer;
-import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
-import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
-import net.minecraft.world.level.levelgen.structure.pools.alias.PoolAliasLookup;
-import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure;
-import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
 import net.minecraft.world.phys.AABB;
 
 import java.util.Optional;
 
 /** Courtyard, paired wall segments, gate, and four corner homes assembled by jigsaw pools. */
-public class HarbingerOutpostStructure extends Structure {
-	public static final MapCodec<HarbingerOutpostStructure> CODEC = RecordCodecBuilder
-			.<HarbingerOutpostStructure>mapCodec(instance -> instance.group(settingsCodec(instance),
-					StructureTemplatePool.CODEC.fieldOf("start_pool").forGetter(s -> s.startPool),
-					ResourceLocation.CODEC.optionalFieldOf("start_jigsaw_name").forGetter(s -> s.startJigsawName),
-					Codec.intRange(0, 30).fieldOf("size").forGetter(s -> s.size),
-					HeightProvider.CODEC.fieldOf("start_height").forGetter(s -> s.startHeight),
-					Heightmap.Types.CODEC.optionalFieldOf("project_start_to_heightmap")
-							.forGetter(s -> s.projectStartToHeightmap),
-					Codec.intRange(1, 128).fieldOf("max_distance_from_center")
-							.forGetter(s -> s.maxDistanceFromCenter))
-				.apply(instance, HarbingerOutpostStructure::new));
+public class HarbingerOutpostStructure extends HemoJigsawStructure {
+	public static final MapCodec<HarbingerOutpostStructure> CODEC = codec(HarbingerOutpostStructure::new);
 
-	private final Holder<StructureTemplatePool> startPool;
-	private final Optional<ResourceLocation> startJigsawName;
-	private final int size;
-	private final HeightProvider startHeight;
-	private final Optional<Heightmap.Types> projectStartToHeightmap;
-	private final int maxDistanceFromCenter;
-
-	public HarbingerOutpostStructure(StructureSettings settings, Holder<StructureTemplatePool> startPool,
-			Optional<ResourceLocation> startJigsawName, int size, HeightProvider startHeight,
-			Optional<Heightmap.Types> projectStartToHeightmap, int maxDistanceFromCenter) {
-		super(settings);
-		this.startPool = startPool;
-		this.startJigsawName = startJigsawName;
-		this.size = size;
-		this.startHeight = startHeight;
-		this.projectStartToHeightmap = projectStartToHeightmap;
-		this.maxDistanceFromCenter = maxDistanceFromCenter;
+	public HarbingerOutpostStructure(Structure.StructureSettings settings, Jigsaw jigsaw) {
+		super(settings, jigsaw);
 	}
 
+	@Override
+	protected boolean canGenerateAt(GenerationContext context) {
+		return StructurePlacementChecks.harbingerOutpostSurface(context).isPresent();
+	}
+
+	/** The plaza anchor sits at the checked surface; findGenerationPoint needs that height, so it checks itself. */
 	@Override
 	public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
 		var surface = StructurePlacementChecks.harbingerOutpostSurface(context);
 		if (surface.isEmpty()) return Optional.empty();
-		int offset = startHeight.sample(context.random(),
-				new WorldGenerationContext(context.chunkGenerator(), context.heightAccessor()));
+		int offset = sampleStartHeight(context);
 		ChunkPos chunk = context.chunkPos();
 		// The anchor is under the plaza at local (15, 0, 15); the floor is at local y = 2.
 		BlockPos anchor = new BlockPos(chunk.getMiddleBlockX(), surface.getAsInt() - 2 + offset,
 				chunk.getMiddleBlockZ());
-		return JigsawPlacement.addPieces(context, startPool, startJigsawName, size, anchor, false,
-				Optional.empty(), maxDistanceFromCenter, PoolAliasLookup.EMPTY,
-				JigsawStructure.DEFAULT_DIMENSION_PADDING, LiquidSettings.APPLY_WATERLOGGING);
+		// The outpost ignores project_start_to_heightmap: the anchor height is already the surface.
+		return addPieces(context, anchor, Optional.empty());
 	}
 
 	@Override
