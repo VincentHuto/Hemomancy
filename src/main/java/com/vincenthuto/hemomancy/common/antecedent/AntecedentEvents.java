@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.antecedent;
 
+import com.vincenthuto.hemomancy.common.capability.player.shared.cooldown.PlayerCooldowns;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.network.*;
@@ -35,9 +36,9 @@ public final class AntecedentEvents {
         long now=level.getGameTime();
         for(var player:level.players()) {
             if(player.distanceToSqr(pos.getCenter())>256 || !ListeningScarItem.awake(new TalismanSocket(player).getStackInSlot(0))) continue;
-            var data=player.getPersistentData();
-            if(data.getLong("hemomancy:scar_pulse_until")>now) continue;
-            data.putLong("hemomancy:scar_pulse_until",now+5);
+            var cooldowns=PlayerCooldowns.of(player);
+            if(cooldowns.until(PlayerCooldowns.SCAR_PULSE)>now) continue;
+            cooldowns.setUntil(PlayerCooldowns.SCAR_PULSE,now+5);
             PacketHandler.sendToPlayer(player,new AntecedentEffectPacket(1,pos));
         }
     }

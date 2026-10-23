@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.gametest;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.EnumArchonPath;
+import com.vincenthuto.hemomancy.common.capability.player.shared.cooldown.PlayerCooldowns;
 import com.vincenthuto.hemomancy.common.capability.player.shared.migration.PlayerDataMigrations;
 import com.vincenthuto.hemomancy.common.circus.CircusApprenticeshipProgress;
 import com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress;
@@ -203,6 +204,45 @@ public final class PlayerMigrationGameTests {
 			helper.assertTrue(!player.getPersistentData().contains("hemomancy:pending_whispers"),
 					"The root-key inbox was left behind");
 			assertSettled(helper, player);
+			helper.succeed();
+		}
+	}
+
+	/**
+	 * S-7: the cooldown root keys move into the cooldowns attachment and are removed; an effect window (Silent
+	 * Slipping's duration) is not a cooldown and stays. The tier is kept: the cooldowns survive a reload and reset on a
+	 * death clone and on an End-return clone, as the root keys did.
+	 */
+	@GameTest(template = "empty", batch = "player_migrations")
+	public static void cooldownRootKeysKeepTheirTierInTheAttachment(GameTestHelper helper) {
+		try (CapturedPlayer captured = CapturedPlayer.create(helper)) {
+			ServerPlayer player = load(helper, captured, "cooldown_root_keys");
+			login(player);
+			var cooldowns = PlayerCooldowns.of(player);
+			String[] ids = { PlayerCooldowns.ARMOR_SET_ABILITY_PREFIX + "hemomancy:edacious_bloodburst",
+					PlayerCooldowns.SILENT_SLIPPING, PlayerCooldowns.SILENT_SLIPPING_SHARD_PULSE,
+					PlayerCooldowns.PHANTASMAL_REACTIVE, PlayerCooldowns.SILENT_ARCHON_REFUSAL,
+					PlayerCooldowns.PRISMATIC_FLASH, PlayerCooldowns.SCAR_PULSE, PlayerCooldowns.SCRIPTORIUM_BACKLASH };
+			for (int i = 0; i < ids.length; i++) {
+				helper.assertTrue(cooldowns.until(ids[i]) == 90000L + i, "Cooldown not migrated: " + ids[i]);
+			}
+			var data = player.getPersistentData();
+			helper.assertTrue(data.size() == 1 && data.getLong("hemomancy:silent_slipping_until") == 90008L,
+					"Cooldown root keys were left behind, or the effect window moved: " + data);
+			assertSettled(helper, player);
+
+			try (CapturedPlayer reloaded = CapturedPlayer.create(helper);
+				 CapturedPlayer respawned = CapturedPlayer.create(helper);
+				 CapturedPlayer returned = CapturedPlayer.create(helper)) {
+				reloaded.player.load(player.saveWithoutId(new CompoundTag()));
+				helper.assertTrue(PlayerCooldowns.of(reloaded.player).until(PlayerCooldowns.PRISMATIC_FLASH) == 90005L,
+						"A persisted cooldown must survive a reload");
+				respawned.player.restoreFrom(reloaded.player, false);
+				returned.player.restoreFrom(reloaded.player, true);
+				helper.assertTrue(PlayerCooldowns.of(respawned.player).until(PlayerCooldowns.PRISMATIC_FLASH) == 0L
+						&& PlayerCooldowns.of(returned.player).until(PlayerCooldowns.PRISMATIC_FLASH) == 0L,
+						"Persisted cooldowns must reset on death and End return, as the root keys did");
+			}
 			helper.succeed();
 		}
 	}

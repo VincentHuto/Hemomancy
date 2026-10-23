@@ -49,7 +49,8 @@ public final class ManipulationReactiveEvents {
 	/** Game tick of a melee swing that broke a Penumbral Drift, so the blow it started still lands as an ambush. */
 	private static final Map<UUID, Long> PENUMBRAL_AMBUSH = new HashMap<>();
 	private static final Map<UUID, UnclosingEye> UNCLOSING_EYES = new HashMap<>();
-	private static final Map<String, Long> PASSIVE_COOLDOWNS = new HashMap<>();
+	/** Session tier: each player's passive trigger cooldowns by manipulation name, cleared at respawn and logout. */
+	private static final Map<UUID, Map<String, Long>> PASSIVE_COOLDOWNS = new HashMap<>();
 	private static final List<EclipseWell> ECLIPSE_WELLS = new ArrayList<>();
 	private static final List<GazeSlam> GAZE_SLAMS = new ArrayList<>();
 	private static final List<HematicBeacon> HEMATIC_BEACONS = new ArrayList<>();
@@ -293,10 +294,10 @@ public final class ManipulationReactiveEvents {
         if (player.tickCount % 20 == 0) {
             var data = player.getPersistentData();
             long now=player.level().getGameTime();
-            if(active(player,"sovereign_instinct") && PASSIVE_COOLDOWNS.getOrDefault(player.getUUID()+":sovereign_instinct",0L)<=now)
+            if(active(player,"sovereign_instinct") && passiveCooldown(player,"sovereign_instinct")<=now)
                 ManipulationVisuals.attached(player,ManipulationVisuals.Form.COMMAND,1.8,25,3);
             if(phoenixDebtReady(player)
-                    && PASSIVE_COOLDOWNS.getOrDefault(player.getUUID()+":phoenix_debt",0L)<=now)
+                    && passiveCooldown(player,"phoenix_debt")<=now)
                 ManipulationVisuals.attached(player,ManipulationVisuals.Form.PHOENIX_READY,1,25,1);
             long tithe = data.getLong("hemomancy:crimson_tithe_expiry") - player.level().getGameTime();
             double reserve = com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BorrowedBloodReserve.get(player);
@@ -465,11 +466,15 @@ public final class ManipulationReactiveEvents {
 	}
 
 	private static boolean trigger(ServerPlayer player, BloodManipulation manipulation, int cooldown) {
-		String key = player.getUUID() + ":" + manipulation.getName();
 		long now = player.level().getGameTime();
-		if (PASSIVE_COOLDOWNS.getOrDefault(key, 0L) > now || !manipulation.tryPerformPassiveTrigger(player)) return false;
-		PASSIVE_COOLDOWNS.put(key, now + cooldown);
+		if (passiveCooldown(player, manipulation.getName()) > now || !manipulation.tryPerformPassiveTrigger(player)) return false;
+		PASSIVE_COOLDOWNS.computeIfAbsent(player.getUUID(), id -> new HashMap<>()).put(manipulation.getName(), now + cooldown);
 		return true;
+	}
+
+	private static long passiveCooldown(ServerPlayer player, String name) {
+		Map<String, Long> cooldowns = PASSIVE_COOLDOWNS.get(player.getUUID());
+		return cooldowns == null ? 0L : cooldowns.getOrDefault(name, 0L);
 	}
 
 	private static boolean active(ServerPlayer player, String name) {
@@ -499,7 +504,7 @@ public final class ManipulationReactiveEvents {
 		WARD_REMNANTS.remove(player);
 		PENUMBRAL_AMBUSH.remove(player);
 		UNCLOSING_EYES.remove(player);
-		PASSIVE_COOLDOWNS.keySet().removeIf(key -> key.startsWith(player + ":"));
+		PASSIVE_COOLDOWNS.remove(player);
 		ECLIPSE_WELLS.removeIf(well -> well.owner.equals(player));
 		GAZE_SLAMS.removeIf(slam -> slam.owner.equals(player));
 		HEMATIC_BEACONS.removeIf(beacon -> beacon.owner.equals(player));

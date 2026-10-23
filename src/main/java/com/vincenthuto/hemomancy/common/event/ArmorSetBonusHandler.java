@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.event;
 
+import com.vincenthuto.hemomancy.common.capability.player.shared.cooldown.PlayerCooldowns;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -61,8 +62,6 @@ public class ArmorSetBonusHandler {
 	private static final net.minecraft.resources.ResourceLocation CHITINITE_TOUGHNESS_ID = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "chitinite_toughness");
 	private static final net.minecraft.resources.ResourceLocation MARROW_CROWN_DAMAGE_ID = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "marrow_crown_damage");
 	private static final net.minecraft.resources.ResourceLocation PELAGIC_MOTION_ID = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("hemomancy", "pelagic_motion");
-	private static final String SILENT_ARCHON_COOLDOWN_TAG = "hemomancy:silent_archon_refusal_until";
-	private static final String PRISMATIC_FLASH_COOLDOWN_TAG = "hemomancy:prismatic_flash_until";
 
 	private static final double HEMATIC_IRON_BLOOD_REGEN = 2.0;
 	private static final int HEMATIC_IRON_REGEN_INTERVAL = 20; // Every 20 ticks = 1 second
@@ -252,11 +251,11 @@ public class ArmorSetBonusHandler {
 	private static void triggerPrismaticFlash(Player player, LivingEntity attacker,
 			int speedTicks, int blindnessTicks, int confusionTicks, boolean recordForkAssignment) {
 		long now = player.level().getGameTime();
-		if (player.getPersistentData().getLong(PRISMATIC_FLASH_COOLDOWN_TAG) > now) {
+		if (PlayerCooldowns.of(player).until(PlayerCooldowns.PRISMATIC_FLASH) > now) {
 			return;
 		}
 
-		player.getPersistentData().putLong(PRISMATIC_FLASH_COOLDOWN_TAG, now + PRISMATIC_FLASH_COOLDOWN_TICKS);
+		PlayerCooldowns.of(player).setUntil(PlayerCooldowns.PRISMATIC_FLASH, now + PRISMATIC_FLASH_COOLDOWN_TICKS);
 		player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, speedTicks, 0, false, true, true));
 
 		player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(PRISMATIC_FLASH_RANGE),
@@ -303,7 +302,7 @@ public class ArmorSetBonusHandler {
 		}
 
 		long now = player.level().getGameTime();
-		long cooldownUntil = player.getPersistentData().getLong(SILENT_ARCHON_COOLDOWN_TAG);
+		long cooldownUntil = PlayerCooldowns.of(player).until(PlayerCooldowns.SILENT_ARCHON_REFUSAL);
 		IInitiatoryDegree degree = HemoCapabilityAccess.getInitiatoryDegree(player);
 		if (degree == null) return false;
 		boolean canRefuse = SilentArchonArmorRules.canRefuseDeath(
@@ -322,7 +321,7 @@ public class ArmorSetBonusHandler {
 		}
 
 		BloodAccounting.pay(player, SilentArchonArmorRules.DEATH_REFUSAL_BLOOD_COST, SILENT_REFUSAL);
-		player.getPersistentData().putLong(SILENT_ARCHON_COOLDOWN_TAG,
+		PlayerCooldowns.of(player).setUntil(PlayerCooldowns.SILENT_ARCHON_REFUSAL,
 				SilentArchonArmorRules.nextCooldownUntil(now));
 		LastRiteHelper.consume(player, LastRiteHelper.SILENT_REFUSAL_ID);
 		event.setNewDamage(SilentArchonArmorRules.damageLeavingBarelyAlive(player.getHealth()));

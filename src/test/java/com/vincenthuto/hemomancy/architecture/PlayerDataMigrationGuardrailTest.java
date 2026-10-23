@@ -23,6 +23,8 @@ class PlayerDataMigrationGuardrailTest {
 
 	/** Each migration entry point and the file that defines it. */
 	private static final Map<String, String> ENTRY_POINTS = Map.of(
+			"PlayerCooldowns::migrateLegacyRootKeys",
+			"src/main/java/com/vincenthuto/hemomancy/common/capability/player/shared/cooldown/PlayerCooldowns.java",
 			"ChamberVisitService::migrateLegacyAccess",
 			"src/main/java/com/vincenthuto/hemomancy/common/worldgen/ChamberVisitService.java",
 			"PendingWhispers::migrateLegacyInbox",

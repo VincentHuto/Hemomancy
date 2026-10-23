@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.enchanting;
 
+import com.vincenthuto.hemomancy.common.capability.player.shared.cooldown.PlayerCooldowns;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
@@ -114,8 +115,9 @@ public final class ScriptoriumUseEvents {
             if (!paid) wear += Math.max(1, provenance.severity());
             addDirectWear(stack, wear);
         }
-        if (load >= 3 && player.level().getGameTime() >= player.getPersistentData().getLong("ScriptoriumBacklashUntil")) {
-            player.getPersistentData().putLong("ScriptoriumBacklashUntil", player.level().getGameTime() + 20);
+        PlayerCooldowns cooldowns = PlayerCooldowns.of(player);
+        if (load >= 3 && player.level().getGameTime() >= cooldowns.until(PlayerCooldowns.SCRIPTORIUM_BACKLASH)) {
+            cooldowns.setUntil(PlayerCooldowns.SCRIPTORIUM_BACKLASH, player.level().getGameTime() + 20);
             if (player.getRandom().nextFloat() < (load >= 5 ? 0.10F : 0.05F))
                 player.hurt(player.damageSources().generic(), 1.0F);
         }

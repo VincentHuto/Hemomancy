@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.armor.ability;
 
+import com.vincenthuto.hemomancy.common.capability.player.shared.cooldown.PlayerCooldowns;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -27,7 +28,6 @@ import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 
 @EventBusSubscriber(modid = Hemomancy.MOD_ID)
 public final class PhanstmalBloodlustArmorAbilityHandler {
-	private static final String PHANTASMAL_REACTIVE_COOLDOWN_KEY = "hemomancy:phantasmal_reactive_until";
 	private static final int MASQUERADE_ECHO_COUNT = 8;
 	private static final int MASQUERADE_ECHO_DURATION_TICKS = 200;
 	private static final double MASQUERADE_MIN_SPAWN_RADIUS = 1.5D;
@@ -69,13 +69,13 @@ public final class PhanstmalBloodlustArmorAbilityHandler {
 
 	private static void triggerDistortedPresence(ServerPlayer player, LivingEntity attacker) {
 		long now = player.level().getGameTime();
-		if (player.getPersistentData().getLong(PHANTASMAL_REACTIVE_COOLDOWN_KEY) > now) {
+		if (PlayerCooldowns.of(player).until(PlayerCooldowns.PHANTASMAL_REACTIVE) > now) {
 			return;
 		}
 		if (player.getRandom().nextFloat() > 0.75F) {
 			return;
 		}
-		player.getPersistentData().putLong(PHANTASMAL_REACTIVE_COOLDOWN_KEY,
+		PlayerCooldowns.of(player).setUntil(PlayerCooldowns.PHANTASMAL_REACTIVE,
 				now + PHANTASMAL_REACTIVE_COOLDOWN_TICKS);
 		attacker.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 80, 0, false, true, true));
 		attacker.addEffect(new MobEffectInstance(MobEffects.GLOWING, 120, 0, false, true, true));

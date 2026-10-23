@@ -176,6 +176,12 @@ public final class HemoAttachmentTypes {
             ATTACHMENT_TYPES.register("pending_whispers", () -> AttachmentType.serializable(
                     com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhisperInbox::new).copyOnDeath().build());
 
+    /** Saved with the player but never copied to a clone: these cooldowns reset on death and End return (S-7). */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<com.vincenthuto.hemomancy.common.capability.player.shared.cooldown.PlayerCooldowns>> COOLDOWNS =
+            ATTACHMENT_TYPES.register("cooldowns", () -> AttachmentType.serializable(
+                    com.vincenthuto.hemomancy.common.capability.player.shared.cooldown.PlayerCooldowns::new)
+                    .copyHandler((cooldowns, holder, provider) -> null).build());
+
     // ── Block-entity attachments (no copyOnDeath) ──
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<BloodVolume>> BLOCK_BLOOD_VOLUME =
             ATTACHMENT_TYPES.register("block_blood_volume",

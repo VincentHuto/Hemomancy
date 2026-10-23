@@ -122,7 +122,7 @@ public final class CombatTargetingMatrixGameTests {
 			attacker.setNoAi(true);
 			attacker.moveTo(caster.position().add(0.0D, 0.0D, 2.0D));
 			helper.getLevel().addFreshEntity(attacker);
-			caster.getPersistentData().remove("hemomancy:prismatic_flash_until");
+			com.vincenthuto.hemomancy.common.capability.player.shared.cooldown.PlayerCooldowns.of(caster).setUntil(com.vincenthuto.hemomancy.common.capability.player.shared.cooldown.PlayerCooldowns.PRISMATIC_FLASH, 0L);
 			try {
 				return touched(target, () -> ArmorSetBonusHandler.onPlayerHurt(new LivingDamageEvent.Pre(caster,
 						new DamageContainer(caster.damageSources().mobAttack(attacker), 1.0F))));

@@ -1919,6 +1919,7 @@ neoforge:attachment_types hemomancy:blood_volume
 neoforge:attachment_types hemomancy:chamber_access
 neoforge:attachment_types hemomancy:circus_progress
 neoforge:attachment_types hemomancy:clinical_blood
+neoforge:attachment_types hemomancy:cooldowns
 neoforge:attachment_types hemomancy:data_version
 neoforge:attachment_types hemomancy:dialogue_knowledge
 neoforge:attachment_types hemomancy:equipped_morphling

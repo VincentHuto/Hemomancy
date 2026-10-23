@@ -1,0 +1,14 @@
+{
+	NeoForgeData: {
+		"hemomancy:armor_set_ability_cooldown:hemomancy:edacious_bloodburst": 90000L,
+		"hemomancy:silent_slipping_cooldown_until": 90001L,
+		"hemomancy:silent_slipping_shard_pulse_cooldown_until": 90002L,
+		"hemomancy:phantasmal_reactive_until": 90003L,
+		"hemomancy:silent_archon_refusal_until": 90004L,
+		"hemomancy:prismatic_flash_until": 90005L,
+		"hemomancy:scar_pulse_until": 90006L,
+		ScriptoriumBacklashUntil: 90007L,
+		"hemomancy:silent_slipping_until": 90008L
+	},
+	"neoforge:attachments": {"hemomancy:data_version": {Version: 8}}
+}

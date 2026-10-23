@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.armor.ability;
 
+import com.vincenthuto.hemomancy.common.capability.player.shared.cooldown.PlayerCooldowns;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.bloodvolume.BloodAccounting;
@@ -27,7 +28,6 @@ public final class ArmorSetAbilityRegistry {
 	public static final ResourceLocation MASQUERADE_OF_THE_FORGOTTEN = Hemomancy.rloc("masquerade_of_the_forgotten");
 	public static final ResourceLocation SILENT_ARCHON_SEVERANCE = Hemomancy.rloc("silent_archon_severance");
 
-	private static final String COOLDOWN_PREFIX = "hemomancy:armor_set_ability_cooldown:";
 	private static final Map<ResourceLocation, ArmorSetAbility> ABILITIES = new LinkedHashMap<>();
 
 	static {
@@ -156,7 +156,7 @@ public final class ArmorSetAbilityRegistry {
 	}
 
 	public static long getCooldownUntil(Player player, ArmorSetAbility ability) {
-		return player.getPersistentData().getLong(COOLDOWN_PREFIX + ability.id());
+		return PlayerCooldowns.of(player).until(PlayerCooldowns.ARMOR_SET_ABILITY_PREFIX + ability.id());
 	}
 
 	public static long getClientCooldownUntil(Player player, ArmorSetAbility ability) {
@@ -169,7 +169,7 @@ public final class ArmorSetAbilityRegistry {
 			return;
 		}
 		long cooldownUntil = remainingTicks > 0 ? player.level().getGameTime() + remainingTicks : 0L;
-		player.getPersistentData().putLong(COOLDOWN_PREFIX + ability.id(), cooldownUntil);
+		PlayerCooldowns.of(player).setUntil(PlayerCooldowns.ARMOR_SET_ABILITY_PREFIX + ability.id(), cooldownUntil);
 	}
 
 	public static boolean isAbilityAvailable(Player player, ResourceLocation abilityId) {
@@ -178,7 +178,7 @@ public final class ArmorSetAbilityRegistry {
 	}
 
 	private static void setCooldownUntil(ServerPlayer player, ArmorSetAbility ability, long cooldownUntil) {
-		player.getPersistentData().putLong(COOLDOWN_PREFIX + ability.id(), cooldownUntil);
+		PlayerCooldowns.of(player).setUntil(PlayerCooldowns.ARMOR_SET_ABILITY_PREFIX + ability.id(), cooldownUntil);
 		syncCooldown(player, ability, cooldownUntil);
 	}
 

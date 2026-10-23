@@ -81,6 +81,10 @@ public static com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispe
     return player.getData(HemoAttachmentTypes.PENDING_WHISPERS);
 }
 
+public static com.vincenthuto.hemomancy.common.capability.player.shared.cooldown.PlayerCooldowns cooldowns(Player player) {
+    return player.getData(HemoAttachmentTypes.COOLDOWNS);
+}
+
 public static DialogueKnowledge dialogueKnowledge(Player player) {
     return player.getData(HemoAttachmentTypes.DIALOGUE_KNOWLEDGE);
 }

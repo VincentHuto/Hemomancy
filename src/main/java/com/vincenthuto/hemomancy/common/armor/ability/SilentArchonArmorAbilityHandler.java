@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.armor.ability;
 
+import com.vincenthuto.hemomancy.common.capability.player.shared.cooldown.PlayerCooldowns;
 import com.vincenthuto.hemomancy.common.util.FlightArbiter;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper;
 import com.vincenthuto.hemomancy.common.manipulation.ManipulationCombatHelper.Reach;
@@ -53,9 +54,6 @@ public final class SilentArchonArmorAbilityHandler {
 	private static final String SILENT_SLIPPING_MARKER_KEY = "hemomancy:silent_slipping_active";
 	private static final String CLIENT_SILENT_SLIPPING_UNTIL_KEY = "hemomancy:client_silent_slipping_until";
 	private static final String SILENT_SLIPPING_INSIDE_SOLID_KEY = "hemomancy:silent_slipping_inside_solid";
-	private static final String SILENT_SLIPPING_SHARD_PULSE_COOLDOWN_UNTIL_KEY =
-			"hemomancy:silent_slipping_shard_pulse_cooldown_until";
-	private static final String SILENT_SLIPPING_COOLDOWN_UNTIL_KEY = "hemomancy:silent_slipping_cooldown_until";
 	private static final int SILENT_SLIPPING_DURATION_TICKS = 100;
 	private static final int SILENT_SLIPPING_COOLDOWN_TICKS = 240;
 	private static final int SILENT_SLIPPING_SHARD_PULSE_COOLDOWN_TICKS = 4;
@@ -84,7 +82,7 @@ public final class SilentArchonArmorAbilityHandler {
 			return false;
 		}
 		long now = player.level().getGameTime();
-		long cooldownUntil = player.getPersistentData().getLong(SILENT_SLIPPING_COOLDOWN_UNTIL_KEY);
+		long cooldownUntil = PlayerCooldowns.of(player).until(PlayerCooldowns.SILENT_SLIPPING);
 		if (cooldownUntil > now) {
 			player.displayClientMessage(Component.literal("Silent Slipping is re-forming.")
 					.withStyle(ChatFormatting.RED), true);
@@ -97,8 +95,7 @@ public final class SilentArchonArmorAbilityHandler {
 					.withStyle(ChatFormatting.RED), true);
 			return false;
 		}
-		player.getPersistentData().putLong(SILENT_SLIPPING_COOLDOWN_UNTIL_KEY,
-				now + SILENT_SLIPPING_COOLDOWN_TICKS);
+		PlayerCooldowns.of(player).setUntil(PlayerCooldowns.SILENT_SLIPPING, now + SILENT_SLIPPING_COOLDOWN_TICKS);
 		activateSilentSlipping(player);
 		return true;
 	}
@@ -418,11 +415,11 @@ public final class SilentArchonArmorAbilityHandler {
 
 	private static void sendSilentSlippingShardPulse(ServerPlayer player) {
 		long now = player.level().getGameTime();
-		long cooldownUntil = player.getPersistentData().getLong(SILENT_SLIPPING_SHARD_PULSE_COOLDOWN_UNTIL_KEY);
+		long cooldownUntil = PlayerCooldowns.of(player).until(PlayerCooldowns.SILENT_SLIPPING_SHARD_PULSE);
 		if (cooldownUntil > now) {
 			return;
 		}
-		player.getPersistentData().putLong(SILENT_SLIPPING_SHARD_PULSE_COOLDOWN_UNTIL_KEY,
+		PlayerCooldowns.of(player).setUntil(PlayerCooldowns.SILENT_SLIPPING_SHARD_PULSE,
 				now + SILENT_SLIPPING_SHARD_PULSE_COOLDOWN_TICKS);
 		Vec3 center = player.position().add(0.0D, player.getBbHeight() * 0.55D, 0.0D);
 		PacketHandler.sendMonolithShardPulse(center, SILENT_SLIPPING_SHARD_PULSE_RADIUS, player.serverLevel());

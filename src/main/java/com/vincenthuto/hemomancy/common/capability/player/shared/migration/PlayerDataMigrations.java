@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal.FungalScarMigrationRules;
+import com.vincenthuto.hemomancy.common.capability.player.shared.cooldown.PlayerCooldowns;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledgeEvents;
 import com.vincenthuto.hemomancy.common.circus.CircusPlayerProgress;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.PendingWhispers;
@@ -52,7 +53,9 @@ public final class PlayerDataMigrations {
 			// Chamber of Will earned-access root keys, then the advancement backfill once (S-1c).
 			new Migration(7, "chamber_access", "2027-04-23", ChamberVisitService::migrateLegacyAccess),
 			// The pending whisper inbox root list (S-1c).
-			new Migration(8, "pending_whispers", "2027-04-23", PendingWhispers::migrateLegacyInbox));
+			new Migration(8, "pending_whispers", "2027-04-23", PendingWhispers::migrateLegacyInbox),
+			// Armour, Antecedent scar and Scriptorium cooldown root keys (S-7).
+			new Migration(9, "persisted_cooldowns", "2027-04-23", PlayerCooldowns::migrateLegacyRootKeys));
 
 	public static final int LATEST = MIGRATIONS.getLast().version();
 
