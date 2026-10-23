@@ -107,13 +107,6 @@ public final class MuscleMemoryEvents {
     }
 
     @SubscribeEvent
-	public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player) {
-			HemoCapabilityAccess.muscleMemory(player).migrateLegacyPriming(player.level().getGameTime());
-		}
-	}
-
-    @SubscribeEvent
     public static void onStartTracking(PlayerEvent.StartTracking event) {
         if (event.getEntity() instanceof ServerPlayer observer
                 && event.getTarget() instanceof ServerPlayer target) {

@@ -30,11 +30,13 @@ public class InitiatoryDegreeEvents {
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
 		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
-		migrateLegacyState(player, degree);
+		reconcileFoundedBloodline(player, degree);
 		LiberKnowledgeHelper.unlockForDegree(player, degree.getDegreeNumber());
 	}
 
-	private static void migrateLegacyState(ServerPlayer player, IInitiatoryDegree degree) {
+	/** A {@code PlayerDataMigrations} entry: the Archon choice kept as a root key before it had a path. */
+	public static void migrateLegacyArchonChoice(ServerPlayer player) {
+		var degree = HemoCapabilityAccess.getInitiatoryDegree(player);
 		String legacyChoice = player.getPersistentData().getString(FungalGardenTravelHelper.ARCHON_CHOICE_KEY);
 		if (degree.getArchonPath() == EnumArchonPath.NONE && !legacyChoice.isBlank()) {
 			degree.setFungalRevelationWitnessed(true);
@@ -45,6 +47,10 @@ public class InitiatoryDegreeEvents {
 						? EnumArchonPath.APOTHEOS : EnumArchonPath.APOTHEOS_PENDING);
 			}
 		}
+	}
+
+	/** Every login, not once: the bloodline record lives in world data and can name the player as leader later. */
+	private static void reconcileFoundedBloodline(ServerPlayer player, IInitiatoryDegree degree) {
 		if (!degree.hasFoundedBloodline()) {
 			Bloodline line = BloodlineSavedData.get(player.server.overworld())
 					.getBloodlineForPlayer(player.getUUID());

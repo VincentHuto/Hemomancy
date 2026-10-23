@@ -14,7 +14,6 @@ public final class StationUpgradeEvents {
     @SubscribeEvent
     public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        StationUpgradeMigration.migrate(player);
         HemoCapabilityAccess.stationUpgrades(player).deliver(player);
         HemoCapabilityAccess.stationUpgrades(player).unlockEligibleLessons(player);
     }

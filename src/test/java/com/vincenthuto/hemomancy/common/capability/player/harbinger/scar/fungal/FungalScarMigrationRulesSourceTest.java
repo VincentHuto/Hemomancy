@@ -35,13 +35,17 @@ public final class FungalScarMigrationRulesSourceTest {
 	}
 
 	private static void migrationEventsSweepInventoryAndScarSlot() throws IOException {
-		Path events = ROOT.resolve("src/main/java/com/vincenthuto/hemomancy/common/event/FungalScarMigrationEvents.java");
-		String source = read(events);
-		assertContains("login migration hook", source, "PlayerLoggedInEvent");
-		assertContains("tick fallback hook", source, "PlayerTickEvent.Post");
-		assertContains("scar slot migration", source, "setFungalScar(FungalScarMigrationRules.migrate");
-		assertContains("inventory migration", source, "player.getInventory()");
-		assertContains("no client-side migration", source, "player.level().isClientSide");
+		String rules = read(MIGRATION_RULES);
+		assertContains("carried-item migration", rules, "migrateCarried(ServerPlayer player)");
+		assertContains("scar slot migration", rules, "scars.setFungalScar(migrate(fungalScar))");
+		assertContains("inventory migration", rules, "player.getInventory()");
+		Path migrations = ROOT.resolve(
+				"src/main/java/com/vincenthuto/hemomancy/common/capability/player/shared/migration/PlayerDataMigrations.java");
+		assertContains("runs once per save through the data version", read(migrations),
+				"FungalScarMigrationRules::migrateCarried");
+		if (Files.exists(ROOT.resolve("src/main/java/com/vincenthuto/hemomancy/common/event/FungalScarMigrationEvents.java"))) {
+			throw new AssertionError("the per-tick fungal scar sweep must stay retired");
+		}
 	}
 
 	private static String read(Path path) throws IOException {

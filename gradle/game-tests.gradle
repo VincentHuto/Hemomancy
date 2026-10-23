@@ -28,6 +28,7 @@ ext.gameTestSuites = [
     'hemo_command_validation': [alpha: true, run: 'hemoCommandGameTestServer', directory: 'build/hemo-command-gametest'],
     'entity_cast_validation': [alpha: true, run: 'entityCastGameTestServer', directory: 'build/entity-cast-gametest'],
     'scriptorium_operation_validation': [alpha: true, run: 'scriptoriumOperationGameTestServer', directory: 'build/scriptorium-operation-gametest'],
+    'player_migration_validation': [alpha: true, run: 'playerMigrationGameTestServer', directory: 'build/player-migration-gametest'],
     'excoriated_spawn_validation': [alpha: false, run: 'excoriatedSpawnGameTestServer', directory: 'build/excoriated-spawn-gametest', reason: 'Existing focused suite remains opt-in; this rollout adds consolidation coverage.'],
     'clinical_validation': [alpha: false, run: 'clinicalGameTestServer', directory: 'build/clinical-gametest', reason: 'Existing focused suite remains opt-in; this rollout adds consolidation coverage.'],
     'choir_keeper_validation': [alpha: false, run: 'choirKeeperGameTestServer', directory: 'build/choir-keeper-gametest', reason: 'Existing focused suite remains opt-in; this rollout adds consolidation coverage.'],

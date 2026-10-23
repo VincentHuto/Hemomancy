@@ -1,0 +1,14 @@
+{
+	NeoForgeData: {
+		"hemomancy:archon_choice_made": "apotheos",
+		"hemomancy.vicar_consecration_kit_claimed": 1b,
+		"hemomancy.monolithic_cornerstone_claimed": 1b
+	},
+	"neoforge:attachments": {
+		"hemomancy:initiatory_degree": {degree: 6, archon_path: "NONE", fungal_revelation_witnessed: 0b},
+		"hemomancy:advanced_brewing": {Distilled: 1b, Refined: 0b, Compounded: 0b, CondenserClaimed: 1b,
+			AthanorClaimed: 0b, CondenserPending: 0b, AthanorPending: 0b},
+		"hemomancy:muscle_memory": {Primed: {ARMS: {Memory: "sanguine_fists", ExpiresAt: 2147483647L}}}
+	},
+	Inventory: [{Slot: 0b, id: "hemomancy:noctifly_agaric", count: 1}]
+}

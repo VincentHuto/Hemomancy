@@ -553,15 +553,15 @@ public final class ClinicalBloodProgressionGameTests {
             legacy.unlockEntry(other, com.vincenthuto.hutoslib.common.book.knowledge.CommonDiscoverySource.OTHER);
             knowledge.setFrom(legacy);
             h.assertTrue(!knowledge.hasEntry(entry), "Legacy fixture must begin with the missing page");
-            com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledgeEvents.playerLoggedIn(
+            com.vincenthuto.hemomancy.common.capability.player.shared.migration.PlayerDataMigrations.onLogin(
                     new PlayerEvent.PlayerLoggedInEvent(actor));
-            com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledgeEvents.playerLoggedIn(
+            com.vincenthuto.hemomancy.common.capability.player.shared.migration.PlayerDataMigrations.onLogin(
                     new PlayerEvent.PlayerLoggedInEvent(newcomer));
             h.assertTrue(knowledge.hasEntry(entry) && knowledge.hasEntry(other)
                     && !LiberKnowledgeHelper.hasEntry(newcomer, entry),
                     "Login must restore only the earned scar lesson page, preserving existing knowledge");
             int count = knowledge.getUnlockedEntries().size();
-            com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledgeEvents.playerLoggedIn(
+            com.vincenthuto.hemomancy.common.capability.player.shared.migration.PlayerDataMigrations.onLogin(
                     new PlayerEvent.PlayerLoggedInEvent(actor));
             h.assertTrue(knowledge.getUnlockedEntries().size() == count && actor.getInventory().isEmpty()
                     && HemoCapabilityAccess.getPlayerDegreeNumber(actor) == 4

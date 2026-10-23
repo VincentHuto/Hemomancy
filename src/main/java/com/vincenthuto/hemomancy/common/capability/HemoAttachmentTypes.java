@@ -19,6 +19,7 @@ import com.vincenthuto.hemomancy.common.capability.player.harbinger.vascular.Vas
 import com.vincenthuto.hemomancy.common.capability.player.harbinger.will.WillAmbushState;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.DialogueKnowledge;
 import com.vincenthuto.hemomancy.common.capability.player.shared.knowledge.LiberKnowledge;
+import com.vincenthuto.hemomancy.common.capability.player.shared.migration.PlayerDataVersion;
 import com.vincenthuto.hemomancy.common.capability.player.shared.skill.SkillProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.stillart.KnownStillArts;
@@ -158,6 +159,10 @@ public final class HemoAttachmentTypes {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<MuscleMemoryState>> MUSCLE_MEMORY =
             ATTACHMENT_TYPES.register("muscle_memory",
                     () -> AttachmentType.serializable(MuscleMemoryState::new).copyOnDeath().build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<PlayerDataVersion>> DATA_VERSION =
+            ATTACHMENT_TYPES.register("data_version",
+                    () -> AttachmentType.serializable(PlayerDataVersion::new).copyOnDeath().build());
 
     // ── Block-entity attachments (no copyOnDeath) ──
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<BloodVolume>> BLOCK_BLOOD_VOLUME =

@@ -18,7 +18,7 @@ Every consolidation session reads this file first and updates it last, following
 | 9 | Phase 6: combat targeting and damage attribution | DONE | `3b841ba03`, `7f0c1968d`, `5fa01de44`, `c9af6c6c3` | 2026-10-22 |
 | 10 | Phases 8 + 9: rendering plumbing and animation conventions | DONE | `a53982248`..`e2597dc41` (items 1-9), review fixes and ledger in the commit after `e2597dc41` | 2026-10-23 |
 | 11 | Phase 10: god-class decomposition | DONE | `91bb77eba`, `b6c7bd846`, `866c0b990`, `3385bc323`, `ced99f334`, `0871dc5e6`, `8ba776eca`, `017d6f7dc`, `7028ada7d`, `44719064f`, item 5 in the commit after it | 2026-10-23 |
-| 12 | Phase 11: persistence authority migrations | NOT STARTED | | |
+| 12 | Phase 11: persistence authority migrations | IN PROGRESS | | 2026-10-23 |
 | 13 | Phases 12 + 13: content, worldgen, data, tooling, standards | NOT STARTED | | |
 
 Statuses: `NOT STARTED`, `IN PROGRESS`, `DONE`, `DONE (uncommitted)`, `BLOCKED`.
@@ -102,12 +102,12 @@ under *Pending approvals*. IDs refer to [ARCHITECTURE_AUDIT](ARCHITECTURE_AUDIT.
 | V-3c | Outpouring surface marks round their alpha | 10 | PENDING | Found in step 10. The marks write the material encoding by hand, camera-relative with no pose, and round alpha × 255 where `MaterialQuads` truncates it. Once approved, write them through `MaterialQuads` (some vertices lose one alpha level). |
 | V-6b | Mycophant spore colours given on the wrong scale | 10 | PENDING | Found in step 10. The Mycophant encounter's two spore bursts pass 0–1 floats (`0.48F, 0.72F, 0.34F`), which `ParticleColor` truncates to black. Once approved, give them 0–255 values (they turn green and amber). (The hit glow takes either scale: `ParticleGlow` divides by 255 only above 1.) |
 | F-11 | Blood-structure crafts tick once per server tick | 11 | PENDING | Crafts take their intended time |
-| S-9 | Per-player `dataVersion` and gated one-shot migrations | 12 | PENDING | Save-critical |
-| F-21 | Archon choice: attachment is the only authority | 12 | PENDING | Save-critical |
-| S-6c | Circus progress moved into one attachment | 12 | PENDING | Save-critical |
-| S-1c | Chamber access and `PendingWhispers` moved into attachments | 12 | PENDING | Save-critical |
-| S-7 | Two-tier cooldown convention | 12 | PENDING | Keep each entry's tier |
-| O-5 | Typed components for reworked items | 12 | PENDING | Save-critical |
+| S-9 | Per-player `dataVersion` and gated one-shot migrations | 12 | APPROVED | Save-critical. Owner approved 2026-10-23 (step 12 session) |
+| F-21 | Archon choice: attachment is the only authority | 12 | APPROVED | Save-critical. Owner approved 2026-10-23 (step 12 session) |
+| S-6c | Circus progress moved into one attachment | 12 | APPROVED | Save-critical. Owner approved 2026-10-23 (step 12 session) |
+| S-1c | Chamber access and `PendingWhispers` moved into attachments | 12 | APPROVED | Save-critical. Owner approved 2026-10-23 (step 12 session) |
+| S-7 | Two-tier cooldown convention | 12 | APPROVED | Keep each entry's tier. Owner approved 2026-10-23 (step 12 session) |
+| O-5 | Typed components for reworked items | 12 | PENDING | Save-critical. Not approved in the step 12 session: it applies only to items being reworked anyway, and none were |
 | F-23 | Move tag files to singular folders (the tags start working) | 13 | PENDING | |
 | F-24 | Three template-less structures and the empty mausoleum tag | 13 | PENDING | Finish / remove |
 | F-25 | Register or remove the MnA config read | 13 | PENDING | |

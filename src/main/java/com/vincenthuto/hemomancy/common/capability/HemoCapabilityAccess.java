@@ -65,6 +65,10 @@ public static MuscleMemoryState muscleMemory(Player player) {
     return player.getData(HemoAttachmentTypes.MUSCLE_MEMORY);
 }
 
+public static com.vincenthuto.hemomancy.common.capability.player.shared.migration.PlayerDataVersion dataVersion(Player player) {
+    return player.getData(HemoAttachmentTypes.DATA_VERSION);
+}
+
 public static DialogueKnowledge dialogueKnowledge(Player player) {
     return player.getData(HemoAttachmentTypes.DIALOGUE_KNOWLEDGE);
 }

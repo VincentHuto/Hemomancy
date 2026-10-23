@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.capability.player.harbinger.scar.fungal;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -41,5 +44,25 @@ public final class FungalScarMigrationRules {
 			return stack;
 		}
 		return new ItemStack(target, stack.getCount());
+	}
+
+	/**
+	 * A {@code PlayerDataMigrations} entry: rewrites retired scars in the scar slot and the inventory once per save.
+	 * The login state sync sends the scar slot afterwards.
+	 */
+	public static void migrateCarried(ServerPlayer player) {
+		var scars = HemoCapabilityAccess.getScarState(player);
+		ItemStack fungalScar = scars.getFungalScar();
+		if (!ItemStack.isSameItemSameComponents(fungalScar, migrate(fungalScar))) {
+			scars.setFungalScar(migrate(fungalScar));
+		}
+		Inventory inventory = player.getInventory();
+		for (int i = 0; i < inventory.getContainerSize(); i++) {
+			ItemStack current = inventory.getItem(i);
+			ItemStack migrated = migrate(current);
+			if (!ItemStack.isSameItemSameComponents(current, migrated)) {
+				inventory.setItem(i, migrated);
+			}
+		}
 	}
 }
