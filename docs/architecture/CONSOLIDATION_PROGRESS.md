@@ -17,7 +17,7 @@ Every consolidation session reads this file first and updates it last, following
 | 8 | Phase 7: registration and client registration | DONE | `3e8b213d4`, `291731d6f` | 2026-10-22 |
 | 9 | Phase 6: combat targeting and damage attribution | DONE | `3b841ba03`, `7f0c1968d`, `5fa01de44`, `c9af6c6c3` | 2026-10-22 |
 | 10 | Phases 8 + 9: rendering plumbing and animation conventions | DONE | `a53982248`..`e2597dc41` (items 1-9), review fixes and ledger in the commit after `e2597dc41` | 2026-10-23 |
-| 11 | Phase 10: god-class decomposition | IN PROGRESS (items 1-3 of 5 done) | `91bb77eba`, `b6c7bd846`, `866c0b990`, `3385bc323`, `ced99f334`, `0871dc5e6`, item 3 in the commit after it | 2026-10-23 |
+| 11 | Phase 10: god-class decomposition | IN PROGRESS (items 1-4 of 5 done) | `91bb77eba`, `b6c7bd846`, `866c0b990`, `3385bc323`, `ced99f334`, `0871dc5e6`, `8ba776eca`, `017d6f7dc`, item 4 in the commit after it | 2026-10-23 |
 | 12 | Phase 11: persistence authority migrations | NOT STARTED | | |
 | 13 | Phases 12 + 13: content, worldgen, data, tooling, standards | NOT STARTED | | |
 
@@ -189,6 +189,8 @@ them green.
 | `architecture/DialogueRoutingGuardrailTest` | 11 | O-4: `DialogueEventRouter` is the only `DialogueEvent` subscriber; every `<Npc>DialogueEvents` class has a `handle` and is in the router's table; no route class over 400 lines |
 | `common/command/HemoCommandTreeTest` | 11 | `/hemo` syntax node by node (literals, argument names, types and bounds, executes, suggests, redirects, permission per node) against `src/test/resources/command/hemo-tree.txt` |
 | gameTest `HemoCommandCharacterisationGameTests` (suite `hemo_command_validation`) | 11 | every executable `/hemo` path (133; `qliphoth tree` excluded as a world edit) run on a fresh player with arguments taken from the tree: return code, feedback, saved-data change and spawned entities against `src/gameTest/resources/command/hemo-command-fingerprints.txt` |
+| gameTest `EntityCastCharacterisationGameTests` (suite `entity_cast_validation`) | 11 | L-1: each of the 34 entity casts (and one manipulation without) cast by a Husk at a Cow: went off, Will-castable, both mobs' health, effects, data keys and movement, spawned types, changed blocks, against `src/gameTest/resources/entitycast/entity-cast-fingerprints.txt`; over the live registry, exactly the 34 casts are attached, Wills may cast exactly the old 32, every Vesper CASTABLE entry has one |
+| `architecture/EntityCastGuardrailTest` | 11 | L-1: `EntityManipulationEffects` has no name switch and names no manipulation; each `EntityCasts` method is attached once, to the manipulation it is named for; only the entry point reads `getEntityCast()` |
 | `architecture/HemoCommandStructureGuardrailTest` | 11 | `HemoCommand` is one root that only wires `<Name>Subcommand.build()`, each exactly once; subcommands register nothing themselves and stay under 300 lines; no other main class registers `/hemo` |
 
 ## Step entries
@@ -1225,13 +1227,16 @@ them green.
   | Characterisation suite for item 2 | DONE | `866c0b990` |
   | 2. Per-NPC dialogue-event routing | DONE | `3385bc323` |
   | Characterisation suite for item 3 | DONE | `ced99f334`, `0871dc5e6` (a boolean argument read as an object hash in the snapshot) |
-  | 3. `HemoCommand` split | DONE | the commit after `0871dc5e6` |
-  | 4. Registration-time `setEntityCast` | NOT STARTED | |
+  | 3. `HemoCommand` split | DONE | `8ba776eca` |
+  | Characterisation suite for item 4 | DONE | `017d6f7dc` |
+  | 4. Registration-time `setEntityCast` | DONE | the commit after `017d6f7dc` |
   | 5. Scriptorium operations into its block entity | NOT STARTED | |
 - **Test counts before → after:** `test` 4,055 → 4,064 (characterisation commit) → 4,067 (item 1) → 4,070 (item 2),
-  0 failures; 4,073 after item 3. `alphaCheck` after item 1: BUILD SUCCESSFUL, all 1,068 required GameTests passed
+  0 failures; 4,073 after item 3; 4,075 after item 4. `alphaCheck` after item 1: BUILD SUCCESSFUL, all 1,068 required GameTests passed
   (1,036 before; 32 are the new `rite_kind_validation` suite). After item 2: all 1,069 (plus
-  `dialogue_route_validation`). After item 3: all 1,070 (plus `hemo_command_validation`).
+  `dialogue_route_validation`). After item 3: all 1,070 (plus `hemo_command_validation`). After item 4: all 1,072
+  (plus the two `entity_cast_validation` tests); one run before that failed the known flaky fish-AI timing test
+  `strongerpreyneedsmultiplebitesbeforereward` (step 10 recorded it), and the rerun passed.
 - **Impact map:** one read-only reviewer listed the tick's branches, `ActiveCardinalRite`'s fields and keys, the
   packet's parts and every test pinning them (not committed; a working list).
 - **Characterisation (before the extraction):**
@@ -1334,7 +1339,34 @@ them green.
   - Final review: the tree and all 89 members verified identical by machine; fixed its finding (`resetUnstained`
     had been placed with the degree branch because a local variable shares its name) and its guardrail suggestion
     (each subcommand wired exactly once). Noted, not changed: the subcommands keep the old wildcard imports.
-- **Handoff notes for item 4 (`setEntityCast`, L-1):**
+- **Item 4, entity casts as a registration hook (L-1):**
+  - Characterisation first (`017d6f7dc`): every entity cast fingerprinted through the shared entry point; three
+    identical recordings.
+  - `EntityCast` (functional interface) and `BloodManipulation.setEntityCast` / `getEntityCast` (transient, like the
+    Drudge action). The 34 bodies moved verbatim to `EntityCasts` (670 lines, `crimsonSight` renamed `hematicBeacon`
+    after the manipulation it serves); `ManipulationInit` attaches `.setEntityCast(EntityCasts::x)` beside each Drudge
+    action. `EntityManipulationEffects` (731 → 29 lines) keeps the shared paralysis and school-damage rules and runs
+    the hook; `isSupported` is "has a cast and is not retired", which equals the old 32-name set (the two retired
+    ones among the 34 are `glacial_bastion` and `blood_eclipse_mantle`). Every caller uses the registry instance.
+  - Source-text tests: `VesperManipulationCoverageTest`'s two parses of `SUPPORTED_CASTS`, the Will kit-id check and the
+    gap-combat id check became the registry GameTest; `ClawSlashRendererSourceTest` and
+    `LivingWeaponGraftUnlockSourceTest` read `EntityCasts.java`. Stale references fixed in `ARCHITECTURE_MAP.md`,
+    `MANIPULATION_BALANCE_PLAN.md` and `wiki/School-Combat.md`.
+  - Final review: no defects; added its guardrail suggestions (cast named for its manipulation; only the entry point
+    runs a cast).
+- **Handoff notes for item 5 (Scriptorium, L-9):**
+  - An impact map was taken (not committed). `EnzymaticScriptoriumMenu.clickMenuButton` (397-line menu): buttons 0-7
+    select enzymes (already a block-entity call), 20-22 set the menu-local mode (tier and degree gated), 8-10 enchant
+    (refresh, validate cost, lapis, xp, tank blood; apply the package; random curse from `actor.getRandom()`; drain,
+    shrink, `consumeEnzymes`, `onEnchantmentPerformed`, `recordUse(ENCHANT / ENCHANT_TARGETED)` on the actor), 11
+    denatures (provenance curse, shard, 300 mL, degree 3). The offer preview (`refresh`) is per player (enchantment
+    seed, degree) and stays in the menu. Precedent: the Resonant Forge menu only dispatches to `startApply()` and the
+    like; the Centrifuge's `attemptStartup(player)`.
+  - `BloodAccountingGuardrailTest` allows 2 `.drain(` in the menu; the entry moves with the drains.
+  - `EnzymaticScriptoriumGameTests` is in the opt-in `scriptorium_validation` suite (not in `alphaCheck`); characterise
+    the buttons in an alpha suite with fixed seeds (`player.getRandom().setSeed`, then `onEnchantmentPerformed` to set
+    the enchantment seed; reseed before the curse roll).
+- **Handoff notes kept from item 3 for item 4 (done):**
   - An impact map was taken (not committed). `EntityManipulationEffects` (731 lines) switches over 34 names;
     `SUPPORTED_CASTS` lists 32, leaving out the two retired ones (`glacial_bastion`, `blood_eclipse_mantle`), which are
     unreachable in production. So `isSupported` can be "has an entity cast and is not retired", exactly.

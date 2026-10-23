@@ -49,6 +49,7 @@ public class ManipulationInit {
 			() -> new BloodShotManip("blood_shot", 100, 0, 0, EnumManipulationType.QUICK, EnumManipulationRank.HUMILIS,
 					EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD)
 					.setCooldownTicks(10)
+					.setEntityCast(EntityCasts::bloodShot)
 					.setDrudgeAction(DrudgeActions::bloodShot, "Ranged strike vs nearest hostile"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> guided_blood_shot = MANIPS.register("guided_blood_shot",
@@ -111,6 +112,7 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD)
 					.setSecondaryTend(EnumBloodTendency.TENEBRIS)
 					.setCooldownTicks(20)
+					.setEntityCast(EntityCasts::deadlyGaze)
 					.setDrudgeAction(DrudgeActions::deadlyGaze, "Knockback and heavy strike vs nearest hostile"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> hematic_rebuke = MANIPS.register("hematic_rebuke",
@@ -169,6 +171,7 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.FERRIC, EnumVeinSections.HEAD)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(10)
+					.setEntityCast(EntityCasts::bloodNeedle)
 					.setDrudgeAction(DrudgeActions::bloodNeedle, "Needle volley vs nearest hostile"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> blood_needle_fan = MANIPS.register("blood_needle_fan",
@@ -192,6 +195,7 @@ public class ManipulationInit {
 					EnumManipulationRank.SUMMA, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD)
 					.setSecondaryTend(EnumBloodTendency.MORTEM)
 					.setCooldownTicks(40)
+					.setEntityCast(EntityCasts::bloodCloud)
 					.setDrudgeAction(DrudgeActions::bloodCloud, "Builds pressure in nearby hostiles"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> expansive_blood_cloud = MANIPS.register("expansive_blood_cloud",
@@ -230,6 +234,7 @@ public class ManipulationInit {
 					EnumManipulationRank.SUMMA, EnumBloodTendency.ANIMUS, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.MORTEM)
 					.setCooldownTicks(40)
+					.setEntityCast(EntityCasts::bloodAneurysm)
 					.setDrudgeAction(DrudgeActions::bloodAneurysm, "Ruptures pressure in nearby hostiles"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> vital_effusion = MANIPS.register("vital_effusion",
@@ -250,12 +255,14 @@ public class ManipulationInit {
 			() -> new ActivationPotentialManip("activation_potential", 200, 10, 0, EnumManipulationType.CHARGED,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.DUCTILIS, EnumVeinSections.BODY)
 					.setCooldownTicks(30)
+					.setEntityCast(EntityCasts::activationPotential)
 					.setDrudgeAction(DrudgeActions::activationPotential, "Shocks hostiles near the Drudge"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> synaptic_jolt = MANIPS.register("synaptic_jolt",
 			() -> new SynapticJoltManip("synaptic_jolt", 150, 0, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD)
 					.setCooldownTicks(25)
+					.setEntityCast(EntityCasts::synapticJolt)
 					.setDrudgeAction(DrudgeActions::synapticJolt, "Interrupts and staggers nearest hostile"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> conductive_mark = MANIPS.register("conductive_mark",
@@ -263,6 +270,7 @@ public class ManipulationInit {
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD)
 					.setSecondaryTend(EnumBloodTendency.FERRIC)
 					.setCooldownTicks(50)
+					.setEntityCast(EntityCasts::conductiveMark)
 					.setDrudgeAction(DrudgeActions::conductiveMark, "Marks nearest hostile for conductive arcs"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> sanguine_ward = MANIPS.register("sanguine_ward",
@@ -277,6 +285,7 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.DUCTILIS, EnumVeinSections.HEAD)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(200)
+					.setEntityCast(EntityCasts::hemolymphalPulse)
 					.setDrudgeAction(DrudgeActions::hemolymphalPulse, "Illuminates nearby hostiles"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> conjure_blade = MANIPS.register("conjure_blade",
@@ -360,6 +369,7 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.ARMS)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(15)
+					.setEntityCast(EntityCasts::crimsonFlameConjuration)
 					.setDrudgeAction(DrudgeActions::crimsonFlameConjuration, "Sears the nearest hostile"));
 
 	// ── Utilitarian Manipulations ──
@@ -389,6 +399,7 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.LUX, EnumVeinSections.HEAD)
 					.setSecondaryTend(EnumBloodTendency.FLAMMEUS)
 					.setCooldownTicks(30)
+					.setEntityCast(EntityCasts::hematicFlare)
 					.setDrudgeAction(DrudgeActions::hematicFlare, "Illuminates and damages the nearest hostile"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> crimson_harvest = MANIPS.register("crimson_harvest",
@@ -403,6 +414,7 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.CONGEATIO, EnumVeinSections.ARMS)
 					.setSecondaryTend(EnumBloodTendency.TENEBRIS)
 					.setCooldownTicks(20)
+					.setEntityCast(EntityCasts::glacialGrasp)
 					.setDrudgeAction(DrudgeActions::glacialGrasp, "Builds Rime and damages the nearest hostile"));
 
 	// ── Mid-Game Utilitarian Manipulations (MEDIOCRITAS) ──
@@ -433,6 +445,7 @@ public class ManipulationInit {
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
 					.setCooldownTicks(80)
+					.setEntityCast(EntityCasts::ironRetort)
 					.setDrudgeAction(DrudgeActions::ironRetort, "Brief retaliatory iron guard"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> ironhearted = MANIPS.register("ironhearted",
@@ -447,6 +460,7 @@ public class ManipulationInit {
 					EnumManipulationRank.SUMMA, EnumBloodTendency.FERRIC, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
 					.setCooldownTicks(140)
+					.setEntityCast(EntityCasts::sanguineMagnetism)
 					.setDrudgeAction(DrudgeActions::sanguineMagnetism, "Raises a magnetic iron pillar that traps hostiles"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> ferric_rampart = MANIPS.register("ferric_rampart",
@@ -463,6 +477,7 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.FERRIC)
 					.setCooldownTicks(30)
+					.setEntityCast(EntityCasts::pyreticForge)
 					.setDrudgeAction(DrudgeActions::pyreticForge, "Burns all hostiles in area"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> umbral_step = MANIPS.register("umbral_step",
@@ -470,6 +485,7 @@ public class ManipulationInit {
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.TENEBRIS, EnumVeinSections.LEGS)
 					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
 					.setCooldownTicks(40)
+					.setEntityCast(EntityCasts::umbralStep)
 					.setDrudgeAction(DrudgeActions::umbralStep, "Teleports Drudge to a dark spot within radius"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> crimson_sight = MANIPS.register("crimson_sight",
@@ -484,6 +500,7 @@ public class ManipulationInit {
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.LUX, EnumVeinSections.HEAD)
 					.setSecondaryTend(EnumBloodTendency.FERRIC)
 					.setCooldownTicks(50)
+					.setEntityCast(EntityCasts::prismaticReproof)
 					.setDrudgeAction(DrudgeActions::prismaticReproof, "Consumes illumination for a prismatic strike"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> hematic_beacon = MANIPS.register("hematic_beacon",
@@ -491,6 +508,7 @@ public class ManipulationInit {
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.LUX, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(160)
+					.setEntityCast(EntityCasts::hematicBeacon)
 					.setDrudgeAction(DrudgeActions::hematicBeacon, "Marks hostiles and steadies nearby allies"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> lumen_suture = MANIPS.register("lumen_suture",
@@ -514,6 +532,7 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.CONGEATIO, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.FLAMMEUS)
 					.setCooldownTicks(30)
+					.setEntityCast(EntityCasts::cryogenicPulse)
 					.setDrudgeAction(DrudgeActions::cryogenicPulse, "Builds Rime on nearby hostiles"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> glacial_circulation = MANIPS.register("glacial_circulation",
@@ -527,6 +546,7 @@ public class ManipulationInit {
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.CONGEATIO, EnumVeinSections.ARMS)
 					.setSecondaryTend(EnumBloodTendency.FERRIC)
 					.setCooldownTicks(50)
+					.setEntityCast(EntityCasts::glacialBastion)
 					.setDrudgeAction(DrudgeActions::glacialBastion, "Raises temporary Frozen Cruor around the Drudge"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> glacial_rampart = MANIPS.register("glacial_rampart",
@@ -534,6 +554,7 @@ public class ManipulationInit {
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.CONGEATIO, EnumVeinSections.ARMS)
 					.setSecondaryTend(EnumBloodTendency.FERRIC)
 					.setCooldownTicks(50)
+					.setEntityCast(EntityCasts::glacialRampart)
 					.setDrudgeAction(DrudgeActions::glacialRampart, "Raises a temporary Frozen Cruor wall"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> osseous_bloom = MANIPS.register("osseous_bloom",
@@ -549,12 +570,14 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(25)
+					.setEntityCast(EntityCasts::sanguineIgnition)
 					.setDrudgeAction(DrudgeActions::sanguineIgnition, "Sets nearest hostile on fire"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> vitric_combustion = MANIPS.register("vitric_combustion",
 			() -> new VitricCombustionManip("vitric_combustion", 350, 25, 0, EnumManipulationType.CHARGED,
 					EnumManipulationRank.SUMMA, EnumBloodTendency.FLAMMEUS, EnumVeinSections.BODY)
 					.setCooldownTicks(60)
+					.setEntityCast(EntityCasts::vitricCombustion)
 					.setDrudgeAction(DrudgeActions::vitricCombustion, "Heavy fire damage to all hostiles in area"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> cauterizing_rebuke = MANIPS.register("cauterizing_rebuke",
@@ -569,6 +592,7 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.LEGS)
 					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
 					.setCooldownTicks(80)
+					.setEntityCast(EntityCasts::scaldingUpdraft)
 					.setDrudgeAction(DrudgeActions::scaldingUpdraft, "Launches the Drudge upward on hot air"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> soaring_updraft = MANIPS.register("soaring_updraft",
@@ -602,6 +626,7 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.TENEBRIS, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.MORTEM)
 					.setCooldownTicks(20)
+					.setEntityCast(EntityCasts::voidShroud)
 					.setDrudgeAction(DrudgeActions::voidShroud, "Veils the Drudge until it attacks"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> gloam_laceration = MANIPS.register("gloam_laceration",
@@ -609,6 +634,7 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.TENEBRIS, EnumVeinSections.ARMS)
 					.setSecondaryTend(EnumBloodTendency.MORTEM)
 					.setCooldownTicks(35)
+					.setEntityCast(EntityCasts::gloamLaceration)
 					.setDrudgeAction(DrudgeActions::gloamLaceration, "Slashes the nearest hostile from darkness"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> blood_eclipse = MANIPS.register("blood_eclipse",
@@ -616,6 +642,7 @@ public class ManipulationInit {
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.TENEBRIS, EnumVeinSections.HEAD)
 					.setSecondaryTend(EnumBloodTendency.LUX)
 					.setCooldownTicks(45)
+					.setEntityCast(EntityCasts::bloodEclipse)
 					.setDrudgeAction(DrudgeActions::bloodEclipse, "Obscures and damages nearby hostiles"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> black_veil_covenant = MANIPS.register("black_veil_covenant",
@@ -637,6 +664,7 @@ public class ManipulationInit {
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.TENEBRIS, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.FLAMMEUS)
 					.setCooldownTicks(180)
+					.setEntityCast(EntityCasts::bloodEclipseMantle)
 					.setDrudgeAction(DrudgeActions::bloodEclipseMantle, "Grants eclipse resistance with a weakness tradeoff"));
 
 	// ── MORTEM — expanded tendencies ──
@@ -646,6 +674,7 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.MORTEM, EnumVeinSections.ARMS)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(20)
+					.setEntityCast(EntityCasts::hemorrhage)
 					.setDrudgeAction(DrudgeActions::hemorrhage, "Afflicts the nearest hostile with Necrosis"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> lignum_mortis = MANIPS.register("lignum_mortis",
@@ -676,6 +705,7 @@ public class ManipulationInit {
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.MORTEM, EnumVeinSections.ARMS)
 					.setSecondaryTend(EnumBloodTendency.DUCTILIS)
 					.setCooldownTicks(50)
+					.setEntityCast(EntityCasts::exsanguinate)
 					.setDrudgeAction(DrudgeActions::exsanguinate, "Drains and reflects HP from nearest hostile"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> insatiable_hunger = MANIPS.register("insatiable_hunger",
@@ -683,6 +713,7 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.MORTEM, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(70)
+					.setEntityCast(EntityCasts::insatiableHunger)
 					.setDrudgeAction(DrudgeActions::insatiableHunger, "Curses nearest hostile with anti-healing hunger"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> grave_debt = MANIPS.register("grave_debt",
@@ -690,6 +721,7 @@ public class ManipulationInit {
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.MORTEM, EnumVeinSections.HEART)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(75)
+					.setEntityCast(EntityCasts::graveDebt)
 					.setDrudgeAction(DrudgeActions::graveDebt, "Marks nearest hostile to burst at low health"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> blackhearted = MANIPS.register("blackhearted",
@@ -822,6 +854,7 @@ public class ManipulationInit {
 					EnumManipulationRank.SUMMA, EnumBloodTendency.LUX, EnumVeinSections.HEAD)
 					.setSecondaryTend(EnumBloodTendency.MORTEM)
 					.setCooldownTicks(120)
+					.setEntityCast(EntityCasts::unclosingEye)
 					.setDrudgeAction(DrudgeActions::unclosingEye, "Applies Glowing to all nearby entities"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> bloom_of_rot = MANIPS.register("bloom_of_rot",
@@ -829,6 +862,7 @@ public class ManipulationInit {
 					EnumManipulationRank.SUMMA, EnumBloodTendency.MORTEM, EnumVeinSections.BODY)
 					.setSecondaryTend(EnumBloodTendency.ANIMUS)
 					.setCooldownTicks(80)
+					.setEntityCast(EntityCasts::bloomOfRot)
 					.setDrudgeAction(DrudgeActions::bloomOfRot, "Afflicts nearby hostiles with Necrosis"));
 
 	public static final DeferredHolder<BloodManipulation, BloodManipulation> endless_hour = MANIPS.register("endless_hour",

@@ -67,24 +67,7 @@ final class VesperManipulationCoverageTest {
 				&& c.second().equals("synaptic_jolt")));
 	}
 
-	@Test
-	void willSupportedListIsUnchanged() throws Exception {
-		String source = Files.readString(ROOT.resolve("manipulation/EntityManipulationEffects.java"));
-		int start = source.indexOf("SUPPORTED_CASTS = Set.of(");
-		int end = source.indexOf(");", start);
-		long count = Pattern.compile("\"\\w+\"").matcher(source.substring(start, end)).results().count();
-		assertEquals(32, count, "Vesper's casts must not widen what Wills can cast");
-	}
-
-	@Test
-	void castableMeansTheSharedEntityPathSupportsIt() throws Exception {
-		String source = Files.readString(ROOT.resolve("manipulation/EntityManipulationEffects.java"));
-		int start = source.indexOf("SUPPORTED_CASTS = Set.of(");
-		String supported = source.substring(start, source.indexOf(");", start));
-		VesperManipulationCoverage.TABLE.forEach((id, entry) -> {
-			if (entry.coverage() == VesperManipulationCoverage.Coverage.CASTABLE) {
-				assertTrue(supported.contains("\"" + id + "\""), id + " is CASTABLE but has no entity cast");
-			}
-		});
-	}
+	// That Wills may cast exactly the 32 entity casts they could before, and that every CASTABLE entry has an entity
+	// cast, is checked over the live registry by entity_cast_validation's
+	// entityCastsAreAttachedWhereWillsAndVesperNeedThem (entity casts are attached at registration since step 11).
 }

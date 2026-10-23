@@ -5,23 +5,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public final class WillCombatRedesignSourceTest {
-	private static final String[] REQUIRED_KIT_IDS = {
-			"blood_shot", "blood_needle", "blood_aneurysm", "blood_cloud",
-			"crimson_flame_conjuration", "sanguine_ignition", "scalding_updraft", "vitric_combustion",
-			"deadly_gaze", "hemolymphal_pulse", "activation_potential",
-			"hematic_flare", "hematic_beacon", "prismatic_reproof", "unclosing_eye",
-			"hemorrhage", "exsanguinate", "bloom_of_rot",
-			"cryogenic_pulse", "glacial_grasp", "glacial_rampart", "iron_retort",
-			"pyretic_forge", "void_shroud", "gloam_laceration", "umbral_step", "blood_eclipse"
-	};
-
 	private WillCombatRedesignSourceTest() {
 	}
 
 	public static void main(String[] args) throws IOException {
 		String will = read("src/main/java/com/vincenthuto/hemomancy/common/entity/mob/monster/will/WillEntity.java");
 		String caster = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/WillManipulationCaster.java");
-		String support = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/EntityManipulationEffects.java");
 		String context = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationCastContext.java");
 		String entityCastable = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/EntityCastableManipulation.java");
 		assertContains("entity cast marker exists", entityCastable, "boolean castFromEntity(ManipulationCastContext context)");
@@ -32,13 +21,8 @@ public final class WillCombatRedesignSourceTest {
 		assertContains("broken wills use cast controller", will, "selectBrokenCast");
 		assertContains("sent wills use cast controller", will, "selectSentCast");
 		assertNotContains("will does not cast through drudge bridge", will, "MobManipCaster");
-		for (String id : REQUIRED_KIT_IDS) {
-			assertContains("entity support covers " + id, support, "\"" + id + "\"");
-		}
-		assertContains("entity support dispatches Lux flare", support,
-				"case \"hematic_flare\" -> hematicFlare(context);");
-		assertContains("entity support dispatches Tenebris slash", support,
-				"case \"gloam_laceration\" -> gloamLaceration(context);");
+		// Which kit manipulations have an entity cast is behaviour now (entity casts are attached at registration):
+		// entity_cast_validation pins the exact Will-castable set and each cast's outcome.
 		assertContains("drudge caster still exists", read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/MobManipCaster.java"),
 				"class MobManipCaster");
 	}

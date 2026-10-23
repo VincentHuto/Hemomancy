@@ -54,7 +54,7 @@ Base cost is 50 mL per existing one-second channel pulse, including the first, w
 
 This table is an inventory of authored assignments, not proof that a combat scenario passed. It was checked against the live registry. **Apply** means an ordinary direct hit applies its primary state; a non-damaging utility does not acquire damage merely because it has school metadata. **Exploit** is the named pre-state follow-up. Deferred periodic/reaction children are **damage only** regardless of the launch role.
 
-Every listed manipulation has its player path. Entity indicates the currently supported `EntityManipulationEffects` path used by non-player casters; Drudge indicates an actual supported action, not the unsupported sentinel. Family forms retain their existing availability restrictions. No additional alternate casting path was enabled merely to fill this table.
+Every listed manipulation has its player path. Entity indicates a supported entity cast (attached in `ManipulationInit`, run through `EntityManipulationEffects`) used by non-player casters; Drudge indicates an actual supported action, not the unsupported sentinel. Family forms retain their existing availability restrictions. No additional alternate casting path was enabled merely to fill this table.
 
 | Ability ID | Primary | Secondary | Direct role | Entity | Drudge |
 | --- | --- | --- | --- | --- | --- |

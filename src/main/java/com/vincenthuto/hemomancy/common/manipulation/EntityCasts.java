@@ -1,0 +1,670 @@
+package com.vincenthuto.hemomancy.common.manipulation;
+
+import com.vincenthuto.hemomancy.common.damage.*;
+import com.vincenthuto.hemomancy.common.particle.HemoParticleData;
+import com.vincenthuto.hemomancy.common.capability.player.harbinger.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.entity.projectile.BloodCloudCarrierEntity;
+import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
+import com.vincenthuto.hemomancy.common.entity.projectile.BloodShotEntity;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.init.EffectInit;
+import com.vincenthuto.hemomancy.common.item.harbinger.memories.LivingWeaponGraftRecipeUnlockEvents;
+import com.vincenthuto.hemomancy.common.manipulation.congeatio.TemporaryIceManager;
+import com.vincenthuto.hemomancy.common.manipulation.ductilis.DuctilisLightningEffects;
+import com.vincenthuto.hemomancy.common.manipulation.ductilis.ConductionManager;
+import com.vincenthuto.hemomancy.common.manipulation.ductilis.Discharge;
+import com.vincenthuto.hemomancy.common.manipulation.ferric.SanguineMagnetismManip;
+import com.vincenthuto.hemomancy.common.manipulation.tenebris.BlackVeilCovenantManager;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
+import javax.annotation.Nullable;
+import java.util.List;
+
+/**
+ * What each manipulation does when an entity casts it (a Will, Vesper): one public method per manipulation,
+ * attached at registration with {@link BloodManipulation#setEntityCast(EntityCast)} and run through
+ * {@link EntityManipulationEffects#cast}, which applies the shared paralysis and school-damage rules first.
+ */
+public final class EntityCasts {
+	private EntityCasts() {
+	}
+
+	public static boolean bloodShot(ManipulationCastContext context) {
+		BloodShotEntity shot = BloodShotEntity.fromManipulation(context.level(), context.caster(), context.heldItem());
+		shootArrow(context, shot, 4.5F, 1.0F, 3.0D);
+		return true;
+	}
+
+	public static boolean bloodNeedle(ManipulationCastContext context) {
+		int count = 8 + context.level().random.nextInt(6);
+		for (int i = 0; i < count; i++) {
+			BloodNeedleEntity needle = BloodNeedleEntity.fromManipulation(context.level(), context.caster(), context.heldItem());
+			needle.setForged(true);
+			shootArrow(context, needle, 3.8F + context.level().random.nextFloat() * 1.2F, 8.0F, 1.25D);
+		}
+		return true;
+	}
+
+	public static boolean bloodAneurysm(ManipulationCastContext context) {
+		LivingEntity target = preferredTarget(context, context.scaleRange(12.0D));
+		if (target == null) return false;
+		float directDamage = context.scaleDamage(8.0F);
+		target.hurt(context.level().damageSources().magic(), directDamage);
+		target.setDeltaMovement(target.getDeltaMovement().x, 1.15D, target.getDeltaMovement().z);
+		target.hurtMarked = true;
+		Vec3 center = target.position().add(0.0D, target.getBbHeight() * 0.5D, 0.0D);
+		for (LivingEntity splash : livingNear(context.level(), center, 4.0D, context.caster())) {
+			if (splash != target && canAffect(context.caster(), splash)) {
+				splash.hurt(context.level().damageSources().magic(), context.scaleDamage(3.0F));
+			}
+		}
+		sendParticles(context.level(), center, 34, new ParticleColor(210, 0, 0), 1.8D);
+		context.level().playSound(null, target.blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE,
+				0.5F, 1.8F);
+		return true;
+	}
+
+	public static boolean bloodCloud(ManipulationCastContext context) {
+		Vec3 aim = context.aim().normalize();
+		BloodCloudCarrierEntity carrier = new BloodCloudCarrierEntity(context.level(), context.caster(),
+				context.caster().getX(), context.caster().getEyeY() - 0.15D, context.caster().getZ());
+		carrier.setDeltaMovement(aim.scale(0.45D));
+		carrier.xPower = carrier.getDeltaMovement().x * 0.01D;
+		carrier.yPower = carrier.getDeltaMovement().y * 0.01D;
+		carrier.zPower = carrier.getDeltaMovement().z * 0.01D;
+		context.level().addFreshEntity(carrier);
+		context.level().levelEvent(null, 1016, context.caster().blockPosition(), 0);
+		return true;
+	}
+
+	public static boolean crimsonFlameConjuration(ManipulationCastContext context) {
+		BlockPos firePos = aimedBlock(context, context.scaleRange(16.0D))
+				.map(hit -> hit.getBlockPos().relative(hit.getDirection()))
+				.orElseGet(() -> context.hasTarget() ? context.target().blockPosition() : context.origin());
+		if (!context.level().getBlockState(firePos).canBeReplaced()) {
+			firePos = firePos.above();
+		}
+		BlockState existing = context.level().getBlockState(firePos);
+		if (!existing.canBeReplaced()) return false;
+		context.level().setBlock(firePos, BlockInit.crimson_flames.get().defaultBlockState(), 3);
+		context.level().playSound(null, firePos, SoundEvents.FIRECHARGE_USE, SoundSource.HOSTILE, 0.8F, 0.9F);
+		thermalBurst(context, ManipulationVisuals.Form.FLAME_CONJURE, Vec3.atBottomCenterOf(firePos), .7, 30);
+		return true;
+	}
+
+	public static boolean sanguineIgnition(ManipulationCastContext context) {
+		int hits = 0;
+		for (LivingEntity target : targetsAroundCaster(context, 5.0D)) {
+			target.hurt(context.level().damageSources().onFire(), context.scaleDamage(2.0F));
+			hits++;
+		}
+		context.level().playSound(null, context.origin(), SoundEvents.FIRECHARGE_USE, SoundSource.HOSTILE, 0.9F, 0.8F);
+		thermalBurst(context, ManipulationVisuals.Form.IGNITION, context.caster().position(), 5, 22);
+		if (hits > 0) {
+			LivingWeaponGraftRecipeUnlockEvents.onTorchAlignedManipulation(context.caster());
+		}
+		return hits > 0;
+	}
+
+	public static boolean scaldingUpdraft(ManipulationCastContext context) {
+		Vec3 flatAim = new Vec3(context.aim().x, 0.0D, context.aim().z);
+		if (flatAim.lengthSqr() > 1.0E-4D) {
+			flatAim = flatAim.normalize().scale(0.4D);
+		}
+		context.caster().push(flatAim.x, 1.05D, flatAim.z);
+		context.caster().hurtMarked = true;
+		context.caster().fallDistance = 0.0F;
+		context.caster().resetFallDistance();
+		context.caster().addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 100, 0, false, true));
+		for (LivingEntity target : targetsAroundCaster(context, 4.0D)) {
+			com.vincenthuto.hemomancy.common.damage.SchoolDamage.hurt(target, context.level().damageSources().onFire(), context.scaleDamage(1.5F), 60, 1);
+		}
+		context.level().playSound(null, context.origin(), SoundEvents.FIRECHARGE_USE, SoundSource.HOSTILE, 0.9F, 0.6F);
+		ManipulationVisuals.attached(context.caster(), ManipulationVisuals.Form.UPDRAFT, 1, 22, 1);
+		LivingWeaponGraftRecipeUnlockEvents.onTorchAlignedManipulation(context.caster());
+		return true;
+	}
+
+	public static boolean vitricCombustion(ManipulationCastContext context) {
+		Vec3 center = context.hasTarget()
+				? context.target().position().add(0.0D, context.target().getBbHeight() * 0.5D, 0.0D)
+				: context.caster().getEyePosition().add(context.aim().scale(context.scaleRange(18.0D)));
+		int hits = 0;
+		for (LivingEntity target : livingNear(context.level(), center, 4.0D, context.caster())) {
+			if (!canAffect(context.caster(), target)) continue;
+			target.hurt(context.level().damageSources().magic(), context.scaleDamage(8.0F));
+			Vec3 knockback = target.position().subtract(center);
+			if (knockback.lengthSqr() > 1.0E-4D) {
+				knockback = knockback.normalize().scale(1.1D);
+				target.push(knockback.x, 0.4D, knockback.z);
+			}
+			hits++;
+		}
+		context.level().playSound(null, BlockPos.containing(center), SoundEvents.GENERIC_EXPLODE.value(),
+				SoundSource.HOSTILE, 1.1F, 0.7F);
+		thermalBurst(context, ManipulationVisuals.Form.GLASS, center, 4, 36);
+		return hits > 0;
+	}
+
+	public static boolean deadlyGaze(ManipulationCastContext context) {
+		LivingEntity target = preferredTarget(context, context.scaleRange(24.0D));
+		if (target == null) return false;
+		target.push(0.0D, 0.85D, 0.0D);
+		target.hurtMarked = true;
+		target.hurt(context.level().damageSources().magic(), context.scaleDamage(2.5F));
+		target.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 20, 0, false, true));
+		sendParticles(context.level(), target.position().add(0.0D, target.getBbHeight() * 0.7D, 0.0D), 16,
+				new ParticleColor(255, 0, 0), 0.8D);
+		return true;
+	}
+
+	public static boolean hemolymphalPulse(ManipulationCastContext context) {
+		int tagged = 0;
+		for (LivingEntity target : targetsAroundCaster(context, 24.0D)) {
+			target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 300, 0, false, false));
+			tagged++;
+			DuctilisLightningEffects.sensoryResponse(target);
+		}
+		if (context.level() instanceof ServerLevel serverLevel) {
+			ManipulationVisuals.burst(serverLevel, ManipulationVisuals.Form.NERVE_PULSE, context.caster().position(),
+					context.caster().position(), 7.0D, 32);
+		}
+		context.level().playSound(null, context.origin(), SoundEvents.WARDEN_HEARTBEAT, SoundSource.HOSTILE, 0.8F, 0.6F);
+		if (tagged > 0) {
+			LivingWeaponGraftRecipeUnlockEvents.onSpearAlignedManipulation(context.caster());
+		}
+		return tagged > 0;
+	}
+
+    public static boolean activationPotential(ManipulationCastContext context) {
+        var discharge=new Discharge();
+        discharge.deferReactions();
+        var hitTargets=new java.util.ArrayList<LivingEntity>();
+        int hits=0;
+        for (LivingEntity target:targetsAroundCaster(context,5.0D)) {
+            if (!ManipulationCombatHelper.canHarmFor(context.caster(),target)
+                    || !ConductionManager.visible((ServerLevel)context.level(),context.caster().getEyePosition(),target.getEyePosition(),context.caster())
+                    || !ConductionManager.claimHit(context.caster(),target,discharge)) continue;
+            DuctilisLightningEffects.synapticJolt(context.caster(),target);
+
+            if (target.hurt(context.level().damageSources().mobAttack(context.caster()),context.scaleDamage(5))) {
+                ConductionManager.energizeTouching(context.caster(),target,discharge);
+                hitTargets.add(target);
+            }
+            hits++;
+        }
+        ConductionManager.energizeVisibleBounds(context.caster(),context.caster().getBoundingBox().inflate(5),discharge);
+        discharge.flushReactions();
+        context.caster().addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED,100,0,false,true));
+        context.level().playSound(null,context.origin(),SoundEvents.TRIDENT_THUNDER.value(),SoundSource.HOSTILE,0.55F,1.5F);
+        return hits>0;
+    }
+
+    public static boolean synapticJolt(ManipulationCastContext context) {
+        LivingEntity target=preferredTarget(context,context.scaleRange(7.0D));
+        if (target==null || !ManipulationCombatHelper.canHarmFor(context.caster(),target)
+                || !ConductionManager.visible((ServerLevel)context.level(),context.caster().getEyePosition(),target.getEyePosition(),context.caster())) return false;
+        var discharge=new Discharge();
+        if (!ConductionManager.claimHit(context.caster(),target,discharge)) return false;
+        DuctilisLightningEffects.synapticJolt(context.caster(),target);
+        float damage=context.scaleDamage(3.0F);
+        if (target.hurt(context.level().damageSources().magic(),damage)) {
+            ConductionManager.energizeTouching(context.caster(),target,discharge);
+
+        }
+        context.level().playSound(null,target.blockPosition(),SoundEvents.TRIDENT_THUNDER.value(),SoundSource.HOSTILE,0.45F,1.75F);
+        return true;
+    }
+
+	public static boolean conductiveMark(ManipulationCastContext context) {
+		LivingEntity target = preferredTarget(context, context.scaleRange(14.0D));
+		if (target == null) return false;
+		SchoolHitHelper.markConductive(target, ManipulationStatusRules.CONDUCTIVE_MARK_TICKS);
+		target.addEffect(new MobEffectInstance(MobEffects.GLOWING, ManipulationStatusRules.CONDUCTIVE_MARK_TICKS,
+				0, false, true, true));
+		DuctilisLightningEffects.conductiveMark(context.caster(), target);
+		context.level().playSound(null, target.blockPosition(), SoundEvents.TRIDENT_THUNDER.value(), SoundSource.HOSTILE,
+				0.35F, 2.0F);
+		return true;
+	}
+
+	public static boolean hematicFlare(ManipulationCastContext context) {
+		LivingEntity target = preferredTarget(context, context.scaleRange(16.0D));
+		if (target == null) return false;
+		boolean concealed = target.hasEffect(MobEffects.INVISIBILITY);
+		float damage = context.scaleDamage(3.0F);
+		SchoolDamage.hurt(target, context.level().damageSources().magic(), damage, 180, 1);
+
+		context.level().playSound(null, target.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.HOSTILE,
+				0.75F, concealed ? 1.75F : 1.45F);
+		if (context.level() instanceof ServerLevel level) {
+            HemomancyTendrilEffects.luxRelease(context.caster(), target.getEyePosition());
+            ManipulationVisuals.burst(level, ManipulationVisuals.Form.FLARE, target.getEyePosition(), target.getEyePosition(), 1.1, 18);
+        }
+		LivingWeaponGraftRecipeUnlockEvents.onSpearAlignedManipulation(context.caster());
+		return true;
+	}
+
+	public static boolean hematicBeacon(ManipulationCastContext context) {
+		context.caster().addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 600, 0, false, false, true));
+		int glowed = 0;
+		for (LivingEntity target : targetsAroundCaster(context, 32.0D)) {
+			SchoolStates.apply(context.caster(), target, SchoolState.ILLUMINATED, 600);
+			glowed++;
+		}
+		context.level().playSound(null, context.origin(), SoundEvents.BEACON_ACTIVATE, SoundSource.HOSTILE, 0.5F, 1.8F);
+		if (glowed > 0) {
+			LivingWeaponGraftRecipeUnlockEvents.onSpearAlignedManipulation(context.caster());
+		}
+		return glowed > 0 || !context.playerCast();
+	}
+
+	public static boolean prismaticReproof(ManipulationCastContext context) {
+		LivingEntity target = preferredTarget(context, context.scaleRange(14.0D));
+		if (target == null) return false;
+        target.hurt(context.level().damageSources().magic(), context.scaleDamage(2.0F));
+		context.level().playSound(null, context.origin(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.HOSTILE,
+				0.8F, 1.4F);
+		if (context.level() instanceof ServerLevel level) {
+            ManipulationVisuals.burst(level, ManipulationVisuals.Form.VERDICT, context.caster().getEyePosition(), target.getEyePosition(), .25, 12);
+        }
+		return true;
+	}
+
+	public static boolean unclosingEye(ManipulationCastContext context) {
+		int revealed = 0;
+		for (LivingEntity target : livingNear(context.level(), context.caster().position(), 32.0D, null)) {
+			if (!target.isAlive()) continue;
+			SchoolStates.apply(context.caster(), target, SchoolState.ILLUMINATED, 600);
+			revealed++;
+		}
+		context.level().playSound(null, context.origin(), SoundEvents.BEACON_ACTIVATE, SoundSource.HOSTILE, 1.0F, 1.5F);
+		ManipulationVisuals.attached(context.caster(), ManipulationVisuals.Form.EYE, 1, 600, 1);
+		return revealed > 0;
+	}
+
+	public static boolean hemorrhage(ManipulationCastContext context) {
+		LivingEntity target = preferredTarget(context, context.scaleRange(8.0D));
+		if (target == null) return false;
+		SchoolStates.apply(context.caster(), target, SchoolState.NECROSIS, 120);
+		context.level().playSound(null, context.origin(), SoundEvents.WITHER_HURT, SoundSource.HOSTILE, 0.7F, 1.6F);
+		BloodFlowVisuals.connect(context.caster(), target, com.vincenthuto.hemomancy.common.network.particle.BloodFlowPacket.Style.TEAR);
+		LivingWeaponGraftRecipeUnlockEvents.onAxeAlignedManipulation(context.caster());
+		return true;
+	}
+
+	public static boolean exsanguinate(ManipulationCastContext context) {
+		LivingEntity target = preferredTarget(context, context.scaleRange(10.0D));
+		if (target == null || target.getHealth() > target.getMaxHealth() * 0.35F) return false;
+		float damage = Math.max(4.0F, target.getHealth() * 1.5F);
+		target.hurt(context.level().damageSources().magic(), context.scaleDamage(damage));
+		context.caster().heal(Math.min(6.0F, damage * 0.35F));
+		context.level().playSound(null, context.origin(), SoundEvents.WITHER_DEATH, SoundSource.HOSTILE, 0.7F, 1.8F);
+		BloodFlowVisuals.connect(context.caster(), target, com.vincenthuto.hemomancy.common.network.particle.BloodFlowPacket.Style.EXTRACTION);
+		return true;
+	}
+
+	public static boolean insatiableHunger(ManipulationCastContext context) {
+		LivingEntity target = preferredTarget(context, context.scaleRange(10.0D));
+		if (target == null) return false;
+		target.addEffect(new MobEffectInstance(EffectInit.insatiable_hunger, 220, 0, false, true, true));
+		context.level().playSound(null, target.blockPosition(), SoundEvents.HUSK_AMBIENT, SoundSource.HOSTILE,
+				0.65F, 0.7F);
+		ManipulationVisuals.attached(target, ManipulationVisuals.Form.HUNGER, .6, 220, 1);
+		return true;
+	}
+
+	public static boolean graveDebt(ManipulationCastContext context) {
+		LivingEntity target = preferredTarget(context, context.scaleRange(12.0D));
+		if (target == null) return false;
+		if (context.caster() instanceof net.minecraft.world.entity.player.Player player) {
+			SchoolHitHelper.markGraveDebt(target, player, ManipulationStatusRules.GRAVE_DEBT_TICKS);
+		} else {
+			target.addEffect(new MobEffectInstance(EffectInit.grave_debt,
+					ManipulationStatusRules.GRAVE_DEBT_TICKS, 0, false, true, true));
+			target.getPersistentData().putBoolean("hemomancy:grave_debt_burst_used", false);
+		}
+		context.level().playSound(null, target.blockPosition(), SoundEvents.SCULK_SHRIEKER_SHRIEK, SoundSource.HOSTILE,
+				0.45F, 0.55F);
+		ManipulationVisuals.attached(target, ManipulationVisuals.Form.GRAVE, .6, ManipulationStatusRules.GRAVE_DEBT_TICKS, 1);
+		return true;
+	}
+
+	public static boolean bloomOfRot(ManipulationCastContext context) {
+		int hits = 0;
+		for (LivingEntity target : targetsAroundCaster(context, 8.0D)) {
+			SchoolStates.apply(context.caster(), target, SchoolState.NECROSIS, 200);
+            MortemStatusVisuals.infect(target, 200);
+			hits++;
+		}
+		context.caster().addEffect(new MobEffectInstance(MobEffects.POISON, 60, 0, false, true));
+		context.level().playSound(null, context.origin(), SoundEvents.SCULK_BLOCK_SPREAD, SoundSource.HOSTILE, 1.0F, 0.7F);
+		MortemStatusVisuals.infect(context.caster(), 60);
+        if(context.level() instanceof net.minecraft.server.level.ServerLevel server)
+            ManipulationVisuals.burst(server, ManipulationVisuals.Form.BLOOM, context.caster().position(), context.caster().position(), 8, 40);
+		return hits > 0;
+	}
+
+	public static boolean cryogenicPulse(ManipulationCastContext context) {
+		int hits = 0;
+		for (LivingEntity target : targetsAroundCaster(context, 5.0D)) {
+			target.hurt(context.level().damageSources().freeze(), context.scaleDamage(3.0F));
+			hits++;
+		}
+		context.level().playSound(null, context.origin(), SoundEvents.GLASS_PLACE, SoundSource.HOSTILE, 1.0F, 0.7F);
+		thermalBurst(context, ManipulationVisuals.Form.CRYOGENIC_PULSE, context.caster().position(), 5, 28);
+		if (hits > 0) {
+			LivingWeaponGraftRecipeUnlockEvents.onFlailAlignedManipulation(context.caster());
+		}
+		return hits > 0;
+	}
+
+	public static boolean glacialGrasp(ManipulationCastContext context) {
+		LivingEntity target = preferredTarget(context, context.scaleRange(10.0D));
+		boolean controlled = false;
+		if (target != null) {
+			applyColdControl(context, target, 120);
+            ManipulationVisuals.attached(target,ManipulationVisuals.Form.FROZEN_VEINS,target.getBbWidth(),100,1);
+			controlled = true;
+		}
+		if (context.level() instanceof ServerLevel serverLevel) {
+			BlockPos center = target != null ? target.blockPosition() : context.caster().blockPosition();
+			int placed = 0;
+			for (int dx = -2; dx <= 2; dx++) {
+				for (int dz = -2; dz <= 2; dz++) {
+					for (int dy = -1; dy <= 0; dy++) {
+						BlockPos pos = center.offset(dx, dy, dz);
+						BlockState state = context.level().getBlockState(pos);
+						if (state.getFluidState().is(Fluids.WATER) && state.getFluidState().isSource()
+								&& context.level().getBlockState(pos.above()).isAir()) {
+							if (TemporaryIceManager.placeOwned(serverLevel, pos,
+									BlockInit.frozen_cruor.get().defaultBlockState(),
+									60 + context.level().random.nextInt(40), context.caster().getUUID())) {
+                                placed++;
+                                ManipulationVisuals.burst(serverLevel,ManipulationVisuals.Form.FROST_ADVANCE,
+                                        Vec3.atBottomCenterOf(pos.above()),context.caster().position(),.45,36);
+                            }
+						}
+					}
+				}
+			}
+			if (placed > 0) {
+				ManipulationVisuals.burst(serverLevel, ManipulationVisuals.Form.ICE, Vec3.atBottomCenterOf(center), Vec3.atCenterOf(center), 2.2, 24);
+				controlled = true;
+			}
+		}
+		context.level().playSound(null, context.origin(), SoundEvents.GLASS_PLACE, SoundSource.HOSTILE, 0.8F, 1.3F);
+		if (controlled) {
+			LivingWeaponGraftRecipeUnlockEvents.onFlailAlignedManipulation(context.caster());
+		}
+		return controlled;
+	}
+
+	public static boolean glacialBastion(ManipulationCastContext context) {
+		if (!(context.level() instanceof ServerLevel serverLevel)) return false;
+		BlockPos base = context.caster().blockPosition();
+		int placed = 0;
+		for (int dx = -2; dx <= 2; dx++) {
+			for (int dz = -2; dz <= 2; dz++) {
+				int dist = Math.abs(dx) + Math.abs(dz);
+				if (dist < 2 || dist > 3) continue;
+				for (int dy = 0; dy < 3; dy++) {
+					BlockPos pos = base.offset(dx, dy, dz);
+					if (pos.equals(base) || pos.equals(base.above())) continue;
+					if (TemporaryIceManager.place(serverLevel, pos, BlockInit.frozen_cruor.get().defaultBlockState(),
+							420 + context.level().random.nextInt(120))) {
+						placed++;
+					}
+				}
+			}
+		}
+		context.level().playSound(null, base, SoundEvents.GLASS_PLACE, SoundSource.HOSTILE, 1.0F, 0.5F);
+		return placed > 0;
+	}
+
+	public static boolean glacialRampart(ManipulationCastContext context) {
+		if (!(context.level() instanceof ServerLevel serverLevel)) return false;
+		Vec3 anchor = context.hasTarget()
+				? context.target().position().subtract(context.aim().scale(1.8D))
+				: context.caster().position().add(context.aim().scale(6.0D));
+		BlockPos base = BlockPos.containing(anchor);
+		Direction lateral = context.caster().getDirection().getClockWise();
+		int placed = 0;
+		for (int dLat = -1; dLat <= 1; dLat++) {
+			for (int dUp = 0; dUp < 3; dUp++) {
+				BlockPos pos = base.relative(lateral, dLat).above(dUp);
+				if (TemporaryIceManager.placeOwned(serverLevel, pos, BlockInit.frozen_cruor.get().defaultBlockState(),
+						420 + context.level().random.nextInt(120), context.caster().getUUID())) {
+					placed++;
+				}
+			}
+		}
+		context.level().playSound(null, base, SoundEvents.GLASS_PLACE, SoundSource.HOSTILE, 1.0F, 0.5F);
+		return placed > 0;
+	}
+
+	public static boolean pyreticForge(ManipulationCastContext context) {
+		LivingEntity target = preferredTarget(context, context.scaleRange(14.0D));
+		if (target == null) return false;
+		com.vincenthuto.hemomancy.common.damage.SchoolDamage.hurt(target, context.level().damageSources().onFire(), context.scaleDamage(4.0F), 100, 1);
+		context.caster().addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 120, 0, false, true));
+		context.level().playSound(null, context.origin(), SoundEvents.FIRECHARGE_USE, SoundSource.HOSTILE, 0.8F, 1.0F);
+		ManipulationVisuals.attached(target, ManipulationVisuals.Form.FORGE, .7, 24, 1);
+		LivingWeaponGraftRecipeUnlockEvents.onTorchAlignedManipulation(context.caster());
+		return true;
+	}
+
+	public static boolean ironRetort(ManipulationCastContext context) {
+		context.caster().addEffect(new MobEffectInstance(EffectInit.iron_retort,
+				ManipulationStatusRules.IRON_RETORT_TICKS, 0, false, true, true));
+		context.level().playSound(null, context.origin(), SoundEvents.ANVIL_USE, SoundSource.HOSTILE,
+				0.55F, 1.8F);
+		sendParticles(context.level(), context.caster().position().add(0.0D, context.caster().getBbHeight() * 0.58D, 0.0D),
+				28, new ParticleColor(155, 155, 150), 1.1D);
+		return true;
+	}
+
+	public static boolean sanguineMagnetism(ManipulationCastContext context) {
+		if (!(context.level() instanceof ServerLevel serverLevel)) return false;
+		Vec3 center = context.hasTarget()
+				? context.target().position()
+				: context.caster().position().add(context.aim().normalize().scale(8.0D));
+		SanguineMagnetismManip.spawnMagneticPillar(context.caster(), serverLevel, center,
+				ManipulationStatusRules.SANGUINE_MAGNETISM_TICKS);
+		return true;
+	}
+
+	public static boolean voidShroud(ManipulationCastContext context) {
+		SchoolStates.apply(context.caster(), context.caster(), SchoolState.VEILED, 100);
+		context.caster().addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 100, 1, false, false));
+		context.caster().addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 100, 0, false, false));
+		context.level().playSound(null, context.origin(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.HOSTILE, 0.5F, 1.8F);
+		if (context.level() instanceof ServerLevel level) {
+            ManipulationVisuals.attached(context.caster(), ManipulationVisuals.Form.VEIL, 1, 18, 1);
+            ManipulationParticles.accent(level, EnumBloodTendency.TENEBRIS, context.caster().position().add(0, 1, 0), Vec3.ZERO);
+        }
+		return true;
+	}
+
+	public static boolean gloamLaceration(ManipulationCastContext context) {
+		LivingEntity target = preferredTarget(context, context.scaleRange(7.0D));
+		if (target == null) return false;
+		boolean ambush = context.caster().isInvisible()
+				|| BlackVeilCovenantManager.isDarkEnough(context.level(), context.caster().blockPosition(), 7);
+		if (target.hurt(context.level().damageSources().magic(), context.scaleDamage(ambush ? 6.0F : 3.5F)))
+            target.addEffect(new MobEffectInstance(EffectInit.blood_loss, 140, 0, false, true));
+		context.level().playSound(null, target.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.HOSTILE,
+				0.75F, ambush ? 0.65F : 0.85F);
+		if (context.level() instanceof ServerLevel serverLevel) {
+            Vec3 at = target.position().add(0, target.getBbHeight() * .55, 0);
+            ManipulationVisuals.burst(serverLevel, ManipulationVisuals.Form.UMBRA_SLASH, at,
+                    at.add(context.aim()), ambush ? 1.05 : .92, 18);
+		}
+		return true;
+	}
+
+	public static boolean umbralStep(ManipulationCastContext context) {
+		if (!context.hasTarget()) return false;
+		BlockPos landing = findLandingNearTarget(context.caster(), context.target());
+		if (landing == null) return false;
+		Vec3 oldPos = context.caster().position();
+		context.caster().teleportTo(landing.getX() + 0.5D, landing.getY(), landing.getZ() + 0.5D);
+		context.caster().fallDistance = 0.0F;
+		context.caster().resetFallDistance();
+		context.level().playSound(null, landing, SoundEvents.ENDERMAN_TELEPORT, SoundSource.HOSTILE, 0.8F, 1.2F);
+        if (context.level() instanceof ServerLevel level) {
+            ManipulationVisuals.burst(level, ManipulationVisuals.Form.TELEPORT, oldPos, oldPos, 1, 18);
+            Vec3 destination = Vec3.atBottomCenterOf(landing);
+            ManipulationVisuals.burst(level, ManipulationVisuals.Form.UMBRA_ARRIVAL, destination, destination, 1, 22);
+        }
+		return true;
+	}
+
+	public static boolean bloodEclipse(ManipulationCastContext context) {
+		int hits = 0;
+		Vec3 eye = context.caster().getEyePosition();
+		Vec3 look = context.aim().normalize();
+		double range = context.scaleRange(18.0D);
+		double coneDot = Math.cos(Math.toRadians(35.0D));
+		for (LivingEntity target : targetsAroundCaster(context, range)) {
+			Vec3 toTarget = target.getEyePosition().subtract(eye);
+			if (toTarget.lengthSqr() <= 1.0E-4D || look.dot(toTarget.normalize()) < coneDot) continue;
+			SchoolDamage.hurt(target, context.level().damageSources().magic(), context.scaleDamage(3.0F), 100, 1);
+			if (hits < 6) HemomancyTendrilEffects.bloodEclipse(context.caster(), target, hits);
+			hits++;
+		}
+		context.level().playSound(null, context.origin(), SoundEvents.WITHER_SHOOT, SoundSource.HOSTILE, 0.6F, 2.0F);
+		return hits > 0;
+	}
+
+	public static boolean bloodEclipseMantle(ManipulationCastContext context) {
+		context.caster().addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 360, 1, false, true));
+		context.caster().addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 360, 0, false, true));
+		context.caster().addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 240, 0, false, true));
+		context.level().playSound(null, context.origin(), SoundEvents.WARDEN_HEARTBEAT, SoundSource.HOSTILE, 0.75F, 0.6F);
+		if (context.level() instanceof ServerLevel level) {
+            ManipulationVisuals.attached(context.caster(), ManipulationVisuals.Form.VEIL, 1, 18, 1);
+            ManipulationParticles.accent(level, EnumBloodTendency.TENEBRIS, context.caster().position().add(0, 1, 0), Vec3.ZERO);
+        }
+		return true;
+	}
+
+    private static void thermalBurst(ManipulationCastContext context,ManipulationVisuals.Form form,Vec3 at,double radius,int ticks) {
+        if(context.level() instanceof ServerLevel level)ManipulationVisuals.burst(level,form,at,at,radius,ticks);
+    }
+
+	private static void shootArrow(ManipulationCastContext context, AbstractArrow arrow, float velocity, float inaccuracy,
+			double baseDamage) {
+		Vec3 aim = context.aim().normalize();
+		arrow.setBaseDamage(baseDamage * context.damageScale());
+		arrow.shoot(aim.x, aim.y, aim.z, velocity, inaccuracy);
+		context.level().addFreshEntity(arrow);
+	}
+
+	@Nullable
+	private static LivingEntity preferredTarget(ManipulationCastContext context, double range) {
+		if (context.hasTarget() && context.caster().distanceTo(context.target()) <= range
+				&& canAffect(context.caster(), context.target())) {
+			return context.target();
+		}
+		return targetsAroundCaster(context, range).stream()
+				.min((a, b) -> Double.compare(context.caster().distanceToSqr(a), context.caster().distanceToSqr(b)))
+				.orElse(null);
+	}
+
+	private static List<LivingEntity> targetsAroundCaster(ManipulationCastContext context, double radius) {
+		return context.level().getEntitiesOfClass(LivingEntity.class, context.caster().getBoundingBox().inflate(radius),
+				target -> target.distanceTo(context.caster()) <= radius && canAffect(context.caster(), target));
+	}
+
+	private static List<LivingEntity> livingNear(Level level, Vec3 center, double radius, @Nullable LivingEntity excluded) {
+		AABB box = new AABB(BlockPos.containing(center)).inflate(radius);
+		return level.getEntitiesOfClass(LivingEntity.class, box,
+				target -> target != excluded && target.isAlive() && target.position().distanceTo(center) <= radius);
+	}
+
+	private static boolean canAffect(LivingEntity caster, @Nullable LivingEntity target) {
+		if (target == null || target == caster || !target.isAlive()) return false;
+		if (target.isAlliedTo(caster) || caster.isAlliedTo(target)) return false;
+		return !(caster instanceof Mob mob) || mob.getTarget() == target || mob.canAttack(target);
+	}
+
+	private static void applyColdControl(ManipulationCastContext context, LivingEntity target, int duration) {
+		SchoolStates.apply(context.caster(), target, SchoolState.RIME, duration, target.isInWaterOrRain() ? 2 : 1);
+        ManipulationVisuals.attached(target,ManipulationVisuals.Form.BONE,target.getBbWidth()*.5,24,1);
+	}
+
+	private static java.util.Optional<BlockHitResult> aimedBlock(ManipulationCastContext context, double range) {
+		Vec3 eye = context.caster().getEyePosition();
+		Vec3 end = eye.add(context.aim().scale(range));
+		BlockHitResult hit = context.level().clip(new ClipContext(eye, end, ClipContext.Block.OUTLINE,
+				ClipContext.Fluid.NONE, context.caster()));
+		return hit.getType() == HitResult.Type.MISS ? java.util.Optional.empty() : java.util.Optional.of(hit);
+	}
+
+	@Nullable
+	private static BlockPos findLandingNearTarget(LivingEntity caster, LivingEntity target) {
+		Vec3 away = caster.position().subtract(target.position());
+		if (away.lengthSqr() < 1.0E-4D) {
+			away = caster.getLookAngle().reverse();
+		}
+		away = away.normalize();
+		BlockPos preferred = BlockPos.containing(target.position().add(away.scale(2.0D)));
+		BlockPos safe = firstSafeLanding(caster.level(), preferred);
+		if (safe != null) return safe;
+		for (int radius = 1; radius <= 3; radius++) {
+			for (int dx = -radius; dx <= radius; dx++) {
+				for (int dz = -radius; dz <= radius; dz++) {
+					safe = firstSafeLanding(caster.level(), target.blockPosition().offset(dx, 0, dz));
+					if (safe != null) return safe;
+				}
+			}
+		}
+		return null;
+	}
+
+	@Nullable
+	private static BlockPos firstSafeLanding(Level level, BlockPos pos) {
+		for (int dy = 2; dy >= -2; dy--) {
+			BlockPos feet = pos.offset(0, dy, 0);
+			if (level.getBlockState(feet).isAir()
+					&& level.getBlockState(feet.above()).isAir()
+					&& !level.getBlockState(feet.below()).getCollisionShape(level, feet.below()).isEmpty()) {
+				return feet;
+			}
+		}
+		return null;
+	}
+
+	private static Vec3 midpoint(LivingEntity a, LivingEntity b) {
+		return a.getEyePosition().add(b.getEyePosition()).scale(0.5D);
+	}
+
+	private static void sendParticles(Level level, Vec3 center, int count, ParticleColor color, double spread) {
+		if (!(level instanceof ServerLevel serverLevel)) return;
+		for (int i = 0; i < count; i++) {
+			serverLevel.sendParticles(HemoParticleData.glow(color),
+					center.x + (level.random.nextDouble() - 0.5D) * spread,
+					center.y + (level.random.nextDouble() - 0.5D) * spread,
+					center.z + (level.random.nextDouble() - 0.5D) * spread,
+					1, 0.0D, 0.04D, 0.0D, 0.01D);
+		}
+	}
+}

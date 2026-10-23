@@ -166,8 +166,9 @@ key press (client/event/ClientEvents)
 ```
 
 Entities cast through a parallel path:
-- `EntityManipulationEffects` dispatches with a switch on the manipulation name.
-- Drudge actions are lambdas registered in `ManipulationInit`.
+- Each manipulation's entity cast is attached at registration (`setEntityCast(EntityCasts::x)` in
+  `ManipulationInit`, since step 11); `EntityManipulationEffects.cast` applies the shared rules and runs it.
+- Drudge actions are attached the same way (`setDrudgeAction(DrudgeActions::x, ...)`).
 
 ---
 

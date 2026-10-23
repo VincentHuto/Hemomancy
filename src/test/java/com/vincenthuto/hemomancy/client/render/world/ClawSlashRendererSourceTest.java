@@ -65,7 +65,7 @@ public final class ClawSlashRendererSourceTest {
 
 	private static void gloamUsesClawSlashVisuals() throws IOException {
 		String gloam = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/tenebris/GloamLacerationManip.java");
-		String entityEffects = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/EntityManipulationEffects.java");
+		String entityEffects = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/EntityCasts.java");
 
 		assertContains("gloam player cast uses the shared manipulation visual pipeline", gloam,
 				"ManipulationVisuals.burst(");

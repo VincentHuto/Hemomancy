@@ -346,6 +346,10 @@ Unstained mechanics, hazards, Still Arts and summons.
 - Since step 11, `/hemo` is one root in `HemoCommand` wiring one `<Name>Subcommand` class per branch.
   `HemoCommandTreeTest` pins the syntax node by node and `hemo_command_validation` fingerprints every
   executable path; `HemoCommandStructureGuardrailTest` keeps the structure.
+- Since step 11, an entity's cast of a manipulation is a registration-time hook, `setEntityCast(EntityCasts::x)`
+  in `ManipulationInit`, beside `setDrudgeAction` (L-1). `EntityManipulationEffects.cast` applies paralysis and
+  school damage and runs the hook; a Will may pick any cast that is not retired. `EntityCastGuardrailTest` and
+  `entity_cast_validation` keep it.
 
 **Migration targets**
 - Living-weapon sweeps (`LivingSickleItem`, `LivingTorchItem`) still use vanilla melee eligibility, and

@@ -56,6 +56,9 @@ src/test/java/com/vincenthuto/hemomancy/architecture/CommonClientIsolationTest.j
 src/test/java/com/vincenthuto/hemomancy/architecture/DialogueRoutingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/route,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/DialogueRoutingGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/entity/npc/dialogue/route/DialogueEventRouter.java,java,by-name
 src/test/java/com/vincenthuto/hemomancy/architecture/EasingCopyGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/util/HemoEasing.java,java,exact
+src/test/java/com/vincenthuto/hemomancy/architecture/EntityCastGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationInit.java,java,helper
+src/test/java/com/vincenthuto/hemomancy/architecture/EntityCastGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/manipulation/EntityCasts.java,java,helper
+src/test/java/com/vincenthuto/hemomancy/architecture/EntityCastGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/manipulation/EntityManipulationEffects.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/HealAndFlightGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common,java,exact-dir
 src/test/java/com/vincenthuto/hemomancy/architecture/HealAndFlightGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/capability/player/unstained/PurityGainEvents.java,java,helper
 src/test/java/com/vincenthuto/hemomancy/architecture/HealAndFlightGuardrailTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationStatusEvents.java,java,helper
@@ -480,7 +483,7 @@ src/test/java/com/vincenthuto/hemomancy/client/render/world/ClawSlashRendererSou
 src/test/java/com/vincenthuto/hemomancy/client/render/world/ClawSlashRendererSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/render/world/ClawSlashRenderer.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/client/render/world/ClawSlashRendererSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/client/render/world/WorldEffectDispatcher.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/client/render/world/ClawSlashRendererSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/tool/living/LivingBaghnakhItem.java,java,exact
-src/test/java/com/vincenthuto/hemomancy/client/render/world/ClawSlashRendererSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/manipulation/EntityManipulationEffects.java,java,exact
+src/test/java/com/vincenthuto/hemomancy/client/render/world/ClawSlashRendererSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/manipulation/EntityCasts.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/client/render/world/ClawSlashRendererSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/manipulation/tenebris/GloamLacerationManip.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/client/render/world/ClawSlashRendererSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/network/PacketHandler.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/client/render/world/ClawSlashRendererSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/network/particle/SpawnClawSlashPacket.java,java,exact
@@ -1358,7 +1361,6 @@ src/test/java/com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperFlammeu
 src/test/java/com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperFlammeusBreathIntegrationSourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperWeaponCombatRules.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperManipulationCoverageTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common,java,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperManipulationCoverageTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationInit.java,java,base-dir
-src/test/java/com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperManipulationCoverageTest.java,junit,src/main/java/com/vincenthuto/hemomancy/common/manipulation/EntityManipulationEffects.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperMountArsenalResourceTest.java,junit,src/main,other,exact-dir
 src/test/java/com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperMountArsenalResourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/model/entity/boss/endgame/VesperMountModel.java,java,base-dir
 src/test/java/com/vincenthuto/hemomancy/common/entity/boss/endgame/VesperMountArsenalResourceTest.java,junit,src/main/java/com/vincenthuto/hemomancy/client/registry/EntityRendererRegistrar.java,java,base-dir
@@ -1520,7 +1522,6 @@ src/test/java/com/vincenthuto/hemomancy/common/entity/mob/monster/will/WillBlood
 src/test/java/com/vincenthuto/hemomancy/common/entity/mob/monster/will/WillBloodUtilitySourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/config/HemoServerConfig.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/entity/mob/monster/will/WillCombatRedesignSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/entity/mob/monster/will/WillEntity.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/entity/mob/monster/will/WillCombatRedesignSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/manipulation/EntityCastableManipulation.java,java,exact
-src/test/java/com/vincenthuto/hemomancy/common/entity/mob/monster/will/WillCombatRedesignSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/manipulation/EntityManipulationEffects.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/entity/mob/monster/will/WillCombatRedesignSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationCastContext.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/entity/mob/monster/will/WillCombatRedesignSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/manipulation/MobManipCaster.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/entity/mob/monster/will/WillCombatRedesignSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/manipulation/WillManipulationCaster.java,java,exact
@@ -2060,7 +2061,7 @@ src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWea
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponGraftSourceTest.java,main,src/main/resources/assets/hemomancy/models/item/living_weapon_graft.json,resource,exact
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponGraftUnlockSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponGraftRecipeUnlockEvents.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponGraftUnlockSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponGraftRecipeUnlocks.java,java,exact
-src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponGraftUnlockSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/manipulation/EntityManipulationEffects.java,java,exact
+src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponGraftUnlockSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/manipulation/EntityCasts.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponGraftUnlockSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/manipulation/SchoolHitHelper.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponMemoryGrantSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/capability/player/harbinger/manip/KnownManipulationGrantHelper.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponMemoryGrantSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/BloodMemoryItem.java,java,exact
@@ -2374,7 +2375,6 @@ src/test/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationGapComba
 src/test/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationGapCombatStyleSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/init/ItemInit.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationGapCombatStyleSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationInit.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationGapCombatStyleSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationTreeInit.java,java,exact
-src/test/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationGapCombatStyleSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/manipulation/EntityManipulationEffects.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationGapCombatStyleSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationStatusEvents.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationGapCombatStyleSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/manipulation/SchoolHitHelper.java,java,exact
 src/test/java/com/vincenthuto/hemomancy/common/manipulation/ManipulationGapCombatStyleSourceTest.java,main,src/main/java/com/vincenthuto/hemomancy/common/manipulation/ductilis/ConductiveMarkManip.java,java,exact

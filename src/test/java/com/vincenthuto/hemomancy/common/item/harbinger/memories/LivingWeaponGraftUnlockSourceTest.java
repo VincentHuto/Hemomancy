@@ -14,7 +14,7 @@ public final class LivingWeaponGraftUnlockSourceTest {
 		String events = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponGraftRecipeUnlockEvents.java");
 		String helper = read("src/main/java/com/vincenthuto/hemomancy/common/item/harbinger/memories/LivingWeaponGraftRecipeUnlocks.java");
 		String schoolHitHelper = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/SchoolHitHelper.java");
-		String entityEffects = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/EntityManipulationEffects.java");
+		String entityEffects = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/EntityCasts.java");
 
 		assertContains("unlock helper has blade advancement", helper, "living_weapon_graft/blade");
 		assertContains("unlock helper has flail advancement", helper, "living_weapon_graft/flail");

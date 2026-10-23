@@ -54,7 +54,40 @@ public final class EntityCastCharacterisationGameTests {
 			// No entity cast: it must report that it did nothing.
 			"blood_rush");
 
+	/** What a Will may cast: every entity cast but the two retired ones. Vesper's casts must not widen it. */
+	private static final Set<String> WILL_CASTS = Set.of(
+			"blood_shot", "blood_needle", "blood_aneurysm", "blood_cloud",
+			"crimson_flame_conjuration", "sanguine_ignition", "scalding_updraft", "vitric_combustion",
+			"deadly_gaze", "hemolymphal_pulse", "activation_potential", "synaptic_jolt", "conductive_mark",
+			"hematic_flare", "hematic_beacon", "prismatic_reproof", "unclosing_eye",
+			"hemorrhage", "exsanguinate", "insatiable_hunger", "grave_debt", "bloom_of_rot",
+			"cryogenic_pulse", "glacial_grasp", "glacial_rampart",
+			"pyretic_forge", "iron_retort", "sanguine_magnetism",
+			"void_shroud", "gloam_laceration", "umbral_step", "blood_eclipse");
+
 	private EntityCastCharacterisationGameTests() {
+	}
+
+	/**
+	 * Over the live registry: exactly the 34 casts are attached, a Will may choose exactly the 32 that are not
+	 * retired, and every manipulation Vesper treats as castable has one.
+	 */
+	@GameTest(template = "wide", timeoutTicks = 40, batch = "entity_casts")
+	public static void entityCastsAreAttachedWhereWillsAndVesperNeedThem(GameTestHelper helper) {
+		TreeSet<String> attached = new TreeSet<>();
+		TreeSet<String> supported = new TreeSet<>();
+		for (BloodManipulation manipulation : ManipulationInit.MANIPS_TYPE_REGISTRY) {
+			if (manipulation.getEntityCast().isPresent()) attached.add(manipulation.getName());
+			if (EntityManipulationEffects.isSupported(manipulation)) supported.add(manipulation.getName());
+		}
+		helper.assertTrue(attached.equals(new TreeSet<>(CASTS.subList(0, 34))), "entity casts attached to " + attached);
+		helper.assertTrue(supported.equals(new TreeSet<>(WILL_CASTS)), "Wills may cast " + supported);
+		com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperManipulationCoverage.TABLE.forEach((id, entry) -> {
+			if (entry.coverage() == com.vincenthuto.hemomancy.common.entity.boss.endgame.VesperManipulationCoverage.Coverage.CASTABLE) {
+				helper.assertTrue(supported.contains(id), id + " is CASTABLE for Vesper but has no entity cast");
+			}
+		});
+		helper.succeed();
 	}
 
 	@GameTest(template = "wide", timeoutTicks = 200, batch = "entity_casts")

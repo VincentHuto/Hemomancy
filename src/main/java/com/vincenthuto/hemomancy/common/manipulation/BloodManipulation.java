@@ -108,6 +108,8 @@ public class BloodManipulation implements EntityCastableManipulation {
 	 */
 	private transient DrudgeAction drudgeAction = null;
 	private transient String drudgeDescription = null;
+	/** What this does when an entity casts it, set at registration; transient like the Drudge action. */
+	private transient EntityCast entityCast = null;
 
 	public BloodManipulation(String name, double cost, double alignLevel, double xpCost, EnumManipulationType type,
 			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
@@ -265,6 +267,16 @@ public class BloodManipulation implements EntityCastableManipulation {
 	 */
 	public Optional<DrudgeAction> getDrudgeAction() {
 		return Optional.ofNullable(drudgeAction);
+	}
+
+	/** Attaches what this manipulation does when an entity (a Will, Vesper) casts it. */
+	public BloodManipulation setEntityCast(EntityCast cast) {
+		this.entityCast = cast;
+		return this;
+	}
+
+	public Optional<EntityCast> getEntityCast() {
+		return Optional.ofNullable(entityCast);
 	}
 
 	/**

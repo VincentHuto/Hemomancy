@@ -114,10 +114,9 @@ public final class ManipulationGapCombatStyleSourceTest {
 
 	private static void treeAndEntityCastingSupportExists() throws IOException {
 		String treeInit = read("src/main/java/com/vincenthuto/hemomancy/common/init/ManipulationTreeInit.java");
-		String entityEffects = read("src/main/java/com/vincenthuto/hemomancy/common/manipulation/EntityManipulationEffects.java");
+		// Their entity casts are attached at registration; entity_cast_validation checks them in the live registry.
 		for (String id : NEW_MANIPULATIONS) {
 			assertContains(id + " tree node", treeInit, "register(\"" + id + "\"");
-			assertContains(id + " entity cast support", entityEffects, "\"" + id + "\"");
 		}
 	}
 
